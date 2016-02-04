@@ -40,14 +40,14 @@ Application::notify(QObject *receiver, QEvent *e)
 void
 Application::setFusionDarkTheme()
 {
-    this->setStyle(QStyleFactory::create("fusion"));
+    QApplication::setStyle(QStyleFactory::create("fusion"));
 
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(0x53, 0x53, 0x53));
     palette.setColor(QPalette::WindowText, QColor(0xe1, 0xe1, 0xe1));
     palette.setColor(QPalette::Base, QColor(0x53, 0x53, 0x53));
     palette.setColor(QPalette::AlternateBase, QColor(0x53, 0x53, 0x53));
-    palette.setColor(QPalette::ToolTipBase, QColor(0xe1, 0xe1, 0xe1));
+    palette.setColor(QPalette::ToolTipBase, QColor(0x53, 0x53, 0x53));
     palette.setColor(QPalette::ToolTipText, QColor(0xe1, 0xe1, 0xe1));
     palette.setColor(QPalette::Text, QColor(0xe1, 0xe1, 0xe1));
     palette.setColor(QPalette::Button, QColor(0x53, 0x53, 0x53));
@@ -57,5 +57,5 @@ Application::setFusionDarkTheme()
     palette.setColor(QPalette::BrightText, QColor(0xe1, 0x00, 0x00));
     palette.setColor(QPalette::Highlight, QColor(0x42, 0x42, 0x42));
     palette.setColor(QPalette::HighlightedText, QColor(0xee, 0xee, 0xee));
-    this->setPalette(palette);
+    QApplication::setPalette(palette);
 }

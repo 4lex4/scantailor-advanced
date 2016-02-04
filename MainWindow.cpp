@@ -129,6 +129,9 @@ MainWindow::MainWindow()
     m_thumbResizeTimer.setSingleShot(true);
     connect(&m_thumbResizeTimer, SIGNAL(timeout()), SLOT(invalidateAllThumbnails()));
 
+    m_autoSaveTimer.setSingleShot(true);
+    connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
+
     setupUi(this);
     sortOptions->setVisible(false);
 
@@ -142,6 +145,11 @@ MainWindow::MainWindow()
     m_ptrTabbedDebugImages.reset(new TabbedDebugImages);
 
     m_debug = actionDebug->isChecked();
+
+    QPalette imageViewFramePalette(QApplication::palette());
+    imageViewFramePalette.setColor(QPalette::Window, QColor(0x45, 0x45, 0x45));
+    imageViewFrame->setPalette(imageViewFramePalette);
+
     m_pImageFrameLayout = new QStackedLayout(imageViewFrame);
     m_pOptionsFrameLayout = new QStackedLayout(filterOptions);
 
@@ -930,7 +938,7 @@ MainWindow::goToPage(PageId const& page_id)
 
     updateMainArea();
 
-    autoSaveProject();
+    m_autoSaveTimer.start(30000);
 }
 
 void
@@ -956,7 +964,7 @@ MainWindow::currentPageChanged(
     }
 
     if (flags & ThumbnailSequence::SELECTED_BY_USER) {
-        autoSaveProject();
+        m_autoSaveTimer.start(30000);
     }
 }
 
@@ -1698,8 +1706,6 @@ MainWindow::loadPageInteractive(PageInfo const& page)
 
     if (isOutputFilter() && !checkReadyForOutput(&page.id())) {
         filterList->setBatchProcessingPossible(false);
-
-        m_ptrThumbSequence->setSelection(m_ptrThumbSequence->firstPage().id());
 
         QString const err_text(
                 tr("Output is not yet possible, as the final size"

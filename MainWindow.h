@@ -374,6 +374,7 @@ private:
     bool m_keep_orig_fore_subscan;
     std::unique_ptr<ThumbnailSequence> m_ptrThumbSequence_export;
     QTimer m_thumbResizeTimer;
+    QTimer m_autoSaveTimer;
 
     void autoSaveProject();
 

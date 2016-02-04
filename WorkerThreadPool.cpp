@@ -113,12 +113,7 @@ WorkerThreadPool::customEvent(QEvent* event)
 void
 WorkerThreadPool::updateNumberOfThreads()
 {
-    int max_threads = 1;
-    if (sizeof(void*) > 4) {
-        // We only allow parallel processing on 64-bit builds due to
-        // address space constraints.
-        max_threads = QThread::idealThreadCount();
-    }
+    int max_threads = QThread::idealThreadCount();
 
     int num_threads = m_settings.value("settings/batch_processing_threads", max_threads).toInt();
     num_threads = std::min<int>(num_threads, max_threads);

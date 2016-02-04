@@ -28,16 +28,7 @@ SystemLoadWidget::SystemLoadWidget(QWidget* parent)
 {
     ui.setupUi(this);
 
-    int num_threads = 1;
-    if (sizeof(void*) == 4) {
-        // On 32-bit builds we don't allow parallel processing, as that makes
-        // it easy to run out of address space.
-        setEnabled(false);
-        ui.slider->setToolTip(tr("32-bit version of Scan Tailor doesn't support parallel processing"));
-    }
-    else {
-        num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
-    }
+    int num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
 
     ui.slider->setRange(1, m_maxThreads);
     ui.slider->setValue(num_threads);

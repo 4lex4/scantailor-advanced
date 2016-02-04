@@ -1,0 +1,98 @@
+The icons in this folder and in sub-folders are all licensed under
+GPL version 3 or above.  The origins and original licenses for each icon
+are given below.
+
+
+Origin: Created by Scan Tailor developers or contributors
+Website: http://scantailor.sourceforge.net/
+Original license: GNU GPL version 3 or above
+Files:
+../appicon.svg
+aqua-sphere.png
+aque-sphere.svg
+keep-in-view.png
+layout-type-auto.png
+left_page_plus_offcut.png
+left_page_plus_offcut_selected.png
+left_page_thumb.png
+right_page_plus_offcut.png
+right_page_plus_offcut_selected.png
+right_page_thumb.png
+single_page_uncut.png
+single_page_uncut_selected.png
+two_pages.png
+two_pages_selected.png
+
+
+Origin: The GNU Image Manipulation Project (GIMP)
+Website: http://gimp.org/
+Original license: GNU GPL version 2 or above
+Files:
+stock-center-24.png
+stock-gravity-east-24.png
+stock-gravity-north-24.png
+stock-gravity-north-east-24.png
+stock-gravity-north-west-24.png
+stock-gravity-south-24.png
+stock-gravity-south-east-24.png
+stock-gravity-south-west-24.png
+stock-gravity-west-24.png
+stock-vchain-24.png
+stock-vchain-broken-24.png
+
+
+Origin: F-Spot
+Website: http://f-spot.org/
+Original license: GNU GPL version 2 or above
+Files:
+object-rotate-left.png
+object-rotate-right.png
+
+
+Origin: Tango Desktop Project
+Website: http://tango.freedesktop.org/
+Original license: Public Domain
+Files (some modified):
+big-down-arrow.png
+big-left-arrow.png
+big-right-arrow.png
+big-up-arrow.png
+despeckle-cautious.png
+despeckle-normal.png
+despeckle-aggressive.png
+insert-before-16.png
+insert-after-16.png
+insert-here-16.png
+user-trash.png
+plus-16.png
+minus-16.png
+trashed-small.png
+trashed-big.png
+untrash-big.png
+undo-22.png
+
+
+Origin: Amarok
+Website: http://amarok.kde.org/
+Original license: GNU GPL version 2 or above
+Files (derived from default-theme-clean.svg):
+play-small.png
+play-small-hovered.png
+play-small-pressed.png
+stop-big.png
+stop-big-hovered.png
+stop-big-pressed.png
+
+
+Origin: Crystal GT icon set by Everaldo Coelho
+Website: http://www.everaldo.com/
+Original license: GNU LGPL version 2.1
+Files:
+file-16.png
+
+
+Origin: Nuvola icon set by David Vignoni
+Website: http://icon-king.com/projects/nuvola
+Original license: GNU LGPL version 2.1
+Files:
+folder-16.png 

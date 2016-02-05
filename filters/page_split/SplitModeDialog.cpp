@@ -101,7 +101,7 @@ namespace page_split
             m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
         }
         else if (selectedPagesRB->isChecked()) {
-            emit accepted(m_selectedPages, false, layout_type, applyCutOption->isChecked());
+            emit accepted(m_selectedPages, layout_type, applyCutOption->isChecked());
             accept();
             return;
         }
@@ -128,7 +128,7 @@ namespace page_split
             }
         }
 
-        emit accepted(pages, false, layout_type, applyCutOption->isChecked());
+        emit accepted(pages, layout_type, applyCutOption->isChecked());
 
         accept();
     }

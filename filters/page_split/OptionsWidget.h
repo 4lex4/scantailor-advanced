@@ -100,8 +100,7 @@ namespace page_split
         void showChangeDialog();
 
         void layoutTypeSet(
-                std::set<PageId> const& pages,
-                bool all_pages, LayoutType layout_type, bool apply_cut);
+                std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
 
         void splitLineModeChanged(bool auto_mode);
 

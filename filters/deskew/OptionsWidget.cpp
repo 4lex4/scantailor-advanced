@@ -85,8 +85,14 @@ namespace deskew
                 m_uiData.dependencies(), m_uiData.mode()
         );
         m_ptrSettings->setDegress(pages, params);
-        for (PageId const& page_id :  pages) {
-            emit invalidateThumbnail(page_id);
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
     }
 

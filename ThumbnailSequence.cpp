@@ -590,9 +590,8 @@ ThumbnailSequence::Impl::invalidateThumbnail(PageInfo const& page_info)
 void
 ThumbnailSequence::Impl::invalidateThumbnailImpl(ItemsById::iterator const id_it)
 {
-    std::unique_ptr<CompositeItem> composite(
-    getCompositeItem(&*id_it, id_it->pageInfo)
-    );
+    std::unique_ptr<CompositeItem> composite(getCompositeItem(&*id_it, id_it->pageInfo));
+
     CompositeItem* const new_composite = composite.get();
     CompositeItem* const old_composite = id_it->composite;
     QSizeF const old_size(old_composite->boundingRect().size());

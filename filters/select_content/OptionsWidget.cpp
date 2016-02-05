@@ -267,8 +267,17 @@ namespace select_content
                                           bottomBorder->value()));
 
             m_ptrSettings->setPageParams(page_id, params);
-            emit invalidateThumbnail(page_id);
         }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
+        }
+
         emit reloadRequested();
     }
 

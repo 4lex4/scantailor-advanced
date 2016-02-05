@@ -250,15 +250,15 @@ namespace page_split
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&, bool, LayoutType, bool)),
-                this, SLOT(layoutTypeSet(std::set<PageId> const&, bool, LayoutType, bool))
+                dialog, SIGNAL(accepted(std::set<PageId> const&, LayoutType, bool)),
+                this, SLOT(layoutTypeSet(std::set<PageId> const&, LayoutType, bool))
         );
         dialog->show();
     }
 
     void
     OptionsWidget::layoutTypeSet(
-            std::set<PageId> const& pages, bool all_pages, LayoutType const layout_type, bool apply_cut)
+            std::set<PageId> const& pages, LayoutType const layout_type, bool apply_cut)
     {
         if (pages.empty()) {
             return;
@@ -277,7 +277,7 @@ namespace page_split
             }
         }
 
-        if (all_pages) {
+        if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         }
         else {

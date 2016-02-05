@@ -444,7 +444,15 @@ namespace output
     {
         for (PageId const& page_id :  pages) {
             m_ptrSettings->setDpi(page_id, dpi);
-            emit invalidateThumbnail(page_id);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
 
         if (pages.find(m_pageId) != pages.end()) {
@@ -460,7 +468,15 @@ namespace output
         for (PageId const& page_id :  pages) {
             m_ptrSettings->setColorParams(page_id, m_colorParams);
             m_ptrSettings->setPictureShape(page_id, m_pictureShape);
-            emit invalidateThumbnail(page_id);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
 
         if (pages.find(m_pageId) != pages.end()) {
@@ -529,7 +545,15 @@ namespace output
     {
         for (PageId const& page_id :  pages) {
             m_ptrSettings->setDespeckleLevel(page_id, m_despeckleLevel);
-            emit invalidateThumbnail(page_id);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
 
         if (pages.find(m_pageId) != pages.end()) {
@@ -556,7 +580,15 @@ namespace output
     {
         for (PageId const& page_id :  pages) {
             m_ptrSettings->setDewarpingMode(page_id, mode);
-            emit invalidateThumbnail(page_id);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
 
         if (pages.find(m_pageId) != pages.end()) {
@@ -601,7 +633,15 @@ namespace output
     {
         for (PageId const& page_id :  pages) {
             m_ptrSettings->setDepthPerception(page_id, m_depthPerception);
-            emit invalidateThumbnail(page_id);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
 
         if (pages.find(m_pageId) != pages.end()) {

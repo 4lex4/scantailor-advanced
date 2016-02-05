@@ -51,8 +51,7 @@ namespace page_split
 
     signals:
 
-        void accepted(std::set<PageId> const& pages,
-                      bool all_pages, LayoutType layout_type, bool apply_cut);
+        void accepted(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
 
     private slots:
 

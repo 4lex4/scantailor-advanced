@@ -107,8 +107,14 @@ namespace fix_orientation
         }
 
         m_ptrSettings->applyRotation(pages, m_rotation);
-        for (PageId const& page_id :  pages) {
-            emit invalidateThumbnail(page_id);
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        }
+        else {
+            for (PageId const& page_id :  pages) {
+                emit invalidateThumbnail(page_id);
+            }
         }
     }
 

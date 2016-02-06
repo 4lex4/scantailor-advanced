@@ -59,7 +59,6 @@ namespace select_content
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
         m_pageId = page_id;
-        autoBtn->setChecked(true);
         autoBtn->setEnabled(false);
         manualBtn->setEnabled(false);
         disableBtn->setEnabled(false);
@@ -96,13 +95,11 @@ namespace select_content
     {
         m_uiData.setContentRect(content_rect);
         m_uiData.setMode(MODE_MANUAL);
-        m_uiData.setContentDetection(true);
-        m_uiData.setPageDetection(false);
+        emit modeChanged(false);
         updateModeIndication(MODE_MANUAL);
         commitCurrentParams();
 
         emit invalidateThumbnail(m_pageId);
-        emit reloadRequested();
     }
 
     void
@@ -115,11 +112,13 @@ namespace select_content
             emit reloadRequested();
         }
         else {
-            m_uiData.setPageDetection(false);
             m_uiData.setMode(MODE_MANUAL);
             m_uiData.setContentDetection(true);
             commitCurrentParams();
-            emit reloadRequested();
+            if(m_uiData.pageDetection()) {
+                m_uiData.setPageDetection(false);
+                emit reloadRequested();
+            }
         }
     }
 
@@ -183,7 +182,6 @@ namespace select_content
     {
         m_uiData.setPageBorders(leftBorder->value(), topBorder->value(), rightBorder->value(), bottomBorder->value());
         commitCurrentParams();
-        emit reloadRequested();
     }
 
     void

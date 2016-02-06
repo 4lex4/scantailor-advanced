@@ -17,6 +17,7 @@
 */
 
 #include "SettingsDialog.h"
+#include "OpenGLSupport.h"
 #include <QSettings>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
@@ -25,6 +26,19 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     ui.setupUi(this);
 
     QSettings settings;
+
+    if (!OpenGLSupport::supported()) {
+		ui.enableOpenglCb->setChecked(false);
+		ui.enableOpenglCb->setEnabled(false);
+		ui.openglDeviceLabel->setEnabled(false);
+		ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
+	} else {
+		ui.enableOpenglCb->setChecked(
+			settings.value("settings/enable_opengl", false).toBool()
+		);
+        QString const openglDevicePattern = ui.openglDeviceLabel->text();
+		ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
+	}
 
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
@@ -43,6 +57,7 @@ void
 SettingsDialog::commitChanges()
 {
     QSettings settings;
+    settings.setValue("settings/enable_opengl", ui.enableOpenglCb->isChecked());
 }
 
 void

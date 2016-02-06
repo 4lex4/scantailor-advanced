@@ -396,6 +396,7 @@ SET(
         Despeckle.cpp Despeckle.h
         ThreadPriority.cpp ThreadPriority.h
         FileNameDisambiguator.cpp FileNameDisambiguator.h
+		OpenGLSupport.cpp OpenGLSupport.h
         OutputFileNameGenerator.cpp OutputFileNameGenerator.h
         PageRange.cpp PageRange.h
         SelectedPage.cpp SelectedPage.h

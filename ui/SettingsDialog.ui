@@ -6,14 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>280</width>
-    <height>93</height>
+    <width>323</width>
+    <height>151</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QCheckBox" name="enableOpenglCb">
+     <property name="text">
+      <string>Accelerate user interface with OpenGL</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="openglDeviceLabel">
+     <property name="text">
+      <string>Device: %1</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QCheckBox" name="AutoSaveProject">
      <property name="text">

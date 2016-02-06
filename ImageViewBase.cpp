@@ -25,12 +25,13 @@
 #include "ScopedIncDec.h"
 #include "imageproc/PolygonUtils.h"
 #include "imageproc/Transform.h"
+#include "OpenGLSupport.h"
 #include <QScrollBar>
+#include <QSettings>
 #include <QPointer>
 #include <QPaintEngine>
 #include <QMouseEvent>
 #include <QApplication>
-
 #include <QGLWidget>
 
 using namespace imageproc;
@@ -156,14 +157,21 @@ ImageViewBase::ImageViewBase(
  */
     viewport()->setAutoFillBackground(false);
 
-    QGLFormat format;
-    format.setSampleBuffers(true);
-    format.setStencil(true);
-    format.setAlpha(true);
-    format.setRgba(true);
-    format.setDepth(false);
+	if (QSettings().value("settings/use_3d_acceleration", false) != false) {
+		if (OpenGLSupport::supported()) {
+			QGLFormat format;
+			format.setSampleBuffers(true);
+			format.setStencil(true);
+			format.setAlpha(true);
+			format.setRgba(true);
+			format.setDepth(false);
 
-    setViewport(new QGLWidget(format));
+			// Most of hardware refuses to work for us with direct rendering enabled.
+            format.setDirectRendering(false);
+
+			setViewport(new QGLWidget(format));
+		}
+	}
 
     setFrameShape(QFrame::NoFrame);
     viewport()->setFocusPolicy(Qt::WheelFocus);

@@ -99,21 +99,33 @@ namespace output
                 cleanBackgroundCB, SIGNAL(clicked(bool)),
                 this, SLOT(cleanBackgroundToggled(bool))
         );
+
+        connect(cleaningAutoBtn, SIGNAL(pressed()), this, SLOT(cleaningAutoMode()));
+        connect(cleaningManualBtn, SIGNAL(pressed()), this, SLOT(cleaningManualMode()));
+
         connect(
-                clearWhiteThresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(clearWThresholdChanged())
+                whitenThresholdSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(whitenThresholdChanged())
         );
         connect(
-                clearWhiteThresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(clearWThresholdChanged())
+                whitenThresholdSlider, SIGNAL(sliderReleased()),
+                this, SLOT(whitenThresholdChanged())
         );
         connect(
-                clearBlackThresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(clearBThresholdChanged())
+                brightnessSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(brightnessChanged())
         );
         connect(
-                clearBlackThresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(clearBThresholdChanged())
+                brightnessSlider, SIGNAL(sliderReleased()),
+                this, SLOT(brightnessChanged())
+        );
+        connect(
+                contrastSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(contrastChanged())
+        );
+        connect(
+                contrastSlider, SIGNAL(sliderReleased()),
+                this, SLOT(contrastChanged())
         );
         connect(
                 lighterThresholdLink, SIGNAL(linkActivated(QString const&)),
@@ -196,6 +208,11 @@ namespace output
         m_dewarpingMode = params.dewarpingMode();
         m_depthPerception = params.depthPerception();
         m_despeckleLevel = params.despeckleLevel();
+
+        cleaningAutoBtn->setChecked(true);
+        cleaningAutoBtn->setEnabled(false);
+        cleaningManualBtn->setEnabled(false);
+
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
@@ -204,6 +221,8 @@ namespace output
     void
     OptionsWidget::postUpdateUI()
     {
+        cleaningAutoBtn->setEnabled(true);
+        cleaningManualBtn->setEnabled(true);
     }
 
     void
@@ -343,69 +362,132 @@ namespace output
         emit invalidateThumbnail(m_pageId);
     }
 
-    void
-    OptionsWidget::clearWThresholdChanged()
+    void OptionsWidget::cleaningAutoMode()
     {
-        int const value = clearWhiteThresholdSlider->value();
+        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
+        opt.setCleanMode(MODE_AUTO);
+        m_colorParams.setColorGrayscaleOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        emit reloadRequested();
+
+        emit invalidateThumbnail(m_pageId);
+    }
+
+    void OptionsWidget::cleaningManualMode()
+    {
+        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
+        opt.setCleanMode(MODE_MANUAL);
+        m_colorParams.setColorGrayscaleOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+    }
+
+    void
+    OptionsWidget::whitenThresholdChanged()
+    {
+        int const value = whitenThresholdSlider->value();
         QString const tooltip_text(QString::number(value));
-        clearWhiteThresholdSlider->setToolTip(tooltip_text);
+        whitenThresholdSlider->setToolTip(tooltip_text);
 
-        clearWhiteThresholdLabel->setText(QString::number(value));
+        whitenThresholdLabel->setText(QString::number(value));
 
 
-        QPoint const center(clearWhiteThresholdSlider->rect().center());
-        QPoint tooltip_pos(clearWhiteThresholdSlider->mapFromGlobal(QCursor::pos()));
+        QPoint const center(whitenThresholdSlider->rect().center());
+        QPoint tooltip_pos(whitenThresholdSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), clearWhiteThresholdSlider->width()));
-        tooltip_pos = clearWhiteThresholdSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, clearWhiteThresholdSlider);
+        tooltip_pos.setX(qBound(0, tooltip_pos.x(), whitenThresholdSlider->width()));
+        tooltip_pos = whitenThresholdSlider->mapToGlobal(tooltip_pos);
+        QToolTip::showText(tooltip_pos, tooltip_text, whitenThresholdSlider);
 
-        if (clearWhiteThresholdSlider->isSliderDown()) {
+        if (whitenThresholdSlider->isSliderDown()) {
             return;
         }
 
         ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        if (opt.clearWhiteThresholdAdjustment() == value) {
+        if (opt.whitenAdjustment() == value) {
             return;
         }
 
-        opt.setClearWhiteThresholdAdjustment(value);
+        opt.setWhitenAdjustment(value);
         m_colorParams.setColorGrayscaleOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        cleaningManualMode();
+
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
     }
 
     void
-    OptionsWidget::clearBThresholdChanged()
+    OptionsWidget::brightnessChanged()
     {
-        int const value = clearBlackThresholdSlider->value();
+        int const value = brightnessSlider->value();
         QString const tooltip_text(QString::number(value));
-        clearBlackThresholdSlider->setToolTip(tooltip_text);
+        brightnessSlider->setToolTip(tooltip_text);
 
-        clearBlackThresholdLabel->setText(QString::number(value));
+        brightnessLabel->setText(QString::number(value));
 
 
-        QPoint const center(clearBlackThresholdSlider->rect().center());
-        QPoint tooltip_pos(clearBlackThresholdSlider->mapFromGlobal(QCursor::pos()));
+        QPoint const center(brightnessSlider->rect().center());
+        QPoint tooltip_pos(brightnessSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), clearBlackThresholdSlider->width()));
-        tooltip_pos = clearBlackThresholdSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, clearBlackThresholdSlider);
+        tooltip_pos.setX(qBound(0, tooltip_pos.x(), brightnessSlider->width()));
+        tooltip_pos = brightnessSlider->mapToGlobal(tooltip_pos);
+        QToolTip::showText(tooltip_pos, tooltip_text, brightnessSlider);
 
-        if (clearBlackThresholdSlider->isSliderDown()) {
+        if (brightnessSlider->isSliderDown()) {
             return;
         }
 
         ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        if (opt.clearBlackThresholdAdjustment() == value) {
+        if (opt.brightnessAdjustment() == value) {
             return;
         }
 
-        opt.setClearBlackThresholdAdjustment(value);
+        opt.setBrightnessAdjustment(value);
         m_colorParams.setColorGrayscaleOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        cleaningManualMode();
+
+        emit reloadRequested();
+
+        emit invalidateThumbnail(m_pageId);
+    }
+
+    void
+    OptionsWidget::contrastChanged()
+    {
+        int const value = contrastSlider->value();
+        QString const tooltip_text(QString::number(value));
+        contrastSlider->setToolTip(tooltip_text);
+
+        contrastLabel->setText(QString::number(value));
+
+
+        QPoint const center(contrastSlider->rect().center());
+        QPoint tooltip_pos(contrastSlider->mapFromGlobal(QCursor::pos()));
+        tooltip_pos.setY(center.y());
+        tooltip_pos.setX(qBound(0, tooltip_pos.x(), contrastSlider->width()));
+        tooltip_pos = contrastSlider->mapToGlobal(tooltip_pos);
+        QToolTip::showText(tooltip_pos, tooltip_text, contrastSlider);
+
+        if (contrastSlider->isSliderDown()) {
+            return;
+        }
+
+        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
+        if (opt.contrastAdjustment() == value) {
+            return;
+        }
+
+        opt.setContrastAdjustment(value);
+        m_colorParams.setColorGrayscaleOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        cleaningManualMode();
+
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
@@ -756,6 +838,7 @@ namespace output
                 color_grayscale_options_visible = true;
                 break;
             case ColorParams::MIXED:
+                color_grayscale_options_visible = true;
                 bw_options_visible = true;
                 picture_shape_visible = true;
                 break;
@@ -766,13 +849,28 @@ namespace output
             ColorGrayscaleOptions const opt(
                     m_colorParams.colorGrayscaleOptions()
             );
-            whiteMarginsCB->setChecked(opt.whiteMargins());
-            equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
-            equalizeIlluminationCB->setEnabled(opt.whiteMargins());
+            if (color_mode != ColorParams::MIXED) {
+                whiteMarginsCB->setVisible(true);
+                whiteMarginsCB->setChecked(opt.whiteMargins());
+                equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
+                equalizeIlluminationCB->setEnabled(opt.whiteMargins());
+            }
+            else {
+                whiteMarginsCB->setVisible(false);
+                equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
+            }
+
             cleanBackgroundCB->setChecked(opt.cleanBackground());
             clearBackgroundOptions->setVisible(opt.cleanBackground());
-            clearBlackThresholdSlider->setValue(opt.clearBlackThresholdAdjustment());
-            clearWhiteThresholdSlider->setValue(opt.clearWhiteThresholdAdjustment());
+            if (opt.cleanMode() == MODE_AUTO) {
+                cleaningAutoBtn->setChecked(true);
+            }
+            else {
+                cleaningManualBtn->setChecked(true);
+            }
+            brightnessSlider->setValue(opt.brightnessAdjustment());
+            contrastSlider->setValue(opt.contrastAdjustment());
+            whitenThresholdSlider->setValue(opt.whitenAdjustment());
         }
         else {
             clearBackgroundOptions->setVisible(false);
@@ -841,4 +939,4 @@ namespace output
         depthPerceptionSlider->blockSignals(false);
     }
 
-} 
+}

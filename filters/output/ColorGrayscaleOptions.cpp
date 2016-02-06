@@ -26,8 +26,10 @@ namespace output
             : m_whiteMargins(false),
               m_normalizeIllumination(false),
               m_cleanBackground(false),
-              m_clearWhiteThresholdAdjustment(25),
-              m_clearBlackThresholdAdjustment(25)
+              m_cleanMode(MODE_AUTO),
+              m_whitenAdjustment(0),
+              m_brightnessAdjustment(0),
+              m_contrastAdjustment(0)
     {
     }
 
@@ -35,8 +37,10 @@ namespace output
             : m_whiteMargins(el.attribute("whiteMargins") == "1"),
               m_normalizeIllumination(el.attribute("normalizeIllumination") == "1"),
               m_cleanBackground(el.attribute("cleanBackground") == "1"),
-              m_clearWhiteThresholdAdjustment(el.attribute("clearWThresholdAdj").toInt()),
-              m_clearBlackThresholdAdjustment(el.attribute("clearBThresholdAdj").toInt())
+              m_cleanMode(el.attribute("cleanMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
+              m_whitenAdjustment(el.attribute("whitenAdj").toInt()),
+              m_brightnessAdjustment(el.attribute("brightnessAdj").toInt()),
+              m_contrastAdjustment(el.attribute("contrastAdj").toInt())
     {
     }
 
@@ -47,8 +51,10 @@ namespace output
         el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
         el.setAttribute("normalizeIllumination", m_normalizeIllumination ? "1" : "0");
         el.setAttribute("cleanBackground", m_cleanBackground ? "1" : "0");
-        el.setAttribute("clearWThresholdAdj", m_clearWhiteThresholdAdjustment);
-        el.setAttribute("clearBThresholdAdj", m_clearBlackThresholdAdjustment);
+        el.setAttribute("cleanMode", (m_cleanMode == MODE_AUTO) ? "auto" : "manual");
+        el.setAttribute("whitenAdj", m_whitenAdjustment);
+        el.setAttribute("brightnessAdj", m_brightnessAdjustment);
+        el.setAttribute("contrastAdj", m_contrastAdjustment);
         return el;
     }
 
@@ -64,6 +70,22 @@ namespace output
         }
 
         if (m_cleanBackground != other.m_cleanBackground) {
+            return false;
+        }
+
+        if (m_cleanMode != other.m_cleanMode) {
+            return false;
+        }
+
+        if (m_whitenAdjustment != other.m_whitenAdjustment) {
+            return false;
+        }
+
+        if (m_brightnessAdjustment != other.m_brightnessAdjustment) {
+            return false;
+        }
+
+        if (m_contrastAdjustment != other.m_contrastAdjustment) {
             return false;
         }
 

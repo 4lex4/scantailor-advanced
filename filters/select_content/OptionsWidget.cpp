@@ -108,7 +108,6 @@ namespace select_content
     void
     OptionsWidget::modeChanged(bool const auto_mode)
     {
-
         if (auto_mode) {
             m_uiData.setMode(MODE_AUTO);
             m_uiData.setContentDetection(true);

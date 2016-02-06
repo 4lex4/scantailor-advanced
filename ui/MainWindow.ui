@@ -184,7 +184,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_4">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -193,6 +193,12 @@
     <size>
      <width>274</width>
      <height>134</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>274</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="features">
@@ -267,7 +273,7 @@
      <item>
       <widget class="QFrame" name="filterOptions">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>

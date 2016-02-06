@@ -19,6 +19,8 @@
 #ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_
 #define OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_
 
+#include <AutoManualMode.h>
+
 class QString;
 
 class QDomDocument;
@@ -55,17 +57,29 @@ namespace output
         void setCleanBackground(bool val)
         { m_cleanBackground = val; }
 
-        int clearWhiteThresholdAdjustment() const
-        { return m_clearWhiteThresholdAdjustment; }
+        AutoManualMode cleanMode() const
+        { return m_cleanMode; }
 
-        void setClearWhiteThresholdAdjustment(int val)
-        { m_clearWhiteThresholdAdjustment = val; }
+        void setCleanMode(AutoManualMode val)
+        { m_cleanMode = val; }
 
-        int clearBlackThresholdAdjustment() const
-        { return m_clearBlackThresholdAdjustment; }
+        int whitenAdjustment() const
+        { return m_whitenAdjustment; }
 
-        void setClearBlackThresholdAdjustment(int val)
-        { m_clearBlackThresholdAdjustment = val; }
+        void setWhitenAdjustment(int val)
+        { m_whitenAdjustment = val; }
+
+        int brightnessAdjustment() const
+        { return m_brightnessAdjustment; }
+
+        void setBrightnessAdjustment(int val)
+        { m_brightnessAdjustment = val; }
+
+        int contrastAdjustment() const
+        { return m_contrastAdjustment; }
+
+        void setContrastAdjustment(int val)
+        { m_contrastAdjustment = val; }
 
         bool operator==(ColorGrayscaleOptions const& other) const;
 
@@ -75,8 +89,10 @@ namespace output
         bool m_whiteMargins;
         bool m_normalizeIllumination;
         bool m_cleanBackground;
-        int m_clearWhiteThresholdAdjustment;
-        int m_clearBlackThresholdAdjustment;
+        AutoManualMode m_cleanMode;
+        int m_whitenAdjustment;
+        int m_brightnessAdjustment;
+        int m_contrastAdjustment;
     };
 
 }

@@ -9,7 +9,7 @@
 
 namespace imageproc
 {
-    void whittenBackground(QImage& cg_image, const unsigned int threshold, const int brightness,
+    void whitenBackground(QImage& cg_image, const unsigned int threshold, const int brightness,
                            const int contrast);
 }
 

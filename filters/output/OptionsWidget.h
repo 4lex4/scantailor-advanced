@@ -108,9 +108,15 @@ namespace output
 
         void bwThresholdChanged();
 
-        void clearWThresholdChanged();
+        void cleaningAutoMode();
 
-        void clearBThresholdChanged();
+        void cleaningManualMode();
+
+        void whitenThresholdChanged();
+
+        void brightnessChanged();
+
+        void contrastChanged();
 
         void despeckleOffSelected();
 

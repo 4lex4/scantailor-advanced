@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>292</width>
-    <height>361</height>
+    <width>202</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -158,21 +158,8 @@
      <property name="title">
       <string>Content Box</string>
      </property>
-     <layout class="QHBoxLayout">
-      <item>
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>1</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1" colspan="2">
        <widget class="QPushButton" name="disableBtn">
         <property name="text">
          <string>Disable</string>
@@ -185,7 +172,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="1">
        <widget class="QPushButton" name="autoBtn">
         <property name="text">
          <string>Auto</string>
@@ -201,7 +188,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="2">
        <widget class="QPushButton" name="manualBtn">
         <property name="text">
          <string>Manual</string>
@@ -213,19 +200,6 @@
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>1</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

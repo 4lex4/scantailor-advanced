@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>226</width>
+    <width>216</width>
     <height>497</height>
    </rect>
   </property>
@@ -269,11 +269,17 @@
    </item>
    <item>
     <widget class="QGroupBox" name="alignmentGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Alignment</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
          <number>0</number>
@@ -352,7 +358,7 @@
         </item>
        </layout>
       </item>
-      <item row="5" column="0">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <spacer name="horizontalSpacer_6">
@@ -599,7 +605,7 @@
         </item>
        </layout>
       </item>
-      <item row="6" column="0">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <spacer name="horizontalSpacer_11">
@@ -636,7 +642,7 @@
         </item>
        </layout>
       </item>
-      <item row="7" column="0">
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

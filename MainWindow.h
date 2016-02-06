@@ -152,6 +152,8 @@ signals:
 
 private slots:
 
+    void autoSaveProject();
+
     void goFirstPage();
 
     void goLastPage();
@@ -375,8 +377,6 @@ private:
     std::unique_ptr<ThumbnailSequence> m_ptrThumbSequence_export;
     QTimer m_thumbResizeTimer;
     QTimer m_autoSaveTimer;
-
-    void autoSaveProject();
 
     bool m_auto_save_project;
     bool m_dont_equalize_illumination_pic_zones;

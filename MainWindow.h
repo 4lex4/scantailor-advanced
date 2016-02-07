@@ -252,7 +252,7 @@ private:
 
     virtual void setImageWidget(
             QWidget* widget, Ownership ownership,
-            DebugImages* debug_images = 0);
+            DebugImages* debug_images = 0, bool clearImageWidget = true);
 
     virtual IntrusivePtr<AbstractCommand0<void> > relinkingDialogRequester();
 

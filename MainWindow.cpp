@@ -66,6 +66,7 @@
 #include "filters/page_layout/Task.h"
 #include "filters/page_layout/CacheDrivenTask.h"
 #include "filters/output/Task.h"
+#include "filters/output/TabbedImageView.h"
 #include "filters/output/CacheDrivenTask.h"
 #include "LoadFileTask.h"
 #include "ScopedIncDec.h"
@@ -107,7 +108,6 @@ public:
 private:
     QPointer<MainWindow> m_ptrWnd;
 };
-
 
 MainWindow::MainWindow()
         : m_ptrPages(new ProjectPages),
@@ -151,6 +151,7 @@ MainWindow::MainWindow()
     imageViewFrame->setPalette(imageViewFramePalette);
 
     m_pImageFrameLayout = new QStackedLayout(imageViewFrame);
+    m_pImageFrameLayout->setStackingMode(QStackedLayout::StackAll);
     m_pOptionsFrameLayout = new QStackedLayout(filterOptions);
 
     addAction(actionFirstPage);
@@ -747,7 +748,7 @@ MainWindow::setOptionsWidget(FilterOptionsWidget* widget, Ownership const owners
 void
 MainWindow::setImageWidget(
         QWidget* widget, Ownership const ownership,
-        DebugImages* debug_images)
+        DebugImages* debug_images, bool clearImageWidget)
 {
     if (isBatchProcessingInProgress() && widget != m_ptrBatchProcessingWidget.get()) {
         if (ownership == TRANSFER_OWNERSHIP) {
@@ -756,7 +757,13 @@ MainWindow::setImageWidget(
         return;
     }
 
-    removeImageWidget();
+    QWidget* current_widget = m_pImageFrameLayout->currentWidget();
+    bool current_widget_isImage = (dynamic_cast<output::TabbedImageView*>(current_widget) != NULL) ||
+                                  (dynamic_cast<ImageViewBase*>(current_widget) != NULL);
+
+    if (clearImageWidget || !current_widget_isImage) {
+        removeImageWidget();
+    }
 
     if (ownership == TRANSFER_OWNERSHIP) {
         m_imageWidgetCleanup.add(widget);
@@ -764,6 +771,9 @@ MainWindow::setImageWidget(
 
     if (!debug_images || debug_images->empty()) {
         m_pImageFrameLayout->addWidget(widget);
+        if (!clearImageWidget && current_widget_isImage) {
+            m_pImageFrameLayout->setCurrentWidget(widget);
+        }
     }
     else {
         m_ptrTabbedDebugImages->addTab(widget, "Main");
@@ -1727,7 +1737,7 @@ MainWindow::loadPageInteractive(PageInfo const& page)
         if (m_pImageFrameLayout->indexOf(m_ptrProcessingIndicationWidget.get()) != -1) {
             m_ptrProcessingIndicationWidget->processingRestartedEffect();
         }
-        setImageWidget(m_ptrProcessingIndicationWidget.get(), KEEP_OWNERSHIP);
+        setImageWidget(m_ptrProcessingIndicationWidget.get(), KEEP_OWNERSHIP, 0, false);
         m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page.id());
     }
 

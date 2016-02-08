@@ -80,6 +80,7 @@
 #include <QScrollBar>
 #include <QDir>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QSortFilterProxyModel>
 #include <QFileSystemModel>
 #include <QResource>
@@ -119,9 +120,7 @@ MainWindow::MainWindow()
           m_ignoreSelectionChanges(0),
           m_ignorePageOrderingChanges(0),
           m_debug(false),
-          m_closing(false),
-          m_keep_orig_fore_subscan(0),
-          m_dont_equalize_illumination_pic_zones(0)
+          m_closing(false)
 {
     m_maxLogicalThumbSize = QSize(250, 160);
     m_ptrThumbSequence.reset(new ThumbnailSequence(m_maxLogicalThumbSize));
@@ -290,7 +289,6 @@ MainWindow::MainWindow()
         }
     }
     m_auto_save_project = settings.value("settings/auto_save_project").toBool();
-    m_dont_equalize_illumination_pic_zones = settings.value("settings/dont_equalize_illumination_pic_zones").toBool();
 }
 
 
@@ -1003,12 +1001,6 @@ MainWindow::AutoSaveProjectState(bool auto_save)
 }
 
 void
-MainWindow::DontEqualizeIlluminationPicZones(bool state)
-{
-    m_dont_equalize_illumination_pic_zones = state;
-}
-
-void
 MainWindow::pageContextMenuRequested(
         PageInfo const& page_info_, QPoint const& screen_pos, bool selected)
 {
@@ -1559,8 +1551,6 @@ MainWindow::openSettingsDialog()
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
     connect(dialog, SIGNAL(AutoSaveProjectStateSignal(bool)), this, SLOT(AutoSaveProjectState(bool)));
-    connect(dialog, SIGNAL(DontEqualizeIlluminationPicZonesSignal(bool)), this,
-            SLOT(DontEqualizeIlluminationPicZones(bool)));
     dialog->show();
 }
 
@@ -2106,9 +2096,7 @@ MainWindow::createCompositeTask(
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
         output_task = m_ptrStages->outputFilter()->createTask(
-                page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug,
-                m_dont_equalize_illumination_pic_zones,
-                m_keep_orig_fore_subscan, &m_orig_fore_subscan
+                page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
         );
         debug = false;
     }

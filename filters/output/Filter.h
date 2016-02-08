@@ -77,9 +77,7 @@ namespace output
                 PageId const& page_id,
                 IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                 OutputFileNameGenerator const& out_file_name_gen,
-                bool batch, bool debug, bool dont_equalize_illumination_pic_zones = false,
-                bool keep_orig_fore_subscan = false,
-                QImage* p_orig_fore_subscan = NULL);
+                bool batch, bool debug);
 
         IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
                 OutputFileNameGenerator const& out_file_name_gen);

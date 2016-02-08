@@ -43,10 +43,6 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
     connect(ui.AutoSaveProject, SIGNAL(toggled(bool)), this, SLOT(OnCheckAutoSaveProject(bool)));
-    ui.DontEqualizeIlluminationPicZones->setChecked(
-            settings.value("settings/dont_equalize_illumination_pic_zones").toBool());
-    connect(ui.DontEqualizeIlluminationPicZones, SIGNAL(toggled(bool)), this,
-            SLOT(OnCheckDontEqualizeIlluminationPicZones(bool)));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -68,14 +64,4 @@ SettingsDialog::OnCheckAutoSaveProject(bool state)
     settings.setValue("settings/auto_save_project", state);
 
     emit AutoSaveProjectStateSignal(state);
-}
-
-void
-SettingsDialog::OnCheckDontEqualizeIlluminationPicZones(bool state)
-{
-    QSettings settings;
-
-    settings.setValue("settings/dont_equalize_illumination_pic_zones", state);
-
-    emit DontEqualizeIlluminationPicZonesSignal(state);
 }

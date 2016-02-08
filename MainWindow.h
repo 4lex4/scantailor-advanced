@@ -38,16 +38,11 @@
 #include <QString>
 #include <QPointer>
 #include <QObjectCleanupHandler>
+#include <QTimer>
 #include <QSizeF>
 #include <memory>
 #include <vector>
 #include <set>
-#include <QMessageBox>
-#include <QTimer>
-
-#include "stdint.h"
-#include "TiffWriter.h"
-#include "ImageLoader.h"
 
 class AbstractFilter;
 
@@ -124,8 +119,6 @@ public:
     std::set<PageId> selectedPages() const;
 
     std::vector<PageRange> selectedRanges() const;
-
-    QImage m_orig_fore_subscan;
 protected:
     bool eventFilter(QObject* obj, QEvent* ev);
 
@@ -138,8 +131,6 @@ public slots:
     void openProject(QString const& project_file);
 
     void AutoSaveProjectState(bool auto_save);
-
-    void DontEqualizeIlluminationPicZones(bool);
 
 private:
     enum MainAreaAction
@@ -373,13 +364,10 @@ private:
     bool m_debug;
     bool m_closing;
     bool m_beepOnBatchProcessingCompletion;
-    bool m_keep_orig_fore_subscan;
-    std::unique_ptr<ThumbnailSequence> m_ptrThumbSequence_export;
     QTimer m_thumbResizeTimer;
     QTimer m_autoSaveTimer;
 
     bool m_auto_save_project;
-    bool m_dont_equalize_illumination_pic_zones;
 };
 
 #endif

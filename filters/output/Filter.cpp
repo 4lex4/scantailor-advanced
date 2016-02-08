@@ -179,10 +179,7 @@ namespace output
             PageId const& page_id,
             IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
             OutputFileNameGenerator const& out_file_name_gen,
-            bool const batch, bool const debug,
-            bool dont_equalize_illumination_pic_zones,
-            bool keep_orig_fore_subscan,
-            QImage* p_orig_fore_subscan)
+            bool const batch, bool const debug)
     {
         ImageViewTab lastTab(TAB_OUTPUT);
         if (m_ptrOptionsWidget.get() != 0) {
@@ -192,9 +189,7 @@ namespace output
                 new Task(
                         IntrusivePtr<Filter>(this), m_ptrSettings,
                         thumbnail_cache, page_id, out_file_name_gen,
-                        lastTab, batch, debug, dont_equalize_illumination_pic_zones,
-                        keep_orig_fore_subscan,
-                        p_orig_fore_subscan
+                        lastTab, batch, debug
                 )
         );
     }

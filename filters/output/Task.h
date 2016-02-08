@@ -68,10 +68,7 @@ namespace output
              IntrusivePtr<Settings> const& settings,
              IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
              PageId const& page_id, OutputFileNameGenerator const& out_file_name_gen,
-             ImageViewTab last_tab, bool batch, bool debug,
-             bool dont_equalize_illumination_pic_zones,
-             bool keep_orig_fore_subscan = false,
-             QImage* p_orig_fore_subscan = NULL);
+             ImageViewTab last_tab, bool batch, bool debug);
 
         virtual ~Task();
 
@@ -93,9 +90,6 @@ namespace output
         ImageViewTab m_lastTab;
         bool m_batchProcessing;
         bool m_debug;
-        bool m_dont_equalize_illumination_pic_zones;
-        bool m_keep_orig_fore_subscan;
-        QImage* m_p_orig_fore_subscan;
     };
 
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>151</height>
+    <width>318</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,13 +32,6 @@
     <widget class="QCheckBox" name="AutoSaveProject">
      <property name="text">
       <string>Auto-save the existing project</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="DontEqualizeIlluminationPicZones">
-     <property name="text">
-      <string>Don't equalize the illumination in picture zones</string>
      </property>
     </widget>
    </item>

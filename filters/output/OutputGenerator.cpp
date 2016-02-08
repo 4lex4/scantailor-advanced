@@ -164,7 +164,7 @@ namespace output
                 QImage& mixed, BinaryImage const& bw_content,
                 BinaryImage const& bw_mask,
                 QImage& original_image,
-                bool dont_equalize_illumination_pic_zones
+                bool equalize_illumination
         )
         {
             MixedPixel* mixed_line = reinterpret_cast<MixedPixel*>(mixed.bits());
@@ -192,7 +192,7 @@ namespace output
                         mixed_line[x] = static_cast<MixedPixel>(tmp);
                     }
                     else {
-                        if (dont_equalize_illumination_pic_zones) {
+                        if (!equalize_illumination) {
                             mixed_line[x] = reserveBlackAndWhite<MixedPixel>(original_image_line[x]);
                         }
                         else {
@@ -233,8 +233,6 @@ namespace output
             DewarpingMode dewarping_mode,
             DistortionModel& distortion_model,
             DepthPerception const& depth_perception,
-            bool dont_equalize_illumination_pic_zones,
-            bool keep_orig_fore_subscan,
             imageproc::BinaryImage* auto_picture_mask,
             imageproc::BinaryImage* speckles_image,
             DebugImages* const dbg,
@@ -246,8 +244,6 @@ namespace output
                 processImpl(
                         status, input, picture_zones, fill_zones,
                         dewarping_mode, distortion_model, depth_perception,
-                        dont_equalize_illumination_pic_zones,
-                        keep_orig_fore_subscan,
                         auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
                         p_settings
                 )
@@ -416,8 +412,6 @@ namespace output
             DewarpingMode dewarping_mode,
             DistortionModel& distortion_model,
             DepthPerception const& depth_perception,
-            bool dont_equalize_illumination_pic_zones,
-            bool keep_orig_fore_subscan,
             imageproc::BinaryImage* auto_picture_mask,
             imageproc::BinaryImage* speckles_image,
             DebugImages* const dbg,
@@ -427,35 +421,12 @@ namespace output
     {
         RenderParams const render_params(m_colorParams);
 
-
-        if (keep_orig_fore_subscan) {
-            if (dewarping_mode == DewarpingMode::AUTO ||
-                dewarping_mode == DewarpingMode::MARGINAL ||
-                (dewarping_mode == DewarpingMode::MANUAL && distortion_model.isValid())) {
-                return processWithDewarping(
-                        status, input, picture_zones, fill_zones,
-                        dewarping_mode, distortion_model, depth_perception,
-                        dont_equalize_illumination_pic_zones,
-                        keep_orig_fore_subscan,
-                        auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
-                        p_settings
-                );
-            }
-            else {
-                return processAsIs(
-                        input, status, fill_zones, depth_perception, dbg
-                );
-            }
-        }
-
         if (dewarping_mode == DewarpingMode::AUTO ||
             dewarping_mode == DewarpingMode::MARGINAL ||
             (dewarping_mode == DewarpingMode::MANUAL && distortion_model.isValid())) {
             return processWithDewarping(
                     status, input, picture_zones, fill_zones,
                     dewarping_mode, distortion_model, depth_perception,
-                    dont_equalize_illumination_pic_zones,
-                    false,
                     auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
                     p_settings
             );
@@ -468,7 +439,6 @@ namespace output
         else {
             return processWithoutDewarping(
                     status, input, picture_zones, fill_zones,
-                    dont_equalize_illumination_pic_zones,
                     auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
                     p_settings
             );
@@ -532,7 +502,6 @@ namespace output
     OutputGenerator::processWithoutDewarping(
             TaskStatus const& status, FilterData const& input,
             ZoneSet& picture_zones, ZoneSet const& fill_zones,
-            bool dont_equalize_illumination_pic_zones,
             imageproc::BinaryImage* auto_picture_mask,
             imageproc::BinaryImage* speckles_image,
             DebugImages* dbg,
@@ -583,24 +552,27 @@ namespace output
             );
         }
 
-        QImage maybe_normalized_Dont_Equalize_Illumination_Pic_Zones;
+        bool equalize_illumination = (*p_settings)->getParams(
+                *p_pageId).colorParams().colorGrayscaleOptions().normalizeIllumination();
+        QImage orig_without_illumination;
 
-        bool const color_original = !input.origImage().allGray();
+        if (!equalize_illumination) {
+            bool const color_original = !input.origImage().allGray();
 
-        if (!color_original) {
+            if (!color_original) {
 
-            maybe_normalized_Dont_Equalize_Illumination_Pic_Zones = transformToGray(
-                    input.grayImage(), m_xform.transform(),
-                    normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
-            );
+                orig_without_illumination = transformToGray(
+                        input.grayImage(), m_xform.transform(),
+                        normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
+                );
+            }
+            else {
+                orig_without_illumination = transform(
+                        input.origImage(), m_xform.transform(),
+                        normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
+                );
+            }
         }
-        else {
-            maybe_normalized_Dont_Equalize_Illumination_Pic_Zones = transform(
-                    input.origImage(), m_xform.transform(),
-                    normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
-            );
-        }
-
         status.throwIfCancelled();
 
         QImage maybe_smoothed;
@@ -780,8 +752,8 @@ namespace output
             if (maybe_normalized.format() == QImage::Format_Indexed8) {
                 combineMixed<uint8_t>(
                         maybe_normalized, bw_content, bw_mask,
-                        maybe_normalized_Dont_Equalize_Illumination_Pic_Zones,
-                        dont_equalize_illumination_pic_zones
+                        orig_without_illumination,
+                        equalize_illumination
                 );
             }
             else {
@@ -790,8 +762,8 @@ namespace output
 
                 combineMixed<uint32_t>(
                         maybe_normalized, bw_content, bw_mask,
-                        maybe_normalized_Dont_Equalize_Illumination_Pic_Zones,
-                        dont_equalize_illumination_pic_zones
+                        orig_without_illumination,
+                        equalize_illumination
                 );
             }
         }
@@ -832,8 +804,6 @@ namespace output
             DewarpingMode dewarping_mode,
             DistortionModel& distortion_model,
             DepthPerception const& depth_perception,
-            bool dont_equalize_illumination_pic_zones,
-            bool keep_orig_fore_subscan,
             imageproc::BinaryImage* auto_picture_mask,
             imageproc::BinaryImage* speckles_image,
             DebugImages* dbg,
@@ -889,14 +859,19 @@ namespace output
                 ) * m_xform.transformBack()
         );
 
-        QImage normalized_original_Dont_Equalize_Illumination_Pic_Zones;
 
-        if (color_original) {
-            normalized_original_Dont_Equalize_Illumination_Pic_Zones
-                    = convertToRGBorRGBA(input.origImage());
-        }
-        else {
-            normalized_original_Dont_Equalize_Illumination_Pic_Zones = input.grayImage();
+        bool equalize_illumination = (*p_settings)->getParams(
+                *p_pageId).colorParams().colorGrayscaleOptions().normalizeIllumination();
+        QImage orig_without_illumination;
+
+        if (!equalize_illumination) {
+            if (color_original) {
+                orig_without_illumination
+                        = convertToRGBorRGBA(input.origImage());
+            }
+            else {
+                orig_without_illumination = input.grayImage();
+            }
         }
 
         if (!render_params.normalizeIllumination()) {
@@ -1289,38 +1264,23 @@ namespace output
             bg_color = QColor(dominant_gray, dominant_gray, dominant_gray);
         }
 
-
-        QImage dewarped_Dont_Equalize_Illumination_Pic_Zones;
-        try {
-            dewarped_Dont_Equalize_Illumination_Pic_Zones = dewarp(
-                    QTransform(), normalized_original_Dont_Equalize_Illumination_Pic_Zones,
-                    m_xform.transform(),
-                    distortion_model, depth_perception, bg_color
-            );
-        } catch (std::runtime_error const&) {
-            setupTrivialDistortionModel(distortion_model);
-            dewarped_Dont_Equalize_Illumination_Pic_Zones = dewarp(
-                    QTransform(), normalized_original_Dont_Equalize_Illumination_Pic_Zones,
-                    m_xform.transform(),
-                    distortion_model, depth_perception, bg_color
-            );
-        }
-        normalized_original_Dont_Equalize_Illumination_Pic_Zones = QImage();
-        if (keep_orig_fore_subscan) {
-
-            std::shared_ptr<DewarpingPointMapper> mapper(
-                    new DewarpingPointMapper(
-                            distortion_model, depth_perception.value(),
-                            m_xform.transform(), m_contentRect
-                    )
-            );
-            boost::function<QPointF(QPointF const&)> const orig_to_output(
-                    boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
-            );
-
-            applyFillZonesInPlace(dewarped_Dont_Equalize_Illumination_Pic_Zones, fill_zones, orig_to_output);
-            maybe_deskew(&dewarped_Dont_Equalize_Illumination_Pic_Zones, dewarping_mode);
-            return dewarped_Dont_Equalize_Illumination_Pic_Zones;
+        if (!equalize_illumination) {
+            QImage orig_without_illumination_dewarped;
+            try {
+                orig_without_illumination_dewarped = dewarp(
+                        QTransform(), orig_without_illumination,
+                        m_xform.transform(),
+                        distortion_model, depth_perception, bg_color
+                );
+            } catch (std::runtime_error const&) {
+                setupTrivialDistortionModel(distortion_model);
+                orig_without_illumination_dewarped = dewarp(
+                        QTransform(), orig_without_illumination,
+                        m_xform.transform(),
+                        distortion_model, depth_perception, bg_color
+                );
+            }
+            orig_without_illumination = orig_without_illumination_dewarped;
         }
 
         QImage dewarped;
@@ -1449,8 +1409,8 @@ namespace output
             if (dewarped.format() == QImage::Format_Indexed8) {
                 combineMixed<uint8_t>(
                         dewarped, dewarped_bw_content, dewarped_bw_mask,
-                        dewarped_Dont_Equalize_Illumination_Pic_Zones,
-                        dont_equalize_illumination_pic_zones
+                        orig_without_illumination,
+                        equalize_illumination
                 );
             }
             else {
@@ -1459,13 +1419,12 @@ namespace output
 
                 combineMixed<uint32_t>(
                         dewarped, dewarped_bw_content, dewarped_bw_mask,
-                        dewarped_Dont_Equalize_Illumination_Pic_Zones,
-                        dont_equalize_illumination_pic_zones
+                        orig_without_illumination,
+                        equalize_illumination
                 );
             }
         }
 
-        dewarped_Dont_Equalize_Illumination_Pic_Zones = QImage();
         applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
         maybe_deskew(&dewarped, dewarping_mode);
         return dewarped;

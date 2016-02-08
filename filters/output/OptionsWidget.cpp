@@ -858,6 +858,7 @@ namespace output
             else {
                 whiteMarginsCB->setVisible(false);
                 equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
+                equalizeIlluminationCB->setEnabled(true);
             }
 
             cleanBackgroundCB->setChecked(opt.cleanBackground());

@@ -35,15 +35,11 @@ signals:
 
     void AutoSaveProjectStateSignal(bool auto_save);
 
-    void DontEqualizeIlluminationPicZonesSignal(bool state);
-
 private slots:
 
     void commitChanges();
 
     void OnCheckAutoSaveProject(bool);
-
-    void OnCheckDontEqualizeIlluminationPicZones(bool);
 
 private:
     Ui::SettingsDialog ui;

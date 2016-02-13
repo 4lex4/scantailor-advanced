@@ -23,9 +23,7 @@
 #include <vector>
 
 class QSize;
-
 class QLineF;
-
 class QImage;
 
 namespace imageproc

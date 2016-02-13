@@ -23,7 +23,6 @@
 #include <math.h>
 
 class QPointF;
-
 class QLineF;
 
 class Proximity

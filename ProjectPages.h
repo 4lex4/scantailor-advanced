@@ -37,17 +37,11 @@
 #include <stddef.h>
 
 class ImageFileInfo;
-
 class ImageInfo;
-
 class OrthogonalRotation;
-
 class PageSequence;
-
 class RelinkablePath;
-
 class AbstractRelinker;
-
 class QDomElement;
 
 class ProjectPages : public QObject, public RefCountable

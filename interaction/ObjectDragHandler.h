@@ -27,9 +27,7 @@
 #include <QPointF>
 
 class QPainter;
-
 class QCursor;
-
 class QString;
 
 class ObjectDragHandler : public InteractionHandler

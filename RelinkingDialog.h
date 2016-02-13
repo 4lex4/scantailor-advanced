@@ -27,11 +27,8 @@
 #include <QDialog>
 
 class RelinkingSortingModel;
-
 class QAbstractButton;
-
 class QItemSelection;
-
 class QString;
 
 class RelinkingDialog : public QDialog

@@ -36,13 +36,9 @@
 #include <map>
 
 class AbstractFilter;
-
 class ProjectPages;
-
 class PageInfo;
-
 class QDomDocument;
-
 class QDomElement;
 
 class ProjectWriter

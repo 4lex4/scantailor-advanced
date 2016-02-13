@@ -23,7 +23,6 @@
 #include "RefCountable.h"
 
 class AbstractFilter;
-
 class FilterUiInterface;
 
 class FilterResult : public RefCountable

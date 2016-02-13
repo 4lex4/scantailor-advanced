@@ -22,9 +22,7 @@
 #include <QPolygonF>
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 namespace select_content

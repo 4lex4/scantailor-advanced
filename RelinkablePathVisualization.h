@@ -23,9 +23,7 @@
 #include <QString>
 
 class RelinkablePath;
-
 class QHBoxLayout;
-
 class QAbstractButton;
 
 class RelinkablePathVisualization : public QWidget

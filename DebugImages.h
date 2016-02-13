@@ -27,7 +27,6 @@
 #include <deque>
 
 class QImage;
-
 class QWidget;
 
 namespace imageproc

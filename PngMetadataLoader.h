@@ -24,7 +24,6 @@
 #include <vector>
 
 class QIODevice;
-
 class ImageMetadata;
 
 class PngMetadataLoader : public ImageMetadataLoader

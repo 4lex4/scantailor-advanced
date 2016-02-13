@@ -32,15 +32,10 @@
 #include <QPixmap>
 
 class ImageTransformation;
-
 class ProjectPages;
-
 class PageInfo;
-
 class QPointF;
-
 class QRectF;
-
 class QLineF;
 
 namespace page_split

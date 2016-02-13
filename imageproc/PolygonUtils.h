@@ -22,9 +22,7 @@
 #include <vector>
 
 class QPolygonF;
-
 class QPointF;
-
 class QLineF;
 
 namespace imageproc

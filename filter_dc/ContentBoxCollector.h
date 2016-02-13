@@ -22,7 +22,6 @@
 #include "AbstractFilterDataCollector.h"
 
 class ImageTransformation;
-
 class QRectF;
 
 class ContentBoxCollector : public AbstractFilterDataCollector

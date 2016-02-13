@@ -23,7 +23,6 @@
 #include "IntrusivePtr.h"
 
 class QDomDocument;
-
 class QDomElement;
 
 class Property : public RefCountable

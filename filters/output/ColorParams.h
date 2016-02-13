@@ -23,7 +23,6 @@
 #include "BlackWhiteOptions.h"
 
 class QDomDocument;
-
 class QDomElement;
 
 namespace output

@@ -30,9 +30,7 @@
 #include <stdint.h>
 
 class Dpi;
-
 class DebugImages;
-
 class QImage;
 
 namespace dewarping

@@ -26,9 +26,7 @@
 #include "ImageId.h"
 
 class TaskStatus;
-
 class FilterData;
-
 class QImage;
 
 namespace page_split
@@ -40,8 +38,7 @@ namespace fix_orientation
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class Task : public RefCountable
     {

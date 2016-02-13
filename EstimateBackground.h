@@ -20,18 +20,14 @@
 #define ESTIMATE_BACKGROUND_H_
 
 class ImageTransformation;
-
 class TaskStatus;
-
 class DebugImages;
-
 class QPolygonF;
 
 namespace imageproc
 {
     class PolynomialSurface;
-
-    class GrayImage;
+class GrayImage;
 }
 
 /**

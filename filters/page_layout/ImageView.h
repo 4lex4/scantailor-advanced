@@ -42,8 +42,7 @@ namespace page_layout
 {
 
     class OptionsWidget;
-
-    class Settings;
+class Settings;
 
     class ImageView :
             public ImageViewBase,

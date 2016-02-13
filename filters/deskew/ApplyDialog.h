@@ -26,7 +26,6 @@
 #include <set>
 
 class QButtonGroup;
-
 class PageSelectionAccessor;
 
 namespace deskew

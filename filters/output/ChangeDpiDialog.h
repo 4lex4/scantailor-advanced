@@ -28,9 +28,7 @@
 #include <set>
 
 class PageSelectionAccessor;
-
 class QButtonGroup;
-
 class Dpi;
 
 namespace output

@@ -28,28 +28,22 @@
 #include "Settings.h"
 
 class PageId;
-
 class QString;
-
 class PageSelectionAccessor;
 
 namespace select_content
 {
     class Task;
-
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace deskew
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
     class Filter : public AbstractFilter
     {

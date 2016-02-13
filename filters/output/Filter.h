@@ -30,25 +30,18 @@
 #include <QImage>
 
 class PageId;
-
 class PageSelectionAccessor;
-
 class ThumbnailPixmapCache;
-
 class OutputFileNameGenerator;
-
 class QString;
 
 namespace output
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
     class Filter : public AbstractFilter
     {

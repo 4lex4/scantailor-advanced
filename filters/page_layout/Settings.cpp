@@ -173,8 +173,7 @@ namespace page_layout
 
     private:
         class SequencedTag;
-
-        class DescWidthTag;
+class DescWidthTag;
 
         class DescHeightTag;
 

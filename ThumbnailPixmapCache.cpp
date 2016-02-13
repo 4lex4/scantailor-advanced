@@ -123,12 +123,9 @@ protected:
 
 private:
     class LoadResultEvent;
-
-    class ItemsByKeyTag;
-
-    class LoadQueueTag;
-
-    class RemoveQueueTag;
+class ItemsByKeyTag;
+class LoadQueueTag;
+class RemoveQueueTag;
 
     typedef multi_index_container<
             Item,

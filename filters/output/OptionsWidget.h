@@ -42,8 +42,7 @@ namespace output
 {
 
     class Settings;
-
-    class DewarpingParams;
+class DewarpingParams;
 
     class OptionsWidget
             : public FilterOptionsWidget, private Ui::OutputOptionsWidget

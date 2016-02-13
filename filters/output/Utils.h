@@ -20,9 +20,7 @@
 #define OUTPUT_UTILS_H_
 
 class Dpi;
-
 class QString;
-
 class QTransform;
 
 namespace output

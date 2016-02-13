@@ -20,23 +20,17 @@
 #define PAGE_LAYOUT_UTILS_H_
 
 class QPolygonF;
-
 class QPointF;
-
 class QSizeF;
-
 class QRectF;
-
 class Margins;
-
 class ImageTransformation;
 
 namespace page_layout
 {
 
     class Alignment;
-
-    class Params;
+class Params;
 
     class Utils
     {

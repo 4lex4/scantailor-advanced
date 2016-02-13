@@ -25,19 +25,12 @@
 #include <vector>
 
 class FilterUiInterface;
-
 class PageId;
-
 class ProjectReader;
-
 class ProjectWriter;
-
 class AbstractRelinker;
-
 class QString;
-
 class QDomDocument;
-
 class QDomElement;
 
 /**

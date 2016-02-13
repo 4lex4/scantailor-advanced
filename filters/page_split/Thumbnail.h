@@ -25,15 +25,10 @@
 #include <QPixmap>
 
 class QPointF;
-
 class QSizeF;
-
 class QPolygonF;
-
 class ThumbnailPixmapCache;
-
 class ImageId;
-
 class ImageTransformation;
 
 namespace page_split

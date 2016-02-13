@@ -20,9 +20,7 @@
 #define PAGE_LAYOUT_ALIGNMENT_H_
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 #include <iostream>

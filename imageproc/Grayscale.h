@@ -24,7 +24,6 @@
 #include <QColor>
 
 class QImage;
-
 class QSize;
 
 namespace imageproc

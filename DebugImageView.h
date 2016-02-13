@@ -46,8 +46,7 @@ public:
 
 private:
     class ImageLoadResult;
-
-    class ImageLoader;
+class ImageLoader;
 
     void imageLoaded(QImage const &image);
 

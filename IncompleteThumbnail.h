@@ -24,9 +24,7 @@
 #include <QPainterPath>
 
 class ThumbnailPixmapCache;
-
 class QSizeF;
-
 class QRectF;
 
 /**

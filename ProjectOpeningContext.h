@@ -29,9 +29,7 @@
 #include <vector>
 
 class FixDpiDialog;
-
 class QWidget;
-
 class QDomDocument;
 
 class ProjectOpeningContext : public QObject

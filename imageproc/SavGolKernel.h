@@ -24,7 +24,6 @@
 #include <stddef.h>
 
 class QPoint;
-
 class QSize;
 
 namespace imageproc

@@ -30,34 +30,25 @@
 #include <vector>
 
 class PageId;
-
 class ProjectPages;
-
 class PageSelectionAccessor;
-
 class ImageTransformation;
-
 class QString;
-
 class QRectF;
 
 namespace output
 {
     class Task;
-
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace page_layout
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
     class Filter : public AbstractFilter
     {

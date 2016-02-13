@@ -38,7 +38,6 @@
 #include <QColor>
 
 class InteractionState;
-
 class QPainter;
 
 namespace output

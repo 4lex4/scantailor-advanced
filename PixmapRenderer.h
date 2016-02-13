@@ -20,7 +20,6 @@
 #define PIXMAPRENDERER_H_
 
 class QPainter;
-
 class QPixmap;
 
 class PixmapRenderer

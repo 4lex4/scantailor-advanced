@@ -25,11 +25,8 @@
 #include "PageId.h"
 
 class TaskStatus;
-
 class FilterData;
-
 class ImageTransformation;
-
 class QRectF;
 
 namespace output
@@ -41,8 +38,7 @@ namespace page_layout
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class Task : public RefCountable
     {

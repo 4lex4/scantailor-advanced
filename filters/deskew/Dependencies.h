@@ -23,9 +23,7 @@
 #include "OrthogonalRotation.h"
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 namespace deskew

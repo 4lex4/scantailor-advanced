@@ -194,8 +194,7 @@ private:
     struct TensionDerivedParams;
 
     class GBlendFunc;
-
-    class HBlendFunc;
+class HBlendFunc;
 
     struct DecomposedDerivs;
 

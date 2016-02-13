@@ -24,7 +24,6 @@
 #include "IntrusivePtr.h"
 
 class PageInfo;
-
 class AbstractFilterDataCollector;
 
 namespace page_split

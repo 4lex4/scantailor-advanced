@@ -25,11 +25,8 @@
 #include <vector>
 
 class PropertyFactory;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 class PropertySet : public RefCountable

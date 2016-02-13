@@ -25,7 +25,6 @@
 #include <Qt>
 
 class PageId;
-
 class AbstractRelinker;
 
 class OutputFileNameGenerator

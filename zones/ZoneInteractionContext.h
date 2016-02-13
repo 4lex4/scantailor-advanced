@@ -25,11 +25,8 @@
 #include <boost/function.hpp>
 
 class InteractionHandler;
-
 class InteractionState;
-
 class ImageViewBase;
-
 class EditableZoneSet;
 
 class ZoneInteractionContext

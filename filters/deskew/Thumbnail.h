@@ -23,11 +23,8 @@
 #include "IntrusivePtr.h"
 
 class QSizeF;
-
 class ThumbnailPixmapCache;
-
 class ImageId;
-
 class ImageTransformation;
 
 namespace deskew

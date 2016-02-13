@@ -26,7 +26,6 @@
 #include <QImage>
 
 class TaskStatus;
-
 class DebugImages;
 
 namespace output

@@ -32,13 +32,9 @@
 #include <map>
 
 class QDomElement;
-
 class ProjectData;
-
 class ProjectPages;
-
 class FileNameDisambiguator;
-
 class AbstractFilter;
 
 class ProjectReader

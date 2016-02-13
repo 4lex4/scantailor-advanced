@@ -98,8 +98,7 @@ protected:
 
 private:
     class StatusUpdateThread;
-
-    class StatusUpdateResponse;
+class StatusUpdateResponse;
 
     /** Stands for File System Object (file or directory). */
     struct Item

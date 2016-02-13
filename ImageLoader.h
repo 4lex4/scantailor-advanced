@@ -20,11 +20,8 @@
 #define IMAGELOADER_H_
 
 class ImageId;
-
 class QImage;
-
 class QString;
-
 class QIODevice;
 
 class ImageLoader

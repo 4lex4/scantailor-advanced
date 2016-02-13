@@ -22,7 +22,6 @@
 #include <QSize>
 
 class Dpi;
-
 class QImage;
 
 /**

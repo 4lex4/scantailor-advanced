@@ -23,11 +23,8 @@
 #include "IntrusivePtr.h"
 
 class ThumbnailPixmapCache;
-
 class ImageTransformation;
-
 class ImageId;
-
 class QSizeF;
 
 namespace output

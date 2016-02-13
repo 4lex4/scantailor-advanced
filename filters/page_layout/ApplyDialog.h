@@ -28,7 +28,6 @@
 #include <set>
 
 class PageSelectionAccessor;
-
 class QButtonGroup;
 
 namespace page_layout

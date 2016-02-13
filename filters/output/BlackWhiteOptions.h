@@ -20,9 +20,7 @@
 #define OUTPUT_BLACK_WHITE_OPTIONS_H_
 
 class QString;
-
 class QDomDocument;
-
 class QDomElement;
 
 namespace output

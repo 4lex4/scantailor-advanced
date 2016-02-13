@@ -28,9 +28,7 @@
 #include "CommandLine.h"
 
 class CommandLine;
-
 class QDomDocument;
-
 class QDomElement;
 
 namespace deskew

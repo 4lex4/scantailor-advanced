@@ -65,8 +65,7 @@ protected:
 
 private:
     class Model;
-
-    class LeftColDelegate;
+class LeftColDelegate;
 
     class RightColDelegate;
 

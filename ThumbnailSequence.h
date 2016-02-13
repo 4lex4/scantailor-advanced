@@ -31,23 +31,14 @@
 #include <set>
 
 class QGraphicsItem;
-
 class QGraphicsView;
-
 class PageId;
-
 class ImageId;
-
 class PageInfo;
-
 class PageSequence;
-
 class ThumbnailFactory;
-
 class QSizeF;
-
 class QRectF;
-
 class QPoint;
 
 class ThumbnailSequence : public QObject
@@ -243,16 +234,11 @@ signals:
 
 private:
     class Item;
-
-    class Impl;
-
-    class GraphicsScene;
-
-    class PlaceholderThumb;
-
-    class LabelGroup;
-
-    class CompositeItem;
+class Impl;
+class GraphicsScene;
+class PlaceholderThumb;
+class LabelGroup;
+class CompositeItem;
 
     void emitNewSelectionLeader(
             PageInfo const& page_info, CompositeItem const* composite,

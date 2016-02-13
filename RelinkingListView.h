@@ -22,9 +22,7 @@
 #include <QListView>
 
 class QPainter;
-
 class QRect;
-
 class QModelIndex;
 
 class RelinkingListView : public QListView
@@ -37,8 +35,7 @@ protected:
 
 private:
     class Delegate;
-
-    class IndicationGroup;
+class IndicationGroup;
 
     class GroupAggregator;
 

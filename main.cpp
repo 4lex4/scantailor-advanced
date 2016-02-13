@@ -25,6 +25,7 @@
 #include <QtPlugin>
 #include <QSettings>
 #include <QTranslator>
+#include <QDir>
 
 #include "CommandLine.h"
 
@@ -71,10 +72,14 @@ int main(int argc, char** argv)
 
     app.installTranslator(&translator);
 
-    app.setApplicationName("Scan Tailor");
-    app.setOrganizationName("Scan Tailor");
-    app.setOrganizationDomain("scantailor.sourceforge.net");
+    app.setApplicationName("scantailor");
+    app.setOrganizationName("scantailor");
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
+
     QSettings settings;
+
 
     PngMetadataLoader::registerMyself();
     TiffMetadataLoader::registerMyself();

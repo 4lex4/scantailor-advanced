@@ -61,8 +61,7 @@ public:
 
 private:
     class Impl;
-
-    class Dispatcher;
+class Dispatcher;
 
     typedef PayloadEvent<TaskPtr> TaskEvent;
     typedef PayloadEvent<TaskResultPtr> ResultEvent;

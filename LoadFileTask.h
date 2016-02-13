@@ -27,11 +27,8 @@
 #include "ImageMetadata.h"
 
 class ThumbnailPixmapCache;
-
 class PageInfo;
-
 class ProjectPages;
-
 class QImage;
 
 namespace fix_orientation

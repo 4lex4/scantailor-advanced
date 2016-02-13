@@ -23,9 +23,7 @@
 #include <memory>
 
 class ThumbnailPixmapCache;
-
 class QGraphicsItem;
-
 class QSizeF;
 
 class ThumbnailCollector : public AbstractFilterDataCollector

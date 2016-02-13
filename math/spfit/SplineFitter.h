@@ -29,8 +29,7 @@ namespace spfit
 {
 
     class ConstraintSet;
-
-    class ModelShape;
+class ModelShape;
 
     struct SqDistApproximant;
 

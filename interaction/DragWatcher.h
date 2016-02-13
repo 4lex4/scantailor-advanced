@@ -24,9 +24,7 @@
 #include <QDateTime>
 
 class DragHandler;
-
 class InteractionState;
-
 class QMouseEvent;
 
 /**

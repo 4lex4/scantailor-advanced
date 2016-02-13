@@ -23,7 +23,6 @@
 #include <QSizeF>
 
 class CompositeCacheDrivenTask;
-
 class ProjectPages;
 
 namespace page_split

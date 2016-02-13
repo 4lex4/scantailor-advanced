@@ -28,9 +28,7 @@
 #include <utility>
 
 class QImage;
-
 class DebugImages;
-
 class XSpline;
 
 namespace dewarping
@@ -93,8 +91,7 @@ namespace dewarping
         struct RansacModel;
 
         class RansacAlgo;
-
-        class BadCurve;
+class BadCurve;
 
         TracedCurve polylineToCurve(std::vector<QPointF> const& polyline) const;
 

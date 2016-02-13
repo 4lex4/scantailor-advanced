@@ -27,7 +27,6 @@
 #include <QRectF>
 
 class ThumbnailPixmapCache;
-
 class ImageId;
 
 namespace page_layout

@@ -27,8 +27,7 @@ namespace imageproc
 {
 
     class BinaryImage;
-
-    class GrayImage;
+class GrayImage;
 
 /**
  * \brief A polynomial function describing a 2D surface.

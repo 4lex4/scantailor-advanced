@@ -23,9 +23,7 @@
 #include <memory>
 
 class QString;
-
 class QIODevice;
-
 class QTemporaryFile;
 
 /**

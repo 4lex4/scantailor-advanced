@@ -33,8 +33,7 @@ namespace imageproc
 {
 
     class BinaryImage;
-
-    class InfluenceMap;
+class InfluenceMap;
 
 /**
  * \brief Assigns each pixel a label that identifies the connected component

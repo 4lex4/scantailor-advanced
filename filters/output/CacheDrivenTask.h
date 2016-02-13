@@ -25,11 +25,8 @@
 #include "OutputFileNameGenerator.h"
 
 class QPolygonF;
-
 class PageInfo;
-
 class AbstractFilterDataCollector;
-
 class ImageTransformation;
 
 namespace output

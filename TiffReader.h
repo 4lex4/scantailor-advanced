@@ -23,11 +23,8 @@
 #include "VirtualFunction.h"
 
 class QIODevice;
-
 class QImage;
-
 class ImageMetadata;
-
 class Dpi;
 
 class TiffReader
@@ -52,8 +49,7 @@ public:
 
 private:
     class TiffHeader;
-
-    class TiffHandle;
+class TiffHandle;
 
     struct TiffInfo;
 

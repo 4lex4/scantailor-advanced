@@ -25,9 +25,7 @@
 #include <QRectF>
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 namespace page_layout

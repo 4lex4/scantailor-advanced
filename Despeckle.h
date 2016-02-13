@@ -20,9 +20,7 @@
 #define DESPECKLE_H_
 
 class Dpi;
-
 class TaskStatus;
-
 class DebugImages;
 
 namespace imageproc

@@ -23,7 +23,6 @@
 #include <boost/function.hpp>
 
 class InteractionState;
-
 class InteractionHandler;
 
 class ZoneContextMenuItem

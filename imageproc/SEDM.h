@@ -28,8 +28,7 @@ namespace imageproc
 {
 
     class BinaryImage;
-
-    class ConnectivityMap;
+class ConnectivityMap;
 
 /**
  * \brief The squared euclidean distance map.

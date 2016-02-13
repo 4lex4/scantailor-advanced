@@ -25,17 +25,11 @@
 #include <boost/intrusive/list.hpp>
 
 class InteractionState;
-
 class QPainter;
-
 class QKeyEvent;
-
 class QMouseEvent;
-
 class QWheelEvent;
-
 class QContextMenuEvent;
-
 class QPointF;
 
 class InteractionHandler :

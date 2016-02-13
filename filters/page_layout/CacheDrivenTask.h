@@ -24,11 +24,8 @@
 #include "IntrusivePtr.h"
 
 class QRectF;
-
 class PageInfo;
-
 class AbstractFilterDataCollector;
-
 class ImageTransformation;
 
 namespace output

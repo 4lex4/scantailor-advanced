@@ -26,11 +26,8 @@
 #include "filters/output/ZoneCategoryProperty.h"
 
 class PropertyFactory;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 class Zone

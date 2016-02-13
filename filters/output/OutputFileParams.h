@@ -23,9 +23,7 @@
 #include <time.h>
 
 class QDomDocument;
-
 class QDomElement;
-
 class QFileInfo;
 
 namespace output

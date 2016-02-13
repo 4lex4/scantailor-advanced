@@ -27,13 +27,9 @@
 #include <memory>
 
 class ImageId;
-
 class QImage;
-
 class QPixmap;
-
 class QString;
-
 class QSize;
 
 class ThumbnailPixmapCache : public RefCountable
@@ -154,8 +150,7 @@ public:
 
 private:
     class Item;
-
-    class Impl;
+class Impl;
 
     std::unique_ptr<Impl> m_ptrImpl;
 };

@@ -51,8 +51,7 @@ public:
 
 private:
     class ItemsByFilePathTag;
-
-    class ItemsByFileNameLabelTag;
+class ItemsByFileNameLabelTag;
 
     class UnorderedItemsTag;
 

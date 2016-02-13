@@ -20,7 +20,6 @@
 #define IMAGEPROC_TESTS_UTILS_H_
 
 class QImage;
-
 class QRect;
 
 namespace imageproc

@@ -23,11 +23,8 @@
 #include <QRectF>
 
 class QSizeF;
-
 class ThumbnailPixmapCache;
-
 class ImageId;
-
 class ImageTransformation;
 
 namespace select_content

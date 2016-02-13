@@ -20,7 +20,6 @@
 #define IMAGEPROC_DRAWOVER_H_
 
 class QImage;
-
 class QRect;
 
 namespace imageproc

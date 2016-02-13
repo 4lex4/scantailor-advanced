@@ -20,7 +20,6 @@
 #define IMAGEPROC_SAVGOLFILTER_H_
 
 class QImage;
-
 class QSize;
 
 namespace imageproc

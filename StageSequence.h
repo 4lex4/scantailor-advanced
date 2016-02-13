@@ -32,11 +32,8 @@
 #include <vector>
 
 class PageId;
-
 class ProjectPages;
-
 class PageSelectionAccessor;
-
 class AbstractRelinker;
 
 class StageSequence : public RefCountable

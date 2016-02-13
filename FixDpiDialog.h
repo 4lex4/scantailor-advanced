@@ -58,12 +58,9 @@ private slots:
 
 private:
     class DpiCounts;
-
-    class SizeGroup;
-
-    class TreeModel;
-
-    class FilterModel;
+class SizeGroup;
+class TreeModel;
+class FilterModel;
 
     enum Scope
     {

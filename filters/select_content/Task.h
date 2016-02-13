@@ -28,11 +28,8 @@
 #include <memory>
 
 class TaskStatus;
-
 class FilterData;
-
 class DebugImages;
-
 class ImageTransformation;
 
 namespace page_layout
@@ -44,8 +41,7 @@ namespace select_content
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class Task : public RefCountable
     {

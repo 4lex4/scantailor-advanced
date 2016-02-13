@@ -45,59 +45,32 @@
 #include <set>
 
 class AbstractFilter;
-
 class AbstractRelinker;
-
 class ThumbnailPixmapCache;
-
 class ProjectPages;
-
 class PageSequence;
-
 class StageSequence;
-
 class PageOrderProvider;
-
 class PageSelectionAccessor;
-
 class FilterOptionsWidget;
-
 class ProcessingIndicationWidget;
-
 class ImageInfo;
-
 class PageInfo;
-
 class QStackedLayout;
-
 class WorkerThreadPool;
-
 class ProjectReader;
-
 class DebugImages;
-
 class ContentBoxPropagator;
-
 class PageOrientationPropagator;
-
 class ProjectCreationContext;
-
 class ProjectOpeningContext;
-
 class CompositeCacheDrivenTask;
-
 class TabbedDebugImages;
-
 class ProcessingTaskQueue;
-
 class FixDpiDialog;
-
 class OutOfMemoryDialog;
-
 class QLineF;
-
 class QRectF;
-
 class QLayout;
 
 class MainWindow :

@@ -24,9 +24,7 @@
 #include <vector>
 
 class PageSequence;
-
 class PageId;
-
 class PageRange;
 
 class PageSelectionProvider : public RefCountable

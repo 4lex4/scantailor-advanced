@@ -27,34 +27,25 @@
 #include "SafeDeletingQObjectPtr.h"
 
 class PageId;
-
 class ImageId;
-
 class PageSelectionAccessor;
-
 class QString;
-
 class QDomDocument;
-
 class QDomElement;
 
 namespace page_split
 {
     class Task;
-
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace fix_orientation
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
 /**
  * \note All methods of this class except the destructor

@@ -146,8 +146,7 @@ public:
 
 private:
     class ItemsByIdTag;
-
-    class ItemsInOrderTag;
+class ItemsInOrderTag;
 
     class SelectedThenUnselectedTag;
 

@@ -32,7 +32,6 @@
 #include <set>
 
 class QToolButton;
-
 class ProjectPages;
 
 namespace page_layout

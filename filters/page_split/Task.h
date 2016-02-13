@@ -27,13 +27,9 @@
 #include <memory>
 
 class TaskStatus;
-
 class FilterData;
-
 class DebugImages;
-
 class ProjectPages;
-
 class QImage;
 
 namespace deskew
@@ -45,8 +41,7 @@ namespace page_split
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class PageLayout;
 

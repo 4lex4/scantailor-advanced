@@ -29,7 +29,6 @@
 #include <set>
 
 class PageSelectionAccessor;
-
 class QButtonGroup;
 
 namespace select_content

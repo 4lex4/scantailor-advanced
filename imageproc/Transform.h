@@ -24,9 +24,7 @@
 #include <stdint.h>
 
 class QImage;
-
 class QRect;
-
 class QTransform;
 
 namespace imageproc

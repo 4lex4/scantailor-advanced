@@ -26,15 +26,10 @@
 #include <memory>
 
 class TaskStatus;
-
 class FilterData;
-
 class QImage;
-
 class QSize;
-
 class Dpi;
-
 class DebugImages;
 
 namespace imageproc
@@ -51,8 +46,7 @@ namespace deskew
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class Task : public RefCountable
     {

@@ -20,9 +20,7 @@
 #define FILL_ZONE_COMPARATOR_H_
 
 class ZoneSet;
-
 class Zone;
-
 class PropertySet;
 
 namespace output

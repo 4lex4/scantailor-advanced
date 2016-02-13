@@ -23,17 +23,14 @@
 #include <vector>
 
 class QSize;
-
 class QRect;
-
 class QPoint;
 
 namespace imageproc
 {
 
     class BinaryImage;
-
-    class GrayImage;
+class GrayImage;
 
     class Brick
     {

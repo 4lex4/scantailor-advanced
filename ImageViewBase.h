@@ -38,9 +38,7 @@
 #include <Qt>
 
 class QPainter;
-
 class BackgroundExecutor;
-
 class ImagePresentation;
 
 /**
@@ -288,8 +286,7 @@ private slots:
 
 private:
     class HqTransformTask;
-
-    class TempFocalPointAdjuster;
+class TempFocalPointAdjuster;
 
     class TransformChangeWatcher;
 

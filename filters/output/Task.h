@@ -30,21 +30,13 @@
 #include <QImage>
 
 class DebugImages;
-
 class TaskStatus;
-
 class FilterData;
-
 class ThumbnailPixmapCache;
-
 class ImageTransformation;
-
 class QPolygonF;
-
 class QSize;
-
 class QImage;
-
 class Dpi;
 
 namespace imageproc
@@ -56,8 +48,7 @@ namespace output
 {
 
     class Filter;
-
-    class Settings;
+class Settings;
 
     class Task : public RefCountable
     {

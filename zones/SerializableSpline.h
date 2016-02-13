@@ -25,13 +25,9 @@
 #include <boost/function.hpp>
 
 class EditableSpline;
-
 class QTransform;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 class SerializableSpline

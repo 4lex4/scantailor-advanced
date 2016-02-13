@@ -36,9 +36,7 @@
 #include <vector>
 
 class ZoneInteractionContext;
-
 class QPainter;
-
 class QMenu;
 
 class ZoneContextMenuInteraction : public QObject, public InteractionHandler

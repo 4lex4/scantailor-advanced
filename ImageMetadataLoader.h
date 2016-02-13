@@ -25,9 +25,7 @@
 #include <vector>
 
 class QString;
-
 class QIODevice;
-
 class ImageMetadata;
 
 class ImageMetadataLoader : public RefCountable

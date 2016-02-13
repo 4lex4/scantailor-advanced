@@ -28,9 +28,7 @@
 #include <vector>
 
 class ProjectFilesDialog;
-
 class FixDpiDialog;
-
 class QWidget;
 
 class ProjectCreationContext : public QObject

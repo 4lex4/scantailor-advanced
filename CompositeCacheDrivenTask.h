@@ -22,7 +22,6 @@
 #include "RefCountable.h"
 
 class PageInfo;
-
 class AbstractFilterDataCollector;
 
 class CompositeCacheDrivenTask : public RefCountable

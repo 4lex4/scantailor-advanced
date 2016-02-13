@@ -24,9 +24,7 @@
 #include "IntrusivePtr.h"
 
 class DebugImages;
-
 class FilterOptionsWidget;
-
 class QWidget;
 
 /**

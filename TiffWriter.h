@@ -24,11 +24,8 @@
 #include <tiff.h>
 
 class QIODevice;
-
 class QString;
-
 class QImage;
-
 class Dpm;
 
 class TiffWriter

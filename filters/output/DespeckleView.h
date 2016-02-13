@@ -29,7 +29,6 @@
 #include <QImage>
 
 class DebugImages;
-
 class ProcessingIndicationWidget;
 
 namespace output
@@ -65,12 +64,9 @@ namespace output
 
     private:
         class TaskCancelException;
-
-        class TaskCancelHandle;
-
-        class DespeckleTask;
-
-        class DespeckleResult;
+class TaskCancelHandle;
+class DespeckleTask;
+class DespeckleResult;
 
         enum AnimationAction
         {

@@ -20,27 +20,16 @@
 #define XMLUNMARSHALLER_H_
 
 class QString;
-
 class QDomElement;
-
 class QSize;
-
 class QSizeF;
-
 class Dpi;
-
 class OrthogonalRotation;
-
 class Margins;
-
 class QPointF;
-
 class QLineF;
-
 class QRect;
-
 class QRectF;
-
 class QPolygonF;
 
 class XmlUnmarshaller

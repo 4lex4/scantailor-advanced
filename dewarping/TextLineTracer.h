@@ -30,22 +30,16 @@
 #include <stdint.h>
 
 class Dpi;
-
 class QImage;
-
 class QSize;
-
 class QRect;
-
 class TaskStatus;
-
 class DebugImages;
 
 namespace imageproc
 {
     class BinaryImage;
-
-    class GrayImage;
+class GrayImage;
 
     class SEDM;
 }

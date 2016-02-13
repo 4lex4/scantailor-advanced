@@ -24,11 +24,8 @@
 #include <boost/function.hpp>
 
 class ObjectDragHandler;
-
 class QPoint;
-
 class QPointF;
-
 class QPainter;
 
 class DraggableObject

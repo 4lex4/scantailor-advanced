@@ -49,22 +49,16 @@
 #include "imageproc/SkewFinder.h"
 
 class TaskStatus;
-
 class DebugImages;
-
 class FilterData;
-
 class ZoneSet;
-
 class QSize;
-
 class QImage;
 
 namespace imageproc
 {
     class BinaryImage;
-
-    class BinaryThreshold;
+class BinaryThreshold;
 
     class GrayImage;
 }
@@ -72,8 +66,7 @@ namespace imageproc
 namespace dewarping
 {
     class DistortionModel;
-
-    class CylindricalSurfaceDewarper;
+class CylindricalSurfaceDewarper;
 }
 using namespace imageproc;
 namespace output

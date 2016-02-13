@@ -27,9 +27,7 @@
 #include <memory>
 
 class PageInfo;
-
 class CompositeCacheDrivenTask;
-
 class QGraphicsItem;
 
 class ThumbnailFactory : public RefCountable

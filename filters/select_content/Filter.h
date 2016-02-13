@@ -31,28 +31,22 @@
 #include <vector>
 
 class PageId;
-
 class PageSelectionAccessor;
-
 class QString;
 
 namespace page_layout
 {
     class Task;
-
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace select_content
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
     class Filter : public AbstractFilter
     {

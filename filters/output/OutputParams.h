@@ -24,9 +24,7 @@
 #include "ZoneSet.h"
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 namespace output

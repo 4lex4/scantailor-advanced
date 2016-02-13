@@ -26,19 +26,12 @@
 #include <Qt>
 
 class TaskStatus;
-
 class DebugImages;
-
 class FilterData;
-
 class QImage;
-
 class QRect;
-
 class QRectF;
-
 class QSizeF;
-
 class QSize;
 
 namespace imageproc

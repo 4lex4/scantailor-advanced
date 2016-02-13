@@ -27,7 +27,6 @@
 #include "DespeckleLevel.h"
 
 class QDomDocument;
-
 class QDomElement;
 
 namespace output

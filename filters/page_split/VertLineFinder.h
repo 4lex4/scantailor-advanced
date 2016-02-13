@@ -25,11 +25,8 @@
 #include <vector>
 
 class QLineF;
-
 class QImage;
-
 class ImageTransformation;
-
 class DebugImages;
 
 namespace imageproc

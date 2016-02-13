@@ -22,9 +22,7 @@
 #include <AutoManualMode.h>
 
 class QString;
-
 class QDomDocument;
-
 class QDomElement;
 
 namespace output

@@ -23,9 +23,7 @@
 #include <Qt>
 
 class QPolygonF;
-
 class QRectF;
-
 class QImage;
 
 namespace imageproc
@@ -54,12 +52,9 @@ namespace imageproc
 
     private:
         class Edge;
-
-        class EdgeComponent;
-
-        class EdgeOrderY;
-
-        class EdgeOrderX;
+class EdgeComponent;
+class EdgeOrderY;
+class EdgeOrderX;
 
         class Rasterizer;
     };

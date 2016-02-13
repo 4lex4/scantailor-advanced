@@ -24,11 +24,8 @@
 #include "IntrusivePtr.h"
 
 class PropertyFactory;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 namespace output

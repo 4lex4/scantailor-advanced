@@ -24,9 +24,7 @@
 #include <QSize>
 
 class QString;
-
 class QDomDocument;
-
 class QDomElement;
 
 namespace page_split

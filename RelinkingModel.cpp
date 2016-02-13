@@ -78,8 +78,7 @@ private:
     };
 
     class OrderedByPathTag;
-
-    class OrderedByPriorityTag;
+class OrderedByPriorityTag;
 
     typedef boost::multi_index_container<
             Task,

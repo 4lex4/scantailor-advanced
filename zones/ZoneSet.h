@@ -24,11 +24,8 @@
 #include <list>
 
 class PropertyFactory;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
 
 class ZoneSet

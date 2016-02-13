@@ -22,7 +22,6 @@
 #include "CylindricalSurfaceDewarper.h"
 
 class QRect;
-
 class QTransform;
 
 namespace dewarping

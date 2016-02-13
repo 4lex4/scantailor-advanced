@@ -24,23 +24,14 @@
 #include <QString>
 
 class QSize;
-
 class QSizeF;
-
 class Dpi;
-
 class OrthogonalRotation;
-
 class Margins;
-
 class QPointF;
-
 class QLineF;
-
 class QPolygonF;
-
 class QRect;
-
 class QRectF;
 
 class XmlMarshaller

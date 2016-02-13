@@ -26,11 +26,8 @@
 #include <QString>
 
 class QRectF;
-
 class QTransform;
-
 class QDomElement;
-
 class QDomDocument;
 
 namespace page_split

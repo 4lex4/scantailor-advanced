@@ -20,11 +20,8 @@
 #define DEWARPING_RASTER_DEWARPER_H_
 
 class QImage;
-
 class QSize;
-
 class QRectF;
-
 class QColor;
 
 namespace dewarping

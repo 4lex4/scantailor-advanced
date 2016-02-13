@@ -26,11 +26,8 @@
 #include <set>
 
 class AbstractRelinker;
-
 class QString;
-
 class QDomElement;
-
 class QDomDocument;
 
 /**

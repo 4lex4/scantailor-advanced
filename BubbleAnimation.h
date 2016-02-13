@@ -22,9 +22,7 @@
 #include <QRectF>
 
 class QColor;
-
 class QPaintDevice;
-
 class QPainter;
 
 /**

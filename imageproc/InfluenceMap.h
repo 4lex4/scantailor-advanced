@@ -29,8 +29,7 @@ namespace imageproc
 {
 
     class BinaryImage;
-
-    class ConnectivityMap;
+class ConnectivityMap;
 
 /**
  * \brief Takes labelled regions and extends them to cover a larger area.

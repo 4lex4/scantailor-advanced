@@ -25,23 +25,17 @@
 #include <memory>
 
 class PageId;
-
 class Margins;
-
 class PageSequence;
-
 class AbstractRelinker;
-
 class QSizeF;
-
 class QRectF;
 
 namespace page_layout
 {
 
     class Params;
-
-    class Alignment;
+class Alignment;
 
     class Settings : public RefCountable
     {
@@ -176,12 +170,9 @@ namespace page_layout
 
     private:
         class Impl;
-
-        class Item;
-
-        class ModifyMargins;
-
-        class ModifyAlignment;
+class Item;
+class ModifyMargins;
+class ModifyAlignment;
 
         class ModifyContentSize;
 

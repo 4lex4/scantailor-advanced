@@ -38,11 +38,8 @@
 #include <QPixmap>
 
 class ImageTransformation;
-
 class InteractionState;
-
 class QPainter;
-
 class QMenu;
 
 namespace output

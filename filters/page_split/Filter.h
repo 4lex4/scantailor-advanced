@@ -30,34 +30,25 @@
 #include <QCoreApplication>
 
 class PageId;
-
 class ImageId;
-
 class PageInfo;
-
 class ProjectPages;
-
 class PageSelectionAccessor;
-
 class OrthogonalRotation;
 
 namespace deskew
 {
     class Task;
-
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace page_split
 {
 
     class OptionsWidget;
-
-    class Task;
-
-    class CacheDrivenTask;
-
-    class Settings;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
     class Params;
 

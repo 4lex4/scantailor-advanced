@@ -29,11 +29,8 @@
 #include <vector>
 
 class TaskStatus;
-
 class DebugImages;
-
 class QImage;
-
 class QPoint;
 
 namespace imageproc

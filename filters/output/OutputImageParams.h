@@ -30,11 +30,8 @@
 #include <QRect>
 
 class ImageTransformation;
-
 class QDomDocument;
-
 class QDomElement;
-
 class QTransform;
 
 namespace output

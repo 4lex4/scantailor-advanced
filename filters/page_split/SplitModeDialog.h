@@ -29,9 +29,7 @@
 #include <set>
 
 class ProjectPages;
-
 class PageSelectionAccessor;
-
 class QButtonGroup;
 
 namespace page_split

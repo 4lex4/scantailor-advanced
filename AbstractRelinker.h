@@ -22,7 +22,6 @@
 #include "RefCountable.h"
 
 class RelinkablePath;
-
 class QString;
 
 class AbstractRelinker : public RefCountable

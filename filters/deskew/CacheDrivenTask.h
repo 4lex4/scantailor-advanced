@@ -24,11 +24,8 @@
 #include "IntrusivePtr.h"
 
 class QSizeF;
-
 class PageInfo;
-
 class AbstractFilterDataCollector;
-
 class ImageTransformation;
 
 namespace select_content

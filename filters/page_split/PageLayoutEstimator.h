@@ -26,24 +26,17 @@
 #include <memory>
 
 class QRect;
-
 class QPoint;
-
 class QImage;
-
 class QTransform;
-
 class ImageTransformation;
-
 class DebugImages;
-
 class Span;
 
 namespace imageproc
 {
     class BinaryImage;
-
-    class BinaryThreshold;
+class BinaryThreshold;
 }
 
 namespace page_split

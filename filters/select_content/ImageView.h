@@ -30,7 +30,6 @@
 #include <QString>
 
 class ImageTransformation;
-
 class QMenu;
 
 namespace select_content

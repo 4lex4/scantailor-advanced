@@ -24,9 +24,7 @@
 #include <QColor>
 
 class EditableZoneSet;
-
 class QPainter;
-
 class QTransform;
 
 class BasicSplineVisualizer

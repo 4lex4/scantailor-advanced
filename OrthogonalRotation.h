@@ -20,11 +20,8 @@
 #define ORTHOGONALROTATION_H_
 
 class QSize;
-
 class QSizeF;
-
 class QPointF;
-
 class QTransform;
 
 class OrthogonalRotation

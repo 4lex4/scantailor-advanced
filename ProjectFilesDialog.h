@@ -66,12 +66,9 @@ private slots:
 
 private:
     class Item;
-
-    class FileList;
-
-    class SortedFileList;
-
-    class ItemVisualOrdering;
+class FileList;
+class SortedFileList;
+class ItemVisualOrdering;
 
     void setInputDir(QString const& dir, bool auto_add_files = true);
 

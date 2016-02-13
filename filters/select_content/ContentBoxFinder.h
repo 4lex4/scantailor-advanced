@@ -22,22 +22,16 @@
 #include "imageproc/BinaryThreshold.h"
 
 class TaskStatus;
-
 class DebugImages;
-
 class FilterData;
-
 class QImage;
-
 class QRect;
-
 class QRectF;
 
 namespace imageproc
 {
     class BinaryImage;
-
-    class ConnComp;
+class ConnComp;
 
     class SEDM;
 }

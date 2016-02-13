@@ -22,13 +22,9 @@
 #include "Curve.h"
 
 class QDomDocument;
-
 class QDomElement;
-
 class QString;
-
 class QRectF;
-
 class QTransform;
 
 namespace dewarping

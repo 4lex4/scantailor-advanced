@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "ZoneVertexDragInteraction.h"
 #include "ZoneInteractionContext.h"
@@ -22,15 +23,16 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-ZoneVertexDragInteraction::ZoneVertexDragInteraction(
-        ZoneInteractionContext& context, InteractionState& interaction,
-        EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex)
-        : m_rContext(context),
-          m_ptrSpline(spline),
-          m_ptrVertex(vertex)
+ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& context,
+                                                     InteractionState& interaction,
+                                                     EditableSpline::Ptr const& spline,
+                                                     SplineVertex::Ptr const& vertex)
+    : m_rContext(context),
+      m_ptrSpline(spline),
+      m_ptrVertex(vertex)
 {
     QPointF const screen_mouse_pos(
-            m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
+        m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
     );
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
     m_dragOffset = to_screen.map(vertex->point()) - screen_mouse_pos;
@@ -47,7 +49,7 @@ ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState const& in
 
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
 
-    for (EditableZoneSet::Zone const& zone :  m_rContext.zones()) {
+    for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
         EditableSpline::Ptr const& spline = zone.spline();
 
         if (spline != m_ptrSpline) {
@@ -91,18 +93,17 @@ ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState const& in
     painter.drawLine(next, pt);
 
     m_visualizer.drawVertex(
-            painter, to_screen.map(m_ptrVertex->point()),
-            m_visualizer.highlightBrightColor()
+        painter, to_screen.map(m_ptrVertex->point()),
+        m_visualizer.highlightBrightColor()
     );
-}
+}  // ZoneVertexDragInteraction::onPaint
 
 void
-ZoneVertexDragInteraction::onMouseReleaseEvent(
-        QMouseEvent* event, InteractionState& interaction)
+ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
 {
     if (event->button() == Qt::LeftButton) {
-        if (m_ptrVertex->point() == m_ptrVertex->next(SplineVertex::LOOP)->point() ||
-            m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point()) {
+        if ((m_ptrVertex->point() == m_ptrVertex->next(SplineVertex::LOOP)->point())
+            || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point())) {
             if (m_ptrVertex->hasAtLeastSiblings(3)) {
                 m_ptrVertex->remove();
             }
@@ -133,7 +134,7 @@ ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState
         int dx = next.x() - prev.x();
         int dy = next.y() - prev.y();
 
-        if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
+        if (((dx > 0) && (dy > 0)) || ((dx < 0) && (dy < 0))) {
             prev.setX(current.x());
             next.setY(current.y());
         }
@@ -148,7 +149,7 @@ ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState
 
     checkProximity(interaction);
     m_rContext.imageView().update();
-}
+}  // ZoneVertexDragInteraction::onMouseMoveEvent
 
 void
 ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
@@ -165,7 +166,7 @@ ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
         QPointF const next(m_ptrVertex->next(SplineVertex::LOOP)->point());
         Proximity const prox_next(origin, to_screen.map(next));
 
-        if (prox_prev <= interaction.proximityThreshold() && prox_prev < prox_next) {
+        if ((prox_prev <= interaction.proximityThreshold()) && (prox_prev < prox_next)) {
             m_ptrVertex->setPoint(prev);
             can_merge = true;
         }
@@ -182,3 +183,4 @@ ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
         m_interaction.setInteractionStatusTip(tr("Move the vertex to one of its neighbors to merge them."));
     }
 }
+

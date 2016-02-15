@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef INCOMPLETETHUMBNAIL_H_
 #define INCOMPLETETHUMBNAIL_H_
@@ -39,22 +40,23 @@ class QRectF;
  * question mark over that image to indicate it's not shown the way it should.
  * This class implements drawing of such thumbnails with question marks.
  */
-class IncompleteThumbnail : public ThumbnailBase
+class IncompleteThumbnail
+    : public ThumbnailBase
 {
 public:
-    IncompleteThumbnail(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id,
-            ImageTransformation const& image_xform);
+    IncompleteThumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                        QSizeF const& max_size,
+                        ImageId const& image_id,
+                        ImageTransformation const& image_xform);
 
     virtual ~IncompleteThumbnail();
 
     static void drawQuestionMark(QPainter& painter, QRectF const& bounding_rect);
 
 protected:
-    virtual void paintOverImage(
-            QPainter& painter, QTransform const& image_to_display,
-            QTransform const& thumb_to_display);
+    virtual void paintOverImage(QPainter& painter,
+                                QTransform const& image_to_display,
+                                QTransform const& thumb_to_display);
 
 private:
     static QPainterPath m_sCachedPath;

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "AtomicFileOverwriter.h"
 #include "Utils.h"
@@ -22,16 +23,15 @@
 #include <QTemporaryFile>
 
 AtomicFileOverwriter::AtomicFileOverwriter()
-{
-}
+{ }
 
 AtomicFileOverwriter::~AtomicFileOverwriter()
 {
     abort();
 }
 
-QIODevice *
-AtomicFileOverwriter::startWriting(QString const &file_path)
+QIODevice*
+AtomicFileOverwriter::startWriting(QString const& file_path)
 {
     abort();
 
@@ -58,6 +58,7 @@ AtomicFileOverwriter::commit()
 
     if (!Utils::overwritingRename(temp_file_path, target_path)) {
         QFile::remove(temp_file_path);
+
         return false;
     }
 
@@ -75,3 +76,4 @@ AtomicFileOverwriter::abort()
     m_ptrTempFile.reset();
     QFile::remove(temp_file_path);
 }
+

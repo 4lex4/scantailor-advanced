@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "FileNameDisambiguator.h"
 #include "RelinkablePath.h"
@@ -37,53 +38,52 @@ class FileNameDisambiguator::Impl
 public:
     Impl();
 
-    Impl(QDomElement const &disambiguator_el,
-         boost::function<QString(QString const &)> const &file_path_unpacker);
+    Impl(QDomElement const& disambiguator_el, boost::function<QString(QString const&)> const& file_path_unpacker);
 
-    QDomElement toXml(QDomDocument &doc, QString const &name,
-                      boost::function<QString(QString const &)> const &file_path_packer) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name, boost::function<QString(
+                                                                                  QString const&)> const& file_path_packer)
+    const;
 
-    int getLabel(QString const &file_path) const;
+    int getLabel(QString const& file_path) const;
 
-    int registerFile(QString const &file_path);
+    int registerFile(QString const& file_path);
 
-    void performRelinking(AbstractRelinker const &relinker);
+    void performRelinking(AbstractRelinker const& relinker);
 
 private:
     class ItemsByFilePathTag;
-class ItemsByFileNameLabelTag;
+    class ItemsByFileNameLabelTag;
 
     class UnorderedItemsTag;
 
-    struct Item
-    {
+    struct Item {
         QString filePath;
         QString fileName;
         int label;
 
-        Item(QString const &file_path, int lbl);
+        Item(QString const& file_path, int lbl);
 
-        Item(QString const &file_path, QString const &file_name, int lbl);
+        Item(QString const& file_path, QString const& file_name, int lbl);
     };
 
     typedef multi_index_container<
             Item,
             indexed_by<
-                    ordered_unique<
-                            tag<ItemsByFilePathTag>,
-                            member<Item, QString, &Item::filePath>
-                    >,
-                    ordered_unique<
-                            tag<ItemsByFileNameLabelTag>,
-                            composite_key<
-                                    Item,
-                                    member<Item, QString, &Item::fileName>,
-                                    member<Item, int, &Item::label>
-                            >
-                    >,
-                    sequenced<tag<UnorderedItemsTag> >
+                ordered_unique<
+                    tag<ItemsByFilePathTag>,
+                    member<Item, QString, & Item::filePath>
+                >,
+                ordered_unique<
+                    tag<ItemsByFileNameLabelTag>,
+                    composite_key<
+                        Item,
+                        member<Item, QString, & Item::fileName>,
+                        member<Item, int, & Item::label>
+                    >
+                >,
+                sequenced<tag<UnorderedItemsTag>>
             >
-    > Container;
+>Container;
 
     typedef Container::index<ItemsByFilePathTag>::type ItemsByFilePath;
     typedef Container::index<ItemsByFileNameLabelTag>::type ItemsByFileNameLabel;
@@ -91,82 +91,74 @@ class ItemsByFileNameLabelTag;
 
     mutable QMutex m_mutex;
     Container m_items;
-    ItemsByFilePath &m_itemsByFilePath;
-    ItemsByFileNameLabel &m_itemsByFileNameLabel;
-    UnorderedItems &m_unorderedItems;
+    ItemsByFilePath& m_itemsByFilePath;
+    ItemsByFileNameLabel& m_itemsByFileNameLabel;
+    UnorderedItems& m_unorderedItems;
 };
 
 
 /*====================== FileNameDisambiguator =========================*/
 
 FileNameDisambiguator::FileNameDisambiguator()
-        : m_ptrImpl(new Impl)
-{
-}
+    : m_ptrImpl(new Impl)
+{ }
 
-FileNameDisambiguator::FileNameDisambiguator(
-        QDomElement const &disambiguator_el)
-        : m_ptrImpl(new Impl(disambiguator_el, boost::lambda::_1))
-{
-}
+FileNameDisambiguator::FileNameDisambiguator(QDomElement const& disambiguator_el)
+    : m_ptrImpl(new Impl(disambiguator_el, boost::lambda::_1))
+{ }
 
-FileNameDisambiguator::FileNameDisambiguator(
-        QDomElement const &disambiguator_el,
-        boost::function<QString(QString const &)> const &file_path_unpacker)
-        : m_ptrImpl(new Impl(disambiguator_el, file_path_unpacker))
-{
-}
+FileNameDisambiguator::FileNameDisambiguator(QDomElement const& disambiguator_el,
+                                             boost::function<QString(QString const&)> const& file_path_unpacker)
+    : m_ptrImpl(new Impl(disambiguator_el, file_path_unpacker))
+{ }
 
 QDomElement
-FileNameDisambiguator::toXml(QDomDocument &doc, QString const &name) const
+FileNameDisambiguator::toXml(QDomDocument& doc, QString const& name) const
 {
     return m_ptrImpl->toXml(doc, name, boost::lambda::_1);
 }
 
 QDomElement
-FileNameDisambiguator::toXml(
-        QDomDocument &doc, QString const &name,
-        boost::function<QString(QString const &)> const &file_path_packer) const
+FileNameDisambiguator::toXml(QDomDocument& doc, QString const& name, boost::function<QString(
+                                                                                         QString const&)> const& file_path_packer)
+const
 {
     return m_ptrImpl->toXml(doc, name, file_path_packer);
 }
 
 int
-FileNameDisambiguator::getLabel(QString const &file_path) const
+FileNameDisambiguator::getLabel(QString const& file_path) const
 {
     return m_ptrImpl->getLabel(file_path);
 }
 
 int
-FileNameDisambiguator::registerFile(QString const &file_path)
+FileNameDisambiguator::registerFile(QString const& file_path)
 {
     return m_ptrImpl->registerFile(file_path);
 }
 
 void
-FileNameDisambiguator::performRelinking(AbstractRelinker const &relinker)
+FileNameDisambiguator::performRelinking(AbstractRelinker const& relinker)
 {
     m_ptrImpl->performRelinking(relinker);
 }
 
-
 /*==================== FileNameDisambiguator::Impl ====================*/
 
 FileNameDisambiguator::Impl::Impl()
-        : m_items(),
-          m_itemsByFilePath(m_items.get<ItemsByFilePathTag>()),
-          m_itemsByFileNameLabel(m_items.get<ItemsByFileNameLabelTag>()),
-          m_unorderedItems(m_items.get<UnorderedItemsTag>())
-{
-}
+    : m_items(),
+      m_itemsByFilePath(m_items.get<ItemsByFilePathTag>()),
+      m_itemsByFileNameLabel(m_items.get<ItemsByFileNameLabelTag>()),
+      m_unorderedItems(m_items.get<UnorderedItemsTag>())
+{ }
 
-FileNameDisambiguator::Impl::Impl(
-        QDomElement const &disambiguator_el,
-        boost::function<QString(QString const &)> const &file_path_unpacker)
-        : m_items(),
-          m_itemsByFilePath(m_items.get<ItemsByFilePathTag>()),
-          m_itemsByFileNameLabel(m_items.get<ItemsByFileNameLabelTag>()),
-          m_unorderedItems(m_items.get<UnorderedItemsTag>())
+FileNameDisambiguator::Impl::Impl(QDomElement const& disambiguator_el, boost::function<QString(
+                                                                                           QString const&)> const& file_path_unpacker)
+    : m_items(),
+      m_itemsByFilePath(m_items.get<ItemsByFilePathTag>()),
+      m_itemsByFileNameLabel(m_items.get<ItemsByFileNameLabelTag>()),
+      m_unorderedItems(m_items.get<UnorderedItemsTag>())
 {
     QDomNode node(disambiguator_el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -190,31 +182,31 @@ FileNameDisambiguator::Impl::Impl(
 }
 
 QDomElement
-FileNameDisambiguator::Impl::toXml(
-        QDomDocument &doc, QString const &name,
-        boost::function<QString(QString const &)> const &file_path_packer) const
+FileNameDisambiguator::Impl::toXml(QDomDocument& doc, QString const& name, boost::function<QString(
+                                                                                               QString const&)> const& file_path_packer)
+const
 {
     QMutexLocker const locker(&m_mutex);
 
     QDomElement el(doc.createElement(name));
 
-    for (Item const& item :  m_unorderedItems) {
-                    QString const file_path_shorthand = file_path_packer(item.filePath);
-                    if (file_path_shorthand.isEmpty()) {
-                        continue;
-                    }
+    for (Item const& item : m_unorderedItems) {
+        QString const file_path_shorthand = file_path_packer(item.filePath);
+        if (file_path_shorthand.isEmpty()) {
+            continue;
+        }
 
-                    QDomElement file_el(doc.createElement("mapping"));
-                    file_el.setAttribute("file", file_path_shorthand);
-                    file_el.setAttribute("label", item.label);
-                    el.appendChild(file_el);
-                }
+        QDomElement file_el(doc.createElement("mapping"));
+        file_el.setAttribute("file", file_path_shorthand);
+        file_el.setAttribute("label", item.label);
+        el.appendChild(file_el);
+    }
 
     return el;
 }
 
 int
-FileNameDisambiguator::Impl::getLabel(QString const &file_path) const
+FileNameDisambiguator::Impl::getLabel(QString const& file_path) const
 {
     QMutexLocker const locker(&m_mutex);
 
@@ -227,7 +219,7 @@ FileNameDisambiguator::Impl::getLabel(QString const &file_path) const
 }
 
 int
-FileNameDisambiguator::Impl::registerFile(QString const &file_path)
+FileNameDisambiguator::Impl::registerFile(QString const& file_path)
 {
     QMutexLocker const locker(&m_mutex);
 
@@ -240,7 +232,7 @@ FileNameDisambiguator::Impl::registerFile(QString const &file_path)
 
     QString const file_name(QFileInfo(file_path).fileName());
     ItemsByFileNameLabel::iterator const fn_it(
-            m_itemsByFileNameLabel.upper_bound(boost::make_tuple(file_name))
+        m_itemsByFileNameLabel.upper_bound(boost::make_tuple(file_name))
     );
     if (fn_it != m_itemsByFileNameLabel.begin()) {
         ItemsByFileNameLabel::iterator prev(fn_it);
@@ -256,34 +248,31 @@ FileNameDisambiguator::Impl::registerFile(QString const &file_path)
 }
 
 void
-FileNameDisambiguator::Impl::performRelinking(AbstractRelinker const &relinker)
+FileNameDisambiguator::Impl::performRelinking(AbstractRelinker const& relinker)
 {
     QMutexLocker const locker(&m_mutex);
     Container new_items;
 
-    for (Item const& item :  m_unorderedItems) {
-                    RelinkablePath const old_path(item.filePath, RelinkablePath::File);
-                    Item new_item(relinker.substitutionPathFor(old_path), item.label);
-                    new_items.insert(new_item);
-                }
+    for (Item const& item : m_unorderedItems) {
+        RelinkablePath const old_path(item.filePath, RelinkablePath::File);
+        Item new_item(relinker.substitutionPathFor(old_path), item.label);
+        new_items.insert(new_item);
+    }
 
     m_items.swap(new_items);
 }
 
-
 /*============================ Impl::Item =============================*/
 
-FileNameDisambiguator::Impl::Item::Item(QString const &file_path, int lbl)
-        : filePath(file_path),
-          fileName(QFileInfo(file_path).fileName()),
-          label(lbl)
-{
-}
+FileNameDisambiguator::Impl::Item::Item(QString const& file_path, int lbl)
+    : filePath(file_path),
+      fileName(QFileInfo(file_path).fileName()),
+      label(lbl)
+{ }
 
-FileNameDisambiguator::Impl::Item::Item(
-        QString const &file_path, QString const &file_name, int lbl)
-        : filePath(file_path),
-          fileName(file_name),
-          label(lbl)
-{
-}
+FileNameDisambiguator::Impl::Item::Item(QString const& file_path, QString const& file_name, int lbl)
+    : filePath(file_path),
+      fileName(file_name),
+      label(lbl)
+{ }
+

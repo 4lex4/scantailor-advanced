@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "BinaryThreshold.h"
 #include "Grayscale.h"
@@ -25,7 +26,6 @@
 
 namespace imageproc
 {
-
     BinaryThreshold
     BinaryThreshold::otsuThreshold(QImage const& image)
     {
@@ -56,11 +56,11 @@ namespace imageproc
         for (int i = 0; i < 256; ++i) {
             int const pixels_below = pixels_by_threshold[i];
             int const pixels_above = total_pixels - pixels_below;
-            if (pixels_below > 0 && pixels_above > 0) {
+            if ((pixels_below > 0) && (pixels_above > 0)) {
                 int64_t const moment_below = moment_by_threshold[i];
                 int64_t const moment_above = total_moment - moment_below;
-                double const mean_below = (double) moment_below / pixels_below;
-                double const mean_above = (double) moment_above / pixels_above;
+                double const mean_below = (double)moment_below / pixels_below;
+                double const mean_above = (double)moment_above / pixels_above;
                 double const mean_diff = mean_below - mean_above;
                 double const variance = mean_diff * mean_diff * pixels_below * pixels_above;
                 if (variance > max_variance) {
@@ -78,8 +78,7 @@ namespace imageproc
         ++last_best_threshold;
 
         return BinaryThreshold((first_best_threshold + last_best_threshold) >> 1);
-    }
-
+    }  // BinaryThreshold::otsuThreshold
 
     BinaryThreshold
     BinaryThreshold::peakThreshold(QImage const& image)
@@ -131,12 +130,12 @@ namespace imageproc
 #endif
 
         return BinaryThreshold(threshold);
-    }
+    }  // BinaryThreshold::peakThreshold
 
     BinaryThreshold
-    BinaryThreshold::mokjiThreshold(
-            QImage const& image, unsigned const max_edge_width,
-            unsigned const min_edge_magnitude)
+    BinaryThreshold::mokjiThreshold(QImage const& image,
+                                    unsigned const max_edge_width,
+                                    unsigned const min_edge_magnitude)
     {
         if (max_edge_width < 1) {
             throw std::invalid_argument("mokjiThreshold: invalud max_edge_width");
@@ -162,8 +161,8 @@ namespace imageproc
 
         src_line += max_edge_width * src_stride;
         dilated_line += max_edge_width * dilated_stride;
-        for (int y = max_edge_width; y < h - (int) max_edge_width; ++y) {
-            for (int x = max_edge_width; x < w - (int) max_edge_width; ++x) {
+        for (int y = max_edge_width; y < h - (int)max_edge_width; ++y) {
+            for (int x = max_edge_width; x < w - (int)max_edge_width; ++x) {
                 unsigned const pixel = src_line[x];
                 unsigned const darkest_neighbor = dilated_line[x];
                 assert(darkest_neighbor <= pixel);
@@ -191,7 +190,7 @@ namespace imageproc
         }
 
         double const threshold = 0.5 * nominator / denominator;
-        return BinaryThreshold((int) (threshold + 0.5));
-    }
 
-} 
+        return BinaryThreshold((int)(threshold + 0.5));
+    }  // BinaryThreshold::mokjiThreshold
+}  // namespace imageproc

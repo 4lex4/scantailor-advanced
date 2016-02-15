@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_SPLINE_FITTER_H_
 #define SPFIT_SPLINE_FITTER_H_
@@ -27,9 +28,8 @@
 
 namespace spfit
 {
-
     class ConstraintSet;
-class ModelShape;
+    class ModelShape;
 
     struct SqDistApproximant;
 
@@ -37,7 +37,7 @@ class ModelShape;
 
     class SplineFitter
     {
-    DECLARE_NON_COPYABLE(SplineFitter)
+        DECLARE_NON_COPYABLE(SplineFitter)
 
     public:
         explicit SplineFitter(FittableSpline* spline);
@@ -57,8 +57,7 @@ class ModelShape;
                                 std::vector<FittableSpline::LinearCoefficient> const& coeffs,
                                 SqDistApproximant const& sqdist_approx);
 
-        void addAttractionForces(ModelShape const& model_shape,
-                                 double from_t = 0.0, double to_t = 1.0);
+        void addAttractionForces(ModelShape const& model_shape, double from_t = 0.0, double to_t = 1.0);
 
         void addExternalForce(QuadraticFunction const& force);
 
@@ -70,11 +69,15 @@ class ModelShape;
 
         /** \see Optimizer::externalForce() */
         double externalForce() const
-        { return m_optimizer.externalForce(); }
+        {
+            return m_optimizer.externalForce();
+        }
 
         /** \see Optimizer::internalForce() */
         double internalForce() const
-        { return m_optimizer.internalForce(); }
+        {
+            return m_optimizer.internalForce();
+        }
 
         OptimizationResult optimize(double internal_force_weight);
 
@@ -88,6 +91,5 @@ class ModelShape;
         std::vector<int> m_tempSparseMap;
         std::vector<FittableSpline::LinearCoefficient> m_tempCoeffs;
     };
-
-}
-#endif
+}  // namespace spfit
+#endif  // ifndef SPFIT_SPLINE_FITTER_H_

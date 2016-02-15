@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef PRIORITY_QUEUE_H_
 #define PRIORITY_QUEUE_H_
@@ -38,7 +39,7 @@
  * \endcode
  * function in the same namespace as T.
  */
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 class PriorityQueue
 {
 public:
@@ -46,13 +47,19 @@ public:
     { }
 
     void reserve(size_t capacity)
-    { m_index.reserve(capacity); }
+    {
+        m_index.reserve(capacity);
+    }
 
     bool empty() const
-    { return m_index.empty(); }
+    {
+        return m_index.empty();
+    }
 
     size_t size() const
-    { return m_index.size(); }
+    {
+        return m_index.size();
+    }
 
     /**
      * \brief Provides access to the head of priority queue.
@@ -63,10 +70,14 @@ public:
      * involves comparing objects.
      */
     T& front()
-    { return m_index.front(); }
+    {
+        return m_index.front();
+    }
 
     T const& front() const
-    { return m_index.front(); }
+    {
+        return m_index.front();
+    }
 
     void push(T const& obj);
 
@@ -87,7 +98,9 @@ public:
     void retrieveFront(T& obj);
 
     void swapWith(PriorityQueue& other)
-    { m_index.swap(other.m_index); }
+    {
+        m_index.swap(other.m_index);
+    }
 
 protected:
     void erase(size_t idx);
@@ -96,19 +109,29 @@ protected:
 
 private:
     static size_t parent(size_t idx)
-    { return (idx - 1) / 2; }
+    {
+        return (idx - 1) / 2;
+    }
 
     static size_t left(size_t idx)
-    { return idx * 2 + 1; }
+    {
+        return idx * 2 + 1;
+    }
 
     static size_t right(size_t idx)
-    { return idx * 2 + 2; }
+    {
+        return idx * 2 + 2;
+    }
 
     SubClass* subClass()
-    { return static_cast<SubClass*>(this); }
+    {
+        return static_cast<SubClass*>(this);
+    }
 
     SubClass const* subClass() const
-    { return static_cast<SubClass const*>(this); }
+    {
+        return static_cast<SubClass const*>(this);
+    }
 
     size_t bubbleUp(size_t idx);
 
@@ -118,13 +141,14 @@ private:
 };
 
 
-template<typename T, typename SubClass>
-inline void swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2)
+template <typename T, typename SubClass>
+inline void
+swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2)
 {
     o1.swap(o2);
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::push(T const& obj)
 {
@@ -134,7 +158,7 @@ PriorityQueue<T, SubClass>::push(T const& obj)
     bubbleUp(idx);
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::pushDestructive(T& obj)
 {
@@ -147,7 +171,7 @@ PriorityQueue<T, SubClass>::pushDestructive(T& obj)
     bubbleUp(idx);
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::pop()
 {
@@ -164,7 +188,7 @@ PriorityQueue<T, SubClass>::pop()
     }
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::retrieveFront(T& obj)
 {
@@ -182,7 +206,7 @@ PriorityQueue<T, SubClass>::retrieveFront(T& obj)
     }
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::erase(size_t const idx)
 {
@@ -195,14 +219,14 @@ PriorityQueue<T, SubClass>::erase(size_t const idx)
     reposition(m_index[idx]);
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 void
 PriorityQueue<T, SubClass>::reposition(size_t const idx)
 {
     bubbleUp(bubbleDown(idx));
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 size_t
 PriorityQueue<T, SubClass>::bubbleUp(size_t idx)
 {
@@ -225,7 +249,7 @@ PriorityQueue<T, SubClass>::bubbleUp(size_t idx)
     return idx;
 }
 
-template<typename T, typename SubClass>
+template <typename T, typename SubClass>
 size_t
 PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
 {
@@ -235,7 +259,7 @@ PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
     assert(idx < len);
 
 
-    for (; ;) {
+    for (;;) {
         size_t const lft = left(idx);
         size_t const rgt = right(idx);
         size_t best_child;
@@ -262,6 +286,6 @@ PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
     }
 
     return idx;
-}
+}  // >::bubbleDown
 
-#endif
+#endif  // ifndef PRIORITY_QUEUE_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_
 #define PAGE_LAYOUT_OPTIONSWIDGET_H_
@@ -36,41 +37,44 @@ class ProjectPages;
 
 namespace page_layout
 {
-
     class Settings;
 
-    class OptionsWidget :
-            public FilterOptionsWidget,
-            public Ui::PageLayoutOptionsWidget
+    class OptionsWidget
+        : public FilterOptionsWidget,
+          public Ui::PageLayoutOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        OptionsWidget(
-                IntrusivePtr<Settings> const& settings,
-                PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
-        void preUpdateUI(PageId const& page_id,
-                         Margins const& margins_mm, Alignment const& alignment);
+        void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
 
         void postUpdateUI();
 
         bool leftRightLinked() const
-        { return m_leftRightLinked; }
+        {
+            return m_leftRightLinked;
+        }
 
         bool topBottomLinked() const
-        { return m_topBottomLinked; }
+        {
+            return m_topBottomLinked;
+        }
 
         Margins const& marginsMM() const
-        { return m_marginsMM; }
+        {
+            return m_marginsMM;
+        }
 
         Alignment const& alignment() const
-        { return m_alignment; }
+        {
+            return m_alignment;
+        }
 
     signals:
-
         void leftRightLinkToggled(bool linked);
 
         void topBottomLinkToggled(bool linked);
@@ -82,11 +86,9 @@ namespace page_layout
         void aggregateHardSizeChanged();
 
     public slots:
-
         void marginsSetExternally(Margins const& margins_mm);
 
     private slots:
-
         void unitsChanged(int idx);
 
         void horMarginsChanged(double val);
@@ -136,6 +138,5 @@ namespace page_layout
         bool m_leftRightLinked;
         bool m_topBottomLinked;
     };
-
-}
-#endif
+}  // namespace page_layout
+#endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

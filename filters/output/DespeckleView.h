@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #ifndef OUTPUT_DESPECKLE_VIEW_H_
@@ -33,12 +34,12 @@ class ProcessingIndicationWidget;
 
 namespace output
 {
-
     class DespeckleVisualization;
 
-    class DespeckleView : public QStackedWidget
+    class DespeckleView
+        : public QStackedWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         /**
@@ -48,13 +49,11 @@ namespace output
          *        when this widget becomes visible.
          * \param debug Indicates whether debugging is turned on.
          */
-        DespeckleView(DespeckleState const& despeckle_state,
-                      DespeckleVisualization const& visualization, bool debug);
+        DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
 
         virtual ~DespeckleView();
 
     public slots:
-
         void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
     protected:
@@ -64,19 +63,17 @@ namespace output
 
     private:
         class TaskCancelException;
-class TaskCancelHandle;
-class DespeckleTask;
-class DespeckleResult;
+        class TaskCancelHandle;
+        class DespeckleTask;
+        class DespeckleResult;
 
-        enum AnimationAction
-        {
-            RESET_ANIMATION, RESUME_ANIMATION
-        };
+        enum AnimationAction { RESET_ANIMATION, RESUME_ANIMATION };
 
         void initiateDespeckling(AnimationAction anim_action);
 
         void despeckleDone(DespeckleState const& despeckle_state,
-                           DespeckleVisualization const& visualization, DebugImages* dbg);
+                           DespeckleVisualization const& visualization,
+                           DebugImages* dbg);
 
         void cancelBackgroundTask();
 
@@ -88,6 +85,5 @@ class DespeckleResult;
         DespeckleLevel m_despeckleLevel;
         bool m_debug;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_DESPECKLE_VIEW_H_

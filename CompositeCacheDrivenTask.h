@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef COMPOSITECACHEDRIVENTASK_H_
 #define COMPOSITECACHEDRIVENTASK_H_
@@ -24,15 +25,14 @@
 class PageInfo;
 class AbstractFilterDataCollector;
 
-class CompositeCacheDrivenTask : public RefCountable
+class CompositeCacheDrivenTask
+    : public RefCountable
 {
 public:
     virtual ~CompositeCacheDrivenTask()
     { }
 
-    virtual void process(
-            PageInfo const &page_info,
-            AbstractFilterDataCollector *collector) = 0;
+    virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector) = 0;
 };
 
 #endif

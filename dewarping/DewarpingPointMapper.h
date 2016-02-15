@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_
 #define DEWARPING_DEWARPING_POINT_MAPPER_H_
@@ -26,16 +27,15 @@ class QTransform;
 
 namespace dewarping
 {
-
     class DistortionModel;
 
     class DewarpingPointMapper
     {
     public:
-        DewarpingPointMapper(
-                dewarping::DistortionModel const& distortion_model, double depth_perception,
-                QTransform const& distortion_model_to_output,
-                QRect const& output_content_rect);
+        DewarpingPointMapper(dewarping::DistortionModel const& distortion_model,
+                             double depth_perception,
+                             QTransform const& distortion_model_to_output,
+                             QRect const& output_content_rect);
 
         /**
          * Similar to CylindricalSurfaceDewarper::mapToDewarpedSpace(),
@@ -60,6 +60,5 @@ namespace dewarping
         double m_modelXScaleToNormalized;
         double m_modelYScaleToNormalized;
     };
-
 }
-#endif
+#endif  // ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_

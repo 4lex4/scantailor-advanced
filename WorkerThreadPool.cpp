@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,25 +15,32 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "WorkerThreadPool.h"
 #include "OutOfMemoryHandler.h"
 #include <QCoreApplication>
 #include <QThreadPool>
 
-class WorkerThreadPool::TaskResultEvent : public QEvent
+class WorkerThreadPool::TaskResultEvent
+    : public QEvent
 {
 public:
     TaskResultEvent(BackgroundTaskPtr const& task, FilterResultPtr const& result)
-            : QEvent(User), m_ptrTask(task), m_ptrResult(result)
+        : QEvent(User),
+          m_ptrTask(task),
+          m_ptrResult(result)
     { }
 
     BackgroundTaskPtr const& task() const
-    { return m_ptrTask; }
+    {
+        return m_ptrTask;
+    }
 
     FilterResultPtr const& result() const
-    { return m_ptrResult; }
+    {
+        return m_ptrResult;
+    }
 
 private:
     BackgroundTaskPtr m_ptrTask;
@@ -41,15 +49,14 @@ private:
 
 
 WorkerThreadPool::WorkerThreadPool(QObject* parent)
-        : QObject(parent),
-          m_pPool(new QThreadPool(this))
+    : QObject(parent),
+      m_pPool(new QThreadPool(this))
 {
     updateNumberOfThreads();
 }
 
 WorkerThreadPool::~WorkerThreadPool()
-{
-}
+{ }
 
 void
 WorkerThreadPool::shutdown()
@@ -66,18 +73,21 @@ WorkerThreadPool::hasSpareCapacity() const
 void
 WorkerThreadPool::submitTask(BackgroundTaskPtr const& task)
 {
-    class Runnable : public QRunnable
+    class Runnable
+        : public QRunnable
     {
     public:
         Runnable(WorkerThreadPool& owner, BackgroundTaskPtr const& task)
-                : m_rOwner(owner), m_ptrTask(task)
+            : m_rOwner(owner),
+              m_ptrTask(task)
         {
             setAutoDelete(true);
         }
 
         virtual void run()
 
-        override {
+        override
+        {
             if (m_ptrTask->isCancelled()) {
                 return;
             }
@@ -86,13 +96,15 @@ WorkerThreadPool::submitTask(BackgroundTaskPtr const& task)
                 FilterResultPtr const result((*m_ptrTask)());
                 if (result) {
                     QCoreApplication::postEvent(
-                            &m_rOwner, new TaskResultEvent(m_ptrTask, result)
+                        &m_rOwner, new TaskResultEvent(m_ptrTask, result)
                     );
                 }
-            } catch (std::bad_alloc const&) {
+            }
+            catch (std::bad_alloc const&) {
                 OutOfMemoryHandler::instance().handleOutOfMemorySituation();
             }
         }
+
     private:
         WorkerThreadPool& m_rOwner;
         BackgroundTaskPtr m_ptrTask;
@@ -100,7 +112,7 @@ WorkerThreadPool::submitTask(BackgroundTaskPtr const& task)
 
     updateNumberOfThreads();
     m_pPool->start(new Runnable(*this, task));
-}
+}  // WorkerThreadPool::submitTask
 
 void
 WorkerThreadPool::customEvent(QEvent* event)
@@ -119,3 +131,4 @@ WorkerThreadPool::updateNumberOfThreads()
     num_threads = std::min<int>(num_threads, max_threads);
     m_pPool->setMaxThreadCount(num_threads);
 }
+

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Settings.h"
 #include "RelinkablePath.h"
@@ -23,15 +24,12 @@
 
 namespace page_split
 {
-
     Settings::Settings()
-            : m_defaultLayoutType(AUTO_LAYOUT_TYPE)
-    {
-    }
+        : m_defaultLayoutType(AUTO_LAYOUT_TYPE)
+    { }
 
     Settings::~Settings()
-    {
-    }
+    { }
 
     void
     Settings::clear()
@@ -48,7 +46,7 @@ namespace page_split
         QMutexLocker locker(&m_mutex);
         PerPageRecords new_records;
 
-        for (PerPageRecords::value_type const& kv :  m_perPageRecords) {
+        for (PerPageRecords::value_type const& kv : m_perPageRecords) {
             RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
             ImageId new_image_id(kv.first);
             new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
@@ -62,6 +60,7 @@ namespace page_split
     Settings::defaultLayoutType() const
     {
         QMutexLocker locker(&m_mutex);
+
         return m_defaultLayoutType;
     }
 
@@ -92,7 +91,7 @@ namespace page_split
 
         UpdateAction action;
 
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             updatePageLocked(page_id.imageId(), action);
         }
     }
@@ -101,6 +100,7 @@ namespace page_split
     Settings::getPageRecord(ImageId const& image_id) const
     {
         QMutexLocker locker(&m_mutex);
+
         return getPageRecordLocked(image_id);
     }
 
@@ -127,9 +127,8 @@ namespace page_split
     Settings::updatePageLocked(ImageId const& image_id, UpdateAction const& action)
     {
         PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
-        if (it == m_perPageRecords.end() ||
-            m_perPageRecords.key_comp()(image_id, it->first)) {
-
+        if ((it == m_perPageRecords.end())
+            || m_perPageRecords.key_comp()(image_id, it->first)) {
             Record record(m_defaultLayoutType);
             record.update(action);
 
@@ -139,7 +138,7 @@ namespace page_split
 
             if (!record.isNull()) {
                 m_perPageRecords.insert(
-                        it, PerPageRecords::value_type(image_id, record)
+                    it, PerPageRecords::value_type(image_id, record)
                 );
             }
         }
@@ -167,15 +166,13 @@ namespace page_split
     }
 
     Settings::Record
-    Settings::conditionalUpdate(
-            ImageId const& image_id, UpdateAction const& action, bool* conflict)
+    Settings::conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict)
     {
         QMutexLocker locker(&m_mutex);
 
         PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
-        if (it == m_perPageRecords.end() ||
-            m_perPageRecords.key_comp()(image_id, it->first)) {
-
+        if ((it == m_perPageRecords.end())
+            || m_perPageRecords.key_comp()(image_id, it->first)) {
             Record record(m_defaultLayoutType);
             record.update(action);
 
@@ -183,22 +180,23 @@ namespace page_split
                 if (conflict) {
                     *conflict = true;
                 }
+
                 return Record(m_defaultLayoutType);
             }
 
             if (!record.isNull()) {
                 m_perPageRecords.insert(
-                        it, PerPageRecords::value_type(image_id, record)
+                    it, PerPageRecords::value_type(image_id, record)
                 );
             }
 
             if (conflict) {
                 *conflict = false;
             }
+
             return record;
         }
         else {
-
             Record record(it->second, m_defaultLayoutType);
             record.update(action);
 
@@ -206,6 +204,7 @@ namespace page_split
                 if (conflict) {
                     *conflict = true;
                 }
+
                 return Record(it->second, m_defaultLayoutType);
             }
 
@@ -215,25 +214,25 @@ namespace page_split
 
             if (record.isNull()) {
                 m_perPageRecords.erase(it);
+
                 return Record(m_defaultLayoutType);
             }
             else {
                 it->second = record;
+
                 return record;
             }
         }
-    }
+    }  // Settings::conditionalUpdate
 
-
-/*======================= Settings::BaseRecord ======================*/
+    /*======================= Settings::BaseRecord ======================*/
 
     Settings::BaseRecord::BaseRecord()
-            : m_params(PageLayout(), Dependencies(), MODE_AUTO),
-              m_layoutType(AUTO_LAYOUT_TYPE),
-              m_paramsValid(false),
-              m_layoutTypeValid(false)
-    {
-    }
+        : m_params(PageLayout(), Dependencies(), MODE_AUTO),
+          m_layoutType(AUTO_LAYOUT_TYPE),
+          m_paramsValid(false),
+          m_layoutTypeValid(false)
+    { }
 
     void
     Settings::BaseRecord::setParams(Params const& params)
@@ -270,24 +269,20 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return false;
     }
 
-
-/*========================= Settings::Record ========================*/
+    /*========================= Settings::Record ========================*/
 
     Settings::Record::Record(LayoutType const default_layout_type)
-            : m_defaultLayoutType(default_layout_type)
-    {
-    }
+        : m_defaultLayoutType(default_layout_type)
+    { }
 
-    Settings::Record::Record(
-            BaseRecord const& base_record,
-            LayoutType const default_layout_type)
-            : BaseRecord(base_record),
-              m_defaultLayoutType(default_layout_type)
-    {
-    }
+    Settings::Record::Record(BaseRecord const& base_record, LayoutType const default_layout_type)
+        : BaseRecord(base_record),
+          m_defaultLayoutType(default_layout_type)
+    { }
 
     LayoutType
     Settings::Record::combinedLayoutType() const
@@ -327,8 +322,7 @@ namespace page_split
         return BaseRecord::hasLayoutTypeConflict(combinedLayoutType());
     }
 
-
-/*======================= Settings::UpdateAction ======================*/
+    /*======================= Settings::UpdateAction ======================*/
 
     void
     Settings::UpdateAction::setLayoutType(LayoutType const layout_type)
@@ -355,5 +349,4 @@ namespace page_split
     {
         m_paramsAction = CLEAR;
     }
-
-} 
+}  // namespace page_split

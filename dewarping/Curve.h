@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_CURVE_H_
 #define DEWARPING_CURVE_H_
@@ -29,7 +30,6 @@ class QString;
 
 namespace dewarping
 {
-
     class Curve
     {
     public:
@@ -48,10 +48,14 @@ namespace dewarping
         bool matches(Curve const& other) const;
 
         XSpline const& xspline() const
-        { return m_xspline; }
+        {
+            return m_xspline;
+        }
 
         std::vector<QPointF> const& polyline() const
-        { return m_polyline; }
+        {
+            return m_polyline;
+        }
 
         static bool splineHasLoops(XSpline const& spline);
 
@@ -60,21 +64,18 @@ namespace dewarping
 
         static std::vector<QPointF> deserializePolyline(QDomElement const& el);
 
-        static QDomElement serializePolyline(
-                std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name);
+        static QDomElement serializePolyline(std::vector<QPointF> const& polyline,
+                                             QDomDocument& doc,
+                                             QString const& name);
 
         static XSpline deserializeXSpline(QDomElement const& el);
 
-        static QDomElement serializeXSpline(
-                XSpline const& xspline, QDomDocument& doc, QString const& name);
+        static QDomElement serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name);
 
-        static bool approxPolylineMatch(
-                std::vector<QPointF> const& polyline1,
-                std::vector<QPointF> const& polyline2);
+        static bool approxPolylineMatch(std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2);
 
         XSpline m_xspline;
         std::vector<QPointF> m_polyline;
     };
-
-}
-#endif
+}  // namespace dewarping
+#endif  // ifndef DEWARPING_CURVE_H_

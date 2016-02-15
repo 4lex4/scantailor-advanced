@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIX_ORIENTATION_IMAGEVIEW_H_
 #define FIX_ORIENTATION_IMAGEVIEW_H_
@@ -27,20 +28,17 @@
 
 namespace fix_orientation
 {
-
-    class ImageView : public ImageViewBase
+    class ImageView
+        : public ImageViewBase
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        ImageView(
-                QImage const& image, QImage const& downscaled_image,
-                ImageTransformation const& xform);
+        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
 
         virtual ~ImageView();
 
     public slots:
-
         void setPreRotation(OrthogonalRotation rotation);
 
     private:
@@ -48,6 +46,5 @@ namespace fix_orientation
         ZoomHandler m_zoomHandler;
         ImageTransformation m_xform;
     };
-
 }
 #endif

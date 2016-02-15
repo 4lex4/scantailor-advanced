@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PolylineModelShape.h"
 #include "FrenetFrame.h"
@@ -23,7 +24,6 @@
 
 namespace spfit
 {
-
     PolylineModelShape::PolylineModelShape(std::vector<QPointF> const& polyline)
     {
         if (polyline.size() <= 1) {
@@ -32,7 +32,7 @@ namespace spfit
 
         XSpline spline;
 
-        for (QPointF const& pt :  polyline) {
+        for (QPointF const& pt : polyline) {
             spline.appendControlPoint(pt, -1);
         }
 
@@ -44,8 +44,7 @@ namespace spfit
     }
 
     SqDistApproximant
-    PolylineModelShape::localSqDistApproximant(
-            QPointF const& pt, FittableSpline::SampleFlags sample_flags) const
+    PolylineModelShape::localSqDistApproximant(QPointF const& pt, FittableSpline::SampleFlags sample_flags) const
     {
         if (m_vertices.empty()) {
             return SqDistApproximant();
@@ -62,7 +61,7 @@ namespace spfit
             QPointF const pt2(m_vertices[i + 1].point);
             QLineF const segment(pt1, pt2);
             double const s = ToLineProjector(segment).projectionScalar(pt);
-            if (s > 0 && s < 1) {
+            if ((s > 0) && (s < 1)) {
                 QPointF const foot_point(segment.pointAt(s));
                 Vec2d const vec(pt - foot_point);
                 double const sqdist = vec.squaredNorm();
@@ -118,13 +117,14 @@ namespace spfit
 
             return calcApproximant(pt, sample_flags, polyline_flags, frenet_frame, pd.signedCurvature());
         }
-    }
+    }  // PolylineModelShape::localSqDistApproximant
 
     SqDistApproximant
-    PolylineModelShape::calcApproximant(
-            QPointF const& pt, FittableSpline::SampleFlags const sample_flags,
-            Flags const polyline_flags, FrenetFrame const& frenet_frame,
-            double const signed_curvature) const
+    PolylineModelShape::calcApproximant(QPointF const& pt,
+                                        FittableSpline::SampleFlags const sample_flags,
+                                        Flags const polyline_flags,
+                                        FrenetFrame const& frenet_frame,
+                                        double const signed_curvature) const
     {
         if (sample_flags & (FittableSpline::HEAD_SAMPLE | FittableSpline::TAIL_SAMPLE)) {
             return SqDistApproximant::pointDistance(frenet_frame.origin());
@@ -133,5 +133,4 @@ namespace spfit
             return SqDistApproximant::curveDistance(pt, frenet_frame, signed_curvature);
         }
     }
-
-} 
+}  // namespace spfit

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESPECKLE_LEVEL_H_
 #define DESPECKLE_LEVEL_H_
@@ -23,9 +24,7 @@ class QString;
 
 namespace output
 {
-
-    enum DespeckleLevel
-    {
+    enum DespeckleLevel {
         DESPECKLE_OFF,
         DESPECKLE_CAUTIOUS,
         DESPECKLE_NORMAL,
@@ -35,6 +34,5 @@ namespace output
     QString despeckleLevelToString(DespeckleLevel level);
 
     DespeckleLevel despeckleLevelFromString(QString const& str);
-
 }
 #endif

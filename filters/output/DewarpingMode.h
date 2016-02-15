@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_DEWARPING_MODE_H_
 #define OUTPUT_DEWARPING_MODE_H_
@@ -23,16 +24,13 @@
 
 namespace output
 {
-
     class DewarpingMode
     {
     public:
-        enum Mode
-        {
-            OFF, AUTO, MANUAL, MARGINAL
-        };
+        enum Mode { OFF, AUTO, MANUAL, MARGINAL };
 
-        DewarpingMode(Mode mode = OFF) : m_mode(mode)
+        DewarpingMode(Mode mode = OFF)
+            : m_mode(mode)
         { }
 
         explicit DewarpingMode(QString const& str);
@@ -40,11 +38,11 @@ namespace output
         QString toString() const;
 
         operator Mode() const
-        { return m_mode; }
+        { return m_mode;
+        }
 
     private:
         Mode m_mode;
     };
-
 }
 #endif

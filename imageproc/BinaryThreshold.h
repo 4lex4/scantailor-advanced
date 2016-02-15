@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_BINARYTHRESHOLD_H_
 #define IMAGEPROC_BINARYTHRESHOLD_H_
@@ -25,16 +26,15 @@ class QImage;
 
 namespace imageproc
 {
-
     class GrayscaleHistogram;
 
-/**
- * \brief Defines the gray level threshold that separates black from white.
- *
- * Gray levels in range of [0, threshold) are considered black, while
- * levels in range of [threshold, 255] are considered white.  The threshold
- * itself is considered to be white.
- */
+    /**
+     * \brief Defines the gray level threshold that separates black from white.
+     *
+     * Gray levels in range of [0, threshold) are considered black, while
+     * levels in range of [threshold, 255] are considered white.  The threshold
+     * itself is considered to be white.
+     */
     class BinaryThreshold
     {
     public:
@@ -64,22 +64,25 @@ namespace imageproc
          * \param min_edge_magnitude The minimum color difference in a gradient.
          * \return A black and white image.
          */
-        static BinaryThreshold mokjiThreshold(
-                QImage const& image,
-                unsigned max_edge_width = 3, unsigned min_edge_magnitude = 20);
+        static BinaryThreshold mokjiThreshold(QImage const& image,
+                                              unsigned max_edge_width = 3,
+                                              unsigned min_edge_magnitude = 20);
 
-        explicit BinaryThreshold(int threshold) : m_threshold(threshold)
+        explicit BinaryThreshold(int threshold)
+            : m_threshold(threshold)
         { }
 
         operator int() const
-        { return m_threshold; }
+        { return m_threshold;
+        }
 
         BWColor grayToBW(int gray) const
-        { return gray < m_threshold ? BLACK : WHITE; }
+        {
+            return gray < m_threshold ? BLACK : WHITE;
+        }
 
     private:
         int m_threshold;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_BINARYTHRESHOLD_H_

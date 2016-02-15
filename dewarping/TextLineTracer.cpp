@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "TextLineTracer.h"
 #include "TextLineRefiner.h"
@@ -51,12 +52,13 @@ using namespace imageproc;
 
 namespace dewarping
 {
-
     void
-    TextLineTracer::trace(
-            GrayImage const& input, Dpi const& dpi, QRect const& content_rect,
-            DistortionModelBuilder& output,
-            TaskStatus const& status, DebugImages* dbg)
+    TextLineTracer::trace(GrayImage const& input,
+                          Dpi const& dpi,
+                          QRect const& content_rect,
+                          DistortionModelBuilder& output,
+                          TaskStatus const& status,
+                          DebugImages* dbg)
     {
         using namespace boost::lambda;
 
@@ -75,8 +77,8 @@ namespace dewarping
 
         QRect const downscaled_content_rect(to_orig.inverted().mapRect(content_rect));
         Dpi const downscaled_dpi(
-                qRound(dpi.horizontal() * downscale_x_factor),
-                qRound(dpi.vertical() * downscale_y_factor)
+            qRound(dpi.horizontal() * downscale_x_factor),
+            qRound(dpi.vertical() * downscale_y_factor)
         );
 
         BinaryImage binarized(binarizeWolf(downscaled, QSize(31, 31)));
@@ -94,7 +96,7 @@ namespace dewarping
             dbg->add(visualizeVerticalBounds(binarized.toQImage(), vert_bounds), "vert_bounds");
         }
 
-        std::list<std::vector<QPointF> > polylines;
+        std::list<std::vector<QPointF>> polylines;
         extractTextLines(polylines, stretchGrayRange(downscaled), vert_bounds, dbg);
         if (dbg) {
             dbg->add(visualizePolylines(downscaled, polylines), "traced");
@@ -112,7 +114,7 @@ namespace dewarping
             unit_down_vector = -unit_down_vector;
         }
         TextLineRefiner refiner(downscaled, Dpi(200, 200), unit_down_vector);
-        refiner.refine(polylines, /*iterations=*/100, dbg);
+        refiner.refine(polylines,  /*iterations=*/ 100, dbg);
 
         filterEdgyCurves(polylines);
         if (dbg) {
@@ -124,19 +126,19 @@ namespace dewarping
         vert_bounds.second = to_orig.map(vert_bounds.second);
         output.setVerticalBounds(vert_bounds.first, vert_bounds.second);
 
-        for (std::vector<QPointF>& polyline :  polylines) {
-            for (QPointF& pt :  polyline) {
+        for (std::vector<QPointF>& polyline : polylines) {
+            for (QPointF& pt : polyline) {
                 pt = to_orig.map(pt);
             }
             output.addHorizontalCurve(polyline);
         }
-    }
+    }  // TextLineTracer::trace
 
     GrayImage
     TextLineTracer::downscale(GrayImage const& input, Dpi const& dpi)
     {
         QSize downscaled_size(input.size());
-        if (dpi.horizontal() < 180 || dpi.horizontal() > 220 || dpi.vertical() < 180 || dpi.vertical() > 220) {
+        if ((dpi.horizontal() < 180) || (dpi.horizontal() > 220) || (dpi.vertical() < 180) || (dpi.vertical() > 220)) {
             downscaled_size.setWidth(std::max<int>(1, input.width() * 200 / dpi.horizontal()));
             downscaled_size.setHeight(std::max<int>(1, input.height() * 200 / dpi.vertical()));
         }
@@ -151,18 +153,18 @@ namespace dewarping
         seed.fillExcept(seed.rect().adjusted(1, 1, -1, -1), BLACK);
 
         BinaryImage touching_border(seedFill(seed.release(), image, CONN8));
-        rasterOp<RopSubtract<RopDst, RopSrc> >(image, touching_border.release());
+        rasterOp<RopSubtract<RopDst, RopSrc>>(image, touching_border.release());
 
         BinaryImage content_seeds(openBrick(image, QSize(2, 3), WHITE));
-        rasterOp<RopOr<RopSrc, RopDst> >(content_seeds, openBrick(image, QSize(3, 2), WHITE));
+        rasterOp<RopOr<RopSrc, RopDst>>(content_seeds, openBrick(image, QSize(3, 2), WHITE));
         image = seedFill(content_seeds.release(), image, CONN8);
 
         image.fillExcept(content_rect, WHITE);
     }
 
-/**
- * Returns false if the curve contains both significant convexities and concavities.
- */
+    /**
+     * Returns false if the curve contains both significant convexities and concavities.
+     */
     bool
     TextLineTracer::isCurvatureConsistent(std::vector<QPointF> const& polyline)
     {
@@ -211,11 +213,10 @@ namespace dewarping
         }
 
         return !(significant_positive && significant_positive);
-    }
+    }  // TextLineTracer::isCurvatureConsistent
 
     bool
-    TextLineTracer::isInsideBounds(
-            QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound)
+    TextLineTracer::isInsideBounds(QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound)
     {
         QPointF left_normal_inside(left_bound.normalVector().p2() - left_bound.p1());
         if (left_normal_inside.x() < 0) {
@@ -239,15 +240,15 @@ namespace dewarping
     }
 
     void
-    TextLineTracer::filterShortCurves(
-            std::list<std::vector<QPointF> >& polylines,
-            QLineF const& left_bound, QLineF const& right_bound)
+    TextLineTracer::filterShortCurves(std::list<std::vector<QPointF>>& polylines,
+                                      QLineF const& left_bound,
+                                      QLineF const& right_bound)
     {
         ToLineProjector const proj1(left_bound);
         ToLineProjector const proj2(right_bound);
 
-        std::list<std::vector<QPointF> >::iterator it(polylines.begin());
-        std::list<std::vector<QPointF> >::iterator const end(polylines.end());
+        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
+        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
         while (it != end) {
             assert(!it->empty());
             QPointF const front(it->front());
@@ -266,15 +267,15 @@ namespace dewarping
     }
 
     void
-    TextLineTracer::filterOutOfBoundsCurves(
-            std::list<std::vector<QPointF> >& polylines,
-            QLineF const& left_bound, QLineF const& right_bound)
+    TextLineTracer::filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
+                                            QLineF const& left_bound,
+                                            QLineF const& right_bound)
     {
-        std::list<std::vector<QPointF> >::iterator it(polylines.begin());
-        std::list<std::vector<QPointF> >::iterator const end(polylines.end());
+        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
+        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
         while (it != end) {
-            if (!isInsideBounds(it->front(), left_bound, right_bound) &&
-                !isInsideBounds(it->back(), left_bound, right_bound)) {
+            if (!isInsideBounds(it->front(), left_bound, right_bound)
+                && !isInsideBounds(it->back(), left_bound, right_bound)) {
                 polylines.erase(it++);
             }
             else {
@@ -284,10 +285,10 @@ namespace dewarping
     }
 
     void
-    TextLineTracer::filterEdgyCurves(std::list<std::vector<QPointF> >& polylines)
+    TextLineTracer::filterEdgyCurves(std::list<std::vector<QPointF>>& polylines)
     {
-        std::list<std::vector<QPointF> >::iterator it(polylines.begin());
-        std::list<std::vector<QPointF> >::iterator const end(polylines.end());
+        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
+        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
         while (it != end) {
             if (!isCurvatureConsistent(*it)) {
                 polylines.erase(it++);
@@ -299,9 +300,10 @@ namespace dewarping
     }
 
     void
-    TextLineTracer::extractTextLines(
-            std::list<std::vector<QPointF> >& out, imageproc::GrayImage const& image,
-            std::pair<QLineF, QLineF> const& bounds, DebugImages* dbg)
+    TextLineTracer::extractTextLines(std::list<std::vector<QPointF>>& out,
+                                     imageproc::GrayImage const& image,
+                                     std::pair<QLineF, QLineF> const& bounds,
+                                     DebugImages* dbg)
     {
         using namespace boost::lambda;
 
@@ -314,41 +316,41 @@ namespace dewarping
 
         float const downscale = 1.0f / (255.0f * 8.0f);
         horizontalSobel<float>(
-                width, height, image.data(), image.stride(), _1 * downscale,
-                aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-                main_grid.data(), main_grid.stride(), _1 = _2
+            width, height, image.data(), image.stride(), _1 * downscale,
+            aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
+            main_grid.data(), main_grid.stride(), _1 = _2
         );
         verticalSobel<float>(
-                width, height, image.data(), image.stride(), _1 * downscale,
-                aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-                main_grid.data(), main_grid.stride(), _1 = _1 * direction[0] + _2 * direction[1]
+            width, height, image.data(), image.stride(), _1 * downscale,
+            aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
+            main_grid.data(), main_grid.stride(), _1 = _1 * direction[0] + _2 * direction[1]
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv");
         }
 
         gaussBlurGeneric(
-                size, 6.0f, 6.0f,
-                main_grid.data(), main_grid.stride(), _1,
-                main_grid.data(), main_grid.stride(), _1 = _2
+            size, 6.0f, 6.0f,
+            main_grid.data(), main_grid.stride(), _1,
+            main_grid.data(), main_grid.stride(), _1 = _2
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv_blurred");
         }
 
         horizontalSobel<float>(
-                width, height, main_grid.data(), main_grid.stride(), _1,
-                aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
-                aux_grid.data(), aux_grid.stride(), _1 = _2
+            width, height, main_grid.data(), main_grid.stride(), _1,
+            aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
+            aux_grid.data(), aux_grid.stride(), _1 = _2
         );
         verticalSobel<float>(
-                width, height, main_grid.data(), main_grid.stride(), _1,
-                main_grid.data(), main_grid.stride(), _1 = _2, _1,
-                main_grid.data(), main_grid.stride(), _1 = _2
+            width, height, main_grid.data(), main_grid.stride(), _1,
+            main_grid.data(), main_grid.stride(), _1 = _2, _1,
+            main_grid.data(), main_grid.stride(), _1 = _2
         );
         rasterOpGeneric(
-                aux_grid.data(), aux_grid.stride(), size,
-                main_grid.data(), main_grid.stride(), _2 = _1 * direction[0] + _2 * direction[1]
+            aux_grid.data(), aux_grid.stride(), size,
+            main_grid.data(), main_grid.stride(), _2 = _1 * direction[0] + _2 * direction[1]
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, main_grid), "second_dir_deriv");
@@ -356,41 +358,41 @@ namespace dewarping
 
         float max = 0;
         rasterOpGeneric(
-                main_grid.data(), main_grid.stride(), size,
-                if_then(_1 > var(max), var(max) = _1)
+            main_grid.data(), main_grid.stride(), size,
+            if_then(_1 > var(max), var(max) = _1)
         );
         float const threshold = max * 15.0f / 255.0f;
 
         BinaryImage initial_binarization(image.size());
         rasterOpGeneric(
-                initial_binarization, main_grid.data(), main_grid.stride(),
-                if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
+            initial_binarization, main_grid.data(), main_grid.stride(),
+            if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
         );
         if (dbg) {
             dbg->add(initial_binarization, "initial_binarization");
         }
 
         rasterOpGeneric(
-                main_grid.data(), main_grid.stride(), size,
-                aux_grid.data(), aux_grid.stride(), _2 = bind((float (*)(float)) &std::fabs, _1)
+            main_grid.data(), main_grid.stride(), size,
+            aux_grid.data(), aux_grid.stride(), _2 = bind((float (*)(float)) & std::fabs, _1)
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, aux_grid), "abs");
         }
 
         gaussBlurGeneric(
-                size, 12.0f, 12.0f,
-                aux_grid.data(), aux_grid.stride(), _1,
-                aux_grid.data(), aux_grid.stride(), _1 = _2
+            size, 12.0f, 12.0f,
+            aux_grid.data(), aux_grid.stride(), _1,
+            aux_grid.data(), aux_grid.stride(), _1 = _2
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, aux_grid), "blurred");
         }
 
         rasterOpGeneric(
-                main_grid.data(), main_grid.stride(), size,
-                aux_grid.data(), aux_grid.stride(),
-                _2 += _1 - bind((float (*)(float)) &std::fabs, _1)
+            main_grid.data(), main_grid.stride(), size,
+            aux_grid.data(), aux_grid.stride(),
+            _2 += _1 - bind((float (*)(float)) & std::fabs, _1)
         );
         if (dbg) {
             dbg->add(visualizeGradient(image, aux_grid), "+= diff");
@@ -398,8 +400,8 @@ namespace dewarping
 
         BinaryImage post_binarization(image.size());
         rasterOpGeneric(
-                post_binarization, aux_grid.data(), aux_grid.stride(),
-                if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
+            post_binarization, aux_grid.data(), aux_grid.stride(),
+            if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0))
         );
         if (dbg) {
             dbg->add(post_binarization, "post_binarization");
@@ -407,8 +409,8 @@ namespace dewarping
 
         BinaryImage obstacles(image.size());
         rasterOpGeneric(
-                obstacles, aux_grid.data(), aux_grid.stride(),
-                if_then_else(_2 < -threshold, _1 = uint32_t(1), _1 = uint32_t(0))
+            obstacles, aux_grid.data(), aux_grid.stride(),
+            if_then_else(_2 < -threshold, _1 = uint32_t(1), _1 = uint32_t(0))
         );
         if (dbg) {
             dbg->add(obstacles, "obstacles");
@@ -421,7 +423,7 @@ namespace dewarping
         }
 
         obstacles.release();
-        rasterOp<RopAnd<RopDst, RopSrc> >(post_binarization, initial_binarization);
+        rasterOp<RopAnd<RopDst, RopSrc>>(post_binarization, initial_binarization);
         if (dbg) {
             dbg->add(post_binarization, "post &&= initial");
         }
@@ -437,7 +439,7 @@ namespace dewarping
         }
 
         post_binarization.release();
-        for (QPoint const seed :  seeds) {
+        for (QPoint const seed : seeds) {
             std::vector<QPointF> polyline;
 
             {
@@ -460,7 +462,7 @@ namespace dewarping
             out.push_back(std::vector<QPointF>());
             out.back().swap(polyline);
         }
-    }
+    }  // TextLineTracer::extractTextLines
 
     Vec2f
     TextLineTracer::calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds)
@@ -478,11 +480,11 @@ namespace dewarping
     }
 
     BinaryImage
-    TextLineTracer::closeWithObstacles(
-            BinaryImage const& image, BinaryImage const& obstacles, QSize const& brick)
+    TextLineTracer::closeWithObstacles(BinaryImage const& image, BinaryImage const& obstacles, QSize const& brick)
     {
         BinaryImage mask(closeBrick(image, brick));
-        rasterOp<RopSubtract<RopDst, RopSrc> >(mask, obstacles);
+        rasterOp<RopSubtract<RopDst, RopSrc>>(mask, obstacles);
+
         return seedFill(image, mask, CONN4);
     }
 
@@ -522,6 +524,7 @@ namespace dewarping
             QPointF const p2(ToLineProjector(line1).projectionPoint(p1));
             QPointF const origin(0.5 * (p1 + p2));
             QPointF const vector(line2.p2() - line2.p1());
+
             return QLineF(origin, origin + vector);
         }
         else {
@@ -529,13 +532,13 @@ namespace dewarping
             Vec2d v2(line2.p2() - line2.p1());
             v1 /= sqrt(v1.squaredNorm());
             v2 /= sqrt(v2.squaredNorm());
+
             return QLineF(intersection, intersection + 0.5 * (v1 + v2));
         }
     }
 
     QImage
-    TextLineTracer::visualizeVerticalBounds(
-            QImage const& background, std::pair<QLineF, QLineF> const& bounds)
+    TextLineTracer::visualizeVerticalBounds(QImage const& background, std::pair<QLineF, QLineF> const& bounds)
     {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
 
@@ -582,14 +585,14 @@ namespace dewarping
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        uint32_t* overlay_line = (uint32_t*)overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         grad_line = grad.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = grad_line[x] * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, (int)(fabs(value) + 0.5), 255);
                 if (value < 0) {
                     overlay_line[x] = qRgba(0, 0, magnitude, magnitude);
                 }
@@ -606,13 +609,14 @@ namespace dewarping
         painter.drawImage(0, 0, overlay);
 
         return canvas;
-    }
+    }  // TextLineTracer::visualizeGradient
 
     QImage
-    TextLineTracer::visualizeMidLineSeeds(
-            QImage const& background, BinaryImage const& overlay,
-            std::pair<QLineF, QLineF> bounds, QLineF mid_line,
-            std::vector<QPoint> const& seeds)
+    TextLineTracer::visualizeMidLineSeeds(QImage const& background,
+                                          BinaryImage const& overlay,
+                                          std::pair<QLineF, QLineF> bounds,
+                                          QLineF mid_line,
+                                          std::vector<QPoint> const& seeds)
     {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
@@ -637,18 +641,18 @@ namespace dewarping
         painter.setPen(Qt::NoPen);
         painter.setBrush(QColor(0x2d, 0x00, 0x6d, 255));
         QRectF rect(0, 0, 7, 7);
-        for (QPoint const pt :  seeds) {
+        for (QPoint const pt : seeds) {
             rect.moveCenter(pt + QPointF(0.5, 0.5));
             painter.drawEllipse(rect);
         }
 
         return canvas;
-    }
+    }  // TextLineTracer::visualizeMidLineSeeds
 
     QImage
-    TextLineTracer::visualizePolylines(
-            QImage const& background, std::list<std::vector<QPointF> > const& polylines,
-            std::pair<QLineF, QLineF> const* vert_bounds)
+    TextLineTracer::visualizePolylines(QImage const& background,
+                                       std::list<std::vector<QPointF>> const& polylines,
+                                       std::pair<QLineF, QLineF> const* vert_bounds)
     {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
@@ -657,7 +661,7 @@ namespace dewarping
         pen.setWidthF(3.0);
         painter.setPen(pen);
 
-        for (std::vector<QPointF> const& polyline :  polylines) {
+        for (std::vector<QPointF> const& polyline : polylines) {
             if (!polyline.empty()) {
                 painter.drawPolyline(&polyline[0], polyline.size());
             }
@@ -670,5 +674,4 @@ namespace dewarping
 
         return canvas;
     }
-
-} 
+}  // namespace dewarping

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef LINEAR_SOLVER_H_
 #define LINEAR_SOLVER_H_
@@ -58,7 +59,7 @@ public:
      *
      * \throw std::runtime_error If the system can't be solved.
      */
-    template<typename T>
+    template <typename T>
     void solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const;
 
     /**
@@ -66,7 +67,7 @@ public:
      *
      * In this version, buffers are allocated internally.
      */
-    template<typename T>
+    template <typename T>
     void solve(T const* A, T* X, T const* B) const;
 
 private:
@@ -76,7 +77,7 @@ private:
 };
 
 
-template<typename T>
+template <typename T>
 void
 LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const
 {
@@ -192,9 +193,9 @@ LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) c
         p_x_col += m_colsArowsX;
         p_y_col += m_colsArowsX;
     }
-}
+}  // LinearSolver::solve
 
-template<typename T>
+template <typename T>
 void
 LinearSolver::solve(T const* A, T* X, T const* B) const
 {
@@ -204,4 +205,4 @@ LinearSolver::solve(T const* A, T* X, T const* B) const
     solve(A, X, B, tbuffer.get(), pbuffer.get());
 }
 
-#endif
+#endif  // ifndef LINEAR_SOLVER_H_

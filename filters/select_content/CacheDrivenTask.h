@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_
 #define SELECT_CONTENT_CACHEDRIVENTASK_H_
@@ -35,12 +36,12 @@ namespace page_layout
 
 namespace select_content
 {
-
     class Settings;
 
-    class CacheDrivenTask : public RefCountable
+    class CacheDrivenTask
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(CacheDrivenTask)
+        DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
         CacheDrivenTask(IntrusivePtr<Settings> const& settings,
@@ -48,14 +49,12 @@ namespace select_content
 
         virtual ~CacheDrivenTask();
 
-        void process(
-                PageInfo const& page_info, AbstractFilterDataCollector* collector,
-                ImageTransformation const& xform);
+        void process(PageInfo const& page_info, AbstractFilterDataCollector* collector,
+                     ImageTransformation const& xform);
 
     private:
         IntrusivePtr<Settings> m_ptrSettings;
         IntrusivePtr<page_layout::CacheDrivenTask> m_ptrNextTask;
     };
-
 }
-#endif
+#endif  // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

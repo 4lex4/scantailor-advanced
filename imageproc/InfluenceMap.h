@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_INFLUENCE_MAP_H_
 #define IMAGEPROC_INFLUENCE_MAP_H_
@@ -27,28 +28,25 @@ class QImage;
 
 namespace imageproc
 {
-
     class BinaryImage;
-class ConnectivityMap;
+    class ConnectivityMap;
 
-/**
- * \brief Takes labelled regions and extends them to cover a larger area.
- *
- * Extension goes by taking over zero (that is background) labels.
- * Extension is done in such a way that two different labels meet at
- * a location equidistant from the initial areas of those two labels.
- */
+    /**
+     * \brief Takes labelled regions and extends them to cover a larger area.
+     *
+     * Extension goes by taking over zero (that is background) labels.
+     * Extension is done in such a way that two different labels meet at
+     * a location equidistant from the initial areas of those two labels.
+     */
     class InfluenceMap
     {
     public:
-        struct Vector
-        {
+        struct Vector {
             int16_t x;
             int16_t y;
         };
 
-        struct Cell
-        {
+        struct Cell {
             /**
              * The label from the connectivity map.
              */
@@ -102,7 +100,9 @@ class ConnectivityMap;
          * than size().width().
          */
         Cell const* data() const
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Returns a pointer to the top-left corner of the map.
@@ -112,7 +112,9 @@ class ConnectivityMap;
          * than size().width().
          */
         Cell* data()
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -142,7 +144,9 @@ class ConnectivityMap;
          * \brief Returns non-padded dimensions of the map.
          */
         QSize size() const
-        { return m_size; }
+        {
+            return m_size;
+        }
 
         /**
          * \brief Returns the number of units on a padded line.
@@ -151,13 +155,17 @@ class ConnectivityMap;
          * this number to a data pointer will move it one line down.
          */
         int stride() const
-        { return m_stride; }
+        {
+            return m_stride;
+        }
 
         /**
          * \brief Returns the maximum label present on the map.
          */
         uint32_t maxLabel() const
-        { return m_maxLabel; }
+        {
+            return m_maxLabel;
+        }
 
         /**
          * \brief Visualizes each label with a different color.
@@ -178,10 +186,10 @@ class ConnectivityMap;
     };
 
 
-    inline void swap(InfluenceMap& o1, InfluenceMap& o2)
+    inline void
+    swap(InfluenceMap& o1, InfluenceMap& o2)
     {
         o1.swap(o2);
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_INFLUENCE_MAP_H_

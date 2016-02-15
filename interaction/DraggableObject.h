@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef DRAGGABLE_OBJECT_H_
 #define DRAGGABLE_OBJECT_H_
@@ -32,41 +33,41 @@ class DraggableObject
 {
 public:
     typedef boost::function<
-            void(QPainter& painter, InteractionState const& interaction)
-    > PaintCallback;
+            void (QPainter& painter, InteractionState const& interaction)
+>PaintCallback;
 
     typedef boost::function<
             Proximity(InteractionState const& interaction)
-    > ProximityThresholdCallback;
+>ProximityThresholdCallback;
 
     typedef boost::function<
-            int()
-    > ProximityPriorityCallback;
+            int ()
+>ProximityPriorityCallback;
 
     typedef boost::function<
             Proximity(QPointF const& mouse_pos)
-    > ProximityCallback;
+>ProximityCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
-    > DragInitiatedCallback;
+            void (QPointF const& mouse_pos)
+>DragInitiatedCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
-    > DragContinuationCallback;
+            void (QPointF const& mouse_pos)
+>DragContinuationCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
-    > DragFinishedCallback;
+            void (QPointF const& mouse_pos)
+>DragFinishedCallback;
 
     DraggableObject()
-            : m_paintCallback(&DraggableObject::defaultPaint),
-              m_proximityThresholdCallback(&DraggableObject::defaultProximityThreshold),
-              m_proximityPriorityCallback(&DraggableObject::defaultProximityPriority),
-              m_proximityCallback(),
-              m_dragInitiatedCallback(),
-              m_dragContinuationCallback(),
-              m_dragFinishedCallback(&DraggableObject::defaultDragFinished)
+        : m_paintCallback(&DraggableObject::defaultPaint),
+          m_proximityThresholdCallback(&DraggableObject::defaultProximityThreshold),
+          m_proximityPriorityCallback(&DraggableObject::defaultProximityPriority),
+          m_proximityCallback(),
+          m_dragInitiatedCallback(),
+          m_dragContinuationCallback(),
+          m_dragFinishedCallback(&DraggableObject::defaultDragFinished)
     { }
 
     virtual ~DraggableObject()
@@ -174,7 +175,9 @@ private:
     }
 
     static int defaultProximityPriority()
-    { return 0; }
+    {
+        return 0;
+    }
 
     static void defaultDragFinished(QPointF const&)
     { }
@@ -188,4 +191,4 @@ private:
     DragFinishedCallback m_dragFinishedCallback;
 };
 
-#endif
+#endif  // ifndef DRAGGABLE_OBJECT_H_

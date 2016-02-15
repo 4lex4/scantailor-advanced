@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,21 +15,21 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "BackgroundTask.h"
 
 char const*
 BackgroundTask::CancelledException::what() const throw()
 {
-	return "BackgroundTask cancelled";
+    return "BackgroundTask cancelled";
 }
 
 void
 BackgroundTask::throwIfCancelled() const
 {
-	if (isCancelled()) {
-		throw CancelledException();
-	}
+    if (isCancelled()) {
+        throw CancelledException();
+    }
 }
 

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_SLICEDHISTOGRAM_H_
 #define IMAGEPROC_SLICEDHISTOGRAM_H_
@@ -26,20 +27,18 @@ class QRect;
 
 namespace imageproc
 {
-
     class BinaryImage;
 
-/**
- * \brief Calculates and stores the number of black pixels
- *        in each horizontal or vertical line.
- */
+    /**
+     * \brief Calculates and stores the number of black pixels
+     *        in each horizontal or vertical line.
+     */
     class SlicedHistogram
     {
     public:
-        enum Type
-        {
-            ROWS, /**< Process horizontal lines. */
-                    COLS  /**< Process vertical lines. */
+        enum Type {
+            ROWS,  /**< Process horizontal lines. */
+            COLS  /**< Process vertical lines. */
         };
 
         /**
@@ -71,16 +70,24 @@ namespace imageproc
         SlicedHistogram(BinaryImage const& image, QRect const& area, Type type);
 
         size_t size() const
-        { return m_data.size(); }
+        {
+            return m_data.size();
+        }
 
         void setSize(size_t size)
-        { m_data.resize(size); }
+        {
+            m_data.resize(size);
+        }
 
         int const& operator[](size_t idx) const
-        { return m_data[idx]; }
+        {
+            return m_data[idx];
+        }
 
         int& operator[](size_t idx)
-        { return m_data[idx]; }
+        {
+            return m_data[idx];
+        }
 
     private:
         void processHorizontalLines(BinaryImage const& image, QRect const& area);
@@ -89,6 +96,5 @@ namespace imageproc
 
         std::vector<int> m_data;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_SLICEDHISTOGRAM_H_

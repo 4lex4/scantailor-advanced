@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageView.h"
 #include "ImageTransformation.h"
@@ -27,26 +28,28 @@
 
 namespace page_split
 {
-
-    ImageView::ImageView(
-            QImage const& image, QImage const& downscaled_image,
-            ImageTransformation const& xform, PageLayout const& layout,
-            IntrusivePtr<ProjectPages> const& pages, ImageId const& image_id,
-            bool left_half_removed, bool right_half_removed)
-            : ImageViewBase(
-            image, downscaled_image,
-            ImagePresentation(xform.transform(), xform.resultingPreCropArea())
-    ),
-              m_ptrPages(pages),
-              m_imageId(image_id),
-              m_leftUnremoveButton(boost::bind(&ImageView::leftPageCenter, this)),
-              m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
-              m_dragHandler(*this),
-              m_zoomHandler(*this),
-              m_handlePixmap(":/icons/aqua-sphere.png"),
-              m_virtLayout(layout),
-              m_leftPageRemoved(left_half_removed),
-              m_rightPageRemoved(right_half_removed)
+    ImageView::ImageView(QImage const& image,
+                         QImage const& downscaled_image,
+                         ImageTransformation const& xform,
+                         PageLayout const& layout,
+                         IntrusivePtr<ProjectPages> const& pages,
+                         ImageId const& image_id,
+                         bool left_half_removed,
+                         bool right_half_removed)
+        : ImageViewBase(
+              image, downscaled_image,
+              ImagePresentation(xform.transform(), xform.resultingPreCropArea())
+        ),
+          m_ptrPages(pages),
+          m_imageId(image_id),
+          m_leftUnremoveButton(boost::bind(&ImageView::leftPageCenter, this)),
+          m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
+          m_dragHandler(*this),
+          m_zoomHandler(*this),
+          m_handlePixmap(":/icons/aqua-sphere.png"),
+          m_virtLayout(layout),
+          m_leftPageRemoved(left_half_removed),
+          m_rightPageRemoved(right_half_removed)
     {
         setMouseTracking(true);
 
@@ -68,8 +71,7 @@ namespace page_split
     }
 
     ImageView::~ImageView()
-    {
-    }
+    { }
 
     void
     ImageView::setupCuttersInteraction()
@@ -83,13 +85,13 @@ namespace page_split
             for (int j = 0; j < 2; ++j) {
                 m_handles[i][j].setHitRadius(hit_radius);
                 m_handles[i][j].setPositionCallback(
-                        boost::bind(&ImageView::handlePosition, this, i, j)
+                    boost::bind(&ImageView::handlePosition, this, i, j)
                 );
                 m_handles[i][j].setMoveRequestCallback(
-                        boost::bind(&ImageView::handleMoveRequest, this, i, j, _1)
+                    boost::bind(&ImageView::handleMoveRequest, this, i, j, _1)
                 );
                 m_handles[i][j].setDragFinishedCallback(
-                        boost::bind(&ImageView::dragFinished, this)
+                    boost::bind(&ImageView::dragFinished, this)
                 );
 
                 m_handleInteractors[i][j].setObject(&m_handles[i][j]);
@@ -98,13 +100,13 @@ namespace page_split
             }
 
             m_lineSegments[i].setPositionCallback(
-                    boost::bind(&ImageView::linePosition, this, i)
+                boost::bind(&ImageView::linePosition, this, i)
             );
             m_lineSegments[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::lineMoveRequest, this, i, _1)
+                boost::bind(&ImageView::lineMoveRequest, this, i, _1)
             );
             m_lineSegments[i].setDragFinishedCallback(
-                    boost::bind(&ImageView::dragFinished, this)
+                boost::bind(&ImageView::dragFinished, this)
             );
 
             m_lineInteractors[i].setObject(&m_lineSegments[i]);
@@ -120,7 +122,7 @@ namespace page_split
             }
             m_lineInteractors[i].unlink();
         }
-    }
+    }  // ImageView::setupCuttersInteraction
 
     void
     ImageView::pageLayoutSetExternally(PageLayout const& layout)
@@ -143,6 +145,7 @@ namespace page_split
             case PageLayout::SINGLE_PAGE_UNCUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawRect(virt_rect);
+
                 return;
             case PageLayout::SINGLE_PAGE_CUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
@@ -178,7 +181,7 @@ namespace page_split
             rect.moveCenter(cutter.p2());
             painter.drawPixmap(rect.topLeft(), m_handlePixmap);
         }
-    }
+    }  // ImageView::onPaint
 
     PageLayout
     ImageView::widgetLayout() const
@@ -195,9 +198,9 @@ namespace page_split
         reduced_widget_rect.setRight(widget_rect.right());
 
         QLineF line(
-                customInscribedCutterLine(
-                        widgetLayout().cutterLine(line_idx), reduced_widget_rect
-                )
+            customInscribedCutterLine(
+                widgetLayout().cutterLine(line_idx), reduced_widget_rect
+            )
         );
 
         if (m_handleInteractors[line_idx][1].interactionInProgress(interactionState())) {
@@ -224,7 +227,7 @@ namespace page_split
         reduced_virt_rect.setRight(virt_rect.right());
 
         return customInscribedCutterLine(
-                m_virtLayout.cutterLine(line_idx), reduced_virt_rect
+            m_virtLayout.cutterLine(line_idx), reduced_virt_rect
         );
     }
 
@@ -232,20 +235,22 @@ namespace page_split
     ImageView::reducedWidgetArea() const
     {
         qreal const delta = 0.5 * m_handlePixmap.width();
+
         return getOccupiedWidgetRect().adjusted(0.0, delta, 0.0, -delta);
     }
 
-/**
- * This implementation differs from PageLayout::inscribedCutterLine() in that
- * it forces the endpoints to lie on the top and bottom boundary lines.
- * Line's angle may change as a result.
- */
+    /**
+     * This implementation differs from PageLayout::inscribedCutterLine() in that
+     * it forces the endpoints to lie on the top and bottom boundary lines.
+     * Line's angle may change as a result.
+     */
     QLineF
     ImageView::customInscribedCutterLine(QLineF const& line, QRectF const& rect)
     {
         if (line.p1().y() == line.p2().y()) {
             qreal middle_x = 0.5 * (line.p1().x() + line.p2().x());
             middle_x = qBound(rect.left(), middle_x, rect.right());
+
             return QLineF(QPointF(middle_x, rect.top()), QPointF(middle_x, rect.bottom()));
         }
 
@@ -265,6 +270,7 @@ namespace page_split
     ImageView::handlePosition(int line_idx, int handle_idx) const
     {
         QLineF const line(widgetCutterLine(line_idx));
+
         return handle_idx == 0 ? line.p1() : line.p2();
     }
 
@@ -307,7 +313,7 @@ namespace page_split
         double const max_x = qMax(p_top.x(), p_bottom.x());
         double const left = valid_area.left() - min_x;
         double const right = max_x - valid_area.right();
-        if (left > right && left > 0.0) {
+        if ((left > right) && (left > 0.0)) {
             line.translate(left, 0.0);
         }
         else if (right > 0.0) {
@@ -355,7 +361,7 @@ namespace page_split
     ImageView::unremoveLeftPage()
     {
         PageInfo page_info(
-                m_ptrPages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE))
+            m_ptrPages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE))
         );
         m_leftUnremoveButton.unlink();
         m_leftPageRemoved = false;
@@ -370,7 +376,7 @@ namespace page_split
     ImageView::unremoveRightPage()
     {
         PageInfo page_info(
-                m_ptrPages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE))
+            m_ptrPages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE))
         );
         m_rightUnremoveButton.unlink();
         m_rightPageRemoved = false;
@@ -380,5 +386,4 @@ namespace page_split
         page_info.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
         emit invalidateThumbnail(page_info);
     }
-
-} 
+}  // namespace page_split

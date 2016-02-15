@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
 
@@ -16,7 +17,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include <vector>
 #include <iostream>
@@ -52,11 +53,13 @@
 
 #include "ConsoleBatch.h"
 
-ConsoleBatch::ConsoleBatch(std::vector<ImageFileInfo> const &images, QString const &output_directory,
+ConsoleBatch::ConsoleBatch(std::vector<ImageFileInfo> const& images,
+                           QString const& output_directory,
                            Qt::LayoutDirection const layout)
-        : batch(true), debug(true),
-          m_ptrDisambiguator(new FileNameDisambiguator),
-          m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout))
+    : batch(true),
+      debug(true),
+      m_ptrDisambiguator(new FileNameDisambiguator),
+      m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout))
 {
     PageSelectionAccessor const accessor((IntrusivePtr<PageSelectionProvider>()));
     m_ptrStages = IntrusivePtr<StageSequence>(new StageSequence(m_ptrPages, accessor));
@@ -66,7 +69,8 @@ ConsoleBatch::ConsoleBatch(std::vector<ImageFileInfo> const &images, QString con
 }
 
 ConsoleBatch::ConsoleBatch(QString const project_file)
-        : batch(true), debug(true)
+    : batch(true),
+      debug(true)
 {
     QFile file(project_file);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -89,7 +93,7 @@ ConsoleBatch::ConsoleBatch(QString const project_file)
     m_ptrStages = IntrusivePtr<StageSequence>(new StageSequence(m_ptrPages, accessor));
     m_ptrReader->readFilterSettings(m_ptrStages->filters());
 
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
     QString output_directory = m_ptrReader->outputDirectory();
     if (!cli.outputDirectory().isEmpty()) {
         output_directory = cli.outputDirectory();
@@ -99,11 +103,8 @@ ConsoleBatch::ConsoleBatch(QString const project_file)
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
 
-
 BackgroundTaskPtr
-ConsoleBatch::createCompositeTask(
-        PageInfo const &page,
-        int const last_filter_idx)
+ConsoleBatch::createCompositeTask(PageInfo const& page, int const last_filter_idx)
 {
     IntrusivePtr<fix_orientation::Task> fix_orientation_task;
     IntrusivePtr<page_split::Task> page_split_task;
@@ -118,60 +119,59 @@ ConsoleBatch::createCompositeTask(
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
         output_task = m_ptrStages->outputFilter()->createTask(
-                page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
-        );
+            page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
+                      );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageLayoutFilterIdx()) {
         page_layout_task = m_ptrStages->pageLayoutFilter()->createTask(
-                page.id(), output_task, batch, debug
-        );
+            page.id(), output_task, batch, debug
+                           );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->selectContentFilterIdx()) {
         select_content_task = m_ptrStages->selectContentFilter()->createTask(
-                page.id(), page_layout_task, batch, debug
-        );
+            page.id(), page_layout_task, batch, debug
+                              );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->deskewFilterIdx()) {
         deskew_task = m_ptrStages->deskewFilter()->createTask(
-                page.id(), select_content_task, batch, debug
-        );
+            page.id(), select_content_task, batch, debug
+                      );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageSplitFilterIdx()) {
         page_split_task = m_ptrStages->pageSplitFilter()->createTask(
-                page, deskew_task, batch, debug
-        );
+            page, deskew_task, batch, debug
+                          );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->fixOrientationFilterIdx()) {
         fix_orientation_task = m_ptrStages->fixOrientationFilter()->createTask(
-                page.id(), page_split_task, batch
-        );
+            page.id(), page_split_task, batch
+                               );
         debug = false;
     }
     assert(fix_orientation_task);
 
     return BackgroundTaskPtr(
-            new LoadFileTask(
-                    BackgroundTask::BATCH,
-                    page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
-            )
+        new LoadFileTask(
+            BackgroundTask::BATCH,
+            page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
+        )
     );
-}
-
+}  // ConsoleBatch::createCompositeTask
 
 void
 ConsoleBatch::process()
 {
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     int startFilterIdx = m_ptrStages->fixOrientationFilterIdx();
     if (cli.hasStartFilterIdx()) {
         unsigned int sf = cli.getStartFilterIdx();
-        if (sf < 0 || sf >= m_ptrStages->filters().size()) {
+        if ((sf < 0) || (sf >= m_ptrStages->filters().size())) {
             throw std::runtime_error("Start filter out of range");
         }
         startFilterIdx = sf;
@@ -180,7 +180,7 @@ ConsoleBatch::process()
     int endFilterIdx = m_ptrStages->outputFilterIdx();
     if (cli.hasEndFilterIdx()) {
         unsigned int ef = cli.getEndFilterIdx();
-        if (ef < 0 || ef >= m_ptrStages->filters().size()) {
+        if ((ef < 0) || (ef >= m_ptrStages->filters().size())) {
             throw std::runtime_error("End filter out of range");
         }
         endFilterIdx = ef;
@@ -211,8 +211,7 @@ ConsoleBatch::process()
     for (int j = 0; j <= endFilterIdx; j++) {
         m_ptrStages->filterAt(j)->updateStatistics();
     }
-}
-
+}  // ConsoleBatch::process
 
 void
 ConsoleBatch::saveProject(QString const project_file)
@@ -222,7 +221,6 @@ ConsoleBatch::saveProject(QString const project_file)
     ProjectWriter writer(m_ptrPages, sPage, m_outFileNameGen);
     writer.write(project_file, m_ptrStages->filters());
 }
-
 
 void
 ConsoleBatch::setupFilter(int idx, std::set<PageId> allPages)
@@ -247,12 +245,11 @@ ConsoleBatch::setupFilter(int idx, std::set<PageId> allPages)
     }
 }
 
-
 void
 ConsoleBatch::setupFixOrientation(std::set<PageId> allPages)
 {
     IntrusivePtr<fix_orientation::Filter> fix_orientation = m_ptrStages->fixOrientationFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
@@ -278,24 +275,22 @@ ConsoleBatch::setupFixOrientation(std::set<PageId> allPages)
     }
 }
 
-
 void
 ConsoleBatch::setupPageSplit(std::set<PageId> allPages)
 {
     IntrusivePtr<page_split::Filter> page_split = m_ptrStages->pageSplitFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     if (cli.hasLayout()) {
         page_split->getSettings()->setLayoutTypeForAllPages(cli.getLayout());
     }
 }
 
-
 void
 ConsoleBatch::setupDeskew(std::set<PageId> allPages)
 {
     IntrusivePtr<deskew::Filter> deskew = m_ptrStages->deskewFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
@@ -317,12 +312,11 @@ ConsoleBatch::setupDeskew(std::set<PageId> allPages)
     }
 }
 
-
 void
 ConsoleBatch::setupSelectContent(std::set<PageId> allPages)
 {
     IntrusivePtr<select_content::Filter> select_content = m_ptrStages->selectContentFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
@@ -360,14 +354,13 @@ ConsoleBatch::setupSelectContent(std::set<PageId> allPages)
     if (cli.hasPageDetectionTolerance()) {
         select_content->getSettings()->setPageDetectionTolerance(cli.getPageDetectionTolerance());
     }
-}
-
+}  // ConsoleBatch::setupSelectContent
 
 void
 ConsoleBatch::setupPageLayout(std::set<PageId> allPages)
 {
     IntrusivePtr<page_layout::Filter> page_layout = m_ptrStages->pageLayoutFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
     QMap<QString, float> img_cache;
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
@@ -392,7 +385,9 @@ ConsoleBatch::setupPageLayout(std::set<PageId> allPages)
                 }
                 float pimgAspectRatio = img_cache[ppath];
                 float diff = imgAspectRatio - pimgAspectRatio;
-                if (diff < 0.0) { diff *= -1; }
+                if (diff < 0.0) {
+                    diff *= -1;
+                }
                 diffs.push_back(diff);
             }
             unsigned bad_diffs = 0;
@@ -412,14 +407,13 @@ ConsoleBatch::setupPageLayout(std::set<PageId> allPages)
             page_layout->getSettings()->setPageAlignment(page, alignment);
         }
     }
-}
-
+}  // ConsoleBatch::setupPageLayout
 
 void
 ConsoleBatch::setupOutput(std::set<PageId> allPages)
 {
     IntrusivePtr<output::Filter> output = m_ptrStages->outputFilter();
-    CommandLine const &cli = CommandLine::get();
+    CommandLine const& cli = CommandLine::get();
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
@@ -475,4 +469,5 @@ ConsoleBatch::setupOutput(std::set<PageId> allPages)
     if (cli.hasTiffCompression()) {
         output->getSettings()->setTiffCompression(cli.getTiffCompression());
     }
-}
+}  // ConsoleBatch::setupOutput
+

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ContentSpanFinder.h"
 #include "imageproc/SlicedHistogram.h"
@@ -22,9 +23,7 @@
 using namespace imageproc;
 
 void
-ContentSpanFinder::findImpl(
-        SlicedHistogram const &histogram,
-        VirtualFunction1<void, Span> &handler) const
+ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFunction1<void, Span>& handler) const
 {
     int const hist_size = histogram.size();
 
@@ -40,8 +39,6 @@ ContentSpanFinder::findImpl(
         }
 
         if (i - content_end >= m_minWhitespaceWidth) {
-
-
             if (content_end - content_begin >= m_minContentWidth) {
                 handler(Span(content_begin, content_end));
             }
@@ -64,4 +61,5 @@ ContentSpanFinder::findImpl(
     if (content_end - content_begin >= m_minContentWidth) {
         handler(Span(content_begin, content_end));
     }
-}
+}  // ContentSpanFinder::findImpl
+

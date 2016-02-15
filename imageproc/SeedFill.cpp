@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SeedFill.h"
 #include "SeedFillGeneric.h"
@@ -23,11 +24,10 @@
 
 namespace imageproc
 {
-
     namespace
     {
-
-        inline uint32_t fillWordHorizontally(uint32_t word, uint32_t const mask)
+        inline uint32_t
+        fillWordHorizontally(uint32_t word, uint32_t const mask)
         {
             uint32_t prev_word;
 
@@ -40,7 +40,8 @@ namespace imageproc
             return word;
         }
 
-        void seedFill4Iteration(BinaryImage& seed, BinaryImage const& mask)
+        void
+        seedFill4Iteration(BinaryImage& seed, BinaryImage const& mask)
         {
             int const w = seed.width();
             int const h = seed.height();
@@ -101,9 +102,10 @@ namespace imageproc
                 seed_line -= seed_wpl;
                 mask_line -= mask_wpl;
             }
-        }
+        }  // seedFill4Iteration
 
-        void seedFill8Iteration(BinaryImage& seed, BinaryImage const& mask)
+        void
+        seedFill8Iteration(BinaryImage& seed, BinaryImage const& mask)
         {
             int const w = seed.width();
             int const h = seed.height();
@@ -192,24 +194,28 @@ namespace imageproc
                 seed_line -= seed_wpl;
                 mask_line -= mask_wpl;
             }
-        }
+        }  // seedFill8Iteration
 
-        inline uint8_t lightest(uint8_t lhs, uint8_t rhs)
+        inline uint8_t
+        lightest(uint8_t lhs, uint8_t rhs)
         {
             return lhs > rhs ? lhs : rhs;
         }
 
-        inline uint8_t darkest(uint8_t lhs, uint8_t rhs)
+        inline uint8_t
+        darkest(uint8_t lhs, uint8_t rhs)
         {
             return lhs < rhs ? lhs : rhs;
         }
 
-        inline bool darker_than(uint8_t lhs, uint8_t rhs)
+        inline bool
+        darker_than(uint8_t lhs, uint8_t rhs)
         {
             return lhs < rhs;
         }
 
-        void seedFillGrayHorLine(uint8_t* seed, uint8_t const* mask, int const line_len)
+        void
+        seedFillGrayHorLine(uint8_t* seed, uint8_t const* mask, int const line_len)
         {
             assert(line_len > 0);
 
@@ -228,9 +234,12 @@ namespace imageproc
             }
         }
 
-        void seedFillGrayVertLine(
-                uint8_t* seed, int const seed_stride,
-                uint8_t const* mask, int const mask_stride, int const line_len)
+        void
+        seedFillGrayVertLine(uint8_t* seed,
+                             int const seed_stride,
+                             uint8_t const* mask,
+                             int const mask_stride,
+                             int const line_len)
         {
             assert(line_len > 0);
 
@@ -249,10 +258,11 @@ namespace imageproc
             }
         }
 
-/**
- * \return non-zero if more iterations are required, zero otherwise.
- */
-        uint8_t seedFillGray4SlowIteration(GrayImage& seed, GrayImage const& mask)
+        /**
+         * \return non-zero if more iterations are required, zero otherwise.
+         */
+        uint8_t
+        seedFillGray4SlowIteration(GrayImage& seed, GrayImage const& mask)
         {
             int const w = seed.width();
             int const h = seed.height();
@@ -271,12 +281,12 @@ namespace imageproc
 
                 for (int x = 0; x < w; ++x) {
                     uint8_t const pixel = lightest(
-                            mask_line[x],
-                            darkest(
-                                    prev_pixel,
-                                    darkest(seed_line[x], prev_line[x])
-                            )
-                    );
+                        mask_line[x],
+                        darkest(
+                            prev_pixel,
+                            darkest(seed_line[x], prev_line[x])
+                        )
+                                          );
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                     prev_pixel = pixel;
@@ -296,12 +306,12 @@ namespace imageproc
 
                 for (int x = w - 1; x >= 0; --x) {
                     uint8_t const pixel = lightest(
-                            mask_line[x],
-                            darkest(
-                                    prev_pixel,
-                                    darkest(seed_line[x], prev_line[x])
-                            )
-                    );
+                        mask_line[x],
+                        darkest(
+                            prev_pixel,
+                            darkest(seed_line[x], prev_line[x])
+                        )
+                                          );
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                     prev_pixel = pixel;
@@ -313,12 +323,13 @@ namespace imageproc
             }
 
             return modified;
-        }
+        }  // seedFillGray4SlowIteration
 
-/**
- * \return non-zero if more iterations are required, zero otherwise.
- */
-        uint8_t seedFillGray8SlowIteration(GrayImage& seed, GrayImage const& mask)
+        /**
+         * \return non-zero if more iterations are required, zero otherwise.
+         */
+        uint8_t
+        seedFillGray8SlowIteration(GrayImage& seed, GrayImage const& mask)
         {
             int const w = seed.width();
             int const h = seed.height();
@@ -334,10 +345,12 @@ namespace imageproc
 
             if (w == 1) {
                 seedFillGrayVertLine(seed_line, seed_stride, mask_line, mask_stride, h);
+
                 return 0;
             }
             else if (h == 1) {
                 seedFillGrayHorLine(seed_line, mask_line, w);
+
                 return 0;
             }
 
@@ -349,37 +362,37 @@ namespace imageproc
                 int x = 0;
 
                 uint8_t pixel = lightest(
-                        mask_line[x],
-                        darkest(
-                                seed_line[x],
-                                darkest(prev_line[x], prev_line[x + 1])
-                        )
-                );
+                    mask_line[x],
+                    darkest(
+                        seed_line[x],
+                        darkest(prev_line[x], prev_line[x + 1])
+                    )
+                                );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
 
                 while (++x < w - 1) {
                     pixel = lightest(
-                            mask_line[x],
+                        mask_line[x],
+                        darkest(
                             darkest(
-                                    darkest(
-                                            darkest(seed_line[x], seed_line[x - 1]),
-                                            darkest(prev_line[x], prev_line[x - 1])
-                                    ),
-                                    prev_line[x + 1]
-                            )
-                    );
+                                darkest(seed_line[x], seed_line[x - 1]),
+                                darkest(prev_line[x], prev_line[x - 1])
+                            ),
+                            prev_line[x + 1]
+                        )
+                            );
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                 }
 
                 pixel = lightest(
-                        mask_line[x],
-                        darkest(
-                                darkest(seed_line[x], seed_line[x - 1]),
-                                darkest(prev_line[x], prev_line[x - 1])
-                        )
-                );
+                    mask_line[x],
+                    darkest(
+                        darkest(seed_line[x], seed_line[x - 1]),
+                        darkest(prev_line[x], prev_line[x - 1])
+                    )
+                        );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
 
@@ -396,37 +409,37 @@ namespace imageproc
                 int x = w - 1;
 
                 uint8_t pixel = lightest(
-                        mask_line[x],
-                        darkest(
-                                seed_line[x],
-                                darkest(prev_line[x], prev_line[x - 1])
-                        )
-                );
+                    mask_line[x],
+                    darkest(
+                        seed_line[x],
+                        darkest(prev_line[x], prev_line[x - 1])
+                    )
+                                );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
 
                 while (--x > 0) {
                     pixel = lightest(
-                            mask_line[x],
+                        mask_line[x],
+                        darkest(
                             darkest(
-                                    darkest(
-                                            darkest(seed_line[x], seed_line[x + 1]),
-                                            darkest(prev_line[x], prev_line[x + 1])
-                                    ),
-                                    prev_line[x - 1]
-                            )
-                    );
+                                darkest(seed_line[x], seed_line[x + 1]),
+                                darkest(prev_line[x], prev_line[x + 1])
+                            ),
+                            prev_line[x - 1]
+                        )
+                            );
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                 }
 
                 pixel = lightest(
-                        mask_line[x],
-                        darkest(
-                                darkest(seed_line[x], seed_line[x + 1]),
-                                darkest(prev_line[x], prev_line[x + 1])
-                        )
-                );
+                    mask_line[x],
+                    darkest(
+                        darkest(seed_line[x], seed_line[x + 1]),
+                        darkest(prev_line[x], prev_line[x + 1])
+                    )
+                        );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
 
@@ -436,13 +449,11 @@ namespace imageproc
             }
 
             return modified;
-        }
+        }  // seedFillGray8SlowIteration
+    }  // namespace
 
-    }
-
-    BinaryImage seedFill(
-            BinaryImage const& seed, BinaryImage const& mask,
-            Connectivity const connectivity)
+    BinaryImage
+    seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity const connectivity)
     {
         if (seed.size() != mask.size()) {
             throw std::invalid_argument("seedFill: seed and mask have different sizes");
@@ -464,16 +475,17 @@ namespace imageproc
         return img;
     }
 
-    GrayImage seedFillGray(
-            GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity)
+    GrayImage
+    seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity)
     {
         GrayImage result(seed);
         seedFillGrayInPlace(result, mask, connectivity);
+
         return result;
     }
 
-    void seedFillGrayInPlace(
-            GrayImage& seed, GrayImage const& mask, Connectivity const connectivity)
+    void
+    seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity const connectivity)
     {
         if (seed.size() != mask.size()) {
             throw std::invalid_argument("seedFillGrayInPlace: seed and mask have different sizes");
@@ -484,27 +496,24 @@ namespace imageproc
         }
 
         seedFillGenericInPlace(
-                &darkest, &lightest, connectivity,
-                seed.data(), seed.stride(), seed.size(),
-                mask.data(), mask.stride()
+            &darkest, &lightest, connectivity,
+            seed.data(), seed.stride(), seed.size(),
+            mask.data(), mask.stride()
         );
     }
 
-    GrayImage seedFillGraySlow(
-            GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity)
+    GrayImage
+    seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity)
     {
         GrayImage img(seed);
 
         if (connectivity == CONN4) {
-            while (seedFillGray4SlowIteration(img, mask)) {
-            }
+            while (seedFillGray4SlowIteration(img, mask)) { }
         }
         else {
-            while (seedFillGray8SlowIteration(img, mask)) {
-            }
+            while (seedFillGray8SlowIteration(img, mask)) { }
         }
 
         return img;
     }
-
-} 
+}  // namespace imageproc

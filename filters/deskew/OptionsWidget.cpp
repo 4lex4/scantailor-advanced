@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "Settings.h"
@@ -23,15 +24,14 @@
 
 namespace deskew
 {
-
     double const OptionsWidget::MAX_ANGLE = 45.0;
 
     OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_ignoreAutoManualToggle(0),
-              m_ignoreSpinBoxChanges(0),
-              m_pageSelectionAccessor(page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_ignoreAutoManualToggle(0),
+          m_ignoreSpinBoxChanges(0),
+          m_pageSelectionAccessor(page_selection_accessor)
     {
         setupUi(this);
         angleSpinBox->setSuffix(QChar(0x00B0));
@@ -40,35 +40,34 @@ namespace deskew
         setSpinBoxUnknownState();
 
         connect(
-                angleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(spinBoxValueChanged(double))
+            angleSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(spinBoxValueChanged(double))
         );
         connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
         connect(
-                applyDeskewBtn, SIGNAL(clicked()),
-                this, SLOT(showDeskewDialog())
+            applyDeskewBtn, SIGNAL(clicked()),
+            this, SLOT(showDeskewDialog())
         );
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
     OptionsWidget::showDeskewDialog()
     {
         ApplyDialog* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                              );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Deskew"));
         connect(
-                dialog, SIGNAL(appliedTo(std::set<PageId> const&)),
-                this, SLOT(appliedTo(std::set<PageId> const&))
+            dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
+            this, SLOT(appliedTo(std::set<PageId> const &))
         );
         connect(
-                dialog, SIGNAL(appliedToAllPages(std::set<PageId> const&)),
-                this, SLOT(appliedToAllPages(std::set<PageId> const&))
+            dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
+            this, SLOT(appliedToAllPages(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -81,8 +80,8 @@ namespace deskew
         }
 
         Params const params(
-                m_uiData.effectiveDeskewAngle(),
-                m_uiData.dependencies(), m_uiData.mode()
+            m_uiData.effectiveDeskewAngle(),
+            m_uiData.dependencies(), m_uiData.mode()
         );
         m_ptrSettings->setDegress(pages, params);
 
@@ -90,7 +89,7 @@ namespace deskew
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -104,8 +103,8 @@ namespace deskew
         }
 
         Params const params(
-                m_uiData.effectiveDeskewAngle(),
-                m_uiData.dependencies(), m_uiData.mode()
+            m_uiData.effectiveDeskewAngle(),
+            m_uiData.dependencies(), m_uiData.mode()
         );
         m_ptrSettings->setDegress(pages, params);
         emit invalidateAllThumbnails();
@@ -220,8 +219,8 @@ namespace deskew
     OptionsWidget::commitCurrentParams()
     {
         Params params(
-                m_uiData.effectiveDeskewAngle(),
-                m_uiData.dependencies(), m_uiData.mode()
+            m_uiData.effectiveDeskewAngle(),
+            m_uiData.dependencies(), m_uiData.mode()
         );
         params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, params);
@@ -239,18 +238,15 @@ namespace deskew
         return -degrees;
     }
 
-
-/*========================== OptionsWidget::UiData =========================*/
+    /*========================== OptionsWidget::UiData =========================*/
 
     OptionsWidget::UiData::UiData()
-            : m_effDeskewAngle(0.0),
-              m_mode(MODE_AUTO)
-    {
-    }
+        : m_effDeskewAngle(0.0),
+          m_mode(MODE_AUTO)
+    { }
 
     OptionsWidget::UiData::~UiData()
-    {
-    }
+    { }
 
     void
     OptionsWidget::UiData::setEffectiveDeskewAngle(double const degrees)
@@ -287,5 +283,4 @@ namespace deskew
     {
         return m_mode;
     }
-
-} 
+}  // namespace deskew

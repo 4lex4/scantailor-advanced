@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageMetadataLoader.h"
 #include "ImageMetadata.h"
@@ -25,16 +26,13 @@
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
 void
-ImageMetadataLoader::registerLoader(
-        IntrusivePtr<ImageMetadataLoader> const& loader)
+ImageMetadataLoader::registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader)
 {
     m_sLoaders.push_back(loader);
 }
 
 ImageMetadataLoader::Status
-ImageMetadataLoader::loadImpl(
-        QIODevice& io_device,
-        VirtualFunction1<void, ImageMetadata const&>& out)
+ImageMetadataLoader::loadImpl(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
 {
     LoaderList::iterator it(m_sLoaders.begin());
     LoaderList::iterator const end(m_sLoaders.end());
@@ -44,18 +42,18 @@ ImageMetadataLoader::loadImpl(
             return status;
         }
     }
+
     return FORMAT_NOT_RECOGNIZED;
 }
 
 ImageMetadataLoader::Status
-ImageMetadataLoader::loadImpl(
-        QString const& file_path,
-        VirtualFunction1<void, ImageMetadata const&>& out)
+ImageMetadataLoader::loadImpl(QString const& file_path, VirtualFunction1<void, ImageMetadata const&>& out)
 {
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         return GENERIC_ERROR;
     }
+
     return loadImpl(file, out);
 }
 

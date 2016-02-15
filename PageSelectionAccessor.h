@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SELECTION_ACCESSOR_H_
 #define PAGE_SELECTION_ACCESSOR_H_
@@ -31,8 +32,7 @@ class PageSequence;
 class PageSelectionAccessor
 {
 public:
-    explicit PageSelectionAccessor(
-            IntrusivePtr<PageSelectionProvider const> const& provider);
+    explicit PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider);
 
     PageSequence allPages() const;
 

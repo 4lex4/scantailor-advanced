@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RELINKING_DIALOG_H_
 #define RELINKING_DIALOG_H_
@@ -31,15 +32,18 @@ class QAbstractButton;
 class QItemSelection;
 class QString;
 
-class RelinkingDialog : public QDialog
+class RelinkingDialog
+    : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit RelinkingDialog(QString const& project_file_path, QWidget* parent = 0);
 
     VirtualFunction1<void, RelinkablePath const&>& pathCollector()
-    { return m_model; }
+    {
+        return m_model;
+    }
 
     /**
      * This method guarantees that
@@ -51,10 +55,11 @@ public:
      * and then use it when accepted() signal is emitted.
      */
     IntrusivePtr<AbstractRelinker> relinker() const
-    { return m_model.relinker(); }
+    {
+        return m_model.relinker();
+    }
 
 private slots:
-
     void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
 
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
@@ -71,4 +76,4 @@ private:
     QString m_projectFileDir;
 };
 
-#endif
+#endif  // ifndef RELINKING_DIALOG_H_

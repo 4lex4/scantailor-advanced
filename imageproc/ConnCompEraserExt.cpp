@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,20 +15,17 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ConnCompEraserExt.h"
 #include "RasterOp.h"
 
 namespace imageproc
 {
-
-    ConnCompEraserExt::ConnCompEraserExt(
-            BinaryImage const& image, Connectivity const conn)
-            : m_eraser(image, conn),
-              m_lastImage(image)
-    {
-    }
+    ConnCompEraserExt::ConnCompEraserExt(BinaryImage const& image, Connectivity const conn)
+        : m_eraser(image, conn),
+          m_lastImage(image)
+    { }
 
     ConnComp
     ConnCompEraserExt::nextConnComp()
@@ -51,6 +49,7 @@ namespace imageproc
         }
 
         m_lastCC = m_eraser.nextConnComp();
+
         return m_lastCC;
     }
 
@@ -76,6 +75,7 @@ namespace imageproc
         if (rect) {
             *rect = r;
         }
+
         return computeDiffImage(r);
     }
 
@@ -84,8 +84,8 @@ namespace imageproc
     {
         BinaryImage diff(rect.width(), rect.height());
         rasterOp<RopSrc>(diff, diff.rect(), m_eraser.image(), rect.topLeft());
-        rasterOp<RopXor<RopSrc, RopDst> >(diff, diff.rect(), m_lastImage, rect.topLeft());
+        rasterOp<RopXor<RopSrc, RopDst>>(diff, diff.rect(), m_lastImage, rect.topLeft());
+
         return diff;
     }
-
-} 
+}  // namespace imageproc

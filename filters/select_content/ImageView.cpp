@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageView.h"
 #include "ImageTransformation.h"
@@ -27,40 +28,41 @@
 
 namespace select_content
 {
-
-    ImageView::ImageView(
-            QImage const& image, QImage const& downscaled_image,
-            ImageTransformation const& xform, QRectF const& content_rect, QRectF const& page_rect)
-            : ImageViewBase(
-            image, downscaled_image,
-            ImagePresentation(xform.transform(), xform.resultingPreCropArea())
-    ),
-              m_dragHandler(*this),
-              m_zoomHandler(*this),
-              m_pNoContentMenu(new QMenu(this)),
-              m_pHaveContentMenu(new QMenu(this)),
-              m_contentRect(content_rect),
-              m_pageRect(page_rect),
-              m_minBoxSize(10.0, 10.0)
+    ImageView::ImageView(QImage const& image,
+                         QImage const& downscaled_image,
+                         ImageTransformation const& xform,
+                         QRectF const& content_rect,
+                         QRectF const& page_rect)
+        : ImageViewBase(
+              image, downscaled_image,
+              ImagePresentation(xform.transform(), xform.resultingPreCropArea())
+        ),
+          m_dragHandler(*this),
+          m_zoomHandler(*this),
+          m_pNoContentMenu(new QMenu(this)),
+          m_pHaveContentMenu(new QMenu(this)),
+          m_contentRect(content_rect),
+          m_pageRect(page_rect),
+          m_minBoxSize(10.0, 10.0)
     {
         setMouseTracking(true);
 
         interactionState().setDefaultStatusTip(
-                tr("Use the context menu to enable / disable the content box.")
+            tr("Use the context menu to enable / disable the content box.")
         );
 
         QString const drag_tip(tr("Drag lines or corners to resize the content box."));
 
-        static int const masks_by_corner[] = {TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT};
+        static int const masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
         for (int i = 0; i < 4; ++i) {
             m_corners[i].setPositionCallback(
-                    boost::bind(&ImageView::cornerPosition, this, masks_by_corner[i])
+                boost::bind(&ImageView::cornerPosition, this, masks_by_corner[i])
             );
             m_corners[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::cornerMoveRequest, this, masks_by_corner[i], _1)
+                boost::bind(&ImageView::cornerMoveRequest, this, masks_by_corner[i], _1)
             );
             m_corners[i].setDragFinishedCallback(
-                    boost::bind(&ImageView::dragFinished, this)
+                boost::bind(&ImageView::dragFinished, this)
             );
             m_cornerHandlers[i].setObject(&m_corners[i]);
             m_cornerHandlers[i].setProximityStatusTip(drag_tip);
@@ -70,16 +72,16 @@ namespace select_content
             makeLastFollower(m_cornerHandlers[i]);
         }
 
-        static int const masks_by_edge[] = {TOP, RIGHT, BOTTOM, LEFT};
+        static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
         for (int i = 0; i < 4; ++i) {
             m_edges[i].setPositionCallback(
-                    boost::bind(&ImageView::edgePosition, this, masks_by_edge[i])
+                boost::bind(&ImageView::edgePosition, this, masks_by_edge[i])
             );
             m_edges[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::edgeMoveRequest, this, masks_by_edge[i], _1)
+                boost::bind(&ImageView::edgeMoveRequest, this, masks_by_edge[i], _1)
             );
             m_edges[i].setDragFinishedCallback(
-                    boost::bind(&ImageView::dragFinished, this)
+                boost::bind(&ImageView::dragFinished, this)
             );
             m_edgeHandlers[i].setObject(&m_edges[i]);
             m_edgeHandlers[i].setProximityStatusTip(drag_tip);
@@ -104,8 +106,7 @@ namespace select_content
     }
 
     ImageView::~ImageView()
-    {
-    }
+    { }
 
     void
     ImageView::createContentBox()
@@ -195,7 +196,7 @@ namespace select_content
         painter.setBrush(QColor(0x00, 0x00, 0xff, 50));
 
         painter.drawRect(m_contentRect);
-    }
+    }  // ImageView::onPaint
 
     void
     ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction)
@@ -299,22 +300,21 @@ namespace select_content
         qreal const minh = m_minBoxSize.height();
         QRectF const image_rect(getOccupiedWidgetRect());
 
-        if ((edge_mask & LEFT) && widget_rect.left() < image_rect.left()) {
+        if ((edge_mask & LEFT) && (widget_rect.left() < image_rect.left())) {
             widget_rect.setLeft(image_rect.left());
             widget_rect.setRight(std::max(widget_rect.right(), widget_rect.left() + minw));
         }
-        if ((edge_mask & RIGHT) && widget_rect.right() > image_rect.right()) {
+        if ((edge_mask & RIGHT) && (widget_rect.right() > image_rect.right())) {
             widget_rect.setRight(image_rect.right());
             widget_rect.setLeft(std::min(widget_rect.left(), widget_rect.right() - minw));
         }
-        if ((edge_mask & TOP) && widget_rect.top() < image_rect.top()) {
+        if ((edge_mask & TOP) && (widget_rect.top() < image_rect.top())) {
             widget_rect.setTop(image_rect.top());
             widget_rect.setBottom(std::max(widget_rect.bottom(), widget_rect.top() + minh));
         }
-        if ((edge_mask & BOTTOM) && widget_rect.bottom() > image_rect.bottom()) {
+        if ((edge_mask & BOTTOM) && (widget_rect.bottom() > image_rect.bottom())) {
             widget_rect.setBottom(image_rect.bottom());
             widget_rect.setTop(std::min(widget_rect.top(), widget_rect.bottom() - minh));
         }
     }
-
-} 
+}  // namespace select_content

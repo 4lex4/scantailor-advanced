@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ChangeDewarpingDialog.h"
 #include "PageSelectionAccessor.h"
@@ -23,16 +24,16 @@
 
 namespace output
 {
-
-    ChangeDewarpingDialog::ChangeDewarpingDialog(
-            QWidget* parent, PageId const& cur_page, DewarpingMode const& mode,
-            PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_curPage(cur_page),
-              m_mode(mode),
-              m_pScopeGroup(new QButtonGroup(this))
+    ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
+                                                 PageId const& cur_page,
+                                                 DewarpingMode const& mode,
+                                                 PageSelectionAccessor const& page_selection_accessor)
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_curPage(cur_page),
+          m_mode(mode),
+          m_pScopeGroup(new QButtonGroup(this))
     {
         using namespace boost::lambda;
 
@@ -69,8 +70,7 @@ namespace output
     }
 
     ChangeDewarpingDialog::~ChangeDewarpingDialog()
-    {
-    }
+    { }
 
     void
     ChangeDewarpingDialog::onSubmit()
@@ -89,6 +89,7 @@ namespace output
         else if (ui.selectedPagesRB->isChecked()) {
             emit accepted(m_selectedPages, m_mode);
             accept();
+
             return;
         }
 
@@ -96,5 +97,4 @@ namespace output
 
         accept();
     }
-
-} 
+}  // namespace output

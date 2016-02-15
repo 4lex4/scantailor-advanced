@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef NON_OWNING_WIDGET_H_
 #define NON_OWNING_WIDGET_H_
@@ -25,7 +26,8 @@
  * \brief Your normal QWidget, except it doesn't delete its children with itself,
  *        rather it calls setParent(0) on them.
  */
-class NonOwningWidget : public QWidget
+class NonOwningWidget
+    : public QWidget
 {
 public:
     NonOwningWidget(QWidget* parent = 0);

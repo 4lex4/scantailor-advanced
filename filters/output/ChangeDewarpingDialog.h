@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_
 #define OUTPUT_CHANGE_DEWARPING_DIALOG_H_
@@ -33,24 +34,23 @@ class QButtonGroup;
 
 namespace output
 {
-
-    class ChangeDewarpingDialog : public QDialog
+    class ChangeDewarpingDialog
+        : public QDialog
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        ChangeDewarpingDialog(
-                QWidget* parent, PageId const& cur_page, DewarpingMode const& mode,
-                PageSelectionAccessor const& page_selection_accessor);
+        ChangeDewarpingDialog(QWidget* parent,
+                              PageId const& cur_page,
+                              DewarpingMode const& mode,
+                              PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~ChangeDewarpingDialog();
 
     signals:
-
         void accepted(std::set<PageId> const& pages, DewarpingMode const& mode);
 
     private slots:
-
         void onSubmit();
 
     private:
@@ -61,6 +61,5 @@ namespace output
         DewarpingMode m_mode;
         QButtonGroup* m_pScopeGroup;
     };
-
 }
-#endif
+#endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THREAD_PRIORITY_H_
 #define THREAD_PRIORITY_H_
@@ -27,8 +28,7 @@ class QSettings;
 class ThreadPriority
 {
 public:
-    enum Priority
-    {
+    enum Priority {
         Minimum,
         Idle = Minimum,
         Lowest,
@@ -37,21 +37,25 @@ public:
         Maximum = Normal
     };
 
-    ThreadPriority(Priority prio) : m_prio(prio)
+    ThreadPriority(Priority prio)
+        : m_prio(prio)
     { }
 
     void setValue(Priority prio)
-    { m_prio = prio; }
+    {
+        m_prio = prio;
+    }
 
     Priority value() const
-    { return m_prio; }
+    {
+        return m_prio;
+    }
 
     QThread::Priority toQThreadPriority() const;
 
     int toPosixNiceLevel() const;
 
-    static ThreadPriority load(
-            QSettings const& settings, QString const& key, Priority dflt = Normal);
+    static ThreadPriority load(QSettings const& settings, QString const& key, Priority dflt = Normal);
 
     static ThreadPriority load(QString const& key, Priority dflt = Normal);
 
@@ -63,4 +67,4 @@ private:
     Priority m_prio;
 };
 
-#endif
+#endif  // ifndef THREAD_PRIORITY_H_

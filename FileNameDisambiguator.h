@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FILENAME_DISAMBIGUATOR_H_
 #define FILENAME_DISAMBIGUATOR_H_
@@ -37,9 +38,10 @@ class QDomDocument;
  *
  * \note This class is thread-safe.
  */
-class FileNameDisambiguator : public RefCountable
+class FileNameDisambiguator
+    : public RefCountable
 {
-DECLARE_NON_COPYABLE(FileNameDisambiguator)
+    DECLARE_NON_COPYABLE(FileNameDisambiguator)
 
 public:
     FileNameDisambiguator();
@@ -47,7 +49,7 @@ public:
     /**
      * \brief Load disambiguation information from XML.
      */
-    FileNameDisambiguator(QDomElement const &disambiguator_el);
+    FileNameDisambiguator(QDomElement const& disambiguator_el);
 
     /**
      * \brief Load disambiguation information from XML with file path unpacking.
@@ -57,14 +59,13 @@ public:
      * returning the full path.  If unpacker returns an empty string,
      * the record will be skipped.
      */
-    FileNameDisambiguator(QDomElement const &disambiguator_el,
-                          boost::function<QString(QString const &)> const &file_path_unpacker);
+    FileNameDisambiguator(QDomElement const& disambiguator_el, boost::function<QString(
+                                                                                   QString const&)> const& file_path_unpacker);
 
     /**
      * \brief Serialize disambiguation information to XML.
      */
-    QDomElement toXml(
-            QDomDocument &doc, QString const &name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
     /**
      * \brief Serialize disambiguation information to XML with file path packing.
@@ -74,15 +75,15 @@ public:
      * returning the corresponding shorthand.  If packer returns an empty string,
      * the record will be skipped.
      */
-    QDomElement toXml(
-            QDomDocument &doc, QString const &name,
-            boost::function<QString(QString const &)> const &file_path_packer) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name, boost::function<QString(
+                                                                                  QString const&)> const& file_path_packer)
+    const;
 
-    int getLabel(QString const &file_path) const;
+    int getLabel(QString const& file_path) const;
 
-    int registerFile(QString const &file_path);
+    int registerFile(QString const& file_path);
 
-    void performRelinking(AbstractRelinker const &relinker);
+    void performRelinking(AbstractRelinker const& relinker);
 
 private:
     class Impl;
@@ -90,4 +91,4 @@ private:
     std::unique_ptr<Impl> m_ptrImpl;
 };
 
-#endif
+#endif  // ifndef FILENAME_DISAMBIGUATOR_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "BubbleAnimation.h"
 #include "imageproc/Constants.h"
@@ -26,41 +27,38 @@
 using namespace imageproc;
 
 BubbleAnimation::BubbleAnimation(int const num_bubbles)
-        : m_numBubbles(num_bubbles),
-          m_curFrame(0)
+    : m_numBubbles(num_bubbles),
+      m_curFrame(0)
 {
     assert(m_numBubbles > 0);
 }
 
 bool
-BubbleAnimation::nextFrame(
-        QColor const &head_color, QColor const &tail_color,
-        QPaintDevice *pd, QRectF rect)
+BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPaintDevice* pd, QRectF rect)
 {
     if (rect.isNull()) {
         rect = QRectF(0.0, 0.0, pd->width(), pd->height());
     }
 
     QPainter painter(pd);
+
     return nextFrame(head_color, tail_color, &painter, rect);
 }
 
 bool
-BubbleAnimation::nextFrame(
-        QColor const &head_color, QColor const &tail_color,
-        QPainter *painter, QRectF const rect)
+BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPainter* painter, QRectF const rect)
 {
     QPointF const center(rect.center());
     double const radius = std::min(
-            center.x() - rect.x(), center.y() - rect.y()
-    );
+        center.x() - rect.x(), center.y() - rect.y()
+                          );
 
     double const PI = imageproc::constants::PI;
     double const arc_fraction_as_radius = 0.25;
 
     double const reduced_radius = radius / (
-            1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
-    );
+        1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
+                                  );
     double const bubble_radius = radius - reduced_radius;
 
     double const tail_length = 0.5 * m_numBubbles;
@@ -82,11 +80,13 @@ BubbleAnimation::nextFrame(
 
     if (m_curFrame + 1 < m_numBubbles) {
         ++m_curFrame;
+
         return true;
     }
     else {
         m_curFrame = 0;
+
         return false;
     }
-}
+}  // BubbleAnimation::nextFrame
 

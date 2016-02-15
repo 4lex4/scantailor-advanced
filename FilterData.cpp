@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "FilterData.h"
 #include "Dpm.h"
@@ -22,18 +23,17 @@
 
 using namespace imageproc;
 
-FilterData::FilterData(QImage const &image)
-        : m_origImage(image),
-          m_grayImage(toGrayscale(m_origImage)),
-          m_xform(image.rect(), Dpm(image)),
-          m_bwThreshold(BinaryThreshold::otsuThreshold(m_grayImage))
-{
-}
+FilterData::FilterData(QImage const& image)
+    : m_origImage(image),
+      m_grayImage(toGrayscale(m_origImage)),
+      m_xform(image.rect(), Dpm(image)),
+      m_bwThreshold(BinaryThreshold::otsuThreshold(m_grayImage))
+{ }
 
-FilterData::FilterData(FilterData const &other, ImageTransformation const &xform)
-        : m_origImage(other.m_origImage),
-          m_grayImage(other.m_grayImage),
-          m_xform(xform),
-          m_bwThreshold(other.m_bwThreshold)
-{
-}
+FilterData::FilterData(FilterData const& other, ImageTransformation const& xform)
+    : m_origImage(other.m_origImage),
+      m_grayImage(other.m_grayImage),
+      m_xform(xform),
+      m_bwThreshold(other.m_bwThreshold)
+{ }
+

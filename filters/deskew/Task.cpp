@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Task.h"
 #include "Filter.h"
@@ -37,15 +38,16 @@
 
 namespace deskew
 {
-
     using namespace imageproc;
 
-    class Task::UiUpdater : public FilterResult
+    class Task::UiUpdater
+        : public FilterResult
     {
     public:
         UiUpdater(IntrusivePtr<Filter> const& filter,
                   std::unique_ptr<DebugImages> dbg_img,
-                  QImage const& image, PageId const& page_id,
+                  QImage const& image,
+                  PageId const& page_id,
                   ImageTransformation const& xform,
                   OptionsWidget::UiData const& ui_data,
                   bool batch_processing);
@@ -53,7 +55,9 @@ namespace deskew
         virtual void updateUI(FilterUiInterface* ui);
 
         virtual IntrusivePtr<AbstractFilter> filter()
-        { return m_ptrFilter; }
+        {
+            return m_ptrFilter;
+        }
 
     private:
         IntrusivePtr<Filter> m_ptrFilter;
@@ -70,12 +74,14 @@ namespace deskew
     Task::Task(IntrusivePtr<Filter> const& filter,
                IntrusivePtr<Settings> const& settings,
                IntrusivePtr<select_content::Task> const& next_task,
-               PageId const& page_id, bool const batch_processing, bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrNextTask(next_task),
-              m_pageId(page_id),
-              m_batchProcessing(batch_processing)
+               PageId const& page_id,
+               bool const batch_processing,
+               bool const debug)
+        : m_ptrFilter(filter),
+          m_ptrSettings(settings),
+          m_ptrNextTask(next_task),
+          m_pageId(page_id),
+          m_batchProcessing(batch_processing)
     {
         if (debug) {
             m_ptrDbg.reset(new DebugImages);
@@ -83,8 +89,7 @@ namespace deskew
     }
 
     Task::~Task()
-    {
-    }
+    { }
 
     FilterResultPtr
     Task::process(TaskStatus const& status, FilterData const& data)
@@ -108,7 +113,7 @@ namespace deskew
                 ui_data.setMode(params->mode());
 
                 Params new_params(
-                        ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
+                    ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
                 new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
@@ -117,23 +122,23 @@ namespace deskew
 
         if (!params.get()) {
             QRectF const image_area(
-                    data.xform().transformBack().mapRect(data.xform().resultingRect())
+                data.xform().transformBack().mapRect(data.xform().resultingRect())
             );
             QRect const bounded_image_area(
-                    image_area.toRect().intersected(data.origImage().rect())
+                image_area.toRect().intersected(data.origImage().rect())
             );
 
             status.throwIfCancelled();
 
             if (bounded_image_area.isValid()) {
                 BinaryImage rotated_image(
-                        orthogonalRotation(
-                                BinaryImage(
-                                        data.grayImage(), bounded_image_area,
-                                        data.bwThreshold()
-                                ),
-                                data.xform().preRotation().toDegrees()
-                        )
+                    orthogonalRotation(
+                        BinaryImage(
+                            data.grayImage(), bounded_image_area,
+                            data.bwThreshold()
+                        ),
+                        data.xform().preRotation().toDegrees()
+                    )
                 );
                 if (m_ptrDbg.get()) {
                     m_ptrDbg->add(rotated_image, "bw_rotated");
@@ -141,7 +146,7 @@ namespace deskew
 
                 QSize const unrotated_dpm(Dpm(data.origImage()).toSize());
                 Dpm const rotated_dpm(
-                        data.xform().preRotation().rotate(unrotated_dpm)
+                    data.xform().preRotation().rotate(unrotated_dpm)
                 );
                 cleanup(status, rotated_image, Dpi(rotated_dpm));
                 if (m_ptrDbg.get()) {
@@ -152,7 +157,7 @@ namespace deskew
 
                 SkewFinder skew_finder;
                 skew_finder.setResolutionRatio(
-                        (double) rotated_dpm.horizontal() / rotated_dpm.vertical()
+                    (double)rotated_dpm.horizontal() / rotated_dpm.vertical()
                 );
                 Skew const skew(skew_finder.findSkew(rotated_image));
 
@@ -165,7 +170,7 @@ namespace deskew
                 ui_data.setMode(MODE_AUTO);
 
                 Params new_params(
-                        ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
+                    ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
                 new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
@@ -182,18 +187,17 @@ namespace deskew
         }
         else {
             return FilterResultPtr(
-                    new UiUpdater(
-                            m_ptrFilter, std::move(m_ptrDbg), data.origImage(),
-                            m_pageId, new_xform, ui_data, m_batchProcessing
-                    )
+                new UiUpdater(
+                    m_ptrFilter, std::move(m_ptrDbg), data.origImage(),
+                    m_pageId, new_xform, ui_data, m_batchProcessing
+                )
             );
         }
-    }
+    }  // Task::process
 
     void
     Task::cleanup(TaskStatus const& status, BinaryImage& image, Dpi const& dpi)
     {
-
         Dpi reduced_dpi(dpi);
         BinaryImage reduced_image;
 
@@ -202,9 +206,9 @@ namespace deskew
             while (reduced_dpi.horizontal() >= 200 && reduced_dpi.vertical() >= 200) {
                 reductor.reduce(2);
                 reduced_dpi = Dpi(
-                        reduced_dpi.horizontal() / 2,
-                        reduced_dpi.vertical() / 2
-                );
+                    reduced_dpi.horizontal() / 2,
+                    reduced_dpi.vertical() / 2
+                              );
             }
             reduced_image = reductor.image();
         }
@@ -227,8 +231,8 @@ namespace deskew
 
         status.throwIfCancelled();
 
-        rasterOp < RopSubtract < RopDst, RopSrc > > (image, garbage);
-    }
+        rasterOp<RopSubtract<RopDst, RopSrc>>(image, garbage);
+    }  // Task::cleanup
 
     int
     Task::from150dpi(int size, int target_dpi)
@@ -237,6 +241,7 @@ namespace deskew
         if (new_size < 1) {
             return 1;
         }
+
         return new_size;
     }
 
@@ -245,34 +250,32 @@ namespace deskew
     {
         int const width = from150dpi(size.width(), target_dpi.horizontal());
         int const height = from150dpi(size.height(), target_dpi.vertical());
+
         return QSize(width, height);
     }
 
+    /*============================ Task::UiUpdater ==========================*/
 
-/*============================ Task::UiUpdater ==========================*/
-
-    Task::UiUpdater::UiUpdater(
-            IntrusivePtr<Filter> const& filter,
-            std::unique_ptr<DebugImages> dbg_img,
-            QImage const& image, PageId const& page_id,
-            ImageTransformation const& xform,
-            OptionsWidget::UiData const& ui_data,
-            bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_ptrDbg(std::move(dbg_img)),
-              m_image(image),
-              m_downscaledImage(ImageView::createDownscaledImage(image)),
-              m_pageId(page_id),
-              m_xform(xform),
-              m_uiData(ui_data),
-              m_batchProcessing(batch_processing)
-    {
-    }
+    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+                               std::unique_ptr<DebugImages> dbg_img,
+                               QImage const& image,
+                               PageId const& page_id,
+                               ImageTransformation const& xform,
+                               OptionsWidget::UiData const& ui_data,
+                               bool const batch_processing)
+        : m_ptrFilter(filter),
+          m_ptrDbg(std::move(dbg_img)),
+          m_image(image),
+          m_downscaledImage(ImageView::createDownscaledImage(image)),
+          m_pageId(page_id),
+          m_xform(xform),
+          m_uiData(ui_data),
+          m_batchProcessing(batch_processing)
+    { }
 
     void
     Task::UiUpdater::updateUI(FilterUiInterface* ui)
     {
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -287,13 +290,12 @@ namespace deskew
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
-                view, SIGNAL(manualDeskewAngleSet(double)),
-                opt_widget, SLOT(manualDeskewAngleSetExternally(double))
+            view, SIGNAL(manualDeskewAngleSet(double)),
+            opt_widget, SLOT(manualDeskewAngleSetExternally(double))
         );
         QObject::connect(
-                opt_widget, SIGNAL(manualDeskewAngleSet(double)),
-                view, SLOT(manualDeskewAngleSetExternally(double))
+            opt_widget, SIGNAL(manualDeskewAngleSet(double)),
+            view, SLOT(manualDeskewAngleSetExternally(double))
         );
     }
-
-} 
+}  // namespace deskew

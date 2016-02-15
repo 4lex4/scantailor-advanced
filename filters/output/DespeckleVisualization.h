@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_
@@ -31,7 +32,6 @@ namespace imageproc
 
 namespace output
 {
-
     class DespeckleVisualization
     {
     public:
@@ -48,25 +48,28 @@ namespace output
          *        If this one is null, it is considered no speckles were detected.
          * \param dpi Dots-per-inch of both images.
          */
-        DespeckleVisualization(
-                QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
 
         bool isNull() const
-        { return m_image.isNull(); }
+        {
+            return m_image.isNull();
+        }
 
         QImage const& image() const
-        { return m_image; }
+        {
+            return m_image;
+        }
 
         QImage const& downscaledImage() const
-        { return m_downscaledImage; }
+        {
+            return m_downscaledImage;
+        }
 
     private:
-        static void colorizeSpeckles(
-                QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
 
         QImage m_image;
         QImage m_downscaledImage;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_

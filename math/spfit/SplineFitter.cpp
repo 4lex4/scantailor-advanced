@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SplineFitter.h"
 #include "ConstraintSet.h"
@@ -23,11 +24,10 @@
 
 namespace spfit
 {
-
     SplineFitter::SplineFitter(FittableSpline* spline)
-            : m_pSpline(spline), m_optimizer(spline->numControlPoints() * 2)
-    {
-    }
+        : m_pSpline(spline),
+          m_optimizer(spline->numControlPoints() * 2)
+    { }
 
     void
     SplineFitter::splineModified()
@@ -48,10 +48,9 @@ namespace spfit
     }
 
     void
-    SplineFitter::addAttractionForce(
-            Vec2d const& spline_point,
-            std::vector<FittableSpline::LinearCoefficient> const& coeffs,
-            SqDistApproximant const& sqdist_approx)
+    SplineFitter::addAttractionForce(Vec2d const& spline_point,
+                                     std::vector<FittableSpline::LinearCoefficient> const& coeffs,
+                                     SqDistApproximant const& sqdist_approx)
     {
         int const num_coeffs = coeffs.size();
         int const num_vars = num_coeffs * 2;
@@ -100,17 +99,18 @@ namespace spfit
         }
 
         m_optimizer.addExternalForce(f, m_tempSparseMap);
-    }
+    }  // SplineFitter::addAttractionForce
 
     void
     SplineFitter::addAttractionForces(ModelShape const& model_shape, double from_t, double to_t)
     {
-        class SampleProcessor :
-                public VirtualFunction3<void, QPointF, double, FittableSpline::SampleFlags>
+        class SampleProcessor
+            : public VirtualFunction3<void, QPointF, double, FittableSpline::SampleFlags>
         {
         public:
             SampleProcessor(SplineFitter& owner, ModelShape const& model_shape)
-                    : m_rOwner(owner), m_rModelShape(model_shape)
+                : m_rOwner(owner),
+                  m_rModelShape(model_shape)
             { }
 
             virtual void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags)
@@ -148,8 +148,7 @@ namespace spfit
     }
 
     void
-    SplineFitter::addInternalForce(
-            QuadraticFunction const& force, std::vector<int> const& sparse_map)
+    SplineFitter::addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map)
     {
         m_optimizer.addInternalForce(force, sparse_map);
     }
@@ -179,5 +178,4 @@ namespace spfit
 
         m_optimizer.undoLastStep();
     }
-
-} 
+}  // namespace spfit

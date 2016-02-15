@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RelinkingModel.h"
 #include "PayloadEvent.h"
@@ -33,17 +34,25 @@ class RelinkingModel::StatusUpdateResponse
 {
 public:
     StatusUpdateResponse(QString const& path, int row, Status status)
-            : m_path(path), m_row(row), m_status(status)
+        : m_path(path),
+          m_row(row),
+          m_status(status)
     { }
 
     QString const& path() const
-    { return m_path; }
+    {
+        return m_path;
+    }
 
     int row() const
-    { return m_row; }
+    {
+        return m_row;
+    }
 
     Status status() const
-    { return m_status; }
+    {
+        return m_status;
+    }
 
 private:
     QString m_path;
@@ -52,7 +61,8 @@ private:
 };
 
 
-class RelinkingModel::StatusUpdateThread : private QThread
+class RelinkingModel::StatusUpdateThread
+    : private QThread
 {
 public:
     StatusUpdateThread(RelinkingModel* owner);
@@ -68,30 +78,31 @@ public:
     void requestStatusUpdate(QString const& path, int row);
 
 private:
-    struct Task
-    {
+    struct Task {
         QString path;
         int row;
 
-        Task(QString const& p, int r) : path(p), row(r)
+        Task(QString const& p, int r)
+            : path(p),
+              row(r)
         { }
     };
 
     class OrderedByPathTag;
-class OrderedByPriorityTag;
+    class OrderedByPriorityTag;
 
     typedef boost::multi_index_container<
             Task,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::tag<OrderedByPathTag>,
-                            boost::multi_index::member<Task, QString, &Task::path>
-                    >,
-                    boost::multi_index::sequenced<
-                            boost::multi_index::tag<OrderedByPriorityTag>
-                    >
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::tag<OrderedByPathTag>,
+                    boost::multi_index::member<Task, QString, & Task::path>
+                >,
+                boost::multi_index::sequenced<
+                    boost::multi_index::tag<OrderedByPriorityTag>
+                >
             >
-    > TaskList;
+>TaskList;
 
     typedef TaskList::index<OrderedByPathTag>::type TasksByPath;
     typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
@@ -112,14 +123,15 @@ class OrderedByPriorityTag;
 /*============================ RelinkingModel =============================*/
 
 RelinkingModel::RelinkingModel()
-        : m_fileIcon(":/icons/file-16.png"), m_folderIcon(":/icons/folder-16.png"), m_ptrRelinker(new Relinker),
-          m_ptrStatusUpdateThread(new StatusUpdateThread(this)), m_haveUncommittedChanges(true)
-{
-}
+    : m_fileIcon(":/icons/file-16.png"),
+      m_folderIcon(":/icons/folder-16.png"),
+      m_ptrRelinker(new Relinker),
+      m_ptrStatusUpdateThread(new StatusUpdateThread(this)),
+      m_haveUncommittedChanges(true)
+{ }
 
 RelinkingModel::~RelinkingModel()
-{
-}
+{ }
 
 int
 RelinkingModel::rowCount(QModelIndex const& parent) const
@@ -145,9 +157,8 @@ RelinkingModel::data(QModelIndex const& index, int role) const
         case UncommittedPathRole:
             return item.uncommittedPath;
         case Qt::DisplayRole:
-            if (item.uncommittedPath.startsWith(QChar('/')) &&
-                !item.uncommittedPath.startsWith(QLatin1String("//"))) {
-                // "//" indicates a network path.
+            if (item.uncommittedPath.startsWith(QChar('/'))
+                && !item.uncommittedPath.startsWith(QLatin1String("//"))) {
                 return item.uncommittedPath;
             }
             else {
@@ -168,7 +179,7 @@ RelinkingModel::addPath(RelinkablePath const& path)
     QString const normalized_path(path.normalizedPath());
 
     std::pair<std::set<QString>::iterator, bool> const ins(
-            m_origPathSet.insert(path.normalizedPath())
+        m_origPathSet.insert(path.normalizedPath())
     );
     if (!ins.second) {
         return;
@@ -182,8 +193,7 @@ RelinkingModel::addPath(RelinkablePath const& path)
 }
 
 void
-RelinkingModel::replacePrefix(
-        QString const& prefix, QString const& replacement, RelinkablePath::Type type)
+RelinkingModel::replacePrefix(QString const& prefix, QString const& replacement, RelinkablePath::Type type)
 {
     QString slash_terminated_prefix(prefix);
     ensureEndsWithSlash(slash_terminated_prefix);
@@ -191,12 +201,12 @@ RelinkingModel::replacePrefix(
     int modified_rowspan_begin = -1;
 
     int row = -1;
-    for (Item& item :  m_items) {
+    for (Item& item : m_items) {
         ++row;
         bool modified = false;
 
         if (type == RelinkablePath::File) {
-            if (item.type == RelinkablePath::File && item.uncommittedPath == prefix) {
+            if ((item.type == RelinkablePath::File) && (item.uncommittedPath == prefix)) {
                 item.uncommittedPath = replacement;
                 modified = true;
             }
@@ -233,7 +243,7 @@ RelinkingModel::replacePrefix(
     if (modified_rowspan_begin != -1) {
         emit dataChanged(index(modified_rowspan_begin), index(row));
     }
-}
+}  // RelinkingModel::replacePrefix
 
 bool
 RelinkingModel::checkForMerges() const
@@ -241,11 +251,12 @@ RelinkingModel::checkForMerges() const
     std::vector<QString> new_paths;
     new_paths.reserve(m_items.size());
 
-    for (Item const& item :  m_items) {
+    for (Item const& item : m_items) {
         new_paths.push_back(item.uncommittedPath);
     }
 
     std::sort(new_paths.begin(), new_paths.end());
+
     return std::adjacent_find(new_paths.begin(), new_paths.end()) != new_paths.end();
 }
 
@@ -260,7 +271,7 @@ RelinkingModel::commitChanges()
     int modified_rowspan_begin = -1;
 
     int row = -1;
-    for (Item& item :  m_items) {
+    for (Item& item : m_items) {
         ++row;
 
         if (item.committedPath != item.uncommittedPath) {
@@ -285,7 +296,7 @@ RelinkingModel::commitChanges()
 
     m_ptrRelinker->swap(new_relinker);
     m_haveUncommittedChanges = false;
-}
+}  // RelinkingModel::commitChanges
 
 void
 RelinkingModel::rollbackChanges()
@@ -297,7 +308,7 @@ RelinkingModel::rollbackChanges()
     int modified_rowspan_begin = -1;
 
     int row = -1;
-    for (Item& item :  m_items) {
+    for (Item& item : m_items) {
         ++row;
 
         if (item.uncommittedPath != item.committedPath) {
@@ -320,7 +331,7 @@ RelinkingModel::rollbackChanges()
     }
 
     m_haveUncommittedChanges = false;
-}
+}  // RelinkingModel::rollbackChanges
 
 void
 RelinkingModel::ensureEndsWithSlash(QString& str)
@@ -349,7 +360,7 @@ RelinkingModel::customEvent(QEvent* event)
     assert(evt);
 
     StatusUpdateResponse const& response = evt->payload();
-    if (response.row() < 0 || response.row() >= int(m_items.size())) {
+    if ((response.row() < 0) || (response.row() >= int(m_items.size()))) {
         return;
     }
 
@@ -364,14 +375,16 @@ RelinkingModel::customEvent(QEvent* event)
     emit dataChanged(index(response.row()), index(response.row()));
 }
 
-
 /*========================== StatusUpdateThread =========================*/
 
 RelinkingModel::StatusUpdateThread::StatusUpdateThread(RelinkingModel* owner)
-        : QThread(owner), m_pOwner(owner), m_tasks(), m_rTasksByPath(m_tasks.get<OrderedByPathTag>()),
-          m_rTasksByPriority(m_tasks.get<OrderedByPriorityTag>()), m_exiting(false)
-{
-}
+    : QThread(owner),
+      m_pOwner(owner),
+      m_tasks(),
+      m_rTasksByPath(m_tasks.get<OrderedByPathTag>()),
+      m_rTasksByPriority(m_tasks.get<OrderedByPriorityTag>()),
+      m_exiting(false)
+{ }
 
 RelinkingModel::StatusUpdateThread::~StatusUpdateThread()
 {
@@ -397,11 +410,11 @@ RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path, int
     }
 
     std::pair<TasksByPath::iterator, bool> const ins(
-            m_rTasksByPath.insert(Task(path, row))
+        m_rTasksByPath.insert(Task(path, row))
     );
 
     m_rTasksByPriority.relocate(
-            m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
+        m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
     );
 
     if (!isRunning()) {
@@ -420,17 +433,22 @@ try
     class MutexUnlocker
     {
     public:
-        MutexUnlocker(QMutex* mutex) : m_pMutex(mutex)
-        { mutex->unlock(); }
+        MutexUnlocker(QMutex* mutex)
+            : m_pMutex(mutex)
+        {
+            mutex->unlock();
+        }
 
         ~MutexUnlocker()
-        { m_pMutex->lock(); }
+        {
+            m_pMutex->lock();
+        }
 
     private:
         QMutex* const m_pMutex;
     };
 
-    for (; ;) {
+    for (;;) {
         if (m_exiting) {
             break;
         }
@@ -457,19 +475,22 @@ try
 
         m_pathBeingProcessed.clear();
     }
-} catch (std::bad_alloc const&) {
+}  // RelinkingModel::StatusUpdateThread::run
+
+catch (std::bad_alloc const&) {
     OutOfMemoryHandler::instance().handleOutOfMemorySituation();
 }
-
 
 /*================================ Item =================================*/
 
 RelinkingModel::Item::Item(RelinkablePath const& path)
-        : origPath(path.normalizedPath()), committedPath(path.normalizedPath()), uncommittedPath(path.normalizedPath()),
-          type(path.type()), committedStatus(StatusUpdatePending), uncommittedStatus(StatusUpdatePending)
-{
-}
-
+    : origPath(path.normalizedPath()),
+      committedPath(path.normalizedPath()),
+      uncommittedPath(path.normalizedPath()),
+      type(path.type()),
+      committedStatus(StatusUpdatePending),
+      uncommittedStatus(StatusUpdatePending)
+{ }
 
 /*============================== Relinker ================================*/
 
@@ -496,3 +517,4 @@ RelinkingModel::Relinker::swap(Relinker& other)
 {
     m_mappings.swap(other.m_mappings);
 }
+

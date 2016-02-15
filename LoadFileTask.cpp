@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "LoadFileTask.h"
 #include "filters/fix_orientation/Task.h"
@@ -33,9 +34,11 @@
 
 using namespace imageproc;
 
-class LoadFileTask::ErrorResult : public FilterResult
+class LoadFileTask::ErrorResult
+    : public FilterResult
 {
-Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
+    Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
+
 public:
     ErrorResult(QString const& file_path);
 
@@ -52,24 +55,23 @@ private:
 };
 
 
-LoadFileTask::LoadFileTask(
-        Type type, PageInfo const& page,
-        IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-        IntrusivePtr<ProjectPages> const& pages,
-        IntrusivePtr<fix_orientation::Task> const& next_task)
-        : BackgroundTask(type),
-          m_ptrThumbnailCache(thumbnail_cache),
-          m_imageId(page.imageId()),
-          m_imageMetadata(page.metadata()),
-          m_ptrPages(pages),
-          m_ptrNextTask(next_task)
+LoadFileTask::LoadFileTask(Type type,
+                           PageInfo const& page,
+                           IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                           IntrusivePtr<ProjectPages> const& pages,
+                           IntrusivePtr<fix_orientation::Task> const& next_task)
+    : BackgroundTask(type),
+      m_ptrThumbnailCache(thumbnail_cache),
+      m_imageId(page.imageId()),
+      m_imageMetadata(page.metadata()),
+      m_ptrPages(pages),
+      m_ptrNextTask(next_task)
 {
     assert(m_ptrNextTask);
 }
 
 LoadFileTask::~LoadFileTask()
-{
-}
+{ }
 
 FilterResultPtr
 LoadFileTask::operator()()
@@ -86,9 +88,11 @@ LoadFileTask::operator()()
             updateImageSizeIfChanged(image);
             overrideDpi(image);
             m_ptrThumbnailCache->ensureThumbnailExists(m_imageId, image);
+
             return m_ptrNextTask->process(*this, FilterData(image));
         }
-    } catch (CancelledException const&) {
+    }
+    catch (CancelledException const&) {
         return FilterResultPtr();
     }
 }
@@ -110,23 +114,25 @@ LoadFileTask::overrideDpi(QImage& image) const
     image.setDotsPerMeterY(dpm.vertical());
 }
 
-
 /*======================= LoadFileTask::ErrorResult ======================*/
 
 LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
-        : m_filePath(QDir::toNativeSeparators(file_path)), m_fileExists(QFile::exists(file_path))
-{
-}
+    : m_filePath(QDir::toNativeSeparators(file_path)),
+      m_fileExists(QFile::exists(file_path))
+{ }
 
 void
 LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui)
 {
-    class ErrWidget : public ErrorWidget
+    class ErrWidget
+        : public ErrorWidget
     {
     public:
-        ErrWidget(IntrusivePtr<AbstractCommand0<void> > const& relinking_dialog_requester,
-                  QString const& text, Qt::TextFormat fmt = Qt::AutoText)
-                : ErrorWidget(text, fmt), m_ptrRelinkingDialogRequester(relinking_dialog_requester)
+        ErrWidget(IntrusivePtr<AbstractCommand0<void>> const& relinking_dialog_requester,
+                  QString const& text,
+                  Qt::TextFormat fmt = Qt::AutoText)
+            : ErrorWidget(text, fmt),
+              m_ptrRelinkingDialogRequester(relinking_dialog_requester)
         { }
 
     private:
@@ -135,7 +141,7 @@ LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui)
             (*m_ptrRelinkingDialogRequester)();
         }
 
-        IntrusivePtr<AbstractCommand0<void> > m_ptrRelinkingDialogRequester;
+        IntrusivePtr<AbstractCommand0<void>> m_ptrRelinkingDialogRequester;
     };
 
     QString err_msg;
@@ -146,12 +152,13 @@ LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui)
     }
     else {
         err_msg = tr(
-                "The following file doesn't exist:<br>%1<br>"
-                        "<br>"
-                        "Use the <a href=\"#relink\">Relinking Tool</a> to locate it."
-        ).arg(m_filePath.toHtmlEscaped());
+            "The following file doesn't exist:<br>%1<br>"
+            "<br>"
+            "Use the <a href=\"#relink\">Relinking Tool</a> to locate it."
+                  ).arg(m_filePath.toHtmlEscaped());
         fmt = Qt::RichText;
     }
     ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), err_msg, fmt), ui->TRANSFER_OWNERSHIP);
     ui->setOptionsWidget(new FilterOptionsWidget, ui->TRANSFER_OWNERSHIP);
-}
+}  // LoadFileTask::ErrorResult::updateUI
+

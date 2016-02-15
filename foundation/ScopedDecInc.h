@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,24 +15,29 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SCOPEDDECINC_H_
 #define SCOPEDDECINC_H_
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+ #include <config.h>
 #endif
 
-template<class T>
+template <class T>
 class ScopedDecInc
 {
 public:
-    ScopedDecInc(T& counter) : m_counter(counter)
-    { --counter; }
+    ScopedDecInc(T& counter)
+        : m_counter(counter)
+    {
+        --counter;
+    }
 
     ~ScopedDecInc()
-    { ++m_counter; }
+    {
+        ++m_counter;
+    }
 
 private:
     T& m_counter;

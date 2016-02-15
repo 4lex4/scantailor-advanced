@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "ZoneDefaultInteraction.h"
 #include "ZoneInteractionContext.h"
@@ -23,9 +24,9 @@
 #include <QMouseEvent>
 
 ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
-        : m_rContext(context),
-          m_dragHandler(context.imageView()),
-          m_dragWatcher(m_dragHandler)
+    : m_rContext(context),
+      m_dragHandler(context.imageView()),
+      m_dragWatcher(m_dragHandler)
 {
     makeLastFollower(m_dragHandler);
     m_dragHandler.makeFirstFollower(m_dragWatcher);
@@ -34,7 +35,7 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     m_segmentProximity.setProximityStatusTip(tr("Click to create a new vertex here."));
     m_zoneAreaProximity.setProximityStatusTip(tr("Right click to edit zone properties."));
     m_rContext.imageView().interactionState().setDefaultStatusTip(
-            tr("Click to start creating a new picture zone.")
+        tr("Click to start creating a new picture zone.")
     );
 }
 
@@ -46,13 +47,13 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
 
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
 
-    for (EditableZoneSet::Zone const& zone :  m_rContext.zones()) {
+    for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
         EditableSpline::Ptr const& spline = zone.spline();
         m_visualizer.prepareForSpline(painter, spline);
         QPolygonF points;
 
         if (!interaction.captured() && interaction.proximityLeader(m_vertexProximity)
-            && spline == m_ptrNearestVertexSpline) {
+            && (spline == m_ptrNearestVertexSpline)) {
             SplineVertex::Ptr vertex(m_ptrNearestVertex->next(SplineVertex::LOOP));
             for (; vertex != m_ptrNearestVertex; vertex = vertex->next(SplineVertex::LOOP)) {
                 points.push_back(to_screen.map(vertex->point()));
@@ -60,7 +61,7 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
             painter.drawPolyline(points);
         }
         else if (!interaction.captured() && interaction.proximityLeader(m_segmentProximity)
-                 && spline == m_ptrNearestSegmentSpline) {
+                 && (spline == m_ptrNearestSegmentSpline)) {
             SplineVertex::Ptr vertex(m_nearestSegment.prev);
             do {
                 vertex = vertex->next(SplineVertex::LOOP);
@@ -111,7 +112,7 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
     else if (!interaction.captured()) {
         m_visualizer.drawVertex(painter, m_screenMousePos, m_visualizer.solidColor());
     }
-}
+}  // ZoneDefaultInteraction::onPaint
 
 void
 ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction)
@@ -132,7 +133,7 @@ ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionS
 
     bool has_zone_under_mouse = false;
 
-    for (EditableZoneSet::Zone const& zone :  m_rContext.zones()) {
+    for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
         EditableSpline::Ptr const& spline = zone.spline();
 
         if (!has_zone_under_mouse) {
@@ -144,7 +145,6 @@ ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionS
 
         for (SplineVertex::Ptr vert(spline->firstVertex());
              vert; vert = vert->next(SplineVertex::NO_LOOP)) {
-
             Proximity const proximity(mouse_pos, to_screen.map(vert->point()));
             if (proximity < best_vertex_proximity) {
                 m_ptrNearestVertex = vert;
@@ -174,7 +174,7 @@ ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionS
         Proximity const zone_area_proximity(std::min(best_vertex_proximity, best_segment_proximity));
         interaction.updateProximity(m_zoneAreaProximity, zone_area_proximity, -1, zone_area_proximity);
     }
-}
+}  // ZoneDefaultInteraction::onProximityUpdate
 
 void
 ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction)
@@ -188,9 +188,9 @@ ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& 
 
     if (interaction.proximityLeader(m_vertexProximity)) {
         makePeerPreceeder(
-                *m_rContext.createVertexDragInteraction(
-                        interaction, m_ptrNearestVertexSpline, m_ptrNearestVertex
-                )
+            *m_rContext.createVertexDragInteraction(
+                interaction, m_ptrNearestVertexSpline, m_ptrNearestVertex
+            )
         );
         delete this;
         event->accept();
@@ -199,9 +199,9 @@ ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& 
         QTransform const from_screen(m_rContext.imageView().widgetToImage());
         SplineVertex::Ptr vertex(m_nearestSegment.splitAt(from_screen.map(m_screenPointOnSegment)));
         makePeerPreceeder(
-                *m_rContext.createVertexDragInteraction(
-                        interaction, m_ptrNearestSegmentSpline, vertex
-                )
+            *m_rContext.createVertexDragInteraction(
+                interaction, m_ptrNearestSegmentSpline, vertex
+            )
         );
         delete this;
         event->accept();
@@ -249,3 +249,4 @@ ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, Interaction
     makePeerPreceeder(*cm_interaction);
     delete this;
 }
+

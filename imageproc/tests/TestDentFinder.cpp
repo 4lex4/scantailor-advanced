@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DentFinder.h"
 #include "BinaryImage.h"
@@ -24,53 +25,50 @@
 
 namespace imageproc
 {
-
     namespace tests
     {
-
         using namespace utils;
 
         BOOST_AUTO_TEST_SUITE(DentFinderTestSuite);
 
-            BOOST_AUTO_TEST_CASE(test_null_image)
-            {
-                BinaryImage const null_img;
-                BOOST_CHECK(DentFinder::findDentsAndHoles(null_img).isNull());
-            }
+        BOOST_AUTO_TEST_CASE(test_null_image)
+        {
+            BinaryImage const null_img;
+            BOOST_CHECK(DentFinder::findDentsAndHoles(null_img).isNull());
+        }
 
-            BOOST_AUTO_TEST_CASE(test1)
-            {
-                static int const inp[] = {
-                        0, 1, 0, 0, 0, 0, 0, 1, 0,
-                        0, 1, 1, 1, 1, 1, 1, 1, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 1, 0, 0, 0, 0,
-                        0, 0, 0, 1, 1, 1, 0, 0, 0
-                };
+        BOOST_AUTO_TEST_CASE(test1)
+        {
+            static int const inp[] = {
+                0, 1, 0, 0, 0, 0, 0, 1, 0,
+                0, 1, 1, 1, 1, 1, 1, 1, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,
+                0, 0, 0, 1, 1, 1, 0, 0, 0
+            };
 
-                static int const out[] = {
-                        0, 0, 1, 1, 1, 1, 1, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 1, 1, 0, 1, 1, 0, 0,
-                        0, 0, 0, 1, 0, 1, 0, 0, 0,
-                        0, 0, 0, 1, 0, 1, 0, 0, 0,
-                        0, 0, 0, 1, 0, 1, 0, 0, 0,
-                        0, 0, 0, 1, 0, 1, 0, 0, 0,
-                        0, 0, 0, 1, 0, 1, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0
-                };
+            static int const out[] = {
+                0, 0, 1, 1, 1, 1, 1, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 1, 1, 0, 1, 1, 0, 0,
+                0, 0, 0, 1, 0, 1, 0, 0, 0,
+                0, 0, 0, 1, 0, 1, 0, 0, 0,
+                0, 0, 0, 1, 0, 1, 0, 0, 0,
+                0, 0, 0, 1, 0, 1, 0, 0, 0,
+                0, 0, 0, 1, 0, 1, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0
+            };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
-                BinaryImage const control(makeBinaryImage(out, 9, 9));
+            BinaryImage const img(makeBinaryImage(inp, 9, 9));
+            BinaryImage const control(makeBinaryImage(out, 9, 9));
 
-                BOOST_CHECK(DentFinder::findDentsAndHoles(img) == control);
-            }
+            BOOST_CHECK(DentFinder::findDentsAndHoles(img) == control);
+        }
 
         BOOST_AUTO_TEST_SUITE_END();
-
-    }
-} 
+    }  // namespace tests
+}  // namespace imageproc

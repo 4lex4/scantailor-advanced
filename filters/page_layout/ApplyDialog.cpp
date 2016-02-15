@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
@@ -22,15 +23,15 @@
 
 namespace page_layout
 {
-
-    ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,
+    ApplyDialog::ApplyDialog(QWidget* parent,
+                             PageId const& cur_page,
                              PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_selectedRanges(page_selection_accessor.selectedRanges()),
-              m_curPage(cur_page),
-              m_pScopeGroup(new QButtonGroup(this))
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_selectedRanges(page_selection_accessor.selectedRanges()),
+          m_curPage(cur_page),
+          m_pScopeGroup(new QButtonGroup(this))
     {
         setupUi(this);
         m_pScopeGroup->addButton(thisPageRB);
@@ -42,21 +43,20 @@ namespace page_layout
         m_pScopeGroup->addButton(everyOtherSelectedRB);
 
         /*
-        if (m_selectedPages.size() <= 1) {
+           if (m_selectedPages.size() <= 1) {
             selectedPagesWidget->setEnabled(false);
             everyOtherSelectedWidget->setEnabled(false);
                     } else if (m_selectedRanges.size() > 1) {
             everyOtherSelectedWidget->setEnabled(false);
             everyOtherSelectedHint->setText(tr("Can't do: more than one group is selected."));
-        }
-        */
+           }
+         */
 
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
     ApplyDialog::~ApplyDialog()
-    {
-    }
+    { }
 
     void
     ApplyDialog::onSubmit()
@@ -72,6 +72,7 @@ namespace page_layout
         else if (selectedPagesRB->isChecked()) {
             emit accepted(m_selectedPages);
             accept();
+
             return;
         }
         else if (everyOtherRB->isChecked()) {
@@ -96,6 +97,5 @@ namespace page_layout
         emit accepted(pages);
 
         accept();
-    }
-
-} 
+    }  // ApplyDialog::onSubmit
+}  // namespace page_layout

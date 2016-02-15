@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PHYSICALTRANSFORMATION_H_
 #define PHYSICALTRANSFORMATION_H_
@@ -29,10 +30,14 @@ public:
     PhysicalTransformation(Dpi const& dpi);
 
     QTransform const& pixelsToMM() const
-    { return m_pixelsToMM; }
+    {
+        return m_pixelsToMM;
+    }
 
     QTransform const& mmToPixels() const
-    { return m_mmToPixels; }
+    {
+        return m_mmToPixels;
+    }
 
 private:
     QTransform m_pixelsToMM;

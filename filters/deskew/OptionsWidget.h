@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESKEW_OPTIONSWIDGET_H_
 #define DESKEW_OPTIONSWIDGET_H_
@@ -30,13 +31,13 @@
 
 namespace deskew
 {
-
     class Settings;
 
-    class OptionsWidget :
-            public FilterOptionsWidget, private Ui::DeskewOptionsWidget
+    class OptionsWidget
+        : public FilterOptionsWidget,
+          private Ui::DeskewOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         class UiData
@@ -64,17 +65,14 @@ namespace deskew
             AutoManualMode m_mode;
         };
 
-        OptionsWidget(IntrusivePtr<Settings> const& settings,
-                      PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
     signals:
-
         void manualDeskewAngleSet(double degrees);
 
     public slots:
-
         void manualDeskewAngleSetExternally(double degrees);
 
     public:
@@ -83,7 +81,6 @@ namespace deskew
         void postUpdateUI(UiData const& ui_data);
 
     private slots:
-
         void spinBoxValueChanged(double skew_degrees);
 
         void modeChanged(bool auto_mode);
@@ -117,6 +114,5 @@ namespace deskew
 
         PageSelectionAccessor m_pageSelectionAccessor;
     };
-
-}
-#endif
+}  // namespace deskew
+#endif  // ifndef DESKEW_OPTIONSWIDGET_H_

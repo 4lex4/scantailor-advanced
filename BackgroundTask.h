@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef BACKGROUNDTASK_H_
 #define BACKGROUNDTASK_H_
@@ -26,36 +27,49 @@
 #include <QAtomicInt>
 #include <exception>
 
-class BackgroundTask : public AbstractCommand0<FilterResultPtr>, public TaskStatus
+class BackgroundTask
+    : public AbstractCommand0<FilterResultPtr>,
+      public TaskStatus
 {
 public:
-	enum Type { INTERACTIVE, BATCH };
+    enum Type { INTERACTIVE, BATCH };
 
-	class CancelledException : public std::exception
-	{
-	public:
-		virtual char const* what() const throw();
-	};
-	
-	BackgroundTask(Type type) : m_type(type) {}
+    class CancelledException
+        : public std::exception
+    {
+    public:
+        virtual char const* what() const throw();
+    };
 
-	Type type() const { return m_type; }
+    BackgroundTask(Type type)
+        : m_type(type)
+    { }
 
-	virtual void cancel() { m_cancelFlag.store(1); }
-	
-	virtual bool isCancelled() const {
-		return m_cancelFlag.load() != 0;
-	}
-	
-	/**
-	 * \brief If cancelled, throws CancelledException.
-	 */
-	virtual void throwIfCancelled() const;
+    Type type() const
+    {
+        return m_type;
+    }
+
+    virtual void cancel()
+    {
+        m_cancelFlag.store(1);
+    }
+
+    virtual bool isCancelled() const
+    {
+        return m_cancelFlag.load() != 0;
+    }
+
+    /**
+     * \brief If cancelled, throws CancelledException.
+     */
+    virtual void throwIfCancelled() const;
+
 private:
-	QAtomicInt m_cancelFlag;
-	Type const m_type;
+    QAtomicInt m_cancelFlag;
+    Type const m_type;
 };
 
 typedef IntrusivePtr<BackgroundTask> BackgroundTaskPtr;
 
-#endif
+#endif  // ifndef BACKGROUNDTASK_H_

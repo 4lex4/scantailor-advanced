@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ThumbnailBase.h"
 #include "PixmapRenderer.h"
@@ -26,13 +27,14 @@
 
 using namespace imageproc;
 
-class ThumbnailBase::LoadCompletionHandler :
-        public AbstractCommand1<void, ThumbnailLoadResult const&>
+class ThumbnailBase::LoadCompletionHandler
+    : public AbstractCommand1<void, ThumbnailLoadResult const&>
 {
-DECLARE_NON_COPYABLE(LoadCompletionHandler)
+    DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
 public:
-    LoadCompletionHandler(ThumbnailBase* thumb) : m_pThumb(thumb)
+    LoadCompletionHandler(ThumbnailBase* thumb)
+        : m_pThumb(thumb)
     { }
 
     virtual void operator()(ThumbnailLoadResult const& result)
@@ -45,22 +47,21 @@ private:
 };
 
 
-ThumbnailBase::ThumbnailBase(
-        IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-        QSizeF const& max_size, ImageId const& image_id,
-        ImageTransformation const& image_xform)
-        : m_ptrThumbnailCache(thumbnail_cache),
-          m_maxSize(max_size),
-          m_imageId(image_id),
-          m_imageXform(image_xform),
-          m_extendedClipArea(false)
+ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                             QSizeF const& max_size,
+                             ImageId const& image_id,
+                             ImageTransformation const& image_xform)
+    : m_ptrThumbnailCache(thumbnail_cache),
+      m_maxSize(max_size),
+      m_imageId(image_id),
+      m_imageXform(image_xform),
+      m_extendedClipArea(false)
 {
     setImageXform(m_imageXform);
 }
 
 ThumbnailBase::~ThumbnailBase()
-{
-}
+{ }
 
 QRectF
 ThumbnailBase::boundingRect() const
@@ -69,17 +70,16 @@ ThumbnailBase::boundingRect() const
 }
 
 void
-ThumbnailBase::paint(QPainter* painter,
-                     QStyleOptionGraphicsItem const* option, QWidget* widget)
+ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget)
 {
     QPixmap pixmap;
 
     if (!m_ptrCompletionHandler.get()) {
         std::shared_ptr<LoadCompletionHandler> handler(
-                new LoadCompletionHandler(this)
+            new LoadCompletionHandler(this)
         );
-        ThumbnailPixmapCache::Status const status =
-                m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
+        ThumbnailPixmapCache::Status const status
+            = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
         if (status == ThumbnailPixmapCache::QUEUED) {
             m_ptrCompletionHandler.swap(handler);
         }
@@ -98,6 +98,7 @@ ThumbnailBase::paint(QPainter* painter,
         painter->fillRect(rect, QColor(0xff, 0xff, 0xff));
 
         paintOverImage(*painter, image_to_display, thumb_to_display);
+
         return;
     }
 
@@ -109,16 +110,16 @@ ThumbnailBase::paint(QPainter* painter,
     pre_scale_xform.scale(x_pre_scale, y_pre_scale);
 
     QTransform const pixmap_to_thumb(
-            pre_scale_xform * m_imageXform.transform() * m_postScaleXform
+        pre_scale_xform * m_imageXform.transform() * m_postScaleXform
     );
 
     QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPostCropArea()));
     if (!m_extendedClipArea) {
         image_poly = image_poly.intersected(
-                PolygonUtils::round(
-                        m_imageXform.transform().map(m_imageXform.origRect())
-                )
-        );
+            PolygonUtils::round(
+                m_imageXform.transform().map(m_imageXform.origRect())
+            )
+                     );
     }
 
     QPolygonF display_poly(image_to_display.map(image_poly));
@@ -132,10 +133,10 @@ ThumbnailBase::paint(QPainter* painter,
     QPixmap temp_pixmap;
     QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
-        || temp_pixmap.width() < display_rect.width()
-        || temp_pixmap.height() < display_rect.width()) {
-        int w = (int) display_rect.width();
-        int h = (int) display_rect.height();
+        || (temp_pixmap.width() < display_rect.width())
+        || (temp_pixmap.height() < display_rect.width())) {
+        int w = (int)display_rect.width();
+        int h = (int)display_rect.height();
 
         w += w / 10;
         h += h / 10;
@@ -156,7 +157,7 @@ ThumbnailBase::paint(QPainter* painter,
     temp_adjustment.translate(-display_rect.left(), -display_rect.top());
 
     temp_painter.setWorldTransform(
-            pixmap_to_thumb * thumb_to_display * temp_adjustment
+        pixmap_to_thumb * thumb_to_display * temp_adjustment
     );
 
     temp_painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -172,8 +173,8 @@ ThumbnailBase::paint(QPainter* painter,
 
     temp_painter.save();
     paintOverImage(
-            temp_painter, image_to_display * temp_adjustment,
-            thumb_to_display * temp_adjustment
+        temp_painter, image_to_display * temp_adjustment,
+        thumb_to_display * temp_adjustment
     );
     temp_painter.restore();
 
@@ -186,7 +187,7 @@ ThumbnailBase::paint(QPainter* painter,
     temp_painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
     temp_painter.drawPolygon(
-            QPolygonF(display_rect).subtracted(PolygonUtils::round(display_poly))
+        QPolygonF(display_rect).subtracted(PolygonUtils::round(display_poly))
     );
 
     temp_painter.end();
@@ -196,9 +197,10 @@ ThumbnailBase::paint(QPainter* painter,
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter->drawPixmap(display_rect.topLeft(), temp_pixmap);
-}
+}  // ThumbnailBase::paint
 
-void ThumbnailBase::paintDeviant(QPainter& painter)
+void
+ThumbnailBase::paintDeviant(QPainter& painter)
 {
     QPen pen(QColor(0xdd, 0x00, 0x00, 0xee));
     pen.setWidth(5);
@@ -220,7 +222,7 @@ ThumbnailBase::setImageXform(ImageTransformation const& image_xform)
 {
     m_imageXform = image_xform;
     QSizeF const unscaled_size(
-            image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
+        image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
     );
     QSizeF scaled_size(unscaled_size);
     scaled_size.scale(m_maxSize, Qt::KeepAspectRatio);
@@ -242,3 +244,4 @@ ThumbnailBase::handleLoadResult(ThumbnailLoadResult const& result)
         update();
     }
 }
+

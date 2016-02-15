@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_BINARYIMAGE_H_
 #define IMAGEPROC_BINARYIMAGE_H_
@@ -31,23 +32,22 @@ class QImage;
 
 namespace imageproc
 {
-
-/**
- * \brief An image consisting of black and white pixels.
- *
- * The reason for having a separate image class instead of just using
- * QImage is convenience and efficiency concerns.  BinaryImage is a
- * sequence of 32bit words with bytes and bits arranged in such a way
- * that
- * \code
- * word << x
- * word >> x
- * \endcode
- * are equivalent to shifting a group of pixels to the left and to the
- * right respectively.\n
- * Additionally, unlinke QImage, BinaryImage doesn't have a palette,
- * so black pixels are always represented as ones and white pixels as zeros.
- */
+    /**
+     * \brief An image consisting of black and white pixels.
+     *
+     * The reason for having a separate image class instead of just using
+     * QImage is convenience and efficiency concerns.  BinaryImage is a
+     * sequence of 32bit words with bytes and bits arranged in such a way
+     * that
+     * \code
+     * word << x
+     * word >> x
+     * \endcode
+     * are equivalent to shifting a group of pixels to the left and to the
+     * right respectively.\n
+     * Additionally, unlinke QImage, BinaryImage doesn't have a palette,
+     * so black pixels are always represented as ones and white pixels as zeros.
+     */
     class BinaryImage
     {
     public:
@@ -91,8 +91,7 @@ namespace imageproc
          * Colors in a QImage are converted to gray first, and then
          * compared against the provided threshold.
          */
-        explicit BinaryImage(
-                QImage const& image, BinaryThreshold threshold = BinaryThreshold(128));
+        explicit BinaryImage(QImage const& image, BinaryThreshold threshold = BinaryThreshold(128));
 
         /**
          * \brief Create a new image by copying a part of a QImage.
@@ -103,9 +102,7 @@ namespace imageproc
          * Colors in a QImage are converted to gray first, and then
          * compared against the provided threshold.
          */
-        explicit BinaryImage(
-                QImage const& image, QRect const& rect,
-                BinaryThreshold threshold = BinaryThreshold(128));
+        explicit BinaryImage(QImage const& image, QRect const& rect, BinaryThreshold threshold = BinaryThreshold(128));
 
         ~BinaryImage();
 
@@ -124,7 +121,9 @@ namespace imageproc
          * Null images have zero width, height and wordsPerLine.
          */
         bool isNull() const
-        { return !m_pData; }
+        {
+            return !m_pData;
+        }
 
         /**
          * \brief Swaps two images.
@@ -207,16 +206,24 @@ namespace imageproc
         void rectangularizeAreasQuadro(BWColor content_color, std::vector<QRect>& areas);
 
         int width() const
-        { return m_width; }
+        {
+            return m_width;
+        }
 
         int height() const
-        { return m_height; }
+        {
+            return m_height;
+        }
 
         QRect rect() const
-        { return QRect(0, 0, m_width, m_height); }
+        {
+            return QRect(0, 0, m_width, m_height);
+        }
 
         QSize size() const
-        { return QSize(m_width, m_height); }
+        {
+            return QSize(m_width, m_height);
+        }
 
         /**
          * \brief Returns the number of 32bit words per line.
@@ -225,7 +232,9 @@ namespace imageproc
          * be bigger than that.
          */
         int wordsPerLine() const
-        { return m_wpl; }
+        {
+            return m_wpl;
+        }
 
         /**
          * \brief Returns a pointer to non-const image data.
@@ -280,27 +289,19 @@ namespace imageproc
 
         static BinaryImage fromMonoLSB(QImage const& image, QRect const& rect);
 
-        static BinaryImage fromIndexed8(
-                QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromIndexed8(QImage const& image, QRect const& rect, int threshold);
 
-        static BinaryImage fromRgb32(
-                QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromRgb32(QImage const& image, QRect const& rect, int threshold);
 
-        static BinaryImage fromArgb32Premultiplied(
-                QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromArgb32Premultiplied(QImage const& image, QRect const& rect, int threshold);
 
-        static BinaryImage fromRgb16(
-                QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromRgb16(QImage const& image, QRect const& rect, int threshold);
 
-        static bool isLineMonotone(
-                uint32_t const* line, int last_word_idx,
-                uint32_t last_word_mask, uint32_t modifier);
+        static bool isLineMonotone(uint32_t const* line, int last_word_idx, uint32_t last_word_mask, uint32_t modifier);
 
-        static int leftmostBitOffset(
-                uint32_t const* line, int offset_limit, uint32_t modifier);
+        static int leftmostBitOffset(uint32_t const* line, int offset_limit, uint32_t modifier);
 
-        static int rightmostBitOffset(
-                uint32_t const* line, int offset_limit, uint32_t modifier);
+        static int rightmostBitOffset(uint32_t const* line, int offset_limit, uint32_t modifier);
 
         SharedData* m_pData;
         int m_width;
@@ -309,7 +310,8 @@ namespace imageproc
     };
 
 
-    inline void swap(BinaryImage& o1, BinaryImage& o2)
+    inline void
+    swap(BinaryImage& o1, BinaryImage& o2)
     {
         o1.swap(o2);
     }
@@ -319,21 +321,22 @@ namespace imageproc
     {
         BinaryImage new_img;
         new_img.swap(*this);
+
         return new_img;
     }
 
-/**
- * \brief Compares image data.
- */
+    /**
+     * \brief Compares image data.
+     */
     bool operator==(BinaryImage const& lhs, BinaryImage const& rhs);
 
-/**
- * \brief Compares image data.
- */
-    inline bool operator!=(BinaryImage const& lhs, BinaryImage const& rhs)
+    /**
+     * \brief Compares image data.
+     */
+    inline bool
+    operator!=(BinaryImage const& lhs, BinaryImage const& rhs)
     {
         return !(lhs == rhs);
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_BINARYIMAGE_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef STAGELISTVIEW_H_
 #define STAGELISTVIEW_H_
@@ -26,9 +27,10 @@
 
 class StageSequence;
 
-class StageListView : public QTableView
+class StageListView
+    : public QTableView
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     StageListView(QWidget* parent);
@@ -38,26 +40,22 @@ public:
     void setStages(IntrusivePtr<StageSequence> const& stages);
 
     virtual QSize sizeHint() const
-    { return m_sizeHint; }
+    {
+        return m_sizeHint;
+    }
 
 signals:
-
     void launchBatchProcessing();
 
 public slots:
-
     void setBatchProcessingPossible(bool possible);
 
     void setBatchProcessingInProgress(bool in_progress);
 
 protected slots:
-
-    virtual void selectionChanged(
-            QItemSelection const& selected,
-            QItemSelection const& deselected);
+    virtual void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
 
 private slots:
-
     void ensureSelectedRowVisible();
 
 protected:
@@ -65,7 +63,7 @@ protected:
 
 private:
     class Model;
-class LeftColDelegate;
+    class LeftColDelegate;
 
     class RightColDelegate;
 
@@ -93,4 +91,4 @@ class LeftColDelegate;
     bool m_batchProcessingInProgress;
 };
 
-#endif
+#endif  // ifndef STAGELISTVIEW_H_

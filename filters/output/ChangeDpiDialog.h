@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_CHANGEDPIDIALOG_H_
 #define OUTPUT_CHANGEDPIDIALOG_H_
@@ -33,31 +34,27 @@ class Dpi;
 
 namespace output
 {
-
-    class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog
+    class ChangeDpiDialog
+        : public QDialog,
+          private Ui::OutputChangeDpiDialog
     {
-    Q_OBJECT
+        Q_OBJECT
+
     public:
-        ChangeDpiDialog(
-                QWidget* parent, Dpi const& dpi, PageId const& cur_page,
-                PageSelectionAccessor const& page_selection_accessor);
+        ChangeDpiDialog(QWidget* parent,
+                        Dpi const& dpi,
+                        PageId const& cur_page,
+                        PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~ChangeDpiDialog();
 
     signals:
-
-        void
-                accepted(std::set<PageId> const
-                         & pages,
-                         Dpi const& dpi
-        );
+        void accepted(std::set<PageId> const
+                      & pages, Dpi const& dpi);
 
     private
         slots:
-
-        void
-
-                dpiSelectionChanged(int index);
+        void dpiSelectionChanged(int index);
 
         void dpiEditTextChanged(QString const& text);
 
@@ -71,6 +68,5 @@ namespace output
         int m_customItemIdx;
         QString m_customDpiString;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_CHANGEDPIDIALOG_H_

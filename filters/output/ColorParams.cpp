@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ColorParams.h"
 #include "CommandLine.h"
@@ -23,18 +24,15 @@
 
 namespace output
 {
-
     ColorParams::ColorParams()
-            : m_colorMode(DefaultColorMode())
-    {
-    }
+        : m_colorMode(DefaultColorMode())
+    { }
 
     ColorParams::ColorParams(QDomElement const& el)
-            : m_colorMode(parseColorMode(el.attribute("colorMode"))),
-              m_colorGrayscaleOptions(el.namedItem("color-or-grayscale").toElement()),
-              m_bwOptions(el.namedItem("bw").toElement())
-    {
-    }
+        : m_colorMode(parseColorMode(el.attribute("colorMode"))),
+          m_colorGrayscaleOptions(el.namedItem("color-or-grayscale").toElement()),
+          m_bwOptions(el.namedItem("bw").toElement())
+    { }
 
     ColorParams::ColorMode
     ColorParams::DefaultColorMode()
@@ -49,6 +47,7 @@ namespace output
         el.setAttribute("colorMode", formatColorMode(m_colorMode));
         el.appendChild(m_colorGrayscaleOptions.toXml(doc, "color-or-grayscale"));
         el.appendChild(m_bwOptions.toXml(doc, "bw"));
+
         return el;
     }
 
@@ -87,7 +86,7 @@ namespace output
                 str = "mixed";
                 break;
         }
+
         return QString::fromLatin1(str);
     }
-
-} 
+}  // namespace output

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESKEW_SETTINGS_H_
 #define DESKEW_SETTINGS_H_
@@ -32,10 +33,10 @@ class AbstractRelinker;
 
 namespace deskew
 {
-
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     public:
         Settings();
@@ -57,22 +58,34 @@ namespace deskew
         void setDegress(std::set<PageId> const& pages, Params const& params);
 
         double maxDeviation() const
-        { return m_maxDeviation; }
+        {
+            return m_maxDeviation;
+        }
 
         void setMaxDeviation(double md)
-        { m_maxDeviation = md; }
+        {
+            m_maxDeviation = md;
+        }
 
         double avg() const
-        { return m_avg; };
+        {
+            return m_avg;
+        }
 
         void setAvg(double a)
-        { m_avg = a; };
+        {
+            m_avg = a;
+        }
 
         double std() const
-        { return m_sigma; };
+        {
+            return m_sigma;
+        }
 
         void setStd(double s)
-        { m_sigma = s; };
+        {
+            m_sigma = s;
+        }
 
     private:
         typedef std::map<PageId, Params> PerPageParams;
@@ -83,6 +96,5 @@ namespace deskew
         double m_sigma;
         double m_maxDeviation;
     };
-
-}
-#endif
+}  // namespace deskew
+#endif  // ifndef DESKEW_SETTINGS_H_

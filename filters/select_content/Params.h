@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_PARAMS_H_
 #define SELECT_CONTENT_PARAMS_H_
@@ -32,16 +33,18 @@ class QString;
 
 namespace select_content
 {
-
     class Params
     {
     public:
+        Params(QRectF const& rect, QSizeF const& size_mm, Dependencies const& deps, AutoManualMode mode);
 
-        Params(QRectF const& rect, QSizeF const& size_mm,
-               Dependencies const& deps, AutoManualMode mode);
-
-        Params(QRectF const& rect, QSizeF const& size_mm,
-               Dependencies const& deps, AutoManualMode mode, bool contentDetect, bool pageDetect, bool fineTuning);
+        Params(QRectF const& rect,
+               QSizeF const& size_mm,
+               Dependencies const& deps,
+               AutoManualMode mode,
+               bool contentDetect,
+               bool pageDetect,
+               bool fineTuning);
 
         Params(Dependencies const& deps);
 
@@ -50,70 +53,114 @@ namespace select_content
         ~Params();
 
         QRectF const& contentRect() const
-        { return m_contentRect; }
+        {
+            return m_contentRect;
+        }
 
         QRectF const& pageRect() const
-        { return m_pageRect; }
+        {
+            return m_pageRect;
+        }
 
         QSizeF const& contentSizeMM() const
-        { return m_contentSizeMM; }
+        {
+            return m_contentSizeMM;
+        }
 
         Dependencies const& dependencies() const
-        { return m_deps; }
+        {
+            return m_deps;
+        }
 
         AutoManualMode mode() const
-        { return m_mode; }
+        {
+            return m_mode;
+        }
 
         double deviation() const
-        { return m_deviation; }
+        {
+            return m_deviation;
+        }
 
         void setDeviation(double d)
-        { m_deviation = d; }
+        {
+            m_deviation = d;
+        }
 
         void computeDeviation(double avg)
-        { m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4); }
+        {
+            m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
+        }
 
         bool isDeviant(double std, double max_dev)
-        { return (max_dev * std) < fabs(m_deviation); }
+        {
+            return (max_dev * std) < fabs(m_deviation);
+        }
 
         bool isContentDetectionEnabled() const
-        { return m_contentDetect; };
+        {
+            return m_contentDetect;
+        }
 
         bool isPageDetectionEnabled() const
-        { return m_pageDetect; };
+        {
+            return m_pageDetect;
+        }
 
         bool isFineTuningEnabled() const
-        { return m_fineTuneCorners; };
+        {
+            return m_fineTuneCorners;
+        }
 
         Margins pageBorders() const
-        { return m_pageBorders; };
+        {
+            return m_pageBorders;
+        }
 
         void setPageBorders(Margins borders)
-        { m_pageBorders = borders; };
+        {
+            m_pageBorders = borders;
+        }
 
         void setMode(AutoManualMode const& mode)
-        { m_mode = mode; };
+        {
+            m_mode = mode;
+        }
 
         void setContentRect(QRectF const& rect)
-        { m_contentRect = rect; };
+        {
+            m_contentRect = rect;
+        }
 
         void setPageRect(QRectF const& rect)
-        { m_pageRect = rect; };
+        {
+            m_pageRect = rect;
+        }
 
         void setContentSizeMM(QSizeF const& size)
-        { m_contentSizeMM = size; };
+        {
+            m_contentSizeMM = size;
+        }
 
         void setDependencies(Dependencies const& deps)
-        { m_deps = deps; };
+        {
+            m_deps = deps;
+        }
 
         void setContentDetect(bool detect)
-        { m_contentDetect = detect; };
+        {
+            m_contentDetect = detect;
+        }
 
         void setPageDetect(bool detect)
-        { m_pageDetect = detect; };
+        {
+            m_pageDetect = detect;
+        }
 
         void setFineTuneCorners(bool fine_tune)
-        { m_fineTuneCorners = fine_tune; };
+        {
+            m_fineTuneCorners = fine_tune;
+        }
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -129,6 +176,5 @@ namespace select_content
         bool m_fineTuneCorners;
         double m_deviation;
     };
-
-}
-#endif
+}  // namespace select_content
+#endif  // ifndef SELECT_CONTENT_PARAMS_H_

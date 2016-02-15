@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef IMAGEPROC_GRAYIMAGE_H_
 #define IMAGEPROC_GRAYIMAGE_H_
@@ -26,10 +27,9 @@
 
 namespace imageproc
 {
-
-/**
- * \brief A wrapper class around QImage that is always guaranteed to be 8-bit grayscale.
- */
+    /**
+     * \brief A wrapper class around QImage that is always guaranteed to be 8-bit grayscale.
+     */
     class GrayImage
     {
     public:
@@ -59,22 +59,33 @@ namespace imageproc
          * image with a grayscale palette.
          */
         QImage const& toQImage() const
-        { return m_image; }
+        {
+            return m_image;
+        }
 
         operator QImage const&() const
-        { return m_image; }
+        { return m_image;
+        }
 
         bool isNull() const
-        { return m_image.isNull(); }
+        {
+            return m_image.isNull();
+        }
 
         void fill(uint8_t color)
-        { m_image.fill(color); }
+        {
+            m_image.fill(color);
+        }
 
         uint8_t* data()
-        { return m_image.bits(); }
+        {
+            return m_image.bits();
+        }
 
         uint8_t const* data() const
-        { return m_image.bits(); }
+        {
+            return m_image.bits();
+        }
 
         /**
          * \brief Number of bytes per line.
@@ -84,33 +95,44 @@ namespace imageproc
          * is that this value is a multiple of 4.
          */
         int stride() const
-        { return m_image.bytesPerLine(); }
+        {
+            return m_image.bytesPerLine();
+        }
 
         QSize size() const
-        { return m_image.size(); }
+        {
+            return m_image.size();
+        }
 
         QRect rect() const
-        { return m_image.rect(); }
+        {
+            return m_image.rect();
+        }
 
         int width() const
-        { return m_image.width(); }
+        {
+            return m_image.width();
+        }
 
         int height() const
-        { return m_image.height(); }
+        {
+            return m_image.height();
+        }
 
     private:
         QImage m_image;
     };
 
-    inline bool operator==(GrayImage const& lhs, GrayImage const& rhs)
+    inline bool
+    operator==(GrayImage const& lhs, GrayImage const& rhs)
     {
         return lhs.toQImage() == rhs.toQImage();
     }
 
-    inline bool operator!=(GrayImage const& lhs, GrayImage const& rhs)
+    inline bool
+    operator!=(GrayImage const& lhs, GrayImage const& rhs)
     {
         return lhs.toQImage() != rhs.toQImage();
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_GRAYIMAGE_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_DENTFINDER_H_
 #define IMAGEPROC_DENTFINDER_H_
@@ -23,7 +24,6 @@
 
 namespace imageproc
 {
-
     class BinaryImage;
 
     class DentFinder
@@ -34,8 +34,7 @@ namespace imageproc
          * and consider every white pixel between the first and the last black
          * span to belong to a dent or a hole.
          */
-        static imageproc::BinaryImage findDentsAndHoles(
-                imageproc::BinaryImage const& src);
+        static imageproc::BinaryImage findDentsAndHoles(imageproc::BinaryImage const& src);
 
     private:
         struct ImgInfo;
@@ -52,6 +51,5 @@ namespace imageproc
 
         static void transferPixel(uint32_t const* src_line, uint32_t* dst_line, int x);
     };
-
 }
-#endif
+#endif  // ifndef IMAGEPROC_DENTFINDER_H_

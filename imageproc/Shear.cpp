@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Shear.h"
 #include "RasterOp.h"
@@ -22,9 +23,12 @@
 
 namespace imageproc
 {
-
-    void hShearFromTo(BinaryImage const& src, BinaryImage& dst, double const shear,
-                      double const y_origin, BWColor const background_color)
+    void
+    hShearFromTo(BinaryImage const& src,
+                 BinaryImage& dst,
+                 double const shear,
+                 double const y_origin,
+                 BWColor const background_color)
     {
         if (src.isNull() || dst.isNull()) {
             throw std::invalid_argument("Can't shear a null image");
@@ -38,22 +42,23 @@ namespace imageproc
 
         double shift = 0.5 + shear * (0.5 - y_origin);
         double const shift_end = 0.5 + shear * (height - 0.5 - y_origin);
-        int shift1 = (int) floor(shift);
+        int shift1 = (int)floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);
             dst = src;
+
             return;
         }
 
         int shift2 = shift1;
         int y1 = 0;
         int y2 = 0;
-        for (; ;) {
+        for (;;) {
             ++y2;
             shift += shear;
-            shift2 = (int) floor(shift);
-            if (shift1 != shift2 || y2 == height) {
+            shift2 = (int)floor(shift);
+            if ((shift1 != shift2) || (y2 == height)) {
                 int const block_height = y2 - y1;
                 if (abs(shift1) >= width) {
                     QRect const fr(0, y1, width, block_height);
@@ -87,10 +92,14 @@ namespace imageproc
                 shift1 = shift2;
             }
         }
-    }
+    }  // hShearFromTo
 
-    void vShearFromTo(BinaryImage const& src, BinaryImage& dst, double const shear,
-                      double const x_origin, BWColor const background_color)
+    void
+    vShearFromTo(BinaryImage const& src,
+                 BinaryImage& dst,
+                 double const shear,
+                 double const x_origin,
+                 BWColor const background_color)
     {
         if (src.isNull() || dst.isNull()) {
             throw std::invalid_argument("Can't shear a null image");
@@ -104,22 +113,23 @@ namespace imageproc
 
         double shift = 0.5 + shear * (0.5 - x_origin);
         double const shift_end = 0.5 + shear * (width - 0.5 - x_origin);
-        int shift1 = (int) floor(shift);
+        int shift1 = (int)floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);
             dst = src;
+
             return;
         }
 
         int shift2 = shift1;
         int x1 = 0;
         int x2 = 0;
-        for (; ;) {
+        for (;;) {
             ++x2;
             shift += shear;
-            shift2 = (int) floor(shift);
-            if (shift1 != shift2 || x2 == width) {
+            shift2 = (int)floor(shift);
+            if ((shift1 != shift2) || (x2 == width)) {
                 int const block_width = x2 - x1;
                 if (abs(shift1) >= height) {
                     QRect const fr(x1, 0, block_width, height);
@@ -153,38 +163,35 @@ namespace imageproc
                 shift1 = shift2;
             }
         }
-    }
+    }  // vShearFromTo
 
-    BinaryImage hShear(
-            BinaryImage const& src, double const shear,
-            double const y_origin, BWColor const background_color)
+    BinaryImage
+    hShear(BinaryImage const& src, double const shear, double const y_origin, BWColor const background_color)
     {
         BinaryImage dst(src.width(), src.height());
         hShearFromTo(src, dst, shear, y_origin, background_color);
+
         return dst;
     }
 
-    BinaryImage vShear(
-            BinaryImage const& src, double const shear,
-            double const x_origin, BWColor const background_color)
+    BinaryImage
+    vShear(BinaryImage const& src, double const shear, double const x_origin, BWColor const background_color)
     {
         BinaryImage dst(src.width(), src.height());
         vShearFromTo(src, dst, shear, x_origin, background_color);
+
         return dst;
     }
 
-    void hShearInPlace(
-            BinaryImage& image, double const shear,
-            double const y_origin, BWColor const background_color)
+    void
+    hShearInPlace(BinaryImage& image, double const shear, double const y_origin, BWColor const background_color)
     {
         hShearFromTo(image, image, shear, y_origin, background_color);
     }
 
-    void vShearInPlace(
-            BinaryImage& image, double const shear,
-            double const x_origin, BWColor const background_color)
+    void
+    vShearInPlace(BinaryImage& image, double const shear, double const x_origin, BWColor const background_color)
     {
         vShearFromTo(image, image, shear, x_origin, background_color);
     }
-
-} 
+}  // namespace imageproc

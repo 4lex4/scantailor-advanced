@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Despeckle.h"
 #include "TaskStatus.h"
@@ -43,23 +44,21 @@ using namespace imageproc;
 
 namespace
 {
-
-/**
- * We treat vertical distances differently from the horizontal ones.
- * We want horizontal proximity to have greater weight, so we
- * multiply the vertical component distances by VERTICAL_SCALE,
- * so that the distance is not:\n
- * sqrt(dx^2 + dy^2)\n
- * but:\n
- * sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
- * Keep in mind that we actually operate on squared distances,
- * so we don't need to take that square root.
- */
+    /**
+     * We treat vertical distances differently from the horizontal ones.
+     * We want horizontal proximity to have greater weight, so we
+     * multiply the vertical component distances by VERTICAL_SCALE,
+     * so that the distance is not:\n
+     * sqrt(dx^2 + dy^2)\n
+     * but:\n
+     * sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
+     * Keep in mind that we actually operate on squared distances,
+     * so we don't need to take that square root.
+     */
     static int const VERTICAL_SCALE = 2;
     static int const VERTICAL_SCALE_SQ = VERTICAL_SCALE * VERTICAL_SCALE;
 
-    struct Settings
-    {
+    struct Settings {
         /**
          * When multiplied by the number of pixels in a connected component,
          * gives the minimum size (in terms of the number of pixels) of a connected
@@ -80,11 +79,11 @@ namespace
          */
         int bigObjectThreshold;
 
-        static Settings get(Despeckle::Level level, Dpi const &dpi);
+        static Settings get(Despeckle::Level level, Dpi const& dpi);
     };
 
     Settings
-    Settings::get(Despeckle::Level const level, Dpi const &dpi)
+    Settings::get(Despeckle::Level const level, Dpi const& dpi)
     {
         Settings settings;
 
@@ -116,9 +115,7 @@ namespace
         return settings;
     }
 
-
-    struct Component
-    {
+    struct Component {
         static uint32_t const ANCHORED_TO_BIG = uint32_t(1) << 31;
         static uint32_t const ANCHORED_TO_SMALL = uint32_t(1) << 30;
         static uint32_t const TAG_MASK = ANCHORED_TO_BIG | ANCHORED_TO_SMALL;
@@ -129,7 +126,8 @@ namespace
          */
         uint32_t num_pixels;
 
-        Component() : num_pixels(0)
+        Component()
+            : num_pixels(0)
         { }
 
         uint32_t const anchoredToBig() const
@@ -158,15 +156,16 @@ namespace
         }
 
         void clearTags()
-        { num_pixels &= ~TAG_MASK; }
+        {
+            num_pixels &= ~TAG_MASK;
+        }
     };
 
     uint32_t const Component::ANCHORED_TO_BIG;
     uint32_t const Component::ANCHORED_TO_SMALL;
     uint32_t const Component::TAG_MASK;
 
-    struct BoundingBox
-    {
+    struct BoundingBox {
         int top;
         int left;
         int bottom;
@@ -179,10 +178,14 @@ namespace
         }
 
         int width() const
-        { return right - left + 1; }
+        {
+            return right - left + 1;
+        }
 
         int height() const
-        { return bottom - top + 1; }
+        {
+            return bottom - top + 1;
+        }
 
         void extend(int x, int y)
         {
@@ -193,60 +196,66 @@ namespace
         }
     };
 
-    struct Vector
-    {
+    struct Vector {
         int16_t x;
         int16_t y;
     };
 
-    union Distance
-    {
+    union Distance {
         Vector vec;
         uint32_t raw;
 
-        static Distance zero()
+        static Distance
+        zero()
         {
             Distance dist;
             dist.raw = 0;
+
             return dist;
         }
 
-        static Distance special()
+        static Distance
+        special()
         {
             Distance dist;
             dist.vec.x = dist.vec.y = std::numeric_limits<int16_t>::max();
+
             return dist;
         }
 
-        bool operator==(Distance const &other) const
+        bool
+        operator==(Distance const& other) const
         {
             return raw == other.raw;
         }
 
-        bool operator!=(Distance const &other) const
+        bool
+        operator!=(Distance const& other) const
         {
             return raw != other.raw;
         }
 
-        void reset(int x)
+        void
+        reset(int x)
         {
             vec.x = std::numeric_limits<int16_t>::max() - x;
             vec.y = 0;
         }
 
-        uint32_t sqdist() const
+        uint32_t
+        sqdist() const
         {
             int const x = vec.x;
             int const y = vec.y;
+
             return static_cast<uint32_t>(x * x + VERTICAL_SCALE_SQ * y * y);
         }
     };
 
-/**
- * \brief A bidirectional association between two connected components.
- */
-    struct Connection
-    {
+    /**
+     * \brief A bidirectional association between two connected components.
+     */
+    struct Connection {
         uint32_t lesser_label;
         uint32_t greater_label;
 
@@ -262,7 +271,7 @@ namespace
             }
         }
 
-        bool operator<(Connection const &rhs) const
+        bool operator<(Connection const& rhs) const
         {
             if (lesser_label < rhs.lesser_label) {
                 return true;
@@ -276,26 +285,27 @@ namespace
         }
     };
 
-/**
- * \brief A directional assiciation between two connected components.
- */
-    struct TargetSourceConn
-    {
+    /**
+     * \brief A directional assiciation between two connected components.
+     */
+    struct TargetSourceConn {
         uint32_t target;
+
         /**< The label of the target connected component. */
         uint32_t source;
 
         /**< The label of the source connected component. */
 
         TargetSourceConn(uint32_t tgt, uint32_t src)
-                : target(tgt), source(src)
+            : target(tgt),
+              source(src)
         { }
 
         /**
          * The ordering is by target then source.  It's designed to be able
          * to quickly locate all associations involving a specific target.
          */
-        bool operator<(TargetSourceConn const &rhs) const
+        bool operator<(TargetSourceConn const& rhs) const
         {
             if (target < rhs.target) {
                 return true;
@@ -309,19 +319,18 @@ namespace
         }
     };
 
-/**
- * \brief If the association didn't exist, create it,
- *        otherwise the minimum distance.
- */
-    void updateDistance(
-            std::map<Connection, uint32_t> &conns,
-            uint32_t label1, uint32_t label2, uint32_t sqdist)
+    /**
+     * \brief If the association didn't exist, create it,
+     *        otherwise the minimum distance.
+     */
+    void
+    updateDistance(std::map<Connection, uint32_t>& conns, uint32_t label1, uint32_t label2, uint32_t sqdist)
     {
         typedef std::map<Connection, uint32_t> Connections;
 
         Connection const conn(label1, label2);
         Connections::iterator it(conns.lower_bound(conn));
-        if (it == conns.end() || conn < it->first) {
+        if ((it == conns.end()) || (conn < it->first)) {
             conns.insert(Connections::value_type(conn, sqdist));
         }
         else if (sqdist < it->second) {
@@ -329,12 +338,12 @@ namespace
         }
     }
 
-/**
- * \brief Tag the source component with ANCHORED_TO_SMALL, ANCHORED_TO_BIG
- *        or none of the above.
- */
-    void tagSourceComponent(
-            Component &source, Component const &target, uint32_t sqdist, Settings const &settings)
+    /**
+     * \brief Tag the source component with ANCHORED_TO_SMALL, ANCHORED_TO_BIG
+     *        or none of the above.
+     */
+    void
+    tagSourceComponent(Component& source, Component const& target, uint32_t sqdist, Settings const& settings)
     {
         if (source.anchoredToBig()) {
             return;
@@ -352,23 +361,25 @@ namespace
         }
     }
 
-/**
- * Check if the component may be attached to another one.
- * Attaching a component to another one will preserve the component
- * being attached, provided that the one it's attached to is also preserved.
- */
-    bool canBeAttachedTo(
-            Component const &comp, Component const &target, uint32_t sqdist, Settings const &settings)
+    /**
+     * Check if the component may be attached to another one.
+     * Attaching a component to another one will preserve the component
+     * being attached, provided that the one it's attached to is also preserved.
+     */
+    bool
+    canBeAttachedTo(Component const& comp, Component const& target, uint32_t sqdist, Settings const& settings)
     {
         if (sqdist <= comp.num_pixels * settings.pixelsToSqDist) {
             if (target.num_pixels >= comp.num_pixels * settings.minRelativeParentWeight) {
                 return true;
             }
         }
+
         return false;
     }
 
-    void voronoi(ConnectivityMap &cmap, std::vector<Distance> &dist)
+    void
+    voronoi(ConnectivityMap& cmap, std::vector<Distance>& dist)
     {
         int const width = cmap.size().width() + 2;
         int const height = cmap.size().height() + 2;
@@ -377,11 +388,11 @@ namespace
         dist.resize(width * height, Distance::zero());
 
         std::vector<uint32_t> sqdists(width * 2, 0);
-        uint32_t *prev_sqdist_line = &sqdists[0];
-        uint32_t *this_sqdist_line = &sqdists[width];
+        uint32_t* prev_sqdist_line = &sqdists[0];
+        uint32_t* this_sqdist_line = &sqdists[width];
 
-        Distance *dist_line = &dist[0];
-        uint32_t *cmap_line = cmap.paddedData();
+        Distance* dist_line = &dist[0];
+        uint32_t* cmap_line = cmap.paddedData();
 
         dist_line[0].reset(0);
         prev_sqdist_line[0] = dist_line[0].sqdist();
@@ -493,19 +504,20 @@ namespace
 
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
-    }
+    }  // voronoi
 
-    void voronoiSpecial(ConnectivityMap &cmap, std::vector<Distance> &dist, Distance const special_distance)
+    void
+    voronoiSpecial(ConnectivityMap& cmap, std::vector<Distance>& dist, Distance const special_distance)
     {
         int const width = cmap.size().width() + 2;
         int const height = cmap.size().height() + 2;
 
         std::vector<uint32_t> sqdists(width * 2, 0);
-        uint32_t *prev_sqdist_line = &sqdists[0];
-        uint32_t *this_sqdist_line = &sqdists[width];
+        uint32_t* prev_sqdist_line = &sqdists[0];
+        uint32_t* this_sqdist_line = &sqdists[width];
 
-        Distance *dist_line = &dist[0];
-        uint32_t *cmap_line = cmap.paddedData();
+        Distance* dist_line = &dist[0];
+        uint32_t* cmap_line = cmap.paddedData();
 
         dist_line[0].reset(0);
         prev_sqdist_line[0] = dist_line[0].sqdist();
@@ -640,24 +652,24 @@ namespace
 
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
-    }
+    }  // voronoiSpecial
 
-/**
- * Calculate the minimum distance between components from neighboring
- * Voronoi segments.
- */
-    void voronoiDistances(
-            ConnectivityMap const &cmap,
-            std::vector<Distance> const &distance_matrix,
-            std::map<Connection, uint32_t> &conns)
+    /**
+     * Calculate the minimum distance between components from neighboring
+     * Voronoi segments.
+     */
+    void
+    voronoiDistances(ConnectivityMap const& cmap,
+                     std::vector<Distance> const& distance_matrix,
+                     std::map<Connection, uint32_t>& conns)
     {
         int const width = cmap.size().width();
         int const height = cmap.size().height();
 
-        int const offsets[] = {-cmap.stride(), -1, 1, cmap.stride()};
+        int const offsets[] = { -cmap.stride(), -1, 1, cmap.stride() };
 
-        uint32_t const *const cmap_data = cmap.data();
-        Distance const *const distance_data = &distance_matrix[0] + width + 3;
+        uint32_t const* const cmap_data = cmap.data();
+        Distance const* const distance_data = &distance_matrix[0] + width + 3;
         for (int y = 0, offset = 0; y < height; ++y, offset += 2) {
             for (int x = 0; x < width; ++x, ++offset) {
                 uint32_t const label = cmap_data[offset];
@@ -669,7 +681,7 @@ namespace
                 for (int i = 0; i < 4; ++i) {
                     int const nbh_offset = offset + offsets[i];
                     uint32_t const nbh_label = cmap_data[nbh_offset];
-                    if (nbh_label == 0 || nbh_label == label) {
+                    if ((nbh_label == 0) || (nbh_label == label)) {
                         continue;
                     }
 
@@ -683,24 +695,28 @@ namespace
                 }
             }
         }
-    }
-
-}
+    }  // voronoiDistances
+}  // namespace
 
 BinaryImage
-Despeckle::despeckle(
-        BinaryImage const &src, Dpi const &dpi, Level const level,
-        TaskStatus const &status, DebugImages *const dbg)
+Despeckle::despeckle(BinaryImage const& src,
+                     Dpi const& dpi,
+                     Level const level,
+                     TaskStatus const& status,
+                     DebugImages* const dbg)
 {
     BinaryImage dst(src);
     despeckleInPlace(dst, dpi, level, status, dbg);
+
     return dst;
 }
 
 void
-Despeckle::despeckleInPlace(
-        BinaryImage &image, Dpi const &dpi, Level const level,
-        TaskStatus const &status, DebugImages *const dbg)
+Despeckle::despeckleInPlace(BinaryImage& image,
+                            Dpi const& dpi,
+                            Level const level,
+                            TaskStatus const& status,
+                            DebugImages* const dbg)
 {
     Settings const settings(Settings::get(level, dpi));
 
@@ -717,9 +733,9 @@ Despeckle::despeckleInPlace(
     int const width = image.width();
     int const height = image.height();
 
-    uint32_t *const cmap_data = cmap.data();
+    uint32_t* const cmap_data = cmap.data();
 
-    uint32_t *cmap_line = cmap_data;
+    uint32_t* cmap_line = cmap_data;
     int const cmap_stride = cmap.stride();
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
@@ -736,8 +752,8 @@ Despeckle::despeckleInPlace(
     uint32_t unified_big_component = 0;
     uint32_t next_avail_component = 1;
     for (uint32_t label = 1; label <= cmap.maxLabel(); ++label) {
-        if (bounding_boxes[label].width() < settings.bigObjectThreshold &&
-            bounding_boxes[label].height() < settings.bigObjectThreshold) {
+        if ((bounding_boxes[label].width() < settings.bigObjectThreshold)
+            && (bounding_boxes[label].height() < settings.bigObjectThreshold)) {
             components[next_avail_component] = components[label];
             remapping_table[label] = next_avail_component;
             ++next_avail_component;
@@ -779,7 +795,7 @@ Despeckle::despeckleInPlace(
 
     status.throwIfCancelled();
 
-    Distance *const distance_data = &distance_matrix[0] + width + 3;
+    Distance* const distance_data = &distance_matrix[0] + width + 3;
 
 
     typedef std::map<Connection, uint32_t> Connections;
@@ -789,24 +805,23 @@ Despeckle::despeckleInPlace(
 
     status.throwIfCancelled();
 
-    for (Connections::value_type const& pair :  conns) {
-                    Connection const conn(pair.first);
-                    uint32_t const sqdist = pair.second;
-                    Component &comp1 = components[conn.lesser_label];
-                    Component &comp2 = components[conn.greater_label];
-                    tagSourceComponent(comp1, comp2, sqdist, settings);
-                    tagSourceComponent(comp2, comp1, sqdist, settings);
-                }
+    for (Connections::value_type const& pair : conns) {
+        Connection const conn(pair.first);
+        uint32_t const sqdist = pair.second;
+        Component& comp1 = components[conn.lesser_label];
+        Component& comp2 = components[conn.greater_label];
+        tagSourceComponent(comp1, comp2, sqdist, settings);
+        tagSourceComponent(comp2, comp1, sqdist, settings);
+    }
 
     components[unified_big_component].setAnchoredToBig();
 
     bool have_anchored_to_small_but_not_big = false;
-    for (Component const &comp :  components) {
-                    have_anchored_to_small_but_not_big = comp.anchoredToSmallButNotBig();
-                }
+    for (Component const& comp : components) {
+        have_anchored_to_small_but_not_big = comp.anchoredToSmallButNotBig();
+    }
 
     if (have_anchored_to_small_but_not_big) {
-
         status.throwIfCancelled();
 
 
@@ -817,7 +832,7 @@ Despeckle::despeckleInPlace(
                 uint32_t const label = cmap_data[offset];
                 assert(label != 0);
 
-                Component const &comp = components[label];
+                Component const& comp = components[label];
                 if (!comp.anchoredToSmallButNotBig()) {
                     if (distance_data[offset] == zero_distance) {
                         distance_data[offset] = special_distance;
@@ -845,9 +860,9 @@ Despeckle::despeckleInPlace(
 
     std::vector<Distance>().swap(distance_matrix);
 
-    for (Component &comp :  components) {
-                    comp.clearTags();
-                }
+    for (Component& comp : components) {
+        comp.clearTags();
+    }
 
     std::vector<TargetSourceConn> target_source;
     while (!conns.empty()) {
@@ -855,8 +870,8 @@ Despeckle::despeckleInPlace(
         uint32_t const label1 = it->first.lesser_label;
         uint32_t const label2 = it->first.greater_label;
         uint32_t const sqdist = it->second;
-        Component const &comp1 = components[label1];
-        Component const &comp2 = components[label2];
+        Component const& comp1 = components[label1];
+        Component const& comp2 = components[label2];
         if (canBeAttachedTo(comp1, comp2, sqdist, settings)) {
             target_source.push_back(TargetSourceConn(label2, label1));
         }
@@ -874,7 +889,7 @@ Despeckle::despeckleInPlace(
     size_t const num_target_sources = target_source.size();
     uint32_t prev_label = uint32_t(0) - 1;
     for (size_t i = 0; i < num_target_sources; ++i) {
-        TargetSourceConn const &conn = target_source[i];
+        TargetSourceConn const& conn = target_source[i];
         assert(conn.target != 0);
         for (; prev_label != conn.target; ++prev_label) {
             target_source_idx.push_back(i);
@@ -893,7 +908,7 @@ Despeckle::despeckleInPlace(
         uint32_t const label = ok_labels.front();
         ok_labels.pop();
 
-        Component &comp = components[label];
+        Component& comp = components[label];
         if (comp.anchoredToBig()) {
             continue;
         }
@@ -901,8 +916,8 @@ Despeckle::despeckleInPlace(
         comp.setAnchoredToBig();
 
         size_t idx = target_source_idx[label];
-        while (idx < num_target_sources &&
-               target_source[idx].target == label) {
+        while (idx < num_target_sources
+               && target_source[idx].target == label) {
             ok_labels.push(target_source[idx].source);
             ++idx;
         }
@@ -911,7 +926,7 @@ Despeckle::despeckleInPlace(
     status.throwIfCancelled();
 
     uint32_t const msb = uint32_t(1) << 31;
-    uint32_t *image_line = image.data();
+    uint32_t* image_line = image.data();
     int const image_stride = image.wordsPerLine();
     cmap_line = cmap_data;
     for (int y = 0; y < height; ++y) {
@@ -923,4 +938,5 @@ Despeckle::despeckleInPlace(
         image_line += image_stride;
         cmap_line += cmap_stride;
     }
-}
+}  // Despeckle::despeckleInPlace
+

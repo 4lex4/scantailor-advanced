@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SplitModeDialog.h"
 #include "PageSelectionAccessor.h"
@@ -23,21 +24,20 @@
 
 namespace page_split
 {
-
-    SplitModeDialog::SplitModeDialog(
-            QWidget* const parent, PageId const& cur_page,
-            PageSelectionAccessor const& page_selection_accessor,
-            LayoutType const layout_type,
-            PageLayout::Type const auto_detected_layout_type,
-            bool const auto_detected_layout_type_valid)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_curPage(cur_page),
-              m_pScopeGroup(new QButtonGroup(this)),
-              m_layoutType(layout_type),
-              m_autoDetectedLayoutType(auto_detected_layout_type),
-              m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid)
+    SplitModeDialog::SplitModeDialog(QWidget* const parent,
+                                     PageId const& cur_page,
+                                     PageSelectionAccessor const& page_selection_accessor,
+                                     LayoutType const layout_type,
+                                     PageLayout::Type const auto_detected_layout_type,
+                                     bool const auto_detected_layout_type_valid)
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_curPage(cur_page),
+          m_pScopeGroup(new QButtonGroup(this)),
+          m_layoutType(layout_type),
+          m_autoDetectedLayoutType(auto_detected_layout_type),
+          m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid)
     {
         setupUi(this);
         m_pScopeGroup->addButton(thisPageRB);
@@ -65,8 +65,7 @@ namespace page_split
     }
 
     SplitModeDialog::~SplitModeDialog()
-    {
-    }
+    { }
 
     void
     SplitModeDialog::autoDetectionSelected()
@@ -103,6 +102,7 @@ namespace page_split
         else if (selectedPagesRB->isChecked()) {
             emit accepted(m_selectedPages, layout_type, applyCutOption->isChecked());
             accept();
+
             return;
         }
         else if (everyOtherRB->isChecked()) {
@@ -117,7 +117,6 @@ namespace page_split
                     pages.insert(*it);
                 }
             }
-
         }
         else if (everyOtherSelectedRB->isChecked()) {
             std::set<PageId>::iterator it = m_selectedPages.begin();
@@ -131,7 +130,7 @@ namespace page_split
         emit accepted(pages, layout_type, applyCutOption->isChecked());
 
         accept();
-    }
+    }  // SplitModeDialog::onSubmit
 
     LayoutType
     SplitModeDialog::combinedLayoutType() const
@@ -154,6 +153,7 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return AUTO_LAYOUT_TYPE;
     }
 
@@ -179,5 +179,4 @@ namespace page_split
 
         return resource;
     }
-
-} 
+}  // namespace page_split

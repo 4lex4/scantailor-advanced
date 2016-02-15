@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RELINKING_LIST_VIEW_H_
 #define RELINKING_LIST_VIEW_H_
@@ -25,7 +26,8 @@ class QPainter;
 class QRect;
 class QModelIndex;
 
-class RelinkingListView : public QListView
+class RelinkingListView
+    : public QListView
 {
 public:
     RelinkingListView(QWidget* parent = 0);
@@ -35,16 +37,15 @@ protected:
 
 private:
     class Delegate;
-class IndicationGroup;
+    class IndicationGroup;
 
     class GroupAggregator;
 
-    void maybeDrawStatusLayer(QPainter* painter,
-                              QModelIndex const& item_index, QRect const& item_paint_rect);
+    void maybeDrawStatusLayer(QPainter* painter, QModelIndex const& item_index, QRect const& item_paint_rect);
 
     void drawStatusLayer(QPainter* painter);
 
     bool m_statusLayerDrawn;
 };
 
-#endif
+#endif  // ifndef RELINKING_LIST_VIEW_H_

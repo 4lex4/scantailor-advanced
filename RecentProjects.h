@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RECENT_PROJECTS_H_
 #define RECENT_PROJECTS_H_
@@ -30,10 +31,7 @@ public:
      * \brief The default value for max_items parameters of
      *        write() and enumerate().
      */
-    enum
-    {
-        DEFAULT_MAX_ITEMS = 7
-    };
+    enum { DEFAULT_MAX_ITEMS = 7 };
 
     /**
      * \brief Reads the list of recent projects from QSettings
@@ -59,23 +57,24 @@ public:
     void write(int max_items = DEFAULT_MAX_ITEMS) const;
 
     bool isEmpty() const
-    { return m_projectFiles.empty(); }
+    {
+        return m_projectFiles.empty();
+    }
 
     /**
      * \brief Calls out((QString const&)file_path) for every entry.
      *
      * Modifying this object from the callback is not allowed.
      */
-    template<typename Out>
-    void enumerate(Out out,
-                   int max_items = DEFAULT_MAX_ITEMS) const;
+    template <typename Out>
+    void enumerate(Out out, int max_items = DEFAULT_MAX_ITEMS) const;
 
 private:
     std::list<QString> m_projectFiles;
 };
 
 
-template<typename Out>
+template <typename Out>
 void
 RecentProjects::enumerate(Out out, int max_items) const
 {
@@ -86,4 +85,4 @@ RecentProjects::enumerate(Out out, int max_items) const
     }
 }
 
-#endif
+#endif  // ifndef RECENT_PROJECTS_H_

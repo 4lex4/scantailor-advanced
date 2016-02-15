@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PolygonUtils.h"
 #include <QPolygonF>
@@ -23,7 +24,6 @@
 
 namespace imageproc
 {
-
     double const PolygonUtils::ROUNDING_MULTIPLIER = 1 << 12;
     double const PolygonUtils::ROUNDING_RECIP_MULTIPLIER = 1.0 / ROUNDING_MULTIPLIER;
 
@@ -41,6 +41,7 @@ namespace imageproc
             if (comp != 0) {
                 return comp < 0;
             }
+
             return compare(lhs.p2(), rhs.p2()) < 0;
         }
 
@@ -65,6 +66,7 @@ namespace imageproc
                     return 1;
                 }
             }
+
             return 0;
         }
     };
@@ -76,7 +78,7 @@ namespace imageproc
         QPolygonF rounded;
         rounded.reserve(poly.size());
 
-        for (QPointF const& p :  poly) {
+        for (QPointF const& p : poly) {
             rounded.push_back(roundPoint(p));
         }
 
@@ -86,10 +88,10 @@ namespace imageproc
     bool
     PolygonUtils::fuzzyCompare(QPolygonF const& poly1, QPolygonF const& poly2)
     {
-        if (poly1.size() < 2 && poly2.size() < 2) {
+        if ((poly1.size() < 2) && (poly2.size() < 2)) {
             return true;
         }
-        else if (poly1.size() < 2 || poly2.size() < 2) {
+        else if ((poly1.size() < 2) || (poly2.size() < 2)) {
             return false;
         }
 
@@ -116,7 +118,7 @@ namespace imageproc
         std::sort(edges2.begin(), edges2.end(), Before());
 
         return fuzzyCompareImpl(edges1, edges2);
-    }
+    }  // PolygonUtils::fuzzyCompare
 
     QPointF
     PolygonUtils::roundPoint(QPointF const& p)
@@ -147,8 +149,7 @@ namespace imageproc
     }
 
     void
-    PolygonUtils::maybeAddNormalizedEdge(
-            std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2)
+    PolygonUtils::maybeAddNormalizedEdge(std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2)
     {
         if (fuzzyCompareImpl(p1, p2)) {
             return;
@@ -163,9 +164,7 @@ namespace imageproc
     }
 
     bool
-    PolygonUtils::fuzzyCompareImpl(
-            std::vector<QLineF> const& lines1,
-            std::vector<QLineF> const& lines2)
+    PolygonUtils::fuzzyCompareImpl(std::vector<QLineF> const& lines1, std::vector<QLineF> const& lines2)
     {
         assert(lines1.size() == lines2.size());
         size_t const size = lines1.size();
@@ -174,14 +173,15 @@ namespace imageproc
                 return false;
             }
         }
+
         return true;
     }
 
     bool
     PolygonUtils::fuzzyCompareImpl(QLineF const& line1, QLineF const& line2)
     {
-        return fuzzyCompareImpl(line1.p1(), line2.p1()) &&
-               fuzzyCompareImpl(line1.p2(), line2.p2());
+        return fuzzyCompareImpl(line1.p1(), line2.p1())
+               && fuzzyCompareImpl(line1.p2(), line2.p2());
     }
 
     bool
@@ -189,14 +189,13 @@ namespace imageproc
     {
         double const dx = fabs(p1.x() - p2.x());
         double const dy = fabs(p1.y() - p2.y());
+
         return dx <= ROUNDING_RECIP_MULTIPLIER && dy <= ROUNDING_RECIP_MULTIPLIER;
     }
 
     namespace
     {
-
-        struct LexicographicPointComparator
-        {
+        struct LexicographicPointComparator {
             bool operator()(QPointF const& p1, QPointF const& p2) const
             {
                 if (p1.x() != p2.x()) {
@@ -208,17 +207,16 @@ namespace imageproc
             }
         };
 
-        double cross(QPointF const& O, QPointF const& A, QPointF const& B)
+        double
+        cross(QPointF const& O, QPointF const& A, QPointF const& B)
         {
             return (A.x() - O.x()) * (B.y() - O.y()) - (A.y() - O.y()) * (B.x() - O.x());
         }
-
     }
 
     QPolygonF
     PolygonUtils::convexHull(std::vector<QPointF> point_cloud)
     {
-
         int const n = point_cloud.size();
         int k = 0;
         std::vector<QPointF> hull(n * 2);
@@ -242,11 +240,10 @@ namespace imageproc
         hull.resize(k);
 
         QPolygonF poly(k);
-        for (QPointF const& pt :  hull) {
+        for (QPointF const& pt : hull) {
             poly << pt;
         }
 
         return poly;
     }
-
-} 
+}  // namespace imageproc

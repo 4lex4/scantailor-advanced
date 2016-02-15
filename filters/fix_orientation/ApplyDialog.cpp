@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
@@ -22,16 +23,15 @@
 
 namespace fix_orientation
 {
-
-    ApplyDialog::ApplyDialog(
-            QWidget* parent,
-            PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_selectedRanges(page_selection_accessor.selectedRanges()),
-              m_curPage(cur_page),
-              m_pBtnGroup(new QButtonGroup(this))
+    ApplyDialog::ApplyDialog(QWidget* parent,
+                             PageId const& cur_page,
+                             PageSelectionAccessor const& page_selection_accessor)
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_selectedRanges(page_selection_accessor.selectedRanges()),
+          m_curPage(cur_page),
+          m_pBtnGroup(new QButtonGroup(this))
     {
         setupUi(this);
         m_pBtnGroup->addButton(thisPageOnlyRB);
@@ -46,8 +46,7 @@ namespace fix_orientation
     }
 
     ApplyDialog::~ApplyDialog()
-    {
-    }
+    { }
 
     void
     ApplyDialog::onSubmit()
@@ -58,6 +57,7 @@ namespace fix_orientation
             m_pages.selectAll().swap(pages);
             emit appliedToAllPages(pages);
             accept();
+
             return;
         }
         else if (thisPageAndFollowersRB->isChecked()) {
@@ -66,6 +66,7 @@ namespace fix_orientation
         else if (selectedPagesRB->isChecked()) {
             emit appliedTo(m_selectedPages);
             accept();
+
             return;
         }
         else if (everyOtherRB->isChecked()) {
@@ -90,6 +91,5 @@ namespace fix_orientation
         emit appliedTo(pages);
 
         accept();
-    }
-
-} 
+    }  // ApplyDialog::onSubmit
+}  // namespace fix_orientation

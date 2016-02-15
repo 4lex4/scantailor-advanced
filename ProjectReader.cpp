@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ProjectReader.h"
 #include "ProjectPages.h"
@@ -25,8 +26,8 @@
 #include <boost/bind.hpp>
 
 ProjectReader::ProjectReader(QDomDocument const& doc)
-        : m_doc(doc),
-          m_ptrDisambiguator(new FileNameDisambiguator)
+    : m_doc(doc),
+      m_ptrDisambiguator(new FileNameDisambiguator)
 {
     QDomElement project_el(m_doc.documentElement());
     m_outDir = project_el.attribute("outputDirectory");
@@ -61,18 +62,17 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
     processPages(pages_el);
 
     QDomElement const disambig_el(
-            project_el.namedItem("file-name-disambiguation").toElement()
+        project_el.namedItem("file-name-disambiguation").toElement()
     );
     m_ptrDisambiguator.reset(
-            new FileNameDisambiguator(
-                    disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
-            )
+        new FileNameDisambiguator(
+            disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
+        )
     );
 }
 
 ProjectReader::~ProjectReader()
-{
-}
+{ }
 
 void
 ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const
@@ -158,12 +158,10 @@ ProjectReader::processFiles(QDomElement const& files_el)
         FileRecord const rec(file_path, compat_multi_page);
         m_fileMap.insert(FileMap::value_type(id, rec));
     }
-}
+}  // ProjectReader::processFiles
 
 void
-ProjectReader::processImages(
-        QDomElement const& images_el,
-        Qt::LayoutDirection const layout_direction)
+ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection const layout_direction)
 {
     QString const image_tag_name("image");
 
@@ -206,13 +204,13 @@ ProjectReader::processImages(
             continue;
         }
         ImageId const image_id(
-                file_record.filePath,
-                file_image + int(file_record.compatMultiPage)
+            file_record.filePath,
+            file_image + int(file_record.compatMultiPage)
         );
         ImageMetadata const metadata(processImageMetadata(el));
         ImageInfo const image_info(
-                image_id, metadata, sub_pages,
-                left_half_removed, right_half_removed
+            image_id, metadata, sub_pages,
+            left_half_removed, right_half_removed
         );
 
         images.push_back(image_info);
@@ -222,7 +220,7 @@ ProjectReader::processImages(
     if (!images.empty()) {
         m_ptrPages.reset(new ProjectPages(images, layout_direction));
     }
-}
+}  // ProjectReader::processImages
 
 ImageMetadata
 ProjectReader::processImageMetadata(QDomElement const& image_el)
@@ -270,8 +268,8 @@ ProjectReader::processPages(QDomElement const& pages_el)
         }
 
         PageId::SubPage const sub_page = PageId::subPageFromString(
-                el.attribute("subPage"), &ok
-        );
+            el.attribute("subPage"), &ok
+                                         );
         if (!ok) {
             continue;
         }
@@ -288,7 +286,7 @@ ProjectReader::processPages(QDomElement const& pages_el)
             m_selectedPage.set(page_id, PAGE_VIEW);
         }
     }
-}
+}  // ProjectReader::processPages
 
 QString
 ProjectReader::getDirPath(int const id) const
@@ -297,6 +295,7 @@ ProjectReader::getDirPath(int const id) const
     if (it != m_dirMap.end()) {
         return it->second;
     }
+
     return QString();
 }
 
@@ -307,6 +306,7 @@ ProjectReader::getFileRecord(int id) const
     if (it != m_fileMap.end()) {
         return it->second;
     }
+
     return FileRecord();
 }
 
@@ -318,6 +318,7 @@ ProjectReader::expandFilePath(QString const& path_shorthand) const
     if (!ok) {
         return QString();
     }
+
     return getFileRecord(file_id).filePath;
 }
 
@@ -328,6 +329,7 @@ ProjectReader::getImageInfo(int id) const
     if (it != m_imageMap.end()) {
         return it->second;
     }
+
     return ImageInfo();
 }
 
@@ -338,6 +340,7 @@ ProjectReader::imageId(int const numeric_id) const
     if (it != m_imageMap.end()) {
         return it->second.id();
     }
+
     return ImageId();
 }
 
@@ -348,5 +351,7 @@ ProjectReader::pageId(int numeric_id) const
     if (it != m_pageMap.end()) {
         return it->second;
     }
+
     return PageId();
 }
+

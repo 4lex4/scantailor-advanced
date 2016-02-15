@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "TextLineRefiner.h"
 #include "NumericTraits.h"
@@ -31,20 +32,25 @@ using namespace imageproc;
 
 namespace dewarping
 {
-
     class TextLineRefiner::SnakeLength
     {
     public:
         explicit SnakeLength(Snake const& snake);
 
         float totalLength() const
-        { return m_totalLength; }
+        {
+            return m_totalLength;
+        }
 
         float avgSegmentLength() const
-        { return m_avgSegmentLength; }
+        {
+            return m_avgSegmentLength;
+        }
 
         float arcLengthAt(size_t node_idx) const
-        { return m_integralLength[node_idx]; }
+        {
+            return m_integralLength[node_idx];
+        }
 
         float arcLengthFractionAt(size_t node_idx) const
         {
@@ -64,8 +70,7 @@ namespace dewarping
     };
 
 
-    struct TextLineRefiner::FrenetFrame
-    {
+    struct TextLineRefiner::FrenetFrame {
         Vec2f unitTangent;
         Vec2f unitDownNormal;
     };
@@ -83,14 +88,13 @@ namespace dewarping
         bool normalMovement(Snake& snake, Grid<float> const& gradient);
 
     private:
-        static float calcExternalEnergy(
-                Grid<float> const& gradient, SnakeNode const& node, Vec2f const down_normal);
+        static float calcExternalEnergy(Grid<float> const& gradient, SnakeNode const& node, Vec2f const down_normal);
 
-        static float calcElasticityEnergy(
-                SnakeNode const& node1, SnakeNode const& node2, float avg_dist);
+        static float calcElasticityEnergy(SnakeNode const& node1, SnakeNode const& node2, float avg_dist);
 
-        static float calcBendingEnergy(
-                SnakeNode const& node, SnakeNode const& prev_node, SnakeNode const& prev_prev_node);
+        static float calcBendingEnergy(SnakeNode const& node,
+                                       SnakeNode const& prev_node,
+                                       SnakeNode const& prev_prev_node);
 
         static float const m_elasticityWeight;
         static float const m_bendingWeight;
@@ -102,17 +106,14 @@ namespace dewarping
     };
 
 
-    TextLineRefiner::TextLineRefiner(
-            GrayImage const& image, Dpi const& dpi,
-            Vec2f const& unit_down_vector)
-            : m_image(image), m_dpi(dpi), m_unitDownVec(unit_down_vector)
-    {
-    }
+    TextLineRefiner::TextLineRefiner(GrayImage const& image, Dpi const& dpi, Vec2f const& unit_down_vector)
+        : m_image(image),
+          m_dpi(dpi),
+          m_unitDownVec(unit_down_vector)
+    { }
 
     void
-    TextLineRefiner::refine(
-            std::list<std::vector<QPointF> >& polylines,
-            int const iterations, DebugImages* dbg) const
+    TextLineRefiner::refine(std::list<std::vector<QPointF>>& polylines, int const iterations, DebugImages* dbg) const
     {
         if (polylines.empty()) {
             return;
@@ -121,7 +122,7 @@ namespace dewarping
         std::vector<Snake> snakes;
         snakes.reserve(polylines.size());
 
-        for (std::vector<QPointF> const& polyline :  polylines) {
+        for (std::vector<QPointF> const& polyline : polylines) {
             snakes.push_back(makeSnake(polyline, iterations));
         }
 
@@ -129,13 +130,13 @@ namespace dewarping
             dbg->add(visualizeSnakes(snakes), "initial_snakes");
         }
 
-        Grid<float> gradient(m_image.width(), m_image.height(), /*padding=*/0);
+        Grid<float> gradient(m_image.width(), m_image.height(),  /*padding=*/ 0);
 
         float h_sigma = (4.0f / 200.f) * m_dpi.horizontal();
         float v_sigma = (4.0f / 200.f) * m_dpi.vertical();
         calcBlurredGradient(gradient, h_sigma, v_sigma);
 
-        for (Snake& snake :  snakes) {
+        for (Snake& snake : snakes) {
             evolveSnake(snake, gradient, ON_CONVERGENCE_STOP);
         }
         if (dbg) {
@@ -146,7 +147,7 @@ namespace dewarping
         v_sigma *= 0.5f;
         calcBlurredGradient(gradient, h_sigma, v_sigma);
 
-        for (Snake& snake :  snakes) {
+        for (Snake& snake : snakes) {
             evolveSnake(snake, gradient, ON_CONVERGENCE_GO_FINER);
         }
         if (dbg) {
@@ -154,53 +155,52 @@ namespace dewarping
         }
 
         int i = -1;
-        for (std::vector<QPointF>& polyline :  polylines) {
+        for (std::vector<QPointF>& polyline : polylines) {
             ++i;
             Snake const& snake = snakes[i];
             polyline.clear();
-            for (SnakeNode const& node :  snake.nodes) {
+            for (SnakeNode const& node : snake.nodes) {
                 polyline.push_back(node.center);
             }
         }
-    }
+    }  // TextLineRefiner::refine
 
     void
-    TextLineRefiner::calcBlurredGradient(
-            Grid<float>& gradient, float h_sigma, float v_sigma) const
+    TextLineRefiner::calcBlurredGradient(Grid<float>& gradient, float h_sigma, float v_sigma) const
     {
         using namespace boost::lambda;
 
         float const downscale = 1.0f / (255.0f * 8.0f);
-        Grid<float> vert_grad(m_image.width(), m_image.height(), /*padding=*/0);
+        Grid<float> vert_grad(m_image.width(), m_image.height(),  /*padding=*/ 0);
         horizontalSobel<float>(
-                m_image.width(), m_image.height(), m_image.data(), m_image.stride(), _1 * downscale,
-                gradient.data(), gradient.stride(), _1 = _2, _1,
-                gradient.data(), gradient.stride(), _1 = _2
+            m_image.width(), m_image.height(), m_image.data(), m_image.stride(), _1 * downscale,
+            gradient.data(), gradient.stride(), _1 = _2, _1,
+            gradient.data(), gradient.stride(), _1 = _2
         );
         verticalSobel<float>(
-                m_image.width(), m_image.height(), m_image.data(), m_image.stride(), _1 * downscale,
-                vert_grad.data(), vert_grad.stride(), _1 = _2, _1,
-                gradient.data(), gradient.stride(),
-                _1 = _1 * m_unitDownVec[0] + _2 * m_unitDownVec[1]
+            m_image.width(), m_image.height(), m_image.data(), m_image.stride(), _1 * downscale,
+            vert_grad.data(), vert_grad.stride(), _1 = _2, _1,
+            gradient.data(), gradient.stride(),
+            _1 = _1 * m_unitDownVec[0] + _2 * m_unitDownVec[1]
         );
         Grid<float>().swap(vert_grad);
         gaussBlurGeneric(
-                m_image.size(), h_sigma, v_sigma,
-                gradient.data(), gradient.stride(), _1,
-                gradient.data(), gradient.stride(), _1 = _2
+            m_image.size(), h_sigma, v_sigma,
+            gradient.data(), gradient.stride(), _1,
+            gradient.data(), gradient.stride(), _1 = _2
         );
     }
 
     float
-    TextLineRefiner::externalEnergyAt(
-            Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside)
+    TextLineRefiner::externalEnergyAt(Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside)
     {
         float const x_base = floor(pos[0]);
         float const y_base = floor(pos[1]);
-        int const x_base_i = (int) x_base;
-        int const y_base_i = (int) y_base;
+        int const x_base_i = (int)x_base;
+        int const y_base_i = (int)y_base;
 
-        if (x_base_i < 0 || y_base_i < 0 || x_base_i + 1 >= gradient.width() || y_base_i + 1 >= gradient.height()) {
+        if ((x_base_i < 0) || (y_base_i < 0) || (x_base_i + 1 >= gradient.width())
+            || (y_base_i + 1 >= gradient.height())) {
             return penalty_if_outside;
         }
 
@@ -251,12 +251,13 @@ namespace dewarping
         }
 
         return snake;
-    }
+    }  // TextLineRefiner::makeSnake
 
     void
-    TextLineRefiner::calcFrenetFrames(
-            std::vector<FrenetFrame>& frenet_frames, Snake const& snake,
-            SnakeLength const& snake_length, Vec2f const& unit_down_vec)
+    TextLineRefiner::calcFrenetFrames(std::vector<FrenetFrame>& frenet_frames,
+                                      Snake const& snake,
+                                      SnakeLength const& snake_length,
+                                      Vec2f const& unit_down_vec)
     {
         size_t const num_nodes = snake.nodes.size();
         frenet_frames.resize(num_nodes);
@@ -267,6 +268,7 @@ namespace dewarping
         else if (num_nodes == 1) {
             frenet_frames[0].unitTangent = Vec2f();
             frenet_frames[0].unitDownNormal = Vec2f();
+
             return;
         }
 
@@ -302,17 +304,16 @@ namespace dewarping
             frenet_frames.back().unitTangent = last_segment;
         }
 
-        for (FrenetFrame& frame :  frenet_frames) {
+        for (FrenetFrame& frame : frenet_frames) {
             frame.unitDownNormal = Vec2f(frame.unitTangent[1], -frame.unitTangent[0]);
             if (frame.unitDownNormal.dot(unit_down_vec) < 0) {
                 frame.unitDownNormal = -frame.unitDownNormal;
             }
         }
-    }
+    }  // TextLineRefiner::calcFrenetFrames
 
     void
-    TextLineRefiner::evolveSnake(Snake& snake, Grid<float> const& gradient,
-                                 OnConvergence const on_convergence) const
+    TextLineRefiner::evolveSnake(Snake& snake, Grid<float> const& gradient, OnConvergence const on_convergence) const
     {
         float factor = 1.0f;
 
@@ -366,14 +367,14 @@ namespace dewarping
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        uint32_t* overlay_line = (uint32_t*)overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         gradient_line = gradient.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = gradient_line[x] * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, (int)(fabs(value) + 0.5), 255);
                 if (value > 0) {
                     overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
                 }
@@ -390,7 +391,7 @@ namespace dewarping
         painter.drawImage(0, 0, overlay);
 
         return canvas;
-    }
+    }  // TextLineRefiner::visualizeGradient
 
     QImage
     TextLineRefiner::visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> const* gradient) const
@@ -421,7 +422,7 @@ namespace dewarping
         QRectF knot_rect(0, 0, 7, 7);
         std::vector<FrenetFrame> frenet_frames;
 
-        for (Snake const& snake :  snakes) {
+        for (Snake const& snake : snakes) {
             SnakeLength const snake_length(snake);
             calcFrenetFrames(frenet_frames, snake, snake_length, m_unitDownVec);
             QVector<QPointF> top_polyline;
@@ -448,20 +449,22 @@ namespace dewarping
             painter.drawPolyline(middle_polyline);
 
             painter.setPen(Qt::NoPen);
-            for (QPointF const& pt :  middle_polyline) {
+            for (QPointF const& pt : middle_polyline) {
                 knot_rect.moveCenter(pt);
                 painter.drawEllipse(knot_rect);
             }
         }
 
         return canvas;
-    }
+    }  // TextLineRefiner::visualizeSnakes
 
-
-/*============================ SnakeLength =============================*/
+    /*============================ SnakeLength =============================*/
 
     TextLineRefiner::SnakeLength::SnakeLength(Snake const& snake)
-            : m_integralLength(snake.nodes.size()), m_totalLength(), m_rTotalLength(), m_avgSegmentLength()
+        : m_integralLength(snake.nodes.size()),
+          m_totalLength(),
+          m_rTotalLength(),
+          m_avgSegmentLength()
     {
         size_t const num_nodes = snake.nodes.size();
         float arc_length_accum = 0;
@@ -479,17 +482,16 @@ namespace dewarping
         }
     }
 
-
-/*=========================== Optimizer =============================*/
+    /*=========================== Optimizer =============================*/
 
     float const TextLineRefiner::Optimizer::m_elasticityWeight = 0.2f;
     float const TextLineRefiner::Optimizer::m_bendingWeight = 1.8f;
     float const TextLineRefiner::Optimizer::m_topExternalWeight = 1.0f;
     float const TextLineRefiner::Optimizer::m_bottomExternalWeight = 1.0f;
 
-    TextLineRefiner::Optimizer::Optimizer(
-            Snake const& snake, Vec2f const& unit_down_vec, float factor)
-            : m_factor(factor), m_snakeLength(snake)
+    TextLineRefiner::Optimizer::Optimizer(Snake const& snake, Vec2f const& unit_down_vec, float factor)
+        : m_factor(factor),
+          m_snakeLength(snake)
     {
         calcFrenetFrames(m_frenetFrames, snake, m_snakeLength, unit_down_vec);
     }
@@ -499,11 +501,8 @@ namespace dewarping
     {
         size_t const num_nodes = snake.nodes.size();
 
-        float const rib_adjustments[] = {0.0f * m_factor, 0.5f * m_factor, -0.5f * m_factor};
-        enum
-        {
-            NUM_RIB_ADJUSTMENTS = sizeof(rib_adjustments) / sizeof(rib_adjustments[0])
-        };
+        float const rib_adjustments[] = { 0.0f * m_factor, 0.5f * m_factor, -0.5f * m_factor };
+        enum { NUM_RIB_ADJUSTMENTS = sizeof(rib_adjustments) / sizeof(rib_adjustments[0]) };
 
         int best_i = 0;
         int best_j = 0;
@@ -545,7 +544,7 @@ namespace dewarping
         }
 
         return rib_adjustments[best_i] != 0 || rib_adjustments[best_j] != 0;
-    }
+    }  // TextLineRefiner::Optimizer::thicknessAdjustment
 
     bool
     TextLineRefiner::Optimizer::tangentMovement(Snake& snake, Grid<float> const& gradient)
@@ -555,11 +554,8 @@ namespace dewarping
             return false;
         }
 
-        float const tangent_movements[] = {0.0f * m_factor, 1.0f * m_factor, -1.0f * m_factor};
-        enum
-        {
-            NUM_TANGENT_MOVEMENTS = sizeof(tangent_movements) / sizeof(tangent_movements[0])
-        };
+        float const tangent_movements[] = { 0.0f * m_factor, 1.0f * m_factor, -1.0f * m_factor };
+        enum { NUM_TANGENT_MOVEMENTS = sizeof(tangent_movements) / sizeof(tangent_movements[0]) };
 
         std::vector<uint32_t> paths;
         std::vector<uint32_t> new_paths;
@@ -588,15 +584,15 @@ namespace dewarping
 
                 if (node_idx == num_nodes - 2) {
                     base_cost += calcElasticityEnergy(
-                            step.node, snake.nodes.back(), m_snakeLength.avgSegmentLength()
-                    );
+                        step.node, snake.nodes.back(), m_snakeLength.avgSegmentLength()
+                                 );
                 }
 
-                for (uint32_t prev_step_idx :  paths) {
+                for (uint32_t prev_step_idx : paths) {
                     Step const& prev_step = step_storage[prev_step_idx];
-                    float const cost = base_cost + prev_step.pathCost +
-                                       calcElasticityEnergy(step.node, prev_step.node,
-                                                            m_snakeLength.avgSegmentLength());
+                    float const cost = base_cost + prev_step.pathCost
+                                       + calcElasticityEnergy(step.node, prev_step.node,
+                                                              m_snakeLength.avgSegmentLength());
 
                     if (cost < step.pathCost) {
                         step.pathCost = cost;
@@ -614,7 +610,7 @@ namespace dewarping
 
         uint32_t best_path_idx = ~uint32_t(0);
         float best_cost = NumericTraits<float>::max();
-        for (uint32_t last_step_idx :  paths) {
+        for (uint32_t last_step_idx : paths) {
             Step const& step = step_storage[last_step_idx];
             if (step.pathCost < best_cost) {
                 best_cost = step.pathCost;
@@ -637,7 +633,7 @@ namespace dewarping
         }
 
         return max_sqdist > std::numeric_limits<float>::epsilon();
-    }
+    }  // TextLineRefiner::Optimizer::tangentMovement
 
     bool
     TextLineRefiner::Optimizer::normalMovement(Snake& snake, Grid<float> const& gradient)
@@ -647,11 +643,8 @@ namespace dewarping
             return false;
         }
 
-        float const normal_movements[] = {0.0f * m_factor, 1.0f * m_factor, -1.0f * m_factor};
-        enum
-        {
-            NUM_NORMAL_MOVEMENTS = sizeof(normal_movements) / sizeof(normal_movements[0])
-        };
+        float const normal_movements[] = { 0.0f * m_factor, 1.0f * m_factor, -1.0f * m_factor };
+        enum { NUM_NORMAL_MOVEMENTS = sizeof(normal_movements) / sizeof(normal_movements[0]) };
 
         std::vector<uint32_t> paths;
         std::vector<uint32_t> new_paths;
@@ -677,8 +670,8 @@ namespace dewarping
                 step.node.center = snake.nodes[1].center + normal_movements[j] * down_normal;
                 step.node.ribHalfLength = snake.nodes[1].ribHalfLength;
                 step.prevStepIdx = prev_step_idx;
-                step.pathCost = step_storage[prev_step_idx].pathCost +
-                                calcExternalEnergy(gradient, step.node, down_normal);
+                step.pathCost = step_storage[prev_step_idx].pathCost
+                                + calcExternalEnergy(gradient, step.node, down_normal);
 
                 paths.push_back(step_storage.size());
                 step_storage.push_back(step);
@@ -698,12 +691,12 @@ namespace dewarping
 
                 float const base_cost = calcExternalEnergy(gradient, step.node, down_normal);
 
-                for (uint32_t prev_step_idx :  paths) {
+                for (uint32_t prev_step_idx : paths) {
                     Step const& prev_step = step_storage[prev_step_idx];
                     Step const& prev_prev_step = step_storage[prev_step.prevStepIdx];
 
-                    float const cost = base_cost + prev_step.pathCost +
-                                       calcBendingEnergy(step.node, prev_step.node, prev_prev_step.node);
+                    float const cost = base_cost + prev_step.pathCost
+                                       + calcBendingEnergy(step.node, prev_step.node, prev_prev_step.node);
 
                     if (cost < step.pathCost) {
                         step.pathCost = cost;
@@ -721,7 +714,7 @@ namespace dewarping
 
         uint32_t best_path_idx = ~uint32_t(0);
         float best_cost = NumericTraits<float>::max();
-        for (uint32_t last_step_idx :  paths) {
+        for (uint32_t last_step_idx : paths) {
             Step const& step = step_storage[last_step_idx];
             if (step.pathCost < best_cost) {
                 best_cost = step.pathCost;
@@ -744,11 +737,12 @@ namespace dewarping
         }
 
         return max_sqdist > std::numeric_limits<float>::epsilon();
-    }
+    }  // TextLineRefiner::Optimizer::normalMovement
 
     float
-    TextLineRefiner::Optimizer::calcExternalEnergy(
-            Grid<float> const& gradient, SnakeNode const& node, Vec2f const down_normal)
+    TextLineRefiner::Optimizer::calcExternalEnergy(Grid<float> const& gradient,
+                                                   SnakeNode const& node,
+                                                   Vec2f const down_normal)
     {
         Vec2f const top(node.center - node.ribHalfLength * down_normal);
         Vec2f const bottom(node.center + node.ribHalfLength * down_normal);
@@ -763,8 +757,7 @@ namespace dewarping
     }
 
     float
-    TextLineRefiner::Optimizer::calcElasticityEnergy(
-            SnakeNode const& node1, SnakeNode const& node2, float avg_dist)
+    TextLineRefiner::Optimizer::calcElasticityEnergy(SnakeNode const& node1, SnakeNode const& node2, float avg_dist)
     {
         Vec2f const vec(node1.center - node2.center);
         float const vec_len = sqrt(vec.squaredNorm());
@@ -774,12 +767,14 @@ namespace dewarping
         }
 
         float const dist_diff = fabs(avg_dist - vec_len);
+
         return m_elasticityWeight * (dist_diff / avg_dist);
     }
 
     float
-    TextLineRefiner::Optimizer::calcBendingEnergy(
-            SnakeNode const& node, SnakeNode const& prev_node, SnakeNode const& prev_prev_node)
+    TextLineRefiner::Optimizer::calcBendingEnergy(SnakeNode const& node,
+                                                  SnakeNode const& prev_node,
+                                                  SnakeNode const& prev_prev_node)
     {
         Vec2f const vec(node.center - prev_node.center);
         float const vec_len = sqrt(vec.squaredNorm());
@@ -795,7 +790,7 @@ namespace dewarping
         }
 
         Vec2f const bend_vec(vec / vec_len - prev_vec / prev_vec_len);
+
         return m_bendingWeight * bend_vec.squaredNorm();
     }
-
-} 
+}  // namespace dewarping

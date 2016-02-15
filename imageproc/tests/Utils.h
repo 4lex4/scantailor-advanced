@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_TESTS_UTILS_H_
 #define IMAGEPROC_TESTS_UTILS_H_
@@ -24,15 +25,12 @@ class QRect;
 
 namespace imageproc
 {
-
     class BinaryImage;
 
     namespace tests
     {
-
         namespace utils
         {
-
             BinaryImage randomBinaryImage(int width, int height);
 
             QImage randomMonoQImage(int width, int height);
@@ -50,8 +48,7 @@ namespace imageproc
             void dumpGrayImage(QImage const& img, char const* name = 0);
 
             bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
-
         }
     }
 }
-#endif
+#endif  // ifndef IMAGEPROC_TESTS_UTILS_H_

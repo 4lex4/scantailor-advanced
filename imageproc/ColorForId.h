@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_COLOR_FOR_ID_H_
 #define IMAGEPROC_COLOR_FOR_ID_H_
@@ -24,15 +25,15 @@
 
 namespace imageproc
 {
-
-/**
- * \brief Generates a color corresponding to a particular numeric ID.
- *
- * Colors for IDs that are numerically close will tend to be significantly
- * different.  Positive IDs are handled better.
- */
-    template<typename T>
-    QColor colorForId(T id)
+    /**
+     * \brief Generates a color corresponding to a particular numeric ID.
+     *
+     * Colors for IDs that are numerically close will tend to be significantly
+     * different.  Positive IDs are handled better.
+     */
+    template <typename T>
+    QColor
+    colorForId(T id)
     {
         int const bits_unused = countMostSignificantZeroes(id);
         int const bits_used = sizeof(T) * 8 - bits_unused;
@@ -47,6 +48,5 @@ namespace imageproc
 
         return color;
     }
-
 }
 #endif

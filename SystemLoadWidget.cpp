@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SystemLoadWidget.h"
 #include <QToolTip>
@@ -24,7 +25,8 @@
 static char const* const key = "settings/batch_processing_threads";
 
 SystemLoadWidget::SystemLoadWidget(QWidget* parent)
-        : QWidget(parent), m_maxThreads(QThread::idealThreadCount())
+    : QWidget(parent),
+      m_maxThreads(QThread::idealThreadCount())
 {
     ui.setupUi(this);
 
@@ -81,15 +83,15 @@ SystemLoadWidget::increaseLoad()
 void
 SystemLoadWidget::showHideToolTip(int threads)
 {
-    // Show the tooltip immediately.
     QPoint const center(ui.slider->rect().center());
     QPoint tooltip_pos(ui.slider->mapFromGlobal(QCursor::pos()));
-    if (tooltip_pos.x() < 0 || tooltip_pos.x() >= ui.slider->width()) {
+    if ((tooltip_pos.x() < 0) || (tooltip_pos.x() >= ui.slider->width())) {
         tooltip_pos.setX(center.x());
     }
-    if (tooltip_pos.y() < 0 || tooltip_pos.y() >= ui.slider->height()) {
+    if ((tooltip_pos.y() < 0) || (tooltip_pos.y() >= ui.slider->height())) {
         tooltip_pos.setY(center.y());
     }
     tooltip_pos = ui.slider->mapToGlobal(tooltip_pos);
     QToolTip::showText(tooltip_pos, QString("%1/%2").arg(threads).arg(m_maxThreads), ui.slider);
 }
+

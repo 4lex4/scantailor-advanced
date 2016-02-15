@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Filter.h"
 #include "FilterUiInterface.h"
@@ -35,16 +36,14 @@
 
 namespace page_layout
 {
-
-    Filter::Filter(IntrusivePtr<ProjectPages> const& pages,
-                   PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrPages(pages),
-              m_ptrSettings(new Settings),
-              m_selectedPageOrder(0)
+    Filter::Filter(IntrusivePtr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrPages(pages),
+          m_ptrSettings(new Settings),
+          m_selectedPageOrder(0)
     {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(
-                    new OptionsWidget(m_ptrSettings, page_selection_accessor)
+                new OptionsWidget(m_ptrSettings, page_selection_accessor)
             );
         }
 
@@ -59,8 +58,7 @@ namespace page_layout
     }
 
     Filter::~Filter()
-    {
-    }
+    { }
 
     QString
     Filter::getName() const
@@ -89,7 +87,7 @@ namespace page_layout
     void
     Filter::selectPageOrder(int option)
     {
-        assert((unsigned) option < m_pageOrderOptions.size());
+        assert((unsigned)option < m_pageOrderOptions.size());
         m_selectedPageOrder = option;
     }
 
@@ -115,27 +113,23 @@ namespace page_layout
     }
 
     QDomElement
-    Filter::saveSettings(
-            ProjectWriter const& writer, QDomDocument& doc) const
+    Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const
     {
-
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("page-layout"));
         writer.enumPages(
-                [&](PageId const& page_id, int numeric_id)
-                {
-                    this->writePageSettings(doc, filter_el, page_id, numeric_id);
-                }
+            [&](PageId const& page_id, int numeric_id)
+        {
+            this->writePageSettings(doc, filter_el, page_id, numeric_id);
+        }
         );
 
         return filter_el;
     }
 
     void
-    Filter::writePageSettings(
-            QDomDocument& doc, QDomElement& filter_el,
-            PageId const& page_id, int numeric_id) const
+    Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const
     {
         std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
         if (!params.get()) {
@@ -155,7 +149,7 @@ namespace page_layout
         m_ptrSettings->clear();
 
         QDomElement const filter_el(
-                filters_el.namedItem("page-layout").toElement()
+            filters_el.namedItem("page-layout").toElement()
         );
 
         QString const page_tag_name("page");
@@ -188,12 +182,10 @@ namespace page_layout
             Params const params(params_el);
             m_ptrSettings->setPageParams(page_id, params);
         }
-    }
+    }  // Filter::loadSettings
 
     void
-    Filter::setContentBox(
-            PageId const& page_id, ImageTransformation const& xform,
-            QRectF const& content_rect)
+    Filter::setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect)
     {
         QSizeF const content_size_mm(Utils::calcRectSizeMM(xform, content_rect));
         m_ptrSettings->setContentSizeMM(page_id, content_size_mm);
@@ -212,29 +204,29 @@ namespace page_layout
             return true;
         }
         PageSequence const snapshot(pages.toPageSequence(PAGE_VIEW));
+
         return m_ptrSettings->checkEverythingDefined(snapshot, ignore);
     }
 
     IntrusivePtr<Task>
-    Filter::createTask(
-            PageId const& page_id, IntrusivePtr<output::Task> const& next_task,
-            bool const batch, bool const debug)
+    Filter::createTask(PageId const& page_id,
+                       IntrusivePtr<output::Task> const& next_task,
+                       bool const batch,
+                       bool const debug)
     {
         return IntrusivePtr<Task>(
-                new Task(
-                        IntrusivePtr<Filter>(this), next_task,
-                        m_ptrSettings, page_id, batch, debug
-                )
+            new Task(
+                IntrusivePtr<Filter>(this), next_task,
+                m_ptrSettings, page_id, batch, debug
+            )
         );
     }
 
     IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(
-            IntrusivePtr<output::CacheDrivenTask> const& next_task)
+    Filter::createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task)
     {
         return IntrusivePtr<CacheDrivenTask>(
-                new CacheDrivenTask(next_task, m_ptrSettings)
+            new CacheDrivenTask(next_task, m_ptrSettings)
         );
     }
-
-} 
+}  // namespace page_layout

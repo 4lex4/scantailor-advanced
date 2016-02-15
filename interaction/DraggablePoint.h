@@ -1,3 +1,4 @@
+
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DRAGGABLE_POINT_H_
 #define DRAGGABLE_POINT_H_
@@ -23,16 +24,17 @@
 #include <QPointF>
 #include <boost/function.hpp>
 
-class DraggablePoint : public DraggableObject
+class DraggablePoint
+    : public DraggableObject
 {
 public:
     typedef boost::function<
             QPointF()
-    > PositionCallback;
+>PositionCallback;
 
     typedef boost::function<
-            void(QPointF const&, Qt::KeyboardModifiers mask)
-    > MoveRequestCallback;
+            void (QPointF const&, Qt::KeyboardModifiers mask)
+>MoveRequestCallback;
 
     DraggablePoint();
 
@@ -41,15 +43,21 @@ public:
      * proximity threshold of InteractionState is to be used.
      */
     double hitRadius() const
-    { return m_hitAreaRadius; }
+    {
+        return m_hitAreaRadius;
+    }
 
     void setHitRadius(double radius)
-    { m_hitAreaRadius = radius; }
+    {
+        m_hitAreaRadius = radius;
+    }
 
     virtual Proximity proximityThreshold(InteractionState const& interaction) const;
 
     void setProximityPriority(int priority)
-    { m_proximityPriority = priority; }
+    {
+        m_proximityPriority = priority;
+    }
 
     virtual int proximityPriority() const;
 
@@ -88,4 +96,4 @@ private:
     int m_proximityPriority;
 };
 
-#endif
+#endif  // ifndef DRAGGABLE_POINT_H_

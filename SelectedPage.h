@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECTED_PAGE_H_
 #define SELECTED_PAGE_H_
@@ -43,7 +44,9 @@ public:
     SelectedPage(PageId const& page_id, PageView view);
 
     bool isNull() const
-    { return m_pageId.isNull(); }
+    {
+        return m_pageId.isNull();
+    }
 
     void set(PageId const& page_id, PageView view);
 

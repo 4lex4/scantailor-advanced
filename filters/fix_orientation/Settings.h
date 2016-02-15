@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIX_ORIENTATION_SETTINGS_H_
 #define FIX_ORIENTATION_SETTINGS_H_
@@ -32,10 +33,10 @@ class AbstractRelinker;
 
 namespace fix_orientation
 {
-
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     public:
         Settings();
@@ -55,12 +56,10 @@ namespace fix_orientation
     private:
         typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
 
-        void setImageRotationLocked(
-                ImageId const& image_id, OrthogonalRotation const& rotation);
+        void setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation);
 
         mutable QMutex m_mutex;
         PerImageRotation m_perImageRotation;
     };
-
 }
-#endif
+#endif  // ifndef FIX_ORIENTATION_SETTINGS_H_

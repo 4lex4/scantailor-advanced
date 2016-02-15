@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIXDPIDIALOG_H_
 #define FIXDPIDIALOG_H_
@@ -33,22 +34,23 @@
 
 class QItemSelection;
 
-class FixDpiDialog : public QDialog, private Ui::FixDpiDialog
+class FixDpiDialog
+    : public QDialog,
+      private Ui::FixDpiDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    FixDpiDialog(std::vector<ImageFileInfo> const &files, QWidget *parent = 0);
+    FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = 0);
 
     virtual ~FixDpiDialog();
 
-    std::vector<ImageFileInfo> const &files() const;
+    std::vector<ImageFileInfo> const& files() const;
 
 private slots:
-
     void tabChanged(int tab);
 
-    void selectionChanged(QItemSelection const &selection);
+    void selectionChanged(QItemSelection const& selection);
 
     void dpiComboChangedByUser(int index);
 
@@ -58,26 +60,23 @@ private slots:
 
 private:
     class DpiCounts;
-class SizeGroup;
-class TreeModel;
-class FilterModel;
+    class SizeGroup;
+    class TreeModel;
+    class FilterModel;
 
-    enum Scope
-    {
-        ALL, NOT_OK
-    };
+    enum Scope { ALL, NOT_OK };
 
     void enableDisableOkButton();
 
-    void updateDpiFromSelection(QItemSelection const &selection);
+    void updateDpiFromSelection(QItemSelection const& selection);
 
     void resetDpiForm();
 
-    void setDpiForm(ImageMetadata const &metadata);
+    void setDpiForm(ImageMetadata const& metadata);
 
     void updateDpiCombo();
 
-    void decorateDpiInputField(QLineEdit *field, ImageMetadata::DpiStatus dpi_status) const;
+    void decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpi_status) const;
 
     std::unique_ptr<TreeModel> m_ptrPages;
     std::unique_ptr<FilterModel> m_ptrUndefinedDpiPages;
@@ -88,4 +87,4 @@ class FilterModel;
     QPalette m_errorPalette;
 };
 
-#endif
+#endif  // ifndef FIXDPIDIALOG_H_

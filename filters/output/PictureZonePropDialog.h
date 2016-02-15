@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_PICTURE_ZONE_PROP_DIALOG_H_
 #define OUTPUT_PICTURE_ZONE_PROP_DIALOG_H_
@@ -26,26 +27,23 @@
 
 namespace output
 {
-
-    class PictureZonePropDialog : public QDialog
+    class PictureZonePropDialog
+        : public QDialog
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent = 0);
 
     signals:
-
         void updated();
 
     private slots:
-
         void itemToggled(bool selected);
 
     private:
         Ui::PictureZonePropDialog ui;
         IntrusivePtr<PropertySet> m_ptrProps;
     };
-
 }
 #endif

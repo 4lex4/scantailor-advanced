@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Params.h"
 #include "XmlMarshaller.h"
@@ -23,31 +24,29 @@
 
 namespace output
 {
-
     Params::Params()
-            : m_dpi(CommandLine::get().getDefaultOutputDpi()),
-              m_despeckleLevel(DESPECKLE_CAUTIOUS),
-              m_pictureShape(FREE_SHAPE)
-    {
-    }
+        : m_dpi(CommandLine::get().getDefaultOutputDpi()),
+          m_despeckleLevel(DESPECKLE_CAUTIOUS),
+          m_pictureShape(FREE_SHAPE)
+    { }
 
     Params::Params(QDomElement const& el)
-            : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
-              m_distortionModel(el.namedItem("distortion-model").toElement()),
-              m_depthPerception(el.attribute("depthPerception")),
-              m_dewarpingMode(el.attribute("dewarpingMode")),
-              m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
-              m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt()))
+        : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+          m_distortionModel(el.namedItem("distortion-model").toElement()),
+          m_depthPerception(el.attribute("depthPerception")),
+          m_dewarpingMode(el.attribute("dewarpingMode")),
+          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
+          m_pictureShape((PictureShape)(el.attribute("pictureShape").toInt()))
     {
         QDomElement const cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
         m_colorParams.setColorGrayscaleOptions(
-                ColorGrayscaleOptions(
-                        cp.namedItem("color-or-grayscale").toElement()
-                )
+            ColorGrayscaleOptions(
+                cp.namedItem("color-or-grayscale").toElement()
+            )
         );
         m_colorParams.setBlackWhiteOptions(
-                BlackWhiteOptions(cp.namedItem("bw").toElement())
+            BlackWhiteOptions(cp.namedItem("bw").toElement())
         );
     }
 
@@ -58,7 +57,7 @@ namespace output
 
         QDomElement el(doc.createElement(name));
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
-        el.setAttribute("pictureShape", (int) m_pictureShape);
+        el.setAttribute("pictureShape", (int)m_pictureShape);
         el.setAttribute("depthPerception", m_depthPerception.toString());
         el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
@@ -66,14 +65,14 @@ namespace output
 
         QDomElement cp(doc.createElement("color-params"));
         cp.setAttribute(
-                "colorMode",
-                formatColorMode(m_colorParams.colorMode())
+            "colorMode",
+            formatColorMode(m_colorParams.colorMode())
         );
 
         cp.appendChild(
-                m_colorParams.colorGrayscaleOptions().toXml(
-                        doc, "color-or-grayscale"
-                )
+            m_colorParams.colorGrayscaleOptions().toXml(
+                doc, "color-or-grayscale"
+            )
         );
         cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
 
@@ -117,7 +116,7 @@ namespace output
                 str = "mixed";
                 break;
         }
+
         return QString::fromLatin1(str);
     }
-
-} 
+}  // namespace output

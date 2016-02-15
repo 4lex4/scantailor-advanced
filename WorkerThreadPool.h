@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef WORKERTHREADPOOL_H_
 #define WORKERTHREADPOOL_H_
@@ -27,9 +28,11 @@
 
 class QThreadPool;
 
-class WorkerThreadPool : public QObject
+class WorkerThreadPool
+    : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     WorkerThreadPool(QObject* parent = nullptr);
 
@@ -48,7 +51,6 @@ public:
     void submitTask(BackgroundTaskPtr const& task);
 
 signals:
-
     void taskResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
 
 private:
@@ -62,4 +64,4 @@ private:
     QSettings m_settings;
 };
 
-#endif
+#endif  // ifndef WORKERTHREADPOOL_H_

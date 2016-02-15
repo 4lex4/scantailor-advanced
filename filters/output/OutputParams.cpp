@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutputParams.h"
 #include "PictureZonePropFactory.h"
@@ -23,32 +24,28 @@
 
 namespace output
 {
-
-    OutputParams::OutputParams(
-            OutputImageParams const& output_image_params,
-            OutputFileParams const& output_file_params,
-            OutputFileParams const& automask_file_params,
-            OutputFileParams const& speckles_file_params,
-            ZoneSet const& picture_zones,
-            ZoneSet const& fill_zones)
-            : m_outputImageParams(output_image_params),
-              m_outputFileParams(output_file_params),
-              m_automaskFileParams(automask_file_params),
-              m_specklesFileParams(speckles_file_params),
-              m_pictureZones(picture_zones),
-              m_fillZones(fill_zones)
-    {
-    }
+    OutputParams::OutputParams(OutputImageParams const& output_image_params,
+                               OutputFileParams const& output_file_params,
+                               OutputFileParams const& automask_file_params,
+                               OutputFileParams const& speckles_file_params,
+                               ZoneSet const& picture_zones,
+                               ZoneSet const& fill_zones)
+        : m_outputImageParams(output_image_params),
+          m_outputFileParams(output_file_params),
+          m_automaskFileParams(automask_file_params),
+          m_specklesFileParams(speckles_file_params),
+          m_pictureZones(picture_zones),
+          m_fillZones(fill_zones)
+    { }
 
     OutputParams::OutputParams(QDomElement const& el)
-            : m_outputImageParams(el.namedItem("image").toElement()),
-              m_outputFileParams(el.namedItem("file").toElement()),
-              m_automaskFileParams(el.namedItem("automask").toElement()),
-              m_specklesFileParams(el.namedItem("speckles").toElement()),
-              m_pictureZones(el.namedItem("zones").toElement(), PictureZonePropFactory()),
-              m_fillZones(el.namedItem("fill-zones").toElement(), FillZonePropFactory())
-    {
-    }
+        : m_outputImageParams(el.namedItem("image").toElement()),
+          m_outputFileParams(el.namedItem("file").toElement()),
+          m_automaskFileParams(el.namedItem("automask").toElement()),
+          m_specklesFileParams(el.namedItem("speckles").toElement()),
+          m_pictureZones(el.namedItem("zones").toElement(), PictureZonePropFactory()),
+          m_fillZones(el.namedItem("fill-zones").toElement(), FillZonePropFactory())
+    { }
 
     QDomElement
     OutputParams::toXml(QDomDocument& doc, QString const& name) const
@@ -60,7 +57,7 @@ namespace output
         el.appendChild(m_specklesFileParams.toXml(doc, "speckles"));
         el.appendChild(m_pictureZones.toXml(doc, "zones"));
         el.appendChild(m_fillZones.toXml(doc, "fill-zones"));
+
         return el;
     }
-
-} 
+}  // namespace output

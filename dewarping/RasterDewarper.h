@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_RASTER_DEWARPER_H_
 #define DEWARPING_RASTER_DEWARPER_H_
@@ -26,18 +27,16 @@ class QColor;
 
 namespace dewarping
 {
-
     class CylindricalSurfaceDewarper;
 
     class RasterDewarper
     {
     public:
-        static QImage dewarp(
-                QImage const& src, QSize const& dst_size,
-                CylindricalSurfaceDewarper const& distortion_model,
-                QRectF const& model_domain, QColor const& background_color
-        );
+        static QImage dewarp(QImage const& src,
+                             QSize const& dst_size,
+                             CylindricalSurfaceDewarper const& distortion_model,
+                             QRectF const& model_domain,
+                             QColor const& background_color);
     };
-
 }
 #endif

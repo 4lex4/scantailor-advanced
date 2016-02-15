@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,14 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ColorInterpolation.h"
 
 namespace imageproc
 {
-
-    QColor colorInterpolation(QColor const& from, QColor const& to, double dist)
+    QColor
+    colorInterpolation(QColor const& from, QColor const& to, double dist)
     {
         dist = qBound(0.0, dist, 1.0);
 
@@ -36,5 +37,4 @@ namespace imageproc
 
         return QColor::fromRgbF(r, g, b, a);
     }
-
-} 
+}

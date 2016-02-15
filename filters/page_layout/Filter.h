@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_FILTER_H_
 #define PAGE_LAYOUT_FILTER_H_
@@ -39,25 +40,25 @@ class QRectF;
 namespace output
 {
     class Task;
-class CacheDrivenTask;
+    class CacheDrivenTask;
 }
 
 namespace page_layout
 {
-
     class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-    class Filter : public AbstractFilter
+    class Filter
+        : public AbstractFilter
     {
-    DECLARE_NON_COPYABLE(Filter)
+        DECLARE_NON_COPYABLE(Filter)
 
-    Q_DECLARE_TR_FUNCTIONS(page_layout::Filter)
+        Q_DECLARE_TR_FUNCTIONS(page_layout::Filter)
+
     public:
-        Filter(IntrusivePtr<ProjectPages> const& page_sequence,
-               PageSelectionAccessor const& page_selection_accessor);
+        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~Filter();
 
@@ -77,38 +78,35 @@ class Settings;
 
         virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-        virtual QDomElement saveSettings(
-                ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-        virtual void loadSettings(
-                ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        void setContentBox(
-                PageId const& page_id, ImageTransformation const& xform,
-                QRectF const& content_rect);
+        void setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect);
 
         void invalidateContentBox(PageId const& page_id);
 
-        bool checkReadyForOutput(
-                ProjectPages const& pages, PageId const* ignore = 0);
+        bool checkReadyForOutput(ProjectPages const& pages, PageId const* ignore = 0);
 
-        IntrusivePtr<Task> createTask(
-                PageId const& page_id,
-                IntrusivePtr<output::Task> const& next_task,
-                bool batch, bool debug);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<output::Task> const& next_task,
+                                      bool batch,
+                                      bool debug);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
-                IntrusivePtr<output::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget()
-        { return m_ptrOptionsWidget.get(); };
+        {
+            return m_ptrOptionsWidget.get();
+        }
 
         Settings* getSettings()
-        { return m_ptrSettings.get(); };
+        {
+            return m_ptrSettings.get();
+        }
+
     private:
-        void writePageSettings(
-                QDomDocument& doc, QDomElement& filter_el,
-                PageId const& page_id, int numeric_id) const;
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
         IntrusivePtr<ProjectPages> m_ptrPages;
         IntrusivePtr<Settings> m_ptrSettings;
@@ -116,6 +114,5 @@ class Settings;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;
     };
-
-}
-#endif
+}  // namespace page_layout
+#endif  // ifndef PAGE_LAYOUT_FILTER_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef TIFFWRITER_H_
 #define TIFFWRITER_H_
@@ -55,25 +56,21 @@ private:
 
     static void setDpm(TiffHandle const& tif, Dpm const& dpm);
 
-    static bool writeBitonalOrIndexed8Image(
-            TiffHandle const& tif, QImage const& image, int compression = COMPRESSION_LZW);
+    static bool writeBitonalOrIndexed8Image(TiffHandle const& tif,
+                                            QImage const& image,
+                                            int compression = COMPRESSION_LZW);
 
-    static bool writeRGB32Image(
-            TiffHandle const& tif, QImage const& image, int compression = COMPRESSION_LZW);
+    static bool writeRGB32Image(TiffHandle const& tif, QImage const& image, int compression = COMPRESSION_LZW);
 
-    static bool writeARGB32Image(
-            TiffHandle const& tif, QImage const& image, int compression = COMPRESSION_LZW);
+    static bool writeARGB32Image(TiffHandle const& tif, QImage const& image, int compression = COMPRESSION_LZW);
 
-    static bool write8bitLines(
-            TiffHandle const& tif, QImage const& image);
+    static bool write8bitLines(TiffHandle const& tif, QImage const& image);
 
-    static bool writeBinaryLinesAsIs(
-            TiffHandle const& tif, QImage const& image);
+    static bool writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image);
 
-    static bool writeBinaryLinesReversed(
-            TiffHandle const& tif, QImage const& image);
+    static bool writeBinaryLinesReversed(TiffHandle const& tif, QImage const& image);
 
     static uint8_t const m_reverseBitsLUT[256];
 };
 
-#endif
+#endif  // ifndef TIFFWRITER_H_

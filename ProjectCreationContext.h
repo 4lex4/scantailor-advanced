@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROJECTCREATIONCONTEXT_H_
 #define PROJECTCREATIONCONTEXT_H_
@@ -31,11 +32,10 @@ class ProjectFilesDialog;
 class FixDpiDialog;
 class QWidget;
 
-class ProjectCreationContext : public QObject
+class ProjectCreationContext
+    : public QObject
 {
-Q_OBJECT
-
-DECLARE_NON_COPYABLE(ProjectCreationContext)
+    Q_OBJECT DECLARE_NON_COPYABLE(ProjectCreationContext)
 
 public:
     ProjectCreationContext(QWidget* parent);
@@ -43,20 +43,24 @@ public:
     virtual ~ProjectCreationContext();
 
     std::vector<ImageFileInfo> const& files() const
-    { return m_files; }
+    {
+        return m_files;
+    }
 
     QString const& outDir() const
-    { return m_outDir; }
+    {
+        return m_outDir;
+    }
 
     Qt::LayoutDirection layoutDirection() const
-    { return m_layoutDirection; }
+    {
+        return m_layoutDirection;
+    }
 
 signals:
-
     void done(ProjectCreationContext* context);
 
 private slots:
-
     void projectFilesSubmitted();
 
     void projectFilesDialogDestroyed();
@@ -78,4 +82,4 @@ private:
     QWidget* m_pParent;
 };
 
-#endif
+#endif  // ifndef PROJECTCREATIONCONTEXT_H_

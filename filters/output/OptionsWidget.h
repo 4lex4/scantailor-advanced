@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_OPTIONSWIDGET_H_
 #define OUTPUT_OPTIONSWIDGET_H_
@@ -40,18 +41,17 @@ namespace dewarping
 
 namespace output
 {
-
     class Settings;
-class DewarpingParams;
+    class DewarpingParams;
 
     class OptionsWidget
-            : public FilterOptionsWidget, private Ui::OutputOptionsWidget
+        : public FilterOptionsWidget,
+          private Ui::OutputOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings,
-                      PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -60,25 +60,26 @@ class DewarpingParams;
         void postUpdateUI();
 
         ImageViewTab lastTab() const
-        { return m_lastTab; }
+        {
+            return m_lastTab;
+        }
 
         DepthPerception const& depthPerception() const
-        { return m_depthPerception; }
+        {
+            return m_depthPerception;
+        }
 
     signals:
-
         void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
         void depthPerceptionChanged(double val);
 
     public slots:
-
         void tabChanged(ImageViewTab tab);
 
         void distortionModelChanged(dewarping::DistortionModel const& model);
 
     private slots:
-
         void changeDpiButtonClicked();
 
         void applyColorsButtonClicked();
@@ -162,6 +163,5 @@ class DewarpingParams;
         ImageViewTab m_lastTab;
         int m_ignoreThresholdChanges;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

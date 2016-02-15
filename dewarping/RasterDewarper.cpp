@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RasterDewarper.h"
 #include "CylindricalSurfaceDewarper.h"
@@ -32,19 +33,20 @@ using namespace imageproc;
 
 namespace dewarping
 {
-
     namespace
     {
-
 #if INTERPOLATION_METHOD == INTERP_NONE
-
-        template<typename ColorMixer, typename PixelType>
-        void dewarpGeneric(
-            PixelType const* const src_data, QSize const src_size,
-            int const src_stride, PixelType* const dst_data,
-            QSize const dst_size, int const dst_stride,
-            CylindricalSurfaceDewarper const& distortion_model,
-            QRectF const& model_domain, PixelType const bg_color)
+        template <typename ColorMixer, typename PixelType>
+        void
+        dewarpGeneric(PixelType const* const src_data,
+                      QSize const src_size,
+                      int const src_stride,
+                      PixelType* const dst_data,
+                      QSize const dst_size,
+                      int const dst_stride,
+                      CylindricalSurfaceDewarper const& distortion_model,
+                      QRectF const& model_domain,
+                      PixelType const bg_color)
         {
             int const src_width = src_size.width();
             int const src_height = src_size.height();
@@ -73,7 +75,7 @@ namespace dewarping
                     Vec2f const src_pt(origin + vec * homog(model_y));
                     int const src_x = qRound(src_pt[0]);
                     int const src_y = qRound(src_pt[1]);
-                    if (src_x < 0 || src_x >= src_width || src_y < 0 || src_y >= src_height) {
+                    if ((src_x < 0) || (src_x >= src_width) || (src_y < 0) || (src_y >= src_height)) {
                         dst_data[dst_y * dst_stride + dst_x] = bg_color;
                         continue;
                     }
@@ -81,17 +83,20 @@ namespace dewarping
                     dst_data[dst_y * dst_stride + dst_x] = src_data[src_y * src_stride + src_x];
                 }
             }
-        }
+        }  // dewarpGeneric
 
 #elif INTERPOLATION_METHOD == INTERP_BILLINEAR
-
-        template<typename ColorMixer, typename PixelType>
-        void dewarpGeneric(
-            PixelType const* const src_data, QSize const src_size,
-            int const src_stride, PixelType* const dst_data,
-            QSize const dst_size, int const dst_stride,
-            CylindricalSurfaceDewarper const& distortion_model,
-            QRectF const& model_domain, PixelType const bg_color)
+        template <typename ColorMixer, typename PixelType>
+        void
+        dewarpGeneric(PixelType const* const src_data,
+                      QSize const src_size,
+                      int const src_stride,
+                      PixelType* const dst_data,
+                      QSize const dst_size,
+                      int const dst_stride,
+                      CylindricalSurfaceDewarper const& distortion_model,
+                      QRectF const& model_domain,
+                      PixelType const bg_color)
         {
             int const src_width = src_size.width();
             int const src_height = src_size.height();
@@ -127,22 +132,22 @@ namespace dewarping
                     float const y = src_pt[1] - src_y0;
 
                     PixelType tl_color = bg_color;
-                    if (src_x0 >= 0 && src_x0 < src_width && src_y0 >= 0 && src_y0 < src_height) {
+                    if ((src_x0 >= 0) && (src_x0 < src_width) && (src_y0 >= 0) && (src_y0 < src_height)) {
                         tl_color = src_data[src_y0 * src_stride + src_x0];
                     }
 
                     PixelType tr_color = bg_color;
-                    if (src_x1 >= 0 && src_x1 < src_width && src_y0 >= 0 && src_y0 < src_height) {
+                    if ((src_x1 >= 0) && (src_x1 < src_width) && (src_y0 >= 0) && (src_y0 < src_height)) {
                         tr_color = src_data[src_y0 * src_stride + src_x1];
                     }
 
                     PixelType bl_color = bg_color;
-                    if (src_x0 >= 0 && src_x0 < src_width && src_y1 >= 0 && src_y1 < src_height) {
+                    if ((src_x0 >= 0) && (src_x0 < src_width) && (src_y1 >= 0) && (src_y1 < src_height)) {
                         bl_color = src_data[src_y1 * src_stride + src_x0];
                     }
 
                     PixelType br_color = bg_color;
-                    if (src_x1 >= 0 && src_x1 < src_width && src_y1 >= 0 && src_y1 < src_height) {
+                    if ((src_x1 >= 0) && (src_x1 < src_width) && (src_y1 >= 0) && (src_y1 < src_height)) {
                         br_color = src_data[src_y1 * src_stride + src_x1];
                     }
 
@@ -154,18 +159,20 @@ namespace dewarping
                     dst_data[dst_y * dst_stride + dst_x] = mixer.mix(1.0f);
                 }
             }
-        }
+        }  // dewarpGeneric
 
 #elif INTERPOLATION_METHOD == INTERP_AREA_MAPPING
-
-        template<typename ColorMixer, typename PixelType>
-        void areaMapGeneratrix(
-                PixelType const* const src_data, QSize const src_size,
-                int const src_stride, PixelType* p_dst,
-                QSize const dst_size, int const dst_stride,
-                PixelType const bg_color,
-                std::vector<Vec2f> const& prev_grid_column,
-                std::vector<Vec2f> const& next_grid_column)
+        template <typename ColorMixer, typename PixelType>
+        void
+        areaMapGeneratrix(PixelType const* const src_data,
+                          QSize const src_size,
+                          int const src_stride,
+                          PixelType* p_dst,
+                          QSize const dst_size,
+                          int const dst_stride,
+                          PixelType const bg_color,
+                          std::vector<Vec2f> const& prev_grid_column,
+                          std::vector<Vec2f> const& next_grid_column)
         {
             int const sw = src_size.width();
             int const sh = src_size.height();
@@ -206,19 +213,19 @@ namespace dewarping
                     }
                 }
 
-                if (f_src32_top < -32.0f * 10000.0f || f_src32_left < -32.0f * 10000.0f ||
-                    f_src32_bottom > 32.0f * (float(sh) + 10000.f) ||
-                    f_src32_right > 32.0f * (float(sw) + 10000.f)) {
+                if ((f_src32_top < -32.0f * 10000.0f) || (f_src32_left < -32.0f * 10000.0f)
+                    || (f_src32_bottom > 32.0f * (float(sh) + 10000.f))
+                    || (f_src32_right > 32.0f * (float(sw) + 10000.f))) {
                     *p_dst = bg_color;
                     p_dst += dst_stride;
                     continue;
                 }
 
 
-                int src32_left = (int) floor(f_src32_left);
-                int src32_right = (int) ceil(f_src32_right);
-                int src32_top = (int) floor(f_src32_top);
-                int src32_bottom = (int) ceil(f_src32_bottom);
+                int src32_left = (int)floor(f_src32_left);
+                int src32_right = (int)ceil(f_src32_right);
+                int src32_top = (int)floor(f_src32_top);
+                int src32_bottom = (int)ceil(f_src32_bottom);
                 int src_left = src32_left >> 5;
                 int src_right = (src32_right - 1) >> 5;
                 int src_top = src32_top >> 5;
@@ -226,7 +233,7 @@ namespace dewarping
                 assert(src_bottom >= src_top);
                 assert(src_right >= src_left);
 
-                if (src_bottom < 0 || src_right < 0 || src_left >= sw || src_top >= sh) {
+                if ((src_bottom < 0) || (src_right < 0) || (src_left >= sw) || (src_top >= sh)) {
                     *p_dst = bg_color;
                     p_dst += dst_stride;
                     continue;
@@ -291,10 +298,10 @@ namespace dewarping
                 unsigned const right_fraction = src32_right - (src_right << 5);
                 unsigned const bottom_fraction = src32_bottom - (src_bottom << 5);
 
-                assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32 ==
-                       static_cast<unsigned>(src32_right - src32_left));
-                assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32 ==
-                       static_cast<unsigned>(src32_bottom - src32_top));
+                assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32
+                       == static_cast<unsigned>(src32_right - src32_left));
+                assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32
+                       == static_cast<unsigned>(src32_bottom - src32_top));
 
                 unsigned const src_area = (src32_bottom - src32_top) * (src32_right - src32_left);
                 if (src_area == 0) {
@@ -392,15 +399,19 @@ namespace dewarping
                 *p_dst = mixer.mix(src_area + background_area);
                 p_dst += dst_stride;
             }
-        }
+        }  // areaMapGeneratrix
 
-        template<typename ColorMixer, typename PixelType>
-        void dewarpGeneric(
-                PixelType const* const src_data, QSize const src_size,
-                int const src_stride, PixelType* const dst_data,
-                QSize const dst_size, int const dst_stride,
-                CylindricalSurfaceDewarper const& distortion_model,
-                QRectF const& model_domain, PixelType const bg_color)
+        template <typename ColorMixer, typename PixelType>
+        void
+        dewarpGeneric(PixelType const* const src_data,
+                      QSize const src_size,
+                      int const src_stride,
+                      PixelType* const dst_data,
+                      QSize const dst_size,
+                      int const dst_stride,
+                      CylindricalSurfaceDewarper const& distortion_model,
+                      QRectF const& model_domain,
+                      PixelType const bg_color)
         {
             int const src_width = src_size.width();
             int const src_height = src_size.height();
@@ -421,7 +432,7 @@ namespace dewarping
             for (int dst_x = 0; dst_x <= dst_width; ++dst_x) {
                 double const model_x = (dst_x - model_domain_left) * model_x_scale;
                 CylindricalSurfaceDewarper::Generatrix const generatrix(
-                        distortion_model.mapGeneratrix(model_x, state)
+                    distortion_model.mapGeneratrix(model_x, state)
                 );
 
                 HomographicTransform<1, float> const homog(generatrix.pln2img.mat());
@@ -434,76 +445,84 @@ namespace dewarping
 
                 if (dst_x != 0) {
                     areaMapGeneratrix<ColorMixer, PixelType>(
-                            src_data, src_size, src_stride,
-                            dst_data + dst_x - 1, dst_size, dst_stride,
-                            bg_color, prev_grid_column, next_grid_column
+                        src_data, src_size, src_stride,
+                        dst_data + dst_x - 1, dst_size, dst_stride,
+                        bg_color, prev_grid_column, next_grid_column
                     );
                 }
 
                 prev_grid_column.swap(next_grid_column);
             }
-        }
-
-#endif
+        }  // dewarpGeneric
+#endif  // if INTERPOLATION_METHOD == INTERP_NONE
 #if INTERPOLATION_METHOD == INTERP_BILLINEAR
         typedef float MixingWeight;
 #else
         typedef unsigned MixingWeight;
 #endif
 
-        QImage dewarpGrayscale(
-                QImage const& src, QSize const& dst_size,
-                CylindricalSurfaceDewarper const& distortion_model,
-                QRectF const& model_domain, QColor const& bg_color)
+        QImage
+        dewarpGrayscale(QImage const& src,
+                        QSize const& dst_size,
+                        CylindricalSurfaceDewarper const& distortion_model,
+                        QRectF const& model_domain,
+                        QColor const& bg_color)
         {
             GrayImage dst(dst_size);
             uint8_t const bg_sample = qGray(bg_color.rgb());
             dst.fill(bg_sample);
             dewarpGeneric<GrayColorMixer<MixingWeight>, uint8_t>(
-                    src.bits(), src.size(), src.bytesPerLine(),
-                    dst.data(), dst_size, dst.stride(),
-                    distortion_model, model_domain, bg_sample
+                src.bits(), src.size(), src.bytesPerLine(),
+                dst.data(), dst_size, dst.stride(),
+                distortion_model, model_domain, bg_sample
             );
+
             return dst.toQImage();
         }
 
-        QImage dewarpRgb(
-                QImage const& src, QSize const& dst_size,
-                CylindricalSurfaceDewarper const& distortion_model,
-                QRectF const& model_domain, QColor const& bg_color)
+        QImage
+        dewarpRgb(QImage const& src,
+                  QSize const& dst_size,
+                  CylindricalSurfaceDewarper const& distortion_model,
+                  QRectF const& model_domain,
+                  QColor const& bg_color)
         {
             QImage dst(dst_size, QImage::Format_RGB32);
             dst.fill(bg_color.rgb());
             dewarpGeneric<RgbColorMixer<MixingWeight>, uint32_t>(
-                    (uint32_t const*) src.bits(), src.size(), src.bytesPerLine() / 4,
-                    (uint32_t*) dst.bits(), dst_size, dst.bytesPerLine() / 4,
-                    distortion_model, model_domain, bg_color.rgb()
+                (uint32_t const*)src.bits(), src.size(), src.bytesPerLine() / 4,
+                (uint32_t*)dst.bits(), dst_size, dst.bytesPerLine() / 4,
+                distortion_model, model_domain, bg_color.rgb()
             );
+
             return dst;
         }
 
-        QImage dewarpArgb(
-                QImage const& src, QSize const& dst_size,
-                CylindricalSurfaceDewarper const& distortion_model,
-                QRectF const& model_domain, QColor const& bg_color)
+        QImage
+        dewarpArgb(QImage const& src,
+                   QSize const& dst_size,
+                   CylindricalSurfaceDewarper const& distortion_model,
+                   QRectF const& model_domain,
+                   QColor const& bg_color)
         {
             QImage dst(dst_size, QImage::Format_ARGB32);
             dst.fill(bg_color.rgba());
             dewarpGeneric<ArgbColorMixer<MixingWeight>, uint32_t>(
-                    (uint32_t const*) src.bits(), src.size(), src.bytesPerLine() / 4,
-                    (uint32_t*) dst.bits(), dst_size, dst.bytesPerLine() / 4,
-                    distortion_model, model_domain, bg_color.rgba()
+                (uint32_t const*)src.bits(), src.size(), src.bytesPerLine() / 4,
+                (uint32_t*)dst.bits(), dst_size, dst.bytesPerLine() / 4,
+                distortion_model, model_domain, bg_color.rgba()
             );
+
             return dst;
         }
-
-    }
+    }  // namespace
 
     QImage
-    RasterDewarper::dewarp(
-            QImage const& src, QSize const& dst_size,
-            CylindricalSurfaceDewarper const& distortion_model,
-            QRectF const& model_domain, QColor const& bg_color)
+    RasterDewarper::dewarp(QImage const& src,
+                           QSize const& dst_size,
+                           CylindricalSurfaceDewarper const& distortion_model,
+                           QRectF const& model_domain,
+                           QColor const& bg_color)
     {
         if (model_domain.isEmpty()) {
             throw std::invalid_argument("RasterDewarper: model_domain is empty.");
@@ -522,8 +541,8 @@ namespace dewarping
                 }
                 else if (src.allGray()) {
                     return dewarpGrayscale(
-                            GrayImage(src).toQImage(), dst_size, distortion_model,
-                            model_domain, bg_color
+                        GrayImage(src).toQImage(), dst_size, distortion_model,
+                        model_domain, bg_color
                     );
                 }
                 break;
@@ -531,26 +550,26 @@ namespace dewarping
             case QImage::Format_MonoLSB:
                 if (src.allGray()) {
                     return dewarpGrayscale(
-                            GrayImage(src).toQImage(),
-                            dst_size, distortion_model, model_domain, bg_color
+                        GrayImage(src).toQImage(),
+                        dst_size, distortion_model, model_domain, bg_color
                     );
                 }
                 break;
-            default:;
+            default:
+                ;
         }
 
         if (src.hasAlphaChannel()) {
             return dewarpArgb(
-                    src.convertToFormat(QImage::Format_ARGB32),
-                    dst_size, distortion_model, model_domain, bg_color
+                src.convertToFormat(QImage::Format_ARGB32),
+                dst_size, distortion_model, model_domain, bg_color
             );
         }
         else {
             return dewarpRgb(
-                    src.convertToFormat(QImage::Format_RGB32),
-                    dst_size, distortion_model, model_domain, bg_color
+                src.convertToFormat(QImage::Format_RGB32),
+                dst_size, distortion_model, model_domain, bg_color
             );
         }
-    }
-
-} 
+    }  // RasterDewarper::dewarp
+}  // namespace dewarping

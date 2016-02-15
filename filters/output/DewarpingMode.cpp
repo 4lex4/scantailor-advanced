@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,14 +15,13 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DewarpingMode.h"
 #include <assert.h>
 
 namespace output
 {
-
     DewarpingMode::DewarpingMode(QString const& str)
     {
         if (str == "auto") {
@@ -53,7 +53,7 @@ namespace output
         }
 
         assert(!"Unreachable");
+
         return QString();
     }
-
-} 
+}  // namespace output

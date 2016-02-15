@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,21 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageId.h"
 #include <assert.h>
 
 PageId::PageId()
-        : m_subPage(SINGLE_PAGE)
-{
-}
+    : m_subPage(SINGLE_PAGE)
+{ }
 
 PageId::PageId(ImageId const& image_id, SubPage subpage)
-        : m_imageId(image_id),
-          m_subPage(subpage)
-{
-}
+    : m_imageId(image_id),
+      m_subPage(subpage)
+{ }
 
 QString
 PageId::subPageToString(SubPage const sub_page)
@@ -48,6 +47,7 @@ PageId::subPageToString(SubPage const sub_page)
     }
 
     assert(str);
+
     return QString::fromLatin1(str);
 }
 
@@ -73,20 +73,24 @@ PageId::subPageFromString(QString const& string, bool* ok)
     if (ok) {
         *ok = recognized;
     }
+
     return sub_page;
 }
 
-bool operator==(PageId const& lhs, PageId const& rhs)
+bool
+operator==(PageId const& lhs, PageId const& rhs)
 {
     return lhs.subPage() == rhs.subPage() && lhs.imageId() == rhs.imageId();
 }
 
-bool operator!=(PageId const& lhs, PageId const& rhs)
+bool
+operator!=(PageId const& lhs, PageId const& rhs)
 {
     return !(lhs == rhs);
 }
 
-bool operator<(PageId const& lhs, PageId const& rhs)
+bool
+operator<(PageId const& lhs, PageId const& rhs)
 {
     if (lhs.imageId() < rhs.imageId()) {
         return true;
@@ -98,3 +102,4 @@ bool operator<(PageId const& lhs, PageId const& rhs)
         return lhs.subPage() < rhs.subPage();
     }
 }
+

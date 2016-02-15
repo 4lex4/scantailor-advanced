@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CommandLine.h"
 #include "MainWindow.h"
@@ -85,10 +86,12 @@
 #include <QFileSystemModel>
 #include <QResource>
 
-class MainWindow::PageSelectionProviderImpl : public PageSelectionProvider
+class MainWindow::PageSelectionProviderImpl
+    : public PageSelectionProvider
 {
 public:
-    PageSelectionProviderImpl(MainWindow* wnd) : m_ptrWnd(wnd)
+    PageSelectionProviderImpl(MainWindow* wnd)
+        : m_ptrWnd(wnd)
     { }
 
     virtual PageSequence allPages() const
@@ -111,16 +114,16 @@ private:
 };
 
 MainWindow::MainWindow()
-        : m_ptrPages(new ProjectPages),
-          m_ptrStages(new StageSequence(m_ptrPages, newPageSelectionAccessor())),
-          m_ptrWorkerThreadPool(new WorkerThreadPool),
-          m_ptrInteractiveQueue(new ProcessingTaskQueue()),
-          m_ptrOutOfMemoryDialog(new OutOfMemoryDialog),
-          m_curFilter(0),
-          m_ignoreSelectionChanges(0),
-          m_ignorePageOrderingChanges(0),
-          m_debug(false),
-          m_closing(false)
+    : m_ptrPages(new ProjectPages),
+      m_ptrStages(new StageSequence(m_ptrPages, newPageSelectionAccessor())),
+      m_ptrWorkerThreadPool(new WorkerThreadPool),
+      m_ptrInteractiveQueue(new ProcessingTaskQueue()),
+      m_ptrOutOfMemoryDialog(new OutOfMemoryDialog),
+      m_curFilter(0),
+      m_ignoreSelectionChanges(0),
+      m_ignorePageOrderingChanges(0),
+      m_debug(false),
+      m_closing(false)
 {
     m_maxLogicalThumbSize = QSize(250, 160);
     m_ptrThumbSequence.reset(new ThumbnailSequence(m_maxLogicalThumbSize));
@@ -177,8 +180,8 @@ MainWindow::MainWindow()
     connect(actionNextPageW, SIGNAL(triggered(bool)), this, SLOT(goNextPage()));
     connect(actionAbout, SIGNAL(triggered(bool)), this, SLOT(showAboutDialog()));
     connect(
-            &OutOfMemoryHandler::instance(),
-            SIGNAL(outOfMemory()), SLOT(handleOutOfMemorySituation())
+        &OutOfMemoryHandler::instance(),
+        SIGNAL(outOfMemory()), SLOT(handleOutOfMemorySituation())
     );
 
     connect(actionSwitchFilter1, SIGNAL(triggered(bool)), SLOT(switchFilter1()));
@@ -189,52 +192,52 @@ MainWindow::MainWindow()
     connect(actionSwitchFilter6, SIGNAL(triggered(bool)), SLOT(switchFilter6()));
 
     connect(
-            filterList->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection const&, QItemSelection const&)),
-            this, SLOT(filterSelectionChanged(QItemSelection const&))
+        filterList->selectionModel(),
+        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+        this, SLOT(filterSelectionChanged(QItemSelection const &))
     );
     connect(
-            filterList, SIGNAL(launchBatchProcessing()),
-            this, SLOT(startBatchProcessing())
-    );
-
-    connect(
-            m_ptrWorkerThreadPool.get(),
-            SIGNAL(taskResult(BackgroundTaskPtr const&, FilterResultPtr const&)),
-            this, SLOT(filterResult(BackgroundTaskPtr const&, FilterResultPtr const&))
+        filterList, SIGNAL(launchBatchProcessing()),
+        this, SLOT(startBatchProcessing())
     );
 
     connect(
-            m_ptrThumbSequence.get(),
-            SIGNAL(newSelectionLeader(PageInfo const&, QRectF const&, ThumbnailSequence::SelectionFlags)),
-            this, SLOT(currentPageChanged(PageInfo const&, QRectF const&, ThumbnailSequence::SelectionFlags))
-    );
-    connect(
-            m_ptrThumbSequence.get(),
-            SIGNAL(pageContextMenuRequested(PageInfo const&, QPoint const&, bool)),
-            this, SLOT(pageContextMenuRequested(PageInfo const&, QPoint const&, bool))
-    );
-    connect(
-            m_ptrThumbSequence.get(),
-            SIGNAL(pastLastPageContextMenuRequested(QPoint const&)),
-            SLOT(pastLastPageContextMenuRequested(QPoint const&))
+        m_ptrWorkerThreadPool.get(),
+        SIGNAL(taskResult(BackgroundTaskPtr const &, FilterResultPtr const &)),
+        this, SLOT(filterResult(BackgroundTaskPtr const &, FilterResultPtr const &))
     );
 
     connect(
-            thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)),
-            this, SLOT(thumbViewScrolled())
+        m_ptrThumbSequence.get(),
+        SIGNAL(newSelectionLeader(PageInfo const &, QRectF const &, ThumbnailSequence::SelectionFlags)),
+        this, SLOT(currentPageChanged(PageInfo const &, QRectF const &, ThumbnailSequence::SelectionFlags))
     );
     connect(
-            thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)),
-            this, SLOT(thumbViewScrolled())
+        m_ptrThumbSequence.get(),
+        SIGNAL(pageContextMenuRequested(PageInfo const &, QPoint const &, bool)),
+        this, SLOT(pageContextMenuRequested(PageInfo const &, QPoint const &, bool))
     );
     connect(
-            focusButton, SIGNAL(clicked(bool)),
-            this, SLOT(thumbViewFocusToggled(bool))
+        m_ptrThumbSequence.get(),
+        SIGNAL(pastLastPageContextMenuRequested(QPoint const &)),
+        SLOT(pastLastPageContextMenuRequested(QPoint const &))
+    );
+
+    connect(
+        thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)),
+        this, SLOT(thumbViewScrolled())
     );
     connect(
-            sortOptions, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(pageOrderingChanged(int))
+        thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)),
+        this, SLOT(thumbViewScrolled())
+    );
+    connect(
+        focusButton, SIGNAL(clicked(bool)),
+        this, SLOT(thumbViewFocusToggled(bool))
+    );
+    connect(
+        sortOptions, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(pageOrderingChanged(int))
     );
 
     connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
@@ -246,33 +249,33 @@ MainWindow::MainWindow()
 #endif
 
     connect(
-            actionSettings, SIGNAL(triggered(bool)),
-            this, SLOT(openSettingsDialog())
+        actionSettings, SIGNAL(triggered(bool)),
+        this, SLOT(openSettingsDialog())
     );
 
     connect(
-            actionNewProject, SIGNAL(triggered(bool)),
-            this, SLOT(newProject())
+        actionNewProject, SIGNAL(triggered(bool)),
+        this, SLOT(newProject())
     );
     connect(
-            actionOpenProject, SIGNAL(triggered(bool)),
-            this, SLOT(openProject())
+        actionOpenProject, SIGNAL(triggered(bool)),
+        this, SLOT(openProject())
     );
     connect(
-            actionSaveProject, SIGNAL(triggered(bool)),
-            this, SLOT(saveProjectTriggered())
+        actionSaveProject, SIGNAL(triggered(bool)),
+        this, SLOT(saveProjectTriggered())
     );
     connect(
-            actionSaveProjectAs, SIGNAL(triggered(bool)),
-            this, SLOT(saveProjectAsTriggered())
+        actionSaveProjectAs, SIGNAL(triggered(bool)),
+        this, SLOT(saveProjectAsTriggered())
     );
     connect(
-            actionCloseProject, SIGNAL(triggered(bool)),
-            this, SLOT(closeProject())
+        actionCloseProject, SIGNAL(triggered(bool)),
+        this, SLOT(closeProject())
     );
     connect(
-            actionQuit, SIGNAL(triggered(bool)),
-            this, SLOT(close())
+        actionQuit, SIGNAL(triggered(bool)),
+        this, SLOT(close())
     );
 
     updateProjectActions();
@@ -282,7 +285,7 @@ MainWindow::MainWindow()
     QSettings settings;
     if (settings.value("mainWindow/maximized") == false) {
         QVariant const geom(
-                settings.value("mainWindow/nonMaximizedGeometry")
+            settings.value("mainWindow/nonMaximizedGeometry")
         );
         if (!restoreGeometry(geom.toByteArray())) {
             resize(1014, 689);
@@ -290,7 +293,6 @@ MainWindow::MainWindow()
     }
     m_auto_save_project = settings.value("settings/auto_save_project").toBool();
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -324,10 +326,10 @@ MainWindow::selectedRanges() const
 }
 
 void
-MainWindow::switchToNewProject(
-        IntrusivePtr<ProjectPages> const& pages,
-        QString const& out_dir, QString const& project_file_path,
-        ProjectReader const* project_reader)
+MainWindow::switchToNewProject(IntrusivePtr<ProjectPages> const& pages,
+                               QString const& out_dir,
+                               QString const& project_file_path,
+                               ProjectReader const* project_reader)
 {
     stopBatchProcessing(CLEAR_MAIN_AREA);
     m_ptrInteractiveQueue->cancelAndClear();
@@ -351,8 +353,8 @@ MainWindow::switchToNewProject(
     }
 
     m_outFileNameGen = OutputFileNameGenerator(
-            disambiguator, out_dir, pages->layoutDirection()
-    );
+        disambiguator, out_dir, pages->layoutDirection()
+                       );
     updateDisambiguationRecords(pages->toPageSequence(IMAGE_VIEW));
 
     m_ptrStages.reset(new StageSequence(pages, newPageSelectionAccessor()));
@@ -367,30 +369,30 @@ MainWindow::switchToNewProject(
         m_curFilter = 0;
 
         connect(
-                filterList->selectionModel(),
-                SIGNAL(selectionChanged(QItemSelection const&, QItemSelection const&)),
-                this, SLOT(filterSelectionChanged(QItemSelection const&))
+            filterList->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+            this, SLOT(filterSelectionChanged(QItemSelection const &))
         );
     }
 
     updateSortOptions();
 
     m_ptrContentBoxPropagator.reset(
-            new ContentBoxPropagator(
-                    m_ptrStages->pageLayoutFilter(),
-                    createCompositeCacheDrivenTask(
-                            m_ptrStages->selectContentFilterIdx()
-                    )
+        new ContentBoxPropagator(
+            m_ptrStages->pageLayoutFilter(),
+            createCompositeCacheDrivenTask(
+                m_ptrStages->selectContentFilterIdx()
             )
+        )
     );
 
     m_ptrPageOrientationPropagator.reset(
-            new PageOrientationPropagator(
-                    m_ptrStages->pageSplitFilter(),
-                    createCompositeCacheDrivenTask(
-                            m_ptrStages->fixOrientationFilterIdx()
-                    )
+        new PageOrientationPropagator(
+            m_ptrStages->pageSplitFilter(),
+            createCompositeCacheDrivenTask(
+                m_ptrStages->fixOrientationFilterIdx()
             )
+        )
     );
 
     if (out_dir.isEmpty()) {
@@ -409,7 +411,7 @@ MainWindow::switchToNewProject(
     if (!QDir(out_dir).exists()) {
         showRelinkingDialog();
     }
-}
+}  // MainWindow::switchToNewProject
 
 void
 MainWindow::showNewOpenProjectPanel()
@@ -421,19 +423,19 @@ MainWindow::showNewOpenProjectPanel()
     NewOpenProjectPanel* nop = new NewOpenProjectPanel(outer_widget.get());
 
     connect(
-            nop, SIGNAL(newProject()),
-            this, SLOT(newProject()),
-            Qt::QueuedConnection
+        nop, SIGNAL(newProject()),
+        this, SLOT(newProject()),
+        Qt::QueuedConnection
     );
     connect(
-            nop, SIGNAL(openProject()),
-            this, SLOT(openProject()),
-            Qt::QueuedConnection
+        nop, SIGNAL(openProject()),
+        this, SLOT(openProject()),
+        Qt::QueuedConnection
     );
     connect(
-            nop, SIGNAL(openRecentProject(QString const&)),
-            this, SLOT(openProject(QString const&)),
-            Qt::QueuedConnection
+        nop, SIGNAL(openRecentProject(QString const &)),
+        this, SLOT(openProject(QString const &)),
+        Qt::QueuedConnection
     );
 
     layout->addWidget(nop, 1, 1);
@@ -444,37 +446,41 @@ MainWindow::showNewOpenProjectPanel()
     setImageWidget(outer_widget.release(), TRANSFER_OWNERSHIP);
 
     filterList->setBatchProcessingPossible(false);
-}
+}  // MainWindow::showNewOpenProjectPanel
 
 void
 MainWindow::createBatchProcessingWidget()
 {
-
     m_ptrBatchProcessingWidget.reset(new QWidget);
     QGridLayout* layout = new QGridLayout(m_ptrBatchProcessingWidget.get());
     m_ptrBatchProcessingWidget->setLayout(layout);
 
     SkinnedButton* stop_btn = new SkinnedButton(
-            ":/icons/stop-big.png",
-            ":/icons/stop-big-hovered.png",
-            ":/icons/stop-big-pressed.png",
-            m_ptrBatchProcessingWidget.get()
-    );
+        ":/icons/stop-big.png",
+        ":/icons/stop-big-hovered.png",
+        ":/icons/stop-big-pressed.png",
+        m_ptrBatchProcessingWidget.get()
+                              );
     stop_btn->setStatusTip(tr("Stop batch processing"));
 
-    class LowerPanel : public QWidget
+    class LowerPanel
+        : public QWidget
     {
     public:
-        LowerPanel(QWidget* parent = 0) : QWidget(parent)
-        { ui.setupUi(this); }
+        LowerPanel(QWidget* parent = 0)
+            : QWidget(parent)
+        {
+            ui.setupUi(this);
+        }
 
         Ui::BatchProcessingLowerPanel ui;
     };
+
     LowerPanel* lower_panel = new LowerPanel(m_ptrBatchProcessingWidget.get());
     m_checkBeepWhenFinished = [lower_panel]()
-    {
-        return lower_panel->ui.beepWhenFinished->isChecked();
-    };
+                              {
+                                  return lower_panel->ui.beepWhenFinished->isChecked();
+                              };
 
     int row = 0;
     layout->addWidget(stop_btn, ++row, 1, Qt::AlignCenter);
@@ -485,7 +491,7 @@ MainWindow::createBatchProcessingWidget()
     layout->setRowStretch(row, 1);
 
     connect(stop_btn, SIGNAL(clicked()), SLOT(stopBatchProcessing()));
-}
+}  // MainWindow::createBatchProcessingWidget
 
 void
 MainWindow::setupThumbView()
@@ -496,7 +502,7 @@ MainWindow::setupThumbView()
         inner_width -= thumbView->frameWidth() * 2;
     }
     int const delta_x = thumbView->size().width() - inner_width;
-    thumbView->setMinimumWidth((int) ceil(m_maxLogicalThumbSize.width() + delta_x));
+    thumbView->setMinimumWidth((int)ceil(m_maxLogicalThumbSize.width() + delta_x));
 
     thumbView->setBackgroundBrush(palette().color(QPalette::Window));
 
@@ -505,11 +511,13 @@ MainWindow::setupThumbView()
     thumbView->installEventFilter(this);
 }
 
-bool MainWindow::eventFilter(QObject* obj, QEvent* ev)
+bool
+MainWindow::eventFilter(QObject* obj, QEvent* ev)
 {
-    if (obj == thumbView && ev->type() == QEvent::Resize) {
+    if ((obj == thumbView) && (ev->type() == QEvent::Resize)) {
         m_thumbResizeTimer.start(200);
     }
+
     return false;
 }
 
@@ -536,7 +544,7 @@ MainWindow::timerEvent(QTimerEvent* const event)
         settings.setValue("mainWindow/maximized", isMaximized());
         if (!isMaximized()) {
             settings.setValue(
-                    "mainWindow/nonMaximizedGeometry", saveGeometry()
+                "mainWindow/nonMaximizedGeometry", saveGeometry()
             );
         }
         close();
@@ -547,10 +555,10 @@ MainWindow::SavePromptResult
 MainWindow::promptProjectSave()
 {
     QMessageBox::StandardButton const res = QMessageBox::question(
-            this, tr("Save Project"), tr("Save the project?"),
-            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-            QMessageBox::Save
-    );
+        this, tr("Save Project"), tr("Save the project?"),
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+        QMessageBox::Save
+                                            );
 
     switch (res) {
         case QMessageBox::Save:
@@ -582,7 +590,7 @@ MainWindow::compareFiles(QString const& fpath1, QString const& fpath2)
     }
 
     int const chunk_size = 4096;
-    for (; ;) {
+    for (;;) {
         QByteArray const chunk1(file1.read(chunk_size));
         QByteArray const chunk2(file2.read(chunk_size));
         if (chunk1.size() != chunk2.size()) {
@@ -603,6 +611,7 @@ MainWindow::currentPageOrderProvider() const
     }
 
     IntrusivePtr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
+
     return filter->pageOrderOptions()[idx].provider();
 }
 
@@ -615,7 +624,7 @@ MainWindow::updateSortOptions()
 
     sortOptions->clear();
 
-    for (PageOrderOption const& opt :  filter->pageOrderOptions()) {
+    for (PageOrderOption const& opt : filter->pageOrderOptions()) {
         sortOptions->addItem(opt.name());
     }
 
@@ -627,49 +636,44 @@ MainWindow::updateSortOptions()
 }
 
 void
-MainWindow::resetThumbSequence(
-        IntrusivePtr<PageOrderProvider const> const& page_order_provider)
+MainWindow::resetThumbSequence(IntrusivePtr<PageOrderProvider const> const& page_order_provider)
 {
     if (m_ptrThumbnailCache.get()) {
         IntrusivePtr<CompositeCacheDrivenTask> const task(
-                createCompositeCacheDrivenTask(m_curFilter)
+            createCompositeCacheDrivenTask(m_curFilter)
         );
 
         m_ptrThumbSequence->setThumbnailFactory(
-                IntrusivePtr<ThumbnailFactory>(
-                        new ThumbnailFactory(
-                                m_ptrThumbnailCache,
-                                m_maxLogicalThumbSize, task
-                        )
+            IntrusivePtr<ThumbnailFactory>(
+                new ThumbnailFactory(
+                    m_ptrThumbnailCache,
+                    m_maxLogicalThumbSize, task
                 )
+            )
         );
     }
 
     m_ptrThumbSequence->reset(
-            m_ptrPages->toPageSequence(getCurrentView()),
-            ThumbnailSequence::RESET_SELECTION, page_order_provider
+        m_ptrPages->toPageSequence(getCurrentView()),
+        ThumbnailSequence::RESET_SELECTION, page_order_provider
     );
 
     if (!m_ptrThumbnailCache.get()) {
         assert(m_ptrPages->numImages() == 0);
         m_ptrThumbSequence->setThumbnailFactory(
-                IntrusivePtr<ThumbnailFactory>()
+            IntrusivePtr<ThumbnailFactory>()
         );
     }
 
     PageId const page(m_selectedPage.get(getCurrentView()));
-    if (m_ptrThumbSequence->setSelection(page)) {
-    }
-    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::LEFT_PAGE))) {
-    }
-    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::RIGHT_PAGE))) {
-    }
-    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::SINGLE_PAGE))) {
-    }
+    if (m_ptrThumbSequence->setSelection(page)) { }
+    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::LEFT_PAGE))) { }
+    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::RIGHT_PAGE))) { }
+    else if (m_ptrThumbSequence->setSelection(PageId(page.imageId(), PageId::SINGLE_PAGE))) { }
     else {
         m_ptrThumbSequence->setSelection(m_ptrThumbSequence->firstPage().id());
     }
-}
+}  // MainWindow::resetThumbSequence
 
 void
 MainWindow::setOptionsWidget(FilterOptionsWidget* widget, Ownership const ownership)
@@ -678,6 +682,7 @@ MainWindow::setOptionsWidget(FilterOptionsWidget* widget, Ownership const owners
         if (ownership == TRANSFER_OWNERSHIP) {
             delete widget;
         }
+
         return;
     }
 
@@ -697,24 +702,24 @@ MainWindow::setOptionsWidget(FilterOptionsWidget* widget, Ownership const owners
 
     if (m_ptrOptionsWidget) {
         disconnect(
-                m_ptrOptionsWidget, SIGNAL(reloadRequested()),
-                this, SLOT(reloadRequested())
+            m_ptrOptionsWidget, SIGNAL(reloadRequested()),
+            this, SLOT(reloadRequested())
         );
         disconnect(
-                m_ptrOptionsWidget, SIGNAL(invalidateThumbnail(PageId const&)),
-                this, SLOT(invalidateThumbnail(PageId const&))
+            m_ptrOptionsWidget, SIGNAL(invalidateThumbnail(PageId const &)),
+            this, SLOT(invalidateThumbnail(PageId const &))
         );
         disconnect(
-                m_ptrOptionsWidget, SIGNAL(invalidateThumbnail(PageInfo const&)),
-                this, SLOT(invalidateThumbnail(PageInfo const&))
+            m_ptrOptionsWidget, SIGNAL(invalidateThumbnail(PageInfo const &)),
+            this, SLOT(invalidateThumbnail(PageInfo const &))
         );
         disconnect(
-                m_ptrOptionsWidget, SIGNAL(invalidateAllThumbnails()),
-                this, SLOT(invalidateAllThumbnails())
+            m_ptrOptionsWidget, SIGNAL(invalidateAllThumbnails()),
+            this, SLOT(invalidateAllThumbnails())
         );
         disconnect(
-                m_ptrOptionsWidget, SIGNAL(goToPage(PageId const&)),
-                this, SLOT(goToPage(PageId const&))
+            m_ptrOptionsWidget, SIGNAL(goToPage(PageId const &)),
+            this, SLOT(goToPage(PageId const &))
         );
     }
 
@@ -722,42 +727,47 @@ MainWindow::setOptionsWidget(FilterOptionsWidget* widget, Ownership const owners
     m_ptrOptionsWidget = widget;
 
     connect(
-            widget, SIGNAL(reloadRequested()),
-            this, SLOT(reloadRequested()), Qt::QueuedConnection
+        widget, SIGNAL(reloadRequested()),
+        this, SLOT(reloadRequested()), Qt::QueuedConnection
     );
     connect(
-            widget, SIGNAL(invalidateThumbnail(PageId const&)),
-            this, SLOT(invalidateThumbnail(PageId const&))
+        widget, SIGNAL(invalidateThumbnail(PageId const &)),
+        this, SLOT(invalidateThumbnail(PageId const &))
     );
     connect(
-            widget, SIGNAL(invalidateThumbnail(PageInfo const&)),
-            this, SLOT(invalidateThumbnail(PageInfo const&))
+        widget, SIGNAL(invalidateThumbnail(PageInfo const &)),
+        this, SLOT(invalidateThumbnail(PageInfo const &))
     );
     connect(
-            widget, SIGNAL(invalidateAllThumbnails()),
-            this, SLOT(invalidateAllThumbnails())
+        widget, SIGNAL(invalidateAllThumbnails()),
+        this, SLOT(invalidateAllThumbnails())
     );
     connect(
-            widget, SIGNAL(goToPage(PageId const&)),
-            this, SLOT(goToPage(PageId const&))
+        widget, SIGNAL(goToPage(PageId const &)),
+        this, SLOT(goToPage(PageId const &))
     );
-}
+}  // MainWindow::setOptionsWidget
 
 void
-MainWindow::setImageWidget(
-        QWidget* widget, Ownership const ownership,
-        DebugImages* debug_images, bool clearImageWidget)
+MainWindow::setImageWidget(QWidget* widget, Ownership const ownership, DebugImages* debug_images, bool clearImageWidget)
 {
-    if (isBatchProcessingInProgress() && widget != m_ptrBatchProcessingWidget.get()) {
+    if (isBatchProcessingInProgress() && (widget != m_ptrBatchProcessingWidget.get())) {
         if (ownership == TRANSFER_OWNERSHIP) {
             delete widget;
         }
+
         return;
     }
 
     QWidget* current_widget = m_pImageFrameLayout->currentWidget();
-    bool current_widget_isImage = (dynamic_cast<output::TabbedImageView*>(current_widget) != NULL) ||
-                                  (dynamic_cast<ImageViewBase*>(current_widget) != NULL);
+    if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != NULL) {
+        if (!clearImageWidget) {
+            return;
+        }
+    }
+
+    bool current_widget_isImage = (dynamic_cast<output::TabbedImageView*>(current_widget) != NULL)
+                                  || (dynamic_cast<ImageViewBase*>(current_widget) != NULL);
 
     if (clearImageWidget || !current_widget_isImage) {
         removeImageWidget();
@@ -784,7 +794,7 @@ MainWindow::setImageWidget(
         }
         m_pImageFrameLayout->addWidget(m_ptrTabbedDebugImages.get());
     }
-}
+}  // MainWindow::setImageWidget
 
 void
 MainWindow::removeImageWidget()
@@ -814,13 +824,15 @@ MainWindow::invalidateAllThumbnails()
     m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
-IntrusivePtr<AbstractCommand0<void> >
+IntrusivePtr<AbstractCommand0<void>>
 MainWindow::relinkingDialogRequester()
 {
-    class Requester : public AbstractCommand0<void>
+    class Requester
+        : public AbstractCommand0<void>
     {
     public:
-        Requester(MainWindow* wnd) : m_ptrWnd(wnd)
+        Requester(MainWindow* wnd)
+            : m_ptrWnd(wnd)
         { }
 
         virtual void operator()()
@@ -834,7 +846,7 @@ MainWindow::relinkingDialogRequester()
         QPointer<MainWindow> m_ptrWnd;
     };
 
-    return IntrusivePtr<AbstractCommand0<void> >(new Requester(this));
+    return IntrusivePtr<AbstractCommand0<void>>(new Requester(this));
 }
 
 void
@@ -854,7 +866,8 @@ MainWindow::showRelinkingDialog()
     connect(dialog, &QDialog::accepted, [this, dialog]()
     {
         this->performRelinking(dialog->relinker());
-    });
+    }
+    );
 
     dialog->show();
 }
@@ -915,7 +928,7 @@ MainWindow::goNextPage()
     }
 
     PageInfo const next_page(
-            m_ptrThumbSequence->nextPage(m_ptrThumbSequence->selectionLeader().id())
+        m_ptrThumbSequence->nextPage(m_ptrThumbSequence->selectionLeader().id())
     );
     if (!next_page.isNull()) {
         goToPage(next_page.id());
@@ -930,7 +943,7 @@ MainWindow::goPrevPage()
     }
 
     PageInfo const prev_page(
-            m_ptrThumbSequence->prevPage(m_ptrThumbSequence->selectionLeader().id())
+        m_ptrThumbSequence->prevPage(m_ptrThumbSequence->selectionLeader().id())
     );
     if (!prev_page.isNull()) {
         goToPage(prev_page.id());
@@ -952,13 +965,13 @@ MainWindow::goToPage(PageId const& page_id)
 }
 
 void
-MainWindow::currentPageChanged(
-        PageInfo const& page_info, QRectF const& thumb_rect,
-        ThumbnailSequence::SelectionFlags const flags)
+MainWindow::currentPageChanged(PageInfo const& page_info,
+                               QRectF const& thumb_rect,
+                               ThumbnailSequence::SelectionFlags const flags)
 {
     m_selectedPage.set(page_info.id(), getCurrentView());
 
-    if ((flags & ThumbnailSequence::SELECTED_BY_USER) || focusButton->isChecked()) {
+    if ((flags& ThumbnailSequence::SELECTED_BY_USER) || focusButton->isChecked()) {
         if (!(flags & ThumbnailSequence::AVOID_SCROLLING_TO)) {
             thumbView->ensureVisible(thumb_rect, 0, 0);
         }
@@ -1001,8 +1014,7 @@ MainWindow::AutoSaveProjectState(bool auto_save)
 }
 
 void
-MainWindow::pageContextMenuRequested(
-        PageInfo const& page_info_, QPoint const& screen_pos, bool selected)
+MainWindow::pageContextMenuRequested(PageInfo const& page_info_, QPoint const& screen_pos, bool selected)
 {
     if (isBatchProcessingInProgress()) {
         return;
@@ -1017,17 +1029,17 @@ MainWindow::pageContextMenuRequested(
     QMenu menu;
 
     QAction* ins_before = menu.addAction(
-            QIcon(":/icons/insert-before-16.png"), tr("Insert before ...")
-    );
+        QIcon(":/icons/insert-before-16.png"), tr("Insert before ...")
+                          );
     QAction* ins_after = menu.addAction(
-            QIcon(":/icons/insert-after-16.png"), tr("Insert after ...")
-    );
+        QIcon(":/icons/insert-after-16.png"), tr("Insert after ...")
+                         );
 
     menu.addSeparator();
 
     QAction* remove = menu.addAction(
-            QIcon(":/icons/user-trash.png"), tr("Remove from project ...")
-    );
+        QIcon(":/icons/user-trash.png"), tr("Remove from project ...")
+                      );
 
     QAction* action = menu.exec(screen_pos);
     if (action == ins_before) {
@@ -1039,7 +1051,7 @@ MainWindow::pageContextMenuRequested(
     else if (action == remove) {
         showRemovePagesDialog(m_ptrThumbSequence->selectedItems());
     }
-}
+}  // MainWindow::pageContextMenuRequested
 
 void
 MainWindow::pastLastPageContextMenuRequested(QPoint const& screen_pos)
@@ -1079,18 +1091,16 @@ MainWindow::thumbViewScrolled()
 
     QRectF const viewport_rect(thumbView->viewport()->rect());
     QRectF const viewport_item_rect(
-            thumbView->viewportTransform().mapRect(rect)
+        thumbView->viewportTransform().mapRect(rect)
     );
 
     double const intersection_threshold = 0.5;
-    if (viewport_item_rect.top() >= viewport_rect.top() &&
-        viewport_item_rect.top() + viewport_item_rect.height()
-                                   * intersection_threshold <= viewport_rect.bottom()) {
-    }
-    else if (viewport_item_rect.bottom() <= viewport_rect.bottom() &&
-             viewport_item_rect.bottom() - viewport_item_rect.height()
-                                           * intersection_threshold >= viewport_rect.top()) {
-    }
+    if ((viewport_item_rect.top() >= viewport_rect.top())
+        && (viewport_item_rect.top() + viewport_item_rect.height()
+            * intersection_threshold <= viewport_rect.bottom())) { }
+    else if ((viewport_item_rect.bottom() <= viewport_rect.bottom())
+             && (viewport_item_rect.bottom() - viewport_item_rect.height()
+                 * intersection_threshold >= viewport_rect.top())) { }
     else {
         focusButton->setChecked(false);
     }
@@ -1138,34 +1148,40 @@ MainWindow::filterSelectionChanged(QItemSelection const& selected)
     resetThumbSequence(currentPageOrderProvider());
 
     updateMainArea();
-}
+}  // MainWindow::filterSelectionChanged
 
-void MainWindow::switchFilter1()
+void
+MainWindow::switchFilter1()
 {
     filterList->selectRow(0);
 }
 
-void MainWindow::switchFilter2()
+void
+MainWindow::switchFilter2()
 {
     filterList->selectRow(1);
 }
 
-void MainWindow::switchFilter3()
+void
+MainWindow::switchFilter3()
 {
     filterList->selectRow(2);
 }
 
-void MainWindow::switchFilter4()
+void
+MainWindow::switchFilter4()
 {
     filterList->selectRow(3);
 }
 
-void MainWindow::switchFilter5()
+void
+MainWindow::switchFilter5()
 {
     filterList->selectRow(4);
 }
 
-void MainWindow::switchFilter6()
+void
+MainWindow::switchFilter6()
 {
     filterList->selectRow(5);
 }
@@ -1181,9 +1197,9 @@ MainWindow::pageOrderingChanged(int idx)
     m_ptrStages->filterAt(m_curFilter)->selectPageOrder(idx);
 
     m_ptrThumbSequence->reset(
-            m_ptrPages->toPageSequence(getCurrentView()),
-            ThumbnailSequence::KEEP_SELECTION,
-            currentPageOrderProvider()
+        m_ptrPages->toPageSequence(getCurrentView()),
+        ThumbnailSequence::KEEP_SELECTION,
+        currentPageOrderProvider()
     );
 }
 
@@ -1215,7 +1231,7 @@ MainWindow::startBatchProcessing()
     PageInfo page = processAll ? m_ptrThumbSequence->firstPage() : m_ptrThumbSequence->selectionLeader();
     for (; !page.isNull(); page = m_ptrThumbSequence->nextPage(page.id())) {
         m_ptrBatchQueue->addProcessingTask(
-                page, createCompositeTask(page, m_curFilter, /*batch=*/true, m_debug)
+            page, createCompositeTask(page, m_curFilter,  /*batch=*/ true, m_debug)
         );
     }
 
@@ -1244,7 +1260,7 @@ MainWindow::startBatchProcessing()
     }
 
     updateMainArea();
-}
+}  // MainWindow::startBatchProcessing
 
 void
 MainWindow::stopBatchProcessing(MainAreaAction main_area)
@@ -1290,8 +1306,7 @@ MainWindow::filterResult(BackgroundTaskPtr const& task, FilterResultPtr const& r
     }
 
     if (!isBatchProcessingInProgress()) {
-        if (!result->filter()) {
-        }
+        if (!result->filter()) { }
         else if (result->filter() != m_ptrStages->filterAt(m_curFilter)) {
             int const idx = m_ptrStages->findFilter(result->filter());
             assert(idx >= 0);
@@ -1333,7 +1348,7 @@ MainWindow::filterResult(BackgroundTaskPtr const& task, FilterResultPtr const& r
             m_ptrThumbSequence->setSelection(page.id());
         }
     }
-}
+}  // MainWindow::filterResult
 
 void
 MainWindow::debugToggled(bool const enabled)
@@ -1370,15 +1385,14 @@ MainWindow::fixedDpiSubmitted()
     m_ptrPages->updateMetadataFrom(m_ptrFixDpiDialog->files());
 
     m_ptrThumbSequence->reset(
-            m_ptrPages->toPageSequence(getCurrentView()),
-            ThumbnailSequence::KEEP_SELECTION, m_ptrThumbSequence->pageOrderProvider()
+        m_ptrPages->toPageSequence(getCurrentView()),
+        ThumbnailSequence::KEEP_SELECTION, m_ptrThumbSequence->pageOrderProvider()
     );
 
     PageInfo const selected_page_after(m_ptrThumbSequence->selectionLeader());
 
-    if (selected_page_before.imageId() != selected_page_after.imageId() ||
-        selected_page_before.metadata() != selected_page_after.metadata()) {
-
+    if ((selected_page_before.imageId() != selected_page_after.imageId())
+        || (selected_page_before.metadata() != selected_page_after.metadata())) {
         reloadRequested();
     }
 }
@@ -1388,6 +1402,7 @@ MainWindow::saveProjectTriggered()
 {
     if (m_projectFile.isEmpty()) {
         saveProjectAsTriggered();
+
         return;
     }
 
@@ -1399,7 +1414,6 @@ MainWindow::saveProjectTriggered()
 void
 MainWindow::saveProjectAsTriggered()
 {
-
     QString project_dir;
     if (!m_projectFile.isEmpty()) {
         project_dir = QFileInfo(m_projectFile).absolutePath();
@@ -1410,10 +1424,10 @@ MainWindow::saveProjectAsTriggered()
     }
 
     QString project_file(
-            QFileDialog::getSaveFileName(
-                    this, QString(), project_dir,
-                    tr("Scan Tailor Projects") + " (*.ScanTailor)"
-            )
+        QFileDialog::getSaveFileName(
+            this, QString(), project_dir,
+            tr("Scan Tailor Projects") + " (*.ScanTailor)"
+        )
     );
     if (project_file.isEmpty()) {
         return;
@@ -1429,8 +1443,8 @@ MainWindow::saveProjectAsTriggered()
 
         QSettings settings;
         settings.setValue(
-                "project/lastDir",
-                QFileInfo(m_projectFile).absolutePath()
+            "project/lastDir",
+            QFileInfo(m_projectFile).absolutePath()
         );
 
         RecentProjects rp;
@@ -1438,7 +1452,7 @@ MainWindow::saveProjectAsTriggered()
         rp.setMostRecent(m_projectFile);
         rp.write();
     }
-}
+}  // MainWindow::saveProjectAsTriggered
 
 void
 MainWindow::newProject()
@@ -1449,8 +1463,8 @@ MainWindow::newProject()
 
     ProjectCreationContext* context = new ProjectCreationContext(this);
     connect(
-            context, SIGNAL(done(ProjectCreationContext * )),
-            this, SLOT(newProjectCreated(ProjectCreationContext * ))
+        context, SIGNAL(done(ProjectCreationContext*)),
+        this, SLOT(newProjectCreated(ProjectCreationContext*))
     );
 }
 
@@ -1458,10 +1472,10 @@ void
 MainWindow::newProjectCreated(ProjectCreationContext* context)
 {
     IntrusivePtr<ProjectPages> pages(
-            new ProjectPages(
-                    context->files(), ProjectPages::AUTO_PAGES,
-                    context->layoutDirection()
-            )
+        new ProjectPages(
+            context->files(), ProjectPages::AUTO_PAGES,
+            context->layoutDirection()
+        )
     );
     switchToNewProject(pages, context->outDir());
 }
@@ -1477,10 +1491,10 @@ MainWindow::openProject()
     QString const project_dir(settings.value("project/lastDir").toString());
 
     QString const project_file(
-            QFileDialog::getOpenFileName(
-                    this, tr("Open Project"), project_dir,
-                    tr("Scan Tailor Projects") + " (*.ScanTailor)"
-            )
+        QFileDialog::getOpenFileName(
+            this, tr("Open Project"), project_dir,
+            tr("Scan Tailor Projects") + " (*.ScanTailor)"
+        )
     );
     if (project_file.isEmpty()) {
         return;
@@ -1495,25 +1509,27 @@ MainWindow::openProject(QString const& project_file)
     QFile file(project_file);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::warning(
-                this, tr("Error"),
-                tr("Unable to open the project file.")
+            this, tr("Error"),
+            tr("Unable to open the project file.")
         );
+
         return;
     }
 
     QDomDocument doc;
     if (!doc.setContent(&file)) {
         QMessageBox::warning(
-                this, tr("Error"),
-                tr("The project file is broken.")
+            this, tr("Error"),
+            tr("The project file is broken.")
         );
+
         return;
     }
 
     file.close();
 
     ProjectOpeningContext* context = new ProjectOpeningContext(this, project_file, doc);
-    connect(context, SIGNAL(done(ProjectOpeningContext * )), SLOT(projectOpened(ProjectOpeningContext * )));
+    connect(context, SIGNAL(done(ProjectOpeningContext*)), SLOT(projectOpened(ProjectOpeningContext*)));
     context->proceed();
 }
 
@@ -1527,14 +1543,14 @@ MainWindow::projectOpened(ProjectOpeningContext* context)
 
     QSettings settings;
     settings.setValue(
-            "project/lastDir",
-            QFileInfo(context->projectFile()).absolutePath()
+        "project/lastDir",
+        QFileInfo(context->projectFile()).absolutePath()
     );
 
     switchToNewProject(
-            context->projectReader()->pages(),
-            context->projectReader()->outputDirectory(),
-            context->projectFile(), context->projectReader()
+        context->projectReader()->pages(),
+        context->projectReader()->outputDirectory(),
+        context->projectFile(), context->projectReader()
     );
 }
 
@@ -1563,7 +1579,7 @@ MainWindow::showAboutDialog()
     ui.version->setText(QString("build from ") + QString::fromUtf8(VERSION));
 
     QResource license(":/GPLv3.html");
-    ui.licenseViewer->setHtml(QString::fromUtf8((char const*) license.data(), license.size()));
+    ui.licenseViewer->setHtml(QString::fromUtf8((char const*)license.data(), license.size()));
 
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
@@ -1579,7 +1595,7 @@ MainWindow::handleOutOfMemorySituation()
     deleteLater();
 
     m_ptrOutOfMemoryDialog->setParams(
-            m_projectFile, m_ptrStages, m_ptrPages, m_selectedPage, m_outFileNameGen
+        m_projectFile, m_ptrStages, m_ptrPages, m_selectedPage, m_outFileNameGen
     );
 
     closeProjectWithoutSaving();
@@ -1641,13 +1657,13 @@ MainWindow::isBelowSelectContent() const
 bool
 MainWindow::isBelowSelectContent(int const filter_idx) const
 {
-    return (filter_idx > m_ptrStages->selectContentFilterIdx());
+    return filter_idx > m_ptrStages->selectContentFilterIdx();
 }
 
 bool
 MainWindow::isBelowFixOrientation(int filter_idx) const
 {
-    return (filter_idx > m_ptrStages->fixOrientationFilterIdx());
+    return filter_idx > m_ptrStages->fixOrientationFilterIdx();
 }
 
 bool
@@ -1659,7 +1675,7 @@ MainWindow::isOutputFilter() const
 bool
 MainWindow::isOutputFilter(int const filter_idx) const
 {
-    return (filter_idx == m_ptrStages->outputFilterIdx());
+    return filter_idx == m_ptrStages->outputFilterIdx();
 }
 
 PageView
@@ -1697,7 +1713,7 @@ bool
 MainWindow::checkReadyForOutput(PageId const* ignore) const
 {
     return m_ptrStages->pageLayoutFilter()->checkReadyForOutput(
-            *m_ptrPages, ignore
+        *m_ptrPages, ignore
     );
 }
 
@@ -1712,14 +1728,15 @@ MainWindow::loadPageInteractive(PageInfo const& page)
         filterList->setBatchProcessingPossible(false);
 
         QString const err_text(
-                tr("Output is not yet possible, as the final size"
-                           " of pages is not yet known.\nTo determine it,"
-                           " run batch processing at \"Select Content\" or"
-                           " \"Margins\".")
+            tr("Output is not yet possible, as the final size"
+               " of pages is not yet known.\nTo determine it,"
+               " run batch processing at \"Select Content\" or"
+               " \"Margins\".")
         );
 
         removeFilterOptionsWidget();
         setImageWidget(new ErrorWidget(err_text), TRANSFER_OWNERSHIP);
+
         return;
     }
 
@@ -1735,10 +1752,10 @@ MainWindow::loadPageInteractive(PageInfo const& page)
 
     m_ptrInteractiveQueue->cancelAndClear();
     m_ptrInteractiveQueue->addProcessingTask(
-            page, createCompositeTask(page, m_curFilter, /*batch=*/false, m_debug)
+        page, createCompositeTask(page, m_curFilter,  /*batch=*/ false, m_debug)
     );
     m_ptrWorkerThreadPool->submitTask(m_ptrInteractiveQueue->takeForProcessing());
-}
+}  // MainWindow::loadPageInteractive
 
 void
 MainWindow::updateWindowTitle()
@@ -1781,13 +1798,14 @@ MainWindow::closeProjectInteractive()
                 return false;
         }
         closeProjectWithoutSaving();
+
         return true;
     }
 
     QFileInfo const project_file(m_projectFile);
     QFileInfo const backup_file(
-            project_file.absoluteDir(),
-            QString::fromLatin1("Backup.") + project_file.fileName()
+        project_file.absoluteDir(),
+        QString::fromLatin1("Backup.") + project_file.fileName()
     );
     QString const backup_file_path(backup_file.absoluteFilePath());
 
@@ -1804,12 +1822,14 @@ MainWindow::closeProjectInteractive()
                 return false;
         }
         closeProjectWithoutSaving();
+
         return true;
     }
 
     if (compareFiles(m_projectFile, backup_file_path)) {
         QFile::remove(backup_file_path);
         closeProjectWithoutSaving();
+
         return true;
     }
 
@@ -1818,9 +1838,10 @@ MainWindow::closeProjectInteractive()
             if (!Utils::overwritingRename(
                     backup_file_path, m_projectFile)) {
                 QMessageBox::warning(
-                        this, tr("Error"),
-                        tr("Error saving the project file!")
+                    this, tr("Error"),
+                    tr("Error saving the project file!")
                 );
+
                 return false;
             }
         case DONT_SAVE:
@@ -1831,8 +1852,9 @@ MainWindow::closeProjectInteractive()
     }
 
     closeProjectWithoutSaving();
+
     return true;
-}
+}  // MainWindow::closeProjectInteractive
 
 void
 MainWindow::closeProjectWithoutSaving()
@@ -1848,9 +1870,10 @@ MainWindow::saveProjectWithFeedback(QString const& project_file)
 
     if (!writer.write(project_file, m_ptrStages->filters())) {
         QMessageBox::warning(
-                this, tr("Error"),
-                tr("Error saving the project file!")
+            this, tr("Error"),
+            tr("Error saving the project file!")
         );
+
         return false;
     }
 
@@ -1867,7 +1890,8 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
         return;
     }
 
-    class ProxyModel : public QSortFilterProxyModel
+    class ProxyModel
+        : public QSortFilterProxyModel
     {
     public:
         ProxyModel(ProjectPages const& pages)
@@ -1890,6 +1914,7 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
             if (data.isNull()) {
                 return true;
             }
+
             return !m_inProjectFiles.contains(QFileInfo(data.toString()));
         }
 
@@ -1903,10 +1928,10 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
     };
 
     std::unique_ptr<QFileDialog> dialog(
-            new QFileDialog(
-                    this, tr("Files to insert"),
-                    QFileInfo(existing.filePath()).absolutePath()
-            )
+        new QFileDialog(
+            this, tr("Files to insert"),
+            QFileInfo(existing.filePath()).absolutePath()
+        )
     );
     dialog->setFileMode(QFileDialog::ExistingFiles);
     dialog->setProxyModel(new ProxyModel(*m_ptrPages));
@@ -1934,11 +1959,11 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
         ImageFileInfo image_file_info(file_info, std::vector<ImageMetadata>());
 
         ImageMetadataLoader::Status const status = ImageMetadataLoader::load(
-                files.at(i), [&](ImageMetadata const& metadata)
+            files.at(i), [&](ImageMetadata const& metadata)
         {
             image_file_info.imageInfo().push_back(metadata);
         }
-        );
+                                                   );
 
         if (status == ImageMetadataLoader::LOADED) {
             new_files.push_back(image_file_info);
@@ -1954,14 +1979,16 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
         err_dialog->setLoadedFiles(loaded_files);
         err_dialog->setFailedFiles(failed_files);
         err_dialog->setOkButtonName(QString(" %1 ").arg(tr("Skip failed files")));
-        if (err_dialog->exec() != QDialog::Accepted || loaded_files.empty()) {
+        if ((err_dialog->exec() != QDialog::Accepted) || loaded_files.empty()) {
             return;
         }
     }
 
     if (std::find_if(new_files.begin(), new_files.end(), [&](ImageFileInfo p) -> bool
-    { return (!p.isDpiOK()); }) != new_files.end()) {
-
+    {
+        return !p.isDpiOK();
+    }
+        ) != new_files.end()) {
         std::unique_ptr<FixDpiDialog> dpi_dialog(new FixDpiDialog(new_files, this));
         dpi_dialog->setWindowModality(Qt::WindowModal);
         if (dpi_dialog->exec() != QDialog::Accepted) {
@@ -1971,21 +1998,21 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
         new_files = dpi_dialog->files();
     }
 
-    for (ImageFileInfo const& file :  new_files) {
+    for (ImageFileInfo const& file : new_files) {
         int image_num = -1;
-        for (ImageMetadata const& metadata :  file.imageInfo()) {
+        for (ImageMetadata const& metadata : file.imageInfo()) {
             ++image_num;
 
             int const num_sub_pages = ProjectPages::adviseNumberOfLogicalPages(
-                    metadata, OrthogonalRotation()
-            );
+                metadata, OrthogonalRotation()
+                                      );
             ImageInfo const image_info(
-                    ImageId(file.fileInfo(), image_num), metadata, num_sub_pages, false, false
+                ImageId(file.fileInfo(), image_num), metadata, num_sub_pages, false, false
             );
             insertImage(image_info, before_or_after, existing);
         }
     }
-}
+}  // MainWindow::showInsertFileDialog
 
 void
 MainWindow::showRemovePagesDialog(std::set<PageId> const& pages)
@@ -2011,20 +2038,19 @@ MainWindow::showRemovePagesDialog(std::set<PageId> const& pages)
  * Note: insertImage(..., BEFORE, ImageId()) is legal and means inserting at the end.
  */
 void
-MainWindow::insertImage(ImageInfo const& new_image,
-                        BeforeOrAfter before_or_after, ImageId existing)
+MainWindow::insertImage(ImageInfo const& new_image, BeforeOrAfter before_or_after, ImageId existing)
 {
     std::vector<PageInfo> pages(
-            m_ptrPages->insertImage(
-                    new_image, before_or_after, existing, getCurrentView()
-            )
+        m_ptrPages->insertImage(
+            new_image, before_or_after, existing, getCurrentView()
+        )
     );
 
     if (before_or_after == BEFORE) {
         std::reverse(pages.begin(), pages.end());
     }
 
-    for (PageInfo const& page_info :  pages) {
+    for (PageInfo const& page_info : pages) {
         m_outFileNameGen.disambiguator()->registerFile(page_info.imageId().filePath());
         m_ptrThumbSequence->insert(page_info, before_or_after, existing);
         existing = page_info.imageId();
@@ -2055,7 +2081,7 @@ MainWindow::eraseOutputFiles(std::set<PageId> const& pages)
     std::vector<PageId::SubPage> erase_variations;
     erase_variations.reserve(3);
 
-    for (PageId const& page_id :  pages) {
+    for (PageId const& page_id : pages) {
         erase_variations.clear();
         switch (page_id.subPage()) {
             case PageId::SINGLE_PAGE:
@@ -2073,15 +2099,14 @@ MainWindow::eraseOutputFiles(std::set<PageId> const& pages)
                 break;
         }
 
-        for (PageId::SubPage subpage :  erase_variations) {
+        for (PageId::SubPage subpage : erase_variations) {
             QFile::remove(m_outFileNameGen.filePathFor(PageId(page_id.imageId(), subpage)));
         }
     }
 }
 
 BackgroundTaskPtr
-MainWindow::createCompositeTask(
-        PageInfo const& page, int const last_filter_idx, bool const batch, bool debug)
+MainWindow::createCompositeTask(PageInfo const& page, int const last_filter_idx, bool const batch, bool debug)
 {
     IntrusivePtr<fix_orientation::Task> fix_orientation_task;
     IntrusivePtr<page_split::Task> page_split_task;
@@ -2096,49 +2121,49 @@ MainWindow::createCompositeTask(
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
         output_task = m_ptrStages->outputFilter()->createTask(
-                page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
-        );
+            page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
+                      );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageLayoutFilterIdx()) {
         page_layout_task = m_ptrStages->pageLayoutFilter()->createTask(
-                page.id(), output_task, batch, debug
-        );
+            page.id(), output_task, batch, debug
+                           );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->selectContentFilterIdx()) {
         select_content_task = m_ptrStages->selectContentFilter()->createTask(
-                page.id(), page_layout_task, batch, debug
-        );
+            page.id(), page_layout_task, batch, debug
+                              );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->deskewFilterIdx()) {
         deskew_task = m_ptrStages->deskewFilter()->createTask(
-                page.id(), select_content_task, batch, debug
-        );
+            page.id(), select_content_task, batch, debug
+                      );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageSplitFilterIdx()) {
         page_split_task = m_ptrStages->pageSplitFilter()->createTask(
-                page, deskew_task, batch, debug
-        );
+            page, deskew_task, batch, debug
+                          );
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->fixOrientationFilterIdx()) {
         fix_orientation_task = m_ptrStages->fixOrientationFilter()->createTask(
-                page.id(), page_split_task, batch
-        );
+            page.id(), page_split_task, batch
+                               );
         debug = false;
     }
     assert(fix_orientation_task);
 
     return BackgroundTaskPtr(
-            new LoadFileTask(
-                    batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE,
-                    page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
-            )
+        new LoadFileTask(
+            batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE,
+            page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
+        )
     );
-}
+}  // MainWindow::createCompositeTask
 
 IntrusivePtr<CompositeCacheDrivenTask>
 MainWindow::createCompositeCacheDrivenTask(int const last_filter_idx)
@@ -2152,33 +2177,33 @@ MainWindow::createCompositeCacheDrivenTask(int const last_filter_idx)
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
         output_task = m_ptrStages->outputFilter()
-                ->createCacheDrivenTask(m_outFileNameGen);
+                      ->createCacheDrivenTask(m_outFileNameGen);
     }
     if (last_filter_idx >= m_ptrStages->pageLayoutFilterIdx()) {
         page_layout_task = m_ptrStages->pageLayoutFilter()
-                ->createCacheDrivenTask(output_task);
+                           ->createCacheDrivenTask(output_task);
     }
     if (last_filter_idx >= m_ptrStages->selectContentFilterIdx()) {
         select_content_task = m_ptrStages->selectContentFilter()
-                ->createCacheDrivenTask(page_layout_task);
+                              ->createCacheDrivenTask(page_layout_task);
     }
     if (last_filter_idx >= m_ptrStages->deskewFilterIdx()) {
         deskew_task = m_ptrStages->deskewFilter()
-                ->createCacheDrivenTask(select_content_task);
+                      ->createCacheDrivenTask(select_content_task);
     }
     if (last_filter_idx >= m_ptrStages->pageSplitFilterIdx()) {
         page_split_task = m_ptrStages->pageSplitFilter()
-                ->createCacheDrivenTask(deskew_task);
+                          ->createCacheDrivenTask(deskew_task);
     }
     if (last_filter_idx >= m_ptrStages->fixOrientationFilterIdx()) {
         fix_orientation_task = m_ptrStages->fixOrientationFilter()
-                ->createCacheDrivenTask(page_split_task);
+                               ->createCacheDrivenTask(page_split_task);
     }
 
     assert(fix_orientation_task);
 
     return fix_orientation_task;
-}
+}  // MainWindow::createCompositeCacheDrivenTask
 
 void
 MainWindow::updateDisambiguationRecords(PageSequence const& pages)
@@ -2193,5 +2218,7 @@ PageSelectionAccessor
 MainWindow::newPageSelectionAccessor()
 {
     IntrusivePtr<PageSelectionProvider const> provider(new PageSelectionProviderImpl(this));
+
     return PageSelectionAccessor(provider);
 }
+

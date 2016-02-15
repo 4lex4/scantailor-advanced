@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Dependencies.h"
 #include "Params.h"
@@ -23,30 +24,24 @@
 
 namespace page_split
 {
-
     Dependencies::Dependencies()
-    {
-    }
+    { }
 
     Dependencies::Dependencies(QDomElement const& el)
-            : m_imageSize(XmlUnmarshaller::size(el.namedItem("size").toElement())),
-              m_rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement())),
-              m_layoutType(
-                      layoutTypeFromString(
-                              XmlUnmarshaller::string(el.namedItem("layoutType").toElement())
-                      )
+        : m_imageSize(XmlUnmarshaller::size(el.namedItem("size").toElement())),
+          m_rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement())),
+          m_layoutType(
+              layoutTypeFromString(
+                  XmlUnmarshaller::string(el.namedItem("layoutType").toElement())
               )
-    {
-    }
+          )
+    { }
 
-    Dependencies::Dependencies(
-            QSize const& image_size, OrthogonalRotation const rotation,
-            LayoutType const layout_type)
-            : m_imageSize(image_size),
-              m_rotation(rotation),
-              m_layoutType(layout_type)
-    {
-    }
+    Dependencies::Dependencies(QSize const& image_size, OrthogonalRotation const rotation, LayoutType const layout_type)
+        : m_imageSize(image_size),
+          m_rotation(rotation),
+          m_layoutType(layout_type)
+    { }
 
     bool
     Dependencies::compatibleWith(Params const& params) const
@@ -65,7 +60,7 @@ namespace page_split
         if (m_layoutType == SINGLE_PAGE_UNCUT) {
             return true;
         }
-        if (m_layoutType == TWO_PAGES && params.splitLineMode() == MODE_MANUAL) {
+        if ((m_layoutType == TWO_PAGES) && (params.splitLineMode() == MODE_MANUAL)) {
             return true;
         }
 
@@ -88,5 +83,4 @@ namespace page_split
 
         return el;
     }
-
-} 
+}  // namespace page_split

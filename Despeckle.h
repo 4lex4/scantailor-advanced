@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESPECKLE_H_
 #define DESPECKLE_H_
@@ -31,10 +32,7 @@ namespace imageproc
 class Despeckle
 {
 public:
-    enum Level
-    {
-        CAUTIOUS, NORMAL, AGGRESSIVE
-    };
+    enum Level { CAUTIOUS, NORMAL, AGGRESSIVE };
 
     /**
      * \brief Removes small speckles from a binary image.
@@ -46,16 +44,20 @@ public:
      * \param status For asynchronous task cancellation.
      * \return The despeckled image.
      */
-    static imageproc::BinaryImage despeckle(
-            imageproc::BinaryImage const &src, Dpi const &dpi, Level level,
-            TaskStatus const &status, DebugImages *dbg = 0);
+    static imageproc::BinaryImage despeckle(imageproc::BinaryImage const& src,
+                                            Dpi const& dpi,
+                                            Level level,
+                                            TaskStatus const& status,
+                                            DebugImages* dbg = 0);
 
     /**
      * \brief A slightly faster, in-place version of despeckle().
      */
-    static void despeckleInPlace(
-            imageproc::BinaryImage &image, Dpi const &dpi,
-            Level level, TaskStatus const &status, DebugImages *dbg = 0);
+    static void despeckleInPlace(imageproc::BinaryImage& image,
+                                 Dpi const& dpi,
+                                 Level level,
+                                 TaskStatus const& status,
+                                 DebugImages* dbg = 0);
 };
 
 #endif

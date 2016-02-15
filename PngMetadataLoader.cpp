@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PngMetadataLoader.h"
 #include "ImageMetadata.h"
@@ -25,10 +26,9 @@
 
 namespace
 {
-
     class PngHandle
     {
-    DECLARE_NON_COPYABLE(PngHandle)
+        DECLARE_NON_COPYABLE(PngHandle)
 
     public:
         PngHandle();
@@ -36,10 +36,14 @@ namespace
         ~PngHandle();
 
         png_structp handle() const
-        { return m_pPng; }
+        {
+            return m_pPng;
+        }
 
         png_infop info() const
-        { return m_pInfo; }
+        {
+            return m_pInfo;
+        }
 
     private:
         png_structp m_pPng;
@@ -62,16 +66,17 @@ namespace
     {
         png_destroy_read_struct(&m_pPng, &m_pInfo, 0);
     }
+}  // namespace
 
-}
-
-static void readFn(png_structp png_ptr, png_bytep data, png_size_t length)
+static void
+readFn(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    QIODevice* io_device = (QIODevice*) png_get_io_ptr(png_ptr);
+    QIODevice* io_device = (QIODevice*)png_get_io_ptr(png_ptr);
     while (length > 0) {
-        qint64 const read = io_device->read((char*) data, length);
+        qint64 const read = io_device->read((char*)data, length);
         if (read <= 0) {
             png_error(png_ptr, "Read Error");
+
             return;
         }
         length -= read;
@@ -84,23 +89,21 @@ PngMetadataLoader::registerMyself()
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
-                IntrusivePtr<ImageMetadataLoader>(new PngMetadataLoader)
+            IntrusivePtr<ImageMetadataLoader>(new PngMetadataLoader)
         );
         registered = true;
     }
 }
 
 ImageMetadataLoader::Status
-PngMetadataLoader::loadMetadata(
-        QIODevice& io_device,
-        VirtualFunction1<void, ImageMetadata const&>& out)
+PngMetadataLoader::loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
 {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }
 
     png_byte signature[8];
-    if (io_device.peek((char*) signature, 8) != 8) {
+    if (io_device.peek((char*)signature, 8) != 8) {
         return FORMAT_NOT_RECOGNIZED;
     }
 
@@ -130,6 +133,7 @@ PngMetadataLoader::loadMetadata(
     }
 
     out(ImageMetadata(size, dpi));
+
     return LOADED;
-}
+}  // PngMetadataLoader::loadMetadata
 

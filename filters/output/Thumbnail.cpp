@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,19 +15,16 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Thumbnail.h"
 
 namespace output
 {
-
-    Thumbnail::Thumbnail(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id,
-            ImageTransformation const& xform)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform)
-    {
-    }
-
-} 
+    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                         QSizeF const& max_size,
+                         ImageId const& image_id,
+                         ImageTransformation const& xform)
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, xform)
+    { }
+}

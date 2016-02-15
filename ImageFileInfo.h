@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEFILEINFO_H_
 #define IMAGEFILEINFO_H_
@@ -26,18 +27,25 @@
 class ImageFileInfo
 {
 public:
-    ImageFileInfo(QFileInfo const &file_info, std::vector<ImageMetadata> const &image_info)
-            : m_fileInfo(file_info), m_imageInfo(image_info)
+    ImageFileInfo(QFileInfo const& file_info, std::vector<ImageMetadata> const& image_info)
+        : m_fileInfo(file_info),
+          m_imageInfo(image_info)
     { }
 
-    QFileInfo const &fileInfo() const
-    { return m_fileInfo; }
+    QFileInfo const& fileInfo() const
+    {
+        return m_fileInfo;
+    }
 
-    std::vector<ImageMetadata> &imageInfo()
-    { return m_imageInfo; }
+    std::vector<ImageMetadata>& imageInfo()
+    {
+        return m_imageInfo;
+    }
 
-    std::vector<ImageMetadata> const &imageInfo() const
-    { return m_imageInfo; }
+    std::vector<ImageMetadata> const& imageInfo() const
+    {
+        return m_imageInfo;
+    }
 
     bool isDpiOK() const;
 
@@ -46,4 +54,4 @@ private:
     std::vector<ImageMetadata> m_imageInfo;
 };
 
-#endif
+#endif  // ifndef IMAGEFILEINFO_H_

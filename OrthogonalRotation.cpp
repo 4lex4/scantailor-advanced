@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OrthogonalRotation.h"
 #include <QSize>
@@ -43,7 +44,7 @@ OrthogonalRotation::prevClockwiseDirection()
 QSize
 OrthogonalRotation::rotate(QSize const& dimensions) const
 {
-    if (m_degrees == 90 || m_degrees == 270) {
+    if ((m_degrees == 90) || (m_degrees == 270)) {
         return QSize(dimensions.height(), dimensions.width());
     }
     else {
@@ -60,7 +61,7 @@ OrthogonalRotation::unrotate(QSize const& dimensions) const
 QSizeF
 OrthogonalRotation::rotate(QSizeF const& dimensions) const
 {
-    if (m_degrees == 90 || m_degrees == 270) {
+    if ((m_degrees == 90) || (m_degrees == 270)) {
         return QSizeF(dimensions.height(), dimensions.width());
     }
     else {
@@ -75,8 +76,7 @@ OrthogonalRotation::unrotate(QSizeF const& dimensions) const
 }
 
 QPointF
-OrthogonalRotation::rotate(
-        QPointF const& point, double const xmax, double const ymax) const
+OrthogonalRotation::rotate(QPointF const& point, double const xmax, double const ymax) const
 {
     QPointF rotated;
 
@@ -104,8 +104,7 @@ OrthogonalRotation::rotate(
 }
 
 QPointF
-OrthogonalRotation::unrotate(
-        QPointF const& point, double const xmax, double const ymax) const
+OrthogonalRotation::unrotate(QPointF const& point, double const xmax, double const ymax) const
 {
     QPointF unrotated;
 
@@ -157,3 +156,4 @@ OrthogonalRotation::transform(QSizeF const& dimensions) const
 
     return t;
 }
+

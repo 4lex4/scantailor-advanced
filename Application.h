@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,21 +15,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
 #include <QApplication>
 
-class Application : public QApplication
+class Application
+    : public QApplication
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    Application(int &argc, char **argv);
+    Application(int& argc, char** argv);
 
-    virtual bool notify(QObject *receiver, QEvent *e);
+    virtual bool notify(QObject* receiver, QEvent* e);
 
     void setFusionDarkTheme();
 };

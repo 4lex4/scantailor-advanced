@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef XSPLINE_H_
 #define XSPLINE_H_
@@ -32,16 +33,18 @@
  *
  * [1] Blanc, C., Schlick, C.: X-splines: a spline model designed for the end-user.
  * http: */
-class XSpline : public spfit::FittableSpline
+class XSpline
+    : public spfit::FittableSpline
 {
 public:
-    struct PointAndDerivs
-    {
+    struct PointAndDerivs {
         QPointF point;
+
         /**< Point on a spline. */
         QPointF firstDeriv;
+
         /**< First derivative with respect to t. */
-        QPointF secondDeriv; /**< Second derivative with respect to t. */
+        QPointF secondDeriv;  /**< Second derivative with respect to t. */
 
         /**
          * \brief Curvature at a given point on the spline.
@@ -161,21 +164,21 @@ public:
     QPointF pointClosestTo(QPointF to, double accuracy = 0.2) const;
 
     /** \see spfit::FittableSpline::sample() */
-    virtual void sample(
-            VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-            SamplingParams const& params = SamplingParams(),
-            double from_t = 0.0, double to_t = 1.0) const;
+    virtual void sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+                        SamplingParams const& params = SamplingParams(),
+                        double from_t = 0.0,
+                        double to_t = 1.0) const;
 
     std::vector<QPointF> toPolyline(
-            SamplingParams const& params = SamplingParams(),
-            double from_t = 0.0, double to_t = 1.0) const;
+        SamplingParams const& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;
 
     void swap(XSpline& other)
-    { m_controlPoints.swap(other.m_controlPoints); }
+    {
+        m_controlPoints.swap(other.m_controlPoints);
+    }
 
 private:
-    struct ControlPoint
-    {
+    struct ControlPoint {
         QPointF pos;
 
         /**
@@ -184,17 +187,20 @@ private:
          */
         double tension;
 
-        ControlPoint() : tension(0)
+        ControlPoint()
+            : tension(0)
         { }
 
-        ControlPoint(QPointF const& p, double tns) : pos(p), tension(tns)
+        ControlPoint(QPointF const& p, double tns)
+            : pos(p),
+              tension(tns)
         { }
     };
 
     struct TensionDerivedParams;
 
     class GBlendFunc;
-class HBlendFunc;
+    class HBlendFunc;
 
     struct DecomposedDerivs;
 
@@ -206,21 +212,25 @@ class HBlendFunc;
 
     DecomposedDerivs decomposedDerivsImpl(int segment, double t) const;
 
-    void maybeAddMoreSamples(
-            VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-            double max_sqdist_to_spline, double max_sqdist_between_samples,
-            double num_segments, double r_num_segments,
-            double prev_t, QPointF const& prev_pt,
-            double next_t, QPointF const& next_pt) const;
+    void maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+                             double max_sqdist_to_spline,
+                             double max_sqdist_between_samples,
+                             double num_segments,
+                             double r_num_segments,
+                             double prev_t,
+                             QPointF const& prev_pt,
+                             double next_t,
+                             QPointF const& next_pt) const;
 
     static double sqDistToLine(QPointF const& pt, QLineF const& line);
 
     std::vector<ControlPoint> m_controlPoints;
 };
 
-inline void swap(XSpline& o1, XSpline& o2)
+inline void
+swap(XSpline& o1, XSpline& o2)
 {
     o1.swap(o2);
 }
 
-#endif
+#endif  // ifndef XSPLINE_H_

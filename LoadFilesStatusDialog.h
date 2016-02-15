@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef LOAD_FILES_STATUS_DIALOG_H_
 #define LOAD_FILES_STATUS_DIALOG_H_
@@ -23,7 +24,8 @@
 #include <QString>
 #include <vector>
 
-class LoadFilesStatusDialog : public QDialog
+class LoadFilesStatusDialog
+    : public QDialog
 {
 public:
     LoadFilesStatusDialog(QWidget* parent = 0);

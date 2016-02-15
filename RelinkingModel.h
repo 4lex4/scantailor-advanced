@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RELINKING_MODEL_H_
 #define RELINKING_MODEL_H_
@@ -35,20 +36,16 @@
 #include <set>
 #include <map>
 
-class RelinkingModel :
-        public QAbstractListModel,
-        public VirtualFunction1<void, RelinkablePath const&>
+class RelinkingModel
+    : public QAbstractListModel,
+      public VirtualFunction1<void, RelinkablePath const&>
 {
-DECLARE_NON_COPYABLE(RelinkingModel)
+    DECLARE_NON_COPYABLE(RelinkingModel)
 
 public:
-    enum Status
-    {
-        Exists, Missing, StatusUpdatePending
-    };
+    enum Status { Exists, Missing, StatusUpdatePending };
 
-    enum
-    {
+    enum {
         TypeRole = Qt::UserRole,
         UncommittedPathRole,
         UncommittedStatusRole
@@ -72,10 +69,14 @@ public:
      * and then use it when accepted() signal is emitted.
      */
     IntrusivePtr<AbstractRelinker> relinker() const
-    { return m_ptrRelinker; }
+    {
+        return m_ptrRelinker;
+    }
 
     virtual void operator()(RelinkablePath const& path)
-    { addPath(path); }
+    {
+        addPath(path);
+    }
 
     void addPath(RelinkablePath const& path);
 
@@ -98,15 +99,16 @@ protected:
 
 private:
     class StatusUpdateThread;
-class StatusUpdateResponse;
+    class StatusUpdateResponse;
 
     /** Stands for File System Object (file or directory). */
-    struct Item
-    {
+    struct Item {
         QString origPath;
+
         /**< That's the path passed through addPath(). It never changes. */
         QString committedPath;
         QString uncommittedPath;
+
         /**< Same as committedPath when m_haveUncommittedChanges == false. */
         RelinkablePath::Type type;
         Status committedStatus;
@@ -117,7 +119,8 @@ class StatusUpdateResponse;
         Item(RelinkablePath const& path);
     };
 
-    class Relinker : public AbstractRelinker
+    class Relinker
+        : public AbstractRelinker
     {
     public:
         void addMapping(QString const& from, QString const& to);
@@ -142,4 +145,4 @@ class StatusUpdateResponse;
     bool m_haveUncommittedChanges;
 };
 
-#endif
+#endif  // ifndef RELINKING_MODEL_H_

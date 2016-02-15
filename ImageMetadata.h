@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEMETADATA_H_
 #define IMAGEMETADATA_H_
@@ -25,8 +26,7 @@
 class ImageMetadata
 {
 public:
-    enum DpiStatus
-    {
+    enum DpiStatus {
         DPI_OK,
         DPI_UNDEFINED,
         DPI_TOO_LARGE,
@@ -37,20 +37,30 @@ public:
     ImageMetadata()
     { }
 
-    ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi)
+    ImageMetadata(QSize size, Dpi dpi)
+        : m_size(size),
+          m_dpi(dpi)
     { }
 
     QSize const& size() const
-    { return m_size; }
+    {
+        return m_size;
+    }
 
     void setSize(QSize const& size)
-    { m_size = size; }
+    {
+        m_size = size;
+    }
 
     Dpi const& dpi() const
-    { return m_dpi; }
+    {
+        return m_dpi;
+    }
 
     void setDpi(Dpi const& dpi)
-    { m_dpi = dpi; }
+    {
+        m_dpi = dpi;
+    }
 
     bool isDpiOK() const;
 
@@ -72,4 +82,4 @@ private:
     Dpi m_dpi;
 };
 
-#endif
+#endif  // ifndef IMAGEMETADATA_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,14 +15,13 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutOfMemoryHandler.h"
 
 OutOfMemoryHandler::OutOfMemoryHandler()
-        : m_hadOOM(false)
-{
-}
+    : m_hadOOM(false)
+{ }
 
 OutOfMemoryHandler&
 OutOfMemoryHandler::instance()
@@ -57,5 +57,7 @@ bool
 OutOfMemoryHandler::hadOutOfMemorySituation() const
 {
     QMutexLocker const locker(&m_mutex);
+
     return m_hadOOM;
 }
+

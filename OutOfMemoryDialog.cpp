@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutOfMemoryDialog.h"
 #include "ProjectWriter.h"
@@ -24,7 +25,7 @@
 #include <QSettings>
 
 OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
-        : QDialog(parent)
+    : QDialog(parent)
 {
     ui.setupUi(this);
     if (sizeof(void*) > 32) {
@@ -40,12 +41,11 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
 }
 
 void
-OutOfMemoryDialog::setParams(
-        QString const& project_file,
-        IntrusivePtr<StageSequence> const& stages,
-        IntrusivePtr<ProjectPages> const& pages,
-        SelectedPage const& selected_page,
-        OutputFileNameGenerator const& out_file_name_gen)
+OutOfMemoryDialog::setParams(QString const& project_file,
+                             IntrusivePtr<StageSequence> const& stages,
+                             IntrusivePtr<ProjectPages> const& pages,
+                             SelectedPage const& selected_page,
+                             OutputFileNameGenerator const& out_file_name_gen)
 {
     m_projectFile = project_file;
     m_ptrStages = stages;
@@ -70,7 +70,6 @@ OutOfMemoryDialog::saveProject()
 void
 OutOfMemoryDialog::saveProjectAs()
 {
-
     QString project_dir;
     if (!m_projectFile.isEmpty()) {
         project_dir = QFileInfo(m_projectFile).absolutePath();
@@ -81,10 +80,10 @@ OutOfMemoryDialog::saveProjectAs()
     }
 
     QString project_file(
-            QFileDialog::getSaveFileName(
-                    this, QString(), project_dir,
-                    tr("Scan Tailor Projects") + " (*.ScanTailor)"
-            )
+        QFileDialog::getSaveFileName(
+            this, QString(), project_dir,
+            tr("Scan Tailor Projects") + " (*.ScanTailor)"
+        )
     );
     if (project_file.isEmpty()) {
         return;
@@ -100,8 +99,8 @@ OutOfMemoryDialog::saveProjectAs()
 
         QSettings settings;
         settings.setValue(
-                "project/lastDir",
-                QFileInfo(m_projectFile).absolutePath()
+            "project/lastDir",
+            QFileInfo(m_projectFile).absolutePath()
         );
 
         RecentProjects rp;
@@ -109,7 +108,7 @@ OutOfMemoryDialog::saveProjectAs()
         rp.setMostRecent(m_projectFile);
         rp.write();
     }
-}
+}  // OutOfMemoryDialog::saveProjectAs
 
 bool
 OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file)
@@ -118,9 +117,10 @@ OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file)
 
     if (!writer.write(project_file, m_ptrStages->filters())) {
         QMessageBox::warning(
-                this, tr("Error"),
-                tr("Error saving the project file!")
+            this, tr("Error"),
+            tr("Error saving the project file!")
         );
+
         return false;
     }
 
@@ -132,3 +132,4 @@ OutOfMemoryDialog::showSaveSuccessScreen()
 {
     ui.topLevelStack->setCurrentWidget(ui.saveSuccessPage);
 }
+

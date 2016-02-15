@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIX_ORIENTATION_FILTER_H_
 #define FIX_ORIENTATION_FILTER_H_
@@ -36,24 +37,24 @@ class QDomElement;
 namespace page_split
 {
     class Task;
-class CacheDrivenTask;
+    class CacheDrivenTask;
 }
 
 namespace fix_orientation
 {
-
     class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-/**
- * \note All methods of this class except the destructor
- *       must be called from the GUI thread only.
- */
-    class Filter : public AbstractFilter
+    /**
+     * \note All methods of this class except the destructor
+     *       must be called from the GUI thread only.
+     */
+    class Filter
+        : public AbstractFilter
     {
-    DECLARE_NON_COPYABLE(Filter)
+        DECLARE_NON_COPYABLE(Filter)
 
     public:
         Filter(PageSelectionAccessor const& page_selection_accessor);
@@ -68,33 +69,32 @@ class Settings;
 
         virtual void preUpdateUI(FilterUiInterface* ui, PageId const&);
 
-        virtual QDomElement saveSettings(
-                ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-        virtual void loadSettings(
-                ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        IntrusivePtr<Task> createTask(
-                PageId const& page_id,
-                IntrusivePtr<page_split::Task> const& next_task,
-                bool batch_processing);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<page_split::Task> const& next_task,
+                                      bool batch_processing);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
-                IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget()
-        { return m_ptrOptionsWidget.get(); };
+        {
+            return m_ptrOptionsWidget.get();
+        }
 
         Settings* getSettings()
-        { return m_ptrSettings.get(); };
+        {
+            return m_ptrSettings.get();
+        }
+
     private:
-        void writeImageSettings(
-                QDomDocument& doc, QDomElement& filter_el,
-                ImageId const& image_id, int numeric_id) const;
+        void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                                int numeric_id) const;
 
         IntrusivePtr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
     };
-
-}
-#endif
+}  // namespace fix_orientation
+#endif  // ifndef FIX_ORIENTATION_FILTER_H_

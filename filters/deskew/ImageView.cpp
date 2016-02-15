@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageView.h"
 #include "ImagePresentation.h"
@@ -28,29 +29,26 @@
 
 namespace deskew
 {
-
     double const ImageView::m_maxRotationDeg = 45.0;
     double const ImageView::m_maxRotationSin = sin(
-            m_maxRotationDeg * imageproc::constants::DEG2RAD
-    );
+        m_maxRotationDeg * imageproc::constants::DEG2RAD
+                                               );
     int const ImageView::m_cellSize = 20;
 
-    ImageView::ImageView(
-            QImage const& image, QImage const& downscaled_image,
-            ImageTransformation const& xform)
-            : ImageViewBase(
-            image, downscaled_image,
-            ImagePresentation(xform.transform(), xform.resultingPreCropArea())
-    ),
-              m_handlePixmap(":/icons/aqua-sphere.png"),
-              m_dragHandler(*this),
-              m_zoomHandler(*this),
-              m_xform(xform)
+    ImageView::ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform)
+        : ImageViewBase(
+              image, downscaled_image,
+              ImagePresentation(xform.transform(), xform.resultingPreCropArea())
+        ),
+          m_handlePixmap(":/icons/aqua-sphere.png"),
+          m_dragHandler(*this),
+          m_zoomHandler(*this),
+          m_xform(xform)
     {
         setMouseTracking(true);
 
         interactionState().setDefaultStatusTip(
-                tr("Use Ctrl+Wheel to rotate or Ctrl+Shift+Wheel for finer rotation.")
+            tr("Use Ctrl+Wheel to rotate or Ctrl+Shift+Wheel for finer rotation.")
         );
 
         QString const tip(tr("Drag this handle to rotate the image."));
@@ -58,13 +56,13 @@ namespace deskew
         for (int i = 0; i < 2; ++i) {
             m_handles[i].setHitRadius(hit_radius);
             m_handles[i].setPositionCallback(
-                    boost::bind(&ImageView::handlePosition, this, i)
+                boost::bind(&ImageView::handlePosition, this, i)
             );
             m_handles[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::handleMoveRequest, this, i, _1)
+                boost::bind(&ImageView::handleMoveRequest, this, i, _1)
             );
             m_handles[i].setDragFinishedCallback(
-                    boost::bind(&ImageView::dragFinished, this)
+                boost::bind(&ImageView::dragFinished, this)
             );
 
             m_handleInteractors[i].setProximityStatusTip(tip);
@@ -91,21 +89,23 @@ namespace deskew
     }
 
     ImageView::~ImageView()
-    {
-    }
+    { }
 
-    void ImageView::doRotate(double deg)
+    void
+    ImageView::doRotate(double deg)
     {
         manualDeskewAngleSetExternally(m_xform.postRotation() + deg);
         emit manualDeskewAngleSet(m_xform.postRotation());
     }
 
-    void ImageView::doRotateLeft()
+    void
+    ImageView::doRotateLeft()
     {
         doRotate(-0.10);
     }
 
-    void ImageView::doRotateRight()
+    void
+    ImageView::doRotateRight()
     {
         doRotate(0.10);
     }
@@ -154,12 +154,12 @@ namespace deskew
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
         painter.drawLine(
-                QPointF(0.5, center.y()),
-                QPointF(w - 0.5, center.y())
+            QPointF(0.5, center.y()),
+            QPointF(w - 0.5, center.y())
         );
         painter.drawLine(
-                QPointF(center.x(), 0.5),
-                QPointF(center.x(), h - 0.5)
+            QPointF(center.x(), 0.5),
+            QPointF(center.x(), h - 0.5)
         );
 
         QRectF const arc_square(getRotationArcSquare());
@@ -169,18 +169,18 @@ namespace deskew
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
         painter.drawArc(
-                arc_square,
-                qRound(16 * -m_maxRotationDeg),
-                qRound(16 * 2 * m_maxRotationDeg)
+            arc_square,
+            qRound(16 * -m_maxRotationDeg),
+            qRound(16 * 2 * m_maxRotationDeg)
         );
         painter.drawArc(
-                arc_square,
-                qRound(16 * (180 - m_maxRotationDeg)),
-                qRound(16 * 2 * m_maxRotationDeg)
+            arc_square,
+            qRound(16 * (180 - m_maxRotationDeg)),
+            qRound(16 * 2 * m_maxRotationDeg)
         );
 
         std::pair<QPointF, QPointF> const handles(
-                getRotationHandles(arc_square)
+            getRotationHandles(arc_square)
         );
 
         QRectF rect(m_handlePixmap.rect());
@@ -188,7 +188,7 @@ namespace deskew
         painter.drawPixmap(rect.topLeft(), m_handlePixmap);
         rect.moveCenter(handles.second);
         painter.drawPixmap(rect.topLeft(), m_handlePixmap);
-    }
+    }  // ImageView::onPaint
 
     void
     ImageView::onWheelEvent(QWheelEvent* event, InteractionState& interaction)
@@ -219,10 +219,10 @@ namespace deskew
 
         m_xform.setPostRotation(angle_deg);
         updateTransformPreservingScale(
-                ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea())
+            ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea())
         );
         emit manualDeskewAngleSet(m_xform.postRotation());
-    }
+    }  // ImageView::onWheelEvent
 
     QPointF
     ImageView::handlePosition(int idx) const
@@ -265,23 +265,24 @@ namespace deskew
         emit manualDeskewAngleSet(m_xform.postRotation());
     }
 
-/**
- * Get the point at the center of the widget, in widget coordinates.
- * The point may be adjusted to to ensure it's at the center of a pixel.
- */
+    /**
+     * Get the point at the center of the widget, in widget coordinates.
+     * The point may be adjusted to to ensure it's at the center of a pixel.
+     */
     QPointF
     ImageView::getImageRotationOrigin() const
     {
         QRectF const viewport_rect(maxViewportRect());
+
         return QPointF(
-                floor(0.5 * viewport_rect.width()) + 0.5,
-                floor(0.5 * viewport_rect.height()) + 0.5
+            floor(0.5 * viewport_rect.width()) + 0.5,
+            floor(0.5 * viewport_rect.height()) + 0.5
         );
     }
 
-/**
- * Get the square in widget coordinates where two rotation arcs will be drawn.
- */
+    /**
+     * Get the square in widget coordinates where two rotation arcs will be drawn.
+     */
     QRectF
     ImageView::getRotationArcSquare() const
     {
@@ -316,7 +317,7 @@ namespace deskew
         left_handle += arc_center;
         QPointF right_handle(rot_cos * arc_radius, rot_sin * arc_radius);
         right_handle += arc_center;
+
         return std::make_pair(left_handle, right_handle);
     }
-
-} 
+}  // namespace deskew

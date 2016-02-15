@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_SETTINGS_H_
 #define PAGE_LAYOUT_SETTINGS_H_
@@ -33,19 +34,16 @@ class QRectF;
 
 namespace page_layout
 {
-
     class Params;
-class Alignment;
+    class Alignment;
 
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     public:
-        enum AggregateSizeChanged
-        {
-            AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED
-        };
+        enum AggregateSizeChanged { AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED };
 
         static Margins defaultHardMarginsMM();
 
@@ -73,8 +71,7 @@ class Alignment;
          * \param pages The list of pages to check.
          * \param ignore The page to be ignored by the check.  Optional.
          */
-        bool checkEverythingDefined(
-                PageSequence const& pages, PageId const* ignore = 0) const;
+        bool checkEverythingDefined(PageSequence const& pages, PageId const* ignore = 0) const;
 
         /**
          * \brief Get all page parameters at once.
@@ -91,11 +88,12 @@ class Alignment;
         /**
          * \brief Updates content size and returns all parameters at once.
          */
-        Params updateContentSizeAndGetParams(
-                PageId const& page_id, QRectF const& page_rect, QRectF const& content_rect,
-                QSizeF const& content_size_mm,
-                QSizeF* agg_hard_size_before = 0,
-                QSizeF* agg_hard_size_after = 0);
+        Params updateContentSizeAndGetParams(PageId const& page_id,
+                                             QRectF const& page_rect,
+                                             QRectF const& content_rect,
+                                             QSizeF const& content_size_mm,
+                                             QSizeF* agg_hard_size_before = 0,
+                                             QSizeF* agg_hard_size_after = 0);
 
         QRectF const& updateContentRect();
 
@@ -147,8 +145,7 @@ class Alignment;
          *
          * The content size comes from the "Select Content" filter.
          */
-        AggregateSizeChanged setContentSizeMM(
-                PageId const& page_id, QSizeF const& content_size_mm);
+        AggregateSizeChanged setContentSizeMM(PageId const& page_id, QSizeF const& content_size_mm);
 
         void invalidateContentSize(PageId const& page_id);
 
@@ -164,20 +161,18 @@ class Alignment;
          * This function doesn't modify anything, it just pretends that
          * the size and alignment of a specified page have changed.
          */
-        QSizeF getAggregateHardSizeMM(
-                PageId const& page_id, QSizeF const& hard_size_mm,
-                Alignment const& alignment) const;
+        QSizeF getAggregateHardSizeMM(PageId const& page_id, QSizeF const& hard_size_mm,
+                                      Alignment const& alignment) const;
 
     private:
         class Impl;
-class Item;
-class ModifyMargins;
-class ModifyAlignment;
+        class Item;
+        class ModifyMargins;
+        class ModifyAlignment;
 
         class ModifyContentSize;
 
         std::unique_ptr<Impl> m_ptrImpl;
     };
-
-}
-#endif
+}  // namespace page_layout
+#endif  // ifndef PAGE_LAYOUT_SETTINGS_H_

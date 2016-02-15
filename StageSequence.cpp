@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,19 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "StageSequence.h"
 #include "ProjectPages.h"
 
 StageSequence::StageSequence(IntrusivePtr<ProjectPages> const& pages,
                              PageSelectionAccessor const& page_selection_accessor)
-        : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
-          m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
-          m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
-          m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
-          m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
-          m_ptrOutputFilter(new output::Filter(page_selection_accessor))
+    : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
+      m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
+      m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
+      m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
+      m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
+      m_ptrOutputFilter(new output::Filter(page_selection_accessor))
 {
     m_fixOrientationFilterIdx = m_filters.size();
     m_filters.push_back(m_ptrFixOrientationFilter);
@@ -50,7 +51,7 @@ StageSequence::StageSequence(IntrusivePtr<ProjectPages> const& pages,
 void
 StageSequence::performRelinking(AbstractRelinker const& relinker)
 {
-    for (FilterPtr& filter :  m_filters) {
+    for (FilterPtr& filter : m_filters) {
         filter->performRelinking(relinker);
     }
 }
@@ -59,11 +60,13 @@ int
 StageSequence::findFilter(FilterPtr const& filter) const
 {
     int idx = 0;
-    for (FilterPtr const& f :  m_filters) {
+    for (FilterPtr const& f : m_filters) {
         if (f == filter) {
             return idx;
         }
         ++idx;
     }
+
     return -1;
 }
+

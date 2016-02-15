@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -15,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_PAGEFINDER_H_
 #define SELECT_CONTENT_PAGEFINDER_H_
@@ -41,13 +42,16 @@ namespace imageproc
 
 namespace select_content
 {
-
     class PageFinder
     {
     public:
-        static QRectF findPageBox(
-                TaskStatus const& status, FilterData const& data, bool fine_tune, QSizeF const& box, double tolerance,
-                Margins borders, DebugImages* dbg = 0);
+        static QRectF findPageBox(TaskStatus const& status,
+                                  FilterData const& data,
+                                  bool fine_tune,
+                                  QSizeF const& box,
+                                  double tolerance,
+                                  Margins borders,
+                                  DebugImages* dbg = 0);
 
     private:
         static QRect detectBorders(QImage const& img);
@@ -56,9 +60,15 @@ namespace select_content
 
         static void fineTuneCorners(QImage const& img, QRect& rect, QSize const& size, double tolerance);
 
-        static bool fineTuneCorner(QImage const& img, int& x, int& y, int max_x, int max_y, int inc_x, int inc_y,
-                                   QSize const& size, double tolerance);
+        static bool fineTuneCorner(QImage const& img,
+                                   int& x,
+                                   int& y,
+                                   int max_x,
+                                   int max_y,
+                                   int inc_x,
+                                   int inc_y,
+                                   QSize const& size,
+                                   double tolerance);
     };
-
 }
-#endif
+#endif  // ifndef SELECT_CONTENT_PAGEFINDER_H_

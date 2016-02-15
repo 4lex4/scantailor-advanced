@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -13,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
@@ -22,14 +23,14 @@
 
 namespace deskew
 {
-
-    ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,
+    ApplyDialog::ApplyDialog(QWidget* parent,
+                             PageId const& cur_page,
                              PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_curPage(cur_page),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_pScopeGroup(new QButtonGroup(this))
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_curPage(cur_page),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_pScopeGroup(new QButtonGroup(this))
     {
         setupUi(this);
         m_pScopeGroup->addButton(thisPageRB);
@@ -47,8 +48,7 @@ namespace deskew
     }
 
     ApplyDialog::~ApplyDialog()
-    {
-    }
+    { }
 
     void
     ApplyDialog::onSubmit()
@@ -91,6 +91,5 @@ namespace deskew
             emit appliedTo(pages);
         }
         accept();
-    }
-
-} 
+    }  // ApplyDialog::onSubmit
+}  // namespace deskew

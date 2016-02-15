@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DentFinder.h"
 #include "BinaryImage.h"
@@ -22,9 +23,7 @@
 
 namespace imageproc
 {
-
-    struct DentFinder::ImgInfo
-    {
+    struct DentFinder::ImgInfo {
         ImgInfo(BinaryImage const& src, BinaryImage& dst);
 
         uint32_t const* src_data;
@@ -36,14 +35,13 @@ namespace imageproc
     };
 
     DentFinder::ImgInfo::ImgInfo(BinaryImage const& src, BinaryImage& dst)
-            : src_data(src.data()),
-              dst_data(dst.data()),
-              src_wpl(src.wordsPerLine()),
-              dst_wpl(dst.wordsPerLine()),
-              width(src.width()),
-              height(src.height())
-    {
-    }
+        : src_data(src.data()),
+          dst_data(dst.data()),
+          src_wpl(src.wordsPerLine()),
+          dst_wpl(dst.wordsPerLine()),
+          width(src.width()),
+          height(src.height())
+    { }
 
     imageproc::BinaryImage
     DentFinder::findDentsAndHoles(imageproc::BinaryImage const& src)
@@ -69,13 +67,12 @@ namespace imageproc
         int const offset = x >> 5;
         int const shift = x & 31;
         uint32_t const msb = uint32_t(1) << 31;
+
         return src_line[offset] & (msb >> shift);
     }
 
     void
-    DentFinder::transferPixel(
-            uint32_t const* const src_line,
-            uint32_t* const dst_line, int const x)
+    DentFinder::transferPixel(uint32_t const* const src_line, uint32_t* const dst_line, int const x)
     {
         int const offset = x >> 5;
         int const shift = x & 31;
@@ -89,7 +86,7 @@ namespace imageproc
         uint32_t const* src_line = info.src_data;
         uint32_t* dst_line = info.dst_data;
         for (int y = 0; y < info.height; ++y,
-                src_line += info.src_wpl, dst_line += info.dst_wpl) {
+             src_line += info.src_wpl, dst_line += info.dst_wpl) {
             int first_black = -1;
             for (int x = 0; x < info.width; ++x) {
                 if (getPixel(src_line, x)) {
@@ -141,7 +138,7 @@ namespace imageproc
                 transferPixel(src_line, dst_line, x);
             }
         }
-    }
+    }  // DentFinder::scanHorizontalLines
 
     void
     DentFinder::scanVerticalLines(ImgInfo const info)
@@ -210,7 +207,7 @@ namespace imageproc
                 p_dst += info.dst_wpl;
             }
         }
-    }
+    }  // DentFinder::scanVerticalLines
 
     void
     DentFinder::scanSlashDiagonals(ImgInfo const info)
@@ -219,16 +216,16 @@ namespace imageproc
         int x1 = 0, y1 = 0;
 
         /*
-        +------------+
-        |(x1, y1)--+ |
-        |(x0, y0)  | |
-        | |        | |
-        | |        v |
-        | +------->  |
-        +------------+
-        */
+           +------------+
+           |(x1, y1)--+ |
+           |(x0, y0)  | |
+         | |        | |
+         | |        v |
+         | +------->  |
+         ||||||||||||||+------------+
+         */
 
-        while (x0 < info.width /*&& y1 < info.height*/) {
+        while (x0 < info.width  /*&& y1 < info.height*/) {
             do {
                 int first_black_x = -1;
                 int x = x0;
@@ -325,7 +322,7 @@ namespace imageproc
                 ++y1;
             }
         }
-    }
+    }  // DentFinder::scanSlashDiagonals
 
     void
     DentFinder::scanBackslashDiagonals(ImgInfo const info)
@@ -334,14 +331,14 @@ namespace imageproc
         int x1 = 0, y1 = y0;
 
         /*
-        +------------+
-        | +------->  |
-        | |        ^ |
-        | |        | |
-        |(x0, y0)  | |
-        |(x1, y1)--+ |
-        +------------+
-        */
+           +------------+
+         | +------->  |
+         | |        ^ |
+         | |        | |
+         |||||||||||||||(x0, y0)  | |
+         |||||||||||||||(x1, y1)--+ |
+         ||||||||||||||+------------+
+         */
 
         while (x0 < info.width) {
             do {
@@ -440,6 +437,5 @@ namespace imageproc
                 --y1;
             }
         }
-    }
-
-} 
+    }  // DentFinder::scanBackslashDiagonals
+}  // namespace imageproc

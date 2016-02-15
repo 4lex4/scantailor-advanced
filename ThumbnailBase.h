@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THUMBNAILBASE_H_
 #define THUMBNAILBASE_H_
@@ -31,22 +32,22 @@
 
 class ThumbnailLoadResult;
 
-class ThumbnailBase : public QGraphicsItem
+class ThumbnailBase
+    : public QGraphicsItem
 {
-DECLARE_NON_COPYABLE(ThumbnailBase)
+    DECLARE_NON_COPYABLE(ThumbnailBase)
 
 public:
-    ThumbnailBase(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id,
-            ImageTransformation const& image_xform);
+    ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                  QSizeF const& max_size,
+                  ImageId const& image_id,
+                  ImageTransformation const& image_xform);
 
     virtual ~ThumbnailBase();
 
     virtual QRectF boundingRect() const;
 
-    virtual void paint(QPainter* painter,
-                       QStyleOptionGraphicsItem const* option, QWidget* widget);
+    virtual void paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget);
 
 protected:
     /**
@@ -67,9 +68,9 @@ protected:
      * restricted to this->boundingRect().  Note that it's not necessary
      * for subclasses to restore the painter state.
      */
-    virtual void paintOverImage(
-            QPainter& painter, QTransform const& image_to_display,
-            QTransform const& thumb_to_display)
+    virtual void paintOverImage(QPainter& painter,
+                                QTransform const& image_to_display,
+                                QTransform const& thumb_to_display)
     { }
 
     virtual void paintDeviant(QPainter& painter);
@@ -83,12 +84,16 @@ protected:
      * to draw outside of the image but inside the crop area.
      */
     void setExtendedClipArea(bool enabled)
-    { m_extendedClipArea = enabled; }
+    {
+        m_extendedClipArea = enabled;
+    }
 
     void setImageXform(ImageTransformation const& image_xform);
 
     ImageTransformation const& imageXform() const
-    { return m_imageXform; }
+    {
+        return m_imageXform;
+    }
 
     /**
      * \brief Converts from the virtual image coordinates to thumbnail image coordinates.
@@ -96,7 +101,9 @@ protected:
      * Virtual image coordinates is what you get after ImageTransformation.
      */
     QTransform const& virtToThumb() const
-    { return m_postScaleXform; }
+    {
+        return m_postScaleXform;
+    }
 
 private:
     class LoadCompletionHandler;
@@ -119,4 +126,4 @@ private:
     bool m_extendedClipArea;
 };
 
-#endif
+#endif  // ifndef THUMBNAILBASE_H_

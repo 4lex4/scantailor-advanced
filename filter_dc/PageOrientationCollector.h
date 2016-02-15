@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_ORIENTATION_COLLECTOR_H_
 #define PAGE_ORIENTATION_COLLECTOR_H_
@@ -23,7 +24,8 @@
 
 class OrthogonalRotation;
 
-class PageOrientationCollector : public AbstractFilterDataCollector
+class PageOrientationCollector
+    : public AbstractFilterDataCollector
 {
 public:
     virtual void process(OrthogonalRotation const& orientation) = 0;

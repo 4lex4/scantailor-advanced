@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROCESSING_TASK_QUEUE_H_
 #define PROCESSING_TASK_QUEUE_H_
@@ -28,7 +29,7 @@
 
 class ProcessingTaskQueue
 {
-DECLARE_NON_COPYABLE(ProcessingTaskQueue)
+    DECLARE_NON_COPYABLE(ProcessingTaskQueue)
 
 public:
     ProcessingTaskQueue();
@@ -60,8 +61,7 @@ public:
     void cancelAndClear();
 
 private:
-    struct Entry
-    {
+    struct Entry {
         PageInfo pageInfo;
         BackgroundTaskPtr task;
         bool takenForProcessing;
@@ -74,4 +74,4 @@ private:
     PageInfo m_pageToSelectWhenDone;
 };
 
-#endif
+#endif  // ifndef PROCESSING_TASK_QUEUE_H_

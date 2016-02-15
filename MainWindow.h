@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_
@@ -73,14 +74,14 @@ class QLineF;
 class QRectF;
 class QLayout;
 
-class MainWindow :
-        public QMainWindow,
-        private FilterUiInterface,
-        private Ui::MainWindow
+class MainWindow
+    : public QMainWindow,
+      private FilterUiInterface,
+      private Ui::MainWindow
 {
-DECLARE_NON_COPYABLE(MainWindow)
+    DECLARE_NON_COPYABLE(MainWindow)
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
     MainWindow();
@@ -92,6 +93,7 @@ public:
     std::set<PageId> selectedPages() const;
 
     std::vector<PageRange> selectedRanges() const;
+
 protected:
     bool eventFilter(QObject* obj, QEvent* ev);
 
@@ -100,22 +102,14 @@ protected:
     virtual void timerEvent(QTimerEvent* event);
 
 public slots:
-
     void openProject(QString const& project_file);
 
     void AutoSaveProjectState(bool auto_save);
 
 private:
-    enum MainAreaAction
-    {
-        UPDATE_MAIN_AREA, CLEAR_MAIN_AREA
-    };
-signals:
-
-    void StartExportTimerSignal();
+    enum MainAreaAction { UPDATE_MAIN_AREA, CLEAR_MAIN_AREA };
 
 private slots:
-
     void autoSaveProject();
 
     void goFirstPage();
@@ -128,12 +122,10 @@ private slots:
 
     void goToPage(PageId const& page_id);
 
-    void currentPageChanged(
-            PageInfo const& page_info, QRectF const& thumb_rect,
-            ThumbnailSequence::SelectionFlags flags);
+    void currentPageChanged(PageInfo const& page_info, QRectF const& thumb_rect,
+                            ThumbnailSequence::SelectionFlags flags);
 
-    void pageContextMenuRequested(
-            PageInfo const& page_info, QPoint const& screen_pos, bool selected);
+    void pageContextMenuRequested(PageInfo const& page_info, QPoint const& screen_pos, bool selected);
 
     void pastLastPageContextMenuRequested(QPoint const& screen_pos);
 
@@ -171,9 +163,7 @@ private slots:
 
     void showRelinkingDialog();
 
-    void filterResult(
-            BackgroundTaskPtr const& task,
-            FilterResultPtr const& result);
+    void filterResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
 
     void debugToggled(bool enabled);
 
@@ -204,27 +194,23 @@ private slots:
 private:
     class PageSelectionProviderImpl;
 
-    enum SavePromptResult
-    {
-        SAVE, DONT_SAVE, CANCEL
-    };
+    enum SavePromptResult { SAVE, DONT_SAVE, CANCEL };
 
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
-    virtual void setOptionsWidget(
-            FilterOptionsWidget* widget, Ownership ownership);
+    virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership);
 
-    virtual void setImageWidget(
-            QWidget* widget, Ownership ownership,
-            DebugImages* debug_images = 0, bool clearImageWidget = true);
+    virtual void setImageWidget(QWidget* widget,
+                                Ownership ownership,
+                                DebugImages* debug_images = 0,
+                                bool clearImageWidget = true);
 
-    virtual IntrusivePtr<AbstractCommand0<void> > relinkingDialogRequester();
+    virtual IntrusivePtr<AbstractCommand0<void>> relinkingDialogRequester();
 
-    void switchToNewProject(
-            IntrusivePtr<ProjectPages> const& pages,
-            QString const& out_dir,
-            QString const& project_file_path = QString(),
-            ProjectReader const* project_reader = 0);
+    void switchToNewProject(IntrusivePtr<ProjectPages> const& pages,
+                            QString const& out_dir,
+                            QString const& project_file_path = QString(),
+                            ProjectReader const* project_reader = 0);
 
     IntrusivePtr<ThumbnailPixmapCache> createThumbnailCache();
 
@@ -240,8 +226,7 @@ private:
 
     void updateSortOptions();
 
-    void resetThumbSequence(
-            IntrusivePtr<PageOrderProvider const> const& page_order_provider);
+    void resetThumbSequence(IntrusivePtr<PageOrderProvider const> const& page_order_provider);
 
     void removeWidgetsFromLayout(QLayout* layout);
 
@@ -281,23 +266,19 @@ private:
 
     bool saveProjectWithFeedback(QString const& project_file);
 
-    void showInsertFileDialog(
-            BeforeOrAfter before_or_after, ImageId const& existig);
+    void showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& existig);
 
     void showRemovePagesDialog(std::set<PageId> const& pages);
 
-    void insertImage(ImageInfo const& new_image,
-                     BeforeOrAfter before_or_after, ImageId existing);
+    void insertImage(ImageInfo const& new_image, BeforeOrAfter before_or_after, ImageId existing);
 
     void removeFromProject(std::set<PageId> const& pages);
 
     void eraseOutputFiles(std::set<PageId> const& pages);
 
-    BackgroundTaskPtr createCompositeTask(
-            PageInfo const& page, int last_filter_idx, bool batch, bool debug);
+    BackgroundTaskPtr createCompositeTask(PageInfo const& page, int last_filter_idx, bool batch, bool debug);
 
-    IntrusivePtr<CompositeCacheDrivenTask>
-            createCompositeCacheDrivenTask(int last_filter_idx);
+    IntrusivePtr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int last_filter_idx);
 
     void createBatchProcessingWidget();
 
@@ -339,8 +320,7 @@ private:
     bool m_beepOnBatchProcessingCompletion;
     QTimer m_thumbResizeTimer;
     QTimer m_autoSaveTimer;
-
     bool m_auto_save_project;
 };
 
-#endif
+#endif  // ifndef MAINWINDOW_H_

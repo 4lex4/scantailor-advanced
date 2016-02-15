@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,14 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef GRID_H_
 #define GRID_H_
 
 #include <boost/scoped_array.hpp>
 
-template<typename Node>
+template <typename Node>
 class Grid
 {
 public:
@@ -43,7 +44,9 @@ public:
     Grid(Grid const& other);
 
     bool isNull() const
-    { return m_width <= 0 || m_height <= 0; }
+    {
+        return m_width <= 0 || m_height <= 0;
+    }
 
     void initPadding(Node const& padding_node);
 
@@ -53,54 +56,70 @@ public:
      * \brief Returns a pointer to the beginning of unpadded data.
      */
     Node* data()
-    { return m_pData; }
+    {
+        return m_pData;
+    }
 
     /**
      * \brief Returns a pointer to the beginning of unpadded data.
      */
     Node const* data() const
-    { return m_pData; }
+    {
+        return m_pData;
+    }
 
     /**
      * \brief Returns a pointer to the beginning of padded data.
      */
     Node* paddedData()
-    { return m_storage.get(); }
+    {
+        return m_storage.get();
+    }
 
     /**
      * \brief Returns a pointer to the beginning of padded data.
      */
     Node const* paddedData() const
-    { return m_storage.get(); }
+    {
+        return m_storage.get();
+    }
 
     /**
      * Returns the number of nodes in a row, including padding nodes.
      */
     int stride() const
-    { return m_stride; }
+    {
+        return m_stride;
+    }
 
     /**
      * Returns the number of nodes in a row, excluding padding nodes.
      */
     int width() const
-    { return m_width; }
+    {
+        return m_width;
+    }
 
     /**
      * Returns the number of nodes in a column, excluding padding nodes.
      */
     int height() const
-    { return m_height; }
+    {
+        return m_height;
+    }
 
     /**
      * Returns the number of padding layers from each side.
      */
     int padding() const
-    { return m_padding; }
+    {
+        return m_padding;
+    }
 
     void swap(Grid& other);
 
 private:
-    template<typename T>
+    template <typename T>
     static void basicSwap(T& o1, T& o2)
     {
         T tmp(o1);
@@ -117,35 +136,33 @@ private:
 };
 
 
-template<typename Node>
+template <typename Node>
 Grid<Node>::Grid()
-        : m_pData(0),
-          m_width(0),
-          m_height(0),
-          m_stride(0),
-          m_padding(0)
-{
-}
+    : m_pData(0),
+      m_width(0),
+      m_height(0),
+      m_stride(0),
+      m_padding(0)
+{ }
 
-template<typename Node>
+template <typename Node>
 Grid<Node>::Grid(int width, int height, int padding)
-        : m_storage(new Node[(width + padding * 2) * (height + padding * 2)]),
-          m_pData(m_storage.get() + (width + padding * 2) * padding + padding),
-          m_width(width),
-          m_height(height),
-          m_stride(width + padding * 2),
-          m_padding(padding)
-{
-}
+    : m_storage(new Node[(width + padding * 2) * (height + padding * 2)]),
+      m_pData(m_storage.get() + (width + padding * 2) * padding + padding),
+      m_width(width),
+      m_height(height),
+      m_stride(width + padding * 2),
+      m_padding(padding)
+{ }
 
-template<typename Node>
+template <typename Node>
 Grid<Node>::Grid(Grid const& other)
-        : m_storage(new Node[(other.stride() * (other.height() + other.padding() * 2))]),
-          m_pData(m_storage.get() + other.stride() * other.padding() + other.padding()),
-          m_width(other.width()),
-          m_height(other.height()),
-          m_stride(other.stride()),
-          m_padding(other.padding())
+    : m_storage(new Node[(other.stride() * (other.height() + other.padding() * 2))]),
+      m_pData(m_storage.get() + other.stride() * other.padding() + other.padding()),
+      m_width(other.width()),
+      m_height(other.height()),
+      m_stride(other.stride()),
+      m_padding(other.padding())
 {
     int const len = m_stride * (m_height + m_padding * 2);
     for (int i = 0; i < len; ++i) {
@@ -153,7 +170,7 @@ Grid<Node>::Grid(Grid const& other)
     }
 }
 
-template<typename Node>
+template <typename Node>
 void
 Grid<Node>::initPadding(Node const& padding_node)
 {
@@ -187,7 +204,7 @@ Grid<Node>::initPadding(Node const& padding_node)
     }
 }
 
-template<typename Node>
+template <typename Node>
 void
 Grid<Node>::initInterior(Node const& interior_node)
 {
@@ -200,7 +217,7 @@ Grid<Node>::initInterior(Node const& interior_node)
     }
 }
 
-template<typename Node>
+template <typename Node>
 void
 Grid<Node>::swap(Grid& other)
 {
@@ -212,10 +229,11 @@ Grid<Node>::swap(Grid& other)
     basicSwap(m_padding, other.m_padding);
 }
 
-template<typename Node>
-void swap(Grid<Node>& o1, Grid<Node>& o2)
+template <typename Node>
+void
+swap(Grid<Node>& o1, Grid<Node>& o2)
 {
     o1.swap(o2);
 }
 
-#endif
+#endif  // ifndef GRID_H_

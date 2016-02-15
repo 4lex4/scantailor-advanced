@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SavGolFilter.h"
 #include "SavGolKernel.h"
@@ -22,26 +23,23 @@
 
 namespace imageproc
 {
-
     namespace
     {
-
-        int calcNumTerms(int const hor_degree, int const vert_degree)
+        int
+        calcNumTerms(int const hor_degree, int const vert_degree)
         {
             return (hor_degree + 1) * (vert_degree + 1);
         }
 
-        class Kernel : public SavGolKernel
+        class Kernel
+            : public SavGolKernel
         {
         public:
-            Kernel(QSize const& size, QPoint const& origin,
-                   int hor_degree, int vert_degree)
-                    : SavGolKernel(size, origin, hor_degree, vert_degree)
+            Kernel(QSize const& size, QPoint const& origin, int hor_degree, int vert_degree)
+                : SavGolKernel(size, origin, hor_degree, vert_degree)
             { }
 
-            void convolve(
-                    uint8_t* dst, uint8_t const* src_top_left,
-                    int src_bpl) const;
+            void convolve(uint8_t* dst, uint8_t const* src_top_left, int src_bpl) const;
         };
 
         inline void
@@ -64,9 +62,8 @@ namespace imageproc
             *dst = static_cast<uint8_t>(qBound(0, val, 255));
         }
 
-        QImage savGolFilterGrayToGray(
-                QImage const& src, QSize const& window_size,
-                int const hor_degree, int const vert_degree)
+        QImage
+        savGolFilterGrayToGray(QImage const& src, QSize const& window_size, int const hor_degree, int const vert_degree)
         {
             int const width = src.width();
             int const height = src.height();
@@ -74,7 +71,7 @@ namespace imageproc
             int const kw = window_size.width();
             int const kh = window_size.height();
 
-            if (kw > width || kh > height) {
+            if ((kw > width) || (kh > height)) {
                 return src;
             }
 
@@ -104,7 +101,7 @@ namespace imageproc
 
             QImage dst(width, height, QImage::Format_Indexed8);
             dst.setColorTable(createGrayscalePalette());
-            if (width > 0 && height > 0 && dst.isNull()) {
+            if ((width > 0) && (height > 0) && dst.isNull()) {
                 throw std::bad_alloc();
             }
 
@@ -149,23 +146,23 @@ namespace imageproc
 
 #if 0
             kernel.recalcForOrigin(k_center);
-src_line = src_data - k_left;
-dst_line = dst_data + dst_bpl * k_top;
-for (int y = k_top; y < height - k_bottom; ++y) {
-    for (int x = k_left; x < width - k_right; ++x) {
-        kernel.convolve(dst_line + x, src_line + x, src_bpl);
-    }
-    src_line += src_bpl;
-    dst_line += dst_bpl;
-}
+            src_line = src_data - k_left;
+            dst_line = dst_data + dst_bpl * k_top;
+            for (int y = k_top; y < height - k_bottom; ++y) {
+                for (int x = k_left; x < width - k_right; ++x) {
+                    kernel.convolve(dst_line + x, src_line + x, src_bpl);
+                }
+                src_line += src_bpl;
+                dst_line += dst_bpl;
+            }
 #else
             SavGolKernel const hor_kernel(
-                    QSize(window_size.width(), 1),
-                    QPoint(k_center.x(), 0), hor_degree, 0
+                QSize(window_size.width(), 1),
+                QPoint(k_center.x(), 0), hor_degree, 0
             );
             SavGolKernel const vert_kernel(
-                    QSize(1, window_size.height()),
-                    QPoint(0, k_center.y()), 0, vert_degree
+                QSize(1, window_size.height()),
+                QPoint(0, k_center.y()), 0, vert_degree
             );
 
             int const shift = kw - 1;
@@ -206,7 +203,7 @@ for (int y = k_top; y < height - k_bottom; ++y) {
                 temp_line += temp_stride;
                 dst_line += dst_bpl;
             }
-#endif
+#endif  // if 0
 
             k_origin.setX(0);
             k_origin.setY(k_center.y() + 1);
@@ -276,15 +273,13 @@ for (int y = k_top; y < height - k_bottom; ++y) {
             }
 
             return dst;
-        }
+        }  // savGolFilterGrayToGray
+    }  // namespace
 
-    }
-
-    QImage savGolFilter(
-            QImage const& src, QSize const& window_size,
-            int const hor_degree, int const vert_degree)
+    QImage
+    savGolFilter(QImage const& src, QSize const& window_size, int const hor_degree, int const vert_degree)
     {
-        if (hor_degree < 0 || vert_degree < 0) {
+        if ((hor_degree < 0) || (vert_degree < 0)) {
             throw std::invalid_argument("savGolFilter: invalid polynomial degree");
         }
         if (window_size.isEmpty()) {
@@ -294,12 +289,11 @@ for (int y = k_top; y < height - k_bottom; ++y) {
         if (calcNumTerms(hor_degree, vert_degree)
             > window_size.width() * window_size.height()) {
             throw std::invalid_argument(
-                    "savGolFilter: order is too big for that window");
+                      "savGolFilter: order is too big for that window");
         }
 
         return savGolFilterGrayToGray(
-                toGrayscale(src), window_size, hor_degree, vert_degree
+            toGrayscale(src), window_size, hor_degree, vert_degree
         );
     }
-
-} 
+}  // namespace imageproc

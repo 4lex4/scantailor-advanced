@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_
 #define IMAGEPROC_MAX_WHITESPACE_FINDER_H_
@@ -31,7 +32,6 @@
 
 namespace imageproc
 {
-
     class BinaryImage;
 
     namespace max_whitespace_finder
@@ -39,21 +39,18 @@ namespace imageproc
         class PriorityStorage;
     }
 
-/**
- * \brief Finds white rectangles in a binary image starting from the largest ones.
- */
+    /**
+     * \brief Finds white rectangles in a binary image starting from the largest ones.
+     */
     class MaxWhitespaceFinder
     {
-    DECLARE_NON_COPYABLE(MaxWhitespaceFinder)
+        DECLARE_NON_COPYABLE(MaxWhitespaceFinder)
 
         friend class max_whitespace_finder::PriorityStorage;
 
     public:
         /** \see next() */
-        enum ObstacleMode
-        {
-            AUTO_OBSTACLES, MANUAL_OBSTACLES
-        };
+        enum ObstacleMode { AUTO_OBSTACLES, MANUAL_OBSTACLES };
 
         /**
          * \brief Constructor.
@@ -61,8 +58,7 @@ namespace imageproc
          * \param img The image to find white regions in.
          * \param min_size The minimum dimensions of regions to find.
          */
-        MaxWhitespaceFinder(
-                BinaryImage const& img, QSize min_size = QSize(1, 1));
+        MaxWhitespaceFinder(BinaryImage const& img, QSize min_size = QSize(1, 1));
 
         /**
          * \brief Constructor with customized rectangle ordering.
@@ -88,10 +84,8 @@ namespace imageproc
          * \param img The image to find white rectangles in.
          * \param min_size The minimum dimensions of regions to find.
          */
-        template<typename QualityCompare>
-        MaxWhitespaceFinder(
-                QualityCompare comp,
-                BinaryImage const& img, QSize min_size = QSize(1, 1));
+        template <typename QualityCompare>
+        MaxWhitespaceFinder(QualityCompare comp, BinaryImage const& img, QSize min_size = QSize(1, 1));
 
         /**
          * \brief Mark a region as black.
@@ -139,7 +133,9 @@ namespace imageproc
             Region(Region const& other);
 
             QRect const& bounds() const
-            { return m_bounds; }
+            {
+                return m_bounds;
+            }
 
             std::vector<QRect> const& obstacles() const
             {
@@ -193,11 +189,11 @@ namespace imageproc
 
     namespace max_whitespace_finder
     {
-
         class PriorityStorage
         {
         protected:
             typedef MaxWhitespaceFinder::Region Region;
+
         public:
             virtual ~PriorityStorage()
             { }
@@ -214,21 +210,29 @@ namespace imageproc
         };
 
 
-        template<typename QualityCompare>
-        class PriorityStorageImpl : public PriorityStorage
+        template <typename QualityCompare>
+        class PriorityStorageImpl
+            : public PriorityStorage
         {
         public:
-            PriorityStorageImpl(QualityCompare comp) : m_qualityLess(comp)
+            PriorityStorageImpl(QualityCompare comp)
+                : m_qualityLess(comp)
             { }
 
             virtual bool empty() const
-            { return m_priorityQueue.empty(); }
+            {
+                return m_priorityQueue.empty();
+            }
 
             virtual size_t size() const
-            { return m_priorityQueue.size(); }
+            {
+                return m_priorityQueue.size();
+            }
 
             virtual Region& top()
-            { return m_priorityQueue.front(); }
+            {
+                return m_priorityQueue.front();
+            }
 
             virtual void push(Region& region);
 
@@ -238,7 +242,8 @@ namespace imageproc
             class ProxyComparator
             {
             public:
-                ProxyComparator(QualityCompare delegate) : m_delegate(delegate)
+                ProxyComparator(QualityCompare delegate)
+                    : m_delegate(delegate)
                 { }
 
                 bool operator()(Region const& lhs, Region const& rhs) const
@@ -250,19 +255,15 @@ namespace imageproc
                 QualityCompare m_delegate;
             };
 
-            void pushHeap(
-                    std::deque<Region>::iterator begin,
-                    std::deque<Region>::iterator end);
+            void pushHeap(std::deque<Region>::iterator begin, std::deque<Region>::iterator end);
 
-            void popHeap(
-                    std::deque<Region>::iterator begin,
-                    std::deque<Region>::iterator end);
+            void popHeap(std::deque<Region>::iterator begin, std::deque<Region>::iterator end);
 
             std::deque<Region> m_priorityQueue;
             ProxyComparator m_qualityLess;
         };
 
-        template<typename QualityCompare>
+        template <typename QualityCompare>
         void
         PriorityStorageImpl<QualityCompare>::push(Region& region)
         {
@@ -271,7 +272,7 @@ namespace imageproc
             pushHeap(m_priorityQueue.begin(), m_priorityQueue.end());
         }
 
-        template<typename QualityCompare>
+        template <typename QualityCompare>
         void
         PriorityStorageImpl<QualityCompare>::pop()
         {
@@ -279,38 +280,36 @@ namespace imageproc
             m_priorityQueue.pop_back();
         }
 
-/**
- * Same as std::push_heap(), except this one never copies objects, but swap()'s
- * them instead.  We need this to avoid copying the obstacle list over and over.
- */
-        template<typename QualityCompare>
+        /**
+         * Same as std::push_heap(), except this one never copies objects, but swap()'s
+         * them instead.  We need this to avoid copying the obstacle list over and over.
+         */
+        template <typename QualityCompare>
         void
-        PriorityStorageImpl<QualityCompare>::pushHeap(
-                std::deque<Region>::iterator const begin,
-                std::deque<Region>::iterator const end)
+        PriorityStorageImpl<QualityCompare>::pushHeap(std::deque<Region>::iterator const begin,
+                                                      std::deque<Region>::iterator const end)
         {
             typedef std::vector<Region>::iterator::difference_type Distance;
 
             Distance valueIdx = end - begin - 1;
             Distance parentIdx = (valueIdx - 1) / 2;
 
-            while (valueIdx > 0 &&
-                   m_qualityLess(*(begin + parentIdx), *(begin + valueIdx))) {
+            while (valueIdx > 0
+                   && m_qualityLess(*(begin + parentIdx), *(begin + valueIdx))) {
                 (begin + valueIdx)->swap(*(begin + parentIdx));
                 valueIdx = parentIdx;
                 parentIdx = (valueIdx - 1) / 2;
             }
         }
 
-/**
- * Same as std::pop_heap(), except this one never copies objects, but swap()'s
- * them instead.  We need this to avoid copying the obstacle list over and over.
- */
-        template<typename QualityCompare>
+        /**
+         * Same as std::pop_heap(), except this one never copies objects, but swap()'s
+         * them instead.  We need this to avoid copying the obstacle list over and over.
+         */
+        template <typename QualityCompare>
         void
-        PriorityStorageImpl<QualityCompare>::popHeap(
-                std::deque<Region>::iterator const begin,
-                std::deque<Region>::iterator const end)
+        PriorityStorageImpl<QualityCompare>::popHeap(std::deque<Region>::iterator const begin,
+                                                     std::deque<Region>::iterator const end)
         {
             begin->swap(*(end - 1));
 
@@ -341,19 +340,16 @@ namespace imageproc
 
             pushHeap(begin, begin + nodeIdx + 1);
         }
+    }  // namespace max_whitespace_finder
 
-    }
-
-    template<typename QualityCompare>
-    MaxWhitespaceFinder::MaxWhitespaceFinder(
-            QualityCompare const comp, BinaryImage const& img, QSize const min_size)
-            : m_integralImg(img.size()),
-              m_ptrQueuedRegions(
-                      new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
-              m_minSize(min_size)
+    template <typename QualityCompare>
+    MaxWhitespaceFinder::MaxWhitespaceFinder(QualityCompare const comp, BinaryImage const& img, QSize const min_size)
+        : m_integralImg(img.size()),
+          m_ptrQueuedRegions(
+              new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
+          m_minSize(min_size)
     {
         init(img);
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_

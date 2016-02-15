@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,15 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "FrenetFrame.h"
 
 namespace spfit
 {
-
     FrenetFrame::FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxisDirection ydir)
-            : m_origin(origin)
+        : m_origin(origin)
     {
         double const sqlen = tangent_vector.squaredNorm();
         if (sqlen > 1e-6) {
@@ -37,5 +37,4 @@ namespace spfit
             }
         }
     }
-
-} 
+}

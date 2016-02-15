@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIX_ORIENTATION_OPTIONSWIDGET_H_
 #define FIX_ORIENTATION_OPTIONSWIDGET_H_
@@ -28,17 +29,16 @@
 
 namespace fix_orientation
 {
-
     class Settings;
 
-    class OptionsWidget :
-            public FilterOptionsWidget, private Ui::OrientationOptionsWidget
+    class OptionsWidget
+        : public FilterOptionsWidget,
+          private Ui::OrientationOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings,
-                      PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -47,11 +47,9 @@ namespace fix_orientation
         void postUpdateUI(OrthogonalRotation rotation);
 
     signals:
-
         void rotated(OrthogonalRotation rotation);
 
     private slots:
-
         void rotateLeft();
 
         void rotateRight();
@@ -74,6 +72,5 @@ namespace fix_orientation
         PageId m_pageId;
         OrthogonalRotation m_rotation;
     };
-
-}
-#endif
+}  // namespace fix_orientation
+#endif  // ifndef FIX_ORIENTATION_OPTIONSWIDGET_H_

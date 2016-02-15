@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_TEXT_LINE_REFINER_H_
 #define DEWARPING_TEXT_LINE_REFINER_H_
@@ -35,22 +36,15 @@ class QImage;
 
 namespace dewarping
 {
-
     class TextLineRefiner
     {
     public:
-        TextLineRefiner(
-                imageproc::GrayImage const& image,
-                Dpi const& dpi, Vec2f const& unit_down_vector);
+        TextLineRefiner(imageproc::GrayImage const& image, Dpi const& dpi, Vec2f const& unit_down_vector);
 
-        void refine(std::list<std::vector<QPointF> >& polylines,
-                    int iterations, DebugImages* dbg) const;
+        void refine(std::list<std::vector<QPointF>>& polylines, int iterations, DebugImages* dbg) const;
 
     private:
-        enum OnConvergence
-        {
-            ON_CONVERGENCE_STOP, ON_CONVERGENCE_GO_FINER
-        };
+        enum OnConvergence { ON_CONVERGENCE_STOP, ON_CONVERGENCE_GO_FINER };
 
         class SnakeLength;
 
@@ -58,23 +52,21 @@ namespace dewarping
 
         class Optimizer;
 
-        struct SnakeNode
-        {
+        struct SnakeNode {
             Vec2f center;
             float ribHalfLength;
         };
 
-        struct Snake
-        {
+        struct Snake {
             std::vector<SnakeNode> nodes;
             int iterationsRemaining;
 
-            Snake() : iterationsRemaining(0)
+            Snake()
+                : iterationsRemaining(0)
             { }
         };
 
-        struct Step
-        {
+        struct Step {
             SnakeNode node;
             uint32_t prevStepIdx;
             float pathCost;
@@ -82,14 +74,14 @@ namespace dewarping
 
         void calcBlurredGradient(Grid<float>& gradient, float h_sigma, float v_sigma) const;
 
-        static float externalEnergyAt(
-                Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside);
+        static float externalEnergyAt(Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside);
 
         static Snake makeSnake(std::vector<QPointF> const& polyline, int iterations);
 
-        static void calcFrenetFrames(
-                std::vector<FrenetFrame>& frenet_frames, Snake const& snake,
-                SnakeLength const& snake_length, Vec2f const& unit_down_vec);
+        static void calcFrenetFrames(std::vector<FrenetFrame>& frenet_frames,
+                                     Snake const& snake,
+                                     SnakeLength const& snake_length,
+                                     Vec2f const& unit_down_vec);
 
         void evolveSnake(Snake& snake, Grid<float> const& gradient, OnConvergence on_convergence) const;
 
@@ -101,6 +93,5 @@ namespace dewarping
         Dpi m_dpi;
         Vec2f m_unitDownVec;
     };
-
-}
-#endif
+}  // namespace dewarping
+#endif  // ifndef DEWARPING_TEXT_LINE_REFINER_H_

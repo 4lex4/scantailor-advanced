@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ZONE_H_
 #define ZONE_H_
@@ -42,13 +43,19 @@ public:
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
     SerializableSpline const& spline() const
-    { return m_spline; }
+    {
+        return m_spline;
+    }
 
     PropertySet& properties()
-    { return m_props; }
+    {
+        return m_props;
+    }
 
     PropertySet const& properties() const
-    { return m_props; }
+    {
+        return m_props;
+    }
 
     bool isValid() const;
 
@@ -57,4 +64,4 @@ private:
     PropertySet m_props;
 };
 
-#endif
+#endif  // ifndef ZONE_H_

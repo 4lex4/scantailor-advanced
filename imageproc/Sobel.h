@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_SOBEL_H_
 #define IMAGEPROC_SOBEL_H_
@@ -29,88 +30,112 @@
 
 namespace imageproc
 {
-
-/**
- * Computes approximation of the horizontal gradient component, that is
- * the partial derivative with respect to x (multiplied by 8).
- *
- * \tparam T The type used for intermediate calculations.  Must be signed.
- * \param width Horizontal size of a grid.  Zero or negative value
- *        will cause this function to return without doing anything.
- * \param height Vertical size of a grid.  Zero or negative value
- *        will cause this function to return without doing anything.
- * \param src Pointer or a random access iterator to the top-left corner
- *        of the source grid.
- * \param src_stride The distance from a point on the source grid to the
- *        point directly below it, in terms of iterator difference.
- * \param src_reader A functor that gets passed a dereferenced iterator
- *        to the source grid and returns some type convertable to T.
- *        It's called like this:
- *        \code
- *        SrcIt src_it = ...;
- *        T const var(src_reader(*src_it));
- *        \endcode
- *        Consider using boost::lambda for constructing such a functor,
- *        possibly combined with one of the functors from ValueConf.h
- * \param tmp Pointer or a random access iterator to the top-left corner
- *        of the temporary grid.  The temporary grid will have the same
- *        width and height as the source and destination grids.
- *        Having the destination grid also serve as a temporary grid
- *        is supported, provided it's able to store signed values.
- *        Having all 3 to be the same is supported as well, subject
- *        to the same condition.
- * \param tmp_stride The distance from a point on the temporary grid to the
- *        point directly below it, in terms of iterator difference.
- * \param tmp_writer A functor that writes a value to the temporary grid.
- *        It's called like this:
- *        \code
- *        TmpIt tmp_it = ...;
- *        T val = ...;
- *        tmp_writer(*tmp_it, val);
- *        \endcode
- * \param tmp_reader A functor that gets passed a dereferenced iterator
- *        to the temporary grid and returns some type convertable to T.
- *        See \p src_reader for more info.
- * \param dst Pointer or a random access iterator to the top-left corner
- *        of the destination grid.
- * \param dst_stride The distance from a point on the destination grid to the
- *        point directly below it, in terms of iterator difference.
- * \param dst_writer A functor that writes a value to the destination grid.
- *        See \p tmp_writer for more info.
- */
-    template<
-            typename T, typename SrcIt, typename TmpIt, typename DstIt,
-            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    /**
+     * Computes approximation of the horizontal gradient component, that is
+     * the partial derivative with respect to x (multiplied by 8).
+     *
+     * \tparam T The type used for intermediate calculations.  Must be signed.
+     * \param width Horizontal size of a grid.  Zero or negative value
+     *        will cause this function to return without doing anything.
+     * \param height Vertical size of a grid.  Zero or negative value
+     *        will cause this function to return without doing anything.
+     * \param src Pointer or a random access iterator to the top-left corner
+     *        of the source grid.
+     * \param src_stride The distance from a point on the source grid to the
+     *        point directly below it, in terms of iterator difference.
+     * \param src_reader A functor that gets passed a dereferenced iterator
+     *        to the source grid and returns some type convertable to T.
+     *        It's called like this:
+     *        \code
+     *        SrcIt src_it = ...;
+     *        T const var(src_reader(*src_it));
+     *        \endcode
+     *        Consider using boost::lambda for constructing such a functor,
+     *        possibly combined with one of the functors from ValueConf.h
+     * \param tmp Pointer or a random access iterator to the top-left corner
+     *        of the temporary grid.  The temporary grid will have the same
+     *        width and height as the source and destination grids.
+     *        Having the destination grid also serve as a temporary grid
+     *        is supported, provided it's able to store signed values.
+     *        Having all 3 to be the same is supported as well, subject
+     *        to the same condition.
+     * \param tmp_stride The distance from a point on the temporary grid to the
+     *        point directly below it, in terms of iterator difference.
+     * \param tmp_writer A functor that writes a value to the temporary grid.
+     *        It's called like this:
+     *        \code
+     *        TmpIt tmp_it = ...;
+     *        T val = ...;
+     *        tmp_writer(*tmp_it, val);
+     *        \endcode
+     * \param tmp_reader A functor that gets passed a dereferenced iterator
+     *        to the temporary grid and returns some type convertable to T.
+     *        See \p src_reader for more info.
+     * \param dst Pointer or a random access iterator to the top-left corner
+     *        of the destination grid.
+     * \param dst_stride The distance from a point on the destination grid to the
+     *        point directly below it, in terms of iterator difference.
+     * \param dst_writer A functor that writes a value to the destination grid.
+     *        See \p tmp_writer for more info.
+     */
+    template <
+        typename T, typename SrcIt, typename TmpIt, typename DstIt,
+        typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void horizontalSobel(
-            int width, int height, SrcIt src, int src_stride, SrcReader src_reader,
-            TmpIt tmp, int tmp_stride, TmpWriter tmp_writer, TmpReader tmp_reader,
-            DstIt dst, int dst_stride, DstWriter dst_writer);
+    void horizontalSobel(int width,
+                         int height,
+                         SrcIt src,
+                         int src_stride,
+                         SrcReader src_reader,
+                         TmpIt tmp,
+                         int tmp_stride,
+                         TmpWriter tmp_writer,
+                         TmpReader tmp_reader,
+                         DstIt dst,
+                         int dst_stride,
+                         DstWriter dst_writer);
 
 
-/**
- * \see horizontalSobel()
- */
-    template<
-            typename T, typename SrcIt, typename TmpIt, typename DstIt,
-            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    /**
+     * \see horizontalSobel()
+     */
+    template <
+        typename T, typename SrcIt, typename TmpIt, typename DstIt,
+        typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void verticalSobel(
-            int width, int height, SrcIt src, int src_stride, SrcReader src_reader,
-            TmpIt tmp, int tmp_stride, TmpWriter tmp_writer, TmpReader tmp_reader,
-            DstIt dst, int dst_stride, DstWriter dst_writer);
+    void verticalSobel(int width,
+                       int height,
+                       SrcIt src,
+                       int src_stride,
+                       SrcReader src_reader,
+                       TmpIt tmp,
+                       int tmp_stride,
+                       TmpWriter tmp_writer,
+                       TmpReader tmp_reader,
+                       DstIt dst,
+                       int dst_stride,
+                       DstWriter dst_writer);
 
 
-    template<
-            typename T, typename SrcIt, typename TmpIt, typename DstIt,
-            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    template <
+        typename T, typename SrcIt, typename TmpIt, typename DstIt,
+        typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void horizontalSobel(
-            int const width, int const height, SrcIt src, int src_stride, SrcReader src_reader,
-            TmpIt tmp, int const tmp_stride, TmpWriter tmp_writer, TmpReader tmp_reader,
-            DstIt dst, int const dst_stride, DstWriter dst_writer)
+    void
+    horizontalSobel(int const width,
+                    int const height,
+                    SrcIt src,
+                    int src_stride,
+                    SrcReader src_reader,
+                    TmpIt tmp,
+                    int const tmp_stride,
+                    TmpWriter tmp_writer,
+                    TmpReader tmp_reader,
+                    DstIt dst,
+                    int const dst_stride,
+                    DstWriter dst_writer)
     {
-        if (width <= 0 || height <= 0) {
+        if ((width <= 0) || (height <= 0)) {
             return;
         }
 
@@ -165,18 +190,27 @@ namespace imageproc
             tmp += tmp_stride;
             dst += dst_stride;
         }
-    }
+    }  // horizontalSobel
 
-    template<
-            typename T, typename SrcIt, typename TmpIt, typename DstIt,
-            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    template <
+        typename T, typename SrcIt, typename TmpIt, typename DstIt,
+        typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void verticalSobel(
-            int const width, int const height, SrcIt src, int src_stride, SrcReader src_reader,
-            TmpIt tmp, int const tmp_stride, TmpWriter tmp_writer, TmpReader tmp_reader,
-            DstIt dst, int const dst_stride, DstWriter dst_writer)
+    void
+    verticalSobel(int const width,
+                  int const height,
+                  SrcIt src,
+                  int src_stride,
+                  SrcReader src_reader,
+                  TmpIt tmp,
+                  int const tmp_stride,
+                  TmpWriter tmp_writer,
+                  TmpReader tmp_reader,
+                  DstIt dst,
+                  int const dst_stride,
+                  DstWriter dst_writer)
     {
-        if (width <= 0 || height <= 0) {
+        if ((width <= 0) || (height <= 0)) {
             return;
         }
 
@@ -232,7 +266,6 @@ namespace imageproc
             p_dst += dst_stride;
             dst_writer(*p_dst, mid - top);
         }
-    }
-
-}
-#endif
+    }  // verticalSobel
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_SOBEL_H_

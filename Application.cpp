@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,25 +15,26 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Application.h"
 #include "OutOfMemoryHandler.h"
 #include <QStyleFactory>
 #include <QPalette>
 
-Application::Application(int &argc, char **argv)
-        : QApplication(argc, argv)
-{
-}
+Application::Application(int& argc, char** argv)
+    : QApplication(argc, argv)
+{ }
 
 bool
-Application::notify(QObject *receiver, QEvent *e)
+Application::notify(QObject* receiver, QEvent* e)
 {
     try {
         return QApplication::notify(receiver, e);
-    } catch (std::bad_alloc const &) {
+    }
+    catch (std::bad_alloc const&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
+
         return false;
     }
 }
@@ -59,3 +61,4 @@ Application::setFusionDarkTheme()
     palette.setColor(QPalette::HighlightedText, QColor(0xee, 0xee, 0xee));
     QApplication::setPalette(palette);
 }
+

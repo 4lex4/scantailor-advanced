@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef MATRIX_CALC_H_
 #define MATRIX_CALC_H_
@@ -30,13 +31,12 @@
 #include <stddef.h>
 #include <assert.h>
 
-template<typename T, typename Alloc>
+template <typename T, typename Alloc>
 class MatrixCalc;
 
 namespace mcalc
 {
-
-    template<typename T>
+    template <typename T>
     class AbstractAllocator
     {
     public:
@@ -46,15 +46,20 @@ namespace mcalc
     };
 
 
-    template<typename T, size_t TSize, size_t PSize>
-    class StaticPoolAllocator : public AbstractAllocator<T>
+    template <typename T, size_t TSize, size_t PSize>
+    class StaticPoolAllocator
+        : public AbstractAllocator<T>
     {
     public:
         virtual T* allocT(size_t size)
-        { return m_poolT.alloc(size); }
+        {
+            return m_poolT.alloc(size);
+        }
 
         virtual size_t* allocP(size_t size)
-        { return m_poolP.alloc(size); }
+        {
+            return m_poolP.alloc(size);
+        }
 
     private:
         StaticPool<size_t, PSize> m_poolP;
@@ -62,15 +67,20 @@ namespace mcalc
     };
 
 
-    template<typename T>
-    class DynamicPoolAllocator : public AbstractAllocator<T>
+    template <typename T>
+    class DynamicPoolAllocator
+        : public AbstractAllocator<T>
     {
     public:
         virtual T* allocT(size_t size)
-        { return m_poolT.alloc(size); }
+        {
+            return m_poolT.alloc(size);
+        }
 
         virtual size_t* allocP(size_t size)
-        { return m_poolP.alloc(size); }
+        {
+            return m_poolP.alloc(size);
+        }
 
     private:
         DynamicPool<size_t> m_poolP;
@@ -78,28 +88,29 @@ namespace mcalc
     };
 
 
-    template<typename T>
+    template <typename T>
     class Mat
     {
-        template<typename OT, typename Alloc> friend
+        template <typename OT, typename Alloc>
+        friend
         class MatrixCalc;
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator+(Mat<OT> const& m1, Mat<OT> const& m2);
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator-(Mat<OT> const& m1, Mat<OT> const& m2);
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator*(Mat<OT> const& m1, Mat<OT> const& m2);
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator*(OT scalar, Mat<OT> const& m);
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator*(Mat<OT> const& m, OT scalar);
 
-        template<typename OT>
+        template <typename OT>
         friend Mat<OT> operator/(Mat<OT> const& m, OT scalar);
 
     public:
@@ -113,22 +124,27 @@ namespace mcalc
 
         Mat write(T* buf) const;
 
-        template<size_t N>
+        template <size_t N>
         Mat write(VecNT<N, T>& vec) const;
 
         Mat transWrite(T* buf) const;
 
-        template<size_t N>
+        template <size_t N>
         Mat transWrite(VecNT<N, T>& vec) const;
 
         Mat operator-() const;
 
         T const* rawData() const
-        { return data; }
+        {
+            return data;
+        }
 
     private:
         Mat(AbstractAllocator<T>* alloc, T const* data, int rows, int cols)
-                : alloc(alloc), data(data), rows(rows), cols(cols)
+            : alloc(alloc),
+              data(data),
+              rows(rows),
+              cols(cols)
         { }
 
         AbstractAllocator<T>* alloc;
@@ -136,13 +152,12 @@ namespace mcalc
         int rows;
         int cols;
     };
+}  // namespace mcalc
 
-}
-
-template<typename T, typename Alloc = mcalc::StaticPoolAllocator<T, 128, 9> >
+template <typename T, typename Alloc = mcalc::StaticPoolAllocator<T, 128, 9>>
 class MatrixCalc
 {
-DECLARE_NON_COPYABLE(MatrixCalc)
+    DECLARE_NON_COPYABLE(MatrixCalc)
 
 public:
     MatrixCalc()
@@ -153,13 +168,13 @@ public:
         return mcalc::Mat<T>(&m_alloc, data, rows, cols);
     }
 
-    template<size_t N>
+    template <size_t N>
     mcalc::Mat<T> operator()(VecNT<N, T> const& vec, int rows, int cols)
     {
         return mcalc::Mat<T>(&m_alloc, vec.data(), rows, cols);
     }
 
-    template<size_t M, size_t N>
+    template <size_t M, size_t N>
     mcalc::Mat<T> operator()(MatMNT<M, N, T> const& mat)
     {
         return mcalc::Mat<T>(&m_alloc, mat.data(), mat.ROWS, mat.COLS);
@@ -170,7 +185,7 @@ public:
         return mcalc::Mat<T>(&m_alloc, mat.data(), mat.rows(), mat.cols());
     }
 
-    template<size_t N>
+    template <size_t N>
     mcalc::Mat<T> operator()(VecNT<N, T> const& vec)
     {
         return mcalc::Mat<T>(&m_alloc, vec.data(), vec.SIZE, 1);
@@ -186,24 +201,23 @@ private:
 };
 
 
-template<typename T, size_t TSize = 128, size_t PSize = 9>
-class StaticMatrixCalc : public MatrixCalc<T, mcalc::StaticPoolAllocator<T, TSize, PSize> >
-{
-};
+template <typename T, size_t TSize = 128, size_t PSize = 9>
+class StaticMatrixCalc
+    : public MatrixCalc<T, mcalc::StaticPoolAllocator<T, TSize, PSize>>
+{ };
 
 
-template<typename T>
-class DynamicMatrixCalc : public MatrixCalc<T, mcalc::DynamicPoolAllocator<T> >
-{
-};
+template <typename T>
+class DynamicMatrixCalc
+    : public MatrixCalc<T, mcalc::DynamicPoolAllocator<T>>
+{ };
 
 
 /*========================== Implementation =============================*/
 
 namespace mcalc
 {
-
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::inv() const
     {
@@ -222,7 +236,7 @@ namespace mcalc
         return solve(ident);
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::solve(Mat const& b) const
     {
@@ -236,27 +250,28 @@ namespace mcalc
         return Mat(alloc, x_data, cols, b.cols);
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::solve(T const* data, int rows, int cols) const
     {
         return solve(Mat(alloc, data, rows, cols));
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::trans() const
     {
-        if (cols == 1 || rows == 1) {
+        if ((cols == 1) || (rows == 1)) {
             return Mat<T>(alloc, data, cols, rows);
         }
 
         T* p_trans = alloc->allocT(cols * rows);
         transWrite(p_trans);
+
         return Mat(alloc, p_trans, cols, rows);
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::write(T* buf) const
     {
@@ -268,16 +283,17 @@ namespace mcalc
         return *this;
     }
 
-    template<typename T>
-    template<size_t N>
+    template <typename T>
+    template <size_t N>
     Mat<T>
     Mat<T>::write(VecNT<N, T>& vec) const
     {
         assert(N >= size_t(rows * cols));
+
         return write(vec.data());
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T>
     Mat<T>::transWrite(T* buf) const
     {
@@ -294,17 +310,18 @@ namespace mcalc
         return *this;
     }
 
-    template<typename T>
-    template<size_t N>
+    template <typename T>
+    template <size_t N>
     Mat<T>
     Mat<T>::transWrite(VecNT<N, T>& vec) const
     {
         assert(N >= rows * cols);
+
         return transWrite(vec.data());
     }
 
-/** Unary minus. */
-    template<typename T>
+    /** Unary minus. */
+    template <typename T>
     Mat<T>
     Mat<T>::operator-() const
     {
@@ -319,7 +336,7 @@ namespace mcalc
         return res;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator+(Mat<T> const& m1, Mat<T> const& m2)
     {
         assert(m1.rows == m2.rows && m1.cols == m2.cols);
@@ -335,7 +352,7 @@ namespace mcalc
         return res;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator-(Mat<T> const& m1, Mat<T> const& m2)
     {
         assert(m1.rows == m2.rows && m1.cols == m2.cols);
@@ -351,7 +368,7 @@ namespace mcalc
         return res;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator*(Mat<T> const& m1, Mat<T> const& m2)
     {
         assert(m1.cols == m2.rows);
@@ -377,7 +394,7 @@ namespace mcalc
         return res;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator*(T scalar, Mat<T> const& m)
     {
         T* p_res = m.alloc->allocT(m.rows * m.cols);
@@ -391,17 +408,16 @@ namespace mcalc
         return res;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator*(Mat<T> const& m, T scalar)
     {
         return scalar * m;
     }
 
-    template<typename T>
+    template <typename T>
     Mat<T> operator/(Mat<T> const& m, T scalar)
     {
         return m * (1.0f / scalar);
     }
-
-}
-#endif
+}  // namespace mcalc
+#endif  // ifndef MATRIX_CALC_H_

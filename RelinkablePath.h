@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RELINKABLE_PATH_H_
 #define RELINKABLE_PATH_H_
@@ -27,18 +28,19 @@
 class RelinkablePath
 {
 public:
-    enum Type
-    {
-        File, Dir
-    };
+    enum Type { File, Dir };
 
     RelinkablePath(QString const& path, Type type);
 
     QString const& normalizedPath() const
-    { return m_normalizedPath; }
+    {
+        return m_normalizedPath;
+    }
 
     Type type() const
-    { return m_type; }
+    {
+        return m_type;
+    }
 
     /**
      * Performs the following operations on the path:
@@ -57,4 +59,4 @@ private:
     Type m_type;
 };
 
-#endif
+#endif  // ifndef RELINKABLE_PATH_H_

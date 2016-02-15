@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_ORDER_PROVIDER_H_
 #define PAGE_ORDER_PROVIDER_H_
@@ -26,7 +27,8 @@ class PageId;
 /**
  * A base class for different page ordering strategies.
  */
-class PageOrderProvider : public RefCountable
+class PageOrderProvider
+    : public RefCountable
 {
 public:
     /**
@@ -34,9 +36,8 @@ public:
      * \p lhs_incomplete and \p rhs_incomplete indicate whether
      * a page is represented by IncompleteThumbnail.
      */
-    virtual bool precedes(
-            PageId const& lhs_page, bool lhs_incomplete,
-            PageId const& rhs_page, bool rhs_incomplete) const = 0;
+    virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
+                          bool rhs_incomplete) const = 0;
 };
 
 #endif

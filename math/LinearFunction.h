@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef LINEAR_FUNCTION_H_
 #define LINEAR_FUNCTION_H_
@@ -47,7 +48,9 @@ public:
     void reset();
 
     size_t numVars() const
-    { return a.size(); }
+    {
+        return a.size();
+    }
 
     /**
      * Evaluates a^T * x + b
@@ -62,9 +65,10 @@ public:
 };
 
 
-inline void swap(LinearFunction& f1, LinearFunction& f2)
+inline void
+swap(LinearFunction& f1, LinearFunction& f2)
 {
     f1.swap(f2);
 }
 
-#endif
+#endif  // ifndef LINEAR_FUNCTION_H_

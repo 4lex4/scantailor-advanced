@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Settings.h"
 #include "Utils.h"
@@ -23,17 +24,15 @@
 
 namespace deskew
 {
-
-    Settings::Settings() :
-            m_avg(0.0),
-            m_sigma(0.0)
+    Settings::Settings()
+        : m_avg(0.0),
+          m_sigma(0.0)
     {
         m_maxDeviation = CommandLine::get().getSkewDeviation();
     }
 
     Settings::~Settings()
-    {
-    }
+    { }
 
     void
     Settings::clear()
@@ -48,7 +47,7 @@ namespace deskew
         QMutexLocker locker(&m_mutex);
         PerPageParams new_params;
 
-        for (PerPageParams::value_type const& kv :  m_perPageParams) {
+        for (PerPageParams::value_type const& kv : m_perPageParams) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
@@ -58,10 +57,11 @@ namespace deskew
         m_perPageParams.swap(new_params);
     }
 
-    void Settings::updateDeviation()
+    void
+    Settings::updateDeviation()
     {
         m_avg = 0.0;
-        for (PerPageParams::value_type const& kv :  m_perPageParams) {
+        for (PerPageParams::value_type const& kv : m_perPageParams) {
             m_avg += kv.second.deskewAngle();
         }
         m_avg = m_avg / m_perPageParams.size();
@@ -70,7 +70,7 @@ namespace deskew
 #endif
 
         double sigma2 = 0.0;
-        for (PerPageParams::value_type& kv :  m_perPageParams) {
+        for (PerPageParams::value_type& kv : m_perPageParams) {
             kv.second.computeDeviation(m_avg);
             sigma2 += kv.second.deviation() * kv.second.deviation();
         }
@@ -114,9 +114,8 @@ namespace deskew
     Settings::setDegress(std::set<PageId> const& pages, Params const& params)
     {
         QMutexLocker const locker(&m_mutex);
-        for (PageId const& page :  pages) {
+        for (PageId const& page : pages) {
             Utils::mapSetValue(m_perPageParams, page, params);
         }
     }
-
-} 
+}  // namespace deskew

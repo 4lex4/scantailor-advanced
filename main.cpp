@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "config.h"
 #include "Application.h"
@@ -29,9 +30,9 @@
 
 #include "CommandLine.h"
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-
     Application app(argc, argv);
 
 #ifdef _WIN32
@@ -43,11 +44,13 @@ int main(int argc, char** argv)
 
     if (cli.isError()) {
         cli.printHelp();
+
         return 1;
     }
 
     if (cli.hasHelp()) {
         cli.printHelp();
+
         return 0;
     }
 
@@ -101,4 +104,5 @@ int main(int argc, char** argv)
     }
 
     return app.exec();
-}
+}  // main
+

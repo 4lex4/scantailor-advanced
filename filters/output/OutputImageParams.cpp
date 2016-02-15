@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutputImageParams.h"
 #include "ImageTransformation.h"
@@ -24,42 +25,41 @@
 
 namespace output
 {
-
-    OutputImageParams::OutputImageParams(
-            QSize const& out_image_size, QRect const& content_rect,
-            ImageTransformation xform,
-            Dpi const& dpi, ColorParams const& color_params,
-            DewarpingMode const& dewarping_mode,
-            dewarping::DistortionModel const& distortion_model,
-            DepthPerception const& depth_perception,
-            DespeckleLevel const despeckle_level,
-            PictureShape const picture_shape)
-            : m_size(out_image_size),
-              m_contentRect(content_rect),
-              m_dpi(dpi),
-              m_colorParams(color_params),
-              m_pictureShape(picture_shape),
-              m_distortionModel(distortion_model),
-              m_depthPerception(depth_perception),
-              m_dewarpingMode(dewarping_mode),
-              m_despeckleLevel(despeckle_level)
+    OutputImageParams::OutputImageParams(QSize const& out_image_size,
+                                         QRect const& content_rect,
+                                         ImageTransformation xform,
+                                         Dpi const& dpi,
+                                         ColorParams const& color_params,
+                                         DewarpingMode const& dewarping_mode,
+                                         dewarping::DistortionModel const& distortion_model,
+                                         DepthPerception const& depth_perception,
+                                         DespeckleLevel const despeckle_level,
+                                         PictureShape const picture_shape)
+        : m_size(out_image_size),
+          m_contentRect(content_rect),
+          m_dpi(dpi),
+          m_colorParams(color_params),
+          m_pictureShape(picture_shape),
+          m_distortionModel(distortion_model),
+          m_depthPerception(depth_perception),
+          m_dewarpingMode(dewarping_mode),
+          m_despeckleLevel(despeckle_level)
     {
         xform.setPostCropArea(QPolygonF());
         m_partialXform = xform.transform();
     }
 
     OutputImageParams::OutputImageParams(QDomElement const& el)
-            : m_size(XmlUnmarshaller::size(el.namedItem("size").toElement())),
-              m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
-              m_partialXform(el.namedItem("partial-xform").toElement()),
-              m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
-              m_colorParams(el.namedItem("color-params").toElement()),
-              m_distortionModel(el.namedItem("distortion-model").toElement()),
-              m_depthPerception(el.attribute("depthPerception")),
-              m_dewarpingMode(el.attribute("dewarpingMode")),
-              m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel")))
-    {
-    }
+        : m_size(XmlUnmarshaller::size(el.namedItem("size").toElement())),
+          m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
+          m_partialXform(el.namedItem("partial-xform").toElement()),
+          m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+          m_colorParams(el.namedItem("color-params").toElement()),
+          m_distortionModel(el.namedItem("distortion-model").toElement()),
+          m_depthPerception(el.attribute("depthPerception")),
+          m_dewarpingMode(el.attribute("dewarpingMode")),
+          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel")))
+    { }
 
     QDomElement
     OutputImageParams::toXml(QDomDocument& doc, QString const& name) const
@@ -121,12 +121,13 @@ namespace output
         }
 
         return true;
-    }
+    }  // OutputImageParams::matches
 
     bool
-    OutputImageParams::colorParamsMatch(
-            ColorParams const& cp1, DespeckleLevel const dl1,
-            ColorParams const& cp2, DespeckleLevel const dl2)
+    OutputImageParams::colorParamsMatch(ColorParams const& cp1,
+                                        DespeckleLevel const dl1,
+                                        ColorParams const& cp2,
+                                        DespeckleLevel const dl2)
     {
         if (cp1.colorMode() != cp2.colorMode()) {
             return false;
@@ -139,7 +140,8 @@ namespace output
                     return false;
                 }
                 break;
-            default:;
+            default:
+                ;
         }
 
         switch (cp1.colorMode()) {
@@ -152,37 +154,35 @@ namespace output
                     return false;
                 }
                 break;
-            default:;
+            default:
+                ;
         }
 
         return true;
-    }
+    }  // OutputImageParams::colorParamsMatch
 
-/*=============================== PartialXform =============================*/
+    /*=============================== PartialXform =============================*/
 
     OutputImageParams::PartialXform::PartialXform()
-            : m_11(),
-              m_12(),
-              m_21(),
-              m_22()
-    {
-    }
+        : m_11(),
+          m_12(),
+          m_21(),
+          m_22()
+    { }
 
     OutputImageParams::PartialXform::PartialXform(QTransform const& xform)
-            : m_11(xform.m11()),
-              m_12(xform.m12()),
-              m_21(xform.m21()),
-              m_22(xform.m22())
-    {
-    }
+        : m_11(xform.m11()),
+          m_12(xform.m12()),
+          m_21(xform.m21()),
+          m_22(xform.m22())
+    { }
 
     OutputImageParams::PartialXform::PartialXform(QDomElement const& el)
-            : m_11(el.namedItem("m11").toElement().text().toDouble()),
-              m_12(el.namedItem("m12").toElement().text().toDouble()),
-              m_21(el.namedItem("m21").toElement().text().toDouble()),
-              m_22(el.namedItem("m22").toElement().text().toDouble())
-    {
-    }
+        : m_11(el.namedItem("m11").toElement().text().toDouble()),
+          m_12(el.namedItem("m12").toElement().text().toDouble()),
+          m_21(el.namedItem("m21").toElement().text().toDouble()),
+          m_22(el.namedItem("m22").toElement().text().toDouble())
+    { }
 
     QDomElement
     OutputImageParams::PartialXform::toXml(QDomDocument& doc, QString const& name) const
@@ -210,5 +210,4 @@ namespace output
     {
         return fabs(v1 - v2) < 0.0001;
     }
-
-} 
+}  // namespace output

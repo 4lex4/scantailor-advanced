@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_RASTEROP_H_
 #define IMAGEPROC_RASTEROP_H_
@@ -29,68 +30,66 @@
 
 namespace imageproc
 {
+    /**
+     * \brief Perform pixel-wise logical operations on portions of images.
+     *
+     * \param dst The destination image.  Changes will be written there.
+     * \param dr The rectangle within the destination image to process.
+     * \param src The source image.  May be the same as the destination image.
+     * \param sp The top-left corner of the rectangle within the source image
+     *           to process.  The rectangle itself is assumed to be the same
+     *           as the destination rectangle.
+     *
+     * The template argument is the operation to perform.  This is generally
+     * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
+     */
+    template <typename Rop>
+    void rasterOp(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp);
 
-/**
- * \brief Perform pixel-wise logical operations on portions of images.
- *
- * \param dst The destination image.  Changes will be written there.
- * \param dr The rectangle within the destination image to process.
- * \param src The source image.  May be the same as the destination image.
- * \param sp The top-left corner of the rectangle within the source image
- *           to process.  The rectangle itself is assumed to be the same
- *           as the destination rectangle.
- *
- * The template argument is the operation to perform.  This is generally
- * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
- */
-    template<typename Rop>
-    void rasterOp(BinaryImage& dst, QRect const& dr,
-                  BinaryImage const& src, QPoint const& sp);
-
-/**
- * \brief Perform pixel-wise logical operations on whole images.
- *
- * \param dst The destination image.  Changes will be written there.
- * \param src The source image.  May be the same as the destination image,
- *        otherwise it must have the same dimensions.
- *
- * The template argument is the operation to perform.  This is generally
- * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
- */
-    template<typename Rop>
+    /**
+     * \brief Perform pixel-wise logical operations on whole images.
+     *
+     * \param dst The destination image.  Changes will be written there.
+     * \param src The source image.  May be the same as the destination image,
+     *        otherwise it must have the same dimensions.
+     *
+     * The template argument is the operation to perform.  This is generally
+     * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
+     */
+    template <typename Rop>
     void rasterOp(BinaryImage& dst, BinaryImage const& src);
 
-/**
- * \brief Raster operation that takes source pixels as they are.
- * \see rasterOp()
- */
+    /**
+     * \brief Raster operation that takes source pixels as they are.
+     * \see rasterOp()
+     */
     class RopSrc
     {
     public:
-        static uint32_t transform(uint32_t src, uint32_t /*dst*/)
+        static uint32_t transform(uint32_t src, uint32_t  /*dst*/)
         {
             return src;
         }
     };
 
-/**
- * \brief Raster operation that takes destination pixels as they are.
- * \see rasterOp()
- */
+    /**
+     * \brief Raster operation that takes destination pixels as they are.
+     * \see rasterOp()
+     */
     class RopDst
     {
     public:
-        static uint32_t transform(uint32_t /*src*/, uint32_t dst)
+        static uint32_t transform(uint32_t  /*src*/, uint32_t dst)
         {
             return dst;
         }
     };
 
-/**
- * \brief Raster operation that performs a logical NOT operation.
- * \see rasterOp()
- */
-    template<typename Arg>
+    /**
+     * \brief Raster operation that performs a logical NOT operation.
+     * \see rasterOp()
+     */
+    template <typename Arg>
     class RopNot
     {
     public:
@@ -100,11 +99,11 @@ namespace imageproc
         }
     };
 
-/**
- * \brief Raster operation that performs a logical AND operation.
- * \see rasterOp()
- */
-    template<typename Arg1, typename Arg2>
+    /**
+     * \brief Raster operation that performs a logical AND operation.
+     * \see rasterOp()
+     */
+    template <typename Arg1, typename Arg2>
     class RopAnd
     {
     public:
@@ -114,11 +113,11 @@ namespace imageproc
         }
     };
 
-/**
- * \brief Raster operation that performs a logical OR operation.
- * \see rasterOp()
- */
-    template<typename Arg1, typename Arg2>
+    /**
+     * \brief Raster operation that performs a logical OR operation.
+     * \see rasterOp()
+     */
+    template <typename Arg1, typename Arg2>
     class RopOr
     {
     public:
@@ -128,11 +127,11 @@ namespace imageproc
         }
     };
 
-/**
- * \brief Raster operation that performs a logical XOR operation.
- * \see rasterOp()
- */
-    template<typename Arg1, typename Arg2>
+    /**
+     * \brief Raster operation that performs a logical XOR operation.
+     * \see rasterOp()
+     */
+    template <typename Arg1, typename Arg2>
     class RopXor
     {
     public:
@@ -142,11 +141,11 @@ namespace imageproc
         }
     };
 
-/**
- * \brief Raster operation that subtracts black pixels of Arg2 from Arg1.
- * \see rasterOp()
- */
-    template<typename Arg1, typename Arg2>
+    /**
+     * \brief Raster operation that subtracts black pixels of Arg2 from Arg1.
+     * \see rasterOp()
+     */
+    template <typename Arg1, typename Arg2>
     class RopSubtract
     {
     public:
@@ -154,15 +153,16 @@ namespace imageproc
         {
             uint32_t lhs = Arg1::transform(src, dst);
             uint32_t rhs = Arg2::transform(src, dst);
+
             return lhs & (lhs ^ rhs);
         }
     };
 
-/**
- * \brief Raster operation that subtracts white pixels of Arg2 from Arg1.
- * \see rasterOp()
- */
-    template<typename Arg1, typename Arg2>
+    /**
+     * \brief Raster operation that subtracts white pixels of Arg2 from Arg1.
+     * \see rasterOp()
+     */
+    template <typename Arg1, typename Arg2>
     class RopSubtractWhite
     {
     public:
@@ -170,17 +170,18 @@ namespace imageproc
         {
             uint32_t lhs = Arg1::transform(src, dst);
             uint32_t rhs = Arg2::transform(src, dst);
+
             return lhs | ~(lhs ^ rhs);
         }
     };
 
-/**
- * \brief Polymorphic interface for raster operations.
- *
- * If you want to parametrize some of your code with a raster operation,
- * one way to do it is to have Rop as a template argument.  The other,
- * and usually better way is to have this class as a non-template argument.
- */
+    /**
+     * \brief Polymorphic interface for raster operations.
+     *
+     * If you want to parametrize some of your code with a raster operation,
+     * one way to do it is to have Rop as a template argument.  The other,
+     * and usually better way is to have this class as a non-template argument.
+     */
     class AbstractRasterOp
     {
     public:
@@ -190,26 +191,22 @@ namespace imageproc
         /**
          * \see rasterOp()
          */
-        virtual void operator()(
-                BinaryImage& dst, QRect const& dr,
-                BinaryImage const& src, QPoint const& sp) const = 0;
+        virtual void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const = 0;
     };
 
-/**
- * \brief A pre-defined raster operation to be called polymorphically.
- */
-    template<typename Rop>
-    class TemplateRasterOp : public AbstractRasterOp
+    /**
+     * \brief A pre-defined raster operation to be called polymorphically.
+     */
+    template <typename Rop>
+    class TemplateRasterOp
+        : public AbstractRasterOp
     {
     public:
         /**
          * \see rasterOp()
          */
-        virtual void operator()(
-                BinaryImage& dst, QRect const& dr,
-                BinaryImage const& src, QPoint const& sp) const
+        virtual void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const
         {
-
             rasterOp<Rop>(dst, dr, src, sp);
         }
     };
@@ -217,11 +214,14 @@ namespace imageproc
 
     namespace detail
     {
-
-        template<typename Rop>
-        void rasterOpInDirection(
-                BinaryImage& dst, QRect const& dr,
-                BinaryImage const& src, QPoint const& sp, int const dy, int const dx)
+        template <typename Rop>
+        void
+        rasterOpInDirection(BinaryImage& dst,
+                            QRect const& dr,
+                            BinaryImage const& src,
+                            QPoint const& sp,
+                            int const dy,
+                            int const dx)
         {
             int const src_start_bit = sp.x() % 32;
             int const dst_start_bit = dr.x() % 32;
@@ -265,7 +265,7 @@ namespace imageproc
                 assert(dr.bottom() == dr.y() + dr.height() - 1);
                 dst_span = dst.data() - dr.bottom() * dst_span_delta + dr.x() / 32;
                 src_span = src.data() - (sp.y() + dr.height() - 1)
-                                        * src_span_delta + sp.x() / 32;
+                           * src_span_delta + sp.x() / 32;
             }
 
             int src_word1_shift;
@@ -285,7 +285,7 @@ namespace imageproc
                     uint32_t const mask = first_dst_mask & last_dst_mask;
 
                     for (int i = dr.height(); i > 0; --i,
-                            src_span += src_span_delta, dst_span += dst_span_delta) {
+                         src_span += src_span_delta, dst_span += dst_span_delta) {
                         uint32_t const src_word = src_span[0];
                         uint32_t const dst_word = dst_span[0];
                         uint32_t const new_dst_word = Rop::transform(src_word, dst_word);
@@ -294,8 +294,7 @@ namespace imageproc
                 }
                 else {
                     for (int i = dr.height(); i > 0; --i,
-                            src_span += src_span_delta, dst_span += dst_span_delta) {
-
+                         src_span += src_span_delta, dst_span += dst_span_delta) {
                         int widx = first_dst_word;
 
                         uint32_t src_word = src_span[widx];
@@ -315,6 +314,7 @@ namespace imageproc
                         dst_span[widx] = (dst_word & ~last_dst_mask) | (new_dst_word & last_dst_mask);
                     }
                 }
+
                 return;
             }
 
@@ -325,7 +325,7 @@ namespace imageproc
                 uint32_t const can_word2 = (~uint32_t(0) >> src_word2_shift) & mask;
 
                 for (int i = dr.height(); i > 0; --i,
-                        src_span += src_span_delta, dst_span += dst_span_delta) {
+                     src_span += src_span_delta, dst_span += dst_span_delta) {
                     uint32_t src_word = 0;
                     if (can_word1) {
                         uint32_t const src_word1 = src_span[0];
@@ -347,8 +347,7 @@ namespace imageproc
                 uint32_t const can_last_word2 = (~uint32_t(0) >> src_word2_shift) & last_dst_mask;
 
                 for (int i = dr.height(); i > 0; --i,
-                        src_span += src_span_delta, dst_span += dst_span_delta) {
-
+                     src_span += src_span_delta, dst_span += dst_span_delta) {
                     int widx = first_dst_word;
 
                     uint32_t src_word = 0;
@@ -372,10 +371,10 @@ namespace imageproc
                         dst_span[widx - dx] = new_dst_word;
 
                         new_dst_word = Rop::transform(
-                                (src_word1 << src_word1_shift) |
-                                (src_word2 >> src_word2_shift),
-                                dst_word
-                        );
+                            (src_word1 << src_word1_shift)
+                            | (src_word2 >> src_word2_shift),
+                            dst_word
+                                       );
                     }
 
                     src_word = 0;
@@ -396,13 +395,12 @@ namespace imageproc
                     dst_span[widx] = new_dst_word;
                 }
             }
-        }
+        }  // rasterOpInDirection
+    }  // namespace detail
 
-    }
-
-    template<typename Rop>
-    void rasterOp(BinaryImage& dst, QRect const& dr,
-                  BinaryImage const& src, QPoint const& sp)
+    template <typename Rop>
+    void
+    rasterOp(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp)
     {
         using namespace detail;
 
@@ -424,23 +422,25 @@ namespace imageproc
 
 
         if (&dst == &src) {
-
             if (dr.y() > sp.y()) {
                 rasterOpInDirection<Rop>(dst, dr, src, sp, -1, 1);
+
                 return;
             }
 
-            if (dr.y() == sp.y() && dr.x() > sp.x()) {
+            if ((dr.y() == sp.y()) && (dr.x() > sp.x())) {
                 rasterOpInDirection<Rop>(dst, dr, src, sp, 1, -1);
+
                 return;
             }
         }
 
         rasterOpInDirection<Rop>(dst, dr, src, sp, 1, 1);
-    }
+    }  // rasterOp
 
-    template<typename Rop>
-    void rasterOp(BinaryImage& dst, BinaryImage const& src)
+    template <typename Rop>
+    void
+    rasterOp(BinaryImage& dst, BinaryImage const& src)
     {
         using namespace detail;
 
@@ -454,6 +454,5 @@ namespace imageproc
 
         rasterOpInDirection<Rop>(dst, dst.rect(), src, QPoint(0, 0), 1, 1);
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_RASTEROP_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,14 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ToLineProjector.h"
 
 ToLineProjector::ToLineProjector(QLineF const& line)
-        : m_origin(line.p1()),
-          m_vec(line.p2() - line.p1()),
-          m_mat(m_vec)
+    : m_origin(line.p1()),
+      m_vec(line.p2() - line.p1()),
+      m_mat(m_vec)
 {
     using namespace std;
 
@@ -40,6 +41,7 @@ double
 ToLineProjector::projectionScalar(QPointF const& pt) const
 {
     Vec2d const b(pt - m_origin);
+
     return m_mat.dot(b);
 }
 
@@ -66,3 +68,4 @@ ToLineProjector::projectionSqDist(QPointF const& pt) const
 {
     return Vec2d(projectionPoint(pt) - pt).squaredNorm();
 }
+

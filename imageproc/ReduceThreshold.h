@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_REDUCETHRESHOLD_H_
 #define IMAGEPROC_REDUCETHRESHOLD_H_
@@ -23,32 +24,31 @@
 
 namespace imageproc
 {
-
-/**
- * \brief Performs 2x horizontal and vertical downscaling on 1-bit images.
- *
- * The dimensions of the target image will be:
- * \code
- * dst_width = max(1, floor(src_width / 2));
- * dst_height = max(1, floor(src_height / 2));
- * \endcode
- * \n
- * Processing a null image results in a null image.
- * Processing a non-null image never results in a null image.\n
- * \n
- * A 2x2 square in the source image becomes 1 pixel in the target image.
- * The threshold parameter controls how many black pixels need to be in
- * the source 2x2 square in order to make the destination pixel black.
- * Valid threshold values are 1, 2, 3 and 4.\n
- * \n
- * If the source image is a line 1 pixel thick, downscaling will be done
- * as if the line was thickened to 2 pixels by duplicating existing pixels.\n
- * \n
- * It is possible to do a cascade of reductions:
- * \code
- * BinaryImage out = ReduceThreshold(input)(4)(4)(3);
- * \endcode
- */
+    /**
+     * \brief Performs 2x horizontal and vertical downscaling on 1-bit images.
+     *
+     * The dimensions of the target image will be:
+     * \code
+     * dst_width = max(1, floor(src_width / 2));
+     * dst_height = max(1, floor(src_height / 2));
+     * \endcode
+     * \n
+     * Processing a null image results in a null image.
+     * Processing a non-null image never results in a null image.\n
+     * \n
+     * A 2x2 square in the source image becomes 1 pixel in the target image.
+     * The threshold parameter controls how many black pixels need to be in
+     * the source 2x2 square in order to make the destination pixel black.
+     * Valid threshold values are 1, 2, 3 and 4.\n
+     * \n
+     * If the source image is a line 1 pixel thick, downscaling will be done
+     * as if the line was thickened to 2 pixels by duplicating existing pixels.\n
+     * \n
+     * It is possible to do a cascade of reductions:
+     * \code
+     * BinaryImage out = ReduceThreshold(input)(4)(4)(3);
+     * \endcode
+     */
     class ReduceThreshold
     {
     public:
@@ -61,13 +61,16 @@ namespace imageproc
          * \brief Implicit conversion to BinaryImage.
          */
         operator BinaryImage const&() const
-        { return m_image; }
+        { return m_image;
+        }
 
         /**
          * \brief Returns a reference to the reduced image.
          */
         BinaryImage const& image() const
-        { return m_image; }
+        {
+            return m_image;
+        }
 
         /**
          * \brief Performs a reduction and returns *this.
@@ -92,7 +95,5 @@ namespace imageproc
          */
         BinaryImage m_image;
     };
-
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_REDUCETHRESHOLD_H_

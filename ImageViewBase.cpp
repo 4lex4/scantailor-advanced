@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageViewBase.h"
 #include "ImagePresentation.h"
@@ -36,28 +37,30 @@
 
 using namespace imageproc;
 
-class ImageViewBase::HqTransformTask :
-        public AbstractCommand0<IntrusivePtr<AbstractCommand0<void> > >,
-        public QObject
+class ImageViewBase::HqTransformTask
+    : public AbstractCommand0<IntrusivePtr<AbstractCommand0<void>>>,
+      public QObject
 {
-DECLARE_NON_COPYABLE(HqTransformTask)
+    DECLARE_NON_COPYABLE(HqTransformTask)
 
 public:
-    HqTransformTask(
-            ImageViewBase* image_view,
-            QImage const& image, QTransform const& xform,
-            QSize const& target_size);
+    HqTransformTask(ImageViewBase* image_view, QImage const& image, QTransform const& xform, QSize const& target_size);
 
     void cancel()
-    { m_ptrResult->cancel(); }
+    {
+        m_ptrResult->cancel();
+    }
 
     bool const isCancelled() const
-    { return m_ptrResult->isCancelled(); }
+    {
+        return m_ptrResult->isCancelled();
+    }
 
-    virtual IntrusivePtr<AbstractCommand0<void> > operator()();
+    virtual IntrusivePtr<AbstractCommand0<void>> operator()();
 
 private:
-    class Result : public AbstractCommand0<void>
+    class Result
+        : public AbstractCommand0<void>
     {
     public:
         Result(ImageViewBase* image_view);
@@ -65,10 +68,14 @@ private:
         void setData(QPoint const& origin, QImage const& hq_image);
 
         void cancel()
-        { m_cancelFlag.fetchAndStoreRelaxed(1); }
+        {
+            m_cancelFlag.fetchAndStoreRelaxed(1);
+        }
 
         bool isCancelled() const
-        { return m_cancelFlag.fetchAndAddRelaxed(0) != 0; }
+        {
+            return m_cancelFlag.fetchAndAddRelaxed(0) != 0;
+        }
 
         virtual void operator()();
 
@@ -131,47 +138,46 @@ private:
 };
 
 
-ImageViewBase::ImageViewBase(
-        QImage const& image, ImagePixmapUnion const& downscaled_version,
-        ImagePresentation const& presentation, Margins const& margins)
-        : m_image(image),
-          m_virtualImageCropArea(presentation.cropArea()),
-          m_virtualDisplayArea(presentation.displayArea()),
-          m_imageToVirtual(presentation.transform()),
-          m_virtualToImage(presentation.transform().inverted()),
-          m_lastMaximumViewportSize(maximumViewportSize()),
-          m_margins(margins),
-          m_zoom(1.0),
-          m_transformChangeWatchersActive(0),
-          m_ignoreScrollEvents(0),
-          m_ignoreResizeEvents(0),
-          m_hqTransformEnabled(true)
+ImageViewBase::ImageViewBase(QImage const& image,
+                             ImagePixmapUnion const& downscaled_version,
+                             ImagePresentation const& presentation,
+                             Margins const& margins)
+    : m_image(image),
+      m_virtualImageCropArea(presentation.cropArea()),
+      m_virtualDisplayArea(presentation.displayArea()),
+      m_imageToVirtual(presentation.transform()),
+      m_virtualToImage(presentation.transform().inverted()),
+      m_lastMaximumViewportSize(maximumViewportSize()),
+      m_margins(margins),
+      m_zoom(1.0),
+      m_transformChangeWatchersActive(0),
+      m_ignoreScrollEvents(0),
+      m_ignoreResizeEvents(0),
+      m_hqTransformEnabled(true)
 {
-
-/* For some reason, the default viewport fills background with
- * a color different from QPalette::Window. Here we make it not
- * fill it at all, assuming QMainWindow will do that anyway
- * (with the correct color). Note that an attempt to do the same
- * to an OpenGL viewport produces "black hole" artefacts. Therefore,
- * we do this before setting an OpenGL viewport rather than after.
- */
+    /* For some reason, the default viewport fills background with
+     * a color different from QPalette::Window. Here we make it not
+     * fill it at all, assuming QMainWindow will do that anyway
+     * (with the correct color). Note that an attempt to do the same
+     * to an OpenGL viewport produces "black hole" artefacts. Therefore,
+     * we do this before setting an OpenGL viewport rather than after.
+     */
     viewport()->setAutoFillBackground(false);
 
-	if (QSettings().value("settings/use_3d_acceleration", false) != false) {
-		if (OpenGLSupport::supported()) {
-			QGLFormat format;
-			format.setSampleBuffers(true);
-			format.setStencil(true);
-			format.setAlpha(true);
-			format.setRgba(true);
-			format.setDepth(false);
+    if (QSettings().value("settings/use_3d_acceleration", false) != false) {
+        if (OpenGLSupport::supported()) {
+            QGLFormat format;
+            format.setSampleBuffers(true);
+            format.setStencil(true);
+            format.setAlpha(true);
+            format.setRgba(true);
+            format.setDepth(false);
 
-			// Most of hardware refuses to work for us with direct rendering enabled.
             format.setDirectRendering(false);
 
-			setViewport(new QGLWidget(format));
-		}
-	}
+            setViewport(new QGLWidget(format));
+        }
+    }
 
     setFrameShape(QFrame::NoFrame);
     viewport()->setFocusPolicy(Qt::WheelFocus);
@@ -187,8 +193,8 @@ ImageViewBase::ImageViewBase(
     }
 
     m_pixmapToImage.scale(
-            (double) m_image.width() / m_pixmap.width(),
-            (double) m_image.height() / m_pixmap.height()
+        (double)m_image.width() / m_pixmap.width(),
+        (double)m_image.height() / m_pixmap.height()
     );
 
     m_widgetFocalPoint = centeredWidgetFocalPoint();
@@ -197,14 +203,14 @@ ImageViewBase::ImageViewBase(
     m_timer.setSingleShot(true);
     m_timer.setInterval(150);
     connect(
-            &m_timer, SIGNAL(timeout()),
-            this, SLOT(initiateBuildingHqVersion())
+        &m_timer, SIGNAL(timeout()),
+        this, SLOT(initiateBuildingHqVersion())
     );
 
     updateWidgetTransformAndFixFocalPoint(CENTER_IF_FITS);
 
     interactionState().setDefaultStatusTip(
-            tr("Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.")
+        tr("Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.")
     );
     ensureStatusTip(interactionState().statusTip());
 
@@ -215,8 +221,7 @@ ImageViewBase::ImageViewBase(
 }
 
 ImageViewBase::~ImageViewBase()
-{
-}
+{ }
 
 void
 ImageViewBase::hqTransformSetEnabled(bool const enabled)
@@ -254,15 +259,16 @@ ImageViewBase::createDownscaledImage(QImage const& image)
     d_w = qBound(1, d_w, o_w);
     d_h = qBound(1, d_h, o_h);
 
-    if (d_w * 1.2 > o_w || d_h * 1.2 > o_h) {
+    if ((d_w * 1.2 > o_w) || (d_h * 1.2 > o_h)) {
         return image;
     }
 
     QTransform xform;
-    xform.scale((double) d_w / o_w, (double) d_h / o_h);
+    xform.scale((double)d_w / o_w, (double)d_h / o_h);
+
     return transform(
-            image, xform, QRect(0, 0, d_w, d_h),
-            OutsidePixels::assumeColor(Qt::white)
+        image, xform, QRect(0, 0, d_w, d_h),
+        OutsidePixels::assumeColor(Qt::white)
     );
 }
 
@@ -272,12 +278,13 @@ ImageViewBase::maxViewportRect() const
     QRectF const viewport_rect(QPointF(0, 0), maximumViewportSize());
     QRectF r(viewport_rect);
     r.adjust(
-            m_margins.left(), m_margins.top(),
-            -m_margins.right(), -m_margins.bottom()
+        m_margins.left(), m_margins.top(),
+        -m_margins.right(), -m_margins.bottom()
     );
     if (r.isEmpty()) {
         return QRectF(viewport_rect.center(), viewport_rect.center());
     }
+
     return r;
 }
 
@@ -287,12 +294,13 @@ ImageViewBase::dynamicViewportRect() const
     QRectF const viewport_rect(viewport()->rect());
     QRectF r(viewport_rect);
     r.adjust(
-            m_margins.left(), m_margins.top(),
-            -m_margins.right(), -m_margins.bottom()
+        m_margins.left(), m_margins.top(),
+        -m_margins.right(), -m_margins.bottom()
     );
     if (r.isEmpty()) {
         return QRectF(viewport_rect.center(), viewport_rect.center());
     }
+
     return r;
 }
 
@@ -300,19 +308,20 @@ QRectF
 ImageViewBase::getOccupiedWidgetRect() const
 {
     QRectF const widget_rect(m_virtualToWidget.mapRect(virtualDisplayRect()));
+
     return widget_rect.intersected(dynamicViewportRect());
 }
 
 void
 ImageViewBase::setWidgetFocalPoint(QPointF const& widget_fp)
 {
-    setNewWidgetFP(widget_fp, /*update =*/true);
+    setNewWidgetFP(widget_fp,  /*update =*/ true);
 }
 
 void
 ImageViewBase::adjustAndSetWidgetFocalPoint(QPointF const& widget_fp)
 {
-    adjustAndSetNewWidgetFP(widget_fp, /*update=*/true);
+    adjustAndSetNewWidgetFP(widget_fp,  /*update=*/ true);
 }
 
 void
@@ -367,8 +376,7 @@ ImageViewBase::updateTransform(ImagePresentation const& presentation)
 }
 
 void
-ImageViewBase::updateTransformAndFixFocalPoint(
-        ImagePresentation const& presentation, FocalPointMode const mode)
+ImageViewBase::updateTransformAndFixFocalPoint(ImagePresentation const& presentation, FocalPointMode const mode)
 {
     TransformChangeWatcher const watcher(*this);
     TempFocalPointAdjuster const temp_fp(*this);
@@ -391,7 +399,7 @@ ImageViewBase::updateTransformPreservingScale(ImagePresentation const& presentat
     QLineF const image_line(0.0, 0.0, 1.0, 1.0);
 
     QLineF const widget_line_before(
-            (m_imageToVirtual * m_virtualToWidget).map(image_line)
+        (m_imageToVirtual * m_virtualToWidget).map(image_line)
     );
 
     m_imageToVirtual = presentation.transform();
@@ -402,7 +410,7 @@ ImageViewBase::updateTransformPreservingScale(ImagePresentation const& presentat
     updateWidgetTransform();
 
     QLineF const widget_line_after(
-            (m_imageToVirtual * m_virtualToWidget).map(image_line)
+        (m_imageToVirtual * m_virtualToWidget).map(image_line)
     );
 
     m_zoom *= widget_line_before.length() / widget_line_after.length();
@@ -455,7 +463,7 @@ ImageViewBase::paintEvent(QPaintEvent* event)
         scheduleHqVersionRebuild();
 
         painter.setWorldTransform(
-                m_pixmapToImage * m_imageToVirtual * m_virtualToWidget
+            m_pixmapToImage * m_imageToVirtual * m_virtualToWidget
         );
         PixmapRenderer::drawPixmap(painter, m_pixmap);
     }
@@ -465,18 +473,18 @@ ImageViewBase::paintEvent(QPaintEvent* event)
 
 
     QPolygonF const image_area(
-            PolygonUtils::round(
-                    m_virtualToWidget.map(
-                            m_imageToVirtual.map(QRectF(m_image.rect()))
-                    )
+        PolygonUtils::round(
+            m_virtualToWidget.map(
+                m_imageToVirtual.map(QRectF(m_image.rect()))
             )
+        )
     );
     QPolygonF const crop_area(
-            PolygonUtils::round(m_virtualToWidget.map(m_virtualImageCropArea))
+        PolygonUtils::round(m_virtualToWidget.map(m_virtualImageCropArea))
     );
 
     QPolygonF const intersected_area(
-            PolygonUtils::round(image_area.intersected(crop_area))
+        PolygonUtils::round(image_area.intersected(crop_area))
     );
 
     QPainterPath intersected_path;
@@ -501,14 +509,14 @@ ImageViewBase::paintEvent(QPaintEvent* event)
     m_interactionState.resetProximity();
     if (!m_interactionState.captured()) {
         m_rootInteractionHandler.proximityUpdate(
-                QPointF(0.5, 0.5) + mapFromGlobal(QCursor::pos()), m_interactionState
+            QPointF(0.5, 0.5) + mapFromGlobal(QCursor::pos()), m_interactionState
         );
         updateStatusTipAndCursor();
     }
 
     m_rootInteractionHandler.paint(painter, m_interactionState);
     maybeQueueRedraw();
-}
+}  // ImageViewBase::paintEvent
 
 void
 ImageViewBase::keyPressEvent(QKeyEvent* event)
@@ -536,7 +544,7 @@ ImageViewBase::mousePressEvent(QMouseEvent* event)
     m_interactionState.resetProximity();
     if (!m_interactionState.captured()) {
         m_rootInteractionHandler.proximityUpdate(
-                QPointF(0.5, 0.5) + event->pos(), m_interactionState
+            QPointF(0.5, 0.5) + event->pos(), m_interactionState
         );
     }
 
@@ -553,7 +561,7 @@ ImageViewBase::mouseReleaseEvent(QMouseEvent* event)
     m_interactionState.resetProximity();
     if (!m_interactionState.captured()) {
         m_rootInteractionHandler.proximityUpdate(
-                QPointF(0.5, 0.5) + event->pos(), m_interactionState
+            QPointF(0.5, 0.5) + event->pos(), m_interactionState
         );
     }
 
@@ -570,7 +578,7 @@ ImageViewBase::mouseMoveEvent(QMouseEvent* event)
     m_interactionState.resetProximity();
     if (!m_interactionState.captured()) {
         m_rootInteractionHandler.proximityUpdate(
-                QPointF(0.5, 0.5) + event->pos(), m_interactionState
+            QPointF(0.5, 0.5) + event->pos(), m_interactionState
         );
     }
 
@@ -621,7 +629,7 @@ ImageViewBase::resizeEvent(QResizeEvent* event)
         TransformChangeWatcher const watcher(*this);
         TempFocalPointAdjuster const temp_fp(*this, QPointF(0, 0));
         updateTransformPreservingScale(
-                ImagePresentation(m_imageToVirtual, m_virtualImageCropArea, m_virtualDisplayArea)
+            ImagePresentation(m_imageToVirtual, m_virtualImageCropArea, m_virtualDisplayArea)
         );
     }
 }
@@ -680,8 +688,8 @@ ImageViewBase::updateScrollBars()
             ymin = std::min<double>(viewport_center.y(), viewport.bottom() - 0.5 * picture.height());
         }
 
-        int const xrange = (int) ceil(xmax - xmin);
-        int const yrange = (int) ceil(ymax - ymin);
+        int const xrange = (int)ceil(xmax - xmin);
+        int const yrange = (int)ceil(ymax - ymin);
         int const xfirst = 0;
         int const xlast = xrange - 1;
         int const yfirst = 0;
@@ -720,7 +728,7 @@ ImageViewBase::updateScrollBars()
             break;
         }
     }
-}
+}  // ImageViewBase::updateScrollBars
 
 void
 ImageViewBase::reactToScrollBars()
@@ -732,7 +740,7 @@ ImageViewBase::reactToScrollBars()
     TransformChangeWatcher const watcher(*this);
 
     QPointF const raw_position(
-            horizontalScrollBar()->value(), verticalScrollBar()->value()
+        horizontalScrollBar()->value(), verticalScrollBar()->value()
     );
     QPointF const new_fp(m_scrollTransform.map(raw_position));
     QPointF const old_fp(getWidgetFocalPoint());
@@ -827,34 +835,34 @@ ImageViewBase::getIdealWidgetFocalPoint(FocalPointMode const mode) const
 
     QPointF widget_focal_point(m_widgetFocalPoint);
 
-    if (mode == CENTER_IF_FITS && left_margin + right_margin >= 0.0) {
+    if ((mode == CENTER_IF_FITS) && (left_margin + right_margin >= 0.0)) {
         double const new_margins = 0.5 * (left_margin + right_margin);
         widget_focal_point.rx() += new_margins - left_margin;
     }
-    else if (left_margin < 0.0 && right_margin > 0.0) {
+    else if ((left_margin < 0.0) && (right_margin > 0.0)) {
         double const movement = std::min(fabs(left_margin), fabs(right_margin));
         widget_focal_point.rx() += movement;
     }
-    else if (right_margin < 0.0 && left_margin > 0.0) {
+    else if ((right_margin < 0.0) && (left_margin > 0.0)) {
         double const movement = std::min(fabs(left_margin), fabs(right_margin));
         widget_focal_point.rx() -= movement;
     }
 
-    if (mode == CENTER_IF_FITS && top_margin + bottom_margin >= 0.0) {
+    if ((mode == CENTER_IF_FITS) && (top_margin + bottom_margin >= 0.0)) {
         double const new_margins = 0.5 * (top_margin + bottom_margin);
         widget_focal_point.ry() += new_margins - top_margin;
     }
-    else if (top_margin < 0.0 && bottom_margin > 0.0) {
+    else if ((top_margin < 0.0) && (bottom_margin > 0.0)) {
         double const movement = std::min(fabs(top_margin), fabs(bottom_margin));
         widget_focal_point.ry() += movement;
     }
-    else if (bottom_margin < 0.0 && top_margin > 0.0) {
+    else if ((bottom_margin < 0.0) && (top_margin > 0.0)) {
         double const movement = std::min(fabs(top_margin), fabs(bottom_margin));
         widget_focal_point.ry() -= movement;
     }
 
     return widget_focal_point;
-}
+}  // ImageViewBase::getIdealWidgetFocalPoint
 
 void
 ImageViewBase::setNewWidgetFP(QPointF const widget_fp, bool const update)
@@ -880,8 +888,7 @@ ImageViewBase::setNewWidgetFP(QPointF const widget_fp, bool const update)
  *        has changed.
  */
 void
-ImageViewBase::adjustAndSetNewWidgetFP(
-        QPointF const proposed_widget_fp, bool const update)
+ImageViewBase::adjustAndSetNewWidgetFP(QPointF const proposed_widget_fp, bool const update)
 {
     QPointF const old_widget_fp(m_widgetFocalPoint);
     setNewWidgetFP(proposed_widget_fp, update);
@@ -915,7 +922,7 @@ ImageViewBase::adjustAndSetNewWidgetFP(
             this->update();
         }
     }
-}
+}  // ImageViewBase::adjustAndSetNewWidgetFP
 
 /**
  * Returns the center point of the available display area.
@@ -931,8 +938,8 @@ ImageViewBase::setWidgetFocalPointWithoutMoving(QPointF const new_widget_fp)
 {
     m_widgetFocalPoint = new_widget_fp;
     m_pixmapFocalPoint = m_virtualToImage.map(
-            m_widgetToVirtual.map(m_widgetFocalPoint)
-    );
+        m_widgetToVirtual.map(m_widgetFocalPoint)
+                         );
 }
 
 /**
@@ -965,7 +972,7 @@ ImageViewBase::scheduleHqVersionRebuild()
 {
     QTransform const xform(m_imageToVirtual * m_virtualToWidget);
 
-    if (!m_timer.isActive() || m_potentialHqXform != xform) {
+    if (!m_timer.isActive() || (m_potentialHqXform != xform)) {
         if (m_ptrHqTransformTask.get()) {
             m_ptrHqTransformTask->cancel();
             m_ptrHqTransformTask.reset();
@@ -991,7 +998,7 @@ ImageViewBase::initiateBuildingHqVersion()
 
     QTransform const xform(m_imageToVirtual * m_virtualToWidget);
     IntrusivePtr<HqTransformTask> const task(
-            new HqTransformTask(this, m_image, xform, viewport()->size())
+        new HqTransformTask(this, m_image, xform, viewport()->size())
     );
 
     backgroundExecutor().enqueueTask(task);
@@ -1005,8 +1012,7 @@ ImageViewBase::initiateBuildingHqVersion()
  * Gets called from HqTransformationTask::Result.
  */
 void
-ImageViewBase::hqVersionBuilt(
-        QPoint const& origin, QImage const& image)
+ImageViewBase::hqVersionBuilt(QPoint const& origin, QImage const& image)
 {
     if (!m_hqTransformEnabled) {
         return;
@@ -1050,43 +1056,42 @@ BackgroundExecutor&
 ImageViewBase::backgroundExecutor()
 {
     static BackgroundExecutor executor;
+
     return executor;
 }
 
-
 /*==================== ImageViewBase::HqTransformTask ======================*/
 
-ImageViewBase::HqTransformTask::HqTransformTask(
-        ImageViewBase* image_view,
-        QImage const& image, QTransform const& xform,
-        QSize const& target_size)
-        : m_ptrResult(new Result(image_view)),
-          m_image(image),
-          m_xform(xform),
-          m_targetSize(target_size)
-{
-}
+ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
+                                                QImage const& image,
+                                                QTransform const& xform,
+                                                QSize const& target_size)
+    : m_ptrResult(new Result(image_view)),
+      m_image(image),
+      m_xform(xform),
+      m_targetSize(target_size)
+{ }
 
-IntrusivePtr<AbstractCommand0<void> >
+IntrusivePtr<AbstractCommand0<void>>
 ImageViewBase::HqTransformTask::operator()()
 {
     if (isCancelled()) {
-        return IntrusivePtr<AbstractCommand0<void> >();
+        return IntrusivePtr<AbstractCommand0<void>>();
     }
 
     QRect const target_rect(
-            m_xform.map(
-                    QRectF(m_image.rect())
-            ).boundingRect().toRect().intersected(
-                    QRect(QPoint(0, 0), m_targetSize)
-            )
+        m_xform.map(
+            QRectF(m_image.rect())
+        ).boundingRect().toRect().intersected(
+            QRect(QPoint(0, 0), m_targetSize)
+        )
     );
 
     QImage hq_image(
-            transform(
-                    m_image, m_xform, target_rect,
-                    OutsidePixels::assumeWeakColor(Qt::white), QSizeF(0.0, 0.0)
-            )
+        transform(
+            m_image, m_xform, target_rect,
+            OutsidePixels::assumeWeakColor(Qt::white), QSizeF(0.0, 0.0)
+        )
     );
 #if defined(Q_WS_X11)
     hq_image = hq_image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
@@ -1096,18 +1101,14 @@ ImageViewBase::HqTransformTask::operator()()
     return m_ptrResult;
 }
 
-
 /*================ ImageViewBase::HqTransformTask::Result ================*/
 
-ImageViewBase::HqTransformTask::Result::Result(
-        ImageViewBase* image_view)
-        : m_ptrImageView(image_view)
-{
-}
+ImageViewBase::HqTransformTask::Result::Result(ImageViewBase* image_view)
+    : m_ptrImageView(image_view)
+{ }
 
 void
-ImageViewBase::HqTransformTask::Result::setData(
-        QPoint const& origin, QImage const& hq_image)
+ImageViewBase::HqTransformTask::Result::setData(QPoint const& origin, QImage const& hq_image)
 {
     m_hqImage = hq_image;
     m_origin = origin;
@@ -1121,20 +1122,18 @@ ImageViewBase::HqTransformTask::Result::operator()()
     }
 }
 
-
 /*================= ImageViewBase::TempFocalPointAdjuster =================*/
 
 ImageViewBase::TempFocalPointAdjuster::TempFocalPointAdjuster(ImageViewBase& obj)
-        : m_rObj(obj),
-          m_origWidgetFP(obj.getWidgetFocalPoint())
+    : m_rObj(obj),
+      m_origWidgetFP(obj.getWidgetFocalPoint())
 {
     obj.setWidgetFocalPointWithoutMoving(obj.centeredWidgetFocalPoint());
 }
 
-ImageViewBase::TempFocalPointAdjuster::TempFocalPointAdjuster(
-        ImageViewBase& obj, QPointF const temp_widget_fp)
-        : m_rObj(obj),
-          m_origWidgetFP(obj.getWidgetFocalPoint())
+ImageViewBase::TempFocalPointAdjuster::TempFocalPointAdjuster(ImageViewBase& obj, QPointF const temp_widget_fp)
+    : m_rObj(obj),
+      m_origWidgetFP(obj.getWidgetFocalPoint())
 {
     obj.setWidgetFocalPointWithoutMoving(temp_widget_fp);
 }
@@ -1144,14 +1143,13 @@ ImageViewBase::TempFocalPointAdjuster::~TempFocalPointAdjuster()
     m_rObj.setWidgetFocalPointWithoutMoving(m_origWidgetFP);
 }
 
-
 /*================== ImageViewBase::TransformChangeWatcher ================*/
 
 ImageViewBase::TransformChangeWatcher::TransformChangeWatcher(ImageViewBase& owner)
-        : m_rOwner(owner),
-          m_imageToVirtual(owner.m_imageToVirtual),
-          m_virtualToWidget(owner.m_virtualToWidget),
-          m_virtualDisplayArea(owner.m_virtualDisplayArea)
+    : m_rOwner(owner),
+      m_imageToVirtual(owner.m_imageToVirtual),
+      m_virtualToWidget(owner.m_virtualToWidget),
+      m_virtualDisplayArea(owner.m_virtualDisplayArea)
 {
     ++m_rOwner.m_transformChangeWatchersActive;
 }
@@ -1159,10 +1157,11 @@ ImageViewBase::TransformChangeWatcher::TransformChangeWatcher(ImageViewBase& own
 ImageViewBase::TransformChangeWatcher::~TransformChangeWatcher()
 {
     if (--m_rOwner.m_transformChangeWatchersActive == 0) {
-        if (m_imageToVirtual != m_rOwner.m_imageToVirtual ||
-            m_virtualToWidget != m_rOwner.m_virtualToWidget ||
-            m_virtualDisplayArea != m_rOwner.m_virtualDisplayArea) {
+        if ((m_imageToVirtual != m_rOwner.m_imageToVirtual)
+            || (m_virtualToWidget != m_rOwner.m_virtualToWidget)
+            || (m_virtualDisplayArea != m_rOwner.m_virtualDisplayArea)) {
             m_rOwner.transformChanged();
         }
     }
 }
+

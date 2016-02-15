@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,26 +15,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ProcessingTaskQueue.h"
 #include <boost/foreach.hpp>
 
-ProcessingTaskQueue::Entry::Entry(
-        PageInfo const& page_info, BackgroundTaskPtr const& tsk)
-        : pageInfo(page_info),
-          task(tsk),
-          takenForProcessing(false)
-{
-}
+ProcessingTaskQueue::Entry::Entry(PageInfo const& page_info, BackgroundTaskPtr const& tsk)
+    : pageInfo(page_info),
+      task(tsk),
+      takenForProcessing(false)
+{ }
 
 ProcessingTaskQueue::ProcessingTaskQueue()
-{
-}
+{ }
 
 void
-ProcessingTaskQueue::addProcessingTask(
-        PageInfo const& page_info, BackgroundTaskPtr const& task)
+ProcessingTaskQueue::addProcessingTask(PageInfo const& page_info, BackgroundTaskPtr const& task)
 {
     m_queue.push_back(Entry(page_info, task));
     m_pageToSelectWhenDone = PageInfo();
@@ -42,7 +39,7 @@ ProcessingTaskQueue::addProcessingTask(
 BackgroundTaskPtr
 ProcessingTaskQueue::takeForProcessing()
 {
-    for (Entry& ent :  m_queue) {
+    for (Entry& ent : m_queue) {
         if (!ent.takenForProcessing) {
             ent.takenForProcessing = true;
 
@@ -63,14 +60,12 @@ ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task)
     std::list<Entry>::iterator it(m_queue.begin());
     std::list<Entry>::iterator const end(m_queue.end());
 
-    for (; ; ++it) {
+    for (;; ++it) {
         if (it == end) {
-            // Task not found.
             return;
         }
 
         if (!it->takenForProcessing) {
-            // There is no point in looking further.
             return;
         }
 
@@ -79,15 +74,13 @@ ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task)
         }
     }
 
-    // If we reached this point, it means we've found our entry and
-    // have <it> pointing to it.
 
     bool const removing_selected_page = (m_selectedPage.id() == it->pageInfo.id());
 
     std::list<Entry>::iterator next_it(it);
     ++next_it;
 
-    if (next_it == end && m_pageToSelectWhenDone.isNull()) {
+    if ((next_it == end) && m_pageToSelectWhenDone.isNull()) {
         m_pageToSelectWhenDone = it->pageInfo;
     }
 
@@ -101,7 +94,7 @@ ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task)
             m_selectedPage = m_pageToSelectWhenDone;
         }
     }
-}
+}  // ProcessingTaskQueue::processingFinished
 
 PageInfo
 ProcessingTaskQueue::selectedPage() const
@@ -133,9 +126,6 @@ ProcessingTaskQueue::cancelAndRemove(std::set<PageId> const& pages)
                 m_selectedPage = PageInfo();
             }
 
-            // We don't bother matching against m_pageToSelectWhenDone,
-            // because in the current implementation that's always a page
-            // that's no longer in the queue.
 
             m_queue.erase(it++);
         }
@@ -154,3 +144,4 @@ ProcessingTaskQueue::cancelAndClear()
     }
     m_selectedPage = m_pageToSelectWhenDone;
 }
+

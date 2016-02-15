@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SlicedHistogram.h"
 #include "BinaryImage.h"
@@ -22,10 +23,8 @@
 
 namespace imageproc
 {
-
     SlicedHistogram::SlicedHistogram()
-    {
-    }
+    { }
 
     SlicedHistogram::SlicedHistogram(BinaryImage const& image, Type const type)
     {
@@ -39,8 +38,7 @@ namespace imageproc
         }
     }
 
-    SlicedHistogram::SlicedHistogram(
-            BinaryImage const& image, QRect const& area, Type const type)
+    SlicedHistogram::SlicedHistogram(BinaryImage const& image, QRect const& area, Type const type)
     {
         if (!image.rect().contains(area)) {
             throw std::invalid_argument("SlicedHistogram: area exceeds the image");
@@ -89,7 +87,7 @@ namespace imageproc
                 m_data.push_back(count);
             }
         }
-    }
+    }  // SlicedHistogram::processHorizontalLines
 
     void
     SlicedHistogram::processVerticalLines(BinaryImage const& image, QRect const& area)
@@ -111,5 +109,4 @@ namespace imageproc
             m_data.push_back(count);
         }
     }
-
-} 
+}  // namespace imageproc

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_PARAMS_H_
 #define PAGE_LAYOUT_PARAMS_H_
@@ -30,32 +31,46 @@ class QString;
 
 namespace page_layout
 {
-
     class Params
     {
     public:
-        Params(Margins const& hard_margins_mm, QRectF const& page_rect, QRectF const& content_rect,
-               QSizeF const& content_size_mm, Alignment const& alignment);
+        Params(Margins const& hard_margins_mm,
+               QRectF const& page_rect,
+               QRectF const& content_rect,
+               QSizeF const& content_size_mm,
+               Alignment const& alignment);
 
         Params(QDomElement const& el);
 
         Margins const& hardMarginsMM() const
-        { return m_hardMarginsMM; }
+        {
+            return m_hardMarginsMM;
+        }
 
         QRectF const& contentRect() const
-        { return m_contentRect; }
+        {
+            return m_contentRect;
+        }
 
         QRectF const& pageRect() const
-        { return m_pageRect; }
+        {
+            return m_pageRect;
+        }
 
         QSizeF const& contentSizeMM() const
-        { return m_contentSizeMM; }
+        {
+            return m_contentSizeMM;
+        }
 
         Alignment const& alignment() const
-        { return m_alignment; }
+        {
+            return m_alignment;
+        }
 
         bool isDeviant() const
-        { return m_alignment.isNull(); }
+        {
+            return m_alignment.isNull();
+        }
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -66,6 +81,5 @@ namespace page_layout
         QSizeF m_contentSizeMM;
         Alignment m_alignment;
     };
-
-}
-#endif
+}  // namespace page_layout
+#endif  // ifndef PAGE_LAYOUT_PARAMS_H_

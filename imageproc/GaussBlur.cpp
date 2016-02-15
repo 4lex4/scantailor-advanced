@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -17,7 +18,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "GaussBlur.h"
 #include "GrayImage.h"
@@ -27,13 +28,10 @@
 
 namespace imageproc
 {
-
     namespace gauss_blur_impl
     {
-
-        void find_iir_constants(
-                float* n_p, float* n_m, float* d_p,
-                float* d_m, float* bd_p, float* bd_m, float std_dev)
+        void
+        find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* bd_p, float* bd_m, float std_dev)
         {
             /*  The constants used in the implemenation of a casual sequence
              *  using a 4th order approximation of the gaussian operator
@@ -50,14 +48,14 @@ namespace imageproc
             const float x7 = -0.2598 / div;
 
             n_p[0] = x4 + x6;
-            n_p[1] = (exp(x1) * (x7 * sin(x3) - (x6 + 2 * x4) * cos(x3)) +
-                      exp(x0) * (x5 * sin(x2) - (2 * x6 + x4) * cos(x2)));
-            n_p[2] = (2 * exp(x0 + x1) *
-                      ((x4 + x6) * cos(x3) * cos(x2) - x5 * cos(x3) * sin(x2) -
-                       x7 * cos(x2) * sin(x3)) +
-                      x6 * exp(2 * x0) + x4 * exp(2 * x1));
-            n_p[3] = (exp(x1 + 2 * x0) * (x7 * sin(x3) - x6 * cos(x3)) +
-                      exp(x0 + 2 * x1) * (x5 * sin(x2) - x4 * cos(x2)));
+            n_p[1] = (exp(x1) * (x7 * sin(x3) - (x6 + 2 * x4) * cos(x3))
+                      + exp(x0) * (x5 * sin(x2) - (2 * x6 + x4) * cos(x2)));
+            n_p[2] = (2 * exp(x0 + x1)
+                      * ((x4 + x6) * cos(x3) * cos(x2) - x5 * cos(x3) * sin(x2)
+                         - x7 * cos(x2) * sin(x3))
+                      + x6 * exp(2 * x0) + x4 * exp(2 * x1));
+            n_p[3] = (exp(x1 + 2 * x0) * (x7 * sin(x3) - x6 * cos(x3))
+                      + exp(x0 + 2 * x1) * (x5 * sin(x2) - x4 * cos(x2)));
             n_p[4] = 0.0;
 
             d_p[0] = 0.0;
@@ -93,11 +91,11 @@ namespace imageproc
                 bd_p[i] = d_p[i] * a;
                 bd_m[i] = d_m[i] * b;
             }
-        }
+        }  // find_iir_constants
+    }  // namespace gauss_blur_impl
 
-    }
-
-    GrayImage gaussBlur(GrayImage const& src, float h_sigma, float v_sigma)
+    GrayImage
+    gaussBlur(GrayImage const& src, float h_sigma, float v_sigma)
     {
         using namespace boost::lambda;
 
@@ -107,12 +105,11 @@ namespace imageproc
 
         GrayImage dst(src.size());
         gaussBlurGeneric(
-                src.size(), h_sigma, v_sigma,
-                src.data(), src.stride(), StaticCastValueConv<float>(),
-                dst.data(), dst.stride(), _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2)
+            src.size(), h_sigma, v_sigma,
+            src.data(), src.stride(), StaticCastValueConv<float>(),
+            dst.data(), dst.stride(), _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2)
         );
 
         return dst;
     }
-
-} 
+}  // namespace imageproc

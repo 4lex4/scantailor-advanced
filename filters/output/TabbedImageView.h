@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_TABBED_IMAGE_VIEW_H_
 #define OUTPUT_TABBED_IMAGE_VIEW_H_
@@ -26,10 +27,10 @@
 
 namespace output
 {
-
-    class TabbedImageView : public QTabWidget
+    class TabbedImageView
+        : public QTabWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         TabbedImageView(QWidget* parent = 0);
@@ -37,20 +38,16 @@ namespace output
         void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
 
     public slots:
-
         void setCurrentTab(ImageViewTab tab);
 
     signals:
-
         void tabChanged(ImageViewTab tab);
 
     private slots:
-
         void tabChangedSlot(int idx);
 
     private:
         std::map<QWidget*, ImageViewTab> m_registry;
     };
-
 }
-#endif
+#endif  // ifndef OUTPUT_TABBED_IMAGE_VIEW_H_

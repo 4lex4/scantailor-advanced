@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SkewFinder.h"
 #include "BinaryImage.h"
@@ -26,7 +27,6 @@
 
 namespace imageproc
 {
-
     double const Skew::GOOD_CONFIDENCE = 2.0;
 
     double const SkewFinder::DEFAULT_MAX_ANGLE = 7.0;
@@ -40,18 +40,17 @@ namespace imageproc
     double const SkewFinder::LOW_SCORE = 1000.0;
 
     SkewFinder::SkewFinder()
-            : m_maxAngle(DEFAULT_MAX_ANGLE),
-              m_accuracy(DEFAULT_ACCURACY),
-              m_resolutionRatio(1.0),
-              m_coarseReduction(DEFAULT_COARSE_REDUCTION),
-              m_fineReduction(DEFAULT_FINE_REDUCTION)
-    {
-    }
+        : m_maxAngle(DEFAULT_MAX_ANGLE),
+          m_accuracy(DEFAULT_ACCURACY),
+          m_resolutionRatio(1.0),
+          m_coarseReduction(DEFAULT_COARSE_REDUCTION),
+          m_fineReduction(DEFAULT_FINE_REDUCTION)
+    { }
 
     void
     SkewFinder::setMaxAngle(double const max_angle)
     {
-        if (max_angle < 0.0 || max_angle > 45.0) {
+        if ((max_angle < 0.0) || (max_angle > 45.0)) {
             throw std::invalid_argument("SkewFinder: max skew angle is invalid");
         }
         m_maxAngle = max_angle;
@@ -128,9 +127,10 @@ namespace imageproc
         if (m_accuracy >= coarse_step) {
             double confidence = 0.0;
             if (num_coarse_scores > 1) {
-                confidence = best_coarse_score /
-                             sum_coarse_scores * num_coarse_scores;
+                confidence = best_coarse_score
+                             / sum_coarse_scores * num_coarse_scores;
             }
+
             return Skew(-best_coarse_angle, confidence - 1.0);
         }
 
@@ -189,8 +189,9 @@ namespace imageproc
             sum_scores += fine_score2;
             confidence = best_score / sum_scores * num_scores;
         }
+
         return Skew(-best_angle, confidence - 1.0);
-    }
+    }  // SkewFinder::findSkew
 
     double
     SkewFinder::process(BinaryImage const& src, BinaryImage& dst, double const angle) const
@@ -198,6 +199,7 @@ namespace imageproc
         double const tg = tan(angle * constants::DEG2RAD);
         double const x_center = 0.5 * dst.width();
         vShearFromTo(src, dst, tg / m_resolutionRatio, x_center, WHITE);
+
         return calcScore(dst);
     }
 
@@ -230,5 +232,4 @@ namespace imageproc
 
         return score;
     }
-
-} 
+}  // namespace imageproc

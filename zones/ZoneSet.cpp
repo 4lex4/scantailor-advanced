@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "ZoneSet.h"
 #include <QDomNode>
@@ -45,9 +46,10 @@ ZoneSet::toXml(QDomDocument& doc, QString const& name) const
     QString const zone_str("zone");
 
     QDomElement el(doc.createElement(name));
-    for (Zone const& zone :  m_zones) {
+    for (Zone const& zone : m_zones) {
         el.appendChild(zone.toXml(doc, zone_str));
     }
+
     return el;
 }
 
@@ -57,8 +59,8 @@ ZoneSet::remove_auto_zones()
     typedef output::ZoneCategoryProperty ZLP;
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
-        if (it->properties().locateOrDefault<ZLP>()->zone_category() ==
-            ZLP::RECTANGULAR_OUTLINE) {
+        if (it->properties().locateOrDefault<ZLP>()->zone_category()
+            == ZLP::RECTANGULAR_OUTLINE) {
             m_zones.erase(it++);
         }
         else {
@@ -73,13 +75,15 @@ ZoneSet::auto_zones_found()
     typedef output::ZoneCategoryProperty ZLP;
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
-        if (it->properties().locateOrDefault<ZLP>()->zone_category() ==
-            ZLP::RECTANGULAR_OUTLINE) {
+        if (it->properties().locateOrDefault<ZLP>()->zone_category()
+            == ZLP::RECTANGULAR_OUTLINE) {
             return true;
         }
         else {
             it++;
         }
     }
+
     return false;
 }
+

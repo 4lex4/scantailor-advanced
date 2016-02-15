@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DYNAMIC_POOL_H_
 #define DYNAMIC_POOL_H_
@@ -30,10 +31,10 @@
  * There is no way of freeing the allocated objects
  * besides destroying the whole pool.
  */
-template<typename T>
+template <typename T>
 class DynamicPool
 {
-DECLARE_NON_COPYABLE(DynamicPool)
+    DECLARE_NON_COPYABLE(DynamicPool)
 
 public:
     DynamicPool()
@@ -50,25 +51,22 @@ public:
     T* alloc(size_t num_elements);
 
 private:
-    enum
-    {
-        OVERALLOCATION_FACTOR = 3
-    };
+    enum { OVERALLOCATION_FACTOR = 3 };
+
     /**< Allocate 3 times the requested size. */
-    enum
-    {
-        OVERALLOCATION_LIMIT = 256
-    };
+    enum { OVERALLOCATION_LIMIT = 256 };
 
     /**< Don't overallocate too much. */
 
-    struct Chunk : public boost::intrusive::list_base_hook<>
-    {
+    struct Chunk
+        : public boost::intrusive::list_base_hook<>{
         boost::scoped_array<T> storage;
         T* pData;
         size_t remainingElements;
 
-        Chunk() : pData(0), remainingElements(0)
+        Chunk()
+            : pData(0),
+              remainingElements(0)
         { }
 
         void init(boost::scoped_array<T>& data, size_t size)
@@ -79,15 +77,14 @@ private:
         }
     };
 
-    struct DeleteDisposer
-    {
+    struct DeleteDisposer {
         void operator()(Chunk* chunk)
         {
             delete chunk;
         }
     };
 
-    typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false> > ChunkList;
+    typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>> ChunkList;
 
     static size_t adviseChunkSize(size_t num_elements);
 
@@ -95,13 +92,13 @@ private:
 };
 
 
-template<typename T>
+template <typename T>
 DynamicPool<T>::~DynamicPool()
 {
     m_chunkList.clear_and_dispose(DeleteDisposer());
 }
 
-template<typename T>
+template <typename T>
 T*
 DynamicPool<T>::alloc(size_t num_elements)
 {
@@ -124,19 +121,20 @@ DynamicPool<T>::alloc(size_t num_elements)
     T* data = chunk->pData;
     chunk->pData += num_elements;
     chunk->remainingElements -= num_elements;
+
     return data;
 }
 
-template<typename T>
+template <typename T>
 size_t
 DynamicPool<T>::adviseChunkSize(size_t num_elements)
 {
     size_t factor = OVERALLOCATION_LIMIT / num_elements;
-    if (factor > (size_t) OVERALLOCATION_FACTOR) {
+    if (factor > (size_t)OVERALLOCATION_FACTOR) {
         factor = OVERALLOCATION_FACTOR;
     }
 
     return num_elements * (factor + 1);
 }
 
-#endif
+#endif  // ifndef DYNAMIC_POOL_H_

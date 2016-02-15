@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_IMAGEVIEW_H_
 #define SELECT_CONTENT_IMAGEVIEW_H_
@@ -34,39 +35,34 @@ class QMenu;
 
 namespace select_content
 {
-
-    class ImageView :
-            public ImageViewBase,
-            private InteractionHandler
+    class ImageView
+        : public ImageViewBase,
+          private InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         /**
          * \p content_rect is in virtual image coordinates.
          */
-        ImageView(
-                QImage const& image, QImage const& downscaled_image,
-                ImageTransformation const& xform,
-                QRectF const& content_rect, QRectF const& page_rect);
+        ImageView(QImage const& image,
+                  QImage const& downscaled_image,
+                  ImageTransformation const& xform,
+                  QRectF const& content_rect,
+                  QRectF const& page_rect);
 
         virtual ~ImageView();
 
     signals:
-
         void manualContentRectSet(QRectF const& content_rect);
 
     private slots:
-
         void createContentBox();
 
         void removeContentBox();
 
     private:
-        enum Edge
-        {
-            LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8
-        };
+        enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
 
         virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
@@ -111,6 +107,5 @@ namespace select_content
 
         QSizeF m_minBoxSize;
     };
-
-}
-#endif
+}  // namespace select_content
+#endif  // ifndef SELECT_CONTENT_IMAGEVIEW_H_

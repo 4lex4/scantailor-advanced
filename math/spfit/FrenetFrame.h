@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_FRENET_FRAME_H_
 #define SPFIT_FRENET_FRAME_H_
@@ -23,17 +24,13 @@
 
 namespace spfit
 {
-
-/**
- * Origin + unit tangent + unit normal vectors.
- */
+    /**
+     * Origin + unit tangent + unit normal vectors.
+     */
     class FrenetFrame
     {
     public:
-        enum YAxisDirection
-        {
-            Y_POINTS_UP, Y_POINTS_DOWN
-        };
+        enum YAxisDirection { Y_POINTS_UP, Y_POINTS_DOWN };
 
         /**
          * \brief Builds a Frenet frame from an origin and a (non-unit) tangent vector.
@@ -49,19 +46,24 @@ namespace spfit
         FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxisDirection ydir = Y_POINTS_DOWN);
 
         Vec2d const& origin() const
-        { return m_origin; }
+        {
+            return m_origin;
+        }
 
         Vec2d const& unitTangent() const
-        { return m_unitTangent; }
+        {
+            return m_unitTangent;
+        }
 
         Vec2d const& unitNormal() const
-        { return m_unitNormal; }
+        {
+            return m_unitNormal;
+        }
 
     private:
         Vec2d m_origin;
         Vec2d m_unitTangent;
         Vec2d m_unitNormal;
     };
-
-}
-#endif
+}  // namespace spfit
+#endif  // ifndef SPFIT_FRENET_FRAME_H_

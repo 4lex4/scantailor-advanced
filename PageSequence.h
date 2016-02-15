@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SEQUENCE_H_
 #define PAGE_SEQUENCE_H_
@@ -30,7 +31,9 @@ public:
     void append(PageInfo const& page_info);
 
     size_t numPages() const
-    { return m_pages.size(); }
+    {
+        return m_pages.size();
+    }
 
     PageInfo const& pageAt(size_t idx) const;
 

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_ORIENTATION_PROPAGATOR_H_
 #define PAGE_ORIENTATION_PROPAGATOR_H_
@@ -42,9 +43,8 @@ namespace page_split
 class PageOrientationPropagator
 {
 public:
-    PageOrientationPropagator(
-            IntrusivePtr<page_split::Filter> const& page_split_filter,
-            IntrusivePtr<CompositeCacheDrivenTask> const& task);
+    PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
+                              IntrusivePtr<CompositeCacheDrivenTask> const& task);
 
     ~PageOrientationPropagator();
 
@@ -57,4 +57,4 @@ private:
     IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
-#endif
+#endif  // ifndef PAGE_ORIENTATION_PROPAGATOR_H_

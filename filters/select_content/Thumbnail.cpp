@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,27 +15,26 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Thumbnail.h"
 #include <QPainter>
 
 namespace select_content
 {
-
-    Thumbnail::Thumbnail(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id,
-            ImageTransformation const& xform, QRectF const& content_rect, bool deviant)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
-              m_contentRect(content_rect), m_deviant(deviant)
-    {
-    }
+    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                         QSizeF const& max_size,
+                         ImageId const& image_id,
+                         ImageTransformation const& xform,
+                         QRectF const& content_rect,
+                         bool deviant)
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+          m_contentRect(content_rect),
+          m_deviant(deviant)
+    { }
 
     void
-    Thumbnail::paintOverImage(
-            QPainter& painter, QTransform const& image_to_display,
-            QTransform const& thumb_to_display)
+    Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display, QTransform const& thumb_to_display)
     {
         if (m_contentRect.isNull()) {
             return;
@@ -59,5 +59,4 @@ namespace select_content
             paintDeviant(painter);
         }
     }
-
-} 
+}  // namespace select_content

@@ -1,3 +1,4 @@
+
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef INTERACTIVE_XSPLINE_H_
 #define INTERACTIVE_XSPLINE_H_
@@ -30,20 +31,24 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class InteractiveXSpline : public InteractionHandler
+class InteractiveXSpline
+    : public InteractionHandler
 {
-Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
+    Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
+
 public:
     typedef boost::function<QPointF(QPointF const&)> Transform;
-    typedef boost::function<void()> ModifiedCallback;
-    typedef boost::function<void()> DragFinishedCallback;
+    typedef boost::function<void ()> ModifiedCallback;
+    typedef boost::function<void ()> DragFinishedCallback;
 
     InteractiveXSpline();
 
     void setSpline(XSpline const& spline);
 
     XSpline const& spline() const
-    { return m_spline; }
+    {
+        return m_spline;
+    }
 
     void setStorageTransform(Transform const& from_storage, Transform const& to_storage);
 
@@ -62,28 +67,22 @@ public:
      *          to the point closest to the cursor will be written there.
      * \return true if the curve is the proximity leader.
      */
-    bool curveIsProximityLeader(
-            InteractionState const& state, QPointF* pt = 0, double* t = 0) const;
+    bool curveIsProximityLeader(InteractionState const& state, QPointF* pt = 0, double* t = 0) const;
 
 protected:
-    virtual void onProximityUpdate(
-            QPointF const& screen_mouse_pos, InteractionState& interaction);
+    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
 
-    virtual void onMouseMoveEvent(
-            QMouseEvent* event, InteractionState& interaction);
+    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
 
-    virtual void onMousePressEvent(
-            QMouseEvent* event, InteractionState& interaction);
+    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
 
-    virtual void onKeyPressEvent(
-            QKeyEvent* event, InteractionState& interaction);
+    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
 
 private:
     struct NoOp;
     struct IdentTransform;
 
-    struct ControlPoint
-    {
+    struct ControlPoint {
         DraggablePoint point;
         ObjectDragHandler handler;
 
@@ -112,4 +111,4 @@ private:
     bool m_lastProximity;
 };
 
-#endif
+#endif  // ifndef INTERACTIVE_XSPLINE_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ATOMICFILEOVERWRITER_H_
 #define ATOMICFILEOVERWRITER_H_
@@ -35,7 +36,7 @@ class QTemporaryFile;
  */
 class AtomicFileOverwriter
 {
-DECLARE_NON_COPYABLE(AtomicFileOverwriter)
+    DECLARE_NON_COPYABLE(AtomicFileOverwriter)
 
 public:
     AtomicFileOverwriter();
@@ -55,7 +56,7 @@ public:
      * If a file is already being written, it calles abort() and then
      * proceeds as usual.
      */
-    QIODevice *startWriting(QString const &file_path);
+    QIODevice* startWriting(QString const& file_path);
 
     /**
      * \brief Replaces the target file with the temporary one.
@@ -74,4 +75,4 @@ private:
     std::unique_ptr<QTemporaryFile> m_ptrTempFile;
 };
 
-#endif
+#endif  // ifndef ATOMICFILEOVERWRITER_H_

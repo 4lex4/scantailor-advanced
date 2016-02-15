@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DespeckleState.h"
 #include "DespeckleVisualization.h"
@@ -27,14 +28,13 @@ using namespace imageproc;
 
 namespace output
 {
-
-    DespeckleState::DespeckleState(
-            QImage const& output,
-            imageproc::BinaryImage const& speckles,
-            DespeckleLevel level, Dpi const& dpi)
-            : m_speckles(speckles),
-              m_dpi(dpi),
-              m_despeckleLevel(level)
+    DespeckleState::DespeckleState(QImage const& output,
+                                   imageproc::BinaryImage const& speckles,
+                                   DespeckleLevel level,
+                                   Dpi const& dpi)
+        : m_speckles(speckles),
+          m_dpi(dpi),
+          m_despeckleLevel(level)
     {
         m_everythingMixed = overlaySpeckles(output, speckles);
         m_everythingBW = extractBW(m_everythingMixed);
@@ -47,9 +47,7 @@ namespace output
     }
 
     DespeckleState
-    DespeckleState::redespeckle(
-            DespeckleLevel const level,
-            TaskStatus const& status, DebugImages* dbg) const
+    DespeckleState::redespeckle(DespeckleLevel const level, TaskStatus const& status, DebugImages* dbg) const
     {
         DespeckleState new_state(*this);
 
@@ -63,6 +61,7 @@ namespace output
         switch (level) {
             case DESPECKLE_OFF:
                 new_state.m_speckles.release();
+
                 return new_state;
             case DESPECKLE_CAUTIOUS:
                 level2 = Despeckle::CAUTIOUS;
@@ -76,19 +75,18 @@ namespace output
         }
 
         new_state.m_speckles = Despeckle::despeckle(
-                m_everythingBW, m_dpi, level2, status, dbg
-        );
+            m_everythingBW, m_dpi, level2, status, dbg
+                               );
 
         status.throwIfCancelled();
 
-        rasterOp<RopSubtract<RopSrc, RopDst> >(new_state.m_speckles, m_everythingBW);
+        rasterOp<RopSubtract<RopSrc, RopDst>>(new_state.m_speckles, m_everythingBW);
 
         return new_state;
-    }
+    }  // DespeckleState::redespeckle
 
     QImage
-    DespeckleState::overlaySpeckles(
-            QImage const& mixed, imageproc::BinaryImage const& speckles)
+    DespeckleState::overlaySpeckles(QImage const& mixed, imageproc::BinaryImage const& speckles)
     {
         QImage result(mixed.convertToFormat(QImage::Format_RGB32));
         if (result.isNull() && !mixed.isNull()) {
@@ -99,7 +97,7 @@ namespace output
             return result;
         }
 
-        uint32_t* result_line = (uint32_t*) result.bits();
+        uint32_t* result_line = (uint32_t*)result.bits();
         int const result_stride = result.bytesPerLine() / 4;
 
         uint32_t const* speckles_line = speckles.data();
@@ -120,19 +118,19 @@ namespace output
         }
 
         return result;
-    }
+    }  // DespeckleState::overlaySpeckles
 
-/**
- * Here we assume that B/W content have all their color components
- * set to either 0x00 or 0xff.  We enforce this convention when
- * generating output files.
- */
+    /**
+     * Here we assume that B/W content have all their color components
+     * set to either 0x00 or 0xff.  We enforce this convention when
+     * generating output files.
+     */
     BinaryImage
     DespeckleState::extractBW(QImage const& mixed)
     {
         BinaryImage result(mixed.size(), WHITE);
 
-        uint32_t const* mixed_line = (uint32_t const*) mixed.bits();
+        uint32_t const* mixed_line = (uint32_t const*)mixed.bits();
         int const mixed_stride = mixed.bytesPerLine() / 4;
 
         uint32_t* result_line = result.data();
@@ -154,5 +152,4 @@ namespace output
 
         return result;
     }
-
-} 
+}  // namespace output

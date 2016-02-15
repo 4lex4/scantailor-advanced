@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Dependencies.h"
 #include "XmlMarshaller.h"
@@ -25,35 +26,29 @@ using namespace imageproc;
 
 namespace deskew
 {
-
     Dependencies::Dependencies()
-    {
-    }
+    { }
 
-    Dependencies::Dependencies(
-            QPolygonF const& page_outline, OrthogonalRotation const rotation)
-            : m_pageOutline(page_outline),
-              m_rotation(rotation)
-    {
-    }
+    Dependencies::Dependencies(QPolygonF const& page_outline, OrthogonalRotation const rotation)
+        : m_pageOutline(page_outline),
+          m_rotation(rotation)
+    { }
 
     Dependencies::Dependencies(QDomElement const& deps_el)
-            : m_pageOutline(
-            XmlUnmarshaller::polygonF(
-                    deps_el.namedItem("page-outline").toElement()
-            )
-    ),
-              m_rotation(
-                      XmlUnmarshaller::rotation(
-                              deps_el.namedItem("rotation").toElement()
-                      )
+        : m_pageOutline(
+              XmlUnmarshaller::polygonF(
+                  deps_el.namedItem("page-outline").toElement()
               )
-    {
-    }
+        ),
+          m_rotation(
+              XmlUnmarshaller::rotation(
+                  deps_el.namedItem("rotation").toElement()
+              )
+          )
+    { }
 
     Dependencies::~Dependencies()
-    {
-    }
+    { }
 
     bool
     Dependencies::matches(Dependencies const& other) const
@@ -64,6 +59,7 @@ namespace deskew
         if (!PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline)) {
             return false;
         }
+
         return true;
     }
 
@@ -78,5 +74,4 @@ namespace deskew
 
         return el;
     }
-
-} 
+}  // namespace deskew

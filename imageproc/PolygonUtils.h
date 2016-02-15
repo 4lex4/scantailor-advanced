@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_POLYGONUTILS_H_
 #define IMAGEPROC_POLYGONUTILS_H_
@@ -27,7 +28,6 @@ class QLineF;
 
 namespace imageproc
 {
-
     class PolygonUtils
     {
     public:
@@ -64,12 +64,9 @@ namespace imageproc
 
         static std::vector<QLineF> extractAndNormalizeEdges(QPolygonF const& poly);
 
-        static void maybeAddNormalizedEdge(
-                std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2);
+        static void maybeAddNormalizedEdge(std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2);
 
-        static bool fuzzyCompareImpl(
-                std::vector<QLineF> const& lines1,
-                std::vector<QLineF> const& lines2);
+        static bool fuzzyCompareImpl(std::vector<QLineF> const& lines1, std::vector<QLineF> const& lines2);
 
         static bool fuzzyCompareImpl(QLineF const& line1, QLineF const& line2);
 
@@ -78,6 +75,5 @@ namespace imageproc
         static double const ROUNDING_MULTIPLIER;
         static double const ROUNDING_RECIP_MULTIPLIER;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_POLYGONUTILS_H_

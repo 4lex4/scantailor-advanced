@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,17 +15,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "AdjustBrightness.h"
 #include <QImage>
 
 namespace imageproc
 {
-
-    void adjustBrightness(
-            QImage& rgb_image, QImage const& brightness,
-            double const wr, double const wb)
+    void
+    adjustBrightness(QImage& rgb_image, QImage const& brightness, double const wr, double const wb)
     {
         switch (rgb_image.format()) {
             case QImage::Format_RGB32:
@@ -34,7 +33,7 @@ namespace imageproc
                 throw std::invalid_argument("adjustBrightness: not (A)RGB32");
         }
 
-        if (brightness.format() != QImage::Format_Indexed8
+        if ((brightness.format() != QImage::Format_Indexed8)
             || !brightness.allGray()) {
             throw std::invalid_argument("adjustBrightness: brightness not grayscale");
         }
@@ -84,16 +83,17 @@ namespace imageproc
             rgb_line += rgb_wpl;
             br_line += br_bpl;
         }
-    }
+    }  // adjustBrightness
 
-    void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness)
+    void
+    adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness)
     {
         adjustBrightness(rgb_image, brightness, 0.299, 0.114);
     }
 
-    void adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness)
+    void
+    adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness)
     {
         adjustBrightness(rgb_image, brightness, 11.0 / 32.0, 5.0 / 32.0);
     }
-
-} 
+}  // namespace imageproc

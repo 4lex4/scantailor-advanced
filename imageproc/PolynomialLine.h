@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_POLYNOMIAL_LINE_H_
 #define IMAGEPROC_POLYNOMIAL_LINE_H_
@@ -27,10 +28,9 @@
 
 namespace imageproc
 {
-
-/**
- * \brief A polynomial function describing a sequence of numbers.
- */
+    /**
+     * \brief A polynomial function describing a sequence of numbers.
+     */
     class PolynomialLine
     {
     public:
@@ -47,9 +47,8 @@ namespace imageproc
          *        The data points will be accessed like this:\n
          *        values[0], values[step], values[step * 2]
          */
-        template<typename T>
-        PolynomialLine(
-                int degree, T const* values, int num_values, int step);
+        template <typename T>
+        PolynomialLine(int degree, T const* values, int num_values, int step);
 
         /**
          * \brief Output the polynomial as a sequence of values.
@@ -70,7 +69,7 @@ namespace imageproc
          *        The data points will be accessed like this:\n
          *        values[0], values[step], values[step * 2]
          */
-        template<typename T>
+        template <typename T>
         void output(T* values, int num_values, int step) const;
 
         /**
@@ -88,18 +87,18 @@ namespace imageproc
          *        The functor will be called like this:\n
          *        T t = pp((double)val);
          */
-        template<typename T, typename PostProcessor>
+        template <typename T, typename PostProcessor>
         void output(T* values, int num_values, int step, PostProcessor pp) const;
 
     private:
-        template<typename T>
+        template <typename T>
         class StaticCastPostProcessor
         {
         public:
             T operator()(double val) const;
         };
 
-        template<typename T>
+        template <typename T>
         class RoundAndClipPostProcessor
         {
         public:
@@ -112,44 +111,38 @@ namespace imageproc
             T m_max;
         };
 
-        template<typename T, bool IsInteger>
-        struct DefaultPostProcessor : public StaticCastPostProcessor<T>
-        {
-        };
+        template <typename T, bool IsInteger>
+        struct DefaultPostProcessor
+            : public StaticCastPostProcessor<T>{ };
 
-        template<typename T>
+        template <typename T>
         struct DefaultPostProcessor<T, true>
-                : public RoundAndClipPostProcessor<T>
-        {
-        };
+            : public RoundAndClipPostProcessor<T>{ };
 
         static void validateArguments(int degree, int num_values);
 
         static double calcScale(int num_values);
 
-        static void prepareEquations(
-                std::vector<double>& equations,
-                int degree, int num_values);
+        static void prepareEquations(std::vector<double>& equations, int degree, int num_values);
 
         std::vector<double> m_coeffs;
     };
 
 
-    template<typename T>
+    template <typename T>
     inline T
     PolynomialLine::StaticCastPostProcessor<T>::operator()(double const val) const
     {
         return static_cast<T>(val);
     }
 
-    template<typename T>
+    template <typename T>
     PolynomialLine::RoundAndClipPostProcessor<T>::RoundAndClipPostProcessor()
-            : m_min(std::numeric_limits<T>::min()),
-              m_max(std::numeric_limits<T>::max())
-    {
-    }
+        : m_min(std::numeric_limits<T>::min()),
+          m_max(std::numeric_limits<T>::max())
+    { }
 
-    template<typename T>
+    template <typename T>
     inline T
     PolynomialLine::RoundAndClipPostProcessor<T>::operator()(double const val) const
     {
@@ -165,10 +158,8 @@ namespace imageproc
         }
     }
 
-    template<typename T>
-    PolynomialLine::PolynomialLine(
-            int degree, T const* values,
-            int const num_values, int const step)
+    template <typename T>
+    PolynomialLine::PolynomialLine(int degree, T const* values, int const num_values, int const step)
     {
         validateArguments(degree, num_values);
 
@@ -191,20 +182,19 @@ namespace imageproc
         leastSquaresFit(dimensions, &equations[0], &m_coeffs[0], &data_points[0]);
     }
 
-    template<typename T>
+    template <typename T>
     void
     PolynomialLine::output(T* values, int num_values, int step) const
     {
         typedef DefaultPostProcessor<
                 T, std::numeric_limits<T>::is_integer
-        > PP;
+>PP;
         output(values, num_values, step, PP());
     }
 
-    template<typename T, typename PostProcessor>
+    template <typename T, typename PostProcessor>
     void
-    PolynomialLine::output(
-            T* values, int num_values, int step, PostProcessor pp) const
+    PolynomialLine::output(T* values, int num_values, int step, PostProcessor pp) const
     {
         if (num_values <= 0) {
             return;
@@ -225,7 +215,6 @@ namespace imageproc
             *values = pp(sum);
         }
     }
+}  // namespace imageproc
 
-}
-
-#endif
+#endif  // ifndef IMAGEPROC_POLYNOMIAL_LINE_H_

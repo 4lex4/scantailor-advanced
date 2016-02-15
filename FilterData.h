@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FILTERDATA_H_
 #define FILTERDATA_H_
@@ -27,21 +28,29 @@
 class FilterData
 {
 public:
-    FilterData(QImage const &image);
+    FilterData(QImage const& image);
 
-    FilterData(FilterData const &other, ImageTransformation const &xform);
+    FilterData(FilterData const& other, ImageTransformation const& xform);
 
     imageproc::BinaryThreshold bwThreshold() const
-    { return m_bwThreshold; }
+    {
+        return m_bwThreshold;
+    }
 
-    ImageTransformation const &xform() const
-    { return m_xform; }
+    ImageTransformation const& xform() const
+    {
+        return m_xform;
+    }
 
-    QImage const &origImage() const
-    { return m_origImage; }
+    QImage const& origImage() const
+    {
+        return m_origImage;
+    }
 
-    imageproc::GrayImage const &grayImage() const
-    { return m_grayImage; }
+    imageproc::GrayImage const& grayImage() const
+    {
+        return m_grayImage;
+    }
 
 private:
     QImage m_origImage;
@@ -50,4 +59,4 @@ private:
     imageproc::BinaryThreshold m_bwThreshold;
 };
 
-#endif
+#endif  // ifndef FILTERDATA_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROJECTWRITER_H_
 #define PROJECTWRITER_H_
@@ -43,15 +44,14 @@ class QDomElement;
 
 class ProjectWriter
 {
-DECLARE_NON_COPYABLE(ProjectWriter)
+    DECLARE_NON_COPYABLE(ProjectWriter)
 
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
-    ProjectWriter(
-            IntrusivePtr<ProjectPages> const& page_sequence,
-            SelectedPage const& selected_page,
-            OutputFileNameGenerator const& out_file_name_gen);
+    ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
+                  SelectedPage const& selected_page,
+                  OutputFileNameGenerator const& out_file_name_gen);
 
     ~ProjectWriter();
 
@@ -60,38 +60,37 @@ public:
     /**
      * \p out will be called like this: out(ImageId, numeric_image_id)
      */
-    template<typename OutFunc>
+    template <typename OutFunc>
     void enumImages(OutFunc out) const;
 
     /**
      * \p out will be called like this: out(LogicalPageId, numeric_page_id)
      */
-    template<typename OutFunc>
+    template <typename OutFunc>
     void enumPages(OutFunc out) const;
 
 private:
-    struct Directory
-    {
+    struct Directory {
         QString path;
         int numericId;
 
         Directory(QString const& path, int numeric_id)
-                : path(path), numericId(numeric_id)
+            : path(path),
+              numericId(numeric_id)
         { }
     };
 
-    struct File
-    {
+    struct File {
         QString path;
         int numericId;
 
         File(QString const& path, int numeric_id)
-                : path(path), numericId(numeric_id)
+            : path(path),
+              numericId(numeric_id)
         { }
     };
 
-    struct Image
-    {
+    struct Image {
         ImageId id;
         int numericId;
         int numSubPages;
@@ -101,13 +100,13 @@ private:
         Image(PageInfo const& page_info, int numeric_id);
     };
 
-    struct Page
-    {
+    struct Page {
         PageId id;
         int numericId;
 
         Page(PageId const& id, int numeric_id)
-                : id(id), numericId(numeric_id)
+            : id(id),
+              numericId(numeric_id)
         { }
     };
 
@@ -118,42 +117,42 @@ private:
     typedef boost::multi_index::multi_index_container<
             Directory,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Directory, QString, &Directory::path>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::member<Directory, QString, & Directory::path>
+                >,
+                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
-    > Directories;
+>Directories;
 
     typedef boost::multi_index::multi_index_container<
             File,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<File, QString, &File::path>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::member<File, QString, & File::path>
+                >,
+                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
-    > Files;
+>Files;
 
     typedef boost::multi_index::multi_index_container<
             Image,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Image, ImageId, &Image::id>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::member<Image, ImageId, & Image::id>
+                >,
+                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
-    > Images;
+>Images;
 
     typedef boost::multi_index::multi_index_container<
             Page,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Page, PageId, &Page::id>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced> >
+                boost::multi_index::ordered_unique<
+                    boost::multi_index::member<Page, PageId, & Page::id>
+                >,
+                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
-    > Pages;
+>Pages;
 
     QDomElement processDirectories(QDomDocument& doc) const;
 
@@ -163,9 +162,7 @@ private:
 
     QDomElement processPages(QDomDocument& doc) const;
 
-    void writeImageMetadata(
-            QDomDocument& doc, QDomElement& image_el,
-            ImageId const& image_id) const;
+    void writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const;
 
     int dirId(QString const& dir_path) const;
 
@@ -192,7 +189,7 @@ private:
     Qt::LayoutDirection m_layoutDirection;
 };
 
-template<typename OutFunc>
+template <typename OutFunc>
 void
 ProjectWriter::enumImages(OutFunc out) const
 {
@@ -200,7 +197,7 @@ ProjectWriter::enumImages(OutFunc out) const
     enumImagesImpl(proxy);
 }
 
-template<typename OutFunc>
+template <typename OutFunc>
 void
 ProjectWriter::enumPages(OutFunc out) const
 {
@@ -208,4 +205,4 @@ ProjectWriter::enumPages(OutFunc out) const
     enumPagesImpl(proxy);
 }
 
-#endif
+#endif  // ifndef PROJECTWRITER_H_

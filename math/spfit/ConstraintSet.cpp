@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ConstraintSet.h"
 #include "FittableSpline.h"
@@ -22,9 +23,8 @@
 
 namespace spfit
 {
-
     ConstraintSet::ConstraintSet(FittableSpline const* spline)
-            : m_pSpline(spline)
+        : m_pSpline(spline)
     {
         assert(spline);
     }
@@ -54,7 +54,7 @@ namespace spfit
 
         LinearFunction f(m_pSpline->numControlPoints() * 2);
         f.b = -pos.x();
-        for (FittableSpline::LinearCoefficient const& coeff :  coeffs) {
+        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
             int const cp_idx = coeff.controlPointIdx;
             f.a[cp_idx * 2] = coeff.coeff;
 
@@ -64,7 +64,7 @@ namespace spfit
 
         f.a.fill(0);
         f.b = -pos.y();
-        for (FittableSpline::LinearCoefficient const& coeff :  coeffs) {
+        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
             int const cp_idx = coeff.controlPointIdx;
             f.a[cp_idx * 2 + 1] = coeff.coeff;
 
@@ -80,6 +80,7 @@ namespace spfit
 
         if (line.p1() == line.p2()) {
             constrainControlPoint(cp_idx, line.p1());
+
             return;
         }
 
@@ -104,6 +105,7 @@ namespace spfit
     {
         if (line.p1() == line.p2()) {
             constrainSplinePoint(t, line.p1());
+
             return;
         }
 
@@ -116,7 +118,7 @@ namespace spfit
 
         LinearFunction f(m_pSpline->numControlPoints() * 2);
         f.b = line.p1().y() * dx - line.p1().x() * dy;
-        for (FittableSpline::LinearCoefficient const& coeff :  coeffs) {
+        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
             f.a[coeff.controlPointIdx * 2] = coeff.coeff * dy;
             f.a[coeff.controlPointIdx * 2 + 1] = -coeff.coeff * dx;
 
@@ -125,5 +127,4 @@ namespace spfit
         }
         m_constraints.push_back(f);
     }
-
-} 
+}  // namespace spfit

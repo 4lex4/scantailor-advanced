@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Binarize.h"
 #include "BinaryImage.h"
@@ -25,25 +26,26 @@
 
 namespace imageproc
 {
-
-    BinaryImage binarizeOtsu(QImage const& src)
+    BinaryImage
+    binarizeOtsu(QImage const& src)
     {
         return BinaryImage(src, BinaryThreshold::otsuThreshold(src));
     }
 
-    BinaryImage binarizeMokji(
-            QImage const& src, unsigned const max_edge_width,
-            unsigned const min_edge_magnitude)
+    BinaryImage
+    binarizeMokji(QImage const& src, unsigned const max_edge_width, unsigned const min_edge_magnitude)
     {
         BinaryThreshold const threshold(
-                BinaryThreshold::mokjiThreshold(
-                        src, max_edge_width, min_edge_magnitude
-                )
+            BinaryThreshold::mokjiThreshold(
+                src, max_edge_width, min_edge_magnitude
+            )
         );
+
         return BinaryImage(src, threshold);
     }
 
-    BinaryImage binarizeSauvola(QImage const& src, QSize const window_size)
+    BinaryImage
+    binarizeSauvola(QImage const& src, QSize const window_size)
     {
         if (window_size.isEmpty()) {
             throw std::invalid_argument("binarizeSauvola: invalid window_size");
@@ -120,11 +122,13 @@ namespace imageproc
         }
 
         return bw_img;
-    }
+    }  // binarizeSauvola
 
-    BinaryImage binarizeWolf(
-            QImage const& src, QSize const window_size,
-            unsigned char const lower_bound, unsigned char const upper_bound)
+    BinaryImage
+    binarizeWolf(QImage const& src,
+                 QSize const window_size,
+                 unsigned char const lower_bound,
+                 unsigned char const upper_bound)
     {
         if (window_size.isEmpty()) {
             throw std::invalid_argument("binarizeWolf: invalid window_size");
@@ -207,9 +211,9 @@ namespace imageproc
 
                 uint32_t const msb = uint32_t(1) << 31;
                 uint32_t const mask = msb >> (x & 31);
-                if (gray_line[x] < lower_bound ||
-                    (gray_line[x] <= upper_bound &&
-                     int(gray_line[x]) < threshold)) {
+                if ((gray_line[x] < lower_bound)
+                    || ((gray_line[x] <= upper_bound)
+                        && (int(gray_line[x]) < threshold))) {
                     bw_line[x >> 5] |= mask;
                 }
                 else {
@@ -219,12 +223,11 @@ namespace imageproc
         }
 
         return bw_img;
-    }
+    }  // binarizeWolf
 
     BinaryImage
     peakThreshold(QImage const& image)
     {
         return BinaryImage(image, BinaryThreshold::peakThreshold(image));
     }
-
-} 
+}  // namespace imageproc

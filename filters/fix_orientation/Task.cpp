@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Task.h"
 #include "Filter.h"
@@ -28,21 +29,24 @@
 
 namespace fix_orientation
 {
-
     using imageproc::BinaryThreshold;
 
-    class Task::UiUpdater : public FilterResult
+    class Task::UiUpdater
+        : public FilterResult
     {
     public:
         UiUpdater(IntrusivePtr<Filter> const& filter,
-                  QImage const& image, ImageId const& image_id,
+                  QImage const& image,
+                  ImageId const& image_id,
                   ImageTransformation const& xform,
                   bool batch_processing);
 
         virtual void updateUI(FilterUiInterface* wnd);
 
         virtual IntrusivePtr<AbstractFilter> filter()
-        { return m_ptrFilter; }
+        {
+            return m_ptrFilter;
+        }
 
     private:
         IntrusivePtr<Filter> m_ptrFilter;
@@ -54,28 +58,24 @@ namespace fix_orientation
     };
 
 
-    Task::Task(
-            ImageId const& image_id,
-            IntrusivePtr<Filter> const& filter,
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<page_split::Task> const& next_task,
-            bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
-              m_imageId(image_id),
-              m_batchProcessing(batch_processing)
-    {
-    }
+    Task::Task(ImageId const& image_id,
+               IntrusivePtr<Filter> const& filter,
+               IntrusivePtr<Settings> const& settings,
+               IntrusivePtr<page_split::Task> const& next_task,
+               bool const batch_processing)
+        : m_ptrFilter(filter),
+          m_ptrNextTask(next_task),
+          m_ptrSettings(settings),
+          m_imageId(image_id),
+          m_batchProcessing(batch_processing)
+    { }
 
     Task::~Task()
-    {
-    }
+    { }
 
     FilterResultPtr
     Task::process(TaskStatus const& status, FilterData const& data)
     {
-
         status.throwIfCancelled();
 
         ImageTransformation xform(data.xform());
@@ -86,30 +86,28 @@ namespace fix_orientation
         }
         else {
             return FilterResultPtr(
-                    new UiUpdater(
-                            m_ptrFilter, data.origImage(), m_imageId, xform,
-                            m_batchProcessing
-                    )
+                new UiUpdater(
+                    m_ptrFilter, data.origImage(), m_imageId, xform,
+                    m_batchProcessing
+                )
             );
         }
     }
 
+    /*============================ Task::UiUpdater ========================*/
 
-/*============================ Task::UiUpdater ========================*/
-
-    Task::UiUpdater::UiUpdater(
-            IntrusivePtr<Filter> const& filter,
-            QImage const& image, ImageId const& image_id,
-            ImageTransformation const& xform,
-            bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_image(image),
-              m_downscaledImage(ImageView::createDownscaledImage(image)),
-              m_imageId(image_id),
-              m_xform(xform),
-              m_batchProcessing(batch_processing)
-    {
-    }
+    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+                               QImage const& image,
+                               ImageId const& image_id,
+                               ImageTransformation const& xform,
+                               bool const batch_processing)
+        : m_ptrFilter(filter),
+          m_image(image),
+          m_downscaledImage(ImageView::createDownscaledImage(image)),
+          m_imageId(image_id),
+          m_xform(xform),
+          m_batchProcessing(batch_processing)
+    { }
 
     void
     Task::UiUpdater::updateUI(FilterUiInterface* ui)
@@ -127,9 +125,8 @@ namespace fix_orientation
         ImageView* view = new ImageView(m_image, m_downscaledImage, m_xform);
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
         QObject::connect(
-                opt_widget, SIGNAL(rotated(OrthogonalRotation)),
-                view, SLOT(setPreRotation(OrthogonalRotation))
+            opt_widget, SIGNAL(rotated(OrthogonalRotation)),
+            view, SLOT(setPreRotation(OrthogonalRotation))
         );
     }
-
-} 
+}  // namespace fix_orientation

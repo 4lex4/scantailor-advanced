@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ContentBoxPropagator.h"
 #include "CompositeCacheDrivenTask.h"
@@ -24,23 +25,28 @@
 #include "filters/page_layout/Filter.h"
 #include "filter_dc/ContentBoxCollector.h"
 
-class ContentBoxPropagator::Collector : public ContentBoxCollector
+class ContentBoxPropagator::Collector
+    : public ContentBoxCollector
 {
 public:
     Collector();
 
-    virtual void process(
-            ImageTransformation const &xform,
-            QRectF const &content_rect);
+    virtual void process(ImageTransformation const& xform, QRectF const& content_rect);
 
     bool collected() const
-    { return m_collected; }
+    {
+        return m_collected;
+    }
 
-    ImageTransformation const &xform() const
-    { return m_xform; }
+    ImageTransformation const& xform() const
+    {
+        return m_xform;
+    }
 
-    QRectF const &contentRect() const
-    { return m_contentRect; }
+    QRectF const& contentRect() const
+    {
+        return m_contentRect;
+    }
 
 private:
     ImageTransformation m_xform;
@@ -49,32 +55,29 @@ private:
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(
-        IntrusivePtr<page_layout::Filter> const &page_layout_filter,
-        IntrusivePtr<CompositeCacheDrivenTask> const &task)
-        : m_ptrPageLayoutFilter(page_layout_filter),
-          m_ptrTask(task)
-{
-}
+ContentBoxPropagator::ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
+                                           IntrusivePtr<CompositeCacheDrivenTask> const& task)
+    : m_ptrPageLayoutFilter(page_layout_filter),
+      m_ptrTask(task)
+{ }
 
 ContentBoxPropagator::~ContentBoxPropagator()
-{
-}
+{ }
 
 void
-ContentBoxPropagator::propagate(ProjectPages const &pages)
+ContentBoxPropagator::propagate(ProjectPages const& pages)
 {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
     size_t const num_pages = sequence.numPages();
 
     for (size_t i = 0; i < num_pages; ++i) {
-        PageInfo const &page_info = sequence.pageAt(i);
+        PageInfo const& page_info = sequence.pageAt(i);
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         if (collector.collected()) {
             m_ptrPageLayoutFilter->setContentBox(
-                    page_info.id(), collector.xform(),
-                    collector.contentRect()
+                page_info.id(), collector.xform(),
+                collector.contentRect()
             );
         }
         else {
@@ -83,20 +86,18 @@ ContentBoxPropagator::propagate(ProjectPages const &pages)
     }
 }
 
-
 /*=================== ContentBoxPropagator::Collector ====================*/
 
 ContentBoxPropagator::Collector::Collector()
-        : m_xform(QRectF(0, 0, 1, 1), Dpi(300, 300)),
-          m_collected(false)
-{
-}
+    : m_xform(QRectF(0, 0, 1, 1), Dpi(300, 300)),
+      m_collected(false)
+{ }
 
 void
-ContentBoxPropagator::Collector::process(
-        ImageTransformation const &xform, QRectF const &content_rect)
+ContentBoxPropagator::Collector::process(ImageTransformation const& xform, QRectF const& content_rect)
 {
     m_xform = xform;
     m_contentRect = content_rect;
     m_collected = true;
 }
+

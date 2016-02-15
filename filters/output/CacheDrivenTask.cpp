@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CacheDrivenTask.h"
 #include "OutputGenerator.h"
@@ -30,26 +31,22 @@
 
 namespace output
 {
-
-    CacheDrivenTask::CacheDrivenTask(
-            IntrusivePtr<Settings> const& settings,
-            OutputFileNameGenerator const& out_file_name_gen)
-            : m_ptrSettings(settings),
-              m_outFileNameGen(out_file_name_gen)
-    {
-    }
+    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     OutputFileNameGenerator const& out_file_name_gen)
+        : m_ptrSettings(settings),
+          m_outFileNameGen(out_file_name_gen)
+    { }
 
     CacheDrivenTask::~CacheDrivenTask()
-    {
-    }
+    { }
 
     void
-    CacheDrivenTask::process(
-            PageInfo const& page_info, AbstractFilterDataCollector* collector,
-            ImageTransformation const& xform, QPolygonF const& content_rect_phys)
+    CacheDrivenTask::process(PageInfo const& page_info,
+                             AbstractFilterDataCollector* collector,
+                             ImageTransformation const& xform,
+                             QPolygonF const& content_rect_phys)
     {
         if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-
             QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
             Params const params(m_ptrSettings->getParams(page_info.id()));
 
@@ -60,7 +57,7 @@ namespace output
 
             do {
                 std::unique_ptr<OutputParams> stored_output_params(
-                        m_ptrSettings->getOutputParams(page_info.id())
+                    m_ptrSettings->getOutputParams(page_info.id())
                 );
 
                 if (!stored_output_params.get()) {
@@ -69,14 +66,14 @@ namespace output
                 }
 
                 OutputGenerator const generator(
-                        params.outputDpi(), params.colorParams(), params.despeckleLevel(),
-                        new_xform, content_rect_phys
+                    params.outputDpi(), params.colorParams(), params.despeckleLevel(),
+                    new_xform, content_rect_phys
                 );
                 OutputImageParams const new_output_image_params(
-                        generator.outputImageSize(), generator.outputContentRect(),
-                        new_xform, params.outputDpi(), params.colorParams(),
-                        params.dewarpingMode(), params.distortionModel(),
-                        params.depthPerception(), params.despeckleLevel(), params.pictureShape()
+                    generator.outputImageSize(), generator.outputContentRect(),
+                    new_xform, params.outputDpi(), params.colorParams(),
+                    params.dewarpingMode(), params.distortionModel(),
+                    params.depthPerception(), params.despeckleLevel(), params.pictureShape()
                 );
 
                 if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
@@ -111,31 +108,30 @@ namespace output
 
             if (need_reprocess) {
                 thumb_col->processThumbnail(
-                        std::unique_ptr<QGraphicsItem>(
-                                new IncompleteThumbnail(
-                                        thumb_col->thumbnailCache(),
-                                        thumb_col->maxLogicalThumbSize(),
-                                        page_info.imageId(), new_xform
-                                )
+                    std::unique_ptr<QGraphicsItem>(
+                        new IncompleteThumbnail(
+                            thumb_col->thumbnailCache(),
+                            thumb_col->maxLogicalThumbSize(),
+                            page_info.imageId(), new_xform
                         )
+                    )
                 );
             }
             else {
                 ImageTransformation const out_xform(
-                        new_xform.resultingRect(), params.outputDpi()
+                    new_xform.resultingRect(), params.outputDpi()
                 );
 
                 thumb_col->processThumbnail(
-                        std::unique_ptr<QGraphicsItem>(
-                                new Thumbnail(
-                                        thumb_col->thumbnailCache(),
-                                        thumb_col->maxLogicalThumbSize(),
-                                        ImageId(out_file_path), out_xform
-                                )
+                    std::unique_ptr<QGraphicsItem>(
+                        new Thumbnail(
+                            thumb_col->thumbnailCache(),
+                            thumb_col->maxLogicalThumbSize(),
+                            ImageId(out_file_path), out_xform
                         )
+                    )
                 );
             }
         }
-    }
-
-} 
+    }  // CacheDrivenTask::process
+}  // namespace output

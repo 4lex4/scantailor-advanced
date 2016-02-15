@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RELINKABLE_PATH_VISUALIZATION_H_
 #define RELINKABLE_PATH_VISUALIZATION_H_
@@ -26,9 +27,10 @@ class RelinkablePath;
 class QHBoxLayout;
 class QAbstractButton;
 
-class RelinkablePathVisualization : public QWidget
+class RelinkablePathVisualization
+    : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     RelinkablePathVisualization(QWidget* parent = 0);
@@ -38,7 +40,6 @@ public:
     void setPath(RelinkablePath const& path, bool clickable);
 
 signals:
-
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
     void clicked(QString const& prefix_path, QString const& suffix_path, int type);
 
@@ -59,4 +60,4 @@ private:
     QHBoxLayout* m_pLayout;
 };
 
-#endif
+#endif  // ifndef RELINKABLE_PATH_VISUALIZATION_H_

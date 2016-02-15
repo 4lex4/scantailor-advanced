@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEMETADATALOADER_H_
 #define IMAGEMETADATALOADER_H_
@@ -28,15 +29,15 @@ class QString;
 class QIODevice;
 class ImageMetadata;
 
-class ImageMetadataLoader : public RefCountable
+class ImageMetadataLoader
+    : public RefCountable
 {
 public:
-    enum Status
-    {
-        LOADED, /**< Loaded successfully */
-                NO_IMAGES, /**< File contained no images. */
-                FORMAT_NOT_RECOGNIZED, /**< File format not recognized. */
-                GENERIC_ERROR /**< Some other error has occured. */
+    enum Status {
+        LOADED,  /**< Loaded successfully */
+        NO_IMAGES,  /**< File contained no images. */
+        FORMAT_NOT_RECOGNIZED,  /**< File format not recognized. */
+        GENERIC_ERROR  /**< Some other error has occured. */
     };
 
     /**
@@ -47,10 +48,10 @@ public:
      */
     static void registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader);
 
-    template<typename OutFunc>
+    template <typename OutFunc>
     static Status load(QIODevice& io_device, OutFunc out);
 
-    template<typename OutFunc>
+    template <typename OutFunc>
     static Status load(QString const& file_path, OutFunc out);
 
 protected:
@@ -70,38 +71,34 @@ protected:
      *        the image metadata.  If there are multiple images (pages) in
      *        the file, this object will be called multiple times.
      */
-    virtual Status loadMetadata(
-            QIODevice& io_device,
-            VirtualFunction1<void, ImageMetadata const&>& out) = 0;
+    virtual Status loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out) = 0;
 
 private:
-    static Status loadImpl(
-            QIODevice& io_device,
-            VirtualFunction1<void, ImageMetadata const&>& out);
+    static Status loadImpl(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out);
 
-    static Status loadImpl(
-            QString const& file_path,
-            VirtualFunction1<void, ImageMetadata const&>& out);
+    static Status loadImpl(QString const& file_path, VirtualFunction1<void, ImageMetadata const&>& out);
 
-    typedef std::vector<IntrusivePtr<ImageMetadataLoader> > LoaderList;
+    typedef std::vector<IntrusivePtr<ImageMetadataLoader>> LoaderList;
     static LoaderList m_sLoaders;
 };
 
 
-template<typename OutFunc>
+template <typename OutFunc>
 ImageMetadataLoader::Status
 ImageMetadataLoader::load(QIODevice& io_device, OutFunc out)
 {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
+
     return loadImpl(io_device, proxy);
 }
 
-template<typename OutFunc>
+template <typename OutFunc>
 ImageMetadataLoader::Status
 ImageMetadataLoader::load(QString const& file_path, OutFunc out)
 {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
+
     return loadImpl(file_path, proxy);
 }
 
-#endif
+#endif  // ifndef IMAGEMETADATALOADER_H_

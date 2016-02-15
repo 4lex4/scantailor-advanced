@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,22 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_IMAGE_VIEW_TAB_H_
 #define OUTPUT_IMAGE_VIEW_TAB_H_
 
 namespace output
 {
-
-    enum ImageViewTab
-    {
+    enum ImageViewTab {
         TAB_OUTPUT,
         TAB_PICTURE_ZONES,
         TAB_FILL_ZONES,
         TAB_DEWARPING,
         TAB_DESPECKLING
     };
-
 }
 #endif

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,20 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_LINEAR_FORCE_BALANCER_H_
 #define SPFIT_LINEAR_FORCE_BALANCER_H_
 
 namespace spfit
 {
-
-/**
- * \brief Implements one possible strategy of choosing the internal / external force ratio.
- *
- * The strategy is starting with some value and linearly changing it (usually decreasing)
-*  over time.
- */
+    /**
+     * \brief Implements one possible strategy of choosing the internal / external force ratio.
+     *
+     * The strategy is starting with some value and linearly changing it (usually decreasing)
+     *  over time.
+     */
     class LinearForceBalancer
     {
     public:
@@ -37,12 +37,16 @@ namespace spfit
         LinearForceBalancer(double internal_external_ratio);
 
         double currentRatio() const
-        { return m_currentRatio; }
+        {
+            return m_currentRatio;
+        }
 
         void setCurrentRatio(double internal_external_ratio);
 
         double targetRatio() const
-        { return m_targetRatio; }
+        {
+            return m_targetRatio;
+        }
 
         void setTargetRatio(double internal_external_ratio);
 
@@ -70,6 +74,5 @@ namespace spfit
         double m_rateOfChange;
         int m_iterationsToTarget;
     };
-
-}
-#endif
+}  // namespace spfit
+#endif  // ifndef SPFIT_LINEAR_FORCE_BALANCER_H_

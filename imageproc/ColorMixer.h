@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_COLOR_MIXER_H_
 #define IMAGEPROC_COLOR_MIXER_H_
@@ -24,13 +25,10 @@
 
 namespace imageproc
 {
-
     namespace color_mixer_impl
     {
-
-        template<typename Mixer, bool IntegerAccum>
-        struct Switcher
-        {
+        template <typename Mixer, bool IntegerAccum>
+        struct Switcher {
             typedef typename Mixer::accum_type accum_type;
             typedef typename Mixer::result_type result_type;
 
@@ -40,9 +38,8 @@ namespace imageproc
             }
         };
 
-        template<typename Mixer>
-        struct Switcher<Mixer, true>
-        {
+        template <typename Mixer>
+        struct Switcher<Mixer, true>{
             typedef typename Mixer::accum_type accum_type;
             typedef typename Mixer::result_type result_type;
 
@@ -51,19 +48,21 @@ namespace imageproc
                 return mixer->integerMix(total_weight);
             }
         };
-
     }
 
-    template<typename AccumType>
+    template <typename AccumType>
     class GrayColorMixer
     {
-        template<typename Mixer, bool IntegerAccum> friend
+        template <typename Mixer, bool IntegerAccum>
+        friend
         struct color_mixer_impl::Switcher;
+
     public:
         typedef AccumType accum_type;
         typedef uint8_t result_type;
 
-        GrayColorMixer() : m_accum()
+        GrayColorMixer()
+            : m_accum()
         { }
 
         void add(uint8_t gray_level, AccumType weight)
@@ -75,8 +74,9 @@ namespace imageproc
         {
             using namespace color_mixer_impl;
             typedef std::numeric_limits<AccumType> traits;
+
             return Switcher<GrayColorMixer<AccumType>, traits::is_integer>::mix(
-                    this, total_weight
+                this, total_weight
             );
         }
 
@@ -90,6 +90,7 @@ namespace imageproc
         {
             AccumType const half_weight = total_weight >> 1;
             AccumType const mixed = (m_accum + half_weight) / total_weight;
+
             return static_cast<uint8_t>(mixed);
         }
 
@@ -97,16 +98,21 @@ namespace imageproc
     };
 
 
-    template<typename AccumType>
+    template <typename AccumType>
     class RgbColorMixer
     {
-        template<typename Mixer, bool IntegerAccum> friend
+        template <typename Mixer, bool IntegerAccum>
+        friend
         struct color_mixer_impl::Switcher;
+
     public:
         typedef AccumType accum_type;
         typedef uint32_t result_type;
 
-        RgbColorMixer() : m_redAccum(), m_greenAccum(), m_blueAccum()
+        RgbColorMixer()
+            : m_redAccum(),
+              m_greenAccum(),
+              m_blueAccum()
         { }
 
         void add(uint32_t rgb, AccumType weight)
@@ -120,8 +126,9 @@ namespace imageproc
         {
             using namespace color_mixer_impl;
             typedef std::numeric_limits<AccumType> traits;
+
             return Switcher<RgbColorMixer<AccumType>, traits::is_integer>::mix(
-                    this, total_weight
+                this, total_weight
             );
         }
 
@@ -132,8 +139,9 @@ namespace imageproc
             uint32_t const r = uint32_t(AccumType(0.5) + m_redAccum * scale);
             uint32_t const g = uint32_t(AccumType(0.5) + m_greenAccum * scale);
             uint32_t const b = uint32_t(AccumType(0.5) + m_blueAccum * scale);
+
             return (r << 16) | (g << 8) | b;
-        };
+        }
 
         uint32_t integerMix(AccumType total_weight) const
         {
@@ -141,8 +149,9 @@ namespace imageproc
             uint32_t const r = uint32_t((m_redAccum + half_weight) / total_weight);
             uint32_t const g = uint32_t((m_greenAccum + half_weight) / total_weight);
             uint32_t const b = uint32_t((m_blueAccum + half_weight) / total_weight);
+
             return (r << 16) | (g << 8) | b;
-        };
+        }
 
         AccumType m_redAccum;
         AccumType m_greenAccum;
@@ -150,16 +159,22 @@ namespace imageproc
     };
 
 
-    template<typename AccumType>
+    template <typename AccumType>
     class ArgbColorMixer
     {
-        template<typename Mixer, bool IntegerAccum> friend
+        template <typename Mixer, bool IntegerAccum>
+        friend
         struct color_mixer_impl::Switcher;
+
     public:
         typedef AccumType accum_type;
         typedef uint32_t result_type;
 
-        ArgbColorMixer() : m_alphaAccum(), m_redAccum(), m_greenAccum(), m_blueAccum()
+        ArgbColorMixer()
+            : m_alphaAccum(),
+              m_redAccum(),
+              m_greenAccum(),
+              m_blueAccum()
         { }
 
         void add(uint32_t argb, AccumType weight)
@@ -174,8 +189,9 @@ namespace imageproc
         {
             using namespace color_mixer_impl;
             typedef std::numeric_limits<AccumType> traits;
+
             return Switcher<ArgbColorMixer<AccumType>, traits::is_integer>::mix(
-                    this, total_weight
+                this, total_weight
             );
         }
 
@@ -187,8 +203,9 @@ namespace imageproc
             uint32_t const r = uint32_t(AccumType(0.5) + m_redAccum * scale);
             uint32_t const g = uint32_t(AccumType(0.5) + m_greenAccum * scale);
             uint32_t const b = uint32_t(AccumType(0.5) + m_blueAccum * scale);
+
             return (a << 24) | (r << 16) | (g << 8) | b;
-        };
+        }
 
         uint32_t integerMix(AccumType total_weight) const
         {
@@ -197,14 +214,14 @@ namespace imageproc
             uint32_t const r = uint32_t((m_redAccum + half_weight) / total_weight);
             uint32_t const g = uint32_t((m_greenAccum + half_weight) / total_weight);
             uint32_t const b = uint32_t((m_blueAccum + half_weight) / total_weight);
+
             return (a << 24) | (r << 16) | (g << 8) | b;
-        };
+        }
 
         AccumType m_alphaAccum;
         AccumType m_redAccum;
         AccumType m_greenAccum;
         AccumType m_blueAccum;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_COLOR_MIXER_H_

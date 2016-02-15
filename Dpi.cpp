@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Dpi.h"
 #include "Dpm.h"
@@ -23,16 +24,14 @@
 using namespace imageproc;
 
 Dpi::Dpi(QSize const size)
-        : m_xDpi(size.width()),
-          m_yDpi(size.height())
-{
-}
+    : m_xDpi(size.width()),
+      m_yDpi(size.height())
+{ }
 
 Dpi::Dpi(Dpm const dpm)
-        : m_xDpi(qRound(dpm.horizontal() * constants::DPM2DPI)),
-          m_yDpi(qRound(dpm.vertical() * constants::DPM2DPI))
-{
-}
+    : m_xDpi(qRound(dpm.horizontal() * constants::DPM2DPI)),
+      m_yDpi(qRound(dpm.vertical() * constants::DPM2DPI))
+{ }
 
 QSize
 Dpi::toSize() const
@@ -46,7 +45,8 @@ Dpi::toSize() const
 }
 
 bool
-Dpi::operator==(Dpi const &other) const
+Dpi::operator==(Dpi const& other) const
 {
     return m_xDpi == other.m_xDpi && m_yDpi == other.m_yDpi;
 }
+

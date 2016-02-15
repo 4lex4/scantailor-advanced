@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ChangeDpiDialog.h"
 #include "PageSelectionAccessor.h"
@@ -23,15 +24,15 @@
 
 namespace output
 {
-
-    ChangeDpiDialog::ChangeDpiDialog(
-            QWidget* parent, Dpi const& dpi, PageId const& cur_page,
-            PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_curPage(cur_page),
-              m_pScopeGroup(new QButtonGroup(this))
+    ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
+                                     Dpi const& dpi,
+                                     PageId const& cur_page,
+                                     PageSelectionAccessor const& page_selection_accessor)
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_curPage(cur_page),
+          m_pScopeGroup(new QButtonGroup(this))
     {
         setupUi(this);
         m_pScopeGroup->addButton(thisPageRB);
@@ -45,14 +46,14 @@ namespace output
         dpiSelector->setValidator(new QIntValidator(dpiSelector));
 
         static int const common_dpis[] = {
-                300, 400, 600
+            300, 400, 600
         };
 
         int const requested_dpi = std::max(dpi.horizontal(), dpi.vertical());
         m_customDpiString = QString::number(requested_dpi);
 
         int selected_index = -1;
-        for (int const cdpi :  common_dpis) {
+        for (int const cdpi : common_dpis) {
             if (cdpi == requested_dpi) {
                 selected_index = dpiSelector->count();
             }
@@ -71,24 +72,23 @@ namespace output
             dpiSelector->setEditable(true);
             dpiSelector->lineEdit()->setText(m_customDpiString);
             dpiSelector->setValidator(
-                    new QIntValidator(0, 9999, dpiSelector)
+                new QIntValidator(0, 9999, dpiSelector)
             );
         }
 
         connect(
-                dpiSelector, SIGNAL(activated(int)),
-                this, SLOT(dpiSelectionChanged(int))
+            dpiSelector, SIGNAL(activated(int)),
+            this, SLOT(dpiSelectionChanged(int))
         );
         connect(
-                dpiSelector, SIGNAL(editTextChanged(QString const&)),
-                this, SLOT(dpiEditTextChanged(QString const&))
+            dpiSelector, SIGNAL(editTextChanged(QString const &)),
+            this, SLOT(dpiEditTextChanged(QString const &))
         );
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
     ChangeDpiDialog::~ChangeDpiDialog()
-    {
-    }
+    { }
 
     void
     ChangeDpiDialog::dpiSelectionChanged(int const index)
@@ -98,7 +98,7 @@ namespace output
             dpiSelector->setEditText(m_customDpiString);
             dpiSelector->lineEdit()->selectAll();
             dpiSelector->setValidator(
-                    new QIntValidator(0, 9999, dpiSelector)
+                new QIntValidator(0, 9999, dpiSelector)
             );
         }
     }
@@ -117,26 +117,29 @@ namespace output
         QString const dpi_str(dpiSelector->currentText());
         if (dpi_str.isEmpty()) {
             QMessageBox::warning(
-                    this, tr("Error"),
-                    tr("DPI is not set.")
+                this, tr("Error"),
+                tr("DPI is not set.")
             );
+
             return;
         }
 
         int const dpi = dpi_str.toInt();
         if (dpi < 72) {
             QMessageBox::warning(
-                    this, tr("Error"),
-                    tr("DPI is too low!")
+                this, tr("Error"),
+                tr("DPI is too low!")
             );
+
             return;
         }
 
         if (dpi > 1200) {
             QMessageBox::warning(
-                    this, tr("Error"),
-                    tr("DPI is too high!")
+                this, tr("Error"),
+                tr("DPI is too high!")
             );
+
             return;
         }
 
@@ -154,12 +157,12 @@ namespace output
         else if (selectedPagesRB->isChecked()) {
             emit accepted(m_selectedPages, Dpi(dpi, dpi));
             accept();
+
             return;
         }
 
         emit accepted(pages, Dpi(dpi, dpi));
 
         accept();
-    }
-
-} 
+    }  // ChangeDpiDialog::onSubmit
+}  // namespace output

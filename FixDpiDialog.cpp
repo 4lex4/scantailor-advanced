@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "FixDpiDialog.h"
 #include <QSortFilterProxyModel>
@@ -45,9 +46,9 @@ static int const AGGREGATE_NOT_OK_METADATA_ROLE = Qt::UserRole + 1;
 class FixDpiDialog::DpiCounts
 {
 public:
-    void add(ImageMetadata const &metadata);
+    void add(ImageMetadata const& metadata);
 
-    void remove(ImageMetadata const &metadata);
+    void remove(ImageMetadata const& metadata);
 
     /**
      * Checks if all ImageMetadata objects return true for ImageMetadata::isDpiOK().
@@ -61,9 +62,8 @@ public:
     ImageMetadata aggregate(Scope scope) const;
 
 private:
-    struct MetadataComparator
-    {
-        bool operator()(ImageMetadata const &lhs, ImageMetadata const &rhs) const;
+    struct MetadataComparator {
+        bool operator()(ImageMetadata const& lhs, ImageMetadata const& rhs) const;
     };
 
     typedef std::map<ImageMetadata, int, MetadataComparator> Map;
@@ -75,8 +75,8 @@ private:
 /**
  * This comparator puts objects that are not OK to the front.
  */
-bool FixDpiDialog::DpiCounts::MetadataComparator::operator()(
-        ImageMetadata const &lhs, ImageMetadata const &rhs) const
+bool
+FixDpiDialog::DpiCounts::MetadataComparator::operator()(ImageMetadata const& lhs, ImageMetadata const& rhs) const
 {
     bool const lhs_ok = lhs.isDpiOK();
     bool const rhs_ok = rhs.isDpiOK();
@@ -107,36 +107,44 @@ bool FixDpiDialog::DpiCounts::MetadataComparator::operator()(
     }
 }
 
-
 class FixDpiDialog::SizeGroup
 {
 public:
-    struct Item
-    {
+    struct Item {
         int fileIdx;
         int imageIdx;
 
         Item(int file_idx, int image_idx)
-                : fileIdx(file_idx), imageIdx(image_idx)
+            : fileIdx(file_idx),
+              imageIdx(image_idx)
         { }
     };
 
-    SizeGroup(QSize const &size) : m_size(size)
+    SizeGroup(QSize const& size)
+        : m_size(size)
     { }
 
-    void append(Item const &item, ImageMetadata const &metadata);
+    void append(Item const& item, ImageMetadata const& metadata);
 
-    QSize const &size() const
-    { return m_size; }
+    QSize const& size() const
+    {
+        return m_size;
+    }
 
-    std::vector<Item> const &items() const
-    { return m_items; }
+    std::vector<Item> const& items() const
+    {
+        return m_items;
+    }
 
-    DpiCounts &dpiCounts()
-    { return m_dpiCounts; }
+    DpiCounts& dpiCounts()
+    {
+        return m_dpiCounts;
+    }
 
-    DpiCounts const &dpiCounts() const
-    { return m_dpiCounts; }
+    DpiCounts const& dpiCounts() const
+    {
+        return m_dpiCounts;
+    }
 
 private:
     QSize m_size;
@@ -145,57 +153,61 @@ private:
 };
 
 
-class FixDpiDialog::TreeModel : private QAbstractItemModel
+class FixDpiDialog::TreeModel
+    : private QAbstractItemModel
 {
 public:
-    TreeModel(std::vector<ImageFileInfo> const &files);
+    TreeModel(std::vector<ImageFileInfo> const& files);
 
-    std::vector<ImageFileInfo> const &files() const
-    { return m_files; }
+    std::vector<ImageFileInfo> const& files() const
+    {
+        return m_files;
+    }
 
-    QAbstractItemModel *model()
-    { return this; }
+    QAbstractItemModel* model()
+    {
+        return this;
+    }
 
     bool allDpisOK() const
     {
         return m_dpiCounts.allDpisOK();
     }
 
-    bool isVisibleForFilter(QModelIndex const &parent, int row) const;
+    bool isVisibleForFilter(QModelIndex const& parent, int row) const;
 
-    void applyDpiToSelection(
-            Scope scope, Dpi const &dpi, QItemSelection const &selection);
+    void applyDpiToSelection(Scope scope, Dpi const& dpi, QItemSelection const& selection);
 
 private:
-    struct Tag
-    {
-    };
+    struct Tag { };
 
-    virtual int columnCount(QModelIndex const &parent) const;
+    virtual int columnCount(QModelIndex const& parent) const;
 
-    virtual int rowCount(QModelIndex const &parent) const;
+    virtual int rowCount(QModelIndex const& parent) const;
 
-    virtual QModelIndex index(int row, int column, QModelIndex const &parent) const;
+    virtual QModelIndex index(int row, int column, QModelIndex const& parent) const;
 
-    virtual QModelIndex parent(QModelIndex const &index) const;
+    virtual QModelIndex parent(QModelIndex const& index) const;
 
-    virtual QVariant data(QModelIndex const &index, int role) const;
+    virtual QVariant data(QModelIndex const& index, int role) const;
 
-    void applyDpiToAllGroups(Scope scope, Dpi const &dpi);
+    void applyDpiToAllGroups(Scope scope, Dpi const& dpi);
 
-    void applyDpiToGroup(Scope scope, Dpi const &dpi, SizeGroup &group, DpiCounts &total_dpi_counts);
+    void applyDpiToGroup(Scope scope, Dpi const& dpi, SizeGroup& group, DpiCounts& total_dpi_counts);
 
-    void applyDpiToItem(
-            Scope scope, ImageMetadata const &new_metadata, SizeGroup::Item item,
-            DpiCounts &total_dpi_counts, DpiCounts &group_dpi_counts);
+    void applyDpiToItem(Scope scope,
+                        ImageMetadata const& new_metadata,
+                        SizeGroup::Item item,
+                        DpiCounts& total_dpi_counts,
+                        DpiCounts& group_dpi_counts);
 
-    void emitAllPagesChanged(QModelIndex const &idx);
+    void emitAllPagesChanged(QModelIndex const& idx);
 
-    void emitSizeGroupChanged(QModelIndex const &idx);
+    void emitSizeGroupChanged(QModelIndex const& idx);
 
-    void emitItemChanged(QModelIndex const &idx);
+    void emitItemChanged(QModelIndex const& idx);
 
-    SizeGroup &sizeGroupFor(QSize size);
+    SizeGroup& sizeGroupFor(QSize size);
 
     static QString sizeToString(QSize size);
 
@@ -208,28 +220,30 @@ private:
 };
 
 
-class FixDpiDialog::FilterModel : private QSortFilterProxyModel
+class FixDpiDialog::FilterModel
+    : private QSortFilterProxyModel
 {
 public:
-    FilterModel(TreeModel &delegate);
+    FilterModel(TreeModel& delegate);
 
-    QAbstractProxyModel *model()
-    { return this; }
+    QAbstractProxyModel* model()
+    {
+        return this;
+    }
 
 private:
-    virtual bool filterAcceptsRow(
-            int source_row, QModelIndex const &source_parent) const;
+    virtual bool filterAcceptsRow(int source_row, QModelIndex const& source_parent) const;
 
-    virtual QVariant data(QModelIndex const &index, int role) const;
+    virtual QVariant data(QModelIndex const& index, int role) const;
 
-    TreeModel &m_rDelegate;
+    TreeModel& m_rDelegate;
 };
 
 
-FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const &files, QWidget *parent)
-        : QDialog(parent),
-          m_ptrPages(new TreeModel(files)),
-          m_ptrUndefinedDpiPages(new FilterModel(*m_ptrPages))
+FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent)
+    : QDialog(parent),
+      m_ptrPages(new TreeModel(files)),
+      m_ptrUndefinedDpiPages(new FilterModel(*m_ptrPages))
 {
     setupUi(this);
 
@@ -244,7 +258,7 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const &files, QWidget *par
     tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
     tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));
     undefinedDpiView->setModel(m_ptrUndefinedDpiPages->model()),
-            undefinedDpiView->header()->hide();
+    undefinedDpiView->header()->hide();
     allPagesView->setModel(m_ptrPages->model());
     allPagesView->header()->hide();
 
@@ -254,33 +268,33 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const &files, QWidget *par
     yDpi->setValidator(new QIntValidator(yDpi));
 
     connect(
-            tabWidget, SIGNAL(currentChanged(int)),
-            this, SLOT(tabChanged(int))
+        tabWidget, SIGNAL(currentChanged(int)),
+        this, SLOT(tabChanged(int))
     );
 
     connect(
-            undefinedDpiView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection const&, QItemSelection const&)),
-            this, SLOT(selectionChanged(QItemSelection const&))
+        undefinedDpiView->selectionModel(),
+        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+        this, SLOT(selectionChanged(QItemSelection const &))
     );
     connect(
-            allPagesView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection const&, QItemSelection const&)),
-            this, SLOT(selectionChanged(QItemSelection const&))
-    );
-
-    connect(
-            dpiCombo, SIGNAL(activated(int)),
-            this, SLOT(dpiComboChangedByUser(int))
+        allPagesView->selectionModel(),
+        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+        this, SLOT(selectionChanged(QItemSelection const &))
     );
 
     connect(
-            xDpi, SIGNAL(textEdited(QString const&)),
-            this, SLOT(dpiValueChanged())
+        dpiCombo, SIGNAL(activated(int)),
+        this, SLOT(dpiComboChangedByUser(int))
+    );
+
+    connect(
+        xDpi, SIGNAL(textEdited(QString const &)),
+        this, SLOT(dpiValueChanged())
     );
     connect(
-            yDpi, SIGNAL(textEdited(QString const&)),
-            this, SLOT(dpiValueChanged())
+        yDpi, SIGNAL(textEdited(QString const &)),
+        this, SLOT(dpiValueChanged())
     );
 
     connect(applyBtn, SIGNAL(clicked()), this, SLOT(applyClicked()));
@@ -289,10 +303,9 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const &files, QWidget *par
 }
 
 FixDpiDialog::~FixDpiDialog()
-{
-}
+{ }
 
-std::vector<ImageFileInfo> const &
+std::vector<ImageFileInfo> const&
 FixDpiDialog::files() const
 {
     return m_ptrPages->files();
@@ -301,14 +314,14 @@ FixDpiDialog::files() const
 void
 FixDpiDialog::tabChanged(int const tab)
 {
-    QTreeView *views[2];
+    QTreeView* views[2];
     views[NEED_FIXING_TAB] = undefinedDpiView;
     views[ALL_PAGES_TAB] = allPagesView;
     updateDpiFromSelection(views[tab]->selectionModel()->selection());
 }
 
 void
-FixDpiDialog::selectionChanged(QItemSelection const &selection)
+FixDpiDialog::selectionChanged(QItemSelection const& selection)
 {
     updateDpiFromSelection(selection);
 }
@@ -336,15 +349,17 @@ FixDpiDialog::dpiValueChanged()
     decorateDpiInputField(xDpi, metadata.horizontalDpiStatus());
     decorateDpiInputField(yDpi, metadata.verticalDpiStatus());
 
-    if (m_xDpiInitialValue == xDpi->text() &&
-        m_yDpiInitialValue == yDpi->text()) {
+    if ((m_xDpiInitialValue == xDpi->text())
+        && (m_yDpiInitialValue == yDpi->text())) {
         applyBtn->setEnabled(false);
+
         return;
     }
 
 
     if (metadata.isDpiOK()) {
         applyBtn->setEnabled(true);
+
         return;
     }
 
@@ -355,7 +370,7 @@ void
 FixDpiDialog::applyClicked()
 {
     Dpi const dpi(xDpi->text().toInt(), yDpi->text().toInt());
-    QItemSelectionModel *selection_model = 0;
+    QItemSelectionModel* selection_model = 0;
 
     if (tabWidget->currentIndex() == ALL_PAGES_TAB) {
         selection_model = allPagesView->selectionModel();
@@ -365,9 +380,9 @@ FixDpiDialog::applyClicked()
     else {
         selection_model = undefinedDpiView->selectionModel();
         QItemSelection const selection(
-                m_ptrUndefinedDpiPages->model()->mapSelectionToSource(
-                        selection_model->selection()
-                )
+            m_ptrUndefinedDpiPages->model()->mapSelectionToSource(
+                selection_model->selection()
+            )
         );
         m_ptrPages->applyDpiToSelection(NOT_OK, dpi, selection);
     }
@@ -388,13 +403,14 @@ FixDpiDialog::enableDisableOkButton()
  * It is assumed that only a single item is selected.
  */
 void
-FixDpiDialog::updateDpiFromSelection(QItemSelection const &selection)
+FixDpiDialog::updateDpiFromSelection(QItemSelection const& selection)
 {
     if (selection.isEmpty()) {
         resetDpiForm();
         dpiCombo->setEnabled(false);
         xDpi->setEnabled(false);
         yDpi->setEnabled(false);
+
         return;
     }
 
@@ -423,12 +439,13 @@ FixDpiDialog::resetDpiForm()
 }
 
 void
-FixDpiDialog::setDpiForm(ImageMetadata const &metadata)
+FixDpiDialog::setDpiForm(ImageMetadata const& metadata)
 {
     Dpi const dpi(metadata.dpi());
 
     if (dpi.isNull()) {
         resetDpiForm();
+
         return;
     }
 
@@ -453,6 +470,7 @@ FixDpiDialog::updateDpiCombo()
             if (data.isValid()) {
                 if (dpi == data.toSize()) {
                     dpiCombo->setCurrentIndex(i);
+
                     return;
                 }
             }
@@ -463,7 +481,7 @@ FixDpiDialog::updateDpiCombo()
 }
 
 void
-FixDpiDialog::decorateDpiInputField(QLineEdit *field, ImageMetadata::DpiStatus dpi_status) const
+FixDpiDialog::decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpi_status) const
 {
     if (dpi_status == ImageMetadata::DPI_OK) {
         field->setPalette(m_normalPalette);
@@ -482,26 +500,26 @@ FixDpiDialog::decorateDpiInputField(QLineEdit *field, ImageMetadata::DpiStatus d
             break;
         case ImageMetadata::DPI_TOO_SMALL:
             field->setToolTip(
-                    tr("DPI is too small. Even if it's correct, you are not going to get acceptable results with it."));
+                tr("DPI is too small. Even if it's correct, you are not going to get acceptable results with it."));
             break;
         case ImageMetadata::DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE:
             field->setToolTip(
-                    tr("DPI is too small for this pixel size. Such combination would probably lead to out of memory errors."));
+                tr(
+                    "DPI is too small for this pixel size. Such combination would probably lead to out of memory errors."));
             break;
     }
 }
 
-
 /*====================== FixDpiDialog::DpiCounts ======================*/
 
 void
-FixDpiDialog::DpiCounts::add(ImageMetadata const &metadata)
+FixDpiDialog::DpiCounts::add(ImageMetadata const& metadata)
 {
     ++m_counts[metadata];
 }
 
 void
-FixDpiDialog::DpiCounts::remove(ImageMetadata const &metadata)
+FixDpiDialog::DpiCounts::remove(ImageMetadata const& metadata)
 {
     if (--m_counts[metadata] == 0) {
         m_counts.erase(metadata);
@@ -512,7 +530,8 @@ bool
 FixDpiDialog::DpiCounts::allDpisOK() const
 {
     Map::const_iterator const it(m_counts.begin());
-    return (it == m_counts.end() || it->first.isDpiOK());
+
+    return it == m_counts.end() || it->first.isDpiOK();
 }
 
 ImageMetadata
@@ -524,7 +543,7 @@ FixDpiDialog::DpiCounts::aggregate(Scope const scope) const
         return ImageMetadata();
     }
 
-    if (scope == NOT_OK && it->first.isDpiOK()) {
+    if ((scope == NOT_OK) && it->first.isDpiOK()) {
         return ImageMetadata();
     }
 
@@ -535,39 +554,37 @@ FixDpiDialog::DpiCounts::aggregate(Scope const scope) const
         return it->first;
     }
 
-    if (scope == NOT_OK && next->first.isDpiOK()) {
+    if ((scope == NOT_OK) && next->first.isDpiOK()) {
         return it->first;
     }
 
     return ImageMetadata();
 }
 
-
 /*====================== FixDpiDialog::SizeGroup ======================*/
 
 void
-FixDpiDialog::SizeGroup::append(Item const &item, ImageMetadata const &metadata)
+FixDpiDialog::SizeGroup::append(Item const& item, ImageMetadata const& metadata)
 {
     m_items.push_back(item);
     m_dpiCounts.add(metadata);
 }
-
 
 /*====================== FixDpiDialog::TreeModel ======================*/
 
 FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_allPagesNodeId;
 FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_sizeGroupNodeId;
 
-FixDpiDialog::TreeModel::TreeModel(std::vector<ImageFileInfo> const &files)
-        : m_files(files)
+FixDpiDialog::TreeModel::TreeModel(std::vector<ImageFileInfo> const& files)
+    : m_files(files)
 {
     int const num_files = m_files.size();
     for (int i = 0; i < num_files; ++i) {
-        ImageFileInfo const &file = m_files[i];
+        ImageFileInfo const& file = m_files[i];
         int const num_images = file.imageInfo().size();
         for (int j = 0; j < num_images; ++j) {
-            ImageMetadata const &metadata = file.imageInfo()[j];
-            SizeGroup &group = sizeGroupFor(metadata.size());
+            ImageMetadata const& metadata = file.imageInfo()[j];
+            SizeGroup& group = sizeGroupFor(metadata.size());
             group.append(SizeGroup::Item(i, j), metadata);
             m_dpiCounts.add(metadata);
         }
@@ -575,9 +592,9 @@ FixDpiDialog::TreeModel::TreeModel(std::vector<ImageFileInfo> const &files)
 }
 
 bool
-FixDpiDialog::TreeModel::isVisibleForFilter(QModelIndex const &parent, int row) const
+FixDpiDialog::TreeModel::isVisibleForFilter(QModelIndex const& parent, int row) const
 {
-    void const *const ptr = parent.internalPointer();
+    void const* const ptr = parent.internalPointer();
 
     if (!parent.isValid()) {
         return !m_dpiCounts.allDpisOK();
@@ -586,9 +603,10 @@ FixDpiDialog::TreeModel::isVisibleForFilter(QModelIndex const &parent, int row) 
         return !m_sizes[row].dpiCounts().allDpisOK();
     }
     else if (ptr == &m_sizeGroupNodeId) {
-        SizeGroup const &group = m_sizes[parent.row()];
-        SizeGroup::Item const &item = group.items()[row];
-        ImageFileInfo const &file = m_files[item.fileIdx];
+        SizeGroup const& group = m_sizes[parent.row()];
+        SizeGroup::Item const& item = group.items()[row];
+        ImageFileInfo const& file = m_files[item.fileIdx];
+
         return !file.imageInfo()[item.imageIdx].isDpiOK();
     }
     else {
@@ -597,8 +615,7 @@ FixDpiDialog::TreeModel::isVisibleForFilter(QModelIndex const &parent, int row) 
 }
 
 void
-FixDpiDialog::TreeModel::applyDpiToSelection(
-        Scope const scope, Dpi const &dpi, QItemSelection const &selection)
+FixDpiDialog::TreeModel::applyDpiToSelection(Scope const scope, Dpi const& dpi, QItemSelection const& selection)
 {
     if (selection.isEmpty()) {
         return;
@@ -606,7 +623,7 @@ FixDpiDialog::TreeModel::applyDpiToSelection(
 
     QModelIndex const parent(selection.front().parent());
     int const row = selection.front().top();
-    void const *const ptr = parent.internalPointer();
+    void const* const ptr = parent.internalPointer();
     QModelIndex const idx(index(row, 0, parent));
 
     if (!parent.isValid()) {
@@ -614,13 +631,13 @@ FixDpiDialog::TreeModel::applyDpiToSelection(
         emitAllPagesChanged(idx);
     }
     else if (ptr == &m_allPagesNodeId) {
-        SizeGroup &group = m_sizes[row];
+        SizeGroup& group = m_sizes[row];
         applyDpiToGroup(scope, dpi, group, m_dpiCounts);
         emitSizeGroupChanged(index(row, 0, parent));
     }
     else if (ptr == &m_sizeGroupNodeId) {
-        SizeGroup &group = m_sizes[parent.row()];
-        SizeGroup::Item const &item = group.items()[row];
+        SizeGroup& group = m_sizes[parent.row()];
+        SizeGroup::Item const& item = group.items()[row];
         ImageMetadata const metadata(group.size(), dpi);
         applyDpiToItem(scope, metadata, item, m_dpiCounts, group.dpiCounts());
         emitItemChanged(idx);
@@ -628,15 +645,15 @@ FixDpiDialog::TreeModel::applyDpiToSelection(
 }
 
 int
-FixDpiDialog::TreeModel::columnCount(QModelIndex const &parent) const
+FixDpiDialog::TreeModel::columnCount(QModelIndex const& parent) const
 {
     return 1;
 }
 
 int
-FixDpiDialog::TreeModel::rowCount(QModelIndex const &parent) const
+FixDpiDialog::TreeModel::rowCount(QModelIndex const& parent) const
 {
-    void const *const ptr = parent.internalPointer();
+    void const* const ptr = parent.internalPointer();
 
     if (!parent.isValid()) {
         return 1;
@@ -653,9 +670,9 @@ FixDpiDialog::TreeModel::rowCount(QModelIndex const &parent) const
 }
 
 QModelIndex
-FixDpiDialog::TreeModel::index(int const row, int const column, QModelIndex const &parent) const
+FixDpiDialog::TreeModel::index(int const row, int const column, QModelIndex const& parent) const
 {
-    void const *const ptr = parent.internalPointer();
+    void const* const ptr = parent.internalPointer();
 
     if (!parent.isValid()) {
         return createIndex(row, column, &m_allPagesNodeId);
@@ -664,16 +681,16 @@ FixDpiDialog::TreeModel::index(int const row, int const column, QModelIndex cons
         return createIndex(row, column, &m_sizeGroupNodeId);
     }
     else if (ptr == &m_sizeGroupNodeId) {
-        return createIndex(row, column, (void *) &m_sizes[parent.row()]);
+        return createIndex(row, column, (void*)&m_sizes[parent.row()]);
     }
 
     return QModelIndex();
 }
 
 QModelIndex
-FixDpiDialog::TreeModel::parent(QModelIndex const &index) const
+FixDpiDialog::TreeModel::parent(QModelIndex const& index) const
 {
-    void const *const ptr = index.internalPointer();
+    void const* const ptr = index.internalPointer();
 
     if (!index.isValid()) {
         return QModelIndex();
@@ -685,15 +702,16 @@ FixDpiDialog::TreeModel::parent(QModelIndex const &index) const
         return createIndex(0, index.column(), &m_allPagesNodeId);
     }
     else {
-        SizeGroup const *group = static_cast<SizeGroup const *>(ptr);
+        SizeGroup const* group = static_cast<SizeGroup const*>(ptr);
+
         return createIndex(group - &m_sizes[0], index.column(), &m_sizeGroupNodeId);
     }
 }
 
 QVariant
-FixDpiDialog::TreeModel::data(QModelIndex const &index, int const role) const
+FixDpiDialog::TreeModel::data(QModelIndex const& index, int const role) const
 {
-    void const *const ptr = index.internalPointer();
+    void const* const ptr = index.internalPointer();
 
     if (!index.isValid()) {
         return QVariant();
@@ -710,7 +728,7 @@ FixDpiDialog::TreeModel::data(QModelIndex const &index, int const role) const
         }
     }
     else if (ptr == &m_sizeGroupNodeId) {
-        SizeGroup const &group = m_sizes[index.row()];
+        SizeGroup const& group = m_sizes[index.row()];
         if (role == Qt::DisplayRole) {
             return sizeToString(group.size());
         }
@@ -722,30 +740,30 @@ FixDpiDialog::TreeModel::data(QModelIndex const &index, int const role) const
         }
     }
     else {
-        SizeGroup const *group = static_cast<SizeGroup const *>(ptr);
-        SizeGroup::Item const &item = group->items()[index.row()];
-        ImageFileInfo const &file = m_files[item.fileIdx];
+        SizeGroup const* group = static_cast<SizeGroup const*>(ptr);
+        SizeGroup::Item const& item = group->items()[index.row()];
+        ImageFileInfo const& file = m_files[item.fileIdx];
         if (role == Qt::DisplayRole) {
-            QString const &fname = file.fileInfo().fileName();
+            QString const& fname = file.fileInfo().fileName();
             if (file.imageInfo().size() == 1) {
                 return fname;
             }
             else {
                 return FixDpiDialog::tr(
-                        "%1 (page %2)"
+                    "%1 (page %2)"
                 ).arg(fname).arg(item.imageIdx + 1);
             }
         }
-        else if (role == AGGREGATE_METADATA_ROLE || role == AGGREGATE_NOT_OK_METADATA_ROLE) {
+        else if ((role == AGGREGATE_METADATA_ROLE) || (role == AGGREGATE_NOT_OK_METADATA_ROLE)) {
             return QVariant::fromValue(file.imageInfo()[item.imageIdx]);
         }
     }
 
     return QVariant();
-}
+}  // FixDpiDialog::TreeModel::data
 
 void
-FixDpiDialog::TreeModel::applyDpiToAllGroups(Scope const scope, Dpi const &dpi)
+FixDpiDialog::TreeModel::applyDpiToAllGroups(Scope const scope, Dpi const& dpi)
 {
     int const num_groups = m_sizes.size();
     for (int i = 0; i < num_groups; ++i) {
@@ -754,31 +772,34 @@ FixDpiDialog::TreeModel::applyDpiToAllGroups(Scope const scope, Dpi const &dpi)
 }
 
 void
-FixDpiDialog::TreeModel::applyDpiToGroup(
-        Scope const scope, Dpi const &dpi,
-        SizeGroup &group, DpiCounts &total_dpi_counts)
+FixDpiDialog::TreeModel::applyDpiToGroup(Scope const scope,
+                                         Dpi const& dpi,
+                                         SizeGroup& group,
+                                         DpiCounts& total_dpi_counts)
 {
-    DpiCounts &group_dpi_counts = group.dpiCounts();
+    DpiCounts& group_dpi_counts = group.dpiCounts();
     ImageMetadata const metadata(group.size(), dpi);
-    std::vector<SizeGroup::Item> const &items = group.items();
+    std::vector<SizeGroup::Item> const& items = group.items();
     int const num_items = items.size();
     for (int i = 0; i < num_items; ++i) {
         applyDpiToItem(
-                scope, metadata, items[i],
-                total_dpi_counts, group_dpi_counts
+            scope, metadata, items[i],
+            total_dpi_counts, group_dpi_counts
         );
     }
 }
 
 void
-FixDpiDialog::TreeModel::applyDpiToItem(
-        Scope const scope, ImageMetadata const &new_metadata, SizeGroup::Item const item,
-        DpiCounts &total_dpi_counts, DpiCounts &group_dpi_counts)
+FixDpiDialog::TreeModel::applyDpiToItem(Scope const scope,
+                                        ImageMetadata const& new_metadata,
+                                        SizeGroup::Item const item,
+                                        DpiCounts& total_dpi_counts,
+                                        DpiCounts& group_dpi_counts)
 {
-    ImageFileInfo &file = m_files[item.fileIdx];
-    ImageMetadata &old_metadata = file.imageInfo()[item.imageIdx];
+    ImageFileInfo& file = m_files[item.fileIdx];
+    ImageMetadata& old_metadata = file.imageInfo()[item.imageIdx];
 
-    if (scope == NOT_OK && old_metadata.isDpiOK()) {
+    if ((scope == NOT_OK) && old_metadata.isDpiOK()) {
         return;
     }
 
@@ -791,7 +812,7 @@ FixDpiDialog::TreeModel::applyDpiToItem(
 }
 
 void
-FixDpiDialog::TreeModel::emitAllPagesChanged(QModelIndex const &idx)
+FixDpiDialog::TreeModel::emitAllPagesChanged(QModelIndex const& idx)
 {
     int const num_groups = m_sizes.size();
     for (int i = 0; i < num_groups; ++i) {
@@ -808,7 +829,7 @@ FixDpiDialog::TreeModel::emitAllPagesChanged(QModelIndex const &idx)
 }
 
 void
-FixDpiDialog::TreeModel::emitSizeGroupChanged(QModelIndex const &idx)
+FixDpiDialog::TreeModel::emitSizeGroupChanged(QModelIndex const& idx)
 {
     emit dataChanged(index(0, 0, idx), index(rowCount(idx), 0, idx));
 
@@ -819,7 +840,7 @@ FixDpiDialog::TreeModel::emitSizeGroupChanged(QModelIndex const &idx)
 }
 
 void
-FixDpiDialog::TreeModel::emitItemChanged(QModelIndex const &idx)
+FixDpiDialog::TreeModel::emitItemChanged(QModelIndex const& idx)
 {
     emit dataChanged(idx, idx);
 
@@ -830,22 +851,23 @@ FixDpiDialog::TreeModel::emitItemChanged(QModelIndex const &idx)
     emit dataChanged(all_pages_node, all_pages_node);
 }
 
-FixDpiDialog::SizeGroup &
+FixDpiDialog::SizeGroup&
 FixDpiDialog::TreeModel::sizeGroupFor(QSize const size)
 {
     using namespace boost::lambda;
 
     std::vector<SizeGroup>::iterator const it(
-            std::find_if(
-                    m_sizes.begin(), m_sizes.end(),
-                    bind(&SizeGroup::size, _1) == size
-            )
+        std::find_if(
+            m_sizes.begin(), m_sizes.end(),
+            bind(&SizeGroup::size, _1) == size
+        )
     );
     if (it != m_sizes.end()) {
         return *it;
     }
     else {
         m_sizes.push_back(SizeGroup(size));
+
         return m_sizes.back();
     }
 }
@@ -858,25 +880,26 @@ FixDpiDialog::TreeModel::sizeToString(QSize const size)
 
 /*====================== FixDpiDialog::FilterModel ======================*/
 
-FixDpiDialog::FilterModel::FilterModel(TreeModel &delegate)
-        : m_rDelegate(delegate)
+FixDpiDialog::FilterModel::FilterModel(TreeModel& delegate)
+    : m_rDelegate(delegate)
 {
     setDynamicSortFilter(true);
     setSourceModel(delegate.model());
 }
 
 bool
-FixDpiDialog::FilterModel::filterAcceptsRow(
-        int const source_row, QModelIndex const &source_parent) const
+FixDpiDialog::FilterModel::filterAcceptsRow(int const source_row, QModelIndex const& source_parent) const
 {
     return m_rDelegate.isVisibleForFilter(source_parent, source_row);
 }
 
 QVariant
-FixDpiDialog::FilterModel::data(QModelIndex const &index, int role) const
+FixDpiDialog::FilterModel::data(QModelIndex const& index, int role) const
 {
     if (role == AGGREGATE_METADATA_ROLE) {
         role = AGGREGATE_NOT_OK_METADATA_ROLE;
     }
+
     return QSortFilterProxyModel::data(index, role);
 }
+

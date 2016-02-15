@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ADIFF_SPARSITY_H_
 #define ADIFF_SPARSITY_H_
@@ -24,19 +25,18 @@
 
 namespace adiff
 {
-
-/**
- * Specifies which derivatives are non-zero and therefore need to be calculated.
- * Each such non-zero derivative is assigned an index in [0, total_nonzero_derivs).
- */
-    template<int ORD>
+    /**
+     * Specifies which derivatives are non-zero and therefore need to be calculated.
+     * Each such non-zero derivative is assigned an index in [0, total_nonzero_derivs).
+     */
+    template <int ORD>
     class SparseMap;
 
-/**
- * The second order sparse map specified which elements of the Hessian
- * matrix are non-zero.
- */
-    template<>
+    /**
+     * The second order sparse map specified which elements of the Hessian
+     * matrix are non-zero.
+     */
+    template <>
     class SparseMap<2>
     {
     public:
@@ -52,7 +52,9 @@ namespace adiff
          * Returns N for an NxN Hessian.
          */
         size_t numVars() const
-        { return m_numVars; }
+        {
+            return m_numVars;
+        }
 
         /**
          * \brief Marks an element at (i, j) as non-zero.
@@ -74,7 +76,9 @@ namespace adiff
          * Returns the number of elements marked as non-zero.
          */
         size_t numNonZeroElements() const
-        { return m_numNonZeroElements; }
+        {
+            return m_numNonZeroElements;
+        }
 
         /**
          * Returns an index in the range of [0, numNonZeroElements)
@@ -88,6 +92,5 @@ namespace adiff
         size_t m_numNonZeroElements;
         MatT<size_t> m_map;
     };
-
-}
-#endif
+}  // namespace adiff
+#endif  // ifndef ADIFF_SPARSITY_H_

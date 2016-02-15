@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef SPLINE_VERTEX_H_
 #define SPLINE_VERTEX_H_
@@ -26,10 +27,7 @@
 class SplineVertex
 {
 public:
-    enum Loop
-    {
-        LOOP, NO_LOOP, LOOP_IF_BRIDGED
-    };
+    enum Loop { LOOP, NO_LOOP, LOOP_IF_BRIDGED };
 
     typedef IntrusivePtr<SplineVertex> Ptr;
 
@@ -97,9 +95,10 @@ protected:
 };
 
 
-class SentinelSplineVertex : public SplineVertex
+class SentinelSplineVertex
+    : public SplineVertex
 {
-DECLARE_NON_COPYABLE(SentinelSplineVertex)
+    DECLARE_NON_COPYABLE(SentinelSplineVertex)
 
 public:
     SentinelSplineVertex();
@@ -121,19 +120,24 @@ public:
     SplineVertex::Ptr lastVertex() const;
 
     bool bridged() const
-    { return m_bridged; }
+    {
+        return m_bridged;
+    }
 
     void setBridged(bool bridged)
-    { m_bridged = bridged; }
+    {
+        m_bridged = bridged;
+    }
 
 private:
     bool m_bridged;
 };
 
 
-class RealSplineVertex : public SplineVertex
+class RealSplineVertex
+    : public SplineVertex
 {
-DECLARE_NON_COPYABLE(RealSplineVertex)
+    DECLARE_NON_COPYABLE(RealSplineVertex)
 
 public:
     RealSplineVertex(QPointF const& pt, SplineVertex* prev, SplineVertex* next);
@@ -155,4 +159,4 @@ private:
     mutable int m_refCounter;
 };
 
-#endif
+#endif  // ifndef SPLINE_VERTEX_H_

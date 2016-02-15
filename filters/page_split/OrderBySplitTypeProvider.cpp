@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -15,29 +16,29 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OrderBySplitTypeProvider.h"
 #include <assert.h>
 
 namespace page_split
 {
-
     OrderBySplitTypeProvider::OrderBySplitTypeProvider(IntrusivePtr<Settings> const& settings)
-            : m_ptrSettings(settings)
-    {
-    }
+        : m_ptrSettings(settings)
+    { }
 
     bool
-    OrderBySplitTypeProvider::precedes(
-            PageId const& lhs_page, bool const lhs_incomplete,
-            PageId const& rhs_page, bool const rhs_incomplete) const
+    OrderBySplitTypeProvider::precedes(PageId const& lhs_page,
+                                       bool const lhs_incomplete,
+                                       PageId const& rhs_page,
+                                       bool const rhs_incomplete) const
     {
         if (lhs_incomplete != rhs_incomplete) {
             return rhs_incomplete;
         }
         else if (lhs_incomplete) {
             assert(rhs_incomplete);
+
             return lhs_page < rhs_page;
         }
 
@@ -72,6 +73,5 @@ namespace page_split
         else {
             return lhs_layout_type < rhs_layout_type;
         }
-    }
-
-} 
+    }  // OrderBySplitTypeProvider::precedes
+}  // namespace page_split

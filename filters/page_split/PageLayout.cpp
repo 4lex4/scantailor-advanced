@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageLayout.h"
 #include "NumericTraits.h"
@@ -29,61 +30,53 @@ using namespace imageproc;
 
 namespace page_split
 {
-
     PageLayout::PageLayout()
-            : m_type(SINGLE_PAGE_UNCUT)
-    {
-    }
+        : m_type(SINGLE_PAGE_UNCUT)
+    { }
 
     PageLayout::PageLayout(QRectF const& full_rect)
-            : m_uncutOutline(full_rect),
-              m_cutter1(full_rect.topLeft(), full_rect.bottomLeft()),
-              m_cutter2(full_rect.topRight(), full_rect.bottomRight()),
-              m_type(SINGLE_PAGE_UNCUT)
-    {
-    }
+        : m_uncutOutline(full_rect),
+          m_cutter1(full_rect.topLeft(), full_rect.bottomLeft()),
+          m_cutter2(full_rect.topRight(), full_rect.bottomRight()),
+          m_type(SINGLE_PAGE_UNCUT)
+    { }
 
     PageLayout::PageLayout(QRectF const& full_rect, QLineF const& cutter1, QLineF const& cutter2)
-            : m_uncutOutline(full_rect),
-              m_cutter1(cutter1),
-              m_cutter2(cutter2),
-              m_type(SINGLE_PAGE_CUT)
-    {
-    }
+        : m_uncutOutline(full_rect),
+          m_cutter1(cutter1),
+          m_cutter2(cutter2),
+          m_type(SINGLE_PAGE_CUT)
+    { }
 
     PageLayout::PageLayout(QRectF const full_rect, QLineF const& split_line)
-            : m_uncutOutline(full_rect),
-              m_cutter1(split_line),
-              m_type(TWO_PAGES)
-    {
-    }
+        : m_uncutOutline(full_rect),
+          m_cutter1(split_line),
+          m_type(TWO_PAGES)
+    { }
 
-    PageLayout::PageLayout(
-            QPolygonF const& outline, QLineF const& cutter1,
-            QLineF const& cutter2, Type type)
-            : m_uncutOutline(outline),
-              m_cutter1(cutter1),
-              m_cutter2(cutter2),
-              m_type(type)
-    {
-    }
+    PageLayout::PageLayout(QPolygonF const& outline, QLineF const& cutter1, QLineF const& cutter2, Type type)
+        : m_uncutOutline(outline),
+          m_cutter1(cutter1),
+          m_cutter2(cutter2),
+          m_type(type)
+    { }
 
     PageLayout::PageLayout(QDomElement const& layout_el)
-            : m_uncutOutline(
-            XmlUnmarshaller::polygonF(
-                    layout_el.namedItem("outline").toElement()
-            )
-    ),
-              m_cutter1(
-                      XmlUnmarshaller::lineF(
-                              layout_el.namedItem("cutter1").toElement()
-                      )
-              ),
-              m_cutter2(
-                      XmlUnmarshaller::lineF(
-                              layout_el.namedItem("cutter2").toElement()
-                      )
+        : m_uncutOutline(
+              XmlUnmarshaller::polygonF(
+                  layout_el.namedItem("outline").toElement()
               )
+        ),
+          m_cutter1(
+              XmlUnmarshaller::lineF(
+                  layout_el.namedItem("cutter1").toElement()
+              )
+          ),
+          m_cutter2(
+              XmlUnmarshaller::lineF(
+                  layout_el.namedItem("cutter2").toElement()
+              )
+          )
     {
         QString const type(layout_el.attribute("type"));
         QDomElement const split_line_el(layout_el.namedItem("split-line").toElement());
@@ -94,23 +87,23 @@ namespace page_split
             QLineF const split_line(XmlUnmarshaller::lineF(split_line_el));
 
             bool const left_page = (
-                    layout_el.attribute("leftPageValid") == "1"
-            );
+                layout_el.attribute("leftPageValid") == "1"
+                                   );
             bool const right_page = (
-                    layout_el.attribute("rightPageValid") == "1"
-            );
+                layout_el.attribute("rightPageValid") == "1"
+                                    );
 
-            if (type == "two-pages" || (left_page && right_page)) {
+            if ((type == "two-pages") || (left_page && right_page)) {
                 m_type = TWO_PAGES;
                 m_cutter1 = split_line;
                 m_cutter2 = QLineF();
             }
-            else if (type == "left-page" || left_page) {
+            else if ((type == "left-page") || left_page) {
                 m_type = SINGLE_PAGE_CUT;
                 m_cutter1 = QLineF(0, 0, 0, 1);
                 m_cutter2 = split_line;
             }
-            else if (type == "right-page" || right_page) {
+            else if ((type == "right-page") || right_page) {
                 m_type = SINGLE_PAGE_CUT;
                 m_cutter1 = split_line;
                 m_cutter2 = QLineF();
@@ -140,7 +133,7 @@ namespace page_split
             return;
         }
 
-        if (m_type == SINGLE_PAGE_CUT && m_cutter2.isNull()) {
+        if ((m_type == SINGLE_PAGE_CUT) && m_cutter2.isNull()) {
             m_cutter2.setP1(m_uncutOutline[1]);
             m_cutter2.setP2(m_uncutOutline[2]);
         }
@@ -150,6 +143,7 @@ namespace page_split
     PageLayout::cutterLine(int idx) const
     {
         assert(idx >= 0 && idx < numCutters());
+
         return idx == 0 ? m_cutter1 : m_cutter2;
     }
 
@@ -173,6 +167,7 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return page_split::SINGLE_PAGE_UNCUT;
     }
 
@@ -189,6 +184,7 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return 0;
     }
 
@@ -229,7 +225,7 @@ namespace page_split
             p1 = poly_segment.p2() - poly_segment.p1();
             p2 = intersection - poly_segment.p1();
             projection = p1.x() * p2.x() + p1.y() * p2.y();
-            if (projection < 0 || projection > p1.x() * p1.x() + p1.y() * p1.y()) {
+            if ((projection < 0) || (projection > p1.x() * p1.x() + p1.y() * p1.y())) {
                 continue;
             }
 
@@ -248,8 +244,9 @@ namespace page_split
 
         QLineF res(min_pt, max_pt);
         ensureSameDirection(raw_line, res);
+
         return res;
-    }
+    }  // PageLayout::inscribedCutterLine
 
     QPolygonF
     PageLayout::singlePageOutline() const
@@ -358,6 +355,7 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return QPolygonF();
     }
 
@@ -365,8 +363,8 @@ namespace page_split
     PageLayout::transformed(QTransform const& xform) const
     {
         return PageLayout(
-                xform.map(m_uncutOutline),
-                xform.map(m_cutter1), xform.map(m_cutter2), m_type
+            xform.map(m_uncutOutline),
+            xform.map(m_cutter1), xform.map(m_cutter2), m_type
         );
     }
 
@@ -423,12 +421,12 @@ namespace page_split
         return QString::fromLatin1(str);
     }
 
-/**
- * Extends or shrinks a line segment in such a way that if you draw perpendicular
- * lines through its endpoints, the given polygon would be squeezed between these
- * two perpendiculars.  This ensures that the resulting line segment intersects
- * all the polygon edges it can possibly intersect.
- */
+    /**
+     * Extends or shrinks a line segment in such a way that if you draw perpendicular
+     * lines through its endpoints, the given polygon would be squeezed between these
+     * two perpendiculars.  This ensures that the resulting line segment intersects
+     * all the polygon edges it can possibly intersect.
+     */
     QLineF
     PageLayout::extendToCover(QLineF const& line, QPolygonF const& poly)
     {
@@ -441,7 +439,7 @@ namespace page_split
         double max = NumericTraits<double>::min();
         ToLineProjector const projector(line);
 
-        for (QPointF const& pt :  poly) {
+        for (QPointF const& pt : poly) {
             double const scalar = projector.projectionScalar(pt);
             if (scalar < min) {
                 min = scalar;
@@ -454,11 +452,11 @@ namespace page_split
         return QLineF(line.pointAt(min), line.pointAt(max));
     }
 
-/**
- * Flips \p line2 if that would make the angle between the two lines more acute.
- * The angle between lines is interpreted as an angle between vectors
- * (line1.p2() - line1.p1()) and (line2.p2() - line2.p1()).
- */
+    /**
+     * Flips \p line2 if that would make the angle between the two lines more acute.
+     * The angle between lines is interpreted as an angle between vectors
+     * (line1.p2() - line1.p1()) and (line2.p2() - line2.p1()).
+     */
     void
     PageLayout::ensureSameDirection(QLineF const& line1, QLineF& line2)
     {
@@ -470,18 +468,17 @@ namespace page_split
         }
     }
 
-/**
- * Add the intersection point between \p line1 and \p line2
- * to \p poly, provided they intersect at all and the intersection
- * point is "between" line1.p1() and line2.p1().  We consider a point
- * to be between two other points by projecting it to the line between
- * those two points and checking if the projected point is between them.
- * When finding the intersection point, we treat \p line1 and \p line2
- * as lines, not line segments.
- */
+    /**
+     * Add the intersection point between \p line1 and \p line2
+     * to \p poly, provided they intersect at all and the intersection
+     * point is "between" line1.p1() and line2.p1().  We consider a point
+     * to be between two other points by projecting it to the line between
+     * those two points and checking if the projected point is between them.
+     * When finding the intersection point, we treat \p line1 and \p line2
+     * as lines, not line segments.
+     */
     void
-    PageLayout::maybeAddIntersectionPoint(
-            QPolygonF& poly, QLineF const& line1, QLineF const& line2)
+    PageLayout::maybeAddIntersectionPoint(QPolygonF& poly, QLineF const& line1, QLineF const& line2)
     {
         QPointF intersection;
         if (line1.intersect(line2, &intersection) == QLineF::NoIntersection) {
@@ -490,9 +487,8 @@ namespace page_split
 
         ToLineProjector const projector(QLineF(line1.p1(), line2.p1()));
         double const p = projector.projectionScalar(intersection);
-        if (p > 0.0 && p < 1.0) {
+        if ((p > 0.0) && (p < 1.0)) {
             poly << intersection;
         }
     }
-
-} 
+}  // namespace page_split

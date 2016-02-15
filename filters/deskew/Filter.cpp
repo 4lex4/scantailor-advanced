@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Filter.h"
 #include "FilterUiInterface.h"
@@ -29,9 +30,8 @@
 
 namespace deskew
 {
-
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(new Settings)
+        : m_ptrSettings(new Settings)
     {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
@@ -39,8 +39,7 @@ namespace deskew
     }
 
     Filter::~Filter()
-    {
-    }
+    { }
 
     QString
     Filter::getName() const
@@ -79,10 +78,10 @@ namespace deskew
         filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
 
         writer.enumPages(
-                [&](PageId const& page_id, int const numeric_id)
-                {
-                    this->writePageSettings(doc, filter_el, page_id, numeric_id);
-                }
+            [&](PageId const& page_id, int const numeric_id)
+        {
+            this->writePageSettings(doc, filter_el, page_id, numeric_id);
+        }
         );
 
         return filter_el;
@@ -105,7 +104,7 @@ namespace deskew
         }
         else {
             m_ptrSettings->setMaxDeviation(
-                    filter_el.attribute("maxDeviation", QString::number(cli.getSkewDeviation())).toDouble());
+                filter_el.attribute("maxDeviation", QString::number(cli.getSkewDeviation())).toDouble());
         }
 
         QString const page_tag_name("page");
@@ -138,12 +137,11 @@ namespace deskew
             Params const params(params_el);
             m_ptrSettings->setPageParams(page_id, params);
         }
-    }
+    }  // Filter::loadSettings
 
     void
-    Filter::writePageSettings(
-            QDomDocument& doc, QDomElement& filter_el,
-            PageId const& page_id, int const numeric_id) const
+    Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id,
+                              int const numeric_id) const
     {
         std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
         if (!params.get()) {
@@ -158,26 +156,24 @@ namespace deskew
     }
 
     IntrusivePtr<Task>
-    Filter::createTask(
-            PageId const& page_id,
-            IntrusivePtr<select_content::Task> const& next_task,
-            bool const batch_processing, bool const debug)
+    Filter::createTask(PageId const& page_id,
+                       IntrusivePtr<select_content::Task> const& next_task,
+                       bool const batch_processing,
+                       bool const debug)
     {
         return IntrusivePtr<Task>(
-                new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings,
-                        next_task, page_id, batch_processing, debug
-                )
+            new Task(
+                IntrusivePtr<Filter>(this), m_ptrSettings,
+                next_task, page_id, batch_processing, debug
+            )
         );
     }
 
     IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(
-            IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
+    Filter::createCacheDrivenTask(IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
     {
         return IntrusivePtr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+            new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }
-
-} 
+}  // namespace deskew

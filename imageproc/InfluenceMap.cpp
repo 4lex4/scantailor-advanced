@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "InfluenceMap.h"
 #include "BinaryImage.h"
@@ -26,20 +27,18 @@ class QImage;
 
 namespace imageproc
 {
-
     InfluenceMap::InfluenceMap()
-            : m_pData(0),
-              m_size(),
-              m_stride(0),
-              m_maxLabel(0)
-    {
-    }
+        : m_pData(0),
+          m_size(),
+          m_stride(0),
+          m_maxLabel(0)
+    { }
 
     InfluenceMap::InfluenceMap(ConnectivityMap const& cmap)
-            : m_pData(0),
-              m_size(),
-              m_stride(0),
-              m_maxLabel(0)
+        : m_pData(0),
+          m_size(),
+          m_stride(0),
+          m_maxLabel(0)
     {
         if (cmap.size().isEmpty()) {
             return;
@@ -48,12 +47,11 @@ namespace imageproc
         init(cmap);
     }
 
-    InfluenceMap::InfluenceMap(
-            ConnectivityMap const& cmap, BinaryImage const& mask)
-            : m_pData(0),
-              m_size(),
-              m_stride(0),
-              m_maxLabel(0)
+    InfluenceMap::InfluenceMap(ConnectivityMap const& cmap, BinaryImage const& mask)
+        : m_pData(0),
+          m_size(),
+          m_stride(0),
+          m_maxLabel(0)
     {
         if (cmap.size().isEmpty()) {
             return;
@@ -66,11 +64,11 @@ namespace imageproc
     }
 
     InfluenceMap::InfluenceMap(InfluenceMap const& other)
-            : m_data(other.m_data),
-              m_pData(0),
-              m_size(other.size()),
-              m_stride(other.stride()),
-              m_maxLabel(other.m_maxLabel)
+        : m_data(other.m_data),
+          m_pData(0),
+          m_size(other.size()),
+          m_stride(other.stride()),
+          m_maxLabel(other.m_maxLabel)
     {
         if (!m_size.isEmpty()) {
             m_pData = &m_data[0] + m_stride + 1;
@@ -81,6 +79,7 @@ namespace imageproc
     InfluenceMap::operator=(InfluenceMap const& other)
     {
         InfluenceMap(other).swap(*this);
+
         return *this;
     }
 
@@ -95,8 +94,7 @@ namespace imageproc
     }
 
     void
-    InfluenceMap::init(
-            ConnectivityMap const& cmap, BinaryImage const* mask)
+    InfluenceMap::init(ConnectivityMap const& cmap, BinaryImage const* mask)
     {
         int const width = cmap.size().width() + 2;
         int const height = cmap.size().height() + 2;
@@ -248,7 +246,7 @@ namespace imageproc
                 queue.push(nbh);
             }
         }
-    }
+    }  // InfluenceMap::init
 
     QImage
     InfluenceMap::visualized() const
@@ -292,6 +290,5 @@ namespace imageproc
         }
 
         return dst;
-    }
-
-} 
+    }  // InfluenceMap::visualized
+}  // namespace imageproc

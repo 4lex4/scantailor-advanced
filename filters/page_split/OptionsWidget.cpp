@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "Filter.h"
@@ -26,16 +27,14 @@
 
 namespace page_split
 {
-
-    OptionsWidget::OptionsWidget(
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<ProjectPages> const& page_sequence,
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_ptrPages(page_sequence),
-              m_pageSelectionAccessor(page_selection_accessor),
-              m_ignoreAutoManualToggle(0),
-              m_ignoreLayoutTypeToggle(0)
+    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                                 IntrusivePtr<ProjectPages> const& page_sequence,
+                                 PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_ptrPages(page_sequence),
+          m_pageSelectionAccessor(page_selection_accessor),
+          m_ignoreAutoManualToggle(0),
+          m_ignoreLayoutTypeToggle(0)
     {
         setupUi(this);
 
@@ -44,30 +43,29 @@ namespace page_split
         grp->addButton(manualBtn);
 
         connect(
-                singlePageUncutBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
+            singlePageUncutBtn, SIGNAL(toggled(bool)),
+            this, SLOT(layoutTypeButtonToggled(bool))
         );
         connect(
-                pagePlusOffcutBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
+            pagePlusOffcutBtn, SIGNAL(toggled(bool)),
+            this, SLOT(layoutTypeButtonToggled(bool))
         );
         connect(
-                twoPagesBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
+            twoPagesBtn, SIGNAL(toggled(bool)),
+            this, SLOT(layoutTypeButtonToggled(bool))
         );
         connect(
-                changeBtn, SIGNAL(clicked()),
-                this, SLOT(showChangeDialog())
+            changeBtn, SIGNAL(clicked()),
+            this, SLOT(showChangeDialog())
         );
         connect(
-                autoBtn, SIGNAL(toggled(bool)),
-                this, SLOT(splitLineModeChanged(bool))
+            autoBtn, SIGNAL(toggled(bool)),
+            this, SLOT(splitLineModeChanged(bool))
         );
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
     OptionsWidget::preUpdateUI(PageId const& page_id)
@@ -115,7 +113,7 @@ namespace page_split
 
         autoBtn->setEnabled(false);
         manualBtn->setEnabled(false);
-    }
+    }  // OptionsWidget::preUpdateUI
 
     void
     OptionsWidget::postUpdateUI(UiData const& ui_data)
@@ -155,7 +153,7 @@ namespace page_split
         if (ui_data.layoutTypeAutoDetected()) {
             scopeLabel->setText(tr("Auto detected"));
         }
-    }
+    }  // OptionsWidget::postUpdateUI
 
     void
     OptionsWidget::pageLayoutSetExternally(PageLayout const& page_layout)
@@ -202,9 +200,9 @@ namespace page_split
 
         m_ptrPages->setLayoutTypeFor(m_pageId.imageId(), plt);
 
-        if (lt == PAGE_PLUS_OFFCUT ||
-            (lt != SINGLE_PAGE_UNCUT &&
-             m_uiData.splitLineMode() == MODE_AUTO)) {
+        if ((lt == PAGE_PLUS_OFFCUT)
+            || ((lt != SINGLE_PAGE_UNCUT)
+                && (m_uiData.splitLineMode() == MODE_AUTO))) {
             m_ptrSettings->updatePage(m_pageId.imageId(), update);
             emit reloadRequested();
         }
@@ -221,8 +219,8 @@ namespace page_split
             PageLayout new_layout(m_uiData.pageLayout());
             new_layout.setType(plt);
             Params const new_params(
-                    new_layout, m_uiData.dependencies(),
-                    m_uiData.splitLineMode()
+                new_layout, m_uiData.dependencies(),
+                m_uiData.splitLineMode()
             );
 
             update.setParams(new_params);
@@ -233,7 +231,7 @@ namespace page_split
             emit pageLayoutSetLocally(new_layout);
             emit invalidateThumbnail(m_pageId);
         }
-    }
+    }  // OptionsWidget::layoutTypeButtonToggled
 
     void
     OptionsWidget::showChangeDialog()
@@ -245,20 +243,19 @@ namespace page_split
         }
 
         SplitModeDialog* dialog = new SplitModeDialog(
-                this, m_pageId, m_pageSelectionAccessor, record.combinedLayoutType(),
-                params->pageLayout().type(), params->splitLineMode() == MODE_AUTO
-        );
+            this, m_pageId, m_pageSelectionAccessor, record.combinedLayoutType(),
+            params->pageLayout().type(), params->splitLineMode() == MODE_AUTO
+                                  );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&, LayoutType, bool)),
-                this, SLOT(layoutTypeSet(std::set<PageId> const&, LayoutType, bool))
+            dialog, SIGNAL(accepted(std::set<PageId> const &, LayoutType, bool)),
+            this, SLOT(layoutTypeSet(std::set<PageId> const &, LayoutType, bool))
         );
         dialog->show();
     }
 
     void
-    OptionsWidget::layoutTypeSet(
-            std::set<PageId> const& pages, LayoutType const layout_type, bool apply_cut)
+    OptionsWidget::layoutTypeSet(std::set<PageId> const& pages, LayoutType const layout_type, bool apply_cut)
     {
         if (pages.empty()) {
             return;
@@ -267,7 +264,7 @@ namespace page_split
         Params const params = *(m_ptrSettings->getPageRecord(m_pageId.imageId()).params());
 
         if (layout_type != AUTO_LAYOUT_TYPE) {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 Settings::UpdateAction update_params;
                 update_params.setLayoutType(layout_type);
                 if (apply_cut) {
@@ -281,7 +278,7 @@ namespace page_split
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -293,7 +290,7 @@ namespace page_split
         else {
             scopeLabel->setText(tr("Set manually"));
         }
-    }
+    }  // OptionsWidget::layoutTypeSet
 
     void
     OptionsWidget::splitLineModeChanged(bool const auto_mode)
@@ -319,26 +316,23 @@ namespace page_split
     OptionsWidget::commitCurrentParams()
     {
         Params const params(
-                m_uiData.pageLayout(),
-                m_uiData.dependencies(), m_uiData.splitLineMode()
+            m_uiData.pageLayout(),
+            m_uiData.dependencies(), m_uiData.splitLineMode()
         );
         Settings::UpdateAction update;
         update.setParams(params);
         m_ptrSettings->updatePage(m_pageId.imageId(), update);
     }
 
-
-/*============================= Widget::UiData ==========================*/
+    /*============================= Widget::UiData ==========================*/
 
     OptionsWidget::UiData::UiData()
-            : m_splitLineMode(MODE_AUTO),
-              m_layoutTypeAutoDetected(false)
-    {
-    }
+        : m_splitLineMode(MODE_AUTO),
+          m_layoutTypeAutoDetected(false)
+    { }
 
     OptionsWidget::UiData::~UiData()
-    {
-    }
+    { }
 
     void
     OptionsWidget::UiData::setPageLayout(PageLayout const& layout)
@@ -387,5 +381,4 @@ namespace page_split
     {
         m_layoutTypeAutoDetected = val;
     }
-
-} 
+}  // namespace page_split

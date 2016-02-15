@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CacheDrivenTask.h"
 #include "Thumbnail.h"
@@ -27,37 +28,32 @@
 
 namespace deskew
 {
-
-    CacheDrivenTask::CacheDrivenTask(
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings)
-    {
-    }
+    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
+        : m_ptrNextTask(next_task),
+          m_ptrSettings(settings)
+    { }
 
     CacheDrivenTask::~CacheDrivenTask()
-    {
-    }
+    { }
 
     void
-    CacheDrivenTask::process(
-            PageInfo const& page_info, AbstractFilterDataCollector* collector,
-            ImageTransformation const& xform)
+    CacheDrivenTask::process(PageInfo const& page_info,
+                             AbstractFilterDataCollector* collector,
+                             ImageTransformation const& xform)
     {
         Dependencies const deps(xform.preCropArea(), xform.preRotation());
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
         if (!params.get() || !deps.matches(params->dependencies())) {
-
             if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
-                        std::unique_ptr<QGraphicsItem>(
-                                new IncompleteThumbnail(
-                                        thumb_col->thumbnailCache(),
-                                        thumb_col->maxLogicalThumbSize(),
-                                        page_info.imageId(), xform
-                                )
+                    std::unique_ptr<QGraphicsItem>(
+                        new IncompleteThumbnail(
+                            thumb_col->thumbnailCache(),
+                            thumb_col->maxLogicalThumbSize(),
+                            page_info.imageId(), xform
                         )
+                    )
                 );
             }
 
@@ -69,21 +65,21 @@ namespace deskew
 
         if (m_ptrNextTask) {
             m_ptrNextTask->process(page_info, collector, new_xform);
+
             return;
         }
 
         if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                            new Thumbnail(
-                                    thumb_col->thumbnailCache(),
-                                    thumb_col->maxLogicalThumbSize(),
-                                    page_info.imageId(), new_xform,
-                                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
-                            )
+                std::unique_ptr<QGraphicsItem>(
+                    new Thumbnail(
+                        thumb_col->thumbnailCache(),
+                        thumb_col->maxLogicalThumbSize(),
+                        page_info.imageId(), new_xform,
+                        params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
                     )
+                )
             );
         }
-    }
-
-} 
+    }  // CacheDrivenTask::process
+}  // namespace deskew

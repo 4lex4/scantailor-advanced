@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,25 +15,24 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SeedFillGeneric.h"
 
 namespace imageproc
 {
-
     namespace detail
     {
-
         namespace seed_fill_generic
         {
-
-            void initHorTransitions(std::vector<HTransition>& transitions, int const width)
+            void
+            initHorTransitions(std::vector<HTransition>& transitions, int const width)
             {
                 transitions.reserve(width);
 
                 if (width == 1) {
                     transitions.push_back(HTransition(0, 0));
+
                     return;
                 }
 
@@ -45,12 +45,14 @@ namespace imageproc
                 transitions.push_back(HTransition(-1, 0));
             }
 
-            void initVertTransitions(std::vector<VTransition>& transitions, int const height)
+            void
+            initVertTransitions(std::vector<VTransition>& transitions, int const height)
             {
                 transitions.reserve(height);
 
                 if (height == 1) {
                     transitions.push_back(VTransition(0, 0));
+
                     return;
                 }
 
@@ -62,7 +64,6 @@ namespace imageproc
 
                 transitions.push_back(VTransition(~0, 0));
             }
-
-        }
-    }
-} 
+        }  // namespace seed_fill_generic
+    }  // namespace detail
+}  // namespace imageproc

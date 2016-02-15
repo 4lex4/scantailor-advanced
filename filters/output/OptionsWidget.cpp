@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "ChangeDpiDialog.h"
@@ -30,15 +31,13 @@
 
 namespace output
 {
-
-    OptionsWidget::OptionsWidget(
-            IntrusivePtr<Settings> const& settings,
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_pageSelectionAccessor(page_selection_accessor),
-              m_despeckleLevel(DESPECKLE_NORMAL),
-              m_lastTab(TAB_OUTPUT),
-              m_ignoreThresholdChanges(0)
+    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                                 PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_pageSelectionAccessor(page_selection_accessor),
+          m_despeckleLevel(DESPECKLE_NORMAL),
+          m_lastTab(TAB_OUTPUT),
+          m_ignoreThresholdChanges(0)
     {
         setupUi(this);
 
@@ -60,10 +59,10 @@ namespace output
         tiffCompression->addItem(tr("JPEG"), COMPRESSION_JPEG);
 
         darkerThresholdLink->setText(
-                Utils::richTextForLink(darkerThresholdLink->text())
+            Utils::richTextForLink(darkerThresholdLink->text())
         );
         lighterThresholdLink->setText(
-                Utils::richTextForLink(lighterThresholdLink->text())
+            Utils::richTextForLink(lighterThresholdLink->text())
         );
         thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
 
@@ -72,120 +71,120 @@ namespace output
         updateDewarpingDisplay();
 
         connect(
-                changeDpiButton, SIGNAL(clicked()),
-                this, SLOT(changeDpiButtonClicked())
+            changeDpiButton, SIGNAL(clicked()),
+            this, SLOT(changeDpiButtonClicked())
         );
         connect(
-                colorModeSelector, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(colorModeChanged(int))
+            colorModeSelector, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(colorModeChanged(int))
         );
         connect(
-                pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(pictureShapeChanged(int))
+            pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(pictureShapeChanged(int))
         );
         connect(
-                tiffCompression, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(tiffCompressionChanged(int))
+            tiffCompression, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(tiffCompressionChanged(int))
         );
         connect(
-                whiteMarginsCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteMarginsToggled(bool))
+            whiteMarginsCB, SIGNAL(clicked(bool)),
+            this, SLOT(whiteMarginsToggled(bool))
         );
         connect(
-                equalizeIlluminationCB, SIGNAL(clicked(bool)),
-                this, SLOT(equalizeIlluminationToggled(bool))
+            equalizeIlluminationCB, SIGNAL(clicked(bool)),
+            this, SLOT(equalizeIlluminationToggled(bool))
         );
         connect(
-                cleanBackgroundCB, SIGNAL(clicked(bool)),
-                this, SLOT(cleanBackgroundToggled(bool))
+            cleanBackgroundCB, SIGNAL(clicked(bool)),
+            this, SLOT(cleanBackgroundToggled(bool))
         );
 
         connect(cleaningAutoBtn, SIGNAL(pressed()), this, SLOT(cleaningAutoMode()));
         connect(cleaningManualBtn, SIGNAL(pressed()), this, SLOT(cleaningManualMode()));
 
         connect(
-                whitenThresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(whitenThresholdChanged())
+            whitenThresholdSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(whitenThresholdChanged())
         );
         connect(
-                whitenThresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(whitenThresholdChanged())
+            whitenThresholdSlider, SIGNAL(sliderReleased()),
+            this, SLOT(whitenThresholdChanged())
         );
         connect(
-                brightnessSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(brightnessChanged())
+            brightnessSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(brightnessChanged())
         );
         connect(
-                brightnessSlider, SIGNAL(sliderReleased()),
-                this, SLOT(brightnessChanged())
+            brightnessSlider, SIGNAL(sliderReleased()),
+            this, SLOT(brightnessChanged())
         );
         connect(
-                contrastSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(contrastChanged())
+            contrastSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(contrastChanged())
         );
         connect(
-                contrastSlider, SIGNAL(sliderReleased()),
-                this, SLOT(contrastChanged())
+            contrastSlider, SIGNAL(sliderReleased()),
+            this, SLOT(contrastChanged())
         );
         connect(
-                lighterThresholdLink, SIGNAL(linkActivated(QString const&)),
-                this, SLOT(setLighterThreshold())
+            lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
+            this, SLOT(setLighterThreshold())
         );
         connect(
-                darkerThresholdLink, SIGNAL(linkActivated(QString const&)),
-                this, SLOT(setDarkerThreshold())
+            darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
+            this, SLOT(setDarkerThreshold())
         );
         connect(
-                neutralThresholdBtn, SIGNAL(clicked()),
-                this, SLOT(setNeutralThreshold())
+            neutralThresholdBtn, SIGNAL(clicked()),
+            this, SLOT(setNeutralThreshold())
         );
         connect(
-                thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(bwThresholdChanged())
+            thresholdSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(bwThresholdChanged())
         );
         connect(
-                thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(bwThresholdChanged())
+            thresholdSlider, SIGNAL(sliderReleased()),
+            this, SLOT(bwThresholdChanged())
         );
         connect(
-                applyColorsButton, SIGNAL(clicked()),
-                this, SLOT(applyColorsButtonClicked())
-        );
-
-        connect(
-                changeDewarpingButton, SIGNAL(clicked()),
-                this, SLOT(changeDewarpingButtonClicked())
+            applyColorsButton, SIGNAL(clicked()),
+            this, SLOT(applyColorsButtonClicked())
         );
 
         connect(
-                applyDepthPerceptionButton, SIGNAL(clicked()),
-                this, SLOT(applyDepthPerceptionButtonClicked())
+            changeDewarpingButton, SIGNAL(clicked()),
+            this, SLOT(changeDewarpingButtonClicked())
         );
 
         connect(
-                despeckleOffBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleOffSelected())
-        );
-        connect(
-                despeckleCautiousBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleCautiousSelected())
-        );
-        connect(
-                despeckleNormalBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleNormalSelected())
-        );
-        connect(
-                despeckleAggressiveBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleAggressiveSelected())
-        );
-        connect(
-                applyDespeckleButton, SIGNAL(clicked()),
-                this, SLOT(applyDespeckleButtonClicked())
+            applyDepthPerceptionButton, SIGNAL(clicked()),
+            this, SLOT(applyDepthPerceptionButtonClicked())
         );
 
         connect(
-                depthPerceptionSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(depthPerceptionChangedSlot(int))
+            despeckleOffBtn, SIGNAL(clicked()),
+            this, SLOT(despeckleOffSelected())
+        );
+        connect(
+            despeckleCautiousBtn, SIGNAL(clicked()),
+            this, SLOT(despeckleCautiousSelected())
+        );
+        connect(
+            despeckleNormalBtn, SIGNAL(clicked()),
+            this, SLOT(despeckleNormalSelected())
+        );
+        connect(
+            despeckleAggressiveBtn, SIGNAL(clicked()),
+            this, SLOT(despeckleAggressiveSelected())
+        );
+        connect(
+            applyDespeckleButton, SIGNAL(clicked()),
+            this, SLOT(applyDespeckleButtonClicked())
+        );
+
+        connect(
+            depthPerceptionSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(depthPerceptionChangedSlot(int))
         );
 
         thresholdSlider->setMinimum(-50);
@@ -194,8 +193,7 @@ namespace output
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
     OptionsWidget::preUpdateUI(PageId const& page_id)
@@ -251,7 +249,7 @@ namespace output
     OptionsWidget::colorModeChanged(int const idx)
     {
         int const mode = colorModeSelector->itemData(idx).toInt();
-        m_colorParams.setColorMode((ColorParams::ColorMode) mode);
+        m_colorParams.setColorMode((ColorParams::ColorMode)mode);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         updateColorsDisplay();
         emit reloadRequested();
@@ -260,7 +258,7 @@ namespace output
     void
     OptionsWidget::pictureShapeChanged(int const idx)
     {
-        m_pictureShape = (PictureShape) (pictureShapeSelector->itemData(idx).toInt());
+        m_pictureShape = (PictureShape)(pictureShapeSelector->itemData(idx).toInt());
         m_ptrSettings->setPictureShape(m_pageId, m_pictureShape);
         emit reloadRequested();
     }
@@ -360,9 +358,10 @@ namespace output
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
-    }
+    }  // OptionsWidget::bwThresholdChanged
 
-    void OptionsWidget::cleaningAutoMode()
+    void
+    OptionsWidget::cleaningAutoMode()
     {
         ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
         opt.setCleanMode(MODE_AUTO);
@@ -374,7 +373,8 @@ namespace output
         emit invalidateThumbnail(m_pageId);
     }
 
-    void OptionsWidget::cleaningManualMode()
+    void
+    OptionsWidget::cleaningManualMode()
     {
         ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
         opt.setCleanMode(MODE_MANUAL);
@@ -417,7 +417,7 @@ namespace output
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
-    }
+    }  // OptionsWidget::whitenThresholdChanged
 
     void
     OptionsWidget::brightnessChanged()
@@ -454,7 +454,7 @@ namespace output
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
-    }
+    }  // OptionsWidget::brightnessChanged
 
     void
     OptionsWidget::contrastChanged()
@@ -491,18 +491,18 @@ namespace output
         emit reloadRequested();
 
         emit invalidateThumbnail(m_pageId);
-    }
+    }  // OptionsWidget::contrastChanged
 
     void
     OptionsWidget::changeDpiButtonClicked()
     {
         ChangeDpiDialog* dialog = new ChangeDpiDialog(
-                this, m_outputDpi, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_outputDpi, m_pageId, m_pageSelectionAccessor
+                                  );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&, Dpi const&)),
-                this, SLOT(dpiChanged(std::set<PageId> const&, Dpi const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &, Dpi const &)),
+            this, SLOT(dpiChanged(std::set<PageId> const &, Dpi const &))
         );
         dialog->show();
     }
@@ -511,12 +511,12 @@ namespace output
     OptionsWidget::applyColorsButtonClicked()
     {
         ApplyColorsDialog* dialog = new ApplyColorsDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                                    );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&)),
-                this, SLOT(applyColorsConfirmed(std::set<PageId> const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &)),
+            this, SLOT(applyColorsConfirmed(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -524,7 +524,7 @@ namespace output
     void
     OptionsWidget::dpiChanged(std::set<PageId> const& pages, Dpi const& dpi)
     {
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setDpi(page_id, dpi);
         }
 
@@ -532,7 +532,7 @@ namespace output
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -547,7 +547,7 @@ namespace output
     void
     OptionsWidget::applyColorsConfirmed(std::set<PageId> const& pages)
     {
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setColorParams(page_id, m_colorParams);
             m_ptrSettings->setPictureShape(page_id, m_pictureShape);
         }
@@ -556,7 +556,7 @@ namespace output
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -611,13 +611,13 @@ namespace output
     OptionsWidget::applyDespeckleButtonClicked()
     {
         ApplyColorsDialog* dialog = new ApplyColorsDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                                    );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Despeckling Level"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&)),
-                this, SLOT(applyDespeckleConfirmed(std::set<PageId> const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &)),
+            this, SLOT(applyDespeckleConfirmed(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -625,7 +625,7 @@ namespace output
     void
     OptionsWidget::applyDespeckleConfirmed(std::set<PageId> const& pages)
     {
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setDespeckleLevel(page_id, m_despeckleLevel);
         }
 
@@ -633,7 +633,7 @@ namespace output
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -647,12 +647,12 @@ namespace output
     OptionsWidget::changeDewarpingButtonClicked()
     {
         ChangeDewarpingDialog* dialog = new ChangeDewarpingDialog(
-                this, m_pageId, m_dewarpingMode, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_dewarpingMode, m_pageSelectionAccessor
+                                        );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&, DewarpingMode const&)),
-                this, SLOT(dewarpingChanged(std::set<PageId> const&, DewarpingMode const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &, DewarpingMode const &)),
+            this, SLOT(dewarpingChanged(std::set<PageId> const &, DewarpingMode const &))
         );
         dialog->show();
     }
@@ -660,7 +660,7 @@ namespace output
     void
     OptionsWidget::dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode)
     {
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setDewarpingMode(page_id, mode);
         }
 
@@ -668,7 +668,7 @@ namespace output
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -677,9 +677,9 @@ namespace output
             if (m_dewarpingMode != mode) {
                 m_dewarpingMode = mode;
 
-                if (mode == DewarpingMode::AUTO || m_lastTab != TAB_DEWARPING
-                    || mode == DewarpingMode::MARGINAL
-                        ) {
+                if ((mode == DewarpingMode::AUTO) || (m_lastTab != TAB_DEWARPING)
+                    || (mode == DewarpingMode::MARGINAL)
+                ) {
                     m_lastTab = TAB_OUTPUT;
 
                     updateDpiDisplay();
@@ -693,19 +693,19 @@ namespace output
                 }
             }
         }
-    }
+    }  // OptionsWidget::dewarpingChanged
 
     void
     OptionsWidget::applyDepthPerceptionButtonClicked()
     {
         ApplyColorsDialog* dialog = new ApplyColorsDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                                    );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Depth Perception"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&)),
-                this, SLOT(applyDepthPerceptionConfirmed(std::set<PageId> const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &)),
+            this, SLOT(applyDepthPerceptionConfirmed(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -713,7 +713,7 @@ namespace output
     void
     OptionsWidget::applyDepthPerceptionConfirmed(std::set<PageId> const& pages)
     {
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setDepthPerception(page_id, m_depthPerception);
         }
 
@@ -721,7 +721,7 @@ namespace output
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -770,10 +770,12 @@ namespace output
 
         if (!PictureZoneComparator::equal(saved_picture_zones, m_ptrSettings->pictureZonesForPage(m_pageId))) {
             emit reloadRequested();
+
             return;
         }
         else if (!FillZoneComparator::equal(saved_fill_zones, m_ptrSettings->fillZonesForPage(m_pageId))) {
             emit reloadRequested();
+
             return;
         }
 
@@ -781,36 +783,38 @@ namespace output
 
         if (saved_despeckle_level != params.despeckleLevel()) {
             emit reloadRequested();
+
             return;
         }
 
-        if (saved_dewarping_mode == DewarpingMode::OFF && params.dewarpingMode() == DewarpingMode::OFF) {
-        }
+        if ((saved_dewarping_mode == DewarpingMode::OFF) && (params.dewarpingMode() == DewarpingMode::OFF)) { }
         else if (saved_depth_perception.value() != params.depthPerception().value()) {
             emit reloadRequested();
+
             return;
         }
-        else if (saved_dewarping_mode == DewarpingMode::AUTO && params.dewarpingMode() == DewarpingMode::AUTO) {
-        }
-        else if (saved_dewarping_mode == DewarpingMode::MARGINAL && params.dewarpingMode() == DewarpingMode::MARGINAL) {
-        }
+        else if ((saved_dewarping_mode == DewarpingMode::AUTO) && (params.dewarpingMode() == DewarpingMode::AUTO)) { }
+        else if ((saved_dewarping_mode == DewarpingMode::MARGINAL)
+                 && (params.dewarpingMode() == DewarpingMode::MARGINAL)) { }
         else if (!saved_distortion_model.matches(params.distortionModel())) {
             emit reloadRequested();
+
             return;
         }
         else if ((saved_dewarping_mode == DewarpingMode::OFF) != (params.dewarpingMode() == DewarpingMode::OFF)) {
             emit reloadRequested();
+
             return;
         }
-    }
+    }  // OptionsWidget::reloadIfNecessary
 
     void
     OptionsWidget::updateDpiDisplay()
     {
         if (m_outputDpi.horizontal() != m_outputDpi.vertical()) {
             dpiLabel->setText(
-                    QString::fromLatin1("%1 x %2")
-                            .arg(m_outputDpi.horizontal()).arg(m_outputDpi.vertical())
+                QString::fromLatin1("%1 x %2")
+                .arg(m_outputDpi.horizontal()).arg(m_outputDpi.vertical())
             );
         }
         else {
@@ -847,7 +851,7 @@ namespace output
         colorGrayscaleOptions->setVisible(color_grayscale_options_visible);
         if (color_grayscale_options_visible) {
             ColorGrayscaleOptions const opt(
-                    m_colorParams.colorGrayscaleOptions()
+                m_colorParams.colorGrayscaleOptions()
             );
             if (color_mode != ColorParams::MIXED) {
                 whiteMarginsCB->setVisible(true);
@@ -908,12 +912,12 @@ namespace output
 
             ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
             thresholdSlider->setValue(
-                    m_colorParams.blackWhiteOptions().thresholdAdjustment()
+                m_colorParams.blackWhiteOptions().thresholdAdjustment()
             );
         }
 
         colorModeSelector->blockSignals(false);
-    }
+    }  // OptionsWidget::updateColorsDisplay
 
     void
     OptionsWidget::updateDewarpingDisplay()
@@ -939,5 +943,4 @@ namespace output
         depthPerceptionSlider->setValue(qRound(m_depthPerception.value() * 10));
         depthPerceptionSlider->blockSignals(false);
     }
-
-}
+}  // namespace output

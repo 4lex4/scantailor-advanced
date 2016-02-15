@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,16 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SidesOfLine.h"
 
-qreal sidesOfLine(QLineF const& line, QPointF const& p1, QPointF const& p2)
+qreal
+sidesOfLine(QLineF const& line, QPointF const& p1, QPointF const& p2)
 {
     QPointF const normal(line.normalVector().p2() - line.p1());
     QPointF const vec1(p1 - line.p1());
     QPointF const vec2(p2 - line.p1());
     qreal const dot1 = normal.x() * vec1.x() + normal.y() * vec1.y();
     qreal const dot2 = normal.x() * vec2.x() + normal.y() * vec2.y();
+
     return dot1 * dot2;
 }
+

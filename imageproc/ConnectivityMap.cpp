@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ConnectivityMap.h"
 #include "BinaryImage.h"
@@ -25,23 +26,21 @@
 
 namespace imageproc
 {
-
     uint32_t const ConnectivityMap::BACKGROUND = ~uint32_t(0);
     uint32_t const ConnectivityMap::UNTAGGED_FG = BACKGROUND - 1;
 
     ConnectivityMap::ConnectivityMap()
-            : m_pData(0),
-              m_size(),
-              m_stride(0),
-              m_maxLabel(0)
-    {
-    }
+        : m_pData(0),
+          m_size(),
+          m_stride(0),
+          m_maxLabel(0)
+    { }
 
     ConnectivityMap::ConnectivityMap(QSize const& size)
-            : m_pData(0),
-              m_size(size),
-              m_stride(0),
-              m_maxLabel(0)
+        : m_pData(0),
+          m_size(size),
+          m_stride(0),
+          m_maxLabel(0)
     {
         if (m_size.isEmpty()) {
             return;
@@ -55,12 +54,11 @@ namespace imageproc
         m_pData = &m_data[0] + 1 + m_stride;
     }
 
-    ConnectivityMap::ConnectivityMap(
-            BinaryImage const& image, Connectivity const conn)
-            : m_pData(0),
-              m_size(image.size()),
-              m_stride(0),
-              m_maxLabel(0)
+    ConnectivityMap::ConnectivityMap(BinaryImage const& image, Connectivity const conn)
+        : m_pData(0),
+          m_size(image.size()),
+          m_stride(0),
+          m_maxLabel(0)
     {
         if (m_size.isEmpty()) {
             return;
@@ -94,11 +92,11 @@ namespace imageproc
     }
 
     ConnectivityMap::ConnectivityMap(ConnectivityMap const& other)
-            : m_data(other.m_data),
-              m_pData(0),
-              m_size(other.size()),
-              m_stride(other.stride()),
-              m_maxLabel(other.m_maxLabel)
+        : m_data(other.m_data),
+          m_pData(0),
+          m_size(other.size()),
+          m_stride(other.stride()),
+          m_maxLabel(other.m_maxLabel)
     {
         if (!m_size.isEmpty()) {
             m_pData = &m_data[0] + m_stride + 1;
@@ -106,10 +104,10 @@ namespace imageproc
     }
 
     ConnectivityMap::ConnectivityMap(InfluenceMap const& imap)
-            : m_pData(0),
-              m_size(imap.size()),
-              m_stride(imap.stride()),
-              m_maxLabel(imap.maxLabel())
+        : m_pData(0),
+          m_size(imap.size()),
+          m_stride(imap.stride()),
+          m_maxLabel(imap.maxLabel())
     {
         if (m_size.isEmpty()) {
             return;
@@ -123,18 +121,20 @@ namespace imageproc
     ConnectivityMap::operator=(ConnectivityMap const& other)
     {
         ConnectivityMap(other).swap(*this);
+
         return *this;
     }
 
     ConnectivityMap&
     ConnectivityMap::operator=(InfluenceMap const& imap)
     {
-        if (m_size == imap.size() && !m_size.isEmpty()) {
+        if ((m_size == imap.size()) && !m_size.isEmpty()) {
             copyFromInfluenceMap(imap);
         }
         else {
             ConnectivityMap(imap).swap(*this);
         }
+
         return *this;
     }
 
@@ -180,7 +180,7 @@ namespace imageproc
         }
 
         m_maxLabel = new_label;
-    }
+    }  // ConnectivityMap::addComponent
 
     QImage
     ConnectivityMap::visualized(QColor bgcolor) const
@@ -230,7 +230,7 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // ConnectivityMap::visualized
 
     void
     ConnectivityMap::copyFromInfluenceMap(InfluenceMap const& imap)
@@ -280,9 +280,9 @@ namespace imageproc
         m_maxLabel = next_label - 1;
     }
 
-/**
- * Tags every object pixel that has a non-object pixel to the left.
- */
+    /**
+     * Tags every object pixel that has a non-object pixel to the left.
+     */
     uint32_t
     ConnectivityMap::initialTagging()
     {
@@ -296,8 +296,8 @@ namespace imageproc
 
         for (int y = 0; y < height; ++y, line += stride) {
             for (int x = 0; x < width; ++x) {
-                if (line[x - 1] == BACKGROUND
-                    && line[x] == UNTAGGED_FG) {
+                if ((line[x - 1] == BACKGROUND)
+                    && (line[x] == UNTAGGED_FG)) {
                     line[x] = next_label;
                     ++next_label;
                 }
@@ -323,9 +323,9 @@ namespace imageproc
                     continue;
                 }
                 line[x] = std::min(
-                        prev_line[x],
-                        std::min(line[x - 1], line[x])
-                );
+                    prev_line[x],
+                    std::min(line[x - 1], line[x])
+                          );
             }
 
             prev_line = line;
@@ -344,8 +344,8 @@ namespace imageproc
                 }
 
                 uint32_t const new_val = std::min(
-                        line[x + 1], prev_line[x]
-                );
+                    line[x + 1], prev_line[x]
+                                         );
 
                 if (new_val >= line[x]) {
                     continue;
@@ -354,7 +354,7 @@ namespace imageproc
                 line[x] = new_val;
 
                 uint32_t const nvp1 = new_val + 1;
-                if (nvp1 < line[x + 1] + 1 || nvp1 < prev_line[x] + 1) {
+                if ((nvp1 < line[x + 1] + 1) || (nvp1 < prev_line[x] + 1)) {
                     queue.push(&line[x]);
                 }
             }
@@ -363,7 +363,7 @@ namespace imageproc
         }
 
         processQueue4(queue);
-    }
+    }  // ConnectivityMap::spreadMin4
 
     void
     ConnectivityMap::spreadMin8()
@@ -381,12 +381,12 @@ namespace imageproc
                     continue;
                 }
                 line[x] = std::min(
-                        std::min(
-                                std::min(prev_line[x - 1], prev_line[x]),
-                                std::min(prev_line[x + 1], line[x - 1])
-                        ),
-                        line[x]
-                );
+                    std::min(
+                        std::min(prev_line[x - 1], prev_line[x]),
+                        std::min(prev_line[x + 1], line[x - 1])
+                    ),
+                    line[x]
+                          );
             }
 
             prev_line = line;
@@ -405,9 +405,9 @@ namespace imageproc
                 }
 
                 uint32_t const new_val = std::min(
-                        std::min(prev_line[x - 1], prev_line[x]),
-                        std::min(prev_line[x + 1], line[x + 1])
-                );
+                    std::min(prev_line[x - 1], prev_line[x]),
+                    std::min(prev_line[x + 1], line[x + 1])
+                                         );
 
                 if (new_val >= line[x]) {
                     continue;
@@ -416,10 +416,10 @@ namespace imageproc
                 line[x] = new_val;
 
                 uint32_t const nvp1 = new_val + 1;
-                if (nvp1 < prev_line[x - 1] + 1
-                    || nvp1 < prev_line[x] + 1
-                    || nvp1 < prev_line[x + 1] + 1
-                    || nvp1 < line[x + 1] + 1) {
+                if ((nvp1 < prev_line[x - 1] + 1)
+                    || (nvp1 < prev_line[x] + 1)
+                    || (nvp1 < prev_line[x + 1] + 1)
+                    || (nvp1 < line[x + 1] + 1)) {
                     queue.push(&line[x]);
                 }
             }
@@ -429,12 +429,10 @@ namespace imageproc
         }
 
         processQueue8(queue);
-    }
+    }  // ConnectivityMap::spreadMin8
 
     void
-    ConnectivityMap::processNeighbor(
-            FastQueue<uint32_t*>& queue,
-            uint32_t const this_val, uint32_t* neighbor)
+    ConnectivityMap::processNeighbor(FastQueue<uint32_t*>& queue, uint32_t const this_val, uint32_t* neighbor)
     {
         if (this_val + 1 < *neighbor + 1) {
             *neighbor = this_val;
@@ -502,7 +500,7 @@ namespace imageproc
             p -= stride;
             processNeighbor(queue, this_val, p);
         }
-    }
+    }  // ConnectivityMap::processQueue8
 
     void
     ConnectivityMap::markUsedIds(std::vector<uint32_t>& used_map) const
@@ -526,7 +524,7 @@ namespace imageproc
     void
     ConnectivityMap::remapIds(std::vector<uint32_t> const& map)
     {
-        for (uint32_t& label :  m_data) {
+        for (uint32_t& label : m_data) {
             if (label == BACKGROUND) {
                 label = 0;
             }
@@ -535,5 +533,4 @@ namespace imageproc
             }
         }
     }
-
-} 
+}  // namespace imageproc

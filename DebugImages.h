@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEBUG_IMAGES_H_
 #define DEBUG_IMAGES_H_
@@ -40,16 +41,20 @@ namespace imageproc
 class DebugImages
 {
 public:
-    void add(QImage const &image, QString const &label,
-             boost::function<QWidget *(QImage const &)> const &image_view_factory =
-             boost::function<QWidget *(QImage const &)>());
+    void add(QImage const& image,
+             QString const& label,
+             boost::function<QWidget*(QImage const&)> const& image_view_factory
+                 = boost::function<QWidget*(QImage const&)>());
 
-    void add(imageproc::BinaryImage const &image, QString const &label,
-             boost::function<QWidget *(QImage const &)> const &image_view_factory =
-             boost::function<QWidget *(QImage const &)>());
+    void add(imageproc::BinaryImage const& image,
+             QString const& label,
+             boost::function<QWidget*(QImage const&)> const& image_view_factory
+                 = boost::function<QWidget*(QImage const&)>());
 
     bool empty() const
-    { return m_sequence.empty(); }
+    {
+        return m_sequence.empty();
+    }
 
     /**
      * \brief Removes and returns the first item in the sequence.
@@ -58,23 +63,23 @@ public:
      * are returned by taking pointers to them as arguments.
      * Returns a null AutoRemovingFile if image sequence is empty.
      */
-    AutoRemovingFile retrieveNext(QString *label = 0,
-                                  boost::function<QWidget *(QImage const &)> *image_view_factory = 0);
+    AutoRemovingFile retrieveNext(QString* label = 0, boost::function<QWidget*(QImage const&)>* image_view_factory = 0);
 
 private:
-    struct Item : public RefCountable
-    {
+    struct Item
+        : public RefCountable {
         AutoRemovingFile file;
         QString label;
-        boost::function<QWidget *(QImage const &)> imageViewFactory;
+        boost::function<QWidget*(QImage const&)> imageViewFactory;
 
-        Item(AutoRemovingFile f, QString const &l,
-             boost::function<QWidget *(QImage const &)> const &imf)
-                : file(f), label(l), imageViewFactory(imf)
+        Item(AutoRemovingFile f, QString const& l, boost::function<QWidget*(QImage const&)> const& imf)
+            : file(f),
+              label(l),
+              imageViewFactory(imf)
         { }
     };
 
-    std::deque<IntrusivePtr<Item> > m_sequence;
+    std::deque<IntrusivePtr<Item>> m_sequence;
 };
 
-#endif
+#endif  // ifndef DEBUG_IMAGES_H_

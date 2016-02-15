@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -15,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageFinder.h"
 
@@ -32,13 +33,16 @@
 
 namespace select_content
 {
-
     using namespace imageproc;
 
     QRectF
-    PageFinder::findPageBox(
-            TaskStatus const& status, FilterData const& data, bool fine_tune, QSizeF const& box, double tolerance,
-            Margins borders, DebugImages* dbg)
+    PageFinder::findPageBox(TaskStatus const& status,
+                            FilterData const& data,
+                            bool fine_tune,
+                            QSizeF const& box,
+                            double tolerance,
+                            Margins borders,
+                            DebugImages* dbg)
     {
         ImageTransformation xform_150dpi(data.xform());
         xform_150dpi.preScaleToDpi(Dpi(150, 150));
@@ -61,11 +65,11 @@ namespace select_content
         QColor const outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
         QImage gray150(
-                transformToGray(
-                        data.grayImage(), xform_150dpi.transform(),
-                        xform_150dpi.resultingRect().toRect(),
-                        OutsidePixels::assumeColor(outside_color)
-                )
+            transformToGray(
+                data.grayImage(), xform_150dpi.transform(),
+                xform_150dpi.resultingRect().toRect(),
+                OutsidePixels::assumeColor(outside_color)
+            )
         );
         if (dbg) {
             dbg->add(gray150, "gray150");
@@ -143,7 +147,7 @@ namespace select_content
         QRectF result = combined_xform.map(QRectF(content_rect)).boundingRect();
 
         return result;
-    }
+    }  // PageFinder::findPageBox
 
     QRect
     PageFinder::detectBorders(QImage const& img)
@@ -160,9 +164,9 @@ namespace select_content
         return QRect(l, t, r - l + 1, b - t + 1);
     }
 
-/**
- * shift edge while points around mid are black
- */
+    /**
+     * shift edge while points around mid are black
+     */
     int
     PageFinder::detectEdge(QImage const& img, int start, int end, int inc, int mid, Qt::Orientation orient)
     {
@@ -206,7 +210,7 @@ namespace select_content
         }
 
         return edge;
-    }
+    }  // PageFinder::detectEdge
 
     void
     PageFinder::fineTuneCorners(QImage const& img, QRect& rect, QSize const& size, double tolerance)
@@ -227,12 +231,19 @@ namespace select_content
         rect.setBottom(b);
     }
 
-/**
- * shift edges until given corner is out of black
- */
+    /**
+     * shift edges until given corner is out of black
+     */
     bool
-    PageFinder::fineTuneCorner(QImage const& img, int& x, int& y, int max_x, int max_y, int inc_x, int inc_y,
-                               QSize const& size, double tolerance)
+    PageFinder::fineTuneCorner(QImage const& img,
+                               int& x,
+                               int& y,
+                               int max_x,
+                               int max_y,
+                               int inc_x,
+                               int inc_y,
+                               QSize const& size,
+                               double tolerance)
     {
         int width_t = size.width() * (1.0 - tolerance);
         int height_t = size.height() * (1.0 - tolerance);
@@ -244,15 +255,15 @@ namespace select_content
         int w = abs(max_x - x);
         int h = abs(max_y - y);
 
-        if ((!size.isEmpty()) && (w < width_t || h < height_t)) {
+        if ((!size.isEmpty()) && ((w < width_t) || (h < height_t))) {
             return true;
         }
-        if (pixel != black || tx < 0 || tx > (img.width() - 1) || ty < 0 || ty > (img.height() - 1)) {
+        if ((pixel != black) || (tx < 0) || (tx > (img.width() - 1)) || (ty < 0) || (ty > (img.height() - 1))) {
             return true;
         }
         x = tx;
         y = ty;
+
         return false;
     }
-
-} 
+}  // namespace select_content

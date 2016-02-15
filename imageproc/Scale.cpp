@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Scale.h"
 #include "GrayImage.h"
@@ -22,12 +23,12 @@
 
 namespace imageproc
 {
-
-/**
- * This is an optimized implementation for the case when every destination
- * pixel maps exactly to a M x N block of source pixels.
- */
-    static GrayImage scaleDownIntGrayToGray(GrayImage const& src, QSize const& dst_size)
+    /**
+     * This is an optimized implementation for the case when every destination
+     * pixel maps exactly to a M x N block of source pixels.
+     */
+    static GrayImage
+    scaleDownIntGrayToGray(GrayImage const& src, QSize const& dst_size)
     {
         int const sw = src.width();
         int const sh = src.height();
@@ -49,11 +50,9 @@ namespace imageproc
         int sy = 0;
         int dy = 0;
         for (; dy < dh; ++dy, sy += yscale) {
-
             int sx = 0;
             int dx = 0;
             for (; dx < dw; ++dx, sx += xscale) {
-
                 unsigned gray_level = 0;
                 uint8_t const* psrc = src_line + sx;
 
@@ -73,13 +72,14 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // scaleDownIntGrayToGray
 
-/**
- * This is an optimized implementation for the case when every destination
- * pixel maps to a single source pixel (possibly to a part of it).
- */
-    static GrayImage scaleUpIntGrayToGray(GrayImage const& src, QSize const& dst_size)
+    /**
+     * This is an optimized implementation for the case when every destination
+     * pixel maps to a single source pixel (possibly to a part of it).
+     */
+    static GrayImage
+    scaleUpIntGrayToGray(GrayImage const& src, QSize const& dst_size)
     {
         int const sw = src.width();
         int const sh = src.height();
@@ -118,36 +118,38 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // scaleUpIntGrayToGray
 
-/**
- * This function is used to calculate the ratio for going
- * from \p dst to \p src multiplied by 32, so that
- * \code
- * int(ratio * (dst_limit - 1)) / 32 < src_limit - 1
- * \endcode
- */
-    static double calc32xRatio1(int const dst, int const src)
+    /**
+     * This function is used to calculate the ratio for going
+     * from \p dst to \p src multiplied by 32, so that
+     * \code
+     * int(ratio * (dst_limit - 1)) / 32 < src_limit - 1
+     * \endcode
+     */
+    static double
+    calc32xRatio1(int const dst, int const src)
     {
         assert(dst > 0);
         assert(src > 0);
 
         int src32 = src << 5;
-        double ratio = (double) src32 / dst;
+        double ratio = (double)src32 / dst;
         while ((int(ratio * (dst - 1)) >> 5) + 1 >= src) {
             --src32;
-            ratio = (double) src32 / dst;
+            ratio = (double)src32 / dst;
         }
 
         return ratio;
     }
 
-/**
- * This is an optimized implementation for the case when
- * the destination image is larger than the source image both
- * horizontally and vertically.
- */
-    static GrayImage scaleUpGrayToGray(GrayImage const& src, QSize const& dst_size)
+    /**
+     * This is an optimized implementation for the case when
+     * the destination image is larger than the source image both
+     * horizontally and vertically.
+     */
+    static GrayImage
+    scaleUpGrayToGray(GrayImage const& src, QSize const& dst_size)
     {
         int const sw = src.width();
         int const sh = src.height();
@@ -165,7 +167,7 @@ namespace imageproc
         int const dst_stride = dst.stride();
 
         for (int dy = 0; dy < dh; ++dy, dst_line += dst_stride) {
-            int const sy32 = (int) (dy * dy2sy32);
+            int const sy32 = (int)(dy * dy2sy32);
             int const sy = sy32 >> 5;
             unsigned const top_fraction = 32 - (sy32 & 31);
             unsigned const bottom_fraction = sy32 & 31;
@@ -173,7 +175,7 @@ namespace imageproc
             uint8_t const* src_line = src_data + sy * src_stride;
 
             for (int dx = 0; dx < dw; ++dx) {
-                int const sx32 = (int) (dx * dx2sx32);
+                int const sx32 = (int)(dx * dx2sx32);
                 int const sx = sx32 >> 5;
                 unsigned const left_fraction = 32 - (sx32 & 31);
                 unsigned const right_fraction = sx32 & 31;
@@ -197,50 +199,52 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // scaleUpGrayToGray
 
-/**
- * This function is used to calculate the ratio for going
- * from \p dst to \p src multiplied by 32, so that
- * \code
- * (int(ratio * dst_limit) - 1) / 32 < src_limit
- * \endcode
- */
-    static double calc32xRatio2(int const dst, int const src)
+    /**
+     * This function is used to calculate the ratio for going
+     * from \p dst to \p src multiplied by 32, so that
+     * \code
+     * (int(ratio * dst_limit) - 1) / 32 < src_limit
+     * \endcode
+     */
+    static double
+    calc32xRatio2(int const dst, int const src)
     {
         assert(dst > 0);
         assert(src > 0);
 
         int src32 = src << 5;
-        double ratio = (double) src32 / dst;
+        double ratio = (double)src32 / dst;
         while ((int(ratio * dst) - 1) >> 5 >= src) {
             --src32;
-            ratio = (double) src32 / dst;
+            ratio = (double)src32 / dst;
         }
 
         return ratio;
     }
 
-/**
- * This is a generic implementation of the scaling algorithm.
- */
-    static GrayImage scaleGrayToGray(GrayImage const& src, QSize const& dst_size)
+    /**
+     * This is a generic implementation of the scaling algorithm.
+     */
+    static GrayImage
+    scaleGrayToGray(GrayImage const& src, QSize const& dst_size)
     {
         int const sw = src.width();
         int const sh = src.height();
         int const dw = dst_size.width();
         int const dh = dst_size.height();
 
-        if (sw == dw && sh == dh) {
+        if ((sw == dw) && (sh == dh)) {
             return src;
         }
-        else if (sw % dw == 0 && sh % dh == 0) {
+        else if ((sw % dw == 0) && (sh % dh == 0)) {
             return scaleDownIntGrayToGray(src, dst_size);
         }
-        else if (dw % sw == 0 && dh % sh == 0) {
+        else if ((dw % sw == 0) && (dh % sh == 0)) {
             return scaleUpIntGrayToGray(src, dst_size);
         }
-        else if (dw > sw && dh > sh) {
+        else if ((dw > sw) && (dh > sh)) {
             return scaleUpGrayToGray(src, dst_size);
         }
 
@@ -257,7 +261,7 @@ namespace imageproc
         int sy32bottom = 0;
         for (int dy1 = 1; dy1 <= dh; ++dy1, dst_line += dst_stride) {
             int const sy32top = sy32bottom;
-            sy32bottom = (int) (dy1 * dy2sy32);
+            sy32bottom = (int)(dy1 * dy2sy32);
             int const sytop = sy32top >> 5;
             int const sybottom = (sy32bottom - 1) >> 5;
             unsigned const top_fraction = 32 - (sy32top & 31);
@@ -271,7 +275,7 @@ namespace imageproc
             int sx32right = 0;
             for (int dx = 0; dx < dw; ++dx) {
                 int const sx32left = sx32right;
-                sx32right = (int) ((dx + 1) * dx2sx32);
+                sx32right = (int)((dx + 1) * dx2sx32);
                 int const sxleft = sx32left >> 5;
                 int const sxright = (sx32right - 1) >> 5;
                 unsigned const left_fraction = 32 - (sx32left & 31);
@@ -364,9 +368,10 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // scaleGrayToGray
 
-    GrayImage scaleToGray(GrayImage const& src, QSize const& dst_size)
+    GrayImage
+    scaleToGray(GrayImage const& src, QSize const& dst_size)
     {
         if (src.isNull()) {
             return src;
@@ -382,5 +387,4 @@ namespace imageproc
 
         return scaleGrayToGray(src, dst_size);
     }
-
-} 
+}  // namespace imageproc

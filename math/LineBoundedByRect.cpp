@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,19 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "LineBoundedByRect.h"
 #include "LineIntersectionScalar.h"
 #include "NumericTraits.h"
 
-bool lineBoundedByRect(QLineF& line, QRectF const& rect)
+bool
+lineBoundedByRect(QLineF& line, QRectF const& rect)
 {
     QLineF const rect_lines[4] = {
-            QLineF(rect.topLeft(), rect.topRight()),
-            QLineF(rect.bottomLeft(), rect.bottomRight()),
-            QLineF(rect.topLeft(), rect.bottomLeft()),
-            QLineF(rect.topRight(), rect.bottomRight())
+        QLineF(rect.topLeft(), rect.topRight()),
+        QLineF(rect.bottomLeft(), rect.bottomRight()),
+        QLineF(rect.topLeft(), rect.bottomLeft()),
+        QLineF(rect.topRight(), rect.bottomRight())
     };
 
     double max = NumericTraits<double>::min();
@@ -34,11 +36,11 @@ bool lineBoundedByRect(QLineF& line, QRectF const& rect)
 
     double s1 = 0;
     double s2 = 0;
-    for (QLineF const& rect_line :  rect_lines) {
+    for (QLineF const& rect_line : rect_lines) {
         if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
             continue;
         }
-        if (s1 < 0 || s1 > 1) {
+        if ((s1 < 0) || (s1 > 1)) {
             continue;
         }
 
@@ -52,9 +54,11 @@ bool lineBoundedByRect(QLineF& line, QRectF const& rect)
 
     if (max > min) {
         line = QLineF(line.pointAt(min), line.pointAt(max));
+
         return true;
     }
     else {
         return false;
     }
-}
+}  // lineBoundedByRect
+

@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "InteractionHandler.h"
 #include "InteractionState.h"
@@ -24,26 +25,27 @@
 #include <boost/lambda/construct.hpp>
 #include <boost/lambda/bind.hpp>
 
-#define DISPATCH(list, call) {                    \
-    HandlerList::iterator it(list->begin());      \
-    HandlerList::iterator const end(list->end()); \
-    while (it != end) {                           \
-        (it++)->call;                             \
-    }                                             \
-}
+#define DISPATCH(list, call) \
+    { \
+        HandlerList::iterator it(list->begin()); \
+        HandlerList::iterator const end(list->end()); \
+        while (it != end) { \
+            (it++)->call; \
+        } \
+    }
 
-#define RETURN_IF_ACCEPTED(event) {               \
-    if (event->isAccepted()) {                    \
-        return;                                   \
-    }                                             \
-}
+#define RETURN_IF_ACCEPTED(event) \
+    { \
+        if (event->isAccepted()) { \
+            return; \
+        } \
+    }
 
 namespace
 {
-
     class ScopedClearAcceptance
     {
-    DECLARE_NON_COPYABLE(ScopedClearAcceptance)
+        DECLARE_NON_COPYABLE(ScopedClearAcceptance)
 
     public:
         ScopedClearAcceptance(QEvent* event);
@@ -56,8 +58,8 @@ namespace
     };
 
     ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
-            : m_pEvent(event),
-              m_wasAccepted(event->isAccepted())
+        : m_pEvent(event),
+          m_wasAccepted(event->isAccepted())
     {
         m_pEvent->setAccepted(false);
     }
@@ -68,14 +70,12 @@ namespace
             m_pEvent->setAccepted(true);
         }
     }
-
 }
 
 InteractionHandler::InteractionHandler()
-        : m_ptrPreceeders(new HandlerList),
-          m_ptrFollowers(new HandlerList)
-{
-}
+    : m_ptrPreceeders(new HandlerList),
+      m_ptrFollowers(new HandlerList)
+{ }
 
 InteractionHandler::~InteractionHandler()
 {
@@ -85,8 +85,7 @@ InteractionHandler::~InteractionHandler()
 }
 
 void
-InteractionHandler::paint(
-        QPainter& painter, InteractionState const& interaction)
+InteractionHandler::paint(QPainter& painter, InteractionState const& interaction)
 {
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
     IntrusivePtr<HandlerList> followers(m_ptrFollowers);
@@ -99,8 +98,7 @@ InteractionHandler::paint(
 }
 
 void
-InteractionHandler::proximityUpdate(
-        QPointF const& screen_mouse_pos, InteractionState& interaction)
+InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction)
 {
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
     IntrusivePtr<HandlerList> followers(m_ptrFollowers);
@@ -202,8 +200,7 @@ InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& interaction
 }
 
 void
-InteractionHandler::contextMenuEvent(
-        QContextMenuEvent* event, InteractionState& interaction)
+InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction)
 {
     RETURN_IF_ACCEPTED(event);
 
@@ -265,3 +262,4 @@ InteractionHandler::defaultInteractionPermitter(InteractionState const& interact
 {
     return !interaction.captured();
 }
+

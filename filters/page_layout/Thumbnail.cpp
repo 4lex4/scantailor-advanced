@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Thumbnail.h"
 #include "Utils.h"
@@ -25,23 +26,22 @@ using namespace imageproc;
 
 namespace page_layout
 {
-
-    Thumbnail::Thumbnail(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id, Params const& params,
-            ImageTransformation const& xform, QPolygonF const& phys_content_rect)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
-              m_params(params),
-              m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
-              m_virtOuterRect(xform.resultingPostCropArea().boundingRect())
+    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                         QSizeF const& max_size,
+                         ImageId const& image_id,
+                         Params const& params,
+                         ImageTransformation const& xform,
+                         QPolygonF const& phys_content_rect)
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+          m_params(params),
+          m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
+          m_virtOuterRect(xform.resultingPostCropArea().boundingRect())
     {
         setExtendedClipArea(true);
     }
 
     void
-    Thumbnail::paintOverImage(
-            QPainter& painter, QTransform const& image_to_display,
-            QTransform const& thumb_to_display)
+    Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display, QTransform const& thumb_to_display)
     {
         painter.setWorldTransform(QTransform());
 
@@ -50,7 +50,7 @@ namespace page_layout
         QRectF const inner_rect(virt_to_display.map(m_virtContentRect).boundingRect());
 
         QRectF const outer_rect(
-                virt_to_display.map(m_virtOuterRect).boundingRect().adjusted(-1.0, -1.0, 1.0, 1.0)
+            virt_to_display.map(m_virtOuterRect).boundingRect().adjusted(-1.0, -1.0, 1.0, 1.0)
         );
 
         QPainterPath outer_outline;
@@ -85,7 +85,5 @@ namespace page_layout
         if (m_params.isDeviant()) {
             paintDeviant(painter);
         }
-    }
-
-
-} 
+    }  // Thumbnail::paintOverImage
+}  // namespace page_layout

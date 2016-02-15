@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ABSTRACTFILTER_H_
 #define ABSTRACTFILTER_H_
@@ -36,7 +37,8 @@ class QDomElement;
 /**
  * Filters represent processing stages, like "Deskew", "Margins" and "Output".
  */
-class AbstractFilter : public RefCountable
+class AbstractFilter
+    : public RefCountable
 {
 public:
     virtual ~AbstractFilter()
@@ -50,7 +52,9 @@ public:
     { }
 
     virtual int selectedPageOrder() const
-    { return -1; }
+    {
+        return -1;
+    }
 
     virtual void selectPageOrder(int option)
     { }
@@ -60,18 +64,16 @@ public:
         return std::vector<PageOrderOption>();
     }
 
-    virtual void performRelinking(AbstractRelinker const &relinker) = 0;
+    virtual void performRelinking(AbstractRelinker const& relinker) = 0;
 
-    virtual void preUpdateUI(FilterUiInterface *ui, PageId const &page_id) = 0;
+    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) = 0;
 
     virtual void updateStatistics()
-    { };
+    { }
 
-    virtual QDomElement saveSettings(
-            ProjectWriter const &writer, QDomDocument &doc) const = 0;
+    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const = 0;
 
-    virtual void loadSettings(
-            ProjectReader const &reader, QDomElement const &filters_el) = 0;
+    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) = 0;
 };
 
-#endif
+#endif  // ifndef ABSTRACTFILTER_H_

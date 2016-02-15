@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #define _ISOC99SOURCE
 
@@ -24,18 +25,18 @@
 #include <assert.h>
 
 #ifdef _MSC_VER
-#undef copysign #define copysign _copysign
+ #undef copysign#define copysign _copysign
 #endif
 
 namespace imageproc
 {
-
-    void leastSquaresFit(QSize const& C_size, double* C, double* x, double* d)
+    void
+    leastSquaresFit(QSize const& C_size, double* C, double* x, double* d)
     {
         int const width = C_size.width();
         int const height = C_size.height();
 
-        if (width < 0 || height < 0 || height < width) {
+        if ((width < 0) || (height < 0) || (height < width)) {
             throw std::invalid_argument("leastSquaresFit: invalid dimensions");
         }
 
@@ -99,6 +100,5 @@ namespace imageproc
             assert(C[ii] != 0.0);
             x[i] = sum / C[ii];
         }
-    }
-
-}
+    }  // leastSquaresFit
+}  // namespace imageproc

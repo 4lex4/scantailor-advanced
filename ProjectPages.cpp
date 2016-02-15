@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ProjectPages.h"
 #include "ImageFileInfo.h"
@@ -35,13 +36,11 @@ ProjectPages::ProjectPages(Qt::LayoutDirection const layout_direction)
     initSubPagesInOrder(layout_direction);
 }
 
-ProjectPages::ProjectPages(
-        std::vector<ImageInfo> const& info,
-        Qt::LayoutDirection const layout_direction)
+ProjectPages::ProjectPages(std::vector<ImageInfo> const& info, Qt::LayoutDirection const layout_direction)
 {
     initSubPagesInOrder(layout_direction);
 
-    for (ImageInfo const& image :  info) {
+    for (ImageInfo const& image : info) {
         ImageDesc image_desc(image);
 
         if (image_desc.numLogicalPages == 2) {
@@ -60,13 +59,13 @@ ProjectPages::ProjectPages(
     }
 }
 
-ProjectPages::ProjectPages(
-        std::vector<ImageFileInfo> const& files,
-        Pages const pages, Qt::LayoutDirection const layout_direction)
+ProjectPages::ProjectPages(std::vector<ImageFileInfo> const& files,
+                           Pages const pages,
+                           Qt::LayoutDirection const layout_direction)
 {
     initSubPagesInOrder(layout_direction);
 
-    for (ImageFileInfo const& file :  files) {
+    for (ImageFileInfo const& file : files) {
         QString const& file_path = file.fileInfo().absoluteFilePath();
         std::vector<ImageMetadata> const& images = file.imageInfo();
         int const num_images = images.size();
@@ -80,8 +79,7 @@ ProjectPages::ProjectPages(
 }
 
 ProjectPages::~ProjectPages()
-{
-}
+{ }
 
 Qt::LayoutDirection
 ProjectPages::layoutDirection() const
@@ -91,6 +89,7 @@ ProjectPages::layoutDirection() const
     }
     else {
         assert(m_subPagesInOrder[0] == PageId::RIGHT_PAGE);
+
         return Qt::RightToLeft;
     }
 }
@@ -122,18 +121,18 @@ ProjectPages::toPageSequence(PageView const view) const
             assert(image.numLogicalPages >= 1 && image.numLogicalPages <= 2);
             for (int j = 0; j < image.numLogicalPages; ++j) {
                 PageId const id(
-                        image.id,
-                        image.logicalPageToSubPage(
-                                j, m_subPagesInOrder
-                        )
+                    image.id,
+                    image.logicalPageToSubPage(
+                        j, m_subPagesInOrder
+                    )
                 );
                 pages.append(
-                        PageInfo(
-                                id, image.metadata,
-                                image.numLogicalPages,
-                                image.leftHalfRemoved,
-                                image.rightHalfRemoved
-                        )
+                    PageInfo(
+                        id, image.metadata,
+                        image.numLogicalPages,
+                        image.leftHalfRemoved,
+                        image.rightHalfRemoved
+                    )
                 );
             }
         }
@@ -148,18 +147,18 @@ ProjectPages::toPageSequence(PageView const view) const
             ImageDesc const& image = m_images[i];
             PageId const id(image.id, PageId::SINGLE_PAGE);
             pages.append(
-                    PageInfo(
-                            id, image.metadata,
-                            image.numLogicalPages,
-                            image.leftHalfRemoved,
-                            image.rightHalfRemoved
-                    )
+                PageInfo(
+                    id, image.metadata,
+                    image.numLogicalPages,
+                    image.leftHalfRemoved,
+                    image.rightHalfRemoved
+                )
             );
         }
     }
 
     return pages;
-}
+}  // ProjectPages::toPageSequence
 
 void
 ProjectPages::listRelinkablePaths(VirtualFunction1<void, RelinkablePath const&>& sink) const
@@ -170,12 +169,12 @@ ProjectPages::listRelinkablePaths(VirtualFunction1<void, RelinkablePath const&>&
         QMutexLocker locker(&m_mutex);
 
         files.reserve(m_images.size());
-        for (ImageDesc const& image :  m_images) {
+        for (ImageDesc const& image : m_images) {
             files.push_back(image.id.filePath());
         }
     }
 
-    for (QString const& file :  files) {
+    for (QString const& file : files) {
         sink(RelinkablePath(file, RelinkablePath::File));
     }
 }
@@ -185,7 +184,7 @@ ProjectPages::performRelinking(AbstractRelinker const& relinker)
 {
     QMutexLocker locker(&m_mutex);
 
-    for (ImageDesc& image :  m_images) {
+    for (ImageDesc& image : m_images) {
         RelinkablePath const old_path(image.id.filePath(), RelinkablePath::File);
         QString const new_path(relinker.substitutionPathFor(old_path));
         image.id.setFilePath(new_path);
@@ -223,8 +222,7 @@ ProjectPages::setLayoutTypeForAllPages(LayoutType const layout)
 }
 
 void
-ProjectPages::autoSetLayoutTypeFor(
-        ImageId const& image_id, OrthogonalRotation const rotation)
+ProjectPages::autoSetLayoutTypeFor(ImageId const& image_id, OrthogonalRotation const rotation)
 {
     bool was_modified = false;
 
@@ -239,8 +237,7 @@ ProjectPages::autoSetLayoutTypeFor(
 }
 
 void
-ProjectPages::updateImageMetadata(
-        ImageId const& image_id, ImageMetadata const& metadata)
+ProjectPages::updateImageMetadata(ImageId const& image_id, ImageMetadata const& metadata)
 {
     bool was_modified = false;
 
@@ -255,8 +252,7 @@ ProjectPages::updateImageMetadata(
 }
 
 int
-ProjectPages::adviseNumberOfLogicalPages(
-        ImageMetadata const& metadata, OrthogonalRotation const rotation)
+ProjectPages::adviseNumberOfLogicalPages(ImageMetadata const& metadata, OrthogonalRotation const rotation)
 {
     QSize const size(rotation.rotate(metadata.size()));
     QSize const dpi(rotation.rotate(metadata.dpi().toSize()));
@@ -273,20 +269,23 @@ int
 ProjectPages::numImages() const
 {
     QMutexLocker locker(&m_mutex);
+
     return m_images.size();
 }
 
 std::vector<PageInfo>
-ProjectPages::insertImage(
-        ImageInfo const& new_image, BeforeOrAfter before_or_after,
-        ImageId const& existing, PageView const view)
+ProjectPages::insertImage(ImageInfo const& new_image,
+                          BeforeOrAfter before_or_after,
+                          ImageId const& existing,
+                          PageView const view)
 {
     bool was_modified = false;
 
     {
         QMutexLocker locker(&m_mutex);
+
         return insertImageImpl(
-                new_image, before_or_after, existing, view, was_modified
+            new_image, before_or_after, existing, view, was_modified
         );
     }
 
@@ -334,7 +333,7 @@ ProjectPages::validateDpis() const
 {
     QMutexLocker locker(&m_mutex);
 
-    for (ImageDesc const& image :  m_images) {
+    for (ImageDesc const& image : m_images) {
         if (!image.metadata.isDpiOK()) {
             return false;
         }
@@ -345,19 +344,18 @@ ProjectPages::validateDpis() const
 
 namespace
 {
-
-    struct File
-    {
+    struct File {
         QString fileName;
         mutable std::vector<ImageMetadata> metadata;
 
-        File(QString const& fname) : fileName(fname)
+        File(QString const& fname)
+            : fileName(fname)
         { }
 
         operator ImageFileInfo() const
-        { return ImageFileInfo(fileName, metadata); }
+        { return ImageFileInfo(fileName, metadata);
+        }
     };
-
 }
 
 std::vector<ImageFileInfo>
@@ -366,17 +364,17 @@ ProjectPages::toImageFileInfo() const
     using namespace boost::multi_index;
 
     multi_index_container<
-            File,
-            indexed_by<
-                    ordered_unique<member<File, QString, &File::fileName> >,
-                    sequenced<>
-            >
+        File,
+        indexed_by<
+            ordered_unique<member<File, QString, & File::fileName>>,
+            sequenced<>
+        >
     > files;
 
     {
         QMutexLocker locker(&m_mutex);
 
-        for (ImageDesc const& image :  m_images) {
+        for (ImageDesc const& image : m_images) {
             File const file(image.id.filePath());
             files.insert(file).first->metadata.push_back(image.metadata);
         }
@@ -391,10 +389,10 @@ ProjectPages::updateMetadataFrom(std::vector<ImageFileInfo> const& files)
     typedef std::map<ImageId, ImageMetadata> MetadataMap;
     MetadataMap metadata_map;
 
-    for (ImageFileInfo const& file :  files) {
+    for (ImageFileInfo const& file : files) {
         QString const file_path(file.fileInfo().absoluteFilePath());
         int page = 0;
-        for (ImageMetadata const& metadata :  file.imageInfo()) {
+        for (ImageMetadata const& metadata : file.imageInfo()) {
             metadata_map[ImageId(file_path, page)] = metadata;
             ++page;
         }
@@ -402,7 +400,7 @@ ProjectPages::updateMetadataFrom(std::vector<ImageFileInfo> const& files)
 
     QMutexLocker locker(&m_mutex);
 
-    for (ImageDesc& image :  m_images) {
+    for (ImageDesc& image : m_images) {
         MetadataMap::const_iterator const it(metadata_map.find(image.id));
         if (it != metadata_map.end()) {
             image.metadata = it->second;
@@ -411,8 +409,7 @@ ProjectPages::updateMetadataFrom(std::vector<ImageFileInfo> const& files)
 }
 
 void
-ProjectPages::setLayoutTypeForImpl(
-        ImageId const& image_id, LayoutType const layout, bool* modified)
+ProjectPages::setLayoutTypeForImpl(ImageId const& image_id, LayoutType const layout, bool* modified)
 {
     int const num_pages = (layout == TWO_PAGE_LAYOUT ? 2 : 1);
     int const num_images = m_images.size();
@@ -420,7 +417,7 @@ ProjectPages::setLayoutTypeForImpl(
         ImageDesc& image = m_images[i];
         if (image.id == image_id) {
             int adjusted_num_pages = num_pages;
-            if (num_pages == 2 && image.leftHalfRemoved != image.rightHalfRemoved) {
+            if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
                 --adjusted_num_pages;
             }
 
@@ -438,8 +435,7 @@ ProjectPages::setLayoutTypeForImpl(
 }
 
 void
-ProjectPages::setLayoutTypeForAllPagesImpl(
-        LayoutType const layout, bool* modified)
+ProjectPages::setLayoutTypeForAllPagesImpl(LayoutType const layout, bool* modified)
 {
     int const num_pages = (layout == TWO_PAGE_LAYOUT ? 2 : 1);
     int const num_images = m_images.size();
@@ -447,7 +443,7 @@ ProjectPages::setLayoutTypeForAllPagesImpl(
         ImageDesc& image = m_images[i];
 
         int adjusted_num_pages = num_pages;
-        if (num_pages == 2 && image.leftHalfRemoved != image.rightHalfRemoved) {
+        if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
             --adjusted_num_pages;
         }
 
@@ -462,15 +458,14 @@ ProjectPages::setLayoutTypeForAllPagesImpl(
 }
 
 void
-ProjectPages::autoSetLayoutTypeForImpl(
-        ImageId const& image_id, OrthogonalRotation const rotation, bool* modified)
+ProjectPages::autoSetLayoutTypeForImpl(ImageId const& image_id, OrthogonalRotation const rotation, bool* modified)
 {
     int const num_images = m_images.size();
     for (int i = 0; i < num_images; ++i) {
         ImageDesc& image = m_images[i];
         if (image.id == image_id) {
             int num_pages = adviseNumberOfLogicalPages(image.metadata, rotation);
-            if (num_pages == 2 && image.leftHalfRemoved != image.rightHalfRemoved) {
+            if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
                 --num_pages;
             }
 
@@ -488,9 +483,7 @@ ProjectPages::autoSetLayoutTypeForImpl(
 }
 
 void
-ProjectPages::updateImageMetadataImpl(
-        ImageId const& image_id,
-        ImageMetadata const& metadata, bool* modified)
+ProjectPages::updateImageMetadataImpl(ImageId const& image_id, ImageMetadata const& metadata, bool* modified)
 {
     int const num_images = m_images.size();
     for (int i = 0; i < num_images; ++i) {
@@ -506,18 +499,19 @@ ProjectPages::updateImageMetadataImpl(
 }
 
 std::vector<PageInfo>
-ProjectPages::insertImageImpl(
-        ImageInfo const& new_image, BeforeOrAfter before_or_after,
-        ImageId const& existing, PageView const view, bool& modified)
+ProjectPages::insertImageImpl(ImageInfo const& new_image,
+                              BeforeOrAfter before_or_after,
+                              ImageId const& existing,
+                              PageView const view,
+                              bool& modified)
 {
     std::vector<PageInfo> logical_pages;
 
     std::vector<ImageDesc>::iterator it(m_images.begin());
     std::vector<ImageDesc>::iterator const end(m_images.end());
-    for (; it != end && it->id != existing; ++it) {
-    }
+    for (; it != end && it->id != existing; ++it) { }
     if (it == end) {
-        if (!(before_or_after == BEFORE && existing.isNull())) {
+        if (!((before_or_after == BEFORE) && existing.isNull())) {
             return logical_pages;
         }
     }
@@ -542,30 +536,30 @@ ProjectPages::insertImageImpl(
     m_images.insert(it, image_desc);
 
     PageInfo page_info_templ(
-            PageId(new_image.id(), PageId::SINGLE_PAGE),
-            image_desc.metadata, image_desc.numLogicalPages,
-            image_desc.leftHalfRemoved, image_desc.rightHalfRemoved
+        PageId(new_image.id(), PageId::SINGLE_PAGE),
+        image_desc.metadata, image_desc.numLogicalPages,
+        image_desc.leftHalfRemoved, image_desc.rightHalfRemoved
     );
 
-    if (view == IMAGE_VIEW || (image_desc.numLogicalPages == 1 &&
-                               image_desc.leftHalfRemoved == image_desc.rightHalfRemoved)) {
+    if ((view == IMAGE_VIEW) || ((image_desc.numLogicalPages == 1)
+                                 && (image_desc.leftHalfRemoved == image_desc.rightHalfRemoved))) {
         logical_pages.push_back(page_info_templ);
     }
     else {
-        if (image_desc.numLogicalPages == 2 ||
-            (image_desc.numLogicalPages == 1 && image_desc.rightHalfRemoved)) {
+        if ((image_desc.numLogicalPages == 2)
+            || ((image_desc.numLogicalPages == 1) && image_desc.rightHalfRemoved)) {
             page_info_templ.setId(PageId(new_image.id(), m_subPagesInOrder[0]));
             logical_pages.push_back(page_info_templ);
         }
-        if (image_desc.numLogicalPages == 2 ||
-            (image_desc.numLogicalPages == 1 && image_desc.leftHalfRemoved)) {
+        if ((image_desc.numLogicalPages == 2)
+            || ((image_desc.numLogicalPages == 1) && image_desc.leftHalfRemoved)) {
             page_info_templ.setId(PageId(new_image.id(), m_subPagesInOrder[1]));
             logical_pages.push_back(page_info_templ);
         }
     }
 
     return logical_pages;
-}
+}  // ProjectPages::insertImageImpl
 
 void
 ProjectPages::removePagesImpl(std::set<PageId> const& to_remove, bool& modified)
@@ -604,7 +598,7 @@ ProjectPages::removePagesImpl(std::set<PageId> const& to_remove, bool& modified)
     }
 
     new_images.swap(m_images);
-}
+}  // ProjectPages::removePagesImpl
 
 PageInfo
 ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified)
@@ -615,8 +609,7 @@ ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified)
 
     std::vector<ImageDesc>::iterator it(m_images.begin());
     std::vector<ImageDesc>::iterator const end(m_images.end());
-    for (; it != end && it->id != page_id.imageId(); ++it) {
-    }
+    for (; it != end && it->id != page_id.imageId(); ++it) { }
     if (it == end) {
         return PageInfo();
     }
@@ -627,10 +620,10 @@ ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified)
         return PageInfo();
     }
 
-    if (page_id.subPage() == PageId::LEFT_PAGE && image.leftHalfRemoved) {
+    if ((page_id.subPage() == PageId::LEFT_PAGE) && image.leftHalfRemoved) {
         image.leftHalfRemoved = false;
     }
-    else if (page_id.subPage() == PageId::RIGHT_PAGE && image.rightHalfRemoved) {
+    else if ((page_id.subPage() == PageId::RIGHT_PAGE) && image.rightHalfRemoved) {
         image.rightHalfRemoved = false;
     }
     else {
@@ -640,29 +633,26 @@ ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified)
     image.numLogicalPages = 2;
 
     return PageInfo(
-            page_id, image.metadata, image.numLogicalPages,
-            image.leftHalfRemoved, image.rightHalfRemoved
+        page_id, image.metadata, image.numLogicalPages,
+        image.leftHalfRemoved, image.rightHalfRemoved
     );
-}
-
+}  // ProjectPages::unremovePageImpl
 
 /*========================= ProjectPages::ImageDesc ======================*/
 
 ProjectPages::ImageDesc::ImageDesc(ImageInfo const& image_info)
-        : id(image_info.id()),
-          metadata(image_info.metadata()),
-          numLogicalPages(image_info.numSubPages()),
-          leftHalfRemoved(image_info.leftHalfRemoved()),
-          rightHalfRemoved(image_info.rightHalfRemoved())
-{
-}
+    : id(image_info.id()),
+      metadata(image_info.metadata()),
+      numLogicalPages(image_info.numSubPages()),
+      leftHalfRemoved(image_info.leftHalfRemoved()),
+      rightHalfRemoved(image_info.rightHalfRemoved())
+{ }
 
-ProjectPages::ImageDesc::ImageDesc(
-        ImageId const& id, ImageMetadata const& metadata, Pages const pages)
-        : id(id),
-          metadata(metadata),
-          leftHalfRemoved(false),
-          rightHalfRemoved(false)
+ProjectPages::ImageDesc::ImageDesc(ImageId const& id, ImageMetadata const& metadata, Pages const pages)
+    : id(id),
+      metadata(metadata),
+      leftHalfRemoved(false),
+      rightHalfRemoved(false)
 {
     switch (pages) {
         case ONE_PAGE:
@@ -673,15 +663,14 @@ ProjectPages::ImageDesc::ImageDesc(
             break;
         case AUTO_PAGES:
             numLogicalPages = adviseNumberOfLogicalPages(
-                    metadata, OrthogonalRotation()
-            );
+                metadata, OrthogonalRotation()
+                              );
             break;
     }
 }
 
 PageId::SubPage
-ProjectPages::ImageDesc::logicalPageToSubPage(
-        int const logical_page, PageId::SubPage const* sub_pages_in_order) const
+ProjectPages::ImageDesc::logicalPageToSubPage(int const logical_page, PageId::SubPage const* sub_pages_in_order) const
 {
     assert(numLogicalPages >= 1 && numLogicalPages <= 2);
     assert(logical_page >= 0 && logical_page < numLogicalPages);
@@ -701,3 +690,4 @@ ProjectPages::ImageDesc::logicalPageToSubPage(
         return sub_pages_in_order[logical_page];
     }
 }
+

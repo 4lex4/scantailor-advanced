@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef QUADRATIC_FUNCTION_H_
 #define QUADRATIC_FUNCTION_H_
@@ -70,7 +71,9 @@ public:
     void reset();
 
     size_t numVars() const
-    { return b.size(); }
+    {
+        return b.size();
+    }
 
     /**
      * Evaluates x^T * A * x + b^T * x + c
@@ -93,9 +96,10 @@ public:
 };
 
 
-inline void swap(QuadraticFunction& f1, QuadraticFunction& f2)
+inline void
+swap(QuadraticFunction& f1, QuadraticFunction& f2)
 {
     f1.swap(f2);
 }
 
-#endif
+#endif  // ifndef QUADRATIC_FUNCTION_H_

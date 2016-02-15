@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutputFileParams.h"
 #include <QDomDocument>
@@ -23,16 +24,14 @@
 
 namespace output
 {
-
     OutputFileParams::OutputFileParams()
-            : m_size(-1),
-              m_mtime(0)
-    {
-    }
+        : m_size(-1),
+          m_mtime(0)
+    { }
 
     OutputFileParams::OutputFileParams(QFileInfo const& file_info)
-            : m_size(-1),
-              m_mtime(0)
+        : m_size(-1),
+          m_mtime(0)
     {
         if (file_info.exists()) {
             m_size = file_info.size();
@@ -41,14 +40,14 @@ namespace output
     }
 
     OutputFileParams::OutputFileParams(QDomElement const& el)
-            : m_size(-1),
-              m_mtime(0)
+        : m_size(-1),
+          m_mtime(0)
     {
         if (el.hasAttribute("size")) {
-            m_size = (qint64) el.attribute("size").toLongLong();
+            m_size = (qint64)el.attribute("size").toLongLong();
         }
         if (el.hasAttribute("mtime")) {
-            m_mtime = (time_t) el.attribute("mtime").toLongLong();
+            m_mtime = (time_t)el.attribute("mtime").toLongLong();
         }
     }
 
@@ -59,6 +58,7 @@ namespace output
             QDomElement el(doc.createElement(name));
             el.setAttribute("size", QString::number(m_size));
             el.setAttribute("mtime", QString::number(m_mtime));
+
             return el;
         }
         else {
@@ -69,8 +69,7 @@ namespace output
     bool
     OutputFileParams::matches(OutputFileParams const& other) const
     {
-        return isValid() && other.isValid() &&
-               m_size == other.m_size/* && m_mtime == other.m_mtime*/;
+        return isValid() && other.isValid()
+               && m_size == other.m_size  /* && m_mtime == other.m_mtime*/;
     }
-
-} 
+}  // namespace output

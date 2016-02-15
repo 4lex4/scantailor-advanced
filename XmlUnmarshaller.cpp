@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "XmlUnmarshaller.h"
 #include "Dpi.h"
@@ -38,6 +39,7 @@ XmlUnmarshaller::size(QDomElement const& el)
 {
     int const width = el.attribute("width").toInt();
     int const height = el.attribute("height").toInt();
+
     return QSize(width, height);
 }
 
@@ -46,6 +48,7 @@ XmlUnmarshaller::sizeF(QDomElement const& el)
 {
     double const width = el.attribute("width").toDouble();
     double const height = el.attribute("height").toDouble();
+
     return QSizeF(width, height);
 }
 
@@ -54,6 +57,7 @@ XmlUnmarshaller::dpi(QDomElement const& el)
 {
     int const hor = el.attribute("horizontal").toInt();
     int const ver = el.attribute("vertical").toInt();
+
     return Dpi(hor, ver);
 }
 
@@ -68,6 +72,7 @@ XmlUnmarshaller::rotation(QDomElement const& el)
         }
         rotation.nextClockwiseDirection();
     }
+
     return rotation;
 }
 
@@ -79,6 +84,7 @@ XmlUnmarshaller::margins(QDomElement const& el)
     margins.setRight(el.attribute("right").toDouble());
     margins.setTop(el.attribute("top").toDouble());
     margins.setBottom(el.attribute("bottom").toDouble());
+
     return margins;
 }
 
@@ -87,6 +93,7 @@ XmlUnmarshaller::pointF(QDomElement const& el)
 {
     double const x = el.attribute("x").toDouble();
     double const y = el.attribute("y").toDouble();
+
     return QPointF(x, y);
 }
 
@@ -95,6 +102,7 @@ XmlUnmarshaller::lineF(QDomElement const& el)
 {
     QPointF const p1(pointF(el.namedItem("p1").toElement()));
     QPointF const p2(pointF(el.namedItem("p2").toElement()));
+
     return QLineF(p1, p2);
 }
 
@@ -105,6 +113,7 @@ XmlUnmarshaller::rect(QDomElement const& el)
     int const y = el.attribute("y").toInt();
     int const width = el.attribute("width").toInt();
     int const height = el.attribute("height").toInt();
+
     return QRect(x, y, width, height);
 }
 
@@ -115,6 +124,7 @@ XmlUnmarshaller::rectF(QDomElement const& el)
     double const y = el.attribute("y").toDouble();
     double const width = el.attribute("width").toDouble();
     double const height = el.attribute("height").toDouble();
+
     return QRectF(x, y, width, height);
 }
 
@@ -137,3 +147,4 @@ XmlUnmarshaller::polygonF(QDomElement const& el)
 
     return poly;
 }
+

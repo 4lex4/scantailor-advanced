@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ThreadPriority.h"
 #include <QSettings>
@@ -35,6 +36,7 @@ ThreadPriority::toQThreadPriority() const
     }
 
     assert(!"Unreachable");
+
     return QThread::NormalPriority;
 }
 
@@ -53,12 +55,12 @@ ThreadPriority::toPosixNiceLevel() const
     }
 
     assert(!"Unreachable");
+
     return 0;
 }
 
 ThreadPriority
-ThreadPriority::load(
-        QSettings const& settings, QString const& key, Priority dflt)
+ThreadPriority::load(QSettings const& settings, QString const& key, Priority dflt)
 {
     QString const str(settings.value(key).toString());
     if (str == "normal") {
@@ -82,6 +84,7 @@ ThreadPriority
 ThreadPriority::load(QString const& key, Priority dflt)
 {
     QSettings settings;
+
     return load(settings, key, dflt);
 }
 
@@ -113,3 +116,4 @@ ThreadPriority::save(QString const& key)
     QSettings settings;
     save(settings, key);
 }
+

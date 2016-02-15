@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "MaxWhitespaceFinder.h"
 #include <QDebug>
@@ -22,12 +23,10 @@
 
 namespace imageproc
 {
-
     using namespace max_whitespace_finder;
 
     namespace
     {
-
         class AreaCompare
         {
         public:
@@ -35,16 +34,16 @@ namespace imageproc
             {
                 int const lhs_area = lhs.width() * lhs.height();
                 int const rhs_area = rhs.width() * rhs.height();
+
                 return lhs_area < rhs_area;
             }
         };
-
     }
 
     MaxWhitespaceFinder::MaxWhitespaceFinder(BinaryImage const& img, QSize min_size)
-            : m_integralImg(img.size()),
-              m_ptrQueuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
-              m_minSize(min_size)
+        : m_integralImg(img.size()),
+          m_ptrQueuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
+          m_minSize(min_size)
     {
         init(img);
     }
@@ -131,8 +130,7 @@ namespace imageproc
     }
 
     void
-    MaxWhitespaceFinder::subdivide(
-            Region const& region, QRect const bounds, QRect const pivot)
+    MaxWhitespaceFinder::subdivide(Region const& region, QRect const bounds, QRect const pivot)
     {
         if (pivot.top() - bounds.top() >= m_minSize.height()) {
             QRect new_bounds(bounds);
@@ -165,7 +163,7 @@ namespace imageproc
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
-    }
+    }  // MaxWhitespaceFinder::subdivide
 
     QRect
     MaxWhitespaceFinder::findPivotObstacle(Region const& region) const
@@ -176,7 +174,7 @@ namespace imageproc
 
         QRect best_obstacle;
         int best_distance = std::numeric_limits<int>::max();
-        for (QRect const& obstacle :  region.obstacles()) {
+        for (QRect const& obstacle : region.obstacles()) {
             QPoint const vec(center - obstacle.center());
             int const distance = vec.x() * vec.x() + vec.y() * vec.y();
             if (distance <= best_distance) {
@@ -189,8 +187,7 @@ namespace imageproc
     }
 
     QPoint
-    MaxWhitespaceFinder::findBlackPixelCloseToCenter(
-            QRect const non_white_rect) const
+    MaxWhitespaceFinder::findBlackPixelCloseToCenter(QRect const non_white_rect) const
     {
         assert(m_integralImg.sum(non_white_rect) != 0);
 
@@ -203,11 +200,11 @@ namespace imageproc
         }
 
 
-        for (; ;) {
+        for (;;) {
             int const outer_inner_dw = outer_rect.width() - inner_rect.width();
             int const outer_inner_dh = outer_rect.height() - inner_rect.height();
 
-            if (outer_inner_dw <= 1 && outer_inner_dh <= 1) {
+            if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
                 break;
             }
 
@@ -217,9 +214,9 @@ namespace imageproc
             int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
 
             QRect middle_rect(
-                    outer_rect.left() + ((delta_left + 1) >> 1),
-                    outer_rect.top() + ((delta_top + 1) >> 1),
-                    0, 0
+                outer_rect.left() + ((delta_left + 1) >> 1),
+                outer_rect.top() + ((delta_top + 1) >> 1),
+                0, 0
             );
             middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
             middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
@@ -295,28 +292,27 @@ namespace imageproc
         else {
             return findBlackPixelCloseToCenter(rect);
         }
-    }
+    }  // MaxWhitespaceFinder::findBlackPixelCloseToCenter
 
     QRect
-    MaxWhitespaceFinder::extendBlackPixelToBlackBox(
-            QPoint const pixel, QRect const bounds) const
+    MaxWhitespaceFinder::extendBlackPixelToBlackBox(QPoint const pixel, QRect const bounds) const
     {
         assert(bounds.contains(pixel));
 
         QRect outer_rect(bounds);
         QRect inner_rect(pixel.x(), pixel.y(), 1, 1);
 
-        if (m_integralImg.sum(outer_rect) ==
-            unsigned(outer_rect.width() * outer_rect.height())) {
+        if (m_integralImg.sum(outer_rect)
+            == unsigned(outer_rect.width() * outer_rect.height())) {
             return outer_rect;
         }
 
 
-        for (; ;) {
+        for (;;) {
             int const outer_inner_dw = outer_rect.width() - inner_rect.width();
             int const outer_inner_dh = outer_rect.height() - inner_rect.height();
 
-            if (outer_inner_dw <= 1 && outer_inner_dh <= 1) {
+            if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
                 break;
             }
 
@@ -326,9 +322,9 @@ namespace imageproc
             int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
 
             QRect middle_rect(
-                    outer_rect.left() + ((delta_left + 1) >> 1),
-                    outer_rect.top() + ((delta_top + 1) >> 1),
-                    0, 0
+                outer_rect.left() + ((delta_left + 1) >> 1),
+                outer_rect.top() + ((delta_top + 1) >> 1),
+                0, 0
             );
             middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
             middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
@@ -345,31 +341,27 @@ namespace imageproc
         }
 
         return inner_rect;
-    }
+    }  // MaxWhitespaceFinder::extendBlackPixelToBlackBox
 
+    /*======================= MaxWhitespaceFinder::Region =====================*/
 
-/*======================= MaxWhitespaceFinder::Region =====================*/
-
-    MaxWhitespaceFinder::Region::Region(
-            unsigned known_new_obstacles, QRect const& bounds)
-            : m_knownNewObstacles(known_new_obstacles),
-              m_bounds(bounds)
-    {
-    }
+    MaxWhitespaceFinder::Region::Region(unsigned known_new_obstacles, QRect const& bounds)
+        : m_knownNewObstacles(known_new_obstacles),
+          m_bounds(bounds)
+    { }
 
     MaxWhitespaceFinder::Region::Region(Region const& other)
-            : m_knownNewObstacles(other.m_knownNewObstacles),
-              m_bounds(other.m_bounds)
-    {
-    }
+        : m_knownNewObstacles(other.m_knownNewObstacles),
+          m_bounds(other.m_bounds)
+    { }
 
-/**
- * Adds obstacles from another region that intersect this region's area.
- */
+    /**
+     * Adds obstacles from another region that intersect this region's area.
+     */
     void
     MaxWhitespaceFinder::Region::addObstacles(Region const& other_region)
     {
-        for (QRect const& obstacle :  other_region.obstacles()) {
+        for (QRect const& obstacle : other_region.obstacles()) {
             QRect const intersected(obstacle.intersected(m_bounds));
             if (!intersected.isEmpty()) {
                 m_obstacles.push_back(intersected);
@@ -377,12 +369,11 @@ namespace imageproc
         }
     }
 
-/**
- * Adds global obstacles that were not there when this region was constructed.
- */
+    /**
+     * Adds global obstacles that were not there when this region was constructed.
+     */
     void
-    MaxWhitespaceFinder::Region::addNewObstacles(
-            std::vector<QRect> const& new_obstacles)
+    MaxWhitespaceFinder::Region::addNewObstacles(std::vector<QRect> const& new_obstacles)
     {
         for (size_t i = m_knownNewObstacles; i < new_obstacles.size(); ++i) {
             QRect const intersected(new_obstacles[i].intersected(m_bounds));
@@ -392,9 +383,9 @@ namespace imageproc
         }
     }
 
-/**
- * A fast and non-throwing swap operation.
- */
+    /**
+     * A fast and non-throwing swap operation.
+     */
     void
     MaxWhitespaceFinder::Region::swap(Region& other)
     {
@@ -402,5 +393,4 @@ namespace imageproc
         std::swap(m_knownNewObstacles, other.m_knownNewObstacles);
         m_obstacles.swap(other.m_obstacles);
     }
-
-} 
+}  // namespace imageproc

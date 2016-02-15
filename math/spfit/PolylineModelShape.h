@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
 #define SPFIT_POLYLINE_MODEL_SHAPE_H_
@@ -30,14 +31,13 @@
 
 namespace spfit
 {
-
-    class PolylineModelShape : public ModelShape
+    class PolylineModelShape
+        : public ModelShape
     {
-    DECLARE_NON_COPYABLE(PolylineModelShape)
+        DECLARE_NON_COPYABLE(PolylineModelShape)
 
     public:
-        enum Flags
-        {
+        enum Flags {
             DEFAULT_FLAGS = 0,
             POLYLINE_FRONT = 1 << 0,
             POLYLINE_BACK = 1 << 1
@@ -45,19 +45,20 @@ namespace spfit
 
         PolylineModelShape(std::vector<QPointF> const& polyline);
 
-        virtual SqDistApproximant localSqDistApproximant(
-                QPointF const& pt, FittableSpline::SampleFlags sample_flags) const;
+        virtual SqDistApproximant localSqDistApproximant(QPointF const& pt,
+                                                         FittableSpline::SampleFlags sample_flags) const;
 
     protected:
-        virtual SqDistApproximant calcApproximant(
-                QPointF const& pt, FittableSpline::SampleFlags sample_flags,
-                Flags polyline_flags, FrenetFrame const& frenet_frame, double signed_curvature) const;
+        virtual SqDistApproximant calcApproximant(QPointF const& pt,
+                                                  FittableSpline::SampleFlags sample_flags,
+                                                  Flags polyline_flags,
+                                                  FrenetFrame const& frenet_frame,
+                                                  double signed_curvature) const;
 
     private:
         std::vector<XSpline::PointAndDerivs> m_vertices;
     };
 
     DEFINE_FLAG_OPS(PolylineModelShape::Flags)
-
 }
-#endif
+#endif  // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_

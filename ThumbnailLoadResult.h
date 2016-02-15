@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THUMBNAILLOADRESULT_H_
 #define THUMBNAILLOADRESULT_H_
@@ -24,17 +25,16 @@
 class ThumbnailLoadResult
 {
 public:
-    enum Status
-    {
+    enum Status {
         /**
          * \brief Thumbnail loaded successfully.  Pixmap is not null.
          */
-                LOADED,
+        LOADED,
 
         /**
          * \brief Thumbnail failed to load.  Pixmap is null.
          */
-                LOAD_FAILED,
+        LOAD_FAILED,
 
         /**
          * \brief Request has expired.  Pixmap is null.
@@ -51,22 +51,27 @@ public:
          * number of newer requests are processed.  If the client is
          * still interested in the thumbnail, it may request it again.
          */
-                REQUEST_EXPIRED
+        REQUEST_EXPIRED
     };
 
     ThumbnailLoadResult(Status status, QPixmap const& pixmap)
-            : m_pixmap(pixmap), m_status(status)
+        : m_pixmap(pixmap),
+          m_status(status)
     { }
 
     Status status() const
-    { return m_status; }
+    {
+        return m_status;
+    }
 
     QPixmap const& pixmap() const
-    { return m_pixmap; }
+    {
+        return m_pixmap;
+    }
 
 private:
     QPixmap m_pixmap;
     Status m_status;
 };
 
-#endif
+#endif  // ifndef THUMBNAILLOADRESULT_H_

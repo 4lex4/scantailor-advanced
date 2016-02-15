@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,18 +15,16 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PictureZonePropDialog.h"
 #include "PictureLayerProperty.h"
 
 namespace output
 {
-
-    PictureZonePropDialog::PictureZonePropDialog(
-            IntrusivePtr<PropertySet> const& props, QWidget* parent)
-            : QDialog(parent),
-              m_ptrProps(props)
+    PictureZonePropDialog::PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent)
+        : QDialog(parent),
+          m_ptrProps(props)
     {
         ui.setupUi(this);
 
@@ -68,5 +67,4 @@ namespace output
 
         emit updated();
     }
-
-} 
+}  // namespace output

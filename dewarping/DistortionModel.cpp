@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DistortionModel.h"
 #include "CylindricalSurfaceDewarper.h"
@@ -24,16 +25,13 @@
 
 namespace dewarping
 {
-
     DistortionModel::DistortionModel()
-    {
-    }
+    { }
 
     DistortionModel::DistortionModel(QDomElement const& el)
-            : m_topCurve(el.namedItem("top-curve").toElement()),
-              m_bottomCurve(el.namedItem("bottom-curve").toElement())
-    {
-    }
+        : m_topCurve(el.namedItem("top-curve").toElement()),
+          m_bottomCurve(el.namedItem("bottom-curve").toElement())
+    { }
 
     QDomElement
     DistortionModel::toXml(QDomDocument& doc, QString const& name) const
@@ -45,6 +43,7 @@ namespace dewarping
         QDomElement el(doc.createElement(name));
         el.appendChild(m_topCurve.toXml(doc, "top-curve"));
         el.appendChild(m_bottomCurve.toXml(doc, "bottom-curve"));
+
         return el;
     }
 
@@ -56,10 +55,10 @@ namespace dewarping
         }
 
         Vec2d const poly[4] = {
-                m_topCurve.polyline().front(),
-                m_topCurve.polyline().back(),
-                m_bottomCurve.polyline().back(),
-                m_bottomCurve.polyline().front()
+            m_topCurve.polyline().front(),
+            m_topCurve.polyline().back(),
+            m_bottomCurve.polyline().back(),
+            m_bottomCurve.polyline().front()
         };
 
         double min_dot = NumericTraits<double>::max();
@@ -87,12 +86,12 @@ namespace dewarping
             return false;
         }
 
-        if (fabs(min_dot) < 0.01 || fabs(max_dot) < 0.01) {
+        if ((fabs(min_dot) < 0.01) || (fabs(max_dot) < 0.01)) {
             return false;
         }
 
         return true;
-    }
+    }  // DistortionModel::isValid
 
     bool
     DistortionModel::matches(DistortionModel const& other) const
@@ -117,9 +116,9 @@ namespace dewarping
     }
 
     QRectF
-    DistortionModel::modelDomain(
-            CylindricalSurfaceDewarper const& dewarper,
-            QTransform const& to_output, QRectF const& output_content_rect) const
+    DistortionModel::modelDomain(CylindricalSurfaceDewarper const& dewarper,
+                                 QTransform const& to_output,
+                                 QRectF const& output_content_rect) const
     {
         QRectF model_domain(boundingBox(to_output));
 
@@ -143,7 +142,7 @@ namespace dewarping
         double bottom = NumericTraits<double>::min();
         double right = bottom;
 
-        for (QPointF pt :  m_topCurve.polyline()) {
+        for (QPointF pt : m_topCurve.polyline()) {
             pt = transform.map(pt);
             left = std::min<double>(left, pt.x());
             right = std::max<double>(right, pt.x());
@@ -151,7 +150,7 @@ namespace dewarping
             bottom = std::max<double>(bottom, pt.y());
         }
 
-        for (QPointF pt :  m_bottomCurve.polyline()) {
+        for (QPointF pt : m_bottomCurve.polyline()) {
             pt = transform.map(pt);
             left = std::min<double>(left, pt.x());
             right = std::max<double>(right, pt.x());
@@ -159,12 +158,11 @@ namespace dewarping
             bottom = std::max<double>(bottom, pt.y());
         }
 
-        if (top > bottom || left > right) {
+        if ((top > bottom) || (left > right)) {
             return QRectF();
         }
         else {
             return QRectF(left, top, right - left, bottom - top);
         }
     }
-
-} 
+}  // namespace dewarping

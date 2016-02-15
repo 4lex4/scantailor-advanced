@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -17,7 +18,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SEDM.h"
 #include "BinaryImage.h"
@@ -28,22 +29,18 @@
 
 namespace imageproc
 {
-
     uint32_t const SEDM::INF_DIST = ~uint32_t(0) - 1;
 
     SEDM::SEDM()
-            : m_pData(0),
-              m_size(),
-              m_stride(0)
-    {
-    }
+        : m_pData(0),
+          m_size(),
+          m_stride(0)
+    { }
 
-    SEDM::SEDM(
-            BinaryImage const& image, DistType const dist_type,
-            Borders const borders)
-            : m_pData(0),
-              m_size(image.size()),
-              m_stride(0)
+    SEDM::SEDM(BinaryImage const& image, DistType const dist_type, Borders const borders)
+        : m_pData(0),
+          m_size(image.size()),
+          m_stride(0)
     {
         if (image.isNull()) {
             return;
@@ -61,8 +58,8 @@ namespace imageproc
         }
         if (borders & DIST_TO_BOTTOM_BORDER) {
             memset(
-                    &m_data[m_data.size() - m_stride],
-                    0, m_stride * sizeof(m_data[0])
+                &m_data[m_data.size() - m_stride],
+                0, m_stride * sizeof(m_data[0])
             );
         }
         if (borders & (DIST_TO_LEFT_BORDER | DIST_TO_RIGHT_BORDER)) {
@@ -107,9 +104,9 @@ namespace imageproc
     }
 
     SEDM::SEDM(ConnectivityMap& cmap)
-            : m_pData(0),
-              m_size(cmap.size()),
-              m_stride(0)
+        : m_pData(0),
+          m_size(cmap.size()),
+          m_stride(0)
     {
         if (m_size.isEmpty()) {
             return;
@@ -139,10 +136,10 @@ namespace imageproc
     }
 
     SEDM::SEDM(SEDM const& other)
-            : m_data(other.m_data),
-              m_pData(0),
-              m_size(other.m_size),
-              m_stride(other.m_stride)
+        : m_data(other.m_data),
+          m_pData(0),
+          m_size(other.m_size),
+          m_stride(other.m_stride)
     {
         if (!m_size.isEmpty()) {
             m_pData = &m_data[0] + m_stride + 1;
@@ -153,6 +150,7 @@ namespace imageproc
     SEDM::operator=(SEDM const& other)
     {
         SEDM(other).swap(*this);
+
         return *this;
     }
 
@@ -175,14 +173,14 @@ namespace imageproc
         BinaryImage peak_candidates(findPeakCandidatesNonPadded());
 
         BinaryImage neighborhood_mask(
-                dilateBrick(
-                        peak_candidates, QSize(3, 3),
-                        peak_candidates.rect().adjusted(-1, -1, 1, 1)
-                )
+            dilateBrick(
+                peak_candidates, QSize(3, 3),
+                peak_candidates.rect().adjusted(-1, -1, 1, 1)
+            )
         );
-        rasterOp<RopXor<RopSrc, RopDst> >(
-                neighborhood_mask, neighborhood_mask.rect().adjusted(1, 1, -1, -1),
-                peak_candidates, QPoint(0, 0)
+        rasterOp<RopXor<RopSrc, RopDst>>(
+            neighborhood_mask, neighborhood_mask.rect().adjusted(1, 1, -1, -1),
+            peak_candidates, QPoint(0, 0)
         );
 
 
@@ -190,25 +188,25 @@ namespace imageproc
         neighborhood_mask.release();
 
         BinaryImage diff(findPeakCandidatesNonPadded());
-        rasterOp<RopXor<RopSrc, RopDst> >(diff, peak_candidates);
+        rasterOp<RopXor<RopSrc, RopDst>>(diff, peak_candidates);
 
         BinaryImage const not_peaks(seedFill(diff, peak_candidates, CONN8));
         diff.release();
 
-        rasterOp<RopXor<RopSrc, RopDst> >(peak_candidates, not_peaks);
+        rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
 
         return peak_candidates;
-    }
+    }  // SEDM::findPeaksDestructive
 
     inline uint32_t
-    SEDM::distSq(
-            int const x1, int const x2, uint32_t const dy_sq)
+    SEDM::distSq(int const x1, int const x2, uint32_t const dy_sq)
     {
         if (dy_sq == INF_DIST) {
             return INF_DIST;
         }
         int const dx = x1 - x2;
         uint32_t const dx_sq = dx * dx;
+
         return dx_sq + dy_sq;
     }
 
@@ -246,7 +244,7 @@ namespace imageproc
                 }
             }
         }
-    }
+    }  // SEDM::processColumns
 
     void
     SEDM::processColumns(ConnectivityMap& cmap)
@@ -287,7 +285,7 @@ namespace imageproc
                 }
             }
         }
-    }
+    }  // SEDM::processColumns
 
     void
     SEDM::processRows()
@@ -306,7 +304,7 @@ namespace imageproc
             t[0] = 0;
             for (int x = 1; x < width; ++x) {
                 while (q >= 0 && distSq(t[q], s[q], line[s[q]])
-                                 > distSq(t[q], x, line[x])) {
+                       > distSq(t[q], x, line[x])) {
                     --q;
                 }
 
@@ -316,11 +314,11 @@ namespace imageproc
                 }
                 else {
                     int const x2 = s[q];
-                    if (line[x] != INF_DIST && line[x2] != INF_DIST) {
+                    if ((line[x] != INF_DIST) && (line[x2] != INF_DIST)) {
                         int w = (x * x + line[x]) - (x2 * x2 + line[x2]);
                         w /= (x - x2) << 1;
                         ++w;
-                        if ((unsigned) w < (unsigned) width) {
+                        if ((unsigned)w < (unsigned)width) {
                             ++q;
                             s[q] = x;
                             t[q] = w;
@@ -339,7 +337,7 @@ namespace imageproc
                 }
             }
         }
-    }
+    }  // SEDM::processRows
 
     void
     SEDM::processRows(ConnectivityMap& cmap)
@@ -360,7 +358,7 @@ namespace imageproc
             t[0] = 0;
             for (int x = 1; x < width; ++x) {
                 while (q >= 0 && distSq(t[q], s[q], line[s[q]])
-                                 > distSq(t[q], x, line[x])) {
+                       > distSq(t[q], x, line[x])) {
                     --q;
                 }
 
@@ -370,11 +368,11 @@ namespace imageproc
                 }
                 else {
                     int const x2 = s[q];
-                    if (line[x] != INF_DIST && line[x2] != INF_DIST) {
+                    if ((line[x] != INF_DIST) && (line[x2] != INF_DIST)) {
                         int w = (x * x + line[x]) - (x2 * x2 + line[x2]);
                         w /= (x - x2) << 1;
                         ++w;
-                        if ((unsigned) w < (unsigned) width) {
+                        if ((unsigned)w < (unsigned)width) {
                             ++q;
                             s[q] = x;
                             t[q] = w;
@@ -395,10 +393,9 @@ namespace imageproc
                 }
             }
         }
-    }
+    }  // SEDM::processRows
 
-
-/*====================== Peak finding stuff goes below ====================*/
+    /*====================== Peak finding stuff goes below ====================*/
 
     BinaryImage
     SEDM::findPeakCandidatesNonPadded() const
@@ -426,8 +423,8 @@ namespace imageproc
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                if (std::max(src1_line[x], src2_line[x]) -
-                    std::min(src1_line[x], src2_line[x]) == 0) {
+                if (std::max(src1_line[x], src2_line[x])
+                    - std::min(src1_line[x], src2_line[x]) == 0) {
                     dst_line[x >> 5] |= msb >> (x & 31);
                 }
             }
@@ -528,5 +525,4 @@ namespace imageproc
             mask_line += mask_wpl;
         }
     }
-
-} 
+}  // namespace imageproc

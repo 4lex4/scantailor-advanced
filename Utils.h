@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef UTILS_H_
 #define UTILS_H_
@@ -25,9 +26,8 @@
 class Utils
 {
 public:
-    template<typename M, typename K, typename V>
-    static typename M::iterator mapSetValue(
-            M& map, K const& key, V const& val);
+    template <typename M, typename K, typename V>
+    static typename M::iterator mapSetValue(M& map, K const& key, V const& val);
 
     /**
      * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
@@ -67,23 +67,22 @@ public:
      *        to QLabel::linkActivated(QString const&).
      * \return The resulting reach text.
      */
-    static QString richTextForLink(
-            QString const& label,
-            QString const& target = QString(QChar('#')));
+    static QString richTextForLink(QString const& label, QString const& target = QString(QChar('#')));
 };
 
-template<typename M, typename K, typename V>
+template <typename M, typename K, typename V>
 typename M::iterator
 Utils::mapSetValue(M& map, K const& key, V const& val)
 {
     typename M::iterator const it(map.lower_bound(key));
-    if (it == map.end() || map.key_comp()(key, it->first)) {
+    if ((it == map.end()) || map.key_comp()(key, it->first)) {
         return map.insert(it, typename M::value_type(key, val));
     }
     else {
         it->second = val;
+
         return it;
     }
 }
 
-#endif
+#endif  // ifndef UTILS_H_

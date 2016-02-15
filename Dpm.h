@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DPM_H_
 #define DPM_H_
@@ -30,36 +31,46 @@ class QImage;
 class Dpm
 {
 public:
-    Dpm() : m_xDpm(0), m_yDpm(0)
+    Dpm()
+        : m_xDpm(0),
+          m_yDpm(0)
     { }
 
-    Dpm(int horizontal, int vertical) : m_xDpm(horizontal), m_yDpm(vertical)
+    Dpm(int horizontal, int vertical)
+        : m_xDpm(horizontal),
+          m_yDpm(vertical)
     { }
 
     Dpm(Dpi dpi);
 
     explicit Dpm(QSize size);
 
-    explicit Dpm(QImage const &image);
+    explicit Dpm(QImage const& image);
 
     int horizontal() const
-    { return m_xDpm; }
+    {
+        return m_xDpm;
+    }
 
     int vertical() const
-    { return m_yDpm; }
+    {
+        return m_yDpm;
+    }
 
     QSize toSize() const;
 
     bool isNull() const;
 
-    bool operator==(Dpm const &other) const;
+    bool operator==(Dpm const& other) const;
 
-    bool operator!=(Dpm const &other) const
-    { return !(*this == other); }
+    bool operator!=(Dpm const& other) const
+    {
+        return !(*this == other);
+    }
 
 private:
     int m_xDpm;
     int m_yDpm;
 };
 
-#endif
+#endif  // ifndef DPM_H_

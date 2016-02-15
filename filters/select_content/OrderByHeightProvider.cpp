@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,22 +15,21 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OrderByHeightProvider.h"
 
 namespace select_content
 {
-
     OrderByHeightProvider::OrderByHeightProvider(IntrusivePtr<Settings> const& settings)
-            : m_ptrSettings(settings)
-    {
-    }
+        : m_ptrSettings(settings)
+    { }
 
     bool
-    OrderByHeightProvider::precedes(
-            PageId const& lhs_page, bool const lhs_incomplete,
-            PageId const& rhs_page, bool const rhs_incomplete) const
+    OrderByHeightProvider::precedes(PageId const& lhs_page,
+                                    bool const lhs_incomplete,
+                                    PageId const& rhs_page,
+                                    bool const rhs_incomplete) const
     {
         std::unique_ptr<Params> const lhs_params(m_ptrSettings->getPageParams(lhs_page));
         std::unique_ptr<Params> const rhs_params(m_ptrSettings->getPageParams(rhs_page));
@@ -52,5 +52,4 @@ namespace select_content
 
         return lhs_size.height() < rhs_size.height();
     }
-
-} 
+}  // namespace select_content

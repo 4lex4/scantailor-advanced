@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef ZONE_INTERACTION_CONTEXT_H_
 #define ZONE_INTERACTION_CONTEXT_H_
@@ -34,36 +35,40 @@ class ZoneInteractionContext
 public:
     typedef boost::function<
             InteractionHandler*()
-    > DefaultInteractionCreator;
+>DefaultInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(InteractionState& interaction)
-    > ZoneCreationInteractionCreator;
+>ZoneCreationInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(
-                    InteractionState& interaction,
-                    EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
+                InteractionState& interaction,
+                EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
             )
-    > VertexDragInteractionCreator;
+>VertexDragInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(InteractionState& interaction)
-    > ContextMenuInteractionCreator;
+>ContextMenuInteractionCreator;
 
     typedef boost::function<
-            void(EditableZoneSet::Zone const& zone)
-    > ShowPropertiesCommand;
+            void (EditableZoneSet::Zone const& zone)
+>ShowPropertiesCommand;
 
     ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones);
 
     virtual ~ZoneInteractionContext();
 
     ImageViewBase& imageView()
-    { return m_rImageView; }
+    {
+        return m_rImageView;
+    }
 
     EditableZoneSet& zones()
-    { return m_rZones; }
+    {
+        return m_rZones;
+    }
 
     virtual InteractionHandler* createDefaultInteraction()
     {
@@ -85,9 +90,9 @@ public:
         m_zoneCreationInteractionCreator = creator;
     }
 
-    virtual InteractionHandler* createVertexDragInteraction(
-            InteractionState& interaction, EditableSpline::Ptr const& spline,
-            SplineVertex::Ptr const& vertex)
+    virtual InteractionHandler* createVertexDragInteraction(InteractionState& interaction,
+                                                            EditableSpline::Ptr const& spline,
+                                                            SplineVertex::Ptr const& vertex)
     {
         return m_vertexDragInteractionCreator(interaction, spline, vertex);
     }
@@ -134,9 +139,9 @@ private:
     /**
      * Creates an instance of ZoneVertexDragInteraction.
      */
-    InteractionHandler* createStdVertexDragInteraction(
-            InteractionState& interaction, EditableSpline::Ptr const& spline,
-            SplineVertex::Ptr const& vertex);
+    InteractionHandler* createStdVertexDragInteraction(InteractionState& interaction,
+                                                       EditableSpline::Ptr const& spline,
+                                                       SplineVertex::Ptr const& vertex);
 
     /**
      * Creates an instance of ZoneContextMenuInteraction.  May return null.
@@ -155,4 +160,4 @@ private:
     ShowPropertiesCommand m_showPropertiesCommand;
 };
 
-#endif
+#endif  // ifndef ZONE_INTERACTION_CONTEXT_H_

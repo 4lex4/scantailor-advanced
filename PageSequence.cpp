@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageSequence.h"
 #include <boost/foreach.hpp>
@@ -36,7 +37,7 @@ PageSequence::selectAll() const
 {
     std::set<PageId> selection;
 
-    for (PageInfo const& page_info :  m_pages) {
+    for (PageInfo const& page_info : m_pages) {
         selection.insert(page_info.id());
     }
 
@@ -50,8 +51,7 @@ PageSequence::selectPagePlusFollowers(PageId const& page) const
 
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
-    for (; it != end && it->id() != page; ++it) {
-    }
+    for (; it != end && it->id() != page; ++it) { }
     for (; it != end; ++it) {
         selection.insert(it->id());
     }
@@ -66,15 +66,14 @@ PageSequence::selectEveryOther(PageId const& base) const
 
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
-    for (; it != end && it->id() != base; ++it) {
-    }
+    for (; it != end && it->id() != base; ++it) { }
     if (it == end) {
         return selection;
     }
 
     int const base_idx = it - m_pages.begin();
     int idx = 0;
-    for (PageInfo const& page_info :  m_pages) {
+    for (PageInfo const& page_info : m_pages) {
         if (((idx - base_idx) & 1) == 0) {
             selection.insert(page_info.id());
         }
@@ -83,3 +82,4 @@ PageSequence::selectEveryOther(PageId const& base) const
 
     return selection;
 }
+

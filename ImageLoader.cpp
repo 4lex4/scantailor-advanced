@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovigh@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageLoader.h"
 #include "TiffReader.h"
@@ -35,6 +36,7 @@ ImageLoader::load(QString const& file_path, int const page_num)
     if (!file.open(QIODevice::ReadOnly)) {
         return QImage();
     }
+
     return load(file, page_num);
 }
 
@@ -51,5 +53,7 @@ ImageLoader::load(QIODevice& io_dev, int const page_num)
 
     QImage image;
     image.load(&io_dev, 0);
+
     return image;
 }
+

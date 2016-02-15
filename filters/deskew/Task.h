@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESKEW_TASK_H_
 #define DESKEW_TASK_H_
@@ -35,7 +36,7 @@ class DebugImages;
 namespace imageproc
 {
     class BinaryImage;
-};
+}
 
 namespace select_content
 {
@@ -44,31 +45,30 @@ namespace select_content
 
 namespace deskew
 {
-
     class Filter;
-class Settings;
+    class Settings;
 
-    class Task : public RefCountable
+    class Task
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Task)
+        DECLARE_NON_COPYABLE(Task)
 
     public:
         Task(IntrusivePtr<Filter> const& filter,
              IntrusivePtr<Settings> const& settings,
              IntrusivePtr<select_content::Task> const& next_task,
-             PageId const& page_id, bool batch_processing, bool debug);
+             PageId const& page_id,
+             bool batch_processing,
+             bool debug);
 
         virtual ~Task();
 
-        FilterResultPtr process(
-                TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
     private:
         class UiUpdater;
 
-        static void cleanup(
-                TaskStatus const& status,
-                imageproc::BinaryImage& img, Dpi const& dpi);
+        static void cleanup(TaskStatus const& status, imageproc::BinaryImage& img, Dpi const& dpi);
 
         static int from150dpi(int size, int target_dpi);
 
@@ -81,6 +81,5 @@ class Settings;
         PageId m_pageId;
         bool m_batchProcessing;
     };
-
-}
-#endif
+}  // namespace deskew
+#endif  // ifndef DESKEW_TASK_H_

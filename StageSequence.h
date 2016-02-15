@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef STAGESEQUENCE_H_
 #define STAGESEQUENCE_H_
@@ -36,26 +37,32 @@ class ProjectPages;
 class PageSelectionAccessor;
 class AbstractRelinker;
 
-class StageSequence : public RefCountable
+class StageSequence
+    : public RefCountable
 {
-DECLARE_NON_COPYABLE(StageSequence)
+    DECLARE_NON_COPYABLE(StageSequence)
 
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
-    StageSequence(IntrusivePtr<ProjectPages> const& pages,
-                  PageSelectionAccessor const& page_selection_accessor);
+    StageSequence(IntrusivePtr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor);
 
     void performRelinking(AbstractRelinker const& relinker);
 
     std::vector<FilterPtr> const& filters() const
-    { return m_filters; }
+    {
+        return m_filters;
+    }
 
     int count() const
-    { return m_filters.size(); }
+    {
+        return m_filters.size();
+    }
 
     FilterPtr const& filterAt(int idx) const
-    { return m_filters[idx]; }
+    {
+        return m_filters[idx];
+    }
 
     int findFilter(FilterPtr const& filter) const;
 
@@ -90,22 +97,34 @@ public:
     }
 
     int fixOrientationFilterIdx() const
-    { return m_fixOrientationFilterIdx; }
+    {
+        return m_fixOrientationFilterIdx;
+    }
 
     int pageSplitFilterIdx() const
-    { return m_pageSplitFilterIdx; }
+    {
+        return m_pageSplitFilterIdx;
+    }
 
     int deskewFilterIdx() const
-    { return m_deskewFilterIdx; }
+    {
+        return m_deskewFilterIdx;
+    }
 
     int selectContentFilterIdx() const
-    { return m_selectContentFilterIdx; }
+    {
+        return m_selectContentFilterIdx;
+    }
 
     int pageLayoutFilterIdx() const
-    { return m_pageLayoutFilterIdx; }
+    {
+        return m_pageLayoutFilterIdx;
+    }
 
     int outputFilterIdx() const
-    { return m_outputFilterIdx; }
+    {
+        return m_outputFilterIdx;
+    }
 
 private:
     IntrusivePtr<fix_orientation::Filter> m_ptrFixOrientationFilter;
@@ -123,4 +142,4 @@ private:
     int m_outputFilterIdx;
 };
 
-#endif
+#endif  // ifndef STAGESEQUENCE_H_

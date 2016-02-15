@@ -1,3 +1,4 @@
+
 /*    Scan Tailor - Interactive post-processing tool for scanned pages.
 
     CommandLine - Interface for ScanTailor's parameters provided on CL.
@@ -15,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include <cstdlib>
 #include <assert.h>
@@ -35,7 +36,7 @@ CommandLine CommandLine::m_globalInstance;
 
 
 void
-CommandLine::set(CommandLine const &cl)
+CommandLine::set(CommandLine const& cl)
 {
     assert(!m_globalInstance.isGlobal());
 
@@ -43,9 +44,8 @@ CommandLine::set(CommandLine const &cl)
     m_globalInstance.setGlobal();
 }
 
-
 bool
-CommandLine::parseCli(QStringList const &argv)
+CommandLine::parseCli(QStringList const& argv)
 {
     QRegExp rx("^--([^=]+)=(.*)$");
     QRegExp rx_switch("^--([^=]+)$");
@@ -208,15 +208,18 @@ CommandLine::parseCli(QStringList const &argv)
 
 #ifdef DEBUG
     QStringList params = m_options.keys();
-    for (int i=0; i<params.size(); i++) { std::cout << params[i].toLatin1().constData() << "=" << m_options[params[i]].toLatin1().constData() << std::endl; }
+    for (int i = 0; i < params.size(); i++) {
+        std::cout << params[i].toLatin1().constData() << "=" << m_options[params[i]].toLatin1().constData()
+                  << std::endl;
+    }
     std::cout << "Images: " << CommandLine::m_images.size() << std::endl;
 #endif
 
     return m_error;
-}
+}  // CommandLine::parseCli
 
 void
-CommandLine::addImage(QString const &path)
+CommandLine::addImage(QString const& path)
 {
     QFileInfo file(path);
     m_files.push_back(file);
@@ -273,8 +276,7 @@ CommandLine::setup()
         ImageFileInfo image_info(m_files[i], vMetadata);
         m_images.push_back(image_info);
     }
-}
-
+}  // CommandLine::setup
 
 void
 CommandLine::printHelp()
@@ -298,8 +300,8 @@ CommandLine::printHelp()
     std::cout << "\tfile names are collected from arguments, input directory or stdin (-)" << std::endl;
     std::cout << "4)" << std::endl;
     std::cout << "\tbatch processing project from command line; no GUI" << std::endl;
-    std::cout << "\tif output_directory is specified as last argument, it overwrites the one in project file" <<
-    std::endl;
+    std::cout << "\tif output_directory is specified as last argument, it overwrites the one in project file"
+              << std::endl;
     std::cout << std::endl;
     std::cout << "Options:" << std::endl;
     std::cout << "\t--help, -h" << std::endl;
@@ -314,37 +316,41 @@ CommandLine::printHelp()
     std::cout << "\t--orientation=<left|right|upsidedown|none>\n\t\t\t\t\t\t-- default: none" << std::endl;
     std::cout << "\t--rotate=<0.0...360.0>\t\t\t-- it also sets deskew to manual mode" << std::endl;
     std::cout << "\t--deskew=<auto|manual>\t\t\t-- default: auto" << std::endl;
-    std::cout <<
-    "\t--skew-deviation=<0.0...)\t\t-- default: 5.0; pages with bigger skew deviation will be painted in red" <<
-    std::endl;
+    std::cout
+        << "\t--skew-deviation=<0.0...)\t\t-- default: 5.0; pages with bigger skew deviation will be painted in red"
+        << std::endl;
     std::cout << "\t--disable-content-detection\t\t-- default: enabled" << std::endl;
     std::cout << "\t--enable-page-detection\t\t\t-- default: disabled" << std::endl;
-    std::cout <<
-    "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while corners are in black" <<
-    std::endl;
-    std::cout <<
-    "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and set content detection to manual mode" <<
-    std::endl;
-    std::cout << "\t--disable-content-text-mask\n\t\t\t\t\t\t-- disable using text mask to estimate a content box" <<
-    std::endl;
+    std::cout
+        <<
+        "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while corners are in black"
+        << std::endl;
+    std::cout
+        <<
+        "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and set content detection to manual mode"
+        << std::endl;
+    std::cout << "\t--disable-content-text-mask\n\t\t\t\t\t\t-- disable using text mask to estimate a content box"
+              << std::endl;
     std::cout << "\t--content-detection=<cautious|normal|aggressive>\n\t\t\t\t\t\t-- default: normal" << std::endl;
-    std::cout <<
-    "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be painted in red" <<
-    std::endl;
+    std::cout
+        <<
+        "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be painted in red"
+        << std::endl;
     std::cout << "\t--content-box=<<left_offset>x<top_offset>:<width>x<height>>" << std::endl;
     std::cout << "\t\t\t\t\t\t-- if set the content detection is se to manual mode" << std::endl;
     std::cout << "\t\t\t\t\t\t   example: --content-box=100x100:1500x2500" << std::endl;
-    std::cout <<
-    "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image size)" <<
-    std::endl;
+    std::cout
+        << "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image size)"
+        << std::endl;
     std::cout << "\t--margins=<number>\t\t\t-- sets left, top, right and bottom margins to same number." << std::endl;
     std::cout << "\t\t--margins-left=<number>" << std::endl;
     std::cout << "\t\t--margins-right=<number>" << std::endl;
     std::cout << "\t\t--margins-top=<number>" << std::endl;
     std::cout << "\t\t--margins-bottom=<number>" << std::endl;
-    std::cout <<
-    "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to same number." <<
-    std::endl;
+    std::cout
+        <<
+        "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to same number."
+        << std::endl;
     std::cout << "\t\t--default-margins-left=<number>" << std::endl;
     std::cout << "\t\t--default-margins-right=<number>" << std::endl;
     std::cout << "\t\t--default-margins-top=<number>" << std::endl;
@@ -352,8 +358,8 @@ CommandLine::printHelp()
     std::cout << "\t--match-layout=<true|false>\t\t-- default: true" << std::endl;
     std::cout << "\t--match-layout-tolerance=<0.0...)\t-- default: off" << std::endl;
     std::cout << "\t--match-layout-default=<true|false>\t-- default: true" << std::endl;
-    std::cout << "\t--alignment=<center|original|auto>\t-- sets vertical to original and horizontal to center" <<
-    std::endl;
+    std::cout << "\t--alignment=<center|original|auto>\t-- sets vertical to original and horizontal to center"
+              << std::endl;
     std::cout << "\t\t--alignment-vertical=<top|center|bottom|original>" << std::endl;
     std::cout << "\t\t--alignment-horizontal=<left|center|right|original>" << std::endl;
     std::cout << "\t--alignment-tolerance=<float>\t\t-- sets tolerance for auto alignment" << std::endl;
@@ -363,12 +369,12 @@ CommandLine::printHelp()
     std::cout << "\t--output-dpi=<number>\t\t\t-- sets x and y output dpi. default: 600" << std::endl;
     std::cout << "\t\t--output-dpi-x=<number>" << std::endl;
     std::cout << "\t\t--output-dpi-y=<number>" << std::endl;
-    std::cout << "\t--default-output-dpi=<number>\t\t-- default output dpi for pages created by split filter in gui" <<
-    std::endl;
-    std::cout << "\t--color-mode=<black_and_white|color_grayscale|mixed>\n\t\t\t\t\t\t-- default: black_and_white" <<
-    std::endl;
-    std::cout << "\t--default-color-mode=<...>\t\t-- sets default value for new images created by split filter" <<
-    std::endl;
+    std::cout << "\t--default-output-dpi=<number>\t\t-- default output dpi for pages created by split filter in gui"
+              << std::endl;
+    std::cout << "\t--color-mode=<black_and_white|color_grayscale|mixed>\n\t\t\t\t\t\t-- default: black_and_white"
+              << std::endl;
+    std::cout << "\t--default-color-mode=<...>\t\t-- sets default value for new images created by split filter"
+              << std::endl;
     std::cout << "\t--picture-shape=<free|rectangular>\n\t\t\t\t\t\t-- default: free" << std::endl;
     std::cout << "\t--white-margins\t\t\t\t-- default: false" << std::endl;
     std::cout << "\t--normalize-illumination\t\t-- default: false" << std::endl;
@@ -388,8 +394,7 @@ CommandLine::printHelp()
     std::cout << "\t\t--page-detection-tolerance=<0.0..1.0>\t-- default: 0.1" << std::endl;
     std::cout << "\t--disable-check-output\t\t\t-- don't check if page is valid when switching to step 6";
     std::cout << std::endl;
-}
-
+}  // CommandLine::printHelp
 
 page_split::LayoutType
 CommandLine::fetchLayoutType()
@@ -503,7 +508,6 @@ CommandLine::fetchPictureShape()
     return output::FREE_SHAPE;
 }
 
-
 Margins
 CommandLine::fetchMargins(QString base, Margins def)
 {
@@ -537,8 +541,7 @@ CommandLine::fetchMargins(QString base, Margins def)
     }
 
     return margins;
-}
-
+}  // CommandLine::fetchMargins
 
 page_layout::Alignment
 CommandLine::fetchAlignment()
@@ -547,7 +550,9 @@ CommandLine::fetchAlignment()
 
     if (m_options.contains("match-layout")) {
         m_defaultNull = false;
-        if (m_options["match-layout"] == "false") { alignment.setNull(true); }
+        if (m_options["match-layout"] == "false") {
+            alignment.setNull(true);
+        }
         if (m_options["match-layout"] == "true") {
             alignment.setNull(false);
             m_defaultNull = true;
@@ -573,26 +578,46 @@ CommandLine::fetchAlignment()
 
     if (m_options.contains("alignment-vertical")) {
         QString a = m_options["alignment-vertical"].toLower();
-        if (a == "top") { alignment.setVertical(page_layout::Alignment::TOP); }
-        if (a == "center") { alignment.setVertical(page_layout::Alignment::VCENTER); }
-        if (a == "bottom") { alignment.setVertical(page_layout::Alignment::BOTTOM); }
-        if (a == "original") { alignment.setVertical(page_layout::Alignment::VORIGINAL); }
-        if (a == "auto") { alignment.setVertical(page_layout::Alignment::VAUTO); }
+        if (a == "top") {
+            alignment.setVertical(page_layout::Alignment::TOP);
+        }
+        if (a == "center") {
+            alignment.setVertical(page_layout::Alignment::VCENTER);
+        }
+        if (a == "bottom") {
+            alignment.setVertical(page_layout::Alignment::BOTTOM);
+        }
+        if (a == "original") {
+            alignment.setVertical(page_layout::Alignment::VORIGINAL);
+        }
+        if (a == "auto") {
+            alignment.setVertical(page_layout::Alignment::VAUTO);
+        }
     }
 
     if (m_options.contains("alignment-horizontal")) {
         QString a = m_options["alignment-horizontal"].toLower();
-        if (a == "left") { alignment.setHorizontal(page_layout::Alignment::LEFT); }
-        if (a == "center") { alignment.setHorizontal(page_layout::Alignment::HCENTER); }
-        if (a == "right") { alignment.setHorizontal(page_layout::Alignment::RIGHT); }
-        if (a == "original") { alignment.setHorizontal(page_layout::Alignment::HORIGINAL); }
-        if (a == "auto") { alignment.setHorizontal(page_layout::Alignment::HAUTO); }
+        if (a == "left") {
+            alignment.setHorizontal(page_layout::Alignment::LEFT);
+        }
+        if (a == "center") {
+            alignment.setHorizontal(page_layout::Alignment::HCENTER);
+        }
+        if (a == "right") {
+            alignment.setHorizontal(page_layout::Alignment::RIGHT);
+        }
+        if (a == "original") {
+            alignment.setHorizontal(page_layout::Alignment::HORIGINAL);
+        }
+        if (a == "auto") {
+            alignment.setHorizontal(page_layout::Alignment::HAUTO);
+        }
     }
 
     alignment.setAutoMargins(isAutoMarginsEnabled());
 
     return alignment;
-}
+}  // CommandLine::fetchAlignment
 
 Despeckle::Level
 CommandLine::fetchContentDetection()
@@ -628,7 +653,6 @@ CommandLine::fetchContentRect()
     std::cout << "invalid --content-box=" << m_options["content-box"].toLatin1().constData() << std::endl;
     exit(1);
 }
-
 
 double
 CommandLine::fetchContentDeviation()
@@ -667,7 +691,6 @@ CommandLine::fetchOrientation()
     return orient;
 }
 
-
 QString
 CommandLine::fetchOutputProjectFile()
 {
@@ -698,11 +721,13 @@ CommandLine::fetchDeskewAngle()
     return m_options["rotate"].toDouble();
 }
 
-AutoManualMode CommandLine::fetchDeskewMode()
+AutoManualMode
+CommandLine::fetchDeskewMode()
 {
     if (!hasDeskew()) {
         return MODE_AUTO;
     }
+
     return (m_options["deskew"].toLower() == "manual") ? MODE_MANUAL : MODE_AUTO;
 }
 
@@ -776,42 +801,39 @@ CommandLine::fetchMatchLayoutTolerance()
     return m_options["match-layout-tolerance"].toFloat();
 }
 
-
 bool
 CommandLine::hasMargins(QString base) const
 {
-    return (
-            m_options.contains(base) ||
-            m_options.contains(base + "-left") ||
-            m_options.contains(base + "-right") ||
-            m_options.contains(base + "-top") ||
-            m_options.contains(base + "-bottom")
-    );
+    return m_options.contains(base)
+           || m_options.contains(base + "-left")
+           || m_options.contains(base + "-right")
+           || m_options.contains(base + "-top")
+           || m_options.contains(base + "-bottom")
+    ;
 }
 
 bool
 CommandLine::hasAlignment() const
 {
-    return (
-            hasMatchLayoutTolerance() ||
-            m_options.contains("alignment") ||
-            m_options.contains("alignment-vertical") ||
-            m_options.contains("alignment-horizontal") ||
-            isAutoMarginsEnabled()
-    );
+    return hasMatchLayoutTolerance()
+           || m_options.contains("alignment")
+           || m_options.contains("alignment-vertical")
+           || m_options.contains("alignment-horizontal")
+           || isAutoMarginsEnabled()
+    ;
 }
 
 bool
 CommandLine::hasOutputDpi() const
 {
-    return (
-            m_options.contains("output-dpi") ||
-            m_options.contains("output-dpi-x") ||
-            m_options.contains("output-dpi-y")
-    );
+    return m_options.contains("output-dpi")
+           || m_options.contains("output-dpi-x")
+           || m_options.contains("output-dpi-y")
+    ;
 }
 
-bool CommandLine::hasLanguage() const
+bool
+CommandLine::hasLanguage() const
 {
     return m_options.contains("language");
 }
@@ -841,10 +863,11 @@ CommandLine::fetchCompression() const
     }
 
     std::cout << "Unknown compression" << std::endl;
-    throw ("Unknown compression");
+    throw("Unknown compression");
 }
 
-QString CommandLine::fetchLanguage() const
+QString
+CommandLine::fetchLanguage() const
 {
     if (hasLanguage()) {
         return m_options["language"];
@@ -853,7 +876,8 @@ QString CommandLine::fetchLanguage() const
     return "untranslated";
 }
 
-QString CommandLine::fetchWindowTitle() const
+QString
+CommandLine::fetchWindowTitle() const
 {
     if (hasWindowTitle()) {
         return m_options["window-title"];
@@ -862,7 +886,8 @@ QString CommandLine::fetchWindowTitle() const
     return "";
 }
 
-QSizeF CommandLine::fetchPageDetectionBox() const
+QSizeF
+CommandLine::fetchPageDetectionBox() const
 {
     if (!hasPageDetectionBox()) {
         return QSizeF();
@@ -877,7 +902,8 @@ QSizeF CommandLine::fetchPageDetectionBox() const
     exit(1);
 }
 
-double CommandLine::fetchPageDetectionTolerance() const
+double
+CommandLine::fetchPageDetectionTolerance() const
 {
     if (hasPageDetectionTolerance()) {
         return m_options["page-detection-tolerance"].toFloat();
@@ -886,13 +912,15 @@ double CommandLine::fetchPageDetectionTolerance() const
     return 0.1;
 }
 
-bool CommandLine::fetchDefaultNull()
+bool
+CommandLine::fetchDefaultNull()
 {
     m_defaultNull = false;
 
-    if (contains("match-layout-default") && m_options["match-layout-default"] == "false") {
+    if (contains("match-layout-default") && (m_options["match-layout-default"] == "false")) {
         m_defaultNull = true;
     }
 
     return m_defaultNull;
 }
+

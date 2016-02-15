@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,23 +15,22 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OrderByWidthProvider.h"
 #include "Params.h"
 
 namespace page_layout
 {
-
     OrderByWidthProvider::OrderByWidthProvider(IntrusivePtr<Settings> const& settings)
-            : m_ptrSettings(settings)
-    {
-    }
+        : m_ptrSettings(settings)
+    { }
 
     bool
-    OrderByWidthProvider::precedes(
-            PageId const& lhs_page, bool const lhs_incomplete,
-            PageId const& rhs_page, bool const rhs_incomplete) const
+    OrderByWidthProvider::precedes(PageId const& lhs_page,
+                                   bool const lhs_incomplete,
+                                   PageId const& rhs_page,
+                                   bool const rhs_incomplete) const
     {
         std::unique_ptr<Params> const lhs_params(m_ptrSettings->getPageParams(lhs_page));
         std::unique_ptr<Params> const rhs_params(m_ptrSettings->getPageParams(rhs_page));
@@ -40,16 +40,16 @@ namespace page_layout
             Margins const margins(lhs_params->hardMarginsMM());
             lhs_size = lhs_params->contentSizeMM();
             lhs_size += QSizeF(
-                    margins.left() + margins.right(), margins.top() + margins.bottom()
-            );
+                margins.left() + margins.right(), margins.top() + margins.bottom()
+                        );
         }
         QSizeF rhs_size;
         if (rhs_params.get()) {
             Margins const margins(rhs_params->hardMarginsMM());
             rhs_size = rhs_params->contentSizeMM();
             rhs_size += QSizeF(
-                    margins.left() + margins.right(), margins.top() + margins.bottom()
-            );
+                margins.left() + margins.right(), margins.top() + margins.bottom()
+                        );
         }
 
         bool const lhs_valid = !lhs_incomplete && lhs_size.isValid();
@@ -61,5 +61,4 @@ namespace page_layout
 
         return lhs_size.width() < rhs_size.width();
     }
-
-} 
+}  // namespace page_layout

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef TO_LINE_PROJECTOR_H_
 #define TO_LINE_PROJECTOR_H_
@@ -75,4 +76,4 @@ private:
     Vec2d m_mat;
 };
 
-#endif
+#endif  // ifndef TO_LINE_PROJECTOR_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGEID_H_
 #define PAGEID_H_
@@ -31,10 +32,7 @@ class QString;
 class PageId
 {
 public:
-    enum SubPage
-    {
-        SINGLE_PAGE, LEFT_PAGE, RIGHT_PAGE
-    };
+    enum SubPage { SINGLE_PAGE, LEFT_PAGE, RIGHT_PAGE };
 
     PageId();
 
@@ -47,19 +45,29 @@ public:
     explicit PageId(ImageId const& image_id, SubPage subpage = SINGLE_PAGE);
 
     bool isNull() const
-    { return m_imageId.isNull(); }
+    {
+        return m_imageId.isNull();
+    }
 
     ImageId& imageId()
-    { return m_imageId; }
+    {
+        return m_imageId;
+    }
 
     ImageId const& imageId() const
-    { return m_imageId; }
+    {
+        return m_imageId;
+    }
 
     SubPage subPage() const
-    { return m_subPage; }
+    {
+        return m_subPage;
+    }
 
     QString subPageAsString() const
-    { return subPageToString(m_subPage); }
+    {
+        return subPageToString(m_subPage);
+    }
 
     static QString subPageToString(SubPage sub_page);
 
@@ -76,4 +84,4 @@ bool operator!=(PageId const& lhs, PageId const& rhs);
 
 bool operator<(PageId const& lhs, PageId const& rhs);
 
-#endif
+#endif  // ifndef PAGEID_H_

@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_IMAGEVIEW_H_
 #define PAGE_SPLIT_IMAGEVIEW_H_
@@ -40,29 +41,30 @@ class QLineF;
 
 namespace page_split
 {
-
-    class ImageView :
-            public ImageViewBase,
-            private InteractionHandler
+    class ImageView
+        : public ImageViewBase,
+          private InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        ImageView(QImage const& image, QImage const& downscaled_image,
-                  ImageTransformation const& xform, PageLayout const& layout,
-                  IntrusivePtr<ProjectPages> const& pages, ImageId const& image_id,
-                  bool left_half_removed, bool right_half_removed);
+        ImageView(QImage const& image,
+                  QImage const& downscaled_image,
+                  ImageTransformation const& xform,
+                  PageLayout const& layout,
+                  IntrusivePtr<ProjectPages> const& pages,
+                  ImageId const& image_id,
+                  bool left_half_removed,
+                  bool right_half_removed);
 
         virtual ~ImageView();
 
     signals:
-
         void invalidateThumbnail(PageInfo const& page_info);
 
         void pageLayoutSetLocally(PageLayout const& layout);
 
     public slots:
-
         void pageLayoutSetExternally(PageLayout const& layout);
 
     protected:
@@ -140,6 +142,5 @@ namespace page_split
         bool m_leftPageRemoved;
         bool m_rightPageRemoved;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGE_SPLIT_IMAGEVIEW_H_

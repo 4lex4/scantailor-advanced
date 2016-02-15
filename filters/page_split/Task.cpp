@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Task.h"
 #include "TaskStatus.h"
@@ -32,16 +33,17 @@
 
 namespace page_split
 {
-
     using imageproc::BinaryThreshold;
 
-    class Task::UiUpdater : public FilterResult
+    class Task::UiUpdater
+        : public FilterResult
     {
     public:
         UiUpdater(IntrusivePtr<Filter> const& filter,
                   IntrusivePtr<ProjectPages> const& pages,
                   std::unique_ptr<DebugImages> dbg_img,
-                  QImage const& image, PageInfo const& page_info,
+                  QImage const& image,
+                  PageInfo const& page_info,
                   ImageTransformation const& xform,
                   OptionsWidget::UiData const& ui_data,
                   bool batch_processing);
@@ -49,7 +51,9 @@ namespace page_split
         virtual void updateUI(FilterUiInterface* ui);
 
         virtual IntrusivePtr<AbstractFilter> filter()
-        { return m_ptrFilter; }
+        {
+            return m_ptrFilter;
+        }
 
     private:
         IntrusivePtr<Filter> m_ptrFilter;
@@ -63,7 +67,8 @@ namespace page_split
         bool m_batchProcessing;
     };
 
-    static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout)
+    static ProjectPages::LayoutType
+    toPageLayoutType(PageLayout const& layout)
     {
         switch (layout.type()) {
             case PageLayout::SINGLE_PAGE_UNCUT:
@@ -74,22 +79,23 @@ namespace page_split
         }
 
         assert(!"Unreachable");
+
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    Task::Task(
-            IntrusivePtr<Filter> const& filter,
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<ProjectPages> const& pages,
-            IntrusivePtr<deskew::Task> const& next_task,
-            PageInfo const& page_info,
-            bool const batch_processing, bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrPages(pages),
-              m_ptrNextTask(next_task),
-              m_pageInfo(page_info),
-              m_batchProcessing(batch_processing)
+    Task::Task(IntrusivePtr<Filter> const& filter,
+               IntrusivePtr<Settings> const& settings,
+               IntrusivePtr<ProjectPages> const& pages,
+               IntrusivePtr<deskew::Task> const& next_task,
+               PageInfo const& page_info,
+               bool const batch_processing,
+               bool const debug)
+        : m_ptrFilter(filter),
+          m_ptrSettings(settings),
+          m_ptrPages(pages),
+          m_ptrNextTask(next_task),
+          m_pageInfo(page_info),
+          m_batchProcessing(batch_processing)
     {
         if (debug) {
             m_ptrDbg.reset(new DebugImages);
@@ -97,8 +103,7 @@ namespace page_split
     }
 
     Task::~Task()
-    {
-    }
+    { }
 
     FilterResultPtr
     Task::process(TaskStatus const& status, FilterData const& data)
@@ -109,24 +114,24 @@ namespace page_split
 
         OrthogonalRotation const pre_rotation(data.xform().preRotation());
         Dependencies const deps(
-                data.origImage().size(), pre_rotation,
-                record.combinedLayoutType()
+            data.origImage().size(), pre_rotation,
+            record.combinedLayoutType()
         );
 
         OptionsWidget::UiData ui_data;
         ui_data.setDependencies(deps);
 
-        for (; ;) {
+        for (;;) {
             Params const* const params = record.params();
 
             PageLayout new_layout;
 
             if (!params || !deps.compatibleWith(*params)) {
                 new_layout = PageLayoutEstimator::estimatePageLayout(
-                        record.combinedLayoutType(),
-                        data.grayImage(), data.xform(),
-                        data.bwThreshold(), m_ptrDbg.get()
-                );
+                    record.combinedLayoutType(),
+                    data.grayImage(), data.xform(),
+                    data.bwThreshold(), m_ptrDbg.get()
+                             );
                 status.throwIfCancelled();
             }
             else if (params->pageLayout().uncutOutline().isEmpty()) {
@@ -151,8 +156,8 @@ namespace page_split
 
             bool conflict = false;
             record = m_ptrSettings->conditionalUpdate(
-                    m_pageInfo.imageId(), update, &conflict
-            );
+                m_pageInfo.imageId(), update, &conflict
+                     );
             if (conflict && !record.params()) {
                 continue;
             }
@@ -162,7 +167,7 @@ namespace page_split
 
         PageLayout const& layout = record.params()->pageLayout();
         ui_data.setLayoutTypeAutoDetected(
-                record.combinedLayoutType() == AUTO_LAYOUT_TYPE
+            record.combinedLayoutType() == AUTO_LAYOUT_TYPE
         );
         ui_data.setPageLayout(layout);
         ui_data.setSplitLineMode(record.params()->splitLineMode());
@@ -172,45 +177,43 @@ namespace page_split
         if (m_ptrNextTask) {
             ImageTransformation new_xform(data.xform());
             new_xform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()));
+
             return m_ptrNextTask->process(status, FilterData(data, new_xform));
         }
         else {
             return FilterResultPtr(
-                    new UiUpdater(
-                            m_ptrFilter, m_ptrPages, std::move(m_ptrDbg), data.origImage(),
-                            m_pageInfo, data.xform(), ui_data, m_batchProcessing
-                    )
+                new UiUpdater(
+                    m_ptrFilter, m_ptrPages, std::move(m_ptrDbg), data.origImage(),
+                    m_pageInfo, data.xform(), ui_data, m_batchProcessing
+                )
             );
         }
-    }
+    }  // Task::process
 
+    /*============================ Task::UiUpdater =========================*/
 
-/*============================ Task::UiUpdater =========================*/
-
-    Task::UiUpdater::UiUpdater(
-            IntrusivePtr<Filter> const& filter,
-            IntrusivePtr<ProjectPages> const& pages,
-            std::unique_ptr<DebugImages> dbg_img,
-            QImage const& image, PageInfo const& page_info,
-            ImageTransformation const& xform,
-            OptionsWidget::UiData const& ui_data,
-            bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_ptrPages(pages),
-              m_ptrDbg(std::move(dbg_img)),
-              m_image(image),
-              m_downscaledImage(ImageView::createDownscaledImage(image)),
-              m_pageInfo(page_info),
-              m_xform(xform),
-              m_uiData(ui_data),
-              m_batchProcessing(batch_processing)
-    {
-    }
+    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+                               IntrusivePtr<ProjectPages> const& pages,
+                               std::unique_ptr<DebugImages> dbg_img,
+                               QImage const& image,
+                               PageInfo const& page_info,
+                               ImageTransformation const& xform,
+                               OptionsWidget::UiData const& ui_data,
+                               bool const batch_processing)
+        : m_ptrFilter(filter),
+          m_ptrPages(pages),
+          m_ptrDbg(std::move(dbg_img)),
+          m_image(image),
+          m_downscaledImage(ImageView::createDownscaledImage(image)),
+          m_pageInfo(page_info),
+          m_xform(xform),
+          m_uiData(ui_data),
+          m_batchProcessing(batch_processing)
+    { }
 
     void
     Task::UiUpdater::updateUI(FilterUiInterface* ui)
     {
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -222,24 +225,23 @@ namespace page_split
         }
 
         ImageView* view = new ImageView(
-                m_image, m_downscaledImage, m_xform, m_uiData.pageLayout(),
-                m_ptrPages, m_pageInfo.imageId(),
-                m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved()
-        );
+            m_image, m_downscaledImage, m_xform, m_uiData.pageLayout(),
+            m_ptrPages, m_pageInfo.imageId(),
+            m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved()
+                          );
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
-                view, SIGNAL(invalidateThumbnail(PageInfo const&)),
-                opt_widget, SIGNAL(invalidateThumbnail(PageInfo const&))
+            view, SIGNAL(invalidateThumbnail(PageInfo const &)),
+            opt_widget, SIGNAL(invalidateThumbnail(PageInfo const &))
         );
         QObject::connect(
-                view, SIGNAL(pageLayoutSetLocally(PageLayout const&)),
-                opt_widget, SLOT(pageLayoutSetExternally(PageLayout const&))
+            view, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
+            opt_widget, SLOT(pageLayoutSetExternally(PageLayout const &))
         );
         QObject::connect(
-                opt_widget, SIGNAL(pageLayoutSetLocally(PageLayout const&)),
-                view, SLOT(pageLayoutSetExternally(PageLayout const&))
+            opt_widget, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
+            view, SLOT(pageLayoutSetExternally(PageLayout const &))
         );
-    }
-
-} 
+    }  // Task::UiUpdater::updateUI
+}  // namespace page_split

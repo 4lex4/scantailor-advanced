@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "XmlMarshaller.h"
 #include "OrthogonalRotation.h"
@@ -27,6 +28,7 @@ XmlMarshaller::string(QString const& str, QString const& name)
 {
     QDomElement el(m_doc.createElement(name));
     el.appendChild(m_doc.createTextNode(str));
+
     return el;
 }
 
@@ -40,9 +42,9 @@ XmlMarshaller::size(QSize const& size, QString const& name)
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("width", size.width());
     el.setAttribute("height", size.height());
+
     return el;
 }
-
 
 QDomElement
 XmlMarshaller::sizeF(QSizeF const& size, QString const& name)
@@ -54,6 +56,7 @@ XmlMarshaller::sizeF(QSizeF const& size, QString const& name)
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("width", Utils::doubleToString(size.width()));
     el.setAttribute("height", Utils::doubleToString(size.height()));
+
     return el;
 }
 
@@ -67,6 +70,7 @@ XmlMarshaller::dpi(Dpi const& dpi, QString const& name)
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("horizontal", dpi.horizontal());
     el.setAttribute("vertical", dpi.vertical());
+
     return el;
 }
 
@@ -75,6 +79,7 @@ XmlMarshaller::rotation(OrthogonalRotation const& rotation, QString const& name)
 {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("degrees", rotation.toDegrees());
+
     return el;
 }
 
@@ -84,6 +89,7 @@ XmlMarshaller::pointF(QPointF const& p, QString const& name)
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("x", Utils::doubleToString(p.x()));
     el.setAttribute("y", Utils::doubleToString(p.y()));
+
     return el;
 }
 
@@ -93,6 +99,7 @@ XmlMarshaller::lineF(QLineF const& line, QString const& name)
     QDomElement el(m_doc.createElement(name));
     el.appendChild(pointF(line.p1(), "p1"));
     el.appendChild(pointF(line.p2(), "p2"));
+
     return el;
 }
 
@@ -104,9 +111,9 @@ XmlMarshaller::rect(QRect const& rect, QString const& name)
     el.setAttribute("y", QString::number(rect.y()));
     el.setAttribute("width", QString::number(rect.width()));
     el.setAttribute("height", QString::number(rect.height()));
+
     return el;
 }
-
 
 QDomElement
 XmlMarshaller::rectF(QRectF const& rect, QString const& name)
@@ -116,6 +123,7 @@ XmlMarshaller::rectF(QRectF const& rect, QString const& name)
     el.setAttribute("y", Utils::doubleToString(rect.y()));
     el.setAttribute("width", Utils::doubleToString(rect.width()));
     el.setAttribute("height", Utils::doubleToString(rect.height()));
+
     return el;
 }
 
@@ -141,5 +149,7 @@ XmlMarshaller::margins(Margins const& margins, QString const& name)
     el.setAttribute("right", Utils::doubleToString(margins.right()));
     el.setAttribute("top", Utils::doubleToString(margins.top()));
     el.setAttribute("bottom", Utils::doubleToString(margins.bottom()));
+
     return el;
 }
+

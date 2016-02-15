@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_SKEWFINDER_H_
 #define IMAGEPROC_SKEWFINDER_H_
@@ -23,13 +24,12 @@
 
 namespace imageproc
 {
-
     class BinaryImage;
 
-/**
- * \brief The result of the "find skew" operation.
- * \see SkewFinder
- */
+    /**
+     * \brief The result of the "find skew" operation.
+     * \see SkewFinder
+     */
     class Skew
     {
     public:
@@ -39,11 +39,14 @@ namespace imageproc
          */
         static double const GOOD_CONFIDENCE;
 
-        Skew() : m_angle(0.0), m_confidence(0.0)
+        Skew()
+            : m_angle(0.0),
+              m_confidence(0.0)
         { }
 
         Skew(double angle, double confidence)
-                : m_angle(angle), m_confidence(confidence)
+            : m_angle(angle),
+              m_confidence(confidence)
         { }
 
         /**
@@ -52,7 +55,9 @@ namespace imageproc
          * Positive values indicate clockwise skews.
          */
         double angle() const
-        { return m_angle; }
+        {
+            return m_angle;
+        }
 
         /**
          * \brief Get the confidence value.
@@ -62,7 +67,9 @@ namespace imageproc
          * confidence level.
          */
         double confidence() const
-        { return m_confidence; }
+        {
+            return m_confidence;
+        }
 
     private:
         double m_angle;
@@ -72,7 +79,7 @@ namespace imageproc
 
     class SkewFinder
     {
-    DECLARE_NON_COPYABLE(SkewFinder)
+        DECLARE_NON_COPYABLE(SkewFinder)
 
     public:
         static double const DEFAULT_MAX_ANGLE;
@@ -158,6 +165,5 @@ namespace imageproc
         int m_coarseReduction;
         int m_fineReduction;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_SKEWFINDER_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DespeckleVisualization.h"
 #include "ImageViewBase.h"
@@ -27,9 +28,9 @@ using namespace imageproc;
 
 namespace output
 {
-
-    DespeckleVisualization::DespeckleVisualization(
-            QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi)
+    DespeckleVisualization::DespeckleVisualization(QImage const& output,
+                                                   imageproc::BinaryImage const& speckles,
+                                                   Dpi const& dpi)
     {
         if (output.isNull()) {
             return;
@@ -45,12 +46,11 @@ namespace output
     }
 
     void
-    DespeckleVisualization::colorizeSpeckles(
-            QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi)
+    DespeckleVisualization::colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi)
     {
         int const w = image.width();
         int const h = image.height();
-        uint32_t* image_line = (uint32_t*) image.bits();
+        uint32_t* image_line = (uint32_t*)image.bits();
         int const image_stride = image.bytesPerLine() / 4;
 
         SEDM const sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
@@ -88,6 +88,5 @@ namespace output
             sedm_line += sedm_stride;
             image_line += image_stride;
         }
-    }
-
-} 
+    }  // DespeckleVisualization::colorizeSpeckles
+}  // namespace output

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Utils.h"
 #include "Margins.h"
@@ -26,10 +27,8 @@
 
 namespace page_layout
 {
-
     QRectF
-    Utils::adaptContentRect(
-            ImageTransformation const& xform, QRectF const& content_rect)
+    Utils::adaptContentRect(ImageTransformation const& xform, QRectF const& content_rect)
     {
         if (!content_rect.isEmpty()) {
             return content_rect;
@@ -37,12 +36,12 @@ namespace page_layout
 
         QPointF const center(xform.resultingRect().center());
         QPointF const delta(0.01, 0.01);
+
         return QRectF(center - delta, center + delta);
     }
 
     QSizeF
-    Utils::calcRectSizeMM(
-            ImageTransformation const& xform, QRectF const& rect)
+    Utils::calcRectSizeMM(ImageTransformation const& xform, QRectF const& rect)
     {
         PhysicalTransformation const phys_xform(xform.origDpi());
         QTransform const virt_to_mm(xform.transformBack() * phys_xform.pixelsToMM());
@@ -52,12 +51,12 @@ namespace page_layout
 
         double const width = virt_to_mm.map(hor_line).length();
         double const height = virt_to_mm.map(ver_line).length();
+
         return QSizeF(width, height);
     }
 
     void
-    Utils::extendPolyRectWithMargins(
-            QPolygonF& poly_rect, Margins const& margins)
+    Utils::extendPolyRectWithMargins(QPolygonF& poly_rect, Margins const& margins)
     {
         QPointF const down_uv(getDownUnitVector(poly_rect));
         QPointF const right_uv(getRightUnitVector(poly_rect));
@@ -84,11 +83,11 @@ namespace page_layout
     Utils::calcMarginsMM(ImageTransformation const& xform, QRectF const& page_rect, QRectF const& content_rect)
     {
         QSizeF const content_size_mm(
-                Utils::calcRectSizeMM(xform, content_rect)
+            Utils::calcRectSizeMM(xform, content_rect)
         );
 
         QSizeF const page_size_mm(
-                Utils::calcRectSizeMM(xform, page_rect)
+            Utils::calcRectSizeMM(xform, page_rect)
         );
 
         double widthMM = page_size_mm.width() - content_size_mm.width();
@@ -113,14 +112,17 @@ namespace page_layout
     }
 
     Margins
-    Utils::calcSoftMarginsMM(
-            QSizeF const& hard_size_mm, QSizeF const& aggregate_hard_size_mm,
-            Alignment const& alignment, QRectF const& contentRect, QRectF const& agg_content_rect)
+    Utils::calcSoftMarginsMM(QSizeF const& hard_size_mm,
+                             QSizeF const& aggregate_hard_size_mm,
+                             Alignment const& alignment,
+                             QRectF const& contentRect,
+                             QRectF const& agg_content_rect)
     {
         if (alignment.isNull()) {
 #ifdef DEBUG
             std::cout << "\tskip soft margins: " << "\n";
 #endif
+
             return Margins();
         }
 
@@ -145,19 +147,19 @@ namespace page_layout
         double left = 0.0;
         double right = 0.0;
 
-        double const delta_width =
-                aggregate_hard_size_mm.width() - hard_size_mm.width();
-        double const delta_height =
-                aggregate_hard_size_mm.height() - hard_size_mm.height();
+        double const delta_width
+            = aggregate_hard_size_mm.width() - hard_size_mm.width();
+        double const delta_height
+            = aggregate_hard_size_mm.height() - hard_size_mm.height();
 
-        double leftBorder =
-                double(contentRect.left() - agg_content_rect.left() + 1) / double(agg_content_rect.width() + 1);
-        double rightBorder =
-                double(agg_content_rect.right() - contentRect.right() + 1) / double(agg_content_rect.width() + 1);
-        double topBorder =
-                double(contentRect.top() - agg_content_rect.top() + 1) / double(agg_content_rect.height() + 1);
-        double bottomBorder =
-                double(agg_content_rect.bottom() - contentRect.bottom() + 1) / double(agg_content_rect.height() + 1);
+        double leftBorder
+            = double(contentRect.left() - agg_content_rect.left() + 1) / double(agg_content_rect.width() + 1);
+        double rightBorder
+            = double(agg_content_rect.right() - contentRect.right() + 1) / double(agg_content_rect.width() + 1);
+        double topBorder
+            = double(contentRect.top() - agg_content_rect.top() + 1) / double(agg_content_rect.height() + 1);
+        double bottomBorder
+            = double(agg_content_rect.bottom() - contentRect.bottom() + 1) / double(agg_content_rect.height() + 1);
 
         double aggLeftBorder = 0.0;
         double aggRightBorder = 0.0;
@@ -175,20 +177,20 @@ namespace page_layout
 
 #ifdef DEBUG
         std::cout << "delta_width: " << delta_width << " " << "delta_height: " << delta_height << "\n";
-        std::cout << aggLeftBorder << " " << aggRightBorder << " " << aggTopBorder << " " << aggBottomBorder << ":" <<
-        "\n";
+        std::cout << aggLeftBorder << " " << aggRightBorder << " " << aggTopBorder << " " << aggBottomBorder << ":"
+                  << "\n";
         std::cout << leftBorder << " " << rightBorder << " " << topBorder << " " << bottomBorder << ":" << "\n";
 #endif
 
-        if (contentRect.width() > 1.0 &&
-            (myAlign.horizontal() == Alignment::HAUTO || myAlign.vertical() == Alignment::VAUTO)) {
+        if ((contentRect.width() > 1.0)
+            && ((myAlign.horizontal() == Alignment::HAUTO) || (myAlign.vertical() == Alignment::VAUTO))) {
             double newLeftBorder = aggLeftBorder / aggregate_hard_size_mm.width();
             double newRightBorder = aggRightBorder / aggregate_hard_size_mm.width();
             double newTopBorder = aggTopBorder / aggregate_hard_size_mm.height();
             double newBottomBorder = aggBottomBorder / aggregate_hard_size_mm.height();
 
-            double cmi = double(contentRect.width() * contentRect.height()) /
-                         double(agg_content_rect.width() * agg_content_rect.height());
+            double cmi = double(contentRect.width() * contentRect.height())
+                         / double(agg_content_rect.width() * agg_content_rect.height());
 
             double hTolerance = myAlign.tolerance();
             double vTolerance = myAlign.tolerance() * 0.7;
@@ -198,8 +200,8 @@ namespace page_layout
             double vabsShift = std::abs(vShift);
 
 #ifdef DEBUG
-            std::cout << newLeftBorder << " " << newRightBorder << " " << newTopBorder << " " << newBottomBorder <<
-            "\n";
+            std::cout << newLeftBorder << " " << newRightBorder << " " << newTopBorder << " " << newBottomBorder
+                      << "\n";
             std::cout << vabsShift << " " << habsShift << std::endl;
             std::cout << cmi << std::endl;
             std::cout << hTolerance << " " << vTolerance << "\n";
@@ -212,10 +214,10 @@ namespace page_layout
                     myAlign.setHorizontal(Alignment::HCENTER);
                 }
                 else {
-                    if (hShift > 0 && newLeftBorder > 1.4 * hTolerance) {
+                    if ((hShift > 0) && (newLeftBorder > 1.4 * hTolerance)) {
                         myAlign.setHorizontal(Alignment::RIGHT);
                     }
-                    else if (hShift <= 0 && newRightBorder > 1.4 * hTolerance) {
+                    else if ((hShift <= 0) && (newRightBorder > 1.4 * hTolerance)) {
                         myAlign.setHorizontal(Alignment::LEFT);
                     }
                     else {
@@ -232,10 +234,10 @@ namespace page_layout
                     myAlign.setVertical(Alignment::VCENTER);
                 }
                 else {
-                    if (vShift > 0 && newBottomBorder > 1.4 * vTolerance) {
+                    if ((vShift > 0) && (newBottomBorder > 1.4 * vTolerance)) {
                         myAlign.setVertical(Alignment::TOP);
                     }
-                    else if (vShift <= 0 && newTopBorder > 1.4 * vTolerance) {
+                    else if ((vShift <= 0) && (newTopBorder > 1.4 * vTolerance)) {
                         myAlign.setVertical(Alignment::BOTTOM);
                     }
                     else {
@@ -309,12 +311,14 @@ namespace page_layout
         }
 
         return Margins(left, top, right, bottom);
-    }
+    }  // Utils::calcSoftMarginsMM
 
     QPolygonF
-    Utils::calcPageRectPhys(
-            ImageTransformation const& xform, QPolygonF const& content_rect_phys,
-            Params const& params, QSizeF const& aggregate_hard_size_mm, QRectF const& agg_content_rect)
+    Utils::calcPageRectPhys(ImageTransformation const& xform,
+                            QPolygonF const& content_rect_phys,
+                            Params const& params,
+                            QSizeF const& aggregate_hard_size_mm,
+                            QRectF const& agg_content_rect)
     {
         PhysicalTransformation const phys_xform(xform.origDpi());
 
@@ -322,16 +326,17 @@ namespace page_layout
         extendPolyRectWithMargins(poly_mm, params.hardMarginsMM());
 
         QSizeF const hard_size_mm(
-                QLineF(poly_mm[0], poly_mm[1]).length(),
-                QLineF(poly_mm[0], poly_mm[3]).length()
+            QLineF(poly_mm[0], poly_mm[1]).length(),
+            QLineF(poly_mm[0], poly_mm[3]).length()
         );
         Margins soft_margins_mm(
-                calcSoftMarginsMM(
-                        hard_size_mm, aggregate_hard_size_mm, params.alignment(), params.contentRect(), agg_content_rect
-                )
+            calcSoftMarginsMM(
+                hard_size_mm, aggregate_hard_size_mm, params.alignment(), params.contentRect(), agg_content_rect
+            )
         );
 
         extendPolyRectWithMargins(poly_mm, soft_margins_mm);
+
         return phys_xform.mmToPixels().map(poly_mm);
     }
 
@@ -340,6 +345,7 @@ namespace page_layout
     {
         QPointF const top_left(poly_rect[0]);
         QPointF const top_right(poly_rect[1]);
+
         return QLineF(top_left, top_right).unitVector().p2() - top_left;
     }
 
@@ -348,7 +354,7 @@ namespace page_layout
     {
         QPointF const top_left(poly_rect[0]);
         QPointF const bottom_left(poly_rect[3]);
+
         return QLineF(top_left, bottom_left).unitVector().p2() - top_left;
     }
-
-} 
+}  // namespace page_layout

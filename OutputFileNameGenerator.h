@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_FILE_NAME_GENERATOR_H_
 #define OUTPUT_FILE_NAME_GENERATOR_H_
@@ -32,23 +33,31 @@ class OutputFileNameGenerator
 public:
     OutputFileNameGenerator();
 
-    OutputFileNameGenerator(
-            IntrusivePtr<FileNameDisambiguator> const& disambiguator,
-            QString const& out_dir, Qt::LayoutDirection layout_direction);
+    OutputFileNameGenerator(IntrusivePtr<FileNameDisambiguator> const& disambiguator,
+                            QString const& out_dir,
+                            Qt::LayoutDirection layout_direction);
 
     void performRelinking(AbstractRelinker const& relinker);
 
     Qt::LayoutDirection layoutDirection() const
-    { return m_layoutDirection; }
+    {
+        return m_layoutDirection;
+    }
 
     QString const& outDir() const
-    { return m_outDir; }
+    {
+        return m_outDir;
+    }
 
     FileNameDisambiguator* disambiguator()
-    { return m_ptrDisambiguator.get(); }
+    {
+        return m_ptrDisambiguator.get();
+    }
 
     FileNameDisambiguator const* disambiguator() const
-    { return m_ptrDisambiguator.get(); }
+    {
+        return m_ptrDisambiguator.get();
+    }
 
     QString fileNameFor(PageId const& page) const;
 
@@ -60,4 +69,4 @@ private:
     Qt::LayoutDirection m_layoutDirection;
 };
 
-#endif
+#endif  // ifndef OUTPUT_FILE_NAME_GENERATOR_H_

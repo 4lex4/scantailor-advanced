@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Filter.h"
 #include "FilterUiInterface.h"
@@ -32,27 +33,24 @@
 
 namespace fix_orientation
 {
-
-    Filter::Filter(
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(new Settings)
+    Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(new Settings)
     {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(
-                    new OptionsWidget(m_ptrSettings, page_selection_accessor)
+                new OptionsWidget(m_ptrSettings, page_selection_accessor)
             );
         }
     }
 
     Filter::~Filter()
-    {
-    }
+    { }
 
     QString
     Filter::getName() const
     {
         return QCoreApplication::translate(
-                "fix_orientation::Filter", "Fix Orientation"
+            "fix_orientation::Filter", "Fix Orientation"
         );
     }
 
@@ -73,7 +71,7 @@ namespace fix_orientation
     {
         if (m_ptrOptionsWidget.get()) {
             OrthogonalRotation const rotation(
-                    m_ptrSettings->getRotationFor(page_id.imageId())
+                m_ptrSettings->getRotationFor(page_id.imageId())
             );
             m_ptrOptionsWidget->preUpdateUI(page_id, rotation);
             ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
@@ -81,17 +79,16 @@ namespace fix_orientation
     }
 
     QDomElement
-    Filter::saveSettings(
-            ProjectWriter const& writer, QDomDocument& doc) const
+    Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const
     {
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("fix-orientation"));
         writer.enumImages(
-                [&](ImageId const& image_id, int const numeric_id)
-                {
-                    this->writeImageSettings(doc, filter_el, image_id, numeric_id);
-                }
+            [&](ImageId const& image_id, int const numeric_id)
+        {
+            this->writeImageSettings(doc, filter_el, image_id, numeric_id);
+        }
         );
 
         return filter_el;
@@ -127,42 +124,39 @@ namespace fix_orientation
             }
 
             OrthogonalRotation const rotation(
-                    XmlUnmarshaller::rotation(
-                            el.namedItem("rotation").toElement()
-                    )
+                XmlUnmarshaller::rotation(
+                    el.namedItem("rotation").toElement()
+                )
             );
 
             m_ptrSettings->applyRotation(image_id, rotation);
         }
-    }
+    }  // Filter::loadSettings
 
     IntrusivePtr<Task>
-    Filter::createTask(
-            PageId const& page_id,
-            IntrusivePtr<page_split::Task> const& next_task,
-            bool const batch_processing)
+    Filter::createTask(PageId const& page_id,
+                       IntrusivePtr<page_split::Task> const& next_task,
+                       bool const batch_processing)
     {
         return IntrusivePtr<Task>(
-                new Task(
-                        page_id.imageId(), IntrusivePtr<Filter>(this),
-                        m_ptrSettings, next_task, batch_processing
-                )
+            new Task(
+                page_id.imageId(), IntrusivePtr<Filter>(this),
+                m_ptrSettings, next_task, batch_processing
+            )
         );
     }
 
     IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(
-            IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
+    Filter::createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
     {
         return IntrusivePtr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+            new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }
 
     void
-    Filter::writeImageSettings(
-            QDomDocument& doc, QDomElement& filter_el,
-            ImageId const& image_id, int const numeric_id) const
+    Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                               int const numeric_id) const
     {
         OrthogonalRotation const rotation(m_ptrSettings->getRotationFor(image_id));
         if (rotation.toDegrees() == 0) {
@@ -176,5 +170,4 @@ namespace fix_orientation
         image_el.appendChild(marshaller.rotation(rotation, "rotation"));
         filter_el.appendChild(image_el);
     }
-
-} 
+}  // namespace fix_orientation

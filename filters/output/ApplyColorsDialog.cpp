@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,22 +15,21 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ApplyColorsDialog.h"
 #include "PageSelectionAccessor.h"
 
 namespace output
 {
-
-    ApplyColorsDialog::ApplyColorsDialog(
-            QWidget* parent, PageId const& cur_page,
-            PageSelectionAccessor const& page_selection_accessor)
-            : QDialog(parent),
-              m_pages(page_selection_accessor.allPages()),
-              m_selectedPages(page_selection_accessor.selectedPages()),
-              m_curPage(cur_page),
-              m_pScopeGroup(new QButtonGroup(this))
+    ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
+                                         PageId const& cur_page,
+                                         PageSelectionAccessor const& page_selection_accessor)
+        : QDialog(parent),
+          m_pages(page_selection_accessor.allPages()),
+          m_selectedPages(page_selection_accessor.selectedPages()),
+          m_curPage(cur_page),
+          m_pScopeGroup(new QButtonGroup(this))
     {
         setupUi(this);
         m_pScopeGroup->addButton(thisPageRB);
@@ -44,8 +44,7 @@ namespace output
     }
 
     ApplyColorsDialog::~ApplyColorsDialog()
-    {
-    }
+    { }
 
     void
     ApplyColorsDialog::onSubmit()
@@ -61,6 +60,7 @@ namespace output
         else if (selectedPagesRB->isChecked()) {
             emit accepted(m_selectedPages);
             accept();
+
             return;
         }
 
@@ -68,5 +68,4 @@ namespace output
 
         accept();
     }
-
-} 
+}  // namespace output

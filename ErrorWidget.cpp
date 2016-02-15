@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,11 +15,11 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ErrorWidget.h"
 
-ErrorWidget::ErrorWidget(QString const &text, Qt::TextFormat fmt)
+ErrorWidget::ErrorWidget(QString const& text, Qt::TextFormat fmt)
 {
     setupUi(this);
     textLabel->setTextFormat(fmt);
@@ -26,5 +27,6 @@ ErrorWidget::ErrorWidget(QString const &text, Qt::TextFormat fmt)
     QIcon icon(QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning));
     imageLabel->setPixmap(icon.pixmap(48, 48));
 
-    connect(textLabel, SIGNAL(linkActivated(QString const&)), SLOT(linkActivated(QString const&)));
+    connect(textLabel, SIGNAL(linkActivated(QString const &)), SLOT(linkActivated(QString const &)));
 }
+

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_TASK_H_
 #define OUTPUT_TASK_H_
@@ -46,26 +47,27 @@ namespace imageproc
 
 namespace output
 {
-
     class Filter;
-class Settings;
+    class Settings;
 
-    class Task : public RefCountable
+    class Task
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Task)
+        DECLARE_NON_COPYABLE(Task)
 
     public:
         Task(IntrusivePtr<Filter> const& filter,
              IntrusivePtr<Settings> const& settings,
              IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-             PageId const& page_id, OutputFileNameGenerator const& out_file_name_gen,
-             ImageViewTab last_tab, bool batch, bool debug);
+             PageId const& page_id,
+             OutputFileNameGenerator const& out_file_name_gen,
+             ImageViewTab last_tab,
+             bool batch,
+             bool debug);
 
         virtual ~Task();
 
-        FilterResultPtr process(
-                TaskStatus const& status, FilterData const& data,
-                QPolygonF const& content_rect_phys);
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
 
     private:
         class UiUpdater;
@@ -82,6 +84,5 @@ class Settings;
         bool m_batchProcessing;
         bool m_debug;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_TASK_H_

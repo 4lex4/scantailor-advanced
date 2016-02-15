@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "BackgroundExecutor.h"
 #include "OutOfMemoryHandler.h"
@@ -22,35 +23,37 @@
 #include <QThread>
 #include <assert.h>
 
-class BackgroundExecutor::Dispatcher : public QObject
+class BackgroundExecutor::Dispatcher
+    : public QObject
 {
 public:
-    Dispatcher(Impl &owner);
+    Dispatcher(Impl& owner);
 
 protected:
-    virtual void customEvent(QEvent *event);
+    virtual void customEvent(QEvent* event);
 
 private:
-    Impl &m_rOwner;
+    Impl& m_rOwner;
 };
 
 
-class BackgroundExecutor::Impl : public QThread
+class BackgroundExecutor::Impl
+    : public QThread
 {
 public:
-    Impl(BackgroundExecutor &owner);
+    Impl(BackgroundExecutor& owner);
 
     ~Impl();
 
-    void enqueueTask(TaskPtr const &task);
+    void enqueueTask(TaskPtr const& task);
 
 protected:
     virtual void run();
 
-    virtual void customEvent(QEvent *event);
+    virtual void customEvent(QEvent* event);
 
 private:
-    BackgroundExecutor &m_rOwner;
+    BackgroundExecutor& m_rOwner;
     Dispatcher m_dispatcher;
     bool m_threadStarted;
 };
@@ -59,13 +62,11 @@ private:
 /*============================ BackgroundExecutor ==========================*/
 
 BackgroundExecutor::BackgroundExecutor()
-        : m_ptrImpl(new Impl(*this))
-{
-}
+    : m_ptrImpl(new Impl(*this))
+{ }
 
 BackgroundExecutor::~BackgroundExecutor()
-{
-}
+{ }
 
 void
 BackgroundExecutor::shutdown()
@@ -74,49 +75,47 @@ BackgroundExecutor::shutdown()
 }
 
 void
-BackgroundExecutor::enqueueTask(TaskPtr const &task)
+BackgroundExecutor::enqueueTask(TaskPtr const& task)
 {
     if (m_ptrImpl.get()) {
         m_ptrImpl->enqueueTask(task);
     }
 }
 
-
 /*===================== BackgroundExecutor::Dispatcher =====================*/
 
-BackgroundExecutor::Dispatcher::Dispatcher(Impl &owner)
-        : m_rOwner(owner)
-{
-}
+BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner)
+    : m_rOwner(owner)
+{ }
 
 void
-BackgroundExecutor::Dispatcher::customEvent(QEvent *event)
+BackgroundExecutor::Dispatcher::customEvent(QEvent* event)
 {
     try {
-        TaskEvent *evt = dynamic_cast<TaskEvent *>(event);
+        TaskEvent* evt = dynamic_cast<TaskEvent*>(event);
         assert(evt);
 
-        TaskPtr const &task = evt->payload();
+        TaskPtr const& task = evt->payload();
         assert(task);
 
         TaskResultPtr const result((*task)());
         if (result) {
             QCoreApplication::postEvent(
-                    &m_rOwner, new ResultEvent(result)
+                &m_rOwner, new ResultEvent(result)
             );
         }
-    } catch (std::bad_alloc const &) {
+    }
+    catch (std::bad_alloc const&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
     }
 }
 
-
 /*======================= BackgroundExecutor::Impl =========================*/
 
-BackgroundExecutor::Impl::Impl(BackgroundExecutor &owner)
-        : m_rOwner(owner),
-          m_dispatcher(*this),
-          m_threadStarted(false)
+BackgroundExecutor::Impl::Impl(BackgroundExecutor& owner)
+    : m_rOwner(owner),
+      m_dispatcher(*this),
+      m_threadStarted(false)
 {
     m_dispatcher.moveToThread(this);
 }
@@ -128,7 +127,7 @@ BackgroundExecutor::Impl::~Impl()
 }
 
 void
-BackgroundExecutor::Impl::enqueueTask(TaskPtr const &task)
+BackgroundExecutor::Impl::enqueueTask(TaskPtr const& task)
 {
     QCoreApplication::postEvent(&m_dispatcher, new TaskEvent(task));
     if (!m_threadStarted) {
@@ -144,13 +143,14 @@ BackgroundExecutor::Impl::run()
 }
 
 void
-BackgroundExecutor::Impl::customEvent(QEvent *event)
+BackgroundExecutor::Impl::customEvent(QEvent* event)
 {
-    ResultEvent *evt = dynamic_cast<ResultEvent *>(event);
+    ResultEvent* evt = dynamic_cast<ResultEvent*>(event);
     assert(evt);
 
-    TaskResultPtr const &result = evt->payload();
+    TaskResultPtr const& result = evt->payload();
     assert(result);
 
     (*result)();
 }
+

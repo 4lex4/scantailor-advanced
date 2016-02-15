@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_
 #define IMAGEPROC_POLYNOMIAL_SURFACE_H_
@@ -25,13 +26,12 @@
 
 namespace imageproc
 {
-
     class BinaryImage;
-class GrayImage;
+    class GrayImage;
 
-/**
- * \brief A polynomial function describing a 2D surface.
- */
+    /**
+     * \brief A polynomial function describing a 2D surface.
+     */
     class PolynomialSurface
     {
     public:
@@ -51,13 +51,12 @@ class GrayImage;
          *       pixels will be fine.  Once built, the polynomial surface
          *       may then be rendered in the original size, if necessary.
          */
-        PolynomialSurface(
-                int hor_degree, int vert_degree, GrayImage const& src);
+        PolynomialSurface(int hor_degree, int vert_degree, GrayImage const& src);
 
         /**
          * \brief Calculate a polynomial that approximates portions of the given image.
          *
-        * \param hor_degree The degree of the polynomial in horizontal direction.
+         * \param hor_degree The degree of the polynomial in horizontal direction.
          *        Must not be negative.  A value of 5 should be enough
          *        to approximate page background.
          * \param vert_degree The degree of the polynomial in vertical direction.
@@ -73,9 +72,7 @@ class GrayImage;
          *       pixels will be fine.  Once built, the polynomial surface
          *       may then rendered in the original size, if necessary.
          */
-        PolynomialSurface(
-                int hor_degree, int vert_degree,
-                GrayImage const& src, BinaryImage const& mask);
+        PolynomialSurface(int hor_degree, int vert_degree, GrayImage const& src, BinaryImage const& mask);
 
         /**
          * \brief Visualizes the polynomial surface as a grayscale image.
@@ -91,28 +88,28 @@ class GrayImage;
 
         static double calcScale(int dimension);
 
-        void prepareEquationsAndDataPoints(
-                GrayImage const& image,
-                std::vector<double>& equations,
-                std::vector<double>& data_points) const;
+        void prepareEquationsAndDataPoints(GrayImage const& image,
+                                           std::vector<double>& equations,
+                                           std::vector<double>& data_points) const;
 
-        void prepareEquationsAndDataPoints(
-                GrayImage const& image, BinaryImage const& mask,
-                std::vector<double>& equations,
-                std::vector<double>& data_points) const;
+        void prepareEquationsAndDataPoints(GrayImage const& image,
+                                           BinaryImage const& mask,
+                                           std::vector<double>& equations,
+                                           std::vector<double>& data_points) const;
 
-        void processMaskWord(
-                uint8_t const* image_line, uint32_t word,
-                int mask_word_idx, int y,
-                double y_adjusted, double xscale,
-                std::vector<double>& equations,
-                std::vector<double>& data_points) const;
+        void processMaskWord(uint8_t const* image_line,
+                             uint32_t word,
+                             int mask_word_idx,
+                             int y,
+                             double y_adjusted,
+                             double xscale,
+                             std::vector<double>& equations,
+                             std::vector<double>& data_points) const;
 
         std::vector<double> m_coeffs;
         int m_horDegree;
         int m_vertDegree;
     };
+}  // namespace imageproc
 
-}
-
-#endif
+#endif  // ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_

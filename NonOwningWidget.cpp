@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,20 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "NonOwningWidget.h"
 
 NonOwningWidget::NonOwningWidget(QWidget* parent)
-        : QWidget(parent)
-{
-}
+    : QWidget(parent)
+{ }
 
 NonOwningWidget::~NonOwningWidget()
 {
-    for (QObject* child :  children()) {
+    for (QObject* child : children()) {
         if (QWidget* widget = dynamic_cast<QWidget*>(child)) {
             widget->setParent(0);
         }
     }
 }
+

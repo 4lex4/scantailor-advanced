@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_SETTINGS_H_
 #define PAGE_SPLIT_SETTINGS_H_
@@ -35,10 +36,10 @@ class AbstractRelinker;
 
 namespace page_split
 {
-
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     private:
         class BaseRecord
@@ -73,10 +74,14 @@ namespace page_split
             void setLayoutType(LayoutType layout_type);
 
             void clearParams()
-            { m_paramsValid = false; }
+            {
+                m_paramsValid = false;
+            }
 
             void clearLayoutType()
-            { m_layoutTypeValid = false; }
+            {
+                m_layoutTypeValid = false;
+            }
 
             /**
              * \brief Checks if a particular layout type conflicts with PageLayout
@@ -93,13 +98,13 @@ namespace page_split
     public:
         class UpdateAction;
 
-        class Record : public BaseRecord
+        class Record
+            : public BaseRecord
         {
         public:
             Record(LayoutType default_layout_type);
 
-            Record(BaseRecord const& base_record,
-                   LayoutType default_layout_type);
+            Record(BaseRecord const& base_record, LayoutType default_layout_type);
 
             LayoutType combinedLayoutType() const;
 
@@ -117,11 +122,11 @@ namespace page_split
             friend class Settings::Record;
 
         public:
-            UpdateAction() :
-                    m_params(PageLayout(), Dependencies(), MODE_AUTO),
-                    m_layoutType(AUTO_LAYOUT_TYPE),
-                    m_paramsAction(DONT_TOUCH),
-                    m_layoutTypeAction(DONT_TOUCH)
+            UpdateAction()
+                : m_params(PageLayout(), Dependencies(), MODE_AUTO),
+                  m_layoutType(AUTO_LAYOUT_TYPE),
+                  m_paramsAction(DONT_TOUCH),
+                  m_layoutTypeAction(DONT_TOUCH)
             { }
 
             void setLayoutType(LayoutType layout_type);
@@ -133,10 +138,7 @@ namespace page_split
             void clearParams();
 
         private:
-            enum Action
-            {
-                DONT_TOUCH, SET, CLEAR
-            };
+            enum Action { DONT_TOUCH, SET, CLEAR };
 
             Params m_params;
             LayoutType m_layoutType;
@@ -192,9 +194,7 @@ namespace page_split
          * Whether the update took place or not, the current page record
          * (updated or not) will be returned.
          */
-        Record conditionalUpdate(
-                ImageId const& image_id, UpdateAction const& action,
-                bool* conflict = 0);
+        Record conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict = 0);
 
     private:
         typedef std::map<ImageId, BaseRecord> PerPageRecords;
@@ -209,6 +209,5 @@ namespace page_split
         PerPageRecords m_perPageRecords;
         LayoutType m_defaultLayoutType;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGE_SPLIT_SETTINGS_H_

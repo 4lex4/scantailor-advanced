@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Optimizer.h"
 #include "MatrixCalc.h"
@@ -22,12 +23,14 @@
 
 namespace spfit
 {
-
     Optimizer::Optimizer(size_t num_vars)
-            : m_numVars(num_vars), m_A(num_vars, num_vars), m_b(num_vars), m_x(num_vars), m_externalForce(num_vars),
-              m_internalForce(num_vars)
-    {
-    }
+        : m_numVars(num_vars),
+          m_A(num_vars, num_vars),
+          m_b(num_vars),
+          m_x(num_vars),
+          m_externalForce(num_vars),
+          m_internalForce(num_vars)
+    { }
 
     void
     Optimizer::setConstraints(std::list<LinearFunction> const& constraints)
@@ -79,8 +82,7 @@ namespace spfit
     }
 
     void
-    Optimizer::addInternalForce(
-            QuadraticFunction const& force, std::vector<int> const& sparse_map)
+    Optimizer::addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map)
     {
         size_t const num_vars = force.numVars();
         for (size_t i = 0; i < num_vars; ++i) {
@@ -113,10 +115,12 @@ namespace spfit
 
         try {
             mc(m_A).solve(mc(m_b)).write(m_x.data());
-        } catch (std::runtime_error const&) {
+        }
+        catch (std::runtime_error const&) {
             m_externalForce.reset();
             m_internalForce.reset();
             m_x.fill(0);
+
             return OptimizationResult(total_force_before, total_force_before);
         }
 
@@ -127,7 +131,7 @@ namespace spfit
         adjustConstraints(1.0);
 
         return OptimizationResult(total_force_before, total_force_after);
-    }
+    }  // Optimizer::optimize
 
     void
     Optimizer::undoLastStep()
@@ -136,10 +140,10 @@ namespace spfit
         m_x.fill(0);
     }
 
-/**
- * direction == 1 is used for forward adjustment,
- * direction == -1 is used for undoing the last step.
- */
+    /**
+     * direction == 1 is used for forward adjustment,
+     * direction == -1 is used for undoing the last step.
+     */
     void
     Optimizer::adjustConstraints(double direction)
     {
@@ -163,5 +167,4 @@ namespace spfit
         m_internalForce.swap(other.m_internalForce);
         std::swap(m_numVars, other.m_numVars);
     }
-
-} 
+}  // namespace spfit

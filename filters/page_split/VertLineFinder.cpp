@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "VertLineFinder.h"
 #include "ImageTransformation.h"
@@ -32,14 +33,15 @@
 
 namespace page_split
 {
-
     using namespace imageproc;
 
     std::vector<QLineF>
-    VertLineFinder::findLines(
-            QImage const& image, ImageTransformation const& xform,
-            int const max_lines, DebugImages* dbg,
-            GrayImage* gray_downscaled, QTransform* out_to_downscaled)
+    VertLineFinder::findLines(QImage const& image,
+                              ImageTransformation const& xform,
+                              int const max_lines,
+                              DebugImages* dbg,
+                              GrayImage* gray_downscaled,
+                              QTransform* out_to_downscaled)
     {
         int const dpi = 100;
 
@@ -53,10 +55,10 @@ namespace page_split
         }
 
         GrayImage const gray100(
-                transformToGray(
-                        image, xform_100dpi.transform(), target_rect,
-                        OutsidePixels::assumeWeakColor(Qt::black), QSizeF(5.0, 5.0)
-                )
+            transformToGray(
+                image, xform_100dpi.transform(), target_rect,
+                OutsidePixels::assumeWeakColor(Qt::black), QSizeF(5.0, 5.0)
+            )
         );
         if (dbg) {
             dbg->add(gray100, "gray100");
@@ -95,7 +97,7 @@ namespace page_split
             preprocessed = GrayImage();
         }
 
-        grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc> >(h_gradient, v_gradient);
+        grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc>>(h_gradient, v_gradient);
         v_gradient = GrayImage();
         if (dbg) {
             dbg->add(h_gradient, "vert_raster_lines");
@@ -110,19 +112,19 @@ namespace page_split
         double const line_thickness = 5.0;
         double const max_angle = 7.0;
         double const angle_step = 0.25;
-        int const angle_steps_to_max = (int) (max_angle / angle_step);
+        int const angle_steps_to_max = (int)(max_angle / angle_step);
         int const total_angle_steps = angle_steps_to_max * 2 + 1;
         double const min_angle = -angle_steps_to_max * angle_step;
         HoughLineDetector line_detector(
-                raster_lines.size(), line_thickness,
-                min_angle, angle_step, total_angle_steps
+            raster_lines.size(), line_thickness,
+            min_angle, angle_step, total_angle_steps
         );
 
         unsigned weight_table[256];
         buildWeightTable(weight_table);
 
         double const margin_mm = 3.5;
-        int const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
+        int const margin = (int)floor(0.5 + margin_mm * constants::MM2INCH * dpi);
 
         int const x_limit = raster_lines.width() - margin;
         int const height = raster_lines.height();
@@ -137,7 +139,7 @@ namespace page_split
             }
         }
 
-        unsigned const min_quality = (unsigned) (height * line_thickness * 1.8) + 1;
+        unsigned const min_quality = (unsigned)(height * line_thickness * 1.8) + 1;
 
         if (dbg) {
             dbg->add(line_detector.visualizeHoughSpace(min_quality), "hough_space");
@@ -147,11 +149,11 @@ namespace page_split
 
         typedef std::list<LineGroup> LineGroups;
         LineGroups line_groups;
-        for (HoughLine const& hough_line :  hough_lines) {
+        for (HoughLine const& hough_line : hough_lines) {
             QualityLine const new_line(
-                    hough_line.pointAtY(0.0),
-                    hough_line.pointAtY(height),
-                    hough_line.quality()
+                hough_line.pointAtY(0.0),
+                hough_line.pointAtY(height),
+                hough_line.quality()
             );
             LineGroup* home_group = 0;
 
@@ -179,18 +181,18 @@ namespace page_split
         }
 
         std::vector<QLineF> lines;
-        for (LineGroup const& group :  line_groups) {
+        for (LineGroup const& group : line_groups) {
             lines.push_back(group.leader().toQLine());
-            if ((int) lines.size() == max_lines) {
+            if ((int)lines.size() == max_lines) {
                 break;
             }
         }
 
         if (dbg) {
             QImage visual(
-                    preprocessed.toQImage().convertToFormat(
-                            QImage::Format_ARGB32_Premultiplied
-                    )
+                preprocessed.toQImage().convertToFormat(
+                    QImage::Format_ARGB32_Premultiplied
+                )
             );
 
             {
@@ -200,7 +202,7 @@ namespace page_split
                 pen.setWidthF(3.0);
                 painter.setPen(pen);
 
-                for (QLineF const& line :  lines) {
+                for (QLineF const& line : lines) {
                     painter.drawLine(line);
                 }
             }
@@ -208,14 +210,14 @@ namespace page_split
         }
 
         QTransform const undo_100dpi(
-                xform_100dpi.transformBack() * xform.transform()
+            xform_100dpi.transformBack() * xform.transform()
         );
-        for (QLineF& line :  lines) {
+        for (QLineF& line : lines) {
             line = undo_100dpi.map(line);
         }
 
         return lines;
-    }
+    }  // VertLineFinder::findLines
 
     GrayImage
     VertLineFinder::removeDarkVertBorders(GrayImage const& src)
@@ -223,7 +225,7 @@ namespace page_split
         GrayImage dst(src);
 
         selectVertBorders(dst);
-        grayRasterOp<GRopInvert<GRopClippedSubtract<GRopDst, GRopSrc> > >(dst, src);
+        grayRasterOp<GRopInvert<GRopClippedSubtract<GRopDst, GRopSrc>>>(dst, src);
 
         return dst;
     }
@@ -249,9 +251,9 @@ namespace page_split
             prev_pixel = 0x00;
             for (int x = w - 1; x >= 0; --x) {
                 prev_pixel = std::max(
-                        image_line[x],
-                        std::min(prev_pixel, tmp_line[x])
-                );
+                    image_line[x],
+                    std::min(prev_pixel, tmp_line[x])
+                             );
                 image_line[x] = prev_pixel;
             }
         }
@@ -276,12 +278,10 @@ namespace page_split
         }
     }
 
+    /*======================= VertLineFinder::QualityLine =======================*/
 
-/*======================= VertLineFinder::QualityLine =======================*/
-
-    VertLineFinder::QualityLine::QualityLine(
-            QPointF const& top, QPointF const& bottom, unsigned const quality)
-            : m_quality(quality)
+    VertLineFinder::QualityLine::QualityLine(QPointF const& top, QPointF const& bottom, unsigned const quality)
+        : m_quality(quality)
     {
         if (top.x() < bottom.x()) {
             m_left = top;
@@ -299,15 +299,13 @@ namespace page_split
         return QLineF(m_left, m_right);
     }
 
-
-/*======================= VertLineFinder::LineGroup ========================*/
+    /*======================= VertLineFinder::LineGroup ========================*/
 
     VertLineFinder::LineGroup::LineGroup(QualityLine const& line)
-            : m_leader(line),
-              m_left(line.left().x()),
-              m_right(line.right().x())
-    {
-    }
+        : m_leader(line),
+          m_left(line.left().x()),
+          m_right(line.right().x())
+    { }
 
     bool
     VertLineFinder::LineGroup::belongsHere(QualityLine const& line) const
@@ -342,5 +340,4 @@ namespace page_split
             m_leader = other.leader();
         }
     }
-
-} 
+}  // namespace page_split

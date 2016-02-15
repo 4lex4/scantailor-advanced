@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,23 +15,21 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageTransformation.h"
 
-ImageTransformation::ImageTransformation(
-        QRectF const& orig_image_rect, Dpi const& orig_dpi)
-        : m_postRotation(0.0),
-          m_origRect(orig_image_rect),
-          m_resultingRect(orig_image_rect),
-          m_origDpi(orig_dpi)
+ImageTransformation::ImageTransformation(QRectF const& orig_image_rect, Dpi const& orig_dpi)
+    : m_postRotation(0.0),
+      m_origRect(orig_image_rect),
+      m_resultingRect(orig_image_rect),
+      m_origDpi(orig_dpi)
 {
     preScaleToEqualizeDpi();
 }
 
 ImageTransformation::~ImageTransformation()
-{
-}
+{ }
 
 void
 ImageTransformation::preScaleToDpi(Dpi const& dpi)
@@ -41,11 +40,11 @@ ImageTransformation::preScaleToDpi(Dpi const& dpi)
 
     m_preScaledDpi = dpi;
 
-    double const xscale = (double) dpi.horizontal() / m_origDpi.horizontal();
-    double const yscale = (double) dpi.vertical() / m_origDpi.vertical();
+    double const xscale = (double)dpi.horizontal() / m_origDpi.horizontal();
+    double const yscale = (double)dpi.vertical() / m_origDpi.vertical();
 
     QSizeF const new_pre_scaled_image_size(
-            m_origRect.width() * xscale, m_origRect.height() * yscale
+        m_origRect.width() * xscale, m_origRect.height() * yscale
     );
 
     QTransform const undo21(m_preRotateXform.inverted() * m_preScaleXform.inverted());
@@ -69,7 +68,7 @@ ImageTransformation::preScaleToDpi(Dpi const& dpi)
     m_postScaleXform = calcPostScaleXform(m_postScaledDpi);
 
     update();
-}
+}  // ImageTransformation::preScaleToDpi
 
 void
 ImageTransformation::preScaleToEqualizeDpi()
@@ -134,6 +133,7 @@ ImageTransformation::calcCropXform(QPolygonF const& area)
     QRectF const bounds(area.boundingRect());
     QTransform xform;
     xform.translate(-bounds.x(), -bounds.y());
+
     return xform;
 }
 
@@ -153,10 +153,11 @@ ImageTransformation::calcPostRotateXform(double const degrees)
         QRectF const post_rotate_rect(post_rotate_poly.boundingRect());
 
         xform *= QTransform().translate(
-                pre_rotate_rect.left() - post_rotate_rect.left(),
-                pre_rotate_rect.top() - post_rotate_rect.top()
-        );
+            pre_rotate_rect.left() - post_rotate_rect.left(),
+            pre_rotate_rect.top() - post_rotate_rect.top()
+                 );
     }
+
     return xform;
 }
 
@@ -179,6 +180,7 @@ ImageTransformation::calcPostScaleXform(Dpi const& target_dpi)
     double const yscale = target_dpi.vertical() * orig_vert_unit.length() / m_origDpi.vertical();
     QTransform xform;
     xform.scale(xscale, yscale);
+
     return xform;
 }
 
@@ -229,3 +231,4 @@ ImageTransformation::update()
     m_resultingPostCropArea = post_crop_then_post_scale.map(m_postCropArea);
     m_resultingRect = m_resultingPostCropArea.boundingRect();
 }
+

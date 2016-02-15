@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROJECTFILESDIALOG_H_
 #define PROJECTFILESDIALOG_H_
@@ -27,9 +28,11 @@
 #include <vector>
 #include <memory>
 
-class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog
+class ProjectFilesDialog
+    : public QDialog,
+      private Ui::ProjectFilesDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     ProjectFilesDialog(QWidget* parent = 0);
@@ -47,7 +50,6 @@ public:
     bool isDpiFixingForced() const;
 
 private slots:
-
     static QString sanitizePath(QString const& path);
 
     void inpDirBrowse();
@@ -66,9 +68,9 @@ private slots:
 
 private:
     class Item;
-class FileList;
-class SortedFileList;
-class ItemVisualOrdering;
+    class FileList;
+    class SortedFileList;
+    class ItemVisualOrdering;
 
     void setInputDir(QString const& dir, bool auto_add_files = true);
 
@@ -90,4 +92,4 @@ class ItemVisualOrdering;
     bool m_autoOutDir;
 };
 
-#endif
+#endif  // ifndef PROJECTFILESDIALOG_H_

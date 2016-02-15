@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "EstimateBackground.h"
 #include "ImageTransformation.h"
@@ -40,8 +41,7 @@
 
 using namespace imageproc;
 
-struct AbsoluteDifference
-{
+struct AbsoluteDifference {
     static uint8_t transform(uint8_t src, uint8_t dst)
     {
         return abs(int(src) - int(dst));
@@ -52,9 +52,10 @@ struct AbsoluteDifference
  * The same as seedFillGrayInPlace() with a seed of two black lines
  * at top and bottom, except here colors may only spread vertically.
  */
-static void seedFillTopBottomInPlace(GrayImage &image)
+static void
+seedFillTopBottomInPlace(GrayImage& image)
 {
-    uint8_t *const data = image.data();
+    uint8_t* const data = image.data();
     int const stride = image.stride();
 
     int const width = image.width();
@@ -63,7 +64,7 @@ static void seedFillTopBottomInPlace(GrayImage &image)
     std::vector<uint8_t> seed_line(height, 0xff);
 
     for (int x = 0; x < width; ++x) {
-        uint8_t *p = data + x;
+        uint8_t* p = data + x;
 
         uint8_t prev = 0;
         for (int y = 0; y < height; ++y) {
@@ -75,13 +76,14 @@ static void seedFillTopBottomInPlace(GrayImage &image)
         for (int y = height - 1; y >= 0; --y) {
             p -= stride;
             *p = prev = std::max(
-                    *p, std::min(seed_line[y], prev)
-            );
+                     *p, std::min(seed_line[y], prev)
+                        );
         }
     }
 }
 
-static void morphologicalPreprocessingInPlace(GrayImage &image, DebugImages *dbg)
+static void
+morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg)
 {
     using namespace boost::lambda;
 
@@ -102,8 +104,8 @@ static void morphologicalPreprocessingInPlace(GrayImage &image, DebugImages *dbg
 
     GrayImage diff(image);
     rasterOpGeneric(
-            diff.data(), diff.stride(), diff.size(),
-            method1.data(), method1.stride(), _1 -= _2
+        diff.data(), diff.stride(), diff.size(),
+        method1.data(), method1.stride(), _1 -= _2
     );
     if (dbg) {
         dbg->add(diff, "raw_diff");
@@ -115,9 +117,9 @@ static void morphologicalPreprocessingInPlace(GrayImage &image, DebugImages *dbg
     }
 
     rasterOpGeneric(
-            diff.data(), diff.stride(), diff.size(),
-            approximated.data(), approximated.stride(),
-            if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
+        diff.data(), diff.stride(), diff.size(),
+        approximated.data(), approximated.stride(),
+        if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
     );
     approximated = GrayImage();
     if (dbg) {
@@ -143,11 +145,11 @@ static void morphologicalPreprocessingInPlace(GrayImage &image, DebugImages *dbg
             dbg->add(image, "use_method2");
         }
     }
-}
+}  // morphologicalPreprocessingInPlace
 
-imageproc::PolynomialSurface estimateBackground(
-        GrayImage const &input, QPolygonF const &area_to_consider,
-        TaskStatus const &status, DebugImages *dbg)
+imageproc::PolynomialSurface
+estimateBackground(GrayImage const& input, QPolygonF const& area_to_consider, TaskStatus const& status,
+                   DebugImages* dbg)
 {
     QSize reduced_size(input.size());
     reduced_size.scale(300, 300, Qt::KeepAspectRatio);
@@ -165,7 +167,7 @@ imageproc::PolynomialSurface estimateBackground(
     int const width = background.width();
     int const height = background.height();
 
-    uint8_t const *const bg_data = background.data();
+    uint8_t const* const bg_data = background.data();
     int const bg_stride = background.stride();
 
     BinaryImage mask(background.size(), BLACK);
@@ -173,11 +175,11 @@ imageproc::PolynomialSurface estimateBackground(
     if (!area_to_consider.isEmpty()) {
         QTransform xform;
         xform.scale(
-                (double) reduced_size.width() / input.width(),
-                (double) reduced_size.height() / input.height()
+            (double)reduced_size.width() / input.width(),
+            (double)reduced_size.height() / input.height()
         );
         PolygonRasterizer::fillExcept(
-                mask, WHITE, xform.map(area_to_consider), Qt::WindingFill
+            mask, WHITE, xform.map(area_to_consider), Qt::WindingFill
         );
     }
 
@@ -185,7 +187,7 @@ imageproc::PolynomialSurface estimateBackground(
         dbg->add(mask, "area_to_consider");
     }
 
-    uint32_t *mask_data = mask.data();
+    uint32_t* mask_data = mask.data();
     int mask_stride = mask.wordsPerLine();
 
     std::vector<uint8_t> line(std::max(width, height), 0);
@@ -200,8 +202,8 @@ imageproc::PolynomialSurface estimateBackground(
         PolynomialLine pl(degree, bg_data + x, height, bg_stride);
         pl.output(&line[0], height, 1);
 
-        uint8_t const *p_bg = bg_data + x;
-        uint32_t *p_mask = mask_data + (x >> 5);
+        uint8_t const* p_bg = bg_data + x;
+        uint32_t* p_mask = mask_data + (x >> 5);
         for (int y = 0; y < height; ++y) {
             if (*p_bg + 30 < line[y]) {
                 *p_mask &= mask;
@@ -213,8 +215,8 @@ imageproc::PolynomialSurface estimateBackground(
 
     status.throwIfCancelled();
 
-    uint8_t const *bg_line = bg_data;
-    uint32_t *mask_line = mask_data;
+    uint8_t const* bg_line = bg_data;
+    uint32_t* mask_line = mask_data;
     for (int y = 0; y < height; ++y) {
         int const degree = 4;
         PolynomialLine pl(degree, bg_line, width, 1);
@@ -248,8 +250,8 @@ imageproc::PolynomialSurface estimateBackground(
 
     int const last_word_idx = (width - 1) >> 5;
     uint32_t const last_word_mask = ~uint32_t(0) << (
-            32 - width - (last_word_idx << 5)
-    );
+        32 - width - (last_word_idx << 5)
+                                    );
     mask_line = mask_data;
     for (int y = 0; y < height; ++y, mask_line += mask_stride) {
         int black_count = 0;
@@ -271,7 +273,7 @@ imageproc::PolynomialSurface estimateBackground(
 
     for (int x = 0; x < width; ++x) {
         uint32_t const mask = msb >> (x & 31);
-        uint32_t *p_mask = mask_data + (x >> 5);
+        uint32_t* p_mask = mask_data + (x >> 5);
         int black_count = 0;
         for (int y = 0; y < height; ++y) {
             if (*p_mask & mask) {
@@ -294,4 +296,5 @@ imageproc::PolynomialSurface estimateBackground(
     status.throwIfCancelled();
 
     return PolynomialSurface(8, 5, background, mask);
-}
+}  // estimateBackground
+

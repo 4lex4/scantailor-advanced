@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_SETTINGS_H_
 #define SELECT_CONTENT_SETTINGS_H_
@@ -31,10 +32,10 @@ class AbstractRelinker;
 
 namespace select_content
 {
-
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     public:
         Settings();
@@ -54,34 +55,55 @@ namespace select_content
         std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
         double maxDeviation() const
-        { return m_maxDeviation; }
+        {
+            return m_maxDeviation;
+        }
 
         void setMaxDeviation(double md)
-        { m_maxDeviation = md; }
+        {
+            m_maxDeviation = md;
+        }
 
         QSizeF pageDetectionBox() const
-        { return m_pageDetectionBox; }
+        {
+            return m_pageDetectionBox;
+        }
 
         void setPageDetectionBox(QSizeF size)
-        { m_pageDetectionBox = size; }
+        {
+            m_pageDetectionBox = size;
+        }
 
         double pageDetectionTolerance() const
-        { return m_pageDetectionTolerance; }
+        {
+            return m_pageDetectionTolerance;
+        }
 
         void setPageDetectionTolerance(double tolerance)
-        { m_pageDetectionTolerance = tolerance; }
+        {
+            m_pageDetectionTolerance = tolerance;
+        }
 
         double avg() const
-        { return m_avg; };
+        {
+            return m_avg;
+        }
 
         void setAvg(double a)
-        { m_avg = a; };
+        {
+            m_avg = a;
+        }
 
         double std() const
-        { return m_sigma; };
+        {
+            return m_sigma;
+        }
 
         void setStd(double s)
-        { m_sigma = s; };
+        {
+            m_sigma = s;
+        }
+
     private:
         typedef std::map<PageId, Params> PageParams;
 
@@ -93,6 +115,5 @@ namespace select_content
         QSizeF m_pageDetectionBox;
         double m_pageDetectionTolerance;
     };
-
-}
-#endif
+}  // namespace select_content
+#endif  // ifndef SELECT_CONTENT_SETTINGS_H_

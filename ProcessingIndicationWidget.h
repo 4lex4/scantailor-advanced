@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROCESSING_INDICATION_WIDGET_H_
 #define PROCESSING_INDICATION_WIDGET_H_
@@ -29,7 +30,8 @@ class QRect;
  * \brief This widget is displayed in the central area od the main window
  *        when an image is being processed.
  */
-class ProcessingIndicationWidget : public QWidget
+class ProcessingIndicationWidget
+    : public QWidget
 {
 public:
     ProcessingIndicationWidget(QWidget* parent = 0);
@@ -61,4 +63,4 @@ private:
     int m_timerId;
 };
 
-#endif
+#endif  // ifndef PROCESSING_INDICATION_WIDGET_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,25 +15,32 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAYLOAD_EVENT_H_
 #define PAYLOAD_EVENT_H_
 
 #include <QEvent>
 
-template<typename T>
-class PayloadEvent : public QEvent
+template <typename T>
+class PayloadEvent
+    : public QEvent
 {
 public:
-    PayloadEvent(T const& payload) : QEvent(User), m_payload(payload)
+    PayloadEvent(T const& payload)
+        : QEvent(User),
+          m_payload(payload)
     { }
 
     T const& payload() const
-    { return m_payload; }
+    {
+        return m_payload;
+    }
 
     T& payload()
-    { return m_payload; }
+    {
+        return m_payload;
+    }
 
 private:
     T m_payload;

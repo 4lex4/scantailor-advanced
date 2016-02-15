@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Utils.h"
 #include "BinaryImage.h"
@@ -24,13 +25,10 @@
 
 namespace imageproc
 {
-
     namespace tests
     {
-
         namespace utils
         {
-
             BinaryImage
             randomBinaryImage(int const width, int const height)
             {
@@ -42,6 +40,7 @@ namespace imageproc
                     uint32_t const w2 = rand() % (1 << 16);
                     *pword = (w1 << 16) | w2;
                 }
+
                 return image;
             }
 
@@ -52,7 +51,7 @@ namespace imageproc
                 image.setColorCount(2);
                 image.setColor(0, 0xffffffff);
                 image.setColor(1, 0xff000000);
-                uint32_t* pword = (uint32_t*) image.bits();
+                uint32_t* pword = (uint32_t*)image.bits();
                 assert(image.bytesPerLine() % 4 == 0);
                 uint32_t* const end = pword + image.height() * (image.bytesPerLine() / 4);
                 for (; pword != end; ++pword) {
@@ -60,6 +59,7 @@ namespace imageproc
                     uint32_t const w2 = rand() % (1 << 16);
                     *pword = (w1 << 16) | w2;
                 }
+
                 return image;
             }
 
@@ -73,15 +73,18 @@ namespace imageproc
                         img.setPixel(x, y, rand() % 10);
                     }
                 }
+
                 return img;
             }
 
-            BinaryImage makeBinaryImage(int const* data, int const width, int const height)
+            BinaryImage
+            makeBinaryImage(int const* data, int const width, int const height)
             {
                 return BinaryImage(makeMonoQImage(data, width, height));
             }
 
-            QImage makeMonoQImage(int const* data, int const width, int const height)
+            QImage
+            makeMonoQImage(int const* data, int const width, int const height)
             {
                 QImage img(width, height, QImage::Format_Mono);
                 img.setColorCount(2);
@@ -92,10 +95,12 @@ namespace imageproc
                         img.setPixel(x, y, data[y * width + x] ? 1 : 0);
                     }
                 }
+
                 return img;
             }
 
-            QImage makeGrayImage(int const* data, int const width, int const height)
+            QImage
+            makeGrayImage(int const* data, int const width, int const height)
             {
                 QImage img(width, height, QImage::Format_Indexed8);
                 img.setColorTable(createGrayscalePalette());
@@ -104,10 +109,12 @@ namespace imageproc
                         img.setPixel(x, y, data[y * width + x]);
                     }
                 }
+
                 return img;
             }
 
-            void dumpBinaryImage(BinaryImage const& img, char const* name)
+            void
+            dumpBinaryImage(BinaryImage const& img, char const* name)
             {
                 if (name) {
                     std::cout << name << " = ";
@@ -115,6 +122,7 @@ namespace imageproc
 
                 if (img.isNull()) {
                     std::cout << "NULL image" << std::endl;
+
                     return;
                 }
 
@@ -134,7 +142,8 @@ namespace imageproc
                 std::cout << "}" << std::endl;
             }
 
-            void dumpGrayImage(QImage const& img, char const* name)
+            void
+            dumpGrayImage(QImage const& img, char const* name)
             {
                 if (name) {
                     std::cout << name << " = ";
@@ -142,6 +151,7 @@ namespace imageproc
 
                 if (img.isNull()) {
                     std::cout << "NULL image" << std::endl;
+
                     return;
                 }
                 if (img.format() != QImage::Format_Indexed8) {
@@ -162,7 +172,8 @@ namespace imageproc
                 std::cout << "}" << std::endl;
             }
 
-            bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect)
+            bool
+            surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect)
             {
                 assert(img1.size() == img2.size());
 
@@ -192,7 +203,7 @@ namespace imageproc
 
                 if (rect.bottom() != img1.rect().bottom()) {
                     QRect const bottom_of(
-                            0, rect.y() + rect.height(), w, h - rect.y() - rect.height()
+                        0, rect.y() + rect.height(), w, h - rect.y() - rect.height()
                     );
                     if (img1.copy(bottom_of) != img2.copy(bottom_of)) {
                         return false;
@@ -200,8 +211,7 @@ namespace imageproc
                 }
 
                 return true;
-            }
-
-        }
-    }
-} 
+            }  // surroundingsIntact
+        }  // namespace utils
+    }  // namespace tests
+}  // namespace imageproc

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "Filter.h"
@@ -25,12 +26,10 @@
 
 namespace fix_orientation
 {
-
-    OptionsWidget::OptionsWidget(
-            IntrusivePtr<Settings> const& settings,
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_pageSelectionAccessor(page_selection_accessor)
+    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                                 PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_pageSelectionAccessor(page_selection_accessor)
     {
         setupUi(this);
 
@@ -41,12 +40,10 @@ namespace fix_orientation
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
-    OptionsWidget::preUpdateUI(
-            PageId const& page_id, OrthogonalRotation const rotation)
+    OptionsWidget::preUpdateUI(PageId const& page_id, OrthogonalRotation const rotation)
     {
         m_pageId = page_id;
         m_rotation = rotation;
@@ -85,16 +82,16 @@ namespace fix_orientation
     OptionsWidget::showApplyToDialog()
     {
         ApplyDialog* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                              );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(appliedTo(std::set<PageId> const&)),
-                this, SLOT(appliedTo(std::set<PageId> const&))
+            dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
+            this, SLOT(appliedTo(std::set<PageId> const &))
         );
         connect(
-                dialog, SIGNAL(appliedToAllPages(std::set<PageId> const&)),
-                this, SLOT(appliedToAllPages(std::set<PageId> const&))
+            dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
+            this, SLOT(appliedToAllPages(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -112,7 +109,7 @@ namespace fix_orientation
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -165,6 +162,4 @@ namespace fix_orientation
 
         rotationIndicator->setPixmap(QPixmap(path));
     }
-
-
-} 
+}  // namespace fix_orientation

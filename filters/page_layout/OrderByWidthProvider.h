@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_ORDER_BY_WIDTH_PROVIDER_H_
 #define PAGE_LAYOUT_ORDER_BY_WIDTH_PROVIDER_H_
@@ -25,19 +26,17 @@
 
 namespace page_layout
 {
-
-    class OrderByWidthProvider : public PageOrderProvider
+    class OrderByWidthProvider
+        : public PageOrderProvider
     {
     public:
         OrderByWidthProvider(IntrusivePtr<Settings> const& settings);
 
-        virtual bool precedes(
-                PageId const& lhs_page, bool lhs_incomplete,
-                PageId const& rhs_page, bool rhs_incomplete) const;
+        virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
+                              bool rhs_incomplete) const;
 
     private:
         IntrusivePtr<Settings> m_ptrSettings;
     };
-
 }
 #endif

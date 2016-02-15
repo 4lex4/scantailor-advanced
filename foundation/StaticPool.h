@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef STATIC_POOL_H_
 #define STATIC_POOL_H_
@@ -23,13 +24,15 @@
 #include <stdexcept>
 #include <stddef.h>
 
-template<typename T>
+template <typename T>
 class StaticPoolBase
 {
-DECLARE_NON_COPYABLE(StaticPoolBase)
+    DECLARE_NON_COPYABLE(StaticPoolBase)
 
 public:
-    StaticPoolBase(T* buf, size_t size) : m_pNext(buf), m_sizeRemaining(size)
+    StaticPoolBase(T* buf, size_t size)
+        : m_pNext(buf),
+          m_sizeRemaining(size)
     { }
 
     /**
@@ -56,13 +59,15 @@ private:
  * There is no way of releasing the allocated objects
  * besides destroying the whole pool.
  */
-template<typename T, size_t S>
-class StaticPool : public StaticPoolBase<T>
+template <typename T, size_t S>
+class StaticPool
+    : public StaticPoolBase<T>
 {
-DECLARE_NON_COPYABLE(StaticPool)
+    DECLARE_NON_COPYABLE(StaticPool)
 
 public:
-    StaticPool() : StaticPoolBase<T>(m_buf, S)
+    StaticPool()
+        : StaticPoolBase<T>(m_buf, S)
     { }
 
 private:
@@ -70,7 +75,7 @@ private:
 };
 
 
-template<typename T>
+template <typename T>
 T*
 StaticPoolBase<T>::alloc(size_t num_elements)
 {
@@ -85,4 +90,4 @@ StaticPoolBase<T>::alloc(size_t num_elements)
     return sequence;
 }
 
-#endif
+#endif  // ifndef STATIC_POOL_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FILTERUIINTERFACE_H_
 #define FILTERUIINTERFACE_H_
@@ -33,29 +34,26 @@ class QWidget;
 class FilterUiInterface
 {
 public:
-    enum Ownership
-    {
-        KEEP_OWNERSHIP, TRANSFER_OWNERSHIP
-    };
+    enum Ownership { KEEP_OWNERSHIP, TRANSFER_OWNERSHIP };
 
     virtual ~FilterUiInterface()
     { }
 
-    virtual void setOptionsWidget(
-            FilterOptionsWidget *widget, Ownership ownership) = 0;
+    virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) = 0;
 
-    virtual void setImageWidget(
-            QWidget *widget, Ownership ownership,
-            DebugImages *debug_images = 0, bool clearImageWidget = true) = 0;
+    virtual void setImageWidget(QWidget* widget,
+                                Ownership ownership,
+                                DebugImages* debug_images = 0,
+                                bool clearImageWidget = true) = 0;
 
-    virtual void invalidateThumbnail(PageId const &page_id) = 0;
+    virtual void invalidateThumbnail(PageId const& page_id) = 0;
 
     virtual void invalidateAllThumbnails() = 0;
 
     /**
      * Returns a callable object that when called will open a relinking dialog.
      */
-    virtual IntrusivePtr<AbstractCommand0<void> > relinkingDialogRequester() = 0;
+    virtual IntrusivePtr<AbstractCommand0<void>> relinkingDialogRequester() = 0;
 };
 
-#endif
+#endif  // ifndef FILTERUIINTERFACE_H_

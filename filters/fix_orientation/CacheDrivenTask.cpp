@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CacheDrivenTask.h"
 #include "Settings.h"
@@ -28,22 +29,17 @@
 
 namespace fix_orientation
 {
-
-    CacheDrivenTask::CacheDrivenTask(
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings)
-    {
-    }
+    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
+        : m_ptrNextTask(next_task),
+          m_ptrSettings(settings)
+    { }
 
     CacheDrivenTask::~CacheDrivenTask()
-    {
-    }
+    { }
 
     void
-    CacheDrivenTask::process(
-            PageInfo const& page_info, AbstractFilterDataCollector* collector)
+    CacheDrivenTask::process(PageInfo const& page_info, AbstractFilterDataCollector* collector)
     {
         QRectF const initial_rect(QPointF(0.0, 0.0), page_info.metadata().size());
         ImageTransformation xform(initial_rect, page_info.metadata().dpi());
@@ -55,20 +51,20 @@ namespace fix_orientation
 
         if (m_ptrNextTask) {
             m_ptrNextTask->process(page_info, collector, xform);
+
             return;
         }
 
         if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                            new ThumbnailBase(
-                                    thumb_col->thumbnailCache(),
-                                    thumb_col->maxLogicalThumbSize(),
-                                    page_info.imageId(), xform
-                            )
+                std::unique_ptr<QGraphicsItem>(
+                    new ThumbnailBase(
+                        thumb_col->thumbnailCache(),
+                        thumb_col->maxLogicalThumbSize(),
+                        page_info.imageId(), xform
                     )
+                )
             );
         }
     }
-
-} 
+}  // namespace fix_orientation

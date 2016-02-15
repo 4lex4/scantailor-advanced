@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
 
@@ -16,7 +17,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef CONSOLEBATCH_H_
 #define CONSOLEBATCH_H_
@@ -43,10 +44,9 @@
 class ConsoleBatch
 {
 public:
-    ConsoleBatch(
-            std::vector<ImageFileInfo> const &images,
-            QString const &output_directory,
-            Qt::LayoutDirection const layout);
+    ConsoleBatch(std::vector<ImageFileInfo> const& images,
+                 QString const& output_directory,
+                 Qt::LayoutDirection const layout);
 
     ConsoleBatch(QString const project_file);
 
@@ -78,10 +78,7 @@ private:
 
     void setupOutput(std::set<PageId> allPages);
 
-    BackgroundTaskPtr createCompositeTask(
-            PageInfo const &page,
-            int const last_filter_idx
-    );
+    BackgroundTaskPtr createCompositeTask(PageInfo const& page, int const last_filter_idx);
 };
 
-#endif
+#endif  // ifndef CONSOLEBATCH_H_

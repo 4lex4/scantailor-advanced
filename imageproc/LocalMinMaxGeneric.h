@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_
 #define IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_
@@ -27,22 +28,25 @@
 
 namespace imageproc
 {
-
     namespace detail
     {
-
         namespace local_min_max
         {
-
-            template<typename T, typename MinMaxSelector>
-            void fillAccumulator(
-                    MinMaxSelector selector, int todo_before, int todo_within, int todo_after,
-                    T outside_values, T const* src, int const src_delta,
-                    T* dst, int const dst_delta)
+            template <typename T, typename MinMaxSelector>
+            void
+            fillAccumulator(MinMaxSelector selector,
+                            int todo_before,
+                            int todo_within,
+                            int todo_after,
+                            T outside_values,
+                            T const* src,
+                            int const src_delta,
+                            T* dst,
+                            int const dst_delta)
             {
                 T extremum(outside_values);
 
-                if (todo_before <= 0 && todo_within > 0) {
+                if ((todo_before <= 0) && (todo_within > 0)) {
                     extremum = *src;
                 }
 
@@ -68,19 +72,25 @@ namespace imageproc
                 }
             }
 
-            template<typename T>
-            void fillWithConstant(T* from, T* to, T constant)
+            template <typename T>
+            void
+            fillWithConstant(T* from, T* to, T constant)
             {
                 for (++to; from != to; ++from) {
                     *from = constant;
                 }
             }
 
-            template<typename T, typename MinMaxSelector>
-            void horizontalPass(
-                    MinMaxSelector selector, QRect const neighborhood, T const outside_values,
-                    T const* input, int const input_stride, QSize const input_size,
-                    T* output, int const output_stride)
+            template <typename T, typename MinMaxSelector>
+            void
+            horizontalPass(MinMaxSelector selector,
+                           QRect const neighborhood,
+                           T const outside_values,
+                           T const* input,
+                           int const input_stride,
+                           QSize const input_size,
+                           T* output,
+                           int const output_stride)
             {
                 int const se_len = neighborhood.width();
                 int const width = input_size.width();
@@ -96,14 +106,14 @@ namespace imageproc
                     for (int dst_segment_first = 0; dst_segment_first < width;
                          dst_segment_first += se_len) {
                         int const dst_segment_last = std::min(
-                                dst_segment_first + se_len, width
-                        ) - 1;
+                            dst_segment_first + se_len, width
+                                                     ) - 1;
                         int const src_segment_first = dst_segment_first + dx1;
                         int const src_segment_last = dst_segment_last + dx2;
-                        int const src_segment_middle =
-                                (src_segment_first + src_segment_last) >> 1;
+                        int const src_segment_middle
+                            = (src_segment_first + src_segment_last) >> 1;
 
-                        if (src_segment_first > width_m1 || src_segment_middle < 0) {
+                        if ((src_segment_first > width_m1) || (src_segment_middle < 0)) {
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         }
                         else {
@@ -117,12 +127,12 @@ namespace imageproc
                             int const dst_delta = -1;
 
                             fillAccumulator(
-                                    selector, todo_before, todo_within, todo_after, outside_values,
-                                    input + src_segment_middle, src_delta, accum_middle, dst_delta
+                                selector, todo_before, todo_within, todo_after, outside_values,
+                                input + src_segment_middle, src_delta, accum_middle, dst_delta
                             );
                         }
 
-                        if (src_segment_last < 0 || src_segment_middle > width_m1) {
+                        if ((src_segment_last < 0) || (src_segment_middle > width_m1)) {
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         }
                         else {
@@ -136,8 +146,8 @@ namespace imageproc
                             int const dst_delta = 1;
 
                             fillAccumulator(
-                                    selector, todo_before, todo_within, todo_after, outside_values,
-                                    input + src_segment_middle, src_delta, accum_middle, dst_delta
+                                selector, todo_before, todo_within, todo_after, outside_values,
+                                input + src_segment_middle, src_delta, accum_middle, dst_delta
                             );
                         }
 
@@ -151,13 +161,18 @@ namespace imageproc
                     input += input_stride;
                     output += output_stride;
                 }
-            }
+            }  // horizontalPass
 
-            template<typename T, typename MinMaxSelector>
-            void verticalPass(
-                    MinMaxSelector selector, QRect const neighborhood, T const outside_values,
-                    T const* input, int const input_stride, QSize const input_size,
-                    T* output, int const output_stride)
+            template <typename T, typename MinMaxSelector>
+            void
+            verticalPass(MinMaxSelector selector,
+                         QRect const neighborhood,
+                         T const outside_values,
+                         T const* input,
+                         int const input_stride,
+                         QSize const input_size,
+                         T* output,
+                         int const output_stride)
             {
                 int const se_len = neighborhood.height();
                 int const width = input_size.width();
@@ -173,14 +188,14 @@ namespace imageproc
                     for (int dst_segment_first = 0; dst_segment_first < height;
                          dst_segment_first += se_len) {
                         int const dst_segment_last = std::min(
-                                dst_segment_first + se_len, height
-                        ) - 1;
+                            dst_segment_first + se_len, height
+                                                     ) - 1;
                         int const src_segment_first = dst_segment_first + dy1;
                         int const src_segment_last = dst_segment_last + dy2;
-                        int const src_segment_middle =
-                                (src_segment_first + src_segment_last) >> 1;
+                        int const src_segment_middle
+                            = (src_segment_first + src_segment_last) >> 1;
 
-                        if (src_segment_first > height_m1 || src_segment_middle < 0) {
+                        if ((src_segment_first > height_m1) || (src_segment_middle < 0)) {
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         }
                         else {
@@ -194,13 +209,13 @@ namespace imageproc
                             int const dst_delta = -1;
 
                             fillAccumulator(
-                                    selector, todo_before, todo_within, todo_after, outside_values,
-                                    input + src_segment_middle * input_stride, src_delta,
-                                    accum_middle, dst_delta
+                                selector, todo_before, todo_within, todo_after, outside_values,
+                                input + src_segment_middle * input_stride, src_delta,
+                                accum_middle, dst_delta
                             );
                         }
 
-                        if (src_segment_last < 0 || src_segment_middle > height_m1) {
+                        if ((src_segment_last < 0) || (src_segment_middle > height_m1)) {
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         }
                         else {
@@ -214,9 +229,9 @@ namespace imageproc
                             int const dst_delta = 1;
 
                             fillAccumulator(
-                                    selector, todo_before, todo_within, todo_after, outside_values,
-                                    input + src_segment_middle * input_stride, src_delta,
-                                    accum_middle, dst_delta
+                                selector, todo_before, todo_within, todo_after, outside_values,
+                                input + src_segment_middle * input_stride, src_delta,
+                                accum_middle, dst_delta
                             );
                         }
 
@@ -232,43 +247,47 @@ namespace imageproc
                     ++input;
                     ++output;
                 }
-            }
+            }  // verticalPass
+        }  // namespace local_min_max
+    }  // namespace detail
 
-        }
-    }
-
-/**
- * \brief For each cell on a 2D grid, finds the minimum or the maximum value
- *        in a rectangular neighborhood.
- *
- * This can be seen as a generalized version of grayscale erode and dilate operations.
- *
- * \param selector A functor or a pointer to a free function that can be called with
- *        two arguments of type T and return the bigger or the smaller of the two.
- * \param neighborhood The rectangular neighborhood to search for maximum or minimum values.
- *        The (0, 0) point would usually be located at the center of the neighborhood
- *        rectangle, although it's not strictly required.  The neighborhood rectangle
- *        can't be empty.
- * \param outside_values Values that are assumed to be outside of the grid bounds.
- * \param input Pointer to the input buffer.
- * \param input_stride The size of a row in input buffer, in terms of the number of T objects.
- * \param input_size Dimensions of the input grid.
- * \param output Pointer to the output data.  Note that the input and output buffers
- *        may be the same.
- * \param output_stride The size of a row in the output buffer, in terms of the number of T objects.
- *        The output grid is presumed to have the same dimensions as the input grid.
- *
- * This code is an implementation of the following algorithm:\n
- * A fast algorithm for local minimum and maximum filters on rectangular and octagonal kernels,
- * Patt. Recog. Letters, 13, pp. 517-521, 1992
- *
- * A good description of this algorithm is available online at:
- * http: */
-    template<typename T, typename MinMaxSelector>
-    void localMinMaxGeneric(
-            MinMaxSelector selector, QRect const neighborhood, T const outside_values,
-            T const* input, int const input_stride, QSize const input_size,
-            T* output, int const output_stride)
+    /**
+     * \brief For each cell on a 2D grid, finds the minimum or the maximum value
+     *        in a rectangular neighborhood.
+     *
+     * This can be seen as a generalized version of grayscale erode and dilate operations.
+     *
+     * \param selector A functor or a pointer to a free function that can be called with
+     *        two arguments of type T and return the bigger or the smaller of the two.
+     * \param neighborhood The rectangular neighborhood to search for maximum or minimum values.
+     *        The (0, 0) point would usually be located at the center of the neighborhood
+     *        rectangle, although it's not strictly required.  The neighborhood rectangle
+     *        can't be empty.
+     * \param outside_values Values that are assumed to be outside of the grid bounds.
+     * \param input Pointer to the input buffer.
+     * \param input_stride The size of a row in input buffer, in terms of the number of T objects.
+     * \param input_size Dimensions of the input grid.
+     * \param output Pointer to the output data.  Note that the input and output buffers
+     *        may be the same.
+     * \param output_stride The size of a row in the output buffer, in terms of the number of T objects.
+     *        The output grid is presumed to have the same dimensions as the input grid.
+     *
+     * This code is an implementation of the following algorithm:\n
+     * A fast algorithm for local minimum and maximum filters on rectangular and octagonal kernels,
+     * Patt. Recog. Letters, 13, pp. 517-521, 1992
+     *
+     * A good description of this algorithm is available online at:
+     * http: */
+    template <typename T, typename MinMaxSelector>
+    void
+    localMinMaxGeneric(MinMaxSelector selector,
+                       QRect const neighborhood,
+                       T const outside_values,
+                       T const* input,
+                       int const input_stride,
+                       QSize const input_size,
+                       T* output,
+                       int const output_stride)
     {
         assert(!neighborhood.isEmpty());
 
@@ -280,17 +299,16 @@ namespace imageproc
         int const temp_stride = input_size.width();
 
         detail::local_min_max::horizontalPass(
-                selector, neighborhood, outside_values,
-                input, input_stride, input_size,
-                &temp[0], temp_stride
+            selector, neighborhood, outside_values,
+            input, input_stride, input_size,
+            &temp[0], temp_stride
         );
 
         detail::local_min_max::verticalPass(
-                selector, neighborhood, outside_values,
-                &temp[0], temp_stride, input_size,
-                output, output_stride
+            selector, neighborhood, outside_values,
+            &temp[0], temp_stride, input_size,
+            output, output_stride
         );
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_

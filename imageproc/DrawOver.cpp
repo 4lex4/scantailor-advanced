@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DrawOver.h"
 #include "BinaryImage.h"
@@ -24,10 +25,8 @@
 
 namespace imageproc
 {
-
-    void drawOver(
-            QImage& dst, QRect const& dst_rect,
-            QImage const& src, QRect const& src_rect)
+    void
+    drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect)
     {
         if (src_rect.size() != dst_rect.size()) {
             throw std::invalid_argument("drawOver: source and destination areas have different sizes");
@@ -71,6 +70,5 @@ namespace imageproc
             dst_line += dst_bpl;
             src_line += src_bpl;
         }
-    }
-
-} 
+    }  // drawOver
+}  // namespace imageproc

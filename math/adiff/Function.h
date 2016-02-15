@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ADIFF_FUNCTION_H_
 #define ADIFF_FUNCTION_H_
@@ -26,17 +27,16 @@
 
 namespace adiff
 {
-
-/**
- * \brief Represents a multivariable function and its derivatives.
- *
- * It would be nice to have a generic version,
- * but for now it's only specialized for ORD == 2.
- */
-    template<int ORD>
+    /**
+     * \brief Represents a multivariable function and its derivatives.
+     *
+     * It would be nice to have a generic version,
+     * but for now it's only specialized for ORD == 2.
+     */
+    template <int ORD>
     class Function;
 
-    template<>
+    template <>
     class Function<2>
     {
     public:
@@ -87,7 +87,8 @@ namespace adiff
         Function& operator*=(double scalar);
     };
 
-    inline void swap(Function<2>& f1, Function<2>& f2)
+    inline void
+    swap(Function<2>& f1, Function<2>& f2)
     {
         f1.swap(f2);
     }
@@ -103,6 +104,5 @@ namespace adiff
     Function<2> operator*(double scalar, Function<2> const& f);
 
     Function<2> operator/(Function<2> const& num, Function<2> const& den);
-
-}
-#endif
+}  // namespace adiff
+#endif  // ifndef ADIFF_FUNCTION_H_

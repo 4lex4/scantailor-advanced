@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PixmapRenderer.h"
 #include <QPainter>
@@ -22,21 +23,21 @@
 #include <QDebug>
 
 #ifdef Q_WS_X11
-#  include <QX11Info>
-#  include <QRegion>
-#  include <X11/extensions/Xrender.h>
+ #  include <QX11Info>
+ #  include <QRegion>
+ #  include <X11/extensions/Xrender.h>
 #endif
 
 void
-PixmapRenderer::drawPixmap(
-        QPainter& painter, QPixmap const& pixmap)
+PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap)
 {
 #if !defined(Q_WS_X11)
     drawPixmapNoXRender(painter, pixmap);
 #else
     QPaintDevice* const dev = painter.device();
 
-    QPoint offset;     QPaintDevice* const redir_dev = QPainter::redirected(painter.device(), &offset);
+    QPoint offset;
+    QPaintDevice* const redir_dev = QPainter::redirected(painter.device(), &offset);
     QPaintDevice* const paint_dev = redir_dev ? redir_dev : dev;
 
     QRect const device_rect(
@@ -50,36 +51,40 @@ PixmapRenderer::drawPixmap(
     Picture dst_pict = 0;
     if (QWidget* widget = dynamic_cast<QWidget*>(paint_dev)) {
         dst_pict = widget->x11PictureHandle();
-    } else if (QPixmap* pixmap = dynamic_cast<QPixmap*>(paint_dev)) {
+    }
+    else if (QPixmap* pixmap = dynamic_cast<QPixmap*>(paint_dev)) {
         dst_pict = pixmap->x11PictureHandle();
     }
 
     if (!dst_pict) {
         drawPixmapNoXRender(painter, pixmap);
+
         return;
     }
 
-            QTransform const src_to_dst(painter.deviceTransform());
+    QTransform const src_to_dst(painter.deviceTransform());
     QTransform const dst_to_src(src_to_dst.inverted());
     QPolygonF const dst_poly(src_to_dst.map(src_rect));
 
-    XTransform xform = {{
+    XTransform xform = {
         {
-            XDoubleToFixed(dst_to_src.m11()),
-            XDoubleToFixed(dst_to_src.m21()),
-            XDoubleToFixed(dst_to_src.m31())
-        },
-        {
-            XDoubleToFixed(dst_to_src.m12()),
-            XDoubleToFixed(dst_to_src.m22()),
-            XDoubleToFixed(dst_to_src.m32())
-        },
-        {
-            XDoubleToFixed(dst_to_src.m13()),
-            XDoubleToFixed(dst_to_src.m23()),
-            XDoubleToFixed(dst_to_src.m33())
+            {
+                XDoubleToFixed(dst_to_src.m11()),
+                XDoubleToFixed(dst_to_src.m21()),
+                XDoubleToFixed(dst_to_src.m31())
+            },
+            {
+                XDoubleToFixed(dst_to_src.m12()),
+                XDoubleToFixed(dst_to_src.m22()),
+                XDoubleToFixed(dst_to_src.m32())
+            },
+            {
+                XDoubleToFixed(dst_to_src.m13()),
+                XDoubleToFixed(dst_to_src.m23()),
+                XDoubleToFixed(dst_to_src.m33())
+            }
         }
-    }};
+    };
 
     XRenderSetPictureTransform(dpy, src_pict, &xform);
 
@@ -110,13 +115,13 @@ PixmapRenderer::drawPixmap(
     }
     QRect const dst_rect(dst_rect_fitting.intersect(dst_bounding_rect));
 
-            XRenderComposite(
+    XRenderComposite(
         dpy, PictOpSrc,
         src_pict, 0, dst_pict, dst_rect.left(), dst_rect.top(), 0, 0,
         dst_rect.left(), dst_rect.top(), dst_rect.width(), dst_rect.height()
     );
-#endif
-}
+#endif  // if !defined(Q_WS_X11)
+}  // PixmapRenderer::drawPixmap
 
 void
 PixmapRenderer::drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap)
@@ -126,3 +131,4 @@ PixmapRenderer::drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap)
     QRectF const bounded_src_rect(src_rect.intersected(pixmap.rect()));
     painter.drawPixmap(bounded_src_rect, pixmap, bounded_src_rect);
 }
+

@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_VERTLINEFINDER_H_
 #define PAGE_SPLIT_VERTLINEFINDER_H_
@@ -36,32 +37,36 @@ namespace imageproc
 
 namespace page_split
 {
-
     class VertLineFinder
     {
     public:
-        static std::vector<QLineF> findLines(
-                QImage const& image, ImageTransformation const& xform,
-                int max_lines, DebugImages* dbg = 0,
-                imageproc::GrayImage* gray_downscaled = 0,
-                QTransform* out_to_downscaled = 0);
+        static std::vector<QLineF> findLines(QImage const& image,
+                                             ImageTransformation const& xform,
+                                             int max_lines,
+                                             DebugImages* dbg = 0,
+                                             imageproc::GrayImage* gray_downscaled = 0,
+                                             QTransform* out_to_downscaled = 0);
 
     private:
         class QualityLine
         {
         public:
-            QualityLine(
-                    QPointF const& top, QPointF const& bottom,
-                    unsigned quality);
+            QualityLine(QPointF const& top, QPointF const& bottom, unsigned quality);
 
             QPointF const& left() const
-            { return m_left; }
+            {
+                return m_left;
+            }
 
             QPointF const& right() const
-            { return m_right; }
+            {
+                return m_right;
+            }
 
             unsigned quality() const
-            { return m_quality; }
+            {
+                return m_quality;
+            }
 
             QLineF toQLine() const;
 
@@ -83,7 +88,9 @@ namespace page_split
             void merge(LineGroup const& other);
 
             QualityLine const& leader() const
-            { return m_leader; }
+            {
+                return m_leader;
+            }
 
         private:
             QualityLine m_leader;
@@ -97,6 +104,5 @@ namespace page_split
 
         static void buildWeightTable(unsigned weight_table[]);
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGE_SPLIT_VERTLINEFINDER_H_

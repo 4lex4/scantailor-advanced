@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,29 +15,30 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Function.h"
 #include <algorithm>
 
 namespace adiff
 {
-
-
     Function<2>::Function(size_t num_non_zero_vars)
-            : value(), firstDerivs(num_non_zero_vars), secondDerivs(num_non_zero_vars)
-    {
-    }
+        : value(),
+          firstDerivs(num_non_zero_vars),
+          secondDerivs(num_non_zero_vars)
+    { }
 
     Function<2>::Function(SparseMap<2> const& sparse_map)
-            : value(), firstDerivs(sparse_map.numNonZeroElements()), secondDerivs(sparse_map.numNonZeroElements())
-    {
-    }
+        : value(),
+          firstDerivs(sparse_map.numNonZeroElements()),
+          secondDerivs(sparse_map.numNonZeroElements())
+    { }
 
     Function<2>::Function(size_t arg_idx, double val, SparseMap<2> const& sparse_map)
-            : value(val), firstDerivs(sparse_map.numNonZeroElements()), secondDerivs(sparse_map.numNonZeroElements())
+        : value(val),
+          firstDerivs(sparse_map.numNonZeroElements()),
+          secondDerivs(sparse_map.numNonZeroElements())
     {
-
         size_t const num_vars = sparse_map.numVars();
 
         for (size_t i = 0; i < num_vars; ++i) {
@@ -203,8 +205,8 @@ namespace adiff
 
         for (size_t u = 0; u < p; ++u) {
             res.firstDerivs[u] = f1.firstDerivs[u] * f2.value + f1.value * f2.firstDerivs[u];
-            res.secondDerivs[u] = f1.secondDerivs[u] * f2.value +
-                                  2.0 * f1.firstDerivs[u] * f2.firstDerivs[u] + f1.value * f2.secondDerivs[u];
+            res.secondDerivs[u] = f1.secondDerivs[u] * f2.value
+                                  + 2.0 * f1.firstDerivs[u] * f2.firstDerivs[u] + f1.value * f2.secondDerivs[u];
         }
 
         return res;
@@ -214,6 +216,7 @@ namespace adiff
     {
         Function<2> res(f);
         res *= scalar;
+
         return res;
     }
 
@@ -221,6 +224,7 @@ namespace adiff
     {
         Function<2> res(f);
         res *= scalar;
+
         return res;
     }
 
@@ -250,5 +254,4 @@ namespace adiff
 
         return res;
     }
-
-} 
+}  // namespace adiff

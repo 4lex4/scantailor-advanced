@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THUMBNAILPIXMAPCACHE_H_
 #define THUMBNAILPIXMAPCACHE_H_
@@ -32,19 +33,17 @@ class QPixmap;
 class QString;
 class QSize;
 
-class ThumbnailPixmapCache : public RefCountable
+class ThumbnailPixmapCache
+    : public RefCountable
 {
-DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
+    DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
 
 public:
-    enum Status
-    {
-        LOADED, LOAD_FAILED, QUEUED
-    };
+    enum Status { LOADED, LOAD_FAILED, QUEUED };
 
     typedef AbstractCommand1<
             void, ThumbnailLoadResult const&
-    > CompletionHandler;
+>CompletionHandler;
 
     /**
      * \brief Constructor.  To be called from the GUI thread only.
@@ -64,8 +63,10 @@ public:
      *
      * \see ThumbnailLoadResult::REQUEST_EXPIRED
      */
-    ThumbnailPixmapCache(QString const& thumb_dir, QSize const& max_size,
-                         int max_cached_pixmaps, int expiration_threshold);
+    ThumbnailPixmapCache(QString const& thumb_dir,
+                         QSize const& max_size,
+                         int max_cached_pixmaps,
+                         int expiration_threshold);
 
     /**
      * \brief Destructor.  To be called from the GUI thread only.
@@ -107,7 +108,7 @@ public:
      * class X : public boost::signals::trackable
      * {
      * public:
-     * 	void handleCompletion(ThumbnailLoadResult const& result);
+     *  void handleCompletion(ThumbnailLoadResult const& result);
      * };
      *
      * X x;
@@ -120,9 +121,9 @@ public:
      * keep in mind is that only boost::bind() can handle trackable binds.
      * Other methods, for example boost::lambda::bind() can't do that.
      */
-    Status loadRequest(
-            ImageId const& image_id, QPixmap& pixmap,
-            std::weak_ptr<CompletionHandler> const& completion_handler);
+    Status loadRequest(ImageId const& image_id,
+                       QPixmap& pixmap,
+                       std::weak_ptr<CompletionHandler> const& completion_handler);
 
     /**
      * \brief If no thumbnail exists for this image, create it.
@@ -150,9 +151,9 @@ public:
 
 private:
     class Item;
-class Impl;
+    class Impl;
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
 
-#endif
+#endif  // ifndef THUMBNAILPIXMAPCACHE_H_

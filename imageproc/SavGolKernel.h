@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_SAVGOL_KERNEL_H_
 #define IMAGEPROC_SAVGOL_KERNEL_H_
@@ -28,35 +29,41 @@ class QSize;
 
 namespace imageproc
 {
-
     class SavGolKernel
     {
     public:
-        SavGolKernel(
-                QSize const& size, QPoint const& origin,
-                int hor_degree, int vert_degree);
+        SavGolKernel(QSize const& size, QPoint const& origin, int hor_degree, int vert_degree);
 
         void recalcForOrigin(QPoint const& origin);
 
         int width() const
-        { return m_width; }
+        {
+            return m_width;
+        }
 
         int height() const
-        { return m_height; }
+        {
+            return m_height;
+        }
 
         float const* data() const
-        { return m_kernel.data(); }
+        {
+            return m_kernel.data();
+        }
 
         float operator[](size_t idx) const
-        { return m_kernel[idx]; }
+        {
+            return m_kernel[idx];
+        }
 
     private:
-        struct Rotation
-        {
+        struct Rotation {
             double sin;
             double cos;
 
-            Rotation(double s, double c) : sin(s), cos(c)
+            Rotation(double s, double c)
+                : sin(s),
+                  cos(c)
             { }
         };
 
@@ -124,6 +131,5 @@ namespace imageproc
          */
         int m_numDataPoints;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_SAVGOL_KERNEL_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageFileInfo.h"
 #include <boost/lambda/lambda.hpp>
@@ -26,8 +27,8 @@ ImageFileInfo::isDpiOK() const
     using namespace boost::lambda;
 
     return std::find_if(
-            m_imageInfo.begin(), m_imageInfo.end(),
-            !bind(&ImageMetadata::isDpiOK, _1)
+        m_imageInfo.begin(), m_imageInfo.end(),
+        !bind(&ImageMetadata::isDpiOK, _1)
     ) == m_imageInfo.end();
 }
 

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
 
@@ -16,7 +17,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef COMMANDLINE_H_
 #define COMMANDLINE_H_
@@ -53,60 +54,90 @@ namespace page_layout
 class CommandLine
 {
 public:
-    enum Orientation
+    enum Orientation { TOP, LEFT, RIGHT, UPSIDEDOWN };
+
+    static CommandLine const& get()
     {
-        TOP, LEFT, RIGHT, UPSIDEDOWN
-    };
+        return m_globalInstance;
+    }
 
-    static CommandLine const &get()
-    { return m_globalInstance; }
+    static void set(CommandLine const& cl);
 
-    static void set(CommandLine const &cl);
-
-    CommandLine(QStringList const &argv, bool g = true) : m_error(false), m_gui(g), m_global(false),
-                                                          m_defaultNull(false)
-    { CommandLine::parseCli(argv); }
+    CommandLine(QStringList const& argv, bool g = true)
+        : m_error(false),
+          m_gui(g),
+          m_global(false),
+          m_defaultNull(false)
+    {
+        CommandLine::parseCli(argv);
+    }
 
     bool isGui() const
-    { return m_gui; }
+    {
+        return m_gui;
+    }
 
     bool isVerbose() const
-    { return contains("verbose"); }
+    {
+        return contains("verbose");
+    }
 
     bool isError() const
-    { return m_error; }
+    {
+        return m_error;
+    }
 
-    std::vector<ImageFileInfo> const &images() const
-    { return m_images; }
+    std::vector<ImageFileInfo> const& images() const
+    {
+        return m_images;
+    }
 
-    QString const &outputDirectory() const
-    { return m_outputDirectory; }
+    QString const& outputDirectory() const
+    {
+        return m_outputDirectory;
+    }
 
-    QString const &projectFile() const
-    { return m_projectFile; }
+    QString const& projectFile() const
+    {
+        return m_projectFile;
+    }
 
-    QString const &outputProjectFile() const
-    { return m_outputProjectFile; }
+    QString const& outputProjectFile() const
+    {
+        return m_outputProjectFile;
+    }
 
     bool isContentDetectionEnabled() const
-    { return !contains("disable-content-detection"); };
+    {
+        return !contains("disable-content-detection");
+    }
 
     bool isPageDetectionEnabled() const
-    { return contains("enable-page-detection"); };
+    {
+        return contains("enable-page-detection");
+    }
 
     bool isForcePageDetectionDisabled() const
-    { return contains("force-disable-page-detection"); };
+    {
+        return contains("force-disable-page-detection");
+    }
 
     bool isFineTuningEnabled() const
-    { return contains("enable-fine-tuning"); };
+    {
+        return contains("enable-fine-tuning");
+    }
 
     bool isAutoMarginsEnabled() const
-    { return contains("enable-auto-margins"); };
+    {
+        return contains("enable-auto-margins");
+    }
 
     bool hasMargins(QString base = "margins") const;
 
     bool hasPageBorders() const
-    { return hasMargins("page-borders"); };
+    {
+        return hasMargins("page-borders");
+    }
 
     bool hasAlignment() const;
 
@@ -115,204 +146,336 @@ public:
     bool hasLanguage() const;
 
     bool hasHelp() const
-    { return contains("help"); }
+    {
+        return contains("help");
+    }
 
     bool hasOutputProject() const
-    { return contains("output-project") && !m_options["output-project"].isEmpty(); }
+    {
+        return contains("output-project") && !m_options["output-project"].isEmpty();
+    }
 
     bool hasLayout() const
-    { return contains("layout") && !m_options["layout"].isEmpty(); }
+    {
+        return contains("layout") && !m_options["layout"].isEmpty();
+    }
 
     bool hasLayoutDirection() const
-    { return contains("layout-direction") && !m_options["layout-direction"].isEmpty(); }
+    {
+        return contains("layout-direction") && !m_options["layout-direction"].isEmpty();
+    }
 
     bool hasStartFilterIdx() const
-    { return contains("start-filter") && !m_options["start-filter"].isEmpty(); }
+    {
+        return contains("start-filter") && !m_options["start-filter"].isEmpty();
+    }
 
     bool hasEndFilterIdx() const
-    { return contains("end-filter") && !m_options["end-filter"].isEmpty(); }
+    {
+        return contains("end-filter") && !m_options["end-filter"].isEmpty();
+    }
 
     bool hasOrientation() const
-    { return contains("orientation") && !m_options["orientation"].isEmpty(); }
+    {
+        return contains("orientation") && !m_options["orientation"].isEmpty();
+    }
 
     bool hasDeskewAngle() const
-    { return contains("rotate") && !m_options["rotate"].isEmpty(); }
+    {
+        return contains("rotate") && !m_options["rotate"].isEmpty();
+    }
 
     bool hasDeskew() const
-    { return contains("deskew") && !m_options["deskew"].isEmpty(); }
+    {
+        return contains("deskew") && !m_options["deskew"].isEmpty();
+    }
 
     bool hasSkewDeviation() const
-    { return contains("skew-deviation") && !m_options["skew-deviation"].isEmpty(); }
+    {
+        return contains("skew-deviation") && !m_options["skew-deviation"].isEmpty();
+    }
 
     bool hasContentRect() const
-    { return contains("content-box") && !m_options["content-box"].isEmpty(); }
+    {
+        return contains("content-box") && !m_options["content-box"].isEmpty();
+    }
 
     bool hasContentDeviation() const
-    { return contains("content-deviation") && !m_options["content-deviation"].isEmpty(); }
+    {
+        return contains("content-deviation") && !m_options["content-deviation"].isEmpty();
+    }
 
     bool hasContentDetection() const
-    { return !contains("disable-content-detection"); }
+    {
+        return !contains("disable-content-detection");
+    }
 
     bool hasContentText() const
-    { return !contains("disable-content-text-mask"); }
+    {
+        return !contains("disable-content-text-mask");
+    }
 
     bool hasColorMode() const
-    { return contains("color-mode") && !m_options["color-mode"].isEmpty(); }
+    {
+        return contains("color-mode") && !m_options["color-mode"].isEmpty();
+    }
 
     bool hasDefaultColorMode() const
-    { return contains("default-color-mode") && !m_options["default-color-mode"].isEmpty(); }
+    {
+        return contains("default-color-mode") && !m_options["default-color-mode"].isEmpty();
+    }
 
     bool hasPictureShape() const
-    { return contains("picture-shape") && !m_options["picture-shape"].isEmpty(); }
+    {
+        return contains("picture-shape") && !m_options["picture-shape"].isEmpty();
+    }
 
     bool hasWhiteMargins() const
-    { return contains("white-margins"); }
+    {
+        return contains("white-margins");
+    }
 
     bool hasNormalizeIllumination() const
-    { return contains("normalize-illumination"); }
+    {
+        return contains("normalize-illumination");
+    }
 
     bool hasThreshold() const
-    { return contains("threshold") && !m_options["threshold"].isEmpty(); }
+    {
+        return contains("threshold") && !m_options["threshold"].isEmpty();
+    }
 
     bool hasDespeckle() const
-    { return contains("despeckle") && !m_options["despeckle"].isEmpty(); }
+    {
+        return contains("despeckle") && !m_options["despeckle"].isEmpty();
+    }
 
     bool hasDewarping() const
-    { return contains("dewarping"); }
+    {
+        return contains("dewarping");
+    }
 
     bool hasMatchLayoutTolerance() const
-    { return contains("match-layout-tolerance") && !m_options["match-layout-tolerance"].isEmpty(); }
+    {
+        return contains("match-layout-tolerance") && !m_options["match-layout-tolerance"].isEmpty();
+    }
 
     bool hasDepthPerception() const
-    { return contains("depth-perception") && !m_options["depth-perception"].isEmpty(); }
+    {
+        return contains("depth-perception") && !m_options["depth-perception"].isEmpty();
+    }
 
     bool hasTiffCompression() const
-    { return contains("tiff-compression") && !m_options["tiff-compression"].isEmpty(); }
+    {
+        return contains("tiff-compression") && !m_options["tiff-compression"].isEmpty();
+    }
 
     bool hasTiffForceRGB() const
-    { return contains("tiff-force-rgb"); }
+    {
+        return contains("tiff-force-rgb");
+    }
 
     bool hasTiffForceGrayscale() const
-    { return contains("tiff-force-grayscale"); }
+    {
+        return contains("tiff-force-grayscale");
+    }
 
     bool hasTiffForceKeepColorSpace() const
-    { return contains("tiff-force-keep-color-space"); }
+    {
+        return contains("tiff-force-keep-color-space");
+    }
 
     bool hasWindowTitle() const
-    { return contains("window-title") && !m_options["window-title"].isEmpty(); }
+    {
+        return contains("window-title") && !m_options["window-title"].isEmpty();
+    }
 
     bool hasPageDetectionBox() const
-    { return contains("page-detection-box") && !m_options["page-detection-box"].isEmpty(); }
+    {
+        return contains("page-detection-box") && !m_options["page-detection-box"].isEmpty();
+    }
 
     bool hasPageDetectionTolerance() const
-    { return contains("page-detection-tolerance") && !m_options["page-detection-tolerance"].isEmpty(); }
+    {
+        return contains("page-detection-tolerance") && !m_options["page-detection-tolerance"].isEmpty();
+    }
 
     bool hasDisableCheckOutput() const
-    { return contains("disable-check-output"); }
+    {
+        return contains("disable-check-output");
+    }
 
     page_split::LayoutType getLayout() const
-    { return m_layoutType; }
+    {
+        return m_layoutType;
+    }
 
     Qt::LayoutDirection getLayoutDirection() const
-    { return m_layoutDirection; }
+    {
+        return m_layoutDirection;
+    }
 
     output::ColorParams::ColorMode getColorMode() const
-    { return m_colorMode; }
+    {
+        return m_colorMode;
+    }
 
     output::ColorParams::ColorMode getDefaultColorMode() const
-    { return m_defaultColorMode; }
+    {
+        return m_defaultColorMode;
+    }
 
     output::PictureShape getPictureShape() const
-    { return m_pictureShape; }
+    {
+        return m_pictureShape;
+    }
 
     Dpi getInputDpi() const
-    { return m_dpi; }
+    {
+        return m_dpi;
+    }
 
     Dpi getOutputDpi() const
-    { return m_outputDpi; }
+    {
+        return m_outputDpi;
+    }
 
     Dpi getDefaultOutputDpi() const
-    { return m_defaultOutputDpi; }
+    {
+        return m_defaultOutputDpi;
+    }
 
     Margins getMargins() const
-    { return m_margins; }
+    {
+        return m_margins;
+    }
 
     Margins getDefaultMargins() const
-    { return m_defaultMargins; }
+    {
+        return m_defaultMargins;
+    }
 
     Margins getPageBorders() const
-    { return m_pageBorders; }
+    {
+        return m_pageBorders;
+    }
 
     page_layout::Alignment getAlignment() const
-    { return m_alignment; }
+    {
+        return m_alignment;
+    }
 
     Despeckle::Level getContentDetection() const
-    { return m_contentDetection; }
+    {
+        return m_contentDetection;
+    }
 
     QRectF getContentRect() const
-    { return m_contentRect; }
+    {
+        return m_contentRect;
+    }
 
     double getContentDeviation() const
-    { return m_contentDeviation; }
+    {
+        return m_contentDeviation;
+    }
 
     Orientation getOrientation() const
-    { return m_orientation; }
+    {
+        return m_orientation;
+    }
 
     int getThreshold() const
-    { return m_threshold; }
+    {
+        return m_threshold;
+    }
 
     double getDeskewAngle() const
-    { return m_deskewAngle; }
+    {
+        return m_deskewAngle;
+    }
 
     AutoManualMode getDeskewMode() const
-    { return m_deskewMode; }
+    {
+        return m_deskewMode;
+    }
 
     double getSkewDeviation() const
-    { return m_skewDeviation; }
+    {
+        return m_skewDeviation;
+    }
 
     int getStartFilterIdx() const
-    { return m_startFilterIdx; }
+    {
+        return m_startFilterIdx;
+    }
 
     int getEndFilterIdx() const
-    { return m_endFilterIdx; }
+    {
+        return m_endFilterIdx;
+    }
 
     output::DewarpingMode getDewarpingMode() const
-    { return m_dewarpingMode; }
+    {
+        return m_dewarpingMode;
+    }
 
     output::DespeckleLevel getDespeckleLevel() const
-    { return m_despeckleLevel; }
+    {
+        return m_despeckleLevel;
+    }
 
     output::DepthPerception getDepthPerception() const
-    { return m_depthPerception; }
+    {
+        return m_depthPerception;
+    }
 
     float getMatchLayoutTolerance() const
-    { return m_matchLayoutTolerance; }
+    {
+        return m_matchLayoutTolerance;
+    }
 
     int getTiffCompression() const
-    { return m_compression; }
+    {
+        return m_compression;
+    }
 
     QString getLanguage() const
-    { return m_language; }
+    {
+        return m_language;
+    }
 
     QString getWindowTitle() const
-    { return m_windowTitle; }
+    {
+        return m_windowTitle;
+    }
 
     QSizeF getPageDetectionBox() const
-    { return m_pageDetectionBox; }
+    {
+        return m_pageDetectionBox;
+    }
 
     double getPageDetectionTolerance() const
-    { return m_pageDetectionTolerance; }
+    {
+        return m_pageDetectionTolerance;
+    }
 
     bool getDefaultNull() const
-    { return m_defaultNull; }
+    {
+        return m_defaultNull;
+    }
 
     bool help()
-    { return m_options.contains("help"); }
+    {
+        return m_options.contains("help");
+    }
 
     void printHelp();
 
 private:
-    CommandLine() : m_gui(true), m_global(false)
+    CommandLine()
+        : m_gui(true),
+          m_global(false)
     { }
 
     static CommandLine m_globalInstance;
@@ -326,13 +489,19 @@ private:
     bool m_defaultNull;
 
     bool isGlobal()
-    { return m_global; }
+    {
+        return m_global;
+    }
 
     void setGlobal()
-    { m_global = true; }
+    {
+        m_global = true;
+    }
 
-    bool contains(QString const &key) const
-    { return m_options.contains(key); }
+    bool contains(QString const& key) const
+    {
+        return m_options.contains(key);
+    }
 
     QMap<QString, QString> m_options;
     QString m_projectFile;
@@ -369,9 +538,9 @@ private:
     float m_matchLayoutTolerance;
     int m_compression;
 
-    bool parseCli(QStringList const &argv);
+    bool parseCli(QStringList const& argv);
 
-    void addImage(QString const &path);
+    void addImage(QString const& path);
 
     void setup();
 
@@ -390,7 +559,9 @@ private:
     Margins fetchMargins(QString base = "margins", Margins def = Margins(10.0, 5.0, 10.0, 5.0));
 
     Margins fetchPageBorders()
-    { return fetchMargins("page-borders", Margins(0, 0, 0, 0)); }
+    {
+        return fetchMargins("page-borders", Margins(0, 0, 0, 0));
+    }
 
     page_layout::Alignment fetchAlignment();
 
@@ -437,4 +608,4 @@ private:
     bool fetchDefaultNull();
 };
 
-#endif
+#endif  // ifndef COMMANDLINE_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEINFO_H_
 #define IMAGEINFO_H_
@@ -32,23 +33,36 @@ class ImageInfo
 public:
     ImageInfo();
 
-    ImageInfo(ImageId const& id, ImageMetadata const& metadata,
-              int num_sub_pages, bool left_page_removed, bool right_page_removed);
+    ImageInfo(ImageId const& id,
+              ImageMetadata const& metadata,
+              int num_sub_pages,
+              bool left_page_removed,
+              bool right_page_removed);
 
     ImageId const& id() const
-    { return m_id; }
+    {
+        return m_id;
+    }
 
     ImageMetadata const& metadata() const
-    { return m_metadata; }
+    {
+        return m_metadata;
+    }
 
     int numSubPages() const
-    { return m_numSubPages; }
+    {
+        return m_numSubPages;
+    }
 
     bool leftHalfRemoved() const
-    { return m_leftHalfRemoved; }
+    {
+        return m_leftHalfRemoved;
+    }
 
     bool rightHalfRemoved() const
-    { return m_rightHalfRemoved; }
+    {
+        return m_rightHalfRemoved;
+    }
 
 private:
     ImageId m_id;
@@ -58,4 +72,4 @@ private:
     bool m_rightHalfRemoved;
 };
 
-#endif
+#endif  // ifndef IMAGEINFO_H_

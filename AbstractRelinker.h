@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ABSTRACT_RELINKER_H_
 #define ABSTRACT_RELINKER_H_
@@ -24,7 +25,8 @@
 class RelinkablePath;
 class QString;
 
-class AbstractRelinker : public RefCountable
+class AbstractRelinker
+    : public RefCountable
 {
 public:
     virtual ~AbstractRelinker()
@@ -34,7 +36,7 @@ public:
      * Returns the path to be used instead of the given path.
      * The same path will be returned if no substitution is to be made.
      */
-    virtual QString substitutionPathFor(RelinkablePath const &orig_path) const = 0;
+    virtual QString substitutionPathFor(RelinkablePath const& orig_path) const = 0;
 };
 
 #endif

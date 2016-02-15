@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef ZONE_SET_H_
 #define ZONE_SET_H_
@@ -31,9 +32,10 @@ class QString;
 class ZoneSet
 {
 public:
-    class const_iterator : public boost::iterator_facade<
-            const_iterator, Zone const, boost::forward_traversal_tag
-    >
+    class const_iterator
+        : public boost::iterator_facade<
+              const_iterator, Zone const, boost::forward_traversal_tag
+        >
     {
         friend class ZoneSet;
 
@@ -44,7 +46,9 @@ public:
         { }
 
         void increment()
-        { ++m_it; }
+        {
+            ++m_it;
+        }
 
         bool equal(const_iterator const& other) const
         {
@@ -52,10 +56,13 @@ public:
         }
 
         Zone const& dereference() const
-        { return *m_it; }
+        {
+            return *m_it;
+        }
 
     private:
-        explicit const_iterator(std::list<Zone>::const_iterator it) : m_it(it)
+        explicit const_iterator(std::list<Zone>::const_iterator it)
+            : m_it(it)
         { }
 
         std::list<Zone>::const_iterator m_it;
@@ -75,16 +82,24 @@ public:
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
     bool empty() const
-    { return m_zones.empty(); }
+    {
+        return m_zones.empty();
+    }
 
     void add(Zone const& zone)
-    { m_zones.push_back(zone); }
+    {
+        m_zones.push_back(zone);
+    }
 
     const_iterator begin() const
-    { return const_iterator(m_zones.begin()); }
+    {
+        return const_iterator(m_zones.begin());
+    }
 
     const_iterator end() const
-    { return const_iterator(m_zones.end()); }
+    {
+        return const_iterator(m_zones.end());
+    }
 
     void remove_auto_zones();
 
@@ -94,4 +109,4 @@ private:
     std::list<Zone> m_zones;
 };
 
-#endif
+#endif  // ifndef ZONE_SET_H_

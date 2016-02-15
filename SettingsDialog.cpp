@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,31 +15,32 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SettingsDialog.h"
 #include "OpenGLSupport.h"
 #include <QSettings>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
-        : QDialog(parent)
+    : QDialog(parent)
 {
     ui.setupUi(this);
 
     QSettings settings;
 
     if (!OpenGLSupport::supported()) {
-		ui.enableOpenglCb->setChecked(false);
-		ui.enableOpenglCb->setEnabled(false);
-		ui.openglDeviceLabel->setEnabled(false);
-		ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
-	} else {
-		ui.enableOpenglCb->setChecked(
-			settings.value("settings/enable_opengl", false).toBool()
-		);
+        ui.enableOpenglCb->setChecked(false);
+        ui.enableOpenglCb->setEnabled(false);
+        ui.openglDeviceLabel->setEnabled(false);
+        ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
+    }
+    else {
+        ui.enableOpenglCb->setChecked(
+            settings.value("settings/enable_opengl", false).toBool()
+        );
         QString const openglDevicePattern = ui.openglDeviceLabel->text();
-		ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
-	}
+        ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
+    }
 
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
@@ -46,8 +48,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 }
 
 SettingsDialog::~SettingsDialog()
-{
-}
+{ }
 
 void
 SettingsDialog::commitChanges()

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ORTHOGONALROTATION_H_
 #define ORTHOGONALROTATION_H_
@@ -27,11 +28,14 @@ class QTransform;
 class OrthogonalRotation
 {
 public:
-    OrthogonalRotation() : m_degrees(0)
+    OrthogonalRotation()
+        : m_degrees(0)
     { }
 
     int toDegrees() const
-    { return m_degrees; }
+    {
+        return m_degrees;
+    }
 
     void nextClockwiseDirection();
 
@@ -55,14 +59,16 @@ private:
     int m_degrees;
 };
 
-inline bool operator==(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
+inline bool
+operator==(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
 {
     return lhs.toDegrees() == rhs.toDegrees();
 }
 
-inline bool operator!=(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
+inline bool
+operator!=(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
 {
     return lhs.toDegrees() != rhs.toDegrees();
 }
 
-#endif
+#endif  // ifndef ORTHOGONALROTATION_H_

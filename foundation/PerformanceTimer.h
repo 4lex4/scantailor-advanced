@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PERFORMANCETIMER_H_
 #define PERFORMANCETIMER_H_
@@ -24,7 +25,8 @@
 class PerformanceTimer
 {
 public:
-    PerformanceTimer() : m_start(clock())
+    PerformanceTimer()
+        : m_start(clock())
     { }
 
     void print(char const* prefix = "");

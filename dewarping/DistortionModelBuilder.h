@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_
 #define DEWARPING_DISTORTION_MODEL_BUILDER_H_
@@ -33,7 +34,6 @@ class XSpline;
 
 namespace dewarping
 {
-
     class DistortionModel;
 
     class DistortionModelBuilder
@@ -91,7 +91,7 @@ namespace dewarping
         struct RansacModel;
 
         class RansacAlgo;
-class BadCurve;
+        class BadCurve;
 
         TracedCurve polylineToCurve(std::vector<QPointF> const& polyline) const;
 
@@ -99,8 +99,8 @@ class BadCurve;
 
         std::pair<QLineF, QLineF> frontBackBounds(std::vector<QPointF> const& polyline) const;
 
-        static std::vector<QPointF> maybeTrimPolyline(
-                std::vector<QPointF> const& polyline, std::pair<QLineF, QLineF> const& bounds);
+        static std::vector<QPointF> maybeTrimPolyline(std::vector<QPointF> const& polyline,
+                                                      std::pair<QLineF, QLineF> const& bounds);
 
         static bool maybeTrimFront(std::deque<QPointF>& polyline, QLineF const& bound);
 
@@ -110,23 +110,22 @@ class BadCurve;
 
         static void intersectBack(std::deque<QPointF>& polyline, QLineF const& bound);
 
-        static XSpline fitExtendedSpline(
-                std::vector<QPointF> const& polyline, Vec2d const& centroid,
-                std::pair<QLineF, QLineF> const& bounds);
+        static XSpline fitExtendedSpline(std::vector<QPointF> const& polyline,
+                                         Vec2d const& centroid,
+                                         std::pair<QLineF, QLineF> const& bounds);
 
-        QImage visualizeTrimmedPolylines(
-                QImage const& background, std::vector<TracedCurve> const& curves) const;
+        QImage visualizeTrimmedPolylines(QImage const& background, std::vector<TracedCurve> const& curves) const;
 
-        QImage visualizeModel(QImage const& background,
-                              std::vector<TracedCurve> const& curves, RansacModel const& model) const;
+        QImage visualizeModel(QImage const& background, std::vector<TracedCurve> const& curves,
+                              RansacModel const& model) const;
 
         Vec2d m_downDirection;
         Vec2d m_rightDirection;
         QLineF m_bound1;
         QLineF m_bound2;
-        /** These go left to right in terms of content. */
-        std::deque<std::vector<QPointF> > m_ltrPolylines;
-    };
 
-}
-#endif
+        /** These go left to right in terms of content. */
+        std::deque<std::vector<QPointF>> m_ltrPolylines;
+    };
+}  // namespace dewarping
+#endif  // ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_

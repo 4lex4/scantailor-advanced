@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Curve.h"
 #include "XmlMarshaller.h"
@@ -25,36 +26,31 @@
 
 namespace dewarping
 {
-
-    struct Curve::CloseEnough
-    {
+    struct Curve::CloseEnough {
         bool operator()(QPointF const& p1, QPointF const& p2)
         {
             QPointF const d(p1 - p2);
+
             return d.x() * d.x() + d.y() * d.y() <= 0.01 * 0.01;
         }
     };
 
     Curve::Curve()
-    {
-    }
+    { }
 
     Curve::Curve(std::vector<QPointF> const& polyline)
-            : m_polyline(polyline)
-    {
-    }
+        : m_polyline(polyline)
+    { }
 
     Curve::Curve(XSpline const& xspline)
-            : m_xspline(xspline),
-              m_polyline(xspline.toPolyline())
-    {
-    }
+        : m_xspline(xspline),
+          m_polyline(xspline.toPolyline())
+    { }
 
     Curve::Curve(QDomElement const& el)
-            : m_xspline(deserializeXSpline(el.namedItem("xspline").toElement())),
-              m_polyline(deserializePolyline(el.namedItem("polyline").toElement()))
-    {
-    }
+        : m_xspline(deserializeXSpline(el.namedItem("xspline").toElement())),
+          m_polyline(deserializePolyline(el.namedItem("polyline").toElement()))
+    { }
 
     QDomElement
     Curve::toXml(QDomDocument& doc, QString const& name) const
@@ -66,6 +62,7 @@ namespace dewarping
         QDomElement el(doc.createElement(name));
         el.appendChild(serializeXSpline(m_xspline, doc, "xspline"));
         el.appendChild(serializePolyline(m_polyline, doc, "polyline"));
+
         return el;
     }
 
@@ -107,8 +104,7 @@ namespace dewarping
     }
 
     QDomElement
-    Curve::serializePolyline(
-            std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name)
+    Curve::serializePolyline(std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name)
     {
         if (polyline.empty()) {
             return QDomElement();
@@ -120,8 +116,8 @@ namespace dewarping
         strm.setVersion(QDataStream::Qt_4_4);
         strm.setByteOrder(QDataStream::LittleEndian);
 
-        for (QPointF const& pt :  polyline) {
-            strm << (float) pt.x() << (float) pt.y();
+        for (QPointF const& pt : polyline) {
+            strm << (float)pt.x() << (float)pt.y();
         }
 
         QDomElement el(doc.createElement(name));
@@ -131,8 +127,7 @@ namespace dewarping
     }
 
     bool
-    Curve::approxPolylineMatch(
-            std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2)
+    Curve::approxPolylineMatch(std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2)
     {
         if (polyline1.size() != polyline2.size()) {
             return false;
@@ -146,8 +141,7 @@ namespace dewarping
     }
 
     QDomElement
-    Curve::serializeXSpline(
-            XSpline const& xspline, QDomDocument& doc, QString const& name)
+    Curve::serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name)
     {
         if (xspline.numControlPoints() == 0) {
             return QDomElement();
@@ -164,7 +158,6 @@ namespace dewarping
 
         return el;
     }
-
 
     XSpline
     Curve::deserializeXSpline(QDomElement const& el)
@@ -207,12 +200,11 @@ namespace dewarping
             double const t1 = spline.controlPointIndexToT(i - 1);
             double const t2 = spline.controlPointIndexToT(i);
             if (Vec2d(spline.pointAt(t2) - spline.pointAt(t1)).dot(main_direction)) < 0) {
-                return true;
-            }
+                    return true;
+                }
 #endif
         }
 
         return false;
     }
-
-} 
+}  // namespace dewarping

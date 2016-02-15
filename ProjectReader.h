@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROJECTREADER_H_
 #define PROJECTREADER_H_
@@ -49,16 +50,24 @@ public:
     void readFilterSettings(std::vector<FilterPtr> const& filters) const;
 
     bool success() const
-    { return m_ptrPages.get() != 0; }
+    {
+        return m_ptrPages.get() != 0;
+    }
 
     QString const& outputDirectory() const
-    { return m_outDir; }
+    {
+        return m_outDir;
+    }
 
     IntrusivePtr<ProjectPages> const& pages() const
-    { return m_ptrPages; }
+    {
+        return m_ptrPages;
+    }
 
     SelectedPage const& selectedPage() const
-    { return m_selectedPage; }
+    {
+        return m_selectedPage;
+    }
 
     IntrusivePtr<FileNameDisambiguator> const& namingDisambiguator() const
     {
@@ -70,16 +79,17 @@ public:
     PageId pageId(int numeric_id) const;
 
 private:
-    struct FileRecord
-    {
+    struct FileRecord {
         QString filePath;
         bool compatMultiPage;
 
-        FileRecord() : compatMultiPage(false)
+        FileRecord()
+            : compatMultiPage(false)
         { }
 
         FileRecord(QString const& file_path, bool compat_multi_page)
-                : filePath(file_path), compatMultiPage(compat_multi_page)
+            : filePath(file_path),
+              compatMultiPage(compat_multi_page)
         { }
     };
 
@@ -92,8 +102,7 @@ private:
 
     void processFiles(QDomElement const& files_el);
 
-    void processImages(QDomElement const& images_el,
-                       Qt::LayoutDirection layout_direction);
+    void processImages(QDomElement const& images_el, Qt::LayoutDirection layout_direction);
 
     ImageMetadata processImageMetadata(QDomElement const& image_el);
 
@@ -118,4 +127,4 @@ private:
     IntrusivePtr<FileNameDisambiguator> m_ptrDisambiguator;
 };
 
-#endif
+#endif  // ifndef PROJECTREADER_H_

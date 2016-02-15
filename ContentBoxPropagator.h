@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef CONTENTBOXPROPAGATOR_H_
 #define CONTENTBOXPROPAGATOR_H_
@@ -42,13 +43,12 @@ namespace page_layout
 class ContentBoxPropagator
 {
 public:
-    ContentBoxPropagator(
-            IntrusivePtr<page_layout::Filter> const &page_layout_filter,
-            IntrusivePtr<CompositeCacheDrivenTask> const &task);
+    ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
+                         IntrusivePtr<CompositeCacheDrivenTask> const& task);
 
     ~ContentBoxPropagator();
 
-    void propagate(ProjectPages const &pages);
+    void propagate(ProjectPages const& pages);
 
 private:
     class Collector;
@@ -57,4 +57,4 @@ private:
     IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
-#endif
+#endif  // ifndef CONTENTBOXPROPAGATOR_H_

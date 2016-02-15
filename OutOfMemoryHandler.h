@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUT_OF_MEMORY_HANDLER_H_
 #define OUT_OF_MEMORY_HANDLER_H_
@@ -25,11 +26,10 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class OutOfMemoryHandler : public QObject
+class OutOfMemoryHandler
+    : public QObject
 {
-Q_OBJECT
-
-DECLARE_NON_COPYABLE(OutOfMemoryHandler)
+    Q_OBJECT DECLARE_NON_COPYABLE(OutOfMemoryHandler)
 
 public:
     static OutOfMemoryHandler& instance();
@@ -45,7 +45,6 @@ public:
     bool hadOutOfMemorySituation() const;
 
 signals:
-
     /** Will be dispatched from the main thread. */
     void outOfMemory();
 
@@ -57,4 +56,4 @@ private:
     bool m_hadOOM;
 };
 
-#endif
+#endif  // ifndef OUT_OF_MEMORY_HANDLER_H_

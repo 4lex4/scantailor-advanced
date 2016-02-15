@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef BASICIMAGEVIEW_H_
 #define BASICIMAGEVIEW_H_
@@ -26,15 +27,14 @@
 #include "Margins.h"
 #include <QImage>
 
-class BasicImageView : public ImageViewBase
+class BasicImageView
+    : public ImageViewBase
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    BasicImageView(
-            QImage const &image,
-            ImagePixmapUnion const &downscaled_image = ImagePixmapUnion(),
-            Margins const &margins = Margins());
+    BasicImageView(QImage const& image,
+                   ImagePixmapUnion const& downscaled_image = ImagePixmapUnion(), Margins const& margins = Margins());
 
     virtual ~BasicImageView();
 

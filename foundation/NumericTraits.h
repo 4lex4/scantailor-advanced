@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef NUMERIC_TRAITS_H_
 #define NUMERIC_TRAITS_H_
@@ -23,21 +24,22 @@
 
 namespace numeric_traits_impl
 {
-
-    template<typename T, bool IsInteger>
+    template <typename T, bool IsInteger>
     struct IntegerSpecific;
-
 }
+
 /**
  * This class exists mainly because std::numeric_values<>::min() has
  * inconsistent behaviour for integer vs floating point types.
  */
-template<typename T>
+template <typename T>
 class NumericTraits
 {
 public:
     static T max()
-    { return std::numeric_limits<T>::max(); }
+    {
+        return std::numeric_limits<T>::max();
+    }
 
     /**
      * This one behaves as you expect, not as std::numeric_limits<T>::min().
@@ -47,31 +49,30 @@ public:
     static T min()
     {
         return numeric_traits_impl::IntegerSpecific<
-                T, std::numeric_limits<T>::is_integer
+            T, std::numeric_limits<T>::is_integer
         >::min();
     }
 
 private:
-
 };
 
 
 namespace numeric_traits_impl
 {
-
-    template<typename T>
-    struct IntegerSpecific<T, true>
-    {
+    template <typename T>
+    struct IntegerSpecific<T, true>{
         static T min()
-        { return std::numeric_limits<T>::min(); }
+        {
+            return std::numeric_limits<T>::min();
+        }
     };
 
-    template<typename T>
-    struct IntegerSpecific<T, false>
-    {
+    template <typename T>
+    struct IntegerSpecific<T, false>{
         static T min()
-        { return -std::numeric_limits<T>::max(); }
+        {
+            return -std::numeric_limits<T>::max();
+        }
     };
-
 }
-#endif
+#endif  // ifndef NUMERIC_TRAITS_H_

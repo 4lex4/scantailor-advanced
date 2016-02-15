@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_INTEGRALIMAGE_H_
 #define IMAGEPROC_INTEGRALIMAGE_H_
@@ -26,23 +27,22 @@
 
 namespace imageproc
 {
-
-/**
- * \brief Provides the sum of values in a sub-rectangle of a 2D array in constant time.
- *
- * Suppose you have a MxN array of some values.  Now if we are not going to
- * alter it, but are going to calculate the sum of values in various
- * rectangular sub-regions, it's best to use an integral image for this purpose.
- * We construct it once, with complexity of O(M*N), and then obtain the sum
- * of values in a rectangular sub-region in O(1).
- *
- * \note Template parameter T must be large enough to hold the sum of all
- *       values in the array.
- */
-    template<typename T>
+    /**
+     * \brief Provides the sum of values in a sub-rectangle of a 2D array in constant time.
+     *
+     * Suppose you have a MxN array of some values.  Now if we are not going to
+     * alter it, but are going to calculate the sum of values in various
+     * rectangular sub-regions, it's best to use an integral image for this purpose.
+     * We construct it once, with complexity of O(M*N), and then obtain the sum
+     * of values in a rectangular sub-region in O(1).
+     *
+     * \note Template parameter T must be large enough to hold the sum of all
+     *       values in the array.
+     */
+    template <typename T>
     class IntegralImage
     {
-    DECLARE_NON_COPYABLE(IntegralImage)
+        DECLARE_NON_COPYABLE(IntegralImage)
 
     public:
         IntegralImage(int width, int height);
@@ -85,30 +85,29 @@ namespace imageproc
         T m_lineSum;
         int m_width;
         int m_height;
-
     };
 
-    template<typename T>
+    template <typename T>
     IntegralImage<T>::IntegralImage(int const width, int const height)
-            : m_lineSum()
+        : m_lineSum()
     {
         init(width + 1, height + 1);
     }
 
-    template<typename T>
+    template <typename T>
     IntegralImage<T>::IntegralImage(QSize const& size)
-            : m_lineSum()
+        : m_lineSum()
     {
         init(size.width() + 1, size.height() + 1);
     }
 
-    template<typename T>
+    template <typename T>
     IntegralImage<T>::~IntegralImage()
     {
         delete[] m_pData;
     }
 
-    template<typename T>
+    template <typename T>
     void
     IntegralImage<T>::init(int const width, int const height)
     {
@@ -126,7 +125,7 @@ namespace imageproc
         m_pCur = m_pAbove + width;
     }
 
-    template<typename T>
+    template <typename T>
     void
     IntegralImage<T>::push(T const val)
     {
@@ -136,7 +135,7 @@ namespace imageproc
         ++m_pAbove;
     }
 
-    template<typename T>
+    template <typename T>
     void
     IntegralImage<T>::beginRow()
     {
@@ -147,7 +146,7 @@ namespace imageproc
         ++m_pAbove;
     }
 
-    template<typename T>
+    template <typename T>
     inline T
     IntegralImage<T>::sum(QRect const& rect) const
     {
@@ -159,8 +158,8 @@ namespace imageproc
         sum -= m_pData[pre_top * m_width + pre_right];
         sum += m_pData[pre_top * m_width + pre_left];
         sum -= m_pData[pre_bottom * m_width + pre_left];
+
         return sum;
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_INTEGRALIMAGE_H_

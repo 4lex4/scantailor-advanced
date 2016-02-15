@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef UNREMOVE_BUTTON_H_
 #define UNREMOVE_BUTTON_H_
@@ -29,13 +30,14 @@
 
 namespace page_split
 {
-
-    class UnremoveButton : public InteractionHandler
+    class UnremoveButton
+        : public InteractionHandler
     {
-    Q_DECLARE_TR_FUNCTIONS(page_split::UnremoveButton)
+        Q_DECLARE_TR_FUNCTIONS(page_split::UnremoveButton)
+
     public:
         typedef boost::function<QPointF()> PositionGetter;
-        typedef boost::function<void()> ClickCallback;
+        typedef boost::function<void ()> ClickCallback;
 
         UnremoveButton(PositionGetter const& position_getter);
 
@@ -62,6 +64,5 @@ namespace page_split
         QPixmap m_hoveredPixmap;
         bool m_wasHovered;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef UNREMOVE_BUTTON_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PROJECT_PAGES_H_
 #define PROJECT_PAGES_H_
@@ -44,29 +45,22 @@ class RelinkablePath;
 class AbstractRelinker;
 class QDomElement;
 
-class ProjectPages : public QObject, public RefCountable
+class ProjectPages
+    : public QObject,
+      public RefCountable
 {
-Q_OBJECT
-
-DECLARE_NON_COPYABLE(ProjectPages)
+    Q_OBJECT DECLARE_NON_COPYABLE(ProjectPages)
 
 public:
-    enum Pages
-    {
-        ONE_PAGE, TWO_PAGES, AUTO_PAGES
-    };
-    enum LayoutType
-    {
-        ONE_PAGE_LAYOUT, TWO_PAGE_LAYOUT
-    };
+    enum Pages { ONE_PAGE, TWO_PAGES, AUTO_PAGES };
+
+    enum LayoutType { ONE_PAGE_LAYOUT, TWO_PAGE_LAYOUT };
 
     ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
 
-    ProjectPages(std::vector<ImageInfo> const& images,
-                 Qt::LayoutDirection layout_direction);
+    ProjectPages(std::vector<ImageInfo> const& images, Qt::LayoutDirection layout_direction);
 
-    ProjectPages(std::vector<ImageFileInfo> const& files,
-                 Pages pages, Qt::LayoutDirection layout_direction);
+    ProjectPages(std::vector<ImageFileInfo> const& files, Pages pages, Qt::LayoutDirection layout_direction);
 
     virtual ~ProjectPages();
 
@@ -86,14 +80,11 @@ public:
 
     void setLayoutTypeForAllPages(LayoutType layout);
 
-    void autoSetLayoutTypeFor(
-            ImageId const& image_id, OrthogonalRotation rotation);
+    void autoSetLayoutTypeFor(ImageId const& image_id, OrthogonalRotation rotation);
 
-    void updateImageMetadata(
-            ImageId const& image_id, ImageMetadata const& metadata);
+    void updateImageMetadata(ImageId const& image_id, ImageMetadata const& metadata);
 
-    static int adviseNumberOfLogicalPages(
-            ImageMetadata const& metadata, OrthogonalRotation rotation);
+    static int adviseNumberOfLogicalPages(ImageMetadata const& metadata, OrthogonalRotation rotation);
 
     int numImages() const;
 
@@ -114,7 +105,9 @@ public:
      *         at construction time.
      */
     std::vector<PageInfo> insertImage(ImageInfo const& new_image,
-                                      BeforeOrAfter before_or_after, ImageId const& existing, PageView view);
+                                      BeforeOrAfter before_or_after,
+                                      ImageId const& existing,
+                                      PageView view);
 
     void removePages(std::set<PageId> const& pages);
 
@@ -139,12 +132,10 @@ public:
     void updateMetadataFrom(std::vector<ImageFileInfo> const& files);
 
 signals:
-
     void modified();
 
 private:
-    struct ImageDesc
-    {
+    struct ImageDesc {
         ImageId id;
         ImageMetadata metadata;
         int numLogicalPages;
@@ -155,28 +146,24 @@ private:
 
         ImageDesc(ImageId const& id, ImageMetadata const& metadata, Pages pages);
 
-        PageId::SubPage logicalPageToSubPage(int logical_page,
-                                             PageId::SubPage const* sub_pages_in_order) const;
+        PageId::SubPage logicalPageToSubPage(int logical_page, PageId::SubPage const* sub_pages_in_order) const;
     };
 
     void initSubPagesInOrder(Qt::LayoutDirection layout_direction);
 
-    void setLayoutTypeForImpl(
-            ImageId const& image_id, LayoutType layout, bool* modified);
+    void setLayoutTypeForImpl(ImageId const& image_id, LayoutType layout, bool* modified);
 
-    void setLayoutTypeForAllPagesImpl(
-            LayoutType layout, bool* modified);
+    void setLayoutTypeForAllPagesImpl(LayoutType layout, bool* modified);
 
-    void autoSetLayoutTypeForImpl(
-            ImageId const& image_id, OrthogonalRotation rotation, bool* modified);
+    void autoSetLayoutTypeForImpl(ImageId const& image_id, OrthogonalRotation rotation, bool* modified);
 
-    void updateImageMetadataImpl(
-            ImageId const& image_id,
-            ImageMetadata const& metadata, bool* modified);
+    void updateImageMetadataImpl(ImageId const& image_id, ImageMetadata const& metadata, bool* modified);
 
-    std::vector<PageInfo> insertImageImpl(
-            ImageInfo const& new_image, BeforeOrAfter before_or_after,
-            ImageId const& existing, PageView view, bool& modified);
+    std::vector<PageInfo> insertImageImpl(ImageInfo const& new_image,
+                                          BeforeOrAfter before_or_after,
+                                          ImageId const& existing,
+                                          PageView view,
+                                          bool& modified);
 
     void removePagesImpl(std::set<PageId> const& pages, bool& modified);
 
@@ -187,4 +174,4 @@ private:
     PageId::SubPage m_subPagesInOrder[2];
 };
 
-#endif
+#endif  // ifndef PROJECT_PAGES_H_

@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_PARAMS_H_
 #define OUTPUT_PARAMS_H_
@@ -31,10 +32,7 @@ class QDomElement;
 
 namespace output
 {
-    enum PictureShape
-    {
-        FREE_SHAPE, RECTANGULAR_SHAPE, QUADRO_SHAPE
-    };
+    enum PictureShape { FREE_SHAPE, RECTANGULAR_SHAPE, QUADRO_SHAPE };
 
     class Params
     {
@@ -44,37 +42,59 @@ namespace output
         Params(QDomElement const& el);
 
         Dpi const& outputDpi() const
-        { return m_dpi; }
+        {
+            return m_dpi;
+        }
 
         void setOutputDpi(Dpi const& dpi)
-        { m_dpi = dpi; }
+        {
+            m_dpi = dpi;
+        }
 
         ColorParams const& colorParams() const
-        { return m_colorParams; }
+        {
+            return m_colorParams;
+        }
 
         PictureShape pictureShape() const
-        { return m_pictureShape; }
+        {
+            return m_pictureShape;
+        }
 
         void setPictureShape(PictureShape ps)
-        { m_pictureShape = ps; }
+        {
+            m_pictureShape = ps;
+        }
 
         void setColorParams(ColorParams const& params)
-        { m_colorParams = params; }
+        {
+            m_colorParams = params;
+        }
 
         DewarpingMode const& dewarpingMode() const
-        { return m_dewarpingMode; }
+        {
+            return m_dewarpingMode;
+        }
 
         void setDewarpingMode(DewarpingMode const& mode)
-        { m_dewarpingMode = mode; }
+        {
+            m_dewarpingMode = mode;
+        }
 
         dewarping::DistortionModel const& distortionModel() const
-        { return m_distortionModel; }
+        {
+            return m_distortionModel;
+        }
 
         void setDistortionModel(dewarping::DistortionModel const& model)
-        { m_distortionModel = model; }
+        {
+            m_distortionModel = model;
+        }
 
         DepthPerception const& depthPerception() const
-        { return m_depthPerception; }
+        {
+            return m_depthPerception;
+        }
 
         void setDepthPerception(DepthPerception depth_perception)
         {
@@ -82,10 +102,14 @@ namespace output
         }
 
         DespeckleLevel despeckleLevel() const
-        { return m_despeckleLevel; }
+        {
+            return m_despeckleLevel;
+        }
 
         void setDespeckleLevel(DespeckleLevel level)
-        { m_despeckleLevel = level; }
+        {
+            m_despeckleLevel = level;
+        }
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -102,6 +126,5 @@ namespace output
         DewarpingMode m_dewarpingMode;
         DespeckleLevel m_despeckleLevel;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_PARAMS_H_

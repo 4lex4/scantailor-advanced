@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef NEW_OPEN_PROJECT_PANEL_H_
 #define NEW_OPEN_PROJECT_PANEL_H_
@@ -24,15 +25,16 @@
 
 class QString;
 
-class NewOpenProjectPanel : public QWidget, private Ui::NewOpenProjectPanel
+class NewOpenProjectPanel
+    : public QWidget,
+      private Ui::NewOpenProjectPanel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     NewOpenProjectPanel(QWidget* parent = 0);
 
 signals:
-
     void newProject();
 
     void openProject();
@@ -46,4 +48,4 @@ private:
     void addRecentProject(QString const& file_path);
 };
 
-#endif
+#endif  // ifndef NEW_OPEN_PROJECT_PANEL_H_

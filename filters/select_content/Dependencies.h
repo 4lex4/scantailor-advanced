@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_DEPENDENCIES_H_
 #define SELECT_CONTENT_DEPENDENCIES_H_
@@ -27,16 +28,14 @@ class QString;
 
 namespace select_content
 {
-
-/**
- * \brief Dependencies of the content box.
- *
- * Once dependencies change, the content box is no longer valid.
- */
+    /**
+     * \brief Dependencies of the content box.
+     *
+     * Once dependencies change, the content box is no longer valid.
+     */
     class Dependencies
     {
     public:
-
         Dependencies();
 
         Dependencies(QPolygonF const& rotated_page_outline);
@@ -46,7 +45,9 @@ namespace select_content
         ~Dependencies();
 
         QPolygonF const& rotatedPageOutline() const
-        { return m_rotatedPageOutline; }
+        {
+            return m_rotatedPageOutline;
+        }
 
         bool matches(Dependencies const& other) const;
 
@@ -55,6 +56,5 @@ namespace select_content
     private:
         QPolygonF m_rotatedPageOutline;
     };
-
 }
-#endif
+#endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_

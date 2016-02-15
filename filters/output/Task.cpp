@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CommandLine.h"
 #include "Task.h"
@@ -52,10 +53,11 @@ using namespace dewarping;
 
 namespace output
 {
-
-    class Task::UiUpdater : public FilterResult
+    class Task::UiUpdater
+        : public FilterResult
     {
-    Q_DECLARE_TR_FUNCTIONS(output::Task::UiUpdater)
+        Q_DECLARE_TR_FUNCTIONS(output::Task::UiUpdater)
+
     public:
         UiUpdater(IntrusivePtr<Filter> const& filter,
                   IntrusivePtr<Settings> const& settings,
@@ -69,12 +71,15 @@ namespace output
                   BinaryImage const& picture_mask,
                   DespeckleState const& despeckle_state,
                   DespeckleVisualization const& despeckle_visualization,
-                  bool batch, bool debug);
+                  bool batch,
+                  bool debug);
 
         virtual void updateUI(FilterUiInterface* ui);
 
         virtual IntrusivePtr<AbstractFilter> filter()
-        { return m_ptrFilter; }
+        {
+            return m_ptrFilter;
+        }
 
     private:
         IntrusivePtr<Filter> m_ptrFilter;
@@ -100,16 +105,19 @@ namespace output
     Task::Task(IntrusivePtr<Filter> const& filter,
                IntrusivePtr<Settings> const& settings,
                IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-               PageId const& page_id, OutputFileNameGenerator const& out_file_name_gen,
-               ImageViewTab const last_tab, bool const batch, bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrThumbnailCache(thumbnail_cache),
-              m_pageId(page_id),
-              m_outFileNameGen(out_file_name_gen),
-              m_lastTab(last_tab),
-              m_batchProcessing(batch),
-              m_debug(debug)
+               PageId const& page_id,
+               OutputFileNameGenerator const& out_file_name_gen,
+               ImageViewTab const last_tab,
+               bool const batch,
+               bool const debug)
+        : m_ptrFilter(filter),
+          m_ptrSettings(settings),
+          m_ptrThumbnailCache(thumbnail_cache),
+          m_pageId(page_id),
+          m_outFileNameGen(out_file_name_gen),
+          m_lastTab(last_tab),
+          m_batchProcessing(batch),
+          m_debug(debug)
     {
         if (debug) {
             m_ptrDbg.reset(new DebugImages);
@@ -117,13 +125,10 @@ namespace output
     }
 
     Task::~Task()
-    {
-    }
+    { }
 
     FilterResultPtr
-    Task::process(
-            TaskStatus const& status, FilterData const& data,
-            QPolygonF const& content_rect_phys)
+    Task::process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys)
     {
         status.throwIfCancelled();
 
@@ -153,31 +158,31 @@ namespace output
 
         QString const automask_dir(Utils::automaskDir(m_outFileNameGen.outDir()));
         QString const automask_file_path(
-                QDir(automask_dir).absoluteFilePath(out_file_info.fileName())
+            QDir(automask_dir).absoluteFilePath(out_file_info.fileName())
         );
         QFileInfo automask_file_info(automask_file_path);
 
         QString const speckles_dir(Utils::specklesDir(m_outFileNameGen.outDir()));
         QString const speckles_file_path(
-                QDir(speckles_dir).absoluteFilePath(out_file_info.fileName())
+            QDir(speckles_dir).absoluteFilePath(out_file_info.fileName())
         );
         QFileInfo speckles_file_info(speckles_file_path);
 
         bool const need_picture_editor = render_params.mixedOutput() && !m_batchProcessing;
         bool const need_speckles_image = params.despeckleLevel() != DESPECKLE_OFF
-                                         && params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE &&
-                                         !m_batchProcessing;
+                                         && params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE
+                                         && !m_batchProcessing;
 
         OutputGenerator const generator(
-                params.outputDpi(), params.colorParams(), params.despeckleLevel(),
-                new_xform, content_rect_phys
+            params.outputDpi(), params.colorParams(), params.despeckleLevel(),
+            new_xform, content_rect_phys
         );
 
         OutputImageParams new_output_image_params(
-                generator.outputImageSize(), generator.outputContentRect(),
-                new_xform, params.outputDpi(), params.colorParams(),
-                params.dewarpingMode(), params.distortionModel(),
-                params.depthPerception(), params.despeckleLevel(), params.pictureShape()
+            generator.outputImageSize(), generator.outputContentRect(),
+            new_xform, params.outputDpi(), params.colorParams(),
+            params.dewarpingMode(), params.distortionModel(),
+            params.depthPerception(), params.despeckleLevel(), params.pictureShape()
         );
 
         ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(m_pageId));
@@ -186,7 +191,7 @@ namespace output
         bool need_reprocess = false;
         do {
             std::unique_ptr<OutputParams> stored_output_params(
-                    m_ptrSettings->getOutputParams(m_pageId)
+                m_ptrSettings->getOutputParams(m_pageId)
             );
 
             if (!stored_output_params.get()) {
@@ -241,7 +246,6 @@ namespace output
                     break;
                 }
             }
-
         } while (false);
 
         QImage out_img;
@@ -274,8 +278,8 @@ namespace output
 
         if (need_reprocess) {
             bool const write_automask = render_params.mixedOutput();
-            bool const write_speckles_file = params.despeckleLevel() != DESPECKLE_OFF &&
-                                             params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE;
+            bool const write_speckles_file = params.despeckleLevel() != DESPECKLE_OFF
+                                             && params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE;
 
             automask_img = BinaryImage();
             speckles_img = BinaryImage();
@@ -286,19 +290,19 @@ namespace output
             }
 
             out_img = generator.process(
-                    status, data, new_picture_zones, new_fill_zones,
-                    params.dewarpingMode(), distortion_model,
-                    params.depthPerception(),
-                    write_automask ? &automask_img : 0,
-                    write_speckles_file ? &speckles_img : 0,
-                    m_ptrDbg.get(),
-                    params.pictureShape(),
-                    &m_pageId, &m_ptrSettings
-            );
+                status, data, new_picture_zones, new_fill_zones,
+                params.dewarpingMode(), distortion_model,
+                params.depthPerception(),
+                write_automask ? &automask_img : 0,
+                write_speckles_file ? &speckles_img : 0,
+                m_ptrDbg.get(),
+                params.pictureShape(),
+                &m_pageId, &m_ptrSettings
+                      );
 
-            if ((params.dewarpingMode() == DewarpingMode::AUTO && distortion_model.isValid())
-                || (params.dewarpingMode() == DewarpingMode::MARGINAL && distortion_model.isValid())
-                    ) {
+            if (((params.dewarpingMode() == DewarpingMode::AUTO) && distortion_model.isValid())
+                || ((params.dewarpingMode() == DewarpingMode::MARGINAL) && distortion_model.isValid())
+            ) {
                 params.setDistortionModel(distortion_model);
                 m_ptrSettings->setParams(m_pageId, params);
                 new_output_image_params.setDistortionModel(distortion_model);
@@ -340,13 +344,13 @@ namespace output
             }
             else {
                 OutputParams const out_params(
-                        new_output_image_params,
-                        OutputFileParams(QFileInfo(out_file_path)),
-                        write_automask ? OutputFileParams(QFileInfo(automask_file_path))
-                                       : OutputFileParams(),
-                        write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path))
-                                            : OutputFileParams(),
-                        new_picture_zones, new_fill_zones
+                    new_output_image_params,
+                    OutputFileParams(QFileInfo(out_file_path)),
+                    write_automask ? OutputFileParams(QFileInfo(automask_file_path))
+                    : OutputFileParams(),
+                    write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path))
+                    : OutputFileParams(),
+                    new_picture_zones, new_fill_zones
                 );
 
                 m_ptrSettings->setOutputParams(m_pageId, out_params);
@@ -356,7 +360,7 @@ namespace output
         }
 
         DespeckleState const despeckle_state(
-                out_img, speckles_img, params.despeckleLevel(), params.outputDpi()
+            out_img, speckles_img, params.despeckleLevel(), params.outputDpi()
         );
 
         DespeckleVisualization despeckle_visualization;
@@ -366,90 +370,87 @@ namespace output
 
         if (CommandLine::get().isGui()) {
             return FilterResultPtr(
-                    new UiUpdater(
-                            m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params,
-                            new_xform, generator.outputContentRect(),
-                            m_pageId, data.origImage(), out_img, automask_img,
-                            despeckle_state, despeckle_visualization,
-                            m_batchProcessing, m_debug
-                    )
+                new UiUpdater(
+                    m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params,
+                    new_xform, generator.outputContentRect(),
+                    m_pageId, data.origImage(), out_img, automask_img,
+                    despeckle_state, despeckle_visualization,
+                    m_batchProcessing, m_debug
+                )
             );
         }
         else {
             return FilterResultPtr(0);
         }
-    }
+    }  // Task::process
 
-/**
- * Delete output files mutually exclusive to m_pageId.
- */
+    /**
+     * Delete output files mutually exclusive to m_pageId.
+     */
     void
     Task::deleteMutuallyExclusiveOutputFiles()
     {
         switch (m_pageId.subPage()) {
             case PageId::SINGLE_PAGE:
                 QFile::remove(
-                        m_outFileNameGen.filePathFor(
-                                PageId(m_pageId.imageId(), PageId::LEFT_PAGE)
-                        )
+                    m_outFileNameGen.filePathFor(
+                        PageId(m_pageId.imageId(), PageId::LEFT_PAGE)
+                    )
                 );
                 QFile::remove(
-                        m_outFileNameGen.filePathFor(
-                                PageId(m_pageId.imageId(), PageId::RIGHT_PAGE)
-                        )
+                    m_outFileNameGen.filePathFor(
+                        PageId(m_pageId.imageId(), PageId::RIGHT_PAGE)
+                    )
                 );
                 break;
             case PageId::LEFT_PAGE:
             case PageId::RIGHT_PAGE:
                 QFile::remove(
-                        m_outFileNameGen.filePathFor(
-                                PageId(m_pageId.imageId(), PageId::SINGLE_PAGE)
-                        )
+                    m_outFileNameGen.filePathFor(
+                        PageId(m_pageId.imageId(), PageId::SINGLE_PAGE)
+                    )
                 );
                 break;
         }
     }
 
+    /*============================ Task::UiUpdater ==========================*/
 
-/*============================ Task::UiUpdater ==========================*/
-
-    Task::UiUpdater::UiUpdater(
-            IntrusivePtr<Filter> const& filter,
-            IntrusivePtr<Settings> const& settings,
-            std::unique_ptr<DebugImages> dbg_img,
-            Params const& params,
-            ImageTransformation const& xform,
-            QRect const& virt_content_rect,
-            PageId const& page_id,
-            QImage const& orig_image,
-            QImage const& output_image,
-            BinaryImage const& picture_mask,
-            DespeckleState const& despeckle_state,
-            DespeckleVisualization const& despeckle_visualization,
-            bool const batch, bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrDbg(std::move(dbg_img)),
-              m_params(params),
-              m_xform(xform),
-              m_virtContentRect(virt_content_rect),
-              m_pageId(page_id),
-              m_origImage(orig_image),
-              m_downscaledOrigImage(ImageView::createDownscaledImage(orig_image)),
-              m_outputImage(output_image),
-              m_downscaledOutputImage(ImageView::createDownscaledImage(output_image)),
-              m_pictureMask(picture_mask),
-              m_despeckleState(despeckle_state),
-              m_despeckleVisualization(despeckle_visualization),
-              m_batchProcessing(batch),
-              m_debug(debug)
-    {
-    }
+    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+                               IntrusivePtr<Settings> const& settings,
+                               std::unique_ptr<DebugImages> dbg_img,
+                               Params const& params,
+                               ImageTransformation const& xform,
+                               QRect const& virt_content_rect,
+                               PageId const& page_id,
+                               QImage const& orig_image,
+                               QImage const& output_image,
+                               BinaryImage const& picture_mask,
+                               DespeckleState const& despeckle_state,
+                               DespeckleVisualization const& despeckle_visualization,
+                               bool const batch,
+                               bool const debug)
+        : m_ptrFilter(filter),
+          m_ptrSettings(settings),
+          m_ptrDbg(std::move(dbg_img)),
+          m_params(params),
+          m_xform(xform),
+          m_virtContentRect(virt_content_rect),
+          m_pageId(page_id),
+          m_origImage(orig_image),
+          m_downscaledOrigImage(ImageView::createDownscaledImage(orig_image)),
+          m_outputImage(output_image),
+          m_downscaledOutputImage(ImageView::createDownscaledImage(output_image)),
+          m_pictureMask(picture_mask),
+          m_despeckleState(despeckle_state),
+          m_despeckleVisualization(despeckle_visualization),
+          m_batchProcessing(batch),
+          m_debug(debug)
+    { }
 
     void
     Task::UiUpdater::updateUI(FilterUiInterface* ui)
     {
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -461,94 +462,94 @@ namespace output
         }
 
         std::unique_ptr<ImageViewBase> image_view(
-                new ImageView(m_outputImage, m_downscaledOutputImage)
+            new ImageView(m_outputImage, m_downscaledOutputImage)
         );
         QPixmap const downscaled_output_pixmap(image_view->downscaledPixmap());
 
         std::unique_ptr<ImageViewBase> dewarping_view(
-                new DewarpingView(
-                        m_origImage, m_downscaledOrigImage, m_xform.transform(),
-                        PolygonUtils::convexHull(
-                                (m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea()).toStdVector()
-                        ),
-                        m_virtContentRect, m_pageId, m_params.dewarpingMode(),
-                        m_params.distortionModel(), opt_widget->depthPerception()
-                )
+            new DewarpingView(
+                m_origImage, m_downscaledOrigImage, m_xform.transform(),
+                PolygonUtils::convexHull(
+                    (m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea()).toStdVector()
+                ),
+                m_virtContentRect, m_pageId, m_params.dewarpingMode(),
+                m_params.distortionModel(), opt_widget->depthPerception()
+            )
         );
         QPixmap const downscaled_orig_pixmap(dewarping_view->downscaledPixmap());
         QObject::connect(
-                opt_widget, SIGNAL(depthPerceptionChanged(double)),
-                dewarping_view.get(), SLOT(depthPerceptionChanged(double))
+            opt_widget, SIGNAL(depthPerceptionChanged(double)),
+            dewarping_view.get(), SLOT(depthPerceptionChanged(double))
         );
         QObject::connect(
-                dewarping_view.get(), SIGNAL(distortionModelChanged(dewarping::DistortionModel const&)),
-                opt_widget, SLOT(distortionModelChanged(dewarping::DistortionModel const&))
+            dewarping_view.get(), SIGNAL(distortionModelChanged(dewarping::DistortionModel const &)),
+            opt_widget, SLOT(distortionModelChanged(dewarping::DistortionModel const &))
         );
 
         std::unique_ptr<QWidget> picture_zone_editor;
         if (m_pictureMask.isNull()) {
             picture_zone_editor.reset(
-                    new ErrorWidget(tr("Picture zones are only available in Mixed mode."))
+                new ErrorWidget(tr("Picture zones are only available in Mixed mode."))
             );
         }
         else {
             picture_zone_editor.reset(
-                    new PictureZoneEditor(
-                            m_origImage, downscaled_orig_pixmap, m_pictureMask,
-                            m_xform.transform(), m_xform.resultingPostCropArea(),
-                            m_pageId, m_ptrSettings
-                    )
+                new PictureZoneEditor(
+                    m_origImage, downscaled_orig_pixmap, m_pictureMask,
+                    m_xform.transform(), m_xform.resultingPostCropArea(),
+                    m_pageId, m_ptrSettings
+                )
             );
             QObject::connect(
-                    picture_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const&)),
-                    opt_widget, SIGNAL(invalidateThumbnail(PageId const&))
+                picture_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const &)),
+                opt_widget, SIGNAL(invalidateThumbnail(PageId const &))
             );
         }
 
         boost::function<QPointF(QPointF const&)> orig_to_output;
         boost::function<QPointF(QPointF const&)> output_to_orig;
-        if (m_params.dewarpingMode() != DewarpingMode::OFF && m_params.distortionModel().isValid()) {
+        if ((m_params.dewarpingMode() != DewarpingMode::OFF) && m_params.distortionModel().isValid()) {
             std::shared_ptr<DewarpingPointMapper> mapper(
-                    new DewarpingPointMapper(
-                            m_params.distortionModel(), m_params.depthPerception().value(),
-                            m_xform.transform(), m_virtContentRect
-                    )
+                new DewarpingPointMapper(
+                    m_params.distortionModel(), m_params.depthPerception().value(),
+                    m_xform.transform(), m_virtContentRect
+                )
             );
             orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
             output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
         }
         else {
-            typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
-            orig_to_output = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1);
-            output_to_orig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
+            typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+            orig_to_output = boost::bind((MapPointFunc) & QTransform::map, m_xform.transform(), _1);
+            output_to_orig = boost::bind((MapPointFunc) & QTransform::map, m_xform.transformBack(), _1);
         }
 
         std::unique_ptr<QWidget> fill_zone_editor(
-                new FillZoneEditor(
-                        m_outputImage, downscaled_output_pixmap,
-                        orig_to_output, output_to_orig, m_pageId, m_ptrSettings
-                )
+            new FillZoneEditor(
+                m_outputImage, downscaled_output_pixmap,
+                orig_to_output, output_to_orig, m_pageId, m_ptrSettings
+            )
         );
         QObject::connect(
-                fill_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const&)),
-                opt_widget, SIGNAL(invalidateThumbnail(PageId const&))
+            fill_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const &)),
+            opt_widget, SIGNAL(invalidateThumbnail(PageId const &))
         );
 
         std::unique_ptr<QWidget> despeckle_view;
         if (m_params.colorParams().colorMode() == ColorParams::COLOR_GRAYSCALE) {
             despeckle_view.reset(
-                    new ErrorWidget(tr("Despeckling can't be done in Color / Grayscale mode."))
+                new ErrorWidget(tr("Despeckling can't be done in Color / Grayscale mode."))
             );
         }
         else {
             despeckle_view.reset(
-                    new DespeckleView(
-                            m_despeckleState, m_despeckleVisualization, m_debug
-                    )
+                new DespeckleView(
+                    m_despeckleState, m_despeckleVisualization, m_debug
+                )
             );
             QObject::connect(
-                    opt_widget, SIGNAL(despeckleLevelChanged(DespeckleLevel, bool * )),
-                    despeckle_view.get(), SLOT(despeckleLevelChanged(DespeckleLevel, bool * ))
+                opt_widget, SIGNAL(despeckleLevelChanged(DespeckleLevel, bool*)),
+                despeckle_view.get(), SLOT(despeckleLevelChanged(DespeckleLevel, bool*))
             );
         }
 
@@ -563,11 +564,10 @@ namespace output
         tab_widget->setCurrentTab(opt_widget->lastTab());
 
         QObject::connect(
-                tab_widget.get(), SIGNAL(tabChanged(ImageViewTab)),
-                opt_widget, SLOT(tabChanged(ImageViewTab))
+            tab_widget.get(), SIGNAL(tabChanged(ImageViewTab)),
+            opt_widget, SLOT(tabChanged(ImageViewTab))
         );
 
         ui->setImageWidget(tab_widget.release(), ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
-    }
-
-} 
+    }  // Task::UiUpdater::updateUI
+}  // namespace output

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEID_H_
 #define IMAGEID_H_
@@ -26,7 +27,9 @@ class QFileInfo;
 class ImageId
 {
 public:
-    ImageId() : m_filePath(), m_page(0)
+    ImageId()
+        : m_filePath(),
+          m_page(0)
     { }
 
     explicit ImageId(QString const& file_path, int page = 0);
@@ -34,25 +37,39 @@ public:
     explicit ImageId(QFileInfo const& file_info, int page = 0);
 
     bool isNull() const
-    { return m_filePath.isNull(); }
+    {
+        return m_filePath.isNull();
+    }
 
     QString const& filePath() const
-    { return m_filePath; }
+    {
+        return m_filePath;
+    }
 
     void setFilePath(QString const& path)
-    { m_filePath = path; }
+    {
+        m_filePath = path;
+    }
 
     int page() const
-    { return m_page; }
+    {
+        return m_page;
+    }
 
     void setPage(int page)
-    { m_page = page; }
+    {
+        m_page = page;
+    }
 
     int zeroBasedPage() const
-    { return m_page > 0 ? m_page - 1 : 0; }
+    {
+        return m_page > 0 ? m_page - 1 : 0;
+    }
 
     bool isMultiPageFile() const
-    { return m_page > 0; }
+    {
+        return m_page > 0;
+    }
 
 private:
     QString m_filePath;
@@ -70,4 +87,4 @@ bool operator!=(ImageId const& lhs, ImageId const& rhs);
 
 bool operator<(ImageId const& lhs, ImageId const& rhs);
 
-#endif
+#endif  // ifndef IMAGEID_H_

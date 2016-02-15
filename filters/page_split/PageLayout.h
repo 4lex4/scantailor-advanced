@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGELAYOUT_H_
 #define PAGELAYOUT_H_
@@ -32,26 +33,24 @@ class QDomDocument;
 
 namespace page_split
 {
-
-/**
- * The page layout comprises the following:
- * \li A rectangular outline, possibly affine-transformed.
- * \li Layout type indicator.
- * \li Zero, 1 or 2 cutters.
- *
- * Cutters are lines with *arbitrary endpoints* that have different meaning
- * depending on layout type.  The SINGLE_PAGE_UNCUT layout doesn't have any
- * cutters.  The TWO_PAGES layout has one cutter that splits the outline into
- * two pages.  The SINGLE_PAGE_CUT layout has two cutters that cut the outline
- * from two sides.  They don't have a special identity like being a left or
- * a right cutter.  Swapping them won't change the area they bound, and that
- * area is the only thing we care about.
- */
+    /**
+     * The page layout comprises the following:
+     * \li A rectangular outline, possibly affine-transformed.
+     * \li Layout type indicator.
+     * \li Zero, 1 or 2 cutters.
+     *
+     * Cutters are lines with *arbitrary endpoints* that have different meaning
+     * depending on layout type.  The SINGLE_PAGE_UNCUT layout doesn't have any
+     * cutters.  The TWO_PAGES layout has one cutter that splits the outline into
+     * two pages.  The SINGLE_PAGE_CUT layout has two cutters that cut the outline
+     * from two sides.  They don't have a special identity like being a left or
+     * a right cutter.  Swapping them won't change the area they bound, and that
+     * area is the only thing we care about.
+     */
     class PageLayout
     {
     public:
-        enum Type
-        {
+        enum Type {
             SINGLE_PAGE_UNCUT,
             SINGLE_PAGE_CUT,
             TWO_PAGES
@@ -83,10 +82,14 @@ namespace page_split
         PageLayout(QDomElement const& layout_el);
 
         bool isNull() const
-        { return m_uncutOutline.isEmpty(); }
+        {
+            return m_uncutOutline.isEmpty();
+        }
 
         Type type() const
-        { return m_type; }
+        {
+            return m_type;
+        }
 
         /**
          * \brief Sets layout type and ensures the internal state
@@ -97,7 +100,9 @@ namespace page_split
         LayoutType toLayoutType() const;
 
         QPolygonF const& uncutOutline() const
-        { return m_uncutOutline; }
+        {
+            return m_uncutOutline;
+        }
 
         /**
          * We don't provide a method to set a polygon, but only a rectangle
@@ -174,8 +179,7 @@ namespace page_split
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
     private:
-        PageLayout(QPolygonF const& outline, QLineF const& cutter1,
-                   QLineF const& cutter2, Type type);
+        PageLayout(QPolygonF const& outline, QLineF const& cutter1, QLineF const& cutter2, Type type);
 
         static Type typeFromString(QString const& str);
 
@@ -185,8 +189,7 @@ namespace page_split
 
         static void ensureSameDirection(QLineF const& line1, QLineF& line2);
 
-        static void maybeAddIntersectionPoint(
-                QPolygonF& poly, QLineF const& line1, QLineF const& line2);
+        static void maybeAddIntersectionPoint(QPolygonF& poly, QLineF const& line1, QLineF const& line2);
 
         /**
          * This polygon always corresponds to a rectangle, unless it's empty.
@@ -204,6 +207,5 @@ namespace page_split
 
         Type m_type;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGELAYOUT_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,17 +15,16 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "QuadraticFunction.h"
 #include <algorithm>
 
 QuadraticFunction::QuadraticFunction(size_t num_vars)
-        : A(num_vars, num_vars),
-          b(num_vars),
-          c(0)
-{
-}
+    : A(num_vars, num_vars),
+      b(num_vars),
+      c(0)
+{ }
 
 void
 QuadraticFunction::reset()
@@ -64,6 +64,7 @@ QuadraticFunction::gradient() const
     }
 
     grad.b = b;
+
     return grad;
 }
 
@@ -100,6 +101,7 @@ QuadraticFunction::operator+=(QuadraticFunction const& other)
     A += other.A;
     b += other.b;
     c += other.c;
+
     return *this;
 }
 
@@ -109,5 +111,7 @@ QuadraticFunction::operator*=(double scalar)
     A *= scalar;
     b *= scalar;
     c *= scalar;
+
     return *this;
 }
+

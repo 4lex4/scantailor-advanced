@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,117 +15,125 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ReduceThreshold.h"
 #include <assert.h>
 
 namespace imageproc
 {
-
     namespace
     {
-
-/**
- * This lookup table is filled like this:
- * \code
- * for (unsigned i = 0; i < 256; i += 2) {
- *	unsigned out =
- *		((i & (1 << 1)) >> 1) |   *		((i & (1 << 3)) >> 2) |   *		((i & (1 << 5)) >> 3) |   *		((i & (1 << 7)) >> 4);    *	compressBitsLut[i >> 1] = static_cast<uint8_t>(out);
- * }
- * \endcode
- * We take every other byte because bit 0 doesn't matter here.
- */
+        /**
+         * This lookup table is filled like this:
+         * \code
+         * for (unsigned i = 0; i < 256; i += 2) {
+         *  unsigned out =
+         *      ((i & (1 << 1)) >> 1) |   *     ((i & (1 << 3)) >> 2) |   *     ((i & (1 << 5)) >> 3) |   *     ((i & (1 << 7)) >> 4);    * compressBitsLut[i >> 1] = static_cast<uint8_t>(out);
+         * }
+         * \endcode
+         * We take every other byte because bit 0 doesn't matter here.
+         */
         static uint8_t const compressBitsLut[128] = {
-                0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
-                0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
-                0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
-                0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
-                0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
-                0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
-                0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
-                0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
-                0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
-                0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
-                0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
-                0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
-                0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
-                0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
-                0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
-                0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf
+            0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
+            0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
+            0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
+            0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
+            0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
+            0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
+            0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
+            0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
+            0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
+            0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
+            0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
+            0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
+            0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
+            0x8, 0x9, 0x8, 0x9, 0xa, 0xb, 0xa, 0xb,
+            0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf,
+            0xc, 0xd, 0xc, 0xd, 0xe, 0xf, 0xe, 0xf
         };
 
-/**
- * Throw away every other bit starting with bit 0 and
- * pack the remaining bits into the upper half of a word.
- */
-        inline uint32_t compressBitsUpperHalf(uint32_t const bits)
+        /**
+         * Throw away every other bit starting with bit 0 and
+         * pack the remaining bits into the upper half of a word.
+         */
+        inline uint32_t
+        compressBitsUpperHalf(uint32_t const bits)
         {
             uint32_t r;
-            r = compressBitsLut[(bits >> 25) /*& 0x7F*/] << 28;
+            r = compressBitsLut[(bits >> 25)  /*& 0x7F*/] << 28;
             r |= compressBitsLut[(bits >> 17) & 0x7F] << 24;
             r |= compressBitsLut[(bits >> 9) & 0x7F] << 20;
             r |= compressBitsLut[(bits >> 1) & 0x7F] << 16;
+
             return r;
         }
 
-/**
- * Throw away every other bit starting with bit 0 and
- * pack the remaining bits into the lower half of a word.
- */
-        inline uint32_t compressBitsLowerHalf(uint32_t const bits)
+        /**
+         * Throw away every other bit starting with bit 0 and
+         * pack the remaining bits into the lower half of a word.
+         */
+        inline uint32_t
+        compressBitsLowerHalf(uint32_t const bits)
         {
             uint32_t r;
-            r = compressBitsLut[(bits >> 25) /*& 0x7F*/] << 12;
+            r = compressBitsLut[(bits >> 25)  /*& 0x7F*/] << 12;
             r |= compressBitsLut[(bits >> 17) & 0x7F] << 8;
             r |= compressBitsLut[(bits >> 9) & 0x7F] << 4;
             r |= compressBitsLut[(bits >> 1) & 0x7F];
+
             return r;
         }
 
-        inline uint32_t threshold1(uint32_t const top, uint32_t const bottom)
+        inline uint32_t
+        threshold1(uint32_t const top, uint32_t const bottom)
         {
             uint32_t word = top | bottom;
             word |= word << 1;
+
             return word;
         }
 
-        inline uint32_t threshold2(uint32_t const top, uint32_t const bottom)
+        inline uint32_t
+        threshold2(uint32_t const top, uint32_t const bottom)
         {
             uint32_t word1 = top & bottom;
             word1 |= word1 << 1;
             uint32_t word2 = top | bottom;
             word2 &= word2 << 1;
+
             return word1 | word2;
         }
 
-        inline uint32_t threshold3(uint32_t const top, uint32_t const bottom)
+        inline uint32_t
+        threshold3(uint32_t const top, uint32_t const bottom)
         {
             uint32_t word1 = top | bottom;
             word1 &= word1 << 1;
             uint32_t word2 = top & bottom;
             word2 |= word2 << 1;
+
             return word1 & word2;
         }
 
-        inline uint32_t threshold4(uint32_t const top, uint32_t const bottom)
+        inline uint32_t
+        threshold4(uint32_t const top, uint32_t const bottom)
         {
             uint32_t word = top & bottom;
             word &= word << 1;
+
             return word;
         }
-
-    }
+    }  // namespace
 
     ReduceThreshold::ReduceThreshold(BinaryImage const& image)
-            : m_image(image)
-    {
-    }
+        : m_image(image)
+    { }
 
     ReduceThreshold&
     ReduceThreshold::reduce(int const threshold)
     {
-        if (threshold < 1 || threshold > 4) {
+        if ((threshold < 1) || (threshold > 4)) {
             throw std::invalid_argument("ReduceThreshold: invalid threshold");
         }
 
@@ -139,10 +148,12 @@ namespace imageproc
 
         if (dst_h == 0) {
             reduceHorLine(threshold);
+
             return *this;
         }
         else if (dst_w == 0) {
             reduceVertLine(threshold);
+
             return *this;
         }
 
@@ -217,8 +228,9 @@ namespace imageproc
         }
 
         m_image = dst;
+
         return *this;
-    }
+    }  // ReduceThreshold::reduce
 
     void
     ReduceThreshold::reduceHorLine(int const threshold)
@@ -242,7 +254,7 @@ namespace imageproc
 
         switch (threshold) {
             case 1:
-            case 2: {
+            case 2:
                 for (int j = 0; j < steps_per_line; j += 2) {
                     word = src_line[j];
                     word |= word << 1;
@@ -254,9 +266,8 @@ namespace imageproc
                     dst_line[j / 2] |= compressBitsLowerHalf(word);
                 }
                 break;
-            }
             case 3:
-            case 4: {
+            case 4:
                 for (int j = 0; j < steps_per_line; j += 2) {
                     word = src_line[j];
                     word &= word << 1;
@@ -268,11 +279,10 @@ namespace imageproc
                     dst_line[j / 2] |= compressBitsLowerHalf(word);
                 }
                 break;
-            }
         }
 
         m_image = dst;
-    }
+    }  // ReduceThreshold::reduceHorLine
 
     void
     ReduceThreshold::reduceVertLine(int const threshold)
@@ -294,26 +304,23 @@ namespace imageproc
 
         switch (threshold) {
             case 1:
-            case 2: {
+            case 2:
                 for (int i = dst_h; i > 0; --i) {
                     dst_line[0] = src_line[0] | src_line[src_wpl];
                     src_line += src_wpl * 2;
                     dst_line += dst_wpl;
                 }
                 break;
-            }
             case 3:
-            case 4: {
+            case 4:
                 for (int i = dst_h; i > 0; --i) {
                     dst_line[0] = src_line[0] & src_line[src_wpl];
                     src_line += src_wpl * 2;
                     dst_line += dst_wpl;
                 }
                 break;
-            }
         }
 
         m_image = dst;
-    }
-
-} 
+    }  // ReduceThreshold::reduceVertLine
+}  // namespace imageproc

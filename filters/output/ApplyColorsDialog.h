@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_APPLYCOLORSDIALOG_H_
 #define OUTPUT_APPLYCOLORSDIALOG_H_
@@ -31,23 +32,21 @@ class QButtonGroup;
 
 namespace output
 {
-
-    class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog
+    class ApplyColorsDialog
+        : public QDialog,
+          private Ui::OutputApplyColorsDialog
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        ApplyColorsDialog(QWidget* parent, PageId const& page_id,
-                          PageSelectionAccessor const& page_selection_accessor);
+        ApplyColorsDialog(QWidget* parent, PageId const& page_id, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~ApplyColorsDialog();
 
     signals:
-
         void accepted(std::set<PageId> const& pages);
 
     private slots:
-
         void onSubmit();
 
     private:
@@ -56,6 +55,5 @@ namespace output
         PageId m_curPage;
         QButtonGroup* m_pScopeGroup;
     };
-
 }
-#endif
+#endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_

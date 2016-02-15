@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,8 +15,8 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//www.gnu.org/licenses/>.
-*/
+
+ */
 
 #ifndef IMAGEPROC_RAST_LINE_FINDER_H_
 #define IMAGEPROC_RAST_LINE_FINDER_H_
@@ -29,7 +30,6 @@
 
 namespace imageproc
 {
-
     class RastLineFinderParams
     {
     public:
@@ -41,11 +41,15 @@ namespace imageproc
          * but you can set it explicitly with this call.
          */
         void setOrigin(QPointF const& origin)
-        { m_origin = origin; }
+        {
+            m_origin = origin;
+        }
 
         /** \see setOrigin() */
         QPointF const& origin() const
-        { return m_origin; }
+        {
+            return m_origin;
+        }
 
         /**
          * By default, all angles are considered. Keeping in mind that line direction
@@ -69,11 +73,15 @@ namespace imageproc
 
         /** \see setAngleRangeDeg() */
         double minAngleDeg() const
-        { return m_minAngleDeg; }
+        {
+            return m_minAngleDeg;
+        }
 
         /** \see setAngleRangeDeg() */
         double maxAngleDeg() const
-        { return m_maxAngleDeg; }
+        {
+            return m_maxAngleDeg;
+        }
 
         /**
          * Being a recursive subdivision algorithm, it has to stop refining the angle
@@ -82,11 +90,15 @@ namespace imageproc
          * a higher value will improve performance.
          */
         void setAngleToleranceDeg(double tolerance_deg)
-        { m_angleToleranceDeg = tolerance_deg; }
+        {
+            m_angleToleranceDeg = tolerance_deg;
+        }
 
         /** \see setAngleToleranceDeg() */
         double angleToleranceDeg() const
-        { return m_angleToleranceDeg; }
+        {
+            return m_angleToleranceDeg;
+        }
 
         /**
          * Sets the maximum distance the point is allowed to be from a line
@@ -97,11 +109,15 @@ namespace imageproc
          * \see setAngleTolerance()
          */
         void setMaxDistFromLine(double dist)
-        { m_maxDistFromLine = dist; }
+        {
+            m_maxDistFromLine = dist;
+        }
 
         /** \see setMaxDistFromLine() */
         double maxDistFromLine() const
-        { return m_maxDistFromLine; }
+        {
+            return m_maxDistFromLine;
+        }
 
         /**
          * A support point is a point considered to be a part of a line.
@@ -111,13 +127,17 @@ namespace imageproc
          * \see setMaxDistFromLine()
          */
         void setMinSupportPoints(unsigned pts)
-        { m_minSupportPoints = pts; }
+        {
+            m_minSupportPoints = pts;
+        }
 
         /**
          * \see setMinSupportPoints()
          */
         unsigned minSupportPoints() const
-        { return m_minSupportPoints; }
+        {
+            return m_minSupportPoints;
+        }
 
         /**
          * \brief Checks if parameters are valid, optionally providing an error string.
@@ -134,14 +154,14 @@ namespace imageproc
     };
 
 
-/**
- * \brief Finds lines in point clouds.
- *
- * This class implements the following algorithm:\n
- * Thomas M. Breuel. Finding Lines under Bounded Error.\n
- * Pattern Recognition, 29(1):167-178, 1996.\n
- * http://infoscience.epfl.ch/record/82286/files/93-11.pdf?version=1
- */
+    /**
+     * \brief Finds lines in point clouds.
+     *
+     * This class implements the following algorithm:\n
+     * Thomas M. Breuel. Finding Lines under Bounded Error.\n
+     * Pattern Recognition, 29(1):167-178, 1996.\n
+     * http://infoscience.epfl.ch/record/82286/files/93-11.pdf?version=1
+     */
     class RastLineFinder
     {
     private:
@@ -186,18 +206,23 @@ namespace imageproc
             QPointF pt;
             bool available;
 
-            Point(QPointF const& p) : pt(p), available(true)
+            Point(QPointF const& p)
+                : pt(p),
+                  available(true)
             { }
         };
 
         class PointUnavailablePred
         {
         public:
-            PointUnavailablePred(std::vector<Point> const* points) : m_pPoints(points)
+            PointUnavailablePred(std::vector<Point> const* points)
+                : m_pPoints(points)
             { }
 
             bool operator()(unsigned idx) const
-            { return !(*m_pPoints)[idx].available; }
+            {
+                return !(*m_pPoints)[idx].available;
+            }
 
         private:
             std::vector<Point> const* m_pPoints;
@@ -208,8 +233,12 @@ namespace imageproc
         public:
             SearchSpace();
 
-            SearchSpace(RastLineFinder const& owner, float min_dist, float max_dist,
-                        float min_angle_rad, float max_angle_rad, std::vector<unsigned> const& candidate_idxs);
+            SearchSpace(RastLineFinder const& owner,
+                        float min_dist,
+                        float max_dist,
+                        float min_angle_rad,
+                        float max_angle_rad,
+                        std::vector<unsigned> const& candidate_idxs);
 
             /**
              * Returns a line that corresponds to the center of this search space.
@@ -226,22 +255,27 @@ namespace imageproc
             void pruneUnavailablePoints(PointUnavailablePred pred);
 
             std::vector<unsigned>& pointIdxs()
-            { return m_pointIdxs; }
+            {
+                return m_pointIdxs;
+            }
 
             std::vector<unsigned> const& pointIdxs() const
-            { return m_pointIdxs; }
+            {
+                return m_pointIdxs;
+            }
 
             void swap(SearchSpace& other);
 
         private:
-            float m_minDist; //
-            float m_maxDist; // These are already extended by max-dist-to-line.
+            float m_minDist;
+            float m_maxDist;
             float m_minAngleRad;
             float m_maxAngleRad;
-            std::vector<unsigned> m_pointIdxs; // Indexes into m_points of the parent object.
+            std::vector<unsigned> m_pointIdxs;
         };
 
-        class OrderedSearchSpaces : public PriorityQueue<SearchSpace, OrderedSearchSpaces>
+        class OrderedSearchSpaces
+            : public PriorityQueue<SearchSpace, OrderedSearchSpaces>
         {
             friend class PriorityQueue<SearchSpace, OrderedSearchSpaces>;
 
@@ -269,7 +303,6 @@ namespace imageproc
         OrderedSearchSpaces m_orderedSearchSpaces;
         bool m_firstLine;
     };
+}  // namespace imageproc
 
-}
-
-#endif
+#endif  // ifndef IMAGEPROC_RAST_LINE_FINDER_H_

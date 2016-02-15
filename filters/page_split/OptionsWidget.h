@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
 #define PAGE_SPLIT_OPTIONSWIDGET_H_
@@ -35,13 +36,13 @@ class ProjectPages;
 
 namespace page_split
 {
-
     class Settings;
 
-    class OptionsWidget :
-            public FilterOptionsWidget, private Ui::PageSplitOptionsWidget
+    class OptionsWidget
+        : public FilterOptionsWidget,
+          private Ui::PageSplitOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         class UiData
@@ -86,21 +87,17 @@ namespace page_split
         void postUpdateUI(UiData const& ui_data);
 
     signals:
-
         void pageLayoutSetLocally(PageLayout const& page_layout);
 
     public slots:
-
         void pageLayoutSetExternally(PageLayout const& page_layout);
 
     private slots:
-
         void layoutTypeButtonToggled(bool checked);
 
         void showChangeDialog();
 
-        void layoutTypeSet(
-                std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
+        void layoutTypeSet(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
 
         void splitLineModeChanged(bool auto_mode);
 
@@ -115,6 +112,5 @@ namespace page_split
         int m_ignoreAutoManualToggle;
         int m_ignoreLayoutTypeToggle;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_

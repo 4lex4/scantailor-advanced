@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_LAYOUT_TYPE_H_
 #define PAGE_SPLIT_LAYOUT_TYPE_H_
@@ -23,9 +24,7 @@
 
 namespace page_split
 {
-
-    enum LayoutType
-    {
+    enum LayoutType {
         AUTO_LAYOUT_TYPE,
         SINGLE_PAGE_UNCUT,
         PAGE_PLUS_OFFCUT,
@@ -35,6 +34,5 @@ namespace page_split
     QString layoutTypeToString(LayoutType type);
 
     LayoutType layoutTypeFromString(QString const& layout_type);
-
 }
 #endif

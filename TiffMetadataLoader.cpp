@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "TiffMetadataLoader.h"
 #include "TiffReader.h"
@@ -25,16 +26,15 @@ TiffMetadataLoader::registerMyself()
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
-                IntrusivePtr<ImageMetadataLoader>(new TiffMetadataLoader)
+            IntrusivePtr<ImageMetadataLoader>(new TiffMetadataLoader)
         );
         registered = true;
     }
 }
 
 ImageMetadataLoader::Status
-TiffMetadataLoader::loadMetadata(
-        QIODevice& io_device,
-        VirtualFunction1<void, ImageMetadata const&>& out)
+TiffMetadataLoader::loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
 {
     return TiffReader::readMetadata(io_device, out);
 }
+

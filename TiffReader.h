@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef TIFFREADER_H_
 #define TIFFREADER_H_
@@ -32,9 +33,8 @@ class TiffReader
 public:
     static bool canRead(QIODevice& device);
 
-    static ImageMetadataLoader::Status readMetadata(
-            QIODevice& device,
-            VirtualFunction1<void, ImageMetadata const&>& out);
+    static ImageMetadataLoader::Status readMetadata(QIODevice& device,
+                                                    VirtualFunction1<void, ImageMetadata const&>& out);
 
     /**
      * \brief Reads the image from io device to QImage.
@@ -49,11 +49,11 @@ public:
 
 private:
     class TiffHeader;
-class TiffHandle;
+    class TiffHandle;
 
     struct TiffInfo;
 
-    template<typename T>
+    template <typename T>
     class TiffBuffer;
 
     static TiffHeader readHeader(QIODevice& device);
@@ -64,13 +64,11 @@ class TiffHandle;
 
     static Dpi getDpi(float xres, float yres, unsigned res_unit);
 
-    static QImage extractBinaryOrIndexed8Image(
-            TiffHandle const& tif, TiffInfo const& info);
+    static QImage extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo const& info);
 
     static void readLines(TiffHandle const& tif, QImage& image);
 
-    static void readAndUnpackLines(
-            TiffHandle const& tif, TiffInfo const& info, QImage& image);
+    static void readAndUnpackLines(TiffHandle const& tif, TiffInfo const& info, QImage& image);
 };
 
-#endif
+#endif  // ifndef TIFFREADER_H_

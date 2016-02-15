@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_TOWARDS_LINE_TRACER_H_
 #define DEWARPING_TOWARDS_LINE_TRACER_H_
@@ -33,21 +34,21 @@ namespace imageproc
 
 namespace dewarping
 {
-
-/**
- * This class is used for tracing a path towards intersection with a given line.
- */
+    /**
+     * This class is used for tracing a path towards intersection with a given line.
+     */
     class TowardsLineTracer
     {
     public:
-        TowardsLineTracer(
-                imageproc::SEDM const* dm, Grid<float> const* pm, QLineF const& line, QPoint const& initial_pos);
+        TowardsLineTracer(imageproc::SEDM const* dm,
+                          Grid<float> const* pm,
+                          QLineF const& line,
+                          QPoint const& initial_pos);
 
         QPoint const* trace(float max_dist);
 
     private:
-        struct Step
-        {
+        struct Step {
             Vec2d unitVec;
             QPoint vec;
             int dmOffset;
@@ -68,6 +69,5 @@ namespace dewarping
         int m_numSteps;
         bool m_finished;
     };
-
-}
-#endif
+}  // namespace dewarping
+#endif  // ifndef DEWARPING_TOWARDS_LINE_TRACER_H_

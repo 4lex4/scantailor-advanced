@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef CONTENTSPANFINDER_H_
 #define CONTENTSPANFINDER_H_
@@ -30,14 +31,20 @@ namespace imageproc
 class ContentSpanFinder
 {
 public:
-    ContentSpanFinder() : m_minContentWidth(1), m_minWhitespaceWidth(1)
+    ContentSpanFinder()
+        : m_minContentWidth(1),
+          m_minWhitespaceWidth(1)
     { }
 
     void setMinContentWidth(int value)
-    { m_minContentWidth = value; }
+    {
+        m_minContentWidth = value;
+    }
 
     void setMinWhitespaceWidth(int value)
-    { m_minWhitespaceWidth = value; }
+    {
+        m_minWhitespaceWidth = value;
+    }
 
     /**
      * \brief Find content spans.
@@ -46,25 +53,23 @@ public:
      * allowed to merge with other content blocks, if whitespace that
      * separates them is shorter than min-whitespace-width.
      */
-    template<typename T>
-    void find(imageproc::SlicedHistogram const &histogram, T handler) const;
+    template <typename T>
+    void find(imageproc::SlicedHistogram const& histogram, T handler) const;
 
 private:
-    void findImpl(
-            imageproc::SlicedHistogram const &histogram,
-            VirtualFunction1<void, Span> &handler) const;
+    void findImpl(imageproc::SlicedHistogram const& histogram, VirtualFunction1<void, Span>& handler) const;
 
     int m_minContentWidth;
     int m_minWhitespaceWidth;
 };
 
 
-template<typename T>
+template <typename T>
 void
-ContentSpanFinder::find(imageproc::SlicedHistogram const &histogram, T handler) const
+ContentSpanFinder::find(imageproc::SlicedHistogram const& histogram, T handler) const
 {
     ProxyFunction1<T, void, Span> proxy(handler);
     findImpl(histogram, proxy);
 }
 
-#endif
+#endif  // ifndef CONTENTSPANFINDER_H_

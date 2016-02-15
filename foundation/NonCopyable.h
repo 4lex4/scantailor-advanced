@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,20 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef NONCOPYABLE_H_
 #define NONCOPYABLE_H_
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+ #include <config.h>
 #endif
 
 #define DECLARE_NON_COPYABLE(Class) \
 private: \
-/** \brief Copying is forbidden. */ \
-Class(Class const&); \
-/** \brief Copying is forbidden. */ \
-Class& operator=(Class const&);
+    /** \brief Copying is forbidden. */ \
+    Class(Class const &); \
+    /** \brief Copying is forbidden. */ \
+    Class& operator=(Class const&);
 
 #endif

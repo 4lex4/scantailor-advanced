@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_
@@ -44,32 +45,33 @@ class QMenu;
 
 namespace output
 {
-
     class Settings;
 
 
-    class PictureZoneEditor : public ImageViewBase, private InteractionHandler
+    class PictureZoneEditor
+        : public ImageViewBase,
+          private InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        PictureZoneEditor(
-                QImage const& image, ImagePixmapUnion const& downscaled_image,
-                imageproc::BinaryImage const& picture_mask,
-                QTransform const& image_to_virt, QPolygonF const& virt_display_area,
-                PageId const& page_id, IntrusivePtr<Settings> const& settings);
+        PictureZoneEditor(QImage const& image,
+                          ImagePixmapUnion const& downscaled_image,
+                          imageproc::BinaryImage const& picture_mask,
+                          QTransform const& image_to_virt,
+                          QPolygonF const& virt_display_area,
+                          PageId const& page_id,
+                          IntrusivePtr<Settings> const& settings);
 
         virtual ~PictureZoneEditor();
 
     signals:
-
         void invalidateThumbnail(PageId const& page_id);
 
     protected:
         virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
     private slots:
-
         void advancePictureMaskAnimation();
 
         void initiateBuildingScreenPictureMask();
@@ -111,6 +113,5 @@ namespace output
         PageId m_pageId;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

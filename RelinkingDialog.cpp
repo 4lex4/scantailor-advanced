@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RelinkingDialog.h"
 #include "RelinkingSortingModel.h"
@@ -23,8 +24,9 @@
 #include <assert.h>
 
 RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* parent)
-        : QDialog(parent), m_pSortingModel(new RelinkingSortingModel),
-          m_projectFileDir(QFileInfo(project_file_path).path())
+    : QDialog(parent),
+      m_pSortingModel(new RelinkingSortingModel),
+      m_projectFileDir(QFileInfo(project_file_path).path())
 {
     ui.setupUi(this);
     m_pSortingModel->setSourceModel(&m_model);
@@ -34,14 +36,14 @@ RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* pare
     ui.undoButton->setVisible(false);
 
     connect(
-            ui.listView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection const&, QItemSelection const&)),
-            SLOT(selectionChanged(QItemSelection const&, QItemSelection const&))
+        ui.listView->selectionModel(),
+        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+        SLOT(selectionChanged(QItemSelection const &, QItemSelection const &))
     );
 
     connect(
-            ui.pathVisualization, SIGNAL(clicked(QString const&, QString const&, int)),
-            SLOT(pathButtonClicked(QString const&, QString const&, int))
+        ui.pathVisualization, SIGNAL(clicked(QString const &, QString const &, int)),
+        SLOT(pathButtonClicked(QString const &, QString const &, int))
     );
 
     connect(ui.undoButton, SIGNAL(clicked()), SLOT(undoButtonClicked()));
@@ -63,7 +65,7 @@ RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection
         QModelIndex const index(selected.front().topLeft());
         QString const path(index.data(m_model.UncommittedPathRole).toString());
         int const type = index.data(m_model.TypeRole).toInt();
-        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type) type), /*clickable=*/true);
+        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type)type),  /*clickable=*/ true);
         ui.pathVisualization->setVisible(true);
 
         if (ui.errorLabel->isVisible()) {
@@ -75,12 +77,10 @@ RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection
     }
 
     ui.errorLabel->setVisible(false);
-
 }
 
 void
-RelinkingDialog::pathButtonClicked(
-        QString const& prefix_path, QString const& suffix_path, int const type)
+RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& suffix_path, int const type)
 {
     assert(!prefix_path.endsWith(QChar('/')) && !prefix_path.endsWith(QChar('\\')));
     assert(!suffix_path.startsWith(QChar('/')) && !suffix_path.startsWith(QChar('\\')));
@@ -90,18 +90,18 @@ RelinkingDialog::pathButtonClicked(
     if (type == RelinkablePath::File) {
         QDir const dir(QFileInfo(prefix_path).dir());
         replacement_path = QFileDialog::getOpenFileName(
-                this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
-                dir.exists() ? dir.path() : m_projectFileDir,
-                QString(), 0, QFileDialog::DontUseNativeDialog
-        );
+            this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
+            dir.exists() ? dir.path() : m_projectFileDir,
+            QString(), 0, QFileDialog::DontUseNativeDialog
+                           );
     }
     else {
         QDir const dir(prefix_path);
         replacement_path = QFileDialog::getExistingDirectory(
-                this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
-                dir.exists() ? prefix_path : m_projectFileDir,
-                QFileDialog::DontUseNativeDialog
-        );
+            this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
+            dir.exists() ? prefix_path : m_projectFileDir,
+            QFileDialog::DontUseNativeDialog
+                           );
     }
 
     replacement_path = RelinkablePath::normalize(replacement_path);
@@ -118,24 +118,24 @@ RelinkingDialog::pathButtonClicked(
     new_path += QChar('/');
     new_path += suffix_path;
 
-    m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type) type);
+    m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type)type);
 
     if (m_model.checkForMerges()) {
         ui.errorLabel->setText(
-                tr("This change would merge several files into one.")
+            tr("This change would merge several files into one.")
         );
         ui.errorLabel->setVisible(true);
         ui.pathVisualization->clear();
         ui.pathVisualization->setVisible(false);
     }
     else {
-        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type) type), /*clickable=*/false);
+        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type)type),  /*clickable=*/ false);
         ui.pathVisualization->setVisible(true);
     }
 
     ui.undoButton->setVisible(true);
     ui.listView->update();
-}
+}  // RelinkingDialog::pathButtonClicked
 
 void
 RelinkingDialog::undoButtonClicked()
@@ -150,3 +150,4 @@ RelinkingDialog::commitChanges()
     m_model.commitChanges();
     accept();
 }
+

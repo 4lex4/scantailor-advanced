@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,23 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DepthPerception.h"
 #include "../../Utils.h"
 
 namespace output
 {
-
     DepthPerception::DepthPerception()
-            : m_value(defaultValue())
-    {
-    }
+        : m_value(defaultValue())
+    { }
 
     DepthPerception::DepthPerception(double value)
-            : m_value(qBound(minValue(), value, maxValue()))
-    {
-    }
+        : m_value(qBound(minValue(), value, maxValue()))
+    { }
 
     DepthPerception::DepthPerception(QString const& from_string)
     {
@@ -55,5 +53,4 @@ namespace output
     {
         m_value = qBound(minValue(), value, maxValue());
     }
-
-} 
+}  // namespace output

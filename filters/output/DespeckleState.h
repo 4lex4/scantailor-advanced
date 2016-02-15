@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #ifndef OUTPUT_DESPECKLE_STATE_H_
@@ -30,31 +31,31 @@ class DebugImages;
 
 namespace output
 {
-
     class DespeckleVisualization;
 
-/**
- * Holds enough information to build a DespeckleVisualization
- * or to re-despeckle with different DespeckleLevel.
- */
+    /**
+     * Holds enough information to build a DespeckleVisualization
+     * or to re-despeckle with different DespeckleLevel.
+     */
     class DespeckleState
     {
     public:
         DespeckleState(QImage const& output,
                        imageproc::BinaryImage const& speckles,
-                       DespeckleLevel level, Dpi const& dpi);
+                       DespeckleLevel level,
+                       Dpi const& dpi);
 
         DespeckleLevel level() const
-        { return m_despeckleLevel; }
+        {
+            return m_despeckleLevel;
+        }
 
         DespeckleVisualization visualize() const;
 
-        DespeckleState redespeckle(DespeckleLevel level,
-                                   TaskStatus const& status, DebugImages* dbg = 0) const;
+        DespeckleState redespeckle(DespeckleLevel level, TaskStatus const& status, DebugImages* dbg = 0) const;
 
     private:
-        static QImage overlaySpeckles(
-                QImage const& mixed, imageproc::BinaryImage const& speckles);
+        static QImage overlaySpeckles(QImage const& mixed, imageproc::BinaryImage const& speckles);
 
         static imageproc::BinaryImage extractBW(QImage const& mixed);
 
@@ -88,6 +89,5 @@ namespace output
          */
         DespeckleLevel m_despeckleLevel;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_DESPECKLE_STATE_H_

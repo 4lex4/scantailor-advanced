@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Filter.h"
 #include "FilterUiInterface.h"
@@ -32,18 +33,17 @@
 
 namespace page_split
 {
-
     Filter::Filter(IntrusivePtr<ProjectPages> const& page_sequence,
                    PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrPages(page_sequence),
-              m_ptrSettings(new Settings),
-              m_selectedPageOrder(0)
+        : m_ptrPages(page_sequence),
+          m_ptrSettings(new Settings),
+          m_selectedPageOrder(0)
     {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(
-                    new OptionsWidget(
-                            m_ptrSettings, m_ptrPages, page_selection_accessor
-                    )
+                new OptionsWidget(
+                    m_ptrSettings, m_ptrPages, page_selection_accessor
+                )
             );
         }
 
@@ -56,8 +56,7 @@ namespace page_split
     }
 
     Filter::~Filter()
-    {
-    }
+    { }
 
     QString
     Filter::getName() const
@@ -85,39 +84,37 @@ namespace page_split
     }
 
     QDomElement
-    Filter::saveSettings(
-            ProjectWriter const& writer, QDomDocument& doc) const
+    Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const
     {
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("page-split"));
         filter_el.setAttribute(
-                "defaultLayoutType",
-                layoutTypeToString(m_ptrSettings->defaultLayoutType())
+            "defaultLayoutType",
+            layoutTypeToString(m_ptrSettings->defaultLayoutType())
         );
 
         writer.enumImages(
-                [&](ImageId const& image_id, int const numeric_id)
-                {
-                    this->writeImageSettings(doc, filter_el, image_id, numeric_id);
-                }
+            [&](ImageId const& image_id, int const numeric_id)
+        {
+            this->writeImageSettings(doc, filter_el, image_id, numeric_id);
+        }
         );
 
         return filter_el;
     }
 
     void
-    Filter::loadSettings(
-            ProjectReader const& reader, QDomElement const& filters_el)
+    Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el)
     {
         m_ptrSettings->clear();
 
         QDomElement const filter_el(filters_el.namedItem("page-split").toElement());
         QString const default_layout_type(
-                filter_el.attribute("defaultLayoutType")
+            filter_el.attribute("defaultLayoutType")
         );
         m_ptrSettings->setLayoutTypeForAllPages(
-                layoutTypeFromString(default_layout_type)
+            layoutTypeFromString(default_layout_type)
         );
 
         QString const image_tag_name("image");
@@ -156,28 +153,25 @@ namespace page_split
 
             m_ptrSettings->updatePage(image_id, update);
         }
-    }
+    }  // Filter::loadSettings
 
     void
-    Filter::pageOrientationUpdate(
-            ImageId const& image_id, OrthogonalRotation const& orientation)
+    Filter::pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation)
     {
         Settings::Record const record(m_ptrSettings->getPageRecord(image_id));
 
-        if (record.layoutType() && *record.layoutType() != AUTO_LAYOUT_TYPE) {
+        if (record.layoutType() && (*record.layoutType() != AUTO_LAYOUT_TYPE)) {
             return;
         }
 
-        if (record.params() && record.params()->dependencies().orientation() == orientation) {
+        if (record.params() && (record.params()->dependencies().orientation() == orientation)) {
             return;
         }
-
     }
 
     void
-    Filter::writeImageSettings(
-            QDomDocument& doc, QDomElement& filter_el,
-            ImageId const& image_id, int const numeric_id) const
+    Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                               int const numeric_id) const
     {
         Settings::Record const record(m_ptrSettings->getPageRecord(image_id));
 
@@ -185,7 +179,7 @@ namespace page_split
         image_el.setAttribute("id", numeric_id);
         if (LayoutType const* layout_type = record.layoutType()) {
             image_el.setAttribute(
-                    "layoutType", layoutTypeToString(*layout_type)
+                "layoutType", layoutTypeToString(*layout_type)
             );
         }
 
@@ -196,25 +190,24 @@ namespace page_split
     }
 
     IntrusivePtr<Task>
-    Filter::createTask(
-            PageInfo const& page_info,
-            IntrusivePtr<deskew::Task> const& next_task,
-            bool const batch_processing, bool const debug)
+    Filter::createTask(PageInfo const& page_info,
+                       IntrusivePtr<deskew::Task> const& next_task,
+                       bool const batch_processing,
+                       bool const debug)
     {
         return IntrusivePtr<Task>(
-                new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings, m_ptrPages,
-                        next_task, page_info, batch_processing, debug
-                )
+            new Task(
+                IntrusivePtr<Filter>(this), m_ptrSettings, m_ptrPages,
+                next_task, page_info, batch_processing, debug
+            )
         );
     }
 
     IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(
-            IntrusivePtr<deskew::CacheDrivenTask> const& next_task)
+    Filter::createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task)
     {
         return IntrusivePtr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+            new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }
 
@@ -233,8 +226,7 @@ namespace page_split
     void
     Filter::selectPageOrder(int option)
     {
-        assert((unsigned) option < m_pageOrderOptions.size());
+        assert((unsigned)option < m_pageOrderOptions.size());
         m_selectedPageOrder = option;
     }
-
-} 
+}  // namespace page_split

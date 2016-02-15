@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SqDistApproximant.h"
 #include "FrenetFrame.h"
@@ -22,9 +23,7 @@
 
 namespace spfit
 {
-
-    SqDistApproximant::SqDistApproximant(
-            Vec2d const& origin, Vec2d const& u, Vec2d const& v, double m, double n)
+    SqDistApproximant::SqDistApproximant(Vec2d const& origin, Vec2d const& u, Vec2d const& v, double m, double n)
     {
         assert(fabs(u.squaredNorm() - 1.0) < 1e-06 && "u is not normalized");
         assert(fabs(v.squaredNorm() - 1.0) < 1e-06 && "v is not normalized");
@@ -85,16 +84,18 @@ namespace spfit
     }
 
     SqDistApproximant
-    SqDistApproximant::curveDistance(
-            Vec2d const& reference_point, FrenetFrame const& frenet_frame, double signed_curvature)
+    SqDistApproximant::curveDistance(Vec2d const& reference_point,
+                                     FrenetFrame const& frenet_frame,
+                                     double signed_curvature)
     {
         return weightedCurveDistance(reference_point, frenet_frame, signed_curvature, 1);
     }
 
     SqDistApproximant
-    SqDistApproximant::weightedCurveDistance(
-            Vec2d const& reference_point, FrenetFrame const& frenet_frame,
-            double const signed_curvature, double const weight)
+    SqDistApproximant::weightedCurveDistance(Vec2d const& reference_point,
+                                             FrenetFrame const& frenet_frame,
+                                             double const signed_curvature,
+                                             double const weight)
     {
         double const abs_curvature = fabs(signed_curvature);
         double m = 0;
@@ -107,8 +108,8 @@ namespace spfit
         }
 
         return SqDistApproximant(
-                frenet_frame.origin(), frenet_frame.unitTangent(),
-                frenet_frame.unitNormal(), m * weight, weight
+            frenet_frame.origin(), frenet_frame.unitTangent(),
+            frenet_frame.unitNormal(), m * weight, weight
         );
     }
 
@@ -116,7 +117,7 @@ namespace spfit
     SqDistApproximant::evaluate(Vec2d const& pt) const
     {
         StaticMatrixCalc<double, 8, 1> mc;
+
         return (mc(pt, 1, 2) * mc(A) * mc(pt, 2, 1) + mc(b, 1, 2) * mc(pt, 2, 1)).rawData()[0] + c;
     }
-
-} 
+}  // namespace spfit

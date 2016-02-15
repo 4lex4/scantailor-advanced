@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,17 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RelinkingListView.h"
 #include "RelinkingModel.h"
 #include <QStyledItemDelegate>
 #include <QPainter>
 
-class RelinkingListView::Delegate : public QStyledItemDelegate
+class RelinkingListView::Delegate
+    : public QStyledItemDelegate
 {
 public:
-    Delegate(RelinkingListView* owner) : QStyledItemDelegate(owner), m_pOwner(owner)
+    Delegate(RelinkingListView* owner)
+        : QStyledItemDelegate(owner),
+          m_pOwner(owner)
     { }
 
     virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const
@@ -44,7 +48,9 @@ public:
     QRect rect;
     int status;
 
-    IndicationGroup(QRect const& r, int st) : rect(r), status(st)
+    IndicationGroup(QRect const& r, int st)
+        : rect(r),
+          status(st)
     { }
 };
 
@@ -55,7 +61,9 @@ public:
     void process(QRect const& rect, int status);
 
     std::vector<IndicationGroup> const& groups() const
-    { return m_groups; }
+    {
+        return m_groups;
+    }
 
 private:
     std::vector<IndicationGroup> m_groups;
@@ -63,7 +71,8 @@ private:
 
 
 RelinkingListView::RelinkingListView(QWidget* parent)
-        : QListView(parent), m_statusLayerDrawn(false)
+    : QListView(parent),
+      m_statusLayerDrawn(false)
 {
     setItemDelegate(new Delegate(this));
 }
@@ -76,8 +85,7 @@ RelinkingListView::paintEvent(QPaintEvent* e)
 }
 
 void
-RelinkingListView::maybeDrawStatusLayer(
-        QPainter* painter, QModelIndex const& item_index, QRect const& item_paint_rect)
+RelinkingListView::maybeDrawStatusLayer(QPainter* painter, QModelIndex const& item_index, QRect const& item_paint_rect)
 {
     if (m_statusLayerDrawn) {
         return;
@@ -121,7 +129,7 @@ RelinkingListView::drawStatusLayer(QPainter* painter)
         int const status = index.data(RelinkingModel::UncommittedStatusRole).toInt();
         group_aggregator.process(rect, status);
 
-        if (row != top_index.row() && !item_rect.intersects(drawing_rect)) {
+        if ((row != top_index.row()) && !item_rect.intersects(drawing_rect)) {
             break;
         }
     }
@@ -136,7 +144,7 @@ RelinkingListView::drawStatusLayer(QPainter* painter)
         painter->setPen(pen);
         painter->setBrush(brush);
 
-        for (IndicationGroup const& group :  group_aggregator.groups()) {
+        for (IndicationGroup const& group : group_aggregator.groups()) {
             if (group.status == status) {
                 qreal const radius = 0.5 * group.rect.width();
                 QRectF rect(group.rect);
@@ -149,15 +157,16 @@ RelinkingListView::drawStatusLayer(QPainter* painter)
         pen.setColor(QColor(0x6f2719));
         brush.setColor(QColor(0xff674b));
     }
-}
+}  // RelinkingListView::drawStatusLayer
 
 void
 RelinkingListView::GroupAggregator::process(QRect const& rect, int status)
 {
-    if (m_groups.empty() || m_groups.back().status != status) {
+    if (m_groups.empty() || (m_groups.back().status != status)) {
         m_groups.push_back(IndicationGroup(rect, status));
     }
     else {
         m_groups.back().rect |= rect;
     }
 }
+

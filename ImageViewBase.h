@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEVIEWBASE_H_
 #define IMAGEVIEWBASE_H_
@@ -57,15 +58,13 @@ class ImagePresentation;
  *
  * \see m_pixmapToImage, m_imageToVirt, m_virtualToWidget, m_widgetToVirtual.
  */
-class ImageViewBase : public QAbstractScrollArea
+class ImageViewBase
+    : public QAbstractScrollArea
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    enum FocalPointMode
-    {
-        CENTER_IF_FITS, DONT_CENTER
-    };
+    enum FocalPointMode { CENTER_IF_FITS, DONT_CENTER };
 
     /**
      * \brief ImageViewBase constructor.
@@ -85,9 +84,10 @@ public:
      *        The units are widget pixels.  This reserved area may
      *        be used for custom drawing or custom controls.
      */
-    ImageViewBase(
-            QImage const& image, ImagePixmapUnion const& downscaled_version,
-            ImagePresentation const& presentation, Margins const& margins = Margins());
+    ImageViewBase(QImage const& image,
+                  ImagePixmapUnion const& downscaled_version,
+                  ImagePresentation const& presentation,
+                  Margins const& margins = Margins());
 
     virtual ~ImageViewBase();
 
@@ -96,7 +96,9 @@ public:
      * downscaled pixmap between multiple image views.
      */
     QPixmap const& downscaledPixmap() const
-    { return m_pixmap; }
+    {
+        return m_pixmap;
+    }
 
     /**
      * \brief Enable or disable the high-quality transform.
@@ -118,37 +120,59 @@ public:
     static QImage createDownscaledImage(QImage const& image);
 
     InteractionHandler& rootInteractionHandler()
-    { return m_rootInteractionHandler; }
+    {
+        return m_rootInteractionHandler;
+    }
 
     InteractionState& interactionState()
-    { return m_interactionState; }
+    {
+        return m_interactionState;
+    }
 
     InteractionState const& interactionState() const
-    { return m_interactionState; }
+    {
+        return m_interactionState;
+    }
 
     QTransform const& imageToVirtual() const
-    { return m_imageToVirtual; }
+    {
+        return m_imageToVirtual;
+    }
 
     QTransform const& virtualToImage() const
-    { return m_virtualToImage; }
+    {
+        return m_virtualToImage;
+    }
 
     QTransform const& virtualToWidget() const
-    { return m_virtualToWidget; }
+    {
+        return m_virtualToWidget;
+    }
 
     QTransform const& widgetToVirtual() const
-    { return m_widgetToVirtual; }
+    {
+        return m_widgetToVirtual;
+    }
 
     QTransform imageToWidget() const
-    { return m_imageToVirtual * m_virtualToWidget; }
+    {
+        return m_imageToVirtual * m_virtualToWidget;
+    }
 
     QTransform widgetToImage() const
-    { return m_widgetToVirtual * m_virtualToImage; }
+    {
+        return m_widgetToVirtual * m_virtualToImage;
+    }
 
     void update()
-    { viewport()->update(); }
+    {
+        viewport()->update();
+    }
 
     QRectF const& virtualDisplayRect() const
-    { return m_virtualDisplayArea; }
+    {
+        return m_virtualDisplayArea;
+    }
 
     /**
      * Get the bounding box of the image as it appears on the screen,
@@ -175,7 +199,9 @@ public:
      * As a result, the image will be moved by delta widget pixels.
      */
     QPointF getWidgetFocalPoint() const
-    { return m_widgetFocalPoint; }
+    {
+        return m_widgetFocalPoint;
+    }
 
     /**
      * \brief Set the focal point in widget coordinates.
@@ -213,8 +239,7 @@ public:
      * \brief Same as updateTransform(), but adjusts the focal point
      *        to improve screen space usage.
      */
-    void updateTransformAndFixFocalPoint(
-            ImagePresentation const& presentation, FocalPointMode mode);
+    void updateTransformAndFixFocalPoint(ImagePresentation const& presentation, FocalPointMode mode);
 
     /**
      * \brief Same as updateTransform(), but preserves the visual image scale.
@@ -236,7 +261,9 @@ public:
      * \see setZoomLevel()
      */
     double zoomLevel() const
-    { return m_zoom; }
+    {
+        return m_zoom;
+    }
 
     /**
      * The image is considered ideally positioned when as little as possible
@@ -277,7 +304,6 @@ protected:
     QRectF maxViewportRect() const;
 
 private slots:
-
     void initiateBuildingHqVersion();
 
     void updateScrollBars();
@@ -286,7 +312,7 @@ private slots:
 
 private:
     class HqTransformTask;
-class TempFocalPointAdjuster;
+    class TempFocalPointAdjuster;
 
     class TransformChangeWatcher;
 
@@ -461,4 +487,4 @@ class TempFocalPointAdjuster;
     bool m_hqTransformEnabled;
 };
 
-#endif
+#endif  // ifndef IMAGEVIEWBASE_H_

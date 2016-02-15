@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef XMLMARSHALLER_H_
 #define XMLMARSHALLER_H_
@@ -37,7 +38,8 @@ class QRectF;
 class XmlMarshaller
 {
 public:
-    XmlMarshaller(QDomDocument const& doc) : m_doc(doc)
+    XmlMarshaller(QDomDocument const& doc)
+        : m_doc(doc)
     { }
 
     QDomElement string(QString const& str, QString const& name);
@@ -66,4 +68,4 @@ private:
     QDomDocument m_doc;
 };
 
-#endif
+#endif  // ifndef XMLMARSHALLER_H_

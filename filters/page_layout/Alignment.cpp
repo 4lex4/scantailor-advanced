@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Alignment.h"
 #include <QDomDocument>
@@ -23,17 +24,21 @@
 
 namespace page_layout
 {
-
-
     Alignment::Alignment()
-            : m_vert(VCENTER), m_hor(HCENTER), m_tolerance(DEFAULT_TOLERANCE), m_autoMargins(false)
+        : m_vert(VCENTER),
+          m_hor(HCENTER),
+          m_tolerance(DEFAULT_TOLERANCE),
+          m_autoMargins(false)
     {
         CommandLine cli = CommandLine::get();
         m_isNull = cli.getDefaultNull();
     }
 
     Alignment::Alignment(Vertical vert, Horizontal hor)
-            : m_vert(vert), m_hor(hor), m_tolerance(DEFAULT_TOLERANCE), m_autoMargins(false)
+        : m_vert(vert),
+          m_hor(hor),
+          m_tolerance(DEFAULT_TOLERANCE),
+          m_autoMargins(false)
     {
         CommandLine cli = CommandLine::get();
         m_isNull = cli.getDefaultNull();
@@ -130,7 +135,7 @@ namespace page_layout
         el.setAttribute("null", m_isNull ? 1 : 0);
         el.setAttribute("tolerance", QString::number(m_tolerance));
         el.setAttribute("autoMargins", m_autoMargins ? "true" : "false");
-        return el;
-    }
 
-} 
+        return el;
+    }  // Alignment::toXml
+}  // namespace page_layout

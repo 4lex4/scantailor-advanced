@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_DEWARPING_VIEW_H_
 #define OUTPUT_DEWARPING_VIEW_H_
@@ -38,42 +39,43 @@
 
 namespace output
 {
-
-    class DewarpingView : public ImageViewBase, protected InteractionHandler
+    class DewarpingView
+        : public ImageViewBase,
+          protected InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        DewarpingView(
-                QImage const& image, ImagePixmapUnion const& downscaled_image,
-                QTransform const& source_to_virt, QPolygonF const& virt_display_area,
-                QRectF const& virt_content_rect, PageId const& page_id,
-                DewarpingMode dewarping_mode,
-                dewarping::DistortionModel const& distortion_model,
-                DepthPerception const& depth_perception);
+        DewarpingView(QImage const& image,
+                      ImagePixmapUnion const& downscaled_image,
+                      QTransform const& source_to_virt,
+                      QPolygonF const& virt_display_area,
+                      QRectF const& virt_content_rect,
+                      PageId const& page_id,
+                      DewarpingMode dewarping_mode,
+                      dewarping::DistortionModel const& distortion_model,
+                      DepthPerception const& depth_perception);
 
         virtual ~DewarpingView();
 
     signals:
-
         void distortionModelChanged(dewarping::DistortionModel const& model);
 
     public slots:
-
         void depthPerceptionChanged(double val);
 
     protected:
         virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
     private:
-        static void initNewSpline(XSpline& spline, QPointF const& p1, QPointF const& p2,
+        static void initNewSpline(XSpline& spline,
+                                  QPointF const& p1,
+                                  QPointF const& p2,
                                   DewarpingMode const* p_dewarpingMode = NULL);
 
         static void fitSpline(XSpline& spline, std::vector<QPointF> const& polyline);
 
-        void paintXSpline(
-                QPainter& painter, InteractionState const& interaction,
-                InteractiveXSpline const& ispline);
+        void paintXSpline(QPainter& painter, InteractionState const& interaction, InteractiveXSpline const& ispline);
 
         void curveModified(int curve_idx);
 
@@ -95,6 +97,5 @@ namespace output
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_DEWARPING_VIEW_H_

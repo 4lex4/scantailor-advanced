@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RelinkablePathVisualization.h"
 #include "RelinkablePath.h"
@@ -28,8 +29,7 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
-struct RelinkablePathVisualization::PathComponent
-{
+struct RelinkablePathVisualization::PathComponent {
     QString label;
     QString prefixPath;
     QString suffixPath;
@@ -37,15 +37,21 @@ struct RelinkablePathVisualization::PathComponent
     bool exists;
 
     PathComponent(QString const& lbl, QString const& prefix_path, QString const& suffix_path, RelinkablePath::Type t)
-            : label(lbl), prefixPath(prefix_path), suffixPath(suffix_path), type(t), exists(false)
+        : label(lbl),
+          prefixPath(prefix_path),
+          suffixPath(suffix_path),
+          type(t),
+          exists(false)
     { }
 };
 
 
-class RelinkablePathVisualization::ComponentButton : public QPushButton
+class RelinkablePathVisualization::ComponentButton
+    : public QPushButton
 {
 public:
-    ComponentButton(QWidget* parent = 0) : QPushButton(parent)
+    ComponentButton(QWidget* parent = 0)
+        : QPushButton(parent)
     { }
 
 protected:
@@ -54,7 +60,8 @@ protected:
 
 
 RelinkablePathVisualization::RelinkablePathVisualization(QWidget* parent)
-        : QWidget(parent), m_pLayout(new QHBoxLayout(this))
+    : QWidget(parent),
+      m_pLayout(new QHBoxLayout(this))
 {
     m_pLayout->setSpacing(0);
     m_pLayout->setMargin(0);
@@ -118,7 +125,7 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
     checkForExistence(path_components);
 
     int component_idx = -1;
-    for (PathComponent& path_component :  path_components) {
+    for (PathComponent& path_component : path_components) {
         ++component_idx;
         ComponentButton* btn = new ComponentButton(this);
         m_pLayout->addWidget(btn);
@@ -130,54 +137,54 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
         stylePathComponentButton(btn, path_component.exists);
 
         new QtSignalForwarder(
-                btn, SIGNAL(clicked()), boost::bind(
+            btn, SIGNAL(clicked()), boost::bind(
                 &RelinkablePathVisualization::onClicked, this,
                 component_idx, path_component.prefixPath,
                 path_component.suffixPath, path_component.type
-        )
+            )
         );
     }
 
     m_pLayout->addStretch();
-}
+}  // RelinkablePathVisualization::setPath
 
 void
 RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists)
 {
     QColor const border_color(palette().color(QPalette::Window).darker(150));
 
-    QString style =
-            "QAbstractButton {\n"
-                    "	border: 2px solid " + border_color.name() + ";\n"
-                    "	border-radius: 0.5em;\n"
-                    "	padding: 0.2em;\n"
-                    "	margin-left: 1px;\n"
-                    "	margin-right: 1px;\n"
-                    "	min-width: 2em;\n"
-                    "	font-weight: bold;\n";
+    QString style
+        = "QAbstractButton {\n"
+          "	border: 2px solid " + border_color.name() + ";\n"
+          "	border-radius: 0.5em;\n"
+          "	padding: 0.2em;\n"
+          "	margin-left: 1px;\n"
+          "	margin-right: 1px;\n"
+          "	min-width: 2em;\n"
+          "	font-weight: bold;\n";
     if (exists) {
-        style +=
-                "	color: #3a5827;\n"
-                        "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #89e74a);\n";
+        style
+            += "	color: #3a5827;\n"
+               "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #89e74a);\n";
     }
     else {
-        style +=
-                "	color: #6f2719;\n"
-                        "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #ff674b);\n";
+        style
+            += "	color: #6f2719;\n"
+               "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #ff674b);\n";
     }
-    style +=
-            "}\n"
-                    "QAbstractButton:hover {\n"
-                    "	color: #333;\n"
-                    "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #bbb);\n"
-                    "}\n"
-                    "QAbstractButton:pressed {\n"
-                    "	color: #333;\n"
-                    "	background: qradialgradient(cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1, radius: 1.35, stop: 0 #fff, stop: 1 #ddd);\n"
-                    "}\n";
+    style
+        += "}\n"
+           "QAbstractButton:hover {\n"
+           "	color: #333;\n"
+           "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #bbb);\n"
+           "}\n"
+           "QAbstractButton:pressed {\n"
+           "	color: #333;\n"
+           "	background: qradialgradient(cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1, radius: 1.35, stop: 0 #fff, stop: 1 #ddd);\n"
+           "}\n";
 
     btn->setStyleSheet(style);
-}
+}  // RelinkablePathVisualization::stylePathComponentButton
 
 void
 RelinkablePathVisualization::paintEvent(QPaintEvent* evt)
@@ -223,13 +230,14 @@ RelinkablePathVisualization::paintEvent(QPaintEvent* evt)
             break;
         }
     }
-}
+}  // RelinkablePathVisualization::paintEvent
 
 void
-RelinkablePathVisualization::onClicked(
-        int component_idx, QString const& prefix_path, QString const& suffix_path, int type)
+RelinkablePathVisualization::onClicked(int component_idx,
+                                       QString const& prefix_path,
+                                       QString const& suffix_path,
+                                       int type)
 {
-
     for (int i = 0; i <= component_idx; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (widget) {
@@ -251,15 +259,15 @@ RelinkablePathVisualization::onClicked(
 void
 RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& components)
 {
-
     if (components.empty()) {
         return;
     }
 
     if (QFile::exists(components.back().prefixPath)) {
-        for (PathComponent& comp :  components) {
+        for (PathComponent& comp : components) {
             comp.exists = true;
         }
+
         return;
     }
 
@@ -280,7 +288,6 @@ RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& compo
     }
 }
 
-
 /*============================ ComponentButton ============================*/
 
 void
@@ -298,3 +305,4 @@ RelinkablePathVisualization::ComponentButton::paintEvent(QPaintEvent* evt)
     QStylePainter painter(this);
     painter.drawControl(QStyle::CE_PushButton, option);
 }
+

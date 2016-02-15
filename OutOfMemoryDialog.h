@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUT_OF_MEMORY_DIALOG_H_
 #define OUT_OF_MEMORY_DIALOG_H_
@@ -28,21 +29,21 @@
 #include <QString>
 #include <QDialog>
 
-class OutOfMemoryDialog : public QDialog
+class OutOfMemoryDialog
+    : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     OutOfMemoryDialog(QWidget* parent = 0);
 
-    void setParams(
-            QString const& project_file, IntrusivePtr<StageSequence> const& stages,
-            IntrusivePtr<ProjectPages> const& pages,
-            SelectedPage const& selected_page,
-            OutputFileNameGenerator const& out_file_name_gen);
+    void setParams(QString const& project_file,
+                   IntrusivePtr<StageSequence> const& stages,
+                   IntrusivePtr<ProjectPages> const& pages,
+                   SelectedPage const& selected_page,
+                   OutputFileNameGenerator const& out_file_name_gen);
 
 private slots:
-
     void saveProject();
 
     void saveProjectAs();
@@ -60,4 +61,4 @@ private:
     OutputFileNameGenerator m_outFileNameGen;
 };
 
-#endif
+#endif  // ifndef OUT_OF_MEMORY_DIALOG_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,24 +15,25 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ImageInfo.h"
 
 ImageInfo::ImageInfo()
-        : m_numSubPages(0),
-          m_leftHalfRemoved(false),
-          m_rightHalfRemoved(false)
-{
-}
+    : m_numSubPages(0),
+      m_leftHalfRemoved(false),
+      m_rightHalfRemoved(false)
+{ }
 
-ImageInfo::ImageInfo(
-        ImageId const& id, ImageMetadata const& metadata,
-        int num_sub_pages, bool left_half_removed, bool right_half_removed)
-        : m_id(id),
-          m_metadata(metadata),
-          m_numSubPages(num_sub_pages),
-          m_leftHalfRemoved(left_half_removed),
-          m_rightHalfRemoved(right_half_removed)
-{
-}
+ImageInfo::ImageInfo(ImageId const& id,
+                     ImageMetadata const& metadata,
+                     int num_sub_pages,
+                     bool left_half_removed,
+                     bool right_half_removed)
+    : m_id(id),
+      m_metadata(metadata),
+      m_numSubPages(num_sub_pages),
+      m_leftHalfRemoved(left_half_removed),
+      m_rightHalfRemoved(right_half_removed)
+{ }
+

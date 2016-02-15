@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_OPTIMIZER_H_
 #define SPFIT_OPTIMIZER_H_
@@ -33,7 +34,6 @@
 
 namespace spfit
 {
-
     class Optimizer
     {
     public:
@@ -58,26 +58,34 @@ namespace spfit
         void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
 
         size_t numVars() const
-        { return m_numVars; }
+        {
+            return m_numVars;
+        }
 
         /**
          * Get the external force accumulated from calls to addAttractionForce().
          * Note that optimize() will reset all forces.
          */
         double externalForce() const
-        { return m_externalForce.c; }
+        {
+            return m_externalForce.c;
+        }
 
         /**
          * Get the internal force accumulated from calls to addInternalForce().
          * Note that optimize() will reset all forces.
          */
         double internalForce() const
-        { return m_internalForce.c; }
+        {
+            return m_internalForce.c;
+        }
 
         OptimizationResult optimize(double internal_external_ratio);
 
         double const* displacementVector() const
-        { return m_x.data(); }
+        {
+            return m_x.data();
+        }
 
         /**
          * Rolls back the very last adjustment to constraints done by optimize()
@@ -99,10 +107,10 @@ namespace spfit
     };
 
 
-    inline void swap(Optimizer& o1, Optimizer& o2)
+    inline void
+    swap(Optimizer& o1, Optimizer& o2)
     {
         o1.swap(o2);
     }
-
-}
-#endif
+}  // namespace spfit
+#endif  // ifndef SPFIT_OPTIMIZER_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Filter.h"
 #include "FilterUiInterface.h"
@@ -32,21 +33,18 @@
 
 namespace output
 {
-
-    Filter::Filter(
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(new Settings)
+    Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(new Settings)
     {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(
-                    new OptionsWidget(m_ptrSettings, page_selection_accessor)
+                new OptionsWidget(m_ptrSettings, page_selection_accessor)
             );
         }
     }
 
     Filter::~Filter()
-    {
-    }
+    { }
 
     QString
     Filter::getName() const
@@ -74,10 +72,8 @@ namespace output
     }
 
     QDomElement
-    Filter::saveSettings(
-            ProjectWriter const& writer, QDomDocument& doc) const
+    Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const
     {
-
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("output"));
@@ -85,19 +81,17 @@ namespace output
         filter_el.setAttribute("tiffCompression", m_ptrSettings->getTiffCompression());
 
         writer.enumPages(
-                [&](PageId const& page_id, int numeric_id)
-                {
-                    this->writePageSettings(doc, filter_el, page_id, numeric_id);
-                }
+            [&](PageId const& page_id, int numeric_id)
+        {
+            this->writePageSettings(doc, filter_el, page_id, numeric_id);
+        }
         );
 
         return filter_el;
     }
 
     void
-    Filter::writePageSettings(
-            QDomDocument& doc, QDomElement& filter_el,
-            PageId const& page_id, int numeric_id) const
+    Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const
     {
         Params const params(m_ptrSettings->getParams(page_id));
 
@@ -122,11 +116,11 @@ namespace output
         m_ptrSettings->clear();
 
         QDomElement const filter_el(
-                filters_el.namedItem("output").toElement()
+            filters_el.namedItem("output").toElement()
         );
 
         m_ptrSettings->setTiffCompression(
-                filter_el.attribute("tiffCompression", QString::number(COMPRESSION_LZW)).toInt());
+            filter_el.attribute("tiffCompression", QString::number(COMPRESSION_LZW)).toInt());
 
         QString const page_tag_name("page");
         QDomNode node(filter_el.firstChild());
@@ -172,25 +166,26 @@ namespace output
                 m_ptrSettings->setOutputParams(page_id, output_params);
             }
         }
-    }
+    }  // Filter::loadSettings
 
     IntrusivePtr<Task>
-    Filter::createTask(
-            PageId const& page_id,
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            OutputFileNameGenerator const& out_file_name_gen,
-            bool const batch, bool const debug)
+    Filter::createTask(PageId const& page_id,
+                       IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                       OutputFileNameGenerator const& out_file_name_gen,
+                       bool const batch,
+                       bool const debug)
     {
         ImageViewTab lastTab(TAB_OUTPUT);
         if (m_ptrOptionsWidget.get() != 0) {
             lastTab = m_ptrOptionsWidget->lastTab();
         }
+
         return IntrusivePtr<Task>(
-                new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings,
-                        thumbnail_cache, page_id, out_file_name_gen,
-                        lastTab, batch, debug
-                )
+            new Task(
+                IntrusivePtr<Filter>(this), m_ptrSettings,
+                thumbnail_cache, page_id, out_file_name_gen,
+                lastTab, batch, debug
+            )
         );
     }
 
@@ -198,8 +193,7 @@ namespace output
     Filter::createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen)
     {
         return IntrusivePtr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, out_file_name_gen)
+            new CacheDrivenTask(m_ptrSettings, out_file_name_gen)
         );
     }
-
-} 
+}  // namespace output

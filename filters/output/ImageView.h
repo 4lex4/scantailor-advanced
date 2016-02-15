@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_IMAGEVIEW_H_
 #define OUTPUT_IMAGEVIEW_H_
@@ -28,10 +29,10 @@ class ImageTransformation;
 
 namespace output
 {
-
-    class ImageView : public ImageViewBase
+    class ImageView
+        : public ImageViewBase
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         ImageView(QImage const& image, QImage const& downscaled_image);
@@ -42,6 +43,5 @@ namespace output
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
     };
-
 }
 #endif

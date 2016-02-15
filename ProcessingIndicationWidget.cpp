@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ProcessingIndicationWidget.h"
 #include "imageproc/ColorInterpolation.h"
@@ -28,11 +29,11 @@ static double const distinction_increase = 1.0 / 5.0;
 static double const distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
-        : QWidget(parent),
-          m_animation(10),
-          m_distinction(1.0),
-          m_distinctionDelta(distinction_increase),
-          m_timerId(0)
+    : QWidget(parent),
+      m_animation(10),
+      m_distinction(1.0),
+      m_distinctionDelta(distinction_increase),
+      m_timerId(0)
 {
     m_headColor = palette().color(QPalette::Window).lighter(200);
     m_tailColor = palette().color(QPalette::Window).lighter(130);
@@ -58,6 +59,7 @@ ProcessingIndicationWidget::paintEvent(QPaintEvent* event)
     QRect animation_rect(animationRect());
     if (!event->rect().contains(animation_rect)) {
         update(animation_rect);
+
         return;
     }
 
@@ -94,5 +96,7 @@ ProcessingIndicationWidget::animationRect() const
     QRect r(0, 0, 80, 80);
     r.moveCenter(rect().center());
     r &= rect();
+
     return r;
 }
+

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_CONNCOMPERASER_H_
 #define IMAGEPROC_CONNCOMPERASER_H_
@@ -28,15 +29,14 @@
 
 namespace imageproc
 {
-
     class ConnComp;
 
-/**
- * \brief Erases connected components one by one and returns their bounding boxes.
- */
+    /**
+     * \brief Erases connected components one by one and returns their bounding boxes.
+     */
     class ConnCompEraser
     {
-    DECLARE_NON_COPYABLE(ConnCompEraser)
+        DECLARE_NON_COPYABLE(ConnCompEraser)
 
     public:
         /**
@@ -63,22 +63,28 @@ namespace imageproc
          * is erased from the image, assuming there was one.
          */
         BinaryImage const& image() const
-        { return m_image; }
+        {
+            return m_image;
+        }
 
     private:
-        struct Segment
-        {
+        struct Segment {
             uint32_t* line;
+
             /**< Pointer to the beginning of the line. */
             int xleft;
+
             /**< Leftmost pixel to process. */
             int xright;
+
             /**< Rightmost pixel to process. */
             int y;
+
             /**< y value of the line to be processed. */
             int dy;
+
             /**< Vertical direction: 1 or -1. */
-            int dy_wpl; /**< words_per_line or -words_per_line. */
+            int dy_wpl;  /**< words_per_line or -words_per_line. */
         };
 
         struct BBox;
@@ -109,6 +115,5 @@ namespace imageproc
         int m_x;
         int m_y;
     };
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_CONNCOMPERASER_H_

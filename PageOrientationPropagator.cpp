@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageOrientationPropagator.h"
 #include "CompositeCacheDrivenTask.h"
@@ -24,7 +25,8 @@
 #include "filters/page_split/Filter.h"
 #include "filter_dc/PageOrientationCollector.h"
 
-class PageOrientationPropagator::Collector : public PageOrientationCollector
+class PageOrientationPropagator::Collector
+    : public PageOrientationCollector
 {
 public:
     virtual void process(OrthogonalRotation const& orientation)
@@ -33,24 +35,23 @@ public:
     }
 
     OrthogonalRotation const& orientation() const
-    { return m_orientation; }
+    {
+        return m_orientation;
+    }
 
 private:
     OrthogonalRotation m_orientation;
 };
 
 
-PageOrientationPropagator::PageOrientationPropagator(
-        IntrusivePtr<page_split::Filter> const& page_split_filter,
-        IntrusivePtr<CompositeCacheDrivenTask> const& task)
-        : m_ptrPageSplitFilter(page_split_filter),
-          m_ptrTask(task)
-{
-}
+PageOrientationPropagator::PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
+                                                     IntrusivePtr<CompositeCacheDrivenTask> const& task)
+    : m_ptrPageSplitFilter(page_split_filter),
+      m_ptrTask(task)
+{ }
 
 PageOrientationPropagator::~PageOrientationPropagator()
-{
-}
+{ }
 
 void
 PageOrientationPropagator::propagate(ProjectPages const& pages)
@@ -63,7 +64,8 @@ PageOrientationPropagator::propagate(ProjectPages const& pages)
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         m_ptrPageSplitFilter->pageOrientationUpdate(
-                page_info.imageId(), collector.orientation()
+            page_info.imageId(), collector.orientation()
         );
     }
 }
+

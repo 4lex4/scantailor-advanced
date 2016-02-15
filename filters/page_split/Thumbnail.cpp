@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,23 +15,24 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Thumbnail.h"
 #include <QPainter>
 
 namespace page_split
 {
-
-    Thumbnail::Thumbnail(
-            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-            QSizeF const& max_size, ImageId const& image_id,
-            ImageTransformation const& xform, PageLayout const& layout,
-            bool left_half_removed, bool right_half_removed)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
-              m_layout(layout),
-              m_leftHalfRemoved(left_half_removed),
-              m_rightHalfRemoved(right_half_removed)
+    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                         QSizeF const& max_size,
+                         ImageId const& image_id,
+                         ImageTransformation const& xform,
+                         PageLayout const& layout,
+                         bool left_half_removed,
+                         bool right_half_removed)
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+          m_layout(layout),
+          m_leftHalfRemoved(left_half_removed),
+          m_rightHalfRemoved(right_half_removed)
     {
         if (left_half_removed || right_half_removed) {
             m_trashPixmap = QPixmap(":/icons/trashed-small.png");
@@ -38,9 +40,7 @@ namespace page_split
     }
 
     void
-    Thumbnail::paintOverImage(
-            QPainter& painter, QTransform const& image_to_display,
-            QTransform const& thumb_to_display)
+    Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display, QTransform const& thumb_to_display)
     {
         QRectF const canvas_rect(imageXform().resultingRect());
 
@@ -52,12 +52,13 @@ namespace page_split
             case PageLayout::SINGLE_PAGE_UNCUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawRect(canvas_rect);
+
                 return;
             case PageLayout::SINGLE_PAGE_CUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawPolygon(m_layout.singlePageOutline());
                 break;
-            case PageLayout::TWO_PAGES:
+            case PageLayout::TWO_PAGES: {
                 QPolygonF const left_poly(m_layout.leftPageOutline());
                 QPolygonF const right_poly(m_layout.rightPageOutline());
                 painter.setBrush(m_leftHalfRemoved ? QColor(0, 0, 0, 80) : QColor(0, 0, 255, 50));
@@ -70,7 +71,7 @@ namespace page_split
 
                     int const subpage_idx = m_leftHalfRemoved ? 0 : 1;
                     QPointF const center(
-                            subPageCenter(left_poly, right_poly, image_to_display, subpage_idx)
+                        subPageCenter(left_poly, right_poly, image_to_display, subpage_idx)
                     );
 
                     QRectF rect(m_trashPixmap.rect());
@@ -80,7 +81,8 @@ namespace page_split
                     painter.setWorldTransform(image_to_display);
                 }
                 break;
-        }
+            }
+        }  // switch
 
         painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -97,15 +99,16 @@ namespace page_split
             case PageLayout::TWO_PAGES:
                 painter.drawLine(m_layout.inscribedCutterLine(0));
                 break;
-            default:;
+            default:
+                ;
         }
-
-    }
+    }  // Thumbnail::paintOverImage
 
     QPointF
-    Thumbnail::subPageCenter(
-            QPolygonF const& left_page, QPolygonF const& right_page,
-            QTransform const& image_to_display, int subpage_idx)
+    Thumbnail::subPageCenter(QPolygonF const& left_page,
+                             QPolygonF const& right_page,
+                             QTransform const& image_to_display,
+                             int subpage_idx)
     {
         QRectF rects[2];
         rects[0] = left_page.boundingRect();
@@ -117,5 +120,4 @@ namespace page_split
 
         return image_to_display.map(rects[subpage_idx].center());
     }
-
-} 
+}  // namespace page_split

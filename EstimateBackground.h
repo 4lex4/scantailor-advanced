@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ESTIMATE_BACKGROUND_H_
 #define ESTIMATE_BACKGROUND_H_
@@ -27,7 +28,7 @@ class QPolygonF;
 namespace imageproc
 {
     class PolynomialSurface;
-class GrayImage;
+    class GrayImage;
 }
 
 /**
@@ -57,8 +58,9 @@ class GrayImage;
  * -# This implementation can handle dark surroundings around the page,
  *    provided they touch the edges, but it performs better without them.
  */
-imageproc::PolynomialSurface estimateBackground(
-        imageproc::GrayImage const &input, QPolygonF const &area_to_consider,
-        TaskStatus const &status, DebugImages *dbg = 0);
+imageproc::PolynomialSurface estimateBackground(imageproc::GrayImage const& input,
+                                                QPolygonF const& area_to_consider,
+                                                TaskStatus const& status,
+                                                DebugImages* dbg = 0);
 
 #endif

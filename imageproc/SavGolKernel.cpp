@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #define _ISOC99SOURCE
 
@@ -25,31 +26,27 @@
 #include <assert.h>
 
 #ifdef _MSC_VER
-#undef copysign #define copysign _copysign
+ #undef copysign#define copysign _copysign
 #endif
 
 namespace imageproc
 {
-
     namespace
     {
-
-        int calcNumTerms(int const hor_degree, int const vert_degree)
+        int
+        calcNumTerms(int const hor_degree, int const vert_degree)
         {
             return (hor_degree + 1) * (vert_degree + 1);
         }
-
     }
 
-    SavGolKernel::SavGolKernel(
-            QSize const& size, QPoint const& origin,
-            int const hor_degree, int const vert_degree)
-            : m_horDegree(hor_degree),
-              m_vertDegree(vert_degree),
-              m_width(size.width()),
-              m_height(size.height()),
-              m_numTerms(calcNumTerms(hor_degree, vert_degree)),
-              m_numDataPoints(size.width() * size.height())
+    SavGolKernel::SavGolKernel(QSize const& size, QPoint const& origin, int const hor_degree, int const vert_degree)
+        : m_horDegree(hor_degree),
+          m_vertDegree(vert_degree),
+          m_width(size.width()),
+          m_height(size.height()),
+          m_numTerms(calcNumTerms(hor_degree, vert_degree)),
+          m_numDataPoints(size.width() * size.height())
     {
         if (size.isEmpty()) {
             throw std::invalid_argument("SavGolKernel: invalid size");
@@ -87,18 +84,18 @@ namespace imageproc
         recalcForOrigin(origin);
     }
 
-/**
- * Perform a QR factorization of m_equations by Givens rotations.
- * We store R in place of m_equations, and we don't store Q anywhere,
- * but we do store the rotations in the order they were performed.
- */
+    /**
+     * Perform a QR factorization of m_equations by Givens rotations.
+     * We store R in place of m_equations, and we don't store Q anywhere,
+     * but we do store the rotations in the order they were performed.
+     */
     void
     SavGolKernel::QR()
     {
         m_rotations.clear();
         m_rotations.reserve(
-                m_numTerms * (m_numTerms - 1) / 2
-                + (m_numDataPoints - m_numTerms) * m_numTerms
+            m_numTerms * (m_numTerms - 1) / 2
+            + (m_numDataPoints - m_numTerms) * m_numTerms
         );
 
         int jj = 0;
@@ -147,7 +144,7 @@ namespace imageproc
                 }
             }
         }
-    }
+    }  // SavGolKernel::QR
 
     void
     SavGolKernel::recalcForOrigin(QPoint const& origin)
@@ -192,10 +189,9 @@ namespace imageproc
                     }
                     pow1 *= y;
                 }
-                m_kernel[ki] = (float) sum;
+                m_kernel[ki] = (float)sum;
                 ++ki;
             }
         }
-    }
-
-} 
+    }  // SavGolKernel::recalcForOrigin
+}  // namespace imageproc

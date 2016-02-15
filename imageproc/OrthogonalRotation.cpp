@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OrthogonalRotation.h"
 #include "BinaryImage.h"
@@ -22,13 +23,14 @@
 
 namespace imageproc
 {
-
-    static inline uint32_t mask(int x)
+    static inline uint32_t
+    mask(int x)
     {
         return (uint32_t(1) << 31) >> (x % 32);
     }
 
-    static BinaryImage rotate0(BinaryImage const& src, QRect const& src_rect)
+    static BinaryImage
+    rotate0(BinaryImage const& src, QRect const& src_rect)
     {
         if (src_rect == src.rect()) {
             return src;
@@ -40,7 +42,8 @@ namespace imageproc
         return dst;
     }
 
-    static BinaryImage rotate90(BinaryImage const& src, QRect const& src_rect)
+    static BinaryImage
+    rotate90(BinaryImage const& src, QRect const& src_rect)
     {
         int const dst_w = src_rect.height();
         int const dst_h = src_rect.width();
@@ -77,7 +80,8 @@ namespace imageproc
         return dst;
     }
 
-    static BinaryImage rotate180(BinaryImage const& src, QRect const& src_rect)
+    static BinaryImage
+    rotate180(BinaryImage const& src, QRect const& src_rect)
     {
         int const dst_w = src_rect.width();
         int const dst_h = src_rect.height();
@@ -110,7 +114,8 @@ namespace imageproc
         return dst;
     }
 
-    static BinaryImage rotate270(BinaryImage const& src, QRect const& src_rect)
+    static BinaryImage
+    rotate270(BinaryImage const& src, QRect const& src_rect)
     {
         int const dst_w = src_rect.height();
         int const dst_h = src_rect.width();
@@ -147,8 +152,8 @@ namespace imageproc
         return dst;
     }
 
-    BinaryImage orthogonalRotation(
-            BinaryImage const& src, QRect const& src_rect, int const degrees)
+    BinaryImage
+    orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int const degrees)
     {
         if (src.isNull() || src_rect.isNull()) {
             return BinaryImage();
@@ -175,9 +180,9 @@ namespace imageproc
         }
     }
 
-    BinaryImage orthogonalRotation(BinaryImage const& src, int const degrees)
+    BinaryImage
+    orthogonalRotation(BinaryImage const& src, int const degrees)
     {
         return orthogonalRotation(src, src.rect(), degrees);
     }
-
-} 
+}  // namespace imageproc

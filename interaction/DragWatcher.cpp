@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "DragWatcher.h"
 #include "DragHandler.h"
@@ -22,11 +23,10 @@
 #include <QDebug>
 
 DragWatcher::DragWatcher(DragHandler& drag_handler)
-        : m_rDragHandler(drag_handler),
-          m_dragMaxSqDist(0),
-          m_dragInProgress(false)
-{
-}
+    : m_rDragHandler(drag_handler),
+      m_dragMaxSqDist(0),
+      m_dragInProgress(false)
+{ }
 
 bool
 DragWatcher::haveSignificantDrag() const
@@ -41,7 +41,7 @@ DragWatcher::haveSignificantDrag() const
         msec_passed += 60 * 60 * 24;
     }
 
-    double const dist_score = sqrt((double) m_dragMaxSqDist) / 12.0;
+    double const dist_score = sqrt((double)m_dragMaxSqDist) / 12.0;
     double const time_score = msec_passed / 500.0;
 
     return dist_score + time_score >= 1.0;
@@ -81,3 +81,4 @@ DragWatcher::updateState(QPoint const mouse_pos)
         m_dragInProgress = false;
     }
 }
+

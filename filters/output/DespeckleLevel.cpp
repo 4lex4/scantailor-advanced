@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,15 +15,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DespeckleLevel.h"
 #include <QString>
 
 namespace output
 {
-
-    QString despeckleLevelToString(DespeckleLevel const level)
+    QString
+    despeckleLevelToString(DespeckleLevel const level)
     {
         switch (level) {
             case DESPECKLE_OFF:
@@ -38,7 +39,8 @@ namespace output
         return QString();
     }
 
-    DespeckleLevel despeckleLevelFromString(QString const& str)
+    DespeckleLevel
+    despeckleLevelFromString(QString const& str)
     {
         if (str == "off") {
             return DESPECKLE_OFF;
@@ -53,5 +55,4 @@ namespace output
             return DESPECKLE_NORMAL;
         }
     }
-
-} 
+}  // namespace output

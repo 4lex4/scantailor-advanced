@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ARC_LENGTH_MAPPER_H_
 #define ARC_LENGTH_MAPPER_H_
@@ -87,12 +88,13 @@ public:
     double xToArcLen(double x, Hint& hint) const;
 
 private:
-    struct Sample
-    {
+    struct Sample {
         double x;
         double arcLen;
 
-        Sample(double x, double arc_len) : x(x), arcLen(arc_len)
+        Sample(double x, double arc_len)
+            : x(x),
+              arcLen(arc_len)
         { }
     };
 
@@ -108,4 +110,4 @@ private:
     double m_prevFX;
 };
 
-#endif
+#endif  // ifndef ARC_LENGTH_MAPPER_H_

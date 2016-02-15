@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef BACKGROUNDEXECUTOR_H_
 #define BACKGROUNDEXECUTOR_H_
@@ -27,11 +28,11 @@
 
 class BackgroundExecutor
 {
-DECLARE_NON_COPYABLE(BackgroundExecutor)
+    DECLARE_NON_COPYABLE(BackgroundExecutor)
 
 public:
-    typedef IntrusivePtr<AbstractCommand0<void> > TaskResultPtr;
-    typedef IntrusivePtr<AbstractCommand0<TaskResultPtr> > TaskPtr;
+    typedef IntrusivePtr<AbstractCommand0<void>> TaskResultPtr;
+    typedef IntrusivePtr<AbstractCommand0<TaskResultPtr>> TaskPtr;
 
     BackgroundExecutor();
 
@@ -57,11 +58,11 @@ public:
      * to be executed in the thread where this BackgroundExecutor
      * object was constructed.
      */
-    void enqueueTask(TaskPtr const &task);
+    void enqueueTask(TaskPtr const& task);
 
 private:
     class Impl;
-class Dispatcher;
+    class Dispatcher;
 
     typedef PayloadEvent<TaskPtr> TaskEvent;
     typedef PayloadEvent<TaskResultPtr> ResultEvent;
@@ -69,4 +70,4 @@ class Dispatcher;
     std::unique_ptr<Impl> m_ptrImpl;
 };
 
-#endif
+#endif  // ifndef BACKGROUNDEXECUTOR_H_

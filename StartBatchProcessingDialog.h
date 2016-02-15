@@ -1,3 +1,4 @@
+
 #ifndef STARTBATCHPROCESSINGDIALOG_H
 #define STARTBATCHPROCESSINGDIALOG_H
 
@@ -8,9 +9,10 @@ namespace Ui
     class StartBatchProcessingDialog;
 }
 
-class StartBatchProcessingDialog : public QDialog
+class StartBatchProcessingDialog
+    : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit StartBatchProcessingDialog(QWidget* parent = 0);
@@ -23,4 +25,4 @@ private:
     Ui::StartBatchProcessingDialog* ui;
 };
 
-#endif 
+#endif

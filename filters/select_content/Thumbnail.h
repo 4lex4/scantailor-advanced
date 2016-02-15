@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_THUMBNAIL_H_
 #define SELECT_CONTENT_THUMBNAIL_H_
@@ -29,23 +30,24 @@ class ImageTransformation;
 
 namespace select_content
 {
-
-    class Thumbnail : public ThumbnailBase
+    class Thumbnail
+        : public ThumbnailBase
     {
     public:
         Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                  QSizeF const& max_size, ImageId const& image_id,
-                  ImageTransformation const& xform, QRectF const& content_rect, bool deviant);
+                  QSizeF const& max_size,
+                  ImageId const& image_id,
+                  ImageTransformation const& xform,
+                  QRectF const& content_rect,
+                  bool deviant);
 
-        virtual void paintOverImage(
-                QPainter& painter,
-                QTransform const& image_to_display,
-                QTransform const& thumb_to_display);
+        virtual void paintOverImage(QPainter& painter,
+                                    QTransform const& image_to_display,
+                                    QTransform const& thumb_to_display);
 
     private:
         QRectF m_contentRect;
         bool m_deviant;
     };
-
 }
 #endif

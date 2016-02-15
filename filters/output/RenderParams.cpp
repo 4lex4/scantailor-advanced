@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,16 +15,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RenderParams.h"
 #include "ColorParams.h"
 
 namespace output
 {
-
     RenderParams::RenderParams(ColorParams const& cp)
-            : m_mask(0)
+        : m_mask(0)
     {
         switch (cp.colorMode()) {
             case ColorParams::BLACK_AND_WHITE:
@@ -32,7 +32,7 @@ namespace output
                 break;
             case ColorParams::COLOR_GRAYSCALE: {
                 ColorGrayscaleOptions const opt(
-                        cp.colorGrayscaleOptions()
+                    cp.colorGrayscaleOptions()
                 );
                 if (opt.whiteMargins()) {
                     m_mask |= WHITE_MARGINS;
@@ -48,5 +48,4 @@ namespace output
                 break;
         }
     }
-
-} 
+}

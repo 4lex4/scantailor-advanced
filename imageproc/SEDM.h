@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_SEDM_H_
 #define IMAGEPROC_SEDM_H_
@@ -26,48 +27,45 @@
 
 namespace imageproc
 {
-
     class BinaryImage;
-class ConnectivityMap;
+    class ConnectivityMap;
 
-/**
- * \brief The squared euclidean distance map.
- *
- * For each pixel of the input image stores the squared euclidean
- * (straight line) distance to either the nearest white or black pixel.
- *
- * The implementation is based on the following paper:\n
- * Meijster, A., Roerdink, J., and Hesselink, W. 2000.
- * A general algorithm for computing distance transforms in linear time.
- * In Proceedings of the 5th International Conference on Mathematical
- * Morphology and its Applications to Image and Signal Processing.
- */
+    /**
+     * \brief The squared euclidean distance map.
+     *
+     * For each pixel of the input image stores the squared euclidean
+     * (straight line) distance to either the nearest white or black pixel.
+     *
+     * The implementation is based on the following paper:\n
+     * Meijster, A., Roerdink, J., and Hesselink, W. 2000.
+     * A general algorithm for computing distance transforms in linear time.
+     * In Proceedings of the 5th International Conference on Mathematical
+     * Morphology and its Applications to Image and Signal Processing.
+     */
     class SEDM
     {
     public:
         /**
          * \brief The type of distance to compute.
          */
-        enum DistType
-        {
+        enum DistType {
             /**
              * For every black pixel, the distance to the nearest
              * white one is computed.
              */
-                    DIST_TO_WHITE,
+            DIST_TO_WHITE,
 
             /**
              * For every white pixel, the distance to the nearest
              * black one is computed.
              */
-                    DIST_TO_BLACK
+            DIST_TO_BLACK
         };
 
         /**
          * \brief Determines whether to compute the distance to borders.
          */
-        enum Borders
-        {
+        enum Borders {
             DIST_TO_NO_BORDERS = 0,
             DIST_TO_TOP_BORDER = 1,
             DIST_TO_LEFT_BORDER = 2,
@@ -109,9 +107,9 @@ class ConnectivityMap;
          *        distance to particular borders.  The borders
          *        are assumed to lie one pixel off the image area.
          */
-        explicit SEDM(
-                BinaryImage const& image, DistType dist_type = DIST_TO_WHITE,
-                Borders borders = DIST_TO_ALL_BORDERS);
+        explicit SEDM(BinaryImage const& image,
+                      DistType dist_type = DIST_TO_WHITE,
+                      Borders borders = DIST_TO_ALL_BORDERS);
 
         /**
          * \brief Build a distance map from a connectivity map.
@@ -136,7 +134,9 @@ class ConnectivityMap;
          * \brief Return the dimensions of the distance map.
          */
         QSize size() const
-        { return m_size; }
+        {
+            return m_size;
+        }
 
         /**
          * \brief Return the number of 32bit words in a line.
@@ -144,19 +144,25 @@ class ConnectivityMap;
          * This value is going to be size().width() + 2.
          */
         int stride() const
-        { return m_stride; }
+        {
+            return m_stride;
+        }
 
         /**
          * \brief Return a matrix of squared distances in row-major order.
          */
         uint32_t* data()
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Return a matrix of squared distances in row-major order.
          */
         uint32_t const* data() const
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Finds peaks on the distance map, altering it in the process.
@@ -208,12 +214,12 @@ class ConnectivityMap;
     };
 
 
-    inline void swap(SEDM& o1, SEDM& o2)
+    inline void
+    swap(SEDM& o1, SEDM& o2)
     {
         o1.swap(o2);
     }
 
     DEFINE_FLAG_OPS(SEDM::Borders)
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_SEDM_H_

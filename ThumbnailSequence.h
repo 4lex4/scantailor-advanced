@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THUMBNAILSEQUENCE_H_
 #define THUMBNAILSEQUENCE_H_
@@ -41,30 +42,25 @@ class QSizeF;
 class QRectF;
 class QPoint;
 
-class ThumbnailSequence : public QObject
+class ThumbnailSequence
+    : public QObject
 {
-Q_OBJECT
-
-DECLARE_NON_COPYABLE(ThumbnailSequence)
+    Q_OBJECT DECLARE_NON_COPYABLE(ThumbnailSequence)
 
 public:
-    enum SelectionAction
-    {
-        KEEP_SELECTION, RESET_SELECTION
-    };
+    enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
 
-    enum SelectionFlags
-    {
+    enum SelectionFlags {
         DEFAULT_SELECTION_FLAGS = 0,
 
         /** Indicates the item was selected by a user action, rather than programmatically. */
-                SELECTED_BY_USER = 1 << 0,
+        SELECTED_BY_USER = 1 << 0,
 
         /**
          * Indicates that the request to make this item a selection leader was redundant,
          * as it's already a selection leader.
          */
-                REDUNDANT_SELECTION = 1 << 1,
+        REDUNDANT_SELECTION = 1 << 1,
 
         /**
          * This flag is set when Ctrl-clicking the current selection leader while other
@@ -73,7 +69,7 @@ public:
          * In these circumstances, scrolling to make the new selection leader visible
          * is undesireable.
          */
-                AVOID_SCROLLING_TO = 1 << 2
+        AVOID_SCROLLING_TO = 1 << 2
     };
 
     ThumbnailSequence(QSizeF const& max_logical_thumb_size);
@@ -99,7 +95,7 @@ public:
     void reset(PageSequence const& pages,
                SelectionAction const selection_action,
                IntrusivePtr<PageOrderProvider const> const& order_provider
-               = IntrusivePtr<PageOrderProvider const>());
+                   = IntrusivePtr<PageOrderProvider const>());
 
     /** Returns the current page order provider, which may be null. */
     IntrusivePtr<PageOrderProvider const> pageOrderProvider() const;
@@ -197,8 +193,7 @@ public:
      * be inserted, unless the request is to insert BEFORE a null ImageId(),
      * which would cause insertion at the end.
      */
-    void insert(PageInfo const& new_page,
-                BeforeOrAfter before_or_after, ImageId const& image);
+    void insert(PageInfo const& new_page, BeforeOrAfter before_or_after, ImageId const& image);
 
     void removePages(std::set<PageId> const& pages);
 
@@ -214,16 +209,13 @@ public:
     std::vector<PageRange> selectedRanges() const;
 
 signals:
-
-    void newSelectionLeader(
-            PageInfo const& page_info, QRectF const& thumb_rect,
-            ThumbnailSequence::SelectionFlags flags);
+    void newSelectionLeader(PageInfo const& page_info, QRectF const& thumb_rect,
+                            ThumbnailSequence::SelectionFlags flags);
 
     /**
      * Emitted when a user right-clicks on a page thumbnail.
      */
-    void pageContextMenuRequested(
-            PageInfo const& page_info, QPoint const& screen_pos, bool selected);
+    void pageContextMenuRequested(PageInfo const& page_info, QPoint const& screen_pos, bool selected);
 
     /**
      * Emitted when a user right clicks on area below the last page.
@@ -234,19 +226,17 @@ signals:
 
 private:
     class Item;
-class Impl;
-class GraphicsScene;
-class PlaceholderThumb;
-class LabelGroup;
-class CompositeItem;
+    class Impl;
+    class GraphicsScene;
+    class PlaceholderThumb;
+    class LabelGroup;
+    class CompositeItem;
 
-    void emitNewSelectionLeader(
-            PageInfo const& page_info, CompositeItem const* composite,
-            SelectionFlags flags);
+    void emitNewSelectionLeader(PageInfo const& page_info, CompositeItem const* composite, SelectionFlags flags);
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
 
 DEFINE_FLAG_OPS(ThumbnailSequence::SelectionFlags)
 
-#endif
+#endif  // ifndef THUMBNAILSEQUENCE_H_

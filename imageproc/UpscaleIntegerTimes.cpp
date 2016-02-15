@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,25 +15,23 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "UpscaleIntegerTimes.h"
 #include "BinaryImage.h"
 
 namespace imageproc
 {
-
     namespace
     {
-
-        inline uint32_t multiplyBit(uint32_t bit, int times)
+        inline uint32_t
+        multiplyBit(uint32_t bit, int times)
         {
             return (uint32_t(0) - bit) >> (32 - times);
         }
 
-        void expandImpl(
-                BinaryImage& dst, BinaryImage const& src,
-                int const xscale, int const yscale)
+        void
+        expandImpl(BinaryImage& dst, BinaryImage const& src, int const xscale, int const yscale)
         {
             int const sw = src.width();
             int const sh = src.height();
@@ -44,7 +43,6 @@ namespace imageproc
             uint32_t* dst_line = dst.data();
 
             for (int sy = 0; sy < sh; ++sy, src_line += src_wpl) {
-
                 uint32_t dst_word = 0;
                 int dst_bits_remaining = 32;
                 int di = 0;
@@ -78,18 +76,17 @@ namespace imageproc
                     memcpy(dst_line, first_dst_line, dst_wpl * 4);
                 }
             }
-        }
+        }  // expandImpl
+    }  // namespace
 
-    }
-
-    BinaryImage upscaleIntegerTimes(
-            BinaryImage const& src, int const xscale, int const yscale)
+    BinaryImage
+    upscaleIntegerTimes(BinaryImage const& src, int const xscale, int const yscale)
     {
-        if (src.isNull() || (xscale == 1 && yscale == 1)) {
+        if (src.isNull() || ((xscale == 1) && (yscale == 1))) {
             return src;
         }
 
-        if (xscale < 0 || yscale < 0) {
+        if ((xscale < 0) || (yscale < 0)) {
             throw std::runtime_error("upscaleIntegerTimes: scaling factors can't be negative");
         }
 
@@ -99,18 +96,19 @@ namespace imageproc
         return dst;
     }
 
-    BinaryImage upscaleIntegerTimes(
-            BinaryImage const& src, QSize const& dst_size, BWColor const padding)
+    BinaryImage
+    upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor const padding)
     {
         if (src.isNull()) {
             BinaryImage dst(dst_size);
             dst.fill(padding);
+
             return dst;
         }
 
         int const xscale = dst_size.width() / src.width();
         int const yscale = dst_size.height() / src.height();
-        if (xscale < 1 || yscale < 1) {
+        if ((xscale < 1) || (yscale < 1)) {
             throw std::invalid_argument("upscaleIntegerTimes: bad dst_size");
         }
 
@@ -121,5 +119,4 @@ namespace imageproc
 
         return dst;
     }
-
-} 
+}  // namespace imageproc

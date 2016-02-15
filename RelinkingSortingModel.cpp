@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,14 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "RelinkingSortingModel.h"
 #include "RelinkingModel.h"
 #include <assert.h>
 
 RelinkingSortingModel::RelinkingSortingModel(QObject* parent)
-        : QSortFilterProxyModel(parent)
+    : QSortFilterProxyModel(parent)
 {
     setDynamicSortFilter(true);
     sort(0);
@@ -62,4 +63,5 @@ RelinkingSortingModel::lessThan(QModelIndex const& left, QModelIndex const& righ
     }
 
     return left_path < right_path;
-}
+}  // RelinkingSortingModel::lessThan
+

@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "Proximity.h"
 #include <QPointF>
@@ -28,13 +29,13 @@ Proximity::Proximity(QPointF const& p1, QPointF const& p2)
 }
 
 Proximity
-Proximity::pointAndLineSegment(
-        QPointF const& pt, QLineF const& segment, QPointF* point_on_segment)
+Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment)
 {
     if (segment.p1() == segment.p2()) {
         if (point_on_segment) {
             *point_on_segment = segment.p1();
         }
+
         return Proximity(pt, segment.p1());
     }
 
@@ -52,10 +53,11 @@ Proximity::pointAndLineSegment(
     double const dy2 = segment.p2().y() - intersection.y();
     double const dx12 = dx1 * dx2;
     double const dy12 = dy1 * dy2;
-    if (dx12 < 0.0 || dy12 < 0.0 || (dx12 == 0.0 && dy12 == 0.0)) {
+    if ((dx12 < 0.0) || (dy12 < 0.0) || ((dx12 == 0.0) && (dy12 == 0.0))) {
         if (point_on_segment) {
             *point_on_segment = intersection;
         }
+
         return Proximity(intersection, pt);
     }
 
@@ -71,5 +73,7 @@ Proximity::pointAndLineSegment(
     if (point_on_segment) {
         *point_on_segment = pts[p_min_prx - prx];
     }
+
     return *p_min_prx;
-}
+}  // Proximity::pointAndLineSegment
+

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_TASK_H_
 #define PAGE_SPLIT_TASK_H_
@@ -39,24 +40,24 @@ namespace deskew
 
 namespace page_split
 {
-
     class Filter;
-class Settings;
+    class Settings;
 
     class PageLayout;
 
-    class Task : public RefCountable
+    class Task
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Task)
+        DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(
-                IntrusivePtr<Filter> const& filter,
-                IntrusivePtr<Settings> const& settings,
-                IntrusivePtr<ProjectPages> const& pages,
-                IntrusivePtr<deskew::Task> const& next_task,
-                PageInfo const& page_info,
-                bool batch_processing, bool debug);
+        Task(IntrusivePtr<Filter> const& filter,
+             IntrusivePtr<Settings> const& settings,
+             IntrusivePtr<ProjectPages> const& pages,
+             IntrusivePtr<deskew::Task> const& next_task,
+             PageInfo const& page_info,
+             bool batch_processing,
+             bool debug);
 
         virtual ~Task();
 
@@ -73,6 +74,5 @@ class Settings;
         PageInfo m_pageInfo;
         bool m_batchProcessing;
     };
-
 }
-#endif
+#endif  // ifndef PAGE_SPLIT_TASK_H_

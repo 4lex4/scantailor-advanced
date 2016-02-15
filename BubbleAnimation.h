@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef BUBBLEANIMATION_H_
 #define BUBBLEANIMATION_H_
@@ -46,9 +47,7 @@ public:
      * \return Whether more frames follow.  After returning false,
      *         the next call will render the first frame again.
      */
-    bool nextFrame(
-            QColor const &head_color, QColor const &tail_color,
-            QPaintDevice *pd, QRectF rect = QRectF());
+    bool nextFrame(QColor const& head_color, QColor const& tail_color, QPaintDevice* pd, QRectF rect = QRectF());
 
     /**
      * \brief Renders the next frame of the animation.
@@ -62,9 +61,7 @@ public:
      * \return Whether more frames follow.  After returning false,
      *         the next call will render the first frame again.
      */
-    bool nextFrame(
-            QColor const &head_color, QColor const &tail_color,
-            QPainter *painter, QRectF rect);
+    bool nextFrame(QColor const& head_color, QColor const& tail_color, QPainter* painter, QRectF rect);
 
 private:
     int m_numBubbles;

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_OUTPUT_PARAMS_H_
 #define OUTPUT_OUTPUT_PARAMS_H_
@@ -29,7 +30,6 @@ class QString;
 
 namespace output
 {
-
     class OutputParams
     {
     public:
@@ -37,29 +37,42 @@ namespace output
                      OutputFileParams const& output_file_params,
                      OutputFileParams const& automask_file_params,
                      OutputFileParams const& speckles_file_params,
-                     ZoneSet const& picture_zones, ZoneSet const& fill_zones);
+                     ZoneSet const& picture_zones,
+                     ZoneSet const& fill_zones);
 
         explicit OutputParams(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
         OutputImageParams const& outputImageParams() const
-        { return m_outputImageParams; }
+        {
+            return m_outputImageParams;
+        }
 
         OutputFileParams const& outputFileParams() const
-        { return m_outputFileParams; }
+        {
+            return m_outputFileParams;
+        }
 
         OutputFileParams const& automaskFileParams() const
-        { return m_automaskFileParams; }
+        {
+            return m_automaskFileParams;
+        }
 
         OutputFileParams const& specklesFileParams() const
-        { return m_specklesFileParams; }
+        {
+            return m_specklesFileParams;
+        }
 
         ZoneSet const& pictureZones() const
-        { return m_pictureZones; }
+        {
+            return m_pictureZones;
+        }
 
         ZoneSet const& fillZones() const
-        { return m_fillZones; }
+        {
+            return m_fillZones;
+        }
 
     private:
         OutputImageParams m_outputImageParams;
@@ -69,6 +82,5 @@ namespace output
         ZoneSet m_pictureZones;
         ZoneSet m_fillZones;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_OUTPUT_PARAMS_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef HOMOGRAPHIC_TRANSFORM_H_
 #define HOMOGRAPHIC_TRANSFORM_H_
@@ -23,17 +24,18 @@
 #include "MatrixCalc.h"
 #include <stddef.h>
 
-template<size_t N, typename T>
+template <size_t N, typename T>
 class HomographicTransform;
 
-template<size_t N, typename T>
+template <size_t N, typename T>
 class HomographicTransformBase
 {
 public:
     typedef VecNT<N, T> Vec;
     typedef VecNT<(N + 1) * (N + 1), T> Mat;
 
-    explicit HomographicTransformBase(Mat const& mat) : m_mat(mat)
+    explicit HomographicTransformBase(Mat const& mat)
+        : m_mat(mat)
     { }
 
     HomographicTransform<N, T> inv() const;
@@ -41,31 +43,34 @@ public:
     Vec operator()(Vec const& from) const;
 
     Mat const& mat() const
-    { return m_mat; }
+    {
+        return m_mat;
+    }
 
 private:
     Mat m_mat;
 };
 
 
-template<size_t N, typename T>
-class HomographicTransform : public HomographicTransformBase<N, T>
+template <size_t N, typename T>
+class HomographicTransform
+    : public HomographicTransformBase<N, T>
 {
 public:
-    explicit HomographicTransform(
-            typename HomographicTransformBase<N, T>::Mat const& mat) : HomographicTransformBase<N, T>(mat)
+    explicit HomographicTransform(typename HomographicTransformBase<N, T>::Mat const& mat)
+        : HomographicTransformBase<N, T>(mat)
     { }
 };
 
 
 /** An optimized, both in terms of API and performance, 1D version. */
-template<typename T>
-class HomographicTransform<1, T> : public HomographicTransformBase<1, T>
+template <typename T>
+class HomographicTransform<1, T>
+    : public HomographicTransformBase<1, T>
 {
 public:
-    explicit HomographicTransform(
-            typename HomographicTransformBase<1, T>::Mat const& mat)
-            : HomographicTransformBase<1, T>(mat)
+    explicit HomographicTransform(typename HomographicTransformBase<1, T>::Mat const& mat)
+        : HomographicTransformBase<1, T>(mat)
     { }
 
     T operator()(T from) const;
@@ -74,17 +79,18 @@ public:
 };
 
 
-template<size_t N, typename T>
+template <size_t N, typename T>
 HomographicTransform<N, T>
 HomographicTransformBase<N, T>::inv() const
 {
     StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
     Mat inv_mat;
     mc(m_mat, N + 1, N + 1).inv().write(inv_mat);
+
     return HomographicTransform<N, T>(inv_mat);
 }
 
-template<size_t N, typename T>
+template <size_t N, typename T>
 typename HomographicTransformBase<N, T>::Vec
 HomographicTransformBase<N, T>::operator()(Vec const& from) const
 {
@@ -94,15 +100,17 @@ HomographicTransformBase<N, T>::operator()(Vec const& from) const
     (mc(m_mat, N + 1, N + 1) * mc(hsrc, N + 1, 1)).write(hdst);
     VecNT<N, T> res(&hdst[0]);
     res /= hdst[N];
+
     return res;
 }
 
-template<typename T>
+template <typename T>
 T
 HomographicTransform<1, T>::operator()(T from) const
 {
     T const* m = this->mat().data();
+
     return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }
 
-#endif
+#endif  // ifndef HOMOGRAPHIC_TRANSFORM_H_

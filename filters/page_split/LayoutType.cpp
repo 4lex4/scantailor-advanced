@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,15 +15,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "LayoutType.h"
 #include <assert.h>
 
 namespace page_split
 {
-
-    QString layoutTypeToString(LayoutType const layout_type)
+    QString
+    layoutTypeToString(LayoutType const layout_type)
     {
         switch (layout_type) {
             case AUTO_LAYOUT_TYPE:
@@ -35,10 +36,12 @@ namespace page_split
                 return "two-pages";
         }
         assert(!"unreachable");
+
         return QString();
     }
 
-    LayoutType layoutTypeFromString(QString const& layout_type)
+    LayoutType
+    layoutTypeFromString(QString const& layout_type)
     {
         if (layout_type == "single-uncut") {
             return SINGLE_PAGE_UNCUT;
@@ -53,5 +56,4 @@ namespace page_split
             return AUTO_LAYOUT_TYPE;
         }
     }
-
-} 
+}  // namespace page_split

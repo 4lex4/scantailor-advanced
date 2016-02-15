@@ -1,20 +1,21 @@
+
 /*
-	Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
+    Scan Tailor - Interactive post-processing tool for scanned pages.
+    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef PROPERTY_SET_H_
 #define PROPERTY_SET_H_
@@ -29,7 +30,8 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class PropertySet : public RefCountable
+class PropertySet
+    : public RefCountable
 {
 public:
     PropertySet()
@@ -55,20 +57,20 @@ public:
      * Returns a property stored in this set, if one having a suitable
      * type is found, or returns a null smart pointer otherwise.
      */
-    template<typename T>
+    template <typename T>
     IntrusivePtr<T> locate();
 
-    template<typename T>
+    template <typename T>
     IntrusivePtr<T const> locate() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
      * type is found, or returns a default constructed object otherwise.
      */
-    template<typename T>
+    template <typename T>
     IntrusivePtr<T> locateOrDefault();
 
-    template<typename T>
+    template <typename T>
     IntrusivePtr<T const> locateOrDefault() const;
 
     /**
@@ -76,16 +78,16 @@ public:
      * type is found.  Otherwise, a default constructed object is put
      * to the set and then returned.
      */
-    template<typename T>
+    template <typename T>
     IntrusivePtr<T> locateOrCreate();
 
 private:
-    typedef std::vector<IntrusivePtr<Property> > PropList;
+    typedef std::vector<IntrusivePtr<Property>> PropList;
     PropList m_props;
 };
 
 
-template<typename T>
+template <typename T>
 IntrusivePtr<T>
 PropertySet::locate()
 {
@@ -96,10 +98,11 @@ PropertySet::locate()
             return IntrusivePtr<T>(obj);
         }
     }
+
     return IntrusivePtr<T>();
 }
 
-template<typename T>
+template <typename T>
 IntrusivePtr<T const>
 PropertySet::locate() const
 {
@@ -110,10 +113,11 @@ PropertySet::locate() const
             return IntrusivePtr<T const>(obj);
         }
     }
+
     return IntrusivePtr<T const>();
 }
 
-template<typename T>
+template <typename T>
 IntrusivePtr<T>
 PropertySet::locateOrDefault()
 {
@@ -121,10 +125,11 @@ PropertySet::locateOrDefault()
     if (!obj.get()) {
         obj.reset(new T);
     }
+
     return obj;
 }
 
-template<typename T>
+template <typename T>
 IntrusivePtr<T const>
 PropertySet::locateOrDefault() const
 {
@@ -132,10 +137,11 @@ PropertySet::locateOrDefault() const
     if (!obj.get()) {
         obj.reset(new T);
     }
+
     return obj;
 }
 
-template<typename T>
+template <typename T>
 IntrusivePtr<T>
 PropertySet::locateOrCreate()
 {
@@ -144,12 +150,14 @@ PropertySet::locateOrCreate()
         obj.reset(new T);
         m_props.push_back(obj);
     }
+
     return obj;
 }
 
-inline void swap(PropertySet& o1, PropertySet& o2)
+inline void
+swap(PropertySet& o1, PropertySet& o2)
 {
     o1.swap(o2);
 }
 
-#endif
+#endif  // ifndef PROPERTY_SET_H_

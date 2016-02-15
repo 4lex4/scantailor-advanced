@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,15 +15,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "LinearFunction.h"
 #include <algorithm>
 
 LinearFunction::LinearFunction(size_t num_vars)
-        : a(num_vars), b(0)
-{
-}
+    : a(num_vars),
+      b(0)
+{ }
 
 void
 LinearFunction::reset()
@@ -56,6 +57,7 @@ LinearFunction::operator+=(LinearFunction const& other)
 {
     a += other.a;
     b += other.b;
+
     return *this;
 }
 
@@ -64,5 +66,7 @@ LinearFunction::operator*=(double scalar)
 {
     a *= scalar;
     b *= scalar;
+
     return *this;
 }
+

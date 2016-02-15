@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "ApplyDialog.h"
@@ -25,13 +26,11 @@
 
 namespace select_content
 {
-
-    OptionsWidget::OptionsWidget(
-            IntrusivePtr<Settings> const& settings,
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_pageSelectionAccessor(page_selection_accessor),
-              m_ignoreAutoManualToggle(0)
+    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                                 PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_pageSelectionAccessor(page_selection_accessor),
+          m_ignoreAutoManualToggle(0)
     {
         setupUi(this);
 
@@ -50,8 +49,7 @@ namespace select_content
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
     OptionsWidget::preUpdateUI(PageId const& page_id)
@@ -115,19 +113,21 @@ namespace select_content
             m_uiData.setMode(MODE_MANUAL);
             m_uiData.setContentDetection(true);
             commitCurrentParams();
-            if(m_uiData.pageDetection()) {
+            if (m_uiData.pageDetection()) {
                 m_uiData.setPageDetection(false);
                 emit reloadRequested();
             }
         }
     }
 
-    void OptionsWidget::autoMode()
+    void
+    OptionsWidget::autoMode()
     {
         modeChanged(true);
     }
 
-    void OptionsWidget::manualMode()
+    void
+    OptionsWidget::manualMode()
     {
         modeChanged(false);
     }
@@ -178,7 +178,8 @@ namespace select_content
         emit reloadRequested();
     }
 
-    void OptionsWidget::borderChanged()
+    void
+    OptionsWidget::borderChanged()
     {
         m_uiData.setPageBorders(leftBorder->value(), topBorder->value(), rightBorder->value(), bottomBorder->value());
         commitCurrentParams();
@@ -213,9 +214,9 @@ namespace select_content
     OptionsWidget::commitCurrentParams()
     {
         Params params(
-                m_uiData.contentRect(), m_uiData.contentSizeMM(),
-                Dependencies(), m_uiData.mode(), m_uiData.contentDetection(), m_uiData.pageDetection(),
-                m_uiData.fineTuning()
+            m_uiData.contentRect(), m_uiData.contentSizeMM(),
+            Dependencies(), m_uiData.mode(), m_uiData.contentDetection(), m_uiData.pageDetection(),
+            m_uiData.fineTuning()
         );
         params.setPageRect(m_uiData.pageRect());
         params.setPageBorders(m_uiData.pageBorders());
@@ -227,12 +228,12 @@ namespace select_content
     OptionsWidget::showApplyToDialog()
     {
         ApplyDialog* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                              );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(applySelection(std::set<PageId> const&, bool)),
-                this, SLOT(applySelection(std::set<PageId> const&, bool))
+            dialog, SIGNAL(applySelection(std::set<PageId> const &, bool)),
+            this, SLOT(applySelection(std::set<PageId> const &, bool))
         );
         dialog->show();
     }
@@ -246,11 +247,11 @@ namespace select_content
 
         Dependencies deps;
         Params params(
-                m_uiData.contentRect(), m_uiData.contentSizeMM(),
-                deps, m_uiData.mode(), m_uiData.contentDetection(), m_uiData.pageDetection(), m_uiData.fineTuning()
+            m_uiData.contentRect(), m_uiData.contentSizeMM(),
+            deps, m_uiData.mode(), m_uiData.contentDetection(), m_uiData.pageDetection(), m_uiData.fineTuning()
         );
 
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
 
             if (old_params.get()) {
@@ -270,28 +271,26 @@ namespace select_content
             emit invalidateAllThumbnails();
         }
         else {
-            for (PageId const& page_id :  pages) {
+            for (PageId const& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
 
         emit reloadRequested();
-    }
+    }  // OptionsWidget::applySelection
 
-/*========================= OptionsWidget::UiData ======================*/
+    /*========================= OptionsWidget::UiData ======================*/
 
     OptionsWidget::UiData::UiData()
-            : m_mode(MODE_AUTO),
-              m_contentDetection(true),
-              m_pageDetection(false),
-              m_fineTuneCorners(false),
-              m_borders(0, 0, 0, 0)
-    {
-    }
+        : m_mode(MODE_AUTO),
+          m_contentDetection(true),
+          m_pageDetection(false),
+          m_fineTuneCorners(false),
+          m_borders(0, 0, 0, 0)
+    { }
 
     OptionsWidget::UiData::~UiData()
-    {
-    }
+    { }
 
     void
     OptionsWidget::UiData::setSizeCalc(PhysSizeCalc const& calc)
@@ -371,13 +370,12 @@ namespace select_content
         m_fineTuneCorners = fine_tune;
     }
 
-    void OptionsWidget::UiData::setPageBorders(double left, double top, double right, double bottom)
+    void
+    OptionsWidget::UiData::setPageBorders(double left, double top, double right, double bottom)
     {
         m_borders.setLeft(left);
         m_borders.setTop(top);
         m_borders.setRight(right);
         m_borders.setBottom(bottom);
     }
-
-
-} 
+}  // namespace select_content

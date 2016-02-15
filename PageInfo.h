@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGEINFO_H_
 #define PAGEINFO_H_
@@ -27,32 +28,51 @@ class PageInfo
 public:
     PageInfo();
 
-    PageInfo(PageId const& page_id, ImageMetadata const& metadata,
-             int image_sub_pages, bool left_half_removed, bool right_half_removed);
+    PageInfo(PageId const& page_id,
+             ImageMetadata const& metadata,
+             int image_sub_pages,
+             bool left_half_removed,
+             bool right_half_removed);
 
     bool isNull() const
-    { return m_pageId.isNull(); }
+    {
+        return m_pageId.isNull();
+    }
 
     PageId const& id() const
-    { return m_pageId; }
+    {
+        return m_pageId;
+    }
 
     void setId(PageId const& id)
-    { m_pageId = id; }
+    {
+        m_pageId = id;
+    }
 
     ImageId const& imageId() const
-    { return m_pageId.imageId(); }
+    {
+        return m_pageId.imageId();
+    }
 
     ImageMetadata const& metadata() const
-    { return m_metadata; }
+    {
+        return m_metadata;
+    }
 
     int imageSubPages() const
-    { return m_imageSubPages; }
+    {
+        return m_imageSubPages;
+    }
 
     bool leftHalfRemoved() const
-    { return m_leftHalfRemoved; }
+    {
+        return m_leftHalfRemoved;
+    }
 
     bool rightHalfRemoved() const
-    { return m_rightHalfRemoved; }
+    {
+        return m_rightHalfRemoved;
+    }
 
 private:
     PageId m_pageId;
@@ -62,4 +82,4 @@ private:
     bool m_rightHalfRemoved;
 };
 
-#endif
+#endif  // ifndef PAGEINFO_H_

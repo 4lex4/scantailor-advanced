@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OutputFileNameGenerator.h"
 #include "PageId.h"
@@ -24,18 +25,17 @@
 #include <QDir>
 
 OutputFileNameGenerator::OutputFileNameGenerator()
-        : m_ptrDisambiguator(new FileNameDisambiguator),
-          m_outDir(),
-          m_layoutDirection(Qt::LeftToRight)
-{
-}
+    : m_ptrDisambiguator(new FileNameDisambiguator),
+      m_outDir(),
+      m_layoutDirection(Qt::LeftToRight)
+{ }
 
-OutputFileNameGenerator::OutputFileNameGenerator(
-        IntrusivePtr<FileNameDisambiguator> const& disambiguator,
-        QString const& out_dir, Qt::LayoutDirection layout_direction)
-        : m_ptrDisambiguator(disambiguator),
-          m_outDir(out_dir),
-          m_layoutDirection(layout_direction)
+OutputFileNameGenerator::OutputFileNameGenerator(IntrusivePtr<FileNameDisambiguator> const& disambiguator,
+                                                 QString const& out_dir,
+                                                 Qt::LayoutDirection layout_direction)
+    : m_ptrDisambiguator(disambiguator),
+      m_outDir(out_dir),
+      m_layoutDirection(layout_direction)
 {
     assert(m_ptrDisambiguator.get());
 }
@@ -60,8 +60,8 @@ OutputFileNameGenerator::fileNameFor(PageId const& page) const
     }
     if (page.imageId().isMultiPageFile()) {
         name += QString::fromLatin1("_page%1").arg(
-                page.imageId().page(), 4, 10, QLatin1Char('0')
-        );
+            page.imageId().page(), 4, 10, QLatin1Char('0')
+                );
     }
     if (sub_page != PageId::SINGLE_PAGE) {
         name += QLatin1Char('_');
@@ -77,5 +77,7 @@ QString
 OutputFileNameGenerator::filePathFor(PageId const& page) const
 {
     QString const file_name(fileNameFor(page));
+
     return QDir(m_outDir).absoluteFilePath(file_name);
 }
+

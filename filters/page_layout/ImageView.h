@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_LAYOUT_IMAGEVIEW_H_
 #define PAGE_LAYOUT_IMAGEVIEW_H_
@@ -40,28 +41,27 @@ class Margins;
 
 namespace page_layout
 {
-
     class OptionsWidget;
-class Settings;
+    class Settings;
 
-    class ImageView :
-            public ImageViewBase,
-            private InteractionHandler
+    class ImageView
+        : public ImageViewBase,
+          private InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        ImageView(
-                IntrusivePtr<Settings> const& settings, PageId const& page_id,
-                QImage const& image, QImage const& downscaled_image,
-                ImageTransformation const& xform,
-                QRectF const& adapted_content_rect,
-                OptionsWidget const& opt_widget);
+        ImageView(IntrusivePtr<Settings> const& settings,
+                  PageId const& page_id,
+                  QImage const& image,
+                  QImage const& downscaled_image,
+                  ImageTransformation const& xform,
+                  QRectF const& adapted_content_rect,
+                  OptionsWidget const& opt_widget);
 
         virtual ~ImageView();
 
     signals:
-
         void invalidateThumbnail(PageId const& page_id);
 
         void invalidateAllThumbnails();
@@ -69,7 +69,6 @@ class Settings;
         void marginsSetLocally(Margins const& margins_mm);
 
     public slots:
-
         void marginsSetExternally(Margins const& margins_mm);
 
         void leftRightLinkToggled(bool linked);
@@ -81,21 +80,13 @@ class Settings;
         void aggregateHardSizeChanged();
 
     private:
-        enum Edge
-        {
-            LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8
-        };
-        enum FitMode
-        {
-            FIT, DONT_FIT
-        };
-        enum AggregateSizeChanged
-        {
-            AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED
-        };
+        enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
 
-        struct StateBeforeResizing
-        {
+        enum FitMode { FIT, DONT_FIT };
+
+        enum AggregateSizeChanged { AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED };
+
+        struct StateBeforeResizing {
             /**
              * Transformation from virtual image coordinates to widget coordinates.
              */
@@ -233,6 +224,5 @@ class Settings;
 
         bool m_topBottomLinked;
     };
-
-}
-#endif
+}  // namespace page_layout
+#endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

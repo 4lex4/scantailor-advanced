@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SPFIT_CONSTRAINT_SET_H_
 #define SPFIT_CONSTRAINT_SET_H_
@@ -27,7 +28,6 @@
 
 namespace spfit
 {
-
     class FittableSpline;
 
     class ConstraintSet
@@ -36,7 +36,9 @@ namespace spfit
         ConstraintSet(FittableSpline const* spline);
 
         std::list<LinearFunction> const& constraints() const
-        { return m_constraints; }
+        {
+            return m_constraints;
+        }
 
         void constrainControlPoint(int cp_idx, QPointF const& pos);
 
@@ -50,6 +52,5 @@ namespace spfit
         FittableSpline const* m_pSpline;
         std::list<LinearFunction> m_constraints;
     };
-
 }
-#endif
+#endif  // ifndef SPFIT_CONSTRAINT_SET_H_

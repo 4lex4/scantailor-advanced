@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Settings.h"
 #include "Utils.h"
@@ -22,23 +23,21 @@
 #include "AbstractRelinker.h"
 
 #include <iostream>
-#include "CommandLine.h" 
+#include "CommandLine.h"
 
 namespace select_content
 {
-
-    Settings::Settings() :
-            m_avg(0.0),
-            m_sigma(0.0),
-            m_pageDetectionBox(0.0, 0.0),
-            m_pageDetectionTolerance(0.1)
+    Settings::Settings()
+        : m_avg(0.0),
+          m_sigma(0.0),
+          m_pageDetectionBox(0.0, 0.0),
+          m_pageDetectionTolerance(0.1)
     {
         m_maxDeviation = CommandLine::get().getContentDeviation();
     }
 
     Settings::~Settings()
-    {
-    }
+    { }
 
     void
     Settings::clear()
@@ -53,7 +52,7 @@ namespace select_content
         QMutexLocker locker(&m_mutex);
         PageParams new_params;
 
-        for (PageParams::value_type const& kv :  m_pageParams) {
+        for (PageParams::value_type const& kv : m_pageParams) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
@@ -63,10 +62,11 @@ namespace select_content
         m_pageParams.swap(new_params);
     }
 
-    void Settings::updateDeviation()
+    void
+    Settings::updateDeviation()
     {
         m_avg = 0.0;
-        for (PageParams::value_type& kv :  m_pageParams) {
+        for (PageParams::value_type& kv : m_pageParams) {
             kv.second.computeDeviation(0.0);
             m_avg += -1 * kv.second.deviation();
         }
@@ -76,7 +76,7 @@ namespace select_content
 #endif
 
         double sigma2 = 0.0;
-        for (PageParams::value_type& kv :  m_pageParams) {
+        for (PageParams::value_type& kv : m_pageParams) {
             kv.second.computeDeviation(m_avg);
             sigma2 += kv.second.deviation() * kv.second.deviation();
         }
@@ -115,5 +115,4 @@ namespace select_content
             return std::unique_ptr<Params>();
         }
     }
-
-} 
+}  // namespace select_content

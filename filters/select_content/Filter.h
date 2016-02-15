@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_FILTER_H_
 #define SELECT_CONTENT_FILTER_H_
@@ -37,22 +38,23 @@ class QString;
 namespace page_layout
 {
     class Task;
-class CacheDrivenTask;
+    class CacheDrivenTask;
 }
 
 namespace select_content
 {
-
     class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-    class Filter : public AbstractFilter
+    class Filter
+        : public AbstractFilter
     {
-    DECLARE_NON_COPYABLE(Filter)
+        DECLARE_NON_COPYABLE(Filter)
 
-    Q_DECLARE_TR_FUNCTIONS(select_content::Filter)
+        Q_DECLARE_TR_FUNCTIONS(select_content::Filter)
+
     public:
         Filter(PageSelectionAccessor const& page_selection_accessor);
 
@@ -73,31 +75,33 @@ class Settings;
         virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
         virtual void updateStatistics()
-        { m_ptrSettings->updateDeviation(); }
+        {
+            m_ptrSettings->updateDeviation();
+        }
 
-        virtual QDomElement saveSettings(
-                ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-        virtual void loadSettings(
-                ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        IntrusivePtr<Task> createTask(
-                PageId const& page_id,
-                IntrusivePtr<page_layout::Task> const& next_task,
-                bool batch, bool debug);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<page_layout::Task> const& next_task,
+                                      bool batch,
+                                      bool debug);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
-                IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget()
-        { return m_ptrOptionsWidget.get(); };
+        {
+            return m_ptrOptionsWidget.get();
+        }
 
         Settings* getSettings()
-        { return m_ptrSettings.get(); };
+        {
+            return m_ptrSettings.get();
+        }
+
     private:
-        void writePageSettings(
-                QDomDocument& doc, QDomElement& filter_el,
-                PageId const& page_id, int numeric_id) const;
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
 
         IntrusivePtr<Settings> m_ptrSettings;
@@ -105,6 +109,5 @@ class Settings;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;
     };
-
-}
-#endif
+}  // namespace select_content
+#endif  // ifndef SELECT_CONTENT_FILTER_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -15,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include <QCoreApplication>
 #include <iostream>
@@ -24,7 +25,8 @@
 #include "ConsoleBatch.h"
 
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
@@ -37,11 +39,14 @@ int main(int argc, char** argv)
 
     if (cli.isError()) {
         cli.printHelp();
+
         return 1;
     }
 
-    if (cli.hasHelp() || cli.outputDirectory().isEmpty() || (cli.images().size() == 0 && cli.projectFile().isEmpty())) {
+    if (cli.hasHelp() || cli.outputDirectory().isEmpty()
+        || ((cli.images().size() == 0) && cli.projectFile().isEmpty())) {
         cli.printHelp();
+
         return 0;
     }
 
@@ -55,7 +60,8 @@ int main(int argc, char** argv)
             cbatch.reset(new ConsoleBatch(cli.images(), cli.outputDirectory(), cli.getLayoutDirection()));
         }
         cbatch->process();
-    } catch (std::exception const& e) {
+    }
+    catch (std::exception const& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
     }
@@ -63,4 +69,5 @@ int main(int argc, char** argv)
     if (cli.hasOutputProject()) {
         cbatch->saveProject(cli.outputProjectFile());
     }
-}
+}  // main
+

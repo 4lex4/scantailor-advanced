@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_
 #define OUTPUT_OUTPUT_IMAGE_PARAMS_H_
@@ -36,37 +37,49 @@ class QTransform;
 
 namespace output
 {
-
-/**
- * \brief Parameters of the output image used to determine if we need to re-generate it.
- */
+    /**
+     * \brief Parameters of the output image used to determine if we need to re-generate it.
+     */
     class OutputImageParams
     {
     public:
         OutputImageParams(QSize const& out_image_size,
-                          QRect const& content_rect, ImageTransformation xform,
-                          Dpi const& dpi, ColorParams const& color_params,
+                          QRect const& content_rect,
+                          ImageTransformation xform,
+                          Dpi const& dpi,
+                          ColorParams const& color_params,
                           DewarpingMode const& dewarping_mode,
                           dewarping::DistortionModel const& distortion_model,
-                          DepthPerception const& depth_perception, DespeckleLevel despeckle_level,
+                          DepthPerception const& depth_perception,
+                          DespeckleLevel despeckle_level,
                           PictureShape picture_shape);
 
         explicit OutputImageParams(QDomElement const& el);
 
         DewarpingMode const& dewarpingMode() const
-        { return m_dewarpingMode; }
+        {
+            return m_dewarpingMode;
+        }
 
         dewarping::DistortionModel const& distortionModel() const
-        { return m_distortionModel; }
+        {
+            return m_distortionModel;
+        }
 
         void setDistortionModel(dewarping::DistortionModel const& model)
-        { m_distortionModel = model; }
+        {
+            m_distortionModel = model;
+        }
 
         DepthPerception const& depthPerception() const
-        { return m_depthPerception; }
+        {
+            return m_depthPerception;
+        }
 
         DespeckleLevel despeckleLevel() const
-        { return m_despeckleLevel; }
+        {
+            return m_despeckleLevel;
+        }
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -99,9 +112,10 @@ namespace output
             double m_22;
         };
 
-        static bool colorParamsMatch(
-                ColorParams const& cp1, DespeckleLevel dl1,
-                ColorParams const& cp2, DespeckleLevel dl2);
+        static bool colorParamsMatch(ColorParams const& cp1,
+                                     DespeckleLevel dl1,
+                                     ColorParams const& cp2,
+                                     DespeckleLevel dl2);
 
         /** Pixel size of the output image. */
         QSize m_size;
@@ -137,6 +151,5 @@ namespace output
         /** Despeckle level of the output image. */
         DespeckleLevel m_despeckleLevel;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_

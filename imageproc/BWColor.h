@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,23 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef BWCOLOR_H_
 #define BWCOLOR_H_
 
 namespace imageproc
 {
+    enum BWColor { WHITE = 0, BLACK = 1 };
 
-    enum BWColor
-    {
-        WHITE = 0, BLACK = 1
-    };
-
-    inline BWColor operator!(BWColor c)
+    inline BWColor
+    operator!(BWColor c)
     {
         return static_cast<BWColor>(~c & 1);
     }
-
 }
 #endif

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Settings.h"
 #include "FillColorProperty.h"
@@ -25,17 +26,14 @@
 
 namespace output
 {
-
     Settings::Settings()
-            : m_defaultPictureZoneProps(initialPictureZoneProps()),
-              m_defaultFillZoneProps(initialFillZoneProps()),
-              m_compression(COMPRESSION_LZW)
-    {
-    }
+        : m_defaultPictureZoneProps(initialPictureZoneProps()),
+          m_defaultFillZoneProps(initialFillZoneProps()),
+          m_compression(COMPRESSION_LZW)
+    { }
 
     Settings::~Settings()
-    {
-    }
+    { }
 
     void
     Settings::clear()
@@ -60,28 +58,28 @@ namespace output
         PerPageZones new_picture_zones;
         PerPageZones new_fill_zones;
 
-        for (PerPageParams::value_type const& kv :  m_perPageParams) {
+        for (PerPageParams::value_type const& kv : m_perPageParams) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_params.insert(PerPageParams::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageOutputParams::value_type const& kv :  m_perPageOutputParams) {
+        for (PerPageOutputParams::value_type const& kv : m_perPageOutputParams) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_output_params.insert(PerPageOutputParams::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageZones::value_type const& kv :  m_perPagePictureZones) {
+        for (PerPageZones::value_type const& kv : m_perPagePictureZones) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_picture_zones.insert(PerPageZones::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageZones::value_type const& kv :  m_perPageFillZones) {
+        for (PerPageZones::value_type const& kv : m_perPageFillZones) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
@@ -92,7 +90,7 @@ namespace output
         m_perPageOutputParams.swap(new_output_params);
         m_perPagePictureZones.swap(new_picture_zones);
         m_perPageFillZones.swap(new_fill_zones);
-    }
+    }  // Settings::performRelinking
 
     Params
     Settings::getParams(PageId const& page_id) const
@@ -121,7 +119,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setColorParams(prms);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -137,7 +135,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setPictureShape(picture_shape);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -153,7 +151,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setOutputDpi(dpi);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -169,7 +167,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDewarpingMode(mode);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -185,7 +183,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDistortionModel(model);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -201,7 +199,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDepthPerception(depth_perception);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -217,7 +215,7 @@ namespace output
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
-        if (it == m_perPageParams.end() || m_perPageParams.key_comp()(page_id, it->first)) {
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDespeckleLevel(level);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -301,6 +299,7 @@ namespace output
     Settings::defaultPictureZoneProperties() const
     {
         QMutexLocker const locker(&m_mutex);
+
         return m_defaultPictureZoneProps;
     }
 
@@ -308,6 +307,7 @@ namespace output
     Settings::defaultFillZoneProperties() const
     {
         QMutexLocker const locker(&m_mutex);
+
         return m_defaultFillZoneProps;
     }
 
@@ -330,6 +330,7 @@ namespace output
     {
         PropertySet props;
         props.locateOrCreate<PictureLayerProperty>()->setLayer(PictureLayerProperty::PAINTER2);
+
         return props;
     }
 
@@ -338,7 +339,7 @@ namespace output
     {
         PropertySet props;
         props.locateOrCreate<FillColorProperty>()->setColor(Qt::white);
+
         return props;
     }
-
-} 
+}  // namespace output

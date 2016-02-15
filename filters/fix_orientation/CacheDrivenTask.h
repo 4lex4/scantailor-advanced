@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_
 #define FIX_ORIENTATION_CACHEDRIVENTASK_H_
@@ -33,27 +34,24 @@ namespace page_split
 
 namespace fix_orientation
 {
-
     class Settings;
 
-    class CacheDrivenTask : public CompositeCacheDrivenTask
+    class CacheDrivenTask
+        : public CompositeCacheDrivenTask
     {
-    DECLARE_NON_COPYABLE(CacheDrivenTask)
+        DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(
-                IntrusivePtr<Settings> const& settings,
-                IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                        IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
 
         virtual ~CacheDrivenTask();
 
-        virtual void process(
-                PageInfo const& page_info, AbstractFilterDataCollector* collector);
+        virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector);
 
     private:
         IntrusivePtr<page_split::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-
 }
-#endif
+#endif  // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_

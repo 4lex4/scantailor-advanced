@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,29 +15,28 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "SkinnedButton.h"
 #include <QBitmap>
 
 SkinnedButton::SkinnedButton(QString const& file, QWidget* parent)
-        : QToolButton(parent),
-          m_normalStatePixmap(file),
-          m_normalStateFile(file)
+    : QToolButton(parent),
+      m_normalStatePixmap(file),
+      m_normalStateFile(file)
 {
     updateStyleSheet();
 }
 
-SkinnedButton::SkinnedButton(
-        QString const& normal_state_file,
-        QString const& hover_state_file,
-        QString const& pressed_state_file,
-        QWidget* parent)
-        : QToolButton(parent),
-          m_normalStatePixmap(normal_state_file),
-          m_normalStateFile(normal_state_file),
-          m_hoverStateFile(hover_state_file),
-          m_pressedStateFile(pressed_state_file)
+SkinnedButton::SkinnedButton(QString const& normal_state_file,
+                             QString const& hover_state_file,
+                             QString const& pressed_state_file,
+                             QWidget* parent)
+    : QToolButton(parent),
+      m_normalStatePixmap(normal_state_file),
+      m_normalStateFile(normal_state_file),
+      m_hoverStateFile(hover_state_file),
+      m_pressedStateFile(pressed_state_file)
 {
     updateStyleSheet();
 }
@@ -76,28 +76,29 @@ void
 SkinnedButton::updateStyleSheet()
 {
     QString style = QString(
-            "QToolButton {"
-                    "border: none;"
-                    "background: transparent;"
-                    "image: url(%1);"
-                    "}"
-    ).arg(m_normalStateFile);
+        "QToolButton {"
+        "border: none;"
+        "background: transparent;"
+        "image: url(%1);"
+        "}"
+                    ).arg(m_normalStateFile);
 
     if (!m_hoverStateFile.isEmpty()) {
         style += QString(
-                "QToolButton:hover {"
-                        "image: url(%1);"
-                        "}"
-        ).arg(m_hoverStateFile);
+            "QToolButton:hover {"
+            "image: url(%1);"
+            "}"
+                 ).arg(m_hoverStateFile);
     }
 
     if (!m_pressedStateFile.isEmpty()) {
         style += QString(
-                "QToolButton:hover:pressed {"
-                        "image: url(%1);"
-                        "}"
-        ).arg(m_pressedStateFile);
+            "QToolButton:hover:pressed {"
+            "image: url(%1);"
+            "}"
+                 ).arg(m_pressedStateFile);
     }
 
     setStyleSheet(style);
 }
+

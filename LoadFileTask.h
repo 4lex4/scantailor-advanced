@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef LOADFILETASK_H_
 #define LOADFILETASK_H_
@@ -36,12 +37,14 @@ namespace fix_orientation
     class Task;
 }
 
-class LoadFileTask : public BackgroundTask
+class LoadFileTask
+    : public BackgroundTask
 {
-DECLARE_NON_COPYABLE(LoadFileTask)
+    DECLARE_NON_COPYABLE(LoadFileTask)
 
 public:
-    LoadFileTask(Type type, PageInfo const& page,
+    LoadFileTask(Type type,
+                 PageInfo const& page,
                  IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                  IntrusivePtr<ProjectPages> const& pages,
                  IntrusivePtr<fix_orientation::Task> const& next_task);
@@ -64,4 +67,4 @@ private:
     IntrusivePtr<fix_orientation::Task> const m_ptrNextTask;
 };
 
-#endif
+#endif  // ifndef LOADFILETASK_H_

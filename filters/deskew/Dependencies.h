@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DESKEW_DEPENDENCIES_H_
 #define DESKEW_DEPENDENCIES_H_
@@ -28,16 +29,14 @@ class QString;
 
 namespace deskew
 {
-
-/**
- * \brief Dependencies of deskew parameters.
- *
- * Once dependencies change, deskew parameters are no longer valid.
- */
+    /**
+     * \brief Dependencies of deskew parameters.
+     *
+     * Once dependencies change, deskew parameters are no longer valid.
+     */
     class Dependencies
     {
     public:
-
         Dependencies();
 
         Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
@@ -54,6 +53,5 @@ namespace deskew
         QPolygonF m_pageOutline;
         OrthogonalRotation m_rotation;
     };
-
 }
-#endif
+#endif  // ifndef DESKEW_DEPENDENCIES_H_

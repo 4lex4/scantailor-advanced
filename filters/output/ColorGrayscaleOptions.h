@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_
 #define OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_
@@ -27,7 +28,6 @@ class QDomElement;
 
 namespace output
 {
-
     class ColorGrayscaleOptions
     {
     public:
@@ -38,46 +38,74 @@ namespace output
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
         bool whiteMargins() const
-        { return m_whiteMargins; }
+        {
+            return m_whiteMargins;
+        }
 
         void setWhiteMargins(bool val)
-        { m_whiteMargins = val; }
+        {
+            m_whiteMargins = val;
+        }
 
         bool normalizeIllumination() const
-        { return m_normalizeIllumination; }
+        {
+            return m_normalizeIllumination;
+        }
 
         void setNormalizeIllumination(bool val)
-        { m_normalizeIllumination = val; }
+        {
+            m_normalizeIllumination = val;
+        }
 
         bool cleanBackground() const
-        { return m_cleanBackground; }
+        {
+            return m_cleanBackground;
+        }
 
         void setCleanBackground(bool val)
-        { m_cleanBackground = val; }
+        {
+            m_cleanBackground = val;
+        }
 
         AutoManualMode cleanMode() const
-        { return m_cleanMode; }
+        {
+            return m_cleanMode;
+        }
 
         void setCleanMode(AutoManualMode val)
-        { m_cleanMode = val; }
+        {
+            m_cleanMode = val;
+        }
 
         int whitenAdjustment() const
-        { return m_whitenAdjustment; }
+        {
+            return m_whitenAdjustment;
+        }
 
         void setWhitenAdjustment(int val)
-        { m_whitenAdjustment = val; }
+        {
+            m_whitenAdjustment = val;
+        }
 
         int brightnessAdjustment() const
-        { return m_brightnessAdjustment; }
+        {
+            return m_brightnessAdjustment;
+        }
 
         void setBrightnessAdjustment(int val)
-        { m_brightnessAdjustment = val; }
+        {
+            m_brightnessAdjustment = val;
+        }
 
         int contrastAdjustment() const
-        { return m_contrastAdjustment; }
+        {
+            return m_contrastAdjustment;
+        }
 
         void setContrastAdjustment(int val)
-        { m_contrastAdjustment = val; }
+        {
+            m_contrastAdjustment = val;
+        }
 
         bool operator==(ColorGrayscaleOptions const& other) const;
 
@@ -92,6 +120,5 @@ namespace output
         int m_brightnessAdjustment;
         int m_contrastAdjustment;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

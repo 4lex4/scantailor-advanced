@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Binarize.h"
 #include "Utils.h"
@@ -22,21 +23,18 @@
 
 namespace imageproc
 {
-
     namespace tests
     {
-
         using namespace utils;
 
         BOOST_AUTO_TEST_SUITE(BinarizeTestSuite);
 #if 0
-            BOOST_AUTO_TEST_CASE(test)
-            {
-                QImage img("test.png");
-                binarizeWolf(img).toQImage().save("out.png");
-            }
+        BOOST_AUTO_TEST_CASE(test)
+        {
+            QImage img("test.png");
+            binarizeWolf(img).toQImage().save("out.png");
+        }
 #endif
         BOOST_AUTO_TEST_SUITE_END();
-
     }
-} 
+}

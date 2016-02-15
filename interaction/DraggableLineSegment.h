@@ -1,3 +1,4 @@
+
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DRAGGABLE_LINE_SEGMENT_H_
 #define DRAGGABLE_LINE_SEGMENT_H_
@@ -26,21 +27,24 @@
 
 class ObjectDragHandler;
 
-class DraggableLineSegment : public DraggableObject
+class DraggableLineSegment
+    : public DraggableObject
 {
 public:
     typedef boost::function<
             QLineF()
-    > PositionCallback;
+>PositionCallback;
 
     typedef boost::function<
-            void(QLineF const& line, Qt::KeyboardModifiers mask)
-    > MoveRequestCallback;
+            void (QLineF const& line, Qt::KeyboardModifiers mask)
+>MoveRequestCallback;
 
     DraggableLineSegment();
 
     void setProximityPriority(int priority)
-    { m_proximityPriority = priority; }
+    {
+        m_proximityPriority = priority;
+    }
 
     virtual int proximityPriority() const;
 
@@ -79,4 +83,4 @@ private:
     int m_proximityPriority;
 };
 
-#endif
+#endif  // ifndef DRAGGABLE_LINE_SEGMENT_H_

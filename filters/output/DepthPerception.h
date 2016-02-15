@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_DEPTH_PERCEPTION_H_
 #define OUTPUT_DEPTH_PERCEPTION_H_
@@ -23,10 +24,9 @@
 
 namespace output
 {
-
-/**
- * \see imageproc::CylindricalSurfaceDewarper
- */
+    /**
+     * \see imageproc::CylindricalSurfaceDewarper
+     */
     class DepthPerception
     {
     public:
@@ -41,20 +41,27 @@ namespace output
         void setValue(double value);
 
         double value() const
-        { return m_value; }
+        {
+            return m_value;
+        }
 
         static double minValue()
-        { return 1.0; }
+        {
+            return 1.0;
+        }
 
         static double defaultValue()
-        { return 2.0; }
+        {
+            return 2.0;
+        }
 
         static double maxValue()
-        { return 3.0; }
+        {
+            return 3.0;
+        }
 
     private:
         double m_value;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_DEPTH_PERCEPTION_H_

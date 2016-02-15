@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_OPTIONSWIDGET_H_
 #define SELECT_CONTENT_OPTIONSWIDGET_H_
@@ -34,13 +35,13 @@
 
 namespace select_content
 {
-
     class Settings;
 
-    class OptionsWidget :
-            public FilterOptionsWidget, private Ui::SelectContentOptionsWidget
+    class OptionsWidget
+        : public FilterOptionsWidget,
+          private Ui::SelectContentOptionsWidget
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
         class UiData
@@ -69,13 +70,19 @@ namespace select_content
             void setMode(AutoManualMode mode);
 
             bool contentDetection() const
-            { return m_contentDetection; }
+            {
+                return m_contentDetection;
+            }
 
             bool pageDetection() const
-            { return m_pageDetection; }
+            {
+                return m_pageDetection;
+            }
 
             bool fineTuning() const
-            { return m_fineTuneCorners; }
+            {
+                return m_fineTuneCorners;
+            }
 
             void setContentDetection(bool detect);
 
@@ -86,10 +93,14 @@ namespace select_content
             void setPageBorders(double left, double top, double right, double bottom);
 
             void setPageBorders(Margins const& borders)
-            { m_borders = borders; };
+            {
+                m_borders = borders;
+            }
 
             Margins pageBorders() const
-            { return m_borders; }
+            {
+                return m_borders;
+            }
 
             AutoManualMode mode() const;
 
@@ -105,8 +116,7 @@ namespace select_content
             Margins m_borders;
         };
 
-        OptionsWidget(IntrusivePtr<Settings> const& settings,
-                      PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -115,11 +125,9 @@ namespace select_content
         void postUpdateUI(UiData const& ui_data);
 
     public slots:
-
         void manualContentRectSet(QRectF const& content_rect);
 
     private slots:
-
         void showApplyToDialog();
 
         void applySelection(std::set<PageId> const& pages, bool apply_content_box);
@@ -151,6 +159,5 @@ namespace select_content
         PageId m_pageId;
         int m_ignoreAutoManualToggle;
     };
-
-}
-#endif
+}  // namespace select_content
+#endif  // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

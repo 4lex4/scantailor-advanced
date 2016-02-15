@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /* The code is based on Paul Heckbert's stack-based seed fill algorithm
  * from "Graphic Gems", ed. Andrew Glassner, Academic Press, 1990.
@@ -26,22 +27,28 @@
 
 namespace imageproc
 {
-
-    struct ConnCompEraser::BBox
-    {
+    struct ConnCompEraser::BBox {
         int xmin;
         int xmax;
         int ymin;
         int ymax;
 
-        BBox(int x, int y) : xmin(x), xmax(x), ymin(y), ymax(y)
+        BBox(int x, int y)
+            : xmin(x),
+              xmax(x),
+              ymin(y),
+              ymax(y)
         { }
 
         int width() const
-        { return xmax - xmin + 1; }
+        {
+            return xmax - xmin + 1;
+        }
 
         int height() const
-        { return ymax - ymin + 1; }
+        {
+            return ymax - ymin + 1;
+        }
     };
 
 
@@ -49,6 +56,7 @@ namespace imageproc
     ConnCompEraser::getBit(uint32_t const* const line, int const x)
     {
         uint32_t const mask = (uint32_t(1) << 31) >> (x & 31);
+
         return line[x >> 5] & mask;
     }
 
@@ -60,16 +68,15 @@ namespace imageproc
     }
 
     ConnCompEraser::ConnCompEraser(BinaryImage const& image, Connectivity conn)
-            : m_image(image),
-              m_pLine(0),
-              m_width(m_image.width()),
-              m_height(m_image.height()),
-              m_wpl(m_image.wordsPerLine()),
-              m_connectivity(conn),
-              m_x(0),
-              m_y(0)
-    {
-    }
+        : m_image(image),
+          m_pLine(0),
+          m_width(m_image.width()),
+          m_height(m_image.height()),
+          m_wpl(m_image.wordsPerLine()),
+          m_connectivity(conn),
+          m_x(0),
+          m_y(0)
+    { }
 
     ConnComp
     ConnCompEraser::nextConnComp()
@@ -97,7 +104,7 @@ namespace imageproc
         int const new_dy = seg.dy;
         int const new_dy_wpl = seg.dy_wpl;
         int const new_y = seg.y + new_dy;
-        if (new_y >= 0 && new_y < m_height) {
+        if ((new_y >= 0) && (new_y < m_height)) {
             Segment new_seg;
             new_seg.line = seg.line + new_dy_wpl;
             new_seg.xleft = xleft;
@@ -120,7 +127,7 @@ namespace imageproc
         int const new_dy = -seg.dy;
         int const new_dy_wpl = -seg.dy_wpl;
         int const new_y = seg.y + new_dy;
-        if (new_y >= 0 && new_y < m_height) {
+        if ((new_y >= 0) && (new_y < m_height)) {
             Segment new_seg;
             new_seg.line = seg.line + new_dy_wpl;
             new_seg.xleft = xleft;
@@ -186,6 +193,7 @@ namespace imageproc
             int const shift = countMostSignificantZeroes(word);
             m_x += shift;
             assert(m_x < m_width);
+
             return true;
         }
 
@@ -209,6 +217,7 @@ namespace imageproc
                     assert(m_x < m_width);
                     m_y = y;
                     m_pLine = line;
+
                     return true;
                 }
             }
@@ -221,6 +230,7 @@ namespace imageproc
                 assert(m_x < m_width);
                 m_y = y;
                 m_pLine = line;
+
                 return true;
             }
 
@@ -230,7 +240,7 @@ namespace imageproc
         }
 
         return false;
-    }
+    }  // ConnCompEraser::moveToNextBlackPixel
 
     ConnComp
     ConnCompEraser::eraseConnComp4()
@@ -274,16 +284,16 @@ namespace imageproc
                     pushSegInvDir(seg, seg.xright + 1, x - 1, bbox);
                 }
 
-                skip:
-                for (++x; x <= xmax && !getBit(seg.line, x); ++x) {
-                }
+            skip:
+                for (++x; x <= xmax && !getBit(seg.line, x); ++x) { }
                 xstart = x;
             } while (x <= xmax);
         }
 
         QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
+
         return ConnComp(QPoint(m_x, m_y), rect, pix_count);
-    }
+    }  // ConnCompEraser::eraseConnComp4
 
     ConnComp
     ConnCompEraser::eraseConnComp8()
@@ -326,15 +336,14 @@ namespace imageproc
                     pushSegInvDir(seg, seg.xright + 1, x - 1, bbox);
                 }
 
-                skip:
-                for (++x; x <= xmax && !getBit(seg.line, x); ++x) {
-                }
+            skip:
+                for (++x; x <= xmax && !getBit(seg.line, x); ++x) { }
                 xstart = x;
             } while (x <= xmax);
         }
 
         QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
-        return ConnComp(QPoint(m_x, m_y), rect, pix_count);
-    }
 
-} 
+        return ConnComp(QPoint(m_x, m_y), rect, pix_count);
+    }  // ConnCompEraser::eraseConnComp8
+}  // namespace imageproc

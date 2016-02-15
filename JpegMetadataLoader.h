@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef JPEGMETADATALOADER_H_
 #define JPEGMETADATALOADER_H_
@@ -26,7 +27,8 @@
 class QIODevice;
 class ImageMetadata;
 
-class JpegMetadataLoader : public ImageMetadataLoader
+class JpegMetadataLoader
+    : public ImageMetadataLoader
 {
 public:
     /**
@@ -38,9 +40,7 @@ public:
     static void registerMyself();
 
 protected:
-    virtual Status loadMetadata(
-            QIODevice& io_device,
-            VirtualFunction1<void, ImageMetadata const&>& out);
+    virtual Status loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out);
 };
 
 #endif

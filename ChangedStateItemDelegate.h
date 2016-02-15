@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef CHANGEDSTATEITEMDELEGATE_H_
 #define CHANGEDSTATEITEMDELEGATE_H_
@@ -27,12 +28,15 @@
  * \brief A decoration of an existing item delegate
  *        that forces certain item states.
  */
-template<typename T = QStyledItemDelegate>
-class ChangedStateItemDelegate : public T
+template <typename T = QStyledItemDelegate>
+class ChangedStateItemDelegate
+    : public T
 {
 public:
-    ChangedStateItemDelegate(QObject *parent = 0)
-            : T(parent), m_changedFlags(), m_changedMask()
+    ChangedStateItemDelegate(QObject* parent = 0)
+        : T(parent),
+          m_changedFlags(),
+          m_changedMask()
     { }
 
     void flagsForceEnabled(QStyle::State flags)
@@ -57,17 +61,14 @@ public:
         m_changedMask = QStyle::State();
     }
 
-    virtual void paint(QPainter *painter,
-                       QStyleOptionViewItem const &option,
-                       QModelIndex const &index) const
+    virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const
     {
-
         QStyle::State const orig_state = option.state;
 
         QStyle::State const new_state = (orig_state & ~m_changedMask)
                                         | (m_changedFlags & m_changedMask);
 
-        QStyleOptionViewItem &non_const_opt = const_cast<QStyleOptionViewItem &>(option);
+        QStyleOptionViewItem& non_const_opt = const_cast<QStyleOptionViewItem&>(option);
 
         non_const_opt.state = new_state;
         T::paint(painter, non_const_opt, index);
@@ -79,4 +80,4 @@ private:
     QStyle::State m_changedMask;
 };
 
-#endif
+#endif  // ifndef CHANGEDSTATEITEMDELEGATE_H_

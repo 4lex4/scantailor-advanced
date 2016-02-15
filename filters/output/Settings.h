@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_SETTINGS_H_
 #define OUTPUT_SETTINGS_H_
@@ -39,12 +40,12 @@ class AbstractRelinker;
 
 namespace output
 {
-
     class Params;
 
-    class Settings : public RefCountable
+    class Settings
+        : public RefCountable
     {
-    DECLARE_NON_COPYABLE(Settings)
+        DECLARE_NON_COPYABLE(Settings)
 
     public:
         Settings();
@@ -88,10 +89,14 @@ namespace output
         void setFillZones(PageId const& page_id, ZoneSet const& zones);
 
         int getTiffCompression()
-        { return m_compression; };
+        {
+            return m_compression;
+        }
 
         void setTiffCompression(int compression)
-        { m_compression = compression; };
+        {
+            m_compression = compression;
+        }
 
         /**
          * For now, default zone properties are not persistent.
@@ -123,6 +128,5 @@ namespace output
         PropertySet m_defaultFillZoneProps;
         int m_compression;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_SETTINGS_H_

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SELECT_CONTENT_PHYS_SIZE_CALC_H_
 #define SELECT_CONTENT_PHYS_SIZE_CALC_H_
@@ -27,7 +28,6 @@ class ImageTransformation;
 
 namespace select_content
 {
-
     class PhysSizeCalc
     {
     public:
@@ -40,6 +40,5 @@ namespace select_content
     private:
         QTransform m_virtToPhys;
     };
-
 }
 #endif

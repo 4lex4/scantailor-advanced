@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "DewarpingView.h"
 #include "ImagePresentation.h"
@@ -32,27 +33,28 @@
 
 namespace output
 {
-
     using namespace imageproc;
 
-    DewarpingView::DewarpingView(
-            QImage const& image, ImagePixmapUnion const& downscaled_image,
-            QTransform const& image_to_virt, QPolygonF const& virt_display_area,
-            QRectF const& virt_content_rect, PageId const& page_id,
-            DewarpingMode dewarping_mode,
-            dewarping::DistortionModel const& distortion_model,
-            DepthPerception const& depth_perception)
-            : ImageViewBase(
-            image, downscaled_image,
-            ImagePresentation(image_to_virt, virt_display_area)
-    ),
-              m_pageId(page_id),
-              m_virtDisplayArea(virt_display_area),
-              m_dewarpingMode(dewarping_mode),
-              m_distortionModel(distortion_model),
-              m_depthPerception(depth_perception),
-              m_dragHandler(*this),
-              m_zoomHandler(*this)
+    DewarpingView::DewarpingView(QImage const& image,
+                                 ImagePixmapUnion const& downscaled_image,
+                                 QTransform const& image_to_virt,
+                                 QPolygonF const& virt_display_area,
+                                 QRectF const& virt_content_rect,
+                                 PageId const& page_id,
+                                 DewarpingMode dewarping_mode,
+                                 dewarping::DistortionModel const& distortion_model,
+                                 DepthPerception const& depth_perception)
+        : ImageViewBase(
+              image, downscaled_image,
+              ImagePresentation(image_to_virt, virt_display_area)
+        ),
+          m_pageId(page_id),
+          m_virtDisplayArea(virt_display_area),
+          m_dewarpingMode(dewarping_mode),
+          m_distortionModel(distortion_model),
+          m_depthPerception(depth_perception),
+          m_dragHandler(*this),
+          m_zoomHandler(*this)
     {
         setMouseTracking(true);
 
@@ -92,15 +94,15 @@ namespace output
         m_topSpline.setSpline(top_spline);
         m_bottomSpline.setSpline(bottom_spline);
 
-        InteractiveXSpline* splines[2] = {&m_topSpline, &m_bottomSpline};
+        InteractiveXSpline* splines[2] = { &m_topSpline, &m_bottomSpline };
         int curve_idx = -1;
-        for (InteractiveXSpline* spline :  splines) {
+        for (InteractiveXSpline* spline : splines) {
             ++curve_idx;
             spline->setModifiedCallback(boost::bind(&DewarpingView::curveModified, this, curve_idx));
             spline->setDragFinishedCallback(boost::bind(&DewarpingView::dragFinished, this));
             spline->setStorageTransform(
-                    boost::bind(&DewarpingView::sourceToWidget, this, _1),
-                    boost::bind(&DewarpingView::widgetToSource, this, _1)
+                boost::bind(&DewarpingView::sourceToWidget, this, _1),
+                boost::bind(&DewarpingView::widgetToSource, this, _1)
             );
             makeLastFollower(*spline);
         }
@@ -114,11 +116,12 @@ namespace output
     }
 
     DewarpingView::~DewarpingView()
-    {
-    }
+    { }
 
     void
-    DewarpingView::initNewSpline(XSpline& spline, QPointF const& p1, QPointF const& p2,
+    DewarpingView::initNewSpline(XSpline& spline,
+                                 QPointF const& p1,
+                                 QPointF const& p2,
                                  DewarpingMode const* p_dewarpingMode)
     {
         QLineF const line(p1, p2);
@@ -158,8 +161,8 @@ namespace output
             fitter.addInternalForce(spline.controlPointsAttractionForce());
 
             double internal_force_weight = balancer.calcInternalForceWeight(
-                    fitter.internalForce(), fitter.externalForce()
-            );
+                fitter.internalForce(), fitter.externalForce()
+                                           );
             OptimizationResult const res(fitter.optimize(internal_force_weight));
             if (dewarping::Curve::splineHasLoops(spline)) {
                 fitter.undoLastStep();
@@ -170,7 +173,7 @@ namespace output
                 break;
             }
         }
-    }
+    }  // DewarpingView::fitSpline
 
     void
     DewarpingView::depthPerceptionChanged(double val)
@@ -206,11 +209,11 @@ namespace output
 
         if (valid_model) {
             try {
-                std::vector<QVector<QPointF> > curves(num_hor_grid_lines);
+                std::vector<QVector<QPointF>> curves(num_hor_grid_lines);
 
                 dewarping::CylindricalSurfaceDewarper dewarper(
-                        m_distortionModel.topCurve().polyline(),
-                        m_distortionModel.bottomCurve().polyline(), m_depthPerception.value()
+                    m_distortionModel.topCurve().polyline(),
+                    m_distortionModel.bottomCurve().polyline(), m_depthPerception.value()
                 );
                 dewarping::CylindricalSurfaceDewarper::State state;
 
@@ -226,10 +229,11 @@ namespace output
                     }
                 }
 
-                for (QVector<QPointF> const& curve :  curves) {
+                for (QVector<QPointF> const& curve : curves) {
                     painter.drawPolyline(curve);
                 }
-            } catch (std::runtime_error const&) {
+            }
+            catch (std::runtime_error const&) {
                 valid_model = false;
             }
         }
@@ -244,12 +248,12 @@ namespace output
 
         paintXSpline(painter, interaction, m_topSpline);
         paintXSpline(painter, interaction, m_bottomSpline);
-    }
+    }  // DewarpingView::onPaint
 
     void
-    DewarpingView::paintXSpline(
-            QPainter& painter, InteractionState const& interaction,
-            InteractiveXSpline const& ispline)
+    DewarpingView::paintXSpline(QPainter& painter,
+                                InteractionState const& interaction,
+                                InteractiveXSpline const& ispline)
     {
         XSpline const& spline = ispline.spline();
 
@@ -289,7 +293,7 @@ namespace output
         }
 
         painter.restore();
-    }
+    }  // DewarpingView::paintXSpline
 
     void
     DewarpingView::curveModified(int curve_idx)
@@ -306,22 +310,22 @@ namespace output
     void
     DewarpingView::dragFinished()
     {
-        if (m_dewarpingMode == DewarpingMode::AUTO
-            || m_dewarpingMode == DewarpingMode::MARGINAL
-                ) {
+        if ((m_dewarpingMode == DewarpingMode::AUTO)
+            || (m_dewarpingMode == DewarpingMode::MARGINAL)
+        ) {
             m_dewarpingMode = DewarpingMode::MANUAL;
         }
         emit distortionModelChanged(m_distortionModel);
     }
 
-/** Source image coordinates to widget coordinates. */
+    /** Source image coordinates to widget coordinates. */
     QPointF
     DewarpingView::sourceToWidget(QPointF const& pt) const
     {
         return virtualToWidget().map(imageToVirtual().map(pt));
     }
 
-/** Widget coordinates to source image coordinates. */
+    /** Widget coordinates to source image coordinates. */
     QPointF
     DewarpingView::widgetToSource(QPointF const& pt) const
     {
@@ -359,7 +363,7 @@ namespace output
         double normal_max = max;
         ToLineProjector const vert_line_projector(vert_boundary);
         ToLineProjector const normal_projector(normal);
-        for (QPointF const& pt :  m_virtDisplayArea) {
+        for (QPointF const& pt : m_virtDisplayArea) {
             double const p1 = vert_line_projector.projectionScalar(pt);
             if (p1 < min) {
                 min = p1;
@@ -385,6 +389,5 @@ namespace output
         poly << vert_boundary.pointAt(min) + normal.pointAt(normal_max) - normal.p1();
 
         return m_virtDisplayArea.intersected(poly);
-    }
-
-} 
+    }  // DewarpingView::virtMarginArea
+}  // namespace output

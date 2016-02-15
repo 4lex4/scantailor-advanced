@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_COLORPARAMS_H_
 #define OUTPUT_COLORPARAMS_H_
@@ -27,14 +28,10 @@ class QDomElement;
 
 namespace output
 {
-
     class ColorParams
     {
     public:
-        enum ColorMode
-        {
-            BLACK_AND_WHITE, COLOR_GRAYSCALE, MIXED
-        };
+        enum ColorMode { BLACK_AND_WHITE, COLOR_GRAYSCALE, MIXED };
 
         ColorParams();
 
@@ -45,10 +42,14 @@ namespace output
         static ColorMode DefaultColorMode();
 
         ColorMode colorMode() const
-        { return m_colorMode; }
+        {
+            return m_colorMode;
+        }
 
         void setColorMode(ColorMode mode)
-        { m_colorMode = mode; }
+        {
+            m_colorMode = mode;
+        }
 
         ColorGrayscaleOptions const& colorGrayscaleOptions() const
         {
@@ -79,6 +80,5 @@ namespace output
         ColorGrayscaleOptions m_colorGrayscaleOptions;
         BlackWhiteOptions m_bwOptions;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_COLORPARAMS_H_

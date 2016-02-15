@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 
 #ifndef OUTPUT_FILL_ZONE_EDITOR_H_
@@ -42,32 +43,32 @@ class QPainter;
 
 namespace output
 {
-
     class Settings;
 
 
-    class FillZoneEditor : public ImageViewBase, private InteractionHandler
+    class FillZoneEditor
+        : public ImageViewBase,
+          private InteractionHandler
     {
-    Q_OBJECT
+        Q_OBJECT
 
     public:
-        FillZoneEditor(
-                QImage const& image, ImagePixmapUnion const& downscaled_version,
-                boost::function<QPointF(QPointF const&)> const& orig_to_image,
-                boost::function<QPointF(QPointF const&)> const& image_to_orig,
-                PageId const& page_id, IntrusivePtr<Settings> const& settings);
+        FillZoneEditor(QImage const& image, ImagePixmapUnion const& downscaled_version,
+                       boost::function<QPointF(QPointF const&)> const& orig_to_image, boost::function<QPointF(
+                                                                                                          QPointF
+                                                                                                          const
+                                                                                                          &)> const& image_to_orig, PageId const& page_id,
+                       IntrusivePtr<Settings> const& settings);
 
         virtual ~FillZoneEditor();
 
     signals:
-
         void invalidateThumbnail(PageId const& page_id);
 
     protected:
         virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
     private slots:
-
         void commitZones();
 
         void updateRequested();
@@ -79,8 +80,8 @@ namespace output
 
         InteractionHandler* createContextMenuInteraction(InteractionState& interaction);
 
-        InteractionHandler* createColorPickupInteraction(
-                EditableZoneSet::Zone const& zone, InteractionState& interaction);
+        InteractionHandler* createColorPickupInteraction(EditableZoneSet::Zone const& zone,
+                                                         InteractionState& interaction);
 
         static QColor toOpaque(QColor const& color);
 
@@ -104,6 +105,5 @@ namespace output
         PageId m_pageId;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-
-}
-#endif
+}  // namespace output
+#endif  // ifndef OUTPUT_FILL_ZONE_EDITOR_H_

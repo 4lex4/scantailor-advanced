@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "OptionsWidget.h"
 #include "Settings.h"
@@ -28,17 +29,15 @@ using namespace imageproc::constants;
 
 namespace page_layout
 {
-
-    OptionsWidget::OptionsWidget(
-            IntrusivePtr<Settings> const& settings,
-            PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_pageSelectionAccessor(page_selection_accessor),
-              m_mmToUnit(1.0),
-              m_unitToMM(1.0),
-              m_ignoreMarginChanges(0),
-              m_leftRightLinked(true),
-              m_topBottomLinked(true)
+    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                                 PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(settings),
+          m_pageSelectionAccessor(page_selection_accessor),
+          m_mmToUnit(1.0),
+          m_unitToMM(1.0),
+          m_ignoreMarginChanges(0),
+          m_leftRightLinked(true),
+          m_topBottomLinked(true)
     {
         {
             QSettings app_settings;
@@ -47,10 +46,10 @@ namespace page_layout
         }
 
         m_chainIcon.addPixmap(
-                QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png"))
+            QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png"))
         );
         m_brokenChainIcon.addPixmap(
-                QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
+            QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
         );
 
         setupUi(this);
@@ -59,107 +58,105 @@ namespace page_layout
         enableDisableAlignmentButtons();
 
         Utils::mapSetValue(
-                m_alignmentByButton, alignTopLeftBtn,
-                Alignment(Alignment::TOP, Alignment::LEFT)
+            m_alignmentByButton, alignTopLeftBtn,
+            Alignment(Alignment::TOP, Alignment::LEFT)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignTopBtn,
-                Alignment(Alignment::TOP, Alignment::HCENTER)
+            m_alignmentByButton, alignTopBtn,
+            Alignment(Alignment::TOP, Alignment::HCENTER)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignTopRightBtn,
-                Alignment(Alignment::TOP, Alignment::RIGHT)
+            m_alignmentByButton, alignTopRightBtn,
+            Alignment(Alignment::TOP, Alignment::RIGHT)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignLeftBtn,
-                Alignment(Alignment::VCENTER, Alignment::LEFT)
+            m_alignmentByButton, alignLeftBtn,
+            Alignment(Alignment::VCENTER, Alignment::LEFT)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignCenterBtn,
-                Alignment(Alignment::VCENTER, Alignment::HCENTER)
+            m_alignmentByButton, alignCenterBtn,
+            Alignment(Alignment::VCENTER, Alignment::HCENTER)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignRightBtn,
-                Alignment(Alignment::VCENTER, Alignment::RIGHT)
+            m_alignmentByButton, alignRightBtn,
+            Alignment(Alignment::VCENTER, Alignment::RIGHT)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignBottomLeftBtn,
-                Alignment(Alignment::BOTTOM, Alignment::LEFT)
+            m_alignmentByButton, alignBottomLeftBtn,
+            Alignment(Alignment::BOTTOM, Alignment::LEFT)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignBottomBtn,
-                Alignment(Alignment::BOTTOM, Alignment::HCENTER)
+            m_alignmentByButton, alignBottomBtn,
+            Alignment(Alignment::BOTTOM, Alignment::HCENTER)
         );
         Utils::mapSetValue(
-                m_alignmentByButton, alignBottomRightBtn,
-                Alignment(Alignment::BOTTOM, Alignment::RIGHT)
+            m_alignmentByButton, alignBottomRightBtn,
+            Alignment(Alignment::BOTTOM, Alignment::RIGHT)
         );
 
         connect(
-                unitsComboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(unitsChanged(int))
+            unitsComboBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(unitsChanged(int))
         );
         connect(
-                topMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(vertMarginsChanged(double))
+            topMarginSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(vertMarginsChanged(double))
         );
         connect(
-                bottomMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(vertMarginsChanged(double))
+            bottomMarginSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(vertMarginsChanged(double))
         );
         connect(
-                leftMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(horMarginsChanged(double))
+            leftMarginSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(horMarginsChanged(double))
         );
         connect(
-                rightMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(horMarginsChanged(double))
+            rightMarginSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(horMarginsChanged(double))
         );
         connect(
-                autoMargins, SIGNAL(toggled(bool)),
-                this, SLOT(autoMarginsChanged(bool))
+            autoMargins, SIGNAL(toggled(bool)),
+            this, SLOT(autoMarginsChanged(bool))
         );
         connect(
-                alignmentMode, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(alignmentModeChanged(int))
+            alignmentMode, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(alignmentModeChanged(int))
         );
         connect(
-                topBottomLink, SIGNAL(clicked()),
-                this, SLOT(topBottomLinkClicked())
+            topBottomLink, SIGNAL(clicked()),
+            this, SLOT(topBottomLinkClicked())
         );
         connect(
-                leftRightLink, SIGNAL(clicked()),
-                this, SLOT(leftRightLinkClicked())
+            leftRightLink, SIGNAL(clicked()),
+            this, SLOT(leftRightLinkClicked())
         );
         connect(
-                applyMarginsBtn, SIGNAL(clicked()),
-                this, SLOT(showApplyMarginsDialog())
+            applyMarginsBtn, SIGNAL(clicked()),
+            this, SLOT(showApplyMarginsDialog())
         );
         connect(
-                alignWithOthersCB, SIGNAL(toggled(bool)),
-                this, SLOT(alignWithOthersToggled())
+            alignWithOthersCB, SIGNAL(toggled(bool)),
+            this, SLOT(alignWithOthersToggled())
         );
         connect(
-                applyAlignmentBtn, SIGNAL(clicked()),
-                this, SLOT(showApplyAlignmentDialog())
+            applyAlignmentBtn, SIGNAL(clicked()),
+            this, SLOT(showApplyAlignmentDialog())
         );
 
         typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv :  m_alignmentByButton) {
+        for (KeyVal const& kv : m_alignmentByButton) {
             connect(
-                    kv.first, SIGNAL(clicked()),
-                    this, SLOT(alignmentButtonClicked())
+                kv.first, SIGNAL(clicked()),
+                this, SLOT(alignmentButtonClicked())
             );
         }
     }
 
     OptionsWidget::~OptionsWidget()
-    {
-    }
+    { }
 
     void
-    OptionsWidget::preUpdateUI(
-            PageId const& page_id, Margins const& margins_mm, Alignment const& alignment)
+    OptionsWidget::preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment)
     {
         m_pageId = page_id;
         m_marginsMM = margins_mm;
@@ -169,7 +166,7 @@ namespace page_layout
         m_ignoreMarginChanges = true;
 
         typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv :  m_alignmentByButton) {
+        for (KeyVal const& kv : m_alignmentByButton) {
             if (kv.second == m_alignment) {
                 kv.first->setChecked(true);
             }
@@ -205,7 +202,7 @@ namespace page_layout
         alignmentGroup->setEnabled(false);
 
         m_ignoreMarginChanges = old_ignore;
-    }
+    }  // OptionsWidget::preUpdateUI
 
     void
     OptionsWidget::postUpdateUI()
@@ -316,7 +313,6 @@ namespace page_layout
         emit alignmentChanged(m_alignment);
     }
 
-
     void
     OptionsWidget::autoMarginsChanged(bool checked)
     {
@@ -358,7 +354,6 @@ namespace page_layout
         emit alignmentChanged(m_alignment);
     }
 
-
     void
     OptionsWidget::alignmentButtonClicked()
     {
@@ -376,13 +371,13 @@ namespace page_layout
     OptionsWidget::showApplyMarginsDialog()
     {
         ApplyDialog* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                              );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Margins"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&)),
-                this, SLOT(applyMargins(std::set<PageId> const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &)),
+            this, SLOT(applyMargins(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -391,13 +386,13 @@ namespace page_layout
     OptionsWidget::showApplyAlignmentDialog()
     {
         ApplyDialog* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
+            this, m_pageId, m_pageSelectionAccessor
+                              );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Alignment"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const&)),
-                this, SLOT(applyAlignment(std::set<PageId> const&))
+            dialog, SIGNAL(accepted(std::set<PageId> const &)),
+            this, SLOT(applyAlignment(std::set<PageId> const &))
         );
         dialog->show();
     }
@@ -409,7 +404,7 @@ namespace page_layout
             return;
         }
 
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);
         }
 
@@ -424,7 +419,7 @@ namespace page_layout
             return;
         }
 
-        for (PageId const& page_id :  pages) {
+        for (PageId const& page_id : pages) {
             m_ptrSettings->setPageAlignment(page_id, m_alignment);
         }
 
@@ -463,5 +458,4 @@ namespace page_layout
         alignBottomBtn->setEnabled(enabled);
         alignBottomRightBtn->setEnabled(enabled);
     }
-
-} 
+}  // namespace page_layout

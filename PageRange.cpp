@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "PageRange.h"
 #include <boost/foreach.hpp>
@@ -26,15 +27,14 @@ PageRange::selectEveryOther(PageId const& base) const
 
     std::vector<PageId>::const_iterator it(pages.begin());
     std::vector<PageId>::const_iterator const end(pages.end());
-    for (; it != end && *it != base; ++it) {
-    }
+    for (; it != end && *it != base; ++it) { }
     if (it == end) {
         return selection;
     }
 
     int const base_idx = it - pages.begin();
     int idx = 0;
-    for (PageId const& page_id :  pages) {
+    for (PageId const& page_id : pages) {
         if (((idx - base_idx) & 1) == 0) {
             selection.insert(page_id);
         }
@@ -43,3 +43,4 @@ PageRange::selectEveryOther(PageId const& base) const
 
     return selection;
 }
+

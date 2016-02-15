@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Settings.h"
 #include "Utils.h"
@@ -23,14 +24,11 @@
 
 namespace fix_orientation
 {
-
     Settings::Settings()
-    {
-    }
+    { }
 
     Settings::~Settings()
-    {
-    }
+    { }
 
     void
     Settings::clear()
@@ -45,7 +43,7 @@ namespace fix_orientation
         QMutexLocker locker(&m_mutex);
         PerImageRotation new_rotations;
 
-        for (PerImageRotation::value_type const& kv :  m_perImageRotation) {
+        for (PerImageRotation::value_type const& kv : m_perImageRotation) {
             RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
             ImageId new_image_id(kv.first);
             new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
@@ -56,20 +54,18 @@ namespace fix_orientation
     }
 
     void
-    Settings::applyRotation(
-            ImageId const& image_id, OrthogonalRotation const rotation)
+    Settings::applyRotation(ImageId const& image_id, OrthogonalRotation const rotation)
     {
         QMutexLocker locker(&m_mutex);
         setImageRotationLocked(image_id, rotation);
     }
 
     void
-    Settings::applyRotation(
-            std::set<PageId> const& pages, OrthogonalRotation const rotation)
+    Settings::applyRotation(std::set<PageId> const& pages, OrthogonalRotation const rotation)
     {
         QMutexLocker locker(&m_mutex);
 
-        for (PageId const& page :  pages) {
+        for (PageId const& page : pages) {
             setImageRotationLocked(page.imageId(), rotation);
         }
     }
@@ -89,10 +85,8 @@ namespace fix_orientation
     }
 
     void
-    Settings::setImageRotationLocked(
-            ImageId const& image_id, OrthogonalRotation const& rotation)
+    Settings::setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation)
     {
         Utils::mapSetValue(m_perImageRotation, image_id, rotation);
     }
-
-} 
+}  // namespace fix_orientation

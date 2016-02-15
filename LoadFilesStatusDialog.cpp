@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,13 +15,13 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "LoadFilesStatusDialog.h"
 #include <QPushButton>
 
 LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent)
-        : QDialog(parent)
+    : QDialog(parent)
 {
     ui.setupUi(this);
     ui.tabWidget->setCurrentWidget(ui.failedTab);
@@ -38,7 +39,7 @@ LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files)
     ui.tabWidget->setTabText(0, m_loadedTabNameTemplate.arg(files.size()));
 
     QString text;
-    for (QString const& file :  files) {
+    for (QString const& file : files) {
         text.append(file);
         text.append(QChar('\n'));
     }
@@ -52,7 +53,7 @@ LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files)
     ui.tabWidget->setTabText(1, m_failedTabNameTemplate.arg(files.size()));
 
     QString text;
-    for (QString const& file :  files) {
+    for (QString const& file : files) {
         text.append(file);
         text.append(QChar('\n'));
     }
@@ -65,3 +66,4 @@ LoadFilesStatusDialog::setOkButtonName(QString const& name)
 {
     ui.buttonBox->button(QDialogButtonBox::Ok)->setText(name);
 }
+

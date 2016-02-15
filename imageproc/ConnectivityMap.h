@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_CONNECTIVITY_MAP_H_
 #define IMAGEPROC_CONNECTIVITY_MAP_H_
@@ -31,20 +32,19 @@ class QImage;
 
 namespace imageproc
 {
-
     class BinaryImage;
-class InfluenceMap;
+    class InfluenceMap;
 
-/**
- * \brief Assigns each pixel a label that identifies the connected component
- *        it belongs to.
- *
- * Such a map makes it possible to quickly tell if a pair of pixels are
- * connected or not.
- *
- * Background (white) pixels are assigned the label of zero, and the remaining
- * labels are guaranteed not to have gaps.
- */
+    /**
+     * \brief Assigns each pixel a label that identifies the connected component
+     *        it belongs to.
+     *
+     * Such a map makes it possible to quickly tell if a pair of pixels are
+     * connected or not.
+     *
+     * Background (white) pixels are assigned the label of zero, and the remaining
+     * labels are guaranteed not to have gaps.
+     */
     class ConnectivityMap
     {
     public:
@@ -71,10 +71,8 @@ class InfluenceMap;
          * \brief Same as the version working with BinaryImage
          *        but allows pixels to be represented by any data type.
          */
-        template<typename T>
-        ConnectivityMap(
-                QSize size, T const* data,
-                int units_per_line, Connectivity conn);
+        template <typename T>
+        ConnectivityMap(QSize size, T const* data, int units_per_line, Connectivity conn);
 
         ConnectivityMap(ConnectivityMap const& other);
 
@@ -112,7 +110,9 @@ class InfluenceMap;
          * than size().width().
          */
         uint32_t const* data() const
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Returns a pointer to the top-left corner of the map.
@@ -122,7 +122,9 @@ class InfluenceMap;
          * than size().width().
          */
         uint32_t* data()
-        { return m_pData; }
+        {
+            return m_pData;
+        }
 
         /**
          * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -152,7 +154,9 @@ class InfluenceMap;
          * \brief Returns non-padded dimensions of the map.
          */
         QSize size() const
-        { return m_size; }
+        {
+            return m_size;
+        }
 
         /**
          * \brief Returns the number of units on a padded line.
@@ -161,20 +165,26 @@ class InfluenceMap;
          * this number to a data pointer will move it one line down.
          */
         int stride() const
-        { return m_stride; }
+        {
+            return m_stride;
+        }
 
         /**
          * \brief Returns the maximum label present on the map.
          */
         uint32_t maxLabel() const
-        { return m_maxLabel; }
+        {
+            return m_maxLabel;
+        }
 
         /**
          * Updating the maximum label may be necessary after manually
          * altering the map.
          */
         void setMaxLabel(uint32_t max_label)
-        { m_maxLabel = max_label; }
+        {
+            m_maxLabel = max_label;
+        }
 
         /**
          * \brief Visualizes each label with a different color.
@@ -194,9 +204,7 @@ class InfluenceMap;
 
         void spreadMin8();
 
-        void processNeighbor(
-                FastQueue<uint32_t*>& queue,
-                uint32_t this_val, uint32_t* neighbor);
+        void processNeighbor(FastQueue<uint32_t*>& queue, uint32_t this_val, uint32_t* neighbor);
 
         void processQueue4(FastQueue<uint32_t*>& queue);
 
@@ -219,20 +227,18 @@ class InfluenceMap;
     };
 
 
-    inline void swap(ConnectivityMap& o1, ConnectivityMap& o2)
+    inline void
+    swap(ConnectivityMap& o1, ConnectivityMap& o2)
     {
         o1.swap(o2);
     }
 
-
-    template<typename T>
-    ConnectivityMap::ConnectivityMap(
-            QSize const size, T const* src,
-            int const src_stride, Connectivity const conn)
-            : m_pData(0),
-              m_size(size),
-              m_stride(0),
-              m_maxLabel(0)
+    template <typename T>
+    ConnectivityMap::ConnectivityMap(QSize const size, T const* src, int const src_stride, Connectivity const conn)
+        : m_pData(0),
+          m_size(size),
+          m_stride(0),
+          m_maxLabel(0)
     {
         if (size.isEmpty()) {
             return;
@@ -260,6 +266,5 @@ class InfluenceMap;
 
         assignIds(conn);
     }
-
-}
-#endif
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_CONNECTIVITY_MAP_H_

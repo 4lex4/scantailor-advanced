@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Transform.h"
 #include "Grayscale.h"
@@ -23,20 +24,16 @@
 
 namespace imageproc
 {
-
     namespace
     {
-
-        struct XLess
-        {
+        struct XLess {
             bool operator()(QPointF const& lhs, QPointF const& rhs) const
             {
                 return lhs.x() < rhs.x();
             }
         };
 
-        struct YLess
-        {
+        struct YLess {
             bool operator()(QPointF const& lhs, QPointF const& rhs) const
             {
                 return lhs.y() < rhs.y();
@@ -46,7 +43,8 @@ namespace imageproc
         class Gray
         {
         public:
-            Gray() : m_grayLevel(0)
+            Gray()
+                : m_grayLevel(0)
             { }
 
             void add(uint8_t const gray_level, unsigned const area)
@@ -58,6 +56,7 @@ namespace imageproc
             {
                 unsigned const half_area = total_area >> 1;
                 unsigned const res = (m_grayLevel + half_area) / total_area;
+
                 return static_cast<uint8_t>(res);
             }
 
@@ -68,7 +67,10 @@ namespace imageproc
         class RGB32
         {
         public:
-            RGB32() : m_red(0), m_green(0), m_blue(0)
+            RGB32()
+                : m_red(0),
+                  m_green(0),
+                  m_blue(0)
             { }
 
             void add(uint32_t rgb, unsigned const area)
@@ -89,6 +91,7 @@ namespace imageproc
                 rgb |= (m_green + half_area) / total_area;
                 rgb <<= 8;
                 rgb |= (m_blue + half_area) / total_area;
+
                 return rgb;
             }
 
@@ -101,7 +104,11 @@ namespace imageproc
         class ARGB32
         {
         public:
-            ARGB32() : m_alpha(0), m_red(0), m_green(0), m_blue(0)
+            ARGB32()
+                : m_alpha(0),
+                  m_red(0),
+                  m_green(0),
+                  m_blue(0)
             { }
 
             void add(uint32_t argb, unsigned const area)
@@ -125,6 +132,7 @@ namespace imageproc
                 argb |= (m_green + half_area) / total_area;
                 argb <<= 8;
                 argb |= (m_blue + half_area) / total_area;
+
                 return argb;
             }
 
@@ -135,7 +143,8 @@ namespace imageproc
             unsigned m_blue;
         };
 
-        static QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min)
+        static QSizeF
+        calcSrcUnitSize(QTransform const& xform, QSizeF const& min)
         {
             QPolygonF dst_poly;
             dst_poly.push_back(QPointF(0.5, 0.0));
@@ -150,18 +159,25 @@ namespace imageproc
             double const height = src_poly.back().y() - src_poly.front().y();
 
             QSizeF const min32(min * 32.0);
+
             return QSizeF(
-                    std::max(min32.width(), qreal(width)),
-                    std::max(min32.height(), qreal(height))
+                std::max(min32.width(), qreal(width)),
+                std::max(min32.height(), qreal(height))
             );
         }
 
-        template<typename StorageUnit, typename Mixer>
-        static void transformGeneric(
-                StorageUnit const* const src_data, int const src_stride, QSize const src_size,
-                StorageUnit* const dst_data, int const dst_stride, QTransform const& xform,
-                QRect const& dst_rect, StorageUnit const outside_color, int const outside_flags,
-                QSizeF const& min_mapping_area)
+        template <typename StorageUnit, typename Mixer>
+        static void
+        transformGeneric(StorageUnit const* const src_data,
+                         int const src_stride,
+                         QSize const src_size,
+                         StorageUnit* const dst_data,
+                         int const dst_stride,
+                         QTransform const& xform,
+                         QRect const& dst_rect,
+                         StorageUnit const outside_color,
+                         int const outside_flags,
+                         QSizeF const& min_mapping_area)
         {
             int const sw = src_size.width();
             int const sh = src_size.height();
@@ -189,8 +205,8 @@ namespace imageproc
                     double const f_dx_center = dx + 0.5;
                     double const f_sx32_center = f_sx32_base + f_dx_center * inv_xform.m11();
                     double const f_sy32_center = f_sy32_base + f_dx_center * inv_xform.m12();
-                    int src32_left = (int) f_sx32_center - (src32_unit_w >> 1);
-                    int src32_top = (int) f_sy32_center - (src32_unit_h >> 1);
+                    int src32_left = (int)f_sx32_center - (src32_unit_w >> 1);
+                    int src32_top = (int)f_sy32_center - (src32_unit_h >> 1);
                     int src32_right = src32_left + src32_unit_w;
                     int src32_bottom = src32_top + src32_unit_h;
                     int src_left = src32_left >> 5;
@@ -200,7 +216,7 @@ namespace imageproc
                     assert(src_bottom >= src_top);
                     assert(src_right >= src_left);
 
-                    if (src_bottom < 0 || src_right < 0 || src_left >= sw || src_top >= sh) {
+                    if ((src_bottom < 0) || (src_right < 0) || (src_left >= sw) || (src_top >= sh)) {
                         if (outside_flags & OutsidePixels::COLOR) {
                             dst_line[dx] = outside_color;
                         }
@@ -276,10 +292,10 @@ namespace imageproc
                     unsigned const right_fraction = src32_right - (src_right << 5);
                     unsigned const bottom_fraction = src32_bottom - (src_bottom << 5);
 
-                    assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32 ==
-                           static_cast<unsigned>(src32_right - src32_left));
-                    assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32 ==
-                           static_cast<unsigned>(src32_bottom - src32_top));
+                    assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32
+                           == static_cast<unsigned>(src32_right - src32_left));
+                    assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32
+                           == static_cast<unsigned>(src32_bottom - src32_top));
 
                     unsigned const src_area = (src32_bottom - src32_top) * (src32_right - src32_left);
                     if (src_area == 0) {
@@ -382,14 +398,15 @@ namespace imageproc
                     dst_line[dx] = mixer.result(src_area + background_area);
                 }
             }
-        }
+        }  // transformGeneric
+    }  // namespace
 
-    }
-
-    QImage transform(
-            QImage const& src, QTransform const& xform,
-            QRect const& dst_rect, OutsidePixels const outside_pixels,
-            QSizeF const& min_mapping_area)
+    QImage
+    transform(QImage const& src,
+              QTransform const& xform,
+              QRect const& dst_rect,
+              OutsidePixels const outside_pixels,
+              QSizeF const& min_mapping_area)
     {
         if (src.isNull() || dst_rect.isEmpty()) {
             return QImage();
@@ -403,45 +420,50 @@ namespace imageproc
             throw std::invalid_argument("transform: dst_rect is invalid");
         }
 
-        if (src.format() == QImage::Format_Indexed8 && src.allGray()) {
+        if ((src.format() == QImage::Format_Indexed8) && src.allGray()) {
             GrayImage gray_src(src);
             GrayImage gray_dst(dst_rect.size());
             transformGeneric<uint8_t, Gray>(
-                    gray_src.data(), gray_src.stride(), src.size(),
-                    gray_dst.data(), gray_dst.stride(), xform, dst_rect,
-                    outside_pixels.grayLevel(), outside_pixels.flags(),
-                    min_mapping_area
+                gray_src.data(), gray_src.stride(), src.size(),
+                gray_dst.data(), gray_dst.stride(), xform, dst_rect,
+                outside_pixels.grayLevel(), outside_pixels.flags(),
+                min_mapping_area
             );
+
             return gray_dst;
         }
         else {
-            if (src.hasAlphaChannel() || qAlpha(outside_pixels.rgba()) != 0xff) {
+            if (src.hasAlphaChannel() || (qAlpha(outside_pixels.rgba()) != 0xff)) {
                 QImage const src_argb32(src.convertToFormat(QImage::Format_ARGB32));
                 QImage dst(dst_rect.size(), QImage::Format_ARGB32);
                 transformGeneric<uint32_t, ARGB32>(
-                        (uint32_t const*) src_argb32.bits(), src_argb32.bytesPerLine() / 4, src_argb32.size(),
-                        (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
-                        outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
+                    (uint32_t const*)src_argb32.bits(), src_argb32.bytesPerLine() / 4, src_argb32.size(),
+                    (uint32_t*)dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
+                    outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
                 );
+
                 return dst;
             }
             else {
                 QImage const src_rgb32(src.convertToFormat(QImage::Format_RGB32));
                 QImage dst(dst_rect.size(), QImage::Format_RGB32);
                 transformGeneric<uint32_t, RGB32>(
-                        (uint32_t const*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
-                        (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
-                        outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
+                    (uint32_t const*)src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
+                    (uint32_t*)dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
+                    outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
                 );
+
                 return dst;
             }
         }
-    }
+    }  // transform
 
-    GrayImage transformToGray(
-            QImage const& src, QTransform const& xform,
-            QRect const& dst_rect, OutsidePixels const outside_pixels,
-            QSizeF const& min_mapping_area)
+    GrayImage
+    transformToGray(QImage const& src,
+                    QTransform const& xform,
+                    QRect const& dst_rect,
+                    OutsidePixels const outside_pixels,
+                    QSizeF const& min_mapping_area)
     {
         if (src.isNull() || dst_rect.isEmpty()) {
             return GrayImage();
@@ -459,13 +481,12 @@ namespace imageproc
         GrayImage dst(dst_rect.size());
 
         transformGeneric<uint8_t, Gray>(
-                gray_src.data(), gray_src.stride(), gray_src.size(),
-                dst.data(), dst.stride(), xform, dst_rect,
-                outside_pixels.grayLevel(), outside_pixels.flags(),
-                min_mapping_area
+            gray_src.data(), gray_src.stride(), gray_src.size(),
+            dst.data(), dst.stride(), xform, dst_rect,
+            outside_pixels.grayLevel(), outside_pixels.flags(),
+            min_mapping_area
         );
 
         return dst;
     }
-
-} 
+}  // namespace imageproc

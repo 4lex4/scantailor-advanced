@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGE_PIXMAP_UNION_H_
 #define IMAGE_PIXMAP_UNION_H_
@@ -28,24 +29,32 @@ public:
     ImagePixmapUnion()
     { }
 
-    ImagePixmapUnion(QImage const& image) : m_image(image)
+    ImagePixmapUnion(QImage const& image)
+        : m_image(image)
     { }
 
-    ImagePixmapUnion(QPixmap const& pixmap) : m_pixmap(pixmap)
+    ImagePixmapUnion(QPixmap const& pixmap)
+        : m_pixmap(pixmap)
     { }
 
     QImage const& image() const
-    { return m_image; }
+    {
+        return m_image;
+    }
 
     QPixmap const& pixmap() const
-    { return m_pixmap; }
+    {
+        return m_pixmap;
+    }
 
     bool isNull() const
-    { return m_image.isNull() && m_pixmap.isNull(); }
+    {
+        return m_image.isNull() && m_pixmap.isNull();
+    }
 
 private:
     QImage m_image;
     QPixmap m_pixmap;
 };
 
-#endif
+#endif  // ifndef IMAGE_PIXMAP_UNION_H_

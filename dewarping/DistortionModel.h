@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DEWARPING_DISTORTION_MODEL_H_
 #define DEWARPING_DISTORTION_MODEL_H_
@@ -29,7 +30,6 @@ class QTransform;
 
 namespace dewarping
 {
-
     class CylindricalSurfaceDewarper;
 
     class DistortionModel
@@ -51,16 +51,24 @@ namespace dewarping
         bool isValid() const;
 
         void setTopCurve(Curve const& curve)
-        { m_topCurve = curve; }
+        {
+            m_topCurve = curve;
+        }
 
         void setBottomCurve(Curve const& curve)
-        { m_bottomCurve = curve; }
+        {
+            m_bottomCurve = curve;
+        }
 
         Curve const& topCurve() const
-        { return m_topCurve; }
+        {
+            return m_topCurve;
+        }
 
         Curve const& bottomCurve() const
-        { return m_bottomCurve; }
+        {
+            return m_bottomCurve;
+        }
 
         bool matches(DistortionModel const& other) const;
 
@@ -68,9 +76,9 @@ namespace dewarping
          * Model domain is a rectangle in output image coordinates that
          * will be mapped to our curved quadrilateral.
          */
-        QRectF modelDomain(
-                CylindricalSurfaceDewarper const& dewarper,
-                QTransform const& to_output, QRectF const& output_content_rect) const;
+        QRectF modelDomain(CylindricalSurfaceDewarper const& dewarper,
+                           QTransform const& to_output,
+                           QRectF const& output_content_rect) const;
 
     private:
         /**
@@ -85,6 +93,5 @@ namespace dewarping
         Curve m_topCurve;
         Curve m_bottomCurve;
     };
-
-}
-#endif
+}  // namespace dewarping
+#endif  // ifndef DEWARPING_DISTORTION_MODEL_H_

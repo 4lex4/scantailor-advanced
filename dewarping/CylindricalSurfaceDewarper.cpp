@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CylindricalSurfaceDewarper.h"
 #include "ToLineProjector.h"
@@ -23,35 +24,33 @@
 #include <boost/foreach.hpp>
 
 /*
-Naming conventions:
-img: Coordinates in the warped image.
-pln: Coordinates on a plane where the 4 corner points of the curved
+   Naming conventions:
+   img: Coordinates in the warped image.
+   pln: Coordinates on a plane where the 4 corner points of the curved
      quadrilateral are supposed to lie.  In our model we assume that
-	 all 4 lie on the same plane.  The corner points are mapped to
-	 the following points on the plane:
-	 * Start point of curve1 [top curve]: (0, 0)
-	 * End point of curve1 [top curve]: (1, 0)
-	 * Start point of curve2 [bottom curve]: (0, 1)
-	 * End point of curve2 [bottom curve]: (1, 1)
-	 pln and img coordinates are linked by a 2D homography,
-	 namely m_pln2img and m_img2pln.
-crv: Dewarped normalized coordinates.  crv X coordinates are linked
+     all 4 lie on the same plane.  The corner points are mapped to
+     the following points on the plane:
+ * Start point of curve1 [top curve]: (0, 0)
+ * End point of curve1 [top curve]: (1, 0)
+ * Start point of curve2 [bottom curve]: (0, 1)
+ * End point of curve2 [bottom curve]: (1, 1)
+     pln and img coordinates are linked by a 2D homography,
+     namely m_pln2img and m_img2pln.
+   crv: Dewarped normalized coordinates.  crv X coordinates are linked
      to pln X ccoordinates through m_arcLengthMapper while the Y
-	 coordinates are linked by a one dimensional homography that's
-	 different for each generatrix.
-*/
+     coordinates are linked by a one dimensional homography that's
+     different for each generatrix.
+ */
 
 namespace dewarping
 {
-
     class CylindricalSurfaceDewarper::CoupledPolylinesIterator
     {
     public:
-        CoupledPolylinesIterator(
-                std::vector<QPointF> const& img_directrix1,
-                std::vector<QPointF> const& img_directrix2,
-                HomographicTransform<2, double> const& pln2img,
-                HomographicTransform<2, double> const& img2pln);
+        CoupledPolylinesIterator(std::vector<QPointF> const& img_directrix1,
+                                 std::vector<QPointF> const& img_directrix2,
+                                 HomographicTransform<2, double> const& pln2img,
+                                 HomographicTransform<2, double> const& img2pln);
 
         bool next(QPointF& img_pt1, QPointF& img_pt2, double& pln_x);
 
@@ -78,18 +77,18 @@ namespace dewarping
         double m_nextPlnX2;
     };
 
-    CylindricalSurfaceDewarper::CylindricalSurfaceDewarper(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2, double depth_perception)
-            : m_pln2img(calcPlnToImgHomography(img_directrix1, img_directrix2)),
-              m_img2pln(m_pln2img.inv()),
-              m_depthPerception(depth_perception),
-              m_plnStraightLineY(
-                      calcPlnStraightLineY(img_directrix1, img_directrix2, m_pln2img, m_img2pln)
-              ),
-              m_directrixArcLength(1.0),
-              m_imgDirectrix1Intersector(img_directrix1),
-              m_imgDirectrix2Intersector(img_directrix2)
+    CylindricalSurfaceDewarper::CylindricalSurfaceDewarper(std::vector<QPointF> const& img_directrix1,
+                                                           std::vector<QPointF> const& img_directrix2,
+                                                           double depth_perception)
+        : m_pln2img(calcPlnToImgHomography(img_directrix1, img_directrix2)),
+          m_img2pln(m_pln2img.inv()),
+          m_depthPerception(depth_perception),
+          m_plnStraightLineY(
+              calcPlnStraightLineY(img_directrix1, img_directrix2, m_pln2img, m_img2pln)
+          ),
+          m_directrixArcLength(1.0),
+          m_imgDirectrix1Intersector(img_directrix1),
+          m_imgDirectrix2Intersector(img_directrix2)
     {
         initArcLengthMapper(img_directrix1, img_directrix2);
     }
@@ -106,10 +105,10 @@ namespace dewarping
         QLineF const img_generatrix(img_top_pt, img_bottom_pt);
         ToLineProjector const projector(img_generatrix);
         Vec2d const img_directrix1_pt(
-                m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
+            m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
         );
         Vec2d const img_directrix2_pt(
-                m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
+            m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
         );
         Vec2d const img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
         double const img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
@@ -119,7 +118,7 @@ namespace dewarping
         boost::array<std::pair<double, double>, 3> pairs;
         pairs[0] = std::make_pair(0.0, img_directrix1_proj);
         pairs[1] = std::make_pair(1.0, img_directrix2_proj);
-        if (fabs(m_plnStraightLineY) < 0.05 || fabs(m_plnStraightLineY - 1.0) < 0.05) {
+        if ((fabs(m_plnStraightLineY) < 0.05) || (fabs(m_plnStraightLineY - 1.0) < 0.05)) {
             pairs[2] = std::make_pair(0.5, 0.5 * (img_directrix1_proj + img_directrix2_proj));
         }
         else {
@@ -128,7 +127,7 @@ namespace dewarping
         HomographicTransform<1, double> H(threePoint1DHomography(pairs));
 
         return Generatrix(img_generatrix, H);
-    }
+    }  // CylindricalSurfaceDewarper::mapGeneratrix
 
     QPointF
     CylindricalSurfaceDewarper::mapToDewarpedSpace(QPointF const& img_pt) const
@@ -145,10 +144,10 @@ namespace dewarping
         QLineF const img_generatrix(img_top_pt, img_bottom_pt);
         ToLineProjector const projector(img_generatrix);
         Vec2d const img_directrix1_pt(
-                m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
+            m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
         );
         Vec2d const img_directrix2_pt(
-                m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
+            m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
         );
         Vec2d const img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
         double const img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
@@ -158,7 +157,7 @@ namespace dewarping
         boost::array<std::pair<double, double>, 3> pairs;
         pairs[0] = std::make_pair(img_directrix1_proj, 0.0);
         pairs[1] = std::make_pair(img_directrix2_proj, 1.0);
-        if (fabs(m_plnStraightLineY) < 0.05 || fabs(m_plnStraightLineY - 1.0) < 0.05) {
+        if ((fabs(m_plnStraightLineY) < 0.05) || (fabs(m_plnStraightLineY - 1.0) < 0.05)) {
             pairs[2] = std::make_pair(0.5 * (img_directrix1_proj + img_directrix2_proj), 0.5);
         }
         else {
@@ -170,20 +169,20 @@ namespace dewarping
         double const crv_y = H(img_pt_proj);
 
         return QPointF(crv_x, crv_y);
-    }
+    }  // CylindricalSurfaceDewarper::mapToDewarpedSpace
 
     QPointF
     CylindricalSurfaceDewarper::mapToWarpedSpace(QPointF const& crv_pt) const
     {
         State state;
         Generatrix const gtx(mapGeneratrix(crv_pt.x(), state));
+
         return gtx.imgLine.pointAt(gtx.pln2img(crv_pt.y()));
     }
 
     HomographicTransform<2, double>
-    CylindricalSurfaceDewarper::calcPlnToImgHomography(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2)
+    CylindricalSurfaceDewarper::calcPlnToImgHomography(std::vector<QPointF> const& img_directrix1,
+                                                       std::vector<QPointF> const& img_directrix2)
     {
         boost::array<std::pair<QPointF, QPointF>, 4> pairs;
         pairs[0] = std::make_pair(QPointF(0, 0), img_directrix1.front());
@@ -195,11 +194,10 @@ namespace dewarping
     }
 
     double
-    CylindricalSurfaceDewarper::calcPlnStraightLineY(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2,
-            HomographicTransform<2, double> const pln2img,
-            HomographicTransform<2, double> const img2pln)
+    CylindricalSurfaceDewarper::calcPlnStraightLineY(std::vector<QPointF> const& img_directrix1,
+                                                     std::vector<QPointF> const& img_directrix2,
+                                                     HomographicTransform<2, double> const pln2img,
+                                                     HomographicTransform<2, double> const img2pln)
     {
         double pln_y_accum = 0;
         double weight_accum = 0;
@@ -231,11 +229,10 @@ namespace dewarping
         }
 
         return weight_accum == 0 ? 0.5 : pln_y_accum / weight_accum;
-    }
+    }  // CylindricalSurfaceDewarper::calcPlnStraightLineY
 
     HomographicTransform<2, double>
-    CylindricalSurfaceDewarper::fourPoint2DHomography(
-            boost::array<std::pair<QPointF, QPointF>, 4> const& pairs)
+    CylindricalSurfaceDewarper::fourPoint2DHomography(boost::array<std::pair<QPointF, QPointF>, 4> const& pairs)
     {
         VecNT<64, double> A;
         VecNT<8, double> B;
@@ -244,7 +241,7 @@ namespace dewarping
         int i = 0;
 
         typedef std::pair<QPointF, QPointF> Pair;
-        for (Pair const& pair :  pairs) {
+        for (Pair const& pair : pairs) {
             QPointF const from(pair.first);
             QPointF const to(pair.second);
 
@@ -281,11 +278,10 @@ namespace dewarping
         mc(H, 3, 3).trans().write(H);
 
         return HomographicTransform<2, double>(H);
-    }
+    }  // CylindricalSurfaceDewarper::fourPoint2DHomography
 
     HomographicTransform<1, double>
-    CylindricalSurfaceDewarper::threePoint1DHomography(
-            boost::array<std::pair<double, double>, 3> const& pairs)
+    CylindricalSurfaceDewarper::threePoint1DHomography(boost::array<std::pair<double, double>, 3> const& pairs)
     {
         VecNT<9, double> A;
         VecNT<3, double> B;
@@ -293,7 +289,7 @@ namespace dewarping
         double* pb = B.data();
 
         typedef std::pair<double, double> Pair;
-        for (Pair const& pair :  pairs) {
+        for (Pair const& pair : pairs) {
             double const from = pair.first;
             double const to = pair.second;
 
@@ -316,9 +312,8 @@ namespace dewarping
     }
 
     void
-    CylindricalSurfaceDewarper::initArcLengthMapper(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2)
+    CylindricalSurfaceDewarper::initArcLengthMapper(std::vector<QPointF> const& img_directrix1,
+                                                    std::vector<QPointF> const& img_directrix2)
     {
         double prev_elevation = 0;
         CoupledPolylinesIterator it(img_directrix1, img_directrix2, m_pln2img, m_img2pln);
@@ -350,40 +345,40 @@ namespace dewarping
         m_directrixArcLength = m_arcLengthMapper.totalArcLength();
 
         m_arcLengthMapper.normalizeRange(1);
-    }
+    }  // CylindricalSurfaceDewarper::initArcLengthMapper
 
-
-/*======================= CoupledPolylinesIterator =========================*/
+    /*======================= CoupledPolylinesIterator =========================*/
 
     CylindricalSurfaceDewarper::CoupledPolylinesIterator::CoupledPolylinesIterator(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2,
-            HomographicTransform<2, double> const& pln2img,
-            HomographicTransform<2, double> const& img2pln)
-            : m_seq1It(img_directrix1.begin()),
-              m_seq2It(img_directrix2.begin()),
-              m_seq1End(img_directrix1.end()),
-              m_seq2End(img_directrix2.end()),
-              m_pln2img(pln2img),
-              m_img2pln(img2pln),
-              m_prevImgPt1(*m_seq1It),
-              m_prevImgPt2(*m_seq2It),
-              m_nextImgPt1(m_prevImgPt1),
-              m_nextImgPt2(m_prevImgPt2),
-              m_nextPlnX1(0),
-              m_nextPlnX2(0)
-    {
-    }
+        std::vector<QPointF> const& img_directrix1,
+        std::vector<QPointF> const& img_directrix2,
+        HomographicTransform<2, double> const& pln2img,
+        HomographicTransform<2, double> const& img2pln)
+        : m_seq1It(img_directrix1.begin()),
+          m_seq2It(img_directrix2.begin()),
+          m_seq1End(img_directrix1.end()),
+          m_seq2End(img_directrix2.end()),
+          m_pln2img(pln2img),
+          m_img2pln(img2pln),
+          m_prevImgPt1(*m_seq1It),
+          m_prevImgPt2(*m_seq2It),
+          m_nextImgPt1(m_prevImgPt1),
+          m_nextImgPt2(m_prevImgPt2),
+          m_nextPlnX1(0),
+          m_nextPlnX2(0)
+    { }
 
     bool
     CylindricalSurfaceDewarper::CoupledPolylinesIterator::next(QPointF& img_pt1, QPointF& img_pt2, double& pln_x)
     {
-        if (m_nextPlnX1 < m_nextPlnX2 && m_seq1It != m_seq1End) {
+        if ((m_nextPlnX1 < m_nextPlnX2) && (m_seq1It != m_seq1End)) {
             next1(img_pt1, img_pt2, pln_x);
+
             return true;
         }
         else if (m_seq2It != m_seq2End) {
             next2(img_pt1, img_pt2, pln_x);
+
             return true;
         }
         else {
@@ -401,13 +396,13 @@ namespace dewarping
         Vec2d const pln_ptx(pln_pt1[0], pln_pt1[1] + 1);
         Vec2d const img_ptx(m_pln2img(pln_ptx));
 
-        if (QLineF(img_pt1, img_ptx).intersect(QLineF(m_nextImgPt2, m_prevImgPt2), &img_pt2) ==
-            QLineF::NoIntersection) {
+        if (QLineF(img_pt1, img_ptx).intersect(QLineF(m_nextImgPt2, m_prevImgPt2), &img_pt2)
+            == QLineF::NoIntersection) {
             img_pt2 = m_nextImgPt2;
         }
 
         advance1();
-        if (m_seq2It != m_seq2End && Vec2d(m_nextImgPt2 - img_pt2).squaredNorm() < 1) {
+        if ((m_seq2It != m_seq2End) && (Vec2d(m_nextImgPt2 - img_pt2).squaredNorm() < 1)) {
             advance2();
         }
     }
@@ -422,13 +417,13 @@ namespace dewarping
         Vec2d const pln_ptx(pln_pt2[0], pln_pt2[1] + 1);
         Vec2d const img_ptx(m_pln2img(pln_ptx));
 
-        if (QLineF(img_pt2, img_ptx).intersect(QLineF(m_nextImgPt1, m_prevImgPt1), &img_pt1) ==
-            QLineF::NoIntersection) {
+        if (QLineF(img_pt2, img_ptx).intersect(QLineF(m_nextImgPt1, m_prevImgPt1), &img_pt1)
+            == QLineF::NoIntersection) {
             img_pt1 = m_nextImgPt1;
         }
 
         advance2();
-        if (m_seq1It != m_seq1End && Vec2d(m_nextImgPt1 - img_pt1).squaredNorm() < 1) {
+        if ((m_seq1It != m_seq1End) && (Vec2d(m_nextImgPt1 - img_pt1).squaredNorm() < 1)) {
             advance1();
         }
     }
@@ -456,5 +451,4 @@ namespace dewarping
         m_nextImgPt2 = *m_seq2It;
         m_nextPlnX2 = m_img2pln(m_nextImgPt2)[0];
     }
-
-} 
+}  // namespace dewarping

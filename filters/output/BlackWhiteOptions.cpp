@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,29 +15,27 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "BlackWhiteOptions.h"
 #include <QDomDocument>
 
 namespace output
 {
-
     BlackWhiteOptions::BlackWhiteOptions()
-            : m_thresholdAdjustment(0)
-    {
-    }
+        : m_thresholdAdjustment(0)
+    { }
 
     BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
-            : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt())
-    {
-    }
+        : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt())
+    { }
 
     QDomElement
     BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const
     {
         QDomElement el(doc.createElement(name));
         el.setAttribute("thresholdAdj", m_thresholdAdjustment);
+
         return el;
     }
 
@@ -55,5 +54,4 @@ namespace output
     {
         return !(*this == other);
     }
-
-} 
+}  // namespace output

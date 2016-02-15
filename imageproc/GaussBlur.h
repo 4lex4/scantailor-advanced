@@ -1,8 +1,9 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
-	Based on code from the GIMP project,
+    Based on code from the GIMP project,
     Copyright (C) 1995 Spencer Kimball and Peter Mattis
 
     This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef IMAGEPROC_GAUSSBLUR_H_
 #define IMAGEPROC_GAUSSBLUR_H_
@@ -30,74 +31,77 @@
 
 namespace imageproc
 {
-
     class GrayImage;
 
-/**
- * \brief Applies gaussian blur on a GrayImage.
- *
- * \param src The image to apply gaussian blur to.
- * \param h_sigma The standard deviation in horizontal direction.
- * \param v_sigma The standard deviation in vertical direction.
- * \return The blurred image.
- */
+    /**
+     * \brief Applies gaussian blur on a GrayImage.
+     *
+     * \param src The image to apply gaussian blur to.
+     * \param h_sigma The standard deviation in horizontal direction.
+     * \param v_sigma The standard deviation in vertical direction.
+     * \return The blurred image.
+     */
     GrayImage gaussBlur(GrayImage const& src, float h_sigma, float v_sigma);
 
-/**
- * \brief Applies a 2D gaussian filter on an arbitrary data grid. 
- *
- * \param size Data grid dimensions.
- * \param h_sigma The standard deviation in horizontal direction.
- * \param v_sigma The standard deviation in vertical direction.
- * \param input A random access iterator (usually a pointer)
- *        to the beginning of input data.
- * \param input_stride The distance (in terms of iterator difference)
- *        from an input grid cell to the one directly below it.
- * \param float_reader A functor to convert whatever value corresponds to *input
- *        into a float.  Consider using one of the functors from ValueConv.h
- *        The functor will be called like this:
- * \code
- * FloatReader const reader = ...;
- * float const val = reader(input[x]);
- * \endcode
- * \param output A random access iterator (usually a pointer)
- *        to the beginning of output data.  Output may point to the same
- *        memory as input.
- * \param output_stride The distance (in terms of iterator difference)
- *        from an output grid cell to the one directly below it.
- * \param float_writer A functor that takes a float value, optionally
- *        converts it into another type and updates an output item.
- *        The functor will be called like this:
- * \code
- * FloatWriter const writer = ...;
- * float const val = ...;
- * writer(output[x], val);
- * \endcode
- * Consider using boost::lambda, possible in conjunction with one of the functors
- * from ValueConv.h:
- * \code
- * using namespace boost::lambda;
- *
- *  * gaussBlurGeneric(..., _1 = _2);
- *
- *  * gaussBlurGeneric(..., _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2);
- * \endcode
- */
-    template<typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
-    void gaussBlurGeneric(QSize size, float h_sigma, float v_sigma,
-                          SrcIt input, int input_stride, FloatReader float_reader,
-                          DstIt output, int output_stride, FloatWriter float_writer);
+    /**
+     * \brief Applies a 2D gaussian filter on an arbitrary data grid.
+     *
+     * \param size Data grid dimensions.
+     * \param h_sigma The standard deviation in horizontal direction.
+     * \param v_sigma The standard deviation in vertical direction.
+     * \param input A random access iterator (usually a pointer)
+     *        to the beginning of input data.
+     * \param input_stride The distance (in terms of iterator difference)
+     *        from an input grid cell to the one directly below it.
+     * \param float_reader A functor to convert whatever value corresponds to *input
+     *        into a float.  Consider using one of the functors from ValueConv.h
+     *        The functor will be called like this:
+     * \code
+     * FloatReader const reader = ...;
+     * float const val = reader(input[x]);
+     * \endcode
+     * \param output A random access iterator (usually a pointer)
+     *        to the beginning of output data.  Output may point to the same
+     *        memory as input.
+     * \param output_stride The distance (in terms of iterator difference)
+     *        from an output grid cell to the one directly below it.
+     * \param float_writer A functor that takes a float value, optionally
+     *        converts it into another type and updates an output item.
+     *        The functor will be called like this:
+     * \code
+     * FloatWriter const writer = ...;
+     * float const val = ...;
+     * writer(output[x], val);
+     * \endcode
+     * Consider using boost::lambda, possible in conjunction with one of the functors
+     * from ValueConv.h:
+     * \code
+     * using namespace boost::lambda;
+     *
+     *  * gaussBlurGeneric(..., _1 = _2);
+     *
+     *  * gaussBlurGeneric(..., _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2);
+     * \endcode
+     */
+    template <typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
+    void gaussBlurGeneric(QSize size,
+                          float h_sigma,
+                          float v_sigma,
+                          SrcIt input,
+                          int input_stride,
+                          FloatReader float_reader,
+                          DstIt output,
+                          int output_stride,
+                          FloatWriter float_writer);
 
     namespace gauss_blur_impl
     {
+        void find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* bd_p, float* bd_m,
+                                float std_dev);
 
-        void find_iir_constants(
-                float* n_p, float* n_m, float* d_p,
-                float* d_m, float* bd_p, float* bd_m, float std_dev);
-
-        template<typename Src1It, typename Src2It, typename DstIt, typename FloatWriter>
-        void save(int num_items, Src1It src1, Src2It src2,
-                  DstIt dst, int dst_stride, FloatWriter writer)
+        template <typename Src1It, typename Src2It, typename DstIt, typename FloatWriter>
+        void
+        save(int num_items, Src1It src1, Src2It src2, DstIt dst, int dst_stride, FloatWriter writer)
         {
             while (num_items-- != 0) {
                 writer(*dst, *src1 + *src2);
@@ -111,15 +115,23 @@ namespace imageproc
         {
         public:
             void operator()(float& dst, float src) const
-            { dst = src; }
+            {
+                dst = src;
+            }
         };
-
     }
 
-    template<typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
-    void gaussBlurGeneric(QSize const size, float const h_sigma, float const v_sigma,
-                          SrcIt const input, int const input_stride, FloatReader const float_reader,
-                          DstIt const output, int const output_stride, FloatWriter const float_writer)
+    template <typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
+    void
+    gaussBlurGeneric(QSize const size,
+                     float const h_sigma,
+                     float const v_sigma,
+                     SrcIt const input,
+                     int const input_stride,
+                     FloatReader const float_reader,
+                     DstIt const output,
+                     int const output_stride,
+                     FloatWriter const float_writer)
     {
         if (size.isEmpty()) {
             return;
@@ -167,8 +179,8 @@ namespace imageproc
             }
 
             gauss_blur_impl::save(
-                    height, &val_p[0], &val_m[0], &intermediate_image[0] + x,
-                    intermediate_stride, gauss_blur_impl::FloatToFloatWriter()
+                height, &val_p[0], &val_m[0], &intermediate_image[0] + x,
+                intermediate_stride, gauss_blur_impl::FloatToFloatWriter()
             );
         }
 
@@ -208,7 +220,6 @@ namespace imageproc
             intermediate_line += intermediate_stride;
             output_line += output_stride;
         }
-    }
-
-}
-#endif
+    }  // gaussBlurGeneric
+}  // namespace imageproc
+#endif  // ifndef IMAGEPROC_GAUSSBLUR_H_

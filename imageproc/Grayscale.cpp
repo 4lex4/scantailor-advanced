@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Grayscale.h"
 #include "BinaryImage.h"
@@ -22,15 +23,15 @@
 
 namespace imageproc
 {
-
-    static QImage monoMsbToGrayscale(QImage const& src)
+    static QImage
+    monoMsbToGrayscale(QImage const& src)
     {
         int const width = src.width();
         int const height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
-        if (width > 0 && height > 0 && dst.isNull()) {
+        if ((width > 0) && (height > 0) && dst.isNull()) {
             throw std::bad_alloc();
         }
 
@@ -39,7 +40,7 @@ namespace imageproc
         int const src_bpl = src.bytesPerLine();
         int const dst_bpl = dst.bytesPerLine();
 
-        uint8_t bin2gray[2] = {0, 0xff};
+        uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
             if (qGray(src.color(0)) > qGray(src.color(1))) {
                 bin2gray[0] = 0xff;
@@ -63,16 +64,17 @@ namespace imageproc
         dst.setDotsPerMeterY(src.dotsPerMeterY());
 
         return dst;
-    }
+    }  // monoMsbToGrayscale
 
-    static QImage monoLsbToGrayscale(QImage const& src)
+    static QImage
+    monoLsbToGrayscale(QImage const& src)
     {
         int const width = src.width();
         int const height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
-        if (width > 0 && height > 0 && dst.isNull()) {
+        if ((width > 0) && (height > 0) && dst.isNull()) {
             throw std::bad_alloc();
         }
 
@@ -81,7 +83,7 @@ namespace imageproc
         int const src_bpl = src.bytesPerLine();
         int const dst_bpl = dst.bytesPerLine();
 
-        uint8_t bin2gray[2] = {0, 0xff};
+        uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
             if (qGray(src.color(0)) > qGray(src.color(1))) {
                 bin2gray[0] = 0xff;
@@ -105,16 +107,17 @@ namespace imageproc
         dst.setDotsPerMeterY(src.dotsPerMeterY());
 
         return dst;
-    }
+    }  // monoLsbToGrayscale
 
-    static QImage anyToGrayscale(QImage const& src)
+    static QImage
+    anyToGrayscale(QImage const& src)
     {
         int const width = src.width();
         int const height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
-        if (width > 0 && height > 0 && dst.isNull()) {
+        if ((width > 0) && (height > 0) && dst.isNull()) {
             throw std::bad_alloc();
         }
 
@@ -134,16 +137,19 @@ namespace imageproc
         return dst;
     }
 
-    QVector<QRgb> createGrayscalePalette()
+    QVector<QRgb>
+    createGrayscalePalette()
     {
         QVector<QRgb> palette(256);
         for (int i = 0; i < 256; ++i) {
             palette[i] = qRgb(i, i, i);
         }
+
         return palette;
     }
 
-    QImage toGrayscale(QImage const& src)
+    QImage
+    toGrayscale(QImage const& src)
     {
         if (src.isNull()) {
             return src;
@@ -165,6 +171,7 @@ namespace imageproc
                         if (!src.isNull() && dst.isNull()) {
                             throw std::bad_alloc();
                         }
+
                         return dst;
                     }
                 }
@@ -173,9 +180,8 @@ namespace imageproc
         }
     }
 
-    GrayImage stretchGrayRange(
-            GrayImage const& src,
-            double const black_clip_fraction, double const white_clip_fraction)
+    GrayImage
+    stretchGrayRange(GrayImage const& src, double const black_clip_fraction, double const white_clip_fraction)
     {
         if (src.isNull()) {
             return src;
@@ -249,10 +255,10 @@ namespace imageproc
         }
 
         return dst;
-    }
+    }  // stretchGrayRange
 
-    GrayImage createFramedImage(QSize const& size,
-                                unsigned char const inner_color, unsigned char const frame_color)
+    GrayImage
+    createFramedImage(QSize const& size, unsigned char const inner_color, unsigned char const frame_color)
     {
         GrayImage image(size);
         image.fill(inner_color);
@@ -275,7 +281,8 @@ namespace imageproc
         return image;
     }
 
-    unsigned char darkestGrayLevel(QImage const& image)
+    unsigned char
+    darkestGrayLevel(QImage const& image)
     {
         QImage const gray(toGrayscale(image));
 
@@ -320,8 +327,7 @@ namespace imageproc
         }
     }
 
-    GrayscaleHistogram::GrayscaleHistogram(
-            QImage const& img, BinaryImage const& mask)
+    GrayscaleHistogram::GrayscaleHistogram(QImage const& img, BinaryImage const& mask)
     {
         memset(m_pixels, 0, sizeof(m_pixels));
 
@@ -331,7 +337,7 @@ namespace imageproc
 
         if (img.size() != mask.size()) {
             throw std::invalid_argument(
-                    "GrayscaleHistogram: img and mask have different sizes"
+                      "GrayscaleHistogram: img and mask have different sizes"
             );
         }
 
@@ -389,7 +395,7 @@ namespace imageproc
 
         m_pixels[qGray(color0)] = num_bits_0;
         m_pixels[qGray(color1)] = num_bits_1;
-    }
+    }  // GrayscaleHistogram::fromMonoImage
 
     void
     GrayscaleHistogram::fromMonoMSBImage(QImage const& img, BinaryImage const& mask)
@@ -400,7 +406,7 @@ namespace imageproc
         int const last_word_idx = (w - 1) >> 5;
         int const last_word_unused_bits = (((last_word_idx + 1) << 5) - w);
         uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const* line = (uint32_t const*) img.bits();
+        uint32_t const* line = (uint32_t const*)img.bits();
         uint32_t const* mask_line = mask.data();
         int const mask_wpl = mask.wordsPerLine();
 
@@ -428,7 +434,7 @@ namespace imageproc
 
         m_pixels[qGray(color0)] = num_bits_0;
         m_pixels[qGray(color1)] = num_bits_1;
-    }
+    }  // GrayscaleHistogram::fromMonoMSBImage
 
     void
     GrayscaleHistogram::fromGrayscaleImage(QImage const& img)
@@ -495,5 +501,4 @@ namespace imageproc
             }
         }
     }
-
-} 
+}  // namespace imageproc

@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef OUTPUT_OUTPUT_MARGINS_H_
 #define OUTPUT_OUTPUT_MARGINS_H_
@@ -23,19 +24,19 @@
 
 namespace output
 {
-
-/**
- * Having margins on the Output stage is useful when creating zones
- * that are meant to cover a corner or an edge of a page.
- * We use the same margins on all tabs to preserve their geometrical
- * one-to-one relationship.
- */
-    class OutputMargins : public Margins
+    /**
+     * Having margins on the Output stage is useful when creating zones
+     * that are meant to cover a corner or an edge of a page.
+     * We use the same margins on all tabs to preserve their geometrical
+     * one-to-one relationship.
+     */
+    class OutputMargins
+        : public Margins
     {
     public:
-        OutputMargins() : Margins(10.0, 10.0, 10.0, 10.0)
+        OutputMargins()
+            : Margins(10.0, 10.0, 10.0, 10.0)
         { }
     };
-
 }
 #endif

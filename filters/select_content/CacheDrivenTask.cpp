@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "CacheDrivenTask.h"
 #include "Thumbnail.h"
@@ -30,38 +31,33 @@
 
 namespace select_content
 {
-
-    CacheDrivenTask::CacheDrivenTask(
-            IntrusivePtr<Settings> const& settings,
-            IntrusivePtr<page_layout::CacheDrivenTask> const& next_task)
-            : m_ptrSettings(settings),
-              m_ptrNextTask(next_task)
-    {
-    }
+    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     IntrusivePtr<page_layout::CacheDrivenTask> const& next_task)
+        : m_ptrSettings(settings),
+          m_ptrNextTask(next_task)
+    { }
 
     CacheDrivenTask::~CacheDrivenTask()
-    {
-    }
+    { }
 
     void
-    CacheDrivenTask::process(
-            PageInfo const& page_info, AbstractFilterDataCollector* collector,
-            ImageTransformation const& xform)
+    CacheDrivenTask::process(PageInfo const& page_info,
+                             AbstractFilterDataCollector* collector,
+                             ImageTransformation const& xform)
     {
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
         Dependencies const deps(xform.resultingPreCropArea());
-        if (!params.get() || (!params->dependencies().matches(deps) &&
-                              (params->mode() == MODE_AUTO || !params->isContentDetectionEnabled()))) {
-
+        if (!params.get() || (!params->dependencies().matches(deps)
+                              && ((params->mode() == MODE_AUTO) || !params->isContentDetectionEnabled()))) {
             if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
-                        std::unique_ptr<QGraphicsItem>(
-                                new IncompleteThumbnail(
-                                        thumb_col->thumbnailCache(),
-                                        thumb_col->maxLogicalThumbSize(),
-                                        page_info.imageId(), xform
-                                )
+                    std::unique_ptr<QGraphicsItem>(
+                        new IncompleteThumbnail(
+                            thumb_col->thumbnailCache(),
+                            thumb_col->maxLogicalThumbSize(),
+                            page_info.imageId(), xform
                         )
+                    )
                 );
             }
 
@@ -74,22 +70,22 @@ namespace select_content
 
         if (m_ptrNextTask) {
             m_ptrNextTask->process(page_info, collector, xform, params->contentRect());
+
             return;
         }
 
         if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                            new Thumbnail(
-                                    thumb_col->thumbnailCache(),
-                                    thumb_col->maxLogicalThumbSize(),
-                                    page_info.imageId(), xform,
-                                    params->contentRect(),
-                                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
-                            )
+                std::unique_ptr<QGraphicsItem>(
+                    new Thumbnail(
+                        thumb_col->thumbnailCache(),
+                        thumb_col->maxLogicalThumbSize(),
+                        page_info.imageId(), xform,
+                        params->contentRect(),
+                        params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
                     )
+                )
             );
         }
-    }
-
-} 
+    }  // CacheDrivenTask::process
+}  // namespace select_content

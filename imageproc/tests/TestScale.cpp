@@ -1,6 +1,7 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Scale.h"
 #include "GrayImage.h"
@@ -23,71 +24,70 @@
 
 namespace imageproc
 {
-
     namespace tests
     {
-
         using namespace utils;
 
         BOOST_AUTO_TEST_SUITE(ScaleTestSuite);
 
-            BOOST_AUTO_TEST_CASE(test_null_image)
-            {
-                GrayImage const null_img;
-                BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
-            }
+        BOOST_AUTO_TEST_CASE(test_null_image)
+        {
+            GrayImage const null_img;
+            BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
+        }
 
-            static bool fuzzyCompare(QImage const& img1, QImage const& img2)
-            {
-                BOOST_REQUIRE(img1.size() == img2.size());
+        static bool
+        fuzzyCompare(QImage const& img1, QImage const& img2)
+        {
+            BOOST_REQUIRE(img1.size() == img2.size());
 
-                int const width = img1.width();
-                int const height = img1.height();
-                uint8_t const* line1 = img1.bits();
-                uint8_t const* line2 = img2.bits();
-                int const line1_bpl = img1.bytesPerLine();
-                int const line2_bpl = img2.bytesPerLine();
+            int const width = img1.width();
+            int const height = img1.height();
+            uint8_t const* line1 = img1.bits();
+            uint8_t const* line2 = img2.bits();
+            int const line1_bpl = img1.bytesPerLine();
+            int const line2_bpl = img2.bytesPerLine();
 
-                for (int y = 0; y < height; ++y) {
-                    for (int x = 0; x < width; ++x) {
-                        if (abs(int(line1[x]) - int(line2[x])) > 1) {
-                            return false;
-                        }
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    if (abs(int(line1[x]) - int(line2[x])) > 1) {
+                        return false;
                     }
-                    line1 += line1_bpl;
-                    line2 += line2_bpl;
                 }
-
-                return true;
+                line1 += line1_bpl;
+                line2 += line2_bpl;
             }
 
-            static bool checkScale(GrayImage const& img, QSize const& new_size)
-            {
-                GrayImage const scaled1(scaleToGray(img, new_size));
-                GrayImage const scaled2(img.toQImage().scaled(
-                        new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation
-                ));
+            return true;
+        }
 
-                return fuzzyCompare(scaled1, scaled2);
-            }
+        static bool
+        checkScale(GrayImage const& img, QSize const& new_size)
+        {
+            GrayImage const scaled1(scaleToGray(img, new_size));
+            GrayImage const scaled2(img.toQImage().scaled(
+                                        new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation
+                                    ));
 
-            BOOST_AUTO_TEST_CASE(test_random_image)
-            {
-                GrayImage img(QSize(100, 100));
-                uint8_t* line = img.data();
-                for (int y = 0; y < img.height(); ++y) {
-                    for (int x = 0; x < img.width(); ++x) {
-                        line[x] = rand() % 256;
-                    }
-                    line += img.stride();
+            return fuzzyCompare(scaled1, scaled2);
+        }
+
+        BOOST_AUTO_TEST_CASE(test_random_image)
+        {
+            GrayImage img(QSize(100, 100));
+            uint8_t* line = img.data();
+            for (int y = 0; y < img.height(); ++y) {
+                for (int x = 0; x < img.width(); ++x) {
+                    line[x] = rand() % 256;
                 }
-
-
-                BOOST_CHECK(checkScale(img, QSize(50, 50)));
-                BOOST_CHECK(checkScale(img, QSize(80, 80)));
+                line += img.stride();
             }
+
+
+            BOOST_CHECK(checkScale(img, QSize(50, 50)));
+            BOOST_CHECK(checkScale(img, QSize(80, 80)));
+        }
 
         BOOST_AUTO_TEST_SUITE_END();
-
-    }
-} 
+    }  // namespace tests
+}  // namespace imageproc

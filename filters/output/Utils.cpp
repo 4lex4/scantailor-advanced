@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "Utils.h"
 #include "Dpi.h"
@@ -24,7 +25,6 @@
 
 namespace output
 {
-
     QString
     Utils::automaskDir(QString const& out_dir)
     {
@@ -48,10 +48,10 @@ namespace output
     {
         QTransform xform;
         xform.scale(
-                (double) to.horizontal() / from.horizontal(),
-                (double) to.vertical() / from.vertical()
+            (double)to.horizontal() / from.horizontal(),
+            (double)to.vertical() / from.vertical()
         );
+
         return xform;
     }
-
-} 
+}  // namespace output

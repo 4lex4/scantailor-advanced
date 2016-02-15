@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,35 +15,32 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "ColorGrayscaleOptions.h"
 #include <QDomDocument>
 
 namespace output
 {
-
     ColorGrayscaleOptions::ColorGrayscaleOptions()
-            : m_whiteMargins(false),
-              m_normalizeIllumination(false),
-              m_cleanBackground(false),
-              m_cleanMode(MODE_AUTO),
-              m_whitenAdjustment(0),
-              m_brightnessAdjustment(0),
-              m_contrastAdjustment(0)
-    {
-    }
+        : m_whiteMargins(false),
+          m_normalizeIllumination(false),
+          m_cleanBackground(false),
+          m_cleanMode(MODE_AUTO),
+          m_whitenAdjustment(0),
+          m_brightnessAdjustment(0),
+          m_contrastAdjustment(0)
+    { }
 
     ColorGrayscaleOptions::ColorGrayscaleOptions(QDomElement const& el)
-            : m_whiteMargins(el.attribute("whiteMargins") == "1"),
-              m_normalizeIllumination(el.attribute("normalizeIllumination") == "1"),
-              m_cleanBackground(el.attribute("cleanBackground") == "1"),
-              m_cleanMode(el.attribute("cleanMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-              m_whitenAdjustment(el.attribute("whitenAdj").toInt()),
-              m_brightnessAdjustment(el.attribute("brightnessAdj").toInt()),
-              m_contrastAdjustment(el.attribute("contrastAdj").toInt())
-    {
-    }
+        : m_whiteMargins(el.attribute("whiteMargins") == "1"),
+          m_normalizeIllumination(el.attribute("normalizeIllumination") == "1"),
+          m_cleanBackground(el.attribute("cleanBackground") == "1"),
+          m_cleanMode(el.attribute("cleanMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
+          m_whitenAdjustment(el.attribute("whitenAdj").toInt()),
+          m_brightnessAdjustment(el.attribute("brightnessAdj").toInt()),
+          m_contrastAdjustment(el.attribute("contrastAdj").toInt())
+    { }
 
     QDomElement
     ColorGrayscaleOptions::toXml(QDomDocument& doc, QString const& name) const
@@ -55,6 +53,7 @@ namespace output
         el.setAttribute("whitenAdj", m_whitenAdjustment);
         el.setAttribute("brightnessAdj", m_brightnessAdjustment);
         el.setAttribute("contrastAdj", m_contrastAdjustment);
+
         return el;
     }
 
@@ -90,12 +89,11 @@ namespace output
         }
 
         return true;
-    }
+    }  // ==
 
     bool
     ColorGrayscaleOptions::operator!=(ColorGrayscaleOptions const& other) const
     {
         return !(*this == other);
     }
-
-} 
+}  // namespace output

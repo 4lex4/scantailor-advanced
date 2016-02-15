@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef ALIGNED_ARRAY_H_
 #define ALIGNED_ARRAY_H_
@@ -29,34 +30,46 @@
  * The alignment is specified not in terms of bytes, but in terms of units,
  * where bytes = units * sizeof(T)
  */
-template<typename T, size_t alignment_in_units>
+template <typename T, size_t alignment_in_units>
 class AlignedArray
 {
-DECLARE_NON_COPYABLE(AlignedArray)
+    DECLARE_NON_COPYABLE(AlignedArray)
 
 public:
     /**
      * \brief Constructs a null array.
      */
-    AlignedArray() : m_pAlignedData(0), m_pStorage(0)
+    AlignedArray()
+        : m_pAlignedData(0),
+          m_pStorage(0)
     { }
 
     AlignedArray(size_t size);
 
     ~AlignedArray()
-    { delete[] m_pStorage; }
+    {
+        delete[] m_pStorage;
+    }
 
     T* data()
-    { return m_pAlignedData; }
+    {
+        return m_pAlignedData;
+    }
 
     T const* data() const
-    { return m_pAlignedData; }
+    {
+        return m_pAlignedData;
+    }
 
     T& operator[](size_t idx)
-    { return m_pAlignedData[idx]; }
+    {
+        return m_pAlignedData[idx];
+    }
 
     T const& operator[](size_t idx) const
-    { return m_pAlignedData[idx]; }
+    {
+        return m_pAlignedData[idx];
+    }
 
     void swap(AlignedArray& other);
 
@@ -66,13 +79,14 @@ private:
 };
 
 
-template<typename T, size_t alignment_in_units>
-inline void swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignment_in_units>& o2)
+template <typename T, size_t alignment_in_units>
+inline void
+swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignment_in_units>& o2)
 {
     o1.swap(o2);
 }
 
-template<typename T, size_t alignment_in_units>
+template <typename T, size_t alignment_in_units>
 AlignedArray<T, alignment_in_units>::AlignedArray(size_t size)
 {
     int const a = alignment_in_units > 1 ? alignment_in_units : 1;
@@ -81,7 +95,7 @@ AlignedArray<T, alignment_in_units>::AlignedArray(size_t size)
     m_pAlignedData = m_pStorage + ((a - ((uintptr_t(m_pStorage) / sizeof(T)) & am1)) & am1);
 }
 
-template<typename T, size_t alignment_in_units>
+template <typename T, size_t alignment_in_units>
 void
 AlignedArray<T, alignment_in_units>::swap(AlignedArray& other)
 {
@@ -94,4 +108,4 @@ AlignedArray<T, alignment_in_units>::swap(AlignedArray& other)
     other.m_pStorage = temp;
 }
 
-#endif
+#endif  // ifndef ALIGNED_ARRAY_H_

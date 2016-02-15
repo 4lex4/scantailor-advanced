@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef PAGE_SPLIT_FILTER_H_
 #define PAGE_SPLIT_FILTER_H_
@@ -39,27 +40,27 @@ class OrthogonalRotation;
 namespace deskew
 {
     class Task;
-class CacheDrivenTask;
+    class CacheDrivenTask;
 }
 
 namespace page_split
 {
-
     class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
     class Params;
 
-    class Filter : public AbstractFilter
+    class Filter
+        : public AbstractFilter
     {
-    DECLARE_NON_COPYABLE(Filter)
+        DECLARE_NON_COPYABLE(Filter)
 
-    Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
+        Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
+
     public:
-        Filter(IntrusivePtr<ProjectPages> const& page_sequence,
-               PageSelectionAccessor const& page_selection_accessor);
+        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~Filter();
 
@@ -71,27 +72,28 @@ class Settings;
 
         virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-        virtual QDomElement saveSettings(
-                ProjectWriter const& wirter, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& wirter, QDomDocument& doc) const;
 
-        virtual void loadSettings(
-                ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
         IntrusivePtr<Task> createTask(PageInfo const& page_info,
                                       IntrusivePtr<deskew::Task> const& next_task,
-                                      bool batch_processing, bool debug);
+                                      bool batch_processing,
+                                      bool debug);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
-                IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget()
-        { return m_ptrOptionsWidget.get(); }
+        {
+            return m_ptrOptionsWidget.get();
+        }
 
-        void pageOrientationUpdate(
-                ImageId const& image_id, OrthogonalRotation const& orientation);
+        void pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation);
 
         Settings* getSettings()
-        { return m_ptrSettings.get(); };
+        {
+            return m_ptrSettings.get();
+        }
 
         virtual std::vector<PageOrderOption> pageOrderOptions() const;
 
@@ -100,9 +102,8 @@ class Settings;
         virtual void selectPageOrder(int option);
 
     private:
-        void writeImageSettings(
-                QDomDocument& doc, QDomElement& filter_el,
-                ImageId const& image_id, int const numeric_id) const;
+        void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                                int const numeric_id) const;
 
         IntrusivePtr<ProjectPages> m_ptrPages;
         IntrusivePtr<Settings> m_ptrSettings;
@@ -110,6 +111,5 @@ class Settings;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;
     };
-
-}
-#endif
+}  // namespace page_split
+#endif  // ifndef PAGE_SPLIT_FILTER_H_

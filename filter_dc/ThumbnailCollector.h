@@ -1,3 +1,4 @@
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -14,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef THUMBNAILCOLLECTOR_H_
 #define THUMBNAILCOLLECTOR_H_
@@ -26,7 +27,8 @@ class ThumbnailPixmapCache;
 class QGraphicsItem;
 class QSizeF;
 
-class ThumbnailCollector : public AbstractFilterDataCollector
+class ThumbnailCollector
+    : public AbstractFilterDataCollector
 {
 public:
     virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;

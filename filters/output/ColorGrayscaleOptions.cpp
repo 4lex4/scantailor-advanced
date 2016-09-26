@@ -24,22 +24,12 @@ namespace output
 {
     ColorGrayscaleOptions::ColorGrayscaleOptions()
         : m_whiteMargins(false),
-          m_normalizeIllumination(false),
-          m_cleanBackground(false),
-          m_cleanMode(MODE_AUTO),
-          m_whitenAdjustment(0),
-          m_brightnessAdjustment(0),
-          m_contrastAdjustment(0)
+          m_normalizeIllumination(false)
     { }
 
     ColorGrayscaleOptions::ColorGrayscaleOptions(QDomElement const& el)
         : m_whiteMargins(el.attribute("whiteMargins") == "1"),
-          m_normalizeIllumination(el.attribute("normalizeIllumination") == "1"),
-          m_cleanBackground(el.attribute("cleanBackground") == "1"),
-          m_cleanMode(el.attribute("cleanMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-          m_whitenAdjustment(el.attribute("whitenAdj").toInt()),
-          m_brightnessAdjustment(el.attribute("brightnessAdj").toInt()),
-          m_contrastAdjustment(el.attribute("contrastAdj").toInt())
+          m_normalizeIllumination(el.attribute("normalizeIllumination") == "1")
     { }
 
     QDomElement
@@ -48,11 +38,6 @@ namespace output
         QDomElement el(doc.createElement(name));
         el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
         el.setAttribute("normalizeIllumination", m_normalizeIllumination ? "1" : "0");
-        el.setAttribute("cleanBackground", m_cleanBackground ? "1" : "0");
-        el.setAttribute("cleanMode", (m_cleanMode == MODE_AUTO) ? "auto" : "manual");
-        el.setAttribute("whitenAdj", m_whitenAdjustment);
-        el.setAttribute("brightnessAdj", m_brightnessAdjustment);
-        el.setAttribute("contrastAdj", m_contrastAdjustment);
 
         return el;
     }
@@ -65,26 +50,6 @@ namespace output
         }
 
         if (m_normalizeIllumination != other.m_normalizeIllumination) {
-            return false;
-        }
-
-        if (m_cleanBackground != other.m_cleanBackground) {
-            return false;
-        }
-
-        if (m_cleanMode != other.m_cleanMode) {
-            return false;
-        }
-
-        if (m_whitenAdjustment != other.m_whitenAdjustment) {
-            return false;
-        }
-
-        if (m_brightnessAdjustment != other.m_brightnessAdjustment) {
-            return false;
-        }
-
-        if (m_contrastAdjustment != other.m_contrastAdjustment) {
             return false;
         }
 

@@ -57,56 +57,6 @@ namespace output
             m_normalizeIllumination = val;
         }
 
-        bool cleanBackground() const
-        {
-            return m_cleanBackground;
-        }
-
-        void setCleanBackground(bool val)
-        {
-            m_cleanBackground = val;
-        }
-
-        AutoManualMode cleanMode() const
-        {
-            return m_cleanMode;
-        }
-
-        void setCleanMode(AutoManualMode val)
-        {
-            m_cleanMode = val;
-        }
-
-        int whitenAdjustment() const
-        {
-            return m_whitenAdjustment;
-        }
-
-        void setWhitenAdjustment(int val)
-        {
-            m_whitenAdjustment = val;
-        }
-
-        int brightnessAdjustment() const
-        {
-            return m_brightnessAdjustment;
-        }
-
-        void setBrightnessAdjustment(int val)
-        {
-            m_brightnessAdjustment = val;
-        }
-
-        int contrastAdjustment() const
-        {
-            return m_contrastAdjustment;
-        }
-
-        void setContrastAdjustment(int val)
-        {
-            m_contrastAdjustment = val;
-        }
-
         bool operator==(ColorGrayscaleOptions const& other) const;
 
         bool operator!=(ColorGrayscaleOptions const& other) const;
@@ -114,11 +64,6 @@ namespace output
     private:
         bool m_whiteMargins;
         bool m_normalizeIllumination;
-        bool m_cleanBackground;
-        AutoManualMode m_cleanMode;
-        int m_whitenAdjustment;
-        int m_brightnessAdjustment;
-        int m_contrastAdjustment;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

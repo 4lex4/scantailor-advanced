@@ -98,8 +98,6 @@ namespace output
 
         void equalizeIlluminationToggled(bool checked);
 
-        void cleanBackgroundToggled(bool checked);
-
         void setLighterThreshold();
 
         void setDarkerThreshold();
@@ -107,16 +105,6 @@ namespace output
         void setNeutralThreshold();
 
         void bwThresholdChanged();
-
-        void cleaningAutoMode();
-
-        void cleaningManualMode();
-
-        void whitenThresholdChanged();
-
-        void brightnessChanged();
-
-        void contrastChanged();
 
         void despeckleOffSelected();
 

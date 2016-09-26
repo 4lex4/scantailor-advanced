@@ -96,6 +96,11 @@ main(int argc, char** argv)
         main_wnd->show();
     }
     else {
+#ifdef _WIN32
+        main_wnd->show();
+        main_wnd->showMaximized();
+        main_wnd->showNormal();
+#endif
         main_wnd->showMaximized();
     }
 

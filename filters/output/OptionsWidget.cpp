@@ -95,38 +95,6 @@ namespace output
             this, SLOT(equalizeIlluminationToggled(bool))
         );
         connect(
-            cleanBackgroundCB, SIGNAL(clicked(bool)),
-            this, SLOT(cleanBackgroundToggled(bool))
-        );
-
-        connect(cleaningAutoBtn, SIGNAL(pressed()), this, SLOT(cleaningAutoMode()));
-        connect(cleaningManualBtn, SIGNAL(pressed()), this, SLOT(cleaningManualMode()));
-
-        connect(
-            whitenThresholdSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(whitenThresholdChanged())
-        );
-        connect(
-            whitenThresholdSlider, SIGNAL(sliderReleased()),
-            this, SLOT(whitenThresholdChanged())
-        );
-        connect(
-            brightnessSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(brightnessChanged())
-        );
-        connect(
-            brightnessSlider, SIGNAL(sliderReleased()),
-            this, SLOT(brightnessChanged())
-        );
-        connect(
-            contrastSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(contrastChanged())
-        );
-        connect(
-            contrastSlider, SIGNAL(sliderReleased()),
-            this, SLOT(contrastChanged())
-        );
-        connect(
             lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
             this, SLOT(setLighterThreshold())
         );
@@ -207,10 +175,6 @@ namespace output
         m_depthPerception = params.depthPerception();
         m_despeckleLevel = params.despeckleLevel();
 
-        cleaningAutoBtn->setChecked(true);
-        cleaningAutoBtn->setEnabled(false);
-        cleaningManualBtn->setEnabled(false);
-
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
@@ -218,10 +182,7 @@ namespace output
 
     void
     OptionsWidget::postUpdateUI()
-    {
-        cleaningAutoBtn->setEnabled(true);
-        cleaningManualBtn->setEnabled(true);
-    }
+    { }
 
     void
     OptionsWidget::tabChanged(ImageViewTab const tab)
@@ -296,16 +257,6 @@ namespace output
     }
 
     void
-    OptionsWidget::cleanBackgroundToggled(bool const checked)
-    {
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        opt.setCleanBackground(checked);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-        emit reloadRequested();
-    }
-
-    void
     OptionsWidget::setLighterThreshold()
     {
         thresholdSlider->setValue(thresholdSlider->value() - 1);
@@ -359,139 +310,6 @@ namespace output
 
         emit invalidateThumbnail(m_pageId);
     }  // OptionsWidget::bwThresholdChanged
-
-    void
-    OptionsWidget::cleaningAutoMode()
-    {
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        opt.setCleanMode(MODE_AUTO);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-
-        emit reloadRequested();
-
-        emit invalidateThumbnail(m_pageId);
-    }
-
-    void
-    OptionsWidget::cleaningManualMode()
-    {
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        opt.setCleanMode(MODE_MANUAL);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-    }
-
-    void
-    OptionsWidget::whitenThresholdChanged()
-    {
-        int const value = whitenThresholdSlider->value();
-        QString const tooltip_text(QString::number(value));
-        whitenThresholdSlider->setToolTip(tooltip_text);
-
-        whitenThresholdLabel->setText(QString::number(value));
-
-
-        QPoint const center(whitenThresholdSlider->rect().center());
-        QPoint tooltip_pos(whitenThresholdSlider->mapFromGlobal(QCursor::pos()));
-        tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), whitenThresholdSlider->width()));
-        tooltip_pos = whitenThresholdSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, whitenThresholdSlider);
-
-        if (whitenThresholdSlider->isSliderDown()) {
-            return;
-        }
-
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        if (opt.whitenAdjustment() == value) {
-            return;
-        }
-
-        opt.setWhitenAdjustment(value);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-
-        cleaningManualMode();
-
-        emit reloadRequested();
-
-        emit invalidateThumbnail(m_pageId);
-    }  // OptionsWidget::whitenThresholdChanged
-
-    void
-    OptionsWidget::brightnessChanged()
-    {
-        int const value = brightnessSlider->value();
-        QString const tooltip_text(QString::number(value));
-        brightnessSlider->setToolTip(tooltip_text);
-
-        brightnessLabel->setText(QString::number(value));
-
-
-        QPoint const center(brightnessSlider->rect().center());
-        QPoint tooltip_pos(brightnessSlider->mapFromGlobal(QCursor::pos()));
-        tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), brightnessSlider->width()));
-        tooltip_pos = brightnessSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, brightnessSlider);
-
-        if (brightnessSlider->isSliderDown()) {
-            return;
-        }
-
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        if (opt.brightnessAdjustment() == value) {
-            return;
-        }
-
-        opt.setBrightnessAdjustment(value);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-
-        cleaningManualMode();
-
-        emit reloadRequested();
-
-        emit invalidateThumbnail(m_pageId);
-    }  // OptionsWidget::brightnessChanged
-
-    void
-    OptionsWidget::contrastChanged()
-    {
-        int const value = contrastSlider->value();
-        QString const tooltip_text(QString::number(value));
-        contrastSlider->setToolTip(tooltip_text);
-
-        contrastLabel->setText(QString::number(value));
-
-
-        QPoint const center(contrastSlider->rect().center());
-        QPoint tooltip_pos(contrastSlider->mapFromGlobal(QCursor::pos()));
-        tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), contrastSlider->width()));
-        tooltip_pos = contrastSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, contrastSlider);
-
-        if (contrastSlider->isSliderDown()) {
-            return;
-        }
-
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        if (opt.contrastAdjustment() == value) {
-            return;
-        }
-
-        opt.setContrastAdjustment(value);
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-
-        cleaningManualMode();
-
-        emit reloadRequested();
-
-        emit invalidateThumbnail(m_pageId);
-    }  // OptionsWidget::contrastChanged
 
     void
     OptionsWidget::changeDpiButtonClicked()
@@ -864,21 +682,6 @@ namespace output
                 equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
                 equalizeIlluminationCB->setEnabled(true);
             }
-
-            cleanBackgroundCB->setChecked(opt.cleanBackground());
-            clearBackgroundOptions->setVisible(opt.cleanBackground());
-            if (opt.cleanMode() == MODE_AUTO) {
-                cleaningAutoBtn->setChecked(true);
-            }
-            else {
-                cleaningManualBtn->setChecked(true);
-            }
-            brightnessSlider->setValue(opt.brightnessAdjustment());
-            contrastSlider->setValue(opt.contrastAdjustment());
-            whitenThresholdSlider->setValue(opt.whitenAdjustment());
-        }
-        else {
-            clearBackgroundOptions->setVisible(false);
         }
 
         modePanel->setVisible(m_lastTab != TAB_DEWARPING);

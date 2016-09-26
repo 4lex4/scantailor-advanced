@@ -195,12 +195,6 @@
      <height>134</height>
     </size>
    </property>
-   <property name="maximumSize">
-    <size>
-     <width>274</width>
-     <height>524287</height>
-    </size>
-   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -214,15 +208,15 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="StageListView" name="filterList">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -271,20 +265,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="filterOptions">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-      </widget>
+      <widget class="NonOwningWidget" name="filterOptions" native="true"/>
      </item>
     </layout>
     <zorder>filterOptions</zorder>
@@ -496,6 +477,12 @@
    <class>StageListView</class>
    <extends>QTableView</extends>
    <header>StageListView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NonOwningWidget</class>
+   <extends>QWidget</extends>
+   <header>NonOwningWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

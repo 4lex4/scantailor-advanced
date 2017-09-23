@@ -46,7 +46,7 @@ FILE(GLOB png_dir_2 "${LIB_DIR}/lpng[0-9]*")
 FILE(GLOB tiff_dir_ "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
 FILE(GLOB qt_dir_ "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
 FILE(GLOB boost_dir_ "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
-FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
+#FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
 
 #=================================== JPEG ===================================#
 
@@ -290,16 +290,18 @@ LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 
 #=================================== OpenCV ===================================#
 
-find_package(OpenCV PATHS opencv_dir_ REQUIRED)
-IF (NOT OpenCV_FOUND)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find OpenCV headers or libraries.\n"
-    )
-ENDIF ()
+IF (FALSE)
+	find_package(OpenCV PATHS opencv_dir_ REQUIRED)
+	IF (NOT OpenCV_FOUND)
+		MESSAGE(
+				FATAL_ERROR
+				"Could not find OpenCV headers or libraries.\n"
+		)
+	ENDIF ()
 
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-LINK_DIRECTORIES(${OpenCV_LIBRARIES})
+	INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+	LINK_DIRECTORIES(${OpenCV_LIBRARIES})
+ENDIF (FALSE)
 
 #=================================== Main ===================================#
 
@@ -521,14 +523,16 @@ TARGET_LINK_LIBRARIES(
         fix_orientation page_split deskew select_content page_layout output stcore
         dewarping zones interaction imageproc math foundation
         ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-        ${Qt5OpenGL_LIBRARIES} ${OpenCV_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
+        ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
+		# ${OpenCV_LIBRARIES}
 )
 TARGET_LINK_LIBRARIES(
         scantailor-cli
         fix_orientation page_split deskew select_content page_layout output
         stcore dewarping zones interaction imageproc math foundation
-        ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES} ${OpenCV_LIBRARIES}
+        ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
+		# ${OpenCV_LIBRARIES}
 )
 
 if (WIN32)

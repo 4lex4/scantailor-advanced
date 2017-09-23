@@ -59,6 +59,14 @@ Application::setFusionDarkTheme()
     palette.setColor(QPalette::BrightText, QColor(0xe1, 0x00, 0x00));
     palette.setColor(QPalette::Highlight, QColor(0x42, 0x42, 0x42));
     palette.setColor(QPalette::HighlightedText, QColor(0xee, 0xee, 0xee));
+
+    palette.setColor(QPalette::Disabled, QPalette::Text, QColor(0xb1, 0xb1, 0xb1));
+    palette.setColor(QPalette::Disabled, QPalette::Base, QColor(0x73, 0x73, 0x73));
+    palette.setColor(QPalette::Disabled, QPalette::AlternateBase, QColor(0x73, 0x73, 0x73));
+    palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(0xb1, 0xb1, 0xb1));
+    palette.setColor(QPalette::Disabled, QPalette::Button, QColor(0x73, 0x73, 0x73));
+    palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(0xb1, 0xb1, 0xb1));
+
     QApplication::setPalette(palette);
 }
 

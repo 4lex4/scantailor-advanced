@@ -45,10 +45,9 @@ namespace page_split
 
     class PageLayout;
 
-    class Task
-        : public RefCountable
+    class Task : public RefCountable
     {
-        DECLARE_NON_COPYABLE(Task)
+    DECLARE_NON_COPYABLE(Task)
 
     public:
         Task(IntrusivePtr<Filter> const& filter,
@@ -59,7 +58,7 @@ namespace page_split
              bool batch_processing,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
         FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 

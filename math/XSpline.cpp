@@ -24,6 +24,7 @@
 #include "adiff/Function.h"
 #include <QDebug>
 #include <boost/foreach.hpp>
+#include <cmath>
 
 struct XSpline::TensionDerivedParams {
     static double const t0;

@@ -23,6 +23,7 @@
 #include "Shear.h"
 #include "ReduceThreshold.h"
 #include "Constants.h"
+#include <cmath>
 #include <QDebug>
 
 namespace imageproc

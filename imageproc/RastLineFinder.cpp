@@ -23,6 +23,7 @@
 #include "Constants.h"
 #include <boost/foreach.hpp>
 #include <assert.h>
+#include <cmath>
 
 namespace imageproc
 {

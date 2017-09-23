@@ -21,6 +21,7 @@
 #include <QPolygonF>
 #include <QLineF>
 #include <assert.h>
+#include <cmath>
 
 namespace imageproc
 {

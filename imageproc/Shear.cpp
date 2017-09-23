@@ -19,6 +19,7 @@
 
 #include "Shear.h"
 #include "RasterOp.h"
+#include <cmath>
 #include <assert.h>
 
 namespace imageproc

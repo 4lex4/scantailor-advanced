@@ -24,6 +24,7 @@
 #include <QPoint>
 #include <stdexcept>
 #include <assert.h>
+#include <cmath>
 
 #ifdef _MSC_VER
  #undef copysign#define copysign _copysign

@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QApplication>
+#include <cmath>
 
 using namespace imageproc;
 

@@ -23,6 +23,7 @@
 #include "IntegralImage.h"
 #include <QDebug>
 #include <assert.h>
+#include <cmath>
 
 namespace imageproc
 {

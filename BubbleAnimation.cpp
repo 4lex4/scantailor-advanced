@@ -23,6 +23,7 @@
 #include <QPaintDevice>
 #include <QPainter>
 #include <assert.h>
+#include <cmath>
 
 using namespace imageproc;
 

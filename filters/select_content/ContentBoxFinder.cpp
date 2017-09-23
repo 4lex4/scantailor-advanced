@@ -41,6 +41,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <queue>
+#include <cmath>
 
 #include "CommandLine.h"
 

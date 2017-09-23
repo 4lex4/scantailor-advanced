@@ -30,6 +30,7 @@
 #include "imageproc/Constants.h"
 #include <QPainter>
 #include <QDebug>
+#include <cmath>
 
 namespace page_split
 {

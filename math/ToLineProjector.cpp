@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 #include "ToLineProjector.h"
 
 ToLineProjector::ToLineProjector(QLineF const& line)

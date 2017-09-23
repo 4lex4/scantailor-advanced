@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <assert.h>
+#include <cmath>
 
 namespace imageproc
 {

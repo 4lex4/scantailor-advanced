@@ -24,6 +24,7 @@
 #include "imageproc/Constants.h"
 #include <QDebug>
 #include <tiffio.h>
+#include <cmath>
 
 /**
  * m_reverseBitsLUT[byte] gives the same byte, but with bit order reversed.

@@ -32,10 +32,11 @@ class QWheelEvent;
 class QContextMenuEvent;
 class QPointF;
 
-class InteractionHandler: public boost::intrusive::list_base_hook<
-                            boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-    >{
-    DECLARE_NON_COPYABLE(InteractionHandler)
+class InteractionHandler : public boost::intrusive::list_base_hook<
+        boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+> {
+DECLARE_NON_COPYABLE(InteractionHandler)
+
 public:
     InteractionHandler();
 
@@ -102,9 +103,9 @@ protected:
     static bool defaultInteractionPermitter(InteractionState const& interaction);
 
 private:
-    class HandlerList: public RefCountable, public boost::intrusive::list<
-                         InteractionHandler, boost::intrusive::constant_time_size<false>
-        >{
+    class HandlerList : public RefCountable, public boost::intrusive::list<
+            InteractionHandler, boost::intrusive::constant_time_size<false>
+    > {
     };
 
 

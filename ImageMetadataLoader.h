@@ -28,7 +28,7 @@ class QString;
 class QIODevice;
 class ImageMetadata;
 
-class ImageMetadataLoader: public RefCountable {
+class ImageMetadataLoader : public RefCountable {
 public:
     enum Status {
         LOADED,  /**< Loaded successfully */
@@ -45,10 +45,10 @@ public:
      */
     static void registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader);
 
-    template <typename OutFunc>
+    template<typename OutFunc>
     static Status load(QIODevice& io_device, OutFunc out);
 
-    template <typename OutFunc>
+    template<typename OutFunc>
     static Status load(QString const& file_path, OutFunc out);
 
 protected:
@@ -80,14 +80,14 @@ private:
 };
 
 
-template <typename OutFunc>
+template<typename OutFunc>
 ImageMetadataLoader::Status ImageMetadataLoader::load(QIODevice& io_device, OutFunc out) {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
 
     return loadImpl(io_device, proxy);
 }
 
-template <typename OutFunc>
+template<typename OutFunc>
 ImageMetadataLoader::Status ImageMetadataLoader::load(QString const& file_path, OutFunc out) {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
 

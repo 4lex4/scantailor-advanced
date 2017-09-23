@@ -38,6 +38,6 @@ namespace imageproc {
  *        within the source image, and its size must match the
  *        size of \p dst_rect.
  */
-void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect);
+    void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect);
 }
 #endif

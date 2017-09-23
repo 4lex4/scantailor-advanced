@@ -22,10 +22,10 @@
 
 bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
     QLineF const rect_lines[4] = {
-        QLineF(rect.topLeft(), rect.topRight()),
-        QLineF(rect.bottomLeft(), rect.bottomRight()),
-        QLineF(rect.topLeft(), rect.bottomLeft()),
-        QLineF(rect.topRight(), rect.bottomRight())
+            QLineF(rect.topLeft(), rect.topRight()),
+            QLineF(rect.bottomLeft(), rect.bottomRight()),
+            QLineF(rect.topLeft(), rect.bottomLeft()),
+            QLineF(rect.topRight(), rect.bottomRight())
     };
 
     double max = NumericTraits<double>::min();

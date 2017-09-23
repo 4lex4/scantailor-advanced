@@ -33,7 +33,7 @@ class QMouseEvent;
  * an ongoing drag and decide if the drag was significant or not, in which
  * case we could perform some other operation on mouse release.
  */
-class DragWatcher: public InteractionHandler {
+class DragWatcher : public InteractionHandler {
 public:
     DragWatcher(DragHandler& drag_handler);
 

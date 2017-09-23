@@ -20,18 +20,18 @@
 #include "FrenetFrame.h"
 
 namespace spfit {
-FrenetFrame::FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxisDirection ydir)
-        : m_origin(origin) {
-    double const sqlen = tangent_vector.squaredNorm();
-    if (sqlen > 1e-6) {
-        m_unitTangent = tangent_vector / sqrt(sqlen);
-        if (ydir == Y_POINTS_UP) {
-            m_unitNormal[0] = -m_unitTangent[1];
-            m_unitNormal[1] = m_unitTangent[0];
-        } else {
-            m_unitNormal[0] = m_unitTangent[1];
-            m_unitNormal[1] = -m_unitTangent[0];
+    FrenetFrame::FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxisDirection ydir)
+            : m_origin(origin) {
+        double const sqlen = tangent_vector.squaredNorm();
+        if (sqlen > 1e-6) {
+            m_unitTangent = tangent_vector / sqrt(sqlen);
+            if (ydir == Y_POINTS_UP) {
+                m_unitNormal[0] = -m_unitTangent[1];
+                m_unitNormal[1] = m_unitTangent[0];
+            } else {
+                m_unitNormal[0] = m_unitTangent[1];
+                m_unitNormal[1] = -m_unitTangent[0];
+            }
         }
     }
-}
 }

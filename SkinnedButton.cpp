@@ -62,27 +62,27 @@ QSize SkinnedButton::sizeHint() const {
 
 void SkinnedButton::updateStyleSheet() {
     QString style = QString(
-        "QToolButton {"
-        "border: none;"
-        "background: transparent;"
-        "image: url(%1);"
-        "}"
-                    ).arg(m_normalStateFile);
+            "QToolButton {"
+                    "border: none;"
+                    "background: transparent;"
+                    "image: url(%1);"
+                    "}"
+    ).arg(m_normalStateFile);
 
     if (!m_hoverStateFile.isEmpty()) {
         style += QString(
-            "QToolButton:hover {"
-            "image: url(%1);"
-            "}"
-                 ).arg(m_hoverStateFile);
+                "QToolButton:hover {"
+                        "image: url(%1);"
+                        "}"
+        ).arg(m_hoverStateFile);
     }
 
     if (!m_pressedStateFile.isEmpty()) {
         style += QString(
-            "QToolButton:hover:pressed {"
-            "image: url(%1);"
-            "}"
-                 ).arg(m_pressedStateFile);
+                "QToolButton:hover:pressed {"
+                        "image: url(%1);"
+                        "}"
+        ).arg(m_pressedStateFile);
     }
 
     setStyleSheet(style);

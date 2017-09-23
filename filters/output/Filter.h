@@ -36,53 +36,54 @@ class OutputFileNameGenerator;
 class QString;
 
 namespace output {
-class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class OptionsWidget;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-class Filter: public AbstractFilter {
+    class Filter : public AbstractFilter {
     DECLARE_NON_COPYABLE(Filter)
-public:
-    Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~Filter();
+    public:
+        Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    virtual QString getName() const;
+        virtual ~Filter();
 
-    virtual PageView getView() const;
+        virtual QString getName() const;
 
-    virtual void performRelinking(AbstractRelinker const& relinker);
+        virtual PageView getView() const;
 
-    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        virtual void performRelinking(AbstractRelinker const& relinker);
 
-    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-    IntrusivePtr<Task> createTask(PageId const& page_id,
-                                  IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                                  OutputFileNameGenerator const& out_file_name_gen,
-                                  bool batch,
-                                  bool debug);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                                      OutputFileNameGenerator const& out_file_name_gen,
+                                      bool batch,
+                                      bool debug);
 
-    OptionsWidget* optionsWidget() {
-        return m_ptrOptionsWidget.get();
-    }
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
 
-    Settings* getSettings() {
-        return m_ptrSettings.get();
-    }
+        OptionsWidget* optionsWidget() {
+            return m_ptrOptionsWidget.get();
+        }
 
-private:
-    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+        Settings* getSettings() {
+            return m_ptrSettings.get();
+        }
 
-    IntrusivePtr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    PictureZonePropFactory m_pictureZonePropFactory;
-    FillZonePropFactory m_fillZonePropFactory;
-};
+    private:
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+
+        IntrusivePtr<Settings> m_ptrSettings;
+        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+        PictureZonePropFactory m_pictureZonePropFactory;
+        FillZonePropFactory m_fillZonePropFactory;
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_FILTER_H_

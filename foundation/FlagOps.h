@@ -20,7 +20,7 @@
 #define FLAGOPS_H_
 
 #ifdef HAVE_CONFIG_H
- #include <config.h>
+#include <config.h>
 #endif
 
 #define DEFINE_FLAG_OPS(type) \

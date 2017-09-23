@@ -297,40 +297,40 @@ void CommandLine::printHelp() {
     std::cout << "\t--rotate=<0.0...360.0>\t\t\t-- it also sets deskew to manual mode" << std::endl;
     std::cout << "\t--deskew=<auto|manual>\t\t\t-- default: auto" << std::endl;
     std::cout
-        << "\t--skew-deviation=<0.0...)\t\t-- default: 5.0; pages with bigger skew deviation will be painted in red"
-        << std::endl;
+            << "\t--skew-deviation=<0.0...)\t\t-- default: 5.0; pages with bigger skew deviation will be painted in red"
+            << std::endl;
     std::cout << "\t--disable-content-detection\t\t-- default: enabled" << std::endl;
     std::cout << "\t--enable-page-detection\t\t\t-- default: disabled" << std::endl;
     std::cout
-        <<
-        "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while corners are in black"
-        << std::endl;
+            <<
+            "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while corners are in black"
+            << std::endl;
     std::cout
-        <<
-        "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and set content detection to manual mode"
-        << std::endl;
+            <<
+            "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and set content detection to manual mode"
+            << std::endl;
     std::cout << "\t--disable-content-text-mask\n\t\t\t\t\t\t-- disable using text mask to estimate a content box"
               << std::endl;
     std::cout << "\t--content-detection=<cautious|normal|aggressive>\n\t\t\t\t\t\t-- default: normal" << std::endl;
     std::cout
-        <<
-        "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be painted in red"
-        << std::endl;
+            <<
+            "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be painted in red"
+            << std::endl;
     std::cout << "\t--content-box=<<left_offset>x<top_offset>:<width>x<height>>" << std::endl;
     std::cout << "\t\t\t\t\t\t-- if set the content detection is se to manual mode" << std::endl;
     std::cout << "\t\t\t\t\t\t   example: --content-box=100x100:1500x2500" << std::endl;
     std::cout
-        << "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image size)"
-        << std::endl;
+            << "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image size)"
+            << std::endl;
     std::cout << "\t--margins=<number>\t\t\t-- sets left, top, right and bottom margins to same number." << std::endl;
     std::cout << "\t\t--margins-left=<number>" << std::endl;
     std::cout << "\t\t--margins-right=<number>" << std::endl;
     std::cout << "\t\t--margins-top=<number>" << std::endl;
     std::cout << "\t\t--margins-bottom=<number>" << std::endl;
     std::cout
-        <<
-        "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to same number."
-        << std::endl;
+            <<
+            "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to same number."
+            << std::endl;
     std::cout << "\t\t--default-margins-left=<number>" << std::endl;
     std::cout << "\t\t--default-margins-right=<number>" << std::endl;
     std::cout << "\t\t--default-margins-top=<number>" << std::endl;
@@ -730,8 +730,7 @@ bool CommandLine::hasMargins(QString base) const {
            || m_options.contains(base + "-left")
            || m_options.contains(base + "-right")
            || m_options.contains(base + "-top")
-           || m_options.contains(base + "-bottom")
-    ;
+           || m_options.contains(base + "-bottom");
 }
 
 bool CommandLine::hasAlignment() const {
@@ -739,15 +738,13 @@ bool CommandLine::hasAlignment() const {
            || m_options.contains("alignment")
            || m_options.contains("alignment-vertical")
            || m_options.contains("alignment-horizontal")
-           || isAutoMarginsEnabled()
-    ;
+           || isAutoMarginsEnabled();
 }
 
 bool CommandLine::hasOutputDpi() const {
     return m_options.contains("output-dpi")
            || m_options.contains("output-dpi-x")
-           || m_options.contains("output-dpi-y")
-    ;
+           || m_options.contains("output-dpi-y");
 }
 
 bool CommandLine::hasLanguage() const {
@@ -773,7 +770,7 @@ int CommandLine::fetchCompression() const {
     }
 
     std::cout << "Unknown compression" << std::endl;
-    throw("Unknown compression");
+    throw ("Unknown compression");
 }
 
 QString CommandLine::fetchLanguage() const {

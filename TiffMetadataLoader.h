@@ -26,7 +26,7 @@
 class QIODevice;
 class ImageMetadata;
 
-class TiffMetadataLoader: public ImageMetadataLoader {
+class TiffMetadataLoader : public ImageMetadataLoader {
 public:
     /**
      * \brief Register this loader in the global registry.

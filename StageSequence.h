@@ -36,8 +36,9 @@ class ProjectPages;
 class PageSelectionAccessor;
 class AbstractRelinker;
 
-class StageSequence: public RefCountable {
-    DECLARE_NON_COPYABLE(StageSequence)
+class StageSequence : public RefCountable {
+DECLARE_NON_COPYABLE(StageSequence)
+
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 

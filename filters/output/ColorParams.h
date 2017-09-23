@@ -26,50 +26,54 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-class ColorParams {
-public:
-    enum ColorMode { BLACK_AND_WHITE, COLOR_GRAYSCALE, MIXED };
+    class ColorParams {
+    public:
+        enum ColorMode {
+            BLACK_AND_WHITE,
+            COLOR_GRAYSCALE,
+            MIXED
+        };
 
-    ColorParams();
+        ColorParams();
 
-    ColorParams(QDomElement const& el);
+        ColorParams(QDomElement const& el);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    static ColorMode DefaultColorMode();
+        static ColorMode DefaultColorMode();
 
-    ColorMode colorMode() const {
-        return m_colorMode;
-    }
+        ColorMode colorMode() const {
+            return m_colorMode;
+        }
 
-    void setColorMode(ColorMode mode) {
-        m_colorMode = mode;
-    }
+        void setColorMode(ColorMode mode) {
+            m_colorMode = mode;
+        }
 
-    ColorGrayscaleOptions const& colorGrayscaleOptions() const {
-        return m_colorGrayscaleOptions;
-    }
+        ColorGrayscaleOptions const& colorGrayscaleOptions() const {
+            return m_colorGrayscaleOptions;
+        }
 
-    void setColorGrayscaleOptions(ColorGrayscaleOptions const& opt) {
-        m_colorGrayscaleOptions = opt;
-    }
+        void setColorGrayscaleOptions(ColorGrayscaleOptions const& opt) {
+            m_colorGrayscaleOptions = opt;
+        }
 
-    BlackWhiteOptions const& blackWhiteOptions() const {
-        return m_bwOptions;
-    }
+        BlackWhiteOptions const& blackWhiteOptions() const {
+            return m_bwOptions;
+        }
 
-    void setBlackWhiteOptions(BlackWhiteOptions const& opt) {
-        m_bwOptions = opt;
-    }
+        void setBlackWhiteOptions(BlackWhiteOptions const& opt) {
+            m_bwOptions = opt;
+        }
 
-private:
-    static ColorMode parseColorMode(QString const& str);
+    private:
+        static ColorMode parseColorMode(QString const& str);
 
-    static QString formatColorMode(ColorMode mode);
+        static QString formatColorMode(ColorMode mode);
 
-    ColorMode m_colorMode;
-    ColorGrayscaleOptions m_colorGrayscaleOptions;
-    BlackWhiteOptions m_bwOptions;
-};
+        ColorMode m_colorMode;
+        ColorGrayscaleOptions m_colorGrayscaleOptions;
+        BlackWhiteOptions m_bwOptions;
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLORPARAMS_H_

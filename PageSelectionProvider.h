@@ -27,7 +27,7 @@ class PageSequence;
 class PageId;
 class PageRange;
 
-class PageSelectionProvider: public RefCountable {
+class PageSelectionProvider : public RefCountable {
 public:
     virtual PageSequence allPages() const = 0;
 

@@ -25,7 +25,7 @@
 class QDomDocument;
 class QDomElement;
 
-class Property: public RefCountable {
+class Property : public RefCountable {
 public:
     virtual IntrusivePtr<Property> clone() const = 0;
 

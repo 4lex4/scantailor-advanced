@@ -19,7 +19,7 @@
 #ifndef VIRTUALFUNCTION_H_
 #define VIRTUALFUNCTION_H_
 
-template <typename R, typename A1>
+template<typename R, typename A1>
 class VirtualFunction1 {
 public:
     virtual ~VirtualFunction1() {
@@ -29,8 +29,8 @@ public:
 };
 
 
-template <typename Delegate, typename R, typename A1>
-class ProxyFunction1: public VirtualFunction1<R, A1>{
+template<typename Delegate, typename R, typename A1>
+class ProxyFunction1 : public VirtualFunction1<R, A1> {
 public:
     ProxyFunction1(Delegate delegate)
             : m_delegate(delegate) {
@@ -45,7 +45,7 @@ private:
 };
 
 
-template <typename R, typename A1, typename A2>
+template<typename R, typename A1, typename A2>
 class VirtualFunction2 {
 public:
     virtual ~VirtualFunction2() {
@@ -55,8 +55,8 @@ public:
 };
 
 
-template <typename Delegate, typename R, typename A1, typename A2>
-class ProxyFunction2: public VirtualFunction2<R, A1, A2>{
+template<typename Delegate, typename R, typename A1, typename A2>
+class ProxyFunction2 : public VirtualFunction2<R, A1, A2> {
 public:
     ProxyFunction2(Delegate delegate)
             : m_delegate(delegate) {
@@ -71,7 +71,7 @@ private:
 };
 
 
-template <typename R, typename A1, typename A2, typename A3>
+template<typename R, typename A1, typename A2, typename A3>
 class VirtualFunction3 {
 public:
     virtual ~VirtualFunction3() {
@@ -81,8 +81,8 @@ public:
 };
 
 
-template <typename Delegate, typename R, typename A1, typename A2, typename A3>
-class ProxyFunction3: public VirtualFunction3<R, A1, A2, A3>{
+template<typename Delegate, typename R, typename A1, typename A2, typename A3>
+class ProxyFunction3 : public VirtualFunction3<R, A1, A2, A3> {
 public:
     ProxyFunction3(Delegate delegate)
             : m_delegate(delegate) {

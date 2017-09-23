@@ -43,8 +43,8 @@ public:
 ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionContext& context,
                                                                InteractionState& interaction) {
     return create(
-        context, interaction,
-        boost::bind(&ZoneContextMenuInteraction::defaultMenuCustomizer, _1, _2)
+            context, interaction,
+            boost::bind(&ZoneContextMenuInteraction::defaultMenuCustomizer, _1, _2)
     );
 }
 
@@ -57,7 +57,7 @@ ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionCo
         return 0;
     } else {
         return new ZoneContextMenuInteraction(
-            context, interaction, menu_customizer, selectable_zones
+                context, interaction, menu_customizer, selectable_zones
         );
     }
 }
@@ -66,7 +66,7 @@ std::vector<ZoneContextMenuInteraction::Zone>
 ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context) {
     QTransform const from_screen(context.imageView().widgetToImage());
     QPointF const image_mouse_pos(
-        from_screen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5))
+            from_screen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5))
     );
 
     std::vector<Zone> selectable_zones;
@@ -124,18 +124,18 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
         }
 
         StandardMenuItems const std_items(
-            propertiesMenuItemFor(*it),
-            deleteMenuItemFor(*it)
+                propertiesMenuItemFor(*it),
+                deleteMenuItemFor(*it)
         );
 
         for (ZoneContextMenuItem const& item : menu_customizer(*it, std_items)) {
             QAction* action = m_ptrMenu->addAction(pixmap, item.label());
             new QtSignalForwarder(
-                action, SIGNAL(triggered()),
-                boost::bind(
-                    &ZoneContextMenuInteraction::menuItemTriggered,
-                    this, boost::ref(interaction), item.callback()
-                )
+                    action, SIGNAL(triggered()),
+                    boost::bind(
+                            &ZoneContextMenuInteraction::menuItemTriggered,
+                            this, boost::ref(interaction), item.callback()
+                    )
             );
 
             hover_map->setMapping(action, i);
@@ -146,8 +146,8 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     }
 
     connect(
-        m_ptrMenu.get(), SIGNAL(aboutToHide()),
-        SLOT(menuAboutToHide()), Qt::QueuedConnection
+            m_ptrMenu.get(), SIGNAL(aboutToHide()),
+            SLOT(menuAboutToHide()), Qt::QueuedConnection
     );
 
     highlightItem(0);
@@ -214,9 +214,9 @@ InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(EditableZoneSe
 
 InteractionHandler* ZoneContextMenuInteraction::deleteRequest(EditableZoneSet::Zone const& zone) {
     QMessageBox::StandardButton const btn = QMessageBox::question(
-        &m_rContext.imageView(), tr("Delete confirmation"), tr("Really delete this zone?"),
-        QMessageBox::Yes | QMessageBox::No
-                                            );
+            &m_rContext.imageView(), tr("Delete confirmation"), tr("Really delete this zone?"),
+            QMessageBox::Yes | QMessageBox::No
+    );
     if (btn == QMessageBox::Yes) {
         m_rContext.zones().removeZone(zone.spline());
         m_rContext.zones().commit();
@@ -227,15 +227,15 @@ InteractionHandler* ZoneContextMenuInteraction::deleteRequest(EditableZoneSet::Z
 
 ZoneContextMenuItem ZoneContextMenuInteraction::deleteMenuItemFor(EditableZoneSet::Zone const& zone) {
     return ZoneContextMenuItem(
-        tr("Delete"),
-        boost::bind(&ZoneContextMenuInteraction::deleteRequest, this, zone)
+            tr("Delete"),
+            boost::bind(&ZoneContextMenuInteraction::deleteRequest, this, zone)
     );
 }
 
 ZoneContextMenuItem ZoneContextMenuInteraction::propertiesMenuItemFor(EditableZoneSet::Zone const& zone) {
     return ZoneContextMenuItem(
-        tr("Properties"),
-        boost::bind(&ZoneContextMenuInteraction::propertiesRequest, this, zone)
+            tr("Properties"),
+            boost::bind(&ZoneContextMenuInteraction::propertiesRequest, this, zone)
     );
 }
 

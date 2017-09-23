@@ -38,88 +38,89 @@
 class AbstractRelinker;
 
 namespace output {
-class Params;
+    class Params;
 
-class Settings: public RefCountable {
+    class Settings : public RefCountable {
     DECLARE_NON_COPYABLE(Settings)
-public:
-    Settings();
 
-    virtual ~Settings();
+    public:
+        Settings();
 
-    void clear();
+        virtual ~Settings();
 
-    void performRelinking(AbstractRelinker const& relinker);
+        void clear();
 
-    Params getParams(PageId const& page_id) const;
+        void performRelinking(AbstractRelinker const& relinker);
 
-    void setParams(PageId const& page_id, Params const& params);
+        Params getParams(PageId const& page_id) const;
 
-    void setColorParams(PageId const& page_id, ColorParams const& prms);
+        void setParams(PageId const& page_id, Params const& params);
 
-    void setPictureShape(PageId const& page_id, PictureShape picture_shape);
+        void setColorParams(PageId const& page_id, ColorParams const& prms);
 
-    void setDpi(PageId const& page_id, Dpi const& dpi);
+        void setPictureShape(PageId const& page_id, PictureShape picture_shape);
 
-    void setDewarpingMode(PageId const& page_id, DewarpingMode const& mode);
+        void setDpi(PageId const& page_id, Dpi const& dpi);
 
-    void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
+        void setDewarpingMode(PageId const& page_id, DewarpingMode const& mode);
 
-    void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);
+        void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
 
-    void setDespeckleLevel(PageId const& page_id, DespeckleLevel level);
+        void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);
 
-    std::unique_ptr<OutputParams> getOutputParams(PageId const& page_id) const;
+        void setDespeckleLevel(PageId const& page_id, DespeckleLevel level);
 
-    void removeOutputParams(PageId const& page_id);
+        std::unique_ptr<OutputParams> getOutputParams(PageId const& page_id) const;
 
-    void setOutputParams(PageId const& page_id, OutputParams const& params);
+        void removeOutputParams(PageId const& page_id);
 
-    ZoneSet pictureZonesForPage(PageId const& page_id) const;
+        void setOutputParams(PageId const& page_id, OutputParams const& params);
 
-    ZoneSet fillZonesForPage(PageId const& page_id) const;
+        ZoneSet pictureZonesForPage(PageId const& page_id) const;
 
-    void setPictureZones(PageId const& page_id, ZoneSet const& zones);
+        ZoneSet fillZonesForPage(PageId const& page_id) const;
 
-    void setFillZones(PageId const& page_id, ZoneSet const& zones);
+        void setPictureZones(PageId const& page_id, ZoneSet const& zones);
 
-    int getTiffCompression() {
-        return m_compression;
-    }
+        void setFillZones(PageId const& page_id, ZoneSet const& zones);
 
-    void setTiffCompression(int compression) {
-        m_compression = compression;
-    }
+        int getTiffCompression() {
+            return m_compression;
+        }
 
-    /**
-     * For now, default zone properties are not persistent.
-     * They may become persistent later though.
-     */
-    PropertySet defaultPictureZoneProperties() const;
+        void setTiffCompression(int compression) {
+            m_compression = compression;
+        }
 
-    PropertySet defaultFillZoneProperties() const;
+        /**
+         * For now, default zone properties are not persistent.
+         * They may become persistent later though.
+         */
+        PropertySet defaultPictureZoneProperties() const;
 
-    void setDefaultPictureZoneProperties(PropertySet const& props);
+        PropertySet defaultFillZoneProperties() const;
 
-    void setDefaultFillZoneProperties(PropertySet const& props);
+        void setDefaultPictureZoneProperties(PropertySet const& props);
 
-private:
-    typedef std::map<PageId, Params> PerPageParams;
-    typedef std::map<PageId, OutputParams> PerPageOutputParams;
-    typedef std::map<PageId, ZoneSet> PerPageZones;
+        void setDefaultFillZoneProperties(PropertySet const& props);
 
-    static PropertySet initialPictureZoneProps();
+    private:
+        typedef std::map<PageId, Params> PerPageParams;
+        typedef std::map<PageId, OutputParams> PerPageOutputParams;
+        typedef std::map<PageId, ZoneSet> PerPageZones;
 
-    static PropertySet initialFillZoneProps();
+        static PropertySet initialPictureZoneProps();
 
-    mutable QMutex m_mutex;
-    PerPageParams m_perPageParams;
-    PerPageOutputParams m_perPageOutputParams;
-    PerPageZones m_perPagePictureZones;
-    PerPageZones m_perPageFillZones;
-    PropertySet m_defaultPictureZoneProps;
-    PropertySet m_defaultFillZoneProps;
-    int m_compression;
-};
+        static PropertySet initialFillZoneProps();
+
+        mutable QMutex m_mutex;
+        PerPageParams m_perPageParams;
+        PerPageOutputParams m_perPageOutputParams;
+        PerPageZones m_perPagePictureZones;
+        PerPageZones m_perPageFillZones;
+        PropertySet m_defaultPictureZoneProps;
+        PropertySet m_defaultFillZoneProps;
+        int m_compression;
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_SETTINGS_H_

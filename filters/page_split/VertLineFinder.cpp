@@ -32,291 +32,291 @@
 #include <cmath>
 
 namespace page_split {
-using namespace imageproc;
+    using namespace imageproc;
 
-std::vector<QLineF>
-VertLineFinder::findLines(QImage const& image,
-                          ImageTransformation const& xform,
-                          int const max_lines,
-                          DebugImages* dbg,
-                          GrayImage* gray_downscaled,
-                          QTransform* out_to_downscaled) {
-    int const dpi = 100;
+    std::vector<QLineF>
+    VertLineFinder::findLines(QImage const& image,
+                              ImageTransformation const& xform,
+                              int const max_lines,
+                              DebugImages* dbg,
+                              GrayImage* gray_downscaled,
+                              QTransform* out_to_downscaled) {
+        int const dpi = 100;
 
-    ImageTransformation xform_100dpi(xform);
-    xform_100dpi.preScaleToDpi(Dpi(dpi, dpi));
+        ImageTransformation xform_100dpi(xform);
+        xform_100dpi.preScaleToDpi(Dpi(dpi, dpi));
 
-    QRect target_rect(xform_100dpi.resultingRect().toRect());
-    if (target_rect.isEmpty()) {
-        target_rect.setWidth(1);
-        target_rect.setHeight(1);
-    }
-
-    GrayImage const gray100(
-        transformToGray(
-            image, xform_100dpi.transform(), target_rect,
-            OutsidePixels::assumeWeakColor(Qt::black), QSizeF(5.0, 5.0)
-        )
-    );
-    if (dbg) {
-        dbg->add(gray100, "gray100");
-    }
-
-    if (gray_downscaled) {
-        *gray_downscaled = gray100;
-    }
-    if (out_to_downscaled) {
-        *out_to_downscaled = xform.transformBack()
-                             * xform_100dpi.transform();
-    }
-
-#if 0
-    GrayImage preprocessed(removeDarkVertBorders(gray100));
-    if (dbg) {
-        dbg->add(preprocessed, "preprocessed");
-    }
-#else
-    GrayImage preprocessed(gray100);
-#endif
-
-#if 0
-    GrayImage h_gradient(morphGradientDetectDarkSide(preprocessed, QSize(11, 1)));
-    GrayImage v_gradient(morphGradientDetectDarkSide(preprocessed, QSize(1, 11)));
-    if (dbg) {
-        dbg->add(h_gradient, "h_gradient");
-        dbg->add(v_gradient, "v_gradient");
-    }
-#else
-    GrayImage h_gradient(erodeGray(preprocessed, QSize(11, 1), 0x00));
-    GrayImage v_gradient(erodeGray(preprocessed, QSize(1, 11), 0x00));
-#endif
-
-    if (!dbg) {
-        preprocessed = GrayImage();
-    }
-
-    grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc>>(h_gradient, v_gradient);
-    v_gradient = GrayImage();
-    if (dbg) {
-        dbg->add(h_gradient, "vert_raster_lines");
-    }
-
-    GrayImage const raster_lines(closeGray(h_gradient, QSize(1, 19), 0x00));
-    h_gradient = GrayImage();
-    if (dbg) {
-        dbg->add(raster_lines, "short_segments_removed");
-    }
-
-    double const line_thickness = 5.0;
-    double const max_angle = 7.0;
-    double const angle_step = 0.25;
-    int const angle_steps_to_max = (int) (max_angle / angle_step);
-    int const total_angle_steps = angle_steps_to_max * 2 + 1;
-    double const min_angle = -angle_steps_to_max * angle_step;
-    HoughLineDetector line_detector(
-        raster_lines.size(), line_thickness,
-        min_angle, angle_step, total_angle_steps
-    );
-
-    unsigned weight_table[256];
-    buildWeightTable(weight_table);
-
-    double const margin_mm = 3.5;
-    int const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
-
-    int const x_limit = raster_lines.width() - margin;
-    int const height = raster_lines.height();
-    uint8_t const* line = raster_lines.data();
-    int const stride = raster_lines.stride();
-    for (int y = 0; y < height; ++y, line += stride) {
-        for (int x = margin; x < x_limit; ++x) {
-            unsigned const val = line[x];
-            if (val > 1) {
-                line_detector.process(x, y, weight_table[val]);
-            }
+        QRect target_rect(xform_100dpi.resultingRect().toRect());
+        if (target_rect.isEmpty()) {
+            target_rect.setWidth(1);
+            target_rect.setHeight(1);
         }
-    }
 
-    unsigned const min_quality = (unsigned) (height * line_thickness * 1.8) + 1;
-
-    if (dbg) {
-        dbg->add(line_detector.visualizeHoughSpace(min_quality), "hough_space");
-    }
-
-    std::vector<HoughLine> const hough_lines(line_detector.findLines(min_quality));
-
-    typedef std::list<LineGroup> LineGroups;
-    LineGroups line_groups;
-    for (HoughLine const& hough_line : hough_lines) {
-        QualityLine const new_line(
-            hough_line.pointAtY(0.0),
-            hough_line.pointAtY(height),
-            hough_line.quality()
+        GrayImage const gray100(
+                transformToGray(
+                        image, xform_100dpi.transform(), target_rect,
+                        OutsidePixels::assumeWeakColor(Qt::black), QSizeF(5.0, 5.0)
+                )
         );
-        LineGroup* home_group = 0;
+        if (dbg) {
+            dbg->add(gray100, "gray100");
+        }
 
-        LineGroups::iterator it(line_groups.begin());
-        LineGroups::iterator const end(line_groups.end());
-        while (it != end) {
-            LineGroup& group = *it;
-            if (group.belongsHere(new_line)) {
-                if (home_group) {
-                    home_group->merge(group);
-                    line_groups.erase(it++);
-                    continue;
-                } else {
-                    group.add(new_line);
-                    home_group = &group;
+        if (gray_downscaled) {
+            *gray_downscaled = gray100;
+        }
+        if (out_to_downscaled) {
+            *out_to_downscaled = xform.transformBack()
+                                 * xform_100dpi.transform();
+        }
+
+#if 0
+        GrayImage preprocessed(removeDarkVertBorders(gray100));
+        if (dbg) {
+            dbg->add(preprocessed, "preprocessed");
+        }
+#else
+        GrayImage preprocessed(gray100);
+#endif
+
+#if 0
+        GrayImage h_gradient(morphGradientDetectDarkSide(preprocessed, QSize(11, 1)));
+        GrayImage v_gradient(morphGradientDetectDarkSide(preprocessed, QSize(1, 11)));
+        if (dbg) {
+            dbg->add(h_gradient, "h_gradient");
+            dbg->add(v_gradient, "v_gradient");
+        }
+#else
+        GrayImage h_gradient(erodeGray(preprocessed, QSize(11, 1), 0x00));
+        GrayImage v_gradient(erodeGray(preprocessed, QSize(1, 11), 0x00));
+#endif
+
+        if (!dbg) {
+            preprocessed = GrayImage();
+        }
+
+        grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc>>(h_gradient, v_gradient);
+        v_gradient = GrayImage();
+        if (dbg) {
+            dbg->add(h_gradient, "vert_raster_lines");
+        }
+
+        GrayImage const raster_lines(closeGray(h_gradient, QSize(1, 19), 0x00));
+        h_gradient = GrayImage();
+        if (dbg) {
+            dbg->add(raster_lines, "short_segments_removed");
+        }
+
+        double const line_thickness = 5.0;
+        double const max_angle = 7.0;
+        double const angle_step = 0.25;
+        int const angle_steps_to_max = (int) (max_angle / angle_step);
+        int const total_angle_steps = angle_steps_to_max * 2 + 1;
+        double const min_angle = -angle_steps_to_max * angle_step;
+        HoughLineDetector line_detector(
+                raster_lines.size(), line_thickness,
+                min_angle, angle_step, total_angle_steps
+        );
+
+        unsigned weight_table[256];
+        buildWeightTable(weight_table);
+
+        double const margin_mm = 3.5;
+        int const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
+
+        int const x_limit = raster_lines.width() - margin;
+        int const height = raster_lines.height();
+        uint8_t const* line = raster_lines.data();
+        int const stride = raster_lines.stride();
+        for (int y = 0; y < height; ++y, line += stride) {
+            for (int x = margin; x < x_limit; ++x) {
+                unsigned const val = line[x];
+                if (val > 1) {
+                    line_detector.process(x, y, weight_table[val]);
                 }
             }
-            ++it;
         }
 
-        if (!home_group) {
-            line_groups.push_back(LineGroup(new_line));
+        unsigned const min_quality = (unsigned) (height * line_thickness * 1.8) + 1;
+
+        if (dbg) {
+            dbg->add(line_detector.visualizeHoughSpace(min_quality), "hough_space");
         }
-    }
 
-    std::vector<QLineF> lines;
-    for (LineGroup const& group : line_groups) {
-        lines.push_back(group.leader().toQLine());
-        if ((int) lines.size() == max_lines) {
-            break;
-        }
-    }
+        std::vector<HoughLine> const hough_lines(line_detector.findLines(min_quality));
 
-    if (dbg) {
-        QImage visual(
-            preprocessed.toQImage().convertToFormat(
-                QImage::Format_ARGB32_Premultiplied
-            )
-        );
+        typedef std::list<LineGroup> LineGroups;
+        LineGroups line_groups;
+        for (HoughLine const& hough_line : hough_lines) {
+            QualityLine const new_line(
+                    hough_line.pointAtY(0.0),
+                    hough_line.pointAtY(height),
+                    hough_line.quality()
+            );
+            LineGroup* home_group = 0;
 
-        {
-            QPainter painter(&visual);
-            painter.setRenderHint(QPainter::Antialiasing);
-            QPen pen(QColor(0xff, 0x00, 0x00, 0x80));
-            pen.setWidthF(3.0);
-            painter.setPen(pen);
+            LineGroups::iterator it(line_groups.begin());
+            LineGroups::iterator const end(line_groups.end());
+            while (it != end) {
+                LineGroup& group = *it;
+                if (group.belongsHere(new_line)) {
+                    if (home_group) {
+                        home_group->merge(group);
+                        line_groups.erase(it++);
+                        continue;
+                    } else {
+                        group.add(new_line);
+                        home_group = &group;
+                    }
+                }
+                ++it;
+            }
 
-            for (QLineF const& line : lines) {
-                painter.drawLine(line);
+            if (!home_group) {
+                line_groups.push_back(LineGroup(new_line));
             }
         }
-        dbg->add(visual, "vector_lines");
-    }
 
-    QTransform const undo_100dpi(
-        xform_100dpi.transformBack() * xform.transform()
-    );
-    for (QLineF& line : lines) {
-        line = undo_100dpi.map(line);
-    }
-
-    return lines;
-}      // VertLineFinder::findLines
-
-GrayImage VertLineFinder::removeDarkVertBorders(GrayImage const& src) {
-    GrayImage dst(src);
-
-    selectVertBorders(dst);
-    grayRasterOp<GRopInvert<GRopClippedSubtract<GRopDst, GRopSrc>>>(dst, src);
-
-    return dst;
-}
-
-void VertLineFinder::selectVertBorders(GrayImage& image) {
-    int const w = image.width();
-    int const h = image.height();
-
-    unsigned char* image_line = image.data();
-    int const image_stride = image.stride();
-
-    std::vector<unsigned char> tmp_line(w, 0x00);
-
-    for (int y = 0; y < h; ++y, image_line += image_stride) {
-        unsigned char prev_pixel = 0x00;
-        for (int x = 0; x < w; ++x) {
-            prev_pixel = std::max(image_line[x], prev_pixel);
-            tmp_line[x] = prev_pixel;
+        std::vector<QLineF> lines;
+        for (LineGroup const& group : line_groups) {
+            lines.push_back(group.leader().toQLine());
+            if ((int) lines.size() == max_lines) {
+                break;
+            }
         }
 
-        prev_pixel = 0x00;
-        for (int x = w - 1; x >= 0; --x) {
-            prev_pixel = std::max(
-                image_line[x],
-                std::min(prev_pixel, tmp_line[x])
-                         );
-            image_line[x] = prev_pixel;
+        if (dbg) {
+            QImage visual(
+                    preprocessed.toQImage().convertToFormat(
+                            QImage::Format_ARGB32_Premultiplied
+                    )
+            );
+
+            {
+                QPainter painter(&visual);
+                painter.setRenderHint(QPainter::Antialiasing);
+                QPen pen(QColor(0xff, 0x00, 0x00, 0x80));
+                pen.setWidthF(3.0);
+                painter.setPen(pen);
+
+                for (QLineF const& line : lines) {
+                    painter.drawLine(line);
+                }
+            }
+            dbg->add(visual, "vector_lines");
+        }
+
+        QTransform const undo_100dpi(
+                xform_100dpi.transformBack() * xform.transform()
+        );
+        for (QLineF& line : lines) {
+            line = undo_100dpi.map(line);
+        }
+
+        return lines;
+    }      // VertLineFinder::findLines
+
+    GrayImage VertLineFinder::removeDarkVertBorders(GrayImage const& src) {
+        GrayImage dst(src);
+
+        selectVertBorders(dst);
+        grayRasterOp<GRopInvert<GRopClippedSubtract<GRopDst, GRopSrc>>>(dst, src);
+
+        return dst;
+    }
+
+    void VertLineFinder::selectVertBorders(GrayImage& image) {
+        int const w = image.width();
+        int const h = image.height();
+
+        unsigned char* image_line = image.data();
+        int const image_stride = image.stride();
+
+        std::vector<unsigned char> tmp_line(w, 0x00);
+
+        for (int y = 0; y < h; ++y, image_line += image_stride) {
+            unsigned char prev_pixel = 0x00;
+            for (int x = 0; x < w; ++x) {
+                prev_pixel = std::max(image_line[x], prev_pixel);
+                tmp_line[x] = prev_pixel;
+            }
+
+            prev_pixel = 0x00;
+            for (int x = w - 1; x >= 0; --x) {
+                prev_pixel = std::max(
+                        image_line[x],
+                        std::min(prev_pixel, tmp_line[x])
+                );
+                image_line[x] = prev_pixel;
+            }
         }
     }
-}
 
-void VertLineFinder::buildWeightTable(unsigned weight_table[]) {
-    int gray_level = 0;
-    unsigned weight = 2;
-    int segment = 2;
-    int prev_segment = 1;
+    void VertLineFinder::buildWeightTable(unsigned weight_table[]) {
+        int gray_level = 0;
+        unsigned weight = 2;
+        int segment = 2;
+        int prev_segment = 1;
 
-    while (gray_level < 256) {
-        int const limit = std::min(256, gray_level + segment);
-        for (; gray_level < limit; ++gray_level) {
-            weight_table[gray_level] = weight;
+        while (gray_level < 256) {
+            int const limit = std::min(256, gray_level + segment);
+            for (; gray_level < limit; ++gray_level) {
+                weight_table[gray_level] = weight;
+            }
+            ++weight;
+            segment += prev_segment;
+            prev_segment = segment;
         }
-        ++weight;
-        segment += prev_segment;
-        prev_segment = segment;
     }
-}
 
 /*======================= VertLineFinder::QualityLine =======================*/
 
-VertLineFinder::QualityLine::QualityLine(QPointF const& top, QPointF const& bottom, unsigned const quality)
-        : m_quality(quality) {
-    if (top.x() < bottom.x()) {
-        m_left = top;
-        m_right = bottom;
-    } else {
-        m_left = bottom;
-        m_right = top;
+    VertLineFinder::QualityLine::QualityLine(QPointF const& top, QPointF const& bottom, unsigned const quality)
+            : m_quality(quality) {
+        if (top.x() < bottom.x()) {
+            m_left = top;
+            m_right = bottom;
+        } else {
+            m_left = bottom;
+            m_right = top;
+        }
     }
-}
 
-QLineF VertLineFinder::QualityLine::toQLine() const {
-    return QLineF(m_left, m_right);
-}
+    QLineF VertLineFinder::QualityLine::toQLine() const {
+        return QLineF(m_left, m_right);
+    }
 
 /*======================= VertLineFinder::LineGroup ========================*/
 
-VertLineFinder::LineGroup::LineGroup(QualityLine const& line)
-        : m_leader(line),
-          m_left(line.left().x()),
-          m_right(line.right().x()) {
-}
-
-bool VertLineFinder::LineGroup::belongsHere(QualityLine const& line) const {
-    if (m_left > line.right().x()) {
-        return false;
-    } else if (m_right < line.left().x()) {
-        return false;
-    } else {
-        return true;
+    VertLineFinder::LineGroup::LineGroup(QualityLine const& line)
+            : m_leader(line),
+              m_left(line.left().x()),
+              m_right(line.right().x()) {
     }
-}
 
-void VertLineFinder::LineGroup::add(QualityLine const& line) {
-    m_left = std::min(qreal(m_left), line.left().x());
-    m_right = std::max(qreal(m_right), line.right().x());
-    if (line.quality() > m_leader.quality()) {
-        m_leader = line;
+    bool VertLineFinder::LineGroup::belongsHere(QualityLine const& line) const {
+        if (m_left > line.right().x()) {
+            return false;
+        } else if (m_right < line.left().x()) {
+            return false;
+        } else {
+            return true;
+        }
     }
-}
 
-void VertLineFinder::LineGroup::merge(LineGroup const& other) {
-    m_left = std::min(m_left, other.m_left);
-    m_right = std::max(m_right, other.m_right);
-    if (other.leader().quality() > m_leader.quality()) {
-        m_leader = other.leader();
+    void VertLineFinder::LineGroup::add(QualityLine const& line) {
+        m_left = std::min(qreal(m_left), line.left().x());
+        m_right = std::max(qreal(m_right), line.right().x());
+        if (line.quality() > m_leader.quality()) {
+            m_leader = line;
+        }
     }
-}
+
+    void VertLineFinder::LineGroup::merge(LineGroup const& other) {
+        m_left = std::min(m_left, other.m_left);
+        m_right = std::max(m_right, other.m_right);
+        if (other.leader().quality() > m_leader.quality()) {
+            m_leader = other.leader();
+        }
+    }
 }  // namespace page_split

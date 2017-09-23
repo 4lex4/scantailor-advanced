@@ -26,7 +26,7 @@
 /**
  * \brief A (column) vector of elements of type T.
  */
-template <typename T>
+template<typename T>
 class VecT {
 public:
     typedef T type;
@@ -51,7 +51,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     explicit VecT(size_t size, OT const* data);
 
     /**
@@ -64,7 +64,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     VecT(VecT<OT> const& other);
 
     /**
@@ -77,7 +77,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     VecT& operator=(VecT<OT> const& other);
 
     VecT& operator+=(VecT const& rhs);
@@ -120,18 +120,18 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 VecT<T>::VecT()
         : m_size(0) {
 }
 
-template <typename T>
+template<typename T>
 VecT<T>::VecT(size_t size)
         : m_data(new T[size]()),
           m_size(size) {
 }
 
-template <typename T>
+template<typename T>
 VecT<T>::VecT(size_t size, T initial_value)
         : m_data(new T[size]),
           m_size(size) {
@@ -140,8 +140,8 @@ VecT<T>::VecT(size_t size, T initial_value)
     }
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 VecT<T>::VecT(size_t size, OT const* data)
         : m_data(new T[size]),
           m_size(size) {
@@ -150,7 +150,7 @@ VecT<T>::VecT(size_t size, OT const* data)
     }
 }
 
-template <typename T>
+template<typename T>
 VecT<T>::VecT(VecT const& other)
         : m_data(new T[other.m_size]),
           m_size(other.m_size) {
@@ -160,8 +160,8 @@ VecT<T>::VecT(VecT const& other)
     }
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 VecT<T>::VecT(VecT<OT> const& other)
         : m_data(new T[other.m_size]),
           m_size(other.m_size) {
@@ -171,22 +171,22 @@ VecT<T>::VecT(VecT<OT> const& other)
     }
 }
 
-template <typename T>
+template<typename T>
 VecT<T>& VecT<T>::operator=(VecT const& other) {
     VecT(other).swap(*this);
 
     return *this;
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 VecT<T>& VecT<T>::operator=(VecT<OT> const& other) {
     VecT(other).swap(*this);
 
     return *this;
 }
 
-template <typename T>
+template<typename T>
 VecT<T>& VecT<T>::operator+=(VecT const& rhs) {
     assert(m_size == rhs.m_size);
     for (size_t i = 0; i < m_size; ++i) {
@@ -196,7 +196,7 @@ VecT<T>& VecT<T>::operator+=(VecT const& rhs) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 VecT<T>& VecT<T>::operator-=(VecT const& rhs) {
     assert(m_size == rhs.m_size);
     for (size_t i = 0; i < m_size; ++i) {
@@ -206,7 +206,7 @@ VecT<T>& VecT<T>::operator-=(VecT const& rhs) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 VecT<T>& VecT<T>::operator*=(T const scalar) {
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] *= scalar;
@@ -215,14 +215,14 @@ VecT<T>& VecT<T>::operator*=(T const scalar) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 void VecT<T>::fill(T const& value) {
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] = value;
     }
 }
 
-template <typename T>
+template<typename T>
 void VecT<T>::swap(VecT& other) {
     size_t tmp = m_size;
     m_size = other.m_size;
@@ -230,12 +230,12 @@ void VecT<T>::swap(VecT& other) {
     m_data.swap(other.m_data);
 }
 
-template <typename T>
+template<typename T>
 void swap(VecT<T> const& o1, VecT<T> const& o2) {
     o1.swap(o2);
 }
 
-template <typename T>
+template<typename T>
 VecT<T> operator*(VecT<T> const& vec, double scalar) {
     VecT<T> res(vec);
     res *= scalar;
@@ -243,7 +243,7 @@ VecT<T> operator*(VecT<T> const& vec, double scalar) {
     return res;
 }
 
-template <typename T>
+template<typename T>
 VecT<T> operator*(double scalar, VecT<T> const& vec) {
     VecT<T> res(vec);
     res *= scalar;

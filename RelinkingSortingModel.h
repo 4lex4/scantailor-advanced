@@ -21,9 +21,10 @@
 
 #include <QSortFilterProxyModel>
 
-class RelinkingSortingModel: public QSortFilterProxyModel {
+class RelinkingSortingModel : public QSortFilterProxyModel {
 public:
     RelinkingSortingModel(QObject* parent = 0);
+
 protected:
     virtual bool lessThan(QModelIndex const& left, QModelIndex const& right) const;
 };

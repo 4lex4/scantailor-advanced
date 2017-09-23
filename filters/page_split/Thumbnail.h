@@ -32,30 +32,30 @@ class ImageId;
 class ImageTransformation;
 
 namespace page_split {
-class Thumbnail: public ThumbnailBase {
-public:
-    Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-              QSizeF const& max_size,
-              ImageId const& image_id,
-              ImageTransformation const& xform,
-              PageLayout const& layout,
-              bool left_half_removed,
-              bool right_half_removed);
+    class Thumbnail : public ThumbnailBase {
+    public:
+        Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                  QSizeF const& max_size,
+                  ImageId const& image_id,
+                  ImageTransformation const& xform,
+                  PageLayout const& layout,
+                  bool left_half_removed,
+                  bool right_half_removed);
 
-    virtual void paintOverImage(QPainter& painter,
-                                QTransform const& image_to_display,
-                                QTransform const& thumb_to_display);
+        virtual void paintOverImage(QPainter& painter,
+                                    QTransform const& image_to_display,
+                                    QTransform const& thumb_to_display);
 
-private:
-    QPointF subPageCenter(QPolygonF const& left_page,
-                          QPolygonF const& right_page,
-                          QTransform const& image_to_display,
-                          int subpage_idx);
+    private:
+        QPointF subPageCenter(QPolygonF const& left_page,
+                              QPolygonF const& right_page,
+                              QTransform const& image_to_display,
+                              int subpage_idx);
 
-    PageLayout m_layout;
-    QPixmap m_trashPixmap;
-    bool m_leftHalfRemoved;
-    bool m_rightHalfRemoved;
-};
+        PageLayout m_layout;
+        QPixmap m_trashPixmap;
+        bool m_leftHalfRemoved;
+        bool m_rightHalfRemoved;
+    };
 }
 #endif  // ifndef PAGE_SPLIT_THUMBNAIL_H_

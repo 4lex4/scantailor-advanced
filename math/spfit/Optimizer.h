@@ -32,76 +32,76 @@
 #include <list>
 
 namespace spfit {
-class Optimizer {
-public:
-    Optimizer(size_t num_vars = 0);
+    class Optimizer {
+    public:
+        Optimizer(size_t num_vars = 0);
 
-    /**
-     * Sets linear constraints in the form of b^T * x + c = 0
-     * Note that x in the above formula is not a vector of coordinates
-     * but a vector of their displacements.  That is, the constraints
-     * to be passed here depend on the current positions of control points.
-     * That doesn't mean you have to provide updated constraints
-     * on very iteration though, as optimize() will update them for you.
-     */
-    void setConstraints(std::list<LinearFunction> const& constraints);
+        /**
+         * Sets linear constraints in the form of b^T * x + c = 0
+         * Note that x in the above formula is not a vector of coordinates
+         * but a vector of their displacements.  That is, the constraints
+         * to be passed here depend on the current positions of control points.
+         * That doesn't mean you have to provide updated constraints
+         * on very iteration though, as optimize() will update them for you.
+         */
+        void setConstraints(std::list<LinearFunction> const& constraints);
 
-    void addExternalForce(QuadraticFunction const& force);
+        void addExternalForce(QuadraticFunction const& force);
 
-    void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+        void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
 
-    void addInternalForce(QuadraticFunction const& force);
+        void addInternalForce(QuadraticFunction const& force);
 
-    void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+        void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
 
-    size_t numVars() const {
-        return m_numVars;
+        size_t numVars() const {
+            return m_numVars;
+        }
+
+        /**
+         * Get the external force accumulated from calls to addAttractionForce().
+         * Note that optimize() will reset all forces.
+         */
+        double externalForce() const {
+            return m_externalForce.c;
+        }
+
+        /**
+         * Get the internal force accumulated from calls to addInternalForce().
+         * Note that optimize() will reset all forces.
+         */
+        double internalForce() const {
+            return m_internalForce.c;
+        }
+
+        OptimizationResult optimize(double internal_external_ratio);
+
+        double const* displacementVector() const {
+            return m_x.data();
+        }
+
+        /**
+         * Rolls back the very last adjustment to constraints done by optimize()
+         * and sets the displacement vector to all zeros.
+         */
+        void undoLastStep();
+
+        void swap(Optimizer& other);
+
+    private:
+        void adjustConstraints(double direction);
+
+        size_t m_numVars;
+        MatT<double> m_A;
+        VecT<double> m_b;
+        VecT<double> m_x;
+        QuadraticFunction m_externalForce;
+        QuadraticFunction m_internalForce;
+    };
+
+
+    inline void swap(Optimizer& o1, Optimizer& o2) {
+        o1.swap(o2);
     }
-
-    /**
-     * Get the external force accumulated from calls to addAttractionForce().
-     * Note that optimize() will reset all forces.
-     */
-    double externalForce() const {
-        return m_externalForce.c;
-    }
-
-    /**
-     * Get the internal force accumulated from calls to addInternalForce().
-     * Note that optimize() will reset all forces.
-     */
-    double internalForce() const {
-        return m_internalForce.c;
-    }
-
-    OptimizationResult optimize(double internal_external_ratio);
-
-    double const* displacementVector() const {
-        return m_x.data();
-    }
-
-    /**
-     * Rolls back the very last adjustment to constraints done by optimize()
-     * and sets the displacement vector to all zeros.
-     */
-    void undoLastStep();
-
-    void swap(Optimizer& other);
-
-private:
-    void adjustConstraints(double direction);
-
-    size_t m_numVars;
-    MatT<double> m_A;
-    VecT<double> m_b;
-    VecT<double> m_x;
-    QuadraticFunction m_externalForce;
-    QuadraticFunction m_internalForce;
-};
-
-
-inline void swap(Optimizer& o1, Optimizer& o2) {
-    o1.swap(o2);
-}
 }  // namespace spfit
 #endif  // ifndef SPFIT_OPTIMIZER_H_

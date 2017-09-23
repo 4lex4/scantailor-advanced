@@ -31,43 +31,43 @@
 class ZoneInteractionContext;
 
 namespace output {
-class ColorPickupInteraction: public InteractionHandler {
+    class ColorPickupInteraction : public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(ColorPickupInteraction)
-public:
-    ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context);
+    public:
+        ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context);
 
-    void startInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
+        void startInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
 
-    bool isActive(InteractionState const& interaction) const;
+        bool isActive(InteractionState const& interaction) const;
 
-protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    protected:
+        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+        virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+        virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+        virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
 
-private:
-    void takeColor();
+    private:
+        void takeColor();
 
-    QRect targetBoundingRect() const;
+        QRect targetBoundingRect() const;
 
-    void switchToDefaultInteraction();
+        void switchToDefaultInteraction();
 
-    static uint32_t bitMixColor(uint32_t color);
+        static uint32_t bitMixColor(uint32_t color);
 
-    static uint32_t bitUnmixColor(uint32_t mixed);
+        static uint32_t bitUnmixColor(uint32_t mixed);
 
-    EditableZoneSet& m_rZones;
-    ZoneInteractionContext& m_rContext;
-    InteractionState::Captor m_interaction;
-    IntrusivePtr<FillColorProperty> m_ptrFillColorProp;
-    int m_dontDrawCircle;
+        EditableZoneSet& m_rZones;
+        ZoneInteractionContext& m_rContext;
+        InteractionState::Captor m_interaction;
+        IntrusivePtr<FillColorProperty> m_ptrFillColorProp;
+        int m_dontDrawCircle;
 
-    static uint32_t const m_sBitMixingLUT[3][256];
-    static uint32_t const m_sBitUnmixingLUT[3][256];
-};
+        static uint32_t const m_sBitMixingLUT[3][256];
+        static uint32_t const m_sBitUnmixingLUT[3][256];
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_PICKUP_INTERACTION_H_

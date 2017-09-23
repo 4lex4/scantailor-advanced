@@ -32,7 +32,7 @@
  *
  * [1] Blanc, C., Schlick, C.: X-splines: a spline model designed for the end-user.
  * http: */
-class XSpline: public spfit::FittableSpline {
+class XSpline : public spfit::FittableSpline {
 public:
     struct PointAndDerivs {
         QPointF point;
@@ -167,7 +167,7 @@ public:
                         double to_t = 1.0) const;
 
     std::vector<QPointF> toPolyline(
-        SamplingParams const& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;
+            SamplingParams const& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;
 
     void swap(XSpline& other) {
         m_controlPoints.swap(other.m_controlPoints);

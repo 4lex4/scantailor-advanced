@@ -41,7 +41,7 @@
 #include "Despeckle.h"
 
 namespace page_layout {
-class Alignment;
+    class Alignment;
 }
 
 /**
@@ -51,7 +51,12 @@ class Alignment;
  */
 class CommandLine {
 public:
-    enum Orientation { TOP, LEFT, RIGHT, UPSIDEDOWN };
+    enum Orientation {
+        TOP,
+        LEFT,
+        RIGHT,
+        UPSIDEDOWN
+    };
 
     static CommandLine const& get() {
         return m_globalInstance;

@@ -26,7 +26,7 @@
 class QIODevice;
 class ImageMetadata;
 
-class JpegMetadataLoader: public ImageMetadataLoader {
+class JpegMetadataLoader : public ImageMetadataLoader {
 public:
     /**
      * \brief Register this loader in the global registry.

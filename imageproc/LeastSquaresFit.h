@@ -32,7 +32,7 @@ namespace imageproc {
  * \param d The d vector of C_size.height() elements.  It's contents won't
  *        be preserved.
  */
-void leastSquaresFit(QSize const& C_size, double* C, double* x, double* d);
+    void leastSquaresFit(QSize const& C_size, double* C, double* x, double* d);
 }
 
 #endif

@@ -29,8 +29,8 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <map>
 
-class EditableZoneSet: public QObject {
-    Q_OBJECT
+class EditableZoneSet : public QObject {
+Q_OBJECT
 private:
     typedef std::map<EditableSpline::Ptr, IntrusivePtr<PropertySet>> Map;
 public:
@@ -59,9 +59,9 @@ public:
     };
 
 
-    class const_iterator: public boost::iterator_facade<
-                            const_iterator, Zone const, boost::forward_traversal_tag
-        >{
+    class const_iterator : public boost::iterator_facade<
+            const_iterator, Zone const, boost::forward_traversal_tag
+    > {
         friend class EditableZoneSet;
 
         friend class boost::iterator_core_access;
@@ -122,6 +122,7 @@ public:
     IntrusivePtr<PropertySet const> propertiesFor(EditableSpline::Ptr const& spline) const;
 
 signals:
+
     void committed();
 
 private:
@@ -131,9 +132,10 @@ private:
 
 
 namespace boost {
-namespace foreach {
-template <>
-struct is_noncopyable<EditableZoneSet>: public boost::mpl::true_ { };
-}
+    namespace foreach {
+        template<>
+        struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_ {
+        };
+    }
 }
 #endif  // ifndef EDITABLE_ZONE_SET_H_

@@ -33,39 +33,42 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace page_split {
-class SplitModeDialog: public QDialog, private Ui::PageSplitModeDialog {
+    class SplitModeDialog : public QDialog, private Ui::PageSplitModeDialog {
     Q_OBJECT
-public:
-    SplitModeDialog(QWidget* parent,
-                    PageId const& cur_page,
-                    PageSelectionAccessor const& page_selection_accessor,
-                    LayoutType layout_type,
-                    PageLayout::Type auto_detected_layout_type,
-                    bool auto_detected_layout_type_valid);
+    public:
+        SplitModeDialog(QWidget* parent,
+                        PageId const& cur_page,
+                        PageSelectionAccessor const& page_selection_accessor,
+                        LayoutType layout_type,
+                        PageLayout::Type auto_detected_layout_type,
+                        bool auto_detected_layout_type_valid);
 
-    virtual ~SplitModeDialog();
-signals:
-    void accepted(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
+        virtual ~SplitModeDialog();
 
-private slots:
-    void autoDetectionSelected();
+    signals:
 
-    void manualModeSelected();
+        void accepted(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
 
-    void onSubmit();
+    private slots:
 
-private:
-    LayoutType combinedLayoutType() const;
+        void autoDetectionSelected();
 
-    static char const* iconFor(LayoutType layout_type);
+        void manualModeSelected();
 
-    PageSequence m_pages;
-    std::set<PageId> m_selectedPages;
-    PageId m_curPage;
-    QButtonGroup* m_pScopeGroup;
-    LayoutType m_layoutType;
-    PageLayout::Type m_autoDetectedLayoutType;
-    bool m_autoDetectedLayoutTypeValid;
-};
+        void onSubmit();
+
+    private:
+        LayoutType combinedLayoutType() const;
+
+        static char const* iconFor(LayoutType layout_type);
+
+        PageSequence m_pages;
+        std::set<PageId> m_selectedPages;
+        PageId m_curPage;
+        QButtonGroup* m_pScopeGroup;
+        LayoutType m_layoutType;
+        PageLayout::Type m_autoDetectedLayoutType;
+        bool m_autoDetectedLayoutTypeValid;
+    };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_SPLITMODEDIALOG_H_

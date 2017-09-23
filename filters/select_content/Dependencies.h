@@ -31,26 +31,26 @@ namespace select_content {
  *
  * Once dependencies change, the content box is no longer valid.
  */
-class Dependencies {
-public:
-    Dependencies();
+    class Dependencies {
+    public:
+        Dependencies();
 
-    Dependencies(QPolygonF const& rotated_page_outline);
+        Dependencies(QPolygonF const& rotated_page_outline);
 
-    Dependencies(QDomElement const& deps_el);
+        Dependencies(QDomElement const& deps_el);
 
-    ~Dependencies();
+        ~Dependencies();
 
-    QPolygonF const& rotatedPageOutline() const {
-        return m_rotatedPageOutline;
-    }
+        QPolygonF const& rotatedPageOutline() const {
+            return m_rotatedPageOutline;
+        }
 
-    bool matches(Dependencies const& other) const;
+        bool matches(Dependencies const& other) const;
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-private:
-    QPolygonF m_rotatedPageOutline;
-};
+    private:
+        QPolygonF m_rotatedPageOutline;
+    };
 }
 #endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_

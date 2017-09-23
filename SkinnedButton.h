@@ -32,7 +32,7 @@
  * \li The hover state image.
  * \li The pressed state image.
  */
-class SkinnedButton: public QToolButton {
+class SkinnedButton : public QToolButton {
 public:
     /**
      * \brief Construct a skinned button from a single image.

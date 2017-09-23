@@ -26,7 +26,10 @@
  */
 class RelinkablePath {
 public:
-    enum Type { File, Dir };
+    enum Type {
+        File,
+        Dir
+    };
 
     RelinkablePath(QString const& path, Type type);
 

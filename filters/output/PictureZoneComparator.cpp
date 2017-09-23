@@ -20,31 +20,31 @@
 #include "ZoneSet.h"
 
 namespace output {
-bool PictureZoneComparator::equal(ZoneSet const& lhs, ZoneSet const& rhs) {
-    ZoneSet::const_iterator lhs_it(lhs.begin());
-    ZoneSet::const_iterator rhs_it(rhs.begin());
-    ZoneSet::const_iterator const lhs_end(lhs.end());
-    ZoneSet::const_iterator const rhs_end(rhs.end());
-    for (; lhs_it != lhs_end && rhs_it != rhs_end; ++lhs_it, ++rhs_it) {
-        if (!equal(*lhs_it, *rhs_it)) {
+    bool PictureZoneComparator::equal(ZoneSet const& lhs, ZoneSet const& rhs) {
+        ZoneSet::const_iterator lhs_it(lhs.begin());
+        ZoneSet::const_iterator rhs_it(rhs.begin());
+        ZoneSet::const_iterator const lhs_end(lhs.end());
+        ZoneSet::const_iterator const rhs_end(rhs.end());
+        for (; lhs_it != lhs_end && rhs_it != rhs_end; ++lhs_it, ++rhs_it) {
+            if (!equal(*lhs_it, *rhs_it)) {
+                return false;
+            }
+        }
+
+        return lhs_it == lhs_end && rhs_it == rhs_end;
+    }
+
+    bool PictureZoneComparator::equal(Zone const& lhs, Zone const& rhs) {
+        if (lhs.spline().toPolygon() != rhs.spline().toPolygon()) {
             return false;
         }
+
+        return equal(lhs.properties(), rhs.properties());
     }
 
-    return lhs_it == lhs_end && rhs_it == rhs_end;
-}
+    bool PictureZoneComparator::equal(PropertySet const& lhs, PropertySet const& rhs) {
+        typedef PictureLayerProperty PLP;
 
-bool PictureZoneComparator::equal(Zone const& lhs, Zone const& rhs) {
-    if (lhs.spline().toPolygon() != rhs.spline().toPolygon()) {
-        return false;
+        return lhs.locateOrDefault<PLP>()->layer() == rhs.locateOrDefault<PLP>()->layer();
     }
-
-    return equal(lhs.properties(), rhs.properties());
-}
-
-bool PictureZoneComparator::equal(PropertySet const& lhs, PropertySet const& rhs) {
-    typedef PictureLayerProperty PLP;
-
-    return lhs.locateOrDefault<PLP>()->layer() == rhs.locateOrDefault<PLP>()->layer();
-}
 }  // namespace output

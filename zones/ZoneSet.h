@@ -30,9 +30,9 @@ class QString;
 
 class ZoneSet {
 public:
-    class const_iterator: public boost::iterator_facade<
-                            const_iterator, Zone const, boost::forward_traversal_tag
-        >{
+    class const_iterator : public boost::iterator_facade<
+            const_iterator, Zone const, boost::forward_traversal_tag
+    > {
         friend class ZoneSet;
 
         friend class boost::iterator_core_access;

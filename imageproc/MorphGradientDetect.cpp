@@ -22,17 +22,17 @@
 #include "GrayRasterOp.h"
 
 namespace imageproc {
-GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area) {
-    GrayImage lighter(erodeGray(image, area, 0x00));
-    grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
+    GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area) {
+        GrayImage lighter(erodeGray(image, area, 0x00));
+        grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
 
-    return lighter;
-}
+        return lighter;
+    }
 
-GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area) {
-    GrayImage darker(dilateGray(image, area, 0xff));
-    grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
+    GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area) {
+        GrayImage darker(dilateGray(image, area, 0xff));
+        grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
 
-    return darker;
-}
+        return darker;
+    }
 }

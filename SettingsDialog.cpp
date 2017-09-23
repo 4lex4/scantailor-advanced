@@ -33,7 +33,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
     } else {
         ui.enableOpenglCb->setChecked(
-            settings.value("settings/enable_opengl", false).toBool()
+                settings.value("settings/enable_opengl", false).toBool()
         );
         QString const openglDevicePattern = ui.openglDeviceLabel->text();
         ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));

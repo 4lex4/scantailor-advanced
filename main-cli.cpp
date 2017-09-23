@@ -41,8 +41,7 @@ int main(int argc, char** argv) {
     }
 
     if (cli.hasHelp() || cli.outputDirectory().isEmpty()
-        || ((cli.images().size() == 0) && cli.projectFile().isEmpty()))
-    {
+        || ((cli.images().size() == 0) && cli.projectFile().isEmpty())) {
         cli.printHelp();
 
         return 0;

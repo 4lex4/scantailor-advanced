@@ -24,14 +24,14 @@
 class QImage;
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 
 /**
  * \brief Image binarization using Otsu's global thresholding method.
  *
  * N. Otsu (1979). "A threshold selection method from gray-level histograms".
  * http: */
-BinaryImage binarizeOtsu(QImage const& src);
+    BinaryImage binarizeOtsu(QImage const& src);
 
 /**
  * \brief Image binarization using Mokji's global thresholding method.
@@ -45,14 +45,14 @@ BinaryImage binarizeOtsu(QImage const& src);
  * \param min_edge_magnitude The minimum color difference in a gradient.
  * \return A black and white image.
  */
-BinaryImage binarizeMokji(QImage const& src, unsigned max_edge_width = 3, unsigned min_edge_magnitude = 20);
+    BinaryImage binarizeMokji(QImage const& src, unsigned max_edge_width = 3, unsigned min_edge_magnitude = 20);
 
 /**
  * \brief Image binarization using Sauvola's local thresholding method.
  *
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
  * http: */
-BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
+    BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
 
 /**
  * \brief Image binarization using Wolf's local thresholding method.
@@ -65,11 +65,11 @@ BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
  * \param lower_bound The minimum possible gray level that can be made white.
  * \param upper_bound The maximum possible gray level that can be made black.
  */
-BinaryImage binarizeWolf(QImage const& src,
-                         QSize window_size,
-                         unsigned char lower_bound = 1,
-                         unsigned char upper_bound = 254);
+    BinaryImage binarizeWolf(QImage const& src,
+                             QSize window_size,
+                             unsigned char lower_bound = 1,
+                             unsigned char upper_bound = 254);
 
-BinaryImage peakThreshold(QImage const& image);
+    BinaryImage peakThreshold(QImage const& image);
 }
 #endif

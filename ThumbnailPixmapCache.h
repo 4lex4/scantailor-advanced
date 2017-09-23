@@ -32,14 +32,19 @@ class QPixmap;
 class QString;
 class QSize;
 
-class ThumbnailPixmapCache: public RefCountable {
-    DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
+class ThumbnailPixmapCache : public RefCountable {
+DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
+
 public:
-    enum Status { LOADED, LOAD_FAILED, QUEUED };
+    enum Status {
+        LOADED,
+        LOAD_FAILED,
+        QUEUED
+    };
 
     typedef AbstractCommand1<
             void, ThumbnailLoadResult const&
->CompletionHandler;
+    > CompletionHandler;
 
     /**
      * \brief Constructor.  To be called from the GUI thread only.

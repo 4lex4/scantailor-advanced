@@ -19,6 +19,9 @@
 #ifndef PAGE_VIEW_H_
 #define PAGE_VIEW_H_
 
-enum PageView { IMAGE_VIEW, PAGE_VIEW };
+enum PageView {
+    IMAGE_VIEW,
+    PAGE_VIEW
+};
 
 #endif

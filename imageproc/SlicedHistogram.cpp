@@ -21,83 +21,83 @@
 #include "BitOps.h"
 
 namespace imageproc {
-SlicedHistogram::SlicedHistogram() {
-}
-
-SlicedHistogram::SlicedHistogram(BinaryImage const& image, Type const type) {
-    switch (type) {
-        case ROWS:
-            processHorizontalLines(image, image.rect());
-            break;
-        case COLS:
-            processVerticalLines(image, image.rect());
-            break;
-    }
-}
-
-SlicedHistogram::SlicedHistogram(BinaryImage const& image, QRect const& area, Type const type) {
-    if (!image.rect().contains(area)) {
-        throw std::invalid_argument("SlicedHistogram: area exceeds the image");
+    SlicedHistogram::SlicedHistogram() {
     }
 
-    switch (type) {
-        case ROWS:
-            processHorizontalLines(image, area);
-            break;
-        case COLS:
-            processVerticalLines(image, area);
-            break;
-    }
-}
-
-void SlicedHistogram::processHorizontalLines(BinaryImage const& image, QRect const& area) {
-    m_data.reserve(area.height());
-
-    int const top = area.top();
-    int const bottom = area.bottom();
-    int const wpl = image.wordsPerLine();
-    int const first_word_idx = area.left() >> 5;
-    int const last_word_idx = area.right() >> 5;
-    uint32_t const first_word_mask = ~uint32_t(0) >> (area.left() & 31);
-    int const last_word_unused_bits = (last_word_idx << 5) + 31 - area.right();
-    uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-    uint32_t const* line = image.data() + top * wpl;
-
-    if (first_word_idx == last_word_idx) {
-        uint32_t const mask = first_word_mask & last_word_mask;
-        for (int y = top; y <= bottom; ++y, line += wpl) {
-            int const count = countNonZeroBits(line[first_word_idx] & mask);
-            m_data.push_back(count);
+    SlicedHistogram::SlicedHistogram(BinaryImage const& image, Type const type) {
+        switch (type) {
+            case ROWS:
+                processHorizontalLines(image, image.rect());
+                break;
+            case COLS:
+                processVerticalLines(image, image.rect());
+                break;
         }
-    } else {
-        for (int y = top; y <= bottom; ++y, line += wpl) {
-            int idx = first_word_idx;
-            int count = countNonZeroBits(line[idx] & first_word_mask);
-            for (++idx; idx != last_word_idx; ++idx) {
-                count += countNonZeroBits(line[idx]);
+    }
+
+    SlicedHistogram::SlicedHistogram(BinaryImage const& image, QRect const& area, Type const type) {
+        if (!image.rect().contains(area)) {
+            throw std::invalid_argument("SlicedHistogram: area exceeds the image");
+        }
+
+        switch (type) {
+            case ROWS:
+                processHorizontalLines(image, area);
+                break;
+            case COLS:
+                processVerticalLines(image, area);
+                break;
+        }
+    }
+
+    void SlicedHistogram::processHorizontalLines(BinaryImage const& image, QRect const& area) {
+        m_data.reserve(area.height());
+
+        int const top = area.top();
+        int const bottom = area.bottom();
+        int const wpl = image.wordsPerLine();
+        int const first_word_idx = area.left() >> 5;
+        int const last_word_idx = area.right() >> 5;
+        uint32_t const first_word_mask = ~uint32_t(0) >> (area.left() & 31);
+        int const last_word_unused_bits = (last_word_idx << 5) + 31 - area.right();
+        uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
+        uint32_t const* line = image.data() + top * wpl;
+
+        if (first_word_idx == last_word_idx) {
+            uint32_t const mask = first_word_mask & last_word_mask;
+            for (int y = top; y <= bottom; ++y, line += wpl) {
+                int const count = countNonZeroBits(line[first_word_idx] & mask);
+                m_data.push_back(count);
             }
-            count += countNonZeroBits(line[idx] & last_word_mask);
+        } else {
+            for (int y = top; y <= bottom; ++y, line += wpl) {
+                int idx = first_word_idx;
+                int count = countNonZeroBits(line[idx] & first_word_mask);
+                for (++idx; idx != last_word_idx; ++idx) {
+                    count += countNonZeroBits(line[idx]);
+                }
+                count += countNonZeroBits(line[idx] & last_word_mask);
+                m_data.push_back(count);
+            }
+        }
+    }      // SlicedHistogram::processHorizontalLines
+
+    void SlicedHistogram::processVerticalLines(BinaryImage const& image, QRect const& area) {
+        m_data.reserve(area.width());
+
+        int const right = area.right();
+        int const height = area.height();
+        int const wpl = image.wordsPerLine();
+        uint32_t const* const top_line = image.data() + area.top() * wpl;
+
+        for (int x = area.left(); x <= right; ++x) {
+            uint32_t const* pword = top_line + (x >> 5);
+            int const least_significant_zeroes = 31 - (x & 31);
+            int count = 0;
+            for (int i = 0; i < height; ++i, pword += wpl) {
+                count += (*pword >> least_significant_zeroes) & 1;
+            }
             m_data.push_back(count);
         }
     }
-}      // SlicedHistogram::processHorizontalLines
-
-void SlicedHistogram::processVerticalLines(BinaryImage const& image, QRect const& area) {
-    m_data.reserve(area.width());
-
-    int const right = area.right();
-    int const height = area.height();
-    int const wpl = image.wordsPerLine();
-    uint32_t const* const top_line = image.data() + area.top() * wpl;
-
-    for (int x = area.left(); x <= right; ++x) {
-        uint32_t const* pword = top_line + (x >> 5);
-        int const least_significant_zeroes = 31 - (x & 31);
-        int count = 0;
-        for (int i = 0; i < height; ++i, pword += wpl) {
-            count += (*pword >> least_significant_zeroes) & 1;
-        }
-        m_data.push_back(count);
-    }
-}
 }  // namespace imageproc

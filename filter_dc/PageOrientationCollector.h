@@ -23,7 +23,7 @@
 
 class OrthogonalRotation;
 
-class PageOrientationCollector: public AbstractFilterDataCollector {
+class PageOrientationCollector : public AbstractFilterDataCollector {
 public:
     virtual void process(OrthogonalRotation const& orientation) = 0;
 };

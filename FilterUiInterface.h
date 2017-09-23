@@ -32,7 +32,10 @@ class QWidget;
  */
 class FilterUiInterface {
 public:
-    enum Ownership { KEEP_OWNERSHIP, TRANSFER_OWNERSHIP };
+    enum Ownership {
+        KEEP_OWNERSHIP,
+        TRANSFER_OWNERSHIP
+    };
 
     virtual ~FilterUiInterface() {
     }

@@ -35,15 +35,15 @@ ProjectCreationContext::~ProjectCreationContext() {
 }
 
 namespace {
-template <typename T>
-bool allDpisOK(T const& container) {
-    using namespace boost::lambda;
+    template<typename T>
+    bool allDpisOK(T const& container) {
+        using namespace boost::lambda;
 
-    return std::find_if(
-        container.begin(), container.end(),
-        !bind(&ImageFileInfo::isDpiOK, _1)
-    ) == container.end();
-}
+        return std::find_if(
+                container.begin(), container.end(),
+                !bind(&ImageFileInfo::isDpiOK, _1)
+        ) == container.end();
+    }
 }
 
 void ProjectCreationContext::projectFilesSubmitted() {
@@ -85,12 +85,12 @@ void ProjectCreationContext::showProjectFilesDialog() {
         m_ptrProjectFilesDialog->setWindowModality(Qt::WindowModal);
     }
     connect(
-        m_ptrProjectFilesDialog, SIGNAL(accepted()),
-        this, SLOT(projectFilesSubmitted())
+            m_ptrProjectFilesDialog, SIGNAL(accepted()),
+            this, SLOT(projectFilesSubmitted())
     );
     connect(
-        m_ptrProjectFilesDialog, SIGNAL(destroyed(QObject*)),
-        this, SLOT(projectFilesDialogDestroyed())
+            m_ptrProjectFilesDialog, SIGNAL(destroyed(QObject * )),
+            this, SLOT(projectFilesDialogDestroyed())
     );
     m_ptrProjectFilesDialog->show();
 }
@@ -104,12 +104,12 @@ void ProjectCreationContext::showFixDpiDialog() {
         m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
     }
     connect(
-        m_ptrFixDpiDialog, SIGNAL(accepted()),
-        this, SLOT(fixedDpiSubmitted())
+            m_ptrFixDpiDialog, SIGNAL(accepted()),
+            this, SLOT(fixedDpiSubmitted())
     );
     connect(
-        m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)),
-        this, SLOT(fixDpiDialogDestroyed())
+            m_ptrFixDpiDialog, SIGNAL(destroyed(QObject * )),
+            this, SLOT(fixDpiDialogDestroyed())
     );
     m_ptrFixDpiDialog->show();
 }

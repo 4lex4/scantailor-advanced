@@ -23,7 +23,7 @@
 #include <QString>
 #include <vector>
 
-class LoadFilesStatusDialog: public QDialog {
+class LoadFilesStatusDialog : public QDialog {
 public:
     LoadFilesStatusDialog(QWidget* parent = 0);
 

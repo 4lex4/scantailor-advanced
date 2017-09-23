@@ -29,48 +29,48 @@ class QDomElement;
 class QString;
 
 namespace page_layout {
-class Params {
-public:
-    Params(Margins const& hard_margins_mm,
-           QRectF const& page_rect,
-           QRectF const& content_rect,
-           QSizeF const& content_size_mm,
-           Alignment const& alignment);
+    class Params {
+    public:
+        Params(Margins const& hard_margins_mm,
+               QRectF const& page_rect,
+               QRectF const& content_rect,
+               QSizeF const& content_size_mm,
+               Alignment const& alignment);
 
-    Params(QDomElement const& el);
+        Params(QDomElement const& el);
 
-    Margins const& hardMarginsMM() const {
-        return m_hardMarginsMM;
-    }
+        Margins const& hardMarginsMM() const {
+            return m_hardMarginsMM;
+        }
 
-    QRectF const& contentRect() const {
-        return m_contentRect;
-    }
+        QRectF const& contentRect() const {
+            return m_contentRect;
+        }
 
-    QRectF const& pageRect() const {
-        return m_pageRect;
-    }
+        QRectF const& pageRect() const {
+            return m_pageRect;
+        }
 
-    QSizeF const& contentSizeMM() const {
-        return m_contentSizeMM;
-    }
+        QSizeF const& contentSizeMM() const {
+            return m_contentSizeMM;
+        }
 
-    Alignment const& alignment() const {
-        return m_alignment;
-    }
+        Alignment const& alignment() const {
+            return m_alignment;
+        }
 
-    bool isDeviant() const {
-        return m_alignment.isNull();
-    }
+        bool isDeviant() const {
+            return m_alignment.isNull();
+        }
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-private:
-    Margins m_hardMarginsMM;
-    QRectF m_contentRect;
-    QRectF m_pageRect;
-    QSizeF m_contentSizeMM;
-    Alignment m_alignment;
-};
+    private:
+        Margins m_hardMarginsMM;
+        QRectF m_contentRect;
+        QRectF m_pageRect;
+        QSizeF m_contentSizeMM;
+        Alignment m_alignment;
+    };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_PARAMS_H_

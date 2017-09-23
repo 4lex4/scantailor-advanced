@@ -31,26 +31,29 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace page_layout {
-class ApplyDialog: public QDialog, private Ui::PageLayoutApplyDialog {
+    class ApplyDialog : public QDialog, private Ui::PageLayoutApplyDialog {
     Q_OBJECT
-public:
-    ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
+    public:
+        ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~ApplyDialog();
-signals:
-    void accepted(std::set<PageId> const
-                  & pages);
+        virtual ~ApplyDialog();
 
-private
-    slots:
-    void onSubmit();
+    signals:
 
-private:
-    PageSequence m_pages;
-    std::set<PageId> m_selectedPages;
-    std::vector<PageRange> m_selectedRanges;
-    PageId m_curPage;
-    QButtonGroup* m_pScopeGroup;
-};
+        void accepted(std::set<PageId> const
+                      & pages);
+
+    private
+        slots:
+
+        void onSubmit();
+
+    private:
+        PageSequence m_pages;
+        std::set<PageId> m_selectedPages;
+        std::vector<PageRange> m_selectedRanges;
+        PageId m_curPage;
+        QButtonGroup* m_pScopeGroup;
+    };
 }
 #endif  // ifndef PAGE_LAYOUT_APPLYDIALOG_H_

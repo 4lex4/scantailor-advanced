@@ -57,7 +57,7 @@ public:
      *
      * \throw std::runtime_error If the system can't be solved.
      */
-    template <typename T>
+    template<typename T>
     void solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const;
 
     /**
@@ -65,7 +65,7 @@ public:
      *
      * In this version, buffers are allocated internally.
      */
-    template <typename T>
+    template<typename T>
     void solve(T const* A, T* X, T const* B) const;
 
 private:
@@ -75,7 +75,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const {
     using namespace std;
     T const epsilon(sqrt(numeric_limits<T>::epsilon()));
@@ -191,7 +191,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
     }
 }  // LinearSolver::solve
 
-template <typename T>
+template<typename T>
 void LinearSolver::solve(T const* A, T* X, T const* B) const {
     boost::scoped_array<T> tbuffer(new T[m_colsArowsX * (m_rowsAB + m_colsBX)]);
     boost::scoped_array<size_t> pbuffer(new size_t[m_rowsAB]);

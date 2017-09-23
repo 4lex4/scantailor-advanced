@@ -29,9 +29,10 @@
  * The alignment is specified not in terms of bytes, but in terms of units,
  * where bytes = units * sizeof(T)
  */
-template <typename T, size_t alignment_in_units>
+template<typename T, size_t alignment_in_units>
 class AlignedArray {
-    DECLARE_NON_COPYABLE(AlignedArray)
+DECLARE_NON_COPYABLE(AlignedArray)
+
 public:
     /**
      * \brief Constructs a null array.
@@ -71,12 +72,12 @@ private:
 };
 
 
-template <typename T, size_t alignment_in_units>
+template<typename T, size_t alignment_in_units>
 inline void swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignment_in_units>& o2) {
     o1.swap(o2);
 }
 
-template <typename T, size_t alignment_in_units>
+template<typename T, size_t alignment_in_units>
 AlignedArray<T, alignment_in_units>::AlignedArray(size_t size) {
     int const a = alignment_in_units > 1 ? alignment_in_units : 1;
     int const am1 = a - 1;
@@ -84,7 +85,7 @@ AlignedArray<T, alignment_in_units>::AlignedArray(size_t size) {
     m_pAlignedData = m_pStorage + ((a - ((uintptr_t(m_pStorage) / sizeof(T)) & am1)) & am1);
 }
 
-template <typename T, size_t alignment_in_units>
+template<typename T, size_t alignment_in_units>
 void AlignedArray<T, alignment_in_units>::swap(AlignedArray& other) {
     T* temp = m_pAlignedData;
     m_pAlignedData = other.m_pAlignedData;

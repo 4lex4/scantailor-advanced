@@ -30,34 +30,35 @@ class FilterData;
 class QImage;
 
 namespace page_split {
-class Task;
+    class Task;
 }
 
 namespace fix_orientation {
-class Filter;
-class Settings;
+    class Filter;
+    class Settings;
 
-class Task: public RefCountable {
+    class Task : public RefCountable {
     DECLARE_NON_COPYABLE(Task)
-public:
-    Task(ImageId const& image_id,
-         IntrusivePtr<Filter> const& filter,
-         IntrusivePtr<Settings> const& settings,
-         IntrusivePtr<page_split::Task> const& next_task,
-         bool batch_processing);
 
-    virtual ~Task();
+    public:
+        Task(ImageId const& image_id,
+             IntrusivePtr<Filter> const& filter,
+             IntrusivePtr<Settings> const& settings,
+             IntrusivePtr<page_split::Task> const& next_task,
+             bool batch_processing);
 
-    FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        virtual ~Task();
 
-private:
-    class UiUpdater;
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
-    IntrusivePtr<Filter> m_ptrFilter;
-    IntrusivePtr<page_split::Task> m_ptrNextTask;
-    IntrusivePtr<Settings> m_ptrSettings;
-    ImageId m_imageId;
-    bool m_batchProcessing;
-};
+    private:
+        class UiUpdater;
+
+        IntrusivePtr<Filter> m_ptrFilter;
+        IntrusivePtr<page_split::Task> m_ptrNextTask;
+        IntrusivePtr<Settings> m_ptrSettings;
+        ImageId m_imageId;
+        bool m_batchProcessing;
+    };
 }
 #endif  // ifndef FIX_ORIENTATION_TASK_H_

@@ -25,8 +25,8 @@ class DebugImages;
 class QPolygonF;
 
 namespace imageproc {
-class PolynomialSurface;
-class GrayImage;
+    class PolynomialSurface;
+    class GrayImage;
 }
 
 /**

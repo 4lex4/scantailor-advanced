@@ -20,32 +20,32 @@
 #include <assert.h>
 
 namespace output {
-DewarpingMode::DewarpingMode(QString const& str) {
-    if (str == "auto") {
-        m_mode = AUTO;
-    } else if (str == "manual") {
-        m_mode = MANUAL;
-    } else if (str == "marginal") {
-        m_mode = MARGINAL;
-    } else {
-        m_mode = OFF;
-    }
-}
-
-QString DewarpingMode::toString() const {
-    switch (m_mode) {
-        case OFF:
-            return "off";
-        case AUTO:
-            return "auto";
-        case MANUAL:
-            return "manual";
-        case MARGINAL:
-            return "marginal";
+    DewarpingMode::DewarpingMode(QString const& str) {
+        if (str == "auto") {
+            m_mode = AUTO;
+        } else if (str == "manual") {
+            m_mode = MANUAL;
+        } else if (str == "marginal") {
+            m_mode = MARGINAL;
+        } else {
+            m_mode = OFF;
+        }
     }
 
-    assert(!"Unreachable");
+    QString DewarpingMode::toString() const {
+        switch (m_mode) {
+            case OFF:
+                return "off";
+            case AUTO:
+                return "auto";
+            case MANUAL:
+                return "manual";
+            case MARGINAL:
+                return "marginal";
+        }
 
-    return QString();
-}
+        assert(!"Unreachable");
+
+        return QString();
+    }
 }  // namespace output

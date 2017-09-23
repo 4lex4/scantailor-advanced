@@ -26,8 +26,8 @@ class RelinkablePath;
 class QHBoxLayout;
 class QAbstractButton;
 
-class RelinkablePathVisualization: public QWidget {
-    Q_OBJECT
+class RelinkablePathVisualization : public QWidget {
+Q_OBJECT
 public:
     RelinkablePathVisualization(QWidget* parent = 0);
 
@@ -36,6 +36,7 @@ public:
     void setPath(RelinkablePath const& path, bool clickable);
 
 signals:
+
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
     void clicked(QString const& prefix_path, QString const& suffix_path, int type);
 

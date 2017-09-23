@@ -60,8 +60,8 @@ void ObjectDragHandler::onPaint(QPainter& painter, InteractionState const& inter
 
 void ObjectDragHandler::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
     interaction.updateProximity(
-        m_interaction, m_pObj->proximity(screen_mouse_pos),
-        m_pObj->proximityPriority(), m_pObj->proximityThreshold(interaction)
+            m_interaction, m_pObj->proximity(screen_mouse_pos),
+            m_pObj->proximityPriority(), m_pObj->proximityThreshold(interaction)
     );
 }
 

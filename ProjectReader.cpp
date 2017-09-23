@@ -60,12 +60,12 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
     processPages(pages_el);
 
     QDomElement const disambig_el(
-        project_el.namedItem("file-name-disambiguation").toElement()
+            project_el.namedItem("file-name-disambiguation").toElement()
     );
     m_ptrDisambiguator.reset(
-        new FileNameDisambiguator(
-            disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
-        )
+            new FileNameDisambiguator(
+                    disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
+            )
     );
 }
 
@@ -194,13 +194,13 @@ void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirect
             continue;
         }
         ImageId const image_id(
-            file_record.filePath,
-            file_image + int(file_record.compatMultiPage)
+                file_record.filePath,
+                file_image + int(file_record.compatMultiPage)
         );
         ImageMetadata const metadata(processImageMetadata(el));
         ImageInfo const image_info(
-            image_id, metadata, sub_pages,
-            left_half_removed, right_half_removed
+                image_id, metadata, sub_pages,
+                left_half_removed, right_half_removed
         );
 
         images.push_back(image_info);
@@ -254,8 +254,8 @@ void ProjectReader::processPages(QDomElement const& pages_el) {
         }
 
         PageId::SubPage const sub_page = PageId::subPageFromString(
-            el.attribute("subPage"), &ok
-                                         );
+                el.attribute("subPage"), &ok
+        );
         if (!ok) {
             continue;
         }

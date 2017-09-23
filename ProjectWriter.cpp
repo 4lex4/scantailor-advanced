@@ -68,8 +68,8 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
     doc.appendChild(root_el);
     root_el.setAttribute("outputDirectory", m_outFileNameGen.outDir());
     root_el.setAttribute(
-        "layoutDirection",
-        m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL"
+            "layoutDirection",
+            m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL"
     );
 
     root_el.appendChild(processDirectories(doc));
@@ -77,10 +77,10 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
     root_el.appendChild(processImages(doc));
     root_el.appendChild(processPages(doc));
     root_el.appendChild(
-        m_outFileNameGen.disambiguator()->toXml(
-            doc, "file-name-disambiguation",
-            boost::bind(&ProjectWriter::packFilePath, this, _1)
-        )
+            m_outFileNameGen.disambiguator()->toXml(
+                    doc, "file-name-disambiguation",
+                    boost::bind(&ProjectWriter::packFilePath, this, _1)
+            )
     );
 
     QDomElement filters_el(doc.createElement("filters"));

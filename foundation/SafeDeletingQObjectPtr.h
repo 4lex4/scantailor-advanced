@@ -21,9 +21,10 @@
 
 #include "NonCopyable.h"
 
-template <typename T>
+template<typename T>
 class SafeDeletingQObjectPtr {
-    DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
+DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
+
 public:
     SafeDeletingQObjectPtr(T* obj = 0)
             : m_pObj(obj) {
@@ -63,7 +64,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 void swap(SafeDeletingQObjectPtr<T>& o1, SafeDeletingQObjectPtr<T>& o2) {
     o1.swap(o2);
 }

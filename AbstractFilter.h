@@ -36,7 +36,7 @@ class QDomElement;
 /**
  * Filters represent processing stages, like "Deskew", "Margins" and "Output".
  */
-class AbstractFilter: public RefCountable {
+class AbstractFilter : public RefCountable {
 public:
     virtual ~AbstractFilter() {
     }

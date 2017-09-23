@@ -23,9 +23,10 @@
 #include "PageInfo.h"
 #include <QWidget>
 
-class FilterOptionsWidget: public QWidget {
-    Q_OBJECT
+class FilterOptionsWidget : public QWidget {
+Q_OBJECT
 signals:
+
     /**
      * \brief To be emitted by subclasses when they want to reload the page.
      */

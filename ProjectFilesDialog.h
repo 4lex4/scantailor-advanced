@@ -27,8 +27,8 @@
 #include <vector>
 #include <memory>
 
-class ProjectFilesDialog: public QDialog, private Ui::ProjectFilesDialog {
-    Q_OBJECT
+class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
+Q_OBJECT
 public:
     ProjectFilesDialog(QWidget* parent = 0);
 
@@ -45,6 +45,7 @@ public:
     bool isDpiFixingForced() const;
 
 private slots:
+
     static QString sanitizePath(QString const& path);
 
     void inpDirBrowse();

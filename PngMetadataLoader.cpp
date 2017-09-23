@@ -24,41 +24,42 @@
 #include <png.h>
 
 namespace {
-class PngHandle {
+    class PngHandle {
     DECLARE_NON_COPYABLE(PngHandle)
-public:
-    PngHandle();
 
-    ~PngHandle();
+    public:
+        PngHandle();
 
-    png_structp handle() const {
-        return m_pPng;
+        ~PngHandle();
+
+        png_structp handle() const {
+            return m_pPng;
+        }
+
+        png_infop info() const {
+            return m_pInfo;
+        }
+
+    private:
+        png_structp m_pPng;
+        png_infop m_pInfo;
+    };
+
+
+    PngHandle::PngHandle() {
+        m_pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+        if (!m_pPng) {
+            throw std::bad_alloc();
+        }
+        m_pInfo = png_create_info_struct(m_pPng);
+        if (!m_pInfo) {
+            throw std::bad_alloc();
+        }
     }
 
-    png_infop info() const {
-        return m_pInfo;
+    PngHandle::~PngHandle() {
+        png_destroy_read_struct(&m_pPng, &m_pInfo, 0);
     }
-
-private:
-    png_structp m_pPng;
-    png_infop m_pInfo;
-};
-
-
-PngHandle::PngHandle() {
-    m_pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-    if (!m_pPng) {
-        throw std::bad_alloc();
-    }
-    m_pInfo = png_create_info_struct(m_pPng);
-    if (!m_pInfo) {
-        throw std::bad_alloc();
-    }
-}
-
-PngHandle::~PngHandle() {
-    png_destroy_read_struct(&m_pPng, &m_pInfo, 0);
-}
 }  // namespace
 
 static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
@@ -78,7 +79,7 @@ void PngMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
-            IntrusivePtr<ImageMetadataLoader>(new PngMetadataLoader)
+                IntrusivePtr<ImageMetadataLoader>(new PngMetadataLoader)
         );
         registered = true;
     }

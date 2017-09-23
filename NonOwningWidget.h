@@ -25,7 +25,7 @@
  * \brief Your normal QWidget, except it doesn't delete its children with itself,
  *        rather it calls setParent(0) on them.
  */
-class NonOwningWidget: public QWidget {
+class NonOwningWidget : public QWidget {
 public:
     NonOwningWidget(QWidget* parent = 0);
 

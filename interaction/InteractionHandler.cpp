@@ -41,29 +41,31 @@
     }
 
 namespace {
-class ScopedClearAcceptance {
+    class ScopedClearAcceptance {
     DECLARE_NON_COPYABLE(ScopedClearAcceptance)
-public:
-    ScopedClearAcceptance(QEvent* event);
 
-    ~ScopedClearAcceptance();
-private:
-    QEvent* m_pEvent;
-    bool m_wasAccepted;
-};
+    public:
+        ScopedClearAcceptance(QEvent* event);
+
+        ~ScopedClearAcceptance();
+
+    private:
+        QEvent* m_pEvent;
+        bool m_wasAccepted;
+    };
 
 
-ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
-        : m_pEvent(event),
-          m_wasAccepted(event->isAccepted()) {
-    m_pEvent->setAccepted(false);
-}
-
-ScopedClearAcceptance::~ScopedClearAcceptance() {
-    if (m_wasAccepted) {
-        m_pEvent->setAccepted(true);
+    ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
+            : m_pEvent(event),
+              m_wasAccepted(event->isAccepted()) {
+        m_pEvent->setAccepted(false);
     }
-}
+
+    ScopedClearAcceptance::~ScopedClearAcceptance() {
+        if (m_wasAccepted) {
+            m_pEvent->setAccepted(true);
+        }
+    }
 }
 
 InteractionHandler::InteractionHandler()

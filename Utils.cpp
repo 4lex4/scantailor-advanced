@@ -22,18 +22,18 @@
 
 #ifdef Q_OS_WIN
 
- #include <windows.h>
+#include <windows.h>
 
 #else
 
- #include <stdio.h>
+#include <stdio.h>
 #endif
 
 bool Utils::overwritingRename(QString const& from, QString const& to) {
 #ifdef Q_OS_WIN
     return MoveFileExW(
-        (WCHAR*) from.utf16(), (WCHAR*) to.utf16(),
-        MOVEFILE_REPLACE_EXISTING
+            (WCHAR*) from.utf16(), (WCHAR*) to.utf16(),
+            MOVEFILE_REPLACE_EXISTING
     ) != 0;
 
 #else
@@ -46,12 +46,12 @@ bool Utils::overwritingRename(QString const& from, QString const& to) {
 
 QString Utils::richTextForLink(QString const& label, QString const& target) {
     return QString::fromLatin1(
-        "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\""
-        "\"http://www.w3.org/TR/REC-html40/strict.dtd\">"
-        "<html><head><meta name=\"qrichtext\" content=\"1\" />"
-        "</head><body><p style=\"margin-top:0px; margin-bottom:0px;"
-        "margin-left:0px; margin-right:0px; -qt-block-indent:0;"
-        "text-indent:0px;\"><a href=\"%1\">%2</a></p></body></html>"
+            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\""
+                    "\"http://www.w3.org/TR/REC-html40/strict.dtd\">"
+                    "<html><head><meta name=\"qrichtext\" content=\"1\" />"
+                    "</head><body><p style=\"margin-top:0px; margin-bottom:0px;"
+                    "margin-left:0px; margin-right:0px; -qt-block-indent:0;"
+                    "text-indent:0px;\"><a href=\"%1\">%2</a></p></body></html>"
     ).arg(target.toHtmlEscaped(), label.toHtmlEscaped());
 }
 
@@ -69,7 +69,7 @@ Utils::createThumbnailCache(QString const& output_dir) {
     QString const thumbs_cache_path(outputDirToThumbDir(output_dir));
 
     return IntrusivePtr<ThumbnailPixmapCache>(
-        new ThumbnailPixmapCache(thumbs_cache_path, max_pixmap_size, 40, 5)
+            new ThumbnailPixmapCache(thumbs_cache_path, max_pixmap_size, 40, 5)
     );
 }
 

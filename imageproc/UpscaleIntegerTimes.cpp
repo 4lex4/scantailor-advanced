@@ -20,92 +20,92 @@
 #include "BinaryImage.h"
 
 namespace imageproc {
-namespace {
-inline uint32_t multiplyBit(uint32_t bit, int times) {
-    return (uint32_t(0) - bit) >> (32 - times);
-}
+    namespace {
+        inline uint32_t multiplyBit(uint32_t bit, int times) {
+            return (uint32_t(0) - bit) >> (32 - times);
+        }
 
-void expandImpl(BinaryImage& dst, BinaryImage const& src, int const xscale, int const yscale) {
-    int const sw = src.width();
-    int const sh = src.height();
+        void expandImpl(BinaryImage& dst, BinaryImage const& src, int const xscale, int const yscale) {
+            int const sw = src.width();
+            int const sh = src.height();
 
-    int const src_wpl = src.wordsPerLine();
-    int const dst_wpl = dst.wordsPerLine();
+            int const src_wpl = src.wordsPerLine();
+            int const dst_wpl = dst.wordsPerLine();
 
-    uint32_t const* src_line = src.data();
-    uint32_t* dst_line = dst.data();
+            uint32_t const* src_line = src.data();
+            uint32_t* dst_line = dst.data();
 
-    for (int sy = 0; sy < sh; ++sy, src_line += src_wpl) {
-        uint32_t dst_word = 0;
-        int dst_bits_remaining = 32;
-        int di = 0;
+            for (int sy = 0; sy < sh; ++sy, src_line += src_wpl) {
+                uint32_t dst_word = 0;
+                int dst_bits_remaining = 32;
+                int di = 0;
 
-        for (int sx = 0; sx < sw; ++sx) {
-            uint32_t const src_word = src_line[sx >> 5];
-            int const src_bit = 31 - (sx & 31);
-            uint32_t const bit = (src_word >> src_bit) & uint32_t(1);
-            int todo = xscale;
+                for (int sx = 0; sx < sw; ++sx) {
+                    uint32_t const src_word = src_line[sx >> 5];
+                    int const src_bit = 31 - (sx & 31);
+                    uint32_t const bit = (src_word >> src_bit) & uint32_t(1);
+                    int todo = xscale;
 
-            while (dst_bits_remaining <= todo) {
-                dst_word |= multiplyBit(bit, dst_bits_remaining);
-                dst_line[di++] = dst_word;
-                todo -= dst_bits_remaining;
-                dst_bits_remaining = 32;
-                dst_word = 0;
+                    while (dst_bits_remaining <= todo) {
+                        dst_word |= multiplyBit(bit, dst_bits_remaining);
+                        dst_line[di++] = dst_word;
+                        todo -= dst_bits_remaining;
+                        dst_bits_remaining = 32;
+                        dst_word = 0;
+                    }
+                    if (todo > 0) {
+                        dst_bits_remaining -= todo;
+                        dst_word |= multiplyBit(bit, todo) << dst_bits_remaining;
+                    }
+                }
+
+                if (dst_bits_remaining != 32) {
+                    dst_line[di] = dst_word;
+                }
+
+                uint32_t const* first_dst_line = dst_line;
+                dst_line += dst_wpl;
+                for (int line = 1; line < yscale; ++line, dst_line += dst_wpl) {
+                    memcpy(dst_line, first_dst_line, dst_wpl * 4);
+                }
             }
-            if (todo > 0) {
-                dst_bits_remaining -= todo;
-                dst_word |= multiplyBit(bit, todo) << dst_bits_remaining;
-            }
+        }          // expandImpl
+    }      // namespace
+
+    BinaryImage upscaleIntegerTimes(BinaryImage const& src, int const xscale, int const yscale) {
+        if (src.isNull() || ((xscale == 1) && (yscale == 1))) {
+            return src;
         }
 
-        if (dst_bits_remaining != 32) {
-            dst_line[di] = dst_word;
+        if ((xscale < 0) || (yscale < 0)) {
+            throw std::runtime_error("upscaleIntegerTimes: scaling factors can't be negative");
         }
 
-        uint32_t const* first_dst_line = dst_line;
-        dst_line += dst_wpl;
-        for (int line = 1; line < yscale; ++line, dst_line += dst_wpl) {
-            memcpy(dst_line, first_dst_line, dst_wpl * 4);
-        }
-    }
-}          // expandImpl
-}      // namespace
-
-BinaryImage upscaleIntegerTimes(BinaryImage const& src, int const xscale, int const yscale) {
-    if (src.isNull() || ((xscale == 1) && (yscale == 1))) {
-        return src;
-    }
-
-    if ((xscale < 0) || (yscale < 0)) {
-        throw std::runtime_error("upscaleIntegerTimes: scaling factors can't be negative");
-    }
-
-    BinaryImage dst(src.width() * xscale, src.height() * yscale);
-    expandImpl(dst, src, xscale, yscale);
-
-    return dst;
-}
-
-BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor const padding) {
-    if (src.isNull()) {
-        BinaryImage dst(dst_size);
-        dst.fill(padding);
+        BinaryImage dst(src.width() * xscale, src.height() * yscale);
+        expandImpl(dst, src, xscale, yscale);
 
         return dst;
     }
 
-    int const xscale = dst_size.width() / src.width();
-    int const yscale = dst_size.height() / src.height();
-    if ((xscale < 1) || (yscale < 1)) {
-        throw std::invalid_argument("upscaleIntegerTimes: bad dst_size");
+    BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor const padding) {
+        if (src.isNull()) {
+            BinaryImage dst(dst_size);
+            dst.fill(padding);
+
+            return dst;
+        }
+
+        int const xscale = dst_size.width() / src.width();
+        int const yscale = dst_size.height() / src.height();
+        if ((xscale < 1) || (yscale < 1)) {
+            throw std::invalid_argument("upscaleIntegerTimes: bad dst_size");
+        }
+
+        BinaryImage dst(dst_size);
+        expandImpl(dst, src, xscale, yscale);
+        QRect const rect(0, 0, src.width() * xscale, src.height() * yscale);
+        dst.fillExcept(rect, padding);
+
+        return dst;
     }
-
-    BinaryImage dst(dst_size);
-    expandImpl(dst, src, xscale, yscale);
-    QRect const rect(0, 0, src.width() * xscale, src.height() * yscale);
-    dst.fillExcept(rect, padding);
-
-    return dst;
-}
 }  // namespace imageproc

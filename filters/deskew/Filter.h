@@ -32,59 +32,61 @@ class QString;
 class PageSelectionAccessor;
 
 namespace select_content {
-class Task;
-class CacheDrivenTask;
+    class Task;
+    class CacheDrivenTask;
 }
 
 namespace deskew {
-class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class OptionsWidget;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-class Filter: public AbstractFilter {
+    class Filter : public AbstractFilter {
     DECLARE_NON_COPYABLE(Filter)
-public:
-    Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~Filter();
+    public:
+        Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    virtual QString getName() const;
+        virtual ~Filter();
 
-    virtual PageView getView() const;
+        virtual QString getName() const;
 
-    virtual void performRelinking(AbstractRelinker const& relinker);
+        virtual PageView getView() const;
 
-    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        virtual void performRelinking(AbstractRelinker const& relinker);
 
-    virtual void updateStatistics() {
-        m_ptrSettings->updateDeviation();
-    }
+        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual void updateStatistics() {
+            m_ptrSettings->updateDeviation();
+        }
 
-    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-    IntrusivePtr<Task> createTask(PageId const& page_id,
-                                  IntrusivePtr<select_content::Task> const& next_task,
-                                  bool batch_processing,
-                                  bool debug);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<select_content::CacheDrivenTask> const& next_task);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<select_content::Task> const& next_task,
+                                      bool batch_processing,
+                                      bool debug);
 
-    OptionsWidget* optionsWidget() {
-        return m_ptrOptionsWidget.get();
-    }
+        IntrusivePtr<CacheDrivenTask>
+        createCacheDrivenTask(IntrusivePtr<select_content::CacheDrivenTask> const& next_task);
 
-    Settings* getSettings() {
-        return m_ptrSettings.get();
-    }
+        OptionsWidget* optionsWidget() {
+            return m_ptrOptionsWidget.get();
+        }
 
-private:
-    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+        Settings* getSettings() {
+            return m_ptrSettings.get();
+        }
 
-    IntrusivePtr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-};
+    private:
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+
+        IntrusivePtr<Settings> m_ptrSettings;
+        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+    };
 }  // namespace deskew
 #endif  // ifndef DESKEW_FILTER_H_

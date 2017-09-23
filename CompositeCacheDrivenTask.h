@@ -24,7 +24,7 @@
 class PageInfo;
 class AbstractFilterDataCollector;
 
-class CompositeCacheDrivenTask: public RefCountable {
+class CompositeCacheDrivenTask : public RefCountable {
 public:
     virtual ~CompositeCacheDrivenTask() {
     }

@@ -30,8 +30,9 @@ class PageInfo;
 class CompositeCacheDrivenTask;
 class QGraphicsItem;
 
-class ThumbnailFactory: public RefCountable {
-    DECLARE_NON_COPYABLE(ThumbnailFactory)
+class ThumbnailFactory : public RefCountable {
+DECLARE_NON_COPYABLE(ThumbnailFactory)
+
 public:
     ThumbnailFactory(IntrusivePtr<ThumbnailPixmapCache> const& pixmap_cache, QSizeF const& max_size,
                      IntrusivePtr<CompositeCacheDrivenTask> const& task);

@@ -25,7 +25,11 @@
 
 class SplineVertex {
 public:
-    enum Loop { LOOP, NO_LOOP, LOOP_IF_BRIDGED };
+    enum Loop {
+        LOOP,
+        NO_LOOP,
+        LOOP_IF_BRIDGED
+    };
 
     typedef IntrusivePtr<SplineVertex> Ptr;
 
@@ -93,8 +97,9 @@ protected:
 };
 
 
-class SentinelSplineVertex: public SplineVertex {
-    DECLARE_NON_COPYABLE(SentinelSplineVertex)
+class SentinelSplineVertex : public SplineVertex {
+DECLARE_NON_COPYABLE(SentinelSplineVertex)
+
 public:
     SentinelSplineVertex();
 
@@ -127,8 +132,9 @@ private:
 };
 
 
-class RealSplineVertex: public SplineVertex {
-    DECLARE_NON_COPYABLE(RealSplineVertex)
+class RealSplineVertex : public SplineVertex {
+DECLARE_NON_COPYABLE(RealSplineVertex)
+
 public:
     RealSplineVertex(QPointF const& pt, SplineVertex* prev, SplineVertex* next);
 

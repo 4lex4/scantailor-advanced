@@ -25,9 +25,10 @@ class QPainter;
 class QRect;
 class QModelIndex;
 
-class RelinkingListView: public QListView {
+class RelinkingListView : public QListView {
 public:
     RelinkingListView(QWidget* parent = 0);
+
 protected:
     virtual void paintEvent(QPaintEvent* e);
 

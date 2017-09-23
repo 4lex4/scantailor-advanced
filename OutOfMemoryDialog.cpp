@@ -70,10 +70,10 @@ void OutOfMemoryDialog::saveProjectAs() {
     }
 
     QString project_file(
-        QFileDialog::getSaveFileName(
-            this, QString(), project_dir,
-            tr("Scan Tailor Projects") + " (*.ScanTailor)"
-        )
+            QFileDialog::getSaveFileName(
+                    this, QString(), project_dir,
+                    tr("Scan Tailor Projects") + " (*.ScanTailor)"
+            )
     );
     if (project_file.isEmpty()) {
         return;
@@ -89,8 +89,8 @@ void OutOfMemoryDialog::saveProjectAs() {
 
         QSettings settings;
         settings.setValue(
-            "project/lastDir",
-            QFileInfo(m_projectFile).absolutePath()
+                "project/lastDir",
+                QFileInfo(m_projectFile).absolutePath()
         );
 
         RecentProjects rp;
@@ -105,8 +105,8 @@ bool OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file) {
 
     if (!writer.write(project_file, m_ptrStages->filters())) {
         QMessageBox::warning(
-            this, tr("Error"),
-            tr("Error saving the project file!")
+                this, tr("Error"),
+                tr("Error saving the project file!")
         );
 
         return false;

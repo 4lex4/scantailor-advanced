@@ -24,40 +24,40 @@
 using namespace imageproc;
 
 namespace select_content {
-Dependencies::Dependencies() {
-}
+    Dependencies::Dependencies() {
+    }
 
-Dependencies::Dependencies(QPolygonF const& rotated_page_outline)
-        : m_rotatedPageOutline(rotated_page_outline) {
-}
+    Dependencies::Dependencies(QPolygonF const& rotated_page_outline)
+            : m_rotatedPageOutline(rotated_page_outline) {
+    }
 
-Dependencies::Dependencies(QDomElement const& deps_el)
-        : m_rotatedPageOutline(
-              XmlUnmarshaller::polygonF(
-                  deps_el.namedItem("rotated-page-outline").toElement()
-              )
-        ) {
-}
+    Dependencies::Dependencies(QDomElement const& deps_el)
+            : m_rotatedPageOutline(
+            XmlUnmarshaller::polygonF(
+                    deps_el.namedItem("rotated-page-outline").toElement()
+            )
+    ) {
+    }
 
-Dependencies::~Dependencies() {
-}
+    Dependencies::~Dependencies() {
+    }
 
-bool Dependencies::matches(Dependencies const& other) const {
-    return PolygonUtils::fuzzyCompare(
-        m_rotatedPageOutline, other.m_rotatedPageOutline
-    );
-}
+    bool Dependencies::matches(Dependencies const& other) const {
+        return PolygonUtils::fuzzyCompare(
+                m_rotatedPageOutline, other.m_rotatedPageOutline
+        );
+    }
 
-QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {
-    XmlMarshaller marshaller(doc);
+    QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {
+        XmlMarshaller marshaller(doc);
 
-    QDomElement el(doc.createElement(name));
-    el.appendChild(
-        marshaller.polygonF(
-            m_rotatedPageOutline, "rotated-page-outline"
-        )
-    );
+        QDomElement el(doc.createElement(name));
+        el.appendChild(
+                marshaller.polygonF(
+                        m_rotatedPageOutline, "rotated-page-outline"
+                )
+        );
 
-    return el;
-}
+        return el;
+    }
 }  // namespace select_content

@@ -22,9 +22,10 @@
 #include <QThread>
 #include <assert.h>
 
-class BackgroundExecutor::Dispatcher: public QObject {
+class BackgroundExecutor::Dispatcher : public QObject {
 public:
     Dispatcher(Impl& owner);
+
 protected:
     virtual void customEvent(QEvent* event);
 
@@ -33,7 +34,7 @@ private:
 };
 
 
-class BackgroundExecutor::Impl: public QThread {
+class BackgroundExecutor::Impl : public QThread {
 public:
     Impl(BackgroundExecutor& owner);
 
@@ -89,7 +90,7 @@ void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
         TaskResultPtr const result((*task)());
         if (result) {
             QCoreApplication::postEvent(
-                &m_rOwner, new ResultEvent(result)
+                    &m_rOwner, new ResultEvent(result)
             );
         }
     } catch (std::bad_alloc const&) {

@@ -46,15 +46,15 @@ bool BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_col
                                 QRectF const rect) {
     QPointF const center(rect.center());
     double const radius = std::min(
-        center.x() - rect.x(), center.y() - rect.y()
-                          );
+            center.x() - rect.x(), center.y() - rect.y()
+    );
 
     double const PI = imageproc::constants::PI;
     double const arc_fraction_as_radius = 0.25;
 
     double const reduced_radius = radius / (
-        1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
-                                  );
+            1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
+    );
     double const bubble_radius = radius - reduced_radius;
 
     double const tail_length = 0.5 * m_numBubbles;

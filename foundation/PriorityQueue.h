@@ -38,7 +38,7 @@
  * \endcode
  * function in the same namespace as T.
  */
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 class PriorityQueue {
 public:
     PriorityQueue() {
@@ -128,12 +128,12 @@ private:
 };
 
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 inline void swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2) {
     o1.swap(o2);
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::push(T const& obj) {
     size_t const idx = m_index.size();
     m_index.push_back(obj);
@@ -141,7 +141,7 @@ void PriorityQueue<T, SubClass>::push(T const& obj) {
     bubbleUp(idx);
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::pushDestructive(T& obj) {
     using namespace std;
 
@@ -152,7 +152,7 @@ void PriorityQueue<T, SubClass>::pushDestructive(T& obj) {
     bubbleUp(idx);
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::pop() {
     using namespace std;
 
@@ -167,7 +167,7 @@ void PriorityQueue<T, SubClass>::pop() {
     }
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::retrieveFront(T& obj) {
     using namespace std;
 
@@ -183,7 +183,7 @@ void PriorityQueue<T, SubClass>::retrieveFront(T& obj) {
     }
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::erase(size_t const idx) {
     using namespace std;
 
@@ -194,12 +194,12 @@ void PriorityQueue<T, SubClass>::erase(size_t const idx) {
     reposition(m_index[idx]);
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::reposition(size_t const idx) {
     bubbleUp(bubbleDown(idx));
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     using namespace std;
 
@@ -220,7 +220,7 @@ size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     return idx;
 }
 
-template <typename T, typename SubClass>
+template<typename T, typename SubClass>
 size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     using namespace std;
 

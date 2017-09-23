@@ -25,8 +25,10 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class OutOfMemoryHandler: public QObject {
-    Q_OBJECT DECLARE_NON_COPYABLE(OutOfMemoryHandler)
+class OutOfMemoryHandler : public QObject {
+Q_OBJECT
+DECLARE_NON_COPYABLE(OutOfMemoryHandler)
+
 public:
     static OutOfMemoryHandler& instance();
 
@@ -41,6 +43,7 @@ public:
     bool hadOutOfMemorySituation() const;
 
 signals:
+
     /** Will be dispatched from the main thread. */
     void outOfMemory();
 

@@ -34,14 +34,14 @@ RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* pare
     ui.undoButton->setVisible(false);
 
     connect(
-        ui.listView->selectionModel(),
-        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
-        SLOT(selectionChanged(QItemSelection const &, QItemSelection const &))
+            ui.listView->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+            SLOT(selectionChanged(QItemSelection const &, QItemSelection const &))
     );
 
     connect(
-        ui.pathVisualization, SIGNAL(clicked(QString const &, QString const &, int)),
-        SLOT(pathButtonClicked(QString const &, QString const &, int))
+            ui.pathVisualization, SIGNAL(clicked(QString const &, QString const &, int)),
+            SLOT(pathButtonClicked(QString const &, QString const &, int))
     );
 
     connect(ui.undoButton, SIGNAL(clicked()), SLOT(undoButtonClicked()));
@@ -82,17 +82,17 @@ void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString cons
     if (type == RelinkablePath::File) {
         QDir const dir(QFileInfo(prefix_path).dir());
         replacement_path = QFileDialog::getOpenFileName(
-            this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
-            dir.exists() ? dir.path() : m_projectFileDir,
-            QString(), 0, QFileDialog::DontUseNativeDialog
-                           );
+                this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
+                dir.exists() ? dir.path() : m_projectFileDir,
+                QString(), 0, QFileDialog::DontUseNativeDialog
+        );
     } else {
         QDir const dir(prefix_path);
         replacement_path = QFileDialog::getExistingDirectory(
-            this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
-            dir.exists() ? prefix_path : m_projectFileDir,
-            QFileDialog::DontUseNativeDialog
-                           );
+                this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
+                dir.exists() ? prefix_path : m_projectFileDir,
+                QFileDialog::DontUseNativeDialog
+        );
     }
 
     replacement_path = RelinkablePath::normalize(replacement_path);
@@ -113,7 +113,7 @@ void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString cons
 
     if (m_model.checkForMerges()) {
         ui.errorLabel->setText(
-            tr("This change would merge several files into one.")
+                tr("This change would merge several files into one.")
         );
         ui.errorLabel->setVisible(true);
         ui.pathVisualization->clear();

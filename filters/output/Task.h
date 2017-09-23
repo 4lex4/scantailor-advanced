@@ -40,43 +40,44 @@ class QImage;
 class Dpi;
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 }
 
 namespace output {
-class Filter;
-class Settings;
+    class Filter;
+    class Settings;
 
-class Task: public RefCountable {
+    class Task : public RefCountable {
     DECLARE_NON_COPYABLE(Task)
-public:
-    Task(IntrusivePtr<Filter> const& filter,
-         IntrusivePtr<Settings> const& settings,
-         IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-         PageId const& page_id,
-         OutputFileNameGenerator const& out_file_name_gen,
-         ImageViewTab last_tab,
-         bool batch,
-         bool debug);
 
-    virtual ~Task();
+    public:
+        Task(IntrusivePtr<Filter> const& filter,
+             IntrusivePtr<Settings> const& settings,
+             IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+             PageId const& page_id,
+             OutputFileNameGenerator const& out_file_name_gen,
+             ImageViewTab last_tab,
+             bool batch,
+             bool debug);
 
-    FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
+        virtual ~Task();
 
-private:
-    class UiUpdater;
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
 
-    void deleteMutuallyExclusiveOutputFiles();
+    private:
+        class UiUpdater;
 
-    IntrusivePtr<Filter> m_ptrFilter;
-    IntrusivePtr<Settings> m_ptrSettings;
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    OutputFileNameGenerator m_outFileNameGen;
-    ImageViewTab m_lastTab;
-    bool m_batchProcessing;
-    bool m_debug;
-};
+        void deleteMutuallyExclusiveOutputFiles();
+
+        IntrusivePtr<Filter> m_ptrFilter;
+        IntrusivePtr<Settings> m_ptrSettings;
+        IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+        std::unique_ptr<DebugImages> m_ptrDbg;
+        PageId m_pageId;
+        OutputFileNameGenerator m_outFileNameGen;
+        ImageViewTab m_lastTab;
+        bool m_batchProcessing;
+        bool m_debug;
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_TASK_H_

@@ -54,8 +54,7 @@ void ZoneSet::remove_auto_zones() {
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
         if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE)
-        {
+            == ZLP::RECTANGULAR_OUTLINE) {
             m_zones.erase(it++);
         } else {
             ++it;
@@ -68,8 +67,7 @@ bool ZoneSet::auto_zones_found() {
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
         if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE)
-        {
+            == ZLP::RECTANGULAR_OUTLINE) {
             return true;
         } else {
             it++;

@@ -31,8 +31,10 @@ class ProjectFilesDialog;
 class FixDpiDialog;
 class QWidget;
 
-class ProjectCreationContext: public QObject {
-    Q_OBJECT DECLARE_NON_COPYABLE(ProjectCreationContext)
+class ProjectCreationContext : public QObject {
+Q_OBJECT
+DECLARE_NON_COPYABLE(ProjectCreationContext)
+
 public:
     ProjectCreationContext(QWidget* parent);
 
@@ -51,9 +53,11 @@ public:
     }
 
 signals:
+
     void done(ProjectCreationContext* context);
 
 private slots:
+
     void projectFilesSubmitted();
 
     void projectFilesDialogDestroyed();

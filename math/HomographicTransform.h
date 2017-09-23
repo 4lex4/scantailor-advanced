@@ -23,10 +23,10 @@
 #include "MatrixCalc.h"
 #include <stddef.h>
 
-template <size_t N, typename T>
+template<size_t N, typename T>
 class HomographicTransform;
 
-template <size_t N, typename T>
+template<size_t N, typename T>
 class HomographicTransformBase {
 public:
     typedef VecNT<N, T> Vec;
@@ -49,8 +49,8 @@ private:
 };
 
 
-template <size_t N, typename T>
-class HomographicTransform: public HomographicTransformBase<N, T>{
+template<size_t N, typename T>
+class HomographicTransform : public HomographicTransformBase<N, T> {
 public:
     explicit HomographicTransform(typename HomographicTransformBase<N, T>::Mat const& mat)
             : HomographicTransformBase<N, T>(mat) {
@@ -59,8 +59,8 @@ public:
 
 
 /** An optimized, both in terms of API and performance, 1D version. */
-template <typename T>
-class HomographicTransform<1, T>: public HomographicTransformBase<1, T>{
+template<typename T>
+class HomographicTransform<1, T> : public HomographicTransformBase<1, T> {
 public:
     explicit HomographicTransform(typename HomographicTransformBase<1, T>::Mat const& mat)
             : HomographicTransformBase<1, T>(mat) {
@@ -72,7 +72,7 @@ public:
 };
 
 
-template <size_t N, typename T>
+template<size_t N, typename T>
 HomographicTransform<N, T>
 HomographicTransformBase<N, T>::inv() const {
     StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
@@ -82,7 +82,7 @@ HomographicTransformBase<N, T>::inv() const {
     return HomographicTransform<N, T>(inv_mat);
 }
 
-template <size_t N, typename T>
+template<size_t N, typename T>
 typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::operator()(Vec const& from) const {
     StaticMatrixCalc<T, N + 1, 1> mc;
     VecNT<N + 1, T> const hsrc(from, T(1));
@@ -94,7 +94,7 @@ typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::ope
     return res;
 }
 
-template <typename T>
+template<typename T>
 T HomographicTransform<1, T>::operator()(T from) const {
     T const* m = this->mat().data();
 

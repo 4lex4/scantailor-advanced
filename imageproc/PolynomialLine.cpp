@@ -20,33 +20,33 @@
 #include <stdexcept>
 
 namespace imageproc {
-void PolynomialLine::validateArguments(int const degree, int const num_values) {
-    if (degree < 0) {
-        throw std::invalid_argument("PolynomialLine: degree is invalid");
-    }
-    if (num_values <= 0) {
-        throw std::invalid_argument("PolynomialLine: no data points");
-    }
-}
-
-double PolynomialLine::calcScale(int const num_values) {
-    if (num_values <= 1) {
-        return 0.0;
-    } else {
-        return 1.0 / (num_values - 1);
-    }
-}
-
-void PolynomialLine::prepareEquations(std::vector<double>& equations, int const degree, int const num_values) {
-    equations.reserve((degree + 1) * num_values);
-
-    double const scale = calcScale(num_values);
-    for (int i = 0; i < num_values; ++i) {
-        double const position = 1.0 + i * scale;
-        double pow = 1.0;
-        for (int j = 0; j <= degree; ++j, pow *= position) {
-            equations.push_back(pow);
+    void PolynomialLine::validateArguments(int const degree, int const num_values) {
+        if (degree < 0) {
+            throw std::invalid_argument("PolynomialLine: degree is invalid");
+        }
+        if (num_values <= 0) {
+            throw std::invalid_argument("PolynomialLine: no data points");
         }
     }
-}
+
+    double PolynomialLine::calcScale(int const num_values) {
+        if (num_values <= 1) {
+            return 0.0;
+        } else {
+            return 1.0 / (num_values - 1);
+        }
+    }
+
+    void PolynomialLine::prepareEquations(std::vector<double>& equations, int const degree, int const num_values) {
+        equations.reserve((degree + 1) * num_values);
+
+        double const scale = calcScale(num_values);
+        for (int i = 0; i < num_values; ++i) {
+            double const position = 1.0 + i * scale;
+            double pow = 1.0;
+            for (int j = 0; j <= degree; ++j, pow *= position) {
+                equations.push_back(pow);
+            }
+        }
+    }
 }  // namespace imageproc

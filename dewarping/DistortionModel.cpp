@@ -23,131 +23,131 @@
 #include <QDomDocument>
 
 namespace dewarping {
-DistortionModel::DistortionModel() {
-}
-
-DistortionModel::DistortionModel(QDomElement const& el)
-        : m_topCurve(el.namedItem("top-curve").toElement()),
-          m_bottomCurve(el.namedItem("bottom-curve").toElement()) {
-}
-
-QDomElement DistortionModel::toXml(QDomDocument& doc, QString const& name) const {
-    if (!isValid()) {
-        return QDomElement();
+    DistortionModel::DistortionModel() {
     }
 
-    QDomElement el(doc.createElement(name));
-    el.appendChild(m_topCurve.toXml(doc, "top-curve"));
-    el.appendChild(m_bottomCurve.toXml(doc, "bottom-curve"));
-
-    return el;
-}
-
-bool DistortionModel::isValid() const {
-    if (!m_topCurve.isValid() || !m_bottomCurve.isValid()) {
-        return false;
+    DistortionModel::DistortionModel(QDomElement const& el)
+            : m_topCurve(el.namedItem("top-curve").toElement()),
+              m_bottomCurve(el.namedItem("bottom-curve").toElement()) {
     }
 
-    Vec2d const poly[4] = {
-        m_topCurve.polyline().front(),
-        m_topCurve.polyline().back(),
-        m_bottomCurve.polyline().back(),
-        m_bottomCurve.polyline().front()
-    };
-
-    double min_dot = NumericTraits<double>::max();
-    double max_dot = NumericTraits<double>::min();
-
-    for (int i = 0; i < 4; ++i) {
-        Vec2d const cur(poly[i]);
-        Vec2d const prev(poly[(i + 3) & 3]);
-        Vec2d const next(poly[(i + 1) & 3]);
-
-        Vec2d prev_normal(cur - prev);
-        std::swap(prev_normal[0], prev_normal[1]);
-        prev_normal[0] = -prev_normal[0];
-
-        double const dot = prev_normal.dot(next - cur);
-        if (dot < min_dot) {
-            min_dot = dot;
+    QDomElement DistortionModel::toXml(QDomDocument& doc, QString const& name) const {
+        if (!isValid()) {
+            return QDomElement();
         }
-        if (dot > max_dot) {
-            max_dot = dot;
+
+        QDomElement el(doc.createElement(name));
+        el.appendChild(m_topCurve.toXml(doc, "top-curve"));
+        el.appendChild(m_bottomCurve.toXml(doc, "bottom-curve"));
+
+        return el;
+    }
+
+    bool DistortionModel::isValid() const {
+        if (!m_topCurve.isValid() || !m_bottomCurve.isValid()) {
+            return false;
         }
-    }
 
-    if (min_dot * max_dot <= 0) {
-        return false;
-    }
+        Vec2d const poly[4] = {
+                m_topCurve.polyline().front(),
+                m_topCurve.polyline().back(),
+                m_bottomCurve.polyline().back(),
+                m_bottomCurve.polyline().front()
+        };
 
-    if ((fabs(min_dot) < 0.01) || (fabs(max_dot) < 0.01)) {
-        return false;
-    }
+        double min_dot = NumericTraits<double>::max();
+        double max_dot = NumericTraits<double>::min();
 
-    return true;
-}      // DistortionModel::isValid
+        for (int i = 0; i < 4; ++i) {
+            Vec2d const cur(poly[i]);
+            Vec2d const prev(poly[(i + 3) & 3]);
+            Vec2d const next(poly[(i + 1) & 3]);
 
-bool DistortionModel::matches(DistortionModel const& other) const {
-    bool const this_valid = isValid();
-    bool const other_valid = other.isValid();
-    if (!this_valid && !other_valid) {
+            Vec2d prev_normal(cur - prev);
+            std::swap(prev_normal[0], prev_normal[1]);
+            prev_normal[0] = -prev_normal[0];
+
+            double const dot = prev_normal.dot(next - cur);
+            if (dot < min_dot) {
+                min_dot = dot;
+            }
+            if (dot > max_dot) {
+                max_dot = dot;
+            }
+        }
+
+        if (min_dot * max_dot <= 0) {
+            return false;
+        }
+
+        if ((fabs(min_dot) < 0.01) || (fabs(max_dot) < 0.01)) {
+            return false;
+        }
+
         return true;
-    } else if (this_valid != other_valid) {
-        return false;
+    }      // DistortionModel::isValid
+
+    bool DistortionModel::matches(DistortionModel const& other) const {
+        bool const this_valid = isValid();
+        bool const other_valid = other.isValid();
+        if (!this_valid && !other_valid) {
+            return true;
+        } else if (this_valid != other_valid) {
+            return false;
+        }
+
+        if (!m_topCurve.matches(other.m_topCurve)) {
+            return false;
+        } else if (!m_bottomCurve.matches(other.m_bottomCurve)) {
+            return false;
+        }
+
+        return true;
     }
 
-    if (!m_topCurve.matches(other.m_topCurve)) {
-        return false;
-    } else if (!m_bottomCurve.matches(other.m_bottomCurve)) {
-        return false;
+    QRectF DistortionModel::modelDomain(CylindricalSurfaceDewarper const& dewarper,
+                                        QTransform const& to_output,
+                                        QRectF const& output_content_rect) const {
+        QRectF model_domain(boundingBox(to_output));
+
+        double const vert_scale = 1.0 / dewarper.directrixArcLength();
+
+        QPointF const scale_origin(output_content_rect.center());
+
+        double const new_upper_part = (scale_origin.y() - model_domain.top()) * vert_scale;
+        double const new_height = model_domain.height() * vert_scale;
+        model_domain.setTop(scale_origin.y() - new_upper_part);
+        model_domain.setHeight(new_height);
+
+        return model_domain;
     }
 
-    return true;
-}
+    QRectF DistortionModel::boundingBox(QTransform const& transform) const {
+        double top = NumericTraits<double>::max();
+        double left = top;
+        double bottom = NumericTraits<double>::min();
+        double right = bottom;
 
-QRectF DistortionModel::modelDomain(CylindricalSurfaceDewarper const& dewarper,
-                                    QTransform const& to_output,
-                                    QRectF const& output_content_rect) const {
-    QRectF model_domain(boundingBox(to_output));
+        for (QPointF pt : m_topCurve.polyline()) {
+            pt = transform.map(pt);
+            left = std::min<double>(left, pt.x());
+            right = std::max<double>(right, pt.x());
+            top = std::min<double>(top, pt.y());
+            bottom = std::max<double>(bottom, pt.y());
+        }
 
-    double const vert_scale = 1.0 / dewarper.directrixArcLength();
+        for (QPointF pt : m_bottomCurve.polyline()) {
+            pt = transform.map(pt);
+            left = std::min<double>(left, pt.x());
+            right = std::max<double>(right, pt.x());
+            top = std::min<double>(top, pt.y());
+            bottom = std::max<double>(bottom, pt.y());
+        }
 
-    QPointF const scale_origin(output_content_rect.center());
-
-    double const new_upper_part = (scale_origin.y() - model_domain.top()) * vert_scale;
-    double const new_height = model_domain.height() * vert_scale;
-    model_domain.setTop(scale_origin.y() - new_upper_part);
-    model_domain.setHeight(new_height);
-
-    return model_domain;
-}
-
-QRectF DistortionModel::boundingBox(QTransform const& transform) const {
-    double top = NumericTraits<double>::max();
-    double left = top;
-    double bottom = NumericTraits<double>::min();
-    double right = bottom;
-
-    for (QPointF pt : m_topCurve.polyline()) {
-        pt = transform.map(pt);
-        left = std::min<double>(left, pt.x());
-        right = std::max<double>(right, pt.x());
-        top = std::min<double>(top, pt.y());
-        bottom = std::max<double>(bottom, pt.y());
+        if ((top > bottom) || (left > right)) {
+            return QRectF();
+        } else {
+            return QRectF(left, top, right - left, bottom - top);
+        }
     }
-
-    for (QPointF pt : m_bottomCurve.polyline()) {
-        pt = transform.map(pt);
-        left = std::min<double>(left, pt.x());
-        right = std::max<double>(right, pt.x());
-        top = std::min<double>(top, pt.y());
-        bottom = std::max<double>(bottom, pt.y());
-    }
-
-    if ((top > bottom) || (left > right)) {
-        return QRectF();
-    } else {
-        return QRectF(left, top, right - left, bottom - top);
-    }
-}
 }  // namespace dewarping

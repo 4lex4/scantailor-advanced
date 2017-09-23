@@ -24,12 +24,16 @@ class TaskStatus;
 class DebugImages;
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 }
 
 class Despeckle {
 public:
-    enum Level { CAUTIOUS, NORMAL, AGGRESSIVE };
+    enum Level {
+        CAUTIOUS,
+        NORMAL,
+        AGGRESSIVE
+    };
 
     /**
      * \brief Removes small speckles from a binary image.

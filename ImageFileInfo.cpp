@@ -24,8 +24,8 @@ bool ImageFileInfo::isDpiOK() const {
     using namespace boost::lambda;
 
     return std::find_if(
-        m_imageInfo.begin(), m_imageInfo.end(),
-        !bind(&ImageMetadata::isDpiOK, _1)
+            m_imageInfo.begin(), m_imageInfo.end(),
+            !bind(&ImageMetadata::isDpiOK, _1)
     ) == m_imageInfo.end();
 }
 

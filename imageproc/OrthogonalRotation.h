@@ -23,7 +23,7 @@
 class QRect;
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 
 /**
  * \brief Rotation by 0, 90, 180 or 270 degrees.
@@ -38,7 +38,7 @@ class BinaryImage;
  *         of the returned image will correspond to \p src_rect,
  *         possibly with width and height swapped.
  */
-BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int degrees);
+    BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int degrees);
 
 /**
  * \brief Rotation by 90, 180 or 270 degrees.
@@ -46,6 +46,6 @@ BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, in
  * This is an overload provided for convenience.
  * It rotates the whole image, not a portion of it.
  */
-BinaryImage orthogonalRotation(BinaryImage const& src, int degrees);
+    BinaryImage orthogonalRotation(BinaryImage const& src, int degrees);
 }
 #endif

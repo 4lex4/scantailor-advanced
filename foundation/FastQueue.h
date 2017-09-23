@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-template <typename T>
+template<typename T>
 class FastQueue {
 public:
     FastQueue()
@@ -61,8 +61,9 @@ public:
     void swap(FastQueue& other);
 
 private:
-    struct Chunk: public boost::intrusive::list_base_hook<>{
-        DECLARE_NON_COPYABLE(Chunk)
+    struct Chunk : public boost::intrusive::list_base_hook<> {
+    DECLARE_NON_COPYABLE(Chunk)
+
     public:
         Chunk(size_t capacity) {
             uintptr_t const p = (uintptr_t) (this + 1);
@@ -97,7 +98,7 @@ private:
 
     typedef boost::intrusive::list<
             Chunk, boost::intrusive::constant_time_size<false>
->ChunkList;
+    > ChunkList;
 
     static size_t defaultChunkCapacity() {
         return (sizeof(T) >= 4096) ? 1 : 4096 / sizeof(T);
@@ -108,7 +109,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 FastQueue<T>::FastQueue(FastQueue const& other)
         : m_chunkCapacity(other.m_chunkCapacity) {
     for (Chunk& chunk : other.m_chunkList) {
@@ -118,14 +119,14 @@ FastQueue<T>::FastQueue(FastQueue const& other)
     }
 }
 
-template <typename T>
+template<typename T>
 FastQueue<T>& FastQueue<T>::operator=(FastQueue const& other) {
     FastQueue(other).swap(*this);
 
     return *this;
 }
 
-template <typename T>
+template<typename T>
 void FastQueue<T>::push(T const& t) {
     Chunk* chunk = 0;
 
@@ -146,7 +147,7 @@ void FastQueue<T>::push(T const& t) {
     ++chunk->pEnd;
 }
 
-template <typename T>
+template<typename T>
 void FastQueue<T>::pop() {
     assert(!empty());
 
@@ -159,7 +160,7 @@ void FastQueue<T>::pop() {
     }
 }
 
-template <typename T>
+template<typename T>
 void FastQueue<T>::swap(FastQueue& other) {
     m_chunkList.swap(other.m_chunkList);
     size_t const tmp = m_chunkCapacity;
@@ -167,7 +168,7 @@ void FastQueue<T>::swap(FastQueue& other) {
     other.m_chunkCapacity = tmp;
 }
 
-template <typename T>
+template<typename T>
 inline void swap(FastQueue<T>& o1, FastQueue<T>& o2) {
     o1.swap(o2);
 }

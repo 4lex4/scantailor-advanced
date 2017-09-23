@@ -51,7 +51,7 @@ private:
 
     struct TiffInfo;
 
-    template <typename T>
+    template<typename T>
     class TiffBuffer;
 
     static TiffHeader readHeader(QIODevice& device);

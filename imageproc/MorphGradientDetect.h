@@ -22,7 +22,7 @@
 class QSize;
 
 namespace imageproc {
-class GrayImage;
+    class GrayImage;
 
 /**
  * \brief Morphological gradient detection.
@@ -39,7 +39,7 @@ class GrayImage;
  * Smoothing the image before calling this function is often a good idea,
  * especially for black and white images.
  */
-GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area);
+    GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area);
 
 /**
  * \brief Morphological gradient detection.
@@ -56,6 +56,6 @@ GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area)
  * Smoothing the image before calling this function is often a good idea,
  * especially for black and white images.
  */
-GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area);
+    GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area);
 }
 #endif

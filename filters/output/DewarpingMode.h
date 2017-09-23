@@ -22,23 +22,29 @@
 #include <QString>
 
 namespace output {
-class DewarpingMode {
-public:
-    enum Mode { OFF, AUTO, MANUAL, MARGINAL };
+    class DewarpingMode {
+    public:
+        enum Mode {
+            OFF,
+            AUTO,
+            MANUAL,
+            MARGINAL
+        };
 
-    DewarpingMode(Mode mode = OFF)
-            : m_mode(mode) {
-    }
+        DewarpingMode(Mode mode = OFF)
+                : m_mode(mode) {
+        }
 
-    explicit DewarpingMode(QString const& str);
+        explicit DewarpingMode(QString const& str);
 
-    QString toString() const;
+        QString toString() const;
 
-    operator Mode() const
-    { return m_mode;
-    }
-private:
-    Mode m_mode;
-};
+        operator Mode() const {
+            return m_mode;
+        }
+
+    private:
+        Mode m_mode;
+    };
 }
 #endif

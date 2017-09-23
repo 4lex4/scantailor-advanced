@@ -17,7 +17,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
- #include <config.h>
+#include <config.h>
 #endif
 
 #define BOOST_AUTO_TEST_MAIN

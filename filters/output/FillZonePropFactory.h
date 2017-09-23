@@ -22,9 +22,9 @@
 #include "PropertyFactory.h"
 
 namespace output {
-class FillZonePropFactory: public PropertyFactory {
-public:
-    FillZonePropFactory();
-};
+    class FillZonePropFactory : public PropertyFactory {
+    public:
+        FillZonePropFactory();
+    };
 }
 #endif

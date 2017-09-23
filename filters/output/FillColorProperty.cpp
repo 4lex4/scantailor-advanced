@@ -21,39 +21,39 @@
 #include <QDomDocument>
 
 namespace output {
-char const FillColorProperty::m_propertyName[] = "FillColorProperty";
+    char const FillColorProperty::m_propertyName[] = "FillColorProperty";
 
-FillColorProperty::FillColorProperty(QDomElement const& el)
-        : m_rgb(rgbFromString(el.attribute("color"))) {
-}
+    FillColorProperty::FillColorProperty(QDomElement const& el)
+            : m_rgb(rgbFromString(el.attribute("color"))) {
+    }
 
-void FillColorProperty::registerIn(PropertyFactory& factory) {
-    factory.registerProperty(m_propertyName, &FillColorProperty::construct);
-}
+    void FillColorProperty::registerIn(PropertyFactory& factory) {
+        factory.registerProperty(m_propertyName, &FillColorProperty::construct);
+    }
 
-IntrusivePtr<Property>
-FillColorProperty::clone() const {
-    return IntrusivePtr<Property>(new FillColorProperty(*this));
-}
+    IntrusivePtr<Property>
+    FillColorProperty::clone() const {
+        return IntrusivePtr<Property>(new FillColorProperty(*this));
+    }
 
-QDomElement FillColorProperty::toXml(QDomDocument& doc, QString const& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("type", m_propertyName);
-    el.setAttribute("color", rgbToString(m_rgb));
+    QDomElement FillColorProperty::toXml(QDomDocument& doc, QString const& name) const {
+        QDomElement el(doc.createElement(name));
+        el.setAttribute("type", m_propertyName);
+        el.setAttribute("color", rgbToString(m_rgb));
 
-    return el;
-}
+        return el;
+    }
 
-IntrusivePtr<Property>
-FillColorProperty::construct(QDomElement const& el) {
-    return IntrusivePtr<Property>(new FillColorProperty(el));
-}
+    IntrusivePtr<Property>
+    FillColorProperty::construct(QDomElement const& el) {
+        return IntrusivePtr<Property>(new FillColorProperty(el));
+    }
 
-QRgb FillColorProperty::rgbFromString(QString const& str) {
-    return QColor(str).rgb();
-}
+    QRgb FillColorProperty::rgbFromString(QString const& str) {
+        return QColor(str).rgb();
+    }
 
-QString FillColorProperty::rgbToString(QRgb rgb) {
-    return QColor(rgb).name();
-}
+    QString FillColorProperty::rgbToString(QRgb rgb) {
+        return QColor(rgb).name();
+    }
 }  // namespace output

@@ -29,7 +29,7 @@ class QRect;
  * \brief This widget is displayed in the central area od the main window
  *        when an image is being processed.
  */
-class ProcessingIndicationWidget: public QWidget {
+class ProcessingIndicationWidget : public QWidget {
 public:
     ProcessingIndicationWidget(QWidget* parent = 0);
 

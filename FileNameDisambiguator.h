@@ -37,8 +37,9 @@ class QDomDocument;
  *
  * \note This class is thread-safe.
  */
-class FileNameDisambiguator: public RefCountable {
-    DECLARE_NON_COPYABLE(FileNameDisambiguator)
+class FileNameDisambiguator : public RefCountable {
+DECLARE_NON_COPYABLE(FileNameDisambiguator)
+
 public:
     FileNameDisambiguator();
 
@@ -56,7 +57,7 @@ public:
      * the record will be skipped.
      */
     FileNameDisambiguator(QDomElement const& disambiguator_el, boost::function<QString(
-                                                                                   QString const&)> const& file_path_unpacker);
+            QString const&)> const& file_path_unpacker);
 
     /**
      * \brief Serialize disambiguation information to XML.
@@ -72,7 +73,7 @@ public:
      * the record will be skipped.
      */
     QDomElement toXml(QDomDocument& doc, QString const& name, boost::function<QString(
-                                                                                  QString const&)> const& file_path_packer)
+            QString const&)> const& file_path_packer)
     const;
 
     int getLabel(QString const& file_path) const;

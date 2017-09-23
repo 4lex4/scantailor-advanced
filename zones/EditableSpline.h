@@ -28,7 +28,7 @@
 
 class SerializableSpline;
 
-class EditableSpline: public RefCountable {
+class EditableSpline : public RefCountable {
 public:
     typedef IntrusivePtr<EditableSpline> Ptr;
 

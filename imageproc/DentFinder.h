@@ -22,31 +22,31 @@
 #include <stdint.h>
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 
-class DentFinder {
-public:
-    /**
-     * The idea is to scan all horizontal, vertical, and diagonal lines
-     * and consider every white pixel between the first and the last black
-     * span to belong to a dent or a hole.
-     */
-    static imageproc::BinaryImage findDentsAndHoles(imageproc::BinaryImage const& src);
+    class DentFinder {
+    public:
+        /**
+         * The idea is to scan all horizontal, vertical, and diagonal lines
+         * and consider every white pixel between the first and the last black
+         * span to belong to a dent or a hole.
+         */
+        static imageproc::BinaryImage findDentsAndHoles(imageproc::BinaryImage const& src);
 
-private:
-    struct ImgInfo;
+    private:
+        struct ImgInfo;
 
-    static void scanHorizontalLines(ImgInfo info);
+        static void scanHorizontalLines(ImgInfo info);
 
-    static void scanVerticalLines(ImgInfo info);
+        static void scanVerticalLines(ImgInfo info);
 
-    static void scanSlashDiagonals(ImgInfo info);
+        static void scanSlashDiagonals(ImgInfo info);
 
-    static void scanBackslashDiagonals(ImgInfo info);
+        static void scanBackslashDiagonals(ImgInfo info);
 
-    static uint32_t getPixel(uint32_t const* src_line, int x);
+        static uint32_t getPixel(uint32_t const* src_line, int x);
 
-    static void transferPixel(uint32_t const* src_line, uint32_t* dst_line, int x);
-};
+        static void transferPixel(uint32_t const* src_line, uint32_t* dst_line, int x);
+    };
 }
 #endif  // ifndef IMAGEPROC_DENTFINDER_H_

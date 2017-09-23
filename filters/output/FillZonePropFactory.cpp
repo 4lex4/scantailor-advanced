@@ -20,7 +20,7 @@
 #include "FillColorProperty.h"
 
 namespace output {
-FillZonePropFactory::FillZonePropFactory() {
-    FillColorProperty::registerIn(*this);
-}
+    FillZonePropFactory::FillZonePropFactory() {
+        FillColorProperty::registerIn(*this);
+    }
 }

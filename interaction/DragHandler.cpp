@@ -35,7 +35,7 @@ DragHandler::DragHandler(ImageViewBase& image_view,
 
 void DragHandler::init() {
     m_interaction.setInteractionStatusTip(
-        tr("Unrestricted dragging is possible by holding down the Shift key.")
+            tr("Unrestricted dragging is possible by holding down the Shift key.")
     );
 }
 
@@ -48,8 +48,7 @@ void DragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& intera
 
     if ((event->buttons() & (Qt::LeftButton | Qt::MidButton))
         && !interaction.capturedBy(m_interaction)
-        && m_interactionPermitter(interaction))
-    {
+        && m_interactionPermitter(interaction)) {
         interaction.capture(m_interaction);
     }
 }

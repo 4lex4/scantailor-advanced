@@ -26,56 +26,56 @@
 #include "filters/select_content/CacheDrivenTask.h"
 
 namespace deskew {
-CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                                 IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
-        : m_ptrNextTask(next_task),
-          m_ptrSettings(settings) {
-}
+    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     IntrusivePtr<select_content::CacheDrivenTask> const& next_task)
+            : m_ptrNextTask(next_task),
+              m_ptrSettings(settings) {
+    }
 
-CacheDrivenTask::~CacheDrivenTask() {
-}
+    CacheDrivenTask::~CacheDrivenTask() {
+    }
 
-void CacheDrivenTask::process(PageInfo const& page_info,
-                              AbstractFilterDataCollector* collector,
-                              ImageTransformation const& xform) {
-    Dependencies const deps(xform.preCropArea(), xform.preRotation());
-    std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
-    if (!params.get() || !deps.matches(params->dependencies())) {
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            thumb_col->processThumbnail(
-                std::unique_ptr<QGraphicsItem>(
-                    new IncompleteThumbnail(
-                        thumb_col->thumbnailCache(),
-                        thumb_col->maxLogicalThumbSize(),
-                        page_info.imageId(), xform
-                    )
-                )
-            );
+    void CacheDrivenTask::process(PageInfo const& page_info,
+                                  AbstractFilterDataCollector* collector,
+                                  ImageTransformation const& xform) {
+        Dependencies const deps(xform.preCropArea(), xform.preRotation());
+        std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
+        if (!params.get() || !deps.matches(params->dependencies())) {
+            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+                thumb_col->processThumbnail(
+                        std::unique_ptr<QGraphicsItem>(
+                                new IncompleteThumbnail(
+                                        thumb_col->thumbnailCache(),
+                                        thumb_col->maxLogicalThumbSize(),
+                                        page_info.imageId(), xform
+                                )
+                        )
+                );
+            }
+
+            return;
         }
 
-        return;
-    }
+        ImageTransformation new_xform(xform);
+        new_xform.setPostRotation(params->deskewAngle());
 
-    ImageTransformation new_xform(xform);
-    new_xform.setPostRotation(params->deskewAngle());
+        if (m_ptrNextTask) {
+            m_ptrNextTask->process(page_info, collector, new_xform);
 
-    if (m_ptrNextTask) {
-        m_ptrNextTask->process(page_info, collector, new_xform);
+            return;
+        }
 
-        return;
-    }
-
-    if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-        thumb_col->processThumbnail(
-            std::unique_ptr<QGraphicsItem>(
-                new Thumbnail(
-                    thumb_col->thumbnailCache(),
-                    thumb_col->maxLogicalThumbSize(),
-                    page_info.imageId(), new_xform,
-                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
-                )
-            )
-        );
-    }
-}      // CacheDrivenTask::process
+        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+            thumb_col->processThumbnail(
+                    std::unique_ptr<QGraphicsItem>(
+                            new Thumbnail(
+                                    thumb_col->thumbnailCache(),
+                                    thumb_col->maxLogicalThumbSize(),
+                                    page_info.imageId(), new_xform,
+                                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
+                            )
+                    )
+            );
+        }
+    }      // CacheDrivenTask::process
 }  // namespace deskew

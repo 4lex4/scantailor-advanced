@@ -21,7 +21,7 @@
 #include "filter_dc/ThumbnailCollector.h"
 #include <QGraphicsItem>
 
-class ThumbnailFactory::Collector: public ThumbnailCollector {
+class ThumbnailFactory::Collector : public ThumbnailCollector {
 public:
     Collector(IntrusivePtr<ThumbnailPixmapCache> const& cache, QSizeF const& max_size);
 

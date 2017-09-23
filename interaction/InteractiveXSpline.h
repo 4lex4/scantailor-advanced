@@ -30,12 +30,12 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class InteractiveXSpline: public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
+class InteractiveXSpline : public InteractionHandler {
+Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
 public:
     typedef boost::function<QPointF(QPointF const&)> Transform;
-    typedef boost::function<void ()> ModifiedCallback;
-    typedef boost::function<void ()> DragFinishedCallback;
+    typedef boost::function<void()> ModifiedCallback;
+    typedef boost::function<void()> DragFinishedCallback;
 
     InteractiveXSpline();
 

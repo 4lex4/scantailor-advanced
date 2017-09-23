@@ -33,46 +33,47 @@ class Dpi;
 class DebugImages;
 
 namespace imageproc {
-class BinaryImage;
+    class BinaryImage;
 }
 
 namespace select_content {
-class Task;
+    class Task;
 }
 
 namespace deskew {
-class Filter;
-class Settings;
+    class Filter;
+    class Settings;
 
-class Task: public RefCountable {
+    class Task : public RefCountable {
     DECLARE_NON_COPYABLE(Task)
-public:
-    Task(IntrusivePtr<Filter> const& filter,
-         IntrusivePtr<Settings> const& settings,
-         IntrusivePtr<select_content::Task> const& next_task,
-         PageId const& page_id,
-         bool batch_processing,
-         bool debug);
 
-    virtual ~Task();
+    public:
+        Task(IntrusivePtr<Filter> const& filter,
+             IntrusivePtr<Settings> const& settings,
+             IntrusivePtr<select_content::Task> const& next_task,
+             PageId const& page_id,
+             bool batch_processing,
+             bool debug);
 
-    FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        virtual ~Task();
 
-private:
-    class UiUpdater;
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
-    static void cleanup(TaskStatus const& status, imageproc::BinaryImage& img, Dpi const& dpi);
+    private:
+        class UiUpdater;
 
-    static int from150dpi(int size, int target_dpi);
+        static void cleanup(TaskStatus const& status, imageproc::BinaryImage& img, Dpi const& dpi);
 
-    static QSize from150dpi(QSize const& size, Dpi const& target_dpi);
+        static int from150dpi(int size, int target_dpi);
 
-    IntrusivePtr<Filter> m_ptrFilter;
-    IntrusivePtr<Settings> m_ptrSettings;
-    IntrusivePtr<select_content::Task> m_ptrNextTask;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    bool m_batchProcessing;
-};
+        static QSize from150dpi(QSize const& size, Dpi const& target_dpi);
+
+        IntrusivePtr<Filter> m_ptrFilter;
+        IntrusivePtr<Settings> m_ptrSettings;
+        IntrusivePtr<select_content::Task> m_ptrNextTask;
+        std::unique_ptr<DebugImages> m_ptrDbg;
+        PageId m_pageId;
+        bool m_batchProcessing;
+    };
 }  // namespace deskew
 #endif  // ifndef DESKEW_TASK_H_

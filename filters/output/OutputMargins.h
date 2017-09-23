@@ -28,11 +28,11 @@ namespace output {
  * We use the same margins on all tabs to preserve their geometrical
  * one-to-one relationship.
  */
-class OutputMargins: public Margins {
-public:
-    OutputMargins()
-            : Margins(10.0, 10.0, 10.0, 10.0) {
-    }
-};
+    class OutputMargins : public Margins {
+    public:
+        OutputMargins()
+                : Margins(10.0, 10.0, 10.0, 10.0) {
+        }
+    };
 }
 #endif

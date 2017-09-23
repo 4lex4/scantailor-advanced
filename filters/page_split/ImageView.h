@@ -39,101 +39,104 @@ class QRectF;
 class QLineF;
 
 namespace page_split {
-class ImageView: public ImageViewBase, private InteractionHandler {
+    class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
-public:
-    ImageView(QImage const& image,
-              QImage const& downscaled_image,
-              ImageTransformation const& xform,
-              PageLayout const& layout,
-              IntrusivePtr<ProjectPages> const& pages,
-              ImageId const& image_id,
-              bool left_half_removed,
-              bool right_half_removed);
+    public:
+        ImageView(QImage const& image,
+                  QImage const& downscaled_image,
+                  ImageTransformation const& xform,
+                  PageLayout const& layout,
+                  IntrusivePtr<ProjectPages> const& pages,
+                  ImageId const& image_id,
+                  bool left_half_removed,
+                  bool right_half_removed);
 
-    virtual ~ImageView();
-signals:
-    void invalidateThumbnail(PageInfo const& page_info);
+        virtual ~ImageView();
 
-    void pageLayoutSetLocally(PageLayout const& layout);
+    signals:
 
-public slots:
-    void pageLayoutSetExternally(PageLayout const& layout);
+        void invalidateThumbnail(PageInfo const& page_info);
 
-protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void pageLayoutSetLocally(PageLayout const& layout);
 
-private:
-    void setupCuttersInteraction();
+    public slots:
 
-    QPointF handlePosition(int line_idx, int handle_idx) const;
+        void pageLayoutSetExternally(PageLayout const& layout);
 
-    void handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos);
+    protected:
+        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    QLineF linePosition(int line_idx) const;
+    private:
+        void setupCuttersInteraction();
 
-    void lineMoveRequest(int line_idx, QLineF line);
+        QPointF handlePosition(int line_idx, int handle_idx) const;
 
-    void dragFinished();
+        void handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos);
 
-    QPointF leftPageCenter() const;
+        QLineF linePosition(int line_idx) const;
 
-    QPointF rightPageCenter() const;
+        void lineMoveRequest(int line_idx, QLineF line);
 
-    void unremoveLeftPage();
+        void dragFinished();
 
-    void unremoveRightPage();
+        QPointF leftPageCenter() const;
 
-    /**
-     * \return Page layout in widget coordinates.
-     */
-    PageLayout widgetLayout() const;
+        QPointF rightPageCenter() const;
 
-    /**
-     * \return A Cutter line in widget coordinates.
-     *
-     * Depending on the current interaction state, the line segment
-     * may end either shortly before the widget boundaries, or shortly
-     * before the image boundaries.
-     */
-    QLineF widgetCutterLine(int line_idx) const;
+        void unremoveLeftPage();
 
-    /**
-     * \return A Cutter line in virtual image coordinates.
-     *
-     * Unlike widgetCutterLine(), this one always ends shortly before
-     * the image boundaries.
-     */
-    QLineF virtualCutterLine(int line_idx) const;
+        void unremoveRightPage();
 
-    /**
-     * Same as ImageViewBase::getVisibleWidgetRect(), except reduced
-     * vertically to accomodate the height of line endpoint handles.
-     */
-    QRectF reducedWidgetArea() const;
+        /**
+         * \return Page layout in widget coordinates.
+         */
+        PageLayout widgetLayout() const;
 
-    static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
+        /**
+         * \return A Cutter line in widget coordinates.
+         *
+         * Depending on the current interaction state, the line segment
+         * may end either shortly before the widget boundaries, or shortly
+         * before the image boundaries.
+         */
+        QLineF widgetCutterLine(int line_idx) const;
 
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    ImageId m_imageId;
-    DraggablePoint m_handles[2][2];
-    ObjectDragHandler m_handleInteractors[2][2];
-    DraggableLineSegment m_lineSegments[2];
-    ObjectDragHandler m_lineInteractors[2];
-    UnremoveButton m_leftUnremoveButton;
-    UnremoveButton m_rightUnremoveButton;
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
+        /**
+         * \return A Cutter line in virtual image coordinates.
+         *
+         * Unlike widgetCutterLine(), this one always ends shortly before
+         * the image boundaries.
+         */
+        QLineF virtualCutterLine(int line_idx) const;
 
-    QPixmap m_handlePixmap;
+        /**
+         * Same as ImageViewBase::getVisibleWidgetRect(), except reduced
+         * vertically to accomodate the height of line endpoint handles.
+         */
+        QRectF reducedWidgetArea() const;
 
-    /**
-     * Page layout in virtual image coordinates.
-     */
-    PageLayout m_virtLayout;
+        static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
 
-    bool m_leftPageRemoved;
-    bool m_rightPageRemoved;
-};
+        IntrusivePtr<ProjectPages> m_ptrPages;
+        ImageId m_imageId;
+        DraggablePoint m_handles[2][2];
+        ObjectDragHandler m_handleInteractors[2][2];
+        DraggableLineSegment m_lineSegments[2];
+        ObjectDragHandler m_lineInteractors[2];
+        UnremoveButton m_leftUnremoveButton;
+        UnremoveButton m_rightUnremoveButton;
+        DragHandler m_dragHandler;
+        ZoomHandler m_zoomHandler;
+
+        QPixmap m_handlePixmap;
+
+        /**
+         * Page layout in virtual image coordinates.
+         */
+        PageLayout m_virtLayout;
+
+        bool m_leftPageRemoved;
+        bool m_rightPageRemoved;
+    };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_IMAGEVIEW_H_

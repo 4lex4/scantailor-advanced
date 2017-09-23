@@ -21,8 +21,8 @@
 #include "ZoneCategoryProperty.h"
 
 namespace output {
-PictureZonePropFactory::PictureZonePropFactory() {
-    PictureLayerProperty::registerIn(*this);
-    ZoneCategoryProperty::registerIn(*this);
-}
+    PictureZonePropFactory::PictureZonePropFactory() {
+        PictureLayerProperty::registerIn(*this);
+        ZoneCategoryProperty::registerIn(*this);
+    }
 }

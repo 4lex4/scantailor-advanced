@@ -25,7 +25,7 @@
 class AbstractFilter;
 class FilterUiInterface;
 
-class FilterResult: public RefCountable {
+class FilterResult : public RefCountable {
 public:
     virtual void updateUI(FilterUiInterface* ui) = 0;
 

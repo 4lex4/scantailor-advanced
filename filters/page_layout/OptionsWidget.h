@@ -35,98 +35,101 @@ class QToolButton;
 class ProjectPages;
 
 namespace page_layout {
-class Settings;
+    class Settings;
 
-class OptionsWidget: public FilterOptionsWidget, public Ui::PageLayoutOptionsWidget {
+    class OptionsWidget : public FilterOptionsWidget, public Ui::PageLayoutOptionsWidget {
     Q_OBJECT
-public:
-    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+    public:
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~OptionsWidget();
+        virtual ~OptionsWidget();
 
-    void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
+        void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
 
-    void postUpdateUI();
+        void postUpdateUI();
 
-    bool leftRightLinked() const {
-        return m_leftRightLinked;
-    }
+        bool leftRightLinked() const {
+            return m_leftRightLinked;
+        }
 
-    bool topBottomLinked() const {
-        return m_topBottomLinked;
-    }
+        bool topBottomLinked() const {
+            return m_topBottomLinked;
+        }
 
-    Margins const& marginsMM() const {
-        return m_marginsMM;
-    }
+        Margins const& marginsMM() const {
+            return m_marginsMM;
+        }
 
-    Alignment const& alignment() const {
-        return m_alignment;
-    }
+        Alignment const& alignment() const {
+            return m_alignment;
+        }
 
-signals:
-    void leftRightLinkToggled(bool linked);
+    signals:
 
-    void topBottomLinkToggled(bool linked);
+        void leftRightLinkToggled(bool linked);
 
-    void alignmentChanged(Alignment const& alignment);
+        void topBottomLinkToggled(bool linked);
 
-    void marginsSetLocally(Margins const& margins_mm);
+        void alignmentChanged(Alignment const& alignment);
 
-    void aggregateHardSizeChanged();
+        void marginsSetLocally(Margins const& margins_mm);
 
-public slots:
-    void marginsSetExternally(Margins const& margins_mm);
+        void aggregateHardSizeChanged();
 
-private slots:
-    void unitsChanged(int idx);
+    public slots:
 
-    void horMarginsChanged(double val);
+        void marginsSetExternally(Margins const& margins_mm);
 
-    void vertMarginsChanged(double val);
+    private slots:
 
-    void autoMarginsChanged(bool checked);
+        void unitsChanged(int idx);
 
-    void alignmentModeChanged(int idx);
+        void horMarginsChanged(double val);
 
-    void topBottomLinkClicked();
+        void vertMarginsChanged(double val);
 
-    void leftRightLinkClicked();
+        void autoMarginsChanged(bool checked);
 
-    void alignWithOthersToggled();
+        void alignmentModeChanged(int idx);
 
-    void alignmentButtonClicked();
+        void topBottomLinkClicked();
 
-    void showApplyMarginsDialog();
+        void leftRightLinkClicked();
 
-    void showApplyAlignmentDialog();
+        void alignWithOthersToggled();
 
-    void applyMargins(std::set<PageId> const& pages);
+        void alignmentButtonClicked();
 
-    void applyAlignment(std::set<PageId> const& pages);
+        void showApplyMarginsDialog();
 
-private:
-    typedef std::map<QToolButton*, Alignment> AlignmentByButton;
+        void showApplyAlignmentDialog();
 
-    void updateMarginsDisplay();
+        void applyMargins(std::set<PageId> const& pages);
 
-    void updateLinkDisplay(QToolButton* button, bool linked);
+        void applyAlignment(std::set<PageId> const& pages);
 
-    void enableDisableAlignmentButtons();
+    private:
+        typedef std::map<QToolButton*, Alignment> AlignmentByButton;
 
-    IntrusivePtr<Settings> m_ptrSettings;
-    PageSelectionAccessor m_pageSelectionAccessor;
-    QIcon m_chainIcon;
-    QIcon m_brokenChainIcon;
-    AlignmentByButton m_alignmentByButton;
-    double m_mmToUnit;
-    double m_unitToMM;
-    PageId m_pageId;
-    Margins m_marginsMM;
-    Alignment m_alignment;
-    int m_ignoreMarginChanges;
-    bool m_leftRightLinked;
-    bool m_topBottomLinked;
-};
+        void updateMarginsDisplay();
+
+        void updateLinkDisplay(QToolButton* button, bool linked);
+
+        void enableDisableAlignmentButtons();
+
+        IntrusivePtr<Settings> m_ptrSettings;
+        PageSelectionAccessor m_pageSelectionAccessor;
+        QIcon m_chainIcon;
+        QIcon m_brokenChainIcon;
+        AlignmentByButton m_alignmentByButton;
+        double m_mmToUnit;
+        double m_unitToMM;
+        PageId m_pageId;
+        Margins m_marginsMM;
+        Alignment m_alignment;
+        int m_ignoreMarginChanges;
+        bool m_leftRightLinked;
+        bool m_topBottomLinked;
+    };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

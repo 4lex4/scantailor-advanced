@@ -17,7 +17,6 @@
  */
 
 #include "PageRange.h"
-#include <boost/foreach.hpp>
 
 std::set<PageId>
 PageRange::selectEveryOther(PageId const& base) const {

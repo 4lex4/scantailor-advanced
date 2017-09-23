@@ -31,10 +31,10 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
 
     recentProjectsGroup->setLayout(new QVBoxLayout);
     newProjectLabel->setText(
-        Utils::richTextForLink(newProjectLabel->text())
+            Utils::richTextForLink(newProjectLabel->text())
     );
     openProjectLabel->setText(
-        Utils::richTextForLink(openProjectLabel->text())
+            Utils::richTextForLink(openProjectLabel->text())
     );
 
     RecentProjects rp;
@@ -46,20 +46,20 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
         recentProjectsGroup->setVisible(false);
     } else {
         rp.enumerate(
-            boost::lambda::bind(
-                &NewOpenProjectPanel::addRecentProject,
-                this, boost::lambda::_1
-            )
+                boost::lambda::bind(
+                        &NewOpenProjectPanel::addRecentProject,
+                        this, boost::lambda::_1
+                )
         );
     }
 
     connect(
-        newProjectLabel, SIGNAL(linkActivated(QString const &)),
-        this, SIGNAL(newProject())
+            newProjectLabel, SIGNAL(linkActivated(QString const &)),
+            this, SIGNAL(newProject())
     );
     connect(
-        openProjectLabel, SIGNAL(linkActivated(QString const &)),
-        this, SIGNAL(openProject())
+            openProjectLabel, SIGNAL(linkActivated(QString const &)),
+            this, SIGNAL(openProject())
     );
 }
 
@@ -77,8 +77,8 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     recentProjectsGroup->layout()->addWidget(label);
 
     connect(
-        label, SIGNAL(linkActivated(QString const &)),
-        this, SIGNAL(openRecentProject(QString const &))
+            label, SIGNAL(linkActivated(QString const &)),
+            this, SIGNAL(openRecentProject(QString const &))
     );
 }
 
@@ -88,7 +88,7 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent* event) {
 
     QRect const widget_rect(rect());
     QRect const except_margins(
-        widget_rect.adjusted(left, top, -right, -bottom)
+            widget_rect.adjusted(left, top, -right, -bottom)
     );
 
     int const border = 1;
@@ -113,9 +113,9 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent* event) {
     bottom -= border;
 
     QRect const extended(
-        except_margins.adjusted(
-            -border - 1, -border - 1, border + 1, border + 1
-        )
+            except_margins.adjusted(
+                    -border - 1, -border - 1, border + 1, border + 1
+            )
     );
 
     {

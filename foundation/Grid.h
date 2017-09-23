@@ -21,7 +21,7 @@
 
 #include <boost/scoped_array.hpp>
 
-template <typename Node>
+template<typename Node>
 class Grid {
 public:
     /**
@@ -108,7 +108,7 @@ public:
     void swap(Grid& other);
 
 private:
-    template <typename T>
+    template<typename T>
     static void basicSwap(T& o1, T& o2) {
         T tmp(o1);
         o1 = o2;
@@ -124,7 +124,7 @@ private:
 };
 
 
-template <typename Node>
+template<typename Node>
 Grid<Node>::Grid()
         : m_pData(0),
           m_width(0),
@@ -133,7 +133,7 @@ Grid<Node>::Grid()
           m_padding(0) {
 }
 
-template <typename Node>
+template<typename Node>
 Grid<Node>::Grid(int width, int height, int padding)
         : m_storage(new Node[(width + padding * 2) * (height + padding * 2)]),
           m_pData(m_storage.get() + (width + padding * 2) * padding + padding),
@@ -143,7 +143,7 @@ Grid<Node>::Grid(int width, int height, int padding)
           m_padding(padding) {
 }
 
-template <typename Node>
+template<typename Node>
 Grid<Node>::Grid(Grid const& other)
         : m_storage(new Node[(other.stride() * (other.height() + other.padding() * 2))]),
           m_pData(m_storage.get() + other.stride() * other.padding() + other.padding()),
@@ -157,7 +157,7 @@ Grid<Node>::Grid(Grid const& other)
     }
 }
 
-template <typename Node>
+template<typename Node>
 void Grid<Node>::initPadding(Node const& padding_node) {
     if (m_padding == 0) {
         return;
@@ -189,7 +189,7 @@ void Grid<Node>::initPadding(Node const& padding_node) {
     }
 }
 
-template <typename Node>
+template<typename Node>
 void Grid<Node>::initInterior(Node const& interior_node) {
     Node* line = m_pData;
     for (int y = 0; y < m_height; ++y) {
@@ -200,7 +200,7 @@ void Grid<Node>::initInterior(Node const& interior_node) {
     }
 }
 
-template <typename Node>
+template<typename Node>
 void Grid<Node>::swap(Grid& other) {
     m_storage.swap(other.m_storage);
     basicSwap(m_pData, other.m_pData);
@@ -210,7 +210,7 @@ void Grid<Node>::swap(Grid& other) {
     basicSwap(m_padding, other.m_padding);
 }
 
-template <typename Node>
+template<typename Node>
 void swap(Grid<Node>& o1, Grid<Node>& o2) {
     o1.swap(o2);
 }

@@ -33,36 +33,37 @@ class DebugImages;
 class ImageTransformation;
 
 namespace page_layout {
-class Task;
+    class Task;
 }
 
 namespace select_content {
-class Filter;
-class Settings;
+    class Filter;
+    class Settings;
 
-class Task: public RefCountable {
+    class Task : public RefCountable {
     DECLARE_NON_COPYABLE(Task)
-public:
-    Task(IntrusivePtr<Filter> const& filter,
-         IntrusivePtr<page_layout::Task> const& next_task,
-         IntrusivePtr<Settings> const& settings,
-         PageId const& page_id,
-         bool batch,
-         bool debug);
 
-    virtual ~Task();
+    public:
+        Task(IntrusivePtr<Filter> const& filter,
+             IntrusivePtr<page_layout::Task> const& next_task,
+             IntrusivePtr<Settings> const& settings,
+             PageId const& page_id,
+             bool batch,
+             bool debug);
 
-    FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        virtual ~Task();
 
-private:
-    class UiUpdater;
+        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
-    IntrusivePtr<Filter> m_ptrFilter;
-    IntrusivePtr<page_layout::Task> m_ptrNextTask;
-    IntrusivePtr<Settings> m_ptrSettings;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    bool m_batchProcessing;
-};
+    private:
+        class UiUpdater;
+
+        IntrusivePtr<Filter> m_ptrFilter;
+        IntrusivePtr<page_layout::Task> m_ptrNextTask;
+        IntrusivePtr<Settings> m_ptrSettings;
+        std::unique_ptr<DebugImages> m_ptrDbg;
+        PageId m_pageId;
+        bool m_batchProcessing;
+    };
 }
 #endif  // ifndef SELECT_CONTENT_TASK_H_

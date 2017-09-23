@@ -17,7 +17,6 @@
  */
 
 #include "RecentProjects.h"
-#include <boost/foreach.hpp>
 #include <QSettings>
 #include <QFile>
 

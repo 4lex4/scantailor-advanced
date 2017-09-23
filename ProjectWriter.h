@@ -42,7 +42,8 @@ class QDomDocument;
 class QDomElement;
 
 class ProjectWriter {
-    DECLARE_NON_COPYABLE(ProjectWriter)
+DECLARE_NON_COPYABLE(ProjectWriter)
+
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
@@ -57,13 +58,13 @@ public:
     /**
      * \p out will be called like this: out(ImageId, numeric_image_id)
      */
-    template <typename OutFunc>
+    template<typename OutFunc>
     void enumImages(OutFunc out) const;
 
     /**
      * \p out will be called like this: out(LogicalPageId, numeric_page_id)
      */
-    template <typename OutFunc>
+    template<typename OutFunc>
     void enumPages(OutFunc out) const;
 
 private:
@@ -114,42 +115,42 @@ private:
     typedef boost::multi_index::multi_index_container<
             Directory,
             boost::multi_index::indexed_by<
-                boost::multi_index::ordered_unique<
-                    boost::multi_index::member<Directory, QString, & Directory::path>
-                >,
-                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
+                    boost::multi_index::ordered_unique<
+                            boost::multi_index::member<Directory, QString, &Directory::path>
+                    >,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
->Directories;
+    > Directories;
 
     typedef boost::multi_index::multi_index_container<
             File,
             boost::multi_index::indexed_by<
-                boost::multi_index::ordered_unique<
-                    boost::multi_index::member<File, QString, & File::path>
-                >,
-                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
+                    boost::multi_index::ordered_unique<
+                            boost::multi_index::member<File, QString, &File::path>
+                    >,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
->Files;
+    > Files;
 
     typedef boost::multi_index::multi_index_container<
             Image,
             boost::multi_index::indexed_by<
-                boost::multi_index::ordered_unique<
-                    boost::multi_index::member<Image, ImageId, & Image::id>
-                >,
-                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
+                    boost::multi_index::ordered_unique<
+                            boost::multi_index::member<Image, ImageId, &Image::id>
+                    >,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
->Images;
+    > Images;
 
     typedef boost::multi_index::multi_index_container<
             Page,
             boost::multi_index::indexed_by<
-                boost::multi_index::ordered_unique<
-                    boost::multi_index::member<Page, PageId, & Page::id>
-                >,
-                boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
+                    boost::multi_index::ordered_unique<
+                            boost::multi_index::member<Page, PageId, &Page::id>
+                    >,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
             >
->Pages;
+    > Pages;
 
     QDomElement processDirectories(QDomDocument& doc) const;
 
@@ -187,13 +188,13 @@ private:
 };
 
 
-template <typename OutFunc>
+template<typename OutFunc>
 void ProjectWriter::enumImages(OutFunc out) const {
     ProxyFunction2<OutFunc, void, ImageId const&, int> proxy(out);
     enumImagesImpl(proxy);
 }
 
-template <typename OutFunc>
+template<typename OutFunc>
 void ProjectWriter::enumPages(OutFunc out) const {
     ProxyFunction2<OutFunc, void, PageId const&, int> proxy(out);
     enumPagesImpl(proxy);

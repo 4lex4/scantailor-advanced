@@ -37,71 +37,71 @@ class PageSelectionAccessor;
 class OrthogonalRotation;
 
 namespace deskew {
-class Task;
-class CacheDrivenTask;
+    class Task;
+    class CacheDrivenTask;
 }
 
 namespace page_split {
-class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class OptionsWidget;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-class Params;
+    class Params;
 
-class Filter: public AbstractFilter {
+    class Filter : public AbstractFilter {
     DECLARE_NON_COPYABLE(Filter)
 
     Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
-public:
-    Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+    public:
+        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~Filter();
+        virtual ~Filter();
 
-    virtual QString getName() const;
+        virtual QString getName() const;
 
-    virtual PageView getView() const;
+        virtual PageView getView() const;
 
-    virtual void performRelinking(AbstractRelinker const& relinker);
+        virtual void performRelinking(AbstractRelinker const& relinker);
 
-    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-    virtual QDomElement saveSettings(ProjectWriter const& wirter, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& wirter, QDomDocument& doc) const;
 
-    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-    IntrusivePtr<Task> createTask(PageInfo const& page_info,
-                                  IntrusivePtr<deskew::Task> const& next_task,
-                                  bool batch_processing,
-                                  bool debug);
+        IntrusivePtr<Task> createTask(PageInfo const& page_info,
+                                      IntrusivePtr<deskew::Task> const& next_task,
+                                      bool batch_processing,
+                                      bool debug);
 
-    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
-    OptionsWidget* optionsWidget() {
-        return m_ptrOptionsWidget.get();
-    }
+        OptionsWidget* optionsWidget() {
+            return m_ptrOptionsWidget.get();
+        }
 
-    void pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation);
+        void pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation);
 
-    Settings* getSettings() {
-        return m_ptrSettings.get();
-    }
+        Settings* getSettings() {
+            return m_ptrSettings.get();
+        }
 
-    virtual std::vector<PageOrderOption> pageOrderOptions() const;
+        virtual std::vector<PageOrderOption> pageOrderOptions() const;
 
-    virtual int selectedPageOrder() const;
+        virtual int selectedPageOrder() const;
 
-    virtual void selectPageOrder(int option);
+        virtual void selectPageOrder(int option);
 
-private:
-    void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
-                            int const numeric_id) const;
+    private:
+        void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                                int const numeric_id) const;
 
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    IntrusivePtr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    std::vector<PageOrderOption> m_pageOrderOptions;
-    int m_selectedPageOrder;
-};
+        IntrusivePtr<ProjectPages> m_ptrPages;
+        IntrusivePtr<Settings> m_ptrSettings;
+        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+        std::vector<PageOrderOption> m_pageOrderOptions;
+        int m_selectedPageOrder;
+    };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_FILTER_H_

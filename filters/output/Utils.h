@@ -24,15 +24,15 @@ class QString;
 class QTransform;
 
 namespace output {
-class Utils {
-public:
-    static QString automaskDir(QString const& out_dir);
+    class Utils {
+    public:
+        static QString automaskDir(QString const& out_dir);
 
-    static QString predespeckleDir(QString const& out_dir);
+        static QString predespeckleDir(QString const& out_dir);
 
-    static QString specklesDir(QString const& out_dir);
+        static QString specklesDir(QString const& out_dir);
 
-    static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
-};
+        static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
+    };
 }
 #endif

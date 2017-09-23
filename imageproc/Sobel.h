@@ -76,188 +76,188 @@ namespace imageproc {
  * \param dst_writer A functor that writes a value to the destination grid.
  *        See \p tmp_writer for more info.
  */
-template <
-    typename T, typename SrcIt, typename TmpIt, typename DstIt,
-    typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
->
-void horizontalSobel(int width,
-                     int height,
-                     SrcIt src,
-                     int src_stride,
-                     SrcReader src_reader,
-                     TmpIt tmp,
-                     int tmp_stride,
-                     TmpWriter tmp_writer,
-                     TmpReader tmp_reader,
-                     DstIt dst,
-                     int dst_stride,
-                     DstWriter dst_writer);
+    template<
+            typename T, typename SrcIt, typename TmpIt, typename DstIt,
+            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    >
+    void horizontalSobel(int width,
+                         int height,
+                         SrcIt src,
+                         int src_stride,
+                         SrcReader src_reader,
+                         TmpIt tmp,
+                         int tmp_stride,
+                         TmpWriter tmp_writer,
+                         TmpReader tmp_reader,
+                         DstIt dst,
+                         int dst_stride,
+                         DstWriter dst_writer);
 
 
 /**
  * \see horizontalSobel()
  */
-template <
-    typename T, typename SrcIt, typename TmpIt, typename DstIt,
-    typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
->
-void verticalSobel(int width,
-                   int height,
-                   SrcIt src,
-                   int src_stride,
-                   SrcReader src_reader,
-                   TmpIt tmp,
-                   int tmp_stride,
-                   TmpWriter tmp_writer,
-                   TmpReader tmp_reader,
-                   DstIt dst,
-                   int dst_stride,
-                   DstWriter dst_writer);
+    template<
+            typename T, typename SrcIt, typename TmpIt, typename DstIt,
+            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    >
+    void verticalSobel(int width,
+                       int height,
+                       SrcIt src,
+                       int src_stride,
+                       SrcReader src_reader,
+                       TmpIt tmp,
+                       int tmp_stride,
+                       TmpWriter tmp_writer,
+                       TmpReader tmp_reader,
+                       DstIt dst,
+                       int dst_stride,
+                       DstWriter dst_writer);
 
 
-template <
-    typename T, typename SrcIt, typename TmpIt, typename DstIt,
-    typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
->
-void horizontalSobel(int const width,
-                     int const height,
-                     SrcIt src,
-                     int src_stride,
-                     SrcReader src_reader,
-                     TmpIt tmp,
-                     int const tmp_stride,
-                     TmpWriter tmp_writer,
-                     TmpReader tmp_reader,
-                     DstIt dst,
-                     int const dst_stride,
-                     DstWriter dst_writer) {
-    if ((width <= 0) || (height <= 0)) {
-        return;
-    }
-
-    for (int x = 0; x < width; ++x) {
-        SrcIt p_src(src + x);
-        TmpIt p_tmp(tmp + x);
-
-        T top(src_reader(*p_src));
-        if (height == 1) {
-            tmp_writer(*p_tmp, top + top + top + top);
-            continue;
+    template<
+            typename T, typename SrcIt, typename TmpIt, typename DstIt,
+            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    >
+    void horizontalSobel(int const width,
+                         int const height,
+                         SrcIt src,
+                         int src_stride,
+                         SrcReader src_reader,
+                         TmpIt tmp,
+                         int const tmp_stride,
+                         TmpWriter tmp_writer,
+                         TmpReader tmp_reader,
+                         DstIt dst,
+                         int const dst_stride,
+                         DstWriter dst_writer) {
+        if ((width <= 0) || (height <= 0)) {
+            return;
         }
 
-        T mid(src_reader(p_src[src_stride]));
-        tmp_writer(*p_tmp, top + top + top + mid);
+        for (int x = 0; x < width; ++x) {
+            SrcIt p_src(src + x);
+            TmpIt p_tmp(tmp + x);
 
-        for (int y = 1; y < height - 1; ++y) {
+            T top(src_reader(*p_src));
+            if (height == 1) {
+                tmp_writer(*p_tmp, top + top + top + top);
+                continue;
+            }
+
+            T mid(src_reader(p_src[src_stride]));
+            tmp_writer(*p_tmp, top + top + top + mid);
+
+            for (int y = 1; y < height - 1; ++y) {
+                p_src += src_stride;
+                p_tmp += tmp_stride;
+                T const bottom(src_reader(p_src[src_stride]));
+                tmp_writer(*p_tmp, top + mid + mid + bottom);
+                top = mid;
+                mid = bottom;
+            }
+
             p_src += src_stride;
             p_tmp += tmp_stride;
-            T const bottom(src_reader(p_src[src_stride]));
-            tmp_writer(*p_tmp, top + mid + mid + bottom);
-            top = mid;
-            mid = bottom;
+            tmp_writer(*p_tmp, top + mid + mid + mid);
         }
 
-        p_src += src_stride;
-        p_tmp += tmp_stride;
-        tmp_writer(*p_tmp, top + mid + mid + mid);
-    }
+        for (int y = 0; y < height; ++y) {
+            T left(tmp_reader(*tmp));
 
-    for (int y = 0; y < height; ++y) {
-        T left(tmp_reader(*tmp));
+            if (width == 1) {
+                dst_writer(*dst, left - left);
+            } else {
+                T mid(tmp_reader(tmp[1]));
+                dst_writer(dst[0], mid - left);
 
-        if (width == 1) {
-            dst_writer(*dst, left - left);
-        } else {
-            T mid(tmp_reader(tmp[1]));
-            dst_writer(dst[0], mid - left);
+                int x = 1;
+                for (; x < width - 1; ++x) {
+                    T const right(tmp_reader(tmp[x + 1]));
+                    dst_writer(dst[x], right - left);
+                    left = mid;
+                    mid = right;
+                }
 
-            int x = 1;
-            for (; x < width - 1; ++x) {
-                T const right(tmp_reader(tmp[x + 1]));
-                dst_writer(dst[x], right - left);
-                left = mid;
-                mid = right;
+                dst_writer(dst[x], mid - left);
             }
 
-            dst_writer(dst[x], mid - left);
+            tmp += tmp_stride;
+            dst += dst_stride;
+        }
+    }      // horizontalSobel
+
+    template<
+            typename T, typename SrcIt, typename TmpIt, typename DstIt,
+            typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
+    >
+    void verticalSobel(int const width,
+                       int const height,
+                       SrcIt src,
+                       int src_stride,
+                       SrcReader src_reader,
+                       TmpIt tmp,
+                       int const tmp_stride,
+                       TmpWriter tmp_writer,
+                       TmpReader tmp_reader,
+                       DstIt dst,
+                       int const dst_stride,
+                       DstWriter dst_writer) {
+        if ((width <= 0) || (height <= 0)) {
+            return;
         }
 
-        tmp += tmp_stride;
-        dst += dst_stride;
-    }
-}      // horizontalSobel
+        TmpIt const tmp_orig(tmp);
 
-template <
-    typename T, typename SrcIt, typename TmpIt, typename DstIt,
-    typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
->
-void verticalSobel(int const width,
-                   int const height,
-                   SrcIt src,
-                   int src_stride,
-                   SrcReader src_reader,
-                   TmpIt tmp,
-                   int const tmp_stride,
-                   TmpWriter tmp_writer,
-                   TmpReader tmp_reader,
-                   DstIt dst,
-                   int const dst_stride,
-                   DstWriter dst_writer) {
-    if ((width <= 0) || (height <= 0)) {
-        return;
-    }
+        for (int y = 0; y < height; ++y) {
+            T left(src_reader(*src));
 
-    TmpIt const tmp_orig(tmp);
+            if (width == 1) {
+                tmp_writer(*tmp, left + left + left + left);
+            } else {
+                T mid(src_reader(src[1]));
+                tmp_writer(tmp[0], left + left + left + mid);
 
-    for (int y = 0; y < height; ++y) {
-        T left(src_reader(*src));
+                int x = 1;
+                for (; x < width - 1; ++x) {
+                    T const right(src_reader(src[x + 1]));
+                    tmp_writer(tmp[x], left + mid + mid + right);
+                    left = mid;
+                    mid = right;
+                }
 
-        if (width == 1) {
-            tmp_writer(*tmp, left + left + left + left);
-        } else {
-            T mid(src_reader(src[1]));
-            tmp_writer(tmp[0], left + left + left + mid);
+                tmp_writer(tmp[x], left + mid + mid + mid);
+            }
+            src += src_stride;
+            tmp += tmp_stride;
+        }
 
-            int x = 1;
-            for (; x < width - 1; ++x) {
-                T const right(src_reader(src[x + 1]));
-                tmp_writer(tmp[x], left + mid + mid + right);
-                left = mid;
-                mid = right;
+        for (int x = 0; x < width; ++x) {
+            TmpIt p_tmp(tmp_orig + x);
+            TmpIt p_dst(dst + x);
+
+            T top(tmp_reader(*p_tmp));
+            if (height == 1) {
+                dst_writer(*p_dst, top - top);
+                continue;
             }
 
-            tmp_writer(tmp[x], left + mid + mid + mid);
-        }
-        src += src_stride;
-        tmp += tmp_stride;
-    }
+            T mid(tmp_reader(p_tmp[tmp_stride]));
+            dst_writer(*p_dst, mid - top);
 
-    for (int x = 0; x < width; ++x) {
-        TmpIt p_tmp(tmp_orig + x);
-        TmpIt p_dst(dst + x);
+            for (int y = 1; y < height - 1; ++y) {
+                p_tmp += tmp_stride;
+                p_dst += dst_stride;
+                T const bottom(tmp_reader(p_tmp[tmp_stride]));
+                dst_writer(*p_dst, bottom - top);
+                top = mid;
+                mid = bottom;
+            }
 
-        T top(tmp_reader(*p_tmp));
-        if (height == 1) {
-            dst_writer(*p_dst, top - top);
-            continue;
-        }
-
-        T mid(tmp_reader(p_tmp[tmp_stride]));
-        dst_writer(*p_dst, mid - top);
-
-        for (int y = 1; y < height - 1; ++y) {
             p_tmp += tmp_stride;
             p_dst += dst_stride;
-            T const bottom(tmp_reader(p_tmp[tmp_stride]));
-            dst_writer(*p_dst, bottom - top);
-            top = mid;
-            mid = bottom;
+            dst_writer(*p_dst, mid - top);
         }
-
-        p_tmp += tmp_stride;
-        p_dst += dst_stride;
-        dst_writer(*p_dst, mid - top);
-    }
-}      // verticalSobel
+    }      // verticalSobel
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_SOBEL_H_

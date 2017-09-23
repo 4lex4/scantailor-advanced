@@ -32,11 +32,10 @@ QString RelinkablePath::normalize(QString const& path) {
     for (QString const& comp : front_slashes.split(QChar('/'), QString::KeepEmptyParts)) {
         if (comp.isEmpty()) {
             if (new_components.isEmpty()
-#if _WIN32
+                #if _WIN32
                 || (new_components.size() == 1 && new_components.front().isEmpty())
 #endif
-            )
-            {
+                    ) {
                 new_components.push_back(comp);
             } else {
                 continue;

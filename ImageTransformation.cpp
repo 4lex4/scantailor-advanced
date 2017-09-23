@@ -40,7 +40,7 @@ void ImageTransformation::preScaleToDpi(Dpi const& dpi) {
     double const yscale = (double) dpi.vertical() / m_origDpi.vertical();
 
     QSizeF const new_pre_scaled_image_size(
-        m_origRect.width() * xscale, m_origRect.height() * yscale
+            m_origRect.width() * xscale, m_origRect.height() * yscale
     );
 
     QTransform const undo21(m_preRotateXform.inverted() * m_preScaleXform.inverted());
@@ -133,9 +133,9 @@ QTransform ImageTransformation::calcPostRotateXform(double const degrees) {
         QRectF const post_rotate_rect(post_rotate_poly.boundingRect());
 
         xform *= QTransform().translate(
-            pre_rotate_rect.left() - post_rotate_rect.left(),
-            pre_rotate_rect.top() - post_rotate_rect.top()
-                 );
+                pre_rotate_rect.left() - post_rotate_rect.left(),
+                pre_rotate_rect.top() - post_rotate_rect.top()
+        );
     }
 
     return xform;

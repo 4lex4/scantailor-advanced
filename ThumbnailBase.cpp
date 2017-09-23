@@ -27,8 +27,9 @@
 
 using namespace imageproc;
 
-class ThumbnailBase::LoadCompletionHandler: public AbstractCommand1<void, ThumbnailLoadResult const&>{
-    DECLARE_NON_COPYABLE(LoadCompletionHandler)
+class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, ThumbnailLoadResult const&> {
+DECLARE_NON_COPYABLE(LoadCompletionHandler)
+
 public:
     LoadCompletionHandler(ThumbnailBase* thumb)
             : m_pThumb(thumb) {
@@ -67,10 +68,10 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 
     if (!m_ptrCompletionHandler.get()) {
         std::shared_ptr<LoadCompletionHandler> handler(
-            new LoadCompletionHandler(this)
+                new LoadCompletionHandler(this)
         );
         ThumbnailPixmapCache::Status const status
-            = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
+                = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
         if (status == ThumbnailPixmapCache::QUEUED) {
             m_ptrCompletionHandler.swap(handler);
         }
@@ -101,16 +102,16 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     pre_scale_xform.scale(x_pre_scale, y_pre_scale);
 
     QTransform const pixmap_to_thumb(
-        pre_scale_xform * m_imageXform.transform() * m_postScaleXform
+            pre_scale_xform * m_imageXform.transform() * m_postScaleXform
     );
 
     QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPostCropArea()));
     if (!m_extendedClipArea) {
         image_poly = image_poly.intersected(
-            PolygonUtils::round(
-                m_imageXform.transform().map(m_imageXform.origRect())
-            )
-                     );
+                PolygonUtils::round(
+                        m_imageXform.transform().map(m_imageXform.origRect())
+                )
+        );
     }
 
     QPolygonF display_poly(image_to_display.map(image_poly));
@@ -125,8 +126,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
         || (temp_pixmap.width() < display_rect.width())
-        || (temp_pixmap.height() < display_rect.width()))
-    {
+        || (temp_pixmap.height() < display_rect.width())) {
         int w = (int) display_rect.width();
         int h = (int) display_rect.height();
 
@@ -149,7 +149,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     temp_adjustment.translate(-display_rect.left(), -display_rect.top());
 
     temp_painter.setWorldTransform(
-        pixmap_to_thumb * thumb_to_display * temp_adjustment
+            pixmap_to_thumb * thumb_to_display * temp_adjustment
     );
 
     temp_painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -165,8 +165,8 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 
     temp_painter.save();
     paintOverImage(
-        temp_painter, image_to_display * temp_adjustment,
-        thumb_to_display * temp_adjustment
+            temp_painter, image_to_display * temp_adjustment,
+            thumb_to_display * temp_adjustment
     );
     temp_painter.restore();
 
@@ -179,7 +179,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     temp_painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
     temp_painter.drawPolygon(
-        QPolygonF(display_rect).subtracted(PolygonUtils::round(display_poly))
+            QPolygonF(display_rect).subtracted(PolygonUtils::round(display_poly))
     );
 
     temp_painter.end();
@@ -210,7 +210,7 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
 void ThumbnailBase::setImageXform(ImageTransformation const& image_xform) {
     m_imageXform = image_xform;
     QSizeF const unscaled_size(
-        image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
+            image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
     );
     QSizeF scaled_size(unscaled_size);
     scaled_size.scale(m_maxSize, Qt::KeepAspectRatio);

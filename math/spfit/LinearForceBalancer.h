@@ -26,48 +26,48 @@ namespace spfit {
  * The strategy is starting with some value and linearly changing it (usually decreasing)
  *  over time.
  */
-class LinearForceBalancer {
-public:
-    /**
-     * Sets both the current and the target ratio, so that it doesn't change over time.
-     */
-    LinearForceBalancer(double internal_external_ratio);
+    class LinearForceBalancer {
+    public:
+        /**
+         * Sets both the current and the target ratio, so that it doesn't change over time.
+         */
+        LinearForceBalancer(double internal_external_ratio);
 
-    double currentRatio() const {
-        return m_currentRatio;
-    }
+        double currentRatio() const {
+            return m_currentRatio;
+        }
 
-    void setCurrentRatio(double internal_external_ratio);
+        void setCurrentRatio(double internal_external_ratio);
 
-    double targetRatio() const {
-        return m_targetRatio;
-    }
+        double targetRatio() const {
+            return m_targetRatio;
+        }
 
-    void setTargetRatio(double internal_external_ratio);
+        void setTargetRatio(double internal_external_ratio);
 
-    /**
-     * Sets the number of iterations after which the internal / external force
-     * ratio reaches its target value.  This method doesn't change the
-     * current ratio.
-     */
-    void setIterationsToTarget(int iterations);
+        /**
+         * Sets the number of iterations after which the internal / external force
+         * ratio reaches its target value.  This method doesn't change the
+         * current ratio.
+         */
+        void setIterationsToTarget(int iterations);
 
-    double calcInternalForceWeight(double internal_force, double external_force) const;
+        double calcInternalForceWeight(double internal_force, double external_force) const;
 
-    /**
-     * Returns the current internal / external force ratio, then moves
-     * it towards its target value.  After it reaches its target value,
-     * further nextIteration() calls will keep returning the same value.
-     */
-    void nextIteration();
+        /**
+         * Returns the current internal / external force ratio, then moves
+         * it towards its target value.  After it reaches its target value,
+         * further nextIteration() calls will keep returning the same value.
+         */
+        void nextIteration();
 
-private:
-    void recalcRateOfChange();
+    private:
+        void recalcRateOfChange();
 
-    double m_currentRatio;
-    double m_targetRatio;
-    double m_rateOfChange;
-    int m_iterationsToTarget;
-};
+        double m_currentRatio;
+        double m_targetRatio;
+        double m_rateOfChange;
+        int m_iterationsToTarget;
+    };
 }  // namespace spfit
 #endif  // ifndef SPFIT_LINEAR_FORCE_BALANCER_H_

@@ -73,10 +73,10 @@ class QLineF;
 class QRectF;
 class QLayout;
 
-class MainWindow: public QMainWindow, private FilterUiInterface, private Ui::MainWindow {
-    DECLARE_NON_COPYABLE(MainWindow)
+class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::MainWindow {
+DECLARE_NON_COPYABLE(MainWindow)
 
-    Q_OBJECT
+Q_OBJECT
 public:
     MainWindow();
 
@@ -96,14 +96,19 @@ protected:
     virtual void timerEvent(QTimerEvent* event);
 
 public slots:
+
     void openProject(QString const& project_file);
 
     void AutoSaveProjectState(bool auto_save);
 
 private:
-    enum MainAreaAction { UPDATE_MAIN_AREA, CLEAR_MAIN_AREA };
+    enum MainAreaAction {
+        UPDATE_MAIN_AREA,
+        CLEAR_MAIN_AREA
+    };
 
 private slots:
+
     void autoSaveProject();
 
     void goFirstPage();
@@ -188,7 +193,11 @@ private slots:
 private:
     class PageSelectionProviderImpl;
 
-    enum SavePromptResult { SAVE, DONT_SAVE, CANCEL };
+    enum SavePromptResult {
+        SAVE,
+        DONT_SAVE,
+        CANCEL
+    };
 
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 

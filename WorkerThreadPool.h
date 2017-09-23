@@ -27,8 +27,8 @@
 
 class QThreadPool;
 
-class WorkerThreadPool: public QObject {
-    Q_OBJECT
+class WorkerThreadPool : public QObject {
+Q_OBJECT
 public:
     WorkerThreadPool(QObject* parent = nullptr);
 
@@ -47,6 +47,7 @@ public:
     void submitTask(BackgroundTaskPtr const& task);
 
 signals:
+
     void taskResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
 
 private:

@@ -47,48 +47,48 @@ namespace imageproc {
  * BinaryImage out = ReduceThreshold(input)(4)(4)(3);
  * \endcode
  */
-class ReduceThreshold {
-public:
-    /**
-     * \brief Constructor.  Doesn't do any work by itself.
-     */
-    ReduceThreshold(BinaryImage const& image);
+    class ReduceThreshold {
+    public:
+        /**
+         * \brief Constructor.  Doesn't do any work by itself.
+         */
+        ReduceThreshold(BinaryImage const& image);
 
-    /**
-     * \brief Implicit conversion to BinaryImage.
-     */
-    operator BinaryImage const&() const
-    { return m_image;
-    }
+        /**
+         * \brief Implicit conversion to BinaryImage.
+         */
+        operator BinaryImage const&() const {
+            return m_image;
+        }
 
-    /**
-     * \brief Returns a reference to the reduced image.
-     */
-    BinaryImage const& image() const {
-        return m_image;
-    }
+        /**
+         * \brief Returns a reference to the reduced image.
+         */
+        BinaryImage const& image() const {
+            return m_image;
+        }
 
-    /**
-     * \brief Performs a reduction and returns *this.
-     */
-    ReduceThreshold& reduce(int threshold);
+        /**
+         * \brief Performs a reduction and returns *this.
+         */
+        ReduceThreshold& reduce(int threshold);
 
-    /**
-     * \brief Operator () performs a reduction and returns *this.
-     */
-    ReduceThreshold& operator()(int threshold) {
-        return reduce(threshold);
-    }
+        /**
+         * \brief Operator () performs a reduction and returns *this.
+         */
+        ReduceThreshold& operator()(int threshold) {
+            return reduce(threshold);
+        }
 
-private:
-    void reduceHorLine(int threshold);
+    private:
+        void reduceHorLine(int threshold);
 
-    void reduceVertLine(int threshold);
+        void reduceVertLine(int threshold);
 
-    /**
-     * \brief The result of a previous reduction.
-     */
-    BinaryImage m_image;
-};
+        /**
+         * \brief The result of a previous reduction.
+         */
+        BinaryImage m_image;
+    };
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_REDUCETHRESHOLD_H_

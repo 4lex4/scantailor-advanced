@@ -23,15 +23,15 @@
 #include <QPointF>
 #include <boost/function.hpp>
 
-class DraggablePoint: public DraggableObject {
+class DraggablePoint : public DraggableObject {
 public:
     typedef boost::function<
             QPointF()
->PositionCallback;
+    > PositionCallback;
 
     typedef boost::function<
-            void (QPointF const&, Qt::KeyboardModifiers mask)
->MoveRequestCallback;
+            void(QPointF const&, Qt::KeyboardModifiers mask)
+    > MoveRequestCallback;
 
     DraggablePoint();
 

@@ -21,63 +21,64 @@
 #include <assert.h>
 
 namespace fix_orientation {
-ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor)
-        : QDialog(parent),
-          m_pages(page_selection_accessor.allPages()),
-          m_selectedPages(page_selection_accessor.selectedPages()),
-          m_selectedRanges(page_selection_accessor.selectedRanges()),
-          m_curPage(cur_page),
-          m_pBtnGroup(new QButtonGroup(this)) {
-    setupUi(this);
-    m_pBtnGroup->addButton(thisPageOnlyRB);
-    m_pBtnGroup->addButton(allPagesRB);
-    m_pBtnGroup->addButton(thisPageAndFollowersRB);
-    m_pBtnGroup->addButton(selectedPagesRB);
-    m_pBtnGroup->addButton(everyOtherRB);
-    m_pBtnGroup->addButton(thisEveryOtherRB);
-    m_pBtnGroup->addButton(everyOtherSelectedRB);
+    ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,
+                             PageSelectionAccessor const& page_selection_accessor)
+            : QDialog(parent),
+              m_pages(page_selection_accessor.allPages()),
+              m_selectedPages(page_selection_accessor.selectedPages()),
+              m_selectedRanges(page_selection_accessor.selectedRanges()),
+              m_curPage(cur_page),
+              m_pBtnGroup(new QButtonGroup(this)) {
+        setupUi(this);
+        m_pBtnGroup->addButton(thisPageOnlyRB);
+        m_pBtnGroup->addButton(allPagesRB);
+        m_pBtnGroup->addButton(thisPageAndFollowersRB);
+        m_pBtnGroup->addButton(selectedPagesRB);
+        m_pBtnGroup->addButton(everyOtherRB);
+        m_pBtnGroup->addButton(thisEveryOtherRB);
+        m_pBtnGroup->addButton(everyOtherSelectedRB);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
-}
-
-ApplyDialog::~ApplyDialog() {
-}
-
-void ApplyDialog::onSubmit() {
-    std::set<PageId> pages;
-
-    if (allPagesRB->isChecked()) {
-        m_pages.selectAll().swap(pages);
-        emit appliedToAllPages(pages);
-        accept();
-
-        return;
-    } else if (thisPageAndFollowersRB->isChecked()) {
-        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-    } else if (selectedPagesRB->isChecked()) {
-        emit appliedTo(m_selectedPages);
-        accept();
-
-        return;
-    } else if (everyOtherRB->isChecked()) {
-        m_pages.selectEveryOther(m_curPage).swap(pages);
-    } else if (thisEveryOtherRB->isChecked()) {
-        std::set<PageId> tmp;
-        m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-        std::set<PageId>::iterator it = tmp.begin();
-        for (int i = 0; it != tmp.end(); ++it, ++i) {
-            if (i % 2 == 0) {
-                pages.insert(*it);
-            }
-        }
-    } else if (everyOtherSelectedRB->isChecked()) {
-        assert(m_selectedRanges.size() == 1);
-        PageRange const& range = m_selectedRanges.front();
-        range.selectEveryOther(m_curPage).swap(pages);
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    emit appliedTo(pages);
+    ApplyDialog::~ApplyDialog() {
+    }
 
-    accept();
-}      // ApplyDialog::onSubmit
+    void ApplyDialog::onSubmit() {
+        std::set<PageId> pages;
+
+        if (allPagesRB->isChecked()) {
+            m_pages.selectAll().swap(pages);
+            emit appliedToAllPages(pages);
+            accept();
+
+            return;
+        } else if (thisPageAndFollowersRB->isChecked()) {
+            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+        } else if (selectedPagesRB->isChecked()) {
+            emit appliedTo(m_selectedPages);
+            accept();
+
+            return;
+        } else if (everyOtherRB->isChecked()) {
+            m_pages.selectEveryOther(m_curPage).swap(pages);
+        } else if (thisEveryOtherRB->isChecked()) {
+            std::set<PageId> tmp;
+            m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
+            std::set<PageId>::iterator it = tmp.begin();
+            for (int i = 0; it != tmp.end(); ++it, ++i) {
+                if (i % 2 == 0) {
+                    pages.insert(*it);
+                }
+            }
+        } else if (everyOtherSelectedRB->isChecked()) {
+            assert(m_selectedRanges.size() == 1);
+            PageRange const& range = m_selectedRanges.front();
+            range.selectEveryOther(m_curPage).swap(pages);
+        }
+
+        emit appliedTo(pages);
+
+        accept();
+    }      // ApplyDialog::onSubmit
 }  // namespace fix_orientation

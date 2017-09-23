@@ -28,20 +28,20 @@ class ImageId;
 class ImageTransformation;
 
 namespace deskew {
-class Thumbnail: public ThumbnailBase {
-public:
-    Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-              QSizeF const& max_size,
-              ImageId const& image_id,
-              ImageTransformation const& xform,
-              bool deviant = false);
+    class Thumbnail : public ThumbnailBase {
+    public:
+        Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                  QSizeF const& max_size,
+                  ImageId const& image_id,
+                  ImageTransformation const& xform,
+                  bool deviant = false);
 
-    virtual void paintOverImage(QPainter& painter,
-                                QTransform const& image_to_display,
-                                QTransform const& thumb_to_display);
+        virtual void paintOverImage(QPainter& painter,
+                                    QTransform const& image_to_display,
+                                    QTransform const& thumb_to_display);
 
-private:
-    bool m_deviant;
-};
+    private:
+        bool m_deviant;
+    };
 }
 #endif

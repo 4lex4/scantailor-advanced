@@ -21,7 +21,7 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 
-class RelinkingListView::Delegate: public QStyledItemDelegate {
+class RelinkingListView::Delegate : public QStyledItemDelegate {
 public:
     Delegate(RelinkingListView* owner)
             : QStyledItemDelegate(owner),

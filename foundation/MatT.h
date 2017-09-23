@@ -28,7 +28,7 @@
  *
  * \note The memory layout is always column-major, as that's what MatrixCalc uses.
  */
-template <typename T>
+template<typename T>
 class MatT {
 public:
     typedef T type;
@@ -53,7 +53,7 @@ public:
      *
      * Conversion is done by static casts.  Data elements must be in column-major order.
      */
-    template <typename OT>
+    template<typename OT>
     explicit MatT(size_t rows, size_t cols, OT const* data);
 
     /**
@@ -66,7 +66,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     MatT(MatT<OT> const& other);
 
     /**
@@ -79,7 +79,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     MatT& operator=(MatT<OT> const& other);
 
     MatT& operator+=(MatT const& rhs);
@@ -127,20 +127,20 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 MatT<T>::MatT()
         : m_rows(0),
           m_cols(0) {
 }
 
-template <typename T>
+template<typename T>
 MatT<T>::MatT(size_t rows, size_t cols)
         : m_rows(rows),
           m_cols(cols),
           m_data(new T[rows * cols]()) {
 }
 
-template <typename T>
+template<typename T>
 MatT<T>::MatT(size_t rows, size_t cols, T initial_value)
         : m_rows(rows),
           m_cols(cols),
@@ -151,8 +151,8 @@ MatT<T>::MatT(size_t rows, size_t cols, T initial_value)
     }
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 MatT<T>::MatT(size_t rows, size_t cols, OT const* data)
         : m_rows(rows),
           m_cols(cols),
@@ -163,7 +163,7 @@ MatT<T>::MatT(size_t rows, size_t cols, OT const* data)
     }
 }
 
-template <typename T>
+template<typename T>
 MatT<T>::MatT(MatT const& other)
         : m_rows(other.rows()),
           m_cols(other.cols()),
@@ -175,8 +175,8 @@ MatT<T>::MatT(MatT const& other)
     }
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 MatT<T>::MatT(MatT<OT> const& other)
         : m_rows(other.rows()),
           m_cols(other.cols()),
@@ -188,22 +188,22 @@ MatT<T>::MatT(MatT<OT> const& other)
     }
 }
 
-template <typename T>
+template<typename T>
 MatT<T>& MatT<T>::operator=(MatT const& other) {
     MatT(other).swap(*this);
 
     return *this;
 }
 
-template <typename T>
-template <typename OT>
+template<typename T>
+template<typename OT>
 MatT<T>& MatT<T>::operator=(MatT<OT> const& other) {
     MatT(other).swap(*this);
 
     return *this;
 }
 
-template <typename T>
+template<typename T>
 MatT<T>& MatT<T>::operator+=(MatT const& rhs) {
     assert(m_rows == rhs.m_rows && m_cols == rhs.m_cols);
 
@@ -215,7 +215,7 @@ MatT<T>& MatT<T>::operator+=(MatT const& rhs) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 MatT<T>& MatT<T>::operator-=(MatT const& rhs) {
     assert(m_rows == rhs.m_rows && m_cols == rhs.m_cols);
 
@@ -227,7 +227,7 @@ MatT<T>& MatT<T>::operator-=(MatT const& rhs) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 MatT<T>& MatT<T>::operator*=(T const scalar) {
     size_t const len = m_rows * m_cols;
     for (size_t i = 0; i < len; ++i) {
@@ -237,7 +237,7 @@ MatT<T>& MatT<T>::operator*=(T const scalar) {
     return *this;
 }
 
-template <typename T>
+template<typename T>
 void MatT<T>::fill(T const& value) {
     size_t const len = m_rows * m_cols;
     for (size_t i = 0; i < len; ++i) {
@@ -245,7 +245,7 @@ void MatT<T>::fill(T const& value) {
     }
 }
 
-template <typename T>
+template<typename T>
 void MatT<T>::swap(MatT& other) {
     size_t tmp = m_rows;
     m_rows = other.m_rows;
@@ -258,12 +258,12 @@ void MatT<T>::swap(MatT& other) {
     m_data.swap(other.m_data);
 }
 
-template <typename T>
+template<typename T>
 void swap(MatT<T> const& o1, MatT<T> const& o2) {
     o1.swap(o2);
 }
 
-template <typename T>
+template<typename T>
 MatT<T> operator*(MatT<T> const& mat, double scalar) {
     MatT<T> res(mat);
     res *= scalar;
@@ -271,7 +271,7 @@ MatT<T> operator*(MatT<T> const& mat, double scalar) {
     return res;
 }
 
-template <typename T>
+template<typename T>
 MatT<T> operator*(double scalar, MatT<T> const& mat) {
     MatT<T> res(mat);
     res *= scalar;

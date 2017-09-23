@@ -44,12 +44,21 @@ class RelinkablePath;
 class AbstractRelinker;
 class QDomElement;
 
-class ProjectPages: public QObject, public RefCountable {
-    Q_OBJECT DECLARE_NON_COPYABLE(ProjectPages)
-public:
-    enum Pages { ONE_PAGE, TWO_PAGES, AUTO_PAGES };
+class ProjectPages : public QObject, public RefCountable {
+Q_OBJECT
+DECLARE_NON_COPYABLE(ProjectPages)
 
-    enum LayoutType { ONE_PAGE_LAYOUT, TWO_PAGE_LAYOUT };
+public:
+    enum Pages {
+        ONE_PAGE,
+        TWO_PAGES,
+        AUTO_PAGES
+    };
+
+    enum LayoutType {
+        ONE_PAGE_LAYOUT,
+        TWO_PAGE_LAYOUT
+    };
 
     ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
 
@@ -127,6 +136,7 @@ public:
     void updateMetadataFrom(std::vector<ImageFileInfo> const& files);
 
 signals:
+
     void modified();
 
 private:

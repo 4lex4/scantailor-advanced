@@ -28,8 +28,8 @@
 #include <QString>
 #include <QDialog>
 
-class OutOfMemoryDialog: public QDialog {
-    Q_OBJECT
+class OutOfMemoryDialog : public QDialog {
+Q_OBJECT
 public:
     OutOfMemoryDialog(QWidget* parent = 0);
 
@@ -40,6 +40,7 @@ public:
                    OutputFileNameGenerator const& out_file_name_gen);
 
 private slots:
+
     void saveProject();
 
     void saveProjectAs();

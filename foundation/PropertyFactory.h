@@ -31,7 +31,7 @@ public:
     virtual ~PropertyFactory() {
     }
 
-    typedef IntrusivePtr<Property>(*PropertyConstructor)(QDomElement const& el);
+    typedef IntrusivePtr<Property>(* PropertyConstructor)(QDomElement const& el);
 
     void registerProperty(QString const& property, PropertyConstructor constructor);
 

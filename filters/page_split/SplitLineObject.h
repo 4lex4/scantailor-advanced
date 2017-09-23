@@ -22,25 +22,25 @@
 #include "DraggableObject.h"
 
 namespace page_split {
-class SplitLineObject: public DraggableObject {
-protected:
-    virtual Proximity lineProximity(QPointF const& widget_mouse_pos, InteractionState const& interaction) const = 0;
+    class SplitLineObject : public DraggableObject {
+    protected:
+        virtual Proximity lineProximity(QPointF const& widget_mouse_pos, InteractionState const& interaction) const = 0;
 
-    virtual QPointF linePosition(InteractionState const& interaction) const = 0;
+        virtual QPointF linePosition(InteractionState const& interaction) const = 0;
 
-    virtual void lineMoveRequest(QPointF const& widget_pos) = 0;
+        virtual void lineMoveRequest(QPointF const& widget_pos) = 0;
 
-    virtual Proximity proximity(QPointF const& widget_mouse_pos, InteractionState const& interaction) {
-        return lineProximity(widget_mouse_pos, interaction);
-    }
+        virtual Proximity proximity(QPointF const& widget_mouse_pos, InteractionState const& interaction) {
+            return lineProximity(widget_mouse_pos, interaction);
+        }
 
-    virtual QPointF position(InteractionState const& interaction) const {
-        return linePosition(interaction);
-    }
+        virtual QPointF position(InteractionState const& interaction) const {
+            return linePosition(interaction);
+        }
 
-    virtual void moveRequest(QPointF const& widget_pos) {
-        return lineMoveRequest(widget_pos);
-    }
-};
+        virtual void moveRequest(QPointF const& widget_pos) {
+            return lineMoveRequest(widget_pos);
+        }
+    };
 }
 #endif  // ifndef PAGE_SPLIT_SPLIT_LINE_OBJECT_H_

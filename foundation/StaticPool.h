@@ -23,9 +23,10 @@
 #include <stdexcept>
 #include <stddef.h>
 
-template <typename T>
+template<typename T>
 class StaticPoolBase {
-    DECLARE_NON_COPYABLE(StaticPoolBase)
+DECLARE_NON_COPYABLE(StaticPoolBase)
+
 public:
     StaticPoolBase(T* buf, size_t size)
             : m_pNext(buf),
@@ -57,9 +58,10 @@ private:
  * There is no way of releasing the allocated objects
  * besides destroying the whole pool.
  */
-template <typename T, size_t S>
-class StaticPool: public StaticPoolBase<T>{
-    DECLARE_NON_COPYABLE(StaticPool)
+template<typename T, size_t S>
+class StaticPool : public StaticPoolBase<T> {
+DECLARE_NON_COPYABLE(StaticPool)
+
 public:
     StaticPool()
             : StaticPoolBase<T>(m_buf, S) {
@@ -70,7 +72,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 T* StaticPoolBase<T>::alloc(size_t num_elements) {
     if (num_elements > m_sizeRemaining) {
         throw std::runtime_error("StaticPool overflow");

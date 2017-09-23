@@ -30,6 +30,7 @@ public:
         friend class PolylineIntersector;
     public:
         Hint();
+
     private:
         void update(int new_segment);
 

@@ -27,7 +27,8 @@
 #include <set>
 
 class ProcessingTaskQueue {
-    DECLARE_NON_COPYABLE(ProcessingTaskQueue)
+DECLARE_NON_COPYABLE(ProcessingTaskQueue)
+
 public:
     ProcessingTaskQueue();
 

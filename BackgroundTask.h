@@ -26,11 +26,14 @@
 #include <QAtomicInt>
 #include <exception>
 
-class BackgroundTask: public AbstractCommand0<FilterResultPtr>, public TaskStatus {
+class BackgroundTask : public AbstractCommand0<FilterResultPtr>, public TaskStatus {
 public:
-    enum Type { INTERACTIVE, BATCH };
+    enum Type {
+        INTERACTIVE,
+        BATCH
+    };
 
-    class CancelledException: public std::exception {
+    class CancelledException : public std::exception {
     public:
         virtual char const* what() const throw();
     };

@@ -30,7 +30,11 @@ class QString;
  */
 class PageId {
 public:
-    enum SubPage { SINGLE_PAGE, LEFT_PAGE, RIGHT_PAGE };
+    enum SubPage {
+        SINGLE_PAGE,
+        LEFT_PAGE,
+        RIGHT_PAGE
+    };
 
     PageId();
 

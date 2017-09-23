@@ -39,8 +39,8 @@ class ZoneInteractionContext;
 class QPainter;
 class QMenu;
 
-class ZoneContextMenuInteraction: public QObject, public InteractionHandler {
-    Q_OBJECT
+class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
+Q_OBJECT
 public:
     struct StandardMenuItems {
         ZoneContextMenuItem propertiesItem;
@@ -51,9 +51,9 @@ public:
 
     typedef boost::function<
             std::vector<ZoneContextMenuItem>(
-                EditableZoneSet::Zone const&, StandardMenuItems const&
+                    EditableZoneSet::Zone const&, StandardMenuItems const&
             )
->MenuCustomizer;
+    > MenuCustomizer;
 
     /**
      * \note This factory method will return null if there are no zones
@@ -69,8 +69,9 @@ public:
                                               MenuCustomizer const& menu_customizer);
 
     virtual ~ZoneContextMenuInteraction();
+
 protected:
-    class Zone: public EditableZoneSet::Zone {
+    class Zone : public EditableZoneSet::Zone {
     public:
         QColor color;
 
@@ -92,6 +93,7 @@ protected:
     }
 
 private slots:
+
     void menuAboutToHide();
 
     void highlightItem(int zone_idx);
@@ -99,7 +101,7 @@ private slots:
 private:
     class OrderByArea;
 
-    class Visualizer: public BasicSplineVisualizer {
+    class Visualizer : public BasicSplineVisualizer {
     public:
         void switchToFillMode(QColor const& color);
 

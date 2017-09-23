@@ -138,7 +138,7 @@ private:
 };
 
 
-class FixDpiDialog::TreeModel: private QAbstractItemModel {
+class FixDpiDialog::TreeModel : private QAbstractItemModel {
 public:
     TreeModel(std::vector<ImageFileInfo> const& files);
 
@@ -159,7 +159,8 @@ public:
     void applyDpiToSelection(Scope scope, Dpi const& dpi, QItemSelection const& selection);
 
 private:
-    struct Tag { };
+    struct Tag {
+    };
 
     virtual int columnCount(QModelIndex const& parent) const;
 
@@ -200,7 +201,7 @@ private:
 };
 
 
-class FixDpiDialog::FilterModel: private QSortFilterProxyModel {
+class FixDpiDialog::FilterModel : private QSortFilterProxyModel {
 public:
     FilterModel(TreeModel& delegate);
 
@@ -234,7 +235,7 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* par
     tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
     tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));
     undefinedDpiView->setModel(m_ptrUndefinedDpiPages->model()),
-    undefinedDpiView->header()->hide();
+            undefinedDpiView->header()->hide();
     allPagesView->setModel(m_ptrPages->model());
     allPagesView->header()->hide();
 
@@ -244,33 +245,33 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* par
     yDpi->setValidator(new QIntValidator(yDpi));
 
     connect(
-        tabWidget, SIGNAL(currentChanged(int)),
-        this, SLOT(tabChanged(int))
+            tabWidget, SIGNAL(currentChanged(int)),
+            this, SLOT(tabChanged(int))
     );
 
     connect(
-        undefinedDpiView->selectionModel(),
-        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
-        this, SLOT(selectionChanged(QItemSelection const &))
+            undefinedDpiView->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+            this, SLOT(selectionChanged(QItemSelection const &))
     );
     connect(
-        allPagesView->selectionModel(),
-        SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
-        this, SLOT(selectionChanged(QItemSelection const &))
-    );
-
-    connect(
-        dpiCombo, SIGNAL(activated(int)),
-        this, SLOT(dpiComboChangedByUser(int))
+            allPagesView->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
+            this, SLOT(selectionChanged(QItemSelection const &))
     );
 
     connect(
-        xDpi, SIGNAL(textEdited(QString const &)),
-        this, SLOT(dpiValueChanged())
+            dpiCombo, SIGNAL(activated(int)),
+            this, SLOT(dpiComboChangedByUser(int))
+    );
+
+    connect(
+            xDpi, SIGNAL(textEdited(QString const &)),
+            this, SLOT(dpiValueChanged())
     );
     connect(
-        yDpi, SIGNAL(textEdited(QString const &)),
-        this, SLOT(dpiValueChanged())
+            yDpi, SIGNAL(textEdited(QString const &)),
+            this, SLOT(dpiValueChanged())
     );
 
     connect(applyBtn, SIGNAL(clicked()), this, SLOT(applyClicked()));
@@ -316,8 +317,7 @@ void FixDpiDialog::dpiValueChanged() {
     decorateDpiInputField(yDpi, metadata.verticalDpiStatus());
 
     if ((m_xDpiInitialValue == xDpi->text())
-        && (m_yDpiInitialValue == yDpi->text()))
-    {
+        && (m_yDpiInitialValue == yDpi->text())) {
         applyBtn->setEnabled(false);
 
         return;
@@ -344,9 +344,9 @@ void FixDpiDialog::applyClicked() {
     } else {
         selection_model = undefinedDpiView->selectionModel();
         QItemSelection const selection(
-            m_ptrUndefinedDpiPages->model()->mapSelectionToSource(
-                selection_model->selection()
-            )
+                m_ptrUndefinedDpiPages->model()->mapSelectionToSource(
+                        selection_model->selection()
+                )
         );
         m_ptrPages->applyDpiToSelection(NOT_OK, dpi, selection);
     }
@@ -450,12 +450,12 @@ void FixDpiDialog::decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiSta
             break;
         case ImageMetadata::DPI_TOO_SMALL:
             field->setToolTip(
-                tr("DPI is too small. Even if it's correct, you are not going to get acceptable results with it."));
+                    tr("DPI is too small. Even if it's correct, you are not going to get acceptable results with it."));
             break;
         case ImageMetadata::DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE:
             field->setToolTip(
-                tr(
-                    "DPI is too small for this pixel size. Such combination would probably lead to out of memory errors."));
+                    tr(
+                            "DPI is too small for this pixel size. Such combination would probably lead to out of memory errors."));
             break;
     }
 }
@@ -654,7 +654,7 @@ QVariant FixDpiDialog::TreeModel::data(QModelIndex const& index, int const role)
                 return fname;
             } else {
                 return FixDpiDialog::tr(
-                    "%1 (page %2)"
+                        "%1 (page %2)"
                 ).arg(fname).arg(item.imageIdx + 1);
             }
         } else if ((role == AGGREGATE_METADATA_ROLE) || (role == AGGREGATE_NOT_OK_METADATA_ROLE)) {
@@ -682,8 +682,8 @@ void FixDpiDialog::TreeModel::applyDpiToGroup(Scope const scope,
     int const num_items = items.size();
     for (int i = 0; i < num_items; ++i) {
         applyDpiToItem(
-            scope, metadata, items[i],
-            total_dpi_counts, group_dpi_counts
+                scope, metadata, items[i],
+                total_dpi_counts, group_dpi_counts
         );
     }
 }
@@ -746,10 +746,10 @@ FixDpiDialog::SizeGroup& FixDpiDialog::TreeModel::sizeGroupFor(QSize const size)
     using namespace boost::lambda;
 
     std::vector<SizeGroup>::iterator const it(
-        std::find_if(
-            m_sizes.begin(), m_sizes.end(),
-            bind(&SizeGroup::size, _1) == size
-        )
+            std::find_if(
+                    m_sizes.begin(), m_sizes.end(),
+                    bind(&SizeGroup::size, _1) == size
+            )
     );
     if (it != m_sizes.end()) {
         return *it;

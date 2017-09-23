@@ -48,25 +48,25 @@ void InteractiveXSpline::setSpline(XSpline const& spline) {
 
     XSpline new_spline(spline);
     boost::scoped_array<ControlPoint> new_control_points(
-        new ControlPoint[num_control_points]
+            new ControlPoint[num_control_points]
     );
 
     for (int i = 0; i < num_control_points; ++i) {
         new_control_points[i].point.setPositionCallback(
-            boost::bind(&InteractiveXSpline::controlPointPosition, this, i)
+                boost::bind(&InteractiveXSpline::controlPointPosition, this, i)
         );
         new_control_points[i].point.setMoveRequestCallback(
-            boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1, _2)
+                boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1, _2)
         );
         new_control_points[i].point.setDragFinishedCallback(
-            boost::bind(&InteractiveXSpline::dragFinished, this)
+                boost::bind(&InteractiveXSpline::dragFinished, this)
         );
 
         if ((i == 0) || (i == num_control_points - 1)) {
             new_control_points[i].handler.setProximityStatusTip(tr("This point can be dragged."));
         } else {
             new_control_points[i].handler.setProximityStatusTip(
-                tr("Drag this point or delete it by pressing Del or D."));
+                    tr("Drag this point or delete it by pressing Del or D."));
         }
         new_control_points[i].handler.setInteractionCursor(Qt::BlankCursor);
         new_control_points[i].handler.setObject(&new_control_points[i].point);
@@ -110,8 +110,8 @@ bool InteractiveXSpline::curveIsProximityLeader(InteractionState const& state, Q
 
 void InteractiveXSpline::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
     m_curveProximityPointStorage = m_spline.pointClosestTo(
-        m_toStorage(screen_mouse_pos), &m_curveProximityT
-                                   );
+            m_toStorage(screen_mouse_pos), &m_curveProximityT
+    );
     m_curveProximityPointScreen = m_fromStorage(m_curveProximityPointStorage);
 
     Proximity const proximity(screen_mouse_pos, m_curveProximityPointScreen);

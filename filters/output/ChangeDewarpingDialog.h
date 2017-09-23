@@ -32,28 +32,31 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace output {
-class ChangeDewarpingDialog: public QDialog {
+    class ChangeDewarpingDialog : public QDialog {
     Q_OBJECT
-public:
-    ChangeDewarpingDialog(QWidget* parent,
-                          PageId const& cur_page,
-                          DewarpingMode const& mode,
-                          PageSelectionAccessor const& page_selection_accessor);
+    public:
+        ChangeDewarpingDialog(QWidget* parent,
+                              PageId const& cur_page,
+                              DewarpingMode const& mode,
+                              PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~ChangeDewarpingDialog();
-signals:
-    void accepted(std::set<PageId> const& pages, DewarpingMode const& mode);
+        virtual ~ChangeDewarpingDialog();
 
-private slots:
-    void onSubmit();
+    signals:
 
-private:
-    Ui::OutputChangeDewarpingDialog ui;
-    PageSequence m_pages;
-    std::set<PageId> m_selectedPages;
-    PageId m_curPage;
-    DewarpingMode m_mode;
-    QButtonGroup* m_pScopeGroup;
-};
+        void accepted(std::set<PageId> const& pages, DewarpingMode const& mode);
+
+    private slots:
+
+        void onSubmit();
+
+    private:
+        Ui::OutputChangeDewarpingDialog ui;
+        PageSequence m_pages;
+        std::set<PageId> m_selectedPages;
+        PageId m_curPage;
+        DewarpingMode m_mode;
+        QButtonGroup* m_pScopeGroup;
+    };
 }
 #endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_

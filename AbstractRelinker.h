@@ -24,7 +24,7 @@
 class RelinkablePath;
 class QString;
 
-class AbstractRelinker: public RefCountable {
+class AbstractRelinker : public RefCountable {
 public:
     virtual ~AbstractRelinker() {
     }

@@ -26,27 +26,27 @@
 #include <stddef.h>
 
 namespace spfit {
-class FittableSpline;
+    class FittableSpline;
 
-class ConstraintSet {
-public:
-    ConstraintSet(FittableSpline const* spline);
+    class ConstraintSet {
+    public:
+        ConstraintSet(FittableSpline const* spline);
 
-    std::list<LinearFunction> const& constraints() const {
-        return m_constraints;
-    }
+        std::list<LinearFunction> const& constraints() const {
+            return m_constraints;
+        }
 
-    void constrainControlPoint(int cp_idx, QPointF const& pos);
+        void constrainControlPoint(int cp_idx, QPointF const& pos);
 
-    void constrainControlPoint(int cp_idx, QLineF const& line);
+        void constrainControlPoint(int cp_idx, QLineF const& line);
 
-    void constrainSplinePoint(double t, QPointF const& pos);
+        void constrainSplinePoint(double t, QPointF const& pos);
 
-    void constrainSplinePoint(double t, QLineF const& line);
+        void constrainSplinePoint(double t, QLineF const& line);
 
-private:
-    FittableSpline const* m_pSpline;
-    std::list<LinearFunction> m_constraints;
-};
+    private:
+        FittableSpline const* m_pSpline;
+        std::list<LinearFunction> m_constraints;
+    };
 }
 #endif  // ifndef SPFIT_CONSTRAINT_SET_H_

@@ -21,8 +21,8 @@
 
 #include <QEvent>
 
-template <typename T>
-class PayloadEvent: public QEvent {
+template<typename T>
+class PayloadEvent : public QEvent {
 public:
     PayloadEvent(T const& payload)
             : QEvent(User),

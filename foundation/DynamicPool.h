@@ -30,9 +30,10 @@
  * There is no way of freeing the allocated objects
  * besides destroying the whole pool.
  */
-template <typename T>
+template<typename T>
 class DynamicPool {
-    DECLARE_NON_COPYABLE(DynamicPool)
+DECLARE_NON_COPYABLE(DynamicPool)
+
 public:
     DynamicPool() {
     }
@@ -48,14 +49,18 @@ public:
     T* alloc(size_t num_elements);
 
 private:
-    enum { OVERALLOCATION_FACTOR = 3 };
+    enum {
+        OVERALLOCATION_FACTOR = 3
+    };
 
     /**< Allocate 3 times the requested size. */
-    enum { OVERALLOCATION_LIMIT = 256 };
+    enum {
+        OVERALLOCATION_LIMIT = 256
+    };
 
     /**< Don't overallocate too much. */
 
-    struct Chunk: public boost::intrusive::list_base_hook<>{
+    struct Chunk : public boost::intrusive::list_base_hook<> {
         boost::scoped_array<T> storage;
         T* pData;
         size_t remainingElements;
@@ -86,12 +91,12 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 DynamicPool<T>::~DynamicPool() {
     m_chunkList.clear_and_dispose(DeleteDisposer());
 }
 
-template <typename T>
+template<typename T>
 T* DynamicPool<T>::alloc(size_t num_elements) {
     Chunk* chunk = 0;
 
@@ -116,7 +121,7 @@ T* DynamicPool<T>::alloc(size_t num_elements) {
     return data;
 }
 
-template <typename T>
+template<typename T>
 size_t DynamicPool<T>::adviseChunkSize(size_t num_elements) {
     size_t factor = OVERALLOCATION_LIMIT / num_elements;
     if (factor > (size_t) OVERALLOCATION_FACTOR) {

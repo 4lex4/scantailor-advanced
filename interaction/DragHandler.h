@@ -29,8 +29,8 @@
 
 class ImageViewBase;
 
-class DragHandler: public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(DragHandler)
+class DragHandler : public InteractionHandler {
+Q_DECLARE_TR_FUNCTIONS(DragHandler)
 public:
     DragHandler(ImageViewBase& image_view);
 

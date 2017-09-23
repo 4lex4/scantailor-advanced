@@ -27,8 +27,8 @@
  * \brief A decoration of an existing item delegate
  *        that forces certain item states.
  */
-template <typename T = QStyledItemDelegate>
-class ChangedStateItemDelegate: public T {
+template<typename T = QStyledItemDelegate>
+class ChangedStateItemDelegate : public T {
 public:
     ChangedStateItemDelegate(QObject* parent = 0)
             : T(parent),

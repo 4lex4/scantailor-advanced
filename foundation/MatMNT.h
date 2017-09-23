@@ -21,7 +21,7 @@
 
 #include <stddef.h>
 
-template <size_t M, size_t N, typename T>
+template<size_t M, size_t N, typename T>
 class MatMNT;
 
 typedef MatMNT<2, 2, float> Mat22f;
@@ -36,11 +36,14 @@ typedef MatMNT<4, 4, double> Mat44d;
  *
  * \note The memory layout is always column-major, as that's what MatrixCalc uses.
  */
-template <size_t M, size_t N, typename T>
+template<size_t M, size_t N, typename T>
 class MatMNT {
 public:
     typedef T type;
-    enum { ROWS = M, COLS = N };
+    enum {
+        ROWS = M,
+        COLS = N
+    };
 
     /**
      * \brief Initializes matrix elements to T().
@@ -52,7 +55,7 @@ public:
      *
      * Conversion is done by static casts.  Data elements must be in column-major order.
      */
-    template <typename OT>
+    template<typename OT>
     explicit MatMNT(OT const* data);
 
     /**
@@ -60,7 +63,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     MatMNT(MatMNT<M, N, OT> const& other);
 
     /**
@@ -68,7 +71,7 @@ public:
      *
      * Conversion is done by static casts.
      */
-    template <typename OT>
+    template<typename OT>
     MatMNT& operator=(MatMNT<M, N, OT> const& other);
 
     T const* data() const {
@@ -92,7 +95,7 @@ private:
 };
 
 
-template <size_t M, size_t N, typename T>
+template<size_t M, size_t N, typename T>
 MatMNT<M, N, T>::MatMNT() {
     size_t const len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
@@ -100,8 +103,8 @@ MatMNT<M, N, T>::MatMNT() {
     }
 }
 
-template <size_t M, size_t N, typename T>
-template <typename OT>
+template<size_t M, size_t N, typename T>
+template<typename OT>
 MatMNT<M, N, T>::MatMNT(OT const* data) {
     size_t const len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
@@ -109,8 +112,8 @@ MatMNT<M, N, T>::MatMNT(OT const* data) {
     }
 }
 
-template <size_t M, size_t N, typename T>
-template <typename OT>
+template<size_t M, size_t N, typename T>
+template<typename OT>
 MatMNT<M, N, T>::MatMNT(MatMNT<M, N, OT> const& other) {
     OT const* data = other.data();
     size_t const len = ROWS * COLS;

@@ -24,7 +24,7 @@
 #include "filters/page_split/Filter.h"
 #include "filter_dc/PageOrientationCollector.h"
 
-class PageOrientationPropagator::Collector: public PageOrientationCollector {
+class PageOrientationPropagator::Collector : public PageOrientationCollector {
 public:
     virtual void process(OrthogonalRotation const& orientation) {
         m_orientation = orientation;
@@ -57,7 +57,7 @@ void PageOrientationPropagator::propagate(ProjectPages const& pages) {
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         m_ptrPageSplitFilter->pageOrientationUpdate(
-            page_info.imageId(), collector.orientation()
+                page_info.imageId(), collector.orientation()
         );
     }
 }

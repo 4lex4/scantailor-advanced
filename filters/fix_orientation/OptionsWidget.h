@@ -27,44 +27,46 @@
 #include "PageSelectionAccessor.h"
 
 namespace fix_orientation {
-class Settings;
+    class Settings;
 
-class OptionsWidget: public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
+    class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
     Q_OBJECT
-public:
-    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+    public:
+        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~OptionsWidget();
+        virtual ~OptionsWidget();
 
-    void preUpdateUI(PageId const& page_id, OrthogonalRotation rotation);
+        void preUpdateUI(PageId const& page_id, OrthogonalRotation rotation);
 
-    void postUpdateUI(OrthogonalRotation rotation);
+        void postUpdateUI(OrthogonalRotation rotation);
 
-signals:
-    void rotated(OrthogonalRotation rotation);
+    signals:
 
-private slots:
-    void rotateLeft();
+        void rotated(OrthogonalRotation rotation);
 
-    void rotateRight();
+    private slots:
 
-    void resetRotation();
+        void rotateLeft();
 
-    void showApplyToDialog();
+        void rotateRight();
 
-    void appliedTo(std::set<PageId> const& pages);
+        void resetRotation();
 
-    void appliedToAllPages(std::set<PageId> const& pages);
+        void showApplyToDialog();
 
-private:
-    void setRotation(OrthogonalRotation rotation);
+        void appliedTo(std::set<PageId> const& pages);
 
-    void setRotationPixmap();
+        void appliedToAllPages(std::set<PageId> const& pages);
 
-    IntrusivePtr<Settings> m_ptrSettings;
-    PageSelectionAccessor m_pageSelectionAccessor;
-    PageId m_pageId;
-    OrthogonalRotation m_rotation;
-};
+    private:
+        void setRotation(OrthogonalRotation rotation);
+
+        void setRotationPixmap();
+
+        IntrusivePtr<Settings> m_ptrSettings;
+        PageSelectionAccessor m_pageSelectionAccessor;
+        PageId m_pageId;
+        OrthogonalRotation m_rotation;
+    };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_OPTIONSWIDGET_H_

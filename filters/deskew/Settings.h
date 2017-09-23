@@ -31,59 +31,60 @@
 class AbstractRelinker;
 
 namespace deskew {
-class Settings: public RefCountable {
+    class Settings : public RefCountable {
     DECLARE_NON_COPYABLE(Settings)
-public:
-    Settings();
 
-    virtual ~Settings();
+    public:
+        Settings();
 
-    void clear();
+        virtual ~Settings();
 
-    void performRelinking(AbstractRelinker const& relinker);
+        void clear();
 
-    void updateDeviation();
+        void performRelinking(AbstractRelinker const& relinker);
 
-    void setPageParams(PageId const& page_id, Params const& params);
+        void updateDeviation();
 
-    void clearPageParams(PageId const& page_id);
+        void setPageParams(PageId const& page_id, Params const& params);
 
-    std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        void clearPageParams(PageId const& page_id);
 
-    void setDegress(std::set<PageId> const& pages, Params const& params);
+        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
-    double maxDeviation() const {
-        return m_maxDeviation;
-    }
+        void setDegress(std::set<PageId> const& pages, Params const& params);
 
-    void setMaxDeviation(double md) {
-        m_maxDeviation = md;
-    }
+        double maxDeviation() const {
+            return m_maxDeviation;
+        }
 
-    double avg() const {
-        return m_avg;
-    }
+        void setMaxDeviation(double md) {
+            m_maxDeviation = md;
+        }
 
-    void setAvg(double a) {
-        m_avg = a;
-    }
+        double avg() const {
+            return m_avg;
+        }
 
-    double std() const {
-        return m_sigma;
-    }
+        void setAvg(double a) {
+            m_avg = a;
+        }
 
-    void setStd(double s) {
-        m_sigma = s;
-    }
+        double std() const {
+            return m_sigma;
+        }
 
-private:
-    typedef std::map<PageId, Params> PerPageParams;
+        void setStd(double s) {
+            m_sigma = s;
+        }
 
-    mutable QMutex m_mutex;
-    PerPageParams m_perPageParams;
-    double m_avg;
-    double m_sigma;
-    double m_maxDeviation;
-};
+    private:
+        typedef std::map<PageId, Params> PerPageParams;
+
+        mutable QMutex m_mutex;
+        PerPageParams m_perPageParams;
+        double m_avg;
+        double m_sigma;
+        double m_maxDeviation;
+    };
 }  // namespace deskew
 #endif  // ifndef DESKEW_SETTINGS_H_

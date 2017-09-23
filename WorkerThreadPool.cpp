@@ -21,7 +21,7 @@
 #include <QCoreApplication>
 #include <QThreadPool>
 
-class WorkerThreadPool::TaskResultEvent: public QEvent {
+class WorkerThreadPool::TaskResultEvent : public QEvent {
 public:
     TaskResultEvent(BackgroundTaskPtr const& task, FilterResultPtr const& result)
             : QEvent(User),
@@ -61,7 +61,7 @@ bool WorkerThreadPool::hasSpareCapacity() const {
 }
 
 void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
-    class Runnable: public QRunnable {
+    class Runnable : public QRunnable {
     public:
         Runnable(WorkerThreadPool& owner, BackgroundTaskPtr const& task)
                 : m_rOwner(owner),
@@ -80,7 +80,7 @@ void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
                 FilterResultPtr const result((*m_ptrTask)());
                 if (result) {
                     QCoreApplication::postEvent(
-                        &m_rOwner, new TaskResultEvent(m_ptrTask, result)
+                            &m_rOwner, new TaskResultEvent(m_ptrTask, result)
                     );
                 }
             } catch (std::bad_alloc const&) {

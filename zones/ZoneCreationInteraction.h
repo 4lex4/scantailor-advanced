@@ -32,10 +32,11 @@
 
 class ZoneInteractionContext;
 
-class ZoneCreationInteraction: public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(ZoneCreationInteraction)
+class ZoneCreationInteraction : public InteractionHandler {
+Q_DECLARE_TR_FUNCTIONS(ZoneCreationInteraction)
 public:
     ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction);
+
 protected:
     ZoneInteractionContext& context() {
         return m_rContext;

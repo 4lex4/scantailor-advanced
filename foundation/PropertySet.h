@@ -29,7 +29,7 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class PropertySet: public RefCountable {
+class PropertySet : public RefCountable {
 public:
     PropertySet() {
     }
@@ -54,20 +54,20 @@ public:
      * Returns a property stored in this set, if one having a suitable
      * type is found, or returns a null smart pointer otherwise.
      */
-    template <typename T>
+    template<typename T>
     IntrusivePtr<T> locate();
 
-    template <typename T>
+    template<typename T>
     IntrusivePtr<T const> locate() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
      * type is found, or returns a default constructed object otherwise.
      */
-    template <typename T>
+    template<typename T>
     IntrusivePtr<T> locateOrDefault();
 
-    template <typename T>
+    template<typename T>
     IntrusivePtr<T const> locateOrDefault() const;
 
     /**
@@ -75,7 +75,7 @@ public:
      * type is found.  Otherwise, a default constructed object is put
      * to the set and then returned.
      */
-    template <typename T>
+    template<typename T>
     IntrusivePtr<T> locateOrCreate();
 
 private:
@@ -84,7 +84,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 IntrusivePtr<T>
 PropertySet::locate() {
     PropList::iterator it(m_props.begin());
@@ -98,7 +98,7 @@ PropertySet::locate() {
     return IntrusivePtr<T>();
 }
 
-template <typename T>
+template<typename T>
 IntrusivePtr<T const>
 PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
@@ -112,7 +112,7 @@ PropertySet::locate() const {
     return IntrusivePtr<T const>();
 }
 
-template <typename T>
+template<typename T>
 IntrusivePtr<T>
 PropertySet::locateOrDefault() {
     IntrusivePtr<T> obj(locate<T>());
@@ -123,7 +123,7 @@ PropertySet::locateOrDefault() {
     return obj;
 }
 
-template <typename T>
+template<typename T>
 IntrusivePtr<T const>
 PropertySet::locateOrDefault() const {
     IntrusivePtr<T const> obj(locate<T>());
@@ -134,7 +134,7 @@ PropertySet::locateOrDefault() const {
     return obj;
 }
 
-template <typename T>
+template<typename T>
 IntrusivePtr<T>
 PropertySet::locateOrCreate() {
     IntrusivePtr<T> obj(locate<T>());

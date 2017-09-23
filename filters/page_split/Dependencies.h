@@ -28,41 +28,41 @@ class QDomDocument;
 class QDomElement;
 
 namespace page_split {
-class Params;
+    class Params;
 
 /**
  * \brief Dependencies of a page parameters.
  *
  * Once dependencies change, the stored page parameters are no longer valid.
  */
-class Dependencies {
-public:
-    Dependencies();
+    class Dependencies {
+    public:
+        Dependencies();
 
-    Dependencies(QDomElement const& el);
+        Dependencies(QDomElement const& el);
 
-    Dependencies(QSize const& image_size, OrthogonalRotation rotation, LayoutType layout_type);
+        Dependencies(QSize const& image_size, OrthogonalRotation rotation, LayoutType layout_type);
 
-    void setLayoutType(LayoutType type) {
-        m_layoutType = type;
-    }
+        void setLayoutType(LayoutType type) {
+            m_layoutType = type;
+        }
 
-    OrthogonalRotation const& orientation() const {
-        return m_rotation;
-    }
+        OrthogonalRotation const& orientation() const {
+            return m_rotation;
+        }
 
-    bool compatibleWith(Params const& params) const;
+        bool compatibleWith(Params const& params) const;
 
-    bool isNull() const {
-        return m_imageSize.isNull();
-    }
+        bool isNull() const {
+            return m_imageSize.isNull();
+        }
 
-    QDomElement toXml(QDomDocument& doc, QString const& tag_name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& tag_name) const;
 
-private:
-    QSize m_imageSize;
-    OrthogonalRotation m_rotation;
-    LayoutType m_layoutType;
-};
+    private:
+        QSize m_imageSize;
+        OrthogonalRotation m_rotation;
+        LayoutType m_layoutType;
+    };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_DEPENDENCIES_H_

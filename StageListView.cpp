@@ -27,7 +27,7 @@
 #include <QPainter>
 #include <QTimer>
 
-class StageListView::Model: public QAbstractTableModel {
+class StageListView::Model : public QAbstractTableModel {
 public:
     Model(QObject* parent, IntrusivePtr<StageSequence> const& stages);
 
@@ -48,7 +48,7 @@ private:
 };
 
 
-class StageListView::LeftColDelegate: public ChangedStateItemDelegate<QStyledItemDelegate>{
+class StageListView::LeftColDelegate : public ChangedStateItemDelegate<QStyledItemDelegate> {
 public:
     LeftColDelegate(StageListView* view);
 
@@ -61,7 +61,7 @@ private:
 };
 
 
-class StageListView::RightColDelegate: public ChangedStateItemDelegate<QStyledItemDelegate>{
+class StageListView::RightColDelegate : public ChangedStateItemDelegate<QStyledItemDelegate> {
 public:
     RightColDelegate(QObject* parent = 0);
 
@@ -98,22 +98,22 @@ StageListView::StageListView(QWidget* parent)
     v_header->setSectionsMovable(false);
 
     m_pLaunchBtn = new SkinnedButton(
-        ":/icons/play-small.png",
-        ":/icons/play-small-hovered.png",
-        ":/icons/play-small-pressed.png",
-        viewport()
-                   );
+            ":/icons/play-small.png",
+            ":/icons/play-small-hovered.png",
+            ":/icons/play-small-pressed.png",
+            viewport()
+    );
     m_pLaunchBtn->setStatusTip(tr("Launch batch processing"));
     m_pLaunchBtn->hide();
 
     connect(
-        m_pLaunchBtn, SIGNAL(clicked()),
-        this, SIGNAL(launchBatchProcessing())
+            m_pLaunchBtn, SIGNAL(clicked()),
+            this, SIGNAL(launchBatchProcessing())
     );
 
     connect(
-        verticalScrollBar(), SIGNAL(rangeChanged(int, int)),
-        this, SLOT(ensureSelectedRowVisible()), Qt::QueuedConnection
+            verticalScrollBar(), SIGNAL(rangeChanged(int, int)),
+            this, SLOT(ensureSelectedRowVisible()), Qt::QueuedConnection
     );
 }
 
@@ -216,7 +216,7 @@ void StageListView::initiateBatchAnimationFrameRendering() {
     }
 
     m_pModel->updateBatchProcessingAnimation(
-        selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]
+            selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]
     );
     if (++m_curBatchAnimationFrame == (int) m_batchAnimationPixmaps.size()) {
         m_curBatchAnimationFrame = 0;

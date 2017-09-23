@@ -20,10 +20,10 @@
 #define SCOPEDDECINC_H_
 
 #ifdef HAVE_CONFIG_H
- #include <config.h>
+#include <config.h>
 #endif
 
-template <class T>
+template<class T>
 class ScopedDecInc {
 public:
     ScopedDecInc(T& counter)

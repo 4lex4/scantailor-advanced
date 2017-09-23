@@ -26,16 +26,16 @@
 class ImageTransformation;
 
 namespace select_content {
-class PhysSizeCalc {
-public:
-    PhysSizeCalc();
+    class PhysSizeCalc {
+    public:
+        PhysSizeCalc();
 
-    explicit PhysSizeCalc(ImageTransformation const& xform);
+        explicit PhysSizeCalc(ImageTransformation const& xform);
 
-    QSizeF sizeMM(QRectF const& rect_px) const;
+        QSizeF sizeMM(QRectF const& rect_px) const;
 
-private:
-    QTransform m_virtToPhys;
-};
+    private:
+        QTransform m_virtToPhys;
+    };
 }
 #endif

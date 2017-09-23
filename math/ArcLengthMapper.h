@@ -38,6 +38,7 @@ public:
         friend class ArcLengthMapper;
     public:
         Hint();
+
     private:
         void update(int new_segment);
 

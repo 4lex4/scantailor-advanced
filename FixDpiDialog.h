@@ -33,8 +33,8 @@
 
 class QItemSelection;
 
-class FixDpiDialog: public QDialog, private Ui::FixDpiDialog {
-    Q_OBJECT
+class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
+Q_OBJECT
 public:
     FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = 0);
 
@@ -43,6 +43,7 @@ public:
     std::vector<ImageFileInfo> const& files() const;
 
 private slots:
+
     void tabChanged(int tab);
 
     void selectionChanged(QItemSelection const& selection);
@@ -59,7 +60,10 @@ private:
     class TreeModel;
     class FilterModel;
 
-    enum Scope { ALL, NOT_OK };
+    enum Scope {
+        ALL,
+        NOT_OK
+    };
 
     void enableDisableOkButton();
 

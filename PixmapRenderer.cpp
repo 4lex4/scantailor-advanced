@@ -22,9 +22,9 @@
 #include <QDebug>
 
 #ifdef Q_WS_X11
- #  include <QX11Info>
- #  include <QRegion>
- #  include <X11/extensions/Xrender.h>
+#  include <QX11Info>
+#  include <QRegion>
+#  include <X11/extensions/Xrender.h>
 #endif
 
 void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {

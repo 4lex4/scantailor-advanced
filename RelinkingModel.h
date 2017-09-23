@@ -35,10 +35,15 @@
 #include <set>
 #include <map>
 
-class RelinkingModel: public QAbstractListModel, public VirtualFunction1<void, RelinkablePath const&>{
-    DECLARE_NON_COPYABLE(RelinkingModel)
+class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, RelinkablePath const&> {
+DECLARE_NON_COPYABLE(RelinkingModel)
+
 public:
-    enum Status { Exists, Missing, StatusUpdatePending };
+    enum Status {
+        Exists,
+        Missing,
+        StatusUpdatePending
+    };
 
     enum {
         TypeRole = Qt::UserRole,
@@ -112,7 +117,7 @@ private:
         Item(RelinkablePath const& path);
     };
 
-    class Relinker: public AbstractRelinker {
+    class Relinker : public AbstractRelinker {
     public:
         void addMapping(QString const& from, QString const& to);
 

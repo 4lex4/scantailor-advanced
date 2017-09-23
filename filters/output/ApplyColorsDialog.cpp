@@ -20,45 +20,45 @@
 #include "PageSelectionAccessor.h"
 
 namespace output {
-ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
-                                     PageId const& cur_page,
-                                     PageSelectionAccessor const& page_selection_accessor)
-        : QDialog(parent),
-          m_pages(page_selection_accessor.allPages()),
-          m_selectedPages(page_selection_accessor.selectedPages()),
-          m_curPage(cur_page),
-          m_pScopeGroup(new QButtonGroup(this)) {
-    setupUi(this);
-    m_pScopeGroup->addButton(thisPageRB);
-    m_pScopeGroup->addButton(allPagesRB);
-    m_pScopeGroup->addButton(thisPageAndFollowersRB);
-    m_pScopeGroup->addButton(selectedPagesRB);
-    if (m_selectedPages.size() <= 1) {
-        selectedPagesWidget->setEnabled(false);
+    ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
+                                         PageId const& cur_page,
+                                         PageSelectionAccessor const& page_selection_accessor)
+            : QDialog(parent),
+              m_pages(page_selection_accessor.allPages()),
+              m_selectedPages(page_selection_accessor.selectedPages()),
+              m_curPage(cur_page),
+              m_pScopeGroup(new QButtonGroup(this)) {
+        setupUi(this);
+        m_pScopeGroup->addButton(thisPageRB);
+        m_pScopeGroup->addButton(allPagesRB);
+        m_pScopeGroup->addButton(thisPageAndFollowersRB);
+        m_pScopeGroup->addButton(selectedPagesRB);
+        if (m_selectedPages.size() <= 1) {
+            selectedPagesWidget->setEnabled(false);
+        }
+
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
-}
+    ApplyColorsDialog::~ApplyColorsDialog() {
+    }
 
-ApplyColorsDialog::~ApplyColorsDialog() {
-}
+    void ApplyColorsDialog::onSubmit() {
+        std::set<PageId> pages;
 
-void ApplyColorsDialog::onSubmit() {
-    std::set<PageId> pages;
+        if (allPagesRB->isChecked()) {
+            m_pages.selectAll().swap(pages);
+        } else if (thisPageAndFollowersRB->isChecked()) {
+            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+        } else if (selectedPagesRB->isChecked()) {
+            emit accepted(m_selectedPages);
+            accept();
 
-    if (allPagesRB->isChecked()) {
-        m_pages.selectAll().swap(pages);
-    } else if (thisPageAndFollowersRB->isChecked()) {
-        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-    } else if (selectedPagesRB->isChecked()) {
-        emit accepted(m_selectedPages);
+            return;
+        }
+
+        emit accepted(pages);
+
         accept();
-
-        return;
     }
-
-    emit accepted(pages);
-
-    accept();
-}
 }  // namespace output

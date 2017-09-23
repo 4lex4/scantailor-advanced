@@ -43,7 +43,7 @@ namespace imageproc {
  * \endcode
  * This function takes wr and wb arguments, and calculates wg as 1.0 - wr - wb.
  */
-void adjustBrightness(QImage& rgb_image, QImage const& brightness, double wr, double wb);
+    void adjustBrightness(QImage& rgb_image, QImage const& brightness, double wr, double wb);
 
 /**
  * \brief A custom version of adjustBrightness().
@@ -51,7 +51,7 @@ void adjustBrightness(QImage& rgb_image, QImage const& brightness, double wr, do
  * Same as adjustBrightness(), but the weighting factors used in the YUV
  * color space are assumed.
  */
-void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness);
+    void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness);
 
 /**
  * \brief A custom version of adjustBrightness().
@@ -59,6 +59,6 @@ void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness);
  * Same as adjustBrightness(), but the weighting factors used by
  * toGrayscale() and qGray() are assumed.
  */
-void adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness);
+    void adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness);
 }
 #endif

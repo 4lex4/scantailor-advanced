@@ -17,7 +17,6 @@
  */
 
 #include "ProcessingTaskQueue.h"
-#include <boost/foreach.hpp>
 
 ProcessingTaskQueue::Entry::Entry(PageInfo const& page_info, BackgroundTaskPtr const& tsk)
         : pageInfo(page_info),

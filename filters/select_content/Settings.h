@@ -30,75 +30,76 @@
 class AbstractRelinker;
 
 namespace select_content {
-class Settings: public RefCountable {
+    class Settings : public RefCountable {
     DECLARE_NON_COPYABLE(Settings)
-public:
-    Settings();
 
-    virtual ~Settings();
+    public:
+        Settings();
 
-    void clear();
+        virtual ~Settings();
 
-    void performRelinking(AbstractRelinker const& relinker);
+        void clear();
 
-    void updateDeviation();
+        void performRelinking(AbstractRelinker const& relinker);
 
-    void setPageParams(PageId const& page_id, Params const& params);
+        void updateDeviation();
 
-    void clearPageParams(PageId const& page_id);
+        void setPageParams(PageId const& page_id, Params const& params);
 
-    std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        void clearPageParams(PageId const& page_id);
 
-    double maxDeviation() const {
-        return m_maxDeviation;
-    }
+        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
-    void setMaxDeviation(double md) {
-        m_maxDeviation = md;
-    }
+        double maxDeviation() const {
+            return m_maxDeviation;
+        }
 
-    QSizeF pageDetectionBox() const {
-        return m_pageDetectionBox;
-    }
+        void setMaxDeviation(double md) {
+            m_maxDeviation = md;
+        }
 
-    void setPageDetectionBox(QSizeF size) {
-        m_pageDetectionBox = size;
-    }
+        QSizeF pageDetectionBox() const {
+            return m_pageDetectionBox;
+        }
 
-    double pageDetectionTolerance() const {
-        return m_pageDetectionTolerance;
-    }
+        void setPageDetectionBox(QSizeF size) {
+            m_pageDetectionBox = size;
+        }
 
-    void setPageDetectionTolerance(double tolerance) {
-        m_pageDetectionTolerance = tolerance;
-    }
+        double pageDetectionTolerance() const {
+            return m_pageDetectionTolerance;
+        }
 
-    double avg() const {
-        return m_avg;
-    }
+        void setPageDetectionTolerance(double tolerance) {
+            m_pageDetectionTolerance = tolerance;
+        }
 
-    void setAvg(double a) {
-        m_avg = a;
-    }
+        double avg() const {
+            return m_avg;
+        }
 
-    double std() const {
-        return m_sigma;
-    }
+        void setAvg(double a) {
+            m_avg = a;
+        }
 
-    void setStd(double s) {
-        m_sigma = s;
-    }
+        double std() const {
+            return m_sigma;
+        }
 
-private:
-    typedef std::map<PageId, Params> PageParams;
+        void setStd(double s) {
+            m_sigma = s;
+        }
 
-    mutable QMutex m_mutex;
-    PageParams m_pageParams;
-    double m_avg;
-    double m_sigma;
-    double m_maxDeviation;
-    QSizeF m_pageDetectionBox;
-    double m_pageDetectionTolerance;
-};
+    private:
+        typedef std::map<PageId, Params> PageParams;
+
+        mutable QMutex m_mutex;
+        PageParams m_pageParams;
+        double m_avg;
+        double m_sigma;
+        double m_maxDeviation;
+        QSizeF m_pageDetectionBox;
+        double m_pageDetectionTolerance;
+    };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_SETTINGS_H_

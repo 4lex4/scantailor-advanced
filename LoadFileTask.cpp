@@ -33,8 +33,8 @@
 
 using namespace imageproc;
 
-class LoadFileTask::ErrorResult: public FilterResult {
-    Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
+class LoadFileTask::ErrorResult : public FilterResult {
+Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
 public:
     ErrorResult(QString const& file_path);
 
@@ -108,7 +108,7 @@ LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
 }
 
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
-    class ErrWidget: public ErrorWidget {
+    class ErrWidget : public ErrorWidget {
     public:
         ErrWidget(IntrusivePtr<AbstractCommand0<void>> const& relinking_dialog_requester,
                   QString const& text,
@@ -133,10 +133,10 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
         fmt = Qt::PlainText;
     } else {
         err_msg = tr(
-            "The following file doesn't exist:<br>%1<br>"
-            "<br>"
-            "Use the <a href=\"#relink\">Relinking Tool</a> to locate it."
-                  ).arg(m_filePath.toHtmlEscaped());
+                "The following file doesn't exist:<br>%1<br>"
+                        "<br>"
+                        "Use the <a href=\"#relink\">Relinking Tool</a> to locate it."
+        ).arg(m_filePath.toHtmlEscaped());
         fmt = Qt::RichText;
     }
     ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), err_msg, fmt), ui->TRANSFER_OWNERSHIP);

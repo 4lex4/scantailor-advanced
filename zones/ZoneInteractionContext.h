@@ -33,26 +33,26 @@ class ZoneInteractionContext {
 public:
     typedef boost::function<
             InteractionHandler*()
->DefaultInteractionCreator;
+    > DefaultInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(InteractionState& interaction)
->ZoneCreationInteractionCreator;
+    > ZoneCreationInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(
-                InteractionState& interaction,
-                EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
+                    InteractionState& interaction,
+                    EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
             )
->VertexDragInteractionCreator;
+    > VertexDragInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(InteractionState& interaction)
->ContextMenuInteractionCreator;
+    > ContextMenuInteractionCreator;
 
     typedef boost::function<
-            void (EditableZoneSet::Zone const& zone)
->ShowPropertiesCommand;
+            void(EditableZoneSet::Zone const& zone)
+    > ShowPropertiesCommand;
 
     ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones);
 

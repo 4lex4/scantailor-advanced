@@ -20,30 +20,30 @@
 #include <QDomDocument>
 
 namespace output {
-BlackWhiteOptions::BlackWhiteOptions()
-        : m_thresholdAdjustment(0) {
-}
-
-BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
-        : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()) {
-}
-
-QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("thresholdAdj", m_thresholdAdjustment);
-
-    return el;
-}
-
-bool BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const {
-    if (m_thresholdAdjustment != other.m_thresholdAdjustment) {
-        return false;
+    BlackWhiteOptions::BlackWhiteOptions()
+            : m_thresholdAdjustment(0) {
     }
 
-    return true;
-}
+    BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
+            : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()) {
+    }
 
-bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
-    return !(*this == other);
-}
+    QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
+        QDomElement el(doc.createElement(name));
+        el.setAttribute("thresholdAdj", m_thresholdAdjustment);
+
+        return el;
+    }
+
+    bool BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const {
+        if (m_thresholdAdjustment != other.m_thresholdAdjustment) {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
+        return !(*this == other);
+    }
 }  // namespace output

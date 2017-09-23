@@ -28,32 +28,32 @@ class QDomDocument;
 class QDomElement;
 
 namespace page_split {
-class Params {
-public:
-    Params(PageLayout const& layout, Dependencies const& deps, AutoManualMode split_line_mode);
+    class Params {
+    public:
+        Params(PageLayout const& layout, Dependencies const& deps, AutoManualMode split_line_mode);
 
-    Params(QDomElement const& el);
+        Params(QDomElement const& el);
 
-    ~Params();
+        ~Params();
 
-    PageLayout const& pageLayout() const {
-        return m_layout;
-    }
+        PageLayout const& pageLayout() const {
+            return m_layout;
+        }
 
-    Dependencies const& dependencies() const {
-        return m_deps;
-    }
+        Dependencies const& dependencies() const {
+            return m_deps;
+        }
 
-    AutoManualMode splitLineMode() const {
-        return m_splitLineMode;
-    }
+        AutoManualMode splitLineMode() const {
+            return m_splitLineMode;
+        }
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-private:
-    PageLayout m_layout;
-    Dependencies m_deps;
-    AutoManualMode m_splitLineMode;
-};
+    private:
+        PageLayout m_layout;
+        Dependencies m_deps;
+        AutoManualMode m_splitLineMode;
+    };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_PARAMS_H_

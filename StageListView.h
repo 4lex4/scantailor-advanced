@@ -26,8 +26,8 @@
 
 class StageSequence;
 
-class StageListView: public QTableView {
-    Q_OBJECT
+class StageListView : public QTableView {
+Q_OBJECT
 public:
     StageListView(QWidget* parent);
 
@@ -40,17 +40,21 @@ public:
     }
 
 signals:
+
     void launchBatchProcessing();
 
 public slots:
+
     void setBatchProcessingPossible(bool possible);
 
     void setBatchProcessingInProgress(bool in_progress);
 
 protected slots:
+
     virtual void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
 
 private slots:
+
     void ensureSelectedRowVisible();
 
 protected:

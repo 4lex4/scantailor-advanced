@@ -4,11 +4,11 @@
 #include <QDialog>
 
 namespace Ui {
-class StartBatchProcessingDialog;
+    class StartBatchProcessingDialog;
 }
 
-class StartBatchProcessingDialog: public QDialog {
-    Q_OBJECT
+class StartBatchProcessingDialog : public QDialog {
+Q_OBJECT
 public:
     explicit StartBatchProcessingDialog(QWidget* parent = 0);
 

@@ -26,216 +26,214 @@
 #include <assert.h>
 
 namespace imageproc {
-namespace detail {
-namespace local_min_max {
-template <typename T, typename MinMaxSelector>
-void fillAccumulator(MinMaxSelector selector,
-                     int todo_before,
-                     int todo_within,
-                     int todo_after,
-                     T outside_values,
-                     T const* src,
-                     int const src_delta,
-                     T* dst,
-                     int const dst_delta) {
-    T extremum(outside_values);
+    namespace detail {
+        namespace local_min_max {
+            template<typename T, typename MinMaxSelector>
+            void fillAccumulator(MinMaxSelector selector,
+                                 int todo_before,
+                                 int todo_within,
+                                 int todo_after,
+                                 T outside_values,
+                                 T const* src,
+                                 int const src_delta,
+                                 T* dst,
+                                 int const dst_delta) {
+                T extremum(outside_values);
 
-    if ((todo_before <= 0) && (todo_within > 0)) {
-        extremum = *src;
-    }
+                if ((todo_before <= 0) && (todo_within > 0)) {
+                    extremum = *src;
+                }
 
-    while (todo_before-- > 0) {
-        *dst = extremum;
-        dst += dst_delta;
-        src += src_delta;
-    }
+                while (todo_before-- > 0) {
+                    *dst = extremum;
+                    dst += dst_delta;
+                    src += src_delta;
+                }
 
-    while (todo_within-- > 0) {
-        extremum = selector(extremum, *src);
-        *dst = extremum;
-        src += src_delta;
-        dst += dst_delta;
-    }
+                while (todo_within-- > 0) {
+                    extremum = selector(extremum, *src);
+                    *dst = extremum;
+                    src += src_delta;
+                    dst += dst_delta;
+                }
 
-    if (todo_after > 0) {
-        extremum = selector(extremum, outside_values);
-        do {
-            *dst = extremum;
-            dst += dst_delta;
-        } while (--todo_after > 0);
-    }
-}
-
-template <typename T>
-void fillWithConstant(T* from, T* to, T constant) {
-    for (++to; from != to; ++from) {
-        *from = constant;
-    }
-}
-
-template <typename T, typename MinMaxSelector>
-void horizontalPass(MinMaxSelector selector,
-                    QRect const neighborhood,
-                    T const outside_values,
-                    T const* input,
-                    int const input_stride,
-                    QSize const input_size,
-                    T* output,
-                    int const output_stride) {
-    int const se_len = neighborhood.width();
-    int const width = input_size.width();
-    int const width_m1 = width - 1;
-    int const height = input_size.height();
-    int const dx1 = neighborhood.left();
-    int const dx2 = neighborhood.right();
-
-    std::vector<T> accum(se_len * 2 - 1);
-    T* const accum_middle = &accum[se_len - 1];
-
-    for (int y = 0; y < height; ++y) {
-        for (int dst_segment_first = 0; dst_segment_first < width;
-             dst_segment_first += se_len)
-        {
-            int const dst_segment_last = std::min(
-                dst_segment_first + se_len, width
-                                         ) - 1;
-            int const src_segment_first = dst_segment_first + dx1;
-            int const src_segment_last = dst_segment_last + dx2;
-            int const src_segment_middle
-                = (src_segment_first + src_segment_last) >> 1;
-
-            if ((src_segment_first > width_m1) || (src_segment_middle < 0)) {
-                fillWithConstant(&accum.front(), accum_middle, outside_values);
-            } else {
-                int const from = std::min(width_m1, src_segment_middle);
-                int const to = std::max(0, src_segment_first);
-
-                int const todo_before = src_segment_middle - from;
-                int const todo_within = from - to + 1;
-                int const todo_after = to - src_segment_first;
-                int const src_delta = -1;
-                int const dst_delta = -1;
-
-                fillAccumulator(
-                    selector, todo_before, todo_within, todo_after, outside_values,
-                    input + src_segment_middle, src_delta, accum_middle, dst_delta
-                );
+                if (todo_after > 0) {
+                    extremum = selector(extremum, outside_values);
+                    do {
+                        *dst = extremum;
+                        dst += dst_delta;
+                    } while (--todo_after > 0);
+                }
             }
 
-            if ((src_segment_last < 0) || (src_segment_middle > width_m1)) {
-                fillWithConstant(accum_middle, &accum.back(), outside_values);
-            } else {
-                int const from = std::max(0, src_segment_middle);
-                int const to = std::min(width_m1, src_segment_last);
-
-                int const todo_before = from - src_segment_middle;
-                int const todo_within = to - from + 1;
-                int const todo_after = src_segment_last - to;
-                int const src_delta = 1;
-                int const dst_delta = 1;
-
-                fillAccumulator(
-                    selector, todo_before, todo_within, todo_after, outside_values,
-                    input + src_segment_middle, src_delta, accum_middle, dst_delta
-                );
+            template<typename T>
+            void fillWithConstant(T* from, T* to, T constant) {
+                for (++to; from != to; ++from) {
+                    *from = constant;
+                }
             }
 
-            int const offset1 = dx1 - src_segment_middle;
-            int const offset2 = dx2 - src_segment_middle;
-            for (int x = dst_segment_first; x <= dst_segment_last; ++x) {
-                output[x] = selector(accum_middle[x + offset1], accum_middle[x + offset2]);
-            }
-        }
+            template<typename T, typename MinMaxSelector>
+            void horizontalPass(MinMaxSelector selector,
+                                QRect const neighborhood,
+                                T const outside_values,
+                                T const* input,
+                                int const input_stride,
+                                QSize const input_size,
+                                T* output,
+                                int const output_stride) {
+                int const se_len = neighborhood.width();
+                int const width = input_size.width();
+                int const width_m1 = width - 1;
+                int const height = input_size.height();
+                int const dx1 = neighborhood.left();
+                int const dx2 = neighborhood.right();
 
-        input += input_stride;
-        output += output_stride;
-    }
-}              // horizontalPass
+                std::vector<T> accum(se_len * 2 - 1);
+                T* const accum_middle = &accum[se_len - 1];
 
-template <typename T, typename MinMaxSelector>
-void verticalPass(MinMaxSelector selector,
-                  QRect const neighborhood,
-                  T const outside_values,
-                  T const* input,
-                  int const input_stride,
-                  QSize const input_size,
-                  T* output,
-                  int const output_stride) {
-    int const se_len = neighborhood.height();
-    int const width = input_size.width();
-    int const height = input_size.height();
-    int const height_m1 = height - 1;
-    int const dy1 = neighborhood.top();
-    int const dy2 = neighborhood.bottom();
+                for (int y = 0; y < height; ++y) {
+                    for (int dst_segment_first = 0; dst_segment_first < width;
+                         dst_segment_first += se_len) {
+                        int const dst_segment_last = std::min(
+                                dst_segment_first + se_len, width
+                        ) - 1;
+                        int const src_segment_first = dst_segment_first + dx1;
+                        int const src_segment_last = dst_segment_last + dx2;
+                        int const src_segment_middle
+                                = (src_segment_first + src_segment_last) >> 1;
 
-    std::vector<T> accum(se_len * 2 - 1);
-    T* const accum_middle = &accum[se_len - 1];
+                        if ((src_segment_first > width_m1) || (src_segment_middle < 0)) {
+                            fillWithConstant(&accum.front(), accum_middle, outside_values);
+                        } else {
+                            int const from = std::min(width_m1, src_segment_middle);
+                            int const to = std::max(0, src_segment_first);
 
-    for (int x = 0; x < width; ++x) {
-        for (int dst_segment_first = 0; dst_segment_first < height;
-             dst_segment_first += se_len)
-        {
-            int const dst_segment_last = std::min(
-                dst_segment_first + se_len, height
-                                         ) - 1;
-            int const src_segment_first = dst_segment_first + dy1;
-            int const src_segment_last = dst_segment_last + dy2;
-            int const src_segment_middle
-                = (src_segment_first + src_segment_last) >> 1;
+                            int const todo_before = src_segment_middle - from;
+                            int const todo_within = from - to + 1;
+                            int const todo_after = to - src_segment_first;
+                            int const src_delta = -1;
+                            int const dst_delta = -1;
 
-            if ((src_segment_first > height_m1) || (src_segment_middle < 0)) {
-                fillWithConstant(&accum.front(), accum_middle, outside_values);
-            } else {
-                int const from = std::min(height_m1, src_segment_middle);
-                int const to = std::max(0, src_segment_first);
+                            fillAccumulator(
+                                    selector, todo_before, todo_within, todo_after, outside_values,
+                                    input + src_segment_middle, src_delta, accum_middle, dst_delta
+                            );
+                        }
 
-                int const todo_before = src_segment_middle - from;
-                int const todo_within = from - to + 1;
-                int const todo_after = to - src_segment_first;
-                int const src_delta = -input_stride;
-                int const dst_delta = -1;
+                        if ((src_segment_last < 0) || (src_segment_middle > width_m1)) {
+                            fillWithConstant(accum_middle, &accum.back(), outside_values);
+                        } else {
+                            int const from = std::max(0, src_segment_middle);
+                            int const to = std::min(width_m1, src_segment_last);
 
-                fillAccumulator(
-                    selector, todo_before, todo_within, todo_after, outside_values,
-                    input + src_segment_middle * input_stride, src_delta,
-                    accum_middle, dst_delta
-                );
-            }
+                            int const todo_before = from - src_segment_middle;
+                            int const todo_within = to - from + 1;
+                            int const todo_after = src_segment_last - to;
+                            int const src_delta = 1;
+                            int const dst_delta = 1;
 
-            if ((src_segment_last < 0) || (src_segment_middle > height_m1)) {
-                fillWithConstant(accum_middle, &accum.back(), outside_values);
-            } else {
-                int const from = std::max(0, src_segment_middle);
-                int const to = std::min(height_m1, src_segment_last);
+                            fillAccumulator(
+                                    selector, todo_before, todo_within, todo_after, outside_values,
+                                    input + src_segment_middle, src_delta, accum_middle, dst_delta
+                            );
+                        }
 
-                int const todo_before = from - src_segment_middle;
-                int const todo_within = to - from + 1;
-                int const todo_after = src_segment_last - to;
-                int const src_delta = input_stride;
-                int const dst_delta = 1;
+                        int const offset1 = dx1 - src_segment_middle;
+                        int const offset2 = dx2 - src_segment_middle;
+                        for (int x = dst_segment_first; x <= dst_segment_last; ++x) {
+                            output[x] = selector(accum_middle[x + offset1], accum_middle[x + offset2]);
+                        }
+                    }
 
-                fillAccumulator(
-                    selector, todo_before, todo_within, todo_after, outside_values,
-                    input + src_segment_middle * input_stride, src_delta,
-                    accum_middle, dst_delta
-                );
-            }
+                    input += input_stride;
+                    output += output_stride;
+                }
+            }              // horizontalPass
 
-            int const offset1 = dy1 - src_segment_middle;
-            int const offset2 = dy2 - src_segment_middle;
-            T* p_out = output + dst_segment_first * output_stride;
-            for (int y = dst_segment_first; y <= dst_segment_last; ++y) {
-                *p_out = selector(accum_middle[y + offset1], accum_middle[y + offset2]);
-                p_out += output_stride;
-            }
-        }
+            template<typename T, typename MinMaxSelector>
+            void verticalPass(MinMaxSelector selector,
+                              QRect const neighborhood,
+                              T const outside_values,
+                              T const* input,
+                              int const input_stride,
+                              QSize const input_size,
+                              T* output,
+                              int const output_stride) {
+                int const se_len = neighborhood.height();
+                int const width = input_size.width();
+                int const height = input_size.height();
+                int const height_m1 = height - 1;
+                int const dy1 = neighborhood.top();
+                int const dy2 = neighborhood.bottom();
 
-        ++input;
-        ++output;
-    }
-}              // verticalPass
-}          // namespace local_min_max
-}      // namespace detail
+                std::vector<T> accum(se_len * 2 - 1);
+                T* const accum_middle = &accum[se_len - 1];
+
+                for (int x = 0; x < width; ++x) {
+                    for (int dst_segment_first = 0; dst_segment_first < height;
+                         dst_segment_first += se_len) {
+                        int const dst_segment_last = std::min(
+                                dst_segment_first + se_len, height
+                        ) - 1;
+                        int const src_segment_first = dst_segment_first + dy1;
+                        int const src_segment_last = dst_segment_last + dy2;
+                        int const src_segment_middle
+                                = (src_segment_first + src_segment_last) >> 1;
+
+                        if ((src_segment_first > height_m1) || (src_segment_middle < 0)) {
+                            fillWithConstant(&accum.front(), accum_middle, outside_values);
+                        } else {
+                            int const from = std::min(height_m1, src_segment_middle);
+                            int const to = std::max(0, src_segment_first);
+
+                            int const todo_before = src_segment_middle - from;
+                            int const todo_within = from - to + 1;
+                            int const todo_after = to - src_segment_first;
+                            int const src_delta = -input_stride;
+                            int const dst_delta = -1;
+
+                            fillAccumulator(
+                                    selector, todo_before, todo_within, todo_after, outside_values,
+                                    input + src_segment_middle * input_stride, src_delta,
+                                    accum_middle, dst_delta
+                            );
+                        }
+
+                        if ((src_segment_last < 0) || (src_segment_middle > height_m1)) {
+                            fillWithConstant(accum_middle, &accum.back(), outside_values);
+                        } else {
+                            int const from = std::max(0, src_segment_middle);
+                            int const to = std::min(height_m1, src_segment_last);
+
+                            int const todo_before = from - src_segment_middle;
+                            int const todo_within = to - from + 1;
+                            int const todo_after = src_segment_last - to;
+                            int const src_delta = input_stride;
+                            int const dst_delta = 1;
+
+                            fillAccumulator(
+                                    selector, todo_before, todo_within, todo_after, outside_values,
+                                    input + src_segment_middle * input_stride, src_delta,
+                                    accum_middle, dst_delta
+                            );
+                        }
+
+                        int const offset1 = dy1 - src_segment_middle;
+                        int const offset2 = dy2 - src_segment_middle;
+                        T* p_out = output + dst_segment_first * output_stride;
+                        for (int y = dst_segment_first; y <= dst_segment_last; ++y) {
+                            *p_out = selector(accum_middle[y + offset1], accum_middle[y + offset2]);
+                            p_out += output_stride;
+                        }
+                    }
+
+                    ++input;
+                    ++output;
+                }
+            }              // verticalPass
+        }          // namespace local_min_max
+    }      // namespace detail
 
 /**
  * \brief For each cell on a 2D grid, finds the minimum or the maximum value
@@ -264,35 +262,35 @@ void verticalPass(MinMaxSelector selector,
  *
  * A good description of this algorithm is available online at:
  * http: */
-template <typename T, typename MinMaxSelector>
-void localMinMaxGeneric(MinMaxSelector selector,
-                        QRect const neighborhood,
-                        T const outside_values,
-                        T const* input,
-                        int const input_stride,
-                        QSize const input_size,
-                        T* output,
-                        int const output_stride) {
-    assert(!neighborhood.isEmpty());
+    template<typename T, typename MinMaxSelector>
+    void localMinMaxGeneric(MinMaxSelector selector,
+                            QRect const neighborhood,
+                            T const outside_values,
+                            T const* input,
+                            int const input_stride,
+                            QSize const input_size,
+                            T* output,
+                            int const output_stride) {
+        assert(!neighborhood.isEmpty());
 
-    if (input_size.isEmpty()) {
-        return;
+        if (input_size.isEmpty()) {
+            return;
+        }
+
+        std::vector<T> temp(input_size.width() * input_size.height());
+        int const temp_stride = input_size.width();
+
+        detail::local_min_max::horizontalPass(
+                selector, neighborhood, outside_values,
+                input, input_stride, input_size,
+                &temp[0], temp_stride
+        );
+
+        detail::local_min_max::verticalPass(
+                selector, neighborhood, outside_values,
+                &temp[0], temp_stride, input_size,
+                output, output_stride
+        );
     }
-
-    std::vector<T> temp(input_size.width() * input_size.height());
-    int const temp_stride = input_size.width();
-
-    detail::local_min_max::horizontalPass(
-        selector, neighborhood, outside_values,
-        input, input_stride, input_size,
-        &temp[0], temp_stride
-    );
-
-    detail::local_min_max::verticalPass(
-        selector, neighborhood, outside_values,
-        &temp[0], temp_stride, input_size,
-        output, output_stride
-    );
-}
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_

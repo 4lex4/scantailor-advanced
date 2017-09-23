@@ -31,8 +31,8 @@ class QAbstractButton;
 class QItemSelection;
 class QString;
 
-class RelinkingDialog: public QDialog {
-    Q_OBJECT
+class RelinkingDialog : public QDialog {
+Q_OBJECT
 public:
     explicit RelinkingDialog(QString const& project_file_path, QWidget* parent = 0);
 
@@ -54,6 +54,7 @@ public:
     }
 
 private slots:
+
     void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
 
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */

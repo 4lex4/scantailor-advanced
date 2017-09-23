@@ -25,24 +25,27 @@
 #include <map>
 
 namespace output {
-class TabbedImageView: public QTabWidget {
+    class TabbedImageView : public QTabWidget {
     Q_OBJECT
-public:
-    TabbedImageView(QWidget* parent = 0);
+    public:
+        TabbedImageView(QWidget* parent = 0);
 
-    void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
+        void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
 
-public slots:
-    void setCurrentTab(ImageViewTab tab);
+    public slots:
 
-signals:
-    void tabChanged(ImageViewTab tab);
+        void setCurrentTab(ImageViewTab tab);
 
-private slots:
-    void tabChangedSlot(int idx);
+    signals:
 
-private:
-    std::map<QWidget*, ImageViewTab> m_registry;
-};
+        void tabChanged(ImageViewTab tab);
+
+    private slots:
+
+        void tabChangedSlot(int idx);
+
+    private:
+        std::map<QWidget*, ImageViewTab> m_registry;
+    };
 }
 #endif  // ifndef OUTPUT_TABBED_IMAGE_VIEW_H_

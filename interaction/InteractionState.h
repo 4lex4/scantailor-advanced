@@ -28,11 +28,12 @@
 class Proximity;
 
 class InteractionState {
-    DECLARE_NON_COPYABLE(InteractionState)
+DECLARE_NON_COPYABLE(InteractionState)
+
 public:
-    class Captor: public boost::intrusive::list_base_hook<
-                    boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-        >{
+    class Captor : public boost::intrusive::list_base_hook<
+            boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+    > {
         friend class InteractionState;
     private:
         struct CopyHelper {
@@ -157,7 +158,7 @@ public:
 private:
     typedef boost::intrusive::list<
             Captor, boost::intrusive::constant_time_size<false>
->CaptorList;
+    > CaptorList;
 
     /**
      * Returns true if the provided proximity is better than the stored one.

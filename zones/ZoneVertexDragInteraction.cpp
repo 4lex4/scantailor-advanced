@@ -30,7 +30,7 @@ ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& con
           m_ptrSpline(spline),
           m_ptrVertex(vertex) {
     QPointF const screen_mouse_pos(
-        m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
+            m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
     );
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
     m_dragOffset = to_screen.map(vertex->point()) - screen_mouse_pos;
@@ -89,16 +89,15 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState cons
     painter.drawLine(next, pt);
 
     m_visualizer.drawVertex(
-        painter, to_screen.map(m_ptrVertex->point()),
-        m_visualizer.highlightBrightColor()
+            painter, to_screen.map(m_ptrVertex->point()),
+            m_visualizer.highlightBrightColor()
     );
 }  // ZoneVertexDragInteraction::onPaint
 
 void ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {
         if ((m_ptrVertex->point() == m_ptrVertex->next(SplineVertex::LOOP)->point())
-            || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point()))
-        {
+            || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point())) {
             if (m_ptrVertex->hasAtLeastSiblings(3)) {
                 m_ptrVertex->remove();
             }

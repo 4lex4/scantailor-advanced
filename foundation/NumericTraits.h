@@ -22,15 +22,15 @@
 #include <limits>
 
 namespace numeric_traits_impl {
-template <typename T, bool IsInteger>
-struct IntegerSpecific;
+    template<typename T, bool IsInteger>
+    struct IntegerSpecific;
 }
 
 /**
  * This class exists mainly because std::numeric_values<>::min() has
  * inconsistent behaviour for integer vs floating point types.
  */
-template <typename T>
+template<typename T>
 class NumericTraits {
 public:
     static T max() {
@@ -44,7 +44,7 @@ public:
      */
     static T min() {
         return numeric_traits_impl::IntegerSpecific<
-            T, std::numeric_limits<T>::is_integer
+                T, std::numeric_limits<T>::is_integer
         >::min();
     }
 
@@ -53,18 +53,18 @@ private:
 
 
 namespace numeric_traits_impl {
-template <typename T>
-struct IntegerSpecific<T, true>{
-    static T min() {
-        return std::numeric_limits<T>::min();
-    }
-};
+    template<typename T>
+    struct IntegerSpecific<T, true> {
+        static T min() {
+            return std::numeric_limits<T>::min();
+        }
+    };
 
-template <typename T>
-struct IntegerSpecific<T, false>{
-    static T min() {
-        return -std::numeric_limits<T>::max();
-    }
-};
+    template<typename T>
+    struct IntegerSpecific<T, false> {
+        static T min() {
+            return -std::numeric_limits<T>::max();
+        }
+    };
 }
 #endif  // ifndef NUMERIC_TRAITS_H_

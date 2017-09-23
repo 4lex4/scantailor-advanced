@@ -56,7 +56,7 @@ private:
 };
 
 
-class RelinkingModel::StatusUpdateThread: private QThread {
+class RelinkingModel::StatusUpdateThread : private QThread {
 public:
     StatusUpdateThread(RelinkingModel* owner);
 
@@ -87,15 +87,15 @@ private:
     typedef boost::multi_index_container<
             Task,
             boost::multi_index::indexed_by<
-                boost::multi_index::ordered_unique<
-                    boost::multi_index::tag<OrderedByPathTag>,
-                    boost::multi_index::member<Task, QString, & Task::path>
-                >,
-                boost::multi_index::sequenced<
-                    boost::multi_index::tag<OrderedByPriorityTag>
-                >
+                    boost::multi_index::ordered_unique<
+                            boost::multi_index::tag<OrderedByPathTag>,
+                            boost::multi_index::member<Task, QString, &Task::path>
+                    >,
+                    boost::multi_index::sequenced<
+                            boost::multi_index::tag<OrderedByPriorityTag>
+                    >
             >
->TaskList;
+    > TaskList;
 
     typedef TaskList::index<OrderedByPathTag>::type TasksByPath;
     typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
@@ -146,8 +146,7 @@ QVariant RelinkingModel::data(QModelIndex const& index, int role) const {
             return item.uncommittedPath;
         case Qt::DisplayRole:
             if (item.uncommittedPath.startsWith(QChar('/'))
-                && !item.uncommittedPath.startsWith(QLatin1String("//")))
-            {
+                && !item.uncommittedPath.startsWith(QLatin1String("//"))) {
                 return item.uncommittedPath;
             } else {
                 return QDir::toNativeSeparators(item.uncommittedPath);
@@ -165,7 +164,7 @@ void RelinkingModel::addPath(RelinkablePath const& path) {
     QString const normalized_path(path.normalizedPath());
 
     std::pair<std::set<QString>::iterator, bool> const ins(
-        m_origPathSet.insert(path.normalizedPath())
+            m_origPathSet.insert(path.normalizedPath())
     );
     if (!ins.second) {
         return;
@@ -374,11 +373,11 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path
     }
 
     std::pair<TasksByPath::iterator, bool> const ins(
-        m_rTasksByPath.insert(Task(path, row))
+            m_rTasksByPath.insert(Task(path, row))
     );
 
     m_rTasksByPriority.relocate(
-        m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
+            m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
     );
 
     if (!isRunning()) {

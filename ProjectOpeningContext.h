@@ -32,8 +32,10 @@ class FixDpiDialog;
 class QWidget;
 class QDomDocument;
 
-class ProjectOpeningContext: public QObject {
-    Q_OBJECT DECLARE_NON_COPYABLE(ProjectOpeningContext)
+class ProjectOpeningContext : public QObject {
+Q_OBJECT
+DECLARE_NON_COPYABLE(ProjectOpeningContext)
+
 public:
     ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc);
 
@@ -50,9 +52,11 @@ public:
     }
 
 signals:
+
     void done(ProjectOpeningContext* context);
 
 private slots:
+
     void fixedDpiSubmitted();
 
     void fixDpiDialogDestroyed();

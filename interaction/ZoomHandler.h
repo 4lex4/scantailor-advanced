@@ -27,10 +27,13 @@
 
 class ImageViewBase;
 
-class ZoomHandler: public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
+class ZoomHandler : public InteractionHandler {
+Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
 public:
-    enum Focus { CENTER, CURSOR };
+    enum Focus {
+        CENTER,
+        CURSOR
+    };
 
     ZoomHandler(ImageViewBase& image_view);
 

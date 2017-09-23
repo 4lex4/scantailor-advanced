@@ -22,88 +22,88 @@
 #include "CommandLine.h"
 
 namespace output {
-Params::Params()
-        : m_dpi(CommandLine::get().getDefaultOutputDpi()),
-          m_despeckleLevel(DESPECKLE_CAUTIOUS),
-          m_pictureShape(FREE_SHAPE) {
-}
-
-Params::Params(QDomElement const& el)
-        : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
-          m_distortionModel(el.namedItem("distortion-model").toElement()),
-          m_depthPerception(el.attribute("depthPerception")),
-          m_dewarpingMode(el.attribute("dewarpingMode")),
-          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
-          m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())) {
-    QDomElement const cp(el.namedItem("color-params").toElement());
-    m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
-    m_colorParams.setColorGrayscaleOptions(
-        ColorGrayscaleOptions(
-            cp.namedItem("color-or-grayscale").toElement()
-        )
-    );
-    m_colorParams.setBlackWhiteOptions(
-        BlackWhiteOptions(cp.namedItem("bw").toElement())
-    );
-}
-
-QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
-    XmlMarshaller marshaller(doc);
-
-    QDomElement el(doc.createElement(name));
-    el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
-    el.setAttribute("pictureShape", (int) m_pictureShape);
-    el.setAttribute("depthPerception", m_depthPerception.toString());
-    el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
-    el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
-    el.appendChild(marshaller.dpi(m_dpi, "dpi"));
-
-    QDomElement cp(doc.createElement("color-params"));
-    cp.setAttribute(
-        "colorMode",
-        formatColorMode(m_colorParams.colorMode())
-    );
-
-    cp.appendChild(
-        m_colorParams.colorGrayscaleOptions().toXml(
-            doc, "color-or-grayscale"
-        )
-    );
-    cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
-
-    el.appendChild(cp);
-
-    return el;
-}
-
-ColorParams::ColorMode Params::parseColorMode(QString const& str) {
-    if (str == "bw") {
-        return ColorParams::BLACK_AND_WHITE;
-    } else if (str == "bitonal") {
-        return ColorParams::BLACK_AND_WHITE;
-    } else if (str == "colorOrGray") {
-        return ColorParams::COLOR_GRAYSCALE;
-    } else if (str == "mixed") {
-        return ColorParams::MIXED;
-    } else {
-        return ColorParams::DefaultColorMode();
-    }
-}
-
-QString Params::formatColorMode(ColorParams::ColorMode const mode) {
-    char const* str = "";
-    switch (mode) {
-        case ColorParams::BLACK_AND_WHITE:
-            str = "bw";
-            break;
-        case ColorParams::COLOR_GRAYSCALE:
-            str = "colorOrGray";
-            break;
-        case ColorParams::MIXED:
-            str = "mixed";
-            break;
+    Params::Params()
+            : m_dpi(CommandLine::get().getDefaultOutputDpi()),
+              m_despeckleLevel(DESPECKLE_CAUTIOUS),
+              m_pictureShape(FREE_SHAPE) {
     }
 
-    return QString::fromLatin1(str);
-}
+    Params::Params(QDomElement const& el)
+            : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+              m_distortionModel(el.namedItem("distortion-model").toElement()),
+              m_depthPerception(el.attribute("depthPerception")),
+              m_dewarpingMode(el.attribute("dewarpingMode")),
+              m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
+              m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())) {
+        QDomElement const cp(el.namedItem("color-params").toElement());
+        m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
+        m_colorParams.setColorGrayscaleOptions(
+                ColorGrayscaleOptions(
+                        cp.namedItem("color-or-grayscale").toElement()
+                )
+        );
+        m_colorParams.setBlackWhiteOptions(
+                BlackWhiteOptions(cp.namedItem("bw").toElement())
+        );
+    }
+
+    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+        XmlMarshaller marshaller(doc);
+
+        QDomElement el(doc.createElement(name));
+        el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
+        el.setAttribute("pictureShape", (int) m_pictureShape);
+        el.setAttribute("depthPerception", m_depthPerception.toString());
+        el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
+        el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
+        el.appendChild(marshaller.dpi(m_dpi, "dpi"));
+
+        QDomElement cp(doc.createElement("color-params"));
+        cp.setAttribute(
+                "colorMode",
+                formatColorMode(m_colorParams.colorMode())
+        );
+
+        cp.appendChild(
+                m_colorParams.colorGrayscaleOptions().toXml(
+                        doc, "color-or-grayscale"
+                )
+        );
+        cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
+
+        el.appendChild(cp);
+
+        return el;
+    }
+
+    ColorParams::ColorMode Params::parseColorMode(QString const& str) {
+        if (str == "bw") {
+            return ColorParams::BLACK_AND_WHITE;
+        } else if (str == "bitonal") {
+            return ColorParams::BLACK_AND_WHITE;
+        } else if (str == "colorOrGray") {
+            return ColorParams::COLOR_GRAYSCALE;
+        } else if (str == "mixed") {
+            return ColorParams::MIXED;
+        } else {
+            return ColorParams::DefaultColorMode();
+        }
+    }
+
+    QString Params::formatColorMode(ColorParams::ColorMode const mode) {
+        char const* str = "";
+        switch (mode) {
+            case ColorParams::BLACK_AND_WHITE:
+                str = "bw";
+                break;
+            case ColorParams::COLOR_GRAYSCALE:
+                str = "colorOrGray";
+                break;
+            case ColorParams::MIXED:
+                str = "mixed";
+                break;
+        }
+
+        return QString::fromLatin1(str);
+    }
 }  // namespace output

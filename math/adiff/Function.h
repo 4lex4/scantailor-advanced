@@ -31,74 +31,74 @@ namespace adiff {
  * It would be nice to have a generic version,
  * but for now it's only specialized for ORD == 2.
  */
-template <int ORD>
-class Function;
+    template<int ORD>
+    class Function;
 
-template <>
-class Function<2>{
-public:
-    /** The value of the function. */
-    double value;
+    template<>
+    class Function<2> {
+    public:
+        /** The value of the function. */
+        double value;
 
-    /**
-     * First directional derivatives in the direction
-     * of u = i + j for every non-zero Hessian element at i, j.
-     */
-    VecT<double> firstDerivs;
+        /**
+         * First directional derivatives in the direction
+         * of u = i + j for every non-zero Hessian element at i, j.
+         */
+        VecT<double> firstDerivs;
 
-    /**
-     * Second directional derivatives in the direction
-     * of u = i + j for every non-zero Hessian element at i, j.
-     */
-    VecT<double> secondDerivs;
+        /**
+         * Second directional derivatives in the direction
+         * of u = i + j for every non-zero Hessian element at i, j.
+         */
+        VecT<double> secondDerivs;
 
-    /**
-     * Constructs the "f(x1, x2, ...) = 0" function.
-     */
-    explicit Function(size_t num_non_zero_vars);
+        /**
+         * Constructs the "f(x1, x2, ...) = 0" function.
+         */
+        explicit Function(size_t num_non_zero_vars);
 
-    /**
-     * Constructs the "f(x1, x2, ...) = 0" function.
-     */
-    explicit Function(SparseMap<2> const& sparse_map);
+        /**
+         * Constructs the "f(x1, x2, ...) = 0" function.
+         */
+        explicit Function(SparseMap<2> const& sparse_map);
 
-    /**
-     * Constructs a function representing an argument.
-     *
-     * \param arg_idx Argument number.
-     * \param val Argument value.
-     * \param sparse_map Tells which derivatives to compute.
-     */
-    Function(size_t arg_idx, double val, SparseMap<2> const& sparse_map);
+        /**
+         * Constructs a function representing an argument.
+         *
+         * \param arg_idx Argument number.
+         * \param val Argument value.
+         * \param sparse_map Tells which derivatives to compute.
+         */
+        Function(size_t arg_idx, double val, SparseMap<2> const& sparse_map);
 
-    VecT<double> gradient(SparseMap<2> const& sparse_map) const;
+        VecT<double> gradient(SparseMap<2> const& sparse_map) const;
 
-    MatT<double> hessian(SparseMap<2> const& sparse_map) const;
+        MatT<double> hessian(SparseMap<2> const& sparse_map) const;
 
-    void swap(Function& other);
+        void swap(Function& other);
 
-    Function& operator+=(Function const& other);
+        Function& operator+=(Function const& other);
 
-    Function& operator-=(Function const& other);
+        Function& operator-=(Function const& other);
 
-    Function& operator*=(double scalar);
-};
+        Function& operator*=(double scalar);
+    };
 
 
-inline void swap(Function<2>& f1, Function<2>& f2) {
-    f1.swap(f2);
-}
+    inline void swap(Function<2>& f1, Function<2>& f2) {
+        f1.swap(f2);
+    }
 
-Function<2> operator+(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator+(Function<2> const& f1, Function<2> const& f2);
 
-Function<2> operator-(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator-(Function<2> const& f1, Function<2> const& f2);
 
-Function<2> operator*(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator*(Function<2> const& f1, Function<2> const& f2);
 
-Function<2> operator*(Function<2> const& f, double scalar);
+    Function<2> operator*(Function<2> const& f, double scalar);
 
-Function<2> operator*(double scalar, Function<2> const& f);
+    Function<2> operator*(double scalar, Function<2> const& f);
 
-Function<2> operator/(Function<2> const& num, Function<2> const& den);
+    Function<2> operator/(Function<2> const& num, Function<2> const& den);
 }  // namespace adiff
 #endif  // ifndef ADIFF_FUNCTION_H_

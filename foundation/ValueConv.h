@@ -22,17 +22,17 @@
 #include "NumericTraits.h"
 #include <math.h>
 
-template <typename ToType>
+template<typename ToType>
 class StaticCastValueConv {
 public:
-    template <typename FromType>
+    template<typename FromType>
     ToType operator()(FromType val) const {
         return static_cast<ToType>(val);
     }
 };
 
 
-template <typename ToType>
+template<typename ToType>
 class RoundAndClipValueConv {
 public:
     RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
@@ -40,7 +40,7 @@ public:
               m_max(max) {
     }
 
-    template <typename FromType>
+    template<typename FromType>
     ToType operator()(FromType val) const {
         if (val < FromType(m_min)) {
             return m_min;

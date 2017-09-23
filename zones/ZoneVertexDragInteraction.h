@@ -28,13 +28,14 @@
 
 class ZoneInteractionContext;
 
-class ZoneVertexDragInteraction: public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
+class ZoneVertexDragInteraction : public InteractionHandler {
+Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
 public:
     ZoneVertexDragInteraction(ZoneInteractionContext& context,
                               InteractionState& interaction,
                               EditableSpline::Ptr const& spline,
                               SplineVertex::Ptr const& vertex);
+
 protected:
     virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 

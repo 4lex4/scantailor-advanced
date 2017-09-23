@@ -28,47 +28,48 @@ class QDomElement;
 class QString;
 
 namespace dewarping {
-class Curve {
-public:
-    Curve();
+    class Curve {
+    public:
+        Curve();
 
-    Curve(std::vector<QPointF> const& polyline);
+        Curve(std::vector<QPointF> const& polyline);
 
-    Curve(XSpline const& xspline);
+        Curve(XSpline const& xspline);
 
-    Curve(QDomElement const& el);
+        Curve(QDomElement const& el);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    bool isValid() const;
+        bool isValid() const;
 
-    bool matches(Curve const& other) const;
+        bool matches(Curve const& other) const;
 
-    XSpline const& xspline() const {
-        return m_xspline;
-    }
+        XSpline const& xspline() const {
+            return m_xspline;
+        }
 
-    std::vector<QPointF> const& polyline() const {
-        return m_polyline;
-    }
+        std::vector<QPointF> const& polyline() const {
+            return m_polyline;
+        }
 
-    static bool splineHasLoops(XSpline const& spline);
+        static bool splineHasLoops(XSpline const& spline);
 
-private:
-    struct CloseEnough;
+    private:
+        struct CloseEnough;
 
-    static std::vector<QPointF> deserializePolyline(QDomElement const& el);
+        static std::vector<QPointF> deserializePolyline(QDomElement const& el);
 
-    static QDomElement serializePolyline(std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name);
+        static QDomElement
+        serializePolyline(std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name);
 
-    static XSpline deserializeXSpline(QDomElement const& el);
+        static XSpline deserializeXSpline(QDomElement const& el);
 
-    static QDomElement serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name);
+        static QDomElement serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name);
 
-    static bool approxPolylineMatch(std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2);
+        static bool approxPolylineMatch(std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2);
 
-    XSpline m_xspline;
-    std::vector<QPointF> m_polyline;
-};
+        XSpline m_xspline;
+        std::vector<QPointF> m_polyline;
+    };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_CURVE_H_

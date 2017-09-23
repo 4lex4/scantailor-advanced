@@ -33,7 +33,7 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     m_segmentProximity.setProximityStatusTip(tr("Click to create a new vertex here."));
     m_zoneAreaProximity.setProximityStatusTip(tr("Right click to edit zone properties."));
     m_rContext.imageView().interactionState().setDefaultStatusTip(
-        tr("Click to start creating a new picture zone.")
+            tr("Click to start creating a new picture zone.")
     );
 }
 
@@ -49,16 +49,14 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
         QPolygonF points;
 
         if (!interaction.captured() && interaction.proximityLeader(m_vertexProximity)
-            && (spline == m_ptrNearestVertexSpline))
-        {
+            && (spline == m_ptrNearestVertexSpline)) {
             SplineVertex::Ptr vertex(m_ptrNearestVertex->next(SplineVertex::LOOP));
             for (; vertex != m_ptrNearestVertex; vertex = vertex->next(SplineVertex::LOOP)) {
                 points.push_back(to_screen.map(vertex->point()));
             }
             painter.drawPolyline(points);
         } else if (!interaction.captured() && interaction.proximityLeader(m_segmentProximity)
-                   && (spline == m_ptrNearestSegmentSpline))
-        {
+                   && (spline == m_ptrNearestSegmentSpline)) {
             SplineVertex::Ptr vertex(m_nearestSegment.prev);
             do {
                 vertex = vertex->next(SplineVertex::LOOP);
@@ -136,8 +134,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
         }
 
         for (SplineVertex::Ptr vert(spline->firstVertex());
-             vert; vert = vert->next(SplineVertex::NO_LOOP))
-        {
+             vert; vert = vert->next(SplineVertex::NO_LOOP)) {
             Proximity const proximity(mouse_pos, to_screen.map(vert->point()));
             if (proximity < best_vertex_proximity) {
                 m_ptrNearestVertex = vert;
@@ -179,9 +176,9 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
 
     if (interaction.proximityLeader(m_vertexProximity)) {
         makePeerPreceeder(
-            *m_rContext.createVertexDragInteraction(
-                interaction, m_ptrNearestVertexSpline, m_ptrNearestVertex
-            )
+                *m_rContext.createVertexDragInteraction(
+                        interaction, m_ptrNearestVertexSpline, m_ptrNearestVertex
+                )
         );
         delete this;
         event->accept();
@@ -189,9 +186,9 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
         QTransform const from_screen(m_rContext.imageView().widgetToImage());
         SplineVertex::Ptr vertex(m_nearestSegment.splitAt(from_screen.map(m_screenPointOnSegment)));
         makePeerPreceeder(
-            *m_rContext.createVertexDragInteraction(
-                interaction, m_ptrNearestSegmentSpline, vertex
-            )
+                *m_rContext.createVertexDragInteraction(
+                        interaction, m_ptrNearestSegmentSpline, vertex
+                )
         );
         delete this;
         event->accept();

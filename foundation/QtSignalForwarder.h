@@ -29,8 +29,10 @@
  * Useful when you need to bind additional parameters to a slot
  * at connection time.
  */
-class QtSignalForwarder: public QObject {
-    Q_OBJECT DECLARE_NON_COPYABLE(QtSignalForwarder)
+class QtSignalForwarder : public QObject {
+Q_OBJECT
+DECLARE_NON_COPYABLE(QtSignalForwarder)
+
 public:
     /**
      * \brief Constructor.
@@ -45,6 +47,7 @@ public:
     QtSignalForwarder(QObject* emitter, char const* signal, boost::function<void()> const& slot);
 
 private slots:
+
     void handleSignal();
 
 private:

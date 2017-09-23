@@ -22,59 +22,59 @@
 #include <QDomDocument>
 
 namespace output {
-char const ZoneCategoryProperty::m_propertyName[] = "ZoneCategoryProperty";
+    char const ZoneCategoryProperty::m_propertyName[] = "ZoneCategoryProperty";
 
-ZoneCategoryProperty::ZoneCategoryProperty(QDomElement const& el)
-        : m_zone_category(zoneCategoryFromString(el.attribute("zone_category"))) {
-}
-
-void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
-    factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
-}
-
-IntrusivePtr<Property>
-ZoneCategoryProperty::clone() const {
-    return IntrusivePtr<Property>(new ZoneCategoryProperty(*this));
-}
-
-QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, QString const& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("type", m_propertyName);
-    el.setAttribute("zone_category", zoneCategoryToString(m_zone_category));
-
-    return el;
-}
-
-IntrusivePtr<Property>
-ZoneCategoryProperty::construct(QDomElement const& el) {
-    return IntrusivePtr<Property>(new ZoneCategoryProperty(el));
-}
-
-ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(QString const& str) {
-    if (str == "manual") {
-        return MANUAL;
-    } else if (str == "rectangular_outline") {
-        return RECTANGULAR_OUTLINE;
-    } else {
-        return MANUAL;
-    }
-}
-
-QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
-    char const* str = 0;
-
-    switch (zone_category) {
-        case MANUAL:
-            str = "manual";
-            break;
-        case RECTANGULAR_OUTLINE:
-            str = "rectangular_outline";
-            break;
-        default:
-            str = "";
-            break;
+    ZoneCategoryProperty::ZoneCategoryProperty(QDomElement const& el)
+            : m_zone_category(zoneCategoryFromString(el.attribute("zone_category"))) {
     }
 
-    return str;
-}
+    void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
+        factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
+    }
+
+    IntrusivePtr<Property>
+    ZoneCategoryProperty::clone() const {
+        return IntrusivePtr<Property>(new ZoneCategoryProperty(*this));
+    }
+
+    QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, QString const& name) const {
+        QDomElement el(doc.createElement(name));
+        el.setAttribute("type", m_propertyName);
+        el.setAttribute("zone_category", zoneCategoryToString(m_zone_category));
+
+        return el;
+    }
+
+    IntrusivePtr<Property>
+    ZoneCategoryProperty::construct(QDomElement const& el) {
+        return IntrusivePtr<Property>(new ZoneCategoryProperty(el));
+    }
+
+    ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(QString const& str) {
+        if (str == "manual") {
+            return MANUAL;
+        } else if (str == "rectangular_outline") {
+            return RECTANGULAR_OUTLINE;
+        } else {
+            return MANUAL;
+        }
+    }
+
+    QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
+        char const* str = 0;
+
+        switch (zone_category) {
+            case MANUAL:
+                str = "manual";
+                break;
+            case RECTANGULAR_OUTLINE:
+                str = "rectangular_outline";
+                break;
+            default:
+                str = "";
+                break;
+        }
+
+        return str;
+    }
 }  // namespace output

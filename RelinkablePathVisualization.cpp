@@ -45,7 +45,7 @@ struct RelinkablePathVisualization::PathComponent {
 };
 
 
-class RelinkablePathVisualization::ComponentButton: public QPushButton {
+class RelinkablePathVisualization::ComponentButton : public QPushButton {
 public:
     ComponentButton(QWidget* parent = 0)
             : QPushButton(parent) {
@@ -128,11 +128,11 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
         stylePathComponentButton(btn, path_component.exists);
 
         new QtSignalForwarder(
-            btn, SIGNAL(clicked()), boost::bind(
-                &RelinkablePathVisualization::onClicked, this,
-                component_idx, path_component.prefixPath,
-                path_component.suffixPath, path_component.type
-            )
+                btn, SIGNAL(clicked()), boost::bind(
+                        &RelinkablePathVisualization::onClicked, this,
+                        component_idx, path_component.prefixPath,
+                        path_component.suffixPath, path_component.type
+                )
         );
     }
 
@@ -143,33 +143,33 @@ void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn,
     QColor const border_color(palette().color(QPalette::Window).darker(150));
 
     QString style
-        = "QAbstractButton {\n"
-          "	border: 2px solid " + border_color.name() + ";\n"
-          "	border-radius: 0.5em;\n"
-          "	padding: 0.2em;\n"
-          "	margin-left: 1px;\n"
-          "	margin-right: 1px;\n"
-          "	min-width: 2em;\n"
-          "	font-weight: bold;\n";
+            = "QAbstractButton {\n"
+                      "	border: 2px solid " + border_color.name() + ";\n"
+                      "	border-radius: 0.5em;\n"
+                      "	padding: 0.2em;\n"
+                      "	margin-left: 1px;\n"
+                      "	margin-right: 1px;\n"
+                      "	min-width: 2em;\n"
+                      "	font-weight: bold;\n";
     if (exists) {
         style
-            += "	color: #3a5827;\n"
-               "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #89e74a);\n";
+                += "	color: #3a5827;\n"
+                "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #89e74a);\n";
     } else {
         style
-            += "	color: #6f2719;\n"
-               "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #ff674b);\n";
+                += "	color: #6f2719;\n"
+                "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #ff674b);\n";
     }
     style
-        += "}\n"
-           "QAbstractButton:hover {\n"
-           "	color: #333;\n"
-           "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #bbb);\n"
-           "}\n"
-           "QAbstractButton:pressed {\n"
-           "	color: #333;\n"
-           "	background: qradialgradient(cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1, radius: 1.35, stop: 0 #fff, stop: 1 #ddd);\n"
-           "}\n";
+            += "}\n"
+            "QAbstractButton:hover {\n"
+            "	color: #333;\n"
+            "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #bbb);\n"
+            "}\n"
+            "QAbstractButton:pressed {\n"
+            "	color: #333;\n"
+            "	background: qradialgradient(cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1, radius: 1.35, stop: 0 #fff, stop: 1 #ddd);\n"
+            "}\n";
 
     btn->setStyleSheet(style);
 }  // RelinkablePathVisualization::stylePathComponentButton

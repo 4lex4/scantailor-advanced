@@ -25,7 +25,7 @@
 class QImage;
 
 namespace imageproc {
-class GrayImage;
+    class GrayImage;
 
 /**
  * \brief Spread black pixels from seed as long as mask allows it.
@@ -39,7 +39,7 @@ class GrayImage;
  * \par
  * The underlying code implements Luc Vincent's iterative seed-fill
  * algorithm: http: */
-BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity connectivity);
+    BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity connectivity);
 
 /**
  * \brief Spread darker colors from seed as long as mask allows it.
@@ -53,12 +53,12 @@ BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectiv
  * \par
  * The underlying code implements Luc Vincent's hybrid seed-fill algorithm:
  * http: */
-GrayImage seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
+    GrayImage seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
 
 /**
  * \brief A faster, in-place version of seedFillGray().
  */
-void seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity connectivity);
+    void seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity connectivity);
 
 /**
  * \brief A slower but more simple implementation of seedFillGray().
@@ -66,6 +66,6 @@ void seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity co
  * This function should not be used for anything but testing the correctness
  * of the fast and complex implementation that is seedFillGray().
  */
-GrayImage seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
+    GrayImage seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
 }
 #endif

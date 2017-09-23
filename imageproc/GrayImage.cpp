@@ -20,19 +20,19 @@
 #include "Grayscale.h"
 
 namespace imageproc {
-GrayImage::GrayImage(QSize size) {
-    if (size.isEmpty()) {
-        return;
+    GrayImage::GrayImage(QSize size) {
+        if (size.isEmpty()) {
+            return;
+        }
+
+        m_image = QImage(size, QImage::Format_Indexed8);
+        m_image.setColorTable(createGrayscalePalette());
+        if (m_image.isNull()) {
+            throw std::bad_alloc();
+        }
     }
 
-    m_image = QImage(size, QImage::Format_Indexed8);
-    m_image.setColorTable(createGrayscalePalette());
-    if (m_image.isNull()) {
-        throw std::bad_alloc();
+    GrayImage::GrayImage(QImage const& image)
+            : m_image(toGrayscale(image)) {
     }
-}
-
-GrayImage::GrayImage(QImage const& image)
-        : m_image(toGrayscale(image)) {
-}
 }

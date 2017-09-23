@@ -22,8 +22,8 @@
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
 
-template <typename R>
-class AbstractCommand0: public RefCountable {
+template<typename R>
+class AbstractCommand0 : public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand0> Ptr;
 
@@ -31,8 +31,8 @@ public:
 };
 
 
-template <typename R, typename A1>
-class AbstractCommand1: public RefCountable {
+template<typename R, typename A1>
+class AbstractCommand1 : public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand1> Ptr;
 
@@ -40,8 +40,8 @@ public:
 };
 
 
-template <typename R, typename T1, typename T2>
-class AbstractCommand2: public RefCountable {
+template<typename R, typename T1, typename T2>
+class AbstractCommand2 : public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand2> Ptr;
 

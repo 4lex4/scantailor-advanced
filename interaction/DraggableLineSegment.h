@@ -26,15 +26,15 @@
 
 class ObjectDragHandler;
 
-class DraggableLineSegment: public DraggableObject {
+class DraggableLineSegment : public DraggableObject {
 public:
     typedef boost::function<
             QLineF()
->PositionCallback;
+    > PositionCallback;
 
     typedef boost::function<
-            void (QLineF const& line, Qt::KeyboardModifiers mask)
->MoveRequestCallback;
+            void(QLineF const& line, Qt::KeyboardModifiers mask)
+    > MoveRequestCallback;
 
     DraggableLineSegment();
 

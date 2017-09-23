@@ -54,8 +54,8 @@ QString OutputFileNameGenerator::fileNameFor(PageId const& page) const {
     }
     if (page.imageId().isMultiPageFile()) {
         name += QString::fromLatin1("_page%1").arg(
-            page.imageId().page(), 4, 10, QLatin1Char('0')
-                );
+                page.imageId().page(), 4, 10, QLatin1Char('0')
+        );
     }
     if (sub_page != PageId::SINGLE_PAGE) {
         name += QLatin1Char('_');

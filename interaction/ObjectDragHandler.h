@@ -30,8 +30,9 @@ class QPainter;
 class QCursor;
 class QString;
 
-class ObjectDragHandler: public InteractionHandler {
-    DECLARE_NON_COPYABLE(ObjectDragHandler)
+class ObjectDragHandler : public InteractionHandler {
+DECLARE_NON_COPYABLE(ObjectDragHandler)
+
 public:
     ObjectDragHandler(DraggableObject* obj = 0);
 

@@ -37,74 +37,74 @@ class QString;
 class QRectF;
 
 namespace output {
-class Task;
-class CacheDrivenTask;
+    class Task;
+    class CacheDrivenTask;
 }
 
 namespace page_layout {
-class OptionsWidget;
-class Task;
-class CacheDrivenTask;
-class Settings;
+    class OptionsWidget;
+    class Task;
+    class CacheDrivenTask;
+    class Settings;
 
-class Filter: public AbstractFilter {
+    class Filter : public AbstractFilter {
     DECLARE_NON_COPYABLE(Filter)
 
     Q_DECLARE_TR_FUNCTIONS(page_layout::Filter)
-public:
-    Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+    public:
+        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
-    virtual ~Filter();
+        virtual ~Filter();
 
-    virtual QString getName() const;
+        virtual QString getName() const;
 
-    virtual PageView getView() const;
+        virtual PageView getView() const;
 
-    virtual void selected();
+        virtual void selected();
 
-    virtual int selectedPageOrder() const;
+        virtual int selectedPageOrder() const;
 
-    virtual void selectPageOrder(int option);
+        virtual void selectPageOrder(int option);
 
-    virtual std::vector<PageOrderOption> pageOrderOptions() const;
+        virtual std::vector<PageOrderOption> pageOrderOptions() const;
 
-    virtual void performRelinking(AbstractRelinker const& relinker);
+        virtual void performRelinking(AbstractRelinker const& relinker);
 
-    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-    void setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect);
+        void setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect);
 
-    void invalidateContentBox(PageId const& page_id);
+        void invalidateContentBox(PageId const& page_id);
 
-    bool checkReadyForOutput(ProjectPages const& pages, PageId const* ignore = 0);
+        bool checkReadyForOutput(ProjectPages const& pages, PageId const* ignore = 0);
 
-    IntrusivePtr<Task> createTask(PageId const& page_id,
-                                  IntrusivePtr<output::Task> const& next_task,
-                                  bool batch,
-                                  bool debug);
+        IntrusivePtr<Task> createTask(PageId const& page_id,
+                                      IntrusivePtr<output::Task> const& next_task,
+                                      bool batch,
+                                      bool debug);
 
-    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task);
+        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task);
 
-    OptionsWidget* optionsWidget() {
-        return m_ptrOptionsWidget.get();
-    }
+        OptionsWidget* optionsWidget() {
+            return m_ptrOptionsWidget.get();
+        }
 
-    Settings* getSettings() {
-        return m_ptrSettings.get();
-    }
+        Settings* getSettings() {
+            return m_ptrSettings.get();
+        }
 
-private:
-    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+    private:
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    IntrusivePtr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    std::vector<PageOrderOption> m_pageOrderOptions;
-    int m_selectedPageOrder;
-};
+        IntrusivePtr<ProjectPages> m_ptrPages;
+        IntrusivePtr<Settings> m_ptrSettings;
+        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+        std::vector<PageOrderOption> m_pageOrderOptions;
+        int m_selectedPageOrder;
+    };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_FILTER_H_

@@ -28,50 +28,50 @@ class QDomElement;
 class QString;
 
 namespace output {
-class OutputParams {
-public:
-    OutputParams(OutputImageParams const& output_image_params,
-                 OutputFileParams const& output_file_params,
-                 OutputFileParams const& automask_file_params,
-                 OutputFileParams const& speckles_file_params,
-                 ZoneSet const& picture_zones,
-                 ZoneSet const& fill_zones);
+    class OutputParams {
+    public:
+        OutputParams(OutputImageParams const& output_image_params,
+                     OutputFileParams const& output_file_params,
+                     OutputFileParams const& automask_file_params,
+                     OutputFileParams const& speckles_file_params,
+                     ZoneSet const& picture_zones,
+                     ZoneSet const& fill_zones);
 
-    explicit OutputParams(QDomElement const& el);
+        explicit OutputParams(QDomElement const& el);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    OutputImageParams const& outputImageParams() const {
-        return m_outputImageParams;
-    }
+        OutputImageParams const& outputImageParams() const {
+            return m_outputImageParams;
+        }
 
-    OutputFileParams const& outputFileParams() const {
-        return m_outputFileParams;
-    }
+        OutputFileParams const& outputFileParams() const {
+            return m_outputFileParams;
+        }
 
-    OutputFileParams const& automaskFileParams() const {
-        return m_automaskFileParams;
-    }
+        OutputFileParams const& automaskFileParams() const {
+            return m_automaskFileParams;
+        }
 
-    OutputFileParams const& specklesFileParams() const {
-        return m_specklesFileParams;
-    }
+        OutputFileParams const& specklesFileParams() const {
+            return m_specklesFileParams;
+        }
 
-    ZoneSet const& pictureZones() const {
-        return m_pictureZones;
-    }
+        ZoneSet const& pictureZones() const {
+            return m_pictureZones;
+        }
 
-    ZoneSet const& fillZones() const {
-        return m_fillZones;
-    }
+        ZoneSet const& fillZones() const {
+            return m_fillZones;
+        }
 
-private:
-    OutputImageParams m_outputImageParams;
-    OutputFileParams m_outputFileParams;
-    OutputFileParams m_automaskFileParams;
-    OutputFileParams m_specklesFileParams;
-    ZoneSet m_pictureZones;
-    ZoneSet m_fillZones;
-};
+    private:
+        OutputImageParams m_outputImageParams;
+        OutputFileParams m_outputFileParams;
+        OutputFileParams m_automaskFileParams;
+        OutputFileParams m_specklesFileParams;
+        ZoneSet m_pictureZones;
+        ZoneSet m_fillZones;
+    };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_PARAMS_H_

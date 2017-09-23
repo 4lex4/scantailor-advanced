@@ -24,7 +24,7 @@
 #include "filters/page_layout/Filter.h"
 #include "filter_dc/ContentBoxCollector.h"
 
-class ContentBoxPropagator::Collector: public ContentBoxCollector {
+class ContentBoxPropagator::Collector : public ContentBoxCollector {
 public:
     Collector();
 
@@ -68,8 +68,8 @@ void ContentBoxPropagator::propagate(ProjectPages const& pages) {
         m_ptrTask->process(page_info, &collector);
         if (collector.collected()) {
             m_ptrPageLayoutFilter->setContentBox(
-                page_info.id(), collector.xform(),
-                collector.contentRect()
+                    page_info.id(), collector.xform(),
+                    collector.contentRect()
             );
         } else {
             m_ptrPageLayoutFilter->invalidateContentBox(page_info.id());

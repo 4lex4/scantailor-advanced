@@ -25,79 +25,79 @@
 #include "CommandLine.h"
 
 namespace select_content {
-Settings::Settings()
-        : m_avg(0.0),
-          m_sigma(0.0),
-          m_pageDetectionBox(0.0, 0.0),
-          m_pageDetectionTolerance(0.1) {
-    m_maxDeviation = CommandLine::get().getContentDeviation();
-}
-
-Settings::~Settings() {
-}
-
-void Settings::clear() {
-    QMutexLocker locker(&m_mutex);
-    m_pageParams.clear();
-}
-
-void Settings::performRelinking(AbstractRelinker const& relinker) {
-    QMutexLocker locker(&m_mutex);
-    PageParams new_params;
-
-    for (PageParams::value_type const& kv : m_pageParams) {
-        RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
-        PageId new_page_id(kv.first);
-        new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
-        new_params.insert(PageParams::value_type(new_page_id, kv.second));
+    Settings::Settings()
+            : m_avg(0.0),
+              m_sigma(0.0),
+              m_pageDetectionBox(0.0, 0.0),
+              m_pageDetectionTolerance(0.1) {
+        m_maxDeviation = CommandLine::get().getContentDeviation();
     }
 
-    m_pageParams.swap(new_params);
-}
-
-void Settings::updateDeviation() {
-    m_avg = 0.0;
-    for (PageParams::value_type& kv : m_pageParams) {
-        kv.second.computeDeviation(0.0);
-        m_avg += -1 * kv.second.deviation();
+    Settings::~Settings() {
     }
-    m_avg = m_avg / double(m_pageParams.size());
+
+    void Settings::clear() {
+        QMutexLocker locker(&m_mutex);
+        m_pageParams.clear();
+    }
+
+    void Settings::performRelinking(AbstractRelinker const& relinker) {
+        QMutexLocker locker(&m_mutex);
+        PageParams new_params;
+
+        for (PageParams::value_type const& kv : m_pageParams) {
+            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+            PageId new_page_id(kv.first);
+            new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
+            new_params.insert(PageParams::value_type(new_page_id, kv.second));
+        }
+
+        m_pageParams.swap(new_params);
+    }
+
+    void Settings::updateDeviation() {
+        m_avg = 0.0;
+        for (PageParams::value_type& kv : m_pageParams) {
+            kv.second.computeDeviation(0.0);
+            m_avg += -1 * kv.second.deviation();
+        }
+        m_avg = m_avg / double(m_pageParams.size());
 #ifdef DEBUG
-    std::cout << "avg_content = " << m_avg << std::endl;
+        std::cout << "avg_content = " << m_avg << std::endl;
 #endif
 
-    double sigma2 = 0.0;
-    for (PageParams::value_type& kv : m_pageParams) {
-        kv.second.computeDeviation(m_avg);
-        sigma2 += kv.second.deviation() * kv.second.deviation();
-    }
-    sigma2 = sigma2 / double(m_pageParams.size());
-    m_sigma = sqrt(sigma2);
+        double sigma2 = 0.0;
+        for (PageParams::value_type& kv : m_pageParams) {
+            kv.second.computeDeviation(m_avg);
+            sigma2 += kv.second.deviation() * kv.second.deviation();
+        }
+        sigma2 = sigma2 / double(m_pageParams.size());
+        m_sigma = sqrt(sigma2);
 #if DEBUG
-    std::cout << "sigma2 = " << sigma2 << std::endl;
-    std::cout << "sigma = " << m_sigma << std::endl;
+        std::cout << "sigma2 = " << sigma2 << std::endl;
+        std::cout << "sigma = " << m_sigma << std::endl;
 #endif
-}
-
-void Settings::setPageParams(PageId const& page_id, Params const& params) {
-    QMutexLocker locker(&m_mutex);
-    Utils::mapSetValue(m_pageParams, page_id, params);
-}
-
-void Settings::clearPageParams(PageId const& page_id) {
-    QMutexLocker locker(&m_mutex);
-    m_pageParams.erase(page_id);
-}
-
-std::unique_ptr<Params>
-Settings::getPageParams(PageId const& page_id) const {
-    QMutexLocker locker(&m_mutex);
-
-    PageParams::const_iterator const it(m_pageParams.find(page_id));
-    if (it != m_pageParams.end()) {
-        return std::unique_ptr<Params>(new Params(it->second));
-    } else {
-        return std::unique_ptr<Params>();
     }
-}
+
+    void Settings::setPageParams(PageId const& page_id, Params const& params) {
+        QMutexLocker locker(&m_mutex);
+        Utils::mapSetValue(m_pageParams, page_id, params);
+    }
+
+    void Settings::clearPageParams(PageId const& page_id) {
+        QMutexLocker locker(&m_mutex);
+        m_pageParams.erase(page_id);
+    }
+
+    std::unique_ptr<Params>
+    Settings::getPageParams(PageId const& page_id) const {
+        QMutexLocker locker(&m_mutex);
+
+        PageParams::const_iterator const it(m_pageParams.find(page_id));
+        if (it != m_pageParams.end()) {
+            return std::unique_ptr<Params>(new Params(it->second));
+        } else {
+            return std::unique_ptr<Params>();
+        }
+    }
 }  // namespace select_content

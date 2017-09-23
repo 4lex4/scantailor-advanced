@@ -24,7 +24,7 @@
 #include "ProcessingIndicationWidget.h"
 #include <QPointer>
 
-class DebugImageView::ImageLoadResult: public AbstractCommand0<void>{
+class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
 public:
     ImageLoadResult(QPointer<DebugImageView> const& owner, QImage const& image)
             : m_ptrOwner(owner),
@@ -43,7 +43,7 @@ private:
 };
 
 
-class DebugImageView::ImageLoader: public AbstractCommand0<BackgroundExecutor::TaskResultPtr>{
+class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
 public:
     ImageLoader(DebugImageView* owner, QString const& file_path)
             : m_ptrOwner(owner),
@@ -76,7 +76,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
 void DebugImageView::setLive(bool const live) {
     if (live && !m_isLive) {
         ImageViewBase::backgroundExecutor().enqueueTask(
-            BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
+                BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
         );
     } else if (!live && m_isLive) {
         if (QWidget* wgt = currentWidget()) {

@@ -20,37 +20,37 @@
 #include <QDomDocument>
 
 namespace output {
-ColorGrayscaleOptions::ColorGrayscaleOptions()
-        : m_whiteMargins(false),
-          m_normalizeIllumination(false) {
-}
-
-ColorGrayscaleOptions::ColorGrayscaleOptions(QDomElement const& el)
-        : m_whiteMargins(el.attribute("whiteMargins") == "1"),
-          m_normalizeIllumination(el.attribute("normalizeIllumination") == "1") {
-}
-
-QDomElement ColorGrayscaleOptions::toXml(QDomDocument& doc, QString const& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
-    el.setAttribute("normalizeIllumination", m_normalizeIllumination ? "1" : "0");
-
-    return el;
-}
-
-bool ColorGrayscaleOptions::operator==(ColorGrayscaleOptions const& other) const {
-    if (m_whiteMargins != other.m_whiteMargins) {
-        return false;
+    ColorGrayscaleOptions::ColorGrayscaleOptions()
+            : m_whiteMargins(false),
+              m_normalizeIllumination(false) {
     }
 
-    if (m_normalizeIllumination != other.m_normalizeIllumination) {
-        return false;
+    ColorGrayscaleOptions::ColorGrayscaleOptions(QDomElement const& el)
+            : m_whiteMargins(el.attribute("whiteMargins") == "1"),
+              m_normalizeIllumination(el.attribute("normalizeIllumination") == "1") {
     }
 
-    return true;
-}      // ==
+    QDomElement ColorGrayscaleOptions::toXml(QDomDocument& doc, QString const& name) const {
+        QDomElement el(doc.createElement(name));
+        el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
+        el.setAttribute("normalizeIllumination", m_normalizeIllumination ? "1" : "0");
 
-bool ColorGrayscaleOptions::operator!=(ColorGrayscaleOptions const& other) const {
-    return !(*this == other);
-}
+        return el;
+    }
+
+    bool ColorGrayscaleOptions::operator==(ColorGrayscaleOptions const& other) const {
+        if (m_whiteMargins != other.m_whiteMargins) {
+            return false;
+        }
+
+        if (m_normalizeIllumination != other.m_normalizeIllumination) {
+            return false;
+        }
+
+        return true;
+    }      // ==
+
+    bool ColorGrayscaleOptions::operator!=(ColorGrayscaleOptions const& other) const {
+        return !(*this == other);
+    }
 }  // namespace output

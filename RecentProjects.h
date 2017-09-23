@@ -29,7 +29,9 @@ public:
      * \brief The default value for max_items parameters of
      *        write() and enumerate().
      */
-    enum { DEFAULT_MAX_ITEMS = 7 };
+    enum {
+        DEFAULT_MAX_ITEMS = 7
+    };
 
     /**
      * \brief Reads the list of recent projects from QSettings
@@ -63,7 +65,7 @@ public:
      *
      * Modifying this object from the callback is not allowed.
      */
-    template <typename Out>
+    template<typename Out>
     void enumerate(Out out, int max_items = DEFAULT_MAX_ITEMS) const;
 
 private:
@@ -71,7 +73,7 @@ private:
 };
 
 
-template <typename Out>
+template<typename Out>
 void RecentProjects::enumerate(Out out, int max_items) const {
     std::list<QString>::const_iterator it(m_projectFiles.begin());
     std::list<QString>::const_iterator const end(m_projectFiles.end());

@@ -24,7 +24,7 @@
 
 class Utils {
 public:
-    template <typename M, typename K, typename V>
+    template<typename M, typename K, typename V>
     static typename M::iterator mapSetValue(M& map, K const& key, V const& val);
 
     /**
@@ -68,7 +68,7 @@ public:
 };
 
 
-template <typename M, typename K, typename V>
+template<typename M, typename K, typename V>
 typename M::iterator Utils::mapSetValue(M& map, K const& key, V const& val) {
     typename M::iterator const it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {

@@ -31,8 +31,9 @@
 
 class ThumbnailLoadResult;
 
-class ThumbnailBase: public QGraphicsItem {
-    DECLARE_NON_COPYABLE(ThumbnailBase)
+class ThumbnailBase : public QGraphicsItem {
+DECLARE_NON_COPYABLE(ThumbnailBase)
+
 public:
     ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,

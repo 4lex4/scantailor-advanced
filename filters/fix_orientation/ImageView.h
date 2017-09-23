@@ -26,19 +26,21 @@
 #include "ZoomHandler.h"
 
 namespace fix_orientation {
-class ImageView: public ImageViewBase {
+    class ImageView : public ImageViewBase {
     Q_OBJECT
-public:
-    ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
+    public:
+        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
 
-    virtual ~ImageView();
-public slots:
-    void setPreRotation(OrthogonalRotation rotation);
+        virtual ~ImageView();
 
-private:
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
-    ImageTransformation m_xform;
-};
+    public slots:
+
+        void setPreRotation(OrthogonalRotation rotation);
+
+    private:
+        DragHandler m_dragHandler;
+        ZoomHandler m_zoomHandler;
+        ImageTransformation m_xform;
+    };
 }
 #endif

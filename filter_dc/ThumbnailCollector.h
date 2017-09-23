@@ -26,7 +26,7 @@ class ThumbnailPixmapCache;
 class QGraphicsItem;
 class QSizeF;
 
-class ThumbnailCollector: public AbstractFilterDataCollector {
+class ThumbnailCollector : public AbstractFilterDataCollector {
 public:
     virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;
 

@@ -23,7 +23,7 @@
 #include "VirtualFunction.h"
 
 namespace imageproc {
-class SlicedHistogram;
+    class SlicedHistogram;
 }
 
 class ContentSpanFinder {
@@ -48,7 +48,7 @@ public:
      * allowed to merge with other content blocks, if whitespace that
      * separates them is shorter than min-whitespace-width.
      */
-    template <typename T>
+    template<typename T>
     void find(imageproc::SlicedHistogram const& histogram, T handler) const;
 
 private:
@@ -59,7 +59,7 @@ private:
 };
 
 
-template <typename T>
+template<typename T>
 void ContentSpanFinder::find(imageproc::SlicedHistogram const& histogram, T handler) const {
     ProxyFunction1<T, void, Span> proxy(handler);
     findImpl(histogram, proxy);

@@ -27,12 +27,12 @@ public:
         /**
          * \brief Thumbnail loaded successfully.  Pixmap is not null.
          */
-        LOADED,
+                LOADED,
 
         /**
          * \brief Thumbnail failed to load.  Pixmap is null.
          */
-        LOAD_FAILED,
+                LOAD_FAILED,
 
         /**
          * \brief Request has expired.  Pixmap is null.
@@ -49,7 +49,7 @@ public:
          * number of newer requests are processed.  If the client is
          * still interested in the thumbnail, it may request it again.
          */
-        REQUEST_EXPIRED
+                REQUEST_EXPIRED
     };
 
     ThumbnailLoadResult(Status status, QPixmap const& pixmap)

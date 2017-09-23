@@ -24,11 +24,13 @@
 
 class QString;
 
-class NewOpenProjectPanel: public QWidget, private Ui::NewOpenProjectPanel {
-    Q_OBJECT
+class NewOpenProjectPanel : public QWidget, private Ui::NewOpenProjectPanel {
+Q_OBJECT
 public:
     NewOpenProjectPanel(QWidget* parent = 0);
+
 signals:
+
     void newProject();
 
     void openProject();

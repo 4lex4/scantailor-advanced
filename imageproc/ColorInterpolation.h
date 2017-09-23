@@ -28,6 +28,6 @@ namespace imageproc {
  * Returns a color between \p from and \p to according to \p dist.
  * \p dist 0 corresponds to \p from, while \p dist 1 corresponds to \p to.
  */
-QColor colorInterpolation(QColor const& from, QColor const& to, double dist);
+    QColor colorInterpolation(QColor const& from, QColor const& to, double dist);
 }
 #endif

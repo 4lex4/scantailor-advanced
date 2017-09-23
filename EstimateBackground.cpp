@@ -72,8 +72,8 @@ static void seedFillTopBottomInPlace(GrayImage& image) {
         for (int y = height - 1; y >= 0; --y) {
             p -= stride;
             *p = prev = std::max(
-                     *p, std::min(seed_line[y], prev)
-                        );
+                    *p, std::min(seed_line[y], prev)
+            );
         }
     }
 }
@@ -98,8 +98,8 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
 
     GrayImage diff(image);
     rasterOpGeneric(
-        diff.data(), diff.stride(), diff.size(),
-        method1.data(), method1.stride(), _1 -= _2
+            diff.data(), diff.stride(), diff.size(),
+            method1.data(), method1.stride(), _1 -= _2
     );
     if (dbg) {
         dbg->add(diff, "raw_diff");
@@ -111,9 +111,9 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
     }
 
     rasterOpGeneric(
-        diff.data(), diff.stride(), diff.size(),
-        approximated.data(), approximated.stride(),
-        if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
+            diff.data(), diff.stride(), diff.size(),
+            approximated.data(), approximated.stride(),
+            if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
     );
     approximated = GrayImage();
     if (dbg) {
@@ -168,11 +168,11 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     if (!area_to_consider.isEmpty()) {
         QTransform xform;
         xform.scale(
-            (double) reduced_size.width() / input.width(),
-            (double) reduced_size.height() / input.height()
+                (double) reduced_size.width() / input.width(),
+                (double) reduced_size.height() / input.height()
         );
         PolygonRasterizer::fillExcept(
-            mask, WHITE, xform.map(area_to_consider), Qt::WindingFill
+                mask, WHITE, xform.map(area_to_consider), Qt::WindingFill
         );
     }
 
@@ -243,8 +243,8 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
 
     int const last_word_idx = (width - 1) >> 5;
     uint32_t const last_word_mask = ~uint32_t(0) << (
-        32 - width - (last_word_idx << 5)
-                                    );
+            32 - width - (last_word_idx << 5)
+    );
     mask_line = mask_data;
     for (int y = 0; y < height; ++y, mask_line += mask_stride) {
         int black_count = 0;

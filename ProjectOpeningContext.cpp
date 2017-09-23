@@ -20,7 +20,6 @@
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
 #include <QMessageBox>
-#include <boost/lambda/lambda.hpp>
 #include <assert.h>
 
 ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc)
@@ -37,8 +36,8 @@ void ProjectOpeningContext::proceed() {
     if (!m_reader.success()) {
         deleteLater();
         QMessageBox::warning(
-            m_pParent, tr("Error"),
-            tr("Unable to interpret the project file.")
+                m_pParent, tr("Error"),
+                tr("Unable to interpret the project file.")
         );
 
         return;
@@ -72,12 +71,12 @@ void ProjectOpeningContext::showFixDpiDialog() {
         m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
     }
     connect(
-        m_ptrFixDpiDialog, SIGNAL(accepted()),
-        this, SLOT(fixedDpiSubmitted())
+            m_ptrFixDpiDialog, SIGNAL(accepted()),
+            this, SLOT(fixedDpiSubmitted())
     );
     connect(
-        m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)),
-        this, SLOT(fixDpiDialogDestroyed())
+            m_ptrFixDpiDialog, SIGNAL(destroyed(QObject * )),
+            this, SLOT(fixDpiDialogDestroyed())
     );
     m_ptrFixDpiDialog->show();
 }

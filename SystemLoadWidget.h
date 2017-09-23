@@ -22,11 +22,13 @@
 #include "ui_SystemLoadWidget.h"
 #include <QWidget>
 
-class SystemLoadWidget: public QWidget {
-    Q_OBJECT
+class SystemLoadWidget : public QWidget {
+Q_OBJECT
 public:
     SystemLoadWidget(QWidget* parent = 0);
+
 private slots:
+
     void sliderPressed();
 
     void sliderMoved(int threads);

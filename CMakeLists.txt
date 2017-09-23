@@ -291,16 +291,16 @@ LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 #=================================== OpenCV ===================================#
 
 IF (FALSE)
-	find_package(OpenCV PATHS opencv_dir_ REQUIRED)
-	IF (NOT OpenCV_FOUND)
-		MESSAGE(
-				FATAL_ERROR
-				"Could not find OpenCV headers or libraries.\n"
-		)
-	ENDIF ()
+    find_package(OpenCV PATHS opencv_dir_ REQUIRED)
+    IF (NOT OpenCV_FOUND)
+        MESSAGE(
+                FATAL_ERROR
+                "Could not find OpenCV headers or libraries.\n"
+        )
+    ENDIF ()
 
-	INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-	LINK_DIRECTORIES(${OpenCV_LIBRARIES})
+    INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+    LINK_DIRECTORIES(${OpenCV_LIBRARIES})
 ENDIF (FALSE)
 
 #=================================== Main ===================================#
@@ -524,7 +524,7 @@ TARGET_LINK_LIBRARIES(
         dewarping zones interaction imageproc math foundation
         ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-		# ${OpenCV_LIBRARIES}
+        # ${OpenCV_LIBRARIES}
 )
 TARGET_LINK_LIBRARIES(
         scantailor-cli
@@ -532,7 +532,7 @@ TARGET_LINK_LIBRARIES(
         stcore dewarping zones interaction imageproc math foundation
         ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-		# ${OpenCV_LIBRARIES}
+        # ${OpenCV_LIBRARIES}
 )
 
 if (WIN32)
@@ -612,12 +612,12 @@ IF (WIN32)
             HINTS "${jpeg_dir_}/bin"
             DOC "Path to jpeg runtime library."
     )
-	IF (JPEG_LIBRARY_DEB)
-		SET(JPEG_LIBRARY_RT optimized ${JPEG_LIBRARY_RT_REL} debug ${JPEG_LIBRARY_RT_DEB})
-	ELSE ()
-		SET(JPEG_LIBRARY_RT ${JPEG_LIBRARY_RT_REL})
-	ENDIF ()
-    
+    IF (JPEG_LIBRARY_DEB)
+        SET(JPEG_LIBRARY_RT optimized ${JPEG_LIBRARY_RT_REL} debug ${JPEG_LIBRARY_RT_DEB})
+    ELSE ()
+        SET(JPEG_LIBRARY_RT ${JPEG_LIBRARY_RT_REL})
+    ENDIF ()
+
     FIND_LIBRARY(
             ZLIB_LIBRARY_RT_REL NAMES z zdll
             HINTS "${zlib_dir_}/bin"
@@ -628,12 +628,12 @@ IF (WIN32)
             HINTS "${zlib_dir_}/bin"
             DOC "Path to zlib runtime library."
     )
-	IF (ZLIB_LIBRARY_DEB)
-		SET(ZLIB_LIBRARY_RT optimized ${ZLIB_LIBRARY_RT_REL} debug ${ZLIB_LIBRARY_RT_DEB})
-	ELSE ()
-		SET(ZLIB_LIBRARY_RT ${ZLIB_LIBRARY_RT_REL})
-	ENDIF ()
-	
+    IF (ZLIB_LIBRARY_DEB)
+        SET(ZLIB_LIBRARY_RT optimized ${ZLIB_LIBRARY_RT_REL} debug ${ZLIB_LIBRARY_RT_DEB})
+    ELSE ()
+        SET(ZLIB_LIBRARY_RT ${ZLIB_LIBRARY_RT_REL})
+    ENDIF ()
+
     FIND_LIBRARY(
             PNG_LIBRARY_RT_REL NAMES png libpng
             HINTS "${png_dir_1}/bin" "${png_dir_2}/bin"
@@ -644,12 +644,12 @@ IF (WIN32)
             HINTS "${png_dir_1}/bin" "${png_dir_2}/bin"
             DOC "Path to png runtime library."
     )
-	IF (PNG_LIBRARY_DEB)
-		SET(PNG_LIBRARY_RT optimized ${PNG_LIBRARY_RT_REL} debug ${PNG_LIBRARY_RT_DEB})
-	ELSE ()
-		SET(PNG_LIBRARY_RT ${PNG_LIBRARY_RT_REL})
-	ENDIF ()
-	
+    IF (PNG_LIBRARY_DEB)
+        SET(PNG_LIBRARY_RT optimized ${PNG_LIBRARY_RT_REL} debug ${PNG_LIBRARY_RT_DEB})
+    ELSE ()
+        SET(PNG_LIBRARY_RT ${PNG_LIBRARY_RT_REL})
+    ENDIF ()
+
     FIND_LIBRARY(
             TIFF_LIBRARY_RT_REL NAMES tiff libtiff
             HINTS "${tiff_dir_}/bin"
@@ -660,19 +660,19 @@ IF (WIN32)
             HINTS "${tiff_dir_}/bin"
             DOC "Path to tiff runtime library."
     )
-	IF (TIFF_LIBRARY_DEB)
-		SET(TIFF_LIBRARY_RT optimized ${TIFF_LIBRARY_RT_REL} debug ${TIFF_LIBRARY_RT_DEB})
-	ELSE ()
-		SET(TIFF_LIBRARY_RT ${TIFF_LIBRARY_RT_REL})
-	ENDIF ()
-	
+    IF (TIFF_LIBRARY_DEB)
+        SET(TIFF_LIBRARY_RT optimized ${TIFF_LIBRARY_RT_REL} debug ${TIFF_LIBRARY_RT_DEB})
+    ELSE ()
+        SET(TIFF_LIBRARY_RT ${TIFF_LIBRARY_RT_REL})
+    ENDIF ()
+
     IF (NOT (JPEG_LIBRARY AND ZLIB_LIBRARY_RT AND PNG_LIBRARY_RT AND TIFF_LIBRARY_RT))
         MESSAGE(
                 FATAL_ERROR
                 "Could not find required RT libraries.\n"
         )
     ENDIF ()
-	
+
     SET(
             libs_copy_all_confs
             "${JPEG_LIBRARY_RT}" "${ZLIB_LIBRARY_RT}" "${PNG_LIBRARY_RT}" "${TIFF_LIBRARY_RT}"

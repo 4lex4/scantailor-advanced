@@ -29,24 +29,26 @@ class AbstractFilterDataCollector;
 class ImageTransformation;
 
 namespace deskew {
-class CacheDrivenTask;
+    class CacheDrivenTask;
 }
 
 namespace page_split {
-class Settings;
+    class Settings;
 
-class CacheDrivenTask: public RefCountable {
+    class CacheDrivenTask : public RefCountable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
-public:
-    CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
-    virtual ~CacheDrivenTask();
+    public:
+        CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
-    void process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
+        virtual ~CacheDrivenTask();
 
-private:
-    IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
-    IntrusivePtr<Settings> m_ptrSettings;
-};
+        void
+        process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
+
+    private:
+        IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
+        IntrusivePtr<Settings> m_ptrSettings;
+    };
 }
 #endif  // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_

@@ -17,7 +17,6 @@
  */
 
 #include "PageSequence.h"
-#include <boost/foreach.hpp>
 
 void PageSequence::append(PageInfo const& page_info) {
     m_pages.push_back(page_info);

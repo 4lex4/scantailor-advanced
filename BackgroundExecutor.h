@@ -26,7 +26,8 @@
 #include <memory>
 
 class BackgroundExecutor {
-    DECLARE_NON_COPYABLE(BackgroundExecutor)
+DECLARE_NON_COPYABLE(BackgroundExecutor)
+
 public:
     typedef IntrusivePtr<AbstractCommand0<void>> TaskResultPtr;
     typedef IntrusivePtr<AbstractCommand0<TaskResultPtr>> TaskPtr;

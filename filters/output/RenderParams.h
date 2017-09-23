@@ -20,46 +20,46 @@
 #define OUTPUT_RENDER_PARAMS_H_
 
 namespace output {
-class ColorParams;
+    class ColorParams;
 
-class RenderParams {
-public:
-    RenderParams()
-            : m_mask(0) {
-    }
+    class RenderParams {
+    public:
+        RenderParams()
+                : m_mask(0) {
+        }
 
-    RenderParams(ColorParams const& color_params);
+        RenderParams(ColorParams const& color_params);
 
-    bool whiteMargins() const {
-        return (m_mask & WHITE_MARGINS) != 0;
-    }
+        bool whiteMargins() const {
+            return (m_mask & WHITE_MARGINS) != 0;
+        }
 
-    bool normalizeIllumination() const {
-        return (m_mask & NORMALIZE_ILLUMINATION) != 0;
-    }
+        bool normalizeIllumination() const {
+            return (m_mask & NORMALIZE_ILLUMINATION) != 0;
+        }
 
-    bool needBinarization() const {
-        return (m_mask & NEED_BINARIZATION) != 0;
-    }
+        bool needBinarization() const {
+            return (m_mask & NEED_BINARIZATION) != 0;
+        }
 
-    bool mixedOutput() const {
-        return (m_mask & MIXED_OUTPUT) != 0;
-    }
+        bool mixedOutput() const {
+            return (m_mask & MIXED_OUTPUT) != 0;
+        }
 
-    bool binaryOutput() const {
-        return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT))
-               == NEED_BINARIZATION;
-    }
+        bool binaryOutput() const {
+            return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT))
+                   == NEED_BINARIZATION;
+        }
 
-private:
-    enum {
-        WHITE_MARGINS = 1,
-        NORMALIZE_ILLUMINATION = 2,
-        NEED_BINARIZATION = 4,
-        MIXED_OUTPUT = 8
+    private:
+        enum {
+            WHITE_MARGINS = 1,
+            NORMALIZE_ILLUMINATION = 2,
+            NEED_BINARIZATION = 4,
+            MIXED_OUTPUT = 8
+        };
+
+        int m_mask;
     };
-
-    int m_mask;
-};
 }  // namespace output
 #endif  // ifndef OUTPUT_RENDER_PARAMS_H_

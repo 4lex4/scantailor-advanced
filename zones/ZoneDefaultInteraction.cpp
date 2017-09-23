@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,10 +23,9 @@
 #include <QMouseEvent>
 
 ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
-    : m_rContext(context),
-      m_dragHandler(context.imageView()),
-      m_dragWatcher(m_dragHandler)
-{
+        : m_rContext(context),
+          m_dragHandler(context.imageView()),
+          m_dragWatcher(m_dragHandler) {
     makeLastFollower(m_dragHandler);
     m_dragHandler.makeFirstFollower(m_dragWatcher);
 
@@ -39,9 +37,7 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     );
 }
 
-void
-ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& interaction)
-{
+void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& interaction) {
     painter.setWorldMatrixEnabled(false);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -53,23 +49,23 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
         QPolygonF points;
 
         if (!interaction.captured() && interaction.proximityLeader(m_vertexProximity)
-            && (spline == m_ptrNearestVertexSpline)) {
+            && (spline == m_ptrNearestVertexSpline))
+        {
             SplineVertex::Ptr vertex(m_ptrNearestVertex->next(SplineVertex::LOOP));
             for (; vertex != m_ptrNearestVertex; vertex = vertex->next(SplineVertex::LOOP)) {
                 points.push_back(to_screen.map(vertex->point()));
             }
             painter.drawPolyline(points);
-        }
-        else if (!interaction.captured() && interaction.proximityLeader(m_segmentProximity)
-                 && (spline == m_ptrNearestSegmentSpline)) {
+        } else if (!interaction.captured() && interaction.proximityLeader(m_segmentProximity)
+                   && (spline == m_ptrNearestSegmentSpline))
+        {
             SplineVertex::Ptr vertex(m_nearestSegment.prev);
             do {
                 vertex = vertex->next(SplineVertex::LOOP);
                 points.push_back(to_screen.map(vertex->point()));
             } while (vertex != m_nearestSegment.prev);
             painter.drawPolyline(points);
-        }
-        else {
+        } else {
             m_visualizer.drawSpline(painter, to_screen, spline);
         }
     }
@@ -98,8 +94,7 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
 
         QPointF const screen_vertex(to_screen.map(m_ptrNearestVertex->point()));
         m_visualizer.drawVertex(painter, screen_vertex, m_visualizer.highlightBrightColor());
-    }
-    else if (interaction.proximityLeader(m_segmentProximity)) {
+    } else if (interaction.proximityLeader(m_segmentProximity)) {
         QLineF const line(to_screen.map(m_nearestSegment.toLine()));
 
         QPen pen(painter.pen());
@@ -108,15 +103,12 @@ ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& inter
         painter.drawLine(line);
 
         m_visualizer.drawVertex(painter, m_screenPointOnSegment, m_visualizer.highlightBrightColor());
-    }
-    else if (!interaction.captured()) {
+    } else if (!interaction.captured()) {
         m_visualizer.drawVertex(painter, m_screenMousePos, m_visualizer.solidColor());
     }
 }  // ZoneDefaultInteraction::onPaint
 
-void
-ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction)
-{
+void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction) {
     m_screenMousePos = mouse_pos;
 
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
@@ -144,7 +136,8 @@ ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionS
         }
 
         for (SplineVertex::Ptr vert(spline->firstVertex());
-             vert; vert = vert->next(SplineVertex::NO_LOOP)) {
+             vert; vert = vert->next(SplineVertex::NO_LOOP))
+        {
             Proximity const proximity(mouse_pos, to_screen.map(vert->point()));
             if (proximity < best_vertex_proximity) {
                 m_ptrNearestVertex = vert;
@@ -176,9 +169,7 @@ ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionS
     }
 }  // ZoneDefaultInteraction::onProximityUpdate
 
-void
-ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     if (interaction.captured()) {
         return;
     }
@@ -194,8 +185,7 @@ ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& 
         );
         delete this;
         event->accept();
-    }
-    else if (interaction.proximityLeader(m_segmentProximity)) {
+    } else if (interaction.proximityLeader(m_segmentProximity)) {
         QTransform const from_screen(m_rContext.imageView().widgetToImage());
         SplineVertex::Ptr vertex(m_nearestSegment.splitAt(from_screen.map(m_screenPointOnSegment)));
         makePeerPreceeder(
@@ -208,9 +198,7 @@ ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& 
     }
 }
 
-void
-ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() != Qt::LeftButton) {
         return;
     }
@@ -227,18 +215,14 @@ ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState
     event->accept();
 }
 
-void
-ZoneDefaultInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void ZoneDefaultInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
 
     m_screenMousePos = to_screen.map(event->pos() + QPointF(0.5, 0.5));
     m_rContext.imageView().update();
 }
 
-void
-ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction)
-{
+void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
     event->accept();
 
     InteractionHandler* cm_interaction = m_rContext.createContextMenuInteraction(interaction);

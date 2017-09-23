@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,15 +24,12 @@
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
-void
-ImageMetadataLoader::registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader)
-{
+void ImageMetadataLoader::registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader) {
     m_sLoaders.push_back(loader);
 }
 
-ImageMetadataLoader::Status
-ImageMetadataLoader::loadImpl(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
-{
+ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
+                                                          VirtualFunction1<void, ImageMetadata const&>& out) {
     LoaderList::iterator it(m_sLoaders.begin());
     LoaderList::iterator const end(m_sLoaders.end());
     for (; it != end; ++it) {
@@ -46,9 +42,8 @@ ImageMetadataLoader::loadImpl(QIODevice& io_device, VirtualFunction1<void, Image
     return FORMAT_NOT_RECOGNIZED;
 }
 
-ImageMetadataLoader::Status
-ImageMetadataLoader::loadImpl(QString const& file_path, VirtualFunction1<void, ImageMetadata const&>& out)
-{
+ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QString const& file_path,
+                                                          VirtualFunction1<void, ImageMetadata const&>& out) {
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         return GENERIC_ERROR;

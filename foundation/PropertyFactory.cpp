@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,20 +19,16 @@
 #include "PropertyFactory.h"
 #include <QDomElement>
 
-void
-PropertyFactory::registerProperty(QString const& property, PropertyConstructor constructor)
-{
+void PropertyFactory::registerProperty(QString const& property, PropertyConstructor constructor) {
     m_registry[property] = constructor;
 }
 
 IntrusivePtr<Property>
-PropertyFactory::construct(QDomElement const& el) const
-{
+PropertyFactory::construct(QDomElement const& el) const {
     Registry::const_iterator it(m_registry.find(el.attribute("type")));
     if (it != m_registry.end()) {
         return (*it->second)(el);
-    }
-    else {
+    } else {
         return IntrusivePtr<Property>();
     }
 }

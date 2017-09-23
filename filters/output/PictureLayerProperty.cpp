@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,79 +20,65 @@
 #include "PropertyFactory.h"
 #include <QDomDocument>
 
-namespace output
-{
-    char const PictureLayerProperty::m_propertyName[] = "PictureZoneProperty";
+namespace output {
+char const PictureLayerProperty::m_propertyName[] = "PictureZoneProperty";
 
-    PictureLayerProperty::PictureLayerProperty(QDomElement const& el)
-        : m_layer(layerFromString(el.attribute("layer")))
-    { }
+PictureLayerProperty::PictureLayerProperty(QDomElement const& el)
+        : m_layer(layerFromString(el.attribute("layer"))) {
+}
 
-    void
-    PictureLayerProperty::registerIn(PropertyFactory& factory)
-    {
-        factory.registerProperty(m_propertyName, &PictureLayerProperty::construct);
+void PictureLayerProperty::registerIn(PropertyFactory& factory) {
+    factory.registerProperty(m_propertyName, &PictureLayerProperty::construct);
+}
+
+IntrusivePtr<Property>
+PictureLayerProperty::clone() const {
+    return IntrusivePtr<Property>(new PictureLayerProperty(*this));
+}
+
+QDomElement PictureLayerProperty::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement el(doc.createElement(name));
+    el.setAttribute("type", m_propertyName);
+    el.setAttribute("layer", layerToString(m_layer));
+
+    return el;
+}
+
+IntrusivePtr<Property>
+PictureLayerProperty::construct(QDomElement const& el) {
+    return IntrusivePtr<Property>(new PictureLayerProperty(el));
+}
+
+PictureLayerProperty::Layer PictureLayerProperty::layerFromString(QString const& str) {
+    if (str == "eraser1") {
+        return ERASER1;
+    } else if (str == "painter2") {
+        return PAINTER2;
+    } else if (str == "eraser3") {
+        return ERASER3;
+    } else {
+        return NO_OP;
+    }
+}
+
+QString PictureLayerProperty::layerToString(Layer layer) {
+    char const* str = 0;
+
+    switch (layer) {
+        case ERASER1:
+            str = "eraser1";
+            break;
+        case PAINTER2:
+            str = "painter2";
+            break;
+        case ERASER3:
+            str = "eraser3";
+            break;
+        default:
+            str = "";
+            break;
     }
 
-    IntrusivePtr<Property>
-    PictureLayerProperty::clone() const
-    {
-        return IntrusivePtr<Property>(new PictureLayerProperty(*this));
-    }
-
-    QDomElement
-    PictureLayerProperty::toXml(QDomDocument& doc, QString const& name) const
-    {
-        QDomElement el(doc.createElement(name));
-        el.setAttribute("type", m_propertyName);
-        el.setAttribute("layer", layerToString(m_layer));
-
-        return el;
-    }
-
-    IntrusivePtr<Property>
-    PictureLayerProperty::construct(QDomElement const& el)
-    {
-        return IntrusivePtr<Property>(new PictureLayerProperty(el));
-    }
-
-    PictureLayerProperty::Layer
-    PictureLayerProperty::layerFromString(QString const& str)
-    {
-        if (str == "eraser1") {
-            return ERASER1;
-        }
-        else if (str == "painter2") {
-            return PAINTER2;
-        }
-        else if (str == "eraser3") {
-            return ERASER3;
-        }
-        else {
-            return NO_OP;
-        }
-    }
-
-    QString
-    PictureLayerProperty::layerToString(Layer layer)
-    {
-        char const* str = 0;
-
-        switch (layer) {
-            case ERASER1:
-                str = "eraser1";
-                break;
-            case PAINTER2:
-                str = "painter2";
-                break;
-            case ERASER3:
-                str = "eraser3";
-                break;
-            default:
-                str = "";
-                break;
-        }
-
-        return str;
-    }
+    return str;
+}
 }  // namespace output

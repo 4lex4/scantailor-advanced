@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,17 +21,16 @@
 
 #include <QString>
 
-namespace page_split
-{
-    enum LayoutType {
-        AUTO_LAYOUT_TYPE,
-        SINGLE_PAGE_UNCUT,
-        PAGE_PLUS_OFFCUT,
-        TWO_PAGES
-    };
+namespace page_split {
+enum LayoutType {
+    AUTO_LAYOUT_TYPE,
+    SINGLE_PAGE_UNCUT,
+    PAGE_PLUS_OFFCUT,
+    TWO_PAGES
+};
 
-    QString layoutTypeToString(LayoutType type);
+QString layoutTypeToString(LayoutType type);
 
-    LayoutType layoutTypeFromString(QString const& layout_type);
+LayoutType layoutTypeFromString(QString const& layout_type);
 }
 #endif

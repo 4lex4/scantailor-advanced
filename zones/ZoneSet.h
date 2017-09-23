@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,75 +28,65 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class ZoneSet
-{
+class ZoneSet {
 public:
-    class const_iterator
-        : public boost::iterator_facade<
-              const_iterator, Zone const, boost::forward_traversal_tag
-        >
-    {
+    class const_iterator: public boost::iterator_facade<
+                            const_iterator, Zone const, boost::forward_traversal_tag
+        >{
         friend class ZoneSet;
 
         friend class boost::iterator_core_access;
-
     public:
-        const_iterator()
-        { }
+        const_iterator() {
+        }
 
-        void increment()
-        {
+        void increment() {
             ++m_it;
         }
 
-        bool equal(const_iterator const& other) const
-        {
+        bool equal(const_iterator const& other) const {
             return m_it == other.m_it;
         }
 
-        Zone const& dereference() const
-        {
+        Zone const& dereference() const {
             return *m_it;
         }
 
     private:
         explicit const_iterator(std::list<Zone>::const_iterator it)
-            : m_it(it)
-        { }
+                : m_it(it) {
+        }
 
         std::list<Zone>::const_iterator m_it;
     };
 
+
     typedef const_iterator iterator;
 
 
-    ZoneSet()
-    { }
+    ZoneSet() {
+    }
 
     ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory);
 
-    virtual ~ZoneSet()
-    { }
+    virtual ~ZoneSet() {
+    }
 
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    bool empty() const
-    {
+    bool empty() const {
         return m_zones.empty();
     }
 
-    void add(Zone const& zone)
-    {
+    void add(Zone const& zone) {
         m_zones.push_back(zone);
     }
 
-    const_iterator begin() const
-    {
+    const_iterator begin() const {
         return const_iterator(m_zones.begin());
     }
 
-    const_iterator end() const
-    {
+    const_iterator end() const {
         return const_iterator(m_zones.end());
     }
 
@@ -108,5 +97,6 @@ public:
 private:
     std::list<Zone> m_zones;
 };
+
 
 #endif  // ifndef ZONE_SET_H_

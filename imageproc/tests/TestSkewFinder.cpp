@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,68 +23,64 @@
 #include <QPainter>
 #include <boost/test/auto_unit_test.hpp>
 
-namespace imageproc
-{
-    namespace tests
+namespace imageproc {
+namespace tests {
+BOOST_AUTO_TEST_SUITE(SkewFinderTestSuite);
+
+BOOST_AUTO_TEST_CASE(test_positive_detection) {
+    int argc = 1;
+    char argv0[] = "test";
+    char* argv[1] = { argv0 };
+    QApplication app(argc, argv);
+    QImage image(1000, 800, QImage::Format_ARGB32_Premultiplied);
+    image.fill(0xffffffff);
     {
-        BOOST_AUTO_TEST_SUITE(SkewFinderTestSuite);
+        QPainter painter(&image);
+        painter.setPen(QColor(0, 0, 0));
+        QTransform xform1;
+        xform1.translate(-0.5 * image.width(), -0.5 * image.height());
+        QTransform xform2;
+        xform2.rotate(4.5);
+        QTransform xform3;
+        xform3.translate(0.5 * image.width(), 0.5 * image.height());
+        painter.setWorldTransform(xform1 * xform2 * xform3);
 
-        BOOST_AUTO_TEST_CASE(test_positive_detection)
-        {
-            int argc = 1;
-            char argv0[] = "test";
-            char* argv[1] = { argv0 };
-            QApplication app(argc, argv);
-            QImage image(1000, 800, QImage::Format_ARGB32_Premultiplied);
-            image.fill(0xffffffff);
-            {
-                QPainter painter(&image);
-                painter.setPen(QColor(0, 0, 0));
-                QTransform xform1;
-                xform1.translate(-0.5 * image.width(), -0.5 * image.height());
-                QTransform xform2;
-                xform2.rotate(4.5);
-                QTransform xform3;
-                xform3.translate(0.5 * image.width(), 0.5 * image.height());
-                painter.setWorldTransform(xform1 * xform2 * xform3);
-
-                QString text;
-                for (int line = 0; line < 40; ++line) {
-                    for (int i = 0; i < 100; ++i) {
-                        text += '1';
-                    }
-                    text += '\n';
-                }
-                QTextOption opt;
-                opt.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-                painter.drawText(image.rect(), text, opt);
+        QString text;
+        for (int line = 0; line < 40; ++line) {
+            for (int i = 0; i < 100; ++i) {
+                text += '1';
             }
-
-            SkewFinder skew_finder;
-            Skew const skew(skew_finder.findSkew(BinaryImage(image)));
-            BOOST_REQUIRE(fabs(skew.angle() - 4.5) < 0.15);
-            BOOST_CHECK(skew.confidence() >= Skew::GOOD_CONFIDENCE);
+            text += '\n';
         }
+        QTextOption opt;
+        opt.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        painter.drawText(image.rect(), text, opt);
+    }
 
-        BOOST_AUTO_TEST_CASE(test_negative_detection)
-        {
-            QImage image(1000, 800, QImage::Format_Mono);
-            image.fill(1);
+    SkewFinder skew_finder;
+    Skew const skew(skew_finder.findSkew(BinaryImage(image)));
+    BOOST_REQUIRE(fabs(skew.angle() - 4.5) < 0.15);
+    BOOST_CHECK(skew.confidence() >= Skew::GOOD_CONFIDENCE);
+}
 
-            int const num_dots = image.width() * image.height() / 5;
-            for (int i = 0; i < num_dots; ++i) {
-                int const x = rand() % image.width();
-                int const y = rand() % image.height();
-                image.setPixel(x, y, 0);
-            }
+BOOST_AUTO_TEST_CASE(test_negative_detection) {
+    QImage image(1000, 800, QImage::Format_Mono);
+    image.fill(1);
 
-            SkewFinder skew_finder;
-            skew_finder.setCoarseReduction(0);
-            skew_finder.setFineReduction(0);
-            Skew const skew(skew_finder.findSkew(BinaryImage(image)));
-            BOOST_CHECK(skew.confidence() < Skew::GOOD_CONFIDENCE);
-        }
+    int const num_dots = image.width() * image.height() / 5;
+    for (int i = 0; i < num_dots; ++i) {
+        int const x = rand() % image.width();
+        int const y = rand() % image.height();
+        image.setPixel(x, y, 0);
+    }
 
-        BOOST_AUTO_TEST_SUITE_END();
-    }  // namespace tests
+    SkewFinder skew_finder;
+    skew_finder.setCoarseReduction(0);
+    skew_finder.setFineReduction(0);
+    Skew const skew(skew_finder.findSkew(BinaryImage(image)));
+    BOOST_CHECK(skew.confidence() < Skew::GOOD_CONFIDENCE);
+}
+
+BOOST_AUTO_TEST_SUITE_END();
+}      // namespace tests
 }  // namespace imageproc

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,9 +25,7 @@
 class AbstractFilter;
 class FilterUiInterface;
 
-class FilterResult
-    : public RefCountable
-{
+class FilterResult: public RefCountable {
 public:
     virtual void updateUI(FilterUiInterface* ui) = 0;
 
@@ -41,6 +38,7 @@ public:
 
     virtual IntrusivePtr<AbstractFilter> filter() = 0;
 };
+
 
 typedef IntrusivePtr<FilterResult> FilterResultPtr;
 

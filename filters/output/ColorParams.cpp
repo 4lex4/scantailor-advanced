@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,71 +21,58 @@
 
 #include <QDomDocument>
 
-namespace output
-{
-    ColorParams::ColorParams()
-        : m_colorMode(DefaultColorMode())
-    { }
+namespace output {
+ColorParams::ColorParams()
+        : m_colorMode(DefaultColorMode()) {
+}
 
-    ColorParams::ColorParams(QDomElement const& el)
+ColorParams::ColorParams(QDomElement const& el)
         : m_colorMode(parseColorMode(el.attribute("colorMode"))),
           m_colorGrayscaleOptions(el.namedItem("color-or-grayscale").toElement()),
-          m_bwOptions(el.namedItem("bw").toElement())
-    { }
+          m_bwOptions(el.namedItem("bw").toElement()) {
+}
 
-    ColorParams::ColorMode
-    ColorParams::DefaultColorMode()
-    {
-        return CommandLine::get().getDefaultColorMode();
+ColorParams::ColorMode ColorParams::DefaultColorMode() {
+    return CommandLine::get().getDefaultColorMode();
+}
+
+QDomElement ColorParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement el(doc.createElement(name));
+    el.setAttribute("colorMode", formatColorMode(m_colorMode));
+    el.appendChild(m_colorGrayscaleOptions.toXml(doc, "color-or-grayscale"));
+    el.appendChild(m_bwOptions.toXml(doc, "bw"));
+
+    return el;
+}
+
+ColorParams::ColorMode ColorParams::parseColorMode(QString const& str) {
+    if (str == "bw") {
+        return BLACK_AND_WHITE;
+    } else if (str == "bitonal") {
+        return BLACK_AND_WHITE;
+    } else if (str == "colorOrGray") {
+        return COLOR_GRAYSCALE;
+    } else if (str == "mixed") {
+        return MIXED;
+    } else {
+        return DefaultColorMode();
+    }
+}
+
+QString ColorParams::formatColorMode(ColorParams::ColorMode const mode) {
+    char const* str = "";
+    switch (mode) {
+        case BLACK_AND_WHITE:
+            str = "bw";
+            break;
+        case COLOR_GRAYSCALE:
+            str = "colorOrGray";
+            break;
+        case MIXED:
+            str = "mixed";
+            break;
     }
 
-    QDomElement
-    ColorParams::toXml(QDomDocument& doc, QString const& name) const
-    {
-        QDomElement el(doc.createElement(name));
-        el.setAttribute("colorMode", formatColorMode(m_colorMode));
-        el.appendChild(m_colorGrayscaleOptions.toXml(doc, "color-or-grayscale"));
-        el.appendChild(m_bwOptions.toXml(doc, "bw"));
-
-        return el;
-    }
-
-    ColorParams::ColorMode
-    ColorParams::parseColorMode(QString const& str)
-    {
-        if (str == "bw") {
-            return BLACK_AND_WHITE;
-        }
-        else if (str == "bitonal") {
-            return BLACK_AND_WHITE;
-        }
-        else if (str == "colorOrGray") {
-            return COLOR_GRAYSCALE;
-        }
-        else if (str == "mixed") {
-            return MIXED;
-        }
-        else {
-            return DefaultColorMode();
-        }
-    }
-
-    QString
-    ColorParams::formatColorMode(ColorParams::ColorMode const mode)
-    {
-        char const* str = "";
-        switch (mode) {
-            case BLACK_AND_WHITE:
-                str = "bw";
-                break;
-            case COLOR_GRAYSCALE:
-                str = "colorOrGray";
-                break;
-            case MIXED:
-                str = "mixed";
-                break;
-        }
-
-        return QString::fromLatin1(str);
-    }
+    return QString::fromLatin1(str);
+}
 }  // namespace output

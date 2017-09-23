@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,8 +30,7 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class SerializableSpline
-{
+class SerializableSpline {
 public:
     SerializableSpline(EditableSpline const& spline);
 
@@ -46,13 +44,13 @@ public:
 
     SerializableSpline transformed(boost::function<QPointF(QPointF const&)> const& xform) const;
 
-    QPolygonF toPolygon() const
-    {
+    QPolygonF toPolygon() const {
         return QPolygonF(m_points);
     }
 
 private:
     QVector<QPointF> m_points;
 };
+
 
 #endif  // ifndef SERIALIZABLE_SPLINE_H_

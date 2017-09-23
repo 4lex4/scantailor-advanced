@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -32,41 +31,35 @@ class PageSelectionAccessor;
 class QButtonGroup;
 class Dpi;
 
-namespace output
-{
-    class ChangeDpiDialog
-        : public QDialog,
-          private Ui::OutputChangeDpiDialog
-    {
-        Q_OBJECT
+namespace output {
+class ChangeDpiDialog: public QDialog, private Ui::OutputChangeDpiDialog {
+    Q_OBJECT
+public:
+    ChangeDpiDialog(QWidget* parent,
+                    Dpi const& dpi,
+                    PageId const& cur_page,
+                    PageSelectionAccessor const& page_selection_accessor);
 
-    public:
-        ChangeDpiDialog(QWidget* parent,
-                        Dpi const& dpi,
-                        PageId const& cur_page,
-                        PageSelectionAccessor const& page_selection_accessor);
+    virtual ~ChangeDpiDialog();
+signals:
+    void accepted(std::set<PageId> const
+                  & pages, Dpi const& dpi);
 
-        virtual ~ChangeDpiDialog();
+private
+    slots:
+    void dpiSelectionChanged(int index);
 
-    signals:
-        void accepted(std::set<PageId> const
-                      & pages, Dpi const& dpi);
+    void dpiEditTextChanged(QString const& text);
 
-    private
-        slots:
-        void dpiSelectionChanged(int index);
+    void onSubmit();
 
-        void dpiEditTextChanged(QString const& text);
-
-        void onSubmit();
-
-    private:
-        PageSequence m_pages;
-        std::set<PageId> m_selectedPages;
-        PageId m_curPage;
-        QButtonGroup* m_pScopeGroup;
-        int m_customItemIdx;
-        QString m_customDpiString;
-    };
+private:
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    PageId m_curPage;
+    QButtonGroup* m_pScopeGroup;
+    int m_customItemIdx;
+    QString m_customDpiString;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_CHANGEDPIDIALOG_H_

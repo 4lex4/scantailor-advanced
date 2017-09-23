@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -36,8 +35,7 @@
  * b: vector of N coefficients.\n
  * c: constant component.\n
  */
-class QuadraticFunction
-{
+class QuadraticFunction {
 public:
     /**
      * Quadratic function's gradient can be written in matrix form as:
@@ -45,12 +43,12 @@ public:
      * nabla F(x) = A * x + b
      * \endcode
      */
-    class Gradient
-    {
+    class Gradient {
     public:
         MatT<double> A;
         VecT<double> b;
     };
+
 
     /**
      * Matrix A has column-major data storage, so that it can be used with MatrixCalc.
@@ -70,8 +68,7 @@ public:
      */
     void reset();
 
-    size_t numVars() const
-    {
+    size_t numVars() const {
         return b.size();
     }
 
@@ -96,9 +93,7 @@ public:
 };
 
 
-inline void
-swap(QuadraticFunction& f1, QuadraticFunction& f2)
-{
+inline void swap(QuadraticFunction& f1, QuadraticFunction& f2) {
     f1.swap(f2);
 }
 

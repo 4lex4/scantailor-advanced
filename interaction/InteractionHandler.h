@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,13 +32,10 @@ class QWheelEvent;
 class QContextMenuEvent;
 class QPointF;
 
-class InteractionHandler
-    : public boost::intrusive::list_base_hook<
-          boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-    >
-{
+class InteractionHandler: public boost::intrusive::list_base_hook<
+                            boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+    >{
     DECLARE_NON_COPYABLE(InteractionHandler)
-
 public:
     InteractionHandler();
 
@@ -76,45 +72,45 @@ public:
     void makeLastFollower(InteractionHandler& handler);
 
 protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction)
-    { }
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction) {
+    }
 
-    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction)
-    { }
+    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
+    }
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction)
-    { }
+    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction)
-    { }
+    virtual void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction)
-    { }
+    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
-    { }
+    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
-    { }
+    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction)
-    { }
+    virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
+    }
 
-    virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction)
-    { }
+    virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
+    }
 
     static bool defaultInteractionPermitter(InteractionState const& interaction);
 
 private:
-    class HandlerList
-        : public RefCountable,
-          public boost::intrusive::list<
-              InteractionHandler, boost::intrusive::constant_time_size<false>
-          >
-    { };
+    class HandlerList: public RefCountable, public boost::intrusive::list<
+                         InteractionHandler, boost::intrusive::constant_time_size<false>
+        >{
+    };
+
 
     IntrusivePtr<HandlerList> m_ptrPreceeders;
     IntrusivePtr<HandlerList> m_ptrFollowers;
 };
+
 
 #endif  // ifndef INTERACTION_HANDLER_H_

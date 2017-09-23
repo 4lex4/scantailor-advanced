@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,8 +20,7 @@
 #include <QPushButton>
 
 LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent)
-    : QDialog(parent)
-{
+        : QDialog(parent) {
     ui.setupUi(this);
     ui.tabWidget->setCurrentWidget(ui.failedTab);
 
@@ -33,9 +31,7 @@ LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent)
     setFailedFiles(std::vector<QString>());
 }
 
-void
-LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files)
-{
+void LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files) {
     ui.tabWidget->setTabText(0, m_loadedTabNameTemplate.arg(files.size()));
 
     QString text;
@@ -47,9 +43,7 @@ LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files)
     ui.loadedFiles->setPlainText(text);
 }
 
-void
-LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files)
-{
+void LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files) {
     ui.tabWidget->setTabText(1, m_failedTabNameTemplate.arg(files.size()));
 
     QString text;
@@ -61,9 +55,7 @@ LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files)
     ui.failedFiles->setPlainText(text);
 }
 
-void
-LoadFilesStatusDialog::setOkButtonName(QString const& name)
-{
+void LoadFilesStatusDialog::setOkButtonName(QString const& name) {
     ui.buttonBox->button(QDialogButtonBox::Ok)->setText(name);
 }
 

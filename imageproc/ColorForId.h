@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,30 +22,27 @@
 #include "BitOps.h"
 #include <QColor>
 
-namespace imageproc
-{
-    /**
-     * \brief Generates a color corresponding to a particular numeric ID.
-     *
-     * Colors for IDs that are numerically close will tend to be significantly
-     * different.  Positive IDs are handled better.
-     */
-    template <typename T>
-    QColor
-    colorForId(T id)
-    {
-        int const bits_unused = countMostSignificantZeroes(id);
-        int const bits_used = sizeof(T) * 8 - bits_unused;
-        T const reversed = reverseBits(id) >> bits_unused;
-        T const mask = (T(1) << bits_used) - 1;
+namespace imageproc {
+/**
+ * \brief Generates a color corresponding to a particular numeric ID.
+ *
+ * Colors for IDs that are numerically close will tend to be significantly
+ * different.  Positive IDs are handled better.
+ */
+template <typename T>
+QColor colorForId(T id) {
+    int const bits_unused = countMostSignificantZeroes(id);
+    int const bits_used = sizeof(T) * 8 - bits_unused;
+    T const reversed = reverseBits(id) >> bits_unused;
+    T const mask = (T(1) << bits_used) - 1;
 
-        double const H = 0.99 * double(reversed + 1) / (mask + 1);
-        double const S = 1.0;
-        double const V = 1.0;
-        QColor color;
-        color.setHsvF(H, S, V);
+    double const H = 0.99 * double(reversed + 1) / (mask + 1);
+    double const S = 1.0;
+    double const V = 1.0;
+    QColor color;
+    color.setHsvF(H, S, V);
 
-        return color;
-    }
+    return color;
+}
 }
 #endif

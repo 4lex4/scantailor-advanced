@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,9 +20,7 @@
 #include "LineIntersectionScalar.h"
 #include "NumericTraits.h"
 
-bool
-lineBoundedByRect(QLineF& line, QRectF const& rect)
-{
+bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
     QLineF const rect_lines[4] = {
         QLineF(rect.topLeft(), rect.topRight()),
         QLineF(rect.bottomLeft(), rect.bottomRight()),
@@ -56,8 +53,7 @@ lineBoundedByRect(QLineF& line, QRectF const& rect)
         line = QLineF(line.pointAt(min), line.pointAt(max));
 
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }  // lineBoundedByRect

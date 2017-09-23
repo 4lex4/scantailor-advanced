@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,58 +21,47 @@
 #include <QMouseEvent>
 
 DragHandler::DragHandler(ImageViewBase& image_view)
-    : m_rImageView(image_view),
-      m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter)
-{
+        : m_rImageView(image_view),
+          m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter) {
     init();
 }
 
 DragHandler::DragHandler(ImageViewBase& image_view,
                          boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter)
-    : m_rImageView(image_view),
-      m_interactionPermitter(explicit_interaction_permitter)
-{
+        : m_rImageView(image_view),
+          m_interactionPermitter(explicit_interaction_permitter) {
     init();
 }
 
-void
-DragHandler::init()
-{
+void DragHandler::init() {
     m_interaction.setInteractionStatusTip(
         tr("Unrestricted dragging is possible by holding down the Shift key.")
     );
 }
 
-bool
-DragHandler::isActive() const
-{
+bool DragHandler::isActive() const {
     return m_rImageView.interactionState().capturedBy(m_interaction);
 }
 
-void
-DragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void DragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     m_lastMousePos = event->pos();
 
     if ((event->buttons() & (Qt::LeftButton | Qt::MidButton))
         && !interaction.capturedBy(m_interaction)
-        && m_interactionPermitter(interaction)) {
+        && m_interactionPermitter(interaction))
+    {
         interaction.capture(m_interaction);
     }
 }
 
-void
-DragHandler::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void DragHandler::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (interaction.capturedBy(m_interaction)) {
         m_interaction.release();
         event->accept();
     }
 }
 
-void
-DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     if (interaction.capturedBy(m_interaction)) {
         QPoint movement(event->pos());
         movement -= m_lastMousePos;
@@ -84,8 +72,7 @@ DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
 
         if (event->modifiers() & Qt::ShiftModifier) {
             m_rImageView.setWidgetFocalPoint(adjusted_fp);
-        }
-        else {
+        } else {
             m_rImageView.adjustAndSetWidgetFocalPoint(adjusted_fp);
         }
     }

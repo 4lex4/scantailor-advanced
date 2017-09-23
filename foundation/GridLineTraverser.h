@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,13 +26,11 @@
  *
  * Think about drawing a line on an image.
  */
-class GridLineTraverser
-{
+class GridLineTraverser {
 public:
     GridLineTraverser(QLineF const& line);
 
-    bool hasNext() const
-    {
+    bool hasNext() const {
         return m_stopsDone < m_totalStops;
     }
 
@@ -45,5 +42,6 @@ private:
     int m_totalStops;
     int m_stopsDone;
 };
+
 
 #endif

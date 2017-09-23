@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,25 +22,20 @@
 #include <QPalette>
 
 Application::Application(int& argc, char** argv)
-    : QApplication(argc, argv)
-{ }
+        : QApplication(argc, argv) {
+}
 
-bool
-Application::notify(QObject* receiver, QEvent* e)
-{
+bool Application::notify(QObject* receiver, QEvent* e) {
     try {
         return QApplication::notify(receiver, e);
-    }
-    catch (std::bad_alloc const&) {
+    } catch (std::bad_alloc const&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
 
         return false;
     }
 }
 
-void
-Application::setFusionDarkTheme()
-{
+void Application::setFusionDarkTheme() {
     QApplication::setStyle(QStyleFactory::create("fusion"));
 
     QPalette palette;

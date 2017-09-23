@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -41,52 +40,44 @@
         } \
     }
 
-namespace
-{
-    class ScopedClearAcceptance
-    {
-        DECLARE_NON_COPYABLE(ScopedClearAcceptance)
+namespace {
+class ScopedClearAcceptance {
+    DECLARE_NON_COPYABLE(ScopedClearAcceptance)
+public:
+    ScopedClearAcceptance(QEvent* event);
 
-    public:
-        ScopedClearAcceptance(QEvent* event);
+    ~ScopedClearAcceptance();
+private:
+    QEvent* m_pEvent;
+    bool m_wasAccepted;
+};
 
-        ~ScopedClearAcceptance();
 
-    private:
-        QEvent* m_pEvent;
-        bool m_wasAccepted;
-    };
-
-    ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
+ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
         : m_pEvent(event),
-          m_wasAccepted(event->isAccepted())
-    {
-        m_pEvent->setAccepted(false);
-    }
+          m_wasAccepted(event->isAccepted()) {
+    m_pEvent->setAccepted(false);
+}
 
-    ScopedClearAcceptance::~ScopedClearAcceptance()
-    {
-        if (m_wasAccepted) {
-            m_pEvent->setAccepted(true);
-        }
+ScopedClearAcceptance::~ScopedClearAcceptance() {
+    if (m_wasAccepted) {
+        m_pEvent->setAccepted(true);
     }
+}
 }
 
 InteractionHandler::InteractionHandler()
-    : m_ptrPreceeders(new HandlerList),
-      m_ptrFollowers(new HandlerList)
-{ }
+        : m_ptrPreceeders(new HandlerList),
+          m_ptrFollowers(new HandlerList) {
+}
 
-InteractionHandler::~InteractionHandler()
-{
+InteractionHandler::~InteractionHandler() {
     using namespace boost::lambda;
     m_ptrPreceeders->clear_and_dispose(bind(delete_ptr(), _1));
     m_ptrFollowers->clear_and_dispose(bind(delete_ptr(), _1));
 }
 
-void
-InteractionHandler::paint(QPainter& painter, InteractionState const& interaction)
-{
+void InteractionHandler::paint(QPainter& painter, InteractionState const& interaction) {
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
     IntrusivePtr<HandlerList> followers(m_ptrFollowers);
 
@@ -97,9 +88,7 @@ InteractionHandler::paint(QPainter& painter, InteractionState const& interaction
     DISPATCH(followers, paint(painter, interaction));
 }
 
-void
-InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction)
-{
+void InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
     IntrusivePtr<HandlerList> followers(m_ptrFollowers);
 
@@ -109,9 +98,7 @@ InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, Interaction
     DISPATCH(followers, proximityUpdate(screen_mouse_pos, interaction));
 }
 
-void
-InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -124,9 +111,7 @@ InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& interactio
     DISPATCH(followers, keyPressEvent(event, interaction));
 }
 
-void
-InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -139,9 +124,7 @@ InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interact
     DISPATCH(followers, keyReleaseEvent(event, interaction));
 }
 
-void
-InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -154,9 +137,7 @@ InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& intera
     DISPATCH(followers, mousePressEvent(event, interaction));
 }
 
-void
-InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -169,9 +150,7 @@ InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& inte
     DISPATCH(followers, mouseReleaseEvent(event, interaction));
 }
 
-void
-InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -184,9 +163,7 @@ InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& interac
     DISPATCH(followers, mouseMoveEvent(event, interaction));
 }
 
-void
-InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -199,9 +176,7 @@ InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& interaction
     DISPATCH(followers, wheelEvent(event, interaction));
 }
 
-void
-InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction)
-{
+void InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 
     IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
@@ -214,52 +189,38 @@ InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState&
     DISPATCH(followers, contextMenuEvent(event, interaction));
 }
 
-void
-InteractionHandler::makePeerPreceeder(InteractionHandler& handler)
-{
+void InteractionHandler::makePeerPreceeder(InteractionHandler& handler) {
     handler.unlink();
     HandlerList::node_algorithms::link_before(this, &handler);
 }
 
-void
-InteractionHandler::makePeerFollower(InteractionHandler& handler)
-{
+void InteractionHandler::makePeerFollower(InteractionHandler& handler) {
     using namespace boost::intrusive;
     handler.unlink();
     HandlerList::node_algorithms::link_after(this, &handler);
 }
 
-void
-InteractionHandler::makeFirstPreceeder(InteractionHandler& handler)
-{
+void InteractionHandler::makeFirstPreceeder(InteractionHandler& handler) {
     handler.unlink();
     m_ptrPreceeders->push_front(handler);
 }
 
-void
-InteractionHandler::makeLastPreceeder(InteractionHandler& handler)
-{
+void InteractionHandler::makeLastPreceeder(InteractionHandler& handler) {
     handler.unlink();
     m_ptrPreceeders->push_back(handler);
 }
 
-void
-InteractionHandler::makeFirstFollower(InteractionHandler& handler)
-{
+void InteractionHandler::makeFirstFollower(InteractionHandler& handler) {
     handler.unlink();
     m_ptrFollowers->push_front(handler);
 }
 
-void
-InteractionHandler::makeLastFollower(InteractionHandler& handler)
-{
+void InteractionHandler::makeLastFollower(InteractionHandler& handler) {
     handler.unlink();
     m_ptrFollowers->push_back(handler);
 }
 
-bool
-InteractionHandler::defaultInteractionPermitter(InteractionState const& interaction)
-{
+bool InteractionHandler::defaultInteractionPermitter(InteractionState const& interaction) {
     return !interaction.captured();
 }
 

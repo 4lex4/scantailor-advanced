@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,26 +22,22 @@
 #include "Span.h"
 #include "VirtualFunction.h"
 
-namespace imageproc
-{
-    class SlicedHistogram;
+namespace imageproc {
+class SlicedHistogram;
 }
 
-class ContentSpanFinder
-{
+class ContentSpanFinder {
 public:
     ContentSpanFinder()
-        : m_minContentWidth(1),
-          m_minWhitespaceWidth(1)
-    { }
+            : m_minContentWidth(1),
+              m_minWhitespaceWidth(1) {
+    }
 
-    void setMinContentWidth(int value)
-    {
+    void setMinContentWidth(int value) {
         m_minContentWidth = value;
     }
 
-    void setMinWhitespaceWidth(int value)
-    {
+    void setMinWhitespaceWidth(int value) {
         m_minWhitespaceWidth = value;
     }
 
@@ -65,9 +60,7 @@ private:
 
 
 template <typename T>
-void
-ContentSpanFinder::find(imageproc::SlicedHistogram const& histogram, T handler) const
-{
+void ContentSpanFinder::find(imageproc::SlicedHistogram const& histogram, T handler) const {
     ProxyFunction1<T, void, Span> proxy(handler);
     findImpl(histogram, proxy);
 }

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,8 +29,7 @@ class InteractionState;
 class ImageViewBase;
 class EditableZoneSet;
 
-class ZoneInteractionContext
-{
+class ZoneInteractionContext {
 public:
     typedef boost::function<
             InteractionHandler*()
@@ -60,68 +58,56 @@ public:
 
     virtual ~ZoneInteractionContext();
 
-    ImageViewBase& imageView()
-    {
+    ImageViewBase& imageView() {
         return m_rImageView;
     }
 
-    EditableZoneSet& zones()
-    {
+    EditableZoneSet& zones() {
         return m_rZones;
     }
 
-    virtual InteractionHandler* createDefaultInteraction()
-    {
+    virtual InteractionHandler* createDefaultInteraction() {
         return m_defaultInteractionCreator();
     }
 
-    void setDefaultInteractionCreator(DefaultInteractionCreator const& creator)
-    {
+    void setDefaultInteractionCreator(DefaultInteractionCreator const& creator) {
         m_defaultInteractionCreator = creator;
     }
 
-    virtual InteractionHandler* createZoneCreationInteraction(InteractionState& interaction)
-    {
+    virtual InteractionHandler* createZoneCreationInteraction(InteractionState& interaction) {
         return m_zoneCreationInteractionCreator(interaction);
     }
 
-    void setZoneCreationInteractionCreator(ZoneCreationInteractionCreator const& creator)
-    {
+    void setZoneCreationInteractionCreator(ZoneCreationInteractionCreator const& creator) {
         m_zoneCreationInteractionCreator = creator;
     }
 
     virtual InteractionHandler* createVertexDragInteraction(InteractionState& interaction,
                                                             EditableSpline::Ptr const& spline,
-                                                            SplineVertex::Ptr const& vertex)
-    {
+                                                            SplineVertex::Ptr const& vertex) {
         return m_vertexDragInteractionCreator(interaction, spline, vertex);
     }
 
-    void setVertexDragInteractionCreator(VertexDragInteractionCreator const& creator)
-    {
+    void setVertexDragInteractionCreator(VertexDragInteractionCreator const& creator) {
         m_vertexDragInteractionCreator = creator;
     }
 
     /**
      * \note This function may refuse to create a context menu interaction by returning null.
      */
-    virtual InteractionHandler* createContextMenuInteraction(InteractionState& interaction)
-    {
+    virtual InteractionHandler* createContextMenuInteraction(InteractionState& interaction) {
         return m_contextMenuInteractionCreator(interaction);
     }
 
-    void setContextMenuInteractionCreator(ContextMenuInteractionCreator const& creator)
-    {
+    void setContextMenuInteractionCreator(ContextMenuInteractionCreator const& creator) {
         m_contextMenuInteractionCreator = creator;
     }
 
-    virtual void showPropertiesCommand(EditableZoneSet::Zone const& zone)
-    {
+    virtual void showPropertiesCommand(EditableZoneSet::Zone const& zone) {
         m_showPropertiesCommand(zone);
     }
 
-    void setShowPropertiesCommand(ShowPropertiesCommand const& command)
-    {
+    void setShowPropertiesCommand(ShowPropertiesCommand const& command) {
         m_showPropertiesCommand = command;
     }
 
@@ -148,8 +134,8 @@ private:
      */
     InteractionHandler* createStdContextMenuInteraction(InteractionState& interaction);
 
-    static void showPropertiesStub(EditableZoneSet::Zone const&)
-    { }
+    static void showPropertiesStub(EditableZoneSet::Zone const&) {
+    }
 
     ImageViewBase& m_rImageView;
     EditableZoneSet& m_rZones;
@@ -159,5 +145,6 @@ private:
     ContextMenuInteractionCreator m_contextMenuInteractionCreator;
     ShowPropertiesCommand m_showPropertiesCommand;
 };
+
 
 #endif  // ifndef ZONE_INTERACTION_CONTEXT_H_

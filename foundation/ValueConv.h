@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,35 +23,30 @@
 #include <math.h>
 
 template <typename ToType>
-class StaticCastValueConv
-{
+class StaticCastValueConv {
 public:
     template <typename FromType>
-    ToType operator()(FromType val) const
-    {
+    ToType operator()(FromType val) const {
         return static_cast<ToType>(val);
     }
 };
 
+
 template <typename ToType>
-class RoundAndClipValueConv
-{
+class RoundAndClipValueConv {
 public:
     RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
-        : m_min(min),
-          m_max(max)
-    { }
+            : m_min(min),
+              m_max(max) {
+    }
 
     template <typename FromType>
-    ToType operator()(FromType val) const
-    {
+    ToType operator()(FromType val) const {
         if (val < FromType(m_min)) {
             return m_min;
-        }
-        else if (val > FromType(m_max)) {
+        } else if (val > FromType(m_max)) {
             return m_max;
-        }
-        else {
+        } else {
             return static_cast<ToType>(floor(val + 0.5));
         }
     }
@@ -61,5 +55,6 @@ private:
     ToType m_min;
     ToType m_max;
 };
+
 
 #endif  // ifndef VALUE_CONV_H_

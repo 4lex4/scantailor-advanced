@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,25 +24,20 @@
 #include "IntrusivePtr.h"
 #include <QDialog>
 
-namespace output
-{
-    class PictureZonePropDialog
-        : public QDialog
-    {
-        Q_OBJECT
+namespace output {
+class PictureZonePropDialog: public QDialog {
+    Q_OBJECT
+public:
+    PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent = 0);
+signals:
+    void updated();
 
-    public:
-        PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent = 0);
+private slots:
+    void itemToggled(bool selected);
 
-    signals:
-        void updated();
-
-    private slots:
-        void itemToggled(bool selected);
-
-    private:
-        Ui::PictureZonePropDialog ui;
-        IntrusivePtr<PropertySet> m_ptrProps;
-    };
+private:
+    Ui::PictureZonePropDialog ui;
+    IntrusivePtr<PropertySet> m_ptrProps;
+};
 }
 #endif

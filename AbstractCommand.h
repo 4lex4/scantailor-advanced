@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,33 +23,30 @@
 #include "IntrusivePtr.h"
 
 template <typename R>
-class AbstractCommand0
-    : public RefCountable
-{
+class AbstractCommand0: public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand0> Ptr;
 
     virtual R operator()() = 0;
 };
 
+
 template <typename R, typename A1>
-class AbstractCommand1
-    : public RefCountable
-{
+class AbstractCommand1: public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand1> Ptr;
 
     virtual R operator()(A1 arg1) = 0;
 };
 
+
 template <typename R, typename T1, typename T2>
-class AbstractCommand2
-    : public RefCountable
-{
+class AbstractCommand2: public RefCountable {
 public:
     typedef IntrusivePtr<AbstractCommand2> Ptr;
 
     virtual R operator()(T1 arg1, T2 arg2) = 0;
 };
+
 
 #endif  // ifndef ABSTRACTCOMMAND_H_

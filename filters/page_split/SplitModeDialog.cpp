@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,14 +21,13 @@
 #include <assert.h>
 #include <iostream>
 
-namespace page_split
-{
-    SplitModeDialog::SplitModeDialog(QWidget* const parent,
-                                     PageId const& cur_page,
-                                     PageSelectionAccessor const& page_selection_accessor,
-                                     LayoutType const layout_type,
-                                     PageLayout::Type const auto_detected_layout_type,
-                                     bool const auto_detected_layout_type_valid)
+namespace page_split {
+SplitModeDialog::SplitModeDialog(QWidget* const parent,
+                                 PageId const& cur_page,
+                                 PageSelectionAccessor const& page_selection_accessor,
+                                 LayoutType const layout_type,
+                                 PageLayout::Type const auto_detected_layout_type,
+                                 bool const auto_detected_layout_type_valid)
         : QDialog(parent),
           m_pages(page_selection_accessor.allPages()),
           m_selectedPages(page_selection_accessor.selectedPages()),
@@ -37,146 +35,128 @@ namespace page_split
           m_pScopeGroup(new QButtonGroup(this)),
           m_layoutType(layout_type),
           m_autoDetectedLayoutType(auto_detected_layout_type),
-          m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid)
-    {
-        setupUi(this);
-        m_pScopeGroup->addButton(thisPageRB);
-        m_pScopeGroup->addButton(allPagesRB);
-        m_pScopeGroup->addButton(thisPageAndFollowersRB);
-        m_pScopeGroup->addButton(thisEveryOtherRB);
-        m_pScopeGroup->addButton(everyOtherRB);
-        m_pScopeGroup->addButton(selectedPagesRB);
-        m_pScopeGroup->addButton(everyOtherSelectedRB);
-        if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
-        }
-
-        layoutTypeLabel->setPixmap(QPixmap(iconFor(m_layoutType)));
-        if (m_layoutType == AUTO_LAYOUT_TYPE) {
-            modeAuto->setChecked(true);
-        }
-        else {
-            modeManual->setChecked(true);
-        }
-
-        connect(modeAuto, SIGNAL(pressed()), this, SLOT(autoDetectionSelected()));
-        connect(modeManual, SIGNAL(pressed()), this, SLOT(manualModeSelected()));
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+          m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid) {
+    setupUi(this);
+    m_pScopeGroup->addButton(thisPageRB);
+    m_pScopeGroup->addButton(allPagesRB);
+    m_pScopeGroup->addButton(thisPageAndFollowersRB);
+    m_pScopeGroup->addButton(thisEveryOtherRB);
+    m_pScopeGroup->addButton(everyOtherRB);
+    m_pScopeGroup->addButton(selectedPagesRB);
+    m_pScopeGroup->addButton(everyOtherSelectedRB);
+    if (m_selectedPages.size() <= 1) {
+        selectedPagesWidget->setEnabled(false);
     }
 
-    SplitModeDialog::~SplitModeDialog()
-    { }
-
-    void
-    SplitModeDialog::autoDetectionSelected()
-    {
-        layoutTypeLabel->setPixmap(QPixmap(":/icons/layout_type_auto.png"));
+    layoutTypeLabel->setPixmap(QPixmap(iconFor(m_layoutType)));
+    if (m_layoutType == AUTO_LAYOUT_TYPE) {
+        modeAuto->setChecked(true);
+    } else {
+        modeManual->setChecked(true);
     }
 
-    void
-    SplitModeDialog::manualModeSelected()
-    {
-        char const* resource = iconFor(combinedLayoutType());
-        layoutTypeLabel->setPixmap(QPixmap(resource));
+    connect(modeAuto, SIGNAL(pressed()), this, SLOT(autoDetectionSelected()));
+    connect(modeManual, SIGNAL(pressed()), this, SLOT(manualModeSelected()));
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+}
+
+SplitModeDialog::~SplitModeDialog() {
+}
+
+void SplitModeDialog::autoDetectionSelected() {
+    layoutTypeLabel->setPixmap(QPixmap(":/icons/layout_type_auto.png"));
+}
+
+void SplitModeDialog::manualModeSelected() {
+    char const* resource = iconFor(combinedLayoutType());
+    layoutTypeLabel->setPixmap(QPixmap(resource));
+}
+
+void SplitModeDialog::onSubmit() {
+    LayoutType layout_type = AUTO_LAYOUT_TYPE;
+    if (modeManual->isChecked()) {
+        layout_type = combinedLayoutType();
     }
 
-    void
-    SplitModeDialog::onSubmit()
-    {
-        LayoutType layout_type = AUTO_LAYOUT_TYPE;
-        if (modeManual->isChecked()) {
-            layout_type = combinedLayoutType();
-        }
+    std::set<PageId> pages;
 
-        std::set<PageId> pages;
-
-        if (thisPageRB->isChecked()) {
-            pages.insert(m_curPage);
-        }
-        else if (allPagesRB->isChecked()) {
-            m_pages.selectAll().swap(pages);
-        }
-        else if (thisPageAndFollowersRB->isChecked()) {
-            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-        }
-        else if (selectedPagesRB->isChecked()) {
-            emit accepted(m_selectedPages, layout_type, applyCutOption->isChecked());
-            accept();
-
-            return;
-        }
-        else if (everyOtherRB->isChecked()) {
-            m_pages.selectEveryOther(m_curPage).swap(pages);
-        }
-        else if (thisEveryOtherRB->isChecked()) {
-            std::set<PageId> tmp;
-            m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
-            for (int i = 0; it != tmp.end(); ++it, ++i) {
-                if (i % 2 == 0) {
-                    pages.insert(*it);
-                }
-            }
-        }
-        else if (everyOtherSelectedRB->isChecked()) {
-            std::set<PageId>::iterator it = m_selectedPages.begin();
-            for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
-                if (i % 2 == 0) {
-                    pages.insert(*it);
-                }
-            }
-        }
-
-        emit accepted(pages, layout_type, applyCutOption->isChecked());
-
+    if (thisPageRB->isChecked()) {
+        pages.insert(m_curPage);
+    } else if (allPagesRB->isChecked()) {
+        m_pages.selectAll().swap(pages);
+    } else if (thisPageAndFollowersRB->isChecked()) {
+        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+    } else if (selectedPagesRB->isChecked()) {
+        emit accepted(m_selectedPages, layout_type, applyCutOption->isChecked());
         accept();
-    }  // SplitModeDialog::onSubmit
 
-    LayoutType
-    SplitModeDialog::combinedLayoutType() const
-    {
-        if (m_layoutType != AUTO_LAYOUT_TYPE) {
-            return m_layoutType;
+        return;
+    } else if (everyOtherRB->isChecked()) {
+        m_pages.selectEveryOther(m_curPage).swap(pages);
+    } else if (thisEveryOtherRB->isChecked()) {
+        std::set<PageId> tmp;
+        m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
+        std::set<PageId>::iterator it = tmp.begin();
+        for (int i = 0; it != tmp.end(); ++it, ++i) {
+            if (i % 2 == 0) {
+                pages.insert(*it);
+            }
         }
-
-        if (!m_autoDetectedLayoutTypeValid) {
-            return AUTO_LAYOUT_TYPE;
+    } else if (everyOtherSelectedRB->isChecked()) {
+        std::set<PageId>::iterator it = m_selectedPages.begin();
+        for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
+            if (i % 2 == 0) {
+                pages.insert(*it);
+            }
         }
+    }
 
-        switch (m_autoDetectedLayoutType) {
-            case PageLayout::SINGLE_PAGE_UNCUT:
-                return SINGLE_PAGE_UNCUT;
-            case PageLayout::SINGLE_PAGE_CUT:
-                return PAGE_PLUS_OFFCUT;
-            case PageLayout::TWO_PAGES:
-                return TWO_PAGES;
-        }
+    emit accepted(pages, layout_type, applyCutOption->isChecked());
 
-        assert(!"Unreachable");
+    accept();
+}      // SplitModeDialog::onSubmit
 
+LayoutType SplitModeDialog::combinedLayoutType() const {
+    if (m_layoutType != AUTO_LAYOUT_TYPE) {
+        return m_layoutType;
+    }
+
+    if (!m_autoDetectedLayoutTypeValid) {
         return AUTO_LAYOUT_TYPE;
     }
 
-    char const*
-    SplitModeDialog::iconFor(LayoutType const layout_type)
-    {
-        char const* resource = "";
-
-        switch (layout_type) {
-            case AUTO_LAYOUT_TYPE:
-                resource = ":/icons/layout_type_auto.png";
-                break;
-            case SINGLE_PAGE_UNCUT:
-                resource = ":/icons/single_page_uncut_selected.png";
-                break;
-            case PAGE_PLUS_OFFCUT:
-                resource = ":/icons/right_page_plus_offcut_selected.png";
-                break;
-            case TWO_PAGES:
-                resource = ":/icons/two_pages_selected.png";
-                break;
-        }
-
-        return resource;
+    switch (m_autoDetectedLayoutType) {
+        case PageLayout::SINGLE_PAGE_UNCUT:
+            return SINGLE_PAGE_UNCUT;
+        case PageLayout::SINGLE_PAGE_CUT:
+            return PAGE_PLUS_OFFCUT;
+        case PageLayout::TWO_PAGES:
+            return TWO_PAGES;
     }
+
+    assert(!"Unreachable");
+
+    return AUTO_LAYOUT_TYPE;
+}
+
+char const* SplitModeDialog::iconFor(LayoutType const layout_type) {
+    char const* resource = "";
+
+    switch (layout_type) {
+        case AUTO_LAYOUT_TYPE:
+            resource = ":/icons/layout_type_auto.png";
+            break;
+        case SINGLE_PAGE_UNCUT:
+            resource = ":/icons/single_page_uncut_selected.png";
+            break;
+        case PAGE_PLUS_OFFCUT:
+            resource = ":/icons/right_page_plus_offcut_selected.png";
+            break;
+        case TWO_PAGES:
+            resource = ":/icons/two_pages_selected.png";
+            break;
+    }
+
+    return resource;
+}
 }  // namespace page_split

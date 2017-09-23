@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,44 +24,31 @@
 #endif
 
 #define DEFINE_FLAG_OPS(type) \
-    inline type operator&(type lhs, type rhs) \
-    { \
+    inline type operator&(type lhs, type rhs) { \
         return type(unsigned(lhs) & unsigned(rhs)); \
     } \
  \
-    inline type \
-    operator|(type lhs, type rhs) \
-    { \
+    inline type operator|(type lhs, type rhs) { \
         return type(unsigned(lhs) | unsigned(rhs)); \
     } \
  \
-    inline type \
-    operator^(type lhs, type rhs) \
-    { \
+    inline type operator^(type lhs, type rhs) { \
         return type(unsigned(lhs) ^ unsigned(rhs)); \
     } \
  \
-    inline type \
-    operator~(type val) \
-    { \
+    inline type operator~(type val) { \
         return type(~unsigned(val)); \
     } \
  \
-    inline type& \
-    operator&=(type& lhs, type rhs) \
-    { \
+    inline type& operator&=(type& lhs, type rhs) { \
         lhs = lhs & rhs; return lhs; \
     } \
  \
-    inline type& \
-    operator|=(type& lhs, type rhs) \
-    { \
+    inline type& operator|=(type& lhs, type rhs) { \
         lhs = lhs | rhs; return lhs; \
     } \
  \
-    inline type& \
-    operator^=(type& lhs, type rhs) \
-    { \
+    inline type& operator^=(type& lhs, type rhs) { \
         lhs = lhs ^ rhs; return lhs; \
     }
 

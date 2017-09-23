@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,10 +26,9 @@ ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& con
                                                      InteractionState& interaction,
                                                      EditableSpline::Ptr const& spline,
                                                      SplineVertex::Ptr const& vertex)
-    : m_rContext(context),
-      m_ptrSpline(spline),
-      m_ptrVertex(vertex)
-{
+        : m_rContext(context),
+          m_ptrSpline(spline),
+          m_ptrVertex(vertex) {
     QPointF const screen_mouse_pos(
         m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
     );
@@ -41,9 +39,7 @@ ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& con
     checkProximity(interaction);
 }
 
-void
-ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState const& interaction)
-{
+void ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState const& interaction) {
     painter.setWorldMatrixEnabled(false);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -98,12 +94,11 @@ ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState const& in
     );
 }  // ZoneVertexDragInteraction::onPaint
 
-void
-ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {
         if ((m_ptrVertex->point() == m_ptrVertex->next(SplineVertex::LOOP)->point())
-            || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point())) {
+            || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point()))
+        {
             if (m_ptrVertex->hasAtLeastSiblings(3)) {
                 m_ptrVertex->remove();
             }
@@ -115,9 +110,7 @@ ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionSt
     }
 }
 
-void
-ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     QTransform const from_screen(m_rContext.imageView().widgetToImage());
     m_ptrVertex->setPoint(from_screen.map(event->pos() + QPointF(0.5, 0.5) + m_dragOffset));
 
@@ -137,8 +130,7 @@ ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState
         if (((dx > 0) && (dy > 0)) || ((dx < 0) && (dy < 0))) {
             prev.setX(current.x());
             next.setY(current.y());
-        }
-        else {
+        } else {
             next.setX(current.x());
             prev.setY(current.y());
         }
@@ -151,9 +143,7 @@ ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState
     m_rContext.imageView().update();
 }  // ZoneVertexDragInteraction::onMouseMoveEvent
 
-void
-ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
-{
+void ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction) {
     bool can_merge = false;
 
     if (m_ptrVertex->hasAtLeastSiblings(3)) {
@@ -169,8 +159,7 @@ ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
         if ((prox_prev <= interaction.proximityThreshold()) && (prox_prev < prox_next)) {
             m_ptrVertex->setPoint(prev);
             can_merge = true;
-        }
-        else if (prox_next <= interaction.proximityThreshold()) {
+        } else if (prox_next <= interaction.proximityThreshold()) {
             m_ptrVertex->setPoint(next);
             can_merge = true;
         }
@@ -178,8 +167,7 @@ ZoneVertexDragInteraction::checkProximity(InteractionState const& interaction)
 
     if (can_merge) {
         m_interaction.setInteractionStatusTip(tr("Merge these two vertices."));
-    }
-    else {
+    } else {
         m_interaction.setInteractionStatusTip(tr("Move the vertex to one of its neighbors to merge them."));
     }
 }

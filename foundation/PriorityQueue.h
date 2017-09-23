@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -40,24 +39,20 @@
  * function in the same namespace as T.
  */
 template <typename T, typename SubClass>
-class PriorityQueue
-{
+class PriorityQueue {
 public:
-    PriorityQueue()
-    { }
+    PriorityQueue() {
+    }
 
-    void reserve(size_t capacity)
-    {
+    void reserve(size_t capacity) {
         m_index.reserve(capacity);
     }
 
-    bool empty() const
-    {
+    bool empty() const {
         return m_index.empty();
     }
 
-    size_t size() const
-    {
+    size_t size() const {
         return m_index.size();
     }
 
@@ -69,13 +64,11 @@ public:
      * pop() or erase() on the modified object before any other operation that
      * involves comparing objects.
      */
-    T& front()
-    {
+    T& front() {
         return m_index.front();
     }
 
-    T const& front() const
-    {
+    T const& front() const {
         return m_index.front();
     }
 
@@ -97,8 +90,7 @@ public:
      */
     void retrieveFront(T& obj);
 
-    void swapWith(PriorityQueue& other)
-    {
+    void swapWith(PriorityQueue& other) {
         m_index.swap(other.m_index);
     }
 
@@ -108,28 +100,23 @@ protected:
     void reposition(size_t idx);
 
 private:
-    static size_t parent(size_t idx)
-    {
+    static size_t parent(size_t idx) {
         return (idx - 1) / 2;
     }
 
-    static size_t left(size_t idx)
-    {
+    static size_t left(size_t idx) {
         return idx * 2 + 1;
     }
 
-    static size_t right(size_t idx)
-    {
+    static size_t right(size_t idx) {
         return idx * 2 + 2;
     }
 
-    SubClass* subClass()
-    {
+    SubClass* subClass() {
         return static_cast<SubClass*>(this);
     }
 
-    SubClass const* subClass() const
-    {
+    SubClass const* subClass() const {
         return static_cast<SubClass const*>(this);
     }
 
@@ -142,16 +129,12 @@ private:
 
 
 template <typename T, typename SubClass>
-inline void
-swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2)
-{
+inline void swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2) {
     o1.swap(o2);
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::push(T const& obj)
-{
+void PriorityQueue<T, SubClass>::push(T const& obj) {
     size_t const idx = m_index.size();
     m_index.push_back(obj);
     subClass()->setIndex(m_index.back(), idx);
@@ -159,9 +142,7 @@ PriorityQueue<T, SubClass>::push(T const& obj)
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::pushDestructive(T& obj)
-{
+void PriorityQueue<T, SubClass>::pushDestructive(T& obj) {
     using namespace std;
 
     size_t const idx = m_index.size();
@@ -172,9 +153,7 @@ PriorityQueue<T, SubClass>::pushDestructive(T& obj)
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::pop()
-{
+void PriorityQueue<T, SubClass>::pop() {
     using namespace std;
 
     assert(!empty());
@@ -189,9 +168,7 @@ PriorityQueue<T, SubClass>::pop()
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::retrieveFront(T& obj)
-{
+void PriorityQueue<T, SubClass>::retrieveFront(T& obj) {
     using namespace std;
 
     assert(!empty());
@@ -207,9 +184,7 @@ PriorityQueue<T, SubClass>::retrieveFront(T& obj)
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::erase(size_t const idx)
-{
+void PriorityQueue<T, SubClass>::erase(size_t const idx) {
     using namespace std;
 
     swap(m_index[idx], m_index.back());
@@ -220,16 +195,12 @@ PriorityQueue<T, SubClass>::erase(size_t const idx)
 }
 
 template <typename T, typename SubClass>
-void
-PriorityQueue<T, SubClass>::reposition(size_t const idx)
-{
+void PriorityQueue<T, SubClass>::reposition(size_t const idx) {
     bubbleUp(bubbleDown(idx));
 }
 
 template <typename T, typename SubClass>
-size_t
-PriorityQueue<T, SubClass>::bubbleUp(size_t idx)
-{
+size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     using namespace std;
 
 
@@ -250,9 +221,7 @@ PriorityQueue<T, SubClass>::bubbleUp(size_t idx)
 }
 
 template <typename T, typename SubClass>
-size_t
-PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
-{
+size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     using namespace std;
 
     size_t const len = m_index.size();
@@ -266,11 +235,9 @@ PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
 
         if (rgt < len) {
             best_child = subClass()->higherThan(m_index[lft], m_index[rgt]) ? lft : rgt;
-        }
-        else if (lft < len) {
+        } else if (lft < len) {
             best_child = lft;
-        }
-        else {
+        } else {
             break;
         }
 
@@ -279,8 +246,7 @@ PriorityQueue<T, SubClass>::bubbleDown(size_t idx)
             subClass()->setIndex(m_index[idx], idx);
             subClass()->setIndex(m_index[best_child], best_child);
             idx = best_child;
-        }
-        else {
+        } else {
             break;
         }
     }

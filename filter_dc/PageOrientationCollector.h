@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,11 +23,10 @@
 
 class OrthogonalRotation;
 
-class PageOrientationCollector
-    : public AbstractFilterDataCollector
-{
+class PageOrientationCollector: public AbstractFilterDataCollector {
 public:
     virtual void process(OrthogonalRotation const& orientation) = 0;
 };
+
 
 #endif

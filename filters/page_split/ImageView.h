@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -39,108 +38,102 @@ class QPointF;
 class QRectF;
 class QLineF;
 
-namespace page_split
-{
-    class ImageView
-        : public ImageViewBase,
-          private InteractionHandler
-    {
-        Q_OBJECT
+namespace page_split {
+class ImageView: public ImageViewBase, private InteractionHandler {
+    Q_OBJECT
+public:
+    ImageView(QImage const& image,
+              QImage const& downscaled_image,
+              ImageTransformation const& xform,
+              PageLayout const& layout,
+              IntrusivePtr<ProjectPages> const& pages,
+              ImageId const& image_id,
+              bool left_half_removed,
+              bool right_half_removed);
 
-    public:
-        ImageView(QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  PageLayout const& layout,
-                  IntrusivePtr<ProjectPages> const& pages,
-                  ImageId const& image_id,
-                  bool left_half_removed,
-                  bool right_half_removed);
+    virtual ~ImageView();
+signals:
+    void invalidateThumbnail(PageInfo const& page_info);
 
-        virtual ~ImageView();
+    void pageLayoutSetLocally(PageLayout const& layout);
 
-    signals:
-        void invalidateThumbnail(PageInfo const& page_info);
+public slots:
+    void pageLayoutSetExternally(PageLayout const& layout);
 
-        void pageLayoutSetLocally(PageLayout const& layout);
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    public slots:
-        void pageLayoutSetExternally(PageLayout const& layout);
+private:
+    void setupCuttersInteraction();
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    QPointF handlePosition(int line_idx, int handle_idx) const;
 
-    private:
-        void setupCuttersInteraction();
+    void handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos);
 
-        QPointF handlePosition(int line_idx, int handle_idx) const;
+    QLineF linePosition(int line_idx) const;
 
-        void handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos);
+    void lineMoveRequest(int line_idx, QLineF line);
 
-        QLineF linePosition(int line_idx) const;
+    void dragFinished();
 
-        void lineMoveRequest(int line_idx, QLineF line);
+    QPointF leftPageCenter() const;
 
-        void dragFinished();
+    QPointF rightPageCenter() const;
 
-        QPointF leftPageCenter() const;
+    void unremoveLeftPage();
 
-        QPointF rightPageCenter() const;
+    void unremoveRightPage();
 
-        void unremoveLeftPage();
+    /**
+     * \return Page layout in widget coordinates.
+     */
+    PageLayout widgetLayout() const;
 
-        void unremoveRightPage();
+    /**
+     * \return A Cutter line in widget coordinates.
+     *
+     * Depending on the current interaction state, the line segment
+     * may end either shortly before the widget boundaries, or shortly
+     * before the image boundaries.
+     */
+    QLineF widgetCutterLine(int line_idx) const;
 
-        /**
-         * \return Page layout in widget coordinates.
-         */
-        PageLayout widgetLayout() const;
+    /**
+     * \return A Cutter line in virtual image coordinates.
+     *
+     * Unlike widgetCutterLine(), this one always ends shortly before
+     * the image boundaries.
+     */
+    QLineF virtualCutterLine(int line_idx) const;
 
-        /**
-         * \return A Cutter line in widget coordinates.
-         *
-         * Depending on the current interaction state, the line segment
-         * may end either shortly before the widget boundaries, or shortly
-         * before the image boundaries.
-         */
-        QLineF widgetCutterLine(int line_idx) const;
+    /**
+     * Same as ImageViewBase::getVisibleWidgetRect(), except reduced
+     * vertically to accomodate the height of line endpoint handles.
+     */
+    QRectF reducedWidgetArea() const;
 
-        /**
-         * \return A Cutter line in virtual image coordinates.
-         *
-         * Unlike widgetCutterLine(), this one always ends shortly before
-         * the image boundaries.
-         */
-        QLineF virtualCutterLine(int line_idx) const;
+    static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
 
-        /**
-         * Same as ImageViewBase::getVisibleWidgetRect(), except reduced
-         * vertically to accomodate the height of line endpoint handles.
-         */
-        QRectF reducedWidgetArea() const;
+    IntrusivePtr<ProjectPages> m_ptrPages;
+    ImageId m_imageId;
+    DraggablePoint m_handles[2][2];
+    ObjectDragHandler m_handleInteractors[2][2];
+    DraggableLineSegment m_lineSegments[2];
+    ObjectDragHandler m_lineInteractors[2];
+    UnremoveButton m_leftUnremoveButton;
+    UnremoveButton m_rightUnremoveButton;
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
 
-        static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
+    QPixmap m_handlePixmap;
 
-        IntrusivePtr<ProjectPages> m_ptrPages;
-        ImageId m_imageId;
-        DraggablePoint m_handles[2][2];
-        ObjectDragHandler m_handleInteractors[2][2];
-        DraggableLineSegment m_lineSegments[2];
-        ObjectDragHandler m_lineInteractors[2];
-        UnremoveButton m_leftUnremoveButton;
-        UnremoveButton m_rightUnremoveButton;
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
+    /**
+     * Page layout in virtual image coordinates.
+     */
+    PageLayout m_virtLayout;
 
-        QPixmap m_handlePixmap;
-
-        /**
-         * Page layout in virtual image coordinates.
-         */
-        PageLayout m_virtLayout;
-
-        bool m_leftPageRemoved;
-        bool m_rightPageRemoved;
-    };
+    bool m_leftPageRemoved;
+    bool m_rightPageRemoved;
+};
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_IMAGEVIEW_H_

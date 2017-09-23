@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,11 +30,8 @@ class PageInfo;
 class CompositeCacheDrivenTask;
 class QGraphicsItem;
 
-class ThumbnailFactory
-    : public RefCountable
-{
+class ThumbnailFactory: public RefCountable {
     DECLARE_NON_COPYABLE(ThumbnailFactory)
-
 public:
     ThumbnailFactory(IntrusivePtr<ThumbnailPixmapCache> const& pixmap_cache, QSizeF const& max_size,
                      IntrusivePtr<CompositeCacheDrivenTask> const& task);
@@ -51,5 +47,6 @@ private:
     QSizeF m_maxSize;
     IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
 };
+
 
 #endif  // ifndef THUMBNAILFACTORY_H_

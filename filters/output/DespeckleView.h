@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,58 +31,53 @@
 class DebugImages;
 class ProcessingIndicationWidget;
 
-namespace output
-{
-    class DespeckleVisualization;
+namespace output {
+class DespeckleVisualization;
 
-    class DespeckleView
-        : public QStackedWidget
-    {
-        Q_OBJECT
+class DespeckleView: public QStackedWidget {
+    Q_OBJECT
+public:
+    /**
+     * \param despeckle_state Describes a particular despeckling.
+     * \param visualization Optional despeckle visualization.
+     *        If null, it will be reconstructed from \p despeckle_state
+     *        when this widget becomes visible.
+     * \param debug Indicates whether debugging is turned on.
+     */
+    DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
 
-    public:
-        /**
-         * \param despeckle_state Describes a particular despeckling.
-         * \param visualization Optional despeckle visualization.
-         *        If null, it will be reconstructed from \p despeckle_state
-         *        when this widget becomes visible.
-         * \param debug Indicates whether debugging is turned on.
-         */
-        DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
+    virtual ~DespeckleView();
+public slots:
+    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
-        virtual ~DespeckleView();
+protected:
+    virtual void hideEvent(QHideEvent* evt);
 
-    public slots:
-        void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    virtual void showEvent(QShowEvent* evt);
 
-    protected:
-        virtual void hideEvent(QHideEvent* evt);
+private:
+    class TaskCancelException;
+    class TaskCancelHandle;
+    class DespeckleTask;
+    class DespeckleResult;
 
-        virtual void showEvent(QShowEvent* evt);
+    enum AnimationAction { RESET_ANIMATION, RESUME_ANIMATION };
 
-    private:
-        class TaskCancelException;
-        class TaskCancelHandle;
-        class DespeckleTask;
-        class DespeckleResult;
+    void initiateDespeckling(AnimationAction anim_action);
 
-        enum AnimationAction { RESET_ANIMATION, RESUME_ANIMATION };
+    void despeckleDone(DespeckleState const& despeckle_state,
+                       DespeckleVisualization const& visualization,
+                       DebugImages* dbg);
 
-        void initiateDespeckling(AnimationAction anim_action);
+    void cancelBackgroundTask();
 
-        void despeckleDone(DespeckleState const& despeckle_state,
-                           DespeckleVisualization const& visualization,
-                           DebugImages* dbg);
+    void removeImageViewWidget();
 
-        void cancelBackgroundTask();
-
-        void removeImageViewWidget();
-
-        DespeckleState m_despeckleState;
-        IntrusivePtr<TaskCancelHandle> m_ptrCancelHandle;
-        ProcessingIndicationWidget* m_pProcessingIndicator;
-        DespeckleLevel m_despeckleLevel;
-        bool m_debug;
-    };
+    DespeckleState m_despeckleState;
+    IntrusivePtr<TaskCancelHandle> m_ptrCancelHandle;
+    ProcessingIndicationWidget* m_pProcessingIndicator;
+    DespeckleLevel m_despeckleLevel;
+    bool m_debug;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_DESPECKLE_VIEW_H_

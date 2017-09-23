@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,16 +31,12 @@ class PageInfo;
 class ProjectPages;
 class QImage;
 
-namespace fix_orientation
-{
-    class Task;
+namespace fix_orientation {
+class Task;
 }
 
-class LoadFileTask
-    : public BackgroundTask
-{
+class LoadFileTask: public BackgroundTask {
     DECLARE_NON_COPYABLE(LoadFileTask)
-
 public:
     LoadFileTask(Type type,
                  PageInfo const& page,
@@ -66,5 +61,6 @@ private:
     IntrusivePtr<ProjectPages> const m_ptrPages;
     IntrusivePtr<fix_orientation::Task> const m_ptrNextTask;
 };
+
 
 #endif  // ifndef LOADFILETASK_H_

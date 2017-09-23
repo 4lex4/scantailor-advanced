@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -37,30 +36,26 @@ class QDomElement;
 /**
  * Filters represent processing stages, like "Deskew", "Margins" and "Output".
  */
-class AbstractFilter
-    : public RefCountable
-{
+class AbstractFilter: public RefCountable {
 public:
-    virtual ~AbstractFilter()
-    { }
+    virtual ~AbstractFilter() {
+    }
 
     virtual QString getName() const = 0;
 
     virtual PageView getView() const = 0;
 
-    virtual void selected()
-    { }
+    virtual void selected() {
+    }
 
-    virtual int selectedPageOrder() const
-    {
+    virtual int selectedPageOrder() const {
         return -1;
     }
 
-    virtual void selectPageOrder(int option)
-    { }
+    virtual void selectPageOrder(int option) {
+    }
 
-    virtual std::vector<PageOrderOption> pageOrderOptions() const
-    {
+    virtual std::vector<PageOrderOption> pageOrderOptions() const {
         return std::vector<PageOrderOption>();
     }
 
@@ -68,12 +63,13 @@ public:
 
     virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) = 0;
 
-    virtual void updateStatistics()
-    { }
+    virtual void updateStatistics() {
+    }
 
     virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const = 0;
 
     virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) = 0;
 };
+
 
 #endif  // ifndef ABSTRACTFILTER_H_

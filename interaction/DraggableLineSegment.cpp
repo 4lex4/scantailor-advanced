@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,31 +21,23 @@
 #include <QPainter>
 
 DraggableLineSegment::DraggableLineSegment()
-    : m_proximityPriority(0)
-{ }
+        : m_proximityPriority(0) {
+}
 
-int
-DraggableLineSegment::proximityPriority() const
-{
+int DraggableLineSegment::proximityPriority() const {
     return m_proximityPriority;
 }
 
-Proximity
-DraggableLineSegment::proximity(QPointF const& mouse_pos)
-{
+Proximity DraggableLineSegment::proximity(QPointF const& mouse_pos) {
     return Proximity::pointAndLineSegment(mouse_pos, lineSegmentPosition());
 }
 
-void
-DraggableLineSegment::dragInitiated(QPointF const& mouse_pos)
-{
+void DraggableLineSegment::dragInitiated(QPointF const& mouse_pos) {
     m_initialMousePos = mouse_pos;
     m_initialLinePos = lineSegmentPosition();
 }
 
-void
-DraggableLineSegment::dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask)
-{
+void DraggableLineSegment::dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) {
     lineSegmentMoveRequest(m_initialLinePos.translated(mouse_pos - m_initialMousePos), mask);
 }
 

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,8 +28,7 @@ class QString;
 class QImage;
 class Dpm;
 
-class TiffWriter
-{
+class TiffWriter {
 public:
     /**
      * \brief Writes a QImage in TIFF format to a file.
@@ -72,5 +70,6 @@ private:
 
     static uint8_t const m_reverseBitsLUT[256];
 };
+
 
 #endif  // ifndef TIFFWRITER_H_

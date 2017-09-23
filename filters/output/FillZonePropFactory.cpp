@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,10 +19,8 @@
 #include "FillZonePropFactory.h"
 #include "FillColorProperty.h"
 
-namespace output
-{
-    FillZonePropFactory::FillZonePropFactory()
-    {
-        FillColorProperty::registerIn(*this);
-    }
+namespace output {
+FillZonePropFactory::FillZonePropFactory() {
+    FillColorProperty::registerIn(*this);
+}
 }

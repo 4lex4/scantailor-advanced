@@ -1,4 +1,3 @@
-
 /*
 
     Scan Tailor - Interactive post-processing tool for scanned pages.
@@ -30,96 +29,81 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <map>
 
-class EditableZoneSet
-    : public QObject
-{
+class EditableZoneSet: public QObject {
     Q_OBJECT
-
 private:
     typedef std::map<EditableSpline::Ptr, IntrusivePtr<PropertySet>> Map;
-
 public:
     class const_iterator;
 
-    class Zone
-    {
+    class Zone {
         friend class EditableZoneSet::const_iterator;
-
     public:
-        Zone()
-        { }
+        Zone() {
+        }
 
-        EditableSpline::Ptr const& spline() const
-        {
+        EditableSpline::Ptr const& spline() const {
             return m_iter->first;
         }
 
-        IntrusivePtr<PropertySet> const& properties() const
-        {
+        IntrusivePtr<PropertySet> const& properties() const {
             return m_iter->second;
         }
 
     private:
         explicit Zone(Map::const_iterator it)
-            : m_iter(it)
-        { }
+                : m_iter(it) {
+        }
 
         Map::const_iterator m_iter;
     };
 
-    class const_iterator
-        : public boost::iterator_facade<
-              const_iterator, Zone const, boost::forward_traversal_tag
-        >
-    {
+
+    class const_iterator: public boost::iterator_facade<
+                            const_iterator, Zone const, boost::forward_traversal_tag
+        >{
         friend class EditableZoneSet;
 
         friend class boost::iterator_core_access;
-
     public:
         const_iterator()
-            : m_zone()
-        { }
+                : m_zone() {
+        }
 
-        void increment()
-        {
+        void increment() {
             ++m_zone.m_iter;
         }
 
-        bool equal(const_iterator const& other) const
-        {
+        bool equal(const_iterator const& other) const {
             return m_zone.m_iter == other.m_zone.m_iter;
         }
 
-        Zone const& dereference() const
-        {
+        Zone const& dereference() const {
             return m_zone;
         }
 
     private:
         explicit const_iterator(Map::const_iterator it)
-            : m_zone(it)
-        { }
+                : m_zone(it) {
+        }
 
         Zone m_zone;
     };
+
 
     typedef const_iterator iterator;
 
     EditableZoneSet();
 
-    const_iterator begin() const
-    {
+    const_iterator begin() const {
         return iterator(m_splineMap.begin());
     }
 
-    const_iterator end() const
-    {
+    const_iterator end() const {
         return iterator(m_splineMap.end());
     }
 
-    PropertySet const& defaultProperties() const
-    {
+    PropertySet const& defaultProperties() const {
         return m_defaultProps;
     }
 
@@ -145,13 +129,11 @@ private:
     PropertySet m_defaultProps;
 };
 
-namespace boost
-{
-    namespace foreach
-    {
-        template <>
-        struct is_noncopyable<EditableZoneSet>
-            : public boost::mpl::true_ { };
-    }
+
+namespace boost {
+namespace foreach {
+template <>
+struct is_noncopyable<EditableZoneSet>: public boost::mpl::true_ { };
+}
 }
 #endif  // ifndef EDITABLE_ZONE_SET_H_

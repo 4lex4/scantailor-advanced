@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,21 +21,18 @@
 
 #include "Margins.h"
 
-namespace output
-{
-    /**
-     * Having margins on the Output stage is useful when creating zones
-     * that are meant to cover a corner or an edge of a page.
-     * We use the same margins on all tabs to preserve their geometrical
-     * one-to-one relationship.
-     */
-    class OutputMargins
-        : public Margins
-    {
-    public:
-        OutputMargins()
-            : Margins(10.0, 10.0, 10.0, 10.0)
-        { }
-    };
+namespace output {
+/**
+ * Having margins on the Output stage is useful when creating zones
+ * that are meant to cover a corner or an edge of a page.
+ * We use the same margins on all tabs to preserve their geometrical
+ * one-to-one relationship.
+ */
+class OutputMargins: public Margins {
+public:
+    OutputMargins()
+            : Margins(10.0, 10.0, 10.0, 10.0) {
+    }
+};
 }
 #endif

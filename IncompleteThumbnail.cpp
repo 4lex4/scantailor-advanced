@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,15 +26,13 @@ IncompleteThumbnail::IncompleteThumbnail(IntrusivePtr<ThumbnailPixmapCache> cons
                                          QSizeF const& max_size,
                                          ImageId const& image_id,
                                          ImageTransformation const& image_xform)
-    : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform)
-{ }
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform) {
+}
 
-IncompleteThumbnail::~IncompleteThumbnail()
-{ }
+IncompleteThumbnail::~IncompleteThumbnail() {
+}
 
-void
-IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& bounding_rect)
-{
+void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& bounding_rect) {
     QString const text(QString::fromLatin1("?"));
 
     if (m_sCachedPath.isEmpty()) {
@@ -131,11 +128,9 @@ IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& bounding_
     painter.drawPath(m_sCachedPath);
 }  // IncompleteThumbnail::drawQuestionMark
 
-void
-IncompleteThumbnail::paintOverImage(QPainter& painter,
-                                    QTransform const& image_to_display,
-                                    QTransform const& thumb_to_display)
-{
+void IncompleteThumbnail::paintOverImage(QPainter& painter,
+                                         QTransform const& image_to_display,
+                                         QTransform const& thumb_to_display) {
     drawQuestionMark(painter, boundingRect());
 }
 

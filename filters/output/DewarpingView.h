@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -37,65 +36,59 @@
 #include <QPolygonF>
 #include <vector>
 
-namespace output
-{
-    class DewarpingView
-        : public ImageViewBase,
-          protected InteractionHandler
-    {
-        Q_OBJECT
+namespace output {
+class DewarpingView: public ImageViewBase, protected InteractionHandler {
+    Q_OBJECT
+public:
+    DewarpingView(QImage const& image,
+                  ImagePixmapUnion const& downscaled_image,
+                  QTransform const& source_to_virt,
+                  QPolygonF const& virt_display_area,
+                  QRectF const& virt_content_rect,
+                  PageId const& page_id,
+                  DewarpingMode dewarping_mode,
+                  dewarping::DistortionModel const& distortion_model,
+                  DepthPerception const& depth_perception);
 
-    public:
-        DewarpingView(QImage const& image,
-                      ImagePixmapUnion const& downscaled_image,
-                      QTransform const& source_to_virt,
-                      QPolygonF const& virt_display_area,
-                      QRectF const& virt_content_rect,
-                      PageId const& page_id,
-                      DewarpingMode dewarping_mode,
-                      dewarping::DistortionModel const& distortion_model,
-                      DepthPerception const& depth_perception);
+    virtual ~DewarpingView();
+signals:
+    void distortionModelChanged(dewarping::DistortionModel const& model);
 
-        virtual ~DewarpingView();
+public slots:
+    void depthPerceptionChanged(double val);
 
-    signals:
-        void distortionModelChanged(dewarping::DistortionModel const& model);
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    public slots:
-        void depthPerceptionChanged(double val);
+private:
+    static void initNewSpline(XSpline& spline,
+                              QPointF const& p1,
+                              QPointF const& p2,
+                              DewarpingMode const* p_dewarpingMode = NULL);
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    static void fitSpline(XSpline& spline, std::vector<QPointF> const& polyline);
 
-    private:
-        static void initNewSpline(XSpline& spline,
-                                  QPointF const& p1,
-                                  QPointF const& p2,
-                                  DewarpingMode const* p_dewarpingMode = NULL);
+    void paintXSpline(QPainter& painter, InteractionState const& interaction, InteractiveXSpline const& ispline);
 
-        static void fitSpline(XSpline& spline, std::vector<QPointF> const& polyline);
+    void curveModified(int curve_idx);
 
-        void paintXSpline(QPainter& painter, InteractionState const& interaction, InteractiveXSpline const& ispline);
+    void dragFinished();
 
-        void curveModified(int curve_idx);
+    QPointF sourceToWidget(QPointF const& pt) const;
 
-        void dragFinished();
+    QPointF widgetToSource(QPointF const& pt) const;
 
-        QPointF sourceToWidget(QPointF const& pt) const;
+    QPolygonF virtMarginArea(int margin_idx) const;
 
-        QPointF widgetToSource(QPointF const& pt) const;
-
-        QPolygonF virtMarginArea(int margin_idx) const;
-
-        PageId m_pageId;
-        QPolygonF m_virtDisplayArea;
-        DewarpingMode m_dewarpingMode;
-        dewarping::DistortionModel m_distortionModel;
-        DepthPerception m_depthPerception;
-        InteractiveXSpline m_topSpline;
-        InteractiveXSpline m_bottomSpline;
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-    };
+    PageId m_pageId;
+    QPolygonF m_virtDisplayArea;
+    DewarpingMode m_dewarpingMode;
+    dewarping::DistortionModel m_distortionModel;
+    DepthPerception m_depthPerception;
+    InteractiveXSpline m_topSpline;
+    InteractiveXSpline m_bottomSpline;
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_DEWARPING_VIEW_H_

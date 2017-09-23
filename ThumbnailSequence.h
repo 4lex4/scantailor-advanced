@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -42,11 +41,8 @@ class QSizeF;
 class QRectF;
 class QPoint;
 
-class ThumbnailSequence
-    : public QObject
-{
+class ThumbnailSequence: public QObject {
     Q_OBJECT DECLARE_NON_COPYABLE(ThumbnailSequence)
-
 public:
     enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
 
@@ -236,6 +232,7 @@ private:
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
+
 
 DEFINE_FLAG_OPS(ThumbnailSequence::SelectionFlags)
 

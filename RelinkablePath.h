@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,20 +24,17 @@
 /**
  * \brief Represents a file or directory.
  */
-class RelinkablePath
-{
+class RelinkablePath {
 public:
     enum Type { File, Dir };
 
     RelinkablePath(QString const& path, Type type);
 
-    QString const& normalizedPath() const
-    {
+    QString const& normalizedPath() const {
         return m_normalizedPath;
     }
 
-    Type type() const
-    {
+    Type type() const {
         return m_type;
     }
 
@@ -58,5 +54,6 @@ private:
     QString m_normalizedPath;
     Type m_type;
 };
+
 
 #endif  // ifndef RELINKABLE_PATH_H_

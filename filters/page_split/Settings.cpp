@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,331 +21,284 @@
 #include "AbstractRelinker.h"
 #include <assert.h>
 
-namespace page_split
-{
-    Settings::Settings()
-        : m_defaultLayoutType(AUTO_LAYOUT_TYPE)
-    { }
+namespace page_split {
+Settings::Settings()
+        : m_defaultLayoutType(AUTO_LAYOUT_TYPE) {
+}
 
-    Settings::~Settings()
-    { }
+Settings::~Settings() {
+}
 
-    void
-    Settings::clear()
-    {
-        QMutexLocker locker(&m_mutex);
+void Settings::clear() {
+    QMutexLocker locker(&m_mutex);
 
-        m_perPageRecords.clear();
-        m_defaultLayoutType = AUTO_LAYOUT_TYPE;
+    m_perPageRecords.clear();
+    m_defaultLayoutType = AUTO_LAYOUT_TYPE;
+}
+
+void Settings::performRelinking(AbstractRelinker const& relinker) {
+    QMutexLocker locker(&m_mutex);
+    PerPageRecords new_records;
+
+    for (PerPageRecords::value_type const& kv : m_perPageRecords) {
+        RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
+        ImageId new_image_id(kv.first);
+        new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
+        new_records.insert(PerPageRecords::value_type(new_image_id, kv.second));
     }
 
-    void
-    Settings::performRelinking(AbstractRelinker const& relinker)
-    {
-        QMutexLocker locker(&m_mutex);
-        PerPageRecords new_records;
+    m_perPageRecords.swap(new_records);
+}
 
-        for (PerPageRecords::value_type const& kv : m_perPageRecords) {
-            RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
-            ImageId new_image_id(kv.first);
-            new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
-            new_records.insert(PerPageRecords::value_type(new_image_id, kv.second));
-        }
+LayoutType Settings::defaultLayoutType() const {
+    QMutexLocker locker(&m_mutex);
 
-        m_perPageRecords.swap(new_records);
-    }
+    return m_defaultLayoutType;
+}
 
-    LayoutType
-    Settings::defaultLayoutType() const
-    {
-        QMutexLocker locker(&m_mutex);
+void Settings::setLayoutTypeForAllPages(LayoutType const layout_type) {
+    QMutexLocker locker(&m_mutex);
 
-        return m_defaultLayoutType;
-    }
-
-    void
-    Settings::setLayoutTypeForAllPages(LayoutType const layout_type)
-    {
-        QMutexLocker locker(&m_mutex);
-
-        PerPageRecords::iterator it(m_perPageRecords.begin());
-        PerPageRecords::iterator const end(m_perPageRecords.end());
-        while (it != end) {
-            if (it->second.hasLayoutTypeConflict(layout_type)) {
-                m_perPageRecords.erase(it++);
-            }
-            else {
-                it->second.clearLayoutType();
-                ++it;
-            }
-        }
-
-        m_defaultLayoutType = layout_type;
-    }
-
-    void
-    Settings::setLayoutTypeFor(LayoutType const layout_type, std::set<PageId> const& pages)
-    {
-        QMutexLocker locker(&m_mutex);
-
-        UpdateAction action;
-
-        for (PageId const& page_id : pages) {
-            updatePageLocked(page_id.imageId(), action);
+    PerPageRecords::iterator it(m_perPageRecords.begin());
+    PerPageRecords::iterator const end(m_perPageRecords.end());
+    while (it != end) {
+        if (it->second.hasLayoutTypeConflict(layout_type)) {
+            m_perPageRecords.erase(it++);
+        } else {
+            it->second.clearLayoutType();
+            ++it;
         }
     }
 
-    Settings::Record
-    Settings::getPageRecord(ImageId const& image_id) const
-    {
-        QMutexLocker locker(&m_mutex);
+    m_defaultLayoutType = layout_type;
+}
 
-        return getPageRecordLocked(image_id);
+void Settings::setLayoutTypeFor(LayoutType const layout_type, std::set<PageId> const& pages) {
+    QMutexLocker locker(&m_mutex);
+
+    UpdateAction action;
+
+    for (PageId const& page_id : pages) {
+        updatePageLocked(page_id.imageId(), action);
     }
+}
 
-    Settings::Record
-    Settings::getPageRecordLocked(ImageId const& image_id) const
-    {
-        PerPageRecords::const_iterator it(m_perPageRecords.find(image_id));
-        if (it == m_perPageRecords.end()) {
-            return Record(m_defaultLayoutType);
-        }
-        else {
-            return Record(it->second, m_defaultLayoutType);
-        }
+Settings::Record Settings::getPageRecord(ImageId const& image_id) const {
+    QMutexLocker locker(&m_mutex);
+
+    return getPageRecordLocked(image_id);
+}
+
+Settings::Record Settings::getPageRecordLocked(ImageId const& image_id) const {
+    PerPageRecords::const_iterator it(m_perPageRecords.find(image_id));
+    if (it == m_perPageRecords.end()) {
+        return Record(m_defaultLayoutType);
+    } else {
+        return Record(it->second, m_defaultLayoutType);
     }
+}
 
-    void
-    Settings::updatePage(ImageId const& image_id, UpdateAction const& action)
+void Settings::updatePage(ImageId const& image_id, UpdateAction const& action) {
+    QMutexLocker locker(&m_mutex);
+    updatePageLocked(image_id, action);
+}
+
+void Settings::updatePageLocked(ImageId const& image_id, UpdateAction const& action) {
+    PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
+    if ((it == m_perPageRecords.end())
+        || m_perPageRecords.key_comp()(image_id, it->first))
     {
-        QMutexLocker locker(&m_mutex);
-        updatePageLocked(image_id, action);
-    }
-
-    void
-    Settings::updatePageLocked(ImageId const& image_id, UpdateAction const& action)
-    {
-        PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
-        if ((it == m_perPageRecords.end())
-            || m_perPageRecords.key_comp()(image_id, it->first)) {
-            Record record(m_defaultLayoutType);
-            record.update(action);
-
-            if (record.hasLayoutTypeConflict()) {
-                record.clearParams();
-            }
-
-            if (!record.isNull()) {
-                m_perPageRecords.insert(
-                    it, PerPageRecords::value_type(image_id, record)
-                );
-            }
-        }
-        else {
-            updatePageLocked(it, action);
-        }
-    }
-
-    void
-    Settings::updatePageLocked(PerPageRecords::iterator const it, UpdateAction const& action)
-    {
-        Record record(it->second, m_defaultLayoutType);
+        Record record(m_defaultLayoutType);
         record.update(action);
 
         if (record.hasLayoutTypeConflict()) {
             record.clearParams();
         }
 
-        if (record.isNull()) {
-            m_perPageRecords.erase(it);
+        if (!record.isNull()) {
+            m_perPageRecords.insert(
+                it, PerPageRecords::value_type(image_id, record)
+            );
         }
-        else {
-            it->second = record;
-        }
+    } else {
+        updatePageLocked(it, action);
+    }
+}
+
+void Settings::updatePageLocked(PerPageRecords::iterator const it, UpdateAction const& action) {
+    Record record(it->second, m_defaultLayoutType);
+    record.update(action);
+
+    if (record.hasLayoutTypeConflict()) {
+        record.clearParams();
     }
 
-    Settings::Record
-    Settings::conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict)
+    if (record.isNull()) {
+        m_perPageRecords.erase(it);
+    } else {
+        it->second = record;
+    }
+}
+
+Settings::Record Settings::conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict) {
+    QMutexLocker locker(&m_mutex);
+
+    PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
+    if ((it == m_perPageRecords.end())
+        || m_perPageRecords.key_comp()(image_id, it->first))
     {
-        QMutexLocker locker(&m_mutex);
+        Record record(m_defaultLayoutType);
+        record.update(action);
 
-        PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
-        if ((it == m_perPageRecords.end())
-            || m_perPageRecords.key_comp()(image_id, it->first)) {
-            Record record(m_defaultLayoutType);
-            record.update(action);
-
-            if (record.hasLayoutTypeConflict()) {
-                if (conflict) {
-                    *conflict = true;
-                }
-
-                return Record(m_defaultLayoutType);
-            }
-
-            if (!record.isNull()) {
-                m_perPageRecords.insert(
-                    it, PerPageRecords::value_type(image_id, record)
-                );
-            }
-
+        if (record.hasLayoutTypeConflict()) {
             if (conflict) {
-                *conflict = false;
+                *conflict = true;
             }
+
+            return Record(m_defaultLayoutType);
+        }
+
+        if (!record.isNull()) {
+            m_perPageRecords.insert(
+                it, PerPageRecords::value_type(image_id, record)
+            );
+        }
+
+        if (conflict) {
+            *conflict = false;
+        }
+
+        return record;
+    } else {
+        Record record(it->second, m_defaultLayoutType);
+        record.update(action);
+
+        if (record.hasLayoutTypeConflict()) {
+            if (conflict) {
+                *conflict = true;
+            }
+
+            return Record(it->second, m_defaultLayoutType);
+        }
+
+        if (conflict) {
+            *conflict = false;
+        }
+
+        if (record.isNull()) {
+            m_perPageRecords.erase(it);
+
+            return Record(m_defaultLayoutType);
+        } else {
+            it->second = record;
 
             return record;
         }
-        else {
-            Record record(it->second, m_defaultLayoutType);
-            record.update(action);
+    }
+}      // Settings::conditionalUpdate
 
-            if (record.hasLayoutTypeConflict()) {
-                if (conflict) {
-                    *conflict = true;
-                }
+/*======================= Settings::BaseRecord ======================*/
 
-                return Record(it->second, m_defaultLayoutType);
-            }
-
-            if (conflict) {
-                *conflict = false;
-            }
-
-            if (record.isNull()) {
-                m_perPageRecords.erase(it);
-
-                return Record(m_defaultLayoutType);
-            }
-            else {
-                it->second = record;
-
-                return record;
-            }
-        }
-    }  // Settings::conditionalUpdate
-
-    /*======================= Settings::BaseRecord ======================*/
-
-    Settings::BaseRecord::BaseRecord()
+Settings::BaseRecord::BaseRecord()
         : m_params(PageLayout(), Dependencies(), MODE_AUTO),
           m_layoutType(AUTO_LAYOUT_TYPE),
           m_paramsValid(false),
-          m_layoutTypeValid(false)
-    { }
+          m_layoutTypeValid(false) {
+}
 
-    void
-    Settings::BaseRecord::setParams(Params const& params)
-    {
-        m_params = params;
-        m_paramsValid = true;
-    }
+void Settings::BaseRecord::setParams(Params const& params) {
+    m_params = params;
+    m_paramsValid = true;
+}
 
-    void
-    Settings::BaseRecord::setLayoutType(LayoutType const layout_type)
-    {
-        m_layoutType = layout_type;
-        m_layoutTypeValid = true;
-    }
+void Settings::BaseRecord::setLayoutType(LayoutType const layout_type) {
+    m_layoutType = layout_type;
+    m_layoutTypeValid = true;
+}
 
-    bool
-    Settings::BaseRecord::hasLayoutTypeConflict(LayoutType const layout_type) const
-    {
-        if (!m_paramsValid) {
-            return false;
-        }
-
-        if (layout_type == AUTO_LAYOUT_TYPE) {
-            return false;
-        }
-
-        switch (m_params.pageLayout().type()) {
-            case PageLayout::SINGLE_PAGE_UNCUT:
-                return layout_type != SINGLE_PAGE_UNCUT;
-            case PageLayout::SINGLE_PAGE_CUT:
-                return layout_type != PAGE_PLUS_OFFCUT;
-            case PageLayout::TWO_PAGES:
-                return layout_type != TWO_PAGES;
-        }
-
-        assert(!"Unreachable");
-
+bool Settings::BaseRecord::hasLayoutTypeConflict(LayoutType const layout_type) const {
+    if (!m_paramsValid) {
         return false;
     }
 
-    /*========================= Settings::Record ========================*/
+    if (layout_type == AUTO_LAYOUT_TYPE) {
+        return false;
+    }
 
-    Settings::Record::Record(LayoutType const default_layout_type)
-        : m_defaultLayoutType(default_layout_type)
-    { }
+    switch (m_params.pageLayout().type()) {
+        case PageLayout::SINGLE_PAGE_UNCUT:
+            return layout_type != SINGLE_PAGE_UNCUT;
+        case PageLayout::SINGLE_PAGE_CUT:
+            return layout_type != PAGE_PLUS_OFFCUT;
+        case PageLayout::TWO_PAGES:
+            return layout_type != TWO_PAGES;
+    }
 
-    Settings::Record::Record(BaseRecord const& base_record, LayoutType const default_layout_type)
+    assert(!"Unreachable");
+
+    return false;
+}
+
+/*========================= Settings::Record ========================*/
+
+Settings::Record::Record(LayoutType const default_layout_type)
+        : m_defaultLayoutType(default_layout_type) {
+}
+
+Settings::Record::Record(BaseRecord const& base_record, LayoutType const default_layout_type)
         : BaseRecord(base_record),
-          m_defaultLayoutType(default_layout_type)
-    { }
+          m_defaultLayoutType(default_layout_type) {
+}
 
-    LayoutType
-    Settings::Record::combinedLayoutType() const
-    {
-        return m_layoutTypeValid ? m_layoutType : m_defaultLayoutType;
+LayoutType Settings::Record::combinedLayoutType() const {
+    return m_layoutTypeValid ? m_layoutType : m_defaultLayoutType;
+}
+
+void Settings::Record::update(UpdateAction const& action) {
+    switch (action.m_layoutTypeAction) {
+        case UpdateAction::SET:
+            setLayoutType(action.m_layoutType);
+            break;
+        case UpdateAction::CLEAR:
+            clearLayoutType();
+            break;
+        case UpdateAction::DONT_TOUCH:
+            break;
     }
 
-    void
-    Settings::Record::update(UpdateAction const& action)
-    {
-        switch (action.m_layoutTypeAction) {
-            case UpdateAction::SET:
-                setLayoutType(action.m_layoutType);
-                break;
-            case UpdateAction::CLEAR:
-                clearLayoutType();
-                break;
-            case UpdateAction::DONT_TOUCH:
-                break;
-        }
-
-        switch (action.m_paramsAction) {
-            case UpdateAction::SET:
-                setParams(action.m_params);
-                break;
-            case UpdateAction::CLEAR:
-                clearParams();
-                break;
-            case UpdateAction::DONT_TOUCH:
-                break;
-        }
+    switch (action.m_paramsAction) {
+        case UpdateAction::SET:
+            setParams(action.m_params);
+            break;
+        case UpdateAction::CLEAR:
+            clearParams();
+            break;
+        case UpdateAction::DONT_TOUCH:
+            break;
     }
+}
 
-    bool
-    Settings::Record::hasLayoutTypeConflict() const
-    {
-        return BaseRecord::hasLayoutTypeConflict(combinedLayoutType());
-    }
+bool Settings::Record::hasLayoutTypeConflict() const {
+    return BaseRecord::hasLayoutTypeConflict(combinedLayoutType());
+}
 
-    /*======================= Settings::UpdateAction ======================*/
+/*======================= Settings::UpdateAction ======================*/
 
-    void
-    Settings::UpdateAction::setLayoutType(LayoutType const layout_type)
-    {
-        m_layoutType = layout_type;
-        m_layoutTypeAction = SET;
-    }
+void Settings::UpdateAction::setLayoutType(LayoutType const layout_type) {
+    m_layoutType = layout_type;
+    m_layoutTypeAction = SET;
+}
 
-    void
-    Settings::UpdateAction::clearLayoutType()
-    {
-        m_layoutTypeAction = CLEAR;
-    }
+void Settings::UpdateAction::clearLayoutType() {
+    m_layoutTypeAction = CLEAR;
+}
 
-    void
-    Settings::UpdateAction::setParams(Params const& params)
-    {
-        m_params = params;
-        m_paramsAction = SET;
-    }
+void Settings::UpdateAction::setParams(Params const& params) {
+    m_params = params;
+    m_paramsAction = SET;
+}
 
-    void
-    Settings::UpdateAction::clearParams()
-    {
-        m_paramsAction = CLEAR;
-    }
+void Settings::UpdateAction::clearParams() {
+    m_paramsAction = CLEAR;
+}
 }  // namespace page_split

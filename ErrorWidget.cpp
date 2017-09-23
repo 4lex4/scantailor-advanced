@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,8 +18,7 @@
 
 #include "ErrorWidget.h"
 
-ErrorWidget::ErrorWidget(QString const& text, Qt::TextFormat fmt)
-{
+ErrorWidget::ErrorWidget(QString const& text, Qt::TextFormat fmt) {
     setupUi(this);
     textLabel->setTextFormat(fmt);
     textLabel->setText(text);

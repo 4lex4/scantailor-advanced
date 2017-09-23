@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,16 +22,12 @@
 #include "ui_SettingsDialog.h"
 #include <QDialog>
 
-class SettingsDialog
-    : public QDialog
-{
+class SettingsDialog: public QDialog {
     Q_OBJECT
-
 public:
     SettingsDialog(QWidget* parent = 0);
 
     virtual ~SettingsDialog();
-
 signals:
     void AutoSaveProjectStateSignal(bool auto_save);
 
@@ -44,5 +39,6 @@ private slots:
 private:
     Ui::SettingsDialog ui;
 };
+
 
 #endif

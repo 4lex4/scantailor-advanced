@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,18 +27,17 @@ class QImage;
 /**
  * \brief Dots per meter (horizontal and vertical).
  */
-class Dpm
-{
+class Dpm {
 public:
     Dpm()
-        : m_xDpm(0),
-          m_yDpm(0)
-    { }
+            : m_xDpm(0),
+              m_yDpm(0) {
+    }
 
     Dpm(int horizontal, int vertical)
-        : m_xDpm(horizontal),
-          m_yDpm(vertical)
-    { }
+            : m_xDpm(horizontal),
+              m_yDpm(vertical) {
+    }
 
     Dpm(Dpi dpi);
 
@@ -47,13 +45,11 @@ public:
 
     explicit Dpm(QImage const& image);
 
-    int horizontal() const
-    {
+    int horizontal() const {
         return m_xDpm;
     }
 
-    int vertical() const
-    {
+    int vertical() const {
         return m_yDpm;
     }
 
@@ -63,8 +59,7 @@ public:
 
     bool operator==(Dpm const& other) const;
 
-    bool operator!=(Dpm const& other) const
-    {
+    bool operator!=(Dpm const& other) const {
         return !(*this == other);
     }
 
@@ -72,5 +67,6 @@ private:
     int m_xDpm;
     int m_yDpm;
 };
+
 
 #endif  // ifndef DPM_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -40,9 +39,7 @@ class QRectF;
  * question mark over that image to indicate it's not shown the way it should.
  * This class implements drawing of such thumbnails with question marks.
  */
-class IncompleteThumbnail
-    : public ThumbnailBase
-{
+class IncompleteThumbnail: public ThumbnailBase {
 public:
     IncompleteThumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                         QSizeF const& max_size,
@@ -61,5 +58,6 @@ protected:
 private:
     static QPainterPath m_sCachedPath;
 };
+
 
 #endif

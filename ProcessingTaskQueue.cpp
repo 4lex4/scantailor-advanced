@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,24 +20,20 @@
 #include <boost/foreach.hpp>
 
 ProcessingTaskQueue::Entry::Entry(PageInfo const& page_info, BackgroundTaskPtr const& tsk)
-    : pageInfo(page_info),
-      task(tsk),
-      takenForProcessing(false)
-{ }
+        : pageInfo(page_info),
+          task(tsk),
+          takenForProcessing(false) {
+}
 
-ProcessingTaskQueue::ProcessingTaskQueue()
-{ }
+ProcessingTaskQueue::ProcessingTaskQueue() {
+}
 
-void
-ProcessingTaskQueue::addProcessingTask(PageInfo const& page_info, BackgroundTaskPtr const& task)
-{
+void ProcessingTaskQueue::addProcessingTask(PageInfo const& page_info, BackgroundTaskPtr const& task) {
     m_queue.push_back(Entry(page_info, task));
     m_pageToSelectWhenDone = PageInfo();
 }
 
-BackgroundTaskPtr
-ProcessingTaskQueue::takeForProcessing()
-{
+BackgroundTaskPtr ProcessingTaskQueue::takeForProcessing() {
     for (Entry& ent : m_queue) {
         if (!ent.takenForProcessing) {
             ent.takenForProcessing = true;
@@ -54,9 +49,7 @@ ProcessingTaskQueue::takeForProcessing()
     return BackgroundTaskPtr();
 }
 
-void
-ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task)
-{
+void ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task) {
     std::list<Entry>::iterator it(m_queue.begin());
     std::list<Entry>::iterator const end(m_queue.end());
 
@@ -89,35 +82,27 @@ ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task)
     if (removing_selected_page) {
         if (!m_queue.empty()) {
             m_selectedPage = m_queue.front().pageInfo;
-        }
-        else if (!m_pageToSelectWhenDone.isNull()) {
+        } else if (!m_pageToSelectWhenDone.isNull()) {
             m_selectedPage = m_pageToSelectWhenDone;
         }
     }
 }  // ProcessingTaskQueue::processingFinished
 
-PageInfo
-ProcessingTaskQueue::selectedPage() const
-{
+PageInfo ProcessingTaskQueue::selectedPage() const {
     return m_selectedPage;
 }
 
-bool
-ProcessingTaskQueue::allProcessed() const
-{
+bool ProcessingTaskQueue::allProcessed() const {
     return m_queue.empty();
 }
 
-void
-ProcessingTaskQueue::cancelAndRemove(std::set<PageId> const& pages)
-{
+void ProcessingTaskQueue::cancelAndRemove(std::set<PageId> const& pages) {
     std::list<Entry>::iterator it(m_queue.begin());
     std::list<Entry>::iterator const end(m_queue.end());
     while (it != end) {
         if (pages.find(it->pageInfo.id()) == pages.end()) {
             ++it;
-        }
-        else {
+        } else {
             if (it->takenForProcessing) {
                 it->task->cancel();
             }
@@ -132,9 +117,7 @@ ProcessingTaskQueue::cancelAndRemove(std::set<PageId> const& pages)
     }
 }
 
-void
-ProcessingTaskQueue::cancelAndClear()
-{
+void ProcessingTaskQueue::cancelAndClear() {
     while (!m_queue.empty()) {
         Entry& ent = m_queue.front();
         if (ent.takenForProcessing) {

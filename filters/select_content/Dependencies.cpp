@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,46 +23,41 @@
 
 using namespace imageproc;
 
-namespace select_content
-{
-    Dependencies::Dependencies()
-    { }
+namespace select_content {
+Dependencies::Dependencies() {
+}
 
-    Dependencies::Dependencies(QPolygonF const& rotated_page_outline)
-        : m_rotatedPageOutline(rotated_page_outline)
-    { }
+Dependencies::Dependencies(QPolygonF const& rotated_page_outline)
+        : m_rotatedPageOutline(rotated_page_outline) {
+}
 
-    Dependencies::Dependencies(QDomElement const& deps_el)
+Dependencies::Dependencies(QDomElement const& deps_el)
         : m_rotatedPageOutline(
               XmlUnmarshaller::polygonF(
                   deps_el.namedItem("rotated-page-outline").toElement()
               )
+        ) {
+}
+
+Dependencies::~Dependencies() {
+}
+
+bool Dependencies::matches(Dependencies const& other) const {
+    return PolygonUtils::fuzzyCompare(
+        m_rotatedPageOutline, other.m_rotatedPageOutline
+    );
+}
+
+QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {
+    XmlMarshaller marshaller(doc);
+
+    QDomElement el(doc.createElement(name));
+    el.appendChild(
+        marshaller.polygonF(
+            m_rotatedPageOutline, "rotated-page-outline"
         )
-    { }
+    );
 
-    Dependencies::~Dependencies()
-    { }
-
-    bool
-    Dependencies::matches(Dependencies const& other) const
-    {
-        return PolygonUtils::fuzzyCompare(
-            m_rotatedPageOutline, other.m_rotatedPageOutline
-        );
-    }
-
-    QDomElement
-    Dependencies::toXml(QDomDocument& doc, QString const& name) const
-    {
-        XmlMarshaller marshaller(doc);
-
-        QDomElement el(doc.createElement(name));
-        el.appendChild(
-            marshaller.polygonF(
-                m_rotatedPageOutline, "rotated-page-outline"
-            )
-        );
-
-        return el;
-    }
+    return el;
+}
 }  // namespace select_content

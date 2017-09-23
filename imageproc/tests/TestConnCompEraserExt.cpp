@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,157 +22,149 @@
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 
-namespace imageproc
-{
-    namespace tests
-    {
-        using namespace utils;
+namespace imageproc {
+namespace tests {
+using namespace utils;
 
-        BOOST_AUTO_TEST_SUITE(ConnCompEraserExtTestSuite);
+BOOST_AUTO_TEST_SUITE(ConnCompEraserExtTestSuite);
 
-        BOOST_AUTO_TEST_CASE(test_null_image)
-        {
-            ConnCompEraser eraser(BinaryImage(), CONN4);
-            BOOST_CHECK(eraser.nextConnComp().isNull());
+BOOST_AUTO_TEST_CASE(test_null_image) {
+    ConnCompEraser eraser(BinaryImage(), CONN4);
+    BOOST_CHECK(eraser.nextConnComp().isNull());
+}
+
+static bool checkAlignedImage(ConnCompEraserExt const& eraser, BinaryImage const& nonaligned) {
+    BinaryImage const aligned(eraser.computeConnCompImageAligned());
+    int const pad = aligned.width() - nonaligned.width();
+    if (pad < 0) {
+        return false;
+    }
+
+    BinaryImage test1(nonaligned);
+    BinaryImage empty1(test1.size());
+    empty1.fill(WHITE);
+    rasterOp<RopXor<RopSrc, RopDst>>(test1, test1.rect(), aligned, QPoint(pad, 0));
+    if (test1 != empty1) {
+        return false;
+    }
+
+    if (pad > 0) {
+        BinaryImage test2(pad, nonaligned.height());
+        BinaryImage empty2(test2.size());
+        empty2.fill(WHITE);
+        rasterOp<RopSrc>(test2, test2.rect(), aligned, QPoint(0, 0));
+        if (test2 != empty2) {
+            return false;
         }
+    }
 
-        static bool
-        checkAlignedImage(ConnCompEraserExt const& eraser, BinaryImage const& nonaligned)
-        {
-            BinaryImage const aligned(eraser.computeConnCompImageAligned());
-            int const pad = aligned.width() - nonaligned.width();
-            if (pad < 0) {
-                return false;
-            }
+    return true;
+}
 
-            BinaryImage test1(nonaligned);
-            BinaryImage empty1(test1.size());
-            empty1.fill(WHITE);
-            rasterOp<RopXor<RopSrc, RopDst>>(test1, test1.rect(), aligned, QPoint(pad, 0));
-            if (test1 != empty1) {
-                return false;
-            }
+BOOST_AUTO_TEST_CASE(test_small_image) {
+    static int const inp[] = {
+        0, 0, 1, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 1, 1, 1, 1,
+        1, 1, 0, 1, 1, 0, 1, 0, 0,
+        0, 0, 1, 1, 0, 0, 1, 1, 0,
+        0, 1, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 1, 0, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 0, 0
+    };
 
-            if (pad > 0) {
-                BinaryImage test2(pad, nonaligned.height());
-                BinaryImage empty2(test2.size());
-                empty2.fill(WHITE);
-                rasterOp<RopSrc>(test2, test2.rect(), aligned, QPoint(0, 0));
-                if (test2 != empty2) {
-                    return false;
-                }
-            }
+    std::list<BinaryImage> c4i;
 
-            return true;
+    static int const out4_1[] = {
+        1, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 1,
+        1, 1, 0,
+        0, 1, 0
+    };
+    c4i.push_back(makeBinaryImage(out4_1, 3, 6));
+
+    static int const out4_2[] = {
+        1, 1
+    };
+    c4i.push_back(makeBinaryImage(out4_2, 2, 1));
+
+    static int const out4_3[] = {
+        0, 0, 0, 0, 0, 1, 0,
+        1, 1, 1, 1, 1, 1, 1
+    };
+    c4i.push_back(makeBinaryImage(out4_3, 7, 2));
+
+    static int const out4_4[] = {
+        1, 1, 1, 1,
+        0, 1, 0, 0,
+        0, 1, 1, 0,
+    };
+    c4i.push_back(makeBinaryImage(out4_4, 4, 3));
+
+    static int const out4_5[] = {
+        1
+    };
+    c4i.push_back(makeBinaryImage(out4_5, 1, 1));
+
+    static int const out4_6[] = {
+        1
+    };
+    c4i.push_back(makeBinaryImage(out4_6, 1, 1));
+
+    std::list<BinaryImage> c8i;
+
+    static int const out8_1[] = {
+        0, 0, 1, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 0, 1, 1, 1, 1,
+        1, 1, 0, 1, 1, 0, 1, 0, 0,
+        0, 0, 1, 1, 0, 0, 1, 1, 0,
+        0, 1, 0, 1, 0, 0, 0, 0, 0,
+    };
+    c8i.push_back(makeBinaryImage(out8_1, 9, 6));
+
+    static int const out8_2[] = {
+        0, 0, 0, 0, 0, 1, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 0,
+    };
+    c8i.push_back(makeBinaryImage(out8_2, 8, 2));
+
+    BinaryImage img(makeBinaryImage(inp, 9, 8));
+
+    ConnComp cc;
+    ConnCompEraserExt eraser4(img, CONN4);
+    while (!(cc = eraser4.nextConnComp()).isNull()) {
+        BinaryImage const cc_img(eraser4.computeConnCompImage());
+        std::list<BinaryImage>::iterator const it(
+            std::find(c4i.begin(), c4i.end(), cc_img)
+        );
+        if (it != c4i.end()) {
+            BOOST_CHECK(checkAlignedImage(eraser4, cc_img));
+            c4i.erase(it);
+        } else {
+            BOOST_ERROR("Incorrect 4-connected block found.");
         }
+    }
+    BOOST_CHECK_MESSAGE(c4i.empty(), "Not all 4-connected blocks were found.");
 
-        BOOST_AUTO_TEST_CASE(test_small_image)
-        {
-            static int const inp[] = {
-                0, 0, 1, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 1, 1, 1, 1,
-                1, 1, 0, 1, 1, 0, 1, 0, 0,
-                0, 0, 1, 1, 0, 0, 1, 1, 0,
-                0, 1, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 1, 0, 1, 0,
-                1, 1, 1, 1, 1, 1, 1, 0, 0
-            };
-
-            std::list<BinaryImage> c4i;
-
-            static int const out4_1[] = {
-                1, 1, 0,
-                0, 1, 0,
-                0, 1, 0,
-                0, 1, 1,
-                1, 1, 0,
-                0, 1, 0
-            };
-            c4i.push_back(makeBinaryImage(out4_1, 3, 6));
-
-            static int const out4_2[] = {
-                1, 1
-            };
-            c4i.push_back(makeBinaryImage(out4_2, 2, 1));
-
-            static int const out4_3[] = {
-                0, 0, 0, 0, 0, 1, 0,
-                1, 1, 1, 1, 1, 1, 1
-            };
-            c4i.push_back(makeBinaryImage(out4_3, 7, 2));
-
-            static int const out4_4[] = {
-                1, 1, 1, 1,
-                0, 1, 0, 0,
-                0, 1, 1, 0,
-            };
-            c4i.push_back(makeBinaryImage(out4_4, 4, 3));
-
-            static int const out4_5[] = {
-                1
-            };
-            c4i.push_back(makeBinaryImage(out4_5, 1, 1));
-
-            static int const out4_6[] = {
-                1
-            };
-            c4i.push_back(makeBinaryImage(out4_6, 1, 1));
-
-            std::list<BinaryImage> c8i;
-
-            static int const out8_1[] = {
-                0, 0, 1, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0, 1, 1, 1, 1,
-                1, 1, 0, 1, 1, 0, 1, 0, 0,
-                0, 0, 1, 1, 0, 0, 1, 1, 0,
-                0, 1, 0, 1, 0, 0, 0, 0, 0,
-            };
-            c8i.push_back(makeBinaryImage(out8_1, 9, 6));
-
-            static int const out8_2[] = {
-                0, 0, 0, 0, 0, 1, 0, 1,
-                1, 1, 1, 1, 1, 1, 1, 0,
-            };
-            c8i.push_back(makeBinaryImage(out8_2, 8, 2));
-
-            BinaryImage img(makeBinaryImage(inp, 9, 8));
-
-            ConnComp cc;
-            ConnCompEraserExt eraser4(img, CONN4);
-            while (!(cc = eraser4.nextConnComp()).isNull()) {
-                BinaryImage const cc_img(eraser4.computeConnCompImage());
-                std::list<BinaryImage>::iterator const it(
-                    std::find(c4i.begin(), c4i.end(), cc_img)
-                );
-                if (it != c4i.end()) {
-                    BOOST_CHECK(checkAlignedImage(eraser4, cc_img));
-                    c4i.erase(it);
-                }
-                else {
-                    BOOST_ERROR("Incorrect 4-connected block found.");
-                }
-            }
-            BOOST_CHECK_MESSAGE(c4i.empty(), "Not all 4-connected blocks were found.");
-
-            ConnCompEraserExt eraser8(img, CONN8);
-            while (!(cc = eraser8.nextConnComp()).isNull()) {
-                BinaryImage const cc_img(eraser8.computeConnCompImage());
-                std::list<BinaryImage>::iterator const it(
-                    std::find(c8i.begin(), c8i.end(), cc_img)
-                );
-                if (it != c8i.end()) {
-                    BOOST_CHECK(checkAlignedImage(eraser8, cc_img));
-                    c8i.erase(it);
-                }
-                else {
-                    BOOST_ERROR("Incorrect 8-connected block found.");
-                }
-            }
-            BOOST_CHECK_MESSAGE(c8i.empty(), "Not all 8-connected blocks were found.");
+    ConnCompEraserExt eraser8(img, CONN8);
+    while (!(cc = eraser8.nextConnComp()).isNull()) {
+        BinaryImage const cc_img(eraser8.computeConnCompImage());
+        std::list<BinaryImage>::iterator const it(
+            std::find(c8i.begin(), c8i.end(), cc_img)
+        );
+        if (it != c8i.end()) {
+            BOOST_CHECK(checkAlignedImage(eraser8, cc_img));
+            c8i.erase(it);
+        } else {
+            BOOST_ERROR("Incorrect 8-connected block found.");
         }
+    }
+    BOOST_CHECK_MESSAGE(c8i.empty(), "Not all 8-connected blocks were found.");
+}
 
-        BOOST_AUTO_TEST_SUITE_END();
-    }  // namespace tests
+BOOST_AUTO_TEST_SUITE_END();
+}      // namespace tests
 }  // namespace imageproc

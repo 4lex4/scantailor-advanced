@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,54 +19,42 @@
 #include "InteractionState.h"
 
 InteractionState::Captor
-&
-InteractionState::Captor::operator=(Captor& other)
-{
+& InteractionState::Captor::operator=(Captor& other) {
     swap_nodes(other);
     other.unlink();
 
     return *this;
 }
 
-InteractionState::Captor&
-InteractionState::Captor::operator=(CopyHelper other)
-{
+InteractionState::Captor& InteractionState::Captor::operator=(CopyHelper other) {
     return *this = *other.captor;
 }
 
 InteractionState::InteractionState()
-    : m_proximityThreshold(Proximity::fromDist(10.0)),
-      m_bestProximityPriority(std::numeric_limits<int>::min()),
-      m_redrawRequested(false)
-{ }
+        : m_proximityThreshold(Proximity::fromDist(10.0)),
+          m_bestProximityPriority(std::numeric_limits<int>::min()),
+          m_redrawRequested(false) {
+}
 
-void
-InteractionState::capture(Captor& captor)
-{
+void InteractionState::capture(Captor& captor) {
     captor.unlink();
     m_captorList.push_back(captor);
 }
 
-bool
-InteractionState::capturedBy(Captor const& captor) const
-{
+bool InteractionState::capturedBy(Captor const& captor) const {
     return !m_captorList.empty() && &m_captorList.back() == &captor;
 }
 
-void
-InteractionState::resetProximity()
-{
+void InteractionState::resetProximity() {
     m_proximityLeader.clear();
     m_bestProximity = Proximity();
     m_bestProximityPriority = std::numeric_limits<int>::min();
 }
 
-void
-InteractionState::updateProximity(Captor& captor,
-                                  Proximity const& proximity,
-                                  int priority,
-                                  Proximity proximity_threshold)
-{
+void InteractionState::updateProximity(Captor& captor,
+                                       Proximity const& proximity,
+                                       int priority,
+                                       Proximity proximity_threshold) {
     if (captor.is_linked()) {
         return;
     }
@@ -86,15 +73,11 @@ InteractionState::updateProximity(Captor& captor,
     }
 }
 
-bool
-InteractionState::proximityLeader(Captor const& captor) const
-{
+bool InteractionState::proximityLeader(Captor const& captor) const {
     return !m_proximityLeader.empty() && &m_proximityLeader.front() == &captor;
 }
 
-bool
-InteractionState::betterProximity(Proximity const& proximity, int const priority) const
-{
+bool InteractionState::betterProximity(Proximity const& proximity, int const priority) const {
     if (priority != m_bestProximityPriority) {
         return priority > m_bestProximityPriority;
     }
@@ -102,30 +85,22 @@ InteractionState::betterProximity(Proximity const& proximity, int const priority
     return proximity < m_bestProximity;
 }
 
-QCursor
-InteractionState::cursor() const
-{
+QCursor InteractionState::cursor() const {
     if (!m_captorList.empty()) {
         return m_captorList.back().interactionCursor();
-    }
-    else if (!m_proximityLeader.empty()) {
+    } else if (!m_proximityLeader.empty()) {
         return m_proximityLeader.front().proximityCursor();
-    }
-    else {
+    } else {
         return QCursor();
     }
 }
 
-QString
-InteractionState::statusTip() const
-{
+QString InteractionState::statusTip() const {
     if (!m_captorList.empty()) {
         return m_captorList.back().interactionOrProximityStatusTip();
-    }
-    else if (!m_proximityLeader.empty()) {
+    } else if (!m_proximityLeader.empty()) {
         return m_proximityLeader.front().proximityStatusTip();
-    }
-    else {
+    } else {
         return m_defaultStatusTip;
     }
 }

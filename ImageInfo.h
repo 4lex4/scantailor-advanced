@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,8 +27,7 @@
  * and is used for adding images to ProjectPages objects.  Beyond that,
  * ProjectPages doesn't operate with ImageInfo objects, but with PageInfo ones.
  */
-class ImageInfo
-{
+class ImageInfo {
 public:
     ImageInfo();
 
@@ -39,28 +37,23 @@ public:
               bool left_page_removed,
               bool right_page_removed);
 
-    ImageId const& id() const
-    {
+    ImageId const& id() const {
         return m_id;
     }
 
-    ImageMetadata const& metadata() const
-    {
+    ImageMetadata const& metadata() const {
         return m_metadata;
     }
 
-    int numSubPages() const
-    {
+    int numSubPages() const {
         return m_numSubPages;
     }
 
-    bool leftHalfRemoved() const
-    {
+    bool leftHalfRemoved() const {
         return m_leftHalfRemoved;
     }
 
-    bool rightHalfRemoved() const
-    {
+    bool rightHalfRemoved() const {
         return m_rightHalfRemoved;
     }
 
@@ -71,5 +64,6 @@ private:
     bool m_leftHalfRemoved;
     bool m_rightHalfRemoved;
 };
+
 
 #endif  // ifndef IMAGEINFO_H_

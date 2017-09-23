@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,14 +24,13 @@
 class PageInfo;
 class AbstractFilterDataCollector;
 
-class CompositeCacheDrivenTask
-    : public RefCountable
-{
+class CompositeCacheDrivenTask: public RefCountable {
 public:
-    virtual ~CompositeCacheDrivenTask()
-    { }
+    virtual ~CompositeCacheDrivenTask() {
+    }
 
     virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector) = 0;
 };
+
 
 #endif

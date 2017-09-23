@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,93 +26,89 @@
 #include <stack>
 #include <stdint.h>
 
-namespace imageproc
-{
-    class ConnComp;
+namespace imageproc {
+class ConnComp;
+
+/**
+ * \brief Erases connected components one by one and returns their bounding boxes.
+ */
+class ConnCompEraser {
+    DECLARE_NON_COPYABLE(ConnCompEraser)
+public:
+    /**
+     * \brief Constructor.
+     *
+     * \param image The image from which connected components are to be erased.
+     *        If you don't need the original image, pass image.release(), to
+     *        avoid unnecessary copy-on-write.
+     * \param conn Defines which neighbouring pixels are considered to be connected.
+     */
+    ConnCompEraser(BinaryImage const& image, Connectivity conn);
 
     /**
-     * \brief Erases connected components one by one and returns their bounding boxes.
+     * \brief Erase the next connected component and return its bounding box.
+     *
+     * If there are no black pixels remaining, returns a null ConnComp.
      */
-    class ConnCompEraser
-    {
-        DECLARE_NON_COPYABLE(ConnCompEraser)
+    ConnComp nextConnComp();
 
-    public:
-        /**
-         * \brief Constructor.
-         *
-         * \param image The image from which connected components are to be erased.
-         *        If you don't need the original image, pass image.release(), to
-         *        avoid unnecessary copy-on-write.
-         * \param conn Defines which neighbouring pixels are considered to be connected.
-         */
-        ConnCompEraser(BinaryImage const& image, Connectivity conn);
+    /**
+     * \brief Returns the image in its present state.
+     *
+     * Every time nextConnComp() is called, a connected component
+     * is erased from the image, assuming there was one.
+     */
+    BinaryImage const& image() const {
+        return m_image;
+    }
 
-        /**
-         * \brief Erase the next connected component and return its bounding box.
-         *
-         * If there are no black pixels remaining, returns a null ConnComp.
-         */
-        ConnComp nextConnComp();
+private:
+    struct Segment {
+        uint32_t* line;
 
-        /**
-         * \brief Returns the image in its present state.
-         *
-         * Every time nextConnComp() is called, a connected component
-         * is erased from the image, assuming there was one.
-         */
-        BinaryImage const& image() const
-        {
-            return m_image;
-        }
+        /**< Pointer to the beginning of the line. */
+        int xleft;
 
-    private:
-        struct Segment {
-            uint32_t* line;
+        /**< Leftmost pixel to process. */
+        int xright;
 
-            /**< Pointer to the beginning of the line. */
-            int xleft;
+        /**< Rightmost pixel to process. */
+        int y;
 
-            /**< Leftmost pixel to process. */
-            int xright;
+        /**< y value of the line to be processed. */
+        int dy;
 
-            /**< Rightmost pixel to process. */
-            int y;
-
-            /**< y value of the line to be processed. */
-            int dy;
-
-            /**< Vertical direction: 1 or -1. */
-            int dy_wpl;  /**< words_per_line or -words_per_line. */
-        };
-
-        struct BBox;
-
-        void pushSegSameDir(Segment const& seg, int xleft, int xright, BBox& bbox);
-
-        void pushSegInvDir(Segment const& seg, int xleft, int xright, BBox& bbox);
-
-        void pushInitialSegments();
-
-        bool moveToNextBlackPixel();
-
-        ConnComp eraseConnComp4();
-
-        ConnComp eraseConnComp8();
-
-        static uint32_t getBit(uint32_t const* line, int x);
-
-        static void clearBit(uint32_t* line, int x);
-
-        BinaryImage m_image;
-        uint32_t* m_pLine;
-        int const m_width;
-        int const m_height;
-        int const m_wpl;
-        Connectivity const m_connectivity;
-        std::stack<Segment> m_segStack;
-        int m_x;
-        int m_y;
+        /**< Vertical direction: 1 or -1. */
+        int dy_wpl;      /**< words_per_line or -words_per_line. */
     };
+
+    struct BBox;
+
+    void pushSegSameDir(Segment const& seg, int xleft, int xright, BBox& bbox);
+
+    void pushSegInvDir(Segment const& seg, int xleft, int xright, BBox& bbox);
+
+    void pushInitialSegments();
+
+    bool moveToNextBlackPixel();
+
+    ConnComp eraseConnComp4();
+
+    ConnComp eraseConnComp8();
+
+    static uint32_t getBit(uint32_t const* line, int x);
+
+    static void clearBit(uint32_t* line, int x);
+
+    BinaryImage m_image;
+    uint32_t* m_pLine;
+    int const m_width;
+    int const m_height;
+    int const m_wpl;
+    Connectivity const m_connectivity;
+    std::stack<Segment> m_segStack;
+    int m_x;
+    int m_y;
+};
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_CONNCOMPERASER_H_

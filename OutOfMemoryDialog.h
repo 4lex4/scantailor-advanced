@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -29,11 +28,8 @@
 #include <QString>
 #include <QDialog>
 
-class OutOfMemoryDialog
-    : public QDialog
-{
+class OutOfMemoryDialog: public QDialog {
     Q_OBJECT
-
 public:
     OutOfMemoryDialog(QWidget* parent = 0);
 
@@ -60,5 +56,6 @@ private:
     SelectedPage m_selectedPage;
     OutputFileNameGenerator m_outFileNameGen;
 };
+
 
 #endif  // ifndef OUT_OF_MEMORY_DIALOG_H_

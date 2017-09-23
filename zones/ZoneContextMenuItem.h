@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,8 +25,7 @@
 class InteractionState;
 class InteractionHandler;
 
-class ZoneContextMenuItem
-{
+class ZoneContextMenuItem {
 public:
     /**
      * A callback may either return the InteractionHandler to connect
@@ -42,17 +40,15 @@ public:
     typedef boost::function<InteractionHandler*(InteractionState&)> Callback;
 
     ZoneContextMenuItem(QString const& label, Callback const& callback)
-        : m_label(label),
-          m_callback(callback)
-    { }
+            : m_label(label),
+              m_callback(callback) {
+    }
 
-    QString const& label() const
-    {
+    QString const& label() const {
         return m_label;
     }
 
-    Callback const& callback() const
-    {
+    Callback const& callback() const {
         return m_callback;
     }
 
@@ -60,5 +56,6 @@ private:
     QString m_label;
     Callback m_callback;
 };
+
 
 #endif  // ifndef ZONE_CONTEXT_MENU_ITEM_H_

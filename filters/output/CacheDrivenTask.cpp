@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -29,109 +28,105 @@
 #include "filter_dc/ThumbnailCollector.h"
 #include <QFileInfo>
 
-namespace output
-{
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                                     OutputFileNameGenerator const& out_file_name_gen)
+namespace output {
+CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                 OutputFileNameGenerator const& out_file_name_gen)
         : m_ptrSettings(settings),
-          m_outFileNameGen(out_file_name_gen)
-    { }
+          m_outFileNameGen(out_file_name_gen) {
+}
 
-    CacheDrivenTask::~CacheDrivenTask()
-    { }
+CacheDrivenTask::~CacheDrivenTask() {
+}
 
-    void
-    CacheDrivenTask::process(PageInfo const& page_info,
-                             AbstractFilterDataCollector* collector,
-                             ImageTransformation const& xform,
-                             QPolygonF const& content_rect_phys)
-    {
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
-            Params const params(m_ptrSettings->getParams(page_info.id()));
+void CacheDrivenTask::process(PageInfo const& page_info,
+                              AbstractFilterDataCollector* collector,
+                              ImageTransformation const& xform,
+                              QPolygonF const& content_rect_phys) {
+    if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
+        Params const params(m_ptrSettings->getParams(page_info.id()));
 
-            ImageTransformation new_xform(xform);
-            new_xform.postScaleToDpi(params.outputDpi());
+        ImageTransformation new_xform(xform);
+        new_xform.postScaleToDpi(params.outputDpi());
 
-            bool need_reprocess = false;
+        bool need_reprocess = false;
 
-            do {
-                std::unique_ptr<OutputParams> stored_output_params(
-                    m_ptrSettings->getOutputParams(page_info.id())
-                );
+        do {
+            std::unique_ptr<OutputParams> stored_output_params(
+                m_ptrSettings->getOutputParams(page_info.id())
+            );
 
-                if (!stored_output_params.get()) {
-                    need_reprocess = true;
-                    break;
-                }
-
-                OutputGenerator const generator(
-                    params.outputDpi(), params.colorParams(), params.despeckleLevel(),
-                    new_xform, content_rect_phys
-                );
-                OutputImageParams const new_output_image_params(
-                    generator.outputImageSize(), generator.outputContentRect(),
-                    new_xform, params.outputDpi(), params.colorParams(),
-                    params.dewarpingMode(), params.distortionModel(),
-                    params.depthPerception(), params.despeckleLevel(), params.pictureShape()
-                );
-
-                if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
-                    need_reprocess = true;
-                    break;
-                }
-
-                ZoneSet const new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
-                if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
-                    need_reprocess = true;
-                    break;
-                }
-
-                ZoneSet const new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
-                if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
-                    need_reprocess = true;
-                    break;
-                }
-
-                QFileInfo const out_file_info(out_file_path);
-
-                if (!out_file_info.exists()) {
-                    need_reprocess = true;
-                    break;
-                }
-
-                if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-                    need_reprocess = true;
-                    break;
-                }
-            } while (false);
-
-            if (need_reprocess) {
-                thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                        new IncompleteThumbnail(
-                            thumb_col->thumbnailCache(),
-                            thumb_col->maxLogicalThumbSize(),
-                            page_info.imageId(), new_xform
-                        )
-                    )
-                );
+            if (!stored_output_params.get()) {
+                need_reprocess = true;
+                break;
             }
-            else {
-                ImageTransformation const out_xform(
-                    new_xform.resultingRect(), params.outputDpi()
-                );
 
-                thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                        new Thumbnail(
-                            thumb_col->thumbnailCache(),
-                            thumb_col->maxLogicalThumbSize(),
-                            ImageId(out_file_path), out_xform
-                        )
-                    )
-                );
+            OutputGenerator const generator(
+                params.outputDpi(), params.colorParams(), params.despeckleLevel(),
+                new_xform, content_rect_phys
+            );
+            OutputImageParams const new_output_image_params(
+                generator.outputImageSize(), generator.outputContentRect(),
+                new_xform, params.outputDpi(), params.colorParams(),
+                params.dewarpingMode(), params.distortionModel(),
+                params.depthPerception(), params.despeckleLevel(), params.pictureShape()
+            );
+
+            if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
+                need_reprocess = true;
+                break;
             }
+
+            ZoneSet const new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
+            if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
+                need_reprocess = true;
+                break;
+            }
+
+            ZoneSet const new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
+            if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
+                need_reprocess = true;
+                break;
+            }
+
+            QFileInfo const out_file_info(out_file_path);
+
+            if (!out_file_info.exists()) {
+                need_reprocess = true;
+                break;
+            }
+
+            if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
+                need_reprocess = true;
+                break;
+            }
+        } while (false);
+
+        if (need_reprocess) {
+            thumb_col->processThumbnail(
+                std::unique_ptr<QGraphicsItem>(
+                    new IncompleteThumbnail(
+                        thumb_col->thumbnailCache(),
+                        thumb_col->maxLogicalThumbSize(),
+                        page_info.imageId(), new_xform
+                    )
+                )
+            );
+        } else {
+            ImageTransformation const out_xform(
+                new_xform.resultingRect(), params.outputDpi()
+            );
+
+            thumb_col->processThumbnail(
+                std::unique_ptr<QGraphicsItem>(
+                    new Thumbnail(
+                        thumb_col->thumbnailCache(),
+                        thumb_col->maxLogicalThumbSize(),
+                        ImageId(out_file_path), out_xform
+                    )
+                )
+            );
         }
-    }  // CacheDrivenTask::process
+    }
+}      // CacheDrivenTask::process
 }  // namespace output

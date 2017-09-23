@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,42 +20,31 @@
 #include "ImageViewBase.h"
 
 DraggablePoint::DraggablePoint()
-    : m_hitAreaRadius(),
-      m_proximityPriority(1)
-{ }
+        : m_hitAreaRadius(),
+          m_proximityPriority(1) {
+}
 
-Proximity
-DraggablePoint::proximityThreshold(InteractionState const& state) const
-{
+Proximity DraggablePoint::proximityThreshold(InteractionState const& state) const {
     if (m_hitAreaRadius == 0.0) {
         return state.proximityThreshold();
-    }
-    else {
+    } else {
         return Proximity::fromDist(m_hitAreaRadius);
     }
 }
 
-int
-DraggablePoint::proximityPriority() const
-{
+int DraggablePoint::proximityPriority() const {
     return m_proximityPriority;
 }
 
-Proximity
-DraggablePoint::proximity(QPointF const& mouse_pos)
-{
+Proximity DraggablePoint::proximity(QPointF const& mouse_pos) {
     return Proximity(pointPosition(), mouse_pos);
 }
 
-void
-DraggablePoint::dragInitiated(QPointF const& mouse_pos)
-{
+void DraggablePoint::dragInitiated(QPointF const& mouse_pos) {
     m_pointRelativeToMouse = pointPosition() - mouse_pos;
 }
 
-void
-DraggablePoint::dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask)
-{
+void DraggablePoint::dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) {
     pointMoveRequest(mouse_pos + m_pointRelativeToMouse, mask);
 }
 

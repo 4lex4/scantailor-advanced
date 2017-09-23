@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovigh@gmail.com>
@@ -25,8 +24,7 @@ class QImage;
 class QString;
 class QIODevice;
 
-class ImageLoader
-{
+class ImageLoader {
 public:
     static QImage load(QString const& file_path, int page_num = 0);
 
@@ -34,5 +32,6 @@ public:
 
     static QImage load(QIODevice& io_dev, int page_num);
 };
+
 
 #endif

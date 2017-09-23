@@ -1,4 +1,3 @@
-
 /*
 
     Scan Tailor - Interactive post-processing tool for scanned pages.
@@ -29,18 +28,15 @@
 
 class SerializableSpline;
 
-class EditableSpline
-    : public RefCountable
-{
+class EditableSpline: public RefCountable {
 public:
     typedef IntrusivePtr<EditableSpline> Ptr;
 
-    class SegmentIterator
-    {
+    class SegmentIterator {
     public:
         SegmentIterator(EditableSpline& spline)
-            : m_ptrNextVertex(spline.firstVertex())
-        { }
+                : m_ptrNextVertex(spline.firstVertex()) {
+        }
 
         bool hasNext() const;
 
@@ -50,31 +46,28 @@ public:
         SplineVertex::Ptr m_ptrNextVertex;
     };
 
+
     EditableSpline();
 
     EditableSpline(SerializableSpline const& spline);
 
     void appendVertex(QPointF const& pt);
 
-    SplineVertex::Ptr firstVertex() const
-    {
+    SplineVertex::Ptr firstVertex() const {
         return m_sentinel.firstVertex();
     }
 
-    SplineVertex::Ptr lastVertex() const
-    {
+    SplineVertex::Ptr lastVertex() const {
         return m_sentinel.lastVertex();
     }
 
     bool hasAtLeastSegments(int num) const;
 
-    bool bridged() const
-    {
+    bool bridged() const {
         return m_sentinel.bridged();
     }
 
-    void setBridged(bool bridged)
-    {
+    void setBridged(bool bridged) {
         m_sentinel.setBridged(true);
     }
 
@@ -83,5 +76,6 @@ public:
 private:
     SentinelSplineVertex m_sentinel;
 };
+
 
 #endif  // ifndef EDITABLE_SPLINE_H_

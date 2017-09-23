@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,8 +29,7 @@
  * Projecting means finding the point on a line that is closest
  * to the given point.
  */
-class ToLineProjector
-{
+class ToLineProjector {
 public:
     /**
      * \brief Initializes line projector.
@@ -75,5 +73,6 @@ private:
     QPointF m_vec;
     Vec2d m_mat;
 };
+
 
 #endif  // ifndef TO_LINE_PROJECTOR_H_

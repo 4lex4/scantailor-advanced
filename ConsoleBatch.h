@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
 
@@ -41,8 +40,7 @@
 #include "ProjectReader.h"
 
 
-class ConsoleBatch
-{
+class ConsoleBatch {
 public:
     ConsoleBatch(std::vector<ImageFileInfo> const& images,
                  QString const& output_directory,
@@ -80,5 +78,6 @@ private:
 
     BackgroundTaskPtr createCompositeTask(PageInfo const& page, int const last_filter_idx);
 };
+
 
 #endif  // ifndef CONSOLEBATCH_H_

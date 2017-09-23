@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -34,12 +33,8 @@
 
 class QItemSelection;
 
-class FixDpiDialog
-    : public QDialog,
-      private Ui::FixDpiDialog
-{
+class FixDpiDialog: public QDialog, private Ui::FixDpiDialog {
     Q_OBJECT
-
 public:
     FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = 0);
 
@@ -86,5 +81,6 @@ private:
     QPalette m_normalPalette;
     QPalette m_errorPalette;
 };
+
 
 #endif  // ifndef FIXDPIDIALOG_H_

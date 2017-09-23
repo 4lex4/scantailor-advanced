@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,12 +24,10 @@
 class RelinkablePath;
 class QString;
 
-class AbstractRelinker
-    : public RefCountable
-{
+class AbstractRelinker: public RefCountable {
 public:
-    virtual ~AbstractRelinker()
-    { }
+    virtual ~AbstractRelinker() {
+    }
 
     /**
      * Returns the path to be used instead of the given path.
@@ -38,5 +35,6 @@ public:
      */
     virtual QString substitutionPathFor(RelinkablePath const& orig_path) const = 0;
 };
+
 
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,31 +28,25 @@ class PageInfo;
 class AbstractFilterDataCollector;
 class ImageTransformation;
 
-namespace deskew
-{
-    class CacheDrivenTask;
+namespace deskew {
+class CacheDrivenTask;
 }
 
-namespace page_split
-{
-    class Settings;
+namespace page_split {
+class Settings;
 
-    class CacheDrivenTask
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(CacheDrivenTask)
+class CacheDrivenTask: public RefCountable {
+    DECLARE_NON_COPYABLE(CacheDrivenTask)
+public:
+    CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
-    public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
+    virtual ~CacheDrivenTask();
 
-        virtual ~CacheDrivenTask();
+    void process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
 
-        void process(PageInfo const& page_info, AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform);
-
-    private:
-        IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
-    };
+private:
+    IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
+    IntrusivePtr<Settings> m_ptrSettings;
+};
 }
 #endif  // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_

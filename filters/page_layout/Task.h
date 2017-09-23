@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,44 +29,39 @@ class FilterData;
 class ImageTransformation;
 class QRectF;
 
-namespace output
-{
-    class Task;
+namespace output {
+class Task;
 }
 
-namespace page_layout
-{
-    class Filter;
-    class Settings;
+namespace page_layout {
+class Filter;
+class Settings;
 
-    class Task
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Task)
+class Task: public RefCountable {
+    DECLARE_NON_COPYABLE(Task)
+public:
+    Task(IntrusivePtr<Filter> const& filter,
+         IntrusivePtr<output::Task> const& next_task,
+         IntrusivePtr<Settings> const& settings,
+         PageId const& page_id,
+         bool batch,
+         bool debug);
 
-    public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<output::Task> const& next_task,
-             IntrusivePtr<Settings> const& settings,
-             PageId const& page_id,
-             bool batch,
-             bool debug);
+    virtual ~Task();
 
-        virtual ~Task();
+    FilterResultPtr process(TaskStatus const& status,
+                            FilterData const& data,
+                            QRectF const& page_rect,
+                            QRectF const& content_rect);
 
-        FilterResultPtr process(TaskStatus const& status,
-                                FilterData const& data,
-                                QRectF const& page_rect,
-                                QRectF const& content_rect);
+private:
+    class UiUpdater;
 
-    private:
-        class UiUpdater;
-
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<output::Task> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
-        PageId m_pageId;
-        bool m_batchProcessing;
-    };
+    IntrusivePtr<Filter> m_ptrFilter;
+    IntrusivePtr<output::Task> m_ptrNextTask;
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageId m_pageId;
+    bool m_batchProcessing;
+};
 }
 #endif  // ifndef PAGE_LAYOUT_TASK_H_

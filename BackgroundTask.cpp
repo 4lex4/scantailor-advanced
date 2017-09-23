@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -19,15 +18,11 @@
 
 #include "BackgroundTask.h"
 
-char const*
-BackgroundTask::CancelledException::what() const throw()
-{
+char const* BackgroundTask::CancelledException::what() const throw() {
     return "BackgroundTask cancelled";
 }
 
-void
-BackgroundTask::throwIfCancelled() const
-{
+void BackgroundTask::throwIfCancelled() const {
     if (isCancelled()) {
         throw CancelledException();
     }

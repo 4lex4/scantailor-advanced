@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,71 +21,57 @@
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
 
-namespace fix_orientation
-{
-    Settings::Settings()
-    { }
+namespace fix_orientation {
+Settings::Settings() {
+}
 
-    Settings::~Settings()
-    { }
+Settings::~Settings() {
+}
 
-    void
-    Settings::clear()
-    {
-        QMutexLocker locker(&m_mutex);
-        m_perImageRotation.clear();
+void Settings::clear() {
+    QMutexLocker locker(&m_mutex);
+    m_perImageRotation.clear();
+}
+
+void Settings::performRelinking(AbstractRelinker const& relinker) {
+    QMutexLocker locker(&m_mutex);
+    PerImageRotation new_rotations;
+
+    for (PerImageRotation::value_type const& kv : m_perImageRotation) {
+        RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
+        ImageId new_image_id(kv.first);
+        new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
+        new_rotations.insert(PerImageRotation::value_type(new_image_id, kv.second));
     }
 
-    void
-    Settings::performRelinking(AbstractRelinker const& relinker)
-    {
-        QMutexLocker locker(&m_mutex);
-        PerImageRotation new_rotations;
+    m_perImageRotation.swap(new_rotations);
+}
 
-        for (PerImageRotation::value_type const& kv : m_perImageRotation) {
-            RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
-            ImageId new_image_id(kv.first);
-            new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
-            new_rotations.insert(PerImageRotation::value_type(new_image_id, kv.second));
-        }
+void Settings::applyRotation(ImageId const& image_id, OrthogonalRotation const rotation) {
+    QMutexLocker locker(&m_mutex);
+    setImageRotationLocked(image_id, rotation);
+}
 
-        m_perImageRotation.swap(new_rotations);
+void Settings::applyRotation(std::set<PageId> const& pages, OrthogonalRotation const rotation) {
+    QMutexLocker locker(&m_mutex);
+
+    for (PageId const& page : pages) {
+        setImageRotationLocked(page.imageId(), rotation);
     }
+}
 
-    void
-    Settings::applyRotation(ImageId const& image_id, OrthogonalRotation const rotation)
-    {
-        QMutexLocker locker(&m_mutex);
-        setImageRotationLocked(image_id, rotation);
+OrthogonalRotation Settings::getRotationFor(ImageId const& image_id) const {
+    QMutexLocker locker(&m_mutex);
+
+    PerImageRotation::const_iterator it(m_perImageRotation.find(image_id));
+    if (it != m_perImageRotation.end()) {
+        return it->second;
+    } else {
+        return OrthogonalRotation();
     }
+}
 
-    void
-    Settings::applyRotation(std::set<PageId> const& pages, OrthogonalRotation const rotation)
-    {
-        QMutexLocker locker(&m_mutex);
-
-        for (PageId const& page : pages) {
-            setImageRotationLocked(page.imageId(), rotation);
-        }
-    }
-
-    OrthogonalRotation
-    Settings::getRotationFor(ImageId const& image_id) const
-    {
-        QMutexLocker locker(&m_mutex);
-
-        PerImageRotation::const_iterator it(m_perImageRotation.find(image_id));
-        if (it != m_perImageRotation.end()) {
-            return it->second;
-        }
-        else {
-            return OrthogonalRotation();
-        }
-    }
-
-    void
-    Settings::setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation)
-    {
-        Utils::mapSetValue(m_perImageRotation, image_id, rotation);
-    }
+void Settings::setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation) {
+    Utils::mapSetValue(m_perImageRotation, image_id, rotation);
+}
 }  // namespace fix_orientation

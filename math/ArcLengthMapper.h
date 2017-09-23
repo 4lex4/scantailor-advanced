@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,22 +32,19 @@
  * to be monotonously increasing, that is we consider adjacent samples
  * to be connected by straight lines.
  */
-class ArcLengthMapper
-{
+class ArcLengthMapper {
 public:
-    class Hint
-    {
+    class Hint {
         friend class ArcLengthMapper;
-
     public:
         Hint();
-
     private:
         void update(int new_segment);
 
         int m_lastSegment;
         int m_direction;
     };
+
 
     ArcLengthMapper();
 
@@ -93,9 +89,9 @@ private:
         double arcLen;
 
         Sample(double x, double arc_len)
-            : x(x),
-              arcLen(arc_len)
-        { }
+                : x(x),
+                  arcLen(arc_len) {
+        }
     };
 
     bool checkSegmentForArcLen(double arc_len, int segment) const;
@@ -109,5 +105,6 @@ private:
     std::vector<Sample> m_samples;
     double m_prevFX;
 };
+
 
 #endif  // ifndef ARC_LENGTH_MAPPER_H_

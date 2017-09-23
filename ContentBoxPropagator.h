@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,9 +25,8 @@
 class CompositeCacheDrivenTask;
 class ProjectPages;
 
-namespace page_layout
-{
-    class Filter;
+namespace page_layout {
+class Filter;
 }
 
 /**
@@ -40,8 +38,7 @@ namespace page_layout
  * expect to see the results of all your adjustments (not just the current page)
  * there.
  */
-class ContentBoxPropagator
-{
+class ContentBoxPropagator {
 public:
     ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
                          IntrusivePtr<CompositeCacheDrivenTask> const& task);
@@ -56,5 +53,6 @@ private:
     IntrusivePtr<page_layout::Filter> m_ptrPageLayoutFilter;
     IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
 };
+
 
 #endif  // ifndef CONTENTBOXPROPAGATOR_H_

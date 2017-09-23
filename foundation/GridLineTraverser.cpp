@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,8 +19,7 @@
 #include "GridLineTraverser.h"
 #include "LineIntersectionScalar.h"
 
-GridLineTraverser::GridLineTraverser(QLineF const& line)
-{
+GridLineTraverser::GridLineTraverser(QLineF const& line) {
     QPoint const p1(line.p1().toPoint());
     QPoint const p2(line.p2().toPoint());
     int h_spans, v_spans, num_spans;
@@ -30,8 +28,7 @@ GridLineTraverser::GridLineTraverser(QLineF const& line)
         num_spans = h_spans;
         lineIntersectionScalar(line, QLineF(p1, QPoint(p1.x(), p1.y() + 1)), s1);
         lineIntersectionScalar(line, QLineF(p2, QPoint(p2.x(), p2.y() + 1)), s2);
-    }
-    else {
+    } else {
         num_spans = v_spans;
         lineIntersectionScalar(line, QLineF(p1, QPoint(p1.x() + 1, p1.y())), s1);
         lineIntersectionScalar(line, QLineF(p2, QPoint(p2.x() + 1, p2.y())), s2);
@@ -44,9 +41,7 @@ GridLineTraverser::GridLineTraverser(QLineF const& line)
     m_stopsDone = 0;
 }
 
-QPoint
-GridLineTraverser::next()
-{
+QPoint GridLineTraverser::next() {
     QPointF const pt(m_line.pointAt(m_stopsDone * m_dt));
     ++m_stopsDone;
 

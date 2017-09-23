@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,11 +26,10 @@
 
 class QDomElement;
 
-class PropertyFactory
-{
+class PropertyFactory {
 public:
-    virtual ~PropertyFactory()
-    { }
+    virtual ~PropertyFactory() {
+    }
 
     typedef IntrusivePtr<Property>(*PropertyConstructor)(QDomElement const& el);
 
@@ -43,5 +41,6 @@ private:
     typedef std::map<QString, PropertyConstructor> Registry;
     Registry m_registry;
 };
+
 
 #endif

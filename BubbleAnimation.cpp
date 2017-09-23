@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,15 +27,12 @@
 using namespace imageproc;
 
 BubbleAnimation::BubbleAnimation(int const num_bubbles)
-    : m_numBubbles(num_bubbles),
-      m_curFrame(0)
-{
+        : m_numBubbles(num_bubbles),
+          m_curFrame(0) {
     assert(m_numBubbles > 0);
 }
 
-bool
-BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPaintDevice* pd, QRectF rect)
-{
+bool BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPaintDevice* pd, QRectF rect) {
     if (rect.isNull()) {
         rect = QRectF(0.0, 0.0, pd->width(), pd->height());
     }
@@ -46,9 +42,8 @@ BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, Q
     return nextFrame(head_color, tail_color, &painter, rect);
 }
 
-bool
-BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPainter* painter, QRectF const rect)
-{
+bool BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, QPainter* painter,
+                                QRectF const rect) {
     QPointF const center(rect.center());
     double const radius = std::min(
         center.x() - rect.x(), center.y() - rect.y()
@@ -83,8 +78,7 @@ BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_color, Q
         ++m_curFrame;
 
         return true;
-    }
-    else {
+    } else {
         m_curFrame = 0;
 
         return false;

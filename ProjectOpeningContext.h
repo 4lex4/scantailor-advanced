@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,11 +32,8 @@ class FixDpiDialog;
 class QWidget;
 class QDomDocument;
 
-class ProjectOpeningContext
-    : public QObject
-{
+class ProjectOpeningContext: public QObject {
     Q_OBJECT DECLARE_NON_COPYABLE(ProjectOpeningContext)
-
 public:
     ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc);
 
@@ -45,13 +41,11 @@ public:
 
     void proceed();
 
-    QString const& projectFile() const
-    {
+    QString const& projectFile() const {
         return m_projectFile;
     }
 
-    ProjectReader* projectReader()
-    {
+    ProjectReader* projectReader() {
         return &m_reader;
     }
 
@@ -71,5 +65,6 @@ private:
     QPointer<FixDpiDialog> m_ptrFixDpiDialog;
     QWidget* m_pParent;
 };
+
 
 #endif  // ifndef PROJECTOPENINGCONTEXT_H_

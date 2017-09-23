@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,22 +20,18 @@
 #include <algorithm>
 
 QuadraticFunction::QuadraticFunction(size_t num_vars)
-    : A(num_vars, num_vars),
-      b(num_vars),
-      c(0)
-{ }
+        : A(num_vars, num_vars),
+          b(num_vars),
+          c(0) {
+}
 
-void
-QuadraticFunction::reset()
-{
+void QuadraticFunction::reset() {
     A.fill(0);
     b.fill(0);
     c = 0;
 }
 
-double
-QuadraticFunction::evaluate(double const* x) const
-{
+double QuadraticFunction::evaluate(double const* x) const {
     size_t const num_vars = numVars();
 
     double sum = c;
@@ -50,9 +45,7 @@ QuadraticFunction::evaluate(double const* x) const
     return sum;
 }
 
-QuadraticFunction::Gradient
-QuadraticFunction::gradient() const
-{
+QuadraticFunction::Gradient QuadraticFunction::gradient() const {
     size_t const num_vars = numVars();
     Gradient grad;
 
@@ -68,9 +61,7 @@ QuadraticFunction::gradient() const
     return grad;
 }
 
-void
-QuadraticFunction::recalcForTranslatedArguments(double const* translation)
-{
+void QuadraticFunction::recalcForTranslatedArguments(double const* translation) {
     size_t const num_vars = numVars();
 
     for (size_t i = 0; i < num_vars; ++i) {
@@ -87,17 +78,13 @@ QuadraticFunction::recalcForTranslatedArguments(double const* translation)
     }
 }
 
-void
-QuadraticFunction::swap(QuadraticFunction& other)
-{
+void QuadraticFunction::swap(QuadraticFunction& other) {
     A.swap(other.A);
     b.swap(other.b);
     std::swap(c, other.c);
 }
 
-QuadraticFunction&
-QuadraticFunction::operator+=(QuadraticFunction const& other)
-{
+QuadraticFunction& QuadraticFunction::operator+=(QuadraticFunction const& other) {
     A += other.A;
     b += other.b;
     c += other.c;
@@ -105,9 +92,7 @@ QuadraticFunction::operator+=(QuadraticFunction const& other)
     return *this;
 }
 
-QuadraticFunction&
-QuadraticFunction::operator*=(double scalar)
-{
+QuadraticFunction& QuadraticFunction::operator*=(double scalar) {
     A *= scalar;
     b *= scalar;
     c *= scalar;

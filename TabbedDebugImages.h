@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,14 +23,10 @@
 #include <QTabWidget>
 #include <boost/intrusive/list.hpp>
 
-class TabbedDebugImages
-    : public QTabWidget
-{
+class TabbedDebugImages: public QTabWidget {
     Q_OBJECT
-
 public:
     TabbedDebugImages(QWidget* parent = 0);
-
 private slots:
     void currentTabChanged(int idx);
 
@@ -51,5 +46,6 @@ private:
      */
     DebugViewList m_liveViews;
 };
+
 
 #endif  // ifndef TABBED_DEBUG_IMAGES_H_

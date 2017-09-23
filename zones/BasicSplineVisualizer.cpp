@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,33 +21,27 @@
 #include <QPainter>
 
 BasicSplineVisualizer::BasicSplineVisualizer()
-    : m_solidColor(0xcc1420),
-      m_highlightBrightColor(0xfffe00),
-      m_highlightDarkColor(0xffa90e),
-      m_pen(m_solidColor)
-{
+        : m_solidColor(0xcc1420),
+          m_highlightBrightColor(0xfffe00),
+          m_highlightDarkColor(0xffa90e),
+          m_pen(m_solidColor) {
     m_pen.setCosmetic(true);
     m_pen.setWidthF(1.5);
 }
 
-void
-BasicSplineVisualizer::drawSplines(QPainter& painter, QTransform const& to_screen, EditableZoneSet const& zones)
-{
+void BasicSplineVisualizer::drawSplines(QPainter& painter, QTransform const& to_screen, EditableZoneSet const& zones) {
     for (EditableZoneSet::Zone const& zone : zones) {
         drawSpline(painter, to_screen, zone.spline());
     }
 }
 
-void
-BasicSplineVisualizer::drawSpline(QPainter& painter, QTransform const& to_screen, EditableSpline::Ptr const& spline)
-{
+void BasicSplineVisualizer::drawSpline(QPainter& painter, QTransform const& to_screen,
+                                       EditableSpline::Ptr const& spline) {
     prepareForSpline(painter, spline);
     painter.drawPolygon(to_screen.map(spline->toPolygon()), Qt::WindingFill);
 }
 
-void
-BasicSplineVisualizer::drawVertex(QPainter& painter, QPointF const& pt, QColor const& color)
-{
+void BasicSplineVisualizer::drawVertex(QPainter& painter, QPointF const& pt, QColor const& color) {
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 
@@ -57,9 +50,7 @@ BasicSplineVisualizer::drawVertex(QPainter& painter, QPointF const& pt, QColor c
     painter.drawEllipse(rect);
 }
 
-void
-BasicSplineVisualizer::prepareForSpline(QPainter& painter, EditableSpline::Ptr const&)
-{
+void BasicSplineVisualizer::prepareForSpline(QPainter& painter, EditableSpline::Ptr const&) {
     painter.setPen(m_pen);
     painter.setBrush(Qt::NoBrush);
 }

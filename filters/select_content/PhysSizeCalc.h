@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,19 +25,17 @@
 
 class ImageTransformation;
 
-namespace select_content
-{
-    class PhysSizeCalc
-    {
-    public:
-        PhysSizeCalc();
+namespace select_content {
+class PhysSizeCalc {
+public:
+    PhysSizeCalc();
 
-        explicit PhysSizeCalc(ImageTransformation const& xform);
+    explicit PhysSizeCalc(ImageTransformation const& xform);
 
-        QSizeF sizeMM(QRectF const& rect_px) const;
+    QSizeF sizeMM(QRectF const& rect_px) const;
 
-    private:
-        QTransform m_virtToPhys;
-    };
+private:
+    QTransform m_virtToPhys;
+};
 }
 #endif

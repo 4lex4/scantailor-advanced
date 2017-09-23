@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -60,8 +59,7 @@
  * a mapping from the original image coordinates to the new ones.
  * Note that all transformation steps are optional.
  */
-class ImageTransformation
-{
+class ImageTransformation {
 public:
     ImageTransformation(QRectF const& orig_image_rect, Dpi const& orig_dpi);
 
@@ -89,8 +87,7 @@ public:
     /**
      * \brief Get the original image DPI.
      */
-    Dpi const& origDpi() const
-    {
+    Dpi const& origDpi() const {
         return m_origDpi;
     }
 
@@ -100,8 +97,7 @@ public:
      * Note that if the original DPI was assymetric, pre-scaling to
      * a symmetric DPI will be applied implicitly.
      */
-    Dpi const& preScaledDpi() const
-    {
+    Dpi const& preScaledDpi() const {
         return m_preScaledDpi;
     }
 
@@ -115,8 +111,7 @@ public:
     /**
      * \brief Returns the 2nd step rotation.
      */
-    OrthogonalRotation preRotation() const
-    {
+    OrthogonalRotation preRotation() const {
         return m_preRotation;
     }
 
@@ -138,8 +133,7 @@ public:
      * this function returns it as is.  Otherwise, the whole available
      * area is returned.
      */
-    QPolygonF const& preCropArea() const
-    {
+    QPolygonF const& preCropArea() const {
         return m_preCropArea;
     }
 
@@ -149,8 +143,7 @@ public:
      * If no pre-crop area was set, the whole image is assumed to be
      * the pre-crop area.
      */
-    QPolygonF const& resultingPreCropArea() const
-    {
+    QPolygonF const& resultingPreCropArea() const {
         return m_resultingPreCropArea;
     }
 
@@ -164,24 +157,21 @@ public:
     /**
      * \brief Returns the 4th step rotation in degrees, as specified.
      */
-    double postRotation() const
-    {
+    double postRotation() const {
         return m_postRotation;
     }
 
     /**
      * \brief Returns the sine of the 4th step rotation angle.
      */
-    double postRotationSin() const
-    {
+    double postRotationSin() const {
         return m_postRotateXform.m12();
     }
 
     /**
      * \brief Returns the cosine of the 3rd step rotation angle.
      */
-    double postRotationCos() const
-    {
+    double postRotationCos() const {
         return m_postRotateXform.m11();
     }
 
@@ -196,8 +186,7 @@ public:
      * If no post-crop area was set, the whole image is assumed to be
      * the post-crop area.
      */
-    QPolygonF const& resultingPostCropArea() const
-    {
+    QPolygonF const& resultingPostCropArea() const {
         return m_resultingPostCropArea;
     }
 
@@ -212,8 +201,7 @@ public:
      * \brief Returns the transformation matrix from the original
      *        to resulting image coordinates.
      */
-    QTransform const& transform() const
-    {
+    QTransform const& transform() const {
         return m_transform;
     }
 
@@ -221,16 +209,14 @@ public:
      * \brief Returns the transformation matrix from the resulting
      *        to original image coordinates.
      */
-    QTransform const& transformBack() const
-    {
+    QTransform const& transformBack() const {
         return m_invTransform;
     }
 
     /**
      * \brief Returns the original image rectangle, as specified.
      */
-    QRectF const& origRect() const
-    {
+    QRectF const& origRect() const {
         return m_origRect;
     }
 
@@ -241,8 +227,7 @@ public:
      * to be very close to (0, 0), assuming the original rectangle
      * had it at (0, 0), but it's not guaranteed to be exactly there.
      */
-    QRectF const& resultingRect() const
-    {
+    QRectF const& resultingRect() const {
         return m_resultingRect;
     }
 
@@ -283,5 +268,6 @@ private:
     Dpi m_postScaledDpi;
     OrthogonalRotation m_preRotation;
 };
+
 
 #endif  // ifndef IMAGETRANSFORMATION_H_

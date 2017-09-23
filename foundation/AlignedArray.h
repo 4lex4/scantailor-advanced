@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -31,43 +30,36 @@
  * where bytes = units * sizeof(T)
  */
 template <typename T, size_t alignment_in_units>
-class AlignedArray
-{
+class AlignedArray {
     DECLARE_NON_COPYABLE(AlignedArray)
-
 public:
     /**
      * \brief Constructs a null array.
      */
     AlignedArray()
-        : m_pAlignedData(0),
-          m_pStorage(0)
-    { }
+            : m_pAlignedData(0),
+              m_pStorage(0) {
+    }
 
     AlignedArray(size_t size);
 
-    ~AlignedArray()
-    {
+    ~AlignedArray() {
         delete[] m_pStorage;
     }
 
-    T* data()
-    {
+    T* data() {
         return m_pAlignedData;
     }
 
-    T const* data() const
-    {
+    T const* data() const {
         return m_pAlignedData;
     }
 
-    T& operator[](size_t idx)
-    {
+    T& operator[](size_t idx) {
         return m_pAlignedData[idx];
     }
 
-    T const& operator[](size_t idx) const
-    {
+    T const& operator[](size_t idx) const {
         return m_pAlignedData[idx];
     }
 
@@ -80,15 +72,12 @@ private:
 
 
 template <typename T, size_t alignment_in_units>
-inline void
-swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignment_in_units>& o2)
-{
+inline void swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignment_in_units>& o2) {
     o1.swap(o2);
 }
 
 template <typename T, size_t alignment_in_units>
-AlignedArray<T, alignment_in_units>::AlignedArray(size_t size)
-{
+AlignedArray<T, alignment_in_units>::AlignedArray(size_t size) {
     int const a = alignment_in_units > 1 ? alignment_in_units : 1;
     int const am1 = a - 1;
     m_pStorage = new T[size + am1];
@@ -96,9 +85,7 @@ AlignedArray<T, alignment_in_units>::AlignedArray(size_t size)
 }
 
 template <typename T, size_t alignment_in_units>
-void
-AlignedArray<T, alignment_in_units>::swap(AlignedArray& other)
-{
+void AlignedArray<T, alignment_in_units>::swap(AlignedArray& other) {
     T* temp = m_pAlignedData;
     m_pAlignedData = other.m_pAlignedData;
     other.m_pAlignedData = temp;

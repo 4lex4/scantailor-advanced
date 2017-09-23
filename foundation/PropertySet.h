@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,12 +29,10 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class PropertySet
-    : public RefCountable
-{
+class PropertySet: public RefCountable {
 public:
-    PropertySet()
-    { }
+    PropertySet() {
+    }
 
     /**
      * \brief Makes a deep copy of another property set.
@@ -89,8 +86,7 @@ private:
 
 template <typename T>
 IntrusivePtr<T>
-PropertySet::locate()
-{
+PropertySet::locate() {
     PropList::iterator it(m_props.begin());
     PropList::iterator const end(m_props.end());
     for (; it != end; ++it) {
@@ -104,8 +100,7 @@ PropertySet::locate()
 
 template <typename T>
 IntrusivePtr<T const>
-PropertySet::locate() const
-{
+PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
     PropList::const_iterator const end(m_props.end());
     for (; it != end; ++it) {
@@ -119,8 +114,7 @@ PropertySet::locate() const
 
 template <typename T>
 IntrusivePtr<T>
-PropertySet::locateOrDefault()
-{
+PropertySet::locateOrDefault() {
     IntrusivePtr<T> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
@@ -131,8 +125,7 @@ PropertySet::locateOrDefault()
 
 template <typename T>
 IntrusivePtr<T const>
-PropertySet::locateOrDefault() const
-{
+PropertySet::locateOrDefault() const {
     IntrusivePtr<T const> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
@@ -143,8 +136,7 @@ PropertySet::locateOrDefault() const
 
 template <typename T>
 IntrusivePtr<T>
-PropertySet::locateOrCreate()
-{
+PropertySet::locateOrCreate() {
     IntrusivePtr<T> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
@@ -154,9 +146,7 @@ PropertySet::locateOrCreate()
     return obj;
 }
 
-inline void
-swap(PropertySet& o1, PropertySet& o2)
-{
+inline void swap(PropertySet& o1, PropertySet& o2) {
     o1.swap(o2);
 }
 

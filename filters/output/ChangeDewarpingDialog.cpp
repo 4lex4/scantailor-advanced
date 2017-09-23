@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,79 +21,72 @@
 #include "QtSignalForwarder.h"
 #include <boost/lambda/lambda.hpp>
 
-namespace output
-{
-    ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
-                                                 PageId const& cur_page,
-                                                 DewarpingMode const& mode,
-                                                 PageSelectionAccessor const& page_selection_accessor)
+namespace output {
+ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
+                                             PageId const& cur_page,
+                                             DewarpingMode const& mode,
+                                             PageSelectionAccessor const& page_selection_accessor)
         : QDialog(parent),
           m_pages(page_selection_accessor.allPages()),
           m_selectedPages(page_selection_accessor.selectedPages()),
           m_curPage(cur_page),
           m_mode(mode),
-          m_pScopeGroup(new QButtonGroup(this))
-    {
-        using namespace boost::lambda;
+          m_pScopeGroup(new QButtonGroup(this)) {
+    using namespace boost::lambda;
 
-        ui.setupUi(this);
-        m_pScopeGroup->addButton(ui.thisPageRB);
-        m_pScopeGroup->addButton(ui.allPagesRB);
-        m_pScopeGroup->addButton(ui.thisPageAndFollowersRB);
-        m_pScopeGroup->addButton(ui.selectedPagesRB);
-        if (m_selectedPages.size() <= 1) {
-            ui.selectedPagesWidget->setEnabled(false);
-        }
-
-        switch (mode) {
-            case DewarpingMode::OFF:
-                ui.offRB->setChecked(true);
-                break;
-            case DewarpingMode::AUTO:
-                ui.autoRB->setChecked(true);
-                break;
-            case DewarpingMode::MARGINAL:
-                ui.marginalRB->setChecked(true);
-                break;
-            case DewarpingMode::MANUAL:
-                ui.manualRB->setChecked(true);
-                break;
-        }
-
-        new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::OFF);
-        new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::AUTO);
-        new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MANUAL);
-        new QtSignalForwarder(ui.marginalRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MARGINAL);
-
-        connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+    ui.setupUi(this);
+    m_pScopeGroup->addButton(ui.thisPageRB);
+    m_pScopeGroup->addButton(ui.allPagesRB);
+    m_pScopeGroup->addButton(ui.thisPageAndFollowersRB);
+    m_pScopeGroup->addButton(ui.selectedPagesRB);
+    if (m_selectedPages.size() <= 1) {
+        ui.selectedPagesWidget->setEnabled(false);
     }
 
-    ChangeDewarpingDialog::~ChangeDewarpingDialog()
-    { }
+    switch (mode) {
+        case DewarpingMode::OFF:
+            ui.offRB->setChecked(true);
+            break;
+        case DewarpingMode::AUTO:
+            ui.autoRB->setChecked(true);
+            break;
+        case DewarpingMode::MARGINAL:
+            ui.marginalRB->setChecked(true);
+            break;
+        case DewarpingMode::MANUAL:
+            ui.manualRB->setChecked(true);
+            break;
+    }
 
-    void
-    ChangeDewarpingDialog::onSubmit()
-    {
-        std::set<PageId> pages;
+    new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::OFF);
+    new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::AUTO);
+    new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MANUAL);
+    new QtSignalForwarder(ui.marginalRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MARGINAL);
 
-        if (ui.thisPageRB->isChecked()) {
-            pages.insert(m_curPage);
-        }
-        else if (ui.allPagesRB->isChecked()) {
-            m_pages.selectAll().swap(pages);
-        }
-        else if (ui.thisPageAndFollowersRB->isChecked()) {
-            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-        }
-        else if (ui.selectedPagesRB->isChecked()) {
-            emit accepted(m_selectedPages, m_mode);
-            accept();
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+}
 
-            return;
-        }
+ChangeDewarpingDialog::~ChangeDewarpingDialog() {
+}
 
-        emit accepted(pages, m_mode);
+void ChangeDewarpingDialog::onSubmit() {
+    std::set<PageId> pages;
 
+    if (ui.thisPageRB->isChecked()) {
+        pages.insert(m_curPage);
+    } else if (ui.allPagesRB->isChecked()) {
+        m_pages.selectAll().swap(pages);
+    } else if (ui.thisPageAndFollowersRB->isChecked()) {
+        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+    } else if (ui.selectedPagesRB->isChecked()) {
+        emit accepted(m_selectedPages, m_mode);
         accept();
+
+        return;
     }
+
+    emit accepted(pages, m_mode);
+
+    accept();
+}
 }  // namespace output

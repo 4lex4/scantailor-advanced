@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,38 +27,31 @@
 
 class Proximity;
 
-class InteractionState
-{
+class InteractionState {
     DECLARE_NON_COPYABLE(InteractionState)
-
 public:
-    class Captor
-        : public boost::intrusive::list_base_hook<
-              boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-        >
-    {
+    class Captor: public boost::intrusive::list_base_hook<
+                    boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+        >{
         friend class InteractionState;
-
     private:
         struct CopyHelper {
             Captor* captor;
 
             CopyHelper(Captor* cap)
-                : captor(cap)
-            { }
+                    : captor(cap) {
+            }
         };
 
     public:
-        Captor()
-        { }
+        Captor() {
+        }
 
-        Captor(Captor& other)
-        {
+        Captor(Captor& other) {
             swap_nodes(other);
         }
 
-        Captor(CopyHelper other)
-        {
+        Captor(CopyHelper other) {
             swap_nodes(*other.captor);
         }
 
@@ -67,58 +59,47 @@ public:
 
         Captor& operator=(CopyHelper other);
 
-        operator CopyHelper()
-        {
+        operator CopyHelper() {
             return CopyHelper(this);
         }
 
-        void release()
-        {
+        void release() {
             unlink();
         }
 
-        QCursor const& proximityCursor() const
-        {
+        QCursor const& proximityCursor() const {
             return m_proximityCursor;
         }
 
-        void setProximityCursor(QCursor const& cursor)
-        {
+        void setProximityCursor(QCursor const& cursor) {
             m_proximityCursor = cursor;
         }
 
-        QCursor const& interactionCursor() const
-        {
+        QCursor const& interactionCursor() const {
             return m_interactionCursor;
         }
 
-        void setInteractionCursor(QCursor const& cursor)
-        {
+        void setInteractionCursor(QCursor const& cursor) {
             m_interactionCursor = cursor;
         }
 
-        QString const& proximityStatusTip() const
-        {
+        QString const& proximityStatusTip() const {
             return m_proximityStatusTip;
         }
 
-        void setProximityStatusTip(QString const& tip)
-        {
+        void setProximityStatusTip(QString const& tip) {
             m_proximityStatusTip = tip;
         }
 
-        QString const& interactionStatusTip() const
-        {
+        QString const& interactionStatusTip() const {
             return m_interactionStatusTip;
         }
 
-        void setInteractionStatusTip(QString const& tip)
-        {
+        void setInteractionStatusTip(QString const& tip) {
             m_interactionStatusTip = tip;
         }
 
-        QString const& interactionOrProximityStatusTip() const
-        {
+        QString const& interactionOrProximityStatusTip() const {
             return m_interactionStatusTip.isNull() ? m_proximityStatusTip : m_interactionStatusTip;
         }
 
@@ -129,12 +110,12 @@ public:
         QString m_interactionStatusTip;
     };
 
+
     InteractionState();
 
     void capture(Captor& captor);
 
-    bool captured() const
-    {
+    bool captured() const {
         return !m_captorList.empty();
     }
 
@@ -149,8 +130,7 @@ public:
 
     bool proximityLeader(Captor const& captor) const;
 
-    Proximity const& proximityThreshold() const
-    {
+    Proximity const& proximityThreshold() const {
         return m_proximityThreshold;
     }
 
@@ -158,23 +138,19 @@ public:
 
     QString statusTip() const;
 
-    QString const& defaultStatusTip() const
-    {
+    QString const& defaultStatusTip() const {
         return m_defaultStatusTip;
     }
 
-    void setDefaultStatusTip(QString const& status_tip)
-    {
+    void setDefaultStatusTip(QString const& status_tip) {
         m_defaultStatusTip = status_tip;
     }
 
-    bool redrawRequested() const
-    {
+    bool redrawRequested() const {
         return m_redrawRequested;
     }
 
-    void setRedrawRequested(bool requested)
-    {
+    void setRedrawRequested(bool requested) {
         m_redrawRequested = requested;
     }
 
@@ -196,5 +172,6 @@ private:
     int m_bestProximityPriority;
     bool m_redrawRequested;
 };
+
 
 #endif  // ifndef INTERACTION_STATE_H_

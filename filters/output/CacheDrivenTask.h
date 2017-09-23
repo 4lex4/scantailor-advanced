@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,28 +29,24 @@ class PageInfo;
 class AbstractFilterDataCollector;
 class ImageTransformation;
 
-namespace output
-{
-    class Settings;
+namespace output {
+class Settings;
 
-    class CacheDrivenTask
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(CacheDrivenTask)
+class CacheDrivenTask: public RefCountable {
+    DECLARE_NON_COPYABLE(CacheDrivenTask)
+public:
+    CacheDrivenTask(IntrusivePtr<Settings> const& settings, OutputFileNameGenerator const& out_file_name_gen);
 
-    public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings, OutputFileNameGenerator const& out_file_name_gen);
+    virtual ~CacheDrivenTask();
 
-        virtual ~CacheDrivenTask();
+    void process(PageInfo const& page_info,
+                 AbstractFilterDataCollector* collector,
+                 ImageTransformation const& xform,
+                 QPolygonF const& content_rect_phys);
 
-        void process(PageInfo const& page_info,
-                     AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform,
-                     QPolygonF const& content_rect_phys);
-
-    private:
-        IntrusivePtr<Settings> m_ptrSettings;
-        OutputFileNameGenerator m_outFileNameGen;
-    };
+private:
+    IntrusivePtr<Settings> m_ptrSettings;
+    OutputFileNameGenerator m_outFileNameGen;
+};
 }
 #endif  // ifndef OUTPUT_CACHEDRIVENTASK_H_

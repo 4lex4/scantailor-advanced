@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -42,10 +41,8 @@ class PageInfo;
 class QDomDocument;
 class QDomElement;
 
-class ProjectWriter
-{
+class ProjectWriter {
     DECLARE_NON_COPYABLE(ProjectWriter)
-
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
@@ -75,9 +72,9 @@ private:
         int numericId;
 
         Directory(QString const& path, int numeric_id)
-            : path(path),
-              numericId(numeric_id)
-        { }
+                : path(path),
+                  numericId(numeric_id) {
+        }
     };
 
     struct File {
@@ -85,9 +82,9 @@ private:
         int numericId;
 
         File(QString const& path, int numeric_id)
-            : path(path),
-              numericId(numeric_id)
-        { }
+                : path(path),
+                  numericId(numeric_id) {
+        }
     };
 
     struct Image {
@@ -105,9 +102,9 @@ private:
         int numericId;
 
         Page(PageId const& id, int numeric_id)
-            : id(id),
-              numericId(numeric_id)
-        { }
+                : id(id),
+                  numericId(numeric_id) {
+        }
     };
 
     class Sequenced;
@@ -189,18 +186,15 @@ private:
     Qt::LayoutDirection m_layoutDirection;
 };
 
+
 template <typename OutFunc>
-void
-ProjectWriter::enumImages(OutFunc out) const
-{
+void ProjectWriter::enumImages(OutFunc out) const {
     ProxyFunction2<OutFunc, void, ImageId const&, int> proxy(out);
     enumImagesImpl(proxy);
 }
 
 template <typename OutFunc>
-void
-ProjectWriter::enumPages(OutFunc out) const
-{
+void ProjectWriter::enumPages(OutFunc out) const {
     ProxyFunction2<OutFunc, void, PageId const&, int> proxy(out);
     enumPagesImpl(proxy);
 }

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,42 +32,37 @@ class FilterData;
 class DebugImages;
 class ImageTransformation;
 
-namespace page_layout
-{
-    class Task;
+namespace page_layout {
+class Task;
 }
 
-namespace select_content
-{
-    class Filter;
-    class Settings;
+namespace select_content {
+class Filter;
+class Settings;
 
-    class Task
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Task)
+class Task: public RefCountable {
+    DECLARE_NON_COPYABLE(Task)
+public:
+    Task(IntrusivePtr<Filter> const& filter,
+         IntrusivePtr<page_layout::Task> const& next_task,
+         IntrusivePtr<Settings> const& settings,
+         PageId const& page_id,
+         bool batch,
+         bool debug);
 
-    public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<page_layout::Task> const& next_task,
-             IntrusivePtr<Settings> const& settings,
-             PageId const& page_id,
-             bool batch,
-             bool debug);
+    virtual ~Task();
 
-        virtual ~Task();
+    FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+private:
+    class UiUpdater;
 
-    private:
-        class UiUpdater;
-
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<page_layout::Task> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
-        std::unique_ptr<DebugImages> m_ptrDbg;
-        PageId m_pageId;
-        bool m_batchProcessing;
-    };
+    IntrusivePtr<Filter> m_ptrFilter;
+    IntrusivePtr<page_layout::Task> m_ptrNextTask;
+    IntrusivePtr<Settings> m_ptrSettings;
+    std::unique_ptr<DebugImages> m_ptrDbg;
+    PageId m_pageId;
+    bool m_batchProcessing;
+};
 }
 #endif  // ifndef SELECT_CONTENT_TASK_H_

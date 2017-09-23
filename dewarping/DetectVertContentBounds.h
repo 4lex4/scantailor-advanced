@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,24 +24,22 @@
 
 class DebugImages;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 }
 
-namespace dewarping
-{
-    /**
-     * \brief Detect the left and right content boundaries.
-     *
-     * \param image The image to work on.
-     * \return A pair of left, right boundaries.  These lines will span
-     *         from top to bottom of the image, and may be partially or even
-     *         completely outside of its bounds.
-     *
-     * \note This function assumes a clean image, that is no clutter
-     *       or speckles, at least not outside of the content area.
-     */
-    std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg);
+namespace dewarping {
+/**
+ * \brief Detect the left and right content boundaries.
+ *
+ * \param image The image to work on.
+ * \return A pair of left, right boundaries.  These lines will span
+ *         from top to bottom of the image, and may be partially or even
+ *         completely outside of its bounds.
+ *
+ * \note This function assumes a clean image, that is no clutter
+ *       or speckles, at least not outside of the content area.
+ */
+std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg);
 }
 #endif

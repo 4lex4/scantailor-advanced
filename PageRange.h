@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,8 +23,7 @@
 #include <vector>
 #include <set>
 
-class PageRange
-{
+class PageRange {
 public:
     /**
      * \brief Ordered list of consecutive pages.
@@ -34,5 +32,6 @@ public:
 
     std::set<PageId> selectEveryOther(PageId const& base) const;
 };
+
 
 #endif

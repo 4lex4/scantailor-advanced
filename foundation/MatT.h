@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,8 +29,7 @@
  * \note The memory layout is always column-major, as that's what MatrixCalc uses.
  */
 template <typename T>
-class MatT
-{
+class MatT {
 public:
     typedef T type;
 
@@ -90,35 +88,29 @@ public:
 
     MatT& operator*=(T scalar);
 
-    size_t rows() const
-    {
+    size_t rows() const {
         return m_rows;
     }
 
-    size_t cols() const
-    {
+    size_t cols() const {
         return m_cols;
     }
 
-    T const* data() const
-    {
+    T const* data() const {
         return m_data.get();
     }
 
-    T* data()
-    {
+    T* data() {
         return m_data.get();
     }
 
-    T const& operator()(size_t row, size_t col) const
-    {
+    T const& operator()(size_t row, size_t col) const {
         assert(row < m_rows && col < m_cols);
 
         return m_data[row + col * m_rows];
     }
 
-    T& operator()(size_t row, size_t col)
-    {
+    T& operator()(size_t row, size_t col) {
         assert(row < m_rows && col < m_cols);
 
         return m_data[row + col * m_rows];
@@ -137,23 +129,22 @@ private:
 
 template <typename T>
 MatT<T>::MatT()
-    : m_rows(0),
-      m_cols(0)
-{ }
+        : m_rows(0),
+          m_cols(0) {
+}
 
 template <typename T>
 MatT<T>::MatT(size_t rows, size_t cols)
-    : m_rows(rows),
-      m_cols(cols),
-      m_data(new T[rows * cols]())
-{ }
+        : m_rows(rows),
+          m_cols(cols),
+          m_data(new T[rows * cols]()) {
+}
 
 template <typename T>
 MatT<T>::MatT(size_t rows, size_t cols, T initial_value)
-    : m_rows(rows),
-      m_cols(cols),
-      m_data(new T[rows * cols])
-{
+        : m_rows(rows),
+          m_cols(cols),
+          m_data(new T[rows * cols]) {
     size_t const len = rows * cols;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = initial_value;
@@ -163,10 +154,9 @@ MatT<T>::MatT(size_t rows, size_t cols, T initial_value)
 template <typename T>
 template <typename OT>
 MatT<T>::MatT(size_t rows, size_t cols, OT const* data)
-    : m_rows(rows),
-      m_cols(cols),
-      m_data(new T[rows * cols])
-{
+        : m_rows(rows),
+          m_cols(cols),
+          m_data(new T[rows * cols]) {
     size_t const len = rows * cols;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = static_cast<T>(data[i]);
@@ -175,10 +165,9 @@ MatT<T>::MatT(size_t rows, size_t cols, OT const* data)
 
 template <typename T>
 MatT<T>::MatT(MatT const& other)
-    : m_rows(other.rows()),
-      m_cols(other.cols()),
-      m_data(new T[m_rows * m_cols])
-{
+        : m_rows(other.rows()),
+          m_cols(other.cols()),
+          m_data(new T[m_rows * m_cols]) {
     size_t const len = m_rows * m_cols;
     T const* other_data = other.data();
     for (size_t i = 0; i < len; ++i) {
@@ -189,10 +178,9 @@ MatT<T>::MatT(MatT const& other)
 template <typename T>
 template <typename OT>
 MatT<T>::MatT(MatT<OT> const& other)
-    : m_rows(other.rows()),
-      m_cols(other.cols()),
-      m_data(new T[m_rows * m_cols])
-{
+        : m_rows(other.rows()),
+          m_cols(other.cols()),
+          m_data(new T[m_rows * m_cols]) {
     size_t const len = m_rows * m_cols;
     T const* other_data = other.data();
     for (size_t i = 0; i < len; ++i) {
@@ -201,9 +189,7 @@ MatT<T>::MatT(MatT<OT> const& other)
 }
 
 template <typename T>
-MatT<T>&
-MatT<T>::operator=(MatT const& other)
-{
+MatT<T>& MatT<T>::operator=(MatT const& other) {
     MatT(other).swap(*this);
 
     return *this;
@@ -211,18 +197,14 @@ MatT<T>::operator=(MatT const& other)
 
 template <typename T>
 template <typename OT>
-MatT<T>&
-MatT<T>::operator=(MatT<OT> const& other)
-{
+MatT<T>& MatT<T>::operator=(MatT<OT> const& other) {
     MatT(other).swap(*this);
 
     return *this;
 }
 
 template <typename T>
-MatT<T>&
-MatT<T>::operator+=(MatT const& rhs)
-{
+MatT<T>& MatT<T>::operator+=(MatT const& rhs) {
     assert(m_rows == rhs.m_rows && m_cols == rhs.m_cols);
 
     size_t const len = m_rows * m_cols;
@@ -234,9 +216,7 @@ MatT<T>::operator+=(MatT const& rhs)
 }
 
 template <typename T>
-MatT<T>&
-MatT<T>::operator-=(MatT const& rhs)
-{
+MatT<T>& MatT<T>::operator-=(MatT const& rhs) {
     assert(m_rows == rhs.m_rows && m_cols == rhs.m_cols);
 
     size_t const len = m_rows * m_cols;
@@ -248,9 +228,7 @@ MatT<T>::operator-=(MatT const& rhs)
 }
 
 template <typename T>
-MatT<T>&
-MatT<T>::operator*=(T const scalar)
-{
+MatT<T>& MatT<T>::operator*=(T const scalar) {
     size_t const len = m_rows * m_cols;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] *= scalar;
@@ -260,9 +238,7 @@ MatT<T>::operator*=(T const scalar)
 }
 
 template <typename T>
-void
-MatT<T>::fill(T const& value)
-{
+void MatT<T>::fill(T const& value) {
     size_t const len = m_rows * m_cols;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = value;
@@ -270,9 +246,7 @@ MatT<T>::fill(T const& value)
 }
 
 template <typename T>
-void
-MatT<T>::swap(MatT& other)
-{
+void MatT<T>::swap(MatT& other) {
     size_t tmp = m_rows;
     m_rows = other.m_rows;
     other.m_rows = tmp;
@@ -285,15 +259,12 @@ MatT<T>::swap(MatT& other)
 }
 
 template <typename T>
-void
-swap(MatT<T> const& o1, MatT<T> const& o2)
-{
+void swap(MatT<T> const& o1, MatT<T> const& o2) {
     o1.swap(o2);
 }
 
 template <typename T>
-MatT<T> operator*(MatT<T> const& mat, double scalar)
-{
+MatT<T> operator*(MatT<T> const& mat, double scalar) {
     MatT<T> res(mat);
     res *= scalar;
 
@@ -301,8 +272,7 @@ MatT<T> operator*(MatT<T> const& mat, double scalar)
 }
 
 template <typename T>
-MatT<T> operator*(double scalar, MatT<T> const& mat)
-{
+MatT<T> operator*(double scalar, MatT<T> const& mat) {
     MatT<T> res(mat);
     res *= scalar;
 

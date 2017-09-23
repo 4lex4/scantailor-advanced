@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,52 +20,40 @@
 #include "ToLineProjector.h"
 
 ToLineProjector::ToLineProjector(QLineF const& line)
-    : m_origin(line.p1()),
-      m_vec(line.p2() - line.p1()),
-      m_mat(m_vec)
-{
+        : m_origin(line.p1()),
+          m_vec(line.p2() - line.p1()),
+          m_mat(m_vec) {
     using namespace std;
 
     double const AtA = m_mat.dot(m_mat);
 
     if (abs(AtA) > numeric_limits<double>::epsilon()) {
         m_mat /= AtA;
-    }
-    else {
+    } else {
         m_mat[0] = 0;
         m_mat[1] = 0;
     }
 }
 
-double
-ToLineProjector::projectionScalar(QPointF const& pt) const
-{
+double ToLineProjector::projectionScalar(QPointF const& pt) const {
     Vec2d const b(pt - m_origin);
 
     return m_mat.dot(b);
 }
 
-QPointF
-ToLineProjector::projectionPoint(QPointF const& pt) const
-{
+QPointF ToLineProjector::projectionPoint(QPointF const& pt) const {
     return m_origin + m_vec * projectionScalar(pt);
 }
 
-QPointF
-ToLineProjector::projectionVector(QPointF const& pt) const
-{
+QPointF ToLineProjector::projectionVector(QPointF const& pt) const {
     return projectionPoint(pt) - pt;
 }
 
-double
-ToLineProjector::projectionDist(QPointF const& pt) const
-{
+double ToLineProjector::projectionDist(QPointF const& pt) const {
     return sqrt(projectionSqDist(pt));
 }
 
-double
-ToLineProjector::projectionSqDist(QPointF const& pt) const
-{
+double ToLineProjector::projectionSqDist(QPointF const& pt) const {
     return Vec2d(projectionPoint(pt) - pt).squaredNorm();
 }
 

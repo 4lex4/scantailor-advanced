@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,9 +23,7 @@
 #include <QString>
 #include <vector>
 
-class LoadFilesStatusDialog
-    : public QDialog
-{
+class LoadFilesStatusDialog: public QDialog {
 public:
     LoadFilesStatusDialog(QWidget* parent = 0);
 
@@ -41,5 +38,6 @@ private:
     QString m_loadedTabNameTemplate;
     QString m_failedTabNameTemplate;
 };
+
 
 #endif

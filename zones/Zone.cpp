@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,18 +20,17 @@
 #include <QDomDocument>
 
 Zone::Zone(SerializableSpline const& spline, PropertySet const& props)
-    : m_spline(spline),
-      m_props(props)
-{ }
+        : m_spline(spline),
+          m_props(props) {
+}
 
 Zone::Zone(QDomElement const& el, PropertyFactory const& prop_factory)
-    : m_spline(el.namedItem("spline").toElement()),
-      m_props(el.namedItem("properties").toElement(), prop_factory)
-{ }
+        : m_spline(el.namedItem("spline").toElement()),
+          m_props(el.namedItem("properties").toElement(), prop_factory) {
+}
 
 Zone::Zone(QPolygonF const& polygon)
-    : m_spline(polygon)
-{
+        : m_spline(polygon) {
     m_props.locateOrCreate<output::PictureLayerProperty>()->
     setLayer(output::PictureLayerProperty::PAINTER2);
 
@@ -40,9 +38,7 @@ Zone::Zone(QPolygonF const& polygon)
     setZoneCategory(output::ZoneCategoryProperty::RECTANGULAR_OUTLINE);
 }
 
-QDomElement
-Zone::toXml(QDomDocument& doc, QString const& name) const
-{
+QDomElement Zone::toXml(QDomDocument& doc, QString const& name) const {
     QDomElement el(doc.createElement(name));
     el.appendChild(m_spline.toXml(doc, "spline"));
     el.appendChild(m_props.toXml(doc, "properties"));
@@ -50,9 +46,7 @@ Zone::toXml(QDomDocument& doc, QString const& name) const
     return el;
 }
 
-bool
-Zone::isValid() const
-{
+bool Zone::isValid() const {
     QPolygonF const& shape = m_spline.toPolygon();
 
     switch (shape.size()) {

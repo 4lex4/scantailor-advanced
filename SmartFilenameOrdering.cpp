@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,9 +19,7 @@
 #include "SmartFilenameOrdering.h"
 #include <QFileInfo>
 
-bool
-SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) const
-{
+bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) const {
     if (int comp = lhs.absolutePath().compare(rhs.absolutePath())) {
         return comp < 0;
     }
@@ -53,8 +50,7 @@ SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) co
 
             if (lhs_number != rhs_number) {
                 return lhs_number < rhs_number;
-            }
-            else {
+            } else {
                 continue;
             }
         }

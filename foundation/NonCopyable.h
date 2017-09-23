@@ -26,7 +26,7 @@
 #define DECLARE_NON_COPYABLE(Class) \
 private: \
     /** \brief Copying is forbidden. */ \
-    Class(Class const&); \
+    Class(Class const &); \
     /** \brief Copying is forbidden. */ \
     Class& operator=(Class const&); \
     /** \brief Moving is forbidden. */ \

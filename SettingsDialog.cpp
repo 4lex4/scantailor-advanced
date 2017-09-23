@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,8 +21,7 @@
 #include <QSettings>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
-    : QDialog(parent)
-{
+        : QDialog(parent) {
     ui.setupUi(this);
 
     QSettings settings;
@@ -33,8 +31,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.enableOpenglCb->setEnabled(false);
         ui.openglDeviceLabel->setEnabled(false);
         ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
-    }
-    else {
+    } else {
         ui.enableOpenglCb->setChecked(
             settings.value("settings/enable_opengl", false).toBool()
         );
@@ -47,19 +44,15 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     connect(ui.AutoSaveProject, SIGNAL(toggled(bool)), this, SLOT(OnCheckAutoSaveProject(bool)));
 }
 
-SettingsDialog::~SettingsDialog()
-{ }
+SettingsDialog::~SettingsDialog() {
+}
 
-void
-SettingsDialog::commitChanges()
-{
+void SettingsDialog::commitChanges() {
     QSettings settings;
     settings.setValue("settings/enable_opengl", ui.enableOpenglCb->isChecked());
 }
 
-void
-SettingsDialog::OnCheckAutoSaveProject(bool state)
-{
+void SettingsDialog::OnCheckAutoSaveProject(bool state) {
     QSettings settings;
 
     settings.setValue("settings/auto_save_project", state);

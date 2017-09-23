@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,25 +25,20 @@
 #include "DragHandler.h"
 #include "ZoomHandler.h"
 
-namespace fix_orientation
-{
-    class ImageView
-        : public ImageViewBase
-    {
-        Q_OBJECT
+namespace fix_orientation {
+class ImageView: public ImageViewBase {
+    Q_OBJECT
+public:
+    ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
 
-    public:
-        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
+    virtual ~ImageView();
+public slots:
+    void setPreRotation(OrthogonalRotation rotation);
 
-        virtual ~ImageView();
-
-    public slots:
-        void setPreRotation(OrthogonalRotation rotation);
-
-    private:
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-        ImageTransformation m_xform;
-    };
+private:
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+    ImageTransformation m_xform;
+};
 }
 #endif

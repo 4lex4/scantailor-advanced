@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,11 +23,8 @@
 #include "PageInfo.h"
 #include <QWidget>
 
-class FilterOptionsWidget
-    : public QWidget
-{
+class FilterOptionsWidget: public QWidget {
     Q_OBJECT
-
 signals:
     /**
      * \brief To be emitted by subclasses when they want to reload the page.
@@ -51,5 +47,6 @@ signals:
      */
     void goToPage(PageId const& page_id);
 };
+
 
 #endif

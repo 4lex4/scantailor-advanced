@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -45,8 +44,7 @@ struct XSpline::TensionDerivedParams {
 };
 
 
-class XSpline::GBlendFunc
-{
+class XSpline::GBlendFunc {
 public:
     GBlendFunc(double q, double p);
 
@@ -65,8 +63,7 @@ private:
 };
 
 
-class XSpline::HBlendFunc
-{
+class XSpline::HBlendFunc {
 public:
     HBlendFunc(double q);
 
@@ -91,8 +88,7 @@ struct XSpline::DecomposedDerivs {
     int controlPoints[4];
     int numControlPoints;
 
-    bool hasNonZeroCoeffs(int idx) const
-    {
+    bool hasNonZeroCoeffs(int idx) const {
         double sum = fabs(zeroDerivCoeffs[idx]) + fabs(firstDerivCoeffs[idx]) + fabs(secondDerivCoeffs[idx]);
 
         return sum > std::numeric_limits<double>::epsilon();
@@ -100,95 +96,70 @@ struct XSpline::DecomposedDerivs {
 };
 
 
-int
-XSpline::numControlPoints() const
-{
+int XSpline::numControlPoints() const {
     return m_controlPoints.size();
 }
 
-int
-XSpline::numSegments() const
-{
+int XSpline::numSegments() const {
     return std::max<int>(m_controlPoints.size() - 1, 0);
 }
 
-double
-XSpline::controlPointIndexToT(int idx) const
-{
-    assert(idx >= 0 || idx <= (int)m_controlPoints.size());
+double XSpline::controlPointIndexToT(int idx) const {
+    assert(idx >= 0 || idx <= (int) m_controlPoints.size());
 
     return double(idx) / (m_controlPoints.size() - 1);
 }
 
-void
-XSpline::appendControlPoint(QPointF const& pos, double tension)
-{
+void XSpline::appendControlPoint(QPointF const& pos, double tension) {
     m_controlPoints.push_back(ControlPoint(pos, tension));
 }
 
-void
-XSpline::insertControlPoint(int idx, QPointF const& pos, double tension)
-{
-    assert(idx >= 0 || idx <= (int)m_controlPoints.size());
+void XSpline::insertControlPoint(int idx, QPointF const& pos, double tension) {
+    assert(idx >= 0 || idx <= (int) m_controlPoints.size());
     m_controlPoints.insert(m_controlPoints.begin() + idx, ControlPoint(pos, tension));
 }
 
-void
-XSpline::eraseControlPoint(int idx)
-{
-    assert(idx >= 0 || idx < (int)m_controlPoints.size());
+void XSpline::eraseControlPoint(int idx) {
+    assert(idx >= 0 || idx < (int) m_controlPoints.size());
     m_controlPoints.erase(m_controlPoints.begin() + idx);
 }
 
-QPointF
-XSpline::controlPointPosition(int idx) const
-{
+QPointF XSpline::controlPointPosition(int idx) const {
     return m_controlPoints[idx].pos;
 }
 
-void
-XSpline::moveControlPoint(int idx, QPointF const& pos)
-{
-    assert(idx >= 0 || idx < (int)m_controlPoints.size());
+void XSpline::moveControlPoint(int idx, QPointF const& pos) {
+    assert(idx >= 0 || idx < (int) m_controlPoints.size());
     m_controlPoints[idx].pos = pos;
 }
 
-double
-XSpline::controlPointTension(int idx) const
-{
-    assert(idx >= 0 && idx < (int)m_controlPoints.size());
+double XSpline::controlPointTension(int idx) const {
+    assert(idx >= 0 && idx < (int) m_controlPoints.size());
 
     return m_controlPoints[idx].tension;
 }
 
-void
-XSpline::setControlPointTension(int idx, double tension)
-{
-    assert(idx >= 0 && idx < (int)m_controlPoints.size());
+void XSpline::setControlPointTension(int idx, double tension) {
+    assert(idx >= 0 && idx < (int) m_controlPoints.size());
     m_controlPoints[idx].tension = tension;
 }
 
-QPointF
-XSpline::pointAt(double t) const
-{
+QPointF XSpline::pointAt(double t) const {
     int const num_segments = numSegments();
     assert(num_segments > 0);
     assert(t >= 0 && t <= 1);
 
     if (t == 1.0) {
         return pointAtImpl(num_segments - 1, 1.0);
-    }
-    else {
+    } else {
         double const t2 = t * num_segments;
         double const segment = floor(t2);
 
-        return pointAtImpl((int)segment, t2 - segment);
+        return pointAtImpl((int) segment, t2 - segment);
     }
 }
 
-QPointF
-XSpline::pointAtImpl(int segment, double t) const
-{
+QPointF XSpline::pointAtImpl(int segment, double t) const {
     LinearCoefficient coeffs[4];
     int const num_coeffs = linearCombinationFor(coeffs, segment, t);
 
@@ -201,12 +172,10 @@ XSpline::pointAtImpl(int segment, double t) const
     return pt;
 }
 
-void
-XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-                SamplingParams const& params,
-                double from_t,
-                double to_t) const
-{
+void XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+                     SamplingParams const& params,
+                     double from_t,
+                     double to_t) const {
     if (m_controlPoints.empty()) {
         return;
     }
@@ -239,17 +208,15 @@ XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
     sink(to_pt, to_t, TAIL_SAMPLE);
 }  // XSpline::sample
 
-void
-XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-                             double max_sqdist_to_spline,
-                             double max_sqdist_between_samples,
-                             double num_segments,
-                             double r_num_segments,
-                             double prev_t,
-                             QPointF const& prev_pt,
-                             double next_t,
-                             QPointF const& next_pt) const
-{
+void XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+                                  double max_sqdist_to_spline,
+                                  double max_sqdist_between_samples,
+                                  double num_segments,
+                                  double r_num_segments,
+                                  double prev_t,
+                                  QPointF const& prev_pt,
+                                  double next_t,
+                                  QPointF const& next_pt) const {
     double const prev_next_sqdist = Vec2d(next_pt - prev_pt).squaredNorm();
     if (prev_next_sqdist < 1e-6) {
         return;
@@ -260,7 +227,8 @@ XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags
     double const nearby_junction_t = floor(mid_t * num_segments + 0.5) * r_num_segments;
 
     if (((nearby_junction_t - prev_t) * (next_t - prev_t) > 0)
-        && ((nearby_junction_t - next_t) * (prev_t - next_t) > 0)) {
+        && ((nearby_junction_t - next_t) * (prev_t - next_t) > 0))
+    {
         mid_t = nearby_junction_t;
         flags = JUNCTION_SAMPLE;
     }
@@ -292,9 +260,7 @@ XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags
     );
 }  // XSpline::maybeAddMoreSamples
 
-void
-XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) const
-{
+void XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) const {
     assert(t >= 0 && t <= 1);
 
     int const num_segments = numSegments();
@@ -306,11 +272,10 @@ XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) c
 
     if (t == 1.0) {
         num_coeffs = linearCombinationFor(static_coeffs, num_segments - 1, 1.0);
-    }
-    else {
+    } else {
         double const t2 = t * num_segments;
         double const segment = floor(t2);
-        num_coeffs = linearCombinationFor(static_coeffs, (int)segment, t2 - segment);
+        num_coeffs = linearCombinationFor(static_coeffs, (int) segment, t2 - segment);
     }
 
     for (int i = 0; i < num_coeffs; ++i) {
@@ -319,10 +284,8 @@ XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) c
     coeffs.resize(num_coeffs);
 }
 
-int
-XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) const
-{
-    assert(segment >= 0 && segment < (int)m_controlPoints.size() - 1);
+int XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) const {
+    assert(segment >= 0 && segment < (int) m_controlPoints.size() - 1);
     assert(t >= 0 && t <= 1);
 
     int idxs[4];
@@ -342,8 +305,7 @@ XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) 
 
     if (t <= tdp.T0p) {
         A[0] = GBlendFunc(tdp.q[0], tdp.p[0]).value((t - tdp.T0p) / (tdp.t0 - tdp.T0p));
-    }
-    else {
+    } else {
         A[0] = HBlendFunc(tdp.q[0]).value((t - tdp.T0p) / (tdp.t0 - tdp.T0p));
     }
 
@@ -352,8 +314,7 @@ XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) 
 
     if (t >= tdp.T3m) {
         A[3] = GBlendFunc(tdp.q[3], tdp.p[3]).value((t - tdp.T3m) / (tdp.t3 - tdp.T3m));
-    }
-    else {
+    } else {
         A[3] = HBlendFunc(tdp.q[3]).value((t - tdp.T3m) / (tdp.t3 - tdp.T3m));
     }
 
@@ -363,16 +324,14 @@ XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) 
 
     if (idxs[0] == idxs[1]) {
         coeffs[out_idx++] = LinearCoefficient(idxs[0], A[0] + A[1]);
-    }
-    else {
+    } else {
         coeffs[out_idx++] = LinearCoefficient(idxs[0], A[0]);
         coeffs[out_idx++] = LinearCoefficient(idxs[1], A[1]);
     }
 
     if (idxs[2] == idxs[3]) {
         coeffs[out_idx++] = LinearCoefficient(idxs[2], A[2] + A[3]);
-    }
-    else {
+    } else {
         coeffs[out_idx++] = LinearCoefficient(idxs[2], A[2]);
         coeffs[out_idx++] = LinearCoefficient(idxs[3], A[3]);
     }
@@ -380,9 +339,7 @@ XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) 
     return out_idx;
 }  // XSpline::linearCombinationFor
 
-XSpline::PointAndDerivs
-XSpline::pointAndDtsAt(double t) const
-{
+XSpline::PointAndDerivs XSpline::pointAndDtsAt(double t) const {
     assert(t >= 0 && t <= 1);
     PointAndDerivs pd;
 
@@ -397,9 +354,7 @@ XSpline::pointAndDtsAt(double t) const
     return pd;
 }
 
-XSpline::DecomposedDerivs
-XSpline::decomposedDerivs(double const t) const
-{
+XSpline::DecomposedDerivs XSpline::decomposedDerivs(double const t) const {
     assert(t >= 0 && t <= 1);
 
     int const num_segments = numSegments();
@@ -407,19 +362,16 @@ XSpline::decomposedDerivs(double const t) const
 
     if (t == 1.0) {
         return decomposedDerivsImpl(num_segments - 1, 1.0);
-    }
-    else {
+    } else {
         double const t2 = t * num_segments;
         double const segment = floor(t2);
 
-        return decomposedDerivsImpl((int)segment, t2 - segment);
+        return decomposedDerivsImpl((int) segment, t2 - segment);
     }
 }
 
-XSpline::DecomposedDerivs
-XSpline::decomposedDerivsImpl(int const segment, double const t) const
-{
-    assert(segment >= 0 && segment < (int)m_controlPoints.size() - 1);
+XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(int const segment, double const t) const {
+    assert(segment >= 0 && segment < (int) m_controlPoints.size() - 1);
     assert(t >= 0 && t <= 1);
 
     DecomposedDerivs derivs;
@@ -453,8 +405,7 @@ XSpline::decomposedDerivsImpl(int const segment, double const t) const
             dA[0] = g.firstDerivative(u) * (ta * dtdT);
 
             ddA[0] = g.secondDerivative(u) * (ta * dtdT) * (ta * dtdT);
-        }
-        else {
+        } else {
             HBlendFunc h(tdp.q[0]);
             A[0] = h.value(u);
             dA[0] = h.firstDerivative(u) * (ta * dtdT);
@@ -491,8 +442,7 @@ XSpline::decomposedDerivsImpl(int const segment, double const t) const
             A[3] = g.value(u);
             dA[3] = g.firstDerivative(u) * (ta * dtdT);
             ddA[3] = g.secondDerivative(u) * (ta * dtdT) * (ta * dtdT);
-        }
-        else {
+        } else {
             HBlendFunc h(tdp.q[3]);
             A[3] = h.value(u);
             dA[3] = h.firstDerivative(u) * (ta * dtdT);
@@ -551,15 +501,11 @@ XSpline::decomposedDerivsImpl(int const segment, double const t) const
     return derivs;
 }  // XSpline::decomposedDerivsImpl
 
-QuadraticFunction
-XSpline::controlPointsAttractionForce() const
-{
+QuadraticFunction XSpline::controlPointsAttractionForce() const {
     return controlPointsAttractionForce(0, numSegments());
 }
 
-QuadraticFunction
-XSpline::controlPointsAttractionForce(int seg_begin, int seg_end) const
-{
+QuadraticFunction XSpline::controlPointsAttractionForce(int seg_begin, int seg_end) const {
     using namespace adiff;
 
     assert(seg_begin >= 0 && seg_begin <= numSegments());
@@ -597,15 +543,11 @@ XSpline::controlPointsAttractionForce(int seg_begin, int seg_end) const
     return f;
 }  // XSpline::controlPointsAttractionForce
 
-QuadraticFunction
-XSpline::junctionPointsAttractionForce() const
-{
+QuadraticFunction XSpline::junctionPointsAttractionForce() const {
     return junctionPointsAttractionForce(0, numSegments());
 }
 
-QuadraticFunction
-XSpline::junctionPointsAttractionForce(int seg_begin, int seg_end) const
-{
+QuadraticFunction XSpline::junctionPointsAttractionForce(int seg_begin, int seg_end) const {
     using namespace adiff;
 
     assert(seg_begin >= 0 && seg_begin <= numSegments());
@@ -659,9 +601,7 @@ XSpline::junctionPointsAttractionForce(int seg_begin, int seg_end) const
     return f;
 }  // XSpline::junctionPointsAttractionForce
 
-QPointF
-XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) const
-{
+QPointF XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) const {
     if (m_controlPoints.empty()) {
         if (t) {
             *t = 0;
@@ -710,8 +650,7 @@ XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) const
         if (pt < pm) {
             next_t = mid_t;
             next_pt = mid_pt;
-        }
-        else {
+        } else {
             prev_t = mid_t;
             prev_pt = mid_pt;
         }
@@ -723,8 +662,7 @@ XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) const
         }
 
         return prev_pt;
-    }
-    else {
+    } else {
         if (t) {
             *t = (best_segment + next_t) / num_segments;
         }
@@ -733,21 +671,16 @@ XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) const
     }
 }  // XSpline::pointClosestTo
 
-QPointF
-XSpline::pointClosestTo(QPointF const to, double accuracy) const
-{
+QPointF XSpline::pointClosestTo(QPointF const to, double accuracy) const {
     return pointClosestTo(to, 0, accuracy);
 }
 
 std::vector<QPointF>
-XSpline::toPolyline(SamplingParams const& params, double from_t, double to_t) const
-{
-    struct Sink
-        : public VirtualFunction3<void, QPointF, double, SampleFlags>{
+XSpline::toPolyline(SamplingParams const& params, double from_t, double to_t) const {
+    struct Sink: public VirtualFunction3<void, QPointF, double, SampleFlags>{
         std::vector<QPointF> polyline;
 
-        virtual void operator()(QPointF pt, double, SampleFlags)
-        {
+        virtual void operator()(QPointF pt, double, SampleFlags) {
             polyline.push_back(pt);
         }
     };
@@ -758,19 +691,15 @@ XSpline::toPolyline(SamplingParams const& params, double from_t, double to_t) co
     return sink.polyline;
 }
 
-double
-XSpline::sqDistToLine(QPointF const& pt, QLineF const& line)
-{
+double XSpline::sqDistToLine(QPointF const& pt, QLineF const& line) {
     ToLineProjector const projector(line);
     double const p = projector.projectionScalar(pt);
     QPointF ppt;
     if (p <= 0) {
         ppt = line.p1();
-    }
-    else if (p >= 1) {
+    } else if (p >= 1) {
         ppt = line.p2();
-    }
-    else {
+    } else {
         ppt = line.pointAt(p);
     }
 
@@ -784,14 +713,11 @@ double const XSpline::TensionDerivedParams::t1 = 0;
 double const XSpline::TensionDerivedParams::t2 = 1;
 double const XSpline::TensionDerivedParams::t3 = 2;
 
-static double
-square(double v)
-{
+static double square(double v) {
     return v * v;
 }
 
-XSpline::TensionDerivedParams::TensionDerivedParams(double const tension1, double const tension2)
-{
+XSpline::TensionDerivedParams::TensionDerivedParams(double const tension1, double const tension2) {
     double const s1 = std::max<double>(tension1, 0);
     double const s2 = std::max<double>(tension2, 0);
     T0p = t1 + s1;
@@ -815,16 +741,14 @@ XSpline::TensionDerivedParams::TensionDerivedParams(double const tension1, doubl
 /*========================== GBlendFunc ==========================*/
 
 XSpline::GBlendFunc::GBlendFunc(double q, double p)
-    : m_c1(q),
-      m_c2(2 * q),
-      m_c3(10 - 12 * q - p),
-      m_c4(2 * p + 14 * q - 15),
-      m_c5(6 - 5 * q - p)
-{ }
+        : m_c1(q),
+          m_c2(2 * q),
+          m_c3(10 - 12 * q - p),
+          m_c4(2 * p + 14 * q - 15),
+          m_c5(6 - 5 * q - p) {
+}
 
-double
-XSpline::GBlendFunc::value(double u) const
-{
+double XSpline::GBlendFunc::value(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
     double const u4 = u3 * u;
@@ -833,9 +757,7 @@ XSpline::GBlendFunc::value(double u) const
     return m_c1 * u + m_c2 * u2 + m_c3 * u3 + m_c4 * u4 + m_c5 * u5;
 }
 
-double
-XSpline::GBlendFunc::firstDerivative(double u) const
-{
+double XSpline::GBlendFunc::firstDerivative(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
     double const u4 = u3 * u;
@@ -843,9 +765,7 @@ XSpline::GBlendFunc::firstDerivative(double u) const
     return m_c1 + 2 * m_c2 * u + 3 * m_c3 * u2 + 4 * m_c4 * u3 + 5 * m_c5 * u4;
 }
 
-double
-XSpline::GBlendFunc::secondDerivative(double u) const
-{
+double XSpline::GBlendFunc::secondDerivative(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
 
@@ -855,15 +775,13 @@ XSpline::GBlendFunc::secondDerivative(double u) const
 /*========================== HBlendFunc ==========================*/
 
 XSpline::HBlendFunc::HBlendFunc(double q)
-    : m_c1(q),
-      m_c2(2 * q),
-      m_c4(-2 * q),
-      m_c5(-q)
-{ }
+        : m_c1(q),
+          m_c2(2 * q),
+          m_c4(-2 * q),
+          m_c5(-q) {
+}
 
-double
-XSpline::HBlendFunc::value(double u) const
-{
+double XSpline::HBlendFunc::value(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
     double const u4 = u3 * u;
@@ -872,9 +790,7 @@ XSpline::HBlendFunc::value(double u) const
     return m_c1 * u + m_c2 * u2 + m_c4 * u4 + m_c5 * u5;
 }
 
-double
-XSpline::HBlendFunc::firstDerivative(double u) const
-{
+double XSpline::HBlendFunc::firstDerivative(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
     double const u4 = u3 * u;
@@ -882,9 +798,7 @@ XSpline::HBlendFunc::firstDerivative(double u) const
     return m_c1 + 2 * m_c2 * u + 4 * m_c4 * u3 + 5 * m_c5 * u4;
 }
 
-double
-XSpline::HBlendFunc::secondDerivative(double u) const
-{
+double XSpline::HBlendFunc::secondDerivative(double u) const {
     double const u2 = u * u;
     double const u3 = u2 * u;
 
@@ -893,9 +807,7 @@ XSpline::HBlendFunc::secondDerivative(double u) const
 
 /*======================== PointAndDerivs ========================*/
 
-double
-XSpline::PointAndDerivs::signedCurvature() const
-{
+double XSpline::PointAndDerivs::signedCurvature() const {
     double const cross = firstDeriv.x() * secondDeriv.y() - firstDeriv.y() * secondDeriv.x();
     double tlen = sqrt(firstDeriv.x() * firstDeriv.x() + firstDeriv.y() * firstDeriv.y());
 

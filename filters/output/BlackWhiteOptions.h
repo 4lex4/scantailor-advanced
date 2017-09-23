@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,33 +23,29 @@ class QString;
 class QDomDocument;
 class QDomElement;
 
-namespace output
-{
-    class BlackWhiteOptions
-    {
-    public:
-        BlackWhiteOptions();
+namespace output {
+class BlackWhiteOptions {
+public:
+    BlackWhiteOptions();
 
-        BlackWhiteOptions(QDomElement const& el);
+    BlackWhiteOptions(QDomElement const& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        int thresholdAdjustment() const
-        {
-            return m_thresholdAdjustment;
-        }
+    int thresholdAdjustment() const {
+        return m_thresholdAdjustment;
+    }
 
-        void setThresholdAdjustment(int val)
-        {
-            m_thresholdAdjustment = val;
-        }
+    void setThresholdAdjustment(int val) {
+        m_thresholdAdjustment = val;
+    }
 
-        bool operator==(BlackWhiteOptions const& other) const;
+    bool operator==(BlackWhiteOptions const& other) const;
 
-        bool operator!=(BlackWhiteOptions const& other) const;
+    bool operator!=(BlackWhiteOptions const& other) const;
 
-    private:
-        int m_thresholdAdjustment;
-    };
+private:
+    int m_thresholdAdjustment;
+};
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

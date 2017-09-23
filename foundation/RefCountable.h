@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,29 +25,26 @@
 
 #include <QAtomicInt>
 
-class RefCountable
-{
+class RefCountable {
 public:
     RefCountable()
-        : m_refCounter(0)
-    { }
+            : m_refCounter(0) {
+    }
 
-    RefCountable(RefCountable const& other)
-    { }
+    RefCountable(RefCountable const& other) {
+    }
 
-    void operator=(RefCountable const& other)
-    { }
+    void operator=(RefCountable const& other) {
+    }
 
-    virtual ~RefCountable()
-    { }
+    virtual ~RefCountable() {
+    }
 
-    void ref() const
-    {
+    void ref() const {
         m_refCounter.fetchAndAddRelaxed(1);
     }
 
-    void unref() const
-    {
+    void unref() const {
         if (m_refCounter.fetchAndAddRelease(-1) == 1) {
             delete this;
         }
@@ -57,5 +53,6 @@ public:
 private:
     mutable QAtomicInt m_refCounter;
 };
+
 
 #endif  // ifndef REFCOUNTABLE_H_

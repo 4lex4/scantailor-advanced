@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,9 +28,7 @@ class QString;
 class QIODevice;
 class ImageMetadata;
 
-class ImageMetadataLoader
-    : public RefCountable
-{
+class ImageMetadataLoader: public RefCountable {
 public:
     enum Status {
         LOADED,  /**< Loaded successfully */
@@ -55,8 +52,8 @@ public:
     static Status load(QString const& file_path, OutFunc out);
 
 protected:
-    virtual ~ImageMetadataLoader()
-    { }
+    virtual ~ImageMetadataLoader() {
+    }
 
     /**
      * \brief Loads metadata from a particular image format.
@@ -84,18 +81,14 @@ private:
 
 
 template <typename OutFunc>
-ImageMetadataLoader::Status
-ImageMetadataLoader::load(QIODevice& io_device, OutFunc out)
-{
+ImageMetadataLoader::Status ImageMetadataLoader::load(QIODevice& io_device, OutFunc out) {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
 
     return loadImpl(io_device, proxy);
 }
 
 template <typename OutFunc>
-ImageMetadataLoader::Status
-ImageMetadataLoader::load(QString const& file_path, OutFunc out)
-{
+ImageMetadataLoader::Status ImageMetadataLoader::load(QString const& file_path, OutFunc out) {
     ProxyFunction1<OutFunc, void, ImageMetadata const&> proxy(out);
 
     return loadImpl(file_path, proxy);

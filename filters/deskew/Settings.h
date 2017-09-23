@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,70 +30,60 @@
 
 class AbstractRelinker;
 
-namespace deskew
-{
-    class Settings
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Settings)
+namespace deskew {
+class Settings: public RefCountable {
+    DECLARE_NON_COPYABLE(Settings)
+public:
+    Settings();
 
-    public:
-        Settings();
+    virtual ~Settings();
 
-        virtual ~Settings();
+    void clear();
 
-        void clear();
+    void performRelinking(AbstractRelinker const& relinker);
 
-        void performRelinking(AbstractRelinker const& relinker);
+    void updateDeviation();
 
-        void updateDeviation();
+    void setPageParams(PageId const& page_id, Params const& params);
 
-        void setPageParams(PageId const& page_id, Params const& params);
+    void clearPageParams(PageId const& page_id);
 
-        void clearPageParams(PageId const& page_id);
+    std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
-        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+    void setDegress(std::set<PageId> const& pages, Params const& params);
 
-        void setDegress(std::set<PageId> const& pages, Params const& params);
+    double maxDeviation() const {
+        return m_maxDeviation;
+    }
 
-        double maxDeviation() const
-        {
-            return m_maxDeviation;
-        }
+    void setMaxDeviation(double md) {
+        m_maxDeviation = md;
+    }
 
-        void setMaxDeviation(double md)
-        {
-            m_maxDeviation = md;
-        }
+    double avg() const {
+        return m_avg;
+    }
 
-        double avg() const
-        {
-            return m_avg;
-        }
+    void setAvg(double a) {
+        m_avg = a;
+    }
 
-        void setAvg(double a)
-        {
-            m_avg = a;
-        }
+    double std() const {
+        return m_sigma;
+    }
 
-        double std() const
-        {
-            return m_sigma;
-        }
+    void setStd(double s) {
+        m_sigma = s;
+    }
 
-        void setStd(double s)
-        {
-            m_sigma = s;
-        }
+private:
+    typedef std::map<PageId, Params> PerPageParams;
 
-    private:
-        typedef std::map<PageId, Params> PerPageParams;
-
-        mutable QMutex m_mutex;
-        PerPageParams m_perPageParams;
-        double m_avg;
-        double m_sigma;
-        double m_maxDeviation;
-    };
+    mutable QMutex m_mutex;
+    PerPageParams m_perPageParams;
+    double m_avg;
+    double m_sigma;
+    double m_maxDeviation;
+};
 }  // namespace deskew
 #endif  // ifndef DESKEW_SETTINGS_H_

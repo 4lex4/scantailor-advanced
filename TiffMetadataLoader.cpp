@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,9 +19,7 @@
 #include "TiffMetadataLoader.h"
 #include "TiffReader.h"
 
-void
-TiffMetadataLoader::registerMyself()
-{
+void TiffMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
@@ -32,9 +29,8 @@ TiffMetadataLoader::registerMyself()
     }
 }
 
-ImageMetadataLoader::Status
-TiffMetadataLoader::loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
-{
+ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& io_device,
+                                                             VirtualFunction1<void, ImageMetadata const&>& out) {
     return TiffReader::readMetadata(io_device, out);
 }
 

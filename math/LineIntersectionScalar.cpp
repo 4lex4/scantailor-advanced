@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,9 +19,7 @@
 #include <cmath>
 #include "LineIntersectionScalar.h"
 
-bool
-lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1, double& s2)
-{
+bool lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1, double& s2) {
     QPointF const p1(line1.p1());
     QPointF const p2(line2.p1());
     QPointF const v1(line1.p2() - line1.p1());
@@ -41,9 +38,7 @@ lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1, dou
     return true;
 }
 
-bool
-lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1)
-{
+bool lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1) {
     QPointF const p1(line1.p1());
     QPointF const p2(line2.p1());
     QPointF const v1(line1.p2() - line1.p1());

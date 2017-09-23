@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,9 +32,7 @@
  * \li The hover state image.
  * \li The pressed state image.
  */
-class SkinnedButton
-    : public QToolButton
-{
+class SkinnedButton: public QToolButton {
 public:
     /**
      * \brief Construct a skinned button from a single image.
@@ -112,5 +109,6 @@ private:
     QString m_hoverStateFile;
     QString m_pressedStateFile;
 };
+
 
 #endif  // ifndef SKINNEDBUTTON_H_

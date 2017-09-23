@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,44 +25,38 @@ class QString;
 class QDomDocument;
 class QDomElement;
 
-namespace output
-{
-    class ColorGrayscaleOptions
-    {
-    public:
-        ColorGrayscaleOptions();
+namespace output {
+class ColorGrayscaleOptions {
+public:
+    ColorGrayscaleOptions();
 
-        ColorGrayscaleOptions(QDomElement const& el);
+    ColorGrayscaleOptions(QDomElement const& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        bool whiteMargins() const
-        {
-            return m_whiteMargins;
-        }
+    bool whiteMargins() const {
+        return m_whiteMargins;
+    }
 
-        void setWhiteMargins(bool val)
-        {
-            m_whiteMargins = val;
-        }
+    void setWhiteMargins(bool val) {
+        m_whiteMargins = val;
+    }
 
-        bool normalizeIllumination() const
-        {
-            return m_normalizeIllumination;
-        }
+    bool normalizeIllumination() const {
+        return m_normalizeIllumination;
+    }
 
-        void setNormalizeIllumination(bool val)
-        {
-            m_normalizeIllumination = val;
-        }
+    void setNormalizeIllumination(bool val) {
+        m_normalizeIllumination = val;
+    }
 
-        bool operator==(ColorGrayscaleOptions const& other) const;
+    bool operator==(ColorGrayscaleOptions const& other) const;
 
-        bool operator!=(ColorGrayscaleOptions const& other) const;
+    bool operator!=(ColorGrayscaleOptions const& other) const;
 
-    private:
-        bool m_whiteMargins;
-        bool m_normalizeIllumination;
-    };
+private:
+    bool m_whiteMargins;
+    bool m_normalizeIllumination;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

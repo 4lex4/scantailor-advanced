@@ -1,4 +1,3 @@
-
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,11 +30,8 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class InteractiveXSpline
-    : public InteractionHandler
-{
+class InteractiveXSpline: public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
-
 public:
     typedef boost::function<QPointF(QPointF const&)> Transform;
     typedef boost::function<void ()> ModifiedCallback;
@@ -45,8 +41,7 @@ public:
 
     void setSpline(XSpline const& spline);
 
-    XSpline const& spline() const
-    {
+    XSpline const& spline() const {
         return m_spline;
     }
 
@@ -86,8 +81,8 @@ private:
         DraggablePoint point;
         ObjectDragHandler handler;
 
-        ControlPoint()
-        { }
+        ControlPoint() {
+        }
     };
 
     QPointF controlPointPosition(int idx) const;
@@ -110,5 +105,6 @@ private:
     double m_curveProximityT;
     bool m_lastProximity;
 };
+
 
 #endif  // ifndef INTERACTIVE_XSPLINE_H_

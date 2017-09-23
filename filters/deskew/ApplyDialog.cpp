@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,75 +20,64 @@
 
 #include <iostream>
 
-namespace deskew
-{
-    ApplyDialog::ApplyDialog(QWidget* parent,
-                             PageId const& cur_page,
-                             PageSelectionAccessor const& page_selection_accessor)
+namespace deskew {
+ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor)
         : QDialog(parent),
           m_pages(page_selection_accessor.allPages()),
           m_curPage(cur_page),
           m_selectedPages(page_selection_accessor.selectedPages()),
-          m_pScopeGroup(new QButtonGroup(this))
-    {
-        setupUi(this);
-        m_pScopeGroup->addButton(thisPageRB);
-        m_pScopeGroup->addButton(allPagesRB);
-        m_pScopeGroup->addButton(thisPageAndFollowersRB);
-        m_pScopeGroup->addButton(everyOtherRB);
-        m_pScopeGroup->addButton(thisEveryOtherRB);
-        m_pScopeGroup->addButton(selectedPagesRB);
-        m_pScopeGroup->addButton(everyOtherSelectedRB);
-        if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
-        }
-
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+          m_pScopeGroup(new QButtonGroup(this)) {
+    setupUi(this);
+    m_pScopeGroup->addButton(thisPageRB);
+    m_pScopeGroup->addButton(allPagesRB);
+    m_pScopeGroup->addButton(thisPageAndFollowersRB);
+    m_pScopeGroup->addButton(everyOtherRB);
+    m_pScopeGroup->addButton(thisEveryOtherRB);
+    m_pScopeGroup->addButton(selectedPagesRB);
+    m_pScopeGroup->addButton(everyOtherSelectedRB);
+    if (m_selectedPages.size() <= 1) {
+        selectedPagesWidget->setEnabled(false);
     }
 
-    ApplyDialog::~ApplyDialog()
-    { }
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+}
 
-    void
-    ApplyDialog::onSubmit()
-    {
-        std::set<PageId> pages;
+ApplyDialog::~ApplyDialog() {
+}
 
-        if (allPagesRB->isChecked()) {
-            m_pages.selectAll().swap(pages);
-            emit appliedToAllPages(pages);
-        }
-        else if (thisPageAndFollowersRB->isChecked()) {
-            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-            emit appliedTo(pages);
-        }
-        else if (selectedPagesRB->isChecked()) {
-            emit appliedTo(m_selectedPages);
-        }
-        else if (everyOtherRB->isChecked()) {
-            m_pages.selectEveryOther(m_curPage).swap(pages);
-            emit appliedTo(pages);
-        }
-        else if (thisEveryOtherRB->isChecked()) {
-            std::set<PageId> tmp;
-            m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
-            for (int i = 0; it != tmp.end(); ++it, ++i) {
-                if (i % 2 == 0) {
-                    pages.insert(*it);
-                }
+void ApplyDialog::onSubmit() {
+    std::set<PageId> pages;
+
+    if (allPagesRB->isChecked()) {
+        m_pages.selectAll().swap(pages);
+        emit appliedToAllPages(pages);
+    } else if (thisPageAndFollowersRB->isChecked()) {
+        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+        emit appliedTo(pages);
+    } else if (selectedPagesRB->isChecked()) {
+        emit appliedTo(m_selectedPages);
+    } else if (everyOtherRB->isChecked()) {
+        m_pages.selectEveryOther(m_curPage).swap(pages);
+        emit appliedTo(pages);
+    } else if (thisEveryOtherRB->isChecked()) {
+        std::set<PageId> tmp;
+        m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
+        std::set<PageId>::iterator it = tmp.begin();
+        for (int i = 0; it != tmp.end(); ++it, ++i) {
+            if (i % 2 == 0) {
+                pages.insert(*it);
             }
-            emit appliedTo(pages);
         }
-        else if (everyOtherSelectedRB->isChecked()) {
-            std::set<PageId>::iterator it = m_selectedPages.begin();
-            for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
-                if (i % 2 == 0) {
-                    pages.insert(*it);
-                }
+        emit appliedTo(pages);
+    } else if (everyOtherSelectedRB->isChecked()) {
+        std::set<PageId>::iterator it = m_selectedPages.begin();
+        for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
+            if (i % 2 == 0) {
+                pages.insert(*it);
             }
-            emit appliedTo(pages);
         }
-        accept();
-    }  // ApplyDialog::onSubmit
+        emit appliedTo(pages);
+    }
+    accept();
+}      // ApplyDialog::onSubmit
 }  // namespace deskew

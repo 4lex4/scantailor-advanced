@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -36,12 +35,8 @@
 #include <set>
 #include <map>
 
-class RelinkingModel
-    : public QAbstractListModel,
-      public VirtualFunction1<void, RelinkablePath const&>
-{
+class RelinkingModel: public QAbstractListModel, public VirtualFunction1<void, RelinkablePath const&>{
     DECLARE_NON_COPYABLE(RelinkingModel)
-
 public:
     enum Status { Exists, Missing, StatusUpdatePending };
 
@@ -68,13 +63,11 @@ public:
      * This allows you to take the relinker right after construction
      * and then use it when accepted() signal is emitted.
      */
-    IntrusivePtr<AbstractRelinker> relinker() const
-    {
+    IntrusivePtr<AbstractRelinker> relinker() const {
         return m_ptrRelinker;
     }
 
-    virtual void operator()(RelinkablePath const& path)
-    {
+    virtual void operator()(RelinkablePath const& path) {
         addPath(path);
     }
 
@@ -119,9 +112,7 @@ private:
         Item(RelinkablePath const& path);
     };
 
-    class Relinker
-        : public AbstractRelinker
-    {
+    class Relinker: public AbstractRelinker {
     public:
         void addMapping(QString const& from, QString const& to);
 
@@ -134,6 +125,7 @@ private:
         std::map<QString, QString> m_mappings;
     };
 
+
     static void ensureEndsWithSlash(QString& str);
 
     QPixmap m_fileIcon;
@@ -144,5 +136,6 @@ private:
     std::unique_ptr<StatusUpdateThread> m_ptrStatusUpdateThread;
     bool m_haveUncommittedChanges;
 };
+
 
 #endif  // ifndef RELINKING_MODEL_H_

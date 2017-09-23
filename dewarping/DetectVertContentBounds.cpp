@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,478 +29,442 @@
 
 using namespace imageproc;
 
-namespace dewarping
-{
-    namespace
-    {
-        struct VertRange {
-            int top;
-            int bottom;
+namespace dewarping {
+namespace {
+struct VertRange {
+    int top;
+    int bottom;
 
-            VertRange()
-                : top(-1),
-                  bottom(-1)
-            { }
+    VertRange()
+            : top(-1),
+              bottom(-1) {
+    }
 
-            VertRange(int t, int b)
-                : top(t),
-                  bottom(b)
-            { }
+    VertRange(int t, int b)
+            : top(t),
+              bottom(b) {
+    }
 
-            bool isValid() const
-            {
-                return top != -1;
-            }
-        };
+    bool isValid() const {
+        return top != -1;
+    }
+};
 
 
-        struct Segment {
-            QLine line;
-            Vec2d unitVec;
-            int vertDist;
+struct Segment {
+    QLine line;
+    Vec2d unitVec;
+    int vertDist;
 
-            bool distToVertLine(int vert_line_x) const
-            {
-                return std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
-            }
+    bool distToVertLine(int vert_line_x) const {
+        return std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
+    }
 
-            Segment(QLine const& line, Vec2d const& vec, int dist)
-                : line(line),
-                  unitVec(vec),
-                  vertDist(dist)
-            { }
-        };
-
-
-        struct RansacModel {
-            std::vector<Segment> segments;
-            int totalVertDist;
-
-            RansacModel()
-                : totalVertDist(0)
-            { }
-
-            void add(Segment const& seg)
-            {
-                segments.push_back(seg);
-                totalVertDist += seg.vertDist;
-            }
-
-            bool betterThan(RansacModel const& other) const
-            {
-                return totalVertDist > other.totalVertDist;
-            }
-
-            void swap(RansacModel& other)
-            {
-                segments.swap(other.segments);
-                std::swap(totalVertDist, other.totalVertDist);
-            }
-        };
+    Segment(QLine const& line, Vec2d const& vec, int dist)
+            : line(line),
+              unitVec(vec),
+              vertDist(dist) {
+    }
+};
 
 
-        class RansacAlgo
-        {
-        public:
-            RansacAlgo(std::vector<Segment> const& segments);
+struct RansacModel {
+    std::vector<Segment> segments;
+    int totalVertDist;
 
-            void buildAndAssessModel(Segment const& seed_segment);
+    RansacModel()
+            : totalVertDist(0) {
+    }
 
-            RansacModel& bestModel()
-            {
-                return m_bestModel;
-            }
+    void add(Segment const& seg) {
+        segments.push_back(seg);
+        totalVertDist += seg.vertDist;
+    }
 
-            RansacModel const& bestModel() const
-            {
-                return m_bestModel;
-            }
+    bool betterThan(RansacModel const& other) const {
+        return totalVertDist > other.totalVertDist;
+    }
 
-        private:
-            std::vector<Segment> const& m_rSegments;
-            RansacModel m_bestModel;
-            double m_cosThreshold;
-        };
-
-
-        class SequentialColumnProcessor
-        {
-        public:
-            enum LeftOrRight { LEFT, RIGHT };
-
-            SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right);
-
-            void process(int x, VertRange const& range);
-
-            QLineF approximateWithLine(std::vector<Segment>* dbg_segments = 0) const;
-
-            QImage visualizeEnvelope(QImage const& background);
-
-        private:
-            bool topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const;
-
-            static int crossZ(QPoint v1, QPoint v2);
-
-            bool segmentIsTooLong(QPoint p1, QPoint p2) const;
-
-            QLineF interpolateSegments(std::vector<Segment> const& segments) const;
-
-            QPoint m_leadingTop;
-            QPoint m_leadingBottom;
-            std::deque<QPoint> m_path;
-            int m_maxSegmentSqLen;
-            int m_leftMinusOneRightOne;
-            LeftOrRight m_leftOrRight;
-        };
+    void swap(RansacModel& other) {
+        segments.swap(other.segments);
+        std::swap(totalVertDist, other.totalVertDist);
+    }
+};
 
 
-        RansacAlgo::RansacAlgo(std::vector<Segment> const& segments)
-            : m_rSegments(segments),
-              m_cosThreshold(cos(4.0 * constants::DEG2RAD))
-        { }
+class RansacAlgo {
+public:
+    RansacAlgo(std::vector<Segment> const& segments);
 
-        void
-        RansacAlgo::buildAndAssessModel(Segment const& seed_segment)
-        {
-            RansacModel cur_model;
-            cur_model.add(seed_segment);
+    void buildAndAssessModel(Segment const& seed_segment);
 
-            for (Segment const& seg : m_rSegments) {
-                double const cos = seg.unitVec.dot(seed_segment.unitVec);
-                if (cos > m_cosThreshold) {
-                    cur_model.add(seg);
-                }
-            }
+    RansacModel& bestModel() {
+        return m_bestModel;
+    }
 
-            if (cur_model.betterThan(m_bestModel)) {
-                cur_model.swap(m_bestModel);
+    RansacModel const& bestModel() const {
+        return m_bestModel;
+    }
+
+private:
+    std::vector<Segment> const& m_rSegments;
+    RansacModel m_bestModel;
+    double m_cosThreshold;
+};
+
+
+class SequentialColumnProcessor {
+public:
+    enum LeftOrRight { LEFT, RIGHT };
+
+    SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right);
+
+    void process(int x, VertRange const& range);
+
+    QLineF approximateWithLine(std::vector<Segment>* dbg_segments = 0) const;
+
+    QImage visualizeEnvelope(QImage const& background);
+
+private:
+    bool topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const;
+
+    static int crossZ(QPoint v1, QPoint v2);
+
+    bool segmentIsTooLong(QPoint p1, QPoint p2) const;
+
+    QLineF interpolateSegments(std::vector<Segment> const& segments) const;
+
+    QPoint m_leadingTop;
+    QPoint m_leadingBottom;
+    std::deque<QPoint> m_path;
+    int m_maxSegmentSqLen;
+    int m_leftMinusOneRightOne;
+    LeftOrRight m_leftOrRight;
+};
+
+
+RansacAlgo::RansacAlgo(std::vector<Segment> const& segments)
+        : m_rSegments(segments),
+          m_cosThreshold(cos(4.0 * constants::DEG2RAD)) {
+}
+
+void RansacAlgo::buildAndAssessModel(Segment const& seed_segment) {
+    RansacModel cur_model;
+    cur_model.add(seed_segment);
+
+    for (Segment const& seg : m_rSegments) {
+        double const cos = seg.unitVec.dot(seed_segment.unitVec);
+        if (cos > m_cosThreshold) {
+            cur_model.add(seg);
+        }
+    }
+
+    if (cur_model.betterThan(m_bestModel)) {
+        cur_model.swap(m_bestModel);
+    }
+}
+
+SequentialColumnProcessor::SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right)
+        : m_leftMinusOneRightOne(left_or_right == LEFT ? -1 : 1),
+          m_leftOrRight(left_or_right) {
+    int const w = page_size.width();
+    int const h = page_size.height();
+    m_maxSegmentSqLen = (w * w + h * h) / 3;
+}
+
+void SequentialColumnProcessor::process(int x, VertRange const& range) {
+    if (!range.isValid()) {
+        return;
+    }
+
+    if (m_path.empty()) {
+        m_leadingTop = QPoint(x, range.top);
+        m_leadingBottom = QPoint(x, range.bottom);
+        m_path.push_front(m_leadingTop);
+
+        if (range.top != range.bottom) {
+            m_path.push_back(m_leadingBottom);
+        }
+
+        return;
+    }
+
+    if (range.top < m_path.front().y()) {
+        QPoint const top(x, range.top);
+
+        size_t const size = m_path.size();
+        size_t mid_idx = 0;
+        size_t bottom_idx = 1;
+
+        for (; bottom_idx < size; ++mid_idx, ++bottom_idx) {
+            if (!topMidBottomConcave(top, m_path[mid_idx], m_path[bottom_idx])) {
+                break;
             }
         }
 
-        SequentialColumnProcessor::SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right)
-            : m_leftMinusOneRightOne(left_or_right == LEFT ? -1 : 1),
-              m_leftOrRight(left_or_right)
-        {
-            int const w = page_size.width();
-            int const h = page_size.height();
-            m_maxSegmentSqLen = (w * w + h * h) / 3;
+        if (!segmentIsTooLong(top, m_path[mid_idx])) {
+            m_path.erase(m_path.begin(), m_path.begin() + mid_idx);
         }
 
-        void
-        SequentialColumnProcessor::process(int x, VertRange const& range)
-        {
-            if (!range.isValid()) {
-                return;
+        m_path.push_front(top);
+    }
+
+    if (range.bottom > m_path.back().y()) {
+        QPoint const bottom(x, range.bottom);
+
+        int mid_idx = m_path.size() - 1;
+        int top_idx = mid_idx - 1;
+
+        for (; top_idx >= 0; --top_idx, --mid_idx) {
+            if (!topMidBottomConcave(m_path[top_idx], m_path[mid_idx], bottom)) {
+                break;
             }
-
-            if (m_path.empty()) {
-                m_leadingTop = QPoint(x, range.top);
-                m_leadingBottom = QPoint(x, range.bottom);
-                m_path.push_front(m_leadingTop);
-
-                if (range.top != range.bottom) {
-                    m_path.push_back(m_leadingBottom);
-                }
-
-                return;
-            }
-
-            if (range.top < m_path.front().y()) {
-                QPoint const top(x, range.top);
-
-                size_t const size = m_path.size();
-                size_t mid_idx = 0;
-                size_t bottom_idx = 1;
-
-                for (; bottom_idx < size; ++mid_idx, ++bottom_idx) {
-                    if (!topMidBottomConcave(top, m_path[mid_idx], m_path[bottom_idx])) {
-                        break;
-                    }
-                }
-
-                if (!segmentIsTooLong(top, m_path[mid_idx])) {
-                    m_path.erase(m_path.begin(), m_path.begin() + mid_idx);
-                }
-
-                m_path.push_front(top);
-            }
-
-            if (range.bottom > m_path.back().y()) {
-                QPoint const bottom(x, range.bottom);
-
-                int mid_idx = m_path.size() - 1;
-                int top_idx = mid_idx - 1;
-
-                for (; top_idx >= 0; --top_idx, --mid_idx) {
-                    if (!topMidBottomConcave(m_path[top_idx], m_path[mid_idx], bottom)) {
-                        break;
-                    }
-                }
-
-                if (!segmentIsTooLong(bottom, m_path[mid_idx])) {
-                    m_path.erase(m_path.begin() + (mid_idx + 1), m_path.end());
-                }
-
-                m_path.push_back(bottom);
-            }
-        }  // SequentialColumnProcessor::process
-
-        bool
-        SequentialColumnProcessor::topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const
-        {
-            int const cross_z = crossZ(mid - top, bottom - mid);
-
-            return cross_z * m_leftMinusOneRightOne < 0;
         }
 
-        int
-        SequentialColumnProcessor::crossZ(QPoint v1, QPoint v2)
-        {
-            return v1.x() * v2.y() - v2.x() * v1.y();
+        if (!segmentIsTooLong(bottom, m_path[mid_idx])) {
+            m_path.erase(m_path.begin() + (mid_idx + 1), m_path.end());
         }
 
-        bool
-        SequentialColumnProcessor::segmentIsTooLong(QPoint const p1, QPoint const p2) const
-        {
-            QPoint const v(p2 - p1);
-            int const sqlen = v.x() * v.x() + v.y() * v.y();
+        m_path.push_back(bottom);
+    }
+}          // SequentialColumnProcessor::process
 
-            return sqlen > m_maxSegmentSqLen;
+bool SequentialColumnProcessor::topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const {
+    int const cross_z = crossZ(mid - top, bottom - mid);
+
+    return cross_z * m_leftMinusOneRightOne < 0;
+}
+
+int SequentialColumnProcessor::crossZ(QPoint v1, QPoint v2) {
+    return v1.x() * v2.y() - v2.x() * v1.y();
+}
+
+bool SequentialColumnProcessor::segmentIsTooLong(QPoint const p1, QPoint const p2) const {
+    QPoint const v(p2 - p1);
+    int const sqlen = v.x() * v.x() + v.y() * v.y();
+
+    return sqlen > m_maxSegmentSqLen;
+}
+
+QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbg_segments) const {
+    using namespace boost::lambda;
+
+    size_t const num_points = m_path.size();
+
+    std::vector<Segment> segments;
+    segments.reserve(num_points);
+
+    for (size_t i = 1; i < num_points; ++i) {
+        QPoint const pt1(m_path[i - 1]);
+        QPoint const pt2(m_path[i]);
+        assert(pt2.y() > pt1.y());
+
+        Vec2d vec(pt2 - pt1);
+        if (fabs(vec[0]) > fabs(vec[1])) {
+            continue;
         }
 
-        QLineF
-        SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbg_segments) const
-        {
-            using namespace boost::lambda;
+        vec /= sqrt(vec.squaredNorm());
+        segments.push_back(Segment(QLine(pt1, pt2), vec, pt2.y() - pt1.y()));
+    }
 
-            size_t const num_points = m_path.size();
 
-            std::vector<Segment> segments;
-            segments.reserve(num_points);
+    RansacAlgo ransac(segments);
+    qsrand(0);
+    size_t const num_best_segments = std::min<size_t>(6, segments.size());
+    std::partial_sort(
+        segments.begin(), segments.begin() + num_best_segments, segments.end(),
+        bind(&Segment::distToVertLine, _1, m_leadingTop.x())
+        < bind(&Segment::distToVertLine, _2, m_leadingTop.x())
+    );
+    for (size_t i = 0; i < num_best_segments; ++i) {
+        ransac.buildAndAssessModel(segments[i]);
+    }
 
-            for (size_t i = 1; i < num_points; ++i) {
-                QPoint const pt1(m_path[i - 1]);
-                QPoint const pt2(m_path[i]);
-                assert(pt2.y() > pt1.y());
+    int const ransac_iterations = segments.empty() ? 0 : 200;
+    for (int i = 0; i < ransac_iterations; ++i) {
+        ransac.buildAndAssessModel(segments[qrand() % segments.size()]);
+    }
 
-                Vec2d vec(pt2 - pt1);
-                if (fabs(vec[0]) > fabs(vec[1])) {
-                    continue;
-                }
+    if (ransac.bestModel().segments.empty()) {
+        return QLineF(m_leadingTop, m_leadingTop + QPointF(0, 1));
+    }
 
-                vec /= sqrt(vec.squaredNorm());
-                segments.push_back(Segment(QLine(pt1, pt2), vec, pt2.y() - pt1.y()));
+    QLineF const line(interpolateSegments(ransac.bestModel().segments));
+
+    if (dbg_segments) {
+        dbg_segments->swap(ransac.bestModel().segments);
+    }
+
+    return line;
+}          // SequentialColumnProcessor::approximateWithLine
+
+QLineF SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segments) const {
+    assert(!segments.empty());
+
+    Vec2d accum_vec;
+    double accum_weight = 0;
+
+    for (Segment const& seg : segments) {
+        double const weight = sqrt(double(seg.vertDist));
+        accum_vec += weight * seg.unitVec;
+        accum_weight += weight;
+    }
+
+    assert(accum_weight != 0);
+    accum_vec /= accum_weight;
+
+    QLineF line(m_path.front(), m_path.front() + accum_vec);
+    Vec2d normal(-accum_vec[1], accum_vec[0]);
+    if ((m_leftOrRight == RIGHT) != (normal[0] < 0)) {
+        normal = -normal;
+    }
+
+    for (QPoint const& pt : m_path) {
+        if (normal.dot(pt - line.p1()) < 0) {
+            line.setP1(pt);
+            line.setP2(line.p1() + accum_vec);
+        }
+    }
+
+    return line;
+}
+
+QImage SequentialColumnProcessor::visualizeEnvelope(QImage const& background) {
+    QImage canvas(background.convertToFormat(QImage::Format_RGB32));
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QPen pen(QColor(0xff, 0, 0, 180));
+    pen.setWidthF(3.0);
+    painter.setPen(pen);
+
+    if (!m_path.empty()) {
+        std::vector<QPointF> const polyline(m_path.begin(), m_path.end());
+        painter.drawPolyline(&polyline[0], polyline.size());
+    }
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(Qt::blue));
+    painter.setOpacity(0.7);
+    QRectF rect(0, 0, 9, 9);
+
+    for (QPoint pt : m_path) {
+        rect.moveCenter(pt + QPointF(0.5, 0.5));
+        painter.drawEllipse(rect);
+    }
+
+    return canvas;
+}
+
+QImage visualizeSegments(QImage const& background, std::vector<Segment> const& segments) {
+    QImage canvas(background.convertToFormat(QImage::Format_RGB32));
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QPen pen(Qt::red);
+    pen.setWidthF(3.0);
+    painter.setPen(pen);
+    painter.setOpacity(0.7);
+
+    for (Segment const& seg : segments) {
+        painter.drawLine(seg.line);
+    }
+
+    return canvas;
+}
+
+void calculateVertRanges(imageproc::BinaryImage const& image, std::vector<VertRange>& ranges) {
+    int const width = image.width();
+    int const height = image.height();
+    uint32_t const* image_data = image.data();
+    int const image_stride = image.wordsPerLine();
+    uint32_t const msb = uint32_t(1) << 31;
+
+    ranges.reserve(width);
+
+    for (int x = 0; x < width; ++x) {
+        ranges.push_back(VertRange());
+        VertRange& range = ranges.back();
+
+        uint32_t const mask = msb >> (x & 31);
+        uint32_t const* p_word = image_data + (x >> 5);
+
+        int top_y = 0;
+        for (; top_y < height; ++top_y, p_word += image_stride) {
+            if (*p_word & mask) {
+                range.top = top_y;
+                break;
             }
-
-
-            RansacAlgo ransac(segments);
-            qsrand(0);
-            size_t const num_best_segments = std::min<size_t>(6, segments.size());
-            std::partial_sort(
-                segments.begin(), segments.begin() + num_best_segments, segments.end(),
-                bind(&Segment::distToVertLine, _1, m_leadingTop.x())
-                < bind(&Segment::distToVertLine, _2, m_leadingTop.x())
-            );
-            for (size_t i = 0; i < num_best_segments; ++i) {
-                ransac.buildAndAssessModel(segments[i]);
-            }
-
-            int const ransac_iterations = segments.empty() ? 0 : 200;
-            for (int i = 0; i < ransac_iterations; ++i) {
-                ransac.buildAndAssessModel(segments[qrand() % segments.size()]);
-            }
-
-            if (ransac.bestModel().segments.empty()) {
-                return QLineF(m_leadingTop, m_leadingTop + QPointF(0, 1));
-            }
-
-            QLineF const line(interpolateSegments(ransac.bestModel().segments));
-
-            if (dbg_segments) {
-                dbg_segments->swap(ransac.bestModel().segments);
-            }
-
-            return line;
-        }  // SequentialColumnProcessor::approximateWithLine
-
-        QLineF
-        SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segments) const
-        {
-            assert(!segments.empty());
-
-            Vec2d accum_vec;
-            double accum_weight = 0;
-
-            for (Segment const& seg : segments) {
-                double const weight = sqrt(double(seg.vertDist));
-                accum_vec += weight * seg.unitVec;
-                accum_weight += weight;
-            }
-
-            assert(accum_weight != 0);
-            accum_vec /= accum_weight;
-
-            QLineF line(m_path.front(), m_path.front() + accum_vec);
-            Vec2d normal(-accum_vec[1], accum_vec[0]);
-            if ((m_leftOrRight == RIGHT) != (normal[0] < 0)) {
-                normal = -normal;
-            }
-
-            for (QPoint const& pt : m_path) {
-                if (normal.dot(pt - line.p1()) < 0) {
-                    line.setP1(pt);
-                    line.setP2(line.p1() + accum_vec);
-                }
-            }
-
-            return line;
         }
 
-        QImage
-        SequentialColumnProcessor::visualizeEnvelope(QImage const& background)
-        {
-            QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-            QPainter painter(&canvas);
-            painter.setRenderHint(QPainter::Antialiasing);
-
-            QPen pen(QColor(0xff, 0, 0, 180));
-            pen.setWidthF(3.0);
-            painter.setPen(pen);
-
-            if (!m_path.empty()) {
-                std::vector<QPointF> const polyline(m_path.begin(), m_path.end());
-                painter.drawPolyline(&polyline[0], polyline.size());
+        int bottom_y = height - 1;
+        p_word = image_data + bottom_y * image_stride + (x >> 5);
+        for (; bottom_y >= top_y; --bottom_y, p_word -= image_stride) {
+            if (*p_word & mask) {
+                range.bottom = bottom_y;
+                break;
             }
-
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(QColor(Qt::blue));
-            painter.setOpacity(0.7);
-            QRectF rect(0, 0, 9, 9);
-
-            for (QPoint pt : m_path) {
-                rect.moveCenter(pt + QPointF(0.5, 0.5));
-                painter.drawEllipse(rect);
-            }
-
-            return canvas;
         }
+    }
+}          // calculateVertRanges
 
-        QImage
-        visualizeSegments(QImage const& background, std::vector<Segment> const& segments)
-        {
-            QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-            QPainter painter(&canvas);
-            painter.setRenderHint(QPainter::Antialiasing);
+QLineF extendLine(QLineF const& line, int height) {
+    QPointF top_intersection;
+    QPointF bottom_intersection;
 
-            QPen pen(Qt::red);
-            pen.setWidthF(3.0);
-            painter.setPen(pen);
-            painter.setOpacity(0.7);
+    QLineF const top_line(QPointF(0, 0), QPointF(1, 0));
+    QLineF const bottom_line(QPointF(0, height), QPointF(1, height));
 
-            for (Segment const& seg : segments) {
-                painter.drawLine(seg.line);
-            }
+    line.intersect(top_line, &top_intersection);
+    line.intersect(bottom_line, &bottom_intersection);
 
-            return canvas;
-        }
+    return QLineF(top_intersection, bottom_intersection);
+}
+}      // namespace
 
-        void
-        calculateVertRanges(imageproc::BinaryImage const& image, std::vector<VertRange>& ranges)
-        {
-            int const width = image.width();
-            int const height = image.height();
-            uint32_t const* image_data = image.data();
-            int const image_stride = image.wordsPerLine();
-            uint32_t const msb = uint32_t(1) << 31;
+std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg) {
+    int const width = image.width();
+    int const height = image.height();
 
-            ranges.reserve(width);
+    std::vector<VertRange> cols;
+    calculateVertRanges(image, cols);
 
-            for (int x = 0; x < width; ++x) {
-                ranges.push_back(VertRange());
-                VertRange& range = ranges.back();
+    SequentialColumnProcessor left_processor(image.size(), SequentialColumnProcessor::LEFT);
+    for (int x = 0; x < width; ++x) {
+        left_processor.process(x, cols[x]);
+    }
 
-                uint32_t const mask = msb >> (x & 31);
-                uint32_t const* p_word = image_data + (x >> 5);
+    SequentialColumnProcessor right_processor(image.size(), SequentialColumnProcessor::RIGHT);
+    for (int x = width - 1; x >= 0; --x) {
+        right_processor.process(x, cols[x]);
+    }
 
-                int top_y = 0;
-                for (; top_y < height; ++top_y, p_word += image_stride) {
-                    if (*p_word & mask) {
-                        range.top = top_y;
-                        break;
-                    }
-                }
+    if (dbg) {
+        QImage const background(image.toQImage().convertToFormat(QImage::Format_RGB32));
+        dbg->add(left_processor.visualizeEnvelope(background), "left_envelope");
+        dbg->add(right_processor.visualizeEnvelope(background), "right_envelope");
+    }
 
-                int bottom_y = height - 1;
-                p_word = image_data + bottom_y * image_stride + (x >> 5);
-                for (; bottom_y >= top_y; --bottom_y, p_word -= image_stride) {
-                    if (*p_word & mask) {
-                        range.bottom = bottom_y;
-                        break;
-                    }
-                }
-            }
-        }  // calculateVertRanges
+    std::pair<QLineF, QLineF> bounds;
 
-        QLineF
-        extendLine(QLineF const& line, int height)
-        {
-            QPointF top_intersection;
-            QPointF bottom_intersection;
+    std::vector<Segment> segments;
+    std::vector<Segment>* dbg_segments = dbg ? &segments : 0;
 
-            QLineF const top_line(QPointF(0, 0), QPointF(1, 0));
-            QLineF const bottom_line(QPointF(0, height), QPointF(1, height));
+    QLineF left_line(left_processor.approximateWithLine(dbg_segments));
+    left_line.translate(-1, 0);
+    bounds.first = extendLine(left_line, height);
+    if (dbg) {
+        dbg->add(visualizeSegments(image.toQImage(), *dbg_segments), "left_ransac_model");
+    }
 
-            line.intersect(top_line, &top_intersection);
-            line.intersect(bottom_line, &bottom_intersection);
+    QLineF right_line(right_processor.approximateWithLine(dbg_segments));
+    right_line.translate(1, 0);
+    bounds.second = extendLine(right_line, height);
+    if (dbg) {
+        dbg->add(visualizeSegments(image.toQImage(), *dbg_segments), "right_ransac_model");
+    }
 
-            return QLineF(top_intersection, bottom_intersection);
-        }
-    }  // namespace
-
-    std::pair<QLineF, QLineF>
-    detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg)
-    {
-        int const width = image.width();
-        int const height = image.height();
-
-        std::vector<VertRange> cols;
-        calculateVertRanges(image, cols);
-
-        SequentialColumnProcessor left_processor(image.size(), SequentialColumnProcessor::LEFT);
-        for (int x = 0; x < width; ++x) {
-            left_processor.process(x, cols[x]);
-        }
-
-        SequentialColumnProcessor right_processor(image.size(), SequentialColumnProcessor::RIGHT);
-        for (int x = width - 1; x >= 0; --x) {
-            right_processor.process(x, cols[x]);
-        }
-
-        if (dbg) {
-            QImage const background(image.toQImage().convertToFormat(QImage::Format_RGB32));
-            dbg->add(left_processor.visualizeEnvelope(background), "left_envelope");
-            dbg->add(right_processor.visualizeEnvelope(background), "right_envelope");
-        }
-
-        std::pair<QLineF, QLineF> bounds;
-
-        std::vector<Segment> segments;
-        std::vector<Segment>* dbg_segments = dbg ? &segments : 0;
-
-        QLineF left_line(left_processor.approximateWithLine(dbg_segments));
-        left_line.translate(-1, 0);
-        bounds.first = extendLine(left_line, height);
-        if (dbg) {
-            dbg->add(visualizeSegments(image.toQImage(), *dbg_segments), "left_ransac_model");
-        }
-
-        QLineF right_line(right_processor.approximateWithLine(dbg_segments));
-        right_line.translate(1, 0);
-        bounds.second = extendLine(right_line, height);
-        if (dbg) {
-            dbg->add(visualizeSegments(image.toQImage(), *dbg_segments), "right_ransac_model");
-        }
-
-        return bounds;
-    }  // detectVertContentBounds
+    return bounds;
+}      // detectVertContentBounds
 }  // namespace dewarping

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -37,22 +36,20 @@ struct RelinkablePathVisualization::PathComponent {
     bool exists;
 
     PathComponent(QString const& lbl, QString const& prefix_path, QString const& suffix_path, RelinkablePath::Type t)
-        : label(lbl),
-          prefixPath(prefix_path),
-          suffixPath(suffix_path),
-          type(t),
-          exists(false)
-    { }
+            : label(lbl),
+              prefixPath(prefix_path),
+              suffixPath(suffix_path),
+              type(t),
+              exists(false) {
+    }
 };
 
 
-class RelinkablePathVisualization::ComponentButton
-    : public QPushButton
-{
+class RelinkablePathVisualization::ComponentButton: public QPushButton {
 public:
     ComponentButton(QWidget* parent = 0)
-        : QPushButton(parent)
-    { }
+            : QPushButton(parent) {
+    }
 
 protected:
     virtual void paintEvent(QPaintEvent* evt);
@@ -60,16 +57,13 @@ protected:
 
 
 RelinkablePathVisualization::RelinkablePathVisualization(QWidget* parent)
-    : QWidget(parent),
-      m_pLayout(new QHBoxLayout(this))
-{
+        : QWidget(parent),
+          m_pLayout(new QHBoxLayout(this)) {
     m_pLayout->setSpacing(0);
     m_pLayout->setMargin(0);
 }
 
-void
-RelinkablePathVisualization::clear()
-{
+void RelinkablePathVisualization::clear() {
     for (int count; (count = m_pLayout->count());) {
         QLayoutItem* item = m_pLayout->takeAt(count - 1);
         if (QWidget* wgt = item->widget()) {
@@ -79,9 +73,7 @@ RelinkablePathVisualization::clear()
     }
 }
 
-void
-RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
-{
+void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable) {
     clear();
 
     QStringList components(path.normalizedPath().split(QChar('/'), QString::SkipEmptyParts));
@@ -93,8 +85,7 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
 
     if (path.normalizedPath().startsWith(QLatin1String("//"))) {
         components.front().prepend(QLatin1String("//"));
-    }
-    else if (path.normalizedPath().startsWith(QChar('/'))) {
+    } else if (path.normalizedPath().startsWith(QChar('/'))) {
         prefix_path += QChar('/');
     }
 
@@ -148,9 +139,7 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
     m_pLayout->addStretch();
 }  // RelinkablePathVisualization::setPath
 
-void
-RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists)
-{
+void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
     QColor const border_color(palette().color(QPalette::Window).darker(150));
 
     QString style
@@ -166,8 +155,7 @@ RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool
         style
             += "	color: #3a5827;\n"
                "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #89e74a);\n";
-    }
-    else {
+    } else {
         style
             += "	color: #6f2719;\n"
                "	background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4, radius: 1.35, stop: 0 #fff, stop: 1 #ff674b);\n";
@@ -186,9 +174,7 @@ RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool
     btn->setStyleSheet(style);
 }  // RelinkablePathVisualization::stylePathComponentButton
 
-void
-RelinkablePathVisualization::paintEvent(QPaintEvent* evt)
-{
+void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
     int const total_items = m_pLayout->count();
     for (int i = 0; i < total_items; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
@@ -213,8 +199,7 @@ RelinkablePathVisualization::paintEvent(QPaintEvent* evt)
                 }
             }
             break;
-        }
-        else if (widget->property("highlightEnforcer").toBool()) {
+        } else if (widget->property("highlightEnforcer").toBool()) {
             widget->setProperty("highlightEnforcer", false);
 
             for (int j = 0; j < total_items; ++j) {
@@ -232,12 +217,10 @@ RelinkablePathVisualization::paintEvent(QPaintEvent* evt)
     }
 }  // RelinkablePathVisualization::paintEvent
 
-void
-RelinkablePathVisualization::onClicked(int component_idx,
-                                       QString const& prefix_path,
-                                       QString const& suffix_path,
-                                       int type)
-{
+void RelinkablePathVisualization::onClicked(int component_idx,
+                                            QString const& prefix_path,
+                                            QString const& suffix_path,
+                                            int type) {
     for (int i = 0; i <= component_idx; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (widget) {
@@ -256,9 +239,7 @@ RelinkablePathVisualization::onClicked(int component_idx,
     }
 }
 
-void
-RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& components)
-{
+void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& components) {
     if (components.empty()) {
         return;
     }
@@ -277,8 +258,7 @@ RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& compo
         int const mid = (left + right + 1) >> 1;
         if (QFile::exists(components[mid].prefixPath)) {
             left = mid;
-        }
-        else {
+        } else {
             right = mid;
         }
     }
@@ -290,9 +270,7 @@ RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& compo
 
 /*============================ ComponentButton ============================*/
 
-void
-RelinkablePathVisualization::ComponentButton::paintEvent(QPaintEvent* evt)
-{
+void RelinkablePathVisualization::ComponentButton::paintEvent(QPaintEvent* evt) {
     QStyleOptionButton option;
     option.initFrom(this);
     option.text = text();

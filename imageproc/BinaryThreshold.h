@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,65 +23,62 @@
 
 class QImage;
 
-namespace imageproc
-{
-    class GrayscaleHistogram;
+namespace imageproc {
+class GrayscaleHistogram;
+
+/**
+ * \brief Defines the gray level threshold that separates black from white.
+ *
+ * Gray levels in range of [0, threshold) are considered black, while
+ * levels in range of [threshold, 255] are considered white.  The threshold
+ * itself is considered to be white.
+ */
+class BinaryThreshold {
+public:
+    /**
+     * \brief Finds the threshold using Otsu’s thresholding method.
+     */
+    static BinaryThreshold otsuThreshold(QImage const& image);
 
     /**
-     * \brief Defines the gray level threshold that separates black from white.
-     *
-     * Gray levels in range of [0, threshold) are considered black, while
-     * levels in range of [threshold, 255] are considered white.  The threshold
-     * itself is considered to be white.
+     * \brief Finds the threshold using Otsu’s thresholding method.
      */
-    class BinaryThreshold
-    {
-    public:
-        /**
-         * \brief Finds the threshold using Otsu’s thresholding method.
-         */
-        static BinaryThreshold otsuThreshold(QImage const& image);
+    static BinaryThreshold otsuThreshold(GrayscaleHistogram const& pixels_by_color);
 
-        /**
-         * \brief Finds the threshold using Otsu’s thresholding method.
-         */
-        static BinaryThreshold otsuThreshold(GrayscaleHistogram const& pixels_by_color);
+    static BinaryThreshold peakThreshold(QImage const& image);
 
-        static BinaryThreshold peakThreshold(QImage const& image);
+    static BinaryThreshold peakThreshold(GrayscaleHistogram const& pixels_by_color);
 
-        static BinaryThreshold peakThreshold(GrayscaleHistogram const& pixels_by_color);
+    /**
+     * \brief Image binarization using Mokji's global thresholding method.
+     *
+     * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
+     * Co-occurrence Matrix Edge Information. Asia International Conference on
+     * Modelling and Simulation 2007: 444-450
+     * http:         *
+     * \param image The source image.  May be in any format.
+     * \param max_edge_width The maximum gradient length to consider.
+     * \param min_edge_magnitude The minimum color difference in a gradient.
+     * \return A black and white image.
+     */
+    static BinaryThreshold mokjiThreshold(QImage const& image,
+                                          unsigned max_edge_width = 3,
+                                          unsigned min_edge_magnitude = 20);
 
-        /**
-         * \brief Image binarization using Mokji's global thresholding method.
-         *
-         * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
-         * Co-occurrence Matrix Edge Information. Asia International Conference on
-         * Modelling and Simulation 2007: 444-450
-         * http:         *
-         * \param image The source image.  May be in any format.
-         * \param max_edge_width The maximum gradient length to consider.
-         * \param min_edge_magnitude The minimum color difference in a gradient.
-         * \return A black and white image.
-         */
-        static BinaryThreshold mokjiThreshold(QImage const& image,
-                                              unsigned max_edge_width = 3,
-                                              unsigned min_edge_magnitude = 20);
+    explicit BinaryThreshold(int threshold)
+            : m_threshold(threshold) {
+    }
 
-        explicit BinaryThreshold(int threshold)
-            : m_threshold(threshold)
-        { }
+    operator int() const
+    { return m_threshold;
+    }
 
-        operator int() const
-        { return m_threshold;
-        }
+    BWColor grayToBW(int gray) const {
+        return gray < m_threshold ? BLACK : WHITE;
+    }
 
-        BWColor grayToBW(int gray) const
-        {
-            return gray < m_threshold ? BLACK : WHITE;
-        }
-
-    private:
-        int m_threshold;
-    };
+private:
+    int m_threshold;
+};
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_BINARYTHRESHOLD_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,9 +24,7 @@
 #include "ConsoleBatch.h"
 
 
-int
-main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
 
 #ifdef _WIN32
@@ -44,7 +41,8 @@ main(int argc, char** argv)
     }
 
     if (cli.hasHelp() || cli.outputDirectory().isEmpty()
-        || ((cli.images().size() == 0) && cli.projectFile().isEmpty())) {
+        || ((cli.images().size() == 0) && cli.projectFile().isEmpty()))
+    {
         cli.printHelp();
 
         return 0;
@@ -55,13 +53,11 @@ main(int argc, char** argv)
     try {
         if (!cli.projectFile().isEmpty()) {
             cbatch.reset(new ConsoleBatch(cli.projectFile()));
-        }
-        else {
+        } else {
             cbatch.reset(new ConsoleBatch(cli.images(), cli.outputDirectory(), cli.getLayoutDirection()));
         }
         cbatch->process();
-    }
-    catch (std::exception const& e) {
+    } catch (std::exception const& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
     }

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,15 +24,13 @@ class QSizeF;
 class QPointF;
 class QTransform;
 
-class OrthogonalRotation
-{
+class OrthogonalRotation {
 public:
     OrthogonalRotation()
-        : m_degrees(0)
-    { }
+            : m_degrees(0) {
+    }
 
-    int toDegrees() const
-    {
+    int toDegrees() const {
         return m_degrees;
     }
 
@@ -59,15 +56,12 @@ private:
     int m_degrees;
 };
 
-inline bool
-operator==(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
-{
+
+inline bool operator==(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs) {
     return lhs.toDegrees() == rhs.toDegrees();
 }
 
-inline bool
-operator!=(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs)
-{
+inline bool operator!=(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs) {
     return lhs.toDegrees() != rhs.toDegrees();
 }
 

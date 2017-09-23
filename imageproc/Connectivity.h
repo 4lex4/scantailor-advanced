@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,18 +19,17 @@
 #ifndef IMAGEPROC_CONNECTIVITY_H_
 #define IMAGEPROC_CONNECTIVITY_H_
 
-namespace imageproc
-{
-    /**
-     * \brief Defines which neighbouring pixels are considered to be connected.
-     */
-    enum Connectivity {
-        /** North, east, south and west neighbours of a pixel
-            are considered to be connected to it. */
-        CONN4,
+namespace imageproc {
+/**
+ * \brief Defines which neighbouring pixels are considered to be connected.
+ */
+enum Connectivity {
+    /** North, east, south and west neighbours of a pixel
+        are considered to be connected to it. */
+    CONN4,
 
-        /** All 8 neighbours are considered to be connected. */
-        CONN8
-    };
+    /** All 8 neighbours are considered to be connected. */
+    CONN8
+};
 }
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,12 +25,9 @@ class QPainter;
 class QRect;
 class QModelIndex;
 
-class RelinkingListView
-    : public QListView
-{
+class RelinkingListView: public QListView {
 public:
     RelinkingListView(QWidget* parent = 0);
-
 protected:
     virtual void paintEvent(QPaintEvent* e);
 
@@ -47,5 +43,6 @@ private:
 
     bool m_statusLayerDrawn;
 };
+
 
 #endif  // ifndef RELINKING_LIST_VIEW_H_

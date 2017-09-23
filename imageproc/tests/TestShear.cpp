@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,71 +22,68 @@
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 
-namespace imageproc
-{
-    namespace tests
-    {
-        using namespace utils;
+namespace imageproc {
+namespace tests {
+using namespace utils;
 
-        BOOST_AUTO_TEST_SUITE(ShearTestSuite);
+BOOST_AUTO_TEST_SUITE(ShearTestSuite);
 
-        BOOST_AUTO_TEST_CASE(test_small_image)
-        {
-            static int const inp[] = {
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0
-            };
+BOOST_AUTO_TEST_CASE(test_small_image) {
+    static int const inp[] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-            static int const h_out[] = {
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 1, 1, 1, 1, 1,
-                0, 0, 0, 1, 1, 1, 1, 1, 1,
-                0, 0, 1, 1, 1, 1, 1, 1, 1,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                1, 1, 1, 1, 1, 1, 1, 0, 0,
-                1, 1, 1, 1, 1, 1, 0, 0, 0,
-                1, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0
-            };
+    static int const h_out[] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 1, 1, 1, 1,
+        0, 0, 0, 1, 1, 1, 1, 1, 1,
+        0, 0, 1, 1, 1, 1, 1, 1, 1,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        1, 1, 1, 1, 1, 1, 1, 0, 0,
+        1, 1, 1, 1, 1, 1, 0, 0, 0,
+        1, 1, 1, 1, 1, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-            static int const v_out[] = {
-                0, 1, 1, 1, 0, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0,
-                0, 0, 1, 1, 1, 1, 1, 1, 0,
-                0, 0, 0, 1, 1, 1, 1, 1, 0,
-                0, 0, 0, 0, 1, 1, 1, 1, 0,
-                0, 0, 0, 0, 0, 1, 1, 1, 0
-            };
+    static int const v_out[] = {
+        0, 1, 1, 1, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 1, 1, 1, 0
+    };
 
-            BinaryImage const img(makeBinaryImage(inp, 9, 9));
-            BinaryImage const h_out_img(makeBinaryImage(h_out, 9, 9));
-            BinaryImage const v_out_img(makeBinaryImage(v_out, 9, 9));
+    BinaryImage const img(makeBinaryImage(inp, 9, 9));
+    BinaryImage const h_out_img(makeBinaryImage(h_out, 9, 9));
+    BinaryImage const v_out_img(makeBinaryImage(v_out, 9, 9));
 
-            BinaryImage const h_shear = hShear(img, -1.0, 0.5 * img.height(), WHITE);
-            BOOST_REQUIRE(h_shear == h_out_img);
+    BinaryImage const h_shear = hShear(img, -1.0, 0.5 * img.height(), WHITE);
+    BOOST_REQUIRE(h_shear == h_out_img);
 
-            BinaryImage const v_shear = vShear(img, 1.0, 0.5 * img.width(), WHITE);
-            BOOST_REQUIRE(v_shear == v_out_img);
+    BinaryImage const v_shear = vShear(img, 1.0, 0.5 * img.width(), WHITE);
+    BOOST_REQUIRE(v_shear == v_out_img);
 
-            BinaryImage h_shear_inplace(img);
-            hShearInPlace(h_shear_inplace, -1.0, 0.5 * img.height(), WHITE);
-            BOOST_REQUIRE(h_shear_inplace == h_out_img);
+    BinaryImage h_shear_inplace(img);
+    hShearInPlace(h_shear_inplace, -1.0, 0.5 * img.height(), WHITE);
+    BOOST_REQUIRE(h_shear_inplace == h_out_img);
 
-            BinaryImage v_shear_inplace(img);
-            vShearInPlace(v_shear_inplace, 1.0, 0.5 * img.width(), WHITE);
-            BOOST_REQUIRE(v_shear_inplace == v_out_img);
-        }
+    BinaryImage v_shear_inplace(img);
+    vShearInPlace(v_shear_inplace, 1.0, 0.5 * img.width(), WHITE);
+    BOOST_REQUIRE(v_shear_inplace == v_out_img);
+}
 
-        BOOST_AUTO_TEST_SUITE_END();
-    }  // namespace tests
+BOOST_AUTO_TEST_SUITE_END();
+}      // namespace tests
 }  // namespace imageproc

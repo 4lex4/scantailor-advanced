@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,22 +24,20 @@
 #endif
 
 template <class T>
-class ScopedDecInc
-{
+class ScopedDecInc {
 public:
     ScopedDecInc(T& counter)
-        : m_counter(counter)
-    {
+            : m_counter(counter) {
         --counter;
     }
 
-    ~ScopedDecInc()
-    {
+    ~ScopedDecInc() {
         ++m_counter;
     }
 
 private:
     T& m_counter;
 };
+
 
 #endif

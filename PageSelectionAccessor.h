@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -29,8 +28,7 @@
 
 class PageSequence;
 
-class PageSelectionAccessor
-{
+class PageSelectionAccessor {
 public:
     explicit PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider);
 
@@ -43,5 +41,6 @@ public:
 private:
     IntrusivePtr<PageSelectionProvider const> m_ptrProvider;
 };
+
 
 #endif

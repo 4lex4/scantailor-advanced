@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,18 +24,16 @@ class QSize;
 class QRectF;
 class QColor;
 
-namespace dewarping
-{
-    class CylindricalSurfaceDewarper;
+namespace dewarping {
+class CylindricalSurfaceDewarper;
 
-    class RasterDewarper
-    {
-    public:
-        static QImage dewarp(QImage const& src,
-                             QSize const& dst_size,
-                             CylindricalSurfaceDewarper const& distortion_model,
-                             QRectF const& model_domain,
-                             QColor const& background_color);
-    };
+class RasterDewarper {
+public:
+    static QImage dewarp(QImage const& src,
+                         QSize const& dst_size,
+                         CylindricalSurfaceDewarper const& distortion_model,
+                         QRectF const& model_domain,
+                         QColor const& background_color);
+};
 }
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,36 +26,29 @@
 #include <QAtomicInt>
 #include <exception>
 
-class BackgroundTask
-    : public AbstractCommand0<FilterResultPtr>,
-      public TaskStatus
-{
+class BackgroundTask: public AbstractCommand0<FilterResultPtr>, public TaskStatus {
 public:
     enum Type { INTERACTIVE, BATCH };
 
-    class CancelledException
-        : public std::exception
-    {
+    class CancelledException: public std::exception {
     public:
         virtual char const* what() const throw();
     };
 
-    BackgroundTask(Type type)
-        : m_type(type)
-    { }
 
-    Type type() const
-    {
+    BackgroundTask(Type type)
+            : m_type(type) {
+    }
+
+    Type type() const {
         return m_type;
     }
 
-    virtual void cancel()
-    {
+    virtual void cancel() {
         m_cancelFlag.store(1);
     }
 
-    virtual bool isCancelled() const
-    {
+    virtual bool isCancelled() const {
         return m_cancelFlag.load() != 0;
     }
 
@@ -69,6 +61,7 @@ private:
     QAtomicInt m_cancelFlag;
     Type const m_type;
 };
+
 
 typedef IntrusivePtr<BackgroundTask> BackgroundTaskPtr;
 

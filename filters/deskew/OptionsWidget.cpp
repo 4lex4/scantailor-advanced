@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,265 +21,220 @@
 #include "ScopedIncDec.h"
 #include "ApplyDialog.h"
 
-namespace deskew
-{
-    double const OptionsWidget::MAX_ANGLE = 45.0;
+namespace deskew {
+double const OptionsWidget::MAX_ANGLE = 45.0;
 
-    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
+OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+                             PageSelectionAccessor const& page_selection_accessor)
         : m_ptrSettings(settings),
           m_ignoreAutoManualToggle(0),
           m_ignoreSpinBoxChanges(0),
-          m_pageSelectionAccessor(page_selection_accessor)
-    {
-        setupUi(this);
-        angleSpinBox->setSuffix(QChar(0x00B0));
-        angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
-        angleSpinBox->adjustSize();
-        setSpinBoxUnknownState();
+          m_pageSelectionAccessor(page_selection_accessor) {
+    setupUi(this);
+    angleSpinBox->setSuffix(QChar(0x00B0));
+    angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
+    angleSpinBox->adjustSize();
+    setSpinBoxUnknownState();
 
-        connect(
-            angleSpinBox, SIGNAL(valueChanged(double)),
-            this, SLOT(spinBoxValueChanged(double))
-        );
-        connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
-        connect(
-            applyDeskewBtn, SIGNAL(clicked()),
-            this, SLOT(showDeskewDialog())
-        );
+    connect(
+        angleSpinBox, SIGNAL(valueChanged(double)),
+        this, SLOT(spinBoxValueChanged(double))
+    );
+    connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
+    connect(
+        applyDeskewBtn, SIGNAL(clicked()),
+        this, SLOT(showDeskewDialog())
+    );
+}
+
+OptionsWidget::~OptionsWidget() {
+}
+
+void OptionsWidget::showDeskewDialog() {
+    ApplyDialog* dialog = new ApplyDialog(
+        this, m_pageId, m_pageSelectionAccessor
+                          );
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(tr("Apply Deskew"));
+    connect(
+        dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
+        this, SLOT(appliedTo(std::set<PageId> const &))
+    );
+    connect(
+        dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
+        this, SLOT(appliedToAllPages(std::set<PageId> const &))
+    );
+    dialog->show();
+}
+
+void OptionsWidget::appliedTo(std::set<PageId> const& pages) {
+    if (pages.empty()) {
+        return;
     }
 
-    OptionsWidget::~OptionsWidget()
-    { }
+    Params const params(
+        m_uiData.effectiveDeskewAngle(),
+        m_uiData.dependencies(), m_uiData.mode()
+    );
+    m_ptrSettings->setDegress(pages, params);
 
-    void
-    OptionsWidget::showDeskewDialog()
-    {
-        ApplyDialog* dialog = new ApplyDialog(
-            this, m_pageId, m_pageSelectionAccessor
-                              );
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->setWindowTitle(tr("Apply Deskew"));
-        connect(
-            dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
-            this, SLOT(appliedTo(std::set<PageId> const &))
-        );
-        connect(
-            dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
-            this, SLOT(appliedToAllPages(std::set<PageId> const &))
-        );
-        dialog->show();
-    }
-
-    void
-    OptionsWidget::appliedTo(std::set<PageId> const& pages)
-    {
-        if (pages.empty()) {
-            return;
-        }
-
-        Params const params(
-            m_uiData.effectiveDeskewAngle(),
-            m_uiData.dependencies(), m_uiData.mode()
-        );
-        m_ptrSettings->setDegress(pages, params);
-
-        if (pages.size() > 1) {
-            emit invalidateAllThumbnails();
-        }
-        else {
-            for (PageId const& page_id : pages) {
-                emit invalidateThumbnail(page_id);
-            }
-        }
-    }
-
-    void
-    OptionsWidget::appliedToAllPages(std::set<PageId> const& pages)
-    {
-        if (pages.empty()) {
-            return;
-        }
-
-        Params const params(
-            m_uiData.effectiveDeskewAngle(),
-            m_uiData.dependencies(), m_uiData.mode()
-        );
-        m_ptrSettings->setDegress(pages, params);
+    if (pages.size() > 1) {
         emit invalidateAllThumbnails();
+    } else {
+        for (PageId const& page_id : pages) {
+            emit invalidateThumbnail(page_id);
+        }
+    }
+}
+
+void OptionsWidget::appliedToAllPages(std::set<PageId> const& pages) {
+    if (pages.empty()) {
+        return;
     }
 
-    void
-    OptionsWidget::manualDeskewAngleSetExternally(double const degrees)
-    {
-        m_uiData.setEffectiveDeskewAngle(degrees);
+    Params const params(
+        m_uiData.effectiveDeskewAngle(),
+        m_uiData.dependencies(), m_uiData.mode()
+    );
+    m_ptrSettings->setDegress(pages, params);
+    emit invalidateAllThumbnails();
+}
+
+void OptionsWidget::manualDeskewAngleSetExternally(double const degrees) {
+    m_uiData.setEffectiveDeskewAngle(degrees);
+    m_uiData.setMode(MODE_MANUAL);
+    updateModeIndication(MODE_MANUAL);
+    setSpinBoxKnownState(degreesToSpinBox(degrees));
+    commitCurrentParams();
+
+    emit invalidateThumbnail(m_pageId);
+}
+
+void OptionsWidget::preUpdateUI(PageId const& page_id) {
+    ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+
+    m_pageId = page_id;
+    setSpinBoxUnknownState();
+    autoBtn->setChecked(true);
+    autoBtn->setEnabled(false);
+    manualBtn->setEnabled(false);
+}
+
+void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+    m_uiData = ui_data;
+    autoBtn->setEnabled(true);
+    manualBtn->setEnabled(true);
+    updateModeIndication(ui_data.mode());
+    setSpinBoxKnownState(degreesToSpinBox(ui_data.effectiveDeskewAngle()));
+}
+
+void OptionsWidget::spinBoxValueChanged(double const value) {
+    if (m_ignoreSpinBoxChanges) {
+        return;
+    }
+
+    double const degrees = spinBoxToDegrees(value);
+    m_uiData.setEffectiveDeskewAngle(degrees);
+    m_uiData.setMode(MODE_MANUAL);
+    updateModeIndication(MODE_MANUAL);
+    commitCurrentParams();
+
+    emit manualDeskewAngleSet(degrees);
+    emit invalidateThumbnail(m_pageId);
+}
+
+void OptionsWidget::modeChanged(bool const auto_mode) {
+    if (m_ignoreAutoManualToggle) {
+        return;
+    }
+
+    if (auto_mode) {
+        m_uiData.setMode(MODE_AUTO);
+        m_ptrSettings->clearPageParams(m_pageId);
+        emit reloadRequested();
+    } else {
         m_uiData.setMode(MODE_MANUAL);
-        updateModeIndication(MODE_MANUAL);
-        setSpinBoxKnownState(degreesToSpinBox(degrees));
         commitCurrentParams();
-
-        emit invalidateThumbnail(m_pageId);
     }
+}
 
-    void
-    OptionsWidget::preUpdateUI(PageId const& page_id)
-    {
-        ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+void OptionsWidget::updateModeIndication(AutoManualMode const mode) {
+    ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
-        m_pageId = page_id;
-        setSpinBoxUnknownState();
+    if (mode == MODE_AUTO) {
         autoBtn->setChecked(true);
-        autoBtn->setEnabled(false);
-        manualBtn->setEnabled(false);
+    } else {
+        manualBtn->setChecked(true);
     }
+}
 
-    void
-    OptionsWidget::postUpdateUI(UiData const& ui_data)
-    {
-        m_uiData = ui_data;
-        autoBtn->setEnabled(true);
-        manualBtn->setEnabled(true);
-        updateModeIndication(ui_data.mode());
-        setSpinBoxKnownState(degreesToSpinBox(ui_data.effectiveDeskewAngle()));
-    }
+void OptionsWidget::setSpinBoxUnknownState() {
+    ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
 
-    void
-    OptionsWidget::spinBoxValueChanged(double const value)
-    {
-        if (m_ignoreSpinBoxChanges) {
-            return;
-        }
+    angleSpinBox->setSpecialValueText("?");
+    angleSpinBox->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    angleSpinBox->setValue(angleSpinBox->minimum());
+    angleSpinBox->setEnabled(false);
+}
 
-        double const degrees = spinBoxToDegrees(value);
-        m_uiData.setEffectiveDeskewAngle(degrees);
-        m_uiData.setMode(MODE_MANUAL);
-        updateModeIndication(MODE_MANUAL);
-        commitCurrentParams();
+void OptionsWidget::setSpinBoxKnownState(double const angle) {
+    ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
 
-        emit manualDeskewAngleSet(degrees);
-        emit invalidateThumbnail(m_pageId);
-    }
+    angleSpinBox->setSpecialValueText("");
+    angleSpinBox->setValue(angle);
 
-    void
-    OptionsWidget::modeChanged(bool const auto_mode)
-    {
-        if (m_ignoreAutoManualToggle) {
-            return;
-        }
+    angleSpinBox->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    angleSpinBox->setEnabled(true);
+}
 
-        if (auto_mode) {
-            m_uiData.setMode(MODE_AUTO);
-            m_ptrSettings->clearPageParams(m_pageId);
-            emit reloadRequested();
-        }
-        else {
-            m_uiData.setMode(MODE_MANUAL);
-            commitCurrentParams();
-        }
-    }
+void OptionsWidget::commitCurrentParams() {
+    Params params(
+        m_uiData.effectiveDeskewAngle(),
+        m_uiData.dependencies(), m_uiData.mode()
+    );
+    params.computeDeviation(m_ptrSettings->avg());
+    m_ptrSettings->setPageParams(m_pageId, params);
+}
 
-    void
-    OptionsWidget::updateModeIndication(AutoManualMode const mode)
-    {
-        ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+double OptionsWidget::spinBoxToDegrees(double const sb_value) {
+    return -sb_value;
+}
 
-        if (mode == MODE_AUTO) {
-            autoBtn->setChecked(true);
-        }
-        else {
-            manualBtn->setChecked(true);
-        }
-    }
+double OptionsWidget::degreesToSpinBox(double const degrees) {
+    return -degrees;
+}
 
-    void
-    OptionsWidget::setSpinBoxUnknownState()
-    {
-        ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
+/*========================== OptionsWidget::UiData =========================*/
 
-        angleSpinBox->setSpecialValueText("?");
-        angleSpinBox->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        angleSpinBox->setValue(angleSpinBox->minimum());
-        angleSpinBox->setEnabled(false);
-    }
-
-    void
-    OptionsWidget::setSpinBoxKnownState(double const angle)
-    {
-        ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
-
-        angleSpinBox->setSpecialValueText("");
-        angleSpinBox->setValue(angle);
-
-        angleSpinBox->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        angleSpinBox->setEnabled(true);
-    }
-
-    void
-    OptionsWidget::commitCurrentParams()
-    {
-        Params params(
-            m_uiData.effectiveDeskewAngle(),
-            m_uiData.dependencies(), m_uiData.mode()
-        );
-        params.computeDeviation(m_ptrSettings->avg());
-        m_ptrSettings->setPageParams(m_pageId, params);
-    }
-
-    double
-    OptionsWidget::spinBoxToDegrees(double const sb_value)
-    {
-        return -sb_value;
-    }
-
-    double
-    OptionsWidget::degreesToSpinBox(double const degrees)
-    {
-        return -degrees;
-    }
-
-    /*========================== OptionsWidget::UiData =========================*/
-
-    OptionsWidget::UiData::UiData()
+OptionsWidget::UiData::UiData()
         : m_effDeskewAngle(0.0),
-          m_mode(MODE_AUTO)
-    { }
+          m_mode(MODE_AUTO) {
+}
 
-    OptionsWidget::UiData::~UiData()
-    { }
+OptionsWidget::UiData::~UiData() {
+}
 
-    void
-    OptionsWidget::UiData::setEffectiveDeskewAngle(double const degrees)
-    {
-        m_effDeskewAngle = degrees;
-    }
+void OptionsWidget::UiData::setEffectiveDeskewAngle(double const degrees) {
+    m_effDeskewAngle = degrees;
+}
 
-    double
-    OptionsWidget::UiData::effectiveDeskewAngle() const
-    {
-        return m_effDeskewAngle;
-    }
+double OptionsWidget::UiData::effectiveDeskewAngle() const {
+    return m_effDeskewAngle;
+}
 
-    void
-    OptionsWidget::UiData::setDependencies(Dependencies const& deps)
-    {
-        m_deps = deps;
-    }
+void OptionsWidget::UiData::setDependencies(Dependencies const& deps) {
+    m_deps = deps;
+}
 
-    Dependencies const&
-    OptionsWidget::UiData::dependencies() const
-    {
-        return m_deps;
-    }
+Dependencies const& OptionsWidget::UiData::dependencies() const {
+    return m_deps;
+}
 
-    void
-    OptionsWidget::UiData::setMode(AutoManualMode const mode)
-    {
-        m_mode = mode;
-    }
+void OptionsWidget::UiData::setMode(AutoManualMode const mode) {
+    m_mode = mode;
+}
 
-    AutoManualMode
-    OptionsWidget::UiData::mode() const
-    {
-        return m_mode;
-    }
+AutoManualMode OptionsWidget::UiData::mode() const {
+    return m_mode;
+}
 }  // namespace deskew

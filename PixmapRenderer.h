@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,8 +22,7 @@
 class QPainter;
 class QPixmap;
 
-class PixmapRenderer
-{
+class PixmapRenderer {
 public:
     /**
      * \brief Workarounds some problems with QPainter::drawPixmap().
@@ -48,5 +46,6 @@ public:
 private:
     static void drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap);
 };
+
 
 #endif

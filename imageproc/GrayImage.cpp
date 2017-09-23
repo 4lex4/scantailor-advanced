@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,22 +19,20 @@
 #include "GrayImage.h"
 #include "Grayscale.h"
 
-namespace imageproc
-{
-    GrayImage::GrayImage(QSize size)
-    {
-        if (size.isEmpty()) {
-            return;
-        }
-
-        m_image = QImage(size, QImage::Format_Indexed8);
-        m_image.setColorTable(createGrayscalePalette());
-        if (m_image.isNull()) {
-            throw std::bad_alloc();
-        }
+namespace imageproc {
+GrayImage::GrayImage(QSize size) {
+    if (size.isEmpty()) {
+        return;
     }
 
-    GrayImage::GrayImage(QImage const& image)
-        : m_image(toGrayscale(image))
-    { }
+    m_image = QImage(size, QImage::Format_Indexed8);
+    m_image.setColorTable(createGrayscalePalette());
+    if (m_image.isNull()) {
+        throw std::bad_alloc();
+    }
+}
+
+GrayImage::GrayImage(QImage const& image)
+        : m_image(toGrayscale(image)) {
+}
 }

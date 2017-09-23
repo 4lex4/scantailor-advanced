@@ -1,4 +1,3 @@
-
 /*    Scan Tailor - Interactive post-processing tool for scanned pages.
 
     CommandLine - Interface for ScanTailor's parameters provided on CL.
@@ -35,18 +34,14 @@
 CommandLine CommandLine::m_globalInstance;
 
 
-void
-CommandLine::set(CommandLine const& cl)
-{
+void CommandLine::set(CommandLine const& cl) {
     assert(!m_globalInstance.isGlobal());
 
     m_globalInstance = cl;
     m_globalInstance.setGlobal();
 }
 
-bool
-CommandLine::parseCli(QStringList const& argv)
-{
+bool CommandLine::parseCli(QStringList const& argv) {
     QRegExp rx("^--([^=]+)=(.*)$");
     QRegExp rx_switch("^--([^=]+)$");
     QRegExp rx_short("^-([^=]+)=(.*)$");
@@ -142,8 +137,7 @@ CommandLine::parseCli(QStringList const& argv)
                 continue;
             }
             m_options[key] = rx.cap(2);
-        }
-        else if (rx_switch.exactMatch(argv[i])) {
+        } else if (rx_switch.exactMatch(argv[i])) {
             QString key = rx_switch.cap(1);
             if (!opts.contains(key)) {
                 m_error = true;
@@ -151,8 +145,7 @@ CommandLine::parseCli(QStringList const& argv)
                 continue;
             }
             m_options[key] = "true";
-        }
-        else if (rx_short.exactMatch(argv[i])) {
+        } else if (rx_short.exactMatch(argv[i])) {
             QString key = shortMap[rx_short.cap(1)];
             if (key == "") {
                 std::cout << "Unknown option: '" << rx_short.cap(1).toStdString() << "'" << std::endl;
@@ -160,8 +153,7 @@ CommandLine::parseCli(QStringList const& argv)
                 continue;
             }
             m_options[key] = rx_short.cap(2);
-        }
-        else if (rx_short_switch.exactMatch(argv[i])) {
+        } else if (rx_short_switch.exactMatch(argv[i])) {
             QString key = shortMap[rx_short_switch.cap(1)];
             if (key == "") {
                 std::cout << "Unknown switch: '" << rx_short_switch.cap(1).toStdString() << "'" << std::endl;
@@ -169,36 +161,30 @@ CommandLine::parseCli(QStringList const& argv)
                 continue;
             }
             m_options[key] = "true";
-        }
-        else if (rx_project.exactMatch(argv[i])) {
+        } else if (rx_project.exactMatch(argv[i])) {
             CommandLine::m_projectFile = argv[i];
-        }
-        else {
+        } else {
             QFileInfo file(argv[i]);
             if (i == (argv.size() - 1)) {
                 if (file.isDir()) {
                     CommandLine::m_outputDirectory = file.filePath();
-                }
-                else {
+                } else {
                     std::cout << "Error: Last argument must be an existing directory" << std::endl;
                     exit(1);
                 }
-            }
-            else if (file.filePath() == "-") {
+            } else if (file.filePath() == "-") {
                 std::string fname;
                 while (!std::cin.eof()) {
                     std::cin >> fname;
                     addImage(fname.c_str());
                 }
-            }
-            else if (file.isDir()) {
+            } else if (file.isDir()) {
                 QDir dir(argv[i]);
                 QStringList files = dir.entryList(QDir::Files, QDir::Name);
                 for (int f = 0; f < files.count(); f++) {
                     addImage(dir.filePath(files[f]));
                 }
-            }
-            else {
+            } else {
                 addImage(file.filePath());
             }
         }
@@ -218,16 +204,12 @@ CommandLine::parseCli(QStringList const& argv)
     return m_error;
 }  // CommandLine::parseCli
 
-void
-CommandLine::addImage(QString const& path)
-{
+void CommandLine::addImage(QString const& path) {
     QFileInfo file(path);
     m_files.push_back(file);
 }
 
-void
-CommandLine::setup()
-{
+void CommandLine::setup() {
     m_outputProjectFile = fetchOutputProjectFile();
     m_layoutType = fetchLayoutType();
     m_layoutDirection = fetchLayoutDirection();
@@ -278,9 +260,7 @@ CommandLine::setup()
     }
 }  // CommandLine::setup
 
-void
-CommandLine::printHelp()
-{
+void CommandLine::printHelp() {
     std::cout << std::endl;
     std::cout << "Scan Tailor is a post-processing tool for scanned pages." << std::endl;
     std::cout << "Version: " << VERSION << std::endl;
@@ -396,9 +376,7 @@ CommandLine::printHelp()
     std::cout << std::endl;
 }  // CommandLine::printHelp
 
-page_split::LayoutType
-CommandLine::fetchLayoutType()
-{
+page_split::LayoutType CommandLine::fetchLayoutType() {
     page_split::LayoutType lt = page_split::AUTO_LAYOUT_TYPE;
 
     if (!hasLayout()) {
@@ -407,20 +385,16 @@ CommandLine::fetchLayoutType()
 
     if (m_options["layout"] == "1") {
         lt = page_split::SINGLE_PAGE_UNCUT;
-    }
-    else if (m_options["layout"] == "1.5") {
+    } else if (m_options["layout"] == "1.5") {
         lt = page_split::PAGE_PLUS_OFFCUT;
-    }
-    else if (m_options["layout"] == "2") {
+    } else if (m_options["layout"] == "2") {
         lt = page_split::TWO_PAGES;
     }
 
     return lt;
 }
 
-Qt::LayoutDirection
-CommandLine::fetchLayoutDirection()
-{
+Qt::LayoutDirection CommandLine::fetchLayoutDirection() {
     Qt::LayoutDirection l = Qt::LeftToRight;
     if (!hasLayoutDirection()) {
         return l;
@@ -434,9 +408,7 @@ CommandLine::fetchLayoutDirection()
     return l;
 }
 
-Dpi
-CommandLine::fetchDpi(QString oname)
-{
+Dpi CommandLine::fetchDpi(QString oname) {
     int xdpi = 600;
     int ydpi = 600;
 
@@ -454,9 +426,7 @@ CommandLine::fetchDpi(QString oname)
     return Dpi(xdpi, ydpi);
 }
 
-output::ColorParams::ColorMode
-CommandLine::fetchColorMode()
-{
+output::ColorParams::ColorMode CommandLine::fetchColorMode() {
     if (!hasColorMode()) {
         return output::ColorParams::BLACK_AND_WHITE;
     }
@@ -465,17 +435,14 @@ CommandLine::fetchColorMode()
 
     if (cm == "color_grayscale") {
         return output::ColorParams::COLOR_GRAYSCALE;
-    }
-    else if (cm == "mixed") {
+    } else if (cm == "mixed") {
         return output::ColorParams::MIXED;
     }
 
     return output::ColorParams::BLACK_AND_WHITE;
 }
 
-output::ColorParams::ColorMode
-CommandLine::fetchDefaultColorMode()
-{
+output::ColorParams::ColorMode CommandLine::fetchDefaultColorMode() {
     if (!hasDefaultColorMode()) {
         return output::ColorParams::BLACK_AND_WHITE;
     }
@@ -484,17 +451,14 @@ CommandLine::fetchDefaultColorMode()
 
     if (cm == "color_grayscale") {
         return output::ColorParams::COLOR_GRAYSCALE;
-    }
-    else if (cm == "mixed") {
+    } else if (cm == "mixed") {
         return output::ColorParams::MIXED;
     }
 
     return output::ColorParams::BLACK_AND_WHITE;
 }
 
-output::PictureShape
-CommandLine::fetchPictureShape()
-{
+output::PictureShape CommandLine::fetchPictureShape() {
     if (!hasPictureShape()) {
         return output::FREE_SHAPE;
     }
@@ -508,9 +472,7 @@ CommandLine::fetchPictureShape()
     return output::FREE_SHAPE;
 }
 
-Margins
-CommandLine::fetchMargins(QString base, Margins def)
-{
+Margins CommandLine::fetchMargins(QString base, Margins def) {
     Margins margins(def);
 
     if (m_options.contains(base)) {
@@ -543,9 +505,7 @@ CommandLine::fetchMargins(QString base, Margins def)
     return margins;
 }  // CommandLine::fetchMargins
 
-page_layout::Alignment
-CommandLine::fetchAlignment()
-{
+page_layout::Alignment CommandLine::fetchAlignment() {
     page_layout::Alignment alignment(page_layout::Alignment::TOP, page_layout::Alignment::HCENTER);
 
     if (m_options.contains("match-layout")) {
@@ -566,11 +526,9 @@ CommandLine::fetchAlignment()
     if (m_options.contains("alignment")) {
         if (m_options["alignment"] == "original") {
             alignment.setVertical(page_layout::Alignment::VORIGINAL);
-        }
-        else if (m_options["alignment"] == "auto") {
+        } else if (m_options["alignment"] == "auto") {
             alignment.setVertical(page_layout::Alignment::VAUTO);
-        }
-        else {
+        } else {
             alignment.setVertical(page_layout::Alignment::VCENTER);
         }
         alignment.setHorizontal(page_layout::Alignment::HCENTER);
@@ -619,17 +577,14 @@ CommandLine::fetchAlignment()
     return alignment;
 }  // CommandLine::fetchAlignment
 
-Despeckle::Level
-CommandLine::fetchContentDetection()
-{
+Despeckle::Level CommandLine::fetchContentDetection() {
     Despeckle::Level level = Despeckle::NORMAL;
 
     if (hasContentDetection()) {
         QString cm = m_options["content-detection"].toLower();
         if (cm == "cautious") {
             level = Despeckle::CAUTIOUS;
-        }
-        else if (cm == "aggressive") {
+        } else if (cm == "aggressive") {
             level = Despeckle::AGGRESSIVE;
         }
     }
@@ -637,9 +592,7 @@ CommandLine::fetchContentDetection()
     return level;
 }
 
-QRectF
-CommandLine::fetchContentRect()
-{
+QRectF CommandLine::fetchContentRect() {
     if (!hasContentRect()) {
         return QRectF();
     }
@@ -654,9 +607,7 @@ CommandLine::fetchContentRect()
     exit(1);
 }
 
-double
-CommandLine::fetchContentDeviation()
-{
+double CommandLine::fetchContentDeviation() {
     if (!hasContentDeviation()) {
         return 1.0;
     }
@@ -664,9 +615,7 @@ CommandLine::fetchContentDeviation()
     return m_options["content-deviation"].toDouble();
 }
 
-CommandLine::Orientation
-CommandLine::fetchOrientation()
-{
+CommandLine::Orientation CommandLine::fetchOrientation() {
     if (!hasOrientation()) {
         return TOP;
     }
@@ -676,14 +625,11 @@ CommandLine::fetchOrientation()
 
     if (cli_orient == "left") {
         orient = LEFT;
-    }
-    else if (cli_orient == "right") {
+    } else if (cli_orient == "right") {
         orient = RIGHT;
-    }
-    else if (cli_orient == "upsidedown") {
+    } else if (cli_orient == "upsidedown") {
         orient = UPSIDEDOWN;
-    }
-    else {
+    } else {
         std::cout << "Wrong orientation " << m_options["orientation"].toLatin1().constData() << std::endl;
         exit(1);
     }
@@ -691,9 +637,7 @@ CommandLine::fetchOrientation()
     return orient;
 }
 
-QString
-CommandLine::fetchOutputProjectFile()
-{
+QString CommandLine::fetchOutputProjectFile() {
     if (!hasOutputProject()) {
         return QString();
     }
@@ -701,9 +645,7 @@ CommandLine::fetchOutputProjectFile()
     return m_options["output-project"];
 }
 
-int
-CommandLine::fetchThreshold()
-{
+int CommandLine::fetchThreshold() {
     if (!hasThreshold()) {
         return 0;
     }
@@ -711,9 +653,7 @@ CommandLine::fetchThreshold()
     return m_options["threshold"].toInt();
 }
 
-double
-CommandLine::fetchDeskewAngle()
-{
+double CommandLine::fetchDeskewAngle() {
     if (!hasDeskewAngle()) {
         return 0.0;
     }
@@ -721,9 +661,7 @@ CommandLine::fetchDeskewAngle()
     return m_options["rotate"].toDouble();
 }
 
-AutoManualMode
-CommandLine::fetchDeskewMode()
-{
+AutoManualMode CommandLine::fetchDeskewMode() {
     if (!hasDeskew()) {
         return MODE_AUTO;
     }
@@ -731,9 +669,7 @@ CommandLine::fetchDeskewMode()
     return (m_options["deskew"].toLower() == "manual") ? MODE_MANUAL : MODE_AUTO;
 }
 
-double
-CommandLine::fetchSkewDeviation()
-{
+double CommandLine::fetchSkewDeviation() {
     if (!hasSkewDeviation()) {
         return 5.0;
     }
@@ -741,9 +677,7 @@ CommandLine::fetchSkewDeviation()
     return m_options["skew-deviation"].toDouble();
 }
 
-int
-CommandLine::fetchStartFilterIdx()
-{
+int CommandLine::fetchStartFilterIdx() {
     if (!hasStartFilterIdx()) {
         return 0;
     }
@@ -751,9 +685,7 @@ CommandLine::fetchStartFilterIdx()
     return m_options["start-filter"].toInt() - 1;
 }
 
-int
-CommandLine::fetchEndFilterIdx()
-{
+int CommandLine::fetchEndFilterIdx() {
     if (!hasEndFilterIdx()) {
         return 5;
     }
@@ -761,9 +693,7 @@ CommandLine::fetchEndFilterIdx()
     return m_options["end-filter"].toInt() - 1;
 }
 
-output::DewarpingMode
-CommandLine::fetchDewarpingMode()
-{
+output::DewarpingMode CommandLine::fetchDewarpingMode() {
     if (!hasDewarping()) {
         return output::DewarpingMode::OFF;
     }
@@ -771,9 +701,7 @@ CommandLine::fetchDewarpingMode()
     return output::DewarpingMode(m_options["dewarping"].toLower());
 }
 
-output::DespeckleLevel
-CommandLine::fetchDespeckleLevel()
-{
+output::DespeckleLevel CommandLine::fetchDespeckleLevel() {
     if (!hasDespeckle()) {
         return output::DESPECKLE_NORMAL;
     }
@@ -781,9 +709,7 @@ CommandLine::fetchDespeckleLevel()
     return output::despeckleLevelFromString(m_options["despeckle"]);
 }
 
-output::DepthPerception
-CommandLine::fetchDepthPerception()
-{
+output::DepthPerception CommandLine::fetchDepthPerception() {
     if (!hasDepthPerception()) {
         return output::DepthPerception();
     }
@@ -791,9 +717,7 @@ CommandLine::fetchDepthPerception()
     return output::DepthPerception(m_options["depth-perception"]);
 }
 
-float
-CommandLine::fetchMatchLayoutTolerance()
-{
+float CommandLine::fetchMatchLayoutTolerance() {
     if (!hasMatchLayoutTolerance()) {
         return 0.2;
     }
@@ -801,9 +725,7 @@ CommandLine::fetchMatchLayoutTolerance()
     return m_options["match-layout-tolerance"].toFloat();
 }
 
-bool
-CommandLine::hasMargins(QString base) const
-{
+bool CommandLine::hasMargins(QString base) const {
     return m_options.contains(base)
            || m_options.contains(base + "-left")
            || m_options.contains(base + "-right")
@@ -812,9 +734,7 @@ CommandLine::hasMargins(QString base) const
     ;
 }
 
-bool
-CommandLine::hasAlignment() const
-{
+bool CommandLine::hasAlignment() const {
     return hasMatchLayoutTolerance()
            || m_options.contains("alignment")
            || m_options.contains("alignment-vertical")
@@ -823,24 +743,18 @@ CommandLine::hasAlignment() const
     ;
 }
 
-bool
-CommandLine::hasOutputDpi() const
-{
+bool CommandLine::hasOutputDpi() const {
     return m_options.contains("output-dpi")
            || m_options.contains("output-dpi-x")
            || m_options.contains("output-dpi-y")
     ;
 }
 
-bool
-CommandLine::hasLanguage() const
-{
+bool CommandLine::hasLanguage() const {
     return m_options.contains("language");
 }
 
-int
-CommandLine::fetchCompression() const
-{
+int CommandLine::fetchCompression() const {
     if (!m_options.contains("tiff-compression")) {
         return COMPRESSION_LZW;
     }
@@ -848,17 +762,13 @@ CommandLine::fetchCompression() const
     QString c(m_options["tiff-compression"].toLower());
     if (c == "lzw") {
         return COMPRESSION_LZW;
-    }
-    else if (c == "none") {
+    } else if (c == "none") {
         return COMPRESSION_NONE;
-    }
-    else if (c == "jpeg") {
+    } else if (c == "jpeg") {
         return COMPRESSION_JPEG;
-    }
-    else if (c == "deflate") {
+    } else if (c == "deflate") {
         return COMPRESSION_DEFLATE;
-    }
-    else if (c == "packbits") {
+    } else if (c == "packbits") {
         return COMPRESSION_PACKBITS;
     }
 
@@ -866,9 +776,7 @@ CommandLine::fetchCompression() const
     throw("Unknown compression");
 }
 
-QString
-CommandLine::fetchLanguage() const
-{
+QString CommandLine::fetchLanguage() const {
     if (hasLanguage()) {
         return m_options["language"];
     }
@@ -876,9 +784,7 @@ CommandLine::fetchLanguage() const
     return "untranslated";
 }
 
-QString
-CommandLine::fetchWindowTitle() const
-{
+QString CommandLine::fetchWindowTitle() const {
     if (hasWindowTitle()) {
         return m_options["window-title"];
     }
@@ -886,9 +792,7 @@ CommandLine::fetchWindowTitle() const
     return "";
 }
 
-QSizeF
-CommandLine::fetchPageDetectionBox() const
-{
+QSizeF CommandLine::fetchPageDetectionBox() const {
     if (!hasPageDetectionBox()) {
         return QSizeF();
     }
@@ -902,9 +806,7 @@ CommandLine::fetchPageDetectionBox() const
     exit(1);
 }
 
-double
-CommandLine::fetchPageDetectionTolerance() const
-{
+double CommandLine::fetchPageDetectionTolerance() const {
     if (hasPageDetectionTolerance()) {
         return m_options["page-detection-tolerance"].toFloat();
     }
@@ -912,9 +814,7 @@ CommandLine::fetchPageDetectionTolerance() const
     return 0.1;
 }
 
-bool
-CommandLine::fetchDefaultNull()
-{
+bool CommandLine::fetchDefaultNull() {
     m_defaultNull = false;
 
     if (contains("match-layout-default") && (m_options["match-layout-default"] == "false")) {

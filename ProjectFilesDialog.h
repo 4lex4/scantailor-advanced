@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,12 +27,8 @@
 #include <vector>
 #include <memory>
 
-class ProjectFilesDialog
-    : public QDialog,
-      private Ui::ProjectFilesDialog
-{
+class ProjectFilesDialog: public QDialog, private Ui::ProjectFilesDialog {
     Q_OBJECT
-
 public:
     ProjectFilesDialog(QWidget* parent = 0);
 
@@ -91,5 +86,6 @@ private:
     bool m_metadataLoadFailed;
     bool m_autoOutDir;
 };
+
 
 #endif  // ifndef PROJECTFILESDIALOG_H_

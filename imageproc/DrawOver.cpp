@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,52 +22,49 @@
 #include <QImage>
 #include <assert.h>
 
-namespace imageproc
-{
-    void
-    drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect)
-    {
-        if (src_rect.size() != dst_rect.size()) {
-            throw std::invalid_argument("drawOver: source and destination areas have different sizes");
-        }
-        if (dst.format() != src.format()) {
-            throw std::invalid_argument("drawOver: source and destination have different formats");
-        }
-        if (dst_rect.intersected(dst.rect()) != dst_rect) {
-            throw std::invalid_argument("drawOver: destination area exceeds the image");
-        }
-        if (src_rect.intersected(src.rect()) != src_rect) {
-            throw std::invalid_argument("drawOver: source area exceeds the image");
-        }
+namespace imageproc {
+void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect) {
+    if (src_rect.size() != dst_rect.size()) {
+        throw std::invalid_argument("drawOver: source and destination areas have different sizes");
+    }
+    if (dst.format() != src.format()) {
+        throw std::invalid_argument("drawOver: source and destination have different formats");
+    }
+    if (dst_rect.intersected(dst.rect()) != dst_rect) {
+        throw std::invalid_argument("drawOver: destination area exceeds the image");
+    }
+    if (src_rect.intersected(src.rect()) != src_rect) {
+        throw std::invalid_argument("drawOver: source area exceeds the image");
+    }
 
-        uint8_t* dst_line = dst.bits();
-        int const dst_bpl = dst.bytesPerLine();
+    uint8_t* dst_line = dst.bits();
+    int const dst_bpl = dst.bytesPerLine();
 
-        uint8_t const* src_line = src.bits();
-        int const src_bpl = src.bytesPerLine();
+    uint8_t const* src_line = src.bits();
+    int const src_bpl = src.bytesPerLine();
 
-        int const depth = src.depth();
-        assert(dst.depth() == depth);
+    int const depth = src.depth();
+    assert(dst.depth() == depth);
 
-        if (depth % 8 != 0) {
-            assert(depth == 1);
+    if (depth % 8 != 0) {
+        assert(depth == 1);
 
-            BinaryImage dst_bin(dst);
-            BinaryImage src_bin(src);
-            rasterOp<RopSrc>(dst_bin, dst_rect, src_bin, src_rect.topLeft());
-            dst = dst_bin.toQImage().convertToFormat(dst.format());
+        BinaryImage dst_bin(dst);
+        BinaryImage src_bin(src);
+        rasterOp<RopSrc>(dst_bin, dst_rect, src_bin, src_rect.topLeft());
+        dst = dst_bin.toQImage().convertToFormat(dst.format());
 
-            return;
-        }
+        return;
+    }
 
-        int const stripe_bytes = src_rect.width() * depth / 8;
-        dst_line += dst_bpl * dst_rect.top() + dst_rect.left() * depth / 8;
-        src_line += src_bpl * src_rect.top() + src_rect.left() * depth / 8;
+    int const stripe_bytes = src_rect.width() * depth / 8;
+    dst_line += dst_bpl * dst_rect.top() + dst_rect.left() * depth / 8;
+    src_line += src_bpl * src_rect.top() + src_rect.left() * depth / 8;
 
-        for (int i = src_rect.height(); i > 0; --i) {
-            memcpy(dst_line, src_line, stripe_bytes);
-            dst_line += dst_bpl;
-            src_line += src_bpl;
-        }
-    }  // drawOver
+    for (int i = src_rect.height(); i > 0; --i) {
+        memcpy(dst_line, src_line, stripe_bytes);
+        dst_line += dst_bpl;
+        src_line += src_bpl;
+    }
+}      // drawOver
 }  // namespace imageproc

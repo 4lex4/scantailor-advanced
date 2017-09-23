@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,131 +32,121 @@
 #include <QRectF>
 #include <memory>
 
-namespace select_content
-{
-    class Settings;
+namespace select_content {
+class Settings;
 
-    class OptionsWidget
-        : public FilterOptionsWidget,
-          private Ui::SelectContentOptionsWidget
-    {
-        Q_OBJECT
-
+class OptionsWidget: public FilterOptionsWidget, private Ui::SelectContentOptionsWidget {
+    Q_OBJECT
+public:
+    class UiData {
     public:
-        class UiData
-        {
-        public:
-            UiData();
+        UiData();
 
-            ~UiData();
+        ~UiData();
 
-            void setSizeCalc(PhysSizeCalc const& calc);
+        void setSizeCalc(PhysSizeCalc const& calc);
 
-            void setContentRect(QRectF const& content_rect);
+        void setContentRect(QRectF const& content_rect);
 
-            void setPageRect(QRectF const& content_rect);
+        void setPageRect(QRectF const& content_rect);
 
-            QRectF const& contentRect() const;
+        QRectF const& contentRect() const;
 
-            QRectF const& pageRect() const;
+        QRectF const& pageRect() const;
 
-            QSizeF contentSizeMM() const;
+        QSizeF contentSizeMM() const;
 
-            void setDependencies(Dependencies const& deps);
+        void setDependencies(Dependencies const& deps);
 
-            Dependencies const& dependencies() const;
+        Dependencies const& dependencies() const;
 
-            void setMode(AutoManualMode mode);
+        void setMode(AutoManualMode mode);
 
-            bool contentDetection() const
-            {
-                return m_contentDetection;
-            }
+        bool contentDetection() const {
+            return m_contentDetection;
+        }
 
-            bool pageDetection() const
-            {
-                return m_pageDetection;
-            }
+        bool pageDetection() const {
+            return m_pageDetection;
+        }
 
-            bool fineTuning() const
-            {
-                return m_fineTuneCorners;
-            }
+        bool fineTuning() const {
+            return m_fineTuneCorners;
+        }
 
-            void setContentDetection(bool detect);
+        void setContentDetection(bool detect);
 
-            void setPageDetection(bool detect);
+        void setPageDetection(bool detect);
 
-            void setFineTuneCorners(bool fine_tune);
+        void setFineTuneCorners(bool fine_tune);
 
-            void setPageBorders(double left, double top, double right, double bottom);
+        void setPageBorders(double left, double top, double right, double bottom);
 
-            void setPageBorders(Margins const& borders)
-            {
-                m_borders = borders;
-            }
+        void setPageBorders(Margins const& borders) {
+            m_borders = borders;
+        }
 
-            Margins pageBorders() const
-            {
-                return m_borders;
-            }
+        Margins pageBorders() const {
+            return m_borders;
+        }
 
-            AutoManualMode mode() const;
-
-        private:
-            QRectF m_contentRect;
-            QRectF m_pageRect;
-            PhysSizeCalc m_sizeCalc;
-            Dependencies m_deps;
-            AutoManualMode m_mode;
-            bool m_contentDetection;
-            bool m_pageDetection;
-            bool m_fineTuneCorners;
-            Margins m_borders;
-        };
-
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
-
-        virtual ~OptionsWidget();
-
-        void preUpdateUI(PageId const& page_id);
-
-        void postUpdateUI(UiData const& ui_data);
-
-    public slots:
-        void manualContentRectSet(QRectF const& content_rect);
-
-    private slots:
-        void showApplyToDialog();
-
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box);
-
-        void modeChanged(bool auto_mode);
-
-        void autoMode();
-
-        void manualMode();
-
-        void fineTuningChanged(bool checked);
-
-        void contentDetectionDisabled(void);
-
-        void pageDetectionDisabled(void);
-
-        void pageDetectionEnabled(void);
-
-        void borderChanged();
+        AutoManualMode mode() const;
 
     private:
-        void updateModeIndication(AutoManualMode const mode);
-
-        void commitCurrentParams();
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        UiData m_uiData;
-        PageSelectionAccessor m_pageSelectionAccessor;
-        PageId m_pageId;
-        int m_ignoreAutoManualToggle;
+        QRectF m_contentRect;
+        QRectF m_pageRect;
+        PhysSizeCalc m_sizeCalc;
+        Dependencies m_deps;
+        AutoManualMode m_mode;
+        bool m_contentDetection;
+        bool m_pageDetection;
+        bool m_fineTuneCorners;
+        Margins m_borders;
     };
+
+
+    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~OptionsWidget();
+
+    void preUpdateUI(PageId const& page_id);
+
+    void postUpdateUI(UiData const& ui_data);
+
+public slots:
+    void manualContentRectSet(QRectF const& content_rect);
+
+private slots:
+    void showApplyToDialog();
+
+    void applySelection(std::set<PageId> const& pages, bool apply_content_box);
+
+    void modeChanged(bool auto_mode);
+
+    void autoMode();
+
+    void manualMode();
+
+    void fineTuningChanged(bool checked);
+
+    void contentDetectionDisabled(void);
+
+    void pageDetectionDisabled(void);
+
+    void pageDetectionEnabled(void);
+
+    void borderChanged();
+
+private:
+    void updateModeIndication(AutoManualMode const mode);
+
+    void commitCurrentParams();
+
+    IntrusivePtr<Settings> m_ptrSettings;
+    UiData m_uiData;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    int m_ignoreAutoManualToggle;
+};
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

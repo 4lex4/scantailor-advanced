@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -29,34 +28,29 @@
 #include <assert.h>
 
 template <typename T>
-class FastQueue
-{
+class FastQueue {
 public:
     FastQueue()
-        : m_chunkCapacity(defaultChunkCapacity())
-    { }
+            : m_chunkCapacity(defaultChunkCapacity()) {
+    }
 
     FastQueue(FastQueue const& other);
 
-    ~FastQueue()
-    {
+    ~FastQueue() {
         m_chunkList.clear_and_dispose(ChunkDisposer());
     }
 
     FastQueue& operator=(FastQueue const& other);
 
-    bool const empty() const
-    {
+    bool const empty() const {
         return m_chunkList.empty();
     }
 
-    T& front()
-    {
+    T& front() {
         return *m_chunkList.front().pBegin;
     }
 
-    T const& front() const
-    {
+    T const& front() const {
         return *m_chunkList.front().pBegin;
     }
 
@@ -67,30 +61,25 @@ public:
     void swap(FastQueue& other);
 
 private:
-    struct Chunk
-        : public boost::intrusive::list_base_hook<>{
+    struct Chunk: public boost::intrusive::list_base_hook<>{
         DECLARE_NON_COPYABLE(Chunk)
-
     public:
-        Chunk(size_t capacity)
-        {
-            uintptr_t const p = (uintptr_t)(this + 1);
+        Chunk(size_t capacity) {
+            uintptr_t const p = (uintptr_t) (this + 1);
             size_t const alignment = boost::alignment_of<T>::value;
-            pBegin = (T*)(((p + alignment - 1) / alignment) * alignment);
+            pBegin = (T*) (((p + alignment - 1) / alignment) * alignment);
             pEnd = pBegin;
             pBufferEnd = pBegin + capacity;
-            assert(size_t((char*)pBufferEnd - (char*)this) <= storageRequirement(capacity));
+            assert(size_t((char*) pBufferEnd - (char*) this) <= storageRequirement(capacity));
         }
 
-        ~Chunk()
-        {
+        ~Chunk() {
             for (; pBegin != pEnd; ++pBegin) {
                 pBegin->~T();
             }
         }
 
-        static size_t storageRequirement(size_t capacity)
-        {
+        static size_t storageRequirement(size_t capacity) {
             return sizeof(Chunk) + boost::alignment_of<T>::value - 1 + capacity * sizeof(T);
         }
 
@@ -100,10 +89,9 @@ private:
     };
 
     struct ChunkDisposer {
-        void operator()(Chunk* chunk)
-        {
+        void operator()(Chunk* chunk) {
             chunk->~Chunk();
-            delete[] (char*)chunk;
+            delete[] (char*) chunk;
         }
     };
 
@@ -111,8 +99,7 @@ private:
             Chunk, boost::intrusive::constant_time_size<false>
 >ChunkList;
 
-    static size_t defaultChunkCapacity()
-    {
+    static size_t defaultChunkCapacity() {
         return (sizeof(T) >= 4096) ? 1 : 4096 / sizeof(T);
     }
 
@@ -123,8 +110,7 @@ private:
 
 template <typename T>
 FastQueue<T>::FastQueue(FastQueue const& other)
-    : m_chunkCapacity(other.m_chunkCapacity)
-{
+        : m_chunkCapacity(other.m_chunkCapacity) {
     for (Chunk& chunk : other.m_chunkList) {
         for (T const* obj = chunk->pBegin; obj != chunk->pEnd; ++obj) {
             push(*obj);
@@ -133,18 +119,14 @@ FastQueue<T>::FastQueue(FastQueue const& other)
 }
 
 template <typename T>
-FastQueue<T>&
-FastQueue<T>::operator=(FastQueue const& other)
-{
+FastQueue<T>& FastQueue<T>::operator=(FastQueue const& other) {
     FastQueue(other).swap(*this);
 
     return *this;
 }
 
 template <typename T>
-void
-FastQueue<T>::push(T const& t)
-{
+void FastQueue<T>::push(T const& t) {
     Chunk* chunk = 0;
 
     if (!m_chunkList.empty()) {
@@ -156,7 +138,7 @@ FastQueue<T>::push(T const& t)
 
     if (!chunk) {
         char* buf = new char[Chunk::storageRequirement(m_chunkCapacity)];
-        chunk = new(buf)Chunk(m_chunkCapacity);
+        chunk = new(buf) Chunk(m_chunkCapacity);
         m_chunkList.push_back(*chunk);
     }
 
@@ -165,9 +147,7 @@ FastQueue<T>::push(T const& t)
 }
 
 template <typename T>
-void
-FastQueue<T>::pop()
-{
+void FastQueue<T>::pop() {
     assert(!empty());
 
     Chunk* chunk = &m_chunkList.front();
@@ -180,9 +160,7 @@ FastQueue<T>::pop()
 }
 
 template <typename T>
-void
-FastQueue<T>::swap(FastQueue& other)
-{
+void FastQueue<T>::swap(FastQueue& other) {
     m_chunkList.swap(other.m_chunkList);
     size_t const tmp = m_chunkCapacity;
     m_chunkCapacity = other.m_chunkCapacity;
@@ -190,9 +168,7 @@ FastQueue<T>::swap(FastQueue& other)
 }
 
 template <typename T>
-inline void
-swap(FastQueue<T>& o1, FastQueue<T>& o2)
-{
+inline void swap(FastQueue<T>& o1, FastQueue<T>& o2) {
     o1.swap(o2);
 }
 

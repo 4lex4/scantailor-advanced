@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -36,60 +35,54 @@ class ThumbnailPixmapCache;
 class OutputFileNameGenerator;
 class QString;
 
-namespace output
-{
-    class OptionsWidget;
-    class Task;
-    class CacheDrivenTask;
-    class Settings;
+namespace output {
+class OptionsWidget;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
-    class Filter
-        : public AbstractFilter
-    {
-        DECLARE_NON_COPYABLE(Filter)
+class Filter: public AbstractFilter {
+    DECLARE_NON_COPYABLE(Filter)
+public:
+    Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    public:
-        Filter(PageSelectionAccessor const& page_selection_accessor);
+    virtual ~Filter();
 
-        virtual ~Filter();
+    virtual QString getName() const;
 
-        virtual QString getName() const;
+    virtual PageView getView() const;
 
-        virtual PageView getView() const;
+    virtual void performRelinking(AbstractRelinker const& relinker);
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+    IntrusivePtr<Task> createTask(PageId const& page_id,
+                                  IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                                  OutputFileNameGenerator const& out_file_name_gen,
+                                  bool batch,
+                                  bool debug);
 
-        IntrusivePtr<Task> createTask(PageId const& page_id,
-                                      IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                                      OutputFileNameGenerator const& out_file_name_gen,
-                                      bool batch,
-                                      bool debug);
+    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
+    OptionsWidget* optionsWidget() {
+        return m_ptrOptionsWidget.get();
+    }
 
-        OptionsWidget* optionsWidget()
-        {
-            return m_ptrOptionsWidget.get();
-        }
+    Settings* getSettings() {
+        return m_ptrSettings.get();
+    }
 
-        Settings* getSettings()
-        {
-            return m_ptrSettings.get();
-        }
+private:
+    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
-    private:
-        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-        PictureZonePropFactory m_pictureZonePropFactory;
-        FillZonePropFactory m_fillZonePropFactory;
-    };
+    IntrusivePtr<Settings> m_ptrSettings;
+    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+    PictureZonePropFactory m_pictureZonePropFactory;
+    FillZonePropFactory m_fillZonePropFactory;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_FILTER_H_

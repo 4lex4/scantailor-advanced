@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,11 +20,9 @@
 #include "PictureLayerProperty.h"
 #include "ZoneCategoryProperty.h"
 
-namespace output
-{
-    PictureZonePropFactory::PictureZonePropFactory()
-    {
-        PictureLayerProperty::registerIn(*this);
-        ZoneCategoryProperty::registerIn(*this);
-    }
+namespace output {
+PictureZonePropFactory::PictureZonePropFactory() {
+    PictureLayerProperty::registerIn(*this);
+    ZoneCategoryProperty::registerIn(*this);
+}
 }

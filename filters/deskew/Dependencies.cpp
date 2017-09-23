@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,17 +23,16 @@
 
 using namespace imageproc;
 
-namespace deskew
-{
-    Dependencies::Dependencies()
-    { }
+namespace deskew {
+Dependencies::Dependencies() {
+}
 
-    Dependencies::Dependencies(QPolygonF const& page_outline, OrthogonalRotation const rotation)
+Dependencies::Dependencies(QPolygonF const& page_outline, OrthogonalRotation const rotation)
         : m_pageOutline(page_outline),
-          m_rotation(rotation)
-    { }
+          m_rotation(rotation) {
+}
 
-    Dependencies::Dependencies(QDomElement const& deps_el)
+Dependencies::Dependencies(QDomElement const& deps_el)
         : m_pageOutline(
               XmlUnmarshaller::polygonF(
                   deps_el.namedItem("page-outline").toElement()
@@ -44,34 +42,30 @@ namespace deskew
               XmlUnmarshaller::rotation(
                   deps_el.namedItem("rotation").toElement()
               )
-          )
-    { }
+          ) {
+}
 
-    Dependencies::~Dependencies()
-    { }
+Dependencies::~Dependencies() {
+}
 
-    bool
-    Dependencies::matches(Dependencies const& other) const
-    {
-        if (m_rotation != other.m_rotation) {
-            return false;
-        }
-        if (!PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline)) {
-            return false;
-        }
-
-        return true;
+bool Dependencies::matches(Dependencies const& other) const {
+    if (m_rotation != other.m_rotation) {
+        return false;
+    }
+    if (!PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline)) {
+        return false;
     }
 
-    QDomElement
-    Dependencies::toXml(QDomDocument& doc, QString const& name) const
-    {
-        XmlMarshaller marshaller(doc);
+    return true;
+}
 
-        QDomElement el(doc.createElement(name));
-        el.appendChild(marshaller.rotation(m_rotation, "rotation"));
-        el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
+QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {
+    XmlMarshaller marshaller(doc);
 
-        return el;
-    }
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.rotation(m_rotation, "rotation"));
+    el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
+
+    return el;
+}
 }  // namespace deskew

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,11 +21,8 @@
 
 #include <QApplication>
 
-class Application
-    : public QApplication
-{
+class Application: public QApplication {
     Q_OBJECT
-
 public:
     Application(int& argc, char** argv);
 
@@ -34,5 +30,6 @@ public:
 
     void setFusionDarkTheme();
 };
+
 
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,11 +31,8 @@
 
 class ThumbnailLoadResult;
 
-class ThumbnailBase
-    : public QGraphicsItem
-{
+class ThumbnailBase: public QGraphicsItem {
     DECLARE_NON_COPYABLE(ThumbnailBase)
-
 public:
     ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
@@ -70,8 +66,8 @@ protected:
      */
     virtual void paintOverImage(QPainter& painter,
                                 QTransform const& image_to_display,
-                                QTransform const& thumb_to_display)
-    { }
+                                QTransform const& thumb_to_display) {
+    }
 
     virtual void paintDeviant(QPainter& painter);
 
@@ -83,15 +79,13 @@ protected:
      * Extended clipping area only includes the cropping area, so it's possible
      * to draw outside of the image but inside the crop area.
      */
-    void setExtendedClipArea(bool enabled)
-    {
+    void setExtendedClipArea(bool enabled) {
         m_extendedClipArea = enabled;
     }
 
     void setImageXform(ImageTransformation const& image_xform);
 
-    ImageTransformation const& imageXform() const
-    {
+    ImageTransformation const& imageXform() const {
         return m_imageXform;
     }
 
@@ -100,8 +94,7 @@ protected:
      *
      * Virtual image coordinates is what you get after ImageTransformation.
      */
-    QTransform const& virtToThumb() const
-    {
+    QTransform const& virtToThumb() const {
         return m_postScaleXform;
     }
 
@@ -125,5 +118,6 @@ private:
     std::shared_ptr<LoadCompletionHandler> m_ptrCompletionHandler;
     bool m_extendedClipArea;
 };
+
 
 #endif  // ifndef THUMBNAILBASE_H_

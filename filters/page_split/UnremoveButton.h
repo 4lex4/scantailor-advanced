@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,41 +27,36 @@
 #include <QCoreApplication>
 #include <boost/function.hpp>
 
-namespace page_split
-{
-    class UnremoveButton
-        : public InteractionHandler
-    {
-        Q_DECLARE_TR_FUNCTIONS(page_split::UnremoveButton)
+namespace page_split {
+class UnremoveButton: public InteractionHandler {
+    Q_DECLARE_TR_FUNCTIONS(page_split::UnremoveButton)
+public:
+    typedef boost::function<QPointF()> PositionGetter;
+    typedef boost::function<void ()> ClickCallback;
 
-    public:
-        typedef boost::function<QPointF()> PositionGetter;
-        typedef boost::function<void ()> ClickCallback;
+    UnremoveButton(PositionGetter const& position_getter);
 
-        UnremoveButton(PositionGetter const& position_getter);
+    void setClickCallback(ClickCallback const& callback) {
+        m_clickCallback = callback;
+    }
 
-        void setClickCallback(ClickCallback const& callback)
-        {
-            m_clickCallback = callback;
-        }
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
 
-        virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
 
-        virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+private:
+    static void noOp() {
+    }
 
-    private:
-        static void noOp()
-        { }
-
-        PositionGetter m_positionGetter;
-        ClickCallback m_clickCallback;
-        InteractionState::Captor m_proximityInteraction;
-        QPixmap m_defaultPixmap;
-        QPixmap m_hoveredPixmap;
-        bool m_wasHovered;
-    };
+    PositionGetter m_positionGetter;
+    ClickCallback m_clickCallback;
+    InteractionState::Captor m_proximityInteraction;
+    QPixmap m_defaultPixmap;
+    QPixmap m_hoveredPixmap;
+    bool m_wasHovered;
+};
 }  // namespace page_split
 #endif  // ifndef UNREMOVE_BUTTON_H_

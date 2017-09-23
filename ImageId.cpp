@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,35 +20,28 @@
 #include <QFileInfo>
 
 ImageId::ImageId(QString const& file_path, int const page)
-    : m_filePath(file_path),
-      m_page(page)
-{ }
+        : m_filePath(file_path),
+          m_page(page) {
+}
 
 ImageId::ImageId(QFileInfo const& file_info, int const page)
-    : m_filePath(file_info.absoluteFilePath()),
-      m_page(page)
-{ }
+        : m_filePath(file_info.absoluteFilePath()),
+          m_page(page) {
+}
 
-bool
-operator==(ImageId const& lhs, ImageId const& rhs)
-{
+bool operator==(ImageId const& lhs, ImageId const& rhs) {
     return lhs.page() == rhs.page() && lhs.filePath() == rhs.filePath();
 }
 
-bool
-operator!=(ImageId const& lhs, ImageId const& rhs)
-{
+bool operator!=(ImageId const& lhs, ImageId const& rhs) {
     return !(lhs == rhs);
 }
 
-bool
-operator<(ImageId const& lhs, ImageId const& rhs)
-{
+bool operator<(ImageId const& lhs, ImageId const& rhs) {
     int const comp = lhs.filePath().compare(rhs.filePath());
     if (comp < 0) {
         return true;
-    }
-    else if (comp > 0) {
+    } else if (comp > 0) {
         return false;
     }
 

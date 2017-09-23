@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,17 +24,14 @@
 #include "ProcessingIndicationWidget.h"
 #include <QPointer>
 
-class DebugImageView::ImageLoadResult
-    : public AbstractCommand0<void>
-{
+class DebugImageView::ImageLoadResult: public AbstractCommand0<void>{
 public:
     ImageLoadResult(QPointer<DebugImageView> const& owner, QImage const& image)
-        : m_ptrOwner(owner),
-          m_image(image)
-    { }
+            : m_ptrOwner(owner),
+              m_image(image) {
+    }
 
-    virtual void operator()()
-    {
+    virtual void operator()() {
         if (DebugImageView* owner = m_ptrOwner) {
             owner->imageLoaded(m_image);
         }
@@ -47,17 +43,14 @@ private:
 };
 
 
-class DebugImageView::ImageLoader
-    : public AbstractCommand0<BackgroundExecutor::TaskResultPtr>
-{
+class DebugImageView::ImageLoader: public AbstractCommand0<BackgroundExecutor::TaskResultPtr>{
 public:
     ImageLoader(DebugImageView* owner, QString const& file_path)
-        : m_ptrOwner(owner),
-          m_filePath(file_path)
-    { }
+            : m_ptrOwner(owner),
+              m_filePath(file_path) {
+    }
 
-    virtual BackgroundExecutor::TaskResultPtr operator()()
-    {
+    virtual BackgroundExecutor::TaskResultPtr operator()() {
         QImage image(m_filePath);
 
         return BackgroundExecutor::TaskResultPtr(new ImageLoadResult(m_ptrOwner, image));
@@ -72,24 +65,20 @@ private:
 DebugImageView::DebugImageView(AutoRemovingFile file,
                                boost::function<QWidget*(QImage const&)> const& image_view_factory,
                                QWidget* parent)
-    : QStackedWidget(parent),
-      m_file(file),
-      m_imageViewFactory(image_view_factory),
-      m_pPlaceholderWidget(new ProcessingIndicationWidget(this)),
-      m_isLive(false)
-{
+        : QStackedWidget(parent),
+          m_file(file),
+          m_imageViewFactory(image_view_factory),
+          m_pPlaceholderWidget(new ProcessingIndicationWidget(this)),
+          m_isLive(false) {
     addWidget(m_pPlaceholderWidget);
 }
 
-void
-DebugImageView::setLive(bool const live)
-{
+void DebugImageView::setLive(bool const live) {
     if (live && !m_isLive) {
         ImageViewBase::backgroundExecutor().enqueueTask(
             BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
         );
-    }
-    else if (!live && m_isLive) {
+    } else if (!live && m_isLive) {
         if (QWidget* wgt = currentWidget()) {
             if (wgt != m_pPlaceholderWidget) {
                 removeWidget(wgt);
@@ -101,9 +90,7 @@ DebugImageView::setLive(bool const live)
     m_isLive = live;
 }
 
-void
-DebugImageView::imageLoaded(QImage const& image)
-{
+void DebugImageView::imageLoaded(QImage const& image) {
     if (!m_isLive) {
         return;
     }
@@ -112,8 +99,7 @@ DebugImageView::imageLoaded(QImage const& image)
         std::unique_ptr<QWidget> image_view;
         if (m_imageViewFactory.empty()) {
             image_view.reset(new BasicImageView(image));
-        }
-        else {
+        } else {
             image_view.reset(m_imageViewFactory(image));
         }
         setCurrentIndex(addWidget(image_view.release()));

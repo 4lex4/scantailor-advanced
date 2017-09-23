@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,79 +20,68 @@
 #include "PageSelectionAccessor.h"
 #include <assert.h>
 
-namespace select_content
-{
-    ApplyDialog::ApplyDialog(QWidget* parent,
-                             PageId const& cur_page,
-                             PageSelectionAccessor const& page_selection_accessor)
+namespace select_content {
+ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor)
         : QDialog(parent),
           m_pages(page_selection_accessor.allPages()),
           m_selectedPages(page_selection_accessor.selectedPages()),
           m_selectedRanges(page_selection_accessor.selectedRanges()),
           m_curPage(cur_page),
-          m_pBtnGroup(new QButtonGroup(this))
-    {
-        setupUi(this);
-        m_pBtnGroup->addButton(thisPageOnlyRB);
-        m_pBtnGroup->addButton(allPagesRB);
-        m_pBtnGroup->addButton(thisPageAndFollowersRB);
-        m_pBtnGroup->addButton(selectedPagesRB);
-        m_pBtnGroup->addButton(everyOtherRB);
-        m_pBtnGroup->addButton(thisEveryOtherRB);
-        m_pBtnGroup->addButton(everyOtherSelectedRB);
+          m_pBtnGroup(new QButtonGroup(this)) {
+    setupUi(this);
+    m_pBtnGroup->addButton(thisPageOnlyRB);
+    m_pBtnGroup->addButton(allPagesRB);
+    m_pBtnGroup->addButton(thisPageAndFollowersRB);
+    m_pBtnGroup->addButton(selectedPagesRB);
+    m_pBtnGroup->addButton(everyOtherRB);
+    m_pBtnGroup->addButton(thisEveryOtherRB);
+    m_pBtnGroup->addButton(everyOtherSelectedRB);
 
-        /*
-           if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
-            everyOtherSelectedWidget->setEnabled(false);
-            everyOtherSelectedHint->setText(selectedPagesHint->text());
-           } else if (m_selectedRanges.size() > 1) {
-            everyOtherSelectedWidget->setEnabled(false);
-            everyOtherSelectedHint->setText(tr("Can't do: more than one group is selected."));
-           }
-         */
+    /*
+       if (m_selectedPages.size() <= 1) {
+        selectedPagesWidget->setEnabled(false);
+        everyOtherSelectedWidget->setEnabled(false);
+        everyOtherSelectedHint->setText(selectedPagesHint->text());
+       } else if (m_selectedRanges.size() > 1) {
+        everyOtherSelectedWidget->setEnabled(false);
+        everyOtherSelectedHint->setText(tr("Can't do: more than one group is selected."));
+       }
+     */
 
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
-    }
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+}
 
-    ApplyDialog::~ApplyDialog()
-    { }
+ApplyDialog::~ApplyDialog() {
+}
 
-    void
-    ApplyDialog::onSubmit()
-    {
-        std::set<PageId> pages;
+void ApplyDialog::onSubmit() {
+    std::set<PageId> pages;
 
-        if (allPagesRB->isChecked()) {
-            m_pages.selectAll().swap(pages);
-        }
-        else if (thisPageAndFollowersRB->isChecked()) {
-            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-        }
-        else if (selectedPagesRB->isChecked()) {
-            m_selectedPages.swap(pages);
-        }
-        else if (everyOtherRB->isChecked()) {
-            m_pages.selectEveryOther(m_curPage).swap(pages);
-        }
-        else if (thisEveryOtherRB->isChecked()) {
-            std::set<PageId> tmp;
-            m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
-            for (int i = 0; it != tmp.end(); ++it, ++i) {
-                if (i % 2 == 0) {
-                    pages.insert(*it);
-                }
+    if (allPagesRB->isChecked()) {
+        m_pages.selectAll().swap(pages);
+    } else if (thisPageAndFollowersRB->isChecked()) {
+        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+    } else if (selectedPagesRB->isChecked()) {
+        m_selectedPages.swap(pages);
+    } else if (everyOtherRB->isChecked()) {
+        m_pages.selectEveryOther(m_curPage).swap(pages);
+    } else if (thisEveryOtherRB->isChecked()) {
+        std::set<PageId> tmp;
+        m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
+        std::set<PageId>::iterator it = tmp.begin();
+        for (int i = 0; it != tmp.end(); ++it, ++i) {
+            if (i % 2 == 0) {
+                pages.insert(*it);
             }
         }
-        else if (everyOtherSelectedRB->isChecked()) {
-            assert(m_selectedRanges.size() == 1);
-            PageRange const& range = m_selectedRanges.front();
-            range.selectEveryOther(m_curPage).swap(pages);
-        }
+    } else if (everyOtherSelectedRB->isChecked()) {
+        assert(m_selectedRanges.size() == 1);
+        PageRange const& range = m_selectedRanges.front();
+        range.selectEveryOther(m_curPage).swap(pages);
+    }
 
-        emit applySelection(pages, applyContentBoxOption->isChecked());
+    emit applySelection(pages, applyContentBoxOption->isChecked());
 
-        accept();
-    }  // ApplyDialog::onSubmit
+    accept();
+}      // ApplyDialog::onSubmit
 }  // namespace select_content

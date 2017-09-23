@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,79 +32,73 @@
 class ImageTransformation;
 class QMenu;
 
-namespace select_content
-{
-    class ImageView
-        : public ImageViewBase,
-          private InteractionHandler
-    {
-        Q_OBJECT
+namespace select_content {
+class ImageView: public ImageViewBase, private InteractionHandler {
+    Q_OBJECT
+public:
+    /**
+     * \p content_rect is in virtual image coordinates.
+     */
+    ImageView(QImage const& image,
+              QImage const& downscaled_image,
+              ImageTransformation const& xform,
+              QRectF const& content_rect,
+              QRectF const& page_rect);
 
-    public:
-        /**
-         * \p content_rect is in virtual image coordinates.
-         */
-        ImageView(QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  QRectF const& content_rect,
-                  QRectF const& page_rect);
+    virtual ~ImageView();
+signals:
+    void manualContentRectSet(QRectF const& content_rect);
 
-        virtual ~ImageView();
+private slots:
+    void createContentBox();
 
-    signals:
-        void manualContentRectSet(QRectF const& content_rect);
+    void removeContentBox();
 
-    private slots:
-        void createContentBox();
+private:
+    enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
 
-        void removeContentBox();
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    private:
-        enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
+    void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
 
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    QPointF cornerPosition(int edge_mask) const;
 
-        void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
+    void cornerMoveRequest(int edge_mask, QPointF const& pos);
 
-        QPointF cornerPosition(int edge_mask) const;
+    QLineF edgePosition(int edge) const;
 
-        void cornerMoveRequest(int edge_mask, QPointF const& pos);
+    void edgeMoveRequest(int edge, QLineF const& line);
 
-        QLineF edgePosition(int edge) const;
+    void dragFinished();
 
-        void edgeMoveRequest(int edge, QLineF const& line);
+    void forceInsideImage(QRectF& widget_rect, int edge_mask) const;
 
-        void dragFinished();
+    DraggablePoint m_corners[4];
+    ObjectDragHandler m_cornerHandlers[4];
 
-        void forceInsideImage(QRectF& widget_rect, int edge_mask) const;
+    DraggableLineSegment m_edges[4];
+    ObjectDragHandler m_edgeHandlers[4];
 
-        DraggablePoint m_corners[4];
-        ObjectDragHandler m_cornerHandlers[4];
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
 
-        DraggableLineSegment m_edges[4];
-        ObjectDragHandler m_edgeHandlers[4];
+    /**
+     * The context menu to be shown if there is no content box.
+     */
+    QMenu* m_pNoContentMenu;
 
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
+    /**
+     * The context menu to be shown if there exists a content box.
+     */
+    QMenu* m_pHaveContentMenu;
 
-        /**
-         * The context menu to be shown if there is no content box.
-         */
-        QMenu* m_pNoContentMenu;
+    /**
+     * Content box in virtual image coordinates.
+     */
+    QRectF m_contentRect;
+    QRectF m_pageRect;
 
-        /**
-         * The context menu to be shown if there exists a content box.
-         */
-        QMenu* m_pHaveContentMenu;
-
-        /**
-         * Content box in virtual image coordinates.
-         */
-        QRectF m_contentRect;
-        QRectF m_pageRect;
-
-        QSizeF m_minBoxSize;
-    };
+    QSizeF m_minBoxSize;
+};
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_IMAGEVIEW_H_

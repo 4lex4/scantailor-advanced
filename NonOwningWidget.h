@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,13 +25,12 @@
  * \brief Your normal QWidget, except it doesn't delete its children with itself,
  *        rather it calls setParent(0) on them.
  */
-class NonOwningWidget
-    : public QWidget
-{
+class NonOwningWidget: public QWidget {
 public:
     NonOwningWidget(QWidget* parent = 0);
 
     virtual ~NonOwningWidget();
 };
+
 
 #endif

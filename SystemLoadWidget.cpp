@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,9 +24,8 @@
 static char const* const key = "settings/batch_processing_threads";
 
 SystemLoadWidget::SystemLoadWidget(QWidget* parent)
-    : QWidget(parent),
-      m_maxThreads(QThread::idealThreadCount())
-{
+        : QWidget(parent),
+          m_maxThreads(QThread::idealThreadCount()) {
     ui.setupUi(this);
 
     int num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
@@ -42,47 +40,34 @@ SystemLoadWidget::SystemLoadWidget(QWidget* parent)
     connect(ui.plusBtn, SIGNAL(clicked()), SLOT(increaseLoad()));
 }
 
-void
-SystemLoadWidget::sliderPressed()
-{
+void SystemLoadWidget::sliderPressed() {
     showHideToolTip(ui.slider->value());
 }
 
-void
-SystemLoadWidget::sliderMoved(int threads)
-{
+void SystemLoadWidget::sliderMoved(int threads) {
     showHideToolTip(threads);
 }
 
-void
-SystemLoadWidget::valueChanged(int threads)
-{
+void SystemLoadWidget::valueChanged(int threads) {
     QSettings settings;
     if (threads == m_maxThreads) {
         settings.remove(key);
-    }
-    else {
+    } else {
         settings.setValue(key, threads);
     }
 }
 
-void
-SystemLoadWidget::decreaseLoad()
-{
+void SystemLoadWidget::decreaseLoad() {
     ui.slider->setValue(ui.slider->value() - 1);
     showHideToolTip(ui.slider->value());
 }
 
-void
-SystemLoadWidget::increaseLoad()
-{
+void SystemLoadWidget::increaseLoad() {
     ui.slider->setValue(ui.slider->value() + 1);
     showHideToolTip(ui.slider->value());
 }
 
-void
-SystemLoadWidget::showHideToolTip(int threads)
-{
+void SystemLoadWidget::showHideToolTip(int threads) {
     QPoint const center(ui.slider->rect().center());
     QPoint tooltip_pos(ui.slider->mapFromGlobal(QCursor::pos()));
     if ((tooltip_pos.x() < 0) || (tooltip_pos.x() >= ui.slider->width())) {

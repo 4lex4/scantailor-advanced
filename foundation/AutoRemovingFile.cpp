@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,47 +19,40 @@
 #include "AutoRemovingFile.h"
 #include <QFile>
 
-AutoRemovingFile::AutoRemovingFile()
-{ }
+AutoRemovingFile::AutoRemovingFile() {
+}
 
 AutoRemovingFile::AutoRemovingFile(QString const& file_path)
-    : m_file(file_path)
-{ }
+        : m_file(file_path) {
+}
 
 AutoRemovingFile::AutoRemovingFile(AutoRemovingFile& other)
-    : m_file(other.release())
-{ }
+        : m_file(other.release()) {
+}
 
 AutoRemovingFile::AutoRemovingFile(CopyHelper other)
-    : m_file(other.obj->release())
-{ }
+        : m_file(other.obj->release()) {
+}
 
-AutoRemovingFile::~AutoRemovingFile()
-{
+AutoRemovingFile::~AutoRemovingFile() {
     if (!m_file.isEmpty()) {
         QFile::remove(m_file);
     }
 }
 
-AutoRemovingFile&
-AutoRemovingFile::operator=(AutoRemovingFile& other)
-{
+AutoRemovingFile& AutoRemovingFile::operator=(AutoRemovingFile& other) {
     m_file = other.release();
 
     return *this;
 }
 
-AutoRemovingFile&
-AutoRemovingFile::operator=(CopyHelper other)
-{
+AutoRemovingFile& AutoRemovingFile::operator=(CopyHelper other) {
     m_file = other.obj->release();
 
     return *this;
 }
 
-void
-AutoRemovingFile::reset(QString const& file)
-{
+void AutoRemovingFile::reset(QString const& file) {
     QString const old_file(file);
 
     m_file = file;
@@ -70,9 +62,7 @@ AutoRemovingFile::reset(QString const& file)
     }
 }
 
-QString
-AutoRemovingFile::release()
-{
+QString AutoRemovingFile::release() {
     QString saved(m_file);
     m_file = QString();
 

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,16 +29,14 @@
 class QImage;
 class QWidget;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 }
 
 /**
  * \brief A sequence of image + label pairs.
  */
-class DebugImages
-{
+class DebugImages {
 public:
     void add(QImage const& image,
              QString const& label,
@@ -51,8 +48,7 @@ public:
              boost::function<QWidget*(QImage const&)> const& image_view_factory
                  = boost::function<QWidget*(QImage const&)>());
 
-    bool empty() const
-    {
+    bool empty() const {
         return m_sequence.empty();
     }
 
@@ -66,20 +62,20 @@ public:
     AutoRemovingFile retrieveNext(QString* label = 0, boost::function<QWidget*(QImage const&)>* image_view_factory = 0);
 
 private:
-    struct Item
-        : public RefCountable {
+    struct Item: public RefCountable {
         AutoRemovingFile file;
         QString label;
         boost::function<QWidget*(QImage const&)> imageViewFactory;
 
         Item(AutoRemovingFile f, QString const& l, boost::function<QWidget*(QImage const&)> const& imf)
-            : file(f),
-              label(l),
-              imageViewFactory(imf)
-        { }
+                : file(f),
+                  label(l),
+                  imageViewFactory(imf) {
+        }
     };
 
     std::deque<IntrusivePtr<Item>> m_sequence;
 };
+
 
 #endif  // ifndef DEBUG_IMAGES_H_

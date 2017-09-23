@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,8 +29,7 @@
  * F(x) = a^T * x + b
  * \endcode
  */
-class LinearFunction
-{
+class LinearFunction {
 public:
     VecT<double> a;
     double b;
@@ -47,8 +45,7 @@ public:
      */
     void reset();
 
-    size_t numVars() const
-    {
+    size_t numVars() const {
         return a.size();
     }
 
@@ -65,9 +62,7 @@ public:
 };
 
 
-inline void
-swap(LinearFunction& f1, LinearFunction& f2)
-{
+inline void swap(LinearFunction& f1, LinearFunction& f2) {
     f1.swap(f2);
 }
 

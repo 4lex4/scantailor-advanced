@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,42 +27,32 @@
 #include <QPolygonF>
 #include <QDomElement>
 
-QString
-XmlUnmarshaller::string(QDomElement const& el)
-{
+QString XmlUnmarshaller::string(QDomElement const& el) {
     return el.text();
 }
 
-QSize
-XmlUnmarshaller::size(QDomElement const& el)
-{
+QSize XmlUnmarshaller::size(QDomElement const& el) {
     int const width = el.attribute("width").toInt();
     int const height = el.attribute("height").toInt();
 
     return QSize(width, height);
 }
 
-QSizeF
-XmlUnmarshaller::sizeF(QDomElement const& el)
-{
+QSizeF XmlUnmarshaller::sizeF(QDomElement const& el) {
     double const width = el.attribute("width").toDouble();
     double const height = el.attribute("height").toDouble();
 
     return QSizeF(width, height);
 }
 
-Dpi
-XmlUnmarshaller::dpi(QDomElement const& el)
-{
+Dpi XmlUnmarshaller::dpi(QDomElement const& el) {
     int const hor = el.attribute("horizontal").toInt();
     int const ver = el.attribute("vertical").toInt();
 
     return Dpi(hor, ver);
 }
 
-OrthogonalRotation
-XmlUnmarshaller::rotation(QDomElement const& el)
-{
+OrthogonalRotation XmlUnmarshaller::rotation(QDomElement const& el) {
     int const degrees = el.attribute("degrees").toInt();
     OrthogonalRotation rotation;
     for (int i = 0; i < 4; ++i) {
@@ -76,9 +65,7 @@ XmlUnmarshaller::rotation(QDomElement const& el)
     return rotation;
 }
 
-Margins
-XmlUnmarshaller::margins(QDomElement const& el)
-{
+Margins XmlUnmarshaller::margins(QDomElement const& el) {
     Margins margins;
     margins.setLeft(el.attribute("left").toDouble());
     margins.setRight(el.attribute("right").toDouble());
@@ -88,27 +75,21 @@ XmlUnmarshaller::margins(QDomElement const& el)
     return margins;
 }
 
-QPointF
-XmlUnmarshaller::pointF(QDomElement const& el)
-{
+QPointF XmlUnmarshaller::pointF(QDomElement const& el) {
     double const x = el.attribute("x").toDouble();
     double const y = el.attribute("y").toDouble();
 
     return QPointF(x, y);
 }
 
-QLineF
-XmlUnmarshaller::lineF(QDomElement const& el)
-{
+QLineF XmlUnmarshaller::lineF(QDomElement const& el) {
     QPointF const p1(pointF(el.namedItem("p1").toElement()));
     QPointF const p2(pointF(el.namedItem("p2").toElement()));
 
     return QLineF(p1, p2);
 }
 
-QRect
-XmlUnmarshaller::rect(QDomElement const& el)
-{
+QRect XmlUnmarshaller::rect(QDomElement const& el) {
     int const x = el.attribute("x").toInt();
     int const y = el.attribute("y").toInt();
     int const width = el.attribute("width").toInt();
@@ -117,9 +98,7 @@ XmlUnmarshaller::rect(QDomElement const& el)
     return QRect(x, y, width, height);
 }
 
-QRectF
-XmlUnmarshaller::rectF(QDomElement const& el)
-{
+QRectF XmlUnmarshaller::rectF(QDomElement const& el) {
     double const x = el.attribute("x").toDouble();
     double const y = el.attribute("y").toDouble();
     double const width = el.attribute("width").toDouble();
@@ -128,9 +107,7 @@ XmlUnmarshaller::rectF(QDomElement const& el)
     return QRectF(x, y, width, height);
 }
 
-QPolygonF
-XmlUnmarshaller::polygonF(QDomElement const& el)
-{
+QPolygonF XmlUnmarshaller::polygonF(QDomElement const& el) {
     QPolygonF poly;
 
     QString const point_tag_name("point");

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -31,8 +30,7 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class Zone
-{
+class Zone {
 public:
     Zone(SerializableSpline const& spline, PropertySet const& props = PropertySet());
 
@@ -42,18 +40,15 @@ public:
 
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    SerializableSpline const& spline() const
-    {
+    SerializableSpline const& spline() const {
         return m_spline;
     }
 
-    PropertySet& properties()
-    {
+    PropertySet& properties() {
         return m_props;
     }
 
-    PropertySet const& properties() const
-    {
+    PropertySet const& properties() const {
         return m_props;
     }
 
@@ -63,5 +58,6 @@ private:
     SerializableSpline m_spline;
     PropertySet m_props;
 };
+
 
 #endif  // ifndef ZONE_H_

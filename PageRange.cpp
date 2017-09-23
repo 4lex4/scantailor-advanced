@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,13 +20,13 @@
 #include <boost/foreach.hpp>
 
 std::set<PageId>
-PageRange::selectEveryOther(PageId const& base) const
-{
+PageRange::selectEveryOther(PageId const& base) const {
     std::set<PageId> selection;
 
     std::vector<PageId>::const_iterator it(pages.begin());
     std::vector<PageId>::const_iterator const end(pages.end());
-    for (; it != end && *it != base; ++it) { }
+    for (; it != end && *it != base; ++it) {
+    }
     if (it == end) {
         return selection;
     }

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,8 +23,7 @@
 #include <list>
 #include <limits>
 
-class RecentProjects
-{
+class RecentProjects {
 public:
     /**
      * \brief The default value for max_items parameters of
@@ -56,8 +54,7 @@ public:
 
     void write(int max_items = DEFAULT_MAX_ITEMS) const;
 
-    bool isEmpty() const
-    {
+    bool isEmpty() const {
         return m_projectFiles.empty();
     }
 
@@ -75,9 +72,7 @@ private:
 
 
 template <typename Out>
-void
-RecentProjects::enumerate(Out out, int max_items) const
-{
+void RecentProjects::enumerate(Out out, int max_items) const {
     std::list<QString>::const_iterator it(m_projectFiles.begin());
     std::list<QString>::const_iterator const end(m_projectFiles.end());
     for (; it != end && max_items > 0; ++it, --max_items) {

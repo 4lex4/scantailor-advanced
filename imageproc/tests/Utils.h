@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,32 +22,29 @@
 class QImage;
 class QRect;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 
-    namespace tests
-    {
-        namespace utils
-        {
-            BinaryImage randomBinaryImage(int width, int height);
+namespace tests {
+namespace utils {
+BinaryImage randomBinaryImage(int width, int height);
 
-            QImage randomMonoQImage(int width, int height);
+QImage randomMonoQImage(int width, int height);
 
-            QImage randomGrayImage(int width, int height);
+QImage randomGrayImage(int width, int height);
 
-            BinaryImage makeBinaryImage(int const* data, int width, int height);
+BinaryImage makeBinaryImage(int const* data, int width, int height);
 
-            QImage makeMonoQImage(int const* data, int width, int height);
+QImage makeMonoQImage(int const* data, int width, int height);
 
-            QImage makeGrayImage(int const* data, int width, int height);
+QImage makeGrayImage(int const* data, int width, int height);
 
-            void dumpBinaryImage(BinaryImage const& img, char const* name = 0);
+void dumpBinaryImage(BinaryImage const& img, char const* name = 0);
 
-            void dumpGrayImage(QImage const& img, char const* name = 0);
+void dumpGrayImage(QImage const& img, char const* name = 0);
 
-            bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
-        }
-    }
+bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
+}
+}
 }
 #endif  // ifndef IMAGEPROC_TESTS_UTILS_H_

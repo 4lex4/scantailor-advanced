@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,10 +23,9 @@
 #include <assert.h>
 
 RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* parent)
-    : QDialog(parent),
-      m_pSortingModel(new RelinkingSortingModel),
-      m_projectFileDir(QFileInfo(project_file_path).path())
-{
+        : QDialog(parent),
+          m_pSortingModel(new RelinkingSortingModel),
+          m_projectFileDir(QFileInfo(project_file_path).path()) {
     ui.setupUi(this);
     m_pSortingModel->setSourceModel(&m_model);
     ui.listView->setModel(m_pSortingModel);
@@ -52,26 +50,22 @@ RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* pare
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
 
-void
-RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected)
-{
+void RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) {
     if (selected.isEmpty()) {
         ui.pathVisualization->clear();
         ui.pathVisualization->setVisible(false);
-    }
-    else {
+    } else {
         ui.undoButton->setVisible(false);
 
         QModelIndex const index(selected.front().topLeft());
         QString const path(index.data(m_model.UncommittedPathRole).toString());
         int const type = index.data(m_model.TypeRole).toInt();
-        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type)type),  /*clickable=*/ true);
+        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type) type),  /*clickable=*/ true);
         ui.pathVisualization->setVisible(true);
 
         if (ui.errorLabel->isVisible()) {
             m_model.rollbackChanges();
-        }
-        else {
+        } else {
             m_model.commitChanges();
         }
     }
@@ -79,9 +73,7 @@ RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection
     ui.errorLabel->setVisible(false);
 }
 
-void
-RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& suffix_path, int const type)
-{
+void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& suffix_path, int const type) {
     assert(!prefix_path.endsWith(QChar('/')) && !prefix_path.endsWith(QChar('\\')));
     assert(!suffix_path.startsWith(QChar('/')) && !suffix_path.startsWith(QChar('\\')));
 
@@ -94,8 +86,7 @@ RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& su
             dir.exists() ? dir.path() : m_projectFileDir,
             QString(), 0, QFileDialog::DontUseNativeDialog
                            );
-    }
-    else {
+    } else {
         QDir const dir(prefix_path);
         replacement_path = QFileDialog::getExistingDirectory(
             this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
@@ -118,7 +109,7 @@ RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& su
     new_path += QChar('/');
     new_path += suffix_path;
 
-    m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type)type);
+    m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type) type);
 
     if (m_model.checkForMerges()) {
         ui.errorLabel->setText(
@@ -127,9 +118,8 @@ RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& su
         ui.errorLabel->setVisible(true);
         ui.pathVisualization->clear();
         ui.pathVisualization->setVisible(false);
-    }
-    else {
-        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type)type),  /*clickable=*/ false);
+    } else {
+        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type) type),  /*clickable=*/ false);
         ui.pathVisualization->setVisible(true);
     }
 
@@ -137,16 +127,12 @@ RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& su
     ui.listView->update();
 }  // RelinkingDialog::pathButtonClicked
 
-void
-RelinkingDialog::undoButtonClicked()
-{
+void RelinkingDialog::undoButtonClicked() {
     m_model.rollbackChanges();
     selectionChanged(ui.listView->selectionModel()->selection(), QItemSelection());
 }
 
-void
-RelinkingDialog::commitChanges()
-{
+void RelinkingDialog::commitChanges() {
     m_model.commitChanges();
     accept();
 }

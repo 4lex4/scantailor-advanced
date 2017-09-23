@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,8 +27,7 @@
 class PageId;
 class AbstractRelinker;
 
-class OutputFileNameGenerator
-{
+class OutputFileNameGenerator {
 public:
     OutputFileNameGenerator();
 
@@ -39,23 +37,19 @@ public:
 
     void performRelinking(AbstractRelinker const& relinker);
 
-    Qt::LayoutDirection layoutDirection() const
-    {
+    Qt::LayoutDirection layoutDirection() const {
         return m_layoutDirection;
     }
 
-    QString const& outDir() const
-    {
+    QString const& outDir() const {
         return m_outDir;
     }
 
-    FileNameDisambiguator* disambiguator()
-    {
+    FileNameDisambiguator* disambiguator() {
         return m_ptrDisambiguator.get();
     }
 
-    FileNameDisambiguator const* disambiguator() const
-    {
+    FileNameDisambiguator const* disambiguator() const {
         return m_ptrDisambiguator.get();
     }
 
@@ -68,5 +62,6 @@ private:
     QString m_outDir;
     Qt::LayoutDirection m_layoutDirection;
 };
+
 
 #endif  // ifndef OUTPUT_FILE_NAME_GENERATOR_H_

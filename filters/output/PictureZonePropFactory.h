@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,13 +21,10 @@
 
 #include "PropertyFactory.h"
 
-namespace output
-{
-    class PictureZonePropFactory
-        : public PropertyFactory
-    {
-    public:
-        PictureZonePropFactory();
-    };
+namespace output {
+class PictureZonePropFactory: public PropertyFactory {
+public:
+    PictureZonePropFactory();
+};
 }
 #endif

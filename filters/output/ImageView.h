@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,21 +26,16 @@
 
 class ImageTransformation;
 
-namespace output
-{
-    class ImageView
-        : public ImageViewBase
-    {
-        Q_OBJECT
+namespace output {
+class ImageView: public ImageViewBase {
+    Q_OBJECT
+public:
+    ImageView(QImage const& image, QImage const& downscaled_image);
 
-    public:
-        ImageView(QImage const& image, QImage const& downscaled_image);
-
-        virtual ~ImageView();
-
-    private:
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-    };
+    virtual ~ImageView();
+private:
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+};
 }
 #endif

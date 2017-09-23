@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,12 +27,9 @@
 
 class QImage;
 
-class DebugImageView
-    : public QStackedWidget,
-      public boost::intrusive::list_base_hook<
-          boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-      >
-{
+class DebugImageView: public QStackedWidget, public boost::intrusive::list_base_hook<
+                        boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+    >{
 public:
     DebugImageView(AutoRemovingFile file, boost::function<QWidget*(QImage const&)> const& image_view_factory
                        = boost::function<QWidget*(QImage const&)>(), QWidget* parent = 0);
@@ -55,5 +51,6 @@ private:
     QWidget* m_pPlaceholderWidget;
     bool m_isLive;
 };
+
 
 #endif  // ifndef DEBUG_IMAGE_VIEW_H_

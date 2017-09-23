@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,9 +25,8 @@
 class CompositeCacheDrivenTask;
 class ProjectPages;
 
-namespace page_split
-{
-    class Filter;
+namespace page_split {
+class Filter;
 }
 
 /**
@@ -40,8 +38,7 @@ namespace page_split
  * and "Split Pages" stages.  "Split Pages" might or might not know the definite
  * answer, while "Fix Orientation" provides a hint.
  */
-class PageOrientationPropagator
-{
+class PageOrientationPropagator {
 public:
     PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
                               IntrusivePtr<CompositeCacheDrivenTask> const& task);
@@ -56,5 +53,6 @@ private:
     IntrusivePtr<page_split::Filter> m_ptrPageSplitFilter;
     IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
 };
+
 
 #endif  // ifndef PAGE_ORIENTATION_PROPAGATOR_H_

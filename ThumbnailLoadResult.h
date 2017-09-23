@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,8 +21,7 @@
 
 #include <QPixmap>
 
-class ThumbnailLoadResult
-{
+class ThumbnailLoadResult {
 public:
     enum Status {
         /**
@@ -55,17 +53,15 @@ public:
     };
 
     ThumbnailLoadResult(Status status, QPixmap const& pixmap)
-        : m_pixmap(pixmap),
-          m_status(status)
-    { }
+            : m_pixmap(pixmap),
+              m_status(status) {
+    }
 
-    Status status() const
-    {
+    Status status() const {
         return m_status;
     }
 
-    QPixmap const& pixmap() const
-    {
+    QPixmap const& pixmap() const {
         return m_pixmap;
     }
 
@@ -73,5 +69,6 @@ private:
     QPixmap m_pixmap;
     Status m_status;
 };
+
 
 #endif  // ifndef THUMBNAILLOADRESULT_H_

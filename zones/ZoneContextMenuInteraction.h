@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -40,12 +39,8 @@ class ZoneInteractionContext;
 class QPainter;
 class QMenu;
 
-class ZoneContextMenuInteraction
-    : public QObject,
-      public InteractionHandler
-{
+class ZoneContextMenuInteraction: public QObject, public InteractionHandler {
     Q_OBJECT
-
 public:
     struct StandardMenuItems {
         ZoneContextMenuItem propertiesItem;
@@ -74,18 +69,16 @@ public:
                                               MenuCustomizer const& menu_customizer);
 
     virtual ~ZoneContextMenuInteraction();
-
 protected:
-    class Zone
-        : public EditableZoneSet::Zone
-    {
+    class Zone: public EditableZoneSet::Zone {
     public:
         QColor color;
 
         Zone(EditableZoneSet::Zone const& zone)
-            : EditableZoneSet::Zone(zone)
-        { }
+                : EditableZoneSet::Zone(zone) {
+        }
     };
+
 
     static std::vector<Zone> zonesUnderMouse(ZoneInteractionContext& context);
 
@@ -94,8 +87,7 @@ protected:
                                MenuCustomizer const& menu_customizer,
                                std::vector<Zone>& selectable_zones);
 
-    ZoneInteractionContext& context()
-    {
+    ZoneInteractionContext& context() {
         return m_rContext;
     }
 
@@ -107,9 +99,7 @@ private slots:
 private:
     class OrderByArea;
 
-    class Visualizer
-        : public BasicSplineVisualizer
-    {
+    class Visualizer: public BasicSplineVisualizer {
     public:
         void switchToFillMode(QColor const& color);
 
@@ -120,6 +110,7 @@ private:
     private:
         QColor m_color;
     };
+
 
     static std::vector<ZoneContextMenuItem> defaultMenuCustomizer(EditableZoneSet::Zone const& zone,
                                                                   StandardMenuItems const& std_items);
@@ -147,5 +138,6 @@ private:
     int m_extraDelaysDone;
 #endif
 };
+
 
 #endif  // ifndef ZONE_CONTEXT_MENU_INTERACTION_H_

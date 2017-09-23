@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,11 +27,8 @@
 
 class QThreadPool;
 
-class WorkerThreadPool
-    : public QObject
-{
+class WorkerThreadPool: public QObject {
     Q_OBJECT
-
 public:
     WorkerThreadPool(QObject* parent = nullptr);
 
@@ -63,5 +59,6 @@ private:
     QThreadPool* m_pPool;
     QSettings m_settings;
 };
+
 
 #endif  // ifndef WORKERTHREADPOOL_H_

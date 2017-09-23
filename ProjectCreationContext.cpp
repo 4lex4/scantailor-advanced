@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,36 +24,29 @@
 #include <assert.h>
 
 ProjectCreationContext::ProjectCreationContext(QWidget* parent)
-    : m_layoutDirection(Qt::LeftToRight),
-      m_pParent(parent)
-{
+        : m_layoutDirection(Qt::LeftToRight),
+          m_pParent(parent) {
     showProjectFilesDialog();
 }
 
-ProjectCreationContext::~ProjectCreationContext()
-{
+ProjectCreationContext::~ProjectCreationContext() {
     delete m_ptrProjectFilesDialog;
     delete m_ptrFixDpiDialog;
 }
 
-namespace
-{
-    template <typename T>
-    bool
-    allDpisOK(T const& container)
-    {
-        using namespace boost::lambda;
+namespace {
+template <typename T>
+bool allDpisOK(T const& container) {
+    using namespace boost::lambda;
 
-        return std::find_if(
-            container.begin(), container.end(),
-            !bind(&ImageFileInfo::isDpiOK, _1)
-        ) == container.end();
-    }
+    return std::find_if(
+        container.begin(), container.end(),
+        !bind(&ImageFileInfo::isDpiOK, _1)
+    ) == container.end();
+}
 }
 
-void
-ProjectCreationContext::projectFilesSubmitted()
-{
+void ProjectCreationContext::projectFilesSubmitted() {
     m_files = m_ptrProjectFilesDialog->inProjectFiles();
     m_outDir = m_ptrProjectFilesDialog->outputDirectory();
     m_layoutDirection = Qt::LeftToRight;
@@ -64,36 +56,27 @@ ProjectCreationContext::projectFilesSubmitted()
 
     if (!m_ptrProjectFilesDialog->isDpiFixingForced() && allDpisOK(m_files)) {
         emit done(this);
-    }
-    else {
+    } else {
         showFixDpiDialog();
     }
 }
 
-void
-ProjectCreationContext::projectFilesDialogDestroyed()
-{
+void ProjectCreationContext::projectFilesDialogDestroyed() {
     if (!m_ptrFixDpiDialog) {
         deleteLater();
     }
 }
 
-void
-ProjectCreationContext::fixedDpiSubmitted()
-{
+void ProjectCreationContext::fixedDpiSubmitted() {
     m_files = m_ptrFixDpiDialog->files();
     emit done(this);
 }
 
-void
-ProjectCreationContext::fixDpiDialogDestroyed()
-{
+void ProjectCreationContext::fixDpiDialogDestroyed() {
     deleteLater();
 }
 
-void
-ProjectCreationContext::showProjectFilesDialog()
-{
+void ProjectCreationContext::showProjectFilesDialog() {
     assert(!m_ptrProjectFilesDialog);
     m_ptrProjectFilesDialog = new ProjectFilesDialog(m_pParent);
     m_ptrProjectFilesDialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -112,9 +95,7 @@ ProjectCreationContext::showProjectFilesDialog()
     m_ptrProjectFilesDialog->show();
 }
 
-void
-ProjectCreationContext::showFixDpiDialog()
-{
+void ProjectCreationContext::showFixDpiDialog() {
     assert(!m_ptrFixDpiDialog);
     m_ptrFixDpiDialog = new FixDpiDialog(m_files, m_pParent);
     m_ptrFixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);

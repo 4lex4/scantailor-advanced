@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,19 +23,16 @@
 #include "IntrusivePtr.h"
 #include "PageOrderProvider.h"
 
-namespace page_layout
-{
-    class OrderByWidthProvider
-        : public PageOrderProvider
-    {
-    public:
-        OrderByWidthProvider(IntrusivePtr<Settings> const& settings);
+namespace page_layout {
+class OrderByWidthProvider: public PageOrderProvider {
+public:
+    OrderByWidthProvider(IntrusivePtr<Settings> const& settings);
 
-        virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
-                              bool rhs_incomplete) const;
+    virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
+                          bool rhs_incomplete) const;
 
-    private:
-        IntrusivePtr<Settings> m_ptrSettings;
-    };
+private:
+    IntrusivePtr<Settings> m_ptrSettings;
+};
 }
 #endif

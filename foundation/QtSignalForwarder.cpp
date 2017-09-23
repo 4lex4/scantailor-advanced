@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,15 +19,12 @@
 #include "QtSignalForwarder.h"
 
 QtSignalForwarder::QtSignalForwarder(QObject* emitter, char const* signal, boost::function<void()> const& slot)
-    : QObject(emitter),
-      m_slot(slot)
-{
+        : QObject(emitter),
+          m_slot(slot) {
     connect(emitter, signal, SLOT(handleSignal()));
 }
 
-void
-QtSignalForwarder::handleSignal()
-{
+void QtSignalForwarder::handleSignal() {
     m_slot();
 }
 

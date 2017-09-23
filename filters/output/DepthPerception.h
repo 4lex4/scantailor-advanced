@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,46 +21,40 @@
 
 #include <QString>
 
-namespace output
-{
-    /**
-     * \see imageproc::CylindricalSurfaceDewarper
-     */
-    class DepthPerception
-    {
-    public:
-        DepthPerception();
+namespace output {
+/**
+ * \see imageproc::CylindricalSurfaceDewarper
+ */
+class DepthPerception {
+public:
+    DepthPerception();
 
-        DepthPerception(double value);
+    DepthPerception(double value);
 
-        explicit DepthPerception(QString const& from_string);
+    explicit DepthPerception(QString const& from_string);
 
-        QString toString() const;
+    QString toString() const;
 
-        void setValue(double value);
+    void setValue(double value);
 
-        double value() const
-        {
-            return m_value;
-        }
+    double value() const {
+        return m_value;
+    }
 
-        static double minValue()
-        {
-            return 1.0;
-        }
+    static double minValue() {
+        return 1.0;
+    }
 
-        static double defaultValue()
-        {
-            return 2.0;
-        }
+    static double defaultValue() {
+        return 2.0;
+    }
 
-        static double maxValue()
-        {
-            return 3.0;
-        }
+    static double maxValue() {
+        return 3.0;
+    }
 
-    private:
-        double m_value;
-    };
+private:
+    double m_value;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_DEPTH_PERCEPTION_H_

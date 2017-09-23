@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,8 +22,7 @@
 
 using namespace imageproc::constants;
 
-PhysicalTransformation::PhysicalTransformation(Dpi const& dpi)
-{
+PhysicalTransformation::PhysicalTransformation(Dpi const& dpi) {
     double const xscale = dpi.horizontal() * (DPI2DPM / 1000.0);
     double const yscale = dpi.vertical() * (DPI2DPM / 1000.0);
     m_mmToPixels.scale(xscale, yscale);

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,13 +25,12 @@
 class QDomDocument;
 class QDomElement;
 
-class Property
-    : public RefCountable
-{
+class Property: public RefCountable {
 public:
     virtual IntrusivePtr<Property> clone() const = 0;
 
     virtual QDomElement toXml(QDomDocument& doc, QString const& name) const = 0;
 };
+
 
 #endif

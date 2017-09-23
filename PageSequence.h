@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,13 +24,11 @@
 #include <set>
 #include <stddef.h>
 
-class PageSequence
-{
+class PageSequence {
 public:
     void append(PageInfo const& page_info);
 
-    size_t numPages() const
-    {
+    size_t numPages() const {
         return m_pages.size();
     }
 
@@ -46,5 +43,6 @@ public:
 private:
     std::vector<PageInfo> m_pages;
 };
+
 
 #endif

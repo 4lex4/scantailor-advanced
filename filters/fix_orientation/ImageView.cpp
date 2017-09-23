@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,33 +19,29 @@
 #include "ImageView.h"
 #include "ImagePresentation.h"
 
-namespace fix_orientation
-{
-    ImageView::ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform)
+namespace fix_orientation {
+ImageView::ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform)
         : ImageViewBase(
               image, downscaled_image,
               ImagePresentation(xform.transform(), xform.resultingPreCropArea())
         ),
           m_dragHandler(*this),
           m_zoomHandler(*this),
-          m_xform(xform)
-    {
-        rootInteractionHandler().makeLastFollower(m_dragHandler);
-        rootInteractionHandler().makeLastFollower(m_zoomHandler);
+          m_xform(xform) {
+    rootInteractionHandler().makeLastFollower(m_dragHandler);
+    rootInteractionHandler().makeLastFollower(m_zoomHandler);
+}
+
+ImageView::~ImageView() {
+}
+
+void ImageView::setPreRotation(OrthogonalRotation const rotation) {
+    if (m_xform.preRotation() == rotation) {
+        return;
     }
 
-    ImageView::~ImageView()
-    { }
+    m_xform.setPreRotation(rotation);
 
-    void
-    ImageView::setPreRotation(OrthogonalRotation const rotation)
-    {
-        if (m_xform.preRotation() == rotation) {
-            return;
-        }
-
-        m_xform.setPreRotation(rotation);
-
-        updateTransform(ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea()));
-    }
+    updateTransform(ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea()));
+}
 }

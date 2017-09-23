@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,13 +21,12 @@
 
 StageSequence::StageSequence(IntrusivePtr<ProjectPages> const& pages,
                              PageSelectionAccessor const& page_selection_accessor)
-    : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
-      m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
-      m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
-      m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
-      m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
-      m_ptrOutputFilter(new output::Filter(page_selection_accessor))
-{
+        : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
+          m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
+          m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
+          m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
+          m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
+          m_ptrOutputFilter(new output::Filter(page_selection_accessor)) {
     m_fixOrientationFilterIdx = m_filters.size();
     m_filters.push_back(m_ptrFixOrientationFilter);
 
@@ -48,17 +46,13 @@ StageSequence::StageSequence(IntrusivePtr<ProjectPages> const& pages,
     m_filters.push_back(m_ptrOutputFilter);
 }
 
-void
-StageSequence::performRelinking(AbstractRelinker const& relinker)
-{
+void StageSequence::performRelinking(AbstractRelinker const& relinker) {
     for (FilterPtr& filter : m_filters) {
         filter->performRelinking(relinker);
     }
 }
 
-int
-StageSequence::findFilter(FilterPtr const& filter) const
-{
+int StageSequence::findFilter(FilterPtr const& filter) const {
     int idx = 0;
     for (FilterPtr const& f : m_filters) {
         if (f == filter) {

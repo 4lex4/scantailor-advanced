@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,11 +25,8 @@
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
 
-class OutOfMemoryHandler
-    : public QObject
-{
+class OutOfMemoryHandler: public QObject {
     Q_OBJECT DECLARE_NON_COPYABLE(OutOfMemoryHandler)
-
 public:
     static OutOfMemoryHandler& instance();
 
@@ -55,5 +51,6 @@ private:
     boost::scoped_array<char> m_emergencyBuffer;
     bool m_hadOOM;
 };
+
 
 #endif  // ifndef OUT_OF_MEMORY_HANDLER_H_

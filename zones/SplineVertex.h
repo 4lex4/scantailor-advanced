@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,8 +23,7 @@
 #include "NonCopyable.h"
 #include <QPointF>
 
-class SplineVertex
-{
+class SplineVertex {
 public:
     enum Loop { LOOP, NO_LOOP, LOOP_IF_BRIDGED };
 
@@ -33,8 +31,8 @@ public:
 
     SplineVertex(SplineVertex* prev, SplineVertex* next);
 
-    virtual ~SplineVertex()
-    { }
+    virtual ~SplineVertex() {
+    }
 
     /**
      * We don't want reference counting for sentinel vertices,
@@ -42,14 +40,14 @@ public:
      * in case of sentinel vertices these function may actually
      * be called from this class constructor.
      */
-    virtual void ref() const
-    { }
+    virtual void ref() const {
+    }
 
     /**
      * \see ref()
      */
-    virtual void unref() const
-    { }
+    virtual void unref() const {
+    }
 
     /**
      * \return Smart pointer to this vertex, unless it's a sentiel vertex,
@@ -95,11 +93,8 @@ protected:
 };
 
 
-class SentinelSplineVertex
-    : public SplineVertex
-{
+class SentinelSplineVertex: public SplineVertex {
     DECLARE_NON_COPYABLE(SentinelSplineVertex)
-
 public:
     SentinelSplineVertex();
 
@@ -119,13 +114,11 @@ public:
 
     SplineVertex::Ptr lastVertex() const;
 
-    bool bridged() const
-    {
+    bool bridged() const {
         return m_bridged;
     }
 
-    void setBridged(bool bridged)
-    {
+    void setBridged(bool bridged) {
         m_bridged = bridged;
     }
 
@@ -134,11 +127,8 @@ private:
 };
 
 
-class RealSplineVertex
-    : public SplineVertex
-{
+class RealSplineVertex: public SplineVertex {
     DECLARE_NON_COPYABLE(RealSplineVertex)
-
 public:
     RealSplineVertex(QPointF const& pt, SplineVertex* prev, SplineVertex* next);
 
@@ -158,5 +148,6 @@ private:
     QPointF m_point;
     mutable int m_refCounter;
 };
+
 
 #endif  // ifndef SPLINE_VERTEX_H_

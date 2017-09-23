@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,43 +19,41 @@
 #include "Thumbnail.h"
 #include <QPainter>
 
-namespace select_content
-{
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         ImageTransformation const& xform,
-                         QRectF const& content_rect,
-                         bool deviant)
+namespace select_content {
+Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                     QSizeF const& max_size,
+                     ImageId const& image_id,
+                     ImageTransformation const& xform,
+                     QRectF const& content_rect,
+                     bool deviant)
         : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
           m_contentRect(content_rect),
-          m_deviant(deviant)
-    { }
+          m_deviant(deviant) {
+}
 
-    void
-    Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display, QTransform const& thumb_to_display)
-    {
-        if (m_contentRect.isNull()) {
-            return;
-        }
-
-        painter.setRenderHint(QPainter::Antialiasing, false);
-
-        QPen pen(QColor(0x00, 0x00, 0xff));
-        pen.setWidth(1);
-        pen.setCosmetic(true);
-        painter.setPen(pen);
-
-        painter.setBrush(QColor(0x00, 0x00, 0xff, 50));
-
-        QRectF content_rect(virtToThumb().mapRect(m_contentRect));
-
-        content_rect.adjust(-1, -1, 1, 1);
-
-        painter.drawRect(content_rect.toRect());
-
-        if (m_deviant) {
-            paintDeviant(painter);
-        }
+void Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display,
+                               QTransform const& thumb_to_display) {
+    if (m_contentRect.isNull()) {
+        return;
     }
+
+    painter.setRenderHint(QPainter::Antialiasing, false);
+
+    QPen pen(QColor(0x00, 0x00, 0xff));
+    pen.setWidth(1);
+    pen.setCosmetic(true);
+    painter.setPen(pen);
+
+    painter.setBrush(QColor(0x00, 0x00, 0xff, 50));
+
+    QRectF content_rect(virtToThumb().mapRect(m_contentRect));
+
+    content_rect.adjust(-1, -1, 1, 1);
+
+    painter.drawRect(content_rect.toRect());
+
+    if (m_deviant) {
+        paintDeviant(painter);
+    }
+}
 }  // namespace select_content

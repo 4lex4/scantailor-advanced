@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,24 +20,20 @@
 #include "PageSequence.h"
 
 PageSelectionAccessor::PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider)
-    : m_ptrProvider(provider)
-{ }
+        : m_ptrProvider(provider) {
+}
 
-PageSequence
-PageSelectionAccessor::allPages() const
-{
+PageSequence PageSelectionAccessor::allPages() const {
     return m_ptrProvider->allPages();
 }
 
 std::set<PageId>
-PageSelectionAccessor::selectedPages() const
-{
+PageSelectionAccessor::selectedPages() const {
     return m_ptrProvider->selectedPages();
 }
 
 std::vector<PageRange>
-PageSelectionAccessor::selectedRanges() const
-{
+PageSelectionAccessor::selectedRanges() const {
     return m_ptrProvider->selectedRanges();
 }
 

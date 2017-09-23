@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -34,10 +33,8 @@ class QTemporaryFile;
  * Because renaming across volumes doesn't work, we create a temporary file
  * in the same directory as the target file.
  */
-class AtomicFileOverwriter
-{
+class AtomicFileOverwriter {
     DECLARE_NON_COPYABLE(AtomicFileOverwriter)
-
 public:
     AtomicFileOverwriter();
 
@@ -74,5 +71,6 @@ public:
 private:
     std::unique_ptr<QTemporaryFile> m_ptrTempFile;
 };
+
 
 #endif  // ifndef ATOMICFILEOVERWRITER_H_

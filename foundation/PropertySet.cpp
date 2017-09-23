@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,8 +20,7 @@
 #include "PropertyFactory.h"
 #include <QDomDocument>
 
-PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory)
-{
+PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory) {
     QString const property_str("property");
     QDomNode node(el.firstChild());
 
@@ -42,8 +40,7 @@ PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory)
     }
 }
 
-PropertySet::PropertySet(PropertySet const& other)
-{
+PropertySet::PropertySet(PropertySet const& other) {
     m_props.reserve(other.m_props.size());
 
     for (IntrusivePtr<Property> const& prop : other.m_props) {
@@ -51,23 +48,17 @@ PropertySet::PropertySet(PropertySet const& other)
     }
 }
 
-PropertySet&
-PropertySet::operator=(PropertySet const& other)
-{
+PropertySet& PropertySet::operator=(PropertySet const& other) {
     PropertySet(other).swap(*this);
 
     return *this;
 }
 
-void
-PropertySet::swap(PropertySet& other)
-{
+void PropertySet::swap(PropertySet& other) {
     m_props.swap(other.m_props);
 }
 
-QDomElement
-PropertySet::toXml(QDomDocument& doc, QString const& name) const
-{
+QDomElement PropertySet::toXml(QDomDocument& doc, QString const& name) const {
     QString const property_str("property");
     QDomElement props_el(doc.createElement(name));
 

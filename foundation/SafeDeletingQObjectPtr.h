@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,45 +22,37 @@
 #include "NonCopyable.h"
 
 template <typename T>
-class SafeDeletingQObjectPtr
-{
+class SafeDeletingQObjectPtr {
     DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
-
 public:
     SafeDeletingQObjectPtr(T* obj = 0)
-        : m_pObj(obj)
-    { }
+            : m_pObj(obj) {
+    }
 
-    ~SafeDeletingQObjectPtr()
-    {
+    ~SafeDeletingQObjectPtr() {
         if (m_pObj) {
             m_pObj->disconnect();
             m_pObj->deleteLater();
         }
     }
 
-    void reset(T* other)
-    {
+    void reset(T* other) {
         SafeDeletingQObjectPtr(other).swap(*this);
     }
 
-    T& operator*() const
-    {
+    T& operator*() const {
         return *m_pObj;
     }
 
-    T* operator->() const
-    {
+    T* operator->() const {
         return m_pObj;
     }
 
-    T* get() const
-    {
+    T* get() const {
         return m_pObj;
     }
 
-    void swap(SafeDeletingQObjectPtr& other)
-    {
+    void swap(SafeDeletingQObjectPtr& other) {
         T* tmp = m_pObj;
         m_pObj = other.m_pObj;
         other.m_pObj = tmp;
@@ -71,10 +62,9 @@ private:
     T* m_pObj;
 };
 
+
 template <typename T>
-void
-swap(SafeDeletingQObjectPtr<T>& o1, SafeDeletingQObjectPtr<T>& o2)
-{
+void swap(SafeDeletingQObjectPtr<T>& o1, SafeDeletingQObjectPtr<T>& o2) {
     o1.swap(o2);
 }
 

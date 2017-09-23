@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,8 +24,7 @@
 #include <QSettings>
 
 OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
-    : QDialog(parent)
-{
+        : QDialog(parent) {
     ui.setupUi(this);
     if (sizeof(void*) > 32) {
         ui.only_32bit_1->hide();
@@ -40,13 +38,11 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
     connect(ui.dontSaveBtn, SIGNAL(clicked()), SLOT(reject()));
 }
 
-void
-OutOfMemoryDialog::setParams(QString const& project_file,
-                             IntrusivePtr<StageSequence> const& stages,
-                             IntrusivePtr<ProjectPages> const& pages,
-                             SelectedPage const& selected_page,
-                             OutputFileNameGenerator const& out_file_name_gen)
-{
+void OutOfMemoryDialog::setParams(QString const& project_file,
+                                  IntrusivePtr<StageSequence> const& stages,
+                                  IntrusivePtr<ProjectPages> const& pages,
+                                  SelectedPage const& selected_page,
+                                  OutputFileNameGenerator const& out_file_name_gen) {
     m_projectFile = project_file;
     m_ptrStages = stages;
     m_ptrPages = pages;
@@ -56,25 +52,19 @@ OutOfMemoryDialog::setParams(QString const& project_file,
     ui.saveProjectBtn->setVisible(!project_file.isEmpty());
 }
 
-void
-OutOfMemoryDialog::saveProject()
-{
+void OutOfMemoryDialog::saveProject() {
     if (m_projectFile.isEmpty()) {
         saveProjectAs();
-    }
-    else if (saveProjectWithFeedback(m_projectFile)) {
+    } else if (saveProjectWithFeedback(m_projectFile)) {
         showSaveSuccessScreen();
     }
 }
 
-void
-OutOfMemoryDialog::saveProjectAs()
-{
+void OutOfMemoryDialog::saveProjectAs() {
     QString project_dir;
     if (!m_projectFile.isEmpty()) {
         project_dir = QFileInfo(m_projectFile).absolutePath();
-    }
-    else {
+    } else {
         QSettings settings;
         project_dir = settings.value("project/lastDir").toString();
     }
@@ -110,9 +100,7 @@ OutOfMemoryDialog::saveProjectAs()
     }
 }  // OutOfMemoryDialog::saveProjectAs
 
-bool
-OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file)
-{
+bool OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file) {
     ProjectWriter writer(m_ptrPages, m_selectedPage, m_outFileNameGen);
 
     if (!writer.write(project_file, m_ptrStages->filters())) {
@@ -127,9 +115,7 @@ OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file)
     return true;
 }
 
-void
-OutOfMemoryDialog::showSaveSuccessScreen()
-{
+void OutOfMemoryDialog::showSaveSuccessScreen() {
     ui.topLevelStack->setCurrentWidget(ui.saveSuccessPage);
 }
 

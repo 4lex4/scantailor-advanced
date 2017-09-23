@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,15 +27,14 @@
  * Just like std::unique_ptr deleting its object when it goes out of scope,
  * this class deletes a file.  unique_ptr's copying semantics is also preserved.
  */
-class AutoRemovingFile
-{
+class AutoRemovingFile {
 private:
     struct CopyHelper {
         AutoRemovingFile* obj;
 
         CopyHelper(AutoRemovingFile* o)
-            : obj(o)
-        { }
+                : obj(o) {
+        }
     };
 
 public:
@@ -54,13 +52,11 @@ public:
 
     AutoRemovingFile& operator=(CopyHelper other);
 
-    operator CopyHelper()
-    {
+    operator CopyHelper() {
         return CopyHelper(this);
     }
 
-    QString const& get() const
-    {
+    QString const& get() const {
         return m_file;
     }
 
@@ -71,5 +67,6 @@ public:
 private:
     QString m_file;
 };
+
 
 #endif  // ifndef AUTO_REMOVING_FILE_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,20 +20,16 @@
 #include <algorithm>
 
 LinearFunction::LinearFunction(size_t num_vars)
-    : a(num_vars),
-      b(0)
-{ }
+        : a(num_vars),
+          b(0) {
+}
 
-void
-LinearFunction::reset()
-{
+void LinearFunction::reset() {
     a.fill(0);
     b = 0;
 }
 
-double
-LinearFunction::evaluate(double const* x) const
-{
+double LinearFunction::evaluate(double const* x) const {
     size_t const num_vars = numVars();
 
     double sum = b;
@@ -45,25 +40,19 @@ LinearFunction::evaluate(double const* x) const
     return sum;
 }
 
-void
-LinearFunction::swap(LinearFunction& other)
-{
+void LinearFunction::swap(LinearFunction& other) {
     a.swap(other.a);
     std::swap(b, other.b);
 }
 
-LinearFunction&
-LinearFunction::operator+=(LinearFunction const& other)
-{
+LinearFunction& LinearFunction::operator+=(LinearFunction const& other) {
     a += other.a;
     b += other.b;
 
     return *this;
 }
 
-LinearFunction&
-LinearFunction::operator*=(double scalar)
-{
+LinearFunction& LinearFunction::operator*=(double scalar) {
     a *= scalar;
     b *= scalar;
 

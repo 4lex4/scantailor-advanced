@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,37 +19,30 @@
 #include "DepthPerception.h"
 #include "../../Utils.h"
 
-namespace output
-{
-    DepthPerception::DepthPerception()
-        : m_value(defaultValue())
-    { }
+namespace output {
+DepthPerception::DepthPerception()
+        : m_value(defaultValue()) {
+}
 
-    DepthPerception::DepthPerception(double value)
-        : m_value(qBound(minValue(), value, maxValue()))
-    { }
+DepthPerception::DepthPerception(double value)
+        : m_value(qBound(minValue(), value, maxValue())) {
+}
 
-    DepthPerception::DepthPerception(QString const& from_string)
-    {
-        bool ok = false;
-        m_value = from_string.toDouble(&ok);
-        if (!ok) {
-            m_value = defaultValue();
-        }
-        else {
-            m_value = qBound(minValue(), m_value, maxValue());
-        }
+DepthPerception::DepthPerception(QString const& from_string) {
+    bool ok = false;
+    m_value = from_string.toDouble(&ok);
+    if (!ok) {
+        m_value = defaultValue();
+    } else {
+        m_value = qBound(minValue(), m_value, maxValue());
     }
+}
 
-    QString
-    DepthPerception::toString() const
-    {
-        return Utils::doubleToString(m_value);
-    }
+QString DepthPerception::toString() const {
+    return Utils::doubleToString(m_value);
+}
 
-    void
-    DepthPerception::setValue(double value)
-    {
-        m_value = qBound(minValue(), value, maxValue());
-    }
+void DepthPerception::setValue(double value) {
+    m_value = qBound(minValue(), value, maxValue());
+}
 }  // namespace output

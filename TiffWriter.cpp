@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -66,22 +65,19 @@ TiffWriter::m_reverseBitsLUT[256] = {
 };
 
 
-class TiffWriter::TiffHandle
-{
+class TiffWriter::TiffHandle {
 public:
     TiffHandle(TIFF* handle)
-        : m_pHandle(handle)
-    { }
+            : m_pHandle(handle) {
+    }
 
-    ~TiffHandle()
-    {
+    ~TiffHandle() {
         if (m_pHandle) {
             TIFFClose(m_pHandle);
         }
     }
 
-    TIFF* handle() const
-    {
+    TIFF* handle() const {
         return m_pHandle;
     }
 
@@ -90,24 +86,18 @@ private:
 };
 
 
-static tsize_t
-deviceRead(thandle_t context, tdata_t data, tsize_t size)
-{
+static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
     return 0;
 }
 
-static tsize_t
-deviceWrite(thandle_t context, tdata_t data, tsize_t size)
-{
-    QIODevice* dev = (QIODevice*)context;
+static tsize_t deviceWrite(thandle_t context, tdata_t data, tsize_t size) {
+    QIODevice* dev = (QIODevice*) context;
 
-    return (tsize_t)dev->write(static_cast<char*>(data), size);
+    return (tsize_t) dev->write(static_cast<char*>(data), size);
 }
 
-static toff_t
-deviceSeek(thandle_t context, toff_t offset, int whence)
-{
-    QIODevice* dev = (QIODevice*)context;
+static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
+    QIODevice* dev = (QIODevice*) context;
 
     switch (whence) {
         case SEEK_SET:
@@ -124,36 +114,27 @@ deviceSeek(thandle_t context, toff_t offset, int whence)
     return dev->pos();
 }
 
-static int
-deviceClose(thandle_t context)
-{
-    QIODevice* dev = (QIODevice*)context;
+static int deviceClose(thandle_t context) {
+    QIODevice* dev = (QIODevice*) context;
     dev->close();
 
     return 0;
 }
 
-static toff_t
-deviceSize(thandle_t context)
-{
-    QIODevice* dev = (QIODevice*)context;
+static toff_t deviceSize(thandle_t context) {
+    QIODevice* dev = (QIODevice*) context;
 
     return dev->size();
 }
 
-static int
-deviceMap(thandle_t, tdata_t*, toff_t*)
-{
+static int deviceMap(thandle_t, tdata_t*, toff_t*) {
     return 0;
 }
 
-static void
-deviceUnmap(thandle_t, tdata_t, toff_t)
-{ }
+static void deviceUnmap(thandle_t, tdata_t, toff_t) {
+}
 
-bool
-TiffWriter::writeImage(QString const& file_path, QImage const& image, int compression)
-{
+bool TiffWriter::writeImage(QString const& file_path, QImage const& image, int compression) {
     if (image.isNull()) {
         return false;
     }
@@ -172,9 +153,7 @@ TiffWriter::writeImage(QString const& file_path, QImage const& image, int compre
     return true;
 }
 
-bool
-TiffWriter::writeImage(QIODevice& device, QImage const& image, int compression)
-{
+bool TiffWriter::writeImage(QIODevice& device, QImage const& image, int compression) {
     if (image.isNull()) {
         return false;
     }
@@ -222,8 +201,7 @@ TiffWriter::writeImage(QIODevice& device, QImage const& image, int compression)
         return writeARGB32Image(
             tif, image.convertToFormat(QImage::Format_ARGB32), compression
         );
-    }
-    else {
+    } else {
         return writeRGB32Image(
             tif, image.convertToFormat(QImage::Format_RGB32), compression
         );
@@ -233,9 +211,7 @@ TiffWriter::writeImage(QIODevice& device, QImage const& image, int compression)
 /**
  * Set the physical resolution, if it's defined.
  */
-void
-TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm)
-{
+void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
     using namespace imageproc::constants;
 
     if (dpm.isNull()) {
@@ -251,7 +227,8 @@ TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm)
     double const rounded_xdpi = floor(xdpi + 0.5);
     double const rounded_ydpi = floor(ydpi + 0.5);
     if ((fabs(xdpi - rounded_xdpi) < 0.02)
-        && (fabs(ydpi - rounded_ydpi) < 0.02)) {
+        && (fabs(ydpi - rounded_ydpi) < 0.02))
+    {
         xres = rounded_xdpi;
         yres = rounded_ydpi;
         unit = RESUNIT_INCH;
@@ -262,9 +239,7 @@ TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm)
     TIFFSetField(tif.handle(), TIFFTAG_RESOLUTIONUNIT, unit);
 }
 
-bool
-TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& image, int compression)
-{
+bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& image, int compression) {
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(1));
 
     uint16 bits_per_sample = 8;
@@ -279,14 +254,12 @@ TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& ima
             bits_per_sample = 1;
             if (image.colorCount() < 2) {
                 photometric = PHOTOMETRIC_MINISWHITE;
-            }
-            else {
+            } else {
                 uint32_t const c0 = image.color(0);
                 uint32_t const c1 = image.color(1);
                 if ((c0 == 0xffffffff) && (c1 == 0xff000000)) {
                     photometric = PHOTOMETRIC_MINISWHITE;
-                }
-                else if ((c0 == 0xff000000) && (c1 == 0xffffffff)) {
+                } else if ((c0 == 0xff000000) && (c1 == 0xffffffff)) {
                     photometric = PHOTOMETRIC_MINISBLACK;
                 }
             }
@@ -319,20 +292,16 @@ TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& ima
 
     if (image.format() == QImage::Format_Indexed8) {
         return write8bitLines(tif, image);
-    }
-    else {
+    } else {
         if (image.format() == QImage::Format_MonoLSB) {
             return writeBinaryLinesReversed(tif, image);
-        }
-        else {
+        } else {
             return writeBinaryLinesAsIs(tif, image);
         }
     }
 }  // TiffWriter::writeBitonalOrIndexed8Image
 
-bool
-TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int compression)
-{
+bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int compression) {
     assert(image.format() == QImage::Format_RGB32);
 
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(3));
@@ -347,7 +316,7 @@ TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int comp
 
 
     for (int y = 0; y < height; ++y) {
-        uint32_t const* p_src = (uint32_t const*)image.scanLine(y);
+        uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
             uint32_t const ARGB = *p_src;
@@ -365,9 +334,7 @@ TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int comp
     return true;
 }  // TiffWriter::writeRGB32Image
 
-bool
-TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, int compression)
-{
+bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, int compression) {
     assert(image.format() == QImage::Format_ARGB32);
 
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(4));
@@ -382,7 +349,7 @@ TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, int com
 
 
     for (int y = 0; y < height; ++y) {
-        uint32_t const* p_src = (uint32_t const*)image.scanLine(y);
+        uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
             uint32_t const ARGB = *p_src;
@@ -401,9 +368,7 @@ TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, int com
     return true;
 }  // TiffWriter::writeARGB32Image
 
-bool
-TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image)
-{
+bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
     int const width = image.width();
     int const height = image.height();
 
@@ -420,9 +385,7 @@ TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image)
     return true;
 }
 
-bool
-TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image)
-{
+bool TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image) {
     int const width = image.width();
     int const height = image.height();
 
@@ -440,9 +403,7 @@ TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image)
     return true;
 }
 
-bool
-TiffWriter::writeBinaryLinesReversed(TiffHandle const& tif, QImage const& image)
-{
+bool TiffWriter::writeBinaryLinesReversed(TiffHandle const& tif, QImage const& image) {
     int const width = image.width();
     int const height = image.height();
 

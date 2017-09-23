@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -45,12 +44,8 @@ class RelinkablePath;
 class AbstractRelinker;
 class QDomElement;
 
-class ProjectPages
-    : public QObject,
-      public RefCountable
-{
+class ProjectPages: public QObject, public RefCountable {
     Q_OBJECT DECLARE_NON_COPYABLE(ProjectPages)
-
 public:
     enum Pages { ONE_PAGE, TWO_PAGES, AUTO_PAGES };
 
@@ -173,5 +168,6 @@ private:
     std::vector<ImageDesc> m_images;
     PageId::SubPage m_subPagesInOrder[2];
 };
+
 
 #endif  // ifndef PROJECT_PAGES_H_

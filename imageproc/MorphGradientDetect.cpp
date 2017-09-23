@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,23 +21,18 @@
 #include "Grayscale.h"
 #include "GrayRasterOp.h"
 
-namespace imageproc
-{
-    GrayImage
-    morphGradientDetectDarkSide(GrayImage const& image, QSize const& area)
-    {
-        GrayImage lighter(erodeGray(image, area, 0x00));
-        grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
+namespace imageproc {
+GrayImage morphGradientDetectDarkSide(GrayImage const& image, QSize const& area) {
+    GrayImage lighter(erodeGray(image, area, 0x00));
+    grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
 
-        return lighter;
-    }
+    return lighter;
+}
 
-    GrayImage
-    morphGradientDetectLightSide(GrayImage const& image, QSize const& area)
-    {
-        GrayImage darker(dilateGray(image, area, 0xff));
-        grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
+GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area) {
+    GrayImage darker(dilateGray(image, area, 0xff));
+    grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
 
-        return darker;
-    }
+    return darker;
+}
 }

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,18 +23,16 @@
 #include "PageOrderProvider.h"
 #include <QString>
 
-class PageOrderOption
-{
+class PageOrderOption {
 public:
     typedef IntrusivePtr<PageOrderProvider const> ProviderPtr;
 
     PageOrderOption(QString const& name, ProviderPtr const& provider)
-        : m_name(name),
-          m_ptrProvider(provider)
-    { }
+            : m_name(name),
+              m_ptrProvider(provider) {
+    }
 
-    QString const& name() const
-    {
+    QString const& name() const {
         return m_name;
     }
 
@@ -43,8 +40,7 @@ public:
      * Returns the ordering information provider.
      * A null provider is OK and is to be interpreted as default order.
      */
-    ProviderPtr const& provider() const
-    {
+    ProviderPtr const& provider() const {
         return m_ptrProvider;
     }
 
@@ -52,5 +48,6 @@ private:
     QString m_name;
     ProviderPtr m_ptrProvider;
 };
+
 
 #endif  // ifndef PAGE_ORDER_OPTION_H_

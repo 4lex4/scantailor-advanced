@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,10 +24,9 @@ class TaskStatus;
 class DebugImages;
 class QPolygonF;
 
-namespace imageproc
-{
-    class PolynomialSurface;
-    class GrayImage;
+namespace imageproc {
+class PolynomialSurface;
+class GrayImage;
 }
 
 /**

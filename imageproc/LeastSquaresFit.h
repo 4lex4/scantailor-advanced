@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,19 +21,18 @@
 
 class QSize;
 
-namespace imageproc
-{
-    /**
-     * \brief Solves C * x - d = r, |r| = min!
-     *
-     * \param C_size Dimensions of the C matrix.
-     * \param C The C matrix stored linearly in row-major order. It's contents
-     *        won't be preserved.
-     * \param x The resulting vector of C_size.width() elements.
-     * \param d The d vector of C_size.height() elements.  It's contents won't
-     *        be preserved.
-     */
-    void leastSquaresFit(QSize const& C_size, double* C, double* x, double* d);
+namespace imageproc {
+/**
+ * \brief Solves C * x - d = r, |r| = min!
+ *
+ * \param C_size Dimensions of the C matrix.
+ * \param C The C matrix stored linearly in row-major order. It's contents
+ *        won't be preserved.
+ * \param x The resulting vector of C_size.width() elements.
+ * \param d The d vector of C_size.height() elements.  It's contents won't
+ *        be preserved.
+ */
+void leastSquaresFit(QSize const& C_size, double* C, double* x, double* d);
 }
 
 #endif

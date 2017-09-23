@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,26 +23,22 @@
 #include <QFileInfo>
 #include <vector>
 
-class ImageFileInfo
-{
+class ImageFileInfo {
 public:
     ImageFileInfo(QFileInfo const& file_info, std::vector<ImageMetadata> const& image_info)
-        : m_fileInfo(file_info),
-          m_imageInfo(image_info)
-    { }
+            : m_fileInfo(file_info),
+              m_imageInfo(image_info) {
+    }
 
-    QFileInfo const& fileInfo() const
-    {
+    QFileInfo const& fileInfo() const {
         return m_fileInfo;
     }
 
-    std::vector<ImageMetadata>& imageInfo()
-    {
+    std::vector<ImageMetadata>& imageInfo() {
         return m_imageInfo;
     }
 
-    std::vector<ImageMetadata> const& imageInfo() const
-    {
+    std::vector<ImageMetadata> const& imageInfo() const {
         return m_imageInfo;
     }
 
@@ -53,5 +48,6 @@ private:
     QFileInfo m_fileInfo;
     std::vector<ImageMetadata> m_imageInfo;
 };
+
 
 #endif  // ifndef IMAGEFILEINFO_H_

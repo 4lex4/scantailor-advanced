@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,20 +20,17 @@
 #include "Utils.h"
 #include <boost/test/auto_unit_test.hpp>
 
-namespace imageproc
-{
-    namespace tests
-    {
-        using namespace utils;
+namespace imageproc {
+namespace tests {
+using namespace utils;
 
-        BOOST_AUTO_TEST_SUITE(BinarizeTestSuite);
+BOOST_AUTO_TEST_SUITE(BinarizeTestSuite);
 #if 0
-        BOOST_AUTO_TEST_CASE(test)
-        {
-            QImage img("test.png");
-            binarizeWolf(img).toQImage().save("out.png");
-        }
+BOOST_AUTO_TEST_CASE(test) {
+    QImage img("test.png");
+    binarizeWolf(img).toQImage().save("out.png");
+}
 #endif
-        BOOST_AUTO_TEST_SUITE_END();
-    }
+BOOST_AUTO_TEST_SUITE_END();
+}
 }

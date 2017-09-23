@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,9 +26,7 @@ class ThumbnailPixmapCache;
 class QGraphicsItem;
 class QSizeF;
 
-class ThumbnailCollector
-    : public AbstractFilterDataCollector
-{
+class ThumbnailCollector: public AbstractFilterDataCollector {
 public:
     virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;
 
@@ -37,5 +34,6 @@ public:
 
     virtual QSizeF maxLogicalThumbSize() const = 0;
 };
+
 
 #endif

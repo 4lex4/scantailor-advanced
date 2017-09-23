@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,11 +24,10 @@
 class ImageTransformation;
 class QRectF;
 
-class ContentBoxCollector
-    : public AbstractFilterDataCollector
-{
+class ContentBoxCollector: public AbstractFilterDataCollector {
 public:
     virtual void process(ImageTransformation const& xform, QRectF const& content_rect) = 0;
 };
+
 
 #endif

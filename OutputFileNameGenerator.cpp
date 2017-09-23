@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,31 +24,26 @@
 #include <QDir>
 
 OutputFileNameGenerator::OutputFileNameGenerator()
-    : m_ptrDisambiguator(new FileNameDisambiguator),
-      m_outDir(),
-      m_layoutDirection(Qt::LeftToRight)
-{ }
+        : m_ptrDisambiguator(new FileNameDisambiguator),
+          m_outDir(),
+          m_layoutDirection(Qt::LeftToRight) {
+}
 
 OutputFileNameGenerator::OutputFileNameGenerator(IntrusivePtr<FileNameDisambiguator> const& disambiguator,
                                                  QString const& out_dir,
                                                  Qt::LayoutDirection layout_direction)
-    : m_ptrDisambiguator(disambiguator),
-      m_outDir(out_dir),
-      m_layoutDirection(layout_direction)
-{
+        : m_ptrDisambiguator(disambiguator),
+          m_outDir(out_dir),
+          m_layoutDirection(layout_direction) {
     assert(m_ptrDisambiguator.get());
 }
 
-void
-OutputFileNameGenerator::performRelinking(AbstractRelinker const& relinker)
-{
+void OutputFileNameGenerator::performRelinking(AbstractRelinker const& relinker) {
     m_ptrDisambiguator->performRelinking(relinker);
     m_outDir = relinker.substitutionPathFor(RelinkablePath(m_outDir, RelinkablePath::Dir));
 }
 
-QString
-OutputFileNameGenerator::fileNameFor(PageId const& page) const
-{
+QString OutputFileNameGenerator::fileNameFor(PageId const& page) const {
     bool const ltr = (m_layoutDirection == Qt::LeftToRight);
     PageId::SubPage const sub_page = page.subPage();
     int const label = m_ptrDisambiguator->getLabel(page.imageId().filePath());
@@ -73,9 +67,7 @@ OutputFileNameGenerator::fileNameFor(PageId const& page) const
     return name;
 }
 
-QString
-OutputFileNameGenerator::filePathFor(PageId const& page) const
-{
+QString OutputFileNameGenerator::filePathFor(PageId const& page) const {
     QString const file_name(fileNameFor(page));
 
     return QDir(m_outDir).absoluteFilePath(file_name);

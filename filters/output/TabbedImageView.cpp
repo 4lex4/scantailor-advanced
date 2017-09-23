@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,44 +18,36 @@
 
 #include <filters/output/TabbedImageView.h>
 
-namespace output
-{
-    TabbedImageView::TabbedImageView(QWidget* parent)
-        : QTabWidget(parent)
-    {
-        connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
-    }
+namespace output {
+TabbedImageView::TabbedImageView(QWidget* parent)
+        : QTabWidget(parent) {
+    connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
+}
 
-    void
-    TabbedImageView::addTab(QWidget* widget, QString const& label, ImageViewTab tab)
-    {
-        QTabWidget::addTab(widget, label);
-        m_registry[widget] = tab;
-    }
+void TabbedImageView::addTab(QWidget* widget, QString const& label, ImageViewTab tab) {
+    QTabWidget::addTab(widget, label);
+    m_registry[widget] = tab;
+}
 
-    void
-    TabbedImageView::setCurrentTab(ImageViewTab const tab)
-    {
-        int const cnt = count();
-        for (int i = 0; i < cnt; ++i) {
-            QWidget* wgt = widget(i);
-            std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
-            if (it != m_registry.end()) {
-                if (it->second == tab) {
-                    setCurrentIndex(i);
-                    break;
-                }
+void TabbedImageView::setCurrentTab(ImageViewTab const tab) {
+    int const cnt = count();
+    for (int i = 0; i < cnt; ++i) {
+        QWidget* wgt = widget(i);
+        std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
+        if (it != m_registry.end()) {
+            if (it->second == tab) {
+                setCurrentIndex(i);
+                break;
             }
         }
     }
+}
 
-    void
-    TabbedImageView::tabChangedSlot(int const idx)
-    {
-        QWidget* wgt = widget(idx);
-        std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
-        if (it != m_registry.end()) {
-            emit tabChanged(it->second);
-        }
+void TabbedImageView::tabChangedSlot(int const idx) {
+    QWidget* wgt = widget(idx);
+    std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
+    if (it != m_registry.end()) {
+        emit tabChanged(it->second);
     }
+}
 }  // namespace output

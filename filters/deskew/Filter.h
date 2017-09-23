@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,69 +31,60 @@ class PageId;
 class QString;
 class PageSelectionAccessor;
 
-namespace select_content
-{
-    class Task;
-    class CacheDrivenTask;
+namespace select_content {
+class Task;
+class CacheDrivenTask;
 }
 
-namespace deskew
-{
-    class OptionsWidget;
-    class Task;
-    class CacheDrivenTask;
-    class Settings;
+namespace deskew {
+class OptionsWidget;
+class Task;
+class CacheDrivenTask;
+class Settings;
 
-    class Filter
-        : public AbstractFilter
-    {
-        DECLARE_NON_COPYABLE(Filter)
+class Filter: public AbstractFilter {
+    DECLARE_NON_COPYABLE(Filter)
+public:
+    Filter(PageSelectionAccessor const& page_selection_accessor);
 
-    public:
-        Filter(PageSelectionAccessor const& page_selection_accessor);
+    virtual ~Filter();
 
-        virtual ~Filter();
+    virtual QString getName() const;
 
-        virtual QString getName() const;
+    virtual PageView getView() const;
 
-        virtual PageView getView() const;
+    virtual void performRelinking(AbstractRelinker const& relinker);
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+    virtual void updateStatistics() {
+        m_ptrSettings->updateDeviation();
+    }
 
-        virtual void updateStatistics()
-        {
-            m_ptrSettings->updateDeviation();
-        }
+    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+    IntrusivePtr<Task> createTask(PageId const& page_id,
+                                  IntrusivePtr<select_content::Task> const& next_task,
+                                  bool batch_processing,
+                                  bool debug);
 
-        IntrusivePtr<Task> createTask(PageId const& page_id,
-                                      IntrusivePtr<select_content::Task> const& next_task,
-                                      bool batch_processing,
-                                      bool debug);
+    IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<select_content::CacheDrivenTask> const& next_task);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(
-            IntrusivePtr<select_content::CacheDrivenTask> const& next_task);
+    OptionsWidget* optionsWidget() {
+        return m_ptrOptionsWidget.get();
+    }
 
-        OptionsWidget* optionsWidget()
-        {
-            return m_ptrOptionsWidget.get();
-        }
+    Settings* getSettings() {
+        return m_ptrSettings.get();
+    }
 
-        Settings* getSettings()
-        {
-            return m_ptrSettings.get();
-        }
+private:
+    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
-    private:
-        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    };
+    IntrusivePtr<Settings> m_ptrSettings;
+    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+};
 }  // namespace deskew
 #endif  // ifndef DESKEW_FILTER_H_

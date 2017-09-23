@@ -1,4 +1,3 @@
-
 /*
 
     Scan Tailor - Interactive post-processing tool for scanned pages.
@@ -20,61 +19,47 @@
 
 #include "EditableZoneSet.h"
 
-EditableZoneSet::EditableZoneSet()
-{ }
+EditableZoneSet::EditableZoneSet() {
+}
 
-void
-EditableZoneSet::setDefaultProperties(PropertySet const& props)
-{
+void EditableZoneSet::setDefaultProperties(PropertySet const& props) {
     m_defaultProps = props;
 }
 
-void
-EditableZoneSet::addZone(EditableSpline::Ptr const& spline)
-{
+void EditableZoneSet::addZone(EditableSpline::Ptr const& spline) {
     IntrusivePtr<PropertySet> new_props(new PropertySet(m_defaultProps));
     m_splineMap.insert(Map::value_type(spline, new_props));
 }
 
-void
-EditableZoneSet::addZone(EditableSpline::Ptr const& spline, PropertySet const& props)
-{
+void EditableZoneSet::addZone(EditableSpline::Ptr const& spline, PropertySet const& props) {
     IntrusivePtr<PropertySet> new_props(new PropertySet(props));
     m_splineMap.insert(Map::value_type(spline, new_props));
 }
 
-void
-EditableZoneSet::removeZone(EditableSpline::Ptr const& spline)
-{
+void EditableZoneSet::removeZone(EditableSpline::Ptr const& spline) {
     m_splineMap.erase(spline);
 }
 
-void
-EditableZoneSet::commit()
-{
+void EditableZoneSet::commit() {
     emit committed();
 }
 
 IntrusivePtr<PropertySet>
-EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline)
-{
+EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline) {
     Map::iterator it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
-    }
-    else {
+    } else {
         return IntrusivePtr<PropertySet>();
     }
 }
 
 IntrusivePtr<PropertySet const>
-EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline) const
-{
+EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline) const {
     Map::const_iterator it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
-    }
-    else {
+    } else {
         return IntrusivePtr<PropertySet const>();
     }
 }

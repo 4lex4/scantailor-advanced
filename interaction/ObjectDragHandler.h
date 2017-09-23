@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -31,16 +30,12 @@ class QPainter;
 class QCursor;
 class QString;
 
-class ObjectDragHandler
-    : public InteractionHandler
-{
+class ObjectDragHandler: public InteractionHandler {
     DECLARE_NON_COPYABLE(ObjectDragHandler)
-
 public:
     ObjectDragHandler(DraggableObject* obj = 0);
 
-    void setObject(DraggableObject* obj)
-    {
+    void setObject(DraggableObject* obj) {
         m_pObj = obj;
     }
 
@@ -73,5 +68,6 @@ private:
     DraggableObject* m_pObj;
     InteractionState::Captor m_interaction;
 };
+
 
 #endif  // ifndef OBJECT_DRAG_HANDLER_H_

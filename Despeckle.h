@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,13 +23,11 @@ class Dpi;
 class TaskStatus;
 class DebugImages;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 }
 
-class Despeckle
-{
+class Despeckle {
 public:
     enum Level { CAUTIOUS, NORMAL, AGGRESSIVE };
 
@@ -59,5 +56,6 @@ public:
                                  TaskStatus const& status,
                                  DebugImages* dbg = 0);
 };
+
 
 #endif

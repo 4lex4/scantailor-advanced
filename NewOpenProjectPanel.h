@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,15 +24,10 @@
 
 class QString;
 
-class NewOpenProjectPanel
-    : public QWidget,
-      private Ui::NewOpenProjectPanel
-{
+class NewOpenProjectPanel: public QWidget, private Ui::NewOpenProjectPanel {
     Q_OBJECT
-
 public:
     NewOpenProjectPanel(QWidget* parent = 0);
-
 signals:
     void newProject();
 
@@ -47,5 +41,6 @@ protected:
 private:
     void addRecentProject(QString const& file_path);
 };
+
 
 #endif  // ifndef NEW_OPEN_PROJECT_PANEL_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -37,11 +36,8 @@ class ProjectPages;
 class PageSelectionAccessor;
 class AbstractRelinker;
 
-class StageSequence
-    : public RefCountable
-{
+class StageSequence: public RefCountable {
     DECLARE_NON_COPYABLE(StageSequence)
-
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
@@ -49,80 +45,65 @@ public:
 
     void performRelinking(AbstractRelinker const& relinker);
 
-    std::vector<FilterPtr> const& filters() const
-    {
+    std::vector<FilterPtr> const& filters() const {
         return m_filters;
     }
 
-    int count() const
-    {
+    int count() const {
         return m_filters.size();
     }
 
-    FilterPtr const& filterAt(int idx) const
-    {
+    FilterPtr const& filterAt(int idx) const {
         return m_filters[idx];
     }
 
     int findFilter(FilterPtr const& filter) const;
 
-    IntrusivePtr<fix_orientation::Filter> const& fixOrientationFilter() const
-    {
+    IntrusivePtr<fix_orientation::Filter> const& fixOrientationFilter() const {
         return m_ptrFixOrientationFilter;
     }
 
-    IntrusivePtr<page_split::Filter> const& pageSplitFilter() const
-    {
+    IntrusivePtr<page_split::Filter> const& pageSplitFilter() const {
         return m_ptrPageSplitFilter;
     }
 
-    IntrusivePtr<deskew::Filter> const& deskewFilter() const
-    {
+    IntrusivePtr<deskew::Filter> const& deskewFilter() const {
         return m_ptrDeskewFilter;
     }
 
-    IntrusivePtr<select_content::Filter> const& selectContentFilter() const
-    {
+    IntrusivePtr<select_content::Filter> const& selectContentFilter() const {
         return m_ptrSelectContentFilter;
     }
 
-    IntrusivePtr<page_layout::Filter> const& pageLayoutFilter() const
-    {
+    IntrusivePtr<page_layout::Filter> const& pageLayoutFilter() const {
         return m_ptrPageLayoutFilter;
     }
 
-    IntrusivePtr<output::Filter> const& outputFilter() const
-    {
+    IntrusivePtr<output::Filter> const& outputFilter() const {
         return m_ptrOutputFilter;
     }
 
-    int fixOrientationFilterIdx() const
-    {
+    int fixOrientationFilterIdx() const {
         return m_fixOrientationFilterIdx;
     }
 
-    int pageSplitFilterIdx() const
-    {
+    int pageSplitFilterIdx() const {
         return m_pageSplitFilterIdx;
     }
 
-    int deskewFilterIdx() const
-    {
+    int deskewFilterIdx() const {
         return m_deskewFilterIdx;
     }
 
-    int selectContentFilterIdx() const
-    {
+    int selectContentFilterIdx() const {
         return m_selectContentFilterIdx;
     }
 
-    int pageLayoutFilterIdx() const
-    {
+    int pageLayoutFilterIdx() const {
         return m_pageLayoutFilterIdx;
     }
 
-    int outputFilterIdx() const
-    {
+    int outputFilterIdx() const {
         return m_outputFilterIdx;
     }
 
@@ -141,5 +122,6 @@ private:
     int m_pageLayoutFilterIdx;
     int m_outputFilterIdx;
 };
+
 
 #endif  // ifndef STAGESEQUENCE_H_

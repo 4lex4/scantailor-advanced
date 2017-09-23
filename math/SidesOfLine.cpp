@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,9 +18,7 @@
 
 #include "SidesOfLine.h"
 
-qreal
-sidesOfLine(QLineF const& line, QPointF const& p1, QPointF const& p2)
-{
+qreal sidesOfLine(QLineF const& line, QPointF const& p1, QPointF const& p2) {
     QPointF const normal(line.normalVector().p2() - line.p1());
     QPointF const vec1(p1 - line.p1());
     QPointF const vec2(p2 - line.p1());

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,8 +29,7 @@ class QPainter;
  * \brief Renders a sequence of frames with a circle of bubles of
  *        varying colors.
  */
-class BubbleAnimation
-{
+class BubbleAnimation {
 public:
     BubbleAnimation(int num_bubbles);
 
@@ -67,5 +65,6 @@ private:
     int m_numBubbles;
     int m_curFrame;
 };
+
 
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,14 +22,10 @@
 #include "ui_SystemLoadWidget.h"
 #include <QWidget>
 
-class SystemLoadWidget
-    : public QWidget
-{
+class SystemLoadWidget: public QWidget {
     Q_OBJECT
-
 public:
     SystemLoadWidget(QWidget* parent = 0);
-
 private slots:
     void sliderPressed();
 
@@ -48,5 +43,6 @@ private:
     Ui::SystemLoadWidget ui;
     int m_maxThreads;
 };
+
 
 #endif  // ifndef SYSTEM_LOAD_WIDGET_H_

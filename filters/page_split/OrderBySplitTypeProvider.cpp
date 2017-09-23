@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,57 +20,52 @@
 #include "OrderBySplitTypeProvider.h"
 #include <assert.h>
 
-namespace page_split
-{
-    OrderBySplitTypeProvider::OrderBySplitTypeProvider(IntrusivePtr<Settings> const& settings)
-        : m_ptrSettings(settings)
-    { }
+namespace page_split {
+OrderBySplitTypeProvider::OrderBySplitTypeProvider(IntrusivePtr<Settings> const& settings)
+        : m_ptrSettings(settings) {
+}
 
-    bool
-    OrderBySplitTypeProvider::precedes(PageId const& lhs_page,
-                                       bool const lhs_incomplete,
-                                       PageId const& rhs_page,
-                                       bool const rhs_incomplete) const
-    {
-        if (lhs_incomplete != rhs_incomplete) {
-            return rhs_incomplete;
-        }
-        else if (lhs_incomplete) {
-            assert(rhs_incomplete);
+bool OrderBySplitTypeProvider::precedes(PageId const& lhs_page,
+                                        bool const lhs_incomplete,
+                                        PageId const& rhs_page,
+                                        bool const rhs_incomplete) const {
+    if (lhs_incomplete != rhs_incomplete) {
+        return rhs_incomplete;
+    } else if (lhs_incomplete) {
+        assert(rhs_incomplete);
 
-            return lhs_page < rhs_page;
-        }
+        return lhs_page < rhs_page;
+    }
 
-        assert(lhs_incomplete == false);
-        assert(rhs_incomplete == false);
+    assert(lhs_incomplete == false);
+    assert(rhs_incomplete == false);
 
-        Settings::Record const lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
-        Settings::Record const rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));
+    Settings::Record const lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
+    Settings::Record const rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));
 
-        Params const* lhs_params = lhs_record.params();
-        Params const* rhs_params = rhs_record.params();
+    Params const* lhs_params = lhs_record.params();
+    Params const* rhs_params = rhs_record.params();
 
-        int lhs_layout_type = lhs_record.combinedLayoutType();
-        if (lhs_params) {
-            lhs_layout_type = lhs_params->pageLayout().toLayoutType();
-        }
-        if (lhs_layout_type == AUTO_LAYOUT_TYPE) {
-            lhs_layout_type = 100;
-        }
+    int lhs_layout_type = lhs_record.combinedLayoutType();
+    if (lhs_params) {
+        lhs_layout_type = lhs_params->pageLayout().toLayoutType();
+    }
+    if (lhs_layout_type == AUTO_LAYOUT_TYPE) {
+        lhs_layout_type = 100;
+    }
 
-        int rhs_layout_type = rhs_record.combinedLayoutType();
-        if (rhs_params) {
-            rhs_layout_type = rhs_params->pageLayout().toLayoutType();
-        }
-        if (rhs_layout_type == AUTO_LAYOUT_TYPE) {
-            rhs_layout_type = 100;
-        }
+    int rhs_layout_type = rhs_record.combinedLayoutType();
+    if (rhs_params) {
+        rhs_layout_type = rhs_params->pageLayout().toLayoutType();
+    }
+    if (rhs_layout_type == AUTO_LAYOUT_TYPE) {
+        rhs_layout_type = 100;
+    }
 
-        if (lhs_layout_type == rhs_layout_type) {
-            return lhs_page < rhs_page;
-        }
-        else {
-            return lhs_layout_type < rhs_layout_type;
-        }
-    }  // OrderBySplitTypeProvider::precedes
+    if (lhs_layout_type == rhs_layout_type) {
+        return lhs_page < rhs_page;
+    } else {
+        return lhs_layout_type < rhs_layout_type;
+    }
+}      // OrderBySplitTypeProvider::precedes
 }  // namespace page_split

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,55 +19,53 @@
 #include "Thumbnail.h"
 #include <QPainter>
 
-namespace deskew
-{
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         ImageTransformation const& xform,
-                         bool deviant)
+namespace deskew {
+Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                     QSizeF const& max_size,
+                     ImageId const& image_id,
+                     ImageTransformation const& xform,
+                     bool deviant)
         : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
-          m_deviant(deviant)
-    { }
+          m_deviant(deviant) {
+}
 
-    void
-    Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display, QTransform const& thumb_to_display)
-    {
-        painter.setRenderHint(QPainter::Antialiasing, false);
+void Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display,
+                               QTransform const& thumb_to_display) {
+    painter.setRenderHint(QPainter::Antialiasing, false);
 
-        QPen pen(QColor(0, 0, 0xd1, 70));
-        pen.setWidth(1);
-        pen.setCosmetic(true);
-        painter.setPen(pen);
+    QPen pen(QColor(0, 0, 0xd1, 70));
+    pen.setWidth(1);
+    pen.setCosmetic(true);
+    painter.setPen(pen);
 
-        QRectF const bounding_rect(boundingRect());
+    QRectF const bounding_rect(boundingRect());
 
-        double const cell_size = 8;
-        double const left = bounding_rect.left();
-        double const right = bounding_rect.right();
-        double const top = bounding_rect.top();
-        double const bottom = bounding_rect.bottom();
-        double const w = bounding_rect.width();
-        double const h = bounding_rect.height();
+    double const cell_size = 8;
+    double const left = bounding_rect.left();
+    double const right = bounding_rect.right();
+    double const top = bounding_rect.top();
+    double const bottom = bounding_rect.bottom();
+    double const w = bounding_rect.width();
+    double const h = bounding_rect.height();
 
-        QPointF const center(bounding_rect.center());
-        QVector<QLineF> lines;
-        for (double y = center.y(); y > 0.0; y -= cell_size) {
-            lines.push_back(QLineF(left, y, right, y));
-        }
-        for (double y = center.y(); (y += cell_size) < h;) {
-            lines.push_back(QLineF(left, y, right, y));
-        }
-        for (double x = center.x(); x > 0.0; x -= cell_size) {
-            lines.push_back(QLineF(x, top, x, bottom));
-        }
-        for (double x = center.x(); (x += cell_size) < w;) {
-            lines.push_back(QLineF(x, top, x, bottom));
-        }
-        painter.drawLines(lines);
+    QPointF const center(bounding_rect.center());
+    QVector<QLineF> lines;
+    for (double y = center.y(); y > 0.0; y -= cell_size) {
+        lines.push_back(QLineF(left, y, right, y));
+    }
+    for (double y = center.y(); (y += cell_size) < h;) {
+        lines.push_back(QLineF(left, y, right, y));
+    }
+    for (double x = center.x(); x > 0.0; x -= cell_size) {
+        lines.push_back(QLineF(x, top, x, bottom));
+    }
+    for (double x = center.x(); (x += cell_size) < w;) {
+        lines.push_back(QLineF(x, top, x, bottom));
+    }
+    painter.drawLines(lines);
 
-        if (m_deviant) {
-            paintDeviant(painter);
-        }
-    }  // Thumbnail::paintOverImage
+    if (m_deviant) {
+        paintDeviant(painter);
+    }
+}      // Thumbnail::paintOverImage
 }  // namespace deskew

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,64 +21,56 @@
 
 #include <QRect>
 
-namespace imageproc
-{
-    /**
-     * \brief Represents a connected group of pixels.
-     */
-    class ConnComp
-    {
-    public:
-        ConnComp()
-            : m_pixCount(0)
-        { }
+namespace imageproc {
+/**
+ * \brief Represents a connected group of pixels.
+ */
+class ConnComp {
+public:
+    ConnComp()
+            : m_pixCount(0) {
+    }
 
-        ConnComp(QPoint const& seed, QRect const& rect, int pix_count)
+    ConnComp(QPoint const& seed, QRect const& rect, int pix_count)
             : m_seed(seed),
               m_rect(rect),
-              m_pixCount(pix_count)
-        { }
+              m_pixCount(pix_count) {
+    }
 
-        bool isNull() const
-        {
-            return m_rect.isNull();
-        }
+    bool isNull() const {
+        return m_rect.isNull();
+    }
 
-        /**
-         * \brief Get an arbitrary black pixel position.
-         *
-         * The position is in containing image coordinates,
-         * not in the bounding box coordinates.
-         */
-        QPoint const& seed() const
-        {
-            return m_seed;
-        }
+    /**
+     * \brief Get an arbitrary black pixel position.
+     *
+     * The position is in containing image coordinates,
+     * not in the bounding box coordinates.
+     */
+    QPoint const& seed() const {
+        return m_seed;
+    }
 
-        int width() const
-        {
-            return m_rect.width();
-        }
+    int width() const {
+        return m_rect.width();
+    }
 
-        int height() const
-        {
-            return m_rect.height();
-        }
+    int height() const {
+        return m_rect.height();
+    }
 
-        QRect const& rect() const
-        {
-            return m_rect;
-        }
+    QRect const& rect() const {
+        return m_rect;
+    }
 
-        int pixCount() const
-        {
-            return m_pixCount;
-        }
+    int pixCount() const {
+        return m_pixCount;
+    }
 
-    private:
-        QPoint m_seed;
-        QRect m_rect;
-        int m_pixCount;
-    };
+private:
+    QPoint m_seed;
+    QRect m_rect;
+    int m_pixCount;
+};
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_CONNCOMP_H_

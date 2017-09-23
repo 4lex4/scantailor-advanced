@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,9 +20,7 @@
 #include <QSettings>
 #include <assert.h>
 
-QThread::Priority
-ThreadPriority::toQThreadPriority() const
-{
+QThread::Priority ThreadPriority::toQThreadPriority() const {
     switch (m_prio) {
         case Normal:
             return QThread::NormalPriority;
@@ -40,9 +37,7 @@ ThreadPriority::toQThreadPriority() const
     return QThread::NormalPriority;
 }
 
-int
-ThreadPriority::toPosixNiceLevel() const
-{
+int ThreadPriority::toPosixNiceLevel() const {
     switch (m_prio) {
         case Normal:
             return 0;
@@ -59,38 +54,28 @@ ThreadPriority::toPosixNiceLevel() const
     return 0;
 }
 
-ThreadPriority
-ThreadPriority::load(QSettings const& settings, QString const& key, Priority dflt)
-{
+ThreadPriority ThreadPriority::load(QSettings const& settings, QString const& key, Priority dflt) {
     QString const str(settings.value(key).toString());
     if (str == "normal") {
         return Normal;
-    }
-    else if (str == "low") {
+    } else if (str == "low") {
         return Low;
-    }
-    else if (str == "lowest") {
+    } else if (str == "lowest") {
         return Lowest;
-    }
-    else if (str == "idle") {
+    } else if (str == "idle") {
         return Idle;
-    }
-    else {
+    } else {
         return dflt;
     }
 }
 
-ThreadPriority
-ThreadPriority::load(QString const& key, Priority dflt)
-{
+ThreadPriority ThreadPriority::load(QString const& key, Priority dflt) {
     QSettings settings;
 
     return load(settings, key, dflt);
 }
 
-void
-ThreadPriority::save(QSettings& settings, QString const& key)
-{
+void ThreadPriority::save(QSettings& settings, QString const& key) {
     char const* str = "";
     switch (m_prio) {
         case Normal:
@@ -110,9 +95,7 @@ ThreadPriority::save(QSettings& settings, QString const& key)
     settings.setValue(key, QString::fromLatin1(str));
 }
 
-void
-ThreadPriority::save(QString const& key)
-{
+void ThreadPriority::save(QString const& key) {
     QSettings settings;
     save(settings, key);
 }

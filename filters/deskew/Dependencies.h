@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,31 +26,29 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-namespace deskew
-{
-    /**
-     * \brief Dependencies of deskew parameters.
-     *
-     * Once dependencies change, deskew parameters are no longer valid.
-     */
-    class Dependencies
-    {
-    public:
-        Dependencies();
+namespace deskew {
+/**
+ * \brief Dependencies of deskew parameters.
+ *
+ * Once dependencies change, deskew parameters are no longer valid.
+ */
+class Dependencies {
+public:
+    Dependencies();
 
-        Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
+    Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
 
-        Dependencies(QDomElement const& deps_el);
+    Dependencies(QDomElement const& deps_el);
 
-        ~Dependencies();
+    ~Dependencies();
 
-        bool matches(Dependencies const& other) const;
+    bool matches(Dependencies const& other) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    private:
-        QPolygonF m_pageOutline;
-        OrthogonalRotation m_rotation;
-    };
+private:
+    QPolygonF m_pageOutline;
+    OrthogonalRotation m_rotation;
+};
 }
 #endif  // ifndef DESKEW_DEPENDENCIES_H_

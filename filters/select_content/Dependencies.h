@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,35 +25,32 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-namespace select_content
-{
-    /**
-     * \brief Dependencies of the content box.
-     *
-     * Once dependencies change, the content box is no longer valid.
-     */
-    class Dependencies
-    {
-    public:
-        Dependencies();
+namespace select_content {
+/**
+ * \brief Dependencies of the content box.
+ *
+ * Once dependencies change, the content box is no longer valid.
+ */
+class Dependencies {
+public:
+    Dependencies();
 
-        Dependencies(QPolygonF const& rotated_page_outline);
+    Dependencies(QPolygonF const& rotated_page_outline);
 
-        Dependencies(QDomElement const& deps_el);
+    Dependencies(QDomElement const& deps_el);
 
-        ~Dependencies();
+    ~Dependencies();
 
-        QPolygonF const& rotatedPageOutline() const
-        {
-            return m_rotatedPageOutline;
-        }
+    QPolygonF const& rotatedPageOutline() const {
+        return m_rotatedPageOutline;
+    }
 
-        bool matches(Dependencies const& other) const;
+    bool matches(Dependencies const& other) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    private:
-        QPolygonF m_rotatedPageOutline;
-    };
+private:
+    QPolygonF m_rotatedPageOutline;
+};
 }
 #endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_

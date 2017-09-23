@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,28 +21,22 @@
 #include <assert.h>
 
 RelinkingSortingModel::RelinkingSortingModel(QObject* parent)
-    : QSortFilterProxyModel(parent)
-{
+        : QSortFilterProxyModel(parent) {
     setDynamicSortFilter(true);
     sort(0);
 }
 
-bool
-RelinkingSortingModel::lessThan(QModelIndex const& left, QModelIndex const& right) const
-{
+bool RelinkingSortingModel::lessThan(QModelIndex const& left, QModelIndex const& right) const {
     int const left_status = left.data(RelinkingModel::UncommittedStatusRole).toInt();
     int const right_status = right.data(RelinkingModel::UncommittedStatusRole).toInt();
     if (left_status != right_status) {
         if (left_status == RelinkingModel::Missing) {
             return true;
-        }
-        else if (right_status == RelinkingModel::Missing) {
+        } else if (right_status == RelinkingModel::Missing) {
             return false;
-        }
-        else if (left_status == RelinkingModel::StatusUpdatePending) {
+        } else if (left_status == RelinkingModel::StatusUpdatePending) {
             return true;
-        }
-        else if (right_status == RelinkingModel::StatusUpdatePending) {
+        } else if (right_status == RelinkingModel::StatusUpdatePending) {
             return false;
         }
         assert(!"Unreachable");

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,16 +31,12 @@ class QAbstractButton;
 class QItemSelection;
 class QString;
 
-class RelinkingDialog
-    : public QDialog
-{
+class RelinkingDialog: public QDialog {
     Q_OBJECT
-
 public:
     explicit RelinkingDialog(QString const& project_file_path, QWidget* parent = 0);
 
-    VirtualFunction1<void, RelinkablePath const&>& pathCollector()
-    {
+    VirtualFunction1<void, RelinkablePath const&>& pathCollector() {
         return m_model;
     }
 
@@ -54,8 +49,7 @@ public:
      * This allows you to take the relinker right after construction
      * and then use it when accepted() signal is emitted.
      */
-    IntrusivePtr<AbstractRelinker> relinker() const
-    {
+    IntrusivePtr<AbstractRelinker> relinker() const {
         return m_model.relinker();
     }
 
@@ -75,5 +69,6 @@ private:
     RelinkingSortingModel* m_pSortingModel;
     QString m_projectFileDir;
 };
+
 
 #endif  // ifndef RELINKING_DIALOG_H_

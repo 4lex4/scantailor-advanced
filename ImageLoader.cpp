@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovigh@gmail.com>
@@ -23,15 +22,11 @@
 #include <QImage>
 #include <QFile>
 
-QImage
-ImageLoader::load(ImageId const& image_id)
-{
+QImage ImageLoader::load(ImageId const& image_id) {
     return load(image_id.filePath(), image_id.zeroBasedPage());
 }
 
-QImage
-ImageLoader::load(QString const& file_path, int const page_num)
-{
+QImage ImageLoader::load(QString const& file_path, int const page_num) {
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         return QImage();
@@ -40,9 +35,7 @@ ImageLoader::load(QString const& file_path, int const page_num)
     return load(file, page_num);
 }
 
-QImage
-ImageLoader::load(QIODevice& io_dev, int const page_num)
-{
+QImage ImageLoader::load(QIODevice& io_dev, int const page_num) {
     if (TiffReader::canRead(io_dev)) {
         return TiffReader::readImage(io_dev, page_num);
     }

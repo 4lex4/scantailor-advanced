@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,80 +28,76 @@ class QImage;
 class QRect;
 class QRectF;
 
-namespace imageproc
-{
-    class BinaryImage;
-    class ConnComp;
+namespace imageproc {
+class BinaryImage;
+class ConnComp;
 
-    class SEDM;
+class SEDM;
 }
 
-namespace select_content
-{
-    class ContentBoxFinder
-    {
-    public:
-        static QRectF findContentBox(TaskStatus const& status,
-                                     FilterData const& data,
-                                     QRectF const& page_rect,
-                                     DebugImages* dbg = 0);
+namespace select_content {
+class ContentBoxFinder {
+public:
+    static QRectF findContentBox(TaskStatus const& status,
+                                 FilterData const& data,
+                                 QRectF const& page_rect,
+                                 DebugImages* dbg = 0);
 
-    private:
-        class Garbage;
+private:
+    class Garbage;
 
-        static void segmentGarbage(imageproc::BinaryImage const& garbage,
-                                   imageproc::BinaryImage& hor_garbage,
-                                   imageproc::BinaryImage& vert_garbage,
-                                   DebugImages* dbg);
-
-        static void trimContentBlocksInPlace(imageproc::BinaryImage const& content,
-                                             imageproc::BinaryImage& content_blocks);
-
-        static void inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& content_blocks, DebugImages* dbg);
-
-        static imageproc::BinaryImage estimateTextMask(imageproc::BinaryImage const& content,
-                                                       imageproc::BinaryImage const& content_blocks,
-                                                       DebugImages* dbg);
-
-        static void filterShadows(TaskStatus const& status, imageproc::BinaryImage& shadows, DebugImages* dbg);
-
-        static QRect trimLeft(imageproc::BinaryImage const& content,
-                              imageproc::BinaryImage const& content_blocks,
-                              imageproc::BinaryImage const& text_mask,
-                              QRect const& area,
-                              Garbage& garbage,
-                              DebugImages* dbg);
-
-        static QRect trimRight(imageproc::BinaryImage const& content,
-                               imageproc::BinaryImage const& content_blocks,
-                               imageproc::BinaryImage const& text_mask,
-                               QRect const& area,
-                               Garbage& garbage,
+    static void segmentGarbage(imageproc::BinaryImage const& garbage,
+                               imageproc::BinaryImage& hor_garbage,
+                               imageproc::BinaryImage& vert_garbage,
                                DebugImages* dbg);
 
-        static QRect trimTop(imageproc::BinaryImage const& content,
-                             imageproc::BinaryImage const& content_blocks,
-                             imageproc::BinaryImage const& text_mask,
-                             QRect const& area,
-                             Garbage& garbage,
-                             DebugImages* dbg);
+    static void trimContentBlocksInPlace(imageproc::BinaryImage const& content, imageproc::BinaryImage& content_blocks);
 
-        static QRect trimBottom(imageproc::BinaryImage const& content,
-                                imageproc::BinaryImage const& content_blocks,
-                                imageproc::BinaryImage const& text_mask,
-                                QRect const& area,
-                                Garbage& garbage,
-                                DebugImages* dbg);
+    static void inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& content_blocks, DebugImages* dbg);
 
-        static QRect trim(imageproc::BinaryImage const& content,
+    static imageproc::BinaryImage estimateTextMask(imageproc::BinaryImage const& content,
+                                                   imageproc::BinaryImage const& content_blocks,
+                                                   DebugImages* dbg);
+
+    static void filterShadows(TaskStatus const& status, imageproc::BinaryImage& shadows, DebugImages* dbg);
+
+    static QRect trimLeft(imageproc::BinaryImage const& content,
                           imageproc::BinaryImage const& content_blocks,
                           imageproc::BinaryImage const& text_mask,
                           QRect const& area,
-                          QRect const& new_area,
-                          QRect const& removed_area,
                           Garbage& garbage,
-                          bool& can_retry_grouped,
                           DebugImages* dbg);
-    };
+
+    static QRect trimRight(imageproc::BinaryImage const& content,
+                           imageproc::BinaryImage const& content_blocks,
+                           imageproc::BinaryImage const& text_mask,
+                           QRect const& area,
+                           Garbage& garbage,
+                           DebugImages* dbg);
+
+    static QRect trimTop(imageproc::BinaryImage const& content,
+                         imageproc::BinaryImage const& content_blocks,
+                         imageproc::BinaryImage const& text_mask,
+                         QRect const& area,
+                         Garbage& garbage,
+                         DebugImages* dbg);
+
+    static QRect trimBottom(imageproc::BinaryImage const& content,
+                            imageproc::BinaryImage const& content_blocks,
+                            imageproc::BinaryImage const& text_mask,
+                            QRect const& area,
+                            Garbage& garbage,
+                            DebugImages* dbg);
+
+    static QRect trim(imageproc::BinaryImage const& content,
+                      imageproc::BinaryImage const& content_blocks,
+                      imageproc::BinaryImage const& text_mask,
+                      QRect const& area,
+                      QRect const& new_area,
+                      QRect const& removed_area,
+                      Garbage& garbage,
+                      bool& can_retry_grouped,
+                      DebugImages* dbg);
+};
 }
 #endif  // ifndef SELECT_CONTENT_CONTENTBOXFINDER_H_

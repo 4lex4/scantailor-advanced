@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,9 +20,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 
-bool
-ImageFileInfo::isDpiOK() const
-{
+bool ImageFileInfo::isDpiOK() const {
     using namespace boost::lambda;
 
     return std::find_if(

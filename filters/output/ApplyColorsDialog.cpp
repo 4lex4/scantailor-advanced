@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,52 +19,46 @@
 #include "ApplyColorsDialog.h"
 #include "PageSelectionAccessor.h"
 
-namespace output
-{
-    ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
-                                         PageId const& cur_page,
-                                         PageSelectionAccessor const& page_selection_accessor)
+namespace output {
+ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
+                                     PageId const& cur_page,
+                                     PageSelectionAccessor const& page_selection_accessor)
         : QDialog(parent),
           m_pages(page_selection_accessor.allPages()),
           m_selectedPages(page_selection_accessor.selectedPages()),
           m_curPage(cur_page),
-          m_pScopeGroup(new QButtonGroup(this))
-    {
-        setupUi(this);
-        m_pScopeGroup->addButton(thisPageRB);
-        m_pScopeGroup->addButton(allPagesRB);
-        m_pScopeGroup->addButton(thisPageAndFollowersRB);
-        m_pScopeGroup->addButton(selectedPagesRB);
-        if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
-        }
-
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+          m_pScopeGroup(new QButtonGroup(this)) {
+    setupUi(this);
+    m_pScopeGroup->addButton(thisPageRB);
+    m_pScopeGroup->addButton(allPagesRB);
+    m_pScopeGroup->addButton(thisPageAndFollowersRB);
+    m_pScopeGroup->addButton(selectedPagesRB);
+    if (m_selectedPages.size() <= 1) {
+        selectedPagesWidget->setEnabled(false);
     }
 
-    ApplyColorsDialog::~ApplyColorsDialog()
-    { }
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
+}
 
-    void
-    ApplyColorsDialog::onSubmit()
-    {
-        std::set<PageId> pages;
+ApplyColorsDialog::~ApplyColorsDialog() {
+}
 
-        if (allPagesRB->isChecked()) {
-            m_pages.selectAll().swap(pages);
-        }
-        else if (thisPageAndFollowersRB->isChecked()) {
-            m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
-        }
-        else if (selectedPagesRB->isChecked()) {
-            emit accepted(m_selectedPages);
-            accept();
+void ApplyColorsDialog::onSubmit() {
+    std::set<PageId> pages;
 
-            return;
-        }
-
-        emit accepted(pages);
-
+    if (allPagesRB->isChecked()) {
+        m_pages.selectAll().swap(pages);
+    } else if (thisPageAndFollowersRB->isChecked()) {
+        m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
+    } else if (selectedPagesRB->isChecked()) {
+        emit accepted(m_selectedPages);
         accept();
+
+        return;
     }
+
+    emit accepted(pages);
+
+    accept();
+}
 }  // namespace output

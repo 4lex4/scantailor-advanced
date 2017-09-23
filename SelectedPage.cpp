@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,26 +18,20 @@
 
 #include "SelectedPage.h"
 
-SelectedPage::SelectedPage(PageId const& page_id, PageView view)
-{
+SelectedPage::SelectedPage(PageId const& page_id, PageView view) {
     set(page_id, view);
 }
 
-void
-SelectedPage::set(PageId const& page_id, PageView view)
-{
+void SelectedPage::set(PageId const& page_id, PageView view) {
     if ((view == PAGE_VIEW) || (page_id.imageId() != m_pageId.imageId())) {
         m_pageId = page_id;
     }
 }
 
-PageId
-SelectedPage::get(PageView view) const
-{
+PageId SelectedPage::get(PageView view) const {
     if (view == PAGE_VIEW) {
         return m_pageId;
-    }
-    else {
+    } else {
         return PageId(m_pageId.imageId(), PageId::SINGLE_PAGE);
     }
 }

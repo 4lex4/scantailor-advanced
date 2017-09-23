@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,8 +26,7 @@
 #include <QFileInfo>
 
 NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
-    : QWidget(parent)
-{
+        : QWidget(parent) {
     setupUi(this);
 
     recentProjectsGroup->setLayout(new QVBoxLayout);
@@ -46,8 +44,7 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
     }
     if (rp.isEmpty()) {
         recentProjectsGroup->setVisible(false);
-    }
-    else {
+    } else {
         rp.enumerate(
             boost::lambda::bind(
                 &NewOpenProjectPanel::addRecentProject,
@@ -66,9 +63,7 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
     );
 }
 
-void
-NewOpenProjectPanel::addRecentProject(QString const& file_path)
-{
+void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     QFileInfo const file_info(file_path);
     QString base_name(file_info.baseName());
     if (base_name.isEmpty()) {
@@ -87,9 +82,7 @@ NewOpenProjectPanel::addRecentProject(QString const& file_path)
     );
 }
 
-void
-NewOpenProjectPanel::paintEvent(QPaintEvent* event)
-{
+void NewOpenProjectPanel::paintEvent(QPaintEvent* event) {
     int left = 0, top = 0, right = 0, bottom = 0;
     layout()->getContentsMargins(&left, &top, &right, &bottom);
 

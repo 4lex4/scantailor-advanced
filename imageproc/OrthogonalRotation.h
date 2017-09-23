@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,31 +22,30 @@
 
 class QRect;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 
-    /**
-     * \brief Rotation by 0, 90, 180 or 270 degrees.
-     *
-     * \param src The source image.  May be null, in which case
-     *        a null rotated image will be returned.
-     * \param src_rect The area that is to be rotated.
-     * \param degrees The rotation angle in degrees.  The angle
-     *        must be a multiple of 90.  Positive values indicate
-     *        clockwise rotation.
-     * \return The rotated area of the source image.  The dimensions
-     *         of the returned image will correspond to \p src_rect,
-     *         possibly with width and height swapped.
-     */
-    BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int degrees);
+/**
+ * \brief Rotation by 0, 90, 180 or 270 degrees.
+ *
+ * \param src The source image.  May be null, in which case
+ *        a null rotated image will be returned.
+ * \param src_rect The area that is to be rotated.
+ * \param degrees The rotation angle in degrees.  The angle
+ *        must be a multiple of 90.  Positive values indicate
+ *        clockwise rotation.
+ * \return The rotated area of the source image.  The dimensions
+ *         of the returned image will correspond to \p src_rect,
+ *         possibly with width and height swapped.
+ */
+BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int degrees);
 
-    /**
-     * \brief Rotation by 90, 180 or 270 degrees.
-     *
-     * This is an overload provided for convenience.
-     * It rotates the whole image, not a portion of it.
-     */
-    BinaryImage orthogonalRotation(BinaryImage const& src, int degrees);
+/**
+ * \brief Rotation by 90, 180 or 270 degrees.
+ *
+ * This is an overload provided for convenience.
+ * It rotates the whole image, not a portion of it.
+ */
+BinaryImage orthogonalRotation(BinaryImage const& src, int degrees);
 }
 #endif

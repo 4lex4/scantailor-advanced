@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -25,141 +24,128 @@
 #include <QRect>
 #include <new>
 
-namespace imageproc
-{
+namespace imageproc {
+/**
+ * \brief Provides the sum of values in a sub-rectangle of a 2D array in constant time.
+ *
+ * Suppose you have a MxN array of some values.  Now if we are not going to
+ * alter it, but are going to calculate the sum of values in various
+ * rectangular sub-regions, it's best to use an integral image for this purpose.
+ * We construct it once, with complexity of O(M*N), and then obtain the sum
+ * of values in a rectangular sub-region in O(1).
+ *
+ * \note Template parameter T must be large enough to hold the sum of all
+ *       values in the array.
+ */
+template <typename T>
+class IntegralImage {
+    DECLARE_NON_COPYABLE(IntegralImage)
+public:
+    IntegralImage(int width, int height);
+
+    explicit IntegralImage(QSize const& size);
+
+    ~IntegralImage();
+
     /**
-     * \brief Provides the sum of values in a sub-rectangle of a 2D array in constant time.
-     *
-     * Suppose you have a MxN array of some values.  Now if we are not going to
-     * alter it, but are going to calculate the sum of values in various
-     * rectangular sub-regions, it's best to use an integral image for this purpose.
-     * We construct it once, with complexity of O(M*N), and then obtain the sum
-     * of values in a rectangular sub-region in O(1).
-     *
-     * \note Template parameter T must be large enough to hold the sum of all
-     *       values in the array.
+     * \brief To be called before pushing new row data.
      */
-    template <typename T>
-    class IntegralImage
-    {
-        DECLARE_NON_COPYABLE(IntegralImage)
+    void beginRow();
 
-    public:
-        IntegralImage(int width, int height);
+    /**
+     * \brief Push a single value to the integral image.
+     *
+     * Values must be pushed row by row, starting from row 0, and from
+     * column to column within each row, starting from column 0.
+     * At the beginning of a row, a call to beginRow() must be made.
+     *
+     * \note Pushing more than width * height values results in undefined
+     *       behavior.
+     */
+    void push(T val);
 
-        explicit IntegralImage(QSize const& size);
+    /**
+     * \brief Calculate the sum of values in the given rectangle.
+     *
+     * \note If the rectangle exceeds the image area, the behaviour is
+     *       undefined.
+     */
+    T sum(QRect const& rect) const;
 
-        ~IntegralImage();
+private:
+    void init(int width, int height);
 
-        /**
-         * \brief To be called before pushing new row data.
-         */
-        void beginRow();
+    T* m_pData;
+    T* m_pCur;
+    T* m_pAbove;
+    T m_lineSum;
+    int m_width;
+    int m_height;
+};
 
-        /**
-         * \brief Push a single value to the integral image.
-         *
-         * Values must be pushed row by row, starting from row 0, and from
-         * column to column within each row, starting from column 0.
-         * At the beginning of a row, a call to beginRow() must be made.
-         *
-         * \note Pushing more than width * height values results in undefined
-         *       behavior.
-         */
-        void push(T val);
 
-        /**
-         * \brief Calculate the sum of values in the given rectangle.
-         *
-         * \note If the rectangle exceeds the image area, the behaviour is
-         *       undefined.
-         */
-        T sum(QRect const& rect) const;
+template <typename T>
+IntegralImage<T>::IntegralImage(int const width, int const height)
+        : m_lineSum() {
+    init(width + 1, height + 1);
+}
 
-    private:
-        void init(int width, int height);
+template <typename T>
+IntegralImage<T>::IntegralImage(QSize const& size)
+        : m_lineSum() {
+    init(size.width() + 1, size.height() + 1);
+}
 
-        T* m_pData;
-        T* m_pCur;
-        T* m_pAbove;
-        T m_lineSum;
-        int m_width;
-        int m_height;
-    };
+template <typename T>
+IntegralImage<T>::~IntegralImage() {
+    delete[] m_pData;
+}
 
-    template <typename T>
-    IntegralImage<T>::IntegralImage(int const width, int const height)
-        : m_lineSum()
-    {
-        init(width + 1, height + 1);
+template <typename T>
+void IntegralImage<T>::init(int const width, int const height) {
+    m_width = width;
+    m_height = height;
+
+    m_pData = new T[width * height];
+
+    T* p = m_pData;
+    for (int i = 0; i < width; ++i, ++p) {
+        *p = T();
     }
 
-    template <typename T>
-    IntegralImage<T>::IntegralImage(QSize const& size)
-        : m_lineSum()
-    {
-        init(size.width() + 1, size.height() + 1);
-    }
+    m_pAbove = m_pData;
+    m_pCur = m_pAbove + width;
+}
 
-    template <typename T>
-    IntegralImage<T>::~IntegralImage()
-    {
-        delete[] m_pData;
-    }
+template <typename T>
+void IntegralImage<T>::push(T const val) {
+    m_lineSum += val;
+    *m_pCur = *m_pAbove + m_lineSum;
+    ++m_pCur;
+    ++m_pAbove;
+}
 
-    template <typename T>
-    void
-    IntegralImage<T>::init(int const width, int const height)
-    {
-        m_width = width;
-        m_height = height;
+template <typename T>
+void IntegralImage<T>::beginRow() {
+    m_lineSum = T();
 
-        m_pData = new T[width * height];
+    *m_pCur = T();
+    ++m_pCur;
+    ++m_pAbove;
+}
 
-        T* p = m_pData;
-        for (int i = 0; i < width; ++i, ++p) {
-            *p = T();
-        }
+template <typename T>
+inline T IntegralImage<T>::sum(QRect const& rect) const {
+    int const pre_left = rect.left();
+    int const pre_right = rect.right() + 1;
+    int const pre_top = rect.top();
+    int const pre_bottom = rect.bottom() + 1;
+    T sum(m_pData[pre_bottom * m_width + pre_right]);
+    sum -= m_pData[pre_top * m_width + pre_right];
+    sum += m_pData[pre_top * m_width + pre_left];
+    sum -= m_pData[pre_bottom * m_width + pre_left];
 
-        m_pAbove = m_pData;
-        m_pCur = m_pAbove + width;
-    }
-
-    template <typename T>
-    void
-    IntegralImage<T>::push(T const val)
-    {
-        m_lineSum += val;
-        *m_pCur = *m_pAbove + m_lineSum;
-        ++m_pCur;
-        ++m_pAbove;
-    }
-
-    template <typename T>
-    void
-    IntegralImage<T>::beginRow()
-    {
-        m_lineSum = T();
-
-        *m_pCur = T();
-        ++m_pCur;
-        ++m_pAbove;
-    }
-
-    template <typename T>
-    inline T
-    IntegralImage<T>::sum(QRect const& rect) const
-    {
-        int const pre_left = rect.left();
-        int const pre_right = rect.right() + 1;
-        int const pre_top = rect.top();
-        int const pre_bottom = rect.bottom() + 1;
-        T sum(m_pData[pre_bottom * m_width + pre_right]);
-        sum -= m_pData[pre_top * m_width + pre_right];
-        sum += m_pData[pre_top * m_width + pre_left];
-        sum -= m_pData[pre_bottom * m_width + pre_left];
-
-        return sum;
-    }
+    return sum;
+}
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_INTEGRALIMAGE_H_

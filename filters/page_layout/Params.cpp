@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,21 +20,20 @@
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
-namespace page_layout
-{
-    Params::Params(Margins const& hard_margins_mm,
-                   QRectF const& content_rect,
-                   QRectF const& page_rect,
-                   QSizeF const& content_size_mm,
-                   Alignment const& alignment)
+namespace page_layout {
+Params::Params(Margins const& hard_margins_mm,
+               QRectF const& content_rect,
+               QRectF const& page_rect,
+               QSizeF const& content_size_mm,
+               Alignment const& alignment)
         : m_hardMarginsMM(hard_margins_mm),
           m_pageRect(page_rect),
           m_contentRect(content_rect),
           m_contentSizeMM(content_size_mm),
-          m_alignment(alignment)
-    { }
+          m_alignment(alignment) {
+}
 
-    Params::Params(QDomElement const& el)
+Params::Params(QDomElement const& el)
         : m_hardMarginsMM(
               XmlUnmarshaller::margins(
                   el.namedItem("hardMarginsMM").toElement()
@@ -56,21 +54,19 @@ namespace page_layout
                   el.namedItem("contentSizeMM").toElement()
               )
           ),
-          m_alignment(el.namedItem("alignment").toElement())
-    { }
+          m_alignment(el.namedItem("alignment").toElement()) {
+}
 
-    QDomElement
-    Params::toXml(QDomDocument& doc, QString const& name) const
-    {
-        XmlMarshaller marshaller(doc);
+QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    XmlMarshaller marshaller(doc);
 
-        QDomElement el(doc.createElement(name));
-        el.appendChild(marshaller.margins(m_hardMarginsMM, "hardMarginsMM"));
-        el.appendChild(marshaller.rectF(m_pageRect, "pageRect"));
-        el.appendChild(marshaller.rectF(m_contentRect, "contentRect"));
-        el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
-        el.appendChild(m_alignment.toXml(doc, "alignment"));
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.margins(m_hardMarginsMM, "hardMarginsMM"));
+    el.appendChild(marshaller.rectF(m_pageRect, "pageRect"));
+    el.appendChild(marshaller.rectF(m_contentRect, "contentRect"));
+    el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
+    el.appendChild(m_alignment.toXml(doc, "alignment"));
 
-        return el;
-    }
+    return el;
+}
 }  // namespace page_layout

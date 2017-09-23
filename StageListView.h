@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,11 +26,8 @@
 
 class StageSequence;
 
-class StageListView
-    : public QTableView
-{
+class StageListView: public QTableView {
     Q_OBJECT
-
 public:
     StageListView(QWidget* parent);
 
@@ -39,8 +35,7 @@ public:
 
     void setStages(IntrusivePtr<StageSequence> const& stages);
 
-    virtual QSize sizeHint() const
-    {
+    virtual QSize sizeHint() const {
         return m_sizeHint;
     }
 
@@ -90,5 +85,6 @@ private:
     bool m_batchProcessingPossible;
     bool m_batchProcessingInProgress;
 };
+
 
 #endif  // ifndef STAGELISTVIEW_H_

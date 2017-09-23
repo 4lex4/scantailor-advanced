@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -29,33 +28,26 @@ static double const distinction_increase = 1.0 / 5.0;
 static double const distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
-    : QWidget(parent),
-      m_animation(10),
-      m_distinction(1.0),
-      m_distinctionDelta(distinction_increase),
-      m_timerId(0)
-{
+        : QWidget(parent),
+          m_animation(10),
+          m_distinction(1.0),
+          m_distinctionDelta(distinction_increase),
+          m_timerId(0) {
     m_headColor = palette().color(QPalette::Window).lighter(200);
     m_tailColor = palette().color(QPalette::Window).lighter(130);
 }
 
-void
-ProcessingIndicationWidget::resetAnimation()
-{
+void ProcessingIndicationWidget::resetAnimation() {
     m_distinction = 1.0;
     m_distinctionDelta = distinction_increase;
 }
 
-void
-ProcessingIndicationWidget::processingRestartedEffect()
-{
+void ProcessingIndicationWidget::processingRestartedEffect() {
     m_distinction = 1.0;
     m_distinctionDelta = distinction_decrease;
 }
 
-void
-ProcessingIndicationWidget::paintEvent(QPaintEvent* event)
-{
+void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
     QRect animation_rect(animationRect());
     if (!event->rect().contains(animation_rect)) {
         update(animation_rect);
@@ -68,8 +60,7 @@ ProcessingIndicationWidget::paintEvent(QPaintEvent* event)
     m_distinction += m_distinctionDelta;
     if (m_distinction > 1.0) {
         m_distinction = 1.0;
-    }
-    else if (m_distinction <= 0.0) {
+    } else if (m_distinction <= 0.0) {
         m_distinction = 0.0;
         m_distinctionDelta = distinction_increase;
     }
@@ -82,17 +73,13 @@ ProcessingIndicationWidget::paintEvent(QPaintEvent* event)
     }
 }
 
-void
-ProcessingIndicationWidget::timerEvent(QTimerEvent* event)
-{
+void ProcessingIndicationWidget::timerEvent(QTimerEvent* event) {
     killTimer(event->timerId());
     m_timerId = 0;
     update(animationRect());
 }
 
-QRect
-ProcessingIndicationWidget::animationRect() const
-{
+QRect ProcessingIndicationWidget::animationRect() const {
     QRect r(0, 0, 80, 80);
     r.moveCenter(rect().center());
     r &= rect();

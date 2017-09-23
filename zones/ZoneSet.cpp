@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,8 +19,7 @@
 #include "ZoneSet.h"
 #include <QDomNode>
 
-ZoneSet::ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory)
-{
+ZoneSet::ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory) {
     QString const zone_str("zone");
 
     QDomNode node(el.firstChild());
@@ -40,9 +38,7 @@ ZoneSet::ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory)
     }
 }
 
-QDomElement
-ZoneSet::toXml(QDomDocument& doc, QString const& name) const
-{
+QDomElement ZoneSet::toXml(QDomDocument& doc, QString const& name) const {
     QString const zone_str("zone");
 
     QDomElement el(doc.createElement(name));
@@ -53,33 +49,29 @@ ZoneSet::toXml(QDomDocument& doc, QString const& name) const
     return el;
 }
 
-void
-ZoneSet::remove_auto_zones()
-{
+void ZoneSet::remove_auto_zones() {
     typedef output::ZoneCategoryProperty ZLP;
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
         if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE) {
+            == ZLP::RECTANGULAR_OUTLINE)
+        {
             m_zones.erase(it++);
-        }
-        else {
+        } else {
             ++it;
         }
     }
 }
 
-bool
-ZoneSet::auto_zones_found()
-{
+bool ZoneSet::auto_zones_found() {
     typedef output::ZoneCategoryProperty ZLP;
 
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
         if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE) {
+            == ZLP::RECTANGULAR_OUTLINE)
+        {
             return true;
-        }
-        else {
+        } else {
             it++;
         }
     }

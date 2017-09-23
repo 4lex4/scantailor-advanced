@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,11 +26,8 @@ class RelinkablePath;
 class QHBoxLayout;
 class QAbstractButton;
 
-class RelinkablePathVisualization
-    : public QWidget
-{
+class RelinkablePathVisualization: public QWidget {
     Q_OBJECT
-
 public:
     RelinkablePathVisualization(QWidget* parent = 0);
 
@@ -59,5 +55,6 @@ private:
 
     QHBoxLayout* m_pLayout;
 };
+
 
 #endif  // ifndef RELINKABLE_PATH_VISUALIZATION_H_

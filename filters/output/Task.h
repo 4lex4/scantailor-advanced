@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -40,49 +39,44 @@ class QSize;
 class QImage;
 class Dpi;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 }
 
-namespace output
-{
-    class Filter;
-    class Settings;
+namespace output {
+class Filter;
+class Settings;
 
-    class Task
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Task)
+class Task: public RefCountable {
+    DECLARE_NON_COPYABLE(Task)
+public:
+    Task(IntrusivePtr<Filter> const& filter,
+         IntrusivePtr<Settings> const& settings,
+         IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+         PageId const& page_id,
+         OutputFileNameGenerator const& out_file_name_gen,
+         ImageViewTab last_tab,
+         bool batch,
+         bool debug);
 
-    public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-             PageId const& page_id,
-             OutputFileNameGenerator const& out_file_name_gen,
-             ImageViewTab last_tab,
-             bool batch,
-             bool debug);
+    virtual ~Task();
 
-        virtual ~Task();
+    FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
+private:
+    class UiUpdater;
 
-    private:
-        class UiUpdater;
+    void deleteMutuallyExclusiveOutputFiles();
 
-        void deleteMutuallyExclusiveOutputFiles();
-
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-        std::unique_ptr<DebugImages> m_ptrDbg;
-        PageId m_pageId;
-        OutputFileNameGenerator m_outFileNameGen;
-        ImageViewTab m_lastTab;
-        bool m_batchProcessing;
-        bool m_debug;
-    };
+    IntrusivePtr<Filter> m_ptrFilter;
+    IntrusivePtr<Settings> m_ptrSettings;
+    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+    std::unique_ptr<DebugImages> m_ptrDbg;
+    PageId m_pageId;
+    OutputFileNameGenerator m_outFileNameGen;
+    ImageViewTab m_lastTab;
+    bool m_batchProcessing;
+    bool m_debug;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_TASK_H_

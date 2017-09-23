@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,11 +19,10 @@
 #ifndef TASKSTATUS_H_
 #define TASKSTATUS_H_
 
-class TaskStatus
-{
+class TaskStatus {
 public:
-    virtual ~TaskStatus()
-    { }
+    virtual ~TaskStatus() {
+    }
 
     virtual void cancel() = 0;
 
@@ -32,5 +30,6 @@ public:
 
     virtual void throwIfCancelled() const = 0;
 };
+
 
 #endif

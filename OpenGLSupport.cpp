@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,9 +23,7 @@
 #include <QOpenGLFunctions>
 #include <QOffscreenSurface>
 
-bool
-OpenGLSupport::supported()
-{
+bool OpenGLSupport::supported() {
     QSurfaceFormat format;
     format.setSamples(2);
     format.setAlphaBufferSize(8);
@@ -48,14 +45,12 @@ OpenGLSupport::supported()
     return true;
 }
 
-QString
-OpenGLSupport::deviceName()
-{
+QString OpenGLSupport::deviceName() {
     QString name;
     QOpenGLContext context;
     QOffscreenSurface surface;
     if (context.create() && (surface.create(), true) && context.makeCurrent(&surface)) {
-        name = QString::fromUtf8((char const*)context.functions()->glGetString(GL_RENDERER));
+        name = QString::fromUtf8((char const*) context.functions()->glGetString(GL_RENDERER));
         context.doneCurrent();
     }
 

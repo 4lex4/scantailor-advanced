@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,26 +24,21 @@
 #include "filters/page_layout/Filter.h"
 #include "filter_dc/ContentBoxCollector.h"
 
-class ContentBoxPropagator::Collector
-    : public ContentBoxCollector
-{
+class ContentBoxPropagator::Collector: public ContentBoxCollector {
 public:
     Collector();
 
     virtual void process(ImageTransformation const& xform, QRectF const& content_rect);
 
-    bool collected() const
-    {
+    bool collected() const {
         return m_collected;
     }
 
-    ImageTransformation const& xform() const
-    {
+    ImageTransformation const& xform() const {
         return m_xform;
     }
 
-    QRectF const& contentRect() const
-    {
+    QRectF const& contentRect() const {
         return m_contentRect;
     }
 
@@ -57,16 +51,14 @@ private:
 
 ContentBoxPropagator::ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
                                            IntrusivePtr<CompositeCacheDrivenTask> const& task)
-    : m_ptrPageLayoutFilter(page_layout_filter),
-      m_ptrTask(task)
-{ }
+        : m_ptrPageLayoutFilter(page_layout_filter),
+          m_ptrTask(task) {
+}
 
-ContentBoxPropagator::~ContentBoxPropagator()
-{ }
+ContentBoxPropagator::~ContentBoxPropagator() {
+}
 
-void
-ContentBoxPropagator::propagate(ProjectPages const& pages)
-{
+void ContentBoxPropagator::propagate(ProjectPages const& pages) {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
     size_t const num_pages = sequence.numPages();
 
@@ -79,8 +71,7 @@ ContentBoxPropagator::propagate(ProjectPages const& pages)
                 page_info.id(), collector.xform(),
                 collector.contentRect()
             );
-        }
-        else {
+        } else {
             m_ptrPageLayoutFilter->invalidateContentBox(page_info.id());
         }
     }
@@ -89,13 +80,11 @@ ContentBoxPropagator::propagate(ProjectPages const& pages)
 /*=================== ContentBoxPropagator::Collector ====================*/
 
 ContentBoxPropagator::Collector::Collector()
-    : m_xform(QRectF(0, 0, 1, 1), Dpi(300, 300)),
-      m_collected(false)
-{ }
+        : m_xform(QRectF(0, 0, 1, 1), Dpi(300, 300)),
+          m_collected(false) {
+}
 
-void
-ContentBoxPropagator::Collector::process(ImageTransformation const& xform, QRectF const& content_rect)
-{
+void ContentBoxPropagator::Collector::process(ImageTransformation const& xform, QRectF const& content_rect) {
     m_xform = xform;
     m_contentRect = content_rect;
     m_collected = true;

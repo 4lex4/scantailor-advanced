@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,8 +22,7 @@
 #include "PageId.h"
 #include "ImageMetadata.h"
 
-class PageInfo
-{
+class PageInfo {
 public:
     PageInfo();
 
@@ -34,43 +32,35 @@ public:
              bool left_half_removed,
              bool right_half_removed);
 
-    bool isNull() const
-    {
+    bool isNull() const {
         return m_pageId.isNull();
     }
 
-    PageId const& id() const
-    {
+    PageId const& id() const {
         return m_pageId;
     }
 
-    void setId(PageId const& id)
-    {
+    void setId(PageId const& id) {
         m_pageId = id;
     }
 
-    ImageId const& imageId() const
-    {
+    ImageId const& imageId() const {
         return m_pageId.imageId();
     }
 
-    ImageMetadata const& metadata() const
-    {
+    ImageMetadata const& metadata() const {
         return m_metadata;
     }
 
-    int imageSubPages() const
-    {
+    int imageSubPages() const {
         return m_imageSubPages;
     }
 
-    bool leftHalfRemoved() const
-    {
+    bool leftHalfRemoved() const {
         return m_leftHalfRemoved;
     }
 
-    bool rightHalfRemoved() const
-    {
+    bool rightHalfRemoved() const {
         return m_rightHalfRemoved;
     }
 
@@ -81,5 +71,6 @@ private:
     bool m_leftHalfRemoved;
     bool m_rightHalfRemoved;
 };
+
 
 #endif  // ifndef PAGEINFO_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,14 +19,13 @@
 #ifndef OUTPUT_IMAGE_VIEW_TAB_H_
 #define OUTPUT_IMAGE_VIEW_TAB_H_
 
-namespace output
-{
-    enum ImageViewTab {
-        TAB_OUTPUT,
-        TAB_PICTURE_ZONES,
-        TAB_FILL_ZONES,
-        TAB_DEWARPING,
-        TAB_DESPECKLING
-    };
+namespace output {
+enum ImageViewTab {
+    TAB_OUTPUT,
+    TAB_PICTURE_ZONES,
+    TAB_FILL_ZONES,
+    TAB_DEWARPING,
+    TAB_DESPECKLING
+};
 }
 #endif

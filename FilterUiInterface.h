@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,13 +30,12 @@ class QWidget;
 /**
  * \brief A reduced interface to MainWindow to allow filters to manupulate the UI.
  */
-class FilterUiInterface
-{
+class FilterUiInterface {
 public:
     enum Ownership { KEEP_OWNERSHIP, TRANSFER_OWNERSHIP };
 
-    virtual ~FilterUiInterface()
-    { }
+    virtual ~FilterUiInterface() {
+    }
 
     virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) = 0;
 
@@ -55,5 +53,6 @@ public:
      */
     virtual IntrusivePtr<AbstractCommand0<void>> relinkingDialogRequester() = 0;
 };
+
 
 #endif  // ifndef FILTERUIINTERFACE_H_

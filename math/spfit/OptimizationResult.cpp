@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,19 +19,16 @@
 #include "OptimizationResult.h"
 #include <algorithm>
 
-namespace spfit
-{
-    OptimizationResult::OptimizationResult(double force_before, double force_after)
+namespace spfit {
+OptimizationResult::OptimizationResult(double force_before, double force_after)
         : m_forceBefore(std::max<double>(force_before, 0)),
-          m_forceAfter(std::max<double>(force_after, 0))
-    { }
+          m_forceAfter(std::max<double>(force_after, 0)) {
+}
 
-    double
-    OptimizationResult::improvementPercentage() const
-    {
-        double improvement = m_forceBefore - m_forceAfter;
-        improvement /= (m_forceBefore + std::numeric_limits<double>::epsilon());
+double OptimizationResult::improvementPercentage() const {
+    double improvement = m_forceBefore - m_forceAfter;
+    improvement /= (m_forceBefore + std::numeric_limits<double>::epsilon());
 
-        return improvement * 100;
-    }
+    return improvement * 100;
+}
 }

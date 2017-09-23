@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -34,18 +33,14 @@
 
 using namespace imageproc;
 
-class LoadFileTask::ErrorResult
-    : public FilterResult
-{
+class LoadFileTask::ErrorResult: public FilterResult {
     Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
-
 public:
     ErrorResult(QString const& file_path);
 
     virtual void updateUI(FilterUiInterface* ui);
 
-    virtual IntrusivePtr<AbstractFilter> filter()
-    {
+    virtual IntrusivePtr<AbstractFilter> filter() {
         return IntrusivePtr<AbstractFilter>();
     }
 
@@ -60,22 +55,19 @@ LoadFileTask::LoadFileTask(Type type,
                            IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
                            IntrusivePtr<ProjectPages> const& pages,
                            IntrusivePtr<fix_orientation::Task> const& next_task)
-    : BackgroundTask(type),
-      m_ptrThumbnailCache(thumbnail_cache),
-      m_imageId(page.imageId()),
-      m_imageMetadata(page.metadata()),
-      m_ptrPages(pages),
-      m_ptrNextTask(next_task)
-{
+        : BackgroundTask(type),
+          m_ptrThumbnailCache(thumbnail_cache),
+          m_imageId(page.imageId()),
+          m_imageMetadata(page.metadata()),
+          m_ptrPages(pages),
+          m_ptrNextTask(next_task) {
     assert(m_ptrNextTask);
 }
 
-LoadFileTask::~LoadFileTask()
-{ }
+LoadFileTask::~LoadFileTask() {
+}
 
-FilterResultPtr
-LoadFileTask::operator()()
-{
+FilterResultPtr LoadFileTask::operator()() {
     QImage image(ImageLoader::load(m_imageId));
 
     try {
@@ -83,32 +75,26 @@ LoadFileTask::operator()()
 
         if (image.isNull()) {
             return FilterResultPtr(new ErrorResult(m_imageId.filePath()));
-        }
-        else {
+        } else {
             updateImageSizeIfChanged(image);
             overrideDpi(image);
             m_ptrThumbnailCache->ensureThumbnailExists(m_imageId, image);
 
             return m_ptrNextTask->process(*this, FilterData(image));
         }
-    }
-    catch (CancelledException const&) {
+    } catch (CancelledException const&) {
         return FilterResultPtr();
     }
 }
 
-void
-LoadFileTask::updateImageSizeIfChanged(QImage const& image)
-{
+void LoadFileTask::updateImageSizeIfChanged(QImage const& image) {
     if (image.size() != m_imageMetadata.size()) {
         m_imageMetadata.setSize(image.size());
         m_ptrPages->updateImageMetadata(m_imageId, m_imageMetadata);
     }
 }
 
-void
-LoadFileTask::overrideDpi(QImage& image) const
-{
+void LoadFileTask::overrideDpi(QImage& image) const {
     Dpm const dpm(m_imageMetadata.dpi());
     image.setDotsPerMeterX(dpm.horizontal());
     image.setDotsPerMeterY(dpm.vertical());
@@ -117,40 +103,35 @@ LoadFileTask::overrideDpi(QImage& image) const
 /*======================= LoadFileTask::ErrorResult ======================*/
 
 LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
-    : m_filePath(QDir::toNativeSeparators(file_path)),
-      m_fileExists(QFile::exists(file_path))
-{ }
+        : m_filePath(QDir::toNativeSeparators(file_path)),
+          m_fileExists(QFile::exists(file_path)) {
+}
 
-void
-LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui)
-{
-    class ErrWidget
-        : public ErrorWidget
-    {
+void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
+    class ErrWidget: public ErrorWidget {
     public:
         ErrWidget(IntrusivePtr<AbstractCommand0<void>> const& relinking_dialog_requester,
                   QString const& text,
                   Qt::TextFormat fmt = Qt::AutoText)
-            : ErrorWidget(text, fmt),
-              m_ptrRelinkingDialogRequester(relinking_dialog_requester)
-        { }
+                : ErrorWidget(text, fmt),
+                  m_ptrRelinkingDialogRequester(relinking_dialog_requester) {
+        }
 
     private:
-        virtual void linkActivated(QString const&)
-        {
+        virtual void linkActivated(QString const&) {
             (*m_ptrRelinkingDialogRequester)();
         }
 
         IntrusivePtr<AbstractCommand0<void>> m_ptrRelinkingDialogRequester;
     };
 
+
     QString err_msg;
     Qt::TextFormat fmt = Qt::AutoText;
     if (m_fileExists) {
         err_msg = tr("The following file could not be loaded:\n%1").arg(m_filePath);
         fmt = Qt::PlainText;
-    }
-    else {
+    } else {
         err_msg = tr(
             "The following file doesn't exist:<br>%1<br>"
             "<br>"

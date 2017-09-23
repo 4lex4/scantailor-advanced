@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,11 +21,10 @@
 
 class QFileInfo;
 
-class SmartFilenameOrdering
-{
+class SmartFilenameOrdering {
 public:
-    SmartFilenameOrdering()
-    { }
+    SmartFilenameOrdering() {
+    }
 
     /**
      * \brief Compare filenames using a set of heuristic rules.
@@ -40,5 +38,6 @@ public:
      */
     bool operator()(QFileInfo const& lhs, QFileInfo const& rhs) const;
 };
+
 
 #endif

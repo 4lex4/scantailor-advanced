@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,23 +22,22 @@
 class QImage;
 class QRect;
 
-namespace imageproc
-{
-    /**
-     * \brief Overdraws a portion of one image with a portion of another.
-     *
-     * \param dst The destination image.  Can be in any format, as long
-     *        as the source image has the same format.
-     * \param dst_rect The area of the destination image to be overdrawn.
-     *        This area must lie completely within the destination
-     *        image, and its size must match the size of \p src_rect.
-     * \param src The source image.  Can be in any format, as long
-     *        as the destination image has the same format.
-     * \param src_rect The area of the source image to draw over
-     *        the destination image.  This area must lie completely
-     *        within the source image, and its size must match the
-     *        size of \p dst_rect.
-     */
-    void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect);
+namespace imageproc {
+/**
+ * \brief Overdraws a portion of one image with a portion of another.
+ *
+ * \param dst The destination image.  Can be in any format, as long
+ *        as the source image has the same format.
+ * \param dst_rect The area of the destination image to be overdrawn.
+ *        This area must lie completely within the destination
+ *        image, and its size must match the size of \p src_rect.
+ * \param src The source image.  Can be in any format, as long
+ *        as the destination image has the same format.
+ * \param src_rect The area of the source image to draw over
+ *        the destination image.  This area must lie completely
+ *        within the source image, and its size must match the
+ *        size of \p dst_rect.
+ */
+void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect);
 }
 #endif

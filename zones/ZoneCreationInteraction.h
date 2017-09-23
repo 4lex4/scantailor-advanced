@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,17 +32,12 @@
 
 class ZoneInteractionContext;
 
-class ZoneCreationInteraction
-    : public InteractionHandler
-{
+class ZoneCreationInteraction: public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(ZoneCreationInteraction)
-
 public:
     ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction);
-
 protected:
-    ZoneInteractionContext& context()
-    {
+    ZoneInteractionContext& context() {
         return m_rContext;
     }
 
@@ -89,5 +83,6 @@ private:
     QPointF m_nextVertexImagePos_mid1;
     QPointF m_nextVertexImagePos_mid2;
 };
+
 
 #endif  // ifndef ZONE_CREATION_INTERACTION_H_

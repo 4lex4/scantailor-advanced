@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,17 +24,13 @@
 #include "filters/page_split/Filter.h"
 #include "filter_dc/PageOrientationCollector.h"
 
-class PageOrientationPropagator::Collector
-    : public PageOrientationCollector
-{
+class PageOrientationPropagator::Collector: public PageOrientationCollector {
 public:
-    virtual void process(OrthogonalRotation const& orientation)
-    {
+    virtual void process(OrthogonalRotation const& orientation) {
         m_orientation = orientation;
     }
 
-    OrthogonalRotation const& orientation() const
-    {
+    OrthogonalRotation const& orientation() const {
         return m_orientation;
     }
 
@@ -46,16 +41,14 @@ private:
 
 PageOrientationPropagator::PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
                                                      IntrusivePtr<CompositeCacheDrivenTask> const& task)
-    : m_ptrPageSplitFilter(page_split_filter),
-      m_ptrTask(task)
-{ }
+        : m_ptrPageSplitFilter(page_split_filter),
+          m_ptrTask(task) {
+}
 
-PageOrientationPropagator::~PageOrientationPropagator()
-{ }
+PageOrientationPropagator::~PageOrientationPropagator() {
+}
 
-void
-PageOrientationPropagator::propagate(ProjectPages const& pages)
-{
+void PageOrientationPropagator::propagate(ProjectPages const& pages) {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
     size_t const num_pages = sequence.numPages();
 

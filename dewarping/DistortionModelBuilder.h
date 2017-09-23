@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,100 +31,98 @@ class QImage;
 class DebugImages;
 class XSpline;
 
-namespace dewarping
-{
-    class DistortionModel;
+namespace dewarping {
+class DistortionModel;
 
-    class DistortionModelBuilder
-    {
-    public:
-        /**
-         * \brief Constructor.
-         *
-         * \param down_direction A vector pointing approximately downwards in terms of content.
-         *        The vector can't be zero-length.
-         */
-        DistortionModelBuilder(Vec2d const& down_direction);
+class DistortionModelBuilder {
+public:
+    /**
+     * \brief Constructor.
+     *
+     * \param down_direction A vector pointing approximately downwards in terms of content.
+     *        The vector can't be zero-length.
+     */
+    DistortionModelBuilder(Vec2d const& down_direction);
 
-        /**
-         * \brief Set the vertical content boundaries.
-         *
-         * Note that we are setting lines, not line segments, so endpoint
-         * positions along the line don't really matter.  It also doesn't
-         * matter which one is the left bound and which one is the right one.
-         */
-        void setVerticalBounds(QLineF const& bound1, QLineF const& bound2);
+    /**
+     * \brief Set the vertical content boundaries.
+     *
+     * Note that we are setting lines, not line segments, so endpoint
+     * positions along the line don't really matter.  It also doesn't
+     * matter which one is the left bound and which one is the right one.
+     */
+    void setVerticalBounds(QLineF const& bound1, QLineF const& bound2);
 
-        /**
-         * \brief Returns the current vertical bounds.
-         *
-         * It's not specified which one is the left and which one is the right bound.
-         */
-        std::pair<QLineF, QLineF> verticalBounds() const;
+    /**
+     * \brief Returns the current vertical bounds.
+     *
+     * It's not specified which one is the left and which one is the right bound.
+     */
+    std::pair<QLineF, QLineF> verticalBounds() const;
 
-        /**
-         * \brief Add a curve that's meant to become straight and horizontal after dewarping.
-         *
-         * The curve doesn't have to touch or intersect the vertical bounds, although
-         * long curves are preferable.  The minimum number of curves to build a distortion
-         * model is 2, although that doesn't guarantee successful model construction.
-         * The more apart the curves are, the better.
-         */
-        void addHorizontalCurve(std::vector<QPointF> const& polyline);
+    /**
+     * \brief Add a curve that's meant to become straight and horizontal after dewarping.
+     *
+     * The curve doesn't have to touch or intersect the vertical bounds, although
+     * long curves are preferable.  The minimum number of curves to build a distortion
+     * model is 2, although that doesn't guarantee successful model construction.
+     * The more apart the curves are, the better.
+     */
+    void addHorizontalCurve(std::vector<QPointF> const& polyline);
 
-        /**
-         * \brief Applies an affine transformation to the internal representation.
-         */
-        void transform(QTransform const& xform);
+    /**
+     * \brief Applies an affine transformation to the internal representation.
+     */
+    void transform(QTransform const& xform);
 
-        /**
-         * \brief Tries to build a distortion model based on information provided so far.
-         *
-         * \return A DistortionModel that may be invalid.
-         * \see DistortionModel::isValid()
-         */
-        DistortionModel tryBuildModel(DebugImages* dbg = 0, QImage const* dbg_background = 0) const;
+    /**
+     * \brief Tries to build a distortion model based on information provided so far.
+     *
+     * \return A DistortionModel that may be invalid.
+     * \see DistortionModel::isValid()
+     */
+    DistortionModel tryBuildModel(DebugImages* dbg = 0, QImage const* dbg_background = 0) const;
 
-    private:
-        struct TracedCurve;
-        struct RansacModel;
+private:
+    struct TracedCurve;
+    struct RansacModel;
 
-        class RansacAlgo;
-        class BadCurve;
+    class RansacAlgo;
+    class BadCurve;
 
-        TracedCurve polylineToCurve(std::vector<QPointF> const& polyline) const;
+    TracedCurve polylineToCurve(std::vector<QPointF> const& polyline) const;
 
-        static Vec2d centroid(std::vector<QPointF> const& polyline);
+    static Vec2d centroid(std::vector<QPointF> const& polyline);
 
-        std::pair<QLineF, QLineF> frontBackBounds(std::vector<QPointF> const& polyline) const;
+    std::pair<QLineF, QLineF> frontBackBounds(std::vector<QPointF> const& polyline) const;
 
-        static std::vector<QPointF> maybeTrimPolyline(std::vector<QPointF> const& polyline,
-                                                      std::pair<QLineF, QLineF> const& bounds);
+    static std::vector<QPointF> maybeTrimPolyline(std::vector<QPointF> const& polyline,
+                                                  std::pair<QLineF, QLineF> const& bounds);
 
-        static bool maybeTrimFront(std::deque<QPointF>& polyline, QLineF const& bound);
+    static bool maybeTrimFront(std::deque<QPointF>& polyline, QLineF const& bound);
 
-        static bool maybeTrimBack(std::deque<QPointF>& polyline, QLineF const& bound);
+    static bool maybeTrimBack(std::deque<QPointF>& polyline, QLineF const& bound);
 
-        static void intersectFront(std::deque<QPointF>& polyline, QLineF const& bound);
+    static void intersectFront(std::deque<QPointF>& polyline, QLineF const& bound);
 
-        static void intersectBack(std::deque<QPointF>& polyline, QLineF const& bound);
+    static void intersectBack(std::deque<QPointF>& polyline, QLineF const& bound);
 
-        static XSpline fitExtendedSpline(std::vector<QPointF> const& polyline,
-                                         Vec2d const& centroid,
-                                         std::pair<QLineF, QLineF> const& bounds);
+    static XSpline fitExtendedSpline(std::vector<QPointF> const& polyline,
+                                     Vec2d const& centroid,
+                                     std::pair<QLineF, QLineF> const& bounds);
 
-        QImage visualizeTrimmedPolylines(QImage const& background, std::vector<TracedCurve> const& curves) const;
+    QImage visualizeTrimmedPolylines(QImage const& background, std::vector<TracedCurve> const& curves) const;
 
-        QImage visualizeModel(QImage const& background, std::vector<TracedCurve> const& curves,
-                              RansacModel const& model) const;
+    QImage visualizeModel(QImage const& background, std::vector<TracedCurve> const& curves,
+                          RansacModel const& model) const;
 
-        Vec2d m_downDirection;
-        Vec2d m_rightDirection;
-        QLineF m_bound1;
-        QLineF m_bound2;
+    Vec2d m_downDirection;
+    Vec2d m_rightDirection;
+    QLineF m_bound1;
+    QLineF m_bound2;
 
-        /** These go left to right in terms of content. */
-        std::deque<std::vector<QPointF>> m_ltrPolylines;
-    };
+    /** These go left to right in terms of content. */
+    std::deque<std::vector<QPointF>> m_ltrPolylines;
+};
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_

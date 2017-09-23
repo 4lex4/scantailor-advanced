@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,9 +25,8 @@
 #include <boost/bind.hpp>
 
 ProjectReader::ProjectReader(QDomDocument const& doc)
-    : m_doc(doc),
-      m_ptrDisambiguator(new FileNameDisambiguator)
-{
+        : m_doc(doc),
+          m_ptrDisambiguator(new FileNameDisambiguator) {
     QDomElement project_el(m_doc.documentElement());
     m_outDir = project_el.attribute("outputDirectory");
 
@@ -71,12 +69,10 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
     );
 }
 
-ProjectReader::~ProjectReader()
-{ }
+ProjectReader::~ProjectReader() {
+}
 
-void
-ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const
-{
+void ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const {
     QDomElement project_el(m_doc.documentElement());
     QDomElement filters_el(project_el.namedItem("filters").toElement());
 
@@ -87,9 +83,7 @@ ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const
     }
 }
 
-void
-ProjectReader::processDirectories(QDomElement const& dirs_el)
-{
+void ProjectReader::processDirectories(QDomElement const& dirs_el) {
     QString const dir_tag_name("directory");
 
     QDomNode node(dirs_el.firstChild());
@@ -117,9 +111,7 @@ ProjectReader::processDirectories(QDomElement const& dirs_el)
     }
 }
 
-void
-ProjectReader::processFiles(QDomElement const& files_el)
-{
+void ProjectReader::processFiles(QDomElement const& files_el) {
     QString const file_tag_name("file");
 
     QDomNode node(files_el.firstChild());
@@ -160,9 +152,7 @@ ProjectReader::processFiles(QDomElement const& files_el)
     }
 }  // ProjectReader::processFiles
 
-void
-ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection const layout_direction)
-{
+void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection const layout_direction) {
     QString const image_tag_name("image");
 
     std::vector<ImageInfo> images;
@@ -222,9 +212,7 @@ ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection c
     }
 }  // ProjectReader::processImages
 
-ImageMetadata
-ProjectReader::processImageMetadata(QDomElement const& image_el)
-{
+ImageMetadata ProjectReader::processImageMetadata(QDomElement const& image_el) {
     QSize size;
     Dpi dpi;
 
@@ -240,9 +228,7 @@ ProjectReader::processImageMetadata(QDomElement const& image_el)
     return ImageMetadata(size, dpi);
 }
 
-void
-ProjectReader::processPages(QDomElement const& pages_el)
-{
+void ProjectReader::processPages(QDomElement const& pages_el) {
     QString const page_tag_name("page");
 
     QDomNode node(pages_el.firstChild());
@@ -288,9 +274,7 @@ ProjectReader::processPages(QDomElement const& pages_el)
     }
 }  // ProjectReader::processPages
 
-QString
-ProjectReader::getDirPath(int const id) const
-{
+QString ProjectReader::getDirPath(int const id) const {
     DirMap::const_iterator const it(m_dirMap.find(id));
     if (it != m_dirMap.end()) {
         return it->second;
@@ -299,9 +283,7 @@ ProjectReader::getDirPath(int const id) const
     return QString();
 }
 
-ProjectReader::FileRecord
-ProjectReader::getFileRecord(int id) const
-{
+ProjectReader::FileRecord ProjectReader::getFileRecord(int id) const {
     FileMap::const_iterator const it(m_fileMap.find(id));
     if (it != m_fileMap.end()) {
         return it->second;
@@ -310,9 +292,7 @@ ProjectReader::getFileRecord(int id) const
     return FileRecord();
 }
 
-QString
-ProjectReader::expandFilePath(QString const& path_shorthand) const
-{
+QString ProjectReader::expandFilePath(QString const& path_shorthand) const {
     bool ok = false;
     int const file_id = path_shorthand.toInt(&ok);
     if (!ok) {
@@ -322,9 +302,7 @@ ProjectReader::expandFilePath(QString const& path_shorthand) const
     return getFileRecord(file_id).filePath;
 }
 
-ImageInfo
-ProjectReader::getImageInfo(int id) const
-{
+ImageInfo ProjectReader::getImageInfo(int id) const {
     ImageMap::const_iterator it(m_imageMap.find(id));
     if (it != m_imageMap.end()) {
         return it->second;
@@ -333,9 +311,7 @@ ProjectReader::getImageInfo(int id) const
     return ImageInfo();
 }
 
-ImageId
-ProjectReader::imageId(int const numeric_id) const
-{
+ImageId ProjectReader::imageId(int const numeric_id) const {
     ImageMap::const_iterator it(m_imageMap.find(numeric_id));
     if (it != m_imageMap.end()) {
         return it->second.id();
@@ -344,9 +320,7 @@ ProjectReader::imageId(int const numeric_id) const
     return ImageId();
 }
 
-PageId
-ProjectReader::pageId(int numeric_id) const
-{
+PageId ProjectReader::pageId(int numeric_id) const {
     PageMap::const_iterator it(m_pageMap.find(numeric_id));
     if (it != m_pageMap.end()) {
         return it->second;

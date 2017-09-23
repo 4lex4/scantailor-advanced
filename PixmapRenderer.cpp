@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,9 +27,7 @@
  #  include <X11/extensions/Xrender.h>
 #endif
 
-void
-PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap)
-{
+void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {
 #if !defined(Q_WS_X11)
     drawPixmapNoXRender(painter, pixmap);
 #else
@@ -51,8 +48,7 @@ PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap)
     Picture dst_pict = 0;
     if (QWidget* widget = dynamic_cast<QWidget*>(paint_dev)) {
         dst_pict = widget->x11PictureHandle();
-    }
-    else if (QPixmap* pixmap = dynamic_cast<QPixmap*>(paint_dev)) {
+    } else if (QPixmap* pixmap = dynamic_cast<QPixmap*>(paint_dev)) {
         dst_pict = pixmap->x11PictureHandle();
     }
 
@@ -123,9 +119,7 @@ PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap)
 #endif  // if !defined(Q_WS_X11)
 }  // PixmapRenderer::drawPixmap
 
-void
-PixmapRenderer::drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap)
-{
+void PixmapRenderer::drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap) {
     QTransform const inv_transform(painter.worldTransform().inverted());
     QRectF const src_rect(inv_transform.map(QRectF(painter.viewport())).boundingRect());
     QRectF const bounded_src_rect(src_rect.intersected(pixmap.rect()));

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,20 +26,17 @@
 #include "Margins.h"
 #include <QImage>
 
-class BasicImageView
-    : public ImageViewBase
-{
+class BasicImageView: public ImageViewBase {
     Q_OBJECT
-
 public:
     BasicImageView(QImage const& image,
                    ImagePixmapUnion const& downscaled_image = ImagePixmapUnion(), Margins const& margins = Margins());
 
     virtual ~BasicImageView();
-
 private:
     DragHandler m_dragHandler;
     ZoomHandler m_zoomHandler;
 };
+
 
 #endif

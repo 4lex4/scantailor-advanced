@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,18 +23,15 @@
 
 class Dpi;
 
-class PhysicalTransformation
-{
+class PhysicalTransformation {
 public:
     PhysicalTransformation(Dpi const& dpi);
 
-    QTransform const& pixelsToMM() const
-    {
+    QTransform const& pixelsToMM() const {
         return m_pixelsToMM;
     }
 
-    QTransform const& mmToPixels() const
-    {
+    QTransform const& mmToPixels() const {
         return m_mmToPixels;
     }
 
@@ -43,5 +39,6 @@ private:
     QTransform m_pixelsToMM;
     QTransform m_mmToPixels;
 };
+
 
 #endif

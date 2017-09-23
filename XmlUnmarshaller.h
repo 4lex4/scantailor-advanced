@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,8 +32,7 @@ class QRect;
 class QRectF;
 class QPolygonF;
 
-class XmlUnmarshaller
-{
+class XmlUnmarshaller {
 public:
     static QString string(QDomElement const& el);
 
@@ -58,5 +56,6 @@ public:
 
     static QPolygonF polygonF(QDomElement const& el);
 };
+
 
 #endif  // ifndef XMLUNMARSHALLER_H_

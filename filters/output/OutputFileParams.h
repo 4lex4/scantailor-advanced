@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,35 +26,32 @@ class QDomDocument;
 class QDomElement;
 class QFileInfo;
 
-namespace output
-{
+namespace output {
+/**
+ * \brief Parameters of the output file used to determine if it has changed.
+ */
+class OutputFileParams {
+public:
+    OutputFileParams();
+
+    explicit OutputFileParams(QFileInfo const& file_info);
+
+    explicit OutputFileParams(QDomElement const& el);
+
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+
+    bool const isValid() const {
+        return m_size >= 0;
+    }
+
     /**
-     * \brief Parameters of the output file used to determine if it has changed.
+     * \brief Returns true if it's likely we have two identical files.
      */
-    class OutputFileParams
-    {
-    public:
-        OutputFileParams();
+    bool matches(OutputFileParams const& other) const;
 
-        explicit OutputFileParams(QFileInfo const& file_info);
-
-        explicit OutputFileParams(QDomElement const& el);
-
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
-
-        bool const isValid() const
-        {
-            return m_size >= 0;
-        }
-
-        /**
-         * \brief Returns true if it's likely we have two identical files.
-         */
-        bool matches(OutputFileParams const& other) const;
-
-    private:
-        qint64 m_size;
-        time_t m_mtime;
-    };
+private:
+    qint64 m_size;
+    time_t m_mtime;
+};
 }
 #endif  // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_

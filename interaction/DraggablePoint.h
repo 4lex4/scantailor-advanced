@@ -1,4 +1,3 @@
-
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,9 +23,7 @@
 #include <QPointF>
 #include <boost/function.hpp>
 
-class DraggablePoint
-    : public DraggableObject
-{
+class DraggablePoint: public DraggableObject {
 public:
     typedef boost::function<
             QPointF()
@@ -42,20 +39,17 @@ public:
      * Returns the hit area radius, with zero indicating the global
      * proximity threshold of InteractionState is to be used.
      */
-    double hitRadius() const
-    {
+    double hitRadius() const {
         return m_hitAreaRadius;
     }
 
-    void setHitRadius(double radius)
-    {
+    void setHitRadius(double radius) {
         m_hitAreaRadius = radius;
     }
 
     virtual Proximity proximityThreshold(InteractionState const& interaction) const;
 
-    void setProximityPriority(int priority)
-    {
+    void setProximityPriority(int priority) {
         m_proximityPriority = priority;
     }
 
@@ -67,24 +61,20 @@ public:
 
     virtual void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask);
 
-    void setPositionCallback(PositionCallback const& callback)
-    {
+    void setPositionCallback(PositionCallback const& callback) {
         m_positionCallback = callback;
     }
 
-    void setMoveRequestCallback(MoveRequestCallback const& callback)
-    {
+    void setMoveRequestCallback(MoveRequestCallback const& callback) {
         m_moveRequestCallback = callback;
     }
 
 protected:
-    virtual QPointF pointPosition() const
-    {
+    virtual QPointF pointPosition() const {
         return m_positionCallback();
     }
 
-    virtual void pointMoveRequest(QPointF const& widget_pos, Qt::KeyboardModifiers mask)
-    {
+    virtual void pointMoveRequest(QPointF const& widget_pos, Qt::KeyboardModifiers mask) {
         m_moveRequestCallback(widget_pos, mask);
     }
 
@@ -95,5 +85,6 @@ private:
     double m_hitAreaRadius;
     int m_proximityPriority;
 };
+
 
 #endif  // ifndef DRAGGABLE_POINT_H_

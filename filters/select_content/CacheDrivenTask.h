@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,32 +28,26 @@ class PageInfo;
 class AbstractFilterDataCollector;
 class ImageTransformation;
 
-namespace page_layout
-{
-    class CacheDrivenTask;
+namespace page_layout {
+class CacheDrivenTask;
 }
 
-namespace select_content
-{
-    class Settings;
+namespace select_content {
+class Settings;
 
-    class CacheDrivenTask
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(CacheDrivenTask)
+class CacheDrivenTask: public RefCountable {
+    DECLARE_NON_COPYABLE(CacheDrivenTask)
+public:
+    CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                    IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
 
-    public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                        IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
+    virtual ~CacheDrivenTask();
 
-        virtual ~CacheDrivenTask();
+    void process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
 
-        void process(PageInfo const& page_info, AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform);
-
-    private:
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<page_layout::CacheDrivenTask> m_ptrNextTask;
-    };
+private:
+    IntrusivePtr<Settings> m_ptrSettings;
+    IntrusivePtr<page_layout::CacheDrivenTask> m_ptrNextTask;
+};
 }
 #endif  // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

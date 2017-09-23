@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,11 +25,10 @@
 ProjectWriter::ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
                              SelectedPage const& selected_page,
                              OutputFileNameGenerator const& out_file_name_gen)
-    : m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW)),
-      m_outFileNameGen(out_file_name_gen),
-      m_selectedPage(selected_page),
-      m_layoutDirection(page_sequence->layoutDirection())
-{
+        : m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW)),
+          m_outFileNameGen(out_file_name_gen),
+          m_selectedPage(selected_page),
+          m_layoutDirection(page_sequence->layoutDirection()) {
     int next_id = 1;
     size_t const num_pages = m_pageSequence.numPages();
     for (size_t i = 0; i < num_pages; ++i) {
@@ -61,12 +59,10 @@ ProjectWriter::ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
     }
 }
 
-ProjectWriter::~ProjectWriter()
-{ }
+ProjectWriter::~ProjectWriter() {
+}
 
-bool
-ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& filters) const
-{
+bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& filters) const {
     QDomDocument doc;
     QDomElement root_el(doc.createElement("project"));
     doc.appendChild(root_el);
@@ -106,9 +102,7 @@ ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& fil
     return false;
 }  // ProjectWriter::write
 
-QDomElement
-ProjectWriter::processDirectories(QDomDocument& doc) const
-{
+QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
     QDomElement dirs_el(doc.createElement("directories"));
 
     for (Directory const& dir : m_dirs.get<Sequenced>()) {
@@ -121,9 +115,7 @@ ProjectWriter::processDirectories(QDomDocument& doc) const
     return dirs_el;
 }
 
-QDomElement
-ProjectWriter::processFiles(QDomDocument& doc) const
-{
+QDomElement ProjectWriter::processFiles(QDomDocument& doc) const {
     QDomElement files_el(doc.createElement("files"));
 
     for (File const& file : m_files.get<Sequenced>()) {
@@ -139,9 +131,7 @@ ProjectWriter::processFiles(QDomDocument& doc) const
     return files_el;
 }
 
-QDomElement
-ProjectWriter::processImages(QDomDocument& doc) const
-{
+QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
     QDomElement images_el(doc.createElement("images"));
 
     for (Image const& image : m_images.get<Sequenced>()) {
@@ -160,9 +150,7 @@ ProjectWriter::processImages(QDomDocument& doc) const
     return images_el;
 }
 
-void
-ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const
-{
+void ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const {
     MetadataByImage::const_iterator it(m_metadataByImage.find(image_id));
     assert(it != m_metadataByImage.end());
     ImageMetadata const& metadata = it->second;
@@ -178,9 +166,7 @@ ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, Imag
     image_el.appendChild(dpi_el);
 }
 
-QDomElement
-ProjectWriter::processPages(QDomDocument& doc) const
-{
+QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     QDomElement pages_el(doc.createElement("pages"));
 
     PageId const sel_opt_1(m_selectedPage.get(IMAGE_VIEW));
@@ -203,68 +189,52 @@ ProjectWriter::processPages(QDomDocument& doc) const
     return pages_el;
 }
 
-int
-ProjectWriter::dirId(QString const& dir_path) const
-{
+int ProjectWriter::dirId(QString const& dir_path) const {
     Directories::const_iterator const it(m_dirs.find(dir_path));
     assert(it != m_dirs.end());
 
     return it->numericId;
 }
 
-int
-ProjectWriter::fileId(QString const& file_path) const
-{
+int ProjectWriter::fileId(QString const& file_path) const {
     Files::const_iterator const it(m_files.find(file_path));
     if (it != m_files.end()) {
         return it->numericId;
-    }
-    else {
+    } else {
         return -1;
     }
 }
 
-QString
-ProjectWriter::packFilePath(QString const& file_path) const
-{
+QString ProjectWriter::packFilePath(QString const& file_path) const {
     Files::const_iterator const it(m_files.find(file_path));
     if (it != m_files.end()) {
         return QString::number(it->numericId);
-    }
-    else {
+    } else {
         return QString();
     }
 }
 
-int
-ProjectWriter::imageId(ImageId const& image_id) const
-{
+int ProjectWriter::imageId(ImageId const& image_id) const {
     Images::const_iterator const it(m_images.find(image_id));
     assert(it != m_images.end());
 
     return it->numericId;
 }
 
-int
-ProjectWriter::pageId(PageId const& page_id) const
-{
+int ProjectWriter::pageId(PageId const& page_id) const {
     Pages::const_iterator const it(m_pages.find(page_id));
     assert(it != m_pages.end());
 
     return it->numericId;
 }
 
-void
-ProjectWriter::enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) const
-{
+void ProjectWriter::enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) const {
     for (Image const& image : m_images.get<Sequenced>()) {
         out(image.id, image.numericId);
     }
 }
 
-void
-ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) const
-{
+void ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) const {
     for (Page const& page : m_pages.get<Sequenced>()) {
         out(page.id, page.numericId);
     }
@@ -273,10 +243,10 @@ ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) co
 /*======================== ProjectWriter::Image =========================*/
 
 ProjectWriter::Image::Image(PageInfo const& page, int numeric_id)
-    : id(page.imageId()),
-      numericId(numeric_id),
-      numSubPages(page.imageSubPages()),
-      leftHalfRemoved(page.leftHalfRemoved()),
-      rightHalfRemoved(page.rightHalfRemoved())
-{ }
+        : id(page.imageId()),
+          numericId(numeric_id),
+          numSubPages(page.imageSubPages()),
+          leftHalfRemoved(page.leftHalfRemoved()),
+          rightHalfRemoved(page.rightHalfRemoved()) {
+}
 

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,21 +20,19 @@
 #include "ImagePresentation.h"
 #include "OutputMargins.h"
 
-namespace output
-{
-    ImageView::ImageView(QImage const& image, QImage const& downscaled_image)
+namespace output {
+ImageView::ImageView(QImage const& image, QImage const& downscaled_image)
         : ImageViewBase(
               image, downscaled_image,
               ImagePresentation(QTransform(), QRectF(image.rect())),
               OutputMargins()
         ),
           m_dragHandler(*this),
-          m_zoomHandler(*this)
-    {
-        rootInteractionHandler().makeLastFollower(m_dragHandler);
-        rootInteractionHandler().makeLastFollower(m_zoomHandler);
-    }
+          m_zoomHandler(*this) {
+    rootInteractionHandler().makeLastFollower(m_dragHandler);
+    rootInteractionHandler().makeLastFollower(m_zoomHandler);
+}
 
-    ImageView::~ImageView()
-    { }
+ImageView::~ImageView() {
+}
 }

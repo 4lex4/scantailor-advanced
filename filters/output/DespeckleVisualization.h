@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,51 +24,45 @@
 
 class Dpi;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 }
 
-namespace output
-{
-    class DespeckleVisualization
-    {
-    public:
-        /*
-         * Constructs a null visualization.
-         */
-        DespeckleVisualization()
-        { }
+namespace output {
+class DespeckleVisualization {
+public:
+    /*
+     * Constructs a null visualization.
+     */
+    DespeckleVisualization() {
+    }
 
-        /**
-         * \param output The output file, as produced by OutputGenerator::process().
-         *        If this one is null, the visualization will be null as well.
-         * \param speckles Speckles detected in the image.
-         *        If this one is null, it is considered no speckles were detected.
-         * \param dpi Dots-per-inch of both images.
-         */
-        DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+    /**
+     * \param output The output file, as produced by OutputGenerator::process().
+     *        If this one is null, the visualization will be null as well.
+     * \param speckles Speckles detected in the image.
+     *        If this one is null, it is considered no speckles were detected.
+     * \param dpi Dots-per-inch of both images.
+     */
+    DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
 
-        bool isNull() const
-        {
-            return m_image.isNull();
-        }
+    bool isNull() const {
+        return m_image.isNull();
+    }
 
-        QImage const& image() const
-        {
-            return m_image;
-        }
+    QImage const& image() const {
+        return m_image;
+    }
 
-        QImage const& downscaledImage() const
-        {
-            return m_downscaledImage;
-        }
+    QImage const& downscaledImage() const {
+        return m_downscaledImage;
+    }
 
-    private:
-        static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+private:
+    static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
 
-        QImage m_image;
-        QImage m_downscaledImage;
-    };
+    QImage m_image;
+    QImage m_downscaledImage;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,27 +22,24 @@
 #include <QEvent>
 
 template <typename T>
-class PayloadEvent
-    : public QEvent
-{
+class PayloadEvent: public QEvent {
 public:
     PayloadEvent(T const& payload)
-        : QEvent(User),
-          m_payload(payload)
-    { }
+            : QEvent(User),
+              m_payload(payload) {
+    }
 
-    T const& payload() const
-    {
+    T const& payload() const {
         return m_payload;
     }
 
-    T& payload()
-    {
+    T& payload() {
         return m_payload;
     }
 
 private:
     T m_payload;
 };
+
 
 #endif

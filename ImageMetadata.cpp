@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,41 +21,29 @@
 
 using namespace imageproc::constants;
 
-bool
-ImageMetadata::operator==(ImageMetadata const& other) const
-{
+bool ImageMetadata::operator==(ImageMetadata const& other) const {
     if (m_size != other.m_size) {
         return false;
-    }
-    else if (m_dpi.isNull() && other.m_dpi.isNull()) {
+    } else if (m_dpi.isNull() && other.m_dpi.isNull()) {
         return true;
-    }
-    else {
+    } else {
         return m_dpi == other.m_dpi;
     }
 }
 
-bool
-ImageMetadata::isDpiOK() const
-{
+bool ImageMetadata::isDpiOK() const {
     return horizontalDpiStatus() != DPI_UNDEFINED && verticalDpiStatus() != DPI_UNDEFINED;
 }
 
-ImageMetadata::DpiStatus
-ImageMetadata::horizontalDpiStatus() const
-{
+ImageMetadata::DpiStatus ImageMetadata::horizontalDpiStatus() const {
     return dpiStatus(m_size.width(), m_dpi.horizontal());
 }
 
-ImageMetadata::DpiStatus
-ImageMetadata::verticalDpiStatus() const
-{
+ImageMetadata::DpiStatus ImageMetadata::verticalDpiStatus() const {
     return dpiStatus(m_size.height(), m_dpi.vertical());
 }
 
-ImageMetadata::DpiStatus
-ImageMetadata::dpiStatus(int pixel_size, int dpi)
-{
+ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixel_size, int dpi) {
     if (dpi <= 1) {
         return DPI_UNDEFINED;
     }

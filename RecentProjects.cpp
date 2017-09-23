@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,9 +21,7 @@
 #include <QSettings>
 #include <QFile>
 
-void
-RecentProjects::read()
-{
+void RecentProjects::read() {
     QSettings settings;
     std::list<QString> new_list;
 
@@ -39,9 +36,7 @@ RecentProjects::read()
     m_projectFiles.swap(new_list);
 }
 
-void
-RecentProjects::write(int const max_items) const
-{
+void RecentProjects::write(int const max_items) const {
     QSettings settings;
     settings.beginWriteArray("project/recent");
     int idx = 0;
@@ -56,9 +51,7 @@ RecentProjects::write(int const max_items) const
     settings.endArray();
 }
 
-bool
-RecentProjects::validate()
-{
+bool RecentProjects::validate() {
     bool all_ok = true;
 
     std::list<QString>::iterator it(m_projectFiles.begin());
@@ -66,8 +59,7 @@ RecentProjects::validate()
     while (it != end) {
         if (QFile::exists(*it)) {
             ++it;
-        }
-        else {
+        } else {
             m_projectFiles.erase(it++);
             all_ok = false;
         }
@@ -76,16 +68,13 @@ RecentProjects::validate()
     return all_ok;
 }
 
-void
-RecentProjects::setMostRecent(QString const& file_path)
-{
+void RecentProjects::setMostRecent(QString const& file_path) {
     std::list<QString>::iterator const begin(m_projectFiles.begin());
     std::list<QString>::iterator const end(m_projectFiles.end());
     std::list<QString>::iterator it(std::find(begin, end, file_path));
     if (it != end) {
         m_projectFiles.splice(begin, m_projectFiles, it);
-    }
-    else {
+    } else {
         m_projectFiles.push_front(file_path);
     }
 }

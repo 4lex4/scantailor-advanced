@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,40 +29,35 @@ class TaskStatus;
 class FilterData;
 class QImage;
 
-namespace page_split
-{
-    class Task;
+namespace page_split {
+class Task;
 }
 
-namespace fix_orientation
-{
-    class Filter;
-    class Settings;
+namespace fix_orientation {
+class Filter;
+class Settings;
 
-    class Task
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Task)
+class Task: public RefCountable {
+    DECLARE_NON_COPYABLE(Task)
+public:
+    Task(ImageId const& image_id,
+         IntrusivePtr<Filter> const& filter,
+         IntrusivePtr<Settings> const& settings,
+         IntrusivePtr<page_split::Task> const& next_task,
+         bool batch_processing);
 
-    public:
-        Task(ImageId const& image_id,
-             IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<page_split::Task> const& next_task,
-             bool batch_processing);
+    virtual ~Task();
 
-        virtual ~Task();
+    FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+private:
+    class UiUpdater;
 
-    private:
-        class UiUpdater;
-
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<page_split::Task> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
-        ImageId m_imageId;
-        bool m_batchProcessing;
-    };
+    IntrusivePtr<Filter> m_ptrFilter;
+    IntrusivePtr<page_split::Task> m_ptrNextTask;
+    IntrusivePtr<Settings> m_ptrSettings;
+    ImageId m_imageId;
+    bool m_batchProcessing;
+};
 }
 #endif  // ifndef FIX_ORIENTATION_TASK_H_

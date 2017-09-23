@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,25 +23,22 @@
 #include "FittableSpline.h"
 #include <QPointF>
 
-namespace spfit
-{
-    /**
-     * \brief A shape we are trying to fit a spline to.
-     *
-     * Could be a polyline or maybe a point cloud.
-     */
-    class ModelShape
-    {
-    public:
-        virtual ~ModelShape()
-        { }
+namespace spfit {
+/**
+ * \brief A shape we are trying to fit a spline to.
+ *
+ * Could be a polyline or maybe a point cloud.
+ */
+class ModelShape {
+public:
+    virtual ~ModelShape() {
+    }
 
-        /**
-         * Returns a function that approximates the squared distance to the model.
-         * The function is only accurate in the neighbourhood of \p pt.
-         */
-        virtual SqDistApproximant localSqDistApproximant(QPointF const& pt,
-                                                         FittableSpline::SampleFlags flags) const = 0;
-    };
+    /**
+     * Returns a function that approximates the squared distance to the model.
+     * The function is only accurate in the neighbourhood of \p pt.
+     */
+    virtual SqDistApproximant localSqDistApproximant(QPointF const& pt, FittableSpline::SampleFlags flags) const = 0;
+};
 }
 #endif

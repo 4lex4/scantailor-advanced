@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,16 +20,13 @@
 #include <QPointF>
 #include <QLineF>
 
-Proximity::Proximity(QPointF const& p1, QPointF const& p2)
-{
+Proximity::Proximity(QPointF const& p1, QPointF const& p2) {
     double const dx = p1.x() - p2.x();
     double const dy = p1.y() - p2.y();
     m_sqDist = dx * dx + dy * dy;
 }
 
-Proximity
-Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment)
-{
+Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment) {
     if (segment.p1() == segment.p2()) {
         if (point_on_segment) {
             *point_on_segment = segment.p1();

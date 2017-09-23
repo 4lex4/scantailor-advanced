@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -33,17 +32,12 @@
 
 class ZoneInteractionContext;
 
-class ZoneDefaultInteraction
-    : public InteractionHandler
-{
+class ZoneDefaultInteraction: public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(ZoneDefaultInteraction)
-
 public:
     ZoneDefaultInteraction(ZoneInteractionContext& context);
-
 protected:
-    ZoneInteractionContext& context()
-    {
+    ZoneInteractionContext& context() {
         return m_rContext;
     }
 
@@ -88,5 +82,6 @@ private:
     EditableSpline::Ptr m_ptrNearestSegmentSpline;
     QPointF m_screenPointOnSegment;
 };
+
 
 #endif  // ifndef ZONE_DEFAULT_INTERACTION_H_

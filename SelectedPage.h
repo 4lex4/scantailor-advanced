@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -35,16 +34,14 @@
  * stays the same.  Note that set(..., PAGE_VIEW) will always overwrite
  * the sub-page, while get(IMAGE_VIEW) will always return SINGLE_PAGE sub-pages.
  */
-class SelectedPage
-{
+class SelectedPage {
 public:
-    SelectedPage()
-    { }
+    SelectedPage() {
+    }
 
     SelectedPage(PageId const& page_id, PageView view);
 
-    bool isNull() const
-    {
+    bool isNull() const {
         return m_pageId.isNull();
     }
 
@@ -55,5 +52,6 @@ public:
 private:
     PageId m_pageId;
 };
+
 
 #endif

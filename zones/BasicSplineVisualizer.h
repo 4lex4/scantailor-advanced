@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,23 +27,19 @@ class EditableZoneSet;
 class QPainter;
 class QTransform;
 
-class BasicSplineVisualizer
-{
+class BasicSplineVisualizer {
 public:
     BasicSplineVisualizer();
 
-    QRgb solidColor() const
-    {
+    QRgb solidColor() const {
         return m_solidColor;
     }
 
-    QRgb highlightBrightColor() const
-    {
+    QRgb highlightBrightColor() const {
         return m_highlightBrightColor;
     }
 
-    QRgb highlightDarkColor() const
-    {
+    QRgb highlightDarkColor() const {
         return m_highlightDarkColor;
     }
 
@@ -62,5 +57,6 @@ protected:
     QRgb m_highlightDarkColor;
     QPen m_pen;
 };
+
 
 #endif  // ifndef BASIC_SPLINE_VISUALIZER_H_

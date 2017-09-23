@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,12 +22,9 @@
 #include <QThread>
 #include <assert.h>
 
-class BackgroundExecutor::Dispatcher
-    : public QObject
-{
+class BackgroundExecutor::Dispatcher: public QObject {
 public:
     Dispatcher(Impl& owner);
-
 protected:
     virtual void customEvent(QEvent* event);
 
@@ -37,9 +33,7 @@ private:
 };
 
 
-class BackgroundExecutor::Impl
-    : public QThread
-{
+class BackgroundExecutor::Impl: public QThread {
 public:
     Impl(BackgroundExecutor& owner);
 
@@ -62,21 +56,17 @@ private:
 /*============================ BackgroundExecutor ==========================*/
 
 BackgroundExecutor::BackgroundExecutor()
-    : m_ptrImpl(new Impl(*this))
-{ }
+        : m_ptrImpl(new Impl(*this)) {
+}
 
-BackgroundExecutor::~BackgroundExecutor()
-{ }
+BackgroundExecutor::~BackgroundExecutor() {
+}
 
-void
-BackgroundExecutor::shutdown()
-{
+void BackgroundExecutor::shutdown() {
     m_ptrImpl.reset();
 }
 
-void
-BackgroundExecutor::enqueueTask(TaskPtr const& task)
-{
+void BackgroundExecutor::enqueueTask(TaskPtr const& task) {
     if (m_ptrImpl.get()) {
         m_ptrImpl->enqueueTask(task);
     }
@@ -85,12 +75,10 @@ BackgroundExecutor::enqueueTask(TaskPtr const& task)
 /*===================== BackgroundExecutor::Dispatcher =====================*/
 
 BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner)
-    : m_rOwner(owner)
-{ }
+        : m_rOwner(owner) {
+}
 
-void
-BackgroundExecutor::Dispatcher::customEvent(QEvent* event)
-{
+void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
     try {
         TaskEvent* evt = dynamic_cast<TaskEvent*>(event);
         assert(evt);
@@ -104,8 +92,7 @@ BackgroundExecutor::Dispatcher::customEvent(QEvent* event)
                 &m_rOwner, new ResultEvent(result)
             );
         }
-    }
-    catch (std::bad_alloc const&) {
+    } catch (std::bad_alloc const&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
     }
 }
@@ -113,22 +100,18 @@ BackgroundExecutor::Dispatcher::customEvent(QEvent* event)
 /*======================= BackgroundExecutor::Impl =========================*/
 
 BackgroundExecutor::Impl::Impl(BackgroundExecutor& owner)
-    : m_rOwner(owner),
-      m_dispatcher(*this),
-      m_threadStarted(false)
-{
+        : m_rOwner(owner),
+          m_dispatcher(*this),
+          m_threadStarted(false) {
     m_dispatcher.moveToThread(this);
 }
 
-BackgroundExecutor::Impl::~Impl()
-{
+BackgroundExecutor::Impl::~Impl() {
     exit();
     wait();
 }
 
-void
-BackgroundExecutor::Impl::enqueueTask(TaskPtr const& task)
-{
+void BackgroundExecutor::Impl::enqueueTask(TaskPtr const& task) {
     QCoreApplication::postEvent(&m_dispatcher, new TaskEvent(task));
     if (!m_threadStarted) {
         start();
@@ -136,15 +119,11 @@ BackgroundExecutor::Impl::enqueueTask(TaskPtr const& task)
     }
 }
 
-void
-BackgroundExecutor::Impl::run()
-{
+void BackgroundExecutor::Impl::run() {
     exec();
 }
 
-void
-BackgroundExecutor::Impl::customEvent(QEvent* event)
-{
+void BackgroundExecutor::Impl::customEvent(QEvent* event) {
     ResultEvent* evt = dynamic_cast<ResultEvent*>(event);
     assert(evt);
 

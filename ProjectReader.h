@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -38,8 +37,7 @@ class ProjectPages;
 class FileNameDisambiguator;
 class AbstractFilter;
 
-class ProjectReader
-{
+class ProjectReader {
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
@@ -49,28 +47,23 @@ public:
 
     void readFilterSettings(std::vector<FilterPtr> const& filters) const;
 
-    bool success() const
-    {
+    bool success() const {
         return m_ptrPages.get() != 0;
     }
 
-    QString const& outputDirectory() const
-    {
+    QString const& outputDirectory() const {
         return m_outDir;
     }
 
-    IntrusivePtr<ProjectPages> const& pages() const
-    {
+    IntrusivePtr<ProjectPages> const& pages() const {
         return m_ptrPages;
     }
 
-    SelectedPage const& selectedPage() const
-    {
+    SelectedPage const& selectedPage() const {
         return m_selectedPage;
     }
 
-    IntrusivePtr<FileNameDisambiguator> const& namingDisambiguator() const
-    {
+    IntrusivePtr<FileNameDisambiguator> const& namingDisambiguator() const {
         return m_ptrDisambiguator;
     }
 
@@ -84,13 +77,13 @@ private:
         bool compatMultiPage;
 
         FileRecord()
-            : compatMultiPage(false)
-        { }
+                : compatMultiPage(false) {
+        }
 
         FileRecord(QString const& file_path, bool compat_multi_page)
-            : filePath(file_path),
-              compatMultiPage(compat_multi_page)
-        { }
+                : filePath(file_path),
+                  compatMultiPage(compat_multi_page) {
+        }
     };
 
     typedef std::map<int, QString> DirMap;
@@ -126,5 +119,6 @@ private:
     IntrusivePtr<ProjectPages> m_ptrPages;
     IntrusivePtr<FileNameDisambiguator> m_ptrDisambiguator;
 };
+
 
 #endif  // ifndef PROJECTREADER_H_

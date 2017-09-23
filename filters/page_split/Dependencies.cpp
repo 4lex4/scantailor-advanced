@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,65 +21,60 @@
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
-namespace page_split
-{
-    Dependencies::Dependencies()
-    { }
+namespace page_split {
+Dependencies::Dependencies() {
+}
 
-    Dependencies::Dependencies(QDomElement const& el)
+Dependencies::Dependencies(QDomElement const& el)
         : m_imageSize(XmlUnmarshaller::size(el.namedItem("size").toElement())),
           m_rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement())),
           m_layoutType(
               layoutTypeFromString(
                   XmlUnmarshaller::string(el.namedItem("layoutType").toElement())
               )
-          )
-    { }
+          ) {
+}
 
-    Dependencies::Dependencies(QSize const& image_size, OrthogonalRotation const rotation, LayoutType const layout_type)
+Dependencies::Dependencies(QSize const& image_size, OrthogonalRotation const rotation, LayoutType const layout_type)
         : m_imageSize(image_size),
           m_rotation(rotation),
-          m_layoutType(layout_type)
-    { }
+          m_layoutType(layout_type) {
+}
 
-    bool
-    Dependencies::compatibleWith(Params const& params) const
-    {
-        Dependencies const& deps = params.dependencies();
+bool Dependencies::compatibleWith(Params const& params) const {
+    Dependencies const& deps = params.dependencies();
 
-        if (m_imageSize != deps.m_imageSize) {
-            return false;
-        }
-        if (m_rotation != deps.m_rotation) {
-            return false;
-        }
-        if (m_layoutType == deps.m_layoutType) {
-            return true;
-        }
-        if (m_layoutType == SINGLE_PAGE_UNCUT) {
-            return true;
-        }
-        if ((m_layoutType == TWO_PAGES) && (params.splitLineMode() == MODE_MANUAL)) {
-            return true;
-        }
-
+    if (m_imageSize != deps.m_imageSize) {
         return false;
     }
-
-    QDomElement
-    Dependencies::toXml(QDomDocument& doc, QString const& tag_name) const
-    {
-        if (isNull()) {
-            return QDomElement();
-        }
-
-        XmlMarshaller marshaller(doc);
-
-        QDomElement el(doc.createElement(tag_name));
-        el.appendChild(marshaller.rotation(m_rotation, "rotation"));
-        el.appendChild(marshaller.size(m_imageSize, "size"));
-        el.appendChild(marshaller.string(layoutTypeToString(m_layoutType), "layoutType"));
-
-        return el;
+    if (m_rotation != deps.m_rotation) {
+        return false;
     }
+    if (m_layoutType == deps.m_layoutType) {
+        return true;
+    }
+    if (m_layoutType == SINGLE_PAGE_UNCUT) {
+        return true;
+    }
+    if ((m_layoutType == TWO_PAGES) && (params.splitLineMode() == MODE_MANUAL)) {
+        return true;
+    }
+
+    return false;
+}
+
+QDomElement Dependencies::toXml(QDomDocument& doc, QString const& tag_name) const {
+    if (isNull()) {
+        return QDomElement();
+    }
+
+    XmlMarshaller marshaller(doc);
+
+    QDomElement el(doc.createElement(tag_name));
+    el.appendChild(marshaller.rotation(m_rotation, "rotation"));
+    el.appendChild(marshaller.size(m_imageSize, "size"));
+    el.appendChild(marshaller.string(layoutTypeToString(m_layoutType), "layoutType"));
+
+    return el;
+}
 }  // namespace page_split

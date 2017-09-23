@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,56 +23,48 @@
 #include <QIODevice>
 #include <png.h>
 
-namespace
-{
-    class PngHandle
-    {
-        DECLARE_NON_COPYABLE(PngHandle)
+namespace {
+class PngHandle {
+    DECLARE_NON_COPYABLE(PngHandle)
+public:
+    PngHandle();
 
-    public:
-        PngHandle();
+    ~PngHandle();
 
-        ~PngHandle();
-
-        png_structp handle() const
-        {
-            return m_pPng;
-        }
-
-        png_infop info() const
-        {
-            return m_pInfo;
-        }
-
-    private:
-        png_structp m_pPng;
-        png_infop m_pInfo;
-    };
-
-    PngHandle::PngHandle()
-    {
-        m_pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-        if (!m_pPng) {
-            throw std::bad_alloc();
-        }
-        m_pInfo = png_create_info_struct(m_pPng);
-        if (!m_pInfo) {
-            throw std::bad_alloc();
-        }
+    png_structp handle() const {
+        return m_pPng;
     }
 
-    PngHandle::~PngHandle()
-    {
-        png_destroy_read_struct(&m_pPng, &m_pInfo, 0);
+    png_infop info() const {
+        return m_pInfo;
     }
+
+private:
+    png_structp m_pPng;
+    png_infop m_pInfo;
+};
+
+
+PngHandle::PngHandle() {
+    m_pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+    if (!m_pPng) {
+        throw std::bad_alloc();
+    }
+    m_pInfo = png_create_info_struct(m_pPng);
+    if (!m_pInfo) {
+        throw std::bad_alloc();
+    }
+}
+
+PngHandle::~PngHandle() {
+    png_destroy_read_struct(&m_pPng, &m_pInfo, 0);
+}
 }  // namespace
 
-static void
-readFn(png_structp png_ptr, png_bytep data, png_size_t length)
-{
-    QIODevice* io_device = (QIODevice*)png_get_io_ptr(png_ptr);
+static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
+    QIODevice* io_device = (QIODevice*) png_get_io_ptr(png_ptr);
     while (length > 0) {
-        qint64 const read = io_device->read((char*)data, length);
+        qint64 const read = io_device->read((char*) data, length);
         if (read <= 0) {
             png_error(png_ptr, "Read Error");
 
@@ -83,9 +74,7 @@ readFn(png_structp png_ptr, png_bytep data, png_size_t length)
     }
 }
 
-void
-PngMetadataLoader::registerMyself()
-{
+void PngMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
@@ -95,15 +84,14 @@ PngMetadataLoader::registerMyself()
     }
 }
 
-ImageMetadataLoader::Status
-PngMetadataLoader::loadMetadata(QIODevice& io_device, VirtualFunction1<void, ImageMetadata const&>& out)
-{
+ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device,
+                                                            VirtualFunction1<void, ImageMetadata const&>& out) {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }
 
     png_byte signature[8];
-    if (io_device.peek((char*)signature, 8) != 8) {
+    if (io_device.peek((char*) signature, 8) != 8) {
         return FORMAT_NOT_RECOGNIZED;
     }
 

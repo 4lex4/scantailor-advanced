@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,25 +21,21 @@
 #include "ToLineProjector.h"
 
 PolylineIntersector::Hint::Hint()
-    : m_lastSegment(0),
-      m_direction(1)
-{ }
+        : m_lastSegment(0),
+          m_direction(1) {
+}
 
-void
-PolylineIntersector::Hint::update(int new_segment)
-{
+void PolylineIntersector::Hint::update(int new_segment) {
     m_direction = new_segment < m_lastSegment ? -1 : 1;
     m_lastSegment = new_segment;
 }
 
 PolylineIntersector::PolylineIntersector(std::vector<QPointF> const& polyline)
-    : m_polyline(polyline),
-      m_numSegments(polyline.size() - 1)
-{ }
+        : m_polyline(polyline),
+          m_numSegments(polyline.size() - 1) {
+}
 
-QPointF
-PolylineIntersector::intersect(QLineF const& line, Hint& hint) const
-{
+QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
     QLineF const normal(line.normalVector());
 
     if (intersectsSegment(normal, hint.m_lastSegment)) {
@@ -78,8 +73,7 @@ PolylineIntersector::intersect(QLineF const& line, Hint& hint) const
 
         if (mid_dot * left_dot <= 0) {
             right_idx = mid_idx;
-        }
-        else {
+        } else {
             left_idx = mid_idx;
             left_dot = mid_dot;
         }
@@ -90,9 +84,7 @@ PolylineIntersector::intersect(QLineF const& line, Hint& hint) const
     return intersectWithSegment(line, left_idx);
 }  // PolylineIntersector::intersect
 
-bool
-PolylineIntersector::intersectsSegment(QLineF const& normal, int segment) const
-{
+bool PolylineIntersector::intersectsSegment(QLineF const& normal, int segment) const {
     if ((segment < 0) || (segment >= m_numSegments)) {
         return false;
     }
@@ -102,9 +94,7 @@ PolylineIntersector::intersectsSegment(QLineF const& normal, int segment) const
     return intersectsSpan(normal, seg_line);
 }
 
-bool
-PolylineIntersector::intersectsSpan(QLineF const& normal, QLineF const& span) const
-{
+bool PolylineIntersector::intersectsSpan(QLineF const& normal, QLineF const& span) const {
     Vec2d const v1(normal.p2() - normal.p1());
     Vec2d const v2(span.p1() - normal.p1());
     Vec2d const v3(span.p2() - normal.p1());
@@ -112,9 +102,7 @@ PolylineIntersector::intersectsSpan(QLineF const& normal, QLineF const& span) co
     return v1.dot(v2) * v1.dot(v3) <= 0;
 }
 
-QPointF
-PolylineIntersector::intersectWithSegment(QLineF const& line, int segment) const
-{
+QPointF PolylineIntersector::intersectWithSegment(QLineF const& line, int segment) const {
     QLineF const seg_line(m_polyline[segment], m_polyline[segment + 1]);
     QPointF intersection;
     if (line.intersect(seg_line, &intersection) == QLineF::NoIntersection) {
@@ -124,9 +112,8 @@ PolylineIntersector::intersectWithSegment(QLineF const& line, int segment) const
     return intersection;
 }
 
-bool
-PolylineIntersector::tryIntersectingOutsideOfPolyline(QLineF const& line, QPointF& intersection, Hint& hint) const
-{
+bool PolylineIntersector::tryIntersectingOutsideOfPolyline(QLineF const& line, QPointF& intersection,
+                                                           Hint& hint) const {
     QLineF const normal(line.normalVector());
     QPointF const origin(normal.p1());
     Vec2d const nv(normal.p2() - normal.p1());
@@ -145,8 +132,7 @@ PolylineIntersector::tryIntersectingOutsideOfPolyline(QLineF const& line, QPoint
     if (fabs(front_dot) < fabs(back_dot)) {
         hint.update(-1);
         intersection = proj.projectionPoint(m_polyline.front());
-    }
-    else {
+    } else {
         hint.update(m_numSegments);
         intersection = proj.projectionPoint(m_polyline.back());
     }

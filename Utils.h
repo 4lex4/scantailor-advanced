@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,8 +22,7 @@
 #include <QString>
 #include "ThumbnailPixmapCache.h"
 
-class Utils
-{
+class Utils {
 public:
     template <typename M, typename K, typename V>
     static typename M::iterator mapSetValue(M& map, K const& key, V const& val);
@@ -52,8 +50,7 @@ public:
      * This function is intended to be used instead of
      * QDomElement::setAttribute(double), which is locale dependent.
      */
-    static QString doubleToString(double val)
-    {
+    static QString doubleToString(double val) {
         return QString::number(val, 'g', 16);
     }
 
@@ -70,15 +67,13 @@ public:
     static QString richTextForLink(QString const& label, QString const& target = QString(QChar('#')));
 };
 
+
 template <typename M, typename K, typename V>
-typename M::iterator
-Utils::mapSetValue(M& map, K const& key, V const& val)
-{
+typename M::iterator Utils::mapSetValue(M& map, K const& key, V const& val) {
     typename M::iterator const it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {
         return map.insert(it, typename M::value_type(key, val));
-    }
-    else {
+    } else {
         it->second = val;
 
         return it;

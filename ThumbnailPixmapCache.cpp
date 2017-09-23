@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -41,8 +40,7 @@ using namespace ::boost;
 using namespace ::boost::multi_index;
 using namespace imageproc;
 
-class ThumbnailPixmapCache::Item
-{
+class ThumbnailPixmapCache::Item {
 public:
     enum Status {
         /**
@@ -93,15 +91,12 @@ public:
     Item(ImageId const& image_id, int preceding_load_attepmts, Status status);
 
     Item(Item const& other);
-
 private:
     Item& operator=(Item const& other);
 };
 
 
-class ThumbnailPixmapCache::Impl
-    : public QThread
-{
+class ThumbnailPixmapCache::Impl: public QThread {
 public:
     Impl(QString const& thumb_dir, QSize const& max_thumb_size, int max_cached_pixmaps, int expiration_threshold);
 
@@ -142,18 +137,16 @@ private:
     typedef Container::index<LoadQueueTag>::type LoadQueue;
     typedef Container::index<RemoveQueueTag>::type RemoveQueue;
 
-    class BackgroundLoader
-        : public QObject
-    {
+    class BackgroundLoader: public QObject {
     public:
         BackgroundLoader(Impl& owner);
-
     protected:
         virtual void customEvent(QEvent* e);
 
     private:
         Impl& m_rOwner;
     };
+
 
     void backgroundProcessing();
 
@@ -229,31 +222,25 @@ private:
 };
 
 
-class ThumbnailPixmapCache::Impl::LoadResultEvent
-    : public QEvent
-{
+class ThumbnailPixmapCache::Impl::LoadResultEvent: public QEvent {
 public:
     LoadResultEvent(Impl::LoadQueue::iterator const& lq_t, QImage const& image, ThumbnailLoadResult::Status status);
 
     virtual ~LoadResultEvent();
 
-    Impl::LoadQueue::iterator lqIter() const
-    {
+    Impl::LoadQueue::iterator lqIter() const {
         return m_lqIter;
     }
 
-    QImage const& image() const
-    {
+    QImage const& image() const {
         return m_image;
     }
 
-    void releaseImage()
-    {
+    void releaseImage() {
         m_image = QImage();
     }
 
-    ThumbnailLoadResult::Status status() const
-    {
+    ThumbnailLoadResult::Status status() const {
         return m_status;
     }
 
@@ -270,52 +257,41 @@ ThumbnailPixmapCache::ThumbnailPixmapCache(QString const& thumb_dir,
                                            QSize const& max_thumb_size,
                                            int const max_cached_pixmaps,
                                            int const expiration_threshold)
-    : m_ptrImpl(
-          new Impl(
-              RelinkablePath::normalize(thumb_dir), max_thumb_size,
-              max_cached_pixmaps, expiration_threshold
-          )
-    )
-{ }
+        : m_ptrImpl(
+              new Impl(
+                  RelinkablePath::normalize(thumb_dir), max_thumb_size,
+                  max_cached_pixmaps, expiration_threshold
+              )
+        ) {
+}
 
-ThumbnailPixmapCache::~ThumbnailPixmapCache()
-{ }
+ThumbnailPixmapCache::~ThumbnailPixmapCache() {
+}
 
-void
-ThumbnailPixmapCache::setThumbDir(QString const& thumb_dir)
-{
+void ThumbnailPixmapCache::setThumbDir(QString const& thumb_dir) {
     m_ptrImpl->setThumbDir(RelinkablePath::normalize(thumb_dir));
 }
 
-ThumbnailPixmapCache::Status
-ThumbnailPixmapCache::loadFromCache(ImageId const& image_id, QPixmap& pixmap)
-{
+ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadFromCache(ImageId const& image_id, QPixmap& pixmap) {
     return m_ptrImpl->request(image_id, pixmap);
 }
 
-ThumbnailPixmapCache::Status
-ThumbnailPixmapCache::loadNow(ImageId const& image_id, QPixmap& pixmap)
-{
+ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadNow(ImageId const& image_id, QPixmap& pixmap) {
     return m_ptrImpl->request(image_id, pixmap, true);
 }
 
-ThumbnailPixmapCache::Status
-ThumbnailPixmapCache::loadRequest(ImageId const& image_id,
-                                  QPixmap& pixmap,
-                                  std::weak_ptr<CompletionHandler> const& completion_handler)
+ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadRequest(ImageId const& image_id,
+                                                               QPixmap& pixmap,
+                                                               std::weak_ptr<CompletionHandler> const& completion_handler)
 {
     return m_ptrImpl->request(image_id, pixmap, false, &completion_handler);
 }
 
-void
-ThumbnailPixmapCache::ensureThumbnailExists(ImageId const& image_id, QImage const& image)
-{
+void ThumbnailPixmapCache::ensureThumbnailExists(ImageId const& image_id, QImage const& image) {
     m_ptrImpl->ensureThumbnailExists(image_id, image);
 }
 
-void
-ThumbnailPixmapCache::recreateThumbnail(ImageId const& image_id, QImage const& image)
-{
+void ThumbnailPixmapCache::recreateThumbnail(ImageId const& image_id, QImage const& image) {
     m_ptrImpl->recreateThumbnail(image_id, image);
 }
 
@@ -325,29 +301,27 @@ ThumbnailPixmapCache::Impl::Impl(QString const& thumb_dir,
                                  QSize const& max_thumb_size,
                                  int const max_cached_pixmaps,
                                  int const expiration_threshold)
-    : m_backgroundLoader(*this),
-      m_items(),
-      m_itemsByKey(m_items.get<ItemsByKeyTag>()),
-      m_loadQueue(m_items.get<LoadQueueTag>()),
-      m_removeQueue(m_items.get<RemoveQueueTag>()),
-      m_endOfLoadedItems(m_removeQueue.end()),
-      m_thumbDir(thumb_dir),
-      m_maxThumbSize(max_thumb_size),
-      m_maxCachedPixmaps(max_cached_pixmaps),
-      m_expirationThreshold(expiration_threshold),
-      m_numQueuedItems(0),
-      m_numLoadedItems(0),
-      m_totalLoadAttempts(0),
-      m_threadStarted(false),
-      m_shuttingDown(false)
-{
+        : m_backgroundLoader(*this),
+          m_items(),
+          m_itemsByKey(m_items.get<ItemsByKeyTag>()),
+          m_loadQueue(m_items.get<LoadQueueTag>()),
+          m_removeQueue(m_items.get<RemoveQueueTag>()),
+          m_endOfLoadedItems(m_removeQueue.end()),
+          m_thumbDir(thumb_dir),
+          m_maxThumbSize(max_thumb_size),
+          m_maxCachedPixmaps(max_cached_pixmaps),
+          m_expirationThreshold(expiration_threshold),
+          m_numQueuedItems(0),
+          m_numLoadedItems(0),
+          m_totalLoadAttempts(0),
+          m_threadStarted(false),
+          m_shuttingDown(false) {
     QDir().mkdir(m_thumbDir);
 
     m_backgroundLoader.moveToThread(this);
 }
 
-ThumbnailPixmapCache::Impl::~Impl()
-{
+ThumbnailPixmapCache::Impl::~Impl() {
     {
         QMutexLocker const locker(&m_mutex);
 
@@ -362,9 +336,7 @@ ThumbnailPixmapCache::Impl::~Impl()
     wait();
 }
 
-void
-ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir)
-{
+void ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir) {
     QMutexLocker locker(&m_mutex);
 
     if (thumb_dir == m_thumbDir) {
@@ -381,11 +353,10 @@ ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir)
     }
 }
 
-ThumbnailPixmapCache::Status
-ThumbnailPixmapCache::Impl::request(ImageId const& image_id,
-                                    QPixmap& pixmap,
-                                    bool const load_now,
-                                    std::weak_ptr<CompletionHandler> const* completion_handler)
+ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(ImageId const& image_id,
+                                                                 QPixmap& pixmap,
+                                                                 bool const load_now,
+                                                                 std::weak_ptr<CompletionHandler> const* completion_handler)
 {
     assert(QCoreApplication::instance()->thread() == QThread::currentThread());
 
@@ -406,8 +377,7 @@ ThumbnailPixmapCache::Impl::request(ImageId const& image_id,
             m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
 
             return LOADED;
-        }
-        else if (k_it->status == Item::LOAD_FAILED) {
+        } else if (k_it->status == Item::LOAD_FAILED) {
             pixmap = k_it->pixmap;
 
             return LOAD_FAILED;
@@ -469,8 +439,7 @@ ThumbnailPixmapCache::Impl::request(ImageId const& image_id,
             QCoreApplication::postEvent(
                 &m_backgroundLoader, new QEvent(QEvent::User)
             );
-        }
-        else {
+        } else {
             start();
             m_threadStarted = true;
         }
@@ -479,9 +448,7 @@ ThumbnailPixmapCache::Impl::request(ImageId const& image_id,
     return QUEUED;
 }  // ThumbnailPixmapCache::Impl::request
 
-void
-ThumbnailPixmapCache::Impl::ensureThumbnailExists(ImageId const& image_id, QImage const& image)
-{
+void ThumbnailPixmapCache::Impl::ensureThumbnailExists(ImageId const& image_id, QImage const& image) {
     if (m_shuttingDown) {
         return;
     }
@@ -509,9 +476,7 @@ ThumbnailPixmapCache::Impl::ensureThumbnailExists(ImageId const& image_id, QImag
     }
 }
 
-void
-ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QImage const& image)
-{
+void ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QImage const& image) {
     if (m_shuttingDown) {
         return;
     }
@@ -533,8 +498,7 @@ ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QImage co
     QIODevice* iodev = overwriter.startWriting(thumb_file_path);
     if (iodev && thumbnail.save(iodev, "PNG")) {
         thumb_written = overwriter.commit();
-    }
-    else {
+    } else {
         overwriter.abort();
     }
 
@@ -561,22 +525,16 @@ ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QImage co
     }
 }  // ThumbnailPixmapCache::Impl::recreateThumbnail
 
-void
-ThumbnailPixmapCache::Impl::run()
-{
+void ThumbnailPixmapCache::Impl::run() {
     backgroundProcessing();
     exec();
 }
 
-void
-ThumbnailPixmapCache::Impl::customEvent(QEvent* e)
-{
+void ThumbnailPixmapCache::Impl::customEvent(QEvent* e) {
     processLoadResult(dynamic_cast<LoadResultEvent*>(e));
 }
 
-void
-ThumbnailPixmapCache::Impl::backgroundProcessing()
-{
+void ThumbnailPixmapCache::Impl::backgroundProcessing() {
     assert(QCoreApplication::instance()->thread() != QThread::currentThread());
 
     for (;;) {
@@ -604,7 +562,8 @@ ThumbnailPixmapCache::Impl::backgroundProcessing()
                 queuedToInProgress(lq_it);
 
                 if (m_totalLoadAttempts - lq_it->precedingLoadAttempts
-                    > m_expirationThreshold) {
+                    > m_expirationThreshold)
+                {
                     postLoadResult(
                         lq_it, QImage(),
                         ThumbnailLoadResult::REQUEST_EXPIRED
@@ -625,18 +584,15 @@ ThumbnailPixmapCache::Impl::backgroundProcessing()
                                                        ? ThumbnailLoadResult::LOAD_FAILED
                                                        : ThumbnailLoadResult::LOADED;
             postLoadResult(lq_it, image, status);
-        }
-        catch (std::bad_alloc const&) {
+        } catch (std::bad_alloc const&) {
             OutOfMemoryHandler::instance().handleOutOfMemorySituation();
         }
     }
 }  // ThumbnailPixmapCache::Impl::backgroundProcessing
 
-QImage
-ThumbnailPixmapCache::Impl::loadSaveThumbnail(ImageId const& image_id,
-                                              QString const& thumb_dir,
-                                              QSize const& max_thumb_size)
-{
+QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(ImageId const& image_id,
+                                                     QString const& thumb_dir,
+                                                     QSize const& max_thumb_size) {
     QString const thumb_file_path(getThumbFilePath(image_id, thumb_dir));
 
     QImage image(ImageLoader::load(thumb_file_path, 0));
@@ -655,9 +611,7 @@ ThumbnailPixmapCache::Impl::loadSaveThumbnail(ImageId const& image_id,
     return thumbnail;
 }
 
-QString
-ThumbnailPixmapCache::Impl::getThumbFilePath(ImageId const& image_id, QString const& thumb_dir)
-{
+QString ThumbnailPixmapCache::Impl::getThumbFilePath(ImageId const& image_id, QString const& thumb_dir) {
     QByteArray const orig_path_hash(
         QCryptographicHash::hash(
             image_id.filePath().toUtf8(), QCryptographicHash::Md5
@@ -680,11 +634,10 @@ ThumbnailPixmapCache::Impl::getThumbFilePath(ImageId const& image_id, QString co
     return thumb_file_path;
 }
 
-QImage
-ThumbnailPixmapCache::Impl::makeThumbnail(QImage const& image, QSize const& max_thumb_size)
-{
+QImage ThumbnailPixmapCache::Impl::makeThumbnail(QImage const& image, QSize const& max_thumb_size) {
     if ((image.width() < max_thumb_size.width())
-        && (image.height() < max_thumb_size.height())) {
+        && (image.height() < max_thumb_size.height()))
+    {
         return image;
     }
 
@@ -701,9 +654,7 @@ ThumbnailPixmapCache::Impl::makeThumbnail(QImage const& image, QSize const& max_
     );
 }
 
-void
-ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& lq_it)
-{
+void ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& lq_it) {
     assert(lq_it->status == Item::QUEUED);
     lq_it->status = Item::IN_PROGRESS;
 
@@ -713,18 +664,14 @@ ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& lq_it)
     m_loadQueue.relocate(m_loadQueue.end(), lq_it);
 }
 
-void
-ThumbnailPixmapCache::Impl::postLoadResult(LoadQueue::iterator const& lq_it,
-                                           QImage const& image,
-                                           ThumbnailLoadResult::Status const status)
-{
+void ThumbnailPixmapCache::Impl::postLoadResult(LoadQueue::iterator const& lq_it,
+                                                QImage const& image,
+                                                ThumbnailLoadResult::Status const status) {
     LoadResultEvent* e = new LoadResultEvent(lq_it, image, status);
     QCoreApplication::postEvent(this, e);
 }
 
-void
-ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
-{
+void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
     assert(QCoreApplication::instance()->thread() == QThread::currentThread());
 
     QPixmap pixmap(QPixmap::fromImage(result->image()));
@@ -747,10 +694,10 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
         Item const& item = *lq_it;
 
         if ((result->status() == ThumbnailLoadResult::LOADED)
-            && pixmap.isNull()) {
+            && pixmap.isNull())
+        {
             assert(!item.pixmap.isNull());
-        }
-        else {
+        } else {
             item.pixmap = pixmap;
         }
         item.completionHandlers.swap(completion_handlers);
@@ -764,13 +711,11 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
             m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
 
             m_loadQueue.relocate(m_loadQueue.end(), lq_it);
-        }
-        else if (result->status() == ThumbnailLoadResult::LOAD_FAILED) {
+        } else if (result->status() == ThumbnailLoadResult::LOAD_FAILED) {
             item.status = Item::LOAD_FAILED;
 
             m_loadQueue.relocate(m_loadQueue.end(), lq_it);
-        }
-        else {
+        } else {
             assert(result->status() == ThumbnailLoadResult::REQUEST_EXPIRED);
 
             removeItemLocked(rq_it);
@@ -786,9 +731,7 @@ ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result)
     }
 }  // ThumbnailPixmapCache::Impl::processLoadResult
 
-void
-ThumbnailPixmapCache::Impl::removeExcessLocked()
-{
+void ThumbnailPixmapCache::Impl::removeExcessLocked() {
     if (m_numLoadedItems >= m_maxCachedPixmaps) {
         assert(m_numLoadedItems > 0);
         assert(!m_removeQueue.empty());
@@ -797,9 +740,7 @@ ThumbnailPixmapCache::Impl::removeExcessLocked()
     }
 }
 
-void
-ThumbnailPixmapCache::Impl::removeItemLocked(RemoveQueue::iterator const& it)
-{
+void ThumbnailPixmapCache::Impl::removeItemLocked(RemoveQueue::iterator const& it) {
     switch (it->status) {
         case Item::QUEUED:
             assert(m_numQueuedItems > 0);
@@ -820,16 +761,12 @@ ThumbnailPixmapCache::Impl::removeItemLocked(RemoveQueue::iterator const& it)
     m_removeQueue.erase(it);
 }
 
-void
-ThumbnailPixmapCache::Impl::cachePixmapUnlocked(ImageId const& image_id, QPixmap const& pixmap)
-{
+void ThumbnailPixmapCache::Impl::cachePixmapUnlocked(ImageId const& image_id, QPixmap const& pixmap) {
     QMutexLocker const locker(&m_mutex);
     cachePixmapLocked(image_id, pixmap);
 }
 
-void
-ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPixmap const& pixmap)
-{
+void ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPixmap const& pixmap) {
     if (m_shuttingDown) {
         return;
     }
@@ -898,42 +835,40 @@ ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPixmap c
 /*====================== ThumbnailPixmapCache::Item =========================*/
 
 ThumbnailPixmapCache::Item::Item(ImageId const& image_id, int const preceding_load_attempts, Status const st)
-    : imageId(image_id),
-      precedingLoadAttempts(preceding_load_attempts),
-      status(st)
-{ }
+        : imageId(image_id),
+          precedingLoadAttempts(preceding_load_attempts),
+          status(st) {
+}
 
 ThumbnailPixmapCache::Item::Item(Item const& other)
-    : imageId(other.imageId),
-      pixmap(other.pixmap),
-      completionHandlers(other.completionHandlers),
-      precedingLoadAttempts(other.precedingLoadAttempts),
-      status(other.status)
-{ }
+        : imageId(other.imageId),
+          pixmap(other.pixmap),
+          completionHandlers(other.completionHandlers),
+          precedingLoadAttempts(other.precedingLoadAttempts),
+          status(other.status) {
+}
 
 /*=============== ThumbnailPixmapCache::Impl::LoadResultEvent ===============*/
 
 ThumbnailPixmapCache::Impl::LoadResultEvent::LoadResultEvent(Impl::LoadQueue::iterator const& lq_it,
                                                              QImage const& image,
                                                              ThumbnailLoadResult::Status const status)
-    : QEvent(QEvent::User),
-      m_lqIter(lq_it),
-      m_image(image),
-      m_status(status)
-{ }
+        : QEvent(QEvent::User),
+          m_lqIter(lq_it),
+          m_image(image),
+          m_status(status) {
+}
 
-ThumbnailPixmapCache::Impl::LoadResultEvent::~LoadResultEvent()
-{ }
+ThumbnailPixmapCache::Impl::LoadResultEvent::~LoadResultEvent() {
+}
 
 /*================== ThumbnailPixmapCache::BackgroundLoader =================*/
 
 ThumbnailPixmapCache::Impl::BackgroundLoader::BackgroundLoader(Impl& owner)
-    : m_rOwner(owner)
-{ }
+        : m_rOwner(owner) {
+}
 
-void
-ThumbnailPixmapCache::Impl::BackgroundLoader::customEvent(QEvent*)
-{
+void ThumbnailPixmapCache::Impl::BackgroundLoader::customEvent(QEvent*) {
     m_rOwner.backgroundProcessing();
 }
 

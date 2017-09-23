@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,10 +25,8 @@
 #include "PayloadEvent.h"
 #include <memory>
 
-class BackgroundExecutor
-{
+class BackgroundExecutor {
     DECLARE_NON_COPYABLE(BackgroundExecutor)
-
 public:
     typedef IntrusivePtr<AbstractCommand0<void>> TaskResultPtr;
     typedef IntrusivePtr<AbstractCommand0<TaskResultPtr>> TaskPtr;
@@ -69,5 +66,6 @@ private:
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
+
 
 #endif  // ifndef BACKGROUNDEXECUTOR_H_

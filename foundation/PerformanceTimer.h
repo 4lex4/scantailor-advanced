@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,17 +21,17 @@
 
 #include <time.h>
 
-class PerformanceTimer
-{
+class PerformanceTimer {
 public:
     PerformanceTimer()
-        : m_start(clock())
-    { }
+            : m_start(clock()) {
+    }
 
     void print(char const* prefix = "");
 
 private:
     clock_t const m_start;
 };
+
 
 #endif

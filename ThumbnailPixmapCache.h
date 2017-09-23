@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,11 +32,8 @@ class QPixmap;
 class QString;
 class QSize;
 
-class ThumbnailPixmapCache
-    : public RefCountable
-{
+class ThumbnailPixmapCache: public RefCountable {
     DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
-
 public:
     enum Status { LOADED, LOAD_FAILED, QUEUED };
 
@@ -155,5 +151,6 @@ private:
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
+
 
 #endif  // ifndef THUMBNAILPIXMAPCACHE_H_

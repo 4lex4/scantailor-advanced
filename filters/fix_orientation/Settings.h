@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,35 +30,31 @@
 
 class AbstractRelinker;
 
-namespace fix_orientation
-{
-    class Settings
-        : public RefCountable
-    {
-        DECLARE_NON_COPYABLE(Settings)
+namespace fix_orientation {
+class Settings: public RefCountable {
+    DECLARE_NON_COPYABLE(Settings)
+public:
+    Settings();
 
-    public:
-        Settings();
+    virtual ~Settings();
 
-        virtual ~Settings();
+    void clear();
 
-        void clear();
+    void performRelinking(AbstractRelinker const& relinker);
 
-        void performRelinking(AbstractRelinker const& relinker);
+    void applyRotation(ImageId const& image_id, OrthogonalRotation rotation);
 
-        void applyRotation(ImageId const& image_id, OrthogonalRotation rotation);
+    void applyRotation(std::set<PageId> const& pages, OrthogonalRotation rotation);
 
-        void applyRotation(std::set<PageId> const& pages, OrthogonalRotation rotation);
+    OrthogonalRotation getRotationFor(ImageId const& image_id) const;
 
-        OrthogonalRotation getRotationFor(ImageId const& image_id) const;
+private:
+    typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
 
-    private:
-        typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
+    void setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation);
 
-        void setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation);
-
-        mutable QMutex m_mutex;
-        PerImageRotation m_perImageRotation;
-    };
+    mutable QMutex m_mutex;
+    PerImageRotation m_perImageRotation;
+};
 }
 #endif  // ifndef FIX_ORIENTATION_SETTINGS_H_

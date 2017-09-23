@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -23,8 +22,7 @@
 #include <QSize>
 #include "Dpi.h"
 
-class ImageMetadata
-{
+class ImageMetadata {
 public:
     enum DpiStatus {
         DPI_OK,
@@ -34,31 +32,27 @@ public:
         DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
     };
 
-    ImageMetadata()
-    { }
+    ImageMetadata() {
+    }
 
     ImageMetadata(QSize size, Dpi dpi)
-        : m_size(size),
-          m_dpi(dpi)
-    { }
+            : m_size(size),
+              m_dpi(dpi) {
+    }
 
-    QSize const& size() const
-    {
+    QSize const& size() const {
         return m_size;
     }
 
-    void setSize(QSize const& size)
-    {
+    void setSize(QSize const& size) {
         m_size = size;
     }
 
-    Dpi const& dpi() const
-    {
+    Dpi const& dpi() const {
         return m_dpi;
     }
 
-    void setDpi(Dpi const& dpi)
-    {
+    void setDpi(Dpi const& dpi) {
         m_dpi = dpi;
     }
 
@@ -70,8 +64,7 @@ public:
 
     bool operator==(ImageMetadata const& other) const;
 
-    bool operator!=(ImageMetadata const& other) const
-    {
+    bool operator!=(ImageMetadata const& other) const {
         return !(*this == other);
     }
 
@@ -81,5 +74,6 @@ private:
     QSize m_size;
     Dpi m_dpi;
 };
+
 
 #endif  // ifndef IMAGEMETADATA_H_

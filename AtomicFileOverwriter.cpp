@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,17 +21,14 @@
 #include <QFile>
 #include <QTemporaryFile>
 
-AtomicFileOverwriter::AtomicFileOverwriter()
-{ }
+AtomicFileOverwriter::AtomicFileOverwriter() {
+}
 
-AtomicFileOverwriter::~AtomicFileOverwriter()
-{
+AtomicFileOverwriter::~AtomicFileOverwriter() {
     abort();
 }
 
-QIODevice*
-AtomicFileOverwriter::startWriting(QString const& file_path)
-{
+QIODevice* AtomicFileOverwriter::startWriting(QString const& file_path) {
     abort();
 
     m_ptrTempFile.reset(new QTemporaryFile(file_path));
@@ -44,9 +40,7 @@ AtomicFileOverwriter::startWriting(QString const& file_path)
     return m_ptrTempFile.get();
 }
 
-bool
-AtomicFileOverwriter::commit()
-{
+bool AtomicFileOverwriter::commit() {
     if (!m_ptrTempFile.get()) {
         return false;
     }
@@ -65,9 +59,7 @@ AtomicFileOverwriter::commit()
     return true;
 }
 
-void
-AtomicFileOverwriter::abort()
-{
+void AtomicFileOverwriter::abort() {
     if (!m_ptrTempFile.get()) {
         return;
     }

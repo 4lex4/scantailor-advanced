@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,17 +21,16 @@
 
 class QString;
 
-namespace output
-{
-    enum DespeckleLevel {
-        DESPECKLE_OFF,
-        DESPECKLE_CAUTIOUS,
-        DESPECKLE_NORMAL,
-        DESPECKLE_AGGRESSIVE
-    };
+namespace output {
+enum DespeckleLevel {
+    DESPECKLE_OFF,
+    DESPECKLE_CAUTIOUS,
+    DESPECKLE_NORMAL,
+    DESPECKLE_AGGRESSIVE
+};
 
-    QString despeckleLevelToString(DespeckleLevel level);
+QString despeckleLevelToString(DespeckleLevel level);
 
-    DespeckleLevel despeckleLevelFromString(QString const& str);
+DespeckleLevel despeckleLevelFromString(QString const& str);
 }
 #endif

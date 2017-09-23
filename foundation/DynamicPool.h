@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -32,13 +31,11 @@
  * besides destroying the whole pool.
  */
 template <typename T>
-class DynamicPool
-{
+class DynamicPool {
     DECLARE_NON_COPYABLE(DynamicPool)
-
 public:
-    DynamicPool()
-    { }
+    DynamicPool() {
+    }
 
     ~DynamicPool();
 
@@ -58,19 +55,17 @@ private:
 
     /**< Don't overallocate too much. */
 
-    struct Chunk
-        : public boost::intrusive::list_base_hook<>{
+    struct Chunk: public boost::intrusive::list_base_hook<>{
         boost::scoped_array<T> storage;
         T* pData;
         size_t remainingElements;
 
         Chunk()
-            : pData(0),
-              remainingElements(0)
-        { }
+                : pData(0),
+                  remainingElements(0) {
+        }
 
-        void init(boost::scoped_array<T>& data, size_t size)
-        {
+        void init(boost::scoped_array<T>& data, size_t size) {
             data.swap(storage);
             pData = storage.get();
             remainingElements = size;
@@ -78,8 +73,7 @@ private:
     };
 
     struct DeleteDisposer {
-        void operator()(Chunk* chunk)
-        {
+        void operator()(Chunk* chunk) {
             delete chunk;
         }
     };
@@ -93,15 +87,12 @@ private:
 
 
 template <typename T>
-DynamicPool<T>::~DynamicPool()
-{
+DynamicPool<T>::~DynamicPool() {
     m_chunkList.clear_and_dispose(DeleteDisposer());
 }
 
 template <typename T>
-T*
-DynamicPool<T>::alloc(size_t num_elements)
-{
+T* DynamicPool<T>::alloc(size_t num_elements) {
     Chunk* chunk = 0;
 
     if (!m_chunkList.empty()) {
@@ -126,11 +117,9 @@ DynamicPool<T>::alloc(size_t num_elements)
 }
 
 template <typename T>
-size_t
-DynamicPool<T>::adviseChunkSize(size_t num_elements)
-{
+size_t DynamicPool<T>::adviseChunkSize(size_t num_elements) {
     size_t factor = OVERALLOCATION_LIMIT / num_elements;
-    if (factor > (size_t)OVERALLOCATION_FACTOR) {
+    if (factor > (size_t) OVERALLOCATION_FACTOR) {
         factor = OVERALLOCATION_FACTOR;
     }
 

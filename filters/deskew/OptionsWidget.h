@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,90 +28,84 @@
 #include "PageSelectionAccessor.h"
 #include <set>
 
-namespace deskew
-{
-    class Settings;
+namespace deskew {
+class Settings;
 
-    class OptionsWidget
-        : public FilterOptionsWidget,
-          private Ui::DeskewOptionsWidget
-    {
-        Q_OBJECT
-
+class OptionsWidget: public FilterOptionsWidget, private Ui::DeskewOptionsWidget {
+    Q_OBJECT
+public:
+    class UiData {
     public:
-        class UiData
-        {
-        public:
-            UiData();
+        UiData();
 
-            ~UiData();
+        ~UiData();
 
-            void setEffectiveDeskewAngle(double degrees);
+        void setEffectiveDeskewAngle(double degrees);
 
-            double effectiveDeskewAngle() const;
+        double effectiveDeskewAngle() const;
 
-            void setDependencies(Dependencies const& deps);
+        void setDependencies(Dependencies const& deps);
 
-            Dependencies const& dependencies() const;
+        Dependencies const& dependencies() const;
 
-            void setMode(AutoManualMode mode);
+        void setMode(AutoManualMode mode);
 
-            AutoManualMode mode() const;
-
-        private:
-            double m_effDeskewAngle;
-            Dependencies m_deps;
-            AutoManualMode m_mode;
-        };
-
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
-
-        virtual ~OptionsWidget();
-
-    signals:
-        void manualDeskewAngleSet(double degrees);
-
-    public slots:
-        void manualDeskewAngleSetExternally(double degrees);
-
-    public:
-        void preUpdateUI(PageId const& page_id);
-
-        void postUpdateUI(UiData const& ui_data);
-
-    private slots:
-        void spinBoxValueChanged(double skew_degrees);
-
-        void modeChanged(bool auto_mode);
-
-        void showDeskewDialog();
-
-        void appliedTo(std::set<PageId> const& pages);
-
-        void appliedToAllPages(std::set<PageId> const& pages);
+        AutoManualMode mode() const;
 
     private:
-        void updateModeIndication(AutoManualMode mode);
-
-        void setSpinBoxUnknownState();
-
-        void setSpinBoxKnownState(double angle);
-
-        void commitCurrentParams();
-
-        static double spinBoxToDegrees(double sb_value);
-
-        static double degreesToSpinBox(double degrees);
-
-        static double const MAX_ANGLE;
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        PageId m_pageId;
-        UiData m_uiData;
-        int m_ignoreAutoManualToggle;
-        int m_ignoreSpinBoxChanges;
-
-        PageSelectionAccessor m_pageSelectionAccessor;
+        double m_effDeskewAngle;
+        Dependencies m_deps;
+        AutoManualMode m_mode;
     };
+
+
+    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~OptionsWidget();
+signals:
+    void manualDeskewAngleSet(double degrees);
+
+public slots:
+    void manualDeskewAngleSetExternally(double degrees);
+
+public:
+    void preUpdateUI(PageId const& page_id);
+
+    void postUpdateUI(UiData const& ui_data);
+
+private slots:
+    void spinBoxValueChanged(double skew_degrees);
+
+    void modeChanged(bool auto_mode);
+
+    void showDeskewDialog();
+
+    void appliedTo(std::set<PageId> const& pages);
+
+    void appliedToAllPages(std::set<PageId> const& pages);
+
+private:
+    void updateModeIndication(AutoManualMode mode);
+
+    void setSpinBoxUnknownState();
+
+    void setSpinBoxKnownState(double angle);
+
+    void commitCurrentParams();
+
+    static double spinBoxToDegrees(double sb_value);
+
+    static double degreesToSpinBox(double degrees);
+
+    static double const MAX_ANGLE;
+
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageId m_pageId;
+    UiData m_uiData;
+    int m_ignoreAutoManualToggle;
+    int m_ignoreSpinBoxChanges;
+
+    PageSelectionAccessor m_pageSelectionAccessor;
+};
 }  // namespace deskew
 #endif  // ifndef DESKEW_OPTIONSWIDGET_H_

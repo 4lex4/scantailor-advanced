@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -26,73 +25,63 @@
 class QPointF;
 class QLineF;
 
-class Proximity
-{
+class Proximity {
 public:
     Proximity()
-        : m_sqDist(std::numeric_limits<double>::max())
-    { }
+            : m_sqDist(std::numeric_limits<double>::max()) {
+    }
 
     Proximity(QPointF const& p1, QPointF const& p2);
 
-    static Proximity fromDist(double dist)
-    {
+    static Proximity fromDist(double dist) {
         return Proximity(dist * dist);
     }
 
-    static Proximity fromSqDist(double sqDist)
-    {
+    static Proximity fromSqDist(double sqDist) {
         return Proximity(sqDist);
     }
 
     static Proximity pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment = 0);
 
-    double dist() const
-    {
+    double dist() const {
         return sqrt(m_sqDist);
     }
 
-    double sqDist() const
-    {
+    double sqDist() const {
         return m_sqDist;
     }
 
-    bool operator==(Proximity const& rhs) const
-    {
+    bool operator==(Proximity const& rhs) const {
         return m_sqDist == rhs.m_sqDist;
     }
 
-    bool operator!=(Proximity const& rhs) const
-    {
+    bool operator!=(Proximity const& rhs) const {
         return m_sqDist != rhs.m_sqDist;
     }
 
-    bool operator<(Proximity const& rhs) const
-    {
+    bool operator<(Proximity const& rhs) const {
         return m_sqDist < rhs.m_sqDist;
     }
 
-    bool operator>(Proximity const& rhs) const
-    {
+    bool operator>(Proximity const& rhs) const {
         return m_sqDist > rhs.m_sqDist;
     }
 
-    bool operator<=(Proximity const& rhs) const
-    {
+    bool operator<=(Proximity const& rhs) const {
         return m_sqDist <= rhs.m_sqDist;
     }
 
-    bool operator>=(Proximity const& rhs) const
-    {
+    bool operator>=(Proximity const& rhs) const {
         return m_sqDist >= rhs.m_sqDist;
     }
 
 private:
     Proximity(double sqDist)
-        : m_sqDist(sqDist)
-    { }
+            : m_sqDist(sqDist) {
+    }
 
     double m_sqDist;
 };
+
 
 #endif  // ifndef PROXIMITY_H_

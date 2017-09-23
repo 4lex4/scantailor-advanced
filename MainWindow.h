@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -74,15 +73,10 @@ class QLineF;
 class QRectF;
 class QLayout;
 
-class MainWindow
-    : public QMainWindow,
-      private FilterUiInterface,
-      private Ui::MainWindow
-{
+class MainWindow: public QMainWindow, private FilterUiInterface, private Ui::MainWindow {
     DECLARE_NON_COPYABLE(MainWindow)
 
     Q_OBJECT
-
 public:
     MainWindow();
 
@@ -322,5 +316,6 @@ private:
     QTimer m_autoSaveTimer;
     bool m_auto_save_project;
 };
+
 
 #endif  // ifndef MAINWINDOW_H_

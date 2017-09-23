@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,8 +24,7 @@
 
 class QSettings;
 
-class ThreadPriority
-{
+class ThreadPriority {
 public:
     enum Priority {
         Minimum,
@@ -38,16 +36,14 @@ public:
     };
 
     ThreadPriority(Priority prio)
-        : m_prio(prio)
-    { }
+            : m_prio(prio) {
+    }
 
-    void setValue(Priority prio)
-    {
+    void setValue(Priority prio) {
         m_prio = prio;
     }
 
-    Priority value() const
-    {
+    Priority value() const {
         return m_prio;
     }
 
@@ -66,5 +62,6 @@ public:
 private:
     Priority m_prio;
 };
+
 
 #endif  // ifndef THREAD_PRIORITY_H_

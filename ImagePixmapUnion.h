@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,32 +22,28 @@
 #include <QImage>
 #include <QPixmap>
 
-class ImagePixmapUnion
-{
+class ImagePixmapUnion {
 public:
-    ImagePixmapUnion()
-    { }
+    ImagePixmapUnion() {
+    }
 
     ImagePixmapUnion(QImage const& image)
-        : m_image(image)
-    { }
+            : m_image(image) {
+    }
 
     ImagePixmapUnion(QPixmap const& pixmap)
-        : m_pixmap(pixmap)
-    { }
+            : m_pixmap(pixmap) {
+    }
 
-    QImage const& image() const
-    {
+    QImage const& image() const {
         return m_image;
     }
 
-    QPixmap const& pixmap() const
-    {
+    QPixmap const& pixmap() const {
         return m_pixmap;
     }
 
-    bool isNull() const
-    {
+    bool isNull() const {
         return m_image.isNull() && m_pixmap.isNull();
     }
 
@@ -56,5 +51,6 @@ private:
     QImage m_image;
     QPixmap m_pixmap;
 };
+
 
 #endif  // ifndef IMAGE_PIXMAP_UNION_H_

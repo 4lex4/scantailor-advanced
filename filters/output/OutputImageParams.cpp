@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,18 +23,17 @@
 #include "XmlUnmarshaller.h"
 #include "../../Utils.h"
 
-namespace output
-{
-    OutputImageParams::OutputImageParams(QSize const& out_image_size,
-                                         QRect const& content_rect,
-                                         ImageTransformation xform,
-                                         Dpi const& dpi,
-                                         ColorParams const& color_params,
-                                         DewarpingMode const& dewarping_mode,
-                                         dewarping::DistortionModel const& distortion_model,
-                                         DepthPerception const& depth_perception,
-                                         DespeckleLevel const despeckle_level,
-                                         PictureShape const picture_shape)
+namespace output {
+OutputImageParams::OutputImageParams(QSize const& out_image_size,
+                                     QRect const& content_rect,
+                                     ImageTransformation xform,
+                                     Dpi const& dpi,
+                                     ColorParams const& color_params,
+                                     DewarpingMode const& dewarping_mode,
+                                     dewarping::DistortionModel const& distortion_model,
+                                     DepthPerception const& depth_perception,
+                                     DespeckleLevel const despeckle_level,
+                                     PictureShape const picture_shape)
         : m_size(out_image_size),
           m_contentRect(content_rect),
           m_dpi(dpi),
@@ -44,13 +42,12 @@ namespace output
           m_distortionModel(distortion_model),
           m_depthPerception(depth_perception),
           m_dewarpingMode(dewarping_mode),
-          m_despeckleLevel(despeckle_level)
-    {
-        xform.setPostCropArea(QPolygonF());
-        m_partialXform = xform.transform();
-    }
+          m_despeckleLevel(despeckle_level) {
+    xform.setPostCropArea(QPolygonF());
+    m_partialXform = xform.transform();
+}
 
-    OutputImageParams::OutputImageParams(QDomElement const& el)
+OutputImageParams::OutputImageParams(QDomElement const& el)
         : m_size(XmlUnmarshaller::size(el.namedItem("size").toElement())),
           m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
           m_partialXform(el.namedItem("partial-xform").toElement()),
@@ -59,156 +56,144 @@ namespace output
           m_distortionModel(el.namedItem("distortion-model").toElement()),
           m_depthPerception(el.attribute("depthPerception")),
           m_dewarpingMode(el.attribute("dewarpingMode")),
-          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel")))
-    { }
+          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))) {
+}
 
-    QDomElement
-    OutputImageParams::toXml(QDomDocument& doc, QString const& name) const
-    {
-        XmlMarshaller marshaller(doc);
+QDomElement OutputImageParams::toXml(QDomDocument& doc, QString const& name) const {
+    XmlMarshaller marshaller(doc);
 
-        QDomElement el(doc.createElement(name));
-        el.appendChild(marshaller.size(m_size, "size"));
-        el.appendChild(marshaller.rect(m_contentRect, "content-rect"));
-        el.appendChild(m_partialXform.toXml(doc, "partial-xform"));
-        el.appendChild(marshaller.dpi(m_dpi, "dpi"));
-        el.appendChild(m_colorParams.toXml(doc, "color-params"));
-        el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
-        el.setAttribute("depthPerception", m_depthPerception.toString());
-        el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
-        el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.size(m_size, "size"));
+    el.appendChild(marshaller.rect(m_contentRect, "content-rect"));
+    el.appendChild(m_partialXform.toXml(doc, "partial-xform"));
+    el.appendChild(marshaller.dpi(m_dpi, "dpi"));
+    el.appendChild(m_colorParams.toXml(doc, "color-params"));
+    el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
+    el.setAttribute("depthPerception", m_depthPerception.toString());
+    el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
+    el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
 
-        return el;
+    return el;
+}
+
+bool OutputImageParams::matches(OutputImageParams const& other) const {
+    if (m_size != other.m_size) {
+        return false;
     }
 
-    bool
-    OutputImageParams::matches(OutputImageParams const& other) const
+    if (m_contentRect != other.m_contentRect) {
+        return false;
+    }
+
+    if (!m_partialXform.matches(other.m_partialXform)) {
+        return false;
+    }
+
+    if (m_dpi != other.m_dpi) {
+        return false;
+    }
+
+    if (!colorParamsMatch(m_colorParams, m_despeckleLevel,
+                          other.m_colorParams, other.m_despeckleLevel))
     {
-        if (m_size != other.m_size) {
-            return false;
-        }
+        return false;
+    }
 
-        if (m_contentRect != other.m_contentRect) {
-            return false;
-        }
+    if (m_pictureShape != other.m_pictureShape) {
+        return false;
+    }
 
-        if (!m_partialXform.matches(other.m_partialXform)) {
+    if (m_dewarpingMode != other.m_dewarpingMode) {
+        return false;
+    } else if (m_dewarpingMode != DewarpingMode::OFF) {
+        if (!m_distortionModel.matches(other.m_distortionModel)) {
             return false;
         }
+        if (m_depthPerception.value() != other.m_depthPerception.value()) {
+            return false;
+        }
+    }
 
-        if (m_dpi != other.m_dpi) {
-            return false;
-        }
+    return true;
+}      // OutputImageParams::matches
 
-        if (!colorParamsMatch(m_colorParams, m_despeckleLevel,
-                              other.m_colorParams, other.m_despeckleLevel)) {
-            return false;
-        }
+bool OutputImageParams::colorParamsMatch(ColorParams const& cp1,
+                                         DespeckleLevel const dl1,
+                                         ColorParams const& cp2,
+                                         DespeckleLevel const dl2) {
+    if (cp1.colorMode() != cp2.colorMode()) {
+        return false;
+    }
 
-        if (m_pictureShape != other.m_pictureShape) {
-            return false;
-        }
-
-        if (m_dewarpingMode != other.m_dewarpingMode) {
-            return false;
-        }
-        else if (m_dewarpingMode != DewarpingMode::OFF) {
-            if (!m_distortionModel.matches(other.m_distortionModel)) {
+    switch (cp1.colorMode()) {
+        case ColorParams::COLOR_GRAYSCALE:
+        case ColorParams::MIXED:
+            if (cp1.colorGrayscaleOptions() != cp2.colorGrayscaleOptions()) {
                 return false;
             }
-            if (m_depthPerception.value() != other.m_depthPerception.value()) {
+            break;
+        default:
+            ;
+    }
+
+    switch (cp1.colorMode()) {
+        case ColorParams::BLACK_AND_WHITE:
+        case ColorParams::MIXED:
+            if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
                 return false;
             }
-        }
+            if (dl1 != dl2) {
+                return false;
+            }
+            break;
+        default:
+            ;
+    }
 
-        return true;
-    }  // OutputImageParams::matches
+    return true;
+}      // OutputImageParams::colorParamsMatch
 
-    bool
-    OutputImageParams::colorParamsMatch(ColorParams const& cp1,
-                                        DespeckleLevel const dl1,
-                                        ColorParams const& cp2,
-                                        DespeckleLevel const dl2)
-    {
-        if (cp1.colorMode() != cp2.colorMode()) {
-            return false;
-        }
+/*=============================== PartialXform =============================*/
 
-        switch (cp1.colorMode()) {
-            case ColorParams::COLOR_GRAYSCALE:
-            case ColorParams::MIXED:
-                if (cp1.colorGrayscaleOptions() != cp2.colorGrayscaleOptions()) {
-                    return false;
-                }
-                break;
-            default:
-                ;
-        }
-
-        switch (cp1.colorMode()) {
-            case ColorParams::BLACK_AND_WHITE:
-            case ColorParams::MIXED:
-                if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
-                    return false;
-                }
-                if (dl1 != dl2) {
-                    return false;
-                }
-                break;
-            default:
-                ;
-        }
-
-        return true;
-    }  // OutputImageParams::colorParamsMatch
-
-    /*=============================== PartialXform =============================*/
-
-    OutputImageParams::PartialXform::PartialXform()
+OutputImageParams::PartialXform::PartialXform()
         : m_11(),
           m_12(),
           m_21(),
-          m_22()
-    { }
+          m_22() {
+}
 
-    OutputImageParams::PartialXform::PartialXform(QTransform const& xform)
+OutputImageParams::PartialXform::PartialXform(QTransform const& xform)
         : m_11(xform.m11()),
           m_12(xform.m12()),
           m_21(xform.m21()),
-          m_22(xform.m22())
-    { }
+          m_22(xform.m22()) {
+}
 
-    OutputImageParams::PartialXform::PartialXform(QDomElement const& el)
+OutputImageParams::PartialXform::PartialXform(QDomElement const& el)
         : m_11(el.namedItem("m11").toElement().text().toDouble()),
           m_12(el.namedItem("m12").toElement().text().toDouble()),
           m_21(el.namedItem("m21").toElement().text().toDouble()),
-          m_22(el.namedItem("m22").toElement().text().toDouble())
-    { }
+          m_22(el.namedItem("m22").toElement().text().toDouble()) {
+}
 
-    QDomElement
-    OutputImageParams::PartialXform::toXml(QDomDocument& doc, QString const& name) const
-    {
-        XmlMarshaller marshaller(doc);
+QDomElement OutputImageParams::PartialXform::toXml(QDomDocument& doc, QString const& name) const {
+    XmlMarshaller marshaller(doc);
 
-        QDomElement el(doc.createElement(name));
-        el.appendChild(marshaller.string(Utils::doubleToString(m_11), "m11"));
-        el.appendChild(marshaller.string(Utils::doubleToString(m_12), "m12"));
-        el.appendChild(marshaller.string(Utils::doubleToString(m_21), "m21"));
-        el.appendChild(marshaller.string(Utils::doubleToString(m_22), "m22"));
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.string(Utils::doubleToString(m_11), "m11"));
+    el.appendChild(marshaller.string(Utils::doubleToString(m_12), "m12"));
+    el.appendChild(marshaller.string(Utils::doubleToString(m_21), "m21"));
+    el.appendChild(marshaller.string(Utils::doubleToString(m_22), "m22"));
 
-        return el;
-    }
+    return el;
+}
 
-    bool
-    OutputImageParams::PartialXform::matches(PartialXform const& other) const
-    {
-        return closeEnough(m_11, other.m_11) && closeEnough(m_12, other.m_12)
-               && closeEnough(m_21, other.m_21) && closeEnough(m_22, other.m_22);
-    }
+bool OutputImageParams::PartialXform::matches(PartialXform const& other) const {
+    return closeEnough(m_11, other.m_11) && closeEnough(m_12, other.m_12)
+           && closeEnough(m_21, other.m_21) && closeEnough(m_22, other.m_22);
+}
 
-    bool
-    OutputImageParams::PartialXform::closeEnough(double v1, double v2)
-    {
-        return fabs(v1 - v2) < 0.0001;
-    }
+bool OutputImageParams::PartialXform::closeEnough(double v1, double v2) {
+    return fabs(v1 - v2) < 0.0001;
+}
 }  // namespace output

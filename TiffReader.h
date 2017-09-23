@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -28,8 +27,7 @@ class QImage;
 class ImageMetadata;
 class Dpi;
 
-class TiffReader
-{
+class TiffReader {
 public:
     static bool canRead(QIODevice& device);
 
@@ -70,5 +68,6 @@ private:
 
     static void readAndUnpackLines(TiffHandle const& tif, TiffInfo const& info, QImage& image);
 };
+
 
 #endif  // ifndef TIFFREADER_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,16 +23,14 @@ class ZoneSet;
 class Zone;
 class PropertySet;
 
-namespace output
-{
-    class PictureZoneComparator
-    {
-    public:
-        static bool equal(ZoneSet const& lhs, ZoneSet const& rhs);
+namespace output {
+class PictureZoneComparator {
+public:
+    static bool equal(ZoneSet const& lhs, ZoneSet const& rhs);
 
-        static bool equal(Zone const& lhs, Zone const& rhs);
+    static bool equal(Zone const& lhs, Zone const& rhs);
 
-        static bool equal(PropertySet const& lhs, PropertySet const& rhs);
-    };
+    static bool equal(PropertySet const& lhs, PropertySet const& rhs);
+};
 }
 #endif

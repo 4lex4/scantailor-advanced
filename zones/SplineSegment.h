@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,14 +23,13 @@
 #include <QPointF>
 #include <QLineF>
 
-class SplineSegment
-{
+class SplineSegment {
 public:
     SplineVertex::Ptr prev;
     SplineVertex::Ptr next;
 
-    SplineSegment()
-    { }
+    SplineSegment() {
+    }
 
     SplineSegment(SplineVertex::Ptr const& prev, SplineVertex::Ptr const& next);
 
@@ -39,15 +37,14 @@ public:
 
     bool isValid() const;
 
-    bool operator==(SplineSegment const& other) const
-    {
+    bool operator==(SplineSegment const& other) const {
         return prev == other.prev && next == other.next;
     }
 
-    QLineF toLine() const
-    {
+    QLineF toLine() const {
         return QLineF(prev->point(), next->point());
     }
 };
+
 
 #endif  // ifndef SPLINE_SEGMENT_H_

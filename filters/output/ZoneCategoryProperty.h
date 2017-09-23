@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,46 +28,41 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-namespace output
-{
-    class ZoneCategoryProperty
-        : public Property
-    {
-    public:
-        enum ZoneCategory { MANUAL, RECTANGULAR_OUTLINE };
+namespace output {
+class ZoneCategoryProperty: public Property {
+public:
+    enum ZoneCategory { MANUAL, RECTANGULAR_OUTLINE };
 
-        ZoneCategoryProperty(ZoneCategory zone_category = MANUAL)
-            : m_zone_category(zone_category)
-        { }
+    ZoneCategoryProperty(ZoneCategory zone_category = MANUAL)
+            : m_zone_category(zone_category) {
+    }
 
-        ZoneCategoryProperty(QDomElement const& el);
+    ZoneCategoryProperty(QDomElement const& el);
 
-        static void registerIn(PropertyFactory& factory);
+    static void registerIn(PropertyFactory& factory);
 
-        virtual IntrusivePtr<Property> clone() const;
+    virtual IntrusivePtr<Property> clone() const;
 
-        virtual QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    virtual QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        ZoneCategory zone_category() const
-        {
-            return m_zone_category;
-        }
+    ZoneCategory zone_category() const {
+        return m_zone_category;
+    }
 
-        void setZoneCategory(ZoneCategory zone_category)
-        {
-            m_zone_category = zone_category;
-        }
+    void setZoneCategory(ZoneCategory zone_category) {
+        m_zone_category = zone_category;
+    }
 
-    private:
-        static IntrusivePtr<Property> construct(QDomElement const& el);
+private:
+    static IntrusivePtr<Property> construct(QDomElement const& el);
 
-        static ZoneCategory zoneCategoryFromString(QString const& str);
+    static ZoneCategory zoneCategoryFromString(QString const& str);
 
-        static QString zoneCategoryToString(ZoneCategory zone_category);
+    static QString zoneCategoryToString(ZoneCategory zone_category);
 
-        static char const m_propertyName[];
-        ZoneCategory m_zone_category;
-    };
+    static char const m_propertyName[];
+    ZoneCategory m_zone_category;
+};
 }  // namespace output
 
 #endif  // ifndef OUTPUT_ZONE_CATEGORY_PROPERTY_H_

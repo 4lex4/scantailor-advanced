@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -21,13 +20,11 @@
 #include <QStringList>
 
 RelinkablePath::RelinkablePath(QString const& path, Type type)
-    : m_normalizedPath(normalize(path)),
-      m_type(type)
-{ }
+        : m_normalizedPath(normalize(path)),
+          m_type(type) {
+}
 
-QString
-RelinkablePath::normalize(QString const& path)
-{
+QString RelinkablePath::normalize(QString const& path) {
     QString front_slashes(path);
     front_slashes.replace(QChar('\\'), QLatin1String("/"));
 
@@ -38,17 +35,15 @@ RelinkablePath::normalize(QString const& path)
 #if _WIN32
                 || (new_components.size() == 1 && new_components.front().isEmpty())
 #endif
-            ) {
+            )
+            {
                 new_components.push_back(comp);
-            }
-            else {
+            } else {
                 continue;
             }
-        }
-        else if (comp == ".") {
+        } else if (comp == ".") {
             continue;
-        }
-        else if (comp == "..") {
+        } else if (comp == "..") {
             if (new_components.isEmpty()) {
                 return QString();
             }
@@ -57,8 +52,7 @@ RelinkablePath::normalize(QString const& path)
                 return QString();
             }
             new_components.pop_back();
-        }
-        else {
+        } else {
             new_components.push_back(comp);
         }
     }

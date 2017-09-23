@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,9 +27,7 @@ class PageSequence;
 class PageId;
 class PageRange;
 
-class PageSelectionProvider
-    : public RefCountable
-{
+class PageSelectionProvider: public RefCountable {
 public:
     virtual PageSequence allPages() const = 0;
 
@@ -38,5 +35,6 @@ public:
 
     virtual std::vector<PageRange> selectedRanges() const = 0;
 };
+
 
 #endif

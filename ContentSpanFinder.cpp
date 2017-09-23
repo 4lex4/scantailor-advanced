@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,9 +21,7 @@
 
 using namespace imageproc;
 
-void
-ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFunction1<void, Span>& handler) const
-{
+void ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFunction1<void, Span>& handler) const {
     int const hist_size = histogram.size();
 
     int i = 0;

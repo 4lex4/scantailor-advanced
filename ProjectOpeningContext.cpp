@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,19 +24,16 @@
 #include <assert.h>
 
 ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc)
-    : m_projectFile(project_file),
-      m_reader(doc),
-      m_pParent(parent)
-{ }
+        : m_projectFile(project_file),
+          m_reader(doc),
+          m_pParent(parent) {
+}
 
-ProjectOpeningContext::~ProjectOpeningContext()
-{
+ProjectOpeningContext::~ProjectOpeningContext() {
     delete m_ptrFixDpiDialog;
 }
 
-void
-ProjectOpeningContext::proceed()
-{
+void ProjectOpeningContext::proceed() {
     if (!m_reader.success()) {
         deleteLater();
         QMessageBox::warning(
@@ -58,22 +54,16 @@ ProjectOpeningContext::proceed()
     showFixDpiDialog();
 }
 
-void
-ProjectOpeningContext::fixedDpiSubmitted()
-{
+void ProjectOpeningContext::fixedDpiSubmitted() {
     m_reader.pages()->updateMetadataFrom(m_ptrFixDpiDialog->files());
     emit done(this);
 }
 
-void
-ProjectOpeningContext::fixDpiDialogDestroyed()
-{
+void ProjectOpeningContext::fixDpiDialogDestroyed() {
     deleteLater();
 }
 
-void
-ProjectOpeningContext::showFixDpiDialog()
-{
+void ProjectOpeningContext::showFixDpiDialog() {
     assert(!m_ptrFixDpiDialog);
     m_ptrFixDpiDialog = new FixDpiDialog(m_reader.pages()->toImageFileInfo(), m_pParent);
     m_ptrFixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);

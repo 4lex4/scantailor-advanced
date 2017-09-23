@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,18 +22,14 @@
 #include "Dpi.h"
 #include "Utils.h"
 
-QDomElement
-XmlMarshaller::string(QString const& str, QString const& name)
-{
+QDomElement XmlMarshaller::string(QString const& str, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.appendChild(m_doc.createTextNode(str));
 
     return el;
 }
 
-QDomElement
-XmlMarshaller::size(QSize const& size, QString const& name)
-{
+QDomElement XmlMarshaller::size(QSize const& size, QString const& name) {
     if (size.isNull()) {
         return QDomElement();
     }
@@ -46,9 +41,7 @@ XmlMarshaller::size(QSize const& size, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::sizeF(QSizeF const& size, QString const& name)
-{
+QDomElement XmlMarshaller::sizeF(QSizeF const& size, QString const& name) {
     if (size.isNull()) {
         return QDomElement();
     }
@@ -60,9 +53,7 @@ XmlMarshaller::sizeF(QSizeF const& size, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::dpi(Dpi const& dpi, QString const& name)
-{
+QDomElement XmlMarshaller::dpi(Dpi const& dpi, QString const& name) {
     if (dpi.isNull()) {
         return QDomElement();
     }
@@ -74,18 +65,14 @@ XmlMarshaller::dpi(Dpi const& dpi, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::rotation(OrthogonalRotation const& rotation, QString const& name)
-{
+QDomElement XmlMarshaller::rotation(OrthogonalRotation const& rotation, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("degrees", rotation.toDegrees());
 
     return el;
 }
 
-QDomElement
-XmlMarshaller::pointF(QPointF const& p, QString const& name)
-{
+QDomElement XmlMarshaller::pointF(QPointF const& p, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("x", Utils::doubleToString(p.x()));
     el.setAttribute("y", Utils::doubleToString(p.y()));
@@ -93,9 +80,7 @@ XmlMarshaller::pointF(QPointF const& p, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::lineF(QLineF const& line, QString const& name)
-{
+QDomElement XmlMarshaller::lineF(QLineF const& line, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.appendChild(pointF(line.p1(), "p1"));
     el.appendChild(pointF(line.p2(), "p2"));
@@ -103,9 +88,7 @@ XmlMarshaller::lineF(QLineF const& line, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::rect(QRect const& rect, QString const& name)
-{
+QDomElement XmlMarshaller::rect(QRect const& rect, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("x", QString::number(rect.x()));
     el.setAttribute("y", QString::number(rect.y()));
@@ -115,9 +98,7 @@ XmlMarshaller::rect(QRect const& rect, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::rectF(QRectF const& rect, QString const& name)
-{
+QDomElement XmlMarshaller::rectF(QRectF const& rect, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("x", Utils::doubleToString(rect.x()));
     el.setAttribute("y", Utils::doubleToString(rect.y()));
@@ -127,9 +108,7 @@ XmlMarshaller::rectF(QRectF const& rect, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::polygonF(QPolygonF const& poly, QString const& name)
-{
+QDomElement XmlMarshaller::polygonF(QPolygonF const& poly, QString const& name) {
     QDomElement el(m_doc.createElement(name));
 
     QPolygonF::const_iterator it(poly.begin());
@@ -141,9 +120,7 @@ XmlMarshaller::polygonF(QPolygonF const& poly, QString const& name)
     return el;
 }
 
-QDomElement
-XmlMarshaller::margins(Margins const& margins, QString const& name)
-{
+QDomElement XmlMarshaller::margins(Margins const& margins, QString const& name) {
     QDomElement el(m_doc.createElement(name));
     el.setAttribute("left", Utils::doubleToString(margins.left()));
     el.setAttribute("right", Utils::doubleToString(margins.right()));

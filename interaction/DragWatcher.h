@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -34,9 +33,7 @@ class QMouseEvent;
  * an ongoing drag and decide if the drag was significant or not, in which
  * case we could perform some other operation on mouse release.
  */
-class DragWatcher
-    : public InteractionHandler
-{
+class DragWatcher: public InteractionHandler {
 public:
     DragWatcher(DragHandler& drag_handler);
 
@@ -56,5 +53,6 @@ private:
     int m_dragMaxSqDist;
     bool m_dragInProgress;
 };
+
 
 #endif  // ifndef DRAG_WATCHER_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -31,143 +30,123 @@
 #include <boost/lambda/bind.hpp>
 #include "CommandLine.h"
 
-namespace fix_orientation
-{
-    Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
-        : m_ptrSettings(new Settings)
-    {
-        if (CommandLine::get().isGui()) {
-            m_ptrOptionsWidget.reset(
-                new OptionsWidget(m_ptrSettings, page_selection_accessor)
-            );
-        }
-    }
-
-    Filter::~Filter()
-    { }
-
-    QString
-    Filter::getName() const
-    {
-        return QCoreApplication::translate(
-            "fix_orientation::Filter", "Fix Orientation"
+namespace fix_orientation {
+Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
+        : m_ptrSettings(new Settings) {
+    if (CommandLine::get().isGui()) {
+        m_ptrOptionsWidget.reset(
+            new OptionsWidget(m_ptrSettings, page_selection_accessor)
         );
     }
+}
 
-    PageView
-    Filter::getView() const
-    {
-        return IMAGE_VIEW;
+Filter::~Filter() {
+}
+
+QString Filter::getName() const {
+    return QCoreApplication::translate(
+        "fix_orientation::Filter", "Fix Orientation"
+    );
+}
+
+PageView Filter::getView() const {
+    return IMAGE_VIEW;
+}
+
+void Filter::performRelinking(AbstractRelinker const& relinker) {
+    m_ptrSettings->performRelinking(relinker);
+}
+
+void Filter::preUpdateUI(FilterUiInterface* ui, PageId const& page_id) {
+    if (m_ptrOptionsWidget.get()) {
+        OrthogonalRotation const rotation(
+            m_ptrSettings->getRotationFor(page_id.imageId())
+        );
+        m_ptrOptionsWidget->preUpdateUI(page_id, rotation);
+        ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
+}
 
-    void
-    Filter::performRelinking(AbstractRelinker const& relinker)
-    {
-        m_ptrSettings->performRelinking(relinker);
-    }
+QDomElement Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const {
+    using namespace boost::lambda;
 
-    void
-    Filter::preUpdateUI(FilterUiInterface* ui, PageId const& page_id)
-    {
-        if (m_ptrOptionsWidget.get()) {
-            OrthogonalRotation const rotation(
-                m_ptrSettings->getRotationFor(page_id.imageId())
-            );
-            m_ptrOptionsWidget->preUpdateUI(page_id, rotation);
-            ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
-        }
-    }
-
-    QDomElement
-    Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const
-    {
-        using namespace boost::lambda;
-
-        QDomElement filter_el(doc.createElement("fix-orientation"));
-        writer.enumImages(
-            [&](ImageId const& image_id, int const numeric_id)
-        {
+    QDomElement filter_el(doc.createElement("fix-orientation"));
+    writer.enumImages(
+        [&](ImageId const& image_id, int const numeric_id) {
             this->writeImageSettings(doc, filter_el, image_id, numeric_id);
         }
-        );
+    );
 
-        return filter_el;
-    }
+    return filter_el;
+}
 
-    void
-    Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el)
-    {
-        m_ptrSettings->clear();
+void Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el) {
+    m_ptrSettings->clear();
 
-        QDomElement filter_el(filters_el.namedItem("fix-orientation").toElement());
+    QDomElement filter_el(filters_el.namedItem("fix-orientation").toElement());
 
-        QString const image_tag_name("image");
-        QDomNode node(filter_el.firstChild());
-        for (; !node.isNull(); node = node.nextSibling()) {
-            if (!node.isElement()) {
-                continue;
-            }
-            if (node.nodeName() != image_tag_name) {
-                continue;
-            }
-            QDomElement el(node.toElement());
-
-            bool ok = true;
-            int const id = el.attribute("id").toInt(&ok);
-            if (!ok) {
-                continue;
-            }
-
-            ImageId const image_id(reader.imageId(id));
-            if (image_id.isNull()) {
-                continue;
-            }
-
-            OrthogonalRotation const rotation(
-                XmlUnmarshaller::rotation(
-                    el.namedItem("rotation").toElement()
-                )
-            );
-
-            m_ptrSettings->applyRotation(image_id, rotation);
+    QString const image_tag_name("image");
+    QDomNode node(filter_el.firstChild());
+    for (; !node.isNull(); node = node.nextSibling()) {
+        if (!node.isElement()) {
+            continue;
         }
-    }  // Filter::loadSettings
+        if (node.nodeName() != image_tag_name) {
+            continue;
+        }
+        QDomElement el(node.toElement());
 
-    IntrusivePtr<Task>
-    Filter::createTask(PageId const& page_id,
-                       IntrusivePtr<page_split::Task> const& next_task,
-                       bool const batch_processing)
-    {
-        return IntrusivePtr<Task>(
-            new Task(
-                page_id.imageId(), IntrusivePtr<Filter>(this),
-                m_ptrSettings, next_task, batch_processing
+        bool ok = true;
+        int const id = el.attribute("id").toInt(&ok);
+        if (!ok) {
+            continue;
+        }
+
+        ImageId const image_id(reader.imageId(id));
+        if (image_id.isNull()) {
+            continue;
+        }
+
+        OrthogonalRotation const rotation(
+            XmlUnmarshaller::rotation(
+                el.namedItem("rotation").toElement()
             )
         );
+
+        m_ptrSettings->applyRotation(image_id, rotation);
+    }
+}      // Filter::loadSettings
+
+IntrusivePtr<Task>
+Filter::createTask(PageId const& page_id, IntrusivePtr<page_split::Task> const& next_task,
+                   bool const batch_processing) {
+    return IntrusivePtr<Task>(
+        new Task(
+            page_id.imageId(), IntrusivePtr<Filter>(this),
+            m_ptrSettings, next_task, batch_processing
+        )
+    );
+}
+
+IntrusivePtr<CacheDrivenTask>
+Filter::createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task) {
+    return IntrusivePtr<CacheDrivenTask>(
+        new CacheDrivenTask(m_ptrSettings, next_task)
+    );
+}
+
+void Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
+                                int const numeric_id) const {
+    OrthogonalRotation const rotation(m_ptrSettings->getRotationFor(image_id));
+    if (rotation.toDegrees() == 0) {
+        return;
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
-    {
-        return IntrusivePtr<CacheDrivenTask>(
-            new CacheDrivenTask(m_ptrSettings, next_task)
-        );
-    }
+    XmlMarshaller marshaller(doc);
 
-    void
-    Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
-                               int const numeric_id) const
-    {
-        OrthogonalRotation const rotation(m_ptrSettings->getRotationFor(image_id));
-        if (rotation.toDegrees() == 0) {
-            return;
-        }
-
-        XmlMarshaller marshaller(doc);
-
-        QDomElement image_el(doc.createElement("image"));
-        image_el.setAttribute("id", numeric_id);
-        image_el.appendChild(marshaller.rotation(rotation, "rotation"));
-        filter_el.appendChild(image_el);
-    }
+    QDomElement image_el(doc.createElement("image"));
+    image_el.setAttribute("id", numeric_id);
+    image_el.appendChild(marshaller.rotation(rotation, "rotation"));
+    filter_el.appendChild(image_el);
+}
 }  // namespace fix_orientation

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -32,28 +31,22 @@ class ProjectFilesDialog;
 class FixDpiDialog;
 class QWidget;
 
-class ProjectCreationContext
-    : public QObject
-{
+class ProjectCreationContext: public QObject {
     Q_OBJECT DECLARE_NON_COPYABLE(ProjectCreationContext)
-
 public:
     ProjectCreationContext(QWidget* parent);
 
     virtual ~ProjectCreationContext();
 
-    std::vector<ImageFileInfo> const& files() const
-    {
+    std::vector<ImageFileInfo> const& files() const {
         return m_files;
     }
 
-    QString const& outDir() const
-    {
+    QString const& outDir() const {
         return m_outDir;
     }
 
-    Qt::LayoutDirection layoutDirection() const
-    {
+    Qt::LayoutDirection layoutDirection() const {
         return m_layoutDirection;
     }
 
@@ -81,5 +74,6 @@ private:
     Qt::LayoutDirection m_layoutDirection;
     QWidget* m_pParent;
 };
+
 
 #endif  // ifndef PROJECTCREATIONCONTEXT_H_

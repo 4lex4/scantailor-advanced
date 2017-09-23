@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,15 +24,13 @@
 #include <stddef.h>
 
 template <typename T>
-class StaticPoolBase
-{
+class StaticPoolBase {
     DECLARE_NON_COPYABLE(StaticPoolBase)
-
 public:
     StaticPoolBase(T* buf, size_t size)
-        : m_pNext(buf),
-          m_sizeRemaining(size)
-    { }
+            : m_pNext(buf),
+              m_sizeRemaining(size) {
+    }
 
     /**
      * \brief Allocates a sequence of objects.
@@ -53,6 +50,7 @@ private:
     size_t m_sizeRemaining;
 };
 
+
 /**
  * \brief Allocates objects from a statically sized pool.
  *
@@ -60,15 +58,12 @@ private:
  * besides destroying the whole pool.
  */
 template <typename T, size_t S>
-class StaticPool
-    : public StaticPoolBase<T>
-{
+class StaticPool: public StaticPoolBase<T>{
     DECLARE_NON_COPYABLE(StaticPool)
-
 public:
     StaticPool()
-        : StaticPoolBase<T>(m_buf, S)
-    { }
+            : StaticPoolBase<T>(m_buf, S) {
+    }
 
 private:
     T m_buf[S];
@@ -76,9 +71,7 @@ private:
 
 
 template <typename T>
-T*
-StaticPoolBase<T>::alloc(size_t num_elements)
-{
+T* StaticPoolBase<T>::alloc(size_t num_elements) {
     if (num_elements > m_sizeRemaining) {
         throw std::runtime_error("StaticPool overflow");
     }

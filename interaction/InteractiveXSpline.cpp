@@ -1,4 +1,3 @@
-
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,32 +22,28 @@
 #include <boost/bind.hpp>
 
 struct InteractiveXSpline::NoOp {
-    void operator()() const
-    { }
+    void operator()() const {
+    }
 };
 
 struct InteractiveXSpline::IdentTransform {
-    QPointF operator()(QPointF const& pt) const
-    {
+    QPointF operator()(QPointF const& pt) const {
         return pt;
     }
 };
 
 InteractiveXSpline::InteractiveXSpline()
-    : m_modifiedCallback(NoOp()),
-      m_dragFinishedCallback(NoOp()),
-      m_fromStorage(IdentTransform()),
-      m_toStorage(IdentTransform()),
-      m_curveProximityT(),
-      m_lastProximity(false)
-{
+        : m_modifiedCallback(NoOp()),
+          m_dragFinishedCallback(NoOp()),
+          m_fromStorage(IdentTransform()),
+          m_toStorage(IdentTransform()),
+          m_curveProximityT(),
+          m_lastProximity(false) {
     m_curveProximity.setProximityCursor(Qt::PointingHandCursor);
     m_curveProximity.setProximityStatusTip(tr("Click to create a new control point."));
 }
 
-void
-InteractiveXSpline::setSpline(XSpline const& spline)
-{
+void InteractiveXSpline::setSpline(XSpline const& spline) {
     int const num_control_points = spline.numControlPoints();
 
     XSpline new_spline(spline);
@@ -69,8 +64,7 @@ InteractiveXSpline::setSpline(XSpline const& spline)
 
         if ((i == 0) || (i == num_control_points - 1)) {
             new_control_points[i].handler.setProximityStatusTip(tr("This point can be dragged."));
-        }
-        else {
+        } else {
             new_control_points[i].handler.setProximityStatusTip(
                 tr("Drag this point or delete it by pressing Del or D."));
         }
@@ -86,28 +80,20 @@ InteractiveXSpline::setSpline(XSpline const& spline)
     m_modifiedCallback();
 }  // InteractiveXSpline::setSpline
 
-void
-InteractiveXSpline::setStorageTransform(Transform const& from_storage, Transform const& to_storage)
-{
+void InteractiveXSpline::setStorageTransform(Transform const& from_storage, Transform const& to_storage) {
     m_fromStorage = from_storage;
     m_toStorage = to_storage;
 }
 
-void
-InteractiveXSpline::setModifiedCallback(ModifiedCallback const& callback)
-{
+void InteractiveXSpline::setModifiedCallback(ModifiedCallback const& callback) {
     m_modifiedCallback = callback;
 }
 
-void
-InteractiveXSpline::setDragFinishedCallback(DragFinishedCallback const& callback)
-{
+void InteractiveXSpline::setDragFinishedCallback(DragFinishedCallback const& callback) {
     m_dragFinishedCallback = callback;
 }
 
-bool
-InteractiveXSpline::curveIsProximityLeader(InteractionState const& state, QPointF* pt, double* t) const
-{
+bool InteractiveXSpline::curveIsProximityLeader(InteractionState const& state, QPointF* pt, double* t) const {
     if (state.proximityLeader(m_curveProximity)) {
         if (pt) {
             *pt = m_curveProximityPointScreen;
@@ -122,9 +108,7 @@ InteractiveXSpline::curveIsProximityLeader(InteractionState const& state, QPoint
     return false;
 }
 
-void
-InteractiveXSpline::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction)
-{
+void InteractiveXSpline::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
     m_curveProximityPointStorage = m_spline.pointClosestTo(
         m_toStorage(screen_mouse_pos), &m_curveProximityT
                                    );
@@ -134,22 +118,17 @@ InteractiveXSpline::onProximityUpdate(QPointF const& screen_mouse_pos, Interacti
     interaction.updateProximity(m_curveProximity, proximity, -1);
 }
 
-void
-InteractiveXSpline::onMouseMoveEvent(QMouseEvent*, InteractionState& interaction)
-{
+void InteractiveXSpline::onMouseMoveEvent(QMouseEvent*, InteractionState& interaction) {
     if (interaction.proximityLeader(m_curveProximity)) {
         interaction.setRedrawRequested(true);
         m_lastProximity = true;
-    }
-    else if (m_lastProximity) {
+    } else if (m_lastProximity) {
         interaction.setRedrawRequested(true);
         m_lastProximity = false;
     }
 }
 
-void
-InteractiveXSpline::onMousePressEvent(QMouseEvent* event, InteractionState& interaction)
-{
+void InteractiveXSpline::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     if (interaction.captured()) {
         return;
     }
@@ -168,9 +147,7 @@ InteractiveXSpline::onMousePressEvent(QMouseEvent* event, InteractionState& inte
     }
 }
 
-void
-InteractiveXSpline::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction)
-{
+void InteractiveXSpline::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
     if (interaction.captured()) {
         return;
     }
@@ -193,22 +170,17 @@ InteractiveXSpline::onKeyPressEvent(QKeyEvent* event, InteractionState& interact
     }
 }
 
-QPointF
-InteractiveXSpline::controlPointPosition(int idx) const
-{
+QPointF InteractiveXSpline::controlPointPosition(int idx) const {
     return m_fromStorage(m_spline.controlPointPosition(idx));
 }
 
-void
-InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt::KeyboardModifiers mask)
-{
+void InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt::KeyboardModifiers mask) {
     QPointF const storage_pt(m_toStorage(pos));
 
     int const num_control_points = m_spline.numControlPoints();
     if ((idx > 0) && (idx < num_control_points - 1)) {
         m_spline.moveControlPoint(idx, storage_pt);
-    }
-    else {
+    } else {
         int const origin_idx = idx == 0 ? num_control_points - 1 : 0;
         QPointF const origin(m_spline.controlPointPosition(origin_idx));
         QPointF const old_pos(m_spline.controlPointPosition(idx));
@@ -220,16 +192,14 @@ InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt::Key
                 (mc(mat, 2, 2) * mc(pt, 2, 1)).write(pt);
                 if (mask != Qt::ControlModifier) {
                     m_spline.moveControlPoint(i, pt + origin);
-                }
-                else {
+                } else {
                     Vec2d shift_y = storage_pt - old_pos;
                     QPointF new_position = m_spline.controlPointPosition(i) + shift_y;
                     new_position.setX(m_spline.controlPointPosition(i).x());
                     m_spline.moveControlPoint(i, new_position);
                 }
             }
-        }
-        else {
+        } else {
             QLineF const line(origin, storage_pt);
             double const scale = 1.0 / (num_control_points - 1);
             for (int i = 0; i < num_control_points; ++i) {
@@ -241,15 +211,11 @@ InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt::Key
     m_modifiedCallback();
 }  // InteractiveXSpline::controlPointMoveRequest
 
-void
-InteractiveXSpline::dragFinished()
-{
+void InteractiveXSpline::dragFinished() {
     m_dragFinishedCallback();
 }
 
-Vec4d
-InteractiveXSpline::rotationAndScale(QPointF const& from, QPointF const& to)
-{
+Vec4d InteractiveXSpline::rotationAndScale(QPointF const& from, QPointF const& to) {
     Vec4d A;
     A[0] = from.x();
     A[1] = from.y();

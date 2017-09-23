@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,14 +21,12 @@
 
 #include <QSortFilterProxyModel>
 
-class RelinkingSortingModel
-    : public QSortFilterProxyModel
-{
+class RelinkingSortingModel: public QSortFilterProxyModel {
 public:
     RelinkingSortingModel(QObject* parent = 0);
-
 protected:
     virtual bool lessThan(QModelIndex const& left, QModelIndex const& right) const;
 };
+
 
 #endif

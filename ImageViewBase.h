@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -58,11 +57,8 @@ class ImagePresentation;
  *
  * \see m_pixmapToImage, m_imageToVirt, m_virtualToWidget, m_widgetToVirtual.
  */
-class ImageViewBase
-    : public QAbstractScrollArea
-{
+class ImageViewBase: public QAbstractScrollArea {
     Q_OBJECT
-
 public:
     enum FocalPointMode { CENTER_IF_FITS, DONT_CENTER };
 
@@ -95,8 +91,7 @@ public:
      * The idea behind this accessor is being able to share a single
      * downscaled pixmap between multiple image views.
      */
-    QPixmap const& downscaledPixmap() const
-    {
+    QPixmap const& downscaledPixmap() const {
         return m_pixmap;
     }
 
@@ -119,58 +114,47 @@ public:
      */
     static QImage createDownscaledImage(QImage const& image);
 
-    InteractionHandler& rootInteractionHandler()
-    {
+    InteractionHandler& rootInteractionHandler() {
         return m_rootInteractionHandler;
     }
 
-    InteractionState& interactionState()
-    {
+    InteractionState& interactionState() {
         return m_interactionState;
     }
 
-    InteractionState const& interactionState() const
-    {
+    InteractionState const& interactionState() const {
         return m_interactionState;
     }
 
-    QTransform const& imageToVirtual() const
-    {
+    QTransform const& imageToVirtual() const {
         return m_imageToVirtual;
     }
 
-    QTransform const& virtualToImage() const
-    {
+    QTransform const& virtualToImage() const {
         return m_virtualToImage;
     }
 
-    QTransform const& virtualToWidget() const
-    {
+    QTransform const& virtualToWidget() const {
         return m_virtualToWidget;
     }
 
-    QTransform const& widgetToVirtual() const
-    {
+    QTransform const& widgetToVirtual() const {
         return m_widgetToVirtual;
     }
 
-    QTransform imageToWidget() const
-    {
+    QTransform imageToWidget() const {
         return m_imageToVirtual * m_virtualToWidget;
     }
 
-    QTransform widgetToImage() const
-    {
+    QTransform widgetToImage() const {
         return m_widgetToVirtual * m_virtualToImage;
     }
 
-    void update()
-    {
+    void update() {
         viewport()->update();
     }
 
-    QRectF const& virtualDisplayRect() const
-    {
+    QRectF const& virtualDisplayRect() const {
         return m_virtualDisplayArea;
     }
 
@@ -198,8 +182,7 @@ public:
      * \endcode
      * As a result, the image will be moved by delta widget pixels.
      */
-    QPointF getWidgetFocalPoint() const
-    {
+    QPointF getWidgetFocalPoint() const {
         return m_widgetFocalPoint;
     }
 
@@ -260,8 +243,7 @@ public:
      * \brief Returns the current zoom level.
      * \see setZoomLevel()
      */
-    double zoomLevel() const
-    {
+    double zoomLevel() const {
         return m_zoom;
     }
 
@@ -486,5 +468,6 @@ private:
 
     bool m_hqTransformEnabled;
 };
+
 
 #endif  // ifndef IMAGEVIEWBASE_H_

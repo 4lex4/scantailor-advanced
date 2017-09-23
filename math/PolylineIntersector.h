@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,22 +24,19 @@
 #include <QLineF>
 #include <vector>
 
-class PolylineIntersector
-{
+class PolylineIntersector {
 public:
-    class Hint
-    {
+    class Hint {
         friend class PolylineIntersector;
-
     public:
         Hint();
-
     private:
         void update(int new_segment);
 
         int m_lastSegment;
         int m_direction;
     };
+
 
     PolylineIntersector(std::vector<QPointF> const& polyline);
 
@@ -58,5 +54,6 @@ private:
     std::vector<QPointF> m_polyline;
     int m_numSegments;
 };
+
 
 #endif  // ifndef POLYLINE_INTERSECTOR_H_

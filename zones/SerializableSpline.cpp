@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,16 +23,14 @@
 #include <QTransform>
 #include <boost/foreach.hpp>
 
-SerializableSpline::SerializableSpline(EditableSpline const& spline)
-{
+SerializableSpline::SerializableSpline(EditableSpline const& spline) {
     SplineVertex::Ptr vertex(spline.firstVertex());
     for (; vertex; vertex = vertex->next(SplineVertex::NO_LOOP)) {
         m_points.push_back(vertex->point());
     }
 }
 
-SerializableSpline::SerializableSpline(QDomElement const& el)
-{
+SerializableSpline::SerializableSpline(QDomElement const& el) {
     QString const point_str("point");
 
     QDomNode node(el.firstChild());
@@ -49,16 +46,13 @@ SerializableSpline::SerializableSpline(QDomElement const& el)
     }
 }
 
-SerializableSpline::SerializableSpline(QPolygonF const& polygon)
-{
-    for (int i = (int)polygon.size() - 1; i >= 0; i--) {
+SerializableSpline::SerializableSpline(QPolygonF const& polygon) {
+    for (int i = (int) polygon.size() - 1; i >= 0; i--) {
         m_points.push_back(polygon[i]);
     }
 }
 
-QDomElement
-SerializableSpline::toXml(QDomDocument& doc, QString const& name) const
-{
+QDomElement SerializableSpline::toXml(QDomDocument& doc, QString const& name) const {
     QDomElement el(doc.createElement(name));
 
     QString const point_str("point");
@@ -70,9 +64,7 @@ SerializableSpline::toXml(QDomDocument& doc, QString const& name) const
     return el;
 }
 
-SerializableSpline
-SerializableSpline::transformed(QTransform const& xform) const
-{
+SerializableSpline SerializableSpline::transformed(QTransform const& xform) const {
     SerializableSpline transformed(*this);
 
     for (QPointF& pt : transformed.m_points) {
@@ -82,9 +74,7 @@ SerializableSpline::transformed(QTransform const& xform) const
     return transformed;
 }
 
-SerializableSpline
-SerializableSpline::transformed(boost::function<QPointF(QPointF const&)> const& xform) const
-{
+SerializableSpline SerializableSpline::transformed(boost::function<QPointF(QPointF const&)> const& xform) const {
     SerializableSpline transformed(*this);
 
     for (QPointF& pt : transformed.m_points) {

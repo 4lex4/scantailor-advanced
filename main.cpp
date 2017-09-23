@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,9 +29,7 @@
 
 #include "CommandLine.h"
 
-int
-main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     Application app(argc, argv);
 
 #ifdef _WIN32
@@ -94,8 +91,7 @@ main(int argc, char** argv)
     main_wnd->setAttribute(Qt::WA_DeleteOnClose);
     if (settings.value("mainWindow/maximized") == false) {
         main_wnd->show();
-    }
-    else {
+    } else {
 #ifdef _WIN32
         main_wnd->show();
         main_wnd->showMaximized();

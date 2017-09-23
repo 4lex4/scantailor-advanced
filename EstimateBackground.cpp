@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -42,8 +41,7 @@
 using namespace imageproc;
 
 struct AbsoluteDifference {
-    static uint8_t transform(uint8_t src, uint8_t dst)
-    {
+    static uint8_t transform(uint8_t src, uint8_t dst) {
         return abs(int(src) - int(dst));
     }
 };
@@ -52,9 +50,7 @@ struct AbsoluteDifference {
  * The same as seedFillGrayInPlace() with a seed of two black lines
  * at top and bottom, except here colors may only spread vertically.
  */
-static void
-seedFillTopBottomInPlace(GrayImage& image)
-{
+static void seedFillTopBottomInPlace(GrayImage& image) {
     uint8_t* const data = image.data();
     int const stride = image.stride();
 
@@ -82,9 +78,7 @@ seedFillTopBottomInPlace(GrayImage& image)
     }
 }
 
-static void
-morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg)
-{
+static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg) {
     using namespace boost::lambda;
 
 
@@ -139,18 +133,17 @@ morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg)
         if (dbg) {
             dbg->add(image, "use_method1");
         }
-    }
-    else {
+    } else {
         if (dbg) {
             dbg->add(image, "use_method2");
         }
     }
 }  // morphologicalPreprocessingInPlace
 
-imageproc::PolynomialSurface
-estimateBackground(GrayImage const& input, QPolygonF const& area_to_consider, TaskStatus const& status,
-                   DebugImages* dbg)
-{
+imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
+                                                QPolygonF const& area_to_consider,
+                                                TaskStatus const& status,
+                                                DebugImages* dbg) {
     QSize reduced_size(input.size());
     reduced_size.scale(300, 300, Qt::KeepAspectRatio);
     GrayImage background(scaleToGray(GrayImage(input), reduced_size));
@@ -175,8 +168,8 @@ estimateBackground(GrayImage const& input, QPolygonF const& area_to_consider, Ta
     if (!area_to_consider.isEmpty()) {
         QTransform xform;
         xform.scale(
-            (double)reduced_size.width() / input.width(),
-            (double)reduced_size.height() / input.height()
+            (double) reduced_size.width() / input.width(),
+            (double) reduced_size.height() / input.height()
         );
         PolygonRasterizer::fillExcept(
             mask, WHITE, xform.map(area_to_consider), Qt::WindingFill

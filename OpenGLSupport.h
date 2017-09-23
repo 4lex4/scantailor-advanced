@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,8 +21,7 @@
 
 #include <QString>
 
-class OpenGLSupport
-{
+class OpenGLSupport {
 public:
     /**
      * \brief Returns true if OpenGL support is present and provides the necessary features.
@@ -37,5 +35,6 @@ public:
      */
     static QString deviceName();
 };
+
 
 #endif

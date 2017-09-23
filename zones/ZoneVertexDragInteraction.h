@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,17 +28,13 @@
 
 class ZoneInteractionContext;
 
-class ZoneVertexDragInteraction
-    : public InteractionHandler
-{
+class ZoneVertexDragInteraction: public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
-
 public:
     ZoneVertexDragInteraction(ZoneInteractionContext& context,
                               InteractionState& interaction,
                               EditableSpline::Ptr const& spline,
                               SplineVertex::Ptr const& vertex);
-
 protected:
     virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
@@ -57,5 +52,6 @@ private:
     BasicSplineVisualizer m_visualizer;
     QPointF m_dragOffset;
 };
+
 
 #endif  // ifndef ZONE_VERTEX_DRAG_INTERACTION_H_

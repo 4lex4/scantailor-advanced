@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,10 +26,8 @@
 #include <list>
 #include <set>
 
-class ProcessingTaskQueue
-{
+class ProcessingTaskQueue {
     DECLARE_NON_COPYABLE(ProcessingTaskQueue)
-
 public:
     ProcessingTaskQueue();
 
@@ -73,5 +70,6 @@ private:
     PageInfo m_selectedPage;
     PageInfo m_pageToSelectWhenDone;
 };
+
 
 #endif  // ifndef PROCESSING_TASK_QUEUE_H_

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -43,75 +42,69 @@ class InteractionState;
 class QPainter;
 class QMenu;
 
-namespace output
-{
-    class Settings;
+namespace output {
+class Settings;
 
 
-    class PictureZoneEditor
-        : public ImageViewBase,
-          private InteractionHandler
-    {
-        Q_OBJECT
+class PictureZoneEditor: public ImageViewBase, private InteractionHandler {
+    Q_OBJECT
+public:
+    PictureZoneEditor(QImage const& image,
+                      ImagePixmapUnion const& downscaled_image,
+                      imageproc::BinaryImage const& picture_mask,
+                      QTransform const& image_to_virt,
+                      QPolygonF const& virt_display_area,
+                      PageId const& page_id,
+                      IntrusivePtr<Settings> const& settings);
 
-    public:
-        PictureZoneEditor(QImage const& image,
-                          ImagePixmapUnion const& downscaled_image,
-                          imageproc::BinaryImage const& picture_mask,
-                          QTransform const& image_to_virt,
-                          QPolygonF const& virt_display_area,
-                          PageId const& page_id,
-                          IntrusivePtr<Settings> const& settings);
+    virtual ~PictureZoneEditor();
+signals:
+    void invalidateThumbnail(PageId const& page_id);
 
-        virtual ~PictureZoneEditor();
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    signals:
-        void invalidateThumbnail(PageId const& page_id);
+private slots:
+    void advancePictureMaskAnimation();
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void initiateBuildingScreenPictureMask();
 
-    private slots:
-        void advancePictureMaskAnimation();
+    void commitZones();
 
-        void initiateBuildingScreenPictureMask();
+    void updateRequested();
 
-        void commitZones();
+private:
+    class MaskTransformTask;
 
-        void updateRequested();
+    bool validateScreenPictureMask() const;
 
-    private:
-        class MaskTransformTask;
+    void schedulePictureMaskRebuild();
 
-        bool validateScreenPictureMask() const;
+    void screenPictureMaskBuilt(QPoint const& origin, QImage const& mask);
 
-        void schedulePictureMaskRebuild();
+    void paintOverPictureMask(QPainter& painter);
 
-        void screenPictureMaskBuilt(QPoint const& origin, QImage const& mask);
+    void showPropertiesDialog(EditableZoneSet::Zone const& zone);
 
-        void paintOverPictureMask(QPainter& painter);
+    EditableZoneSet m_zones;
 
-        void showPropertiesDialog(EditableZoneSet::Zone const& zone);
+    ZoneInteractionContext m_context;
 
-        EditableZoneSet m_zones;
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
 
-        ZoneInteractionContext m_context;
+    imageproc::BinaryImage m_origPictureMask;
+    QPixmap m_screenPictureMask;
+    QPoint m_screenPictureMaskOrigin;
+    QTransform m_screenPictureMaskXform;
+    QTransform m_potentialPictureMaskXform;
+    QTimer m_pictureMaskRebuildTimer;
+    QTimer m_pictureMaskAnimateTimer;
+    int m_pictureMaskAnimationPhase;
+    IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
 
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-
-        imageproc::BinaryImage m_origPictureMask;
-        QPixmap m_screenPictureMask;
-        QPoint m_screenPictureMaskOrigin;
-        QTransform m_screenPictureMaskXform;
-        QTransform m_potentialPictureMaskXform;
-        QTimer m_pictureMaskRebuildTimer;
-        QTimer m_pictureMaskAnimateTimer;
-        int m_pictureMaskAnimationPhase;
-        IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
-
-        PageId m_pageId;
-        IntrusivePtr<Settings> m_ptrSettings;
-    };
+    PageId m_pageId;
+    IntrusivePtr<Settings> m_ptrSettings;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

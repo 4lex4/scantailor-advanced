@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -30,11 +29,8 @@
 
 class ImageViewBase;
 
-class DragHandler
-    : public InteractionHandler
-{
+class DragHandler: public InteractionHandler {
     Q_DECLARE_TR_FUNCTIONS(DragHandler)
-
 public:
     DragHandler(ImageViewBase& image_view);
 
@@ -58,5 +54,6 @@ private:
     QPoint m_lastMousePos;
     boost::function<bool(InteractionState const&)> m_interactionPermitter;
 };
+
 
 #endif  // ifndef DRAG_HANDLER_H_

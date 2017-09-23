@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,11 +29,8 @@
  * Useful when you need to bind additional parameters to a slot
  * at connection time.
  */
-class QtSignalForwarder
-    : public QObject
-{
+class QtSignalForwarder: public QObject {
     Q_OBJECT DECLARE_NON_COPYABLE(QtSignalForwarder)
-
 public:
     /**
      * \brief Constructor.
@@ -54,5 +50,6 @@ private slots:
 private:
     boost::function<void()> m_slot;
 };
+
 
 #endif

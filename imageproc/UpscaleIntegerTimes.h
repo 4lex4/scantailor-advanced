@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -24,23 +23,22 @@
 
 class QSize;
 
-namespace imageproc
-{
-    class BinaryImage;
+namespace imageproc {
+class BinaryImage;
 
-    /**
-     * \brief Upscale a binary image integer times in each direction.
-     */
-    BinaryImage upscaleIntegerTimes(BinaryImage const& src, int xscale, int yscale);
+/**
+ * \brief Upscale a binary image integer times in each direction.
+ */
+BinaryImage upscaleIntegerTimes(BinaryImage const& src, int xscale, int yscale);
 
-    /**
-     * \brief Upscale a binary image integer times in each direction
-     *        and add padding if necessary.
-     *
-     * The resulting image will have a size of \p dst_size, which is achieved
-     * by upscaling the source image integer times in each direction and then
-     * adding a padding to reach the requested size.
-     */
-    BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor padding);
+/**
+ * \brief Upscale a binary image integer times in each direction
+ *        and add padding if necessary.
+ *
+ * The resulting image will have a size of \p dst_size, which is achieved
+ * by upscaling the source image integer times in each direction and then
+ * adding a padding to reach the requested size.
+ */
+BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor padding);
 }
 #endif

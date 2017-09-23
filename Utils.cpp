@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,12 +29,10 @@
  #include <stdio.h>
 #endif
 
-bool
-Utils::overwritingRename(QString const& from, QString const& to)
-{
+bool Utils::overwritingRename(QString const& from, QString const& to) {
 #ifdef Q_OS_WIN
     return MoveFileExW(
-        (WCHAR*)from.utf16(), (WCHAR*)to.utf16(),
+        (WCHAR*) from.utf16(), (WCHAR*) to.utf16(),
         MOVEFILE_REPLACE_EXISTING
     ) != 0;
 
@@ -47,9 +44,7 @@ Utils::overwritingRename(QString const& from, QString const& to)
 #endif
 }
 
-QString
-Utils::richTextForLink(QString const& label, QString const& target)
-{
+QString Utils::richTextForLink(QString const& label, QString const& target) {
     return QString::fromLatin1(
         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\""
         "\"http://www.w3.org/TR/REC-html40/strict.dtd\">"
@@ -60,21 +55,16 @@ Utils::richTextForLink(QString const& label, QString const& target)
     ).arg(target.toHtmlEscaped(), label.toHtmlEscaped());
 }
 
-void
-Utils::maybeCreateCacheDir(QString const& output_dir)
-{
+void Utils::maybeCreateCacheDir(QString const& output_dir) {
     QDir(output_dir).mkdir(QString::fromLatin1("cache"));
 }
 
-QString
-Utils::outputDirToThumbDir(QString const& output_dir)
-{
+QString Utils::outputDirToThumbDir(QString const& output_dir) {
     return output_dir + QLatin1String("/cache/thumbs");
 }
 
 IntrusivePtr<ThumbnailPixmapCache>
-Utils::createThumbnailCache(QString const& output_dir)
-{
+Utils::createThumbnailCache(QString const& output_dir) {
     QSize const max_pixmap_size(200, 200);
     QString const thumbs_cache_path(outputDirToThumbDir(output_dir));
 

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -38,11 +37,8 @@ class QDomDocument;
  *
  * \note This class is thread-safe.
  */
-class FileNameDisambiguator
-    : public RefCountable
-{
+class FileNameDisambiguator: public RefCountable {
     DECLARE_NON_COPYABLE(FileNameDisambiguator)
-
 public:
     FileNameDisambiguator();
 
@@ -90,5 +86,6 @@ private:
 
     std::unique_ptr<Impl> m_ptrImpl;
 };
+
 
 #endif  // ifndef FILENAME_DISAMBIGUATOR_H_

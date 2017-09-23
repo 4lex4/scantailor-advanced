@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -38,8 +37,7 @@ typedef MatMNT<4, 4, double> Mat44d;
  * \note The memory layout is always column-major, as that's what MatrixCalc uses.
  */
 template <size_t M, size_t N, typename T>
-class MatMNT
-{
+class MatMNT {
 public:
     typedef T type;
     enum { ROWS = M, COLS = N };
@@ -73,23 +71,19 @@ public:
     template <typename OT>
     MatMNT& operator=(MatMNT<M, N, OT> const& other);
 
-    T const* data() const
-    {
+    T const* data() const {
         return m_data;
     }
 
-    T* data()
-    {
+    T* data() {
         return m_data;
     }
 
-    T const& operator()(int i, int j) const
-    {
+    T const& operator()(int i, int j) const {
         return m_data[i + j * M];
     }
 
-    T& operator()(int i, int j)
-    {
+    T& operator()(int i, int j) {
         return m_data[i + j * M];
     }
 
@@ -99,8 +93,7 @@ private:
 
 
 template <size_t M, size_t N, typename T>
-MatMNT<M, N, T>::MatMNT()
-{
+MatMNT<M, N, T>::MatMNT() {
     size_t const len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = T();
@@ -109,8 +102,7 @@ MatMNT<M, N, T>::MatMNT()
 
 template <size_t M, size_t N, typename T>
 template <typename OT>
-MatMNT<M, N, T>::MatMNT(OT const* data)
-{
+MatMNT<M, N, T>::MatMNT(OT const* data) {
     size_t const len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = static_cast<T>(data[i]);
@@ -119,8 +111,7 @@ MatMNT<M, N, T>::MatMNT(OT const* data)
 
 template <size_t M, size_t N, typename T>
 template <typename OT>
-MatMNT<M, N, T>::MatMNT(MatMNT<M, N, OT> const& other)
-{
+MatMNT<M, N, T>::MatMNT(MatMNT<M, N, OT> const& other) {
     OT const* data = other.data();
     size_t const len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {

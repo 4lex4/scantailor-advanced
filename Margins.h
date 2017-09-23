@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,60 +19,51 @@
 #ifndef MARGINS_H_
 #define MARGINS_H_
 
-class Margins
-{
+class Margins {
 public:
     Margins()
-        : m_top(),
-          m_bottom(),
-          m_left(),
-          m_right()
-    { }
+            : m_top(),
+              m_bottom(),
+              m_left(),
+              m_right() {
+    }
 
     Margins(double left, double top, double right, double bottom)
-        : m_top(top),
-          m_bottom(bottom),
-          m_left(left),
-          m_right(right)
-    { }
+            : m_top(top),
+              m_bottom(bottom),
+              m_left(left),
+              m_right(right) {
+    }
 
-    double top() const
-    {
+    double top() const {
         return m_top;
     }
 
-    void setTop(double val)
-    {
+    void setTop(double val) {
         m_top = val;
     }
 
-    double bottom() const
-    {
+    double bottom() const {
         return m_bottom;
     }
 
-    void setBottom(double val)
-    {
+    void setBottom(double val) {
         m_bottom = val;
     }
 
-    double left() const
-    {
+    double left() const {
         return m_left;
     }
 
-    void setLeft(double val)
-    {
+    void setLeft(double val) {
         m_left = val;
     }
 
-    double right() const
-    {
+    double right() const {
         return m_right;
     }
 
-    void setRight(double val)
-    {
+    void setRight(double val) {
         m_right = val;
     }
 
@@ -83,5 +73,6 @@ private:
     double m_left;
     double m_right;
 };
+
 
 #endif  // ifndef MARGINS_H_

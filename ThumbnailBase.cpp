@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,18 +27,14 @@
 
 using namespace imageproc;
 
-class ThumbnailBase::LoadCompletionHandler
-    : public AbstractCommand1<void, ThumbnailLoadResult const&>
-{
+class ThumbnailBase::LoadCompletionHandler: public AbstractCommand1<void, ThumbnailLoadResult const&>{
     DECLARE_NON_COPYABLE(LoadCompletionHandler)
-
 public:
     LoadCompletionHandler(ThumbnailBase* thumb)
-        : m_pThumb(thumb)
-    { }
+            : m_pThumb(thumb) {
+    }
 
-    virtual void operator()(ThumbnailLoadResult const& result)
-    {
+    virtual void operator()(ThumbnailLoadResult const& result) {
         m_pThumb->handleLoadResult(result);
     }
 
@@ -52,27 +47,22 @@ ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform)
-    : m_ptrThumbnailCache(thumbnail_cache),
-      m_maxSize(max_size),
-      m_imageId(image_id),
-      m_imageXform(image_xform),
-      m_extendedClipArea(false)
-{
+        : m_ptrThumbnailCache(thumbnail_cache),
+          m_maxSize(max_size),
+          m_imageId(image_id),
+          m_imageXform(image_xform),
+          m_extendedClipArea(false) {
     setImageXform(m_imageXform);
 }
 
-ThumbnailBase::~ThumbnailBase()
-{ }
+ThumbnailBase::~ThumbnailBase() {
+}
 
-QRectF
-ThumbnailBase::boundingRect() const
-{
+QRectF ThumbnailBase::boundingRect() const {
     return m_boundingRect;
 }
 
-void
-ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget)
-{
+void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget) {
     QPixmap pixmap;
 
     if (!m_ptrCompletionHandler.get()) {
@@ -135,9 +125,10 @@ ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, 
     QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
         || (temp_pixmap.width() < display_rect.width())
-        || (temp_pixmap.height() < display_rect.width())) {
-        int w = (int)display_rect.width();
-        int h = (int)display_rect.height();
+        || (temp_pixmap.height() < display_rect.width()))
+    {
+        int w = (int) display_rect.width();
+        int h = (int) display_rect.height();
 
         w += w / 10;
         h += h / 10;
@@ -200,9 +191,7 @@ ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, 
     painter->drawPixmap(display_rect.topLeft(), temp_pixmap);
 }  // ThumbnailBase::paint
 
-void
-ThumbnailBase::paintDeviant(QPainter& painter)
-{
+void ThumbnailBase::paintDeviant(QPainter& painter) {
     QPen pen(QColor(0xdd, 0x00, 0x00, 0xee));
     pen.setWidth(5);
     pen.setCosmetic(true);
@@ -218,9 +207,7 @@ ThumbnailBase::paintDeviant(QPainter& painter)
     painter.drawText(boundingRect(), Qt::AlignCenter, "*");
 }
 
-void
-ThumbnailBase::setImageXform(ImageTransformation const& image_xform)
-{
+void ThumbnailBase::setImageXform(ImageTransformation const& image_xform) {
     m_imageXform = image_xform;
     QSizeF const unscaled_size(
         image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
@@ -236,9 +223,7 @@ ThumbnailBase::setImageXform(ImageTransformation const& image_xform)
     m_postScaleXform.scale(x_post_scale, y_post_scale);
 }
 
-void
-ThumbnailBase::handleLoadResult(ThumbnailLoadResult const& result)
-{
+void ThumbnailBase::handleLoadResult(ThumbnailLoadResult const& result) {
     m_ptrCompletionHandler.reset();
 
     if (result.status() != ThumbnailLoadResult::LOAD_FAILED) {

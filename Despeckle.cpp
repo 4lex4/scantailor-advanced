@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -42,457 +41,463 @@
 
 using namespace imageproc;
 
-namespace
-{
+namespace {
+/**
+ * We treat vertical distances differently from the horizontal ones.
+ * We want horizontal proximity to have greater weight, so we
+ * multiply the vertical component distances by VERTICAL_SCALE,
+ * so that the distance is not:\n
+ * sqrt(dx^2 + dy^2)\n
+ * but:\n
+ * sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
+ * Keep in mind that we actually operate on squared distances,
+ * so we don't need to take that square root.
+ */
+static int const VERTICAL_SCALE = 2;
+static int const VERTICAL_SCALE_SQ = VERTICAL_SCALE * VERTICAL_SCALE;
+
+struct Settings {
     /**
-     * We treat vertical distances differently from the horizontal ones.
-     * We want horizontal proximity to have greater weight, so we
-     * multiply the vertical component distances by VERTICAL_SCALE,
-     * so that the distance is not:\n
-     * sqrt(dx^2 + dy^2)\n
-     * but:\n
-     * sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
-     * Keep in mind that we actually operate on squared distances,
-     * so we don't need to take that square root.
+     * When multiplied by the number of pixels in a connected component,
+     * gives the minimum size (in terms of the number of pixels) of a connected
+     * component we may attach it to.
      */
-    static int const VERTICAL_SCALE = 2;
-    static int const VERTICAL_SCALE_SQ = VERTICAL_SCALE * VERTICAL_SCALE;
+    double minRelativeParentWeight;
 
-    struct Settings {
-        /**
-         * When multiplied by the number of pixels in a connected component,
-         * gives the minimum size (in terms of the number of pixels) of a connected
-         * component we may attach it to.
-         */
-        double minRelativeParentWeight;
+    /**
+     * When multiplied by the number of pixels in a connected component,
+     * gives the maximum squared distance to another connected component
+     * we may attach it to.
+     */
+    uint32_t pixelsToSqDist;
 
-        /**
-         * When multiplied by the number of pixels in a connected component,
-         * gives the maximum squared distance to another connected component
-         * we may attach it to.
-         */
-        uint32_t pixelsToSqDist;
+    /**
+     * Defines the minimum width or height in pixels that will guarantee
+     * the object won't be removed.
+     */
+    int bigObjectThreshold;
 
-        /**
-         * Defines the minimum width or height in pixels that will guarantee
-         * the object won't be removed.
-         */
-        int bigObjectThreshold;
+    static Settings get(Despeckle::Level level, Dpi const& dpi);
+};
 
-        static Settings get(Despeckle::Level level, Dpi const& dpi);
-    };
+Settings Settings::get(Despeckle::Level const level, Dpi const& dpi) {
+    Settings settings;
 
-    Settings
-    Settings::get(Despeckle::Level const level, Dpi const& dpi)
-    {
-        Settings settings;
+    int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
+    double const dpi_factor = min_dpi / 300.0;
 
-        int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
-        double const dpi_factor = min_dpi / 300.0;
+    settings.minRelativeParentWeight = 0;
+    settings.pixelsToSqDist = 0;
+    settings.bigObjectThreshold = 0;
 
-        settings.minRelativeParentWeight = 0;
-        settings.pixelsToSqDist = 0;
-        settings.bigObjectThreshold = 0;
-
-        switch (level) {
-            case Despeckle::CAUTIOUS:
-                settings.minRelativeParentWeight = 0.125 * dpi_factor;
-                settings.pixelsToSqDist = 10.0 * 10.0;
-                settings.bigObjectThreshold = qRound(7 * dpi_factor);
-                break;
-            case Despeckle::NORMAL:
-                settings.minRelativeParentWeight = 0.175 * dpi_factor;
-                settings.pixelsToSqDist = 6.5 * 6.5;
-                settings.bigObjectThreshold = qRound(12 * dpi_factor);
-                break;
-            case Despeckle::AGGRESSIVE:
-                settings.minRelativeParentWeight = 0.225 * dpi_factor;
-                settings.pixelsToSqDist = 3.5 * 3.5;
-                settings.bigObjectThreshold = qRound(17 * dpi_factor);
-                break;
-        }
-
-        return settings;
+    switch (level) {
+        case Despeckle::CAUTIOUS:
+            settings.minRelativeParentWeight = 0.125 * dpi_factor;
+            settings.pixelsToSqDist = 10.0 * 10.0;
+            settings.bigObjectThreshold = qRound(7 * dpi_factor);
+            break;
+        case Despeckle::NORMAL:
+            settings.minRelativeParentWeight = 0.175 * dpi_factor;
+            settings.pixelsToSqDist = 6.5 * 6.5;
+            settings.bigObjectThreshold = qRound(12 * dpi_factor);
+            break;
+        case Despeckle::AGGRESSIVE:
+            settings.minRelativeParentWeight = 0.225 * dpi_factor;
+            settings.pixelsToSqDist = 3.5 * 3.5;
+            settings.bigObjectThreshold = qRound(17 * dpi_factor);
+            break;
     }
 
-    struct Component {
-        static uint32_t const ANCHORED_TO_BIG = uint32_t(1) << 31;
-        static uint32_t const ANCHORED_TO_SMALL = uint32_t(1) << 30;
-        static uint32_t const TAG_MASK = ANCHORED_TO_BIG | ANCHORED_TO_SMALL;
+    return settings;
+}
 
-        /**
-         * Lower 30 bits: the number of pixels in the connected component.
-         * Higher 2 bits: tags.
-         */
-        uint32_t num_pixels;
-
-        Component()
-            : num_pixels(0)
-        { }
-
-        uint32_t const anchoredToBig() const
-        {
-            return num_pixels & ANCHORED_TO_BIG;
-        }
-
-        void setAnchoredToBig()
-        {
-            num_pixels |= ANCHORED_TO_BIG;
-        }
-
-        uint32_t const anchoredToSmall() const
-        {
-            return num_pixels & ANCHORED_TO_SMALL;
-        }
-
-        void setAnchoredToSmall()
-        {
-            num_pixels |= ANCHORED_TO_SMALL;
-        }
-
-        bool const anchoredToSmallButNotBig() const
-        {
-            return (num_pixels & TAG_MASK) == ANCHORED_TO_SMALL;
-        }
-
-        void clearTags()
-        {
-            num_pixels &= ~TAG_MASK;
-        }
-    };
-
-    uint32_t const Component::ANCHORED_TO_BIG;
-    uint32_t const Component::ANCHORED_TO_SMALL;
-    uint32_t const Component::TAG_MASK;
-
-    struct BoundingBox {
-        int top;
-        int left;
-        int bottom;
-        int right;
-
-        BoundingBox()
-        {
-            top = left = std::numeric_limits<int>::max();
-            bottom = right = std::numeric_limits<int>::min();
-        }
-
-        int width() const
-        {
-            return right - left + 1;
-        }
-
-        int height() const
-        {
-            return bottom - top + 1;
-        }
-
-        void extend(int x, int y)
-        {
-            top = std::min(top, y);
-            left = std::min(left, x);
-            bottom = std::max(bottom, y);
-            right = std::max(right, x);
-        }
-    };
-
-    struct Vector {
-        int16_t x;
-        int16_t y;
-    };
-
-    union Distance {
-        Vector vec;
-        uint32_t raw;
-
-        static Distance
-        zero()
-        {
-            Distance dist;
-            dist.raw = 0;
-
-            return dist;
-        }
-
-        static Distance
-        special()
-        {
-            Distance dist;
-            dist.vec.x = dist.vec.y = std::numeric_limits<int16_t>::max();
-
-            return dist;
-        }
-
-        bool
-        operator==(Distance const& other) const
-        {
-            return raw == other.raw;
-        }
-
-        bool
-        operator!=(Distance const& other) const
-        {
-            return raw != other.raw;
-        }
-
-        void
-        reset(int x)
-        {
-            vec.x = std::numeric_limits<int16_t>::max() - x;
-            vec.y = 0;
-        }
-
-        uint32_t
-        sqdist() const
-        {
-            int const x = vec.x;
-            int const y = vec.y;
-
-            return static_cast<uint32_t>(x * x + VERTICAL_SCALE_SQ * y * y);
-        }
-    };
+struct Component {
+    static uint32_t const ANCHORED_TO_BIG = uint32_t(1) << 31;
+    static uint32_t const ANCHORED_TO_SMALL = uint32_t(1) << 30;
+    static uint32_t const TAG_MASK = ANCHORED_TO_BIG | ANCHORED_TO_SMALL;
 
     /**
-     * \brief A bidirectional association between two connected components.
+     * Lower 30 bits: the number of pixels in the connected component.
+     * Higher 2 bits: tags.
      */
-    struct Connection {
-        uint32_t lesser_label;
-        uint32_t greater_label;
+    uint32_t num_pixels;
 
-        Connection(uint32_t lbl1, uint32_t lbl2)
-        {
-            if (lbl1 < lbl2) {
-                lesser_label = lbl1;
-                greater_label = lbl2;
-            }
-            else {
-                lesser_label = lbl2;
-                greater_label = lbl1;
-            }
+    Component()
+            : num_pixels(0) {
+    }
+
+    uint32_t const anchoredToBig() const {
+        return num_pixels & ANCHORED_TO_BIG;
+    }
+
+    void setAnchoredToBig() {
+        num_pixels |= ANCHORED_TO_BIG;
+    }
+
+    uint32_t const anchoredToSmall() const {
+        return num_pixels & ANCHORED_TO_SMALL;
+    }
+
+    void setAnchoredToSmall() {
+        num_pixels |= ANCHORED_TO_SMALL;
+    }
+
+    bool const anchoredToSmallButNotBig() const {
+        return (num_pixels & TAG_MASK) == ANCHORED_TO_SMALL;
+    }
+
+    void clearTags() {
+        num_pixels &= ~TAG_MASK;
+    }
+};
+
+uint32_t const Component::ANCHORED_TO_BIG;
+uint32_t const Component::ANCHORED_TO_SMALL;
+uint32_t const Component::TAG_MASK;
+
+struct BoundingBox {
+    int top;
+    int left;
+    int bottom;
+    int right;
+
+    BoundingBox() {
+        top = left = std::numeric_limits<int>::max();
+        bottom = right = std::numeric_limits<int>::min();
+    }
+
+    int width() const {
+        return right - left + 1;
+    }
+
+    int height() const {
+        return bottom - top + 1;
+    }
+
+    void extend(int x, int y) {
+        top = std::min(top, y);
+        left = std::min(left, x);
+        bottom = std::max(bottom, y);
+        right = std::max(right, x);
+    }
+};
+
+struct Vector {
+    int16_t x;
+    int16_t y;
+};
+
+union Distance {
+    Vector vec;
+    uint32_t raw;
+
+    static Distance zero() {
+        Distance dist;
+        dist.raw = 0;
+
+        return dist;
+    }
+
+    static Distance special() {
+        Distance dist;
+        dist.vec.x = dist.vec.y = std::numeric_limits<int16_t>::max();
+
+        return dist;
+    }
+
+    bool operator==(Distance const& other) const {
+        return raw == other.raw;
+    }
+
+    bool operator!=(Distance const& other) const {
+        return raw != other.raw;
+    }
+
+    void reset(int x) {
+        vec.x = std::numeric_limits<int16_t>::max() - x;
+        vec.y = 0;
+    }
+
+    uint32_t sqdist() const {
+        int const x = vec.x;
+        int const y = vec.y;
+
+        return static_cast<uint32_t>(x * x + VERTICAL_SCALE_SQ * y * y);
+    }
+};
+
+/**
+ * \brief A bidirectional association between two connected components.
+ */
+struct Connection {
+    uint32_t lesser_label;
+    uint32_t greater_label;
+
+    Connection(uint32_t lbl1, uint32_t lbl2) {
+        if (lbl1 < lbl2) {
+            lesser_label = lbl1;
+            greater_label = lbl2;
+        } else {
+            lesser_label = lbl2;
+            greater_label = lbl1;
         }
+    }
 
-        bool operator<(Connection const& rhs) const
-        {
-            if (lesser_label < rhs.lesser_label) {
-                return true;
-            }
-            else if (lesser_label > rhs.lesser_label) {
-                return false;
-            }
-            else {
-                return greater_label < rhs.greater_label;
-            }
+    bool operator<(Connection const& rhs) const {
+        if (lesser_label < rhs.lesser_label) {
+            return true;
+        } else if (lesser_label > rhs.lesser_label) {
+            return false;
+        } else {
+            return greater_label < rhs.greater_label;
         }
-    };
+    }
+};
 
-    /**
-     * \brief A directional assiciation between two connected components.
-     */
-    struct TargetSourceConn {
-        uint32_t target;
+/**
+ * \brief A directional assiciation between two connected components.
+ */
+struct TargetSourceConn {
+    uint32_t target;
 
-        /**< The label of the target connected component. */
-        uint32_t source;
+    /**< The label of the target connected component. */
+    uint32_t source;
 
-        /**< The label of the source connected component. */
+    /**< The label of the source connected component. */
 
-        TargetSourceConn(uint32_t tgt, uint32_t src)
+    TargetSourceConn(uint32_t tgt, uint32_t src)
             : target(tgt),
-              source(src)
-        { }
-
-        /**
-         * The ordering is by target then source.  It's designed to be able
-         * to quickly locate all associations involving a specific target.
-         */
-        bool operator<(TargetSourceConn const& rhs) const
-        {
-            if (target < rhs.target) {
-                return true;
-            }
-            else if (target > rhs.target) {
-                return false;
-            }
-            else {
-                return source < rhs.source;
-            }
-        }
-    };
-
-    /**
-     * \brief If the association didn't exist, create it,
-     *        otherwise the minimum distance.
-     */
-    void
-    updateDistance(std::map<Connection, uint32_t>& conns, uint32_t label1, uint32_t label2, uint32_t sqdist)
-    {
-        typedef std::map<Connection, uint32_t> Connections;
-
-        Connection const conn(label1, label2);
-        Connections::iterator it(conns.lower_bound(conn));
-        if ((it == conns.end()) || (conn < it->first)) {
-            conns.insert(Connections::value_type(conn, sqdist));
-        }
-        else if (sqdist < it->second) {
-            it->second = sqdist;
-        }
+              source(src) {
     }
 
     /**
-     * \brief Tag the source component with ANCHORED_TO_SMALL, ANCHORED_TO_BIG
-     *        or none of the above.
+     * The ordering is by target then source.  It's designed to be able
+     * to quickly locate all associations involving a specific target.
      */
-    void
-    tagSourceComponent(Component& source, Component const& target, uint32_t sqdist, Settings const& settings)
-    {
-        if (source.anchoredToBig()) {
-            return;
+    bool operator<(TargetSourceConn const& rhs) const {
+        if (target < rhs.target) {
+            return true;
+        } else if (target > rhs.target) {
+            return false;
+        } else {
+            return source < rhs.source;
         }
+    }
+};
 
-        if (sqdist > source.num_pixels * settings.pixelsToSqDist) {
-            return;
-        }
+/**
+ * \brief If the association didn't exist, create it,
+ *        otherwise the minimum distance.
+ */
+void updateDistance(std::map<Connection, uint32_t>& conns, uint32_t label1, uint32_t label2, uint32_t sqdist) {
+    typedef std::map<Connection, uint32_t> Connections;
 
-        if (target.num_pixels >= settings.minRelativeParentWeight * source.num_pixels) {
-            source.setAnchoredToBig();
-        }
-        else {
-            source.setAnchoredToSmall();
+    Connection const conn(label1, label2);
+    Connections::iterator it(conns.lower_bound(conn));
+    if ((it == conns.end()) || (conn < it->first)) {
+        conns.insert(Connections::value_type(conn, sqdist));
+    } else if (sqdist < it->second) {
+        it->second = sqdist;
+    }
+}
+
+/**
+ * \brief Tag the source component with ANCHORED_TO_SMALL, ANCHORED_TO_BIG
+ *        or none of the above.
+ */
+void tagSourceComponent(Component& source, Component const& target, uint32_t sqdist, Settings const& settings) {
+    if (source.anchoredToBig()) {
+        return;
+    }
+
+    if (sqdist > source.num_pixels * settings.pixelsToSqDist) {
+        return;
+    }
+
+    if (target.num_pixels >= settings.minRelativeParentWeight * source.num_pixels) {
+        source.setAnchoredToBig();
+    } else {
+        source.setAnchoredToSmall();
+    }
+}
+
+/**
+ * Check if the component may be attached to another one.
+ * Attaching a component to another one will preserve the component
+ * being attached, provided that the one it's attached to is also preserved.
+ */
+bool canBeAttachedTo(Component const& comp, Component const& target, uint32_t sqdist, Settings const& settings) {
+    if (sqdist <= comp.num_pixels * settings.pixelsToSqDist) {
+        if (target.num_pixels >= comp.num_pixels * settings.minRelativeParentWeight) {
+            return true;
         }
     }
 
-    /**
-     * Check if the component may be attached to another one.
-     * Attaching a component to another one will preserve the component
-     * being attached, provided that the one it's attached to is also preserved.
-     */
-    bool
-    canBeAttachedTo(Component const& comp, Component const& target, uint32_t sqdist, Settings const& settings)
-    {
-        if (sqdist <= comp.num_pixels * settings.pixelsToSqDist) {
-            if (target.num_pixels >= comp.num_pixels * settings.minRelativeParentWeight) {
-                return true;
-            }
-        }
+    return false;
+}
 
-        return false;
+void voronoi(ConnectivityMap& cmap, std::vector<Distance>& dist) {
+    int const width = cmap.size().width() + 2;
+    int const height = cmap.size().height() + 2;
+
+    assert(dist.empty());
+    dist.resize(width * height, Distance::zero());
+
+    std::vector<uint32_t> sqdists(width * 2, 0);
+    uint32_t* prev_sqdist_line = &sqdists[0];
+    uint32_t* this_sqdist_line = &sqdists[width];
+
+    Distance* dist_line = &dist[0];
+    uint32_t* cmap_line = cmap.paddedData();
+
+    dist_line[0].reset(0);
+    prev_sqdist_line[0] = dist_line[0].sqdist();
+    for (int x = 1; x < width; ++x) {
+        dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
+        prev_sqdist_line[x] = prev_sqdist_line[x - 1]
+                              - (int(dist_line[x - 1].vec.x) << 1) + 1;
     }
 
-    void
-    voronoi(ConnectivityMap& cmap, std::vector<Distance>& dist)
-    {
-        int const width = cmap.size().width() + 2;
-        int const height = cmap.size().height() + 2;
-
-        assert(dist.empty());
-        dist.resize(width * height, Distance::zero());
-
-        std::vector<uint32_t> sqdists(width * 2, 0);
-        uint32_t* prev_sqdist_line = &sqdists[0];
-        uint32_t* this_sqdist_line = &sqdists[width];
-
-        Distance* dist_line = &dist[0];
-        uint32_t* cmap_line = cmap.paddedData();
-
+    for (int y = 1; y < height; ++y) {
+        dist_line += width;
+        cmap_line += width;
         dist_line[0].reset(0);
-        prev_sqdist_line[0] = dist_line[0].sqdist();
-        for (int x = 1; x < width; ++x) {
-            dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
-            prev_sqdist_line[x] = prev_sqdist_line[x - 1]
-                                  - (int(dist_line[x - 1].vec.x) << 1) + 1;
+        dist_line[width - 1].reset(width - 1);
+        this_sqdist_line[0] = dist_line[0].sqdist();
+        this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+        for (int x = 1; x < width - 1; ++x) {
+            if (cmap_line[x]) {
+                this_sqdist_line[x] = 0;
+                assert(dist_line[x] == Distance::zero());
+                continue;
+            }
+
+            Distance left_dist = dist_line[x - 1];
+            uint32_t sqdist_left = this_sqdist_line[x - 1];
+            sqdist_left += 1 - (int(left_dist.vec.x) << 1);
+
+            Distance top_dist = dist_line[x - width];
+            uint32_t sqdist_top = prev_sqdist_line[x];
+            sqdist_top += VERTICAL_SCALE_SQ - 2 * VERTICAL_SCALE_SQ * int(top_dist.vec.y);
+
+            if (sqdist_left < sqdist_top) {
+                this_sqdist_line[x] = sqdist_left;
+                --left_dist.vec.x;
+                dist_line[x] = left_dist;
+                cmap_line[x] = cmap_line[x - 1];
+            } else {
+                this_sqdist_line[x] = sqdist_top;
+                --top_dist.vec.y;
+                dist_line[x] = top_dist;
+                cmap_line[x] = cmap_line[x - width];
+            }
         }
 
-        for (int y = 1; y < height; ++y) {
-            dist_line += width;
-            cmap_line += width;
-            dist_line[0].reset(0);
-            dist_line[width - 1].reset(width - 1);
-            this_sqdist_line[0] = dist_line[0].sqdist();
-            this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
-            for (int x = 1; x < width - 1; ++x) {
-                if (cmap_line[x]) {
-                    this_sqdist_line[x] = 0;
-                    assert(dist_line[x] == Distance::zero());
-                    continue;
-                }
+        for (int x = width - 2; x >= 1; --x) {
+            Distance right_dist = dist_line[x + 1];
+            uint32_t sqdist_right = this_sqdist_line[x + 1];
+            sqdist_right += 1 + (int(right_dist.vec.x) << 1);
 
-                Distance left_dist = dist_line[x - 1];
-                uint32_t sqdist_left = this_sqdist_line[x - 1];
-                sqdist_left += 1 - (int(left_dist.vec.x) << 1);
-
-                Distance top_dist = dist_line[x - width];
-                uint32_t sqdist_top = prev_sqdist_line[x];
-                sqdist_top += VERTICAL_SCALE_SQ - 2 * VERTICAL_SCALE_SQ * int(top_dist.vec.y);
-
-                if (sqdist_left < sqdist_top) {
-                    this_sqdist_line[x] = sqdist_left;
-                    --left_dist.vec.x;
-                    dist_line[x] = left_dist;
-                    cmap_line[x] = cmap_line[x - 1];
-                }
-                else {
-                    this_sqdist_line[x] = sqdist_top;
-                    --top_dist.vec.y;
-                    dist_line[x] = top_dist;
-                    cmap_line[x] = cmap_line[x - width];
-                }
+            if (sqdist_right < this_sqdist_line[x]) {
+                this_sqdist_line[x] = sqdist_right;
+                ++right_dist.vec.x;
+                dist_line[x] = right_dist;
+                cmap_line[x] = cmap_line[x + 1];
             }
-
-            for (int x = width - 2; x >= 1; --x) {
-                Distance right_dist = dist_line[x + 1];
-                uint32_t sqdist_right = this_sqdist_line[x + 1];
-                sqdist_right += 1 + (int(right_dist.vec.x) << 1);
-
-                if (sqdist_right < this_sqdist_line[x]) {
-                    this_sqdist_line[x] = sqdist_right;
-                    ++right_dist.vec.x;
-                    dist_line[x] = right_dist;
-                    cmap_line[x] = cmap_line[x + 1];
-                }
-            }
-
-            std::swap(this_sqdist_line, prev_sqdist_line);
         }
 
-        for (int y = height - 2; y >= 1; --y) {
-            dist_line -= width;
-            cmap_line -= width;
-            dist_line[0].reset(0);
-            dist_line[width - 1].reset(width - 1);
-            this_sqdist_line[0] = dist_line[0].sqdist();
-            this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
-            for (int x = width - 2; x >= 1; --x) {
-                Distance right_dist = dist_line[x + 1];
-                uint32_t sqdist_right = this_sqdist_line[x + 1];
-                sqdist_right += 1 + (int(right_dist.vec.x) << 1);
+        std::swap(this_sqdist_line, prev_sqdist_line);
+    }
 
-                Distance bottom_dist = dist_line[x + width];
-                uint32_t sqdist_bottom = prev_sqdist_line[x];
-                sqdist_bottom += VERTICAL_SCALE_SQ + 2 * VERTICAL_SCALE_SQ * int(bottom_dist.vec.y);
+    for (int y = height - 2; y >= 1; --y) {
+        dist_line -= width;
+        cmap_line -= width;
+        dist_line[0].reset(0);
+        dist_line[width - 1].reset(width - 1);
+        this_sqdist_line[0] = dist_line[0].sqdist();
+        this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+        for (int x = width - 2; x >= 1; --x) {
+            Distance right_dist = dist_line[x + 1];
+            uint32_t sqdist_right = this_sqdist_line[x + 1];
+            sqdist_right += 1 + (int(right_dist.vec.x) << 1);
 
-                this_sqdist_line[x] = dist_line[x].sqdist();
+            Distance bottom_dist = dist_line[x + width];
+            uint32_t sqdist_bottom = prev_sqdist_line[x];
+            sqdist_bottom += VERTICAL_SCALE_SQ + 2 * VERTICAL_SCALE_SQ * int(bottom_dist.vec.y);
 
-                if (sqdist_right < this_sqdist_line[x]) {
-                    this_sqdist_line[x] = sqdist_right;
-                    ++right_dist.vec.x;
-                    dist_line[x] = right_dist;
-                    assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
-                    cmap_line[x] = cmap_line[x + 1];
-                }
-                if (sqdist_bottom < this_sqdist_line[x]) {
-                    this_sqdist_line[x] = sqdist_bottom;
-                    ++bottom_dist.vec.y;
-                    dist_line[x] = bottom_dist;
-                    assert(cmap_line[x] == 0 || cmap_line[x + width] != 0);
-                    cmap_line[x] = cmap_line[x + width];
-                }
+            this_sqdist_line[x] = dist_line[x].sqdist();
+
+            if (sqdist_right < this_sqdist_line[x]) {
+                this_sqdist_line[x] = sqdist_right;
+                ++right_dist.vec.x;
+                dist_line[x] = right_dist;
+                assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
+                cmap_line[x] = cmap_line[x + 1];
+            }
+            if (sqdist_bottom < this_sqdist_line[x]) {
+                this_sqdist_line[x] = sqdist_bottom;
+                ++bottom_dist.vec.y;
+                dist_line[x] = bottom_dist;
+                assert(cmap_line[x] == 0 || cmap_line[x + width] != 0);
+                cmap_line[x] = cmap_line[x + width];
+            }
+        }
+
+        for (int x = 1; x < width - 1; ++x) {
+            Distance left_dist = dist_line[x - 1];
+            uint32_t sqdist_left = this_sqdist_line[x - 1];
+            sqdist_left += 1 - (int(left_dist.vec.x) << 1);
+
+            if (sqdist_left < this_sqdist_line[x]) {
+                this_sqdist_line[x] = sqdist_left;
+                --left_dist.vec.x;
+                dist_line[x] = left_dist;
+                assert(cmap_line[x] == 0 || cmap_line[x - 1] != 0);
+                cmap_line[x] = cmap_line[x - 1];
+            }
+        }
+
+        std::swap(this_sqdist_line, prev_sqdist_line);
+    }
+}      // voronoi
+
+void voronoiSpecial(ConnectivityMap& cmap, std::vector<Distance>& dist, Distance const special_distance) {
+    int const width = cmap.size().width() + 2;
+    int const height = cmap.size().height() + 2;
+
+    std::vector<uint32_t> sqdists(width * 2, 0);
+    uint32_t* prev_sqdist_line = &sqdists[0];
+    uint32_t* this_sqdist_line = &sqdists[width];
+
+    Distance* dist_line = &dist[0];
+    uint32_t* cmap_line = cmap.paddedData();
+
+    dist_line[0].reset(0);
+    prev_sqdist_line[0] = dist_line[0].sqdist();
+    for (int x = 1; x < width; ++x) {
+        dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
+        prev_sqdist_line[x] = prev_sqdist_line[x - 1]
+                              - (int(dist_line[x - 1].vec.x) << 1) + 1;
+    }
+
+    for (int y = 1; y < height - 1; ++y) {
+        dist_line += width;
+        cmap_line += width;
+        dist_line[0].reset(0);
+        dist_line[width - 1].reset(width - 1);
+        this_sqdist_line[0] = dist_line[0].sqdist();
+        this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+        for (int x = 1; x < width - 1; ++x) {
+            if (dist_line[x] == special_distance) {
+                continue;
             }
 
-            for (int x = 1; x < width - 1; ++x) {
-                Distance left_dist = dist_line[x - 1];
+            this_sqdist_line[x] = dist_line[x].sqdist();
+
+            Distance left_dist = dist_line[x - 1];
+            if (left_dist != special_distance) {
                 uint32_t sqdist_left = this_sqdist_line[x - 1];
                 sqdist_left += 1 - (int(left_dist.vec.x) << 1);
-
                 if (sqdist_left < this_sqdist_line[x]) {
                     this_sqdist_line[x] = sqdist_left;
                     --left_dist.vec.x;
@@ -502,222 +507,164 @@ namespace
                 }
             }
 
-            std::swap(this_sqdist_line, prev_sqdist_line);
+            Distance top_dist = dist_line[x - width];
+            if (top_dist != special_distance) {
+                uint32_t sqdist_top = prev_sqdist_line[x];
+                sqdist_top += VERTICAL_SCALE_SQ - 2 * VERTICAL_SCALE_SQ * int(top_dist.vec.y);
+                if (sqdist_top < this_sqdist_line[x]) {
+                    this_sqdist_line[x] = sqdist_top;
+                    --top_dist.vec.y;
+                    dist_line[x] = top_dist;
+                    assert(cmap_line[x] == 0 || cmap_line[x - width] != 0);
+                    cmap_line[x] = cmap_line[x - width];
+                }
+            }
         }
-    }  // voronoi
 
-    void
-    voronoiSpecial(ConnectivityMap& cmap, std::vector<Distance>& dist, Distance const special_distance)
-    {
-        int const width = cmap.size().width() + 2;
-        int const height = cmap.size().height() + 2;
+        for (int x = width - 2; x >= 1; --x) {
+            if (dist_line[x] == special_distance) {
+                continue;
+            }
 
-        std::vector<uint32_t> sqdists(width * 2, 0);
-        uint32_t* prev_sqdist_line = &sqdists[0];
-        uint32_t* this_sqdist_line = &sqdists[width];
+            Distance right_dist = dist_line[x + 1];
+            if (right_dist != special_distance) {
+                uint32_t sqdist_right = this_sqdist_line[x + 1];
+                sqdist_right += 1 + (int(right_dist.vec.x) << 1);
+                if (sqdist_right < this_sqdist_line[x]) {
+                    this_sqdist_line[x] = sqdist_right;
+                    ++right_dist.vec.x;
+                    dist_line[x] = right_dist;
+                    assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
+                    cmap_line[x] = cmap_line[x + 1];
+                }
+            }
+        }
 
-        Distance* dist_line = &dist[0];
-        uint32_t* cmap_line = cmap.paddedData();
+        std::swap(this_sqdist_line, prev_sqdist_line);
+    }
 
+    for (int y = height - 2; y >= 1; --y) {
+        dist_line -= width;
+        cmap_line -= width;
         dist_line[0].reset(0);
-        prev_sqdist_line[0] = dist_line[0].sqdist();
-        for (int x = 1; x < width; ++x) {
-            dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
-            prev_sqdist_line[x] = prev_sqdist_line[x - 1]
-                                  - (int(dist_line[x - 1].vec.x) << 1) + 1;
-        }
+        dist_line[width - 1].reset(width - 1);
+        this_sqdist_line[0] = dist_line[0].sqdist();
+        this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+        for (int x = width - 2; x >= 1; --x) {
+            if (dist_line[x] == special_distance) {
+                continue;
+            }
 
-        for (int y = 1; y < height - 1; ++y) {
-            dist_line += width;
-            cmap_line += width;
-            dist_line[0].reset(0);
-            dist_line[width - 1].reset(width - 1);
-            this_sqdist_line[0] = dist_line[0].sqdist();
-            this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
-            for (int x = 1; x < width - 1; ++x) {
-                if (dist_line[x] == special_distance) {
-                    continue;
-                }
+            this_sqdist_line[x] = dist_line[x].sqdist();
 
-                this_sqdist_line[x] = dist_line[x].sqdist();
-
-                Distance left_dist = dist_line[x - 1];
-                if (left_dist != special_distance) {
-                    uint32_t sqdist_left = this_sqdist_line[x - 1];
-                    sqdist_left += 1 - (int(left_dist.vec.x) << 1);
-                    if (sqdist_left < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_left;
-                        --left_dist.vec.x;
-                        dist_line[x] = left_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x - 1] != 0);
-                        cmap_line[x] = cmap_line[x - 1];
-                    }
-                }
-
-                Distance top_dist = dist_line[x - width];
-                if (top_dist != special_distance) {
-                    uint32_t sqdist_top = prev_sqdist_line[x];
-                    sqdist_top += VERTICAL_SCALE_SQ - 2 * VERTICAL_SCALE_SQ * int(top_dist.vec.y);
-                    if (sqdist_top < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_top;
-                        --top_dist.vec.y;
-                        dist_line[x] = top_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x - width] != 0);
-                        cmap_line[x] = cmap_line[x - width];
-                    }
+            Distance right_dist = dist_line[x + 1];
+            if (right_dist != special_distance) {
+                uint32_t sqdist_right = this_sqdist_line[x + 1];
+                sqdist_right += 1 + (int(right_dist.vec.x) << 1);
+                if (sqdist_right < this_sqdist_line[x]) {
+                    this_sqdist_line[x] = sqdist_right;
+                    ++right_dist.vec.x;
+                    dist_line[x] = right_dist;
+                    assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
+                    cmap_line[x] = cmap_line[x + 1];
                 }
             }
 
-            for (int x = width - 2; x >= 1; --x) {
-                if (dist_line[x] == special_distance) {
-                    continue;
-                }
-
-                Distance right_dist = dist_line[x + 1];
-                if (right_dist != special_distance) {
-                    uint32_t sqdist_right = this_sqdist_line[x + 1];
-                    sqdist_right += 1 + (int(right_dist.vec.x) << 1);
-                    if (sqdist_right < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_right;
-                        ++right_dist.vec.x;
-                        dist_line[x] = right_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
-                        cmap_line[x] = cmap_line[x + 1];
-                    }
-                }
-            }
-
-            std::swap(this_sqdist_line, prev_sqdist_line);
-        }
-
-        for (int y = height - 2; y >= 1; --y) {
-            dist_line -= width;
-            cmap_line -= width;
-            dist_line[0].reset(0);
-            dist_line[width - 1].reset(width - 1);
-            this_sqdist_line[0] = dist_line[0].sqdist();
-            this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
-            for (int x = width - 2; x >= 1; --x) {
-                if (dist_line[x] == special_distance) {
-                    continue;
-                }
-
-                this_sqdist_line[x] = dist_line[x].sqdist();
-
-                Distance right_dist = dist_line[x + 1];
-                if (right_dist != special_distance) {
-                    uint32_t sqdist_right = this_sqdist_line[x + 1];
-                    sqdist_right += 1 + (int(right_dist.vec.x) << 1);
-                    if (sqdist_right < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_right;
-                        ++right_dist.vec.x;
-                        dist_line[x] = right_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x + 1] != 0);
-                        cmap_line[x] = cmap_line[x + 1];
-                    }
-                }
-
-                Distance bottom_dist = dist_line[x + width];
-                if (bottom_dist != special_distance) {
-                    uint32_t sqdist_bottom = prev_sqdist_line[x];
-                    sqdist_bottom += VERTICAL_SCALE_SQ + 2 * VERTICAL_SCALE_SQ * int(bottom_dist.vec.y);
-                    if (sqdist_bottom < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_bottom;
-                        ++bottom_dist.vec.y;
-                        dist_line[x] = bottom_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x + width] != 0);
-                        cmap_line[x] = cmap_line[x + width];
-                    }
-                }
-            }
-
-            for (int x = 1; x < width - 1; ++x) {
-                if (dist_line[x] == special_distance) {
-                    continue;
-                }
-
-                Distance left_dist = dist_line[x - 1];
-                if (left_dist != special_distance) {
-                    uint32_t sqdist_left = this_sqdist_line[x - 1];
-                    sqdist_left += 1 - (int(left_dist.vec.x) << 1);
-                    if (sqdist_left < this_sqdist_line[x]) {
-                        this_sqdist_line[x] = sqdist_left;
-                        --left_dist.vec.x;
-                        dist_line[x] = left_dist;
-                        assert(cmap_line[x] == 0 || cmap_line[x - 1] != 0);
-                        cmap_line[x] = cmap_line[x - 1];
-                    }
-                }
-            }
-
-            std::swap(this_sqdist_line, prev_sqdist_line);
-        }
-    }  // voronoiSpecial
-
-    /**
-     * Calculate the minimum distance between components from neighboring
-     * Voronoi segments.
-     */
-    void
-    voronoiDistances(ConnectivityMap const& cmap,
-                     std::vector<Distance> const& distance_matrix,
-                     std::map<Connection, uint32_t>& conns)
-    {
-        int const width = cmap.size().width();
-        int const height = cmap.size().height();
-
-        int const offsets[] = { -cmap.stride(), -1, 1, cmap.stride() };
-
-        uint32_t const* const cmap_data = cmap.data();
-        Distance const* const distance_data = &distance_matrix[0] + width + 3;
-        for (int y = 0, offset = 0; y < height; ++y, offset += 2) {
-            for (int x = 0; x < width; ++x, ++offset) {
-                uint32_t const label = cmap_data[offset];
-                assert(label != 0);
-
-                int const x1 = x + distance_data[offset].vec.x;
-                int const y1 = y + distance_data[offset].vec.y;
-
-                for (int i = 0; i < 4; ++i) {
-                    int const nbh_offset = offset + offsets[i];
-                    uint32_t const nbh_label = cmap_data[nbh_offset];
-                    if ((nbh_label == 0) || (nbh_label == label)) {
-                        continue;
-                    }
-
-                    int const x2 = x + distance_data[nbh_offset].vec.x;
-                    int const y2 = y + distance_data[nbh_offset].vec.y;
-                    int const dx = x1 - x2;
-                    int const dy = y1 - y2;
-                    uint32_t const sqdist = dx * dx + dy * dy;
-
-                    updateDistance(conns, label, nbh_label, sqdist);
+            Distance bottom_dist = dist_line[x + width];
+            if (bottom_dist != special_distance) {
+                uint32_t sqdist_bottom = prev_sqdist_line[x];
+                sqdist_bottom += VERTICAL_SCALE_SQ + 2 * VERTICAL_SCALE_SQ * int(bottom_dist.vec.y);
+                if (sqdist_bottom < this_sqdist_line[x]) {
+                    this_sqdist_line[x] = sqdist_bottom;
+                    ++bottom_dist.vec.y;
+                    dist_line[x] = bottom_dist;
+                    assert(cmap_line[x] == 0 || cmap_line[x + width] != 0);
+                    cmap_line[x] = cmap_line[x + width];
                 }
             }
         }
-    }  // voronoiDistances
+
+        for (int x = 1; x < width - 1; ++x) {
+            if (dist_line[x] == special_distance) {
+                continue;
+            }
+
+            Distance left_dist = dist_line[x - 1];
+            if (left_dist != special_distance) {
+                uint32_t sqdist_left = this_sqdist_line[x - 1];
+                sqdist_left += 1 - (int(left_dist.vec.x) << 1);
+                if (sqdist_left < this_sqdist_line[x]) {
+                    this_sqdist_line[x] = sqdist_left;
+                    --left_dist.vec.x;
+                    dist_line[x] = left_dist;
+                    assert(cmap_line[x] == 0 || cmap_line[x - 1] != 0);
+                    cmap_line[x] = cmap_line[x - 1];
+                }
+            }
+        }
+
+        std::swap(this_sqdist_line, prev_sqdist_line);
+    }
+}      // voronoiSpecial
+
+/**
+ * Calculate the minimum distance between components from neighboring
+ * Voronoi segments.
+ */
+void voronoiDistances(ConnectivityMap const& cmap,
+                      std::vector<Distance> const& distance_matrix,
+                      std::map<Connection, uint32_t>& conns) {
+    int const width = cmap.size().width();
+    int const height = cmap.size().height();
+
+    int const offsets[] = { -cmap.stride(), -1, 1, cmap.stride() };
+
+    uint32_t const* const cmap_data = cmap.data();
+    Distance const* const distance_data = &distance_matrix[0] + width + 3;
+    for (int y = 0, offset = 0; y < height; ++y, offset += 2) {
+        for (int x = 0; x < width; ++x, ++offset) {
+            uint32_t const label = cmap_data[offset];
+            assert(label != 0);
+
+            int const x1 = x + distance_data[offset].vec.x;
+            int const y1 = y + distance_data[offset].vec.y;
+
+            for (int i = 0; i < 4; ++i) {
+                int const nbh_offset = offset + offsets[i];
+                uint32_t const nbh_label = cmap_data[nbh_offset];
+                if ((nbh_label == 0) || (nbh_label == label)) {
+                    continue;
+                }
+
+                int const x2 = x + distance_data[nbh_offset].vec.x;
+                int const y2 = y + distance_data[nbh_offset].vec.y;
+                int const dx = x1 - x2;
+                int const dy = y1 - y2;
+                uint32_t const sqdist = dx * dx + dy * dy;
+
+                updateDistance(conns, label, nbh_label, sqdist);
+            }
+        }
+    }
+}      // voronoiDistances
 }  // namespace
 
-BinaryImage
-Despeckle::despeckle(BinaryImage const& src,
-                     Dpi const& dpi,
-                     Level const level,
-                     TaskStatus const& status,
-                     DebugImages* const dbg)
-{
+BinaryImage Despeckle::despeckle(BinaryImage const& src,
+                                 Dpi const& dpi,
+                                 Level const level,
+                                 TaskStatus const& status,
+                                 DebugImages* const dbg) {
     BinaryImage dst(src);
     despeckleInPlace(dst, dpi, level, status, dbg);
 
     return dst;
 }
 
-void
-Despeckle::despeckleInPlace(BinaryImage& image,
-                            Dpi const& dpi,
-                            Level const level,
-                            TaskStatus const& status,
-                            DebugImages* const dbg)
-{
+void Despeckle::despeckleInPlace(BinaryImage& image,
+                                 Dpi const& dpi,
+                                 Level const level,
+                                 TaskStatus const& status,
+                                 DebugImages* const dbg) {
     Settings const settings(Settings::get(level, dpi));
 
     ConnectivityMap cmap(image, CONN8);
@@ -753,12 +700,12 @@ Despeckle::despeckleInPlace(BinaryImage& image,
     uint32_t next_avail_component = 1;
     for (uint32_t label = 1; label <= cmap.maxLabel(); ++label) {
         if ((bounding_boxes[label].width() < settings.bigObjectThreshold)
-            && (bounding_boxes[label].height() < settings.bigObjectThreshold)) {
+            && (bounding_boxes[label].height() < settings.bigObjectThreshold))
+        {
             components[next_avail_component] = components[label];
             remapping_table[label] = next_avail_component;
             ++next_avail_component;
-        }
-        else {
+        } else {
             if (unified_big_component == 0) {
                 unified_big_component = next_avail_component;
                 ++next_avail_component;
@@ -836,8 +783,7 @@ Despeckle::despeckleInPlace(BinaryImage& image,
                 if (!comp.anchoredToSmallButNotBig()) {
                     if (distance_data[offset] == zero_distance) {
                         distance_data[offset] = special_distance;
-                    }
-                    else {
+                    } else {
                         distance_data[offset].reset(x + 1);
                     }
                 }
@@ -897,7 +843,8 @@ Despeckle::despeckleInPlace(BinaryImage& image,
         assert(target_source_idx.size() - 1 == conn.target);
     }
     for (uint32_t label = target_source_idx.size();
-         label <= max_label; ++label) {
+         label <= max_label; ++label)
+    {
         target_source_idx.push_back(num_target_sources);
     }
 
@@ -917,7 +864,8 @@ Despeckle::despeckleInPlace(BinaryImage& image,
 
         size_t idx = target_source_idx[label];
         while (idx < num_target_sources
-               && target_source[idx].target == label) {
+               && target_source[idx].target == label)
+        {
             ok_labels.push(target_source[idx].source);
             ++idx;
         }

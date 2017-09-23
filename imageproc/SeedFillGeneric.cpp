@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -19,51 +18,44 @@
 
 #include "SeedFillGeneric.h"
 
-namespace imageproc
-{
-    namespace detail
-    {
-        namespace seed_fill_generic
-        {
-            void
-            initHorTransitions(std::vector<HTransition>& transitions, int const width)
-            {
-                transitions.reserve(width);
+namespace imageproc {
+namespace detail {
+namespace seed_fill_generic {
+void initHorTransitions(std::vector<HTransition>& transitions, int const width) {
+    transitions.reserve(width);
 
-                if (width == 1) {
-                    transitions.push_back(HTransition(0, 0));
+    if (width == 1) {
+        transitions.push_back(HTransition(0, 0));
 
-                    return;
-                }
+        return;
+    }
 
-                transitions.push_back(HTransition(0, 1));
+    transitions.push_back(HTransition(0, 1));
 
-                for (int i = 1; i < width - 1; ++i) {
-                    transitions.push_back(HTransition(-1, 1));
-                }
+    for (int i = 1; i < width - 1; ++i) {
+        transitions.push_back(HTransition(-1, 1));
+    }
 
-                transitions.push_back(HTransition(-1, 0));
-            }
+    transitions.push_back(HTransition(-1, 0));
+}
 
-            void
-            initVertTransitions(std::vector<VTransition>& transitions, int const height)
-            {
-                transitions.reserve(height);
+void initVertTransitions(std::vector<VTransition>& transitions, int const height) {
+    transitions.reserve(height);
 
-                if (height == 1) {
-                    transitions.push_back(VTransition(0, 0));
+    if (height == 1) {
+        transitions.push_back(VTransition(0, 0));
 
-                    return;
-                }
+        return;
+    }
 
-                transitions.push_back(VTransition(0, ~0));
+    transitions.push_back(VTransition(0, ~0));
 
-                for (int i = 1; i < height - 1; ++i) {
-                    transitions.push_back(VTransition(~0, ~0));
-                }
+    for (int i = 1; i < height - 1; ++i) {
+        transitions.push_back(VTransition(~0, ~0));
+    }
 
-                transitions.push_back(VTransition(~0, 0));
-            }
-        }  // namespace seed_fill_generic
-    }  // namespace detail
+    transitions.push_back(VTransition(~0, 0));
+}
+}          // namespace seed_fill_generic
+}      // namespace detail
 }  // namespace imageproc

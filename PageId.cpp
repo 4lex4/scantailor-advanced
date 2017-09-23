@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,17 +20,15 @@
 #include <assert.h>
 
 PageId::PageId()
-    : m_subPage(SINGLE_PAGE)
-{ }
+        : m_subPage(SINGLE_PAGE) {
+}
 
 PageId::PageId(ImageId const& image_id, SubPage subpage)
-    : m_imageId(image_id),
-      m_subPage(subpage)
-{ }
+        : m_imageId(image_id),
+          m_subPage(subpage) {
+}
 
-QString
-PageId::subPageToString(SubPage const sub_page)
-{
+QString PageId::subPageToString(SubPage const sub_page) {
     char const* str = 0;
 
     switch (sub_page) {
@@ -51,22 +48,17 @@ PageId::subPageToString(SubPage const sub_page)
     return QString::fromLatin1(str);
 }
 
-PageId::SubPage
-PageId::subPageFromString(QString const& string, bool* ok)
-{
+PageId::SubPage PageId::subPageFromString(QString const& string, bool* ok) {
     bool recognized = true;
     SubPage sub_page = SINGLE_PAGE;
 
     if (string == "single") {
         sub_page = SINGLE_PAGE;
-    }
-    else if (string == "left") {
+    } else if (string == "left") {
         sub_page = LEFT_PAGE;
-    }
-    else if (string == "right") {
+    } else if (string == "right") {
         sub_page = RIGHT_PAGE;
-    }
-    else {
+    } else {
         recognized = false;
     }
 
@@ -77,28 +69,20 @@ PageId::subPageFromString(QString const& string, bool* ok)
     return sub_page;
 }
 
-bool
-operator==(PageId const& lhs, PageId const& rhs)
-{
+bool operator==(PageId const& lhs, PageId const& rhs) {
     return lhs.subPage() == rhs.subPage() && lhs.imageId() == rhs.imageId();
 }
 
-bool
-operator!=(PageId const& lhs, PageId const& rhs)
-{
+bool operator!=(PageId const& lhs, PageId const& rhs) {
     return !(lhs == rhs);
 }
 
-bool
-operator<(PageId const& lhs, PageId const& rhs)
-{
+bool operator<(PageId const& lhs, PageId const& rhs) {
     if (lhs.imageId() < rhs.imageId()) {
         return true;
-    }
-    else if (rhs.imageId() < lhs.imageId()) {
+    } else if (rhs.imageId() < lhs.imageId()) {
         return false;
-    }
-    else {
+    } else {
         return lhs.subPage() < rhs.subPage();
     }
 }

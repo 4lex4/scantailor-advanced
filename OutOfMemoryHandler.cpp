@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,28 +19,22 @@
 #include "OutOfMemoryHandler.h"
 
 OutOfMemoryHandler::OutOfMemoryHandler()
-    : m_hadOOM(false)
-{ }
+        : m_hadOOM(false) {
+}
 
-OutOfMemoryHandler&
-OutOfMemoryHandler::instance()
-{
+OutOfMemoryHandler& OutOfMemoryHandler::instance() {
     static OutOfMemoryHandler object;
 
     return object;
 }
 
-void
-OutOfMemoryHandler::allocateEmergencyMemory(size_t bytes)
-{
+void OutOfMemoryHandler::allocateEmergencyMemory(size_t bytes) {
     QMutexLocker const locker(&m_mutex);
 
     boost::scoped_array<char>(new char[bytes]).swap(m_emergencyBuffer);
 }
 
-void
-OutOfMemoryHandler::handleOutOfMemorySituation()
-{
+void OutOfMemoryHandler::handleOutOfMemorySituation() {
     QMutexLocker const locker(&m_mutex);
 
     if (m_hadOOM) {
@@ -53,9 +46,7 @@ OutOfMemoryHandler::handleOutOfMemorySituation()
     QMetaObject::invokeMethod(this, "outOfMemory", Qt::QueuedConnection);
 }
 
-bool
-OutOfMemoryHandler::hadOutOfMemorySituation() const
-{
+bool OutOfMemoryHandler::hadOutOfMemorySituation() const {
     QMutexLocker const locker(&m_mutex);
 
     return m_hadOOM;

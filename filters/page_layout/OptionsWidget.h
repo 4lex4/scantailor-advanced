@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -35,108 +34,99 @@
 class QToolButton;
 class ProjectPages;
 
-namespace page_layout
-{
-    class Settings;
+namespace page_layout {
+class Settings;
 
-    class OptionsWidget
-        : public FilterOptionsWidget,
-          public Ui::PageLayoutOptionsWidget
-    {
-        Q_OBJECT
+class OptionsWidget: public FilterOptionsWidget, public Ui::PageLayoutOptionsWidget {
+    Q_OBJECT
+public:
+    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
-    public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+    virtual ~OptionsWidget();
 
-        virtual ~OptionsWidget();
+    void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
 
-        void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
+    void postUpdateUI();
 
-        void postUpdateUI();
+    bool leftRightLinked() const {
+        return m_leftRightLinked;
+    }
 
-        bool leftRightLinked() const
-        {
-            return m_leftRightLinked;
-        }
+    bool topBottomLinked() const {
+        return m_topBottomLinked;
+    }
 
-        bool topBottomLinked() const
-        {
-            return m_topBottomLinked;
-        }
+    Margins const& marginsMM() const {
+        return m_marginsMM;
+    }
 
-        Margins const& marginsMM() const
-        {
-            return m_marginsMM;
-        }
+    Alignment const& alignment() const {
+        return m_alignment;
+    }
 
-        Alignment const& alignment() const
-        {
-            return m_alignment;
-        }
+signals:
+    void leftRightLinkToggled(bool linked);
 
-    signals:
-        void leftRightLinkToggled(bool linked);
+    void topBottomLinkToggled(bool linked);
 
-        void topBottomLinkToggled(bool linked);
+    void alignmentChanged(Alignment const& alignment);
 
-        void alignmentChanged(Alignment const& alignment);
+    void marginsSetLocally(Margins const& margins_mm);
 
-        void marginsSetLocally(Margins const& margins_mm);
+    void aggregateHardSizeChanged();
 
-        void aggregateHardSizeChanged();
+public slots:
+    void marginsSetExternally(Margins const& margins_mm);
 
-    public slots:
-        void marginsSetExternally(Margins const& margins_mm);
+private slots:
+    void unitsChanged(int idx);
 
-    private slots:
-        void unitsChanged(int idx);
+    void horMarginsChanged(double val);
 
-        void horMarginsChanged(double val);
+    void vertMarginsChanged(double val);
 
-        void vertMarginsChanged(double val);
+    void autoMarginsChanged(bool checked);
 
-        void autoMarginsChanged(bool checked);
+    void alignmentModeChanged(int idx);
 
-        void alignmentModeChanged(int idx);
+    void topBottomLinkClicked();
 
-        void topBottomLinkClicked();
+    void leftRightLinkClicked();
 
-        void leftRightLinkClicked();
+    void alignWithOthersToggled();
 
-        void alignWithOthersToggled();
+    void alignmentButtonClicked();
 
-        void alignmentButtonClicked();
+    void showApplyMarginsDialog();
 
-        void showApplyMarginsDialog();
+    void showApplyAlignmentDialog();
 
-        void showApplyAlignmentDialog();
+    void applyMargins(std::set<PageId> const& pages);
 
-        void applyMargins(std::set<PageId> const& pages);
+    void applyAlignment(std::set<PageId> const& pages);
 
-        void applyAlignment(std::set<PageId> const& pages);
+private:
+    typedef std::map<QToolButton*, Alignment> AlignmentByButton;
 
-    private:
-        typedef std::map<QToolButton*, Alignment> AlignmentByButton;
+    void updateMarginsDisplay();
 
-        void updateMarginsDisplay();
+    void updateLinkDisplay(QToolButton* button, bool linked);
 
-        void updateLinkDisplay(QToolButton* button, bool linked);
+    void enableDisableAlignmentButtons();
 
-        void enableDisableAlignmentButtons();
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        PageSelectionAccessor m_pageSelectionAccessor;
-        QIcon m_chainIcon;
-        QIcon m_brokenChainIcon;
-        AlignmentByButton m_alignmentByButton;
-        double m_mmToUnit;
-        double m_unitToMM;
-        PageId m_pageId;
-        Margins m_marginsMM;
-        Alignment m_alignment;
-        int m_ignoreMarginChanges;
-        bool m_leftRightLinked;
-        bool m_topBottomLinked;
-    };
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    QIcon m_chainIcon;
+    QIcon m_brokenChainIcon;
+    AlignmentByButton m_alignmentByButton;
+    double m_mmToUnit;
+    double m_unitToMM;
+    PageId m_pageId;
+    Margins m_marginsMM;
+    Alignment m_alignment;
+    int m_ignoreMarginChanges;
+    bool m_leftRightLinked;
+    bool m_topBottomLinked;
+};
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

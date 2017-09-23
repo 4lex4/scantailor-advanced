@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -41,69 +40,62 @@
 class InteractionState;
 class QPainter;
 
-namespace output
-{
-    class Settings;
+namespace output {
+class Settings;
 
 
-    class FillZoneEditor
-        : public ImageViewBase,
-          private InteractionHandler
-    {
-        Q_OBJECT
+class FillZoneEditor: public ImageViewBase, private InteractionHandler {
+    Q_OBJECT
+public:
+    FillZoneEditor(QImage const& image, ImagePixmapUnion const& downscaled_version,
+                   boost::function<QPointF(QPointF const&)> const& orig_to_image, boost::function<QPointF(
+                                                                                                      QPointF
+                                                                                                      const
+                                                                                                      &)> const& image_to_orig, PageId const& page_id,
+                   IntrusivePtr<Settings> const& settings);
 
-    public:
-        FillZoneEditor(QImage const& image, ImagePixmapUnion const& downscaled_version,
-                       boost::function<QPointF(QPointF const&)> const& orig_to_image, boost::function<QPointF(
-                                                                                                          QPointF
-                                                                                                          const
-                                                                                                          &)> const& image_to_orig, PageId const& page_id,
-                       IntrusivePtr<Settings> const& settings);
+    virtual ~FillZoneEditor();
+signals:
+    void invalidateThumbnail(PageId const& page_id);
 
-        virtual ~FillZoneEditor();
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-    signals:
-        void invalidateThumbnail(PageId const& page_id);
+private slots:
+    void commitZones();
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void updateRequested();
 
-    private slots:
-        void commitZones();
+private:
+    class MenuCustomizer;
 
-        void updateRequested();
+    typedef QColor (* ColorAdapter)(QColor const&);
 
-    private:
-        class MenuCustomizer;
+    InteractionHandler* createContextMenuInteraction(InteractionState& interaction);
 
-        typedef QColor (* ColorAdapter)(QColor const&);
+    InteractionHandler* createColorPickupInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
 
-        InteractionHandler* createContextMenuInteraction(InteractionState& interaction);
+    static QColor toOpaque(QColor const& color);
 
-        InteractionHandler* createColorPickupInteraction(EditableZoneSet::Zone const& zone,
-                                                         InteractionState& interaction);
+    static QColor toGrayscale(QColor const& color);
 
-        static QColor toOpaque(QColor const& color);
+    static QColor toBlackWhite(QColor const& color);
 
-        static QColor toGrayscale(QColor const& color);
+    static ColorAdapter colorAdapterFor(QImage const& image);
 
-        static QColor toBlackWhite(QColor const& color);
+    ColorAdapter m_colorAdapter;
+    EditableZoneSet m_zones;
 
-        static ColorAdapter colorAdapterFor(QImage const& image);
+    ZoneInteractionContext m_context;
 
-        ColorAdapter m_colorAdapter;
-        EditableZoneSet m_zones;
+    ColorPickupInteraction m_colorPickupInteraction;
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
 
-        ZoneInteractionContext m_context;
-
-        ColorPickupInteraction m_colorPickupInteraction;
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-
-        boost::function<QPointF(QPointF const&)> m_origToImage;
-        boost::function<QPointF(QPointF const&)> m_imageToOrig;
-        PageId m_pageId;
-        IntrusivePtr<Settings> m_ptrSettings;
-    };
+    boost::function<QPointF(QPointF const&)> m_origToImage;
+    boost::function<QPointF(QPointF const&)> m_imageToOrig;
+    PageId m_pageId;
+    IntrusivePtr<Settings> m_ptrSettings;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_FILL_ZONE_EDITOR_H_

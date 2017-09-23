@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,21 +21,19 @@
 #include <QWheelEvent>
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view)
-    : m_rImageView(image_view),
-      m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter),
-      m_focus(CURSOR)
-{ }
+        : m_rImageView(image_view),
+          m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter),
+          m_focus(CURSOR) {
+}
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view,
                          boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter)
-    : m_rImageView(image_view),
-      m_interactionPermitter(explicit_interaction_permitter),
-      m_focus(CURSOR)
-{ }
+        : m_rImageView(image_view),
+          m_interactionPermitter(explicit_interaction_permitter),
+          m_focus(CURSOR) {
+}
 
-void
-ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction)
-{
+void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
     if (event->orientation() != Qt::Vertical) {
         return;
     }
@@ -77,9 +74,7 @@ ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction)
     m_rImageView.setZoomLevel(zoom);
 }  // ZoomHandler::onWheelEvent
 
-void
-ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction)
-{
+void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
     if (!m_interactionPermitter(interaction)) {
         return;
     }

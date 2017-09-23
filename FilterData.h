@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -25,30 +24,25 @@
 #include "ImageTransformation.h"
 #include <QImage>
 
-class FilterData
-{
+class FilterData {
 public:
     FilterData(QImage const& image);
 
     FilterData(FilterData const& other, ImageTransformation const& xform);
 
-    imageproc::BinaryThreshold bwThreshold() const
-    {
+    imageproc::BinaryThreshold bwThreshold() const {
         return m_bwThreshold;
     }
 
-    ImageTransformation const& xform() const
-    {
+    ImageTransformation const& xform() const {
         return m_xform;
     }
 
-    QImage const& origImage() const
-    {
+    QImage const& origImage() const {
         return m_origImage;
     }
 
-    imageproc::GrayImage const& grayImage() const
-    {
+    imageproc::GrayImage const& grayImage() const {
         return m_grayImage;
     }
 
@@ -58,5 +52,6 @@ private:
     ImageTransformation m_xform;
     imageproc::BinaryThreshold m_bwThreshold;
 };
+
 
 #endif  // ifndef FILTERDATA_H_

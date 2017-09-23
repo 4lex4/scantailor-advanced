@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -20,11 +19,10 @@
 #include "EditableSpline.h"
 #include "SerializableSpline.h"
 
-EditableSpline::EditableSpline()
-{ }
+EditableSpline::EditableSpline() {
+}
 
-EditableSpline::EditableSpline(SerializableSpline const& spline)
-{
+EditableSpline::EditableSpline(SerializableSpline const& spline) {
     for (QPointF const& pt : spline.toPolygon()) {
         appendVertex(pt);
     }
@@ -37,25 +35,19 @@ EditableSpline::EditableSpline(SerializableSpline const& spline)
     setBridged(true);
 }
 
-void
-EditableSpline::appendVertex(QPointF const& pt)
-{
+void EditableSpline::appendVertex(QPointF const& pt) {
     m_sentinel.insertBefore(pt);
 }
 
-bool
-EditableSpline::hasAtLeastSegments(int num) const
-{
-    for (SegmentIterator it((EditableSpline&)*this); num > 0 && it.hasNext(); it.next()) {
+bool EditableSpline::hasAtLeastSegments(int num) const {
+    for (SegmentIterator it((EditableSpline&) *this); num > 0 && it.hasNext(); it.next()) {
         --num;
     }
 
     return num == 0;
 }
 
-QPolygonF
-EditableSpline::toPolygon() const
-{
+QPolygonF EditableSpline::toPolygon() const {
     QPolygonF poly;
 
     SplineVertex::Ptr vertex(firstVertex());
@@ -73,23 +65,18 @@ EditableSpline::toPolygon() const
 
 /*======================== Spline::SegmentIterator =======================*/
 
-bool
-EditableSpline::SegmentIterator::hasNext() const
-{
+bool EditableSpline::SegmentIterator::hasNext() const {
     return m_ptrNextVertex && m_ptrNextVertex->next(SplineVertex::LOOP_IF_BRIDGED);
 }
 
-SplineSegment
-EditableSpline::SegmentIterator::next()
-{
+SplineSegment EditableSpline::SegmentIterator::next() {
     assert(hasNext());
 
     SplineVertex::Ptr origin(m_ptrNextVertex);
     m_ptrNextVertex = m_ptrNextVertex->next(SplineVertex::NO_LOOP);
     if (!m_ptrNextVertex) {
         return SplineSegment(origin, origin->next(SplineVertex::LOOP_IF_BRIDGED));
-    }
-    else {
+    } else {
         return SplineSegment(origin, m_ptrNextVertex);
     }
 }

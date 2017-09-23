@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,376 +20,338 @@
 #include <QDebug>
 #include <assert.h>
 
-namespace imageproc
-{
-    using namespace max_whitespace_finder;
+namespace imageproc {
+using namespace max_whitespace_finder;
 
-    namespace
-    {
-        class AreaCompare
-        {
-        public:
-            bool operator()(QRect const lhs, QRect const rhs) const
-            {
-                int const lhs_area = lhs.width() * lhs.height();
-                int const rhs_area = rhs.width() * rhs.height();
+namespace {
+class AreaCompare {
+public:
+    bool operator()(QRect const lhs, QRect const rhs) const {
+        int const lhs_area = lhs.width() * lhs.height();
+        int const rhs_area = rhs.width() * rhs.height();
 
-                return lhs_area < rhs_area;
-            }
-        };
+        return lhs_area < rhs_area;
     }
+};
+}
 
-    MaxWhitespaceFinder::MaxWhitespaceFinder(BinaryImage const& img, QSize min_size)
+MaxWhitespaceFinder::MaxWhitespaceFinder(BinaryImage const& img, QSize min_size)
         : m_integralImg(img.size()),
           m_ptrQueuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
-          m_minSize(min_size)
-    {
-        init(img);
-    }
+          m_minSize(min_size) {
+    init(img);
+}
 
-    void
-    MaxWhitespaceFinder::init(BinaryImage const& img)
-    {
-        int const width = img.width();
-        int const height = img.height();
-        uint32_t const* line = img.data();
-        int const wpl = img.wordsPerLine();
+void MaxWhitespaceFinder::init(BinaryImage const& img) {
+    int const width = img.width();
+    int const height = img.height();
+    uint32_t const* line = img.data();
+    int const wpl = img.wordsPerLine();
 
-        for (int y = 0; y < height; ++y, line += wpl) {
-            m_integralImg.beginRow();
-            for (int x = 0; x < width; ++x) {
-                int const shift = 31 - (x & 31);
-                m_integralImg.push((line[x >> 5] >> shift) & 1);
-            }
-        }
-
-        Region region(0, img.rect());
-        m_ptrQueuedRegions->push(region);
-    }
-
-    void
-    MaxWhitespaceFinder::addObstacle(QRect const& obstacle)
-    {
-        if (m_ptrQueuedRegions->size() == 1) {
-            m_ptrQueuedRegions->top().addObstacle(obstacle);
-        }
-        else {
-            m_newObstacles.push_back(obstacle);
+    for (int y = 0; y < height; ++y, line += wpl) {
+        m_integralImg.beginRow();
+        for (int x = 0; x < width; ++x) {
+            int const shift = 31 - (x & 31);
+            m_integralImg.push((line[x >> 5] >> shift) & 1);
         }
     }
 
-    QRect
-    MaxWhitespaceFinder::next(ObstacleMode const obstacle_mode, int max_iterations)
-    {
-        while (max_iterations-- > 0 && !m_ptrQueuedRegions->empty()) {
-            Region& top_region = m_ptrQueuedRegions->top();
-            Region region(top_region);
-            region.swapObstacles(top_region);
-            m_ptrQueuedRegions->pop();
+    Region region(0, img.rect());
+    m_ptrQueuedRegions->push(region);
+}
 
-            region.addNewObstacles(m_newObstacles);
+void MaxWhitespaceFinder::addObstacle(QRect const& obstacle) {
+    if (m_ptrQueuedRegions->size() == 1) {
+        m_ptrQueuedRegions->top().addObstacle(obstacle);
+    } else {
+        m_newObstacles.push_back(obstacle);
+    }
+}
 
-            if (!region.obstacles().empty()) {
-                subdivideUsingObstacles(region);
-                continue;
-            }
+QRect MaxWhitespaceFinder::next(ObstacleMode const obstacle_mode, int max_iterations) {
+    while (max_iterations-- > 0 && !m_ptrQueuedRegions->empty()) {
+        Region& top_region = m_ptrQueuedRegions->top();
+        Region region(top_region);
+        region.swapObstacles(top_region);
+        m_ptrQueuedRegions->pop();
 
-            if (m_integralImg.sum(region.bounds()) != 0) {
-                subdivideUsingRaster(region);
-                continue;
-            }
+        region.addNewObstacles(m_newObstacles);
 
-            if (obstacle_mode == AUTO_OBSTACLES) {
-                m_newObstacles.push_back(region.bounds());
-            }
-
-            return region.bounds();
+        if (!region.obstacles().empty()) {
+            subdivideUsingObstacles(region);
+            continue;
         }
 
-        return QRect();
+        if (m_integralImg.sum(region.bounds()) != 0) {
+            subdivideUsingRaster(region);
+            continue;
+        }
+
+        if (obstacle_mode == AUTO_OBSTACLES) {
+            m_newObstacles.push_back(region.bounds());
+        }
+
+        return region.bounds();
     }
 
-    void
-    MaxWhitespaceFinder::subdivideUsingObstacles(Region const& region)
-    {
-        QRect const bounds(region.bounds());
-        QRect const pivot_rect(findPivotObstacle(region));
+    return QRect();
+}
 
-        subdivide(region, bounds, pivot_rect);
+void MaxWhitespaceFinder::subdivideUsingObstacles(Region const& region) {
+    QRect const bounds(region.bounds());
+    QRect const pivot_rect(findPivotObstacle(region));
+
+    subdivide(region, bounds, pivot_rect);
+}
+
+void MaxWhitespaceFinder::subdivideUsingRaster(Region const& region) {
+    QRect const bounds(region.bounds());
+    QPoint const pivot_pixel(findBlackPixelCloseToCenter(bounds));
+    QRect const pivot_rect(extendBlackPixelToBlackBox(pivot_pixel, bounds));
+
+    subdivide(region, bounds, pivot_rect);
+}
+
+void MaxWhitespaceFinder::subdivide(Region const& region, QRect const bounds, QRect const pivot) {
+    if (pivot.top() - bounds.top() >= m_minSize.height()) {
+        QRect new_bounds(bounds);
+        new_bounds.setBottom(pivot.top() - 1);
+        Region new_region(m_newObstacles.size(), new_bounds);
+        new_region.addObstacles(region);
+        m_ptrQueuedRegions->push(new_region);
     }
 
-    void
-    MaxWhitespaceFinder::subdivideUsingRaster(Region const& region)
-    {
-        QRect const bounds(region.bounds());
-        QPoint const pivot_pixel(findBlackPixelCloseToCenter(bounds));
-        QRect const pivot_rect(extendBlackPixelToBlackBox(pivot_pixel, bounds));
-
-        subdivide(region, bounds, pivot_rect);
+    if (bounds.bottom() - pivot.bottom() >= m_minSize.height()) {
+        QRect new_bounds(bounds);
+        new_bounds.setTop(pivot.bottom() + 1);
+        Region new_region(m_newObstacles.size(), new_bounds);
+        new_region.addObstacles(region);
+        m_ptrQueuedRegions->push(new_region);
     }
 
-    void
-    MaxWhitespaceFinder::subdivide(Region const& region, QRect const bounds, QRect const pivot)
-    {
-        if (pivot.top() - bounds.top() >= m_minSize.height()) {
-            QRect new_bounds(bounds);
-            new_bounds.setBottom(pivot.top() - 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
-            new_region.addObstacles(region);
-            m_ptrQueuedRegions->push(new_region);
-        }
-
-        if (bounds.bottom() - pivot.bottom() >= m_minSize.height()) {
-            QRect new_bounds(bounds);
-            new_bounds.setTop(pivot.bottom() + 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
-            new_region.addObstacles(region);
-            m_ptrQueuedRegions->push(new_region);
-        }
-
-        if (pivot.left() - bounds.left() >= m_minSize.width()) {
-            QRect new_bounds(bounds);
-            new_bounds.setRight(pivot.left() - 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
-            new_region.addObstacles(region);
-            m_ptrQueuedRegions->push(new_region);
-        }
-
-        if (bounds.right() - pivot.right() >= m_minSize.width()) {
-            QRect new_bounds(bounds);
-            new_bounds.setLeft(pivot.right() + 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
-            new_region.addObstacles(region);
-            m_ptrQueuedRegions->push(new_region);
-        }
-    }  // MaxWhitespaceFinder::subdivide
-
-    QRect
-    MaxWhitespaceFinder::findPivotObstacle(Region const& region) const
-    {
-        assert(!region.obstacles().empty());
-
-        QPoint const center(region.bounds().center());
-
-        QRect best_obstacle;
-        int best_distance = std::numeric_limits<int>::max();
-        for (QRect const& obstacle : region.obstacles()) {
-            QPoint const vec(center - obstacle.center());
-            int const distance = vec.x() * vec.x() + vec.y() * vec.y();
-            if (distance <= best_distance) {
-                best_obstacle = obstacle;
-                best_distance = distance;
-            }
-        }
-
-        return best_obstacle;
+    if (pivot.left() - bounds.left() >= m_minSize.width()) {
+        QRect new_bounds(bounds);
+        new_bounds.setRight(pivot.left() - 1);
+        Region new_region(m_newObstacles.size(), new_bounds);
+        new_region.addObstacles(region);
+        m_ptrQueuedRegions->push(new_region);
     }
 
-    QPoint
-    MaxWhitespaceFinder::findBlackPixelCloseToCenter(QRect const non_white_rect) const
-    {
-        assert(m_integralImg.sum(non_white_rect) != 0);
+    if (bounds.right() - pivot.right() >= m_minSize.width()) {
+        QRect new_bounds(bounds);
+        new_bounds.setLeft(pivot.right() + 1);
+        Region new_region(m_newObstacles.size(), new_bounds);
+        new_region.addObstacles(region);
+        m_ptrQueuedRegions->push(new_region);
+    }
+}      // MaxWhitespaceFinder::subdivide
 
-        QPoint const center(non_white_rect.center());
-        QRect outer_rect(non_white_rect);
-        QRect inner_rect(center.x(), center.y(), 1, 1);
+QRect MaxWhitespaceFinder::findPivotObstacle(Region const& region) const {
+    assert(!region.obstacles().empty());
 
-        if (m_integralImg.sum(inner_rect) != 0) {
-            return center;
+    QPoint const center(region.bounds().center());
+
+    QRect best_obstacle;
+    int best_distance = std::numeric_limits<int>::max();
+    for (QRect const& obstacle : region.obstacles()) {
+        QPoint const vec(center - obstacle.center());
+        int const distance = vec.x() * vec.x() + vec.y() * vec.y();
+        if (distance <= best_distance) {
+            best_obstacle = obstacle;
+            best_distance = distance;
+        }
+    }
+
+    return best_obstacle;
+}
+
+QPoint MaxWhitespaceFinder::findBlackPixelCloseToCenter(QRect const non_white_rect) const {
+    assert(m_integralImg.sum(non_white_rect) != 0);
+
+    QPoint const center(non_white_rect.center());
+    QRect outer_rect(non_white_rect);
+    QRect inner_rect(center.x(), center.y(), 1, 1);
+
+    if (m_integralImg.sum(inner_rect) != 0) {
+        return center;
+    }
+
+
+    for (;;) {
+        int const outer_inner_dw = outer_rect.width() - inner_rect.width();
+        int const outer_inner_dh = outer_rect.height() - inner_rect.height();
+
+        if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
+            break;
         }
 
+        int const delta_left = inner_rect.left() - outer_rect.left();
+        int const delta_right = outer_rect.right() - inner_rect.right();
+        int const delta_top = inner_rect.top() - outer_rect.top();
+        int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
 
-        for (;;) {
-            int const outer_inner_dw = outer_rect.width() - inner_rect.width();
-            int const outer_inner_dh = outer_rect.height() - inner_rect.height();
+        QRect middle_rect(
+            outer_rect.left() + ((delta_left + 1) >> 1),
+            outer_rect.top() + ((delta_top + 1) >> 1),
+            0, 0
+        );
+        middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
+        middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
+        assert(outer_rect.contains(middle_rect));
+        assert(middle_rect.contains(inner_rect));
 
-            if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
-                break;
-            }
-
-            int const delta_left = inner_rect.left() - outer_rect.left();
-            int const delta_right = outer_rect.right() - inner_rect.right();
-            int const delta_top = inner_rect.top() - outer_rect.top();
-            int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
-
-            QRect middle_rect(
-                outer_rect.left() + ((delta_left + 1) >> 1),
-                outer_rect.top() + ((delta_top + 1) >> 1),
-                0, 0
-            );
-            middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
-            middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
-            assert(outer_rect.contains(middle_rect));
-            assert(middle_rect.contains(inner_rect));
-
-            if (m_integralImg.sum(middle_rect) == 0) {
-                inner_rect = middle_rect;
-            }
-            else {
-                outer_rect = middle_rect;
-            }
+        if (m_integralImg.sum(middle_rect) == 0) {
+            inner_rect = middle_rect;
+        } else {
+            outer_rect = middle_rect;
         }
+    }
 
-        if (outer_rect.left() != inner_rect.left()) {
-            QRect rect(outer_rect);
-            rect.setRight(rect.left());
-            unsigned const sum = m_integralImg.sum(rect);
-            if (outer_rect.height() == 1) {
-                if (sum != 0) {
-                    return outer_rect.topLeft();
-                }
-                else {
-                    return outer_rect.topRight();
-                }
-            }
-            else if (sum != 0) {
-                return findBlackPixelCloseToCenter(rect);
-            }
-        }
-
-        if (outer_rect.right() != inner_rect.right()) {
-            QRect rect(outer_rect);
-            rect.setLeft(rect.right());
-            unsigned const sum = m_integralImg.sum(rect);
-            if (outer_rect.height() == 1) {
-                if (sum != 0) {
-                    return outer_rect.topRight();
-                }
-                else {
-                    return outer_rect.topLeft();
-                }
-            }
-            else if (sum != 0) {
-                return findBlackPixelCloseToCenter(rect);
-            }
-        }
-
-        if (outer_rect.top() != inner_rect.top()) {
-            QRect rect(outer_rect);
-            rect.setBottom(rect.top());
-            unsigned const sum = m_integralImg.sum(rect);
-            if (outer_rect.width() == 1) {
-                if (sum != 0) {
-                    return outer_rect.topLeft();
-                }
-                else {
-                    return outer_rect.bottomLeft();
-                }
-            }
-            else if (sum != 0) {
-                return findBlackPixelCloseToCenter(rect);
-            }
-        }
-
-        assert(outer_rect.bottom() != inner_rect.bottom());
+    if (outer_rect.left() != inner_rect.left()) {
         QRect rect(outer_rect);
-        rect.setTop(rect.bottom());
-        assert(m_integralImg.sum(rect) != 0);
-        if (outer_rect.width() == 1) {
-            return outer_rect.bottomLeft();
-        }
-        else {
+        rect.setRight(rect.left());
+        unsigned const sum = m_integralImg.sum(rect);
+        if (outer_rect.height() == 1) {
+            if (sum != 0) {
+                return outer_rect.topLeft();
+            } else {
+                return outer_rect.topRight();
+            }
+        } else if (sum != 0) {
             return findBlackPixelCloseToCenter(rect);
         }
-    }  // MaxWhitespaceFinder::findBlackPixelCloseToCenter
+    }
 
-    QRect
-    MaxWhitespaceFinder::extendBlackPixelToBlackBox(QPoint const pixel, QRect const bounds) const
+    if (outer_rect.right() != inner_rect.right()) {
+        QRect rect(outer_rect);
+        rect.setLeft(rect.right());
+        unsigned const sum = m_integralImg.sum(rect);
+        if (outer_rect.height() == 1) {
+            if (sum != 0) {
+                return outer_rect.topRight();
+            } else {
+                return outer_rect.topLeft();
+            }
+        } else if (sum != 0) {
+            return findBlackPixelCloseToCenter(rect);
+        }
+    }
+
+    if (outer_rect.top() != inner_rect.top()) {
+        QRect rect(outer_rect);
+        rect.setBottom(rect.top());
+        unsigned const sum = m_integralImg.sum(rect);
+        if (outer_rect.width() == 1) {
+            if (sum != 0) {
+                return outer_rect.topLeft();
+            } else {
+                return outer_rect.bottomLeft();
+            }
+        } else if (sum != 0) {
+            return findBlackPixelCloseToCenter(rect);
+        }
+    }
+
+    assert(outer_rect.bottom() != inner_rect.bottom());
+    QRect rect(outer_rect);
+    rect.setTop(rect.bottom());
+    assert(m_integralImg.sum(rect) != 0);
+    if (outer_rect.width() == 1) {
+        return outer_rect.bottomLeft();
+    } else {
+        return findBlackPixelCloseToCenter(rect);
+    }
+}      // MaxWhitespaceFinder::findBlackPixelCloseToCenter
+
+QRect MaxWhitespaceFinder::extendBlackPixelToBlackBox(QPoint const pixel, QRect const bounds) const {
+    assert(bounds.contains(pixel));
+
+    QRect outer_rect(bounds);
+    QRect inner_rect(pixel.x(), pixel.y(), 1, 1);
+
+    if (m_integralImg.sum(outer_rect)
+        == unsigned(outer_rect.width() * outer_rect.height()))
     {
-        assert(bounds.contains(pixel));
+        return outer_rect;
+    }
 
-        QRect outer_rect(bounds);
-        QRect inner_rect(pixel.x(), pixel.y(), 1, 1);
 
-        if (m_integralImg.sum(outer_rect)
-            == unsigned(outer_rect.width() * outer_rect.height())) {
-            return outer_rect;
+    for (;;) {
+        int const outer_inner_dw = outer_rect.width() - inner_rect.width();
+        int const outer_inner_dh = outer_rect.height() - inner_rect.height();
+
+        if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
+            break;
         }
 
+        int const delta_left = inner_rect.left() - outer_rect.left();
+        int const delta_right = outer_rect.right() - inner_rect.right();
+        int const delta_top = inner_rect.top() - outer_rect.top();
+        int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
 
-        for (;;) {
-            int const outer_inner_dw = outer_rect.width() - inner_rect.width();
-            int const outer_inner_dh = outer_rect.height() - inner_rect.height();
+        QRect middle_rect(
+            outer_rect.left() + ((delta_left + 1) >> 1),
+            outer_rect.top() + ((delta_top + 1) >> 1),
+            0, 0
+        );
+        middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
+        middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
+        assert(outer_rect.contains(middle_rect));
+        assert(middle_rect.contains(inner_rect));
 
-            if ((outer_inner_dw <= 1) && (outer_inner_dh <= 1)) {
-                break;
-            }
-
-            int const delta_left = inner_rect.left() - outer_rect.left();
-            int const delta_right = outer_rect.right() - inner_rect.right();
-            int const delta_top = inner_rect.top() - outer_rect.top();
-            int const delta_bottom = outer_rect.bottom() - inner_rect.bottom();
-
-            QRect middle_rect(
-                outer_rect.left() + ((delta_left + 1) >> 1),
-                outer_rect.top() + ((delta_top + 1) >> 1),
-                0, 0
-            );
-            middle_rect.setRight(outer_rect.right() - (delta_right >> 1));
-            middle_rect.setBottom(outer_rect.bottom() - (delta_bottom >> 1));
-            assert(outer_rect.contains(middle_rect));
-            assert(middle_rect.contains(inner_rect));
-
-            unsigned const area = middle_rect.width() * middle_rect.height();
-            if (m_integralImg.sum(middle_rect) == area) {
-                inner_rect = middle_rect;
-            }
-            else {
-                outer_rect = middle_rect;
-            }
+        unsigned const area = middle_rect.width() * middle_rect.height();
+        if (m_integralImg.sum(middle_rect) == area) {
+            inner_rect = middle_rect;
+        } else {
+            outer_rect = middle_rect;
         }
+    }
 
-        return inner_rect;
-    }  // MaxWhitespaceFinder::extendBlackPixelToBlackBox
+    return inner_rect;
+}      // MaxWhitespaceFinder::extendBlackPixelToBlackBox
 
-    /*======================= MaxWhitespaceFinder::Region =====================*/
+/*======================= MaxWhitespaceFinder::Region =====================*/
 
-    MaxWhitespaceFinder::Region::Region(unsigned known_new_obstacles, QRect const& bounds)
+MaxWhitespaceFinder::Region::Region(unsigned known_new_obstacles, QRect const& bounds)
         : m_knownNewObstacles(known_new_obstacles),
-          m_bounds(bounds)
-    { }
+          m_bounds(bounds) {
+}
 
-    MaxWhitespaceFinder::Region::Region(Region const& other)
+MaxWhitespaceFinder::Region::Region(Region const& other)
         : m_knownNewObstacles(other.m_knownNewObstacles),
-          m_bounds(other.m_bounds)
-    { }
+          m_bounds(other.m_bounds) {
+}
 
-    /**
-     * Adds obstacles from another region that intersect this region's area.
-     */
-    void
-    MaxWhitespaceFinder::Region::addObstacles(Region const& other_region)
-    {
-        for (QRect const& obstacle : other_region.obstacles()) {
-            QRect const intersected(obstacle.intersected(m_bounds));
-            if (!intersected.isEmpty()) {
-                m_obstacles.push_back(intersected);
-            }
+/**
+ * Adds obstacles from another region that intersect this region's area.
+ */
+void MaxWhitespaceFinder::Region::addObstacles(Region const& other_region) {
+    for (QRect const& obstacle : other_region.obstacles()) {
+        QRect const intersected(obstacle.intersected(m_bounds));
+        if (!intersected.isEmpty()) {
+            m_obstacles.push_back(intersected);
         }
     }
+}
 
-    /**
-     * Adds global obstacles that were not there when this region was constructed.
-     */
-    void
-    MaxWhitespaceFinder::Region::addNewObstacles(std::vector<QRect> const& new_obstacles)
-    {
-        for (size_t i = m_knownNewObstacles; i < new_obstacles.size(); ++i) {
-            QRect const intersected(new_obstacles[i].intersected(m_bounds));
-            if (!intersected.isEmpty()) {
-                m_obstacles.push_back(intersected);
-            }
+/**
+ * Adds global obstacles that were not there when this region was constructed.
+ */
+void MaxWhitespaceFinder::Region::addNewObstacles(std::vector<QRect> const& new_obstacles) {
+    for (size_t i = m_knownNewObstacles; i < new_obstacles.size(); ++i) {
+        QRect const intersected(new_obstacles[i].intersected(m_bounds));
+        if (!intersected.isEmpty()) {
+            m_obstacles.push_back(intersected);
         }
     }
+}
 
-    /**
-     * A fast and non-throwing swap operation.
-     */
-    void
-    MaxWhitespaceFinder::Region::swap(Region& other)
-    {
-        std::swap(m_bounds, other.m_bounds);
-        std::swap(m_knownNewObstacles, other.m_knownNewObstacles);
-        m_obstacles.swap(other.m_obstacles);
-    }
+/**
+ * A fast and non-throwing swap operation.
+ */
+void MaxWhitespaceFinder::Region::swap(Region& other) {
+    std::swap(m_bounds, other.m_bounds);
+    std::swap(m_knownNewObstacles, other.m_knownNewObstacles);
+    m_obstacles.swap(other.m_obstacles);
+}
 }  // namespace imageproc

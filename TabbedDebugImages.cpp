@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph_a@mail.ru>
@@ -21,15 +20,12 @@
 #include "TabbedDebugImages.h"
 
 TabbedDebugImages::TabbedDebugImages(QWidget* parent)
-    : QTabWidget(parent)
-{
+        : QTabWidget(parent) {
     setDocumentMode(true);
     connect(this, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
 }
 
-void
-TabbedDebugImages::currentTabChanged(int const idx)
-{
+void TabbedDebugImages::currentTabChanged(int const idx) {
     if (DebugImageView* div = dynamic_cast<DebugImageView*>(widget(idx))) {
         div->unlink();
         m_liveViews.push_back(*div);
@@ -38,9 +34,7 @@ TabbedDebugImages::currentTabChanged(int const idx)
     }
 }
 
-void
-TabbedDebugImages::removeExcessLiveViews()
-{
+void TabbedDebugImages::removeExcessLiveViews() {
     int remaining = m_liveViews.size();
     for (; remaining > MAX_LIVE_VIEWS; --remaining) {
         m_liveViews.front().setLive(false);

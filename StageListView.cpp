@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -28,9 +27,7 @@
 #include <QPainter>
 #include <QTimer>
 
-class StageListView::Model
-    : public QAbstractTableModel
-{
+class StageListView::Model: public QAbstractTableModel {
 public:
     Model(QObject* parent, IntrusivePtr<StageSequence> const& stages);
 
@@ -51,9 +48,7 @@ private:
 };
 
 
-class StageListView::LeftColDelegate
-    : public ChangedStateItemDelegate<QStyledItemDelegate>
-{
+class StageListView::LeftColDelegate: public ChangedStateItemDelegate<QStyledItemDelegate>{
 public:
     LeftColDelegate(StageListView* view);
 
@@ -66,9 +61,7 @@ private:
 };
 
 
-class StageListView::RightColDelegate
-    : public ChangedStateItemDelegate<QStyledItemDelegate>
-{
+class StageListView::RightColDelegate: public ChangedStateItemDelegate<QStyledItemDelegate>{
 public:
     RightColDelegate(QObject* parent = 0);
 
@@ -80,16 +73,15 @@ private:
 
 
 StageListView::StageListView(QWidget* parent)
-    : QTableView(parent),
-      m_sizeHint(QTableView::sizeHint()),
-      m_pModel(0),
-      m_pFirstColDelegate(new LeftColDelegate(this)),
-      m_pSecondColDelegate(new RightColDelegate(this)),
-      m_curBatchAnimationFrame(0),
-      m_timerId(0),
-      m_batchProcessingPossible(false),
-      m_batchProcessingInProgress(false)
-{
+        : QTableView(parent),
+          m_sizeHint(QTableView::sizeHint()),
+          m_pModel(0),
+          m_pFirstColDelegate(new LeftColDelegate(this)),
+          m_pSecondColDelegate(new RightColDelegate(this)),
+          m_curBatchAnimationFrame(0),
+          m_timerId(0),
+          m_batchProcessingPossible(false),
+          m_batchProcessingInProgress(false) {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     m_pFirstColDelegate->flagsForceDisabled(QStyle::State_HasFocus);
@@ -125,12 +117,10 @@ StageListView::StageListView(QWidget* parent)
     );
 }
 
-StageListView::~StageListView()
-{ }
+StageListView::~StageListView() {
+}
 
-void
-StageListView::setStages(IntrusivePtr<StageSequence> const& stages)
-{
+void StageListView::setStages(IntrusivePtr<StageSequence> const& stages) {
     if (QAbstractItemModel* m = model()) {
         m->deleteLater();
     }
@@ -147,8 +137,7 @@ StageListView::setStages(IntrusivePtr<StageSequence> const& stages)
         h_header->resizeSection(1, square_side);
         int const reduced_square_side = std::max(1, square_side - 6);
         createBatchAnimationSequence(reduced_square_side);
-    }
-    else {
+    } else {
         createBatchAnimationSequence(1);
     }
     m_curBatchAnimationFrame = 0;
@@ -164,9 +153,7 @@ StageListView::setStages(IntrusivePtr<StageSequence> const& stages)
     updateGeometry();
 }  // StageListView::setStages
 
-void
-StageListView::setBatchProcessingPossible(bool const possible)
-{
+void StageListView::setBatchProcessingPossible(bool const possible) {
     if (m_batchProcessingPossible == possible) {
         return;
     }
@@ -174,15 +161,12 @@ StageListView::setBatchProcessingPossible(bool const possible)
 
     if (possible) {
         placeLaunchButton(selectedRow());
-    }
-    else {
+    } else {
         removeLaunchButton(selectedRow());
     }
 }
 
-void
-StageListView::setBatchProcessingInProgress(bool const in_progress)
-{
+void StageListView::setBatchProcessingInProgress(bool const in_progress) {
     if (m_batchProcessingInProgress == in_progress) {
         return;
     }
@@ -196,8 +180,7 @@ StageListView::setBatchProcessingInProgress(bool const in_progress)
 
         initiateBatchAnimationFrameRendering();
         m_timerId = startTimer(180);
-    }
-    else {
+    } else {
         updateRowSpans();
         placeLaunchButton(selectedRow());
 
@@ -212,9 +195,7 @@ StageListView::setBatchProcessingInProgress(bool const in_progress)
     }
 }
 
-void
-StageListView::timerEvent(QTimerEvent* event)
-{
+void StageListView::timerEvent(QTimerEvent* event) {
     if (event->timerId() != m_timerId) {
         QTableView::timerEvent(event);
 
@@ -224,9 +205,7 @@ StageListView::timerEvent(QTimerEvent* event)
     initiateBatchAnimationFrameRendering();
 }
 
-void
-StageListView::initiateBatchAnimationFrameRendering()
-{
+void StageListView::initiateBatchAnimationFrameRendering() {
     if (!m_pModel || !m_batchProcessingInProgress) {
         return;
     }
@@ -239,14 +218,12 @@ StageListView::initiateBatchAnimationFrameRendering()
     m_pModel->updateBatchProcessingAnimation(
         selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]
     );
-    if (++m_curBatchAnimationFrame == (int)m_batchAnimationPixmaps.size()) {
+    if (++m_curBatchAnimationFrame == (int) m_batchAnimationPixmaps.size()) {
         m_curBatchAnimationFrame = 0;
     }
 }
 
-void
-StageListView::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected)
-{
+void StageListView::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) {
     QTableView::selectionChanged(selected, deselected);
 
     if (!deselected.isEmpty()) {
@@ -258,17 +235,13 @@ StageListView::selectionChanged(QItemSelection const& selected, QItemSelection c
     }
 }
 
-void
-StageListView::ensureSelectedRowVisible()
-{
+void StageListView::ensureSelectedRowVisible() {
     for (QModelIndex const& idx : selectionModel()->selectedRows(0)) {
         scrollTo(idx, EnsureVisible);
     }
 }
 
-void
-StageListView::removeLaunchButton(int const row)
-{
+void StageListView::removeLaunchButton(int const row) {
     if (row == -1) {
         return;
     }
@@ -276,9 +249,7 @@ StageListView::removeLaunchButton(int const row)
     m_pLaunchBtn->hide();
 }
 
-void
-StageListView::placeLaunchButton(int row)
-{
+void StageListView::placeLaunchButton(int row) {
     if (row == -1) {
         return;
     }
@@ -292,9 +263,7 @@ StageListView::placeLaunchButton(int row)
     m_pLaunchBtn->show();
 }
 
-void
-StageListView::createBatchAnimationSequence(int const square_side)
-{
+void StageListView::createBatchAnimationSequence(int const square_side) {
     int const num_frames = 8;
     m_batchAnimationPixmaps.resize(num_frames);
 
@@ -312,9 +281,7 @@ StageListView::createBatchAnimationSequence(int const square_side)
     }
 }
 
-void
-StageListView::updateRowSpans()
-{
+void StageListView::updateRowSpans() {
     if (!m_pModel) {
         return;
     }
@@ -325,9 +292,7 @@ StageListView::updateRowSpans()
     }
 }
 
-int
-StageListView::selectedRow() const
-{
+int StageListView::selectedRow() const {
     QModelIndexList const selection(selectionModel()->selectedRows(0));
     if (selection.empty()) {
         return -1;
@@ -339,44 +304,33 @@ StageListView::selectedRow() const
 /*========================= StageListView::Model ======================*/
 
 StageListView::Model::Model(QObject* parent, IntrusivePtr<StageSequence> const& stages)
-    : QAbstractTableModel(parent),
-      m_ptrStages(stages),
-      m_curSelectedRow(0)
-{
+        : QAbstractTableModel(parent),
+          m_ptrStages(stages),
+          m_curSelectedRow(0) {
     assert(m_ptrStages.get());
 }
 
-void
-StageListView::Model::updateBatchProcessingAnimation(int const selected_row, QPixmap const& animation_frame)
-{
+void StageListView::Model::updateBatchProcessingAnimation(int const selected_row, QPixmap const& animation_frame) {
     int const max_row = std::max(selected_row, m_curSelectedRow);
     m_curSelectedRow = selected_row;
     m_curAnimationFrame = animation_frame;
     emit dataChanged(index(0, 1), index(max_row, 1));
 }
 
-void
-StageListView::Model::disableBatchProcessingAnimation()
-{
+void StageListView::Model::disableBatchProcessingAnimation() {
     m_curAnimationFrame = QPixmap();
     emit dataChanged(index(0, 1), index(m_curSelectedRow, 1));
 }
 
-int
-StageListView::Model::columnCount(QModelIndex const& parent) const
-{
+int StageListView::Model::columnCount(QModelIndex const& parent) const {
     return 2;
 }
 
-int
-StageListView::Model::rowCount(QModelIndex const& parent) const
-{
+int StageListView::Model::rowCount(QModelIndex const& parent) const {
     return m_ptrStages->count();
 }
 
-QVariant
-StageListView::Model::data(QModelIndex const& index, int const role) const
-{
+QVariant StageListView::Model::data(QModelIndex const& index, int const role) const {
     if (role == Qt::DisplayRole) {
         if (index.column() == 0) {
             return m_ptrStages->filterAt(index.row())->getName();
@@ -396,14 +350,13 @@ StageListView::Model::data(QModelIndex const& index, int const role) const
 /*================= StageListView::LeftColDelegate ===================*/
 
 StageListView::LeftColDelegate::LeftColDelegate(StageListView* view)
-    : SuperClass(view),
-      m_pView(view)
-{ }
+        : SuperClass(view),
+          m_pView(view) {
+}
 
-void
-StageListView::LeftColDelegate::paint(QPainter* painter, QStyleOptionViewItem const& option,
-                                      QModelIndex const& index) const
-{
+void StageListView::LeftColDelegate::paint(QPainter* painter,
+                                           QStyleOptionViewItem const& option,
+                                           QModelIndex const& index) const {
     SuperClass::paint(painter, option, index);
 
     if ((index.row() == m_pView->selectedRow()) && m_pView->m_pLaunchBtn->isVisible()) {
@@ -416,13 +369,12 @@ StageListView::LeftColDelegate::paint(QPainter* painter, QStyleOptionViewItem co
 /*================= StageListView::RightColDelegate ===================*/
 
 StageListView::RightColDelegate::RightColDelegate(QObject* parent)
-    : SuperClass(parent)
-{ }
+        : SuperClass(parent) {
+}
 
-void
-StageListView::RightColDelegate::paint(QPainter* painter, QStyleOptionViewItem const& option,
-                                       QModelIndex const& index) const
-{
+void StageListView::RightColDelegate::paint(QPainter* painter,
+                                            QStyleOptionViewItem const& option,
+                                            QModelIndex const& index) const {
     SuperClass::paint(painter, option, index);
 
     QVariant const var(index.data(Qt::UserRole));

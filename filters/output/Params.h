@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -30,101 +29,85 @@
 class QDomDocument;
 class QDomElement;
 
-namespace output
-{
-    enum PictureShape { FREE_SHAPE, RECTANGULAR_SHAPE, QUADRO_SHAPE };
+namespace output {
+enum PictureShape { FREE_SHAPE, RECTANGULAR_SHAPE, QUADRO_SHAPE };
 
-    class Params
-    {
-    public:
-        Params();
+class Params {
+public:
+    Params();
 
-        Params(QDomElement const& el);
+    Params(QDomElement const& el);
 
-        Dpi const& outputDpi() const
-        {
-            return m_dpi;
-        }
+    Dpi const& outputDpi() const {
+        return m_dpi;
+    }
 
-        void setOutputDpi(Dpi const& dpi)
-        {
-            m_dpi = dpi;
-        }
+    void setOutputDpi(Dpi const& dpi) {
+        m_dpi = dpi;
+    }
 
-        ColorParams const& colorParams() const
-        {
-            return m_colorParams;
-        }
+    ColorParams const& colorParams() const {
+        return m_colorParams;
+    }
 
-        PictureShape pictureShape() const
-        {
-            return m_pictureShape;
-        }
+    PictureShape pictureShape() const {
+        return m_pictureShape;
+    }
 
-        void setPictureShape(PictureShape ps)
-        {
-            m_pictureShape = ps;
-        }
+    void setPictureShape(PictureShape ps) {
+        m_pictureShape = ps;
+    }
 
-        void setColorParams(ColorParams const& params)
-        {
-            m_colorParams = params;
-        }
+    void setColorParams(ColorParams const& params) {
+        m_colorParams = params;
+    }
 
-        DewarpingMode const& dewarpingMode() const
-        {
-            return m_dewarpingMode;
-        }
+    DewarpingMode const& dewarpingMode() const {
+        return m_dewarpingMode;
+    }
 
-        void setDewarpingMode(DewarpingMode const& mode)
-        {
-            m_dewarpingMode = mode;
-        }
+    void setDewarpingMode(DewarpingMode const& mode) {
+        m_dewarpingMode = mode;
+    }
 
-        dewarping::DistortionModel const& distortionModel() const
-        {
-            return m_distortionModel;
-        }
+    dewarping::DistortionModel const& distortionModel() const {
+        return m_distortionModel;
+    }
 
-        void setDistortionModel(dewarping::DistortionModel const& model)
-        {
-            m_distortionModel = model;
-        }
+    void setDistortionModel(dewarping::DistortionModel const& model) {
+        m_distortionModel = model;
+    }
 
-        DepthPerception const& depthPerception() const
-        {
-            return m_depthPerception;
-        }
+    DepthPerception const& depthPerception() const {
+        return m_depthPerception;
+    }
 
-        void setDepthPerception(DepthPerception depth_perception)
-        {
-            m_depthPerception = depth_perception;
-        }
+    void setDepthPerception(DepthPerception depth_perception) {
+        m_depthPerception = depth_perception;
+    }
 
-        DespeckleLevel despeckleLevel() const
-        {
-            return m_despeckleLevel;
-        }
+    DespeckleLevel despeckleLevel() const {
+        return m_despeckleLevel;
+    }
 
-        void setDespeckleLevel(DespeckleLevel level)
-        {
-            m_despeckleLevel = level;
-        }
+    void setDespeckleLevel(DespeckleLevel level) {
+        m_despeckleLevel = level;
+    }
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    private:
-        static ColorParams::ColorMode parseColorMode(QString const& str);
+private:
+    static ColorParams::ColorMode parseColorMode(QString const& str);
 
-        static QString formatColorMode(ColorParams::ColorMode mode);
+    static QString formatColorMode(ColorParams::ColorMode mode);
 
-        Dpi m_dpi;
-        ColorParams m_colorParams;
-        PictureShape m_pictureShape;
-        dewarping::DistortionModel m_distortionModel;
-        DepthPerception m_depthPerception;
-        DewarpingMode m_dewarpingMode;
-        DespeckleLevel m_despeckleLevel;
-    };
+    Dpi m_dpi;
+    ColorParams m_colorParams;
+    PictureShape m_pictureShape;
+    dewarping::DistortionModel m_distortionModel;
+    DepthPerception m_depthPerception;
+    DewarpingMode m_dewarpingMode;
+    DespeckleLevel m_despeckleLevel;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_PARAMS_H_

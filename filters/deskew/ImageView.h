@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -36,59 +35,53 @@
 
 class QRect;
 
-namespace deskew
-{
-    class ImageView
-        : public ImageViewBase,
-          private InteractionHandler
-    {
-        Q_OBJECT
+namespace deskew {
+class ImageView: public ImageViewBase, private InteractionHandler {
+    Q_OBJECT
+public:
+    ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
 
-    public:
-        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
+    virtual ~ImageView();
+signals:
+    void manualDeskewAngleSet(double degrees);
 
-        virtual ~ImageView();
+public slots:
+    void manualDeskewAngleSetExternally(double degrees);
 
-    signals:
-        void manualDeskewAngleSet(double degrees);
+    void doRotateLeft();
 
-    public slots:
-        void manualDeskewAngleSetExternally(double degrees);
+    void doRotateRight();
 
-        void doRotateLeft();
+protected:
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 
-        void doRotateRight();
+    virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction);
 
-    protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void doRotate(double deg);
 
-        virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction);
+private:
+    QPointF handlePosition(int idx) const;
 
-        void doRotate(double deg);
+    void handleMoveRequest(int idx, QPointF const& pos);
 
-    private:
-        QPointF handlePosition(int idx) const;
+    virtual void dragFinished();
 
-        void handleMoveRequest(int idx, QPointF const& pos);
+    QPointF getImageRotationOrigin() const;
 
-        virtual void dragFinished();
+    QRectF getRotationArcSquare() const;
 
-        QPointF getImageRotationOrigin() const;
+    std::pair<QPointF, QPointF> getRotationHandles(QRectF const& arc_square) const;
 
-        QRectF getRotationArcSquare() const;
+    static int const m_cellSize;
+    static double const m_maxRotationDeg;
+    static double const m_maxRotationSin;
 
-        std::pair<QPointF, QPointF> getRotationHandles(QRectF const& arc_square) const;
-
-        static int const m_cellSize;
-        static double const m_maxRotationDeg;
-        static double const m_maxRotationSin;
-
-        QPixmap m_handlePixmap;
-        DraggablePoint m_handles[2];
-        ObjectDragHandler m_handleInteractors[2];
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-        ImageTransformation m_xform;
-    };
+    QPixmap m_handlePixmap;
+    DraggablePoint m_handles[2];
+    ObjectDragHandler m_handleInteractors[2];
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+    ImageTransformation m_xform;
+};
 }  // namespace deskew
 #endif  // ifndef DESKEW_IMAGEVIEW_H_

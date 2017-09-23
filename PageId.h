@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -29,8 +28,7 @@ class QString;
  *
  * An image can contain one or two logical pages.
  */
-class PageId
-{
+class PageId {
 public:
     enum SubPage { SINGLE_PAGE, LEFT_PAGE, RIGHT_PAGE };
 
@@ -44,28 +42,23 @@ public:
      */
     explicit PageId(ImageId const& image_id, SubPage subpage = SINGLE_PAGE);
 
-    bool isNull() const
-    {
+    bool isNull() const {
         return m_imageId.isNull();
     }
 
-    ImageId& imageId()
-    {
+    ImageId& imageId() {
         return m_imageId;
     }
 
-    ImageId const& imageId() const
-    {
+    ImageId const& imageId() const {
         return m_imageId;
     }
 
-    SubPage subPage() const
-    {
+    SubPage subPage() const {
         return m_subPage;
     }
 
-    QString subPageAsString() const
-    {
+    QString subPageAsString() const {
         return subPageToString(m_subPage);
     }
 
@@ -77,6 +70,7 @@ private:
     ImageId m_imageId;
     SubPage m_subPage;
 };
+
 
 bool operator==(PageId const& lhs, PageId const& rhs);
 

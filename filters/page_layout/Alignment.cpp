@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -22,120 +21,106 @@
 
 #include "CommandLine.h"
 
-namespace page_layout
-{
-    Alignment::Alignment()
+namespace page_layout {
+Alignment::Alignment()
         : m_vert(VCENTER),
           m_hor(HCENTER),
           m_tolerance(DEFAULT_TOLERANCE),
-          m_autoMargins(false)
-    {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
-    }
+          m_autoMargins(false) {
+    CommandLine cli = CommandLine::get();
+    m_isNull = cli.getDefaultNull();
+}
 
-    Alignment::Alignment(Vertical vert, Horizontal hor)
+Alignment::Alignment(Vertical vert, Horizontal hor)
         : m_vert(vert),
           m_hor(hor),
           m_tolerance(DEFAULT_TOLERANCE),
-          m_autoMargins(false)
-    {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
+          m_autoMargins(false) {
+    CommandLine cli = CommandLine::get();
+    m_isNull = cli.getDefaultNull();
+}
+
+Alignment::Alignment(QDomElement const& el) {
+    CommandLine cli = CommandLine::get();
+    m_isNull = cli.getDefaultNull();
+
+    QString const vert(el.attribute("vert"));
+    QString const hor(el.attribute("hor"));
+    m_isNull = el.attribute("null").toInt() != 0;
+    m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
+    m_autoMargins = el.attribute("autoMargins") == "true" ? true : false;
+
+    if (vert == "top") {
+        m_vert = TOP;
+    } else if (vert == "bottom") {
+        m_vert = BOTTOM;
+    } else if (vert == "auto") {
+        m_vert = VAUTO;
+    } else if (vert == "original") {
+        m_vert = VORIGINAL;
+    } else {
+        m_vert = VCENTER;
     }
 
-    Alignment::Alignment(QDomElement const& el)
-    {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
+    if (hor == "left") {
+        m_hor = LEFT;
+    } else if (hor == "right") {
+        m_hor = RIGHT;
+    } else if (hor == "auto") {
+        m_hor = HAUTO;
+    } else if (vert == "original") {
+        m_hor = HORIGINAL;
+    } else {
+        m_hor = HCENTER;
+    }
+}
 
-        QString const vert(el.attribute("vert"));
-        QString const hor(el.attribute("hor"));
-        m_isNull = el.attribute("null").toInt() != 0;
-        m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
-        m_autoMargins = el.attribute("autoMargins") == "true" ? true : false;
-
-        if (vert == "top") {
-            m_vert = TOP;
-        }
-        else if (vert == "bottom") {
-            m_vert = BOTTOM;
-        }
-        else if (vert == "auto") {
-            m_vert = VAUTO;
-        }
-        else if (vert == "original") {
-            m_vert = VORIGINAL;
-        }
-        else {
-            m_vert = VCENTER;
-        }
-
-        if (hor == "left") {
-            m_hor = LEFT;
-        }
-        else if (hor == "right") {
-            m_hor = RIGHT;
-        }
-        else if (hor == "auto") {
-            m_hor = HAUTO;
-        }
-        else if (vert == "original") {
-            m_hor = HORIGINAL;
-        }
-        else {
-            m_hor = HCENTER;
-        }
+QDomElement Alignment::toXml(QDomDocument& doc, QString const& name) const {
+    char const* vert = 0;
+    switch (m_vert) {
+        case TOP:
+            vert = "top";
+            break;
+        case VCENTER:
+            vert = "vcenter";
+            break;
+        case BOTTOM:
+            vert = "bottom";
+            break;
+        case VAUTO:
+            vert = "auto";
+            break;
+        case VORIGINAL:
+            vert = "original";
+            break;
     }
 
-    QDomElement
-    Alignment::toXml(QDomDocument& doc, QString const& name) const
-    {
-        char const* vert = 0;
-        switch (m_vert) {
-            case TOP:
-                vert = "top";
-                break;
-            case VCENTER:
-                vert = "vcenter";
-                break;
-            case BOTTOM:
-                vert = "bottom";
-                break;
-            case VAUTO:
-                vert = "auto";
-                break;
-            case VORIGINAL:
-                vert = "original";
-                break;
-        }
+    char const* hor = 0;
+    switch (m_hor) {
+        case LEFT:
+            hor = "left";
+            break;
+        case HCENTER:
+            hor = "hcenter";
+            break;
+        case RIGHT:
+            hor = "right";
+            break;
+        case HAUTO:
+            hor = "auto";
+            break;
+        case HORIGINAL:
+            hor = "original";
+            break;
+    }
 
-        char const* hor = 0;
-        switch (m_hor) {
-            case LEFT:
-                hor = "left";
-                break;
-            case HCENTER:
-                hor = "hcenter";
-                break;
-            case RIGHT:
-                hor = "right";
-                break;
-            case HAUTO:
-                hor = "auto";
-                break;
-            case HORIGINAL:
-                hor = "original";
-                break;
-        }
+    QDomElement el(doc.createElement(name));
+    el.setAttribute("vert", QString::fromLatin1(vert));
+    el.setAttribute("hor", QString::fromLatin1(hor));
+    el.setAttribute("null", m_isNull ? 1 : 0);
+    el.setAttribute("tolerance", QString::number(m_tolerance));
+    el.setAttribute("autoMargins", m_autoMargins ? "true" : "false");
 
-        QDomElement el(doc.createElement(name));
-        el.setAttribute("vert", QString::fromLatin1(vert));
-        el.setAttribute("hor", QString::fromLatin1(hor));
-        el.setAttribute("null", m_isNull ? 1 : 0);
-        el.setAttribute("tolerance", QString::number(m_tolerance));
-        el.setAttribute("autoMargins", m_autoMargins ? "true" : "false");
-
-        return el;
-    }  // Alignment::toXml
+    return el;
+}      // Alignment::toXml
 }  // namespace page_layout

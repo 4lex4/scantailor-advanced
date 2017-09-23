@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -23,35 +22,26 @@
 #include <QTransform>
 #include <QDir>
 
-namespace output
-{
-    QString
-    Utils::automaskDir(QString const& out_dir)
-    {
-        return QDir(out_dir).absoluteFilePath("cache/automask");
-    }
+namespace output {
+QString Utils::automaskDir(QString const& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/automask");
+}
 
-    QString
-    Utils::predespeckleDir(QString const& out_dir)
-    {
-        return QDir(out_dir).absoluteFilePath("cache/predespeckle");
-    }
+QString Utils::predespeckleDir(QString const& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/predespeckle");
+}
 
-    QString
-    Utils::specklesDir(QString const& out_dir)
-    {
-        return QDir(out_dir).absoluteFilePath("cache/speckles");
-    }
+QString Utils::specklesDir(QString const& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/speckles");
+}
 
-    QTransform
-    Utils::scaleFromToDpi(Dpi const& from, Dpi const& to)
-    {
-        QTransform xform;
-        xform.scale(
-            (double)to.horizontal() / from.horizontal(),
-            (double)to.vertical() / from.vertical()
-        );
+QTransform Utils::scaleFromToDpi(Dpi const& from, Dpi const& to) {
+    QTransform xform;
+    xform.scale(
+        (double) to.horizontal() / from.horizontal(),
+        (double) to.vertical() / from.vertical()
+    );
 
-        return xform;
-    }
+    return xform;
+}
 }  // namespace output

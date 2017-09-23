@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -26,70 +25,65 @@
 #include "VecNT.h"
 #include <vector>
 
-namespace spfit
-{
-    class ConstraintSet;
-    class ModelShape;
+namespace spfit {
+class ConstraintSet;
+class ModelShape;
 
-    struct SqDistApproximant;
+struct SqDistApproximant;
 
-    class OptimizationResult;
+class OptimizationResult;
 
-    class SplineFitter
-    {
-        DECLARE_NON_COPYABLE(SplineFitter)
+class SplineFitter {
+    DECLARE_NON_COPYABLE(SplineFitter)
+public:
+    explicit SplineFitter(FittableSpline* spline);
 
-    public:
-        explicit SplineFitter(FittableSpline* spline);
+    /**
+     * To be called after adding / moving / removing any of spline's control points.
+     * This will reset the optimizer, which means the current set of constraints
+     * is lost.  Any forces accumulated since the last optimize() call are lost as well.
+     */
+    void splineModified();
 
-        /**
-         * To be called after adding / moving / removing any of spline's control points.
-         * This will reset the optimizer, which means the current set of constraints
-         * is lost.  Any forces accumulated since the last optimize() call are lost as well.
-         */
-        void splineModified();
+    void setConstraints(ConstraintSet const& constraints);
 
-        void setConstraints(ConstraintSet const& constraints);
+    void setSamplingParams(FittableSpline::SamplingParams const& sampling_params);
 
-        void setSamplingParams(FittableSpline::SamplingParams const& sampling_params);
+    void addAttractionForce(Vec2d const& spline_point,
+                            std::vector<FittableSpline::LinearCoefficient> const& coeffs,
+                            SqDistApproximant const& sqdist_approx);
 
-        void addAttractionForce(Vec2d const& spline_point,
-                                std::vector<FittableSpline::LinearCoefficient> const& coeffs,
-                                SqDistApproximant const& sqdist_approx);
+    void addAttractionForces(ModelShape const& model_shape, double from_t = 0.0, double to_t = 1.0);
 
-        void addAttractionForces(ModelShape const& model_shape, double from_t = 0.0, double to_t = 1.0);
+    void addExternalForce(QuadraticFunction const& force);
 
-        void addExternalForce(QuadraticFunction const& force);
+    void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
 
-        void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+    void addInternalForce(QuadraticFunction const& force);
 
-        void addInternalForce(QuadraticFunction const& force);
+    void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparce_map);
 
-        void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparce_map);
+    /** \see Optimizer::externalForce() */
+    double externalForce() const {
+        return m_optimizer.externalForce();
+    }
 
-        /** \see Optimizer::externalForce() */
-        double externalForce() const
-        {
-            return m_optimizer.externalForce();
-        }
+    /** \see Optimizer::internalForce() */
+    double internalForce() const {
+        return m_optimizer.internalForce();
+    }
 
-        /** \see Optimizer::internalForce() */
-        double internalForce() const
-        {
-            return m_optimizer.internalForce();
-        }
+    OptimizationResult optimize(double internal_force_weight);
 
-        OptimizationResult optimize(double internal_force_weight);
+    void undoLastStep();
 
-        void undoLastStep();
-
-    private:
-        FittableSpline* m_pSpline;
-        Optimizer m_optimizer;
-        FittableSpline::SamplingParams m_samplingParams;
-        std::vector<double> m_tempVars;
-        std::vector<int> m_tempSparseMap;
-        std::vector<FittableSpline::LinearCoefficient> m_tempCoeffs;
-    };
+private:
+    FittableSpline* m_pSpline;
+    Optimizer m_optimizer;
+    FittableSpline::SamplingParams m_samplingParams;
+    std::vector<double> m_tempVars;
+    std::vector<int> m_tempSparseMap;
+    std::vector<FittableSpline::LinearCoefficient> m_tempCoeffs;
+};
 }  // namespace spfit
 #endif  // ifndef SPFIT_SPLINE_FITTER_H_

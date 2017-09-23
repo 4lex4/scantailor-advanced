@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -24,18 +23,16 @@ class Dpi;
 class QString;
 class QTransform;
 
-namespace output
-{
-    class Utils
-    {
-    public:
-        static QString automaskDir(QString const& out_dir);
+namespace output {
+class Utils {
+public:
+    static QString automaskDir(QString const& out_dir);
 
-        static QString predespeckleDir(QString const& out_dir);
+    static QString predespeckleDir(QString const& out_dir);
 
-        static QString specklesDir(QString const& out_dir);
+    static QString specklesDir(QString const& out_dir);
 
-        static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
-    };
+    static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
+};
 }
 #endif

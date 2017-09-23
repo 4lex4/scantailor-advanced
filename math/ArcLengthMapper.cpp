@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -22,24 +21,20 @@
 #include <assert.h>
 
 ArcLengthMapper::Hint::Hint()
-    : m_lastSegment(0),
-      m_direction(1)
-{ }
+        : m_lastSegment(0),
+          m_direction(1) {
+}
 
-void
-ArcLengthMapper::Hint::update(int new_segment)
-{
+void ArcLengthMapper::Hint::update(int new_segment) {
     m_direction = new_segment < m_lastSegment ? -1 : 1;
     m_lastSegment = new_segment;
 }
 
 ArcLengthMapper::ArcLengthMapper()
-    : m_prevFX()
-{ }
+        : m_prevFX() {
+}
 
-void
-ArcLengthMapper::addSample(double x, double fx)
-{
+void ArcLengthMapper::addSample(double x, double fx) {
     double arc_len = 0;
 
     if (!m_samples.empty()) {
@@ -53,15 +48,11 @@ ArcLengthMapper::addSample(double x, double fx)
     m_prevFX = fx;
 }
 
-double
-ArcLengthMapper::totalArcLength() const
-{
+double ArcLengthMapper::totalArcLength() const {
     return m_samples.size() < 2 ? 0.0 : m_samples.back().arcLen;
 }
 
-void
-ArcLengthMapper::normalizeRange(double total_arc_len)
-{
+void ArcLengthMapper::normalizeRange(double total_arc_len) {
     if (m_samples.size() <= 1) {
         return;
     }
@@ -74,9 +65,7 @@ ArcLengthMapper::normalizeRange(double total_arc_len)
     }
 }
 
-double
-ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const
-{
+double ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const {
     switch (m_samples.size()) {
         case 0:
             return 0;
@@ -88,8 +77,7 @@ ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const
         hint.update(0);
 
         return interpolateArcLenInSegment(arc_len, 0);
-    }
-    else if (arc_len > m_samples.back().arcLen) {
+    } else if (arc_len > m_samples.back().arcLen) {
         hint.update(m_samples.size() - 2);
 
         return interpolateArcLenInSegment(arc_len, hint.m_lastSegment);
@@ -97,13 +85,11 @@ ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const
 
     if (checkSegmentForArcLen(arc_len, hint.m_lastSegment)) {
         return interpolateArcLenInSegment(arc_len, hint.m_lastSegment);
-    }
-    else if (checkSegmentForArcLen(arc_len, hint.m_lastSegment + hint.m_direction)) {
+    } else if (checkSegmentForArcLen(arc_len, hint.m_lastSegment + hint.m_direction)) {
         hint.update(hint.m_lastSegment + hint.m_direction);
 
         return interpolateArcLenInSegment(arc_len, hint.m_lastSegment);
-    }
-    else if (checkSegmentForArcLen(arc_len, hint.m_lastSegment - hint.m_direction)) {
+    } else if (checkSegmentForArcLen(arc_len, hint.m_lastSegment - hint.m_direction)) {
         hint.update(hint.m_lastSegment - hint.m_direction);
 
         return interpolateArcLenInSegment(arc_len, hint.m_lastSegment);
@@ -117,8 +103,7 @@ ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const
         double const mid_arc_len = m_samples[mid_idx].arcLen;
         if ((arc_len - mid_arc_len) * (arc_len - left_arc_len) <= 0) {
             right_idx = mid_idx;
-        }
-        else {
+        } else {
             left_idx = mid_idx;
             left_arc_len = mid_arc_len;
         }
@@ -129,9 +114,7 @@ ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const
     return interpolateArcLenInSegment(arc_len, left_idx);
 }  // ArcLengthMapper::arcLenToX
 
-double
-ArcLengthMapper::xToArcLen(double x, Hint& hint) const
-{
+double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     switch (m_samples.size()) {
         case 0:
             return 0;
@@ -143,8 +126,7 @@ ArcLengthMapper::xToArcLen(double x, Hint& hint) const
         hint.update(0);
 
         return interpolateXInSegment(x, 0);
-    }
-    else if (x > m_samples.back().x) {
+    } else if (x > m_samples.back().x) {
         hint.update(m_samples.size() - 2);
 
         return interpolateXInSegment(x, hint.m_lastSegment);
@@ -152,13 +134,11 @@ ArcLengthMapper::xToArcLen(double x, Hint& hint) const
 
     if (checkSegmentForX(x, hint.m_lastSegment)) {
         return interpolateXInSegment(x, hint.m_lastSegment);
-    }
-    else if (checkSegmentForX(x, hint.m_lastSegment + hint.m_direction)) {
+    } else if (checkSegmentForX(x, hint.m_lastSegment + hint.m_direction)) {
         hint.update(hint.m_lastSegment + hint.m_direction);
 
         return interpolateXInSegment(x, hint.m_lastSegment);
-    }
-    else if (checkSegmentForX(x, hint.m_lastSegment - hint.m_direction)) {
+    } else if (checkSegmentForX(x, hint.m_lastSegment - hint.m_direction)) {
         hint.update(hint.m_lastSegment - hint.m_direction);
 
         return interpolateXInSegment(x, hint.m_lastSegment);
@@ -172,8 +152,7 @@ ArcLengthMapper::xToArcLen(double x, Hint& hint) const
         double const mid_x = m_samples[mid_idx].x;
         if ((x - mid_x) * (x - left_x) <= 0) {
             right_idx = mid_idx;
-        }
-        else {
+        } else {
             left_idx = mid_idx;
             left_x = mid_x;
         }
@@ -184,9 +163,7 @@ ArcLengthMapper::xToArcLen(double x, Hint& hint) const
     return interpolateXInSegment(x, left_idx);
 }  // ArcLengthMapper::xToArcLen
 
-bool
-ArcLengthMapper::checkSegmentForArcLen(double arc_len, int segment) const
-{
+bool ArcLengthMapper::checkSegmentForArcLen(double arc_len, int segment) const {
     assert(m_samples.size() > 1);
     if ((segment < 0) || (segment >= int(m_samples.size()) - 1)) {
         return false;
@@ -198,9 +175,7 @@ ArcLengthMapper::checkSegmentForArcLen(double arc_len, int segment) const
     return (arc_len - left_arc_len) * (arc_len - right_arc_len) <= 0;
 }
 
-bool
-ArcLengthMapper::checkSegmentForX(double x, int segment) const
-{
+bool ArcLengthMapper::checkSegmentForX(double x, int segment) const {
     assert(m_samples.size() > 1);
     if ((segment < 0) || (segment >= int(m_samples.size()) - 1)) {
         return false;
@@ -212,9 +187,7 @@ ArcLengthMapper::checkSegmentForX(double x, int segment) const
     return (x - left_x) * (x - right_x) <= 0;
 }
 
-double
-ArcLengthMapper::interpolateArcLenInSegment(double arc_len, int segment) const
-{
+double ArcLengthMapper::interpolateArcLenInSegment(double arc_len, int segment) const {
     double const x0 = m_samples[segment].x;
     double const a0 = m_samples[segment].arcLen;
     double const x1 = m_samples[segment + 1].x;
@@ -224,9 +197,7 @@ ArcLengthMapper::interpolateArcLenInSegment(double arc_len, int segment) const
     return x;
 }
 
-double
-ArcLengthMapper::interpolateXInSegment(double x, int segment) const
-{
+double ArcLengthMapper::interpolateXInSegment(double x, int segment) const {
     double const x0 = m_samples[segment].x;
     double const a0 = m_samples[segment].arcLen;
     double const x1 = m_samples[segment + 1].x;

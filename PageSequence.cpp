@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -20,21 +19,16 @@
 #include "PageSequence.h"
 #include <boost/foreach.hpp>
 
-void
-PageSequence::append(PageInfo const& page_info)
-{
+void PageSequence::append(PageInfo const& page_info) {
     m_pages.push_back(page_info);
 }
 
-PageInfo const&
-PageSequence::pageAt(size_t const idx) const
-{
+PageInfo const& PageSequence::pageAt(size_t const idx) const {
     return m_pages.at(idx);
 }
 
 std::set<PageId>
-PageSequence::selectAll() const
-{
+PageSequence::selectAll() const {
     std::set<PageId> selection;
 
     for (PageInfo const& page_info : m_pages) {
@@ -45,13 +39,13 @@ PageSequence::selectAll() const
 }
 
 std::set<PageId>
-PageSequence::selectPagePlusFollowers(PageId const& page) const
-{
+PageSequence::selectPagePlusFollowers(PageId const& page) const {
     std::set<PageId> selection;
 
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
-    for (; it != end && it->id() != page; ++it) { }
+    for (; it != end && it->id() != page; ++it) {
+    }
     for (; it != end; ++it) {
         selection.insert(it->id());
     }
@@ -60,13 +54,13 @@ PageSequence::selectPagePlusFollowers(PageId const& page) const
 }
 
 std::set<PageId>
-PageSequence::selectEveryOther(PageId const& base) const
-{
+PageSequence::selectEveryOther(PageId const& base) const {
     std::set<PageId> selection;
 
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
-    for (; it != end && it->id() != base; ++it) { }
+    for (; it != end && it->id() != base; ++it) {
+    }
     if (it == end) {
         return selection;
     }

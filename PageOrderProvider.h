@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -27,9 +26,7 @@ class PageId;
 /**
  * A base class for different page ordering strategies.
  */
-class PageOrderProvider
-    : public RefCountable
-{
+class PageOrderProvider: public RefCountable {
 public:
     /**
      * Returns true if \p lhs_page precedes \p rhs_page.
@@ -39,5 +36,6 @@ public:
     virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
                           bool rhs_incomplete) const = 0;
 };
+
 
 #endif

@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,44 +26,41 @@
 #include "filter_dc/PageOrientationCollector.h"
 #include "filters/page_split/CacheDrivenTask.h"
 
-namespace fix_orientation
-{
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                                     IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
+namespace fix_orientation {
+CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                 IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
         : m_ptrNextTask(next_task),
-          m_ptrSettings(settings)
-    { }
+          m_ptrSettings(settings) {
+}
 
-    CacheDrivenTask::~CacheDrivenTask()
-    { }
+CacheDrivenTask::~CacheDrivenTask() {
+}
 
-    void
-    CacheDrivenTask::process(PageInfo const& page_info, AbstractFilterDataCollector* collector)
-    {
-        QRectF const initial_rect(QPointF(0.0, 0.0), page_info.metadata().size());
-        ImageTransformation xform(initial_rect, page_info.metadata().dpi());
-        xform.setPreRotation(m_ptrSettings->getRotationFor(page_info.imageId()));
+void CacheDrivenTask::process(PageInfo const& page_info, AbstractFilterDataCollector* collector) {
+    QRectF const initial_rect(QPointF(0.0, 0.0), page_info.metadata().size());
+    ImageTransformation xform(initial_rect, page_info.metadata().dpi());
+    xform.setPreRotation(m_ptrSettings->getRotationFor(page_info.imageId()));
 
-        if (PageOrientationCollector* col = dynamic_cast<PageOrientationCollector*>(collector)) {
-            col->process(xform.preRotation());
-        }
-
-        if (m_ptrNextTask) {
-            m_ptrNextTask->process(page_info, collector, xform);
-
-            return;
-        }
-
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            thumb_col->processThumbnail(
-                std::unique_ptr<QGraphicsItem>(
-                    new ThumbnailBase(
-                        thumb_col->thumbnailCache(),
-                        thumb_col->maxLogicalThumbSize(),
-                        page_info.imageId(), xform
-                    )
-                )
-            );
-        }
+    if (PageOrientationCollector* col = dynamic_cast<PageOrientationCollector*>(collector)) {
+        col->process(xform.preRotation());
     }
+
+    if (m_ptrNextTask) {
+        m_ptrNextTask->process(page_info, collector, xform);
+
+        return;
+    }
+
+    if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        thumb_col->processThumbnail(
+            std::unique_ptr<QGraphicsItem>(
+                new ThumbnailBase(
+                    thumb_col->thumbnailCache(),
+                    thumb_col->maxLogicalThumbSize(),
+                    page_info.imageId(), xform
+                )
+            )
+        );
+    }
+}
 }  // namespace fix_orientation

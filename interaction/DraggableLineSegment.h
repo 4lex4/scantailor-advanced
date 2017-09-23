@@ -1,4 +1,3 @@
-
 /*
    Scan Tailor - Interactive post-processing tool for scanned pages.
    Copyright (C) 2007-2009  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,9 +26,7 @@
 
 class ObjectDragHandler;
 
-class DraggableLineSegment
-    : public DraggableObject
-{
+class DraggableLineSegment: public DraggableObject {
 public:
     typedef boost::function<
             QLineF()
@@ -41,8 +38,7 @@ public:
 
     DraggableLineSegment();
 
-    void setProximityPriority(int priority)
-    {
+    void setProximityPriority(int priority) {
         m_proximityPriority = priority;
     }
 
@@ -54,24 +50,20 @@ public:
 
     virtual void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask);
 
-    void setPositionCallback(PositionCallback const& callback)
-    {
+    void setPositionCallback(PositionCallback const& callback) {
         m_positionCallback = callback;
     }
 
-    void setMoveRequestCallback(MoveRequestCallback const& callback)
-    {
+    void setMoveRequestCallback(MoveRequestCallback const& callback) {
         m_moveRequestCallback = callback;
     }
 
 protected:
-    virtual QLineF lineSegmentPosition() const
-    {
+    virtual QLineF lineSegmentPosition() const {
         return m_positionCallback();
     }
 
-    virtual void lineSegmentMoveRequest(QLineF const& line, Qt::KeyboardModifiers mask)
-    {
+    virtual void lineSegmentMoveRequest(QLineF const& line, Qt::KeyboardModifiers mask) {
         m_moveRequestCallback(line, mask);
     }
 
@@ -82,5 +74,6 @@ private:
     QLineF m_initialLinePos;
     int m_proximityPriority;
 };
+
 
 #endif  // ifndef DRAGGABLE_LINE_SEGMENT_H_

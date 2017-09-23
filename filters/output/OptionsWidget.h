@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -34,122 +33,114 @@
 #include "Params.h"
 #include <set>
 
-namespace dewarping
-{
-    class DistortionModel;
+namespace dewarping {
+class DistortionModel;
 }
 
-namespace output
-{
-    class Settings;
-    class DewarpingParams;
+namespace output {
+class Settings;
+class DewarpingParams;
 
-    class OptionsWidget
-        : public FilterOptionsWidget,
-          private Ui::OutputOptionsWidget
-    {
-        Q_OBJECT
+class OptionsWidget: public FilterOptionsWidget, private Ui::OutputOptionsWidget {
+    Q_OBJECT
+public:
+    OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
-    public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+    virtual ~OptionsWidget();
 
-        virtual ~OptionsWidget();
+    void preUpdateUI(PageId const& page_id);
 
-        void preUpdateUI(PageId const& page_id);
+    void postUpdateUI();
 
-        void postUpdateUI();
+    ImageViewTab lastTab() const {
+        return m_lastTab;
+    }
 
-        ImageViewTab lastTab() const
-        {
-            return m_lastTab;
-        }
+    DepthPerception const& depthPerception() const {
+        return m_depthPerception;
+    }
 
-        DepthPerception const& depthPerception() const
-        {
-            return m_depthPerception;
-        }
+signals:
+    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
-    signals:
-        void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    void depthPerceptionChanged(double val);
 
-        void depthPerceptionChanged(double val);
+public slots:
+    void tabChanged(ImageViewTab tab);
 
-    public slots:
-        void tabChanged(ImageViewTab tab);
+    void distortionModelChanged(dewarping::DistortionModel const& model);
 
-        void distortionModelChanged(dewarping::DistortionModel const& model);
+private slots:
+    void changeDpiButtonClicked();
 
-    private slots:
-        void changeDpiButtonClicked();
+    void applyColorsButtonClicked();
 
-        void applyColorsButtonClicked();
+    void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
 
-        void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
+    void applyColorsConfirmed(std::set<PageId> const& pages);
 
-        void applyColorsConfirmed(std::set<PageId> const& pages);
+    void colorModeChanged(int idx);
 
-        void colorModeChanged(int idx);
+    void pictureShapeChanged(int idx);
 
-        void pictureShapeChanged(int idx);
+    void tiffCompressionChanged(int idx);
 
-        void tiffCompressionChanged(int idx);
+    void whiteMarginsToggled(bool checked);
 
-        void whiteMarginsToggled(bool checked);
+    void equalizeIlluminationToggled(bool checked);
 
-        void equalizeIlluminationToggled(bool checked);
+    void setLighterThreshold();
 
-        void setLighterThreshold();
+    void setDarkerThreshold();
 
-        void setDarkerThreshold();
+    void setNeutralThreshold();
 
-        void setNeutralThreshold();
+    void bwThresholdChanged();
 
-        void bwThresholdChanged();
+    void despeckleOffSelected();
 
-        void despeckleOffSelected();
+    void despeckleCautiousSelected();
 
-        void despeckleCautiousSelected();
+    void despeckleNormalSelected();
 
-        void despeckleNormalSelected();
+    void despeckleAggressiveSelected();
 
-        void despeckleAggressiveSelected();
+    void applyDespeckleButtonClicked();
 
-        void applyDespeckleButtonClicked();
+    void applyDespeckleConfirmed(std::set<PageId> const& pages);
 
-        void applyDespeckleConfirmed(std::set<PageId> const& pages);
+    void changeDewarpingButtonClicked();
 
-        void changeDewarpingButtonClicked();
+    void dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode);
 
-        void dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode);
+    void applyDepthPerceptionButtonClicked();
 
-        void applyDepthPerceptionButtonClicked();
+    void applyDepthPerceptionConfirmed(std::set<PageId> const& pages);
 
-        void applyDepthPerceptionConfirmed(std::set<PageId> const& pages);
+    void depthPerceptionChangedSlot(int val);
 
-        void depthPerceptionChangedSlot(int val);
+private:
+    void handleDespeckleLevelChange(DespeckleLevel level);
 
-    private:
-        void handleDespeckleLevelChange(DespeckleLevel level);
+    void reloadIfNecessary();
 
-        void reloadIfNecessary();
+    void updateDpiDisplay();
 
-        void updateDpiDisplay();
+    void updateColorsDisplay();
 
-        void updateColorsDisplay();
+    void updateDewarpingDisplay();
 
-        void updateDewarpingDisplay();
-
-        IntrusivePtr<Settings> m_ptrSettings;
-        PageSelectionAccessor m_pageSelectionAccessor;
-        PageId m_pageId;
-        Dpi m_outputDpi;
-        ColorParams m_colorParams;
-        PictureShape m_pictureShape;
-        DepthPerception m_depthPerception;
-        DewarpingMode m_dewarpingMode;
-        DespeckleLevel m_despeckleLevel;
-        ImageViewTab m_lastTab;
-        int m_ignoreThresholdChanges;
-    };
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    Dpi m_outputDpi;
+    ColorParams m_colorParams;
+    PictureShape m_pictureShape;
+    DepthPerception m_depthPerception;
+    DewarpingMode m_dewarpingMode;
+    DespeckleLevel m_despeckleLevel;
+    ImageViewTab m_lastTab;
+    int m_ignoreThresholdChanges;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

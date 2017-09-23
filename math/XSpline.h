@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -33,9 +32,7 @@
  *
  * [1] Blanc, C., Schlick, C.: X-splines: a spline model designed for the end-user.
  * http: */
-class XSpline
-    : public spfit::FittableSpline
-{
+class XSpline: public spfit::FittableSpline {
 public:
     struct PointAndDerivs {
         QPointF point;
@@ -172,8 +169,7 @@ public:
     std::vector<QPointF> toPolyline(
         SamplingParams const& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;
 
-    void swap(XSpline& other)
-    {
+    void swap(XSpline& other) {
         m_controlPoints.swap(other.m_controlPoints);
     }
 
@@ -188,13 +184,13 @@ private:
         double tension;
 
         ControlPoint()
-            : tension(0)
-        { }
+                : tension(0) {
+        }
 
         ControlPoint(QPointF const& p, double tns)
-            : pos(p),
-              tension(tns)
-        { }
+                : pos(p),
+                  tension(tns) {
+        }
     };
 
     struct TensionDerivedParams;
@@ -227,9 +223,8 @@ private:
     std::vector<ControlPoint> m_controlPoints;
 };
 
-inline void
-swap(XSpline& o1, XSpline& o2)
-{
+
+inline void swap(XSpline& o1, XSpline& o2) {
     o1.swap(o2);
 }
 

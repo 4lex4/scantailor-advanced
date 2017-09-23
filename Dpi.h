@@ -1,4 +1,3 @@
-
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
@@ -27,44 +26,39 @@ class Dpm;
 /**
  * \brief Dots per inch (horizontal and vertical).
  */
-class Dpi
-{
+class Dpi {
 public:
     Dpi()
-        : m_xDpi(0),
-          m_yDpi(0)
-    { }
+            : m_xDpi(0),
+              m_yDpi(0) {
+    }
 
     Dpi(int horizontal, int vertical)
-        : m_xDpi(horizontal),
-          m_yDpi(vertical)
-    { }
+            : m_xDpi(horizontal),
+              m_yDpi(vertical) {
+    }
 
     Dpi(Dpm dpm);
 
     explicit Dpi(QSize size);
 
-    int horizontal() const
-    {
+    int horizontal() const {
         return m_xDpi;
     }
 
-    int vertical() const
-    {
+    int vertical() const {
         return m_yDpi;
     }
 
     QSize toSize() const;
 
-    bool isNull() const
-    {
+    bool isNull() const {
         return m_xDpi <= 1 || m_yDpi <= 1;
     }
 
     bool operator==(Dpi const& other) const;
 
-    bool operator!=(Dpi const& other) const
-    {
+    bool operator!=(Dpi const& other) const {
         return !(*this == other);
     }
 
@@ -72,5 +66,6 @@ private:
     int m_xDpi;
     int m_yDpi;
 };
+
 
 #endif  // ifndef DPI_H_

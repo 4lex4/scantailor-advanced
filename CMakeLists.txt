@@ -77,7 +77,13 @@ FIND_LIBRARY(
         HINTS "${jpeg_dir_}/stage/lib"
         DOC "Path to jpeg library."
 )
-SET(JPEG_LIBRARY optimized ${JPEG_LIBRARY_REL} debug ${JPEG_LIBRARY_DEB})
+
+IF (JPEG_LIBRARY_DEB)
+    SET(JPEG_LIBRARY optimized ${JPEG_LIBRARY_REL} debug ${JPEG_LIBRARY_DEB})
+ELSE ()
+    SET(JPEG_LIBRARY ${JPEG_LIBRARY_REL})
+ENDIF ()
+
 IF (NOT JPEG_LIBRARY)
     MESSAGE(
             FATAL_ERROR
@@ -114,7 +120,13 @@ FIND_LIBRARY(
         HINTS "${zlib_dir_}/stage/lib"
         DOC "Path to jpeg library."
 )
-SET(ZLIB_LIBRARY optimized ${ZLIB_LIBRARY_REL} debug ${ZLIB_LIBRARY_DEB})
+
+IF (ZLIB_LIBRARY_DEB)
+    SET(ZLIB_LIBRARY optimized ${ZLIB_LIBRARY_REL} debug ${ZLIB_LIBRARY_DEB})
+ELSE ()
+    SET(ZLIB_LIBRARY ${ZLIB_LIBRARY_REL})
+ENDIF ()
+
 IF (NOT ZLIB_LIBRARY)
     MESSAGE(
             FATAL_ERROR
@@ -151,7 +163,13 @@ FIND_LIBRARY(
         HINTS "${png_dir_1}/stage/lib" "${png_dir_2}/stage/lib"
         DOC "Path to png library."
 )
-SET(PNG_LIBRARY optimized ${PNG_LIBRARY_REL} debug ${PNG_LIBRARY_DEB})
+
+IF (PNG_LIBRARY_DEB)
+    SET(PNG_LIBRARY optimized ${PNG_LIBRARY_REL} debug ${PNG_LIBRARY_DEB})
+ELSE ()
+    SET(PNG_LIBRARY ${PNG_LIBRARY_REL})
+ENDIF ()
+
 IF (NOT PNG_LIBRARY)
     MESSAGE(
             FATAL_ERROR
@@ -191,7 +209,14 @@ FIND_LIBRARY(
         PATH_SUFFIXES libtiff
         DOC "Path to tiff library."
 )
-SET(TIFF_LIBRARY optimized ${TIFF_LIBRARY_REL} debug ${TIFF_LIBRARY_DEB})
+
+
+IF (TIFF_LIBRARY_DEB)
+    SET(TIFF_LIBRARY optimized ${TIFF_LIBRARY_REL} debug ${TIFF_LIBRARY_DEB})
+ELSE ()
+    SET(TIFF_LIBRARY ${TIFF_LIBRARY_REL})
+ENDIF ()
+
 IF (NOT TIFF_LIBRARY)
     MESSAGE(
             FATAL_ERROR
@@ -230,15 +255,14 @@ LINK_DIRECTORIES(${Boost_LIBRARIES})
 
 #=================================== Qt ===================================#
 
-cmake_policy(SET CMP0020 OLD)
+find_package(Qt5Core PATHS ${qt_dir_}/qtbase)
+find_package(Qt5GUI PATHS ${qt_dir_}/qtbase)
+find_package(Qt5Widgets PATHS ${qt_dir_}/qtbase)
+find_package(Qt5Xml PATHS ${qt_dir_}/qtbase)
+find_package(Qt5Network PATHS ${qt_dir_}/qtbase)
+find_package(Qt5OpenGL PATHS ${qt_dir_}/qtbase)
+find_package(Qt5LinguistTools PATHS ${qt_dir_}/qttools)
 
-find_package(Qt5Core PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5GUI PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5Widgets PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5Xml PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5Network PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5OpenGL PATHS ${qt_dir_}/qtbase REQUIRED)
-find_package(Qt5LinguistTools PATHS ${qt_dir_}/qtbase REQUIRED)
 IF (NOT (Qt5Widgets_FOUND AND Qt5GUI_FOUND AND Qt5Core_FOUND AND Qt5LinguistTools_FOUND
         AND Qt5Xml_FOUND AND Qt5Network_FOUND AND Qt5OpenGL_FOUND))
     MESSAGE(
@@ -272,10 +296,12 @@ IF (NOT OpenCV_FOUND)
             FATAL_ERROR
             "Could not find OpenCV headers or libraries.\n"
     )
-ENDIF()
+ENDIF ()
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 LINK_DIRECTORIES(${OpenCV_LIBRARIES})
+
+#=================================== Main ===================================#
 
 # Note that ${JPEG_LIBRARY} must go after qjpeg plugin, because otherwise
 # the GNU linker won't resolve symbols qjpeg needs from it.
@@ -396,7 +422,7 @@ SET(
         Despeckle.cpp Despeckle.h
         ThreadPriority.cpp ThreadPriority.h
         FileNameDisambiguator.cpp FileNameDisambiguator.h
-		OpenGLSupport.cpp OpenGLSupport.h
+        OpenGLSupport.cpp OpenGLSupport.h
         OutputFileNameGenerator.cpp OutputFileNameGenerator.h
         PageRange.cpp PageRange.h
         SelectedPage.cpp SelectedPage.h

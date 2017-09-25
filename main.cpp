@@ -22,6 +22,7 @@
 #include "PngMetadataLoader.h"
 #include "TiffMetadataLoader.h"
 #include "JpegMetadataLoader.h"
+#include "DarkScheme.h"
 #include <QtPlugin>
 #include <QSettings>
 #include <QTranslator>
@@ -85,7 +86,7 @@ int main(int argc, char** argv) {
     TiffMetadataLoader::registerMyself();
     JpegMetadataLoader::registerMyself();
 
-    app.setFusionDarkTheme();
+    DarkScheme::assign();
 
     MainWindow* main_wnd = new MainWindow();
     main_wnd->setAttribute(Qt::WA_DeleteOnClose);

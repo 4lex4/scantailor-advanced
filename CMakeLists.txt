@@ -349,10 +349,14 @@ ADD_SUBDIRECTORY(filters/select_content)
 ADD_SUBDIRECTORY(filters/page_layout)
 ADD_SUBDIRECTORY(filters/output)
 
+SET(resource_files "resources/resources.qrc" "resources/DarkScheme.qrc")
 SET(resource_sources)
-QT5_ADD_RESOURCES(resource_sources resources/resources.qrc)
+FOREACH (resource_file ${resource_files})
+    QT5_ADD_RESOURCES(resource_sources ${resource_file})
+ENDFOREACH ()
+SET_SOURCE_FILES_PROPERTIES(${resource_sources} PROPERTIES GENERATED TRUE)
 SOURCE_GROUP("Generated" FILES ${common_ui_sources} ${gui_only_ui_sources} ${resource_sources})
-SOURCE_GROUP("Resources" FILES resources/resources.qrc resources/icons/COPYING)
+SOURCE_GROUP("Resources" FILES ${resource_files})
 IF (WIN32)
     SOURCE_GROUP("Resources" FILES resources/win32/resources.rc)
 ENDIF ()
@@ -453,6 +457,7 @@ SET(
 SET(
         gui_only_sources
         Application.cpp Application.h
+		DarkScheme.cpp DarkScheme.h
         SkinnedButton.cpp SkinnedButton.h
         RelinkablePathVisualization.cpp RelinkablePathVisualization.h
         RelinkingModel.cpp RelinkingModel.h

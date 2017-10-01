@@ -142,12 +142,9 @@ MainWindow::MainWindow()
 
     m_debug = actionDebug->isChecked();
 
-    QPalette imageViewFramePalette(QApplication::palette());
-    imageViewFramePalette.setColor(QPalette::Window, QColor(0x45, 0x45, 0x45));
-    imageViewFrame->setPalette(imageViewFramePalette);
-
     m_pImageFrameLayout = new QStackedLayout(imageViewFrame);
     m_pImageFrameLayout->setStackingMode(QStackedLayout::StackAll);
+
     m_pOptionsFrameLayout = new QStackedLayout(filterOptions);
 
     addAction(actionFirstPage);
@@ -480,8 +477,6 @@ void MainWindow::setupThumbView() {
     int const delta_x = thumbView->size().width() - inner_width;
     thumbView->setMinimumWidth((int) ceil(m_maxLogicalThumbSize.width() + delta_x));
 
-    thumbView->setBackgroundBrush(palette().color(QPalette::Window));
-
     m_ptrThumbSequence->attachView(thumbView);
 
     thumbView->installEventFilter(this);
@@ -521,11 +516,11 @@ void MainWindow::timerEvent(QTimerEvent* const event) {
 }
 
 MainWindow::SavePromptResult MainWindow::promptProjectSave() {
-    QMessageBox::StandardButton const res = QMessageBox::question(
-            this, tr("Save Project"), tr("Save the project?"),
-            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-            QMessageBox::Save
-    );
+    QMessageBox::StandardButton const res = (QMessageBox::StandardButton) (QMessageBox::question(
+                this, tr("Save Project"), tr("Save the project?"),
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                QMessageBox::Save
+        ));
 
     switch (res) {
         case QMessageBox::Save:

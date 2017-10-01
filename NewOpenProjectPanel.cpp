@@ -19,10 +19,8 @@
 #include "NewOpenProjectPanel.h"
 #include "RecentProjects.h"
 #include "Utils.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
+#include "ColorSchemeManager.h"
 #include <QPainter>
-#include <QSettings>
 #include <QFileInfo>
 
 NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
@@ -46,10 +44,9 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
         recentProjectsGroup->setVisible(false);
     } else {
         rp.enumerate(
-                boost::lambda::bind(
-                        &NewOpenProjectPanel::addRecentProject,
-                        this, boost::lambda::_1
-                )
+                [this](QString const& file_path) {
+                    addRecentProject(file_path);
+                }
         );
     }
 
@@ -74,6 +71,12 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     label->setTextFormat(Qt::RichText);
     label->setText(Utils::richTextForLink(base_name, file_path));
     label->setToolTip(file_path);
+    
+    int fontSize = recentProjectsGroup->font().pointSize();
+    QFont widgetFont = label->font();
+    widgetFont.setPointSize(fontSize);
+    label->setFont(widgetFont);
+
     recentProjectsGroup->layout()->addWidget(label);
 
     connect(
@@ -82,7 +85,7 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     );
 }
 
-void NewOpenProjectPanel::paintEvent(QPaintEvent* event) {
+void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
     int left = 0, top = 0, right = 0, bottom = 0;
     layout()->getContentsMargins(&left, &top, &right, &bottom);
 
@@ -92,79 +95,13 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent* event) {
     );
 
     int const border = 1;
-    int const shadow = std::min(right, bottom) - border;
 
     QPainter painter(this);
 
-    painter.setPen(QPen(palette().windowText(), border));
+    painter.setPen(QPen(ColorSchemeManager::instance()->getColorParam(
+            "open_new_project_border_color",
+            palette().windowText()), border));
 
     painter.drawRect(except_margins);
-
-    QColor const dark(Qt::darkGray);
-    QColor const light(Qt::transparent);
-
-    if (shadow <= 0) {
-        return;
-    }
-
-    left -= border;
-    right -= border;
-    top -= border;
-    bottom -= border;
-
-    QRect const extended(
-            except_margins.adjusted(
-                    -border - 1, -border - 1, border + 1, border + 1
-            )
-    );
-
-    {
-        QRect rect(widget_rect);
-        rect.setWidth(shadow);
-        rect.moveLeft(extended.right());
-        rect.adjust(0, top + shadow, 0, -bottom);
-        QLinearGradient grad(rect.topLeft(), rect.topRight());
-        grad.setColorAt(0, dark);
-        grad.setColorAt(1, light);
-        painter.fillRect(rect, grad);
-    }
-
-    {
-        QRect rect(widget_rect);
-        rect.setHeight(shadow);
-        rect.moveTop(extended.bottom());
-        rect.adjust(left + shadow, 0, -right, 0);
-        QLinearGradient grad(rect.topLeft(), rect.bottomLeft());
-        grad.setColorAt(0, dark);
-        grad.setColorAt(1, light);
-        painter.fillRect(rect, grad);
-    }
-
-    {
-        QRect rect(0, 0, shadow, shadow);
-        rect.moveTopLeft(extended.bottomRight());
-        QRadialGradient grad(rect.topLeft(), shadow);
-        grad.setColorAt(0, dark);
-        grad.setColorAt(1, light);
-        painter.fillRect(rect, grad);
-    }
-
-    {
-        QRect rect(0, 0, shadow, shadow);
-        rect.moveTopLeft(extended.topRight() + QPoint(0, border));
-        QRadialGradient grad(rect.bottomLeft(), shadow);
-        grad.setColorAt(0, dark);
-        grad.setColorAt(1, light);
-        painter.fillRect(rect, grad);
-    }
-
-    {
-        QRect rect(0, 0, shadow, shadow);
-        rect.moveTopLeft(extended.bottomLeft() + QPoint(border, 0));
-        QRadialGradient grad(rect.topRight(), shadow);
-        grad.setColorAt(0, dark);
-        grad.setColorAt(1, light);
-        painter.fillRect(rect, grad);
-    }
-}  // NewOpenProjectPanel::paintEvent
+} // NewOpenProjectPanel::paintEvent
 

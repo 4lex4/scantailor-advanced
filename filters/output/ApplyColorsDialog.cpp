@@ -34,7 +34,8 @@ namespace output {
         m_pScopeGroup->addButton(thisPageAndFollowersRB);
         m_pScopeGroup->addButton(selectedPagesRB);
         if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
+            selectedPagesRB->setEnabled(false);
+            selectedPagesHint->setEnabled(false);
         }
 
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));

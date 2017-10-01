@@ -26,6 +26,7 @@
 #include "imageproc/PolygonUtils.h"
 #include "imageproc/Transform.h"
 #include "OpenGLSupport.h"
+#include "ColorSchemeManager.h"
 #include <QScrollBar>
 #include <QSettings>
 #include <QPointer>
@@ -448,7 +449,9 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     QPainterPath containing_path;
     containing_path.addRect(viewport()->rect());
 
-    QBrush const brush(palette().color(QPalette::Window));
+    QBrush const brush(ColorSchemeManager::instance()->getColorParam(
+            "image_view_intersected_area_color",
+            palette().color(QPalette::Window)));
     QPen pen(brush, 1.0);
     pen.setCosmetic(true);
 

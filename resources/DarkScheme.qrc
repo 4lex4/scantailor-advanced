@@ -10,18 +10,25 @@
         <file>dark_scheme/icon_vline.png</file>
         <file>dark_scheme/icon_checkbox_checked.png</file>
         <file>dark_scheme/icon_checkbox_indeterminate.png</file>
-        <file>dark_scheme/icon_checkbox_unchecked.png</file>
         <file>dark_scheme/icon_checkbox_checked_pressed.png</file>
         <file>dark_scheme/icon_checkbox_indeterminate_pressed.png</file>
-        <file>dark_scheme/icon_checkbox_unchecked_pressed.png</file>
         <file>dark_scheme/icon_checkbox_checked_disabled.png</file>
         <file>dark_scheme/icon_checkbox_indeterminate_disabled.png</file>
-        <file>dark_scheme/icon_checkbox_unchecked_disabled.png</file>
         <file>dark_scheme/icon_radiobutton_checked.png</file>
-        <file>dark_scheme/icon_radiobutton_unchecked.png</file>
         <file>dark_scheme/icon_radiobutton_checked_pressed.png</file>
-        <file>dark_scheme/icon_radiobutton_unchecked_pressed.png</file>
         <file>dark_scheme/icon_radiobutton_checked_disabled.png</file>
-        <file>dark_scheme/icon_radiobutton_unchecked_disabled.png</file>
+		<file>dark_scheme/icon_window_close.png</file>
+		<file>dark_scheme/icon_window_maximize.png</file>
+		<file>dark_scheme/icon_window_minimize.png</file>
+		<file>dark_scheme/icon_window_restore.png</file>
+		<file>dark_scheme/icon_scroll_bar_left_arrow.png</file>
+		<file>dark_scheme/icon_scroll_bar_right_arrow.png</file>
+		<file>dark_scheme/icon_scroll_bar_down_arrow.png</file>
+		<file>dark_scheme/icon_scroll_bar_up_arrow.png</file>
+		<file>dark_scheme/icon_down_arrow.png</file>
+		<file>dark_scheme/icon_up_arrow.png</file>
+		<file>dark_scheme/icon_down_arrow_pressed.png</file>
+		<file>dark_scheme/icon_up_arrow_pressed.png</file>
+		<file>dark_scheme/icon_slider_handle.png</file>
     </qresource>
 </RCC>

@@ -20,6 +20,7 @@
 #include "ThumbnailFactory.h"
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
+#include "ColorSchemeManager.h"
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
@@ -1215,7 +1216,10 @@ ThumbnailSequence::Impl::getLabelGroup(PageInfo const& page_info) {
     QFont bold_font(bold_text_item->font());
     bold_font.setWeight(QFont::Bold);
     bold_text_item->setFont(bold_font);
-    bold_text_item->setBrush(QApplication::palette().highlightedText());
+
+    bold_text_item->setBrush(ColorSchemeManager::instance()->getColorParam(
+            "thumbnail_sequence_selected_item_text",
+            QApplication::palette().highlightedText()));
 
     QRectF normal_text_box(normal_text_item->boundingRect());
     QRectF bold_text_box(bold_text_item->boundingRect());
@@ -1349,9 +1353,13 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
     if (selection_leader) {
         assert(selected);
     } else if (selected) {
-        m_pNormalLabel->setBrush(QApplication::palette().highlightedText());
+        m_pNormalLabel->setBrush(ColorSchemeManager::instance()->getColorParam(
+                "thumbnail_sequence_selected_item_text",
+                QApplication::palette().highlightedText()));
     } else {
-        m_pNormalLabel->setBrush(QApplication::palette().text());
+        m_pNormalLabel->setBrush(ColorSchemeManager::instance()->getColorParam(
+                "thumbnail_sequence_item_text",
+                QApplication::palette().text()));
     }
 }
 
@@ -1415,7 +1423,9 @@ void ThumbnailSequence::CompositeItem::paint(QPainter* painter, QStyleOptionGrap
     if (m_pItem->isSelected()) {
         painter->fillRect(
                 boundingRect(),
-                QApplication::palette().color(QPalette::Highlight)
+                ColorSchemeManager::instance()->getColorParam(
+                        "thumbnail_sequence_selected_item_background",
+                        QApplication::palette().color(QPalette::Highlight))
         );
     }
 }

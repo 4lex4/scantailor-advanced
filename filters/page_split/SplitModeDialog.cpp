@@ -45,7 +45,10 @@ namespace page_split {
         m_pScopeGroup->addButton(selectedPagesRB);
         m_pScopeGroup->addButton(everyOtherSelectedRB);
         if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
+            selectedPagesRB->setEnabled(false);
+            selectedPagesHint->setEnabled(false);
+            everyOtherSelectedRB->setEnabled(false);
+            everyOtherSelectedHint->setEnabled(false);
         }
 
         layoutTypeLabel->setPixmap(QPixmap(iconFor(m_layoutType)));

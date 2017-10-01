@@ -23,12 +23,9 @@
 #include "TiffMetadataLoader.h"
 #include "JpegMetadataLoader.h"
 #include "DarkScheme.h"
-#include <QtPlugin>
-#include <QSettings>
-#include <QTranslator>
-#include <QDir>
 
 #include "CommandLine.h"
+#include "ColorSchemeManager.h"
 
 int main(int argc, char** argv) {
     Application app(argc, argv);
@@ -80,13 +77,12 @@ int main(int argc, char** argv) {
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
 
     QSettings settings;
-
-
+    
     PngMetadataLoader::registerMyself();
     TiffMetadataLoader::registerMyself();
     JpegMetadataLoader::registerMyself();
 
-    DarkScheme::assign();
+    ColorSchemeManager::instance()->setColorScheme(DarkScheme());
 
     MainWindow* main_wnd = new MainWindow();
     main_wnd->setAttribute(Qt::WA_DeleteOnClose);

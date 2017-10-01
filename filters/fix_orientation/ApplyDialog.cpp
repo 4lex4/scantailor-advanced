@@ -37,6 +37,12 @@ namespace fix_orientation {
         m_pBtnGroup->addButton(everyOtherRB);
         m_pBtnGroup->addButton(thisEveryOtherRB);
         m_pBtnGroup->addButton(everyOtherSelectedRB);
+        if (m_selectedPages.size() <= 1) {
+            selectedPagesRB->setEnabled(false);
+            selectedPagesHint->setEnabled(false);
+            everyOtherSelectedRB->setEnabled(false);
+            everyOtherSelectedHint->setEnabled(false);
+        }
 
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }

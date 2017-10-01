@@ -19,6 +19,7 @@
 #include "RelinkablePathVisualization.h"
 #include "RelinkablePath.h"
 #include "QtSignalForwarder.h"
+#include "ColorSchemeManager.h"
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QPaintEvent>
@@ -140,7 +141,9 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
 }  // RelinkablePathVisualization::setPath
 
 void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
-    QColor const border_color(palette().color(QPalette::Window).darker(150));
+    QColor const border_color(ColorSchemeManager::instance()->getColorParam(
+            "relinkable_path_visualization_border_color",
+            palette().color(QPalette::Window).darker(150)).color());
 
     QString style
             = "QAbstractButton {\n"

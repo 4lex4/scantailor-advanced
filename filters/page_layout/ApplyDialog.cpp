@@ -37,16 +37,13 @@ namespace page_layout {
         m_pScopeGroup->addButton(everyOtherRB);
         m_pScopeGroup->addButton(thisEveryOtherRB);
         m_pScopeGroup->addButton(everyOtherSelectedRB);
-
-        /*
-           if (m_selectedPages.size() <= 1) {
-            selectedPagesWidget->setEnabled(false);
-            everyOtherSelectedWidget->setEnabled(false);
-                    } else if (m_selectedRanges.size() > 1) {
-            everyOtherSelectedWidget->setEnabled(false);
-            everyOtherSelectedHint->setText(tr("Can't do: more than one group is selected."));
-           }
-         */
+        
+        if (m_selectedPages.size() <= 1) {
+            selectedPagesRB->setEnabled(false);
+            selectedPagesHint->setEnabled(false);
+            everyOtherSelectedRB->setEnabled(false);
+            everyOtherSelectedHint->setEnabled(false);
+        }
 
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }

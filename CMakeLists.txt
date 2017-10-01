@@ -451,13 +451,13 @@ SET(
         filter_dc/PageOrientationCollector.h
         version.h
         config.h.in
-        ${common_ui_files}
-)
+        ${common_ui_files} ColorScheme.h)
 
 SET(
         gui_only_sources
         Application.cpp Application.h
 		DarkScheme.cpp DarkScheme.h
+        ColorSchemeManager.cpp ColorSchemeManager.h
         SkinnedButton.cpp SkinnedButton.h
         RelinkablePathVisualization.cpp RelinkablePathVisualization.h
         RelinkingModel.cpp RelinkingModel.h

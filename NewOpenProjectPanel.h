@@ -21,13 +21,14 @@
 
 #include "ui_NewOpenProjectPanel.h"
 #include <QWidget>
+#include <memory>
 
 class QString;
 
 class NewOpenProjectPanel : public QWidget, private Ui::NewOpenProjectPanel {
 Q_OBJECT
 public:
-    NewOpenProjectPanel(QWidget* parent = 0);
+    explicit NewOpenProjectPanel(QWidget* parent = 0);
 
 signals:
 
@@ -38,7 +39,7 @@ signals:
     void openRecentProject(QString const& project_file);
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent*) override;
 
 private:
     void addRecentProject(QString const& file_path);

@@ -27,8 +27,6 @@ public:
     Application(int& argc, char** argv);
 
     virtual bool notify(QObject* receiver, QEvent* e);
-
-    void setFusionDarkTheme();
 };
 
 

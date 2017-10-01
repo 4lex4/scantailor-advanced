@@ -17,6 +17,7 @@
  */
 
 #include "FixDpiDialog.h"
+#include "ColorSchemeManager.h"
 #include <QSortFilterProxyModel>
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -226,7 +227,9 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* par
 
     m_normalPalette = xDpi->palette();
     m_errorPalette = m_normalPalette;
-    m_errorPalette.setColor(QPalette::Text, QColor(0xd1, 0x00, 0x00));
+    m_errorPalette.setColor(QPalette::Text, ColorSchemeManager::instance()->getColorParam(
+            "fix_dpi_dialog_error_text_color",
+            Qt::red).color());
 
     dpiCombo->addItem("300 x 300", QSize(300, 300));
     dpiCombo->addItem("400 x 400", QSize(400, 400));

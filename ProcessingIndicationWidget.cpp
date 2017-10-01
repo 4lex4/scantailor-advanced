@@ -18,6 +18,7 @@
 
 #include "ProcessingIndicationWidget.h"
 #include "imageproc/ColorInterpolation.h"
+#include "ColorSchemeManager.h"
 #include <QTimerEvent>
 #include <QPaintEvent>
 #include <QPainter>
@@ -33,8 +34,12 @@ ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
           m_distinction(1.0),
           m_distinctionDelta(distinction_increase),
           m_timerId(0) {
-    m_headColor = palette().color(QPalette::Window).lighter(200);
-    m_tailColor = palette().color(QPalette::Window).lighter(130);
+    m_headColor = ColorSchemeManager::instance()->getColorParam(
+            "processing_indication_head_color",
+            palette().color(QPalette::Window).lighter(200)).color();
+    m_tailColor = ColorSchemeManager::instance()->getColorParam(
+            "processing_indication_tail_color",
+            palette().color(QPalette::Window).lighter(130)).color();
 }
 
 void ProcessingIndicationWidget::resetAnimation() {
@@ -66,6 +71,13 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
     }
 
     QPainter painter(this);
+
+    QColor fadeColor = ColorSchemeManager::instance()->getColorParam(
+            "processing_indication_fade_color",
+            palette().background().color()).color();
+    fadeColor.setAlpha(127);
+    painter.fillRect(rect(), fadeColor);
+    
     m_animation.nextFrame(head_color, m_tailColor, &painter, animation_rect);
 
     if (m_timerId == 0) {

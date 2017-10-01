@@ -21,6 +21,7 @@
 #include "ChangedStateItemDelegate.h"
 #include "SkinnedButton.h"
 #include "BubbleAnimation.h"
+#include "ColorSchemeManager.h"
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QScrollBar>
@@ -267,8 +268,12 @@ void StageListView::createBatchAnimationSequence(int const square_side) {
     int const num_frames = 8;
     m_batchAnimationPixmaps.resize(num_frames);
 
-    QColor const head_color(palette().color(QPalette::Window).lighter(200));
-    QColor const tail_color(palette().color(QPalette::Window).lighter(130));
+    QColor const head_color(ColorSchemeManager::instance()->getColorParam(
+            "stage_list_head_color",
+            palette().color(QPalette::Window).lighter(200)).color());
+    QColor const tail_color(ColorSchemeManager::instance()->getColorParam(
+            "stage_list_tail_color",
+            palette().color(QPalette::Window).lighter(130)).color());
 
     BubbleAnimation animation(num_frames);
     for (int i = 0; i < num_frames; ++i) {

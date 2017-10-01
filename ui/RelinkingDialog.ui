@@ -109,6 +109,9 @@
    </item>
    <item>
     <widget class="RelinkingListView" name="listView">
+     <property name="styleSheet">
+      <string notr="true">show-decoration-selected: 0;</string>
+     </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>

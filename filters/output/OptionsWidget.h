@@ -92,6 +92,12 @@ namespace output {
 
         void equalizeIlluminationToggled(bool checked);
 
+        void equalizeIlluminationColorToggled(bool checked);
+
+        void savitzkyGolaySmoothingToggled(bool checked);
+
+        void morphologicalSmoothingToggled(bool checked);
+
         void setLighterThreshold();
 
         void setDarkerThreshold();

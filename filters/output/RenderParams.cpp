@@ -20,29 +20,33 @@
 #include "ColorParams.h"
 
 namespace output {
-    RenderParams::RenderParams(ColorParams const& cp)
-            : m_mask(0) {
-        switch (cp.colorMode()) {
-            case ColorParams::BLACK_AND_WHITE:
-                m_mask |= WHITE_MARGINS | NORMALIZE_ILLUMINATION
-                          | NEED_BINARIZATION;
-                break;
-            case ColorParams::COLOR_GRAYSCALE: {
-                ColorGrayscaleOptions const opt(
-                        cp.colorGrayscaleOptions()
-                );
-                if (opt.whiteMargins()) {
-                    m_mask |= WHITE_MARGINS;
-                    if (opt.normalizeIllumination()) {
-                        m_mask |= NORMALIZE_ILLUMINATION;
-                    }
-                }
-                break;
+    RenderParams::RenderParams(ColorParams const& colorParams)
+            : m_mask(0),
+              smoothingMask(0) {
+        const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
+        const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());
+        const ColorParams::ColorMode colorMode = colorParams.colorMode();
+        
+        if ((colorMode == ColorParams::BLACK_AND_WHITE) || (colorMode == ColorParams::MIXED)) {
+            m_mask |= NEED_BINARIZATION;
+            if (colorMode == ColorParams::MIXED) {
+                m_mask |= MIXED_OUTPUT;
             }
-            case ColorParams::MIXED:
-                m_mask |= WHITE_MARGINS | NORMALIZE_ILLUMINATION
-                          | NEED_BINARIZATION | MIXED_OUTPUT;
-                break;
+            if (blackWhiteOptions.isSavitzkyGolaySmoothingEnabled()) {
+                smoothingMask |= SAVITZKY_GOLAY_SMOOTHING;
+            }
+            if (blackWhiteOptions.isMorphologicalSmoothingEnabled()) {
+                smoothingMask |= MORPHOLOGICAL_SMOOTHING;
+            }
+            if (blackWhiteOptions.normalizeIllumination()) {
+                m_mask |= NORMALIZE_ILLUMINATION;
+            }
+        }
+        if (colorCommonOptions.whiteMargins()) {
+            m_mask |= WHITE_MARGINS;
+        }
+        if (colorCommonOptions.normalizeIllumination()) {
+            m_mask |= NORMALIZE_ILLUMINATION_COLOR;
         }
     }
 }

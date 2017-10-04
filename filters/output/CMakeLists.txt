@@ -26,7 +26,7 @@ SET(
         Utils.cpp Utils.h
         Params.cpp Params.h
         BlackWhiteOptions.cpp BlackWhiteOptions.h
-        ColorGrayscaleOptions.cpp ColorGrayscaleOptions.h
+        ColorCommonOptions.cpp ColorCommonOptions.h
         RenderParams.cpp RenderParams.h
         ColorParams.cpp ColorParams.h
         OutputImageParams.cpp OutputImageParams.h

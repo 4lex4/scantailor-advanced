@@ -19,7 +19,7 @@
 #ifndef OUTPUT_COLORPARAMS_H_
 #define OUTPUT_COLORPARAMS_H_
 
-#include "ColorGrayscaleOptions.h"
+#include "ColorCommonOptions.h"
 #include "BlackWhiteOptions.h"
 
 class QDomDocument;
@@ -50,12 +50,12 @@ namespace output {
             m_colorMode = mode;
         }
 
-        ColorGrayscaleOptions const& colorGrayscaleOptions() const {
-            return m_colorGrayscaleOptions;
+        ColorCommonOptions const& colorCommonOptions() const {
+            return m_colorCommonOptions;
         }
 
-        void setColorGrayscaleOptions(ColorGrayscaleOptions const& opt) {
-            m_colorGrayscaleOptions = opt;
+        void setColorCommonOptions(ColorCommonOptions const& opt) {
+            m_colorCommonOptions = opt;
         }
 
         BlackWhiteOptions const& blackWhiteOptions() const {
@@ -72,7 +72,7 @@ namespace output {
         static QString formatColorMode(ColorMode mode);
 
         ColorMode m_colorMode;
-        ColorGrayscaleOptions m_colorGrayscaleOptions;
+        ColorCommonOptions m_colorCommonOptions;
         BlackWhiteOptions m_bwOptions;
     };
 }  // namespace output

@@ -99,7 +99,7 @@ public slots:
 
     void openProject(QString const& project_file);
 
-    void AutoSaveProjectState(bool auto_save);
+    void setAutoSaveProjectState(bool auto_save);
 
 private:
     enum MainAreaAction {

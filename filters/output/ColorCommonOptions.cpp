@@ -16,41 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ColorGrayscaleOptions.h"
+#include "ColorCommonOptions.h"
 #include <QDomDocument>
 
 namespace output {
-    ColorGrayscaleOptions::ColorGrayscaleOptions()
-            : m_whiteMargins(false),
+    ColorCommonOptions::ColorCommonOptions()
+            : m_whiteMargins(true),
               m_normalizeIllumination(false) {
     }
 
-    ColorGrayscaleOptions::ColorGrayscaleOptions(QDomElement const& el)
+    ColorCommonOptions::ColorCommonOptions(QDomElement const& el)
             : m_whiteMargins(el.attribute("whiteMargins") == "1"),
-              m_normalizeIllumination(el.attribute("normalizeIllumination") == "1") {
+              m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1") {
     }
 
-    QDomElement ColorGrayscaleOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
-        el.setAttribute("normalizeIllumination", m_normalizeIllumination ? "1" : "0");
+        el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
 
         return el;
     }
 
-    bool ColorGrayscaleOptions::operator==(ColorGrayscaleOptions const& other) const {
-        if (m_whiteMargins != other.m_whiteMargins) {
-            return false;
-        }
+    bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
+        return (m_normalizeIllumination == other.m_normalizeIllumination)
+               && (m_whiteMargins == other.m_whiteMargins);
+    }  // ==
 
-        if (m_normalizeIllumination != other.m_normalizeIllumination) {
-            return false;
-        }
-
-        return true;
-    }      // ==
-
-    bool ColorGrayscaleOptions::operator!=(ColorGrayscaleOptions const& other) const {
+    bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {
         return !(*this == other);
     }
 }  // namespace output

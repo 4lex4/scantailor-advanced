@@ -86,9 +86,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-202</y>
-        <width>234</width>
-        <height>829</height>
+        <y>0</y>
+        <width>230</width>
+        <height>890</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -249,7 +249,10 @@
            </layout>
           </item>
           <item>
-           <widget class="QGroupBox" name="colorGrayscaleOptions">
+           <widget class="QGroupBox" name="commonOptions">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="title">
              <string>Options</string>
             </property>
@@ -284,6 +287,18 @@
                <property name="fieldGrowthPolicy">
                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                </property>
+               <property name="horizontalSpacing">
+                <number>0</number>
+               </property>
+               <property name="verticalSpacing">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
                <item row="0" column="0">
                 <widget class="QCheckBox" name="whiteMarginsCB">
                  <property name="text">
@@ -294,7 +309,28 @@
                <item row="1" column="0">
                 <widget class="QCheckBox" name="equalizeIlluminationCB">
                  <property name="text">
-                  <string>Equalize illumination</string>
+                  <string>Equalize illumination (B&amp;&amp;W)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="equalizeIlluminationColorCB">
+                 <property name="text">
+                  <string>Equalize illumination (Color)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="savitzkyGolaySmoothingCB">
+                 <property name="text">
+                  <string>Savitzky-Golay smoothing</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QCheckBox" name="morphologicalSmoothingCB">
+                 <property name="text">
+                  <string>Morphological smoothing</string>
                  </property>
                 </widget>
                </item>
@@ -317,9 +353,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="bwOptions">
+           <widget class="QGroupBox" name="thresholdOptions">
             <property name="title">
-             <string>Thresholding</string>
+             <string>Threshold</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -331,9 +367,22 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_22">
                <item>
+                <spacer name="horizontalSpacer_42">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QLabel" name="thresholMethodLabel">
                  <property name="text">
-                  <string>Threshold method: </string>
+                  <string>Method:</string>
                  </property>
                 </widget>
                </item>
@@ -357,6 +406,9 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_21">
+               <property name="spacing">
+                <number>6</number>
+               </property>
                <item>
                 <spacer name="horizontalSpacer_39">
                  <property name="orientation">

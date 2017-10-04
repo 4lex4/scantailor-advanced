@@ -26,11 +26,11 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-    class ColorGrayscaleOptions {
+    class ColorCommonOptions {
     public:
-        ColorGrayscaleOptions();
+        ColorCommonOptions();
 
-        ColorGrayscaleOptions(QDomElement const& el);
+        explicit ColorCommonOptions(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -50,9 +50,9 @@ namespace output {
             m_normalizeIllumination = val;
         }
 
-        bool operator==(ColorGrayscaleOptions const& other) const;
+        bool operator==(ColorCommonOptions const& other) const;
 
-        bool operator!=(ColorGrayscaleOptions const& other) const;
+        bool operator!=(ColorCommonOptions const& other) const;
 
     private:
         bool m_whiteMargins;

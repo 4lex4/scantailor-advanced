@@ -37,8 +37,8 @@ namespace output {
               m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())) {
         QDomElement const cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
-        m_colorParams.setColorGrayscaleOptions(
-                ColorGrayscaleOptions(
+        m_colorParams.setColorCommonOptions(
+                ColorCommonOptions(
                         cp.namedItem("color-or-grayscale").toElement()
                 )
         );
@@ -65,7 +65,7 @@ namespace output {
         );
 
         cp.appendChild(
-                m_colorParams.colorGrayscaleOptions().toXml(
+                m_colorParams.colorCommonOptions().toXml(
                         doc, "color-or-grayscale"
                 )
         );

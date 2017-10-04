@@ -928,7 +928,7 @@ void MainWindow::autoSaveProject() {
     saveProjectWithFeedback(m_projectFile);
 }
 
-void MainWindow::AutoSaveProjectState(bool auto_save) {
+void MainWindow::setAutoSaveProjectState(bool auto_save) {
     m_auto_save_project = auto_save;
 }
 
@@ -1425,7 +1425,7 @@ void MainWindow::openSettingsDialog() {
     SettingsDialog* dialog = new SettingsDialog(this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
-    connect(dialog, SIGNAL(AutoSaveProjectStateSignal(bool)), this, SLOT(AutoSaveProjectState(bool)));
+    connect(dialog, SIGNAL(AutoSaveProjectStateSignal(bool)), this, SLOT(setAutoSaveProjectState(bool)));
     dialog->show();
 }
 
@@ -1520,11 +1520,19 @@ PageView MainWindow::getCurrentView() const {
 void MainWindow::updateMainArea() {
     if (m_ptrPages->numImages() == 0) {
         filterList->setBatchProcessingPossible(false);
+        if (filterDockWidget->isEnabled() || thumbnailsDockWidget->isEnabled()) {
+            filterDockWidget->setEnabled(false);
+            thumbnailsDockWidget->setEnabled(false);
+        }
         showNewOpenProjectPanel();
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
     } else {
+        if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
+            filterDockWidget->setEnabled(true);
+            thumbnailsDockWidget->setEnabled(true);
+        }
         PageInfo const page(m_ptrThumbSequence->selectionLeader());
         if (page.isNull()) {
             filterList->setBatchProcessingPossible(false);

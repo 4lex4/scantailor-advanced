@@ -406,14 +406,14 @@ void ConsoleBatch::setupOutput(std::set<PageId> allPages) {
         }
 
         if (cli.hasWhiteMargins() || cli.hasNormalizeIllumination()) {
-            output::ColorGrayscaleOptions cgo;
+            output::ColorCommonOptions cgo;
             if (cli.hasWhiteMargins()) {
                 cgo.setWhiteMargins(true);
             }
             if (cli.hasNormalizeIllumination()) {
                 cgo.setNormalizeIllumination(true);
             }
-            colorParams.setColorGrayscaleOptions(cgo);
+            colorParams.setColorCommonOptions(cgo);
         }
 
         if (cli.hasThreshold()) {

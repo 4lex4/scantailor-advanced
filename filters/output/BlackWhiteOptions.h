@@ -28,7 +28,7 @@ namespace output {
     public:
         BlackWhiteOptions();
 
-        BlackWhiteOptions(QDomElement const& el);
+        explicit BlackWhiteOptions(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -40,12 +40,31 @@ namespace output {
             m_thresholdAdjustment = val;
         }
 
+        bool normalizeIllumination() const {
+            return m_normalizeIllumination;
+        }
+
+        void setNormalizeIllumination(bool val) {
+            m_normalizeIllumination = val;
+        }
+
+        bool isSavitzkyGolaySmoothingEnabled() const;
+
+        void setSavitzkyGolaySmoothingEnabled(bool savitzkyGolaySmoothingEnabled);
+
+        bool isMorphologicalSmoothingEnabled() const;
+
+        void setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled);
+
         bool operator==(BlackWhiteOptions const& other) const;
 
         bool operator!=(BlackWhiteOptions const& other) const;
 
     private:
         int m_thresholdAdjustment;
+        bool savitzkyGolaySmoothingEnabled;
+        bool morphologicalSmoothingEnabled;
+        bool m_normalizeIllumination;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

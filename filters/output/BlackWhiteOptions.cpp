@@ -21,29 +21,53 @@
 
 namespace output {
     BlackWhiteOptions::BlackWhiteOptions()
-            : m_thresholdAdjustment(0) {
+            : m_thresholdAdjustment(0),
+              savitzkyGolaySmoothingEnabled(true),
+              morphologicalSmoothingEnabled(true),
+              m_normalizeIllumination(true) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
-            : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()) {
+            : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()),
+              savitzkyGolaySmoothingEnabled(el.attribute("savitzkyGolaySmoothing") == "1"),
+              morphologicalSmoothingEnabled(el.attribute("morphologicalSmoothing") == "1"),
+              m_normalizeIllumination(el.attribute("normalizeIlluminationBW") == "1") {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("thresholdAdj", m_thresholdAdjustment);
+        el.setAttribute("savitzkyGolaySmoothing", savitzkyGolaySmoothingEnabled ? "1" : "0");
+        el.setAttribute("morphologicalSmoothing", morphologicalSmoothingEnabled ? "1" : "0");
+        el.setAttribute("normalizeIlluminationBW", m_normalizeIllumination ? "1" : "0");
 
         return el;
     }
 
     bool BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const {
-        if (m_thresholdAdjustment != other.m_thresholdAdjustment) {
-            return false;
-        }
-
-        return true;
+        return (m_thresholdAdjustment == other.m_thresholdAdjustment)
+               && (savitzkyGolaySmoothingEnabled == other.savitzkyGolaySmoothingEnabled)
+               && (morphologicalSmoothingEnabled == other.morphologicalSmoothingEnabled)
+               && (m_normalizeIllumination == other.m_normalizeIllumination);
     }
 
     bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
         return !(*this == other);
+    }
+
+    bool BlackWhiteOptions::isSavitzkyGolaySmoothingEnabled() const {
+        return savitzkyGolaySmoothingEnabled;
+    }
+
+    void BlackWhiteOptions::setSavitzkyGolaySmoothingEnabled(bool savitzkyGolaySmoothingEnabled) {
+        BlackWhiteOptions::savitzkyGolaySmoothingEnabled = savitzkyGolaySmoothingEnabled;
+    }
+
+    bool BlackWhiteOptions::isMorphologicalSmoothingEnabled() const {
+        return morphologicalSmoothingEnabled;
+    }
+
+    void BlackWhiteOptions::setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled) {
+        BlackWhiteOptions::morphologicalSmoothingEnabled = morphologicalSmoothingEnabled;
     }
 }  // namespace output

@@ -127,7 +127,7 @@ namespace output {
         switch (cp1.colorMode()) {
             case ColorParams::COLOR_GRAYSCALE:
             case ColorParams::MIXED:
-                if (cp1.colorGrayscaleOptions() != cp2.colorGrayscaleOptions()) {
+                if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
                     return false;
                 }
                 break;
@@ -138,6 +138,9 @@ namespace output {
             case ColorParams::BLACK_AND_WHITE:
             case ColorParams::MIXED:
                 if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
+                    return false;
+                }
+                if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
                     return false;
                 }
                 if (dl1 != dl2) {

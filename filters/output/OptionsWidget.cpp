@@ -92,6 +92,18 @@ namespace output {
                 this, SLOT(equalizeIlluminationToggled(bool))
         );
         connect(
+                equalizeIlluminationColorCB, SIGNAL(clicked(bool)),
+                this, SLOT(equalizeIlluminationColorToggled(bool))
+        );
+        connect(
+                savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(savitzkyGolaySmoothingToggled(bool))
+        );
+        connect(
+                morphologicalSmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(morphologicalSmoothingToggled(bool))
+        );
+        connect(
                 lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
                 this, SLOT(setLighterThreshold())
         );
@@ -216,22 +228,49 @@ namespace output {
     }
 
     void OptionsWidget::whiteMarginsToggled(bool const checked) {
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
-        opt.setWhiteMargins(checked);
+        ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
+        colorCommonOptions.setWhiteMargins(checked);
+
         if (!checked) {
-            opt.setNormalizeIllumination(false);
+            BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
+            blackWhiteOptions.setNormalizeIllumination(false);
             equalizeIlluminationCB->setChecked(false);
+            m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+
+            colorCommonOptions.setNormalizeIllumination(false);
+            equalizeIlluminationColorCB->setChecked(false);
         }
-        m_colorParams.setColorGrayscaleOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         equalizeIlluminationCB->setEnabled(checked);
+        equalizeIlluminationColorCB->setEnabled(checked);
+
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
     }
 
     void OptionsWidget::equalizeIlluminationToggled(bool const checked) {
-        ColorGrayscaleOptions opt(m_colorParams.colorGrayscaleOptions());
+        BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
+        blackWhiteOptions.setNormalizeIllumination(checked);
+
+        if (m_colorParams.colorMode() == ColorParams::MIXED) {
+            if (!checked) {
+                ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
+                colorCommonOptions.setNormalizeIllumination(false);
+                equalizeIlluminationColorCB->setChecked(false);
+                m_colorParams.setColorCommonOptions(colorCommonOptions);
+            }
+            equalizeIlluminationColorCB->setEnabled(checked);
+        }
+
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::equalizeIlluminationColorToggled(bool const checked) {
+        ColorCommonOptions opt(m_colorParams.colorCommonOptions());
         opt.setNormalizeIllumination(checked);
-        m_colorParams.setColorGrayscaleOptions(opt);
+        m_colorParams.setColorCommonOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
     }
@@ -508,7 +547,7 @@ namespace output {
         DespeckleLevel saved_despeckle_level = DESPECKLE_CAUTIOUS;
 
         std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(m_pageId));
-        if (output_params.get()) {
+        if (output_params) {
             saved_picture_zones = output_params->pictureZones();
             saved_fill_zones = output_params->fillZones();
             saved_dewarping_mode = output_params->outputImageParams().dewarpingMode();
@@ -572,44 +611,55 @@ namespace output {
         int const color_mode_idx = colorModeSelector->findData(color_mode);
         colorModeSelector->setCurrentIndex(color_mode_idx);
 
-        bool color_grayscale_options_visible = false;
-        bool bw_options_visible = false;
+        bool threshold_options_visible = false;
         bool picture_shape_visible = false;
         switch (color_mode) {
             case ColorParams::BLACK_AND_WHITE:
-                bw_options_visible = true;
+                threshold_options_visible = true;
                 break;
             case ColorParams::COLOR_GRAYSCALE:
-                color_grayscale_options_visible = true;
                 break;
             case ColorParams::MIXED:
-                color_grayscale_options_visible = true;
-                bw_options_visible = true;
+                threshold_options_visible = true;
                 picture_shape_visible = true;
                 break;
         }
 
-        colorGrayscaleOptions->setVisible(color_grayscale_options_visible);
-        if (color_grayscale_options_visible) {
-            ColorGrayscaleOptions const opt(
-                    m_colorParams.colorGrayscaleOptions()
-            );
-            if (color_mode != ColorParams::MIXED) {
-                whiteMarginsCB->setVisible(true);
-                whiteMarginsCB->setChecked(opt.whiteMargins());
-                equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
-                equalizeIlluminationCB->setEnabled(opt.whiteMargins());
-            } else {
-                whiteMarginsCB->setVisible(false);
-                equalizeIlluminationCB->setChecked(opt.normalizeIllumination());
-                equalizeIlluminationCB->setEnabled(true);
-            }
+        commonOptions->setVisible(true);
+        ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
+        BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
+
+        if (!colorCommonOptions.whiteMargins()) {
+            colorCommonOptions.setNormalizeIllumination(false);
+            blackWhiteOptions.setNormalizeIllumination(false);
+        } else if (!blackWhiteOptions.normalizeIllumination()
+                   && color_mode == ColorParams::MIXED) {
+            colorCommonOptions.setNormalizeIllumination(false);
+        }
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        whiteMarginsCB->setChecked(colorCommonOptions.whiteMargins());
+        whiteMarginsCB->setVisible(true);
+        equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
+        equalizeIlluminationCB->setEnabled(colorCommonOptions.whiteMargins());
+        equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
+        equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
+        equalizeIlluminationColorCB->setVisible(color_mode != ColorParams::BLACK_AND_WHITE);
+        if (color_mode != ColorParams::MIXED) {
+            equalizeIlluminationColorCB->setEnabled(colorCommonOptions.whiteMargins());
+        } else {
+            equalizeIlluminationColorCB->setEnabled(colorCommonOptions.whiteMargins()
+                                                    && blackWhiteOptions.normalizeIllumination());
         }
 
         modePanel->setVisible(m_lastTab != TAB_DEWARPING);
         pictureShapeOptions->setVisible(picture_shape_visible);
-        bwOptions->setVisible(bw_options_visible);
-        despecklePanel->setVisible(bw_options_visible && m_lastTab != TAB_DEWARPING);
+        thresholdOptions->setVisible(threshold_options_visible);
+        savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
+        morphologicalSmoothingCB->setVisible(threshold_options_visible);
+        despecklePanel->setVisible(threshold_options_visible && m_lastTab != TAB_DEWARPING);
 
         if (picture_shape_visible) {
             int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);
@@ -619,7 +669,7 @@ namespace output {
         int compression_idx = tiffCompression->findData(m_ptrSettings->getTiffCompression());
         tiffCompression->setCurrentIndex(compression_idx);
 
-        if (bw_options_visible) {
+        if (threshold_options_visible) {
             switch (m_despeckleLevel) {
                 case DESPECKLE_OFF:
                     despeckleOffBtn->setChecked(true);
@@ -636,9 +686,7 @@ namespace output {
             }
 
             ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
-            thresholdSlider->setValue(
-                    m_colorParams.blackWhiteOptions().thresholdAdjustment()
-            );
+            thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
         }
 
         colorModeSelector->blockSignals(false);
@@ -665,5 +713,21 @@ namespace output {
         depthPerceptionSlider->blockSignals(true);
         depthPerceptionSlider->setValue(qRound(m_depthPerception.value() * 10));
         depthPerceptionSlider->blockSignals(false);
+    }
+
+    void OptionsWidget::savitzkyGolaySmoothingToggled(bool checked) {
+        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+        opt.setSavitzkyGolaySmoothingEnabled(checked);
+        m_colorParams.setBlackWhiteOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::morphologicalSmoothingToggled(bool checked) {
+        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+        opt.setMorphologicalSmoothingEnabled(checked);
+        m_colorParams.setBlackWhiteOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
     }
 }  // namespace output

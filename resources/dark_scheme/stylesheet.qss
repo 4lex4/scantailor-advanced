@@ -19,7 +19,7 @@ QToolButton {
 
 QPushButton:disabled, QLineEdit:disabled, QListView:disabled, QToolButton:disabled {
 	border: 1px solid #5e5e5e;
-	background-color: palette(disabled, base);
+	background-color: #4d4d4d;
 }
 
 QPushButton:default, QToolButton:default {
@@ -38,6 +38,11 @@ QPushButton:pressed, QToolButton:pressed {
 QPushButton:checked, QToolButton:checked {
 	border-color: #595fb1;
 	background-color: #383838;
+}
+
+QPushButton:checked:disabled, QToolButton:checked:disabled {
+	border-color: #595fb1;
+	background-color: #4d4d4d;
 }
 
 QPushButton:flat, QToolButton:flat {
@@ -68,7 +73,7 @@ QCheckBox::indicator:unchecked:pressed, QTreeView::indicator:unchecked:pressed, 
 
 QCheckBox::indicator:unchecked:disabled, QTreeView::indicator:unchecked:disabled, QTableView::indicator:unchecked:disabled, QGroupBox::indicator:unchecked:disabled {
     border: 1px solid #5e5e5e;
-    background-color: palette(disabled, base);
+    background-color: #4d4d4d;
 }
 
 QCheckBox::indicator:checked, QTreeView::indicator:checked, QTableView::indicator:checked, QGroupBox::indicator:checked,
@@ -147,7 +152,7 @@ QRadioButton::indicator:unchecked:pressed {
 
 QRadioButton::indicator:unchecked:disabled {
     border: 1px solid #5e5e5e;
-    background-color: palette(disabled, base);
+    background-color: #4d4d4d;
 }
 
 QRadioButton::indicator:checked,
@@ -210,7 +215,7 @@ QGroupBox::title {
 QGraphicsView, ImageViewBase, QFrame#imageViewFrame {
 	background-color: #282828;
 	background-attachment: scroll;
-	border: 1px solid #282828;
+	border: none;
 }
 
 QGraphicsView {
@@ -426,9 +431,15 @@ QTabBar::tab:selected {
 }
 
 output--TabbedImageView > QTabBar::tab {
-	padding: 0.2ex 0.35em 0.2ex 0.35em;
+	padding: 0.2ex 0.25em 0.2ex 0.35em;
 	height: 7em;
 	width: 1em;
+}
+
+output--TabbedImageView::tab-bar {
+	left: 0px;
+    right: 0px;
+    top: 0px;
 }
 
 QComboBox {
@@ -454,7 +465,7 @@ QAbstractSpinBox {
 
 QComboBox:disabled, QAbstractSpinBox:disabled {
 	border: 1px solid #5e5e5e;
-	background-color: palette(disabled, base);
+	background-color: #4d4d4d;
 }
 
 QComboBox:hover, QAbstractSpinBox:focus {
@@ -562,7 +573,7 @@ QTreeView QHeaderView::section, QTableView QHeaderView::section {
 }
 
 QTreeView::item:selected:disabled, QTableView::item:selected:disabled {
-    background: palette(disabled, higlight);
+    background: #5d5d5d;
 }
 
 QTreeView::branch {

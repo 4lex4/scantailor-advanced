@@ -44,4 +44,12 @@ namespace output {
 
         return xform;
     }
+
+    QString Utils::foregroundDir(QString const& out_dir) {
+        return QDir(out_dir).absoluteFilePath("foreground");
+    }
+
+    QString Utils::backgroundDir(QString const& out_dir) {
+        return QDir(out_dir).absoluteFilePath("background");
+    }
 }  // namespace output

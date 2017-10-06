@@ -21,22 +21,28 @@
 
 namespace output {
     RenderParams::RenderParams(ColorParams const& colorParams)
-            : m_mask(0),
-              smoothingMask(0) {
+            : m_mask(0) {
         const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
         const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());
+        const SplittingOptions splittingOptions(colorParams.splittingOptions());
         const ColorParams::ColorMode colorMode = colorParams.colorMode();
-        
+
         if ((colorMode == ColorParams::BLACK_AND_WHITE) || (colorMode == ColorParams::MIXED)) {
             m_mask |= NEED_BINARIZATION;
+            if ((colorMode == ColorParams::MIXED) && splittingOptions.isSplitOutput()) {
+                m_mask |= SPLIT_OUTPUT;
+                if (splittingOptions.getForegroundType() == SplittingOptions::COLOR_FOREGROUND) {
+                    m_mask ^= NEED_BINARIZATION;
+                }
+            }
             if (colorMode == ColorParams::MIXED) {
                 m_mask |= MIXED_OUTPUT;
             }
             if (blackWhiteOptions.isSavitzkyGolaySmoothingEnabled()) {
-                smoothingMask |= SAVITZKY_GOLAY_SMOOTHING;
+                m_mask |= SAVITZKY_GOLAY_SMOOTHING;
             }
             if (blackWhiteOptions.isMorphologicalSmoothingEnabled()) {
-                smoothingMask |= MORPHOLOGICAL_SMOOTHING;
+                m_mask |= MORPHOLOGICAL_SMOOTHING;
             }
             if (blackWhiteOptions.normalizeIllumination()) {
                 m_mask |= NORMALIZE_ILLUMINATION;

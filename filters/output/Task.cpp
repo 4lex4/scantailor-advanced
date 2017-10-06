@@ -162,7 +162,7 @@ namespace output {
 
         bool const need_picture_editor = render_params.mixedOutput() && !m_batchProcessing;
         bool const need_speckles_image = params.despeckleLevel() != DESPECKLE_OFF
-                                         && params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE
+                                         && render_params.needBinarization()
                                          && !m_batchProcessing;
 
         OutputGenerator const generator(
@@ -271,7 +271,7 @@ namespace output {
         if (need_reprocess) {
             bool const write_automask = render_params.mixedOutput();
             bool const write_speckles_file = params.despeckleLevel() != DESPECKLE_OFF
-                                             && params.colorParams().colorMode() != ColorParams::COLOR_GRAYSCALE;
+                                             && render_params.needBinarization();
 
             automask_img = BinaryImage();
             speckles_img = BinaryImage();
@@ -281,6 +281,7 @@ namespace output {
                 distortion_model = params.distortionModel();
             }
 
+            SplitImage splitImage;
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones,
                     params.dewarpingMode(), distortion_model,
@@ -289,7 +290,8 @@ namespace output {
                     write_speckles_file ? &speckles_img : 0,
                     m_ptrDbg.get(),
                     params.pictureShape(),
-                    &m_pageId, &m_ptrSettings
+                    &m_pageId, &m_ptrSettings,
+                    &splitImage
             );
 
             if (((params.dewarpingMode() == DewarpingMode::AUTO) && distortion_model.isValid())
@@ -310,6 +312,27 @@ namespace output {
                 invalidate_params = true;
             } else {
                 deleteMutuallyExclusiveOutputFiles();
+            }
+            if (render_params.splitOutput()) {
+                const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+                const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+                const QString foreground_file_path(
+                        QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
+                );
+                const QString background_file_path(
+                        QDir(background_dir).absoluteFilePath(out_file_info.fileName())
+                );
+
+
+                QDir().mkdir(foreground_dir);
+                QDir().mkdir(background_dir);
+
+                if (!TiffWriter::writeImage(
+                        foreground_file_path, splitImage.getForegroundImage(), m_ptrSettings->getTiffCompression())
+                    || !TiffWriter::writeImage(
+                        background_file_path, splitImage.getBackgroundImage(), m_ptrSettings->getTiffCompression())) {
+                    invalidate_params = true;
+                }
             }
 
             if (write_automask) {

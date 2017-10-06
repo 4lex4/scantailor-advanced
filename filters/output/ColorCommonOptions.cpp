@@ -41,7 +41,7 @@ namespace output {
     bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
         return (m_normalizeIllumination == other.m_normalizeIllumination)
                && (m_whiteMargins == other.m_whiteMargins);
-    }  // ==
+    }
 
     bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {
         return !(*this == other);

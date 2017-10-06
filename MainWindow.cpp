@@ -886,7 +886,7 @@ void MainWindow::goToPage(PageId const& page_id) {
     updateMainArea();
 
     if (m_autoSaveTimer.remainingTime() <= 0) {
-        m_autoSaveTimer.start(60000);
+        m_autoSaveTimer.start(30000);
     }
 }
 
@@ -911,7 +911,7 @@ void MainWindow::currentPageChanged(PageInfo const& page_info,
 
     if (flags & ThumbnailSequence::SELECTED_BY_USER) {
         if (m_autoSaveTimer.remainingTime() <= 0) {
-            m_autoSaveTimer.start(60000);
+            m_autoSaveTimer.start(30000);
         }
     }
 }

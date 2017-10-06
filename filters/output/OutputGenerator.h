@@ -47,6 +47,7 @@
 #include <QtCore/qmath.h>
 #include <QFile>
 #include "imageproc/SkewFinder.h"
+#include "SplitImage.h"
 
 class TaskStatus;
 class DebugImages;
@@ -112,7 +113,8 @@ namespace output {
                        DebugImages* dbg = 0,
                        PictureShape picture_shape = FREE_SHAPE,
                        PageId* p_pageId = NULL,
-                       IntrusivePtr<Settings>* p_settings = NULL) const;
+                       IntrusivePtr<Settings>* p_settings = NULL,
+                       SplitImage* splitImage = nullptr) const;
 
         QSize outputImageSize() const;
 
@@ -134,13 +136,8 @@ namespace output {
                            DebugImages* dbg = 0,
                            PictureShape picture_shape = FREE_SHAPE,
                            PageId* p_pageId = NULL,
-                           IntrusivePtr<Settings>* p_settings = NULL) const;
-
-        QImage processAsIs(FilterData const& input,
-                           TaskStatus const& status,
-                           ZoneSet const& fill_zones,
-                           DepthPerception const& depth_perception,
-                           DebugImages* dbg = 0) const;
+                           IntrusivePtr<Settings>* p_settings = NULL,
+                           SplitImage* splitImage = nullptr) const;
 
         QImage processWithoutDewarping(TaskStatus const& status,
                                        FilterData const& input,
@@ -151,7 +148,8 @@ namespace output {
                                        DebugImages* dbg = 0,
                                        PictureShape picture_shape = FREE_SHAPE,
                                        PageId* p_pageId = NULL,
-                                       IntrusivePtr<Settings>* p_settings = NULL) const;
+                                       IntrusivePtr<Settings>* p_settings = NULL,
+                                       SplitImage* splitImage = nullptr) const;
 
         QImage processWithDewarping(TaskStatus const& status,
                                     FilterData const& input,
@@ -165,7 +163,8 @@ namespace output {
                                     DebugImages* dbg = 0,
                                     PictureShape picture_shape = FREE_SHAPE,
                                     PageId* p_pageId = NULL,
-                                    IntrusivePtr<Settings>* p_settings = NULL) const;
+                                    IntrusivePtr<Settings>* p_settings = NULL,
+                                    SplitImage* splitImage = nullptr) const;
 
         void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 

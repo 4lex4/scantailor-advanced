@@ -19,8 +19,6 @@
 #include "ColorParams.h"
 #include "CommandLine.h"
 
-#include <QDomDocument>
-
 namespace output {
     ColorParams::ColorParams()
             : m_colorMode(DefaultColorMode()) {
@@ -29,7 +27,8 @@ namespace output {
     ColorParams::ColorParams(QDomElement const& el)
             : m_colorMode(parseColorMode(el.attribute("colorMode"))),
               m_colorCommonOptions(el.namedItem("color-or-grayscale").toElement()),
-              m_bwOptions(el.namedItem("bw").toElement()) {
+              m_bwOptions(el.namedItem("bw").toElement()),
+              m_splittingOptions(el.namedItem("splitting").toElement()) {
     }
 
     ColorParams::ColorMode ColorParams::DefaultColorMode() {
@@ -41,6 +40,7 @@ namespace output {
         el.setAttribute("colorMode", formatColorMode(m_colorMode));
         el.appendChild(m_colorCommonOptions.toXml(doc, "color-or-grayscale"));
         el.appendChild(m_bwOptions.toXml(doc, "bw"));
+        el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
 
         return el;
     }

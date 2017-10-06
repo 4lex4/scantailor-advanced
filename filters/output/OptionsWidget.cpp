@@ -104,6 +104,18 @@ namespace output {
                 this, SLOT(morphologicalSmoothingToggled(bool))
         );
         connect(
+                splittingCB, SIGNAL(clicked(bool)),
+                this, SLOT(splittingToggled(bool))
+        );
+        connect(
+                bwForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(bwForegroundToggled(bool))
+        );
+        connect(
+                colorForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(colorForegroundToggled(bool))
+        );
+        connect(
                 lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
                 this, SLOT(setLighterThreshold())
         );
@@ -613,6 +625,7 @@ namespace output {
 
         bool threshold_options_visible = false;
         bool picture_shape_visible = false;
+        bool splitting_options_visible = false;
         switch (color_mode) {
             case ColorParams::BLACK_AND_WHITE:
                 threshold_options_visible = true;
@@ -622,12 +635,14 @@ namespace output {
             case ColorParams::MIXED:
                 threshold_options_visible = true;
                 picture_shape_visible = true;
+                splitting_options_visible = true;
                 break;
         }
 
         commonOptions->setVisible(true);
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
+        SplittingOptions splitOptions(m_colorParams.splittingOptions());
 
         if (!colorCommonOptions.whiteMargins()) {
             colorCommonOptions.setNormalizeIllumination(false);
@@ -653,13 +668,28 @@ namespace output {
             equalizeIlluminationColorCB->setEnabled(colorCommonOptions.whiteMargins()
                                                     && blackWhiteOptions.normalizeIllumination());
         }
+        savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
+        savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
+        morphologicalSmoothingCB->setChecked(blackWhiteOptions.isMorphologicalSmoothingEnabled());
+        morphologicalSmoothingCB->setVisible(threshold_options_visible);
 
         modePanel->setVisible(m_lastTab != TAB_DEWARPING);
         pictureShapeOptions->setVisible(picture_shape_visible);
         thresholdOptions->setVisible(threshold_options_visible);
-        savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
-        morphologicalSmoothingCB->setVisible(threshold_options_visible);
         despecklePanel->setVisible(threshold_options_visible && m_lastTab != TAB_DEWARPING);
+        
+        splittingOptions->setVisible(splitting_options_visible);
+        splittingCB->setChecked(splitOptions.isSplitOutput());
+        switch (splitOptions.getForegroundType()) {
+            case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
+                bwForegroundRB->setChecked(true);
+                break;
+            case SplittingOptions::COLOR_FOREGROUND:
+                colorForegroundRB->setChecked(true);
+                break;
+        }
+        colorForegroundRB->setEnabled(splitOptions.isSplitOutput());
+        bwForegroundRB->setEnabled(splitOptions.isSplitOutput());
 
         if (picture_shape_visible) {
             int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);
@@ -727,6 +757,40 @@ namespace output {
         BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
         opt.setMorphologicalSmoothingEnabled(checked);
         m_colorParams.setBlackWhiteOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::bwForegroundToggled(bool checked) {
+        if (!checked) {
+            return;
+        }
+        SplittingOptions opt(m_colorParams.splittingOptions());
+        opt.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
+        m_colorParams.setSplittingOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::colorForegroundToggled(bool checked) {
+        if (!checked) {
+            return;
+        }
+        SplittingOptions opt(m_colorParams.splittingOptions());
+        opt.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
+        m_colorParams.setSplittingOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::splittingToggled(bool checked) {
+        SplittingOptions opt(m_colorParams.splittingOptions());
+        opt.setSplitOutput(checked);
+
+        bwForegroundRB->setEnabled(checked);
+        colorForegroundRB->setEnabled(checked);
+        
+        m_colorParams.setSplittingOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
     }

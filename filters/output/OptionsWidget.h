@@ -98,6 +98,12 @@ namespace output {
 
         void morphologicalSmoothingToggled(bool checked);
 
+        void splittingToggled(bool checked);
+
+        void bwForegroundToggled(bool checked);
+
+        void colorForegroundToggled(bool checked);
+
         void setLighterThreshold();
 
         void setDarkerThreshold();

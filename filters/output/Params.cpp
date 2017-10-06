@@ -45,6 +45,9 @@ namespace output {
         m_colorParams.setBlackWhiteOptions(
                 BlackWhiteOptions(cp.namedItem("bw").toElement())
         );
+        m_colorParams.setSplittingOptions(
+                SplittingOptions(cp.namedItem("splitting").toElement())
+        );
     }
 
     QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
@@ -70,6 +73,7 @@ namespace output {
                 )
         );
         cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
+        cp.appendChild(m_colorParams.splittingOptions().toXml(doc, "splitting"));
 
         el.appendChild(cp);
 

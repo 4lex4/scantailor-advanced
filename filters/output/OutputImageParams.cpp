@@ -125,29 +125,24 @@ namespace output {
         }
 
         switch (cp1.colorMode()) {
-            case ColorParams::COLOR_GRAYSCALE:
             case ColorParams::MIXED:
-                if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
+                if (cp1.splittingOptions() != cp2.splittingOptions()) {
                     return false;
                 }
-                break;
-            default:;
-        }
-
-        switch (cp1.colorMode()) {
+                // fall into
             case ColorParams::BLACK_AND_WHITE:
-            case ColorParams::MIXED:
                 if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
-                    return false;
-                }
-                if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
                     return false;
                 }
                 if (dl1 != dl2) {
                     return false;
                 }
+                // fall into
+            case ColorParams::COLOR_GRAYSCALE:
+                if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
+                    return false;
+                }
                 break;
-            default:;
         }
 
         return true;

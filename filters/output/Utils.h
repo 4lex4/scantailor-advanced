@@ -32,6 +32,10 @@ namespace output {
 
         static QString specklesDir(QString const& out_dir);
 
+        static QString foregroundDir(QString const& out_dir);
+
+        static QString backgroundDir(QString const& out_dir);
+
         static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
     };
 }

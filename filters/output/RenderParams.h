@@ -25,8 +25,7 @@ namespace output {
     class RenderParams {
     public:
         RenderParams()
-                : m_mask(0),
-                  smoothingMask(0) {
+                : m_mask(0) {
         }
 
         explicit RenderParams(ColorParams const& colorParams);
@@ -57,11 +56,15 @@ namespace output {
         }
 
         bool needSavitzkyGolaySmoothing() const {
-            return (smoothingMask & SAVITZKY_GOLAY_SMOOTHING) != 0;
+            return (m_mask & SAVITZKY_GOLAY_SMOOTHING) != 0;
         }
 
         bool needMorphologicalSmoothing() const {
-            return (smoothingMask & MORPHOLOGICAL_SMOOTHING) != 0;
+            return (m_mask & MORPHOLOGICAL_SMOOTHING) != 0;
+        }
+
+        bool splitOutput() const {
+            return (m_mask & SPLIT_OUTPUT) != 0;
         }
 
     private:
@@ -70,16 +73,13 @@ namespace output {
             NORMALIZE_ILLUMINATION = 2,
             NEED_BINARIZATION = 4,
             MIXED_OUTPUT = 8,
-            NORMALIZE_ILLUMINATION_COLOR = 16
+            NORMALIZE_ILLUMINATION_COLOR = 16,
+            SAVITZKY_GOLAY_SMOOTHING = 32,
+            MORPHOLOGICAL_SMOOTHING = 64,
+            SPLIT_OUTPUT = 128
         };
-
-        enum {
-            SAVITZKY_GOLAY_SMOOTHING = 1,
-            MORPHOLOGICAL_SMOOTHING = 2
-        };
-
+        
         int m_mask;
-        int smoothingMask;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_RENDER_PARAMS_H_

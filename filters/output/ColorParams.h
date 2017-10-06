@@ -21,6 +21,7 @@
 
 #include "ColorCommonOptions.h"
 #include "BlackWhiteOptions.h"
+#include "SplittingOptions.h"
 
 class QDomDocument;
 class QDomElement;
@@ -66,6 +67,14 @@ namespace output {
             m_bwOptions = opt;
         }
 
+        const SplittingOptions& splittingOptions() const {
+            return m_splittingOptions;
+        }
+
+        void setSplittingOptions(const SplittingOptions& opt) {
+            m_splittingOptions = opt;
+        }
+
     private:
         static ColorMode parseColorMode(QString const& str);
 
@@ -74,6 +83,7 @@ namespace output {
         ColorMode m_colorMode;
         ColorCommonOptions m_colorCommonOptions;
         BlackWhiteOptions m_bwOptions;
+        SplittingOptions m_splittingOptions;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLORPARAMS_H_

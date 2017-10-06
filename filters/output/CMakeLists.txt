@@ -51,7 +51,7 @@ SET(
         DewarpingMode.cpp DewarpingMode.h
         ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
         DepthPerception.cpp DepthPerception.h
-)
+        SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h)
 SOURCE_GROUP("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

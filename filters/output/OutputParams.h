@@ -32,6 +32,8 @@ namespace output {
     public:
         OutputParams(OutputImageParams const& output_image_params,
                      OutputFileParams const& output_file_params,
+                     OutputFileParams const& foreground_file_params,
+                     OutputFileParams const& background_file_params,
                      OutputFileParams const& automask_file_params,
                      OutputFileParams const& speckles_file_params,
                      ZoneSet const& picture_zones,
@@ -47,6 +49,14 @@ namespace output {
 
         OutputFileParams const& outputFileParams() const {
             return m_outputFileParams;
+        }
+
+        OutputFileParams const& foregroundFileParams() const {
+            return m_foregroundFileParams;
+        }
+
+        OutputFileParams const& backgroundFileParams() const {
+            return m_backgroundFileParams;
         }
 
         OutputFileParams const& automaskFileParams() const {
@@ -68,6 +78,8 @@ namespace output {
     private:
         OutputImageParams m_outputImageParams;
         OutputFileParams m_outputFileParams;
+        OutputFileParams m_foregroundFileParams;
+        OutputFileParams m_backgroundFileParams;
         OutputFileParams m_automaskFileParams;
         OutputFileParams m_specklesFileParams;
         ZoneSet m_pictureZones;

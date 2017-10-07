@@ -10,6 +10,10 @@
 namespace output {
     class SplitImage {
     public:
+        SplitImage();
+
+        SplitImage(const QImage& foreground, const QImage& background);
+
         QImage toImage() const;
 
         const QImage& getForegroundImage() const;
@@ -20,7 +24,9 @@ namespace output {
 
         void setBackgroundImage(const QImage& backgroundImage);
 
-        void performWithImages(std::function<void(QImage&)> function);
+        void applyToLayerImages(std::function<void(QImage&)> function);
+
+        bool isNull() const;
 
     private:
         QImage foregroundImage;

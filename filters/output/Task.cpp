@@ -148,6 +148,17 @@ namespace output {
         ImageTransformation new_xform(data.xform());
         new_xform.postScaleToDpi(params.outputDpi());
 
+        const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+        const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+        const QString foreground_file_path(
+                QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
+        );
+        const QString background_file_path(
+                QDir(background_dir).absoluteFilePath(out_file_info.fileName())
+        );
+        QFileInfo const foreground_file_info(foreground_file_path);
+        QFileInfo const background_file_info(background_file_path);
+
         QString const automask_dir(Utils::automaskDir(m_outFileNameGen.outDir()));
         QString const automask_file_path(
                 QDir(automask_dir).absoluteFilePath(out_file_info.fileName())
@@ -206,15 +217,35 @@ namespace output {
                 break;
             }
 
-            if (!out_file_info.exists()) {
-                need_reprocess = true;
-                break;
+            if (render_params.splitOutput()) {
+                if (!out_file_info.exists()) {
+                    need_reprocess = true;
+                    break;
+                }
+
+                if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
+                    need_reprocess = true;
+                    break;
+                }
+            } else {
+                if (!foreground_file_info.exists()) {
+                    need_reprocess = true;
+                    break;
+                }
+                if (!background_file_info.exists()) {
+                    need_reprocess = true;
+                    break;
+                }
+
+                if (!(stored_output_params->foregroundFileParams().matches(
+                        OutputFileParams(foreground_file_info)))
+                    || !(stored_output_params->backgroundFileParams().matches(
+                        OutputFileParams(background_file_info)))) {
+                    need_reprocess = true;
+                    break;
+                }
             }
 
-            if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-                need_reprocess = true;
-                break;
-            }
 
             if (need_picture_editor) {
                 if (!automask_file_info.exists()) {
@@ -245,11 +276,30 @@ namespace output {
         BinaryImage speckles_img;
 
         if (!need_reprocess) {
-            QFile out_file(out_file_path);
-            if (out_file.open(QIODevice::ReadOnly)) {
-                out_img = ImageLoader::load(out_file, 0);
+            if (!render_params.splitOutput()) {
+                QFile out_file(out_file_path);
+                if (out_file.open(QIODevice::ReadOnly)) {
+                    out_img = ImageLoader::load(out_file, 0);
+                }
+                need_reprocess = out_img.isNull();
+            } else {
+                QImage foreground_image;
+                QImage background_image;
+                QFile foreground_file(foreground_file_path);
+                QFile background_file(background_file_path);
+                if (foreground_file.open(QIODevice::ReadOnly)) {
+                    foreground_image = ImageLoader::load(foreground_file, 0);
+                }
+                if (background_file.open(QIODevice::ReadOnly)) {
+                    background_image = ImageLoader::load(foreground_file, 0);
+                }
+                SplitImage tmpSplitImage = SplitImage(foreground_image, background_image);
+                if (tmpSplitImage.isNull()) {
+                    need_reprocess = true;
+                } else {
+                    out_img = tmpSplitImage.toImage();
+                }
             }
-            need_reprocess = out_img.isNull();
 
             if (need_picture_editor && !need_reprocess) {
                 QFile automask_file(automask_file_path);
@@ -294,6 +344,30 @@ namespace output {
                     &splitImage
             );
 
+            bool invalidate_params = false;
+
+            if (render_params.splitOutput()) {
+                QDir().mkdir(foreground_dir);
+                QDir().mkdir(background_dir);
+
+                if (!TiffWriter::writeImage(
+                        foreground_file_path, splitImage.getForegroundImage(), m_ptrSettings->getTiffCompression())
+                    || !TiffWriter::writeImage(
+                        background_file_path, splitImage.getBackgroundImage(), m_ptrSettings->getTiffCompression())) {
+                    invalidate_params = true;
+                } else {
+                    deleteMutuallyExclusiveOutputFiles();
+                }
+
+                out_img = splitImage.toImage();
+                splitImage = SplitImage();
+            }
+            if (!TiffWriter::writeImage(out_file_path, out_img, m_ptrSettings->getTiffCompression())) {
+                invalidate_params = true;
+            } else {
+                deleteMutuallyExclusiveOutputFiles();
+            }
+
             if (((params.dewarpingMode() == DewarpingMode::AUTO) && distortion_model.isValid())
                 || ((params.dewarpingMode() == DewarpingMode::MARGINAL) && distortion_model.isValid())
                     ) {
@@ -304,35 +378,6 @@ namespace output {
 
             if (write_speckles_file && speckles_img.isNull()) {
                 BinaryImage(out_img.size(), WHITE).swap(speckles_img);
-            }
-
-            bool invalidate_params = false;
-
-            if (!TiffWriter::writeImage(out_file_path, out_img, m_ptrSettings->getTiffCompression())) {
-                invalidate_params = true;
-            } else {
-                deleteMutuallyExclusiveOutputFiles();
-            }
-            if (render_params.splitOutput()) {
-                const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
-                const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
-                const QString foreground_file_path(
-                        QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
-                );
-                const QString background_file_path(
-                        QDir(background_dir).absoluteFilePath(out_file_info.fileName())
-                );
-
-
-                QDir().mkdir(foreground_dir);
-                QDir().mkdir(background_dir);
-
-                if (!TiffWriter::writeImage(
-                        foreground_file_path, splitImage.getForegroundImage(), m_ptrSettings->getTiffCompression())
-                    || !TiffWriter::writeImage(
-                        background_file_path, splitImage.getBackgroundImage(), m_ptrSettings->getTiffCompression())) {
-                    invalidate_params = true;
-                }
             }
 
             if (write_automask) {
@@ -358,6 +403,10 @@ namespace output {
                 OutputParams const out_params(
                         new_output_image_params,
                         OutputFileParams(QFileInfo(out_file_path)),
+                        render_params.splitOutput() ? OutputFileParams(QFileInfo(foreground_file_path))
+                                                    : OutputFileParams(),
+                        render_params.splitOutput() ? OutputFileParams(QFileInfo(background_file_path))
+                                                    : OutputFileParams(),
                         write_automask ? OutputFileParams(QFileInfo(automask_file_path))
                                        : OutputFileParams(),
                         write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path))

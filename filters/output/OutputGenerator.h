@@ -172,7 +172,9 @@ namespace output {
 
         void drawPoint(QImage& image, QPointF const& pt) const;
 
-        void maybe_deskew(QImage* p_dewarped, DewarpingMode dewarping_mode) const;
+        double maybe_deskew(QImage* p_dewarped, DewarpingMode dewarping_mode) const;
+
+        void deskew(QImage* image, double angle) const;
 
         void movePointToTopMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 

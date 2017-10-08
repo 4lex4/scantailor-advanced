@@ -1201,11 +1201,16 @@ ThumbnailSequence::Impl::getLabelGroup(PageInfo const& page_info) {
     QFileInfo const file_info(page_id.imageId().filePath());
     QString const file_name(file_info.fileName());
 
-    QString text(file_name);
+    QString text;
+    if (file_name.size() <= 20) {
+        text = file_name;
+    } else {
+        text = "..." + file_name.right(20);
+    }
     if (page_info.imageId().isMultiPageFile()) {
         text = ThumbnailSequence::tr(
                 "%1 (page %2)"
-        ).arg(file_name).arg(page_id.imageId().page());
+        ).arg(text).arg(page_id.imageId().page());
     }
 
     std::unique_ptr<QGraphicsSimpleTextItem> normal_text_item(new QGraphicsSimpleTextItem);
@@ -1339,6 +1344,11 @@ ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextIte
     m_pNormalLabel->setVisible(true);
     m_pBoldLabel->setVisible(false);
 
+    bold_label->setPos(
+            bold_label->pos().x() + 0.5 * (bold_label->boundingRect().width() - normal_label->boundingRect().width()),
+            bold_label->pos().y()
+    );
+    
     addToGroup(normal_label.release());
     addToGroup(bold_label.release());
     if (pixmap.get()) {
@@ -1378,7 +1388,7 @@ ThumbnailSequence::CompositeItem::CompositeItem(ThumbnailSequence::Impl& owner,
     int const thumb_label_spacing = 1;
     thumbnail->setPos(-0.5 * thumb_size.width(), 0.0);
     label_group->setPos(
-            thumbnail->pos().x() + thumb_size.width() - label_size.width(),
+            thumbnail->pos().x() + 0.5 * (thumb_size.width() - label_size.width()),
             thumb_size.height() + thumb_label_spacing
     );
 
@@ -1413,12 +1423,18 @@ void ThumbnailSequence::CompositeItem::updateAppearence(bool selected, bool sele
 
 QRectF ThumbnailSequence::CompositeItem::boundingRect() const {
     QRectF rect(QGraphicsItemGroup::boundingRect());
-    rect.adjust(-100, -5, 100, 3);
+    qreal horizontalAdjustVal = 150 - 0.5 * rect.size().width();
+    if (horizontalAdjustVal < 5) {
+        horizontalAdjustVal = 5;
+    }
+
+    rect.adjust(-horizontalAdjustVal, -5, horizontalAdjustVal, 3);
 
     return rect;
 }
 
-void ThumbnailSequence::CompositeItem::paint(QPainter* painter, QStyleOptionGraphicsItem const* option,
+void ThumbnailSequence::CompositeItem::paint(QPainter* painter,
+                                             QStyleOptionGraphicsItem const* option,
                                              QWidget* widget) {
     if (m_pItem->isSelected()) {
         painter->fillRect(

@@ -271,6 +271,8 @@ namespace output {
                                                   DebugImages* dbg,
                                                   QImage const* morph_background = 0) const;
 
+        void fillExcept(QImage& img, const QPolygonF& poly, const QColor& color) const;
+
         void applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
                 QPointF const&)> const& orig_to_output)
         const;

@@ -49,9 +49,10 @@ QPushButton:flat, QToolButton:flat {
 	border: none;
 }
 
-QCheckBox::indicator, QRadioButton::indicator {
-    width: 1em;
-    height: 1em;
+QCheckBox::indicator, QTreeView::indicator, QTableView::indicator, QGroupBox::indicator, QMenu::indicator:non-exclusive,
+QRadioButton::indicator, QMenu::indicator:exclusive {
+    width: 13px;
+    height: 13px;
 }
 
 QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indicator:unchecked, QGroupBox::indicator:unchecked,
@@ -259,6 +260,10 @@ QMenuBar::item:pressed {
 	background-color: #383838;
 }
 
+QMenu {
+	background-color: palette(base);
+}
+
 QMenu::separator {
     height: 1px;
     background: #383838;
@@ -266,9 +271,20 @@ QMenu::separator {
     margin-right: 5px;
 }
 
-QMenu::indicator {
-    width: 18px;
-    height: 18px;
+QMenu::item {
+	padding: 0.2ex 14px 0.2ex 20px;
+	height: 1.8em;
+	width: 8.3em;
+}
+
+QMenu::item:disabled {
+	background-color: #4d4d4d;
+	color: #989898;
+}
+
+QMenu::item:selected {
+	background-color: palette(highlight);
+	color: palette(highlighted-text);
 }
 
 QDockWidget::title {
@@ -479,7 +495,7 @@ QComboBox:on {
 
 QComboBox::drop-down {
     subcontrol-origin: padding;
-    subcontrol-position: top right;
+    subcontrol-position: bottom right;
 	width: 1.3em;
 	background: transparent;
 	border: none;

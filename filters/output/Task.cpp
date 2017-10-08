@@ -217,12 +217,12 @@ namespace output {
                 break;
             }
 
-            if (render_params.splitOutput()) {
+            if (!render_params.splitOutput()) {
                 if (!out_file_info.exists()) {
                     need_reprocess = true;
                     break;
                 }
-
+                
                 if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
                     need_reprocess = true;
                     break;
@@ -245,7 +245,6 @@ namespace output {
                     break;
                 }
             }
-
 
             if (need_picture_editor) {
                 if (!automask_file_info.exists()) {
@@ -276,13 +275,11 @@ namespace output {
         BinaryImage speckles_img;
 
         if (!need_reprocess) {
-            if (!render_params.splitOutput()) {
-                QFile out_file(out_file_path);
-                if (out_file.open(QIODevice::ReadOnly)) {
-                    out_img = ImageLoader::load(out_file, 0);
-                }
-                need_reprocess = out_img.isNull();
-            } else {
+            QFile out_file(out_file_path);
+            if (out_file.open(QIODevice::ReadOnly)) {
+                out_img = ImageLoader::load(out_file, 0);
+            }
+            if (out_img.isNull() && render_params.splitOutput()) {
                 QImage foreground_image;
                 QImage background_image;
                 QFile foreground_file(foreground_file_path);
@@ -294,12 +291,11 @@ namespace output {
                     background_image = ImageLoader::load(foreground_file, 0);
                 }
                 SplitImage tmpSplitImage = SplitImage(foreground_image, background_image);
-                if (tmpSplitImage.isNull()) {
-                    need_reprocess = true;
-                } else {
+                if (!tmpSplitImage.isNull()) {
                     out_img = tmpSplitImage.toImage();
                 }
             }
+            need_reprocess = out_img.isNull();
 
             if (need_picture_editor && !need_reprocess) {
                 QFile automask_file(automask_file_path);
@@ -355,8 +351,6 @@ namespace output {
                     || !TiffWriter::writeImage(
                         background_file_path, splitImage.getBackgroundImage(), m_ptrSettings->getTiffCompression())) {
                     invalidate_params = true;
-                } else {
-                    deleteMutuallyExclusiveOutputFiles();
                 }
 
                 out_img = splitImage.toImage();

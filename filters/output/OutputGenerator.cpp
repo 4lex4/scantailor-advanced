@@ -226,13 +226,13 @@ namespace output {
                         splitImage
                 )
         );
-        
+
         const RenderParams renderParams(m_colorParams);
         Dpm const output_dpm(m_dpi);
 
         if (!renderParams.splitOutput()) {
             assert(!image.isNull());
-            
+
             image.setDotsPerMeterX(output_dpm.horizontal());
             image.setDotsPerMeterY(output_dpm.vertical());
         } else {
@@ -432,6 +432,18 @@ namespace output {
                                                     SplitImage* splitImage) const {
         RenderParams const render_params(m_colorParams);
 
+        QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
+        if (m_outRect.isEmpty()) {
+            QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
+            if (!render_params.splitOutput()) {
+                return emptyImage;
+            } else {
+                splitImage->setForegroundImage(emptyImage);
+                splitImage->setBackgroundImage(emptyImage.convertToFormat(QImage::Format_Indexed8));
+                return QImage();
+            }
+        }
+
         QRect contentRect = m_contentRect;
         if (!render_params.whiteMargins()) {
             contentRect = m_outRect;
@@ -490,6 +502,7 @@ namespace output {
                     normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
             );
         }
+        fillExcept(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
 
         status.throwIfCancelled();
 
@@ -529,22 +542,21 @@ namespace output {
 
                 status.throwIfCancelled();
 
+                maybeDespeckleInPlace(
+                        bw_content, small_margins_rect, contentRect,
+                        m_despeckleLevel, speckles_image, m_dpi, status, dbg
+                );
+
                 QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
                 QRect const dst_rect(contentRect);
                 rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
                 bw_content.release();
-                maybeDespeckleInPlace(
-                        dst, m_outRect, m_outRect, m_despeckleLevel,
-                        speckles_image, m_dpi, status, dbg
-                );
             }
 
             applyFillZonesInPlace(dst, fill_zones);
 
             return dst.toQImage();
         }
-
-        QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
 
         if (needNormalizeIllumination && !input.origImage().allGray()) {
             assert(maybe_normalized.format() == QImage::Format_Indexed8);
@@ -645,6 +657,7 @@ namespace output {
                             normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
                     );
                 }
+                fillExcept(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
             }
 
             status.throwIfCancelled();
@@ -690,12 +703,17 @@ namespace output {
                 status.throwIfCancelled();
 
                 if (render_params.splitOutput()) {
-                    BinaryImage foreground(bw_content);
+                    BinaryImage foreground(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
+                    if (!contentRect.isEmpty()) {
+                        QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+                        QRect const dst_rect(contentRect);
+                        rasterOp<RopSrc>(foreground, dst_rect, bw_content, src_rect.topLeft());
+                    }
                     bw_content.release();
                     applyFillZonesInPlace(foreground, fill_zones);
                     splitImage->setForegroundImage(foreground.toQImage());
                     foreground.release();
-                    
+
                     BinaryImage bw_empty(normalize_illumination_rect.size().expandedTo(QSize(1, 1)), WHITE);
                     if (maybe_normalized.format() == QImage::Format_Indexed8) {
                         combineMixed<uint8_t>(
@@ -836,12 +854,19 @@ namespace output {
                                                  PageId* p_pageId,
                                                  IntrusivePtr<Settings>* p_settings,
                                                  SplitImage* splitImage) const {
+        RenderParams const render_params(m_colorParams);
+
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
         if (m_outRect.isEmpty()) {
-            return BinaryImage(target_size, WHITE).toQImage();
+            QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
+            if (!render_params.splitOutput()) {
+                return emptyImage;
+            } else {
+                splitImage->setForegroundImage(emptyImage);
+                splitImage->setBackgroundImage(emptyImage.convertToFormat(QImage::Format_Indexed8));
+                return QImage();
+            }
         }
-
-        RenderParams const render_params(m_colorParams);
 
         QRect contentRect = m_contentRect;
         if (!render_params.whiteMargins()) {
@@ -1254,8 +1279,9 @@ namespace output {
                 dbg->add(out_image, "marginal dewarping");
             }
         }
-
         warped_gray_output = GrayImage();
+
+        fillExcept(normalized_original, normalize_illumination_crop_area, outsideBackgroundColor);
         if (render_params.whiteMargins()) {
             QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
             fillMarginsInPlace(normalized_original, orig_content_poly, outsideBackgroundColor);
@@ -1334,7 +1360,6 @@ namespace output {
                     speckles_image, m_dpi, status, dbg
             );
 
-            applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output);
             QImage tmp_image(dewarped_bw_content.toQImage());
             dewarped_bw_content.release();
 
@@ -1376,6 +1401,7 @@ namespace output {
                 } else {
                     orig_without_illumination = input.grayImage();
                 }
+                fillExcept(orig_without_illumination, normalize_illumination_crop_area, outsideBackgroundColor);
                 if (render_params.whiteMargins()) {
                     QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
                     fillMarginsInPlace(orig_without_illumination, orig_content_poly, outsideBackgroundColor);
@@ -1385,7 +1411,7 @@ namespace output {
                 }
 
                 status.throwIfCancelled();
-                
+
                 try {
                     dewarped = dewarp(
                             QTransform(), orig_without_illumination,
@@ -1455,10 +1481,9 @@ namespace output {
                 if (render_params.splitOutput()) {
                     BinaryImage foreground(dewarped_bw_content);
                     dewarped_bw_content.release();
-                    applyFillZonesInPlace(foreground, fill_zones, orig_to_output);
                     splitImage->setForegroundImage(foreground.toQImage());
                     foreground.release();
-                    
+
                     BinaryImage bw_empty(dewarped.size(), WHITE);
                     if (dewarped.format() == QImage::Format_Indexed8) {
                         combineMixed<uint8_t>(
@@ -1471,7 +1496,7 @@ namespace output {
                     }
                     bw_empty.release();
                     dewarped_bw_mask.release();
-                    
+
                     splitImage->setBackgroundImage(dewarped);
                     dewarped = QImage();
 
@@ -2092,6 +2117,34 @@ namespace output {
         return 0;
     }      // OutputGenerator::calcDominantBackgroundGrayLevel
 
+    void OutputGenerator::fillExcept(QImage& img, const QPolygonF& poly, const QColor& color) const {
+        if (poly.isEmpty()) {
+            return;
+        }
+        const QRectF imageRect = img.rect();
+        const QPolygonF correctedPoly = poly.intersected(imageRect);
+
+        QPainterPath outer_path;
+        outer_path.addRect(imageRect);
+        QPainterPath inner_path;
+        inner_path.addPolygon(correctedPoly);
+
+        QImage canvas(img.convertToFormat(QImage::Format_ARGB32_Premultiplied));
+
+        QPainter painter(&canvas);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setPen(Qt::NoPen);
+
+        painter.setBrush(color);
+        painter.drawPath(outer_path.subtracted(inner_path));
+
+        if ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()) {
+            img = toGrayscale(canvas);
+        } else {
+            img = canvas.convertToFormat(img.format());
+        }
+    }
+
     void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
             QPointF const&)> const& orig_to_output)
     const {
@@ -2285,7 +2338,7 @@ namespace output {
         rot.translate(-center.x(), -center.y());
 
         *image = imageproc::transform(*image, rot, image->rect(),
-                                           OutsidePixels::assumeWeakColor(Qt::white));
+                                      OutsidePixels::assumeWeakColor(Qt::white));
     }
 
     double OutputGenerator::maybe_deskew(QImage* p_dewarped, DewarpingMode dewarping_mode) const {
@@ -2305,7 +2358,7 @@ namespace output {
                 return angle_deg;
             }
         }
-        
+
         return .0;
     }
 }  // namespace output

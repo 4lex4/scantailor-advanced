@@ -20,11 +20,12 @@
 #include "ChangeDpiDialog.h"
 #include "ChangeDewarpingDialog.h"
 #include "ApplyColorsDialog.h"
-#include "Settings.h"
 #include "PictureZoneComparator.h"
 #include "FillZoneComparator.h"
+#include "OtsuBinarizationOptionsWidget.h"
+#include "SauvolaBinarizationOptionsWidget.h"
+#include "WolfBinarizationOptionsWidget.h"
 #include "../../Utils.h"
-#include "ScopedIncDec.h"
 #include <QToolTip>
 #include <tiff.h>
 
@@ -34,8 +35,7 @@ namespace output {
             : m_ptrSettings(settings),
               m_pageSelectionAccessor(page_selection_accessor),
               m_despeckleLevel(DESPECKLE_NORMAL),
-              m_lastTab(TAB_OUTPUT),
-              m_ignoreThresholdChanges(0) {
+              m_lastTab(TAB_OUTPUT) {
         setupUi(this);
 
         depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
@@ -44,6 +44,25 @@ namespace output {
         colorModeSelector->addItem(tr("Black and White"), ColorParams::BLACK_AND_WHITE);
         colorModeSelector->addItem(tr("Color / Grayscale"), ColorParams::COLOR_GRAYSCALE);
         colorModeSelector->addItem(tr("Mixed"), ColorParams::MIXED);
+
+        thresholdMethodBox->addItem(tr("Otsu"), BlackWhiteOptions::OTSU);
+        thresholdMethodBox->addItem(tr("Sauvola"), BlackWhiteOptions::SAUVOLA);
+        thresholdMethodBox->addItem(tr("Wolf"), BlackWhiteOptions::WOLF);
+
+        QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget
+                = new OtsuBinarizationOptionsWidget(m_ptrSettings);
+        QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
+                = new SauvolaBinarizationOptionsWidget(m_ptrSettings);
+        QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget
+                = new WolfBinarizationOptionsWidget(m_ptrSettings);
+
+        while (binarizationOptions->count() != 0) {
+            binarizationOptions->removeWidget(binarizationOptions->widget(0));
+        }
+        addBinarizationOptionsWidget(otsuBinarizationOptionsWidget);
+        addBinarizationOptionsWidget(sauvolaBinarizationOptionsWidget);
+        addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
+        binarizationOptionsChanged(binarizationOptions->currentIndex());
 
         pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
@@ -54,14 +73,6 @@ namespace output {
         tiffCompression->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
         tiffCompression->addItem(tr("Packbits"), COMPRESSION_PACKBITS);
         tiffCompression->addItem(tr("JPEG"), COMPRESSION_JPEG);
-
-        darkerThresholdLink->setText(
-                Utils::richTextForLink(darkerThresholdLink->text())
-        );
-        lighterThresholdLink->setText(
-                Utils::richTextForLink(lighterThresholdLink->text())
-        );
-        thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
 
         updateDpiDisplay();
         updateColorsDisplay();
@@ -74,6 +85,14 @@ namespace output {
         connect(
                 colorModeSelector, SIGNAL(currentIndexChanged(int)),
                 this, SLOT(colorModeChanged(int))
+        );
+        connect(
+                thresholdMethodBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(thresholdMethodChanged(int))
+        );
+        connect(
+                binarizationOptions, SIGNAL(currentChanged(int)),
+                this, SLOT(binarizationOptionsChanged(int))
         );
         connect(
                 pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
@@ -116,26 +135,6 @@ namespace output {
                 this, SLOT(colorForegroundToggled(bool))
         );
         connect(
-                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
-                this, SLOT(setLighterThreshold())
-        );
-        connect(
-                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
-                this, SLOT(setDarkerThreshold())
-        );
-        connect(
-                neutralThresholdBtn, SIGNAL(clicked()),
-                this, SLOT(setNeutralThreshold())
-        );
-        connect(
-                thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(bwThresholdChanged())
-        );
-        connect(
-                thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(bwThresholdChanged())
-        );
-        connect(
                 applyColorsButton, SIGNAL(clicked()),
                 this, SLOT(applyColorsButtonClicked())
         );
@@ -176,9 +175,7 @@ namespace output {
                 this, SLOT(depthPerceptionChangedSlot(int))
         );
 
-        thresholdSlider->setMinimum(-50);
-        thresholdSlider->setMaximum(50);
-        thresholLabel->setText(QString::number(thresholdSlider->value()));
+
     }
 
     OptionsWidget::~OptionsWidget() {
@@ -197,6 +194,11 @@ namespace output {
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
+        for (int i = 0; i < binarizationOptions->count(); i++) {
+            BinarizationOptionsWidget* widget =
+                    dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
+            widget->preUpdateUI(m_pageId);
+        }
     }
 
     void OptionsWidget::postUpdateUI() {
@@ -225,6 +227,19 @@ namespace output {
         m_colorParams.setColorMode((ColorParams::ColorMode) mode);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         updateColorsDisplay();
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::thresholdMethodChanged(int idx) {
+        const BlackWhiteOptions::BinarizationMethod method
+                = (BlackWhiteOptions::BinarizationMethod) thresholdMethodBox->itemData(idx).toInt();
+        BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
+        blackWhiteOptions.setBinarizationMethod(method);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        binarizationOptions->setCurrentIndex(idx);
+
         emit reloadRequested();
     }
 
@@ -287,52 +302,11 @@ namespace output {
         emit reloadRequested();
     }
 
-    void OptionsWidget::setLighterThreshold() {
-        thresholdSlider->setValue(thresholdSlider->value() - 1);
-    }
 
-    void OptionsWidget::setDarkerThreshold() {
-        thresholdSlider->setValue(thresholdSlider->value() + 1);
-    }
-
-    void OptionsWidget::setNeutralThreshold() {
-        thresholdSlider->setValue(0);
-    }
-
-    void OptionsWidget::bwThresholdChanged() {
-        int const value = thresholdSlider->value();
-        QString const tooltip_text(QString::number(value));
-        thresholdSlider->setToolTip(tooltip_text);
-
-        thresholLabel->setText(QString::number(value));
-
-        if (m_ignoreThresholdChanges) {
-            return;
-        }
-
-        QPoint const center(thresholdSlider->rect().center());
-        QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
-        tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
-        tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
-
-        if (thresholdSlider->isSliderDown()) {
-            return;
-        }
-
-        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
-        if (opt.thresholdAdjustment() == value) {
-            return;
-        }
-
-        opt.setThresholdAdjustment(value);
-        m_colorParams.setBlackWhiteOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+    void OptionsWidget::binarizationSettingsChanged() {
         emit reloadRequested();
-
         emit invalidateThumbnail(m_pageId);
-    }      // OptionsWidget::bwThresholdChanged
+    }
 
     void OptionsWidget::changeDpiButtonClicked() {
         ChangeDpiDialog* dialog = new ChangeDpiDialog(
@@ -677,7 +651,7 @@ namespace output {
         pictureShapeOptions->setVisible(picture_shape_visible);
         thresholdOptions->setVisible(threshold_options_visible);
         despecklePanel->setVisible(threshold_options_visible && m_lastTab != TAB_DEWARPING);
-        
+
         splittingOptions->setVisible(splitting_options_visible);
         splittingCB->setChecked(splitOptions.isSplitOutput());
         switch (splitOptions.getForegroundType()) {
@@ -690,6 +664,9 @@ namespace output {
         }
         colorForegroundRB->setEnabled(splitOptions.isSplitOutput());
         bwForegroundRB->setEnabled(splitOptions.isSplitOutput());
+
+        thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
+        binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
 
         if (picture_shape_visible) {
             int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);
@@ -714,9 +691,6 @@ namespace output {
                     despeckleAggressiveBtn->setChecked(true);
                     break;
             }
-
-            ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
-            thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
         }
 
         colorModeSelector->blockSignals(false);
@@ -789,9 +763,38 @@ namespace output {
 
         bwForegroundRB->setEnabled(checked);
         colorForegroundRB->setEnabled(checked);
-        
+
         m_colorParams.setSplittingOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
     }
+
+    void OptionsWidget::binarizationOptionsChanged(int idx) {
+        for (int i = 0; i < binarizationOptions->count(); i++) {
+            QWidget* currentWidget = binarizationOptions->widget(i);
+            currentWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+            currentWidget->resize(0, 0);
+
+            disconnect(
+                    currentWidget, SIGNAL(stateChanged()),
+                    this, SLOT(binarizationSettingsChanged())
+            );
+        }
+
+        QWidget* widget = binarizationOptions->widget(idx);
+        widget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        widget->adjustSize();
+        binarizationOptions->adjustSize();
+
+        connect(
+                widget, SIGNAL(stateChanged()),
+                this, SLOT(binarizationSettingsChanged())
+        );
+    }
+
+    void OptionsWidget::addBinarizationOptionsWidget(BinarizationOptionsWidget* widget) {
+        widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        binarizationOptions->addWidget(widget);
+    }
+
 }  // namespace output

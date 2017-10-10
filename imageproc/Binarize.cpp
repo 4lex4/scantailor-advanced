@@ -39,7 +39,7 @@ namespace imageproc {
         return BinaryImage(src, threshold);
     }
 
-    BinaryImage binarizeSauvola(QImage const& src, QSize const window_size) {
+    BinaryImage binarizeSauvola(QImage const& src, QSize const window_size, const double k) {
         if (window_size.isEmpty()) {
             throw std::invalid_argument("binarizeSauvola: invalid window_size");
         }
@@ -97,7 +97,6 @@ namespace imageproc {
                 double const variance = sqmean - mean * mean;
                 double const deviation = sqrt(fabs(variance));
 
-                double const k = 0.34;
                 double const threshold = mean * (1.0 + k * (deviation / 128.0 - 1.0));
 
                 uint32_t const msb = uint32_t(1) << 31;
@@ -119,7 +118,8 @@ namespace imageproc {
     BinaryImage binarizeWolf(QImage const& src,
                              QSize const window_size,
                              unsigned char const lower_bound,
-                             unsigned char const upper_bound) {
+                             unsigned char const upper_bound,
+                             const double k) {
         if (window_size.isEmpty()) {
             throw std::invalid_argument("binarizeWolf: invalid window_size");
         }
@@ -195,7 +195,6 @@ namespace imageproc {
             for (int x = 0; x < w; ++x) {
                 float const mean = means[y * w + x];
                 float const deviation = deviations[y * w + x];
-                double const k = 0.3;
                 double const a = 1.0 - deviation / max_deviation;
                 double const threshold = mean - k * a * (mean - min_gray_level);
 

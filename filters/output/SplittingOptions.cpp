@@ -41,9 +41,7 @@ namespace output {
     }
 
     SplittingOptions::ForegroundType SplittingOptions::parseForegroundType(const QString& str) {
-        if (str == "bw") {
-            return BLACK_AND_WHITE_FOREGROUND;
-        } else if (str == "color") {
+        if (str == "color") {
             return COLOR_FOREGROUND;
         } else {
             return BLACK_AND_WHITE_FOREGROUND;

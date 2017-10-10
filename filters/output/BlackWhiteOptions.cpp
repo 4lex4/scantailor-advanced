@@ -24,14 +24,26 @@ namespace output {
             : m_thresholdAdjustment(0),
               savitzkyGolaySmoothingEnabled(true),
               morphologicalSmoothingEnabled(true),
-              m_normalizeIllumination(true) {
+              m_normalizeIllumination(true),
+              windowSize(51),
+              sauvolaCoef(0.34),
+              wolfLowerBound(1),
+              wolfUpperBound(254),
+              wolfCoef(0.3),
+              binarizationMethod(OTSU) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
             : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()),
               savitzkyGolaySmoothingEnabled(el.attribute("savitzkyGolaySmoothing") == "1"),
               morphologicalSmoothingEnabled(el.attribute("morphologicalSmoothing") == "1"),
-              m_normalizeIllumination(el.attribute("normalizeIlluminationBW") == "1") {
+              m_normalizeIllumination(el.attribute("normalizeIlluminationBW") == "1"),
+              windowSize(el.attribute("windowSize").toInt()),
+              sauvolaCoef(el.attribute("sauvolaCoef").toDouble()),
+              wolfLowerBound(el.attribute("wolfLowerBound").toInt()),
+              wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
+              wolfCoef(el.attribute("wolfCoef").toDouble()),
+              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
@@ -40,6 +52,12 @@ namespace output {
         el.setAttribute("savitzkyGolaySmoothing", savitzkyGolaySmoothingEnabled ? "1" : "0");
         el.setAttribute("morphologicalSmoothing", morphologicalSmoothingEnabled ? "1" : "0");
         el.setAttribute("normalizeIlluminationBW", m_normalizeIllumination ? "1" : "0");
+        el.setAttribute("windowSize", windowSize);
+        el.setAttribute("sauvolaCoef", sauvolaCoef);
+        el.setAttribute("wolfLowerBound", wolfLowerBound);
+        el.setAttribute("wolfUpperBound", wolfUpperBound);
+        el.setAttribute("wolfCoef", wolfCoef);
+        el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
 
         return el;
     }
@@ -48,7 +66,13 @@ namespace output {
         return (m_thresholdAdjustment == other.m_thresholdAdjustment)
                && (savitzkyGolaySmoothingEnabled == other.savitzkyGolaySmoothingEnabled)
                && (morphologicalSmoothingEnabled == other.morphologicalSmoothingEnabled)
-               && (m_normalizeIllumination == other.m_normalizeIllumination);
+               && (m_normalizeIllumination == other.m_normalizeIllumination)
+               && (windowSize == other.windowSize)
+               && (sauvolaCoef == other.sauvolaCoef)
+               && (wolfLowerBound == other.wolfLowerBound)
+               && (wolfUpperBound == other.wolfUpperBound)
+               && (wolfCoef == other.wolfCoef)
+               && (binarizationMethod == other.binarizationMethod);
     }
 
     bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
@@ -69,5 +93,80 @@ namespace output {
 
     void BlackWhiteOptions::setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled) {
         BlackWhiteOptions::morphologicalSmoothingEnabled = morphologicalSmoothingEnabled;
+    }
+
+    int BlackWhiteOptions::getWindowSize() const {
+        return windowSize;
+    }
+
+    void BlackWhiteOptions::setWindowSize(int windowSize) {
+        BlackWhiteOptions::windowSize = windowSize;
+    }
+
+    double BlackWhiteOptions::getSauvolaCoef() const {
+        return sauvolaCoef;
+    }
+
+    void BlackWhiteOptions::setSauvolaCoef(double sauvolaCoef) {
+        BlackWhiteOptions::sauvolaCoef = sauvolaCoef;
+    }
+
+    int BlackWhiteOptions::getWolfLowerBound() const {
+        return wolfLowerBound;
+    }
+
+    void BlackWhiteOptions::setWolfLowerBound(int wolfLowerBound) {
+        BlackWhiteOptions::wolfLowerBound = wolfLowerBound;
+    }
+
+    int BlackWhiteOptions::getWolfUpperBound() const {
+        return wolfUpperBound;
+    }
+
+    void BlackWhiteOptions::setWolfUpperBound(int wolfUpperBound) {
+        BlackWhiteOptions::wolfUpperBound = wolfUpperBound;
+    }
+
+    double BlackWhiteOptions::getWolfCoef() const {
+        return wolfCoef;
+    }
+
+    void BlackWhiteOptions::setWolfCoef(double wolfCoef) {
+        BlackWhiteOptions::wolfCoef = wolfCoef;
+    }
+    
+    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
+        return binarizationMethod;
+    }
+
+    void BlackWhiteOptions::setBinarizationMethod(BlackWhiteOptions::BinarizationMethod binarizationMethod) {
+        BlackWhiteOptions::binarizationMethod = binarizationMethod;
+    }
+
+    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
+        if (str == "wolf") {
+            return WOLF;
+        } else if (str == "sauvola") {
+            return SAUVOLA;
+        } else {
+            return OTSU;
+        }
+    }
+
+    QString BlackWhiteOptions::formatBinarizationMethod(BlackWhiteOptions::BinarizationMethod type) {
+        QString str = "";
+        switch (type) {
+            case OTSU:
+                str = "otsu";
+                break;
+            case SAUVOLA:
+                str = "sauvola";
+                break;
+            case WOLF:
+                str = "wolf";
+                break;
+        }
+
+        return str;
     }
 }  // namespace output

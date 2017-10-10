@@ -26,11 +26,21 @@ class QDomElement;
 namespace output {
     class BlackWhiteOptions {
     public:
+        enum BinarizationMethod {
+            OTSU,
+            SAUVOLA,
+            WOLF
+        };
+
         BlackWhiteOptions();
 
         explicit BlackWhiteOptions(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
+
+        bool operator==(BlackWhiteOptions const& other) const;
+
+        bool operator!=(BlackWhiteOptions const& other) const;
 
         int thresholdAdjustment() const {
             return m_thresholdAdjustment;
@@ -56,15 +66,45 @@ namespace output {
 
         void setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled);
 
-        bool operator==(BlackWhiteOptions const& other) const;
+        int getWindowSize() const;
 
-        bool operator!=(BlackWhiteOptions const& other) const;
+        void setWindowSize(int windowSize);
+
+        double getSauvolaCoef() const;
+
+        void setSauvolaCoef(double sauvolaCoef);
+
+        int getWolfLowerBound() const;
+
+        void setWolfLowerBound(int wolfLowerBound);
+
+        int getWolfUpperBound() const;
+
+        void setWolfUpperBound(int wolfUpperBound);
+
+        double getWolfCoef() const;
+
+        void setWolfCoef(double wolfCoef);
+
+        BinarizationMethod getBinarizationMethod() const;
+
+        void setBinarizationMethod(BinarizationMethod binarizationMethod);
 
     private:
+        static BinarizationMethod parseBinarizationMethod(const QString& str);
+
+        static QString formatBinarizationMethod(BinarizationMethod type);
+
         int m_thresholdAdjustment;
         bool savitzkyGolaySmoothingEnabled;
         bool morphologicalSmoothingEnabled;
         bool m_normalizeIllumination;
+        int windowSize;
+        double sauvolaCoef;
+        int wolfLowerBound;
+        int wolfUpperBound;
+        double wolfCoef;
+        BinarizationMethod binarizationMethod;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

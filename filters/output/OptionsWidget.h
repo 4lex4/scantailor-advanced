@@ -31,7 +31,12 @@
 #include "Dpi.h"
 #include "ImageViewTab.h"
 #include "Params.h"
+#include "BinarizationOptionsWidget.h"
 #include <set>
+#include <QtWidgets/QStackedLayout>
+#include <QtCore/QPointer>
+#include <QtCore/QObjectCleanupHandler>
+#include <memory>
 
 namespace dewarping {
     class DistortionModel;
@@ -84,6 +89,8 @@ namespace output {
 
         void colorModeChanged(int idx);
 
+        void thresholdMethodChanged(int idx);
+
         void pictureShapeChanged(int idx);
 
         void tiffCompressionChanged(int idx);
@@ -104,13 +111,7 @@ namespace output {
 
         void colorForegroundToggled(bool checked);
 
-        void setLighterThreshold();
-
-        void setDarkerThreshold();
-
-        void setNeutralThreshold();
-
-        void bwThresholdChanged();
+        void binarizationSettingsChanged();
 
         void despeckleOffSelected();
 
@@ -134,6 +135,8 @@ namespace output {
 
         void depthPerceptionChangedSlot(int val);
 
+        void binarizationOptionsChanged(int idx);
+
     private:
         void handleDespeckleLevelChange(DespeckleLevel level);
 
@@ -145,6 +148,8 @@ namespace output {
 
         void updateDewarpingDisplay();
 
+        void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+
         IntrusivePtr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
@@ -155,7 +160,6 @@ namespace output {
         DewarpingMode m_dewarpingMode;
         DespeckleLevel m_despeckleLevel;
         ImageViewTab m_lastTab;
-        int m_ignoreThresholdChanges;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

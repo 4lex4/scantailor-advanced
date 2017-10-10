@@ -51,7 +51,7 @@ SET(
         DewarpingMode.cpp DewarpingMode.h
         ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
         DepthPerception.cpp DepthPerception.h
-        SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h)
+        SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h BinarizationOptionsWidget.h)
 SOURCE_GROUP("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

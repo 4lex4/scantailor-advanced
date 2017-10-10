@@ -502,7 +502,7 @@ namespace output {
                     normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
             );
         }
-        fillExcept(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
+        fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
 
         status.throwIfCancelled();
 
@@ -524,7 +524,7 @@ namespace output {
                 status.throwIfCancelled();
 
                 BinaryImage bw_content(
-                        binarize(maybe_smoothed, normalize_illumination_crop_area)
+                        binarize(maybe_smoothed)
                 );
                 maybe_smoothed = QImage();
                 if (dbg) {
@@ -657,7 +657,7 @@ namespace output {
                             normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
                     );
                 }
-                fillExcept(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
+                fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
             }
 
             status.throwIfCancelled();
@@ -673,7 +673,7 @@ namespace output {
                     }
                 }
                 BinaryImage bw_content(
-                        binarize(maybe_smoothed, normalize_illumination_crop_area, &bw_mask)
+                        binarize(maybe_smoothed, bw_mask)
                 );
                 maybe_smoothed = QImage();
                 if (dbg) {
@@ -1281,7 +1281,7 @@ namespace output {
         }
         warped_gray_output = GrayImage();
 
-        fillExcept(normalized_original, normalize_illumination_crop_area, outsideBackgroundColor);
+        fillMarginsInPlace(normalized_original, normalize_illumination_crop_area, outsideBackgroundColor);
         if (render_params.whiteMargins()) {
             QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
             fillMarginsInPlace(normalized_original, orig_content_poly, outsideBackgroundColor);
@@ -1338,7 +1338,9 @@ namespace output {
             }
             dewarped = QImage();
 
-            BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+            BinaryImage dewarped_bw_content(
+                    binarize(dewarped_and_maybe_smoothed)
+            );
             dewarped_and_maybe_smoothed = QImage();
             if (dbg) {
                 dbg->add(dewarped_bw_content, "dewarped_bw_content");
@@ -1401,7 +1403,7 @@ namespace output {
                 } else {
                     orig_without_illumination = input.grayImage();
                 }
-                fillExcept(orig_without_illumination, normalize_illumination_crop_area, outsideBackgroundColor);
+                fillMarginsInPlace(orig_without_illumination, normalize_illumination_crop_area, outsideBackgroundColor);
                 if (render_params.whiteMargins()) {
                     QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
                     fillMarginsInPlace(orig_without_illumination, orig_content_poly, outsideBackgroundColor);
@@ -1450,7 +1452,9 @@ namespace output {
                         dbg->add(dewarped_and_maybe_smoothed, "smoothed");
                     }
                 }
-                BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+                BinaryImage dewarped_bw_content(
+                        binarize(dewarped_and_maybe_smoothed, dewarped_bw_mask)
+                );
                 dewarped_and_maybe_smoothed = QImage();
                 if (dbg) {
                     dbg->add(dewarped_bw_content, "dewarped_bw_content");
@@ -1464,10 +1468,6 @@ namespace output {
                         dbg->add(dewarped_bw_content, "edges_smoothed");
                     }
                 }
-
-                status.throwIfCancelled();
-
-                rasterOp<RopAnd<RopSrc, RopDst>>(dewarped_bw_content, dewarped_bw_mask);
 
                 status.throwIfCancelled();
 
@@ -1667,6 +1667,16 @@ namespace output {
     }
 
     void OutputGenerator::fillMarginsInPlace(QImage& image, QPolygonF const& content_poly, QColor const& color) {
+        if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
+            BinaryImage binaryImage(image);
+            PolygonRasterizer::fillExcept(
+                    binaryImage, color.lightnessF() >= 0.5 ? WHITE : BLACK, content_poly, Qt::WindingFill
+            );
+            image = binaryImage.toQImage();
+            
+            return;
+        }
+
         if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
             PolygonRasterizer::grayFillExcept(
                     image, qGray(color.rgb()), content_poly, Qt::WindingFill
@@ -1683,7 +1693,7 @@ namespace output {
 
         {
             QPainter painter(&image);
-            painter.setRenderHint(QPainter::Antialiasing);
+            painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setBrush(color);
             painter.setPen(Qt::NoPen);
 
@@ -1828,10 +1838,44 @@ namespace output {
         }
     }
 
+    BinaryImage OutputGenerator::binarize(QImage const& image) const {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        BlackWhiteOptions::BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
+
+        BinaryImage binarized;
+        switch (binarizationMethod) {
+            case BlackWhiteOptions::OTSU: {
+                GrayscaleHistogram hist(image);
+                BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
+
+                binarized = BinaryImage(image, adjustThreshold(bw_thresh));
+                break;
+            }
+            case BlackWhiteOptions::SAUVOLA: {
+                QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(),
+                                          blackWhiteOptions.getWindowSize());
+                double sauvolaCoef = blackWhiteOptions.getSauvolaCoef();
+
+                binarized = imageproc::binarizeSauvola(image, windowsSize, sauvolaCoef);
+                break;
+            }
+            case BlackWhiteOptions::WOLF: {
+                QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(),
+                                          blackWhiteOptions.getWindowSize());
+                unsigned char lowerBound = (unsigned char) blackWhiteOptions.getWolfLowerBound();
+                unsigned char upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
+                double wolfCoef = blackWhiteOptions.getWolfCoef();
+                
+                binarized = imageproc::binarizeWolf(image, windowsSize, lowerBound, upperBound, wolfCoef);
+                break;
+            }
+        }
+
+        return binarized;
+    }
+
     BinaryImage OutputGenerator::binarize(QImage const& image, BinaryImage const& mask) const {
-        GrayscaleHistogram hist(image, mask);
-        BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
-        BinaryImage binarized(image, adjustThreshold(bw_thresh));
+        BinaryImage binarized = binarize(image);
 
         rasterOp<RopAnd<RopSrc, RopDst>>(binarized, mask);
 
@@ -2116,34 +2160,6 @@ namespace output {
 
         return 0;
     }      // OutputGenerator::calcDominantBackgroundGrayLevel
-
-    void OutputGenerator::fillExcept(QImage& img, const QPolygonF& poly, const QColor& color) const {
-        if (poly.isEmpty()) {
-            return;
-        }
-        const QRectF imageRect = img.rect();
-        const QPolygonF correctedPoly = poly.intersected(imageRect);
-
-        QPainterPath outer_path;
-        outer_path.addRect(imageRect);
-        QPainterPath inner_path;
-        inner_path.addPolygon(correctedPoly);
-
-        QImage canvas(img.convertToFormat(QImage::Format_ARGB32_Premultiplied));
-
-        QPainter painter(&canvas);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.setPen(Qt::NoPen);
-
-        painter.setBrush(color);
-        painter.drawPath(outer_path.subtracted(inner_path));
-
-        if ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()) {
-            img = toGrayscale(canvas);
-        } else {
-            img = canvas.convertToFormat(img.format());
-        }
-    }
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
             QPointF const&)> const& orig_to_output)

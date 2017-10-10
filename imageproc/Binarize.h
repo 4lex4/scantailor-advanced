@@ -52,7 +52,7 @@ namespace imageproc {
  *
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
  * http: */
-    BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
+    BinaryImage binarizeSauvola(QImage const& src, QSize window_size, double k = 0.34);
 
 /**
  * \brief Image binarization using Wolf's local thresholding method.
@@ -68,7 +68,8 @@ namespace imageproc {
     BinaryImage binarizeWolf(QImage const& src,
                              QSize window_size,
                              unsigned char lower_bound = 1,
-                             unsigned char upper_bound = 254);
+                             unsigned char upper_bound = 254,
+                             double k = 0.3);
 
     BinaryImage peakThreshold(QImage const& image);
 }

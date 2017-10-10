@@ -233,6 +233,8 @@ namespace output {
                                                              QPolygonF const& crop_area,
                                                              imageproc::BinaryImage const* mask = 0) const;
 
+        BinaryImage binarize(QImage const& image) const;
+
         imageproc::BinaryImage binarize(QImage const& image, imageproc::BinaryImage const& mask) const;
 
         imageproc::BinaryImage binarize(QImage const& image,
@@ -270,8 +272,6 @@ namespace output {
         QImage transformAndNormalizeIllumination2(QImage const& gray_input,
                                                   DebugImages* dbg,
                                                   QImage const* morph_background = 0) const;
-
-        void fillExcept(QImage& img, const QPolygonF& poly, const QColor& color) const;
 
         void applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
                 QPointF const&)> const& orig_to_output)

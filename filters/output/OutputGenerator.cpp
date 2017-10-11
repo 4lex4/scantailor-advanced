@@ -645,6 +645,16 @@ namespace output {
                 dbg->add(bw_mask, "bw_mask with zones");
             }
 
+            if (render_params.splitOutput()) {
+                BinaryImage post_bw_mask(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
+                if (!contentRect.isEmpty()) {
+                    QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+                    QRect const dst_rect(contentRect);
+                    rasterOp<RopSrc>(post_bw_mask, dst_rect, bw_mask, src_rect.topLeft());
+                }
+                splitImage->setMask(post_bw_mask, render_params.needBinarization());
+            }
+
             if (!render_params.normalizeIlluminationColor()) {
                 if (input.origImage().allGray()) {
                     maybe_normalized = transformToGray(
@@ -702,51 +712,6 @@ namespace output {
 
                 status.throwIfCancelled();
 
-                if (render_params.splitOutput()) {
-                    BinaryImage foreground(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
-                    if (!contentRect.isEmpty()) {
-                        QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-                        QRect const dst_rect(contentRect);
-                        rasterOp<RopSrc>(foreground, dst_rect, bw_content, src_rect.topLeft());
-                    }
-                    bw_content.release();
-                    applyFillZonesInPlace(foreground, fill_zones);
-                    splitImage->setForegroundImage(foreground.toQImage());
-                    foreground.release();
-
-                    BinaryImage bw_empty(normalize_illumination_rect.size().expandedTo(QSize(1, 1)), WHITE);
-                    if (maybe_normalized.format() == QImage::Format_Indexed8) {
-                        combineMixed<uint8_t>(
-                                maybe_normalized, bw_empty, bw_mask
-                        );
-                    } else {
-                        combineMixed<uint32_t>(
-                                maybe_normalized, bw_empty, bw_mask
-                        );
-                    }
-                    bw_empty.release();
-                    bw_mask.release();
-
-                    QImage tmp(target_size, maybe_normalized.format());
-                    if (tmp.format() == QImage::Format_Indexed8) {
-                        tmp.setColorTable(createGrayscalePalette());
-                        uint8_t const color = render_params.mixedOutput() ? 0xff : 0xfe;
-                        tmp.fill(color);
-                    } else {
-                        uint32_t const color = render_params.mixedOutput() ? 0xffffffff : 0xfffefefe;
-                        tmp.fill(color);
-                    }
-                    if (!contentRect.isEmpty()) {
-                        QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                        QRect const dst_rect(contentRect);
-                        drawOver(tmp, dst_rect, maybe_normalized, src_rect);
-                    }
-                    applyFillZonesInPlace(tmp, fill_zones);
-                    splitImage->setBackgroundImage(tmp);
-
-                    return QImage();
-                }
-
                 if (maybe_normalized.format() == QImage::Format_Indexed8) {
                     combineMixed<uint8_t>(
                             maybe_normalized, bw_content, bw_mask
@@ -759,54 +724,6 @@ namespace output {
                             maybe_normalized, bw_content, bw_mask
                     );
                 }
-            } else if (render_params.splitOutput()) {
-                QImage foreground(maybe_normalized);
-                maybe_normalized = QImage();
-                QImage background(foreground);
-                BinaryImage bw_empty(normalize_illumination_rect.size().expandedTo(QSize(1, 1)), WHITE);
-                if (background.format() == QImage::Format_Indexed8) {
-                    combineMixed<uint8_t>(
-                            foreground, bw_empty, bw_mask.inverted(), false
-                    );
-                    combineMixed<uint8_t>(
-                            background, bw_empty, bw_mask
-                    );
-                } else {
-                    combineMixed<uint32_t>(
-                            foreground, bw_empty, bw_mask.inverted(), false
-                    );
-                    combineMixed<uint32_t>(
-                            background, bw_empty, bw_mask
-                    );
-                }
-                bw_empty.release();
-                bw_mask.release();
-
-                splitImage->setForegroundImage(foreground);
-                foreground = QImage();
-                splitImage->setBackgroundImage(background);
-                background = QImage();
-
-                splitImage->applyToLayerImages([&](QImage& img) {
-                    QImage tmp(target_size, img.format());
-                    if (tmp.format() == QImage::Format_Indexed8) {
-                        tmp.setColorTable(createGrayscalePalette());
-                        uint8_t const color = render_params.mixedOutput() ? 0xff : 0xfe;
-                        tmp.fill(color);
-                    } else {
-                        uint32_t const color = render_params.mixedOutput() ? 0xffffffff : 0xfffefefe;
-                        tmp.fill(color);
-                    }
-                    if (!contentRect.isEmpty()) {
-                        QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                        QRect const dst_rect(contentRect);
-                        drawOver(tmp, dst_rect, img, src_rect);
-                    }
-                    applyFillZonesInPlace(tmp, fill_zones);
-                    img = tmp;
-                });
-
-                return QImage();
             }
         }
 
@@ -836,6 +753,12 @@ namespace output {
         maybe_normalized = QImage();
 
         applyFillZonesInPlace(dst, fill_zones);
+
+        if (render_params.splitOutput()) {
+            splitImage->setBackgroundImage(dst);
+
+            return QImage();
+        }
 
         return dst;
     }      // OutputGenerator::processWithoutDewarping
@@ -1442,6 +1365,10 @@ namespace output {
             dewarped_bw_mask = BinaryImage(dewarped_bw_mask_deskewed);
             dewarped_bw_mask_deskewed = QImage();
 
+            if (render_params.splitOutput()) {
+                splitImage->setMask(dewarped_bw_mask, render_params.needBinarization());
+            }
+
             if (render_params.needBinarization()) {
                 QImage dewarped_and_maybe_smoothed;
                 if (!render_params.needSavitzkyGolaySmoothing()) {
@@ -1478,35 +1405,6 @@ namespace output {
 
                 status.throwIfCancelled();
 
-                if (render_params.splitOutput()) {
-                    BinaryImage foreground(dewarped_bw_content);
-                    dewarped_bw_content.release();
-                    splitImage->setForegroundImage(foreground.toQImage());
-                    foreground.release();
-
-                    BinaryImage bw_empty(dewarped.size(), WHITE);
-                    if (dewarped.format() == QImage::Format_Indexed8) {
-                        combineMixed<uint8_t>(
-                                dewarped, bw_empty, dewarped_bw_mask
-                        );
-                    } else {
-                        combineMixed<uint32_t>(
-                                dewarped, bw_empty, dewarped_bw_mask
-                        );
-                    }
-                    bw_empty.release();
-                    dewarped_bw_mask.release();
-
-                    splitImage->setBackgroundImage(dewarped);
-                    dewarped = QImage();
-
-                    splitImage->setForegroundImage(
-                            BinaryImage(splitImage->getForegroundImage(), bw_threshold).toQImage()
-                    );
-
-                    return QImage();
-                }
-
                 if (dewarped.format() == QImage::Format_Indexed8) {
                     combineMixed<uint8_t>(
                             dewarped, dewarped_bw_content, dewarped_bw_mask
@@ -1519,36 +1417,13 @@ namespace output {
                             dewarped, dewarped_bw_content, dewarped_bw_mask
                     );
                 }
-            } else if (render_params.splitOutput()) {
-                QImage foreground(dewarped);
-                dewarped = QImage();
-                QImage background(foreground);
-                BinaryImage bw_empty(background.size(), WHITE);
-                if (background.format() == QImage::Format_Indexed8) {
-                    combineMixed<uint8_t>(
-                            foreground, bw_empty, dewarped_bw_mask.inverted(), false
-                    );
-                    combineMixed<uint8_t>(
-                            background, bw_empty, dewarped_bw_mask
-                    );
-                } else {
-                    combineMixed<uint32_t>(
-                            foreground, bw_empty, dewarped_bw_mask.inverted(), false
-                    );
-                    combineMixed<uint32_t>(
-                            background, bw_empty, dewarped_bw_mask
-                    );
-                }
-                bw_empty.release();
-                dewarped_bw_mask.release();
-
-                splitImage->setForegroundImage(foreground);
-                foreground = QImage();
-                splitImage->setBackgroundImage(background);
-                background = QImage();
-
-                return QImage();
             }
+        }
+
+        if (render_params.splitOutput()) {
+            splitImage->setBackgroundImage(dewarped);
+
+            return QImage();
         }
 
         return dewarped;

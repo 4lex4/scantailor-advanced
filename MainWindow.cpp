@@ -1433,7 +1433,7 @@ void MainWindow::showAboutDialog() {
     Ui::AboutDialog ui;
     QDialog* dialog = new QDialog(this);
     ui.setupUi(dialog);
-    ui.version->setText(QString("build from ") + QString::fromUtf8(VERSION));
+    ui.version->setText(QString(tr("version ")) + QString::fromUtf8(VERSION));
 
     QResource license(":/GPLv3.html");
     ui.licenseViewer->setHtml(QString::fromUtf8((char const*) license.data(), license.size()));

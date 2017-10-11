@@ -26,6 +26,7 @@
 
 #include "CommandLine.h"
 #include "ColorSchemeManager.h"
+#include "LightScheme.h"
 
 int main(int argc, char** argv) {
     Application app(argc, argv);
@@ -82,7 +83,17 @@ int main(int argc, char** argv) {
     TiffMetadataLoader::registerMyself();
     JpegMetadataLoader::registerMyself();
 
-    ColorSchemeManager::instance()->setColorScheme(DarkScheme());
+    {
+        QString val = settings.value("settings/color_scheme", "dark").toString();
+        std::unique_ptr<ColorScheme> scheme;
+        if (val == "light") {
+            scheme.reset(new LightScheme);
+        } else {
+            scheme.reset(new DarkScheme);
+        }
+        
+        ColorSchemeManager::instance()->setColorScheme(*scheme.release());
+    }
 
     MainWindow* main_wnd = new MainWindow();
     main_wnd->setAttribute(Qt::WA_DeleteOnClose);

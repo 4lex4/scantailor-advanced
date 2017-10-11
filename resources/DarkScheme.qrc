@@ -30,5 +30,11 @@
 		<file>dark_scheme/icon_down_arrow_pressed.png</file>
 		<file>dark_scheme/icon_up_arrow_pressed.png</file>
 		<file>dark_scheme/icon_slider_handle.png</file>
+		<file>dark_scheme/icon_close_disabled.png</file>
+		<file>dark_scheme/icon_undock_disabled.png</file>
+		<file>dark_scheme/icon_window_close_disabled.png</file>
+		<file>dark_scheme/icon_window_maximize_disabled.png</file>
+		<file>dark_scheme/icon_window_minimize_disabled.png</file>
+		<file>dark_scheme/icon_window_restore_disabled.png</file>
     </qresource>
 </RCC>

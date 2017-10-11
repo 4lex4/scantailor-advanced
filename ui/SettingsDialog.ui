@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>318</width>
-    <height>112</height>
+    <height>160</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,24 +15,63 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="enableOpenglCb">
-     <property name="text">
-      <string>Accelerate user interface with OpenGL</string>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string/>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="openglDeviceLabel">
-     <property name="text">
-      <string>Device: %1</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="AutoSaveProject">
-     <property name="text">
-      <string>Auto-save the existing project</string>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="enableOpenglCb">
+        <property name="text">
+         <string>Accelerate user interface with OpenGL</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="openglDeviceLabel">
+        <property name="text">
+         <string>Device: %1</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="AutoSaveProject">
+        <property name="text">
+         <string>Auto-save the existing project</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="colorSchemeLabel">
+          <property name="text">
+           <string>Color Scheme: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="colorSchemeBox"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+     <zorder>enableOpenglCb</zorder>
+     <zorder>AutoSaveProject</zorder>
+     <zorder>openglDeviceLabel</zorder>
     </widget>
    </item>
    <item>

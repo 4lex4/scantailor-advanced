@@ -25,7 +25,8 @@ std::unique_ptr<QPalette> DarkScheme::getPalette() const {
     darkPalette->setColor(QPalette::Mid, QColor(0x33, 0x33, 0x33));
     darkPalette->setColor(QPalette::Shadow, QColor(0x26, 0x26, 0x26));
     darkPalette->setColor(QPalette::Button, darkPalette->color(QPalette::Base));
-    darkPalette->setColor(QPalette::Disabled, QPalette::Button, darkPalette->color(QPalette::Disabled, QPalette::Base));
+    darkPalette->setColor(QPalette::Disabled, QPalette::Button,
+                          darkPalette->color(QPalette::Disabled, QPalette::Base));
     darkPalette->setColor(QPalette::ButtonText, darkPalette->color(QPalette::WindowText));
     darkPalette->setColor(QPalette::Disabled, QPalette::ButtonText,
                           darkPalette->color(QPalette::Disabled, QPalette::WindowText));

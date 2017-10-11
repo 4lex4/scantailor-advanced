@@ -39,6 +39,7 @@ private slots:
 
     void OnCheckAutoSaveProject(bool);
 
+    void onColorSchemeChanged(int idx);
 private:
     Ui::SettingsDialog ui;
 };

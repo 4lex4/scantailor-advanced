@@ -111,8 +111,8 @@ font-weight:bold;</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>270</width>
-            <height>161</height>
+            <width>444</width>
+            <height>261</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -176,6 +176,13 @@ font-weight:bold;</string>
               <widget class="QLabel" name="label_15">
                <property name="text">
                 <string>Petr Kovář - Command line interface, ver. Enhanced</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>DikBSD - ver. Plus</string>
                </property>
               </widget>
              </item>

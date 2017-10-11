@@ -1199,13 +1199,13 @@ std::unique_ptr<ThumbnailSequence::LabelGroup>
 ThumbnailSequence::Impl::getLabelGroup(PageInfo const& page_info) {
     PageId const& page_id = page_info.id();
     QFileInfo const file_info(page_id.imageId().filePath());
-    QString const file_name(file_info.fileName());
+    QString const file_name(file_info.baseName());
 
     QString text;
-    if (file_name.size() <= 20) {
+    if (file_name.size() <= 30) {
         text = file_name;
     } else {
-        text = "..." + file_name.right(20);
+        text = "..." + file_name.right(30);
     }
     if (page_info.imageId().isMultiPageFile()) {
         text = ThumbnailSequence::tr(

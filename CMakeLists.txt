@@ -349,7 +349,7 @@ ADD_SUBDIRECTORY(filters/select_content)
 ADD_SUBDIRECTORY(filters/page_layout)
 ADD_SUBDIRECTORY(filters/output)
 
-SET(resource_files "resources/resources.qrc" "resources/DarkScheme.qrc")
+SET(resource_files "resources/resources.qrc" "resources/DarkScheme.qrc" "resources/LightScheme.qrc")
 SET(resource_sources)
 FOREACH (resource_file ${resource_files})
     QT5_ADD_RESOURCES(resource_sources ${resource_file})
@@ -457,6 +457,7 @@ SET(
         gui_only_sources
         Application.cpp Application.h
 		DarkScheme.cpp DarkScheme.h
+        LightScheme.cpp LightScheme.h
         ColorSchemeManager.cpp ColorSchemeManager.h
         SkinnedButton.cpp SkinnedButton.h
         RelinkablePathVisualization.cpp RelinkablePathVisualization.h

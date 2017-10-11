@@ -19,6 +19,7 @@
 #include "SettingsDialog.h"
 #include "OpenGLSupport.h"
 #include <QSettings>
+#include <QtWidgets/QMessageBox>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
         : QDialog(parent) {
@@ -39,9 +40,22 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
     }
 
+    ui.colorSchemeBox->addItem(tr("Dark"));
+    ui.colorSchemeBox->addItem(tr("Light"));
+    QString val = settings.value("settings/color_scheme", "dark").toString();
+    if (val == "light") {
+        ui.colorSchemeBox->setCurrentIndex(1);
+    } else {
+        ui.colorSchemeBox->setCurrentIndex(0);
+    }
+
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
     connect(ui.AutoSaveProject, SIGNAL(toggled(bool)), this, SLOT(OnCheckAutoSaveProject(bool)));
+    connect(
+            ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(onColorSchemeChanged(int))
+    );
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -58,4 +72,19 @@ void SettingsDialog::OnCheckAutoSaveProject(bool state) {
     settings.setValue("settings/auto_save_project", state);
 
     emit AutoSaveProjectStateSignal(state);
+}
+
+void SettingsDialog::onColorSchemeChanged(int idx) {
+    QSettings settings;
+
+    if (idx == 0) {
+        settings.setValue("settings/color_scheme", "dark");
+    } else if (idx == 1) {
+        settings.setValue("settings/color_scheme", "light");
+    }
+
+    QMessageBox::information(
+            this, tr("Information"),
+            tr("ScanTailor need to be restarted to apply the color scheme changes.")
+    );
 }

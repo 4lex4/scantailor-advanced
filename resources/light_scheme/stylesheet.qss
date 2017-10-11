@@ -53,6 +53,7 @@ QCheckBox::indicator, QTreeView::indicator, QTableView::indicator, QGroupBox::in
 QRadioButton::indicator, QMenu::indicator:exclusive {
     width: 13px;
     height: 13px;
+    margin: 0.1em 0px 0.1em 0px;
 }
 
 QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indicator:unchecked, QGroupBox::indicator:unchecked,
@@ -60,7 +61,6 @@ QMenu::indicator:non-exclusive:unchecked {
 	border: 1px solid #cccccc;
 	background-color: palette(base);
 	border-radius: 3px;
-	margin: 0.1em 0px 0.1em 0px;
 }
 
 QCheckBox::indicator:unchecked:hover, QTreeView::indicator:unchecked:hover, QTableView::indicator:unchecked:hover, QGroupBox::indicator:unchecked:hover {
@@ -139,7 +139,6 @@ QMenu::indicator:exclusive:unchecked {
     border: 1px solid #cccccc;
 	background-color: palette(base);
 	border-radius: 0.5em;
-	margin: 0.1em 0px 0.1em 0px;
 }
 
 QRadioButton::indicator:unchecked:hover {
@@ -517,7 +516,7 @@ QComboBox::down-arrow {
 }
 
 QComboBox QAbstractItemView {
-	border: 1px solid #bfbfbf;
+	border: none;
 	padding: 0.2ex 0.2ex 0.2ex 0.2ex;
 	selection-background-color: #3399ff;
 	selection-color: white;

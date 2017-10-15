@@ -159,7 +159,7 @@ Features
 * ##### Full control over settings on output
  This feature enables to control white margins, normalizing illumination before binarization,
  normalizing illumination in color areas options, Savitzky-Golay and morphological smoothing on output
- in any mode (if that supports those features).  
+ in any mode (of course, those setting that can be applied in the current mode).  
  
 * ##### Adaptive binarization
  Sauvola and Wolf binarization algorithms have been added. They can be applied when

@@ -18,12 +18,10 @@
 
 #include "ContentSpanFinder.h"
 #include "imageproc/SlicedHistogram.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
+#include <vector>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace Tests {
-    using namespace boost::lambda;
     using namespace imageproc;
 
     BOOST_AUTO_TEST_SUITE(ContentSpanFinderTestSuite);
@@ -34,7 +32,10 @@ namespace Tests {
             std::vector<Span> spans;
             span_finder.find(
                     SlicedHistogram(),
-                    bind(&std::vector<Span>::push_back, var(spans), _1)
+            [&](Span const& span)
+        {
+            spans.push_back(span);
+        }
             );
 
             BOOST_CHECK(spans.empty());
@@ -57,7 +58,11 @@ namespace Tests {
             span_finder.setMinContentWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, bind(&std::vector<Span>::push_back, var(spans), _1));
+        span_finder.find(hist, [&](Span const& span)
+        {
+            spans.push_back(span);
+        }
+        );
 
             BOOST_REQUIRE(spans.size() == 2);
             BOOST_REQUIRE(spans[0] == Span(3, 3 + 3));
@@ -81,7 +86,11 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, bind(&std::vector<Span>::push_back, var(spans), _1));
+        span_finder.find(hist, [&](Span const& span)
+        {
+            spans.push_back(span);
+        }
+        );
 
             BOOST_REQUIRE(spans.size() == 2);
             BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
@@ -106,7 +115,11 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, bind(&std::vector<Span>::push_back, var(spans), _1));
+        span_finder.find(hist, [&](Span const& span)
+        {
+            spans.push_back(span);
+        }
+        );
 
 
             BOOST_REQUIRE(spans.size() == 1);

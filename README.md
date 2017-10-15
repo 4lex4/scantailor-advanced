@@ -8,28 +8,28 @@ brings new ones and fixes.
 #### <u>Contents</u>:
 * [Description](#description)
 * [Features](#features)
-    * [**Scan Tailor Enhanced** features](#**scan-tailor-enhanced**-features)
+    * [**Scan Tailor Enhanced** features](#scan-tailor-enhanced-features)
         * [Auto margins](#auto-margins)
         * [Page detect](#page-detect)
         * [Deviation](#deviation)
         * [Picture shape](#picture-shape)
         * [Tiff compression](#tiff-compression)
-        * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-\[reworked\])
-    * [**Scan Tailor Featured** features](#**scan-tailor-featured**-features)
+        * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-reworked)
+    * [**Scan Tailor Featured** features](#scan-tailor-featured-features)
         * [Scan Tailor Featured fixes](#scan-tailor-featured-fixes)
         * [Line vertical dragging on dewarp](#line-vertical-dragging-on-dewarp)
         * [Square picture zones](#square-picture-zones)
-        * [Auto save project \[optimized\]](#auto-save-project-\[optimized\])
+        * [Auto save project \[optimized\]](#auto-save-project-optimized)
         * [Quadro Zoner](#quadro-zoner)
         * [Marginal dewarping](#marginal-dewarping)
-    * [**Scan Tailor Advanced** features](#**scan-tailor-advanced**-features)
+    * [**Scan Tailor Advanced** features](#scan-tailor-advanced-features)
         * [Scan Tailor Advanced fixes](#scan-tailor-advanced-fixes)
         * [Light and Dark color schemes](#light-and-dark-color-schemes)
         * [Multi-threading support for batch processing](#multi-threading-support-for-batch-processing)
         * [Full control over settings on output](#full-control-over-settings-on-output)
         * [Adaptive binarization](#adaptive-binarization)
         * [Splitting output](#splitting-output)
-* Building (work on the section in progress)
+* [Building](#building)
 
 Description
 ------------
@@ -112,8 +112,8 @@ Features
  *This feature had performance issues and has been optimized.*
  
 * ##### Quadro Zoner
- Another rectangular picture zone shape. This option is based on [Picture shape](picture-shape),
- [Square picture zones](square-picture-zones). It squeezes every Picture shape zone down to the real
+ Another rectangular picture zone shape. This option is based on [Picture shape](#picture-shape),
+ [Square picture zones](#square-picture-zones). It squeezes every Picture shape zone down to the real
  rectangular picture outline and then replaces it (the resulting raster zone) by a vector rectangular zone,
  so that a user could easily adjust it afterwards (by moving its corners in an orthogonal manner).
  
@@ -143,7 +143,7 @@ Features
 
 4. Optimized memory usage on the output stage.
 
-5. Reworking on [Multi column thumbnails view](#multi-column-thumbnails-view-\[reworked\])
+5. Reworking on [Multi column thumbnails view](#multi-column-thumbnails-view-reworked)
    feature from ver. Enhanced. 
    Now thumbnails is shown evenly.
 
@@ -153,6 +153,7 @@ Features
 * ##### Multi-threading support for batch processing
  This significantly increases the speed of processing. The count of threads to use can be
  adjusted while processing.
+
  **Warning!** More threads requires more memory to use. Exclude situations of that to be overflowed.  
 
 * ##### Full control over settings on output
@@ -168,12 +169,17 @@ Features
  The feature allows to split the mixed output scans into the pairs of a foreground (letters) 
  and background (images) layer.
  
- You can choose between B&W or Color foreground.
+ You can choose between B&W or color (original) foreground.
  
  It can be useful:
- - for the further DjVu encoding,
- - to apply different filters to letters and images, which when being applied to the whole
-   image gives worse results.
+   -    for the further DjVu encoding,
+   -    to apply different filters to letters and images, which when being applied to the whole
+        image gives worse results.
    
- This does not rename files to 0001, 0002... It can be made by a third party app, for example 
- [Bulk Rename Utility](http://www.bulkrenameutility.co.uk/Main_Intro.php)
+ *Note: That does not rename files to 0001, 0002... It can be made by a third party app, for example 
+ [Bulk Rename Utility](http://www.bulkrenameutility.co.uk/Main_Intro.php)*
+
+Building
+----------
+
+Go to [this repository](https://github.com/4lex4/scantailor-libs-build) and follow the instructions given there.

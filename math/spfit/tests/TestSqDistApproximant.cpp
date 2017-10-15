@@ -18,7 +18,12 @@
 
 #include "SqDistApproximant.h"
 #include "ToLineProjector.h"
+#include <QPointF>
+#include <QLineF>
 #include <boost/test/auto_unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
+#include <stdlib.h>
+#include <math.h>
 
 namespace spfit {
     namespace tests {

@@ -56,4 +56,4 @@ SOURCE_GROUP(Sources FILES ${sources})
 
 ADD_LIBRARY(imageproc STATIC ${sources})
 
-ADD_SUBDIRECTORY(tests)
+#ADD_SUBDIRECTORY(tests)

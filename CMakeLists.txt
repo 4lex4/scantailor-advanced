@@ -6,7 +6,7 @@ IF (DEBUG_CLI)
     ADD_DEFINITIONS(-DDEBUG_CLI)
 ENDIF (DEBUG_CLI)
 
-ENABLE_TESTING()
+#ENABLE_TESTING()
 
 # This has to go quite early on, as otherwise we risk picking
 # up an identically named header from a system include path.
@@ -290,18 +290,18 @@ LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 
 #=================================== OpenCV ===================================#
 
-IF (FALSE)
-    find_package(OpenCV PATHS opencv_dir_ REQUIRED)
-    IF (NOT OpenCV_FOUND)
-        MESSAGE(
-                FATAL_ERROR
-                "Could not find OpenCV headers or libraries.\n"
-        )
-    ENDIF ()
 
-    INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-    LINK_DIRECTORIES(${OpenCV_LIBRARIES})
-ENDIF (FALSE)
+#   find_package(OpenCV PATHS opencv_dir_ REQUIRED)
+#   IF (NOT OpenCV_FOUND)
+#       MESSAGE(
+#               FATAL_ERROR
+#               "Could not find OpenCV headers or libraries.\n"
+#       )
+#   ENDIF ()
+#
+#   INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+#   LINK_DIRECTORIES(${OpenCV_LIBRARIES})
+
 
 #=================================== Main ===================================#
 
@@ -325,7 +325,7 @@ ADD_SUBDIRECTORY(math)
 ADD_SUBDIRECTORY(imageproc)
 ADD_SUBDIRECTORY(interaction)
 ADD_SUBDIRECTORY(zones)
-ADD_SUBDIRECTORY(tests)
+#ADD_SUBDIRECTORY(tests)
 
 FILE(GLOB common_ui_files ui/ErrorWidget.ui)
 FILE(GLOB gui_only_ui_files "ui/*.ui")
@@ -430,6 +430,9 @@ SET(
         FileNameDisambiguator.cpp FileNameDisambiguator.h
         OpenGLSupport.cpp OpenGLSupport.h
         OutputFileNameGenerator.cpp OutputFileNameGenerator.h
+	DarkScheme.cpp DarkScheme.h
+        LightScheme.cpp LightScheme.h
+        ColorSchemeManager.cpp ColorSchemeManager.h
         PageRange.cpp PageRange.h
         SelectedPage.cpp SelectedPage.h
         Utils.cpp Utils.h
@@ -456,9 +459,6 @@ SET(
 SET(
         gui_only_sources
         Application.cpp Application.h
-		DarkScheme.cpp DarkScheme.h
-        LightScheme.cpp LightScheme.h
-        ColorSchemeManager.cpp ColorSchemeManager.h
         SkinnedButton.cpp SkinnedButton.h
         RelinkablePathVisualization.cpp RelinkablePathVisualization.h
         RelinkingModel.cpp RelinkingModel.h
@@ -522,7 +522,7 @@ ADD_EXECUTABLE(
         ${resource_sources} ${win32_resource_file} resources/icons/COPYING
 )
 
-ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_sources})
+#ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_sources})
 
 TARGET_LINK_LIBRARIES(
         scantailor
@@ -532,27 +532,28 @@ TARGET_LINK_LIBRARIES(
         ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
         # ${OpenCV_LIBRARIES}
 )
-TARGET_LINK_LIBRARIES(
-        scantailor-cli
-        fix_orientation page_split deskew select_content page_layout output
-        stcore dewarping zones interaction imageproc math foundation
-        ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-        ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-        # ${OpenCV_LIBRARIES}
-)
+#TARGET_LINK_LIBRARIES(
+#        scantailor-cli
+#        fix_orientation page_split deskew select_content page_layout output
+#        stcore dewarping zones interaction imageproc math foundation
+#        ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
+#        ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
+#        # ${OpenCV_LIBRARIES}
+#)
 
 if (WIN32)
     TARGET_LINK_LIBRARIES(
             scantailor
             wsock32 ws2_32
     )
-    TARGET_LINK_LIBRARIES(
-            scantailor-cli
-            wsock32 ws2_32
-    )
+#    TARGET_LINK_LIBRARIES(
+#            scantailor-cli
+#            wsock32 ws2_32
+#    )
 endif ()
 
-INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
+#INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
+INSTALL(TARGETS scantailor RUNTIME DESTINATION bin)
 
 # Translations
 TRANSLATION_SOURCES(scantailor ${sources} ${ui_files})

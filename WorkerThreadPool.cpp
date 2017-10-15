@@ -105,7 +105,17 @@ void WorkerThreadPool::customEvent(QEvent* event) {
 }
 
 void WorkerThreadPool::updateNumberOfThreads() {
-    int max_threads = QThread::idealThreadCount();
+    int max_threads;
+    if (sizeof(void*) <= 4) {
+        // Restricting num of processors for 32-bit due to
+        // address space constraints.
+        max_threads = QThread::idealThreadCount();
+        if (max_threads > 2) {
+        	max_threads = 2;
+        }
+    } else {
+    	max_threads = QThread::idealThreadCount();
+    }
 
     int num_threads = m_settings.value("settings/batch_processing_threads", max_threads).toInt();
     num_threads = std::min<int>(num_threads, max_threads);

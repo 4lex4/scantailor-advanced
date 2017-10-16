@@ -19,6 +19,6 @@
 #ifndef SCANTAILOR_VERSION_H_
 #define SCANTAILOR_VERSION_H_
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1 PR"
 #define VERSION_QUAD ""
 #endif

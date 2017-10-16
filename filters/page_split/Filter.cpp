@@ -149,6 +149,8 @@ namespace page_split {
         if (record.params() && (record.params()->dependencies().orientation() == orientation)) {
             return;
         }
+
+        m_ptrPages->autoSetLayoutTypeFor(image_id, orientation);
     }
 
     void Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,

@@ -1204,7 +1204,7 @@ namespace output {
         }
         warped_gray_output = GrayImage();
 
-        fillMarginsInPlace(normalized_original, normalize_illumination_crop_area, outsideBackgroundColor);
+        fillMarginsInPlace(normalized_original, orig_image_crop_area, outsideBackgroundColor);
         if (render_params.whiteMargins()) {
             QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
             fillMarginsInPlace(normalized_original, orig_content_poly, outsideBackgroundColor);
@@ -1326,7 +1326,7 @@ namespace output {
                 } else {
                     orig_without_illumination = input.grayImage();
                 }
-                fillMarginsInPlace(orig_without_illumination, normalize_illumination_crop_area, outsideBackgroundColor);
+                fillMarginsInPlace(orig_without_illumination, orig_image_crop_area, outsideBackgroundColor);
                 if (render_params.whiteMargins()) {
                     QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
                     fillMarginsInPlace(orig_without_illumination, orig_content_poly, outsideBackgroundColor);

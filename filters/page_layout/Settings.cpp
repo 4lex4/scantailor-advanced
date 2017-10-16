@@ -138,12 +138,17 @@ namespace page_layout {
                                              QRectF const& content_rect,
                                              QSizeF const& content_size_mm,
                                              QSizeF* agg_hard_size_before,
-                                             QSizeF* agg_hard_size_after);
+                                             QSizeF* agg_hard_size_after,
+                                             bool suppress_content_rect_update);
 
         QRectF const& updateContentRect();
 
         QRectF const& getContentRect() {
             return m_contentRect;
+        }
+
+        void setContentRect(const QRectF& contentRect) {
+            m_contentRect = contentRect;
         }
 
         QRectF const& getPageRect() {
@@ -268,10 +273,12 @@ namespace page_layout {
                                                    QRectF const& content_rect,
                                                    QSizeF const& content_size_mm,
                                                    QSizeF* agg_hard_size_before,
-                                                   QSizeF* agg_hard_size_after) {
+                                                   QSizeF* agg_hard_size_after,
+                                                   bool suppress_content_rect_update) {
         return m_ptrImpl->updateContentSizeAndGetParams(
                 page_id, page_rect, content_rect, content_size_mm,
-                agg_hard_size_before, agg_hard_size_after
+                agg_hard_size_before, agg_hard_size_after,
+                suppress_content_rect_update
         );
     }
 
@@ -281,6 +288,10 @@ namespace page_layout {
 
     QRectF const& Settings::getContentRect() {
         return m_ptrImpl->getContentRect();
+    }
+
+    void Settings::setContentRect(const QRectF& contentRect) {
+        m_ptrImpl->setContentRect(contentRect);
     }
 
     QRectF const& Settings::getPageRect() {
@@ -462,7 +473,8 @@ namespace page_layout {
                                                          QRectF const& content_rect,
                                                          QSizeF const& content_size_mm,
                                                          QSizeF* agg_hard_size_before,
-                                                         QSizeF* agg_hard_size_after) {
+                                                         QSizeF* agg_hard_size_after,
+                                                         bool suppress_content_rect_update) {
         QMutexLocker const locker(&m_mutex);
 
         if (agg_hard_size_before) {
@@ -485,7 +497,9 @@ namespace page_layout {
             *agg_hard_size_after = getAggregateHardSizeMMLocked();
         }
 
-        updateContentRect();
+        if (!suppress_content_rect_update) {
+            updateContentRect();
+        }
 
         return Params(
                 item_it->hardMarginsMM, item_it->pageRect, item_it->contentRect,

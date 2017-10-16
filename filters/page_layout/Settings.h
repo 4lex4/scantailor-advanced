@@ -92,11 +92,14 @@ namespace page_layout {
                                              QRectF const& content_rect,
                                              QSizeF const& content_size_mm,
                                              QSizeF* agg_hard_size_before = 0,
-                                             QSizeF* agg_hard_size_after = 0);
+                                             QSizeF* agg_hard_size_after = 0,
+                                             bool suppress_content_rect_update = false);
 
         QRectF const& updateContentRect();
 
         QRectF const& getContentRect();
+
+        void setContentRect(const QRectF& contentRect);
 
         QRectF const& getPageRect();
 

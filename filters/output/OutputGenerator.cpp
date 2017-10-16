@@ -1562,9 +1562,8 @@ namespace output {
 
         assert(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
 
-        if (image.format() == QImage::Format_ARGB32) {
-            image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-        }
+        const QImage::Format imageFormat = image.format();
+        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
         {
             QPainter painter(&image);
@@ -1580,9 +1579,7 @@ namespace output {
             painter.drawPath(outer_path.subtracted(inner_path));
         }
 
-        if (image.format() == QImage::Format_ARGB32_Premultiplied) {
-            image = image.convertToFormat(QImage::Format_ARGB32);
-        }
+        image = image.convertToFormat(imageFormat);
     }      // OutputGenerator::fillMarginsInPlace
 
     GrayImage OutputGenerator::detectPictures(GrayImage const& input_300dpi,

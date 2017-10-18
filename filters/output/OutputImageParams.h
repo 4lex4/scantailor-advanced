@@ -22,7 +22,7 @@
 #include "Dpi.h"
 #include "ColorParams.h"
 #include "Params.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
@@ -45,7 +45,7 @@ namespace output {
                           ImageTransformation xform,
                           Dpi const& dpi,
                           ColorParams const& color_params,
-                          DewarpingMode const& dewarping_mode,
+                          DewarpingOptions const& dewarping_options,
                           dewarping::DistortionModel const& distortion_model,
                           DepthPerception const& depth_perception,
                           DespeckleLevel despeckle_level,
@@ -53,8 +53,8 @@ namespace output {
 
         explicit OutputImageParams(QDomElement const& el);
 
-        DewarpingMode const& dewarpingMode() const {
-            return m_dewarpingMode;
+        DewarpingOptions const& dewarpingMode() const {
+            return m_dewarpingOptions;
         }
 
         dewarping::DistortionModel const& distortionModel() const {
@@ -136,7 +136,7 @@ namespace output {
         DepthPerception m_depthPerception;
 
         /** Off / Auto / Manual */
-        DewarpingMode m_dewarpingMode;
+        DewarpingOptions m_dewarpingOptions;
 
         /** Despeckle level of the output image. */
         DespeckleLevel m_despeckleLevel;

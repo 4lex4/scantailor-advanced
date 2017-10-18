@@ -141,16 +141,16 @@ namespace output {
         }
     }
 
-    void Settings::setDewarpingMode(PageId const& page_id, DewarpingMode const& mode) {
+    void Settings::setDewarpingOptions(PageId const& page_id, DewarpingOptions const& opt) {
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
-            params.setDewarpingMode(mode);
+            params.setDewarpingOptions(opt);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
         } else {
-            it->second.setDewarpingMode(mode);
+            it->second.setDewarpingOptions(opt);
         }
     }
 

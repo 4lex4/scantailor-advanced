@@ -234,7 +234,7 @@ void CommandLine::setup() {
     m_startFilterIdx = fetchStartFilterIdx();
     m_endFilterIdx = fetchEndFilterIdx();
     m_matchLayoutTolerance = fetchMatchLayoutTolerance();
-    m_dewarpingMode = fetchDewarpingMode();
+    m_dewarpingOptions = output::DewarpingOptions(fetchDewarpingMode());
     m_compression = fetchCompression();
     m_language = fetchLanguage();
     m_windowTitle = fetchWindowTitle();
@@ -693,12 +693,12 @@ int CommandLine::fetchEndFilterIdx() {
     return m_options["end-filter"].toInt() - 1;
 }
 
-output::DewarpingMode CommandLine::fetchDewarpingMode() {
+output::DewarpingOptions::Mode CommandLine::fetchDewarpingMode() {
     if (!hasDewarping()) {
-        return output::DewarpingMode::OFF;
+        return output::DewarpingOptions::OFF;
     }
 
-    return output::DewarpingMode(m_options["dewarping"].toLower());
+    return output::DewarpingOptions::parseDewarpingMode(m_options["dewarping"].toLower());
 }
 
 output::DespeckleLevel CommandLine::fetchDespeckleLevel() {

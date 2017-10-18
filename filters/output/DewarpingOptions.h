@@ -20,9 +20,10 @@
 #define OUTPUT_DEWARPING_MODE_H_
 
 #include <QString>
+#include <QtXml/QDomElement>
 
 namespace output {
-    class DewarpingMode {
+    class DewarpingOptions {
     public:
         enum Mode {
             OFF,
@@ -31,20 +32,31 @@ namespace output {
             MARGINAL
         };
 
-        DewarpingMode(Mode mode = OFF)
-                : m_mode(mode) {
-        }
+        explicit DewarpingOptions(Mode mode = OFF, bool needPostDeskew = true);
 
-        explicit DewarpingMode(QString const& str);
+        explicit DewarpingOptions(QDomElement const& el);
 
-        QString toString() const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        operator Mode() const {
-            return m_mode;
-        }
+        bool operator==(DewarpingOptions const& other) const;
+
+        bool operator!=(DewarpingOptions const& other) const;
+
+        DewarpingOptions::Mode mode() const;
+
+        void setMode(DewarpingOptions::Mode m_mode);
+
+        bool needPostDeskew() const;
+
+        void setPostDeskew(bool postDeskew);
+
+        static DewarpingOptions::Mode parseDewarpingMode(QString const& str);
+
+        static QString formatDewarpingMode(DewarpingOptions::Mode mode);
 
     private:
-        Mode m_mode;
+        DewarpingOptions::Mode m_mode;
+        bool postDeskew;
     };
 }
 #endif

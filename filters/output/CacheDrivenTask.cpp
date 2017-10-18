@@ -68,7 +68,7 @@ namespace output {
                 OutputImageParams const new_output_image_params(
                         generator.outputImageSize(), generator.outputContentRect(),
                         new_xform, params.outputDpi(), params.colorParams(),
-                        params.dewarpingMode(), params.distortionModel(),
+                        params.dewarpingOptions(), params.distortionModel(),
                         params.depthPerception(), params.despeckleLevel(), params.pictureShape()
                 );
 

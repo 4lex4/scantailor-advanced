@@ -31,7 +31,7 @@
 #include "filters/output/ColorParams.h"
 #include "filters/output/Params.h"
 #include "filters/output/DespeckleLevel.h"
-#include "filters/output/DewarpingMode.h"
+#include "filters/output/DewarpingOptions.h"
 #include "filters/output/DepthPerception.h"
 #include "filters/page_layout/Settings.h"
 #include "filters/page_layout/Alignment.h"
@@ -348,8 +348,8 @@ public:
         return m_endFilterIdx;
     }
 
-    output::DewarpingMode getDewarpingMode() const {
-        return m_dewarpingMode;
+    output::DewarpingOptions getDewarpingMode() const {
+        return m_dewarpingOptions;
     }
 
     output::DespeckleLevel getDespeckleLevel() const {
@@ -451,7 +451,7 @@ private:
     double m_skewDeviation;
     int m_startFilterIdx;
     int m_endFilterIdx;
-    output::DewarpingMode m_dewarpingMode;
+    output::DewarpingOptions m_dewarpingOptions;
     output::DespeckleLevel m_despeckleLevel;
     output::DepthPerception m_depthPerception;
     float m_matchLayoutTolerance;
@@ -505,7 +505,7 @@ private:
 
     int fetchEndFilterIdx();
 
-    output::DewarpingMode fetchDewarpingMode();
+    output::DewarpingOptions::Mode fetchDewarpingMode();
 
     output::DespeckleLevel fetchDespeckleLevel();
 

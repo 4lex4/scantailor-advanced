@@ -32,7 +32,6 @@
 #include "dewarping/DistortionModelBuilder.h"
 #include "dewarping/DewarpingPointMapper.h"
 #include "dewarping/RasterDewarper.h"
-#include "imageproc/BinaryImage.h"
 #include "imageproc/Binarize.h"
 #include "imageproc/Transform.h"
 #include "imageproc/Scale.h"
@@ -207,7 +206,7 @@ namespace output {
                                     FilterData const& input,
                                     ZoneSet& picture_zones,
                                     ZoneSet const& fill_zones,
-                                    DewarpingMode dewarping_mode,
+                                    DewarpingOptions dewarping_options,
                                     DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
@@ -220,7 +219,7 @@ namespace output {
         QImage image(
                 processImpl(
                         status, input, picture_zones, fill_zones,
-                        dewarping_mode, distortion_model, depth_perception,
+                        dewarping_options, distortion_model, depth_perception,
                         auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
                         p_settings,
                         splitImage
@@ -389,7 +388,7 @@ namespace output {
                                         FilterData const& input,
                                         ZoneSet& picture_zones,
                                         ZoneSet const& fill_zones,
-                                        DewarpingMode dewarping_mode,
+                                        DewarpingOptions dewarping_options,
                                         DistortionModel& distortion_model,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
@@ -399,12 +398,12 @@ namespace output {
                                         PageId* p_pageId,
                                         IntrusivePtr<Settings>* p_settings,
                                         SplitImage* splitImage) const {
-        if ((dewarping_mode == DewarpingMode::AUTO)
-            || (dewarping_mode == DewarpingMode::MARGINAL)
-            || ((dewarping_mode == DewarpingMode::MANUAL) && distortion_model.isValid())) {
+        if ((dewarping_options.mode() == DewarpingOptions::AUTO)
+            || (dewarping_options.mode() == DewarpingOptions::MARGINAL)
+            || ((dewarping_options.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
                     status, input, picture_zones, fill_zones,
-                    dewarping_mode, distortion_model, depth_perception,
+                    dewarping_options, distortion_model, depth_perception,
                     auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
                     p_settings,
                     splitImage
@@ -767,7 +766,7 @@ namespace output {
                                                  FilterData const& input,
                                                  ZoneSet& picture_zones,
                                                  ZoneSet const& fill_zones,
-                                                 DewarpingMode dewarping_mode,
+                                                 DewarpingOptions dewarping_options,
                                                  DistortionModel& distortion_model,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
@@ -984,7 +983,7 @@ namespace output {
             status.throwIfCancelled();
         }
 
-        if (dewarping_mode == DewarpingMode::AUTO) {
+        if (dewarping_options.mode() == DewarpingOptions::AUTO) {
             DistortionModelBuilder model_builder(Vec2d(0, 1));
 
             QRect const content_rect(
@@ -1111,7 +1110,7 @@ namespace output {
             if (!distortion_model.isValid()) {
                 setupTrivialDistortionModel(distortion_model);
             }
-        } else if (dewarping_mode == DewarpingMode::MARGINAL) {
+        } else if (dewarping_options.mode() == DewarpingOptions::MARGINAL) {
             BinaryThreshold bw_threshold(64);
             BinaryImage bw_image(input.grayImage(), bw_threshold);
 
@@ -1247,7 +1246,7 @@ namespace output {
         );
 
         applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
-        double deskew_angle = maybe_deskew(&dewarped, dewarping_mode);
+        double deskew_angle = maybe_deskew(&dewarped, dewarping_options, outsideBackgroundColor);
 
         if (render_params.binaryOutput()) {
             QImage dewarped_and_maybe_smoothed;
@@ -1354,14 +1353,14 @@ namespace output {
                 orig_without_illumination = QImage();
 
                 applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
-                deskew_angle = maybe_deskew(&dewarped, dewarping_mode);
+                deskew_angle = maybe_deskew(&dewarped, dewarping_options, outsideBackgroundColor);
             }
 
             status.throwIfCancelled();
 
             QImage dewarped_bw_mask_deskewed(dewarped_bw_mask.toQImage());
             applyFillZonesInPlace(dewarped_bw_mask_deskewed, fill_zones, orig_to_output);
-            deskew(&dewarped_bw_mask_deskewed, deskew_angle);
+            deskew(&dewarped_bw_mask_deskewed, deskew_angle, outsideBackgroundColor);
             dewarped_bw_mask = BinaryImage(dewarped_bw_mask_deskewed);
             dewarped_bw_mask_deskewed = QImage();
 
@@ -1548,7 +1547,7 @@ namespace output {
                     binaryImage, color.lightnessF() >= 0.5 ? WHITE : BLACK, content_poly, Qt::WindingFill
             );
             image = binaryImage.toQImage();
-            
+
             return;
         }
 
@@ -1737,7 +1736,7 @@ namespace output {
                 unsigned char lowerBound = (unsigned char) blackWhiteOptions.getWolfLowerBound();
                 unsigned char upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
                 double wolfCoef = blackWhiteOptions.getWolfCoef();
-                
+
                 binarized = imageproc::binarizeWolf(image, windowsSize, lowerBound, upperBound, wolfCoef);
                 break;
             }
@@ -2213,7 +2212,7 @@ namespace output {
         return qFabs(qAtan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180 / M_PI);
     }
 
-    void OutputGenerator::deskew(QImage* image, double angle) const {
+    void OutputGenerator::deskew(QImage* image, const double angle, const QColor& outside_color) const {
         if (angle == .0) {
             return;
         }
@@ -2226,13 +2225,15 @@ namespace output {
         rot.translate(-center.x(), -center.y());
 
         *image = imageproc::transform(*image, rot, image->rect(),
-                                      OutsidePixels::assumeWeakColor(Qt::white));
+                                      OutsidePixels::assumeWeakColor(outside_color));
     }
 
-    double OutputGenerator::maybe_deskew(QImage* p_dewarped, DewarpingMode dewarping_mode) const {
-        if ((dewarping_mode == DewarpingMode::MARGINAL)
-            || (dewarping_mode == DewarpingMode::MANUAL)
-                ) {
+    double OutputGenerator::maybe_deskew(QImage* p_dewarped,
+                                         DewarpingOptions dewarping_options,
+                                         const QColor& outside_color) const {
+        if (dewarping_options.needPostDeskew()
+            && ((dewarping_options.mode() == DewarpingOptions::MARGINAL)
+                || (dewarping_options.mode() == DewarpingOptions::MANUAL))) {
             BinaryThreshold bw_threshold(128);
             BinaryImage bw_image(*p_dewarped, bw_threshold);
 
@@ -2241,7 +2242,7 @@ namespace output {
             if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
                 double const angle_deg = skew.angle();
 
-                deskew(p_dewarped, angle_deg);
+                deskew(p_dewarped, angle_deg, outside_color);
 
                 return angle_deg;
             }

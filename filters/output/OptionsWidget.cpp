@@ -187,7 +187,7 @@ namespace output {
         m_outputDpi = params.outputDpi();
         m_colorParams = params.colorParams();
         m_pictureShape = params.pictureShape();
-        m_dewarpingMode = params.dewarpingMode();
+        m_dewarpingOptions = params.dewarpingOptions();
         m_depthPerception = params.depthPerception();
         m_despeckleLevel = params.despeckleLevel();
 
@@ -215,9 +215,9 @@ namespace output {
     void OptionsWidget::distortionModelChanged(dewarping::DistortionModel const& model) {
         m_ptrSettings->setDistortionModel(m_pageId, model);
 
-        /*if (m_dewarpingMode == DewarpingMode::AUTO)*/ {
-            m_ptrSettings->setDewarpingMode(m_pageId, DewarpingMode::MANUAL);
-            m_dewarpingMode = DewarpingMode::MANUAL;
+        /*if (m_dewarpingOptions.mode() == DewarpingOptions::AUTO)*/ {
+            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
+            m_ptrSettings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
             updateDewarpingDisplay();
         }
     }
@@ -434,19 +434,19 @@ namespace output {
 
     void OptionsWidget::changeDewarpingButtonClicked() {
         ChangeDewarpingDialog* dialog = new ChangeDewarpingDialog(
-                this, m_pageId, m_dewarpingMode, m_pageSelectionAccessor
+                this, m_pageId, m_dewarpingOptions, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &, DewarpingMode const &)),
-                this, SLOT(dewarpingChanged(std::set<PageId> const &, DewarpingMode const &))
+                dialog, SIGNAL(accepted(std::set<PageId> const &, DewarpingOptions const &)),
+                this, SLOT(dewarpingChanged(std::set<PageId> const &, DewarpingOptions const &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode) {
+    void OptionsWidget::dewarpingChanged(std::set<PageId> const& pages, DewarpingOptions const& opt) {
         for (PageId const& page_id : pages) {
-            m_ptrSettings->setDewarpingMode(page_id, mode);
+            m_ptrSettings->setDewarpingOptions(page_id, opt);
         }
 
         if (pages.size() > 1) {
@@ -458,12 +458,12 @@ namespace output {
         }
 
         if (pages.find(m_pageId) != pages.end()) {
-            if (m_dewarpingMode != mode) {
-                m_dewarpingMode = mode;
+            if (m_dewarpingOptions != opt) {
+                m_dewarpingOptions = opt;
 
-                if ((mode == DewarpingMode::AUTO) || (m_lastTab != TAB_DEWARPING)
-                    || (mode == DewarpingMode::MARGINAL)
-                        ) {
+                if ((opt.mode() == DewarpingOptions::AUTO)
+                    || (m_lastTab != TAB_DEWARPING)
+                    || (opt.mode() == DewarpingOptions::MARGINAL)) {
                     m_lastTab = TAB_OUTPUT;
 
                     updateDpiDisplay();
@@ -527,7 +527,7 @@ namespace output {
     void OptionsWidget::reloadIfNecessary() {
         ZoneSet saved_picture_zones;
         ZoneSet saved_fill_zones;
-        DewarpingMode saved_dewarping_mode;
+        DewarpingOptions saved_dewarping_options;
         dewarping::DistortionModel saved_distortion_model;
         DepthPerception saved_depth_perception;
         DespeckleLevel saved_despeckle_level = DESPECKLE_CAUTIOUS;
@@ -536,7 +536,7 @@ namespace output {
         if (output_params) {
             saved_picture_zones = output_params->pictureZones();
             saved_fill_zones = output_params->fillZones();
-            saved_dewarping_mode = output_params->outputImageParams().dewarpingMode();
+            saved_dewarping_options = output_params->outputImageParams().dewarpingMode();
             saved_distortion_model = output_params->outputImageParams().distortionModel();
             saved_depth_perception = output_params->outputImageParams().depthPerception();
             saved_despeckle_level = output_params->outputImageParams().despeckleLevel();
@@ -560,19 +560,22 @@ namespace output {
             return;
         }
 
-        if ((saved_dewarping_mode == DewarpingMode::OFF) && (params.dewarpingMode() == DewarpingMode::OFF)) {
+        if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
+            && (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
         } else if (saved_depth_perception.value() != params.depthPerception().value()) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_mode == DewarpingMode::AUTO) && (params.dewarpingMode() == DewarpingMode::AUTO)) {
-        } else if ((saved_dewarping_mode == DewarpingMode::MARGINAL)
-                   && (params.dewarpingMode() == DewarpingMode::MARGINAL)) {
+        } else if ((saved_dewarping_options.mode() == DewarpingOptions::AUTO)
+                   && (params.dewarpingOptions().mode() == DewarpingOptions::AUTO)) {
+        } else if ((saved_dewarping_options.mode() == DewarpingOptions::MARGINAL)
+                   && (params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL)) {
         } else if (!saved_distortion_model.matches(params.distortionModel())) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_mode == DewarpingMode::OFF) != (params.dewarpingMode() == DewarpingMode::OFF)) {
+        } else if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
+                   != (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
             emit reloadRequested();
 
             return;
@@ -699,19 +702,26 @@ namespace output {
     void OptionsWidget::updateDewarpingDisplay() {
         depthPerceptionPanel->setVisible(m_lastTab == TAB_DEWARPING);
 
-        switch (m_dewarpingMode) {
-            case DewarpingMode::OFF:
+        switch (m_dewarpingOptions.mode()) {
+            case DewarpingOptions::OFF:
                 dewarpingStatusLabel->setText(tr("Off"));
                 break;
-            case DewarpingMode::AUTO:
+            case DewarpingOptions::AUTO:
                 dewarpingStatusLabel->setText(tr("Auto"));
                 break;
-            case DewarpingMode::MANUAL:
+            case DewarpingOptions::MANUAL:
                 dewarpingStatusLabel->setText(tr("Manual"));
                 break;
-            case DewarpingMode::MARGINAL:
+            case DewarpingOptions::MARGINAL:
                 dewarpingStatusLabel->setText(tr("Marginal"));
                 break;
+        }
+        if (!m_dewarpingOptions.needPostDeskew()
+            && ((m_dewarpingOptions.mode() == DewarpingOptions::MANUAL)
+                || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL))) {
+            dewarpingStatusLabel->setText(dewarpingStatusLabel->text()
+                                                  .append(" (").append(tr("deskew disabled"))
+                                                  .append(")"));
         }
 
         depthPerceptionSlider->blockSignals(true);

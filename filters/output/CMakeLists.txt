@@ -48,7 +48,7 @@ SET(
         DespeckleVisualization.cpp DespeckleVisualization.h
         DespeckleLevel.cpp DespeckleLevel.h
         DewarpingView.cpp DewarpingView.h
-        DewarpingMode.cpp DewarpingMode.h
+        DewarpingOptions.cpp DewarpingOptions.h
         ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
         DepthPerception.cpp DepthPerception.h
         SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h BinarizationOptionsWidget.h)

@@ -32,7 +32,7 @@ namespace output {
             : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
-              m_dewarpingMode(el.attribute("dewarpingMode")),
+              m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
               m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())) {
         QDomElement const cp(el.namedItem("color-params").toElement());
@@ -57,7 +57,7 @@ namespace output {
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
         el.setAttribute("pictureShape", (int) m_pictureShape);
         el.setAttribute("depthPerception", m_depthPerception.toString());
-        el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
+        el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
 

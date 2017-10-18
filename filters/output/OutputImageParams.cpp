@@ -29,7 +29,7 @@ namespace output {
                                          ImageTransformation xform,
                                          Dpi const& dpi,
                                          ColorParams const& color_params,
-                                         DewarpingMode const& dewarping_mode,
+                                         DewarpingOptions const& dewarping_options,
                                          dewarping::DistortionModel const& distortion_model,
                                          DepthPerception const& depth_perception,
                                          DespeckleLevel const despeckle_level,
@@ -41,7 +41,7 @@ namespace output {
               m_pictureShape(picture_shape),
               m_distortionModel(distortion_model),
               m_depthPerception(depth_perception),
-              m_dewarpingMode(dewarping_mode),
+              m_dewarpingOptions(dewarping_options),
               m_despeckleLevel(despeckle_level) {
         xform.setPostCropArea(QPolygonF());
         m_partialXform = xform.transform();
@@ -55,7 +55,7 @@ namespace output {
               m_colorParams(el.namedItem("color-params").toElement()),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
-              m_dewarpingMode(el.attribute("dewarpingMode")),
+              m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))) {
     }
 
@@ -70,7 +70,7 @@ namespace output {
         el.appendChild(m_colorParams.toXml(doc, "color-params"));
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
         el.setAttribute("depthPerception", m_depthPerception.toString());
-        el.setAttribute("dewarpingMode", m_dewarpingMode.toString());
+        el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
 
         return el;
@@ -102,9 +102,9 @@ namespace output {
             return false;
         }
 
-        if (m_dewarpingMode != other.m_dewarpingMode) {
+        if (m_dewarpingOptions != other.m_dewarpingOptions) {
             return false;
-        } else if (m_dewarpingMode != DewarpingMode::OFF) {
+        } else if (m_dewarpingOptions.mode() != DewarpingOptions::OFF) {
             if (!m_distortionModel.matches(other.m_distortionModel)) {
                 return false;
             }

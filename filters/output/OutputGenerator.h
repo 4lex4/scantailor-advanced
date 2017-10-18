@@ -25,7 +25,7 @@
 #include "Params.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "ImageTransformation.h"
 #include <boost/function.hpp>
 #include <QSize>
@@ -105,7 +105,7 @@ namespace output {
                        FilterData const& input,
                        ZoneSet& picture_zones,
                        ZoneSet const& fill_zones,
-                       DewarpingMode dewarping_mode,
+                       DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
                        DepthPerception const& depth_perception,
                        imageproc::BinaryImage* auto_picture_mask = 0,
@@ -128,7 +128,7 @@ namespace output {
                            FilterData const& input,
                            ZoneSet& picture_zones,
                            ZoneSet const& fill_zones,
-                           DewarpingMode dewarping_mode,
+                           DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
                            DepthPerception const& depth_perception,
                            imageproc::BinaryImage* auto_picture_mask = 0,
@@ -155,7 +155,7 @@ namespace output {
                                     FilterData const& input,
                                     ZoneSet& picture_zones,
                                     ZoneSet const& fill_zones,
-                                    DewarpingMode dewarping_mode,
+                                    DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask = 0,
@@ -172,9 +172,11 @@ namespace output {
 
         void drawPoint(QImage& image, QPointF const& pt) const;
 
-        double maybe_deskew(QImage* p_dewarped, DewarpingMode dewarping_mode) const;
+        void deskew(QImage* image, double angle, const QColor& outside_color) const;
 
-        void deskew(QImage* image, double angle) const;
+        double maybe_deskew(QImage* p_dewarped,
+                            DewarpingOptions dewarping_options,
+                            const QColor& outside_color) const;
 
         void movePointToTopMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 

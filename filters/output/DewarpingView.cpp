@@ -39,7 +39,7 @@ namespace output {
                                  QPolygonF const& virt_display_area,
                                  QRectF const& virt_content_rect,
                                  PageId const& page_id,
-                                 DewarpingMode dewarping_mode,
+                                 DewarpingOptions dewarping_options,
                                  dewarping::DistortionModel const& distortion_model,
                                  DepthPerception const& depth_perception)
             : ImageViewBase(
@@ -48,7 +48,7 @@ namespace output {
     ),
               m_pageId(page_id),
               m_virtDisplayArea(virt_display_area),
-              m_dewarpingMode(dewarping_mode),
+              m_dewarpingOptions(dewarping_options),
               m_distortionModel(distortion_model),
               m_depthPerception(depth_perception),
               m_dragHandler(*this),
@@ -64,9 +64,9 @@ namespace output {
 
             XSpline new_top_spline;
             if (polyline.size() < 2) {
-                initNewSpline(new_top_spline, source_content_rect[0], source_content_rect[1], &dewarping_mode);
+                initNewSpline(new_top_spline, source_content_rect[0], source_content_rect[1], &dewarping_options);
             } else {
-                initNewSpline(new_top_spline, polyline.front(), polyline.back(), &dewarping_mode);
+                initNewSpline(new_top_spline, polyline.front(), polyline.back(), &dewarping_options);
                 fitSpline(new_top_spline, polyline);
             }
 
@@ -77,9 +77,9 @@ namespace output {
 
             XSpline new_bottom_spline;
             if (polyline.size() < 2) {
-                initNewSpline(new_bottom_spline, source_content_rect[3], source_content_rect[2], &dewarping_mode);
+                initNewSpline(new_bottom_spline, source_content_rect[3], source_content_rect[2], &dewarping_options);
             } else {
-                initNewSpline(new_bottom_spline, polyline.front(), polyline.back(), &dewarping_mode);
+                initNewSpline(new_bottom_spline, polyline.front(), polyline.back(), &dewarping_options);
                 fitSpline(new_bottom_spline, polyline);
             }
 
@@ -116,10 +116,10 @@ namespace output {
     void DewarpingView::initNewSpline(XSpline& spline,
                                       QPointF const& p1,
                                       QPointF const& p2,
-                                      DewarpingMode const* p_dewarpingMode) {
+                                      DewarpingOptions const* p_dewarpingOptions) {
         QLineF const line(p1, p2);
         spline.appendControlPoint(line.p1(), 0);
-        if (*p_dewarpingMode == DewarpingMode::AUTO) {
+        if ((*p_dewarpingOptions).mode() == DewarpingOptions::AUTO) {
             spline.appendControlPoint(line.pointAt(1.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(2.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(3.0 / 4.0), 1);
@@ -289,10 +289,9 @@ namespace output {
     }
 
     void DewarpingView::dragFinished() {
-        if ((m_dewarpingMode == DewarpingMode::AUTO)
-            || (m_dewarpingMode == DewarpingMode::MARGINAL)
-                ) {
-            m_dewarpingMode = DewarpingMode::MANUAL;
+        if ((m_dewarpingOptions.mode() == DewarpingOptions::AUTO)
+            || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)) {
+            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
         }
         emit distortionModelChanged(m_distortionModel);
     }

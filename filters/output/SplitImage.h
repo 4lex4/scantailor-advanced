@@ -14,9 +14,9 @@ namespace output {
      * The class to store and manage output images split to foreground and background layers.
      * It works in two modes:
      *  1.  Storing foreground and background images directly.
-     *      Then use of \code SplitImage::toImage() method to get the image from layers.
+     *      Then use \code SplitImage::toImage() method to get the image from layers.
      *  2.  Storing only an image and mask.
-     *      Then use of \code SplitImage::getForegroundImage() and
+     *      Then use \code SplitImage::getForegroundImage() and
      *      \code SplitImage::getBackgroundImage() to get the image layers.
      */
     class SplitImage {

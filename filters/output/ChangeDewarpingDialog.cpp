@@ -24,13 +24,14 @@
 namespace output {
     ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
                                                  PageId const& cur_page,
-                                                 DewarpingMode const& mode,
+                                                 DewarpingOptions const& dewarpingOptions,
                                                  PageSelectionAccessor const& page_selection_accessor)
             : QDialog(parent),
               m_pages(page_selection_accessor.allPages()),
               m_selectedPages(page_selection_accessor.selectedPages()),
               m_curPage(cur_page),
-              m_mode(mode),
+              m_dewarpingMode(dewarpingOptions.mode()),
+              m_dewarpingOptions(dewarpingOptions),
               m_pScopeGroup(new QButtonGroup(this)) {
         using namespace boost::lambda;
 
@@ -43,25 +44,27 @@ namespace output {
             ui.selectedPagesWidget->setEnabled(false);
         }
 
-        switch (mode) {
-            case DewarpingMode::OFF:
+        switch (dewarpingOptions.mode()) {
+            case DewarpingOptions::OFF:
                 ui.offRB->setChecked(true);
                 break;
-            case DewarpingMode::AUTO:
+            case DewarpingOptions::AUTO:
                 ui.autoRB->setChecked(true);
                 break;
-            case DewarpingMode::MARGINAL:
+            case DewarpingOptions::MARGINAL:
                 ui.marginalRB->setChecked(true);
                 break;
-            case DewarpingMode::MANUAL:
+            case DewarpingOptions::MANUAL:
                 ui.manualRB->setChecked(true);
                 break;
         }
 
-        new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::OFF);
-        new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::AUTO);
-        new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MANUAL);
-        new QtSignalForwarder(ui.marginalRB, SIGNAL(clicked(bool)), var(m_mode) = DewarpingMode::MARGINAL);
+        ui.dewarpingPostDeskewCB->setChecked(dewarpingOptions.needPostDeskew());
+
+        new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::OFF);
+        new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::AUTO);
+        new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::MANUAL);
+        new QtSignalForwarder(ui.marginalRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::MARGINAL);
 
         connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
@@ -72,6 +75,9 @@ namespace output {
     void ChangeDewarpingDialog::onSubmit() {
         std::set<PageId> pages;
 
+        m_dewarpingOptions.setMode(m_dewarpingMode);
+        m_dewarpingOptions.setPostDeskew(ui.dewarpingPostDeskewCB->isChecked());
+
         if (ui.thisPageRB->isChecked()) {
             pages.insert(m_curPage);
         } else if (ui.allPagesRB->isChecked()) {
@@ -79,13 +85,13 @@ namespace output {
         } else if (ui.thisPageAndFollowersRB->isChecked()) {
             m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
         } else if (ui.selectedPagesRB->isChecked()) {
-            emit accepted(m_selectedPages, m_mode);
+            emit accepted(m_selectedPages, m_dewarpingOptions);
             accept();
 
             return;
         }
 
-        emit accepted(pages, m_mode);
+        emit accepted(pages, m_dewarpingOptions);
 
         accept();
     }

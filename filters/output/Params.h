@@ -21,7 +21,7 @@
 
 #include "Dpi.h"
 #include "ColorParams.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
@@ -66,12 +66,12 @@ namespace output {
             m_colorParams = params;
         }
 
-        DewarpingMode const& dewarpingMode() const {
-            return m_dewarpingMode;
+        DewarpingOptions const& dewarpingOptions() const {
+            return m_dewarpingOptions;
         }
 
-        void setDewarpingMode(DewarpingMode const& mode) {
-            m_dewarpingMode = mode;
+        void setDewarpingOptions(DewarpingOptions const& opt) {
+            m_dewarpingOptions = opt;
         }
 
         dewarping::DistortionModel const& distortionModel() const {
@@ -110,7 +110,7 @@ namespace output {
         PictureShape m_pictureShape;
         dewarping::DistortionModel m_distortionModel;
         DepthPerception m_depthPerception;
-        DewarpingMode m_dewarpingMode;
+        DewarpingOptions m_dewarpingOptions;
         DespeckleLevel m_despeckleLevel;
     };
 }  // namespace output

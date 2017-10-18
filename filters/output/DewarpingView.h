@@ -25,7 +25,7 @@
 #include "InteractiveXSpline.h"
 #include "DragHandler.h"
 #include "ZoomHandler.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "Settings.h"
@@ -46,7 +46,7 @@ namespace output {
                       QPolygonF const& virt_display_area,
                       QRectF const& virt_content_rect,
                       PageId const& page_id,
-                      DewarpingMode dewarping_mode,
+                      DewarpingOptions dewarping_options,
                       dewarping::DistortionModel const& distortion_model,
                       DepthPerception const& depth_perception);
 
@@ -67,7 +67,7 @@ namespace output {
         static void initNewSpline(XSpline& spline,
                                   QPointF const& p1,
                                   QPointF const& p2,
-                                  DewarpingMode const* p_dewarpingMode = NULL);
+                                  DewarpingOptions const* p_dewarpingOptions = NULL);
 
         static void fitSpline(XSpline& spline, std::vector<QPointF> const& polyline);
 
@@ -85,7 +85,7 @@ namespace output {
 
         PageId m_pageId;
         QPolygonF m_virtDisplayArea;
-        DewarpingMode m_dewarpingMode;
+        DewarpingOptions m_dewarpingOptions;
         dewarping::DistortionModel m_distortionModel;
         DepthPerception m_depthPerception;
         InteractiveXSpline m_topSpline;

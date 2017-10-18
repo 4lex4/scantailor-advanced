@@ -25,7 +25,7 @@
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "ColorParams.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
 #include "Dpi.h"
@@ -127,7 +127,7 @@ namespace output {
 
         void changeDewarpingButtonClicked();
 
-        void dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode);
+        void dewarpingChanged(std::set<PageId> const& pages, DewarpingOptions const& opt);
 
         void applyDepthPerceptionButtonClicked();
 
@@ -157,7 +157,7 @@ namespace output {
         ColorParams m_colorParams;
         PictureShape m_pictureShape;
         DepthPerception m_depthPerception;
-        DewarpingMode m_dewarpingMode;
+        DewarpingOptions m_dewarpingOptions;
         DespeckleLevel m_despeckleLevel;
         ImageViewTab m_lastTab;
     };

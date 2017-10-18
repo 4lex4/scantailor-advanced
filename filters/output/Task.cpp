@@ -184,7 +184,7 @@ namespace output {
         OutputImageParams new_output_image_params(
                 generator.outputImageSize(), generator.outputContentRect(),
                 new_xform, params.outputDpi(), params.colorParams(),
-                params.dewarpingMode(), params.distortionModel(),
+                params.dewarpingOptions(), params.distortionModel(),
                 params.depthPerception(), params.despeckleLevel(), params.pictureShape()
         );
 
@@ -323,14 +323,14 @@ namespace output {
             speckles_img = BinaryImage();
 
             DistortionModel distortion_model;
-            if (params.dewarpingMode() == DewarpingMode::MANUAL) {
+            if (params.dewarpingOptions().mode() == DewarpingOptions::MANUAL) {
                 distortion_model = params.distortionModel();
             }
 
             SplitImage splitImage;
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones,
-                    params.dewarpingMode(), distortion_model,
+                    params.dewarpingOptions(), distortion_model,
                     params.depthPerception(),
                     write_automask ? &automask_img : 0,
                     write_speckles_file ? &speckles_img : 0,
@@ -362,8 +362,8 @@ namespace output {
                 deleteMutuallyExclusiveOutputFiles();
             }
 
-            if (((params.dewarpingMode() == DewarpingMode::AUTO) && distortion_model.isValid())
-                || ((params.dewarpingMode() == DewarpingMode::MARGINAL) && distortion_model.isValid())
+            if (((params.dewarpingOptions().mode() == DewarpingOptions::AUTO) && distortion_model.isValid())
+                || ((params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL) && distortion_model.isValid())
                     ) {
                 params.setDistortionModel(distortion_model);
                 m_ptrSettings->setParams(m_pageId, params);
@@ -522,7 +522,7 @@ namespace output {
                         PolygonUtils::convexHull(
                                 (m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea()).toStdVector()
                         ),
-                        m_virtContentRect, m_pageId, m_params.dewarpingMode(),
+                        m_virtContentRect, m_pageId, m_params.dewarpingOptions(),
                         m_params.distortionModel(), opt_widget->depthPerception()
                 )
         );
@@ -557,7 +557,7 @@ namespace output {
 
         boost::function<QPointF(QPointF const&)> orig_to_output;
         boost::function<QPointF(QPointF const&)> output_to_orig;
-        if ((m_params.dewarpingMode() != DewarpingMode::OFF) && m_params.distortionModel().isValid()) {
+        if ((m_params.dewarpingOptions().mode() != DewarpingOptions::OFF) && m_params.distortionModel().isValid()) {
             std::shared_ptr<DewarpingPointMapper> mapper(
                     new DewarpingPointMapper(
                             m_params.distortionModel(), m_params.depthPerception().value(),

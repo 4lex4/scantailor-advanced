@@ -20,7 +20,7 @@
 #define OUTPUT_CHANGE_DEWARPING_DIALOG_H_
 
 #include "ui_OutputChangeDewarpingDialog.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "PageId.h"
 #include "PageSequence.h"
 #include "IntrusivePtr.h"
@@ -37,14 +37,14 @@ namespace output {
     public:
         ChangeDewarpingDialog(QWidget* parent,
                               PageId const& cur_page,
-                              DewarpingMode const& mode,
+                              DewarpingOptions const& dewarpingOptions,
                               PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~ChangeDewarpingDialog();
 
     signals:
 
-        void accepted(std::set<PageId> const& pages, DewarpingMode const& mode);
+        void accepted(std::set<PageId> const& pages, DewarpingOptions const& dewarpingOptions);
 
     private slots:
 
@@ -55,7 +55,8 @@ namespace output {
         PageSequence m_pages;
         std::set<PageId> m_selectedPages;
         PageId m_curPage;
-        DewarpingMode m_mode;
+        DewarpingOptions::Mode m_dewarpingMode;
+        DewarpingOptions m_dewarpingOptions;
         QButtonGroup* m_pScopeGroup;
     };
 }

@@ -26,7 +26,7 @@
 #include "ColorParams.h"
 #include "Params.h"
 #include "OutputParams.h"
-#include "DewarpingMode.h"
+#include "DewarpingOptions.h"
 #include "dewarping/DistortionModel.h"
 #include "DespeckleLevel.h"
 #include "ZoneSet.h"
@@ -62,7 +62,7 @@ namespace output {
 
         void setDpi(PageId const& page_id, Dpi const& dpi);
 
-        void setDewarpingMode(PageId const& page_id, DewarpingMode const& mode);
+        void setDewarpingOptions(PageId const& page_id, DewarpingOptions const& opt);
 
         void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
 

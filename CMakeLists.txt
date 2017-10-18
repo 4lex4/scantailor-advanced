@@ -430,7 +430,7 @@ SET(
         FileNameDisambiguator.cpp FileNameDisambiguator.h
         OpenGLSupport.cpp OpenGLSupport.h
         OutputFileNameGenerator.cpp OutputFileNameGenerator.h
-	DarkScheme.cpp DarkScheme.h
+	    DarkScheme.cpp DarkScheme.h
         LightScheme.cpp LightScheme.h
         ColorSchemeManager.cpp ColorSchemeManager.h
         PageRange.cpp PageRange.h

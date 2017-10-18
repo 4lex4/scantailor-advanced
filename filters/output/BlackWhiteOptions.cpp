@@ -30,6 +30,7 @@ namespace output {
               wolfLowerBound(1),
               wolfUpperBound(254),
               wolfCoef(0.3),
+              whiteOnBlackMode(false),
               binarizationMethod(OTSU) {
     }
 
@@ -43,6 +44,7 @@ namespace output {
               wolfLowerBound(el.attribute("wolfLowerBound").toInt()),
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
+              whiteOnBlackMode(el.attribute("whiteOnBlackMode") == "1"),
               binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
     }
 
@@ -57,6 +59,7 @@ namespace output {
         el.setAttribute("wolfLowerBound", wolfLowerBound);
         el.setAttribute("wolfUpperBound", wolfUpperBound);
         el.setAttribute("wolfCoef", wolfCoef);
+        el.setAttribute("whiteOnBlackMode", whiteOnBlackMode ? "1" : "0");
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
 
         return el;
@@ -72,6 +75,7 @@ namespace output {
                && (wolfLowerBound == other.wolfLowerBound)
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
+               && (whiteOnBlackMode == other.whiteOnBlackMode)
                && (binarizationMethod == other.binarizationMethod);
     }
 
@@ -133,6 +137,14 @@ namespace output {
 
     void BlackWhiteOptions::setWolfCoef(double wolfCoef) {
         BlackWhiteOptions::wolfCoef = wolfCoef;
+    }
+
+    bool BlackWhiteOptions::isWhiteOnBlackMode() const {
+        return whiteOnBlackMode;
+    }
+
+    void BlackWhiteOptions::setWhiteOnBlackMode(bool whiteOnBlackMode) {
+        BlackWhiteOptions::whiteOnBlackMode = whiteOnBlackMode;
     }
     
     BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {

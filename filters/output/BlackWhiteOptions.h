@@ -86,6 +86,10 @@ namespace output {
 
         void setWolfCoef(double wolfCoef);
 
+        bool isWhiteOnBlackMode() const;
+
+        void setWhiteOnBlackMode(bool whiteOnBlackMode);
+
         BinarizationMethod getBinarizationMethod() const;
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
@@ -104,6 +108,7 @@ namespace output {
         int wolfLowerBound;
         int wolfUpperBound;
         double wolfCoef;
+        bool whiteOnBlackMode;
         BinarizationMethod binarizationMethod;
     };
 }

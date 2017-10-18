@@ -32,6 +32,10 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
+        connect(
+                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
+                this, SLOT(whiteOnBlackModeToggled(bool))
+        );
     }
 
     void WolfBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
@@ -78,12 +82,21 @@ namespace output {
         delayedStateChanger.start(750);
     }
 
+    void WolfBinarizationOptionsWidget::whiteOnBlackModeToggled(bool checked) {
+        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+        opt.setWhiteOnBlackMode(checked);
+        m_colorParams.setBlackWhiteOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit stateChanged();
+    }
+
     void WolfBinarizationOptionsWidget::updateView() {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
         windowSize->setValue(blackWhiteOptions.getWindowSize());
         lowerBound->setValue(blackWhiteOptions.getWolfLowerBound());
         upperBound->setValue(blackWhiteOptions.getWolfUpperBound());
         wolfCoef->setValue(blackWhiteOptions.getWolfCoef());
+        whiteOnBlackModeCB->setChecked(blackWhiteOptions.isWhiteOnBlackMode());
     }
 
     void WolfBinarizationOptionsWidget::sendStateChanged() {

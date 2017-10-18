@@ -36,6 +36,8 @@ namespace output {
 
         void upperBoundChanged(int value);
 
+        void whiteOnBlackModeToggled(bool checked);
+
         void sendStateChanged();
 
     private:

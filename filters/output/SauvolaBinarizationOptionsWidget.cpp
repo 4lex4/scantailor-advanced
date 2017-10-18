@@ -24,6 +24,10 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
+        connect(
+                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
+                this, SLOT(whiteOnBlackModeToggled(bool))
+        );
     }
 
     void SauvolaBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
@@ -52,10 +56,19 @@ namespace output {
         delayedStateChanger.start(750);
     }
 
+    void SauvolaBinarizationOptionsWidget::whiteOnBlackModeToggled(bool checked) {
+        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+        opt.setWhiteOnBlackMode(checked);
+        m_colorParams.setBlackWhiteOptions(opt);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        emit stateChanged();
+    }
+
     void SauvolaBinarizationOptionsWidget::updateView() {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
         windowSize->setValue(blackWhiteOptions.getWindowSize());
         sauvolaCoef->setValue(blackWhiteOptions.getSauvolaCoef());
+        whiteOnBlackModeCB->setChecked(blackWhiteOptions.isWhiteOnBlackMode());
     }
 
     void SauvolaBinarizationOptionsWidget::sendStateChanged() {

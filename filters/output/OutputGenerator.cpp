@@ -1710,16 +1710,23 @@ namespace output {
     }
 
     BinaryImage OutputGenerator::binarize(QImage const& image) const {
+        if ((image.format() == QImage::Format_Mono)
+            || (image.format() == QImage::Format_MonoLSB)) {
+            return BinaryImage(image);
+        }
+
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
         BlackWhiteOptions::BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
+
+        QImage imageToBinarize = image;
 
         BinaryImage binarized;
         switch (binarizationMethod) {
             case BlackWhiteOptions::OTSU: {
-                GrayscaleHistogram hist(image);
+                GrayscaleHistogram hist(imageToBinarize);
                 BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
 
-                binarized = BinaryImage(image, adjustThreshold(bw_thresh));
+                binarized = BinaryImage(imageToBinarize, adjustThreshold(bw_thresh));
                 break;
             }
             case BlackWhiteOptions::SAUVOLA: {
@@ -1727,7 +1734,16 @@ namespace output {
                                           blackWhiteOptions.getWindowSize());
                 double sauvolaCoef = blackWhiteOptions.getSauvolaCoef();
 
-                binarized = imageproc::binarizeSauvola(image, windowsSize, sauvolaCoef);
+                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                    imageToBinarize = imageproc::toGrayscale(imageToBinarize);
+                    imageToBinarize.invertPixels();
+                }
+
+                binarized = imageproc::binarizeSauvola(imageToBinarize, windowsSize, sauvolaCoef);
+
+                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                    binarized.invert();
+                }
                 break;
             }
             case BlackWhiteOptions::WOLF: {
@@ -1737,7 +1753,16 @@ namespace output {
                 unsigned char upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
                 double wolfCoef = blackWhiteOptions.getWolfCoef();
 
-                binarized = imageproc::binarizeWolf(image, windowsSize, lowerBound, upperBound, wolfCoef);
+                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                    imageToBinarize = imageproc::toGrayscale(imageToBinarize);
+                    imageToBinarize.invertPixels();
+                }
+
+                binarized = imageproc::binarizeWolf(imageToBinarize, windowsSize, lowerBound, upperBound, wolfCoef);
+
+                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                    binarized.invert();
+                }
                 break;
             }
         }

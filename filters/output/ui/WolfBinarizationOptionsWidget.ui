@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>172</width>
-    <height>120</height>
+    <height>143</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,39 +19,31 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>4</number>
-   </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>5</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QCheckBox" name="whiteOnBlackModeCB">
+       <property name="toolTip">
+        <string>This options should be enabled when the text or content is placed on the darker background</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>1</width>
-         <height>20</height>
-        </size>
+       <property name="text">
+        <string>White on black mode</string>
        </property>
-      </spacer>
+      </widget>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
@@ -64,7 +56,7 @@
           <number>5</number>
          </property>
          <property name="maximum">
-          <number>999</number>
+          <number>9999</number>
          </property>
         </widget>
        </item>
@@ -72,13 +64,6 @@
         <widget class="QLabel" name="windowSizeLabel">
          <property name="text">
           <string>Window size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lowerBoundLabel">
-         <property name="text">
-          <string>Lower bound: </string>
          </property>
         </widget>
        </item>
@@ -99,6 +84,13 @@
         <widget class="QLabel" name="upperBoundLabel">
          <property name="text">
           <string>Upper Bound: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lowerBoundLabel">
+         <property name="text">
+          <string>Lower bound: </string>
          </property>
         </widget>
        </item>
@@ -140,20 +132,20 @@
        </item>
       </layout>
      </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>1</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>5</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

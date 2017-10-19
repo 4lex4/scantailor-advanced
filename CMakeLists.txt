@@ -26,9 +26,11 @@ ENDIF ()
 ST_SET_DEFAULT_BUILD_TYPE(Release)
 
 IF (WIN32)
+    FILE(GLOB libs_dir_ "${PROJECT_SOURCE_DIR}/../libs/*libs-build*")
+    get_filename_component(libs_dir_name_ ${libs_dir_} NAME)
     FIND_PATH(
-            LIB_DIR LIBS-BUILD/CMakeLists.txt
-            HINTS "${PROJECT_SOURCE_DIR}/../libs"
+            LIB_DIR ${libs_dir_name_}/CMakeLists.txt
+            HINTS "${libs_dir_}/.."
             DOC "Libs directory"
     )
     IF (NOT LIB_DIR)

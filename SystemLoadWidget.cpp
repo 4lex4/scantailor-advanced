@@ -28,6 +28,13 @@ SystemLoadWidget::SystemLoadWidget(QWidget* parent)
           m_maxThreads(QThread::idealThreadCount()) {
     ui.setupUi(this);
 
+    if (sizeof(void*) <= 4) {
+        // Restricting num of processors for 32-bit due to
+        // address space constraints.
+        if (m_maxThreads > 2) {
+        	m_maxThreads = 2;
+        }
+    }
     int num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
 
     ui.slider->setRange(1, m_maxThreads);

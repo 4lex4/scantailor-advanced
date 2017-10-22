@@ -6,7 +6,7 @@ IF (DEBUG_CLI)
     ADD_DEFINITIONS(-DDEBUG_CLI)
 ENDIF (DEBUG_CLI)
 
-#ENABLE_TESTING()
+ENABLE_TESTING()
 
 # This has to go quite early on, as otherwise we risk picking
 # up an identically named header from a system include path.
@@ -244,7 +244,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 SET(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
 IF (NOT Boost_FOUND)
     MESSAGE(
             FATAL_ERROR
@@ -253,7 +253,7 @@ IF (NOT Boost_FOUND)
 ENDIF (NOT Boost_FOUND)
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_DIRECTORIES(${Boost_LIBRARIES})
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 #=================================== Qt ===================================#
 
@@ -311,6 +311,10 @@ LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 # the GNU linker won't resolve symbols qjpeg needs from it.
 SET(EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
+IF(WIN32)
+    LIST(APPEND EXTRA_LIBS ws2_32)
+ENDIF()
+
 # Prepare config.h
 IF (WIN32)
     SET(TRANSLATIONS_DIR_REL "translations")
@@ -327,7 +331,7 @@ ADD_SUBDIRECTORY(math)
 ADD_SUBDIRECTORY(imageproc)
 ADD_SUBDIRECTORY(interaction)
 ADD_SUBDIRECTORY(zones)
-#ADD_SUBDIRECTORY(tests)
+ADD_SUBDIRECTORY(tests)
 
 FILE(GLOB common_ui_files ui/ErrorWidget.ui)
 FILE(GLOB gui_only_ui_files "ui/*.ui")
@@ -542,17 +546,6 @@ TARGET_LINK_LIBRARIES(
 #        ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
 #        # ${OpenCV_LIBRARIES}
 #)
-
-if (WIN32)
-    TARGET_LINK_LIBRARIES(
-            scantailor
-            wsock32 ws2_32
-    )
-#    TARGET_LINK_LIBRARIES(
-#            scantailor-cli
-#            wsock32 ws2_32
-#    )
-endif ()
 
 #INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
 INSTALL(TARGETS scantailor RUNTIME DESTINATION bin)

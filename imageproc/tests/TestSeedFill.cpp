@@ -17,8 +17,14 @@
  */
 
 #include "SeedFill.h"
+#include "Connectivity.h"
+#include "BinaryImage.h"
+#include "BWColor.h"
 #include "Grayscale.h"
 #include "Utils.h"
+#include <QImage>
+#include <QSize>
+#include <QPoint>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

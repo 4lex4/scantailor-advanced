@@ -18,6 +18,7 @@
 
 #include "ContentSpanFinder.h"
 #include "imageproc/SlicedHistogram.h"
+#include "Span.h"
 #include <vector>
 #include <boost/test/auto_unit_test.hpp>
 

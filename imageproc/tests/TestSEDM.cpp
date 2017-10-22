@@ -18,11 +18,12 @@
 
 #include "SEDM.h"
 #include "BinaryImage.h"
+#include "BWColor.h"
 #include "Utils.h"
 #include <iostream>
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-
+#include <math.h>
 namespace imageproc {
     namespace tests {
         using namespace utils;

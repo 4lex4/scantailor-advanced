@@ -26,9 +26,9 @@ void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
     m_ptrColorParams = colorScheme.getColorParams();
 }
 
-QBrush ColorSchemeManager::getColorParam(const std::string& colorScheme, const QBrush& defaultColor) {
-    if (m_ptrColorParams->count(colorScheme) == 1) {
-        return m_ptrColorParams->at(colorScheme);
+QBrush ColorSchemeManager::getColorParam(const std::string& colorParam, const QBrush& defaultColor) {
+    if (m_ptrColorParams->count(colorParam) == 1) {
+        return m_ptrColorParams->at(colorParam);
     } else {
         return defaultColor;
     }

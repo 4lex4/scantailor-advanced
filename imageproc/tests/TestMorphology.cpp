@@ -19,7 +19,11 @@
 #include "Morphology.h"
 #include "GrayImage.h"
 #include "BinaryImage.h"
+#include "BWColor.h"
 #include "Utils.h"
+#include <QImage>
+#include <QSize>
+#include <QPoint>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

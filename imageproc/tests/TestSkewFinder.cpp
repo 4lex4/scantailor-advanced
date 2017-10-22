@@ -21,7 +21,12 @@
 #include <QApplication>
 #include <QImage>
 #include <QPainter>
+#include <QTransform>
+#include <QColor>
+#include <QString>
 #include <boost/test/auto_unit_test.hpp>
+#include <math.h>
+#include <stdlib.h>
 
 namespace imageproc {
     namespace tests {

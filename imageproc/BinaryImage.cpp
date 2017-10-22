@@ -20,9 +20,16 @@
 #include "BinaryImage.h"
 #include "ByteOrder.h"
 #include "BitOps.h"
+#include <QAtomicInt>
 #include <QImage>
+#include <QRect>
+#include <new>
 #include <memory>
-#include <iostream>
+#include <stdexcept>
+#include <algorithm>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 namespace imageproc {

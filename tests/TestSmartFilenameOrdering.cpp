@@ -18,6 +18,7 @@
 
 #include "SmartFilenameOrdering.h"
 #include <QFileInfo>
+#include <QString>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace Tests {

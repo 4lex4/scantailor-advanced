@@ -18,11 +18,20 @@
 
 #include "PolygonRasterizer.h"
 #include "BinaryImage.h"
+#include "BinaryThreshold.h"
 #include "RasterOp.h"
+#include "BWColor.h"
 #include "Utils.h"
 #include <QPolygonF>
+#include <QSize>
+#include <QRectF>
+#include <QPointF>
 #include <QImage>
 #include <QPainter>
+#include <QBrush>
+#include <QColor>
+#include <Qt>
+#include <math.h>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

@@ -17,7 +17,10 @@
  */
 
 #include "Binarize.h"
+#include "BinaryImage.h"
 #include "Utils.h"
+#include <QImage>
+#include <QSize>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

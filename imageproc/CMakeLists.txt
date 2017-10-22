@@ -49,11 +49,10 @@ SET(
         SeedFillGeneric.cpp SeedFillGeneric.h
         FindPeaksGeneric.h
         ColorMixer.h
-        ColorForId.h
-        BackgroundCleaner.cpp BackgroundCleaner.h)
+        ColorForId.h)
 
 SOURCE_GROUP(Sources FILES ${sources})
 
 ADD_LIBRARY(imageproc STATIC ${sources})
 
-#ADD_SUBDIRECTORY(tests)
+ADD_SUBDIRECTORY(tests)

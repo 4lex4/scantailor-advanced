@@ -19,7 +19,11 @@
 #include "Utils.h"
 #include "BinaryImage.h"
 #include "Grayscale.h"
+#include <QImage>
+#include <QRect>
 #include <iostream>
+#include <stdint.h>
+#include <stdlib.h>
 #include <assert.h>
 
 namespace imageproc {

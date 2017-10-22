@@ -18,6 +18,7 @@
 
 #include "Shear.h"
 #include "BinaryImage.h"
+#include "BWColor.h"
 #include "Utils.h"
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>

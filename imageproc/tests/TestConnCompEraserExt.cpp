@@ -17,9 +17,14 @@
  */
 
 #include "ConnCompEraserExt.h"
+#include "ConnComp.h"
+#include "BinaryImage.h"
+#include "BWColor.h"
 #include "RasterOp.h"
 #include "Utils.h"
 #include <QImage>
+#include <list>
+#include <algorithm>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

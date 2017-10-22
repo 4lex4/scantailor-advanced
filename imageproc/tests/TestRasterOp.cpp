@@ -17,9 +17,14 @@
  */
 
 #include "RasterOp.h"
+#include "BinaryImage.h"
 #include "Utils.h"
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
+#include <vector>
+#include <stddef.h>
+#include <stdlib.h>
+#include <assert.h>
 
 namespace imageproc {
     namespace tests {

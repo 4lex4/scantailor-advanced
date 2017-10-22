@@ -12,11 +12,12 @@ SET(
 SOURCE_GROUP("Sources" FILES ${sources})
 
 SET(
-        libs
-        imageproc math ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-        ${Boost_PRG_EXECUTION_MONITOR_LIBRARY}
-        ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	libs
+	imageproc math Qt5::Widgets ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+	${Boost_PRG_EXECUTION_MONITOR_LIBRARY} ${EXTRA_LIBS}
 )
 
 ADD_EXECUTABLE(tests ${sources})
 TARGET_LINK_LIBRARIES(tests ${libs})
+
+

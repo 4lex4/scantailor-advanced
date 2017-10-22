@@ -19,7 +19,12 @@
 #include "Transform.h"
 #include "Grayscale.h"
 #include "Utils.h"
+#include <QImage>
+#include <QSize>
 #include <boost/test/auto_unit_test.hpp>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
 
 namespace imageproc {
     namespace tests {

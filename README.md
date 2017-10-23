@@ -175,6 +175,7 @@ Features
    -    for the further DjVu encoding,
    -    to apply different filters to letters and images, which when being applied to the whole
         image gives worse results.
+   -    to apply a binarization to the letters from a third party app without affecting the images.
    
  *Note: That does not rename files to 0001, 0002... It can be made by a third party app, for example 
  [Bulk Rename Utility](http://www.bulkrenameutility.co.uk/Main_Intro.php)*

@@ -24,6 +24,11 @@ IF(MSVC)
 	ENDIF(DEBUG_CLI)
 ENDIF()
 
+IF(UNIX) 
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+ENDIF()
+
 SET(
 	CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
 	CACHE STRING "Common C flags for all build configurations." FORCE
@@ -102,16 +107,16 @@ IF (WIN32)
                 "You can specify it manually in LIB_DIR variable. Make sure you build the dependencies first!"
         )
     ENDIF ()
+	
+    FILE(GLOB jpeg_dir_ "${LIB_DIR}/jpeg-[0-9]*")
+    FILE(GLOB zlib_dir_ "${LIB_DIR}/zlib-[0-9]*.[0-9]*.[0-9]*")
+    FILE(GLOB png_dir_1 "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
+    FILE(GLOB png_dir_2 "${LIB_DIR}/lpng[0-9]*")
+    FILE(GLOB tiff_dir_ "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
+    FILE(GLOB qt_dir_ "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
+    FILE(GLOB boost_dir_ "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
+   #FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
 ENDIF ()
-
-FILE(GLOB jpeg_dir_ "${LIB_DIR}/jpeg-[0-9]*")
-FILE(GLOB zlib_dir_ "${LIB_DIR}/zlib-[0-9]*.[0-9]*.[0-9]*")
-FILE(GLOB png_dir_1 "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
-FILE(GLOB png_dir_2 "${LIB_DIR}/lpng[0-9]*")
-FILE(GLOB tiff_dir_ "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
-FILE(GLOB qt_dir_ "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
-FILE(GLOB boost_dir_ "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
-#FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
 
 #=================================== JPEG ===================================#
 
@@ -299,14 +304,13 @@ IF (WIN32)
             BOOST_ROOT boost-build.jam PATHS ${boost_dir_}
             DOC "Path to top-level Boost source directory."
     )
-
     SET(Boost_USE_STATIC_LIBS ON)
 ELSE (WIN32)
     ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
 ENDIF (WIN32)
 SET(Boost_USE_MULTITHREADED ON)
 
-FIND_PACKAGE(Boost COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
+FIND_PACKAGE(Boost 1.65 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
 IF (NOT Boost_FOUND)
     MESSAGE(
             FATAL_ERROR
@@ -319,29 +323,31 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 #=================================== Qt ===================================#
 
-find_package(Qt5Core PATHS ${qt_dir_}/qtbase)
-find_package(Qt5GUI PATHS ${qt_dir_}/qtbase)
-find_package(Qt5Widgets PATHS ${qt_dir_}/qtbase)
-find_package(Qt5Xml PATHS ${qt_dir_}/qtbase)
-find_package(Qt5Network PATHS ${qt_dir_}/qtbase)
-find_package(Qt5OpenGL PATHS ${qt_dir_}/qtbase)
-find_package(Qt5LinguistTools PATHS ${qt_dir_}/qttools ${qt_dir_}/qtbase)
+IF (WIN32)
+    SET(Qt5Core_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5Core")
+    SET(Qt5Gui_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5Gui")
+    SET(Qt5Widgets_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5Widgets")
+    SET(Qt5Xml_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5Xml")
+    SET(Qt5Network_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5Network")
+    SET(Qt5OpenGL_DIR "${qt_dir_}/qtbase/lib/cmake/Qt5OpenGL")
+    SET(Qt5LinguistTools_DIR "${qt_dir_}/qttools/lib/cmake/Qt5LinguistTools")
+ENDIF (WIN32)
 
-IF (NOT (Qt5Widgets_FOUND AND Qt5GUI_FOUND AND Qt5Core_FOUND AND Qt5LinguistTools_FOUND
-        AND Qt5Xml_FOUND AND Qt5Network_FOUND AND Qt5OpenGL_FOUND))
-    MESSAGE(
-            FATAL_ERROR "Qt could not be found. "
-            "If it's installed in a non-standard location, specify the path to qmake in QT_QMAKE_EXECUTABLE. "
-            "You can do it in interactive mode (ccmake instead of cmake) or using -DVAR=VAL syntax."
-    )
-ENDIF ()
+SET(qt_min_version 5.6)
+FIND_PACKAGE(Qt5Core ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5Gui ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5Widgets ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5Xml ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5Network ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5LinguistTools ${qt_min_version} REQUIRED)
+FIND_PACKAGE(Qt5OpenGL ${qt_min_version} REQUIRED)
 
 INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Qt5Core_LIBRARIES})
 INCLUDE_DIRECTORIES(${Qt5GUI_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Qt5GUI_LIBRARIES})
 INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS})
-add_definitions(${Qt5Widgets_DEFINITIONS})
+ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS})
 LINK_DIRECTORIES(${Qt5Widgets_LIBRARIES})
 INCLUDE_DIRECTORIES(${Qt5Xml_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Qt5Xml_LIBRARIES})

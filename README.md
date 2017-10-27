@@ -147,6 +147,8 @@ Features
    feature from ver. Enhanced. 
    Now thumbnails is shown evenly.
 
+6. Fixed other bugs of Enhanced and Featured versions.
+
 * ##### Light and Dark color schemes
  You can choose a desired color scheme in settings.
 

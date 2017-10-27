@@ -2,9 +2,9 @@ QPushButton, QLineEdit, QListView {
 	border: 1px solid #cccccc;
 	background-color: palette(base);
 	border-radius: 3px;
-	padding: 0.2ex 0.2em 0.2ex 0.2em;
-	height: 1.3em;
-	width: 5em;
+	padding: 1px 3px 1px 3px;
+	height: 18px;
+	width: 68px;
 	text-align: center;
 	selection-background-color: #3399ff;
 	selection-color: white;
@@ -51,9 +51,9 @@ QPushButton:flat, QToolButton:flat {
 
 QCheckBox::indicator, QTreeView::indicator, QTableView::indicator, QGroupBox::indicator, QMenu::indicator:non-exclusive,
 QRadioButton::indicator, QMenu::indicator:exclusive {
-    width: 13px;
-    height: 13px;
-    margin: 0.1em 0px 0.1em 0px;
+    width: 14px;
+    height: 14px;
+    margin: 1px 0px 1px 0px;
 }
 
 QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indicator:unchecked, QGroupBox::indicator:unchecked,
@@ -138,7 +138,7 @@ QRadioButton::indicator:unchecked,
 QMenu::indicator:exclusive:unchecked {
     border: 1px solid #cccccc;
 	background-color: palette(base);
-	border-radius: 0.5em;
+	border-radius: 7px;
 }
 
 QRadioButton::indicator:unchecked:hover {
@@ -161,7 +161,7 @@ QMenu::indicator:exclusive:checked {
     margin-left: 1px;
     margin-right: 1px;
     background-color: #6c6c6c;
-    border-radius: 0.49em;
+    border-radius: 7px;
     image: url(:/light_scheme/icon_radiobutton_checked.png);
 }
 
@@ -169,14 +169,14 @@ QRadioButton::indicator:checked:hover {
     border: 1px solid #1e76e3;
     margin-left: 0px;
     margin-right: 0px;
-    border-radius: 0.5em;
+    border-radius: 7px;
 }
 
 QRadioButton::indicator:checked:pressed {
     border: 1px solid #1e76e3;
     margin-left: 0px;
     margin-right: 0px;
-    border-radius: 0.5em;
+    border-radius: 7px;
     background-color: #555555;
     image: url(:/light_scheme/icon_radiobutton_checked_pressed.png);
 }
@@ -189,14 +189,14 @@ QRadioButton::indicator:checked:disabled {
 QProgressBar {
 	border: 1px solid #cccccc;
 	background-color: palette(base);
-	border-radius: 0.55em;
-	height: 1.1em; 
+	border-radius: 6px;
+	height: 12px; 
 	text-align: center;
 }
 
 QProgressBar::chunk {
 	background-color: #5d9bf3;
-	border-radius: 0.55em;
+	border-radius: 6px;
 }
 
 QGroupBox {
@@ -209,7 +209,7 @@ QGroupBox {
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top center;
-    margin: 0px 0.25em 0px 0.25em
+    margin: 0px 4px 0px 4px
 }
 
 QGraphicsView, ImageViewBase, QFrame#imageViewFrame {
@@ -226,14 +226,14 @@ QGroupBox#recentProjectsGroup {
 	background-color: transparent;
     border: 1px solid #1e76e3;
     border-radius: 0px;
-    margin-top: 1em;
+    margin-top: 14px;
     color: #000000;
 }
 
 QGroupBox#recentProjectsGroup::title {
     subcontrol-origin: margin;
     subcontrol-position: top center;
-    margin: 0px 0.25em 0px 0.25em;
+    margin: 0px 4px 0px 4px;
 }
 
 QMenuBar {
@@ -247,7 +247,7 @@ QMenuBar::item {
     padding: 1px 3px 1px;
     background: transparent;
 	border-radius: 2px;
-	margin-bottom: 0.2em; 
+	margin-bottom: 3px; 
 }
 
 QMenuBar::item:selected {
@@ -272,9 +272,9 @@ QMenu::separator {
 }
 
 QMenu::item {
-	padding: 0.2ex 14px 0.2ex 20px;
-	height: 1.7em;
-	width: 8.3em;
+	padding: 1px 14px 1px 20px;
+    height: 24px;
+    width: 113px;
 	margin: 1px 0px 1px 0px;
 }
 
@@ -435,9 +435,9 @@ QTabBar {
 }
 
 QTabBar::tab {
-    padding: 0.35em 0.2ex 0.35em 0.2ex;
-	height: 1em;
-	width: 5em;
+    padding: 5px 1px 5px 1px;
+	height: 14px;
+	width: 68px;
     background-color: #dbdbdb;
     border: 1px solid #cccccc;
     font-weight: bold;
@@ -457,9 +457,9 @@ QTabBar::tab:selected {
 }
 
 output--TabbedImageView > QTabBar::tab {
-	padding: 0.2ex 0.25em 0.2ex 0.35em;
-	height: 7em;
-	width: 1em;
+	padding: 1px 4px 1px 5px;
+	height: 96px;
+	width: 14px;
 }
 
 output--TabbedImageView::tab-bar {
@@ -472,9 +472,9 @@ QComboBox {
 	border: 1px solid #cccccc;
 	background-color: palette(base);
 	border-radius: 3px;
-	padding: 0.2ex 0px 0.2ex 0.6em;
-	height: 1.3em;
-	width: 6.3em;
+	padding: 1px 0px 1px 0.6em;
+	height: 18px;
+	width: 86px;
 	selection-background-color: #3399ff;
 	selection-color: white;
 }
@@ -483,8 +483,8 @@ QAbstractSpinBox {
 	border: 1px solid #cccccc;
 	background-color: palette(base);
 	border-radius: 3px;
-	padding: 0.2ex 0.2em 0.2ex 0.2em;
-	height: 1.3em;
+	padding: 1px 3px 1px 3px;
+	height: 18px;
 	selection-background-color: #3399ff;
 	selection-color: white;
 }
@@ -506,7 +506,7 @@ QComboBox:on {
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: bottom right;
-	width: 1.3em;
+	width: 18px;
 	background: transparent;
 	border: none;
 }
@@ -517,7 +517,7 @@ QComboBox::down-arrow {
 
 QComboBox QAbstractItemView {
 	border: none;
-	padding: 0.2ex 0.2ex 0.2ex 0.2ex;
+	padding: 1px 1px 1px 1px;
 	selection-background-color: #3399ff;
 	selection-color: white;
 }
@@ -525,9 +525,9 @@ QComboBox QAbstractItemView {
 QAbstractSpinBox::up-button {
 	subcontrol-origin: border;
     subcontrol-position: top right;
-    padding-top: 1.25ex;
-    padding-right: 0.3ex;
-	width: 1em;
+    padding-top: 4px;
+    padding-right: 1px;
+	width: 14px;
 	background: transparent;
 	border: none;
 }
@@ -535,9 +535,9 @@ QAbstractSpinBox::up-button {
 QAbstractSpinBox::down-button {
 	subcontrol-origin: border;
     subcontrol-position: bottom right;
-    padding-bottom: 1.25ex;
-    padding-right: 0.3ex;
-	width: 1em;
+    padding-bottom: 4px;
+    padding-right: 1px;
+	width: 14px;
 	background: transparent;
 	border: none;
 }

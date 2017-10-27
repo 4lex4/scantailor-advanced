@@ -18,33 +18,13 @@
 
 #include "ProjectFilesDialog.h"
 #include "NonCopyable.h"
-#include "ImageMetadata.h"
 #include "ImageMetadataLoader.h"
 #include "SmartFilenameOrdering.h"
-#include <QAbstractListModel>
 #include <QSortFilterProxyModel>
-#include <QModelIndex>
-#include <QItemSelectionModel>
-#include <QItemSelection>
-#include <QItemSelectionRange>
 #include <QFileDialog>
-#include <QDir>
-#include <QFileInfoList>
-#include <QVariant>
-#include <QVector>
-#include <QVectorIterator>
 #include <QMessageBox>
-#include <QTimerEvent>
 #include <QSettings>
-#include <QBrush>
-#include <QColor>
-#include <QDebug>
-#include <vector>
 #include <deque>
-#include <algorithm>
-#include <utility>
-#include <iterator>
-#include <stddef.h>
 
 class ProjectFilesDialog::Item {
 public:
@@ -264,7 +244,6 @@ QString ProjectFilesDialog::outputDirectory() const {
 }
 
 
-
 std::vector<ImageFileInfo>
 ProjectFilesDialog::inProjectFiles() const {
 
@@ -364,7 +343,7 @@ namespace {
         }
     };
 
-        }
+}
 
 void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_files) {
 
@@ -398,7 +377,7 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
         Qt::ItemFlags flags;
         if (m_supportedExtensions.contains(file.suffix().toLower())) {
             flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-            }
+        }
         items.push_back(Item(file, flags));
     }
 
@@ -450,7 +429,7 @@ void ProjectFilesDialog::removeFromProject() {
     m_ptrInProjectFiles->items(selection, [&](Item const& item) {
         if (item.fileInfo().dir() == input_dir) {
             items.push_back(item);
-            }
+        }
     });
 
     m_ptrOffProjectFiles->append(items.begin(), items.end());
@@ -619,12 +598,12 @@ void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
     QVector<Range> sorted_ranges;
     for (auto const& range : selection) {
         sorted_ranges.push_back(Range(range.top(), range.bottom()));
-            }
+    }
 
     std::sort(
             sorted_ranges.begin(), sorted_ranges.end(),
-        [](Range const& lhs, Range const& rhs) {
-        return lhs.first < rhs.first;
+            [](Range const& lhs, Range const& rhs) {
+                return lhs.first < rhs.first;
             }
     );
 
@@ -679,8 +658,8 @@ void ProjectFilesDialog::FileList::prepareForLoadingFiles() {
 
     std::sort(
             item_indexes.begin(), item_indexes.end(),
-        [&](int lhs, int rhs) {
-        return ItemVisualOrdering()(m_items[lhs], m_items[rhs]);
+            [&](int lhs, int rhs) {
+                return ItemVisualOrdering()(m_items[lhs], m_items[rhs]);
             }
     );
 
@@ -698,8 +677,8 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
     std::vector<ImageMetadata> per_page_metadata;
     QString const file_path(item.fileInfo().absoluteFilePath());
     ImageMetadataLoader::Status const st = ImageMetadataLoader::load(
-        file_path, [&](ImageMetadata const& metadata) {
-        per_page_metadata.push_back(metadata);
+            file_path, [&](ImageMetadata const& metadata) {
+                per_page_metadata.push_back(metadata);
             }
     );
 

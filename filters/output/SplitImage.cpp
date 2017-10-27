@@ -75,7 +75,7 @@ namespace output {
                 image_line += image_stride;
                 bw_mask_line += bw_mask_stride;
             }
-        }          // combineMixed
+        }
     } // namespace
 
     SplitImage::SplitImage() = default;

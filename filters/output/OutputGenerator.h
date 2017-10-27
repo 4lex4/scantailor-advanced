@@ -205,6 +205,12 @@ namespace output {
 
         static void fillMarginsInPlace(QImage& image, QPolygonF const& content_poly, QColor const& color);
 
+        static void fillMarginsInPlace(BinaryImage& image, QPolygonF const& content_poly, BWColor const& color);
+
+        static void fillMarginsInPlace(QImage& image, BinaryImage const& content_mask, QColor const& color);
+
+        static void fillMarginsInPlace(BinaryImage& image, BinaryImage const& content_mask, BWColor const& color);
+
         static imageproc::GrayImage normalizeIlluminationGray(TaskStatus const& status,
                                                               QImage const& input,
                                                               QPolygonF const& area_to_consider,

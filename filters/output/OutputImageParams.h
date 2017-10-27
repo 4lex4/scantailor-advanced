@@ -28,6 +28,7 @@
 #include "DespeckleLevel.h"
 #include <QSize>
 #include <QRect>
+#include <ImageTransformation.h>
 
 class ImageTransformation;
 class QDomDocument;
@@ -103,6 +104,9 @@ namespace output {
             double m_22;
         };
 
+        static PictureShape parsePictureShape(const QString& str);
+
+        static QString formatPictureShape(PictureShape type);
 
         static bool colorParamsMatch(ColorParams const& cp1, DespeckleLevel dl1, ColorParams const& cp2,
                                      DespeckleLevel dl2);

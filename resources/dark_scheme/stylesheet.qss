@@ -138,7 +138,7 @@ QRadioButton::indicator:unchecked,
 QMenu::indicator:exclusive:unchecked {
     border: 1px solid #666666;
 	background-color: palette(base);
-	border-radius: 7px;
+	border-radius: 8px;
 }
 
 QRadioButton::indicator:unchecked:hover {
@@ -169,14 +169,14 @@ QRadioButton::indicator:checked:hover {
     border: 1px solid #0f64d2;
     margin-left: 0px;
     margin-right: 0px;
-    border-radius: 7px;
+    border-radius: 8px;
 }
 
 QRadioButton::indicator:checked:pressed {
     border: 1px solid #0f64d2;
     margin-left: 0px;
     margin-right: 0px;
-    border-radius: 7px;
+    border-radius: 8px;
     background-color: #868686;
     image: url(:/dark_scheme/icon_radiobutton_checked_pressed.png);
 }
@@ -189,21 +189,21 @@ QRadioButton::indicator:checked:disabled {
 QProgressBar {
 	border: 1px solid #666666;
 	background-color: palette(base);
-	border-radius: 6px;
-	height: 12px; 
+	border-radius: 7px;
+	height: 14px; 
 	text-align: center;
 }
 
 QProgressBar::chunk {
 	background-color: #3399ff;
-	border-radius: 6px;
+	border-radius: 7px;
 }
 
 QGroupBox {
     background-color: palette(window);
     border: 1px solid #424242;
     border-radius: 0px;
-    margin-top: 0.6em;
+    margin-top: 8px;
 }
 
 QGroupBox::title {
@@ -471,7 +471,7 @@ QComboBox {
 	border: 1px solid #666666;
 	background-color: palette(base);
 	border-radius: 3px;
-	padding: 1px 0px 1px 0.6em;
+	padding: 1px 0px 1px 8px;
 	height: 18px;
 	width: 86px;
 	selection-background-color: #3399ff;

@@ -117,6 +117,9 @@ namespace output {
         /** Content rectangle in output image coordinates. */
         QRect m_contentRect;
 
+        /** Crop area in output image coordinates. */
+        QPolygonF m_cropArea;
+
         /**
          * Some parameters from the transformation matrix that maps
          * source image coordinates to unscaled (disregarding dpi changes)

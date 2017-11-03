@@ -257,19 +257,6 @@ namespace output {
     void OptionsWidget::whiteMarginsToggled(bool const checked) {
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         colorCommonOptions.setWhiteMargins(checked);
-
-        if (!checked) {
-            BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
-            blackWhiteOptions.setNormalizeIllumination(false);
-            equalizeIlluminationCB->setChecked(false);
-            m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-
-            colorCommonOptions.setNormalizeIllumination(false);
-            equalizeIlluminationColorCB->setChecked(false);
-        }
-        equalizeIlluminationCB->setEnabled(checked);
-        equalizeIlluminationColorCB->setEnabled(checked);
-
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
@@ -621,30 +608,20 @@ namespace output {
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
         SplittingOptions splitOptions(m_colorParams.splittingOptions());
 
-        if (!colorCommonOptions.whiteMargins()) {
-            colorCommonOptions.setNormalizeIllumination(false);
-            blackWhiteOptions.setNormalizeIllumination(false);
-        } else if (!blackWhiteOptions.normalizeIllumination()
-                   && color_mode == ColorParams::MIXED) {
+        if (!blackWhiteOptions.normalizeIllumination()
+            && color_mode == ColorParams::MIXED) {
             colorCommonOptions.setNormalizeIllumination(false);
         }
         m_colorParams.setColorCommonOptions(colorCommonOptions);
-        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
         whiteMarginsCB->setChecked(colorCommonOptions.whiteMargins());
         whiteMarginsCB->setVisible(true);
         equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
-        equalizeIlluminationCB->setEnabled(colorCommonOptions.whiteMargins());
         equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
         equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
         equalizeIlluminationColorCB->setVisible(color_mode != ColorParams::BLACK_AND_WHITE);
-        if (color_mode != ColorParams::MIXED) {
-            equalizeIlluminationColorCB->setEnabled(colorCommonOptions.whiteMargins());
-        } else {
-            equalizeIlluminationColorCB->setEnabled(colorCommonOptions.whiteMargins()
-                                                    && blackWhiteOptions.normalizeIllumination());
-        }
+        equalizeIlluminationColorCB->setEnabled(blackWhiteOptions.normalizeIllumination());
         savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
         savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
         morphologicalSmoothingCB->setChecked(blackWhiteOptions.isMorphologicalSmoothingEnabled());

@@ -35,6 +35,7 @@ namespace output {
                                          PictureShape const picture_shape)
             : m_size(out_image_size),
               m_contentRect(content_rect),
+              m_cropArea(xform.resultingPreCropArea()),
               m_dpi(dpi),
               m_colorParams(color_params),
               m_pictureShape(picture_shape),
@@ -49,6 +50,7 @@ namespace output {
     OutputImageParams::OutputImageParams(QDomElement const& el)
             : m_size(XmlUnmarshaller::size(el.namedItem("size").toElement())),
               m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
+              m_cropArea(XmlUnmarshaller::polygonF(el.namedItem("crop-area").toElement())),
               m_partialXform(el.namedItem("partial-xform").toElement()),
               m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_colorParams(el.namedItem("color-params").toElement()),
@@ -65,6 +67,7 @@ namespace output {
         QDomElement el(doc.createElement(name));
         el.appendChild(marshaller.size(m_size, "size"));
         el.appendChild(marshaller.rect(m_contentRect, "content-rect"));
+        el.appendChild(marshaller.polygonF(m_cropArea, "crop-area"));
         el.appendChild(m_partialXform.toXml(doc, "partial-xform"));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
         el.appendChild(m_colorParams.toXml(doc, "color-params"));
@@ -83,6 +86,10 @@ namespace output {
         }
 
         if (m_contentRect != other.m_contentRect) {
+            return false;
+        }
+
+        if (m_cropArea != other.m_cropArea) {
             return false;
         }
 

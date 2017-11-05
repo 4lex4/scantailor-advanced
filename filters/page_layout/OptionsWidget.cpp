@@ -211,12 +211,12 @@ namespace page_layout {
         int decimals = 0;
         double step = 0.0;
 
-        if (idx == 0) {
+        if (idx == 0) {  // mm
             m_mmToUnit = 1.0;
             m_unitToMM = 1.0;
             decimals = 1;
             step = 1.0;
-        } else {
+        } else {  // in
             m_mmToUnit = MM2INCH;
             m_unitToMM = INCH2MM;
             decimals = 2;

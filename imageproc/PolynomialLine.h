@@ -30,6 +30,7 @@ namespace imageproc {
  * \brief A polynomial function describing a sequence of numbers.
  */
     class PolynomialLine {
+        // Member-wise copying is OK.
     public:
         /**
          * \brief Calculate a polynomial that approximates a sequence of values.
@@ -186,6 +187,7 @@ namespace imageproc {
             return;
         }
 
+        // Pretend that data points are positioned in range of [1, 2].
         double const scale = calcScale(num_values);
         for (int i = 0; i < num_values; ++i, values += step) {
             double const position = 1.0 + i * scale;
@@ -201,6 +203,6 @@ namespace imageproc {
             *values = pp(sum);
         }
     }
-}  // namespace imageproc
+} // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_POLYNOMIAL_LINE_H_
+#endif // ifndef IMAGEPROC_POLYNOMIAL_LINE_H_

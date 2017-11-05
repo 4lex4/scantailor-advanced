@@ -23,6 +23,7 @@
 #include "Dpi.h"
 
 class ImageMetadata {
+    // Member-wise copying is OK.
 public:
     enum DpiStatus {
         DPI_OK,
@@ -76,4 +77,4 @@ private:
 };
 
 
-#endif  // ifndef IMAGEMETADATA_H_
+#endif // ifndef IMAGEMETADATA_H_

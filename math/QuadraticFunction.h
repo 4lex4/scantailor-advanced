@@ -36,6 +36,7 @@
  * c: constant component.\n
  */
 class QuadraticFunction {
+    // Member-wise copying is OK.
 public:
     /**
      * Quadratic function's gradient can be written in matrix form as:
@@ -97,4 +98,4 @@ inline void swap(QuadraticFunction& f1, QuadraticFunction& f2) {
     f1.swap(f2);
 }
 
-#endif  // ifndef QUADRATIC_FUNCTION_H_
+#endif // ifndef QUADRATIC_FUNCTION_H_

@@ -26,5 +26,5 @@ namespace output {
     public:
         PictureZonePropFactory();
     };
-}
+}  // namespace output
 #endif

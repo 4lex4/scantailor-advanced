@@ -31,7 +31,8 @@
  * \brief An open X-Spline.
  *
  * [1] Blanc, C., Schlick, C.: X-splines: a spline model designed for the end-user.
- * http: */
+ * http://scholar.google.com/scholar?cluster=2002168279173394147&hl=en&as_sdt=0,5
+ */
 class XSpline : public spfit::FittableSpline {
 public:
     struct PointAndDerivs {
@@ -228,4 +229,4 @@ inline void swap(XSpline& o1, XSpline& o2) {
     o1.swap(o2);
 }
 
-#endif  // ifndef XSPLINE_H_
+#endif // ifndef XSPLINE_H_

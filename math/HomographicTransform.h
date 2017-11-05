@@ -68,6 +68,7 @@ public:
 
     T operator()(T from) const;
 
+    // Prevent it's shadowing by the above one.
     using HomographicTransformBase<1, T>::operator();
 };
 
@@ -96,9 +97,10 @@ typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::ope
 
 template<typename T>
 T HomographicTransform<1, T>::operator()(T from) const {
+    // Optimized version for 1D case.
     T const* m = this->mat().data();
 
     return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }
 
-#endif  // ifndef HOMOGRAPHIC_TRANSFORM_H_
+#endif // ifndef HOMOGRAPHIC_TRANSFORM_H_

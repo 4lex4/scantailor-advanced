@@ -60,6 +60,9 @@ public:
         QStyle::State const new_state = (orig_state & ~m_changedMask)
                                         | (m_changedFlags & m_changedMask);
 
+        // Evil but necessary: the alternative solution of modifying
+        // a copy doesn't work, as option doesn't really point to
+        // QStyleOptionViewItem, but to one of its subclasses.
         QStyleOptionViewItem& non_const_opt = const_cast<QStyleOptionViewItem&>(option);
 
         non_const_opt.state = new_state;
@@ -73,4 +76,4 @@ private:
 };
 
 
-#endif  // ifndef CHANGEDSTATEITEMDELEGATE_H_
+#endif // ifndef CHANGEDSTATEITEMDELEGATE_H_

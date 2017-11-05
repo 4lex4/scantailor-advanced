@@ -121,7 +121,7 @@ namespace dewarping {
         HomographicTransform<1, double> H(threePoint1DHomography(pairs));
 
         return Generatrix(img_generatrix, H);
-    }      // CylindricalSurfaceDewarper::mapGeneratrix
+    }  // CylindricalSurfaceDewarper::mapGeneratrix
 
     QPointF CylindricalSurfaceDewarper::mapToDewarpedSpace(QPointF const& img_pt) const {
         State state;
@@ -160,7 +160,7 @@ namespace dewarping {
         double const crv_y = H(img_pt_proj);
 
         return QPointF(crv_x, crv_y);
-    }      // CylindricalSurfaceDewarper::mapToDewarpedSpace
+    }  // CylindricalSurfaceDewarper::mapToDewarpedSpace
 
     QPointF CylindricalSurfaceDewarper::mapToWarpedSpace(QPointF const& crv_pt) const {
         State state;
@@ -215,7 +215,7 @@ namespace dewarping {
         }
 
         return weight_accum == 0 ? 0.5 : pln_y_accum / weight_accum;
-    }      // CylindricalSurfaceDewarper::calcPlnStraightLineY
+    }  // CylindricalSurfaceDewarper::calcPlnStraightLineY
 
     HomographicTransform<2, double>
     CylindricalSurfaceDewarper::fourPoint2DHomography(boost::array<std::pair<QPointF, QPointF>, 4> const& pairs) {
@@ -263,7 +263,7 @@ namespace dewarping {
         mc(H, 3, 3).trans().write(H);
 
         return HomographicTransform<2, double>(H);
-    }      // CylindricalSurfaceDewarper::fourPoint2DHomography
+    }  // CylindricalSurfaceDewarper::fourPoint2DHomography
 
     HomographicTransform<1, double>
     CylindricalSurfaceDewarper::threePoint1DHomography(boost::array<std::pair<double, double>, 3> const& pairs) {
@@ -305,6 +305,9 @@ namespace dewarping {
         double pln_x;
         while (it.next(img_curve1_pt, img_curve2_pt, pln_x)) {
             if (pln_x <= prev_pln_x) {
+                // This means our surface has an S-like shape.
+                // We don't support that, and to make ReverseArcLength happy,
+                // we have to skip such points.
                 continue;
             }
 
@@ -324,10 +327,11 @@ namespace dewarping {
             prev_pln_x = pln_x;
         }
 
+        // Needs to go before normalizeRange().
         m_directrixArcLength = m_arcLengthMapper.totalArcLength();
-
+        // Scale arc lengths to the range of [0, 1].
         m_arcLengthMapper.normalizeRange(1);
-    }      // CylindricalSurfaceDewarper::initArcLengthMapper
+    }  // CylindricalSurfaceDewarper::initArcLengthMapper
 
 /*======================= CoupledPolylinesIterator =========================*/
 

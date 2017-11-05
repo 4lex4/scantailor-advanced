@@ -75,6 +75,7 @@ namespace imageproc {
                     BOOST_REQUIRE_CLOSE(x[i], control[i], 1e-6);
                 }
 
+                // Now make the system inconsistent.
                 B[4] += 1.0;
                 BOOST_CHECK_THROW(mc(A, 3, 5).trans().solve(mc(B, 5, 1)), std::runtime_error);
             }

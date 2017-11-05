@@ -36,6 +36,7 @@ namespace output {
  * or to re-despeckle with different DespeckleLevel.
  */
     class DespeckleState {
+        // Member-wise copying is OK.
     public:
         DespeckleState(QImage const& output, imageproc::BinaryImage const& speckles, DespeckleLevel level,
                        Dpi const& dpi);
@@ -84,4 +85,4 @@ namespace output {
         DespeckleLevel m_despeckleLevel;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_DESPECKLE_STATE_H_
+#endif // ifndef OUTPUT_DESPECKLE_STATE_H_

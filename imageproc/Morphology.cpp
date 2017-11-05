@@ -82,6 +82,8 @@ namespace imageproc {
         void ReusableImages::store(BinaryImage& img) {
             assert(!img.isNull());
 
+            // Using push_back(null_image) then swap() avoids atomic operations
+            // inside BinaryImage.
             m_images.push_back(BinaryImage());
             m_images.back().swap(img);
         }
@@ -276,7 +278,7 @@ namespace imageproc {
                         remaining_steps, rop
                 );
             }
-        }          // spreadInDirectionLow
+        }  // spreadInDirectionLow
 
         void spreadInDirection(BinaryImage& dst,
                                CoordinateSystem const& dst_cs,
@@ -358,7 +360,7 @@ namespace imageproc {
             }
 
             tmp_images.store(tmp);
-        }          // spreadInDirection
+        }  // spreadInDirection
 
         void dilateOrErodeBrick(BinaryImage& dst,
                                 BinaryImage const& src,
@@ -377,10 +379,12 @@ namespace imageproc {
                 return;
             }
 
-            CoordinateSystem const src_cs;
+            CoordinateSystem const src_cs;  // global coordinate system
             CoordinateSystem const dst_cs(dst_area.topLeft());
             QRect const dst_image_rect(QPoint(0, 0), dst_area.size());
 
+            // Area in dst coordinates that matters.
+            // Everything outside of it will be overwritten.
             QRect dst_relevant_rect(dst_image_rect);
 
             if (src_surroundings == spreading_color) {
@@ -405,39 +409,47 @@ namespace imageproc {
             CoordinateSystem tmp_cs(tmp_area.topLeft());
             QRect const tmp_image_rect(QPoint(0, 0), tmp_area.size());
 
+            // Because all temporary images share the same size, it's easy
+            // to reuse them.  Reusing an image not only saves us the
+            // cost of memory allocation, but also improves chances that
+            // image data is already in CPU cache.
             ReusableImages tmp_images;
 
             if (brick.minY() == brick.maxY()) {
-                spreadInDirection(dst, dst_cs, dst_relevant_rect, src, src_cs,
-                                  tmp_images, tmp_cs, tmp_image_rect.size(),
-                                  brick.minX(), 1, brick.minY(), 0, brick.width(),
-                                  rop, !spreading_color, false
+                spreadInDirection(  // horizontal
+                        dst, dst_cs, dst_relevant_rect, src, src_cs,
+                        tmp_images, tmp_cs, tmp_image_rect.size(),
+                        brick.minX(), 1, brick.minY(), 0, brick.width(),
+                        rop, !spreading_color, false
                 );
             } else if (brick.minX() == brick.maxX()) {
-                spreadInDirection(dst, dst_cs, dst_relevant_rect, src, src_cs,
-                                  tmp_images, tmp_cs, tmp_image_rect.size(),
-                                  brick.minX(), 0, brick.minY(), 1, brick.height(),
-                                  rop, !spreading_color, false
+                spreadInDirection(  // vertical
+                        dst, dst_cs, dst_relevant_rect, src, src_cs,
+                        tmp_images, tmp_cs, tmp_image_rect.size(),
+                        brick.minX(), 0, brick.minY(), 1, brick.height(),
+                        rop, !spreading_color, false
                 );
             } else {
                 BinaryImage tmp(tmp_area.size());
-                spreadInDirection(tmp, tmp_cs, tmp_image_rect, src, src_cs,
-                                  tmp_images, tmp_cs, tmp_image_rect.size(),
-                                  brick.minX(), 1, brick.minY(), 0, brick.width(),
-                                  rop, !spreading_color, true
+                spreadInDirection(  // horizontal
+                        tmp, tmp_cs, tmp_image_rect, src, src_cs,
+                        tmp_images, tmp_cs, tmp_image_rect.size(),
+                        brick.minX(), 1, brick.minY(), 0, brick.width(),
+                        rop, !spreading_color, true
                 );
 
-                spreadInDirection(dst, dst_cs, dst_relevant_rect, tmp, tmp_cs,
-                                  tmp_images, tmp_cs, tmp_image_rect.size(),
-                                  0, 0, 0, 1, brick.height(),
-                                  rop, !spreading_color, false
+                spreadInDirection(  // vertical
+                        dst, dst_cs, dst_relevant_rect, tmp, tmp_cs,
+                        tmp_images, tmp_cs, tmp_image_rect.size(),
+                        0, 0, 0, 1, brick.height(),
+                        rop, !spreading_color, false
                 );
             }
 
             if (src_surroundings == spreading_color) {
                 dst.fillExcept(dst_relevant_rect, src_surroundings);
             }
-        }          // dilateOrErodeBrick
+        }  // dilateOrErodeBrick
 
         class Darker {
         public:
@@ -511,7 +523,7 @@ namespace imageproc {
                      dst_segment_first += se_len) {
                     int const dst_segment_last = std::min(
                             dst_segment_first + se_len, dst_width
-                    ) - 1;
+                    ) - 1; // inclusive
                     int const src_segment_first = dst_segment_first + dx1;
                     int const src_segment_last = dst_segment_last + dx2;
                     int const src_segment_center
@@ -529,7 +541,7 @@ namespace imageproc {
 
                     for (int x = dst_segment_first; x <= dst_segment_last; ++x) {
                         int const src_first = x + dx1;
-                        int const src_last = x + dx2;
+                        int const src_last = x + dx2;  // inclusive
                         assert(src_segment_center >= src_first);
                         assert(src_segment_center <= src_last);
                         uint8_t v1 = array_center[src_first - src_segment_center];
@@ -541,7 +553,7 @@ namespace imageproc {
                 src_line += src_stride;
                 dst_line += dst_stride;
             }
-        }          // spreadGrayHorizontal
+        }  // spreadGrayHorizontal
 
         template<typename MinOrMax>
         void spreadGrayHorizontal(GrayImage& dst,
@@ -551,6 +563,7 @@ namespace imageproc {
                                   int const dy,
                                   int const dx1,
                                   int const dx2) {
+            // src_point = dst_point + dst_to_src;
             QPoint const dst_to_src(dst_cs.offsetTo(src_cs));
 
             spreadGrayHorizontal<MinOrMax>(
@@ -579,7 +592,7 @@ namespace imageproc {
                      dst_segment_first += se_len) {
                     int const dst_segment_last = std::min(
                             dst_segment_first + se_len, dst_height
-                    ) - 1;
+                    ) - 1; // inclusive
                     int const src_segment_first = dst_segment_first + dy1;
                     int const src_segment_last = dst_segment_last + dy2;
                     int const src_segment_center
@@ -598,7 +611,7 @@ namespace imageproc {
                     uint8_t* dst = dst_data + x + dst_segment_first * dst_stride;
                     for (int y = dst_segment_first; y <= dst_segment_last; ++y) {
                         int const src_first = y + dy1;
-                        int const src_last = y + dy2;
+                        int const src_last = y + dy2;  // inclusive
                         assert(src_segment_center >= src_first);
                         assert(src_segment_center <= src_last);
                         uint8_t v1 = array_center[src_first - src_segment_center];
@@ -608,7 +621,7 @@ namespace imageproc {
                     }
                 }
             }
-        }          // spreadGrayVertical
+        }  // spreadGrayVertical
 
         template<typename MinOrMax>
         void spreadGrayVertical(GrayImage& dst,
@@ -618,6 +631,7 @@ namespace imageproc {
                                 int const dx,
                                 int const dy1,
                                 int const dy2) {
+            // src_point = dst_point + dst_to_src;
             QPoint const dst_to_src(dst_cs.offsetTo(src_cs));
 
             spreadGrayVertical<MinOrMax>(
@@ -674,7 +688,7 @@ namespace imageproc {
             }
 
             return dst;
-        }          // extendGrayImage
+        }  // extendGrayImage
 
         template<typename MinOrMax>
         GrayImage dilateOrErodeGray(GrayImage const& src,
@@ -694,10 +708,15 @@ namespace imageproc {
             }
             CoordinateSystem const dst_cs(dst_area.topLeft());
 
+            // Each pixel will be a minumum or maximum of a group of pixels
+            // in its neighborhood.  The neighborhood is defined by collect_area.
             Brick const collect_area(brick.flipped());
 
             if ((collect_area.minY() != collect_area.maxY())
                 && (collect_area.minX() != collect_area.maxX())) {
+                // We are going to make two operations:
+                // src -> tmp, then tmp -> dst
+                // Those operations will use the following collect areas:
                 Brick const collect_area1(
                         collect_area.minX(), collect_area.minY(),
                         collect_area.maxX(), collect_area.minY()
@@ -710,7 +729,8 @@ namespace imageproc {
                 CoordinateSystem tmp_cs(tmp_rect.topLeft());
 
                 GrayImage tmp(tmp_rect.size());
-
+                // First operation.  The scope is there to destroy the
+                // effective_src image when it's no longer necessary.
                 {
                     QRect const effective_src_rect(
                             extendByBrick(tmp_rect, collect_area1)
@@ -734,7 +754,7 @@ namespace imageproc {
                             collect_area1.minX(), collect_area1.maxX()
                     );
                 }
-
+                // Second operation.
                 spreadGrayVertical<MinOrMax>(
                         dst, dst_cs, tmp, tmp_cs,
                         collect_area2.minX(),
@@ -774,8 +794,8 @@ namespace imageproc {
             }
 
             return dst;
-        }          // dilateOrErodeGray
-    }      // namespace
+        }  // dilateOrErodeGray
+    }  // anonymous namespace
 
     BinaryImage dilateBrick(BinaryImage const& src,
                             Brick const& brick,
@@ -891,6 +911,8 @@ namespace imageproc {
             tmp_area = extendByBrick(src.rect(), actual_brick);
         }
 
+        // At this point we could leave tmp_area as is, but a large
+        // tmp_area would be a waste if dst_area is small.
 
         tmp_area = extendByBrick(dst_area, actual_brick).intersected(tmp_area);
 
@@ -905,7 +927,7 @@ namespace imageproc {
                 tmp, actual_brick,
                 tmp_cs.fromGlobal(dst_area), src_surroundings
         );
-    }      // openBrick
+    }  // openBrick
 
     BinaryImage openBrick(BinaryImage const& src, QSize const& brick, BWColor const src_surroundings) {
         return openBrick(src, brick, src.rect(), src_surroundings);
@@ -926,6 +948,8 @@ namespace imageproc {
         Brick const brick1(brick);
         Brick const brick2(brick1.flipped());
 
+        // We are going to make two operations:
+        // tmp = erodeGray(src, brick1), then dst = dilateGray(tmp, brick2)
         QRect const tmp_rect(extendByBrick(dst_area, brick1));
         CoordinateSystem tmp_cs(tmp_rect.topLeft());
 
@@ -964,6 +988,8 @@ namespace imageproc {
             tmp_area = extendByBrick(src.rect(), actual_brick);
         }
 
+        // At this point we could leave tmp_area as is, but a large
+        // tmp_area would be a waste if dst_area is small.
 
         tmp_area = extendByBrick(dst_area, actual_brick).intersected(tmp_area);
 
@@ -978,7 +1004,7 @@ namespace imageproc {
                 tmp, actual_brick,
                 tmp_cs.fromGlobal(dst_area), src_surroundings
         );
-    }      // closeBrick
+    }  // closeBrick
 
     BinaryImage closeBrick(BinaryImage const& src, QSize const& brick, BWColor const src_surroundings) {
         return closeBrick(src, brick, src.rect(), src_surroundings);
@@ -1001,6 +1027,8 @@ namespace imageproc {
         Brick const brick1(brick);
         Brick const brick2(brick1.flipped());
 
+        // We are going to make two operations:
+        // tmp = dilateGray(src, brick1), then dst = erodeGray(tmp, brick2)
         QRect const tmp_rect(extendByBrick(dst_area, brick2));
         CoordinateSystem tmp_cs(tmp_rect.topLeft());
 
@@ -1025,7 +1053,7 @@ namespace imageproc {
             return BinaryImage();
         }
 
-        QRect const rect(src.rect());
+        QRect const rect(src.rect());  // same as dst.rect()
         BinaryImage dst(src.size());
 
         bool first = true;
@@ -1048,6 +1076,7 @@ namespace imageproc {
             }
 
             if (src_surroundings == WHITE) {
+                // No hits on white surroundings.
                 dst.fillExcept(dst_rect, WHITE);
             }
         }
@@ -1072,16 +1101,17 @@ namespace imageproc {
             }
 
             if (src_surroundings == BLACK) {
+                // No misses on black surroundings.
                 dst.fillExcept(dst_rect, WHITE);
             }
         }
 
         if (first) {
-            dst.fill(WHITE);
+            dst.fill(WHITE);  // No matches.
         }
 
         return dst;
-    }      // hitMissMatch
+    }  // hitMissMatch
 
     BinaryImage hitMissMatch(BinaryImage const& src,
                              BWColor const src_surroundings,
@@ -1135,6 +1165,9 @@ namespace imageproc {
                                char const* const pattern,
                                int const pattern_width,
                                int const pattern_height) {
+        // It's better to have the origin at one of the replacement positions.
+        // Otherwise we may miss a partially outside-of-image match because
+        // the origin point was outside of the image as well.
         int const pattern_len = pattern_width * pattern_height;
         char const* const minus_pos = (char const*) memchr(pattern, '-', pattern_len);
         char const* const plus_pos = (char const*) memchr(pattern, '+', pattern_len);
@@ -1146,6 +1179,7 @@ namespace imageproc {
         } else if (plus_pos) {
             origin_pos = plus_pos;
         } else {
+            // No replacements requested - nothing to do.
             return;
         }
 
@@ -1165,11 +1199,13 @@ namespace imageproc {
                 switch (*p) {
                     case '-':
                         black_to_white.push_back(QPoint(x, y) - origin);
+                        // fall through
                     case 'X':
                         hits.push_back(QPoint(x, y) - origin);
                         break;
                     case '+':
                         white_to_black.push_back(QPoint(x, y) - origin);
+                        // fall through
                     case ' ':
                         misses.push_back(QPoint(x, y) - origin);
                         break;
@@ -1205,5 +1241,5 @@ namespace imageproc {
                     img, dst_rect, matches, src_rect.topLeft()
             );
         }
-    }      // hitMissReplaceInPlace
+    }  // hitMissReplaceInPlace
 }  // namespace imageproc

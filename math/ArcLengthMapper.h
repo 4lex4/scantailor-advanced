@@ -33,6 +33,7 @@
  * to be connected by straight lines.
  */
 class ArcLengthMapper {
+    // Member-wise copying is OK.
 public:
     class Hint {
         friend class ArcLengthMapper;
@@ -108,4 +109,4 @@ private:
 };
 
 
-#endif  // ifndef ARC_LENGTH_MAPPER_H_
+#endif // ifndef ARC_LENGTH_MAPPER_H_

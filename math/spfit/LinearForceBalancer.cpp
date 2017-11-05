@@ -43,6 +43,8 @@ namespace spfit {
     }
 
     double LinearForceBalancer::calcInternalForceWeight(double internal_force, double external_force) const {
+        // (internal * lambda) / external = ratio
+        // internal * lambda = external * ratio
         double lambda = 0;
         if (fabs(internal_force) > 1e-6) {
             lambda = m_currentRatio * external_force / internal_force;
@@ -60,6 +62,7 @@ namespace spfit {
 
     void LinearForceBalancer::recalcRateOfChange() {
         if (m_iterationsToTarget <= 0) {
+            // Already there.
             m_rateOfChange = 0;
         } else {
             m_rateOfChange = (m_targetRatio - m_currentRatio) / m_iterationsToTarget;

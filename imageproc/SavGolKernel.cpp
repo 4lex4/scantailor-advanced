@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _ISOC99SOURCE
+#define _ISOC99SOURCE // For copysign()
 
 #include "SavGolKernel.h"
 #include <QSize>
@@ -26,7 +26,8 @@
 #include <cmath>
 
 #ifdef _MSC_VER
-#undef copysign#define copysign _copysign
+#undef copysign // Just in case.
+#define copysign _copysign
 #endif
 
 namespace imageproc {
@@ -34,7 +35,7 @@ namespace imageproc {
         int calcNumTerms(int const hor_degree, int const vert_degree) {
             return (hor_degree + 1) * (vert_degree + 1);
         }
-    }
+    }  // anonymous namespace
 
     SavGolKernel::SavGolKernel(QSize const& size, QPoint const& origin, int const hor_degree, int const vert_degree)
             : m_horDegree(hor_degree),
@@ -56,10 +57,11 @@ namespace imageproc {
             throw std::invalid_argument("SavGolKernel: too high degree for this amount of data");
         }
 
+        // Allocate memory.
         m_dataPoints.resize(m_numDataPoints, 0.0);
         m_coeffs.resize(m_numTerms);
         AlignedArray<float, 4>(m_numDataPoints).swap(m_kernel);
-
+        // Prepare equations.
         m_equations.reserve(m_numTerms * m_numDataPoints);
         for (int y = 1; y <= m_height; ++y) {
             for (int x = 1; x <= m_width; ++x) {
@@ -91,9 +93,9 @@ namespace imageproc {
                 + (m_numDataPoints - m_numTerms) * m_numTerms
         );
 
-        int jj = 0;
+        int jj = 0;  // j * m_numTerms + j
         for (int j = 0; j < m_numTerms; ++j, jj += m_numTerms + 1) {
-            int ij = jj + m_numTerms;
+            int ij = jj + m_numTerms;  // i * m_numTerms + j
             for (int i = j + 1; i < m_numDataPoints; ++i, ij += m_numTerms) {
                 double const a = m_equations[jj];
                 double const b = m_equations[ij];
@@ -126,8 +128,8 @@ namespace imageproc {
 
                 m_rotations.push_back(Rotation(sin, cos));
 
-                int ik = ij + 1;
-                int jk = jj + 1;
+                int ik = ij + 1;  // i * m_numTerms + k
+                int jk = jj + 1;  // j * m_numTerms + k
                 for (int k = j + 1; k < m_numTerms; ++k, ++ik, ++jk) {
                     double const temp = cos * m_equations[jk] + sin * m_equations[ik];
                     m_equations[ik] = cos * m_equations[ik] - sin * m_equations[jk];
@@ -135,12 +137,13 @@ namespace imageproc {
                 }
             }
         }
-    }      // SavGolKernel::QR
+    }  // SavGolKernel::QR
 
     void SavGolKernel::recalcForOrigin(QPoint const& origin) {
         std::fill(m_dataPoints.begin(), m_dataPoints.end(), 0.0);
         m_dataPoints[origin.y() * m_width + origin.x()] = 1.0;
 
+        // Rotate data points.
         double* const dp = &m_dataPoints[0];
         std::vector<Rotation>::const_iterator rot(m_rotations.begin());
         for (int j = 0; j < m_numTerms; ++j) {
@@ -150,8 +153,8 @@ namespace imageproc {
                 dp[j] = temp;
             }
         }
-
-        int ii = m_numTerms * m_numTerms - 1;
+        // Solve R*x = d by back-substitution.
+        int ii = m_numTerms * m_numTerms - 1;  // i * m_numTerms + i
         for (int i = m_numTerms - 1; i >= 0; --i, ii -= m_numTerms + 1) {
             double sum = dp[i];
             int ik = ii + 1;
@@ -182,5 +185,5 @@ namespace imageproc {
                 ++ki;
             }
         }
-    }      // SavGolKernel::recalcForOrigin
+    }  // SavGolKernel::recalcForOrigin
 }  // namespace imageproc

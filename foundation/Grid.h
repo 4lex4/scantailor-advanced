@@ -110,6 +110,7 @@ public:
 private:
     template<typename T>
     static void basicSwap(T& o1, T& o2) {
+        // Just to avoid incoduing the heavy <algorithm> header.
         T tmp(o1);
         o1 = o2;
         o2 = tmp;
@@ -160,6 +161,7 @@ Grid<Node>::Grid(Grid const& other)
 template<typename Node>
 void Grid<Node>::initPadding(Node const& padding_node) {
     if (m_padding == 0) {
+        // No padding.
         return;
     }
 
@@ -187,7 +189,7 @@ void Grid<Node>::initPadding(Node const& padding_node) {
         }
         line += m_stride;
     }
-}
+} // >::initPadding
 
 template<typename Node>
 void Grid<Node>::initInterior(Node const& interior_node) {
@@ -215,4 +217,4 @@ void swap(Grid<Node>& o1, Grid<Node>& o2) {
     o1.swap(o2);
 }
 
-#endif  // ifndef GRID_H_
+#endif // ifndef GRID_H_

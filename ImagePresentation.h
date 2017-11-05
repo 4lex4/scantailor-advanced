@@ -34,6 +34,7 @@
  *     or extra controls.
  */
 class ImagePresentation {
+    // Member-wise copying is OK.
 public:
     ImagePresentation(QTransform const& xform, QPolygonF const& crop_area)
             : m_xform(xform),
@@ -78,4 +79,4 @@ private:
 };
 
 
-#endif  // ifndef IMAGE_PRESENTATION_H_
+#endif // ifndef IMAGE_PRESENTATION_H_

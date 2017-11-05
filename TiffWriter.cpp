@@ -87,6 +87,7 @@ private:
 
 
 static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
+    // Not implemented.
     return 0;
 }
 
@@ -128,10 +129,12 @@ static toff_t deviceSize(thandle_t context) {
 }
 
 static int deviceMap(thandle_t, tdata_t*, toff_t*) {
+    // Not implemented.
     return 0;
 }
 
 static void deviceUnmap(thandle_t, tdata_t, toff_t) {
+    // Not implemented.
 }
 
 bool TiffWriter::writeImage(QString const& file_path, QImage const& image, int compression) {
@@ -161,11 +164,14 @@ bool TiffWriter::writeImage(QIODevice& device, QImage const& image, int compress
         return false;
     }
     if (device.isSequential()) {
+        // libtiff needs to be able to seek.
         return false;
     }
 
     TiffHandle tif(
             TIFFClientOpen(
+                    // Libtiff seems to be buggy with L or H flags,
+                    // so we use B.
                     "file", "wBm", &device, &deviceRead, &deviceWrite,
                     &deviceSeek, &deviceClose, &deviceSize,
                     &deviceMap, &deviceUnmap
@@ -205,7 +211,7 @@ bool TiffWriter::writeImage(QIODevice& device, QImage const& image, int compress
                 tif, image.convertToFormat(QImage::Format_RGB32), compression
         );
     }
-}  // TiffWriter::writeImage
+} // TiffWriter::writeImage
 
 /**
  * Set the physical resolution, if it's defined.
@@ -217,10 +223,12 @@ void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
         return;
     }
 
-    float xres = 0.01 * dpm.horizontal();
-    float yres = 0.01 * dpm.vertical();
+    float xres = 0.01 * dpm.horizontal();  // cm
+    float yres = 0.01 * dpm.vertical();  // cm
     uint16 unit = RESUNIT_CENTIMETER;
 
+    // If we have a round (or almost round) DPI, then
+    // write it as DPI rather than dots per cm.
     double const xdpi = dpm.horizontal() * DPM2DPI;
     double const ydpi = dpm.vertical() * DPM2DPI;
     double const rounded_xdpi = floor(xdpi + 0.5);
@@ -249,10 +257,16 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
     switch (image.format()) {
         case QImage::Format_Mono:
         case QImage::Format_MonoLSB:
+            // Don't use CCITTFAX4 compression, as Photoshop
+            // has problems with it.
+            // compression = COMPRESSION_CCITTFAX4;
             bits_per_sample = 1;
             if (image.colorCount() < 2) {
                 photometric = PHOTOMETRIC_MINISWHITE;
             } else {
+                // Some programs don't understand
+                // palettized binary images, so don't
+                // use a palette for black and white images.
                 uint32_t const c0 = image.color(0);
                 uint32_t const c1 = image.color(1);
                 if ((c0 == 0xffffffff) && (c1 == 0xff000000)) {
@@ -296,7 +310,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
             return writeBinaryLinesAsIs(tif, image);
         }
     }
-}  // TiffWriter::writeBitonalOrIndexed8Image
+} // TiffWriter::writeBitonalOrIndexed8Image
 
 bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int compression) {
     assert(image.format() == QImage::Format_RGB32);
@@ -311,6 +325,7 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int
 
     std::vector<uint8_t> tmp_line(width * 3);
 
+    // Libtiff expects "RR GG BB" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
         uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
@@ -329,7 +344,7 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image, int
     }
 
     return true;
-}  // TiffWriter::writeRGB32Image
+} // TiffWriter::writeRGB32Image
 
 bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, int compression) {
     assert(image.format() == QImage::Format_ARGB32);
@@ -344,6 +359,7 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, in
 
     std::vector<uint8_t> tmp_line(width * 4);
 
+    // Libtiff expects "RR GG BB AA" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
         uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
@@ -363,12 +379,15 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image, in
     }
 
     return true;
-}  // TiffWriter::writeARGB32Image
+} // TiffWriter::writeARGB32Image
 
 bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
     int const width = image.width();
     int const height = image.height();
 
+    // TIFFWriteScanline() can actually modify the data you pass it,
+    // so we have to use a temporary buffer even when no coversion
+    // is required.
     std::vector<uint8_t> tmp_line(width, 0);
 
     for (int y = 0; y < height; ++y) {
@@ -385,7 +404,9 @@ bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
 bool TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image) {
     int const width = image.width();
     int const height = image.height();
-
+    // TIFFWriteScanline() can actually modify the data you pass it,
+    // so we have to use a temporary buffer even when no coversion
+    // is required.
     int const bpl = (width + 7) / 8;
     std::vector<uint8_t> tmp_line(bpl, 0);
 

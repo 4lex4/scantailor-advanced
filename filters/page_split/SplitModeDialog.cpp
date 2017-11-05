@@ -115,7 +115,8 @@ namespace page_split {
         }
 
         emit accepted(pages, layout_type, applyCutOption->isChecked());
-
+        // We assume the default connection from accepted() to accept()
+        // was removed.
         accept();
     }      // SplitModeDialog::onSubmit
 

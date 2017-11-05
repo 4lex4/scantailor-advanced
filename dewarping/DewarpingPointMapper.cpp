@@ -32,12 +32,16 @@ namespace dewarping {
                     depth_perception
             )
     ) {
+        // Model domain is a rectangle in output image coordinates that
+        // will be mapped to our curved quadrilateral.
         QRect const model_domain(
                 distortion_model.modelDomain(
                         m_dewarper, distortion_model_to_output, output_content_rect
                 ).toRect()
         );
 
+        // Note: QRect::right() - QRect::left() will give you size() - 1 not size()!
+        // That's intended.
 
         m_modelDomainLeft = model_domain.left();
         m_modelXScaleFromNormalized = model_domain.right() - model_domain.left();

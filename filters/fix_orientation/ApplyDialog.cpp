@@ -53,6 +53,7 @@ namespace fix_orientation {
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
 
+        // thisPageOnlyRB is intentionally not handled.
         if (allPagesRB->isChecked()) {
             m_pages.selectAll().swap(pages);
             emit appliedToAllPages(pages);
@@ -85,6 +86,7 @@ namespace fix_orientation {
 
         emit appliedTo(pages);
 
+        // We assume the default connection from accept() to accepted() was removed.
         accept();
     }      // ApplyDialog::onSubmit
 }  // namespace fix_orientation

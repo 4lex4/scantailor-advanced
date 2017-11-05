@@ -24,6 +24,7 @@
 #include <QString>
 
 class PageOrderOption {
+    // Member-wise copying is OK.
 public:
     typedef IntrusivePtr<PageOrderProvider const> ProviderPtr;
 
@@ -50,4 +51,4 @@ private:
 };
 
 
-#endif  // ifndef PAGE_ORDER_OPTION_H_
+#endif // ifndef PAGE_ORDER_OPTION_H_

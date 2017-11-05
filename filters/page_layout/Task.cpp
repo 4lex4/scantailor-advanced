@@ -141,7 +141,7 @@ namespace page_layout {
         } else {
             return FilterResultPtr(0);
         }
-    }      // Task::process
+    }  // Task::process
 
 /*============================ Task::UiUpdater ==========================*/
 
@@ -165,6 +165,8 @@ namespace page_layout {
     }
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
+        // This function is executed from the GUI thread.
+
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -217,5 +219,5 @@ namespace page_layout {
                 opt_widget, SIGNAL(aggregateHardSizeChanged()),
                 view, SLOT(aggregateHardSizeChanged())
         );
-    }      // Task::UiUpdater::updateUI
+    }  // Task::UiUpdater::updateUI
 }  // namespace page_layout

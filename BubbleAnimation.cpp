@@ -51,7 +51,11 @@ bool BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_col
 
     double const PI = imageproc::constants::PI;
     double const arc_fraction_as_radius = 0.25;
-
+    // We have the following system of equations:
+    // bubble_radius = arc_between_bubbles * arc_fraction_as_radius;
+    // arc_between_bubbles = 2.0 * PI * reduced_radius / m_numBubbles;
+    // reduced_radius = radius - bubble_radius.
+    // Solving this system of equations, we get:
     double const reduced_radius = radius / (
             1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
     );
@@ -83,5 +87,5 @@ bool BubbleAnimation::nextFrame(QColor const& head_color, QColor const& tail_col
 
         return false;
     }
-}  // BubbleAnimation::nextFrame
+} // BubbleAnimation::nextFrame
 

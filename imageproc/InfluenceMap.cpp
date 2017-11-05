@@ -154,6 +154,7 @@ namespace imageproc {
             int32_t const dx2 = cell->vec.x << 1;
             int32_t const dy2 = cell->vec.y << 1;
 
+            // North-western neighbor.
             Cell* nbh = cell - width - 1;
             uint32_t new_dist_sq = cell->distSq + dx2 + dy2 + 2;
             if (new_dist_sq < nbh->distSq) {
@@ -163,7 +164,7 @@ namespace imageproc {
                 nbh->vec.y = cell->vec.y + 1;
                 queue.push(nbh);
             }
-
+            // Northern neighbor.
             ++nbh;
             new_dist_sq = cell->distSq + dy2 + 1;
             if (new_dist_sq < nbh->distSq) {
@@ -174,6 +175,7 @@ namespace imageproc {
                 queue.push(nbh);
             }
 
+            // North-eastern neighbor.
             ++nbh;
             new_dist_sq = cell->distSq - dx2 + dy2 + 2;
             if (new_dist_sq < nbh->distSq) {
@@ -183,7 +185,7 @@ namespace imageproc {
                 nbh->vec.y = cell->vec.y + 1;
                 queue.push(nbh);
             }
-
+            // Eastern neighbor.
             nbh += width;
             new_dist_sq = cell->distSq - dx2 + 1;
             if (new_dist_sq < nbh->distSq) {
@@ -194,6 +196,7 @@ namespace imageproc {
                 queue.push(nbh);
             }
 
+            // South-eastern neighbor.
             nbh += width;
             new_dist_sq = cell->distSq - dx2 - dy2 + 2;
             if (new_dist_sq < nbh->distSq) {
@@ -203,7 +206,7 @@ namespace imageproc {
                 nbh->vec.y = cell->vec.y - 1;
                 queue.push(nbh);
             }
-
+            // Southern neighbor.
             --nbh;
             new_dist_sq = cell->distSq - dy2 + 1;
             if (new_dist_sq < nbh->distSq) {
@@ -214,6 +217,7 @@ namespace imageproc {
                 queue.push(nbh);
             }
 
+            // South-western neighbor.
             --nbh;
             new_dist_sq = cell->distSq + dx2 - dy2 + 2;
             if (new_dist_sq < nbh->distSq) {
@@ -223,7 +227,7 @@ namespace imageproc {
                 nbh->vec.y = cell->vec.y - 1;
                 queue.push(nbh);
             }
-
+            // Western neighbor.
             nbh -= width;
             new_dist_sq = cell->distSq + dx2 + 1;
             if (new_dist_sq < nbh->distSq) {
@@ -234,7 +238,7 @@ namespace imageproc {
                 queue.push(nbh);
             }
         }
-    }      // InfluenceMap::init
+    }  // InfluenceMap::init
 
     QImage InfluenceMap::visualized() const {
         if (m_size.isEmpty()) {
@@ -245,7 +249,7 @@ namespace imageproc {
         int const height = m_size.height();
 
         QImage dst(m_size, QImage::Format_ARGB32);
-        dst.fill(0x00FFFFFF);
+        dst.fill(0x00FFFFFF);  // transparent white
         Cell const* src_line = m_pData;
         int const src_stride = m_stride;
 
@@ -276,5 +280,5 @@ namespace imageproc {
         }
 
         return dst;
-    }      // InfluenceMap::visualized
+    }  // InfluenceMap::visualized
 }  // namespace imageproc

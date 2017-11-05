@@ -11,7 +11,8 @@
 #include <QtCore>
 
 namespace output {
-    class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::SauvolaBinarizationOptionsWidget {
+    class SauvolaBinarizationOptionsWidget
+            : public BinarizationOptionsWidget, private Ui::SauvolaBinarizationOptionsWidget {
     Q_OBJECT
 
     private:

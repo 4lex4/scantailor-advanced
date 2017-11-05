@@ -27,6 +27,7 @@
  * Think about drawing a line on an image.
  */
 class GridLineTraverser {
+    // Member-wise copying is OK.
 public:
     GridLineTraverser(QLineF const& line);
 

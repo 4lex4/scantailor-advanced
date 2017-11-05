@@ -34,7 +34,7 @@ namespace page_split {
               m_ignoreAutoManualToggle(0),
               m_ignoreLayoutTypeToggle(0) {
         setupUi(this);
-
+        // Workaround for QTBUG-182
         QButtonGroup* grp = new QButtonGroup(this);
         grp->addButton(autoBtn);
         grp->addButton(manualBtn);
@@ -74,6 +74,8 @@ namespace page_split {
 
         switch (layout_type) {
             case AUTO_LAYOUT_TYPE:
+                // Uncheck all buttons.  Can only be done
+                // by playing with exclusiveness.
                 twoPagesBtn->setChecked(true);
                 twoPagesBtn->setAutoExclusive(false);
                 twoPagesBtn->setChecked(false);
@@ -100,14 +102,15 @@ namespace page_split {
             scopeLabel->setText(tr("Set manually"));
         }
 
+        // Uncheck both the Auto and Manual buttons.
         autoBtn->setChecked(true);
         autoBtn->setAutoExclusive(false);
         autoBtn->setChecked(false);
         autoBtn->setAutoExclusive(true);
-
+        // And disable both of them.
         autoBtn->setEnabled(false);
         manualBtn->setEnabled(false);
-    }      // OptionsWidget::preUpdateUI
+    }  // OptionsWidget::preUpdateUI
 
     void OptionsWidget::postUpdateUI(UiData const& ui_data) {
         ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
@@ -144,7 +147,7 @@ namespace page_split {
         if (ui_data.layoutTypeAutoDetected()) {
             scopeLabel->setText(tr("Auto detected"));
         }
-    }      // OptionsWidget::postUpdateUI
+    }  // OptionsWidget::postUpdateUI
 
     void OptionsWidget::pageLayoutSetExternally(PageLayout const& page_layout) {
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
@@ -214,7 +217,7 @@ namespace page_split {
             emit pageLayoutSetLocally(new_layout);
             emit invalidateThumbnail(m_pageId);
         }
-    }      // OptionsWidget::layoutTypeButtonToggled
+    }  // OptionsWidget::layoutTypeButtonToggled
 
     void OptionsWidget::showChangeDialog() {
         Settings::Record const record(m_ptrSettings->getPageRecord(m_pageId.imageId()));
@@ -267,7 +270,7 @@ namespace page_split {
         } else {
             scopeLabel->setText(tr("Set manually"));
         }
-    }      // OptionsWidget::layoutTypeSet
+    }  // OptionsWidget::layoutTypeSet
 
     void OptionsWidget::splitLineModeChanged(bool const auto_mode) {
         if (m_ignoreAutoManualToggle) {

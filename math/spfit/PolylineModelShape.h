@@ -57,5 +57,5 @@ namespace spfit {
 
 
     DEFINE_FLAG_OPS(PolylineModelShape::Flags)
-}
-#endif  // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
+}  // namespace spfit
+#endif // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_

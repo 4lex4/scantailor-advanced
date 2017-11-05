@@ -74,7 +74,7 @@ public:
 private:
     struct FileRecord {
         QString filePath;
-        bool compatMultiPage;
+        bool compatMultiPage;  // Backwards compatibility.
 
         FileRecord()
                 : compatMultiPage(false) {
@@ -121,4 +121,4 @@ private:
 };
 
 
-#endif  // ifndef PROJECTREADER_H_
+#endif // ifndef PROJECTREADER_H_

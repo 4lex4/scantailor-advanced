@@ -69,6 +69,7 @@ ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context) {
             from_screen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5))
     );
 
+    // Find zones containing the mouse position.
     std::vector<Zone> selectable_zones;
     for (EditableZoneSet::Zone const& zone : context.zones()) {
         QPainterPath path;
@@ -144,7 +145,8 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
 
         m_ptrMenu->addSeparator();
     }
-
+    // The queued connection is used to ensure it gets called *after*
+    // QAction::triggered().
     connect(
             m_ptrMenu.get(), SIGNAL(aboutToHide()),
             SLOT(menuAboutToHide()), Qt::QueuedConnection
@@ -174,6 +176,10 @@ void ZoneContextMenuInteraction::menuAboutToHide() {
     }
 
 #ifdef Q_WS_MAC
+    // On OSX, QAction::triggered() is emitted significantly (like 150ms)
+    // later than QMenu::aboutToHide().  This makes it generally not possible
+    // to tell whether the menu was just dismissed or a menu item was clicked.
+    // The only way to tell is to check back later, which we do here.
     if (m_extraDelaysDone++ < 1) {
         QTimer::singleShot(200, this, SLOT(menuAboutToHide()));
 

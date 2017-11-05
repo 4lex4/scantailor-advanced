@@ -55,5 +55,5 @@ namespace page_layout {
         PageId m_curPage;
         QButtonGroup* m_pScopeGroup;
     };
-}
-#endif  // ifndef PAGE_LAYOUT_APPLYDIALOG_H_
+}  // namespace page_layout
+#endif // ifndef PAGE_LAYOUT_APPLYDIALOG_H_

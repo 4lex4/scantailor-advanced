@@ -27,11 +27,15 @@ namespace imageproc {
 
     ConnComp ConnCompEraserExt::nextConnComp() {
         if (!m_lastCC.isNull()) {
+            // Propagate the changes from m_eraser.image() to m_lastImage.
+            // We could copy the whole image, but instead we copy just
+            // the affected area, extending it to word boundries.
             QRect const& rect = m_lastCC.rect();
             BinaryImage const& src = m_eraser.image();
             size_t const src_wpl = src.wordsPerLine();
             size_t const dst_wpl = m_lastImage.wordsPerLine();
             size_t const first_word_idx = rect.left() / 32;
+            // Note: rect.right() == rect.x() + rect.width() - 1
             size_t const span_length = (rect.right() + 31) / 32 - first_word_idx;
             size_t const src_initial_offset = rect.top() * src_wpl + first_word_idx;
             size_t const dst_initial_offset = rect.top() * dst_wpl + first_word_idx;

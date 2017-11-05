@@ -47,5 +47,5 @@ namespace imageproc {
 
         class Rasterizer;
     };
-}
-#endif  // ifndef IMAGEPROC_POLYGONRASTERIZER_H_
+}  // namespace imageproc
+#endif // ifndef IMAGEPROC_POLYGONRASTERIZER_H_

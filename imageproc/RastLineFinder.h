@@ -247,11 +247,11 @@ namespace imageproc {
             void swap(SearchSpace& other);
 
         private:
-            float m_minDist;
-            float m_maxDist;
+            float m_minDist;  //
+            float m_maxDist;  // These are already extended by max-dist-to-line.
             float m_minAngleRad;
             float m_maxAngleRad;
-            std::vector<unsigned> m_pointIdxs;
+            std::vector<unsigned> m_pointIdxs;  // Indexes into m_points of the parent object.
         };
 
 
@@ -283,4 +283,4 @@ namespace imageproc {
     };
 }  // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_RAST_LINE_FINDER_H_
+#endif // ifndef IMAGEPROC_RAST_LINE_FINDER_H_

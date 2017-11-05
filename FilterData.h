@@ -25,6 +25,7 @@
 #include <QImage>
 
 class FilterData {
+    // Member-wise copying is OK.
 public:
     FilterData(QImage const& image);
 
@@ -54,4 +55,4 @@ private:
 };
 
 
-#endif  // ifndef FILTERDATA_H_
+#endif // ifndef FILTERDATA_H_

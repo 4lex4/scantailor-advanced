@@ -41,5 +41,5 @@ namespace spfit {
         virtual SqDistApproximant
         localSqDistApproximant(QPointF const& pt, FittableSpline::SampleFlags flags) const = 0;
     };
-}
+}  // namespace spfit
 #endif

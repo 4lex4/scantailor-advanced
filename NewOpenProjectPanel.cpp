@@ -38,6 +38,8 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
     RecentProjects rp;
     rp.read();
     if (!rp.validate()) {
+        // Some project files weren't found.
+        // Write the list without them.
         rp.write();
     }
     if (rp.isEmpty()) {
@@ -71,7 +73,7 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     label->setTextFormat(Qt::RichText);
     label->setText(Utils::richTextForLink(base_name, file_path));
     label->setToolTip(file_path);
-    
+
     int fontSize = recentProjectsGroup->font().pointSize();
     QFont widgetFont = label->font();
     widgetFont.setPointSize(fontSize);
@@ -86,6 +88,10 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
 }
 
 void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
+    // In fact Qt doesn't draw QWidget's background, unless
+    // autoFillBackground property is set, so we can safely
+    // draw our borders and shadows in the margins area.
+
     int left = 0, top = 0, right = 0, bottom = 0;
     layout()->getContentsMargins(&left, &top, &right, &bottom);
 
@@ -94,7 +100,7 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
             widget_rect.adjusted(left, top, -right, -bottom)
     );
 
-    int const border = 1;
+    int const border = 1;  // Solid line border width.
 
     QPainter painter(this);
 

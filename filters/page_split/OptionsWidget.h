@@ -40,6 +40,7 @@ namespace page_split {
     Q_OBJECT
     public:
         class UiData {
+            // Member-wise copying is OK.
         public:
             UiData();
 
@@ -109,4 +110,4 @@ namespace page_split {
         int m_ignoreLayoutTypeToggle;
     };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
+#endif // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_

@@ -10,7 +10,7 @@
 #include <QtCore>
 
 namespace output {
-    
+
     class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
     Q_OBJECT
 

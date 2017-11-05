@@ -34,5 +34,5 @@ namespace output {
                 : Margins(10.0, 10.0, 10.0, 10.0) {
         }
     };
-}
+}  // namespace output
 #endif

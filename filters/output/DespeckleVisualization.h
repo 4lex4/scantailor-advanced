@@ -65,4 +65,4 @@ namespace output {
         QImage m_downscaledImage;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_
+#endif // ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_

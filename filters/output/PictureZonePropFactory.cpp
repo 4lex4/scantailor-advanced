@@ -25,4 +25,4 @@ namespace output {
         PictureLayerProperty::registerIn(*this);
         ZoneCategoryProperty::registerIn(*this);
     }
-}
+}  // namespace output

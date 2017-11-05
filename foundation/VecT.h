@@ -128,6 +128,7 @@ VecT<T>::VecT()
 template<typename T>
 VecT<T>::VecT(size_t size)
         : m_data(new T[size]()),
+        // The "()" will cause elements to be initialized to T().
           m_size(size) {
 }
 
@@ -251,4 +252,4 @@ VecT<T> operator*(double scalar, VecT<T> const& vec) {
     return res;
 }
 
-#endif  // ifndef VEC_T_H_
+#endif // ifndef VEC_T_H_

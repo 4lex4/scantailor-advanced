@@ -31,6 +31,7 @@ public:
               m_image(image) {
     }
 
+    // This method is called from the main thread.
     virtual void operator()() {
         if (DebugImageView* owner = m_ptrOwner) {
             owner->imageLoaded(m_image);

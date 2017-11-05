@@ -51,5 +51,5 @@ namespace select_content {
         IntrusivePtr<Settings> m_ptrSettings;
         IntrusivePtr<page_layout::CacheDrivenTask> m_ptrNextTask;
     };
-}
-#endif  // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_
+}  // namespace select_content
+#endif // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

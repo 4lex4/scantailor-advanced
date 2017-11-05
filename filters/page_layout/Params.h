@@ -30,6 +30,7 @@ class QString;
 
 namespace page_layout {
     class Params {
+        // Member-wise copying is OK.
     public:
         Params(Margins const& hard_margins_mm,
                QRectF const& page_rect,
@@ -73,4 +74,4 @@ namespace page_layout {
         Alignment m_alignment;
     };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_PARAMS_H_
+#endif // ifndef PAGE_LAYOUT_PARAMS_H_

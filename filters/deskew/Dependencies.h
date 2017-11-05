@@ -34,6 +34,8 @@ namespace deskew {
  */
     class Dependencies {
     public:
+        // Member-wise copying is OK.
+
         Dependencies();
 
         Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
@@ -50,5 +52,5 @@ namespace deskew {
         QPolygonF m_pageOutline;
         OrthogonalRotation m_rotation;
     };
-}
-#endif  // ifndef DESKEW_DEPENDENCIES_H_
+}  // namespace deskew
+#endif // ifndef DESKEW_DEPENDENCIES_H_

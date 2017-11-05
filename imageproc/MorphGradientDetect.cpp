@@ -35,4 +35,4 @@ namespace imageproc {
 
         return darker;
     }
-}
+}  // namespace imageproc

@@ -29,5 +29,5 @@ namespace imageproc {
  * \p dist 0 corresponds to \p from, while \p dist 1 corresponds to \p to.
  */
     QColor colorInterpolation(QColor const& from, QColor const& to, double dist);
-}
+}  // namespace imageproc
 #endif

@@ -38,5 +38,5 @@ namespace output {
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
     };
-}
+}  // namespace output
 #endif

@@ -162,6 +162,7 @@ ImageViewBase::ImageViewBase(QImage const& image,
             format.setRgba(true);
             format.setDepth(false);
 
+            // Most of hardware refuses to work for us with direct rendering enabled.
             format.setDirectRendering(false);
 
             setViewport(new QGLWidget(format));
@@ -188,7 +189,7 @@ ImageViewBase::ImageViewBase(QImage const& image,
     m_pixmapFocalPoint = m_virtualToImage.map(virtualDisplayRect().center());
 
     m_timer.setSingleShot(true);
-    m_timer.setInterval(150);
+    m_timer.setInterval(150);  // msec
     connect(
             &m_timer, SIGNAL(timeout()),
             this, SLOT(initiateBuildingHqVersion())
@@ -212,6 +213,7 @@ ImageViewBase::~ImageViewBase() {
 
 void ImageViewBase::hqTransformSetEnabled(bool const enabled) {
     if (!enabled && m_hqTransformEnabled) {
+        // Turning off.
         m_hqTransformEnabled = false;
         if (m_ptrHqTransformTask.get()) {
             m_ptrHqTransformTask->cancel();
@@ -222,6 +224,7 @@ void ImageViewBase::hqTransformSetEnabled(bool const enabled) {
             update();
         }
     } else if (enabled && !m_hqTransformEnabled) {
+        // Turning on.
         m_hqTransformEnabled = true;
         update();
     }
@@ -230,6 +233,7 @@ void ImageViewBase::hqTransformSetEnabled(bool const enabled) {
 QImage ImageViewBase::createDownscaledImage(QImage const& image) {
     assert(!image.isNull());
 
+    // Original and downscaled DPM.
     Dpm const o_dpm(image);
     Dpm const d_dpm(Dpi(300, 300));
 
@@ -242,6 +246,7 @@ QImage ImageViewBase::createDownscaledImage(QImage const& image) {
     d_h = qBound(1, d_h, o_h);
 
     if ((d_w * 1.2 > o_w) || (d_h * 1.2 > o_h)) {
+        // Sizes are close - no point in downscaling.
         return image;
     }
 
@@ -306,6 +311,7 @@ void ImageViewBase::setZoomLevel(double zoom) {
 
 void ImageViewBase::moveTowardsIdealPosition(double const pixel_length) {
     if (pixel_length <= 0) {
+        // The name implies we are moving *towards* the ideal position.
         return;
     }
 
@@ -357,6 +363,7 @@ void ImageViewBase::updateTransformPreservingScale(ImagePresentation const& pres
     TransformChangeWatcher const watcher(*this);
     TempFocalPointAdjuster const temp_fp(*this);
 
+    // An arbitrary line in image coordinates.
     QLineF const image_line(0.0, 0.0, 1.0, 1.0);
 
     QLineF const widget_line_before(
@@ -392,6 +399,11 @@ void ImageViewBase::ensureStatusTip(QString const& status_tip) {
     viewport()->setStatusTip(status_tip);
 
     if (viewport()->underMouse()) {
+        // Note that setStatusTip() alone is not enough,
+        // as it's only taken into account when the mouse
+        // enters the widget.
+        // Also note that we use postEvent() rather than sendEvent(),
+        // because sendEvent() may immediately process other events.
         QApplication::postEvent(viewport(), new QStatusTipEvent(status_tip));
     }
 }
@@ -400,6 +412,7 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     QPainter painter(viewport());
     painter.save();
 
+    // On X11 (except with OpenGL), SmoothPixmapTransform is too slow, so don't enable it.
     bool smooth_pixmap_ok = true;
 #if defined(Q_WS_X11)
     smooth_pixmap_ok = viewport()->inherits("QGLWidget");
@@ -407,12 +420,14 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     if (smooth_pixmap_ok) {
         double const xscale = m_virtualToWidget.m11();
 
+        // Width of a source pixel in mm, as it's displayed on screen.
         double const pixel_width = widthMM() * xscale / width();
-
+        // Disable antialiasing for large zoom levels.
         painter.setRenderHint(QPainter::SmoothPixmapTransform, pixel_width < 0.5);
     }
 
     if (validateHqPixmap()) {
+        // HQ pixmap maps one to one to screen pixels, so antialiasing is not necessary.
         painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
         painter.drawPixmap(m_hqPixmapPos, m_hqPixmap);
     } else {
@@ -427,6 +442,9 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     painter.setRenderHints(QPainter::Antialiasing, true);
     painter.setWorldMatrixEnabled(false);
 
+    // Cover parts of the image that should not be visible with background.
+    // Note that because of Qt::WA_OpaquePaintEvent attribute, we need
+    // to paint the whole widget, which we do here.
 
     QPolygonF const image_area(
             PolygonUtils::round(
@@ -455,6 +473,9 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     QPen pen(brush, 1.0);
     pen.setCosmetic(true);
 
+    // By using a pen with the same color as the brush, we essentially
+    // expanding the area we are going to draw.  It's necessary because
+    // XRender doesn't provide subpixel accuracy.
 
     painter.setPen(pen);
     painter.setBrush(brush);
@@ -474,7 +495,7 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
 
     m_rootInteractionHandler.paint(painter, m_interactionState);
     maybeQueueRedraw();
-}  // ImageViewBase::paintEvent
+} // ImageViewBase::paintEvent
 
 void ImageViewBase::keyPressEvent(QKeyEvent* event) {
     event->setAccepted(false);
@@ -600,9 +621,12 @@ void ImageViewBase::updateScrollBars() {
     QPointF const picture_center(picture.center());
     QRectF viewport(maxViewportRect());
 
+    // Introduction of one scrollbar will decrease the available size in
+    // another direction, which may cause a scrollbar in that direction
+    // to become necessary.  For this reason, we have a loop here.
     for (int i = 0; i < 2; ++i) {
         double const xval = picture_center.x();
-        double xmin, xmax;
+        double xmin, xmax;  // Minimum and maximum positions for picture center.
         if (picture_center.x() < viewport_center.x()) {
             xmin = std::min<double>(xval, viewport.right() - 0.5 * picture.width());
             xmax = std::max<double>(viewport_center.x(), viewport.left() + 0.5 * picture.width());
@@ -612,7 +636,7 @@ void ImageViewBase::updateScrollBars() {
         }
 
         double const yval = picture_center.y();
-        double ymin, ymax;
+        double ymin, ymax;  // Minimum and maximum positions for picture center.
         if (picture_center.y() < viewport_center.y()) {
             ymin = std::min<double>(yval, viewport.bottom() - 0.5 * picture.height());
             ymax = std::max<double>(viewport_center.y(), viewport.top() + 0.5 * picture.height());
@@ -628,12 +652,20 @@ void ImageViewBase::updateScrollBars() {
         int const yfirst = 0;
         int const ylast = yrange - 1;
 
+        // We are going to map scrollbar coordinates to widget coordinates
+        // of the central point of the display area using a linear function.
+        // f(x) = ax + b
 
+        // xmin = xa * xlast + xb
+        // xmax = xa * xfirst + xb
         double const xa = (xfirst == xlast) ? 1 : (xmax - xmin) / (xfirst - xlast);
         double const xb = xmax - xa * xfirst;
         double const ya = (yfirst == ylast) ? 1 : (ymax - ymin) / (yfirst - ylast);
         double const yb = ymax - ya * yfirst;
 
+        // Inverse transformation.
+        // xlast = ixa * xmin + ixb
+        // xfirst = ixa * xmax + ixb
         double const ixa = (xmax == xmin) ? 1 : (xfirst - xlast) / (xmax - xmin);
         double const ixb = xfirst - ixa * xmax;
         double const iya = (ymax == ymin) ? 1 : (yfirst - ylast) / (ymax - ymin);
@@ -652,7 +684,11 @@ void ImageViewBase::updateScrollBars() {
 
         horizontalScrollBar()->setPageStep(qRound(viewport.width()));
         verticalScrollBar()->setPageStep(qRound(viewport.height()));
-
+        // XXX: a hack to force immediate update of viewport()->rect(),
+        // which is used by dynamicViewportRect() below.
+        // Note that it involves a resize event being sent not only to
+        // the viewport, but for some reason also to the containing
+        // QAbstractScrollArea, that is to this object.
         setHorizontalScrollBarPolicy(horizontalScrollBarPolicy());
 
         QRectF const old_viewport(viewport);
@@ -661,7 +697,7 @@ void ImageViewBase::updateScrollBars() {
             break;
         }
     }
-}  // ImageViewBase::updateScrollBars
+} // ImageViewBase::updateScrollBars
 
 void ImageViewBase::reactToScrollBars() {
     if (m_ignoreScrollEvents) {
@@ -721,6 +757,9 @@ void ImageViewBase::updateWidgetTransform() {
 void ImageViewBase::updateWidgetTransformAndFixFocalPoint(FocalPointMode const mode) {
     TransformChangeWatcher const watcher(*this);
 
+    // This must go before getIdealWidgetFocalPoint(), as it
+    // recalculates m_virtualToWidget, that is used by
+    // getIdealWidgetFocalPoint().
     updateWidgetTransform();
 
     QPointF const ideal_widget_fp(getIdealWidgetFocalPoint(mode));
@@ -749,10 +788,12 @@ void ImageViewBase::updateWidgetTransformAndFixFocalPoint(FocalPointMode const m
  * in horizontal and vertical dimensions independently.
  */
 QPointF ImageViewBase::getIdealWidgetFocalPoint(FocalPointMode const mode) const {
+    // Widget rect reduced by margins.
     QRectF const display_area(maxViewportRect());
 
+    // The virtual image rectangle in widget coordinates.
     QRectF const image_area(m_virtualToWidget.mapRect(virtualDisplayRect()));
-
+    // Unused display space from each side.
     double const left_margin = image_area.left() - display_area.left();
     double const right_margin = display_area.right() - image_area.right();
     double const top_margin = image_area.top() - display_area.top();
@@ -761,29 +802,41 @@ QPointF ImageViewBase::getIdealWidgetFocalPoint(FocalPointMode const mode) const
     QPointF widget_focal_point(m_widgetFocalPoint);
 
     if ((mode == CENTER_IF_FITS) && (left_margin + right_margin >= 0.0)) {
+        // Image fits horizontally, so center it in that direction
+        // by equalizing its left and right margins.
         double const new_margins = 0.5 * (left_margin + right_margin);
         widget_focal_point.rx() += new_margins - left_margin;
     } else if ((left_margin < 0.0) && (right_margin > 0.0)) {
+        // Move image to the right so that either left_margin or
+        // right_margin becomes zero, whichever requires less movement.
         double const movement = std::min(fabs(left_margin), fabs(right_margin));
         widget_focal_point.rx() += movement;
     } else if ((right_margin < 0.0) && (left_margin > 0.0)) {
+        // Move image to the left so that either left_margin or
+        // right_margin becomes zero, whichever requires less movement.
         double const movement = std::min(fabs(left_margin), fabs(right_margin));
         widget_focal_point.rx() -= movement;
     }
 
     if ((mode == CENTER_IF_FITS) && (top_margin + bottom_margin >= 0.0)) {
+        // Image fits vertically, so center it in that direction
+        // by equalizing its top and bottom margins.
         double const new_margins = 0.5 * (top_margin + bottom_margin);
         widget_focal_point.ry() += new_margins - top_margin;
     } else if ((top_margin < 0.0) && (bottom_margin > 0.0)) {
+        // Move image down so that either top_margin or bottom_margin
+        // becomes zero, whichever requires less movement.
         double const movement = std::min(fabs(top_margin), fabs(bottom_margin));
         widget_focal_point.ry() += movement;
     } else if ((bottom_margin < 0.0) && (top_margin > 0.0)) {
+        // Move image up so that either top_margin or bottom_margin
+        // becomes zero, whichever requires less movement.
         double const movement = std::min(fabs(top_margin), fabs(bottom_margin));
         widget_focal_point.ry() -= movement;
     }
 
     return widget_focal_point;
-}  // ImageViewBase::getIdealWidgetFocalPoint
+} // ImageViewBase::getIdealWidgetFocalPoint
 
 void ImageViewBase::setNewWidgetFP(QPointF const widget_fp, bool const update) {
     if (widget_fp != m_widgetFocalPoint) {
@@ -807,6 +860,12 @@ void ImageViewBase::setNewWidgetFP(QPointF const widget_fp, bool const update) {
  *        has changed.
  */
 void ImageViewBase::adjustAndSetNewWidgetFP(QPointF const proposed_widget_fp, bool const update) {
+    // We first apply the proposed focal point, and only then
+    // calculate the ideal one.  That's done because
+    // the ideal focal point is the current focal point when
+    // no widget space is wasted (image covers the whole widget).
+    // We don't want the ideal focal point to be equal to the current
+    // one, as that would disallow any movements.
     QPointF const old_widget_fp(m_widgetFocalPoint);
     setNewWidgetFP(proposed_widget_fp, update);
 
@@ -817,15 +876,20 @@ void ImageViewBase::adjustAndSetNewWidgetFP(QPointF const proposed_widget_fp, bo
 
     QPointF movement(towards_proposed);
 
+    // Horizontal movement.
     if (towards_ideal.x() * towards_proposed.x() < 0.0) {
+        // Wrong direction - no movement at all.
         movement.setX(0.0);
     } else if (fabs(towards_proposed.x()) > fabs(towards_ideal.x())) {
+        // Too much movement - limit it.
         movement.setX(towards_ideal.x());
     }
-
+    // Vertical movement.
     if (towards_ideal.y() * towards_proposed.y() < 0.0) {
+        // Wrong direction - no movement at all.
         movement.setY(0.0);
     } else if (fabs(towards_proposed.y()) > fabs(towards_ideal.y())) {
+        // Too much movement - limit it.
         movement.setY(towards_ideal.y());
     }
 
@@ -837,7 +901,7 @@ void ImageViewBase::adjustAndSetNewWidgetFP(QPointF const proposed_widget_fp, bo
             this->update();
         }
     }
-}  // ImageViewBase::adjustAndSetNewWidgetFP
+} // ImageViewBase::adjustAndSetNewWidgetFP
 
 /**
  * Returns the center point of the available display area.
@@ -986,6 +1050,7 @@ ImageViewBase::HqTransformTask::operator()() {
             )
     );
 #if defined(Q_WS_X11)
+    // ARGB32_Premultiplied is an optimal format for X11 + XRender.
     hq_image = hq_image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 #endif
     m_ptrResult->setData(target_rect.topLeft(), hq_image);

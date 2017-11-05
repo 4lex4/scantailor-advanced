@@ -55,10 +55,10 @@ namespace fix_orientation {
         class UiUpdater;
 
         IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<page_split::Task> m_ptrNextTask;
+        IntrusivePtr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
         IntrusivePtr<Settings> m_ptrSettings;
         ImageId m_imageId;
         bool m_batchProcessing;
     };
-}
-#endif  // ifndef FIX_ORIENTATION_TASK_H_
+}  // namespace fix_orientation
+#endif // ifndef FIX_ORIENTATION_TASK_H_

@@ -80,4 +80,4 @@ namespace output {
         bool m_debug;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_TASK_H_
+#endif // ifndef OUTPUT_TASK_H_

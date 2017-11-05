@@ -58,7 +58,7 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
         return;
     }
     processPages(pages_el);
-
+    // Load naming disambiguator.  This needs to be done after processing pages.
     QDomElement const disambig_el(
             project_el.namedItem("file-name-disambiguation").toElement()
     );
@@ -144,13 +144,14 @@ void ProjectReader::processFiles(QDomElement const& files_el) {
             continue;
         }
 
+        // Backwards compatibility.
         bool const compat_multi_page = (el.attribute("multiPage") == "1");
 
         QString const file_path(QDir(dir_path).filePath(name));
         FileRecord const rec(file_path, compat_multi_page);
         m_fileMap.insert(FileMap::value_type(id, rec));
     }
-}  // ProjectReader::processFiles
+} // ProjectReader::processFiles
 
 void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection const layout_direction) {
     QString const image_tag_name("image");
@@ -210,7 +211,7 @@ void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirect
     if (!images.empty()) {
         m_ptrPages.reset(new ProjectPages(images, layout_direction));
     }
-}  // ProjectReader::processImages
+} // ProjectReader::processImages
 
 ImageMetadata ProjectReader::processImageMetadata(QDomElement const& image_el) {
     QSize size;
@@ -272,7 +273,7 @@ void ProjectReader::processPages(QDomElement const& pages_el) {
             m_selectedPage.set(page_id, PAGE_VIEW);
         }
     }
-}  // ProjectReader::processPages
+} // ProjectReader::processPages
 
 QString ProjectReader::getDirPath(int const id) const {
     DirMap::const_iterator const it(m_dirMap.find(id));

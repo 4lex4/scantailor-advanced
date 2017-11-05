@@ -38,17 +38,18 @@ QString RelinkablePath::normalize(QString const& path) {
                     ) {
                 new_components.push_back(comp);
             } else {
+                // This will get rid of redundant slashes, including the trailing slash.
                 continue;
             }
         } else if (comp == ".") {
             continue;
         } else if (comp == "..") {
             if (new_components.isEmpty()) {
-                return QString();
+                return QString();  // Error.
             }
             QString const& last_comp = new_components.back();
             if (last_comp.isEmpty() || last_comp.endsWith(QChar(':'))) {
-                return QString();
+                return QString();  // Error.
             }
             new_components.pop_back();
         } else {
@@ -57,5 +58,5 @@ QString RelinkablePath::normalize(QString const& path) {
     }
 
     return new_components.join(QChar('/'));
-}  // RelinkablePath::normalize
+} // RelinkablePath::normalize
 

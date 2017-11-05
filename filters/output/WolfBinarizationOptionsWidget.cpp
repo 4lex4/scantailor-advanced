@@ -103,5 +103,5 @@ namespace output {
         emit stateChanged();
     }
 
-    
+
 }

@@ -33,4 +33,4 @@ namespace imageproc {
 
         return QColor::fromRgbF(r, g, b, a);
     }
-}
+}  // namespace imageproc

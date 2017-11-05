@@ -35,5 +35,5 @@ namespace imageproc {
         double const DPM2DPI = 0.0254;
 
         double const DPI2DPM = 1.0 / DPM2DPI;
-    }
-}
+    }  // namespace constants
+}  // namespace imageproc

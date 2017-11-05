@@ -123,4 +123,4 @@ namespace select_content {
 
         return el;
     }
-}  // namespace select_content
+}  // namespace content_rect

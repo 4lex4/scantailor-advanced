@@ -57,5 +57,5 @@ namespace fix_orientation {
         mutable QMutex m_mutex;
         PerImageRotation m_perImageRotation;
     };
-}
-#endif  // ifndef FIX_ORIENTATION_SETTINGS_H_
+}  // namespace fix_orientation
+#endif // ifndef FIX_ORIENTATION_SETTINGS_H_

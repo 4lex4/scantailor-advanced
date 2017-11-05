@@ -24,7 +24,15 @@ bool lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1
     QPointF const p2(line2.p1());
     QPointF const v1(line1.p2() - line1.p1());
     QPointF const v2(line2.p2() - line2.p1());
-
+    // p1 + s1 * v1 = p2 + s2 * v2
+    // which gives us a system of equations:
+    // s1 * v1.x - s2 * v2.x = p2.x - p1.x
+    // s1 * v1.y - s2 * v2.y = p2.y - p1.y
+    // In matrix form:
+    // [v1 -v2]*x = p2 - p1
+    // Taking A = [v1 -v2], b = p2 - p1, and solving it by Cramer's rule:
+    // s1 = |b -v2|/|A|
+    // s2 = |v1  b|/|A|
     double const det_A = v2.x() * v1.y() - v1.x() * v2.y();
     if (fabs(det_A) < std::numeric_limits<double>::epsilon()) {
         return false;
@@ -44,6 +52,15 @@ bool lineIntersectionScalar(QLineF const& line1, QLineF const& line2, double& s1
     QPointF const v1(line1.p2() - line1.p1());
     QPointF const v2(line2.p2() - line2.p1());
 
+    // p1 + s1 * v1 = p2 + s2 * v2
+    // which gives us a system of equations:
+    // s1 * v1.x - s2 * v2.x = p2.x - p1.x
+    // s1 * v1.y - s2 * v2.y = p2.y - p1.y
+    // In matrix form:
+    // [v1 -v2]*x = p2 - p1
+    // Taking A = [v1 -v2], b = p2 - p1, and solving it by Cramer's rule:
+    // s1 = |b -v2|/|A|
+    // s2 = |v1  b|/|A|
     double const det_A = v2.x() * v1.y() - v1.x() * v2.y();
     if (fabs(det_A) < std::numeric_limits<double>::epsilon()) {
         return false;

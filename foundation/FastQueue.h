@@ -87,6 +87,7 @@ private:
         T* pBegin;
         T* pEnd;
         T* pBufferEnd;
+        // An implicit array of T follows.
     };
 
     struct ChunkDisposer {
@@ -138,11 +139,12 @@ void FastQueue<T>::push(T const& t) {
     }
 
     if (!chunk) {
+        // Create a new chunk.
         char* buf = new char[Chunk::storageRequirement(m_chunkCapacity)];
         chunk = new(buf) Chunk(m_chunkCapacity);
         m_chunkList.push_back(*chunk);
     }
-
+    // Push to chunk.
     new(chunk->pEnd)T(t);
     ++chunk->pEnd;
 }
@@ -173,4 +175,4 @@ inline void swap(FastQueue<T>& o1, FastQueue<T>& o2) {
     o1.swap(o2);
 }
 
-#endif  // ifndef FAST_QUEUE_H_
+#endif // ifndef FAST_QUEUE_H_

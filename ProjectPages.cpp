@@ -39,7 +39,7 @@ ProjectPages::ProjectPages(std::vector<ImageInfo> const& info, Qt::LayoutDirecti
 
     for (ImageInfo const& image : info) {
         ImageDesc image_desc(image);
-
+        // Enforce some rules.
         if (image_desc.numLogicalPages == 2) {
             image_desc.leftHalfRemoved = false;
             image_desc.rightHalfRemoved = false;
@@ -143,9 +143,11 @@ PageSequence ProjectPages::toPageSequence(PageView const view) const {
     }
 
     return pages;
-}  // ProjectPages::toPageSequence
+} // ProjectPages::toPageSequence
 
 void ProjectPages::listRelinkablePaths(VirtualFunction1<void, RelinkablePath const&>& sink) const {
+    // It's generally a bad idea to do callbacks while holding an internal mutex,
+    // so we accumulate results into this vector first.
     std::vector<QString> files;
 
     {
@@ -316,7 +318,7 @@ namespace {
             return ImageFileInfo(fileName, metadata);
         }
     };
-}
+}  // anonymous namespace
 
 std::vector<ImageFileInfo>
 ProjectPages::toImageFileInfo() const {
@@ -373,6 +375,8 @@ void ProjectPages::setLayoutTypeForImpl(ImageId const& image_id, LayoutType cons
         if (image.id == image_id) {
             int adjusted_num_pages = num_pages;
             if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
+                // Both can't be removed, but we handle that case anyway
+                // by treating it like none are removed.
                 --adjusted_num_pages;
             }
 
@@ -397,6 +401,8 @@ void ProjectPages::setLayoutTypeForAllPagesImpl(LayoutType const layout, bool* m
 
         int adjusted_num_pages = num_pages;
         if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
+            // Both can't be removed, but we handle that case anyway
+            // by treating it like none are removed.
             --adjusted_num_pages;
         }
 
@@ -418,6 +424,8 @@ void ProjectPages::autoSetLayoutTypeForImpl(ImageId const& image_id, OrthogonalR
         if (image.id == image_id) {
             int num_pages = adviseNumberOfLogicalPages(image.metadata, rotation);
             if ((num_pages == 2) && (image.leftHalfRemoved != image.rightHalfRemoved)) {
+                // Both can't be removed, but we handle that case anyway
+                // by treating it like none are removed.
                 --num_pages;
             }
 
@@ -459,11 +467,13 @@ ProjectPages::insertImageImpl(ImageInfo const& new_image,
     std::vector<ImageDesc>::iterator it(m_images.begin());
     std::vector<ImageDesc>::iterator const end(m_images.end());
     for (; it != end && it->id != existing; ++it) {
+        // Continue until we find the existing image.
     }
     if (it == end) {
+        // Existing image not found.
         if (!((before_or_after == BEFORE) && existing.isNull())) {
             return logical_pages;
-        }
+        }  // Otherwise we can still handle that case.
     }
     if (before_or_after == AFTER) {
         ++it;
@@ -471,6 +481,7 @@ ProjectPages::insertImageImpl(ImageInfo const& new_image,
 
     ImageDesc image_desc(new_image);
 
+    // Enforce some rules.
     if (image_desc.numLogicalPages == 2) {
         image_desc.leftHalfRemoved = false;
         image_desc.rightHalfRemoved = false;
@@ -506,7 +517,7 @@ ProjectPages::insertImageImpl(ImageInfo const& new_image,
     }
 
     return logical_pages;
-}  // ProjectPages::insertImageImpl
+} // ProjectPages::insertImageImpl
 
 void ProjectPages::removePagesImpl(std::set<PageId> const& to_remove, bool& modified) {
     std::set<PageId>::const_iterator const to_remove_end(to_remove.end());
@@ -542,18 +553,21 @@ void ProjectPages::removePagesImpl(std::set<PageId> const& to_remove, bool& modi
     }
 
     new_images.swap(m_images);
-}  // ProjectPages::removePagesImpl
+} // ProjectPages::removePagesImpl
 
 PageInfo ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified) {
     if (page_id.subPage() == PageId::SINGLE_PAGE) {
+        // These can't be unremoved.
         return PageInfo();
     }
 
     std::vector<ImageDesc>::iterator it(m_images.begin());
     std::vector<ImageDesc>::iterator const end(m_images.end());
     for (; it != end && it->id != page_id.imageId(); ++it) {
+        // Continue until we find the corresponding image.
     }
     if (it == end) {
+        // The corresponding image wasn't found.
         return PageInfo();
     }
 
@@ -577,7 +591,7 @@ PageInfo ProjectPages::unremovePageImpl(PageId const& page_id, bool& modified) {
             page_id, image.metadata, image.numLogicalPages,
             image.leftHalfRemoved, image.rightHalfRemoved
     );
-}  // ProjectPages::unremovePageImpl
+} // ProjectPages::unremovePageImpl
 
 /*========================= ProjectPages::ImageDesc ======================*/
 

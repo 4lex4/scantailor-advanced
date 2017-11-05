@@ -39,6 +39,7 @@ namespace select_content {
     Q_OBJECT
     public:
         class UiData {
+            // Member-wise copying is OK.
         public:
             UiData();
 
@@ -93,7 +94,7 @@ namespace select_content {
             AutoManualMode mode() const;
 
         private:
-            QRectF m_contentRect;
+            QRectF m_contentRect;  // In virtual image coordinates.
             QRectF m_pageRect;
             PhysSizeCalc m_sizeCalc;
             Dependencies m_deps;
@@ -151,4 +152,4 @@ namespace select_content {
         int m_ignoreAutoManualToggle;
     };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_
+#endif // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

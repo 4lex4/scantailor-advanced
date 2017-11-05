@@ -40,6 +40,7 @@ namespace imageproc {
     void PolynomialLine::prepareEquations(std::vector<double>& equations, int const degree, int const num_values) {
         equations.reserve((degree + 1) * num_values);
 
+        // Pretend that data points are positioned in range of [1, 2].
         double const scale = calcScale(num_values);
         for (int i = 0; i < num_values; ++i) {
             double const position = 1.0 + i * scale;
@@ -49,4 +50,4 @@ namespace imageproc {
             }
         }
     }
-}  // namespace imageproc
+} // namespace imageproc

@@ -118,6 +118,7 @@ namespace deskew {
         double const h = maxViewportRect().height();
         QPointF const center(getImageRotationOrigin());
 
+        // Draw the semi-transparent grid.
         QPen pen(QColor(0, 0, 0xd1, 90));
         pen.setCosmetic(true);
         pen.setWidth(1);
@@ -137,6 +138,7 @@ namespace deskew {
         }
         painter.drawLines(lines);
 
+        // Draw the horizontal and vertical line crossing at the center.
         pen.setColor(QColor(0, 0, 0xd1));
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
@@ -148,7 +150,8 @@ namespace deskew {
                 QPointF(center.x(), 0.5),
                 QPointF(center.x(), h - 0.5)
         );
-
+        // Draw the rotation arcs.
+        // Those will look like this (  )
         QRectF const arc_square(getRotationArcSquare());
 
         painter.setRenderHints(QPainter::Antialiasing, true);
@@ -175,7 +178,7 @@ namespace deskew {
         painter.drawPixmap(rect.topLeft(), m_handlePixmap);
         rect.moveCenter(handles.second);
         painter.drawPixmap(rect.topLeft(), m_handlePixmap);
-    }      // ImageView::onPaint
+    }  // ImageView::onPaint
 
     void ImageView::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
         if (interaction.captured()) {

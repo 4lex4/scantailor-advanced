@@ -68,6 +68,7 @@ namespace page_split {
 
         PageLayout layout(params->pageLayout());
         if (layout.uncutOutline().isEmpty()) {
+            // Backwards compatibility with versions < 0.9.9
             layout.setUncutOutline(xform.resultingRect());
         }
 
@@ -92,5 +93,5 @@ namespace page_split {
                     )
             );
         }
-    }      // CacheDrivenTask::process
+    }  // CacheDrivenTask::process
 }  // namespace page_split

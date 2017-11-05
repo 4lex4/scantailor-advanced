@@ -27,5 +27,5 @@ namespace output {
         TAB_DEWARPING,
         TAB_DESPECKLING
     };
-}
+}  // namespace output
 #endif

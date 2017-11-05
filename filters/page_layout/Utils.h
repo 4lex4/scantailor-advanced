@@ -95,5 +95,5 @@ namespace page_layout {
 
         static QPointF getDownUnitVector(QPolygonF const& poly_rect);
     };
-}
-#endif  // ifndef PAGE_LAYOUT_UTILS_H_
+}  // namespace page_layout
+#endif // ifndef PAGE_LAYOUT_UTILS_H_

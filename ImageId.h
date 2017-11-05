@@ -24,6 +24,7 @@
 class QFileInfo;
 
 class ImageId {
+    // Member-wise copying is OK.
 public:
     ImageId()
             : m_filePath(),
@@ -79,4 +80,4 @@ bool operator!=(ImageId const& lhs, ImageId const& rhs);
 
 bool operator<(ImageId const& lhs, ImageId const& rhs);
 
-#endif  // ifndef IMAGEID_H_
+#endif // ifndef IMAGEID_H_

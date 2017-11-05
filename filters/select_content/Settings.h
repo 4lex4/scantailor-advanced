@@ -102,4 +102,4 @@ namespace select_content {
         double m_pageDetectionTolerance;
     };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_SETTINGS_H_
+#endif // ifndef SELECT_CONTENT_SETTINGS_H_

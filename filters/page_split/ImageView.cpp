@@ -74,10 +74,10 @@ namespace page_split {
         QString const tip(tr("Drag the line or the handles."));
         double const hit_radius = std::max<double>(0.5 * m_handlePixmap.width(), 15.0);
         int const num_cutters = m_virtLayout.numCutters();
-        for (int i = 0; i < num_cutters; ++i) {
+        for (int i = 0; i < num_cutters; ++i) {  // Loop over lines.
             m_lineInteractors[i].setObject(&m_lineSegments[0]);
 
-            for (int j = 0; j < 2; ++j) {
+            for (int j = 0; j < 2; ++j) {  // Loop over handles.
                 m_handles[i][j].setHitRadius(hit_radius);
                 m_handles[i][j].setPositionCallback(
                         boost::bind(&ImageView::handlePosition, this, i, j)
@@ -111,13 +111,14 @@ namespace page_split {
             makeLastFollower(m_lineInteractors[i]);
         }
 
+        // Turn off cutters we don't need anymore.
         for (int i = num_cutters; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
                 m_handleInteractors[i][j].unlink();
             }
             m_lineInteractors[i].unlink();
         }
-    }      // ImageView::setupCuttersInteraction
+    }  // ImageView::setupCuttersInteraction
 
     void ImageView::pageLayoutSetExternally(PageLayout const& layout) {
         m_virtLayout = layout;
@@ -137,7 +138,7 @@ namespace page_split {
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawRect(virt_rect);
 
-                return;
+                return;  // No Split Line will be drawn.
             case PageLayout::SINGLE_PAGE_CUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawPolygon(m_virtLayout.singlePageOutline());
@@ -172,7 +173,7 @@ namespace page_split {
             rect.moveCenter(cutter.p2());
             painter.drawPixmap(rect.topLeft(), m_handlePixmap);
         }
-    }      // ImageView::onPaint
+    }  // ImageView::onPaint
 
     PageLayout ImageView::widgetLayout() const {
         return m_virtLayout.transformed(virtualToWidget());
@@ -183,7 +184,9 @@ namespace page_split {
         QRectF reduced_widget_rect(reducedWidgetArea());
         reduced_widget_rect.setLeft(widget_rect.left());
         reduced_widget_rect.setRight(widget_rect.right());
-
+        // The reason we restore original left and right boundaries is that
+        // we want to allow cutter handles to go off-screen horizontally
+        // but not vertically.
         QLineF line(
                 customInscribedCutterLine(
                         widgetLayout().cutterLine(line_idx), reduced_widget_rect
@@ -209,7 +212,9 @@ namespace page_split {
         QRectF reduced_virt_rect(widgetToVirtual().mapRect(widget_rect));
         reduced_virt_rect.setLeft(virt_rect.left());
         reduced_virt_rect.setRight(virt_rect.right());
-
+        // The reason we restore original left and right boundaries is that
+        // we want to allow cutter handles to go off-screen horizontally
+        // but not vertically.
         return customInscribedCutterLine(
                 m_virtLayout.cutterLine(line_idx), reduced_virt_rect
         );
@@ -228,6 +233,7 @@ namespace page_split {
  */
     QLineF ImageView::customInscribedCutterLine(QLineF const& line, QRectF const& rect) {
         if (line.p1().y() == line.p2().y()) {
+            // This should not happen, but if it does, we need to handle it gracefully.
             qreal middle_x = 0.5 * (line.p1().x() + line.p2().x());
             middle_x = qBound(rect.left(), middle_x, rect.right());
 
@@ -274,12 +280,13 @@ namespace page_split {
     }
 
     void ImageView::lineMoveRequest(int line_idx, QLineF line) {
+        // Intersect with top and bottom.
         QPointF p_top;
         QPointF p_bottom;
         QRectF const valid_area(getOccupiedWidgetRect());
         line.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top);
         line.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom);
-
+        // Limit movement.
         double const min_x = qMin(p_top.x(), p_bottom.x());
         double const max_x = qMax(p_top.x(), p_bottom.x());
         double const left = valid_area.left() - min_x;
@@ -295,6 +302,11 @@ namespace page_split {
     }
 
     void ImageView::dragFinished() {
+        // When a handle is being dragged, the other handle is displayed not
+        // at the edge of the widget widget but at the edge of the image.
+        // That means we have to redraw once dragging is over.
+        // BTW, the only reason for displaying handles at widget's edges
+        // is to make them visible and accessible for dragging.
         update();
         emit pageLayoutSetLocally(m_virtLayout);
     }
@@ -330,6 +342,8 @@ namespace page_split {
 
         update();
 
+        // We need invalidateThumbnail(PageInfo) rather than (PageId),
+        // as we are updating page removal status.
         page_info.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
         emit invalidateThumbnail(page_info);
     }
@@ -343,6 +357,8 @@ namespace page_split {
 
         update();
 
+        // We need invalidateThumbnail(PageInfo) rather than (PageId),
+        // as we are updating page removal status.
         page_info.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
         emit invalidateThumbnail(page_info);
     }

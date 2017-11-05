@@ -43,7 +43,7 @@ namespace imageproc {
                 return mixer->integerMix(total_weight);
             }
         };
-    }
+    }  // namespace color_mixer_impl
 
     template<typename AccumType>
     class GrayColorMixer {
@@ -201,4 +201,4 @@ namespace imageproc {
         AccumType m_blueAccum;
     };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_COLOR_MIXER_H_
+#endif // ifndef IMAGEPROC_COLOR_MIXER_H_

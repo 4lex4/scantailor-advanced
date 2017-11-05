@@ -35,6 +35,7 @@ namespace deskew {
     Q_OBJECT
     public:
         class UiData {
+            // Member-wise copying is OK.
         public:
             UiData();
 
@@ -112,4 +113,4 @@ namespace deskew {
         PageSelectionAccessor m_pageSelectionAccessor;
     };
 }  // namespace deskew
-#endif  // ifndef DESKEW_OPTIONSWIDGET_H_
+#endif // ifndef DESKEW_OPTIONSWIDGET_H_

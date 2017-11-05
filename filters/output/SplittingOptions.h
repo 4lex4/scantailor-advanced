@@ -37,7 +37,7 @@ namespace output {
         static ForegroundType parseForegroundType(const QString& str);
 
         static QString formatForegroundType(ForegroundType type);
-        
+
         bool splitOutput;
         ForegroundType foregroundType;
     };

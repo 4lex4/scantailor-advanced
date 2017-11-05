@@ -86,7 +86,7 @@ namespace imageproc {
 
         QPolygonF closed1(poly1);
         QPolygonF closed2(poly2);
-
+        // Close if necessary.
         if (closed1.back() != closed1.front()) {
             closed1.push_back(closed1.front());
         }
@@ -105,7 +105,7 @@ namespace imageproc {
         std::sort(edges2.begin(), edges2.end(), Before());
 
         return fuzzyCompareImpl(edges1, edges2);
-    }      // PolygonUtils::fuzzyCompare
+    }  // PolygonUtils::fuzzyCompare
 
     QPointF PolygonUtils::roundPoint(QPointF const& p) {
         return QPointF(roundValue(p.x()), roundValue(p.y()));
@@ -177,25 +177,33 @@ namespace imageproc {
             }
         };
 
+// 2D cross product of OA and OB vectors, i.e. z-component of their 3D cross product.
+// Returns a positive value, if OAB makes a counter-clockwise turn,
+// negative for clockwise turn, and zero if the points are collinear.
         double cross(QPointF const& O, QPointF const& A, QPointF const& B) {
             return (A.x() - O.x()) * (B.y() - O.y()) - (A.y() - O.y()) * (B.x() - O.x());
         }
-    }
+    }  // anonymous namespace
 
     QPolygonF PolygonUtils::convexHull(std::vector<QPointF> point_cloud) {
+        // "Monotone chain" algorithm.
+        // http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+
         int const n = point_cloud.size();
         int k = 0;
         std::vector<QPointF> hull(n * 2);
 
+        // Sort points by x, then y.
         std::sort(point_cloud.begin(), point_cloud.end(), LexicographicPointComparator());
 
+        // Build lower hull.
         for (int i = 0; i < n; ++i) {
             while (k >= 2 && cross(hull[k - 2], hull[k - 1], point_cloud[i]) <= 0) {
                 k--;
             }
             hull[k++] = point_cloud[i];
         }
-
+        // Build upper hull.
         for (int i = n - 2, t = k + 1; i >= 0; --i) {
             while (k >= t && cross(hull[k - 2], hull[k - 1], point_cloud[i]) <= 0) {
                 k--;

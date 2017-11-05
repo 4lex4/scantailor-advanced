@@ -57,5 +57,5 @@ namespace dewarping {
         double m_modelXScaleToNormalized;
         double m_modelYScaleToNormalized;
     };
-}
-#endif  // ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_
+}  // namespace dewarping
+#endif // ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_

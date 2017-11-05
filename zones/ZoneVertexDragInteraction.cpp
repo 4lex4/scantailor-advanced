@@ -49,10 +49,11 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState cons
         EditableSpline::Ptr const& spline = zone.spline();
 
         if (spline != m_ptrSpline) {
+            // Draw the whole spline in solid color.
             m_visualizer.drawSpline(painter, to_screen, spline);
             continue;
         }
-
+        // Draw the solid part of the spline.
         QPolygonF points;
         SplineVertex::Ptr vertex(m_ptrVertex->next(SplineVertex::LOOP));
         for (; vertex != m_ptrVertex; vertex = vertex->next(SplineVertex::LOOP)) {
@@ -63,7 +64,7 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState cons
         painter.drawPolyline(points);
     }
 
-    QLinearGradient gradient;
+    QLinearGradient gradient;  // From remote to selected point.
     gradient.setColorAt(0.0, m_visualizer.solidColor());
     gradient.setColorAt(1.0, m_visualizer.highlightDarkColor());
 
@@ -92,7 +93,7 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, InteractionState cons
             painter, to_screen.map(m_ptrVertex->point()),
             m_visualizer.highlightBrightColor()
     );
-}  // ZoneVertexDragInteraction::onPaint
+} // ZoneVertexDragInteraction::onPaint
 
 void ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {

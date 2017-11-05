@@ -61,4 +61,4 @@ namespace fix_orientation {
         QButtonGroup* m_pBtnGroup;
     };
 }  // namespace fix_orientation
-#endif  // ifndef FIX_ORIENTATION_APPLYDIALOG_H_
+#endif // ifndef FIX_ORIENTATION_APPLYDIALOG_H_

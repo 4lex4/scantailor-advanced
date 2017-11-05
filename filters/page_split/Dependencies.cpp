@@ -54,9 +54,14 @@ namespace page_split {
             return true;
         }
         if (m_layoutType == SINGLE_PAGE_UNCUT) {
+            // The split line doesn't matter here.
             return true;
         }
         if ((m_layoutType == TWO_PAGES) && (params.splitLineMode() == MODE_MANUAL)) {
+            // Two pages and a specified split line means we have all the data.
+            // Note that if layout type was PAGE_PLUS_OFFCUT, we would
+            // not know if that page is to the left or to the right of the
+            // split line.
             return true;
         }
 

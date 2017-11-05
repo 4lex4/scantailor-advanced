@@ -52,5 +52,5 @@ namespace page_layout {
         IntrusivePtr<output::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
-#endif  // ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_
+}  // namespace page_layout
+#endif // ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_

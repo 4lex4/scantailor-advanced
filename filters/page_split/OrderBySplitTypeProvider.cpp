@@ -30,10 +30,11 @@ namespace page_split {
                                             PageId const& rhs_page,
                                             bool const rhs_incomplete) const {
         if (lhs_incomplete != rhs_incomplete) {
+            // Pages with question mark go to the bottom.
             return rhs_incomplete;
         } else if (lhs_incomplete) {
             assert(rhs_incomplete);
-
+            // Two pages with question marks are ordered naturally.
             return lhs_page < rhs_page;
         }
 
@@ -51,7 +52,7 @@ namespace page_split {
             lhs_layout_type = lhs_params->pageLayout().toLayoutType();
         }
         if (lhs_layout_type == AUTO_LAYOUT_TYPE) {
-            lhs_layout_type = 100;
+            lhs_layout_type = 100;  // To force it below pages with known layout.
         }
 
         int rhs_layout_type = rhs_record.combinedLayoutType();
@@ -59,7 +60,7 @@ namespace page_split {
             rhs_layout_type = rhs_params->pageLayout().toLayoutType();
         }
         if (rhs_layout_type == AUTO_LAYOUT_TYPE) {
-            rhs_layout_type = 100;
+            rhs_layout_type = 100;  // To force it below pages with known layout.
         }
 
         if (lhs_layout_type == rhs_layout_type) {
@@ -67,5 +68,5 @@ namespace page_split {
         } else {
             return lhs_layout_type < rhs_layout_type;
         }
-    }      // OrderBySplitTypeProvider::precedes
+    }  // OrderBySplitTypeProvider::precedes
 }  // namespace page_split

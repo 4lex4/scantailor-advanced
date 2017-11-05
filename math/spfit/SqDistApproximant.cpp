@@ -26,7 +26,15 @@ namespace spfit {
         assert(fabs(v.squaredNorm() - 1.0) < 1e-06 && "v is not normalized");
         assert(fabs(u.dot(v)) < 1e-06 && "u and v are not orthogonal");
 
+        // Consider the following equation:
+        // w = R*x + t
+        // w: vector in the local coordinate system.
+        // R: rotation matrix.  Actually the inverse of [u v].
+        // x: vector in the global coordinate system.
+        // t: translation component.
 
+        // R = | u1 u2 |
+        // | v1 v2 |
         Mat22d R;
         R(0, 0) = u[0];
         R(0, 1) = u[1];
@@ -34,7 +42,7 @@ namespace spfit {
         R(1, 1) = v[1];
 
         StaticMatrixCalc<double, 4> mc;
-        Vec2d t;
+        Vec2d t;  // Translation component.
         (-(mc(R) * mc(origin, 2, 1))).write(t);
 
         A(0, 0) = m * R(0, 0) * R(0, 0) + n * R(1, 0) * R(1, 0);
@@ -66,6 +74,7 @@ namespace spfit {
             return pointDistance(line.p1());
         }
 
+        // Unit normal to line.
         Vec2d const v(-u[1], u[0]);
 
         return SqDistApproximant(line.p1(), u, v, 0, weight);
@@ -88,7 +97,7 @@ namespace spfit {
             Vec2d const to_reference_point(reference_point - frenet_frame.origin());
             double const p = 1.0 / abs_curvature;
             double const d = fabs(frenet_frame.unitNormal().dot(to_reference_point));
-            m = d / (d + p);
+            m = d / (d + p);  // Formula 7 in [2].
         }
 
         return SqDistApproximant(

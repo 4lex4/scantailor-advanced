@@ -52,9 +52,10 @@ namespace page_layout {
         bool const rhs_valid = !rhs_incomplete && rhs_size.isValid();
 
         if (lhs_valid != rhs_valid) {
+            // Invalid (unknown) sizes go to the back.
             return lhs_valid;
         }
 
         return lhs_size.height() < rhs_size.height();
-    }
+    } // OrderByHeightProvider::precedes
 }  // namespace page_layout

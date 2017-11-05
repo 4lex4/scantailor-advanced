@@ -111,10 +111,10 @@ void WorkerThreadPool::updateNumberOfThreads() {
         // address space constraints.
         max_threads = QThread::idealThreadCount();
         if (max_threads > 2) {
-        	max_threads = 2;
+            max_threads = 2;
         }
     } else {
-    	max_threads = QThread::idealThreadCount();
+        max_threads = QThread::idealThreadCount();
     }
 
     int num_threads = m_settings.value("settings/batch_processing_threads", max_threads).toInt();

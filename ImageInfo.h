@@ -28,6 +28,7 @@
  * ProjectPages doesn't operate with ImageInfo objects, but with PageInfo ones.
  */
 class ImageInfo {
+    // Member-wise copying is OK.
 public:
     ImageInfo();
 
@@ -60,10 +61,10 @@ public:
 private:
     ImageId m_id;
     ImageMetadata m_metadata;
-    int m_numSubPages;
-    bool m_leftHalfRemoved;
-    bool m_rightHalfRemoved;
+    int m_numSubPages;  // 1 or 2
+    bool m_leftHalfRemoved;  // Both can't be true, and if one is true,
+    bool m_rightHalfRemoved;  // then m_numSubPages is 1.
 };
 
 
-#endif  // ifndef IMAGEINFO_H_
+#endif // ifndef IMAGEINFO_H_

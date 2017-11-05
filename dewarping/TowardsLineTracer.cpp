@@ -43,6 +43,7 @@ namespace dewarping {
               m_numSteps(0),
               m_finished(false) {
         if (sidesOfLine(m_line, initial_pos, line.p1() + m_normalTowardsLine) > 0) {
+            // It points the wrong way -> fix that.
             m_normalTowardsLine = -m_normalTowardsLine;
         }
 
@@ -101,6 +102,8 @@ namespace dewarping {
             Step& step = m_steps[best_idx];
 
             if (sidesOfLine(m_line, cur_pos + step.vec, m_lastOutputPos) < 0) {
+                // Note that this has to be done before we update cur_pos,
+                // as it will be used after breaking from this loop.
                 m_finished = true;
                 break;
             }
@@ -124,24 +127,28 @@ namespace dewarping {
         } else {
             return 0;
         }
-    }      // TowardsLineTracer::trace
+    }  // TowardsLineTracer::trace
 
     void TowardsLineTracer::setupSteps() {
         QPoint all_directions[8];
-
+        // all_directions[0] is north-west, and then clockwise from there.
         static int const m0p[] = { -1, 0, 1 };
         static int const p0m[] = { 1, 0, -1 };
 
         for (int i = 0; i < 3; ++i) {
+            // north
             all_directions[i].setX(m0p[i]);
             all_directions[i].setY(-1);
 
+            // east
             all_directions[2 + i].setX(1);
             all_directions[2 + i].setY(m0p[i]);
 
+            // south
             all_directions[4 + i].setX(p0m[i]);
             all_directions[4 + i].setY(1);
 
+            // west
             all_directions[(6 + i) & 7].setX(-1);
             all_directions[(6 + i) & 7].setY(p0m[i]);
         }
@@ -160,11 +167,12 @@ namespace dewarping {
             }
         }
 
+        // Sort by decreasing alignment with m_normalTowardsLine.
         using namespace boost::lambda;
         std::sort(
                 m_steps, m_steps + m_numSteps,
                 bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _1))
                 > bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _2))
         );
-    }      // TowardsLineTracer::setupSteps
+    }  // TowardsLineTracer::setupSteps
 }  // namespace dewarping

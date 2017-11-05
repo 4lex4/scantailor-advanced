@@ -28,6 +28,7 @@ class PageId;
 class AbstractRelinker;
 
 class OutputFileNameGenerator {
+    // Member-wise copying is OK.
 public:
     OutputFileNameGenerator();
 
@@ -64,4 +65,4 @@ private:
 };
 
 
-#endif  // ifndef OUTPUT_FILE_NAME_GENERATOR_H_
+#endif // ifndef OUTPUT_FILE_NAME_GENERATOR_H_

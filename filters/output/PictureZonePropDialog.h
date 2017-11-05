@@ -42,5 +42,5 @@ namespace output {
         Ui::PictureZonePropDialog ui;
         IntrusivePtr<PropertySet> m_ptrProps;
     };
-}
+}  // namespace output
 #endif

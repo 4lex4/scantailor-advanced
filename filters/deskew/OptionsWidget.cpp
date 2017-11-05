@@ -31,7 +31,7 @@ namespace deskew {
               m_ignoreSpinBoxChanges(0),
               m_pageSelectionAccessor(page_selection_accessor) {
         setupUi(this);
-        angleSpinBox->setSuffix(QChar(0x00B0));
+        angleSpinBox->setSuffix(QChar(0x00B0));  // the degree symbol
         angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
         angleSpinBox->adjustSize();
         setSpinBoxUnknownState();
@@ -183,6 +183,7 @@ namespace deskew {
         angleSpinBox->setSpecialValueText("");
         angleSpinBox->setValue(angle);
 
+        // Right alignment doesn't work correctly, so we use the left one.
         angleSpinBox->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         angleSpinBox->setEnabled(true);
     }
@@ -197,10 +198,15 @@ namespace deskew {
     }
 
     double OptionsWidget::spinBoxToDegrees(double const sb_value) {
+        // The spin box shows the angle in a usual geometric way,
+        // with positive angles going counter-clockwise.
+        // Internally, we operate with angles going clockwise,
+        // because the Y axis points downwards in computer graphics.
         return -sb_value;
     }
 
     double OptionsWidget::degreesToSpinBox(double const degrees) {
+        // See above.
         return -degrees;
     }
 

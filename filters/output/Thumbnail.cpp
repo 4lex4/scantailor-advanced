@@ -25,4 +25,4 @@ namespace output {
                          ImageTransformation const& xform)
             : ThumbnailBase(thumbnail_cache, max_size, image_id, xform) {
     }
-}
+}  // namespace output

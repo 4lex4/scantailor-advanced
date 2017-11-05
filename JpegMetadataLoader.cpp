@@ -103,6 +103,7 @@ namespace {
     }
 
     void JpegSourceManager::initSource(j_decompress_ptr cinfo) {
+        // No-op.
     }
 
     boolean JpegSourceManager::fillInputBuffer(j_decompress_ptr cinfo) {
@@ -114,6 +115,7 @@ namespace {
         if (bytes_read > 0) {
             bytes_in_buffer = bytes_read;
         } else {
+            // Insert a fake EOI marker.
             m_buf[0] = 0xFF;
             m_buf[1] = JPEG_EOI;
             bytes_in_buffer = 2;
@@ -141,6 +143,7 @@ namespace {
     }
 
     void JpegSourceManager::termSource(j_decompress_ptr cinfo) {
+        // No-op.
     }
 
     JpegSourceManager* JpegSourceManager::object(j_decompress_ptr cinfo) {
@@ -180,7 +183,7 @@ namespace {
     JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
         return static_cast<JpegErrorManager*>(cinfo->err);
     }
-}  // namespace
+}  // namespace {
 
 /*============================= JpegMetadataLoader ==========================*/
 
@@ -213,6 +216,7 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
 
     JpegErrorManager err_mgr;
     if (setjmp(err_mgr.jmpBuf())) {
+        // Returning from longjmp().
         return GENERIC_ERROR;
     }
 
@@ -224,22 +228,26 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
         return NO_IMAGES;
     }
 
+    // The other possible value is JPEG_SUSPENDED, but we never suspend it.
     assert(header_status == JPEG_HEADER_OK);
 
     if (!jpeg_start_decompress(cinfo.ptr())) {
+        // libjpeg doesn't support all compression types.
         return GENERIC_ERROR;
     }
 
     QSize const size(cinfo->image_width, cinfo->image_height);
     Dpi dpi;
     if (cinfo->density_unit == 1) {
+        // Dots per inch.
         dpi = Dpi(cinfo->X_density, cinfo->Y_density);
     } else if (cinfo->density_unit == 2) {
+        // Dots per centimeter.
         dpi = Dpm(cinfo->X_density * 100, cinfo->Y_density * 100);
     }
 
     out(ImageMetadata(size, dpi));
 
     return LOADED;
-}  // JpegMetadataLoader::loadMetadata
+} // JpegMetadataLoader::loadMetadata
 

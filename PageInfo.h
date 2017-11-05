@@ -23,6 +23,7 @@
 #include "ImageMetadata.h"
 
 class PageInfo {
+    // Member-wise copying is OK.
 public:
     PageInfo();
 
@@ -73,4 +74,4 @@ private:
 };
 
 
-#endif  // ifndef PAGEINFO_H_
+#endif // ifndef PAGEINFO_H_

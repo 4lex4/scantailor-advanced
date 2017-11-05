@@ -137,7 +137,7 @@ template<typename T>
 MatT<T>::MatT(size_t rows, size_t cols)
         : m_rows(rows),
           m_cols(cols),
-          m_data(new T[rows * cols]()) {
+          m_data(new T[rows * cols]()) { // The "()" will cause elements to be initialized to T().
 }
 
 template<typename T>
@@ -279,4 +279,4 @@ MatT<T> operator*(double scalar, MatT<T> const& mat) {
     return res;
 }
 
-#endif  // ifndef MAT_T_H_
+#endif // ifndef MAT_T_H_

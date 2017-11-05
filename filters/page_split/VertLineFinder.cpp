@@ -76,6 +76,12 @@ namespace page_split {
             dbg->add(preprocessed, "preprocessed");
         }
 #else
+        // It looks like preprocessing causes more problems than it solves.
+        // It can reduce the visibility of a folding line to a level where
+        // it can't be detected, while it can't always fulfill its purpose of
+        // removing vertical edges of a book.  Because of that, other methods
+        // of dealing with them were developed, which makes preprocessing
+        // obsolete.
         GrayImage preprocessed(gray100);
 #endif
 
@@ -87,11 +93,14 @@ namespace page_split {
             dbg->add(v_gradient, "v_gradient");
         }
 #else
+        // These are not gradients, but their difference is the same as for
+        // the two gradients above.  This branch is an optimization.
         GrayImage h_gradient(erodeGray(preprocessed, QSize(11, 1), 0x00));
         GrayImage v_gradient(erodeGray(preprocessed, QSize(1, 11), 0x00));
 #endif
 
         if (!dbg) {
+            // We'll need it later if debugging is on.
             preprocessed = GrayImage();
         }
 
@@ -108,7 +117,7 @@ namespace page_split {
         }
 
         double const line_thickness = 5.0;
-        double const max_angle = 7.0;
+        double const max_angle = 7.0;  // degrees
         double const angle_step = 0.25;
         int const angle_steps_to_max = (int) (max_angle / angle_step);
         int const total_angle_steps = angle_steps_to_max * 2 + 1;
@@ -121,6 +130,7 @@ namespace page_split {
         unsigned weight_table[256];
         buildWeightTable(weight_table);
 
+        // We don't want to process areas too close to the vertical edges.
         double const margin_mm = 3.5;
         int const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
 
@@ -206,6 +216,7 @@ namespace page_split {
             dbg->add(visual, "vector_lines");
         }
 
+        // Transform lines back into original coordinates.
         QTransform const undo_100dpi(
                 xform_100dpi.transformBack() * xform.transform()
         );
@@ -214,7 +225,7 @@ namespace page_split {
         }
 
         return lines;
-    }      // VertLineFinder::findLines
+    }  // VertLineFinder::findLines
 
     GrayImage VertLineFinder::removeDarkVertBorders(GrayImage const& src) {
         GrayImage dst(src);
@@ -235,13 +246,14 @@ namespace page_split {
         std::vector<unsigned char> tmp_line(w, 0x00);
 
         for (int y = 0; y < h; ++y, image_line += image_stride) {
-            unsigned char prev_pixel = 0x00;
+            // Left to right.
+            unsigned char prev_pixel = 0x00;  // Black vertical border.
             for (int x = 0; x < w; ++x) {
                 prev_pixel = std::max(image_line[x], prev_pixel);
                 tmp_line[x] = prev_pixel;
             }
-
-            prev_pixel = 0x00;
+            // Right to left
+            prev_pixel = 0x00;  // Black vertical border.
             for (int x = w - 1; x >= 0; --x) {
                 prev_pixel = std::max(
                         image_line[x],

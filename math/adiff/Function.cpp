@@ -20,6 +20,10 @@
 #include <algorithm>
 
 namespace adiff {
+// Note:
+// 1. u in this file has the same meaning as in [1].
+// 2. sparse_map(i, j) corresponds to l(i, j) in [1].
+
     Function<2>::Function(size_t num_non_zero_vars)
             : value(),
               firstDerivs(num_non_zero_vars),
@@ -36,15 +40,20 @@ namespace adiff {
             : value(val),
               firstDerivs(sparse_map.numNonZeroElements()),
               secondDerivs(sparse_map.numNonZeroElements()) {
+        // An argument Xi is represented as a function:
+        // f(X1, X2, ..., Xi, ...) = Xi
+        // Derivatives are calculated accordingly.
+
         size_t const num_vars = sparse_map.numVars();
 
+        // arg_idx row
         for (size_t i = 0; i < num_vars; ++i) {
             size_t const u = sparse_map.nonZeroElementIdx(arg_idx, i);
             if (u != sparse_map.ZERO_ELEMENT) {
                 firstDerivs[u] = 1.0;
             }
         }
-
+        // arg_idx column
         for (size_t i = 0; i < num_vars; ++i) {
             size_t const u = sparse_map.nonZeroElementIdx(i, arg_idx);
             if (u != sparse_map.ZERO_ELEMENT) {
@@ -222,13 +231,17 @@ namespace adiff {
         double const den4 = den2 * den2;
 
         for (size_t u = 0; u < p; ++u) {
+            // Derivative of: (num.value / den.value)
             double const d1 = num.firstDerivs[u] * den.value - num.value * den.firstDerivs[u];
             res.firstDerivs[u] = d1 / den2;
 
+            // Derivative of: (num.firstDerivs[u] * den.value - num.value * den.firstDerivs[u])
             double const d2 = num.secondDerivs[u] * den.value - num.value * den.secondDerivs[u];
 
+            // Derivative of: den2
             double const d3 = 2.0 * den.value * den.firstDerivs[u];
 
+            // Derivative of: (d1 / den2)
             res.secondDerivs[u] = (d2 * den2 - d1 * d3) / den4;
         }
 

@@ -97,15 +97,18 @@ namespace imageproc {
                          dst_segment_first += se_len) {
                         int const dst_segment_last = std::min(
                                 dst_segment_first + se_len, width
-                        ) - 1;
+                        ) - 1; // inclusive
                         int const src_segment_first = dst_segment_first + dx1;
                         int const src_segment_last = dst_segment_last + dx2;
                         int const src_segment_middle
                                 = (src_segment_first + src_segment_last) >> 1;
-
+                        // Fill the first half of the accumulator buffer.
                         if ((src_segment_first > width_m1) || (src_segment_middle < 0)) {
+                            // This half is completely outside the image.
+                            // Note that the branch below can't deal with such a case.
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         } else {
+                            // after <- [to <- within <- from] <- before
                             int const from = std::min(width_m1, src_segment_middle);
                             int const to = std::max(0, src_segment_first);
 
@@ -120,10 +123,13 @@ namespace imageproc {
                                     input + src_segment_middle, src_delta, accum_middle, dst_delta
                             );
                         }
-
+                        // Fill the second half of the accumulator buffer.
                         if ((src_segment_last < 0) || (src_segment_middle > width_m1)) {
+                            // This half is completely outside the image.
+                            // Note that the branch below can't deal with such a case.
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         } else {
+                            // before -> [from -> within -> to] -> after
                             int const from = std::max(0, src_segment_middle);
                             int const to = std::min(width_m1, src_segment_last);
 
@@ -149,7 +155,7 @@ namespace imageproc {
                     input += input_stride;
                     output += output_stride;
                 }
-            }              // horizontalPass
+            }  // horizontalPass
 
             template<typename T, typename MinMaxSelector>
             void verticalPass(MinMaxSelector selector,
@@ -175,15 +181,18 @@ namespace imageproc {
                          dst_segment_first += se_len) {
                         int const dst_segment_last = std::min(
                                 dst_segment_first + se_len, height
-                        ) - 1;
+                        ) - 1; // inclusive
                         int const src_segment_first = dst_segment_first + dy1;
                         int const src_segment_last = dst_segment_last + dy2;
                         int const src_segment_middle
                                 = (src_segment_first + src_segment_last) >> 1;
-
+                        // Fill the first half of accumulator buffer.
                         if ((src_segment_first > height_m1) || (src_segment_middle < 0)) {
+                            // This half is completely outside the image.
+                            // Note that the branch below can't deal with such a case.
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         } else {
+                            // after <- [to <- within <- from] <- before
                             int const from = std::min(height_m1, src_segment_middle);
                             int const to = std::max(0, src_segment_first);
 
@@ -199,10 +208,13 @@ namespace imageproc {
                                     accum_middle, dst_delta
                             );
                         }
-
+                        // Fill the second half of accumulator buffer.
                         if ((src_segment_last < 0) || (src_segment_middle > height_m1)) {
+                            // This half is completely outside the image.
+                            // Note that the branch below can't deal with such a case.
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         } else {
+                            // before -> [from -> within -> to] -> after
                             int const from = std::max(0, src_segment_middle);
                             int const to = std::min(height_m1, src_segment_last);
 
@@ -231,7 +243,7 @@ namespace imageproc {
                     ++input;
                     ++output;
                 }
-            }              // verticalPass
+            }  // verticalPass
         }          // namespace local_min_max
     }      // namespace detail
 
@@ -261,7 +273,8 @@ namespace imageproc {
  * Patt. Recog. Letters, 13, pp. 517-521, 1992
  *
  * A good description of this algorithm is available online at:
- * http: */
+ * http://leptonica.com/grayscale-morphology.html#FAST-IMPLEMENTATION
+ */
     template<typename T, typename MinMaxSelector>
     void localMinMaxGeneric(MinMaxSelector selector,
                             QRect const neighborhood,
@@ -293,4 +306,4 @@ namespace imageproc {
         );
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_
+#endif // ifndef IMAGEPROC_LOCAL_MIN_MAX_GENERIC_H_

@@ -133,9 +133,10 @@ private:
 
 namespace boost {
     namespace foreach {
+// Make BOOST_FOREACH work with the above class (necessary for boost >= 1.46 with gcc >= 4.6)
         template<>
         struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_ {
         };
-    }
-}
-#endif  // ifndef EDITABLE_ZONE_SET_H_
+    }  // namespace foreach
+}  // namespace boost
+#endif // ifndef EDITABLE_ZONE_SET_H_

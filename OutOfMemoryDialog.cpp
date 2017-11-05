@@ -61,6 +61,8 @@ void OutOfMemoryDialog::saveProject() {
 }
 
 void OutOfMemoryDialog::saveProjectAs() {
+    // XXX: this function is duplicated MainWindow
+
     QString project_dir;
     if (!m_projectFile.isEmpty()) {
         project_dir = QFileInfo(m_projectFile).absolutePath();
@@ -98,7 +100,7 @@ void OutOfMemoryDialog::saveProjectAs() {
         rp.setMostRecent(m_projectFile);
         rp.write();
     }
-}  // OutOfMemoryDialog::saveProjectAs
+} // OutOfMemoryDialog::saveProjectAs
 
 bool OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file) {
     ProjectWriter writer(m_ptrPages, m_selectedPage, m_outFileNameGen);

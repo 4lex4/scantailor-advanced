@@ -35,4 +35,4 @@ namespace output {
 
     ImageView::~ImageView() {
     }
-}
+}  // namespace output

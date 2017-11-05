@@ -27,6 +27,8 @@
 #include "RasterOp.h"
 
 namespace imageproc {
+// Note that -1 is an implementation detail.
+// It exists to make sure INF_DIST + 1 doesn't overflow.
     uint32_t const SEDM::INF_DIST = ~uint32_t(0) - 1;
 
     SEDM::SEDM()
@@ -75,11 +77,11 @@ namespace imageproc {
 
         uint32_t initial_distance[2];
         if (dist_type == DIST_TO_WHITE) {
-            initial_distance[0] = 0;
-            initial_distance[1] = INF_DIST;
+            initial_distance[0] = 0;  // white
+            initial_distance[1] = INF_DIST;  // black
         } else {
-            initial_distance[0] = INF_DIST;
-            initial_distance[1] = 0;
+            initial_distance[0] = INF_DIST;  // white
+            initial_distance[1] = 0;  // black
         }
 
         uint32_t* p_dist = m_pData;
@@ -159,7 +161,9 @@ namespace imageproc {
         }
 
         BinaryImage peak_candidates(findPeakCandidatesNonPadded());
-
+        // To check if a peak candidate is really a peak, we have to check
+        // that every cell in its neighborhood has a lower value than that
+        // candidate.  We are working with 3x3 neighborhoods.
         BinaryImage neighborhood_mask(
                 dilateBrick(
                         peak_candidates, QSize(3, 3),
@@ -171,6 +175,14 @@ namespace imageproc {
                 peak_candidates, QPoint(0, 0)
         );
 
+        // Cells in the neighborhood of a peak candidate fall into two categories:
+        // 1. The cell has a lower value than the peak candidate.
+        // 2. The cell has the same value as the peak candidate,
+        // but it has a cell with a greater value in its neighborhood.
+        // The second case indicates that our candidate is not relly a peak.
+        // To test for the second case we are going to increment the values
+        // of the cells in the neighborhood of peak candidates, find the peak
+        // candidates again and analize the differences.
 
         incrementMaskedPadded(neighborhood_mask);
         neighborhood_mask.release();
@@ -178,13 +190,16 @@ namespace imageproc {
         BinaryImage diff(findPeakCandidatesNonPadded());
         rasterOp<RopXor<RopSrc, RopDst>>(diff, peak_candidates);
 
+        // If a bin that has changed its state was a part of a peak candidate,
+        // it means a neighboring bin went from equal to a greater value,
+        // which indicates that such candidate is not a peak.
         BinaryImage const not_peaks(seedFill(diff, peak_candidates, CONN8));
         diff.release();
 
         rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
 
         return peak_candidates;
-    }      // SEDM::findPeaksDestructive
+    }  // SEDM::findPeaksDestructive
 
     inline uint32_t SEDM::distSq(int const x1, int const x2, uint32_t const dy_sq) {
         if (dy_sq == INF_DIST) {
@@ -202,7 +217,8 @@ namespace imageproc {
 
         uint32_t* p_sqd = &m_data[0];
         for (int x = 0; x < width; ++x, ++p_sqd) {
-            uint32_t b = 1;
+            // (d + 1)^2 = d^2 + 2d + 1
+            uint32_t b = 1;  // 2d + 1 in the above formula.
             for (int todo = height - 1; todo > 0; --todo) {
                 uint32_t const sqd = *p_sqd + b;
                 p_sqd += width;
@@ -226,7 +242,7 @@ namespace imageproc {
                 }
             }
         }
-    }      // SEDM::processColumns
+    }  // SEDM::processColumns
 
     void SEDM::processColumns(ConnectivityMap& cmap) {
         int const width = m_size.width() + 2;
@@ -235,7 +251,8 @@ namespace imageproc {
         uint32_t* p_sqd = &m_data[0];
         uint32_t* p_label = cmap.paddedData();
         for (int x = 0; x < width; ++x, ++p_sqd, ++p_label) {
-            uint32_t b = 1;
+            // (d + 1)^2 = d^2 + 2d + 1
+            uint32_t b = 1;  // 2d + 1 in the above formula.
             for (int todo = height - 1; todo > 0; --todo) {
                 uint32_t const sqd = *p_sqd + b;
                 p_sqd += width;
@@ -263,7 +280,7 @@ namespace imageproc {
                 }
             }
         }
-    }      // SEDM::processColumns
+    }  // SEDM::processColumns
 
     void SEDM::processRows() {
         int const width = m_size.width() + 2;
@@ -312,7 +329,7 @@ namespace imageproc {
                 }
             }
         }
-    }      // SEDM::processRows
+    }  // SEDM::processRows
 
     void SEDM::processRows(ConnectivityMap& cmap) {
         int const width = m_size.width() + 2;
@@ -365,13 +382,14 @@ namespace imageproc {
                 }
             }
         }
-    }      // SEDM::processRows
+    }  // SEDM::processRows
 
 /*====================== Peak finding stuff goes below ====================*/
 
     BinaryImage SEDM::findPeakCandidatesNonPadded() const {
         std::vector<uint32_t> maxed(m_data.size(), 0);
 
+        // Every cell becomes the maximum of itself and its neighbors.
         max3x3(&m_data[0], &maxed[0]);
 
         return buildEqualMapNonPadded(&m_data[0], &maxed[0]);
@@ -418,6 +436,7 @@ namespace imageproc {
         uint32_t* dst_line = &dst[0];
 
         for (int y = 0; y < height; ++y) {
+            // First column (no left neighbors).
             int x = 0;
             dst_line[x] = std::max(src_line[x], src_line[x + 1]);
 
@@ -428,6 +447,7 @@ namespace imageproc {
                 dst_line[x] = std::max(prev, std::max(cur, next));
             }
 
+            // Last column (no right neighbors).
             dst_line[x] = std::max(src_line[x], src_line[x - 1]);
 
             src_line += width;
@@ -438,7 +458,7 @@ namespace imageproc {
     void SEDM::max1x3(uint32_t const* src, uint32_t* dst) const {
         int const width = m_size.width() + 2;
         int const height = m_size.height() + 2;
-
+        // First row (no top neighbors).
         uint32_t const* p_src = &src[0];
         uint32_t* p_dst = &dst[0];
         for (int x = 0; x < width; ++x) {
@@ -459,6 +479,7 @@ namespace imageproc {
             p_dst += width;
         }
 
+        // Last row (no bottom neighbors).
         for (int x = 0; x < width; ++x) {
             *p_dst = std::max(p_src[0], p_src[-width]);
             ++p_src;

@@ -51,5 +51,5 @@ namespace deskew {
         IntrusivePtr<select_content::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
-#endif  // ifndef DESKEW_CACHEDRIVENTASK_H_
+}  // namespace deskew
+#endif // ifndef DESKEW_CACHEDRIVENTASK_H_

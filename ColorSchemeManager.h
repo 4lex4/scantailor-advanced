@@ -15,6 +15,7 @@ private:
     std::unique_ptr<ColorParams> m_ptrColorParams;
 
     ColorSchemeManager() = default;
+
 public:
     static ColorSchemeManager* instance();
 

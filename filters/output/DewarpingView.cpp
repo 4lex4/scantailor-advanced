@@ -164,7 +164,7 @@ namespace output {
                 break;
             }
         }
-    }      // DewarpingView::fitSpline
+    }  // DewarpingView::fitSpline
 
     void DewarpingView::depthPerceptionChanged(double val) {
         m_depthPerception.setValue(val);
@@ -175,9 +175,9 @@ namespace output {
         painter.setRenderHint(QPainter::Antialiasing);
 
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(0xff, 0xff, 0xff, 150));
-        painter.drawPolygon(virtMarginArea(0));
-        painter.drawPolygon(virtMarginArea(1));
+        painter.setBrush(QColor(0xff, 0xff, 0xff, 150));  // Translucent white.
+        painter.drawPolygon(virtMarginArea(0));  // Left margin.
+        painter.drawPolygon(virtMarginArea(1));  // Right margin.
         painter.setWorldTransform(imageToVirtual() * painter.worldTransform());
         painter.setBrush(Qt::NoBrush);
 
@@ -220,10 +220,12 @@ namespace output {
                     painter.drawPolyline(curve);
                 }
             } catch (std::runtime_error const&) {
+                // Still probably a bad model, even though DistortionModel::isValid() was true.
                 valid_model = false;
             }
-        }
+        }  // valid_model
         if (!valid_model) {
+            // Just draw the frame.
             dewarping::Curve const& top_curve = m_distortionModel.topCurve();
             dewarping::Curve const& bottom_curve = m_distortionModel.bottomCurve();
             painter.drawLine(top_curve.polyline().front(), bottom_curve.polyline().front());
@@ -234,7 +236,7 @@ namespace output {
 
         paintXSpline(painter, interaction, m_topSpline);
         paintXSpline(painter, interaction, m_bottomSpline);
-    }      // DewarpingView::onPaint
+    }  // DewarpingView::onPaint
 
     void DewarpingView::paintXSpline(QPainter& painter,
                                      InteractionState const& interaction,
@@ -244,7 +246,7 @@ namespace output {
         painter.save();
         painter.setBrush(Qt::NoBrush);
 
-#if 0
+#if 0  // No point in drawing the curve itself - we already draw the grid.
         painter.setWorldTransform(imageToVirtual() * virtualToWidget());
 
         QPen curve_pen(Qt::blue);
@@ -255,7 +257,8 @@ namespace output {
         std::vector<QPointF> const polyline(spline.toPolyline());
         painter.drawPolyline(&polyline[0], polyline.size());
 #endif
-
+        // Drawing cosmetic points in transformed coordinates seems unreliable,
+        // so let's draw them in widget coordinates.
         painter.setWorldMatrixEnabled(false);
 
         QPen existing_point_pen(Qt::red);
@@ -277,7 +280,7 @@ namespace output {
         }
 
         painter.restore();
-    }      // DewarpingView::paintXSpline
+    }  // DewarpingView::paintXSpline
 
     void DewarpingView::curveModified(int curve_idx) {
         if (curve_idx == 0) {
@@ -310,11 +313,11 @@ namespace output {
         dewarping::Curve const& top_curve = m_distortionModel.topCurve();
         dewarping::Curve const& bottom_curve = m_distortionModel.bottomCurve();
 
-        QLineF vert_boundary;
-        if (margin_idx == 0) {
+        QLineF vert_boundary;  // From top to bottom, that's important!
+        if (margin_idx == 0) {  // Left margin.
             vert_boundary.setP1(top_curve.polyline().front());
             vert_boundary.setP2(bottom_curve.polyline().front());
-        } else {
+        } else {  // Right margin.
             vert_boundary.setP1(top_curve.polyline().back());
             vert_boundary.setP2(bottom_curve.polyline().back());
         }
@@ -322,12 +325,14 @@ namespace output {
         vert_boundary = imageToVirtual().map(vert_boundary);
 
         QLineF normal;
-        if (margin_idx == 0) {
+        if (margin_idx == 0) {  // Left margin.
             normal = QLineF(vert_boundary.p2(), vert_boundary.p1()).normalVector();
-        } else {
+        } else {  // Right margin.
             normal = vert_boundary.normalVector();
         }
 
+        // Project every vertex in the m_virtDisplayArea polygon
+        // to vert_line and to its normal, keeping track min and max values.
         double min = NumericTraits<double>::max();
         double max = NumericTraits<double>::min();
         double normal_max = max;
@@ -348,6 +353,7 @@ namespace output {
             }
         }
 
+        // Workaround clipping bugs in QPolygon::intersected().
         min -= 1.0;
         max += 1.0;
         normal_max += 1.0;
@@ -359,5 +365,5 @@ namespace output {
         poly << vert_boundary.pointAt(min) + normal.pointAt(normal_max) - normal.p1();
 
         return m_virtDisplayArea.intersected(poly);
-    }      // DewarpingView::virtMarginArea
+    }  // DewarpingView::virtMarginArea
 }  // namespace output

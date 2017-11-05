@@ -90,8 +90,9 @@ namespace output {
         ColorAdapter m_colorAdapter;
         EditableZoneSet m_zones;
 
+        // Must go after m_zones.
         ZoneInteractionContext m_context;
-
+        // Must go after m_context.
         ColorPickupInteraction m_colorPickupInteraction;
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
@@ -102,4 +103,4 @@ namespace output {
         IntrusivePtr<Settings> m_ptrSettings;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_FILL_ZONE_EDITOR_H_
+#endif // ifndef OUTPUT_FILL_ZONE_EDITOR_H_

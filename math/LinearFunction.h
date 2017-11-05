@@ -30,6 +30,7 @@
  * \endcode
  */
 class LinearFunction {
+    // Member-wise copying is OK.
 public:
     VecT<double> a;
     double b;
@@ -66,4 +67,4 @@ inline void swap(LinearFunction& f1, LinearFunction& f2) {
     f1.swap(f2);
 }
 
-#endif  // ifndef LINEAR_FUNCTION_H_
+#endif // ifndef LINEAR_FUNCTION_H_

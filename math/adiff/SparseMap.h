@@ -36,6 +36,7 @@ namespace adiff {
  */
     template<>
     class SparseMap<2> {
+        // Member-wise copying is OK.
     public:
         static size_t const ZERO_ELEMENT;
 
@@ -88,4 +89,4 @@ namespace adiff {
         MatT<size_t> m_map;
     };
 }  // namespace adiff
-#endif  // ifndef ADIFF_SPARSITY_H_
+#endif // ifndef ADIFF_SPARSITY_H_

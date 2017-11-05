@@ -29,6 +29,7 @@ void ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFuncti
     int content_begin = content_end;
 
     while (true) {
+        // Find the next content position.
         for (; i < hist_size; ++i) {
             if (histogram[i] != 0) {
                 break;
@@ -36,6 +37,13 @@ void ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFuncti
         }
 
         if (i - content_end >= m_minWhitespaceWidth) {
+            // Whitespace is long enough to break the content block.
+
+            // Note that content_end is initialized to
+            // -m_minWhitespaceWidth to make this test
+            // pass on the first content block, in order to avoid
+            // growing a non existing content block.
+
             if (content_end - content_begin >= m_minContentWidth) {
                 handler(Span(content_begin, content_end));
             }
@@ -47,6 +55,7 @@ void ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFuncti
             break;
         }
 
+        // Find the next whitespace position.
         for (; i < hist_size; ++i) {
             if (histogram[i] == 0) {
                 break;
@@ -58,5 +67,5 @@ void ContentSpanFinder::findImpl(SlicedHistogram const& histogram, VirtualFuncti
     if (content_end - content_begin >= m_minContentWidth) {
         handler(Span(content_begin, content_end));
     }
-}  // ContentSpanFinder::findImpl
+} // ContentSpanFinder::findImpl
 

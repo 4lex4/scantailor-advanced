@@ -34,6 +34,8 @@ class QDomElement;
 namespace deskew {
     class Params {
     public:
+        // Member-wise copying is OK.
+
         Params(double deskew_angle_deg, Dependencies const& deps, AutoManualMode mode);
 
         Params(QDomElement const& deskew_el);
@@ -73,4 +75,4 @@ namespace deskew {
         double m_deviation;
     };
 }  // namespace deskew
-#endif  // ifndef DESKEW_PARAMS_H_
+#endif // ifndef DESKEW_PARAMS_H_

@@ -160,6 +160,7 @@ FileNameDisambiguator::Impl::Impl(QDomElement const& disambiguator_el, boost::fu
         QString const file_path_shorthand(file_el.attribute("file"));
         QString const file_path = file_path_unpacker(file_path_shorthand);
         if (file_path.isEmpty()) {
+            // Unresolved shorthand - skipping this record.
             continue;
         }
 
@@ -178,6 +179,7 @@ const {
     for (Item const& item : m_unorderedItems) {
         QString const file_path_shorthand = file_path_packer(item.filePath);
         if (file_path_shorthand.isEmpty()) {
+            // Unrepresentable file path - skipping this record.
             continue;
         }
 
@@ -215,13 +217,15 @@ int FileNameDisambiguator::Impl::registerFile(QString const& file_path) {
     ItemsByFileNameLabel::iterator const fn_it(
             m_itemsByFileNameLabel.upper_bound(boost::make_tuple(file_name))
     );
+    // If the item preceeding fn_it has the same file name,
+    // the new file belongs to the same disambiguation group.
     if (fn_it != m_itemsByFileNameLabel.begin()) {
         ItemsByFileNameLabel::iterator prev(fn_it);
         --prev;
         if (prev->fileName == file_name) {
             label = prev->label + 1;
         }
-    }
+    }  // Otherwise, label remains 0.
     Item const new_item(file_path, file_name, label);
     m_itemsByFileNameLabel.insert(fn_it, new_item);
 

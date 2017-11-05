@@ -50,6 +50,7 @@ namespace page_layout {
  * use CommandLine::set(CommandLine const&) to set the global class
  */
 class CommandLine {
+    // Member-wise copying is OK.
 public:
     enum Orientation {
         TOP,
@@ -527,4 +528,4 @@ private:
 };
 
 
-#endif  // ifndef COMMANDLINE_H_
+#endif // ifndef COMMANDLINE_H_

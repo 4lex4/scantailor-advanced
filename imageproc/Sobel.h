@@ -135,6 +135,7 @@ namespace imageproc {
             return;
         }
 
+        // Vertical pre-accumulation pass: mid = top + mid*2 + bottom
         for (int x = 0; x < width; ++x) {
             SrcIt p_src(src + x);
             TmpIt p_tmp(tmp + x);
@@ -162,6 +163,7 @@ namespace imageproc {
             tmp_writer(*p_tmp, top + mid + mid + mid);
         }
 
+        // Horizontal pass: mid = right - left
         for (int y = 0; y < height; ++y) {
             T left(tmp_reader(*tmp));
 
@@ -185,7 +187,7 @@ namespace imageproc {
             tmp += tmp_stride;
             dst += dst_stride;
         }
-    }      // horizontalSobel
+    }  // horizontalSobel
 
     template<
             typename T, typename SrcIt, typename TmpIt, typename DstIt,
@@ -209,6 +211,7 @@ namespace imageproc {
 
         TmpIt const tmp_orig(tmp);
 
+        // Horizontal pre-accumulation pass: mid = left + mid*2 + right
         for (int y = 0; y < height; ++y) {
             T left(src_reader(*src));
 
@@ -232,6 +235,7 @@ namespace imageproc {
             tmp += tmp_stride;
         }
 
+        // Vertical pass: mid = bottom - top
         for (int x = 0; x < width; ++x) {
             TmpIt p_tmp(tmp_orig + x);
             TmpIt p_dst(dst + x);
@@ -258,6 +262,6 @@ namespace imageproc {
             p_dst += dst_stride;
             dst_writer(*p_dst, mid - top);
         }
-    }      // verticalSobel
+    }  // verticalSobel
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SOBEL_H_
+#endif // ifndef IMAGEPROC_SOBEL_H_

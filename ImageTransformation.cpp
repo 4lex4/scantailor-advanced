@@ -43,28 +43,34 @@ void ImageTransformation::preScaleToDpi(Dpi const& dpi) {
             m_origRect.width() * xscale, m_origRect.height() * yscale
     );
 
+    // Undo's for the specified steps.
     QTransform const undo21(m_preRotateXform.inverted() * m_preScaleXform.inverted());
     QTransform const undo4321(m_postRotateXform.inverted() * m_preCropXform.inverted() * undo21);
 
+    // Update transform #1: pre-scale.
     m_preScaleXform.reset();
     m_preScaleXform.scale(xscale, yscale);
 
+    // Update transform #2: pre-rotate.
     m_preRotateXform = m_preRotation.transform(new_pre_scaled_image_size);
 
+    // Update transform #3: pre-crop.
     QTransform const redo12(m_preScaleXform * m_preRotateXform);
     m_preCropArea = (undo21 * redo12).map(m_preCropArea);
     m_preCropXform = calcCropXform(m_preCropArea);
 
+    // Update transform #4: post-rotate.
     m_postRotateXform = calcPostRotateXform(m_postRotation);
 
+    // Update transform #5: post-crop.
     QTransform const redo1234(redo12 * m_preCropXform * m_postRotateXform);
     m_postCropArea = (undo4321 * redo1234).map(m_postCropArea);
     m_postCropXform = calcCropXform(m_postCropArea);
-
+    // Update transform #6: post-scale.
     m_postScaleXform = calcPostScaleXform(m_postScaledDpi);
 
     update();
-}  // ImageTransformation::preScaleToDpi
+} // ImageTransformation::preScaleToDpi
 
 void ImageTransformation::preScaleToEqualizeDpi() {
     int const min_dpi = std::min(m_origDpi.horizontal(), m_origDpi.vertical());
@@ -127,6 +133,7 @@ QTransform ImageTransformation::calcPostRotateXform(double const degrees) {
         xform *= QTransform().rotate(degrees);
         xform *= QTransform().translate(origin.x(), origin.y());
 
+        // Calculate size changes.
         QPolygonF const pre_rotate_poly(m_preCropXform.map(m_preCropArea));
         QRectF const pre_rotate_rect(pre_rotate_poly.boundingRect());
         QPolygonF const post_rotate_poly(xform.map(pre_rotate_poly));
@@ -146,8 +153,12 @@ QTransform ImageTransformation::calcPostScaleXform(Dpi const& target_dpi) {
         return QTransform();
     }
 
+    // We are going to measure the effective DPI after the previous transforms.
+    // Normally m_preScaledDpi would be symmetric, so we could just
+    // use that, but just in case ...
 
     QTransform const to_orig(m_postScaleXform * m_transform.inverted());
+    // IMPORTANT: in the above line we assume post-scale is the last transform.
 
     QLineF const hor_unit(QPointF(0, 0), QPointF(1, 0));
     QLineF const vert_unit(QPointF(0, 0), QPointF(0, 1));
@@ -183,10 +194,10 @@ void ImageTransformation::resetPostScale() {
 }
 
 void ImageTransformation::update() {
-    QTransform const pre_scale_then_pre_rotate(m_preScaleXform * m_preRotateXform);
-    QTransform const pre_crop_then_post_rotate(m_preCropXform * m_postRotateXform);
-    QTransform const post_crop_then_post_scale(m_postCropXform * m_postScaleXform);
-    QTransform const pre_crop_and_further(pre_crop_then_post_rotate * post_crop_then_post_scale);
+    QTransform const pre_scale_then_pre_rotate(m_preScaleXform * m_preRotateXform);  // 12
+    QTransform const pre_crop_then_post_rotate(m_preCropXform * m_postRotateXform);  // 34
+    QTransform const post_crop_then_post_scale(m_postCropXform * m_postScaleXform);  // 56
+    QTransform const pre_crop_and_further(pre_crop_then_post_rotate * post_crop_then_post_scale);  // 3456
     m_transform = pre_scale_then_pre_rotate * pre_crop_and_further;
     m_invTransform = m_transform.inverted();
     if (m_preCropArea.empty()) {

@@ -32,6 +32,7 @@ namespace imageproc {
  *        in each horizontal or vertical line.
  */
     class SlicedHistogram {
+        // Member-wise copying is OK.
     public:
         enum Type {
             ROWS,      /**< Process horizontal lines. */
@@ -90,4 +91,4 @@ namespace imageproc {
         std::vector<int> m_data;
     };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SLICEDHISTOGRAM_H_
+#endif // ifndef IMAGEPROC_SLICEDHISTOGRAM_H_

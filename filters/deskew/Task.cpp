@@ -182,9 +182,12 @@ namespace deskew {
                     )
             );
         }
-    }      // Task::process
+    }  // Task::process
 
     void Task::cleanup(TaskStatus const& status, BinaryImage& image, Dpi const& dpi) {
+        // We don't have to clean up every piece of garbage.
+        // The only concern are the horizontal shadows, which we remove here.
+
         Dpi reduced_dpi(dpi);
         BinaryImage reduced_image;
 
@@ -219,7 +222,7 @@ namespace deskew {
         status.throwIfCancelled();
 
         rasterOp<RopSubtract<RopDst, RopSrc>>(image, garbage);
-    }      // Task::cleanup
+    }  // Task::cleanup
 
     int Task::from150dpi(int size, int target_dpi) {
         int const new_size = (size * target_dpi + 75) / 150;
@@ -257,6 +260,8 @@ namespace deskew {
     }
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
+        // This function is executed from the GUI thread.
+
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);

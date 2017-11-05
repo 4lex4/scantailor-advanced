@@ -28,12 +28,17 @@ SplineVertex::SplineVertex(SplineVertex* prev, SplineVertex* next)
 }
 
 void SplineVertex::remove() {
+    // Be very careful here - don't let this object
+    // be destroyed before we've finished working with it.
+
     m_pPrev->m_ptrNext.swap(m_ptrNext);
     assert(m_ptrNext.get() == this);
 
     m_pPrev->m_ptrNext->m_pPrev = m_pPrev;
     m_pPrev = 0;
 
+    // This may or may not destroy this object,
+    // depending on if there are other references to it.
     m_ptrNext.reset();
 }
 
@@ -80,6 +85,10 @@ SentinelSplineVertex::SentinelSplineVertex()
 }
 
 SentinelSplineVertex::~SentinelSplineVertex() {
+    // Just releasing m_ptrNext is not enough, because in case some external
+    // object holds a reference to a vertix of this spline, that vertex will
+    // still (possibly indirectly) reference us through a chain of m_ptrNext
+    // smart pointers.  Therefore, we explicitly unlink each node.
     while (m_ptrNext.get() != this) {
         m_ptrNext->remove();
     }

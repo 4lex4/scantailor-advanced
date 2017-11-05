@@ -192,7 +192,7 @@ namespace output {
         ZoneSet const new_fill_zones(m_ptrSettings->fillZonesForPage(m_pageId));
 
         bool need_reprocess = false;
-        do {
+        do {  // Just to be able to break from it.
             std::unique_ptr<OutputParams> stored_output_params(
                     m_ptrSettings->getOutputParams(m_pageId)
             );
@@ -222,7 +222,7 @@ namespace output {
                     need_reprocess = true;
                     break;
                 }
-                
+
                 if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
                     need_reprocess = true;
                     break;
@@ -315,6 +315,11 @@ namespace output {
         }
 
         if (need_reprocess) {
+            // Even in batch processing mode we should still write automask, because it
+            // will be needed when we view the results back in interactive mode.
+            // The same applies even more to speckles file, as we need it not only
+            // for visualization purposes, but also for re-doing despeckling at
+            // different levels without going through the whole output generation process.
             bool const write_automask = render_params.mixedOutput();
             bool const write_speckles_file = params.despeckleLevel() != DESPECKLE_OFF
                                              && render_params.needBinarization();
@@ -326,7 +331,8 @@ namespace output {
             if (params.dewarpingOptions().mode() == DewarpingOptions::MANUAL) {
                 distortion_model = params.distortionModel();
             }
-
+            // OutputGenerator will write a new distortion model
+            // there, if dewarping mode is AUTO.
             SplitImage splitImage;
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones,
@@ -365,18 +371,28 @@ namespace output {
             if (((params.dewarpingOptions().mode() == DewarpingOptions::AUTO) && distortion_model.isValid())
                 || ((params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL) && distortion_model.isValid())
                     ) {
+                // A new distortion model was generated.
+                // We need to save it to be able to modify it manually.
                 params.setDistortionModel(distortion_model);
                 m_ptrSettings->setParams(m_pageId, params);
                 new_output_image_params.setDistortionModel(distortion_model);
             }
 
             if (write_speckles_file && speckles_img.isNull()) {
+                // Even if despeckling didn't actually take place, we still need
+                // to write an empty speckles file.  Making it a special case
+                // is simply not worth it.
                 BinaryImage(out_img.size(), WHITE).swap(speckles_img);
             }
 
             if (write_automask) {
+                // Note that QDir::mkdir() will fail if the parent directory,
+                // that is $OUT/cache doesn't exist. We want that behaviour,
+                // as otherwise when loading a project from a different machine,
+                // a whole bunch of bogus directories would be created.
                 QDir().mkdir(automask_dir);
-
+                // Also note that QDir::mkdir() will fail if the directory already exists,
+                // so we ignore its return value here.
                 if (!TiffWriter::writeImage(automask_file_path, automask_img.toQImage(),
                                             m_ptrSettings->getTiffCompression())) {
                     invalidate_params = true;
@@ -394,6 +410,8 @@ namespace output {
             if (invalidate_params) {
                 m_ptrSettings->removeOutputParams(m_pageId);
             } else {
+                // Note that we can't reuse *_file_info objects
+                // as we've just overwritten those files.
                 OutputParams const out_params(
                         new_output_image_params,
                         OutputFileParams(QFileInfo(out_file_path)),
@@ -420,6 +438,9 @@ namespace output {
 
         DespeckleVisualization despeckle_visualization;
         if (m_lastTab == TAB_DESPECKLING) {
+            // Because constructing DespeckleVisualization takes a noticeable
+            // amount of time, we only do it if we are sure we'll need it.
+            // Otherwise it will get constructed on demand.
             despeckle_visualization = despeckle_state.visualize();
         }
 
@@ -436,7 +457,7 @@ namespace output {
         } else {
             return FilterResultPtr(0);
         }
-    }      // Task::process
+    }  // Task::process
 
 /**
  * Delete output files mutually exclusive to m_pageId.
@@ -501,6 +522,8 @@ namespace output {
     }
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
+        // This function is executed from the GUI thread.
+
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -555,6 +578,11 @@ namespace output {
             );
         }
 
+        // We make sure we never need to update the original <-> output
+        // mapping at run time, that is without reloading.
+        // In OptionsWidget::dewarpingChanged() we make sure to reload
+        // if we are on the "Fill Zones" tab, and if not, it will be reloaded
+        // anyway when another tab is selected.
         boost::function<QPointF(QPointF const&)> orig_to_output;
         boost::function<QPointF(QPointF const&)> output_to_orig;
         if ((m_params.dewarpingOptions().mode() != DewarpingOptions::OFF) && m_params.distortionModel().isValid()) {
@@ -616,5 +644,5 @@ namespace output {
         );
 
         ui->setImageWidget(tab_widget.release(), ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
-    }      // Task::UiUpdater::updateUI
+    }  // Task::UiUpdater::updateUI
 }  // namespace output

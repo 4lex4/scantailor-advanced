@@ -31,6 +31,7 @@ namespace imageproc {
     class GrayImage;
 
     class OutsidePixels {
+        // Member-wise copying is OK.
     public:
         enum Flags {
             COLOR = 1 << 0,
@@ -134,4 +135,4 @@ namespace imageproc {
                               OutsidePixels outside_pixels,
                               QSizeF const& min_mapping_area = QSizeF(0.9, 0.9));
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_TRANSFORM_H_
+#endif // ifndef IMAGEPROC_TRANSFORM_H_

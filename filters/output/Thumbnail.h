@@ -35,5 +35,5 @@ namespace output {
                   ImageId const& image_id,
                   ImageTransformation const& xform);
     };
-}
+}  // namespace output
 #endif

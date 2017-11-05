@@ -123,6 +123,9 @@ namespace output {
 
         rootInteractionHandler().makeLastFollower(*this);
 
+        // We want these handlers after zone interaction handlers,
+        // as some of those have their own drag and zoom handlers,
+        // which need to get events before these standard ones.
         rootInteractionHandler().makeLastFollower(m_dragHandler);
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
@@ -152,7 +155,7 @@ namespace output {
             schedulePictureMaskRebuild();
         } else {
             double const sn = sin(constants::DEG2RAD * m_pictureMaskAnimationPhase);
-            double const scale = 0.5 * (sn + 1.0);
+            double const scale = 0.5 * (sn + 1.0);  // 0 .. 1
             double const opacity = 0.35 * scale + 0.15;
 
             QPixmap mask(m_screenPictureMask);
@@ -234,13 +237,19 @@ namespace output {
         painter.setBrush(QColor(mask_color));
 
 #ifndef Q_WS_X11
+        // That's how it's supposed to be.
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
 #else
-        painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+        // QPainter::CompositionMode_Clear doesn't work for arbitrarily shaped
+        // objects on X11, as well as CompositionMode_Source with a transparent
+        // brush.  Fortunately, CompositionMode_DestinationOut with a non-transparent
+        // brush does actually work.
+            painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
 
         typedef PictureLayerProperty PLP;
 
+        // First pass: ERASER1
         for (EditableZoneSet::Zone const& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
@@ -249,6 +258,7 @@ namespace output {
 
         painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
+        // Second pass: PAINTER2
         for (EditableZoneSet::Zone const& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
@@ -256,17 +266,23 @@ namespace output {
         }
 
 #ifndef Q_WS_X11
+        // That's how it's supposed to be.
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
 #else
-        painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+        // QPainter::CompositionMode_Clear doesn't work for arbitrarily shaped
+        // objects on X11, as well as CompositionMode_Source with a transparent
+        // brush.  Fortunately, CompositionMode_DestinationOut with a non-transparent
+        // brush does actually work.
+            painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
 
+        // Third pass: ERASER1
         for (EditableZoneSet::Zone const& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
             }
         }
-    }      // PictureZoneEditor::paintOverPictureMask
+    }  // PictureZoneEditor::paintOverPictureMask
 
     void PictureZoneEditor::showPropertiesDialog(EditableZoneSet::Zone const& zone) {
         PropertySet saved_properties;
@@ -274,7 +290,9 @@ namespace output {
         *zone.properties() = saved_properties;
 
         PictureZonePropDialog dialog(zone.properties(), this);
-
+        // We can't connect to the update() slot directly, as since some time,
+        // Qt ignores such update requests on inactive windows.  Updating
+        // it through a proxy slot does work though.
         connect(&dialog, SIGNAL(updated()), SLOT(updateRequested()));
 
         if (dialog.exec() == QDialog::Accepted) {

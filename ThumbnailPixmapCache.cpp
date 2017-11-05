@@ -93,7 +93,7 @@ public:
     Item(Item const& other);
 
 private:
-    Item& operator=(Item const& other);
+    Item& operator=(Item const& other);  // Assignment is forbidden.
 };
 
 
@@ -317,6 +317,10 @@ ThumbnailPixmapCache::Impl::Impl(QString const& thumb_dir,
           m_totalLoadAttempts(0),
           m_threadStarted(false),
           m_shuttingDown(false) {
+    // Note that QDir::mkdir() will fail if the parent directory,
+    // that is $OUT/cache doesn't exist. We want that behaviour,
+    // as otherwise when loading a project from a different machine,
+    // a whole bunch of bogus directories would be created.
     QDir().mkdir(m_thumbDir);
 
     m_backgroundLoader.moveToThread(this);
@@ -347,6 +351,7 @@ void ThumbnailPixmapCache::Impl::setThumbDir(QString const& thumb_dir) {
     m_thumbDir = thumb_dir;
 
     for (Item const& item : m_loadQueue) {
+        // This trick will make all queued tasks to expire.
         m_totalLoadAttempts = std::max(
                 m_totalLoadAttempts,
                 item.precedingLoadAttempts + m_expirationThreshold + 1
@@ -371,6 +376,7 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(ImageId const& 
         if (k_it->status == Item::LOADED) {
             pixmap = k_it->pixmap;
 
+            // Move it after all other candidates for removal.
             RemoveQueue::iterator const rq_it(
                     m_items.project<RemoveQueueTag>(k_it)
             );
@@ -411,6 +417,11 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(ImageId const& 
         k_it->completionHandlers.push_back(*completion_handler);
 
         if (k_it->status == Item::QUEUED) {
+            // Because we've got a new request for this item,
+            // we move it to the beginning of the load queue.
+            // Note that we don't do it for IN_PROGRESS items,
+            // because all QUEUED items must precede any other
+            // items in the load queue.
             LoadQueue::iterator const lq_it(
                     m_items.project<LoadQueueTag>(k_it)
             );
@@ -420,11 +431,14 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(ImageId const& 
         return QUEUED;
     }
 
+    // Create a new item.
     LoadQueue::iterator const lq_it(
             m_loadQueue.push_front(
                     Item(image_id, m_totalLoadAttempts, Item::QUEUED)
             ).first
     );
+    // Now our new item is at the beginning of the load queue and at the
+    // end of the remove queue.
 
     assert(lq_it->status == Item::QUEUED);
     assert(lq_it->completionHandlers.empty());
@@ -436,17 +450,19 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(ImageId const& 
 
     if (m_numQueuedItems++ == 0) {
         if (m_threadStarted) {
+            // Wake the background thread up.
             QCoreApplication::postEvent(
                     &m_backgroundLoader, new QEvent(QEvent::User)
             );
         } else {
+            // Start the background thread.
             start();
             m_threadStarted = true;
         }
     }
 
     return QUEUED;
-}  // ThumbnailPixmapCache::Impl::request
+} // ThumbnailPixmapCache::Impl::request
 
 void ThumbnailPixmapCache::Impl::ensureThumbnailExists(ImageId const& image_id, QImage const& image) {
     if (m_shuttingDown) {
@@ -494,6 +510,7 @@ void ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QIma
     QImage const thumbnail(makeThumbnail(image, max_thumb_size));
     bool thumb_written = false;
 
+    // Note that we may be called from multiple threads at the same time.
     AtomicFileOverwriter overwriter;
     QIODevice* iodev = overwriter.startWriting(thumb_file_path);
     if (iodev && thumbnail.save(iodev, "PNG")) {
@@ -521,13 +538,19 @@ void ThumbnailPixmapCache::Impl::recreateThumbnail(ImageId const& image_id, QIma
         case Item::QUEUED:
             break;
         case Item::IN_PROGRESS:
+            // We have a small race condition in this case.
+            // We don't know if the other thread has already loaded
+            // the thumbnail or not.  In case it did, again we
+            // don't know if it loaded the old or new version.
+            // Well, let's just pretend the thumnail was loaded
+            // (or failed to load) before we wrote the new version.
             break;
     }
-}  // ThumbnailPixmapCache::Impl::recreateThumbnail
+} // ThumbnailPixmapCache::Impl::recreateThumbnail
 
 void ThumbnailPixmapCache::Impl::run() {
     backgroundProcessing();
-    exec();
+    exec();  // Wait for further processing requests (via custom events).
 }
 
 void ThumbnailPixmapCache::Impl::customEvent(QEvent* e) {
@@ -535,10 +558,12 @@ void ThumbnailPixmapCache::Impl::customEvent(QEvent* e) {
 }
 
 void ThumbnailPixmapCache::Impl::backgroundProcessing() {
+    // This method is called from a background thread.
     assert(QCoreApplication::instance()->thread() != QThread::currentThread());
 
     for (;;) {
         try {
+            // We are going to initialize these while holding the mutex.
             LoadQueue::iterator lq_it;
             ImageId image_id;
             QString thumb_dir;
@@ -555,14 +580,25 @@ void ThumbnailPixmapCache::Impl::backgroundProcessing() {
                 image_id = lq_it->imageId;
 
                 if (lq_it->status != Item::QUEUED) {
+                    // All QUEUED items precede any other items
+                    // in the load queue, so it means there are no
+                    // QUEUED items at all.
                     assert(m_numQueuedItems == 0);
                     break;
                 }
 
+                // By marking the item as IN_PROGRESS, we prevent it
+                // from being processed again before the GUI thread
+                // receives our LoadResultEvent.
                 queuedToInProgress(lq_it);
 
                 if (m_totalLoadAttempts - lq_it->precedingLoadAttempts
                     > m_expirationThreshold) {
+                    // Expire this request.  The reasoning behind
+                    // request expiration is described in
+                    // ThumbnailLoadResult::REQUEST_EXPIRED
+                    // documentation.
+
                     postLoadResult(
                             lq_it, QImage(),
                             ThumbnailLoadResult::REQUEST_EXPIRED
@@ -570,11 +606,13 @@ void ThumbnailPixmapCache::Impl::backgroundProcessing() {
                     continue;
                 }
 
+                // Expired requests don't count as load attempts.
                 ++m_totalLoadAttempts;
 
+                // Copy those while holding the mutex.
                 thumb_dir = m_thumbDir;
                 max_thumb_size = m_maxThumbSize;
-            }
+            }  // mutex scope
             QImage const image(
                     loadSaveThumbnail(image_id, thumb_dir, max_thumb_size)
             );
@@ -587,7 +625,7 @@ void ThumbnailPixmapCache::Impl::backgroundProcessing() {
             OutOfMemoryHandler::instance().handleOutOfMemorySituation();
         }
     }
-}  // ThumbnailPixmapCache::Impl::backgroundProcessing
+} // ThumbnailPixmapCache::Impl::backgroundProcessing
 
 QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(ImageId const& image_id,
                                                      QString const& thumb_dir,
@@ -611,6 +649,10 @@ QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(ImageId const& image_id,
 }
 
 QString ThumbnailPixmapCache::Impl::getThumbFilePath(ImageId const& image_id, QString const& thumb_dir) {
+    // Because a project may have several files with the same name (from
+    // different directories), we add a hash of the original image path
+    // to the thumbnail file name.
+
     QByteArray const orig_path_hash(
             QCryptographicHash::hash(
                     image_id.filePath().toUtf8(), QCryptographicHash::Md5
@@ -643,6 +685,7 @@ QImage ThumbnailPixmapCache::Impl::makeThumbnail(QImage const& image, QSize cons
     to_size.scale(max_thumb_size, Qt::KeepAspectRatio);
 
     if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
+        // This will be faster than QImage::scale().
         return scaleToGray(GrayImage(image), to_size);
     }
 
@@ -659,7 +702,13 @@ void ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& l
     assert(m_numQueuedItems > 0);
     --m_numQueuedItems;
 
+    // Move it item to the end of load queue.
+    // The point is to keep QUEUED items before any others.
     m_loadQueue.relocate(m_loadQueue.end(), lq_it);
+
+    // Going from QUEUED to IN_PROGRESS doesn't require
+    // moving it in the remove queue, as we only remove
+    // LOADED items.
 }
 
 void ThumbnailPixmapCache::Impl::postLoadResult(LoadQueue::iterator const& lq_it,
@@ -693,6 +742,7 @@ void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
 
         if ((result->status() == ThumbnailLoadResult::LOADED)
             && pixmap.isNull()) {
+            // That's a special case caused by cachePixmapLocked().
             assert(!item.pixmap.isNull());
         } else {
             item.pixmap = pixmap;
@@ -700,24 +750,35 @@ void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
         item.completionHandlers.swap(completion_handlers);
 
         if (result->status() == ThumbnailLoadResult::LOADED) {
+            // Maybe remove an older item.
             removeExcessLocked();
 
             item.status = Item::LOADED;
             ++m_numLoadedItems;
 
+            // Move this item after all other LOADED items in
+            // the remove queue.
             m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
 
+            // Move to the end of load queue.
             m_loadQueue.relocate(m_loadQueue.end(), lq_it);
         } else if (result->status() == ThumbnailLoadResult::LOAD_FAILED) {
+            // We keep items that failed to load, as they are cheap
+            // to keep and helps us avoid trying to load them
+            // again and again.
+
             item.status = Item::LOAD_FAILED;
 
+            // Move to the end of load queue.
             m_loadQueue.relocate(m_loadQueue.end(), lq_it);
         } else {
             assert(result->status() == ThumbnailLoadResult::REQUEST_EXPIRED);
 
+            // Just remove it.
             removeItemLocked(rq_it);
         }
-    }
+    }  // mutex scope
+    // Notify listeners.
     ThumbnailLoadResult const load_result(result->status(), pixmap);
     typedef std::weak_ptr<CompletionHandler> WeakHandler;
     for (WeakHandler const& wh : completion_handlers) {
@@ -726,7 +787,7 @@ void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
             (*sh)(load_result);
         }
     }
-}  // ThumbnailPixmapCache::Impl::processLoadResult
+} // ThumbnailPixmapCache::Impl::processLoadResult
 
 void ThumbnailPixmapCache::Impl::removeExcessLocked() {
     if (m_numLoadedItems >= m_maxCachedPixmaps) {
@@ -770,17 +831,23 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPix
     Item::Status const new_status = pixmap.isNull()
                                     ? Item::LOAD_FAILED : Item::LOADED;
 
+    // Check if such item already exists.
     ItemsByKey::iterator const k_it(m_itemsByKey.find(image_id));
     if (k_it == m_itemsByKey.end()) {
+        // Existing item not found.
+
+        // Maybe remove an older item.
         removeExcessLocked();
 
+        // Insert our new item.
         RemoveQueue::iterator const rq_it(
                 m_removeQueue.insert(
                         m_endOfLoadedItems,
                         Item(image_id, m_totalLoadAttempts, new_status)
                 ).first
         );
-
+        // Our new item is now after all LOADED items in the
+        // remove queue and at the end of the load queue.
         if (new_status == Item::LOAD_FAILED) {
             --m_endOfLoadedItems;
         }
@@ -794,13 +861,21 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPix
 
     switch (k_it->status) {
         case Item::LOADED:
+            // There is no point in replacing LOADED items.
         case Item::IN_PROGRESS:
+            // It's unsafe to touch IN_PROGRESS items.
             return;
         default:
             break;
     }
 
     if ((new_status == Item::LOADED) && (k_it->status == Item::QUEUED)) {
+        // Not so fast.  We can't go from QUEUED to LOADED directly.
+        // Well, maybe we can, but we'd have to invoke the completion
+        // handlers right now.  We'd rather do it asynchronously,
+        // so let's transition it to IN_PROGRESS and send
+        // a LoadResultEvent asynchronously.
+
         assert(!k_it->completionHandlers.empty());
 
         LoadQueue::iterator const lq_it(
@@ -826,7 +901,7 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(ImageId const& image_id, QPix
         m_removeQueue.relocate(m_endOfLoadedItems, rq_it);
         ++m_numLoadedItems;
     }
-}  // ThumbnailPixmapCache::Impl::cachePixmapLocked
+} // ThumbnailPixmapCache::Impl::cachePixmapLocked
 
 /*====================== ThumbnailPixmapCache::Item =========================*/
 

@@ -69,6 +69,8 @@ namespace fix_orientation {
     }
 
     FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+        // This function is executed from the worker thread.
+
         status.throwIfCancelled();
 
         ImageTransformation xform(data.xform());
@@ -102,6 +104,7 @@ namespace fix_orientation {
     }
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
+        // This function is executed from the GUI thread.
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_xform.preRotation());
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);

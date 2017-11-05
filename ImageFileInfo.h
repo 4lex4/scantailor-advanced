@@ -24,6 +24,7 @@
 #include <vector>
 
 class ImageFileInfo {
+    // Member-wise copying is OK.
 public:
     ImageFileInfo(QFileInfo const& file_info, std::vector<ImageMetadata> const& image_info)
             : m_fileInfo(file_info),
@@ -50,4 +51,4 @@ private:
 };
 
 
-#endif  // ifndef IMAGEFILEINFO_H_
+#endif // ifndef IMAGEFILEINFO_H_

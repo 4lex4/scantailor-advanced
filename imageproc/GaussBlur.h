@@ -76,9 +76,11 @@ namespace imageproc {
  * \code
  * using namespace boost::lambda;
  *
- *  * gaussBlurGeneric(..., _1 = _2);
+ * // Just copying.
+ * gaussBlurGeneric(..., _1 = _2);
  *
- *  * gaussBlurGeneric(..., _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2);
+ * // Convert to uint8_t, with rounding and clipping.
+ * gaussBlurGeneric(..., _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2);
  * \endcode
  */
     template<typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
@@ -112,7 +114,7 @@ namespace imageproc {
                 dst = src;
             }
         };
-    }
+    }  // namespace gauss_blur_impl
 
     template<typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
     void gaussBlurGeneric(QSize const size,
@@ -137,8 +139,9 @@ namespace imageproc {
         boost::scoped_array<float> intermediate_image(new float[width * height]);
         int const intermediate_stride = width;
 
+        // IIR parameters.
         float n_p[5], n_m[5], d_p[5], d_m[5], bd_p[5], bd_m[5];
-
+        // Vertical pass.
         gauss_blur_impl::find_iir_constants(n_p, n_m, d_p, d_m, bd_p, bd_m, v_sigma);
         for (int x = 0; x < width; ++x) {
             memset(&val_p[0], 0, height * sizeof(val_p[0]));
@@ -174,7 +177,7 @@ namespace imageproc {
                     intermediate_stride, gauss_blur_impl::FloatToFloatWriter()
             );
         }
-
+        // Horizontal pass.
         gauss_blur_impl::find_iir_constants(n_p, n_m, d_p, d_m, bd_p, bd_m, h_sigma);
         float const* intermediate_line = &intermediate_image[0];
         DstIt output_line(output);
@@ -211,6 +214,6 @@ namespace imageproc {
             intermediate_line += intermediate_stride;
             output_line += output_stride;
         }
-    }      // gaussBlurGeneric
+    }  // gaussBlurGeneric
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_GAUSSBLUR_H_
+#endif // ifndef IMAGEPROC_GAUSSBLUR_H_

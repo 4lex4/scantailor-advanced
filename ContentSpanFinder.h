@@ -27,6 +27,7 @@ namespace imageproc {
 }
 
 class ContentSpanFinder {
+    // Member-wise copying is OK.
 public:
     ContentSpanFinder()
             : m_minContentWidth(1),
@@ -65,4 +66,4 @@ void ContentSpanFinder::find(imageproc::SlicedHistogram const& histogram, T hand
     findImpl(histogram, proxy);
 }
 
-#endif  // ifndef CONTENTSPANFINDER_H_
+#endif // ifndef CONTENTSPANFINDER_H_

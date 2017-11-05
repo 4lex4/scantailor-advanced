@@ -30,6 +30,8 @@ class QDomElement;
 namespace page_split {
     class Params {
     public:
+        // Member-wise copying is OK.
+
         Params(PageLayout const& layout, Dependencies const& deps, AutoManualMode split_line_mode);
 
         Params(QDomElement const& el);
@@ -56,4 +58,4 @@ namespace page_split {
         AutoManualMode m_splitLineMode;
     };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_PARAMS_H_
+#endif // ifndef PAGE_SPLIT_PARAMS_H_

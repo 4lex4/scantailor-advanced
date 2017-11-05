@@ -76,13 +76,15 @@ private:
      */
     DragWatcher m_dragWatcher;
 
+    // These are valid if m_vertexProximity is the proximity leader.
     SplineVertex::Ptr m_ptrNearestVertex;
     EditableSpline::Ptr m_ptrNearestVertexSpline;
 
+    // These are valid if m_segmentProximity is the proximity leader.
     SplineSegment m_nearestSegment;
     EditableSpline::Ptr m_ptrNearestSegmentSpline;
     QPointF m_screenPointOnSegment;
 };
 
 
-#endif  // ifndef ZONE_DEFAULT_INTERACTION_H_
+#endif // ifndef ZONE_DEFAULT_INTERACTION_H_

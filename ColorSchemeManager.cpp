@@ -22,7 +22,7 @@ void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
     if (colorScheme.getStyleSheet() != nullptr) {
         qApp->setStyleSheet(*colorScheme.getStyleSheet().release());
     }
-    
+
     m_ptrColorParams = colorScheme.getColorParams();
 }
 

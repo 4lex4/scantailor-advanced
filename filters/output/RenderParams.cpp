@@ -55,4 +55,4 @@ namespace output {
             m_mask |= NORMALIZE_ILLUMINATION_COLOR;
         }
     }
-}
+}  // namespace output

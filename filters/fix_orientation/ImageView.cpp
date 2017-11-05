@@ -42,6 +42,7 @@ namespace fix_orientation {
 
         m_xform.setPreRotation(rotation);
 
+        // This should call update() by itself.
         updateTransform(ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea()));
     }
-}
+}  // namespace fix_orientation

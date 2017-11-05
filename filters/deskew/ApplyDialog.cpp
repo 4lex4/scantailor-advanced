@@ -51,7 +51,7 @@ namespace deskew {
 
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
-
+        // thisPageRB is intentionally not handled.
         if (allPagesRB->isChecked()) {
             m_pages.selectAll().swap(pages);
             emit appliedToAllPages(pages);

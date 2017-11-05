@@ -59,29 +59,30 @@ namespace imageproc {
         MaxWhitespaceFinder(BinaryImage const& img, QSize min_size = QSize(1, 1));
 
         /**
-         * \brief Constructor with customized rectangle ordering.
-         *
-         * \param comp A functor used to compare the "quality" of
-         *        rectangles.  It will be called like this:\n
-         * \code
-         * QRect lhs, rhs;
-         * if (comp(lhs, rhs)) {
-         *              * }
-         * \endcode
-         * The comparison functor must comply with the following
-         * restriction:
-         * \code
-         * QRect rect, subrect;
-         * if (rect.contains(subrect)) {
-         *     assert(comp(rect, subrect) == false);
-         * }
-         * \endcode
-         * That is, if one rectangle contains or is equal to another,
-         * it can't have lesser quality.
-         *
-         * \param img The image to find white rectangles in.
-         * \param min_size The minimum dimensions of regions to find.
-         */
+     * \brief Constructor with customized rectangle ordering.
+     *
+     * \param comp A functor used to compare the "quality" of
+     *        rectangles.  It will be called like this:\n
+     * \code
+     * QRect lhs, rhs;
+     * if (comp(lhs, rhs)) {
+     *     // lhs is of less quality than rhs.
+     * }
+     * \endcode
+     * The comparison functor must comply with the following
+     * restriction:
+     * \code
+     * QRect rect, subrect;
+     * if (rect.contains(subrect)) {
+     *     assert(comp(rect, subrect) == false);
+     * }
+     * \endcode
+     * That is, if one rectangle contains or is equal to another,
+     * it can't have lesser quality.
+     *
+     * \param img The image to find white rectangles in.
+     * \param min_size The minimum dimensions of regions to find.
+     */
         template<typename QualityCompare>
         MaxWhitespaceFinder(QualityCompare comp, BinaryImage const& img, QSize min_size = QSize(1, 1));
 
@@ -274,6 +275,7 @@ namespace imageproc {
             Distance valueIdx = end - begin - 1;
             Distance parentIdx = (valueIdx - 1) / 2;
 
+            // While the node is bigger than its parent, swap them.
             while (valueIdx > 0
                    && m_qualityLess(*(begin + parentIdx), *(begin + valueIdx))) {
                 (begin + valueIdx)->swap(*(begin + parentIdx));
@@ -289,6 +291,7 @@ namespace imageproc {
         template<typename QualityCompare>
         void PriorityStorageImpl<QualityCompare>::popHeap(std::deque<Region>::iterator const begin,
                                                           std::deque<Region>::iterator const end) {
+            // Swap the first (top) and the last elements.
             begin->swap(*(end - 1));
 
             typedef std::vector<Region>::iterator::difference_type Distance;
@@ -296,6 +299,8 @@ namespace imageproc {
             Distance nodeIdx = 0;
             Distance secondChildIdx = 2 * (nodeIdx + 1);
 
+            // Lower the new top node all the way down the tree
+            // by continuously swapping it with the biggest of its children.
             while (secondChildIdx < new_length) {
                 Distance const firstChildIdx = secondChildIdx - 1;
                 Distance biggestChildIdx = firstChildIdx;
@@ -311,13 +316,17 @@ namespace imageproc {
                 secondChildIdx = 2 * (nodeIdx + 1);
             }
             if (secondChildIdx == new_length) {
+                // Swap it with its only child.
                 Distance const firstChildIdx = secondChildIdx - 1;
                 (begin + nodeIdx)->swap(*(begin + firstChildIdx));
                 nodeIdx = firstChildIdx;
             }
 
+            // Now raise the node until it's at correct position.  Very little
+            // raising should be necessary, that's why it's faster than adding
+            // an additional comparision to the loop where we lower the node.
             pushHeap(begin, begin + nodeIdx + 1);
-        } // >::popHeap
+        }  // >::popHeap
     }      // namespace max_whitespace_finder
 
     template<typename QualityCompare>
@@ -329,4 +338,4 @@ namespace imageproc {
         init(img);
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_
+#endif // ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_

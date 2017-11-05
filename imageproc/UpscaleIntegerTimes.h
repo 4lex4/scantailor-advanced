@@ -40,5 +40,5 @@ namespace imageproc {
  * adding a padding to reach the requested size.
  */
     BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor padding);
-}
+}  // namespace imageproc
 #endif

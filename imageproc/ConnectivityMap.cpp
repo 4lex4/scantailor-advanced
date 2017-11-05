@@ -119,6 +119,7 @@ namespace imageproc {
 
     ConnectivityMap& ConnectivityMap::operator=(InfluenceMap const& imap) {
         if ((m_size == imap.size()) && !m_size.isEmpty()) {
+            // Common case optimization.
             copyFromInfluenceMap(imap);
         } else {
             ConnectivityMap(imap).swap(*this);
@@ -165,7 +166,7 @@ namespace imageproc {
         }
 
         m_maxLabel = new_label;
-    }      // ConnectivityMap::addComponent
+    }  // ConnectivityMap::addComponent
 
     QImage ConnectivityMap::visualized(QColor bgcolor) const {
         if (m_size.isEmpty()) {
@@ -174,7 +175,7 @@ namespace imageproc {
 
         int const width = m_size.width();
         int const height = m_size.height();
-
+        // Convert to premultiplied RGBA.
         bgcolor = bgcolor.toRgb();
         bgcolor.setRedF(bgcolor.redF() * bgcolor.alphaF());
         bgcolor.setGreenF(bgcolor.greenF() * bgcolor.alphaF());
@@ -213,7 +214,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // ConnectivityMap::visualized
+    }  // ConnectivityMap::visualized
 
     void ConnectivityMap::copyFromInfluenceMap(InfluenceMap const& imap) {
         assert(!imap.size().isEmpty());
@@ -291,8 +292,9 @@ namespace imageproc {
 
         uint32_t* line = m_pData;
         uint32_t* prev_line = m_pData - stride;
-
+        // Top to bottom.
         for (int y = 0; y < height; ++y) {
+            // Left to right.
             for (int x = 0; x < width; ++x) {
                 if (line[x] == BACKGROUND) {
                     continue;
@@ -312,7 +314,9 @@ namespace imageproc {
 
         FastQueue<uint32_t*> queue;
 
+        // Bottom to top.
         for (int y = height - 1; y >= 0; --y) {
+            // Right to left.
             for (int x = width - 1; x >= 0; --x) {
                 if (line[x] == BACKGROUND) {
                     continue;
@@ -327,7 +331,9 @@ namespace imageproc {
                 }
 
                 line[x] = new_val;
-
+                // We compare new_val + 1 < neighbor + 1 to
+                // make BACKGROUND neighbors overflow and become
+                // zero.
                 uint32_t const nvp1 = new_val + 1;
                 if ((nvp1 < line[x + 1] + 1) || (nvp1 < prev_line[x] + 1)) {
                     queue.push(&line[x]);
@@ -338,7 +344,7 @@ namespace imageproc {
         }
 
         processQueue4(queue);
-    }      // ConnectivityMap::spreadMin4
+    }  // ConnectivityMap::spreadMin4
 
     void ConnectivityMap::spreadMin8() {
         int const width = m_size.width();
@@ -347,8 +353,9 @@ namespace imageproc {
 
         uint32_t* line = m_pData;
         uint32_t* prev_line = m_pData - stride;
-
+        // Top to bottom.
         for (int y = 0; y < height; ++y) {
+            // Left to right.
             for (int x = 0; x < width; ++x) {
                 if (line[x] == BACKGROUND) {
                     continue;
@@ -371,6 +378,7 @@ namespace imageproc {
 
         FastQueue<uint32_t*> queue;
 
+        // Bottom to top.
         for (int y = height - 1; y >= 0; --y) {
             for (int x = width - 1; x >= 0; --x) {
                 if (line[x] == BACKGROUND) {
@@ -388,6 +396,9 @@ namespace imageproc {
 
                 line[x] = new_val;
 
+                // We compare new_val + 1 < neighbor + 1 to
+                // make BACKGROUND neighbors overflow and become
+                // zero.
                 uint32_t const nvp1 = new_val + 1;
                 if ((nvp1 < prev_line[x - 1] + 1)
                     || (nvp1 < prev_line[x] + 1)
@@ -402,9 +413,11 @@ namespace imageproc {
         }
 
         processQueue8(queue);
-    }      // ConnectivityMap::spreadMin8
+    }  // ConnectivityMap::spreadMin8
 
     void ConnectivityMap::processNeighbor(FastQueue<uint32_t*>& queue, uint32_t const this_val, uint32_t* neighbor) {
+        // *neighbor + 1 will overflow if *neighbor == BACKGROUND,
+        // which is what we want.
         if (this_val + 1 < *neighbor + 1) {
             *neighbor = this_val;
             queue.push(neighbor);
@@ -420,15 +433,18 @@ namespace imageproc {
 
             uint32_t const this_val = *p;
 
+            // Northern neighbor.
             p -= stride;
             processNeighbor(queue, this_val, p);
 
+            // Eastern neighbor.
             p += stride + 1;
             processNeighbor(queue, this_val, p);
 
+            // Southern neighbor.
             p += stride - 1;
             processNeighbor(queue, this_val, p);
-
+            // Western neighbor.
             p -= stride + 1;
             processNeighbor(queue, this_val, p);
         }
@@ -443,31 +459,38 @@ namespace imageproc {
 
             uint32_t const this_val = *p;
 
+            // Northern neighbor.
             p -= stride;
             processNeighbor(queue, this_val, p);
 
+            // North-eastern neighbor.
             ++p;
             processNeighbor(queue, this_val, p);
 
+            // Eastern neighbor.
             p += stride;
             processNeighbor(queue, this_val, p);
 
+            // South-eastern neighbor.
             p += stride;
             processNeighbor(queue, this_val, p);
 
+            // Southern neighbor.
             --p;
             processNeighbor(queue, this_val, p);
 
+            // South-western neighbor.
             --p;
             processNeighbor(queue, this_val, p);
 
+            // Western neighbor.
             p -= stride;
             processNeighbor(queue, this_val, p);
-
+            // North-western neighbor.
             p -= stride;
             processNeighbor(queue, this_val, p);
         }
-    }      // ConnectivityMap::processQueue8
+    }  // ConnectivityMap::processQueue8
 
     void ConnectivityMap::markUsedIds(std::vector<uint32_t>& used_map) const {
         int const width = m_size.width();
@@ -475,8 +498,9 @@ namespace imageproc {
         int const stride = m_stride;
 
         uint32_t const* line = m_pData;
-
+        // Top to bottom.
         for (int y = 0; y < height; ++y, line += stride) {
+            // Left to right.
             for (int x = 0; x < width; ++x) {
                 if (line[x] == BACKGROUND) {
                     continue;

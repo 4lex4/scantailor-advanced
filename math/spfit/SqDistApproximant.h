@@ -56,17 +56,19 @@ namespace spfit {
         }
 
         /**
-         * \brief The general case constructor.
-         *
-         * We have a coordinate system at \p origin with orthonormal basis formed
-         * by vectors \p u and \p v.  Given a point p in the global coordinate system,
-         * the appoximant will evaluate to:
-         * \code
-         * sqdist = m * i^2 + n * j^2;
-         *          *          * i = (p - origin) . u;
-         * j = (p - origin) . v;
-         * \endcode
-         */
+     * \brief The general case constructor.
+     *
+     * We have a coordinate system at \p origin with orthonormal basis formed
+     * by vectors \p u and \p v.  Given a point p in the global coordinate system,
+     * the appoximant will evaluate to:
+     * \code
+     * sqdist = m * i^2 + n * j^2;
+     * // Where i and j are projections onto u and v respectively.
+     * // More precisely:
+     * i = (p - origin) . u;
+     * j = (p - origin) . v;
+     * \endcode
+     */
         SqDistApproximant(Vec2d const& origin, Vec2d const& u, Vec2d const& v, double m, double n);
 
         static SqDistApproximant pointDistance(Vec2d const& pt);
@@ -89,4 +91,4 @@ namespace spfit {
         double evaluate(Vec2d const& pt) const;
     };
 }  // namespace spfit
-#endif  // ifndef SQDIST_APPROXIMANT_H_
+#endif // ifndef SQDIST_APPROXIMANT_H_

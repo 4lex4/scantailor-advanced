@@ -76,4 +76,4 @@ namespace deskew {
         bool m_batchProcessing;
     };
 }  // namespace deskew
-#endif  // ifndef DESKEW_TASK_H_
+#endif // ifndef DESKEW_TASK_H_

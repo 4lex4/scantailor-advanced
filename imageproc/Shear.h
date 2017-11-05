@@ -84,5 +84,5 @@ namespace imageproc {
  * Same as vShearFromTo() with src and dst being the same image.
  */
     void vShearInPlace(BinaryImage& image, double shear, double x_origin, BWColor background_color);
-}
+}  // namespace imageproc
 #endif

@@ -31,5 +31,5 @@ namespace imageproc {
         /** All 8 neighbours are considered to be connected. */
                 CONN8
     };
-}
+}  // namespace imageproc
 #endif

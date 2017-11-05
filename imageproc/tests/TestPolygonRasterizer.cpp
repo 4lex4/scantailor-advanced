@@ -59,12 +59,15 @@ namespace imageproc {
             }
 
             static bool fuzzyCompare(BinaryImage const& img, QImage const& control) {
+                // Make two binary images from the QImage with slightly different thresholds.
                 BinaryImage control1(control, BinaryThreshold(128 - 30));
                 BinaryImage control2(control, BinaryThreshold(128 + 30));
 
+                // Take the difference with each control image.
                 rasterOp<RopXor<RopSrc, RopDst>>(control1, img);
                 rasterOp<RopXor<RopSrc, RopDst>>(control2, img);
 
+                // Are there pixels different in both cases?
                 rasterOp<RopAnd<RopSrc, RopDst>>(control1, control2);
 
                 return control1.countBlackPixels() == 0;
@@ -109,8 +112,10 @@ namespace imageproc {
             BOOST_AUTO_TEST_CASE(test_complex_shape) {
                 QSize const image_size(500, 500);
 
+                // This one fits the image.
                 QPolygonF const smaller_shape(createShape(image_size, 230));
 
+                // This one doesn't fit the image and will be clipped.
                 QPolygonF const bigger_shape(createShape(image_size, 300));
 
                 BOOST_CHECK(testFillShape(image_size, smaller_shape, Qt::OddEvenFill));
@@ -128,6 +133,7 @@ namespace imageproc {
                 QPolygonF const shape(QRectF(QPointF(0, 0), image_size));
                 QPolygonF const shape2(QRectF(QPointF(-1, -1), image_size));
 
+                // This one touches clip rectangle's corners.
                 QPolygonF shape3;
                 shape3.push_back(QPointF(-250.0, 250.0));
                 shape3.push_back(QPointF(250.0, -250.0));

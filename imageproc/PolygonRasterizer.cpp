@@ -62,7 +62,7 @@ namespace imageproc {
         QPointF m_bottom;
         double m_deltaX;
         double m_reDeltaY;
-        int m_vertDirection;
+        int m_vertDirection;  // 1: down, -1: up
     };
 
 
@@ -113,7 +113,7 @@ namespace imageproc {
         }
 
         bool operator()(EdgeComponent const& lhs, double rhs) const {
-            return lhs.bottom() <= rhs;
+            return lhs.bottom() <= rhs;  // bottom is not a part of the interval.
         }
 
         bool operator()(double lhs, EdgeComponent const& rhs) const {
@@ -159,7 +159,7 @@ namespace imageproc {
 
         static void fillBinarySegment(int x_from, int x_to, uint32_t* line, uint32_t pattern);
 
-        std::vector<Edge> m_edges;
+        std::vector<Edge> m_edges;  // m_edgeComponents references m_edges.
         std::vector<EdgeComponent> m_edgeComponents;
         QRect m_imageRect;
         QPolygonF m_fillPoly;
@@ -290,6 +290,7 @@ namespace imageproc {
             return;
         }
 
+        // Collect the edges, excluding horizontal and null ones.
         m_edges.reserve(num_verts + 2);
         for (int i = 0; i < num_verts - 1; ++i) {
             QPointF const from(m_fillPoly[i]);
@@ -302,11 +303,14 @@ namespace imageproc {
         assert(m_fillPoly.isClosed());
 
         if (m_invert) {
+            // Add left and right edges with neutral direction (0),
+            // to avoid confusing a winding fill.
             QRectF const rect(m_imageRect);
             m_edges.push_back(Edge(rect.topLeft(), rect.bottomLeft(), 0));
             m_edges.push_back(Edge(rect.topRight(), rect.bottomRight(), 0));
         }
 
+        // Create an ordered list of y coordinates of polygon vertexes.
         std::vector<double> y_values;
         y_values.reserve(num_verts + 2);
         for (QPointF const& pt : m_fillPoly) {
@@ -318,9 +322,11 @@ namespace imageproc {
             y_values.push_back(m_imageRect.height());
         }
 
+        // Sort and remove duplicates.
         std::sort(y_values.begin(), y_values.end());
         y_values.erase(std::unique(y_values.begin(), y_values.end()), y_values.end());
 
+        // Break edges into non-overlaping components, then sort them.
         m_edgeComponents.reserve(m_edges.size());
         for (Edge const& edge : m_edges) {
             std::vector<double>::iterator it(
@@ -341,7 +347,7 @@ namespace imageproc {
         }
 
         std::sort(m_edgeComponents.begin(), m_edgeComponents.end(), EdgeOrderY());
-    }      // PolygonRasterizer::Rasterizer::prepareEdges
+    }  // PolygonRasterizer::Rasterizer::prepareEdges
 
     void PolygonRasterizer::Rasterizer::fillBinary(BinaryImage& image, BWColor const color) const {
         std::vector<EdgeComponent> edges_for_line;
@@ -357,6 +363,7 @@ namespace imageproc {
         for (; i < limit; ++i, line += wpl, edges_for_line.clear()) {
             double const y = i + 0.5;
 
+            // Get edges intersecting this horizontal line.
             std::pair<EdgeIter, EdgeIter> const range(
                     std::equal_range(
                             m_edgeComponents.begin(), m_edgeComponents.end(),
@@ -373,10 +380,12 @@ namespace imageproc {
                     std::back_inserter(edges_for_line)
             );
 
+            // Calculate the intersection point of each edge with
+            // the current horizontal line.
             for (EdgeComponent& ecomp : edges_for_line) {
                 ecomp.setX(ecomp.edge().xForY(y));
             }
-
+            // Sort edge components by the x value of the intersection point.
             std::sort(
                     edges_for_line.begin(), edges_for_line.end(),
                     EdgeOrderX()
@@ -394,7 +403,7 @@ namespace imageproc {
                 );
             }
         }
-    }      // PolygonRasterizer::Rasterizer::fillBinary
+    }  // PolygonRasterizer::Rasterizer::fillBinary
 
     void PolygonRasterizer::Rasterizer::fillGrayscale(QImage& image, uint8_t const color) const {
         std::vector<EdgeComponent> edges_for_line;
@@ -409,6 +418,7 @@ namespace imageproc {
         for (; i < limit; ++i, line += bpl, edges_for_line.clear()) {
             double const y = i + 0.5;
 
+            // Get edges intersecting this horizontal line.
             std::pair<EdgeIter, EdgeIter> const range(
                     std::equal_range(
                             m_edgeComponents.begin(), m_edgeComponents.end(),
@@ -425,10 +435,12 @@ namespace imageproc {
                     std::back_inserter(edges_for_line)
             );
 
+            // Calculate the intersection point of each edge with
+            // the current horizontal line.
             for (EdgeComponent& ecomp : edges_for_line) {
                 ecomp.setX(ecomp.edge().xForY(y));
             }
-
+            // Sort edge components by the x value of the intersection point.
             std::sort(
                     edges_for_line.begin(), edges_for_line.end(),
                     EdgeOrderX()
@@ -446,7 +458,7 @@ namespace imageproc {
                 );
             }
         }
-    }      // PolygonRasterizer::Rasterizer::fillGrayscale
+    }  // PolygonRasterizer::Rasterizer::fillGrayscale
 
     void PolygonRasterizer::Rasterizer::oddEvenLineBinary(EdgeComponent const* const edges,
                                                           int const num_edges,
@@ -518,7 +530,7 @@ namespace imageproc {
         uint32_t const first_word_mask = full_mask >> (x_from & 31);
         uint32_t const last_word_mask = full_mask << (31 - ((x_to - 1) & 31));
         int const first_word_idx = x_from >> 5;
-        int const last_word_idx = (x_to - 1) >> 5;
+        int const last_word_idx = (x_to - 1) >> 5;  // x_to is exclusive
         if (first_word_idx == last_word_idx) {
             uint32_t const mask = first_word_mask & last_word_mask;
             uint32_t& word = line[first_word_idx];
@@ -529,13 +541,16 @@ namespace imageproc {
 
         int i = first_word_idx;
 
+        // First word.
         uint32_t& first_word = line[i];
         first_word = (first_word & ~first_word_mask) | (pattern & first_word_mask);
 
+        // Middle words.
         for (++i; i < last_word_idx; ++i) {
             line[i] = pattern;
         }
 
+        // Last word.
         uint32_t& last_word = line[i];
         last_word = (last_word & ~last_word_mask) | (pattern & last_word_mask);
     }

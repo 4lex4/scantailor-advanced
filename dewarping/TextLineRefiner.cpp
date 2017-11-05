@@ -57,7 +57,7 @@ namespace dewarping {
     private:
         std::vector<float> m_integralLength;
         float m_totalLength;
-        float m_rTotalLength;
+        float m_rTotalLength;  // Reciprocal of the above.
         float m_avgSegmentLength;
     };
 
@@ -111,6 +111,7 @@ namespace dewarping {
         std::vector<Snake> snakes;
         snakes.reserve(polylines.size());
 
+        // Convert from polylines to snakes.
         for (std::vector<QPointF> const& polyline : polylines) {
             snakes.push_back(makeSnake(polyline, iterations));
         }
@@ -121,6 +122,7 @@ namespace dewarping {
 
         Grid<float> gradient(m_image.width(), m_image.height(),  /*padding=*/ 0);
 
+        // Start with a rather strong blur.
         float h_sigma = (4.0f / 200.f) * m_dpi.horizontal();
         float v_sigma = (4.0f / 200.f) * m_dpi.vertical();
         calcBlurredGradient(gradient, h_sigma, v_sigma);
@@ -132,6 +134,7 @@ namespace dewarping {
             dbg->add(visualizeSnakes(snakes, &gradient), "evolved_snakes1");
         }
 
+        // Less blurring this time.
         h_sigma *= 0.5f;
         v_sigma *= 0.5f;
         calcBlurredGradient(gradient, h_sigma, v_sigma);
@@ -143,6 +146,7 @@ namespace dewarping {
             dbg->add(visualizeSnakes(snakes, &gradient), "evolved_snakes2");
         }
 
+        // Convert from snakes back to polylines.
         int i = -1;
         for (std::vector<QPointF>& polyline : polylines) {
             ++i;
@@ -152,7 +156,7 @@ namespace dewarping {
                 polyline.push_back(node.center);
             }
         }
-    }      // TextLineRefiner::refine
+    }  // TextLineRefiner::refine
 
     void TextLineRefiner::calcBlurredGradient(Grid<float>& gradient, float h_sigma, float v_sigma) const {
         using namespace boost::lambda;
@@ -170,7 +174,7 @@ namespace dewarping {
                 gradient.data(), gradient.stride(),
                 _1 = _1 * m_unitDownVec[0] + _2 * m_unitDownVec[1]
         );
-        Grid<float>().swap(vert_grad);
+        Grid<float>().swap(vert_grad);  // Save memory.
         gaussBlurGeneric(
                 m_image.size(), h_sigma, v_sigma,
                 gradient.data(), gradient.stride(), _1,
@@ -234,7 +238,7 @@ namespace dewarping {
         }
 
         return snake;
-    }      // TextLineRefiner::makeSnake
+    }  // TextLineRefiner::makeSnake
 
     void TextLineRefiner::calcFrenetFrames(std::vector<FrenetFrame>& frenet_frames,
                                            Snake const& snake,
@@ -252,13 +256,14 @@ namespace dewarping {
             return;
         }
 
+        // First segment.
         Vec2f first_segment(snake.nodes[1].center - snake.nodes[0].center);
         float const first_segment_len = snake_length.arcLengthAt(1);
         if (first_segment_len > std::numeric_limits<float>::epsilon()) {
             first_segment /= first_segment_len;
             frenet_frames.front().unitTangent = first_segment;
         }
-
+        // Segments between first and last, exclusive.
         Vec2f prev_segment(first_segment);
         for (size_t i = 1; i < num_nodes - 1; ++i) {
             Vec2f next_segment(snake.nodes[i + 1].center - snake.nodes[i].center);
@@ -277,6 +282,7 @@ namespace dewarping {
             prev_segment = next_segment;
         }
 
+        // Last segments.
         Vec2f last_segment(snake.nodes[num_nodes - 1].center - snake.nodes[num_nodes - 2].center);
         float const last_segment_len = snake_length.lengthFromTo(num_nodes - 2, num_nodes - 1);
         if (last_segment_len > std::numeric_limits<float>::epsilon()) {
@@ -284,13 +290,14 @@ namespace dewarping {
             frenet_frames.back().unitTangent = last_segment;
         }
 
+        // Calculate normals and make sure they point down.
         for (FrenetFrame& frame : frenet_frames) {
             frame.unitDownNormal = Vec2f(frame.unitTangent[1], -frame.unitTangent[0]);
             if (frame.unitDownNormal.dot(unit_down_vec) < 0) {
                 frame.unitDownNormal = -frame.unitDownNormal;
             }
         }
-    }      // TextLineRefiner::calcFrenetFrames
+    }  // TextLineRefiner::calcFrenetFrames
 
     void
     TextLineRefiner::evolveSnake(Snake& snake, Grid<float> const& gradient, OnConvergence const on_convergence) const {
@@ -306,6 +313,7 @@ namespace dewarping {
             changed |= optimizer.normalMovement(snake, gradient);
 
             if (!changed) {
+                // qDebug() << "Converged.  Iterations remaining = " << snake.iterationsRemaining;
                 if (on_convergence == ON_CONVERGENCE_STOP) {
                     break;
                 } else {
@@ -319,7 +327,7 @@ namespace dewarping {
         int const width = gradient.width();
         int const height = gradient.height();
         int const gradient_stride = gradient.stride();
-
+        // First let's find the maximum and minimum values.
         float min_value = NumericTraits<float>::max();
         float max_value = NumericTraits<float>::min();
 
@@ -351,6 +359,7 @@ namespace dewarping {
                 float const value = gradient_line[x] * scale;
                 int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
                 if (value > 0) {
+                    // Red for positive gradients which indicate bottom edges.
                     overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
                 } else {
                     overlay_line[x] = qRgba(0, 0, magnitude, magnitude);
@@ -365,7 +374,7 @@ namespace dewarping {
         painter.drawImage(0, 0, overlay);
 
         return canvas;
-    }      // TextLineRefiner::visualizeGradient
+    }  // TextLineRefiner::visualizeGradient
 
     QImage TextLineRefiner::visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> const* gradient) const {
         QImage canvas;
@@ -410,6 +419,7 @@ namespace dewarping {
                 bottom_polyline << bottom;
             }
 
+            // Draw polylines.
             painter.setPen(top_pen);
             painter.drawPolyline(top_polyline);
 
@@ -419,6 +429,7 @@ namespace dewarping {
             painter.setPen(middle_pen);
             painter.drawPolyline(middle_polyline);
 
+            // Draw knots.
             painter.setPen(Qt::NoPen);
             for (QPointF const& pt : middle_polyline) {
                 knot_rect.moveCenter(pt);
@@ -427,7 +438,7 @@ namespace dewarping {
         }
 
         return canvas;
-    }      // TextLineRefiner::visualizeSnakes
+    }  // TextLineRefiner::visualizeSnakes
 
 /*============================ SnakeLength =============================*/
 
@@ -510,10 +521,13 @@ namespace dewarping {
         for (size_t node_idx = 0; node_idx < num_nodes; ++node_idx) {
             float const t = m_snakeLength.arcLengthFractionAt(node_idx);
             snake.nodes[node_idx].ribHalfLength = head_rib + t * (tail_rib - head_rib);
+            // Note that we need to recalculate inner ribs even if outer ribs
+            // didn't change, as movement of ribs in tangent direction affects
+            // interpolation.
         }
 
         return rib_adjustments[best_i] != 0 || rib_adjustments[best_j] != 0;
-    }      // TextLineRefiner::Optimizer::thicknessAdjustment
+    }  // TextLineRefiner::Optimizer::thicknessAdjustment
 
     bool TextLineRefiner::Optimizer::tangentMovement(Snake& snake, Grid<float> const& gradient) {
         size_t const num_nodes = snake.nodes.size();
@@ -529,7 +543,7 @@ namespace dewarping {
         std::vector<uint32_t> paths;
         std::vector<uint32_t> new_paths;
         std::vector<Step> step_storage;
-
+        // Note that we don't move the first and the last node in tangent direction.
         paths.push_back(step_storage.size());
         step_storage.push_back(Step());
         step_storage.back().prevStepIdx = ~uint32_t(0);
@@ -552,11 +566,13 @@ namespace dewarping {
                 float base_cost = calcExternalEnergy(gradient, step.node, down_normal);
 
                 if (node_idx == num_nodes - 2) {
+                    // Take into account the distance to the last node as well.
                     base_cost += calcElasticityEnergy(
                             step.node, snake.nodes.back(), m_snakeLength.avgSegmentLength()
                     );
                 }
 
+                // Now find the best step for the previous node to combine with.
                 for (uint32_t prev_step_idx : paths) {
                     Step const& prev_step = step_storage[prev_step_idx];
                     float const cost = base_cost + prev_step.pathCost
@@ -577,6 +593,7 @@ namespace dewarping {
             new_paths.clear();
         }
 
+        // Find the best overall path.
         uint32_t best_path_idx = ~uint32_t(0);
         float best_cost = NumericTraits<float>::max();
         for (uint32_t last_step_idx : paths) {
@@ -586,7 +603,7 @@ namespace dewarping {
                 best_path_idx = last_step_idx;
             }
         }
-
+        // Having found the best path, convert it back to a snake.
         float max_sqdist = 0;
         uint32_t step_idx = best_path_idx;
         for (int node_idx = num_nodes - 2; node_idx > 0; --node_idx) {
@@ -602,7 +619,7 @@ namespace dewarping {
         }
 
         return max_sqdist > std::numeric_limits<float>::epsilon();
-    }      // TextLineRefiner::Optimizer::tangentMovement
+    }  // TextLineRefiner::Optimizer::tangentMovement
 
     bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, Grid<float> const& gradient) {
         size_t const num_nodes = snake.nodes.size();
@@ -618,10 +635,16 @@ namespace dewarping {
         std::vector<uint32_t> paths;
         std::vector<uint32_t> new_paths;
         std::vector<Step> step_storage;
-
+        // The first two nodes pose a problem for us.  These nodes don't have two predecessors,
+        // and therefore we can't take bending into the account.  We could take the followers
+        // instead of the ancestors, but then this follower is going to move itself, making
+        // our calculations less accurate.  The proper solution is to provide not N but N*N
+        // paths to the 3rd node, each path corresponding to a combination of movement of
+        // the first and the second node.  That's the approach we are taking here.
         for (int i = 0; i < NUM_NORMAL_MOVEMENTS; ++i) {
             uint32_t const prev_step_idx = step_storage.size();
             {
+                // Movements of the first node.
                 Vec2f const down_normal(m_frenetFrames[0].unitDownNormal);
                 Step step;
                 step.node.center = snake.nodes[0].center + normal_movements[i] * down_normal;
@@ -633,6 +656,7 @@ namespace dewarping {
             }
 
             for (int j = 0; j < NUM_NORMAL_MOVEMENTS; ++j) {
+                // Movements of the second node.
                 Vec2f const down_normal(m_frenetFrames[1].unitDownNormal);
 
                 Step step;
@@ -660,6 +684,7 @@ namespace dewarping {
 
                 float const base_cost = calcExternalEnergy(gradient, step.node, down_normal);
 
+                // Now find the best step for the previous node to combine with.
                 for (uint32_t prev_step_idx : paths) {
                     Step const& prev_step = step_storage[prev_step_idx];
                     Step const& prev_prev_step = step_storage[prev_step.prevStepIdx];
@@ -681,6 +706,7 @@ namespace dewarping {
             new_paths.clear();
         }
 
+        // Find the best overall path.
         uint32_t best_path_idx = ~uint32_t(0);
         float best_cost = NumericTraits<float>::max();
         for (uint32_t last_step_idx : paths) {
@@ -690,7 +716,7 @@ namespace dewarping {
                 best_path_idx = last_step_idx;
             }
         }
-
+        // Having found the best path, convert it back to a snake.
         float max_sqdist = 0;
         uint32_t step_idx = best_path_idx;
         for (int node_idx = num_nodes - 1; node_idx >= 0; --node_idx) {
@@ -706,7 +732,7 @@ namespace dewarping {
         }
 
         return max_sqdist > std::numeric_limits<float>::epsilon();
-    }      // TextLineRefiner::Optimizer::normalMovement
+    }  // TextLineRefiner::Optimizer::normalMovement
 
     float TextLineRefiner::Optimizer::calcExternalEnergy(Grid<float> const& gradient,
                                                          SnakeNode const& node,
@@ -717,9 +743,15 @@ namespace dewarping {
         float const top_grad = externalEnergyAt(gradient, top, 0.0f);
         float const bottom_grad = externalEnergyAt(gradient, bottom, 0.0f);
 
+        // Surprisingly, it turns out it's a bad idea to penalize for the opposite
+        // sign in the gradient.  Sometimes a snake's edge has to move over the
+        // "wrong" gradient ridge before it gets into a good position.
+        // Those std::min and std::max prevent such penalties.
         float const top_energy = m_topExternalWeight * std::min<float>(top_grad, 0.0f);
         float const bottom_energy = m_bottomExternalWeight * std::max<float>(bottom_grad, 0.0f);
 
+        // Positive gradient indicates the bottom edge and vice versa.
+        // Note that negative energies are fine with us - the less the better.
         return top_energy - bottom_energy;
     }
 
@@ -729,7 +761,7 @@ namespace dewarping {
         float const vec_len = sqrt(vec.squaredNorm());
 
         if (vec_len < 1.0f) {
-            return 1000.0f;
+            return 1000.0f;  // Penalty for moving too close to another node.
         }
 
         float const dist_diff = fabs(avg_dist - vec_len);
@@ -744,13 +776,13 @@ namespace dewarping {
         float const vec_len = sqrt(vec.squaredNorm());
 
         if (vec_len < 1.0f) {
-            return 1000.0f;
+            return 1000.0f;  // Penalty for moving too close to another node.
         }
 
         Vec2f const prev_vec(prev_node.center - prev_prev_node.center);
         float const prev_vec_len = sqrt(prev_vec.squaredNorm());
         if (prev_vec_len < 1.0f) {
-            return 1000.0f;
+            return 1000.0f;  // Penalty for moving too close to another node.
         }
 
         Vec2f const bend_vec(vec / vec_len - prev_vec / prev_vec_len);

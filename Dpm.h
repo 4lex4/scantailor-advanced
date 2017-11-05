@@ -28,6 +28,7 @@ class QImage;
  * \brief Dots per meter (horizontal and vertical).
  */
 class Dpm {
+    // Member-wise copying is OK.
 public:
     Dpm()
             : m_xDpm(0),
@@ -69,4 +70,4 @@ private:
 };
 
 
-#endif  // ifndef DPM_H_
+#endif // ifndef DPM_H_

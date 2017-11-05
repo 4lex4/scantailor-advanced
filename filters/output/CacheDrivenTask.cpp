@@ -51,7 +51,7 @@ namespace output {
 
             bool need_reprocess = false;
 
-            do {
+            do {  // Just to be able to break from it.
                 std::unique_ptr<OutputParams> stored_output_params(
                         m_ptrSettings->getOutputParams(page_info.id())
                 );
@@ -128,5 +128,5 @@ namespace output {
                 );
             }
         }
-    }      // CacheDrivenTask::process
+    }  // CacheDrivenTask::process
 }  // namespace output

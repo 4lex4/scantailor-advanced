@@ -59,5 +59,5 @@ namespace output {
         DewarpingOptions m_dewarpingOptions;
         QButtonGroup* m_pScopeGroup;
     };
-}
-#endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_
+}  // namespace output
+#endif // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_

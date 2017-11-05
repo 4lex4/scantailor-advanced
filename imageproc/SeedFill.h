@@ -38,7 +38,8 @@ namespace imageproc {
  * They will be ignored and will not appear in the resulting image.
  * \par
  * The underlying code implements Luc Vincent's iterative seed-fill
- * algorithm: http: */
+ * algorithm: http://www.vincent-net.com/luc/papers/93ieeeip_recons.pdf
+ */
     BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity connectivity);
 
 /**
@@ -52,7 +53,8 @@ namespace imageproc {
  * in \p mask.  Such pixels will be made equal to their mask values.
  * \par
  * The underlying code implements Luc Vincent's hybrid seed-fill algorithm:
- * http: */
+ * http://www.vincent-net.com/luc/papers/93ieeeip_recons.pdf
+ */
     GrayImage seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
 
 /**
@@ -67,5 +69,5 @@ namespace imageproc {
  * of the fast and complex implementation that is seedFillGray().
  */
     GrayImage seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
-}
+}  // namespace imageproc
 #endif

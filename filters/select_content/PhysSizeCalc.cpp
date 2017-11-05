@@ -37,4 +37,4 @@ namespace select_content {
 
         return size_mm;
     }
-}
+}  // namespace select_content

@@ -28,5 +28,5 @@ namespace imageproc {
     inline BWColor operator!(BWColor c) {
         return static_cast<BWColor>(~c & 1);
     }
-}
+}  // namespace imageproc
 #endif

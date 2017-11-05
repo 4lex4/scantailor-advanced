@@ -125,6 +125,7 @@ bool CommandLine::parseCli(QStringList const& argv) {
     shortMap["ld"] = "layout-direction";
     shortMap["o"] = "output-project";
 
+    // skip first argument (scantailor)
     for (int i = 1; i < argv.size(); i++) {
 #ifdef DEBUG
         std::cout << "arg[" << i << "]=" << argv[i].toLatin1().constData() << std::endl;
@@ -162,10 +163,13 @@ bool CommandLine::parseCli(QStringList const& argv) {
             }
             m_options[key] = "true";
         } else if (rx_project.exactMatch(argv[i])) {
+            // project file
             CommandLine::m_projectFile = argv[i];
         } else {
+            // handle input images and output directory
             QFileInfo file(argv[i]);
             if (i == (argv.size() - 1)) {
+                // output directory
                 if (file.isDir()) {
                     CommandLine::m_outputDirectory = file.filePath();
                 } else {
@@ -173,18 +177,21 @@ bool CommandLine::parseCli(QStringList const& argv) {
                     exit(1);
                 }
             } else if (file.filePath() == "-") {
+                // file names from stdin
                 std::string fname;
                 while (!std::cin.eof()) {
                     std::cin >> fname;
                     addImage(fname.c_str());
                 }
             } else if (file.isDir()) {
+                // add all files from given directory as images
                 QDir dir(argv[i]);
                 QStringList files = dir.entryList(QDir::Files, QDir::Name);
                 for (int f = 0; f < files.count(); f++) {
                     addImage(dir.filePath(files[f]));
                 }
             } else {
+                // argument is image
                 addImage(file.filePath());
             }
         }
@@ -202,7 +209,7 @@ bool CommandLine::parseCli(QStringList const& argv) {
 #endif
 
     return m_error;
-}  // CommandLine::parseCli
+} // CommandLine::parseCli
 
 void CommandLine::addImage(QString const& path) {
     QFileInfo file(path);
@@ -374,7 +381,7 @@ void CommandLine::printHelp() {
     std::cout << "\t\t--page-detection-tolerance=<0.0..1.0>\t-- default: 0.1" << std::endl;
     std::cout << "\t--disable-check-output\t\t\t-- don't check if page is valid when switching to step 6";
     std::cout << std::endl;
-}  // CommandLine::printHelp
+} // CommandLine::printHelp
 
 page_split::LayoutType CommandLine::fetchLayoutType() {
     page_split::LayoutType lt = page_split::AUTO_LAYOUT_TYPE;
@@ -575,7 +582,7 @@ page_layout::Alignment CommandLine::fetchAlignment() {
     alignment.setAutoMargins(isAutoMarginsEnabled());
 
     return alignment;
-}  // CommandLine::fetchAlignment
+} // CommandLine::fetchAlignment
 
 Despeckle::Level CommandLine::fetchContentDetection() {
     Despeckle::Level level = Despeckle::NORMAL;

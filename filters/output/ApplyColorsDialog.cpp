@@ -47,6 +47,7 @@ namespace output {
     void ApplyColorsDialog::onSubmit() {
         std::set<PageId> pages;
 
+        // thisPageRB is intentionally not handled.
         if (allPagesRB->isChecked()) {
             m_pages.selectAll().swap(pages);
         } else if (thisPageAndFollowersRB->isChecked()) {
@@ -60,6 +61,8 @@ namespace output {
 
         emit accepted(pages);
 
+        // We assume the default connection from accepted() to accept()
+        // was removed.
         accept();
     }
 }  // namespace output

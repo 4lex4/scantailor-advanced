@@ -49,5 +49,5 @@ namespace output {
         IntrusivePtr<Settings> m_ptrSettings;
         OutputFileNameGenerator m_outFileNameGen;
     };
-}
-#endif  // ifndef OUTPUT_CACHEDRIVENTASK_H_
+}  // namespace output
+#endif // ifndef OUTPUT_CACHEDRIVENTASK_H_

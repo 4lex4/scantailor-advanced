@@ -34,7 +34,8 @@ IncompleteThumbnail::~IncompleteThumbnail() {
 
 void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& bounding_rect) {
     QString const text(QString::fromLatin1("?"));
-
+    // Because painting happens only from the main thread, we don't
+    // need to care about concurrent access.
     if (m_sCachedPath.isEmpty()) {
 #if 0
         QFont font(painter.font());
@@ -96,7 +97,7 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& boun
         m_sCachedPath.lineTo(QPointF(2.8125, 0.0));
         m_sCachedPath.lineTo(QPointF(4.625, 0.0));
         m_sCachedPath.lineTo(QPointF(4.625, -1.75));
-#endif  // if 0
+#endif // if 0
     }
 
     QRectF const text_rect(m_sCachedPath.boundingRect());
@@ -113,6 +114,7 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& boun
     QTransform xform2;
     xform2.scale(hscale, vscale);
 
+    // Position the text at the center of our bounding rect.
     QSizeF const translation(bounding_rect.size() * 0.5 - scaled_size * 0.5);
     QTransform xform3;
     xform3.translate(translation.width(), translation.height());
@@ -126,7 +128,7 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& boun
     painter.setPen(pen);
 
     painter.drawPath(m_sCachedPath);
-}  // IncompleteThumbnail::drawQuestionMark
+} // IncompleteThumbnail::drawQuestionMark
 
 void IncompleteThumbnail::paintOverImage(QPainter& painter,
                                          QTransform const& image_to_display,

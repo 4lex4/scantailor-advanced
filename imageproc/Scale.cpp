@@ -68,7 +68,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // scaleDownIntGrayToGray
+    }  // scaleDownIntGrayToGray
 
 /**
  * This is an optimized implementation for the case when every destination
@@ -112,7 +112,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // scaleUpIntGrayToGray
+    }  // scaleUpIntGrayToGray
 
 /**
  * This function is used to calculate the ratio for going
@@ -161,7 +161,7 @@ namespace imageproc {
             int const sy = sy32 >> 5;
             unsigned const top_fraction = 32 - (sy32 & 31);
             unsigned const bottom_fraction = sy32 & 31;
-            assert(sy + 1 < sh);
+            assert(sy + 1 < sh);  // calc32xRatio1() ensures that.
             uint8_t const* src_line = src_data + sy * src_stride;
 
             for (int dx = 0; dx < dw; ++dx) {
@@ -169,7 +169,7 @@ namespace imageproc {
                 int const sx = sx32 >> 5;
                 unsigned const left_fraction = 32 - (sx32 & 31);
                 unsigned const right_fraction = sx32 & 31;
-                assert(sx + 1 < sw);
+                assert(sx + 1 < sw);  // calc32xRatio1() ensures that.
                 unsigned gray_level = 0;
 
                 uint8_t const* psrc = src_line + sx;
@@ -189,7 +189,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // scaleUpGrayToGray
+    }  // scaleUpGrayToGray
 
 /**
  * This function is used to calculate the ratio for going
@@ -221,6 +221,7 @@ namespace imageproc {
         int const dw = dst_size.width();
         int const dh = dst_size.height();
 
+        // Try versions optimized for a particular case.
         if ((sw == dw) && (sh == dh)) {
             return src;
         } else if ((sw % dw == 0) && (sh % dh == 0)) {
@@ -249,7 +250,7 @@ namespace imageproc {
             int const sybottom = (sy32bottom - 1) >> 5;
             unsigned const top_fraction = 32 - (sy32top & 31);
             unsigned const bottom_fraction = sy32bottom - (sybottom << 5);
-            assert(sybottom < sh);
+            assert(sybottom < sh);  // calc32xRatio2() ensures that.
             unsigned const top_area = top_fraction << 5;
             unsigned const bottom_area = bottom_fraction << 5;
 
@@ -263,15 +264,17 @@ namespace imageproc {
                 int const sxright = (sx32right - 1) >> 5;
                 unsigned const left_fraction = 32 - (sx32left & 31);
                 unsigned const right_fraction = sx32right - (sxright << 5);
-                assert(sxright < sw);
+                assert(sxright < sw);  // calc32xRatio2() ensures that.
                 uint8_t const* src_line = src_line_const;
                 unsigned gray_level = 0;
 
                 if (sytop == sybottom) {
                     if (sxleft == sxright) {
+                        // dst pixel maps to a single src pixel
                         dst_line[dx] = src_line[sxleft];
                         continue;
                     } else {
+                        // dst pixel maps to a horizontal line of src pixels
                         unsigned const vert_fraction = sy32bottom - sy32top;
                         unsigned const left_area = vert_fraction * left_fraction;
                         unsigned const middle_area = vert_fraction << 5;
@@ -286,6 +289,7 @@ namespace imageproc {
                         gray_level += src_line[sxright] * right_area;
                     }
                 } else if (sxleft == sxright) {
+                    // dst pixel maps to a vertical line of src pixels
                     unsigned const hor_fraction = sx32right - sx32left;
                     unsigned const top_area = hor_fraction * top_fraction;
                     unsigned const middle_area = hor_fraction << 5;
@@ -302,6 +306,7 @@ namespace imageproc {
 
                     gray_level += src_line[sxleft] * bottom_area;
                 } else {
+                    // dst pixel maps to a block of src pixels
                     unsigned const left_area = left_fraction << 5;
                     unsigned const right_area = right_fraction << 5;
                     unsigned const topleft_area = top_fraction * left_fraction;
@@ -309,16 +314,19 @@ namespace imageproc {
                     unsigned const bottomleft_area = bottom_fraction * left_fraction;
                     unsigned const bottomright_area = bottom_fraction * right_fraction;
 
+                    // process the top-left corner
                     gray_level += src_line[sxleft] * topleft_area;
 
+                    // process the top line (without corners)
                     for (int sx = sxleft + 1; sx < sxright; ++sx) {
                         gray_level += src_line[sx] * top_area;
                     }
 
+                    // process the top-right corner
                     gray_level += src_line[sxright] * topright_area;
 
                     src_line += src_stride;
-
+                    // process middle lines
                     for (int sy = sytop + 1; sy < sybottom; ++sy) {
                         gray_level += src_line[sxleft] * left_area;
 
@@ -331,12 +339,14 @@ namespace imageproc {
                         src_line += src_stride;
                     }
 
+                    // process bottom-left corner
                     gray_level += src_line[sxleft] * bottomleft_area;
 
+                    // process the bottom line (without corners)
                     for (int sx = sxleft + 1; sx < sxright; ++sx) {
                         gray_level += src_line[sx] * bottom_area;
                     }
-
+                    // process the bottom-right corner
                     gray_level += src_line[sxright] * bottomright_area;
                 }
 
@@ -348,7 +358,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // scaleGrayToGray
+    }  // scaleGrayToGray
 
     GrayImage scaleToGray(GrayImage const& src, QSize const& dst_size) {
         if (src.isNull()) {

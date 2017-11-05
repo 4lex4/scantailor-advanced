@@ -70,7 +70,7 @@ namespace imageproc {
 
             m_angleUnitVectors.push_back(uv);
         }
-
+        // We bias distances to make them non-negative.
         m_distanceBias = -min_distance;
 
         double const max_biased_distance = max_distance + m_distanceBias;
@@ -160,7 +160,7 @@ namespace imageproc {
         }
 
         return visual;
-    }      // HoughLineDetector::visualizeHoughSpace
+    }  // HoughLineDetector::visualizeHoughSpace
 
     std::vector<HoughLine>
     HoughLineDetector::findLines(unsigned const quality_lower_bound) const {
@@ -197,13 +197,26 @@ namespace imageproc {
                                                       int const width,
                                                       int const height,
                                                       unsigned const lower_bound) {
+        // Peak candidates are connected components of bins having the same
+        // value.  Such a connected component may or may not be a peak.
         BinaryImage peak_candidates(
                 findPeakCandidates(hist, width, height, lower_bound)
         );
 
+        // To check if a peak candidate is really a peak, we have to check
+        // that every bin in its neighborhood has a lower value than that
+        // candidate.  The are working with 5x5 neighborhoods.
         BinaryImage neighborhood_mask(dilateBrick(peak_candidates, QSize(5, 5)));
         rasterOp<RopXor<RopSrc, RopDst>>(neighborhood_mask, peak_candidates);
 
+        // Bins in the neighborhood of a peak candidate fall into two categories:
+        // 1. The bin has a lower value than the peak candidate.
+        // 2. The bin has the same value as the peak candidate,
+        // but it has a greater bin in its neighborhood.
+        // The second case indicates that our candidate is not relly a peak.
+        // To test for the second case we are going to increment the values
+        // of the bins in the neighborhood of peak candidates, find the peak
+        // candidates again and analize the differences.
         std::vector<unsigned> new_hist(hist);
         incrementBinsMasked(new_hist, width, height, neighborhood_mask);
         neighborhood_mask.release();
@@ -211,12 +224,15 @@ namespace imageproc {
         BinaryImage diff(findPeakCandidates(new_hist, width, height, lower_bound));
         rasterOp<RopXor<RopSrc, RopDst>>(diff, peak_candidates);
 
+        // If a bin that has changed its state was a part of a peak candidate,
+        // it means a neighboring bin went from equal to a greater value,
+        // which indicates that such candidate is not a peak.
         BinaryImage const not_peaks(seedFill(diff, peak_candidates, CONN8));
 
         rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
 
         return peak_candidates;
-    }
+    } // HoughLineDetector::findHistogramPeaks
 
 /**
  * Build a binary image where a black pixel indicates that the corresponding
@@ -230,8 +246,9 @@ namespace imageproc {
                                                       unsigned const lower_bound) {
         std::vector<unsigned> maxed(hist.size(), 0);
 
+        // Every bin becomes the maximum of itself and its neighbors.
         max5x5(hist, maxed, width, height);
-
+        // Those that haven't changed didn't have a greater neighbor.
         BinaryImage equal_map(
                 buildEqualMap(hist, maxed, width, height, lower_bound)
         );
@@ -295,6 +312,7 @@ namespace imageproc {
         unsigned* dst_line = &dst[0];
 
         for (int y = 0; y < height; ++y) {
+            // First column (no left neighbors).
             int x = 0;
             dst_line[x] = std::max(src_line[x], src_line[x + 1]);
 
@@ -304,7 +322,7 @@ namespace imageproc {
                 unsigned const next = src_line[x + 1];
                 dst_line[x] = std::max(prev, std::max(cur, next));
             }
-
+            // Last column (no right neighbors).
             dst_line[x] = std::max(src_line[x], src_line[x - 1]);
 
             src_line += width;
@@ -325,7 +343,7 @@ namespace imageproc {
 
             return;
         }
-
+        // First row (no top neighbors).
         unsigned const* p_src = &src[0];
         unsigned* p_dst = &dst[0];
         for (int x = 0; x < width; ++x) {
@@ -345,13 +363,13 @@ namespace imageproc {
             p_src += width;
             p_dst += width;
         }
-
+        // Last row (no bottom neighbors).
         for (int x = 0; x < width; ++x) {
             *p_dst = std::max(p_src[0], p_src[-width]);
             ++p_src;
             ++p_dst;
         }
-    }      // HoughLineDetector::max1x3
+    }  // HoughLineDetector::max1x3
 
 /**
  * Builds a binary image where a black pixel indicates that the corresponding

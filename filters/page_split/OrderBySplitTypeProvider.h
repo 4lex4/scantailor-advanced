@@ -35,5 +35,6 @@ namespace page_split {
     private:
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
-#endif
+}  // namespace page_split
+
+#endif  // PAGE_SPLIT_ORDER_BY_SPLIT_TYPE_PROVIDER_H_

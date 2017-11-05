@@ -124,6 +124,7 @@ namespace page_split {
                 );
                 status.throwIfCancelled();
             } else if (params->pageLayout().uncutOutline().isEmpty()) {
+                // Backwards compatibility with versions < 0.9.9
                 new_layout = params->pageLayout();
                 new_layout.setUncutOutline(data.xform().resultingRect());
             } else {
@@ -139,6 +140,9 @@ namespace page_split {
                 Settings::Record updated_record(record);
                 updated_record.update(update);
                 assert(!updated_record.hasLayoutTypeConflict());
+                // This assert effectively verifies that PageLayoutEstimator::estimatePageLayout()
+                // returned a layout with of a type consistent with the requested one.
+                // If it didn't, it's a bug which will in fact cause a dead loop.
             }
 #endif
 
@@ -147,6 +151,15 @@ namespace page_split {
                     m_pageInfo.imageId(), update, &conflict
             );
             if (conflict && !record.params()) {
+                // If there was a conflict, it means
+                // the record was updated by another
+                // thread somewhere between getPageRecord()
+                // and conditionalUpdate().  If that
+                // external update didn't leave page
+                // parameters clear, we are just going
+                // to use it's data, otherwise we need
+                // to process this page again for the
+                // new layout type.
                 continue;
             }
 
@@ -175,7 +188,7 @@ namespace page_split {
                         m_pageInfo, data.xform(), ui_data, m_batchProcessing
                 )
         );
-    }      // Task::process
+    }  // Task::process
 
 /*============================ Task::UiUpdater =========================*/
 
@@ -199,6 +212,8 @@ namespace page_split {
     }
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
+        // This function is executed from the GUI thread.
+
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -227,5 +242,5 @@ namespace page_split {
                 opt_widget, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
                 view, SLOT(pageLayoutSetExternally(PageLayout const &))
         );
-    }      // Task::UiUpdater::updateUI
+    }  // Task::UiUpdater::updateUI
 }  // namespace page_split

@@ -100,5 +100,5 @@ namespace select_content {
                           bool& can_retry_grouped,
                           DebugImages* dbg);
     };
-}
-#endif  // ifndef SELECT_CONTENT_CONTENTBOXFINDER_H_
+}  // namespace select_content
+#endif // ifndef SELECT_CONTENT_CONTENTBOXFINDER_H_

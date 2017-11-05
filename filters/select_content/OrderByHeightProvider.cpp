@@ -43,6 +43,7 @@ namespace select_content {
         bool const rhs_valid = !rhs_incomplete && rhs_size.isValid();
 
         if (lhs_valid != rhs_valid) {
+            // Invalid (unknown) sizes go to the back.
             return lhs_valid;
         }
 

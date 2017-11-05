@@ -33,7 +33,7 @@ void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {
 #else
     QPaintDevice* const dev = painter.device();
 
-    QPoint offset;
+    QPoint offset;  // Both x and y will be either zero or negative.
     QPaintDevice* const redir_dev = QPainter::redirected(painter.device(), &offset);
     QPaintDevice* const paint_dev = redir_dev ? redir_dev : dev;
 
@@ -57,7 +57,8 @@ void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {
 
         return;
     }
-
+    // Note that device transform already accounts for offset
+    // within a destination surface.
     QTransform const src_to_dst(painter.deviceTransform());
     QTransform const dst_to_src(src_to_dst.inverted());
     QPolygonF const dst_poly(src_to_dst.map(src_rect));
@@ -111,13 +112,15 @@ void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {
     }
     QRect const dst_rect(dst_rect_fitting.intersect(dst_bounding_rect));
 
+    // Note that XRenderComposite() expects destination coordinates
+    // everywhere, even for source picture origin.
     XRenderComposite(
         dpy, PictOpSrc,
         src_pict, 0, dst_pict, dst_rect.left(), dst_rect.top(), 0, 0,
         dst_rect.left(), dst_rect.top(), dst_rect.width(), dst_rect.height()
     );
-#endif  // if !defined(Q_WS_X11)
-}  // PixmapRenderer::drawPixmap
+#endif // if !defined(Q_WS_X11)
+} // PixmapRenderer::drawPixmap
 
 void PixmapRenderer::drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap) {
     QTransform const inv_transform(painter.worldTransform().inverted());

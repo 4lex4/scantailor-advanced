@@ -41,6 +41,7 @@
 
 
 class ConsoleBatch {
+    // Member-wise copying is OK.
 public:
     ConsoleBatch(std::vector<ImageFileInfo> const& images,
                  QString const& output_directory,
@@ -80,4 +81,4 @@ private:
 };
 
 
-#endif  // ifndef CONSOLEBATCH_H_
+#endif // ifndef CONSOLEBATCH_H_

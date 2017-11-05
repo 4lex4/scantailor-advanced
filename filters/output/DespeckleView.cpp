@@ -82,6 +82,7 @@ namespace output {
                         DespeckleVisualization const& visualization,
                         std::unique_ptr<DebugImages> debug_images);
 
+        // This method is called from the main thread.
         virtual void operator()();
 
     private:
@@ -105,6 +106,7 @@ namespace output {
         addWidget(m_pProcessingIndicator);
 
         if (!visualization.isNull()) {
+            // Create the image view.
             std::unique_ptr<QWidget> widget(
                     new BasicImageView(visualization.image(), visualization.downscaledImage())
             );
@@ -135,7 +137,8 @@ namespace output {
 
     void DespeckleView::hideEvent(QHideEvent* evt) {
         QStackedWidget::hideEvent(evt);
-
+        // We don't want background despeckling to continue when user
+        // switches to another tab.
         cancelBackgroundTask();
     }
 
@@ -158,6 +161,8 @@ namespace output {
         cancelBackgroundTask();
         m_ptrCancelHandle.reset(new TaskCancelHandle);
 
+        // Note that we are getting rid of m_initialSpeckles,
+        // as we wouldn't need it any more.
 
         BackgroundExecutor::TaskPtr const task(
                 new DespeckleTask(
@@ -205,6 +210,8 @@ namespace output {
     }
 
     void DespeckleView::removeImageViewWidget() {
+        // Widget 0 is always m_pProcessingIndicator, so we start with 1.
+        // Also, normally there can't be more than 2 widgets, but just in case ...
         while (count() > 1) {
             QWidget* wgt = widget(1);
             removeWidget(wgt);

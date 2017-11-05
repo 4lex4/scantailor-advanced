@@ -34,6 +34,7 @@ public:
     OutOfMemoryDialog(QWidget* parent = 0);
 
     void setParams(QString const& project_file,
+            // may be empty
                    IntrusivePtr<StageSequence> const& stages,
                    IntrusivePtr<ProjectPages> const& pages,
                    SelectedPage const& selected_page,
@@ -59,4 +60,4 @@ private:
 };
 
 
-#endif  // ifndef OUT_OF_MEMORY_DIALOG_H_
+#endif // ifndef OUT_OF_MEMORY_DIALOG_H_

@@ -61,6 +61,8 @@ namespace output {
     namespace {
         struct RaiseAboveBackground {
             static uint8_t transform(uint8_t src, uint8_t dst) {
+                // src: orig
+                // dst: background (dst >= src)
                 if (dst - src < 1) {
                     return 0xff;
                 }
@@ -92,6 +94,7 @@ namespace output {
 
         template<>
         uint32_t reserveBlackAndWhite(uint32_t color) {
+            // We handle both RGB32 and ARGB32 here.
             switch (color & 0x00FFFFFF) {
                 case 0x00000000:
                     return 0xFF010101;
@@ -166,14 +169,17 @@ namespace output {
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     if (bw_mask_line[x >> 5] & (msb >> (x & 31))) {
+                        // B/W content.
+
                         uint32_t tmp = bw_content_line[x >> 5];
                         tmp >>= (31 - (x & 31));
                         tmp &= uint32_t(1);
-
-                        --tmp;
-                        tmp |= 0xff000000;
+                        // Now it's 0 for white and 1 for black.
+                        --tmp;  // 0 becomes 0xffffffff and 1 becomes 0.
+                        tmp |= 0xff000000;  // Force opacity.
                         mixed_line[x] = static_cast<MixedPixel>(tmp);
                     } else {
+                        // Non-B/W content.
                         if (needReserveBlackAndWhite) {
                             mixed_line[x] = reserveBlackAndWhite<MixedPixel>(mixed_line[x]);
                         }
@@ -183,7 +189,7 @@ namespace output {
                 bw_content_line += bw_content_stride;
                 bw_mask_line += bw_mask_stride;
             }
-        }          // combineMixed
+        }  // combineMixed
 
         template<typename MixedPixel>
         void fillExcept(QImage& image, const BinaryImage& bw_mask, const QColor& color) {
@@ -245,6 +251,7 @@ namespace output {
               m_despeckleLevel(despeckle_level) {
         assert(m_outRect.topLeft() == QPoint(0, 0));
 
+        // Note that QRect::contains(<empty rect>) always returns false, so we don't use it here.
         assert(m_outRect.contains(m_contentRect.topLeft()) && m_outRect.contains(m_contentRect.bottomRight()));
     }
 
@@ -271,7 +278,7 @@ namespace output {
                         splitImage
                 )
         );
-
+        // Set the correct DPI.
         const RenderParams renderParams(m_colorParams);
         Dpm const output_dpm(m_dpi);
 
@@ -344,7 +351,7 @@ namespace output {
         }
 
         return bg_img;
-    }      // OutputGenerator::normalizeIlluminationGray
+    }  // OutputGenerator::normalizeIlluminationGray
 
     imageproc::BinaryImage OutputGenerator::estimateBinarizationMask(TaskStatus const& status,
                                                                      GrayImage const& gray_source,
@@ -353,12 +360,18 @@ namespace output {
                                                                      DebugImages* const dbg) const {
         assert(source_rect.contains(source_sub_rect));
 
+        // If we need to strip some of the margins from a grayscale
+        // image, we may actually do it without copying anything.
+        // We are going to construct a QImage from existing data.
+        // That image won't own that data, but gray_source is not
+        // going anywhere, so it's fine.
 
         GrayImage trimmed_image;
 
         if (source_rect == source_sub_rect) {
-            trimmed_image = gray_source;
+            trimmed_image = gray_source;  // Shallow copy.
         } else {
+            // Sub-rectangle in input image coordinates.
             QRect relative_subrect(source_sub_rect);
             relative_subrect.moveTopLeft(
                     source_sub_rect.topLeft() - source_rect.topLeft()
@@ -379,26 +392,28 @@ namespace output {
 
         QSize const downscaled_size(to300dpi(trimmed_image.size(), m_dpi));
 
+        // A 300dpi version of trimmed_image.
         GrayImage downscaled_input(
                 scaleToGray(trimmed_image, downscaled_size)
         );
-        trimmed_image = GrayImage();
+        trimmed_image = GrayImage();  // Save memory.
         status.throwIfCancelled();
 
+        // Light areas indicate pictures.
         GrayImage picture_areas(detectPictures(downscaled_input, status, dbg));
-        downscaled_input = GrayImage();
+        downscaled_input = GrayImage();  // Save memory.
         status.throwIfCancelled();
 
         BinaryThreshold const threshold(
                 48
         );
-
+        // Scale back to original size.
         picture_areas = scaleToGray(
                 picture_areas, source_sub_rect.size()
         );
 
         return BinaryImage(picture_areas, threshold);
-    }      // OutputGenerator::estimateBinarizationMask
+    }  // OutputGenerator::estimateBinarizationMask
 
     void OutputGenerator::modifyBinarizationMask(imageproc::BinaryImage& bw_mask,
                                                  QRect const& mask_rect,
@@ -408,6 +423,7 @@ namespace output {
 
         typedef PictureLayerProperty PLP;
 
+        // Pass 1: ERASER1
         for (Zone const& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
                 QPolygonF const poly(zone.spline().toPolygon());
@@ -415,6 +431,7 @@ namespace output {
             }
         }
 
+        // Pass 2: PAINTER2
         for (Zone const& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
                 QPolygonF const poly(zone.spline().toPolygon());
@@ -422,6 +439,7 @@ namespace output {
             }
         }
 
+        // Pass 1: ERASER3
         for (Zone const& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
                 QPolygonF const poly(zone.spline().toPolygon());
@@ -488,7 +506,7 @@ namespace output {
                 return QImage();
             }
         }
-
+        // The whole image minus the part cut off by the split line.
         QRect contentRect = m_contentRect;
         if (!render_params.whiteMargins()) {
             contentRect = m_outRect;
@@ -498,8 +516,13 @@ namespace output {
                 m_xform.resultingPreCropArea().boundingRect().toRect() | contentRect
         );
 
+        // For various reasons, we need some whitespace around the content
+        // area.  This is the number of pixels of such whitespace.
         int const content_margin = m_dpi.vertical() * 20 / 300;
 
+        // The content area (in output image coordinates) extended
+        // with content_margin.  Note that we prevent that extension
+        // from reaching the neighboring page.
         QRect const small_margins_rect(
                 contentRect.adjusted(
                         -content_margin, -content_margin,
@@ -507,18 +530,25 @@ namespace output {
                 ).intersected(big_margins_rect)
         );
 
+        // This is the area we are going to pass to estimateBackground().
+        // estimateBackground() needs some margins around content, and
+        // generally smaller margins are better, except when there is
+        // some garbage that connects the content to the edge of the
+        // image area.
         QRect const normalize_illumination_rect(
                 small_margins_rect
         );
 
         QImage maybe_normalized;
 
+        // Crop area in original image coordinates.
         QPolygonF const orig_image_crop_area(
                 m_xform.transformBack().map(
                         m_xform.resultingPreCropArea()
                 )
         );
 
+        // Crop area in maybe_normalized image coordinates.
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
 
@@ -551,6 +581,7 @@ namespace output {
 
             if (!contentRect.isEmpty()) {
                 QImage maybe_smoothed;
+                // We only do smoothing if we are going to do binarization later.
                 if (!render_params.needSavitzkyGolaySmoothing()) {
                     maybe_smoothed = maybe_normalized;
                 } else {
@@ -591,12 +622,20 @@ namespace output {
                 QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
                 QRect const dst_rect(contentRect);
                 rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
-                bw_content.release();
+                bw_content.release();  // Save memory.
+                // It's important to keep despeckling the very last operation
+                // affecting the binary part of the output. That's because
+                // we will be reconstructing the input to this despeckling
+                // operation from the final output file.
             }
 
             applyFillZonesInPlace(dst, fill_zones);
 
             return dst.toQImage();
+            // This block should go before the block with
+            // adjustBrightnessGrayscale(), which may convert
+            // maybe_normalized from grayscale to color mode.
+
         }
 
         if (needNormalizeIllumination && !input.origImage().allGray()) {
@@ -624,6 +663,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput()) {
+            // It's "Color / Grayscale" mode, as we handle B/W above.
             reserveBlackAndWhite(maybe_normalized);
         } else {
             BinaryImage bw_mask(estimateBinarizationMask(
@@ -723,7 +763,7 @@ namespace output {
 
                 bw_mask_filled.release();
 
-                maybe_smoothed = QImage();
+                maybe_smoothed = QImage();  // Save memory.
                 if (dbg) {
                     dbg->add(bw_content, "binarized_and_cropped");
                 }
@@ -737,8 +777,14 @@ namespace output {
                     }
                 }
 
+                // We don't want speckles in non-B/W areas, as they would
+                // then get visualized on the Despeckling tab.
                 status.throwIfCancelled();
 
+                // It's important to keep despeckling the very last operation
+                // affecting the binary part of the output. That's because
+                // we will be reconstructing the input to this despeckling
+                // operation from the final output file.
                 maybeDespeckleInPlace(
                         bw_content, small_margins_rect, contentRect,
                         m_despeckleLevel, speckles_image, m_dpi, status, dbg
@@ -809,6 +855,7 @@ namespace output {
         dst.fill(outsideBackgroundColor);
 
         if (dst.isNull()) {
+            // Both the constructor and setColorTable() above can leave the image null.
             throw std::bad_alloc();
         }
 
@@ -828,7 +875,7 @@ namespace output {
         }
 
         return dst;
-    }      // OutputGenerator::processWithoutDewarping
+    }  // OutputGenerator::processWithoutDewarping
 
     QImage OutputGenerator::processWithDewarping(TaskStatus const& status,
                                                  FilterData const& input,
@@ -862,13 +909,18 @@ namespace output {
         if (!render_params.whiteMargins()) {
             contentRect = m_outRect;
         }
-
+        // The whole image minus the part cut off by the split line.
         QRect const big_margins_rect(
                 m_xform.resultingPreCropArea().boundingRect().toRect() | contentRect
         );
 
+        // For various reasons, we need some whitespace around the content
+        // area.  This is the number of pixels of such whitespace.
         int const content_margin = m_dpi.vertical() * 20 / 300;
 
+        // The content area (in output image coordinates) extended
+        // with content_margin.  Note that we prevent that extension
+        // from reaching the neighboring page.
         QRect const small_margins_rect(
                 contentRect.adjusted(
                         -content_margin, -content_margin,
@@ -876,14 +928,21 @@ namespace output {
                 ).intersected(big_margins_rect)
         );
 
+        // This is the area we are going to pass to estimateBackground().
+        // estimateBackground() needs some margins around content, and
+        // generally smaller margins are better, except when there is
+        // some garbage that connects the content to the edge of the
+        // image area.
         QRect const normalize_illumination_rect(
                 small_margins_rect
         );
 
+        // Crop area in original image coordinates.
         QPolygonF const orig_image_crop_area(
                 m_xform.transformBack().map(m_xform.resultingPreCropArea())
         );
 
+        // Crop area in maybe_normalized image coordinates.
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
 
@@ -901,10 +960,18 @@ namespace output {
 
         bool const color_original = !input.origImage().allGray();
 
+        // Original image, but:
+        // 1. In a format we can handle, that is grayscale, RGB32, ARGB32
+        // 2. With illumination normalized over the content area, if required.
+        // 3. With margins filled with white, if required.
         QImage normalized_original;
 
+        // The output we would get if dewarping was turned off, except always grayscale.
+        // Used for automatic picture detection and binarization threshold calculation.
+        // This image corresponds to the area of normalize_illumination_rect above.
         GrayImage warped_gray_output;
-
+        // Picture mask (white indicate a picture) in the same coordinates as
+        // warped_gray_output.  Only built for Mixed mode.
         BinaryImage warped_bw_mask;
 
         BinaryThreshold bw_threshold(128);
@@ -936,6 +1003,7 @@ namespace output {
 
             status.throwIfCancelled();
 
+            // Transform warped_gray_background to original image coordinates.
             warped_gray_background = transformToGray(
                     warped_gray_background.toQImage(), norm_illum_to_original,
                     input.origImage().rect(), OutsidePixels::assumeWeakColor(Qt::black)
@@ -945,7 +1013,7 @@ namespace output {
             }
 
             status.throwIfCancelled();
-
+            // Turn background into a grayscale, illumination-normalized image.
             grayRasterOp<RaiseAboveBackground>(warped_gray_background, input.grayImage());
             if (dbg) {
                 dbg->add(warped_gray_background, "norm_illum_gray");
@@ -1047,6 +1115,7 @@ namespace output {
 
             status.throwIfCancelled();
 
+            // For Mixed output, we mask out pictures when calculating binarization threshold.
             bw_threshold = calcBinarizationThreshold(
                     warped_gray_output, normalize_illumination_crop_area, &warped_bw_mask
             );
@@ -1272,10 +1341,11 @@ namespace output {
                 dbg->add(out_image, "marginal dewarping");
             }
         }
-        warped_gray_output = GrayImage();
+        warped_gray_output = GrayImage();  // Save memory.
 
         fillMarginsInPlace(normalized_original, orig_image_crop_area, outsideBackgroundColor);
         if (render_params.whiteMargins()) {
+            // Fill everything except the content area in normalized_original to white.
             QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
             fillMarginsInPlace(normalized_original, orig_content_poly, outsideBackgroundColor);
             if (dbg) {
@@ -1292,6 +1362,7 @@ namespace output {
                     distortion_model, depth_perception, outsideBackgroundColor
             );
         } catch (std::runtime_error const&) {
+            // Probably an impossible distortion model.  Let's fall back to a trivial one.
             setupTrivialDistortionModel(distortion_model);
             dewarped = dewarp(
                     QTransform(), normalized_original, m_xform.transform(),
@@ -1299,7 +1370,7 @@ namespace output {
             );
         }
 
-        normalized_original = QImage();
+        normalized_original = QImage();  // Save memory.
         if (dbg) {
             dbg->add(dewarped, "dewarped");
         }
@@ -1337,6 +1408,7 @@ namespace output {
 
         if (render_params.binaryOutput()) {
             QImage dewarped_and_maybe_smoothed;
+            // We only do smoothing if we are going to do binarization later.
             if (!render_params.needSavitzkyGolaySmoothing()) {
                 dewarped_and_maybe_smoothed = dewarped;
             } else {
@@ -1355,7 +1427,7 @@ namespace output {
 
             status.throwIfCancelled();
 
-            dewarped_and_maybe_smoothed = QImage();
+            dewarped_and_maybe_smoothed = QImage();  // Save memory.
             if (dbg) {
                 dbg->add(dewarped_bw_content, "dewarped_bw_content");
             }
@@ -1371,6 +1443,10 @@ namespace output {
 
             status.throwIfCancelled();
 
+            // It's important to keep despeckling the very last operation
+            // affecting the binary part of the output. That's because
+            // we will be reconstructing the input to this despeckling
+            // operation from the final output file.
             maybeDespeckleInPlace(
                     dewarped_bw_content, m_outRect, m_outRect, m_despeckleLevel,
                     speckles_image, m_dpi, status, dbg
@@ -1383,6 +1459,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput()) {
+            // It's "Color / Grayscale" mode, as we handle B/W above.
             reserveBlackAndWhite(dewarped);
         } else {
             QTransform const orig_to_small_margins(
@@ -1439,7 +1516,7 @@ namespace output {
                 );
 
                 dewarped_bw_mask_filled.release();
-                dewarped_and_maybe_smoothed = QImage();
+                dewarped_and_maybe_smoothed = QImage();  // Save memory.
 
                 if (dbg) {
                     dbg->add(dewarped_bw_content, "dewarped_bw_content");
@@ -1465,6 +1542,10 @@ namespace output {
 
                 status.throwIfCancelled();
 
+                // It's important to keep despeckling the very last operation
+                // affecting the binary part of the output. That's because
+                // we will be reconstructing the input to this despeckling
+                // operation from the final output file.
                 maybeDespeckleInPlace(
                         dewarped_bw_content, m_outRect, contentRect,
                         m_despeckleLevel, speckles_image, m_dpi, status, dbg
@@ -1576,7 +1657,7 @@ namespace output {
         }
 
         return dewarped;
-    }      // OutputGenerator::processWithDewarping
+    }  // OutputGenerator::processWithDewarping
 
     /**
      * Set up a distortion model corresponding to the content rect,
@@ -1595,10 +1676,10 @@ namespace output {
         poly = m_xform.transformBack().map(poly);
 
         std::vector<QPointF> top_polyline, bottom_polyline;
-        top_polyline.push_back(poly[0]);
-        top_polyline.push_back(poly[1]);
-        bottom_polyline.push_back(poly[3]);
-        bottom_polyline.push_back(poly[2]);
+        top_polyline.push_back(poly[0]);  // top-left
+        top_polyline.push_back(poly[1]);  // top-right
+        bottom_polyline.push_back(poly[3]);  // bottom-left
+        bottom_polyline.push_back(poly[2]);  // bottom-right
         distortion_model.setTopCurve(Curve(top_polyline));
         distortion_model.setBottomCurve(Curve(bottom_polyline));
     }
@@ -1648,6 +1729,8 @@ namespace output {
                 createDewarper(distortion_model, orig_to_src, depth_perception.value())
         );
 
+        // Model domain is a rectangle in output image coordinates that
+        // will be mapped to our curved quadrilateral.
         QRect const model_domain(
                 distortion_model.modelDomain(
                         dewarper, orig_to_src * src_to_output, outputContentRect()
@@ -1655,7 +1738,7 @@ namespace output {
         );
         if (model_domain.isEmpty()) {
             GrayImage out(src.size());
-            out.fill(0xff);
+            out.fill(0xff);  // white
 
             return out;
         }
@@ -1757,12 +1840,17 @@ namespace output {
 
     void
     OutputGenerator::fillMarginsInPlace(BinaryImage& image, BinaryImage const& content_mask, BWColor const& color) {
-         fillExcept(image, content_mask, color);
+        fillExcept(image, content_mask, color);
     }
 
     GrayImage OutputGenerator::detectPictures(GrayImage const& input_300dpi,
                                               TaskStatus const& status,
                                               DebugImages* const dbg) {
+        // We stretch the range of gray levels to cover the whole
+        // range of [0, 255].  We do it because we want text
+        // and background to be equally far from the center
+        // of the whole range.  Otherwise text printed with a big
+        // font will be considered a picture.
         GrayImage stretched(stretchGrayRange(input_300dpi, 0.01, 0.01));
         if (dbg) {
             dbg->add(stretched, "stretched");
@@ -1782,7 +1870,7 @@ namespace output {
             dbg->add(dilated, "dilated");
         }
 
-        stretched = GrayImage();
+        stretched = GrayImage();  // Save memory.
         status.throwIfCancelled();
 
         grayRasterOp<CombineInverted>(dilated, eroded);
@@ -1831,7 +1919,7 @@ namespace output {
         }
 
         return stretched2;
-    }      // OutputGenerator::detectPictures
+    }  // OutputGenerator::detectPictures
 
     QImage OutputGenerator::smoothToGrayscale(QImage const& src, Dpi const& dpi) {
         int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
@@ -1858,6 +1946,8 @@ namespace output {
         int const adjusted = threshold
                              + m_colorParams.blackWhiteOptions().thresholdAdjustment();
 
+        // Hard-bounding threshold values is necessary for example
+        // if all the content went into the picture mask.
         return BinaryThreshold(qBound(30, adjusted, 225));
     }
 
@@ -2051,9 +2141,11 @@ namespace output {
                 );
             }
         }
-    }      // OutputGenerator::maybeDespeckleInPlace
+    }  // OutputGenerator::maybeDespeckleInPlace
 
     void OutputGenerator::morphologicalSmoothInPlace(BinaryImage& bin_img, TaskStatus const& status) {
+        // When removing black noise, remove small ones first.
+
         {
             char const pattern[]
                     = "XXX"
@@ -2129,7 +2221,7 @@ namespace output {
                             "XXX";
             hitMissReplaceAllDirections(bin_img, pattern, 3, 3);
         }
-    }      // OutputGenerator::morphologicalSmoothInPlace
+    }  // OutputGenerator::morphologicalSmoothInPlace
 
     void OutputGenerator::hitMissReplaceAllDirections(imageproc::BinaryImage& img,
                                                       char const* const pattern,
@@ -2140,6 +2232,7 @@ namespace output {
         std::vector<char> pattern_data(pattern_width * pattern_height, ' ');
         char* const new_pattern = &pattern_data[0];
 
+        // Rotate 90 degrees clockwise.
         char const* p = pattern;
         int new_width = pattern_height;
         int new_height = pattern_width;
@@ -2152,6 +2245,7 @@ namespace output {
         }
         hitMissReplaceInPlace(img, WHITE, new_pattern, new_width, new_height);
 
+        // Rotate upside down.
         p = pattern;
         new_width = pattern_width;
         new_height = pattern_height;
@@ -2163,7 +2257,7 @@ namespace output {
             }
         }
         hitMissReplaceInPlace(img, WHITE, new_pattern, new_width, new_height);
-
+        // Rotate 90 degrees counter-clockwise.
         p = pattern;
         new_width = pattern_height;
         new_height = pattern_width;
@@ -2175,7 +2269,7 @@ namespace output {
             }
         }
         hitMissReplaceInPlace(img, WHITE, new_pattern, new_width, new_height);
-    }      // OutputGenerator::hitMissReplaceAllDirections
+    }  // OutputGenerator::hitMissReplaceAllDirections
 
     QSize OutputGenerator::calcLocalWindowSize(Dpi const& dpi) {
         QSizeF const size_mm(3, 30);
@@ -2197,6 +2291,10 @@ namespace output {
     }
 
     unsigned char OutputGenerator::calcDominantBackgroundGrayLevel(QImage const& img) {
+        // TODO: make a color version.
+        // In ColorPickupInteraction.cpp we have code for median color finding.
+        // We can use that.
+
         QImage const gray(toGrayscale(img));
 
         BinaryImage mask(binarizeOtsu(gray));
@@ -2234,7 +2332,7 @@ namespace output {
         assert(!"Unreachable");
 
         return 0;
-    }      // OutputGenerator::calcDominantBackgroundGrayLevel
+    }  // OutputGenerator::calcDominantBackgroundGrayLevel
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
             QPointF const&)> const& orig_to_output)

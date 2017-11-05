@@ -38,6 +38,9 @@ BackgroundTaskPtr ProcessingTaskQueue::takeForProcessing() {
             ent.takenForProcessing = true;
 
             if (m_selectedPage.isNull()) {
+                // In this mode we select the most recently submitted for processing page.
+                // This means question marks on selected pages, but at least this avoids
+                // jumps caused by dynamic ordering.
                 m_selectedPage = ent.pageInfo;
             }
 
@@ -54,10 +57,12 @@ void ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task) {
 
     for (;; ++it) {
         if (it == end) {
+            // Task not found.
             return;
         }
 
         if (!it->takenForProcessing) {
+            // There is no point in looking further.
             return;
         }
 

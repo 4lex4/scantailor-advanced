@@ -180,6 +180,7 @@ static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
 }
 
 static tsize_t deviceWrite(thandle_t context, tdata_t data, tsize_t size) {
+    // Not implemented.
     return 0;
 }
 
@@ -215,10 +216,12 @@ static toff_t deviceSize(thandle_t context) {
 }
 
 static int deviceMap(thandle_t, tdata_t*, toff_t*) {
+    // Not implemented.
     return 0;
 }
 
 static void deviceUnmap(thandle_t, tdata_t, toff_t) {
+    // Not implemented.
 }
 
 bool TiffReader::canRead(QIODevice& device) {
@@ -226,6 +229,7 @@ bool TiffReader::canRead(QIODevice& device) {
         return false;
     }
     if (device.isSequential()) {
+        // libtiff needs to be able to seek.
         return false;
     }
 
@@ -240,6 +244,7 @@ ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
         return ImageMetadataLoader::GENERIC_ERROR;
     }
     if (device.isSequential()) {
+        // libtiff needs to be able to seek.
         return ImageMetadataLoader::GENERIC_ERROR;
     }
 
@@ -268,10 +273,10 @@ ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
 static void convertAbgrToArgb(uint32 const* src, uint32* dst, int count) {
     for (int i = 0; i < count; ++i) {
         uint32 const src_word = src[i];
-        uint32 dst_word = src_word & 0xFF000000;
-        dst_word |= (src_word & 0x00FF0000) >> 16;
-        dst_word |= src_word & 0x0000FF00;
-        dst_word |= (src_word & 0x000000FF) << 16;
+        uint32 dst_word = src_word & 0xFF000000;  // A
+        dst_word |= (src_word & 0x00FF0000) >> 16;  // B
+        dst_word |= src_word & 0x0000FF00;  // G
+        dst_word |= (src_word & 0x000000FF) << 16;  // R
         dst[i] = dst_word;
     }
 }
@@ -281,6 +286,7 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
         return QImage();
     }
     if (device.isSequential()) {
+        // libtiff needs to be able to seek.
         return QImage();
     }
 
@@ -311,8 +317,10 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
     QImage image;
 
     if (info.mapsToBinaryOrIndexed8()) {
+        // Common case optimization.
         image = extractBinaryOrIndexed8Image(tif, info);
     } else {
+        // General case.
         image = QImage(
                 info.width, info.height,
                 info.samples_per_pixel == 3
@@ -322,10 +330,12 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
             throw std::bad_alloc();
         }
 
+        // For ABGR -> ARGB conversion.
         TiffBuffer<uint32> tmp_buffer;
         uint32 const* src_line = 0;
 
         if (image.bytesPerLine() == 4 * info.width) {
+            // We can avoid creating a temporary buffer in this case.
             if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height,
                                            (uint32*) image.bits(), ORIENTATION_TOPLEFT, 0)) {
                 return QImage();
@@ -357,7 +367,7 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
     }
 
     return image;
-}  // TiffReader::readImage
+} // TiffReader::readImage
 
 TiffReader::TiffHeader TiffReader::readHeader(QIODevice& device) {
     unsigned char data[4];
@@ -407,9 +417,9 @@ ImageMetadata TiffReader::currentPageMetadata(TiffHandle const& tif) {
 
 Dpi TiffReader::getDpi(float xres, float yres, unsigned res_unit) {
     switch (res_unit) {
-        case RESUNIT_INCH:
+        case RESUNIT_INCH:  // inch
             return Dpi(qRound(xres), qRound(yres));
-        case RESUNIT_CENTIMETER:
+        case RESUNIT_CENTIMETER:  // cm
             return Dpm(qRound(xres * 100), qRound(yres * 100));
     }
 
@@ -419,6 +429,8 @@ Dpi TiffReader::getDpi(float xres, float yres, unsigned res_unit) {
 QImage TiffReader::extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo const& info) {
     QImage::Format format = QImage::Format_Indexed8;
     if (info.bits_per_sample == 1) {
+        // Because we specify B option when opening, we can
+        // always use Format_Mono, and not Format_MonoLSB.
         format = QImage::Format_Mono;
     }
 
@@ -475,7 +487,7 @@ QImage TiffReader::extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo 
     }
 
     return image;
-}  // TiffReader::extractBinaryOrIndexed8Image
+} // TiffReader::extractBinaryOrIndexed8Image
 
 void TiffReader::readLines(TiffHandle const& tif, QImage& image) {
     int const height = image.height();

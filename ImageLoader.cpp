@@ -41,6 +41,7 @@ QImage ImageLoader::load(QIODevice& io_dev, int const page_num) {
     }
 
     if (page_num != 0) {
+        // Qt can only load the first page of multi-page images.
         return QImage();
     }
 

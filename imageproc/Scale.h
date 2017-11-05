@@ -35,5 +35,5 @@ namespace imageproc {
  * dealing with grayscale images.
  */
     GrayImage scaleToGray(GrayImage const& src, QSize const& dst_size);
-}
+}  // namespace imageproc
 #endif

@@ -67,6 +67,8 @@ namespace output {
             dpiSelector->setCurrentIndex(m_customItemIdx);
             dpiSelector->setEditable(true);
             dpiSelector->lineEdit()->setText(m_customDpiString);
+            // It looks like we need to set a new validator
+            // every time we make the combo box editable.
             dpiSelector->setValidator(
                     new QIntValidator(0, 9999, dpiSelector)
             );
@@ -91,6 +93,8 @@ namespace output {
         if (index == m_customItemIdx) {
             dpiSelector->setEditText(m_customDpiString);
             dpiSelector->lineEdit()->selectAll();
+            // It looks like we need to set a new validator
+            // every time we make the combo box editable.
             dpiSelector->setValidator(
                     new QIntValidator(0, 9999, dpiSelector)
             );
@@ -150,6 +154,8 @@ namespace output {
 
         emit accepted(pages, Dpi(dpi, dpi));
 
+        // We assume the default connection from accepted() to accept()
+        // was removed.
         accept();
-    }      // ChangeDpiDialog::onSubmit
+    }  // ChangeDpiDialog::onSubmit
 }  // namespace output

@@ -9,7 +9,7 @@
 #include <imageproc/BinaryImage.h>
 
 namespace output {
-    
+
     /**
      * The class to store and manage output images split to foreground and background layers.
      * It works in two modes:
@@ -34,7 +34,7 @@ namespace output {
         QImage getBackgroundImage() const;
 
         void setBackgroundImage(const QImage& backgroundImage);
-        
+
         void setMask(const imageproc::BinaryImage& mask, bool binariryForeground);
 
         void applyToLayerImages(std::function<void(QImage&)> function);

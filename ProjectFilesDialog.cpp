@@ -336,6 +336,7 @@ namespace {
     struct FileInfoLess {
         bool operator()(QFileInfo const& lhs, QFileInfo const& rhs) const {
             if (lhs == rhs) {
+                // This takes into account filesystem's case sensitivity.
                 return false;
             }
 
@@ -355,6 +356,9 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
     QFileInfoList files(QDir(dir).entryInfoList(QDir::Files));
 
     {
+        // Filter out files already in project.
+        // Here we use simple ordering, which is OK.
+
         std::vector<QFileInfo> new_files(files.begin(), files.end());
         std::vector<QFileInfo> existing_files;
         m_ptrInProjectFiles->files([&](QFileInfo const& file_info) {
@@ -387,7 +391,7 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
         offProjectList->selectAll();
         addToProject();
     }
-}  // ProjectFilesDialog::setInputDir
+} // ProjectFilesDialog::setInputDir
 
 void ProjectFilesDialog::setOutputDir(QString const& dir) {
     outDirLine->setText(QDir::toNativeSeparators(dir));
@@ -466,6 +470,7 @@ void ProjectFilesDialog::onOK() {
     }
 
     if (out_dir.isAbsolute() && !out_dir.exists()) {
+        // Maybe create it.
         bool create = m_autoOutDir;
         if (!m_autoOutDir) {
             create = QMessageBox::question(
@@ -498,7 +503,7 @@ void ProjectFilesDialog::onOK() {
     }
 
     startLoadingMetadata();
-}  // ProjectFilesDialog::onOK
+} // ProjectFilesDialog::onOK
 
 void ProjectFilesDialog::startLoadingMetadata() {
     m_ptrInProjectFiles->prepareForLoadingFiles();
@@ -534,6 +539,7 @@ void ProjectFilesDialog::timerEvent(QTimerEvent* event) {
             break;
         case FileList::LOAD_FAILED:
             m_metadataLoadFailed = true;
+            // Fall through.
         case FileList::LOAD_OK:
             progressBar->setValue(progressBar->value() + 1);
             break;
@@ -618,7 +624,7 @@ void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
         endRemoveRows();
         rows_removed += last - first + 1;
     }
-}  // ProjectFilesDialog::FileList::remove
+} // ProjectFilesDialog::FileList::remove
 
 int ProjectFilesDialog::FileList::rowCount(QModelIndex const&) const {
     return m_items.size();
@@ -698,7 +704,7 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
     m_itemsToLoad.pop_front();
 
     return status;
-}  // ProjectFilesDialog::FileList::loadNextFile
+} // ProjectFilesDialog::FileList::loadNextFile
 
 /*================= ProjectFilesDialog::SortedFileList ===================*/
 
@@ -722,6 +728,7 @@ bool ProjectFilesDialog::ItemVisualOrdering::operator()(Item const& lhs, Item co
     bool const lhs_failed = (lhs.status() == Item::STATUS_LOAD_FAILED);
     bool const rhs_failed = (rhs.status() == Item::STATUS_LOAD_FAILED);
     if (lhs_failed != rhs_failed) {
+        // Failed ones go to the top.
         return lhs_failed;
     }
 

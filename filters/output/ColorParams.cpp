@@ -49,6 +49,7 @@ namespace output {
         if (str == "bw") {
             return BLACK_AND_WHITE;
         } else if (str == "bitonal") {
+            // Backwards compatibility.
             return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
             return COLOR_GRAYSCALE;

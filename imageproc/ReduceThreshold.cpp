@@ -26,7 +26,11 @@ namespace imageproc {
  * \code
  * for (unsigned i = 0; i < 256; i += 2) {
  *  unsigned out =
- *      ((i & (1 << 1)) >> 1) |   *     ((i & (1 << 3)) >> 2) |   *     ((i & (1 << 5)) >> 3) |   *     ((i & (1 << 7)) >> 4);    * compressBitsLut[i >> 1] = static_cast<uint8_t>(out);
+ *      ((i & (1 << 1)) >> 1) |  // bit 1 becomes bit 0
+ *      ((i & (1 << 3)) >> 2) |  // bit 3 becomes bit 1
+ *      ((i & (1 << 5)) >> 3) |  // bit 5 becomes bit 2
+ *      ((i & (1 << 7)) >> 4);   // bit 7 becomes bit 3
+ *  compressBitsLut[i >> 1] = static_cast<uint8_t>(out);
  * }
  * \endcode
  * We take every other byte because bit 0 doesn't matter here.
@@ -209,13 +213,14 @@ namespace imageproc {
         m_image = dst;
 
         return *this;
-    }      // ReduceThreshold::reduce
+    }  // ReduceThreshold::reduce
 
     void ReduceThreshold::reduceHorLine(int const threshold) {
         BinaryImage const& src = m_image;
         assert(src.height() == 1);
 
         if (src.width() == 1) {
+            // 1x1 image remains the same no matter the threshold.
             return;
         }
 
@@ -259,13 +264,14 @@ namespace imageproc {
         }
 
         m_image = dst;
-    }      // ReduceThreshold::reduceHorLine
+    }  // ReduceThreshold::reduceHorLine
 
     void ReduceThreshold::reduceVertLine(int const threshold) {
         BinaryImage const& src = m_image;
         assert(src.width() == 1);
 
         if (src.height() == 1) {
+            // 1x1 image remains the same no matter the threshold.
             return;
         }
 
@@ -297,5 +303,5 @@ namespace imageproc {
         }
 
         m_image = dst;
-    }      // ReduceThreshold::reduceVertLine
+    }  // ReduceThreshold::reduceVertLine
 }  // namespace imageproc

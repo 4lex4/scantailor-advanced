@@ -33,7 +33,7 @@ namespace imageproc {
                 return lhs_area < rhs_area;
             }
         };
-    }
+    }  // anonymous namespace
 
     MaxWhitespaceFinder::MaxWhitespaceFinder(BinaryImage const& img, QSize min_size)
             : m_integralImg(img.size()),
@@ -113,14 +113,16 @@ namespace imageproc {
     }
 
     void MaxWhitespaceFinder::subdivide(Region const& region, QRect const bounds, QRect const pivot) {
+        // Area above the pivot obstacle.
         if (pivot.top() - bounds.top() >= m_minSize.height()) {
             QRect new_bounds(bounds);
-            new_bounds.setBottom(pivot.top() - 1);
+            new_bounds.setBottom(pivot.top() - 1);  // Bottom is inclusive.
             Region new_region(m_newObstacles.size(), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
 
+        // Area below the pivot obstacle.
         if (bounds.bottom() - pivot.bottom() >= m_minSize.height()) {
             QRect new_bounds(bounds);
             new_bounds.setTop(pivot.bottom() + 1);
@@ -129,14 +131,15 @@ namespace imageproc {
             m_ptrQueuedRegions->push(new_region);
         }
 
+        // Area to the left of the pivot obstacle.
         if (pivot.left() - bounds.left() >= m_minSize.width()) {
             QRect new_bounds(bounds);
-            new_bounds.setRight(pivot.left() - 1);
+            new_bounds.setRight(pivot.left() - 1);  // Right is inclusive.
             Region new_region(m_newObstacles.size(), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
-
+        // Area to the right of the pivot obstacle.
         if (bounds.right() - pivot.right() >= m_minSize.width()) {
             QRect new_bounds(bounds);
             new_bounds.setLeft(pivot.right() + 1);
@@ -144,7 +147,7 @@ namespace imageproc {
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
-    }      // MaxWhitespaceFinder::subdivide
+    }  // MaxWhitespaceFinder::subdivide
 
     QRect MaxWhitespaceFinder::findPivotObstacle(Region const& region) const {
         assert(!region.obstacles().empty());
@@ -176,6 +179,13 @@ namespace imageproc {
             return center;
         }
 
+        // We have two rectangles: the outer one, that always contains at least
+        // one black pixel, and the inner one (contained within the outer one),
+        // that doesn't contain any black pixels.
+
+        // The first thing we do is bringing those two rectangles as close
+        // as possible to each other, so that no more than 1 pixel separates
+        // their corresponding edges.
 
         for (;;) {
             int const outer_inner_dw = outer_rect.width() - inner_rect.width();
@@ -207,11 +217,17 @@ namespace imageproc {
             }
         }
 
+        // Process the left edge.
         if (outer_rect.left() != inner_rect.left()) {
             QRect rect(outer_rect);
-            rect.setRight(rect.left());
+            rect.setRight(rect.left());  // Right is inclusive.
             unsigned const sum = m_integralImg.sum(rect);
             if (outer_rect.height() == 1) {
+                // This means we are dealing with a horizontal line
+                // and that we only have to check at most two pixels
+                // (the endpoints) and that at least one of them
+                // is definately black and that rect is a 1x1 pixels
+                // block pointing to the left endpoint.
                 if (sum != 0) {
                     return outer_rect.topLeft();
                 } else {
@@ -221,12 +237,14 @@ namespace imageproc {
                 return findBlackPixelCloseToCenter(rect);
             }
         }
-
+        // Process the right edge.
         if (outer_rect.right() != inner_rect.right()) {
             QRect rect(outer_rect);
-            rect.setLeft(rect.right());
+            rect.setLeft(rect.right());  // Right is inclusive.
             unsigned const sum = m_integralImg.sum(rect);
             if (outer_rect.height() == 1) {
+                // Same as above, except rect now points to the
+                // right endpoint.
                 if (sum != 0) {
                     return outer_rect.topRight();
                 } else {
@@ -237,11 +255,14 @@ namespace imageproc {
             }
         }
 
+        // Process the top edge.
         if (outer_rect.top() != inner_rect.top()) {
             QRect rect(outer_rect);
-            rect.setBottom(rect.top());
+            rect.setBottom(rect.top());  // Bottom is inclusive.
             unsigned const sum = m_integralImg.sum(rect);
             if (outer_rect.width() == 1) {
+                // Same as above, except rect now points to the
+                // top endpoint.
                 if (sum != 0) {
                     return outer_rect.topLeft();
                 } else {
@@ -251,17 +272,17 @@ namespace imageproc {
                 return findBlackPixelCloseToCenter(rect);
             }
         }
-
+        // Process the bottom edge.
         assert(outer_rect.bottom() != inner_rect.bottom());
         QRect rect(outer_rect);
-        rect.setTop(rect.bottom());
+        rect.setTop(rect.bottom());  // Bottom is inclusive.
         assert(m_integralImg.sum(rect) != 0);
         if (outer_rect.width() == 1) {
             return outer_rect.bottomLeft();
         } else {
             return findBlackPixelCloseToCenter(rect);
         }
-    }      // MaxWhitespaceFinder::findBlackPixelCloseToCenter
+    }  // MaxWhitespaceFinder::findBlackPixelCloseToCenter
 
     QRect MaxWhitespaceFinder::extendBlackPixelToBlackBox(QPoint const pixel, QRect const bounds) const {
         assert(bounds.contains(pixel));
@@ -274,6 +295,13 @@ namespace imageproc {
             return outer_rect;
         }
 
+        // We have two rectangles: the outer one, that always contains at least
+        // one white pixel, and the inner one (contained within the outer one),
+        // that doesn't.
+
+        // We will be bringing those two rectangles as close as possible to
+        // each other, so that no more than 1 pixel separates their
+        // corresponding edges.
 
         for (;;) {
             int const outer_inner_dw = outer_rect.width() - inner_rect.width();
@@ -307,7 +335,7 @@ namespace imageproc {
         }
 
         return inner_rect;
-    }      // MaxWhitespaceFinder::extendBlackPixelToBlackBox
+    }  // MaxWhitespaceFinder::extendBlackPixelToBlackBox
 
 /*======================= MaxWhitespaceFinder::Region =====================*/
 
@@ -319,6 +347,7 @@ namespace imageproc {
     MaxWhitespaceFinder::Region::Region(Region const& other)
             : m_knownNewObstacles(other.m_knownNewObstacles),
               m_bounds(other.m_bounds) {
+        // Note that we don't copy m_obstacles.  This is a shallow copy.
     }
 
 /**

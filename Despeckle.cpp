@@ -85,7 +85,7 @@ namespace {
 
         int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
         double const dpi_factor = min_dpi / 300.0;
-
+        // To silence compiler's warnings.
         settings.minRelativeParentWeight = 0;
         settings.pixelsToSqDist = 0;
         settings.bigObjectThreshold = 0;
@@ -307,10 +307,12 @@ namespace {
  */
     void tagSourceComponent(Component& source, Component const& target, uint32_t sqdist, Settings const& settings) {
         if (source.anchoredToBig()) {
+            // No point in setting ANCHORED_TO_SMALL.
             return;
         }
 
         if (sqdist > source.num_pixels * settings.pixelsToSqDist) {
+            // Too far.
             return;
         }
 
@@ -358,6 +360,7 @@ namespace {
                                   - (int(dist_line[x - 1].vec.x) << 1) + 1;
         }
 
+        // Top to bottom scan.
         for (int y = 1; y < height; ++y) {
             dist_line += width;
             cmap_line += width;
@@ -365,6 +368,7 @@ namespace {
             dist_line[width - 1].reset(width - 1);
             this_sqdist_line[0] = dist_line[0].sqdist();
             this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+            // Left to right scan.
             for (int x = 1; x < width - 1; ++x) {
                 if (cmap_line[x]) {
                     this_sqdist_line[x] = 0;
@@ -372,10 +376,11 @@ namespace {
                     continue;
                 }
 
+                // Propagate from left.
                 Distance left_dist = dist_line[x - 1];
                 uint32_t sqdist_left = this_sqdist_line[x - 1];
                 sqdist_left += 1 - (int(left_dist.vec.x) << 1);
-
+                // Propagate from top.
                 Distance top_dist = dist_line[x - width];
                 uint32_t sqdist_top = prev_sqdist_line[x];
                 sqdist_top += VERTICAL_SCALE_SQ - 2 * VERTICAL_SCALE_SQ * int(top_dist.vec.y);
@@ -393,7 +398,9 @@ namespace {
                 }
             }
 
+            // Right to left scan.
             for (int x = width - 2; x >= 1; --x) {
+                // Propagate from right.
                 Distance right_dist = dist_line[x + 1];
                 uint32_t sqdist_right = this_sqdist_line[x + 1];
                 sqdist_right += 1 + (int(right_dist.vec.x) << 1);
@@ -409,6 +416,7 @@ namespace {
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
 
+        // Bottom to top scan.
         for (int y = height - 2; y >= 1; --y) {
             dist_line -= width;
             cmap_line -= width;
@@ -416,11 +424,13 @@ namespace {
             dist_line[width - 1].reset(width - 1);
             this_sqdist_line[0] = dist_line[0].sqdist();
             this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+            // Right to left scan.
             for (int x = width - 2; x >= 1; --x) {
+                // Propagate from right.
                 Distance right_dist = dist_line[x + 1];
                 uint32_t sqdist_right = this_sqdist_line[x + 1];
                 sqdist_right += 1 + (int(right_dist.vec.x) << 1);
-
+                // Propagate from bottom.
                 Distance bottom_dist = dist_line[x + width];
                 uint32_t sqdist_bottom = prev_sqdist_line[x];
                 sqdist_bottom += VERTICAL_SCALE_SQ + 2 * VERTICAL_SCALE_SQ * int(bottom_dist.vec.y);
@@ -442,8 +452,9 @@ namespace {
                     cmap_line[x] = cmap_line[x + width];
                 }
             }
-
+            // Left to right scan.
             for (int x = 1; x < width - 1; ++x) {
+                // Propagate from left.
                 Distance left_dist = dist_line[x - 1];
                 uint32_t sqdist_left = this_sqdist_line[x - 1];
                 sqdist_left += 1 - (int(left_dist.vec.x) << 1);
@@ -459,7 +470,7 @@ namespace {
 
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
-    }      // voronoi
+    }  // voronoi
 
     void voronoiSpecial(ConnectivityMap& cmap, std::vector<Distance>& dist, Distance const special_distance) {
         int const width = cmap.size().width() + 2;
@@ -480,6 +491,7 @@ namespace {
                                   - (int(dist_line[x - 1].vec.x) << 1) + 1;
         }
 
+        // Top to bottom scan.
         for (int y = 1; y < height - 1; ++y) {
             dist_line += width;
             cmap_line += width;
@@ -487,13 +499,14 @@ namespace {
             dist_line[width - 1].reset(width - 1);
             this_sqdist_line[0] = dist_line[0].sqdist();
             this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+            // Left to right scan.
             for (int x = 1; x < width - 1; ++x) {
                 if (dist_line[x] == special_distance) {
                     continue;
                 }
 
                 this_sqdist_line[x] = dist_line[x].sqdist();
-
+                // Propagate from left.
                 Distance left_dist = dist_line[x - 1];
                 if (left_dist != special_distance) {
                     uint32_t sqdist_left = this_sqdist_line[x - 1];
@@ -506,7 +519,7 @@ namespace {
                         cmap_line[x] = cmap_line[x - 1];
                     }
                 }
-
+                // Propagate from top.
                 Distance top_dist = dist_line[x - width];
                 if (top_dist != special_distance) {
                     uint32_t sqdist_top = prev_sqdist_line[x];
@@ -521,11 +534,12 @@ namespace {
                 }
             }
 
+            // Right to left scan.
             for (int x = width - 2; x >= 1; --x) {
                 if (dist_line[x] == special_distance) {
                     continue;
                 }
-
+                // Propagate from right.
                 Distance right_dist = dist_line[x + 1];
                 if (right_dist != special_distance) {
                     uint32_t sqdist_right = this_sqdist_line[x + 1];
@@ -543,6 +557,7 @@ namespace {
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
 
+        // Bottom to top scan.
         for (int y = height - 2; y >= 1; --y) {
             dist_line -= width;
             cmap_line -= width;
@@ -550,13 +565,14 @@ namespace {
             dist_line[width - 1].reset(width - 1);
             this_sqdist_line[0] = dist_line[0].sqdist();
             this_sqdist_line[width - 1] = dist_line[width - 1].sqdist();
+            // Right to left scan.
             for (int x = width - 2; x >= 1; --x) {
                 if (dist_line[x] == special_distance) {
                     continue;
                 }
 
                 this_sqdist_line[x] = dist_line[x].sqdist();
-
+                // Propagate from right.
                 Distance right_dist = dist_line[x + 1];
                 if (right_dist != special_distance) {
                     uint32_t sqdist_right = this_sqdist_line[x + 1];
@@ -569,7 +585,7 @@ namespace {
                         cmap_line[x] = cmap_line[x + 1];
                     }
                 }
-
+                // Propagate from bottom.
                 Distance bottom_dist = dist_line[x + width];
                 if (bottom_dist != special_distance) {
                     uint32_t sqdist_bottom = prev_sqdist_line[x];
@@ -584,11 +600,12 @@ namespace {
                 }
             }
 
+            // Left to right scan.
             for (int x = 1; x < width - 1; ++x) {
                 if (dist_line[x] == special_distance) {
                     continue;
                 }
-
+                // Propagate from left.
                 Distance left_dist = dist_line[x - 1];
                 if (left_dist != special_distance) {
                     uint32_t sqdist_left = this_sqdist_line[x - 1];
@@ -605,7 +622,7 @@ namespace {
 
             std::swap(this_sqdist_line, prev_sqdist_line);
         }
-    }      // voronoiSpecial
+    }  // voronoiSpecial
 
 /**
  * Calculate the minimum distance between components from neighboring
@@ -633,6 +650,8 @@ namespace {
                     int const nbh_offset = offset + offsets[i];
                     uint32_t const nbh_label = cmap_data[nbh_offset];
                     if ((nbh_label == 0) || (nbh_label == label)) {
+                        // label 0 can be encountered in
+                        // padding lines.
                         continue;
                     }
 
@@ -646,7 +665,7 @@ namespace {
                 }
             }
         }
-    }      // voronoiDistances
+    }  // voronoiDistances
 }  // namespace
 
 BinaryImage Despeckle::despeckle(BinaryImage const& src,
@@ -669,6 +688,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
     ConnectivityMap cmap(image, CONN8);
     if (cmap.maxLabel() == 0) {
+        // Completely white image?
         return;
     }
 
@@ -682,6 +702,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
     uint32_t* const cmap_data = cmap.data();
 
+    // Count the number of pixels and a bounding rect of each component.
     uint32_t* cmap_line = cmap_data;
     int const cmap_stride = cmap.stride();
     for (int y = 0; y < height; ++y) {
@@ -695,6 +716,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
     status.throwIfCancelled();
 
+    // Unify big components into one.
     std::vector<uint32_t> remapping_table(components.size());
     uint32_t unified_big_component = 0;
     uint32_t next_avail_component = 1;
@@ -709,17 +731,19 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
                 unified_big_component = next_avail_component;
                 ++next_avail_component;
                 components[unified_big_component] = components[label];
+                // Set num_pixels to a large value so that canBeAttachedTo()
+                // always allows attaching to any such component.
                 components[unified_big_component].num_pixels = width * height;
             }
             remapping_table[label] = unified_big_component;
         }
     }
     components.resize(next_avail_component);
-    std::vector<BoundingBox>().swap(bounding_boxes);
+    std::vector<BoundingBox>().swap(bounding_boxes);  // We don't need them any more.
     status.throwIfCancelled();
 
     uint32_t const max_label = next_avail_component - 1;
-
+    // Remapping individual pixels.
     cmap_line = cmap_data;
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
@@ -732,7 +756,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
     }
 
     status.throwIfCancelled();
-
+    // Build a Voronoi diagram.
     std::vector<Distance> distance_matrix;
     voronoi(cmap, distance_matrix);
     if (dbg) {
@@ -743,14 +767,17 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
     Distance* const distance_data = &distance_matrix[0] + width + 3;
 
+    // Now build a bidirectional map of distances between neighboring
+    // connected components.
 
-    typedef std::map<Connection, uint32_t> Connections;
+    typedef std::map<Connection, uint32_t> Connections;  // conn -> sqdist
     Connections conns;
 
     voronoiDistances(cmap, distance_matrix, conns);
 
     status.throwIfCancelled();
 
+    // Tag connected components with ANCHORED_TO_BIG or ANCHORED_TO_SMALL.
     for (Connections::value_type const& pair : conns) {
         Connection const conn(pair.first);
         uint32_t const sqdist = pair.second;
@@ -760,6 +787,8 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
         tagSourceComponent(comp2, comp1, sqdist, settings);
     }
 
+    // Prevent it from growing when we compute the Voronoi diagram
+    // the second time.
     components[unified_big_component].setAnchoredToBig();
 
     bool have_anchored_to_small_but_not_big = false;
@@ -770,6 +799,9 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
     if (have_anchored_to_small_but_not_big) {
         status.throwIfCancelled();
 
+        // Give such components a second chance.  Maybe they do have
+        // big neighbors, but Voronoi regions from a smaller ones
+        // block the path to the bigger ones.
 
         Distance const zero_distance(Distance::zero());
         Distance const special_distance(Distance::special());
@@ -781,8 +813,14 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
                 Component const& comp = components[label];
                 if (!comp.anchoredToSmallButNotBig()) {
                     if (distance_data[offset] == zero_distance) {
+                        // Prevent this region from growing
+                        // and from being taken over by another
+                        // by another region.
                         distance_data[offset] = special_distance;
                     } else {
+                        // Allow this region to be taken over by others.
+                        // Note: x + 1 here is equivalent to x
+                        // in voronoi() or voronoiSpecial().
                         distance_data[offset].reset(x + 1);
                     }
                 }
@@ -791,6 +829,10 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
         status.throwIfCancelled();
 
+        // Calculate the Voronoi diagram again, but this time
+        // treat pixels with a special distance in such a way
+        // to prevent them from spreading but also preventing
+        // them from being overwritten.
         voronoiSpecial(cmap, distance_matrix, special_distance);
         if (dbg) {
             dbg->add(cmap.visualized(), "voronoi_special");
@@ -798,17 +840,23 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
         status.throwIfCancelled();
 
+        // We've got new connections.  Add them to the map.
         voronoiDistances(cmap, distance_matrix, conns);
     }
 
     status.throwIfCancelled();
 
+    // Clear the distance matrix.
     std::vector<Distance>().swap(distance_matrix);
 
+    // Remove tags from components.
     for (Component& comp : components) {
         comp.clearTags();
     }
-
+    // Build a directional connection map and only include
+    // good connections, that is those with a small enough
+    // distance.
+    // While at it, clear the bidirectional connection map.
     std::vector<TargetSourceConn> target_source;
     while (!conns.empty()) {
         Connections::iterator const it(conns.begin());
@@ -830,6 +878,8 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
 
     status.throwIfCancelled();
 
+    // Create an index for quick access to a group of connections
+    // with a specified target.
     std::vector<size_t> target_source_idx;
     size_t const num_target_sources = target_source.size();
     uint32_t prev_label = uint32_t(0) - 1;
@@ -845,7 +895,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
          label <= max_label; ++label) {
         target_source_idx.push_back(num_target_sources);
     }
-
+    // Labels of components that are to be retained.
     FastQueue<uint32_t> ok_labels;
     ok_labels.push(unified_big_component);
 
@@ -869,7 +919,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
     }
 
     status.throwIfCancelled();
-
+    // Remove unmarked components from the binary image.
     uint32_t const msb = uint32_t(1) << 31;
     uint32_t* image_line = image.data();
     int const image_stride = image.wordsPerLine();
@@ -883,5 +933,5 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
         image_line += image_stride;
         cmap_line += cmap_stride;
     }
-}  // Despeckle::despeckleInPlace
+} // Despeckle::despeckleInPlace
 

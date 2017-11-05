@@ -42,5 +42,5 @@ namespace fix_orientation {
         ZoomHandler m_zoomHandler;
         ImageTransformation m_xform;
     };
-}
+}  // namespace fix_orientation
 #endif

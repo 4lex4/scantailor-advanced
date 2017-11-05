@@ -60,9 +60,11 @@ namespace page_layout {
                 tr("Resize margins by dragging any of the solid lines.")
         );
 
+        // Setup interaction stuff.
         static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
         static int const masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
         for (int i = 0; i < 4; ++i) {
+            // Proximity priority - inner rect higher than middle, corners higher than edges.
             m_innerCorners[i].setProximityPriorityCallback(
                     boost::lambda::constant(4)
             );
@@ -76,6 +78,7 @@ namespace page_layout {
                     boost::lambda::constant(1)
             );
 
+            // Proximity.
             m_innerCorners[i].setProximityCallback(
                     boost::bind(&ImageView::cornerProximity, this, masks_by_corner[i], &m_innerRect, _1)
             );
@@ -88,7 +91,7 @@ namespace page_layout {
             m_middleEdges[i].setProximityCallback(
                     boost::bind(&ImageView::edgeProximity, this, masks_by_edge[i], &m_middleRect, _1)
             );
-
+            // Drag initiation.
             m_innerCorners[i].setDragInitiatedCallback(
                     boost::bind(&ImageView::dragInitiated, this, _1)
             );
@@ -102,6 +105,7 @@ namespace page_layout {
                     boost::bind(&ImageView::dragInitiated, this, _1)
             );
 
+            // Drag continuation.
             m_innerCorners[i].setDragContinuationCallback(
                     boost::bind(&ImageView::innerRectDragContinuation, this, masks_by_corner[i], _1)
             );
@@ -114,7 +118,7 @@ namespace page_layout {
             m_middleEdges[i].setDragContinuationCallback(
                     boost::bind(&ImageView::middleRectDragContinuation, this, masks_by_edge[i], _1)
             );
-
+            // Drag finishing.
             m_innerCorners[i].setDragFinishedCallback(
                     boost::bind(&ImageView::dragFinished, this)
             );
@@ -239,6 +243,9 @@ namespace page_layout {
         QColor bg_color;
         QColor fg_color;
         if (m_alignment.isNull()) {
+            // "Align with other pages" is turned off.
+            // Different color is useful on a thumbnail list to
+            // distinguish "safe" pages from potentially problematic ones.
             bg_color = QColor(0x58, 0x7f, 0xf4, 70);
             fg_color = QColor(0x00, 0x52, 0xff);
         } else {
@@ -275,7 +282,7 @@ namespace page_layout {
             painter.setPen(pen);
             painter.drawRect(m_outerRect);
         }
-    }      // ImageView::onPaint
+    }  // ImageView::onPaint
 
     Proximity ImageView::cornerProximity(int const edge_mask, QRectF const* box, QPointF const& mouse_pos) const {
         QRectF const r(virtualToWidget().mapRect(*box));
@@ -333,6 +340,10 @@ namespace page_layout {
     }
 
     void ImageView::innerRectDragContinuation(int edge_mask, QPointF const& mouse_pos) {
+        // What really happens when we resize the inner box is resizing
+        // the middle box in the opposite direction and moving the scene
+        // on screen so that the object being dragged is still under mouse.
+
         QPointF const delta(mouse_pos - m_beforeResizing.mousePos);
         qreal left_adjust = 0;
         qreal right_adjust = 0;
@@ -384,6 +395,8 @@ namespace page_layout {
             effective_dy = old_widget_rect.bottom() - widget_rect.bottom();
         }
 
+        // Updating the focal point is what makes the image move
+        // as we drag an inner edge.
         QPointF fp(m_beforeResizing.focalPoint);
         fp += QPointF(effective_dx, effective_dy);
         setWidgetFocalPoint(fp);
@@ -397,7 +410,7 @@ namespace page_layout {
         updatePresentationTransform(DONT_FIT);
 
         emit marginsSetLocally(calcHardMarginsMM());
-    }      // ImageView::innerRectDragContinuation
+    }  // ImageView::innerRectDragContinuation
 
     void ImageView::middleRectDragContinuation(int const edge_mask, QPointF const& mouse_pos) {
         QPointF const delta(mouse_pos - m_beforeResizing.mousePos);
@@ -449,7 +462,7 @@ namespace page_layout {
             widget_rect.adjust(left_adjust, top_adjust, right_adjust, bottom_adjust);
 
             m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
-            forceNonNegativeHardMargins(m_middleRect);
+            forceNonNegativeHardMargins(m_middleRect);  // invalidates widget_rect
         }
 
         m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM(
@@ -461,7 +474,7 @@ namespace page_layout {
         updatePresentationTransform(DONT_FIT);
 
         emit marginsSetLocally(calcHardMarginsMM());
-    }      // ImageView::middleRectDragContinuation
+    }  // ImageView::middleRectDragContinuation
 
     void ImageView::dragFinished() {
         AggregateSizeChanged const agg_size_changed(
@@ -580,7 +593,7 @@ namespace page_layout {
         margins.setRight(virt_to_mm.map(right_margin_line).length());
 
         return margins;
-    }      // ImageView::calcHardMarginsMM
+    }  // ImageView::calcHardMarginsMM
 
 /**
  * \brief Recalculates m_outerRect based on m_middleRect, m_aggregateHardSizeMM

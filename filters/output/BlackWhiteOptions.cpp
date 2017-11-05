@@ -146,7 +146,7 @@ namespace output {
     void BlackWhiteOptions::setWhiteOnBlackMode(bool whiteOnBlackMode) {
         BlackWhiteOptions::whiteOnBlackMode = whiteOnBlackMode;
     }
-    
+
     BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
         return binarizationMethod;
     }

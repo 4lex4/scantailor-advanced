@@ -70,7 +70,7 @@ namespace imageproc {
                 double new_B = new_Y + U * wu;
                 double new_G = (new_Y - new_R * wr - new_B * wb) * r_wg;
 
-                RGB &= 0xFF000000;
+                RGB &= 0xFF000000;  // preserve alpha
                 RGB |= uint32_t(qBound(0, int(new_R + 0.5), 255)) << 16;
                 RGB |= uint32_t(qBound(0, int(new_G + 0.5), 255)) << 8;
                 RGB |= uint32_t(qBound(0, int(new_B + 0.5), 255));
@@ -79,7 +79,7 @@ namespace imageproc {
             rgb_line += rgb_wpl;
             br_line += br_bpl;
         }
-    }      // adjustBrightness
+    }  // adjustBrightness
 
     void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness) {
         adjustBrightness(rgb_image, brightness, 0.299, 0.114);

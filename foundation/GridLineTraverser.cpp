@@ -25,10 +25,12 @@ GridLineTraverser::GridLineTraverser(QLineF const& line) {
     int h_spans, v_spans, num_spans;
     double s1 = 0.0, s2 = 0.0;
     if ((h_spans = abs(p1.x() - p2.x())) > (v_spans = abs(p1.y() - p2.y()))) {
+        // Major direction: horizontal.
         num_spans = h_spans;
         lineIntersectionScalar(line, QLineF(p1, QPoint(p1.x(), p1.y() + 1)), s1);
         lineIntersectionScalar(line, QLineF(p2, QPoint(p2.x(), p2.y() + 1)), s2);
     } else {
+        // Major direction: vertical.
         num_spans = v_spans;
         lineIntersectionScalar(line, QLineF(p1, QPoint(p1.x() + 1, p1.y())), s1);
         lineIntersectionScalar(line, QLineF(p2, QPoint(p2.x() + 1, p2.y())), s2);

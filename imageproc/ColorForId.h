@@ -44,5 +44,5 @@ namespace imageproc {
 
         return color;
     }
-}
+}  // namespace imageproc
 #endif

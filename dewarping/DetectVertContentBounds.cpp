@@ -70,7 +70,7 @@ namespace dewarping {
 
         struct RansacModel {
             std::vector<Segment> segments;
-            int totalVertDist;
+            int totalVertDist;  // Sum of individual Segment::vertDist
 
             RansacModel()
                     : totalVertDist(0) {
@@ -137,9 +137,10 @@ namespace dewarping {
 
             QLineF interpolateSegments(std::vector<Segment> const& segments) const;
 
+            // Top and bottom points on the leftmost or the rightmost line.
             QPoint m_leadingTop;
             QPoint m_leadingBottom;
-            std::deque<QPoint> m_path;
+            std::deque<QPoint> m_path;  // Top to bottom.
             int m_maxSegmentSqLen;
             int m_leftMinusOneRightOne;
             LeftOrRight m_leftOrRight;
@@ -185,7 +186,7 @@ namespace dewarping {
                 m_leadingBottom = QPoint(x, range.bottom);
                 m_path.push_front(m_leadingTop);
 
-                if (range.top != range.bottom) {
+                if (range.top != range.bottom) {  // We don't want zero length segments in m_path.
                     m_path.push_back(m_leadingBottom);
                 }
 
@@ -193,8 +194,10 @@ namespace dewarping {
             }
 
             if (range.top < m_path.front().y()) {
+                // Growing towards the top.
                 QPoint const top(x, range.top);
-
+                // Now we decide if we need to trim the path before
+                // adding a new element to it to preserve convexity.
                 size_t const size = m_path.size();
                 size_t mid_idx = 0;
                 size_t bottom_idx = 1;
@@ -205,6 +208,8 @@ namespace dewarping {
                     }
                 }
 
+                // We avoid trimming the path too much.  This helps cases like a heading
+                // wider than the rest of the text.
                 if (!segmentIsTooLong(top, m_path[mid_idx])) {
                     m_path.erase(m_path.begin(), m_path.begin() + mid_idx);
                 }
@@ -213,8 +218,11 @@ namespace dewarping {
             }
 
             if (range.bottom > m_path.back().y()) {
+                // Growing towards the bottom.
                 QPoint const bottom(x, range.bottom);
 
+                // Now we decide if we need to trim the path before
+                // adding a new element to it to preserve convexity.
                 int mid_idx = m_path.size() - 1;
                 int top_idx = mid_idx - 1;
 
@@ -223,14 +231,15 @@ namespace dewarping {
                         break;
                     }
                 }
-
+                // We avoid trimming the path too much.  This helps cases like a heading
+                // wider than the rest of the text.
                 if (!segmentIsTooLong(bottom, m_path[mid_idx])) {
                     m_path.erase(m_path.begin() + (mid_idx + 1), m_path.end());
                 }
 
                 m_path.push_back(bottom);
             }
-        }          // SequentialColumnProcessor::process
+        }  // SequentialColumnProcessor::process
 
         bool SequentialColumnProcessor::topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const {
             int const cross_z = crossZ(mid - top, bottom - mid);
@@ -256,7 +265,7 @@ namespace dewarping {
 
             std::vector<Segment> segments;
             segments.reserve(num_points);
-
+            // Collect line segments from m_path and convert them to unit vectors.
             for (size_t i = 1; i < num_points; ++i) {
                 QPoint const pt1(m_path[i - 1]);
                 QPoint const pt2(m_path[i]);
@@ -264,6 +273,7 @@ namespace dewarping {
 
                 Vec2d vec(pt2 - pt1);
                 if (fabs(vec[0]) > fabs(vec[1])) {
+                    // We don't want segments that are more horizontal than vertical.
                     continue;
                 }
 
@@ -272,8 +282,14 @@ namespace dewarping {
             }
 
 
+            // Run RANSAC on the segments.
+
             RansacAlgo ransac(segments);
-            qsrand(0);
+            qsrand(0);  // Repeatablity is important.
+
+            // We want to make sure we do pick a few segments closest
+            // to the edge, so let's sort segments appropriately
+            // and manually feed the best ones to RANSAC.
             size_t const num_best_segments = std::min<size_t>(6, segments.size());
             std::partial_sort(
                     segments.begin(), segments.begin() + num_best_segments, segments.end(),
@@ -283,7 +299,7 @@ namespace dewarping {
             for (size_t i = 0; i < num_best_segments; ++i) {
                 ransac.buildAndAssessModel(segments[i]);
             }
-
+            // Continue with random samples.
             int const ransac_iterations = segments.empty() ? 0 : 200;
             for (int i = 0; i < ransac_iterations; ++i) {
                 ransac.buildAndAssessModel(segments[qrand() % segments.size()]);
@@ -296,15 +312,17 @@ namespace dewarping {
             QLineF const line(interpolateSegments(ransac.bestModel().segments));
 
             if (dbg_segments) {
+                // Has to be the last thing we do with best model.
                 dbg_segments->swap(ransac.bestModel().segments);
             }
 
             return line;
-        }          // SequentialColumnProcessor::approximateWithLine
+        }  // SequentialColumnProcessor::approximateWithLine
 
         QLineF SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segments) const {
             assert(!segments.empty());
 
+            // First, interpolate the angle of segments.
             Vec2d accum_vec;
             double accum_weight = 0;
 
@@ -322,7 +340,8 @@ namespace dewarping {
             if ((m_leftOrRight == RIGHT) != (normal[0] < 0)) {
                 normal = -normal;
             }
-
+            // normal now points *inside* the image, towards the other bound.
+            // Now find the vertex in m_path through which our line should pass.
             for (QPoint const& pt : m_path) {
                 if (normal.dot(pt - line.p1()) < 0) {
                     line.setP1(pt);
@@ -377,6 +396,7 @@ namespace dewarping {
             return canvas;
         }
 
+// For every column in the image, store the top-most and bottom-most black pixel.
         void calculateVertRanges(imageproc::BinaryImage const& image, std::vector<VertRange>& ranges) {
             int const width = image.width();
             int const height = image.height();
@@ -410,7 +430,7 @@ namespace dewarping {
                     }
                 }
             }
-        }          // calculateVertRanges
+        }  // calculateVertRanges
 
         QLineF extendLine(QLineF const& line, int height) {
             QPointF top_intersection;
@@ -469,5 +489,5 @@ namespace dewarping {
         }
 
         return bounds;
-    }      // detectVertContentBounds
+    }  // detectVertContentBounds
 }  // namespace dewarping

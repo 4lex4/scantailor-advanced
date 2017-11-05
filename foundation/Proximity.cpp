@@ -23,11 +23,12 @@
 Proximity::Proximity(QPointF const& p1, QPointF const& p2) {
     double const dx = p1.x() - p2.x();
     double const dy = p1.y() - p2.y();
-    m_sqDist = dx * dx + dy * dy;
+    m_sqDist = dx * dx + dy * dy;  // dx * dy;
 }
 
 Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment) {
     if (segment.p1() == segment.p2()) {
+        // Line segment is zero length.
         if (point_on_segment) {
             *point_on_segment = segment.p1();
         }
@@ -37,9 +38,10 @@ Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segmen
 
     QLineF perpendicular(segment.normalVector());
 
+    // Make the perpendicular pass through pt.
     perpendicular.translate(-perpendicular.p1());
     perpendicular.translate(pt);
-
+    // Calculate intersection.
     QPointF intersection;
     segment.intersect(perpendicular, &intersection);
 
@@ -50,6 +52,7 @@ Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segmen
     double const dx12 = dx1 * dx2;
     double const dy12 = dy1 * dy2;
     if ((dx12 < 0.0) || (dy12 < 0.0) || ((dx12 == 0.0) && (dy12 == 0.0))) {
+        // Intersection is on the segment.
         if (point_on_segment) {
             *point_on_segment = intersection;
         }
@@ -71,5 +74,5 @@ Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segmen
     }
 
     return *p_min_prx;
-}  // Proximity::pointAndLineSegment
+} // Proximity::pointAndLineSegment
 

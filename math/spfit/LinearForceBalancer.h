@@ -27,6 +27,7 @@ namespace spfit {
  *  over time.
  */
     class LinearForceBalancer {
+        // Member-wise copying is OK.
     public:
         /**
          * Sets both the current and the target ratio, so that it doesn't change over time.
@@ -70,4 +71,4 @@ namespace spfit {
         int m_iterationsToTarget;
     };
 }  // namespace spfit
-#endif  // ifndef SPFIT_LINEAR_FORCE_BALANCER_H_
+#endif // ifndef SPFIT_LINEAR_FORCE_BALANCER_H_

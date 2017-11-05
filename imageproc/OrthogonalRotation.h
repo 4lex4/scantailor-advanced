@@ -47,5 +47,5 @@ namespace imageproc {
  * It rotates the whole image, not a portion of it.
  */
     BinaryImage orthogonalRotation(BinaryImage const& src, int degrees);
-}
+}  // namespace imageproc
 #endif

@@ -27,6 +27,8 @@ namespace adiff {
         BOOST_AUTO_TEST_SUITE(AutomaticDifferentiationTestSuite);
 
             BOOST_AUTO_TEST_CASE(test1) {
+                // F(x) = x^2  | x = 3
+
                 SparseMap<2> sparse_map(1);
                 sparse_map.markAllNonZero();
 
@@ -36,6 +38,9 @@ namespace adiff {
                 VecT<double> const gradient(res.gradient(sparse_map));
                 MatT<double> const hessian(res.hessian(sparse_map));
 
+                // F = 9
+                // Fx = 2 * x = 6
+                // Fxx = 2
 
                 BOOST_REQUIRE_CLOSE(res.value, 9, 1e-06);
                 BOOST_REQUIRE_CLOSE(gradient[0], 6, 1e-06);
@@ -43,6 +48,8 @@ namespace adiff {
             }
 
             BOOST_AUTO_TEST_CASE(test2) {
+                // F(x, y) = x^2  | x = 3
+
                 SparseMap<2> sparse_map(2);
                 sparse_map.markAllNonZero();
 
@@ -52,6 +59,12 @@ namespace adiff {
                 VecT<double> const gradient(res.gradient(sparse_map));
                 MatT<double> const hessian(res.hessian(sparse_map));
 
+                // F = 9
+                // Fx = 2 * x = 6
+                // Fy = 0
+                // Fxx = 2
+                // Fyy = 0
+                // Fxy = 0
 
                 BOOST_REQUIRE_CLOSE(res.value, 9, 1e-06);
                 BOOST_REQUIRE_CLOSE(gradient[0], 6, 1e-06);
@@ -63,6 +76,8 @@ namespace adiff {
             }
 
             BOOST_AUTO_TEST_CASE(test3) {
+                // F(x, y) = x^3 * y^2   | x = 2, y = 3
+
                 SparseMap<2> sparse_map(2);
                 sparse_map.markAllNonZero();
 
@@ -75,6 +90,12 @@ namespace adiff {
                 VecT<double> const gradient(res.gradient(sparse_map));
                 MatT<double> const hessian(res.hessian(sparse_map));
 
+                // F = 72
+                // Fx = 3 * x^2 * y^2 = 108
+                // Fy = 2 * y * x^3 = 48
+                // Fxx = 6 * x * y^2 = 108
+                // Fyy = 2 * x^3 = 16
+                // Fyx = 6 * y * x^2 = 72
 
                 BOOST_REQUIRE_CLOSE(res.value, 72, 1e-06);
                 BOOST_REQUIRE_CLOSE(gradient[0], 108, 1e-06);

@@ -108,12 +108,14 @@ T* DynamicPool<T>::alloc(size_t num_elements) {
     }
 
     if (!chunk) {
+        // Create a new chunk.
         size_t const chunk_size = adviseChunkSize(num_elements);
         boost::scoped_array<T> data(new T[chunk_size]);
         chunk = &*m_chunkList.insert(m_chunkList.end(), *new Chunk);
         chunk->init(data, chunk_size);
     }
 
+    // Allocate from chunk.
     T* data = chunk->pData;
     chunk->pData += num_elements;
     chunk->remainingElements -= num_elements;
@@ -131,4 +133,4 @@ size_t DynamicPool<T>::adviseChunkSize(size_t num_elements) {
     return num_elements * (factor + 1);
 }
 
-#endif  // ifndef DYNAMIC_POOL_H_
+#endif // ifndef DYNAMIC_POOL_H_

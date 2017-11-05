@@ -27,6 +27,8 @@ namespace spfit {
             throw std::invalid_argument("PolylineModelShape: polyline must have at least 2 vertices");
         }
 
+        // We build an interpolating X-spline with control points at the vertices
+        // of our polyline.  We'll use it to calculate curvature at polyline vertices.
         XSpline spline;
 
         for (QPointF const& pt : polyline) {
@@ -46,11 +48,13 @@ namespace spfit {
             return SqDistApproximant();
         }
 
+        // First, find the point on the polyline closest to pt.
         QPointF best_foot_point;
         double best_sqdist = NumericTraits<double>::max();
         double segment_t = -1;
-        int segment_idx = -1;
-        int vertex_idx = -1;
+        int segment_idx = -1;  // If best_foot_point is on a segment, its index goes here.
+        int vertex_idx = -1;  // If best_foot_point is a vertex, its index goes here.
+        // Project pt to each segment.
         int const num_segments = int(m_vertices.size()) - 1;
         for (int i = 0; i < num_segments; ++i) {
             QPointF const pt1(m_vertices[i].point);
@@ -70,7 +74,7 @@ namespace spfit {
                 }
             }
         }
-
+        // Check if pt is closer to a vertex than to any segment.
         int const num_points = m_vertices.size();
         for (int i = 0; i < num_points; ++i) {
             QPointF const vtx(m_vertices[i].point);
@@ -85,6 +89,7 @@ namespace spfit {
         }
 
         if (segment_idx != -1) {
+            // The foot point is on a line segment.
             assert(segment_t >= 0 && segment_t <= 1);
 
             XSpline::PointAndDerivs const& pd1 = m_vertices[segment_idx];
@@ -97,6 +102,7 @@ namespace spfit {
 
             return calcApproximant(pt, sample_flags, DEFAULT_FLAGS, frenet_frame, weighted_k);
         } else {
+            // The foot point is a vertex of the polyline.
             assert(vertex_idx != -1);
 
             XSpline::PointAndDerivs const& pd = m_vertices[vertex_idx];
@@ -112,7 +118,7 @@ namespace spfit {
 
             return calcApproximant(pt, sample_flags, polyline_flags, frenet_frame, pd.signedCurvature());
         }
-    }      // PolylineModelShape::localSqDistApproximant
+    }  // PolylineModelShape::localSqDistApproximant
 
     SqDistApproximant PolylineModelShape::calcApproximant(QPointF const& pt,
                                                           FittableSpline::SampleFlags const sample_flags,

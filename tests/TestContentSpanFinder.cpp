@@ -33,10 +33,9 @@ namespace Tests {
             std::vector<Span> spans;
             span_finder.find(
                     SlicedHistogram(),
-            [&](Span const& span)
-        {
-            spans.push_back(span);
-        }
+                    [&](Span const& span) {
+                        spans.push_back(span);
+                    }
             );
 
             BOOST_CHECK(spans.empty());
@@ -59,11 +58,10 @@ namespace Tests {
             span_finder.setMinContentWidth(2);
 
             std::vector<Span> spans;
-        span_finder.find(hist, [&](Span const& span)
-        {
-            spans.push_back(span);
-        }
-        );
+            span_finder.find(hist, [&](Span const& span) {
+                                 spans.push_back(span);
+                             }
+            );
 
             BOOST_REQUIRE(spans.size() == 2);
             BOOST_REQUIRE(spans[0] == Span(3, 3 + 3));
@@ -87,11 +85,10 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-        span_finder.find(hist, [&](Span const& span)
-        {
-            spans.push_back(span);
-        }
-        );
+            span_finder.find(hist, [&](Span const& span) {
+                                 spans.push_back(span);
+                             }
+            );
 
             BOOST_REQUIRE(spans.size() == 2);
             BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
@@ -116,12 +113,14 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-        span_finder.find(hist, [&](Span const& span)
-        {
-            spans.push_back(span);
-        }
-        );
+            span_finder.find(hist, [&](Span const& span) {
+                                 spans.push_back(span);
+                             }
+            );
 
+            // Note that although a content block at index 1 is too short,
+            // it's still allowed to merge with content at positions 3 and 4
+            // because the whitespace between them is too short as well.
 
             BOOST_REQUIRE(spans.size() == 1);
             BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));

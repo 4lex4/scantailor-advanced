@@ -107,6 +107,8 @@ namespace page_split {
         PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
         if ((it == m_perPageRecords.end())
             || m_perPageRecords.key_comp()(image_id, it->first)) {
+            // No record exists for this page.
+
             Record record(m_defaultLayoutType);
             record.update(action);
 
@@ -120,6 +122,7 @@ namespace page_split {
                 );
             }
         } else {
+            // A record was found.
             updatePageLocked(it, action);
         }
     }
@@ -145,6 +148,8 @@ namespace page_split {
         PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
         if ((it == m_perPageRecords.end())
             || m_perPageRecords.key_comp()(image_id, it->first)) {
+            // No record exists for this page.
+
             Record record(m_defaultLayoutType);
             record.update(action);
 
@@ -168,6 +173,8 @@ namespace page_split {
 
             return record;
         } else {
+            // A record was found.
+
             Record record(it->second, m_defaultLayoutType);
             record.update(action);
 
@@ -193,7 +200,7 @@ namespace page_split {
                 return record;
             }
         }
-    }      // Settings::conditionalUpdate
+    }  // Settings::conditionalUpdate
 
 /*======================= Settings::BaseRecord ======================*/
 
@@ -216,10 +223,12 @@ namespace page_split {
 
     bool Settings::BaseRecord::hasLayoutTypeConflict(LayoutType const layout_type) const {
         if (!m_paramsValid) {
+            // No data - no conflict.
             return false;
         }
 
         if (layout_type == AUTO_LAYOUT_TYPE) {
+            // This one is compatible with everything.
             return false;
         }
 

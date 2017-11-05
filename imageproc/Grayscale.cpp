@@ -39,6 +39,7 @@ namespace imageproc {
         uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
             if (qGray(src.color(0)) > qGray(src.color(1))) {
+                // if color 0 is lighter than color 1
                 bin2gray[0] = 0xff;
                 bin2gray[1] = 0;
             }
@@ -60,7 +61,7 @@ namespace imageproc {
         dst.setDotsPerMeterY(src.dotsPerMeterY());
 
         return dst;
-    }      // monoMsbToGrayscale
+    }  // monoMsbToGrayscale
 
     static QImage monoLsbToGrayscale(QImage const& src) {
         int const width = src.width();
@@ -80,6 +81,7 @@ namespace imageproc {
         uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
             if (qGray(src.color(0)) > qGray(src.color(1))) {
+                // if color 0 is lighter than color 1
                 bin2gray[0] = 0xff;
                 bin2gray[1] = 0;
             }
@@ -101,7 +103,7 @@ namespace imageproc {
         dst.setDotsPerMeterY(src.dotsPerMeterY());
 
         return dst;
-    }      // monoLsbToGrayscale
+    }  // monoLsbToGrayscale
 
     static QImage anyToGrayscale(QImage const& src) {
         int const width = src.width();
@@ -162,6 +164,7 @@ namespace imageproc {
                         return dst;
                     }
                 }
+                // fall though
             default:
                 return anyToGrayscale(src);
         }
@@ -238,7 +241,7 @@ namespace imageproc {
         }
 
         return dst;
-    }      // stretchGrayRange
+    }  // stretchGrayRange
 
     GrayImage createFramedImage(QSize const& size, unsigned char const inner_color, unsigned char const frame_color) {
         GrayImage image(size);
@@ -300,6 +303,7 @@ namespace imageproc {
                     fromGrayscaleImage(img);
                     break;
                 }
+                // fall though
             default:
                 fromAnyImage(img);
         }
@@ -330,6 +334,7 @@ namespace imageproc {
                     fromGrayscaleImage(img, mask);
                     break;
                 }
+                // fall though
             default:
                 fromAnyImage(img, mask);
         }
@@ -356,6 +361,7 @@ namespace imageproc {
                 num_bits_1 += countNonZeroBits(line[i]);
             }
 
+            // The last (possibly incomplete) byte.
             num_bits_1 += countNonZeroBits(line[i] & last_byte_mask);
         }
         int const num_bits_0 = w * h - num_bits_1;
@@ -369,7 +375,7 @@ namespace imageproc {
 
         m_pixels[qGray(color0)] = num_bits_0;
         m_pixels[qGray(color1)] = num_bits_1;
-    }      // GrayscaleHistogram::fromMonoImage
+    }  // GrayscaleHistogram::fromMonoImage
 
     void GrayscaleHistogram::fromMonoMSBImage(QImage const& img, BinaryImage const& mask) {
         int const w = img.width();
@@ -392,6 +398,7 @@ namespace imageproc {
                 num_bits_0 += countNonZeroBits(~line[i] & mask);
             }
 
+            // The last (possibly incomplete) word.
             uint32_t const mask = mask_line[i] & last_word_mask;
             num_bits_1 += countNonZeroBits(line[i] & mask);
             num_bits_0 += countNonZeroBits(~line[i] & mask);
@@ -406,7 +413,7 @@ namespace imageproc {
 
         m_pixels[qGray(color0)] = num_bits_0;
         m_pixels[qGray(color1)] = num_bits_1;
-    }      // GrayscaleHistogram::fromMonoMSBImage
+    }  // GrayscaleHistogram::fromMonoMSBImage
 
     void GrayscaleHistogram::fromGrayscaleImage(QImage const& img) {
         int const w = img.width();

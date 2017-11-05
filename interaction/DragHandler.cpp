@@ -69,6 +69,7 @@ void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interac
         QPointF adjusted_fp(m_rImageView.getWidgetFocalPoint());
         adjusted_fp += movement;
 
+        // These will call update() if necessary.
         if (event->modifiers() & Qt::ShiftModifier) {
             m_rImageView.setWidgetFocalPoint(adjusted_fp);
         } else {

@@ -32,9 +32,11 @@ public:
     }
 
     RefCountable(RefCountable const& other) {
+        // don't copy the reference counter!
     }
 
     void operator=(RefCountable const& other) {
+        // don't copy the reference counter!
     }
 
     virtual ~RefCountable() {
@@ -55,4 +57,4 @@ private:
 };
 
 
-#endif  // ifndef REFCOUNTABLE_H_
+#endif // ifndef REFCOUNTABLE_H_

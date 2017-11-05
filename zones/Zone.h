@@ -31,6 +31,7 @@ class QDomElement;
 class QString;
 
 class Zone {
+    // Member-wise copying is OK, but that will produce a partly shallow copy.
 public:
     Zone(SerializableSpline const& spline, PropertySet const& props = PropertySet());
 
@@ -60,4 +61,4 @@ private:
 };
 
 
-#endif  // ifndef ZONE_H_
+#endif // ifndef ZONE_H_

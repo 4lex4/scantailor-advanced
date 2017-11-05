@@ -91,6 +91,7 @@ namespace output {
 
         EditableZoneSet m_zones;
 
+        // Must go after m_zones.
         ZoneInteractionContext m_context;
 
         DragHandler m_dragHandler;
@@ -103,11 +104,11 @@ namespace output {
         QTransform m_potentialPictureMaskXform;
         QTimer m_pictureMaskRebuildTimer;
         QTimer m_pictureMaskAnimateTimer;
-        int m_pictureMaskAnimationPhase;
+        int m_pictureMaskAnimationPhase;  // degrees
         IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
 
         PageId m_pageId;
         IntrusivePtr<Settings> m_ptrSettings;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_
+#endif // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

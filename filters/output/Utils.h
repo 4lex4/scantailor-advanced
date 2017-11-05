@@ -38,5 +38,5 @@ namespace output {
 
         static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
     };
-}
+}  // namespace output
 #endif

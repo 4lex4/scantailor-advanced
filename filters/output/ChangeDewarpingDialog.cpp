@@ -60,7 +60,7 @@ namespace output {
         }
 
         ui.dewarpingPostDeskewCB->setChecked(dewarpingOptions.needPostDeskew());
-
+        // No, we don't leak memory here.
         new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::OFF);
         new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::AUTO);
         new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = DewarpingOptions::MANUAL);
@@ -93,6 +93,8 @@ namespace output {
 
         emit accepted(pages, m_dewarpingOptions);
 
+        // We assume the default connection from accepted() to accept()
+        // was removed.
         accept();
     }
 }  // namespace output

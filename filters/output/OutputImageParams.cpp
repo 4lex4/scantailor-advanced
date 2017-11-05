@@ -43,7 +43,8 @@ namespace output {
               m_depthPerception(depth_perception),
               m_dewarpingOptions(dewarping_options),
               m_despeckleLevel(despeckle_level) {
-        xform.setPostCropArea(QPolygonF());
+        // For historical reasons, we disregard post-cropping and post-scaling here.
+        xform.setPostCropArea(QPolygonF());  // Resets post-scale as well.
         m_partialXform = xform.transform();
     }
 
@@ -122,7 +123,7 @@ namespace output {
         }
 
         return true;
-    }      // OutputImageParams::matches
+    }  // OutputImageParams::matches
 
     bool OutputImageParams::colorParamsMatch(ColorParams const& cp1,
                                              DespeckleLevel const dl1,

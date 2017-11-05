@@ -32,9 +32,11 @@ int main(int argc, char** argv) {
     Application app(argc, argv);
 
 #ifdef _WIN32
+    // Get rid of all references to Qt's installation directory.
     app.setLibraryPaths(QStringList(app.applicationDirPath()));
 #endif
 
+    // parse command line arguments
     CommandLine cli(app.arguments());
     CommandLine::set(cli);
 
@@ -50,32 +52,34 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-	QString const translation("scantailor_"+QLocale::system().name());
-	QTranslator translator;
-	
-	// Try loading translations from different paths.
-	QStringList const translation_dirs(
-		QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
-	);
-	for (QString const& path : translation_dirs) {
-		QString absolute_path;
-		if (QDir::isAbsolutePath(path)) {
-			absolute_path = path;
-		} else {
-			absolute_path = app.applicationDirPath();
-			absolute_path += QChar('/');
-			absolute_path += path;
-		}
-		absolute_path += QChar('/');
-		absolute_path += translation;
+    QString const translation("scantailor_" + QLocale::system().name());
+    QTranslator translator;
 
-		if (translator.load(absolute_path)) {
-			break;
-		}
-	}
-	
-	app.installTranslator(&translator);
 
+    QStringList const translation_dirs(
+            // Now try loading from where it's supposed to be.
+            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
+    );
+    for (QString const& path : translation_dirs) {
+        QString absolute_path;
+        if (QDir::isAbsolutePath(path)) {
+            absolute_path = path;
+        } else {
+            absolute_path = app.applicationDirPath();
+            absolute_path += QChar('/');
+            absolute_path += path;
+        }
+        absolute_path += QChar('/');
+        absolute_path += translation;
+
+        if (translator.load(absolute_path)) {
+            break;
+        }
+    }
+
+    app.installTranslator(&translator);
+
+    // This information is used by QSettings.
     app.setApplicationName("scantailor");
     app.setOrganizationName("scantailor");
 
@@ -83,7 +87,7 @@ int main(int argc, char** argv) {
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
 
     QSettings settings;
-    
+
     PngMetadataLoader::registerMyself();
     TiffMetadataLoader::registerMyself();
     JpegMetadataLoader::registerMyself();
@@ -96,7 +100,7 @@ int main(int argc, char** argv) {
         } else {
             scheme.reset(new DarkScheme);
         }
-        
+
         ColorSchemeManager::instance()->setColorScheme(*scheme.release());
     }
 
@@ -118,5 +122,5 @@ int main(int argc, char** argv) {
     }
 
     return app.exec();
-}  // main
+} // main
 

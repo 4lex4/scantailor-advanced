@@ -29,6 +29,7 @@ ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, QString const& pro
 }
 
 ProjectOpeningContext::~ProjectOpeningContext() {
+    // Deleting a null pointer is OK.
     delete m_ptrFixDpiDialog;
 }
 

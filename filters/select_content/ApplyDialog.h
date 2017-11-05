@@ -56,5 +56,5 @@ namespace select_content {
         PageId m_curPage;
         QButtonGroup* m_pBtnGroup;
     };
-}
-#endif  // ifndef SELECT_CONTENT_APPLYDIALOG_H_
+}  // namespace select_content
+#endif // ifndef SELECT_CONTENT_APPLYDIALOG_H_

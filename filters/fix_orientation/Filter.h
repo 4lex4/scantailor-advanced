@@ -89,5 +89,5 @@ namespace fix_orientation {
         IntrusivePtr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
     };
-}  // namespace fix_orientation
-#endif  // ifndef FIX_ORIENTATION_FILTER_H_
+}  // fix_orientation
+#endif // ifndef FIX_ORIENTATION_FILTER_H_

@@ -23,6 +23,7 @@
 #include <QPixmap>
 
 class ImagePixmapUnion {
+    // Member-wise copying is OK.
 public:
     ImagePixmapUnion() {
     }
@@ -53,4 +54,4 @@ private:
 };
 
 
-#endif  // ifndef IMAGE_PIXMAP_UNION_H_
+#endif // ifndef IMAGE_PIXMAP_UNION_H_

@@ -84,6 +84,7 @@ namespace output {
         if (str == "bw") {
             return ColorParams::BLACK_AND_WHITE;
         } else if (str == "bitonal") {
+            // Backwards compatibility.
             return ColorParams::BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
             return ColorParams::COLOR_GRAYSCALE;

@@ -69,5 +69,5 @@ namespace page_split {
         PageInfo m_pageInfo;
         bool m_batchProcessing;
     };
-}
-#endif  // ifndef PAGE_SPLIT_TASK_H_
+}  // namespace PageSplit
+#endif // ifndef PAGE_SPLIT_TASK_H_

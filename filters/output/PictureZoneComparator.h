@@ -32,5 +32,5 @@ namespace output {
 
         static bool equal(PropertySet const& lhs, PropertySet const& rhs);
     };
-}
+}  // namespace output
 #endif

@@ -49,5 +49,5 @@ namespace spfit {
         double m_forceBefore;
         double m_forceAfter;
     };
-}
+}  // namespace spfit
 #endif

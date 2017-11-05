@@ -77,7 +77,7 @@ namespace dewarping {
                     dst_data[dst_y * dst_stride + dst_x] = src_data[src_y * src_stride + src_x];
                 }
             }
-        }          // dewarpGeneric
+}  // dewarpGeneric
 
 #elif INTERPOLATION_METHOD == INTERP_BILLINEAR
         template <typename ColorMixer, typename PixelType>
@@ -151,7 +151,7 @@ namespace dewarping {
                     dst_data[dst_y * dst_stride + dst_x] = mixer.mix(1.0f);
                 }
             }
-        }          // dewarpGeneric
+}  // dewarpGeneric
 
 #elif INTERPOLATION_METHOD == INTERP_AREA_MAPPING
 
@@ -175,6 +175,8 @@ namespace dewarping {
             Vec2f f_src32_quad[4];
 
             for (int dst_y = 0; dst_y < dst_height; ++dst_y) {
+                // Take a mid-point of each edge, pre-multiply by 32,
+                // write the result to f_src32_quad. 16 comes from 32*0.5
                 f_src32_quad[0] = 16.0f * (src_left_points[0] + src_right_points[0]);
                 f_src32_quad[1] = 16.0f * (src_right_points[0] + src_right_points[1]);
                 f_src32_quad[2] = 16.0f * (src_right_points[1] + src_left_points[1]);
@@ -182,6 +184,7 @@ namespace dewarping {
                 ++src_left_points;
                 ++src_right_points;
 
+                // Calculate the bounding box of src_quad.
 
                 float f_src32_left = f_src32_quad[0][0];
                 float f_src32_top = f_src32_quad[0][1];
@@ -205,24 +208,31 @@ namespace dewarping {
                 if ((f_src32_top < -32.0f * 10000.0f) || (f_src32_left < -32.0f * 10000.0f)
                     || (f_src32_bottom > 32.0f * (float(sh) + 10000.f))
                     || (f_src32_right > 32.0f * (float(sw) + 10000.f))) {
+                    // This helps to prevent integer overflows.
                     *p_dst = bg_color;
                     p_dst += dst_stride;
                     continue;
                 }
 
+                // Note: the code below is more or less the same as in transformGeneric()
+                // in imageproc/Transform.cpp
 
+                // Note that without using floor() and ceil()
+                // we can't guarantee that src_bottom >= src_top
+                // and src_right >= src_left.
                 int src32_left = (int) floor(f_src32_left);
                 int src32_right = (int) ceil(f_src32_right);
                 int src32_top = (int) floor(f_src32_top);
                 int src32_bottom = (int) ceil(f_src32_bottom);
                 int src_left = src32_left >> 5;
-                int src_right = (src32_right - 1) >> 5;
+                int src_right = (src32_right - 1) >> 5;  // inclusive
                 int src_top = src32_top >> 5;
-                int src_bottom = (src32_bottom - 1) >> 5;
+                int src_bottom = (src32_bottom - 1) >> 5;  // inclusive
                 assert(src_bottom >= src_top);
                 assert(src_right >= src_left);
 
                 if ((src_bottom < 0) || (src_right < 0) || (src_left >= sw) || (src_top >= sh)) {
+                    // Completely outside of src image.
                     *p_dst = bg_color;
                     p_dst += dst_stride;
                     continue;
@@ -255,8 +265,8 @@ namespace dewarping {
                     background_area += bottom_fraction * hor_fraction;
                     unsigned const full_pixels_ver = src_bottom - sh;
                     background_area += hor_fraction * (full_pixels_ver << 5);
-                    src_bottom = sh - 1;
-                    src32_bottom = sh << 5;
+                    src_bottom = sh - 1;  // inclusive
+                    src32_bottom = sh << 5;  // exclusive
                 }
                 if (src_left < 0) {
                     unsigned const left_fraction = 32 - (src32_left & 31);
@@ -273,14 +283,18 @@ namespace dewarping {
                     background_area += right_fraction * vert_fraction;
                     unsigned const full_pixels_hor = src_right - sw;
                     background_area += vert_fraction * (full_pixels_hor << 5);
-                    src_right = sw - 1;
-                    src32_right = sw << 5;
+                    src_right = sw - 1;  // inclusive
+                    src32_right = sw << 5;  // exclusive
                 }
                 assert(src_bottom >= src_top);
                 assert(src_right >= src_left);
 
                 ColorMixer mixer;
+                // if (weak_background) {
+                // background_area = 0;
+                // } else {
                 mixer.add(bg_color, background_area);
+                // }
 
                 unsigned const left_fraction = 32 - (src32_left & 31);
                 unsigned const top_fraction = 32 - (src32_top & 31);
@@ -303,14 +317,17 @@ namespace dewarping {
 
                 if (src_top == src_bottom) {
                     if (src_left == src_right) {
+                        // dst pixel maps to a single src pixel
                         PixelType const c = src_line[src_left];
                         if (background_area == 0) {
+                            // common case optimization
                             *p_dst = c;
                             p_dst += dst_stride;
                             continue;
                         }
                         mixer.add(c, src_area);
                     } else {
+                        // dst pixel maps to a horizontal line of src pixels
                         unsigned const vert_fraction = src32_bottom - src32_top;
                         unsigned const left_area = vert_fraction * left_fraction;
                         unsigned const middle_area = vert_fraction << 5;
@@ -325,6 +342,7 @@ namespace dewarping {
                         mixer.add(src_line[src_right], right_area);
                     }
                 } else if (src_left == src_right) {
+                    // dst pixel maps to a vertical line of src pixels
                     unsigned const hor_fraction = src32_right - src32_left;
                     unsigned const top_area = hor_fraction * top_fraction;
                     unsigned const middle_area = hor_fraction << 5;
@@ -342,6 +360,7 @@ namespace dewarping {
 
                     mixer.add(*src_line, bottom_area);
                 } else {
+                    // dst pixel maps to a block of src pixels
                     unsigned const top_area = top_fraction << 5;
                     unsigned const bottom_area = bottom_fraction << 5;
                     unsigned const left_area = left_fraction << 5;
@@ -351,16 +370,19 @@ namespace dewarping {
                     unsigned const bottomleft_area = bottom_fraction * left_fraction;
                     unsigned const bottomright_area = bottom_fraction * right_fraction;
 
+                    // process the top-left corner
                     mixer.add(src_line[src_left], topleft_area);
 
+                    // process the top line (without corners)
                     for (int sx = src_left + 1; sx < src_right; ++sx) {
                         mixer.add(src_line[sx], top_area);
                     }
 
+                    // process the top-right corner
                     mixer.add(src_line[src_right], topright_area);
 
                     src_line += src_stride;
-
+                    // process middle lines
                     for (int sy = src_top + 1; sy < src_bottom; ++sy) {
                         mixer.add(src_line[src_left], left_area);
 
@@ -373,19 +395,21 @@ namespace dewarping {
                         src_line += src_stride;
                     }
 
+                    // process bottom-left corner
                     mixer.add(src_line[src_left], bottomleft_area);
 
+                    // process the bottom line (without corners)
                     for (int sx = src_left + 1; sx < src_right; ++sx) {
                         mixer.add(src_line[sx], bottom_area);
                     }
-
+                    // process the bottom-right corner
                     mixer.add(src_line[src_right], bottomright_area);
                 }
 
                 *p_dst = mixer.mix(src_area + background_area);
                 p_dst += dst_stride;
             }
-        }          // areaMapGeneratrix
+        }  // areaMapGeneratrix
 
         template<typename ColorMixer, typename PixelType>
         void dewarpGeneric(PixelType const* const src_data,
@@ -437,8 +461,8 @@ namespace dewarping {
 
                 prev_grid_column.swap(next_grid_column);
             }
-        }          // dewarpGeneric
-#endif  // if INTERPOLATION_METHOD == INTERP_NONE
+        }  // dewarpGeneric
+#endif  // INTERPOLATION_METHOD
 #if INTERPOLATION_METHOD == INTERP_BILLINEAR
         typedef float MixingWeight;
 #else
@@ -515,6 +539,7 @@ namespace dewarping {
                 if (src.isGrayscale()) {
                     return dewarpGrayscale(src, dst_size, distortion_model, model_domain, bg_color);
                 } else if (src.allGray()) {
+                    // Only shades of gray but non-standard palette.
                     return dewarpGrayscale(
                             GrayImage(src).toQImage(), dst_size, distortion_model,
                             model_domain, bg_color
@@ -532,7 +557,7 @@ namespace dewarping {
                 break;
             default:;
         }
-
+        // Generic case: convert to either RGB32 or ARGB32.
         if (src.hasAlphaChannel()) {
             return dewarpArgb(
                     src.convertToFormat(QImage::Format_ARGB32),
@@ -544,5 +569,5 @@ namespace dewarping {
                     dst_size, distortion_model, model_domain, bg_color
             );
         }
-    }      // RasterDewarper::dewarp
+    }  // RasterDewarper::dewarp
 }  // namespace dewarping

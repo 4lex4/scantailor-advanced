@@ -34,4 +34,4 @@ namespace spfit {
             }
         }
     }
-}
+}  // namespace spfit

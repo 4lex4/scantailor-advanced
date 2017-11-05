@@ -48,8 +48,12 @@ namespace select_content {
 
         QRectF content_rect(virtToThumb().mapRect(m_contentRect));
 
+        // Adjust to compensate for pen width.
         content_rect.adjust(-1, -1, 1, 1);
 
+        // toRect() is necessary because we turn off antialiasing.
+        // For some reason, if we let Qt round the coordinates,
+        // the result is slightly different.
         painter.drawRect(content_rect.toRect());
 
         if (m_deviant) {

@@ -29,6 +29,7 @@
 class PageSequence;
 
 class PageSelectionAccessor {
+    // Member-wise copying is OK.
 public:
     explicit PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider);
 

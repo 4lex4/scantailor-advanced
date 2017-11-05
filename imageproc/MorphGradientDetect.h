@@ -57,5 +57,5 @@ namespace imageproc {
  * especially for black and white images.
  */
     GrayImage morphGradientDetectLightSide(GrayImage const& image, QSize const& area);
-}
+}  // namespace imageproc
 #endif

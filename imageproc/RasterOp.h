@@ -209,7 +209,7 @@ namespace imageproc {
                                  int const dx) {
             int const src_start_bit = sp.x() % 32;
             int const dst_start_bit = dr.x() % 32;
-            int const rightmost_dst_bit = dr.right();
+            int const rightmost_dst_bit = dr.right();  // == dr.x() + dr.width() - 1;
             int const rightmost_dst_word = rightmost_dst_bit / 32 - dr.x() / 32;
             uint32_t const leftmost_dst_mask = ~uint32_t(0) >> dst_start_bit;
             uint32_t const rightmost_dst_mask = ~uint32_t(0) << (31 - rightmost_dst_bit % 32);
@@ -260,6 +260,9 @@ namespace imageproc {
                 src_word1_shift = 32 - src_word2_shift;
                 --src_span;
             } else {
+                // Here we have a simple case of dst_x % 32 == src_x % 32.
+                // Note that the rest of the code doesn't work with such
+                // a case because of hardcoded widx + 1.
                 if (first_dst_word == last_dst_word) {
                     assert(first_dst_word == 0);
                     uint32_t const mask = first_dst_mask & last_dst_mask;
@@ -275,7 +278,7 @@ namespace imageproc {
                     for (int i = dr.height(); i > 0; --i,
                             src_span += src_span_delta, dst_span += dst_span_delta) {
                         int widx = first_dst_word;
-
+                        // Handle the first (possibly incomplete) dst word in the line.
                         uint32_t src_word = src_span[widx];
                         uint32_t dst_word = dst_span[widx];
                         uint32_t new_dst_word = Rop::transform(src_word, dst_word);
@@ -287,6 +290,7 @@ namespace imageproc {
                             dst_span[widx] = Rop::transform(src_word, dst_word);
                         }
 
+                        // Handle the last (possibly incomplete) dst word in the line.
                         src_word = src_span[widx];
                         dst_word = dst_span[widx];
                         new_dst_word = Rop::transform(src_word, dst_word);
@@ -327,7 +331,7 @@ namespace imageproc {
                 for (int i = dr.height(); i > 0; --i,
                         src_span += src_span_delta, dst_span += dst_span_delta) {
                     int widx = first_dst_word;
-
+                    // Handle the first (possibly incomplete) dst word in the line.
                     uint32_t src_word = 0;
                     if (can_first_word1) {
                         uint32_t const src_word1 = src_span[widx];
@@ -355,6 +359,7 @@ namespace imageproc {
                         );
                     }
 
+                    // Handle the last (possibly incomplete) dst word in the line.
                     src_word = 0;
                     if (can_last_word1) {
                         uint32_t const src_word1 = src_span[widx];
@@ -373,7 +378,7 @@ namespace imageproc {
                     dst_span[widx] = new_dst_word;
                 }
             }
-        }          // rasterOpInDirection
+        }  // rasterOpInDirection
     }      // namespace detail
 
     template<typename Rop>
@@ -396,8 +401,15 @@ namespace imageproc {
             throw std::invalid_argument("rasterOp: raster area exceedes the src image");
         }
 
+        // We need to avoid a situation where we write some output
+        // and then read it as input.  This can happen if src and dst
+        // are the same images.
 
         if (&dst == &src) {
+            // Note that if src and dst are different objects sharing
+            // the same data, dst will get a private copy when
+            // dst.data() is called.
+
             if (dr.y() > sp.y()) {
                 rasterOpInDirection<Rop>(dst, dr, src, sp, -1, 1);
 
@@ -412,7 +424,7 @@ namespace imageproc {
         }
 
         rasterOpInDirection<Rop>(dst, dr, src, sp, 1, 1);
-    }      // rasterOp
+    }  // rasterOp
 
     template<typename Rop>
     void rasterOp(BinaryImage& dst, BinaryImage const& src) {
@@ -429,4 +441,4 @@ namespace imageproc {
         rasterOpInDirection<Rop>(dst, dst.rect(), src, QPoint(0, 0), 1, 1);
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_RASTEROP_H_
+#endif // ifndef IMAGEPROC_RASTEROP_H_

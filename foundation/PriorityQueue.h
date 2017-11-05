@@ -40,6 +40,7 @@
  */
 template<typename T, typename SubClass>
 class PriorityQueue {
+    // Member-wise copying is OK.
 public:
     PriorityQueue() {
     }
@@ -203,6 +204,8 @@ template<typename T, typename SubClass>
 size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     using namespace std;
 
+    // Iteratively swap the element with its parent,
+    // if it's greater than the parent.
 
     assert(idx < m_index.size());
 
@@ -227,6 +230,8 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     size_t const len = m_index.size();
     assert(idx < len);
 
+    // While any child is greater than the element itself,
+    // swap it with the greatest child.
 
     for (;;) {
         size_t const lft = left(idx);
@@ -252,6 +257,6 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     }
 
     return idx;
-}  // >::bubbleDown
+} // >::bubbleDown
 
-#endif  // ifndef PRIORITY_QUEUE_H_
+#endif // ifndef PRIORITY_QUEUE_H_

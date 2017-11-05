@@ -44,23 +44,26 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
 
     int segment;
 
+    // Check the next segment in direction provided by hint.
     if (intersectsSegment(normal, (segment = hint.m_lastSegment + hint.m_direction))) {
         hint.update(segment);
 
         return intersectWithSegment(line, segment);
     }
 
+    // Check the next segment in opposite direction.
     if (intersectsSegment(normal, (segment = hint.m_lastSegment - hint.m_direction))) {
         hint.update(segment);
 
         return intersectWithSegment(line, segment);
     }
 
+    // Does the whole polyline intersect our line?
     QPointF intersection;
     if (tryIntersectingOutsideOfPolyline(line, intersection, hint)) {
         return intersection;
     }
-
+    // OK, let's do a binary search then.
     QPointF const origin(normal.p1());
     Vec2d const nv(normal.p2() - normal.p1());
     int left_idx = 0;
@@ -72,6 +75,8 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
         double const mid_dot = nv.dot(m_polyline[mid_idx] - origin);
 
         if (mid_dot * left_dot <= 0) {
+            // Note: <= 0 vs < 0 is actually important for this branch.
+            // 0 would indicate either left or mid point is our exact answer.
             right_idx = mid_idx;
         } else {
             left_idx = mid_idx;
@@ -82,7 +87,7 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
     hint.update(left_idx);
 
     return intersectWithSegment(line, left_idx);
-}  // PolylineIntersector::intersect
+} // PolylineIntersector::intersect
 
 bool PolylineIntersector::intersectsSegment(QLineF const& normal, int segment) const {
     if ((segment < 0) || (segment >= m_numSegments)) {
@@ -106,6 +111,9 @@ QPointF PolylineIntersector::intersectWithSegment(QLineF const& line, int segmen
     QLineF const seg_line(m_polyline[segment], m_polyline[segment + 1]);
     QPointF intersection;
     if (line.intersect(seg_line, &intersection) == QLineF::NoIntersection) {
+        // Considering we were called for a reason, the segment must
+        // be on the same line as our subject line.  Just return segment
+        // midpoint in this case.
         return seg_line.pointAt(0.5);
     }
 

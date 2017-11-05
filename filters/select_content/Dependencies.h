@@ -33,6 +33,8 @@ namespace select_content {
  */
     class Dependencies {
     public:
+        // Member-wise copying is OK.
+
         Dependencies();
 
         Dependencies(QPolygonF const& rotated_page_outline);
@@ -52,5 +54,5 @@ namespace select_content {
     private:
         QPolygonF m_rotatedPageOutline;
     };
-}
-#endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_
+}  // namespace select_content
+#endif // ifndef SELECT_CONTENT_DEPENDENCIES_H_

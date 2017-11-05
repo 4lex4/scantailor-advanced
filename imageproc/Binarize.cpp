@@ -80,12 +80,12 @@ namespace imageproc {
         gray_line = gray.bits();
         for (int y = 0; y < h; ++y) {
             int const top = std::max(0, y - window_lower_half);
-            int const bottom = std::min(h, y + window_upper_half);
+            int const bottom = std::min(h, y + window_upper_half);  // exclusive
             for (int x = 0; x < w; ++x) {
                 int const left = std::max(0, x - window_left_half);
-                int const right = std::min(w, x + window_right_half);
+                int const right = std::min(w, x + window_right_half);  // exclusive
                 int const area = (bottom - top) * (right - left);
-                assert(area > 0);
+                assert(area > 0);  // because window_size > 0 and w > 0 and h > 0
                 QRect const rect(left, top, right - left, bottom - top);
                 double const window_sum = integral_image.sum(rect);
                 double const window_sqsum = integral_sqimage.sum(rect);
@@ -102,8 +102,10 @@ namespace imageproc {
                 uint32_t const msb = uint32_t(1) << 31;
                 uint32_t const mask = msb >> (x & 31);
                 if (int(gray_line[x]) < threshold) {
+                    // black
                     bw_line[x >> 5] |= mask;
                 } else {
+                    // white
                     bw_line[x >> 5] &= ~mask;
                 }
             }
@@ -113,7 +115,7 @@ namespace imageproc {
         }
 
         return bw_img;
-    }      // binarizeSauvola
+    }  // binarizeSauvola
 
     BinaryImage binarizeWolf(QImage const& src,
                              QSize const window_size,
@@ -163,12 +165,12 @@ namespace imageproc {
 
         for (int y = 0; y < h; ++y) {
             int const top = std::max(0, y - window_lower_half);
-            int const bottom = std::min(h, y + window_upper_half);
+            int const bottom = std::min(h, y + window_upper_half);  // exclusive
             for (int x = 0; x < w; ++x) {
                 int const left = std::max(0, x - window_left_half);
-                int const right = std::min(w, x + window_right_half);
+                int const right = std::min(w, x + window_right_half);  // exclusive
                 int const area = (bottom - top) * (right - left);
-                assert(area > 0);
+                assert(area > 0);  // because window_size > 0 and w > 0 and h > 0
                 QRect const rect(left, top, right - left, bottom - top);
                 double const window_sum = integral_image.sum(rect);
                 double const window_sqsum = integral_sqimage.sum(rect);
@@ -185,6 +187,7 @@ namespace imageproc {
             }
         }
 
+        // TODO: integral images can be disposed at this point.
 
         BinaryImage bw_img(w, h);
         uint32_t* bw_line = bw_img.data();
@@ -203,15 +206,17 @@ namespace imageproc {
                 if ((gray_line[x] < lower_bound)
                     || ((gray_line[x] <= upper_bound)
                         && (int(gray_line[x]) < threshold))) {
+                    // black
                     bw_line[x >> 5] |= mask;
                 } else {
+                    // white
                     bw_line[x >> 5] &= ~mask;
                 }
             }
         }
 
         return bw_img;
-    }      // binarizeWolf
+    }  // binarizeWolf
 
     BinaryImage peakThreshold(QImage const& image) {
         return BinaryImage(image, BinaryThreshold::peakThreshold(image));

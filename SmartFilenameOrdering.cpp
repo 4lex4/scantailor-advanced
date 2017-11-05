@@ -20,6 +20,7 @@
 #include <QFileInfo>
 
 bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) const {
+    // First compare directories.
     if (int comp = lhs.absolutePath().compare(rhs.absolutePath())) {
         return comp < 0;
     }
@@ -32,6 +33,7 @@ bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rh
         bool const lhs_is_digit = lhs_ptr->isDigit();
         bool const rhs_is_digit = rhs_ptr->isDigit();
         if (lhs_is_digit != rhs_is_digit) {
+            // Digits have priority over non-digits.
             return lhs_is_digit;
         }
 
@@ -40,12 +42,14 @@ bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rh
             do {
                 lhs_number = lhs_number * 10 + lhs_ptr->digitValue();
                 ++lhs_ptr;
+                // Note: isDigit() implies !isNull()
             } while (lhs_ptr->isDigit());
 
             unsigned long rhs_number = 0;
             do {
                 rhs_number = rhs_number * 10 + rhs_ptr->digitValue();
                 ++rhs_ptr;
+                // Note: isDigit() implies !isNull()
             } while (rhs_ptr->isDigit());
 
             if (lhs_number != rhs_number) {
@@ -67,6 +71,9 @@ bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rh
         return lhs_ptr->isNull();
     }
 
+    // OK, the smart comparison indicates the file names are equal.
+    // However, if they aren't symbol-to-symbol equal, we can't treat
+    // them as equal, so let's do a usual comparision now.
     return lhs_fname < rhs_fname;
-}  // ()
+} // ()
 

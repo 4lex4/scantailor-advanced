@@ -44,7 +44,7 @@ namespace imageproc {
             void dumpGrayImage(QImage const& img, char const* name = 0);
 
             bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
-        }
-    }
-}
-#endif  // ifndef IMAGEPROC_TESTS_UTILS_H_
+        }  // namespace utils
+    }  // namespace uests
+}  // namespace imageproc
+#endif // ifndef IMAGEPROC_TESTS_UTILS_H_

@@ -137,19 +137,22 @@ namespace page_split {
 
             m_ptrSettings->updatePage(image_id, update);
         }
-    }      // Filter::loadSettings
+    }  // Filter::loadSettings
 
     void Filter::pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation) {
         Settings::Record const record(m_ptrSettings->getPageRecord(image_id));
 
         if (record.layoutType() && (*record.layoutType() != AUTO_LAYOUT_TYPE)) {
+            // The layout type was set manually, so we don't care about orientation.
             return;
         }
 
         if (record.params() && (record.params()->dependencies().orientation() == orientation)) {
+            // We've already estimated the number of pages for this orientation.
             return;
         }
 
+        // Use orientation to update the number of logical pages in an image.
         m_ptrPages->autoSetLayoutTypeFor(image_id, orientation);
     }
 
@@ -204,4 +207,4 @@ namespace page_split {
         assert((unsigned) option < m_pageOrderOptions.size());
         m_selectedPageOrder = option;
     }
-}  // namespace page_split
+}  // page_split

@@ -37,7 +37,7 @@ namespace page_layout {
         m_pScopeGroup->addButton(everyOtherRB);
         m_pScopeGroup->addButton(thisEveryOtherRB);
         m_pScopeGroup->addButton(everyOtherSelectedRB);
-        
+
         if (m_selectedPages.size() <= 1) {
             selectedPagesRB->setEnabled(false);
             selectedPagesHint->setEnabled(false);
@@ -54,6 +54,7 @@ namespace page_layout {
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
 
+        // thisPageRB is intentionally not handled.
         if (allPagesRB->isChecked()) {
             m_pages.selectAll().swap(pages);
         } else if (thisPageAndFollowersRB->isChecked()) {
@@ -82,6 +83,8 @@ namespace page_layout {
 
         emit accepted(pages);
 
+        // We assume the default connection from accepted() to accept()
+        // was removed.
         accept();
     }      // ApplyDialog::onSubmit
 }  // namespace page_layout

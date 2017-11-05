@@ -29,6 +29,7 @@ namespace spfit {
     class FittableSpline;
 
     class ConstraintSet {
+        // Member-wise copying is OK.
     public:
         ConstraintSet(FittableSpline const* spline);
 
@@ -48,5 +49,5 @@ namespace spfit {
         FittableSpline const* m_pSpline;
         std::list<LinearFunction> m_constraints;
     };
-}
-#endif  // ifndef SPFIT_CONSTRAINT_SET_H_
+}  // namespace spfit
+#endif // ifndef SPFIT_CONSTRAINT_SET_H_

@@ -63,7 +63,7 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, InteractionState const&
     solid_line_pen.setCosmetic(true);
     solid_line_pen.setWidthF(1.5);
 
-    QLinearGradient gradient;
+    QLinearGradient gradient;  // From inactive to active point.
     gradient.setColorAt(0.0, m_visualizer.solidColor());
     gradient.setColorAt(1.0, m_visualizer.highlightDarkColor());
 
@@ -173,7 +173,7 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, InteractionState const&
     m_visualizer.drawVertex(
             painter, to_screen.map(m_nextVertexImagePos), m_visualizer.highlightBrightColor()
     );
-}  // ZoneCreationInteraction::onPaint
+} // ZoneCreationInteraction::onPaint
 
 void ZoneCreationInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
     if (event->key() == Qt::Key_Escape) {
@@ -216,6 +216,8 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
     } else {
         if (m_ptrSpline->hasAtLeastSegments(2)
             && (m_nextVertexImagePos == m_ptrSpline->firstVertex()->point())) {
+            // Finishing the spline.  Bridging the first and the last points
+            // will create another segment.
             m_ptrSpline->setBridged(true);
             m_rContext.zones().addZone(m_ptrSpline);
             m_rContext.zones().commit();
@@ -224,13 +226,16 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
             m_rContext.imageView().update();
             delete this;
         } else if (m_nextVertexImagePos == m_ptrSpline->lastVertex()->point()) {
+            // Removing the last vertex.
             m_ptrSpline->lastVertex()->remove();
             if (!m_ptrSpline->firstVertex()) {
+                // If it was the only vertex, cancelling spline creation.
                 makePeerPreceeder(*m_rContext.createDefaultInteraction());
                 m_rContext.imageView().update();
                 delete this;
             }
         } else {
+            // Adding a new vertex, provided we are not to close to the previous one.
             Proximity const prox(screen_mouse_pos, m_ptrSpline->lastVertex()->point());
             if (prox > interaction.proximityThreshold()) {
                 m_ptrSpline->appendVertex(image_mouse_pos);
@@ -240,7 +245,7 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
     }
 
     event->accept();
-}  // ZoneCreationInteraction::onMouseReleaseEvent
+} // ZoneCreationInteraction::onMouseReleaseEvent
 
 void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     QPointF const screen_mouse_pos(event->pos() + QPointF(0.5, 0.5));

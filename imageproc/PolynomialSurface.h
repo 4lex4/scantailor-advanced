@@ -31,6 +31,7 @@ namespace imageproc {
  * \brief A polynomial function describing a 2D surface.
  */
     class PolynomialSurface {
+        // Member-wise copying is OK.
     public:
         /**
          * \brief Calculate a polynomial that approximates the given image.
@@ -107,6 +108,6 @@ namespace imageproc {
         int m_horDegree;
         int m_vertDegree;
     };
-}  // namespace imageproc
+} // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_
+#endif // ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_

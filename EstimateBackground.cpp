@@ -62,13 +62,13 @@ static void seedFillTopBottomInPlace(GrayImage& image) {
     for (int x = 0; x < width; ++x) {
         uint8_t* p = data + x;
 
-        uint8_t prev = 0;
+        uint8_t prev = 0;  // black
         for (int y = 0; y < height; ++y) {
             seed_line[y] = prev = std::max(*p, prev);
             p += stride;
         }
 
-        prev = 0;
+        prev = 0;  // black
         for (int y = height - 1; y >= 0; --y) {
             p -= stride;
             *p = prev = std::max(
@@ -81,10 +81,18 @@ static void seedFillTopBottomInPlace(GrayImage& image) {
 static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg) {
     using namespace boost::lambda;
 
+    // We do morphological preprocessing with one of two methods.  The first
+    // one is good for cases when the dark area is in the middle of the image,
+    // touching at least one of the vertical edges and not touching the horizontal one.
+    // The second method is good for pages that have pictures (partly) in the
+    // shadow of the spine.  Most of the other cases can be handled by any of these
+    // two methods.
 
     GrayImage method1(createFramedImage(image.size()));
     seedFillGrayInPlace(method1, image, CONN8);
 
+    // This will get rid of the remnants of letters.  Note that since we know we
+    // are working with at most 300x300 px images, we can just hardcode the size.
     method1 = openGray(method1, QSize(1, 20), 0x00);
     if (dbg) {
         dbg->add(method1, "preproc_method1");
@@ -95,7 +103,9 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
         dbg->add(image, "preproc_method2");
     }
 
+    // Now let's estimate, which of the methods is better for this case.
 
+    // Take the difference between two methods.
     GrayImage diff(image);
     rasterOpGeneric(
             diff.data(), diff.stride(), diff.size(),
@@ -105,21 +115,29 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
         dbg->add(diff, "raw_diff");
     }
 
+    // Approximate the difference using a polynomial function.
+    // If it fits well into our data set, we consider the difference
+    // to be caused by a shadow rather than a picture, and use method1.
     GrayImage approximated(PolynomialSurface(3, 3, diff).render(diff.size()));
     if (dbg) {
         dbg->add(approximated, "approx_diff");
     }
-
+    // Now let's take the difference between the original difference
+    // and approximated difference.
     rasterOpGeneric(
             diff.data(), diff.stride(), diff.size(),
             approximated.data(), approximated.stride(),
             if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
     );
-    approximated = GrayImage();
+    approximated = GrayImage();  // save memory.
     if (dbg) {
         dbg->add(diff, "raw_vs_approx_diff");
     }
 
+    // Our final decision is like this:
+    // If we have at least 1% of pixels that are greater than 10,
+    // we consider that we have a picture rather than a shadow,
+    // and use method2.
 
     int sum = 0;
     GrayscaleHistogram hist(diff);
@@ -127,6 +145,7 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
         sum += hist[i];
     }
 
+    // qDebug() << "% of pixels > 10: " << 100.0 * sum / (diff.width() * diff.height());
 
     if (sum < 0.01 * (diff.width() * diff.height())) {
         image = method1;
@@ -134,11 +153,12 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
             dbg->add(image, "use_method1");
         }
     } else {
+        // image is already set to method2
         if (dbg) {
             dbg->add(image, "use_method2");
         }
     }
-}  // morphologicalPreprocessingInPlace
+} // morphologicalPreprocessingInPlace
 
 imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
                                                 QPolygonF const& area_to_consider,
@@ -188,6 +208,8 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
 
     status.throwIfCancelled();
 
+    // Smooth every horizontal line with a polynomial,
+    // then mask pixels that became significantly lighter.
     for (int x = 0; x < width; ++x) {
         uint32_t const mask = ~(msb >> (x & 31));
 
@@ -207,7 +229,8 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     }
 
     status.throwIfCancelled();
-
+    // Smooth every vertical line with a polynomial,
+    // then mask pixels that became significantly lighter.
     uint8_t const* bg_line = bg_data;
     uint32_t* mask_line = mask_data;
     for (int y = 0; y < height; ++y) {
@@ -238,9 +261,11 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
 
     status.throwIfCancelled();
 
+    // Update those because mask was overwritten.
     mask_data = mask.data();
     mask_stride = mask.wordsPerLine();
-
+    // Check each horizontal line.  If it's mostly
+    // white (ignored), then make it completely white.
     int const last_word_idx = (width - 1) >> 5;
     uint32_t const last_word_mask = ~uint32_t(0) << (
             32 - width - (last_word_idx << 5)
@@ -250,10 +275,12 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
         int black_count = 0;
         int i = 0;
 
+        // Complete words.
         for (; i < last_word_idx; ++i) {
             black_count += countNonZeroBits(mask_line[i]);
         }
 
+        // The last (possible incomplete) word.
         black_count += countNonZeroBits(mask_line[i] & last_word_mask);
 
         if (black_count < width / 4) {
@@ -263,7 +290,8 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     }
 
     status.throwIfCancelled();
-
+    // Check each vertical line.  If it's mostly
+    // white (ignored), then make it completely white.
     for (int x = 0; x < width; ++x) {
         uint32_t const mask = msb >> (x & 31);
         uint32_t* p_mask = mask_data + (x >> 5);
@@ -289,5 +317,5 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     status.throwIfCancelled();
 
     return PolynomialSurface(8, 5, background, mask);
-}  // estimateBackground
+} // estimateBackground
 

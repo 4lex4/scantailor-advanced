@@ -29,6 +29,7 @@ class QString;
  * An image can contain one or two logical pages.
  */
 class PageId {
+    // Member-wise copying is OK.
 public:
     enum SubPage {
         SINGLE_PAGE,
@@ -82,4 +83,4 @@ bool operator!=(PageId const& lhs, PageId const& rhs);
 
 bool operator<(PageId const& lhs, PageId const& rhs);
 
-#endif  // ifndef PAGEID_H_
+#endif // ifndef PAGEID_H_

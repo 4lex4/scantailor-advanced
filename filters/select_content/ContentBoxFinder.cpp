@@ -109,6 +109,9 @@ namespace select_content {
                         OutsidePixels::assumeColor(outside_color)
                 )
         );
+        // Note that we fill new areas that appear as a result of
+        // rotation with black, not white.  Filling them with white
+        // may be bad for detecting the shadow around the page.
         if (dbg) {
             dbg->add(gray150, "gray150");
         }
@@ -257,6 +260,8 @@ namespace select_content {
             dbg->add(content_blocks, "initial_trimming");
         }
 
+        // Do some more whitespace finding.  This should help us separate
+        // blocks that don't belong together.
         {
             BinaryImage tmp(content);
             rasterOp<RopOr<RopNot<RopSrc>, RopDst>>(tmp, content_blocks);
@@ -296,15 +301,15 @@ namespace select_content {
 
         if (dbg) {
             QImage text_mask_visualized(content.size(), QImage::Format_ARGB32_Premultiplied);
-            text_mask_visualized.fill(0xffffffff);
+            text_mask_visualized.fill(0xffffffff);  // Opaque white.
             QPainter painter(&text_mask_visualized);
 
             QImage tmp(content.size(), QImage::Format_ARGB32_Premultiplied);
-            tmp.fill(0xff64dd62);
+            tmp.fill(0xff64dd62);  // Opaque light green.
             tmp.setAlphaChannel(text_mask.inverted().toQImage());
             painter.drawImage(QPoint(0, 0), tmp);
 
-            tmp.fill(0xe0000000);
+            tmp.fill(0xe0000000);  // Mostly transparent black.
             tmp.setAlphaChannel(content.inverted().toQImage());
             painter.drawImage(QPoint(0, 0), tmp);
 
@@ -313,10 +318,12 @@ namespace select_content {
             dbg->add(text_mask_visualized, "text_mask");
         }
 
+        // Make text_mask strore the actual content pixels that are text.
         rasterOp<RopAnd<RopSrc, RopDst>>(text_mask, content);
 
         QRect content_rect(content_blocks.contentBoundingBox());
-
+        // Temporarily reuse hor_shadows_seed and ver_shadows_seed.
+        // It's OK they are null.
         segmentGarbage(garbage, hor_shadows_seed, ver_shadows_seed, dbg);
         garbage.release();
 
@@ -423,14 +430,16 @@ namespace select_content {
             }
         }
 
+        // Transform back from 150dpi.
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
 
         return combined_xform.map(QRectF(content_rect)).boundingRect();
-    }      // ContentBoxFinder::findContentBox
+    }  // ContentBoxFinder::findContentBox
 
     namespace {
         struct Bounds {
+            // All are inclusive.
             int left;
             int right;
             int top;
@@ -517,9 +526,15 @@ namespace select_content {
             cmap_line += cmap_stride;
             cb_line += cb_stride;
         }
-    }      // ContentBoxFinder::trimContentBlocksInPlace
+    }  // ContentBoxFinder::trimContentBlocksInPlace
 
     void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& content_blocks, DebugImages* dbg) {
+        // We could just do a seed fill from borders, but that
+        // has the potential to remove too much.  Instead, we
+        // do something similar to a seed fill, but with a limited
+        // spread distance.
+
+
         int const width = content_blocks.width();
         int const height = content_blocks.height();
 
@@ -537,6 +552,7 @@ namespace select_content {
                 mask &= uint32_t(1);
                 --mask;
 
+                // WHITE -> max, BLACK -> 0
                 map_line[x] = static_cast<uint16_t>(mask);
             }
             map_line += map_stride;
@@ -544,7 +560,7 @@ namespace select_content {
         }
 
         std::queue<uint16_t*> queue;
-
+        // Initialize border seeds.
         map_line = &map[0] + width + 3;
         for (int x = 0; x < width; ++x) {
             if (map_line[x] == 0) {
@@ -571,6 +587,7 @@ namespace select_content {
         }
 
         if (queue.empty()) {
+            // Common case optimization.
             return;
         }
 
@@ -611,14 +628,14 @@ namespace select_content {
         uint32_t const msb = uint32_t(1) << 31;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                if (map_line[x] + 1 > 1) {
+                if (map_line[x] + 1 > 1) {  // If not 0 or ~uint16_t(0)
                     cb_line[x >> 5] &= ~(msb >> (x & 31));
                 }
             }
             map_line += map_stride;
             cb_line += cb_stride;
         }
-    }      // ContentBoxFinder::inPlaceRemoveAreasTouchingBorders
+    }  // ContentBoxFinder::inPlaceRemoveAreasTouchingBorders
 
     void ContentBoxFinder::segmentGarbage(imageproc::BinaryImage const& garbage,
                                           imageproc::BinaryImage& hor_garbage,
@@ -693,11 +710,15 @@ namespace select_content {
 
         rasterOp<RopOr<RopSrc, RopDst>>(hor_garbage, unconnected_garbage);
         rasterOp<RopOr<RopSrc, RopDst>>(vert_garbage, unconnected_garbage);
-    }      // ContentBoxFinder::segmentGarbage
+    }  // ContentBoxFinder::segmentGarbage
 
     imageproc::BinaryImage ContentBoxFinder::estimateTextMask(imageproc::BinaryImage const& content,
                                                               imageproc::BinaryImage const& content_blocks,
                                                               DebugImages* dbg) {
+        // We differentiate between a text line and a slightly skewed straight
+        // line (which may have a fill factor similar to that of text) by the
+        // presence of ultimate eroded points.
+
         BinaryImage const ueps(
                 SEDM(content, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS)
                         .findPeaksDestructive()
@@ -707,14 +728,14 @@ namespace select_content {
             QPainter painter;
             painter.begin(&canvas);
             QImage overlay(canvas.size(), canvas.format());
-            overlay.fill(0xff0000ff);
+            overlay.fill(0xff0000ff);  // opaque blue
             overlay.setAlphaChannel(content.inverted().toQImage());
             painter.drawImage(QPoint(0, 0), overlay);
 
             BinaryImage ueps_on_content_blocks(content_blocks);
             rasterOp<RopAnd<RopSrc, RopDst>>(ueps_on_content_blocks, ueps);
 
-            overlay.fill(0xffffff00);
+            overlay.fill(0xffffff00);  // opaque yellow
             overlay.setAlphaChannel(ueps_on_content_blocks.inverted().toQImage());
             painter.drawImage(QPoint(0, 0), overlay);
 
@@ -740,6 +761,9 @@ namespace select_content {
                     content, cc.rect().topLeft()
             );
 
+            // Note that some content may actually be not masked
+            // by content_blocks, because we build content_blocks
+            // based on despeckled content image.
             rasterOp<RopAnd<RopSrc, RopDst>>(content_img, cc_img);
 
             SlicedHistogram const hist(content_img, SlicedHistogram::ROWS);
@@ -757,15 +781,17 @@ namespace select_content {
             std::vector<int> max_forward(hist.size());
             std::vector<int> max_backwards(hist.size());
 
+            // Try splitting text lines.
             while (!splittable_ranges.empty()) {
                 int const* const first = splittable_ranges.back().first;
                 int const* const last = splittable_ranges.back().second;
                 splittable_ranges.pop_back();
 
                 if (last - first < min_text_height - 1) {
+                    // Just ignore such a small segment.
                     continue;
                 }
-
+                // Fill max_forward and max_backwards.
                 {
                     int prev = *first;
                     for (int i = 0; i <= last - first; ++i) {
@@ -833,6 +859,7 @@ namespace select_content {
                 }
 
                 if (total_weight == 0) {
+                    // qDebug() << "no black pixels at all";
                     continue;
                 }
 
@@ -854,12 +881,15 @@ namespace select_content {
                     max_width = std::max(max_width, block_hist[i]);
                 }
                 if (num_black < num_total * min_fill_factor) {
+                    // qDebug() << "initial fill factor too low";
                     continue;
                 }
                 if (num_black > num_total * max_fill_factor) {
+                    // qDebug() << "initial fill factor too high";
                     continue;
                 }
 
+                // Extend the top and bottom of the text line.
                 while ((top > first || bottom < last)
                        && abs((center_y - top) - (bottom - center_y)) <= 1) {
                     int const new_top = (top > first) ? top - 1 : top;
@@ -876,10 +906,12 @@ namespace select_content {
                 }
 
                 if (num_black > num_total * max_fill_factor) {
+                    // qDebug() << "final fill factor too high";
                     continue;
                 }
 
                 if (max_width < (bottom - top + 1) * 0.6) {
+                    // qDebug() << "aspect ratio too low";
                     continue;
                 }
 
@@ -887,6 +919,7 @@ namespace select_content {
                 line_rect.setTop(cc.rect().top() + top);
                 line_rect.setBottom(cc.rect().top() + bottom);
 
+                // Check if there are enough ultimate eroded points on the line.
                 int ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
                 if (ueps_todo) {
                     BinaryImage line_ueps(line_rect.size());
@@ -896,12 +929,15 @@ namespace select_content {
                     ConnCompEraser ueps_eraser(line_ueps, CONN4);
                     ConnComp cc;
                     for (; ueps_todo && !(cc = ueps_eraser.nextConnComp()).isNull(); --ueps_todo) {
+                        // Erase components until ueps_todo reaches zero or there are no more components.
                     }
                     if (ueps_todo) {
+                        // Not enough ueps were found.
+                        // qDebug() << "Not enough UEPs.";
                         continue;
                     }
                 }
-
+                // Write this block to the text mask.
                 rasterOp<RopOr<RopSrc, RopDst>>(
                         text_mask, line_rect, cc_img, QPoint(0, top)
                 );
@@ -909,7 +945,7 @@ namespace select_content {
         }
 
         return text_mask;
-    }      // ContentBoxFinder::estimateTextMask
+    }  // ContentBoxFinder::estimateTextMask
 
     QRect ContentBoxFinder::trimLeft(imageproc::BinaryImage const& content,
                                      imageproc::BinaryImage const& content_blocks,
@@ -923,9 +959,11 @@ namespace select_content {
         while (start < hist.size()) {
             size_t first_ws = start;
             for (; first_ws < hist.size() && hist[first_ws] != 0; ++first_ws) {
+                // Skip non-empty columns.
             }
             size_t first_non_ws = first_ws;
             for (; first_non_ws < hist.size() && hist[first_non_ws] == 0; ++first_non_ws) {
+                // Skip empty columns.
             }
 
             first_ws += area.left();
@@ -957,7 +995,7 @@ namespace select_content {
         }
 
         return area;
-    }      // ContentBoxFinder::trimLeft
+    }  // ContentBoxFinder::trimLeft
 
     QRect ContentBoxFinder::trimRight(imageproc::BinaryImage const& content,
                                       imageproc::BinaryImage const& content_blocks,
@@ -971,9 +1009,11 @@ namespace select_content {
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
+                // Skip non-empty columns.
             }
             int first_non_ws = first_ws;
             for (; first_non_ws >= 0 && hist[first_non_ws] == 0; --first_non_ws) {
+                // Skip empty columns.
             }
 
             first_ws += area.left();
@@ -1005,7 +1045,7 @@ namespace select_content {
         }
 
         return area;
-    }      // ContentBoxFinder::trimRight
+    }  // ContentBoxFinder::trimRight
 
     QRect ContentBoxFinder::trimTop(imageproc::BinaryImage const& content,
                                     imageproc::BinaryImage const& content_blocks,
@@ -1019,9 +1059,11 @@ namespace select_content {
         while (start < hist.size()) {
             size_t first_ws = start;
             for (; first_ws < hist.size() && hist[first_ws] != 0; ++first_ws) {
+                // Skip non-empty columns.
             }
             size_t first_non_ws = first_ws;
             for (; first_non_ws < hist.size() && hist[first_non_ws] == 0; ++first_non_ws) {
+                // Skip empty columns.
             }
 
             first_ws += area.top();
@@ -1053,7 +1095,7 @@ namespace select_content {
         }
 
         return area;
-    }      // ContentBoxFinder::trimTop
+    }  // ContentBoxFinder::trimTop
 
     QRect ContentBoxFinder::trimBottom(imageproc::BinaryImage const& content,
                                        imageproc::BinaryImage const& content_blocks,
@@ -1067,9 +1109,11 @@ namespace select_content {
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
+                // Skip non-empty columns.
             }
             int first_non_ws = first_ws;
             for (; first_non_ws >= 0 && hist[first_non_ws] == 0; --first_non_ws) {
+                // Skip empty columns.
             }
 
             first_ws += area.top();
@@ -1101,7 +1145,7 @@ namespace select_content {
         }
 
         return area;
-    }      // ContentBoxFinder::trimBottom
+    }  // ContentBoxFinder::trimBottom
 
     QRect ContentBoxFinder::trim(imageproc::BinaryImage const& content,
                                  imageproc::BinaryImage const& content_blocks,
@@ -1129,13 +1173,19 @@ namespace select_content {
             QPainterPath inner_path;
             inner_path.addRect(area);
 
+            // Fill already rejected area with translucent gray.
             painter.setPen(Qt::NoPen);
             painter.setBrush(QColor(0x00, 0x00, 0x00, 50));
             painter.drawPath(outer_path.subtracted(inner_path));
         }
 
+        // Don't trim too much.
         while (removed_area.width() * removed_area.height()
                > 0.3 * (new_area.width() * new_area.height())) {
+            // It's a loop just to be able to break from it.
+
+            // There is a special case when there is nothing but
+            // garbage on the page.  Let's try to handle it here.
             if ((removed_area.width() < 6) || (removed_area.height() < 6)) {
                 break;
             }
@@ -1159,7 +1209,11 @@ namespace select_content {
                 new_area.top() == area.top()
                 && new_area.bottom() == area.bottom()
         );
-
+        // qDebug() << "vertical cut: " << vertical_cut;
+        // Ranged from 0.0 to 1.0.  When it's less than 0.5, objects
+        // are more likely to be considered as garbage.  When it's
+        // more than 0.5, objects are less likely to be considered
+        // as garbage.
         double proximity_bias = vertical_cut ? 0.5 : 0.65;
 
         int const num_text_pixels = text.countBlackPixels(removed_area);
@@ -1169,7 +1223,9 @@ namespace select_content {
             int total_pixels = content_pixels;
             total_pixels += garbage.image().countBlackPixels(removed_area);
 
-            ++total_pixels;
+            // qDebug() << "num_text_pixels = " << num_text_pixels;
+            // qDebug() << "total_pixels = " << total_pixels;
+            ++total_pixels;  // just in case
             double const min_text_influence = 0.2;
             double const max_text_influence = 1.0;
             int const upper_threshold = 5000;
@@ -1179,6 +1235,7 @@ namespace select_content {
                                  + (max_text_influence - min_text_influence)
                                    * log((double) num_text_pixels) / log((double) upper_threshold);
             }
+            // qDebug() << "text_influence = " << text_influence;
 
             proximity_bias += (1.0 - proximity_bias) * text_influence
                               * num_text_pixels / total_pixels;
@@ -1229,6 +1286,10 @@ namespace select_content {
             dm_others_line += dm_stride;
         }
 
+        // qDebug() << "proximity_bias = " << proximity_bias;
+        // qDebug() << "sum_dist_to_garbage = " << sum_dist_to_garbage;
+        // qDebug() << "sum_dist_to_others = " << sum_dist_to_others;
+        // qDebug() << "count = " << count;
 
         sum_dist_to_garbage *= proximity_bias;
         sum_dist_to_others *= 1.0 - proximity_bias;
@@ -1261,11 +1322,17 @@ namespace select_content {
 
             return area;
         }
-    }      // ContentBoxFinder::trim
+    }  // ContentBoxFinder::trim
 
     void ContentBoxFinder::filterShadows(TaskStatus const& status, imageproc::BinaryImage& shadows,
                                          DebugImages* const dbg) {
+        // The input image should only contain shadows from the edges
+        // of a page, but in practice it may also contain things like
+        // a black table header which white letters on it.  Here we
+        // try to filter them out.
+
 #if 1
+        // Shadows that touch borders are genuine and should not be removed.
         BinaryImage borders(shadows.size(), WHITE);
         borders.fillExcept(borders.rect().adjusted(1, 1, -1, -1), BLACK);
 
@@ -1295,68 +1362,74 @@ namespace select_content {
         }
 
         rasterOp<RopOr<RopSrc, RopDst>>(shadows, touching_shadows);
-#else
-        BinaryImage reduced_dithering(closeBrick(shadows, QSize(1, 2), BLACK));
-        reduced_dithering = closeBrick(reduced_dithering, QSize(2, 1), BLACK);
-        if (dbg) {
-            dbg->add(reduced_dithering, "reduced_dithering");
-        }
+#else // if 1
+        // White dots on black background may be a problem for us.
+        // They may be misclassified as parts of white letters.
+          BinaryImage reduced_dithering(closeBrick(shadows, QSize(1, 2), BLACK));
+          reduced_dithering = closeBrick(reduced_dithering, QSize(2, 1), BLACK);
+          if (dbg) {
+              dbg->add(reduced_dithering, "reduced_dithering");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
 
-        BinaryImage vert_whitespace(
-            closeBrick(reduced_dithering, QSize(1, 150), BLACK)
-        );
-        if (dbg) {
-            dbg->add(vert_whitespace, "vert_whitespace");
-        }
+      // Long white vertical lines are definately not spaces between letters.
+          BinaryImage vert_whitespace(
+              closeBrick(reduced_dithering, QSize(1, 150), BLACK)
+          );
+          if (dbg) {
+              dbg->add(vert_whitespace, "vert_whitespace");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
 
-        BinaryImage opened(openBrick(reduced_dithering, QSize(10, 4), BLACK));
-        reduced_dithering.release();
-        if (dbg) {
-            dbg->add(opened, "opened");
-        }
+      // Join neighboring white letters.
+          BinaryImage opened(openBrick(reduced_dithering, QSize(10, 4), BLACK));
+          reduced_dithering.release();
+          if (dbg) {
+              dbg->add(opened, "opened");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
 
-        rasterOp<RopSubtract<RopNot<RopDst>, RopNot<RopSrc>>>(opened, shadows);
-        if (dbg) {
-            dbg->add(opened, "became white");
-        }
+      // Extract areas that became white as a result of the last operation.
+          rasterOp<RopSubtract<RopNot<RopDst>, RopNot<RopSrc>>>(opened, shadows);
+          if (dbg) {
+              dbg->add(opened, "became white");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
+      // Join the spacings between words together.
+          BinaryImage closed(closeBrick(opened, QSize(20, 1), WHITE));
+          opened.release();
+          rasterOp<RopAnd<RopSrc, RopDst>>(closed, vert_whitespace);
+          vert_whitespace.release();
+          if (dbg) {
+              dbg->add(closed, "closed");
+          }
 
-        BinaryImage closed(closeBrick(opened, QSize(20, 1), WHITE));
-        opened.release();
-        rasterOp<RopAnd<RopSrc, RopDst>>(closed, vert_whitespace);
-        vert_whitespace.release();
-        if (dbg) {
-            dbg->add(closed, "closed");
-        }
+          status.throwIfCancelled();
+      // If we've got long enough and tall enough blocks, we assume they
+      // are the text lines.
+          opened = openBrick(closed, QSize(50, 10), WHITE);
+          closed.release();
+          if (dbg) {
+              dbg->add(opened, "reopened");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
 
-        opened = openBrick(closed, QSize(50, 10), WHITE);
-        closed.release();
-        if (dbg) {
-            dbg->add(opened, "reopened");
-        }
+          BinaryImage non_shadows(seedFill(opened, shadows, CONN8));
+          opened.release();
+          if (dbg) {
+              dbg->add(non_shadows, "non_shadows");
+          }
 
-        status.throwIfCancelled();
+          status.throwIfCancelled();
 
-        BinaryImage non_shadows(seedFill(opened, shadows, CONN8));
-        opened.release();
-        if (dbg) {
-            dbg->add(non_shadows, "non_shadows");
-        }
-
-        status.throwIfCancelled();
-
-        rasterOp<RopSubtract<RopDst, RopSrc>>(shadows, non_shadows);
-#endif  // if 1
-    }      // ContentBoxFinder::filterShadows
+          rasterOp<RopSubtract<RopDst, RopSrc>>(shadows, non_shadows);
+#endif // if 1
+    }  // ContentBoxFinder::filterShadows
 
 /*====================== ContentBoxFinder::Garbage =====================*/
 

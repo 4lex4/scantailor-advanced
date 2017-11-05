@@ -48,11 +48,13 @@ namespace imageproc {
             uint32_t const* mask_line = mask.data();
             uint32_t const* prev_line = seed_line;
 
+            // Top to bottom.
             for (int y = 0; y < h; ++y) {
                 uint32_t prev_word = 0;
 
+                // Make sure offscreen bits are 0.
                 seed_line[last_word_idx] &= last_word_mask;
-
+                // Left to right (except the last word).
                 for (int i = 0; i <= last_word_idx; ++i) {
                     uint32_t const mask = mask_line[i];
                     uint32_t word = prev_word << 31;
@@ -63,6 +65,9 @@ namespace imageproc {
                     prev_word = word;
                 }
 
+                // If we don't do this, prev_line[last_word_idx] on the next
+                // iteration may contain garbage in the off-screen area.
+                // That garbage can easily leak back.
                 seed_line[last_word_idx] &= last_word_mask;
 
                 prev_line = seed_line;
@@ -74,11 +79,13 @@ namespace imageproc {
             mask_line -= mask_wpl;
             prev_line = seed_line;
 
+            // Bottom to top.
             for (int y = h - 1; y >= 0; --y) {
                 uint32_t prev_word = 0;
 
+                // Make sure offscreen bits area 0.
                 seed_line[last_word_idx] &= last_word_mask;
-
+                // Right to left.
                 for (int i = last_word_idx; i >= 0; --i) {
                     uint32_t const mask = mask_line[i];
                     uint32_t word = prev_word >> 31;
@@ -88,14 +95,18 @@ namespace imageproc {
                     seed_line[i] = word;
                     prev_word = word;
                 }
-
+                // If we don't do this, prev_line[last_word_idx] on the next
+                // iteration may contain garbage in the off-screen area.
+                // That garbage can easily leak back.
+                // Fortunately, garbage can't spread through prev_word,
+                // as only 1 bit is used from it, which can't be garbage.
                 seed_line[last_word_idx] &= last_word_mask;
 
                 prev_line = seed_line;
                 seed_line -= seed_wpl;
                 mask_line -= mask_wpl;
             }
-        }          // seedFill4Iteration
+        }  // seedFill4Iteration
 
         void seedFill8Iteration(BinaryImage& seed, BinaryImage const& mask) {
             int const w = seed.width();
@@ -110,15 +121,22 @@ namespace imageproc {
             uint32_t const* mask_line = mask.data();
             uint32_t const* prev_line = seed_line;
 
+            // Note: we start with prev_line == seed_line, but in this case
+            // prev_line[i + 1] won't be clipped by its mask when we use it to
+            // update seed_line[i].  The wrong value may propagate further from
+            // there, so clipping we do on the anti-raster pass won't help.
+            // That's why we clip the first line here.
             for (int i = 0; i <= last_word_idx; ++i) {
                 seed_line[i] &= mask_line[i];
             }
 
+            // Top to bottom.
             for (int y = 0; y < h; ++y) {
                 uint32_t prev_word = 0;
 
+                // Make sure offscreen bits area 0.
                 seed_line[last_word_idx] &= last_word_mask;
-
+                // Left to right (except the last word).
                 int i = 0;
                 for (; i < last_word_idx; ++i) {
                     uint32_t const mask = mask_line[i];
@@ -132,7 +150,7 @@ namespace imageproc {
                     seed_line[i] = word;
                     prev_word = word;
                 }
-
+                // Last word.
                 uint32_t const mask = mask_line[i] & last_word_mask;
                 uint32_t word = prev_line[i];
                 word |= (word << 1) | (word >> 1);
@@ -151,11 +169,13 @@ namespace imageproc {
             mask_line -= mask_wpl;
             prev_line = seed_line;
 
+            // Bottom to top.
             for (int y = h - 1; y >= 0; --y) {
                 uint32_t prev_word = 0;
 
+                // Make sure offscreen bits area 0.
                 seed_line[last_word_idx] &= last_word_mask;
-
+                // Right to left (except the last word).
                 int i = last_word_idx;
                 for (; i > 0; --i) {
                     uint32_t const mask = mask_line[i];
@@ -170,6 +190,7 @@ namespace imageproc {
                     prev_word = word;
                 }
 
+                // Last word.
                 uint32_t const mask = mask_line[i];
                 uint32_t word = prev_line[i];
                 word |= (word << 1) | (word >> 1);
@@ -178,14 +199,18 @@ namespace imageproc {
                 word &= mask;
                 word = fillWordHorizontally(word, mask);
                 seed_line[i] = word;
-
+                // If we don't do this, prev_line[last_word_idx] on the next
+                // iteration may contain garbage in the off-screen area.
+                // That garbage can easily leak back.
+                // Fortunately, garbage can't spread through prev_word,
+                // as only 1 bit is used from it, which can't be garbage.
                 seed_line[last_word_idx] &= last_word_mask;
 
                 prev_line = seed_line;
                 seed_line -= seed_wpl;
                 mask_line -= mask_wpl;
             }
-        }          // seedFill8Iteration
+        }  // seedFill8Iteration
 
         inline uint8_t lightest(uint8_t lhs, uint8_t rhs) {
             return lhs > rhs ? lhs : rhs;
@@ -255,9 +280,10 @@ namespace imageproc {
 
             uint8_t modified = 0;
 
+            // Top to bottom.
             for (int y = 0; y < h; ++y) {
                 uint8_t prev_pixel = 0xff;
-
+                // Left to right.
                 for (int x = 0; x < w; ++x) {
                     uint8_t const pixel = lightest(
                             mask_line[x],
@@ -280,9 +306,10 @@ namespace imageproc {
             mask_line -= mask_stride;
             prev_line = seed_line;
 
+            // Bottom to top.
             for (int y = h - 1; y >= 0; --y) {
                 uint8_t prev_pixel = 0xff;
-
+                // Right to left.
                 for (int x = w - 1; x >= 0; --x) {
                     uint8_t const pixel = lightest(
                             mask_line[x],
@@ -302,7 +329,7 @@ namespace imageproc {
             }
 
             return modified;
-        }          // seedFillGray4SlowIteration
+        }  // seedFillGray4SlowIteration
 
 /**
  * \return non-zero if more iterations are required, zero otherwise.
@@ -320,6 +347,7 @@ namespace imageproc {
 
             uint8_t modified = 0;
 
+            // Some code below doesn't handle such cases.
             if (w == 1) {
                 seedFillGrayVertLine(seed_line, seed_stride, mask_line, mask_stride, h);
 
@@ -330,13 +358,18 @@ namespace imageproc {
                 return 0;
             }
 
+            // The prev_line[x + 1] below actually refers to seed_line[x + 1]
+            // for the first line in raster order.  When working with seed_line[x],
+            // seed_line[x + 1] would not yet be clipped by its mask.  So, we
+            // have to do it now.
             for (int x = 0; x < w; ++x) {
                 seed_line[x] = lightest(seed_line[x], mask_line[x]);
             }
 
+            // Top to bottom.
             for (int y = 0; y < h; ++y) {
                 int x = 0;
-
+                // Leftmost pixel.
                 uint8_t pixel = lightest(
                         mask_line[x],
                         darkest(
@@ -346,7 +379,7 @@ namespace imageproc {
                 );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
-
+                // Left to right.
                 while (++x < w - 1) {
                     pixel = lightest(
                             mask_line[x],
@@ -361,7 +394,7 @@ namespace imageproc {
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                 }
-
+                // Rightmost pixel.
                 pixel = lightest(
                         mask_line[x],
                         darkest(
@@ -381,9 +414,10 @@ namespace imageproc {
             mask_line -= mask_stride;
             prev_line = seed_line;
 
+            // Bottom to top.
             for (int y = h - 1; y >= 0; --y) {
                 int x = w - 1;
-
+                // Rightmost pixel.
                 uint8_t pixel = lightest(
                         mask_line[x],
                         darkest(
@@ -393,7 +427,7 @@ namespace imageproc {
                 );
                 modified |= seed_line[x] ^ pixel;
                 seed_line[x] = pixel;
-
+                // Right to left.
                 while (--x > 0) {
                     pixel = lightest(
                             mask_line[x],
@@ -408,7 +442,7 @@ namespace imageproc {
                     modified |= seed_line[x] ^ pixel;
                     seed_line[x] = pixel;
                 }
-
+                // Leftmost pixel.
                 pixel = lightest(
                         mask_line[x],
                         darkest(
@@ -425,7 +459,7 @@ namespace imageproc {
             }
 
             return modified;
-        }          // seedFillGray8SlowIteration
+        }  // seedFillGray8SlowIteration
     }      // namespace
 
     BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity const connectivity) {
@@ -476,9 +510,11 @@ namespace imageproc {
 
         if (connectivity == CONN4) {
             while (seedFillGray4SlowIteration(img, mask)) {
+                // Continue until done.
             }
         } else {
             while (seedFillGray8SlowIteration(img, mask)) {
+                // Continue until done.
             }
         }
 

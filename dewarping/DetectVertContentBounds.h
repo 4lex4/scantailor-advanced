@@ -42,5 +42,5 @@ namespace dewarping {
  *       or speckles, at least not outside of the content area.
  */
     std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg);
-}
+}  // namespace dewarping
 #endif

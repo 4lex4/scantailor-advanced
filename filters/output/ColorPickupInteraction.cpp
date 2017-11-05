@@ -57,7 +57,7 @@ namespace output {
     }
 
     void ColorPickupInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
-        if (event->buttons() == Qt::LeftButton) {
+        if (event->buttons() == Qt::LeftButton) {  // Left and only left button.
             event->accept();
             takeColor();
             switchToDefaultInteraction();
@@ -93,9 +93,10 @@ namespace output {
         uint32_t const* line = (uint32_t*) image.bits();
         int const stride = image.bytesPerLine() / 4;
 
+        // We are going to take a median color using the bit-mixing technique.
         std::vector<uint32_t> bitmixed_colors;
         bitmixed_colors.reserve(width * height);
-
+        // Take colors from the circle.
         for (int y = 0; y < height; ++y, line += stride) {
             int const dy = y - y_center;
             int const dy_sq = dy * dy;
@@ -120,15 +121,16 @@ namespace output {
 
         m_ptrFillColorProp->setColor(color);
 
+        // Update default properties.
         PropertySet default_props(m_rZones.defaultProperties());
         default_props.locateOrCreate<FillColorProperty>()->setColor(color);
         m_rZones.setDefaultProperties(default_props);
         m_rZones.commit();
-    }      // ColorPickupInteraction::takeColor
+    }  // ColorPickupInteraction::takeColor
 
     QRect ColorPickupInteraction::targetBoundingRect() const {
         QPoint const mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()));
-        QRect rect(0, 0, 15, 15);
+        QRect rect(0, 0, 15, 15);  // Odd width and height are needed for symmetry.
         rect.moveCenter(mouse_pos);
 
         return rect;

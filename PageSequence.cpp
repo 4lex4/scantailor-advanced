@@ -23,7 +23,7 @@ void PageSequence::append(PageInfo const& page_info) {
 }
 
 PageInfo const& PageSequence::pageAt(size_t const idx) const {
-    return m_pages.at(idx);
+    return m_pages.at(idx);  // may throw
 }
 
 std::set<PageId>
@@ -44,6 +44,7 @@ PageSequence::selectPagePlusFollowers(PageId const& page) const {
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
     for (; it != end && it->id() != page; ++it) {
+        // Continue until we have a match.
     }
     for (; it != end; ++it) {
         selection.insert(it->id());
@@ -59,6 +60,7 @@ PageSequence::selectEveryOther(PageId const& base) const {
     std::vector<PageInfo>::const_iterator it(m_pages.begin());
     std::vector<PageInfo>::const_iterator const end(m_pages.end());
     for (; it != end && it->id() != base; ++it) {
+        // Continue until we have a match.
     }
     if (it == end) {
         return selection;

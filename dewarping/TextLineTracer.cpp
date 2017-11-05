@@ -81,7 +81,7 @@ namespace dewarping {
         if (dbg) {
             dbg->add(binarized, "binarized");
         }
-
+        // detectVertContentBounds() is sensitive to clutter and speckles, so let's try to remove it.
         sanitizeBinaryImage(binarized, downscaled_content_rect);
         if (dbg) {
             dbg->add(binarized, "sanitized");
@@ -118,6 +118,8 @@ namespace dewarping {
         }
 
 
+        // Transform back to original coordinates and output.
+
         vert_bounds.first = to_orig.map(vert_bounds.first);
         vert_bounds.second = to_orig.map(vert_bounds.second);
         output.setVerticalBounds(vert_bounds.first, vert_bounds.second);
@@ -128,9 +130,10 @@ namespace dewarping {
             }
             output.addHorizontalCurve(polyline);
         }
-    }      // TextLineTracer::trace
+    }  // TextLineTracer::trace
 
     GrayImage TextLineTracer::downscale(GrayImage const& input, Dpi const& dpi) {
+        // Downscale to 200 DPI.
         QSize downscaled_size(input.size());
         if ((dpi.horizontal() < 180) || (dpi.horizontal() > 220) || (dpi.vertical() < 180) || (dpi.vertical() > 220)) {
             downscaled_size.setWidth(std::max<int>(1, input.width() * 200 / dpi.horizontal()));
@@ -141,16 +144,18 @@ namespace dewarping {
     }
 
     void TextLineTracer::sanitizeBinaryImage(BinaryImage& image, QRect const& content_rect) {
+        // Kill connected components touching the borders.
         BinaryImage seed(image.size(), WHITE);
         seed.fillExcept(seed.rect().adjusted(1, 1, -1, -1), BLACK);
 
         BinaryImage touching_border(seedFill(seed.release(), image, CONN8));
         rasterOp<RopSubtract<RopDst, RopSrc>>(image, touching_border.release());
 
+        // Poor man's despeckle.
         BinaryImage content_seeds(openBrick(image, QSize(2, 3), WHITE));
         rasterOp<RopOr<RopSrc, RopDst>>(content_seeds, openBrick(image, QSize(3, 2), WHITE));
         image = seedFill(content_seeds.release(), image, CONN8);
-
+        // Clear margins.
         image.fillExcept(content_rect, WHITE);
     }
 
@@ -161,11 +166,14 @@ namespace dewarping {
         size_t const num_nodes = polyline.size();
 
         if (num_nodes <= 1) {
+            // Even though we can't say anything about curvature in this case,
+            // we don't like such gegenerate curves, so we reject them.
             return false;
         } else if (num_nodes == 2) {
+            // These are fine.
             return true;
         }
-
+        // Threshold angle between a polyline segment and a normal to the previous one.
         float const cos_threshold = cos((90.0f - 6.0f) * constants::DEG2RAD);
         float const cos_sq_threshold = cos_threshold * cos_threshold;
         bool significant_positive = false;
@@ -201,7 +209,7 @@ namespace dewarping {
         }
 
         return !(significant_positive && significant_positive);
-    }      // TextLineTracer::isCurvatureConsistent
+    }  // TextLineTracer::isCurvatureConsistent
 
     bool TextLineTracer::isInsideBounds(QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound) {
         QPointF left_normal_inside(left_bound.normalVector().p2() - left_bound.p1());
@@ -391,19 +399,19 @@ namespace dewarping {
             dbg->add(obstacles, "obstacles");
         }
 
-        Grid<float>().swap(aux_grid);
+        Grid<float>().swap(aux_grid);  // Save memory.
         initial_binarization = closeWithObstacles(initial_binarization, obstacles, QSize(21, 21));
         if (dbg) {
             dbg->add(initial_binarization, "initial_closed");
         }
 
-        obstacles.release();
+        obstacles.release();  // Save memory.
         rasterOp<RopAnd<RopDst, RopSrc>>(post_binarization, initial_binarization);
         if (dbg) {
             dbg->add(post_binarization, "post &&= initial");
         }
 
-        initial_binarization.release();
+        initial_binarization.release();  // Save memory.
         SEDM const sedm(post_binarization);
 
         std::vector<QPoint> seeds;
@@ -413,7 +421,7 @@ namespace dewarping {
             dbg->add(visualizeMidLineSeeds(image, post_binarization, bounds, mid_line, seeds), "seeds");
         }
 
-        post_binarization.release();
+        post_binarization.release();  // Save memory.
         for (QPoint const seed : seeds) {
             std::vector<QPointF> polyline;
 
@@ -437,7 +445,7 @@ namespace dewarping {
             out.push_back(std::vector<QPointF>());
             out.back().swap(polyline);
         }
-    }      // TextLineTracer::extractTextLines
+    }  // TextLineTracer::extractTextLines
 
     Vec2f TextLineTracer::calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds) {
         Vec2f v1(bounds.first.p2() - bounds.first.p1());
@@ -469,12 +477,13 @@ namespace dewarping {
 
         QPoint prev_pt;
         int32_t prev_level = 0;
-        int dir = 1;
+        int dir = 1;  // Distance growing.
         GridLineTraverser traverser(mid_line);
         while (traverser.hasNext()) {
             QPoint const pt(traverser.next());
             int32_t const level = sedm_data[pt.y() * sedm_stride + pt.x()];
             if ((level - prev_level) * dir < 0) {
+                // Direction changed.
                 if (dir > 0) {
                     seeds.push_back(prev_pt);
                 }
@@ -489,6 +498,7 @@ namespace dewarping {
     QLineF TextLineTracer::calcMidLine(QLineF const& line1, QLineF const& line2) {
         QPointF intersection;
         if (line1.intersect(line2, &intersection) == QLineF::NoIntersection) {
+            // Lines are parallel.
             QPointF const p1(line2.p1());
             QPointF const p2(ToLineProjector(line1).projectionPoint(p1));
             QPointF const origin(0.5 * (p1 + p2));
@@ -496,6 +506,7 @@ namespace dewarping {
 
             return QLineF(origin, origin + vector);
         } else {
+            // Lines do intersect.
             Vec2d v1(line1.p2() - line1.p1());
             Vec2d v2(line2.p2() - line2.p1());
             v1 /= sqrt(v1.squaredNorm());
@@ -525,7 +536,7 @@ namespace dewarping {
         int const width = grad.width();
         int const height = grad.height();
         int const grad_stride = grad.stride();
-
+        // First let's find the maximum and minimum values.
         float min_value = NumericTraits<float>::max();
         float max_value = NumericTraits<float>::min();
 
@@ -571,7 +582,7 @@ namespace dewarping {
         painter.drawImage(0, 0, overlay);
 
         return canvas;
-    }      // TextLineTracer::visualizeGradient
+    }  // TextLineTracer::visualizeGradient
 
     QImage TextLineTracer::visualizeMidLineSeeds(QImage const& background,
                                                  BinaryImage const& overlay,
@@ -607,7 +618,7 @@ namespace dewarping {
         }
 
         return canvas;
-    }      // TextLineTracer::visualizeMidLineSeeds
+    }  // TextLineTracer::visualizeMidLineSeeds
 
     QImage TextLineTracer::visualizePolylines(QImage const& background,
                                               std::list<std::vector<QPointF>> const& polylines,

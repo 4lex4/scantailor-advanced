@@ -49,7 +49,7 @@ namespace select_content {
         );
 
         QString const drag_tip(tr("Drag lines or corners to resize the content box."));
-
+        // Setup corner drag handlers.
         static int const masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
         for (int i = 0; i < 4; ++i) {
             m_corners[i].setPositionCallback(
@@ -68,7 +68,7 @@ namespace select_content {
             m_cornerHandlers[i].setInteractionCursor(cursor);
             makeLastFollower(m_cornerHandlers[i]);
         }
-
+        // Setup edge drag handlers.
         static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
         for (int i = 0; i < 4; ++i) {
             m_edges[i].setPositionCallback(
@@ -179,6 +179,7 @@ namespace select_content {
 
         painter.setRenderHints(QPainter::Antialiasing, true);
 
+        // Draw the content bounding box.
         QPen pen(QColor(0x00, 0x00, 0xff));
         pen.setWidth(1);
         pen.setCosmetic(true);
@@ -186,11 +187,13 @@ namespace select_content {
 
         painter.setBrush(QColor(0x00, 0x00, 0xff, 50));
 
+        // Pen strokes will be outside of m_contentRect - that's how drawRect() works.
         painter.drawRect(m_contentRect);
     }      // ImageView::onPaint
 
     void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
         if (interaction.captured()) {
+            // No context menus during resizing.
             return;
         }
 

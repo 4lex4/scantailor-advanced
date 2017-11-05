@@ -57,7 +57,7 @@ namespace imageproc {
         int const bottom = area.bottom();
         int const wpl = image.wordsPerLine();
         int const first_word_idx = area.left() >> 5;
-        int const last_word_idx = area.right() >> 5;
+        int const last_word_idx = area.right() >> 5;  // area.right() is within area
         uint32_t const first_word_mask = ~uint32_t(0) >> (area.left() & 31);
         int const last_word_unused_bits = (last_word_idx << 5) + 31 - area.right();
         uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
@@ -80,7 +80,7 @@ namespace imageproc {
                 m_data.push_back(count);
             }
         }
-    }      // SlicedHistogram::processHorizontalLines
+    }  // SlicedHistogram::processHorizontalLines
 
     void SlicedHistogram::processVerticalLines(BinaryImage const& image, QRect const& area) {
         m_data.reserve(area.width());

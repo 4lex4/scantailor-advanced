@@ -27,6 +27,7 @@
 class QDomElement;
 
 class PropertyFactory {
+    // Member-wise copying is OK.
 public:
     virtual ~PropertyFactory() {
     }

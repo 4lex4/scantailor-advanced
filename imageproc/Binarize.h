@@ -30,7 +30,8 @@ namespace imageproc {
  * \brief Image binarization using Otsu's global thresholding method.
  *
  * N. Otsu (1979). "A threshold selection method from gray-level histograms".
- * http: */
+ * http://en.wikipedia.org/wiki/Otsu%27s_method
+ */
     BinaryImage binarizeOtsu(QImage const& src);
 
 /**
@@ -39,7 +40,8 @@ namespace imageproc {
  * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
  * Co-occurrence Matrix Edge Information. Asia International Conference on
  * Modelling and Simulation 2007: 444-450
- * http: *
+ * http://www.academypublisher.com/jcp/vol02/no08/jcp02084452.pdf
+ *
  * \param src The source image.  May be in any format.
  * \param max_edge_width The maximum gradient length to consider.
  * \param min_edge_magnitude The minimum color difference in a gradient.
@@ -51,7 +53,8 @@ namespace imageproc {
  * \brief Image binarization using Sauvola's local thresholding method.
  *
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
- * http: */
+ * http://www.mediateam.oulu.fi/publications/pdf/24.pdf
+ */
     BinaryImage binarizeSauvola(QImage const& src, QSize window_size, double k = 0.34);
 
 /**
@@ -59,7 +62,8 @@ namespace imageproc {
  *
  * C. Wolf, J.M. Jolion, F. Chassaing. "Text localization, enhancement and
  * binarization in multimedia documents."
- * http: *
+ * http://liris.cnrs.fr/christian.wolf/papers/icpr2002v.pdf
+ *
  * \param src The image to binarize.
  * \param window_size The dimensions of a pixel neighborhood to consider.
  * \param lower_bound The minimum possible gray level that can be made white.

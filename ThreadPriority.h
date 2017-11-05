@@ -25,6 +25,7 @@
 class QSettings;
 
 class ThreadPriority {
+    // Member-wise copying is OK.
 public:
     enum Priority {
         Minimum,
@@ -64,4 +65,4 @@ private:
 };
 
 
-#endif  // ifndef THREAD_PRIORITY_H_
+#endif // ifndef THREAD_PRIORITY_H_

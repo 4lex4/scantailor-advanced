@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
 #include "PolynomialSurface.h"
@@ -30,6 +30,8 @@ namespace imageproc {
     PolynomialSurface::PolynomialSurface(int const hor_degree, int const vert_degree, GrayImage const& src)
             : m_horDegree(hor_degree),
               m_vertDegree(vert_degree) {
+        // Note: m_horDegree and m_vertDegree may still change!
+
         if (hor_degree < 0) {
             throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
         }
@@ -69,6 +71,8 @@ namespace imageproc {
                                          BinaryImage const& mask)
             : m_horDegree(hor_degree),
               m_vertDegree(vert_degree) {
+        // Note: m_horDegree and m_vertDegree may still change!
+
         if (hor_degree < 0) {
             throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
         }
@@ -117,7 +121,8 @@ namespace imageproc {
         unsigned char* line = image.data();
         int const bpl = image.stride();
         int const num_coeffs = m_coeffs.size();
-
+        // Pretend that both x and y positions of pixels
+        // lie in range of [0, 1].
         double const xscale = calcScale(width);
         double const yscale = calcScale(height);
 
@@ -152,7 +157,7 @@ namespace imageproc {
         for (int y = 0; y < height; ++y, line += bpl, vert_line += num_coeffs) {
             float const* hor_line = &hor_matrix[0];
             for (int x = 0; x < width; ++x, hor_line += num_coeffs) {
-                float sum = 0.5f / 255.0f;
+                float sum = 0.5f / 255.0f;  // for rounding purposes.
                 for (int i = 0; i < num_coeffs; ++i) {
                     sum += hor_line[i] * vert_line[i];
                 }
@@ -162,7 +167,7 @@ namespace imageproc {
         }
 
         return image;
-    }      // PolynomialSurface::render
+    }  // PolynomialSurface::render
 
     void PolynomialSurface::maybeReduceDegrees(int const num_data_points) {
         assert(num_data_points > 0);
@@ -197,6 +202,8 @@ namespace imageproc {
         uint8_t const* line = image.data();
         int const bpl = image.stride();
 
+        // Pretend that both x and y positions of pixels
+        // lie in range of [0, 1].
         double const xscale = calcScale(width);
         double const yscale = calcScale(height);
 
@@ -243,13 +250,14 @@ namespace imageproc {
             double const y_adjusted = y * yscale;
             int idx = 0;
 
+            // Full words.
             for (; idx < last_word_idx; ++idx) {
                 processMaskWord(
                         image_line, mask_line[idx], idx, y,
                         y_adjusted, xscale, equations, data_points
                 );
             }
-
+            // Last word.
             processMaskWord(
                     image_line, mask_line[idx] & last_word_mask,
                     idx, y, y_adjusted, xscale, equations, data_points
@@ -258,7 +266,7 @@ namespace imageproc {
             image_line += image_bpl;
             mask_line += mask_wpl;
         }
-    }      // PolynomialSurface::prepareEquationsAndDataPoints
+    }  // PolynomialSurface::prepareEquationsAndDataPoints
 
     void PolynomialSurface::processMaskWord(uint8_t const* const image_line,
                                             uint32_t word,
@@ -276,6 +284,7 @@ namespace imageproc {
 
         for (; word; word &= ~mask, mask >>= 1, ++x) {
             if (!(word & mask)) {
+                // Skip a group of zero bits.
                 int const offset = countMostSignificantZeroes(word);
                 x = xbase + offset;
                 mask = msb >> offset;
@@ -297,5 +306,5 @@ namespace imageproc {
                 pow1 *= y_adjusted;
             }
         }
-    }      // PolynomialSurface::processMaskWord
-}  // namespace imageproc
+    }  // PolynomialSurface::processMaskWord
+} // namespace imageproc

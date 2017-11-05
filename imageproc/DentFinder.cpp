@@ -77,7 +77,8 @@ namespace imageproc {
         uint32_t* dst_line = info.dst_data;
         for (int y = 0; y < info.height; ++y,
                 src_line += info.src_wpl, dst_line += info.dst_wpl) {
-            int first_black = -1;
+            // Find the first black pixel.
+            int first_black = -1;  // TODO: rename to first_black_x
             for (int x = 0; x < info.width; ++x) {
                 if (getPixel(src_line, x)) {
                     first_black = x;
@@ -86,9 +87,10 @@ namespace imageproc {
             }
 
             if (first_black == -1) {
+                // Only one black span on this line.
                 continue;
             }
-
+            // Continue until we encounter a white pixel.
             int first_black_end = -1;
             for (int x = first_black + 1; x < info.width; ++x) {
                 if (!getPixel(src_line, x)) {
@@ -98,9 +100,11 @@ namespace imageproc {
             }
 
             if (first_black_end == -1) {
+                // Only one black span on this line.
                 continue;
             }
 
+            // Find the last black pixel.
             int last_black = -1;
             for (int x = info.width - 1; x >= 0; --x) {
                 if (getPixel(src_line, x)) {
@@ -109,12 +113,14 @@ namespace imageproc {
                 }
             }
 
+            // We know we have at least one black pixel.
             assert(last_black != -1);
 
             if (first_black_end > last_black) {
+                // Only one black span on this line.
                 continue;
             }
-
+            // Continue until we encounter a white pixel.
             int last_black_end = -1;
             for (int x = last_black - 1; x >= 0; --x) {
                 if (!getPixel(src_line, x)) {
@@ -123,19 +129,20 @@ namespace imageproc {
                 }
             }
             assert(last_black_end != -1);
-
+            // Every white pixel between the first and the last black span
+            // becomes black in the destination image.
             for (int x = first_black_end; x <= last_black_end; ++x) {
                 transferPixel(src_line, dst_line, x);
             }
         }
-    }      // DentFinder::scanHorizontalLines
+    }  // DentFinder::scanHorizontalLines
 
     void DentFinder::scanVerticalLines(ImgInfo const info) {
         for (int x = 0; x < info.width; ++x) {
             int const offset = x >> 5;
             uint32_t const msb = uint32_t(1) << 31;
             uint32_t const mask = msb >> (x & 31);
-
+            // Find the first black pixel.
             int first_black = -1;
             uint32_t const* p_src_first = info.src_data + offset;
             for (int y = 0; y < info.height; ++y, p_src_first += info.src_wpl) {
@@ -146,9 +153,11 @@ namespace imageproc {
             }
 
             if (first_black == -1) {
+                // Only one black span on this line.
                 continue;
             }
 
+            // Continue until we encounter a white pixel.
             int first_black_end = -1;
             for (int y = first_black + 1; y < info.height; ++y) {
                 p_src_first += info.src_wpl;
@@ -159,9 +168,11 @@ namespace imageproc {
             }
 
             if (first_black_end == -1) {
+                // Only one black span on this line.
                 continue;
             }
 
+            // Find the last black pixel.
             int last_black = -1;
             uint32_t const* p_src_last = info.src_data + info.height * info.src_wpl + offset;
             for (int y = info.height - 1; y >= 0; --y) {
@@ -172,12 +183,14 @@ namespace imageproc {
                 }
             }
 
+            // We know we have at least one black pixel.
             assert(last_black != -1);
 
             if (first_black_end > last_black) {
+                // Only one black span on this line.
                 continue;
             }
-
+            // Continue until we encounter a white pixel.
             int last_black_end = -1;
             for (int y = last_black - 1; y >= 0; --y) {
                 p_src_last -= info.src_wpl;
@@ -187,7 +200,8 @@ namespace imageproc {
                 }
             }
             assert(last_black_end != -1);
-
+            // Every white pixel between the first and the last black span
+            // becomes black in the destination image.
             uint32_t* p_dst = info.dst_data + first_black_end * info.dst_wpl + offset;
             for (int y = first_black_end; y <= last_black_end; ++y) {
                 *p_dst |= ~*p_src_first & mask;
@@ -195,24 +209,26 @@ namespace imageproc {
                 p_dst += info.dst_wpl;
             }
         }
-    }      // DentFinder::scanVerticalLines
+    }  // DentFinder::scanVerticalLines
 
     void DentFinder::scanSlashDiagonals(ImgInfo const info) {
+        // These are endpoint coordinates of our slash diagonals.
         int x0 = 0, y0 = 0;
         int x1 = 0, y1 = 0;
 
         /*
-           +------------+
-           |(x1, y1)--+ |
-           |(x0, y0)  | |
-         | |        | |
-         | |        v |
-         | +------->  |
-         |||||||||||||||+------------+
-         */
+       +------------+
+       |(x1, y1)--+ |
+       |(x0, y0)  | |
+     | |        | |
+     | |        v |
+     | +------->  |
+     |+------------+
+     */
 
         while (x0 < info.width  /*&& y1 < info.height*/) {
-            do {
+            do {  // just to be able to break from it.
+                // Find the first black pixel.
                 int first_black_x = -1;
                 int x = x0;
                 int y = y0;
@@ -228,9 +244,11 @@ namespace imageproc {
                 } while (x < x1);
 
                 if (first_black_x == -1) {
+                    // No black pixels on this line.
                     break;
                 }
 
+                // Continue until we encounter a white pixel.
                 int first_black_end_x = -1;
                 int first_black_end_y = -1;
                 do {
@@ -245,9 +263,11 @@ namespace imageproc {
                 } while (x < x1);
 
                 if (first_black_end_x == -1) {
+                    // Only one black span on this line.
                     break;
                 }
 
+                // Find the last black pixel.
                 int last_black_x = -1;
                 x = x1;
                 y = y1;
@@ -262,12 +282,14 @@ namespace imageproc {
                     src_line += info.src_wpl;
                 } while (x >= x0);
 
+                // We know we have at least one black pixel.
                 assert(last_black_x != -1);
 
                 if (first_black_end_x > last_black_x) {
+                    // Only one black span on this line.
                     break;
                 }
-
+                // Continue until we encounter a white pixel.
                 int last_black_end_x = -1;
                 int last_black_end_y = -1;
                 do {
@@ -281,7 +303,8 @@ namespace imageproc {
                     src_line += info.src_wpl;
                 } while (x >= x0);
                 assert(last_black_end_x != -1);
-
+                // Every white pixel between the first and the last black span
+                // becomes black in the destination image.
                 x = first_black_end_x;
                 y = first_black_end_y;
                 src_line = info.src_data + info.src_wpl * y;
@@ -306,24 +329,26 @@ namespace imageproc {
                 ++y1;
             }
         }
-    }      // DentFinder::scanSlashDiagonals
+    }  // DentFinder::scanSlashDiagonals
 
     void DentFinder::scanBackslashDiagonals(ImgInfo const info) {
+        // These are endpoint coordinates of our backslash diagonals.
         int x0 = 0, y0 = info.height - 1;
         int x1 = 0, y1 = y0;
 
         /*
-           +------------+
-         | +------->  |
-         | |        ^ |
-         | |        | |
-         ||||||||||||||||(x0, y0)  | |
-         ||||||||||||||||(x1, y1)--+ |
-         |||||||||||||||+------------+
-         */
+       +------------+
+     | +------->  |
+     | |        ^ |
+     | |        | |
+     ||(x0, y0)  | |
+     ||(x1, y1)--+ |
+     |+------------+
+     */
 
         while (x0 < info.width) {
-            do {
+            do {  // just to be able to break from it.
+                // Find the first black pixel.
                 int first_black_x = -1;
                 int x = x0;
                 int y = y0;
@@ -339,9 +364,11 @@ namespace imageproc {
                 } while (x < x1);
 
                 if (first_black_x == -1) {
+                    // No black pixels on this line.
                     break;
                 }
 
+                // Continue until we encounter a white pixel.
                 int first_black_end_x = -1;
                 int first_black_end_y = -1;
                 do {
@@ -356,9 +383,11 @@ namespace imageproc {
                 } while (x < x1);
 
                 if (first_black_end_x == -1) {
+                    // Only one black span on this line.
                     break;
                 }
 
+                // Find the last black pixel.
                 int last_black_x = -1;
                 x = x1;
                 y = y1;
@@ -373,12 +402,14 @@ namespace imageproc {
                     src_line -= info.src_wpl;
                 } while (x >= x0);
 
+                // We know we have at least one black pixel.
                 assert(last_black_x != -1);
 
                 if (first_black_end_x > last_black_x) {
+                    // Only one black span on this line.
                     break;
                 }
-
+                // Continue until we encounter a white pixel.
                 int last_black_end_x = -1;
                 int last_black_end_y = -1;
                 do {
@@ -392,7 +423,8 @@ namespace imageproc {
                     src_line -= info.src_wpl;
                 } while (x >= x0);
                 assert(last_black_end_x != -1);
-
+                // Every white pixel between the first and the last black span
+                // becomes black in the destination image.
                 x = first_black_end_x;
                 y = first_black_end_y;
                 src_line = info.src_data + info.src_wpl * y;
@@ -417,5 +449,5 @@ namespace imageproc {
                 --y1;
             }
         }
-    }      // DentFinder::scanBackslashDiagonals
+    }  // DentFinder::scanBackslashDiagonals
 }  // namespace imageproc

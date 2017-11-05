@@ -24,7 +24,7 @@
 namespace numeric_traits_impl {
     template<typename T, bool IsInteger>
     struct IntegerSpecific;
-}
+}  // namespace numeric_traits_impl
 
 /**
  * This class exists mainly because std::numeric_values<>::min() has
@@ -66,5 +66,5 @@ namespace numeric_traits_impl {
             return -std::numeric_limits<T>::max();
         }
     };
-}
-#endif  // ifndef NUMERIC_TRAITS_H_
+}  // namespace numeric_traits_impl
+#endif // ifndef NUMERIC_TRAITS_H_

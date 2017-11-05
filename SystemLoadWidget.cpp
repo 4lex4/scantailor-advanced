@@ -32,7 +32,7 @@ SystemLoadWidget::SystemLoadWidget(QWidget* parent)
         // Restricting num of processors for 32-bit due to
         // address space constraints.
         if (m_maxThreads > 2) {
-        	m_maxThreads = 2;
+            m_maxThreads = 2;
         }
     }
     int num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
@@ -75,6 +75,7 @@ void SystemLoadWidget::increaseLoad() {
 }
 
 void SystemLoadWidget::showHideToolTip(int threads) {
+    // Show the tooltip immediately.
     QPoint const center(ui.slider->rect().center());
     QPoint tooltip_pos(ui.slider->mapFromGlobal(QCursor::pos()));
     if ((tooltip_pos.x() < 0) || (tooltip_pos.x() >= ui.slider->width())) {

@@ -33,6 +33,7 @@
 
 namespace spfit {
     class Optimizer {
+        // Member-wise copying is OK.
     public:
         Optimizer(size_t num_vars = 0);
 
@@ -104,4 +105,4 @@ namespace spfit {
         o1.swap(o2);
     }
 }  // namespace spfit
-#endif  // ifndef SPFIT_OPTIMIZER_H_
+#endif // ifndef SPFIT_OPTIMIZER_H_

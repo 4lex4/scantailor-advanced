@@ -36,6 +36,7 @@ namespace adiff {
 
     template<>
     class Function<2> {
+        // Member-wise copying is OK.
     public:
         /** The value of the function. */
         double value;
@@ -101,4 +102,4 @@ namespace adiff {
 
     Function<2> operator/(Function<2> const& num, Function<2> const& den);
 }  // namespace adiff
-#endif  // ifndef ADIFF_FUNCTION_H_
+#endif // ifndef ADIFF_FUNCTION_H_

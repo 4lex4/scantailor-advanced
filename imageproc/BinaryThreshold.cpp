@@ -32,6 +32,12 @@ namespace imageproc {
         int32_t pixels_by_threshold[256];
         int64_t moment_by_threshold[256];
 
+        // Note that although BinaryThreshold is defined in such a way
+        // that everything below the threshold is considered black,
+        // this algorithm assumes that everything below *or equal* to
+        // the threshold is considered black.
+        // That is, pixels_by_threshold[10] holds the number of pixels
+        // in the image that have a gray_level <= 10
 
         pixels_by_threshold[0] = pixels_by_color[0];
         moment_by_threshold[0] = 0;
@@ -50,7 +56,7 @@ namespace imageproc {
         for (int i = 0; i < 256; ++i) {
             int const pixels_below = pixels_by_threshold[i];
             int const pixels_above = total_pixels - pixels_below;
-            if ((pixels_below > 0) && (pixels_above > 0)) {
+            if ((pixels_below > 0) && (pixels_above > 0)) {  // prevent division by zero
                 int64_t const moment_below = moment_by_threshold[i];
                 int64_t const moment_above = total_moment - moment_below;
                 double const mean_below = (double) moment_below / pixels_below;
@@ -67,11 +73,13 @@ namespace imageproc {
             }
         }
 
+        // Compensate the "< threshold" vs "<= threshold" difference.
         ++first_best_threshold;
         ++last_best_threshold;
 
+        // The middle between the two.
         return BinaryThreshold((first_best_threshold + last_best_threshold) >> 1);
-    }      // BinaryThreshold::otsuThreshold
+    }  // BinaryThreshold::otsuThreshold
 
     BinaryThreshold BinaryThreshold::peakThreshold(QImage const& image) {
         return peakThreshold(GrayscaleHistogram(image));
@@ -179,5 +187,5 @@ namespace imageproc {
         double const threshold = 0.5 * nominator / denominator;
 
         return BinaryThreshold((int) (threshold + 0.5));
-    }      // BinaryThreshold::mokjiThreshold
+    }  // BinaryThreshold::mokjiThreshold
 }  // namespace imageproc

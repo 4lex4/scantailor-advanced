@@ -143,9 +143,9 @@ private:
     struct ImageDesc {
         ImageId id;
         ImageMetadata metadata;
-        int numLogicalPages;
-        bool leftHalfRemoved;
-        bool rightHalfRemoved;
+        int numLogicalPages;  // 1 or 2
+        bool leftHalfRemoved;  // Both can't be true, and if one is true,
+        bool rightHalfRemoved;  // then numLogicalPages is 1.
 
         ImageDesc(ImageInfo const& image_info);
 
@@ -180,4 +180,4 @@ private:
 };
 
 
-#endif  // ifndef PROJECT_PAGES_H_
+#endif // ifndef PROJECT_PAGES_H_

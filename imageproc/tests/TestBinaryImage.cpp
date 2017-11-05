@@ -62,6 +62,9 @@ namespace imageproc {
                 BOOST_CHECK(BinaryImage(qimg_rgb32).toQImage() == qimg_mono);
                 BOOST_CHECK(BinaryImage(qimg_argb32_pm).toQImage() == qimg_mono);
                 BOOST_CHECK(BinaryImage(qimg_indexed8).toQImage() == qimg_mono);
+
+                // A bug in Qt prevents this from working.
+                // BOOST_CHECK(BinaryImage(qimg_rgb16, 0x80).toQImage() == qimg_mono);
             }
 
             BOOST_AUTO_TEST_CASE(test_full_fill) {

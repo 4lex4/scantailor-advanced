@@ -69,7 +69,7 @@ namespace imageproc {
                     memcpy(dst_line, first_dst_line, dst_wpl * 4);
                 }
             }
-        }          // expandImpl
+        }  // expandImpl
     }      // namespace
 
     BinaryImage upscaleIntegerTimes(BinaryImage const& src, int const xscale, int const yscale) {

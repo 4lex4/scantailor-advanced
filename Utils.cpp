@@ -57,6 +57,9 @@ QString Utils::richTextForLink(QString const& label, QString const& target) {
 
 void Utils::maybeCreateCacheDir(QString const& output_dir) {
     QDir(output_dir).mkdir(QString::fromLatin1("cache"));
+
+    // QDir::mkdir() returns false if the directory already exists,
+    // so to prevent confusion this function return void.
 }
 
 QString Utils::outputDirToThumbDir(QString const& output_dir) {

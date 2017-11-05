@@ -35,9 +35,11 @@ bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
     double s2 = 0;
     for (QLineF const& rect_line : rect_lines) {
         if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
+            // line is parallel to rect_line.
             continue;
         }
         if ((s1 < 0) || (s1 > 1)) {
+            // Intersection outside of rect.
             continue;
         }
 
@@ -56,5 +58,5 @@ bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
     } else {
         return false;
     }
-}  // lineBoundedByRect
+} // lineBoundedByRect
 

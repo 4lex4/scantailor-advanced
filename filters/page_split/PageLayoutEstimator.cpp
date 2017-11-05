@@ -84,11 +84,17 @@ namespace page_split {
                                                                DebugImages* dbg) {
             double const image_center = virtual_image_rect.center().x();
 
+            // A loop just to be able to break from it.
             do {
+                // This whole branch (loop) leads to SINGLE_PAGE_UNCUT,
+                // which conflicts with PAGE_PLUS_OFFCUT.
                 if (layout_type == PAGE_PLUS_OFFCUT) {
                     break;
                 }
-
+                // If we have a single line close to an edge,
+                // Or more than one line, with the first and the last
+                // ones close to an edge, that looks more like
+                // SINGLE_PAGE_CUT layout.
                 if (!ltr_lines.empty()) {
                     QLineF const& first_line = ltr_lines.front();
                     double const line_center = lineCenterX(first_line);
@@ -104,10 +110,12 @@ namespace page_split {
                     }
                 }
 
+                // Return a SINGLE_PAGE_UNCUT layout.
                 return std::unique_ptr<PageLayout>(new PageLayout(virtual_image_rect));
             } while (false);
 
             if (ltr_lines.empty()) {
+                // Impossible to detect the layout type.
                 return std::unique_ptr<PageLayout>();
             } else if (ltr_lines.size() > 1) {
                 return std::unique_ptr<PageLayout>(
@@ -135,7 +143,7 @@ namespace page_split {
                     );
                 }
             }
-        }          // autoDetectSinglePageLayout
+        }  // autoDetectSinglePageLayout
 
 /**
  * \brief Try to auto-detect a page layout for a two-page configuration.
@@ -147,6 +155,7 @@ namespace page_split {
         std::unique_ptr<PageLayout> autoDetectTwoPageLayout(std::vector<QLineF> const& ltr_lines,
                                                             QRectF const& virtual_image_rect) {
             if (ltr_lines.empty()) {
+                // Impossible to detect the page layout.
                 return std::unique_ptr<PageLayout>();
             } else if (ltr_lines.size() == 1) {
                 return std::unique_ptr<PageLayout>(
@@ -154,6 +163,7 @@ namespace page_split {
                 );
             }
 
+            // Find the line closest to the center.
             double const image_center = virtual_image_rect.center().x();
             double min_distance = std::numeric_limits<double>::max();
             QLineF const* best_line = 0;
@@ -196,7 +206,7 @@ namespace page_split {
 
             return num_pages;
         }
-    }      // namespace
+    }  // anonymous namespace
 
     PageLayout PageLayoutEstimator::estimatePageLayout(LayoutType const layout_type,
                                                        QImage const& input,
@@ -239,7 +249,7 @@ namespace page_split {
             double m_imageCenter;
             double m_distFromCenterThreshold;
         };
-    }
+    }  // anonymous namespace
 
 /**
  * \brief Attempts to find the folding line and cut the image there.
@@ -283,19 +293,27 @@ namespace page_split {
         QPointF const center(virtual_image_rect.center());
 
         if (num_pages == 1) {
-            while (lines.size() > 1) {
+            // If all of the lines are close to one of the edges,
+            // that means they can't be the edges of a pages,
+            // so we take only one of them, the one closest to
+            // the center.
+            while (lines.size() > 1) {  // just to be able to break from it.
                 QLineF const left_line(lines.front());
                 QLineF const right_line(lines.back());
                 double const threshold = 0.3 * center.x();
                 double left_dist = center.x() - lineCenterX(left_line);
                 double right_dist = center.x() - lineCenterX(right_line);
                 if ((left_dist < 0) != (right_dist < 0)) {
+                    // They are from the opposite sides
+                    // from the center line.
                     break;
                 }
 
                 left_dist = fabs(left_dist);
                 right_dist = fabs(right_dist);
                 if ((left_dist < threshold) || (right_dist < threshold)) {
+                    // At least one of them is relatively close
+                    // to the center.
                     break;
                 }
 
@@ -310,6 +328,8 @@ namespace page_split {
             );
         } else {
             assert(num_pages == 2);
+            // In two page mode we ignore the lines that are too close
+            // to the edge.
             lines.erase(
                     std::remove_if(
                             lines.begin(), lines.end(),
@@ -319,7 +339,7 @@ namespace page_split {
 
             return autoDetectTwoPageLayout(lines, virtual_image_rect);
         }
-    }      // PageLayoutEstimator::tryCutAtFoldingLine
+    }  // PageLayoutEstimator::tryCutAtFoldingLine
 
 /**
  * \brief Attempts to find a suitable whitespace to draw a splitting line through.
@@ -343,8 +363,10 @@ namespace page_split {
                                                     DebugImages* const dbg) {
         QTransform xform;
 
+        // Convert to B/W and rotate.
         BinaryImage img(to300DpiBinary(input, xform, bw_threshold));
-
+        // Note: here we assume the only transformation applied
+        // to the input image is orthogonal rotation.
         img = orthogonalRotation(img, pre_xform.preRotation().toDegrees());
         if (dbg) {
             dbg->add(img, "bw300");
@@ -356,14 +378,16 @@ namespace page_split {
             dbg->add(img, "no_garbage");
         }
 
+        // From now on we work with 150 dpi images.
 
         bool const left_offcut = checkForLeftOffcut(img);
         bool const right_offcut = checkForRightOffcut(img);
 
         SkewFinder skew_finder;
+        // We work with 150dpi image, so no further reduction.
         skew_finder.setCoarseReduction(0);
         skew_finder.setFineReduction(0);
-        skew_finder.setDesiredAccuracy(0.5);
+        skew_finder.setDesiredAccuracy(0.5);  // fine accuracy is not required.
         Skew const skew(skew_finder.findSkew(img));
         if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
             int const w = img.width();
@@ -401,11 +425,11 @@ namespace page_split {
         );
 
         PageLayout transformed_layout(layout.transformed(xform.inverted()));
-
+        // We don't want a skewed outline!
         transformed_layout.setUncutOutline(pre_xform.resultingRect());
 
         return transformed_layout;
-    }      // PageLayoutEstimator::cutAtWhitespace
+    }  // PageLayoutEstimator::cutAtWhitespace
 
 /**
  * \brief Attempts to find a suitable whitespace to draw a splitting line through.
@@ -472,6 +496,8 @@ namespace page_split {
                     left_offcut, right_offcut
             );
         } else {
+            // This helps if we have 2 pages with one page containing nothing
+            // but a small amount of garbage.
             removeInsignificantEdgeSpans(spans);
             if (dbg) {
                 visualizeSpans(*dbg, spans, input, "spans_refined");
@@ -481,7 +507,7 @@ namespace page_split {
                     layout_type, spans, width, height
             );
         }
-    }      // PageLayoutEstimator::cutAtWhitespaceDeskewed150
+    }  // PageLayoutEstimator::cutAtWhitespaceDeskewed150
 
     imageproc::BinaryImage PageLayoutEstimator::to300DpiBinary(QImage const& img,
                                                                QTransform& xform,
@@ -510,7 +536,7 @@ namespace page_split {
         if (dbg) {
             dbg->add(reduced, "reduced");
         }
-
+        // Remove anything not connected to a bar of at least 4 pixels long.
         BinaryImage non_garbage_seed(openBrick(reduced, QSize(4, 1)));
         BinaryImage non_garbage_seed2(openBrick(reduced, QSize(1, 4)));
         rasterOp<RopOr<RopSrc, RopDst>>(non_garbage_seed, non_garbage_seed2);
@@ -543,10 +569,10 @@ namespace page_split {
         rasterOp<RopSubtract<RopDst, RopSrc>>(reduced, shadows_dilated);
 
         return reduced;
-    }      // PageLayoutEstimator::removeGarbageAnd2xDownscale
+    }  // PageLayoutEstimator::removeGarbageAnd2xDownscale
 
     bool PageLayoutEstimator::checkForLeftOffcut(BinaryImage const& image) {
-        int const margin = 2;
+        int const margin = 2;  // Some scanners leave garbage near page borders.
         int const width = 3;
         QRect rect(margin, 0, width, image.height());
         rect.adjust(0, margin, 0, -margin);
@@ -555,7 +581,7 @@ namespace page_split {
     }
 
     bool PageLayoutEstimator::checkForRightOffcut(BinaryImage const& image) {
-        int const margin = 2;
+        int const margin = 2;  // Some scanners leave garbage near page borders.
         int const width = 3;
         QRect rect(image.width() - margin - width, 0, width, image.height());
         rect.adjust(0, margin, 0, -margin);
@@ -590,7 +616,8 @@ namespace page_split {
         if (spans.empty()) {
             return;
         }
-
+        // GapInfo.first: the amount of content preceding this gap.
+        // GapInfo.second: the amount of content following this gap.
         typedef std::pair<int, int> GapInfo;
 
         std::vector<GapInfo> gaps(spans.size() - 1);
@@ -629,7 +656,7 @@ namespace page_split {
                 spans.pop_back();
             }
         } while (!spans.empty());
-    }      // PageLayoutEstimator::removeInsignificantEdgeSpans
+    }  // PageLayoutEstimator::removeInsignificantEdgeSpans
 
     PageLayout PageLayoutEstimator::processContentSpansSinglePage(LayoutType const layout_type,
                                                                   std::deque<Span> const& spans,
@@ -642,6 +669,7 @@ namespace page_split {
 
         QRectF const virtual_image_rect(0, 0, width, height);
 
+        // Just to be able to break from it.
         while (left_offcut && !right_offcut
                && layout_type == AUTO_LAYOUT_TYPE) {
             double x;
@@ -651,6 +679,8 @@ namespace page_split {
                 x = 0.5 * spans.front().begin();
             } else {
                 if (spans.front().width() > width / 2) {
+                    // Probably it's the content span.
+                    // Maybe we should cut it from the other side.
                     break;
                 } else if (spans.size() > 1) {
                     x = Span(spans[0], spans[1]).center();
@@ -666,6 +696,7 @@ namespace page_split {
             return PageLayout(virtual_image_rect, vertLine(x), right_line);
         }
 
+        // Just to be able to break from it.
         while (right_offcut && !left_offcut
                && layout_type == AUTO_LAYOUT_TYPE) {
             double x;
@@ -675,6 +706,8 @@ namespace page_split {
                 x = Span(spans.back(), width).center();
             } else {
                 if (spans.back().width() > width / 2) {
+                    // Probably it's the content span.
+                    // Maybe we should cut it from the other side.
                     break;
                 } else if (spans.size() > 1) {
                     x = Span(spans[spans.size() - 2], spans.back()).center();
@@ -696,9 +729,10 @@ namespace page_split {
 
             return PageLayout(virtual_image_rect, line1, line2);
         } else {
+            // Returning a SINGLE_PAGE_UNCUT layout.
             return PageLayout(virtual_image_rect);
         }
-    }      // PageLayoutEstimator::processContentSpansSinglePage
+    }  // PageLayoutEstimator::processContentSpansSinglePage
 
     PageLayout PageLayoutEstimator::processContentSpansTwoPages(LayoutType const layout_type,
                                                                 std::deque<Span> const& spans,
@@ -714,6 +748,8 @@ namespace page_split {
         } else if (spans.size() == 1) {
             return processTwoPagesWithSingleSpan(spans.front(), width, height);
         } else {
+            // GapInfo.first: the amount of content preceding this gap.
+            // GapInfo.second: the amount of content following this gap.
             typedef std::pair<int, int> GapInfo;
 
             std::vector<GapInfo> gaps(spans.size() - 1);
@@ -750,6 +786,7 @@ namespace page_split {
             }
 
             if (best_ratio < 0.25) {
+                // Probably one of the pages is just empty.
                 return processTwoPagesWithSingleSpan(
                         Span(content_begin, content_end), width, height
                 );
@@ -791,7 +828,7 @@ namespace page_split {
         }
 
         return PageLayout(virtual_image_rect, vertLine(x));
-    }      // PageLayoutEstimator::processContentSpansTwoPages
+    }  // PageLayoutEstimator::processContentSpansTwoPages
 
     PageLayout PageLayoutEstimator::processTwoPagesWithSingleSpan(Span const& span, int width, int height) {
         QRectF const virtual_image_rect(0, 0, width, height);

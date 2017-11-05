@@ -34,5 +34,5 @@ namespace select_content {
     private:
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
+}  // namespace select_content
 #endif

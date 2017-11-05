@@ -54,6 +54,7 @@ namespace select_content {
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
 
+        // thisPageOnlyRB is intentionally not handled.
         if (allPagesRB->isChecked()) {
             m_pages.selectAll().swap(pages);
         } else if (thisPageAndFollowersRB->isChecked()) {
@@ -78,7 +79,7 @@ namespace select_content {
         }
 
         emit applySelection(pages, applyContentBoxOption->isChecked());
-
+        // We assume the default connection from accept() to accepted() was removed.
         accept();
     }      // ApplyDialog::onSubmit
 }  // namespace select_content

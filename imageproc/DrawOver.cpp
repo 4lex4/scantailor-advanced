@@ -49,10 +49,12 @@ namespace imageproc {
         if (depth % 8 != 0) {
             assert(depth == 1);
 
+            // Slow but simple.
             BinaryImage dst_bin(dst);
             BinaryImage src_bin(src);
             rasterOp<RopSrc>(dst_bin, dst_rect, src_bin, src_rect.topLeft());
             dst = dst_bin.toQImage().convertToFormat(dst.format());
+            // FIXME: we are not preserving the color table.
 
             return;
         }
@@ -66,5 +68,5 @@ namespace imageproc {
             dst_line += dst_bpl;
             src_line += src_bpl;
         }
-    }      // drawOver
+    }  // drawOver
 }  // namespace imageproc

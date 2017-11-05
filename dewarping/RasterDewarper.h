@@ -35,5 +35,5 @@ namespace dewarping {
                              QRectF const& model_domain,
                              QColor const& background_color);
     };
-}
+}  // namespace dewarping
 #endif

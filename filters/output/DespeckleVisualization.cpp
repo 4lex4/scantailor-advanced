@@ -30,6 +30,7 @@ namespace output {
                                                    imageproc::BinaryImage const& speckles,
                                                    Dpi const& dpi) {
         if (output.isNull()) {
+            // This can happen in batch processing mode.
             return;
         }
 
@@ -60,9 +61,11 @@ namespace output {
             for (int x = 0; x < w; ++x) {
                 uint32_t const sq_dist = sedm_line[x];
                 if (sq_dist == 0) {
-                    image_line[x] = 0xffff0000;
+                    // Speckle pixel.
+                    image_line[x] = 0xffff0000;  // opaque red
                     continue;
                 } else if ((image_line[x] & 0x00ffffff) == 0x0) {
+                    // Non-speckle black pixel.
                     continue;
                 }
 
@@ -83,5 +86,5 @@ namespace output {
             sedm_line += sedm_stride;
             image_line += image_stride;
         }
-    }      // DespeckleVisualization::colorizeSpeckles
+    }  // DespeckleVisualization::colorizeSpeckles
 }  // namespace output

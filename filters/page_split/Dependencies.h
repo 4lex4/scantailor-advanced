@@ -36,6 +36,7 @@ namespace page_split {
  * Once dependencies change, the stored page parameters are no longer valid.
  */
     class Dependencies {
+        // Member-wise copying is OK.
     public:
         Dependencies();
 
@@ -65,4 +66,4 @@ namespace page_split {
         LayoutType m_layoutType;
     };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_DEPENDENCIES_H_
+#endif // ifndef PAGE_SPLIT_DEPENDENCIES_H_

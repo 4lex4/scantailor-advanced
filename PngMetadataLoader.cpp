@@ -124,5 +124,5 @@ ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device
     out(ImageMetadata(size, dpi));
 
     return LOADED;
-}  // PngMetadataLoader::loadMetadata
+} // PngMetadataLoader::loadMetadata
 

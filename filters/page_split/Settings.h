@@ -39,6 +39,7 @@ namespace page_split {
 
     private:
         class BaseRecord {
+            // Member-wise copying is OK.
             friend class Settings;
         public:
             BaseRecord();
@@ -89,6 +90,7 @@ namespace page_split {
         class UpdateAction;
 
         class Record : public BaseRecord {
+            // Member-wise copying is OK.
         public:
             Record(LayoutType default_layout_type);
 
@@ -200,4 +202,4 @@ namespace page_split {
         LayoutType m_defaultLayoutType;
     };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_SETTINGS_H_
+#endif // ifndef PAGE_SPLIT_SETTINGS_H_

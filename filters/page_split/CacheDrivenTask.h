@@ -50,5 +50,5 @@ namespace page_split {
         IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
-#endif  // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_
+}  // namespace page_split
+#endif // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_

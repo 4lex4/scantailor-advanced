@@ -79,6 +79,9 @@ namespace output {
 
         rootInteractionHandler().makeLastFollower(*this);
 
+        // We want these handlers after zone interaction handlers,
+        // as some of those have their own drag and zoom handlers,
+        // which need to get events before these standard ones.
         rootInteractionHandler().makeLastFollower(m_dragHandler);
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
@@ -112,6 +115,7 @@ namespace output {
     }
 
     InteractionHandler* FillZoneEditor::createContextMenuInteraction(InteractionState& interaction) {
+        // Return a standard ZoneContextMenuInteraction but with a customized menu.
         return ZoneContextMenuInteraction::create(
                 m_context, interaction, MenuCustomizer(this)
         );
@@ -171,6 +175,7 @@ namespace output {
                 if (image.allGray()) {
                     return &FillZoneEditor::toGrayscale;
                 }
+                // fall through
             default:
                 return &FillZoneEditor::toOpaque;
         }

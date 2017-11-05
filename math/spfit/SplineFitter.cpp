@@ -25,6 +25,7 @@ namespace spfit {
     SplineFitter::SplineFitter(FittableSpline* spline)
             : m_pSpline(spline),
               m_optimizer(spline->numControlPoints() * 2) {
+        // Each control point is a pair of (x, y) varaiables.
     }
 
     void SplineFitter::splineModified() {
@@ -46,11 +47,26 @@ namespace spfit {
         int const num_vars = num_coeffs * 2;
         QuadraticFunction f(num_vars);
 
+        // Right now we basically have F(x) = Q(L(x)),
+        // where Q is a quadratic function represented by sqdist_approx,
+        // and L is a vector of linear combinations of control points,
+        // represented by coeffs.  L[0] = is a linear combination of x coordinats
+        // of control points and L[1] is a linear combination of y coordinates of
+        // control points.  What we are after is F(x) = Q(x), that is a quadratic
+        // function of control points.  We consider control points to be a flat
+        // vector of variables, with the following layout: [x0 y0 x1 y1 x2 y2 ...]
 
+        // First deal with the quadratic portion of our function.
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
+                // Here we have Li * Aij * Lj, which gives us a product of
+                // two linear functions times a constant.
+                // L0 is a linear combination of x components: L0 = [c1 0  c2  0 ...]
+                // L1 is a linear combination of y components: L1 = [ 0 c1  0 c2 ...]
+                // Note that the same coefficients are indeed present in both L0 and L1.
                 double const a = sqdist_approx.A(i, j);
 
+                // Now let's multiply Li by Lj
                 for (int m = 0; m < num_coeffs; ++m) {
                     double const c1 = coeffs[m].coeff;
                     int const Li_idx = m * 2 + i;
@@ -63,7 +79,9 @@ namespace spfit {
             }
         }
 
+        // Moving on to the linear part of the function.
         for (int i = 0; i < 2; ++i) {
+            // Here we have Li * Bi, that is a linear function times a constant.
             double const b = sqdist_approx.b[i];
             for (int m = 0; m < num_coeffs; ++m) {
                 int const Li_idx = m * 2 + i;
@@ -71,8 +89,10 @@ namespace spfit {
             }
         }
 
+        // The constant part is easy.
         f.c = sqdist_approx.c;
-
+        // What we've got at this point is a function of control point positions.
+        // What we need however, is a function from control point displacements.
         m_tempVars.resize(num_vars);
         for (int i = 0; i < num_coeffs; ++i) {
             int const cp_idx = coeffs[i].controlPointIdx;
@@ -81,7 +101,7 @@ namespace spfit {
             m_tempVars[i * 2 + 1] = cp.y();
         }
         f.recalcForTranslatedArguments(num_vars ? &m_tempVars[0] : 0);
-
+        // What remains is a mapping from the reduced set of variables to the full set.
         m_tempSparseMap.resize(num_vars);
         for (int i = 0; i < num_coeffs; ++i) {
             m_tempSparseMap[i * 2] = coeffs[i].controlPointIdx * 2;
@@ -89,7 +109,7 @@ namespace spfit {
         }
 
         m_optimizer.addExternalForce(f, m_tempSparseMap);
-    }      // SplineFitter::addAttractionForce
+    }  // SplineFitter::addAttractionForce
 
     void SplineFitter::addAttractionForces(ModelShape const& model_shape, double from_t, double to_t) {
         class SampleProcessor : public VirtualFunction3<void, QPointF, double, FittableSpline::SampleFlags> {
@@ -150,6 +170,6 @@ namespace spfit {
             m_pSpline->moveControlPoint(i, m_pSpline->controlPointPosition(i) - delta);
         }
 
-        m_optimizer.undoLastStep();
+        m_optimizer.undoLastStep();  // Zeroes the displacement vector among other things.
     }
 }  // namespace spfit

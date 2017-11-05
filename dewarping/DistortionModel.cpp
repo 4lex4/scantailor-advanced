@@ -77,15 +77,17 @@ namespace dewarping {
         }
 
         if (min_dot * max_dot <= 0) {
+            // Not convex.
             return false;
         }
 
         if ((fabs(min_dot) < 0.01) || (fabs(max_dot) < 0.01)) {
+            // Too close - possible problems with calculating homography.
             return false;
         }
 
         return true;
-    }      // DistortionModel::isValid
+    }  // DistortionModel::isValid
 
     bool DistortionModel::matches(DistortionModel const& other) const {
         bool const this_valid = isValid();
@@ -110,8 +112,11 @@ namespace dewarping {
                                         QRectF const& output_content_rect) const {
         QRectF model_domain(boundingBox(to_output));
 
+        // We not only uncurl the lines, but also stretch them in curved areas.
+        // Because we don't want to reach out of the content box, we shrink
+        // the model domain vertically, rather than stretching it horizontally.
         double const vert_scale = 1.0 / dewarper.directrixArcLength();
-
+        // When scaling model_domain, we want the following point to remain where it is.
         QPointF const scale_origin(output_content_rect.center());
 
         double const new_upper_part = (scale_origin.y() - model_domain.top()) * vert_scale;

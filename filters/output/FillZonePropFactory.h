@@ -26,5 +26,5 @@ namespace output {
     public:
         FillZonePropFactory();
     };
-}
+}  // namespace output
 #endif

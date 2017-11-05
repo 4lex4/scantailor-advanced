@@ -25,6 +25,7 @@
 #include <stddef.h>
 
 class PageSequence {
+    // Member-wise copying is OK.
 public:
     void append(PageInfo const& page_info);
 

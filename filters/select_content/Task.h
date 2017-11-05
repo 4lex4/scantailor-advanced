@@ -65,5 +65,5 @@ namespace select_content {
         PageId m_pageId;
         bool m_batchProcessing;
     };
-}
-#endif  // ifndef SELECT_CONTENT_TASK_H_
+}  // namespace select_content
+#endif // ifndef SELECT_CONTENT_TASK_H_

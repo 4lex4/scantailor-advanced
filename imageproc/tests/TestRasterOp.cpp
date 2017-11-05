@@ -38,7 +38,7 @@ namespace imageproc {
                 BinaryImage dst_bi(dst);
                 BinaryImage const src_bi(src);
                 rasterOp<Rop>(dst_bi, dst_rect, src_bi, src_pt);
-
+                // Here we assume that full-image raster operations work correctly.
                 BinaryImage dst_subimage(dst.copy(dst_rect));
                 QRect const src_rect(src_pt, dst_rect.size());
                 BinaryImage const src_subimage(src.copy(src_rect));
@@ -150,7 +150,7 @@ namespace imageproc {
 
                     return surroundingsIntact(dst, dst_before, dst_rect);
                 }
-            }          // namespace
+            }  // namespace {
             BOOST_AUTO_TEST_CASE(test_large_image) {
                 Tester1 tester;
                 BOOST_REQUIRE(tester.testFullImage());

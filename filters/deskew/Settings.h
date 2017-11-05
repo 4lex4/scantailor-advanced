@@ -87,4 +87,4 @@ namespace deskew {
         double m_maxDeviation;
     };
 }  // namespace deskew
-#endif  // ifndef DESKEW_SETTINGS_H_
+#endif // ifndef DESKEW_SETTINGS_H_

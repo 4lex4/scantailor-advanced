@@ -61,6 +61,8 @@
  */
 class ImageTransformation {
 public:
+    // Member-wise copying is OK.
+
     ImageTransformation(QRectF const& orig_image_rect, Dpi const& orig_dpi);
 
     ~ImageTransformation();
@@ -258,16 +260,16 @@ private:
     QTransform m_invTransform;
     double m_postRotation;
     QRectF m_origRect;
-    QRectF m_resultingRect;
+    QRectF m_resultingRect;  // Managed by update().
     QPolygonF m_preCropArea;
-    QPolygonF m_resultingPreCropArea;
+    QPolygonF m_resultingPreCropArea;  // Managed by update().
     QPolygonF m_postCropArea;
-    QPolygonF m_resultingPostCropArea;
+    QPolygonF m_resultingPostCropArea;  // Managed by update().
     Dpi m_origDpi;
-    Dpi m_preScaledDpi;
-    Dpi m_postScaledDpi;
+    Dpi m_preScaledDpi;  // Always set, as preScaleToEqualizeDpi() is called from the constructor.
+    Dpi m_postScaledDpi;  // Default constructed object if no post-scaling.
     OrthogonalRotation m_preRotation;
 };
 
 
-#endif  // ifndef IMAGETRANSFORMATION_H_
+#endif // ifndef IMAGETRANSFORMATION_H_

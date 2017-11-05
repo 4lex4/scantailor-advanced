@@ -34,6 +34,13 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test1) {
+                // 4- and 3-point lines with min_support_points == 3
+                // --------------------------------------------------
+                // x     x
+                // x x
+                // x x
+                // x
+                // --------------------------------------------------
                 std::vector<QPointF> pts;
                 pts.push_back(QPointF(-100, -100));
                 pts.push_back(QPointF(0, 0));
@@ -60,12 +67,15 @@ namespace imageproc {
 
                 std::vector<unsigned> support_idxs;
 
+                // line 1
                 BOOST_REQUIRE(!finder.findNext(&support_idxs).isNull());
                 BOOST_REQUIRE(matchSupportPoints(support_idxs, line1_idxs));
 
+                // line2
                 BOOST_REQUIRE(!finder.findNext(&support_idxs).isNull());
                 BOOST_REQUIRE(matchSupportPoints(support_idxs, line2_idxs));
 
+                // no more lines
                 BOOST_REQUIRE(finder.findNext().isNull());
             }
 

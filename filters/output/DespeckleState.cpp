@@ -54,6 +54,7 @@ namespace output {
         Despeckle::Level level2 = Despeckle::NORMAL;
         switch (level) {
             case DESPECKLE_OFF:
+                // Null speckles image is equivalent to a white one.
                 new_state.m_speckles.release();
 
                 return new_state;
@@ -77,7 +78,7 @@ namespace output {
         rasterOp<RopSubtract<RopSrc, RopDst>>(new_state.m_speckles, m_everythingBW);
 
         return new_state;
-    }      // DespeckleState::redespeckle
+    }  // DespeckleState::redespeckle
 
     QImage DespeckleState::overlaySpeckles(QImage const& mixed, imageproc::BinaryImage const& speckles) {
         QImage result(mixed.convertToFormat(QImage::Format_RGB32));
@@ -102,7 +103,7 @@ namespace output {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (speckles_line[x >> 5] & (msb >> (x & 31))) {
-                    result_line[x] = 0xff000000;
+                    result_line[x] = 0xff000000;  // opaque black
                 }
             }
             result_line += result_stride;
@@ -110,7 +111,7 @@ namespace output {
         }
 
         return result;
-    }      // DespeckleState::overlaySpeckles
+    }  // DespeckleState::overlaySpeckles
 
 /**
  * Here we assume that B/W content have all their color components

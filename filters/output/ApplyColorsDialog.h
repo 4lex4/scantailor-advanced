@@ -51,5 +51,5 @@ namespace output {
         PageId m_curPage;
         QButtonGroup* m_pScopeGroup;
     };
-}
-#endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_
+}  // namespace output
+#endif // ifndef OUTPUT_APPLYCOLORSDIALOG_H_

@@ -88,6 +88,14 @@ FilterResultPtr LoadFileTask::operator()() {
 }
 
 void LoadFileTask::updateImageSizeIfChanged(QImage const& image) {
+    // The user might just replace a file with another one.
+    // In that case, we update its size that we store.
+    // Note that we don't do the same about DPI, because
+    // a DPI mismatch between the image and the stored value
+    // may indicate that the DPI was overridden.
+    // TODO: do something about DPIs when we have the ability
+    // to change DPIs at any point in time (not just when
+    // creating a project).
     if (image.size() != m_imageMetadata.size()) {
         m_imageMetadata.setSize(image.size());
         m_ptrPages->updateImageMetadata(m_imageId, m_imageMetadata);
@@ -95,6 +103,8 @@ void LoadFileTask::updateImageSizeIfChanged(QImage const& image) {
 }
 
 void LoadFileTask::overrideDpi(QImage& image) const {
+    // Beware: QImage will have a default DPI when loading
+    // an image that doesn't specify one.
     Dpm const dpm(m_imageMetadata.dpi());
     image.setDotsPerMeterX(dpm.horizontal());
     image.setDotsPerMeterY(dpm.vertical());
@@ -141,5 +151,5 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
     }
     ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), err_msg, fmt), ui->TRANSFER_OWNERSHIP);
     ui->setOptionsWidget(new FilterOptionsWidget, ui->TRANSFER_OWNERSHIP);
-}  // LoadFileTask::ErrorResult::updateUI
+} // LoadFileTask::ErrorResult::updateUI
 

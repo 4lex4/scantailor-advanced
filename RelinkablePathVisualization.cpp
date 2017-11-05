@@ -31,9 +31,9 @@
 
 struct RelinkablePathVisualization::PathComponent {
     QString label;
-    QString prefixPath;
-    QString suffixPath;
-    RelinkablePath::Type type;
+    QString prefixPath;  // Including the component itself.
+    QString suffixPath;  // Rest of the path.
+    RelinkablePath::Type type;  // File or Dir.
     bool exists;
 
     PathComponent(QString const& lbl, QString const& prefix_path, QString const& suffix_path, RelinkablePath::Type t)
@@ -68,7 +68,7 @@ void RelinkablePathVisualization::clear() {
     for (int count; (count = m_pLayout->count());) {
         QLayoutItem* item = m_pLayout->takeAt(count - 1);
         if (QWidget* wgt = item->widget()) {
-            wgt->deleteLater();
+            wgt->deleteLater();  // We may be called from the widget's signal.
         }
         delete item;
     }
@@ -82,11 +82,14 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
         return;
     }
 
+    // prefix_path is the path up to and including the current component.
     QString prefix_path;
 
     if (path.normalizedPath().startsWith(QLatin1String("//"))) {
+        // That's the Windows \\host\path thing.
         components.front().prepend(QLatin1String("//"));
     } else if (path.normalizedPath().startsWith(QChar('/'))) {
+        // Unix paths start with a slash.
         prefix_path += QChar('/');
     }
 
@@ -100,7 +103,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
             prefix_path += QChar('/');
         }
         prefix_path += component;
-
+        // Rest of the path.
         QString suffix_path;
         for (QStringList::const_iterator it2(it); ++it2 != components.end();) {
             if (!suffix_path.isEmpty()) {
@@ -112,6 +115,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
         path_components.push_back(PathComponent(component, prefix_path, suffix_path, RelinkablePath::Dir));
     }
 
+    // The last path component is either a file or a dir, while all the previous ones are dirs.
     path_components.back().type = path.type();
 
     checkForExistence(path_components);
@@ -178,7 +182,7 @@ void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn,
 }  // RelinkablePathVisualization::stylePathComponentButton
 
 void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
-    int const total_items = m_pLayout->count();
+    int const total_items = m_pLayout->count();  // Note that there is an extra stretch item.
     for (int i = 0; i < total_items; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (!widget) {
@@ -190,7 +194,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
 
         if (option.state & QStyle::State_MouseOver) {
             widget->setProperty("highlightEnforcer", true);
-
+            // Update the forceHighlight attribute for all buttons.
             for (int j = 0; j < total_items; ++j) {
                 widget = m_pLayout->itemAt(j)->widget();
                 if (widget) {
@@ -205,6 +209,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
         } else if (widget->property("highlightEnforcer").toBool()) {
             widget->setProperty("highlightEnforcer", false);
 
+            // Update the forceHighlight attribute for all buttons.
             for (int j = 0; j < total_items; ++j) {
                 widget = m_pLayout->itemAt(j)->widget();
                 if (widget) {
@@ -224,6 +229,8 @@ void RelinkablePathVisualization::onClicked(int component_idx,
                                             QString const& prefix_path,
                                             QString const& suffix_path,
                                             int type) {
+    // We'd like highlighting to stick until this method returns.
+
     for (int i = 0; i <= component_idx; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (widget) {
@@ -232,8 +239,8 @@ void RelinkablePathVisualization::onClicked(int component_idx,
     }
 
     emit clicked(prefix_path, suffix_path, type);
-
-    int const total_items = m_pLayout->count();
+    // Note that clear() or setPath() might have been called by a signal handler.
+    int const total_items = m_pLayout->count();  // Note that there is an extra stretch item.
     for (int i = 0; i <= component_idx && i < total_items; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (widget) {
@@ -243,6 +250,9 @@ void RelinkablePathVisualization::onClicked(int component_idx,
 }
 
 void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& components) {
+    // Instead of calling QFile::exists() [which also works on directories]
+    // for every component, we use binary search. That's especially important
+    // when dealing with network paths.
     if (components.empty()) {
         return;
     }
@@ -255,8 +265,8 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
         return;
     }
 
-    int left = -1;
-    int right = components.size() - 1;
+    int left = -1;  // Existing component (unless -1).
+    int right = components.size() - 1;  // Non-existing component (we checked it above).
     while (right - left > 1) {
         int const mid = (left + right + 1) >> 1;
         if (QFile::exists(components[mid].prefixPath)) {
@@ -269,8 +279,7 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
     for (int i = components.size() - 1; i >= 0; --i) {
         components[i].exists = (i < right);
     }
-}
-
+} // RelinkablePathVisualization::checkForExistence
 /*============================ ComponentButton ============================*/
 
 void RelinkablePathVisualization::ComponentButton::paintEvent(QPaintEvent* evt) {
@@ -281,6 +290,7 @@ void RelinkablePathVisualization::ComponentButton::paintEvent(QPaintEvent* evt) 
         option.state |= QStyle::State_MouseOver;
     }
 
+    // Prevent weird looking font effects for disabled buttons with Windows XP style.
     option.state |= QStyle::State_Enabled;
 
     QStylePainter painter(this);

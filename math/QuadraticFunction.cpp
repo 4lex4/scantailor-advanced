@@ -65,11 +65,13 @@ void QuadraticFunction::recalcForTranslatedArguments(double const* translation) 
     size_t const num_vars = numVars();
 
     for (size_t i = 0; i < num_vars; ++i) {
+        // Bi * (Xi + Ti) = Bi * Xi + Bi * Ti
         c += b[i] * translation[i];
     }
 
     for (size_t i = 0; i < num_vars; ++i) {
         for (size_t j = 0; j < num_vars; ++j) {
+            // (Xi + Ti)*Aij*(Xj + Tj) = Xi*Aij*Xj + Aij*Tj*Xi + Aij*Ti*Xj + Aij*Ti*Tj
             double const a = A(i, j);
             b[i] += a * translation[j];
             b[j] += a * translation[i];

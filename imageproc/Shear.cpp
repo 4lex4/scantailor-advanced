@@ -37,6 +37,7 @@ namespace imageproc {
         int const width = src.width();
         int const height = src.height();
 
+        // shift = floor(0.5 + shear * (y + 0.5 - y_origin));
         double shift = 0.5 + shear * (0.5 - y_origin);
         double const shift_end = 0.5 + shear * (height - 0.5 - y_origin);
         int shift1 = (int) floor(shift);
@@ -58,21 +59,25 @@ namespace imageproc {
             if ((shift1 != shift2) || (y2 == height)) {
                 int const block_height = y2 - y1;
                 if (abs(shift1) >= width) {
+                    // The shifted block would be completely off the image.
                     QRect const fr(0, y1, width, block_height);
                     dst.fill(fr, background_color);
                 } else if (shift1 < 0) {
+                    // Shift to the left.
                     QRect const dr(0, y1, width + shift1, block_height);
                     QPoint const sp(-shift1, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                     QRect const fr(width + shift1, y1, -shift1, block_height);
                     dst.fill(fr, background_color);
                 } else if (shift1 > 0) {
+                    // Shift to the right.
                     QRect const dr(shift1, y1, width - shift1, block_height);
                     QPoint const sp(0, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                     QRect const fr(0, y1, shift1, block_height);
                     dst.fill(fr, background_color);
                 } else {
+                    // No shift, just copy.
                     QRect const dr(0, y1, width, block_height);
                     QPoint const sp(0, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
@@ -86,7 +91,7 @@ namespace imageproc {
                 shift1 = shift2;
             }
         }
-    }      // hShearFromTo
+    }  // hShearFromTo
 
     void vShearFromTo(BinaryImage const& src,
                       BinaryImage& dst,
@@ -103,6 +108,7 @@ namespace imageproc {
         int const width = src.width();
         int const height = src.height();
 
+        // shift = floor(0.5 + shear * (x + 0.5 - x_origin));
         double shift = 0.5 + shear * (0.5 - x_origin);
         double const shift_end = 0.5 + shear * (width - 0.5 - x_origin);
         int shift1 = (int) floor(shift);
@@ -124,21 +130,25 @@ namespace imageproc {
             if ((shift1 != shift2) || (x2 == width)) {
                 int const block_width = x2 - x1;
                 if (abs(shift1) >= height) {
+                    // The shifted block would be completely off the image.
                     QRect const fr(x1, 0, block_width, height);
                     dst.fill(fr, background_color);
                 } else if (shift1 < 0) {
+                    // Shift upwards.
                     QRect const dr(x1, 0, block_width, height + shift1);
                     QPoint const sp(x1, -shift1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                     QRect const fr(x1, height + shift1, block_width, -shift1);
                     dst.fill(fr, background_color);
                 } else if (shift1 > 0) {
+                    // Shift downwards.
                     QRect const dr(x1, shift1, block_width, height - shift1);
                     QPoint const sp(x1, 0);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                     QRect const fr(x1, 0, block_width, shift1);
                     dst.fill(fr, background_color);
                 } else {
+                    // No shift, just copy.
                     QRect const dr(x1, 0, block_width, height);
                     QPoint const sp(x1, 0);
                     rasterOp<RopSrc>(dst, dr, src, sp);
@@ -152,7 +162,7 @@ namespace imageproc {
                 shift1 = shift2;
             }
         }
-    }      // vShearFromTo
+    }  // vShearFromTo
 
     BinaryImage
     hShear(BinaryImage const& src, double const shear, double const y_origin, BWColor const background_color) {

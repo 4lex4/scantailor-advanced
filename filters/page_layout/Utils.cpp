@@ -53,20 +53,25 @@ namespace page_layout {
         QPointF const down_uv(getDownUnitVector(poly_rect));
         QPointF const right_uv(getRightUnitVector(poly_rect));
 
+        // top-left
         poly_rect[0] -= down_uv * margins.top();
         poly_rect[0] -= right_uv * margins.left();
 
+        // top-right
         poly_rect[1] -= down_uv * margins.top();
         poly_rect[1] += right_uv * margins.right();
 
+        // bottom-right
         poly_rect[2] += down_uv * margins.bottom();
         poly_rect[2] += right_uv * margins.right();
 
+        // bottom-left
         poly_rect[3] += down_uv * margins.bottom();
         poly_rect[3] -= right_uv * margins.left();
 
         if (poly_rect.size() > 4) {
             assert(poly_rect.size() == 5);
+            // This polygon is closed.
             poly_rect[4] = poly_rect[3];
         }
     }
@@ -111,7 +116,7 @@ namespace page_layout {
 #ifdef DEBUG
             std::cout << "\tskip soft margins: " << "\n";
 #endif
-
+            // This means we are not aligning this page with others.
             return Margins();
         }
 
@@ -292,7 +297,7 @@ namespace page_layout {
         }
 
         return Margins(left, top, right, bottom);
-    }      // Utils::calcSoftMarginsMM
+    }  // Utils::calcSoftMarginsMM
 
     QPolygonF Utils::calcPageRectPhys(ImageTransformation const& xform,
                                       QPolygonF const& content_rect_phys,

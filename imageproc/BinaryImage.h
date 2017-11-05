@@ -297,7 +297,7 @@ namespace imageproc {
         SharedData* m_pData;
         int m_width;
         int m_height;
-        int m_wpl;
+        int m_wpl;  // words per line
     };
 
 
@@ -324,4 +324,4 @@ namespace imageproc {
         return !(lhs == rhs);
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_BINARYIMAGE_H_
+#endif // ifndef IMAGEPROC_BINARYIMAGE_H_

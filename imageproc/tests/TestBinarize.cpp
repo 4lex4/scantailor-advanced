@@ -35,5 +35,5 @@ namespace imageproc {
             }
 #endif
         BOOST_AUTO_TEST_SUITE_END();
-    }
-}
+    }  // namespace tests
+}  // namespace imageproc

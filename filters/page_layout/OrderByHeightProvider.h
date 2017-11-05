@@ -34,5 +34,5 @@ namespace page_layout {
     private:
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
+}  // namespace page_layout
 #endif

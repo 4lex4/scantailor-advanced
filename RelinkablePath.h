@@ -25,6 +25,7 @@
  * \brief Represents a file or directory.
  */
 class RelinkablePath {
+    // Member-wise copying is OK.
 public:
     enum Type {
         File,

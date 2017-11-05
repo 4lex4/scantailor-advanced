@@ -80,8 +80,11 @@ namespace page_split {
         if (split_line_el.isNull()) {
             m_type = typeFromString(type);
         } else {
+            // Backwards compatibility with versions < 0.9.9
+            // Note that we fill in m_uncutOutline elsewhere, namely in Task::process().
             QLineF const split_line(XmlUnmarshaller::lineF(split_line_el));
 
+            // Backwards compatibility with versions <= 0.9.1
             bool const left_page = (
                     layout_el.attribute("leftPageValid") == "1"
             );
@@ -95,12 +98,15 @@ namespace page_split {
                 m_cutter2 = QLineF();
             } else if ((type == "left-page") || left_page) {
                 m_type = SINGLE_PAGE_CUT;
-                m_cutter1 = QLineF(0, 0, 0, 1);
+                m_cutter1 = QLineF(0, 0, 0, 1);  // A bit of a hack, but should work.
                 m_cutter2 = split_line;
             } else if ((type == "right-page") || right_page) {
                 m_type = SINGLE_PAGE_CUT;
                 m_cutter1 = split_line;
                 m_cutter2 = QLineF();
+                // This one is a special case.  We don't know the outline at this point,
+                // so we make m_cutter2 null.  We'll assign the correct value to it in
+                // setUncutOutline().
             } else {
                 m_type = SINGLE_PAGE_UNCUT;
                 m_cutter1 = QLineF();
@@ -119,10 +125,12 @@ namespace page_split {
     void PageLayout::setUncutOutline(QRectF const& outline) {
         m_uncutOutline = outline;
         if (m_uncutOutline.size() < 4) {
+            // Empty rect?
             return;
         }
 
         if ((m_type == SINGLE_PAGE_CUT) && m_cutter2.isNull()) {
+            // Backwards compatibility.  See PageLayout(QDomElement const&);
             m_cutter2.setP1(m_uncutOutline[1]);
             m_cutter2.setP2(m_uncutOutline[2]);
         }
@@ -199,13 +207,16 @@ namespace page_split {
                 continue;
             }
 
+            // Project the intersection point on poly_segment to check
+            // if it's between its endpoints.
             p1 = poly_segment.p2() - poly_segment.p1();
             p2 = intersection - poly_segment.p1();
             projection = p1.x() * p2.x() + p1.y() * p2.y();
             if ((projection < 0) || (projection > p1.x() * p1.x() + p1.y() * p1.y())) {
+                // Intersection point not on the polygon segment.
                 continue;
             }
-
+            // Now project it on raw_line and update min/max projections.
             p1 = intersection - origin;
             p2 = line_vec;
             projection = p1.x() * p2.x() + p1.y() * p2.y();
@@ -223,7 +234,7 @@ namespace page_split {
         ensureSameDirection(raw_line, res);
 
         return res;
-    }      // PageLayout::inscribedCutterLine
+    }  // PageLayout::inscribedCutterLine
 
     QPolygonF PageLayout::singlePageOutline() const {
         if (m_uncutOutline.size() < 4) {
@@ -358,7 +369,7 @@ namespace page_split {
             return TWO_PAGES;
         } else if (str == "single-cut") {
             return SINGLE_PAGE_CUT;
-        } else {
+        } else {  // "single-uncut"
             return SINGLE_PAGE_UNCUT;
         }
     }
@@ -391,6 +402,7 @@ namespace page_split {
             return line;
         }
 
+        // Project every vertex of the polygon onto the line and take extremas.
 
         double min = NumericTraits<double>::max();
         double max = NumericTraits<double>::min();

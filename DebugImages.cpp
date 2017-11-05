@@ -35,7 +35,7 @@ void DebugImages::add(QImage const& image,
     file.setAutoRemove(false);
 
     QImageWriter writer(&file, "png");
-    writer.setCompression(2);
+    writer.setCompression(2);  // Trade space for speed.
     if (!writer.write(image)) {
         return;
     }

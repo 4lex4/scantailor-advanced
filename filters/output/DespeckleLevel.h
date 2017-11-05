@@ -32,5 +32,5 @@ namespace output {
     QString despeckleLevelToString(DespeckleLevel level);
 
     DespeckleLevel despeckleLevelFromString(QString const& str);
-}
+}  // namespace output
 #endif

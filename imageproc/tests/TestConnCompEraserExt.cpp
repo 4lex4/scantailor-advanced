@@ -54,6 +54,7 @@ namespace imageproc {
                 }
 
                 if (pad > 0) {
+                    // Check that padding is white.
                     BinaryImage test2(pad, nonaligned.height());
                     BinaryImage empty2(test2.size());
                     empty2.fill(WHITE);

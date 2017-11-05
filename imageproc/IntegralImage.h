@@ -87,13 +87,15 @@ namespace imageproc {
 
     template<typename T>
     IntegralImage<T>::IntegralImage(int const width, int const height)
-            : m_lineSum() {
+            : m_lineSum() { // init with 0 or with default constructor.
+        // The first row and column are fake.
         init(width + 1, height + 1);
     }
 
     template<typename T>
     IntegralImage<T>::IntegralImage(QSize const& size)
-            : m_lineSum() {
+            : m_lineSum() { // init with 0 or with default constructor.
+        // The first row and column are fake.
         init(size.width() + 1, size.height() + 1);
     }
 
@@ -109,13 +111,15 @@ namespace imageproc {
 
         m_pData = new T[width * height];
 
+        // Initialize the first (fake) row.
+        // As for the fake column, we initialize its elements in beginRow().
         T* p = m_pData;
         for (int i = 0; i < width; ++i, ++p) {
             *p = T();
         }
 
         m_pAbove = m_pData;
-        m_pCur = m_pAbove + width;
+        m_pCur = m_pAbove + width;  // Skip the first row.
     }
 
     template<typename T>
@@ -130,6 +134,7 @@ namespace imageproc {
     void IntegralImage<T>::beginRow() {
         m_lineSum = T();
 
+        // Initialize and skip the fake column.
         *m_pCur = T();
         ++m_pCur;
         ++m_pAbove;
@@ -137,10 +142,11 @@ namespace imageproc {
 
     template<typename T>
     inline T IntegralImage<T>::sum(QRect const& rect) const {
+        // Keep in mind that row 0 and column 0 are fake.
         int const pre_left = rect.left();
-        int const pre_right = rect.right() + 1;
+        int const pre_right = rect.right() + 1;  // QRect::right() is inclusive.
         int const pre_top = rect.top();
-        int const pre_bottom = rect.bottom() + 1;
+        int const pre_bottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
         T sum(m_pData[pre_bottom * m_width + pre_right]);
         sum -= m_pData[pre_top * m_width + pre_right];
         sum += m_pData[pre_top * m_width + pre_left];
@@ -149,4 +155,4 @@ namespace imageproc {
         return sum;
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_INTEGRALIMAGE_H_
+#endif // ifndef IMAGEPROC_INTEGRALIMAGE_H_

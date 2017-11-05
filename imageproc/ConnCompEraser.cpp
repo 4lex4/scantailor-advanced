@@ -68,6 +68,8 @@ namespace imageproc {
               m_connectivity(conn),
               m_x(0),
               m_y(0) {
+        // By initializing m_pLine with 0 instead of m_image.data(),
+        // we avoid copy-on-write, provided that the caller used image.release().
     }
 
     ConnComp ConnCompEraser::nextConnComp() {
@@ -155,12 +157,18 @@ namespace imageproc {
         }
 
         if (!m_pLine) {
+            // By initializing m_pLine with 0 instead of m_image.data(),
+            // we allow the caller to delete his copy of the image
+            // to avoid copy-on-write.
+            // We could also try to avoid copy-on-write in the case of
+            // a completely white image, but I don't think it's worth it.
             m_pLine = m_image.data();
         }
 
         uint32_t* line = m_pLine;
         uint32_t const* pword = line + (m_x >> 5);
 
+        // Stop word is a last word in line that holds data.
         int const last_bit_idx = m_width - 1;
         uint32_t const* p_stop_word = line + (last_bit_idx >> 5);
         uint32_t const stop_word_mask = ~uint32_t(0) << (31 - (last_bit_idx & 31));
@@ -201,7 +209,7 @@ namespace imageproc {
                     return true;
                 }
             }
-
+            // Handle the stop word (some bits need to be ignored).
             assert(pword == p_stop_word);
             word = *pword & stop_word_mask;
             if (word) {
@@ -220,7 +228,7 @@ namespace imageproc {
         }
 
         return false;
-    }      // ConnCompEraser::moveToNextBlackPixel
+    }  // ConnCompEraser::moveToNextBlackPixel
 
     ConnComp ConnCompEraser::eraseConnComp4() {
         pushInitialSegments();
@@ -229,6 +237,7 @@ namespace imageproc {
         int pix_count = 0;
 
         while (!m_segStack.empty()) {
+            // Pop a segment off the stack.
             Segment const seg(m_segStack.top());
             m_segStack.pop();
 
@@ -243,10 +252,12 @@ namespace imageproc {
             int xstart = x + 1;
 
             if (x >= seg.xleft) {
+                // Pixel at seg.xleft was off and was not cleared.
                 goto skip;
             }
 
             if (xstart < seg.xleft - 1) {
+                // Leak on left.
                 pushSegInvDir(seg, xstart, seg.xleft - 1, bbox);
             }
 
@@ -259,11 +270,13 @@ namespace imageproc {
                 }
                 pushSegSameDir(seg, xstart, x - 1, bbox);
                 if (x > seg.xright + 1) {
+                    // Leak on right.
                     pushSegInvDir(seg, seg.xright + 1, x - 1, bbox);
                 }
 
                 skip:
                 for (++x; x <= xmax && !getBit(seg.line, x); ++x) {
+                    // Skip white pixels.
                 }
                 xstart = x;
             } while (x <= xmax);
@@ -272,7 +285,7 @@ namespace imageproc {
         QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
 
         return ConnComp(QPoint(m_x, m_y), rect, pix_count);
-    }      // ConnCompEraser::eraseConnComp4
+    }  // ConnCompEraser::eraseConnComp4
 
     ConnComp ConnCompEraser::eraseConnComp8() {
         pushInitialSegments();
@@ -281,6 +294,7 @@ namespace imageproc {
         int pix_count = 0;
 
         while (!m_segStack.empty()) {
+            // Pop a segment off the stack.
             Segment const seg(m_segStack.top());
             m_segStack.pop();
 
@@ -295,10 +309,12 @@ namespace imageproc {
             int xstart = x + 1;
 
             if (x >= seg.xleft - 1) {
+                // Pixel at seg.xleft - 1 was off and was not cleared.
                 goto skip;
             }
 
             if (xstart < seg.xleft) {
+                // Leak on left.
                 pushSegInvDir(seg, xstart, seg.xleft - 1, bbox);
             }
 
@@ -310,11 +326,13 @@ namespace imageproc {
                 }
                 pushSegSameDir(seg, xstart, x - 1, bbox);
                 if (x > seg.xright) {
+                    // Leak on right.
                     pushSegInvDir(seg, seg.xright + 1, x - 1, bbox);
                 }
 
                 skip:
                 for (++x; x <= xmax && !getBit(seg.line, x); ++x) {
+                    // Skip white pixels.
                 }
                 xstart = x;
             } while (x <= xmax);
@@ -323,5 +341,5 @@ namespace imageproc {
         QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
 
         return ConnComp(QPoint(m_x, m_y), rect, pix_count);
-    }      // ConnCompEraser::eraseConnComp8
+    }  // ConnCompEraser::eraseConnComp8
 }  // namespace imageproc

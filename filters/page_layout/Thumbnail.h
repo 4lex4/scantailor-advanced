@@ -48,5 +48,5 @@ namespace page_layout {
         QRectF m_virtContentRect;
         QRectF m_virtOuterRect;
     };
-}
+}  // namespace page_layout
 #endif

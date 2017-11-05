@@ -35,4 +35,4 @@ namespace imageproc {
     GrayImage::GrayImage(QImage const& image)
             : m_image(toGrayscale(image)) {
     }
-}
+}  // namespace imageproc

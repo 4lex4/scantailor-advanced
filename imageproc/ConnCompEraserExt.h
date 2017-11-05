@@ -90,5 +90,5 @@ namespace imageproc {
         BinaryImage m_lastImage;
         ConnComp m_lastCC;
     };
-}
-#endif  // ifndef IMAGEPROC_CONNCOMPERASEREXT_H_
+}  // namespace imageproc
+#endif // ifndef IMAGEPROC_CONNCOMPERASEREXT_H_

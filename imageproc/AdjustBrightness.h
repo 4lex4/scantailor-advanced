@@ -60,5 +60,5 @@ namespace imageproc {
  * toGrayscale() and qGray() are assumed.
  */
     void adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness);
-}
+}  // namespace imageproc
 #endif

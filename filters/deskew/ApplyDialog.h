@@ -52,5 +52,5 @@ namespace deskew {
         std::set<PageId> m_selectedPages;
         QButtonGroup* m_pScopeGroup;
     };
-}
-#endif  // ifndef DESKEW_APPLYDIALOG_H_
+}  // namespace deskew
+#endif // ifndef DESKEW_APPLYDIALOG_H_

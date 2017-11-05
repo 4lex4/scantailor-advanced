@@ -133,6 +133,8 @@ namespace imageproc {
 
 
         static QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min) {
+            // Imagine a rectangle of (0, 0, 1, 1), except we take
+            // centers of its edges instead of its vertices.
             QPolygonF dst_poly;
             dst_poly.push_back(QPointF(0.5, 0.0));
             dst_poly.push_back(QPointF(1.0, 0.5));
@@ -176,6 +178,8 @@ namespace imageproc {
             inv_xform *= xform.inverted();
             inv_xform *= QTransform().scale(32.0, 32.0);
 
+            // sx32 = dx*inv_xform.m11() + dy*inv_xform.m21() + inv_xform.dx();
+            // sy32 = dy*inv_xform.m22() + dx*inv_xform.m12() + inv_xform.dy();
 
             QSizeF const src32_unit_size(calcSrcUnitSize(inv_xform, min_mapping_area));
             int const src32_unit_w = std::max<int>(1, qRound(src32_unit_size.width()));
@@ -195,13 +199,14 @@ namespace imageproc {
                     int src32_right = src32_left + src32_unit_w;
                     int src32_bottom = src32_top + src32_unit_h;
                     int src_left = src32_left >> 5;
-                    int src_right = (src32_right - 1) >> 5;
+                    int src_right = (src32_right - 1) >> 5;  // inclusive
                     int src_top = src32_top >> 5;
-                    int src_bottom = (src32_bottom - 1) >> 5;
+                    int src_bottom = (src32_bottom - 1) >> 5;  // inclusive
                     assert(src_bottom >= src_top);
                     assert(src_right >= src_left);
 
                     if ((src_bottom < 0) || (src_right < 0) || (src_left >= sw) || (src_top >= sh)) {
+                        // Completely outside of src image.
                         if (outside_flags & OutsidePixels::COLOR) {
                             dst_line[dx] = outside_color;
                         } else {
@@ -239,8 +244,8 @@ namespace imageproc {
                         background_area += bottom_fraction * hor_fraction;
                         unsigned const full_pixels_ver = src_bottom - sh;
                         background_area += hor_fraction * (full_pixels_ver << 5);
-                        src_bottom = sh - 1;
-                        src32_bottom = sh << 5;
+                        src_bottom = sh - 1;  // inclusive
+                        src32_bottom = sh << 5;  // exclusive
                     }
                     if (src_left < 0) {
                         unsigned const left_fraction = 32 - (src32_left & 31);
@@ -257,8 +262,8 @@ namespace imageproc {
                         background_area += right_fraction * vert_fraction;
                         unsigned const full_pixels_hor = src_right - sw;
                         background_area += vert_fraction * (full_pixels_hor << 5);
-                        src_right = sw - 1;
-                        src32_right = sw << 5;
+                        src_right = sw - 1;  // inclusive
+                        src32_right = sw << 5;  // exclusive
                     }
                     assert(src_bottom >= src_top);
                     assert(src_right >= src_left);
@@ -296,13 +301,16 @@ namespace imageproc {
 
                     if (src_top == src_bottom) {
                         if (src_left == src_right) {
+                            // dst pixel maps to a single src pixel
                             StorageUnit const c = src_line[src_left];
                             if (background_area == 0) {
+                                // common case optimization
                                 dst_line[dx] = c;
                                 continue;
                             }
                             mixer.add(c, src_area);
                         } else {
+                            // dst pixel maps to a horizontal line of src pixels
                             unsigned const vert_fraction = src32_bottom - src32_top;
                             unsigned const left_area = vert_fraction * left_fraction;
                             unsigned const middle_area = vert_fraction << 5;
@@ -317,6 +325,7 @@ namespace imageproc {
                             mixer.add(src_line[src_right], right_area);
                         }
                     } else if (src_left == src_right) {
+                        // dst pixel maps to a vertical line of src pixels
                         unsigned const hor_fraction = src32_right - src32_left;
                         unsigned const top_area = hor_fraction * top_fraction;
                         unsigned const middle_area = hor_fraction << 5;
@@ -334,6 +343,7 @@ namespace imageproc {
 
                         mixer.add(*src_line, bottom_area);
                     } else {
+                        // dst pixel maps to a block of src pixels
                         unsigned const top_area = top_fraction << 5;
                         unsigned const bottom_area = bottom_fraction << 5;
                         unsigned const left_area = left_fraction << 5;
@@ -343,16 +353,19 @@ namespace imageproc {
                         unsigned const bottomleft_area = bottom_fraction * left_fraction;
                         unsigned const bottomright_area = bottom_fraction * right_fraction;
 
+                        // process the top-left corner
                         mixer.add(src_line[src_left], topleft_area);
 
+                        // process the top line (without corners)
                         for (int sx = src_left + 1; sx < src_right; ++sx) {
                             mixer.add(src_line[sx], top_area);
                         }
 
+                        // process the top-right corner
                         mixer.add(src_line[src_right], topright_area);
 
                         src_line += src_stride;
-
+                        // process middle lines
                         for (int sy = src_top + 1; sy < src_bottom; ++sy) {
                             mixer.add(src_line[src_left], left_area);
 
@@ -365,19 +378,22 @@ namespace imageproc {
                             src_line += src_stride;
                         }
 
+                        // process bottom-left corner
                         mixer.add(src_line[src_left], bottomleft_area);
 
+                        // process the bottom line (without corners)
                         for (int sx = src_left + 1; sx < src_right; ++sx) {
                             mixer.add(src_line[sx], bottom_area);
                         }
 
+                        // process the bottom-right corner
                         mixer.add(src_line[src_right], bottomright_area);
                     }
 
                     dst_line[dx] = mixer.result(src_area + background_area);
                 }
             }
-        }          // transformGeneric
+        }  // transformGeneric
     }      // namespace
 
     QImage transform(QImage const& src,
@@ -398,6 +414,8 @@ namespace imageproc {
         }
 
         if ((src.format() == QImage::Format_Indexed8) && src.allGray()) {
+            // The palette of src may be non-standard, so we create a GrayImage,
+            // which is guaranteed to have a standard palette.
             GrayImage gray_src(src);
             GrayImage gray_dst(dst_rect.size());
             transformGeneric<uint8_t, Gray>(
@@ -431,7 +449,7 @@ namespace imageproc {
                 return dst;
             }
         }
-    }      // transform
+    }  // transform
 
     GrayImage transformToGray(QImage const& src,
                               QTransform const& xform,

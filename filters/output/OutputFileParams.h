@@ -53,5 +53,5 @@ namespace output {
         qint64 m_size;
         time_t m_mtime;
     };
-}
-#endif  // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_
+}  // namespace output
+#endif // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_

@@ -39,5 +39,5 @@ namespace imageproc {
  *        size of \p dst_rect.
  */
     void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect);
-}
+}  // namespace imageproc
 #endif

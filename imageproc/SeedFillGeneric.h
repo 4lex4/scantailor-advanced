@@ -29,8 +29,8 @@ namespace imageproc {
     namespace detail {
         namespace seed_fill_generic {
             struct HTransition {
-                int west_delta;
-                int east_delta;
+                int west_delta;  // -1 or 0
+                int east_delta;  // 1 or 0
 
                 HTransition(int west_delta_, int east_delta_)
                         : west_delta(west_delta_),
@@ -39,8 +39,8 @@ namespace imageproc {
             };
 
             struct VTransition {
-                int north_mask;
-                int south_mask;
+                int north_mask;  // 0 or ~0
+                int south_mask;  // 0 or ~0
 
                 VTransition(int north_mask_, int south_mask_)
                         : north_mask(north_mask_),
@@ -131,31 +131,35 @@ namespace imageproc {
                     T* seed;
                     T const* mask;
 
+                    // Western neighbor.
                     seed = pos.seed + ht.west_delta;
                     mask = pos.mask + ht.west_delta;
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, ht.west_delta, 0
                     );
 
+                    // Eastern neighbor.
                     seed = pos.seed + ht.east_delta;
                     mask = pos.mask + ht.east_delta;
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, ht.east_delta, 0
                     );
 
+                    // Northern neighbor.
                     seed = pos.seed - (seed_stride & vt.north_mask);
                     mask = pos.mask - (mask_stride & vt.north_mask);
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, 0, -1 & vt.north_mask
                     );
 
+                    // Southern neighbor.
                     seed = pos.seed + (seed_stride & vt.south_mask);
                     mask = pos.mask + (mask_stride & vt.south_mask);
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, 0, 1 & vt.south_mask
                     );
                 }
-            }              // spread4
+            }  // spread4
 
             template<typename T, typename SpreadOp, typename MaskOp>
             void spread8(SpreadOp spread_op,
@@ -175,6 +179,7 @@ namespace imageproc {
                     T* seed;
                     T const* mask;
 
+                    // Northern neighbor.
                     seed = pos.seed - (seed_stride & vt.north_mask);
                     mask = pos.mask - (mask_stride & vt.north_mask);
                     processNeighbor(
@@ -182,6 +187,7 @@ namespace imageproc {
                             pos, 0, -1 & vt.north_mask
                     );
 
+                    // North-Western neighbor.
                     seed = pos.seed - (seed_stride & vt.north_mask) + ht.west_delta;
                     mask = pos.mask - (mask_stride & vt.north_mask) + ht.west_delta;
                     processNeighbor(
@@ -189,6 +195,7 @@ namespace imageproc {
                             pos, ht.west_delta, -1 & vt.north_mask
                     );
 
+                    // North-Eastern neighbor.
                     seed = pos.seed - (seed_stride & vt.north_mask) + ht.east_delta;
                     mask = pos.mask - (mask_stride & vt.north_mask) + ht.east_delta;
                     processNeighbor(
@@ -196,24 +203,28 @@ namespace imageproc {
                             pos, ht.east_delta, -1 & vt.north_mask
                     );
 
+                    // Eastern neighbor.
                     seed = pos.seed + ht.east_delta;
                     mask = pos.mask + ht.east_delta;
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, ht.east_delta, 0
                     );
 
+                    // Western neighbor.
                     seed = pos.seed + ht.west_delta;
                     mask = pos.mask + ht.west_delta;
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, ht.west_delta, 0
                     );
 
+                    // Southern neighbor.
                     seed = pos.seed + (seed_stride & vt.south_mask);
                     mask = pos.mask + (mask_stride & vt.south_mask);
                     processNeighbor(
                             spread_op, mask_op, queue, this_val, seed, mask, pos, 0, 1 & vt.south_mask
                     );
 
+                    // South-Eastern neighbor.
                     seed = pos.seed + (seed_stride & vt.south_mask) + ht.east_delta;
                     mask = pos.mask + (mask_stride & vt.south_mask) + ht.east_delta;
                     processNeighbor(
@@ -221,6 +232,7 @@ namespace imageproc {
                             pos, ht.east_delta, 1 & vt.south_mask
                     );
 
+                    // South-Western neighbor.
                     seed = pos.seed + (seed_stride & vt.south_mask) + ht.west_delta;
                     mask = pos.mask + (seed_stride & vt.south_mask) + ht.west_delta;
                     processNeighbor(
@@ -228,7 +240,7 @@ namespace imageproc {
                             pos, ht.west_delta, 1 & vt.south_mask
                     );
                 }
-            }              // spread8
+            }  // spread8
 
             template<typename T, typename SpreadOp, typename MaskOp>
             void seedFill4(SpreadOp spread_op,
@@ -245,12 +257,15 @@ namespace imageproc {
                 T const* mask_line = mask;
                 T* prev_line = seed_line;
 
+                // Top to bottom.
                 for (int y = 0; y < h; ++y) {
                     int x = 0;
 
+                    // First item in line.
                     T prev(mask_op(mask_line[x], spread_op(seed_line[x], prev_line[x])));
                     seed_line[x] = prev;
 
+                    // Other items, left to right.
                     while (++x < w) {
                         prev = mask_op(mask_line[x], spread_op(prev, spread_op(seed_line[x], prev_line[x])));
                         seed_line[x] = prev;
@@ -270,9 +285,11 @@ namespace imageproc {
                 initHorTransitions(h_transitions, w);
                 initVertTransitions(v_transitions, h);
 
+                // Bottom to top.
                 for (int y = h - 1; y >= 0; --y) {
                     VTransition const vt(v_transitions[y]);
 
+                    // Right to left.
                     for (int x = w - 1; x >= 0; --x) {
                         HTransition const ht(h_transitions[x]);
 
@@ -298,11 +315,13 @@ namespace imageproc {
                         T const* p_east_mask = p_base_mask + ht.east_delta;
                         T const* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
 
+                        // Eastern neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_east_seed, p_east_mask, pos, ht.east_delta, 0
                         );
 
+                        // Southern neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_south_seed, p_south_mask, pos, 0, 1 & vt.south_mask
@@ -317,7 +336,7 @@ namespace imageproc {
                         spread_op, mask_op, queue, &h_transitions[0],
                         &v_transitions[0], seed_stride, mask_stride
                 );
-            }              // seedFill4
+            }  // seedFill4
 
             template<typename T, typename SpreadOp, typename MaskOp>
             void seedFill8(SpreadOp spread_op,
@@ -330,6 +349,7 @@ namespace imageproc {
                 int const w = size.width();
                 int const h = size.height();
 
+                // Some code below doesn't handle such cases.
                 if (w == 1) {
                     seedFillSingleLine(spread_op, mask_op, h, seed, seed_stride, mask, mask_stride);
 
@@ -343,6 +363,12 @@ namespace imageproc {
                 T* seed_line = seed;
                 T const* mask_line = mask;
 
+                // Note: we usually process the first line by assigning
+                // prev_line = seed_line, but in this case prev_line[x + 1]
+                // won't be clipped by its mask when we use it to update seed_line[x].
+                // The wrong value may propagate further from there, so clipping
+                // we do on the anti-raster pass won't help.
+                // That's why we process the first line separately.
                 seed_line[0] = mask_op(seed_line[0], mask_line[0]);
                 for (int x = 1; x < w; ++x) {
                     seed_line[x] = mask_op(
@@ -353,12 +379,14 @@ namespace imageproc {
 
                 T* prev_line = seed_line;
 
+                // Top to bottom.
                 for (int y = 1; y < h; ++y) {
                     seed_line += seed_stride;
                     mask_line += mask_stride;
 
                     int x = 0;
 
+                    // Leftmost pixel.
                     seed_line[x] = mask_op(
                             mask_line[x],
                             spread_op(
@@ -367,6 +395,7 @@ namespace imageproc {
                             )
                     );
 
+                    // Left to right.
                     while (++x < w - 1) {
                         seed_line[x] = mask_op(
                                 mask_line[x],
@@ -380,6 +409,7 @@ namespace imageproc {
                         );
                     }
 
+                    // Rightmost pixel.
                     seed_line[x] = mask_op(
                             mask_line[x],
                             spread_op(
@@ -397,6 +427,7 @@ namespace imageproc {
                 initHorTransitions(h_transitions, w);
                 initVertTransitions(v_transitions, h);
 
+                // Bottom to top.
                 for (int y = h - 1; y >= 0; --y) {
                     VTransition const vt(v_transitions[y]);
 
@@ -433,22 +464,26 @@ namespace imageproc {
                         T const* p_south_west_mask = p_south_mask + ht.west_delta;
                         T const* p_south_east_mask = p_south_mask + ht.east_delta;
 
+                        // Eastern neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_east_seed, p_east_mask, pos, ht.east_delta, 0
                         );
 
+                        // South-eastern neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_south_east_seed, p_south_east_mask, pos,
                                 ht.east_delta, 1 & vt.south_mask
                         );
 
+                        // Southern neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_south_seed, p_south_mask, pos, 0, 1 & vt.south_mask
                         );
 
+                        // South-western neighbor.
                         processNeighbor(
                                 spread_op, mask_op, queue, new_val,
                                 p_south_west_seed, p_south_west_mask, pos,
@@ -464,7 +499,7 @@ namespace imageproc {
                         spread_op, mask_op, queue, &h_transitions[0],
                         &v_transitions[0], seed_stride, mask_stride
                 );
-            }              // seedFill8
+            }  // seedFill8
         }          // namespace seed_fill_generic
     }      // namespace detail
 
@@ -521,4 +556,4 @@ namespace imageproc {
         }
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SEEDFILL_GENERIC_H_
+#endif // ifndef IMAGEPROC_SEEDFILL_GENERIC_H_

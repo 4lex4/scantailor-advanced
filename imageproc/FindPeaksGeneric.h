@@ -52,6 +52,7 @@ namespace imageproc {
                     peak_neighborhood.setHeight(1);
                 }
 
+                // Dilate the peaks and write results to seed.
                 QRect neighborhood(QPoint(0, 0), peak_neighborhood);
                 neighborhood.moveCenter(QPoint(0, 0));
                 localMinMaxGeneric(
@@ -62,6 +63,7 @@ namespace imageproc {
                 std::vector<T> mask(to_be_raised, to_be_raised + to_be_raised_stride * size.height());
                 int const mask_stride = to_be_raised_stride;
 
+                // Slightly raise the mask relative to to_be_raised.
                 std::transform(mask.begin(), mask.end(), mask.begin(), increase_significance);
 
                 seedFillGenericInPlace(
@@ -69,7 +71,7 @@ namespace imageproc {
                         &to_be_raised[0], to_be_raised_stride, size, &mask[0], mask_stride
                 );
             }
-        }
+        }  // namespace find_peaks
     }      // namespace detail
 
 /**
@@ -144,7 +146,7 @@ namespace imageproc {
             raised_line += raised_stride;
             data_line += stride;
         }
-    }      // findPeaksInPlaceGeneric
+    }  // findPeaksInPlaceGeneric
 
 /**
  * \brief Same as findPeaksInPlaceGeneric(), but returning a binary image
@@ -194,6 +196,6 @@ namespace imageproc {
         }
 
         return peaks;
-    }      // findPeaksGeneric
+    }  // findPeaksGeneric
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_FIND_PEAKS_H_
+#endif // ifndef IMAGEPROC_FIND_PEAKS_H_

@@ -59,9 +59,9 @@ ConsoleBatch::ConsoleBatch(std::vector<ImageFileInfo> const& images,
           debug(true),
           m_ptrDisambiguator(new FileNameDisambiguator),
           m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout)) {
-    PageSelectionAccessor const accessor((IntrusivePtr<PageSelectionProvider>()));
+    PageSelectionAccessor const accessor((IntrusivePtr<PageSelectionProvider>()));  // Won't really be used anyway.
     m_ptrStages = IntrusivePtr<StageSequence>(new StageSequence(m_ptrPages, accessor));
-
+    // m_ptrThumbnailCache = IntrusivePtr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_dir+"/cache/thumbs", QSize(200,200), 40, 5));
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
@@ -84,7 +84,7 @@ ConsoleBatch::ConsoleBatch(QString const project_file)
     m_ptrReader.reset(new ProjectReader(doc));
     m_ptrPages = m_ptrReader->pages();
 
-    PageSelectionAccessor const accessor((IntrusivePtr<PageSelectionProvider>()));
+    PageSelectionAccessor const accessor((IntrusivePtr<PageSelectionProvider>()));  // Won't be used anyway.
     m_ptrDisambiguator = m_ptrReader->namingDisambiguator();
 
     m_ptrStages = IntrusivePtr<StageSequence>(new StageSequence(m_ptrPages, accessor));
@@ -95,7 +95,7 @@ ConsoleBatch::ConsoleBatch(QString const project_file)
     if (!cli.outputDirectory().isEmpty()) {
         output_directory = cli.outputDirectory();
     }
-
+    // m_ptrThumbnailCache = IntrusivePtr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_directory+"/cache/thumbs", QSize(200,200), 40, 5));
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
@@ -156,8 +156,9 @@ BackgroundTaskPtr ConsoleBatch::createCompositeTask(PageInfo const& page, int co
                     page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
             )
     );
-}  // ConsoleBatch::createCompositeTask
+} // ConsoleBatch::createCompositeTask
 
+// process the image vector **images** and save output to **output_dir**
 void ConsoleBatch::process() {
     CommandLine const& cli = CommandLine::get();
 
@@ -204,7 +205,7 @@ void ConsoleBatch::process() {
     for (int j = 0; j <= endFilterIdx; j++) {
         m_ptrStages->filterAt(j)->updateStatistics();
     }
-}  // ConsoleBatch::process
+} // ConsoleBatch::process
 
 void ConsoleBatch::saveProject(QString const project_file) {
     PageInfo fpage = m_ptrPages->toPageSequence(PAGE_VIEW).pageAt(0);
@@ -237,6 +238,7 @@ void ConsoleBatch::setupFixOrientation(std::set<PageId> allPages) {
         PageId page = *i;
 
         OrthogonalRotation rotation;
+        // FIX ORIENTATION FILTER
         if (cli.hasOrientation()) {
             switch (cli.getOrientation()) {
                 case CommandLine::LEFT:
@@ -261,6 +263,7 @@ void ConsoleBatch::setupPageSplit(std::set<PageId> allPages) {
     IntrusivePtr<page_split::Filter> page_split = m_ptrStages->pageSplitFilter();
     CommandLine const& cli = CommandLine::get();
 
+    // PAGE SPLIT
     if (cli.hasLayout()) {
         page_split->getSettings()->setLayoutTypeForAllPages(cli.getLayout());
     }
@@ -272,7 +275,7 @@ void ConsoleBatch::setupDeskew(std::set<PageId> allPages) {
 
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
-
+        // DESKEW FILTER
         OrthogonalRotation rotation;
         if (cli.hasDeskewAngle() || cli.hasDeskew()) {
             double angle = 0.0;
@@ -304,7 +307,7 @@ void ConsoleBatch::setupSelectContent(std::set<PageId> allPages) {
         if (old_params.get()) {
             params = *old_params;
         }
-
+        // SELECT CONTENT FILTER
         if (cli.hasContentRect()) {
             params.setContentRect(cli.getContentRect());
         }
@@ -340,6 +343,7 @@ void ConsoleBatch::setupPageLayout(std::set<PageId> allPages) {
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
 
+        // PAGE LAYOUT FILTER
         page_layout::Alignment alignment = cli.getAlignment();
         if (cli.hasMatchLayoutTolerance()) {
             QString const path = page.imageId().filePath();
@@ -390,6 +394,7 @@ void ConsoleBatch::setupOutput(std::set<PageId> allPages) {
     for (std::set<PageId>::iterator i = allPages.begin(); i != allPages.end(); i++) {
         PageId page = *i;
 
+        // OUTPUT FILTER
         output::Params params(output->getSettings()->getParams(page));
         if (cli.hasOutputDpi()) {
             Dpi outputDpi = cli.getOutputDpi();
@@ -441,5 +446,5 @@ void ConsoleBatch::setupOutput(std::set<PageId> allPages) {
     if (cli.hasTiffCompression()) {
         output->getSettings()->setTiffCompression(cli.getTiffCompression());
     }
-}  // ConsoleBatch::setupOutput
+} // ConsoleBatch::setupOutput
 

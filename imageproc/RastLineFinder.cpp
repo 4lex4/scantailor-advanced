@@ -70,7 +70,7 @@ namespace imageproc {
         }
 
         return true;
-    }      // RastLineFinderParams::validate
+    }  // RastLineFinderParams::validate
 
     RastLineFinder::RastLineFinder(std::vector<QPointF> const& points, RastLineFinderParams const& params)
             : m_origin(params.origin()),
@@ -99,7 +99,7 @@ namespace imageproc {
             }
         }
 
-        float const max_dist = sqrt(max_sqdist) + 1.0;
+        float const max_dist = sqrt(max_sqdist) + 1.0;  // + 1.0 to combant rounding issues
 
         double delta_deg = fmod(params.maxAngleDeg() - params.minAngleDeg(), 360.0);
         if (delta_deg < 0) {
@@ -133,6 +133,7 @@ namespace imageproc {
 
             if (!ssp.subdivideDist(*this, dist_ssp1, dist_ssp2)) {
                 if (!ssp.subdivideAngle(*this, angle_ssp1, angle_ssp2)) {
+                    // Can't subdivide at all - return what we've got then.
                     markPointsUnavailable(ssp.pointIdxs());
                     if (point_idxs) {
                         point_idxs->swap(ssp.pointIdxs());
@@ -140,14 +141,19 @@ namespace imageproc {
 
                     return ssp.representativeLine(*this);
                 } else {
+                    // Can only subdivide by angle.
                     pushIfGoodEnough(angle_ssp1);
                     pushIfGoodEnough(angle_ssp2);
                 }
             } else {
                 if (!ssp.subdivideAngle(*this, angle_ssp1, angle_ssp2)) {
+                    // Can only subdivide by distance.
                     pushIfGoodEnough(dist_ssp1);
                     pushIfGoodEnough(dist_ssp2);
                 } else {
+                    // Can subdivide both by angle and distance.
+                    // Choose the option that results in less combined
+                    // number of points in two resulting sub-spaces.
                     if (dist_ssp1.pointIdxs().size() + dist_ssp2.pointIdxs().size()
                         < angle_ssp1.pointIdxs().size() + angle_ssp2.pointIdxs().size()) {
                         pushIfGoodEnough(dist_ssp1);
@@ -161,7 +167,7 @@ namespace imageproc {
         }
 
         return QLineF();
-    }      // RastLineFinder::findNext
+    }  // RastLineFinder::findNext
 
     void RastLineFinder::pushIfGoodEnough(SearchSpace& ssp) {
         if (ssp.pointIdxs().size() >= m_minSupportPoints) {
@@ -239,20 +245,25 @@ namespace imageproc {
 
             if ((Vec2d(pnt.pt - min_angle_inner_pt).dot(min_angle_unit_vec) >= 0)
                 && (Vec2d(pnt.pt - max_angle_outer_pt).dot(max_angle_unit_vec) <= 0)) {
+                // Accepted.
             } else if ((Vec2d(pnt.pt - max_angle_inner_pt).dot(max_angle_unit_vec) >= 0)
                        && (Vec2d(pnt.pt - min_angle_outer_pt).dot(min_angle_unit_vec) <= 0)) {
+                // Accepted.
             } else if ((min_towards_max_angle_vec.dot(rel_pt) >= 0)
                        && (max_towards_min_angle_vec.dot(rel_pt) >= 0)
                        && (rel_pt.squaredNorm() >= min_sqdist)
                        && (rel_pt.squaredNorm() <= max_sqdist)) {
+                // Accepted.
             } else {
+                // Rejected.
                 continue;
             }
 
             m_pointIdxs.push_back(idx);
         }
 
-
+        // Compact m_pointIdxs, as we expect a lot of SearchSpace objects
+        // to exist at the same time.
         std::vector<unsigned>(m_pointIdxs).swap(m_pointIdxs);
     }
 
@@ -277,6 +288,7 @@ namespace imageproc {
         }
 
         if (m_maxDist - m_minDist <= owner.m_angleToleranceRad * 3) {
+            // This branch prevents near-infinite subdivision that would have happened without it.
             SearchSpace ssp1(owner, m_minDist, m_minDist + owner.m_maxDistFromLine * 2, m_minAngleRad, m_maxAngleRad,
                              m_pointIdxs);
             SearchSpace ssp2(owner, m_maxDist - owner.m_maxDistFromLine * 2, m_maxDist, m_minAngleRad, m_maxAngleRad,

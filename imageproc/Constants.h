@@ -54,6 +54,6 @@ namespace imageproc {
  * dots_per_inch = dots_per_meter * DPM2DPI
  */
         extern double const DPM2DPI;
-    }
-}
+    }  // namespace constants
+}  // namespace imageproc
 #endif

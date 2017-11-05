@@ -30,6 +30,7 @@ ProjectCreationContext::ProjectCreationContext(QWidget* parent)
 }
 
 ProjectCreationContext::~ProjectCreationContext() {
+    // Deleting a null pointer is OK.
     delete m_ptrProjectFilesDialog;
     delete m_ptrFixDpiDialog;
 }
@@ -44,7 +45,7 @@ namespace {
                 !bind(&ImageFileInfo::isDpiOK, _1)
         ) == container.end();
     }
-}
+}  // anonymous namespace
 
 void ProjectCreationContext::projectFilesSubmitted() {
     m_files = m_ptrProjectFilesDialog->inProjectFiles();

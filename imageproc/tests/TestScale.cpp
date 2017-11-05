@@ -79,9 +79,15 @@ namespace imageproc {
                     line += img.stride();
                 }
 
+                // Unfortunately scaleToGray() and QImage::scaled()
+                // produce too different results when upscaling.
 
                 BOOST_CHECK(checkScale(img, QSize(50, 50)));
+                // BOOST_CHECK(checkScale(img, QSize(200, 200)));
                 BOOST_CHECK(checkScale(img, QSize(80, 80)));
+                // BOOST_CHECK(checkScale(img, QSize(140, 140)));
+                // BOOST_CHECK(checkScale(img, QSize(55, 145)));
+                // BOOST_CHECK(checkScale(img, QSize(145, 55)));
             }
 
         BOOST_AUTO_TEST_SUITE_END();

@@ -49,7 +49,7 @@ namespace page_split {
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawRect(canvas_rect);
 
-                return;
+                return;  // No split line will be drawn.
             case PageLayout::SINGLE_PAGE_CUT:
                 painter.setBrush(QColor(0, 0, 255, 50));
                 painter.drawPolygon(m_layout.singlePageOutline());
@@ -61,7 +61,7 @@ namespace page_split {
                 painter.drawPolygon(left_poly);
                 painter.setBrush(m_rightHalfRemoved ? QColor(0, 0, 0, 80) : QColor(255, 0, 0, 50));
                 painter.drawPolygon(right_poly);
-
+                // Draw the trash icon.
                 if (m_leftHalfRemoved || m_rightHalfRemoved) {
                     painter.setWorldTransform(QTransform());
 
@@ -78,7 +78,7 @@ namespace page_split {
                 }
                 break;
             }
-        }      // switch
+        }  // switch
 
         painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -97,7 +97,7 @@ namespace page_split {
                 break;
             default:;
         }
-    }      // Thumbnail::paintOverImage
+    }  // Thumbnail::paintOverImage
 
     QPointF Thumbnail::subPageCenter(QPolygonF const& left_page,
                                      QPolygonF const& right_page,

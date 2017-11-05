@@ -147,6 +147,7 @@ QVariant RelinkingModel::data(QModelIndex const& index, int role) const {
         case Qt::DisplayRole:
             if (item.uncommittedPath.startsWith(QChar('/'))
                 && !item.uncommittedPath.startsWith(QLatin1String("//"))) {
+                // "//" indicates a network path
                 return item.uncommittedPath;
             } else {
                 return QDir::toNativeSeparators(item.uncommittedPath);
@@ -167,6 +168,7 @@ void RelinkingModel::addPath(RelinkablePath const& path) {
             m_origPathSet.insert(path.normalizedPath())
     );
     if (!ins.second) {
+        // Not inserted because identical path is already there.
         return;
     }
 
@@ -211,7 +213,7 @@ void RelinkingModel::replacePrefix(QString const& prefix, QString const& replace
                 modified_rowspan_begin = row;
             }
             emit dataChanged(index(modified_rowspan_begin), index(row));
-            requestStatusUpdate(index(row));
+            requestStatusUpdate(index(row));  // This sets item.changedStatus to StatusUpdatePending.
         } else {
             if (modified_rowspan_begin != -1) {
                 emit dataChanged(index(modified_rowspan_begin), index(row));
@@ -369,6 +371,7 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path
     }
 
     if (path == m_pathBeingProcessed) {
+        // This task is currently in progress.
         return;
     }
 
@@ -376,6 +379,7 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path
             m_rTasksByPath.insert(Task(path, row))
     );
 
+    // Whether inserted or being already there, move it to the front of priority queue.
     m_rTasksByPriority.relocate(
             m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
     );

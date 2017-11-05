@@ -82,6 +82,10 @@ void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
     }
 
     painter->save();
+    // Now, the painter is configured for drawing an ItemView cell.
+    // We can't be sure about its origin (widget top-left, viewport top-left?)
+    // and its clipping region.  The origin is not hard to figure out,
+    // while the clipping region we are just going to reset.
     painter->translate(item_paint_rect.topLeft() - visualRect(item_index).topLeft());
     painter->setClipRect(viewport()->rect());
     drawStatusLayer(painter);
@@ -94,10 +98,13 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
     QRect const drawing_rect(viewport()->rect());
     QModelIndex top_index(this->indexAt(drawing_rect.topLeft()));
     if (!top_index.isValid()) {
+        // No [visible] elements at all?
         return;
     }
 
     if (top_index.row() > 0) {
+        // The appearence of any element actually depends on its neighbours,
+        // so we start with the element above our topmost visible one.
         top_index = top_index.sibling(top_index.row() - 1, 0);
     }
 
@@ -118,16 +125,23 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
         group_aggregator.process(rect, status);
 
         if ((row != top_index.row()) && !item_rect.intersects(drawing_rect)) {
+            // Note that we intentionally break *after* processing
+            // the first invisible item. That's because the appearence
+            // of its immediate predecessor depends on it. The topmost item
+            // is allowed to be invisible, as it's processed for the same reason,
+            // that is to make its immediate neighbour to display correctly.
             break;
         }
     }
 
     painter->setRenderHint(QPainter::Antialiasing);
 
+    // Prepare for drawing existing items.
     QPen pen(QColor(0x3a5827));
     pen.setWidthF(1.5);
     QBrush brush(QColor(0x89e74a));
 
+    // Draw existing, then missing items.
     for (int status = RelinkingModel::Exists, i = 0; i < 2; ++i) {
         painter->setPen(pen);
         painter->setBrush(brush);
@@ -140,12 +154,12 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
                 painter->drawRoundedRect(rect, radius, radius);
             }
         }
-
+        // Prepare for drawing missing items.
         status = RelinkingModel::Missing;
         pen.setColor(QColor(0x6f2719));
         brush.setColor(QColor(0xff674b));
     }
-}  // RelinkingListView::drawStatusLayer
+} // RelinkingListView::drawStatusLayer
 
 void RelinkingListView::GroupAggregator::process(QRect const& rect, int status) {
     if (m_groups.empty() || (m_groups.back().status != status)) {

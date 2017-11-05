@@ -57,5 +57,5 @@ namespace page_split {
         bool m_leftHalfRemoved;
         bool m_rightHalfRemoved;
     };
-}
-#endif  // ifndef PAGE_SPLIT_THUMBNAIL_H_
+}  // namespace page_split
+#endif // ifndef PAGE_SPLIT_THUMBNAIL_H_

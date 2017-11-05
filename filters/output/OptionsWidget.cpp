@@ -274,11 +274,16 @@ namespace output {
                 m_colorParams.setColorCommonOptions(colorCommonOptions);
             }
             equalizeIlluminationColorCB->setEnabled(checked);
+            // Show the tooltip immediately.
+            // Wait for it to be released.
+            // We could have just disabled tracking, but in that case we wouldn't
+            // be able to show tooltips with a precise value.
         }
 
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
+        // Didn't change.
     }
 
     void OptionsWidget::equalizeIlluminationColorToggled(bool const checked) {
@@ -382,6 +387,7 @@ namespace output {
         emit despeckleLevelChanged(level, &handled);
 
         if (handled) {
+            // This means we are on the "Despeckling" tab.
             emit invalidateThumbnail(m_pageId);
         } else {
             emit reloadRequested();
@@ -448,17 +454,26 @@ namespace output {
             if (m_dewarpingOptions != opt) {
                 m_dewarpingOptions = opt;
 
+
+                // We also have to reload if we are currently on the "Fill Zones" tab,
+                // as it makes use of original <-> dewarped coordinate mapping,
+                // which is too hard to update without reloading.  For consistency,
+                // we reload not just on TAB_FILL_ZONES but on all tabs except TAB_DEWARPING.
+                // PS: the static original <-> dewarped mappings are constructed
+                // in Task::UiUpdater::updateUI().  Look for "new DewarpingPointMapper" there.
                 if ((opt.mode() == DewarpingOptions::AUTO)
                     || (m_lastTab != TAB_DEWARPING)
                     || (opt.mode() == DewarpingOptions::MARGINAL)) {
+                    // Switch to the Output tab after reloading.
                     m_lastTab = TAB_OUTPUT;
-
+                    // These depend on the value of m_lastTab.
                     updateDpiDisplay();
                     updateColorsDisplay();
                     updateDewarpingDisplay();
 
                     emit reloadRequested();
                 } else {
+                    // This one we have to call anyway, as it depends on m_dewarpingMode.
                     updateDewarpingDisplay();
                 }
             }
@@ -501,6 +516,7 @@ namespace output {
         QString const tooltip_text(QString::number(m_depthPerception.value()));
         depthPerceptionSlider->setToolTip(tooltip_text);
 
+        // Show the tooltip immediately.
         QPoint const center(depthPerceptionSlider->rect().center());
         QPoint tooltip_pos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
@@ -508,6 +524,7 @@ namespace output {
         tooltip_pos = depthPerceptionSlider->mapToGlobal(tooltip_pos);
         QToolTip::showText(tooltip_pos, tooltip_text, depthPerceptionSlider);
 
+        // Propagate the signal.
         emit depthPerceptionChanged(m_depthPerception.value());
     }
 
@@ -567,7 +584,7 @@ namespace output {
 
             return;
         }
-    }      // OptionsWidget::reloadIfNecessary
+    }  // OptionsWidget::reloadIfNecessary
 
     void OptionsWidget::updateDpiDisplay() {
         if (m_outputDpi.horizontal() != m_outputDpi.vertical()) {
@@ -674,7 +691,7 @@ namespace output {
         }
 
         colorModeSelector->blockSignals(false);
-    }      // OptionsWidget::updateColorsDisplay
+    }  // OptionsWidget::updateColorsDisplay
 
     void OptionsWidget::updateDewarpingDisplay() {
         depthPerceptionPanel->setVisible(m_lastTab == TAB_DEWARPING);

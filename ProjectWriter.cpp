@@ -100,7 +100,7 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
     }
 
     return false;
-}  // ProjectWriter::write
+} // ProjectWriter::write
 
 QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
     QDomElement dirs_el(doc.createElement("directories"));
@@ -141,6 +141,7 @@ QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
         image_el.setAttribute("fileId", fileId(image.id.filePath()));
         image_el.setAttribute("fileImage", image.id.page());
         if (image.leftHalfRemoved != image.rightHalfRemoved) {
+            // Both are not supposed to be removed.
             image_el.setAttribute("removed", image.leftHalfRemoved ? "L" : "R");
         }
         writeImageMetadata(doc, image_el, image.id);

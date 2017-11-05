@@ -35,6 +35,7 @@ namespace dewarping {
     class DistortionModel;
 
     class DistortionModelBuilder {
+        // Member-wise copying is OK.
     public:
         /**
          * \brief Constructor.
@@ -118,11 +119,11 @@ namespace dewarping {
 
         Vec2d m_downDirection;
         Vec2d m_rightDirection;
-        QLineF m_bound1;
-        QLineF m_bound2;
+        QLineF m_bound1;  // It's not specified which one is left
+        QLineF m_bound2;  // and which one is right.
 
         /** These go left to right in terms of content. */
         std::deque<std::vector<QPointF>> m_ltrPolylines;
     };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_
+#endif // ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_

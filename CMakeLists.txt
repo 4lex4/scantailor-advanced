@@ -4,42 +4,42 @@ PROJECT("ScanTailor")
 
 # setting compiler flags
 IF ((CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX) OR MINGW)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 ENDIF ()
 
 IF (MSVC AND WIN_XP)
-	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
-	SET(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE,5.01 /SUBSYSTEM:WINDOWS,5.01 ${CMAKE_EXE_LINKER_FLAGS}")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
+    SET(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE,5.01 /SUBSYSTEM:WINDOWS,5.01 ${CMAKE_EXE_LINKER_FLAGS}")
 ENDIF ()
 
-IF(MSVC)
-	# Disable checked iterators for extra performance.
-	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_SECURE_SCL=0")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SECURE_SCL=0")
-	
-	IF(DEBUG_CLI)
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DDEBUG_CLI")
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DDEBUG_CLI")
-	ENDIF(DEBUG_CLI)
-ENDIF()
+IF (MSVC)
+    # Disable checked iterators for extra performance.
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_SECURE_SCL=0")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SECURE_SCL=0")
 
-IF(UNIX) 
+    IF (DEBUG_CLI)
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DDEBUG_CLI")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DDEBUG_CLI")
+    ENDIF (DEBUG_CLI)
+ENDIF ()
+
+IF (UNIX)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-ENDIF()
+ENDIF ()
 
 SET(
-	CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
-	CACHE STRING "Common C flags for all build configurations." FORCE
+        CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
+        CACHE STRING "Common C flags for all build configurations." FORCE
 )
 SET(
-	CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
-	CACHE STRING "Common C++ flags for all build configurations." FORCE
+        CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
+        CACHE STRING "Common C++ flags for all build configurations." FORCE
 )
 SET(
-	CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
-	CACHE STRING "Common link flags for all build configurations." FORCE
+        CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+        CACHE STRING "Common link flags for all build configurations." FORCE
 )
 
 ENABLE_TESTING()
@@ -47,36 +47,36 @@ ENABLE_TESTING()
 # An undocumented side-effect of CONFIGURE_FILE() is that it makes
 # the whole project depend on the file we are parsing / copying.
 CONFIGURE_FILE(
-	"${PROJECT_SOURCE_DIR}/version.h"
-	"${PROJECT_BINARY_DIR}/.version.h" COPYONLY
+        "${PROJECT_SOURCE_DIR}/version.h"
+        "${PROJECT_BINARY_DIR}/.version.h" COPYONLY
 )
 
 # Prevent this leftover from old builds to be used in favour
 # of the one in ${PROJECT_SOURCE_DIR}
-IF(NOT "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
-	FILE(REMOVE "${PROJECT_BINARY_DIR}/version.h")
-ENDIF()
+IF (NOT "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+    FILE(REMOVE "${PROJECT_BINARY_DIR}/version.h")
+ENDIF ()
 
 # Extract VERSION and VERSION_QUAD from version.h
 FILE(READ "${PROJECT_SOURCE_DIR}/version.h" version_h_contents)
 STRING(
-	REGEX REPLACE
-	".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
-	"\\1" VERSION "${version_h_contents}"
+        REGEX REPLACE
+        ".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
+        "\\1" VERSION "${version_h_contents}"
 )
-IF("${VERSION}" STREQUAL "${version_h_contents}")
-	MESSAGE(FATAL_ERROR "Failed to extract VERSION from version.h")
-ENDIF()
+IF ("${VERSION}" STREQUAL "${version_h_contents}")
+    MESSAGE(FATAL_ERROR "Failed to extract VERSION from version.h")
+ENDIF ()
 
 # VERSION_QUAD must be either empty or be in the form of X.Y.Z.Y
 STRING(
-	REGEX REPLACE
-	".*#define[ \\t]+VERSION_QUAD[ \\t]+\"(([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)?)\".*"
-	"\\1" VERSION_QUAD "${version_h_contents}"
+        REGEX REPLACE
+        ".*#define[ \\t]+VERSION_QUAD[ \\t]+\"(([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)?)\".*"
+        "\\1" VERSION_QUAD "${version_h_contents}"
 )
-IF("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
-	MESSAGE(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
-ENDIF()
+IF ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
+    MESSAGE(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
+ENDIF ()
 
 # This has to go quite early on, as otherwise we risk picking
 # up an identically named header from a system include path.
@@ -107,7 +107,7 @@ IF (WIN32)
                 "You can specify it manually in LIB_DIR variable. Make sure you build the dependencies first!"
         )
     ENDIF ()
-	
+
     FILE(GLOB jpeg_dir_ "${LIB_DIR}/jpeg-[0-9]*")
     FILE(GLOB zlib_dir_ "${LIB_DIR}/zlib-[0-9]*.[0-9]*.[0-9]*")
     FILE(GLOB png_dir_1 "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
@@ -115,7 +115,7 @@ IF (WIN32)
     FILE(GLOB tiff_dir_ "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
     FILE(GLOB qt_dir_ "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
     FILE(GLOB boost_dir_ "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
-   #FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
+    #FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
 ENDIF ()
 
 #=================================== JPEG ===================================#
@@ -380,38 +380,38 @@ LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 
 SET(EXTRA_LIBS "")
 
-IF(UNIX)
-	FindPthreads()
-	IF(PTHREADS_FOUND)
-		ADD_DEFINITIONS(${PTHREADS_CFLAGS})
-		LINK_LIBRARIES(${PTHREADS_LIBS})
-	ELSE(PTHREADS_FOUND)
-		MESSAGE(
-			FATAL_ERROR
-			"Could not detect threading flags.\n"
-			"Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
-		)
-	ENDIF(PTHREADS_FOUND)
-ELSEIF(WIN32 AND MSVC)
-	ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF(UNIX)
+IF (UNIX)
+    FindPthreads()
+    IF (PTHREADS_FOUND)
+        ADD_DEFINITIONS(${PTHREADS_CFLAGS})
+        LINK_LIBRARIES(${PTHREADS_LIBS})
+    ELSE (PTHREADS_FOUND)
+        MESSAGE(
+                FATAL_ERROR
+                "Could not detect threading flags.\n"
+                "Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
+        )
+    ENDIF (PTHREADS_FOUND)
+ELSEIF (WIN32 AND MSVC)
+    ADD_DEFINITIONS(-DNOMINMAX)
+ENDIF (UNIX)
 
 ADD_DEFINITIONS(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 
-IF(WIN32)
-	LIST(APPEND EXTRA_LIBS winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool)
-ENDIF()
+IF (WIN32)
+    LIST(APPEND EXTRA_LIBS winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool)
+ENDIF ()
 
 LIST(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
 # Prepare config.h
-IF(WIN32)
-	SET(TRANSLATION_DIRS ".:translations")
-	SET(PLUGIN_DIRS ".")
-ELSE()
-	SET(TRANSLATION_DIRS ".:${CMAKE_INSTALL_PREFIX}/share/scantailor/translations")
-	SET(PLUGIN_DIRS ".:${CMAKE_INSTALL_PREFIX}/lib/scantailor")
-ENDIF()
+IF (WIN32)
+    SET(TRANSLATION_DIRS ".:translations")
+    SET(PLUGIN_DIRS ".")
+ELSE ()
+    SET(TRANSLATION_DIRS ".:${CMAKE_INSTALL_PREFIX}/share/scantailor/translations")
+    SET(PLUGIN_DIRS ".:${CMAKE_INSTALL_PREFIX}/lib/scantailor")
+ENDIF ()
 
 CONFIGURE_FILE(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 
@@ -526,8 +526,8 @@ SET(
         FileNameDisambiguator.cpp FileNameDisambiguator.h
         OpenGLSupport.cpp OpenGLSupport.h
         OutputFileNameGenerator.cpp OutputFileNameGenerator.h
-		ColorScheme.h
-	    DarkScheme.cpp DarkScheme.h
+        ColorScheme.h
+        DarkScheme.cpp DarkScheme.h
         LightScheme.cpp LightScheme.h
         ColorSchemeManager.cpp ColorSchemeManager.h
         PageRange.cpp PageRange.h
@@ -643,8 +643,8 @@ INSTALL(TARGETS scantailor RUNTIME DESTINATION bin)
 
 # Translations
 TRANSLATION_SOURCES(
-	scantailor
-	${common_sources} ${gui_only_sources} ${cli_only_sources}
+        scantailor
+        ${common_sources} ${gui_only_sources} ${cli_only_sources}
 )
 FILE(GLOB TRANSLATION_FILES translations/scantailor_*.ts)
 
@@ -655,13 +655,13 @@ SET(ts_files ${TRANSLATION_FILES})
 
 # Don't build *.qm files from *untranslated.ts
 SET(FILTERED_TRANSLATION_FILES)
-FOREACH(ts_file ${ts_files})
-	IF ("${ts_file}" MATCHES ".*untranslated.ts")
-		# Just skip it.
-	ELSE("${ts_file}" MATCHES ".*untranslated.ts")
-		LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
-	ENDIF("${ts_file}" MATCHES ".*untranslated.ts")
-ENDFOREACH(ts_file)
+FOREACH (ts_file ${ts_files})
+    IF ("${ts_file}" MATCHES ".*untranslated.ts")
+        # Just skip it.
+    ELSE ("${ts_file}" MATCHES ".*untranslated.ts")
+        LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
+    ENDIF ("${ts_file}" MATCHES ".*untranslated.ts")
+ENDFOREACH (ts_file)
 
 QT5_ADD_TRANSLATION(QM_FILES ${FILTERED_TRANSLATION_FILES})
 ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
@@ -671,52 +671,52 @@ INSTALL(FILES ${QM_FILES} DESTINATION "share/scantailor/translations")
 IF (WIN32)
     # Copy some DLLs to the staging dir.
 
-	SET(
-		qt5_libs
-		${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
-		${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES}
-		${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES}
-	)
-	
-	FOREACH(target ${qt5_libs})
-		GET_TARGET_PROPERTY(debug_loc "${target}" LOCATION_DEBUG)
-		GET_TARGET_PROPERTY(release_loc "${target}" LOCATION_RELEASE)
-		COPY_TO_BUILD_DIR("${debug_loc}" CONFIGURATIONS Debug)
-		COPY_TO_BUILD_DIR("${release_loc}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	ENDFOREACH()
-	
-	# Qt's plugins.
-	SET(PLUGINS_DIR "${qt_dir_}/qtbase/plugins")
-	COPY_TO_BUILD_DIR(
-		"${PLUGINS_DIR}/platforms/qwindows.dll" SUBDIR platforms
-		CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-	)
-	COPY_TO_BUILD_DIR(
-		"${PLUGINS_DIR}/platforms/qwindowsd.dll" SUBDIR platforms
-		CONFIGURATIONS Debug
-	)
-	
-	COPY_TO_BUILD_DIR(
-		"${PLUGINS_DIR}/imageformats/qjpeg.dll" SUBDIR imageformats
-		CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-	)
-	COPY_TO_BUILD_DIR(
-		"${PLUGINS_DIR}/imageformats/qjpegd.dll" SUBDIR imageformats
-		CONFIGURATIONS Debug
-	)
+    SET(
+            qt5_libs
+            ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
+            ${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES}
+            ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES}
+    )
 
-	IF(EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll")
-		COPY_TO_BUILD_DIR(
-			"${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll" SUBDIR accessible
-			CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-		)
-	ENDIF()
-	IF(EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
-		COPY_TO_BUILD_DIR(
-			"${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll" SUBDIR accessible
-			CONFIGURATIONS Debug
-		)
-	ENDIF()
+    FOREACH (target ${qt5_libs})
+        GET_TARGET_PROPERTY(debug_loc "${target}" LOCATION_DEBUG)
+        GET_TARGET_PROPERTY(release_loc "${target}" LOCATION_RELEASE)
+        COPY_TO_BUILD_DIR("${debug_loc}" CONFIGURATIONS Debug)
+        COPY_TO_BUILD_DIR("${release_loc}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    ENDFOREACH ()
+
+    # Qt's plugins.
+    SET(PLUGINS_DIR "${qt_dir_}/qtbase/plugins")
+    COPY_TO_BUILD_DIR(
+            "${PLUGINS_DIR}/platforms/qwindows.dll" SUBDIR platforms
+            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
+    )
+    COPY_TO_BUILD_DIR(
+            "${PLUGINS_DIR}/platforms/qwindowsd.dll" SUBDIR platforms
+            CONFIGURATIONS Debug
+    )
+
+    COPY_TO_BUILD_DIR(
+            "${PLUGINS_DIR}/imageformats/qjpeg.dll" SUBDIR imageformats
+            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
+    )
+    COPY_TO_BUILD_DIR(
+            "${PLUGINS_DIR}/imageformats/qjpegd.dll" SUBDIR imageformats
+            CONFIGURATIONS Debug
+    )
+
+    IF (EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll")
+        COPY_TO_BUILD_DIR(
+                "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll" SUBDIR accessible
+                CONFIGURATIONS Release MinSizeRel RelWithDebInfo
+        )
+    ENDIF ()
+    IF (EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
+        COPY_TO_BUILD_DIR(
+                "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll" SUBDIR accessible
+                CONFIGURATIONS Debug
+        )
+    ENDIF ()
 
     FIND_FILE(
             JPEG_LIBRARY_RT_REL NAMES jpeg libjpeg libjpeg.dll
@@ -728,8 +728,8 @@ IF (WIN32)
             HINTS "${jpeg_dir_}/bin"
             DOC "Path to jpeg runtime library."
     )
-	COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
+    COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
 
     FIND_FILE(
             ZLIB_LIBRARY_RT_REL NAMES z libz libz.dll zdll.dll
@@ -741,8 +741,8 @@ IF (WIN32)
             HINTS "${zlib_dir_}/bin"
             DOC "Path to zlib runtime library."
     )
-	COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
+    COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
 
     FIND_FILE(
             PNG_LIBRARY_RT_REL NAMES png libpng libpng.dll
@@ -754,8 +754,8 @@ IF (WIN32)
             HINTS "${png_dir_1}/bin" "${png_dir_2}/bin"
             DOC "Path to png runtime library."
     )
-	COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
+    COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
 
     FIND_FILE(
             TIFF_LIBRARY_RT_REL NAMES tiff libtiff libtiff.dll
@@ -767,14 +767,14 @@ IF (WIN32)
             HINTS "${tiff_dir_}/bin"
             DOC "Path to tiff runtime library."
     )
-	COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
-	
-	IF (MINGW)
-		GET_FILENAME_COMPONENT(mingw_path_ ${CMAKE_CXX_COMPILER} PATH)
-	    COPY_TO_BUILD_DIR("${mingw_path_}/libgcc_s_seh-1.dll" "${mingw_path_}/libgcc_s_sjlj-1.dll" "${mingw_path_}/libgcc_s_dw2-1.dll"
-						  "${mingw_path_}/libstdc++-6.dll" "${mingw_path_}/libwinpthread-1.dll")
-	ENDIF(MINGW)
+    COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
+
+    IF (MINGW)
+        GET_FILENAME_COMPONENT(mingw_path_ ${CMAKE_CXX_COMPILER} PATH)
+        COPY_TO_BUILD_DIR("${mingw_path_}/libgcc_s_seh-1.dll" "${mingw_path_}/libgcc_s_sjlj-1.dll" "${mingw_path_}/libgcc_s_dw2-1.dll"
+                "${mingw_path_}/libstdc++-6.dll" "${mingw_path_}/libwinpthread-1.dll")
+    ENDIF (MINGW)
 
     # Generate the target that will actually do the copying.
     GENERATE_COPY_TO_BUILD_DIR_TARGET(copy_to_build_dir)

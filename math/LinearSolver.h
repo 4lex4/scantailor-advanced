@@ -40,6 +40,7 @@
  * \see MatrixCalc
  */
 class LinearSolver {
+    // Member-wise copying is OK.
 public:
     /*
      * \throw std::runtime_error If rows_AB < cols_A_rows_X.
@@ -77,18 +78,20 @@ private:
 
 template<typename T>
 void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const {
-    using namespace std;
+    using namespace std;  // To catch different overloads of abs()
     T const epsilon(sqrt(numeric_limits<T>::epsilon()));
 
     size_t const num_elements_A = m_rowsAB * m_colsArowsX;
 
-    T* const lu_data = tbuffer;
+    T* const lu_data = tbuffer;  // Dimensions: m_rowsAB, m_colsArowsX
     tbuffer += num_elements_A;
 
+    // Copy this matrix to lu.
     for (size_t i = 0; i < num_elements_A; ++i) {
         lu_data[i] = A[i];
     }
 
+    // Maps virtual row numbers to physical ones.
     size_t* const perm = pbuffer;
     for (size_t i = 0; i < m_rowsAB; ++i) {
         perm[i] = i;
@@ -96,6 +99,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
 
     T* p_col = lu_data;
     for (size_t i = 0; i < m_colsArowsX; ++i, p_col += m_rowsAB) {
+        // Find the largest pivot.
         size_t virt_pivot_row = i;
         T largest_abs_pivot(abs(p_col[perm[i]]));
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
@@ -117,16 +121,19 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         T const* const p_pivot = p_col + phys_pivot_row;
         T const r_pivot(T(1) / *p_pivot);
 
+        // Eliminate entries below the pivot.
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
             T const* p1 = p_pivot;
             T* p2 = p_col + perm[j];
             if (abs(*p2) <= epsilon) {
+                // We consider it's already zero.
                 *p2 = T();
                 continue;
             }
 
             T const factor(*p2 * r_pivot);
-            *p2 = factor;
+            *p2 = factor;  // Factor goes into L, zero goes into U.
+            // Transform the rest of the row.
             for (size_t col = i + 1; col < m_colsArowsX; ++col) {
                 p1 += m_rowsAB;
                 p2 += m_rowsAB;
@@ -135,7 +142,9 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         }
     }
 
-    T* const y_data = tbuffer;
+    // First solve Ly = b
+    T* const y_data = tbuffer;  // Dimensions: m_colsArowsX, m_colsBX
+    // tbuffer += m_colsArowsX * m_colsBX;
     T* p_y_col = y_data;
     T const* p_b_col = B;
     for (size_t y_col = 0; y_col < m_colsBX; ++y_col) {
@@ -144,20 +153,26 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
             int const phys_row = perm[virt_row];
             T right(p_b_col[phys_row]);
 
+            // Move already calculated factors to the right side.
             T const* p_lu = lu_data + phys_row;
+            // Go left to right, stop at diagonal.
             for (size_t lu_col = 0; lu_col < virt_row; ++lu_col) {
                 right -= *p_lu * p_y_col[lu_col];
                 p_lu += m_rowsAB;
             }
 
+            // We assume L has ones on the diagonal, so no division here.
             p_y_col[virt_row] = right;
         }
 
+        // Continue below the square part (if any).
         for (; virt_row < m_rowsAB; ++virt_row) {
             int const phys_row = perm[virt_row];
             T right(p_b_col[phys_row]);
 
+            // Move everything to the right side, then verify it's zero.
             T const* p_lu = lu_data + phys_row;
+            // Go left to right all the way.
             for (size_t lu_col = 0; lu_col < m_colsArowsX; ++lu_col) {
                 right -= *p_lu * p_y_col[lu_col];
                 p_lu += m_rowsAB;
@@ -171,6 +186,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         p_b_col += m_rowsAB;
     }
 
+    // Now solve Ux = y
     T* p_x_col = X;
     p_y_col = y_data;
     T const* p_lu_last_col = lu_data + (m_colsArowsX - 1) * m_rowsAB;
@@ -178,7 +194,9 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         for (int virt_row = m_colsArowsX - 1; virt_row >= 0; --virt_row) {
             T right(p_y_col[virt_row]);
 
+            // Move already calculated factors to the right side.
             T const* p_lu = p_lu_last_col + perm[virt_row];
+            // Go right to left, stop at diagonal.
             for (int lu_col = m_colsArowsX - 1; lu_col > virt_row; --lu_col) {
                 right -= *p_lu * p_x_col[lu_col];
                 p_lu -= m_rowsAB;
@@ -189,7 +207,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         p_x_col += m_colsArowsX;
         p_y_col += m_colsArowsX;
     }
-}  // LinearSolver::solve
+} // LinearSolver::solve
 
 template<typename T>
 void LinearSolver::solve(T const* A, T* X, T const* B) const {
@@ -199,4 +217,4 @@ void LinearSolver::solve(T const* A, T* X, T const* B) const {
     solve(A, X, B, tbuffer.get(), pbuffer.get());
 }
 
-#endif  // ifndef LINEAR_SOLVER_H_
+#endif // ifndef LINEAR_SOLVER_H_

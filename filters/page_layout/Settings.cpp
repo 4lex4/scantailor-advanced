@@ -187,6 +187,7 @@ namespace page_layout {
                         sequenced<tag<SequencedTag>>,
                         ordered_non_unique<
                                 tag<DescWidthTag>,
+                                // ORDER BY alignedWithOthers DESC, hardWidthMM DESC
                                 composite_key<
                                         Item,
                                         const_mem_fun<Item, bool, &Item::alignedWithOthers>,
@@ -199,6 +200,7 @@ namespace page_layout {
                         >,
                         ordered_non_unique<
                                 tag<DescHeightTag>,
+                                // ORDER BY alignedWithOthers DESC, hardHeightMM DESC
                                 composite_key<
                                         Item,
                                         const_mem_fun<Item, bool, &Item::alignedWithOthers>,
@@ -710,5 +712,5 @@ namespace page_layout {
         }
 
         return QSizeF(width, height);
-    }      // Settings::Impl::getAggregateHardSizeMM
+    }  // Settings::Impl::getAggregateHardSizeMM
 }  // namespace page_layout

@@ -34,6 +34,7 @@ namespace imageproc {
  * itself is considered to be white.
  */
     class BinaryThreshold {
+        // Member-wise copying is OK.
     public:
         /**
          * \brief Finds the threshold using Otsu’s thresholding method.
@@ -50,17 +51,18 @@ namespace imageproc {
         static BinaryThreshold peakThreshold(GrayscaleHistogram const& pixels_by_color);
 
         /**
-         * \brief Image binarization using Mokji's global thresholding method.
-         *
-         * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
-         * Co-occurrence Matrix Edge Information. Asia International Conference on
-         * Modelling and Simulation 2007: 444-450
-         * http:         *
-         * \param image The source image.  May be in any format.
-         * \param max_edge_width The maximum gradient length to consider.
-         * \param min_edge_magnitude The minimum color difference in a gradient.
-         * \return A black and white image.
-         */
+     * \brief Image binarization using Mokji's global thresholding method.
+     *
+     * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
+     * Co-occurrence Matrix Edge Information. Asia International Conference on
+     * Modelling and Simulation 2007: 444-450
+     * http://www.academypublisher.com/jcp/vol02/no08/jcp02084452.pdf
+     *
+     * \param image The source image.  May be in any format.
+     * \param max_edge_width The maximum gradient length to consider.
+     * \param min_edge_magnitude The minimum color difference in a gradient.
+     * \return A black and white image.
+     */
         static BinaryThreshold mokjiThreshold(QImage const& image,
                                               unsigned max_edge_width = 3,
                                               unsigned min_edge_magnitude = 20);
@@ -81,4 +83,4 @@ namespace imageproc {
         int m_threshold;
     };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_BINARYTHRESHOLD_H_
+#endif // ifndef IMAGEPROC_BINARYTHRESHOLD_H_

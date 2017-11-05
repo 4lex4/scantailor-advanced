@@ -69,7 +69,8 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
     }
 
     if (interaction.proximityLeader(m_vertexProximity)) {
-        QLinearGradient gradient;
+        // Draw the two adjacent edges in gradient red-to-orange.
+        QLinearGradient gradient;  // From inactive to active point.
         gradient.setColorAt(0.0, m_visualizer.solidColor());
         gradient.setColorAt(1.0, m_visualizer.highlightDarkColor());
 
@@ -90,11 +91,12 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
         painter.setPen(pen);
         painter.drawLine(next, pt);
 
+        // Visualize the highlighted vertex.
         QPointF const screen_vertex(to_screen.map(m_ptrNearestVertex->point()));
         m_visualizer.drawVertex(painter, screen_vertex, m_visualizer.highlightBrightColor());
     } else if (interaction.proximityLeader(m_segmentProximity)) {
         QLineF const line(to_screen.map(m_nearestSegment.toLine()));
-
+        // Draw the highglighed edge in orange.
         QPen pen(painter.pen());
         pen.setColor(m_visualizer.highlightDarkColor());
         painter.setPen(pen);
@@ -104,7 +106,7 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
     } else if (!interaction.captured()) {
         m_visualizer.drawVertex(painter, m_screenMousePos, m_visualizer.solidColor());
     }
-}  // ZoneDefaultInteraction::onPaint
+} // ZoneDefaultInteraction::onPaint
 
 void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction) {
     m_screenMousePos = mouse_pos;
@@ -133,6 +135,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
             has_zone_under_mouse = path.contains(image_mouse_pos);
         }
 
+        // Process vertices.
         for (SplineVertex::Ptr vert(spline->firstVertex());
              vert; vert = vert->next(SplineVertex::NO_LOOP)) {
             Proximity const proximity(mouse_pos, to_screen.map(vert->point()));
@@ -142,7 +145,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
                 best_vertex_proximity = proximity;
             }
         }
-
+        // Process segments.
         for (EditableSpline::SegmentIterator it(*spline); it.hasNext();) {
             SplineSegment const segment(it.next());
             QLineF const line(to_screen.map(segment.toLine()));
@@ -164,7 +167,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
         Proximity const zone_area_proximity(std::min(best_vertex_proximity, best_segment_proximity));
         interaction.updateProximity(m_zoneAreaProximity, zone_area_proximity, -1, zone_area_proximity);
     }
-}  // ZoneDefaultInteraction::onProximityUpdate
+} // ZoneDefaultInteraction::onProximityUpdate
 
 void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     if (interaction.captured()) {

@@ -58,6 +58,7 @@ bool Zone::isValid() const {
             if (shape.front() == shape.back()) {
                 return false;
             }
+            // fall through
         default:
             return true;
     }

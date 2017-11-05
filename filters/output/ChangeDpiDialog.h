@@ -65,4 +65,4 @@ namespace output {
         QString m_customDpiString;
     };
 }  // namespace output
-#endif  // ifndef OUTPUT_CHANGEDPIDIALOG_H_
+#endif // ifndef OUTPUT_CHANGEDPIDIALOG_H_

@@ -28,7 +28,7 @@
 #include <QDomElement>
 
 QString XmlUnmarshaller::string(QDomElement const& el) {
-    return el.text();
+    return el.text();  // FIXME: this needs unescaping, but Qt doesn't provide such functionality
 }
 
 QSize XmlUnmarshaller::size(QDomElement const& el) {

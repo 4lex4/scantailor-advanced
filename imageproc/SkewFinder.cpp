@@ -96,7 +96,8 @@ namespace imageproc {
         }
 
         BinaryImage skewed(coarse_reduced.image().size());
-        double const coarse_step = 1.0;
+        double const coarse_step = 1.0;  // degrees
+        // Coarse linear search.
         int num_coarse_scores = 0;
         double sum_coarse_scores = 0.0;
         double best_coarse_score = 0.0;
@@ -128,7 +129,7 @@ namespace imageproc {
         if (m_coarseReduction != m_fineReduction) {
             skewed = BinaryImage(fine_reduced.image().size());
         }
-
+        // Fine binary search.
         double angle_plus = best_coarse_angle + 0.5 * coarse_step;
         double angle_minus = best_coarse_angle - 0.5 * coarse_step;
         double score_plus = process(fine_reduced, skewed, angle_plus);
@@ -143,6 +144,7 @@ namespace imageproc {
                 angle_plus = 0.5 * (angle_plus + angle_minus);
                 score_plus = process(fine_reduced, skewed, angle_plus);
             } else {
+                // This protects us from unreasonably low m_accuracy.
                 break;
             }
         }
@@ -158,7 +160,7 @@ namespace imageproc {
         }
 
         if (best_score <= LOW_SCORE) {
-            return Skew(-best_angle, 0.0);
+            return Skew(-best_angle, 0.0);  // Zero confidence.
         }
 
         double confidence = 0.0;
@@ -174,7 +176,7 @@ namespace imageproc {
         }
 
         return Skew(-best_angle, confidence - 1.0);
-    }      // SkewFinder::findSkew
+    }  // SkewFinder::findSkew
 
     double SkewFinder::process(BinaryImage const& src, BinaryImage& dst, double const angle) const {
         double const tg = tan(angle * constants::DEG2RAD);

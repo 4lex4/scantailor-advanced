@@ -105,6 +105,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
             pre_scale_xform * m_imageXform.transform() * m_postScaleXform
     );
 
+    // The polygon to draw into in original image coordinates.
     QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPostCropArea()));
     if (!m_extendedClipArea) {
         image_poly = image_poly.intersected(
@@ -114,6 +115,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
         );
     }
 
+    // The polygon to draw into in display coordinates.
     QPolygonF display_poly(image_to_display.map(image_poly));
 
     QRectF display_rect(display_poly.boundingRect());
@@ -129,13 +131,14 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
         || (temp_pixmap.height() < display_rect.width())) {
         int w = (int) display_rect.width();
         int h = (int) display_rect.height();
-
+        // Add some extra, to avoid rectreating the pixmap too often.
         w += w / 10;
         h += h / 10;
 
         temp_pixmap = QPixmap(w, h);
 
         if (!temp_pixmap.hasAlphaChannel()) {
+            // This actually forces the alpha channel to be created.
             temp_pixmap.fill(Qt::transparent);
         }
 
@@ -152,6 +155,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
             pixmap_to_thumb * thumb_to_display * temp_adjustment
     );
 
+    // Turn off alpha compositing.
     temp_painter.setCompositionMode(QPainter::CompositionMode_Source);
 
     temp_painter.setRenderHint(QPainter::SmoothPixmapTransform);
@@ -159,8 +163,10 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 
     PixmapRenderer::drawPixmap(temp_painter, pixmap);
 
+    // Turn alpha compositing on again.
     temp_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-
+    // Setup the painter for drawing in thumbnail coordinates,
+    // as required for paintOverImage().
     temp_painter.setWorldTransform(thumb_to_display * temp_adjustment);
 
     temp_painter.save();
@@ -174,8 +180,13 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     temp_painter.setBrush(Qt::white);
     temp_painter.setWorldTransform(temp_adjustment);
 #ifndef Q_WS_X11
+    // That's how it's supposed to be.
     temp_painter.setCompositionMode(QPainter::CompositionMode_Clear);
 #else
+    // QPainter::CompositionMode_Clear doesn't work for arbitrarily shaped
+    // objects on X11, as well as CompositionMode_Source with a transparent
+    // brush.  Fortunately, CompositionMode_DestinationOut with a non-transparent
+    // brush does actually work.
     temp_painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
     temp_painter.drawPolygon(
@@ -189,7 +200,7 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter->drawPixmap(display_rect.topLeft(), temp_pixmap);
-}  // ThumbnailBase::paint
+} // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
     QPen pen(QColor(0xdd, 0x00, 0x00, 0xee));
@@ -227,6 +238,9 @@ void ThumbnailBase::handleLoadResult(ThumbnailLoadResult const& result) {
     m_ptrCompletionHandler.reset();
 
     if (result.status() != ThumbnailLoadResult::LOAD_FAILED) {
+        // Note that we don't store result.pixmap() in
+        // this object, because we may have already went
+        // out of view, so we may never receive a paint event.
         update();
     }
 }

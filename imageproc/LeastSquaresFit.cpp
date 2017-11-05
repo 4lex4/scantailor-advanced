@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _ISOC99SOURCE
+#define _ISOC99SOURCE // For copysign()
 
 #include "LeastSquaresFit.h"
 #include <QSize>
@@ -25,7 +25,8 @@
 #include <cmath>
 
 #ifdef _MSC_VER
-#undef copysign#define copysign _copysign
+#undef copysign // Just in case.
+#define copysign _copysign
 #endif
 
 namespace imageproc {
@@ -36,10 +37,12 @@ namespace imageproc {
         if ((width < 0) || (height < 0) || (height < width)) {
             throw std::invalid_argument("leastSquaresFit: invalid dimensions");
         }
-
-        int jj = 0;
+        // Calculate a QR decomposition of C using Givens rotations.
+        // We store R in place of C, while Q is not stored at all.
+        // Instead, we rotate the d vector on the fly.
+        int jj = 0;  // j * width + j
         for (int j = 0; j < width; ++j, jj += width + 1) {
-            int ij = jj + width;
+            int ij = jj + width;  // i * width + j
             for (int i = j + 1; i < height; ++i, ij += width) {
                 double const a = C[jj];
                 double const b = C[ij];
@@ -69,21 +72,22 @@ namespace imageproc {
                 }
                 C[ij] = 0.0;
 
-                int ik = ij + 1;
-                int jk = jj + 1;
+                int ik = ij + 1;  // i * width + k
+                int jk = jj + 1;  // j * width + k
                 for (int k = j + 1; k < width; ++k, ++ik, ++jk) {
                     double const temp = cos * C[jk] + sin * C[ik];
                     C[ik] = cos * C[ik] - sin * C[jk];
                     C[jk] = temp;
                 }
 
+                // Rotate d.
                 double const temp = cos * d[j] + sin * d[i];
                 d[i] = cos * d[i] - sin * d[j];
                 d[j] = temp;
             }
         }
-
-        int ii = width * width - 1;
+        // Solve R*x = d by back-substitution.
+        int ii = width * width - 1;  // i * width + i
         for (int i = width - 1; i >= 0; --i, ii -= width + 1) {
             double sum = d[i];
 
@@ -95,5 +99,5 @@ namespace imageproc {
             assert(C[ii] != 0.0);
             x[i] = sum / C[ii];
         }
-    }      // leastSquaresFit
-}  // namespace imageproc
+    }  // leastSquaresFit
+} // namespace imageproc

@@ -33,6 +33,8 @@ class QString;
 namespace select_content {
     class Params {
     public:
+        // Member-wise copying is OK.
+
         Params(QRectF const& rect, QSizeF const& size_mm, Dependencies const& deps, AutoManualMode mode);
 
         Params(QRectF const& rect,
@@ -152,4 +154,4 @@ namespace select_content {
         double m_deviation;
     };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_PARAMS_H_
+#endif // ifndef SELECT_CONTENT_PARAMS_H_

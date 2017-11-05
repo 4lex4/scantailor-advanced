@@ -48,5 +48,5 @@ namespace fix_orientation {
         IntrusivePtr<page_split::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
     };
-}
-#endif  // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_
+}  // namespace fix_orientation
+#endif // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_

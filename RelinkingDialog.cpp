@@ -94,7 +94,10 @@ void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString cons
                 QFileDialog::DontUseNativeDialog
         );
     }
-
+    // So what's wrong with native dialogs? The one for directory selection won't show files
+    // at all (if you ask it to, the non-native dialog will appear), which is inconvenient
+    // in this situation. So, if one of them has to be non-native, the other was made
+    // non-native as well, for consistency reasons.
     replacement_path = RelinkablePath::normalize(replacement_path);
 
     if (replacement_path.isEmpty()) {
@@ -125,10 +128,10 @@ void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString cons
 
     ui.undoButton->setVisible(true);
     ui.listView->update();
-}  // RelinkingDialog::pathButtonClicked
+} // RelinkingDialog::pathButtonClicked
 
 void RelinkingDialog::undoButtonClicked() {
-    m_model.rollbackChanges();
+    m_model.rollbackChanges();  // Has to go before selectionChanged()
     selectionChanged(ui.listView->selectionModel()->selection(), QItemSelection());
 }
 

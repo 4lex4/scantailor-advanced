@@ -77,7 +77,7 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
             palette().background().color()).color();
     fadeColor.setAlpha(127);
     painter.fillRect(rect(), fadeColor);
-    
+
     m_animation.nextFrame(head_color, m_tailColor, &painter, animation_rect);
 
     if (m_timerId == 0) {

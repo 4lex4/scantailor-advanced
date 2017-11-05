@@ -78,7 +78,7 @@ namespace output {
             MORPHOLOGICAL_SMOOTHING = 64,
             SPLIT_OUTPUT = 128
         };
-        
+
         int m_mask;
     };
 }  // namespace output

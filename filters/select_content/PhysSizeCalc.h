@@ -27,6 +27,7 @@ class ImageTransformation;
 
 namespace select_content {
     class PhysSizeCalc {
+        // Member-wise copying is OK.
     public:
         PhysSizeCalc();
 
@@ -37,5 +38,5 @@ namespace select_content {
     private:
         QTransform m_virtToPhys;
     };
-}
+}  // namespace select_content
 #endif

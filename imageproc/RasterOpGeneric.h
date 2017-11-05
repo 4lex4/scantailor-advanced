@@ -200,4 +200,4 @@ namespace imageproc {
         }
     }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_RASTER_OP_GENERIC_H_
+#endif // ifndef IMAGEPROC_RASTER_OP_GENERIC_H_

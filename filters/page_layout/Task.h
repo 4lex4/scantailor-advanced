@@ -64,5 +64,5 @@ namespace page_layout {
         PageId m_pageId;
         bool m_batchProcessing;
     };
-}
-#endif  // ifndef PAGE_LAYOUT_TASK_H_
+}  // namespace page_layout
+#endif // ifndef PAGE_LAYOUT_TASK_H_

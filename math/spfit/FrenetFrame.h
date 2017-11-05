@@ -26,6 +26,7 @@ namespace spfit {
  * Origin + unit tangent + unit normal vectors.
  */
     class FrenetFrame {
+        // Member-wise copying is OK.
     public:
         enum YAxisDirection {
             Y_POINTS_UP,
@@ -63,4 +64,4 @@ namespace spfit {
         Vec2d m_unitNormal;
     };
 }  // namespace spfit
-#endif  // ifndef SPFIT_FRENET_FRAME_H_
+#endif // ifndef SPFIT_FRENET_FRAME_H_

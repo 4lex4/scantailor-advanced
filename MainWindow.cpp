@@ -54,7 +54,6 @@
 #include "RelinkingDialog.h"
 #include "OutOfMemoryHandler.h"
 #include "OutOfMemoryDialog.h"
-#include "StartBatchProcessingDialog.h"
 #include "filters/fix_orientation/Task.h"
 #include "filters/fix_orientation/CacheDrivenTask.h"
 #include "filters/page_split/Task.h"
@@ -1142,16 +1141,7 @@ void MainWindow::startBatchProcessing() {
     m_ptrInteractiveQueue->cancelAndClear();
 
     m_ptrBatchQueue.reset(new ProcessingTaskQueue);
-
-    StartBatchProcessingDialog dialog(this);
-
-    dialog.show();
-    if (!dialog.exec()) {
-        return;
-    }
-
-    bool processAll = dialog.isAllPagesChecked();
-    PageInfo page = processAll ? m_ptrThumbSequence->firstPage() : m_ptrThumbSequence->selectionLeader();
+    PageInfo page(m_ptrThumbSequence->selectionLeader());
     for (; !page.isNull(); page = m_ptrThumbSequence->nextPage(page.id())) {
         m_ptrBatchQueue->addProcessingTask(
                 page, createCompositeTask(page, m_curFilter,  /*batch=*/ true, m_debug)

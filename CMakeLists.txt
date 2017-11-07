@@ -565,7 +565,6 @@ SET(
         SettingsDialog.cpp SettingsDialog.h
         FixDpiDialog.cpp FixDpiDialog.h
         LoadFilesStatusDialog.cpp LoadFilesStatusDialog.h
-        StartBatchProcessingDialog.cpp StartBatchProcessingDialog.h
         ProjectCreationContext.cpp ProjectCreationContext.h
         ProjectOpeningContext.cpp ProjectOpeningContext.h
         OutOfMemoryDialog.cpp OutOfMemoryDialog.h

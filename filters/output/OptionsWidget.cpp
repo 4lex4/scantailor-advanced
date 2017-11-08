@@ -280,16 +280,11 @@ namespace output {
                 m_colorParams.setColorCommonOptions(colorCommonOptions);
             }
             equalizeIlluminationColorCB->setEnabled(checked);
-            // Show the tooltip immediately.
-            // Wait for it to be released.
-            // We could have just disabled tracking, but in that case we wouldn't
-            // be able to show tooltips with a precise value.
         }
 
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
-        // Didn't change.
     }
 
     void OptionsWidget::equalizeIlluminationColorToggled(bool const checked) {
@@ -673,7 +668,8 @@ namespace output {
         equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
         equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
         equalizeIlluminationColorCB->setVisible(color_mode != ColorParams::BLACK_AND_WHITE);
-        equalizeIlluminationColorCB->setEnabled(blackWhiteOptions.normalizeIllumination());
+        equalizeIlluminationColorCB->setEnabled(color_mode == ColorParams::COLOR_GRAYSCALE
+                                                || blackWhiteOptions.normalizeIllumination());
         savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
         savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
         morphologicalSmoothingCB->setChecked(blackWhiteOptions.isMorphologicalSmoothingEnabled());

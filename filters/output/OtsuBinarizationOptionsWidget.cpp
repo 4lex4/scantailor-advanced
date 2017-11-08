@@ -65,6 +65,7 @@ namespace output {
             return;
         }
 
+        // Show the tooltip immediately.
         QPoint const center(thresholdSlider->rect().center());
         QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
@@ -73,6 +74,9 @@ namespace output {
         QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
 
         if (thresholdSlider->isSliderDown()) {
+            // Wait for it to be released.
+            // We could have just disabled tracking, but in that case we wouldn't
+            // be able to show tooltips with a precise value.
             return;
         }
 
@@ -82,6 +86,7 @@ namespace output {
     void OtsuBinarizationOptionsWidget::thresholdValueChanged(int value) {
         BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
         if (opt.thresholdAdjustment() == value) {
+            // Didn't change.
             return;
         }
 

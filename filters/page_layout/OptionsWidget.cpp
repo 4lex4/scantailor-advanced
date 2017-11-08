@@ -312,8 +312,13 @@ namespace page_layout {
                 m_alignment.setHorizontal(Alignment::HCENTER);
                 break;
             case 1:
-                m_alignment.setVertical(Alignment::TOP);
-                m_alignment.setHorizontal(Alignment::HCENTER);
+                for (auto& iter : m_alignmentByButton) {
+                    QToolButton* button = iter.first;
+                    if (button->isChecked()) {
+                        m_alignment = iter.second;
+                        break;
+                    }
+                }
                 break;
             case 2:
                 m_alignment.setVertical(Alignment::VORIGINAL);

@@ -141,7 +141,7 @@ namespace output {
             params.setColorParams(colorParams);
         }
 
-        RenderParams render_params(params.colorParams());
+        RenderParams render_params(params.colorParams(), params.splittingOptions());
         QString const out_file_path(m_outFileNameGen.filePathFor(m_pageId));
         QFileInfo const out_file_info(out_file_path);
 
@@ -177,13 +177,14 @@ namespace output {
                                          && !m_batchProcessing;
 
         OutputGenerator const generator(
-                params.outputDpi(), params.colorParams(), params.despeckleLevel(),
+                params.outputDpi(), params.colorParams(), params.splittingOptions(),
+                params.despeckleLevel(),
                 new_xform, content_rect_phys
         );
 
         OutputImageParams new_output_image_params(
                 generator.outputImageSize(), generator.outputContentRect(),
-                new_xform, params.outputDpi(), params.colorParams(),
+                new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                 params.dewarpingOptions(), params.distortionModel(),
                 params.depthPerception(), params.despeckleLevel(), params.pictureShape()
         );

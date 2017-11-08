@@ -34,7 +34,8 @@ namespace output {
               m_depthPerception(el.attribute("depthPerception")),
               m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
-              m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())) {
+              m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())),
+              m_splittingOptions(el.namedItem("splitting").toElement()) {
         QDomElement const cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
         m_colorParams.setColorCommonOptions(
@@ -44,9 +45,6 @@ namespace output {
         );
         m_colorParams.setBlackWhiteOptions(
                 BlackWhiteOptions(cp.namedItem("bw").toElement())
-        );
-        m_colorParams.setSplittingOptions(
-                SplittingOptions(cp.namedItem("splitting").toElement())
         );
     }
 
@@ -60,7 +58,8 @@ namespace output {
         el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
-
+        el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
+        
         QDomElement cp(doc.createElement("color-params"));
         cp.setAttribute(
                 "colorMode",
@@ -73,7 +72,6 @@ namespace output {
                 )
         );
         cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
-        cp.appendChild(m_colorParams.splittingOptions().toXml(doc, "splitting"));
 
         el.appendChild(cp);
 
@@ -82,9 +80,6 @@ namespace output {
 
     ColorParams::ColorMode Params::parseColorMode(QString const& str) {
         if (str == "bw") {
-            return ColorParams::BLACK_AND_WHITE;
-        } else if (str == "bitonal") {
-            // Backwards compatibility.
             return ColorParams::BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
             return ColorParams::COLOR_GRAYSCALE;

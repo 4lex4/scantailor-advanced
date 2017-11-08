@@ -140,6 +140,11 @@ namespace output {
         );
 
         connect(
+                applySplittingButton, SIGNAL(clicked()),
+                this, SLOT(applySplittingButtonClicked())
+        );
+
+        connect(
                 changeDewarpingButton, SIGNAL(clicked()),
                 this, SLOT(changeDewarpingButtonClicked())
         );
@@ -186,6 +191,7 @@ namespace output {
         m_pageId = page_id;
         m_outputDpi = params.outputDpi();
         m_colorParams = params.colorParams();
+        m_splittingOptions = params.splittingOptions();
         m_pictureShape = params.pictureShape();
         m_dewarpingOptions = params.dewarpingOptions();
         m_depthPerception = params.depthPerception();
@@ -348,6 +354,37 @@ namespace output {
         for (PageId const& page_id : pages) {
             m_ptrSettings->setColorParams(page_id, m_colorParams);
             m_ptrSettings->setPictureShape(page_id, m_pictureShape);
+        }
+
+        if (pages.size() > 1) {
+            emit invalidateAllThumbnails();
+        } else {
+            for (PageId const& page_id : pages) {
+                emit invalidateThumbnail(page_id);
+            }
+        }
+
+        if (pages.find(m_pageId) != pages.end()) {
+            emit reloadRequested();
+        }
+    }
+
+    void OptionsWidget::applySplittingButtonClicked() {
+        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+                this, m_pageId, m_pageSelectionAccessor
+        );
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setWindowTitle(tr("Apply Splitting Settings"));
+        connect(
+                dialog, SIGNAL(accepted(std::set<PageId> const &)),
+                this, SLOT(applySplittingOptionsConfirmed(std::set<PageId> const &))
+        );
+        dialog->show();
+    }
+
+    void OptionsWidget::applySplittingOptionsConfirmed(std::set<PageId> const& pages) {
+        for (PageId const& page_id : pages) {
+            m_ptrSettings->setSplittingOptions(page_id, m_splittingOptions);
         }
 
         if (pages.size() > 1) {
@@ -608,22 +645,20 @@ namespace output {
         bool picture_shape_visible = false;
         bool splitting_options_visible = false;
         switch (color_mode) {
-            case ColorParams::BLACK_AND_WHITE:
-                threshold_options_visible = true;
-                break;
-            case ColorParams::COLOR_GRAYSCALE:
-                break;
             case ColorParams::MIXED:
-                threshold_options_visible = true;
                 picture_shape_visible = true;
                 splitting_options_visible = true;
+                // fall into
+            case ColorParams::BLACK_AND_WHITE:
+                threshold_options_visible = true;
+                // fall into
+            case ColorParams::COLOR_GRAYSCALE:
                 break;
         }
 
         commonOptions->setVisible(true);
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
-        SplittingOptions splitOptions(m_colorParams.splittingOptions());
 
         if (!blackWhiteOptions.normalizeIllumination()
             && color_mode == ColorParams::MIXED) {
@@ -650,8 +685,8 @@ namespace output {
         despecklePanel->setVisible(threshold_options_visible && m_lastTab != TAB_DEWARPING);
 
         splittingOptions->setVisible(splitting_options_visible);
-        splittingCB->setChecked(splitOptions.isSplitOutput());
-        switch (splitOptions.getForegroundType()) {
+        splittingCB->setChecked(m_splittingOptions.isSplitOutput());
+        switch (m_splittingOptions.getForegroundType()) {
             case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
                 bwForegroundRB->setChecked(true);
                 break;
@@ -659,8 +694,8 @@ namespace output {
                 colorForegroundRB->setChecked(true);
                 break;
         }
-        colorForegroundRB->setEnabled(splitOptions.isSplitOutput());
-        bwForegroundRB->setEnabled(splitOptions.isSplitOutput());
+        colorForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
+        bwForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
 
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
@@ -743,10 +778,8 @@ namespace output {
         if (!checked) {
             return;
         }
-        SplittingOptions opt(m_colorParams.splittingOptions());
-        opt.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
-        m_colorParams.setSplittingOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        m_splittingOptions.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
+        m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
 
@@ -754,22 +787,18 @@ namespace output {
         if (!checked) {
             return;
         }
-        SplittingOptions opt(m_colorParams.splittingOptions());
-        opt.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
-        m_colorParams.setSplittingOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        m_splittingOptions.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
+        m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
 
     void OptionsWidget::splittingToggled(bool checked) {
-        SplittingOptions opt(m_colorParams.splittingOptions());
-        opt.setSplitOutput(checked);
+        m_splittingOptions.setSplitOutput(checked);
 
         bwForegroundRB->setEnabled(checked);
         colorForegroundRB->setEnabled(checked);
 
-        m_colorParams.setSplittingOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
 

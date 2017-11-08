@@ -28,6 +28,7 @@ namespace output {
                                          ImageTransformation xform,
                                          Dpi const& dpi,
                                          ColorParams const& color_params,
+                                         SplittingOptions splitting_options,
                                          DewarpingOptions const& dewarping_options,
                                          dewarping::DistortionModel const& distortion_model,
                                          DepthPerception const& depth_perception,
@@ -38,6 +39,7 @@ namespace output {
               m_cropArea(xform.resultingPreCropArea()),
               m_dpi(dpi),
               m_colorParams(color_params),
+              m_splittingOptions(splitting_options),
               m_pictureShape(picture_shape),
               m_distortionModel(distortion_model),
               m_depthPerception(depth_perception),
@@ -55,6 +57,7 @@ namespace output {
               m_partialXform(el.namedItem("partial-xform").toElement()),
               m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_colorParams(el.namedItem("color-params").toElement()),
+              m_splittingOptions(el.namedItem("splitting").toElement()),
               m_pictureShape(parsePictureShape(el.attribute("pictureShape"))),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
@@ -72,6 +75,7 @@ namespace output {
         el.appendChild(m_partialXform.toXml(doc, "partial-xform"));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
         el.appendChild(m_colorParams.toXml(doc, "color-params"));
+        el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
         el.setAttribute("pictureShape", formatPictureShape(m_pictureShape));
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
         el.setAttribute("depthPerception", m_depthPerception.toString());
@@ -102,8 +106,8 @@ namespace output {
             return false;
         }
 
-        if (!colorParamsMatch(m_colorParams, m_despeckleLevel,
-                              other.m_colorParams, other.m_despeckleLevel)) {
+        if (!colorParamsMatch(m_colorParams, m_despeckleLevel, m_splittingOptions,
+                              other.m_colorParams, other.m_despeckleLevel, other.m_splittingOptions)) {
             return false;
         }
 
@@ -127,15 +131,17 @@ namespace output {
 
     bool OutputImageParams::colorParamsMatch(ColorParams const& cp1,
                                              DespeckleLevel const dl1,
+                                             SplittingOptions const& so1,
                                              ColorParams const& cp2,
-                                             DespeckleLevel const dl2) {
+                                             DespeckleLevel const dl2,
+                                             SplittingOptions const& so2) {
         if (cp1.colorMode() != cp2.colorMode()) {
             return false;
         }
 
         switch (cp1.colorMode()) {
             case ColorParams::MIXED:
-                if (cp1.splittingOptions() != cp2.splittingOptions()) {
+                if (so1 != so2) {
                     return false;
                 }
                 // fall into

@@ -20,11 +20,10 @@
 #include "ColorParams.h"
 
 namespace output {
-    RenderParams::RenderParams(ColorParams const& colorParams)
+    RenderParams::RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions)
             : m_mask(0) {
         const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
         const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());
-        const SplittingOptions splittingOptions(colorParams.splittingOptions());
         const ColorParams::ColorMode colorMode = colorParams.colorMode();
 
         if ((colorMode == ColorParams::BLACK_AND_WHITE) || (colorMode == ColorParams::MIXED)) {

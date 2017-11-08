@@ -240,11 +240,13 @@ namespace output {
 
     OutputGenerator::OutputGenerator(Dpi const& dpi,
                                      ColorParams const& color_params,
+                                     SplittingOptions splittingOptions,
                                      DespeckleLevel const despeckle_level,
                                      ImageTransformation const& xform,
                                      QPolygonF const& content_rect_phys)
             : m_dpi(dpi),
               m_colorParams(color_params),
+              m_splittingOptions(splittingOptions),
               m_xform(xform),
               m_outRect(xform.resultingRect().toRect()),
               m_contentRect(xform.transform().map(content_rect_phys).boundingRect().toRect()),
@@ -279,7 +281,7 @@ namespace output {
                 )
         );
         // Set the correct DPI.
-        const RenderParams renderParams(m_colorParams);
+        const RenderParams renderParams(m_colorParams, m_splittingOptions);
         Dpm const output_dpm(m_dpi);
 
         if (!renderParams.splitOutput()) {
@@ -493,7 +495,7 @@ namespace output {
                                                     PageId* p_pageId,
                                                     IntrusivePtr<Settings>* p_settings,
                                                     SplitImage* splitImage) const {
-        RenderParams const render_params(m_colorParams);
+        RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
         if (m_outRect.isEmpty()) {
@@ -891,7 +893,7 @@ namespace output {
                                                  PageId* p_pageId,
                                                  IntrusivePtr<Settings>* p_settings,
                                                  SplitImage* splitImage) const {
-        RenderParams const render_params(m_colorParams);
+        RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
         if (m_outRect.isEmpty()) {

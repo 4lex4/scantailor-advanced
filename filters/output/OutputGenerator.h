@@ -73,6 +73,7 @@ namespace output {
     public:
         OutputGenerator(Dpi const& dpi,
                         ColorParams const& color_params,
+                        SplittingOptions splittingOptions,
                         DespeckleLevel despeckle_level,
                         ImageTransformation const& xform,
                         QPolygonF const& content_rect_phys);
@@ -295,6 +296,7 @@ namespace output {
 
         Dpi m_dpi;
         ColorParams m_colorParams;
+        SplittingOptions m_splittingOptions;
 
         /**
          * Transformation from the input to the output image coordinates.

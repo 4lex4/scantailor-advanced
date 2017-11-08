@@ -66,6 +66,14 @@ namespace output {
             m_colorParams = params;
         }
 
+        const SplittingOptions& splittingOptions() const {
+            return m_splittingOptions;
+        }
+
+        void setSplittingOptions(const SplittingOptions& opt) {
+            m_splittingOptions = opt;
+        }
+
         DewarpingOptions const& dewarpingOptions() const {
             return m_dewarpingOptions;
         }
@@ -107,6 +115,7 @@ namespace output {
 
         Dpi m_dpi;
         ColorParams m_colorParams;
+        SplittingOptions m_splittingOptions;
         PictureShape m_pictureShape;
         dewarping::DistortionModel m_distortionModel;
         DepthPerception m_depthPerception;

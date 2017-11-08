@@ -46,6 +46,7 @@ namespace output {
                           ImageTransformation xform,
                           Dpi const& dpi,
                           ColorParams const& color_params,
+                          SplittingOptions splittingOptions,
                           DewarpingOptions const& dewarping_options,
                           dewarping::DistortionModel const& distortion_model,
                           DepthPerception const& depth_perception,
@@ -108,8 +109,12 @@ namespace output {
 
         static QString formatPictureShape(PictureShape type);
 
-        static bool colorParamsMatch(ColorParams const& cp1, DespeckleLevel dl1, ColorParams const& cp2,
-                                     DespeckleLevel dl2);
+        static bool colorParamsMatch(ColorParams const& cp1,
+                                     DespeckleLevel const dl1,
+                                     SplittingOptions const& so1,
+                                     ColorParams const& cp2,
+                                     DespeckleLevel const dl2,
+                                     SplittingOptions const& so2);
 
         /** Pixel size of the output image. */
         QSize m_size;
@@ -132,6 +137,9 @@ namespace output {
 
         /** Non-geometric parameters used to generate the output image. */
         ColorParams m_colorParams;
+
+        /** Parameters used to generate the split output images. */
+        SplittingOptions m_splittingOptions;
 
         /** Shape of the pictures in image */
         PictureShape m_pictureShape;

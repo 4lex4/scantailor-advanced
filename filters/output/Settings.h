@@ -64,6 +64,8 @@ namespace output {
 
         void setDewarpingOptions(PageId const& page_id, DewarpingOptions const& opt);
 
+        void setSplittingOptions(PageId const& page_id, SplittingOptions const& opt);
+
         void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
 
         void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);

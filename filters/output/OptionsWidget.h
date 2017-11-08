@@ -83,9 +83,13 @@ namespace output {
 
         void applyColorsButtonClicked();
 
+        void applySplittingButtonClicked();
+
         void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
 
         void applyColorsConfirmed(std::set<PageId> const& pages);
+
+        void applySplittingOptionsConfirmed(std::set<PageId> const& pages);
 
         void colorModeChanged(int idx);
 
@@ -155,6 +159,7 @@ namespace output {
         PageId m_pageId;
         Dpi m_outputDpi;
         ColorParams m_colorParams;
+        SplittingOptions m_splittingOptions;
         PictureShape m_pictureShape;
         DepthPerception m_depthPerception;
         DewarpingOptions m_dewarpingOptions;

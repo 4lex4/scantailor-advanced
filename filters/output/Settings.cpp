@@ -154,6 +154,19 @@ namespace output {
         }
     }
 
+    void Settings::setSplittingOptions(PageId const& page_id, SplittingOptions const& opt) {
+        QMutexLocker const locker(&m_mutex);
+
+        PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
+        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+            Params params;
+            params.setSplittingOptions(opt);
+            m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
+        } else {
+            it->second.setSplittingOptions(opt);
+        }
+    }
+
     void Settings::setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model) {
         QMutexLocker const locker(&m_mutex);
 

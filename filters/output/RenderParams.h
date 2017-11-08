@@ -19,6 +19,8 @@
 #ifndef OUTPUT_RENDER_PARAMS_H_
 #define OUTPUT_RENDER_PARAMS_H_
 
+#include "SplittingOptions.h"
+
 namespace output {
     class ColorParams;
 
@@ -28,7 +30,7 @@ namespace output {
                 : m_mask(0) {
         }
 
-        explicit RenderParams(ColorParams const& colorParams);
+        explicit RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions);
 
         bool whiteMargins() const {
             return (m_mask & WHITE_MARGINS) != 0;

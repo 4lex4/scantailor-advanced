@@ -62,12 +62,13 @@ namespace output {
                 }
 
                 OutputGenerator const generator(
-                        params.outputDpi(), params.colorParams(), params.despeckleLevel(),
+                        params.outputDpi(), params.colorParams(), params.splittingOptions(),
+                        params.despeckleLevel(),
                         new_xform, content_rect_phys
                 );
                 OutputImageParams const new_output_image_params(
                         generator.outputImageSize(), generator.outputContentRect(),
-                        new_xform, params.outputDpi(), params.colorParams(),
+                        new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.dewarpingOptions(), params.distortionModel(),
                         params.depthPerception(), params.despeckleLevel(), params.pictureShape()
                 );

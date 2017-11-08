@@ -253,6 +253,9 @@ namespace output {
               m_despeckleLevel(despeckle_level) {
         assert(m_outRect.topLeft() == QPoint(0, 0));
 
+        // prevents a crash due to round error on transforming virtual coordinates to output image coordinates
+        // when m_contentRect coordinates could exceed m_outRect ones by 1 px
+        m_contentRect = m_contentRect.intersected(m_outRect);
         // Note that QRect::contains(<empty rect>) always returns false, so we don't use it here.
         assert(m_outRect.contains(m_contentRect.topLeft()) && m_outRect.contains(m_contentRect.bottomRight()));
     }

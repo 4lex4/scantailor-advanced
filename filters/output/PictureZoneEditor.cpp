@@ -158,10 +158,12 @@ namespace output {
             double const scale = 0.5 * (sn + 1.0);  // 0 .. 1
             double const opacity = 0.35 * scale + 0.15;
 
-            QPixmap mask(m_screenPictureMask);
+            QPixmap mask(m_screenPictureMask.rect().size());
+            mask.fill(Qt::transparent);
 
             {
                 QPainter mask_painter(&mask);
+                mask_painter.drawPixmap(QPoint(0, 0), m_screenPictureMask);
                 mask_painter.translate(-m_screenPictureMaskOrigin);
                 paintOverPictureMask(mask_painter);
             }
@@ -276,7 +278,7 @@ namespace output {
             painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
 #endif
 
-        // Third pass: ERASER1
+        // Third pass: ERASER3
         for (EditableZoneSet::Zone const& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);

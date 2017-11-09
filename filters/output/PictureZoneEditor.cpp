@@ -300,6 +300,7 @@ namespace output {
         if (dialog.exec() == QDialog::Accepted) {
             m_zones.setDefaultProperties(*zone.properties());
             m_zones.commit();
+            m_ptrSettings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
         } else {
             zone.properties()->swap(saved_properties);
             update();

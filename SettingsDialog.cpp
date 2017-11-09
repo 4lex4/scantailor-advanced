@@ -51,7 +51,10 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
+    ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
+
     connect(ui.AutoSaveProject, SIGNAL(toggled(bool)), this, SLOT(OnCheckAutoSaveProject(bool)));
+    connect(ui.highlightDeviationCB, SIGNAL(toggled(bool)), this, SLOT(OnHighlightDeviationToggled(bool)));
     connect(
             ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onColorSchemeChanged(int))
@@ -72,6 +75,14 @@ void SettingsDialog::OnCheckAutoSaveProject(bool state) {
     settings.setValue("settings/auto_save_project", state);
 
     emit AutoSaveProjectStateSignal(state);
+}
+
+void SettingsDialog::OnHighlightDeviationToggled(bool state) {
+    QSettings settings;
+
+    settings.setValue("settings/highlight_deviation", state);
+
+    emit higlightDeviationChanged();
 }
 
 void SettingsDialog::onColorSchemeChanged(int idx) {

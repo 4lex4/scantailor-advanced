@@ -101,6 +101,8 @@ public slots:
 
     void setAutoSaveProjectState(bool auto_save);
 
+    void onHiglightDeviationChanged();
+
 private:
     enum MainAreaAction {
         UPDATE_MAIN_AREA,

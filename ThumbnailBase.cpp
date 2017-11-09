@@ -24,6 +24,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QApplication>
 #include <cmath>
+#include <QtCore/QSettings>
 
 using namespace imageproc;
 
@@ -203,6 +204,11 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 } // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
+    QSettings settings;
+    if (!settings.value("settings/highlight_deviation", 1).toBool()) {
+        return;
+    }
+
     QPen pen(QColor(0xdd, 0x00, 0x00, 0xee));
     pen.setWidth(5);
     pen.setCosmetic(true);

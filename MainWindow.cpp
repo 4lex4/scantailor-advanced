@@ -954,6 +954,10 @@ void MainWindow::setAutoSaveProjectState(bool auto_save) {
     m_auto_save_project = auto_save;
 }
 
+void MainWindow::onHiglightDeviationChanged() {
+    m_ptrThumbSequence->invalidateAllThumbnails();
+}
+
 void MainWindow::pageContextMenuRequested(PageInfo const& page_info_, QPoint const& screen_pos, bool selected) {
     if (isBatchProcessingInProgress()) {
         return;
@@ -1463,6 +1467,7 @@ void MainWindow::openSettingsDialog() {
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
     connect(dialog, SIGNAL(AutoSaveProjectStateSignal(bool)), this, SLOT(setAutoSaveProjectState(bool)));
+    connect(dialog, SIGNAL(higlightDeviationChanged(bool)), this, SLOT(onHiglightDeviationChanged));
     dialog->show();
 }
 

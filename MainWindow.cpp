@@ -281,7 +281,8 @@ MainWindow::MainWindow()
             resize(1014, 689);  // A sensible value.
         }
     }
-    m_auto_save_project = settings.value("settings/auto_save_project").toBool();
+    m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+    m_highlightDeviation = settings.value("settings/highlight_deviation", true).toBool();
 }
 
 MainWindow::~MainWindow() {
@@ -943,19 +944,11 @@ void MainWindow::autoSaveProject() {
         return;
     }
 
-    if (!m_auto_save_project) {
+    if (!m_autoSaveProject) {
         return;
     }
 
     saveProjectWithFeedback(m_projectFile);
-}
-
-void MainWindow::setAutoSaveProjectState(bool auto_save) {
-    m_auto_save_project = auto_save;
-}
-
-void MainWindow::onHiglightDeviationChanged() {
-    m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
 void MainWindow::pageContextMenuRequested(PageInfo const& page_info_, QPoint const& screen_pos, bool selected) {
@@ -1466,9 +1459,20 @@ void MainWindow::openSettingsDialog() {
     SettingsDialog* dialog = new SettingsDialog(this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
-    connect(dialog, SIGNAL(AutoSaveProjectStateSignal(bool)), this, SLOT(setAutoSaveProjectState(bool)));
-    connect(dialog, SIGNAL(higlightDeviationChanged(bool)), this, SLOT(onHiglightDeviationChanged));
+    connect(dialog, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
     dialog->show();
+}
+
+void MainWindow::onSettingsChanged() {
+    QSettings settings;
+
+    m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+
+    bool highlightDeviation = settings.value("settings/highlight_deviation").toBool();
+    if (highlightDeviation != m_highlightDeviation) {
+        m_highlightDeviation = highlightDeviation;
+        m_ptrThumbSequence->invalidateAllThumbnails();
+    }
 }
 
 void MainWindow::showAboutDialog() {

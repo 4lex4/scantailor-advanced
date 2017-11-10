@@ -99,10 +99,6 @@ public slots:
 
     void openProject(QString const& project_file);
 
-    void setAutoSaveProjectState(bool auto_save);
-
-    void onHiglightDeviationChanged();
-
 private:
     enum MainAreaAction {
         UPDATE_MAIN_AREA,
@@ -187,6 +183,8 @@ private slots:
     void closeProject();
 
     void openSettingsDialog();
+
+    void onSettingsChanged();
 
     void showAboutDialog();
 
@@ -325,7 +323,8 @@ private:
     bool m_beepOnBatchProcessingCompletion;
     QTimer m_thumbResizeTimer;
     QTimer m_autoSaveTimer;
-    bool m_auto_save_project;
+    bool m_autoSaveProject;
+    bool m_highlightDeviation;
 };
 
 

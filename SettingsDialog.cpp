@@ -53,8 +53,6 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
     ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
 
-    connect(ui.AutoSaveProject, SIGNAL(toggled(bool)), this, SLOT(OnCheckAutoSaveProject(bool)));
-    connect(ui.highlightDeviationCB, SIGNAL(toggled(bool)), this, SLOT(OnHighlightDeviationToggled(bool)));
     connect(
             ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onColorSchemeChanged(int))
@@ -67,33 +65,18 @@ SettingsDialog::~SettingsDialog() {
 void SettingsDialog::commitChanges() {
     QSettings settings;
     settings.setValue("settings/enable_opengl", ui.enableOpenglCb->isChecked());
-}
-
-void SettingsDialog::OnCheckAutoSaveProject(bool state) {
-    QSettings settings;
-
-    settings.setValue("settings/auto_save_project", state);
-
-    emit AutoSaveProjectStateSignal(state);
-}
-
-void SettingsDialog::OnHighlightDeviationToggled(bool state) {
-    QSettings settings;
-
-    settings.setValue("settings/highlight_deviation", state);
-
-    emit higlightDeviationChanged();
-}
-
-void SettingsDialog::onColorSchemeChanged(int idx) {
-    QSettings settings;
-
-    if (idx == 0) {
+    settings.setValue("settings/auto_save_project", ui.AutoSaveProject->isChecked());
+    settings.setValue("settings/highlight_deviation", ui.highlightDeviationCB->isChecked());
+    if (ui.colorSchemeBox->currentIndex() == 0) {
         settings.setValue("settings/color_scheme", "dark");
-    } else if (idx == 1) {
+    } else if (ui.colorSchemeBox->currentIndex() == 1) {
         settings.setValue("settings/color_scheme", "light");
     }
 
+    emit settingsChanged();
+}
+
+void SettingsDialog::onColorSchemeChanged(int idx) {
     QMessageBox::information(
             this, tr("Information"),
             tr("ScanTailor need to be restarted to apply the color scheme changes.")

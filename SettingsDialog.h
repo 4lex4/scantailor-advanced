@@ -29,19 +29,14 @@ public:
 
     virtual ~SettingsDialog();
 
+
 signals:
 
-    void AutoSaveProjectStateSignal(bool auto_save);
-
-    void higlightDeviationChanged();
+    void settingsChanged();
 
 private slots:
 
     void commitChanges();
-
-    void OnCheckAutoSaveProject(bool);
-
-    void OnHighlightDeviationToggled(bool state);
 
     void onColorSchemeChanged(int idx);
 

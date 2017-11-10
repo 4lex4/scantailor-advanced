@@ -29,8 +29,7 @@ public:
      *     processing_indication_fade_color,
      *     stage_list_head_color,
      *     stage_list_tail_color,
-     *     fix_dpi_dialog_error_text_color,
-     *     image_view_intersected_area_color
+     *     fix_dpi_dialog_error_text_color
      *
      * @return the list of colors to override the default values by the color scheme
      */

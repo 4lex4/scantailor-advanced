@@ -29,11 +29,12 @@ namespace page_layout {
                          ImageId const& image_id,
                          Params const& params,
                          ImageTransformation const& xform,
-                         QPolygonF const& phys_content_rect)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+                         QPolygonF const& phys_content_rect,
+                         QRectF displayArea)
+            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform, displayArea),
               m_params(params),
               m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
-              m_virtOuterRect(xform.resultingPostCropArea().boundingRect()) {
+              m_virtOuterRect(displayArea) {
         setExtendedClipArea(true);
     }
 
@@ -52,11 +53,11 @@ namespace page_layout {
         // of subpixel accuracy.  Doing that is actually OK, because what
         // we paint will be clipped anyway.
         QRectF const outer_rect(
-                virt_to_display.map(m_virtOuterRect).boundingRect().adjusted(-1.0, -1.0, 1.0, 1.0)
+                virt_to_display.map(m_virtOuterRect).boundingRect().toAlignedRect()
         );
 
         QPainterPath outer_outline;
-        outer_outline.addPolygon(PolygonUtils::round(outer_rect));
+        outer_outline.addPolygon(outer_rect);
 
         QPainterPath content_outline;
         content_outline.addPolygon(PolygonUtils::round(inner_rect));

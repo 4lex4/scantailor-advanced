@@ -88,7 +88,8 @@ namespace page_layout {
                                     thumb_col->thumbnailCache(),
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), *params,
-                                    new_xform, content_rect_phys
+                                    xform, content_rect_phys,
+                                    xform.transform().map(page_rect_phys).boundingRect()
                             )
                     )
             );

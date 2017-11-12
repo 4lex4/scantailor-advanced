@@ -520,7 +520,10 @@ namespace page_layout {
         Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
         QRectF const outer_rect(mm_to_virt.map(poly_mm).boundingRect());
-        updateTransformAndFixFocalPoint(ImagePresentation(imageToVirtual(), outer_rect), CENTER_IF_FITS);
+        updateTransformAndFixFocalPoint(
+                ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea(), outer_rect),
+                CENTER_IF_FITS
+        );
 
         m_middleRect = middle_rect;
         m_outerRect = outer_rect;
@@ -534,11 +537,14 @@ namespace page_layout {
  */
     void ImageView::updatePresentationTransform(FitMode const fit_mode) {
         if (fit_mode == DONT_FIT) {
-            updateTransformPreservingScale(ImagePresentation(imageToVirtual(), m_outerRect));
+            updateTransformPreservingScale(
+                    ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea(), m_outerRect)
+            );
         } else {
             setZoomLevel(1.0);
             updateTransformAndFixFocalPoint(
-                    ImagePresentation(imageToVirtual(), m_outerRect), CENTER_IF_FITS
+                    ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea(), m_outerRect),
+                    CENTER_IF_FITS
             );
         }
     }

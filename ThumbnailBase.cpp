@@ -49,11 +49,21 @@ ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform)
+        : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform,
+                        image_xform.resultingPostCropArea().boundingRect()) {
+}
+
+ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                             QSizeF const& max_size,
+                             ImageId const& image_id,
+                             ImageTransformation const& image_xform,
+                             QRectF displayArea)
         : m_ptrThumbnailCache(thumbnail_cache),
           m_maxSize(max_size),
           m_imageId(image_id),
           m_imageXform(image_xform),
-          m_extendedClipArea(false) {
+          m_extendedClipArea(false),
+          m_displayArea(displayArea) {
     setImageXform(m_imageXform);
 }
 
@@ -107,11 +117,11 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     );
 
     // The polygon to draw into in original image coordinates.
-    QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPostCropArea()));
+    QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPreCropArea()));
     if (!m_extendedClipArea) {
         image_poly = image_poly.intersected(
                 PolygonUtils::round(
-                        m_imageXform.transform().map(m_imageXform.origRect())
+                        m_imageXform.resultingRect()
                 )
         );
     }
@@ -119,11 +129,12 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     // The polygon to draw into in display coordinates.
     QPolygonF display_poly(image_to_display.map(image_poly));
 
-    QRectF display_rect(display_poly.boundingRect());
-    display_rect.setTop(floor(display_rect.top()));
-    display_rect.setLeft(floor(display_rect.left()));
-    display_rect.setBottom(ceil(display_rect.bottom()));
-    display_rect.setRight(ceil(display_rect.right()));
+    QRectF display_rect(
+            image_to_display
+                    .map(PolygonUtils::round(m_displayArea))
+                    .boundingRect()
+                    .toAlignedRect()
+    );
 
     QPixmap temp_pixmap;
     QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
@@ -164,6 +175,28 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 
     PixmapRenderer::drawPixmap(temp_painter, pixmap);
 
+    temp_painter.setPen(Qt::NoPen);
+    temp_painter.setBrush(Qt::transparent);
+    temp_painter.setWorldTransform(temp_adjustment);
+#ifndef Q_WS_X11
+    // That's how it's supposed to be.
+    temp_painter.setCompositionMode(QPainter::CompositionMode_Clear);
+#else
+    // QPainter::CompositionMode_Clear doesn't work for arbitrarily shaped
+    // objects on X11, as well as CompositionMode_Source with a transparent
+    // brush.  Fortunately, CompositionMode_DestinationOut with a non-transparent
+    // brush does actually work.
+    temp_painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
+#endif
+    {
+        QPainterPath outer_path;
+        outer_path.addRect(display_rect);
+        QPainterPath inner_path;
+        inner_path.addPolygon(display_poly);
+
+        temp_painter.drawPath(outer_path.subtracted(inner_path));
+    }
+
     // Turn alpha compositing on again.
     temp_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     // Setup the painter for drawing in thumbnail coordinates,
@@ -177,35 +210,17 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     );
     temp_painter.restore();
 
-    temp_painter.setPen(Qt::NoPen);
-    temp_painter.setBrush(Qt::white);
-    temp_painter.setWorldTransform(temp_adjustment);
-#ifndef Q_WS_X11
-    // That's how it's supposed to be.
-    temp_painter.setCompositionMode(QPainter::CompositionMode_Clear);
-#else
-    // QPainter::CompositionMode_Clear doesn't work for arbitrarily shaped
-    // objects on X11, as well as CompositionMode_Source with a transparent
-    // brush.  Fortunately, CompositionMode_DestinationOut with a non-transparent
-    // brush does actually work.
-    temp_painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-#endif
-    temp_painter.drawPolygon(
-            QPolygonF(display_rect).subtracted(PolygonUtils::round(display_poly))
-    );
-
     temp_painter.end();
 
-    painter->setWorldTransform(QTransform());
-    painter->setClipRect(display_rect);
+    painter->setClipRect(QRectF(QPointF(0, 0), display_rect.size()));
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter->drawPixmap(display_rect.topLeft(), temp_pixmap);
+    painter->drawPixmap(QPointF(0, 0), temp_pixmap);
 } // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
     QSettings settings;
-    if (!settings.value("settings/highlight_deviation", 1).toBool()) {
+    if (!settings.value("settings/highlight_deviation", true).toBool()) {
         return;
     }
 
@@ -227,7 +242,7 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
 void ThumbnailBase::setImageXform(ImageTransformation const& image_xform) {
     m_imageXform = image_xform;
     QSizeF const unscaled_size(
-            image_xform.resultingRect().size().expandedTo(QSizeF(1, 1))
+            m_displayArea.size().expandedTo(QSizeF(1, 1))
     );
     QSizeF scaled_size(unscaled_size);
     scaled_size.scale(m_maxSize, Qt::KeepAspectRatio);

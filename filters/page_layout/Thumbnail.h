@@ -37,7 +37,8 @@ namespace page_layout {
                   ImageId const& image_id,
                   Params const& params,
                   ImageTransformation const& xform,
-                  QPolygonF const& phys_content_rect);
+                  QPolygonF const& phys_content_rect,
+                  QRectF displayArea);
 
         virtual void paintOverImage(QPainter& painter,
                                     QTransform const& image_to_display,

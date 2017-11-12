@@ -40,6 +40,12 @@ public:
                   ImageId const& image_id,
                   ImageTransformation const& image_xform);
 
+    ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                  QSizeF const& max_size,
+                  ImageId const& image_id,
+                  ImageTransformation const& image_xform,
+                  QRectF displayArea);
+
     virtual ~ThumbnailBase();
 
     virtual QRectF boundingRect() const;
@@ -109,6 +115,7 @@ private:
     ImageId m_imageId;
     ImageTransformation m_imageXform;
     QRectF m_boundingRect;
+    QRectF m_displayArea;
 
     /**
      * Transforms virtual image coordinates into thumbnail coordinates.

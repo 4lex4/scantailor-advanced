@@ -89,8 +89,17 @@ namespace page_layout {
         // toRect() is necessary because we turn off antialiasing.
         // For some reason, if we let Qt round the coordinates,
         // the result is slightly different.
+
+        // inner rect
         painter.drawRect(inner_rect.toRect());
 
+        // outer rect
+        if (!m_params.alignment().isNull()) {
+            pen.setStyle(Qt::DashLine);
+        }
+        painter.setPen(pen);
+        painter.drawRect(outer_rect.toRect().adjusted(1, 1, -1, -1));
+        
         if (m_params.isDeviant()) {
             paintDeviant(painter);
         }

@@ -209,10 +209,10 @@ namespace select_content {
             return;
         }
 
-        Dependencies deps;
         Params params(
                 m_uiData.contentRect(), m_uiData.contentSizeMM(),
-                deps, m_uiData.mode(), m_uiData.contentDetection(), m_uiData.pageDetection(), m_uiData.fineTuning()
+                m_uiData.dependencies(), m_uiData.mode(), m_uiData.contentDetection(),
+                m_uiData.pageDetection(), m_uiData.fineTuning()
         );
 
         for (PageId const& page_id : pages) {
@@ -222,6 +222,19 @@ namespace select_content {
                 if (!apply_content_box) {
                     params.setContentRect(old_params->contentRect());
                     params.setContentSizeMM(old_params->contentSizeMM());
+                } else {
+                    // we don't want the content box to be out of the page bounds
+                    QRectF fixedContentRect = m_uiData.contentRect().intersected(old_params->pageRect());
+                    if (fixedContentRect != m_uiData.contentRect()) {
+                        if (fixedContentRect.isValid()) {
+                            params.setContentRect(fixedContentRect);
+                        } else {
+                            params.setContentRect(old_params->pageRect());
+                        }
+                        // if it happens we need recalculate other params that can't be done here
+                        // so we install empty dependencies to force that
+                        params.setDependencies(Dependencies());
+                    }
                 }
                 params.setPageRect(old_params->pageRect());
             }

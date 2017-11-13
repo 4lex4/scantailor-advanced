@@ -175,6 +175,19 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
 
     PixmapRenderer::drawPixmap(temp_painter, pixmap);
 
+    // Turn alpha compositing on again.
+    temp_painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    // Setup the painter for drawing in thumbnail coordinates,
+    // as required for paintOverImage().
+    temp_painter.setWorldTransform(thumb_to_display * temp_adjustment);
+
+    temp_painter.save();
+    prePaintOverImage(
+            temp_painter, image_to_display * temp_adjustment,
+            thumb_to_display * temp_adjustment
+    );
+    temp_painter.restore();
+
     temp_painter.setPen(Qt::NoPen);
     temp_painter.setBrush(Qt::transparent);
     temp_painter.setWorldTransform(temp_adjustment);

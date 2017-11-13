@@ -76,6 +76,15 @@ protected:
                                 QTransform const& thumb_to_display) {
     }
 
+    /**
+     * \brief This is the same as paintOverImage().
+     *        The only difference is that the painted content will be cropped with the image.
+     */
+    virtual void prePaintOverImage(QPainter& painter,
+                                QTransform const& image_to_display,
+                                QTransform const& thumb_to_display) {
+    }
+
     virtual void paintDeviant(QPainter& painter);
 
     /**

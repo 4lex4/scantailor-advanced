@@ -36,7 +36,7 @@ namespace page_split {
         }
     }
 
-    void Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display,
+    void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
                                    QTransform const& thumb_to_display) {
         QRectF const canvas_rect(imageXform().resultingRect());
 

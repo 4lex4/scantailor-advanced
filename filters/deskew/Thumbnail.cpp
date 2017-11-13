@@ -29,7 +29,7 @@ namespace deskew {
               m_deviant(deviant) {
     }
 
-    void Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display,
+    void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
                                    QTransform const& thumb_to_display) {
         painter.setRenderHint(QPainter::Antialiasing, false);
 

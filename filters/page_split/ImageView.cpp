@@ -30,7 +30,7 @@ namespace page_split {
                          QImage const& downscaled_image,
                          ImageTransformation const& xform,
                          PageLayout const& layout,
-                         IntrusivePtr<ProjectPages> const& pages,
+                         IntrusivePtr <ProjectPages> const& pages,
                          ImageId const& image_id,
                          bool left_half_removed,
                          bool right_half_removed)
@@ -260,15 +260,43 @@ namespace page_split {
 
     void ImageView::handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos) {
         QRectF const valid_area(getOccupiedWidgetRect());
-        double const x = qBound(valid_area.left(), pos.x(), valid_area.right());
-        QPointF const wpt(x, handle_idx == 0 ? valid_area.top() : valid_area.bottom());
-        QPointF const vpt(widgetToVirtual().map(wpt));
+
+        qreal min_x_top = valid_area.left();
+        qreal max_x_top = valid_area.right();
+        qreal min_x_bottom = valid_area.left();
+        qreal max_x_bottom = valid_area.right();
+
+        // preventing intersection with other cutters
+        for (int i = 0; i < m_virtLayout.numCutters(); i++) {
+            if (i != line_idx) {
+                QPointF p_top_i;
+                QPointF p_bottom_i;
+                QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+                anotherLine.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top_i);
+                anotherLine.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom_i);
+
+                if ((p_top_i.x() < min_x_top) || (p_top_i.x() > max_x_top)
+                    || (p_bottom_i.x() < min_x_bottom) || (p_bottom_i.x() > max_x_bottom)) {
+                    continue;
+                }
+
+                if (line_idx > i) {
+                    min_x_top = p_top_i.x();
+                    min_x_bottom = p_bottom_i.x();
+                } else {
+                    max_x_top = p_top_i.x();
+                    max_x_bottom = p_bottom_i.x();
+                }
+            }
+        }
 
         QLineF virt_line(virtualCutterLine(line_idx));
         if (handle_idx == 0) {
-            virt_line.setP1(vpt);
+            const QPointF wpt(qBound(min_x_top, pos.x(), max_x_top), valid_area.top());
+            virt_line.setP1(widgetToVirtual().map(wpt));
         } else {
-            virt_line.setP2(vpt);
+            const QPointF wpt(qBound(min_x_bottom, pos.x(), max_x_bottom), valid_area.bottom());
+            virt_line.setP2(widgetToVirtual().map(wpt));
         }
 
         m_virtLayout.setCutterLine(line_idx, virt_line);
@@ -281,16 +309,44 @@ namespace page_split {
 
     void ImageView::lineMoveRequest(int line_idx, QLineF line) {
         // Intersect with top and bottom.
+        QRectF const valid_area(getOccupiedWidgetRect());
         QPointF p_top;
         QPointF p_bottom;
-        QRectF const valid_area(getOccupiedWidgetRect());
         line.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top);
         line.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom);
+
+        qreal min_x_top = valid_area.left();
+        qreal max_x_top = valid_area.right();
+        qreal min_x_bottom = valid_area.left();
+        qreal max_x_bottom = valid_area.right();
+
+        // preventing intersection with other cutters
+        for (int i = 0; i < m_virtLayout.numCutters(); i++) {
+            if (i != line_idx) {
+                QPointF p_top_i;
+                QPointF p_bottom_i;
+                QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+                anotherLine.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top_i);
+                anotherLine.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom_i);
+
+                if ((p_top_i.x() < min_x_top) || (p_top_i.x() > max_x_top)
+                    || (p_bottom_i.x() < min_x_bottom) || (p_bottom_i.x() > max_x_bottom)) {
+                    continue;
+                }
+
+                if (line_idx > i) {
+                    min_x_top = p_top_i.x();
+                    min_x_bottom = p_bottom_i.x();
+                } else {
+                    max_x_top = p_top_i.x();
+                    max_x_bottom = p_bottom_i.x();
+                }
+            }
+        }
+
         // Limit movement.
-        double const min_x = qMin(p_top.x(), p_bottom.x());
-        double const max_x = qMax(p_top.x(), p_bottom.x());
-        double const left = valid_area.left() - min_x;
-        double const right = max_x - valid_area.right();
+        double const left = qMax(min_x_top - p_top.x(), min_x_bottom - p_bottom.x());
+        double const right = qMax(p_top.x() - max_x_top, p_bottom.x() - max_x_bottom);
         if ((left > right) && (left > 0.0)) {
             line.translate(left, 0.0);
         } else if (right > 0.0) {

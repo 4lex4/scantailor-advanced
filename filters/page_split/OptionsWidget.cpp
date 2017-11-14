@@ -22,6 +22,7 @@
 #include "Settings.h"
 #include "ProjectPages.h"
 #include "ScopedIncDec.h"
+#include "PageLayoutAdapter.h"
 #include <assert.h>
 
 namespace page_split {
@@ -249,9 +250,31 @@ namespace page_split {
             for (PageId const& page_id : pages) {
                 Settings::UpdateAction update_params;
                 update_params.setLayoutType(layout_type);
-                if (apply_cut) {
-                    update_params.setParams(params);
+                if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
+                    Params new_params(params);
+
+                    const Params* old_params = m_ptrSettings->getPageRecord(page_id.imageId()).params();
+                    if (old_params != nullptr) {
+                        std::unique_ptr<PageLayout> newPageLayout =
+                                PageLayoutAdapter::adaptPageLayout(params.pageLayout(),
+                                                                   old_params->pageLayout().uncutOutline().boundingRect());
+
+                        update_params.setLayoutType(newPageLayout->toLayoutType());
+                        new_params.setPageLayout(*newPageLayout);
+
+                        Dependencies oldDeps = old_params->dependencies();
+                        oldDeps.setLayoutType(newPageLayout->toLayoutType());
+                        new_params.setDependencies(oldDeps);
+                    }
+
+                    update_params.setParams(new_params);
                 }
+                m_ptrSettings->updatePage(page_id.imageId(), update_params);
+            }
+        } else {
+            for (PageId const& page_id : pages) {
+                Settings::UpdateAction update_params;
+                update_params.setLayoutType(layout_type);
                 m_ptrSettings->updatePage(page_id.imageId(), update_params);
             }
         }

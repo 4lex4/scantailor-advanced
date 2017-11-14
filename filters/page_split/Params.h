@@ -42,12 +42,24 @@ namespace page_split {
             return m_layout;
         }
 
+        void setPageLayout(PageLayout layout) {
+            m_layout = layout;
+        }
+
         Dependencies const& dependencies() const {
             return m_deps;
         }
 
+        void setDependencies(Dependencies deps) {
+            m_deps = deps;
+        }
+
         AutoManualMode splitLineMode() const {
             return m_splitLineMode;
+        }
+
+        void setSplitLineMode(AutoManualMode mode) {
+            m_splitLineMode = mode;
         }
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;

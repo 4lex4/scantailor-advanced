@@ -54,8 +54,10 @@ namespace page_split {
         layoutTypeLabel->setPixmap(QPixmap(iconFor(m_layoutType)));
         if (m_layoutType == AUTO_LAYOUT_TYPE) {
             modeAuto->setChecked(true);
+            applyCutOption->setEnabled(false);
         } else {
             modeManual->setChecked(true);
+            applyCutOption->setEnabled(true);
         }
 
         connect(modeAuto, SIGNAL(pressed()), this, SLOT(autoDetectionSelected()));
@@ -68,11 +70,14 @@ namespace page_split {
 
     void SplitModeDialog::autoDetectionSelected() {
         layoutTypeLabel->setPixmap(QPixmap(":/icons/layout_type_auto.png"));
+        applyCutOption->setEnabled(false);
+        applyCutOption->setChecked(false);
     }
 
     void SplitModeDialog::manualModeSelected() {
         char const* resource = iconFor(combinedLayoutType());
         layoutTypeLabel->setPixmap(QPixmap(resource));
+        applyCutOption->setEnabled(true);
     }
 
     void SplitModeDialog::onSubmit() {

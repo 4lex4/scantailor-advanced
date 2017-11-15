@@ -1348,16 +1348,6 @@ namespace output {
         }
         warped_gray_output = GrayImage();  // Save memory.
 
-        fillMarginsInPlace(normalized_original, orig_image_crop_area, outsideBackgroundColor);
-        if (render_params.whiteMargins()) {
-            // Fill everything except the content area in normalized_original to white.
-            QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
-            fillMarginsInPlace(normalized_original, orig_content_poly, outsideBackgroundColor);
-            if (dbg) {
-                dbg->add(normalized_original, "white margins");
-            }
-        }
-
         status.throwIfCancelled();
 
         QImage dewarped;
@@ -1614,14 +1604,6 @@ namespace output {
                                 = convertToRGBorRGBA(input.origImage());
                     } else {
                         orig_without_illumination = input.grayImage();
-                    }
-                    fillMarginsInPlace(orig_without_illumination, orig_image_crop_area, outsideBackgroundColor);
-                    if (render_params.whiteMargins()) {
-                        QPolygonF const orig_content_poly(m_xform.transformBack().map(QRectF(contentRect)));
-                        fillMarginsInPlace(orig_without_illumination, orig_content_poly, outsideBackgroundColor);
-                        if (dbg) {
-                            dbg->add(orig_without_illumination, "white margins");
-                        }
                     }
 
                     status.throwIfCancelled();

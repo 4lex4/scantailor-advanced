@@ -128,7 +128,10 @@ namespace select_content {
         ui_data.setFineTuneCorners(new_params.isFineTuningEnabled());
         ui_data.setPageBorders(new_params.pageBorders());
 
-        new_params.setContentSizeMM(ui_data.contentSizeMM());
+        // required only if content box changed
+        if (!params.get() || !params->dependencies().matches(deps)) {
+            new_params.setContentSizeMM(ui_data.contentSizeMM());
+        }
 
         new_params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, new_params);

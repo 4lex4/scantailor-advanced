@@ -270,8 +270,6 @@ namespace output {
 
         static QSize calcLocalWindowSize(Dpi const& dpi);
 
-        static unsigned char calcDominantBackgroundGrayLevel(QImage const& img);
-
         static QImage normalizeIllumination(QImage const& gray_input, DebugImages* dbg);
 
         QImage transformAndNormalizeIllumination(QImage const& gray_input,

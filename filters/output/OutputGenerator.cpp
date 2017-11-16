@@ -52,6 +52,7 @@
 #include <boost/bind.hpp>
 #include <QPainter>
 #include <QDebug>
+#include <imageproc/BackgroundColorCalculator.h>
 #include "imageproc/OrthogonalRotation.h"
 
 using namespace imageproc;
@@ -556,12 +557,8 @@ namespace output {
         // Crop area in maybe_normalized image coordinates.
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
-
+        
         QColor outsideBackgroundColor;
-        {
-            uint8_t const dominant_gray = calcDominantBackgroundGrayLevel(input.grayImage());
-            outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
-        }
 
         const bool needNormalizeIllumination
                 = (render_params.normalizeIllumination() && render_params.needBinarization())
@@ -573,10 +570,21 @@ namespace output {
                     m_xform.transform(), normalize_illumination_rect, 0, dbg
             );
         } else {
-            maybe_normalized = transform(
-                    input.origImage(), m_xform.transform(),
-                    normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
-            );
+            if (input.origImage().allGray()) {
+                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
+
+                maybe_normalized = transformToGray(
+                        input.grayImage(), m_xform.transform(),
+                        normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
+                );
+            } else {
+                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
+
+                maybe_normalized = transform(
+                        input.origImage(), m_xform.transform(),
+                        normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
+                );
+            }
         }
 
         status.throwIfCancelled();
@@ -661,10 +669,7 @@ namespace output {
                 dbg->add(maybe_normalized, "norm_illum_color");
             }
 
-            {
-                uint8_t const dominant_gray = calcDominantBackgroundGrayLevel(maybe_normalized);
-                outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
-            }
+            outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized);
         }
 
         if (!render_params.mixedOutput()) {
@@ -797,7 +802,7 @@ namespace output {
 
                 status.throwIfCancelled();
 
-                if (!render_params.normalizeIlluminationColor()) {
+                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     if (input.origImage().allGray()) {
                         maybe_normalized = transformToGray(
                                 input.grayImage(), m_xform.transform(),
@@ -826,16 +831,19 @@ namespace output {
                     );
                 }
             } else {
-                if (!render_params.normalizeIlluminationColor()) {
-                    uint8_t const dominant_gray = calcDominantBackgroundGrayLevel(input.grayImage());
-                    outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
-
+                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     if (input.origImage().allGray()) {
+                        outsideBackgroundColor =
+                                BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
+
                         maybe_normalized = transformToGray(
                                 input.grayImage(), m_xform.transform(),
                                 normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
                         );
                     } else {
+                        outsideBackgroundColor =
+                                BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
+
                         maybe_normalized = transform(
                                 input.origImage(), m_xform.transform(),
                                 normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
@@ -951,19 +959,20 @@ namespace output {
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
 
+        bool const color_original = !input.origImage().allGray();
+
         QColor outsideBackgroundColor;
-        {
-            uint8_t const dominant_gray = reserveBlackAndWhite<uint8_t>(
-                    calcDominantBackgroundGrayLevel(input.grayImage())
-            );
-            outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
+        if (color_original) {
+            outsideBackgroundColor =
+                    BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
+        } else {
+            outsideBackgroundColor =
+                    BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
         }
 
         const bool needNormalizeIllumination
                 = (render_params.normalizeIllumination() && render_params.needBinarization())
                   || (render_params.normalizeIlluminationColor() && !render_params.needBinarization());
-
-        bool const color_original = !input.origImage().allGray();
 
         // Original image, but:
         // 1. In a format we can handle, that is grayscale, RGB32, ARGB32
@@ -1035,10 +1044,7 @@ namespace output {
                     dbg->add(normalized_original, "norm_illum_color");
                 }
 
-                {
-                    uint8_t const dominant_gray = calcDominantBackgroundGrayLevel(normalized_original);
-                    outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
-                }
+                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(normalized_original);
             }
         }
 
@@ -1548,7 +1554,7 @@ namespace output {
 
                 status.throwIfCancelled();
 
-                if (!render_params.normalizeIlluminationColor()) {
+                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     QImage orig_without_illumination;
                     if (color_original) {
                         orig_without_illumination
@@ -1594,15 +1600,18 @@ namespace output {
                     );
                 }
             } else {
-                if (!render_params.normalizeIlluminationColor()) {
-                    uint8_t const dominant_gray = calcDominantBackgroundGrayLevel(input.grayImage());
-                    outsideBackgroundColor = QColor(dominant_gray, dominant_gray, dominant_gray);
-
+                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     QImage orig_without_illumination;
                     if (color_original) {
+                        outsideBackgroundColor =
+                                BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
+
                         orig_without_illumination
                                 = convertToRGBorRGBA(input.origImage());
                     } else {
+                        outsideBackgroundColor =
+                                BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
+
                         orig_without_illumination = input.grayImage();
                     }
 
@@ -2276,50 +2285,6 @@ namespace output {
 
         return size_pixels;
     }
-
-    unsigned char OutputGenerator::calcDominantBackgroundGrayLevel(QImage const& img) {
-        // TODO: make a color version.
-        // In ColorPickupInteraction.cpp we have code for median color finding.
-        // We can use that.
-
-        QImage const gray(toGrayscale(img));
-
-        BinaryImage mask(binarizeOtsu(gray));
-        mask.invert();
-
-        GrayscaleHistogram const hist(gray, mask);
-
-        int integral_hist[256];
-        integral_hist[0] = hist[0];
-        for (int i = 1; i < 256; ++i) {
-            integral_hist[i] = hist[i] + integral_hist[i - 1];
-        }
-
-        int const num_colors = 256;
-        int const window_size = 10;
-
-        int best_pos = 0;
-        int best_sum = integral_hist[window_size - 1];
-        for (int i = 1; i <= num_colors - window_size; ++i) {
-            int const sum = integral_hist[i + window_size - 1] - integral_hist[i - 1];
-            if (sum > best_sum) {
-                best_sum = sum;
-                best_pos = i;
-            }
-        }
-
-        int half_sum = 0;
-        for (int i = best_pos; i < best_pos + window_size; ++i) {
-            half_sum += hist[i];
-            if (half_sum >= best_sum / 2) {
-                return i;
-            }
-        }
-
-        assert(!"Unreachable");
-
-        return 0;
-    }  // OutputGenerator::calcDominantBackgroundGrayLevel
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
             QPointF const&)> const& orig_to_output)

@@ -514,7 +514,7 @@ namespace output {
         }
         // The whole image minus the part cut off by the split line.
         QRect contentRect = m_contentRect;
-        if (!render_params.whiteMargins()) {
+        if (!render_params.cutMargins()) {
             contentRect = m_outRect;
         }
 
@@ -919,7 +919,7 @@ namespace output {
         }
 
         QRect contentRect = m_contentRect;
-        if (!render_params.whiteMargins()) {
+        if (!render_params.cutMargins()) {
             contentRect = m_outRect;
         }
         // The whole image minus the part cut off by the split line.
@@ -1393,7 +1393,7 @@ namespace output {
 
         BinaryImage dewarping_content_area_mask(input.grayImage().size(), BLACK);
         QPolygonF content_area = orig_image_crop_area;
-        if (render_params.whiteMargins()) {
+        if (render_params.cutMargins()) {
             content_area = content_area.intersected(m_xform.transformBack().map(QRectF(contentRect)));
         }
         fillMarginsInPlace(dewarping_content_area_mask, content_area, WHITE);

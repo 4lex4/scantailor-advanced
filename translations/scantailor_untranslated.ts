@@ -1111,7 +1111,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+48"/>
-        <source>White margins</source>
+        <source>Cut margins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

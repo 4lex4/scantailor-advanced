@@ -410,10 +410,10 @@ void ConsoleBatch::setupOutput(std::set<PageId> allPages) {
             colorParams.setColorMode(cli.getColorMode());
         }
 
-        if (cli.hasWhiteMargins() || cli.hasNormalizeIllumination()) {
+        if (cli.hasCutMargins() || cli.hasNormalizeIllumination()) {
             output::ColorCommonOptions cgo;
-            if (cli.hasWhiteMargins()) {
-                cgo.setWhiteMargins(true);
+            if (cli.hasCutMargins()) {
+                cgo.setCutMargins(true);
             }
             if (cli.hasNormalizeIllumination()) {
                 cgo.setNormalizeIllumination(true);

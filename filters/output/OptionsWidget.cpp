@@ -103,8 +103,8 @@ namespace output {
                 this, SLOT(tiffCompressionChanged(int))
         );
         connect(
-                whiteMarginsCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteMarginsToggled(bool))
+                cutMarginsCB, SIGNAL(clicked(bool)),
+                this, SLOT(cutMarginsToggled(bool))
         );
         connect(
                 equalizeIlluminationCB, SIGNAL(clicked(bool)),
@@ -260,9 +260,9 @@ namespace output {
         m_ptrSettings->setTiffCompression(compression);
     }
 
-    void OptionsWidget::whiteMarginsToggled(bool const checked) {
+    void OptionsWidget::cutMarginsToggled(bool const checked) {
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
-        colorCommonOptions.setWhiteMargins(checked);
+        colorCommonOptions.setCutMargins(checked);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         emit reloadRequested();
@@ -662,8 +662,8 @@ namespace output {
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
-        whiteMarginsCB->setChecked(colorCommonOptions.whiteMargins());
-        whiteMarginsCB->setVisible(true);
+        cutMarginsCB->setChecked(colorCommonOptions.cutMargins());
+        cutMarginsCB->setVisible(true);
         equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
         equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
         equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());

@@ -47,8 +47,8 @@ namespace output {
                 m_mask |= NORMALIZE_ILLUMINATION;
             }
         }
-        if (colorCommonOptions.whiteMargins()) {
-            m_mask |= WHITE_MARGINS;
+        if (colorCommonOptions.cutMargins()) {
+            m_mask |= CUT_MARGINS;
         }
         if (colorCommonOptions.normalizeIllumination()) {
             m_mask |= NORMALIZE_ILLUMINATION_COLOR;

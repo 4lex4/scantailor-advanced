@@ -89,7 +89,7 @@ bool CommandLine::parseCli(QStringList const& argv) {
     opts << "output-dpi-x";
     opts << "output-dpi-y";
     opts << "color-mode";
-    opts << "white-margins";
+    opts << "cut-margins";
     opts << "normalize-illumination";
     opts << "threshold";
     opts << "despeckle";
@@ -363,7 +363,7 @@ void CommandLine::printHelp() {
     std::cout << "\t--default-color-mode=<...>\t\t-- sets default value for new images created by split filter"
               << std::endl;
     std::cout << "\t--picture-shape=<free|rectangular>\n\t\t\t\t\t\t-- default: free" << std::endl;
-    std::cout << "\t--white-margins\t\t\t\t-- default: false" << std::endl;
+    std::cout << "\t--cut-margins\t\t\t\t-- default: false" << std::endl;
     std::cout << "\t--normalize-illumination\t\t-- default: false" << std::endl;
     std::cout << "\t--threshold=<n>\t\t\t\t-- n<0 thinner, n>0 thicker; default: 0" << std::endl;
     std::cout << "\t--despeckle=<off|cautious|normal|aggressive>\n\t\t\t\t\t\t-- default: normal" << std::endl;

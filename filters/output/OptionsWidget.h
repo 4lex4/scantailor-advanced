@@ -99,7 +99,7 @@ namespace output {
 
         void tiffCompressionChanged(int idx);
 
-        void whiteMarginsToggled(bool checked);
+        void cutMarginsToggled(bool checked);
 
         void equalizeIlluminationToggled(bool checked);
 

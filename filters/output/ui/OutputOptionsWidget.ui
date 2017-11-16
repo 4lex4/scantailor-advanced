@@ -300,9 +300,9 @@
                 <number>5</number>
                </property>
                <item row="0" column="0">
-                <widget class="QCheckBox" name="whiteMarginsCB">
+                <widget class="QCheckBox" name="cutMarginsCB">
                  <property name="text">
-                  <string>White margins</string>
+                  <string>Cut margins</string>
                  </property>
                 </widget>
                </item>

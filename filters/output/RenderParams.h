@@ -32,8 +32,8 @@ namespace output {
 
         explicit RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions);
 
-        bool whiteMargins() const {
-            return (m_mask & WHITE_MARGINS) != 0;
+        bool cutMargins() const {
+            return (m_mask & CUT_MARGINS) != 0;
         }
 
         bool normalizeIllumination() const {
@@ -71,7 +71,7 @@ namespace output {
 
     private:
         enum {
-            WHITE_MARGINS = 1,
+            CUT_MARGINS = 1,
             NORMALIZE_ILLUMINATION = 2,
             NEED_BINARIZATION = 4,
             MIXED_OUTPUT = 8,

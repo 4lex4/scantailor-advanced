@@ -159,7 +159,7 @@ Features
  **Warning!** More threads requires more memory to use. Exclude situations of that to be overflowed.  
 
 * ##### Full control over settings on output
- This feature enables to control white margins, normalizing illumination before binarization,
+ This feature enables to control cut margins, normalizing illumination before binarization,
  normalizing illumination in color areas options, Savitzky-Golay and morphological smoothing on output
  in any mode (of course, those setting that can be applied in the current mode).  
  

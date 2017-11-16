@@ -34,12 +34,12 @@ namespace output {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        bool whiteMargins() const {
-            return m_whiteMargins;
+        bool cutMargins() const {
+            return m_cutMargins;
         }
 
-        void setWhiteMargins(bool val) {
-            m_whiteMargins = val;
+        void setCutMargins(bool val) {
+            m_cutMargins = val;
         }
 
         bool normalizeIllumination() const {
@@ -55,7 +55,7 @@ namespace output {
         bool operator!=(ColorCommonOptions const& other) const;
 
     private:
-        bool m_whiteMargins;
+        bool m_cutMargins;
         bool m_normalizeIllumination;
     };
 }  // namespace output

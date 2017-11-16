@@ -21,18 +21,18 @@
 
 namespace output {
     ColorCommonOptions::ColorCommonOptions()
-            : m_whiteMargins(true),
+            : m_cutMargins(true),
               m_normalizeIllumination(false) {
     }
 
     ColorCommonOptions::ColorCommonOptions(QDomElement const& el)
-            : m_whiteMargins(el.attribute("whiteMargins") == "1"),
+            : m_cutMargins(el.attribute("cutMargins") == "1"),
               m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1") {
     }
 
     QDomElement ColorCommonOptions::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
-        el.setAttribute("whiteMargins", m_whiteMargins ? "1" : "0");
+        el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
         el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
 
         return el;
@@ -40,7 +40,7 @@ namespace output {
 
     bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
         return (m_normalizeIllumination == other.m_normalizeIllumination)
-               && (m_whiteMargins == other.m_whiteMargins);
+               && (m_cutMargins == other.m_cutMargins);
     }
 
     bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {

@@ -201,8 +201,8 @@ public:
         return contains("picture-shape") && !m_options["picture-shape"].isEmpty();
     }
 
-    bool hasWhiteMargins() const {
-        return contains("white-margins");
+    bool hasCutMargins() const {
+        return contains("cut-margins");
     }
 
     bool hasNormalizeIllumination() const {

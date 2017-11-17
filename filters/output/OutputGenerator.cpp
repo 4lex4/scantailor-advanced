@@ -681,10 +681,7 @@ namespace output {
             outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized);
         }
 
-        if (!render_params.mixedOutput()) {
-            // It's "Color / Grayscale" mode, as we handle B/W above.
-            reserveBlackAndWhite(maybe_normalized);
-        } else {
+        if (render_params.mixedOutput()) {
             BinaryImage bw_mask(estimateBinarizationMask(
                     status, GrayImage(maybe_normalized),
                     normalize_illumination_rect,
@@ -829,14 +826,14 @@ namespace output {
 
                 if (maybe_normalized.format() == QImage::Format_Indexed8) {
                     combineMixed<uint8_t>(
-                            maybe_normalized, bw_content, bw_mask
+                            maybe_normalized, bw_content, bw_mask, !render_params.splitOutput()
                     );
                 } else {
                     assert(maybe_normalized.format() == QImage::Format_RGB32
                            || maybe_normalized.format() == QImage::Format_ARGB32);
 
                     combineMixed<uint32_t>(
-                            maybe_normalized, bw_content, bw_mask
+                            maybe_normalized, bw_content, bw_mask, !render_params.splitOutput()
                     );
                 }
             } else {
@@ -1475,11 +1472,8 @@ namespace output {
 
             return dewarped_bw_content.toQImage();
         }
-
-        if (!render_params.mixedOutput()) {
-            // It's "Color / Grayscale" mode, as we handle B/W above.
-            reserveBlackAndWhite(dewarped);
-        } else {
+        
+        if (render_params.mixedOutput()) {
             QTransform const orig_to_small_margins(
                     m_xform.transform() * QTransform().translate(
                             -small_margins_rect.left(),
@@ -1606,14 +1600,14 @@ namespace output {
 
                 if (dewarped.format() == QImage::Format_Indexed8) {
                     combineMixed<uint8_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask
+                            dewarped, dewarped_bw_content, dewarped_bw_mask, !render_params.splitOutput()
                     );
                 } else {
                     assert(dewarped.format() == QImage::Format_RGB32
                            || dewarped.format() == QImage::Format_ARGB32);
 
                     combineMixed<uint32_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask
+                            dewarped, dewarped_bw_content, dewarped_bw_mask, !render_params.splitOutput()
                     );
                 }
             } else {

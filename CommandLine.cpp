@@ -98,7 +98,6 @@ bool CommandLine::parseCli(QStringList const& argv) {
     opts << "start-filter";
     opts << "end-filter";
     opts << "output-project";
-    opts << "tiff-compression";
     opts << "picture-shape";
     opts << "language";
     opts << "disable-content-text-mask";
@@ -242,7 +241,6 @@ void CommandLine::setup() {
     m_endFilterIdx = fetchEndFilterIdx();
     m_matchLayoutTolerance = fetchMatchLayoutTolerance();
     m_dewarpingOptions = output::DewarpingOptions(fetchDewarpingMode());
-    m_compression = fetchCompression();
     m_language = fetchLanguage();
     m_windowTitle = fetchWindowTitle();
     m_pageDetectionBox = fetchPageDetectionBox();
@@ -372,7 +370,6 @@ void CommandLine::printHelp() {
     std::cout << "\t--start-filter=<1...6>\t\t\t-- default: 4" << std::endl;
     std::cout << "\t--end-filter=<1...6>\t\t\t-- default: 6" << std::endl;
     std::cout << "\t--output-project=, -o=<project_name>" << std::endl;
-    std::cout << "\t--tiff-compression=<lzw|deflate|packbits|jpeg|none>\t-- default: lzw" << std::endl;
     std::cout << "\t--tiff-force-rgb\t\t\t-- all output tiffs will be rgb" << std::endl;
     std::cout << "\t--tiff-force-grayscale\t\t\t-- all output tiffs will be grayscale" << std::endl;
     std::cout << "\t--tiff-force-keep-color-space\t\t-- output tiffs will be in original color space" << std::endl;
@@ -756,28 +753,6 @@ bool CommandLine::hasOutputDpi() const {
 
 bool CommandLine::hasLanguage() const {
     return m_options.contains("language");
-}
-
-int CommandLine::fetchCompression() const {
-    if (!m_options.contains("tiff-compression")) {
-        return COMPRESSION_LZW;
-    }
-
-    QString c(m_options["tiff-compression"].toLower());
-    if (c == "lzw") {
-        return COMPRESSION_LZW;
-    } else if (c == "none") {
-        return COMPRESSION_NONE;
-    } else if (c == "jpeg") {
-        return COMPRESSION_JPEG;
-    } else if (c == "deflate") {
-        return COMPRESSION_DEFLATE;
-    } else if (c == "packbits") {
-        return COMPRESSION_PACKBITS;
-    }
-
-    std::cout << "Unknown compression" << std::endl;
-    throw ("Unknown compression");
 }
 
 QString CommandLine::fetchLanguage() const {

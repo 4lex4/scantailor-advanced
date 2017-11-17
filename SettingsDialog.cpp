@@ -20,6 +20,7 @@
 #include "OpenGLSupport.h"
 #include <QSettings>
 #include <QtWidgets/QMessageBox>
+#include <tiff.h>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
         : QDialog(parent) {
@@ -48,6 +49,28 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     } else {
         ui.colorSchemeBox->setCurrentIndex(0);
     }
+    
+    ui.tiffCompressionBWBox->addItem(tr("None"), COMPRESSION_NONE);
+    ui.tiffCompressionBWBox->addItem(tr("LZW"), COMPRESSION_LZW);
+    ui.tiffCompressionBWBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
+    ui.tiffCompressionBWBox->addItem(tr("CCITT G4"), COMPRESSION_CCITTFAX4);
+
+    ui.tiffCompressionBWBox->setCurrentIndex(
+            ui.tiffCompressionBWBox->findData(
+                    settings.value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()
+            )
+    );
+
+    ui.tiffCompressionColorBox->addItem(tr("None"), COMPRESSION_NONE);
+    ui.tiffCompressionColorBox->addItem(tr("LZW"), COMPRESSION_LZW);
+    ui.tiffCompressionColorBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
+    ui.tiffCompressionColorBox->addItem(tr("JPEG"), COMPRESSION_JPEG);
+
+    ui.tiffCompressionColorBox->setCurrentIndex(
+            ui.tiffCompressionColorBox->findData(
+                    settings.value("settings/color_compression", COMPRESSION_LZW).toInt()
+            )
+    );
 
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
@@ -72,6 +95,9 @@ void SettingsDialog::commitChanges() {
     } else if (ui.colorSchemeBox->currentIndex() == 1) {
         settings.setValue("settings/color_scheme", "light");
     }
+    
+    settings.setValue("settings/bw_compression", ui.tiffCompressionBWBox->currentData().toInt());
+    settings.setValue("settings/color_compression", ui.tiffCompressionColorBox->currentData().toInt());
 
     emit settingsChanged();
 }

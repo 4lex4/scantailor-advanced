@@ -229,10 +229,6 @@ public:
         return contains("depth-perception") && !m_options["depth-perception"].isEmpty();
     }
 
-    bool hasTiffCompression() const {
-        return contains("tiff-compression") && !m_options["tiff-compression"].isEmpty();
-    }
-
     bool hasTiffForceRGB() const {
         return contains("tiff-force-rgb");
     }
@@ -365,10 +361,6 @@ public:
         return m_matchLayoutTolerance;
     }
 
-    int getTiffCompression() const {
-        return m_compression;
-    }
-
     QString getLanguage() const {
         return m_language;
     }
@@ -456,7 +448,6 @@ private:
     output::DespeckleLevel m_despeckleLevel;
     output::DepthPerception m_depthPerception;
     float m_matchLayoutTolerance;
-    int m_compression;
 
     bool parseCli(QStringList const& argv);
 
@@ -513,8 +504,6 @@ private:
     output::DepthPerception fetchDepthPerception();
 
     float fetchMatchLayoutTolerance();
-
-    int fetchCompression() const;
 
     QString fetchLanguage() const;
 

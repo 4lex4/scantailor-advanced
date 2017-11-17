@@ -27,7 +27,6 @@
 #include "WolfBinarizationOptionsWidget.h"
 #include "../../Utils.h"
 #include <QToolTip>
-#include <tiff.h>
 
 namespace output {
     OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
@@ -71,12 +70,6 @@ namespace output {
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
         pictureShapeSelector->addItem(tr("Quadro"), QUADRO_SHAPE);
 
-        tiffCompression->addItem(tr("None"), COMPRESSION_NONE);
-        tiffCompression->addItem(tr("LZW"), COMPRESSION_LZW);
-        tiffCompression->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
-        tiffCompression->addItem(tr("Packbits"), COMPRESSION_PACKBITS);
-        tiffCompression->addItem(tr("JPEG"), COMPRESSION_JPEG);
-
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
@@ -104,10 +97,6 @@ namespace output {
         connect(
                 pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
                 this, SLOT(pictureShapeChanged(int))
-        );
-        connect(
-                tiffCompression, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(tiffCompressionChanged(int))
         );
         connect(
                 cutMarginsCB, SIGNAL(clicked(bool)),
@@ -269,11 +258,6 @@ namespace output {
         m_pictureShape = (PictureShape) (pictureShapeSelector->itemData(idx).toInt());
         m_ptrSettings->setPictureShape(m_pageId, m_pictureShape);
         emit reloadRequested();
-    }
-
-    void OptionsWidget::tiffCompressionChanged(int idx) {
-        int compression = tiffCompression->itemData(idx).toInt();
-        m_ptrSettings->setTiffCompression(compression);
     }
 
     void OptionsWidget::cutMarginsToggled(bool const checked) {
@@ -718,9 +702,6 @@ namespace output {
             int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);
             pictureShapeSelector->setCurrentIndex(picture_shape_idx);
         }
-
-        int compression_idx = tiffCompression->findData(m_ptrSettings->getTiffCompression());
-        tiffCompression->setCurrentIndex(compression_idx);
 
         if (threshold_options_visible) {
             switch (m_despeckleLevel) {

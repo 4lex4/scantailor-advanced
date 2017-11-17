@@ -354,16 +354,16 @@ namespace output {
                 QDir().mkdir(background_dir);
 
                 if (!TiffWriter::writeImage(
-                        foreground_file_path, splitImage.getForegroundImage(), m_ptrSettings->getTiffCompression())
+                        foreground_file_path, splitImage.getForegroundImage())
                     || !TiffWriter::writeImage(
-                        background_file_path, splitImage.getBackgroundImage(), m_ptrSettings->getTiffCompression())) {
+                        background_file_path, splitImage.getBackgroundImage())) {
                     invalidate_params = true;
                 }
 
                 out_img = splitImage.toImage();
                 splitImage = SplitImage();
             }
-            if (!TiffWriter::writeImage(out_file_path, out_img, m_ptrSettings->getTiffCompression())) {
+            if (!TiffWriter::writeImage(out_file_path, out_img)) {
                 invalidate_params = true;
             } else {
                 deleteMutuallyExclusiveOutputFiles();
@@ -394,16 +394,14 @@ namespace output {
                 QDir().mkdir(automask_dir);
                 // Also note that QDir::mkdir() will fail if the directory already exists,
                 // so we ignore its return value here.
-                if (!TiffWriter::writeImage(automask_file_path, automask_img.toQImage(),
-                                            m_ptrSettings->getTiffCompression())) {
+                if (!TiffWriter::writeImage(automask_file_path, automask_img.toQImage())) {
                     invalidate_params = true;
                 }
             }
             if (write_speckles_file) {
                 if (!QDir().mkpath(speckles_dir)) {
                     invalidate_params = true;
-                } else if (!TiffWriter::writeImage(speckles_file_path, speckles_img.toQImage(),
-                                                   m_ptrSettings->getTiffCompression())) {
+                } else if (!TiffWriter::writeImage(speckles_file_path, speckles_img.toQImage())) {
                     invalidate_params = true;
                 }
             }

@@ -26,8 +26,7 @@
 namespace output {
     Settings::Settings()
             : m_defaultPictureZoneProps(initialPictureZoneProps()),
-              m_defaultFillZoneProps(initialFillZoneProps()),
-              m_compression(COMPRESSION_LZW) {
+              m_defaultFillZoneProps(initialFillZoneProps()) {
     }
 
     Settings::~Settings() {

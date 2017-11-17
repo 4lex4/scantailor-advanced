@@ -65,8 +65,6 @@ namespace output {
 
         QDomElement filter_el(doc.createElement("output"));
 
-        filter_el.setAttribute("tiffCompression", m_ptrSettings->getTiffCompression());
-
         writer.enumPages(
                 [&](PageId const& page_id, int numeric_id) {
                     this->writePageSettings(doc, filter_el, page_id, numeric_id);
@@ -101,9 +99,6 @@ namespace output {
         QDomElement const filter_el(
                 filters_el.namedItem("output").toElement()
         );
-
-        m_ptrSettings->setTiffCompression(
-                filter_el.attribute("tiffCompression", QString::number(COMPRESSION_LZW)).toInt());
 
         QString const page_tag_name("page");
         QDomNode node(filter_el.firstChild());

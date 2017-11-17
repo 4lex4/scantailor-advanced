@@ -86,14 +86,6 @@ namespace output {
 
         void setFillZones(PageId const& page_id, ZoneSet const& zones);
 
-        int getTiffCompression() {
-            return m_compression;
-        }
-
-        void setTiffCompression(int compression) {
-            m_compression = compression;
-        }
-
         /**
          * For now, default zone properties are not persistent.
          * They may become persistent later though.
@@ -122,7 +114,6 @@ namespace output {
         PerPageZones m_perPageFillZones;
         PropertySet m_defaultPictureZoneProps;
         PropertySet m_defaultFillZoneProps;
-        int m_compression;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_SETTINGS_H_

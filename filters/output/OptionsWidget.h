@@ -99,8 +99,6 @@ namespace output {
 
         void pictureShapeChanged(int idx);
 
-        void tiffCompressionChanged(int idx);
-
         void cutMarginsToggled(bool checked);
 
         void equalizeIlluminationToggled(bool checked);

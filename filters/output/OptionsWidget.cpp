@@ -49,6 +49,9 @@ namespace output {
         thresholdMethodBox->addItem(tr("Sauvola"), BlackWhiteOptions::SAUVOLA);
         thresholdMethodBox->addItem(tr("Wolf"), BlackWhiteOptions::WOLF);
 
+        fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
+        fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
+
         QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget
                 = new OtsuBinarizationOptionsWidget(m_ptrSettings);
         QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
@@ -89,6 +92,10 @@ namespace output {
         connect(
                 thresholdMethodBox, SIGNAL(currentIndexChanged(int)),
                 this, SLOT(thresholdMethodChanged(int))
+        );
+        connect(
+                fillingColorBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(fillingColorChanged(int))
         );
         connect(
                 binarizationOptions, SIGNAL(currentChanged(int)),
@@ -244,7 +251,16 @@ namespace output {
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
-        binarizationOptions->setCurrentIndex(idx);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::fillingColorChanged(int idx) {
+        const ColorCommonOptions::FillingColor color
+                = (ColorCommonOptions::FillingColor) fillingColorBox->itemData(idx).toInt();
+        ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
+        colorCommonOptions.setFillingColor(color);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
         emit reloadRequested();
     }
@@ -695,6 +711,8 @@ namespace output {
 
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
+
+        fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
         if (picture_shape_visible) {
             int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);

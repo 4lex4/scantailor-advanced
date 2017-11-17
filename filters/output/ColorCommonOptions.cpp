@@ -22,28 +22,62 @@
 namespace output {
     ColorCommonOptions::ColorCommonOptions()
             : m_cutMargins(true),
-              m_normalizeIllumination(false) {
+              m_normalizeIllumination(false),
+              m_fillingColor(BACKGROUND) {
     }
 
     ColorCommonOptions::ColorCommonOptions(QDomElement const& el)
             : m_cutMargins(el.attribute("cutMargins") == "1"),
-              m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1") {
+              m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
+              m_fillingColor(parseFillingColor(el.attribute("fillingColor"))) {
     }
 
     QDomElement ColorCommonOptions::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
         el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
+        el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
 
         return el;
     }
 
     bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
         return (m_normalizeIllumination == other.m_normalizeIllumination)
-               && (m_cutMargins == other.m_cutMargins);
+               && (m_cutMargins == other.m_cutMargins)
+               && (m_fillingColor == other.m_fillingColor);
     }
 
     bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {
         return !(*this == other);
+    }
+
+    ColorCommonOptions::FillingColor ColorCommonOptions::getFillingColor() const {
+        return m_fillingColor;
+    }
+
+    void ColorCommonOptions::setFillingColor(ColorCommonOptions::FillingColor fillingColor) {
+        ColorCommonOptions::m_fillingColor = fillingColor;
+    }
+
+    ColorCommonOptions::FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
+        if (str == "white") {
+            return WHITE;
+        } else {
+            return BACKGROUND;
+        }
+    }
+
+    QString ColorCommonOptions::formatFillingColor(ColorCommonOptions::FillingColor type) {
+        QString str = "";
+        switch (type) {
+            case WHITE:
+                str = "white";
+                break;
+            case BACKGROUND:
+                str = "background";
+                break;
+        }
+
+        return str;
     }
 }  // namespace output

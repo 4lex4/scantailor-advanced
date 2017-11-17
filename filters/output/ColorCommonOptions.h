@@ -28,6 +28,11 @@ class QDomElement;
 namespace output {
     class ColorCommonOptions {
     public:
+        enum FillingColor {
+            BACKGROUND,
+            WHITE
+        };
+
         ColorCommonOptions();
 
         explicit ColorCommonOptions(QDomElement const& el);
@@ -50,13 +55,22 @@ namespace output {
             m_normalizeIllumination = val;
         }
 
+        FillingColor getFillingColor() const;
+
+        void setFillingColor(FillingColor fillingColor);
+
         bool operator==(ColorCommonOptions const& other) const;
 
         bool operator!=(ColorCommonOptions const& other) const;
 
     private:
+        static FillingColor parseFillingColor(const QString& str);
+
+        static QString formatFillingColor(FillingColor type);
+
         bool m_cutMargins;
         bool m_normalizeIllumination;
+        FillingColor m_fillingColor;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

@@ -557,7 +557,7 @@ namespace output {
         // Crop area in maybe_normalized image coordinates.
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
-        
+
         QColor outsideBackgroundColor;
 
         const bool needNormalizeIllumination
@@ -610,6 +610,15 @@ namespace output {
                 BinaryImage bw_content(
                         binarize(maybe_smoothed, normalize_illumination_crop_area)
                 );
+
+                if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
+                    outsideBackgroundColor
+                            = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_smoothed);
+                    BWColor fillColor = (outsideBackgroundColor == Qt::black) ? BLACK : WHITE;
+                    fillMarginsInPlace(bw_content, normalize_illumination_crop_area,
+                                       fillColor);
+                    dst.fill(fillColor);
+                }
 
                 maybe_smoothed = QImage();
                 if (dbg) {
@@ -861,8 +870,12 @@ namespace output {
         if (maybe_normalized.format() == QImage::Format_Indexed8) {
             dst.setColorTable(createGrayscalePalette());
         }
-        if (render_params.needBinarization()) {
+
+        if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
             outsideBackgroundColor = Qt::white;
+        } else if (render_params.needBinarization()) {
+            outsideBackgroundColor
+                    = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_normalized);
         }
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
         dst.fill(outsideBackgroundColor);
@@ -1428,6 +1441,13 @@ namespace output {
 
             status.throwIfCancelled();
 
+            if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
+                outsideBackgroundColor
+                        = BackgroundColorCalculator::calcDominantBackgroundColorBW(dewarped_and_maybe_smoothed);
+                fillMarginsInPlace(dewarped_bw_content, dewarping_content_area_mask,
+                                   (outsideBackgroundColor == Qt::black) ? BLACK : WHITE);
+            }
+
             dewarped_and_maybe_smoothed = QImage();  // Save memory.
             if (dbg) {
                 dbg->add(dewarped_bw_content, "dewarped_bw_content");
@@ -1453,10 +1473,7 @@ namespace output {
                     speckles_image, m_dpi, status, dbg
             );
 
-            QImage tmp_image(dewarped_bw_content.toQImage());
-            dewarped_bw_content.release();
-
-            return tmp_image;
+            return dewarped_bw_content.toQImage();
         }
 
         if (!render_params.mixedOutput()) {
@@ -1641,8 +1658,11 @@ namespace output {
             }
         }
 
-        if (render_params.needBinarization()) {
+        if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
             outsideBackgroundColor = Qt::white;
+        } else if (render_params.needBinarization()) {
+            outsideBackgroundColor
+                    = BackgroundColorCalculator::calcDominantBackgroundColorBW(dewarped);
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 
@@ -1773,7 +1793,7 @@ namespace output {
         if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
             BinaryImage binaryImage(image);
             PolygonRasterizer::fillExcept(
-                    binaryImage, WHITE, content_poly, Qt::WindingFill
+                    binaryImage, (color == Qt::black) ? BLACK : WHITE, content_poly, Qt::WindingFill
             );
             image = binaryImage.toQImage();
 
@@ -1819,7 +1839,7 @@ namespace output {
     void OutputGenerator::fillMarginsInPlace(QImage& image, BinaryImage const& content_mask, QColor const& color) {
         if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
             BinaryImage binaryImage(image);
-            fillExcept(binaryImage, content_mask, (color.lightnessF() < 0.5 ? BLACK : WHITE));
+            fillExcept(binaryImage, content_mask, (color == Qt::black) ? BLACK : WHITE);
             image = binaryImage.toQImage();
 
             return;
@@ -2286,8 +2306,9 @@ namespace output {
         return size_pixels;
     }
 
-    void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
-            QPointF const&)> const& orig_to_output)
+    void OutputGenerator::applyFillZonesInPlace(QImage& img,
+                                                ZoneSet const& zones,
+                                                boost::function<QPointF(QPointF const&)> const& orig_to_output)
     const {
         if (zones.empty()) {
             return;

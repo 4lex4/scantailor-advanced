@@ -81,7 +81,7 @@ namespace imageproc {
         }
 
         void RgbHistogram::fromRgbImage(QImage const& img) {
-            const  uint32_t* img_line = reinterpret_cast<const uint32_t*>(img.bits());
+            const uint32_t* img_line = reinterpret_cast<const uint32_t*>(img.bits());
             int const img_stride = img.bytesPerLine() / sizeof(uint32_t);
 
             int const width = img.width();
@@ -189,6 +189,15 @@ namespace imageproc {
             uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
 
             return QColor(dominant_red, dominant_green, dominant_blue);
+        }
+    }
+
+    QColor BackgroundColorCalculator::calcDominantBackgroundColorBW(QImage const& img) {
+        BinaryImage mask(binarizeOtsu(img));
+        if (mask.countBlackPixels() < mask.countWhitePixels()) {
+            return Qt::white;
+        } else {
+            return Qt::black;
         }
     }
 

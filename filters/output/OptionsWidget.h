@@ -95,6 +95,8 @@ namespace output {
 
         void thresholdMethodChanged(int idx);
 
+        void fillingColorChanged(int idx);
+
         void pictureShapeChanged(int idx);
 
         void tiffCompressionChanged(int idx);

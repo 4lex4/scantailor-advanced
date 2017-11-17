@@ -636,6 +636,10 @@ namespace output {
 
                 status.throwIfCancelled();
 
+                // It's important to keep despeckling the very last operation
+                // affecting the binary part of the output. That's because
+                // we will be reconstructing the input to this despeckling
+                // operation from the final output file.
                 maybeDespeckleInPlace(
                         bw_content, small_margins_rect, contentRect,
                         m_despeckleLevel, speckles_image, m_dpi, status, dbg
@@ -645,19 +649,11 @@ namespace output {
                 QRect const dst_rect(contentRect);
                 rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
                 bw_content.release();  // Save memory.
-                // It's important to keep despeckling the very last operation
-                // affecting the binary part of the output. That's because
-                // we will be reconstructing the input to this despeckling
-                // operation from the final output file.
             }
 
             applyFillZonesInPlace(dst, fill_zones);
 
             return dst.toQImage();
-            // This block should go before the block with
-            // adjustBrightnessGrayscale(), which may convert
-            // maybe_normalized from grayscale to color mode.
-
         }
 
         if (needNormalizeIllumination && !input.origImage().allGray()) {

@@ -98,7 +98,7 @@ namespace page_layout {
             pen.setStyle(Qt::DashLine);
         }
         painter.setPen(pen);
-        painter.drawRect(outer_rect.toRect().adjusted(1, 1, -1, -1));
+        painter.drawRect(outer_rect.toRect());
         
         if (m_params.isDeviant()) {
             paintDeviant(painter);

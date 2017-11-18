@@ -49,7 +49,9 @@ SET(
         SeedFillGeneric.cpp SeedFillGeneric.h
         FindPeaksGeneric.h
         ColorMixer.h
-        ColorForId.h BackgroundColorCalculator.cpp BackgroundColorCalculator.h)
+        ColorForId.h
+        BackgroundColorCalculator.cpp BackgroundColorCalculator.h
+        BadAllocIfNull.cpp BadAllocIfNull.h)
 
 SOURCE_GROUP(Sources FILES ${sources})
 

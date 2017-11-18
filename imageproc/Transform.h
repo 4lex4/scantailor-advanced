@@ -75,7 +75,7 @@ namespace imageproc {
         }
 
         QRgb rgb() const {
-            return m_rgba & 0x00ffffff;
+            return m_rgba | 0xff000000;
         }
 
         uint8_t grayLevel() const {

@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "BadAllocIfNull.h"
+#include "ColorMixer.h"
 #include "Transform.h"
 #include "Grayscale.h"
 #include <QDebug>
@@ -34,103 +36,6 @@ namespace imageproc {
                 return lhs.y() < rhs.y();
             }
         };
-
-        class Gray {
-        public:
-            Gray()
-                    : m_grayLevel(0) {
-            }
-
-            void add(uint8_t const gray_level, unsigned const area) {
-                m_grayLevel += gray_level * area;
-            }
-
-            uint8_t result(unsigned const total_area) const {
-                unsigned const half_area = total_area >> 1;
-                unsigned const res = (m_grayLevel + half_area) / total_area;
-
-                return static_cast<uint8_t>(res);
-            }
-
-        private:
-            unsigned m_grayLevel;
-        };
-
-
-        class RGB32 {
-        public:
-            RGB32()
-                    : m_red(0),
-                      m_green(0),
-                      m_blue(0) {
-            }
-
-            void add(uint32_t rgb, unsigned const area) {
-                m_blue += (rgb & 0xFF) * area;
-                rgb >>= 8;
-                m_green += (rgb & 0xFF) * area;
-                rgb >>= 8;
-                m_red += (rgb & 0xFF) * area;
-            }
-
-            uint32_t result(unsigned const total_area) const {
-                unsigned const half_area = total_area >> 1;
-                uint32_t rgb = 0x0000FF00;
-                rgb |= (m_red + half_area) / total_area;
-                rgb <<= 8;
-                rgb |= (m_green + half_area) / total_area;
-                rgb <<= 8;
-                rgb |= (m_blue + half_area) / total_area;
-
-                return rgb;
-            }
-
-        private:
-            unsigned m_red;
-            unsigned m_green;
-            unsigned m_blue;
-        };
-
-
-        class ARGB32 {
-        public:
-            ARGB32()
-                    : m_alpha(0),
-                      m_red(0),
-                      m_green(0),
-                      m_blue(0) {
-            }
-
-            void add(uint32_t argb, unsigned const area) {
-                m_blue += (argb & 0xFF) * area;
-                argb >>= 8;
-                m_green += (argb & 0xFF) * area;
-                argb >>= 8;
-                m_red += (argb & 0xFF) * area;
-                argb >>= 8;
-                m_alpha += argb * area;
-            }
-
-            uint32_t result(unsigned const total_area) const {
-                unsigned const half_area = total_area >> 1;
-                uint32_t argb = (m_alpha + half_area) / total_area;
-                argb <<= 8;
-                argb |= (m_red + half_area) / total_area;
-                argb <<= 8;
-                argb |= (m_green + half_area) / total_area;
-                argb <<= 8;
-                argb |= (m_blue + half_area) / total_area;
-
-                return argb;
-            }
-
-        private:
-            unsigned m_alpha;
-            unsigned m_red;
-            unsigned m_green;
-            unsigned m_blue;
-        };
-
 
         static QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min) {
             // Imagine a rectangle of (0, 0, 1, 1), except we take
@@ -272,6 +177,7 @@ namespace imageproc {
                     if (outside_flags & OutsidePixels::WEAK) {
                         background_area = 0;
                     } else {
+                        assert(outside_flags & OutsidePixels::COLOR);
                         mixer.add(outside_color, background_area);
                     }
 
@@ -390,7 +296,7 @@ namespace imageproc {
                         mixer.add(src_line[src_right], bottomright_area);
                     }
 
-                    dst_line[dx] = mixer.result(src_area + background_area);
+                    dst_line[dx] = mixer.mix(src_area + background_area);
                 }
             }
         }  // transformGeneric
@@ -413,41 +319,62 @@ namespace imageproc {
             throw std::invalid_argument("transform: dst_rect is invalid");
         }
 
-        if ((src.format() == QImage::Format_Indexed8) && src.allGray()) {
-            // The palette of src may be non-standard, so we create a GrayImage,
-            // which is guaranteed to have a standard palette.
-            GrayImage gray_src(src);
-            GrayImage gray_dst(dst_rect.size());
-            transformGeneric<uint8_t, Gray>(
-                    gray_src.data(), gray_src.stride(), src.size(),
-                    gray_dst.data(), gray_dst.stride(), xform, dst_rect,
-                    outside_pixels.grayLevel(), outside_pixels.flags(),
-                    min_mapping_area
-            );
+        auto is_opaque_gray = [](QRgb rgba) {
+            return qAlpha(rgba) == 0xff && qRed(rgba) == qBlue(rgba) && qRed(rgba) == qGreen(rgba);
+        };
+        switch (src.format()) {
+            case QImage::Format_Invalid:
+                return QImage();
+            case QImage::Format_Indexed8:
+            case QImage::Format_Mono:
+            case QImage::Format_MonoLSB:
+                if (src.allGray() && is_opaque_gray(outside_pixels.rgba())) {
+                    // The palette of src may be non-standard, so we create a GrayImage,
+                    // which is guaranteed to have a standard palette.
+                    GrayImage gray_src(src);
+                    GrayImage gray_dst(dst_rect.size());
+                    typedef uint32_t AccumType;
+                    transformGeneric<uint8_t, GrayColorMixer<AccumType>>
+                            (
+                                    gray_src.data(), gray_src.stride(), src.size(),
+                                    gray_dst.data(), gray_dst.stride(), xform, dst_rect,
+                                    outside_pixels.grayLevel(), outside_pixels.flags(),
+                                    min_mapping_area
+                            );
 
-            return gray_dst;
-        } else {
-            if (src.hasAlphaChannel() || (qAlpha(outside_pixels.rgba()) != 0xff)) {
-                QImage const src_argb32(src.convertToFormat(QImage::Format_ARGB32));
-                QImage dst(dst_rect.size(), QImage::Format_ARGB32);
-                transformGeneric<uint32_t, ARGB32>(
-                        (uint32_t const*) src_argb32.bits(), src_argb32.bytesPerLine() / 4, src_argb32.size(),
-                        (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
-                        outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
-                );
+                    return gray_dst;
+                }
+            default:
+                if (!src.hasAlphaChannel() && (qAlpha(outside_pixels.rgba()) == 0xff)) {
+                    QImage const src_rgb32(src.convertToFormat(QImage::Format_RGB32));
+                    badAllocIfNull(src_rgb32);
+                    QImage dst(dst_rect.size(), QImage::Format_RGB32);
+                    badAllocIfNull(dst);
 
-                return dst;
-            } else {
-                QImage const src_rgb32(src.convertToFormat(QImage::Format_RGB32));
-                QImage dst(dst_rect.size(), QImage::Format_RGB32);
-                transformGeneric<uint32_t, RGB32>(
-                        (uint32_t const*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
-                        (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
-                        outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
-                );
+                    typedef uint32_t AccumType;
+                    transformGeneric<uint32_t, RgbColorMixer<AccumType >>(
+                            (uint32_t const*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
+                            (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
+                            outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
+                    );
 
-                return dst;
-            }
+                    return dst;
+                } else {
+                    QImage const src_argb32(src.convertToFormat(QImage::Format_ARGB32));
+                    badAllocIfNull(src_argb32);
+                    QImage dst(dst_rect.size(), QImage::Format_ARGB32);
+                    badAllocIfNull(dst);
+
+                    typedef float AccumType;
+                    transformGeneric<uint32_t, ArgbColorMixer<AccumType >>(
+                            (uint32_t const*) src_argb32.bits(),
+                            src_argb32.bytesPerLine() / 4, src_argb32.size(),
+                            (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
+                            outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
+                    );
+
+                    return dst;
+                }
         }
     }  // transform
 
@@ -471,7 +398,8 @@ namespace imageproc {
         GrayImage const gray_src(src);
         GrayImage dst(dst_rect.size());
 
-        transformGeneric<uint8_t, Gray>(
+        typedef unsigned AccumType;
+        transformGeneric<uint8_t, GrayColorMixer<AccumType >>(
                 gray_src.data(), gray_src.stride(), gray_src.size(),
                 dst.data(), dst.stride(), xform, dst_rect,
                 outside_pixels.grayLevel(), outside_pixels.flags(),

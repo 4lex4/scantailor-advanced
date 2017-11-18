@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C) 2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,10 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SCANTAILOR_VERSION_H_
-#define SCANTAILOR_VERSION_H_
+#include "BadAllocIfNull.h"
+#include <QImage>
+#include <new>
 
-#define VERSION "1.0.6 PR"
-#define VERSION_QUAD "" // Must be "x.x.x.x" or an empty string.
-
-#endif
+namespace imageproc {
+    QImage const& badAllocIfNull(QImage const& image) {
+        if (image.isNull()) {
+            throw std::bad_alloc();
+        }
+        return image;
+    }
+}  // namespace imageproc

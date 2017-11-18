@@ -512,14 +512,15 @@ namespace output {
                 return QImage();
             }
         }
-        // The whole image minus the part cut off by the split line.
-        QRect contentRect = m_contentRect;
+
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_contentRect);
         if (!render_params.cutMargins()) {
-            contentRect = m_outRect;
+            contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_outRect);
         }
 
+        // The whole image minus the part cut off by the split line.
         QRect const big_margins_rect(
-                m_xform.resultingPreCropArea().boundingRect().toRect() | contentRect
+                m_xform.resultingPreCropArea().boundingRect().toRect()
         );
 
         // For various reasons, we need some whitespace around the content
@@ -559,6 +560,7 @@ namespace output {
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
 
         QColor outsideBackgroundColor;
+        QColor outsideBackgroundColorBW;
 
         const bool needNormalizeIllumination
                 = (render_params.normalizeIllumination() && render_params.needBinarization())
@@ -571,25 +573,48 @@ namespace output {
             );
         } else {
             if (input.origImage().allGray()) {
-                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
-
                 maybe_normalized = transformToGray(
                         input.grayImage(), m_xform.transform(),
-                        normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
+                        normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
                 );
             } else {
-                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
-
                 maybe_normalized = transform(
                         input.origImage(), m_xform.transform(),
-                        normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
+                        normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
                 );
             }
         }
 
+        if (needNormalizeIllumination && !input.origImage().allGray()) {
+            assert(maybe_normalized.format() == QImage::Format_Indexed8);
+            QImage tmp(
+                    transform(
+                            input.origImage(), m_xform.transform(),
+                            normalize_illumination_rect,
+                            OutsidePixels::assumeColor(outsideBackgroundColor)
+                    )
+            );
+
+            status.throwIfCancelled();
+
+            adjustBrightnessGrayscale(tmp, maybe_normalized);
+            maybe_normalized = tmp;
+            if (dbg) {
+                dbg->add(maybe_normalized, "norm_illum_color");
+            }
+        }
+
+        outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized);
+        if (render_params.needBinarization()) {
+            outsideBackgroundColorBW
+                    = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_normalized);
+        }
+
+        fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
+
         status.throwIfCancelled();
 
-        if (render_params.binaryOutput() || m_outRect.isEmpty()) {
+        if (render_params.binaryOutput()) {
             BinaryImage dst(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
 
             if (!contentRect.isEmpty()) {
@@ -612,11 +637,8 @@ namespace output {
                 );
 
                 if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
-                    outsideBackgroundColor
-                            = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_smoothed);
-                    BWColor fillColor = (outsideBackgroundColor == Qt::black) ? BLACK : WHITE;
-                    fillMarginsInPlace(bw_content, normalize_illumination_crop_area,
-                                       fillColor);
+                    BWColor fillColor = (outsideBackgroundColorBW == Qt::black) ? BLACK : WHITE;
+                    fillMarginsInPlace(bw_content, normalize_illumination_crop_area, fillColor);
                     dst.fill(fillColor);
                 }
 
@@ -654,27 +676,6 @@ namespace output {
             applyFillZonesInPlace(dst, fill_zones);
 
             return dst.toQImage();
-        }
-
-        if (needNormalizeIllumination && !input.origImage().allGray()) {
-            assert(maybe_normalized.format() == QImage::Format_Indexed8);
-            QImage tmp(
-                    transform(
-                            input.origImage(), m_xform.transform(),
-                            normalize_illumination_rect,
-                            OutsidePixels::assumeColor(outsideBackgroundColor)
-                    )
-            );
-
-            status.throwIfCancelled();
-
-            adjustBrightnessGrayscale(tmp, maybe_normalized);
-            maybe_normalized = tmp;
-            if (dbg) {
-                dbg->add(maybe_normalized, "norm_illum_color");
-            }
-
-            outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized);
         }
 
         if (render_params.mixedOutput()) {
@@ -773,8 +774,7 @@ namespace output {
                         binarize(maybe_smoothed, bw_mask_filled)
                 );
 
-                bw_mask_filled.release();
-
+                bw_mask.release();
                 maybe_smoothed = QImage();  // Save memory.
                 if (dbg) {
                     dbg->add(bw_content, "binarized_and_cropped");
@@ -808,12 +808,12 @@ namespace output {
                     if (input.origImage().allGray()) {
                         maybe_normalized = transformToGray(
                                 input.grayImage(), m_xform.transform(),
-                                normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
+                                normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
                         );
                     } else {
                         maybe_normalized = transform(
                                 input.origImage(), m_xform.transform(),
-                                normalize_illumination_rect, OutsidePixels::assumeColor(Qt::white)
+                                normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
                         );
                     }
 
@@ -822,35 +822,15 @@ namespace output {
 
                 if (maybe_normalized.format() == QImage::Format_Indexed8) {
                     combineMixed<uint8_t>(
-                            maybe_normalized, bw_content, bw_mask, !render_params.splitOutput()
+                            maybe_normalized, bw_content, bw_mask_filled, !render_params.splitOutput()
                     );
                 } else {
                     assert(maybe_normalized.format() == QImage::Format_RGB32
                            || maybe_normalized.format() == QImage::Format_ARGB32);
 
                     combineMixed<uint32_t>(
-                            maybe_normalized, bw_content, bw_mask, !render_params.splitOutput()
+                            maybe_normalized, bw_content, bw_mask_filled, !render_params.splitOutput()
                     );
-                }
-            } else {
-                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
-                    if (input.origImage().allGray()) {
-                        outsideBackgroundColor =
-                                BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
-
-                        maybe_normalized = transformToGray(
-                                input.grayImage(), m_xform.transform(),
-                                normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
-                        );
-                    } else {
-                        outsideBackgroundColor =
-                                BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
-
-                        maybe_normalized = transform(
-                                input.origImage(), m_xform.transform(),
-                                normalize_illumination_rect, OutsidePixels::assumeColor(outsideBackgroundColor)
-                        );
-                    }
                 }
             }
         }
@@ -867,8 +847,7 @@ namespace output {
         if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
             outsideBackgroundColor = Qt::white;
         } else if (render_params.needBinarization()) {
-            outsideBackgroundColor
-                    = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_normalized);
+            outsideBackgroundColor = outsideBackgroundColorBW;
         }
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
         dst.fill(outsideBackgroundColor);
@@ -924,13 +903,13 @@ namespace output {
             }
         }
 
-        QRect contentRect = m_contentRect;
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_contentRect);
         if (!render_params.cutMargins()) {
-            contentRect = m_outRect;
+            contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_outRect);
         }
         // The whole image minus the part cut off by the split line.
         QRect const big_margins_rect(
-                m_xform.resultingPreCropArea().boundingRect().toRect() | contentRect
+                m_xform.resultingPreCropArea().boundingRect().toRect()
         );
 
         // For various reasons, we need some whitespace around the content
@@ -968,13 +947,7 @@ namespace output {
         bool const color_original = !input.origImage().allGray();
 
         QColor outsideBackgroundColor;
-        if (color_original) {
-            outsideBackgroundColor =
-                    BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
-        } else {
-            outsideBackgroundColor =
-                    BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
-        }
+        QColor outsideBackgroundColorBW;
 
         const bool needNormalizeIllumination
                 = (render_params.normalizeIllumination() && render_params.needBinarization())
@@ -1049,8 +1022,6 @@ namespace output {
                 if (dbg) {
                     dbg->add(normalized_original, "norm_illum_color");
                 }
-
-                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(normalized_original);
             }
         }
 
@@ -1362,6 +1333,19 @@ namespace output {
 
         status.throwIfCancelled();
 
+        {
+            QImage cropped_image = transform(
+                    normalized_original, m_xform.transform(),
+                    contentRect, OutsidePixels::assumeColor(Qt::white)
+            );
+            outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(cropped_image);
+            if (render_params.needBinarization()) {
+                outsideBackgroundColorBW = BackgroundColorCalculator::calcDominantBackgroundColorBW(cropped_image);
+            }
+        }
+
+        status.throwIfCancelled();
+
         QImage dewarped;
         try {
             dewarped = dewarp(
@@ -1413,6 +1397,8 @@ namespace output {
         dewarping_content_area_mask = BinaryImage(dewarping_content_area_mask_dewarped);
         dewarping_content_area_mask_dewarped = QImage();
 
+        fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
+
         if (render_params.binaryOutput()) {
             QImage dewarped_and_maybe_smoothed;
             // We only do smoothing if we are going to do binarization later.
@@ -1435,10 +1421,8 @@ namespace output {
             status.throwIfCancelled();
 
             if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
-                outsideBackgroundColor
-                        = BackgroundColorCalculator::calcDominantBackgroundColorBW(dewarped_and_maybe_smoothed);
                 fillMarginsInPlace(dewarped_bw_content, dewarping_content_area_mask,
-                                   (outsideBackgroundColor == Qt::black) ? BLACK : WHITE);
+                                   (outsideBackgroundColorBW == Qt::black) ? BLACK : WHITE);
             }
 
             dewarped_and_maybe_smoothed = QImage();  // Save memory.
@@ -1468,7 +1452,7 @@ namespace output {
 
             return dewarped_bw_content.toQImage();
         }
-        
+
         if (render_params.mixedOutput()) {
             QTransform const orig_to_small_margins(
                     m_xform.transform() * QTransform().translate(
@@ -1523,7 +1507,7 @@ namespace output {
                         binarize(dewarped_and_maybe_smoothed, dewarped_bw_mask_filled)
                 );
 
-                dewarped_bw_mask_filled.release();
+                dewarped_bw_mask.release();
                 dewarped_and_maybe_smoothed = QImage();  // Save memory.
 
                 if (dbg) {
@@ -1576,58 +1560,6 @@ namespace output {
                         dewarped = dewarp(
                                 QTransform(), orig_without_illumination,
                                 m_xform.transform(),
-                                distortion_model, depth_perception, Qt::white
-                        );
-                    } catch (std::runtime_error const&) {
-                        setupTrivialDistortionModel(distortion_model);
-                        dewarped = dewarp(
-                                QTransform(), orig_without_illumination,
-                                m_xform.transform(),
-                                distortion_model, depth_perception, Qt::white
-                        );
-                    }
-                    orig_without_illumination = QImage();
-
-                    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
-                    deskew(&dewarped, deskew_angle, Qt::white);
-
-                    status.throwIfCancelled();
-                }
-
-                if (dewarped.format() == QImage::Format_Indexed8) {
-                    combineMixed<uint8_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask, !render_params.splitOutput()
-                    );
-                } else {
-                    assert(dewarped.format() == QImage::Format_RGB32
-                           || dewarped.format() == QImage::Format_ARGB32);
-
-                    combineMixed<uint32_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask, !render_params.splitOutput()
-                    );
-                }
-            } else {
-                if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
-                    QImage orig_without_illumination;
-                    if (color_original) {
-                        outsideBackgroundColor =
-                                BackgroundColorCalculator::calcDominantBackgroundColor(input.origImage());
-
-                        orig_without_illumination
-                                = convertToRGBorRGBA(input.origImage());
-                    } else {
-                        outsideBackgroundColor =
-                                BackgroundColorCalculator::calcDominantBackgroundColor(input.grayImage());
-
-                        orig_without_illumination = input.grayImage();
-                    }
-
-                    status.throwIfCancelled();
-
-                    try {
-                        dewarped = dewarp(
-                                QTransform(), orig_without_illumination,
-                                m_xform.transform(),
                                 distortion_model, depth_perception, outsideBackgroundColor
                         );
                     } catch (std::runtime_error const&) {
@@ -1645,14 +1577,26 @@ namespace output {
 
                     status.throwIfCancelled();
                 }
+
+                if (dewarped.format() == QImage::Format_Indexed8) {
+                    combineMixed<uint8_t>(
+                            dewarped, dewarped_bw_content, dewarped_bw_mask_filled, !render_params.splitOutput()
+                    );
+                } else {
+                    assert(dewarped.format() == QImage::Format_RGB32
+                           || dewarped.format() == QImage::Format_ARGB32);
+
+                    combineMixed<uint32_t>(
+                            dewarped, dewarped_bw_content, dewarped_bw_mask_filled, !render_params.splitOutput()
+                    );
+                }
             }
         }
 
         if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
             outsideBackgroundColor = Qt::white;
         } else if (render_params.needBinarization()) {
-            outsideBackgroundColor
-                    = BackgroundColorCalculator::calcDominantBackgroundColorBW(dewarped);
+            outsideBackgroundColor = outsideBackgroundColorBW;
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 

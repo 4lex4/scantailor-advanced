@@ -201,7 +201,7 @@ namespace page_split {
 
         if (m_ptrNextTask != nullptr) {
             ImageTransformation new_xform(data.xform());
-            new_xform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()));
+            new_xform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
 
             return m_ptrNextTask->process(status, FilterData(data, new_xform));
         }

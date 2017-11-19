@@ -83,16 +83,16 @@ namespace page_split {
     }
 
     void PageLayoutAdapter::correctPageLayoutType(PageLayout* layout) {
-        const QRectF outline = layout->uncutOutline().boundingRect();
+        const QRectF outline = layout->uncutOutline().boundingRect().toRect();
 
         if (layout->type() == PageLayout::SINGLE_PAGE_CUT) {
-            QLineF cutterLine1 = layout->cutterLine(0);
-            QLineF cutterLine2 = layout->cutterLine(1);
+            QLineF cutterLine1 = layout->cutterLine(0).toLine();
+            QLineF cutterLine2 = layout->cutterLine(1).toLine();
 
             // if both cutter lines match left or right bound
-            if (((cutterLine1.y1() == cutterLine1.y2())
+            if (((cutterLine1.x1() == cutterLine1.x2())
                  && ((cutterLine1.x1() == outline.left()) || (cutterLine1.x1() == outline.right())))
-                && ((cutterLine2.y1() == cutterLine2.y2())
+                && ((cutterLine2.x1() == cutterLine2.x2())
                     && ((cutterLine2.x1() == outline.left()) || (cutterLine2.x1() == outline.right())))) {
                 layout->setType(PageLayout::SINGLE_PAGE_UNCUT);
             }
@@ -110,10 +110,10 @@ namespace page_split {
         }
 
         if (layout->type() == PageLayout::TWO_PAGES) {
-            QLineF cutterLine1 = layout->cutterLine(0);
+            QLineF cutterLine1 = layout->cutterLine(0).toLine();
 
             // if the cutter line matches left or right bound
-            if ((cutterLine1.y1() == cutterLine1.y2())
+            if ((cutterLine1.x1() == cutterLine1.x2())
                 && ((cutterLine1.x1() == outline.left()) || (cutterLine1.x1() == outline.right()))) {
                 layout->setType(PageLayout::SINGLE_PAGE_UNCUT);
             }

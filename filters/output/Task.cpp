@@ -542,7 +542,7 @@ namespace output {
                 new DewarpingView(
                         m_origImage, m_downscaledOrigImage, m_xform.transform(),
                         PolygonUtils::convexHull(
-                                (m_xform.resultingPreCropArea() + m_xform.resultingPostCropArea()).toStdVector()
+                                m_xform.resultingPreCropArea().toStdVector()
                         ),
                         m_virtContentRect, m_pageId, m_params.dewarpingOptions(),
                         m_params.distortionModel(), opt_widget->depthPerception()
@@ -567,7 +567,7 @@ namespace output {
             picture_zone_editor.reset(
                     new PictureZoneEditor(
                             m_origImage, downscaled_orig_pixmap, m_pictureMask,
-                            m_xform.transform(), m_xform.resultingPostCropArea(),
+                            m_xform.transform(), m_xform.resultingPreCropArea(),
                             m_pageId, m_ptrSettings
                     )
             );

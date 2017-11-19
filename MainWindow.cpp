@@ -72,7 +72,6 @@
 #include "ui_AboutDialog.h"
 #include "ui_RemovePagesDialog.h"
 #include "ui_BatchProcessingLowerPanel.h"
-#include "ui_StartBatchProcessingDialog.h"
 #include "version.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>

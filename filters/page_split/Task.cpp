@@ -142,12 +142,6 @@ namespace page_split {
                     newDeps.setLayoutType(newPageLayout->toLayoutType());
                     new_params->setDependencies(newDeps);
                 }
-            } else if (params->pageLayout().uncutOutline().isEmpty()) {
-                // Backwards compatibility with versions < 0.9.9
-                new_layout = params->pageLayout();
-                new_layout.setUncutOutline(data.xform().resultingRect());
-
-                new_params = std::make_unique<Params>(new_layout, deps, MODE_AUTO);
             } else {
                 PageLayout correctedPageLayout = params->pageLayout();
                 PageLayoutAdapter::correctPageLayoutType(&correctedPageLayout);

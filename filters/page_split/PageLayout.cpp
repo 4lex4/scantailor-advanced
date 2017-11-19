@@ -65,6 +65,9 @@ namespace page_split {
                     layout_el.namedItem("outline").toElement()
             )
     ),
+              m_type(
+                      typeFromString(layout_el.attribute("type"))
+              ),
               m_cutter1(
                       XmlUnmarshaller::lineF(
                               layout_el.namedItem("cutter1").toElement()
@@ -75,44 +78,6 @@ namespace page_split {
                               layout_el.namedItem("cutter2").toElement()
                       )
               ) {
-        QString const type(layout_el.attribute("type"));
-        QDomElement const split_line_el(layout_el.namedItem("split-line").toElement());
-        if (split_line_el.isNull()) {
-            m_type = typeFromString(type);
-        } else {
-            // Backwards compatibility with versions < 0.9.9
-            // Note that we fill in m_uncutOutline elsewhere, namely in Task::process().
-            QLineF const split_line(XmlUnmarshaller::lineF(split_line_el));
-
-            // Backwards compatibility with versions <= 0.9.1
-            bool const left_page = (
-                    layout_el.attribute("leftPageValid") == "1"
-            );
-            bool const right_page = (
-                    layout_el.attribute("rightPageValid") == "1"
-            );
-
-            if ((type == "two-pages") || (left_page && right_page)) {
-                m_type = TWO_PAGES;
-                m_cutter1 = split_line;
-                m_cutter2 = QLineF();
-            } else if ((type == "left-page") || left_page) {
-                m_type = SINGLE_PAGE_CUT;
-                m_cutter1 = QLineF(0, 0, 0, 1);  // A bit of a hack, but should work.
-                m_cutter2 = split_line;
-            } else if ((type == "right-page") || right_page) {
-                m_type = SINGLE_PAGE_CUT;
-                m_cutter1 = split_line;
-                m_cutter2 = QLineF();
-                // This one is a special case.  We don't know the outline at this point,
-                // so we make m_cutter2 null.  We'll assign the correct value to it in
-                // setUncutOutline().
-            } else {
-                m_type = SINGLE_PAGE_UNCUT;
-                m_cutter1 = QLineF();
-                m_cutter2 = QLineF();
-            }
-        }
     }
 
     void PageLayout::setType(Type type) {
@@ -127,12 +92,6 @@ namespace page_split {
         if (m_uncutOutline.size() < 4) {
             // Empty rect?
             return;
-        }
-
-        if ((m_type == SINGLE_PAGE_CUT) && m_cutter2.isNull()) {
-            // Backwards compatibility.  See PageLayout(QDomElement const&);
-            m_cutter2.setP1(m_uncutOutline[1]);
-            m_cutter2.setP2(m_uncutOutline[2]);
         }
     }
 

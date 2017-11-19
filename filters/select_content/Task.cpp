@@ -97,8 +97,7 @@ namespace select_content {
         if (!params.get() || !params->dependencies().matches(deps)) {
             QRectF page_rect(data.xform().resultingRect());
             QRectF content_rect(page_rect);
-
-            // Backwards compatibilty: put the missing data where it belongs.
+            
             if (new_params.isPageDetectionEnabled()) {
                 page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
                                                     m_ptrSettings->pageDetectionBox(),

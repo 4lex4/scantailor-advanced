@@ -67,10 +67,6 @@ namespace page_split {
         }
 
         PageLayout layout(params->pageLayout());
-        if (layout.uncutOutline().isEmpty()) {
-            // Backwards compatibility with versions < 0.9.9
-            layout.setUncutOutline(xform.resultingRect());
-        }
 
         if (m_ptrNextTask) {
             ImageTransformation new_xform(xform);

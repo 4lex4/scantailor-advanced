@@ -40,7 +40,9 @@ namespace deskew {
                                   ImageTransformation const& xform) {
         Dependencies const deps(xform.preCropArea(), xform.preRotation());
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
-        if (!params.get() || !deps.matches(params->dependencies())) {
+        if (!params.get()
+            || (!deps.matches(params->dependencies())
+                && (params->mode() == MODE_AUTO))) {
             if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(

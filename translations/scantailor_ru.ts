@@ -1006,7 +1006,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+6"/>
         <source>Post deskew</source>
-        <translation>С поворотом</translation>
+        <translation>Компенсировать поворот</translation>
     </message>
     <message>
         <location line="+10"/>

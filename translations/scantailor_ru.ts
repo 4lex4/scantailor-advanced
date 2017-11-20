@@ -105,7 +105,7 @@
     <message>
         <location filename="../filters/deskew/ui/DeskewApplyDialog.ui" line="+20"/>
         <source>Apply to</source>
-        <translation>Применить</translation>
+        <translation>Область применения</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -127,7 +127,7 @@
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
         <translatorcomment>Все нечетные или четные страницы, в зависимости от текущей страницы.</translatorcomment>
-        <translation>К этой странице и следующей каждой второй странице</translation>
+        <translation>К этой странице и каждой второй последующей</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -172,7 +172,7 @@
     <message>
         <location line="+8"/>
         <source>Auto</source>
-        <translation>Автомат.</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -241,7 +241,7 @@
     <message>
         <location filename="../FixDpiDialog.cpp" line="+241"/>
         <source>Need Fixing</source>
-        <translation>Необходимо исправить</translation>
+        <translation>Необх. испр.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -714,7 +714,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+6"/>
         <source>Apply to</source>
-        <translation>Применить</translation>
+        <translation>Область применения</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -736,7 +736,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
         <translatorcomment>Все нечетные или четные страницы, в зависимости от текущей страницы.</translatorcomment>
-        <translation>К этой странице и каждой второй следующей странице</translation>
+        <translation>К этой странице и каждой второй последующей</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -769,7 +769,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
 <context>
     <name>OrientationOptionsWidget</name>
     <message>
-        <location filename="../filters/fix_orientation/ui/OrientationOptionsWidget.ui" line="+13"/>
+        <location filename="../filters/fix_orientation/ui/OrientationOptionsWidget.ui" line="+14"/>
         <source>Form</source>
         <translation></translation>
     </message>
@@ -780,22 +780,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+21"/>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Reset</source>
         <translation>Сбросить</translation>
     </message>
     <message>
-        <location line="+25"/>
-        <source>Scope</source>
-        <translation>Область применения</translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="+40"/>
         <source>Apply to ...</source>
         <translation>Применить...</translation>
     </message>
@@ -918,7 +913,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Обратите внимание на то, что хотя Scan Tailor и пытается обработать ситуации нехватки памяти, чтобы дать вам возможность сохранить проект, это не всегда бывает возможно. В этот раз все получилось, но в следующий раз программа может просто &quot;упасть&quot;.</translation>
     </message>
     <message>
-        <location filename="../OutOfMemoryDialog.cpp" line="+75"/>
+        <location filename="../OutOfMemoryDialog.cpp" line="+77"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
@@ -943,7 +938,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+6"/>
         <source>Apply to</source>
-        <translation>Применить</translation>
+        <translation>Область применения</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -976,7 +971,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location filename="../filters/output/ui/OutputChangeDewarpingDialog.ui" line="+17"/>
         <source>Apply Dewarping Mode</source>
-        <translation>Применить режим Выпрямление строк</translation>
+        <translation>Применить режим Выпрямления строк</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1004,7 +999,6 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Вручную</translation>
     </message>
     <message>
-        <location filename="../OutOfMemoryDialog.cpp" line="+75"/>
         <location line="+10"/>
         <source>Options</source>
         <translation>Настройки</translation>
@@ -1016,7 +1010,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+10"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation>Область применения</translation>
     </message>
     <message>
@@ -1059,7 +1053,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+45"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation>Область применения</translation>
     </message>
     <message>
@@ -1078,7 +1072,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>К этой странице и всем последующим</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+25"/>
         <source>Selected pages</source>
         <translation>К выделенным страницам</translation>
     </message>
@@ -1123,18 +1117,18 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+48"/>
-        <source>White margins</source>
-        <translation>Белые поля</translation>
+        <source>Cut margins</source>
+        <translation>Подрезать поля</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
-        <translation>Выровнять освещение (Ч&amp;&amp;Б)</translation>
+        <translation>Выровнять освещение (ЧБ)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Equalize illumination (Color)</source>
-        <translation>Выровнять освещение (Цвет)</translation>
+        <translation>Выровнять освещение (Цвет.)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1192,7 +1186,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+7"/>
         <source>B&amp;&amp;W foreground</source>
-        <translation>Ч&amp;&amp;Б передний слой</translation>
+        <translation>ЧБ передний слой</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1247,7 +1241,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location filename="../filters/page_layout/ui/PageLayoutApplyDialog.ui" line="+20"/>
         <source>Apply to</source>
-        <translation>Применить</translation>
+        <translation>Область применения</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1393,7 +1387,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+10"/>
         <source>Match size with other pages</source>
-        <translation>Выровнять размеры страниц в проекте</translation>
+        <translation>Выровнять размер с остальн. стр.</translation>
     </message>
 </context>
 <context>
@@ -1430,7 +1424,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+25"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation>Область применения</translation>
     </message>
     <message>
@@ -1511,7 +1505,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="+17"/>
         <source>Auto</source>
-        <translation>Автомат.</translation>
+        <translation>Автоматически</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1802,7 +1796,7 @@ You should remove them from the project.</source>
     <message>
         <location line="+10"/>
         <source>Apply to</source>
-        <translation>Применить</translation>
+        <translation>Область применения</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1974,7 +1968,7 @@ You should remove them from the project.</source>
     <message>
         <location line="+8"/>
         <source>B&amp;W Compression: </source>
-        <translation>Ч&amp;Б сжатие: </translation>
+        <translation>ЧБ сжатие: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2231,7 +2225,7 @@ You should remove them from the project.</source>
     <message>
         <location filename="../filters/deskew/OptionsWidget.cpp" line="+58"/>
         <source>Apply Deskew</source>
-        <translation>Применить компенсацию наклона</translation>
+        <translation>Область примененияомпенсацию наклона</translation>
     </message>
 </context>
 <context>
@@ -2416,7 +2410,7 @@ You should remove them from the project.</source>
     <message>
         <location line="+1"/>
         <source>Dewarping</source>
-        <translation>Выпрямление строк</translation>
+        <translation>Выпрямл. строк</translation>
     </message>
     <message>
         <location line="+1"/>

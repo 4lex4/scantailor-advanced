@@ -1,32 +1,33 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>OrientationOptionsWidget</class>
- <widget class="QWidget" name="OrientationOptionsWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="OrientationOptionsWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>224</width>
-    <height>272</height>
+    <height>191</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>Rotate</string>
      </property>
-     <layout class="QVBoxLayout" >
+     <layout class="QVBoxLayout">
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -35,14 +36,15 @@
          </spacer>
         </item>
         <item>
-         <widget class="QToolButton" name="rotateLeftBtn" >
-          <property name="text" >
+         <widget class="QToolButton" name="rotateLeftBtn">
+          <property name="text">
            <string>...</string>
           </property>
-          <property name="icon" >
-           <iconset resource="../../../resources/resources.qrc" >:/icons/object-rotate-left.png</iconset>
+          <property name="icon">
+           <iconset resource="../../../resources/resources.qrc">
+            <normaloff>:/icons/object-rotate-left.png</normaloff>:/icons/object-rotate-left.png</iconset>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>24</width>
             <height>24</height>
@@ -51,14 +53,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="rotateRightBtn" >
-          <property name="text" >
+         <widget class="QToolButton" name="rotateRightBtn">
+          <property name="text">
            <string>...</string>
           </property>
-          <property name="icon" >
-           <iconset resource="../../../resources/resources.qrc" >:/icons/object-rotate-right.png</iconset>
+          <property name="icon">
+           <iconset resource="../../../resources/resources.qrc">
+            <normaloff>:/icons/object-rotate-right.png</normaloff>:/icons/object-rotate-right.png</iconset>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>24</width>
             <height>24</height>
@@ -68,10 +71,10 @@
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -82,13 +85,13 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -97,21 +100,21 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="rotationIndicator" >
-          <property name="text" >
+         <widget class="QLabel" name="rotationIndicator">
+          <property name="text">
            <string/>
           </property>
-          <property name="pixmap" >
-           <pixmap resource="../../../resources/resources.qrc" >:/icons/big-up-arrow.png</pixmap>
+          <property name="pixmap">
+           <pixmap resource="../../../resources/resources.qrc">:/icons/big-up-arrow.png</pixmap>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -122,13 +125,13 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QHBoxLayout">
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -137,18 +140,18 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="resetBtn" >
-          <property name="text" >
+         <widget class="QPushButton" name="resetBtn">
+          <property name="text">
            <string>Reset</string>
           </property>
          </widget>
         </item>
         <item>
          <spacer>
-          <property name="orientation" >
+          <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
             <height>20</height>
@@ -162,57 +165,48 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="scopeBox" >
-     <property name="title" >
-      <string>Scope</string>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="applyToBtn" >
-          <property name="text" >
-           <string>Apply to ...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QHBoxLayout">
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyToBtn">
+       <property name="text">
+        <string>Apply to ...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -223,7 +217,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../resources/resources.qrc" />
+  <include location="../../../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

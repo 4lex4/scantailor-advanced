@@ -3,8 +3,8 @@ QPushButton, QLineEdit, QListView {
 	background-color: palette(base);
 	border-radius: 0px;
 	padding: 1px 3px 1px 3px;
-	height: 18px;
-	width: 68px;
+	height: 17px;
+	width: 78px;
 	text-align: center;
 	selection-background-color: #3399ff;
 	selection-color: white;
@@ -473,7 +473,7 @@ QComboBox {
 	background-color: palette(base);
 	border-radius: 3px;
 	padding: 1px 0px 1px 8px;
-	height: 18px;
+	height: 17px;
 	width: 86px;
 	selection-background-color: #3399ff;
 	selection-color: white;
@@ -484,7 +484,7 @@ QAbstractSpinBox {
 	background-color: palette(base);
 	border-radius: 0px;
 	padding: 1px 3px 1px 3px;
-	height: 18px;
+	height: 17px;
 	selection-background-color: #3399ff;
 	selection-color: white;
 }

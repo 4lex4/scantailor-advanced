@@ -764,7 +764,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
 <context>
     <name>OrientationOptionsWidget</name>
     <message>
-        <location filename="../filters/fix_orientation/ui/OrientationOptionsWidget.ui" line="+13"/>
+        <location filename="../filters/fix_orientation/ui/OrientationOptionsWidget.ui" line="+14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
@@ -775,22 +775,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+21"/>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+25"/>
-        <source>Scope</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="+40"/>
         <source>Apply to ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1009,7 +1004,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+10"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1052,7 +1047,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+45"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1071,7 +1066,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+25"/>
         <source>Selected pages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1421,7 +1416,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+25"/>
-        <source>Scope</source>
+        <source>Apply to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

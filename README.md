@@ -13,20 +13,21 @@ brings new ones and fixes.
         * [Page detect](#page-detect)
         * [Deviation](#deviation)
         * [Picture shape](#picture-shape)
-        * [Tiff compression](#tiff-compression)
         * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-reworked)
     * [**Scan Tailor Featured** features](#scan-tailor-featured-features)
-        * [Scan Tailor Featured fixes](#scan-tailor-featured-fixes)
+        * [Scan Tailor Featured fixes & improvements](#scan-tailor-featured-fixes--improvements)
         * [Line vertical dragging on dewarp](#line-vertical-dragging-on-dewarp)
         * [Square picture zones](#square-picture-zones)
         * [Auto save project \[optimized\]](#auto-save-project-optimized)
         * [Quadro Zoner](#quadro-zoner)
         * [Marginal dewarping](#marginal-dewarping)
     * [**Scan Tailor Advanced** features](#scan-tailor-advanced-features)
-        * [Scan Tailor Advanced fixes](#scan-tailor-advanced-fixes)
+        * [Scan Tailor Advanced fixes & improvements](#scan-tailor-advanced-fixes--improvements)
         * [Light and Dark color schemes](#light-and-dark-color-schemes)
         * [Multi-threading support for batch processing](#multi-threading-support-for-batch-processing)
         * [Full control over settings on output](#full-control-over-settings-on-output)
+        * [Filling outside areas](#filling-outside-areas)
+        * [Tiff compression](#tiff-compression)
         * [Adaptive binarization](#adaptive-binarization)
         * [Splitting output](#splitting-output)
 * [Building](#building)
@@ -70,10 +71,6 @@ Features
  Picture shape feature adds option for mixed pages to choose from free shape and rectangular
  shape images. This patch does not improve the original algoritm but creates from the
  detected "blobs" rectangular shapes and the rectangles that intersects joins to one.
- 
-* ##### Tiff compression
- Tiff compression option allows to disable compression in tiff files or select one of other
- standard compression methods (LZW, Deflate, PackBits, Jpeg).
 
 * ##### Multi column thumbnails view \[reworked\]
  This allows to expand and un-dock thumbnails view to see more thumbnails at a time.
@@ -82,7 +79,7 @@ Features
  
 #### **Scan Tailor Featured** features
 
-* ##### Scan Tailor Featured fixes
+* ##### Scan Tailor Featured fixes & improvements
 1. Deleted 3 Red Points 
  The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
  mesh are now eliminated. 
@@ -131,23 +128,35 @@ Features
 
 #### **Scan Tailor Advanced** features
 
-* ##### Scan Tailor Advanced fixes
+* ##### Scan Tailor Advanced fixes & improvements
 1. Portability.
    The setting is stored in the folder with a program.
 
 2. Page splitting had an influence on output only in b&w mode with dewarping disabled.
    Now it works in all the modes.
+   
+3. Page layout and all the other views now consider splitting settings.
+   Corresponding improvements are done to thumbnails.
 
-3. Dewarping in manual mode with binarization enabled produced low-quality results due to post deskew.
-   Now deskew is done before binarization.
+4. Changed Scan Tailor behavior on page split stage.
+     1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
+   	    than the page the cut applied to, Scan Tailor tries to adapt cutters instead of fully
+   	    rejecting the cut setting and switching to auto mode for those pages as it was before.
+   	    The later was annoying as pages could be similar and had the difference in a few pixels.
+     2. Added check to reject invalid cut settings in manual mode.
+     3. UI: Added cutters interaction between each other. They can't more intersect each other,
+   	    which created a wrong page layout configuration before.
 
-4. Optimized memory usage on the output stage.
+5. Optimized memory usage on the output stage.
 
-5. Reworking on [Multi column thumbnails view](#multi-column-thumbnails-view-reworked)
+6. Reworking on [Multi column thumbnails view](#multi-column-thumbnails-view-reworked)
    feature from ver. Enhanced. 
    Now thumbnails is shown evenly.
 
-6. Fixed other bugs of Enhanced and Featured versions.
+7. Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
+   The option refreshes the thumbnails instantly.
+
+8. Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes
  You can choose a desired color scheme in settings.
@@ -161,8 +170,22 @@ Features
 * ##### Full control over settings on output
  This feature enables to control cut margins, normalizing illumination before binarization,
  normalizing illumination in color areas options, Savitzky-Golay and morphological smoothing on output
- in any mode (of course, those setting that can be applied in the current mode).  
+ in any mode (of course, those setting that can be applied in the current mode).
  
+* ##### Filling outside areas
+ Now outside pixels can be filled with the background color of the page.
+ 
+ Added filling setting with the following options:
+   1. Background: estimate the background and fill outside pixels with its color.
+   2. White: always fill with white.
+ 
+* ##### Tiff compression
+ Tiff compression options allow to disable or change compression method in tiff files.
+ 
+ There are two options in settings dialog: B&W and color compression. 
+   1. The B&W one has None, LZW, Deflate and CCITT G4 (Default) options.
+   2. The color one has None, LZW (Default), Deflate and JPEG options.
+
 * ##### Adaptive binarization
  Sauvola and Wolf binarization algorithms have been added. They can be applied when
  normalizing illumination does not help.

@@ -97,7 +97,7 @@ namespace select_content {
         if (!params.get() || !params->dependencies().matches(deps)) {
             QRectF page_rect(data.xform().resultingRect());
             QRectF content_rect(page_rect);
-            
+
             if (new_params.isPageDetectionEnabled()) {
                 page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
                                                     m_ptrSettings->pageDetectionBox(),
@@ -107,8 +107,9 @@ namespace select_content {
 
             if (new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_AUTO)) {
                 content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
-            } else if (new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_MANUAL)
-                       && (content_rect = new_params.contentRect().intersected(page_rect)).isValid()) {
+            } else if ((new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_MANUAL)
+                        && (content_rect = new_params.contentRect().intersected(page_rect)).isValid())
+                       || new_params.contentRect().isEmpty()) {
                 // we don't want the content box to be out of the page bounds so use intersecting
             } else {
                 content_rect = page_rect;

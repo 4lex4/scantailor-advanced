@@ -254,11 +254,13 @@ namespace output {
               m_despeckleLevel(despeckle_level) {
         assert(m_outRect.topLeft() == QPoint(0, 0));
 
-        // prevents a crash due to round error on transforming virtual coordinates to output image coordinates
-        // when m_contentRect coordinates could exceed m_outRect ones by 1 px
-        m_contentRect = m_contentRect.intersected(m_outRect);
-        // Note that QRect::contains(<empty rect>) always returns false, so we don't use it here.
-        assert(m_outRect.contains(m_contentRect.topLeft()) && m_outRect.contains(m_contentRect.bottomRight()));
+        if (!m_contentRect.isEmpty()) {
+            // prevents a crash due to round error on transforming virtual coordinates to output image coordinates
+            // when m_contentRect coordinates could exceed m_outRect ones by 1 px
+            m_contentRect = m_contentRect.intersected(m_outRect);
+            // Note that QRect::contains(<empty rect>) always returns false, so we don't use it here.
+            assert(m_outRect.contains(m_contentRect.topLeft()) && m_outRect.contains(m_contentRect.bottomRight()));
+        }
     }
 
     QImage OutputGenerator::process(TaskStatus const& status,
@@ -502,7 +504,7 @@ namespace output {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
-        if (m_outRect.isEmpty()) {
+        if (m_contentRect.isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
                 return emptyImage;
@@ -617,61 +619,59 @@ namespace output {
         if (render_params.binaryOutput()) {
             BinaryImage dst(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
 
-            if (!contentRect.isEmpty()) {
-                QImage maybe_smoothed;
-                // We only do smoothing if we are going to do binarization later.
-                if (!render_params.needSavitzkyGolaySmoothing()) {
-                    maybe_smoothed = maybe_normalized;
-                } else {
-                    maybe_smoothed = smoothToGrayscale(maybe_normalized, m_dpi);
-                    if (dbg) {
-                        dbg->add(maybe_smoothed, "smoothed");
-                    }
-                }
-                maybe_normalized = QImage();
-
-                status.throwIfCancelled();
-
-                BinaryImage bw_content(
-                        binarize(maybe_smoothed, normalize_illumination_crop_area)
-                );
-
-                if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
-                    BWColor fillColor = (outsideBackgroundColorBW == Qt::black) ? BLACK : WHITE;
-                    fillMarginsInPlace(bw_content, normalize_illumination_crop_area, fillColor);
-                    dst.fill(fillColor);
-                }
-
-                maybe_smoothed = QImage();
+            QImage maybe_smoothed;
+            // We only do smoothing if we are going to do binarization later.
+            if (!render_params.needSavitzkyGolaySmoothing()) {
+                maybe_smoothed = maybe_normalized;
+            } else {
+                maybe_smoothed = smoothToGrayscale(maybe_normalized, m_dpi);
                 if (dbg) {
-                    dbg->add(bw_content, "binarized_and_cropped");
+                    dbg->add(maybe_smoothed, "smoothed");
                 }
-
-                status.throwIfCancelled();
-
-                if (render_params.needMorphologicalSmoothing()) {
-                    morphologicalSmoothInPlace(bw_content, status);
-                    if (dbg) {
-                        dbg->add(bw_content, "edges_smoothed");
-                    }
-                }
-
-                status.throwIfCancelled();
-
-                // It's important to keep despeckling the very last operation
-                // affecting the binary part of the output. That's because
-                // we will be reconstructing the input to this despeckling
-                // operation from the final output file.
-                maybeDespeckleInPlace(
-                        bw_content, small_margins_rect, contentRect,
-                        m_despeckleLevel, speckles_image, m_dpi, status, dbg
-                );
-
-                QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-                QRect const dst_rect(contentRect);
-                rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
-                bw_content.release();  // Save memory.
             }
+            maybe_normalized = QImage();
+
+            status.throwIfCancelled();
+
+            BinaryImage bw_content(
+                    binarize(maybe_smoothed, normalize_illumination_crop_area)
+            );
+
+            if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::BACKGROUND) {
+                BWColor fillColor = (outsideBackgroundColorBW == Qt::black) ? BLACK : WHITE;
+                fillMarginsInPlace(bw_content, normalize_illumination_crop_area, fillColor);
+                dst.fill(fillColor);
+            }
+
+            maybe_smoothed = QImage();
+            if (dbg) {
+                dbg->add(bw_content, "binarized_and_cropped");
+            }
+
+            status.throwIfCancelled();
+
+            if (render_params.needMorphologicalSmoothing()) {
+                morphologicalSmoothInPlace(bw_content, status);
+                if (dbg) {
+                    dbg->add(bw_content, "edges_smoothed");
+                }
+            }
+
+            status.throwIfCancelled();
+
+            // It's important to keep despeckling the very last operation
+            // affecting the binary part of the output. That's because
+            // we will be reconstructing the input to this despeckling
+            // operation from the final output file.
+            maybeDespeckleInPlace(
+                    bw_content, small_margins_rect, contentRect,
+                    m_despeckleLevel, speckles_image, m_dpi, status, dbg
+            );
+
+            QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+            QRect const dst_rect(contentRect);
+            rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
+            bw_content.release();  // Save memory.
 
             applyFillZonesInPlace(dst, fill_zones);
 
@@ -892,7 +892,7 @@ namespace output {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
-        if (m_outRect.isEmpty()) {
+        if (m_contentRect.isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
                 return emptyImage;

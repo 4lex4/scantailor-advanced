@@ -29,6 +29,9 @@
 #include "LightScheme.h"
 
 int main(int argc, char** argv) {
+    // rescaling for high DPI displays
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     Application app(argc, argv);
 
 #ifdef _WIN32

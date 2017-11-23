@@ -77,8 +77,15 @@ namespace page_layout {
             fg_color = QColor(0xbe, 0x5b, 0xec);
         }
 
+        // we round inner rect to check whether content rect is empty and this is just an adapted rect.
+        const bool isNullContentRect = m_virtContentRect.toRect().isEmpty();
+
         // Draw margins.
-        painter.fillPath(outer_outline.subtracted(content_outline), bg_color);
+        if (!isNullContentRect) {
+            painter.fillPath(outer_outline.subtracted(content_outline), bg_color);
+        } else {
+            painter.fillPath(outer_outline, bg_color);
+        }
 
         QPen pen(fg_color);
         pen.setCosmetic(true);
@@ -91,7 +98,9 @@ namespace page_layout {
         // the result is slightly different.
 
         // inner rect
-        painter.drawRect(inner_rect.toRect());
+        if (!isNullContentRect) {
+            painter.drawRect(inner_rect.toRect());
+        }
 
         // outer rect
         if (!m_params.alignment().isNull()) {

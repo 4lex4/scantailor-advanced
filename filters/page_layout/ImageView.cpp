@@ -265,17 +265,30 @@ namespace page_layout {
 
         painter.setRenderHint(QPainter::Antialiasing, false);
 
+        // we round inner rect to check whether content rect is empty and this is just an adapted rect.
+        const bool isNullContentRect = m_innerRect.toRect().isEmpty();
+
         painter.setPen(Qt::NoPen);
         painter.setBrush(bg_color);
-        painter.drawPath(outer_outline.subtracted(content_outline));
+
+        if (!isNullContentRect) {
+            painter.drawPath(outer_outline.subtracted(content_outline));
+        } else {
+            painter.drawPath(outer_outline);
+        }
 
         QPen pen(fg_color);
         pen.setCosmetic(true);
         pen.setWidthF(2.0);
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawRect(m_middleRect);
-        painter.drawRect(m_innerRect);
+
+        if (!isNullContentRect || m_alignment.isNull()) {
+            painter.drawRect(m_middleRect);
+        }
+        if (!isNullContentRect) {
+            painter.drawRect(m_innerRect);
+        }
 
         if (!m_alignment.isNull()) {
             pen.setStyle(Qt::DashLine);

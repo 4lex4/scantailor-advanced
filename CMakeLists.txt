@@ -310,7 +310,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 SET(Boost_USE_MULTITHREADED ON)
 
-FIND_PACKAGE(Boost 1.65 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
+FIND_PACKAGE(Boost 1.60 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
 IF (NOT Boost_FOUND)
     MESSAGE(
             FATAL_ERROR

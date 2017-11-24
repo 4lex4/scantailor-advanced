@@ -106,6 +106,8 @@ namespace output {
 
         painter.setPen(Qt::NoPen);
 
+        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
         for (EditableZoneSet::Zone const& zone : m_zones) {
             typedef FillColorProperty FCP;
             QColor const color(zone.properties()->locateOrDefault<FCP>()->color());
@@ -132,9 +134,7 @@ namespace output {
         ZoneSet zones;
 
         for (EditableZoneSet::Zone const& zone : m_zones) {
-            SerializableSpline const spline(
-            SerializableSpline(* zone.spline()).transformed(m_imageToOrig)
-            );
+            SerializableSpline const spline(SerializableSpline(*zone.spline()).transformed(m_imageToOrig));
             zones.add(Zone(spline, *zone.properties()));
         }
 

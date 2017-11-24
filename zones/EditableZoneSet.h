@@ -71,11 +71,12 @@ public:
         }
 
         void increment() {
-            ++m_zone.m_iter;
+            ++m_iter;
+            m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
         }
 
         bool equal(const_iterator const& other) const {
-            return m_zone.m_iter == other.m_zone.m_iter;
+            return m_iter == other.m_iter;
         }
 
         Zone const& dereference() const {
@@ -83,24 +84,28 @@ public:
         }
 
     private:
-        explicit const_iterator(Map::const_iterator it)
-                : m_zone(it) {
+        explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it,
+                                const Map* splineMap)
+                : m_iter(it),
+                  m_ptrSplineMap(splineMap),
+                  m_zone(splineMap->find(*it)) {
         }
 
         Zone m_zone;
+        std::list<EditableSpline::Ptr>::const_iterator m_iter;
+        const Map* m_ptrSplineMap;
     };
-
 
     typedef const_iterator iterator;
 
     EditableZoneSet();
 
     const_iterator begin() const {
-        return iterator(m_splineMap.begin());
+        return iterator(m_splineList.begin(), const_cast<const Map*>(&m_splineMap));
     }
 
     const_iterator end() const {
-        return iterator(m_splineMap.end());
+        return iterator(m_splineList.end(), const_cast<const Map*>(&m_splineMap));
     }
 
     PropertySet const& defaultProperties() const {
@@ -127,6 +132,7 @@ signals:
 
 private:
     Map m_splineMap;
+    std::list<EditableSpline::Ptr> m_splineList;
     PropertySet m_defaultProps;
 };
 

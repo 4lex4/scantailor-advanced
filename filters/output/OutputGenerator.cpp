@@ -267,21 +267,21 @@ namespace output {
                                     FilterData const& input,
                                     ZoneSet& picture_zones,
                                     ZoneSet const& fill_zones,
+                                    PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
                                     DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
                                     DebugImages* const dbg,
-                                    PictureShape picture_shape,
                                     PageId* p_pageId,
                                     IntrusivePtr<Settings>* p_settings,
                                     SplitImage* splitImage) const {
         QImage image(
                 processImpl(
-                        status, input, picture_zones, fill_zones,
+                        status, input, picture_zones, fill_zones, picture_shape_options,
                         dewarping_options, distortion_model, depth_perception,
-                        auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
+                        auto_picture_mask, speckles_image, dbg, p_pageId,
                         p_settings,
                         splitImage
                 )
@@ -412,9 +412,7 @@ namespace output {
         downscaled_input = GrayImage();  // Save memory.
         status.throwIfCancelled();
 
-        BinaryThreshold const threshold(
-                48
-        );
+        BinaryThreshold const threshold(48);
         // Scale back to original size.
         picture_areas = scaleToGray(
                 picture_areas, source_sub_rect.size()
@@ -460,13 +458,13 @@ namespace output {
                                         FilterData const& input,
                                         ZoneSet& picture_zones,
                                         ZoneSet const& fill_zones,
+                                        PictureShapeOptions picture_shape_options,
                                         DewarpingOptions dewarping_options,
                                         DistortionModel& distortion_model,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
                                         imageproc::BinaryImage* speckles_image,
                                         DebugImages* const dbg,
-                                        PictureShape picture_shape,
                                         PageId* p_pageId,
                                         IntrusivePtr<Settings>* p_settings,
                                         SplitImage* splitImage) const {
@@ -474,16 +472,16 @@ namespace output {
             || (dewarping_options.mode() == DewarpingOptions::MARGINAL)
             || ((dewarping_options.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
-                    status, input, picture_zones, fill_zones,
+                    status, input, picture_zones, fill_zones, picture_shape_options,
                     dewarping_options, distortion_model, depth_perception,
-                    auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
+                    auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
             );
         } else {
             return processWithoutDewarping(
-                    status, input, picture_zones, fill_zones,
-                    auto_picture_mask, speckles_image, dbg, picture_shape, p_pageId,
+                    status, input, picture_zones, fill_zones, picture_shape_options,
+                    auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
             );
@@ -494,10 +492,10 @@ namespace output {
                                                     FilterData const& input,
                                                     ZoneSet& picture_zones,
                                                     ZoneSet const& fill_zones,
+                                                    PictureShapeOptions picture_shape_options,
                                                     imageproc::BinaryImage* auto_picture_mask,
                                                     imageproc::BinaryImage* speckles_image,
                                                     DebugImages* dbg,
-                                                    PictureShape picture_shape,
                                                     PageId* p_pageId,
                                                     IntrusivePtr<Settings>* p_settings,
                                                     SplitImage* splitImage) const {
@@ -679,45 +677,57 @@ namespace output {
         }
 
         if (render_params.mixedOutput()) {
-            BinaryImage bw_mask(estimateBinarizationMask(
-                    status, GrayImage(maybe_normalized),
-                    normalize_illumination_rect,
-                    small_margins_rect, dbg
-            ));
-            if (picture_shape == RECTANGULAR_SHAPE) {
-                bw_mask.rectangularizeAreas(WHITE);
+            BinaryImage bw_mask(small_margins_rect.size(), BLACK);
 
-                picture_zones.remove_auto_zones();
+            if ((picture_shape_options.getPictureShape() != RECTANGULAR_SHAPE)
+                || !picture_shape_options.isAutoZonesFound()) {
+                bw_mask = estimateBinarizationMask(
+                        status, GrayImage(maybe_normalized),
+                        normalize_illumination_rect,
+                        small_margins_rect, dbg
+                );
 
+                // remove auto zones
+                picture_zones.applyToZoneSet(
+                        [](const Zone& zone) {
+                            return (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
+                                    == ZoneCategoryProperty::RECTANGULAR_OUTLINE);
+                        },
+                        [](std::list<Zone>& zones,
+                           const std::list<Zone>::iterator& iter) {
+                            zones.erase(iter);
+                        }
+                );
                 (*p_settings)->setPictureZones(*p_pageId, picture_zones);
-            } else if (picture_shape == QUADRO_SHAPE) {
-                if (picture_zones.auto_zones_found()) {
-                    bw_mask.fill(BLACK);
-                } else {
-                    std::vector<QRect> areas;
-                    bw_mask.rectangularizeAreasQuadro(WHITE, areas);
 
-                    QTransform xform1(m_xform.transform());
-                    xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
+                picture_shape_options.setAutoZonesFound(false);
+                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+            }
+            if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
+                && !picture_shape_options.isAutoZonesFound()) {
+                std::vector<QRect> areas;
+                bw_mask.rectangularizeAreas(areas, WHITE, picture_shape_options.getSensitivity());
 
-                    QTransform inv_xform(xform1.inverted());
+                QTransform xform1(m_xform.transform());
+                xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
 
-                    for (int i = 0; i < (int) areas.size(); i++) {
-                        QRectF area0(areas[i]);
-                        QPolygonF area1(area0);
-                        QPolygonF area(inv_xform.map(area1));
+                QTransform inv_xform(xform1.inverted());
 
-                        Zone zone1(area);
+                for (int i = 0; i < (int) areas.size(); i++) {
+                    QRectF area0(areas[i]);
+                    QPolygonF area1(area0);
+                    QPolygonF area(inv_xform.map(area1));
 
-                        picture_zones.add(zone1);
-                    }
+                    Zone zone1(area);
 
-                    (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+                    picture_zones.add(zone1);
                 }
-            } else {
-                picture_zones.remove_auto_zones();
-
                 (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+
+                picture_shape_options.setAutoZonesFound(true);
+                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+
+                bw_mask.fill(BLACK);
             }
 
             if (dbg) {
@@ -879,13 +889,13 @@ namespace output {
                                                  FilterData const& input,
                                                  ZoneSet& picture_zones,
                                                  ZoneSet const& fill_zones,
+                                                 PictureShapeOptions picture_shape_options,
                                                  DewarpingOptions dewarping_options,
                                                  DistortionModel& distortion_model,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
                                                  imageproc::BinaryImage* speckles_image,
                                                  DebugImages* dbg,
-                                                 PictureShape picture_shape,
                                                  PageId* p_pageId,
                                                  IntrusivePtr<Settings>* p_settings,
                                                  SplitImage* splitImage) const {
@@ -1034,49 +1044,60 @@ namespace output {
 
             status.throwIfCancelled();
         } else if (render_params.mixedOutput()) {
-            estimateBinarizationMask(
-                    status, GrayImage(warped_gray_output),
-                    normalize_illumination_rect,
-                    small_margins_rect, dbg
-            ).swap(warped_bw_mask);
-            if (dbg) {
-                dbg->add(warped_bw_mask, "warped_bw_mask");
-            }
+            warped_bw_mask = BinaryImage(small_margins_rect.size(), BLACK);
 
-            if (picture_shape == RECTANGULAR_SHAPE) {
-                warped_bw_mask.rectangularizeAreas(WHITE);
-
-                picture_zones.remove_auto_zones();
-
-                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
-            } else if (picture_shape == QUADRO_SHAPE) {
-                if (picture_zones.auto_zones_found()) {
-                    warped_bw_mask.fill(BLACK);
-                } else {
-                    std::vector<QRect> areas;
-                    warped_bw_mask.rectangularizeAreasQuadro(WHITE, areas);
-
-                    QTransform xform1(m_xform.transform());
-                    xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
-
-                    QTransform inv_xform(xform1.inverted());
-
-                    for (int i = 0; i < (int) areas.size(); i++) {
-                        QRectF area0(areas[i]);
-                        QPolygonF area1(area0);
-                        QPolygonF area(inv_xform.map(area1));
-
-                        Zone zone1(area);
-
-                        picture_zones.add(zone1);
-                    }
-
-                    (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+            if ((picture_shape_options.getPictureShape() != RECTANGULAR_SHAPE)
+                || !picture_shape_options.isAutoZonesFound()) {
+                warped_bw_mask = estimateBinarizationMask(
+                        status, GrayImage(warped_gray_output),
+                        normalize_illumination_rect,
+                        small_margins_rect, dbg
+                );
+                if (dbg) {
+                    dbg->add(warped_bw_mask, "warped_bw_mask");
                 }
-            } else {
-                picture_zones.remove_auto_zones();
 
+                // remove auto zones
+                picture_zones.applyToZoneSet(
+                        [](const Zone& zone) {
+                            return (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
+                                    == ZoneCategoryProperty::RECTANGULAR_OUTLINE);
+                        },
+                        [](std::list<Zone>& zones,
+                           const std::list<Zone>::iterator& iter) {
+                            zones.erase(iter);
+                        }
+                );
                 (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+
+                picture_shape_options.setAutoZonesFound(false);
+                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+            }
+            if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
+                && !picture_shape_options.isAutoZonesFound()) {
+                std::vector<QRect> areas;
+                warped_bw_mask.rectangularizeAreas(areas, WHITE, picture_shape_options.getSensitivity());
+
+                QTransform xform1(m_xform.transform());
+                xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
+
+                QTransform inv_xform(xform1.inverted());
+
+                for (int i = 0; i < (int) areas.size(); i++) {
+                    QRectF area0(areas[i]);
+                    QPolygonF area1(area0);
+                    QPolygonF area(inv_xform.map(area1));
+
+                    Zone zone1(area);
+
+                    picture_zones.add(zone1);
+                }
+                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+
+                picture_shape_options.setAutoZonesFound(true);
+                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+
+                warped_bw_mask.fill(BLACK);
             }
 
             status.throwIfCancelled();

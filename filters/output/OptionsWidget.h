@@ -37,6 +37,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QObjectCleanupHandler>
 #include <memory>
+#include <QtCore/QTimer>
 
 namespace dewarping {
     class DistortionModel;
@@ -99,6 +100,8 @@ namespace output {
 
         void pictureShapeChanged(int idx);
 
+        void pictureShapeSensitivityChanged(int value);
+
         void cutMarginsToggled(bool checked);
 
         void equalizeIlluminationToggled(bool checked);
@@ -141,6 +144,8 @@ namespace output {
 
         void binarizationOptionsChanged(int idx);
 
+        void sendReloadRequested();
+
     private:
         void handleDespeckleLevelChange(DespeckleLevel level);
 
@@ -160,11 +165,12 @@ namespace output {
         Dpi m_outputDpi;
         ColorParams m_colorParams;
         SplittingOptions m_splittingOptions;
-        PictureShape m_pictureShape;
+        PictureShapeOptions m_pictureShapeOptions;
         DepthPerception m_depthPerception;
         DewarpingOptions m_dewarpingOptions;
         DespeckleLevel m_despeckleLevel;
         ImageViewTab m_lastTab;
+        QTimer delayedReloadRequest;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

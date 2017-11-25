@@ -49,31 +49,14 @@ QDomElement ZoneSet::toXml(QDomDocument& doc, QString const& name) const {
     return el;
 }
 
-void ZoneSet::remove_auto_zones() {
-    typedef output::ZoneCategoryProperty ZLP;
-
+void ZoneSet::applyToZoneSet(const std::function<bool(const Zone& zone)>& predicate,
+                             const std::function<void(std::list<Zone>& zones,
+                                                const std::list<Zone>::iterator& iter)>& consumer) {
     for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
-        if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE) {
-            m_zones.erase(it++);
-        } else {
-            ++it;
+        if (predicate(*it)) {
+            consumer(m_zones, it);
         }
+        it++;
     }
-}
-
-bool ZoneSet::auto_zones_found() {
-    typedef output::ZoneCategoryProperty ZLP;
-
-    for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
-        if (it->properties().locateOrDefault<ZLP>()->zone_category()
-            == ZLP::RECTANGULAR_OUTLINE) {
-            return true;
-        } else {
-            it++;
-        }
-    }
-
-    return false;
 }
 

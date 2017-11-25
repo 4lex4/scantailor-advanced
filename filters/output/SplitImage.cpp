@@ -177,7 +177,7 @@ namespace output {
         SplitImage::backgroundImage = backgroundImage;
     }
 
-    void SplitImage::applyToLayerImages(std::function<void(QImage&)> function) {
+    void SplitImage::applyToLayerImages(const std::function<void(QImage&)>& function) {
         if (!foregroundImage.isNull()) {
             function(foregroundImage);
         }

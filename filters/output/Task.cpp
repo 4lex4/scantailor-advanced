@@ -186,7 +186,7 @@ namespace output {
                 generator.outputImageSize(), generator.outputContentRect(),
                 new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                 params.dewarpingOptions(), params.distortionModel(),
-                params.depthPerception(), params.despeckleLevel(), params.pictureShape()
+                params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions()
         );
 
         ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(m_pageId));
@@ -336,13 +336,12 @@ namespace output {
             // there, if dewarping mode is AUTO.
             SplitImage splitImage;
             out_img = generator.process(
-                    status, data, new_picture_zones, new_fill_zones,
+                    status, data, new_picture_zones, new_fill_zones, params.pictureShapeOptions(),
                     params.dewarpingOptions(), distortion_model,
                     params.depthPerception(),
                     write_automask ? &automask_img : 0,
                     write_speckles_file ? &speckles_img : 0,
                     m_ptrDbg.get(),
-                    params.pictureShape(),
                     &m_pageId, &m_ptrSettings,
                     &splitImage
             );

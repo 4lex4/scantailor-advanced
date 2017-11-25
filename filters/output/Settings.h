@@ -58,7 +58,7 @@ namespace output {
 
         void setColorParams(PageId const& page_id, ColorParams const& prms);
 
-        void setPictureShape(PageId const& page_id, PictureShape picture_shape);
+        void setPictureShapeOptions(PageId const& page_id, PictureShapeOptions picture_shape_options);
 
         void setDpi(PageId const& page_id, Dpi const& dpi);
 

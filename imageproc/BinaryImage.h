@@ -197,9 +197,7 @@ namespace imageproc {
          */
         QRect contentBoundingBox(BWColor content_color = BLACK) const;
 
-        void rectangularizeAreas(BWColor content_color = BLACK);
-
-        void rectangularizeAreasQuadro(BWColor content_color, std::vector<QRect>& areas);
+        void rectangularizeAreas(std::vector<QRect>& areas, const BWColor content_color, const int sensitivity);
 
         int width() const {
             return m_width;

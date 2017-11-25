@@ -70,7 +70,7 @@ namespace output {
                         generator.outputImageSize(), generator.outputContentRect(),
                         new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.dewarpingOptions(), params.distortionModel(),
-                        params.depthPerception(), params.despeckleLevel(), params.pictureShape()
+                        params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions()
                 );
 
                 if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {

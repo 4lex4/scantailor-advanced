@@ -531,84 +531,46 @@ namespace imageproc {
         return QRect(left, top, w - right - left, bottom - top + 1);
     }  // BinaryImage::contentBoundingBox
 
-    void BinaryImage::rectangularizeAreas(BWColor content_color) {
-        if (isNull()) {
-            return;
+    namespace {
+        const int MultiplyDeBruijnBitPosition[32] = {
+                0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
+                31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+        };
+
+        const int MultiplyDeBruijnBitPosition2[32] = {
+                0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
+                8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
+        };
+
+        /**
+         * aka "Count the consecutive zero bits (trailing) on the right with multiply and lookup"
+         * from Bit Twiddling Hacks By Sean Eron Anderson
+         *
+         * https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup
+        */
+        inline const int countConsecutiveZeroBitsTrailing(uint32_t v) {
+            return MultiplyDeBruijnBitPosition[((uint32_t) ((v & -v) * 0x077CB531U)) >> 27];
         }
 
+        /**
+         * aka "Find the log base 2 of an N-bit integer in O(lg(N)) operations with multiply and lookup"
+         * from Bit Twiddling Hacks By Sean Eron Anderson
+         *
+         * https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
+        */
+        inline const int findPositionOfTheHighestBitSet(uint32_t v) {
+            v |= v >> 1; // first round down to one less than a power of 2
+            v |= v >> 2;
+            v |= v >> 4;
+            v |= v >> 8;
+            v |= v >> 16;
 
-        int const w = m_width;
-        int const h = m_height;
-        int const wpl = m_wpl;
-        int const last_word_idx = (w - 1) >> 5;
-        int const last_word_bits = w - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
-        uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const modifier = (content_color == WHITE) ? ~uint32_t(0) : 0;
-        uint32_t const* const data = this->data();
-        std::vector<QRect> areas;
-
-        uint32_t const* line = data;
-        for (int y = 0; y < h; ++y, line += wpl) {
-            QRect area;
-            for (int i = 0; i <= last_word_idx; ++i) {
-                uint32_t word = line[i] ^modifier;
-                if (i == last_word_idx) {
-                    word = (line[last_word_idx] ^ modifier) & last_word_mask;
-                }
-                if (word) {
-                    if (area.isEmpty()) {
-                        area.setLeft(i << 5);
-                        area.setRight(((i + 1) << 5) - 1);
-                        area.setTop(y);
-                        area.setBottom(y);
-                    } else {
-                        area.setRight(((i + 1) << 5) - 1);
-                    }
-                } else {
-                    if (!area.isEmpty()) {
-                        areas.push_back(QRect(area));
-                    }
-                    area = QRect();
-                }
-            }
-            if (!area.isEmpty()) {
-                areas.push_back(QRect(area));
-            }
+            return MultiplyDeBruijnBitPosition2[(uint32_t) (v * 0x07C4ACDDU) >> 27];
         }
+    }
 
-        bool join = true;
-        int overlap = 16;
-        while (join) {
-            join = false;
-            std::vector<QRect> tmp;
-            for (QRect area : areas) {
-                QRect enlArea(area.adjusted(-overlap, -overlap, overlap, overlap));
-                bool intersected = false;
-                std::vector<QRect> tmp2;
-                for (QRect ta : tmp) {
-                    QRect enlTA(ta.adjusted(-overlap, -overlap, overlap, overlap));
-                    if (enlArea.intersects(enlTA)) {
-                        intersected = true;
-                        join = true;
-                        tmp2.push_back(area.united(ta));
-                    } else {
-                        tmp2.push_back(ta);
-                    }
-                }
-                if (!intersected) {
-                    tmp2.push_back(area);
-                }
-                tmp = tmp2;
-            }
-            areas = tmp;
-        }
-        for (QRect area : areas) {
-            fill(area, WHITE);
-        }
-    }      // BinaryImage::rectangularizeAreas
-
-    void BinaryImage::rectangularizeAreasQuadro(BWColor content_color, std::vector<QRect>& areas) {
+    void
+    BinaryImage::rectangularizeAreas(std::vector<QRect>& areas, const BWColor content_color, const int sensitivity) {
         if (isNull()) {
             return;
         }
@@ -624,44 +586,56 @@ namespace imageproc {
         uint32_t const* const data = this->data();
 
         uint32_t const* line = data;
+        // create list of filled continuous blocks on each line
         for (int y = 0; y < h; ++y, line += wpl) {
             QRect area;
+            area.setTop(y);
+            area.setBottom(y);
+            bool area_found = false;
             for (int i = 0; i <= last_word_idx; ++i) {
                 uint32_t word = line[i] ^modifier;
                 if (i == last_word_idx) {
-                    word = (line[last_word_idx] ^ modifier) & last_word_mask;
+                    // The last (possibly incomplete) word.
+                    word &= last_word_mask;
                 }
                 if (word) {
-                    if (area.isEmpty()) {
-                        area.setLeft(i << 5);
-                        area.setRight(((i + 1) << 5) - 1);
-                        area.setTop(y);
-                        area.setBottom(y);
-                    } else {
-                        area.setRight(((i + 1) << 5) - 1);
+                    if (!area_found) {
+                        area.setLeft((i << 5) + 31 - findPositionOfTheHighestBitSet(~line[i]));
+                        area_found = true;
                     }
+                    area.setRight(((i + 1) << 5) - 1);
                 } else {
-                    if (!area.isEmpty()) {
+                    if (area_found) {
+                        uint32_t v = line[i - 1];
+                        if (v) {
+                            area.setRight(area.right() - countConsecutiveZeroBitsTrailing(~v));
+                        }
                         areas.push_back(QRect(area));
+                        area_found = false;
                     }
-                    area = QRect();
                 }
             }
-            if (!area.isEmpty()) {
+            if (area_found) {
+                uint32_t v = line[last_word_idx];
+                if (v) {
+                    area.setRight(area.right() - countConsecutiveZeroBitsTrailing(~v));
+                }
                 areas.push_back(QRect(area));
             }
         }
 
+        // join adjacent blocks of areas
         bool join = true;
         int overlap = 16;
         while (join) {
             join = false;
             std::vector<QRect> tmp;
-            for (QRect area : areas) {
+            for (QRect area: areas) {
+                // take an area and try to join with something in tmp
                 QRect enlArea(area.adjusted(-overlap, -overlap, overlap, overlap));
                 bool intersected = false;
                 std::vector<QRect> tmp2;
-                for (QRect ta : tmp) {
+                for (QRect ta: tmp) {
                     QRect enlTA(ta.adjusted(-overlap, -overlap, overlap, overlap));
                     if (enlArea.intersects(enlTA)) {
                         intersected = true;
@@ -679,96 +653,94 @@ namespace imageproc {
             areas = tmp;
         }
 
-        for (QRect& area : areas) {
-            QRect tmp_area = area;
+        const float percent = (float) (sensitivity / 100.);
+        if (percent < 1.) {
+            for (QRect& area: areas) {
 
-            int word_width = area.width() >> 5;
+                int word_width = area.width() >> 5;
 
-            int left = area.left();
-            int left_word = left >> 5;
-            int right = area.x() + area.width();
-            int right_word = right >> 5;
-            int top = area.top();
-            int bottom = area.bottom();
+                int left = area.left();
+                int left_word = left >> 5;
+                int right = area.x() + area.width();
+                int right_word = right >> 5;
+                int top = area.top();
+                int bottom = area.bottom();
 
-            uint32_t* pdata = this->data();
+                uint32_t* pdata = this->data();
 
-            float percent = 0.25;
-            int criterium = (int) (area.width() * percent);
-            int criterium_word = (int) (word_width * percent);
+                const int criterium = (int) (area.width() * percent);
+                const int criterium_word = (int) (word_width * percent);
 
-            for (int y = top; y < bottom; y++) {
-                line = pdata + m_wpl * y;
-
-                int mword = 0;
-
-                for (int k = left_word; k < right_word; k++) {
-                    if (!line[k]) {
-                        mword++;
-                    }
-                }
-                if (mword > criterium_word) {
-                    area.setTop(y);
-
-                    break;
-                }
-            }
-
-            for (int y = bottom; y > top; y--) {
-                line = pdata + m_wpl * y;
-
-                int mword = 0;
-
-                for (int k = left_word; k < right_word; k++) {
-                    if (!line[k]) {
-                        mword++;
-                    }
-                }
-
-                if (mword > criterium_word) {
-                    area.setBottom(y);
-
-                    break;
-                }
-            }
-
-            for (int x = left; x < right; x++) {
-                int mword = 0;
-
+                // cut the dirty upper lines
                 for (int y = top; y < bottom; y++) {
-                    if (WHITE == getPixel(x, y)) {
-                        mword++;
+                    line = pdata + m_wpl * y;
+
+                    int mword = 0;
+
+                    for (int k = left_word; k < right_word; k++) {
+                        if (!line[k]) {
+                            mword++; //count the totally white words
+                        }
+                    }
+
+                    if (mword > criterium_word) {
+                        area.setTop(y);
+                        break;
                     }
                 }
 
-                if (mword > criterium) {
-                    area.setLeft(x);
+                // cut the dirty bottom lines
+                for (int y = bottom; y > top; y--) {
+                    line = pdata + m_wpl * y;
 
-                    break;
-                }
-            }
+                    int mword = 0;
 
-            for (int x = right; x > left; x--) {
-                int mword = 0;
+                    for (int k = left_word; k < right_word; k++) {
+                        if (!line[k]) {
+                            mword++;
+                        }
+                    }
 
-                for (int y = top; y < bottom; y++) {
-                    if (WHITE == getPixel(x, y)) {
-                        mword++;
+                    if (mword > criterium_word) {
+                        area.setBottom(y);
+                        break;
                     }
                 }
 
-                if (mword > criterium) {
-                    area.setRight(x);
+                for (int x = left; x < right; x++) {
+                    int mword = 0;
 
-                    break;
+                    for (int y = top; y < bottom; y++) {
+                        if (WHITE == getPixel(x, y)) {
+                            mword++;
+                        }
+                    }
+
+                    if (mword > criterium) {
+                        area.setLeft(x);
+                        break;
+                    }
                 }
+
+                for (int x = right; x > left; x--) {
+                    int mword = 0;
+
+                    for (int y = top; y < bottom; y++) {
+                        if (WHITE == getPixel(x, y)) {
+                            mword++;
+                        }
+                    }
+
+                    if (mword > criterium) {
+                        area.setRight(x);
+                        break;
+                    }
+                }
+
+                area = area.intersected(this->rect());
             }
-
-            area = area.intersected(this->rect());
-
-            fill(tmp_area, BLACK);
         }
-    }      // BinaryImage::rectangularizeAreasQuadro
+    }
 
     void BinaryImage::setPixel(int x, int y, BWColor color) {
         uint32_t* line = this->data() + m_wpl * y;

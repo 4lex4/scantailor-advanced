@@ -90,9 +90,9 @@ public:
         return const_iterator(m_zones.end());
     }
 
-    void remove_auto_zones();
-
-    bool auto_zones_found();
+    void applyToZoneSet(const std::function<bool(const Zone& zone)>& predicate,
+                        const std::function<void(std::list<Zone>& zones,
+                                                 const std::list<Zone>::iterator& iter)>& consumer);
 
 private:
     std::list<Zone> m_zones;

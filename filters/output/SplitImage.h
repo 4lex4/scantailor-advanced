@@ -37,7 +37,7 @@ namespace output {
 
         void setMask(const imageproc::BinaryImage& mask, bool binariryForeground);
 
-        void applyToLayerImages(std::function<void(QImage&)> function);
+        void applyToLayerImages(const std::function<void(QImage&)>& function);
 
         bool isNull() const;
 

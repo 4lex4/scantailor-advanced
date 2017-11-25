@@ -114,16 +114,16 @@ namespace output {
         }
     }
 
-    void Settings::setPictureShape(PageId const& page_id, PictureShape picture_shape) {
+    void Settings::setPictureShapeOptions(PageId const& page_id, PictureShapeOptions picture_shape_options) {
         QMutexLocker const locker(&m_mutex);
 
         PerPageParams::iterator const it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
-            params.setPictureShape(picture_shape);
+            params.setPictureShapeOptions(picture_shape_options);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
         } else {
-            it->second.setPictureShape(picture_shape);
+            it->second.setPictureShapeOptions(picture_shape_options);
         }
     }
 

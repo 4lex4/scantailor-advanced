@@ -37,6 +37,8 @@ namespace output {
               m_lastTab(TAB_OUTPUT) {
         setupUi(this);
 
+        delayedReloadRequest.setSingleShot(true);
+
         depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
         depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
 
@@ -68,7 +70,6 @@ namespace output {
 
         pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
-        pictureShapeSelector->addItem(tr("Quadro"), QUADRO_SHAPE);
 
         updateDpiDisplay();
         updateColorsDisplay();
@@ -97,6 +98,10 @@ namespace output {
         connect(
                 pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
                 this, SLOT(pictureShapeChanged(int))
+        );
+        connect(
+                pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
+                this, SLOT(pictureShapeSensitivityChanged(int))
         );
         connect(
                 cutMarginsCB, SIGNAL(clicked(bool)),
@@ -170,13 +175,14 @@ namespace output {
                 applyDespeckleButton, SIGNAL(clicked()),
                 this, SLOT(applyDespeckleButtonClicked())
         );
-
         connect(
                 depthPerceptionSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(depthPerceptionChangedSlot(int))
         );
-
-
+        connect(
+                &delayedReloadRequest, SIGNAL(timeout()),
+                this, SLOT(sendReloadRequested())
+        );
     }
 
     OptionsWidget::~OptionsWidget() {
@@ -188,7 +194,7 @@ namespace output {
         m_outputDpi = params.outputDpi();
         m_colorParams = params.colorParams();
         m_splittingOptions = params.splittingOptions();
-        m_pictureShape = params.pictureShape();
+        m_pictureShapeOptions = params.pictureShapeOptions();
         m_dewarpingOptions = params.dewarpingOptions();
         m_depthPerception = params.depthPerception();
         m_despeckleLevel = params.despeckleLevel();
@@ -204,6 +210,7 @@ namespace output {
     }
 
     void OptionsWidget::postUpdateUI() {
+        m_pictureShapeOptions = m_ptrSettings->getParams(m_pageId).pictureShapeOptions();
     }
 
     void OptionsWidget::tabChanged(ImageViewTab const tab) {
@@ -255,9 +262,16 @@ namespace output {
     }
 
     void OptionsWidget::pictureShapeChanged(int const idx) {
-        m_pictureShape = (PictureShape) (pictureShapeSelector->itemData(idx).toInt());
-        m_ptrSettings->setPictureShape(m_pageId, m_pictureShape);
+        m_pictureShapeOptions.setPictureShape((PictureShape) (pictureShapeSelector->itemData(idx).toInt()));
+        m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
         emit reloadRequested();
+    }
+
+    void OptionsWidget::pictureShapeSensitivityChanged(int value) {
+        m_pictureShapeOptions.setSensitivity(value);
+        m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
+        delayedReloadRequest.start(750);
     }
 
     void OptionsWidget::cutMarginsToggled(bool const checked) {
@@ -348,7 +362,7 @@ namespace output {
     void OptionsWidget::applyColorsConfirmed(std::set<PageId> const& pages) {
         for (PageId const& page_id : pages) {
             m_ptrSettings->setColorParams(page_id, m_colorParams);
-            m_ptrSettings->setPictureShape(page_id, m_pictureShape);
+            m_ptrSettings->setPictureShapeOptions(page_id, m_pictureShapeOptions);
         }
 
         if (pages.size() > 1) {
@@ -699,8 +713,10 @@ namespace output {
         fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
         if (picture_shape_visible) {
-            int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShape);
+            int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
             pictureShapeSelector->setCurrentIndex(picture_shape_idx);
+            pictureShapeSensitivitySB->setValue(m_pictureShapeOptions.getSensitivity());
+            pictureShapeSensitivityOptions->setVisible(m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE);
         }
 
         if (threshold_options_visible) {
@@ -823,6 +839,10 @@ namespace output {
     void OptionsWidget::addBinarizationOptionsWidget(BinarizationOptionsWidget* widget) {
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
         binarizationOptions->addWidget(widget);
+    }
+
+    void OptionsWidget::sendReloadRequested() {
+         emit reloadRequested();
     }
 
 }  // namespace output

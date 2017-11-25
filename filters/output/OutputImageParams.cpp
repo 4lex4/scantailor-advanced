@@ -33,14 +33,14 @@ namespace output {
                                          dewarping::DistortionModel const& distortion_model,
                                          DepthPerception const& depth_perception,
                                          DespeckleLevel const despeckle_level,
-                                         PictureShape const picture_shape)
+                                         PictureShapeOptions const picture_shape_options)
             : m_size(out_image_size),
               m_contentRect(content_rect),
               m_cropArea(xform.resultingPreCropArea()),
               m_dpi(dpi),
               m_colorParams(color_params),
               m_splittingOptions(splitting_options),
-              m_pictureShape(picture_shape),
+              m_pictureShapeOptions(picture_shape_options),
               m_distortionModel(distortion_model),
               m_depthPerception(depth_perception),
               m_dewarpingOptions(dewarping_options),
@@ -58,7 +58,7 @@ namespace output {
               m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_colorParams(el.namedItem("color-params").toElement()),
               m_splittingOptions(el.namedItem("splitting").toElement()),
-              m_pictureShape(parsePictureShape(el.attribute("pictureShape"))),
+              m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
               m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
@@ -76,7 +76,7 @@ namespace output {
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
         el.appendChild(m_colorParams.toXml(doc, "color-params"));
         el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
-        el.setAttribute("pictureShape", formatPictureShape(m_pictureShape));
+        el.appendChild(m_pictureShapeOptions.toXml(doc, "picture-shape-options"));
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
         el.setAttribute("depthPerception", m_depthPerception.toString());
         el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
@@ -111,7 +111,7 @@ namespace output {
             return false;
         }
 
-        if (m_pictureShape != other.m_pictureShape) {
+        if (m_pictureShapeOptions != other.m_pictureShapeOptions) {
             return false;
         }
 
@@ -162,35 +162,7 @@ namespace output {
 
         return true;
     }
-
-    PictureShape OutputImageParams::parsePictureShape(const QString& str) {
-        if (str == "quadro") {
-            return QUADRO_SHAPE;
-        } else if (str == "rectangular") {
-            return RECTANGULAR_SHAPE;
-        } else {
-            return FREE_SHAPE;
-        }
-    }
-
-    QString OutputImageParams::formatPictureShape(PictureShape type) {
-        QString str = "";
-        switch (type) {
-            case FREE_SHAPE:
-                str = "free";
-                break;
-            case RECTANGULAR_SHAPE:
-                str = "rectangular";
-                break;
-            case QUADRO_SHAPE:
-                str = "quadro";
-                break;
-        }
-
-        return str;
-    }
-    // OutputImageParams::colorParamsMatch
-
+    
 /*=============================== PartialXform =============================*/
 
     OutputImageParams::PartialXform::PartialXform()

@@ -24,8 +24,7 @@
 namespace output {
     Params::Params()
             : m_dpi(CommandLine::get().getDefaultOutputDpi()),
-              m_despeckleLevel(DESPECKLE_CAUTIOUS),
-              m_pictureShape(FREE_SHAPE) {
+              m_despeckleLevel(DESPECKLE_CAUTIOUS) {
     }
 
     Params::Params(QDomElement const& el)
@@ -34,7 +33,7 @@ namespace output {
               m_depthPerception(el.attribute("depthPerception")),
               m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
-              m_pictureShape((PictureShape) (el.attribute("pictureShape").toInt())),
+              m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
               m_splittingOptions(el.namedItem("splitting").toElement()) {
         QDomElement const cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
@@ -53,7 +52,7 @@ namespace output {
 
         QDomElement el(doc.createElement(name));
         el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
-        el.setAttribute("pictureShape", (int) m_pictureShape);
+        el.appendChild(m_pictureShapeOptions.toXml(doc, "picture-shape-options"));
         el.setAttribute("depthPerception", m_depthPerception.toString());
         el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));

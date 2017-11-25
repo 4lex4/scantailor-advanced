@@ -51,7 +51,7 @@ namespace output {
                           dewarping::DistortionModel const& distortion_model,
                           DepthPerception const& depth_perception,
                           DespeckleLevel despeckle_level,
-                          PictureShape picture_shape);
+                          PictureShapeOptions const picture_shape_options);
 
         explicit OutputImageParams(QDomElement const& el);
 
@@ -105,10 +105,6 @@ namespace output {
             double m_22;
         };
 
-        static PictureShape parsePictureShape(const QString& str);
-
-        static QString formatPictureShape(PictureShape type);
-
         static bool colorParamsMatch(ColorParams const& cp1,
                                      DespeckleLevel const dl1,
                                      SplittingOptions const& so1,
@@ -142,7 +138,7 @@ namespace output {
         SplittingOptions m_splittingOptions;
 
         /** Shape of the pictures in image */
-        PictureShape m_pictureShape;
+        PictureShapeOptions m_pictureShapeOptions;
 
         /** Two curves and two lines connecting their endpoints.  Used for dewarping. */
         dewarping::DistortionModel m_distortionModel;
@@ -150,7 +146,7 @@ namespace output {
         /** \see imageproc::CylindricalSurfaceDewarper */
         DepthPerception m_depthPerception;
 
-        /** Off / Auto / Manual */
+        /** Dewarping mode (Off / Auto / Manual) and options */
         DewarpingOptions m_dewarpingOptions;
 
         /** Despeckle level of the output image. */

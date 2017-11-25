@@ -25,17 +25,12 @@
 #include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
+#include "PictureShapeOptions.h"
 
 class QDomDocument;
 class QDomElement;
 
 namespace output {
-    enum PictureShape {
-        FREE_SHAPE,
-        RECTANGULAR_SHAPE,
-        QUADRO_SHAPE
-    };
-
     class Params {
     public:
         Params();
@@ -54,12 +49,12 @@ namespace output {
             return m_colorParams;
         }
 
-        PictureShape pictureShape() const {
-            return m_pictureShape;
+        PictureShapeOptions pictureShapeOptions() const {
+            return m_pictureShapeOptions;
         }
 
-        void setPictureShape(PictureShape ps) {
-            m_pictureShape = ps;
+        void setPictureShapeOptions(PictureShapeOptions opt) {
+            m_pictureShapeOptions = opt;
         }
 
         void setColorParams(ColorParams const& params) {
@@ -116,7 +111,7 @@ namespace output {
         Dpi m_dpi;
         ColorParams m_colorParams;
         SplittingOptions m_splittingOptions;
-        PictureShape m_pictureShape;
+        PictureShapeOptions m_pictureShapeOptions;
         dewarping::DistortionModel m_distortionModel;
         DepthPerception m_depthPerception;
         DewarpingOptions m_dewarpingOptions;

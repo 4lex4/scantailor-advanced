@@ -109,6 +109,7 @@ namespace output {
                        PictureShapeOptions picture_shape_options,
                        DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
+                       QTransform& postTransform,
                        DepthPerception const& depth_perception,
                        imageproc::BinaryImage* auto_picture_mask = 0,
                        imageproc::BinaryImage* speckles_image = 0,
@@ -132,6 +133,7 @@ namespace output {
                            PictureShapeOptions picture_shape_options,
                            DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
+                           QTransform& postTransform,
                            DepthPerception const& depth_perception,
                            imageproc::BinaryImage* auto_picture_mask = 0,
                            imageproc::BinaryImage* speckles_image = 0,
@@ -159,6 +161,7 @@ namespace output {
                                     PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
+                                    QTransform& postTransform,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask = 0,
                                     imageproc::BinaryImage* speckles_image = 0,
@@ -280,15 +283,25 @@ namespace output {
                                                   DebugImages* dbg,
                                                   QImage const* morph_background = 0) const;
 
-        void applyFillZonesInPlace(QImage& img, ZoneSet const& zones, boost::function<QPointF(
-                QPointF const&)> const& orig_to_output)
-        const;
+        void applyFillZonesInPlace(QImage& img,
+                                   ZoneSet const& zones,
+                                   boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                   QTransform const& xform) const;
+
+        void applyFillZonesInPlace(QImage& img,
+                                   ZoneSet const& zones,
+                                   boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
         void applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const;
 
-        void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones, boost::function<QPointF(
-                QPointF const&)> const& orig_to_output)
-        const;
+        void applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                   ZoneSet const& zones,
+                                   boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                   QTransform const& xform) const;
+
+        void applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                   ZoneSet const& zones,
+                                   boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const;
 

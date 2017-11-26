@@ -270,6 +270,7 @@ namespace output {
                                     PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
                                     DistortionModel& distortion_model,
+                                    QTransform& postTransform,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
@@ -280,7 +281,7 @@ namespace output {
         QImage image(
                 processImpl(
                         status, input, picture_zones, fill_zones, picture_shape_options,
-                        dewarping_options, distortion_model, depth_perception,
+                        dewarping_options, distortion_model, postTransform, depth_perception,
                         auto_picture_mask, speckles_image, dbg, p_pageId,
                         p_settings,
                         splitImage
@@ -461,6 +462,7 @@ namespace output {
                                         PictureShapeOptions picture_shape_options,
                                         DewarpingOptions dewarping_options,
                                         DistortionModel& distortion_model,
+                                        QTransform& postTransform,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
                                         imageproc::BinaryImage* speckles_image,
@@ -473,7 +475,7 @@ namespace output {
             || ((dewarping_options.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
                     status, input, picture_zones, fill_zones, picture_shape_options,
-                    dewarping_options, distortion_model, depth_perception,
+                    dewarping_options, distortion_model, postTransform, depth_perception,
                     auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
@@ -657,19 +659,19 @@ namespace output {
 
             status.throwIfCancelled();
 
+            QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+            QRect const dst_rect(contentRect);
+            rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
+            bw_content.release();  // Save memory.
+
             // It's important to keep despeckling the very last operation
             // affecting the binary part of the output. That's because
             // we will be reconstructing the input to this despeckling
             // operation from the final output file.
             maybeDespeckleInPlace(
-                    bw_content, small_margins_rect, contentRect,
-                    m_despeckleLevel, speckles_image, m_dpi, status, dbg
+                    dst, m_outRect, m_outRect, m_despeckleLevel,
+                    speckles_image, m_dpi, status, dbg
             );
-
-            QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-            QRect const dst_rect(contentRect);
-            rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
-            bw_content.release();  // Save memory.
 
             applyFillZonesInPlace(dst, fill_zones);
 
@@ -892,6 +894,7 @@ namespace output {
                                                  PictureShapeOptions picture_shape_options,
                                                  DewarpingOptions dewarping_options,
                                                  DistortionModel& distortion_model,
+                                                 QTransform& postTransform,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
                                                  imageproc::BinaryImage* speckles_image,
@@ -1399,8 +1402,19 @@ namespace output {
                 boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
         );
 
-        applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
         double deskew_angle = maybe_deskew(&dewarped, dewarping_options, outsideBackgroundColor);
+
+        {
+            QTransform post_rotate;
+
+            QPointF center(m_outRect.width() / 2, m_outRect.height() / 2);
+
+            post_rotate.translate(center.x(), center.y());
+            post_rotate.rotate(-deskew_angle);
+            post_rotate.translate(-center.x(), -center.y());
+
+            postTransform = post_rotate;
+        }
 
         BinaryImage dewarping_content_area_mask(input.grayImage().size(), BLACK);
         QPolygonF content_area = orig_image_crop_area;
@@ -1470,6 +1484,8 @@ namespace output {
                     dewarped_bw_content, m_outRect, m_outRect, m_despeckleLevel,
                     speckles_image, m_dpi, status, dbg
             );
+
+            applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output, postTransform);
 
             return dewarped_bw_content.toQImage();
         }
@@ -1593,7 +1609,6 @@ namespace output {
                     }
                     orig_without_illumination = QImage();
 
-                    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
                     deskew(&dewarped, deskew_angle, outsideBackgroundColor);
 
                     status.throwIfCancelled();
@@ -1620,6 +1635,8 @@ namespace output {
             outsideBackgroundColor = outsideBackgroundColorBW;
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
+
+        applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, postTransform);
 
         if (render_params.splitOutput()) {
             splitImage->setBackgroundImage(dewarped);
@@ -2263,7 +2280,8 @@ namespace output {
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
                                                 ZoneSet const& zones,
-                                                boost::function<QPointF(QPointF const&)> const& orig_to_output)
+                                                boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                                QTransform const& xform)
     const {
         if (zones.empty()) {
             return;
@@ -2278,7 +2296,7 @@ namespace output {
 
             for (Zone const& zone : zones) {
                 QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
-                QPolygonF const poly(zone.spline().transformed(orig_to_output).toPolygon());
+                QPolygonF const poly(xform.map(zone.spline().transformed(orig_to_output).toPolygon()));
                 painter.setBrush(color);
                 painter.drawPolygon(poly, Qt::WindingFill);
             }
@@ -2289,6 +2307,15 @@ namespace output {
         } else {
             img = canvas.convertToFormat(img.format());
         }
+    }
+
+    void OutputGenerator::applyFillZonesInPlace(QImage& img,
+                                                ZoneSet const& zones,
+                                                boost::function<QPointF(QPointF const&)> const& orig_to_output)
+    const {
+        applyFillZonesInPlace(
+                img, zones, orig_to_output, QTransform()
+        );
     }
 
 /**
@@ -2303,9 +2330,10 @@ namespace output {
     }
 
     void
-    OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones, boost::function<QPointF(
-            QPointF const&)> const& orig_to_output)
-    const {
+    OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                           ZoneSet const& zones,
+                                           boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                           QTransform const& xform) const {
         if (zones.empty()) {
             return;
         }
@@ -2313,9 +2341,18 @@ namespace output {
         for (Zone const& zone : zones) {
             QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
             BWColor const bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
-            QPolygonF const poly(zone.spline().transformed(orig_to_output).toPolygon());
+            QPolygonF const poly(xform.map(zone.spline().transformed(orig_to_output).toPolygon()));
             PolygonRasterizer::fill(img, bw_color, poly, Qt::WindingFill);
         }
+    }
+
+    void
+    OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                           ZoneSet const& zones,
+                                           boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
+        applyFillZonesInPlace(
+                img, zones, orig_to_output, QTransform()
+        );
     }
 
 /**

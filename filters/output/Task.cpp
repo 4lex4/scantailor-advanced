@@ -59,6 +59,7 @@ namespace output {
                   std::unique_ptr<DebugImages> dbg_img,
                   Params const& params,
                   ImageTransformation const& xform,
+                  QTransform postTransform,
                   QRect const& virt_content_rect,
                   PageId const& page_id,
                   QImage const& orig_image,
@@ -81,6 +82,7 @@ namespace output {
         std::unique_ptr<DebugImages> m_ptrDbg;
         Params m_params;
         ImageTransformation m_xform;
+        QTransform m_outputPostTransform;
         QRect m_virtContentRect;
         PageId m_pageId;
         QImage m_origImage;
@@ -181,6 +183,9 @@ namespace output {
                 params.despeckleLevel(),
                 new_xform, content_rect_phys
         );
+
+        // store additional transformations after processing such as post deskew after dewarping
+        QTransform postTransform;
 
         OutputImageParams new_output_image_params(
                 generator.outputImageSize(), generator.outputContentRect(),
@@ -328,16 +333,17 @@ namespace output {
             automask_img = BinaryImage();
             speckles_img = BinaryImage();
 
+            // OutputGenerator will write a new distortion model
+            // there, if dewarping mode is AUTO.
             DistortionModel distortion_model;
             if (params.dewarpingOptions().mode() == DewarpingOptions::MANUAL) {
                 distortion_model = params.distortionModel();
             }
-            // OutputGenerator will write a new distortion model
-            // there, if dewarping mode is AUTO.
+
             SplitImage splitImage;
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones, params.pictureShapeOptions(),
-                    params.dewarpingOptions(), distortion_model,
+                    params.dewarpingOptions(), distortion_model, postTransform,
                     params.depthPerception(),
                     write_automask ? &automask_img : 0,
                     write_speckles_file ? &speckles_img : 0,
@@ -446,7 +452,7 @@ namespace output {
             return FilterResultPtr(
                     new UiUpdater(
                             m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params,
-                            new_xform, generator.outputContentRect(),
+                            new_xform, postTransform, generator.outputContentRect(),
                             m_pageId, data.origImage(), out_img, automask_img,
                             despeckle_state, despeckle_visualization,
                             m_batchProcessing, m_debug
@@ -492,6 +498,7 @@ namespace output {
                                std::unique_ptr<DebugImages> dbg_img,
                                Params const& params,
                                ImageTransformation const& xform,
+                               QTransform postTransform,
                                QRect const& virt_content_rect,
                                PageId const& page_id,
                                QImage const& orig_image,
@@ -506,6 +513,7 @@ namespace output {
               m_ptrDbg(std::move(dbg_img)),
               m_params(params),
               m_xform(xform),
+              m_outputPostTransform(postTransform),
               m_virtContentRect(virt_content_rect),
               m_pageId(page_id),
               m_origImage(orig_image),
@@ -587,7 +595,7 @@ namespace output {
             std::shared_ptr<DewarpingPointMapper> mapper(
                     new DewarpingPointMapper(
                             m_params.distortionModel(), m_params.depthPerception().value(),
-                            m_xform.transform(), m_virtContentRect
+                            m_xform.transform(), m_virtContentRect, m_outputPostTransform
                     )
             );
             orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);

@@ -19,10 +19,10 @@
 #ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_
 #define DEWARPING_DEWARPING_POINT_MAPPER_H_
 
+#include <QtGui/QTransform>
 #include "CylindricalSurfaceDewarper.h"
 
 class QRect;
-class QTransform;
 
 namespace dewarping {
     class DistortionModel;
@@ -32,7 +32,8 @@ namespace dewarping {
         DewarpingPointMapper(dewarping::DistortionModel const& distortion_model,
                              double depth_perception,
                              QTransform const& distortion_model_to_output,
-                             QRect const& output_content_rect);
+                             QRect const& output_content_rect,
+                             const QTransform& postTransform = QTransform());
 
         /**
          * Similar to CylindricalSurfaceDewarper::mapToDewarpedSpace(),
@@ -56,6 +57,7 @@ namespace dewarping {
         double m_modelYScaleFromNormalized;
         double m_modelXScaleToNormalized;
         double m_modelYScaleToNormalized;
+        QTransform m_postTransform;
     };
 }  // namespace dewarping
 #endif // ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_

@@ -136,7 +136,7 @@ private:
     std::unique_ptr<QMenu> m_ptrMenu;
     int m_highlightedZoneIdx;
     bool m_menuItemTriggered;
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     int m_extraDelaysDone;
 #endif
 };

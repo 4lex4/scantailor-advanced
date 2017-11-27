@@ -45,10 +45,11 @@ namespace select_content {
                    AutoManualMode const mode,
                    bool contentDetect,
                    bool pageDetect,
-                   bool fineTuning)
+                   bool fineTuning,
+                   Margins pageBorders)
             : m_contentRect(content_rect),
               m_pageRect(content_rect),
-              m_pageBorders(0, 0, 0, 0),
+              m_pageBorders(pageBorders),
               m_contentSizeMM(content_size_mm),
               m_deps(deps),
               m_mode(mode),

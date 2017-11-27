@@ -43,7 +43,8 @@ namespace select_content {
                AutoManualMode mode,
                bool contentDetect,
                bool pageDetect,
-               bool fineTuning);
+               bool fineTuning,
+               Margins pageBorders = Margins(0, 0, 0, 0));
 
         Params(Dependencies const& deps);
 

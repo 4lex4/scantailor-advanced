@@ -209,39 +209,42 @@ namespace select_content {
             return;
         }
 
-        Params params(
+        Params const params(
                 m_uiData.contentRect(), m_uiData.contentSizeMM(),
                 m_uiData.dependencies(), m_uiData.mode(), m_uiData.contentDetection(),
-                m_uiData.pageDetection(), m_uiData.fineTuning()
+                m_uiData.pageDetection(), m_uiData.fineTuning(),
+                Margins(leftBorder->value(), topBorder->value(), rightBorder->value(), bottomBorder->value())
         );
 
         for (PageId const& page_id : pages) {
-            std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
+            Params new_params(params);
 
+            std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
             if (old_params.get()) {
-                if (!apply_content_box) {
-                    params.setContentRect(old_params->contentRect());
-                    params.setContentSizeMM(old_params->contentSizeMM());
-                } else {
-                    // we don't want the content box to be out of the page bounds
-                    QRectF fixedContentRect = m_uiData.contentRect().intersected(old_params->pageRect());
-                    if (fixedContentRect != m_uiData.contentRect()) {
-                        if (fixedContentRect.isValid()) {
-                            params.setContentRect(fixedContentRect);
-                        } else {
-                            params.setContentRect(old_params->pageRect());
+                new_params.setPageRect(old_params->pageRect());
+
+                if (new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_MANUAL)) {
+                    if (!apply_content_box) {
+                        new_params.setContentRect(old_params->contentRect());
+                        new_params.setContentSizeMM(old_params->contentSizeMM());
+                    } else {
+                        // we don't want the content box to be out of the page bounds
+                        QRectF fixedContentRect = m_uiData.contentRect().intersected(old_params->pageRect());
+                        if (fixedContentRect != m_uiData.contentRect()) {
+                            if (fixedContentRect.isValid()) {
+                                new_params.setContentRect(fixedContentRect);
+                            } else {
+                                new_params.setContentRect(old_params->pageRect());
+                            }
+                            // we need recalculate other params that can't be done here
+                            // so we install empty dependencies to force that
+                            new_params.setDependencies(Dependencies());
                         }
-                        // if it happens we need recalculate other params that can't be done here
-                        // so we install empty dependencies to force that
-                        params.setDependencies(Dependencies());
                     }
                 }
-                params.setPageRect(old_params->pageRect());
             }
-            params.setPageBorders(Margins(leftBorder->value(), topBorder->value(), rightBorder->value(),
-                                          bottomBorder->value()));
 
-            m_ptrSettings->setPageParams(page_id, params);
+            m_ptrSettings->setPageParams(page_id, new_params);
         }
 
         if (pages.size() > 1) {

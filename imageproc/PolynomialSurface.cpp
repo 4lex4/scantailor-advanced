@@ -17,294 +17,360 @@
  */
 
 #include "PolynomialSurface.h"
-#include "LeastSquaresFit.h"
 #include "AlignedArray.h"
 #include "BinaryImage.h"
 #include "GrayImage.h"
 #include "Grayscale.h"
 #include "BitOps.h"
 #include <QDebug>
+#include "MatT.h"
+#include "VecT.h"
+#include "MatrixCalc.h"
+#include <stdexcept>
+#include <algorithm>
+#include <math.h>
+#include <stdint.h>
 #include <assert.h>
 
 namespace imageproc {
-    PolynomialSurface::PolynomialSurface(int const hor_degree, int const vert_degree, GrayImage const& src)
-            : m_horDegree(hor_degree),
-              m_vertDegree(vert_degree) {
-        // Note: m_horDegree and m_vertDegree may still change!
+PolynomialSurface::PolynomialSurface(int const hor_degree, int const vert_degree, GrayImage const& src)
+        : m_horDegree(hor_degree),
+          m_vertDegree(vert_degree) {
+    // Note: m_horDegree and m_vertDegree may still change!
 
-        if (hor_degree < 0) {
-            throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
-        }
-        if (vert_degree < 0) {
-            throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
-        }
-
-        int const num_data_points = src.width() * src.height();
-        if (num_data_points == 0) {
-            m_horDegree = 0;
-            m_vertDegree = 0;
-            m_coeffs.push_back(0.0);
-
-            return;
-        }
-
-        maybeReduceDegrees(num_data_points);
-
-        int const num_terms = calcNumTerms();
-        QSize const dimensions(num_terms, num_data_points);
-        std::vector<double> equations;
-        std::vector<double> data_points;
-        equations.reserve(dimensions.width() * dimensions.height());
-        data_points.reserve(dimensions.height());
-        m_coeffs.resize(dimensions.width());
-
-        prepareEquationsAndDataPoints(src, equations, data_points);
-        assert(int(equations.size()) == dimensions.width() * dimensions.height());
-        assert(int(data_points.size()) == num_data_points);
-
-        leastSquaresFit(dimensions, &equations[0], &m_coeffs[0], &data_points[0]);
+    if (hor_degree < 0) {
+        throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
+    }
+    if (vert_degree < 0) {
+        throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
     }
 
-    PolynomialSurface::PolynomialSurface(int const hor_degree,
-                                         int const vert_degree,
-                                         GrayImage const& src,
-                                         BinaryImage const& mask)
-            : m_horDegree(hor_degree),
-              m_vertDegree(vert_degree) {
-        // Note: m_horDegree and m_vertDegree may still change!
-
-        if (hor_degree < 0) {
-            throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
-        }
-        if (vert_degree < 0) {
-            throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
-        }
-        if (src.size() != mask.size()) {
-            throw std::invalid_argument("PolynomialSurface: image and mask have different sizes");
-        }
-
-        int const num_data_points = mask.countBlackPixels();
-        if (num_data_points == 0) {
-            m_horDegree = 0;
-            m_vertDegree = 0;
-            m_coeffs.push_back(0.0);
-
-            return;
-        }
-
-        maybeReduceDegrees(num_data_points);
-
-        int const num_terms = calcNumTerms();
-        QSize const dimensions(num_terms, num_data_points);
-
-        std::vector<double> equations;
-        std::vector<double> data_points;
-        equations.reserve(dimensions.width() * dimensions.height());
-        data_points.reserve(dimensions.height());
-        m_coeffs.resize(dimensions.width());
-
-        prepareEquationsAndDataPoints(src, mask, equations, data_points);
-        assert(int(equations.size()) == dimensions.width() * dimensions.height());
-        assert(int(data_points.size()) == num_data_points);
-
-        leastSquaresFit(dimensions, &equations[0], &m_coeffs[0], &data_points[0]);
+    int const num_data_points = src.width() * src.height();
+    if (num_data_points == 0) {
+        m_horDegree = 0;
+        m_vertDegree = 0;
+        VecT<double>(1, 0.0).swap(m_coeffs);
+        return;
     }
 
-    GrayImage PolynomialSurface::render(QSize const& size) const {
-        if (size.isEmpty()) {
-            return GrayImage();
+    maybeReduceDegrees(num_data_points);
+
+    int const num_terms = calcNumTerms();
+    VecT<double>(num_terms, 0.0).swap(m_coeffs);
+
+    // The least squares equation is A^T*A*x = A^T*b
+    // We will be building A^T*A and A^T*b incrementally.
+    // This allows us not to build matrix A at all.
+    MatT<double> AtA(num_terms, num_terms);
+    VecT<double> Atb(num_terms);
+    prepareDataForLeastSquares(src, AtA, Atb, m_horDegree, m_vertDegree);
+
+    fixSquareMatrixRankDeficiency(AtA);
+
+    try {
+        DynamicMatrixCalc<double> mc;
+        mc(AtA).solve(mc(Atb)).write(m_coeffs.data());
+    } catch (std::runtime_error const&) {
+    }
+}
+
+PolynomialSurface::PolynomialSurface(int const hor_degree,
+                                     int const vert_degree,
+                                     GrayImage const& src,
+                                     BinaryImage const& mask)
+        : m_horDegree(hor_degree),
+          m_vertDegree(vert_degree) {
+    // Note: m_horDegree and m_vertDegree may still change!
+
+    if (hor_degree < 0) {
+        throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
+    }
+    if (vert_degree < 0) {
+        throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
+    }
+    if (src.size() != mask.size()) {
+        throw std::invalid_argument("PolynomialSurface: image and mask have different sizes");
+    }
+
+    int const num_data_points = mask.countBlackPixels();
+    if (num_data_points == 0) {
+        m_horDegree = 0;
+        m_vertDegree = 0;
+        VecT<double>(1, 0.0).swap(m_coeffs);
+        return;
+    }
+
+    maybeReduceDegrees(num_data_points);
+
+    int const num_terms = calcNumTerms();
+    VecT<double>(num_terms, 0.0).swap(m_coeffs);
+
+    // The least squares equation is A^T*A*x = A^T*b
+    // We will be building A^T*A and A^T*b incrementally.
+    // This allows us not to build matrix A at all.
+    MatT<double> AtA(num_terms, num_terms);
+    VecT<double> Atb(num_terms);
+    prepareDataForLeastSquares(src, mask, AtA, Atb, m_horDegree, m_vertDegree);
+
+    fixSquareMatrixRankDeficiency(AtA);
+
+    try {
+        DynamicMatrixCalc<double> mc;
+        mc(AtA).solve(mc(Atb)).write(m_coeffs.data());
+    } catch (std::runtime_error const&) {
+    }
+}
+
+GrayImage PolynomialSurface::render(QSize const& size) const {
+    if (size.isEmpty()) {
+        return GrayImage();
+    }
+
+    GrayImage image(size);
+    int const width = size.width();
+    int const height = size.height();
+    unsigned char* line = image.data();
+    int const bpl = image.stride();
+    int const num_coeffs = m_coeffs.size();
+
+    // Pretend that both x and y positions of pixels
+    // lie in range of [0, 1].
+    double const xscale = calcScale(width);
+    double const yscale = calcScale(height);
+
+    AlignedArray<float, 4> vert_matrix(num_coeffs * height);
+    float* out = &vert_matrix[0];
+    for (int y = 0; y < height; ++y) {
+        double const y_adjusted = y * yscale;
+        double pow = 1.0;
+        int pos = 0;
+        for (int i = 0; i <= m_vertDegree; ++i) {
+            for (int j = 0; j <= m_horDegree; ++j, ++pos, ++out) {
+                *out = static_cast<float>(m_coeffs[pos] * pow);
+            }
+            pow *= y_adjusted;
         }
+    }
 
-        GrayImage image(size);
-        int const width = size.width();
-        int const height = size.height();
-        unsigned char* line = image.data();
-        int const bpl = image.stride();
-        int const num_coeffs = m_coeffs.size();
-        // Pretend that both x and y positions of pixels
-        // lie in range of [0, 1].
-        double const xscale = calcScale(width);
-        double const yscale = calcScale(height);
-
-        AlignedArray<float, 4> vert_matrix(num_coeffs * height);
-        float* out = &vert_matrix[0];
-        for (int y = 0; y < height; ++y) {
-            double const y_adjusted = y * yscale;
+    AlignedArray<float, 4> hor_matrix(num_coeffs * width);
+    out = &hor_matrix[0];
+    for (int x = 0; x < width; ++x) {
+        double const x_adjusted = x * xscale;
+        for (int i = 0; i <= m_vertDegree; ++i) {
             double pow = 1.0;
-            int pos = 0;
-            for (int i = 0; i <= m_vertDegree; ++i) {
-                for (int j = 0; j <= m_horDegree; ++j, ++pos, ++out) {
-                    *out = static_cast<float>(m_coeffs[pos] * pow);
-                }
-                pow *= y_adjusted;
-            }
-        }
-
-        AlignedArray<float, 4> hor_matrix(num_coeffs * width);
-        out = &hor_matrix[0];
-        for (int x = 0; x < width; ++x) {
-            double const x_adjusted = x * xscale;
-            for (int i = 0; i <= m_vertDegree; ++i) {
-                double pow = 1.0;
-                for (int j = 0; j <= m_horDegree; ++j, ++out) {
-                    *out = static_cast<float>(pow);
-                    pow *= x_adjusted;
-                }
-            }
-        }
-
-        float const* vert_line = &vert_matrix[0];
-        for (int y = 0; y < height; ++y, line += bpl, vert_line += num_coeffs) {
-            float const* hor_line = &hor_matrix[0];
-            for (int x = 0; x < width; ++x, hor_line += num_coeffs) {
-                float sum = 0.5f / 255.0f;  // for rounding purposes.
-                for (int i = 0; i < num_coeffs; ++i) {
-                    sum += hor_line[i] * vert_line[i];
-                }
-                int const isum = (int) (sum * 255.0);
-                line[x] = static_cast<unsigned char>(qBound(0, isum, 255));
-            }
-        }
-
-        return image;
-    }  // PolynomialSurface::render
-
-    void PolynomialSurface::maybeReduceDegrees(int const num_data_points) {
-        assert(num_data_points > 0);
-
-        while (num_data_points < calcNumTerms()) {
-            if (m_horDegree > m_vertDegree) {
-                --m_horDegree;
-            } else {
-                --m_vertDegree;
+            for (int j = 0; j <= m_horDegree; ++j, ++out) {
+                *out = static_cast<float>(pow);
+                pow *= x_adjusted;
             }
         }
     }
 
-    int PolynomialSurface::calcNumTerms() const {
-        return (m_horDegree + 1) * (m_vertDegree + 1);
+    float const* vert_line = &vert_matrix[0];
+    for (int y = 0; y < height; ++y, line += bpl, vert_line += num_coeffs) {
+        float const* hor_line = &hor_matrix[0];
+        for (int x = 0; x < width; ++x, hor_line += num_coeffs) {
+            float sum = 0.5f / 255.0f;  // for rounding purposes.
+            for (int i = 0; i < num_coeffs; ++i) {
+                sum += hor_line[i] * vert_line[i];
+            }
+            int const isum = (int) (sum * 255.0);
+            line[x] = static_cast<unsigned char>(qBound(0, isum, 255));
+        }
     }
 
-    double PolynomialSurface::calcScale(int const dimension) {
-        if (dimension <= 1) {
-            return 0.0;
+    return image;
+} // PolynomialSurface::render
+
+void PolynomialSurface::maybeReduceDegrees(int const num_data_points) {
+    assert(num_data_points > 0);
+
+    while (num_data_points < calcNumTerms()) {
+        if (m_horDegree > m_vertDegree) {
+            --m_horDegree;
         } else {
-            return 1.0 / (dimension - 1);
+            --m_vertDegree;
+        }
+    }
+}
+
+int PolynomialSurface::calcNumTerms() const {
+    return (m_horDegree + 1) * (m_vertDegree + 1);
+}
+
+double PolynomialSurface::calcScale(int const dimension) {
+    if (dimension <= 1) {
+        return 0.0;
+    } else {
+        return 1.0 / (dimension - 1);
+    }
+}
+
+void PolynomialSurface::prepareDataForLeastSquares(GrayImage const& image,
+                                                   MatT<double>& AtA,
+                                                   VecT<double>& Atb,
+                                                   int const h_degree,
+                                                   int const v_degree) {
+    double* const AtA_data = AtA.data();
+    double* const Atb_data = Atb.data();
+
+    int const width = image.width();
+    int const height = image.height();
+    int const num_terms = Atb.size();
+
+    uint8_t const* line = image.data();
+    int const stride = image.stride();
+
+    // Pretend that both x and y positions of pixels
+    // lie in range of [0, 1].
+    double const xscale = calcScale(width);
+    double const yscale = calcScale(height);
+
+    // To force data samples into [0, 1] range.
+    double const data_scale = 1.0 / 255.0;
+
+    // 1, y, y^2, y^3, ...
+    VecT<double> y_powers(v_degree + 1);  // Initialized to 0.
+
+    // Same as y_powers, except y_powers correspond to a given y,
+    // while x_powers are computed for all possible x values.
+    MatT<double> x_powers(h_degree + 1, width);  // Initialized to 0.
+    for (int x = 0; x < width; ++x) {
+        double const x_adjusted = xscale * x;
+        double x_power = 1.0;
+        for (int i = 0; i <= h_degree; ++i) {
+            x_powers(i, x) = x_power;
+            x_power *= x_adjusted;
         }
     }
 
-    void PolynomialSurface::prepareEquationsAndDataPoints(GrayImage const& image,
-                                                          std::vector<double>& equations,
-                                                          std::vector<double>& data_points) const {
-        int const width = image.width();
-        int const height = image.height();
+    VecT<double> full_powers(num_terms);
 
-        uint8_t const* line = image.data();
-        int const bpl = image.stride();
+    for (int y = 0; y < height; ++y, line += stride) {
+        double const y_adjusted = yscale * y;
 
-        // Pretend that both x and y positions of pixels
-        // lie in range of [0, 1].
-        double const xscale = calcScale(width);
-        double const yscale = calcScale(height);
+        double y_power = 1.0;
+        for (int i = 0; i <= v_degree; ++i) {
+            y_powers[i] = y_power;
+            y_power *= y_adjusted;
+        }
 
-        for (int y = 0; y < height; ++y, line += bpl) {
-            double const y_adjusted = yscale * y;
+        for (int x = 0; x < width; ++x) {
+            double const data_point = data_scale * line[x];
 
-            for (int x = 0; x < width; ++x) {
-                double const x_adjusted = xscale * x;
+            int pos = 0;
+            for (int i = 0; i <= v_degree; ++i) {
+                for (int j = 0; j <= h_degree; ++j, ++pos) {
+                    full_powers[pos] = y_powers[i] * x_powers(j, x);
+                }
+            }
 
-                data_points.push_back((1.0 / 255.0) * line[x]);
+            double* p_AtA = AtA_data;
+            for (int i = 0; i < num_terms; ++i) {
+                double const i_val = full_powers[i];
+                Atb_data[i] += i_val * data_point;
 
-                double pow1 = 1.0;
-                for (int i = 0; i <= m_vertDegree; ++i) {
-                    double pow2 = pow1;
-                    for (int j = 0; j <= m_horDegree; ++j) {
-                        equations.push_back(pow2);
-                        pow2 *= x_adjusted;
-                    }
-                    pow1 *= y_adjusted;
+                for (int j = 0; j < num_terms; ++j) {
+                    double const j_val = full_powers[j];
+                    *p_AtA += i_val * j_val;
+                    ++p_AtA;
                 }
             }
         }
     }
+} // PolynomialSurface::prepareDataForLeastSquares
 
-    void PolynomialSurface::prepareEquationsAndDataPoints(GrayImage const& image,
-                                                          BinaryImage const& mask,
-                                                          std::vector<double>& equations,
-                                                          std::vector<double>& data_points) const {
-        int const width = image.width();
-        int const height = image.height();
+void PolynomialSurface::prepareDataForLeastSquares(GrayImage const& image,
+                                                   BinaryImage const& mask,
+                                                   MatT<double>& AtA,
+                                                   VecT<double>& Atb,
+                                                   int const h_degree,
+                                                   int const v_degree) {
+    double* const AtA_data = AtA.data();
+    double* const Atb_data = Atb.data();
 
-        double const xscale = calcScale(width);
-        double const yscale = calcScale(height);
+    int const width = image.width();
+    int const height = image.height();
+    int const num_terms = Atb.size();
 
-        uint8_t const* image_line = image.data();
-        int const image_bpl = image.stride();
+    uint8_t const* image_line = image.data();
+    int const image_stride = image.stride();
 
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
-        int const last_word_idx = (width - 1) >> 5;
-        int const last_word_mask = ~uint32_t(0) << (31 - ((width - 1) & 31));
+    uint32_t const* mask_line = mask.data();
+    int const mask_stride = mask.wordsPerLine();
 
-        for (int y = 0; y < height; ++y) {
-            double const y_adjusted = y * yscale;
-            int idx = 0;
+    // Pretend that both x and y positions of pixels
+    // lie in range of [0, 1].
+    double const xscale = calcScale(width);
+    double const yscale = calcScale(height);
 
-            // Full words.
-            for (; idx < last_word_idx; ++idx) {
-                processMaskWord(
-                        image_line, mask_line[idx], idx, y,
-                        y_adjusted, xscale, equations, data_points
-                );
-            }
-            // Last word.
-            processMaskWord(
-                    image_line, mask_line[idx] & last_word_mask,
-                    idx, y, y_adjusted, xscale, equations, data_points
-            );
+    // To force data samples into [0, 1] range.
+    double const data_scale = 1.0 / 255.0;
 
-            image_line += image_bpl;
-            mask_line += mask_wpl;
+    // 1, y, y^2, y^3, ...
+    VecT<double> y_powers(v_degree + 1);  // Initialized to 0.
+
+    // Same as y_powers, except y_powers correspond to a given y,
+    // while x_powers are computed for all possible x values.
+    MatT<double> x_powers(h_degree + 1, width);  // Initialized to 0.
+    for (int x = 0; x < width; ++x) {
+        double const x_adjusted = xscale * x;
+        double x_power = 1.0;
+        for (int i = 0; i <= h_degree; ++i) {
+            x_powers(i, x) = x_power;
+            x_power *= x_adjusted;
         }
-    }  // PolynomialSurface::prepareEquationsAndDataPoints
+    }
 
-    void PolynomialSurface::processMaskWord(uint8_t const* const image_line,
-                                            uint32_t word,
-                                            int const word_idx,
-                                            int const y,
-                                            double const y_adjusted,
-                                            double const xscale,
-                                            std::vector<double>& equations,
-                                            std::vector<double>& data_points) const {
-        uint32_t const msb = uint32_t(1) << 31;
-        int const xbase = word_idx << 5;
+    VecT<double> full_powers(num_terms);
 
-        int x = xbase;
-        uint32_t mask = msb;
+    uint32_t const msb = uint32_t(1) << 31;
+    for (int y = 0; y < height; ++y) {
+        double const y_adjusted = yscale * y;
 
-        for (; word; word &= ~mask, mask >>= 1, ++x) {
-            if (!(word & mask)) {
-                // Skip a group of zero bits.
-                int const offset = countMostSignificantZeroes(word);
-                x = xbase + offset;
-                mask = msb >> offset;
-                assert(word & mask);
+        double y_power = 1.0;
+        for (int i = 0; i <= v_degree; ++i) {
+            y_powers[i] = y_power;
+            y_power *= y_adjusted;
+        }
+
+        for (int x = 0; x < width; ++x) {
+            if (!(mask_line[x >> 5] & (msb >> (x & 31)))) {
+                continue;
             }
 
-            data_points.push_back((1.0 / 255.0) * image_line[x]);
+            double const data_point = data_scale * image_line[x];
 
-            double const x_adjusted = xscale * x;
-            double pow1 = 1.0;
-            for (int i = 0; i <= m_vertDegree; ++i) {
-                double pow2 = pow1;
-
-                for (int j = 0; j <= m_horDegree; ++j) {
-                    equations.push_back(pow2);
-                    pow2 *= x_adjusted;
+            int pos = 0;
+            for (int i = 0; i <= v_degree; ++i) {
+                for (int j = 0; j <= h_degree; ++j, ++pos) {
+                    full_powers[pos] = y_powers[i] * x_powers(j, x);
                 }
+            }
 
-                pow1 *= y_adjusted;
+            double* p_AtA = AtA_data;
+            for (int i = 0; i < num_terms; ++i) {
+                double const i_val = full_powers[i];
+                Atb_data[i] += i_val * data_point;
+
+                for (int j = 0; j < num_terms; ++j) {
+                    double const j_val = full_powers[j];
+                    *p_AtA += i_val * j_val;
+                    ++p_AtA;
+                }
             }
         }
-    }  // PolynomialSurface::processMaskWord
-} // namespace imageproc
+
+        image_line += image_stride;
+        mask_line += mask_stride;
+    }
+} // PolynomialSurface::prepareDataForLeastSquares
+
+void PolynomialSurface::fixSquareMatrixRankDeficiency(MatT<double>& mat) {
+    assert(mat.cols() == mat.rows());
+
+    int const dim = mat.cols();
+    for (int i = 0; i < dim; ++i) {
+        mat(i, i) += 1e-5;  // Add a small value to the diagonal.
+    }
+}
+}  // namespace imagproc

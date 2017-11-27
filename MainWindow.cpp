@@ -1234,7 +1234,18 @@ void MainWindow::filterResult(BackgroundTaskPtr const& task, FilterResultPtr con
 
             QApplication::alert(this);  // Flash the taskbar entry.
             if (m_checkBeepWhenFinished()) {
-                QApplication::beep();
+#if defined(Q_OS_UNIX)
+                QString ext_play_cmd("play /usr/share/sounds/freedesktop/stereo/bell.oga");
+#else
+                QString ext_play_cmd;
+#endif
+                QSettings settings;
+                QString cmd = settings.value("main_window/external_alarm_cmd", ext_play_cmd).toString();
+                if (cmd.isEmpty()) {
+                    QApplication::beep();
+                } else {
+                    std::system(cmd.toStdString().c_str());
+                }
             }
 
             if (m_selectedPage.get(getCurrentView()) == m_ptrThumbSequence->lastPage().id()) {

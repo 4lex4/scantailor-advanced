@@ -13,7 +13,6 @@ SET(
         TestScale.cpp
         TestTransform.cpp
         TestMorphology.cpp
-        TestDentFinder.cpp
         TestBinarize.cpp
         TestPolygonRasterizer.cpp
         TestSeedFill.cpp

@@ -29,8 +29,7 @@ namespace output {
 
     bool PictureShapeOptions::operator==(PictureShapeOptions const& other) const {
         return (pictureShape == other.pictureShape)
-               && (sensitivity == other.sensitivity)
-               && (autoZonesFound == other.autoZonesFound);
+               && (sensitivity == other.sensitivity);
     }
 
     bool PictureShapeOptions::operator!=(PictureShapeOptions const& other) const {
@@ -65,8 +64,6 @@ namespace output {
 
     void PictureShapeOptions::setPictureShape(PictureShape pictureShape) {
         PictureShapeOptions::pictureShape = pictureShape;
-
-        setAutoZonesFound(false);
     }
 
     int PictureShapeOptions::getSensitivity() const {
@@ -75,8 +72,6 @@ namespace output {
 
     void PictureShapeOptions::setSensitivity(int sensitivity) {
         PictureShapeOptions::sensitivity = sensitivity;
-
-        setAutoZonesFound(false);
     }
 
     bool PictureShapeOptions::isAutoZonesFound() const {

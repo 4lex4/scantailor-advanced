@@ -412,20 +412,14 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     QPainter painter(viewport());
     painter.save();
 
-    // On X11 (except with OpenGL), SmoothPixmapTransform is too slow, so don't enable it.
-    bool smooth_pixmap_ok = true;
-#if defined(Q_WS_X11)
-    smooth_pixmap_ok = viewport()->inherits("QGLWidget");
-#endif
-    if (smooth_pixmap_ok) {
-        double const xscale = m_virtualToWidget.m11();
+    double const xscale = m_virtualToWidget.m11();
 
-        // Width of a source pixel in mm, as it's displayed on screen.
-        double const pixel_width = widthMM() * xscale / width();
-        // Disable antialiasing for large zoom levels.
-        painter.setRenderHint(QPainter::SmoothPixmapTransform, pixel_width < 0.5);
-    }
+    // Width of a source pixel in mm, as it's displayed on screen.
+    double const pixel_width = widthMM() * xscale / width();
 
+    // Disable antialiasing for large zoom levels.
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, pixel_width < 0.5);
+    
     if (validateHqPixmap()) {
         // HQ pixmap maps one to one to screen pixels, so antialiasing is not necessary.
         painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
@@ -1047,10 +1041,15 @@ ImageViewBase::HqTransformTask::operator()() {
                     OutsidePixels::assumeWeakColor(Qt::white), QSizeF(0.0, 0.0)
             )
     );
-#if defined(Q_WS_X11)
-    // ARGB32_Premultiplied is an optimal format for X11 + XRender.
-    hq_image = hq_image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-#endif
+
+    // In many cases m_image and therefore hq_image are grayscale with
+    // a palette, but given that hq_image will be converted to a QPixmap
+    // on the GUI thread, it's better to convert it to RGB as a preparation
+    // step while we are still in a background thread.
+    hq_image = hq_image.convertToFormat(
+            hq_image.hasAlphaChannel() ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32
+    );
+
     m_ptrResult->setData(target_rect.topLeft(), hq_image);
 
     return m_ptrResult;

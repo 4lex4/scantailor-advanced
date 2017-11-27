@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-    Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
+    Copyright (C) 2007-2015  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,26 +25,18 @@ class QPixmap;
 class PixmapRenderer {
 public:
     /**
-     * \brief Workarounds some problems with QPainter::drawPixmap().
+     * \brief Workarounds an issue with QPainter::drawPixmap().
      *
      * This method is more or less equivalent to:
      * \code
      * QPainter::drawPixmap(0, 0, pixmap);
      * \endcode
-     * However, there are two problems with the above code:\n
-     * 1. On X11, QPainter doesn't (as of Qt 4.4.0) use XRender if
-     *    a transformation is applied.  We call XRender manually, but
-     *    note that not all features of QPainter are implemented.
-     *    In particular, clipping will be done by the bounding box
-     *    of the requested clip region.\n
-     * 2. On Windows, the above code is very slow if a large zoom is
-     *    specified in QPainter.  To fix that we calculate the region of
-     *    the image to be displayed and pass it to the rendering engine.
+     * However, Qt's raster paint engine for some reason refuses to draw
+     * the pixmap at all if a very strong zoom is applied (as of Qt 5.4.0).
+     * This method solves the problem above by calculating the visible area
+     * of the pixmap and communicating that information to QPainter.
      */
     static void drawPixmap(QPainter& painter, QPixmap const& pixmap);
-
-private:
-    static void drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap);
 };
 
 

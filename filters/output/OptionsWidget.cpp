@@ -202,15 +202,13 @@ namespace output {
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
-        for (int i = 0; i < binarizationOptions->count(); i++) {
-            BinarizationOptionsWidget* widget =
-                    dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
-            widget->preUpdateUI(m_pageId);
-        }
     }
 
     void OptionsWidget::postUpdateUI() {
         m_pictureShapeOptions = m_ptrSettings->getParams(m_pageId).pictureShapeOptions();
+        m_colorParams = m_ptrSettings->getParams(m_pageId).colorParams();
+        
+        updateColorsDisplay();
     }
 
     void OptionsWidget::tabChanged(ImageViewTab const tab) {
@@ -733,6 +731,12 @@ namespace output {
                 case DESPECKLE_AGGRESSIVE:
                     despeckleAggressiveBtn->setChecked(true);
                     break;
+            }
+
+            for (int i = 0; i < binarizationOptions->count(); i++) {
+                BinarizationOptionsWidget* widget =
+                        dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
+                widget->preUpdateUI(m_pageId);
             }
         }
 

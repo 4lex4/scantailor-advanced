@@ -178,14 +178,11 @@ namespace output {
                                          && render_params.needBinarization()
                                          && !m_batchProcessing;
 
-        OutputGenerator const generator(
+        OutputGenerator generator(
                 params.outputDpi(), params.colorParams(), params.splittingOptions(),
                 params.despeckleLevel(),
                 new_xform, content_rect_phys
         );
-
-        // store additional transformations after processing such as post deskew after dewarping
-        QTransform postTransform;
 
         OutputImageParams new_output_image_params(
                 generator.outputImageSize(), generator.outputContentRect(),
@@ -343,7 +340,7 @@ namespace output {
             SplitImage splitImage;
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones, params.pictureShapeOptions(),
-                    params.dewarpingOptions(), distortion_model, postTransform,
+                    params.dewarpingOptions(), distortion_model,
                     params.depthPerception(),
                     write_automask ? &automask_img : 0,
                     write_speckles_file ? &speckles_img : 0,
@@ -452,7 +449,7 @@ namespace output {
             return FilterResultPtr(
                     new UiUpdater(
                             m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params,
-                            new_xform, postTransform, generator.outputContentRect(),
+                            new_xform, generator.getPostTransform(), generator.outputContentRect(),
                             m_pageId, data.origImage(), out_img, automask_img,
                             despeckle_state, despeckle_visualization,
                             m_batchProcessing, m_debug

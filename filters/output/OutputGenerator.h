@@ -109,14 +109,13 @@ namespace output {
                        PictureShapeOptions picture_shape_options,
                        DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
-                       QTransform& postTransform,
                        DepthPerception const& depth_perception,
                        imageproc::BinaryImage* auto_picture_mask = 0,
                        imageproc::BinaryImage* speckles_image = 0,
                        DebugImages* dbg = 0,
                        PageId* p_pageId = NULL,
                        IntrusivePtr<Settings>* p_settings = NULL,
-                       SplitImage* splitImage = nullptr) const;
+                       SplitImage* splitImage = nullptr);
 
         QSize outputImageSize() const;
 
@@ -124,6 +123,8 @@ namespace output {
          * \brief Returns the content rectangle in output image coordinates.
          */
         QRect outputContentRect() const;
+
+        const QTransform& getPostTransform() const;
 
     private:
         QImage processImpl(TaskStatus const& status,
@@ -133,14 +134,13 @@ namespace output {
                            PictureShapeOptions picture_shape_options,
                            DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
-                           QTransform& postTransform,
                            DepthPerception const& depth_perception,
                            imageproc::BinaryImage* auto_picture_mask = 0,
                            imageproc::BinaryImage* speckles_image = 0,
                            DebugImages* dbg = 0,
                            PageId* p_pageId = NULL,
                            IntrusivePtr<Settings>* p_settings = NULL,
-                           SplitImage* splitImage = nullptr) const;
+                           SplitImage* splitImage = nullptr);
 
         QImage processWithoutDewarping(TaskStatus const& status,
                                        FilterData const& input,
@@ -152,7 +152,7 @@ namespace output {
                                        DebugImages* dbg = 0,
                                        PageId* p_pageId = NULL,
                                        IntrusivePtr<Settings>* p_settings = NULL,
-                                       SplitImage* splitImage = nullptr) const;
+                                       SplitImage* splitImage = nullptr);
 
         QImage processWithDewarping(TaskStatus const& status,
                                     FilterData const& input,
@@ -161,14 +161,13 @@ namespace output {
                                     PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
-                                    QTransform& postTransform,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask = 0,
                                     imageproc::BinaryImage* speckles_image = 0,
                                     DebugImages* dbg = 0,
                                     PageId* p_pageId = NULL,
                                     IntrusivePtr<Settings>* p_settings = NULL,
-                                    SplitImage* splitImage = nullptr) const;
+                                    SplitImage* splitImage = nullptr);
 
         void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 
@@ -341,6 +340,9 @@ namespace output {
         QRect m_contentRect;
 
         DespeckleLevel m_despeckleLevel;
+
+        // store additional transformations after processing such as post deskew after dewarping
+        QTransform postTransform;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUTGENERATOR_H_

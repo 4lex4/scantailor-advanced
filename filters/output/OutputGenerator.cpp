@@ -270,18 +270,17 @@ namespace output {
                                     PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
                                     DistortionModel& distortion_model,
-                                    QTransform& postTransform,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
                                     DebugImages* const dbg,
                                     PageId* p_pageId,
                                     IntrusivePtr<Settings>* p_settings,
-                                    SplitImage* splitImage) const {
+                                    SplitImage* splitImage) {
         QImage image(
                 processImpl(
                         status, input, picture_zones, fill_zones, picture_shape_options,
-                        dewarping_options, distortion_model, postTransform, depth_perception,
+                        dewarping_options, distortion_model, depth_perception,
                         auto_picture_mask, speckles_image, dbg, p_pageId,
                         p_settings,
                         splitImage
@@ -462,20 +461,19 @@ namespace output {
                                         PictureShapeOptions picture_shape_options,
                                         DewarpingOptions dewarping_options,
                                         DistortionModel& distortion_model,
-                                        QTransform& postTransform,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
                                         imageproc::BinaryImage* speckles_image,
                                         DebugImages* const dbg,
                                         PageId* p_pageId,
                                         IntrusivePtr<Settings>* p_settings,
-                                        SplitImage* splitImage) const {
+                                        SplitImage* splitImage) {
         if ((dewarping_options.mode() == DewarpingOptions::AUTO)
             || (dewarping_options.mode() == DewarpingOptions::MARGINAL)
             || ((dewarping_options.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
                     status, input, picture_zones, fill_zones, picture_shape_options,
-                    dewarping_options, distortion_model, postTransform, depth_perception,
+                    dewarping_options, distortion_model, depth_perception,
                     auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
@@ -500,7 +498,7 @@ namespace output {
                                                     DebugImages* dbg,
                                                     PageId* p_pageId,
                                                     IntrusivePtr<Settings>* p_settings,
-                                                    SplitImage* splitImage) const {
+                                                    SplitImage* splitImage) {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
@@ -610,6 +608,19 @@ namespace output {
         if (render_params.needBinarization()) {
             outsideBackgroundColorBW
                     = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_normalized);
+
+            if (!m_colorParams.blackWhiteOptions().isWhiteOnBlackAutoDetected()) {
+                BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+
+                if (outsideBackgroundColorBW == Qt::black) {
+                    blackWhiteOptions.setWhiteOnBlackMode(true);
+                }
+
+                blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
+
+                m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+                (*p_settings)->setColorParams(*p_pageId, m_colorParams);
+            }
         }
 
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
@@ -877,6 +888,8 @@ namespace output {
 
         applyFillZonesInPlace(dst, fill_zones);
 
+        status.throwIfCancelled();
+
         if (render_params.splitOutput()) {
             splitImage->setBackgroundImage(dst);
 
@@ -893,14 +906,13 @@ namespace output {
                                                  PictureShapeOptions picture_shape_options,
                                                  DewarpingOptions dewarping_options,
                                                  DistortionModel& distortion_model,
-                                                 QTransform& postTransform,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
                                                  imageproc::BinaryImage* speckles_image,
                                                  DebugImages* dbg,
                                                  PageId* p_pageId,
                                                  IntrusivePtr<Settings>* p_settings,
-                                                 SplitImage* splitImage) const {
+                                                 SplitImage* splitImage) {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
         QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
@@ -1364,6 +1376,19 @@ namespace output {
             outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(cropped_image);
             if (render_params.needBinarization()) {
                 outsideBackgroundColorBW = BackgroundColorCalculator::calcDominantBackgroundColorBW(cropped_image);
+                
+                if (!m_colorParams.blackWhiteOptions().isWhiteOnBlackAutoDetected()) {
+                    BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+
+                    if (outsideBackgroundColorBW == Qt::black) {
+                        blackWhiteOptions.setWhiteOnBlackMode(true);
+                    }
+
+                    blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
+
+                    m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+                    (*p_settings)->setColorParams(*p_pageId, m_colorParams);
+                }
             }
         }
 
@@ -1639,6 +1664,8 @@ namespace output {
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 
         applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, postTransform);
+
+        status.throwIfCancelled();
 
         if (render_params.splitOutput()) {
             splitImage->setBackgroundImage(dewarped);
@@ -2570,5 +2597,9 @@ namespace output {
         applyFillZonesToMaskInPlace(
                 mask, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1)
         );
+    }
+
+    const QTransform& OutputGenerator::getPostTransform() const {
+        return postTransform;
     }
 }  // namespace output

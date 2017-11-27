@@ -31,7 +31,8 @@ namespace output {
               wolfUpperBound(254),
               wolfCoef(0.3),
               whiteOnBlackMode(false),
-              binarizationMethod(OTSU) {
+              binarizationMethod(OTSU),
+              whiteOnBlackAutoDetected(false) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
@@ -45,7 +46,8 @@ namespace output {
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
               whiteOnBlackMode(el.attribute("whiteOnBlackMode") == "1"),
-              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
+              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
+              whiteOnBlackAutoDetected(el.attribute("whiteOnBlackAutoDetected") == "1") {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
@@ -61,6 +63,7 @@ namespace output {
         el.setAttribute("wolfCoef", wolfCoef);
         el.setAttribute("whiteOnBlackMode", whiteOnBlackMode ? "1" : "0");
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
+        el.setAttribute("whiteOnBlackAutoDetected", whiteOnBlackAutoDetected ? "1" : "0");
 
         return el;
     }
@@ -180,5 +183,13 @@ namespace output {
         }
 
         return str;
+    }
+
+    bool BlackWhiteOptions::isWhiteOnBlackAutoDetected() const {
+        return whiteOnBlackAutoDetected;
+    }
+
+    void BlackWhiteOptions::setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected) {
+        BlackWhiteOptions::whiteOnBlackAutoDetected = whiteOnBlackAutoDetected;
     }
 }  // namespace output

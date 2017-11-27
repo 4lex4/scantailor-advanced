@@ -94,6 +94,10 @@ namespace output {
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
 
+        bool isWhiteOnBlackAutoDetected() const;
+
+        void setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected);
+
     private:
         static BinarizationMethod parseBinarizationMethod(const QString& str);
 
@@ -110,6 +114,8 @@ namespace output {
         double wolfCoef;
         bool whiteOnBlackMode;
         BinarizationMethod binarizationMethod;
+
+        bool whiteOnBlackAutoDetected;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

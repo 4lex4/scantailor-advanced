@@ -1,6 +1,3 @@
-//
-// Created by Alex on 10/5/2017.
-//
 
 #include "SplittingOptions.h"
 

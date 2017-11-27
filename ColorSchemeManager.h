@@ -1,6 +1,3 @@
-//
-// Created by Alex on 9/27/2017.
-//
 
 #ifndef SCANTAILOR_COLORSCHEMEMANAGER_H
 #define SCANTAILOR_COLORSCHEMEMANAGER_H

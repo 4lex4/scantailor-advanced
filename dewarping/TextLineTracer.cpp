@@ -208,7 +208,7 @@ namespace dewarping {
             prev_normal_sqlen = next_segment_sqlen;
         }
 
-        return !(significant_positive && significant_positive);
+        return !(significant_positive && significant_negative);
     }  // TextLineTracer::isCurvatureConsistent
 
     bool TextLineTracer::isInsideBounds(QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound) {

@@ -219,14 +219,8 @@ InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(EditableZoneSe
 }
 
 InteractionHandler* ZoneContextMenuInteraction::deleteRequest(EditableZoneSet::Zone const& zone) {
-    QMessageBox::StandardButton const btn = QMessageBox::question(
-            &m_rContext.imageView(), tr("Delete confirmation"), tr("Really delete this zone?"),
-            QMessageBox::Yes | QMessageBox::No
-    );
-    if (btn == QMessageBox::Yes) {
-        m_rContext.zones().removeZone(zone.spline());
-        m_rContext.zones().commit();
-    }
+    m_rContext.zones().removeZone(zone.spline());
+    m_rContext.zones().commit();
 
     return m_rContext.createDefaultInteraction();
 }

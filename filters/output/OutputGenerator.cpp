@@ -1163,7 +1163,9 @@ namespace output {
             );
 
             distortion_model = model_builder.tryBuildModel(dbg, &input.grayImage().toQImage());
-
+            if (!distortion_model.isValid()) {
+                setupTrivialDistortionModel(distortion_model);
+            }
 
             BinaryThreshold bw_threshold(64);
             BinaryImage bw_image(input.grayImage(), bw_threshold);
@@ -1267,11 +1269,6 @@ namespace output {
                         distortion_model.setBottomCurve(dewarping::Curve(new_top_polyline));
                     }
                 }
-            }
-
-
-            if (!distortion_model.isValid()) {
-                setupTrivialDistortionModel(distortion_model);
             }
         } else if (dewarping_options.mode() == DewarpingOptions::MARGINAL) {
             BinaryThreshold bw_threshold(64);

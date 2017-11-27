@@ -742,11 +742,9 @@ namespace output {
                 }
                 auto_picture_mask->fill(BLACK);
 
-                if (!contentRect.isEmpty()) {
-                    QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                    QRect const dst_rect(contentRect);
-                    rasterOp<RopSrc>(*auto_picture_mask, dst_rect, bw_mask, src_rect.topLeft());
-                }
+                QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+                QRect const dst_rect(contentRect);
+                rasterOp<RopSrc>(*auto_picture_mask, dst_rect, bw_mask, src_rect.topLeft());
             }
 
             status.throwIfCancelled();
@@ -757,13 +755,14 @@ namespace output {
             }
 
             if (render_params.splitOutput()) {
-                BinaryImage post_bw_mask(m_outRect.size().expandedTo(QSize(1, 1)), BLACK);
-                if (!contentRect.isEmpty()) {
-                    QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-                    QRect const dst_rect(contentRect);
-                    rasterOp<RopSrc>(post_bw_mask, dst_rect, bw_mask, src_rect.topLeft());
-                }
-                splitImage->setMask(post_bw_mask, render_params.needBinarization());
+                BinaryImage out_bw_mask_with_fill_zones(m_outRect.size().expandedTo(QSize(1, 1)), BLACK);
+                QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+                QRect const dst_rect(contentRect);
+                rasterOp<RopSrc>(out_bw_mask_with_fill_zones, dst_rect, bw_mask, src_rect.topLeft());
+
+                applyFillZonesToMaskInPlace(out_bw_mask_with_fill_zones, fill_zones);
+
+                splitImage->setMask(out_bw_mask_with_fill_zones, render_params.needBinarization());
             }
 
             status.throwIfCancelled();
@@ -1521,7 +1520,10 @@ namespace output {
             dewarped_bw_mask_deskewed = QImage();
 
             if (render_params.splitOutput()) {
-                splitImage->setMask(dewarped_bw_mask, render_params.needBinarization());
+                BinaryImage dewarped_bw_mask_with_fill_zones(dewarped_bw_mask);
+                applyFillZonesToMaskInPlace(dewarped_bw_mask_with_fill_zones,
+                                            fill_zones, orig_to_output, postTransform);
+                splitImage->setMask(dewarped_bw_mask_with_fill_zones, render_params.needBinarization());
             }
 
             if (render_params.needBinarization()) {
@@ -2281,7 +2283,7 @@ namespace output {
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
                                                 ZoneSet const& zones,
                                                 boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                                QTransform const& xform)
+                                                QTransform const& postTransform)
     const {
         if (zones.empty()) {
             return;
@@ -2296,7 +2298,7 @@ namespace output {
 
             for (Zone const& zone : zones) {
                 QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
-                QPolygonF const poly(xform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+                QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
                 painter.setBrush(color);
                 painter.drawPolygon(poly, Qt::WindingFill);
             }
@@ -2333,7 +2335,7 @@ namespace output {
     OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
                                            ZoneSet const& zones,
                                            boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                           QTransform const& xform) const {
+                                           QTransform const& postTransform) const {
         if (zones.empty()) {
             return;
         }
@@ -2341,7 +2343,7 @@ namespace output {
         for (Zone const& zone : zones) {
             QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
             BWColor const bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
-            QPolygonF const poly(xform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+            QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
             PolygonRasterizer::fill(img, bw_color, poly, Qt::WindingFill);
         }
     }
@@ -2516,5 +2518,57 @@ namespace output {
         }
 
         return .0;
+    }
+
+    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                                      ZoneSet const& zones,
+                                                      boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                                      QTransform const& postTransform) const {
+        if (zones.empty()) {
+            return;
+        }
+
+        QImage canvas(mask.size(), QImage::Format_ARGB32_Premultiplied);
+        canvas.fill(qRgb(0, 0, 0));
+        {
+            QPainter painter(&canvas);
+            painter.setRenderHint(QPainter::Antialiasing, true);
+            painter.setPen(Qt::NoPen);
+
+            for (Zone const& zone : zones) {
+                QColor const color(Qt::white);
+                QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+                painter.setBrush(color);
+                painter.drawPolygon(poly, Qt::WindingFill);
+            }
+        }
+
+        const BinaryImage fill_mask(canvas, BinaryThreshold(1));
+
+        rasterOp<RopAnd<RopSrc, RopDst>>(mask, fill_mask);
+    }
+
+    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                                      ZoneSet const& zones,
+                                                      QTransform const& postTransform) const {
+        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+        applyFillZonesToMaskInPlace(
+                mask, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
+        );
+    }
+
+    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                                      ZoneSet const& zones,
+                                                      boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
+        applyFillZonesToMaskInPlace(
+                mask, zones, orig_to_output, QTransform()
+        );
+    }
+
+    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask, ZoneSet const& zones) const {
+        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+        applyFillZonesToMaskInPlace(
+                mask, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1)
+        );
     }
 }  // namespace output

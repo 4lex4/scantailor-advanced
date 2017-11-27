@@ -286,7 +286,7 @@ namespace output {
         void applyFillZonesInPlace(QImage& img,
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                   QTransform const& xform) const;
+                                   QTransform const& postTransform) const;
 
         void applyFillZonesInPlace(QImage& img,
                                    ZoneSet const& zones,
@@ -297,13 +297,28 @@ namespace output {
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                   QTransform const& xform) const;
+                                   QTransform const& postTransform) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const;
+
+        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                         ZoneSet const& zones,
+                                         boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                         QTransform const& postTransform) const;
+
+        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                         ZoneSet const& zones,
+                                         QTransform const& postTransform) const;
+
+        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
+                                         ZoneSet const& zones,
+                                         boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+
+        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask, ZoneSet const& zones) const;
 
         Dpi m_dpi;
         ColorParams m_colorParams;

@@ -586,8 +586,9 @@ void ThumbnailSequence::Impl::invalidateThumbnailImpl(ItemsById::iterator const 
         ItemsInOrder::iterator prev(ord_it);
         --prev;
         xoffset = prev->composite->pos().x() + prev->composite->boundingRect().width() + SPACING;
-        yoffset = prev->composite->pos().y() + SPACING;
-        if (xoffset > view_width) {
+        if (xoffset <= view_width) {
+            yoffset = prev->composite->pos().y() + SPACING;
+        } else {
             xoffset = SPACING;
             yoffset = prev->composite->pos().y() + prev->composite->boundingRect().height() + SPACING;
         }

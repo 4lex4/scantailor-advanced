@@ -41,7 +41,7 @@ namespace select_content {
         static QRectF findContentBox(TaskStatus const& status,
                                      FilterData const& data,
                                      QRectF const& page_rect,
-                                     DebugImages* dbg = 0);
+                                     DebugImages* dbg = nullptr);
 
     private:
         class Garbage;

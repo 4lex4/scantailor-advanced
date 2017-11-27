@@ -70,7 +70,7 @@ namespace page_layout {
          * \param pages The list of pages to check.
          * \param ignore The page to be ignored by the check.  Optional.
          */
-        bool checkEverythingDefined(PageSequence const& pages, PageId const* ignore = 0) const;
+        bool checkEverythingDefined(PageSequence const& pages, PageId const* ignore = nullptr) const;
 
         /**
          * \brief Get all page parameters at once.
@@ -91,8 +91,8 @@ namespace page_layout {
                                              QRectF const& page_rect,
                                              QRectF const& content_rect,
                                              QSizeF const& content_size_mm,
-                                             QSizeF* agg_hard_size_before = 0,
-                                             QSizeF* agg_hard_size_after = 0,
+                                             QSizeF* agg_hard_size_before = nullptr,
+                                             QSizeF* agg_hard_size_after = nullptr,
                                              bool suppress_content_rect_update = false);
 
         QRectF const& updateContentRect();

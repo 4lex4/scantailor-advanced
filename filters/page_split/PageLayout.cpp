@@ -334,7 +334,7 @@ namespace page_split {
     }
 
     QString PageLayout::typeToString(Type const type) {
-        char const* str = 0;
+        char const* str = nullptr;
         switch (type) {
             case SINGLE_PAGE_UNCUT:
                 str = "single-uncut";

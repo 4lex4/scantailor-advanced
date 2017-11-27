@@ -63,7 +63,7 @@ namespace page_split {
                                              QImage const& input,
                                              ImageTransformation const& pre_xform,
                                              imageproc::BinaryThreshold bw_threshold,
-                                             DebugImages* dbg = 0);
+                                             DebugImages* dbg = nullptr);
 
     private:
         static std::unique_ptr<PageLayout> tryCutAtFoldingLine(LayoutType layout_type,

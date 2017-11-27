@@ -67,7 +67,7 @@ namespace output {
         static void initNewSpline(XSpline& spline,
                                   QPointF const& p1,
                                   QPointF const& p2,
-                                  DewarpingOptions const* p_dewarpingOptions = NULL);
+                                  DewarpingOptions const* p_dewarpingOptions = nullptr);
 
         static void fitSpline(XSpline& spline, std::vector<QPointF> const& polyline);
 

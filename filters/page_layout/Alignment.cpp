@@ -76,7 +76,7 @@ namespace page_layout {
     }
 
     QDomElement Alignment::toXml(QDomDocument& doc, QString const& name) const {
-        char const* vert = 0;
+        char const* vert = nullptr;
         switch (m_vert) {
             case TOP:
                 vert = "top";
@@ -95,7 +95,7 @@ namespace page_layout {
                 break;
         }
 
-        char const* hor = 0;
+        char const* hor = nullptr;
         switch (m_hor) {
             case LEFT:
                 hor = "left";

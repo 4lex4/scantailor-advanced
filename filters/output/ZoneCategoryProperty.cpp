@@ -61,7 +61,7 @@ namespace output {
     }
 
     QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
-        char const* str = 0;
+        char const* str = nullptr;
 
         switch (zone_category) {
             case MANUAL:

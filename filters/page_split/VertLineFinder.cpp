@@ -163,7 +163,7 @@ namespace page_split {
                     hough_line.pointAtY(height),
                     hough_line.quality()
             );
-            LineGroup* home_group = 0;
+            LineGroup* home_group = nullptr;
 
             LineGroups::iterator it(line_groups.begin());
             LineGroups::iterator const end(line_groups.end());

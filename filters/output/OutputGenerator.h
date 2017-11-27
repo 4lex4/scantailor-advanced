@@ -110,11 +110,11 @@ namespace output {
                        DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
                        DepthPerception const& depth_perception,
-                       imageproc::BinaryImage* auto_picture_mask = 0,
-                       imageproc::BinaryImage* speckles_image = 0,
-                       DebugImages* dbg = 0,
-                       PageId* p_pageId = NULL,
-                       IntrusivePtr<Settings>* p_settings = NULL,
+                       imageproc::BinaryImage* auto_picture_mask = nullptr,
+                       imageproc::BinaryImage* speckles_image = nullptr,
+                       DebugImages* dbg = nullptr,
+                       PageId* p_pageId = nullptr,
+                       IntrusivePtr<Settings>* p_settings = nullptr,
                        SplitImage* splitImage = nullptr);
 
         QSize outputImageSize() const;
@@ -135,11 +135,11 @@ namespace output {
                            DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
                            DepthPerception const& depth_perception,
-                           imageproc::BinaryImage* auto_picture_mask = 0,
-                           imageproc::BinaryImage* speckles_image = 0,
-                           DebugImages* dbg = 0,
-                           PageId* p_pageId = NULL,
-                           IntrusivePtr<Settings>* p_settings = NULL,
+                           imageproc::BinaryImage* auto_picture_mask = nullptr,
+                           imageproc::BinaryImage* speckles_image = nullptr,
+                           DebugImages* dbg = nullptr,
+                           PageId* p_pageId = nullptr,
+                           IntrusivePtr<Settings>* p_settings = nullptr,
                            SplitImage* splitImage = nullptr);
 
         QImage processWithoutDewarping(TaskStatus const& status,
@@ -147,11 +147,11 @@ namespace output {
                                        ZoneSet& picture_zones,
                                        ZoneSet const& fill_zones,
                                        PictureShapeOptions picture_shape_options,
-                                       imageproc::BinaryImage* auto_picture_mask = 0,
-                                       imageproc::BinaryImage* speckles_image = 0,
-                                       DebugImages* dbg = 0,
-                                       PageId* p_pageId = NULL,
-                                       IntrusivePtr<Settings>* p_settings = NULL,
+                                       imageproc::BinaryImage* auto_picture_mask = nullptr,
+                                       imageproc::BinaryImage* speckles_image = nullptr,
+                                       DebugImages* dbg = nullptr,
+                                       PageId* p_pageId = nullptr,
+                                       IntrusivePtr<Settings>* p_settings = nullptr,
                                        SplitImage* splitImage = nullptr);
 
         QImage processWithDewarping(TaskStatus const& status,
@@ -162,11 +162,11 @@ namespace output {
                                     DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
-                                    imageproc::BinaryImage* auto_picture_mask = 0,
-                                    imageproc::BinaryImage* speckles_image = 0,
-                                    DebugImages* dbg = 0,
-                                    PageId* p_pageId = NULL,
-                                    IntrusivePtr<Settings>* p_settings = NULL,
+                                    imageproc::BinaryImage* auto_picture_mask = nullptr,
+                                    imageproc::BinaryImage* speckles_image = nullptr,
+                                    DebugImages* dbg = nullptr,
+                                    PageId* p_pageId = nullptr,
+                                    IntrusivePtr<Settings>* p_settings = nullptr,
                                     SplitImage* splitImage = nullptr);
 
         void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
@@ -219,12 +219,12 @@ namespace output {
                                                               QPolygonF const& area_to_consider,
                                                               QTransform const& xform,
                                                               QRect const& target_rect,
-                                                              imageproc::GrayImage* background = 0,
-                                                              DebugImages* dbg = 0);
+                                                              imageproc::GrayImage* background = nullptr,
+                                                              DebugImages* dbg = nullptr);
 
         static imageproc::GrayImage detectPictures(imageproc::GrayImage const& input_300dpi,
                                                    TaskStatus const& status,
-                                                   DebugImages* dbg = 0);
+                                                   DebugImages* dbg = nullptr);
 
         imageproc::BinaryImage estimateBinarizationMask(TaskStatus const& status,
                                                         imageproc::GrayImage const& gray_source,
@@ -242,7 +242,7 @@ namespace output {
 
         imageproc::BinaryThreshold calcBinarizationThreshold(QImage const& image,
                                                              QPolygonF const& crop_area,
-                                                             imageproc::BinaryImage const* mask = 0) const;
+                                                             imageproc::BinaryImage const* mask = nullptr) const;
 
         BinaryImage binarize(QImage const& image) const;
 
@@ -250,7 +250,7 @@ namespace output {
 
         imageproc::BinaryImage binarize(QImage const& image,
                                         QPolygonF const& crop_area,
-                                        imageproc::BinaryImage const* mask = 0) const;
+                                        imageproc::BinaryImage const* mask = nullptr) const;
 
         void maybeDespeckleInPlace(imageproc::BinaryImage& image,
                                    QRect const& image_rect,
@@ -276,11 +276,11 @@ namespace output {
 
         QImage transformAndNormalizeIllumination(QImage const& gray_input,
                                                  DebugImages* dbg,
-                                                 QImage const* morph_background = 0) const;
+                                                 QImage const* morph_background = nullptr) const;
 
         QImage transformAndNormalizeIllumination2(QImage const& gray_input,
                                                   DebugImages* dbg,
-                                                  QImage const* morph_background = 0) const;
+                                                  QImage const* morph_background = nullptr) const;
 
         void applyFillZonesInPlace(QImage& img,
                                    ZoneSet const& zones,

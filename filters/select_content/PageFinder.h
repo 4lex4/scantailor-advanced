@@ -47,7 +47,7 @@ namespace select_content {
                                   QSizeF const& box,
                                   double tolerance,
                                   Margins borders,
-                                  DebugImages* dbg = 0);
+                                  DebugImages* dbg = nullptr);
 
     private:
         static QRect detectBorders(QImage const& img);

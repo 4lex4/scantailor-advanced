@@ -28,7 +28,7 @@ namespace output {
     class TabbedImageView : public QTabWidget {
     Q_OBJECT
     public:
-        TabbedImageView(QWidget* parent = 0);
+        TabbedImageView(QWidget* parent = nullptr);
 
         void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
 

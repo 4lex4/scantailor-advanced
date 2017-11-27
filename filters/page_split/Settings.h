@@ -186,7 +186,7 @@ namespace page_split {
          * Whether the update took place or not, the current page record
          * (updated or not) will be returned.
          */
-        Record conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict = 0);
+        Record conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict = nullptr);
 
     private:
         typedef std::map<ImageId, BaseRecord> PerPageRecords;

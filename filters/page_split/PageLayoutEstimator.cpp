@@ -166,7 +166,7 @@ namespace page_split {
             // Find the line closest to the center.
             double const image_center = virtual_image_rect.center().x();
             double min_distance = std::numeric_limits<double>::max();
-            QLineF const* best_line = 0;
+            QLineF const* best_line = nullptr;
             for (QLineF const& line : ltr_lines) {
                 double const line_center = lineCenterX(line);
                 double const distance = fabs(line_center - image_center);

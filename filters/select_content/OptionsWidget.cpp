@@ -157,6 +157,9 @@ namespace select_content {
     void OptionsWidget::borderChanged() {
         m_uiData.setPageBorders(leftBorder->value(), topBorder->value(), rightBorder->value(), bottomBorder->value());
         commitCurrentParams();
+        if (!m_uiData.contentRect().isEmpty()) {
+            emit reloadRequested();
+        }
     }
 
     void OptionsWidget::updateModeIndication(AutoManualMode const mode) {

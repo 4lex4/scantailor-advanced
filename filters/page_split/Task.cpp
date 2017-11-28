@@ -36,8 +36,8 @@ namespace page_split {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr <Filter> const& filter,
-                  IntrusivePtr <ProjectPages> const& pages,
+        UiUpdater(IntrusivePtr<Filter> const& filter,
+                  IntrusivePtr<ProjectPages> const& pages,
                   std::unique_ptr<DebugImages> dbg_img,
                   QImage const& image,
                   PageInfo const& page_info,
@@ -47,13 +47,13 @@ namespace page_split {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr <AbstractFilter> filter() {
+        virtual IntrusivePtr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr <Filter> m_ptrFilter;
-        IntrusivePtr <ProjectPages> m_ptrPages;
+        IntrusivePtr<Filter> m_ptrFilter;
+        IntrusivePtr<ProjectPages> m_ptrPages;
         std::unique_ptr<DebugImages> m_ptrDbg;
         QImage m_image;
         QImage m_downscaledImage;
@@ -78,10 +78,10 @@ namespace page_split {
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    Task::Task(IntrusivePtr <Filter> const& filter,
-               IntrusivePtr <Settings> const& settings,
-               IntrusivePtr <ProjectPages> const& pages,
-               IntrusivePtr <deskew::Task> const& next_task,
+    Task::Task(IntrusivePtr<Filter> const& filter,
+               IntrusivePtr<Settings> const& settings,
+               IntrusivePtr<ProjectPages> const& pages,
+               IntrusivePtr<deskew::Task> const& next_task,
                PageInfo const& page_info,
                bool const batch_processing,
                bool const debug)
@@ -117,9 +117,9 @@ namespace page_split {
 
             PageLayout new_layout;
             std::unique_ptr<Params> new_params;
-            
+
             if (!params || !deps.compatibleWith(*params)) {
-                if (!params || (*record.layoutType() == AUTO_LAYOUT_TYPE)) {
+                if (!params || ((record.layoutType() == nullptr) || (*record.layoutType() == AUTO_LAYOUT_TYPE))) {
                     new_layout = PageLayoutEstimator::estimatePageLayout(
                             record.combinedLayoutType(),
                             data.grayImage(), data.xform(),
@@ -134,7 +134,7 @@ namespace page_split {
 
                     std::unique_ptr<PageLayout> newPageLayout =
                             PageLayoutAdapter::adaptPageLayout(params->pageLayout(),
-                                                   data.xform().resultingRect());
+                                                               data.xform().resultingRect());
 
                     new_params->setPageLayout(*newPageLayout);
 
@@ -216,8 +216,8 @@ namespace page_split {
 
 /*============================ Task::UiUpdater =========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr <Filter> const& filter,
-                               IntrusivePtr <ProjectPages> const& pages,
+    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+                               IntrusivePtr<ProjectPages> const& pages,
                                std::unique_ptr<DebugImages> dbg_img,
                                QImage const& image,
                                PageInfo const& page_info,
@@ -256,15 +256,15 @@ namespace page_split {
 
         QObject::connect(
                 view, SIGNAL(invalidateThumbnail(PageInfo const &)),
-        opt_widget, SIGNAL(invalidateThumbnail(PageInfo const &))
+                opt_widget, SIGNAL(invalidateThumbnail(PageInfo const &))
         );
         QObject::connect(
                 view, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
-        opt_widget, SLOT(pageLayoutSetExternally(PageLayout const &))
+                opt_widget, SLOT(pageLayoutSetExternally(PageLayout const &))
         );
         QObject::connect(
                 opt_widget, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
-        view, SLOT(pageLayoutSetExternally(PageLayout const &))
+                view, SLOT(pageLayoutSetExternally(PageLayout const &))
         );
     }  // Task::UiUpdater::updateUI
 }  // namespace page_split

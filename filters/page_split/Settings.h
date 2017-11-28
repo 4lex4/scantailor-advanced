@@ -45,11 +45,11 @@ namespace page_split {
             BaseRecord();
 
             LayoutType const* layoutType() const {
-                return m_layoutTypeValid ? &m_layoutType : 0;
+                return m_layoutTypeValid ? &m_layoutType : nullptr;
             }
 
             Params const* params() const {
-                return m_paramsValid ? &m_params : 0;
+                return m_paramsValid ? &m_params : nullptr;
             }
 
             /**

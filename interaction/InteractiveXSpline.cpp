@@ -17,9 +17,19 @@
  */
 
 #include "InteractiveXSpline.h"
+#include "Proximity.h"
+#include "VecNT.h"
 #include "MatrixCalc.h"
+#include <QCursor>
 #include <QMouseEvent>
+#include <Qt>
+#include <QDebug>
+
+#ifndef Q_MOC_RUN
+
 #include <boost/bind.hpp>
+
+#endif
 
 struct InteractiveXSpline::NoOp {
     void operator()() const {
@@ -64,7 +74,8 @@ void InteractiveXSpline::setSpline(XSpline const& spline) {
 
         if ((i == 0) || (i == num_control_points - 1)) {
             // Endpoints can't be deleted.
-            new_control_points[i].handler.setProximityStatusTip(tr("This point can be dragged."));
+            new_control_points[i].handler.setProximityStatusTip(
+                    tr("This point can be dragged. Hold Ctrl or Shift to drag along axes."));
         } else {
             new_control_points[i].handler.setProximityStatusTip(
                     tr("Drag this point or delete it by pressing Del or D."));
@@ -102,7 +113,6 @@ bool InteractiveXSpline::curveIsProximityLeader(InteractionState const& state, Q
         if (t) {
             *t = m_curveProximityT;
         }
-
         return true;
     }
 
@@ -157,7 +167,7 @@ void InteractiveXSpline::onKeyPressEvent(QKeyEvent* event, InteractionState& int
 
     switch (event->key()) {
         case Qt::Key_Delete:
-        case Qt::Key_D: {
+        case Qt::Key_D:
             int const num_control_points = m_spline.numControlPoints();
             // Check if one of our control points is a proximity leader.
             // Note that we don't consider the endpoints.
@@ -170,8 +180,6 @@ void InteractiveXSpline::onKeyPressEvent(QKeyEvent* event, InteractionState& int
                     break;
                 }
             }
-            break;
-        }
     }
 }
 
@@ -179,8 +187,29 @@ QPointF InteractiveXSpline::controlPointPosition(int idx) const {
     return m_fromStorage(m_spline.controlPointPosition(idx));
 }
 
+double findAngle(QPointF p1, QPointF p2) {  // return angle between vector (0,0)(1,0) and this
+    // move p1 to 0,0
+    p2 -= p1;
+
+    // get angle with (1,0)
+    double a = p2.x() / sqrt(p2.x() * p2.x() + p2.y() * p2.y());
+    return acos(a) * 180.0 / 3.14159265;
+}
+
 void InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt::KeyboardModifiers mask) {
+    // end of modified by monday2000
     QPointF const storage_pt(m_toStorage(pos));
+    bool swap_sides = false;
+    bool modified = mask.testFlag(Qt::ControlModifier) || mask.testFlag(Qt::ShiftModifier);
+
+    if (modified) {
+        double ang = findAngle(m_toStorage(QPointF(0, 0)), m_toStorage(QPointF(1, 0)));
+        swap_sides = (ang >= 45 && ang <= 135);  // page has been rotated
+
+        if (mask.testFlag(Qt::ShiftModifier)) {
+            swap_sides = !swap_sides;
+        }
+    }
 
     int const num_control_points = m_spline.numControlPoints();
     if ((idx > 0) && (idx < num_control_points - 1)) {
@@ -200,14 +229,22 @@ void InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt
                 Vec2d pt(m_spline.controlPointPosition(i) - origin);
                 MatrixCalc<double> mc;
                 (mc(mat, 2, 2) * mc(pt, 2, 1)).write(pt);
-                if (mask != Qt::ControlModifier) {
+
+                if (!modified) { // default behavior
                     m_spline.moveControlPoint(i, pt + origin);
-                } else {
-                    Vec2d shift_y = storage_pt - old_pos;
-                    QPointF new_position = m_spline.controlPointPosition(i) + shift_y;
-                    new_position.setX(m_spline.controlPointPosition(i).x());
+                } else { // Ctrl or Shift is pressed
+                    Vec2d shift = storage_pt - old_pos;
+                    QPointF new_position = m_spline.controlPointPosition(i) + shift;
+
+                    if (!swap_sides) {
+                        new_position.setX(m_spline.controlPointPosition(i).x());
+                    } else {
+                        new_position.setY(m_spline.controlPointPosition(i).y());
+                    }
+
                     m_spline.moveControlPoint(i, new_position);
                 }
+                // end of modified by monday2000
             }
         } else {
             // Move the endpoint and distribute midpoints uniformly.
@@ -220,7 +257,7 @@ void InteractiveXSpline::controlPointMoveRequest(int idx, QPointF const& pos, Qt
     }
 
     m_modifiedCallback();
-}  // InteractiveXSpline::controlPointMoveRequest
+} // InteractiveXSpline::controlPointMoveRequest
 
 void InteractiveXSpline::dragFinished() {
     m_dragFinishedCallback();
@@ -243,7 +280,6 @@ Vec4d InteractiveXSpline::rotationAndScale(QPointF const& from, QPointF const& t
     A[1] = -x[1];
     A[2] = x[1];
     A[3] = x[0];
-
     return A;
 }
 

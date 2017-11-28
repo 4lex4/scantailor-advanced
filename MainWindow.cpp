@@ -1945,14 +1945,49 @@ void MainWindow::removeFromProject(std::set<PageId> const& pages) {
     }
 
     m_ptrPages->removePages(pages);
-    m_ptrThumbSequence->removePages(pages);
 
-    if (m_ptrThumbSequence->selectionLeader().isNull()) {
-        m_ptrThumbSequence->setSelection(m_ptrThumbSequence->firstPage().id());
+
+    const PageSequence itemsInOrder = m_ptrThumbSequence->toPageSequence();
+    std::set<PageId> new_selection;
+
+    bool select_first_non_deleted = false;
+    if (itemsInOrder.numPages() > 0) {
+        // if first page was deleted select first not deleted page
+        // otherwise select last not deleted page from beginning
+        select_first_non_deleted = pages.find(itemsInOrder.pageAt(0).id()) != pages.end();
+
+        PageId last_non_deleted;
+        for (const PageInfo& page : itemsInOrder) {
+            const PageId& id = page.id();
+            const bool was_deleted = (pages.find(id) != pages.end());
+
+            if (!was_deleted) {
+                if (select_first_non_deleted) {
+                    m_ptrThumbSequence->setSelection(id);
+                    new_selection.insert(id);
+                    break;
+                } else {
+                    last_non_deleted = id;
+                }
+            } else if (!select_first_non_deleted && !last_non_deleted.isNull()) {
+                m_ptrThumbSequence->setSelection(last_non_deleted);
+                new_selection.insert(last_non_deleted);
+                break;
+            }
+        }
+
+        m_ptrThumbSequence->removePages(pages);
+
+        if (new_selection.empty()) {
+            // fallback to old behaviour
+            if (m_ptrThumbSequence->selectionLeader().isNull()) {
+                m_ptrThumbSequence->setSelection(m_ptrThumbSequence->firstPage().id());
+            }
+        }
     }
 
     updateMainArea();
-}
+} // MainWindow::removeFromProject
 
 void MainWindow::eraseOutputFiles(std::set<PageId> const& pages) {
     std::vector<PageId::SubPage> erase_variations;

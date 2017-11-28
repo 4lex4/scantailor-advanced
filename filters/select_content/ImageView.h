@@ -57,6 +57,10 @@ namespace select_content {
 
         void removeContentBox();
 
+    protected:
+
+        void keyPressEvent(QKeyEvent* event) override;
+
     private:
         enum Edge {
             LEFT = 1,

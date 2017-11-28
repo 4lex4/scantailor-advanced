@@ -270,7 +270,7 @@ namespace select_content {
     void ImageView::forceInsideImage(QRectF& widget_rect, int const edge_mask) const {
         qreal const minw = m_minBoxSize.width();
         qreal const minh = m_minBoxSize.height();
-        QRectF const image_rect(getOccupiedWidgetRect());
+        QRectF const image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
 
         if ((edge_mask & LEFT) && (widget_rect.left() < image_rect.left())) {
             widget_rect.setLeft(image_rect.left());
@@ -288,5 +288,41 @@ namespace select_content {
             widget_rect.setBottom(image_rect.bottom());
             widget_rect.setTop(std::min(widget_rect.top(), widget_rect.bottom() - minh));
         }
+    }
+
+    void ImageView::keyPressEvent(QKeyEvent* event) {
+        int dx = 0;
+        int dy = 0;
+        switch (event->key()) {
+            case Qt::Key_Up:
+                dy--;
+                break;
+            case Qt::Key_Down:
+                dy++;
+                break;
+            case Qt::Key_Right:
+                dx++;
+                break;
+            case Qt::Key_Left:
+                dx--;
+                break;
+            default:
+                ImageViewBase::keyPressEvent(event);
+                return; // stop processing
+        }
+
+        QRectF contentRectInWidget(virtualToWidget().mapRect(m_contentRect));
+        if (dx || dy) {
+            contentRectInWidget.translate(dx, dy);
+            forceInsideImage(contentRectInWidget, TOP | BOTTOM | LEFT | RIGHT);
+        }
+
+        m_contentRect = widgetToVirtual().mapRect(contentRectInWidget);
+
+        update();
+
+        emit manualContentRectSet(m_contentRect);
+
+        ImageViewBase::keyPressEvent(event);
     }
 }  // namespace select_content

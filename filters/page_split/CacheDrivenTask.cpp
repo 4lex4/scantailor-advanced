@@ -20,6 +20,7 @@
 #include "Thumbnail.h"
 #include "IncompleteThumbnail.h"
 #include "Settings.h"
+#include "ProjectPages.h"
 #include "PageInfo.h"
 #include "filter_dc/AbstractFilterDataCollector.h"
 #include "filter_dc/ThumbnailCollector.h"
@@ -27,12 +28,28 @@
 
 namespace page_split {
     CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+                                     IntrusivePtr<ProjectPages> projectPages,
                                      IntrusivePtr<deskew::CacheDrivenTask> const& next_task)
             : m_ptrNextTask(next_task),
-              m_ptrSettings(settings) {
+              m_ptrSettings(settings),
+              m_projectPages(projectPages) {
     }
 
     CacheDrivenTask::~CacheDrivenTask() {
+    }
+
+    static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout) {
+        switch (layout.type()) {
+            case PageLayout::SINGLE_PAGE_UNCUT:
+            case PageLayout::SINGLE_PAGE_CUT:
+                return ProjectPages::ONE_PAGE_LAYOUT;
+            case PageLayout::TWO_PAGES:
+                return ProjectPages::TWO_PAGE_LAYOUT;
+        }
+
+        assert(!"Unreachable");
+        
+        return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
     void CacheDrivenTask::process(PageInfo const& page_info,
@@ -67,6 +84,12 @@ namespace page_split {
         }
 
         PageLayout layout(params->pageLayout());
+
+        // m_projectPages controls number of pages displayed in thumbnail list
+        // usually this is set in Task, but if user changed layout with Apply To..
+        // and just jumped to next stage - the Task::process isn't invoked for all pages
+        // so we must additionally ensure here that we display right number of pages.
+        m_projectPages->setLayoutTypeFor(page_info.id().imageId(), toPageLayoutType(layout));
 
         if (m_ptrNextTask) {
             ImageTransformation new_xform(xform);

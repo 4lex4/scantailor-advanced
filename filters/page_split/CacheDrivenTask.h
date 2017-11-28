@@ -27,6 +27,7 @@ class QSizeF;
 class PageInfo;
 class AbstractFilterDataCollector;
 class ImageTransformation;
+class ProjectPages;
 
 namespace deskew {
     class CacheDrivenTask;
@@ -39,7 +40,8 @@ namespace page_split {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(IntrusivePtr<Settings> const& settings, IntrusivePtr<ProjectPages> projectPages,
+                        IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
 
         virtual ~CacheDrivenTask();
 
@@ -49,6 +51,7 @@ namespace page_split {
     private:
         IntrusivePtr<deskew::CacheDrivenTask> m_ptrNextTask;
         IntrusivePtr<Settings> m_ptrSettings;
+        IntrusivePtr<ProjectPages> m_projectPages;
     };
 }  // namespace page_split
 #endif // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_

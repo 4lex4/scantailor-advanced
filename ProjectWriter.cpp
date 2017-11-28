@@ -18,9 +18,26 @@
 
 #include "ProjectWriter.h"
 #include "ProjectPages.h"
+#include "PageView.h"
+#include "PageInfo.h"
+#include "PageId.h"
+#include "ImageId.h"
+#include "ImageMetadata.h"
 #include "AbstractFilter.h"
+#include "FileNameDisambiguator.h"
 #include <QtXml>
-#include <boost/foreach.hpp>
+#include <QFile>
+#include <QTextStream>
+#include <QFileInfo>
+
+#ifndef Q_MOC_RUN
+
+#include <boost/bind.hpp>
+
+#endif
+
+#include <stddef.h>
+#include <assert.h>
 
 ProjectWriter::ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
                              SelectedPage const& selected_page,
@@ -30,9 +47,7 @@ ProjectWriter::ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
           m_selectedPage(selected_page),
           m_layoutDirection(page_sequence->layoutDirection()) {
     int next_id = 1;
-    size_t const num_pages = m_pageSequence.numPages();
-    for (size_t i = 0; i < num_pages; ++i) {
-        PageInfo const& page = m_pageSequence.pageAt(i);
+    for (const PageInfo& page : m_pageSequence) {
         PageId const& page_id = page.id();
         ImageId const& image_id = page_id.imageId();
         QString const& file_path = image_id.filePath();
@@ -95,7 +110,6 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream strm(&file);
         doc.save(strm, 2);
-
         return true;
     }
 
@@ -173,27 +187,35 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     PageId const sel_opt_1(m_selectedPage.get(IMAGE_VIEW));
     PageId const sel_opt_2(m_selectedPage.get(PAGE_VIEW));
 
-    size_t const num_pages = m_pageSequence.numPages();
-    for (size_t i = 0; i < num_pages; ++i) {
-        PageInfo const& page = m_pageSequence.pageAt(i);
+    PageId page_left;
+    PageId page_right;
+    if (sel_opt_2.subPage() == PageId::SINGLE_PAGE) {
+        // In case it was split later select first of its pages found
+        page_left = PageId(sel_opt_2.imageId(), PageId::LEFT_PAGE);
+        page_right = PageId(sel_opt_2.imageId(), PageId::RIGHT_PAGE);
+    }
+
+
+    for (const PageInfo& page : m_pageSequence) {
         PageId const& page_id = page.id();
         QDomElement page_el(doc.createElement("page"));
         page_el.setAttribute("id", pageId(page_id));
         page_el.setAttribute("imageId", imageId(page_id.imageId()));
         page_el.setAttribute("subPage", page_id.subPageAsString());
-        if ((page_id == sel_opt_1) || (page_id == sel_opt_2)) {
+        if ((page_id == sel_opt_1) || (page_id == sel_opt_2)
+            || (page_id == page_left) || (page_id == page_right)) {
             page_el.setAttribute("selected", "selected");
+            page_left = page_right = PageId();  // if one of these match other shouldn't
         }
         pages_el.appendChild(page_el);
     }
 
     return pages_el;
-}
+} // ProjectWriter::processPages
 
 int ProjectWriter::dirId(QString const& dir_path) const {
     Directories::const_iterator const it(m_dirs.find(dir_path));
     assert(it != m_dirs.end());
-
     return it->numericId;
 }
 
@@ -218,14 +240,12 @@ QString ProjectWriter::packFilePath(QString const& file_path) const {
 int ProjectWriter::imageId(ImageId const& image_id) const {
     Images::const_iterator const it(m_images.find(image_id));
     assert(it != m_images.end());
-
     return it->numericId;
 }
 
 int ProjectWriter::pageId(PageId const& page_id) const {
     Pages::const_iterator const it(m_pages.find(page_id));
     assert(it != m_pages.end());
-
     return it->numericId;
 }
 

@@ -26,6 +26,23 @@ PageInfo const& PageSequence::pageAt(size_t const idx) const {
     return m_pages.at(idx);  // may throw
 }
 
+PageInfo const& PageSequence::pageAt(PageId const page) const {
+    std::vector<PageInfo>::const_iterator it(m_pages.begin());
+    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    for (; it != end && it->id() != page; ++it) {
+    }
+    return *it;
+}
+
+int PageSequence::pageNo(PageId const& page) const {
+    std::vector<PageInfo>::const_iterator it(m_pages.begin());
+    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    int res = 0;
+    for (; it != end && it->id() != page; ++it, ++res) {
+    }
+    return (it == end) ? -1 : res;
+}
+
 std::set<PageId>
 PageSequence::selectAll() const {
     std::set<PageId> selection;

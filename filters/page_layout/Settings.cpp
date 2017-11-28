@@ -404,10 +404,10 @@ namespace page_layout {
         QMutexLocker const locker(&m_mutex);
 
         std::vector<PageId> sorted_pages;
-        size_t const num_pages = pages.numPages();
-        sorted_pages.reserve(num_pages);
-        for (size_t i = 0; i < num_pages; ++i) {
-            sorted_pages.push_back(pages.pageAt(i).id());
+
+        sorted_pages.reserve(pages.numPages());
+        for (PageInfo const& page : pages) {
+            sorted_pages.push_back(page.id());
         }
         std::sort(sorted_pages.begin(), sorted_pages.end());
 
@@ -425,9 +425,7 @@ namespace page_layout {
     bool Settings::Impl::checkEverythingDefined(PageSequence const& pages, PageId const* ignore) const {
         QMutexLocker const locker(&m_mutex);
 
-        size_t const num_pages = pages.numPages();
-        for (size_t i = 0; i < num_pages; ++i) {
-            PageInfo const& page_info = pages.pageAt(i);
+        for (PageInfo const& page_info : pages) {
             if (ignore && (*ignore == page_info.id())) {
                 continue;
             }

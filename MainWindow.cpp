@@ -1778,9 +1778,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId con
             setDynamicSortFilter(true);
 
             PageSequence const sequence(pages.toPageSequence(IMAGE_VIEW));
-            unsigned const count = sequence.numPages();
-            for (unsigned i = 0; i < count; ++i) {
-                PageInfo const& page = sequence.pageAt(i);
+            for (PageInfo const& page : sequence) {
                 m_inProjectFiles.push_back(QFileInfo(page.imageId().filePath()));
             }
         }
@@ -2118,9 +2116,8 @@ MainWindow::createCompositeCacheDrivenTask(int const last_filter_idx) {
 } // MainWindow::createCompositeCacheDrivenTask
 
 void MainWindow::updateDisambiguationRecords(PageSequence const& pages) {
-    int const count = pages.numPages();
-    for (int i = 0; i < count; ++i) {
-        m_outFileNameGen.disambiguator()->registerFile(pages.pageAt(i).imageId().filePath());
+    for (PageInfo const& page : pages) {
+        m_outFileNameGen.disambiguator()->registerFile(page.imageId().filePath());
     }
 }
 

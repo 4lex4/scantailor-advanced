@@ -450,16 +450,14 @@ void ThumbnailSequence::Impl::reset(PageSequence const& pages,
     }
 
     clear();  // Also clears the selection.
-    size_t const num_pages = pages.numPages();
-    if (num_pages == 0) {
+
+    if (pages.numPages() == 0) {
         return;
     }
 
     Item const* some_selected_item = 0;
 
-    for (size_t i = 0; i < num_pages; ++i) {
-        PageInfo const& page_info(pages.pageAt(i));
-
+    for (PageInfo const& page_info : pages) {
         std::unique_ptr<CompositeItem> composite(getCompositeItem(0, page_info));
         m_itemsInOrder.push_back(Item(page_info, composite.release()));
         Item const* item = &m_itemsInOrder.back();

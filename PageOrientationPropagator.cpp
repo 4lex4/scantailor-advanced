@@ -50,10 +50,8 @@ PageOrientationPropagator::~PageOrientationPropagator() {
 
 void PageOrientationPropagator::propagate(ProjectPages const& pages) {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
-    size_t const num_pages = sequence.numPages();
 
-    for (size_t i = 0; i < num_pages; ++i) {
-        PageInfo const& page_info = sequence.pageAt(i);
+    for (PageInfo const& page_info : sequence) {
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         m_ptrPageSplitFilter->pageOrientationUpdate(

@@ -279,13 +279,13 @@
 <context>
     <name>InteractiveXSpline</name>
     <message>
-        <location filename="../interaction/InteractiveXSpline.cpp" line="+43"/>
+        <location filename="../interaction/InteractiveXSpline.cpp" line="+53"/>
         <source>Click to create a new control point.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>This point can be dragged.</source>
+        <location line="+25"/>
+        <source>This point can be dragged. Hold Ctrl or Shift to drag along axes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -380,7 +380,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+529"/>
+        <location filename="../MainWindow.cpp" line="+530"/>
         <source>Save Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -602,7 +602,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+338"/>
+        <location line="+349"/>
         <location line="+62"/>
         <source>Scan Tailor Projects</source>
         <translation type="unfinished"></translation>
@@ -615,13 +615,13 @@
     <message>
         <location line="+16"/>
         <location line="+10"/>
-        <location line="+297"/>
+        <location line="+299"/>
         <location line="+29"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-335"/>
+        <location line="-337"/>
         <source>Unable to open the project file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -631,7 +631,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+62"/>
         <source>version </source>
         <translation type="unfinished"></translation>
     </message>
@@ -658,7 +658,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+50"/>
         <source>Files to insert</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1095,12 +1095,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+37"/>
-        <location line="+808"/>
+        <location line="+869"/>
         <source>Change ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-783"/>
+        <location line="-844"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1160,7 +1160,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+67"/>
+        <source>Sensitivity (%): </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <location line="+107"/>
         <location line="+188"/>
         <location line="+71"/>
@@ -1941,6 +1946,11 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+27"/>
+        <source>Language: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+32"/>
         <source>Saving</source>
         <translation type="unfinished"></translation>
@@ -1956,7 +1966,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="+35"/>
+        <location filename="../SettingsDialog.cpp" line="+38"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1999,7 +2009,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+43"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2039,7 +2049,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../ThumbnailSequence.cpp" line="+1253"/>
+        <location filename="../ThumbnailSequence.cpp" line="+1252"/>
         <source>%1 (page %2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2105,17 +2115,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneContextMenuInteraction</name>
     <message>
-        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+223"/>
-        <source>Delete confirmation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Really delete this zone?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+230"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2265,7 +2265,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::OptionsWidget</name>
     <message>
-        <location filename="../filters/output/OptionsWidget.cpp" line="+43"/>
+        <location filename="../filters/output/OptionsWidget.cpp" line="+45"/>
         <source>Black and White</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2315,12 +2315,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Quadro</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+301"/>
+        <location line="+312"/>
         <source>Apply Splitting Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2335,7 +2330,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+219"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2363,7 +2358,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+564"/>
+        <location filename="../filters/output/Task.cpp" line="+568"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation type="unfinished"></translation>
     </message>

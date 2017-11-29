@@ -16,10 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "RelinkingDialog.h"
+#include "LoadFilesStatusDialog.h"
+#include "FixDpiDialog.h"
+#include "ImageMetadataLoader.h"
+#include "ProcessingIndicationWidget.h"
+#include "ProjectOpeningContext.h"
+#include "DebugImages.h"
+#include "ErrorWidget.h"
+#include "Utils.h"
+#include "StageSequence.h"
+#include "NewOpenProjectPanel.h"
+#include "MainWindow.h"
 #include "Application.h"
 #include "OutOfMemoryHandler.h"
-#include <QStyleFactory>
-#include <QPalette>
+#include <config.h>
+#include <QtCore/QDir>
 
 Application::Application(int& argc, char** argv)
         : QApplication(argc, argv) {
@@ -35,3 +47,38 @@ bool Application::notify(QObject* receiver, QEvent* e) {
     }
 }
 
+void Application::installLanguage(const QString& locale) {
+    if (m_currentLocale == locale) {
+        return;
+    }
+
+    QString const translation("scantailor_" + locale);
+
+    QStringList const translation_dirs(
+            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
+    );
+    for (QString const& path : translation_dirs) {
+        QString absolute_path;
+        if (QDir::isAbsolutePath(path)) {
+            absolute_path = path;
+        } else {
+            absolute_path = qApp->applicationDirPath();
+            absolute_path += QChar('/');
+            absolute_path += path;
+        }
+        absolute_path += QChar('/');
+        absolute_path += translation;
+
+        if (m_translator.load(absolute_path)) {
+            m_currentLocale = locale;
+            break;
+        }
+    }
+
+    qApp->removeTranslator(&m_translator);
+    qApp->installTranslator(&m_translator);
+}
+
+const QString& Application::getCurrentLocale() const {
+    return m_currentLocale;
+}

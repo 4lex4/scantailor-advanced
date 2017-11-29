@@ -20,6 +20,12 @@
 #define APPLICATION_H_
 
 #include <QApplication>
+#include <QTimer>
+#include <QtCore/QTranslator>
+#include "ui_MainWindow.h"
+#include "FilterUiInterface.h"
+#include "BackgroundTask.h"
+#include "OutputFileNameGenerator.h"
 
 class Application : public QApplication {
 Q_OBJECT
@@ -27,6 +33,14 @@ public:
     Application(int& argc, char** argv);
 
     virtual bool notify(QObject* receiver, QEvent* e);
+
+    const QString& getCurrentLocale() const;
+
+    void installLanguage(const QString& locale);
+
+private:
+    QTranslator m_translator;
+    QString m_currentLocale;
 };
 
 

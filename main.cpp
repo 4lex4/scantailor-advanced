@@ -55,46 +55,21 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    QString const translation("scantailor_" + QLocale::system().name());
-    QTranslator translator;
-
-
-    QStringList const translation_dirs(
-            // Now try loading from where it's supposed to be.
-            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
-    );
-    for (QString const& path : translation_dirs) {
-        QString absolute_path;
-        if (QDir::isAbsolutePath(path)) {
-            absolute_path = path;
-        } else {
-            absolute_path = app.applicationDirPath();
-            absolute_path += QChar('/');
-            absolute_path += path;
-        }
-        absolute_path += QChar('/');
-        absolute_path += translation;
-
-        if (translator.load(absolute_path)) {
-            break;
-        }
-    }
-
-    app.installTranslator(&translator);
-
     // This information is used by QSettings.
     app.setApplicationName("scantailor");
     app.setOrganizationName("scantailor");
+
+    PngMetadataLoader::registerMyself();
+    TiffMetadataLoader::registerMyself();
+    JpegMetadataLoader::registerMyself();
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
 
     QSettings settings;
 
-    PngMetadataLoader::registerMyself();
-    TiffMetadataLoader::registerMyself();
-    JpegMetadataLoader::registerMyself();
-
+    app.installLanguage(settings.value("settings/language", QLocale::system().name()).toString());
+    
     {
         QString val = settings.value("settings/color_scheme", "dark").toString();
         std::unique_ptr<ColorScheme> scheme;

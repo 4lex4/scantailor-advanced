@@ -73,6 +73,7 @@
 #include "ui_RemovePagesDialog.h"
 #include "ui_BatchProcessingLowerPanel.h"
 #include "version.h"
+#include "Application.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
 #include <QScrollBar>
@@ -1477,6 +1478,8 @@ void MainWindow::onSettingsChanged() {
     QSettings settings;
 
     m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+
+    dynamic_cast<Application*>(qApp)->installLanguage(settings.value("settings/language").toString());
 
     bool highlightDeviation = settings.value("settings/highlight_deviation").toBool();
     if (highlightDeviation != m_highlightDeviation) {

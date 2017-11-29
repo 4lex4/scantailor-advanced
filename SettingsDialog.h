@@ -41,6 +41,9 @@ private slots:
     void onColorSchemeChanged(int idx);
 
 private:
+
+    void initLanguageList(const QString& locale);
+
     Ui::SettingsDialog ui;
 };
 

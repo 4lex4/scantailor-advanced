@@ -18,9 +18,12 @@
 
 #include "SettingsDialog.h"
 #include "OpenGLSupport.h"
+#include "Application.h"
 #include <QSettings>
 #include <QtWidgets/QMessageBox>
 #include <tiff.h>
+#include <QtCore/QDir>
+#include <config.h>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
         : QDialog(parent) {
@@ -49,7 +52,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     } else {
         ui.colorSchemeBox->setCurrentIndex(0);
     }
-    
+
     ui.tiffCompressionBWBox->addItem(tr("None"), COMPRESSION_NONE);
     ui.tiffCompressionBWBox->addItem(tr("LZW"), COMPRESSION_LZW);
     ui.tiffCompressionBWBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
@@ -80,6 +83,8 @@ SettingsDialog::SettingsDialog(QWidget* parent)
             ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onColorSchemeChanged(int))
     );
+
+    initLanguageList(dynamic_cast<Application*>(qApp)->getCurrentLocale());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -95,9 +100,10 @@ void SettingsDialog::commitChanges() {
     } else if (ui.colorSchemeBox->currentIndex() == 1) {
         settings.setValue("settings/color_scheme", "light");
     }
-    
+
     settings.setValue("settings/bw_compression", ui.tiffCompressionBWBox->currentData().toInt());
     settings.setValue("settings/color_compression", ui.tiffCompressionColorBox->currentData().toInt());
+    settings.setValue("settings/language", ui.languageBox->currentData().toString());
 
     emit settingsChanged();
 }
@@ -108,3 +114,35 @@ void SettingsDialog::onColorSchemeChanged(int idx) {
             tr("ScanTailor need to be restarted to apply the color scheme changes.")
     );
 }
+
+void SettingsDialog::initLanguageList(const QString& locale) {
+    ui.languageBox->clear();
+    ui.languageBox->addItem(QLocale::languageToString(QLocale("en_US").language()), "en_US");
+
+    QStringList const translation_dirs(
+            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
+    );
+
+    const QStringList language_file_filter("scantailor_*.qm");
+    QStringList fileNames;
+    for (QString const& path : translation_dirs) {
+        fileNames += QDir(path).entryList(language_file_filter);
+    }
+
+    fileNames.sort();
+
+    for (QString locale : fileNames) {
+        locale.truncate(locale.lastIndexOf('.'));
+        locale.remove(0, locale.indexOf('_') + 1);
+
+        QString lang = QLocale::languageToString(QLocale(locale).language());
+        ui.languageBox->addItem(lang, locale);
+    }
+
+    ui.languageBox->setEnabled(ui.languageBox->count() > 1);
+
+    int currentLangIndex = ui.languageBox->findData(locale);
+    if (currentLangIndex > 0) {
+        ui.languageBox->setCurrentIndex(currentLangIndex);
+    }
+} // SettingsDialog::initLanguageList

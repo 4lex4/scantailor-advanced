@@ -20,7 +20,7 @@
 #define SELECT_CONTENT_TASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "FilterResult.h"
 #include "PageId.h"
 #include <QSizeF>
@@ -40,13 +40,13 @@ namespace select_content {
     class Filter;
     class Settings;
 
-    class Task : public RefCountable {
+    class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<page_layout::Task> const& next_task,
-             IntrusivePtr<Settings> const& settings,
+        Task(intrusive_ptr<Filter> const& filter,
+             intrusive_ptr<page_layout::Task> const& next_task,
+             intrusive_ptr<Settings> const& settings,
              PageId const& page_id,
              bool batch,
              bool debug);
@@ -58,9 +58,9 @@ namespace select_content {
     private:
         class UiUpdater;
 
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<page_layout::Task> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<page_layout::Task> m_ptrNextTask;
+        intrusive_ptr<Settings> m_ptrSettings;
         std::unique_ptr<DebugImages> m_ptrDbg;
         PageId m_pageId;
         bool m_batchProcessing;

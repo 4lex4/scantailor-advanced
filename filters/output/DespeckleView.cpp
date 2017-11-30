@@ -42,7 +42,7 @@ namespace output {
     };
 
 
-    class DespeckleView::TaskCancelHandle : public TaskStatus, public RefCountable {
+    class DespeckleView::TaskCancelHandle : public TaskStatus, public ref_countable {
     public:
         virtual void cancel();
 
@@ -59,7 +59,7 @@ namespace output {
     public:
         DespeckleTask(DespeckleView* owner,
                       DespeckleState const& despeckle_state,
-                      IntrusivePtr<TaskCancelHandle> const& cancel_handle,
+                      intrusive_ptr<TaskCancelHandle> const& cancel_handle,
                       DespeckleLevel new_level,
                       bool debug);
 
@@ -68,7 +68,7 @@ namespace output {
     private:
         QPointer<DespeckleView> m_ptrOwner;
         DespeckleState m_despeckleState;
-        IntrusivePtr<TaskCancelHandle> m_ptrCancelHandle;
+        intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
         std::unique_ptr<DebugImages> m_ptrDbg;
         DespeckleLevel m_despeckleLevel;
     };
@@ -77,7 +77,7 @@ namespace output {
     class DespeckleView::DespeckleResult : public AbstractCommand0<void> {
     public:
         DespeckleResult(QPointer<DespeckleView> const& owner,
-                        IntrusivePtr<TaskCancelHandle> const& cancel_handle,
+                        intrusive_ptr<TaskCancelHandle> const& cancel_handle,
                         DespeckleState const& despeckle_state,
                         DespeckleVisualization const& visualization,
                         std::unique_ptr<DebugImages> debug_images);
@@ -87,7 +87,7 @@ namespace output {
 
     private:
         QPointer<DespeckleView> m_ptrOwner;
-        IntrusivePtr<TaskCancelHandle> m_ptrCancelHandle;
+        intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
         std::unique_ptr<DebugImages> m_ptrDbg;
         DespeckleState m_despeckleState;
         DespeckleVisualization m_visualization;
@@ -223,7 +223,7 @@ namespace output {
 
     DespeckleView::DespeckleTask::DespeckleTask(DespeckleView* owner,
                                                 DespeckleState const& despeckle_state,
-                                                IntrusivePtr<TaskCancelHandle> const& cancel_handle,
+                                                intrusive_ptr<TaskCancelHandle> const& cancel_handle,
                                                 DespeckleLevel const level,
                                                 bool const debug)
             : m_ptrOwner(owner),
@@ -263,7 +263,7 @@ namespace output {
 /*======================== DespeckleResult ===========================*/
 
     DespeckleView::DespeckleResult::DespeckleResult(QPointer<DespeckleView> const& owner,
-                                                    IntrusivePtr<TaskCancelHandle> const& cancel_handle,
+                                                    intrusive_ptr<TaskCancelHandle> const& cancel_handle,
                                                     DespeckleState const& despeckle_state,
                                                     DespeckleVisualization const& visualization,
                                                     std::unique_ptr<DebugImages> debug_images)

@@ -19,7 +19,7 @@
 #ifndef DESKEW_SETTINGS_H_
 #define DESKEW_SETTINGS_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"
@@ -31,7 +31,7 @@
 class AbstractRelinker;
 
 namespace deskew {
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     public:

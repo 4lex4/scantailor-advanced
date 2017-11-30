@@ -20,19 +20,19 @@
 #define PAGE_LAYOUT_ORDER_BY_WIDTH_PROVIDER_H_
 
 #include "Settings.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageOrderProvider.h"
 
 namespace page_layout {
     class OrderByWidthProvider : public PageOrderProvider {
     public:
-        OrderByWidthProvider(IntrusivePtr<Settings> const& settings);
+        OrderByWidthProvider(intrusive_ptr<Settings> const& settings);
 
         virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
                               bool rhs_incomplete) const;
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace page_layout
 #endif

@@ -21,7 +21,7 @@
 
 #include "ui_OutputOptionsWidget.h"
 #include "FilterOptionsWidget.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "ColorParams.h"
@@ -50,7 +50,7 @@ namespace output {
     class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -159,7 +159,7 @@ namespace output {
 
         void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
         Dpi m_outputDpi;

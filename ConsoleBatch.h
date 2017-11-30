@@ -24,7 +24,7 @@
 #include <QString>
 #include <vector>
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "BackgroundTask.h"
 #include "FilterResult.h"
 #include "OutputFileNameGenerator.h"
@@ -56,11 +56,11 @@ public:
 private:
     bool batch;
     bool debug;
-    IntrusivePtr<FileNameDisambiguator> m_ptrDisambiguator;
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    IntrusivePtr<StageSequence> m_ptrStages;
+    intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
+    intrusive_ptr<ProjectPages> m_ptrPages;
+    intrusive_ptr<StageSequence> m_ptrStages;
     OutputFileNameGenerator m_outFileNameGen;
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     std::unique_ptr<ProjectReader> m_ptrReader;
 
     void setupFilter(int idx, std::set<PageId> allPages);

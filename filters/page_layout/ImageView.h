@@ -28,7 +28,7 @@
 #include "DraggableObject.h"
 #include "ObjectDragHandler.h"
 #include "Alignment.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageId.h"
 #include <QTransform>
 #include <QSizeF>
@@ -45,7 +45,7 @@ namespace page_layout {
     class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        ImageView(IntrusivePtr<Settings> const& settings,
+        ImageView(intrusive_ptr<Settings> const& settings,
                   PageId const& page_id,
                   QImage const& image,
                   QImage const& downscaled_image,
@@ -164,7 +164,7 @@ namespace page_layout {
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
 
         PageId const m_pageId;
 

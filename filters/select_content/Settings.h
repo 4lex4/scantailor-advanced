@@ -19,7 +19,7 @@
 #ifndef SELECT_CONTENT_SETTINGS_H_
 #define SELECT_CONTENT_SETTINGS_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"
@@ -30,7 +30,7 @@
 class AbstractRelinker;
 
 namespace select_content {
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     public:

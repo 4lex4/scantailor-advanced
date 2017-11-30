@@ -20,7 +20,7 @@
 #define ZONE_H_
 
 #include "SerializableSpline.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PropertySet.h"
 #include "filters/output/PictureLayerProperty.h"
 #include "filters/output/ZoneCategoryProperty.h"

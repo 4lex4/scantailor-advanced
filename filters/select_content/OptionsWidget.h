@@ -21,7 +21,7 @@
 
 #include "ui_SelectContentOptionsWidget.h"
 #include "FilterOptionsWidget.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "AutoManualMode.h"
 #include "Dependencies.h"
 #include "PhysSizeCalc.h"
@@ -106,7 +106,7 @@ namespace select_content {
         };
 
 
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -145,7 +145,7 @@ namespace select_content {
 
         void commitCurrentParams();
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;

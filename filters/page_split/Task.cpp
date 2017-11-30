@@ -36,8 +36,8 @@ namespace page_split {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
-                  IntrusivePtr<ProjectPages> const& pages,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
+                  intrusive_ptr<ProjectPages> const& pages,
                   std::unique_ptr<DebugImages> dbg_img,
                   QImage const& image,
                   PageInfo const& page_info,
@@ -47,13 +47,13 @@ namespace page_split {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<ProjectPages> m_ptrPages;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<ProjectPages> m_ptrPages;
         std::unique_ptr<DebugImages> m_ptrDbg;
         QImage m_image;
         QImage m_downscaledImage;
@@ -78,10 +78,10 @@ namespace page_split {
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    Task::Task(IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<Settings> const& settings,
-               IntrusivePtr<ProjectPages> const& pages,
-               IntrusivePtr<deskew::Task> const& next_task,
+    Task::Task(intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<Settings> const& settings,
+               intrusive_ptr<ProjectPages> const& pages,
+               intrusive_ptr<deskew::Task> const& next_task,
                PageInfo const& page_info,
                bool const batch_processing,
                bool const debug)
@@ -216,8 +216,8 @@ namespace page_split {
 
 /*============================ Task::UiUpdater =========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
-                               IntrusivePtr<ProjectPages> const& pages,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
+                               intrusive_ptr<ProjectPages> const& pages,
                                std::unique_ptr<DebugImages> dbg_img,
                                QImage const& image,
                                PageInfo const& page_info,

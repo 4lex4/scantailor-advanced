@@ -19,7 +19,7 @@
 #ifndef PAGE_SELECTION_PROVIDER_H_
 #define PAGE_SELECTION_PROVIDER_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include <set>
 #include <vector>
 
@@ -27,7 +27,7 @@ class PageSequence;
 class PageId;
 class PageRange;
 
-class PageSelectionProvider : public RefCountable {
+class PageSelectionProvider : public ref_countable {
 public:
     virtual PageSequence allPages() const = 0;
 

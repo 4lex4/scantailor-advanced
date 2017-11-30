@@ -20,7 +20,7 @@
 #define IMAGEVIEWBASE_H_
 
 #include "Margins.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "ImagePixmapUnion.h"
@@ -385,7 +385,7 @@ private:
     /**
      * The pending (if any) high quality transformation task.
      */
-    IntrusivePtr<HqTransformTask> m_ptrHqTransformTask;
+    intrusive_ptr<HqTransformTask> m_ptrHqTransformTask;
 
     /**
      * Transformation from m_pixmap coordinates to m_image coordinates.

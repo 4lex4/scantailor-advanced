@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "AbstractFilter.h"
 #include "PageView.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "FilterResult.h"
 #include "SafeDeletingQObjectPtr.h"
 #include "PageOrderOption.h"
@@ -76,13 +76,13 @@ namespace select_content {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        IntrusivePtr<Task> createTask(PageId const& page_id,
-                                      IntrusivePtr<page_layout::Task> const& next_task,
-                                      bool batch,
-                                      bool debug);
+        intrusive_ptr<Task> createTask(PageId const& page_id,
+                                       intrusive_ptr<page_layout::Task> const& next_task,
+                                       bool batch,
+                                       bool debug);
 
-        IntrusivePtr<CacheDrivenTask>
-        createCacheDrivenTask(IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask>
+        createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget() {
             return m_ptrOptionsWidget.get();
@@ -96,7 +96,7 @@ namespace select_content {
         void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;

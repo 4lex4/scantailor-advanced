@@ -31,9 +31,9 @@ namespace output {
         factory.registerProperty(m_propertyName, &FillColorProperty::construct);
     }
 
-    IntrusivePtr<Property>
+    intrusive_ptr<Property>
     FillColorProperty::clone() const {
-        return IntrusivePtr<Property>(new FillColorProperty(*this));
+        return intrusive_ptr<Property>(new FillColorProperty(*this));
     }
 
     QDomElement FillColorProperty::toXml(QDomDocument& doc, QString const& name) const {
@@ -44,9 +44,9 @@ namespace output {
         return el;
     }
 
-    IntrusivePtr<Property>
+    intrusive_ptr<Property>
     FillColorProperty::construct(QDomElement const& el) {
-        return IntrusivePtr<Property>(new FillColorProperty(el));
+        return intrusive_ptr<Property>(new FillColorProperty(el));
     }
 
     QRgb FillColorProperty::rgbFromString(QString const& str) {

@@ -20,7 +20,7 @@
 #define OUTPUT_FILL_COLOR_PROPERTY_H_
 
 #include "Property.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QColor>
 #include <Qt>
 
@@ -40,7 +40,7 @@ namespace output {
 
         static void registerIn(PropertyFactory& factory);
 
-        virtual IntrusivePtr<Property> clone() const;
+        virtual intrusive_ptr<Property> clone() const;
 
         virtual QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -53,7 +53,7 @@ namespace output {
         }
 
     private:
-        static IntrusivePtr<Property> construct(QDomElement const& el);
+        static intrusive_ptr<Property> construct(QDomElement const& el);
 
         static QRgb rgbFromString(QString const& str);
 

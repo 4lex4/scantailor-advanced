@@ -22,7 +22,7 @@
 #include "ThumbnailBase.h"
 #include "Params.h"
 #include "ImageTransformation.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QTransform>
 #include <QRectF>
 
@@ -32,7 +32,7 @@ class ImageId;
 namespace page_layout {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   Params const& params,

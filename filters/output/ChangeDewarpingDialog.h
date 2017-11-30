@@ -23,7 +23,7 @@
 #include "DewarpingOptions.h"
 #include "PageId.h"
 #include "PageSequence.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QDialog>
 #include <QString>
 #include <set>

@@ -4,7 +4,7 @@
 
 namespace output {
 
-    SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(IntrusivePtr<Settings> settings)
+    SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
             : m_ptrSettings(settings) {
         setupUi(this);
 

@@ -19,7 +19,7 @@
 #ifndef SPLINE_VERTEX_H_
 #define SPLINE_VERTEX_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "NonCopyable.h"
 #include <QPointF>
 
@@ -31,7 +31,7 @@ public:
         LOOP_IF_BRIDGED
     };
 
-    typedef IntrusivePtr<SplineVertex> Ptr;
+    typedef intrusive_ptr<SplineVertex> Ptr;
 
     SplineVertex(SplineVertex* prev, SplineVertex* next);
 

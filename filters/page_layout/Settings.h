@@ -20,7 +20,7 @@
 #define PAGE_LAYOUT_SETTINGS_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "Margins.h"
 #include <memory>
 
@@ -35,7 +35,7 @@ namespace page_layout {
     class Params;
     class Alignment;
 
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     public:

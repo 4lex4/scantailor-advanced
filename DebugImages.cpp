@@ -40,7 +40,7 @@ void DebugImages::add(QImage const& image,
         return;
     }
 
-    m_sequence.push_back(IntrusivePtr<Item>(new Item(arem_file, label, image_view_factory)));
+    m_sequence.push_back(intrusive_ptr<Item>(new Item(arem_file, label, image_view_factory)));
 }
 
 void DebugImages::add(imageproc::BinaryImage const& image,

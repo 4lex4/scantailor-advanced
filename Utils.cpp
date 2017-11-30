@@ -66,12 +66,12 @@ QString Utils::outputDirToThumbDir(QString const& output_dir) {
     return output_dir + QLatin1String("/cache/thumbs");
 }
 
-IntrusivePtr<ThumbnailPixmapCache>
+intrusive_ptr<ThumbnailPixmapCache>
 Utils::createThumbnailCache(QString const& output_dir) {
     QSize const max_pixmap_size(200, 200);
     QString const thumbs_cache_path(outputDirToThumbDir(output_dir));
 
-    return IntrusivePtr<ThumbnailPixmapCache>(
+    return intrusive_ptr<ThumbnailPixmapCache>(
             new ThumbnailPixmapCache(thumbs_cache_path, max_pixmap_size, 40, 5)
     );
 }

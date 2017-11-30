@@ -5,7 +5,7 @@
 #include "ui_WolfBinarizationOptionsWidget.h"
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "Settings.h"
 #include <QtCore>
 
@@ -14,13 +14,13 @@ namespace output {
     Q_OBJECT
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;
         ColorParams m_colorParams;
         QTimer delayedStateChanger;
 
     public:
-        explicit WolfBinarizationOptionsWidget(IntrusivePtr<Settings> settings);
+        explicit WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
         ~WolfBinarizationOptionsWidget() override = default;
 

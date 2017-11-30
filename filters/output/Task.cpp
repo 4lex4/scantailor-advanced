@@ -54,8 +54,8 @@ namespace output {
     class Task::UiUpdater : public FilterResult {
     Q_DECLARE_TR_FUNCTIONS(output::Task::UiUpdater)
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
-                  IntrusivePtr<Settings> const& settings,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
+                  intrusive_ptr<Settings> const& settings,
                   std::unique_ptr<DebugImages> dbg_img,
                   Params const& params,
                   ImageTransformation const& xform,
@@ -72,13 +72,13 @@ namespace output {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<Settings> m_ptrSettings;
         std::unique_ptr<DebugImages> m_ptrDbg;
         Params m_params;
         ImageTransformation m_xform;
@@ -98,9 +98,9 @@ namespace output {
     };
 
 
-    Task::Task(IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<Settings> const& settings,
-               IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Task::Task(intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<Settings> const& settings,
+               intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                PageId const& page_id,
                OutputFileNameGenerator const& out_file_name_gen,
                ImageViewTab const last_tab,
@@ -342,10 +342,10 @@ namespace output {
                     status, data, new_picture_zones, new_fill_zones, params.pictureShapeOptions(),
                     params.dewarpingOptions(), distortion_model,
                     params.depthPerception(),
-                    write_automask ? &automask_img : 0,
-                    write_speckles_file ? &speckles_img : 0,
+                    write_automask ? &automask_img : nullptr,
+                    write_speckles_file ? &speckles_img : nullptr,
                     m_ptrDbg.get(),
-                    &m_pageId, &m_ptrSettings,
+                    m_pageId, m_ptrSettings,
                     &splitImage
             );
 
@@ -490,8 +490,8 @@ namespace output {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
-                               IntrusivePtr<Settings> const& settings,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
+                               intrusive_ptr<Settings> const& settings,
                                std::unique_ptr<DebugImages> dbg_img,
                                Params const& params,
                                ImageTransformation const& xform,

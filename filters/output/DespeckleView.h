@@ -22,7 +22,7 @@
 
 #include "DespeckleLevel.h"
 #include "DespeckleState.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "Dpi.h"
 #include "imageproc/BinaryImage.h"
 #include <QStackedWidget>
@@ -79,7 +79,7 @@ namespace output {
         void removeImageViewWidget();
 
         DespeckleState m_despeckleState;
-        IntrusivePtr<TaskCancelHandle> m_ptrCancelHandle;
+        intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
         ProcessingIndicationWidget* m_pProcessingIndicator;
         DespeckleLevel m_despeckleLevel;
         bool m_debug;

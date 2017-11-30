@@ -29,7 +29,7 @@ OutputFileNameGenerator::OutputFileNameGenerator()
           m_layoutDirection(Qt::LeftToRight) {
 }
 
-OutputFileNameGenerator::OutputFileNameGenerator(IntrusivePtr<FileNameDisambiguator> const& disambiguator,
+OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> const& disambiguator,
                                                  QString const& out_dir,
                                                  Qt::LayoutDirection layout_direction)
         : m_ptrDisambiguator(disambiguator),

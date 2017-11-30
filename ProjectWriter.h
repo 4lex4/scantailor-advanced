@@ -19,7 +19,7 @@
 #ifndef PROJECTWRITER_H_
 #define PROJECTWRITER_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageSequence.h"
 #include "OutputFileNameGenerator.h"
 #include "ImageId.h"
@@ -45,9 +45,9 @@ class ProjectWriter {
 DECLARE_NON_COPYABLE(ProjectWriter)
 
 public:
-    typedef IntrusivePtr<AbstractFilter> FilterPtr;
+    typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
+    ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
                   SelectedPage const& selected_page,
                   OutputFileNameGenerator const& out_file_name_gen);
 

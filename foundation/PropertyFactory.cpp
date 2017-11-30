@@ -23,13 +23,13 @@ void PropertyFactory::registerProperty(QString const& property, PropertyConstruc
     m_registry[property] = constructor;
 }
 
-IntrusivePtr<Property>
+intrusive_ptr<Property>
 PropertyFactory::construct(QDomElement const& el) const {
     Registry::const_iterator it(m_registry.find(el.attribute("type")));
     if (it != m_registry.end()) {
         return (*it->second)(el);
     } else {
-        return IntrusivePtr<Property>();
+        return intrusive_ptr<Property>();
     }
 }
 

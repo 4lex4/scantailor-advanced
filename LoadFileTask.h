@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "BackgroundTask.h"
 #include "FilterResult.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "ImageId.h"
 #include "ImageMetadata.h"
 
@@ -41,9 +41,9 @@ DECLARE_NON_COPYABLE(LoadFileTask)
 public:
     LoadFileTask(Type type,
                  PageInfo const& page,
-                 IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                 IntrusivePtr<ProjectPages> const& pages,
-                 IntrusivePtr<fix_orientation::Task> const& next_task);
+                 intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+                 intrusive_ptr<ProjectPages> const& pages,
+                 intrusive_ptr<fix_orientation::Task> const& next_task);
 
     virtual ~LoadFileTask();
 
@@ -56,11 +56,11 @@ private:
 
     void overrideDpi(QImage& image) const;
 
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     ImageId m_imageId;
     ImageMetadata m_imageMetadata;
-    IntrusivePtr<ProjectPages> const m_ptrPages;
-    IntrusivePtr<fix_orientation::Task> const m_ptrNextTask;
+    intrusive_ptr<ProjectPages> const m_ptrPages;
+    intrusive_ptr<fix_orientation::Task> const m_ptrNextTask;
 };
 
 

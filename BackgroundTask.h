@@ -20,7 +20,7 @@
 #define BACKGROUNDTASK_H_
 
 #include "AbstractCommand.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "FilterResult.h"
 #include "TaskStatus.h"
 #include <QAtomicInt>
@@ -66,6 +66,6 @@ private:
 };
 
 
-typedef IntrusivePtr<BackgroundTask> BackgroundTaskPtr;
+typedef intrusive_ptr<BackgroundTask> BackgroundTaskPtr;
 
 #endif  // ifndef BACKGROUNDTASK_H_

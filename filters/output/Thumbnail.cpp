@@ -19,7 +19,7 @@
 #include "Thumbnail.h"
 
 namespace output {
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          ImageTransformation const& xform)

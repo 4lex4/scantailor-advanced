@@ -23,7 +23,7 @@
 #include "AbstractFilter.h"
 #include "PageView.h"
 #include "FilterResult.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "SafeDeletingQObjectPtr.h"
 
 class PageId;
@@ -68,11 +68,12 @@ namespace fix_orientation {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        IntrusivePtr<Task> createTask(PageId const& page_id,
-                                      IntrusivePtr<page_split::Task> const& next_task,
-                                      bool batch_processing);
+        intrusive_ptr<Task> createTask(PageId const& page_id,
+                                       intrusive_ptr<page_split::Task> const& next_task,
+                                       bool batch_processing);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask>
+        createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget() {
             return m_ptrOptionsWidget.get();
@@ -86,7 +87,7 @@ namespace fix_orientation {
         void
         writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id, int numeric_id) const;
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
     };
 }  // fix_orientation

@@ -49,8 +49,8 @@ private:
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
-                                           IntrusivePtr<CompositeCacheDrivenTask> const& task)
+ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> const& page_layout_filter,
+                                           intrusive_ptr<CompositeCacheDrivenTask> const& task)
         : m_ptrPageLayoutFilter(page_layout_filter),
           m_ptrTask(task) {
 }

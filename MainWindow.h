@@ -23,7 +23,7 @@
 #include "FilterUiInterface.h"
 #include "NonCopyable.h"
 #include "AbstractCommand.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "BackgroundTask.h"
 #include "FilterResult.h"
 #include "ThumbnailSequence.h"
@@ -199,7 +199,7 @@ private:
         CANCEL
     };
 
-    typedef IntrusivePtr<AbstractFilter> FilterPtr;
+    typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
     virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership);
 
@@ -208,14 +208,14 @@ private:
                                 DebugImages* debug_images = 0,
                                 bool clearImageWidget = true);
 
-    virtual IntrusivePtr<AbstractCommand0<void>> relinkingDialogRequester();
+    virtual intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester();
 
-    void switchToNewProject(IntrusivePtr<ProjectPages> const& pages,
+    void switchToNewProject(intrusive_ptr<ProjectPages> const& pages,
                             QString const& out_dir,
                             QString const& project_file_path = QString(),
                             ProjectReader const* project_reader = 0);
 
-    IntrusivePtr<ThumbnailPixmapCache> createThumbnailCache();
+    intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache();
 
     void setupThumbView();
 
@@ -225,11 +225,11 @@ private:
 
     static bool compareFiles(QString const& fpath1, QString const& fpath2);
 
-    IntrusivePtr<PageOrderProvider const> currentPageOrderProvider() const;
+    intrusive_ptr<PageOrderProvider const> currentPageOrderProvider() const;
 
     void updateSortOptions();
 
-    void resetThumbSequence(IntrusivePtr<PageOrderProvider const> const& page_order_provider);
+    void resetThumbSequence(intrusive_ptr<PageOrderProvider const> const& page_order_provider);
 
     void removeWidgetsFromLayout(QLayout* layout);
 
@@ -281,22 +281,22 @@ private:
 
     BackgroundTaskPtr createCompositeTask(PageInfo const& page, int last_filter_idx, bool batch, bool debug);
 
-    IntrusivePtr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int last_filter_idx);
+    intrusive_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int last_filter_idx);
 
     void createBatchProcessingWidget();
 
     void updateDisambiguationRecords(PageSequence const& pages);
 
-    void performRelinking(IntrusivePtr<AbstractRelinker> const& relinker);
+    void performRelinking(intrusive_ptr<AbstractRelinker> const& relinker);
 
     PageSelectionAccessor newPageSelectionAccessor();
 
     QSizeF m_maxLogicalThumbSize;
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    IntrusivePtr<StageSequence> m_ptrStages;
+    intrusive_ptr<ProjectPages> m_ptrPages;
+    intrusive_ptr<StageSequence> m_ptrStages;
     QString m_projectFile;
     OutputFileNameGenerator m_outFileNameGen;
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     std::unique_ptr<ThumbnailSequence> m_ptrThumbSequence;
     std::unique_ptr<WorkerThreadPool> m_ptrWorkerThreadPool;
     std::unique_ptr<ProcessingTaskQueue> m_ptrBatchQueue;

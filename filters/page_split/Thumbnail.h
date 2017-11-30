@@ -21,7 +21,7 @@
 
 #include "ThumbnailBase.h"
 #include "PageLayout.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QPixmap>
 
 class QPointF;
@@ -34,7 +34,7 @@ class ImageTransformation;
 namespace page_split {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& xform,

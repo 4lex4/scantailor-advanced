@@ -24,7 +24,7 @@
 using namespace imageproc;
 
 namespace page_layout {
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          Params const& params,
@@ -108,7 +108,7 @@ namespace page_layout {
         }
         painter.setPen(pen);
         painter.drawRect(outer_rect.toRect());
-        
+
         if (m_params.isDeviant()) {
             paintDeviant(painter);
         }

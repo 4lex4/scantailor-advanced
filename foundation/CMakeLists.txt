@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 
 SET(
         sources
-        NonCopyable.h IntrusivePtr.h RefCountable.h
+        NonCopyable.h intrusive_ptr.h ref_countable.h
         AlignedArray.h
         FastQueue.h
         SafeDeletingQObjectPtr.h

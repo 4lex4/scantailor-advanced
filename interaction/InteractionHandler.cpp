@@ -81,8 +81,8 @@ InteractionHandler::~InteractionHandler() {
 
 void InteractionHandler::paint(QPainter& painter, InteractionState const& interaction) {
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, paint(painter, interaction));
     painter.save();
@@ -93,8 +93,8 @@ void InteractionHandler::paint(QPainter& painter, InteractionState const& intera
 
 void InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, proximityUpdate(screen_mouse_pos, interaction));
     onProximityUpdate(screen_mouse_pos, interaction);
@@ -106,8 +106,8 @@ void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& inter
     RETURN_IF_ACCEPTED(event);
 
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, keyPressEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -119,8 +119,8 @@ void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& inter
 void InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, keyReleaseEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -133,8 +133,8 @@ void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& i
     RETURN_IF_ACCEPTED(event);
 
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, mousePressEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -146,8 +146,8 @@ void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& i
 void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, mouseReleaseEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -160,8 +160,8 @@ void InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& in
     RETURN_IF_ACCEPTED(event);
 
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, mouseMoveEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -174,8 +174,8 @@ void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& intera
     RETURN_IF_ACCEPTED(event);
 
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, wheelEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);
@@ -187,8 +187,8 @@ void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& intera
 void InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
     // Keep them alive in case this object gets destroyed.
-    IntrusivePtr<HandlerList> preceeders(m_ptrPreceeders);
-    IntrusivePtr<HandlerList> followers(m_ptrFollowers);
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
     DISPATCH(preceeders, contextMenuEvent(event, interaction));
     RETURN_IF_ACCEPTED(event);

@@ -20,7 +20,7 @@
 #include "PictureLayerProperty.h"
 
 namespace output {
-    PictureZonePropDialog::PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent)
+    PictureZonePropDialog::PictureZonePropDialog(intrusive_ptr<PropertySet> const& props, QWidget* parent)
             : QDialog(parent),
               m_ptrProps(props) {
         ui.setupUi(this);

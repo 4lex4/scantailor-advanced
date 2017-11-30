@@ -33,8 +33,8 @@
 namespace page_layout {
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
-                  IntrusivePtr<Settings> const& settings,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
+                  intrusive_ptr<Settings> const& settings,
                   PageId const& page_id,
                   QImage const& image,
                   ImageTransformation const& xform,
@@ -44,13 +44,13 @@ namespace page_layout {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;
         QImage m_image;
         QImage m_downscaledImage;
@@ -61,9 +61,9 @@ namespace page_layout {
     };
 
 
-    Task::Task(IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<output::Task> const& next_task,
-               IntrusivePtr<Settings> const& settings,
+    Task::Task(intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<output::Task> const& next_task,
+               intrusive_ptr<Settings> const& settings,
                PageId const& page_id,
                bool batch,
                bool debug)
@@ -145,8 +145,8 @@ namespace page_layout {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
-                               IntrusivePtr<Settings> const& settings,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
+                               intrusive_ptr<Settings> const& settings,
                                PageId const& page_id,
                                QImage const& image,
                                ImageTransformation const& xform,

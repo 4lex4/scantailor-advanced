@@ -19,7 +19,7 @@
 #ifndef FIX_ORIENTATION_SETTINGS_H_
 #define FIX_ORIENTATION_SETTINGS_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "NonCopyable.h"
 #include "OrthogonalRotation.h"
 #include "ImageId.h"
@@ -31,7 +31,7 @@
 class AbstractRelinker;
 
 namespace fix_orientation {
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     public:

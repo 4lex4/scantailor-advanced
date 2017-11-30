@@ -19,7 +19,7 @@
 #ifndef CONTENTBOXPROPAGATOR_H_
 #define CONTENTBOXPROPAGATOR_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QSizeF>
 
 class CompositeCacheDrivenTask;
@@ -40,8 +40,8 @@ namespace page_layout {
  */
 class ContentBoxPropagator {
 public:
-    ContentBoxPropagator(IntrusivePtr<page_layout::Filter> const& page_layout_filter,
-                         IntrusivePtr<CompositeCacheDrivenTask> const& task);
+    ContentBoxPropagator(intrusive_ptr<page_layout::Filter> const& page_layout_filter,
+                         intrusive_ptr<CompositeCacheDrivenTask> const& task);
 
     ~ContentBoxPropagator();
 
@@ -50,8 +50,8 @@ public:
 private:
     class Collector;
 
-    IntrusivePtr<page_layout::Filter> m_ptrPageLayoutFilter;
-    IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
+    intrusive_ptr<page_layout::Filter> m_ptrPageLayoutFilter;
+    intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
 

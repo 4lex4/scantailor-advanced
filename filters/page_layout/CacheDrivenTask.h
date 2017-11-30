@@ -20,8 +20,8 @@
 #define PAGE_LAYOUT_CACHEDRIVENTASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 
 class QRectF;
 class PageInfo;
@@ -35,11 +35,12 @@ namespace output {
 namespace page_layout {
     class Settings;
 
-    class CacheDrivenTask : public RefCountable {
+    class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task, IntrusivePtr<Settings> const& settings);
+        CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
+                        intrusive_ptr<Settings> const& settings);
 
         virtual ~CacheDrivenTask();
 
@@ -49,8 +50,8 @@ namespace page_layout {
                      QRectF const& content_rect);
 
     private:
-        IntrusivePtr<output::CacheDrivenTask> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace page_layout
 #endif // ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_

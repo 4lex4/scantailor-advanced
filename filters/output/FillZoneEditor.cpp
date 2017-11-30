@@ -50,7 +50,7 @@ namespace output {
                                            QPointF
                                            const
                                            &)> const& image_to_orig, PageId const& page_id,
-                                   IntrusivePtr<Settings> const& settings)
+                                   intrusive_ptr<Settings> const& settings)
             : ImageViewBase(
             image, downscaled_version,
             ImagePresentation(QTransform(), QRectF(image.rect())),
@@ -134,7 +134,7 @@ namespace output {
         ZoneSet zones;
 
         for (EditableZoneSet::Zone const& zone : m_zones) {
-            SerializableSpline const spline(SerializableSpline(*zone.spline()).transformed(m_imageToOrig));
+            SerializableSpline const spline(SerializableSpline(* zone.spline()).transformed(m_imageToOrig));
             zones.add(Zone(spline, *zone.properties()));
         }
 

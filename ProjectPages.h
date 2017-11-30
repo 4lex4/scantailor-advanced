@@ -20,7 +20,7 @@
 #define PROJECT_PAGES_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "ImageMetadata.h"
 #include "ImageId.h"
 #include "PageId.h"
@@ -44,7 +44,7 @@ class RelinkablePath;
 class AbstractRelinker;
 class QDomElement;
 
-class ProjectPages : public QObject, public RefCountable {
+class ProjectPages : public QObject, public ref_countable {
 Q_OBJECT
 DECLARE_NON_COPYABLE(ProjectPages)
 

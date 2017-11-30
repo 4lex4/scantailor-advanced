@@ -29,7 +29,7 @@
 #include <QToolTip>
 
 namespace output {
-    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
               m_pageSelectionAccessor(page_selection_accessor),
@@ -207,7 +207,7 @@ namespace output {
     void OptionsWidget::postUpdateUI() {
         m_pictureShapeOptions = m_ptrSettings->getParams(m_pageId).pictureShapeOptions();
         m_colorParams = m_ptrSettings->getParams(m_pageId).colorParams();
-        
+
         updateColorsDisplay();
     }
 
@@ -846,7 +846,7 @@ namespace output {
     }
 
     void OptionsWidget::sendReloadRequested() {
-         emit reloadRequested();
+        emit reloadRequested();
     }
 
 }  // namespace output

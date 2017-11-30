@@ -20,7 +20,7 @@
 #define DESKEW_THUMBNAIL_H_
 
 #include "ThumbnailBase.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 
 class QSizeF;
 class ThumbnailPixmapCache;
@@ -30,7 +30,7 @@ class ImageTransformation;
 namespace deskew {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& xform,

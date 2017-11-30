@@ -21,7 +21,7 @@
 #include <assert.h>
 
 namespace page_split {
-    OrderBySplitTypeProvider::OrderBySplitTypeProvider(IntrusivePtr<Settings> const& settings)
+    OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings)
             : m_ptrSettings(settings) {
     }
 

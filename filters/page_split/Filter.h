@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "AbstractFilter.h"
 #include "PageView.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "FilterResult.h"
 #include "SafeDeletingQObjectPtr.h"
 #include <set>
@@ -54,7 +54,7 @@ namespace page_split {
 
     Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
     public:
-        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+        Filter(intrusive_ptr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~Filter();
 
@@ -70,12 +70,12 @@ namespace page_split {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
-        IntrusivePtr<Task> createTask(PageInfo const& page_info,
-                                      IntrusivePtr<deskew::Task> const& next_task,
-                                      bool batch_processing,
-                                      bool debug);
+        intrusive_ptr<Task> createTask(PageInfo const& page_info,
+                                       intrusive_ptr<deskew::Task> const& next_task,
+                                       bool batch_processing,
+                                       bool debug);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget() {
             return m_ptrOptionsWidget.get();
@@ -97,8 +97,8 @@ namespace page_split {
         void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
                                 int const numeric_id) const;
 
-        IntrusivePtr<ProjectPages> m_ptrPages;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<ProjectPages> m_ptrPages;
+        intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;

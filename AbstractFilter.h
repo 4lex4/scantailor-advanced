@@ -19,7 +19,7 @@
 #ifndef ABSTRACTFILTER_H_
 #define ABSTRACTFILTER_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "PageView.h"
 #include "PageOrderOption.h"
 #include <vector>
@@ -36,7 +36,7 @@ class QDomElement;
 /**
  * Filters represent processing stages, like "Deskew", "Margins" and "Output".
  */
-class AbstractFilter : public RefCountable {
+class AbstractFilter : public ref_countable {
 public:
     virtual ~AbstractFilter() {
     }

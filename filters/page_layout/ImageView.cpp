@@ -30,7 +30,7 @@
 using namespace imageproc;
 
 namespace page_layout {
-    ImageView::ImageView(IntrusivePtr<Settings> const& settings,
+    ImageView::ImageView(intrusive_ptr<Settings> const& settings,
                          PageId const& page_id,
                          QImage const& image,
                          QImage const& downscaled_image,

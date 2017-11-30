@@ -45,7 +45,7 @@ private:
 };
 
 
-ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform)
@@ -53,7 +53,7 @@ ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail
                         image_xform.resultingPostCropArea().boundingRect()) {
 }
 
-ThumbnailBase::ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform,

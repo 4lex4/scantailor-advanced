@@ -22,7 +22,7 @@
 #include "ui_PageLayoutOptionsWidget.h"
 #include "FilterOptionsWidget.h"
 #include "PageSelectionAccessor.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "Margins.h"
 #include "Alignment.h"
 #include "PageId.h"
@@ -40,7 +40,7 @@ namespace page_layout {
     class OptionsWidget : public FilterOptionsWidget, public Ui::PageLayoutOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -117,7 +117,7 @@ namespace page_layout {
 
         void enableDisableAlignmentButtons();
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         QIcon m_chainIcon;
         QIcon m_brokenChainIcon;

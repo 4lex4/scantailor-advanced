@@ -21,7 +21,7 @@
 
 #include "PageId.h"
 #include "AbstractCommand.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 
 class DebugImages;
 class FilterOptionsWidget;
@@ -54,7 +54,7 @@ public:
     /**
      * Returns a callable object that when called will open a relinking dialog.
      */
-    virtual IntrusivePtr<AbstractCommand0<void>> relinkingDialogRequester() = 0;
+    virtual intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() = 0;
 };
 
 

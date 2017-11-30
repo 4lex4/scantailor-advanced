@@ -21,7 +21,7 @@
 
 #include "NonCopyable.h"
 #include "FlagOps.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageRange.h"
 #include "PageOrderProvider.h"
 #include "BeforeOrAfter.h"
@@ -77,7 +77,7 @@ public:
 
     ~ThumbnailSequence();
 
-    void setThumbnailFactory(IntrusivePtr<ThumbnailFactory> const& factory);
+    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory);
 
     void attachView(QGraphicsView* view);
 
@@ -95,11 +95,11 @@ public:
      */
     void reset(PageSequence const& pages,
                SelectionAction const selection_action,
-               IntrusivePtr<PageOrderProvider const> const& order_provider
-               = IntrusivePtr<PageOrderProvider const>());
+               intrusive_ptr<PageOrderProvider const> const& order_provider
+               = intrusive_ptr<PageOrderProvider const>());
 
     /** Returns the current page order provider, which may be null. */
-    IntrusivePtr<PageOrderProvider const> pageOrderProvider() const;
+    intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
 
     PageSequence toPageSequence() const;
 

@@ -36,7 +36,7 @@
 #include "CommandLine.h"
 
 namespace page_layout {
-    Filter::Filter(IntrusivePtr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor)
+    Filter::Filter(intrusive_ptr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor)
             : m_ptrPages(pages),
               m_ptrSettings(new Settings),
               m_selectedPageOrder(0) {
@@ -189,22 +189,22 @@ namespace page_layout {
         return m_ptrSettings->checkEverythingDefined(snapshot, ignore);
     }
 
-    IntrusivePtr<Task>
+    intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       IntrusivePtr<output::Task> const& next_task,
+                       intrusive_ptr<output::Task> const& next_task,
                        bool const batch,
                        bool const debug) {
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        IntrusivePtr<Filter>(this), next_task,
+                        intrusive_ptr<Filter>(this), next_task,
                         m_ptrSettings, page_id, batch, debug
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task) {
-        return IntrusivePtr<CacheDrivenTask>(
+    intrusive_ptr<CacheDrivenTask>
+    Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task) {
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(next_task, m_ptrSettings)
         );
     }

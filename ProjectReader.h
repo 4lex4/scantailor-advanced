@@ -24,7 +24,7 @@
 #include "ImageInfo.h"
 #include "ImageMetadata.h"
 #include "SelectedPage.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QString>
 #include <QDomDocument>
 #include <Qt>
@@ -39,7 +39,7 @@ class AbstractFilter;
 
 class ProjectReader {
 public:
-    typedef IntrusivePtr<AbstractFilter> FilterPtr;
+    typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
     ProjectReader(QDomDocument const& doc);
 
@@ -55,7 +55,7 @@ public:
         return m_outDir;
     }
 
-    IntrusivePtr<ProjectPages> const& pages() const {
+    intrusive_ptr<ProjectPages> const& pages() const {
         return m_ptrPages;
     }
 
@@ -63,7 +63,7 @@ public:
         return m_selectedPage;
     }
 
-    IntrusivePtr<FileNameDisambiguator> const& namingDisambiguator() const {
+    intrusive_ptr<FileNameDisambiguator> const& namingDisambiguator() const {
         return m_ptrDisambiguator;
     }
 
@@ -116,8 +116,8 @@ private:
     ImageMap m_imageMap;
     PageMap m_pageMap;
     SelectedPage m_selectedPage;
-    IntrusivePtr<ProjectPages> m_ptrPages;
-    IntrusivePtr<FileNameDisambiguator> m_ptrDisambiguator;
+    intrusive_ptr<ProjectPages> m_ptrPages;
+    intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
 };
 
 

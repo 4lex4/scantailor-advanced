@@ -19,14 +19,14 @@
 #ifndef PAGE_ORDER_PROVIDER_H_
 #define PAGE_ORDER_PROVIDER_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 
 class PageId;
 
 /**
  * A base class for different page ordering strategies.
  */
-class PageOrderProvider : public RefCountable {
+class PageOrderProvider : public ref_countable {
 public:
     /**
      * Returns true if \p lhs_page precedes \p rhs_page.

@@ -19,13 +19,13 @@
 #ifndef FILTERRESULT_H_
 #define FILTERRESULT_H_
 
-#include "IntrusivePtr.h"
-#include "RefCountable.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class AbstractFilter;
 class FilterUiInterface;
 
-class FilterResult : public RefCountable {
+class FilterResult : public ref_countable {
 public:
     virtual void updateUI(FilterUiInterface* ui) = 0;
 
@@ -36,10 +36,10 @@ public:
      *       That would be LoadFileTask.
      */
 
-    virtual IntrusivePtr<AbstractFilter> filter() = 0;
+    virtual intrusive_ptr<AbstractFilter> filter() = 0;
 };
 
 
-typedef IntrusivePtr<FilterResult> FilterResultPtr;
+typedef intrusive_ptr<FilterResult> FilterResultPtr;
 
 #endif

@@ -20,7 +20,7 @@
 #define OUTPUT_FILE_NAME_GENERATOR_H_
 
 #include "FileNameDisambiguator.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QString>
 #include <Qt>
 
@@ -32,7 +32,7 @@ class OutputFileNameGenerator {
 public:
     OutputFileNameGenerator();
 
-    OutputFileNameGenerator(IntrusivePtr<FileNameDisambiguator> const& disambiguator,
+    OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> const& disambiguator,
                             QString const& out_dir,
                             Qt::LayoutDirection layout_direction);
 
@@ -59,7 +59,7 @@ public:
     QString filePathFor(PageId const& page) const;
 
 private:
-    IntrusivePtr<FileNameDisambiguator> m_ptrDisambiguator;
+    intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
     QString m_outDir;
     Qt::LayoutDirection m_layoutDirection;
 };

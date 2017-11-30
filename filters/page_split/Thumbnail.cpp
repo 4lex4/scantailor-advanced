@@ -20,7 +20,7 @@
 #include <QPainter>
 
 namespace page_split {
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          ImageTransformation const& xform,
@@ -37,7 +37,7 @@ namespace page_split {
     }
 
     void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
-                                   QTransform const& thumb_to_display) {
+                                      QTransform const& thumb_to_display) {
         QRectF const canvas_rect(imageXform().resultingRect());
 
         painter.setRenderHint(QPainter::Antialiasing, false);

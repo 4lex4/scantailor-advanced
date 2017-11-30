@@ -19,7 +19,7 @@
 #ifndef PAGE_ORIENTATION_PROPAGATOR_H_
 #define PAGE_ORIENTATION_PROPAGATOR_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QSizeF>
 
 class CompositeCacheDrivenTask;
@@ -40,8 +40,8 @@ namespace page_split {
  */
 class PageOrientationPropagator {
 public:
-    PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
-                              IntrusivePtr<CompositeCacheDrivenTask> const& task);
+    PageOrientationPropagator(intrusive_ptr<page_split::Filter> const& page_split_filter,
+                              intrusive_ptr<CompositeCacheDrivenTask> const& task);
 
     ~PageOrientationPropagator();
 
@@ -50,8 +50,8 @@ public:
 private:
     class Collector;
 
-    IntrusivePtr<page_split::Filter> m_ptrPageSplitFilter;
-    IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
+    intrusive_ptr<page_split::Filter> m_ptrPageSplitFilter;
+    intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
 

@@ -21,7 +21,7 @@
 
 #include "ui_PageSplitOptionsWidget.h"
 #include "FilterOptionsWidget.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "LayoutType.h"
 #include "PageLayout.h"
 #include "ImageId.h"
@@ -70,8 +70,8 @@ namespace page_split {
         };
 
 
-        OptionsWidget(IntrusivePtr<Settings> const& settings,
-                      IntrusivePtr<ProjectPages> const& page_sequence,
+        OptionsWidget(intrusive_ptr<Settings> const& settings,
+                      intrusive_ptr<ProjectPages> const& page_sequence,
                       PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
@@ -101,8 +101,8 @@ namespace page_split {
     private:
         void commitCurrentParams();
 
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<ProjectPages> m_ptrPages;
+        intrusive_ptr<Settings> m_ptrSettings;
+        intrusive_ptr<ProjectPages> m_ptrPages;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
         UiData m_uiData;

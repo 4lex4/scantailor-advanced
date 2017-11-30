@@ -19,7 +19,7 @@
 #ifndef OUTPUT_SETTINGS_H_
 #define OUTPUT_SETTINGS_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Dpi.h"
@@ -40,7 +40,7 @@ class AbstractRelinker;
 namespace output {
     class Params;
 
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     public:

@@ -20,8 +20,8 @@
 #define DESKEW_CACHEDRIVENTASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 
 class QSizeF;
 class PageInfo;
@@ -35,12 +35,12 @@ namespace select_content {
 namespace deskew {
     class Settings;
 
-    class CacheDrivenTask : public RefCountable {
+    class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                        IntrusivePtr<select_content::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+                        intrusive_ptr<select_content::CacheDrivenTask> const& next_task);
 
         virtual ~CacheDrivenTask();
 
@@ -48,8 +48,8 @@ namespace deskew {
         process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
 
     private:
-        IntrusivePtr<select_content::CacheDrivenTask> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<select_content::CacheDrivenTask> m_ptrNextTask;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace deskew
 #endif // ifndef DESKEW_CACHEDRIVENTASK_H_

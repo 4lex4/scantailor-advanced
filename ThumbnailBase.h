@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "ImageId.h"
 #include "ImageTransformation.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "ThumbnailPixmapCache.h"
 #include <QTransform>
 #include <QGraphicsItem>
@@ -35,12 +35,12 @@ class ThumbnailBase : public QGraphicsItem {
 DECLARE_NON_COPYABLE(ThumbnailBase)
 
 public:
-    ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& image_xform);
 
-    ThumbnailBase(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& image_xform,
@@ -81,8 +81,8 @@ protected:
      *        The only difference is that the painted content will be cropped with the image.
      */
     virtual void prePaintOverImage(QPainter& painter,
-                                QTransform const& image_to_display,
-                                QTransform const& thumb_to_display) {
+                                   QTransform const& image_to_display,
+                                   QTransform const& thumb_to_display) {
     }
 
     virtual void paintDeviant(QPainter& painter);
@@ -119,7 +119,7 @@ private:
 
     void handleLoadResult(ThumbnailLoadResult const& result);
 
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     QSizeF m_maxSize;
     ImageId m_imageId;
     ImageTransformation m_imageXform;

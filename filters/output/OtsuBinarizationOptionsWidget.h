@@ -5,7 +5,7 @@
 #include "ui_OtsuBinarizationOptionsWidget.h"
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "Settings.h"
 #include <QtCore>
 
@@ -15,13 +15,13 @@ namespace output {
     Q_OBJECT
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;
         ColorParams m_colorParams;
         int m_ignoreThresholdChanges;
 
     public:
-        explicit OtsuBinarizationOptionsWidget(IntrusivePtr<Settings> settings);
+        explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
         ~OtsuBinarizationOptionsWidget() override = default;
 

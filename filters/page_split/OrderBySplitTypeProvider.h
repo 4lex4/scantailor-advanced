@@ -21,19 +21,19 @@
 #define PAGE_SPLIT_ORDER_BY_SPLIT_TYPE_PROVIDER_H_
 
 #include "Settings.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageOrderProvider.h"
 
 namespace page_split {
     class OrderBySplitTypeProvider : public PageOrderProvider {
     public:
-        OrderBySplitTypeProvider(IntrusivePtr<Settings> const& settings);
+        OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings);
 
         virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
                               bool rhs_incomplete) const;
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace page_split
 

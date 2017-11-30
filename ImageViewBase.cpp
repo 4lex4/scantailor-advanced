@@ -37,7 +37,7 @@
 
 using namespace imageproc;
 
-class ImageViewBase::HqTransformTask : public AbstractCommand0<IntrusivePtr<AbstractCommand0<void>>>, public QObject {
+class ImageViewBase::HqTransformTask : public AbstractCommand0<intrusive_ptr<AbstractCommand0<void>>>, public QObject {
 DECLARE_NON_COPYABLE(HqTransformTask)
 
 public:
@@ -51,7 +51,7 @@ public:
         return m_ptrResult->isCancelled();
     }
 
-    virtual IntrusivePtr<AbstractCommand0<void>> operator()();
+    virtual intrusive_ptr<AbstractCommand0<void>> operator()();
 
 private:
     class Result : public AbstractCommand0<void> {
@@ -78,7 +78,7 @@ private:
     };
 
 
-    IntrusivePtr<Result> m_ptrResult;
+    intrusive_ptr<Result> m_ptrResult;
     QImage m_image;
     QTransform m_xform;
     QSize m_targetSize;
@@ -419,7 +419,7 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
 
     // Disable antialiasing for large zoom levels.
     painter.setRenderHint(QPainter::SmoothPixmapTransform, pixel_width < 0.5);
-    
+
     if (validateHqPixmap()) {
         // HQ pixmap maps one to one to screen pixels, so antialiasing is not necessary.
         painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
@@ -958,7 +958,7 @@ void ImageViewBase::initiateBuildingHqVersion() {
     }
 
     QTransform const xform(m_imageToVirtual * m_virtualToWidget);
-    IntrusivePtr<HqTransformTask> const task(
+    intrusive_ptr<HqTransformTask> const task(
             new HqTransformTask(this, m_image, xform, viewport()->size())
     );
 
@@ -1021,10 +1021,10 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
           m_targetSize(target_size) {
 }
 
-IntrusivePtr<AbstractCommand0<void>>
+intrusive_ptr<AbstractCommand0<void>>
 ImageViewBase::HqTransformTask::operator()() {
     if (isCancelled()) {
-        return IntrusivePtr<AbstractCommand0<void>>();
+        return intrusive_ptr<AbstractCommand0<void>>();
     }
 
     QRect const target_rect(

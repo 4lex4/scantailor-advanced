@@ -24,7 +24,7 @@
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
-void ImageMetadataLoader::registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader) {
+void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> const& loader) {
     m_sLoaders.push_back(loader);
 }
 

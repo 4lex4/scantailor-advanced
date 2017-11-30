@@ -39,8 +39,8 @@ private:
 };
 
 
-PageOrientationPropagator::PageOrientationPropagator(IntrusivePtr<page_split::Filter> const& page_split_filter,
-                                                     IntrusivePtr<CompositeCacheDrivenTask> const& task)
+PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> const& page_split_filter,
+                                                     intrusive_ptr<CompositeCacheDrivenTask> const& task)
         : m_ptrPageSplitFilter(page_split_filter),
           m_ptrTask(task) {
 }

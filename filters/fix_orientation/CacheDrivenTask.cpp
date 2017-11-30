@@ -27,8 +27,8 @@
 #include "filters/page_split/CacheDrivenTask.h"
 
 namespace fix_orientation {
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                                     IntrusivePtr<page_split::CacheDrivenTask> const& next_task)
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+                                     intrusive_ptr<page_split::CacheDrivenTask> const& next_task)
             : m_ptrNextTask(next_task),
               m_ptrSettings(settings) {
     }

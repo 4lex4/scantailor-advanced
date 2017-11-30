@@ -19,8 +19,8 @@
 #ifndef PROPERTY_SET_H_
 #define PROPERTY_SET_H_
 
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "Property.h"
 #include <vector>
 
@@ -29,7 +29,7 @@ class QDomDocument;
 class QDomElement;
 class QString;
 
-class PropertySet : public RefCountable {
+class PropertySet : public ref_countable {
 public:
     PropertySet() {
     }
@@ -55,20 +55,20 @@ public:
      * type is found, or returns a null smart pointer otherwise.
      */
     template<typename T>
-    IntrusivePtr<T> locate();
+    intrusive_ptr<T> locate();
 
     template<typename T>
-    IntrusivePtr<T const> locate() const;
+    intrusive_ptr<T const> locate() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
      * type is found, or returns a default constructed object otherwise.
      */
     template<typename T>
-    IntrusivePtr<T> locateOrDefault();
+    intrusive_ptr<T> locateOrDefault();
 
     template<typename T>
-    IntrusivePtr<T const> locateOrDefault() const;
+    intrusive_ptr<T const> locateOrDefault() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
@@ -76,46 +76,46 @@ public:
      * to the set and then returned.
      */
     template<typename T>
-    IntrusivePtr<T> locateOrCreate();
+    intrusive_ptr<T> locateOrCreate();
 
 private:
-    typedef std::vector<IntrusivePtr<Property>> PropList;
+    typedef std::vector<intrusive_ptr<Property>> PropList;
     PropList m_props;
 };
 
 
 template<typename T>
-IntrusivePtr<T>
+intrusive_ptr<T>
 PropertySet::locate() {
     PropList::iterator it(m_props.begin());
     PropList::iterator const end(m_props.end());
     for (; it != end; ++it) {
         if (T* obj = dynamic_cast<T*>(it->get())) {
-            return IntrusivePtr<T>(obj);
+            return intrusive_ptr<T>(obj);
         }
     }
 
-    return IntrusivePtr<T>();
+    return intrusive_ptr<T>();
 }
 
 template<typename T>
-IntrusivePtr<T const>
+intrusive_ptr<T const>
 PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
     PropList::const_iterator const end(m_props.end());
     for (; it != end; ++it) {
         if (T const* obj = dynamic_cast<T const*>(it->get())) {
-            return IntrusivePtr<T const>(obj);
+            return intrusive_ptr<T const>(obj);
         }
     }
 
-    return IntrusivePtr<T const>();
+    return intrusive_ptr<T const>();
 }
 
 template<typename T>
-IntrusivePtr<T>
+intrusive_ptr<T>
 PropertySet::locateOrDefault() {
-    IntrusivePtr<T> obj(locate<T>());
+    intrusive_ptr<T> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
     }
@@ -124,9 +124,9 @@ PropertySet::locateOrDefault() {
 }
 
 template<typename T>
-IntrusivePtr<T const>
+intrusive_ptr<T const>
 PropertySet::locateOrDefault() const {
-    IntrusivePtr<T const> obj(locate<T>());
+    intrusive_ptr<T const> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
     }
@@ -135,9 +135,9 @@ PropertySet::locateOrDefault() const {
 }
 
 template<typename T>
-IntrusivePtr<T>
+intrusive_ptr<T>
 PropertySet::locateOrCreate() {
-    IntrusivePtr<T> obj(locate<T>());
+    intrusive_ptr<T> obj(locate<T>());
     if (!obj.get()) {
         obj.reset(new T);
         m_props.push_back(obj);

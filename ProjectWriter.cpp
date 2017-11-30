@@ -39,7 +39,7 @@
 #include <stddef.h>
 #include <assert.h>
 
-ProjectWriter::ProjectWriter(IntrusivePtr<ProjectPages> const& page_sequence,
+ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
                              SelectedPage const& selected_page,
                              OutputFileNameGenerator const& out_file_name_gen)
         : m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW)),

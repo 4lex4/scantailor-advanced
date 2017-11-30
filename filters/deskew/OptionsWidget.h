@@ -21,7 +21,7 @@
 
 #include "ui_DeskewOptionsWidget.h"
 #include "FilterOptionsWidget.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageId.h"
 #include "Dependencies.h"
 #include "AutoManualMode.h"
@@ -60,7 +60,7 @@ namespace deskew {
         };
 
 
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -104,7 +104,7 @@ namespace deskew {
 
         static double const MAX_ANGLE;
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;
         UiData m_uiData;
         int m_ignoreAutoManualToggle;

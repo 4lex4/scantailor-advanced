@@ -24,7 +24,7 @@
 namespace deskew {
     double const OptionsWidget::MAX_ANGLE = 45.0;
 
-    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
               m_ignoreAutoManualToggle(0),

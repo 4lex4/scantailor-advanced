@@ -20,15 +20,15 @@
 #define IMAGEMETADATALOADER_H_
 
 #include "VirtualFunction.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include <vector>
 
 class QString;
 class QIODevice;
 class ImageMetadata;
 
-class ImageMetadataLoader : public RefCountable {
+class ImageMetadataLoader : public ref_countable {
 public:
     enum Status {
         LOADED,  /**< Loaded successfully */
@@ -43,7 +43,7 @@ public:
      * This function may not be called before main() or after additional
      * threads have been created.
      */
-    static void registerLoader(IntrusivePtr<ImageMetadataLoader> const& loader);
+    static void registerLoader(intrusive_ptr<ImageMetadataLoader> const& loader);
 
     template<typename OutFunc>
     static Status load(QIODevice& io_device, OutFunc out);
@@ -75,7 +75,7 @@ private:
 
     static Status loadImpl(QString const& file_path, VirtualFunction1<void, ImageMetadata const&>& out);
 
-    typedef std::vector<IntrusivePtr<ImageMetadataLoader>> LoaderList;
+    typedef std::vector<intrusive_ptr<ImageMetadataLoader>> LoaderList;
     static LoaderList m_sLoaders;
 };
 

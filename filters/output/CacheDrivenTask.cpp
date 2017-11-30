@@ -29,7 +29,7 @@
 #include <QFileInfo>
 
 namespace output {
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
                                      OutputFileNameGenerator const& out_file_name_gen)
             : m_ptrSettings(settings),
               m_outFileNameGen(out_file_name_gen) {

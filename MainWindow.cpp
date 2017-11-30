@@ -311,7 +311,7 @@ MainWindow::selectedRanges() const {
     return m_ptrThumbSequence->selectedRanges();
 }
 
-void MainWindow::switchToNewProject(IntrusivePtr<ProjectPages> const& pages,
+void MainWindow::switchToNewProject(intrusive_ptr<ProjectPages> const& pages,
                                     QString const& out_dir,
                                     QString const& project_file_path,
                                     ProjectReader const* project_reader) {
@@ -328,7 +328,7 @@ void MainWindow::switchToNewProject(IntrusivePtr<ProjectPages> const& pages,
         m_selectedPage = project_reader->selectedPage();
     }
 
-    IntrusivePtr<FileNameDisambiguator> disambiguator;
+    intrusive_ptr<FileNameDisambiguator> disambiguator;
     if (project_reader) {
         disambiguator = project_reader->namingDisambiguator();
     } else {
@@ -571,14 +571,14 @@ bool MainWindow::compareFiles(QString const& fpath1, QString const& fpath2) {
     }
 }
 
-IntrusivePtr<PageOrderProvider const>
+intrusive_ptr<PageOrderProvider const>
 MainWindow::currentPageOrderProvider() const {
     int const idx = sortOptions->currentIndex();
     if (idx < 0) {
-        return IntrusivePtr<PageOrderProvider const>();
+        return intrusive_ptr<PageOrderProvider const>();
     }
 
-    IntrusivePtr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
+    intrusive_ptr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
 
     return filter->pageOrderOptions()[idx].provider();
 }
@@ -586,7 +586,7 @@ MainWindow::currentPageOrderProvider() const {
 void MainWindow::updateSortOptions() {
     ScopedIncDec<int> const guard(m_ignorePageOrderingChanges);
 
-    IntrusivePtr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
+    intrusive_ptr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
 
     sortOptions->clear();
 
@@ -601,14 +601,14 @@ void MainWindow::updateSortOptions() {
     }
 }
 
-void MainWindow::resetThumbSequence(IntrusivePtr<PageOrderProvider const> const& page_order_provider) {
+void MainWindow::resetThumbSequence(intrusive_ptr<PageOrderProvider const> const& page_order_provider) {
     if (m_ptrThumbnailCache.get()) {
-        IntrusivePtr<CompositeCacheDrivenTask> const task(
+        intrusive_ptr<CompositeCacheDrivenTask> const task(
                 createCompositeCacheDrivenTask(m_curFilter)
         );
 
         m_ptrThumbSequence->setThumbnailFactory(
-                IntrusivePtr<ThumbnailFactory>(
+                intrusive_ptr<ThumbnailFactory>(
                         new ThumbnailFactory(
                                 m_ptrThumbnailCache,
                                 m_maxLogicalThumbSize, task
@@ -626,7 +626,7 @@ void MainWindow::resetThumbSequence(IntrusivePtr<PageOrderProvider const> const&
         // Empty project.
         assert(m_ptrPages->numImages() == 0);
         m_ptrThumbSequence->setThumbnailFactory(
-                IntrusivePtr<ThumbnailFactory>()
+                intrusive_ptr<ThumbnailFactory>()
         );
     }
 
@@ -788,7 +788,7 @@ void MainWindow::invalidateAllThumbnails() {
     m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
-IntrusivePtr<AbstractCommand0<void>>
+intrusive_ptr<AbstractCommand0<void>>
 MainWindow::relinkingDialogRequester() {
     class Requester : public AbstractCommand0<void> {
     public:
@@ -807,7 +807,7 @@ MainWindow::relinkingDialogRequester() {
     };
 
 
-    return IntrusivePtr<AbstractCommand0<void>>(new Requester(this));
+    return intrusive_ptr<AbstractCommand0<void>>(new Requester(this));
 }
 
 void MainWindow::showRelinkingDialog() {
@@ -830,7 +830,7 @@ void MainWindow::showRelinkingDialog() {
     dialog->show();
 }
 
-void MainWindow::performRelinking(IntrusivePtr<AbstractRelinker> const& relinker) {
+void MainWindow::performRelinking(intrusive_ptr<AbstractRelinker> const& relinker) {
     assert(relinker.get());
 
     if (!isProjectLoaded()) {
@@ -1384,7 +1384,7 @@ void MainWindow::newProject() {
 }
 
 void MainWindow::newProjectCreated(ProjectCreationContext* context) {
-    IntrusivePtr<ProjectPages> pages(
+    intrusive_ptr<ProjectPages> pages(
             new ProjectPages(
                     context->files(), ProjectPages::AUTO_PAGES,
                     context->layoutDirection()
@@ -1748,7 +1748,7 @@ bool MainWindow::closeProjectInteractive() {
 } // MainWindow::closeProjectInteractive
 
 void MainWindow::closeProjectWithoutSaving() {
-    IntrusivePtr<ProjectPages> pages(new ProjectPages());
+    intrusive_ptr<ProjectPages> pages(new ProjectPages());
     switchToNewProject(pages, QString());
 }
 
@@ -2022,12 +2022,12 @@ BackgroundTaskPtr MainWindow::createCompositeTask(PageInfo const& page,
                                                   int const last_filter_idx,
                                                   bool const batch,
                                                   bool debug) {
-    IntrusivePtr<fix_orientation::Task> fix_orientation_task;
-    IntrusivePtr<page_split::Task> page_split_task;
-    IntrusivePtr<deskew::Task> deskew_task;
-    IntrusivePtr<select_content::Task> select_content_task;
-    IntrusivePtr<page_layout::Task> page_layout_task;
-    IntrusivePtr<output::Task> output_task;
+    intrusive_ptr<fix_orientation::Task> fix_orientation_task;
+    intrusive_ptr<page_split::Task> page_split_task;
+    intrusive_ptr<deskew::Task> deskew_task;
+    intrusive_ptr<select_content::Task> select_content_task;
+    intrusive_ptr<page_layout::Task> page_layout_task;
+    intrusive_ptr<output::Task> output_task;
 
     if (batch) {
         debug = false;
@@ -2079,14 +2079,14 @@ BackgroundTaskPtr MainWindow::createCompositeTask(PageInfo const& page,
     );
 } // MainWindow::createCompositeTask
 
-IntrusivePtr<CompositeCacheDrivenTask>
+intrusive_ptr<CompositeCacheDrivenTask>
 MainWindow::createCompositeCacheDrivenTask(int const last_filter_idx) {
-    IntrusivePtr<fix_orientation::CacheDrivenTask> fix_orientation_task;
-    IntrusivePtr<page_split::CacheDrivenTask> page_split_task;
-    IntrusivePtr<deskew::CacheDrivenTask> deskew_task;
-    IntrusivePtr<select_content::CacheDrivenTask> select_content_task;
-    IntrusivePtr<page_layout::CacheDrivenTask> page_layout_task;
-    IntrusivePtr<output::CacheDrivenTask> output_task;
+    intrusive_ptr<fix_orientation::CacheDrivenTask> fix_orientation_task;
+    intrusive_ptr<page_split::CacheDrivenTask> page_split_task;
+    intrusive_ptr<deskew::CacheDrivenTask> deskew_task;
+    intrusive_ptr<select_content::CacheDrivenTask> select_content_task;
+    intrusive_ptr<page_layout::CacheDrivenTask> page_layout_task;
+    intrusive_ptr<output::CacheDrivenTask> output_task;
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
         output_task = m_ptrStages->outputFilter()
@@ -2125,7 +2125,7 @@ void MainWindow::updateDisambiguationRecords(PageSequence const& pages) {
 }
 
 PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
-    IntrusivePtr<PageSelectionProvider const> provider(new PageSelectionProviderImpl(this));
+    intrusive_ptr<PageSelectionProvider const> provider(new PageSelectionProviderImpl(this));
 
     return PageSelectionAccessor(provider);
 }

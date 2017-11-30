@@ -23,7 +23,7 @@
 #include "FilterOptionsWidget.h"
 #include "OrthogonalRotation.h"
 #include "PageId.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageSelectionAccessor.h"
 
 namespace fix_orientation {
@@ -32,7 +32,7 @@ namespace fix_orientation {
     class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(IntrusivePtr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
 
@@ -63,7 +63,7 @@ namespace fix_orientation {
 
         void setRotationPixmap();
 
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
         OrthogonalRotation m_rotation;

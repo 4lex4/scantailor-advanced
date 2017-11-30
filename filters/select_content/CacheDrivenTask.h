@@ -20,8 +20,8 @@
 #define SELECT_CONTENT_CACHEDRIVENTASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 
 class QSizeF;
 class PageInfo;
@@ -35,12 +35,12 @@ namespace page_layout {
 namespace select_content {
     class Settings;
 
-    class CacheDrivenTask : public RefCountable {
+    class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                        IntrusivePtr<page_layout::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+                        intrusive_ptr<page_layout::CacheDrivenTask> const& next_task);
 
         virtual ~CacheDrivenTask();
 
@@ -48,8 +48,8 @@ namespace select_content {
         process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<page_layout::CacheDrivenTask> m_ptrNextTask;
+        intrusive_ptr<Settings> m_ptrSettings;
+        intrusive_ptr<page_layout::CacheDrivenTask> m_ptrNextTask;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

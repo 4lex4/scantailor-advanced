@@ -20,7 +20,7 @@
 #define OUTPUT_TASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "FilterResult.h"
 #include "PageId.h"
 #include "ImageViewTab.h"
@@ -47,13 +47,13 @@ namespace output {
     class Filter;
     class Settings;
 
-    class Task : public RefCountable {
+    class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Task(intrusive_ptr<Filter> const& filter,
+             intrusive_ptr<Settings> const& settings,
+             intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
              PageId const& page_id,
              OutputFileNameGenerator const& out_file_name_gen,
              ImageViewTab last_tab,
@@ -69,9 +69,9 @@ namespace output {
 
         void deleteMutuallyExclusiveOutputFiles();
 
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<Settings> m_ptrSettings;
+        intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
         std::unique_ptr<DebugImages> m_ptrDbg;
         PageId m_pageId;
         OutputFileNameGenerator m_outFileNameGen;

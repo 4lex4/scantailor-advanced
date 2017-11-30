@@ -21,14 +21,14 @@
 
 #include "ui_PictureZonePropDialog.h"
 #include "PropertySet.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QDialog>
 
 namespace output {
     class PictureZonePropDialog : public QDialog {
     Q_OBJECT
     public:
-        PictureZonePropDialog(IntrusivePtr<PropertySet> const& props, QWidget* parent = nullptr);
+        PictureZonePropDialog(intrusive_ptr<PropertySet> const& props, QWidget* parent = nullptr);
 
     signals:
 
@@ -40,7 +40,7 @@ namespace output {
 
     private:
         Ui::PictureZonePropDialog ui;
-        IntrusivePtr<PropertySet> m_ptrProps;
+        intrusive_ptr<PropertySet> m_ptrProps;
     };
 }  // namespace output
 #endif

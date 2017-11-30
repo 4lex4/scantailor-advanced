@@ -19,7 +19,7 @@
 #ifndef STAGELISTVIEW_H_
 #define STAGELISTVIEW_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QTableView>
 #include <QPixmap>
 #include <vector>
@@ -33,7 +33,7 @@ public:
 
     virtual ~StageListView();
 
-    void setStages(IntrusivePtr<StageSequence> const& stages);
+    void setStages(intrusive_ptr<StageSequence> const& stages);
 
     virtual QSize sizeHint() const {
         return m_sizeHint;

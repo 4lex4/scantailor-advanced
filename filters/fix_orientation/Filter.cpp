@@ -117,20 +117,20 @@ namespace fix_orientation {
         }
     }      // Filter::loadSettings
 
-    IntrusivePtr<Task>
-    Filter::createTask(PageId const& page_id, IntrusivePtr<page_split::Task> const& next_task,
+    intrusive_ptr<Task>
+    Filter::createTask(PageId const& page_id, intrusive_ptr<page_split::Task> const& next_task,
                        bool const batch_processing) {
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        page_id.imageId(), IntrusivePtr<Filter>(this),
+                        page_id.imageId(), intrusive_ptr<Filter>(this),
                         m_ptrSettings, next_task, batch_processing
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<page_split::CacheDrivenTask> const& next_task) {
-        return IntrusivePtr<CacheDrivenTask>(
+    intrusive_ptr<CacheDrivenTask>
+    Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> const& next_task) {
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }

@@ -19,12 +19,12 @@
 #ifndef ABSTRACT_RELINKER_H_
 #define ABSTRACT_RELINKER_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 
 class RelinkablePath;
 class QString;
 
-class AbstractRelinker : public RefCountable {
+class AbstractRelinker : public ref_countable {
 public:
     virtual ~AbstractRelinker() {
     }

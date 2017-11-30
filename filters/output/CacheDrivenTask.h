@@ -20,8 +20,8 @@
 #define OUTPUT_CACHEDRIVENTASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "OutputFileNameGenerator.h"
 
 class QPolygonF;
@@ -32,11 +32,11 @@ class ImageTransformation;
 namespace output {
     class Settings;
 
-    class CacheDrivenTask : public RefCountable {
+    class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings, OutputFileNameGenerator const& out_file_name_gen);
+        CacheDrivenTask(intrusive_ptr<Settings> const& settings, OutputFileNameGenerator const& out_file_name_gen);
 
         virtual ~CacheDrivenTask();
 
@@ -46,7 +46,7 @@ namespace output {
                      QPolygonF const& content_rect_phys);
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
         OutputFileNameGenerator m_outFileNameGen;
     };
 }  // namespace output

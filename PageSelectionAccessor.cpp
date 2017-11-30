@@ -19,7 +19,7 @@
 #include "PageSelectionAccessor.h"
 #include "PageSequence.h"
 
-PageSelectionAccessor::PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider)
+PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<PageSelectionProvider const> const& provider)
         : m_ptrProvider(provider) {
 }
 

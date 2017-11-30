@@ -20,17 +20,17 @@
 #ifndef EDITABLE_SPLINE_H_
 #define EDITABLE_SPLINE_H_
 
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "SplineVertex.h"
 #include "SplineSegment.h"
 #include <QPolygonF>
 
 class SerializableSpline;
 
-class EditableSpline : public RefCountable {
+class EditableSpline : public ref_countable {
 public:
-    typedef IntrusivePtr<EditableSpline> Ptr;
+    typedef intrusive_ptr<EditableSpline> Ptr;
 
     class SegmentIterator {
     public:

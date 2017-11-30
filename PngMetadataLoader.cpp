@@ -79,7 +79,7 @@ void PngMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
-                IntrusivePtr<ImageMetadataLoader>(new PngMetadataLoader)
+                intrusive_ptr<ImageMetadataLoader>(new PngMetadataLoader)
         );
         registered = true;
     }

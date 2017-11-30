@@ -40,7 +40,7 @@ namespace deskew {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
                   std::unique_ptr<DebugImages> dbg_img,
                   QImage const& image,
                   PageId const& page_id,
@@ -50,12 +50,12 @@ namespace deskew {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
+        intrusive_ptr<Filter> m_ptrFilter;
         std::unique_ptr<DebugImages> m_ptrDbg;
         QImage m_image;
         QImage m_downscaledImage;
@@ -66,9 +66,9 @@ namespace deskew {
     };
 
 
-    Task::Task(IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<Settings> const& settings,
-               IntrusivePtr<select_content::Task> const& next_task,
+    Task::Task(intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<Settings> const& settings,
+               intrusive_ptr<select_content::Task> const& next_task,
                PageId const& page_id,
                bool const batch_processing,
                bool const debug)
@@ -245,7 +245,7 @@ namespace deskew {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
                                std::unique_ptr<DebugImages> dbg_img,
                                QImage const& image,
                                PageId const& page_id,

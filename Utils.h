@@ -37,7 +37,7 @@ public:
 
     static QString outputDirToThumbDir(QString const& output_dir);
 
-    static IntrusivePtr<ThumbnailPixmapCache> createThumbnailCache(QString const& output_dir);
+    static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(QString const& output_dir);
 
     /**
      * Unlike QFile::rename(), this one overwrites existing files.

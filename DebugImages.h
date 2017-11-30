@@ -19,8 +19,8 @@
 #ifndef DEBUG_IMAGES_H_
 #define DEBUG_IMAGES_H_
 
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "AutoRemovingFile.h"
 #include <boost/function.hpp>
 #include <QString>
@@ -62,7 +62,7 @@ public:
     AutoRemovingFile retrieveNext(QString* label = 0, boost::function<QWidget*(QImage const&)>* image_view_factory = 0);
 
 private:
-    struct Item : public RefCountable {
+    struct Item : public ref_countable {
         AutoRemovingFile file;
         QString label;
         boost::function<QWidget*(QImage const&)> imageViewFactory;
@@ -74,7 +74,7 @@ private:
         }
     };
 
-    std::deque<IntrusivePtr<Item>> m_sequence;
+    std::deque<intrusive_ptr<Item>> m_sequence;
 };
 
 

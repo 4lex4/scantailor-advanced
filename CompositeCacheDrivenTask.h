@@ -19,12 +19,12 @@
 #ifndef COMPOSITECACHEDRIVENTASK_H_
 #define COMPOSITECACHEDRIVENTASK_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 
 class PageInfo;
 class AbstractFilterDataCollector;
 
-class CompositeCacheDrivenTask : public RefCountable {
+class CompositeCacheDrivenTask : public ref_countable {
 public:
     virtual ~CompositeCacheDrivenTask() {
     }

@@ -20,7 +20,7 @@
 #define PROPERTY_FACTORY_H_
 
 #include "Property.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QString>
 #include <map>
 
@@ -32,11 +32,11 @@ public:
     virtual ~PropertyFactory() {
     }
 
-    typedef IntrusivePtr<Property>(* PropertyConstructor)(QDomElement const& el);
+    typedef intrusive_ptr<Property>(* PropertyConstructor)(QDomElement const& el);
 
     void registerProperty(QString const& property, PropertyConstructor constructor);
 
-    IntrusivePtr<Property> construct(QDomElement const& el) const;
+    intrusive_ptr<Property> construct(QDomElement const& el) const;
 
 private:
     typedef std::map<QString, PropertyConstructor> Registry;

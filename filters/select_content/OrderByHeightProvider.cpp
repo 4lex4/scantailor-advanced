@@ -19,7 +19,7 @@
 #include "OrderByHeightProvider.h"
 
 namespace select_content {
-    OrderByHeightProvider::OrderByHeightProvider(IntrusivePtr<Settings> const& settings)
+    OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> const& settings)
             : m_ptrSettings(settings) {
     }
 

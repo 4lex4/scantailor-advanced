@@ -20,9 +20,9 @@
 #define PAGE_SPLIT_TASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "FilterResult.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageInfo.h"
 #include <memory>
 
@@ -42,14 +42,14 @@ namespace page_split {
 
     class PageLayout;
 
-    class Task : public RefCountable {
+    class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<ProjectPages> const& pages,
-             IntrusivePtr<deskew::Task> const& next_task,
+        Task(intrusive_ptr<Filter> const& filter,
+             intrusive_ptr<Settings> const& settings,
+             intrusive_ptr<ProjectPages> const& pages,
+             intrusive_ptr<deskew::Task> const& next_task,
              PageInfo const& page_info,
              bool batch_processing,
              bool debug);
@@ -61,10 +61,10 @@ namespace page_split {
     private:
         class UiUpdater;
 
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<ProjectPages> m_ptrPages;
-        IntrusivePtr<deskew::Task> m_ptrNextTask;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<Settings> m_ptrSettings;
+        intrusive_ptr<ProjectPages> m_ptrPages;
+        intrusive_ptr<deskew::Task> m_ptrNextTask;
         std::unique_ptr<DebugImages> m_ptrDbg;
         PageInfo m_pageInfo;
         bool m_batchProcessing;

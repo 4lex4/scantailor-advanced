@@ -31,7 +31,7 @@ namespace fix_orientation {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
                   QImage const& image,
                   ImageId const& image_id,
                   ImageTransformation const& xform,
@@ -39,12 +39,12 @@ namespace fix_orientation {
 
         virtual void updateUI(FilterUiInterface* wnd);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
+        intrusive_ptr<Filter> m_ptrFilter;
         QImage m_image;
         QImage m_downscaledImage;
         ImageId m_imageId;
@@ -54,9 +54,9 @@ namespace fix_orientation {
 
 
     Task::Task(ImageId const& image_id,
-               IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<Settings> const& settings,
-               IntrusivePtr<page_split::Task> const& next_task,
+               intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<Settings> const& settings,
+               intrusive_ptr<page_split::Task> const& next_task,
                bool const batch_processing)
             : m_ptrFilter(filter),
               m_ptrNextTask(next_task),
@@ -90,7 +90,7 @@ namespace fix_orientation {
 
 /*============================ Task::UiUpdater ========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
                                QImage const& image,
                                ImageId const& image_id,
                                ImageTransformation const& xform,

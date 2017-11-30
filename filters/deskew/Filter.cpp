@@ -136,22 +136,22 @@ namespace deskew {
         filter_el.appendChild(page_el);
     }
 
-    IntrusivePtr<Task>
+    intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       IntrusivePtr<select_content::Task> const& next_task,
+                       intrusive_ptr<select_content::Task> const& next_task,
                        bool const batch_processing,
                        bool const debug) {
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings,
+                        intrusive_ptr<Filter>(this), m_ptrSettings,
                         next_task, page_id, batch_processing, debug
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<select_content::CacheDrivenTask> const& next_task) {
-        return IntrusivePtr<CacheDrivenTask>(
+    intrusive_ptr<CacheDrivenTask>
+    Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> const& next_task) {
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }

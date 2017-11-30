@@ -27,9 +27,9 @@
 #include "filters/deskew/CacheDrivenTask.h"
 
 namespace page_split {
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                                     IntrusivePtr<ProjectPages> projectPages,
-                                     IntrusivePtr<deskew::CacheDrivenTask> const& next_task)
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+                                     intrusive_ptr<ProjectPages> projectPages,
+                                     intrusive_ptr<deskew::CacheDrivenTask> const& next_task)
             : m_ptrNextTask(next_task),
               m_ptrSettings(settings),
               m_projectPages(projectPages) {
@@ -48,7 +48,7 @@ namespace page_split {
         }
 
         assert(!"Unreachable");
-        
+
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 

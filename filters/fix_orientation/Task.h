@@ -20,9 +20,9 @@
 #define FIX_ORIENTATION_TASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "FilterResult.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "ImageId.h"
 
 class TaskStatus;
@@ -37,14 +37,14 @@ namespace fix_orientation {
     class Filter;
     class Settings;
 
-    class Task : public RefCountable {
+    class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
     public:
         Task(ImageId const& image_id,
-             IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<page_split::Task> const& next_task,
+             intrusive_ptr<Filter> const& filter,
+             intrusive_ptr<Settings> const& settings,
+             intrusive_ptr<page_split::Task> const& next_task,
              bool batch_processing);
 
         virtual ~Task();
@@ -54,9 +54,9 @@ namespace fix_orientation {
     private:
         class UiUpdater;
 
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
+        intrusive_ptr<Settings> m_ptrSettings;
         ImageId m_imageId;
         bool m_batchProcessing;
     };

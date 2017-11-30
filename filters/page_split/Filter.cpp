@@ -31,7 +31,7 @@
 #include "OrderBySplitTypeProvider.h"
 
 namespace page_split {
-    Filter::Filter(IntrusivePtr<ProjectPages> const& page_sequence,
+    Filter::Filter(intrusive_ptr<ProjectPages> const& page_sequence,
                    PageSelectionAccessor const& page_selection_accessor)
             : m_ptrPages(page_sequence),
               m_ptrSettings(new Settings),
@@ -174,22 +174,22 @@ namespace page_split {
         }
     }
 
-    IntrusivePtr<Task>
+    intrusive_ptr<Task>
     Filter::createTask(PageInfo const& page_info,
-                       IntrusivePtr<deskew::Task> const& next_task,
+                       intrusive_ptr<deskew::Task> const& next_task,
                        bool const batch_processing,
                        bool const debug) {
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings, m_ptrPages,
+                        intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrPages,
                         next_task, page_info, batch_processing, debug
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<deskew::CacheDrivenTask> const& next_task) {
-        return IntrusivePtr<CacheDrivenTask>(
+    intrusive_ptr<CacheDrivenTask>
+    Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> const& next_task) {
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, m_ptrPages, next_task)
         );
     }

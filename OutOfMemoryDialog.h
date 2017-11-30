@@ -21,7 +21,7 @@
 
 #include "ui_OutOfMemoryDialog.h"
 #include "OutputFileNameGenerator.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "StageSequence.h"
 #include "ProjectPages.h"
 #include "SelectedPage.h"
@@ -35,8 +35,8 @@ public:
 
     void setParams(QString const& project_file,
             // may be empty
-                   IntrusivePtr<StageSequence> const& stages,
-                   IntrusivePtr<ProjectPages> const& pages,
+                   intrusive_ptr<StageSequence> const& stages,
+                   intrusive_ptr<ProjectPages> const& pages,
                    SelectedPage const& selected_page,
                    OutputFileNameGenerator const& out_file_name_gen);
 
@@ -53,8 +53,8 @@ private:
 
     Ui::OutOfMemoryDialog ui;
     QString m_projectFile;
-    IntrusivePtr<StageSequence> m_ptrStages;
-    IntrusivePtr<ProjectPages> m_ptrPages;
+    intrusive_ptr<StageSequence> m_ptrStages;
+    intrusive_ptr<ProjectPages> m_ptrPages;
     SelectedPage m_selectedPage;
     OutputFileNameGenerator m_outFileNameGen;
 };

@@ -20,7 +20,7 @@
 #define INCOMPLETETHUMBNAIL_H_
 
 #include "ThumbnailBase.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QPainterPath>
 
 class ThumbnailPixmapCache;
@@ -41,7 +41,7 @@ class QRectF;
  */
 class IncompleteThumbnail : public ThumbnailBase {
 public:
-    IncompleteThumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                         QSizeF const& max_size,
                         ImageId const& image_id,
                         ImageTransformation const& image_xform);

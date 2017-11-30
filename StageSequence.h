@@ -20,8 +20,8 @@
 #define STAGESEQUENCE_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "AbstractFilter.h"
 #include "filters/fix_orientation/Filter.h"
 #include "filters/page_split/Filter.h"
@@ -36,13 +36,13 @@ class ProjectPages;
 class PageSelectionAccessor;
 class AbstractRelinker;
 
-class StageSequence : public RefCountable {
+class StageSequence : public ref_countable {
 DECLARE_NON_COPYABLE(StageSequence)
 
 public:
-    typedef IntrusivePtr<AbstractFilter> FilterPtr;
+    typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    StageSequence(IntrusivePtr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor);
+    StageSequence(intrusive_ptr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor);
 
     void performRelinking(AbstractRelinker const& relinker);
 
@@ -60,27 +60,27 @@ public:
 
     int findFilter(FilterPtr const& filter) const;
 
-    IntrusivePtr<fix_orientation::Filter> const& fixOrientationFilter() const {
+    intrusive_ptr<fix_orientation::Filter> const& fixOrientationFilter() const {
         return m_ptrFixOrientationFilter;
     }
 
-    IntrusivePtr<page_split::Filter> const& pageSplitFilter() const {
+    intrusive_ptr<page_split::Filter> const& pageSplitFilter() const {
         return m_ptrPageSplitFilter;
     }
 
-    IntrusivePtr<deskew::Filter> const& deskewFilter() const {
+    intrusive_ptr<deskew::Filter> const& deskewFilter() const {
         return m_ptrDeskewFilter;
     }
 
-    IntrusivePtr<select_content::Filter> const& selectContentFilter() const {
+    intrusive_ptr<select_content::Filter> const& selectContentFilter() const {
         return m_ptrSelectContentFilter;
     }
 
-    IntrusivePtr<page_layout::Filter> const& pageLayoutFilter() const {
+    intrusive_ptr<page_layout::Filter> const& pageLayoutFilter() const {
         return m_ptrPageLayoutFilter;
     }
 
-    IntrusivePtr<output::Filter> const& outputFilter() const {
+    intrusive_ptr<output::Filter> const& outputFilter() const {
         return m_ptrOutputFilter;
     }
 
@@ -109,12 +109,12 @@ public:
     }
 
 private:
-    IntrusivePtr<fix_orientation::Filter> m_ptrFixOrientationFilter;
-    IntrusivePtr<page_split::Filter> m_ptrPageSplitFilter;
-    IntrusivePtr<deskew::Filter> m_ptrDeskewFilter;
-    IntrusivePtr<select_content::Filter> m_ptrSelectContentFilter;
-    IntrusivePtr<page_layout::Filter> m_ptrPageLayoutFilter;
-    IntrusivePtr<output::Filter> m_ptrOutputFilter;
+    intrusive_ptr<fix_orientation::Filter> m_ptrFixOrientationFilter;
+    intrusive_ptr<page_split::Filter> m_ptrPageSplitFilter;
+    intrusive_ptr<deskew::Filter> m_ptrDeskewFilter;
+    intrusive_ptr<select_content::Filter> m_ptrSelectContentFilter;
+    intrusive_ptr<page_layout::Filter> m_ptrPageLayoutFilter;
+    intrusive_ptr<output::Filter> m_ptrOutputFilter;
     std::vector<FilterPtr> m_filters;
     int m_fixOrientationFilterIdx;
     int m_pageSplitFilterIdx;

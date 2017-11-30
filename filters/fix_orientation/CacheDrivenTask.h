@@ -21,7 +21,7 @@
 
 #include "NonCopyable.h"
 #include "CompositeCacheDrivenTask.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 
 class PageInfo;
 class AbstractFilterDataCollector;
@@ -37,16 +37,16 @@ namespace fix_orientation {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(IntrusivePtr<Settings> const& settings,
-                        IntrusivePtr<page_split::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+                        intrusive_ptr<page_split::CacheDrivenTask> const& next_task);
 
         virtual ~CacheDrivenTask();
 
         virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector);
 
     private:
-        IntrusivePtr<page_split::CacheDrivenTask> m_ptrNextTask;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace fix_orientation
 #endif // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_

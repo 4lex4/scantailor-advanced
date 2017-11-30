@@ -25,7 +25,7 @@
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
 #include "PropertySet.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "BasicSplineVisualizer.h"
 #include <QObject>
 #include <QColor>

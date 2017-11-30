@@ -19,7 +19,7 @@
 #ifndef PAGE_SPLIT_SETTINGS_H_
 #define PAGE_SPLIT_SETTINGS_H_
 
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "NonCopyable.h"
 #include "PageLayout.h"
 #include "LayoutType.h"
@@ -34,7 +34,7 @@
 class AbstractRelinker;
 
 namespace page_split {
-    class Settings : public RefCountable {
+    class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
     private:

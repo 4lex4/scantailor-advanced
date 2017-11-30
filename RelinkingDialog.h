@@ -23,7 +23,7 @@
 #include "RelinkingModel.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QDialog>
 
 class RelinkingSortingModel;
@@ -49,7 +49,7 @@ public:
      * This allows you to take the relinker right after construction
      * and then use it when accepted() signal is emitted.
      */
-    IntrusivePtr<AbstractRelinker> relinker() const {
+    intrusive_ptr<AbstractRelinker> relinker() const {
         return m_model.relinker();
     }
 

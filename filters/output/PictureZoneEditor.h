@@ -22,8 +22,8 @@
 
 #include "ImageViewBase.h"
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "PageId.h"
 #include "ZoneInteractionContext.h"
 #include "EditableSpline.h"
@@ -55,7 +55,7 @@ namespace output {
                           QTransform const& image_to_virt,
                           QPolygonF const& virt_display_area,
                           PageId const& page_id,
-                          IntrusivePtr<Settings> const& settings);
+                          intrusive_ptr<Settings> const& settings);
 
         virtual ~PictureZoneEditor();
 
@@ -105,10 +105,10 @@ namespace output {
         QTimer m_pictureMaskRebuildTimer;
         QTimer m_pictureMaskAnimateTimer;
         int m_pictureMaskAnimationPhase;  // degrees
-        IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
+        intrusive_ptr<MaskTransformTask> m_ptrMaskTransformTask;
 
         PageId m_pageId;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace output
 #endif // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

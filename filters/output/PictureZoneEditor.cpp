@@ -38,7 +38,7 @@ namespace output {
 
     using namespace imageproc;
 
-    class PictureZoneEditor::MaskTransformTask : public AbstractCommand0<IntrusivePtr<AbstractCommand0<void>>>,
+    class PictureZoneEditor::MaskTransformTask : public AbstractCommand0<intrusive_ptr<AbstractCommand0<void>>>,
                                                  public QObject {
     DECLARE_NON_COPYABLE(MaskTransformTask)
 
@@ -56,7 +56,7 @@ namespace output {
             return m_ptrResult->isCancelled();
         }
 
-        virtual IntrusivePtr<AbstractCommand0<void>> operator()();
+        virtual intrusive_ptr<AbstractCommand0<void>> operator()();
 
     private:
         class Result : public AbstractCommand0<void> {
@@ -83,7 +83,7 @@ namespace output {
         };
 
 
-        IntrusivePtr<Result> m_ptrResult;
+        intrusive_ptr<Result> m_ptrResult;
         BinaryImage m_origMask;
         QTransform m_xform;
         QSize m_targetSize;
@@ -96,7 +96,7 @@ namespace output {
                                          QTransform const& image_to_virt,
                                          QPolygonF const& virt_display_area,
                                          PageId const& page_id,
-                                         IntrusivePtr<Settings> const& settings)
+                                         intrusive_ptr<Settings> const& settings)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(image_to_virt, virt_display_area),
@@ -212,7 +212,7 @@ namespace output {
         }
 
         QTransform const xform(virtualToWidget());
-        IntrusivePtr<MaskTransformTask> const task(
+        intrusive_ptr<MaskTransformTask> const task(
                 new MaskTransformTask(this, m_origPictureMask, xform, viewport()->size())
         );
 
@@ -259,7 +259,7 @@ namespace output {
         }
 
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
-        
+
         // Third pass: ERASER3
         for (EditableZoneSet::Zone const& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
@@ -317,10 +317,10 @@ namespace output {
               m_targetSize(target_size) {
     }
 
-    IntrusivePtr<AbstractCommand0<void>>
+    intrusive_ptr<AbstractCommand0<void>>
     PictureZoneEditor::MaskTransformTask::operator()() {
         if (isCancelled()) {
-            return IntrusivePtr<AbstractCommand0<void>>();
+            return intrusive_ptr<AbstractCommand0<void>>();
         }
 
         QRect const target_rect(

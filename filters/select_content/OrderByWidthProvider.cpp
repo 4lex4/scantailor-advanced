@@ -19,7 +19,7 @@
 #include "OrderByWidthProvider.h"
 
 namespace select_content {
-    OrderByWidthProvider::OrderByWidthProvider(IntrusivePtr<Settings> const& settings)
+    OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> const& settings)
             : m_ptrSettings(settings) {
     }
 

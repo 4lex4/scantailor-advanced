@@ -33,7 +33,7 @@
 namespace select_content {
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(IntrusivePtr<Filter> const& filter,
+        UiUpdater(intrusive_ptr<Filter> const& filter,
                   PageId const& page_id,
                   std::unique_ptr<DebugImages> dbg,
                   QImage const& image,
@@ -43,12 +43,12 @@ namespace select_content {
 
         virtual void updateUI(FilterUiInterface* ui);
 
-        virtual IntrusivePtr<AbstractFilter> filter() {
+        virtual intrusive_ptr<AbstractFilter> filter() {
             return m_ptrFilter;
         }
 
     private:
-        IntrusivePtr<Filter> m_ptrFilter;
+        intrusive_ptr<Filter> m_ptrFilter;
         PageId m_pageId;
         std::unique_ptr<DebugImages> m_ptrDbg;
         QImage m_image;
@@ -59,9 +59,9 @@ namespace select_content {
     };
 
 
-    Task::Task(IntrusivePtr<Filter> const& filter,
-               IntrusivePtr<page_layout::Task> const& next_task,
-               IntrusivePtr<Settings> const& settings,
+    Task::Task(intrusive_ptr<Filter> const& filter,
+               intrusive_ptr<page_layout::Task> const& next_task,
+               intrusive_ptr<Settings> const& settings,
                PageId const& page_id,
                bool const batch,
                bool const debug)
@@ -155,7 +155,7 @@ namespace select_content {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(IntrusivePtr<Filter> const& filter,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
                                PageId const& page_id,
                                std::unique_ptr<DebugImages> dbg,
                                QImage const& image,

@@ -28,7 +28,7 @@
 #include "PageLayout.h"
 #include "UnremoveButton.h"
 #include "ImageId.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QPixmap>
 
 class ImageTransformation;
@@ -46,7 +46,7 @@ namespace page_split {
                   QImage const& downscaled_image,
                   ImageTransformation const& xform,
                   PageLayout const& layout,
-                  IntrusivePtr<ProjectPages> const& pages,
+                  intrusive_ptr<ProjectPages> const& pages,
                   ImageId const& image_id,
                   bool left_half_removed,
                   bool right_half_removed);
@@ -117,7 +117,7 @@ namespace page_split {
 
         static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
 
-        IntrusivePtr<ProjectPages> m_ptrPages;
+        intrusive_ptr<ProjectPages> m_ptrPages;
         ImageId m_imageId;
         DraggablePoint m_handles[2][2];
         ObjectDragHandler m_handleInteractors[2][2];

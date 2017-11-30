@@ -20,7 +20,7 @@
 #define BACKGROUNDEXECUTOR_H_
 
 #include "NonCopyable.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "AbstractCommand.h"
 #include "PayloadEvent.h"
 #include <memory>
@@ -29,8 +29,8 @@ class BackgroundExecutor {
 DECLARE_NON_COPYABLE(BackgroundExecutor)
 
 public:
-    typedef IntrusivePtr<AbstractCommand0<void>> TaskResultPtr;
-    typedef IntrusivePtr<AbstractCommand0<TaskResultPtr>> TaskPtr;
+    typedef intrusive_ptr<AbstractCommand0<void>> TaskResultPtr;
+    typedef intrusive_ptr<AbstractCommand0<TaskResultPtr>> TaskPtr;
 
     BackgroundExecutor();
 

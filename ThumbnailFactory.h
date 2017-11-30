@@ -20,8 +20,8 @@
 #define THUMBNAILFACTORY_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "ThumbnailPixmapCache.h"
 #include <QSizeF>
 #include <memory>
@@ -30,12 +30,12 @@ class PageInfo;
 class CompositeCacheDrivenTask;
 class QGraphicsItem;
 
-class ThumbnailFactory : public RefCountable {
+class ThumbnailFactory : public ref_countable {
 DECLARE_NON_COPYABLE(ThumbnailFactory)
 
 public:
-    ThumbnailFactory(IntrusivePtr<ThumbnailPixmapCache> const& pixmap_cache, QSizeF const& max_size,
-                     IntrusivePtr<CompositeCacheDrivenTask> const& task);
+    ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> const& pixmap_cache, QSizeF const& max_size,
+                     intrusive_ptr<CompositeCacheDrivenTask> const& task);
 
     virtual ~ThumbnailFactory();
 
@@ -44,9 +44,9 @@ public:
 private:
     class Collector;
 
-    IntrusivePtr<ThumbnailPixmapCache> m_ptrPixmapCache;
+    intrusive_ptr<ThumbnailPixmapCache> m_ptrPixmapCache;
     QSizeF m_maxSize;
-    IntrusivePtr<CompositeCacheDrivenTask> m_ptrTask;
+    intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
 

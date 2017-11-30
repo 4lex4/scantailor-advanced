@@ -30,7 +30,7 @@ namespace page_split {
                          QImage const& downscaled_image,
                          ImageTransformation const& xform,
                          PageLayout const& layout,
-                         IntrusivePtr <ProjectPages> const& pages,
+                         intrusive_ptr<ProjectPages> const& pages,
                          ImageId const& image_id,
                          bool left_half_removed,
                          bool right_half_removed)

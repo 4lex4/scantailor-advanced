@@ -20,7 +20,7 @@
 #define DESKEW_TASK_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include "FilterResult.h"
 #include "PageId.h"
 #include <memory>
@@ -44,13 +44,13 @@ namespace deskew {
     class Filter;
     class Settings;
 
-    class Task : public RefCountable {
+    class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(IntrusivePtr<Filter> const& filter,
-             IntrusivePtr<Settings> const& settings,
-             IntrusivePtr<select_content::Task> const& next_task,
+        Task(intrusive_ptr<Filter> const& filter,
+             intrusive_ptr<Settings> const& settings,
+             intrusive_ptr<select_content::Task> const& next_task,
              PageId const& page_id,
              bool batch_processing,
              bool debug);
@@ -68,9 +68,9 @@ namespace deskew {
 
         static QSize from150dpi(QSize const& size, Dpi const& target_dpi);
 
-        IntrusivePtr<Filter> m_ptrFilter;
-        IntrusivePtr<Settings> m_ptrSettings;
-        IntrusivePtr<select_content::Task> m_ptrNextTask;
+        intrusive_ptr<Filter> m_ptrFilter;
+        intrusive_ptr<Settings> m_ptrSettings;
+        intrusive_ptr<select_content::Task> m_ptrNextTask;
         std::unique_ptr<DebugImages> m_ptrDbg;
         PageId m_pageId;
         bool m_batchProcessing;

@@ -19,7 +19,7 @@
 #include "StageSequence.h"
 #include "ProjectPages.h"
 
-StageSequence::StageSequence(IntrusivePtr<ProjectPages> const& pages,
+StageSequence::StageSequence(intrusive_ptr<ProjectPages> const& pages,
                              PageSelectionAccessor const& page_selection_accessor)
         : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
           m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),

@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include "AbstractFilter.h"
 #include "PageView.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "FilterResult.h"
 #include "SafeDeletingQObjectPtr.h"
 #include "PageOrderOption.h"
@@ -52,7 +52,7 @@ namespace page_layout {
 
     Q_DECLARE_TR_FUNCTIONS(page_layout::Filter)
     public:
-        Filter(IntrusivePtr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+        Filter(intrusive_ptr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~Filter();
 
@@ -82,12 +82,12 @@ namespace page_layout {
 
         bool checkReadyForOutput(ProjectPages const& pages, PageId const* ignore = nullptr);
 
-        IntrusivePtr<Task> createTask(PageId const& page_id,
-                                      IntrusivePtr<output::Task> const& next_task,
-                                      bool batch,
-                                      bool debug);
+        intrusive_ptr<Task> createTask(PageId const& page_id,
+                                       intrusive_ptr<output::Task> const& next_task,
+                                       bool batch,
+                                       bool debug);
 
-        IntrusivePtr<CacheDrivenTask> createCacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task);
 
         OptionsWidget* optionsWidget() {
             return m_ptrOptionsWidget.get();
@@ -100,8 +100,8 @@ namespace page_layout {
     private:
         void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
 
-        IntrusivePtr<ProjectPages> m_ptrPages;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<ProjectPages> m_ptrPages;
+        intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
         std::vector<PageOrderOption> m_pageOrderOptions;
         int m_selectedPageOrder;

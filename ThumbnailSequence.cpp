@@ -97,15 +97,15 @@ public:
 
     ~Impl();
 
-    void setThumbnailFactory(IntrusivePtr<ThumbnailFactory> const& factory);
+    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory);
 
     void attachView(QGraphicsView* view);
 
     void reset(PageSequence const& pages,
                SelectionAction const selection_action,
-               IntrusivePtr<PageOrderProvider const> const& provider);
+               intrusive_ptr<PageOrderProvider const> const& provider);
 
-    IntrusivePtr<PageOrderProvider const> pageOrderProvider() const;
+    intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
 
     PageSequence toPageSequence() const;
 
@@ -226,8 +226,8 @@ private:
     SelectedThenUnselected& m_selectedThenUnselected;
 
     Item const* m_pSelectionLeader;
-    IntrusivePtr<ThumbnailFactory> m_ptrFactory;
-    IntrusivePtr<PageOrderProvider const> m_ptrOrderProvider;
+    intrusive_ptr<ThumbnailFactory> m_ptrFactory;
+    intrusive_ptr<PageOrderProvider const> m_ptrOrderProvider;
     GraphicsScene m_graphicsScene;
     QRectF m_sceneRect;
 };
@@ -316,7 +316,7 @@ ThumbnailSequence::ThumbnailSequence(QSizeF const& max_logical_thumb_size)
 ThumbnailSequence::~ThumbnailSequence() {
 }
 
-void ThumbnailSequence::setThumbnailFactory(IntrusivePtr<ThumbnailFactory> const& factory) {
+void ThumbnailSequence::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory) {
     m_ptrImpl->setThumbnailFactory(factory);
 }
 
@@ -326,11 +326,11 @@ void ThumbnailSequence::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::reset(PageSequence const& pages,
                               SelectionAction const selection_action,
-                              IntrusivePtr<PageOrderProvider const> const& order_provider) {
+                              intrusive_ptr<PageOrderProvider const> const& order_provider) {
     m_ptrImpl->reset(pages, selection_action, order_provider);
 }
 
-IntrusivePtr<PageOrderProvider const>
+intrusive_ptr<PageOrderProvider const>
 ThumbnailSequence::pageOrderProvider() const {
     return m_ptrImpl->pageOrderProvider();
 }
@@ -426,7 +426,7 @@ ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, QSizeF const& max_logica
 ThumbnailSequence::Impl::~Impl() {
 }
 
-void ThumbnailSequence::Impl::setThumbnailFactory(IntrusivePtr<ThumbnailFactory> const& factory) {
+void ThumbnailSequence::Impl::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory) {
     m_ptrFactory = factory;
 }
 
@@ -436,7 +436,7 @@ void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::Impl::reset(PageSequence const& pages,
                                     SelectionAction const selection_action,
-                                    IntrusivePtr<PageOrderProvider const> const& order_provider) {
+                                    intrusive_ptr<PageOrderProvider const> const& order_provider) {
     m_ptrOrderProvider = order_provider;
 
     std::set<PageId> selected;
@@ -489,7 +489,7 @@ void ThumbnailSequence::Impl::reset(PageSequence const& pages,
     }
 } // ThumbnailSequence::Impl::reset
 
-IntrusivePtr<PageOrderProvider const>
+intrusive_ptr<PageOrderProvider const>
 ThumbnailSequence::Impl::pageOrderProvider() const {
     return m_ptrOrderProvider;
 }

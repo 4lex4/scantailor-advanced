@@ -20,19 +20,19 @@
 #define SELECT_CONTENT_ORDER_BY_HEIGHT_PROVIDER_H_
 
 #include "Settings.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageOrderProvider.h"
 
 namespace select_content {
     class OrderByHeightProvider : public PageOrderProvider {
     public:
-        OrderByHeightProvider(IntrusivePtr<Settings> const& settings);
+        OrderByHeightProvider(intrusive_ptr<Settings> const& settings);
 
         virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
                               bool rhs_incomplete) const;
 
     private:
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace select_content
 #endif

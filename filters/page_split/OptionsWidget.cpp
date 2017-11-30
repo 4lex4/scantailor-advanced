@@ -26,8 +26,8 @@
 #include <assert.h>
 
 namespace page_split {
-    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
-                                 IntrusivePtr<ProjectPages> const& page_sequence,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+                                 intrusive_ptr<ProjectPages> const& page_sequence,
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
               m_ptrPages(page_sequence),

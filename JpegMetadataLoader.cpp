@@ -191,7 +191,7 @@ void JpegMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
         ImageMetadataLoader::registerLoader(
-                IntrusivePtr<ImageMetadataLoader>(new JpegMetadataLoader)
+                intrusive_ptr<ImageMetadataLoader>(new JpegMetadataLoader)
         );
         registered = true;
     }

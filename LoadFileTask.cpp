@@ -40,8 +40,8 @@ public:
 
     virtual void updateUI(FilterUiInterface* ui);
 
-    virtual IntrusivePtr<AbstractFilter> filter() {
-        return IntrusivePtr<AbstractFilter>();
+    virtual intrusive_ptr<AbstractFilter> filter() {
+        return intrusive_ptr<AbstractFilter>();
     }
 
 private:
@@ -52,9 +52,9 @@ private:
 
 LoadFileTask::LoadFileTask(Type type,
                            PageInfo const& page,
-                           IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
-                           IntrusivePtr<ProjectPages> const& pages,
-                           IntrusivePtr<fix_orientation::Task> const& next_task)
+                           intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+                           intrusive_ptr<ProjectPages> const& pages,
+                           intrusive_ptr<fix_orientation::Task> const& next_task)
         : BackgroundTask(type),
           m_ptrThumbnailCache(thumbnail_cache),
           m_imageId(page.imageId()),
@@ -120,7 +120,7 @@ LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
     class ErrWidget : public ErrorWidget {
     public:
-        ErrWidget(IntrusivePtr<AbstractCommand0<void>> const& relinking_dialog_requester,
+        ErrWidget(intrusive_ptr<AbstractCommand0<void>> const& relinking_dialog_requester,
                   QString const& text,
                   Qt::TextFormat fmt = Qt::AutoText)
                 : ErrorWidget(text, fmt),
@@ -132,7 +132,7 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
             (*m_ptrRelinkingDialogRequester)();
         }
 
-        IntrusivePtr<AbstractCommand0<void>> m_ptrRelinkingDialogRequester;
+        intrusive_ptr<AbstractCommand0<void>> m_ptrRelinkingDialogRequester;
     };
 
 

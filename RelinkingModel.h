@@ -23,7 +23,7 @@
 #include "VirtualFunction.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QString>
 #include <QModelIndex>
 #include <QAbstractListModel>
@@ -68,7 +68,7 @@ public:
      * This allows you to take the relinker right after construction
      * and then use it when accepted() signal is emitted.
      */
-    IntrusivePtr<AbstractRelinker> relinker() const {
+    intrusive_ptr<AbstractRelinker> relinker() const {
         return m_ptrRelinker;
     }
 
@@ -137,7 +137,7 @@ private:
     QPixmap m_folderIcon;
     std::vector<Item> m_items;
     std::set<QString> m_origPathSet;
-    IntrusivePtr<Relinker> const m_ptrRelinker;
+    intrusive_ptr<Relinker> const m_ptrRelinker;
     std::unique_ptr<StatusUpdateThread> m_ptrStatusUpdateThread;
     bool m_haveUncommittedChanges;
 };

@@ -176,20 +176,20 @@ namespace select_content {
         }
     }      // Filter::loadSettings
 
-    IntrusivePtr<Task>
-    Filter::createTask(PageId const& page_id, IntrusivePtr<page_layout::Task> const& next_task, bool batch,
+    intrusive_ptr<Task>
+    Filter::createTask(PageId const& page_id, intrusive_ptr<page_layout::Task> const& next_task, bool batch,
                        bool debug) {
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        IntrusivePtr<Filter>(this), next_task,
+                        intrusive_ptr<Filter>(this), next_task,
                         m_ptrSettings, page_id, batch, debug
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(IntrusivePtr<page_layout::CacheDrivenTask> const& next_task) {
-        return IntrusivePtr<CacheDrivenTask>(
+    intrusive_ptr<CacheDrivenTask>
+    Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> const& next_task) {
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, next_task)
         );
     }

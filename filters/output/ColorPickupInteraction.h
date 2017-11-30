@@ -23,7 +23,7 @@
 #include "InteractionState.h"
 #include "EditableZoneSet.h"
 #include "FillColorProperty.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QCoreApplication>
 #include <QRect>
 #include <stdint.h>
@@ -63,7 +63,7 @@ namespace output {
         EditableZoneSet& m_rZones;
         ZoneInteractionContext& m_rContext;
         InteractionState::Captor m_interaction;
-        IntrusivePtr<FillColorProperty> m_ptrFillColorProp;
+        intrusive_ptr<FillColorProperty> m_ptrFillColorProp;
         int m_dontDrawCircle;
 
         static uint32_t const m_sBitMixingLUT[3][256];

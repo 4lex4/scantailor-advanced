@@ -21,7 +21,6 @@
 
 #include <QLineF>
 #include <utility>
-#include "imageproc/BinaryImage.h"
 
 class DebugImages;
 

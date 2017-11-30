@@ -20,7 +20,7 @@
 #define FILENAME_DISAMBIGUATOR_H_
 
 #include "NonCopyable.h"
-#include "RefCountable.h"
+#include "ref_countable.h"
 #include <boost/function.hpp>
 #include <memory>
 #include <set>
@@ -37,7 +37,7 @@ class QDomDocument;
  *
  * \note This class is thread-safe.
  */
-class FileNameDisambiguator : public RefCountable {
+class FileNameDisambiguator : public ref_countable {
 DECLARE_NON_COPYABLE(FileNameDisambiguator)
 
 public:

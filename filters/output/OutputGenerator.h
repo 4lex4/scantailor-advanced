@@ -40,7 +40,7 @@
 #include <stdint.h>
 #include "Params.h"
 #include "PageId.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "Settings.h"
 #include <QMessageBox>
 #include "TiffWriter.h"
@@ -110,12 +110,12 @@ namespace output {
                        DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
                        DepthPerception const& depth_perception,
-                       imageproc::BinaryImage* auto_picture_mask = nullptr,
-                       imageproc::BinaryImage* speckles_image = nullptr,
-                       DebugImages* dbg = nullptr,
-                       PageId* p_pageId = nullptr,
-                       IntrusivePtr<Settings>* p_settings = nullptr,
-                       SplitImage* splitImage = nullptr);
+                       imageproc::BinaryImage* auto_picture_mask,
+                       imageproc::BinaryImage* speckles_image,
+                       DebugImages* dbg,
+                       PageId const& p_pageId,
+                       intrusive_ptr<Settings> const& p_settings,
+                       SplitImage* splitImage);
 
         QSize outputImageSize() const;
 
@@ -135,24 +135,24 @@ namespace output {
                            DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
                            DepthPerception const& depth_perception,
-                           imageproc::BinaryImage* auto_picture_mask = nullptr,
-                           imageproc::BinaryImage* speckles_image = nullptr,
-                           DebugImages* dbg = nullptr,
-                           PageId* p_pageId = nullptr,
-                           IntrusivePtr<Settings>* p_settings = nullptr,
-                           SplitImage* splitImage = nullptr);
+                           imageproc::BinaryImage* auto_picture_mask,
+                           imageproc::BinaryImage* speckles_image,
+                           DebugImages* dbg,
+                           PageId const& p_pageId,
+                           intrusive_ptr<Settings> const& p_settings,
+                           SplitImage* splitImage);
 
         QImage processWithoutDewarping(TaskStatus const& status,
                                        FilterData const& input,
                                        ZoneSet& picture_zones,
                                        ZoneSet const& fill_zones,
                                        PictureShapeOptions picture_shape_options,
-                                       imageproc::BinaryImage* auto_picture_mask = nullptr,
-                                       imageproc::BinaryImage* speckles_image = nullptr,
-                                       DebugImages* dbg = nullptr,
-                                       PageId* p_pageId = nullptr,
-                                       IntrusivePtr<Settings>* p_settings = nullptr,
-                                       SplitImage* splitImage = nullptr);
+                                       imageproc::BinaryImage* auto_picture_mask,
+                                       imageproc::BinaryImage* speckles_image,
+                                       DebugImages* dbg,
+                                       PageId const& p_pageId,
+                                       intrusive_ptr<Settings> const& p_settings,
+                                       SplitImage* splitImage);
 
         QImage processWithDewarping(TaskStatus const& status,
                                     FilterData const& input,
@@ -162,12 +162,12 @@ namespace output {
                                     DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
-                                    imageproc::BinaryImage* auto_picture_mask = nullptr,
-                                    imageproc::BinaryImage* speckles_image = nullptr,
-                                    DebugImages* dbg = nullptr,
-                                    PageId* p_pageId = nullptr,
-                                    IntrusivePtr<Settings>* p_settings = nullptr,
-                                    SplitImage* splitImage = nullptr);
+                                    imageproc::BinaryImage* auto_picture_mask,
+                                    imageproc::BinaryImage* speckles_image,
+                                    DebugImages* dbg,
+                                    PageId const& p_pageId,
+                                    intrusive_ptr<Settings> const& p_settings,
+                                    SplitImage* splitImage);
 
         void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 

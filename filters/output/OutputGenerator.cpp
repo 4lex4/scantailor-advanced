@@ -269,13 +269,13 @@ namespace output {
                                     ZoneSet const& fill_zones,
                                     PictureShapeOptions picture_shape_options,
                                     DewarpingOptions dewarping_options,
-                                    DistortionModel& distortion_model,
+                                    dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
-                                    DebugImages* const dbg,
-                                    PageId* p_pageId,
-                                    IntrusivePtr<Settings>* p_settings,
+                                    DebugImages* dbg,
+                                    PageId const& p_pageId,
+                                    intrusive_ptr<Settings> const& p_settings,
                                     SplitImage* splitImage) {
         QImage image(
                 processImpl(
@@ -460,13 +460,13 @@ namespace output {
                                         ZoneSet const& fill_zones,
                                         PictureShapeOptions picture_shape_options,
                                         DewarpingOptions dewarping_options,
-                                        DistortionModel& distortion_model,
+                                        dewarping::DistortionModel& distortion_model,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
                                         imageproc::BinaryImage* speckles_image,
-                                        DebugImages* const dbg,
-                                        PageId* p_pageId,
-                                        IntrusivePtr<Settings>* p_settings,
+                                        DebugImages* dbg,
+                                        PageId const& p_pageId,
+                                        intrusive_ptr<Settings> const& p_settings,
                                         SplitImage* splitImage) {
         if ((dewarping_options.mode() == DewarpingOptions::AUTO)
             || (dewarping_options.mode() == DewarpingOptions::MARGINAL)
@@ -496,8 +496,8 @@ namespace output {
                                                     imageproc::BinaryImage* auto_picture_mask,
                                                     imageproc::BinaryImage* speckles_image,
                                                     DebugImages* dbg,
-                                                    PageId* p_pageId,
-                                                    IntrusivePtr<Settings>* p_settings,
+                                                    PageId const& p_pageId,
+                                                    intrusive_ptr<Settings> const& p_settings,
                                                     SplitImage* splitImage) {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
@@ -619,7 +619,7 @@ namespace output {
                 blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
 
                 m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-                (*p_settings)->setColorParams(*p_pageId, m_colorParams);
+                p_settings->setColorParams(p_pageId, m_colorParams);
             }
         }
 
@@ -711,10 +711,10 @@ namespace output {
                             zones.erase(iter);
                         }
                 );
-                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+                p_settings->setPictureZones(p_pageId, picture_zones);
 
                 picture_shape_options.setAutoZonesFound(false);
-                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
             }
             if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
                 && !picture_shape_options.isAutoZonesFound()) {
@@ -735,10 +735,10 @@ namespace output {
 
                     picture_zones.add(zone1);
                 }
-                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+                p_settings->setPictureZones(p_pageId, picture_zones);
 
                 picture_shape_options.setAutoZonesFound(true);
-                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
 
                 bw_mask.fill(BLACK);
             }
@@ -905,13 +905,13 @@ namespace output {
                                                  ZoneSet const& fill_zones,
                                                  PictureShapeOptions picture_shape_options,
                                                  DewarpingOptions dewarping_options,
-                                                 DistortionModel& distortion_model,
+                                                 dewarping::DistortionModel& distortion_model,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
                                                  imageproc::BinaryImage* speckles_image,
                                                  DebugImages* dbg,
-                                                 PageId* p_pageId,
-                                                 IntrusivePtr<Settings>* p_settings,
+                                                 PageId const& p_pageId,
+                                                 intrusive_ptr<Settings> const& p_settings,
                                                  SplitImage* splitImage) {
         RenderParams const render_params(m_colorParams, m_splittingOptions);
 
@@ -1082,10 +1082,10 @@ namespace output {
                             zones.erase(iter);
                         }
                 );
-                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+                p_settings->setPictureZones(p_pageId, picture_zones);
 
                 picture_shape_options.setAutoZonesFound(false);
-                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
             }
             if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
                 && !picture_shape_options.isAutoZonesFound()) {
@@ -1106,10 +1106,10 @@ namespace output {
 
                     picture_zones.add(zone1);
                 }
-                (*p_settings)->setPictureZones(*p_pageId, picture_zones);
+                p_settings->setPictureZones(p_pageId, picture_zones);
 
                 picture_shape_options.setAutoZonesFound(true);
-                (*p_settings)->setPictureShapeOptions(*p_pageId, picture_shape_options);
+                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
 
                 warped_bw_mask.fill(BLACK);
             }
@@ -1191,7 +1191,7 @@ namespace output {
             }
 
 
-            PageId const& pageId = *p_pageId;
+            PageId const& pageId = p_pageId;
 
             QString stAngle;
 
@@ -1282,7 +1282,7 @@ namespace output {
 
             setupTrivialDistortionModel(distortion_model);
 
-            PageId const& pageId = *p_pageId;
+            PageId const& pageId = p_pageId;
 
             int max_red_points = 5;
             XSpline top_spline;
@@ -1373,7 +1373,7 @@ namespace output {
             outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(cropped_image);
             if (render_params.needBinarization()) {
                 outsideBackgroundColorBW = BackgroundColorCalculator::calcDominantBackgroundColorBW(cropped_image);
-                
+
                 if (!m_colorParams.blackWhiteOptions().isWhiteOnBlackAutoDetected()) {
                     BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
 
@@ -1384,7 +1384,7 @@ namespace output {
                     blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
 
                     m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-                    (*p_settings)->setColorParams(*p_pageId, m_colorParams);
+                    p_settings->setColorParams(p_pageId, m_colorParams);
                 }
             }
         }
@@ -1926,7 +1926,7 @@ namespace output {
         if (dbg) {
             dbg->add(holes_filled, "holes_filled");
         }
-        
+
         return holes_filled;
     }  // OutputGenerator::detectPictures
 

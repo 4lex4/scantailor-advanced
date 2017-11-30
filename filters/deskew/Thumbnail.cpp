@@ -20,7 +20,7 @@
 #include <QPainter>
 
 namespace deskew {
-    Thumbnail::Thumbnail(IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          ImageTransformation const& xform,
@@ -30,7 +30,7 @@ namespace deskew {
     }
 
     void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
-                                   QTransform const& thumb_to_display) {
+                                      QTransform const& thumb_to_display) {
         painter.setRenderHint(QPainter::Antialiasing, false);
 
         QPen pen(QColor(0, 0, 0xd1, 70));

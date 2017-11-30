@@ -4,7 +4,7 @@
 
 namespace output {
 
-    WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(IntrusivePtr<Settings> settings)
+    WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
             : m_ptrSettings(settings) {
         setupUi(this);
 

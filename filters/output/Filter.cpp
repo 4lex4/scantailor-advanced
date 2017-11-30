@@ -146,9 +146,9 @@ namespace output {
         }
     }      // Filter::loadSettings
 
-    IntrusivePtr<Task>
+    intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
+                       intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                        OutputFileNameGenerator const& out_file_name_gen,
                        bool const batch,
                        bool const debug) {
@@ -157,18 +157,18 @@ namespace output {
             lastTab = m_ptrOptionsWidget->lastTab();
         }
 
-        return IntrusivePtr<Task>(
+        return intrusive_ptr<Task>(
                 new Task(
-                        IntrusivePtr<Filter>(this), m_ptrSettings,
+                        intrusive_ptr<Filter>(this), m_ptrSettings,
                         thumbnail_cache, page_id, out_file_name_gen,
                         lastTab, batch, debug
                 )
         );
     }
 
-    IntrusivePtr<CacheDrivenTask>
+    intrusive_ptr<CacheDrivenTask>
     Filter::createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen) {
-        return IntrusivePtr<CacheDrivenTask>(
+        return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, out_file_name_gen)
         );
     }

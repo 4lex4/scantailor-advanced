@@ -22,7 +22,7 @@
 
 #include "EditableSpline.h"
 #include "PropertySet.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <QObject>
 #include <boost/mpl/bool.hpp>
 #include <boost/foreach.hpp>
@@ -32,7 +32,7 @@
 class EditableZoneSet : public QObject {
 Q_OBJECT
 private:
-    typedef std::map<EditableSpline::Ptr, IntrusivePtr<PropertySet>> Map;
+    typedef std::map<EditableSpline::Ptr, intrusive_ptr<PropertySet>> Map;
 public:
     class const_iterator;
 
@@ -46,7 +46,7 @@ public:
             return m_iter->first;
         }
 
-        IntrusivePtr<PropertySet> const& properties() const {
+        intrusive_ptr<PropertySet> const& properties() const {
             return m_iter->second;
         }
 
@@ -122,9 +122,9 @@ public:
 
     void commit();
 
-    IntrusivePtr<PropertySet> propertiesFor(EditableSpline::Ptr const& spline);
+    intrusive_ptr<PropertySet> propertiesFor(EditableSpline::Ptr const& spline);
 
-    IntrusivePtr<PropertySet const> propertiesFor(EditableSpline::Ptr const& spline) const;
+    intrusive_ptr<PropertySet const> propertiesFor(EditableSpline::Ptr const& spline) const;
 
 signals:
 

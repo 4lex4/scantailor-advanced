@@ -19,14 +19,14 @@
 #ifndef PAGE_ORDER_OPTION_H_
 #define PAGE_ORDER_OPTION_H_
 
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include "PageOrderProvider.h"
 #include <QString>
 
 class PageOrderOption {
     // Member-wise copying is OK.
 public:
-    typedef IntrusivePtr<PageOrderProvider const> ProviderPtr;
+    typedef intrusive_ptr<PageOrderProvider const> ProviderPtr;
 
     PageOrderOption(QString const& name, ProviderPtr const& provider)
             : m_name(name),

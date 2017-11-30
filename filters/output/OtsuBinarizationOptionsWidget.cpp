@@ -6,7 +6,7 @@
 
 namespace output {
 
-    OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(IntrusivePtr<Settings> settings)
+    OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
             : m_ptrSettings(settings) {
         setupUi(this);
 

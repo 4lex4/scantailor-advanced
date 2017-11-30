@@ -28,8 +28,8 @@
 #include "filter_dc/ThumbnailCollector.h"
 
 namespace page_layout {
-    CacheDrivenTask::CacheDrivenTask(IntrusivePtr<output::CacheDrivenTask> const& next_task,
-                                     IntrusivePtr<Settings> const& settings)
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
+                                     intrusive_ptr<Settings> const& settings)
             : m_ptrNextTask(next_task),
               m_ptrSettings(settings) {
     }

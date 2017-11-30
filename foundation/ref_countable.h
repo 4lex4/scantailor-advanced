@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef REFCOUNTABLE_H_
-#define REFCOUNTABLE_H_
+#ifndef ref_countable_H_
+#define ref_countable_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -25,21 +25,21 @@
 
 #include <QAtomicInt>
 
-class RefCountable {
+class ref_countable {
 public:
-    RefCountable()
+    ref_countable()
             : m_refCounter(0) {
     }
 
-    RefCountable(RefCountable const& other) {
+    ref_countable(ref_countable const& other) {
         // don't copy the reference counter!
     }
 
-    void operator=(RefCountable const& other) {
+    void operator=(ref_countable const& other) {
         // don't copy the reference counter!
     }
 
-    virtual ~RefCountable() {
+    virtual ~ref_countable() {
     }
 
     void ref() const {
@@ -57,4 +57,4 @@ private:
 };
 
 
-#endif // ifndef REFCOUNTABLE_H_
+#endif // ifndef ref_countable_H_

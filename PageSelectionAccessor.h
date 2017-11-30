@@ -22,7 +22,7 @@
 #include "PageSelectionProvider.h"
 #include "PageId.h"
 #include "PageRange.h"
-#include "IntrusivePtr.h"
+#include "intrusive_ptr.h"
 #include <set>
 #include <vector>
 
@@ -31,7 +31,7 @@ class PageSequence;
 class PageSelectionAccessor {
     // Member-wise copying is OK.
 public:
-    explicit PageSelectionAccessor(IntrusivePtr<PageSelectionProvider const> const& provider);
+    explicit PageSelectionAccessor(intrusive_ptr<PageSelectionProvider const> const& provider);
 
     PageSequence allPages() const;
 
@@ -40,7 +40,7 @@ public:
     std::vector<PageRange> selectedRanges() const;
 
 private:
-    IntrusivePtr<PageSelectionProvider const> m_ptrProvider;
+    intrusive_ptr<PageSelectionProvider const> m_ptrProvider;
 };
 
 

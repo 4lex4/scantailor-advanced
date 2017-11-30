@@ -23,8 +23,8 @@
 #include "ImageViewBase.h"
 #include "ImagePixmapUnion.h"
 #include "NonCopyable.h"
-#include "RefCountable.h"
-#include "IntrusivePtr.h"
+#include "ref_countable.h"
+#include "intrusive_ptr.h"
 #include "PageId.h"
 #include "ZoneInteractionContext.h"
 #include "ColorPickupInteraction.h"
@@ -52,7 +52,7 @@ namespace output {
                 QPointF
                 const
                 &)> const& image_to_orig, PageId const& page_id,
-                       IntrusivePtr<Settings> const& settings);
+                       intrusive_ptr<Settings> const& settings);
 
         virtual ~FillZoneEditor();
 
@@ -100,7 +100,7 @@ namespace output {
         boost::function<QPointF(QPointF const&)> m_origToImage;
         boost::function<QPointF(QPointF const&)> m_imageToOrig;
         PageId m_pageId;
-        IntrusivePtr<Settings> m_ptrSettings;
+        intrusive_ptr<Settings> m_ptrSettings;
     };
 }  // namespace output
 #endif // ifndef OUTPUT_FILL_ZONE_EDITOR_H_

@@ -24,7 +24,7 @@
 #include <assert.h>
 
 namespace fix_orientation {
-    OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
               m_pageSelectionAccessor(page_selection_accessor) {

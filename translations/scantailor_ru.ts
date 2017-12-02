@@ -60,13 +60,18 @@
     </message>
     <message>
         <location line="+7"/>
-        <source>DikBSD - ver. Plus</source>
-        <translation>DikBSD - версия Plus</translation>
+        <source>Vadim Kuznetsov - ver. Plus</source>
+        <translation>Vadim Kuznetsov - версия Plus</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>monday2000 - ver. Featured</source>
         <translation>monday2000 - версия Featured</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Alexander Trufanov - ver. Universal</source>
+        <translation>Alexander Trufanov - версия Universal</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1751,7 +1756,7 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+36"/>
         <source>This options should be enabled when the text or content is placed on the darker background</source>
         <translation>Эти параметры должны быть включены, когда текст или контент светлее фона</translation>
     </message>
@@ -2082,7 +2087,7 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+36"/>
         <source>This options should be enabled when the text or content is placed on the darker background</source>
         <translation>Эта опция должна быть включена, когда текст или контент светлее фона</translation>
     </message>
@@ -2223,7 +2228,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../filters/deskew/OptionsWidget.cpp" line="+58"/>
+        <location filename="../filters/deskew/OptionsWidget.cpp" line="+50"/>
         <source>Apply Deskew</source>
         <translation>Область примененияомпенсацию наклона</translation>
     </message>
@@ -2335,7 +2340,7 @@ You should remove them from the project.</source>
         <translation>Прямоугольная</translation>
     </message>
     <message>
-        <location line="+312"/>
+        <location line="+217"/>
         <source>Apply Splitting Settings</source>
         <translation>Применить настройки разделения</translation>
     </message>
@@ -2378,7 +2383,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+568"/>
+        <location filename="../filters/output/Task.cpp" line="+595"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation>Зоны картинок доступны только в режиме &quot;Смешанный&quot;.</translation>
     </message>
@@ -2447,7 +2452,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+350"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+303"/>
         <source>Apply Margins</source>
         <translation>Применить поля</translation>
     </message>
@@ -2486,15 +2491,15 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_split/OptionsWidget.cpp" line="+103"/>
-        <location line="+85"/>
+        <location filename="../filters/page_split/OptionsWidget.cpp" line="+86"/>
+        <location line="+91"/>
         <location line="+106"/>
         <source>Set manually</source>
         <translation>Установлено вручную</translation>
     </message>
     <message>
-        <location line="-145"/>
-        <location line="+142"/>
+        <location line="-147"/>
+        <location line="+144"/>
         <source>Auto detected</source>
         <translation>Определено автоматически</translation>
     </message>

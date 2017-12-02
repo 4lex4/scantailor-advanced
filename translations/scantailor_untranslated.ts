@@ -60,12 +60,17 @@
     </message>
     <message>
         <location line="+7"/>
-        <source>DikBSD - ver. Plus</source>
+        <source>Vadim Kuznetsov - ver. Plus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>monday2000 - ver. Featured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Alexander Trufanov - ver. Universal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1733,7 +1738,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+36"/>
         <source>This options should be enabled when the text or content is placed on the darker background</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2062,7 +2067,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+36"/>
         <source>This options should be enabled when the text or content is placed on the darker background</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2203,7 +2208,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../filters/deskew/OptionsWidget.cpp" line="+58"/>
+        <location filename="../filters/deskew/OptionsWidget.cpp" line="+50"/>
         <source>Apply Deskew</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2315,7 +2320,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+312"/>
+        <location line="+217"/>
         <source>Apply Splitting Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2358,7 +2363,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+568"/>
+        <location filename="../filters/output/Task.cpp" line="+595"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2427,7 +2432,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+350"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+303"/>
         <source>Apply Margins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2466,15 +2471,15 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_split/OptionsWidget.cpp" line="+103"/>
-        <location line="+85"/>
+        <location filename="../filters/page_split/OptionsWidget.cpp" line="+86"/>
+        <location line="+91"/>
         <location line="+106"/>
         <source>Set manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-145"/>
-        <location line="+142"/>
+        <location line="-147"/>
+        <location line="+144"/>
         <source>Auto detected</source>
         <translation type="unfinished"></translation>
     </message>

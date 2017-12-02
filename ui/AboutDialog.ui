@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="documentMode">
       <bool>true</bool>
@@ -182,7 +182,7 @@ font-weight:bold;</string>
              <item>
               <widget class="QLabel" name="label_16">
                <property name="text">
-                <string>DikBSD - ver. Plus</string>
+                <string>Vadim Kuznetsov - ver. Plus</string>
                </property>
               </widget>
              </item>
@@ -190,6 +190,13 @@ font-weight:bold;</string>
               <widget class="QLabel" name="label_29">
                <property name="text">
                 <string>monday2000 - ver. Featured</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Alexander Trufanov - ver. Universal</string>
                </property>
               </widget>
              </item>

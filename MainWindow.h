@@ -91,9 +91,11 @@ public:
 protected:
     bool eventFilter(QObject* obj, QEvent* ev);
 
-    virtual void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event)override ;
 
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
+
+    void changeEvent(QEvent* event) override;
 
 public slots:
 

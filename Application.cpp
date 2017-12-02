@@ -53,30 +53,32 @@ void Application::installLanguage(const QString& locale) {
     }
 
     QString const translation("scantailor_" + locale);
-
     QStringList const translation_dirs(
             QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
     );
+    bool loaded = false;
     for (QString const& path : translation_dirs) {
         QString absolute_path;
         if (QDir::isAbsolutePath(path)) {
             absolute_path = path;
         } else {
-            absolute_path = qApp->applicationDirPath();
+            absolute_path = this->applicationDirPath();
             absolute_path += QChar('/');
             absolute_path += path;
         }
         absolute_path += QChar('/');
         absolute_path += translation;
 
-        if (m_translator.load(absolute_path)) {
-            m_currentLocale = locale;
+        loaded = m_translator.load(absolute_path);
+        if (loaded) {
             break;
         }
     }
+    
+    this->removeTranslator(&m_translator);
+    this->installTranslator(&m_translator);
 
-    qApp->removeTranslator(&m_translator);
-    qApp->installTranslator(&m_translator);
+    m_currentLocale = (loaded) ? locale : "en";
 }
 
 const QString& Application::getCurrentLocale() const {

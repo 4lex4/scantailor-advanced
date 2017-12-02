@@ -2130,3 +2130,21 @@ PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
     return PageSelectionAccessor(provider);
 }
 
+void MainWindow::changeEvent(QEvent* event) {
+    if (event != nullptr) {
+        switch (event->type()) {
+            case QEvent::LanguageChange:
+                retranslateUi(this);
+                updateWindowTitle();
+                break;
+            case QEvent::LocaleChange: {
+                dynamic_cast<Application*>(qApp)->installLanguage(QLocale::system().name());
+                break;
+            }
+            default:
+                QWidget::changeEvent(event);
+                break;
+        }
+    }
+}
+

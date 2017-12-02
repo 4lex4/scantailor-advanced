@@ -117,7 +117,7 @@ void SettingsDialog::onColorSchemeChanged(int idx) {
 
 void SettingsDialog::initLanguageList(const QString& locale) {
     ui.languageBox->clear();
-    ui.languageBox->addItem(QLocale::languageToString(QLocale("en_US").language()), "en_US");
+    ui.languageBox->addItem(QLocale::languageToString(QLocale("en").language()), "en");
 
     QStringList const translation_dirs(
             QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)

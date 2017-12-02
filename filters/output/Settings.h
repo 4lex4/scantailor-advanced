@@ -31,6 +31,7 @@
 #include "DespeckleLevel.h"
 #include "ZoneSet.h"
 #include "PropertySet.h"
+#include "OutputProcessingParams.h"
 #include <QMutex>
 #include <map>
 #include <memory>
@@ -98,10 +99,15 @@ namespace output {
 
         void setDefaultFillZoneProperties(PropertySet const& props);
 
+        OutputProcessingParams getOutputProcessingParams(PageId const& page_id) const;
+
+        void setOutputProcessingParams(PageId const& page_id, OutputProcessingParams const& output_processing_params);
+
     private:
         typedef std::map<PageId, Params> PerPageParams;
         typedef std::map<PageId, OutputParams> PerPageOutputParams;
         typedef std::map<PageId, ZoneSet> PerPageZones;
+        typedef std::map<PageId, OutputProcessingParams> PerPageOutputProcessingParams;
 
         static PropertySet initialPictureZoneProps();
 
@@ -114,6 +120,7 @@ namespace output {
         PerPageZones m_perPageFillZones;
         PropertySet m_defaultPictureZoneProps;
         PropertySet m_defaultFillZoneProps;
+        PerPageOutputProcessingParams m_perPageOutputProcessingParams;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_SETTINGS_H_

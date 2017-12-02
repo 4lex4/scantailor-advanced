@@ -24,34 +24,19 @@ namespace output {
 
         updateView();
 
-        connect(
-                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
-                this, SLOT(setLighterThreshold())
-        );
-        connect(
-                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
-                this, SLOT(setDarkerThreshold())
-        );
-        connect(
-                thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(bwThresholdChanged())
-        );
-        connect(
-                thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(thresholdValueChanged(int))
-        );
-        connect(
-                neutralThresholdBtn, SIGNAL(clicked()),
-                this, SLOT(setNeutralThreshold())
-        );
+        setupUiConnections();
     }
 
     void OtsuBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         const Params params(m_ptrSettings->getParams(page_id));
         m_pageId = page_id;
         m_colorParams = params.colorParams();
 
         updateView();
+        
+        setupUiConnections();
     }
 
     void OtsuBinarizationOptionsWidget::bwThresholdChanged() {
@@ -119,6 +104,52 @@ namespace output {
         ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
         thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
         thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
+    }
+
+    void OtsuBinarizationOptionsWidget::setupUiConnections() {
+        connect(
+                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
+                this, SLOT(setLighterThreshold())
+        );
+        connect(
+                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
+                this, SLOT(setDarkerThreshold())
+        );
+        connect(
+                thresholdSlider, SIGNAL(sliderReleased()),
+                this, SLOT(bwThresholdChanged())
+        );
+        connect(
+                thresholdSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(thresholdValueChanged(int))
+        );
+        connect(
+                neutralThresholdBtn, SIGNAL(clicked()),
+                this, SLOT(setNeutralThreshold())
+        );
+    }
+
+    void OtsuBinarizationOptionsWidget::removeUiConnections() {
+        disconnect(
+                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
+                this, SLOT(setLighterThreshold())
+        );
+        disconnect(
+                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
+                this, SLOT(setDarkerThreshold())
+        );
+        disconnect(
+                thresholdSlider, SIGNAL(sliderReleased()),
+                this, SLOT(bwThresholdChanged())
+        );
+        disconnect(
+                thresholdSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(thresholdValueChanged(int))
+        );
+        disconnect(
+                neutralThresholdBtn, SIGNAL(clicked()),
+                this, SLOT(setNeutralThreshold())
+        );
     }
 
 }    // namespace output

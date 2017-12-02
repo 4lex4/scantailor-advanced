@@ -145,6 +145,10 @@ namespace select_content {
 
         void commitCurrentParams();
 
+        void setupUiConnections();
+
+        void removeUiConnections();
+
         intrusive_ptr<Settings> m_ptrSettings;
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;

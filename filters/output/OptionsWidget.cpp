@@ -66,7 +66,7 @@ namespace output {
         addBinarizationOptionsWidget(otsuBinarizationOptionsWidget);
         addBinarizationOptionsWidget(sauvolaBinarizationOptionsWidget);
         addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
-        binarizationOptionsChanged(binarizationOptions->currentIndex());
+        updateBinarizationOptionsDisplay(binarizationOptions->currentIndex());
 
         pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
@@ -76,119 +76,19 @@ namespace output {
         updateDewarpingDisplay();
 
         connect(
-                changeDpiButton, SIGNAL(clicked()),
-                this, SLOT(changeDpiButtonClicked())
-        );
-        connect(
-                colorModeSelector, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(colorModeChanged(int))
-        );
-        connect(
-                thresholdMethodBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(thresholdMethodChanged(int))
-        );
-        connect(
-                fillingColorBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(fillingColorChanged(int))
-        );
-        connect(
                 binarizationOptions, SIGNAL(currentChanged(int)),
-                this, SLOT(binarizationOptionsChanged(int))
-        );
-        connect(
-                pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(pictureShapeChanged(int))
-        );
-        connect(
-                pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
-                this, SLOT(pictureShapeSensitivityChanged(int))
-        );
-        connect(
-                cutMarginsCB, SIGNAL(clicked(bool)),
-                this, SLOT(cutMarginsToggled(bool))
-        );
-        connect(
-                equalizeIlluminationCB, SIGNAL(clicked(bool)),
-                this, SLOT(equalizeIlluminationToggled(bool))
-        );
-        connect(
-                equalizeIlluminationColorCB, SIGNAL(clicked(bool)),
-                this, SLOT(equalizeIlluminationColorToggled(bool))
-        );
-        connect(
-                savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)),
-                this, SLOT(savitzkyGolaySmoothingToggled(bool))
-        );
-        connect(
-                morphologicalSmoothingCB, SIGNAL(clicked(bool)),
-                this, SLOT(morphologicalSmoothingToggled(bool))
-        );
-        connect(
-                splittingCB, SIGNAL(clicked(bool)),
-                this, SLOT(splittingToggled(bool))
-        );
-        connect(
-                bwForegroundRB, SIGNAL(clicked(bool)),
-                this, SLOT(bwForegroundToggled(bool))
-        );
-        connect(
-                colorForegroundRB, SIGNAL(clicked(bool)),
-                this, SLOT(colorForegroundToggled(bool))
-        );
-        connect(
-                applyColorsButton, SIGNAL(clicked()),
-                this, SLOT(applyColorsButtonClicked())
+                this, SLOT(updateBinarizationOptionsDisplay(int))
         );
 
-        connect(
-                applySplittingButton, SIGNAL(clicked()),
-                this, SLOT(applySplittingButtonClicked())
-        );
-
-        connect(
-                changeDewarpingButton, SIGNAL(clicked()),
-                this, SLOT(changeDewarpingButtonClicked())
-        );
-
-        connect(
-                applyDepthPerceptionButton, SIGNAL(clicked()),
-                this, SLOT(applyDepthPerceptionButtonClicked())
-        );
-
-        connect(
-                despeckleOffBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleOffSelected())
-        );
-        connect(
-                despeckleCautiousBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleCautiousSelected())
-        );
-        connect(
-                despeckleNormalBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleNormalSelected())
-        );
-        connect(
-                despeckleAggressiveBtn, SIGNAL(clicked()),
-                this, SLOT(despeckleAggressiveSelected())
-        );
-        connect(
-                applyDespeckleButton, SIGNAL(clicked()),
-                this, SLOT(applyDespeckleButtonClicked())
-        );
-        connect(
-                depthPerceptionSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(depthPerceptionChangedSlot(int))
-        );
-        connect(
-                &delayedReloadRequest, SIGNAL(timeout()),
-                this, SLOT(sendReloadRequested())
-        );
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         Params const params(m_ptrSettings->getParams(page_id));
         m_pageId = page_id;
         m_outputDpi = params.outputDpi();
@@ -202,13 +102,17 @@ namespace output {
         updateDpiDisplay();
         updateColorsDisplay();
         updateDewarpingDisplay();
+
+        setupUiConnections();
     }
 
     void OptionsWidget::postUpdateUI() {
-        m_pictureShapeOptions = m_ptrSettings->getParams(m_pageId).pictureShapeOptions();
-        m_colorParams = m_ptrSettings->getParams(m_pageId).colorParams();
+        removeUiConnections();
 
+        m_colorParams = m_ptrSettings->getParams(m_pageId).colorParams();
         updateColorsDisplay();
+
+        setupUiConnections();
     }
 
     void OptionsWidget::tabChanged(ImageViewTab const tab) {
@@ -262,6 +166,7 @@ namespace output {
     void OptionsWidget::pictureShapeChanged(int const idx) {
         m_pictureShapeOptions.setPictureShape((PictureShape) (pictureShapeSelector->itemData(idx).toInt()));
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
         emit reloadRequested();
     }
 
@@ -817,7 +722,7 @@ namespace output {
         emit reloadRequested();
     }
 
-    void OptionsWidget::binarizationOptionsChanged(int idx) {
+    void OptionsWidget::updateBinarizationOptionsDisplay(int idx) {
         for (int i = 0; i < binarizationOptions->count(); i++) {
             QWidget* currentWidget = binarizationOptions->widget(i);
             currentWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -847,6 +752,220 @@ namespace output {
 
     void OptionsWidget::sendReloadRequested() {
         emit reloadRequested();
+    }
+
+    void OptionsWidget::setupUiConnections() {
+        connect(
+                changeDpiButton, SIGNAL(clicked()),
+                this, SLOT(changeDpiButtonClicked())
+        );
+        connect(
+                colorModeSelector, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(colorModeChanged(int))
+        );
+        connect(
+                thresholdMethodBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(thresholdMethodChanged(int))
+        );
+        connect(
+                fillingColorBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(fillingColorChanged(int))
+        );
+        connect(
+                pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(pictureShapeChanged(int))
+        );
+        connect(
+                pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
+                this, SLOT(pictureShapeSensitivityChanged(int))
+        );
+        connect(
+                cutMarginsCB, SIGNAL(clicked(bool)),
+                this, SLOT(cutMarginsToggled(bool))
+        );
+        connect(
+                equalizeIlluminationCB, SIGNAL(clicked(bool)),
+                this, SLOT(equalizeIlluminationToggled(bool))
+        );
+        connect(
+                equalizeIlluminationColorCB, SIGNAL(clicked(bool)),
+                this, SLOT(equalizeIlluminationColorToggled(bool))
+        );
+        connect(
+                savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(savitzkyGolaySmoothingToggled(bool))
+        );
+        connect(
+                morphologicalSmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(morphologicalSmoothingToggled(bool))
+        );
+        connect(
+                splittingCB, SIGNAL(clicked(bool)),
+                this, SLOT(splittingToggled(bool))
+        );
+        connect(
+                bwForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(bwForegroundToggled(bool))
+        );
+        connect(
+                colorForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(colorForegroundToggled(bool))
+        );
+        connect(
+                applyColorsButton, SIGNAL(clicked()),
+                this, SLOT(applyColorsButtonClicked())
+        );
+
+        connect(
+                applySplittingButton, SIGNAL(clicked()),
+                this, SLOT(applySplittingButtonClicked())
+        );
+
+        connect(
+                changeDewarpingButton, SIGNAL(clicked()),
+                this, SLOT(changeDewarpingButtonClicked())
+        );
+
+        connect(
+                applyDepthPerceptionButton, SIGNAL(clicked()),
+                this, SLOT(applyDepthPerceptionButtonClicked())
+        );
+
+        connect(
+                despeckleOffBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleOffSelected())
+        );
+        connect(
+                despeckleCautiousBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleCautiousSelected())
+        );
+        connect(
+                despeckleNormalBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleNormalSelected())
+        );
+        connect(
+                despeckleAggressiveBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleAggressiveSelected())
+        );
+        connect(
+                applyDespeckleButton, SIGNAL(clicked()),
+                this, SLOT(applyDespeckleButtonClicked())
+        );
+        connect(
+                depthPerceptionSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(depthPerceptionChangedSlot(int))
+        );
+        connect(
+                &delayedReloadRequest, SIGNAL(timeout()),
+                this, SLOT(sendReloadRequested())
+        );
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(
+                changeDpiButton, SIGNAL(clicked()),
+                this, SLOT(changeDpiButtonClicked())
+        );
+        disconnect(
+                colorModeSelector, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(colorModeChanged(int))
+        );
+        disconnect(
+                thresholdMethodBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(thresholdMethodChanged(int))
+        );
+        disconnect(
+                fillingColorBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(fillingColorChanged(int))
+        );
+        disconnect(
+                pictureShapeSelector, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(pictureShapeChanged(int))
+        );
+        disconnect(
+                pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
+                this, SLOT(pictureShapeSensitivityChanged(int))
+        );
+        disconnect(
+                cutMarginsCB, SIGNAL(clicked(bool)),
+                this, SLOT(cutMarginsToggled(bool))
+        );
+        disconnect(
+                equalizeIlluminationCB, SIGNAL(clicked(bool)),
+                this, SLOT(equalizeIlluminationToggled(bool))
+        );
+        disconnect(
+                equalizeIlluminationColorCB, SIGNAL(clicked(bool)),
+                this, SLOT(equalizeIlluminationColorToggled(bool))
+        );
+        disconnect(
+                savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(savitzkyGolaySmoothingToggled(bool))
+        );
+        disconnect(
+                morphologicalSmoothingCB, SIGNAL(clicked(bool)),
+                this, SLOT(morphologicalSmoothingToggled(bool))
+        );
+        disconnect(
+                splittingCB, SIGNAL(clicked(bool)),
+                this, SLOT(splittingToggled(bool))
+        );
+        disconnect(
+                bwForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(bwForegroundToggled(bool))
+        );
+        disconnect(
+                colorForegroundRB, SIGNAL(clicked(bool)),
+                this, SLOT(colorForegroundToggled(bool))
+        );
+        disconnect(
+                applyColorsButton, SIGNAL(clicked()),
+                this, SLOT(applyColorsButtonClicked())
+        );
+
+        disconnect(
+                applySplittingButton, SIGNAL(clicked()),
+                this, SLOT(applySplittingButtonClicked())
+        );
+
+        disconnect(
+                changeDewarpingButton, SIGNAL(clicked()),
+                this, SLOT(changeDewarpingButtonClicked())
+        );
+
+        disconnect(
+                applyDepthPerceptionButton, SIGNAL(clicked()),
+                this, SLOT(applyDepthPerceptionButtonClicked())
+        );
+
+        disconnect(
+                despeckleOffBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleOffSelected())
+        );
+        disconnect(
+                despeckleCautiousBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleCautiousSelected())
+        );
+        disconnect(
+                despeckleNormalBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleNormalSelected())
+        );
+        disconnect(
+                despeckleAggressiveBtn, SIGNAL(clicked()),
+                this, SLOT(despeckleAggressiveSelected())
+        );
+        disconnect(
+                applyDespeckleButton, SIGNAL(clicked()),
+                this, SLOT(applyDespeckleButtonClicked())
+        );
+        disconnect(
+                depthPerceptionSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(depthPerceptionChangedSlot(int))
+        );
+        disconnect(
+                &delayedReloadRequest, SIGNAL(timeout()),
+                this, SLOT(sendReloadRequested())
+        );
     }
 
 }  // namespace output

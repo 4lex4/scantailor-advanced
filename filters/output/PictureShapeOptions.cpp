@@ -5,21 +5,18 @@
 namespace output {
     PictureShapeOptions::PictureShapeOptions()
             : pictureShape(FREE_SHAPE),
-              sensitivity(100),
-              autoZonesFound(false) {
+              sensitivity(100) {
     }
 
     PictureShapeOptions::PictureShapeOptions(QDomElement const& el)
             : pictureShape(parsePictureShape(el.attribute("pictureShape"))),
-              sensitivity(el.attribute("sensitivity").toInt()),
-              autoZonesFound(el.attribute("autoZonesFound") == "1") {
+              sensitivity(el.attribute("sensitivity").toInt()) {
     }
 
     QDomElement PictureShapeOptions::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("pictureShape", formatPictureShape(pictureShape));
         el.setAttribute("sensitivity", sensitivity);
-        el.setAttribute("autoZonesFound", autoZonesFound ? "1" : "0");
 
         return el;
     }
@@ -71,11 +68,4 @@ namespace output {
         PictureShapeOptions::sensitivity = sensitivity;
     }
 
-    bool PictureShapeOptions::isAutoZonesFound() const {
-        return autoZonesFound;
-    }
-
-    void PictureShapeOptions::setAutoZonesFound(bool autoZonesFound) {
-        PictureShapeOptions::autoZonesFound = autoZonesFound;
-    }
 }

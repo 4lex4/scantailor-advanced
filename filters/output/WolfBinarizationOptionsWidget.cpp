@@ -12,38 +12,20 @@ namespace output {
 
         delayedStateChanger.setSingleShot(true);
 
-        connect(
-                windowSize, SIGNAL(valueChanged(int)),
-                this, SLOT(windowSizeChanged(int))
-        );
-        connect(
-                lowerBound, SIGNAL(valueChanged(int)),
-                this, SLOT(lowerBoundChanged(int))
-        );
-        connect(
-                upperBound, SIGNAL(valueChanged(int)),
-                this, SLOT(upperBoundChanged(int))
-        );
-        connect(
-                wolfCoef, SIGNAL(valueChanged(double)),
-                this, SLOT(wolfCoefChanged(double))
-        );
-        connect(
-                &delayedStateChanger, SIGNAL(timeout()),
-                this, SLOT(sendStateChanged())
-        );
-        connect(
-                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteOnBlackModeToggled(bool))
-        );
+        setupUiConnections();
     }
 
     void WolfBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         const Params params(m_ptrSettings->getParams(page_id));
         m_pageId = page_id;
         m_colorParams = params.colorParams();
+        m_outputProcessingParams = m_ptrSettings->getOutputProcessingParams(page_id);
 
         updateView();
+
+        setupUiConnections();
     }
 
     void WolfBinarizationOptionsWidget::windowSizeChanged(int value) {
@@ -83,10 +65,9 @@ namespace output {
     }
 
     void WolfBinarizationOptionsWidget::whiteOnBlackModeToggled(bool checked) {
-        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
-        opt.setWhiteOnBlackMode(checked);
-        m_colorParams.setBlackWhiteOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        m_outputProcessingParams.setWhiteOnBlackMode(checked);
+        m_ptrSettings->setOutputProcessingParams(m_pageId, m_outputProcessingParams);
+
         emit stateChanged();
     }
 
@@ -96,11 +77,65 @@ namespace output {
         lowerBound->setValue(blackWhiteOptions.getWolfLowerBound());
         upperBound->setValue(blackWhiteOptions.getWolfUpperBound());
         wolfCoef->setValue(blackWhiteOptions.getWolfCoef());
-        whiteOnBlackModeCB->setChecked(blackWhiteOptions.isWhiteOnBlackMode());
+        whiteOnBlackModeCB->setChecked(m_outputProcessingParams.isWhiteOnBlackMode());
     }
 
     void WolfBinarizationOptionsWidget::sendStateChanged() {
         emit stateChanged();
+    }
+
+    void WolfBinarizationOptionsWidget::setupUiConnections() {
+        connect(
+                windowSize, SIGNAL(valueChanged(int)),
+                this, SLOT(windowSizeChanged(int))
+        );
+        connect(
+                lowerBound, SIGNAL(valueChanged(int)),
+                this, SLOT(lowerBoundChanged(int))
+        );
+        connect(
+                upperBound, SIGNAL(valueChanged(int)),
+                this, SLOT(upperBoundChanged(int))
+        );
+        connect(
+                wolfCoef, SIGNAL(valueChanged(double)),
+                this, SLOT(wolfCoefChanged(double))
+        );
+        connect(
+                &delayedStateChanger, SIGNAL(timeout()),
+                this, SLOT(sendStateChanged())
+        );
+        connect(
+                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
+                this, SLOT(whiteOnBlackModeToggled(bool))
+        );
+    }
+
+    void WolfBinarizationOptionsWidget::removeUiConnections() {
+        disconnect(
+                windowSize, SIGNAL(valueChanged(int)),
+                this, SLOT(windowSizeChanged(int))
+        );
+        disconnect(
+                lowerBound, SIGNAL(valueChanged(int)),
+                this, SLOT(lowerBoundChanged(int))
+        );
+        disconnect(
+                upperBound, SIGNAL(valueChanged(int)),
+                this, SLOT(upperBoundChanged(int))
+        );
+        disconnect(
+                wolfCoef, SIGNAL(valueChanged(double)),
+                this, SLOT(wolfCoefChanged(double))
+        );
+        disconnect(
+                &delayedStateChanger, SIGNAL(timeout()),
+                this, SLOT(sendStateChanged())
+        );
+        disconnect(
+                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
+                this, SLOT(whiteOnBlackModeToggled(bool))
+        );
     }
 
 

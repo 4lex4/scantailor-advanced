@@ -91,68 +91,15 @@ namespace page_layout {
                 Alignment(Alignment::BOTTOM, Alignment::RIGHT)
         );
 
-        connect(
-                unitsComboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(unitsChanged(int))
-        );
-        connect(
-                topMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(vertMarginsChanged(double))
-        );
-        connect(
-                bottomMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(vertMarginsChanged(double))
-        );
-        connect(
-                leftMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(horMarginsChanged(double))
-        );
-        connect(
-                rightMarginSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(horMarginsChanged(double))
-        );
-        connect(
-                autoMargins, SIGNAL(toggled(bool)),
-                this, SLOT(autoMarginsChanged(bool))
-        );
-        connect(
-                alignmentMode, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(alignmentModeChanged(int))
-        );
-        connect(
-                topBottomLink, SIGNAL(clicked()),
-                this, SLOT(topBottomLinkClicked())
-        );
-        connect(
-                leftRightLink, SIGNAL(clicked()),
-                this, SLOT(leftRightLinkClicked())
-        );
-        connect(
-                applyMarginsBtn, SIGNAL(clicked()),
-                this, SLOT(showApplyMarginsDialog())
-        );
-        connect(
-                alignWithOthersCB, SIGNAL(toggled(bool)),
-                this, SLOT(alignWithOthersToggled())
-        );
-        connect(
-                applyAlignmentBtn, SIGNAL(clicked()),
-                this, SLOT(showApplyAlignmentDialog())
-        );
-
-        typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv : m_alignmentByButton) {
-            connect(
-                    kv.first, SIGNAL(clicked()),
-                    this, SLOT(alignmentButtonClicked())
-            );
-        }
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment) {
+        removeUiConnections();
+
         m_pageId = page_id;
         m_marginsMM = margins_mm;
         m_alignment = alignment;
@@ -195,11 +142,17 @@ namespace page_layout {
         alignmentGroup->setEnabled(false);
 
         m_ignoreMarginChanges = old_ignore;
+
+        setupUiConnections();
     }      // OptionsWidget::preUpdateUI
 
     void OptionsWidget::postUpdateUI() {
+        removeUiConnections();
+
         marginsGroup->setEnabled(true);
         alignmentGroup->setEnabled(true);
+
+        setupUiConnections();
     }
 
     void OptionsWidget::marginsSetExternally(Margins const& margins_mm) {
@@ -418,5 +371,123 @@ namespace page_layout {
         alignBottomLeftBtn->setEnabled(enabled);
         alignBottomBtn->setEnabled(enabled);
         alignBottomRightBtn->setEnabled(enabled);
+    }
+
+    void OptionsWidget::setupUiConnections() {
+        connect(
+                unitsComboBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(unitsChanged(int))
+        );
+        connect(
+                topMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(vertMarginsChanged(double))
+        );
+        connect(
+                bottomMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(vertMarginsChanged(double))
+        );
+        connect(
+                leftMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(horMarginsChanged(double))
+        );
+        connect(
+                rightMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(horMarginsChanged(double))
+        );
+        connect(
+                autoMargins, SIGNAL(toggled(bool)),
+                this, SLOT(autoMarginsChanged(bool))
+        );
+        connect(
+                alignmentMode, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(alignmentModeChanged(int))
+        );
+        connect(
+                topBottomLink, SIGNAL(clicked()),
+                this, SLOT(topBottomLinkClicked())
+        );
+        connect(
+                leftRightLink, SIGNAL(clicked()),
+                this, SLOT(leftRightLinkClicked())
+        );
+        connect(
+                applyMarginsBtn, SIGNAL(clicked()),
+                this, SLOT(showApplyMarginsDialog())
+        );
+        connect(
+                alignWithOthersCB, SIGNAL(toggled(bool)),
+                this, SLOT(alignWithOthersToggled())
+        );
+        connect(
+                applyAlignmentBtn, SIGNAL(clicked()),
+                this, SLOT(showApplyAlignmentDialog())
+        );
+
+        typedef AlignmentByButton::value_type KeyVal;
+        for (KeyVal const& kv : m_alignmentByButton) {
+            connect(
+                    kv.first, SIGNAL(clicked()),
+                    this, SLOT(alignmentButtonClicked())
+            );
+        }
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(
+                unitsComboBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(unitsChanged(int))
+        );
+        disconnect(
+                topMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(vertMarginsChanged(double))
+        );
+        disconnect(
+                bottomMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(vertMarginsChanged(double))
+        );
+        disconnect(
+                leftMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(horMarginsChanged(double))
+        );
+        disconnect(
+                rightMarginSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(horMarginsChanged(double))
+        );
+        disconnect(
+                autoMargins, SIGNAL(toggled(bool)),
+                this, SLOT(autoMarginsChanged(bool))
+        );
+        disconnect(
+                alignmentMode, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(alignmentModeChanged(int))
+        );
+        disconnect(
+                topBottomLink, SIGNAL(clicked()),
+                this, SLOT(topBottomLinkClicked())
+        );
+        disconnect(
+                leftRightLink, SIGNAL(clicked()),
+                this, SLOT(leftRightLinkClicked())
+        );
+        disconnect(
+                applyMarginsBtn, SIGNAL(clicked()),
+                this, SLOT(showApplyMarginsDialog())
+        );
+        disconnect(
+                alignWithOthersCB, SIGNAL(toggled(bool)),
+                this, SLOT(alignWithOthersToggled())
+        );
+        disconnect(
+                applyAlignmentBtn, SIGNAL(clicked()),
+                this, SLOT(showApplyAlignmentDialog())
+        );
+
+        typedef AlignmentByButton::value_type KeyVal;
+        for (KeyVal const& kv : m_alignmentByButton) {
+            disconnect(
+                    kv.first, SIGNAL(clicked()),
+                    this, SLOT(alignmentButtonClicked())
+            );
+        }
     }
 }  // namespace page_layout

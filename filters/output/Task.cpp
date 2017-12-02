@@ -178,9 +178,32 @@ namespace output {
                                          && render_params.needBinarization()
                                          && !m_batchProcessing;
 
+        {
+            std::unique_ptr<OutputParams> stored_output_params(
+                    m_ptrSettings->getOutputParams(m_pageId)
+            );
+            if (stored_output_params != nullptr) {
+                if (stored_output_params->outputImageParams().getPictureShapeOptions()
+                    != params.pictureShapeOptions()) {
+                    // if picture shape options changed, reset auto picture zones
+                    OutputProcessingParams outputProcessingParams = m_ptrSettings->getOutputProcessingParams(m_pageId);
+                    outputProcessingParams.setAutoZonesFound(false);
+                    m_ptrSettings->setOutputProcessingParams(m_pageId, outputProcessingParams);
+                }
+                if (stored_output_params->outputImageParams().getCropArea().boundingRect().toRect()
+                    != new_xform.resultingPreCropArea().boundingRect().toRect()) {
+                    // if crop area changed, auto recalculate white on black option
+                    OutputProcessingParams outputProcessingParams = m_ptrSettings->getOutputProcessingParams(m_pageId);
+                    outputProcessingParams.setWhiteOnBlackAutoDetected(false);
+                    m_ptrSettings->setOutputProcessingParams(m_pageId, outputProcessingParams);
+                }
+            }
+        }
+
         OutputGenerator generator(
                 params.outputDpi(), params.colorParams(), params.splittingOptions(),
-                params.despeckleLevel(),
+                params.pictureShapeOptions(), params.dewarpingOptions(),
+                m_ptrSettings->getOutputProcessingParams(m_pageId), params.despeckleLevel(),
                 new_xform, content_rect_phys
         );
 
@@ -188,7 +211,8 @@ namespace output {
                 generator.outputImageSize(), generator.outputContentRect(),
                 new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                 params.dewarpingOptions(), params.distortionModel(),
-                params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions()
+                params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions(),
+                m_ptrSettings->getOutputProcessingParams(m_pageId)
         );
 
         ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(m_pageId));
@@ -338,16 +362,29 @@ namespace output {
             }
 
             SplitImage splitImage;
+            
             out_img = generator.process(
-                    status, data, new_picture_zones, new_fill_zones, params.pictureShapeOptions(),
-                    params.dewarpingOptions(), distortion_model,
-                    params.depthPerception(),
+                    status, data, new_picture_zones, new_fill_zones,
+                    distortion_model, params.depthPerception(),
                     write_automask ? &automask_img : nullptr,
                     write_speckles_file ? &speckles_img : nullptr,
                     m_ptrDbg.get(),
                     m_pageId, m_ptrSettings,
                     &splitImage
             );
+
+            if (((params.dewarpingOptions().mode() == DewarpingOptions::AUTO) && distortion_model.isValid())
+                || ((params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL) && distortion_model.isValid())
+                    ) {
+                // A new distortion model was generated.
+                // We need to save it to be able to modify it manually.
+                params.setDistortionModel(distortion_model);
+                m_ptrSettings->setParams(m_pageId, params);
+                new_output_image_params.setDistortionModel(distortion_model);
+            }
+
+            // Saving refreshed output processing params.
+            new_output_image_params.setOutputProcessingParams(m_ptrSettings->getOutputProcessingParams(m_pageId));
 
             bool invalidate_params = false;
 
@@ -369,16 +406,6 @@ namespace output {
                 invalidate_params = true;
             } else {
                 deleteMutuallyExclusiveOutputFiles();
-            }
-
-            if (((params.dewarpingOptions().mode() == DewarpingOptions::AUTO) && distortion_model.isValid())
-                || ((params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL) && distortion_model.isValid())
-                    ) {
-                // A new distortion model was generated.
-                // We need to save it to be able to modify it manually.
-                params.setDistortionModel(distortion_model);
-                m_ptrSettings->setParams(m_pageId, params);
-                new_output_image_params.setDistortionModel(distortion_model);
             }
 
             if (write_speckles_file && speckles_img.isNull()) {

@@ -241,13 +241,19 @@ namespace output {
 
     OutputGenerator::OutputGenerator(Dpi const& dpi,
                                      ColorParams const& color_params,
-                                     SplittingOptions splittingOptions,
-                                     DespeckleLevel const despeckle_level,
+                                     SplittingOptions const& splitting_options,
+                                     PictureShapeOptions const& picture_shape_options,
+                                     DewarpingOptions const& dewarping_options,
+                                     OutputProcessingParams const& output_processing_params,
+                                     DespeckleLevel despeckle_level,
                                      ImageTransformation const& xform,
                                      QPolygonF const& content_rect_phys)
             : m_dpi(dpi),
               m_colorParams(color_params),
-              m_splittingOptions(splittingOptions),
+              m_splittingOptions(splitting_options),
+              m_pictureShapeOptions(picture_shape_options),
+              m_dewarpingOptions(dewarping_options),
+              m_outputProcessingParams(output_processing_params),
               m_xform(xform),
               m_outRect(xform.resultingRect().toRect()),
               m_contentRect(xform.transform().map(content_rect_phys).boundingRect().toRect()),
@@ -267,8 +273,6 @@ namespace output {
                                     FilterData const& input,
                                     ZoneSet& picture_zones,
                                     ZoneSet const& fill_zones,
-                                    PictureShapeOptions picture_shape_options,
-                                    DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
@@ -279,8 +283,8 @@ namespace output {
                                     SplitImage* splitImage) {
         QImage image(
                 processImpl(
-                        status, input, picture_zones, fill_zones, picture_shape_options,
-                        dewarping_options, distortion_model, depth_perception,
+                        status, input, picture_zones, fill_zones,
+                        distortion_model, depth_perception,
                         auto_picture_mask, speckles_image, dbg, p_pageId,
                         p_settings,
                         splitImage
@@ -458,8 +462,6 @@ namespace output {
                                         FilterData const& input,
                                         ZoneSet& picture_zones,
                                         ZoneSet const& fill_zones,
-                                        PictureShapeOptions picture_shape_options,
-                                        DewarpingOptions dewarping_options,
                                         dewarping::DistortionModel& distortion_model,
                                         DepthPerception const& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
@@ -468,19 +470,19 @@ namespace output {
                                         PageId const& p_pageId,
                                         intrusive_ptr<Settings> const& p_settings,
                                         SplitImage* splitImage) {
-        if ((dewarping_options.mode() == DewarpingOptions::AUTO)
-            || (dewarping_options.mode() == DewarpingOptions::MARGINAL)
-            || ((dewarping_options.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
+        if ((m_dewarpingOptions.mode() == DewarpingOptions::AUTO)
+            || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)
+            || ((m_dewarpingOptions.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
-                    status, input, picture_zones, fill_zones, picture_shape_options,
-                    dewarping_options, distortion_model, depth_perception,
+                    status, input, picture_zones, fill_zones,
+                    distortion_model, depth_perception,
                     auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
             );
         } else {
             return processWithoutDewarping(
-                    status, input, picture_zones, fill_zones, picture_shape_options,
+                    status, input, picture_zones, fill_zones,
                     auto_picture_mask, speckles_image, dbg, p_pageId,
                     p_settings,
                     splitImage
@@ -492,7 +494,6 @@ namespace output {
                                                     FilterData const& input,
                                                     ZoneSet& picture_zones,
                                                     ZoneSet const& fill_zones,
-                                                    PictureShapeOptions picture_shape_options,
                                                     imageproc::BinaryImage* auto_picture_mask,
                                                     imageproc::BinaryImage* speckles_image,
                                                     DebugImages* dbg,
@@ -609,17 +610,11 @@ namespace output {
             outsideBackgroundColorBW
                     = BackgroundColorCalculator::calcDominantBackgroundColorBW(maybe_normalized);
 
-            if (!m_colorParams.blackWhiteOptions().isWhiteOnBlackAutoDetected()) {
-                BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+            if (!m_outputProcessingParams.isWhiteOnBlackAutoDetected()) {
+                m_outputProcessingParams.setWhiteOnBlackMode(outsideBackgroundColorBW == Qt::black);
 
-                if (outsideBackgroundColorBW == Qt::black) {
-                    blackWhiteOptions.setWhiteOnBlackMode(true);
-                }
-
-                blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
-
-                m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-                p_settings->setColorParams(p_pageId, m_colorParams);
+                m_outputProcessingParams.setWhiteOnBlackAutoDetected(true);
+                p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
             }
         }
 
@@ -692,8 +687,8 @@ namespace output {
         if (render_params.mixedOutput()) {
             BinaryImage bw_mask(small_margins_rect.size(), BLACK);
 
-            if ((picture_shape_options.getPictureShape() != RECTANGULAR_SHAPE)
-                || !picture_shape_options.isAutoZonesFound()) {
+            if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
+                || !m_outputProcessingParams.isAutoZonesFound()) {
                 bw_mask = estimateBinarizationMask(
                         status, GrayImage(maybe_normalized),
                         normalize_illumination_rect,
@@ -713,13 +708,13 @@ namespace output {
                 );
                 p_settings->setPictureZones(p_pageId, picture_zones);
 
-                picture_shape_options.setAutoZonesFound(false);
-                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
+                m_outputProcessingParams.setAutoZonesFound(false);
+                p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
             }
-            if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
-                && !picture_shape_options.isAutoZonesFound()) {
+            if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
+                && !m_outputProcessingParams.isAutoZonesFound()) {
                 std::vector<QRect> areas;
-                bw_mask.rectangularizeAreas(areas, WHITE, picture_shape_options.getSensitivity());
+                bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
                 xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
@@ -737,8 +732,8 @@ namespace output {
                 }
                 p_settings->setPictureZones(p_pageId, picture_zones);
 
-                picture_shape_options.setAutoZonesFound(true);
-                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
+                m_outputProcessingParams.setAutoZonesFound(true);
+                p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
 
                 bw_mask.fill(BLACK);
             }
@@ -903,8 +898,6 @@ namespace output {
                                                  FilterData const& input,
                                                  ZoneSet& picture_zones,
                                                  ZoneSet const& fill_zones,
-                                                 PictureShapeOptions picture_shape_options,
-                                                 DewarpingOptions dewarping_options,
                                                  dewarping::DistortionModel& distortion_model,
                                                  DepthPerception const& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
@@ -1060,8 +1053,8 @@ namespace output {
         } else if (render_params.mixedOutput()) {
             warped_bw_mask = BinaryImage(small_margins_rect.size(), BLACK);
 
-            if ((picture_shape_options.getPictureShape() != RECTANGULAR_SHAPE)
-                || !picture_shape_options.isAutoZonesFound()) {
+            if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
+                || !m_outputProcessingParams.isAutoZonesFound()) {
                 warped_bw_mask = estimateBinarizationMask(
                         status, GrayImage(warped_gray_output),
                         normalize_illumination_rect,
@@ -1084,13 +1077,13 @@ namespace output {
                 );
                 p_settings->setPictureZones(p_pageId, picture_zones);
 
-                picture_shape_options.setAutoZonesFound(false);
-                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
+                m_outputProcessingParams.setAutoZonesFound(false);
+                p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
             }
-            if ((picture_shape_options.getPictureShape() == RECTANGULAR_SHAPE)
-                && !picture_shape_options.isAutoZonesFound()) {
+            if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
+                && !m_outputProcessingParams.isAutoZonesFound()) {
                 std::vector<QRect> areas;
-                warped_bw_mask.rectangularizeAreas(areas, WHITE, picture_shape_options.getSensitivity());
+                warped_bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
                 xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
@@ -1108,8 +1101,8 @@ namespace output {
                 }
                 p_settings->setPictureZones(p_pageId, picture_zones);
 
-                picture_shape_options.setAutoZonesFound(true);
-                p_settings->setPictureShapeOptions(p_pageId, picture_shape_options);
+                m_outputProcessingParams.setAutoZonesFound(true);
+                p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
 
                 warped_bw_mask.fill(BLACK);
             }
@@ -1146,7 +1139,7 @@ namespace output {
             status.throwIfCancelled();
         }
 
-        if (dewarping_options.mode() == DewarpingOptions::AUTO) {
+        if (m_dewarpingOptions.mode() == DewarpingOptions::AUTO) {
             DistortionModelBuilder model_builder(Vec2d(0, 1));
 
             QRect const content_rect(
@@ -1270,7 +1263,7 @@ namespace output {
                     }
                 }
             }
-        } else if (dewarping_options.mode() == DewarpingOptions::MARGINAL) {
+        } else if (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL) {
             BinaryThreshold bw_threshold(64);
             BinaryImage bw_image(input.grayImage(), bw_threshold);
 
@@ -1374,17 +1367,11 @@ namespace output {
             if (render_params.needBinarization()) {
                 outsideBackgroundColorBW = BackgroundColorCalculator::calcDominantBackgroundColorBW(cropped_image);
 
-                if (!m_colorParams.blackWhiteOptions().isWhiteOnBlackAutoDetected()) {
-                    BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+                if (!m_outputProcessingParams.isWhiteOnBlackAutoDetected()) {
+                    m_outputProcessingParams.setWhiteOnBlackMode(outsideBackgroundColorBW == Qt::black);
 
-                    if (outsideBackgroundColorBW == Qt::black) {
-                        blackWhiteOptions.setWhiteOnBlackMode(true);
-                    }
-
-                    blackWhiteOptions.setWhiteOnBlackAutoDetected(true);
-
-                    m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-                    p_settings->setColorParams(p_pageId, m_colorParams);
+                    m_outputProcessingParams.setWhiteOnBlackAutoDetected(true);
+                    p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
                 }
             }
         }
@@ -1423,7 +1410,7 @@ namespace output {
                 boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
         );
 
-        double deskew_angle = maybe_deskew(&dewarped, dewarping_options, outsideBackgroundColor);
+        double deskew_angle = maybe_deskew(&dewarped, m_dewarpingOptions, outsideBackgroundColor);
 
         {
             QTransform post_rotate;
@@ -2012,14 +1999,14 @@ namespace output {
                                           blackWhiteOptions.getWindowSize());
                 double sauvolaCoef = blackWhiteOptions.getSauvolaCoef();
 
-                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                if (m_outputProcessingParams.isWhiteOnBlackMode()) {
                     imageToBinarize = imageproc::toGrayscale(imageToBinarize);
                     imageToBinarize.invertPixels();
                 }
 
                 binarized = imageproc::binarizeSauvola(imageToBinarize, windowsSize, sauvolaCoef);
 
-                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                if (m_outputProcessingParams.isWhiteOnBlackMode()) {
                     binarized.invert();
                 }
                 break;
@@ -2031,14 +2018,14 @@ namespace output {
                 unsigned char upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
                 double wolfCoef = blackWhiteOptions.getWolfCoef();
 
-                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                if (m_outputProcessingParams.isWhiteOnBlackMode()) {
                     imageToBinarize = imageproc::toGrayscale(imageToBinarize);
                     imageToBinarize.invertPixels();
                 }
 
                 binarized = imageproc::binarizeWolf(imageToBinarize, windowsSize, lowerBound, upperBound, wolfCoef);
 
-                if (blackWhiteOptions.isWhiteOnBlackMode()) {
+                if (m_outputProcessingParams.isWhiteOnBlackMode()) {
                     binarized.invert();
                 }
                 break;
@@ -2517,11 +2504,11 @@ namespace output {
     }
 
     double OutputGenerator::maybe_deskew(QImage* p_dewarped,
-                                         DewarpingOptions dewarping_options,
+                                         DewarpingOptions m_dewarpingOptions,
                                          const QColor& outside_color) const {
-        if (dewarping_options.needPostDeskew()
-            && ((dewarping_options.mode() == DewarpingOptions::MARGINAL)
-                || (dewarping_options.mode() == DewarpingOptions::MANUAL))) {
+        if (m_dewarpingOptions.needPostDeskew()
+            && ((m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)
+                || (m_dewarpingOptions.mode() == DewarpingOptions::MANUAL))) {
             BinaryThreshold bw_threshold(128);
             BinaryImage bw_image(*p_dewarped, bw_threshold);
 

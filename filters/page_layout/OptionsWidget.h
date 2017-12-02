@@ -117,6 +117,10 @@ namespace page_layout {
 
         void enableDisableAlignmentButtons();
 
+        void setupUiConnections();
+
+        void removeUiConnections();
+
         intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         QIcon m_chainIcon;

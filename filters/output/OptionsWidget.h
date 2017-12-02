@@ -32,6 +32,7 @@
 #include "ImageViewTab.h"
 #include "Params.h"
 #include "BinarizationOptionsWidget.h"
+#include "OutputProcessingParams.h"
 #include <set>
 #include <QtWidgets/QStackedLayout>
 #include <QtCore/QPointer>
@@ -142,7 +143,7 @@ namespace output {
 
         void depthPerceptionChangedSlot(int val);
 
-        void binarizationOptionsChanged(int idx);
+        void updateBinarizationOptionsDisplay(int idx);
 
         void sendReloadRequested();
 
@@ -158,6 +159,10 @@ namespace output {
         void updateDewarpingDisplay();
 
         void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+
+        void setupUiConnections();
+
+        void removeUiConnections();
 
         intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;

@@ -40,32 +40,15 @@ namespace page_split {
         grp->addButton(autoBtn);
         grp->addButton(manualBtn);
 
-        connect(
-                singlePageUncutBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
-        );
-        connect(
-                pagePlusOffcutBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
-        );
-        connect(
-                twoPagesBtn, SIGNAL(toggled(bool)),
-                this, SLOT(layoutTypeButtonToggled(bool))
-        );
-        connect(
-                changeBtn, SIGNAL(clicked()),
-                this, SLOT(showChangeDialog())
-        );
-        connect(
-                autoBtn, SIGNAL(toggled(bool)),
-                this, SLOT(splitLineModeChanged(bool))
-        );
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
         ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
 
@@ -111,9 +94,13 @@ namespace page_split {
         // And disable both of them.
         autoBtn->setEnabled(false);
         manualBtn->setEnabled(false);
+
+        setupUiConnections();
     }  // OptionsWidget::preUpdateUI
 
     void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+        removeUiConnections();
+
         ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
         ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
 
@@ -148,6 +135,8 @@ namespace page_split {
         if (ui_data.layoutTypeAutoDetected()) {
             scopeLabel->setText(tr("Auto detected"));
         }
+
+        setupUiConnections();
     }  // OptionsWidget::postUpdateUI
 
     void OptionsWidget::pageLayoutSetExternally(PageLayout const& page_layout) {
@@ -320,6 +309,52 @@ namespace page_split {
         Settings::UpdateAction update;
         update.setParams(params);
         m_ptrSettings->updatePage(m_pageId.imageId(), update);
+    }
+
+    void OptionsWidget::setupUiConnections() {
+        connect(
+                singlePageUncutBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        connect(
+                pagePlusOffcutBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        connect(
+                twoPagesBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        connect(
+                changeBtn, SIGNAL(clicked()),
+                this, SLOT(showChangeDialog())
+        );
+        connect(
+                autoBtn, SIGNAL(toggled(bool)),
+                this, SLOT(splitLineModeChanged(bool))
+        );
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(
+                singlePageUncutBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        disconnect(
+                pagePlusOffcutBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        disconnect(
+                twoPagesBtn, SIGNAL(toggled(bool)),
+                this, SLOT(layoutTypeButtonToggled(bool))
+        );
+        disconnect(
+                changeBtn, SIGNAL(clicked()),
+                this, SLOT(showChangeDialog())
+        );
+        disconnect(
+                autoBtn, SIGNAL(toggled(bool)),
+                this, SLOT(splitLineModeChanged(bool))
+        );
     }
 
 /*============================= Widget::UiData ==========================*/

@@ -28,12 +28,13 @@ namespace output {
                                          ImageTransformation xform,
                                          Dpi const& dpi,
                                          ColorParams const& color_params,
-                                         SplittingOptions splitting_options,
+                                         SplittingOptions const& splitting_options,
                                          DewarpingOptions const& dewarping_options,
                                          dewarping::DistortionModel const& distortion_model,
                                          DepthPerception const& depth_perception,
-                                         DespeckleLevel const despeckle_level,
-                                         PictureShapeOptions const picture_shape_options)
+                                         DespeckleLevel despeckle_level,
+                                         PictureShapeOptions const& picture_shape_options,
+                                         OutputProcessingParams const& output_processing_params)
             : m_size(out_image_size),
               m_contentRect(content_rect),
               m_cropArea(xform.resultingPreCropArea()),
@@ -44,7 +45,8 @@ namespace output {
               m_distortionModel(distortion_model),
               m_depthPerception(depth_perception),
               m_dewarpingOptions(dewarping_options),
-              m_despeckleLevel(despeckle_level) {
+              m_despeckleLevel(despeckle_level),
+              m_outputProcessingParams(output_processing_params) {
         // For historical reasons, we disregard post-cropping and post-scaling here.
         xform.setPostCropArea(QPolygonF());  // Resets post-scale as well.
         m_partialXform = xform.transform();
@@ -62,7 +64,8 @@ namespace output {
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
               m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
-              m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))) {
+              m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
+              m_outputProcessingParams(el.namedItem("processing-params").toElement()) {
     }
 
     QDomElement OutputImageParams::toXml(QDomDocument& doc, QString const& name) const {
@@ -81,6 +84,7 @@ namespace output {
         el.setAttribute("depthPerception", m_depthPerception.toString());
         el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
+        el.appendChild(m_outputProcessingParams.toXml(doc, "processing-params"));
 
         return el;
     }
@@ -126,6 +130,10 @@ namespace output {
             }
         }
 
+        if (m_outputProcessingParams != other.m_outputProcessingParams) {
+            return false;
+        }
+
         return true;
     }  // OutputImageParams::matches
 
@@ -162,7 +170,20 @@ namespace output {
 
         return true;
     }
-    
+
+    void OutputImageParams::setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams) {
+        OutputImageParams::m_outputProcessingParams = outputProcessingParams;
+    }
+
+    const PictureShapeOptions& OutputImageParams::getPictureShapeOptions() const {
+        return m_pictureShapeOptions;
+    }
+
+    const QPolygonF& OutputImageParams::getCropArea() const {
+        return m_cropArea;
+    }
+
+
 /*=============================== PartialXform =============================*/
 
     OutputImageParams::PartialXform::PartialXform()

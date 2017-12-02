@@ -36,15 +36,7 @@ namespace deskew {
         angleSpinBox->adjustSize();
         setSpinBoxUnknownState();
 
-        connect(
-                angleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(spinBoxValueChanged(double))
-        );
-        connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
-        connect(
-                applyDeskewBtn, SIGNAL(clicked()),
-                this, SLOT(showDeskewDialog())
-        );
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
@@ -111,6 +103,8 @@ namespace deskew {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
         m_pageId = page_id;
@@ -118,14 +112,20 @@ namespace deskew {
         autoBtn->setChecked(true);
         autoBtn->setEnabled(false);
         manualBtn->setEnabled(false);
+
+        setupUiConnections();
     }
 
     void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+        removeUiConnections();
+
         m_uiData = ui_data;
         autoBtn->setEnabled(true);
         manualBtn->setEnabled(true);
         updateModeIndication(ui_data.mode());
         setSpinBoxKnownState(degreesToSpinBox(ui_data.effectiveDeskewAngle()));
+
+        setupUiConnections();
     }
 
     void OptionsWidget::spinBoxValueChanged(double const value) {
@@ -208,6 +208,30 @@ namespace deskew {
     double OptionsWidget::degreesToSpinBox(double const degrees) {
         // See above.
         return -degrees;
+    }
+
+    void OptionsWidget::setupUiConnections() {
+        connect(
+                angleSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(spinBoxValueChanged(double))
+        );
+        connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
+        connect(
+                applyDeskewBtn, SIGNAL(clicked()),
+                this, SLOT(showDeskewDialog())
+        );
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(
+                angleSpinBox, SIGNAL(valueChanged(double)),
+                this, SLOT(spinBoxValueChanged(double))
+        );
+        disconnect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
+        disconnect(
+                applyDeskewBtn, SIGNAL(clicked()),
+                this, SLOT(showDeskewDialog())
+        );
     }
 
 /*========================== OptionsWidget::UiData =========================*/

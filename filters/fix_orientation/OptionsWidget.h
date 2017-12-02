@@ -63,6 +63,10 @@ namespace fix_orientation {
 
         void setRotationPixmap();
 
+        void setupUiConnections();
+
+        void removeUiConnections();
+
         intrusive_ptr<Settings> m_ptrSettings;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;

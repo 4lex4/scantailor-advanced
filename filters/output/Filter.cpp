@@ -84,6 +84,7 @@ namespace output {
         page_el.appendChild(m_ptrSettings->pictureZonesForPage(page_id).toXml(doc, "zones"));
         page_el.appendChild(m_ptrSettings->fillZonesForPage(page_id).toXml(doc, "fill-zones"));
         page_el.appendChild(params.toXml(doc, "params"));
+        page_el.appendChild(m_ptrSettings->getOutputProcessingParams(page_id).toXml(doc, "processing-params"));
 
         std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(page_id));
         if (output_params.get()) {
@@ -136,6 +137,12 @@ namespace output {
             if (!params_el.isNull()) {
                 Params const params(params_el);
                 m_ptrSettings->setParams(page_id, params);
+            }
+
+            QDomElement const output_processing_params_el(el.namedItem("processing-params").toElement());
+            if (!output_processing_params_el.isNull()) {
+                OutputProcessingParams const output_processing_params(output_processing_params_el);
+                m_ptrSettings->setOutputProcessingParams(page_id, output_processing_params);
             }
 
             QDomElement const output_params_el(el.namedItem("output-params").toElement());

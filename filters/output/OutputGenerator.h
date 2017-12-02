@@ -48,6 +48,7 @@
 #include <QFile>
 #include "imageproc/SkewFinder.h"
 #include "SplitImage.h"
+#include "OutputProcessingParams.h"
 
 class TaskStatus;
 class DebugImages;
@@ -73,7 +74,10 @@ namespace output {
     public:
         OutputGenerator(Dpi const& dpi,
                         ColorParams const& color_params,
-                        SplittingOptions splittingOptions,
+                        SplittingOptions const& splitting_options,
+                        PictureShapeOptions const& picture_shape_options,
+                        DewarpingOptions const& dewarping_options,
+                        OutputProcessingParams const& output_processing_params,
                         DespeckleLevel despeckle_level,
                         ImageTransformation const& xform,
                         QPolygonF const& content_rect_phys);
@@ -106,8 +110,6 @@ namespace output {
                        FilterData const& input,
                        ZoneSet& picture_zones,
                        ZoneSet const& fill_zones,
-                       PictureShapeOptions picture_shape_options,
-                       DewarpingOptions dewarping_options,
                        dewarping::DistortionModel& distortion_model,
                        DepthPerception const& depth_perception,
                        imageproc::BinaryImage* auto_picture_mask,
@@ -131,8 +133,6 @@ namespace output {
                            FilterData const& input,
                            ZoneSet& picture_zones,
                            ZoneSet const& fill_zones,
-                           PictureShapeOptions picture_shape_options,
-                           DewarpingOptions dewarping_options,
                            dewarping::DistortionModel& distortion_model,
                            DepthPerception const& depth_perception,
                            imageproc::BinaryImage* auto_picture_mask,
@@ -146,7 +146,6 @@ namespace output {
                                        FilterData const& input,
                                        ZoneSet& picture_zones,
                                        ZoneSet const& fill_zones,
-                                       PictureShapeOptions picture_shape_options,
                                        imageproc::BinaryImage* auto_picture_mask,
                                        imageproc::BinaryImage* speckles_image,
                                        DebugImages* dbg,
@@ -158,8 +157,6 @@ namespace output {
                                     FilterData const& input,
                                     ZoneSet& picture_zones,
                                     ZoneSet const& fill_zones,
-                                    PictureShapeOptions picture_shape_options,
-                                    DewarpingOptions dewarping_options,
                                     dewarping::DistortionModel& distortion_model,
                                     DepthPerception const& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
@@ -322,6 +319,9 @@ namespace output {
         Dpi m_dpi;
         ColorParams m_colorParams;
         SplittingOptions m_splittingOptions;
+        PictureShapeOptions m_pictureShapeOptions;
+        DewarpingOptions m_dewarpingOptions;
+        OutputProcessingParams m_outputProcessingParams;
 
         /**
          * Transformation from the input to the output image coordinates.

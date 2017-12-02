@@ -63,14 +63,16 @@ namespace output {
 
                 OutputGenerator const generator(
                         params.outputDpi(), params.colorParams(), params.splittingOptions(),
-                        params.despeckleLevel(),
+                        params.pictureShapeOptions(), params.dewarpingOptions(),
+                        m_ptrSettings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
                         new_xform, content_rect_phys
                 );
                 OutputImageParams const new_output_image_params(
                         generator.outputImageSize(), generator.outputContentRect(),
                         new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.dewarpingOptions(), params.distortionModel(),
-                        params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions()
+                        params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions(),
+                        m_ptrSettings->getOutputProcessingParams(page_info.id())
                 );
 
                 if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {

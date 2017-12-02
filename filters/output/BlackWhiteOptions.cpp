@@ -30,9 +30,7 @@ namespace output {
               wolfLowerBound(1),
               wolfUpperBound(254),
               wolfCoef(0.3),
-              whiteOnBlackMode(false),
-              binarizationMethod(OTSU),
-              whiteOnBlackAutoDetected(false) {
+              binarizationMethod(OTSU) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
@@ -45,9 +43,7 @@ namespace output {
               wolfLowerBound(el.attribute("wolfLowerBound").toInt()),
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
-              whiteOnBlackMode(el.attribute("whiteOnBlackMode") == "1"),
-              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
-              whiteOnBlackAutoDetected(el.attribute("whiteOnBlackAutoDetected") == "1") {
+              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
@@ -61,9 +57,7 @@ namespace output {
         el.setAttribute("wolfLowerBound", wolfLowerBound);
         el.setAttribute("wolfUpperBound", wolfUpperBound);
         el.setAttribute("wolfCoef", wolfCoef);
-        el.setAttribute("whiteOnBlackMode", whiteOnBlackMode ? "1" : "0");
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
-        el.setAttribute("whiteOnBlackAutoDetected", whiteOnBlackAutoDetected ? "1" : "0");
 
         return el;
     }
@@ -78,7 +72,6 @@ namespace output {
                && (wolfLowerBound == other.wolfLowerBound)
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
-               && (whiteOnBlackMode == other.whiteOnBlackMode)
                && (binarizationMethod == other.binarizationMethod);
     }
 
@@ -142,14 +135,6 @@ namespace output {
         BlackWhiteOptions::wolfCoef = wolfCoef;
     }
 
-    bool BlackWhiteOptions::isWhiteOnBlackMode() const {
-        return whiteOnBlackMode;
-    }
-
-    void BlackWhiteOptions::setWhiteOnBlackMode(bool whiteOnBlackMode) {
-        BlackWhiteOptions::whiteOnBlackMode = whiteOnBlackMode;
-    }
-
     BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
         return binarizationMethod;
     }
@@ -185,11 +170,4 @@ namespace output {
         return str;
     }
 
-    bool BlackWhiteOptions::isWhiteOnBlackAutoDetected() const {
-        return whiteOnBlackAutoDetected;
-    }
-
-    void BlackWhiteOptions::setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected) {
-        BlackWhiteOptions::whiteOnBlackAutoDetected = whiteOnBlackAutoDetected;
-    }
 }  // namespace output

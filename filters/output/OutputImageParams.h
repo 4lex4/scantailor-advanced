@@ -26,6 +26,7 @@
 #include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
+#include "OutputProcessingParams.h"
 #include <QSize>
 #include <QRect>
 #include <ImageTransformation.h>
@@ -46,12 +47,13 @@ namespace output {
                           ImageTransformation xform,
                           Dpi const& dpi,
                           ColorParams const& color_params,
-                          SplittingOptions splittingOptions,
+                          SplittingOptions const& splittingOptions,
                           DewarpingOptions const& dewarping_options,
                           dewarping::DistortionModel const& distortion_model,
                           DepthPerception const& depth_perception,
                           DespeckleLevel despeckle_level,
-                          PictureShapeOptions const picture_shape_options);
+                          PictureShapeOptions const& picture_shape_options,
+                          OutputProcessingParams const& output_processing_params);
 
         explicit OutputImageParams(QDomElement const& el);
 
@@ -74,6 +76,12 @@ namespace output {
         DespeckleLevel despeckleLevel() const {
             return m_despeckleLevel;
         }
+
+        void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
+
+        const PictureShapeOptions& getPictureShapeOptions() const;
+
+        const QPolygonF& getCropArea() const;
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -151,6 +159,9 @@ namespace output {
 
         /** Despeckle level of the output image. */
         DespeckleLevel m_despeckleLevel;
+
+        /** Per-page params set while processing. */
+        OutputProcessingParams m_outputProcessingParams;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_

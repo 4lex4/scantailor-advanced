@@ -30,23 +30,28 @@ namespace fix_orientation {
               m_pageSelectionAccessor(page_selection_accessor) {
         setupUi(this);
 
-        connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-        connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-        connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-        connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id, OrthogonalRotation const rotation) {
+        removeUiConnections();
+
         m_pageId = page_id;
         m_rotation = rotation;
         setRotationPixmap();
+
+        setupUiConnections();
     }
 
     void OptionsWidget::postUpdateUI(OrthogonalRotation const rotation) {
+        removeUiConnections();
+
         setRotation(rotation);
+
+        setupUiConnections();
     }
 
     void OptionsWidget::rotateLeft() {
@@ -137,5 +142,19 @@ namespace fix_orientation {
         }
 
         rotationIndicator->setPixmap(QPixmap(path));
+    }
+
+    void OptionsWidget::setupUiConnections() {
+        connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+        connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+        connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+        connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+        disconnect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+        disconnect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+        disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
     }
 }  // namespace fix_orientation

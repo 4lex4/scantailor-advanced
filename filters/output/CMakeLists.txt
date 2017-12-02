@@ -51,7 +51,7 @@ SET(
         DewarpingOptions.cpp DewarpingOptions.h
         ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
         DepthPerception.cpp DepthPerception.h
-        SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h BinarizationOptionsWidget.h PictureShapeOptions.cpp PictureShapeOptions.h)
+        SplitImage.cpp SplitImage.h SplittingOptions.cpp SplittingOptions.h OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h BinarizationOptionsWidget.h PictureShapeOptions.cpp PictureShapeOptions.h OutputProcessingParams.cpp OutputProcessingParams.h)
 SOURCE_GROUP("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

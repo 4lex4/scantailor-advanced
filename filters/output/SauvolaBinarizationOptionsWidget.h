@@ -20,6 +20,7 @@ namespace output {
         PageId m_pageId;
         ColorParams m_colorParams;
         QTimer delayedStateChanger;
+        OutputProcessingParams m_outputProcessingParams;
 
     public:
         explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
@@ -40,6 +41,10 @@ namespace output {
 
     private:
         void updateView();
+
+        void setupUiConnections();
+
+        void removeUiConnections();
     };
 }
 

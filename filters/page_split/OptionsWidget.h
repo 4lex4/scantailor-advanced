@@ -101,6 +101,10 @@ namespace page_split {
     private:
         void commitCurrentParams();
 
+        void setupUiConnections();
+
+        void removeUiConnections();
+
         intrusive_ptr<Settings> m_ptrSettings;
         intrusive_ptr<ProjectPages> m_ptrPages;
         PageSelectionAccessor m_pageSelectionAccessor;

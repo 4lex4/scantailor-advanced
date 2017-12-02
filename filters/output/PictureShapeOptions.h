@@ -32,10 +32,6 @@ namespace output {
 
         void setSensitivity(int sensitivity);
 
-        bool isAutoZonesFound() const;
-
-        void setAutoZonesFound(bool autoZonesFound);
-
     private:
         static PictureShape parsePictureShape(const QString& str);
 
@@ -43,8 +39,6 @@ namespace output {
 
         PictureShape pictureShape;
         int sensitivity;
-        
-        bool autoZonesFound;
     };
 }
 

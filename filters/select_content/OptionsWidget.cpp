@@ -31,24 +31,15 @@ namespace select_content {
               m_ignoreAutoManualToggle(0) {
         setupUi(this);
 
-        connect(autoBtn, SIGNAL(pressed()), this, SLOT(autoMode()));
-        connect(manualBtn, SIGNAL(pressed()), this, SLOT(manualMode()));
-        connect(disableBtn, SIGNAL(pressed()), this, SLOT(contentDetectionDisabled()));
-        connect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectionEnabled()));
-        connect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectionDisabled()));
-        connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
-        connect(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
-
-        connect(leftBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
-        connect(rightBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
-        connect(topBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
-        connect(bottomBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        setupUiConnections();
     }
 
     OptionsWidget::~OptionsWidget() {
     }
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
+        removeUiConnections();
+
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
         m_pageId = page_id;
@@ -57,9 +48,13 @@ namespace select_content {
         disableBtn->setEnabled(false);
         pageDetectAutoBtn->setEnabled(false);
         pageDetectDisableBtn->setEnabled(false);
+
+        setupUiConnections();
     }
 
     void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+        removeUiConnections();
+
         Margins m = ui_data.pageBorders();
 
         m_uiData = ui_data;
@@ -79,6 +74,8 @@ namespace select_content {
         pageDetectAutoBtn->setEnabled(true);
         pageDetectDisableBtn->setEnabled(true);
         fineTuneBtn->setEnabled(true);
+
+        setupUiConnections();
     }
 
     void OptionsWidget::manualContentRectSet(QRectF const& content_rect) {
@@ -259,7 +256,38 @@ namespace select_content {
         }
 
         emit reloadRequested();
-    }      // OptionsWidget::applySelection
+    } // OptionsWidget::applySelection
+
+    void OptionsWidget::setupUiConnections() {
+        connect(autoBtn, SIGNAL(pressed()), this, SLOT(autoMode()));
+        connect(manualBtn, SIGNAL(pressed()), this, SLOT(manualMode()));
+        connect(disableBtn, SIGNAL(pressed()), this, SLOT(contentDetectionDisabled()));
+        connect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectionEnabled()));
+        connect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectionDisabled()));
+        connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+        connect(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
+
+        connect(leftBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        connect(rightBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        connect(topBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        connect(bottomBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+    }
+
+    void OptionsWidget::removeUiConnections() {
+        disconnect(autoBtn, SIGNAL(pressed()), this, SLOT(autoMode()));
+        disconnect(manualBtn, SIGNAL(pressed()), this, SLOT(manualMode()));
+        disconnect(disableBtn, SIGNAL(pressed()), this, SLOT(contentDetectionDisabled()));
+        disconnect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectionEnabled()));
+        disconnect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectionDisabled()));
+        disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+        disconnect(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
+
+        disconnect(leftBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        disconnect(rightBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        disconnect(topBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+        disconnect(bottomBorder, SIGNAL(valueChanged(double)), this, SLOT(borderChanged()));
+    }
+    
 
 /*========================= OptionsWidget::UiData ======================*/
 

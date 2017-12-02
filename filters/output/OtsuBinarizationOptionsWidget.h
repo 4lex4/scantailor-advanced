@@ -41,6 +41,10 @@ namespace output {
 
     private:
         void updateView();
+
+        void setupUiConnections();
+
+        void removeUiConnections();
     };
 
 

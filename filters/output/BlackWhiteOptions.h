@@ -86,17 +86,9 @@ namespace output {
 
         void setWolfCoef(double wolfCoef);
 
-        bool isWhiteOnBlackMode() const;
-
-        void setWhiteOnBlackMode(bool whiteOnBlackMode);
-
         BinarizationMethod getBinarizationMethod() const;
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
-
-        bool isWhiteOnBlackAutoDetected() const;
-
-        void setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected);
 
     private:
         static BinarizationMethod parseBinarizationMethod(const QString& str);
@@ -112,10 +104,7 @@ namespace output {
         int wolfLowerBound;
         int wolfUpperBound;
         double wolfCoef;
-        bool whiteOnBlackMode;
         BinarizationMethod binarizationMethod;
-
-        bool whiteOnBlackAutoDetected;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

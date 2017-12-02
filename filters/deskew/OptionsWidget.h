@@ -98,6 +98,10 @@ namespace deskew {
 
         void commitCurrentParams();
 
+        void setupUiConnections();
+
+        void removeUiConnections();
+
         static double spinBoxToDegrees(double sb_value);
 
         static double degreesToSpinBox(double degrees);

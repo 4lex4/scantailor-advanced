@@ -41,6 +41,7 @@ namespace output {
         m_perPageOutputParams.clear();
         m_perPagePictureZones.clear();
         m_perPageFillZones.clear();
+        m_perPageOutputProcessingParams.clear();
     }
 
     void Settings::performRelinking(AbstractRelinker const& relinker) {
@@ -50,6 +51,7 @@ namespace output {
         PerPageOutputParams new_output_params;
         PerPageZones new_picture_zones;
         PerPageZones new_fill_zones;
+        PerPageOutputProcessingParams new_output_processing_params;
 
         for (PerPageParams::value_type const& kv : m_perPageParams) {
             RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
@@ -79,10 +81,18 @@ namespace output {
             new_fill_zones.insert(PerPageZones::value_type(new_page_id, kv.second));
         }
 
+        for (PerPageOutputProcessingParams::value_type const& kv : m_perPageOutputProcessingParams) {
+            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+            PageId new_page_id(kv.first);
+            new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
+            new_output_processing_params.insert(PerPageOutputProcessingParams::value_type(new_page_id, kv.second));
+        }
+
         m_perPageParams.swap(new_params);
         m_perPageOutputParams.swap(new_output_params);
         m_perPagePictureZones.swap(new_picture_zones);
         m_perPageFillZones.swap(new_fill_zones);
+        m_perPageOutputProcessingParams.swap(new_output_processing_params);
     }      // Settings::performRelinking
 
     Params Settings::getParams(PageId const& page_id) const {
@@ -293,5 +303,22 @@ namespace output {
         props.locateOrCreate<FillColorProperty>()->setColor(Qt::white);
 
         return props;
+    }
+
+    OutputProcessingParams Settings::getOutputProcessingParams(PageId const& page_id) const {
+        QMutexLocker const locker(&m_mutex);
+
+        PerPageOutputProcessingParams::const_iterator const it(m_perPageOutputProcessingParams.find(page_id));
+        if (it != m_perPageOutputProcessingParams.end()) {
+            return it->second;
+        } else {
+            return OutputProcessingParams();
+        }
+    }
+
+    void Settings::setOutputProcessingParams(PageId const& page_id,
+                                             OutputProcessingParams const& output_processing_params) {
+        QMutexLocker const locker(&m_mutex);
+        Utils::mapSetValue(m_perPageOutputProcessingParams, page_id, output_processing_params);
     }
 }  // namespace output

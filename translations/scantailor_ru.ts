@@ -36,7 +36,7 @@
     <message>
         <location line="+10"/>
         <source>Contributors</source>
-        <translation>Благодарности</translation>
+        <translation>Внесли вклад в проект</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -56,7 +56,7 @@
     <message>
         <location line="+7"/>
         <source>Petr Kovář - Command line interface, ver. Enhanced</source>
-        <translation>Petr Kovář - Версия для командной строки. Версия  Enhanced</translation>
+        <translation>Petr Kovář - Версия для командной строки, версия Enhanced</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -481,7 +481,7 @@
     <message>
         <location line="+3"/>
         <source>Home</source>
-        <translation>Домой</translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+5"/>

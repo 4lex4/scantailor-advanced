@@ -274,8 +274,7 @@ QMenu::separator {
 QMenu::item {
 	padding: 1px 14px 1px 20px;
     height: 24px;
-    width: 113px;
-	margin: 1px 0px 1px 0px;
+    margin: 1px 0px 1px 0px;
 }
 
 QMenu::item:disabled {

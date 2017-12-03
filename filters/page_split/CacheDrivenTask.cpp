@@ -25,6 +25,7 @@
 #include "filter_dc/AbstractFilterDataCollector.h"
 #include "filter_dc/ThumbnailCollector.h"
 #include "filters/deskew/CacheDrivenTask.h"
+#include "PageLayoutAdapter.h"
 
 namespace page_split {
     CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
@@ -84,7 +85,7 @@ namespace page_split {
         }
 
         PageLayout layout(params->pageLayout());
-
+        PageLayoutAdapter::correctPageLayoutType(&layout);
         // m_projectPages controls number of pages displayed in thumbnail list
         // usually this is set in Task, but if user changed layout with Apply To..
         // and just jumped to next stage - the Task::process isn't invoked for all pages

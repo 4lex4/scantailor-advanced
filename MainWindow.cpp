@@ -2137,10 +2137,6 @@ void MainWindow::changeEvent(QEvent* event) {
                 retranslateUi(this);
                 updateWindowTitle();
                 break;
-            case QEvent::LocaleChange: {
-                dynamic_cast<Application*>(qApp)->installLanguage(QLocale::system().name());
-                break;
-            }
             default:
                 QWidget::changeEvent(event);
                 break;

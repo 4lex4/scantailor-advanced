@@ -24,11 +24,13 @@
 using namespace imageproc;
 
 namespace select_content {
-    Dependencies::Dependencies() {
+    Dependencies::Dependencies() :
+            m_invalid(false) {
     }
 
     Dependencies::Dependencies(QPolygonF const& rotated_page_outline)
-            : m_rotatedPageOutline(rotated_page_outline) {
+            : m_rotatedPageOutline(rotated_page_outline),
+              m_invalid(false) {
     }
 
     Dependencies::Dependencies(QDomElement const& deps_el)
@@ -36,13 +38,18 @@ namespace select_content {
             XmlUnmarshaller::polygonF(
                     deps_el.namedItem("rotated-page-outline").toElement()
             )
-    ) {
+    ),
+              m_invalid(deps_el.attribute("invalid") == "1") {
     }
 
     Dependencies::~Dependencies() {
     }
 
     bool Dependencies::matches(Dependencies const& other) const {
+        if (m_invalid) {
+            return false;
+        }
+
         return PolygonUtils::fuzzyCompare(
                 m_rotatedPageOutline, other.m_rotatedPageOutline
         );
@@ -57,7 +64,12 @@ namespace select_content {
                         m_rotatedPageOutline, "rotated-page-outline"
                 )
         );
+        el.setAttribute("invalid", m_invalid ? "1" : "0");
 
         return el;
+    }
+
+    void Dependencies::invalidate() {
+        m_invalid = true;
     }
 }  // namespace select_content

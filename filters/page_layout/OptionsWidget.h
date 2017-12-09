@@ -76,10 +76,6 @@ namespace page_layout {
 
         void aggregateHardSizeChanged();
 
-    public slots:
-
-        void marginsSetExternally(Margins const& margins_mm);
-
     private slots:
 
         void unitsChanged(int idx);
@@ -88,7 +84,7 @@ namespace page_layout {
 
         void vertMarginsChanged(double val);
 
-        void autoMarginsChanged(bool checked);
+        void autoMarginsToggled(bool checked);
 
         void alignmentModeChanged(int idx);
 
@@ -115,7 +111,9 @@ namespace page_layout {
 
         void updateLinkDisplay(QToolButton* button, bool linked);
 
-        void enableDisableAlignmentButtons();
+        void updateAlignmentButtonsEnabled();
+
+        void updateMarginsControlsEnabled();
 
         void setupUiConnections();
 

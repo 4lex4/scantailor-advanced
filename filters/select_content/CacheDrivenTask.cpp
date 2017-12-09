@@ -43,8 +43,7 @@ namespace select_content {
                                   ImageTransformation const& xform) {
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
         Dependencies const deps(xform.resultingPreCropArea());
-        if (!params.get() || (!params->dependencies().matches(deps)
-                              && ((params->mode() == MODE_AUTO) || !params->isContentDetectionEnabled()))) {
+        if (!params.get() || !params->dependencies().matches(deps)) {
             if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
@@ -78,6 +77,8 @@ namespace select_content {
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), xform,
                                     params->contentRect(),
+                                    params->pageRect(),
+                                    params->isPageDetectionEnabled(),
                                     params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
                             )
                     )

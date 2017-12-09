@@ -43,13 +43,16 @@ namespace select_content {
                   QImage const& downscaled_image,
                   ImageTransformation const& xform,
                   QRectF const& content_rect,
-                  QRectF const& page_rect);
+                  QRectF const& page_rect,
+                  bool page_rect_enabled);
 
         virtual ~ImageView();
 
     signals:
 
         void manualContentRectSet(QRectF const& content_rect);
+
+        void manualPageRectSet(QRectF const& page_rect);
 
     private slots:
 
@@ -69,27 +72,45 @@ namespace select_content {
             BOTTOM = 8
         };
 
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-        void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
+        void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
-        QPointF cornerPosition(int edge_mask) const;
+        QPointF contentRectCornerPosition(int edge_mask) const;
 
-        void cornerMoveRequest(int edge_mask, QPointF const& pos);
+        void contentRectCornerMoveRequest(int edge_mask, QPointF const& pos);
 
-        QLineF edgePosition(int edge) const;
+        QLineF contentRectEdgePosition(int edge) const;
 
-        void edgeMoveRequest(int edge, QLineF const& line);
+        void contentRectEdgeMoveRequest(int edge, QLineF const& line);
 
-        void dragFinished();
+        void contentRectDragFinished();
+
+        QPointF pageRectCornerPosition(int edge_mask) const;
+
+        void pageRectCornerMoveRequest(int edge_mask, QPointF const& pos);
+
+        QLineF pageRectEdgePosition(int edge) const;
+
+        void pageRectEdgeMoveRequest(int edge, QLineF const& line);
+
+        void pageRectDragFinished();
 
         void forceInsideImage(QRectF& widget_rect, int edge_mask) const;
 
-        DraggablePoint m_corners[4];
-        ObjectDragHandler m_cornerHandlers[4];
+        void forcePageRectDescribeContent();
 
-        DraggableLineSegment m_edges[4];
-        ObjectDragHandler m_edgeHandlers[4];
+        DraggablePoint m_contentRectCorners[4];
+        ObjectDragHandler m_contentRectCornerHandlers[4];
+
+        DraggableLineSegment m_contentRectEdges[4];
+        ObjectDragHandler m_contentRectEdgeHandlers[4];
+
+        DraggablePoint m_pageRectCorners[4];
+        ObjectDragHandler m_pageRectCornerHandlers[4];
+
+        DraggableLineSegment m_pageRectEdges[4];
+        ObjectDragHandler m_pageRectEdgeHandlers[4];
 
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
@@ -109,6 +130,9 @@ namespace select_content {
          */
         QRectF m_contentRect;
         QRectF m_pageRect;
+
+        bool m_pageRectEnabled;
+        bool m_pageRectReloadRequested;
 
         QSizeF m_minBoxSize;
     };

@@ -576,8 +576,6 @@ page_layout::Alignment CommandLine::fetchAlignment() {
         }
     }
 
-    alignment.setAutoMargins(isAutoMarginsEnabled());
-
     return alignment;
 } // CommandLine::fetchAlignment
 

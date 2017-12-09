@@ -25,9 +25,13 @@ namespace select_content {
                          ImageId const& image_id,
                          ImageTransformation const& xform,
                          QRectF const& content_rect,
+                         QRectF const& page_rect,
+                         bool page_rect_enabled,
                          bool deviant)
             : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
               m_contentRect(content_rect),
+              m_pageRect(page_rect),
+              m_pageRectEnabled(page_rect_enabled),
               m_deviant(deviant) {
     }
 
@@ -37,7 +41,20 @@ namespace select_content {
             return;
         }
 
+        QRectF page_rect(virtToThumb().mapRect(m_pageRect));
+
         painter.setRenderHint(QPainter::Antialiasing, false);
+
+        if (m_pageRectEnabled) {
+            QPen pen(QColor(0xee, 0xee, 0x00));
+            pen.setWidth(1);
+            pen.setCosmetic(true);
+            painter.setPen(pen);
+
+            painter.setBrush(Qt::NoBrush);
+
+            painter.drawRect(page_rect);
+        }
 
         QPen pen(QColor(0x00, 0x00, 0xff));
         pen.setWidth(1);
@@ -50,11 +67,9 @@ namespace select_content {
 
         // Adjust to compensate for pen width.
         content_rect.adjust(-1, -1, 1, 1);
+        content_rect = content_rect.intersected(page_rect);
 
-        // toRect() is necessary because we turn off antialiasing.
-        // For some reason, if we let Qt round the coordinates,
-        // the result is slightly different.
-        painter.drawRect(content_rect.toRect());
+        painter.drawRect(content_rect);
 
         if (m_deviant) {
             paintDeviant(painter);

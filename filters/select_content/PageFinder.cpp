@@ -38,7 +38,6 @@ namespace select_content {
                                    bool fine_tune,
                                    QSizeF const& box,
                                    double tolerance,
-                                   Margins borders,
                                    DebugImages* dbg) {
         ImageTransformation xform_150dpi(data.xform());
         xform_150dpi.preScaleToDpi(Dpi(150, 150));
@@ -131,12 +130,7 @@ namespace select_content {
 #ifdef DEBUG
         std::cout << "width = " << content_rect.width() << "; height=" << content_rect.height() << std::endl;
 #endif
-
-        content_rect.setLeft(content_rect.left() + to150 * borders.left());
-        content_rect.setTop(content_rect.top() + to150 * borders.top());
-        content_rect.setRight(content_rect.right() - to150 * borders.right());
-        content_rect.setBottom(content_rect.bottom() - to150 * borders.bottom());
-
+        
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
         QRectF result = combined_xform.map(QRectF(content_rect)).boundingRect();

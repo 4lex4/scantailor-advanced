@@ -166,6 +166,10 @@ namespace page_layout {
         QSizeF
         getAggregateHardSizeMM(PageId const& page_id, QSizeF const& hard_size_mm, Alignment const& alignment) const;
 
+        bool isPageAutoMarginsEnabled(PageId const& page_id);
+
+        void setPageAutoMarginsEnabled(PageId const& page_id, bool state);
+
     private:
         class Impl;
         class Item;

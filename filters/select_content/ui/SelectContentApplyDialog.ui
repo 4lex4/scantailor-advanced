@@ -30,6 +30,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="applyPageBoxOption">
+        <property name="text">
+         <string>Apply page box</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

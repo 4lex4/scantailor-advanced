@@ -51,8 +51,11 @@ namespace select_content {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
+        void invalidate();
+
     private:
         QPolygonF m_rotatedPageOutline;
+        bool m_invalid;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_DEPENDENCIES_H_

@@ -53,14 +53,14 @@ namespace page_layout {
         // of subpixel accuracy.  Doing that is actually OK, because what
         // we paint will be clipped anyway.
         QRectF const outer_rect(
-                virt_to_display.map(m_virtOuterRect).boundingRect().toAlignedRect()
+                virt_to_display.map(m_virtOuterRect).boundingRect()
         );
 
         QPainterPath outer_outline;
         outer_outline.addPolygon(outer_rect);
 
         QPainterPath content_outline;
-        content_outline.addPolygon(PolygonUtils::round(inner_rect));
+        content_outline.addPolygon(inner_rect);
 
         painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -93,13 +93,9 @@ namespace page_layout {
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
 
-        // toRect() is necessary because we turn off antialiasing.
-        // For some reason, if we let Qt round the coordinates,
-        // the result is slightly different.
-
         // inner rect
         if (!isNullContentRect) {
-            painter.drawRect(inner_rect.toRect());
+            painter.drawRect(inner_rect);
         }
 
         // outer rect
@@ -107,7 +103,7 @@ namespace page_layout {
             pen.setStyle(Qt::DashLine);
         }
         painter.setPen(pen);
-        painter.drawRect(outer_rect.toRect());
+        painter.drawRect(outer_rect);
 
         if (m_params.isDeviant()) {
             paintDeviant(painter);

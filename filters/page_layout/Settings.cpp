@@ -45,13 +45,15 @@ namespace page_layout {
         QRectF contentRect;
         QSizeF contentSizeMM;
         Alignment alignment;
+        bool autoMargins;
 
         Item(PageId const& page_id,
              Margins const& hard_margins_mm,
              QRectF const& page_rect,
              QRectF const& content_rect,
              QSizeF const& content_size_mm,
-             Alignment const& alignment);
+             Alignment const& alignment,
+             bool auto_margins);
 
         double hardWidthMM() const;
 
@@ -69,16 +71,19 @@ namespace page_layout {
 
     class Settings::ModifyMargins {
     public:
-        ModifyMargins(Margins const& margins_mm)
-                : m_marginsMM(margins_mm) {
+        ModifyMargins(Margins const& margins_mm, bool const auto_margins)
+                : m_marginsMM(margins_mm),
+                  m_autoMargins(auto_margins) {
         }
 
         void operator()(Item& item) {
             item.hardMarginsMM = m_marginsMM;
+            item.autoMargins = m_autoMargins;
         }
 
     private:
         Margins m_marginsMM;
+        bool m_autoMargins;
     };
 
 
@@ -99,19 +104,22 @@ namespace page_layout {
 
     class Settings::ModifyContentSize {
     public:
-        ModifyContentSize(QSizeF const& content_size_mm, QRectF const& content_rect)
+        ModifyContentSize(QSizeF const& content_size_mm, QRectF const& content_rect, QRectF const& page_rect)
                 : m_contentSizeMM(content_size_mm),
-                  m_contentRect(content_rect) {
+                  m_contentRect(content_rect),
+                  m_pageRect(page_rect) {
         }
 
         void operator()(Item& item) {
             item.contentSizeMM = m_contentSizeMM;
             item.contentRect = m_contentRect;
+            item.pageRect = m_pageRect;
         }
 
     private:
         QSizeF m_contentSizeMM;
         QRectF m_contentRect;
+        QRectF m_pageRect;
     };
 
 
@@ -174,6 +182,10 @@ namespace page_layout {
         QSizeF
         getAggregateHardSizeMM(PageId const& page_id, QSizeF const& hard_size_mm, Alignment const& alignment) const;
 
+        bool isPageAutoMarginsEnabled(PageId const& page_id);
+
+        void setPageAutoMarginsEnabled(PageId const& page_id, bool state);
+
     private:
         class SequencedTag;
         class DescWidthTag;
@@ -229,6 +241,7 @@ namespace page_layout {
         Alignment const m_defaultAlignment;
         QRectF m_contentRect;
         QRectF m_pageRect;
+        bool const m_autoMarginsDefault;
     };
 
 
@@ -333,6 +346,14 @@ namespace page_layout {
         return m_ptrImpl->getAggregateHardSizeMM(page_id, hard_size_mm, alignment);
     }
 
+    bool Settings::isPageAutoMarginsEnabled(PageId const& page_id) {
+        return m_ptrImpl->isPageAutoMarginsEnabled(page_id);
+    }
+
+    void Settings::setPageAutoMarginsEnabled(PageId const& page_id, bool const state) {
+        return m_ptrImpl->setPageAutoMarginsEnabled(page_id, state);
+    }
+
 /*============================== Settings::Item =============================*/
 
     Settings::Item::Item(PageId const& page_id,
@@ -340,13 +361,15 @@ namespace page_layout {
                          QRectF const& page_rect,
                          QRectF const& content_rect,
                          QSizeF const& content_size_mm,
-                         Alignment const& align)
+                         Alignment const& alignment,
+                         bool const auto_margins)
             : pageId(page_id),
               hardMarginsMM(hard_margins_mm),
               pageRect(page_rect),
               contentRect(content_rect),
               contentSizeMM(content_size_mm),
-              alignment(align) {
+              alignment(alignment),
+              autoMargins(auto_margins) {
     }
 
     double Settings::Item::hardWidthMM() const {
@@ -375,7 +398,8 @@ namespace page_layout {
               m_invalidRect(),
               m_invalidSize(),
               m_defaultHardMarginsMM(page_layout::Settings::defaultHardMarginsMM()),
-              m_defaultAlignment(Alignment::TOP, Alignment::HCENTER) {
+              m_defaultAlignment(Alignment::TOP, Alignment::HCENTER),
+              m_autoMarginsDefault(false) {
     }
 
     Settings::Impl::~Impl() {
@@ -448,7 +472,8 @@ namespace page_layout {
         }
 
         return std::unique_ptr<Params>(
-                new Params(it->hardMarginsMM, it->pageRect, it->contentRect, it->contentSizeMM, it->alignment)
+                new Params(it->hardMarginsMM, it->pageRect, it->contentRect,
+                           it->contentSizeMM, it->alignment, it->autoMargins)
         );
     }
 
@@ -457,7 +482,7 @@ namespace page_layout {
 
         Item const new_item(
                 page_id, params.hardMarginsMM(), params.pageRect(),
-                params.contentRect(), params.contentSizeMM(), params.alignment()
+                params.contentRect(), params.contentSizeMM(), params.alignment(), params.isAutoMarginsEnabled()
         );
 
         Container::iterator const it(m_items.lower_bound(page_id));
@@ -486,11 +511,11 @@ namespace page_layout {
         if ((it == m_items.end()) || (page_id < it->pageId)) {
             Item const item(
                     page_id, m_defaultHardMarginsMM, page_rect,
-                    content_rect, content_size_mm, m_defaultAlignment
+                    content_rect, content_size_mm, m_defaultAlignment, m_autoMarginsDefault
             );
             item_it = m_items.insert(it, item);
         } else {
-            m_items.modify(it, ModifyContentSize(content_size_mm, content_rect));
+            m_items.modify(it, ModifyContentSize(content_size_mm, content_rect, page_rect));
         }
 
         if (agg_hard_size_after) {
@@ -503,7 +528,7 @@ namespace page_layout {
 
         return Params(
                 item_it->hardMarginsMM, item_it->pageRect, item_it->contentRect,
-                item_it->contentSizeMM, item_it->alignment
+                item_it->contentSizeMM, item_it->alignment, item_it->autoMargins
         );
     }      // Settings::Impl::updateContentSizeAndGetParams
 
@@ -564,11 +589,12 @@ namespace page_layout {
         Container::iterator const it(m_items.lower_bound(page_id));
         if ((it == m_items.end()) || (page_id < it->pageId)) {
             Item const item(
-                    page_id, margins_mm, m_invalidRect, m_invalidRect, m_invalidSize, m_defaultAlignment
+                    page_id, margins_mm, m_invalidRect, m_invalidRect,
+                    m_invalidSize, m_defaultAlignment, m_autoMarginsDefault
             );
             m_items.insert(it, item);
         } else {
-            m_items.modify(it, ModifyMargins(margins_mm));
+            m_items.modify(it, ModifyMargins(margins_mm, it->autoMargins));
         }
     }
 
@@ -591,7 +617,8 @@ namespace page_layout {
         Container::iterator const it(m_items.lower_bound(page_id));
         if ((it == m_items.end()) || (page_id < it->pageId)) {
             Item const item(
-                    page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, m_invalidSize, alignment
+                    page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect,
+                    m_invalidSize, alignment, m_autoMarginsDefault
             );
             m_items.insert(it, item);
         } else {
@@ -616,11 +643,11 @@ namespace page_layout {
         if ((it == m_items.end()) || (page_id < it->pageId)) {
             Item const item(
                     page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect,
-                    content_size_mm, m_defaultAlignment
+                    content_size_mm, m_defaultAlignment, m_autoMarginsDefault
             );
             m_items.insert(it, item);
         } else {
-            m_items.modify(it, ModifyContentSize(content_size_mm, m_invalidRect));
+            m_items.modify(it, ModifyContentSize(content_size_mm, m_invalidRect, it->pageRect));
         }
 
         QSizeF const agg_size_after(getAggregateHardSizeMMLocked());
@@ -636,7 +663,7 @@ namespace page_layout {
 
         Container::iterator const it(m_items.find(page_id));
         if (it != m_items.end()) {
-            m_items.modify(it, ModifyContentSize(m_invalidSize, m_invalidRect));
+            m_items.modify(it, ModifyContentSize(m_invalidSize, m_invalidRect, it->pageRect));
         }
     }
 
@@ -711,4 +738,31 @@ namespace page_layout {
 
         return QSizeF(width, height);
     }  // Settings::Impl::getAggregateHardSizeMM
+
+    bool Settings::Impl::isPageAutoMarginsEnabled(PageId const& page_id) {
+        QMutexLocker const locker(&m_mutex);
+
+        Container::iterator const it(m_items.find(page_id));
+        if (it == m_items.end()) {
+            return m_autoMarginsDefault;
+        } else {
+            return it->autoMargins;
+        }
+    }
+
+    void Settings::Impl::setPageAutoMarginsEnabled(PageId const& page_id, bool const state) {
+        QMutexLocker const locker(&m_mutex);
+
+        Container::iterator const it(m_items.lower_bound(page_id));
+        if ((it == m_items.end()) || (page_id < it->pageId)) {
+            Item const item(
+                    page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect,
+                    m_invalidSize, m_defaultAlignment, state
+            );
+            m_items.insert(it, item);
+        } else {
+            m_items.modify(it, ModifyMargins(it->hardMarginsMM, state));
+        }
+    }
+
 }  // namespace page_layout

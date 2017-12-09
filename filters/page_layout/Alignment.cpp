@@ -25,8 +25,7 @@ namespace page_layout {
     Alignment::Alignment()
             : m_vert(VCENTER),
               m_hor(HCENTER),
-              m_tolerance(DEFAULT_TOLERANCE),
-              m_autoMargins(false) {
+              m_tolerance(DEFAULT_TOLERANCE) {
         CommandLine cli = CommandLine::get();
         m_isNull = cli.getDefaultNull();
     }
@@ -34,8 +33,7 @@ namespace page_layout {
     Alignment::Alignment(Vertical vert, Horizontal hor)
             : m_vert(vert),
               m_hor(hor),
-              m_tolerance(DEFAULT_TOLERANCE),
-              m_autoMargins(false) {
+              m_tolerance(DEFAULT_TOLERANCE) {
         CommandLine cli = CommandLine::get();
         m_isNull = cli.getDefaultNull();
     }
@@ -48,7 +46,6 @@ namespace page_layout {
         QString const hor(el.attribute("hor"));
         m_isNull = el.attribute("null").toInt() != 0;
         m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
-        m_autoMargins = el.attribute("autoMargins") == "true" ? true : false;
 
         if (vert == "top") {
             m_vert = TOP;
@@ -119,8 +116,18 @@ namespace page_layout {
         el.setAttribute("hor", QString::fromLatin1(hor));
         el.setAttribute("null", m_isNull ? 1 : 0);
         el.setAttribute("tolerance", QString::number(m_tolerance));
-        el.setAttribute("autoMargins", m_autoMargins ? "true" : "false");
 
         return el;
-    }      // Alignment::toXml
+    }
+
+    bool Alignment::operator==(Alignment const& other) const {
+        return (m_vert == other.m_vert)
+               && (m_hor == other.m_hor)
+               && (m_isNull == other.m_isNull);
+    }
+
+    bool Alignment::operator!=(Alignment const& other) const {
+        return !(*this == other);
+    }
+    // Alignment::toXml
 }  // namespace page_layout

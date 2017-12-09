@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
-    <height>383</height>
+    <width>196</width>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,133 +19,82 @@
      <property name="title">
       <string>Page Box</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QCheckBox" name="fineTuneBtn">
-          <property name="toolTip">
-           <string>Shift with corners while they are in black. </string>
-          </property>
-          <property name="text">
-           <string>Fine Tune Page Corners</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QPushButton" name="pageDetectDisableBtn">
-            <property name="text">
-             <string>Disable</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pageDetectAutoBtn">
-            <property name="text">
-             <string>Auto</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QPushButton" name="pageDetectDisableBtn">
+        <property name="text">
+         <string>Disable</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_3">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pageDetectAutoBtn">
+        <property name="text">
+         <string>Auto</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pageDetectManualBtn">
+        <property name="text">
+         <string>Manual</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QGroupBox" name="pageDetectOptions">
         <property name="title">
-         <string>Borders in MM</string>
+         <string>Options</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>9</number>
+         </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Left</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QDoubleSpinBox" name="leftBorder"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Top</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QDoubleSpinBox" name="topBorder"/>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Right</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QDoubleSpinBox" name="rightBorder"/>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_4">
-               <property name="text">
-                <string>Bottom</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QDoubleSpinBox" name="bottomBorder"/>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <widget class="QCheckBox" name="fineTuneBtn">
+           <property name="toolTip">
+            <string>Shift with corners while they are in black. </string>
+           </property>
+           <property name="text">
+            <string>Fine Tune Page Corners</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -159,21 +108,8 @@
       <string>Content Box</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="1" colspan="2">
-       <widget class="QPushButton" name="disableBtn">
-        <property name="text">
-         <string>Disable</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
-       <widget class="QPushButton" name="autoBtn">
+       <widget class="QPushButton" name="contentDetectAutoBtn">
         <property name="text">
          <string>Auto</string>
         </property>
@@ -188,8 +124,21 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QPushButton" name="contentDetectDisableBtn">
+        <property name="text">
+         <string>Disable</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="2">
-       <widget class="QPushButton" name="manualBtn">
+       <widget class="QPushButton" name="contentDetectManualBtn">
         <property name="text">
          <string>Manual</string>
         </property>

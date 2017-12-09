@@ -25,12 +25,14 @@ namespace page_layout {
                    QRectF const& content_rect,
                    QRectF const& page_rect,
                    QSizeF const& content_size_mm,
-                   Alignment const& alignment)
+                   Alignment const& alignment,
+                   bool const auto_margins)
             : m_hardMarginsMM(hard_margins_mm),
               m_pageRect(page_rect),
               m_contentRect(content_rect),
               m_contentSizeMM(content_size_mm),
-              m_alignment(alignment) {
+              m_alignment(alignment),
+              m_autoMargins(auto_margins) {
     }
 
     Params::Params(QDomElement const& el)
@@ -54,7 +56,8 @@ namespace page_layout {
                               el.namedItem("contentSizeMM").toElement()
                       )
               ),
-              m_alignment(el.namedItem("alignment").toElement()) {
+              m_alignment(el.namedItem("alignment").toElement()),
+              m_autoMargins(el.attribute("autoMargins") == "1") {
     }
 
     QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
@@ -66,6 +69,7 @@ namespace page_layout {
         el.appendChild(marshaller.rectF(m_contentRect, "contentRect"));
         el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
         el.appendChild(m_alignment.toXml(doc, "alignment"));
+        el.setAttribute("autoMargins", m_autoMargins ? "1" : "0");
 
         return el;
     }

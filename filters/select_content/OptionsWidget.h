@@ -61,51 +61,45 @@ namespace select_content {
 
             Dependencies const& dependencies() const;
 
-            void setMode(AutoManualMode mode);
+            void setContentDetectionMode(AutoManualMode mode);
 
-            bool contentDetection() const {
-                return m_contentDetection;
+            void setPageDetectionMode(AutoManualMode mode);
+
+            bool isContentDetectionEnabled() const {
+                return m_contentDetectionEnabled;
             }
 
-            bool pageDetection() const {
-                return m_pageDetection;
+            bool isPageDetectionEnabled() const {
+                return m_pageDetectionEnabled;
             }
 
-            bool fineTuning() const {
-                return m_fineTuneCorners;
+            bool isFineTuningCornersEnabled() const {
+                return m_fineTuneCornersEnabled;
             }
 
-            void setContentDetection(bool detect);
+            void setContentDetectionEnabled(bool detect);
 
-            void setPageDetection(bool detect);
+            void setPageDetectionEnabled(bool detect);
 
-            void setFineTuneCorners(bool fine_tune);
+            void setFineTuneCornersEnabled(bool fine_tune);
 
-            void setPageBorders(double left, double top, double right, double bottom);
+            AutoManualMode contentDetectionMode() const;
 
-            void setPageBorders(Margins const& borders) {
-                m_borders = borders;
-            }
-
-            Margins pageBorders() const {
-                return m_borders;
-            }
-
-            AutoManualMode mode() const;
+            AutoManualMode pageDetectionMode() const;
 
         private:
             QRectF m_contentRect;  // In virtual image coordinates.
             QRectF m_pageRect;
             PhysSizeCalc m_sizeCalc;
             Dependencies m_deps;
-            AutoManualMode m_mode;
-            bool m_contentDetection;
-            bool m_pageDetection;
-            bool m_fineTuneCorners;
-            Margins m_borders;
+            AutoManualMode m_contentDetectionMode;
+            AutoManualMode m_pageDetectionMode;
+            bool m_contentDetectionEnabled;
+            bool m_pageDetectionEnabled;
+            bool m_fineTuneCornersEnabled;
         };
 
-
+        
         OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
@@ -118,30 +112,32 @@ namespace select_content {
 
         void manualContentRectSet(QRectF const& content_rect);
 
+        void manualPageRectSet(QRectF const& page_rect);
+
     private slots:
 
         void showApplyToDialog();
 
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box);
+        void applySelection(std::set<PageId> const& pages, bool apply_content_box, bool apply_page_box);
 
-        void modeChanged(bool auto_mode);
+        void contentDetectAutoToggled();
 
-        void autoMode();
+        void contentDetectManualToggled();
 
-        void manualMode();
+        void contentDetectDisableToggled();
+
+        void pageDetectAutoToggled();
+
+        void pageDetectManualToggled();
+
+        void pageDetectDisableToggled();
 
         void fineTuningChanged(bool checked);
 
-        void contentDetectionDisabled(void);
-
-        void pageDetectionDisabled(void);
-
-        void pageDetectionEnabled(void);
-
-        void borderChanged();
-
     private:
-        void updateModeIndication(AutoManualMode const mode);
+        void updateContentModeIndication(AutoManualMode const mode);
+
+        void updatePageModeIndication(AutoManualMode const mode);
 
         void commitCurrentParams();
 
@@ -153,7 +149,6 @@ namespace select_content {
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
-        int m_ignoreAutoManualToggle;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

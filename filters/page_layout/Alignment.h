@@ -89,22 +89,9 @@ namespace page_layout {
             m_tolerance = t;
         }
 
-        bool isAutoMarginsEnabled() const {
-            return m_autoMargins;
-        }
+        bool operator==(Alignment const& other) const;
 
-        void setAutoMargins(bool state) {
-            m_autoMargins = state;
-        }
-
-        bool operator==(Alignment const& other) const {
-            return m_vert == other.m_vert && m_hor == other.m_hor
-                   && m_isNull == other.m_isNull && m_autoMargins == other.m_autoMargins;
-        }
-
-        bool operator!=(Alignment const& other) const {
-            return !(*this == other);
-        }
+        bool operator!=(Alignment const& other) const;
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -113,7 +100,6 @@ namespace page_layout {
         Horizontal m_hor;
         bool m_isNull;
         double m_tolerance;
-        bool m_autoMargins;
     };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_ALIGNMENT_H_

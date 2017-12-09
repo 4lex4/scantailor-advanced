@@ -78,7 +78,7 @@ namespace select_content {
             range.selectEveryOther(m_curPage).swap(pages);
         }
 
-        emit applySelection(pages, applyContentBoxOption->isChecked());
+        emit applySelection(pages, applyContentBoxOption->isChecked(), applyPageBoxOption->isChecked());
         // We assume the default connection from accept() to accepted() was removed.
         accept();
     }      // ApplyDialog::onSubmit

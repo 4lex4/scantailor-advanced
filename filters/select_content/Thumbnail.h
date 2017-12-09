@@ -35,6 +35,8 @@ namespace select_content {
                   ImageId const& image_id,
                   ImageTransformation const& xform,
                   QRectF const& content_rect,
+                  QRectF const& page_rect,
+                  bool page_rect_enabled,
                   bool deviant);
 
         virtual void paintOverImage(QPainter& painter,
@@ -43,6 +45,8 @@ namespace select_content {
 
     private:
         QRectF m_contentRect;
+        QRectF m_pageRect;
+        bool m_pageRectEnabled;
         bool m_deviant;
     };
 }

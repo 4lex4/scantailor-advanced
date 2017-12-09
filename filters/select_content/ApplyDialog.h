@@ -43,7 +43,7 @@ namespace select_content {
 
     signals:
 
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box);
+        void applySelection(std::set<PageId> const& pages, bool apply_content_box, bool apply_page_box);
 
     private slots:
 

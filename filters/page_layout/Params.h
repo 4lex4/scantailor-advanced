@@ -36,7 +36,8 @@ namespace page_layout {
                QRectF const& page_rect,
                QRectF const& content_rect,
                QSizeF const& content_size_mm,
-               Alignment const& alignment);
+               Alignment const& alignment,
+               bool auto_margins);
 
         Params(QDomElement const& el);
 
@@ -60,6 +61,10 @@ namespace page_layout {
             return m_alignment;
         }
 
+        bool isAutoMarginsEnabled() const {
+            return m_autoMargins;
+        }
+
         bool isDeviant() const {
             return m_alignment.isNull();
         }
@@ -72,6 +77,7 @@ namespace page_layout {
         QRectF m_pageRect;
         QSizeF m_contentSizeMM;
         Alignment m_alignment;
+        bool m_autoMargins;
     };
 }  // namespace page_layout
 #endif // ifndef PAGE_LAYOUT_PARAMS_H_

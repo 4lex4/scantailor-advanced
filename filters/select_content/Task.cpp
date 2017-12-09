@@ -87,8 +87,8 @@ namespace select_content {
         ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
 
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
-        Params new_params(deps);
 
+        Params new_params(deps);
         if (params.get()) {
             new_params = *params;
             new_params.setDependencies(deps);
@@ -98,21 +98,50 @@ namespace select_content {
             QRectF page_rect(data.xform().resultingRect());
             QRectF content_rect(page_rect);
 
-            if (new_params.isPageDetectionEnabled()) {
-                page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
-                                                    m_ptrSettings->pageDetectionBox(),
-                                                    m_ptrSettings->pageDetectionTolerance(), new_params.pageBorders(),
-                                                    m_ptrDbg.get());
+            QRectF corrected_page_rect(new_params.pageRect());
+            if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)) {
+                const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                              (new_page_rect.height() - old_page_rect.height()) / 2);
+                corrected_page_rect = corrected_page_rect.intersected(data.xform().resultingRect());
             }
 
-            if (new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_AUTO)) {
+            if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_AUTO)) {
+                page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
+                                                    m_ptrSettings->pageDetectionBox(),
+                                                    m_ptrSettings->pageDetectionTolerance(),
+                                                    m_ptrDbg.get());
+            } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)
+                       && corrected_page_rect.isValid()) {
+                page_rect = corrected_page_rect;
+            } else {
+                page_rect = data.xform().resultingRect();
+            }
+
+            QRectF corrected_content_rect(new_params.contentRect());
+            if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)) {
+                const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                                 (new_page_rect.height() - old_page_rect.height()) / 2);
+                corrected_content_rect = corrected_content_rect.intersected(data.xform().resultingRect());
+            }
+            
+            if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_AUTO)) {
                 content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
-            } else if ((new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_MANUAL)
-                        && (content_rect = new_params.contentRect().intersected(page_rect)).isValid())
+            } else if ((new_params.isContentDetectionEnabled()
+                        && (new_params.contentDetectionMode() == MODE_MANUAL)
+                        && corrected_content_rect.isValid())
                        || new_params.contentRect().isEmpty()) {
                 // we don't want the content box to be out of the page bounds so use intersecting
+                content_rect = corrected_content_rect;
             } else {
                 content_rect = page_rect;
+            }
+
+            if (content_rect.isValid()) {
+                page_rect |= content_rect;
             }
 
             new_params.setPageRect(page_rect);
@@ -122,13 +151,12 @@ namespace select_content {
         ui_data.setContentRect(new_params.contentRect());
         ui_data.setPageRect(new_params.pageRect());
         ui_data.setDependencies(deps);
-        ui_data.setMode(new_params.mode());
-        ui_data.setContentDetection(new_params.isContentDetectionEnabled());
-        ui_data.setPageDetection(new_params.isPageDetectionEnabled());
-        ui_data.setFineTuneCorners(new_params.isFineTuningEnabled());
-        ui_data.setPageBorders(new_params.pageBorders());
+        ui_data.setContentDetectionMode(new_params.contentDetectionMode());
+        ui_data.setContentDetectionEnabled(new_params.isContentDetectionEnabled());
+        ui_data.setPageDetectionMode(new_params.pageDetectionMode());
+        ui_data.setPageDetectionEnabled(new_params.isPageDetectionEnabled());
+        ui_data.setFineTuneCornersEnabled(new_params.isFineTuningEnabled());
 
-        // required only if content box changed
         if (!params.get() || !params->dependencies().matches(deps)) {
             new_params.setContentSizeMM(ui_data.contentSizeMM());
         }
@@ -187,13 +215,18 @@ namespace select_content {
 
         ImageView* view = new ImageView(
                 m_image, m_downscaledImage,
-                m_xform, m_uiData.contentRect(), m_uiData.pageRect()
+                m_xform, m_uiData.contentRect(),
+                m_uiData.pageRect(), m_uiData.isPageDetectionEnabled()
         );
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
                 view, SIGNAL(manualContentRectSet(QRectF const &)),
                 opt_widget, SLOT(manualContentRectSet(QRectF const &))
+        );
+        QObject::connect(
+                view, SIGNAL(manualPageRectSet(QRectF const &)),
+                opt_widget, SLOT(manualPageRectSet(QRectF const &))
         );
     }
 }  // namespace select_content

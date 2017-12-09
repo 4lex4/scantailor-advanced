@@ -46,7 +46,6 @@ namespace select_content {
                                   bool fine_tune,
                                   QSizeF const& box,
                                   double tolerance,
-                                  Margins borders,
                                   DebugImages* dbg = nullptr);
 
     private:

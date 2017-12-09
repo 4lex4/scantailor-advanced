@@ -87,15 +87,11 @@ namespace page_layout {
                 Utils::calcRectSizeMM(data.xform(), content_rect)
         );
 
-        Alignment alignment(m_ptrSettings->getPageAlignment(m_pageId));
-        if (alignment.isAutoMarginsEnabled()) {
+        if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
             Margins const& margins_mm = Utils::calcMarginsMM(data.xform(), page_rect, content_rect);
             m_ptrSettings->setHardMarginsMM(
                     m_pageId, margins_mm
             );
-            if (m_ptrFilter->optionsWidget() != 0) {
-                m_ptrFilter->optionsWidget()->marginsSetExternally(margins_mm);
-            }
         }
 
         QSizeF agg_hard_size_before;
@@ -129,7 +125,7 @@ namespace page_layout {
             return m_ptrNextTask->process(
                     status, FilterData(data, new_xform), content_rect_phys
             );
-        } else if (m_ptrFilter->optionsWidget() != 0) {
+        } else {
             return FilterResultPtr(
                     new UiUpdater(
                             m_ptrFilter, m_ptrSettings, m_pageId,
@@ -138,8 +134,6 @@ namespace page_layout {
                             m_batchProcessing
                     )
             );
-        } else {
-            return FilterResultPtr(0);
         }
     }  // Task::process
 

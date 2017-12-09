@@ -52,7 +52,7 @@ namespace page_layout {
         setupUi(this);
         updateLinkDisplay(topBottomLink, m_topBottomLinked);
         updateLinkDisplay(leftRightLink, m_leftRightLinked);
-        enableDisableAlignmentButtons();
+        updateAlignmentButtonsEnabled();
 
         Utils::mapSetValue(
                 m_alignmentByButton, alignTopLeftBtn,
@@ -129,9 +129,10 @@ namespace page_layout {
             alignmentMode->setCurrentIndex(1);
         }
         alignmentMode->blockSignals(false);
-
-        autoMargins->setChecked(m_alignment.isAutoMarginsEnabled());
-        enableDisableAlignmentButtons();
+        updateAlignmentButtonsEnabled();
+        
+        autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(page_id));
+        updateMarginsControlsEnabled();
 
         m_leftRightLinked = m_leftRightLinked && (margins_mm.left() == margins_mm.right());
         m_topBottomLinked = m_topBottomLinked && (margins_mm.top() == margins_mm.bottom());
@@ -152,12 +153,12 @@ namespace page_layout {
         marginsGroup->setEnabled(true);
         alignmentGroup->setEnabled(true);
 
-        setupUiConnections();
-    }
+        if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
+            m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
+            updateMarginsDisplay();
+        }
 
-    void OptionsWidget::marginsSetExternally(Margins const& margins_mm) {
-        m_marginsMM = margins_mm;
-        updateMarginsDisplay();
+        setupUiConnections();
     }
 
     void OptionsWidget::unitsChanged(int const idx) {
@@ -238,21 +239,18 @@ namespace page_layout {
 
     void OptionsWidget::alignWithOthersToggled() {
         m_alignment.setNull(!alignWithOthersCB->isChecked());
-        enableDisableAlignmentButtons();
+        updateAlignmentButtonsEnabled();
         emit alignmentChanged(m_alignment);
     }
 
-    void OptionsWidget::autoMarginsChanged(bool checked) {
+    void OptionsWidget::autoMarginsToggled(bool checked) {
         if (m_ignoreMarginChanges) {
             return;
         }
 
-        alignmentMode->setEnabled(!checked);
-        alignmentMode->setCurrentIndex(2);
-        enableDisableAlignmentButtons();
-        m_alignment.setAutoMargins(checked);
-        m_alignment.setVertical(Alignment::VORIGINAL);
-        m_alignment.setHorizontal(Alignment::HORIGINAL);
+        m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, checked);
+        updateMarginsControlsEnabled();
+
         m_ptrSettings->setPageAlignment(m_pageId, m_alignment);
         m_ptrSettings->updateContentRect();
         emit reloadRequested();
@@ -275,12 +273,16 @@ namespace page_layout {
                 break;
             case 2:
                 m_alignment.setVertical(Alignment::VORIGINAL);
-                m_alignment.setHorizontal(Alignment::HCENTER);
+                if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
+                    m_alignment.setHorizontal(Alignment::HORIGINAL);
+                } else {
+                    m_alignment.setHorizontal(Alignment::HCENTER);
+                }
                 break;
         }
 
         m_ptrSettings->updateContentRect();
-        enableDisableAlignmentButtons();
+        updateAlignmentButtonsEnabled();
         emit alignmentChanged(m_alignment);
     }
 
@@ -326,8 +328,18 @@ namespace page_layout {
             return;
         }
 
+        bool autoMarginsEnabled = m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
         for (PageId const& page_id : pages) {
-            m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);
+            if (page_id == m_pageId) {
+                continue;
+            }
+
+            if (autoMarginsEnabled) {
+                m_ptrSettings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
+                m_ptrSettings->invalidateContentSize(page_id);
+            } else {
+                m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);
+            }
         }
 
         emit aggregateHardSizeChanged();
@@ -359,7 +371,7 @@ namespace page_layout {
         button->setIcon(linked ? m_chainIcon : m_brokenChainIcon);
     }
 
-    void OptionsWidget::enableDisableAlignmentButtons() {
+    void OptionsWidget::updateAlignmentButtonsEnabled() {
         bool const enabled = alignWithOthersCB->isChecked() && (alignmentMode->currentIndex() == 1);
 
         alignTopLeftBtn->setEnabled(enabled);
@@ -371,6 +383,17 @@ namespace page_layout {
         alignBottomLeftBtn->setEnabled(enabled);
         alignBottomBtn->setEnabled(enabled);
         alignBottomRightBtn->setEnabled(enabled);
+    }
+
+    void OptionsWidget::updateMarginsControlsEnabled() {
+        bool const enabled = !m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
+
+        topMarginSpinBox->setEnabled(enabled);
+        bottomMarginSpinBox->setEnabled(enabled);
+        leftMarginSpinBox->setEnabled(enabled);
+        rightMarginSpinBox->setEnabled(enabled);
+        topBottomLink->setEnabled(enabled);
+        leftRightLink->setEnabled(enabled);
     }
 
     void OptionsWidget::setupUiConnections() {
@@ -396,7 +419,7 @@ namespace page_layout {
         );
         connect(
                 autoMargins, SIGNAL(toggled(bool)),
-                this, SLOT(autoMarginsChanged(bool))
+                this, SLOT(autoMarginsToggled(bool))
         );
         connect(
                 alignmentMode, SIGNAL(currentIndexChanged(int)),
@@ -455,7 +478,7 @@ namespace page_layout {
         );
         disconnect(
                 autoMargins, SIGNAL(toggled(bool)),
-                this, SLOT(autoMarginsChanged(bool))
+                this, SLOT(autoMarginsToggled(bool))
         );
         disconnect(
                 alignmentMode, SIGNAL(currentIndexChanged(int)),

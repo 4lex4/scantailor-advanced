@@ -47,7 +47,7 @@ namespace select_content {
         setMouseTracking(true);
 
         interactionState().setDefaultStatusTip(
-                tr("Use the context menu to enable / disable the content box.")
+                tr("Use the context menu to enable / disable the content box. Keep Shift pressed to drag a box.")
         );
 
         QString const content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
@@ -130,6 +130,46 @@ namespace select_content {
             }
         }
 
+        {
+            m_contentRectArea.setPositionCallback(
+                    boost::bind(&ImageView::contentRectPosition, this)
+            );
+            m_contentRectArea.setMoveRequestCallback(
+                    boost::bind(&ImageView::contentRectMoveRequest, this, _1)
+            );
+            m_contentRectArea.setDragFinishedCallback(
+                    boost::bind(&ImageView::contentRectDragFinished, this)
+            );
+            m_contentRectAreaHandler.setObject(&m_contentRectArea);
+            m_contentRectAreaHandler.setProximityStatusTip(tr("Use left mouse button to move the content box."));
+            m_contentRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
+            Qt::CursorShape cursor = Qt::DragMoveCursor;
+            m_contentRectAreaHandler.setKeyboardModifiers(Qt::ShiftModifier);
+            m_contentRectAreaHandler.setProximityCursor(cursor);
+            m_contentRectAreaHandler.setInteractionCursor(cursor);
+            makeLastFollower(m_contentRectAreaHandler);
+        }
+
+        if (page_rect_enabled) {
+            m_pageRectArea.setPositionCallback(
+                    boost::bind(&ImageView::pageRectPosition, this)
+            );
+            m_pageRectArea.setMoveRequestCallback(
+                    boost::bind(&ImageView::pageRectMoveRequest, this, _1)
+            );
+            m_pageRectArea.setDragFinishedCallback(
+                    boost::bind(&ImageView::pageRectDragFinished, this)
+            );
+            m_pageRectAreaHandler.setObject(&m_pageRectArea);
+            m_pageRectAreaHandler.setProximityStatusTip(tr("Use left mouse button to move the page box."));
+            m_pageRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
+            Qt::CursorShape cursor = Qt::DragMoveCursor;
+            m_pageRectAreaHandler.setKeyboardModifiers(Qt::ShiftModifier);
+            m_pageRectAreaHandler.setProximityCursor(cursor);
+            m_pageRectAreaHandler.setInteractionCursor(cursor);
+            makeLastFollower(m_pageRectAreaHandler);
+        }
+        
         rootInteractionHandler().makeLastFollower(*this);
         rootInteractionHandler().makeLastFollower(m_dragHandler);
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
@@ -386,39 +426,71 @@ namespace select_content {
         }
     }
 
-    void ImageView::keyPressEvent(QKeyEvent* event) {
-        int dx = 0;
-        int dy = 0;
-        switch (event->key()) {
-            case Qt::Key_Up:
-                dy--;
-                break;
-            case Qt::Key_Down:
-                dy++;
-                break;
-            case Qt::Key_Right:
-                dx++;
-                break;
-            case Qt::Key_Left:
-                dx--;
-                break;
-            default:
-                ImageViewBase::keyPressEvent(event);
-                return; // stop processing
-        }
+    QRectF ImageView::contentRectPosition() const {
+        return virtualToWidget().mapRect(m_contentRect);
+    }
 
-        QRectF contentRectInWidget(virtualToWidget().mapRect(m_contentRect));
-        if (dx || dy) {
-            contentRectInWidget.translate(dx, dy);
-            forceInsideImage(contentRectInWidget, TOP | BOTTOM | LEFT | RIGHT);
+    void ImageView::contentRectMoveRequest(QPolygonF const& poly_pos) {
+        QRectF contentRectInWidget(poly_pos.boundingRect());
+
+        const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
+        if (contentRectInWidget.left() < image_rect.left()) {
+            contentRectInWidget.translate(image_rect.left() - contentRectInWidget.left(), 0);
+        }
+        if (contentRectInWidget.right() > image_rect.right()) {
+            contentRectInWidget.translate(image_rect.right() - contentRectInWidget.right(), 0);
+        }
+        if (contentRectInWidget.top() < image_rect.top()) {
+            contentRectInWidget.translate(0, image_rect.top() - contentRectInWidget.top());
+        }
+        if (contentRectInWidget.bottom() > image_rect.bottom()) {
+            contentRectInWidget.translate(0, image_rect.bottom() - contentRectInWidget.bottom());
         }
 
         m_contentRect = widgetToVirtual().mapRect(contentRectInWidget);
 
+        forcePageRectDescribeContent();
+
         update();
+    }
 
-        emit manualContentRectSet(m_contentRect);
+    QRectF ImageView::pageRectPosition() const {
+        return virtualToWidget().mapRect(m_pageRect);
+    }
 
-        ImageViewBase::keyPressEvent(event);
+    void ImageView::pageRectMoveRequest(QPolygonF const& poly_pos) {
+        QRectF pageRectInWidget(poly_pos.boundingRect());
+
+        const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
+        if (pageRectInWidget.left() < image_rect.left()) {
+            pageRectInWidget.translate(image_rect.left() - pageRectInWidget.left(), 0);
+        }
+        if (pageRectInWidget.right() > image_rect.right()) {
+            pageRectInWidget.translate(image_rect.right() - pageRectInWidget.right(), 0);
+        }
+        if (pageRectInWidget.top() < image_rect.top()) {
+            pageRectInWidget.translate(0, image_rect.top() - pageRectInWidget.top());
+        }
+        if (pageRectInWidget.bottom() > image_rect.bottom()) {
+            pageRectInWidget.translate(0, image_rect.bottom() - pageRectInWidget.bottom());
+        }
+
+        const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
+        if (pageRectInWidget.left() > content_rect.left()) {
+            pageRectInWidget.translate(content_rect.left() - pageRectInWidget.left(), 0);
+        }
+        if (pageRectInWidget.right() < content_rect.right()) {
+            pageRectInWidget.translate(content_rect.right() - pageRectInWidget.right(), 0);
+        }
+        if (pageRectInWidget.top() > content_rect.top()) {
+            pageRectInWidget.translate(0, content_rect.top() - pageRectInWidget.top());
+        }
+        if (pageRectInWidget.bottom() < content_rect.bottom()) {
+            pageRectInWidget.translate(0, content_rect.bottom() - pageRectInWidget.bottom());
+        }
+
+        m_pageRect = widgetToVirtual().mapRect(pageRectInWidget);
+
+        update();
     }
 }  // namespace select_content

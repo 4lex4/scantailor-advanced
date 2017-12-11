@@ -28,6 +28,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QString>
+#include <interaction/DraggablePolygon.h>
 
 class ImageTransformation;
 class QMenu;
@@ -59,10 +60,6 @@ namespace select_content {
         void createContentBox();
 
         void removeContentBox();
-
-    protected:
-
-        void keyPressEvent(QKeyEvent* event) override;
 
     private:
         enum Edge {
@@ -100,17 +97,31 @@ namespace select_content {
 
         void forcePageRectDescribeContent();
 
+        QRectF contentRectPosition() const;
+
+        void contentRectMoveRequest(QPolygonF const& pos);
+
+        QRectF pageRectPosition() const;
+
+        void pageRectMoveRequest(QPolygonF const& pos);
+
         DraggablePoint m_contentRectCorners[4];
         ObjectDragHandler m_contentRectCornerHandlers[4];
 
         DraggableLineSegment m_contentRectEdges[4];
         ObjectDragHandler m_contentRectEdgeHandlers[4];
 
+        DraggablePolygon m_contentRectArea;
+        ObjectDragHandler m_contentRectAreaHandler;
+
         DraggablePoint m_pageRectCorners[4];
         ObjectDragHandler m_pageRectCornerHandlers[4];
 
         DraggableLineSegment m_pageRectEdges[4];
         ObjectDragHandler m_pageRectEdgeHandlers[4];
+
+        DraggablePolygon m_pageRectArea;
+        ObjectDragHandler m_pageRectAreaHandler;
 
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;

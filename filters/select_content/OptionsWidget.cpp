@@ -254,6 +254,10 @@ namespace select_content {
         );
 
         for (PageId const& page_id : pages) {
+            if (m_pageId == page_id) {
+                continue;
+            }
+
             Params new_params(params);
 
             std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);

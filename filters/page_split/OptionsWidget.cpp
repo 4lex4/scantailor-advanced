@@ -237,6 +237,10 @@ namespace page_split {
 
         if (layout_type != AUTO_LAYOUT_TYPE) {
             for (PageId const& page_id : pages) {
+                if (m_pageId == page_id) {
+                    continue;
+                }
+
                 Settings::UpdateAction update_params;
                 update_params.setLayoutType(layout_type);
                 if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
@@ -262,6 +266,10 @@ namespace page_split {
             }
         } else {
             for (PageId const& page_id : pages) {
+                if (m_pageId == page_id) {
+                    continue;
+                }
+
                 Settings::UpdateAction update_params;
                 update_params.setLayoutType(layout_type);
                 m_ptrSettings->updatePage(page_id.imageId(), update_params);

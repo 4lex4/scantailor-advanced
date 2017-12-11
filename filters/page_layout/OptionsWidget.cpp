@@ -352,6 +352,10 @@ namespace page_layout {
         }
 
         for (PageId const& page_id : pages) {
+            if (page_id == m_pageId) {
+                continue;
+            }
+
             m_ptrSettings->setPageAlignment(page_id, m_alignment);
         }
 

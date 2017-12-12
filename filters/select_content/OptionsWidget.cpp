@@ -206,9 +206,17 @@ namespace select_content {
 
     void OptionsWidget::commitCurrentParams() {
         Dependencies deps(m_uiData.dependencies());
+        // we need recalculate the boxes on switching to auto mode or if content box disabled
         if ((!m_uiData.isContentDetectionEnabled() || m_uiData.contentDetectionMode() == MODE_AUTO)
-            || (!m_uiData.isPageDetectionEnabled() || m_uiData.pageDetectionMode() == MODE_AUTO)) {
+            || (m_uiData.isPageDetectionEnabled() && m_uiData.pageDetectionMode() == MODE_AUTO)) {
             deps.invalidate();
+        }
+        // if page detection has been disabled its recalculation required
+        if (!m_uiData.isPageDetectionEnabled()) {
+            const std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(m_pageId);
+            if ((old_params != nullptr) && old_params->isPageDetectionEnabled()) {
+                deps.invalidate();
+            }
         }
 
         Params params(
@@ -241,8 +249,9 @@ namespace select_content {
         }
 
         Dependencies deps(m_uiData.dependencies());
+        // we need recalculate the boxes on switching to auto mode or if content box disabled
         if ((!m_uiData.isContentDetectionEnabled() || m_uiData.contentDetectionMode() == MODE_AUTO)
-            || (!m_uiData.isPageDetectionEnabled() || m_uiData.pageDetectionMode() == MODE_AUTO)) {
+            || (m_uiData.isPageDetectionEnabled() && m_uiData.pageDetectionMode() == MODE_AUTO)) {
             deps.invalidate();
         }
 
@@ -261,15 +270,23 @@ namespace select_content {
             Params new_params(params);
 
             std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
-            if (old_params.get()) {
+            if (old_params != nullptr) {
                 if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_MANUAL)) {
                     if (!apply_content_box) {
                         new_params.setContentRect(old_params->contentRect());
                         new_params.setContentSizeMM(old_params->contentSizeMM());
                     }
                 }
-                if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
-                    if (!apply_page_box) {
+
+                if (!new_params.isPageDetectionEnabled() || (new_params.pageDetectionMode() == MODE_MANUAL)) {
+                    // if page detection has been disabled its recalculation required
+                    if (!new_params.isPageDetectionEnabled() && old_params->isPageDetectionEnabled()) {
+                        Dependencies new_deps(new_params.dependencies());
+                        new_deps.invalidate();
+                        new_params.setDependencies(new_deps);
+                    }
+
+                    if (new_params.isPageDetectionEnabled() && !apply_page_box) {
                         new_params.setPageRect(old_params->pageRect());
                     }
                 }

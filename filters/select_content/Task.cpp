@@ -98,44 +98,54 @@ namespace select_content {
             QRectF page_rect(data.xform().resultingRect());
             QRectF content_rect(page_rect);
 
-            QRectF corrected_page_rect(new_params.pageRect());
-            if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)) {
-                const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
-                const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
-                corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
-                                              (new_page_rect.height() - old_page_rect.height()) / 2);
-                corrected_page_rect = corrected_page_rect.intersected(data.xform().resultingRect());
-            }
-
             if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_AUTO)) {
                 page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
                                                     m_ptrSettings->pageDetectionBox(),
                                                     m_ptrSettings->pageDetectionTolerance(),
                                                     m_ptrDbg.get());
-            } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)
-                       && corrected_page_rect.isValid()) {
-                page_rect = corrected_page_rect;
+            } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
+                // shifting page rect for skewed pages correcting
+                QRectF corrected_page_rect(new_params.pageRect());
+                if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)) {
+                    const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                    const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                    corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                                  (new_page_rect.height() - old_page_rect.height()) / 2);
+                    // we don't want the page box to be out of the page bounds so use intersecting
+                    corrected_page_rect = corrected_page_rect.intersected(data.xform().resultingRect());
+                }
+
+                if (corrected_page_rect.isValid()) {
+                    page_rect = corrected_page_rect;
+                } else {
+                    page_rect = data.xform().resultingRect();
+                }
             } else {
                 page_rect = data.xform().resultingRect();
             }
 
-            QRectF corrected_content_rect(new_params.contentRect());
-            if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)) {
-                const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
-                const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
-                corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
-                                                 (new_page_rect.height() - old_page_rect.height()) / 2);
-                corrected_content_rect = corrected_content_rect.intersected(data.xform().resultingRect());
-            }
-            
             if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_AUTO)) {
                 content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
-            } else if ((new_params.isContentDetectionEnabled()
-                        && (new_params.contentDetectionMode() == MODE_MANUAL)
-                        && corrected_content_rect.isValid())
+            } else if ((new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_MANUAL))
                        || new_params.contentRect().isEmpty()) {
-                // we don't want the content box to be out of the page bounds so use intersecting
-                content_rect = corrected_content_rect;
+                if (!new_params.contentRect().isEmpty()) {
+                    // shifting content rect for skewed pages correcting
+                    QRectF corrected_content_rect(new_params.contentRect());
+                    if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)) {
+                        const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                        const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                        corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                                         (new_page_rect.height() - old_page_rect.height()) / 2);
+                        // we don't want the content box to be out of the page box so use intersecting
+                        corrected_content_rect = corrected_content_rect.intersected(page_rect);
+                    }
+
+                    if (corrected_content_rect.isValid()) {
+                        content_rect = corrected_content_rect;
+                    } else {
+                        content_rect = page_rect;
+                    }
+                }
             } else {
                 content_rect = page_rect;
             }

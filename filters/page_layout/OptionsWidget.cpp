@@ -328,14 +328,14 @@ namespace page_layout {
             return;
         }
 
-        bool autoMarginsEnabled = m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
+        const bool autoMarginsEnabled = m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
         for (PageId const& page_id : pages) {
             if (page_id == m_pageId) {
                 continue;
             }
 
+            m_ptrSettings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
             if (autoMarginsEnabled) {
-                m_ptrSettings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
                 m_ptrSettings->invalidateContentSize(page_id);
             } else {
                 m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);

@@ -224,7 +224,7 @@ namespace select_content {
         painter.setRenderHints(QPainter::Antialiasing, true);
 
         if (m_pageRectEnabled) {
-            QPen pen(QColor(0xee, 0xee, 0x00));
+            QPen pen(QColor(0xff, 0x7f, 0x00));
             pen.setWidthF(1.0);
             pen.setCosmetic(true);
             painter.setPen(pen);

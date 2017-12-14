@@ -46,7 +46,7 @@ namespace select_content {
         painter.setRenderHint(QPainter::Antialiasing, false);
 
         if (m_pageRectEnabled) {
-            QPen pen(QColor(0xee, 0xee, 0x00));
+            QPen pen(QColor(0xff, 0x7f, 0x00));
             pen.setWidth(1);
             pen.setCosmetic(true);
             painter.setPen(pen);

@@ -47,6 +47,13 @@ public:
     > VertexDragInteractionCreator;
 
     typedef boost::function<
+            InteractionHandler*(
+                    InteractionState& interaction,
+                    EditableSpline::Ptr const& spline
+            )
+    > ZoneDragInteractionCreator;
+
+    typedef boost::function<
             InteractionHandler*(InteractionState& interaction)
     > ContextMenuInteractionCreator;
 
@@ -92,6 +99,15 @@ public:
         m_vertexDragInteractionCreator = creator;
     }
 
+    virtual InteractionHandler* createZoneDragInteraction(InteractionState& interaction,
+                                                          EditableSpline::Ptr const& spline) {
+        return m_zoneDragInteractionCreator(interaction, spline);
+    }
+
+    void setZoneDragInteractionCreator(ZoneDragInteractionCreator const& creator) {
+        m_zoneDragInteractionCreator = creator;
+    }
+
     /**
      * \note This function may refuse to create a context menu interaction by returning null.
      */
@@ -130,6 +146,12 @@ private:
                                                        SplineVertex::Ptr const& vertex);
 
     /**
+     * Creates an instance of ZoneDragInteraction.
+     */
+    InteractionHandler* createStdZoneDragInteraction(InteractionState& interaction,
+                                                     EditableSpline::Ptr const& spline);
+
+    /**
      * Creates an instance of ZoneContextMenuInteraction.  May return null.
      */
     InteractionHandler* createStdContextMenuInteraction(InteractionState& interaction);
@@ -142,6 +164,7 @@ private:
     DefaultInteractionCreator m_defaultInteractionCreator;
     ZoneCreationInteractionCreator m_zoneCreationInteractionCreator;
     VertexDragInteractionCreator m_vertexDragInteractionCreator;
+    ZoneDragInteractionCreator m_zoneDragInteractionCreator;
     ContextMenuInteractionCreator m_contextMenuInteractionCreator;
     ShowPropertiesCommand m_showPropertiesCommand;
 };

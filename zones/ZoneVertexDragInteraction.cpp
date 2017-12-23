@@ -124,8 +124,8 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
         QPointF prev = to_screen.map(m_ptrVertex->prev(SplineVertex::LOOP)->point());
         QPointF next = to_screen.map(m_ptrVertex->next(SplineVertex::LOOP)->point());
 
-        int dx = next.x() - prev.x();
-        int dy = next.y() - prev.y();
+        qreal dx = next.x() - prev.x();
+        qreal dy = next.y() - prev.y();
 
         if (((dx > 0) && (dy > 0)) || ((dx < 0) && (dy < 0))) {
             prev.setX(current.x());

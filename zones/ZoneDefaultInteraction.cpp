@@ -19,6 +19,7 @@
 #include "ZoneDefaultInteraction.h"
 #include "ZoneInteractionContext.h"
 #include "ImageViewBase.h"
+#include "SerializableSpline.h"
 #include <QPainter>
 #include <QMouseEvent>
 
@@ -29,9 +30,14 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     makeLastFollower(m_dragHandler);
     m_dragHandler.makeFirstFollower(m_dragWatcher);
 
-    m_vertexProximity.setProximityStatusTip(tr("Drag the vertex."));
+    m_vertexProximity.setProximityStatusTip(tr("Drag the vertex. Hold Ctrl to force the vertex angle be right."));
     m_segmentProximity.setProximityStatusTip(tr("Click to create a new vertex here."));
-    m_zoneAreaProximity.setProximityStatusTip(tr("Right click to edit zone properties."));
+    m_zoneAreaProximity.setProximityStatusTip(
+            tr("Right click to edit zone properties. Hold Shift to drag the zone. Hold Shift+Ctrl to copy the zone."));
+    m_zoneAreaDragProximity.setProximityStatusTip("Hold left mouse button to drag the zone.");
+    m_zoneAreaDragProximity.setProximityCursor(Qt::DragMoveCursor);
+    m_zoneAreaDragCopyProximity.setProximityStatusTip("Hold left mouse button to copy and drag the zone.");
+    m_zoneAreaDragCopyProximity.setProximityCursor(Qt::DragCopyCursor);
     m_rContext.imageView().interactionState().setDefaultStatusTip(
             tr("Click to start creating a new picture zone.")
     );
@@ -119,6 +125,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
     m_ptrNearestVertexSpline.reset();
     m_nearestSegment = SplineSegment();
     m_ptrNearestSegmentSpline.reset();
+    m_ptrCursorOverSpline.reset();
 
     Proximity best_vertex_proximity;
     Proximity best_segment_proximity;
@@ -128,11 +135,15 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
     for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
         EditableSpline::Ptr const& spline = zone.spline();
 
-        if (!has_zone_under_mouse) {
+        {
             QPainterPath path;
             path.setFillRule(Qt::WindingFill);
             path.addPolygon(spline->toPolygon());
-            has_zone_under_mouse = path.contains(image_mouse_pos);
+            if (path.contains(image_mouse_pos)) {
+                m_ptrCursorOverSpline = spline;
+
+                has_zone_under_mouse = true;
+            }
         }
 
         // Process vertices.
@@ -160,12 +171,17 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
         }
     }
 
-    interaction.updateProximity(m_vertexProximity, best_vertex_proximity, 1);
-    interaction.updateProximity(m_segmentProximity, best_segment_proximity, 0);
+    interaction.updateProximity(m_vertexProximity, best_vertex_proximity, 2);
+    interaction.updateProximity(m_segmentProximity, best_segment_proximity, 1);
 
     if (has_zone_under_mouse) {
         Proximity const zone_area_proximity(std::min(best_vertex_proximity, best_segment_proximity));
         interaction.updateProximity(m_zoneAreaProximity, zone_area_proximity, -1, zone_area_proximity);
+        if (m_activeKeyboardModifiers == Qt::ShiftModifier) {
+            interaction.updateProximity(m_zoneAreaDragProximity, Proximity::fromSqDist(0), 0);
+        } else if (m_activeKeyboardModifiers == (Qt::ShiftModifier | Qt::ControlModifier)) {
+            interaction.updateProximity(m_zoneAreaDragCopyProximity, Proximity::fromSqDist(0), 0);
+        }
     }
 } // ZoneDefaultInteraction::onProximityUpdate
 
@@ -195,6 +211,24 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
         );
         delete this;
         event->accept();
+    } else if (interaction.proximityLeader(m_zoneAreaDragProximity)) {
+        makePeerPreceeder(
+                *m_rContext.createZoneDragInteraction(
+                        interaction, m_ptrCursorOverSpline
+                )
+        );
+        delete this;
+        event->accept();
+    } else if (interaction.proximityLeader(m_zoneAreaDragCopyProximity)) {
+        EditableSpline::Ptr new_spline(new EditableSpline(SerializableSpline(*m_ptrCursorOverSpline)));
+        m_rContext.zones().addZone(new_spline, *m_rContext.zones().propertiesFor(m_ptrCursorOverSpline));
+        makePeerPreceeder(
+                *m_rContext.createZoneDragInteraction(
+                        interaction, new_spline
+                )
+        );
+        delete this;
+        event->accept();
     }
 }
 
@@ -220,6 +254,14 @@ void ZoneDefaultInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSta
 
     m_screenMousePos = to_screen.map(event->pos() + QPointF(0.5, 0.5));
     m_rContext.imageView().update();
+}
+
+void ZoneDefaultInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
+    m_activeKeyboardModifiers = event->modifiers();
+}
+
+void ZoneDefaultInteraction::onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
+    m_activeKeyboardModifiers = event->modifiers();
 }
 
 void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {

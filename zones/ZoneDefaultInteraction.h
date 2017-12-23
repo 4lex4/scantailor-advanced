@@ -52,6 +52,10 @@ protected:
 
     virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
 
+    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+
+    virtual void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction);
+
     virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
 
 private:
@@ -60,7 +64,10 @@ private:
     InteractionState::Captor m_vertexProximity;
     InteractionState::Captor m_segmentProximity;
     InteractionState::Captor m_zoneAreaProximity;
+    InteractionState::Captor m_zoneAreaDragProximity;
+    InteractionState::Captor m_zoneAreaDragCopyProximity;
     QPointF m_screenMousePos;
+    Qt::KeyboardModifiers m_activeKeyboardModifiers;
 
     /**
      * We want our own drag handler, to be able to monitor it
@@ -84,6 +91,7 @@ private:
     SplineSegment m_nearestSegment;
     EditableSpline::Ptr m_ptrNearestSegmentSpline;
     QPointF m_screenPointOnSegment;
+    EditableSpline::Ptr m_ptrCursorOverSpline;
 };
 
 

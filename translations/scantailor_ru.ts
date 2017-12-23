@@ -1768,7 +1768,7 @@ You should remove them from the project.</source>
     <message>
         <location line="+9"/>
         <source>Coef:</source>
-        <translation>Коеф.:</translation>
+        <translation>Коэф.:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2129,7 +2129,7 @@ You should remove them from the project.</source>
     <message>
         <location line="+13"/>
         <source>Coeff:</source>
-        <translation>Коеф.:</translation>
+        <translation>Коэф.:</translation>
     </message>
     <message>
         <location line="+7"/>

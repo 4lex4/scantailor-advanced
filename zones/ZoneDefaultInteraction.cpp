@@ -30,7 +30,7 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     makeLastFollower(m_dragHandler);
     m_dragHandler.makeFirstFollower(m_dragWatcher);
 
-    m_vertexProximity.setProximityStatusTip(tr("Drag the vertex. Hold Ctrl to force the vertex angle be right."));
+    m_vertexProximity.setProximityStatusTip(tr("Drag the vertex. Hold Ctrl to make the vertex angle right."));
     m_segmentProximity.setProximityStatusTip(tr("Click to create a new vertex here."));
     m_zoneAreaProximity.setProximityStatusTip(
             tr("Right click to edit zone properties. Hold Shift to drag the zone. Hold Shift+Ctrl to copy the zone."));

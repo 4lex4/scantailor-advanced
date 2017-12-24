@@ -114,32 +114,38 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
     QTransform const from_screen(m_rContext.imageView().widgetToImage());
     m_ptrVertex->setPoint(from_screen.map(event->pos() + QPointF(0.5, 0.5) + m_dragOffset));
 
+    checkProximity(interaction);
 
-    Qt::KeyboardModifiers mask = event->modifiers();
-
+    Qt::KeyboardModifiers const mask = event->modifiers();
     if (mask == Qt::ControlModifier) {
         QTransform const to_screen(m_rContext.imageView().imageToWidget());
 
-        QPointF current = event->pos() + QPointF(0.5, 0.5) + m_dragOffset;
+        QPointF const current = to_screen.map(m_ptrVertex->point());
         QPointF prev = to_screen.map(m_ptrVertex->prev(SplineVertex::LOOP)->point());
         QPointF next = to_screen.map(m_ptrVertex->next(SplineVertex::LOOP)->point());
 
-        qreal dx = next.x() - prev.x();
-        qreal dy = next.y() - prev.y();
+        if (!((current == prev) && (current == next))) {
+            double prev_angle_cos = abs((prev.x() - current.x())
+                                       / sqrt(pow((prev.y() - current.y()), 2) + pow((prev.x() - current.x()), 2)));
+            double next_angle_cos = abs((next.x() - current.x())
+                                       / sqrt(pow((next.y() - current.y()), 2) + pow((next.x() - current.x()), 2)));
 
-        if (((dx > 0) && (dy > 0)) || ((dx < 0) && (dy < 0))) {
-            prev.setX(current.x());
-            next.setY(current.y());
-        } else {
-            next.setX(current.x());
-            prev.setY(current.y());
+
+            if ((prev_angle_cos < next_angle_cos)
+                || (isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
+                || (isnan(next_angle_cos) && (prev_angle_cos < (1.0 / sqrt(2))))) {
+                prev.setX(current.x());
+                next.setY(current.y());
+            } else {
+                next.setX(current.x());
+                prev.setY(current.y());
+            }
+
+            m_ptrVertex->prev(SplineVertex::LOOP)->setPoint(from_screen.map(prev));
+            m_ptrVertex->next(SplineVertex::LOOP)->setPoint(from_screen.map(next));
         }
-
-        m_ptrVertex->prev(SplineVertex::LOOP)->setPoint(from_screen.map(prev));
-        m_ptrVertex->next(SplineVertex::LOOP)->setPoint(from_screen.map(next));
     }
 
-    checkProximity(interaction);
     m_rContext.imageView().update();
 }  // ZoneVertexDragInteraction::onMouseMoveEvent
 

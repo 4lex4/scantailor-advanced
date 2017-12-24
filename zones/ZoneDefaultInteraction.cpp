@@ -125,7 +125,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
     m_ptrNearestVertexSpline.reset();
     m_nearestSegment = SplineSegment();
     m_ptrNearestSegmentSpline.reset();
-    m_ptrCursorOverSpline.reset();
+    m_ptrUnderCursorSpline.reset();
 
     Proximity best_vertex_proximity;
     Proximity best_segment_proximity;
@@ -140,7 +140,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
             path.setFillRule(Qt::WindingFill);
             path.addPolygon(spline->toPolygon());
             if (path.contains(image_mouse_pos)) {
-                m_ptrCursorOverSpline = spline;
+                m_ptrUnderCursorSpline = spline;
 
                 has_zone_under_mouse = true;
             }
@@ -214,14 +214,14 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
     } else if (interaction.proximityLeader(m_zoneAreaDragProximity)) {
         makePeerPreceeder(
                 *m_rContext.createZoneDragInteraction(
-                        interaction, m_ptrCursorOverSpline
+                        interaction, m_ptrUnderCursorSpline
                 )
         );
         delete this;
         event->accept();
     } else if (interaction.proximityLeader(m_zoneAreaDragCopyProximity)) {
-        EditableSpline::Ptr new_spline(new EditableSpline(SerializableSpline(*m_ptrCursorOverSpline)));
-        m_rContext.zones().addZone(new_spline, *m_rContext.zones().propertiesFor(m_ptrCursorOverSpline));
+        EditableSpline::Ptr new_spline(new EditableSpline(SerializableSpline(*m_ptrUnderCursorSpline)));
+        m_rContext.zones().addZone(new_spline, *m_rContext.zones().propertiesFor(m_ptrUnderCursorSpline));
         makePeerPreceeder(
                 *m_rContext.createZoneDragInteraction(
                         interaction, new_spline
@@ -286,8 +286,8 @@ void ZoneDefaultInteraction::onKeyReleaseEvent(QKeyEvent* event, InteractionStat
     m_activeKeyboardModifiers = event->modifiers();
 
     if (event->key() == Qt::Key_Delete) {
-        if (m_ptrCursorOverSpline != nullptr) {
-            m_rContext.zones().removeZone(m_ptrCursorOverSpline);
+        if (m_ptrUnderCursorSpline != nullptr) {
+            m_rContext.zones().removeZone(m_ptrUnderCursorSpline);
             m_rContext.zones().commit();
         }
 

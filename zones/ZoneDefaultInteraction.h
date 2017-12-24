@@ -91,7 +91,7 @@ private:
     SplineSegment m_nearestSegment;
     EditableSpline::Ptr m_ptrNearestSegmentSpline;
     QPointF m_screenPointOnSegment;
-    EditableSpline::Ptr m_ptrCursorOverSpline;
+    EditableSpline::Ptr m_ptrUnderCursorSpline;
 };
 
 

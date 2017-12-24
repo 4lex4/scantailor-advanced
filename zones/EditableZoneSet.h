@@ -60,7 +60,7 @@ public:
 
 
     class const_iterator : public boost::iterator_facade<
-            const_iterator, Zone const, boost::forward_traversal_tag
+            const_iterator, Zone const, boost::bidirectional_traversal_tag
     > {
         friend class EditableZoneSet;
 
@@ -72,6 +72,11 @@ public:
 
         void increment() {
             ++m_iter;
+            m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
+        }
+
+        void decrement() {
+            --m_iter;
             m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
         }
 

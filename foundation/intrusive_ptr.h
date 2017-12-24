@@ -33,7 +33,7 @@ private:
     typedef int BooleanTestHelper::* BooleanTest;
 public:
     intrusive_ptr()
-            : m_pObj(0) {
+            : m_pObj(nullptr) {
     }
 
     explicit intrusive_ptr(T* obj);

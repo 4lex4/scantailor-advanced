@@ -33,13 +33,13 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     m_vertexProximity.setProximityStatusTip(tr("Drag the vertex. Hold Ctrl to make the vertex angle right."));
     m_segmentProximity.setProximityStatusTip(tr("Click to create a new vertex here."));
     m_zoneAreaProximity.setProximityStatusTip(
-            tr("Right click to edit zone properties. Hold Shift to drag the zone. Hold Shift+Ctrl to copy the zone."));
+            tr("Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone."));
     m_zoneAreaDragProximity.setProximityStatusTip("Hold left mouse button to drag the zone.");
     m_zoneAreaDragProximity.setProximityCursor(Qt::DragMoveCursor);
     m_zoneAreaDragCopyProximity.setProximityStatusTip("Hold left mouse button to copy and drag the zone.");
     m_zoneAreaDragCopyProximity.setProximityCursor(Qt::DragCopyCursor);
     m_rContext.imageView().interactionState().setDefaultStatusTip(
-            tr("Click to start creating a new picture zone.")
+            tr("Click to start creating a new picture zone. Use Ctrl+Alt+Click to copy the latest created zone.")
     );
 }
 
@@ -244,6 +244,28 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
         return;
     }
 
+    if (m_activeKeyboardModifiers == (Qt::ControlModifier | Qt::AltModifier)) {
+        QTransform const from_screen(m_rContext.imageView().widgetToImage());
+
+        EditableZoneSet::const_iterator latest_zone = --m_rContext.zones().end();
+        if (latest_zone != m_rContext.zones().end()) {
+            SerializableSpline serializable_spline(*(*latest_zone).spline());
+
+            QPointF const old_center = serializable_spline.toPolygon().boundingRect().center();
+            QPointF const new_center = from_screen.map(event->pos() + QPointF(0.5, 0.5));
+            QPointF const shift = new_center - old_center;
+
+            serializable_spline = serializable_spline.transformed(QTransform().translate(shift.x(), shift.y()));
+
+            EditableSpline::Ptr new_spline(new EditableSpline(serializable_spline));
+            m_rContext.zones().addZone(new_spline, *(*latest_zone).properties());
+            m_rContext.zones().commit();
+        }
+
+        m_rContext.imageView().update();
+        return;
+    }
+
     makePeerPreceeder(*m_rContext.createZoneCreationInteraction(interaction));
     delete this;
     event->accept();
@@ -262,6 +284,15 @@ void ZoneDefaultInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState&
 
 void ZoneDefaultInteraction::onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
     m_activeKeyboardModifiers = event->modifiers();
+
+    if (event->key() == Qt::Key_Delete) {
+        if (m_ptrCursorOverSpline != nullptr) {
+            m_rContext.zones().removeZone(m_ptrCursorOverSpline);
+            m_rContext.zones().commit();
+        }
+
+        m_rContext.imageView().update();
+    }
 }
 
 void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {

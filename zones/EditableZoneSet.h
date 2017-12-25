@@ -27,12 +27,12 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <map>
+#include <unordered_map>
 
 class EditableZoneSet : public QObject {
 Q_OBJECT
 private:
-    typedef std::map<EditableSpline::Ptr, intrusive_ptr<PropertySet>> Map;
+    typedef std::unordered_map<EditableSpline::Ptr, intrusive_ptr<PropertySet>, EditableSpline::Ptr::hash> Map;
 public:
     class const_iterator;
 

@@ -19,6 +19,8 @@
 #ifndef intrusive_ptr_H_
 #define intrusive_ptr_H_
 
+#include <cstddef>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -31,6 +33,10 @@ private:
     };
 
     typedef int BooleanTestHelper::* BooleanTest;
+
+public:
+    class hash;
+
 public:
     intrusive_ptr()
             : m_pObj(nullptr) {
@@ -89,7 +95,6 @@ public:
 private:
     T* m_pObj;
 };
-
 
 /**
  * \brief Default implementation of intrusive referencing.
@@ -201,5 +206,12 @@ INTRUSIVE_PTR_OP(>)
 INTRUSIVE_PTR_OP(<=)
 
 INTRUSIVE_PTR_OP(>=)
+
+template<typename T>
+struct intrusive_ptr<T>::hash {
+    std::size_t operator()(const intrusive_ptr<T>& __p) const noexcept {
+        return reinterpret_cast<std::size_t>(__p.get());
+    }
+};
 
 #endif  // ifndef intrusive_ptr_H_

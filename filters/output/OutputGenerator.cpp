@@ -1980,8 +1980,8 @@ namespace output {
             return BinaryImage(image);
         }
 
-        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        BlackWhiteOptions::BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
+        const BlackWhiteOptions& blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        const BlackWhiteOptions::BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
 
         QImage imageToBinarize = image;
 
@@ -2049,9 +2049,7 @@ namespace output {
         path.addPolygon(crop_area);
 
         if (path.contains(image.rect()) && !mask) {
-            BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(image));
-
-            return BinaryImage(image, adjustThreshold(bw_thresh));
+            return binarize(image);
         } else {
             BinaryImage modified_mask(image.size(), BLACK);
             PolygonRasterizer::fillExcept(modified_mask, WHITE, crop_area, Qt::WindingFill);

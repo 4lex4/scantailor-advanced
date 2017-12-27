@@ -61,6 +61,10 @@ void DragHandler::onMouseReleaseEvent(QMouseEvent* event, InteractionState& inte
 }
 
 void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
+    if (!((event->modifiers() == Qt::NoModifier) || (event->modifiers() & Qt::ShiftModifier))) {
+        return;
+    }
+
     if (interaction.capturedBy(m_interaction)) {
         QPoint movement(event->pos());
         movement -= m_lastMousePos;

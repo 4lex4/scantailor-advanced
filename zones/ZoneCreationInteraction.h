@@ -46,6 +46,8 @@ protected:
 
     virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
 
+    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+
     virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
 
     virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
@@ -83,6 +85,7 @@ private:
     bool m_rectangularZoneType;
     QPointF m_nextVertexImagePos_mid1;
     QPointF m_nextVertexImagePos_mid2;
+    bool m_lassoMode;
 };
 
 

@@ -40,6 +40,8 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
     m_nextVertexImagePos_mid2 = m_nextVertexImagePos;
     m_rectangularZoneType = false;
 
+    m_lassoMode = false;
+
     makeLastFollower(m_dragHandler);
     m_dragHandler.makeFirstFollower(m_dragWatcher);
 
@@ -180,13 +182,26 @@ void ZoneCreationInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState
     }
 }
 
+void ZoneCreationInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
+    if (event->button() != Qt::LeftButton) {
+        return;
+    }
+
+    if (!m_rectangularZoneType && (event->modifiers() == Qt::AltModifier)) {
+        m_lassoMode = true;
+    }
+
+    event->accept();
+}
+
 void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() != Qt::LeftButton) {
         return;
     }
-    if (m_dragWatcher.haveSignificantDrag()) {
+    if (m_dragWatcher.haveSignificantDrag() && !m_lassoMode) {
         return;
     }
+    m_lassoMode = false;
 
     QTransform const to_screen(m_rContext.imageView().imageToWidget());
     QTransform const from_screen(m_rContext.imageView().widgetToImage());
@@ -257,6 +272,7 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
 
     if (!m_rectangularZoneType && (event->modifiers() == Qt::ControlModifier)) {
         m_rectangularZoneType = true;
+        m_lassoMode = false;
         updateStatusTip();
     }
 
@@ -290,6 +306,14 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
         }
     }
 
+    if (m_lassoMode) {
+        Proximity min_distance = Proximity::fromDist(10);
+        if ((Proximity(last, screen_mouse_pos) > min_distance)
+            && (Proximity(first, screen_mouse_pos) > min_distance)) {
+            m_ptrSpline->appendVertex(m_nextVertexImagePos);
+        }
+    }
+
     m_rContext.imageView().update();
 }  // ZoneCreationInteraction::onMouseMoveEvent
 
@@ -308,7 +332,7 @@ void ZoneCreationInteraction::updateStatusTip() {
                 tip = tr("Connect first and last points to finish this zone.  ESC to cancel.");
             }
         } else {
-            tip = tr("Zones need to have at least 3 points. Hold Ctrl to create a rectangular zone.  ESC to cancel.");
+            tip = tr("Hold Ctrl to create a rectangular zone, Alt+LMB to switch to lasso mode.  ESC to cancel.");
         }
     }
 

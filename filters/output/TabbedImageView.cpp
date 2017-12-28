@@ -18,14 +18,15 @@
 
 #include <filters/output/TabbedImageView.h>
 #include <ImageViewBase.h>
-#include <functional>
 #include "DespeckleView.h"
+#include <QKeyEvent>
 
 namespace output {
     TabbedImageView::TabbedImageView(QWidget* parent)
             : QTabWidget(parent),
               m_prevImageViewTabIndex(0) {
         connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
+        setStatusTip(tr("Use Ctrl+1..5 to switch the tabs."));
     }
 
     void TabbedImageView::addTab(QWidget* widget, QString const& label, ImageViewTab tab) {
@@ -161,5 +162,35 @@ namespace output {
         }
 
         return nullptr;
+    }
+
+    void TabbedImageView::keyReleaseEvent(QKeyEvent* event) {
+        event->setAccepted(false);
+        if (event->modifiers() != Qt::ControlModifier) {
+            return;
+        }
+
+        switch (event->key()) {
+            case Qt::Key_1:
+                setCurrentIndex(0);
+                event->accept();
+                break;
+            case Qt::Key_2:
+                setCurrentIndex(1);
+                event->accept();
+                break;
+            case Qt::Key_3:
+                setCurrentIndex(2);
+                event->accept();
+                break;
+            case Qt::Key_4:
+                setCurrentIndex(3);
+                event->accept();
+                break;
+            case Qt::Key_5:
+                setCurrentIndex(4);
+                event->accept();
+                break;
+        }
     }
 }  // namespace output

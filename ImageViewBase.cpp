@@ -492,7 +492,6 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
 void ImageViewBase::keyPressEvent(QKeyEvent* event) {
     event->setAccepted(false);
     m_rootInteractionHandler.keyPressEvent(event, m_interactionState);
-    event->setAccepted(true);
     updateStatusTipAndCursor();
     maybeQueueRedraw();
 }
@@ -500,7 +499,6 @@ void ImageViewBase::keyPressEvent(QKeyEvent* event) {
 void ImageViewBase::keyReleaseEvent(QKeyEvent* event) {
     event->setAccepted(false);
     m_rootInteractionHandler.keyReleaseEvent(event, m_interactionState);
-    event->setAccepted(true);
     updateStatusTipAndCursor();
     maybeQueueRedraw();
 }

@@ -46,6 +46,9 @@ namespace output {
 
         void tabChanged(ImageViewTab tab);
 
+    protected:
+        void keyReleaseEvent(QKeyEvent *event) override;
+
     private slots:
 
         void tabChangedSlot(int idx);

@@ -111,6 +111,7 @@ namespace output {
                     new BasicImageView(visualization.image(), visualization.downscaledImage())
             );
             setCurrentIndex(addWidget(widget.release()));
+            emit imageViewCreated(dynamic_cast<ImageViewBase*>(widget.get()));
         }
     }
 
@@ -200,6 +201,7 @@ namespace output {
         }
 
         setCurrentIndex(addWidget(widget.release()));
+        emit imageViewCreated(dynamic_cast<ImageViewBase*>(widget.get()));
     }
 
     void DespeckleView::cancelBackgroundTask() {

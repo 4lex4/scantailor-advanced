@@ -362,7 +362,7 @@ namespace output {
             }
 
             SplitImage splitImage;
-            
+
             out_img = generator.process(
                     status, data, new_picture_zones, new_fill_zones,
                     distortion_model, params.depthPerception(),
@@ -564,10 +564,14 @@ namespace output {
             return;
         }
 
+        std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map
+                = std::make_unique<std::unordered_map<ImageViewTab, QRectF>>();
+
         std::unique_ptr<ImageViewBase> image_view(
                 new ImageView(m_outputImage, m_downscaledOutputImage)
         );
         QPixmap const downscaled_output_pixmap(image_view->downscaledPixmap());
+        tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
 
         std::unique_ptr<ImageViewBase> dewarping_view(
                 new DewarpingView(
@@ -588,6 +592,8 @@ namespace output {
                 dewarping_view.get(), SIGNAL(distortionModelChanged(dewarping::DistortionModel const &)),
                 opt_widget, SLOT(distortionModelChanged(dewarping::DistortionModel const &))
         );
+        tab_image_rect_map->insert(
+                std::pair<ImageViewTab, QRectF>(TAB_DEWARPING, m_xform.resultingPreCropArea().boundingRect()));
 
         std::unique_ptr<QWidget> picture_zone_editor;
         if (m_pictureMask.isNull()) {
@@ -606,6 +612,8 @@ namespace output {
                     picture_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const &)),
                     opt_widget, SIGNAL(invalidateThumbnail(PageId const &))
             );
+            tab_image_rect_map->insert(
+                    std::pair<ImageViewTab, QRectF>(TAB_PICTURE_ZONES, m_xform.resultingPreCropArea().boundingRect()));
         }
 
         // We make sure we never need to update the original <-> output
@@ -640,6 +648,7 @@ namespace output {
                 fill_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const &)),
                 opt_widget, SIGNAL(invalidateThumbnail(PageId const &))
         );
+        tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
 
         std::unique_ptr<QWidget> despeckle_view;
         if (m_params.colorParams().colorMode() == ColorParams::COLOR_GRAYSCALE) {
@@ -656,6 +665,7 @@ namespace output {
                     opt_widget, SIGNAL(despeckleLevelChanged(DespeckleLevel, bool * )),
                     despeckle_view.get(), SLOT(despeckleLevelChanged(DespeckleLevel, bool * ))
             );
+            tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_DESPECKLING, m_xform.resultingRect()));
         }
 
         std::unique_ptr<TabbedImageView> tab_widget(new TabbedImageView);
@@ -667,6 +677,7 @@ namespace output {
         tab_widget->addTab(dewarping_view.release(), tr("Dewarping"), TAB_DEWARPING);
         tab_widget->addTab(despeckle_view.release(), tr("Despeckling"), TAB_DESPECKLING);
         tab_widget->setCurrentTab(opt_widget->lastTab());
+        tab_widget->setImageRectMap(std::move(tab_image_rect_map));
 
         QObject::connect(
                 tab_widget.get(), SIGNAL(tabChanged(ImageViewTab)),

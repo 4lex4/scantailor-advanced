@@ -30,6 +30,7 @@
 
 class DebugImages;
 class ProcessingIndicationWidget;
+class ImageViewBase;
 
 namespace output {
     class DespeckleVisualization;
@@ -51,6 +52,10 @@ namespace output {
     public slots:
 
         void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+
+    signals:
+
+        void imageViewCreated(ImageViewBase*);
 
     protected:
         virtual void hideEvent(QHideEvent* evt);

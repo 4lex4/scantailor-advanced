@@ -22,7 +22,11 @@
 #include "ImageViewTab.h"
 #include <QWidget>
 #include <QTabWidget>
-#include <map>
+#include <QScrollBar>
+#include <unordered_map>
+#include <memory>
+
+class ImageViewBase;
 
 namespace output {
     class TabbedImageView : public QTabWidget {
@@ -31,6 +35,8 @@ namespace output {
         TabbedImageView(QWidget* parent = nullptr);
 
         void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
+
+        void setImageRectMap(std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map);
 
     public slots:
 
@@ -45,7 +51,17 @@ namespace output {
         void tabChangedSlot(int idx);
 
     private:
-        std::map<QWidget*, ImageViewTab> m_registry;
+        void copyViewZoomAndPos(int old_idx, int new_idx) const;
+
+        QPointF getFocus(QRectF const& rect, QScrollBar const& hor_bar, QScrollBar const& ver_bar) const;
+
+        void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, QRectF const& rect, QPointF const& focal) const;
+
+        ImageViewBase* findImageViewBase(QWidget* parent) const;
+
+        std::unordered_map<QWidget*, ImageViewTab> m_registry;
+        std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> m_tabImageRectMap;
+        int m_prevImageViewTabIndex;
     };
 }
 #endif  // ifndef OUTPUT_TABBED_IMAGE_VIEW_H_

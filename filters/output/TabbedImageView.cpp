@@ -17,23 +17,35 @@
  */
 
 #include <filters/output/TabbedImageView.h>
+#include <ImageViewBase.h>
+#include <functional>
+#include "DespeckleView.h"
 
 namespace output {
     TabbedImageView::TabbedImageView(QWidget* parent)
-            : QTabWidget(parent) {
+            : QTabWidget(parent),
+              m_prevImageViewTabIndex(0) {
         connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
     }
 
     void TabbedImageView::addTab(QWidget* widget, QString const& label, ImageViewTab tab) {
         QTabWidget::addTab(widget, label);
         m_registry[widget] = tab;
+
+        if (auto* despeckleView = dynamic_cast<DespeckleView*>(widget)) {
+            connect(despeckleView, &DespeckleView::imageViewCreated,
+                    [this](ImageViewBase*) {
+                        copyViewZoomAndPos(m_prevImageViewTabIndex, currentIndex());
+                    }
+            );
+        }
     }
 
     void TabbedImageView::setCurrentTab(ImageViewTab const tab) {
         int const cnt = count();
         for (int i = 0; i < cnt; ++i) {
             QWidget* wgt = widget(i);
-            std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
+            auto it = m_registry.find(wgt);
             if (it != m_registry.end()) {
                 if (it->second == tab) {
                     setCurrentIndex(i);
@@ -45,9 +57,109 @@ namespace output {
 
     void TabbedImageView::tabChangedSlot(int const idx) {
         QWidget* wgt = widget(idx);
-        std::map<QWidget*, ImageViewTab>::const_iterator it(m_registry.find(wgt));
+        auto it = m_registry.find(wgt);
         if (it != m_registry.end()) {
             emit tabChanged(it->second);
         }
+
+        copyViewZoomAndPos(m_prevImageViewTabIndex, idx);
+
+        if (findImageViewBase(widget(idx)) != nullptr) {
+            m_prevImageViewTabIndex = idx;
+        }
+    }
+
+    void
+    TabbedImageView::setImageRectMap(std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map) {
+        m_tabImageRectMap = std::move(tab_image_rect_map);
+    }
+
+    void TabbedImageView::copyViewZoomAndPos(int const old_idx, int const new_idx) const {
+        if (m_tabImageRectMap == nullptr) {
+            return;
+        }
+
+        if ((m_registry.count(widget(old_idx)) == 0) || (m_registry.count(widget(new_idx)) == 0)) {
+            return;
+        }
+        ImageViewTab const old_view_tab = m_registry.at(widget(old_idx));
+        ImageViewTab const new_view_tab = m_registry.at(widget(new_idx));
+
+        if ((m_tabImageRectMap->count(old_view_tab) == 0) || (m_tabImageRectMap->count(new_view_tab) == 0)) {
+            return;
+        }
+        QRectF const& old_view_rect = m_tabImageRectMap->at(old_view_tab);
+        QRectF const& new_view_rect = m_tabImageRectMap->at(new_view_tab);
+
+        auto* old_image_view = findImageViewBase(widget(old_idx));
+        auto* new_image_view = findImageViewBase(widget(new_idx));
+        if ((old_image_view == nullptr) || (new_image_view == nullptr)) {
+            return;
+        }
+        if (old_image_view == new_image_view) {
+            return;
+        }
+
+        if (old_image_view->zoomLevel() != 1.0) {
+            QPointF const view_focus = getFocus(old_view_rect,
+                                                *old_image_view->horizontalScrollBar(),
+                                                *old_image_view->verticalScrollBar());
+            double const zoom_factor = std::max(new_view_rect.width(), new_view_rect.height())
+                                       / std::max(old_view_rect.width(), old_view_rect.height());
+            new_image_view->setZoomLevel(qMax(1., old_image_view->zoomLevel() * zoom_factor));
+            setFocus(*new_image_view->horizontalScrollBar(),
+                     *new_image_view->verticalScrollBar(),
+                     new_view_rect,
+                     view_focus);
+        }
+    }
+
+    QPointF TabbedImageView::getFocus(QRectF const& rect, QScrollBar const& hor_bar, QScrollBar const& ver_bar) const {
+        int const hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
+        int const ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+
+        qreal x = ((hor_bar.value() + (hor_bar.pageStep() / 2.0)) / hor_bar_length) * rect.width() + rect.left();
+        qreal y = ((ver_bar.value() + (ver_bar.pageStep() / 2.0)) / ver_bar_length) * rect.height() + rect.top();
+
+        return QPointF(x, y);
+    }
+
+    void TabbedImageView::setFocus(QScrollBar& hor_bar,
+                                   QScrollBar& ver_bar,
+                                   QRectF const& rect,
+                                   QPointF const& focal) const {
+        int const hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
+        int const ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+
+        int hor_value = (int) round(
+                ((focal.x() - rect.left()) / rect.width()) * hor_bar_length - (hor_bar.pageStep() / 2.0)
+        );
+        int ver_value = (int) round(
+                ((focal.y() - rect.top()) / rect.height()) * ver_bar_length - (ver_bar.pageStep() / 2.0)
+        );
+
+        hor_value = qBound(hor_bar.minimum(), hor_value, hor_bar.maximum());
+        ver_value = qBound(ver_bar.minimum(), ver_value, ver_bar.maximum());
+
+        hor_bar.setValue(hor_value);
+        ver_bar.setValue(ver_value);
+    }
+
+    ImageViewBase* TabbedImageView::findImageViewBase(QWidget* parent) const {
+        if (parent == nullptr) {
+            return nullptr;
+        }
+
+        if (auto* resource = dynamic_cast<ImageViewBase*>(parent)) {
+            return resource;
+        } else {
+            for (QObject* child : parent->children()) {
+                if (resource = findImageViewBase(dynamic_cast<QWidget*>(child))) {
+                    return resource;
+                }
+            }
+        }
+
+        return nullptr;
     }
 }  // namespace output

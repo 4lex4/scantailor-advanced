@@ -282,11 +282,17 @@ protected:
 
     virtual void enterEvent(QEvent* event);
 
+    virtual void leaveEvent(QEvent* event);
+
     /**
      * Returns the maximum viewport size (as if scrollbars are hidden)
      * reduced by margins.
      */
     QRectF maxViewportRect() const;
+
+    virtual void updateCursorPos(const QPointF& pos);
+
+    virtual void updatePhysSize();
 
 private slots:
 
@@ -463,6 +469,16 @@ private:
      * The zoom factor.  A value of 1.0 corresponds to fit-to-widget zoom.
      */
     double m_zoom;
+
+    /**
+     * This timer is used for tracking the cursor position.
+     */
+    QTimer m_cursorTrackerTimer;
+
+    /**
+     * Current mouse pos in widget coordinates.
+     */
+    QPointF m_cursorPos;
 
     int m_transformChangeWatchersActive;
 

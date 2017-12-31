@@ -27,6 +27,7 @@
 #include "imageproc/Transform.h"
 #include "OpenGLSupport.h"
 #include "ColorSchemeManager.h"
+#include "StatusBarProvider.h"
 #include <QScrollBar>
 #include <QSettings>
 #include <QPointer>
@@ -195,6 +196,21 @@ ImageViewBase::ImageViewBase(QImage const& image,
             this, SLOT(initiateBuildingHqVersion())
     );
 
+    setMouseTracking(true);
+    m_cursorTrackerTimer.setSingleShot(true);
+    m_cursorTrackerTimer.setInterval(150);  // msec
+    connect(
+            &m_cursorTrackerTimer, &QTimer::timeout, [this]() {
+                QPointF cursorPos;
+                if (!m_cursorPos.isNull()) {
+                    cursorPos = m_widgetToVirtual.map(m_cursorPos) - m_virtualImageCropArea.boundingRect().topLeft();
+                }
+                StatusBarProvider::getInstance()->setMousePos(cursorPos);
+            }
+    );
+
+    updatePhysSize();
+
     updateWidgetTransformAndFixFocalPoint(CENTER_IF_FITS);
 
     interactionState().setDefaultStatusTip(
@@ -344,6 +360,7 @@ void ImageViewBase::updateTransform(ImagePresentation const& presentation) {
 
     updateWidgetTransform();
     update();
+    updatePhysSize();
 }
 
 void ImageViewBase::updateTransformAndFixFocalPoint(ImagePresentation const& presentation, FocalPointMode const mode) {
@@ -357,6 +374,7 @@ void ImageViewBase::updateTransformAndFixFocalPoint(ImagePresentation const& pre
 
     updateWidgetTransformAndFixFocalPoint(mode);
     update();
+    updatePhysSize();
 }
 
 void ImageViewBase::updateTransformPreservingScale(ImagePresentation const& presentation) {
@@ -385,6 +403,7 @@ void ImageViewBase::updateTransformPreservingScale(ImagePresentation const& pres
     updateWidgetTransform();
 
     update();
+    updatePhysSize();
 }
 
 void ImageViewBase::ensureStatusTip(QString const& status_tip) {
@@ -546,6 +565,7 @@ void ImageViewBase::mouseMoveEvent(QMouseEvent* event) {
     event->setAccepted(true);
     updateStatusTipAndCursor();
     maybeQueueRedraw();
+    updateCursorPos(event->localPos());
 }
 
 void ImageViewBase::wheelEvent(QWheelEvent* event) {
@@ -589,6 +609,11 @@ void ImageViewBase::resizeEvent(QResizeEvent* event) {
 void ImageViewBase::enterEvent(QEvent* event) {
     viewport()->setFocus();
     QAbstractScrollArea::enterEvent(event);
+}
+
+void ImageViewBase::leaveEvent(QEvent* event) {
+    updateCursorPos(QPointF());
+    QAbstractScrollArea::leaveEvent(event);
 }
 
 /**
@@ -1005,6 +1030,20 @@ BackgroundExecutor& ImageViewBase::backgroundExecutor() {
     static BackgroundExecutor executor;
 
     return executor;
+}
+
+void ImageViewBase::updateCursorPos(const QPointF& pos) {
+    if (pos != m_cursorPos) {
+        m_cursorPos = pos;
+        if (!m_cursorTrackerTimer.isActive()) {
+            // report cursor pos once in 150 msec
+            m_cursorTrackerTimer.start(150);
+        }
+    }
+}
+
+void ImageViewBase::updatePhysSize() {
+    StatusBarProvider::getInstance()->setPhysSize(m_virtualImageCropArea.boundingRect().size());
 }
 
 /*==================== ImageViewBase::HqTransformTask ======================*/

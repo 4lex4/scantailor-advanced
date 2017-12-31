@@ -549,6 +549,7 @@ SET(
         filter_dc/ThumbnailCollector.h
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
+        StatusBarProvider.cpp StatusBarProvider.h
         version.h
         config.h.in
         ${common_ui_files})
@@ -574,7 +575,7 @@ SET(
         SystemLoadWidget.cpp SystemLoadWidget.h
         MainWindow.cpp MainWindow.h
         main.cpp
-)
+        StatusBarPanel.cpp StatusBarPanel.h)
 
 SET(
         cli_only_sources

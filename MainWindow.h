@@ -33,6 +33,7 @@
 #include "PageRange.h"
 #include "SelectedPage.h"
 #include "BeforeOrAfter.h"
+#include "StatusBarPanel.h"
 #include <boost/function.hpp>
 #include <QMainWindow>
 #include <QString>
@@ -327,6 +328,7 @@ private:
     QTimer m_autoSaveTimer;
     bool m_autoSaveProject;
     bool m_highlightDeviation;
+    std::shared_ptr<StatusBarPanel> m_statusBarPanel;
 };
 
 

@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+#include <StatusBarProvider.h>
 
 using namespace imageproc;
 
@@ -542,6 +543,7 @@ namespace page_layout {
 
         m_middleRect = middle_rect;
         m_outerRect = outer_rect;
+        updatePhysSize();
     }
 
 /**
@@ -646,6 +648,7 @@ namespace page_layout {
         Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
         m_outerRect = mm_to_virt.map(poly_mm).boundingRect();
+        updatePhysSize();
     }
 
     QSizeF ImageView::origRectToSizeMM(QRectF const& rect) const {
@@ -681,6 +684,14 @@ namespace page_layout {
             emit invalidateAllThumbnails();
         } else {
             emit invalidateThumbnail(m_pageId);
+        }
+    }
+
+    void ImageView::updatePhysSize() {
+        if (m_outerRect.isValid()) {
+            StatusBarProvider::getInstance()->setPhysSize(m_outerRect.size());
+        } else {
+            ImageViewBase::updatePhysSize();
         }
     }
 }  // namespace page_layout

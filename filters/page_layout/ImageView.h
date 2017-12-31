@@ -75,6 +75,9 @@ namespace page_layout {
 
         void aggregateHardSizeChanged();
 
+    protected:
+        void updatePhysSize() override;
+
     private:
         enum Edge {
             LEFT = 1,

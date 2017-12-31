@@ -74,6 +74,7 @@
 #include "ui_BatchProcessingLowerPanel.h"
 #include "version.h"
 #include "Application.h"
+#include "StatusBarProvider.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
 #include <QScrollBar>
@@ -145,6 +146,18 @@ MainWindow::MainWindow()
     m_pImageFrameLayout->setStackingMode(QStackedLayout::StackAll);
 
     m_pOptionsFrameLayout = new QStackedLayout(filterOptions);
+
+    m_statusBarPanel = std::make_shared<StatusBarPanel>();
+    StatusBarProvider::getInstance()->registerStatusBarPanel(m_statusBarPanel);
+    QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
+    connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](PageInfo const& page_info) {
+         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
+         if (pageSequence.numPages() > 0) {
+             m_statusBarPanel->updatePageNum(pageSequence.pageNo(page_info.id()) + 1);
+         } else {
+             m_statusBarPanel->clear();
+         }
+    });
 
     addAction(actionFirstPage);
     addAction(actionLastPage);
@@ -1584,9 +1597,12 @@ void MainWindow::updateMainArea() {
             thumbnailsDockWidget->setEnabled(false);
         }
         showNewOpenProjectPanel();
+        m_statusBarPanel->clear();
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
+        m_statusBarPanel->updateMousePos(QPointF());
+        m_statusBarPanel->updatePhysSize(QRectF().size());
     } else {
         if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
             filterDockWidget->setEnabled(true);
@@ -1600,6 +1616,10 @@ void MainWindow::updateMainArea() {
         } else {
             // Note that loadPageInteractive may reset it to false.
             filterList->setBatchProcessingPossible(true);
+            PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
+            if (pageSequence.numPages() > 0) {
+                m_statusBarPanel->updatePageNum(pageSequence.pageNo(page.id()) + 1);
+            }
             loadPageInteractive(page);
         }
     }

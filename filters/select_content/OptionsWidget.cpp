@@ -22,12 +22,14 @@
 #include "ScopedIncDec.h"
 
 #include <iostream>
+#include <MetricUnitsProvider.h>
 
 namespace select_content {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
-              m_pageSelectionAccessor(page_selection_accessor) {
+              m_pageSelectionAccessor(page_selection_accessor),
+              m_ignorePageSizeChanges(0) {
         setupUi(this);
 
         setupUiConnections();
@@ -48,7 +50,8 @@ namespace select_content {
         pageDetectManualBtn->setEnabled(false);
         pageDetectDisableBtn->setEnabled(false);
 
-        pageDetectOptions->setVisible(pageDetectAutoBtn->isChecked());
+        updatePageDetectOptionsDisplay();
+        updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
 
         setupUiConnections();
     }
@@ -68,8 +71,7 @@ namespace select_content {
         pageDetectManualBtn->setEnabled(true);
         pageDetectDisableBtn->setEnabled(true);
 
-        fineTuneBtn->setChecked(ui_data.isFineTuningCornersEnabled());
-        pageDetectOptions->setVisible(pageDetectAutoBtn->isChecked());
+        updatePageDetectOptionsDisplay();
 
         setupUiConnections();
     }
@@ -84,6 +86,7 @@ namespace select_content {
         if (m_uiData.pageDetectionMode() == MODE_AUTO) {
             m_uiData.setPageDetectionMode(MODE_MANUAL);
             updatePageModeIndication(MODE_MANUAL);
+            updatePageDetectOptionsDisplay();
         }
 
         commitCurrentParams();
@@ -95,7 +98,6 @@ namespace select_content {
         m_uiData.setPageRect(page_rect);
         m_uiData.setPageDetectionMode(MODE_MANUAL);
         m_uiData.setPageDetectionEnabled(true);
-        pageDetectOptions->setVisible(false);
 
         updatePageModeIndication(MODE_MANUAL);
 
@@ -104,9 +106,23 @@ namespace select_content {
             updateContentModeIndication(MODE_MANUAL);
         }
 
+        updatePageDetectOptionsDisplay();
+        updatePageRectSize(page_rect.size());
+
         commitCurrentParams();
 
         emit invalidateThumbnail(m_pageId);
+    }
+
+    void OptionsWidget::updatePageRectSize(QSizeF const& size) {
+        ScopedIncDec<int> const ingore_scope(m_ignorePageSizeChanges);
+
+        double width = size.width();
+        double height = size.height();
+        MetricUnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
+
+        widthSpinBox->setValue(width);
+        heightSpinBox->setValue(height);
     }
 
     void OptionsWidget::contentDetectAutoToggled() {
@@ -124,6 +140,7 @@ namespace select_content {
         if (m_uiData.pageDetectionMode() == MODE_AUTO) {
             m_uiData.setPageDetectionMode(MODE_MANUAL);
             updatePageModeIndication(MODE_MANUAL);
+            updatePageDetectOptionsDisplay();
         }
 
         commitCurrentParams();
@@ -132,8 +149,6 @@ namespace select_content {
     void OptionsWidget::contentDetectDisableToggled() {
         m_uiData.setContentDetectionEnabled(false);
         commitCurrentParams();
-        contentDetectAutoBtn->setChecked(false);
-        contentDetectManualBtn->setChecked(false);
         contentDetectDisableBtn->setChecked(true);
         emit reloadRequested();
     }
@@ -141,7 +156,7 @@ namespace select_content {
     void OptionsWidget::pageDetectAutoToggled() {
         m_uiData.setPageDetectionMode(MODE_AUTO);
         m_uiData.setPageDetectionEnabled(true);
-        pageDetectOptions->setVisible(true);
+        updatePageDetectOptionsDisplay();
         commitCurrentParams();
         emit reloadRequested();
     }
@@ -151,12 +166,11 @@ namespace select_content {
 
         m_uiData.setPageDetectionMode(MODE_MANUAL);
         m_uiData.setPageDetectionEnabled(true);
-        pageDetectOptions->setVisible(false);
-
         if (m_uiData.contentDetectionMode() == MODE_AUTO) {
             m_uiData.setContentDetectionMode(MODE_MANUAL);
             updateContentModeIndication(MODE_MANUAL);
         }
+        updatePageDetectOptionsDisplay();
 
         commitCurrentParams();
         if (need_reload) {
@@ -166,7 +180,7 @@ namespace select_content {
 
     void OptionsWidget::pageDetectDisableToggled() {
         m_uiData.setPageDetectionEnabled(false);
-        pageDetectOptions->setVisible(false);
+        updatePageDetectOptionsDisplay();
         commitCurrentParams();
         pageDetectDisableBtn->setChecked(true);
         emit reloadRequested();
@@ -202,6 +216,28 @@ namespace select_content {
                 pageDetectManualBtn->setChecked(true);
             }
         }
+    }
+
+    void OptionsWidget::updatePageDetectOptionsDisplay() {
+        fineTuneBtn->setChecked(m_uiData.isFineTuningCornersEnabled());
+        pageDetectOptions->setVisible(m_uiData.isPageDetectionEnabled());
+        fineTuneBtn->setVisible(m_uiData.pageDetectionMode() == MODE_AUTO);
+        dimensionsWidget->setVisible(m_uiData.pageDetectionMode() == MODE_MANUAL);
+    }
+
+    void OptionsWidget::dimensionsChangedLocally(double) {
+        if (m_ignorePageSizeChanges) {
+            return;
+        }
+
+        double widthSpinBoxValue = widthSpinBox->value();
+        double heightSpinBoxValue = heightSpinBox->value();
+        MetricUnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS);
+
+        QRectF newPageRect = m_uiData.pageRect();
+        newPageRect.setSize(QSizeF(widthSpinBoxValue, heightSpinBoxValue));
+
+        emit pageRectChangedLocally(newPageRect);
     }
 
     void OptionsWidget::commitCurrentParams() {
@@ -306,7 +342,37 @@ namespace select_content {
         emit reloadRequested();
     } // OptionsWidget::applySelection
 
+
+    void OptionsWidget::updateMetricUnits(MetricUnits units) {
+        removeUiConnections();
+
+        int decimals;
+        double step;
+        switch (units) {
+            case PIXELS:
+            case MILLIMETRES:
+                decimals = 1;
+                step = 1.0;
+                break;
+            default:
+                decimals = 2;
+                step = 0.01;
+                break;
+        }
+
+        widthSpinBox->setDecimals(decimals);
+        widthSpinBox->setSingleStep(step);
+        heightSpinBox->setDecimals(decimals);
+        heightSpinBox->setSingleStep(step);
+
+        updatePageRectSize(m_uiData.pageRect().size());
+
+        setupUiConnections();
+    }
+
     void OptionsWidget::setupUiConnections() {
+        connect(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
+        connect(heightSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
         connect(contentDetectAutoBtn, SIGNAL(pressed()), this, SLOT(contentDetectAutoToggled()));
         connect(contentDetectManualBtn, SIGNAL(pressed()), this, SLOT(contentDetectManualToggled()));
         connect(contentDetectDisableBtn, SIGNAL(pressed()), this, SLOT(contentDetectDisableToggled()));
@@ -318,6 +384,8 @@ namespace select_content {
     }
 
     void OptionsWidget::removeUiConnections() {
+        disconnect(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
+        disconnect(heightSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
         disconnect(contentDetectAutoBtn, SIGNAL(pressed()), this, SLOT(contentDetectAutoToggled()));
         disconnect(contentDetectManualBtn, SIGNAL(pressed()), this, SLOT(contentDetectManualToggled()));
         disconnect(contentDetectDisableBtn, SIGNAL(pressed()), this, SLOT(contentDetectDisableToggled()));

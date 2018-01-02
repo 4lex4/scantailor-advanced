@@ -217,7 +217,7 @@ namespace select_content {
     }
 
     void ImageView::onPaint(QPainter& painter, InteractionState const& interaction) {
-        if (m_contentRect.isNull()) {
+        if (m_contentRect.isNull() && !m_pageRectEnabled) {
             return;
         }
 
@@ -232,6 +232,10 @@ namespace select_content {
             painter.setBrush(Qt::NoBrush);
 
             painter.drawRect(m_pageRect);
+        }
+
+        if (m_contentRect.isNull()) {
+            return;
         }
 
         // Draw the content bounding box.
@@ -364,13 +368,12 @@ namespace select_content {
         } else if (edge_mask & RIGHT) {
             r.setRight(std::max(pos.x(), r.left() + minw));
         }
-
-        forceInsideImage(r, edge_mask);
+        
         m_pageRect = widgetToVirtual().mapRect(r);
-
         forcePageRectDescribeContent();
 
         update();
+        emit pageRectSizeChanged(m_pageRect.size());
     }
 
     QLineF ImageView::pageRectEdgePosition(int edge) const {
@@ -423,6 +426,7 @@ namespace select_content {
         m_pageRect |= m_contentRect;
         if (m_pageRect != oldPageRect) {
             m_pageRectReloadRequested = true;
+            emit pageRectSizeChanged(m_pageRect.size());
         }
     }
 
@@ -461,20 +465,6 @@ namespace select_content {
     void ImageView::pageRectMoveRequest(QPolygonF const& poly_pos) {
         QRectF pageRectInWidget(poly_pos.boundingRect());
 
-        const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
-        if (pageRectInWidget.left() < image_rect.left()) {
-            pageRectInWidget.translate(image_rect.left() - pageRectInWidget.left(), 0);
-        }
-        if (pageRectInWidget.right() > image_rect.right()) {
-            pageRectInWidget.translate(image_rect.right() - pageRectInWidget.right(), 0);
-        }
-        if (pageRectInWidget.top() < image_rect.top()) {
-            pageRectInWidget.translate(0, image_rect.top() - pageRectInWidget.top());
-        }
-        if (pageRectInWidget.bottom() > image_rect.bottom()) {
-            pageRectInWidget.translate(0, image_rect.bottom() - pageRectInWidget.bottom());
-        }
-
         const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
         if (pageRectInWidget.left() > content_rect.left()) {
             pageRectInWidget.translate(content_rect.left() - pageRectInWidget.left(), 0);
@@ -492,5 +482,16 @@ namespace select_content {
         m_pageRect = widgetToVirtual().mapRect(pageRectInWidget);
 
         update();
+    }
+
+    void ImageView::pageRectSetExternally(QRectF const& pageRect) {
+        if (!m_pageRectEnabled) {
+            return;
+        }
+        m_pageRect = pageRect;
+        forcePageRectDescribeContent();
+
+        update();
+        emit manualPageRectSet(m_pageRect);
     }
 }  // namespace select_content

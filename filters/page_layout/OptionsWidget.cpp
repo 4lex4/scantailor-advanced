@@ -113,7 +113,7 @@ namespace page_layout {
             }
         }
 
-        updateMarginsDisplay();
+        updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
 
         alignWithOthersCB->blockSignals(true);
         alignWithOthersCB->setChecked(!alignment.isNull());

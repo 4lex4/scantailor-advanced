@@ -31,11 +31,13 @@
 #include <QSizeF>
 #include <QRectF>
 #include <memory>
+#include <MetricUnitsObserver.h>
 
 namespace select_content {
     class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, private Ui::SelectContentOptionsWidget {
+    class OptionsWidget
+            : public FilterOptionsWidget, public MetricUnitsObserver, private Ui::SelectContentOptionsWidget {
     Q_OBJECT
     public:
         class UiData {
@@ -99,7 +101,7 @@ namespace select_content {
             bool m_fineTuneCornersEnabled;
         };
 
-        
+
         OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
 
         virtual ~OptionsWidget();
@@ -108,11 +110,19 @@ namespace select_content {
 
         void postUpdateUI(UiData const& ui_data);
 
+        void updateMetricUnits(MetricUnits units) override;
+
     public slots:
 
         void manualContentRectSet(QRectF const& content_rect);
 
         void manualPageRectSet(QRectF const& page_rect);
+
+        void updatePageRectSize(QSizeF const& size);
+
+    signals:
+
+        void pageRectChangedLocally(QRectF const& pageRect);
 
     private slots:
 
@@ -134,10 +144,14 @@ namespace select_content {
 
         void fineTuningChanged(bool checked);
 
+        void dimensionsChangedLocally(double);
+
     private:
         void updateContentModeIndication(AutoManualMode const mode);
 
         void updatePageModeIndication(AutoManualMode const mode);
+
+        void updatePageDetectOptionsDisplay();
 
         void commitCurrentParams();
 
@@ -149,6 +163,7 @@ namespace select_content {
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
+        int m_ignorePageSizeChanges;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

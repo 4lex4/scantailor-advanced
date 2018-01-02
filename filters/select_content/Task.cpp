@@ -113,11 +113,11 @@ namespace select_content {
                     const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
                     corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
                                                   (new_page_rect.height() - old_page_rect.height()) / 2);
-                    // we don't want the page box to be out of the page bounds so use intersecting
-                    corrected_page_rect = corrected_page_rect.intersected(data.xform().resultingRect());
                 }
 
-                if (corrected_page_rect.isValid()) {
+                // allow the page box to be out of the page bounds but checking intersecting with the page
+                if (corrected_page_rect.isValid()
+                    && corrected_page_rect.intersected(data.xform().resultingRect()).isValid()) {
                     page_rect = corrected_page_rect;
                 } else {
                     page_rect = data.xform().resultingRect();
@@ -240,6 +240,14 @@ namespace select_content {
         QObject::connect(
                 view, SIGNAL(manualPageRectSet(QRectF const &)),
                 opt_widget, SLOT(manualPageRectSet(QRectF const &))
+        );
+        QObject::connect(
+                view, SIGNAL(pageRectSizeChanged(QSizeF const &)),
+                opt_widget, SLOT(updatePageRectSize(QSizeF const &))
+        );
+        QObject::connect(
+                opt_widget, SIGNAL(pageRectChangedLocally(QRectF const &)),
+                view, SLOT(pageRectSetExternally(QRectF const &))
         );
     }
 }  // namespace select_content

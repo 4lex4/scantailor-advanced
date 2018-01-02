@@ -55,6 +55,12 @@ namespace select_content {
 
         void manualPageRectSet(QRectF const& page_rect);
 
+        void pageRectSizeChanged(QSizeF const& size);
+
+    public slots:
+
+        void pageRectSetExternally(QRectF const& pageRect);
+
     private slots:
 
         void createContentBox();

@@ -23,6 +23,7 @@
 #include "ScopedIncDec.h"
 #include "imageproc/Constants.h"
 #include <QSettings>
+#include <MetricUnitsProvider.h>
 
 using namespace imageproc::constants;
 
@@ -31,8 +32,6 @@ namespace page_layout {
                                  PageSelectionAccessor const& page_selection_accessor)
             : m_ptrSettings(settings),
               m_pageSelectionAccessor(page_selection_accessor),
-              m_mmToUnit(1.0),
-              m_unitToMM(1.0),
               m_ignoreMarginChanges(0),
               m_leftRightLinked(true),
               m_topBottomLinked(true) {
@@ -130,7 +129,7 @@ namespace page_layout {
         }
         alignmentMode->blockSignals(false);
         updateAlignmentButtonsEnabled();
-        
+
         autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(page_id));
         updateMarginsControlsEnabled();
 
@@ -161,20 +160,21 @@ namespace page_layout {
         setupUiConnections();
     }
 
-    void OptionsWidget::unitsChanged(int const idx) {
-        int decimals = 0;
-        double step = 0.0;
+    void OptionsWidget::updateMetricUnits(MetricUnits const units) {
+        removeUiConnections();
 
-        if (idx == 0) {  // mm
-            m_mmToUnit = 1.0;
-            m_unitToMM = 1.0;
-            decimals = 1;
-            step = 1.0;
-        } else {  // in
-            m_mmToUnit = MM2INCH;
-            m_unitToMM = INCH2MM;
-            decimals = 2;
-            step = 0.01;
+        int decimals;
+        double step;
+        switch (units) {
+            case PIXELS:
+            case MILLIMETRES:
+                decimals = 1;
+                step = 1.0;
+                break;
+            default:
+                decimals = 2;
+                step = 0.01;
+                break;
         }
 
         topMarginSpinBox->setDecimals(decimals);
@@ -187,6 +187,8 @@ namespace page_layout {
         rightMarginSpinBox->setSingleStep(step);
 
         updateMarginsDisplay();
+
+        setupUiConnections();
     }
 
     void OptionsWidget::horMarginsChanged(double const val) {
@@ -200,8 +202,14 @@ namespace page_layout {
             rightMarginSpinBox->setValue(val);
         }
 
-        m_marginsMM.setLeft(leftMarginSpinBox->value() * m_unitToMM);
-        m_marginsMM.setRight(rightMarginSpinBox->value() * m_unitToMM);
+        double dummy;
+        double leftMarginSpinBoxValue = leftMarginSpinBox->value();
+        double rightMarginSpinBoxValue = rightMarginSpinBox->value();
+        MetricUnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES);
+        MetricUnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES);
+
+        m_marginsMM.setLeft(leftMarginSpinBoxValue);
+        m_marginsMM.setRight(rightMarginSpinBoxValue);
 
         emit marginsSetLocally(m_marginsMM);
     }
@@ -217,8 +225,14 @@ namespace page_layout {
             bottomMarginSpinBox->setValue(val);
         }
 
-        m_marginsMM.setTop(topMarginSpinBox->value() * m_unitToMM);
-        m_marginsMM.setBottom(bottomMarginSpinBox->value() * m_unitToMM);
+        double dummy;
+        double topMarginSpinBoxValue = topMarginSpinBox->value();
+        double bottomMarginSpinBoxValue = bottomMarginSpinBox->value();
+        MetricUnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES);
+        MetricUnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES);
+
+        m_marginsMM.setTop(topMarginSpinBoxValue);
+        m_marginsMM.setBottom(bottomMarginSpinBoxValue);
 
         emit marginsSetLocally(m_marginsMM);
     }
@@ -365,10 +379,17 @@ namespace page_layout {
     void OptionsWidget::updateMarginsDisplay() {
         ScopedIncDec<int> const ignore_scope(m_ignoreMarginChanges);
 
-        topMarginSpinBox->setValue(m_marginsMM.top() * m_mmToUnit);
-        bottomMarginSpinBox->setValue(m_marginsMM.bottom() * m_mmToUnit);
-        leftMarginSpinBox->setValue(m_marginsMM.left() * m_mmToUnit);
-        rightMarginSpinBox->setValue(m_marginsMM.right() * m_mmToUnit);
+        double topMarginValue = m_marginsMM.top();
+        double bottomMarginValue = m_marginsMM.bottom();
+        double leftMarginValue = m_marginsMM.left();
+        double rightMarginValue = m_marginsMM.right();
+        MetricUnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES);
+        MetricUnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES);
+
+        topMarginSpinBox->setValue(topMarginValue);
+        bottomMarginSpinBox->setValue(bottomMarginValue);
+        leftMarginSpinBox->setValue(leftMarginValue);
+        rightMarginSpinBox->setValue(rightMarginValue);
     }
 
     void OptionsWidget::updateLinkDisplay(QToolButton* button, bool const linked) {
@@ -401,10 +422,6 @@ namespace page_layout {
     }
 
     void OptionsWidget::setupUiConnections() {
-        connect(
-                unitsComboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(unitsChanged(int))
-        );
         connect(
                 topMarginSpinBox, SIGNAL(valueChanged(double)),
                 this, SLOT(vertMarginsChanged(double))
@@ -460,10 +477,6 @@ namespace page_layout {
     }
 
     void OptionsWidget::removeUiConnections() {
-        disconnect(
-                unitsComboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(unitsChanged(int))
-        );
         disconnect(
                 topMarginSpinBox, SIGNAL(valueChanged(double)),
                 this, SLOT(vertMarginsChanged(double))

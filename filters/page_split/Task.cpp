@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <MetricUnitsProvider.h>
 #include "Task.h"
 #include "TaskStatus.h"
 #include "Filter.h"
@@ -237,6 +238,7 @@ namespace page_split {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
+        MetricUnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);

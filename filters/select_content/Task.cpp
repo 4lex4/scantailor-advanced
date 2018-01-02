@@ -29,6 +29,8 @@
 #include "filters/page_layout/Task.h"
 
 #include <iostream>
+#include <MetricUnitsProvider.h>
+#include "Dpm.h"
 
 namespace select_content {
     class Task::UiUpdater : public FilterResult {
@@ -212,6 +214,7 @@ namespace select_content {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
+        MetricUnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);

@@ -552,7 +552,7 @@ SET(
         StatusBarProvider.cpp StatusBarProvider.h
         version.h
         config.h.in
-        ${common_ui_files})
+        ${common_ui_files} MetricUnitsProvider.cpp MetricUnitsProvider.h MetricUnitsObserver.h MetricUnitsObserver.cpp)
 
 SET(
         gui_only_sources

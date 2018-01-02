@@ -75,6 +75,7 @@
 #include "version.h"
 #include "Application.h"
 #include "StatusBarProvider.h"
+#include "MetricUnitsProvider.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
 #include <QScrollBar>
@@ -157,6 +158,32 @@ MainWindow::MainWindow()
          } else {
              m_statusBarPanel->clear();
          }
+    });
+
+    m_metricMenuActionGroup.reset(new QActionGroup(this));
+    for (QAction* action : menuMetricUnits->actions()) {
+        m_metricMenuActionGroup->addAction(action);
+    }
+    actionMilimeters->setChecked(true);
+    connect(actionPixels, &QAction::toggled, [this](bool checked) {
+        if (checked) {
+            MetricUnitsProvider::getInstance()->setMetricUnits(PIXELS);
+        }
+    });
+    connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
+        if (checked) {
+            MetricUnitsProvider::getInstance()->setMetricUnits(MILLIMETRES);
+        }
+    });
+    connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
+        if (checked) {
+            MetricUnitsProvider::getInstance()->setMetricUnits(CENTIMETRES);
+        }
+    });
+    connect(actionInches, &QAction::toggled, [this](bool checked) {
+        if (checked) {
+            MetricUnitsProvider::getInstance()->setMetricUnits(INCHES);
+        }
     });
 
     addAction(actionFirstPage);
@@ -1601,8 +1628,8 @@ void MainWindow::updateMainArea() {
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
-        m_statusBarPanel->updateMousePos(QPointF());
-        m_statusBarPanel->updatePhysSize(QRectF().size());
+        StatusBarProvider::getInstance()->setMousePos(QPointF());
+        StatusBarProvider::getInstance()->setPhysSize(QRectF().size());
     } else {
         if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
             filterDockWidget->setEnabled(true);

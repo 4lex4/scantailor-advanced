@@ -30,6 +30,7 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <MetricUnitsObserver.h>
 
 class QToolButton;
 class ProjectPages;
@@ -37,7 +38,7 @@ class ProjectPages;
 namespace page_layout {
     class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, public Ui::PageLayoutOptionsWidget {
+    class OptionsWidget : public FilterOptionsWidget, public MetricUnitsObserver, public Ui::PageLayoutOptionsWidget {
     Q_OBJECT
     public:
         OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
@@ -64,6 +65,8 @@ namespace page_layout {
             return m_alignment;
         }
 
+        void updateMetricUnits(MetricUnits units) override;
+
     signals:
 
         void leftRightLinkToggled(bool linked);
@@ -77,8 +80,6 @@ namespace page_layout {
         void aggregateHardSizeChanged();
 
     private slots:
-
-        void unitsChanged(int idx);
 
         void horMarginsChanged(double val);
 
@@ -124,8 +125,6 @@ namespace page_layout {
         QIcon m_chainIcon;
         QIcon m_brokenChainIcon;
         AlignmentByButton m_alignmentByButton;
-        double m_mmToUnit;
-        double m_unitToMM;
         PageId m_pageId;
         Margins m_marginsMM;
         Alignment m_alignment;

@@ -79,6 +79,9 @@ namespace page_layout {
 
         void aggregateHardSizeChanged();
 
+    public slots:
+        void marginsSetExternally(Margins const& margins_mm);
+
     private slots:
 
         void horMarginsChanged(double val);

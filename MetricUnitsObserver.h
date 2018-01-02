@@ -3,6 +3,7 @@
 #define SCANTAILOR_METRICUNITSOBSERVER_H
 
 #include "Dpi.h"
+#include <QtCore/QString>
 
 class Dpi;
 
@@ -12,6 +13,8 @@ enum MetricUnits {
     CENTIMETRES,
     INCHES
 };
+
+QString toString(MetricUnits units);
 
 class MetricUnitsObserver {
 public:

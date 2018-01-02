@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>208</width>
-    <height>20</height>
+    <height>16</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,12 @@
    </property>
    <item>
     <widget class="QLabel" name="mousePosLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -35,10 +41,10 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Mouse position</string>
+      <string>Mouse position.</string>
      </property>
      <property name="statusTip">
-      <string>Mouse position relative to page</string>
+      <string>Mouse position relative to page.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -54,6 +60,12 @@
    </item>
    <item>
     <widget class="QLabel" name="physSizeLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>31</width>
@@ -61,10 +73,10 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Physical size</string>
+      <string>Physical size.</string>
      </property>
      <property name="statusTip">
-      <string>Physical size of image. (Click to change units of measurement)</string>
+      <string>Physical size of image.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -83,6 +95,12 @@
    </item>
    <item>
     <widget class="QLabel" name="pageNoLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>31</width>
@@ -90,10 +108,10 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Page number</string>
+      <string>Page number.</string>
      </property>
      <property name="statusTip">
-      <string>Position of the selected page in current order</string>
+      <string>Position of the selected page in current order.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -114,7 +132,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>10</width>
-       <height>20</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>

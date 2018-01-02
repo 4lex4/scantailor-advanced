@@ -160,6 +160,11 @@ namespace page_layout {
         setupUiConnections();
     }
 
+    void OptionsWidget::marginsSetExternally(Margins const& margins_mm) {
+        m_marginsMM = margins_mm;
+        updateMarginsDisplay();
+    }
+
     void OptionsWidget::updateMetricUnits(MetricUnits const units) {
         removeUiConnections();
 

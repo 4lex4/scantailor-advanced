@@ -44,32 +44,28 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
         double height = physSize.height();
         MetricUnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
 
-        QString units;
-        switch (MetricUnitsProvider::getInstance()->getMetricUnits()) {
+        const MetricUnits units = MetricUnitsProvider::getInstance()->getMetricUnits();
+        switch (units) {
             case PIXELS:
                 width = round(width);
                 height = round(height);
-                units = tr("px");
                 break;
             case MILLIMETRES:
                 width = round(width);
                 height = round(height);
-                units = tr("mm");
                 break;
             case CENTIMETRES:
                 width = round(width * 10) / 10;
                 height = round(height * 10) / 10;
-                units = tr("cm");
                 break;
             case INCHES:
                 width = round(width * 10) / 10;
                 height = round(height * 10) / 10;
-                units = tr("in");
                 break;
         }
 
         physSizeLine->setVisible(true);
-        physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(units));
+        physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(toString(units)));
     } else {
         physSizeLabel->clear();
         physSizeLine->setVisible(false);

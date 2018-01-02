@@ -430,11 +430,14 @@ namespace select_content {
             }
         }
 
+        // Increase the content rect due to cutting off the content at edges because of rescaling made.
+        content_rect.adjust(-1, -1, 1, 1);
+
         // Transform back from 150dpi.
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
 
-        return combined_xform.map(QRectF(content_rect)).boundingRect();
+        return combined_xform.map(QRectF(content_rect)).boundingRect().intersected(data.xform().resultingRect());
     }  // ContentBoxFinder::findContentBox
 
     namespace {

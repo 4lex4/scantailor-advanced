@@ -153,37 +153,54 @@ MainWindow::MainWindow()
     StatusBarProvider::getInstance()->registerStatusBarPanel(m_statusBarPanel);
     QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
     connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](PageInfo const& page_info) {
-         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
-         if (pageSequence.numPages() > 0) {
-             m_statusBarPanel->updatePageNum(pageSequence.pageNo(page_info.id()) + 1);
-         } else {
-             m_statusBarPanel->clear();
-         }
+        PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
+        if (pageSequence.numPages() > 0) {
+            m_statusBarPanel->updatePageNum(pageSequence.pageNo(page_info.id()) + 1);
+        } else {
+            m_statusBarPanel->clear();
+        }
     });
 
     m_metricMenuActionGroup = std::make_unique<QActionGroup>(this);
     for (QAction* action : menuMetricUnits->actions()) {
         m_metricMenuActionGroup->addAction(action);
     }
-    actionMilimeters->setChecked(true);
+    switch (metricUnitsFromString(QSettings().value("metric-units", "mm").toString())) {
+        case PIXELS:
+            actionPixels->setChecked(true);
+            break;
+        case MILLIMETRES:
+            actionMilimeters->setChecked(true);
+            break;
+        case CENTIMETRES:
+            actionCentimetres->setChecked(true);
+            break;
+        case INCHES:
+            actionInches->setChecked(true);
+            break;
+    }
     connect(actionPixels, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(PIXELS);
+            QSettings().setValue("metric-units", toString(PIXELS));
         }
     });
     connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(MILLIMETRES);
+            QSettings().setValue("metric-units", toString(MILLIMETRES));
         }
     });
     connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(CENTIMETRES);
+            QSettings().setValue("metric-units", toString(CENTIMETRES));
         }
     });
     connect(actionInches, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(INCHES);
+            QSettings().setValue("metric-units", toString(INCHES));
         }
     });
 

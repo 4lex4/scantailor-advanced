@@ -558,7 +558,7 @@ SET(
         DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
         version.h
         config.h.in
-        ${common_ui_files})
+        ${common_ui_files} MetricUnitsConverter.cpp MetricUnitsConverter.h)
 
 SET(
         gui_only_sources

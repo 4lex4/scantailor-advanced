@@ -5,6 +5,7 @@
 #include <memory>
 #include <list>
 #include "MetricUnitsObserver.h"
+#include "MetricUnitsConverter.h"
 
 class Dpi;
 
@@ -13,8 +14,8 @@ private:
     static std::unique_ptr<MetricUnitsProvider> instance;
 
     std::list<MetricUnitsObserver*> observers;
-    Dpi dpi;
     MetricUnits metricUnits;
+    MetricUnitsConverter metricUnitsConverter;
 
     MetricUnitsProvider();
 

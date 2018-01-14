@@ -4,6 +4,10 @@
 
 std::unique_ptr<StatusBarProvider> StatusBarProvider::instance = nullptr;
 
+StatusBarProvider::StatusBarProvider()
+        : physSize(QRectF().size()) {
+}
+
 StatusBarProvider* StatusBarProvider::getInstance() {
     if (instance == nullptr) {
         instance.reset(new StatusBarProvider());

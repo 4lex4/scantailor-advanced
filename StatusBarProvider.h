@@ -16,7 +16,7 @@ private:
     QSizeF physSize;
     QPointF mousePos;
 
-    StatusBarProvider() = default;
+    StatusBarProvider();
 
 public:
     static StatusBarProvider* getInstance();

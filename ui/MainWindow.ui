@@ -79,6 +79,7 @@
     <addaction name="actionDebug"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionDefaults"/>
     <addaction name="separator"/>
     <addaction name="menuMetricUnits"/>
    </widget>
@@ -514,6 +515,11 @@
    </property>
    <property name="text">
     <string>Centimetres</string>
+   </property>
+  </action>
+  <action name="actionDefaults">
+   <property name="text">
+    <string>Default parameters ...</string>
    </property>
   </action>
  </widget>

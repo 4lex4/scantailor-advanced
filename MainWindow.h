@@ -187,6 +187,8 @@ private slots:
 
     void openSettingsDialog();
 
+    void openDefaultParamsDialog();
+
     void onSettingsChanged();
 
     void showAboutDialog();

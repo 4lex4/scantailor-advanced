@@ -59,7 +59,7 @@ namespace fix_orientation {
         void appliedToAllPages(std::set<PageId> const& pages);
 
     private:
-        void setRotation(OrthogonalRotation rotation);
+        void setRotation(OrthogonalRotation const& rotation);
 
         void setRotationPixmap();
 

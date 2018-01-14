@@ -22,7 +22,7 @@ namespace output {
         thresholdSlider->setMaximum(50);
         thresholLabel->setText(QString::number(thresholdSlider->value()));
 
-        updateView();
+        delayedStateChanger.setSingleShot(true);
 
         setupUiConnections();
     }
@@ -39,16 +39,18 @@ namespace output {
         setupUiConnections();
     }
 
-    void OtsuBinarizationOptionsWidget::bwThresholdChanged() {
+    void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
         int const value = thresholdSlider->value();
-        QString const tooltip_text(QString::number(value));
-        thresholdSlider->setToolTip(tooltip_text);
+        setThresholdAdjustment(value);
 
+        emit stateChanged();
+    }
+
+    void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
         thresholLabel->setText(QString::number(value));
 
-        if (m_ignoreThresholdChanges) {
-            return;
-        }
+        QString const tooltip_text(QString::number(value));
+        thresholdSlider->setToolTip(tooltip_text);
 
         // Show the tooltip immediately.
         QPoint const center(thresholdSlider->rect().center());
@@ -57,18 +59,9 @@ namespace output {
         tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
         tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
         QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
+    }
 
-        if (thresholdSlider->isSliderDown()) {
-            // Wait for it to be released.
-            // We could have just disabled tracking, but in that case we wouldn't
-            // be able to show tooltips with a precise value.
-            return;
-        }
-
-        thresholdValueChanged(value);
-    }      // OtsuBinarizationOptionsWidget::bwThresholdChanged
-
-    void OtsuBinarizationOptionsWidget::thresholdValueChanged(int value) {
+    void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
         BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
         if (opt.thresholdAdjustment() == value) {
             // Didn't change.
@@ -80,28 +73,31 @@ namespace output {
         opt.setThresholdAdjustment(value);
         m_colorParams.setBlackWhiteOptions(opt);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-
-        emit stateChanged();
     }
 
     void OtsuBinarizationOptionsWidget::setLighterThreshold() {
         thresholdSlider->setValue(thresholdSlider->value() - 1);
-        thresholdValueChanged(thresholdSlider->value());
+        setThresholdAdjustment(thresholdSlider->value());
+
+        delayedStateChanger.start(750);
     }
 
     void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
         thresholdSlider->setValue(thresholdSlider->value() + 1);
-        thresholdValueChanged(thresholdSlider->value());
+        setThresholdAdjustment(thresholdSlider->value());
+
+        delayedStateChanger.start(750);
     }
 
     void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
         thresholdSlider->setValue(0);
-        thresholdValueChanged(thresholdSlider->value());
+        setThresholdAdjustment(thresholdSlider->value());
+
+        emit stateChanged();
     }
 
     void OtsuBinarizationOptionsWidget::updateView() {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
         thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
         thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
     }
@@ -117,15 +113,19 @@ namespace output {
         );
         connect(
                 thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(bwThresholdChanged())
+                this, SLOT(thresholdSliderReleased())
         );
         connect(
                 thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(thresholdValueChanged(int))
+                this, SLOT(thresholdSliderValueChanged(int))
         );
         connect(
                 neutralThresholdBtn, SIGNAL(clicked()),
                 this, SLOT(setNeutralThreshold())
+        );
+        connect(
+                &delayedStateChanger, SIGNAL(timeout()),
+                this, SLOT(sendStateChanged())
         );
     }
 
@@ -140,16 +140,23 @@ namespace output {
         );
         disconnect(
                 thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(bwThresholdChanged())
+                this, SLOT(thresholdSliderReleased())
         );
         disconnect(
                 thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(thresholdValueChanged(int))
+                this, SLOT(thresholdSliderValueChanged(int))
         );
         disconnect(
                 neutralThresholdBtn, SIGNAL(clicked()),
                 this, SLOT(setNeutralThreshold())
         );
+        disconnect(
+                &delayedStateChanger, SIGNAL(timeout()),
+                this, SLOT(sendStateChanged())
+        );
     }
 
+    void OtsuBinarizationOptionsWidget::sendStateChanged() {
+        emit stateChanged();
+    }
 }    // namespace output

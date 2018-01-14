@@ -8,8 +8,6 @@ namespace output {
             : m_ptrSettings(settings) {
         setupUi(this);
 
-        updateView();
-
         delayedStateChanger.setSingleShot(true);
 
         setupUiConnections();

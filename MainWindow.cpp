@@ -76,6 +76,7 @@
 #include "Application.h"
 #include "StatusBarProvider.h"
 #include "MetricUnitsProvider.h"
+#include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
 #include <QScrollBar>
@@ -160,7 +161,7 @@ MainWindow::MainWindow()
          }
     });
 
-    m_metricMenuActionGroup.reset(new QActionGroup(this));
+    m_metricMenuActionGroup = std::make_unique<QActionGroup>(this);
     for (QAction* action : menuMetricUnits->actions()) {
         m_metricMenuActionGroup->addAction(action);
     }
@@ -281,6 +282,10 @@ MainWindow::MainWindow()
     connect(
             actionSettings, SIGNAL(triggered(bool)),
             this, SLOT(openSettingsDialog())
+    );
+    connect(
+            actionDefaults, SIGNAL(triggered(bool)),
+            this, SLOT(openDefaultParamsDialog())
     );
 
     connect(
@@ -1511,6 +1516,13 @@ void MainWindow::openSettingsDialog() {
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
     connect(dialog, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
+    dialog->show();
+}
+
+void MainWindow::openDefaultParamsDialog() {
+    DefaultParamsDialog* dialog = new DefaultParamsDialog(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowModality(Qt::WindowModal);
     dialog->show();
 }
 

@@ -27,6 +27,9 @@ public:
     template<typename M, typename K, typename V>
     static typename M::iterator mapSetValue(M& map, K const& key, V const& val);
 
+    template<typename M, typename K, typename V>
+    static typename M::iterator unorderedMapSetValue(M& map, K const& key, V const& val);
+
     /**
      * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
      *
@@ -72,6 +75,18 @@ template<typename M, typename K, typename V>
 typename M::iterator Utils::mapSetValue(M& map, K const& key, V const& val) {
     typename M::iterator const it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {
+        return map.insert(it, typename M::value_type(key, val));
+    } else {
+        it->second = val;
+
+        return it;
+    }
+}
+
+template<typename M, typename K, typename V>
+typename M::iterator Utils::unorderedMapSetValue(M& map, const K& key, const V& val) {
+    typename M::iterator const it(map.find(key));
+    if (it == map.end()) {
         return map.insert(it, typename M::value_type(key, val));
     } else {
         it->second = val;

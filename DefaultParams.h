@@ -122,22 +122,22 @@ public:
 
     class PageLayoutParams {
     private:
-        Margins hardMarginsMM;
+        Margins hardMargins;
         page_layout::Alignment alignment;
         bool autoMargins;
 
     public:
         PageLayoutParams();
 
-        PageLayoutParams(const Margins& hardMarginsMM, const page_layout::Alignment& alignment, bool autoMargins);
+        PageLayoutParams(const Margins& hardMargins, const page_layout::Alignment& alignment, bool autoMargins);
 
         explicit PageLayoutParams(const QDomElement& el);
 
         QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        const Margins& getHardMarginsMM() const;
+        const Margins& getHardMargins() const;
 
-        void setHardMarginsMM(const Margins& hardMarginsMM);
+        void setHardMargins(const Margins& hardMargins);
 
         const page_layout::Alignment& getAlignment() const;
 

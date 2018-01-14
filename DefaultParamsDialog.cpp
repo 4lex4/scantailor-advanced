@@ -200,7 +200,7 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
     autoMargins->setChecked(params.isAutoMargins());
     marginsWidget->setEnabled(!params.isAutoMargins());
 
-    const Margins& margins = params.getHardMarginsMM();
+    const Margins& margins = params.getHardMargins();
     topMarginSpinBox->setValue(margins.top());
     rightMarginSpinBox->setValue(margins.right());
     bottomMarginSpinBox->setValue(margins.bottom());

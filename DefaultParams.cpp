@@ -272,25 +272,25 @@ void DefaultParams::SelectContentParams::setPageDetectMode(AutoManualMode pageDe
     SelectContentParams::pageDetectMode = pageDetectMode;
 }
 
-DefaultParams::PageLayoutParams::PageLayoutParams(const Margins& hardMarginsMM,
+DefaultParams::PageLayoutParams::PageLayoutParams(const Margins& hardMargins,
                                                   const page_layout::Alignment& alignment,
                                                   bool autoMargins)
-        : hardMarginsMM(hardMarginsMM),
+        : hardMargins(hardMargins),
           alignment(alignment),
           autoMargins(autoMargins) {
 }
 
 DefaultParams::PageLayoutParams::PageLayoutParams()
-        : hardMarginsMM(10, 5, 10, 5),
+        : hardMargins(10, 5, 10, 5),
           autoMargins(false) {
 }
 
-const Margins& DefaultParams::PageLayoutParams::getHardMarginsMM() const {
-    return hardMarginsMM;
+const Margins& DefaultParams::PageLayoutParams::getHardMargins() const {
+    return hardMargins;
 }
 
-void DefaultParams::PageLayoutParams::setHardMarginsMM(const Margins& hardMarginsMM) {
-    PageLayoutParams::hardMarginsMM = hardMarginsMM;
+void DefaultParams::PageLayoutParams::setHardMargins(const Margins& hardMargins) {
+    PageLayoutParams::hardMargins = hardMargins;
 }
 
 const page_layout::Alignment& DefaultParams::PageLayoutParams::getAlignment() const {
@@ -310,14 +310,14 @@ void DefaultParams::PageLayoutParams::setAutoMargins(bool autoMargins) {
 }
 
 DefaultParams::PageLayoutParams::PageLayoutParams(const QDomElement& el)
-        : hardMarginsMM(XmlUnmarshaller::margins(el.namedItem("hardMarginsMM").toElement())),
+        : hardMargins(XmlUnmarshaller::margins(el.namedItem("hardMargins").toElement())),
           alignment(el.namedItem("alignment").toElement()),
           autoMargins(el.attribute("autoMargins") == "1") {
 }
 
 QDomElement DefaultParams::PageLayoutParams::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
-    el.appendChild(XmlMarshaller(doc).margins(hardMarginsMM, "hardMarginsMM"));
+    el.appendChild(XmlMarshaller(doc).margins(hardMargins, "hardMargins"));
     el.appendChild(alignment.toXml(doc, "alignment"));
     el.setAttribute("autoMargins", autoMargins ? "1" : "0");
 

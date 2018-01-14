@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>362</width>
-    <height>345</height>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,12 +28,18 @@
         <property name="text">
          <string>Apply content box</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="applyPageBoxOption">
         <property name="text">
          <string>Apply page box</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

@@ -556,6 +556,10 @@ QAbstractSpinBox::up-arrow:pressed {
 	image: url(:/dark_scheme/icon_up_arrow_pressed.png);
 }
 
+QSlider:horizontal {
+	margin: 7px 1px 9px 1px;
+}
+
 QSlider::groove:horizontal {
 	border: none;
 	height: 3px;

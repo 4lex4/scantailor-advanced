@@ -7,7 +7,7 @@
 std::unique_ptr<MetricUnitsProvider> MetricUnitsProvider::instance = nullptr;
 
 MetricUnitsProvider::MetricUnitsProvider()
-        : metricUnits(metricUnitsFromString(QSettings().value("metric-units", "mm").toString())) {
+        : metricUnits(metricUnitsFromString(QSettings().value("settings/metric_units", "mm").toString())) {
 }
 
 MetricUnitsProvider* MetricUnitsProvider::getInstance() {

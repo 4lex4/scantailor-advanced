@@ -165,7 +165,7 @@ MainWindow::MainWindow()
     for (QAction* action : menuMetricUnits->actions()) {
         m_metricMenuActionGroup->addAction(action);
     }
-    switch (metricUnitsFromString(QSettings().value("metric-units", "mm").toString())) {
+    switch (metricUnitsFromString(QSettings().value("settings/metric_units", "mm").toString())) {
         case PIXELS:
             actionPixels->setChecked(true);
             break;
@@ -182,25 +182,25 @@ MainWindow::MainWindow()
     connect(actionPixels, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(PIXELS);
-            QSettings().setValue("metric-units", toString(PIXELS));
+            QSettings().setValue("settings/metric_units", toString(PIXELS));
         }
     });
     connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(MILLIMETRES);
-            QSettings().setValue("metric-units", toString(MILLIMETRES));
+            QSettings().setValue("settings/metric_units", toString(MILLIMETRES));
         }
     });
     connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(CENTIMETRES);
-            QSettings().setValue("metric-units", toString(CENTIMETRES));
+            QSettings().setValue("settings/metric_units", toString(CENTIMETRES));
         }
     });
     connect(actionInches, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(INCHES);
-            QSettings().setValue("metric-units", toString(INCHES));
+            QSettings().setValue("settings/metric_units", toString(INCHES));
         }
     });
 

@@ -207,7 +207,8 @@ DefaultParams::SelectContentParams::SelectContentParams(const QSizeF& pageRectSi
 }
 
 DefaultParams::SelectContentParams::SelectContentParams()
-        : pageDetectMode(MODE_AUTO),
+        : pageRectSize(QSizeF(210, 297)),
+          pageDetectMode(MODE_AUTO),
           contentDetectEnabled(true),
           pageDetectEnabled(false),
           fineTuneCorners(false) {
@@ -342,7 +343,7 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
 
 DefaultParams::OutputParams::OutputParams()
         : despeckleLevel(DESPECKLE_CAUTIOUS),
-          dpi(300, 300) {
+          dpi(600, 600) {
 }
 
 const Dpi& DefaultParams::OutputParams::getDpi() const {

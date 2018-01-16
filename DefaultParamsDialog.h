@@ -95,6 +95,8 @@ private slots:
 
     void profileDeletePressed();
 
+    void commitChanges();
+
 private:
     void updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params);
 
@@ -125,6 +127,8 @@ private:
     std::unique_ptr<DefaultParams> buildParams() const;
 
     bool isProfileNameReserved(const QString& name);
+
+    void setTabWidgetsEnabled(bool enabled);
 };
 
 

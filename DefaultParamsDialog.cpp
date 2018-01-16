@@ -12,6 +12,7 @@
 #include "DefaultParamsDialog.h"
 #include "Utils.h"
 #include "MetricUnitsProvider.h"
+#include "DefaultParamsProvider.h"
 
 using namespace page_split;
 using namespace output;
@@ -128,7 +129,13 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     thresholdSlider->setMaximum(50);
     thresholLabel->setText(QString::number(thresholdSlider->value()));
 
+    const int index = profileCB->findData(DefaultParamsProvider::getInstance()->getProfileName());
+    if (index != -1) {
+        profileCB->setCurrentIndex(index);
+    }
     profileChanged(profileCB->currentIndex());
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(commitChanges()));
 }
 
 void DefaultParamsDialog::updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params) {
@@ -173,7 +180,11 @@ void DefaultParamsDialog::updatePageSplitDisplay(const DefaultParams::PageSplitP
 
 void DefaultParamsDialog::updateDeskewDisplay(const DefaultParams::DeskewParams& params) {
     AutoManualMode mode = params.getMode();
-    deskewAutoBtn->setChecked(mode == MODE_AUTO);
+    if (mode == MODE_AUTO) {
+        deskewAutoBtn->setChecked(true);
+    } else {
+        deskewManualBtn->setChecked(true);
+    }
     angleSpinBox->setEnabled(mode == MODE_MANUAL);
     angleSpinBox->setValue(params.getDeskewAngleDeg());
 }
@@ -184,16 +195,26 @@ void DefaultParamsDialog::updateSelectContentDisplay(const DefaultParams::Select
         AutoManualMode pageDetectMode = params.getPageDetectMode();
         fineTuneBtn->setEnabled(pageDetectMode == MODE_AUTO);
         dimensionsWidget->setEnabled(pageDetectMode == MODE_MANUAL);
+        if (pageDetectMode == MODE_AUTO) {
+            pageDetectAutoBtn->setChecked(true);
+        } else {
+            pageDetectManualBtn->setChecked(true);
+        }
     } else {
         pageDetectOptions->setEnabled(false);
+        pageDetectDisableBtn->setChecked(true);
+    }
+
+    if (params.isContentDetectEnabled()) {
+        contentDetectAutoBtn->setChecked(true);
+    } else {
+        contentDetectDisableBtn->setChecked(true);
     }
 
     QSizeF pageRectSize = params.getPageRectSize();
     widthSpinBox->setValue(pageRectSize.width());
     heightSpinBox->setValue(pageRectSize.height());
     fineTuneBtn->setEnabled(params.isFineTuneCorners());
-
-    contentDetectDisableBtn->setChecked(!params.isContentDetectEnabled());
 }
 
 void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayoutParams& params) {
@@ -543,14 +564,15 @@ void DefaultParamsDialog::splittingToggled(const bool checked) {
 void DefaultParamsDialog::loadParams(const DefaultParams& params) {
     removeUiConnections();
 
+    // must be done before updating the displays in order to set the precise of the spin boxes
+    updateMetricUnits(params.getMetricUnits());
+
     updateFixOrientationDisplay(params.getFixOrientationParams());
     updatePageSplitDisplay(params.getPageSplitParams());
     updateDeskewDisplay(params.getDeskewParams());
     updateSelectContentDisplay(params.getSelectContentParams());
     updatePageLayoutDisplay(params.getPageLayoutParams());
     updateOutputDisplay(params.getOutputParams());
-
-    updateMetricUnits(params.getMetricUnits());
 
     setupUiConnections();
 }
@@ -677,9 +699,55 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     return std::move(defaultParams);
 }
 
-void DefaultParamsDialog::updateMetricUnits(MetricUnits units) {
+void DefaultParamsDialog::updateMetricUnits(const MetricUnits units) {
     currentMetricUnits = units;
     metricUnitsLabel->setText(toString(units));
+
+    {
+        int decimals;
+        double step;
+        switch (units) {
+            case PIXELS:
+            case MILLIMETRES:
+                decimals = 1;
+                step = 1.0;
+                break;
+            default:
+                decimals = 2;
+                step = 0.01;
+                break;
+        }
+
+        widthSpinBox->setDecimals(decimals);
+        widthSpinBox->setSingleStep(step);
+        heightSpinBox->setDecimals(decimals);
+        heightSpinBox->setSingleStep(step);
+    }
+
+    {
+        int decimals;
+        double step;
+        switch (units) {
+            case PIXELS:
+            case MILLIMETRES:
+                decimals = 1;
+                step = 1.0;
+                break;
+            default:
+                decimals = 2;
+                step = 0.01;
+                break;
+        }
+
+        topMarginSpinBox->setDecimals(decimals);
+        topMarginSpinBox->setSingleStep(step);
+        bottomMarginSpinBox->setDecimals(decimals);
+        bottomMarginSpinBox->setSingleStep(step);
+        leftMarginSpinBox->setDecimals(decimals);
+        leftMarginSpinBox->setSingleStep(step);
+        rightMarginSpinBox->setDecimals(decimals);
+        rightMarginSpinBox->setSingleStep(step);
+    }
 }
 
 void DefaultParamsDialog::setLinkButtonLinked(QToolButton* button, bool linked) {
@@ -805,23 +873,46 @@ void DefaultParamsDialog::profileChanged(const int index) {
         profileCB->lineEdit()->selectAll();
         profileSaveButton->setEnabled(true);
         profileDeleteButton->setEnabled(false);
-        updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
+        setTabWidgetsEnabled(true);
+
+        if (DefaultParamsProvider::getInstance()->getProfileName() == "Custom") {
+            loadParams(DefaultParamsProvider::getInstance()->getParams());
+        } else {
+            updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
+        }
     } else if (profileCB->currentData().toString() == "Default") {
+        profileSaveButton->setEnabled(false);
+        profileDeleteButton->setEnabled(false);
+        setTabWidgetsEnabled(false);
+
         std::unique_ptr<DefaultParams> defaultProfile = profileManager.createDefaultProfile();
         loadParams(*defaultProfile);
+    } else if (profileCB->currentData().toString() == "Source") {
         profileSaveButton->setEnabled(false);
         profileDeleteButton->setEnabled(false);
-    } else if (profileCB->currentData().toString() == "Source") {
+        setTabWidgetsEnabled(false);
+
         std::unique_ptr<DefaultParams> sourceProfile = profileManager.createSourceProfile();
         loadParams(*sourceProfile);
-        profileSaveButton->setEnabled(false);
-        profileDeleteButton->setEnabled(false);
     } else {
         std::unique_ptr<DefaultParams> profile = profileManager.readProfile(profileCB->itemData(index).toString());
         if (profile != nullptr) {
-            loadParams(*profile);
             profileSaveButton->setEnabled(false);
             profileDeleteButton->setEnabled(true);
+            setTabWidgetsEnabled(false);
+
+            loadParams(*profile);
+        } else {
+            QMessageBox::critical(this, tr("Error"), tr("Error loading the profile."));
+            profileCB->setCurrentIndex(0);
+            profileCB->removeItem(index);
+
+            profileSaveButton->setEnabled(false);
+            profileDeleteButton->setEnabled(false);
+            setTabWidgetsEnabled(false);
+
+            std::unique_ptr<DefaultParams> defaultProfile = profileManager.createDefaultProfile();
+            loadParams(*defaultProfile);
         }
     }
 }
@@ -846,6 +937,7 @@ void DefaultParamsDialog::profileSavePressed() {
 
         profileSaveButton->setEnabled(false);
         profileDeleteButton->setEnabled(true);
+        setTabWidgetsEnabled(false);
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Error saving the profile."));
     }
@@ -861,6 +953,7 @@ void DefaultParamsDialog::profileDeletePressed() {
 
         profileSaveButton->setEnabled(true);
         profileDeleteButton->setEnabled(false);
+        setTabWidgetsEnabled(true);
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Error deleting the profile."));
     }
@@ -868,4 +961,24 @@ void DefaultParamsDialog::profileDeletePressed() {
 
 bool DefaultParamsDialog::isProfileNameReserved(const QString& name) {
     return reservedProfileNames.count(name) > 0;
+}
+
+void DefaultParamsDialog::commitChanges() {
+    const QString profile = profileCB->currentData().toString();
+    std::unique_ptr<DefaultParams> params;
+    if (profile == "Default") {
+        params = profileManager.createDefaultProfile();
+    } else if (profile == "Source") {
+        params = profileManager.createSourceProfile();
+    } else {
+        params = buildParams();
+    }
+    DefaultParamsProvider::getInstance()->setParams(std::move(params), profile);
+}
+
+void DefaultParamsDialog::setTabWidgetsEnabled(const bool enabled) {
+    for (int i = 0; i < tabWidget->count(); i++) {
+        QWidget* widget = tabWidget->widget(i);
+        widget->setEnabled(enabled);
+    }
 }

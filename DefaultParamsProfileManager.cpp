@@ -4,6 +4,10 @@
 #include "DefaultParamsProfileManager.h"
 #include "DefaultParams.h"
 
+using namespace page_split;
+using namespace output;
+using namespace page_layout;
+
 DefaultParamsProfileManager::DefaultParamsProfileManager()
         : path(qApp->applicationDirPath() + "/config/profiles") {
 }
@@ -79,7 +83,41 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createDefaultProfile
 }
 
 std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile() {
-    return std::make_unique<DefaultParams>();
+    DefaultParams::DeskewParams deskewParams;
+    deskewParams.setMode(MODE_MANUAL);
+
+    DefaultParams::PageSplitParams pageSplitParams;
+    pageSplitParams.setLayoutType(SINGLE_PAGE_UNCUT);
+
+    DefaultParams::SelectContentParams selectContentParams;
+    selectContentParams.setContentDetectEnabled(false);
+
+    DefaultParams::PageLayoutParams pageLayoutParams;
+    pageLayoutParams.setHardMargins(Margins(0, 0, 0, 0));
+
+    Alignment alignment;
+    alignment.setNull(true);
+    pageLayoutParams.setAlignment(alignment);
+
+    DefaultParams::OutputParams outputParams;
+
+    ColorParams colorParams;
+    colorParams.setColorMode(ColorParams::COLOR_GRAYSCALE);
+
+    ColorCommonOptions colorCommonOptions;
+    colorCommonOptions.setCutMargins(false);
+    colorParams.setColorCommonOptions(colorCommonOptions);
+
+    outputParams.setColorParams(colorParams);
+
+    return std::make_unique<DefaultParams>(
+            DefaultParams::FixOrientationParams(),
+            deskewParams,
+            pageSplitParams,
+            selectContentParams,
+            pageLayoutParams,
+            outputParams
+    );
 }
 
 bool DefaultParamsProfileManager::deleteProfile(const QString& name) {

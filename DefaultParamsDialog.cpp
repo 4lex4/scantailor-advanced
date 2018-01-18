@@ -141,7 +141,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
 
 void DefaultParamsDialog::updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params) {
     orthogonalRotation = params.getImageRotation();
-    setRotation(orthogonalRotation);
+    setRotationPixmap();
 }
 
 void DefaultParamsDialog::updatePageSplitDisplay(const DefaultParams::PageSplitParams& params) {
@@ -215,7 +215,7 @@ void DefaultParamsDialog::updateSelectContentDisplay(const DefaultParams::Select
     QSizeF pageRectSize = params.getPageRectSize();
     widthSpinBox->setValue(pageRectSize.width());
     heightSpinBox->setValue(pageRectSize.height());
-    fineTuneBtn->setEnabled(params.isFineTuneCorners());
+    fineTuneBtn->setChecked(params.isFineTuneCorners());
 }
 
 void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayoutParams& params) {
@@ -607,11 +607,30 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
 
     Alignment alignment;
-    for (auto button : alignmentByButton) {
-        if (button.first->isChecked()) {
-            alignment = button.second;
+    alignment.setNull(!alignWithOthersCB->isChecked());
+    switch (alignmentMode->currentIndex()) {
+        case 0:
+            alignment.setVertical(Alignment::VAUTO);
+            alignment.setHorizontal(Alignment::HCENTER);
             break;
-        }
+        case 1:
+            for (auto button : alignmentByButton) {
+                if (button.first->isChecked()) {
+                    alignment = button.second;
+                    break;
+                }
+            }
+            break;
+        case 2:
+            alignment.setVertical(Alignment::VORIGINAL);
+            if (autoMargins->isChecked()) {
+                alignment.setHorizontal(Alignment::HORIGINAL);
+            } else {
+                alignment.setHorizontal(Alignment::HCENTER);
+            }
+            break;
+        default:
+            break;
     }
     DefaultParams::PageLayoutParams pageLayoutParams(
             Margins(leftMarginSpinBox->value(),

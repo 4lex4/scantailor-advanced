@@ -53,13 +53,12 @@ namespace page_layout {
         ProviderPtr const default_order;
         ProviderPtr const order_by_width(new OrderByWidthProvider(m_ptrSettings));
         ProviderPtr const order_by_height(new OrderByHeightProvider(m_ptrSettings));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Natural order"), default_order));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Order by increasing width"), order_by_width));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Order by increasing height"), order_by_height));
+        m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+        m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
+        m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return tr("Margins");
@@ -218,7 +217,7 @@ namespace page_layout {
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-        // we need recalculate the margins basing on metric units and dpi
+        // we need to recalculate the margins later basing on metric units and dpi
         m_ptrSettings->setPageParams(
                 page_id,
                 Params(Margins(-0.01, -0.01, -0.01, -0.01),

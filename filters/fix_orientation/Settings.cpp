@@ -22,11 +22,9 @@
 #include "AbstractRelinker.h"
 
 namespace fix_orientation {
-    Settings::Settings() {
-    }
+    Settings::Settings() = default;
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
@@ -63,7 +61,7 @@ namespace fix_orientation {
     OrthogonalRotation Settings::getRotationFor(ImageId const& image_id) const {
         QMutexLocker locker(&m_mutex);
 
-        PerImageRotation::const_iterator it(m_perImageRotation.find(image_id));
+        auto it(m_perImageRotation.find(image_id));
         if (it != m_perImageRotation.end()) {
             return it->second;
         } else {
@@ -73,5 +71,11 @@ namespace fix_orientation {
 
     void Settings::setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation) {
         Utils::mapSetValue(m_perImageRotation, image_id, rotation);
+    }
+
+    bool Settings::isRotationNull(ImageId const& image_id) const {
+        QMutexLocker locker(&m_mutex);
+
+        return m_perImageRotation.count(image_id) == 0;
     }
 }  // namespace fix_orientation

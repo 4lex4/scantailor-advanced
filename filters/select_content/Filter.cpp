@@ -27,6 +27,8 @@
 #include "OrderByHeightProvider.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 #include "CommandLine.h"
 
 namespace select_content {
@@ -191,6 +193,27 @@ namespace select_content {
     Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> const& next_task) {
         return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, next_task)
+        );
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->isParamsNull(page_id)) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
+
+        m_ptrSettings->setPageParams(
+                page_id,
+                Params(QRectF(),
+                       QSizeF(),
+                       QRectF(),
+                       Dependencies(),
+                       MODE_AUTO,
+                       selectContentParams.getPageDetectMode(),
+                       selectContentParams.isContentDetectEnabled(),
+                       selectContentParams.isPageDetectEnabled(),
+                       selectContentParams.isFineTuneCorners())
         );
     }
 }  // namespace select_content

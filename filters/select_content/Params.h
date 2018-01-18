@@ -35,7 +35,7 @@ namespace select_content {
     public:
         // Member-wise copying is OK.
 
-        Params(Dependencies const& deps);
+        explicit Params(Dependencies const& deps);
 
         Params(QRectF const& content_rect,
                QSizeF const& size_mm,
@@ -47,7 +47,7 @@ namespace select_content {
                bool pageDetect,
                bool fineTuning);
 
-        Params(QDomElement const& filter_el);
+        explicit Params(QDomElement const& filter_el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

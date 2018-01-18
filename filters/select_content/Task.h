@@ -31,6 +31,7 @@ class TaskStatus;
 class FilterData;
 class DebugImages;
 class ImageTransformation;
+class Dpi;
 
 namespace page_layout {
     class Task;
@@ -51,12 +52,14 @@ namespace select_content {
              bool batch,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
         FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 
     private:
         class UiUpdater;
+
+        void loadDefaultSettings(const Dpi& dpi);
 
         intrusive_ptr<Filter> m_ptrFilter;
         intrusive_ptr<page_layout::Task> m_ptrNextTask;

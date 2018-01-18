@@ -33,6 +33,8 @@
 #include <boost/lambda/bind.hpp>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 #include "CommandLine.h"
 
 namespace page_layout {
@@ -206,6 +208,26 @@ namespace page_layout {
     Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task) {
         return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(next_task, m_ptrSettings)
+        );
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->isParamsNull(page_id)) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
+
+        // we need recalculate the margins basing on metric units and dpi
+        m_ptrSettings->setPageParams(
+                page_id,
+                Params(Margins(-0.01, -0.01, -0.01, -0.01),
+                       QRectF(),
+                       QRectF(),
+                       QSizeF(),
+                       pageLayoutParams.getAlignment(),
+                       pageLayoutParams.isAutoMargins()
+                )
         );
     }
 }  // namespace page_layout

@@ -76,6 +76,8 @@ namespace select_content {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
+        void loadDefaultSettings(PageId const& page_id) override;
+
         intrusive_ptr<Task> createTask(PageId const& page_id,
                                        intrusive_ptr<page_layout::Task> const& next_task,
                                        bool batch,

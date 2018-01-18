@@ -27,6 +27,8 @@
 #include "CacheDrivenTask.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 #include "CommandLine.h"
 #include "OrderBySplitTypeProvider.h"
 
@@ -206,5 +208,17 @@ namespace page_split {
     void Filter::selectPageOrder(int option) {
         assert((unsigned) option < m_pageOrderOptions.size());
         m_selectedPageOrder = option;
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->getPageRecord(page_id.imageId()).isNull()) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::PageSplitParams& pageSplitParams = defaultParams.getPageSplitParams();
+
+        Settings::UpdateAction update;
+        update.setLayoutType(pageSplitParams.getLayoutType());
+        m_ptrSettings->updatePage(page_id.imageId(), update);
     }
 }  // page_split

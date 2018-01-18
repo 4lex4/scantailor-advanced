@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <memory>
 #include <QtWidgets/QMessageBox>
+#include <QtCore/QSettings>
 #include "DefaultParamsDialog.h"
 #include "Utils.h"
 #include "MetricUnitsProvider.h"
@@ -974,6 +975,7 @@ void DefaultParamsDialog::commitChanges() {
         params = buildParams();
     }
     DefaultParamsProvider::getInstance()->setParams(std::move(params), profile);
+    QSettings().setValue("settings/current_profile", profile);
 }
 
 void DefaultParamsDialog::setTabWidgetsEnabled(const bool enabled) {

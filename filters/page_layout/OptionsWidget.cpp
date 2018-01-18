@@ -152,10 +152,8 @@ namespace page_layout {
         marginsGroup->setEnabled(true);
         alignmentGroup->setEnabled(true);
 
-        if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
-            m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
-            updateMarginsDisplay();
-        }
+        m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
+        updateMarginsDisplay();
 
         setupUiConnections();
     }

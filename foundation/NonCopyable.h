@@ -30,7 +30,7 @@ private: \
     /** \brief Copying is forbidden. */ \
     Class& operator=(Class const&); \
     /** \brief Moving is forbidden. */ \
-    Class(Class const &&); \
+    Class(Class const &&) noexcept; \
     /** \brief Moving is forbidden. */ \
     Class& operator=(Class const&&) noexcept;
 

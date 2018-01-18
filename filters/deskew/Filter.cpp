@@ -26,6 +26,8 @@
 #include "AbstractRelinker.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 
 namespace deskew {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -153,6 +155,19 @@ namespace deskew {
     Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> const& next_task) {
         return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, next_task)
+        );
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->isParamsNull(page_id)) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::DeskewParams& deskewParams = defaultParams.getDeskewParams();
+
+        m_ptrSettings->setPageParams(
+                page_id,
+                Params(deskewParams.getDeskewAngleDeg(), Dependencies(), deskewParams.getMode())
         );
     }
 }  // namespace deskew

@@ -1150,6 +1150,13 @@ void MainWindow::filterSelectionChanged(QItemSelection const& selected) {
     focusButton->setChecked(true);  // Should go before resetThumbSequence().
     resetThumbSequence(currentPageOrderProvider());
 
+    // load default settings for all the pages
+    for (const PageInfo& pageInfo : m_ptrThumbSequence->toPageSequence()) {
+        for (int i = 0; i < m_ptrStages->count(); i++) {
+            m_ptrStages->filterAt(i)->loadDefaultSettings(pageInfo.id());
+        }
+    }
+
     updateMainArea();
 } // MainWindow::filterSelectionChanged
 
@@ -1207,6 +1214,9 @@ void MainWindow::startBatchProcessing() {
     m_ptrBatchQueue.reset(new ProcessingTaskQueue);
     PageInfo page(m_ptrThumbSequence->selectionLeader());
     for (; !page.isNull(); page = m_ptrThumbSequence->nextPage(page.id())) {
+        for (int i = 0; i < m_ptrStages->count(); i++) {
+            m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
+        }
         m_ptrBatchQueue->addProcessingTask(
                 page, createCompositeTask(page, m_curFilter,  /*batch=*/ true, m_debug)
         );
@@ -1711,6 +1721,10 @@ void MainWindow::loadPageInteractive(PageInfo const& page) {
         setImageWidget(new ErrorWidget(err_text), TRANSFER_OWNERSHIP);
 
         return;
+    }
+
+    for (int i = 0; i < m_ptrStages->count(); i++) {
+        m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
     }
 
     if (!isBatchProcessingInProgress()) {

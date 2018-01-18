@@ -100,4 +100,10 @@ namespace select_content {
             return std::unique_ptr<Params>();
         }
     }
+
+    bool Settings::isParamsNull(PageId const& page_id) const {
+        QMutexLocker locker(&m_mutex);
+
+        return m_pageParams.count(page_id) == 0;
+    }
 }  // namespace select_content

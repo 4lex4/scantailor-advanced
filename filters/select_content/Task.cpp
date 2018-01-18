@@ -112,7 +112,8 @@ namespace select_content {
             } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
                 // shifting page rect for skewed pages correcting
                 QRectF corrected_page_rect(new_params.pageRect());
-                if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)) {
+                if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)
+                    && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
                     const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
                     const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
                     corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
@@ -137,7 +138,8 @@ namespace select_content {
                 if (!new_params.contentRect().isEmpty()) {
                     // shifting content rect for skewed pages correcting
                     QRectF corrected_content_rect(new_params.contentRect());
-                    if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)) {
+                    if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)
+                        && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
                         const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
                         const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
                         corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,

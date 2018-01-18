@@ -27,6 +27,8 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <tiff.h>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 
 #include "CommandLine.h"
 
@@ -177,6 +179,27 @@ namespace output {
     Filter::createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen) {
         return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, out_file_name_gen)
+        );
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->isParamsNull(page_id)) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
+
+        m_ptrSettings->setParams(
+                page_id,
+                Params(outputParams.getDpi(),
+                       outputParams.getColorParams(),
+                       outputParams.getSplittingOptions(),
+                       outputParams.getPictureShapeOptions(),
+                       dewarping::DistortionModel(),
+                       outputParams.getDepthPerception(),
+                       outputParams.getDewarpingOptions(),
+                       outputParams.getDespeckleLevel()
+                )
         );
     }
 }  // namespace output

@@ -66,6 +66,8 @@ namespace deskew {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
+        void loadDefaultSettings(PageId const& page_id) override;
+
         intrusive_ptr<Task> createTask(PageId const& page_id,
                                        intrusive_ptr<select_content::Task> const& next_task,
                                        bool batch_processing,

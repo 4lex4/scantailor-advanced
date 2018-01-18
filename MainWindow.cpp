@@ -76,6 +76,7 @@
 #include "Application.h"
 #include "StatusBarProvider.h"
 #include "MetricUnitsProvider.h"
+#include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
 #include <QScrollBar>
@@ -152,37 +153,54 @@ MainWindow::MainWindow()
     StatusBarProvider::getInstance()->registerStatusBarPanel(m_statusBarPanel);
     QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
     connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](PageInfo const& page_info) {
-         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
-         if (pageSequence.numPages() > 0) {
-             m_statusBarPanel->updatePageNum(pageSequence.pageNo(page_info.id()) + 1);
-         } else {
-             m_statusBarPanel->clear();
-         }
+        PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
+        if (pageSequence.numPages() > 0) {
+            m_statusBarPanel->updatePageNum(pageSequence.pageNo(page_info.id()) + 1);
+        } else {
+            m_statusBarPanel->clear();
+        }
     });
 
-    m_metricMenuActionGroup.reset(new QActionGroup(this));
+    m_metricMenuActionGroup = std::make_unique<QActionGroup>(this);
     for (QAction* action : menuMetricUnits->actions()) {
         m_metricMenuActionGroup->addAction(action);
     }
-    actionMilimeters->setChecked(true);
+    switch (metricUnitsFromString(QSettings().value("settings/metric_units", "mm").toString())) {
+        case PIXELS:
+            actionPixels->setChecked(true);
+            break;
+        case MILLIMETRES:
+            actionMilimeters->setChecked(true);
+            break;
+        case CENTIMETRES:
+            actionCentimetres->setChecked(true);
+            break;
+        case INCHES:
+            actionInches->setChecked(true);
+            break;
+    }
     connect(actionPixels, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(PIXELS);
+            QSettings().setValue("settings/metric_units", toString(PIXELS));
         }
     });
     connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(MILLIMETRES);
+            QSettings().setValue("settings/metric_units", toString(MILLIMETRES));
         }
     });
     connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(CENTIMETRES);
+            QSettings().setValue("settings/metric_units", toString(CENTIMETRES));
         }
     });
     connect(actionInches, &QAction::toggled, [this](bool checked) {
         if (checked) {
             MetricUnitsProvider::getInstance()->setMetricUnits(INCHES);
+            QSettings().setValue("settings/metric_units", toString(INCHES));
         }
     });
 
@@ -281,6 +299,10 @@ MainWindow::MainWindow()
     connect(
             actionSettings, SIGNAL(triggered(bool)),
             this, SLOT(openSettingsDialog())
+    );
+    connect(
+            actionDefaults, SIGNAL(triggered(bool)),
+            this, SLOT(openDefaultParamsDialog())
     );
 
     connect(
@@ -566,13 +588,18 @@ void MainWindow::timerEvent(QTimerEvent* const event) {
 }
 
 MainWindow::SavePromptResult MainWindow::promptProjectSave() {
-    QMessageBox::StandardButton const res = (QMessageBox::StandardButton) (QMessageBox::question(
-            this, tr("Save Project"), tr("Save the project?"),
-            QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-            QMessageBox::Save
-    ));
+    QMessageBox msgBox(QMessageBox::Question,
+                       tr("Save Project"), tr("Save the project?"),
+                       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                       this
+    );
+    msgBox.setDefaultButton(QMessageBox::Save);
 
-    switch (res) {
+    msgBox.setButtonText(QMessageBox::Save, tr("Save"));
+    msgBox.setButtonText(QMessageBox::Discard, tr("Discard"));
+    msgBox.setButtonText(QMessageBox::Cancel, tr("Cancel"));
+
+    switch (msgBox.exec()) {
         case QMessageBox::Save:
             return SAVE;
         case QMessageBox::Discard:
@@ -1123,6 +1150,13 @@ void MainWindow::filterSelectionChanged(QItemSelection const& selected) {
     focusButton->setChecked(true);  // Should go before resetThumbSequence().
     resetThumbSequence(currentPageOrderProvider());
 
+    // load default settings for all the pages
+    for (const PageInfo& pageInfo : m_ptrThumbSequence->toPageSequence()) {
+        for (int i = 0; i < m_ptrStages->count(); i++) {
+            m_ptrStages->filterAt(i)->loadDefaultSettings(pageInfo.id());
+        }
+    }
+
     updateMainArea();
 } // MainWindow::filterSelectionChanged
 
@@ -1180,6 +1214,9 @@ void MainWindow::startBatchProcessing() {
     m_ptrBatchQueue.reset(new ProcessingTaskQueue);
     PageInfo page(m_ptrThumbSequence->selectionLeader());
     for (; !page.isNull(); page = m_ptrThumbSequence->nextPage(page.id())) {
+        for (int i = 0; i < m_ptrStages->count(); i++) {
+            m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
+        }
         m_ptrBatchQueue->addProcessingTask(
                 page, createCompositeTask(page, m_curFilter,  /*batch=*/ true, m_debug)
         );
@@ -1514,6 +1551,13 @@ void MainWindow::openSettingsDialog() {
     dialog->show();
 }
 
+void MainWindow::openDefaultParamsDialog() {
+    DefaultParamsDialog* dialog = new DefaultParamsDialog(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowModality(Qt::WindowModal);
+    dialog->show();
+}
+
 void MainWindow::onSettingsChanged() {
     QSettings settings;
 
@@ -1677,6 +1721,10 @@ void MainWindow::loadPageInteractive(PageInfo const& page) {
         setImageWidget(new ErrorWidget(err_text), TRANSFER_OWNERSHIP);
 
         return;
+    }
+
+    for (int i = 0; i < m_ptrStages->count(); i++) {
+        m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
     }
 
     if (!isBatchProcessingInProgress()) {

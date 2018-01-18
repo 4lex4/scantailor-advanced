@@ -35,7 +35,16 @@ namespace output {
     public:
         Params();
 
-        Params(QDomElement const& el);
+        Params(const Dpi& m_dpi,
+               const ColorParams& m_colorParams,
+               const SplittingOptions& m_splittingOptions,
+               const PictureShapeOptions& m_pictureShapeOptions,
+               const dewarping::DistortionModel& m_distortionModel,
+               const DepthPerception& m_depthPerception,
+               const DewarpingOptions& m_dewarpingOptions,
+               DespeckleLevel m_despeckleLevel);
+
+        explicit Params(QDomElement const& el);
 
         Dpi const& outputDpi() const {
             return m_dpi;

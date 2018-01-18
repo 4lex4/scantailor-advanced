@@ -264,12 +264,61 @@
      <property name="title">
       <string>Alignment</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="spacing">
-         <number>0</number>
-        </property>
+        <item>
+         <spacer name="horizontalSpacer_14">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="alignmentMode">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <item>
+           <property name="text">
+            <string comment="auto">Auto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="manual">Manual</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="original">Original</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
@@ -277,50 +326,21 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>0</width>
-            <height>0</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="spacing">
-           <number>6</number>
+         <widget class="QCheckBox" name="alignWithOthersCB">
+          <property name="text">
+           <string>Match size with other pages</string>
           </property>
-          <item>
-           <widget class="QComboBox" name="alignmentMode">
-            <property name="currentIndex">
-             <number>1</number>
-            </property>
-            <item>
-             <property name="text">
-              <string comment="auto">Auto</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string comment="manual">Manual</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string comment="original">Original</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="alignWithOthersCB">
-            <property name="text">
-             <string>Match size with other pages</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer_8">
@@ -329,8 +349,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>0</width>
-            <height>0</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>

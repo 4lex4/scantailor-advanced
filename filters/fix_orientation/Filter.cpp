@@ -28,6 +28,8 @@
 #include "XmlUnmarshaller.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <DefaultParamsProvider.h>
+#include <DefaultParams.h>
 #include "CommandLine.h"
 
 namespace fix_orientation {
@@ -148,5 +150,15 @@ namespace fix_orientation {
         image_el.setAttribute("id", numeric_id);
         image_el.appendChild(marshaller.rotation(rotation, "rotation"));
         filter_el.appendChild(image_el);
+    }
+
+    void Filter::loadDefaultSettings(PageId const& page_id) {
+        if (!m_ptrSettings->isRotationNull(page_id.imageId())) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
+
+        m_ptrSettings->applyRotation(page_id.imageId(), fixOrientationParams.getImageRotation());
     }
 }  // namespace fix_orientation

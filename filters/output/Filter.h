@@ -61,6 +61,8 @@ namespace output {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
+        void loadDefaultSettings(PageId const& page_id) override;
+
         intrusive_ptr<Task> createTask(PageId const& page_id,
                                        intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
                                        OutputFileNameGenerator const& out_file_name_gen,

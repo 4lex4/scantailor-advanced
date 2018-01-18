@@ -152,10 +152,8 @@ namespace page_layout {
         marginsGroup->setEnabled(true);
         alignmentGroup->setEnabled(true);
 
-        if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
-            m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
-            updateMarginsDisplay();
-        }
+        m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
+        updateMarginsDisplay();
 
         setupUiConnections();
     }
@@ -282,10 +280,9 @@ namespace page_layout {
                 m_alignment.setHorizontal(Alignment::HCENTER);
                 break;
             case 1:
-                for (auto& iter : m_alignmentByButton) {
-                    QToolButton* button = iter.first;
-                    if (button->isChecked()) {
-                        m_alignment = iter.second;
+                for (auto button : m_alignmentByButton) {
+                    if (button.first->isChecked()) {
+                        m_alignment = button.second;
                         break;
                     }
                 }
@@ -297,6 +294,8 @@ namespace page_layout {
                 } else {
                     m_alignment.setHorizontal(Alignment::HCENTER);
                 }
+                break;
+            default:
                 break;
         }
 

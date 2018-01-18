@@ -23,8 +23,25 @@
 
 namespace output {
     Params::Params()
-            : m_dpi(CommandLine::get().getDefaultOutputDpi()),
+            : m_dpi(600, 600),
               m_despeckleLevel(DESPECKLE_CAUTIOUS) {
+    }
+
+    Params::Params(const Dpi& m_dpi,
+                   const ColorParams& m_colorParams,
+                   const SplittingOptions& m_splittingOptions,
+                   const PictureShapeOptions& m_pictureShapeOptions,
+                   const dewarping::DistortionModel& m_distortionModel,
+                   const DepthPerception& m_depthPerception,
+                   const DewarpingOptions& m_dewarpingOptions,
+                   DespeckleLevel m_despeckleLevel) : m_dpi(m_dpi),
+                                                      m_colorParams(m_colorParams),
+                                                      m_splittingOptions(m_splittingOptions),
+                                                      m_pictureShapeOptions(m_pictureShapeOptions),
+                                                      m_distortionModel(m_distortionModel),
+                                                      m_depthPerception(m_depthPerception),
+                                                      m_dewarpingOptions(m_dewarpingOptions),
+                                                      m_despeckleLevel(m_despeckleLevel) {
     }
 
     Params::Params(QDomElement const& el)

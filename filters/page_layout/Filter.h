@@ -76,6 +76,8 @@ namespace page_layout {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
+        void loadDefaultSettings(PageId const& page_id) override;
+
         void setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect);
 
         void invalidateContentBox(PageId const& page_id);

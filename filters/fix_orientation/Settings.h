@@ -49,6 +49,8 @@ namespace fix_orientation {
 
         OrthogonalRotation getRotationFor(ImageId const& image_id) const;
 
+        bool isRotationNull(ImageId const& image_id) const;
+
     private:
         typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
 

@@ -3,8 +3,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
 PROJECT("ScanTailor")
 
 # setting compiler flags
+SET(CMAKE_CXX_STANDARD 17)
+
 IF ((CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX) OR MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 ENDIF ()
 
 IF (MSVC AND WIN_XP)
@@ -550,9 +552,13 @@ SET(
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
         StatusBarProvider.cpp StatusBarProvider.h
+        MetricUnitsProvider.cpp MetricUnitsProvider.h
+        MetricUnitsObserver.h MetricUnitsObserver.cpp
+        DefaultParams.cpp DefaultParams.h
+        DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
         version.h
         config.h.in
-        ${common_ui_files} MetricUnitsProvider.cpp MetricUnitsProvider.h MetricUnitsObserver.h MetricUnitsObserver.cpp)
+        ${common_ui_files} MetricUnitsConverter.cpp MetricUnitsConverter.h DefaultParamsProvider.cpp DefaultParamsProvider.h)
 
 SET(
         gui_only_sources
@@ -575,7 +581,8 @@ SET(
         SystemLoadWidget.cpp SystemLoadWidget.h
         MainWindow.cpp MainWindow.h
         main.cpp
-        StatusBarPanel.cpp StatusBarPanel.h)
+        StatusBarPanel.cpp StatusBarPanel.h
+        DefaultParamsDialog.cpp DefaultParamsDialog.h)
 
 SET(
         cli_only_sources

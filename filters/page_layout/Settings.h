@@ -79,6 +79,8 @@ namespace page_layout {
          */
         std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
+        bool isParamsNull(PageId const& page_id) const;
+
         /**
          * \brief Set all page parameters at once.
          */

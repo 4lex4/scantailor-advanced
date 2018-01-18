@@ -51,6 +51,8 @@ namespace deskew {
 
         std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
+        bool isParamsNull(PageId const& page_id) const;
+
         void setDegress(std::set<PageId> const& pages, Params const& params);
 
         double maxDeviation() const {

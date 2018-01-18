@@ -50,6 +50,8 @@ namespace select_content {
 
         std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
+        bool isParamsNull(PageId const& page_id) const;
+
         double maxDeviation() const {
             return m_maxDeviation;
         }

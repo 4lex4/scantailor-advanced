@@ -69,6 +69,9 @@ public:
     virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const = 0;
 
     virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) = 0;
+
+    virtual void loadDefaultSettings(PageId const& page_id) {
+    };
 };
 
 

@@ -58,6 +58,8 @@ namespace page_layout {
     private:
         class UiUpdater;
 
+        void loadDefaultSettings(const Dpi& dpi);
+
         intrusive_ptr<Filter> m_ptrFilter;
         intrusive_ptr<output::Task> m_ptrNextTask;
         intrusive_ptr<Settings> m_ptrSettings;

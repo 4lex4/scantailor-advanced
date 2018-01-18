@@ -30,6 +30,8 @@
 
 #include <iostream>
 #include <MetricUnitsProvider.h>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 #include "Dpm.h"
 
 namespace select_content {
@@ -83,6 +85,8 @@ namespace select_content {
     FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
         status.throwIfCancelled();
 
+        loadDefaultSettings(Dpi(Dpm(data.origImage())));
+
         Dependencies const deps(data.xform().resultingPreCropArea());
 
         OptionsWidget::UiData ui_data;
@@ -108,7 +112,8 @@ namespace select_content {
             } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
                 // shifting page rect for skewed pages correcting
                 QRectF corrected_page_rect(new_params.pageRect());
-                if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)) {
+                if (params.get() && new_params.pageRect().isValid() && !params->dependencies().matches(deps)
+                    && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
                     const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
                     const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
                     corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
@@ -133,7 +138,8 @@ namespace select_content {
                 if (!new_params.contentRect().isEmpty()) {
                     // shifting content rect for skewed pages correcting
                     QRectF corrected_content_rect(new_params.contentRect());
-                    if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)) {
+                    if (params.get() && new_params.contentRect().isValid() && !params->dependencies().matches(deps)
+                        && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
                         const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
                         const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
                         corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
@@ -191,7 +197,26 @@ namespace select_content {
                     )
             );
         }
-    }  // Task::process
+    }   // Task::process
+
+    void Task::loadDefaultSettings(const Dpi& dpi) {
+        std::unique_ptr<Params> params = m_ptrSettings->getPageParams(m_pageId);
+        if ((params == nullptr) || !params->pageRect().isNull()) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
+
+        MetricUnitsConverter unitsConverter(dpi);
+
+        const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
+        double pageRectWidth = pageRectSize.width();
+        double pageRectHeight = pageRectSize.height();
+        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getMetricUnits(), PIXELS);
+
+        params->setPageRect(QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)));
+        m_ptrSettings->setPageParams(m_pageId, *params);
+    }
 
 /*============================ Task::UiUpdater ==========================*/
 

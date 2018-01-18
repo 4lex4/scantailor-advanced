@@ -47,7 +47,7 @@ namespace output {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
@@ -56,6 +56,8 @@ namespace output {
         Params getParams(PageId const& page_id) const;
 
         void setParams(PageId const& page_id, Params const& params);
+
+        bool isParamsNull(PageId const& page_id) const;
 
         void setColorParams(PageId const& page_id, ColorParams const& prms);
 

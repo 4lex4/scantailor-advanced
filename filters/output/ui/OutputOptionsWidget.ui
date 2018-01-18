@@ -86,7 +86,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-115</y>
+        <y>0</y>
         <width>230</width>
         <height>988</height>
        </rect>
@@ -283,51 +283,51 @@
               </spacer>
              </item>
              <item>
-              <layout class="QFormLayout" name="formLayout">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-               </property>
-               <property name="horizontalSpacing">
-                <number>0</number>
-               </property>
-               <property name="verticalSpacing">
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <property name="spacing">
                 <number>2</number>
                </property>
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
                <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
                 <number>5</number>
                </property>
                <property name="bottomMargin">
                 <number>5</number>
                </property>
-               <item row="0" column="0">
+               <item>
                 <widget class="QCheckBox" name="cutMarginsCB">
                  <property name="text">
                   <string>Cut margins</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item>
                 <widget class="QCheckBox" name="equalizeIlluminationCB">
                  <property name="text">
                   <string>Equalize illumination (B&amp;&amp;W)</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item>
                 <widget class="QCheckBox" name="equalizeIlluminationColorCB">
                  <property name="text">
                   <string>Equalize illumination (Color)</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item>
                 <widget class="QCheckBox" name="savitzkyGolaySmoothingCB">
                  <property name="text">
                   <string>Savitzky-Golay smoothing</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item>
                 <widget class="QCheckBox" name="morphologicalSmoothingCB">
                  <property name="text">
                   <string>Morphological smoothing</string>

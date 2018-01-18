@@ -33,3 +33,15 @@ QString toString(const MetricUnits units) {
 
     return unitsStr;
 }
+
+MetricUnits metricUnitsFromString(const QString& string) {
+    if (string == "px") {
+        return PIXELS;
+    } else if (string == "cm") {
+        return CENTIMETRES;
+    } else if (string == "in") {
+        return INCHES;
+    } else {
+        return MILLIMETRES;
+    }
+}

@@ -17,6 +17,8 @@
  */
 
 #include <MetricUnitsProvider.h>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -85,6 +87,8 @@ namespace page_layout {
                                   QRectF const& content_rect) {
         status.throwIfCancelled();
 
+        loadDefaultSettings(Dpi(Dpm(data.origImage())));
+
         QSizeF const content_size_mm(
                 Utils::calcRectSizeMM(data.xform(), content_rect)
         );
@@ -137,7 +141,29 @@ namespace page_layout {
                     )
             );
         }
-    }  // Task::process
+    }   // Task::process
+
+    void Task::loadDefaultSettings(const Dpi& dpi) {
+        if (m_ptrSettings->isParamsNull(m_pageId)
+            || (m_ptrSettings->getHardMarginsMM(m_pageId).top() != -0.01)) {
+            return;
+        }
+
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
+
+        MetricUnitsConverter unitsConverter(dpi);
+
+        const Margins& margins = pageLayoutParams.getHardMargins();
+        double leftMargin = margins.left();
+        double topMargin = margins.top();
+        double rightMargin = margins.right();
+        double bottomMargin = margins.bottom();
+        unitsConverter.convert(leftMargin, topMargin, defaultParams.getMetricUnits(), MILLIMETRES);
+        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getMetricUnits(), MILLIMETRES);
+
+        m_ptrSettings->setHardMarginsMM(m_pageId, Margins(leftMargin, topMargin, rightMargin, bottomMargin));
+    }
 
 /*============================ Task::UiUpdater ==========================*/
 

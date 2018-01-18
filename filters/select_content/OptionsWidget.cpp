@@ -72,6 +72,7 @@ namespace select_content {
         pageDetectDisableBtn->setEnabled(true);
 
         updatePageDetectOptionsDisplay();
+        updatePageRectSize(m_uiData.pageRect().size());
 
         setupUiConnections();
     }

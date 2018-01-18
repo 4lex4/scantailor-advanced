@@ -16,6 +16,8 @@ enum MetricUnits {
 
 QString toString(MetricUnits units);
 
+MetricUnits metricUnitsFromString(const QString& string);
+
 class MetricUnitsObserver {
 public:
     MetricUnitsObserver();

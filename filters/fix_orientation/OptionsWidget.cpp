@@ -107,7 +107,7 @@ namespace fix_orientation {
         emit invalidateAllThumbnails();
     }
 
-    void OptionsWidget::setRotation(OrthogonalRotation const rotation) {
+    void OptionsWidget::setRotation(OrthogonalRotation const& rotation) {
         if (rotation == m_rotation) {
             return;
         }

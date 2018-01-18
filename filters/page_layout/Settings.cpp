@@ -139,6 +139,8 @@ namespace page_layout {
 
         std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
 
+        bool isParamsNull(PageId const& page_id) const;
+
         void setPageParams(PageId const& page_id, Params const& params);
 
         Params updateContentSizeAndGetParams(PageId const& page_id,
@@ -352,6 +354,10 @@ namespace page_layout {
 
     void Settings::setPageAutoMarginsEnabled(PageId const& page_id, bool const state) {
         return m_ptrImpl->setPageAutoMarginsEnabled(page_id, state);
+    }
+
+    bool Settings::isParamsNull(const PageId& page_id) const {
+        return m_ptrImpl->isParamsNull(page_id);
     }
 
 /*============================== Settings::Item =============================*/
@@ -765,4 +771,10 @@ namespace page_layout {
         }
     }
 
+    bool Settings::Impl::isParamsNull(PageId const& page_id) const {
+        QMutexLocker const locker(&m_mutex);
+
+        Container::iterator const it(m_items.find(page_id));
+        return (it == m_items.end());
+    }
 }  // namespace page_layout

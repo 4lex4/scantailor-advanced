@@ -28,8 +28,7 @@ namespace deskew {
         m_maxDeviation = CommandLine::get().getSkewDeviation();
     }
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
@@ -87,11 +86,11 @@ namespace deskew {
     Settings::getPageParams(PageId const& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        PerPageParams::const_iterator it(m_perPageParams.find(page_id));
+        auto it(m_perPageParams.find(page_id));
         if (it != m_perPageParams.end()) {
-            return std::unique_ptr<Params>(new Params(it->second));
+            return std::make_unique<Params>(it->second);
         } else {
-            return std::unique_ptr<Params>();
+            return nullptr;
         }
     }
 
@@ -100,5 +99,11 @@ namespace deskew {
         for (PageId const& page : pages) {
             Utils::mapSetValue(m_perPageParams, page, params);
         }
+    }
+
+    bool Settings::isParamsNull(PageId const& page_id) const {
+        QMutexLocker locker(&m_mutex);
+
+        return m_perPageParams.count(page_id) == 0;
     }
 }  // namespace deskew

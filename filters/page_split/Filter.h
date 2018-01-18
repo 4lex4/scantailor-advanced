@@ -70,6 +70,8 @@ namespace page_split {
 
         virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
 
+        void loadDefaultSettings(PageId const& page_id) override;
+
         intrusive_ptr<Task> createTask(PageInfo const& page_info,
                                        intrusive_ptr<deskew::Task> const& next_task,
                                        bool batch_processing,

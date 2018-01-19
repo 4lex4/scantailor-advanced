@@ -424,7 +424,7 @@ namespace select_content {
     void ImageView::forcePageRectDescribeContent() {
         const QRectF oldPageRect = m_pageRect;
         m_pageRect |= m_contentRect;
-        if (m_pageRect != oldPageRect) {
+        if (m_pageRectEnabled && (m_pageRect != oldPageRect)) {
             m_pageRectReloadRequested = true;
             emit pageRectSizeChanged(m_pageRect.size());
         }

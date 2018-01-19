@@ -34,7 +34,7 @@ class ObjectDragHandler : public InteractionHandler {
 DECLARE_NON_COPYABLE(ObjectDragHandler)
 
 public:
-    ObjectDragHandler(DraggableObject* obj = 0);
+    explicit ObjectDragHandler(DraggableObject* obj = nullptr);
 
     void setObject(DraggableObject* obj) {
         m_pObj = obj;
@@ -57,19 +57,19 @@ public:
     void setKeyboardModifiers(Qt::KeyboardModifiers modifiers);
 
 protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+    void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) override;
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
 
 private:
     DraggableObject* m_pObj;

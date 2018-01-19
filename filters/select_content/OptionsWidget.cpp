@@ -84,7 +84,7 @@ namespace select_content {
 
         updateContentModeIndication(MODE_MANUAL);
 
-        if (m_uiData.pageDetectionMode() == MODE_AUTO) {
+        if (m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO)) {
             m_uiData.setPageDetectionMode(MODE_MANUAL);
             updatePageModeIndication(MODE_MANUAL);
             updatePageDetectOptionsDisplay();
@@ -102,7 +102,7 @@ namespace select_content {
 
         updatePageModeIndication(MODE_MANUAL);
 
-        if (m_uiData.contentDetectionMode() == MODE_AUTO) {
+        if (m_uiData.isContentDetectionEnabled() && (m_uiData.contentDetectionMode() == MODE_AUTO)) {
             m_uiData.setContentDetectionMode(MODE_MANUAL);
             updateContentModeIndication(MODE_MANUAL);
         }
@@ -116,7 +116,7 @@ namespace select_content {
     }
 
     void OptionsWidget::updatePageRectSize(QSizeF const& size) {
-        ScopedIncDec<int> const ingore_scope(m_ignorePageSizeChanges);
+        ScopedIncDec<int> const ignore_scope(m_ignorePageSizeChanges);
 
         double width = size.width();
         double height = size.height();
@@ -138,7 +138,7 @@ namespace select_content {
         m_uiData.setContentDetectionMode(MODE_MANUAL);
         m_uiData.setContentDetectionEnabled(true);
 
-        if (m_uiData.pageDetectionMode() == MODE_AUTO) {
+        if (m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO)) {
             m_uiData.setPageDetectionMode(MODE_MANUAL);
             updatePageModeIndication(MODE_MANUAL);
             updatePageDetectOptionsDisplay();
@@ -163,11 +163,11 @@ namespace select_content {
     }
 
     void OptionsWidget::pageDetectManualToggled() {
-        bool need_reload = !m_uiData.isPageDetectionEnabled();
+        const bool need_reload = !m_uiData.isPageDetectionEnabled();
 
         m_uiData.setPageDetectionMode(MODE_MANUAL);
         m_uiData.setPageDetectionEnabled(true);
-        if (m_uiData.contentDetectionMode() == MODE_AUTO) {
+        if (m_uiData.isContentDetectionEnabled() && (m_uiData.contentDetectionMode() == MODE_AUTO)) {
             m_uiData.setContentDetectionMode(MODE_MANUAL);
             updateContentModeIndication(MODE_MANUAL);
         }
@@ -222,8 +222,10 @@ namespace select_content {
     void OptionsWidget::updatePageDetectOptionsDisplay() {
         fineTuneBtn->setChecked(m_uiData.isFineTuningCornersEnabled());
         pageDetectOptions->setVisible(m_uiData.isPageDetectionEnabled());
-        fineTuneBtn->setVisible(m_uiData.pageDetectionMode() == MODE_AUTO);
-        dimensionsWidget->setVisible(m_uiData.pageDetectionMode() == MODE_MANUAL);
+        fineTuneBtn->setVisible(m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO));
+        dimensionsWidget->setVisible(
+                m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_MANUAL)
+        );
     }
 
     void OptionsWidget::dimensionsChangedLocally(double) {

@@ -566,8 +566,7 @@ namespace output {
             return;
         }
 
-        std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map
-                = std::make_unique<std::unordered_map<ImageViewTab, QRectF>>();
+        auto tab_image_rect_map = std::make_unique<std::unordered_map<ImageViewTab, QRectF, std::hash<int>>>();
 
         std::unique_ptr<ImageViewBase> image_view(
                 new ImageView(m_outputImage, m_downscaledOutputImage)

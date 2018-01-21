@@ -31,12 +31,15 @@ class ImageViewBase;
 namespace output {
     class TabbedImageView : public QTabWidget {
     Q_OBJECT
+    private:
+        typedef std::unordered_map<ImageViewTab, QRectF, std::hash<int>> TabImageRectMap;
+
     public:
-        TabbedImageView(QWidget* parent = nullptr);
+        explicit TabbedImageView(QWidget* parent = nullptr);
 
         void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
 
-        void setImageRectMap(std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map);
+        void setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map);
 
     public slots:
 
@@ -63,7 +66,7 @@ namespace output {
         ImageViewBase* findImageViewBase(QWidget* parent) const;
 
         std::unordered_map<QWidget*, ImageViewTab> m_registry;
-        std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> m_tabImageRectMap;
+        std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
         int m_prevImageViewTabIndex;
     };
 }

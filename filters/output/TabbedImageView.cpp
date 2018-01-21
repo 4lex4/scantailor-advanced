@@ -71,7 +71,7 @@ namespace output {
     }
 
     void
-    TabbedImageView::setImageRectMap(std::unique_ptr<std::unordered_map<ImageViewTab, QRectF>> tab_image_rect_map) {
+    TabbedImageView::setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map) {
         m_tabImageRectMap = std::move(tab_image_rect_map);
     }
 

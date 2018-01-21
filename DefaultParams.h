@@ -15,7 +15,7 @@
 #include "AutoManualMode.h"
 #include "Margins.h"
 #include "Dpi.h"
-#include "MetricUnitsObserver.h"
+#include "UnitsObserver.h"
 
 class DefaultParams {
 public:
@@ -240,9 +240,9 @@ public:
 
     void setOutputParams(const OutputParams& outputParams);
 
-    MetricUnits getMetricUnits() const;
+    Units getUnits() const;
 
-    void setMetricUnits(MetricUnits metricUnits);
+    void setUnits(Units units);
 
 private:
     FixOrientationParams fixOrientationParams;
@@ -251,7 +251,7 @@ private:
     SelectContentParams selectContentParams;
     PageLayoutParams pageLayoutParams;
     OutputParams outputParams;
-    MetricUnits metricUnits;
+    Units units;
 };
 
 

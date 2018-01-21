@@ -30,7 +30,7 @@
 #include <memory>
 #include <map>
 #include <set>
-#include <MetricUnitsObserver.h>
+#include <UnitsObserver.h>
 
 class QToolButton;
 class ProjectPages;
@@ -38,7 +38,7 @@ class ProjectPages;
 namespace page_layout {
     class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, public MetricUnitsObserver, public Ui::PageLayoutOptionsWidget {
+    class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, public Ui::PageLayoutOptionsWidget {
     Q_OBJECT
     public:
         OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
@@ -65,7 +65,7 @@ namespace page_layout {
             return m_alignment;
         }
 
-        void updateMetricUnits(MetricUnits units) override;
+        void updateUnits(Units units) override;
 
     signals:
 

@@ -66,7 +66,7 @@ DefaultParams::DefaultParams(const DefaultParams::FixOrientationParams& fixOrien
           selectContentParams(selectContentParams),
           pageLayoutParams(pageLayoutParams),
           outputParams(outputParams),
-          metricUnits(MILLIMETRES) {
+          units(MILLIMETRES) {
 }
 
 DefaultParams::DefaultParams(const QDomElement& el)
@@ -76,7 +76,7 @@ DefaultParams::DefaultParams(const QDomElement& el)
           selectContentParams(el.namedItem("select-content-params").toElement()),
           pageLayoutParams(el.namedItem("page-layout-params").toElement()),
           outputParams(el.namedItem("output-params").toElement()),
-          metricUnits(metricUnitsFromString(el.attribute("metricUnits"))) {
+          units(unitsFromString(el.attribute("units"))) {
 }
 
 QDomElement DefaultParams::toXml(QDomDocument& doc, QString const& name) const {
@@ -87,21 +87,21 @@ QDomElement DefaultParams::toXml(QDomDocument& doc, QString const& name) const {
     el.appendChild(selectContentParams.toXml(doc, "select-content-params"));
     el.appendChild(pageLayoutParams.toXml(doc, "page-layout-params"));
     el.appendChild(outputParams.toXml(doc, "output-params"));
-    el.setAttribute("metricUnits", toString(metricUnits));
+    el.setAttribute("units", toString(units));
 
     return el;
 }
 
 DefaultParams::DefaultParams()
-        : metricUnits(MILLIMETRES) {
+        : units(MILLIMETRES) {
 }
 
-MetricUnits DefaultParams::getMetricUnits() const {
-    return metricUnits;
+Units DefaultParams::getUnits() const {
+    return units;
 }
 
-void DefaultParams::setMetricUnits(MetricUnits metricUnits) {
-    DefaultParams::metricUnits = metricUnits;
+void DefaultParams::setUnits(Units units) {
+    DefaultParams::units = units;
 }
 
 const OrthogonalRotation& DefaultParams::FixOrientationParams::getImageRotation() const {

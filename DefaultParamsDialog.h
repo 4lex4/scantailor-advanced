@@ -24,7 +24,7 @@ private:
     int customDpiItemIdx;
     QString customDpiString;
     int customProfileItemIdx;
-    MetricUnits currentMetricUnits;
+    Units currentUnits;
     std::set<QString> reservedProfileNames;
     int ignoreProfileChanges;
 
@@ -110,7 +110,7 @@ private:
 
     void updateOutputDisplay(const DefaultParams::OutputParams& params);
 
-    void updateMetricUnits(MetricUnits units);
+    void updateUnits(Units units);
 
     void setupUiConnections();
 

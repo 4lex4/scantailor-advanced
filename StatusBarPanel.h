@@ -5,9 +5,9 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QMutex>
 #include "ui_StatusBarPanel.h"
-#include "MetricUnitsObserver.h"
+#include "UnitsObserver.h"
 
-class StatusBarPanel : public QWidget, public MetricUnitsObserver, private Ui::StatusBarPanel {
+class StatusBarPanel : public QWidget, public UnitsObserver, private Ui::StatusBarPanel {
 Q_OBJECT
 private:
     mutable QMutex m_mutex;
@@ -24,7 +24,7 @@ public:
 
     void clear();
 
-    void updateMetricUnits(MetricUnits) override;
+    void updateUnits(Units) override;
 
 public slots:
 

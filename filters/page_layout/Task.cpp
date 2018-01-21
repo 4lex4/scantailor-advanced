@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <MetricUnitsProvider.h>
+#include <UnitsProvider.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include "Task.h"
@@ -152,15 +152,15 @@ namespace page_layout {
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-        MetricUnitsConverter unitsConverter(dpi);
+        UnitsConverter unitsConverter(dpi);
 
         const Margins& margins = pageLayoutParams.getHardMargins();
         double leftMargin = margins.left();
         double topMargin = margins.top();
         double rightMargin = margins.right();
         double bottomMargin = margins.bottom();
-        unitsConverter.convert(leftMargin, topMargin, defaultParams.getMetricUnits(), MILLIMETRES);
-        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getMetricUnits(), MILLIMETRES);
+        unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
+        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
 
         m_ptrSettings->setHardMarginsMM(m_pageId, Margins(leftMargin, topMargin, rightMargin, bottomMargin));
     }
@@ -188,7 +188,7 @@ namespace page_layout {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        MetricUnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
+        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();

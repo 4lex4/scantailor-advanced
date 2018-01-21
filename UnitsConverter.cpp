@@ -1,15 +1,15 @@
 
-#include "MetricUnitsConverter.h"
+#include "UnitsConverter.h"
 #include "dpm.h"
 
-MetricUnitsConverter::MetricUnitsConverter(const Dpi& dpi)
+UnitsConverter::UnitsConverter(const Dpi& dpi)
         : dpi(dpi) {
 }
 
-void MetricUnitsConverter::convert(double& horizontalValue,
+void UnitsConverter::convert(double& horizontalValue,
                                    double& verticalValue,
-                                   MetricUnits fromUnits,
-                                   MetricUnits toUnits) const {
+                                   Units fromUnits,
+                                   Units toUnits) const {
     if (dpi.isNull() || (fromUnits == toUnits)) {
         return;
     }
@@ -91,10 +91,10 @@ void MetricUnitsConverter::convert(double& horizontalValue,
     }
 }
 
-const Dpi& MetricUnitsConverter::getDpi() const {
+const Dpi& UnitsConverter::getDpi() const {
     return dpi;
 }
 
-void MetricUnitsConverter::setDpi(const Dpi& dpi) {
-    MetricUnitsConverter::dpi = dpi;
+void UnitsConverter::setDpi(const Dpi& dpi) {
+    UnitsConverter::dpi = dpi;
 }

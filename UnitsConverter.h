@@ -1,0 +1,26 @@
+
+#ifndef SCANTAILOR_UNITSCONVERTER_H
+#define SCANTAILOR_UNITSCONVERTER_H
+
+
+#include "Dpi.h"
+#include "UnitsObserver.h"
+
+class UnitsConverter {
+private:
+    Dpi dpi;
+
+public:
+    UnitsConverter() = default;
+
+    explicit UnitsConverter(const Dpi& dpi);
+
+    void convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const;
+
+    const Dpi& getDpi() const;
+
+    void setDpi(const Dpi& dpi);
+};
+
+
+#endif //SCANTAILOR_UNITSCONVERTER_H

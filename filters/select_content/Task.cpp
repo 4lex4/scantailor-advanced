@@ -29,7 +29,7 @@
 #include "filters/page_layout/Task.h"
 
 #include <iostream>
-#include <MetricUnitsProvider.h>
+#include <UnitsProvider.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include "Dpm.h"
@@ -207,12 +207,12 @@ namespace select_content {
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
-        MetricUnitsConverter unitsConverter(dpi);
+        UnitsConverter unitsConverter(dpi);
 
         const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
         double pageRectWidth = pageRectSize.width();
         double pageRectHeight = pageRectSize.height();
-        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getMetricUnits(), PIXELS);
+        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
 
         params->setPageRect(QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)));
         m_ptrSettings->setPageParams(m_pageId, *params);
@@ -239,7 +239,7 @@ namespace select_content {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        MetricUnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
+        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);

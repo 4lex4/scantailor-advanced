@@ -1,20 +1,20 @@
 
-#include "MetricUnitsObserver.h"
-#include "MetricUnitsProvider.h"
+#include "UnitsObserver.h"
+#include "UnitsProvider.h"
 #include <QObject>
 
-MetricUnitsObserver::MetricUnitsObserver() {
-    MetricUnitsProvider::getInstance()->attachObserver(this);
+UnitsObserver::UnitsObserver() {
+    UnitsProvider::getInstance()->attachObserver(this);
 }
 
-MetricUnitsObserver::~MetricUnitsObserver() {
-    MetricUnitsProvider::getInstance()->detachObserver(this);
+UnitsObserver::~UnitsObserver() {
+    UnitsProvider::getInstance()->detachObserver(this);
 }
 
-void MetricUnitsObserver::updateDpi(Dpi dpi) {
+void UnitsObserver::updateDpi(Dpi dpi) {
 }
 
-QString toString(const MetricUnits units) {
+QString toString(const Units units) {
     QString unitsStr;
     switch (units) {
         case PIXELS:
@@ -34,7 +34,7 @@ QString toString(const MetricUnits units) {
     return unitsStr;
 }
 
-MetricUnits metricUnitsFromString(const QString& string) {
+Units unitsFromString(const QString& string) {
     if (string == "px") {
         return PIXELS;
     } else if (string == "cm") {

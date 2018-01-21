@@ -2,7 +2,7 @@
 #include <cmath>
 #include "StatusBarPanel.h"
 #include "StatusBarProvider.h"
-#include "MetricUnitsProvider.h"
+#include "UnitsProvider.h"
 
 StatusBarPanel::StatusBarPanel() {
     setupUi(this);
@@ -14,9 +14,9 @@ void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
     if (!mousePos.isNull()) {
         double x = mousePos.x();
         double y = mousePos.y();
-        MetricUnitsProvider::getInstance()->convertFrom(x, y, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(x, y, PIXELS);
 
-        switch (MetricUnitsProvider::getInstance()->getMetricUnits()) {
+        switch (UnitsProvider::getInstance()->getUnits()) {
             case PIXELS:
             case MILLIMETRES:
                 x = ceil(x);
@@ -42,9 +42,9 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
     if (!physSize.isNull()) {
         double width = physSize.width();
         double height = physSize.height();
-        MetricUnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
 
-        const MetricUnits units = MetricUnitsProvider::getInstance()->getMetricUnits();
+        const Units units = UnitsProvider::getInstance()->getUnits();
         switch (units) {
             case PIXELS:
                 width = round(width);
@@ -85,7 +85,7 @@ void StatusBarPanel::clear() {
     physSizeLine->setVisible(false);
 }
 
-void StatusBarPanel::updateMetricUnits(MetricUnits) {
+void StatusBarPanel::updateUnits(Units) {
     updateMousePos(StatusBarProvider::getInstance()->getMousePos());
     updatePhysSize(StatusBarProvider::getInstance()->getPhysSize());
 }

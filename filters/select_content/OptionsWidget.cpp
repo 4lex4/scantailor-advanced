@@ -22,7 +22,7 @@
 #include "ScopedIncDec.h"
 
 #include <iostream>
-#include <MetricUnitsProvider.h>
+#include <UnitsProvider.h>
 
 namespace select_content {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
@@ -51,7 +51,7 @@ namespace select_content {
         pageDetectDisableBtn->setEnabled(false);
 
         updatePageDetectOptionsDisplay();
-        updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
+        updateUnits(UnitsProvider::getInstance()->getUnits());
 
         setupUiConnections();
     }
@@ -120,7 +120,7 @@ namespace select_content {
 
         double width = size.width();
         double height = size.height();
-        MetricUnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
 
         widthSpinBox->setValue(width);
         heightSpinBox->setValue(height);
@@ -235,7 +235,7 @@ namespace select_content {
 
         double widthSpinBoxValue = widthSpinBox->value();
         double heightSpinBoxValue = heightSpinBox->value();
-        MetricUnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS);
+        UnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS);
 
         QRectF newPageRect = m_uiData.pageRect();
         newPageRect.setSize(QSizeF(widthSpinBoxValue, heightSpinBoxValue));
@@ -346,7 +346,7 @@ namespace select_content {
     } // OptionsWidget::applySelection
 
 
-    void OptionsWidget::updateMetricUnits(MetricUnits units) {
+    void OptionsWidget::updateUnits(Units units) {
         removeUiConnections();
 
         int decimals;

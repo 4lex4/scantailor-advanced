@@ -75,7 +75,7 @@
 #include "version.h"
 #include "Application.h"
 #include "StatusBarProvider.h"
-#include "MetricUnitsProvider.h"
+#include "UnitsProvider.h"
 #include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
 #include <QStackedLayout>
@@ -161,11 +161,11 @@ MainWindow::MainWindow()
         }
     });
 
-    m_metricMenuActionGroup = std::make_unique<QActionGroup>(this);
-    for (QAction* action : menuMetricUnits->actions()) {
-        m_metricMenuActionGroup->addAction(action);
+    m_unitsMenuActionGroup = std::make_unique<QActionGroup>(this);
+    for (QAction* action : menuUnits->actions()) {
+        m_unitsMenuActionGroup->addAction(action);
     }
-    switch (metricUnitsFromString(QSettings().value("settings/metric_units", "mm").toString())) {
+    switch (unitsFromString(QSettings().value("settings/units", "mm").toString())) {
         case PIXELS:
             actionPixels->setChecked(true);
             break;
@@ -181,26 +181,26 @@ MainWindow::MainWindow()
     }
     connect(actionPixels, &QAction::toggled, [this](bool checked) {
         if (checked) {
-            MetricUnitsProvider::getInstance()->setMetricUnits(PIXELS);
-            QSettings().setValue("settings/metric_units", toString(PIXELS));
+            UnitsProvider::getInstance()->setUnits(PIXELS);
+            QSettings().setValue("settings/units", toString(PIXELS));
         }
     });
     connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
         if (checked) {
-            MetricUnitsProvider::getInstance()->setMetricUnits(MILLIMETRES);
-            QSettings().setValue("settings/metric_units", toString(MILLIMETRES));
+            UnitsProvider::getInstance()->setUnits(MILLIMETRES);
+            QSettings().setValue("settings/units", toString(MILLIMETRES));
         }
     });
     connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
         if (checked) {
-            MetricUnitsProvider::getInstance()->setMetricUnits(CENTIMETRES);
-            QSettings().setValue("settings/metric_units", toString(CENTIMETRES));
+            UnitsProvider::getInstance()->setUnits(CENTIMETRES);
+            QSettings().setValue("settings/units", toString(CENTIMETRES));
         }
     });
     connect(actionInches, &QAction::toggled, [this](bool checked) {
         if (checked) {
-            MetricUnitsProvider::getInstance()->setMetricUnits(INCHES);
-            QSettings().setValue("settings/metric_units", toString(INCHES));
+            UnitsProvider::getInstance()->setUnits(INCHES);
+            QSettings().setValue("settings/units", toString(INCHES));
         }
     });
 

@@ -64,9 +64,9 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menuMetricUnits">
+    <widget class="QMenu" name="menuUnits">
      <property name="title">
-      <string>Metric units</string>
+      <string>Units</string>
      </property>
      <addaction name="actionPixels"/>
      <addaction name="actionMilimeters"/>
@@ -81,7 +81,7 @@
     <addaction name="actionSettings"/>
     <addaction name="actionDefaults"/>
     <addaction name="separator"/>
-    <addaction name="menuMetricUnits"/>
+    <addaction name="menuUnits"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">

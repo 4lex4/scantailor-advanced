@@ -28,6 +28,7 @@ SET(
         UnremoveButton.cpp UnremoveButton.h
         OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
         PageLayoutAdapter.cpp PageLayoutAdapter.h)
+		
 SOURCE_GROUP("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

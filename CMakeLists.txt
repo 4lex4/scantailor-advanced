@@ -552,13 +552,15 @@ SET(
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
         StatusBarProvider.cpp StatusBarProvider.h
-        MetricUnitsProvider.cpp MetricUnitsProvider.h
-        MetricUnitsObserver.h MetricUnitsObserver.cpp
+        UnitsProvider.cpp UnitsProvider.h
+        UnitsObserver.h UnitsObserver.cpp
+		UnitsConverter.cpp UnitsConverter.h
         DefaultParams.cpp DefaultParams.h
         DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
+		DefaultParamsProvider.cpp DefaultParamsProvider.h
         version.h
         config.h.in
-        ${common_ui_files} MetricUnitsConverter.cpp MetricUnitsConverter.h DefaultParamsProvider.cpp DefaultParamsProvider.h)
+        ${common_ui_files})
 
 SET(
         gui_only_sources

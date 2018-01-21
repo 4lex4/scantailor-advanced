@@ -23,7 +23,7 @@
 #include "ScopedIncDec.h"
 #include "imageproc/Constants.h"
 #include <QSettings>
-#include <MetricUnitsProvider.h>
+#include <UnitsProvider.h>
 
 using namespace imageproc::constants;
 
@@ -113,7 +113,7 @@ namespace page_layout {
             }
         }
 
-        updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
+        updateUnits(UnitsProvider::getInstance()->getUnits());
 
         alignWithOthersCB->blockSignals(true);
         alignWithOthersCB->setChecked(!alignment.isNull());
@@ -163,7 +163,7 @@ namespace page_layout {
         updateMarginsDisplay();
     }
 
-    void OptionsWidget::updateMetricUnits(MetricUnits const units) {
+    void OptionsWidget::updateUnits(Units const units) {
         removeUiConnections();
 
         int decimals;
@@ -208,8 +208,8 @@ namespace page_layout {
         double dummy;
         double leftMarginSpinBoxValue = leftMarginSpinBox->value();
         double rightMarginSpinBoxValue = rightMarginSpinBox->value();
-        MetricUnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES);
-        MetricUnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES);
 
         m_marginsMM.setLeft(leftMarginSpinBoxValue);
         m_marginsMM.setRight(rightMarginSpinBoxValue);
@@ -231,8 +231,8 @@ namespace page_layout {
         double dummy;
         double topMarginSpinBoxValue = topMarginSpinBox->value();
         double bottomMarginSpinBoxValue = bottomMarginSpinBox->value();
-        MetricUnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES);
-        MetricUnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES);
 
         m_marginsMM.setTop(topMarginSpinBoxValue);
         m_marginsMM.setBottom(bottomMarginSpinBoxValue);
@@ -387,8 +387,8 @@ namespace page_layout {
         double bottomMarginValue = m_marginsMM.bottom();
         double leftMarginValue = m_marginsMM.left();
         double rightMarginValue = m_marginsMM.right();
-        MetricUnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES);
-        MetricUnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES);
 
         topMarginSpinBox->setValue(topMarginValue);
         bottomMarginSpinBox->setValue(bottomMarginValue);

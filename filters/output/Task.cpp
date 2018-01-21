@@ -46,7 +46,7 @@
 #include "imageproc/PolygonUtils.h"
 #include <boost/bind.hpp>
 #include <QDir>
-#include <MetricUnitsProvider.h>
+#include <UnitsProvider.h>
 
 using namespace imageproc;
 using namespace dewarping;
@@ -554,7 +554,7 @@ namespace output {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        MetricUnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_outputImage)));
+        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_outputImage)));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();

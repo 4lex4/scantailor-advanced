@@ -331,7 +331,7 @@ private:
     bool m_autoSaveProject;
     bool m_highlightDeviation;
     std::shared_ptr<StatusBarPanel> m_statusBarPanel;
-    std::unique_ptr<QActionGroup> m_metricMenuActionGroup;
+    std::unique_ptr<QActionGroup> m_unitsMenuActionGroup;
 };
 
 

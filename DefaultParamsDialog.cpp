@@ -12,7 +12,7 @@
 #include <QtCore/QSettings>
 #include "DefaultParamsDialog.h"
 #include "Utils.h"
-#include "MetricUnitsProvider.h"
+#include "UnitsProvider.h"
 #include "DefaultParamsProvider.h"
 
 using namespace page_split;
@@ -24,7 +24,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
           leftRightLinkEnabled(true),
           topBottomLinkEnabled(true),
           ignoreMarginChanges(0),
-          currentMetricUnits(MILLIMETRES),
+          currentUnits(MILLIMETRES),
           ignoreProfileChanges(0) {
     setupUi(this);
 
@@ -566,7 +566,7 @@ void DefaultParamsDialog::loadParams(const DefaultParams& params) {
     removeUiConnections();
 
     // must be done before updating the displays in order to set the precise of the spin boxes
-    updateMetricUnits(params.getMetricUnits());
+    updateUnits(params.getUnits());
 
     updateFixOrientationDisplay(params.getFixOrientationParams());
     updatePageSplitDisplay(params.getPageSplitParams());
@@ -714,14 +714,14 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
             pageLayoutParams,
             outputParams
     );
-    defaultParams->setMetricUnits(currentMetricUnits);
+    defaultParams->setUnits(currentUnits);
 
     return std::move(defaultParams);
 }
 
-void DefaultParamsDialog::updateMetricUnits(const MetricUnits units) {
-    currentMetricUnits = units;
-    metricUnitsLabel->setText(toString(units));
+void DefaultParamsDialog::updateUnits(const Units units) {
+    currentUnits = units;
+    unitsLabel->setText(toString(units));
 
     {
         int decimals;
@@ -898,7 +898,7 @@ void DefaultParamsDialog::profileChanged(const int index) {
         if (DefaultParamsProvider::getInstance()->getProfileName() == "Custom") {
             loadParams(DefaultParamsProvider::getInstance()->getParams());
         } else {
-            updateMetricUnits(MetricUnitsProvider::getInstance()->getMetricUnits());
+            updateUnits(UnitsProvider::getInstance()->getUnits());
         }
     } else if (profileCB->currentData().toString() == "Default") {
         profileSaveButton->setEnabled(false);

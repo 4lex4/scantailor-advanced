@@ -31,13 +31,13 @@
 #include <QSizeF>
 #include <QRectF>
 #include <memory>
-#include <MetricUnitsObserver.h>
+#include <UnitsObserver.h>
 
 namespace select_content {
     class Settings;
 
     class OptionsWidget
-            : public FilterOptionsWidget, public MetricUnitsObserver, private Ui::SelectContentOptionsWidget {
+            : public FilterOptionsWidget, public UnitsObserver, private Ui::SelectContentOptionsWidget {
     Q_OBJECT
     public:
         class UiData {
@@ -110,7 +110,7 @@ namespace select_content {
 
         void postUpdateUI(UiData const& ui_data);
 
-        void updateMetricUnits(MetricUnits units) override;
+        void updateUnits(Units units) override;
 
     public slots:
 

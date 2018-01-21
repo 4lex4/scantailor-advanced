@@ -83,7 +83,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="metricUnitsLabel">
+      <widget class="QLabel" name="unitsLabel">
        <property name="minimumSize">
         <size>
          <width>22</width>
@@ -153,8 +153,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>139</width>
-            <height>154</height>
+            <width>634</width>
+            <height>420</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -390,8 +390,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>193</width>
-            <height>162</height>
+            <width>634</width>
+            <height>420</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -629,8 +629,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>116</height>
+            <width>634</width>
+            <height>420</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -798,8 +798,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>314</height>
+            <width>634</width>
+            <height>420</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1099,8 +1099,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>410</width>
-            <height>258</height>
+            <width>634</width>
+            <height>420</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">

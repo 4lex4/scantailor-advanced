@@ -153,14 +153,19 @@ namespace output {
 
         const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
         const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+        const QString original_background_dir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
         const QString foreground_file_path(
                 QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
         );
         const QString background_file_path(
                 QDir(background_dir).absoluteFilePath(out_file_info.fileName())
         );
+        const QString original_background_file_path(
+                QDir(original_background_dir).absoluteFilePath(out_file_info.fileName())
+        );
         QFileInfo const foreground_file_info(foreground_file_path);
         QFileInfo const background_file_info(background_file_path);
+        QFileInfo const original_background_file_info(original_background_file_path);
 
         QString const automask_dir(Utils::automaskDir(m_outFileNameGen.outDir()));
         QString const automask_file_path(
@@ -264,13 +269,24 @@ namespace output {
                     need_reprocess = true;
                     break;
                 }
-
                 if (!(stored_output_params->foregroundFileParams().matches(
                         OutputFileParams(foreground_file_info)))
                     || !(stored_output_params->backgroundFileParams().matches(
                         OutputFileParams(background_file_info)))) {
                     need_reprocess = true;
                     break;
+                }
+
+                if (render_params.originalBackground()) {
+                    if (!original_background_file_info.exists()) {
+                        need_reprocess = true;
+                        break;
+                    }
+                    if (!(stored_output_params->originalBackgroundFileParams().matches(
+                            OutputFileParams(original_background_file_info)))) {
+                        need_reprocess = true;
+                        break;
+                    }
                 }
             }
 
@@ -318,7 +334,18 @@ namespace output {
                 if (background_file.open(QIODevice::ReadOnly)) {
                     background_image = ImageLoader::load(foreground_file, 0);
                 }
-                SplitImage tmpSplitImage = SplitImage(foreground_image, background_image);
+
+                SplitImage tmpSplitImage;
+                if (!render_params.originalBackground()) {
+                    tmpSplitImage = SplitImage(foreground_image, background_image);
+                } else {
+                    QImage original_background_image;
+                    QFile original_background_file(original_background_file_path);
+                    if (original_background_file.open(QIODevice::ReadOnly)) {
+                        original_background_image = ImageLoader::load(foreground_file, 0);
+                    }
+                    tmpSplitImage = SplitImage(foreground_image, background_image, original_background_image);
+                }
                 if (!tmpSplitImage.isNull()) {
                     out_img = tmpSplitImage.toImage();
                 }
@@ -393,11 +420,18 @@ namespace output {
                 QDir().mkdir(foreground_dir);
                 QDir().mkdir(background_dir);
 
-                if (!TiffWriter::writeImage(
-                        foreground_file_path, splitImage.getForegroundImage())
-                    || !TiffWriter::writeImage(
-                        background_file_path, splitImage.getBackgroundImage())) {
+                if (!TiffWriter::writeImage(foreground_file_path, splitImage.getForegroundImage())
+                    || !TiffWriter::writeImage(background_file_path, splitImage.getBackgroundImage())) {
                     invalidate_params = true;
+                }
+
+                if (render_params.originalBackground()) {
+                    QDir().mkdir(original_background_dir);
+
+                    if (!TiffWriter::writeImage(original_background_file_path,
+                                                splitImage.getOriginalBackgroundImage())) {
+                        invalidate_params = true;
+                    }
                 }
 
                 out_img = splitImage.toImage();
@@ -448,6 +482,8 @@ namespace output {
                                                     : OutputFileParams(),
                         render_params.splitOutput() ? OutputFileParams(QFileInfo(background_file_path))
                                                     : OutputFileParams(),
+                        render_params.originalBackground() ? OutputFileParams(QFileInfo(original_background_file_path))
+                                                           : OutputFileParams(),
                         write_automask ? OutputFileParams(QFileInfo(automask_file_path))
                                        : OutputFileParams(),
                         write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path))

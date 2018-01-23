@@ -36,6 +36,8 @@ namespace output {
 
         static QString backgroundDir(QString const& out_dir);
 
+        static QString originalBackgroundDir(QString const& out_dir);
+
         static QTransform scaleFromToDpi(Dpi const& from, Dpi const& to);
     };
 }  // namespace output

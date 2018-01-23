@@ -269,16 +269,6 @@ namespace output {
 
         static QSize calcLocalWindowSize(Dpi const& dpi);
 
-        static QImage normalizeIllumination(QImage const& gray_input, DebugImages* dbg);
-
-        QImage transformAndNormalizeIllumination(QImage const& gray_input,
-                                                 DebugImages* dbg,
-                                                 QImage const* morph_background = nullptr) const;
-
-        QImage transformAndNormalizeIllumination2(QImage const& gray_input,
-                                                  DebugImages* dbg,
-                                                  QImage const* morph_background = nullptr) const;
-
         void applyFillZonesInPlace(QImage& img,
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output,
@@ -287,6 +277,10 @@ namespace output {
         void applyFillZonesInPlace(QImage& img,
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+
+        void applyFillZonesInPlace(QImage& img,
+                                   ZoneSet const& zones,
+                                   QTransform const& postTransform) const;
 
         void applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const;
 
@@ -299,22 +293,21 @@ namespace output {
                                    ZoneSet const& zones,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
 
+        void applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                   ZoneSet const& zones,
+                                   QTransform const& postTransform) const;
+
         void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const;
 
-        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                         ZoneSet const& zones,
-                                         boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                         QTransform const& postTransform) const;
+        void applyFillZonesToMixedInPlace(QImage& img,
+                                          ZoneSet const& zones,
+                                          imageproc::BinaryImage const& picture_mask) const;
 
-        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                         ZoneSet const& zones,
-                                         QTransform const& postTransform) const;
-
-        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                         ZoneSet const& zones,
-                                         boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
-
-        void applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask, ZoneSet const& zones) const;
+        void applyFillZonesToMixedInPlace(QImage& img,
+                                          ZoneSet const& zones,
+                                          boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                          QTransform const& postTransform,
+                                          imageproc::BinaryImage const& picture_mask) const;
 
         Dpi m_dpi;
         ColorParams m_colorParams;

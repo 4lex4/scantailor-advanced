@@ -157,7 +157,7 @@ namespace output {
                           BinaryImage const& bw_content,
                           BinaryImage const& bw_mask,
                           bool needReserveBlackAndWhite = true) {
-            MixedPixel* mixed_line = reinterpret_cast<MixedPixel*>(mixed.bits());
+            auto* mixed_line = reinterpret_cast<MixedPixel*>(mixed.bits());
             int const mixed_stride = mixed.bytesPerLine() / sizeof(MixedPixel);
             uint32_t const* bw_content_line = bw_content.data();
             int const bw_content_stride = bw_content.wordsPerLine();
@@ -192,16 +192,33 @@ namespace output {
             }
         }  // combineMixed
 
+        void combineMixed(QImage& mixed,
+                          BinaryImage const& bw_content,
+                          BinaryImage const& bw_mask,
+                          bool needReserveBlackAndWhite = true) {
+            if ((mixed.format() != QImage::Format_Indexed8)
+                && (mixed.format() != QImage::Format_RGB32)
+                && (mixed.format() != QImage::Format_ARGB32)) {
+                throw std::invalid_argument("Error: wrong image format.");
+            }
+
+            if (mixed.format() == QImage::Format_Indexed8) {
+                combineMixed<uint8_t>(mixed, bw_content, bw_mask, needReserveBlackAndWhite);
+            } else {
+                combineMixed<uint32_t>(mixed, bw_content, bw_mask, needReserveBlackAndWhite);
+            }
+        }
+
         template<typename MixedPixel>
         void fillExcept(QImage& image, const BinaryImage& bw_mask, const QColor& color) {
-            MixedPixel* image_line = reinterpret_cast<MixedPixel*>(image.bits());
+            auto* image_line = reinterpret_cast<MixedPixel*>(image.bits());
             const int image_stride = image.bytesPerLine() / sizeof(MixedPixel);
             const uint32_t* bw_mask_line = bw_mask.data();
             const int bw_mask_stride = bw_mask.wordsPerLine();
             const int width = image.width();
             const int height = image.height();
             const uint32_t msb = uint32_t(1) << 31;
-            const MixedPixel fillingPixel = static_cast<MixedPixel>(color.rgba());
+            const auto fillingPixel = static_cast<MixedPixel>(color.rgba());
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
@@ -235,6 +252,44 @@ namespace output {
                 }
                 image_line += image_stride;
                 bw_mask_line += bw_mask_stride;
+            }
+        }
+
+        template<typename MixedPixel>
+        void applyMask(QImage& image, const BinaryImage& bw_mask, const BWColor filling_color = WHITE) {
+            auto* image_line = reinterpret_cast<MixedPixel*>(image.bits());
+            const int image_stride = image.bytesPerLine() / sizeof(MixedPixel);
+            const uint32_t* bw_mask_line = bw_mask.data();
+            const int bw_mask_stride = bw_mask.wordsPerLine();
+            const int width = image.width();
+            const int height = image.height();
+            const uint32_t msb = uint32_t(1) << 31;
+            const auto fillingPixel = static_cast<MixedPixel>(
+                    (filling_color == WHITE) ? 0xffffffff : 0x00000000
+            );
+
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    if (!(bw_mask_line[x >> 5] & (msb >> (x & 31)))) {
+                        image_line[x] = fillingPixel;
+                    }
+                }
+                image_line += image_stride;
+                bw_mask_line += bw_mask_stride;
+            }
+        }
+
+        void applyMask(QImage& image, const BinaryImage& bw_mask, const BWColor filling_color = WHITE) {
+            if ((image.format() != QImage::Format_Indexed8)
+                && (image.format() != QImage::Format_RGB32)
+                && (image.format() != QImage::Format_ARGB32)) {
+                throw std::invalid_argument("Error: wrong image format.");
+            }
+
+            if (image.format() == QImage::Format_Indexed8) {
+                applyMask<uint8_t>(image, bw_mask, filling_color);
+            } else {
+                applyMask<uint32_t>(image, bw_mask, filling_color);
             }
         }
     }      // namespace
@@ -514,10 +569,8 @@ namespace output {
             }
         }
 
-        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_contentRect);
-        if (!render_params.cutMargins()) {
-            contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_outRect);
-        }
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
+                render_params.cutMargins() ? m_contentRect : m_outRect);
 
         // The whole image minus the part cut off by the split line.
         QRect const big_margins_rect(
@@ -618,12 +671,17 @@ namespace output {
             }
         }
 
+        // Transform from the output image coordinates to the transformed image coordinates.
+        QTransform output_to_transformed;
+        output_to_transformed.translate(-normalize_illumination_rect.left(),
+                                        -normalize_illumination_rect.top());
+
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
 
         status.throwIfCancelled();
 
         if (render_params.binaryOutput()) {
-            BinaryImage dst(m_outRect.size().expandedTo(QSize(1, 1)), WHITE);
+            BinaryImage dst(target_size, WHITE);
 
             QImage maybe_smoothed;
             // We only do smoothing if we are going to do binarization later.
@@ -684,6 +742,7 @@ namespace output {
             return dst.toQImage();
         }
 
+        BinaryImage picture_mask_output;
         if (render_params.mixedOutput()) {
             BinaryImage bw_mask(small_margins_rect.size(), BLACK);
 
@@ -760,15 +819,11 @@ namespace output {
                 dbg->add(bw_mask, "bw_mask with zones");
             }
 
-            if (render_params.splitOutput()) {
-                BinaryImage out_bw_mask_with_fill_zones(m_outRect.size().expandedTo(QSize(1, 1)), BLACK);
+            {
+                picture_mask_output = BinaryImage(target_size, BLACK);
                 QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
                 QRect const dst_rect(contentRect);
-                rasterOp<RopSrc>(out_bw_mask_with_fill_zones, dst_rect, bw_mask, src_rect.topLeft());
-
-                applyFillZonesToMaskInPlace(out_bw_mask_with_fill_zones, fill_zones);
-
-                splitImage->setMask(out_bw_mask_with_fill_zones, render_params.needBinarization());
+                rasterOp<RopSrc>(picture_mask_output, dst_rect, bw_mask, src_rect.topLeft());
             }
 
             status.throwIfCancelled();
@@ -785,7 +840,7 @@ namespace output {
                 }
 
                 BinaryImage bw_mask_filled(bw_mask);
-                fillMarginsInPlace(bw_mask, normalize_illumination_crop_area, WHITE);
+                fillMarginsInPlace(bw_mask_filled, normalize_illumination_crop_area, WHITE);
 
                 BinaryImage bw_content(
                         binarize(maybe_smoothed, bw_mask_filled)
@@ -837,18 +892,64 @@ namespace output {
                     status.throwIfCancelled();
                 }
 
-                if (maybe_normalized.format() == QImage::Format_Indexed8) {
-                    combineMixed<uint8_t>(
-                            maybe_normalized, bw_content, bw_mask_filled, !render_params.splitOutput()
-                    );
-                } else {
-                    assert(maybe_normalized.format() == QImage::Format_RGB32
-                           || maybe_normalized.format() == QImage::Format_ARGB32);
+                if (render_params.originalBackground()) {
+                    QImage original_background(maybe_normalized);
+                    // reserving original black and white colors
+                    reserveBlackAndWhite(original_background);
+                    // subtracting bw content filling the content areas with white,
+                    // considering the colors of the content and background
+                    BinaryImage bw_content_mask(bw_content);
+                    // we applying BW filling zones to the mask to create an ability to control
+                    // the content of original background manually
+                    applyFillZonesInPlace(bw_content_mask, fill_zones, output_to_transformed);
+                    if (outsideBackgroundColorBW == Qt::white) {
+                        bw_content_mask.invert();
+                    }
+                    applyMask(original_background,
+                              bw_content_mask,
+                              WHITE);
+                    // applying picture mask filling the picture areas with black
+                    applyMask(original_background, bw_mask_filled, BLACK);
 
-                    combineMixed<uint32_t>(
-                            maybe_normalized, bw_content, bw_mask_filled, !render_params.splitOutput()
-                    );
+                    status.throwIfCancelled();
+
+                    QImage original_background_dst(target_size, original_background.format());
+                    if (original_background.format() == QImage::Format_Indexed8) {
+                        original_background_dst.setColorTable(createGrayscalePalette());
+                    }
+                    if (original_background_dst.isNull()) {
+                        // Both the constructor and setColorTable() above can leave the image null.
+                        throw std::bad_alloc();
+                    }
+
+                    QColor outsideOriginalBackgroundColor = outsideBackgroundColor;
+                    if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
+                        outsideOriginalBackgroundColor = Qt::white;
+                    }
+                    // reserving outside background color if it's black or white
+                    if (outsideOriginalBackgroundColor == Qt::white) {
+                        outsideOriginalBackgroundColor = QColor(254, 254, 254);
+                    } else if (outsideOriginalBackgroundColor == Qt::black) {
+                        outsideOriginalBackgroundColor = QColor(1, 1, 1);
+                    }
+                    fillMarginsInPlace(original_background,
+                                       normalize_illumination_crop_area,
+                                       outsideOriginalBackgroundColor);
+                    original_background_dst.fill(outsideOriginalBackgroundColor);
+
+                    if (!contentRect.isEmpty()) {
+                        QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+                        QRect const dst_rect(contentRect);
+                        drawOver(original_background_dst, dst_rect, original_background, src_rect);
+                    }
+                    original_background = QImage();
+
+                    status.throwIfCancelled();
+
+                    splitImage->setOriginalBackgroundImage(original_background_dst);
                 }
+
+                combineMixed(maybe_normalized, bw_content, bw_mask_filled, !render_params.splitOutput());
             }
         }
 
@@ -861,6 +962,11 @@ namespace output {
             dst.setColorTable(createGrayscalePalette());
         }
 
+        if (dst.isNull()) {
+            // Both the constructor and setColorTable() above can leave the image null.
+            throw std::bad_alloc();
+        }
+
         if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
             outsideBackgroundColor = Qt::white;
         } else if (render_params.needBinarization()) {
@@ -869,11 +975,6 @@ namespace output {
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
         dst.fill(outsideBackgroundColor);
 
-        if (dst.isNull()) {
-            // Both the constructor and setColorTable() above can leave the image null.
-            throw std::bad_alloc();
-        }
-
         if (!contentRect.isEmpty()) {
             QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
             QRect const dst_rect(contentRect);
@@ -881,11 +982,16 @@ namespace output {
         }
         maybe_normalized = QImage();
 
-        applyFillZonesInPlace(dst, fill_zones);
+        if (render_params.mixedOutput() && render_params.needBinarization()) {
+            applyFillZonesToMixedInPlace(dst, fill_zones, picture_mask_output);
+        } else {
+            applyFillZonesInPlace(dst, fill_zones);
+        }
 
         status.throwIfCancelled();
 
         if (render_params.splitOutput()) {
+            splitImage->setMask(picture_mask_output, render_params.needBinarization());
             splitImage->setBackgroundImage(dst);
 
             return QImage();
@@ -920,10 +1026,9 @@ namespace output {
             }
         }
 
-        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_contentRect);
-        if (!render_params.cutMargins()) {
-            contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(m_outRect);
-        }
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
+                render_params.cutMargins() ? m_contentRect : m_outRect);
+
         // The whole image minus the part cut off by the split line.
         QRect const big_margins_rect(
                 m_xform.resultingPreCropArea().boundingRect().toRect()
@@ -1498,6 +1603,7 @@ namespace output {
             return dewarped_bw_content.toQImage();
         }
 
+        BinaryImage dewarped_picture_mask;
         if (render_params.mixedOutput()) {
             QTransform const orig_to_small_margins(
                     m_xform.transform() * QTransform().translate(
@@ -1528,12 +1634,7 @@ namespace output {
             dewarped_bw_mask = BinaryImage(dewarped_bw_mask_deskewed);
             dewarped_bw_mask_deskewed = QImage();
 
-            if (render_params.splitOutput()) {
-                BinaryImage dewarped_bw_mask_with_fill_zones(dewarped_bw_mask);
-                applyFillZonesToMaskInPlace(dewarped_bw_mask_with_fill_zones,
-                                            fill_zones, orig_to_output, postTransform);
-                splitImage->setMask(dewarped_bw_mask_with_fill_zones, render_params.needBinarization());
-            }
+            dewarped_picture_mask = dewarped_bw_mask;
 
             if (render_params.needBinarization()) {
                 QImage dewarped_and_maybe_smoothed;
@@ -1625,18 +1726,46 @@ namespace output {
                     status.throwIfCancelled();
                 }
 
-                if (dewarped.format() == QImage::Format_Indexed8) {
-                    combineMixed<uint8_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask_filled, !render_params.splitOutput()
-                    );
-                } else {
-                    assert(dewarped.format() == QImage::Format_RGB32
-                           || dewarped.format() == QImage::Format_ARGB32);
+                if (render_params.originalBackground()) {
+                    QImage original_background(dewarped);
+                    // reserving original black and white colors
+                    reserveBlackAndWhite(original_background);
+                    // subtracting bw content filling the content areas with white,
+                    // considering the colors of the content and background
+                    BinaryImage dewarped_bw_content_mask(dewarped_bw_content);
+                    // we applying BW filling zones to the mask to create an ability to control
+                    // the content of original background manually
+                    applyFillZonesInPlace(dewarped_bw_content_mask, fill_zones, orig_to_output, postTransform);
+                    if (outsideBackgroundColorBW == Qt::white) {
+                        dewarped_bw_content_mask.invert();
+                    }
+                    applyMask(original_background,
+                              dewarped_bw_content_mask,
+                              WHITE);
+                    // applying picture mask filling the picture areas with black
+                    applyMask(original_background, dewarped_bw_mask_filled, BLACK);
 
-                    combineMixed<uint32_t>(
-                            dewarped, dewarped_bw_content, dewarped_bw_mask_filled, !render_params.splitOutput()
-                    );
+                    status.throwIfCancelled();
+
+                    QColor outsideOriginalBackgroundColor = outsideBackgroundColor;
+                    if (m_colorParams.colorCommonOptions().getFillingColor() == ColorCommonOptions::WHITE) {
+                        outsideOriginalBackgroundColor = Qt::white;
+                    }
+                    // reserving outside background color if it's black or white
+                    if (outsideOriginalBackgroundColor == Qt::white) {
+                        outsideOriginalBackgroundColor = QColor(254, 254, 254);
+                    } else if (outsideOriginalBackgroundColor == Qt::black) {
+                        outsideOriginalBackgroundColor = QColor(1, 1, 1);
+                    }
+
+                    fillMarginsInPlace(original_background,
+                                       dewarping_content_area_mask,
+                                       outsideOriginalBackgroundColor);
+
+                    splitImage->setOriginalBackgroundImage(original_background);
                 }
+
+                combineMixed(dewarped, dewarped_bw_content, dewarped_bw_mask_filled, !render_params.splitOutput());
             }
         }
 
@@ -1647,11 +1776,16 @@ namespace output {
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 
-        applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, postTransform);
+        if (render_params.mixedOutput() && render_params.needBinarization()) {
+            applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, postTransform, dewarped_picture_mask);
+        } else {
+            applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, postTransform);
+        }
 
         status.throwIfCancelled();
 
         if (render_params.splitOutput()) {
+            splitImage->setMask(dewarped_picture_mask, render_params.needBinarization());
             splitImage->setBackgroundImage(dewarped);
 
             return QImage();
@@ -2317,10 +2451,18 @@ namespace output {
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
                                                 ZoneSet const& zones,
-                                                boost::function<QPointF(QPointF const&)> const& orig_to_output)
-    const {
+                                                boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform()
+        );
+    }
+
+    void OutputGenerator::applyFillZonesInPlace(QImage& img,
+                                                ZoneSet const& zones,
+                                                QTransform const& postTransform) const {
+        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+        applyFillZonesInPlace(
+                img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
         );
     }
 
@@ -2358,6 +2500,15 @@ namespace output {
                                            boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform()
+        );
+    }
+
+    void OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                                ZoneSet const& zones,
+                                                QTransform const& postTransform) const {
+        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+        applyFillZonesInPlace(
+                img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
         );
     }
 
@@ -2524,59 +2675,27 @@ namespace output {
         return .0;
     }
 
-    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                                      ZoneSet const& zones,
-                                                      boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                                      QTransform const& postTransform) const {
-        if (zones.empty()) {
-            return;
-        }
-
-        QImage canvas(mask.size(), QImage::Format_ARGB32_Premultiplied);
-        canvas.fill(qRgb(0, 0, 0));
-        {
-            QPainter painter(&canvas);
-            painter.setRenderHint(QPainter::Antialiasing, true);
-            painter.setPen(Qt::NoPen);
-
-            for (Zone const& zone : zones) {
-                QColor const color(Qt::white);
-                QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
-                painter.setBrush(color);
-                painter.drawPolygon(poly, Qt::WindingFill);
-            }
-        }
-
-        const BinaryImage fill_mask(canvas, BinaryThreshold(1));
-
-        rasterOp<RopAnd<RopSrc, RopDst>>(mask, fill_mask);
-    }
-
-    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                                      ZoneSet const& zones,
-                                                      QTransform const& postTransform) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
-        applyFillZonesToMaskInPlace(
-                mask, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
-        );
-    }
-
-    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask,
-                                                      ZoneSet const& zones,
-                                                      boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
-        applyFillZonesToMaskInPlace(
-                mask, zones, orig_to_output, QTransform()
-        );
-    }
-
-    void OutputGenerator::applyFillZonesToMaskInPlace(imageproc::BinaryImage& mask, ZoneSet const& zones) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
-        applyFillZonesToMaskInPlace(
-                mask, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1)
-        );
-    }
-
     const QTransform& OutputGenerator::getPostTransform() const {
         return postTransform;
+    }
+
+    void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
+                                                       ZoneSet const& zones,
+                                                       BinaryImage const& picture_mask) const {
+        BinaryImage bw_content(img, BinaryThreshold(1));
+        applyFillZonesInPlace(bw_content, zones);
+        applyFillZonesInPlace(img, zones);
+        combineMixed(img, bw_content, picture_mask, false);
+    }
+
+    void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
+                                                       ZoneSet const& zones,
+                                                       boost::function<QPointF(QPointF const&)> const& orig_to_output,
+                                                       QTransform const& postTransform,
+                                                       BinaryImage const& picture_mask) const {
+        BinaryImage bw_content(img, BinaryThreshold(1));
+        applyFillZonesInPlace(bw_content, zones, orig_to_output, postTransform);
+        applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
+        combineMixed(img, bw_content, picture_mask, false);
     }
 }  // namespace output

@@ -69,6 +69,10 @@ namespace output {
             return (m_mask & SPLIT_OUTPUT) != 0;
         }
 
+        bool originalBackground() const {
+            return (m_mask & ORIGINAL_BACKGROUND) != 0;
+        }
+
     private:
         enum {
             CUT_MARGINS = 1,
@@ -78,7 +82,8 @@ namespace output {
             NORMALIZE_ILLUMINATION_COLOR = 16,
             SAVITZKY_GOLAY_SMOOTHING = 32,
             MORPHOLOGICAL_SMOOTHING = 64,
-            SPLIT_OUTPUT = 128
+            SPLIT_OUTPUT = 128,
+            ORIGINAL_BACKGROUND = 256
         };
 
         int m_mask;

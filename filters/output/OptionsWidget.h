@@ -119,6 +119,8 @@ namespace output {
 
         void colorForegroundToggled(bool checked);
 
+        void originalBackgroundToggled(bool checked);
+
         void binarizationSettingsChanged();
 
         void despeckleOffSelected();

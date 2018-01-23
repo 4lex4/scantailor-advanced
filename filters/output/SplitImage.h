@@ -25,6 +25,8 @@ namespace output {
 
         SplitImage(const QImage& foreground, const QImage& background);
 
+        SplitImage(const QImage& foreground, const QImage& background, const QImage& originalBackground);
+
         QImage toImage() const;
 
         QImage getForegroundImage() const;
@@ -35,17 +37,22 @@ namespace output {
 
         void setBackgroundImage(const QImage& backgroundImage);
 
-        void setMask(const imageproc::BinaryImage& mask, bool binariryForeground);
+        void setMask(const imageproc::BinaryImage& mask, bool binaryForeground);
 
-        void applyToLayerImages(const std::function<void(QImage&)>& function);
+        void applyToLayerImages(const std::function<void(QImage&)>& consumer);
 
         bool isNull() const;
+
+        const QImage& getOriginalBackgroundImage() const;
+
+        void setOriginalBackgroundImage(const QImage& originalBackgroundImage);
 
     private:
         bool binaryForeground;
         imageproc::BinaryImage mask;
         QImage foregroundImage;
         QImage backgroundImage;
+        QImage originalBackgroundImage;
     };
 }
 

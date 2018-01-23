@@ -306,8 +306,15 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
 
     const SplittingOptions& splittingOptions = params.getSplittingOptions();
     splittingCB->setChecked(splittingOptions.isSplitOutput());
-    bwForegroundRB->setChecked(splittingOptions.getForegroundType()
-                               == SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
+    switch (splittingOptions.getForegroundType()) {
+        case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
+            bwForegroundRB->setChecked(true);
+            break;
+        case SplittingOptions::COLOR_FOREGROUND:
+            colorForegroundRB->setChecked(true);
+            break;
+    }
+    originalBackgroundCB->setChecked(splittingOptions.isOriginalBackground());
 
     switch (params.getDespeckleLevel()) {
         case DESPECKLE_OFF:
@@ -362,6 +369,8 @@ void DefaultParamsDialog::setupUiConnections() {
     connect(pictureShapeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureShapeChanged(int)));
     connect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
     connect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
+    connect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
+    connect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
     connect(lighterThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setLighterThreshold()));
     connect(darkerThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setDarkerThreshold()));
     connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
@@ -397,6 +406,8 @@ void DefaultParamsDialog::removeUiConnections() {
     disconnect(pictureShapeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureShapeChanged(int)));
     disconnect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
     disconnect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
+    disconnect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
+    disconnect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
     disconnect(lighterThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setLighterThreshold()));
     disconnect(darkerThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setDarkerThreshold()));
     disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
@@ -560,6 +571,21 @@ void DefaultParamsDialog::equalizeIlluminationToggled(const bool checked) {
 void DefaultParamsDialog::splittingToggled(const bool checked) {
     bwForegroundRB->setEnabled(checked);
     colorForegroundRB->setEnabled(checked);
+    originalBackgroundCB->setEnabled(checked && bwForegroundRB->isChecked());
+}
+
+void DefaultParamsDialog::bwForegroundToggled(bool checked) {
+    if (!checked) {
+        return;
+    }
+    originalBackgroundCB->setEnabled(checked);
+}
+
+void DefaultParamsDialog::colorForegroundToggled(bool checked) {
+    if (!checked) {
+        return;
+    }
+    originalBackgroundCB->setEnabled(!checked);
 }
 
 void DefaultParamsDialog::loadParams(const DefaultParams& params) {
@@ -676,6 +702,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     splittingOptions.setSplitOutput(splittingCB->isChecked());
     splittingOptions.setForegroundType(bwForegroundRB->isChecked() ? SplittingOptions::BLACK_AND_WHITE_FOREGROUND
                                                                    : SplittingOptions::COLOR_FOREGROUND);
+    splittingOptions.setOriginalBackground(originalBackgroundCB->isChecked());
 
     PictureShapeOptions pictureShapeOptions;
     pictureShapeOptions.setPictureShape(static_cast<PictureShape>(pictureShapeSelector->currentData().toInt()));

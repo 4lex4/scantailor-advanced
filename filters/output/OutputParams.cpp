@@ -26,6 +26,7 @@ namespace output {
                                OutputFileParams const& output_file_params,
                                OutputFileParams const& foreground_file_params,
                                OutputFileParams const& background_file_params,
+                               OutputFileParams const& original_background_file_params,
                                OutputFileParams const& automask_file_params,
                                OutputFileParams const& speckles_file_params,
                                ZoneSet const& picture_zones,
@@ -34,6 +35,7 @@ namespace output {
               m_outputFileParams(output_file_params),
               m_foregroundFileParams(foreground_file_params),
               m_backgroundFileParams(background_file_params),
+              m_originalBackgroundFileParams(original_background_file_params),
               m_automaskFileParams(automask_file_params),
               m_specklesFileParams(speckles_file_params),
               m_pictureZones(picture_zones),
@@ -45,6 +47,7 @@ namespace output {
               m_outputFileParams(el.namedItem("file").toElement()),
               m_foregroundFileParams(el.namedItem("foreground_file").toElement()),
               m_backgroundFileParams(el.namedItem("background_file").toElement()),
+              m_originalBackgroundFileParams(el.namedItem("original_background_file").toElement()),
               m_automaskFileParams(el.namedItem("automask").toElement()),
               m_specklesFileParams(el.namedItem("speckles").toElement()),
               m_pictureZones(el.namedItem("zones").toElement(), PictureZonePropFactory()),
@@ -57,6 +60,7 @@ namespace output {
         el.appendChild(m_outputFileParams.toXml(doc, "file"));
         el.appendChild(m_foregroundFileParams.toXml(doc, "foreground_file"));
         el.appendChild(m_backgroundFileParams.toXml(doc, "background_file"));
+        el.appendChild(m_originalBackgroundFileParams.toXml(doc, "original_background_file"));
         el.appendChild(m_automaskFileParams.toXml(doc, "automask"));
         el.appendChild(m_specklesFileParams.toXml(doc, "speckles"));
         el.appendChild(m_pictureZones.toXml(doc, "zones"));

@@ -52,4 +52,8 @@ namespace output {
     QString Utils::backgroundDir(QString const& out_dir) {
         return QDir(out_dir).absoluteFilePath("background");
     }
+
+    QString Utils::originalBackgroundDir(QString const& out_dir) {
+        return QDir(out_dir).absoluteFilePath("original_background");
+    }
 }  // namespace output

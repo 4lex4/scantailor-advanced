@@ -33,6 +33,10 @@ namespace output {
                 if (splittingOptions.getForegroundType() == SplittingOptions::COLOR_FOREGROUND) {
                     m_mask ^= NEED_BINARIZATION;
                 }
+                if ((splittingOptions.getForegroundType() == SplittingOptions::BLACK_AND_WHITE_FOREGROUND)
+                    && (splittingOptions.isOriginalBackground())) {
+                    m_mask |= ORIGINAL_BACKGROUND;
+                }
             }
             if (colorMode == ColorParams::MIXED) {
                 m_mask |= MIXED_OUTPUT;

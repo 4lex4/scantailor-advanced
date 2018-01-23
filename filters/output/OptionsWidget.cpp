@@ -607,8 +607,12 @@ namespace output {
                 colorForegroundRB->setChecked(true);
                 break;
         }
+        originalBackgroundCB->setChecked(m_splittingOptions.isOriginalBackground());
         colorForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
         bwForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
+        originalBackgroundCB->setEnabled(m_splittingOptions.isSplitOutput()
+                                         && (m_splittingOptions.getForegroundType()
+                                             == SplittingOptions::BLACK_AND_WHITE_FOREGROUND));
 
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
@@ -698,6 +702,9 @@ namespace output {
         if (!checked) {
             return;
         }
+
+        originalBackgroundCB->setEnabled(checked);
+
         m_splittingOptions.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
@@ -707,6 +714,9 @@ namespace output {
         if (!checked) {
             return;
         }
+
+        originalBackgroundCB->setEnabled(!checked);
+
         m_splittingOptions.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
@@ -717,6 +727,14 @@ namespace output {
 
         bwForegroundRB->setEnabled(checked);
         colorForegroundRB->setEnabled(checked);
+        originalBackgroundCB->setEnabled(checked && bwForegroundRB->isChecked());
+
+        m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::originalBackgroundToggled(bool checked) {
+        m_splittingOptions.setOriginalBackground(checked);
 
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
@@ -810,6 +828,10 @@ namespace output {
         connect(
                 colorForegroundRB, SIGNAL(clicked(bool)),
                 this, SLOT(colorForegroundToggled(bool))
+        );
+        connect(
+                originalBackgroundCB, SIGNAL(clicked(bool)),
+                this, SLOT(originalBackgroundToggled(bool))
         );
         connect(
                 applyColorsButton, SIGNAL(clicked()),
@@ -917,6 +939,10 @@ namespace output {
         disconnect(
                 colorForegroundRB, SIGNAL(clicked(bool)),
                 this, SLOT(colorForegroundToggled(bool))
+        );
+        disconnect(
+                originalBackgroundCB, SIGNAL(clicked(bool)),
+                this, SLOT(originalBackgroundToggled(bool))
         );
         disconnect(
                 applyColorsButton, SIGNAL(clicked()),

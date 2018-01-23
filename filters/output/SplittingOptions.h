@@ -30,6 +30,10 @@ namespace output {
 
         bool operator!=(const SplittingOptions& other) const;
 
+        bool isOriginalBackground() const;
+
+        void setOriginalBackground(bool originalBackground);
+
     private:
         static ForegroundType parseForegroundType(const QString& str);
 
@@ -37,6 +41,7 @@ namespace output {
 
         bool splitOutput;
         ForegroundType foregroundType;
+        bool originalBackground;
     };
 }
 

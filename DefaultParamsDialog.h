@@ -75,6 +75,10 @@ private slots:
 
     void splittingToggled(bool checked);
 
+    void bwForegroundToggled(bool checked);
+
+    void colorForegroundToggled(bool checked);
+
     void thresholdSliderValueChanged(int value);
 
     void setLighterThreshold();

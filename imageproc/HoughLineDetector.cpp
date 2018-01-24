@@ -26,7 +26,7 @@
 #include "Grayscale.h"
 #include <QPainter>
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 namespace imageproc {

@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <tiff.h>
 #include <tiffio.h>
-#include <assert.h>
+#include <cassert>
 
 class TiffReader::TiffHeader {
 public:

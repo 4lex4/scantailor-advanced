@@ -23,7 +23,7 @@
 #include <QIODevice>
 #include <QDebug>
 #include <setjmp.h>
-#include <assert.h>
+#include <cassert>
 
 extern "C" {
 #include <jpeglib.h>

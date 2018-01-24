@@ -20,7 +20,7 @@
 #include "BinaryImage.h"
 #include "RasterOp.h"
 #include <QImage>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect) {

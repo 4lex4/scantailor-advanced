@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 #include <stddef.h>
-#include <assert.h>
+#include <cassert>
 
 /**
  * \brief A priority queue implemented as a binary heap.

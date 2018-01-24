@@ -20,7 +20,7 @@
 
 #include <vector>
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 
 #include "Utils.h"
 #include "ProjectPages.h"

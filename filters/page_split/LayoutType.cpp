@@ -17,7 +17,7 @@
  */
 
 #include "LayoutType.h"
-#include <assert.h>
+#include <cassert>
 
 namespace page_split {
     QString layoutTypeToString(LayoutType const layout_type) {

@@ -21,7 +21,7 @@
 #include "imageproc/ColorInterpolation.h"
 #include <QPaintDevice>
 #include <QPainter>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 using namespace imageproc;

@@ -17,7 +17,7 @@
  */
 
 #include "PageId.h"
-#include <assert.h>
+#include <cassert>
 
 PageId::PageId()
         : m_subPage(SINGLE_PAGE) {

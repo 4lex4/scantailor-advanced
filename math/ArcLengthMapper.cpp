@@ -17,8 +17,8 @@
  */
 
 #include "ArcLengthMapper.h"
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 
 ArcLengthMapper::Hint::Hint()
         : m_lastSegment(0),

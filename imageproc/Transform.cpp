@@ -21,7 +21,7 @@
 #include "Transform.h"
 #include "Grayscale.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     namespace {

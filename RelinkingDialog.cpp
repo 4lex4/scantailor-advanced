@@ -20,7 +20,7 @@
 #include "RelinkingSortingModel.h"
 #include <QDir>
 #include <QFileDialog>
-#include <assert.h>
+#include <cassert>
 
 RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* parent)
         : QDialog(parent),

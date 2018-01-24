@@ -20,7 +20,7 @@
 #include "OutOfMemoryHandler.h"
 #include <QCoreApplication>
 #include <QThread>
-#include <assert.h>
+#include <cassert>
 
 class BackgroundExecutor::Dispatcher : public QObject {
 public:

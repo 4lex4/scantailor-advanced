@@ -21,7 +21,7 @@
 #include "ApplyDialog.h"
 #include "Settings.h"
 #include "ProjectPages.h"
-#include <assert.h>
+#include <cassert>
 
 namespace fix_orientation {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,

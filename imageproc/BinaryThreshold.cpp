@@ -20,7 +20,7 @@
 #include "Grayscale.h"
 #include "Morphology.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 namespace imageproc {

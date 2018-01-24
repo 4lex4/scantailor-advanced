@@ -17,7 +17,7 @@
  */
 
 #include "SplineSegment.h"
-#include <assert.h>
+#include <cassert>
 
 SplineSegment::SplineSegment(SplineVertex::Ptr const& prev, SplineVertex::Ptr const& next)
         : prev(prev),

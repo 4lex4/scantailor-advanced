@@ -18,7 +18,7 @@
 
 #include "RelinkingSortingModel.h"
 #include "RelinkingModel.h"
-#include <assert.h>
+#include <cassert>
 
 RelinkingSortingModel::RelinkingSortingModel(QObject* parent)
         : QSortFilterProxyModel(parent) {

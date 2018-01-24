@@ -31,7 +31,7 @@
 #include <QBrush>
 #include <QColor>
 #include <Qt>
-#include <math.h>
+#include <cmath>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {

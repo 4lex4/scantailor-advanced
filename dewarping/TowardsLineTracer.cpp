@@ -23,7 +23,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
-#include <assert.h>
+#include <cassert>
 
 using namespace imageproc;
 

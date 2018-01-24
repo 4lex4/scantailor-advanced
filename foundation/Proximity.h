@@ -20,7 +20,7 @@
 #define PROXIMITY_H_
 
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 class QPointF;
 class QLineF;

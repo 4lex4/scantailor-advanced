@@ -132,8 +132,8 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
 
 
             if ((prev_angle_cos < next_angle_cos)
-                || (isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
-                || (isnan(next_angle_cos) && (prev_angle_cos < (1.0 / sqrt(2))))) {
+                || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
+                || (std::isnan(next_angle_cos) && (prev_angle_cos < (1.0 / sqrt(2))))) {
                 prev.setX(current.x());
                 next.setY(current.y());
             } else {

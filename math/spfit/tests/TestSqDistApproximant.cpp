@@ -23,7 +23,7 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 namespace spfit {
     namespace tests {

@@ -25,7 +25,7 @@
 #include <QSize>
 #include <boost/cstdint.hpp>
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**

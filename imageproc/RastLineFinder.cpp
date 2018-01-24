@@ -21,7 +21,7 @@
 #include "VecNT.h"
 #include "Constants.h"
 #include <boost/foreach.hpp>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 namespace imageproc {

@@ -23,7 +23,7 @@
 #include <QPainterPath>
 #include <QImage>
 #include <boost/foreach.hpp>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**

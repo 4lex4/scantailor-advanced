@@ -17,7 +17,7 @@
  */
 
 #include "SplineVertex.h"
-#include <assert.h>
+#include <cassert>
 
 
 /*============================= SplineVertex ============================*/

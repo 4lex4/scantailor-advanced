@@ -18,7 +18,7 @@
 
 #include "Scale.h"
 #include "GrayImage.h"
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**

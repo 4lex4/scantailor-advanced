@@ -19,7 +19,7 @@
 #include "Shear.h"
 #include "RasterOp.h"
 #include <cmath>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     void hShearFromTo(BinaryImage const& src,

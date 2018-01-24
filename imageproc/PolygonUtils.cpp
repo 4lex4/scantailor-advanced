@@ -19,7 +19,7 @@
 #include "PolygonUtils.h"
 #include <QPolygonF>
 #include <QLineF>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 namespace imageproc {

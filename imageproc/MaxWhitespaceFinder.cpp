@@ -18,7 +18,7 @@
 
 #include "MaxWhitespaceFinder.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     using namespace max_whitespace_finder;

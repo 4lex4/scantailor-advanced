@@ -28,7 +28,7 @@
 #include "VecNT.h"
 #include "VecT.h"
 #include <stddef.h>
-#include <assert.h>
+#include <cassert>
 
 template<typename T, typename Alloc>
 class MatrixCalc;

@@ -20,7 +20,7 @@
 #define VALUE_CONV_H_
 
 #include "NumericTraits.h"
-#include <math.h>
+#include <cmath>
 
 template<typename ToType>
 class StaticCastValueConv {

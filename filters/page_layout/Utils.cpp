@@ -22,7 +22,7 @@
 #include "Params.h"
 #include "ImageTransformation.h"
 #include "PhysicalTransformation.h"
-#include <assert.h>
+#include <cassert>
 
 namespace page_layout {
     QRectF Utils::adaptContentRect(ImageTransformation const& xform, QRectF const& content_rect) {

@@ -18,7 +18,7 @@
  */
 
 #include "OrderBySplitTypeProvider.h"
-#include <assert.h>
+#include <cassert>
 
 namespace page_split {
     OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings)

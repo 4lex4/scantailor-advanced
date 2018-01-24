@@ -22,7 +22,7 @@
 #include "BinaryImage.h"
 #include <QSize>
 #include <stdint.h>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**

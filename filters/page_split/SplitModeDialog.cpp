@@ -18,7 +18,7 @@
 
 #include "SplitModeDialog.h"
 #include "PageSelectionAccessor.h"
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 namespace page_split {

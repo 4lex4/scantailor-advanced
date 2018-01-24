@@ -22,7 +22,7 @@
 
 #include "ConnCompEraser.h"
 #include "BitOps.h"
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     struct ConnCompEraser::BBox {

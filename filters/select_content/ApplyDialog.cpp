@@ -18,7 +18,7 @@
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
-#include <assert.h>
+#include <cassert>
 
 namespace select_content {
     ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,

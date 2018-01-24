@@ -25,7 +25,7 @@
 #include <boost/foreach.hpp>
 #include <stddef.h>
 #include <stdint.h>
-#include <assert.h>
+#include <cassert>
 
 template<typename T>
 class FastQueue {

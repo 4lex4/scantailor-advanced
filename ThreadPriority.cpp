@@ -18,7 +18,7 @@
 
 #include "ThreadPriority.h"
 #include <QSettings>
-#include <assert.h>
+#include <cassert>
 
 QThread::Priority ThreadPriority::toQThreadPriority() const {
     switch (m_prio) {

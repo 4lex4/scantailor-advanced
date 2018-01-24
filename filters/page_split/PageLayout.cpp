@@ -23,7 +23,7 @@
 #include "ToLineProjector.h"
 #include "imageproc/PolygonUtils.h"
 #include <QTransform>
-#include <assert.h>
+#include <cassert>
 
 using namespace imageproc;
 

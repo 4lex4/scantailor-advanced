@@ -23,7 +23,7 @@
 #include "ProjectPages.h"
 #include "ScopedIncDec.h"
 #include "PageLayoutAdapter.h"
-#include <assert.h>
+#include <cassert>
 
 namespace page_split {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,

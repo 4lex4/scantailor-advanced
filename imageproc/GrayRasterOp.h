@@ -26,7 +26,7 @@
 #include <QSize>
 #include <stdexcept>
 #include <stdint.h>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**

@@ -21,7 +21,7 @@
 
 #include <boost/scoped_array.hpp>
 #include <stddef.h>
-#include <assert.h>
+#include <cassert>
 
 /**
  * \brief A (column) vector of elements of type T.

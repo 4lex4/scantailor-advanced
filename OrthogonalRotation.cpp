@@ -20,7 +20,7 @@
 #include <QSize>
 #include <QPointF>
 #include <QTransform>
-#include <assert.h>
+#include <cassert>
 
 void OrthogonalRotation::nextClockwiseDirection() {
     m_degrees += 90;

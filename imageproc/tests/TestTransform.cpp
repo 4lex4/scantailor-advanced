@@ -24,7 +24,7 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <stdint.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 namespace imageproc {
     namespace tests {

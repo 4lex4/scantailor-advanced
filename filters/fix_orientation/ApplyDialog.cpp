@@ -18,7 +18,7 @@
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
-#include <assert.h>
+#include <cassert>
 
 namespace fix_orientation {
     ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,

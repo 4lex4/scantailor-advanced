@@ -19,7 +19,7 @@
 #include "Settings.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include <assert.h>
+#include <cassert>
 
 namespace page_split {
     Settings::Settings()

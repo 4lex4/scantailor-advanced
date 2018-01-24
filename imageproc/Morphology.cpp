@@ -22,7 +22,7 @@
 #include "RasterOp.h"
 #include "Grayscale.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 namespace imageproc {

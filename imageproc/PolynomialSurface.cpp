@@ -28,9 +28,9 @@
 #include "MatrixCalc.h"
 #include <stdexcept>
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 #include <stdint.h>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 PolynomialSurface::PolynomialSurface(int const hor_degree, int const vert_degree, GrayImage const& src)

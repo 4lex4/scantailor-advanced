@@ -20,7 +20,7 @@
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
 #include <QMessageBox>
-#include <assert.h>
+#include <cassert>
 
 ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc)
         : m_projectFile(project_file),

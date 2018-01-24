@@ -1,5 +1,5 @@
 
-#include <assert.h>
+#include <cassert>
 #include "BackgroundColorCalculator.h"
 #include "Grayscale.h"
 #include "Binarize.h"

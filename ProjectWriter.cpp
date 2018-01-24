@@ -37,7 +37,7 @@
 #endif
 
 #include <stddef.h>
-#include <assert.h>
+#include <cassert>
 
 ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
                              SelectedPage const& selected_page,

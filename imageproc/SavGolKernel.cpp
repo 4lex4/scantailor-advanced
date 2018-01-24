@@ -22,7 +22,7 @@
 #include <QSize>
 #include <QPoint>
 #include <stdexcept>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 #ifdef _MSC_VER

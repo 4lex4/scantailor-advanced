@@ -21,7 +21,7 @@
 
 #include "VecT.h"
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 namespace imageproc {
 /**

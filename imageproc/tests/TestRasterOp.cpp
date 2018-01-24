@@ -24,7 +24,7 @@
 #include <vector>
 #include <stddef.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     namespace tests {

@@ -25,7 +25,7 @@
 #include <QColor>
 #include <QString>
 #include <boost/test/auto_unit_test.hpp>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 
 namespace imageproc {

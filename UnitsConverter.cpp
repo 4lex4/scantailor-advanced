@@ -1,6 +1,6 @@
 
 #include "UnitsConverter.h"
-#include "dpm.h"
+#include "Dpm.h"
 
 UnitsConverter::UnitsConverter(const Dpi& dpi)
         : dpi(dpi) {

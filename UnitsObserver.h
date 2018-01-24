@@ -2,21 +2,10 @@
 #ifndef SCANTAILOR_UNITSOBSERVER_H
 #define SCANTAILOR_UNITSOBSERVER_H
 
-#include "Dpi.h"
-#include <QtCore/QString>
+
+#include "Units.h"
 
 class Dpi;
-
-enum Units {
-    PIXELS,
-    MILLIMETRES,
-    CENTIMETRES,
-    INCHES
-};
-
-QString toString(Units units);
-
-Units unitsFromString(const QString& string);
 
 class UnitsObserver {
 public:

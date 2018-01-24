@@ -555,6 +555,7 @@ SET(
         UnitsProvider.cpp UnitsProvider.h
         UnitsObserver.h UnitsObserver.cpp
 		UnitsConverter.cpp UnitsConverter.h
+        Units.cpp Units.h
         DefaultParams.cpp DefaultParams.h
         DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
 		DefaultParamsProvider.cpp DefaultParamsProvider.h

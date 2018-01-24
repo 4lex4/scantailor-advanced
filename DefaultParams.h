@@ -15,7 +15,7 @@
 #include "AutoManualMode.h"
 #include "Margins.h"
 #include "Dpi.h"
-#include "UnitsObserver.h"
+#include "Units.h"
 
 class DefaultParams {
 public:

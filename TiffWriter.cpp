@@ -279,16 +279,14 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
 
     if (image.format() == QImage::Format_Indexed8) {
         TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-                     QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt());
+                     uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
     } else {
         TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
                      uint16(QSettings().value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()));
     }
+
     TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bits_per_sample);
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, photometric);
-    if (image.format() == QImage::Format_Indexed8) {
-        TIFFSetField(tif.handle(), TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
-    }
 
     if (photometric == PHOTOMETRIC_PALETTE) {
         int const num_colors = 1 << bits_per_sample;
@@ -327,7 +325,6 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image) {
                  uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
     TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-    TIFFSetField(tif.handle(), TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
 
     int const width = image.width();
     int const height = image.height();
@@ -363,7 +360,6 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image) {
                  uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
     TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-    TIFFSetField(tif.handle(), TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
 
     int const width = image.width();
     int const height = image.height();

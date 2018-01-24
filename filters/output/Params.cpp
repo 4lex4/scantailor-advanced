@@ -19,7 +19,6 @@
 #include "Params.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "CommandLine.h"
 
 namespace output {
     Params::Params()
@@ -75,7 +74,7 @@ namespace output {
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
         el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
-        
+
         QDomElement cp(doc.createElement("color-params"));
         cp.setAttribute(
                 "colorMode",
@@ -102,7 +101,7 @@ namespace output {
         } else if (str == "mixed") {
             return ColorParams::MIXED;
         } else {
-            return ColorParams::DefaultColorMode();
+            return ColorParams::BLACK_AND_WHITE;
         }
     }
 

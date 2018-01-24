@@ -41,8 +41,6 @@ namespace output {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        static ColorMode DefaultColorMode();
-
         ColorMode colorMode() const {
             return m_colorMode;
         }

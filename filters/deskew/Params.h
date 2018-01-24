@@ -25,9 +25,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include "CommandLine.h"
-
-class CommandLine;
 class QDomDocument;
 class QDomElement;
 
@@ -54,7 +51,7 @@ namespace deskew {
             m_deviation = avg - m_deskewAngleDeg;
         }
 
-        bool isDeviant(double std, double max_dev = CommandLine::get().getSkewDeviation()) const {
+        bool isDeviant(double std, double max_dev) const {
             return std::max(1.5 * std, max_dev) < fabs(m_deviation);
         }
 

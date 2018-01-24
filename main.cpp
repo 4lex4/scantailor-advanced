@@ -39,21 +39,9 @@ int main(int argc, char** argv) {
     app.setLibraryPaths(QStringList(app.applicationDirPath()));
 #endif
 
-    // parse command line arguments
+    // Initialize command line in gui mode.
     CommandLine cli(app.arguments());
     CommandLine::set(cli);
-
-    if (cli.isError()) {
-        cli.printHelp();
-
-        return 1;
-    }
-
-    if (cli.hasHelp()) {
-        cli.printHelp();
-
-        return 0;
-    }
 
     // This information is used by QSettings.
     app.setApplicationName("scantailor");

@@ -17,21 +17,16 @@
  */
 
 #include "ColorParams.h"
-#include "CommandLine.h"
 
 namespace output {
     ColorParams::ColorParams()
-            : m_colorMode(DefaultColorMode()) {
+            : m_colorMode(BLACK_AND_WHITE) {
     }
 
     ColorParams::ColorParams(QDomElement const& el)
             : m_colorMode(parseColorMode(el.attribute("colorMode"))),
               m_colorCommonOptions(el.namedItem("color-or-grayscale").toElement()),
               m_bwOptions(el.namedItem("bw").toElement()) {
-    }
-
-    ColorParams::ColorMode ColorParams::DefaultColorMode() {
-        return CommandLine::get().getDefaultColorMode();
     }
 
     QDomElement ColorParams::toXml(QDomDocument& doc, QString const& name) const {
@@ -51,7 +46,7 @@ namespace output {
         } else if (str == "mixed") {
             return MIXED;
         } else {
-            return DefaultColorMode();
+            return BLACK_AND_WHITE;
         }
     }
 

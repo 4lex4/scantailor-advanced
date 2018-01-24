@@ -27,6 +27,7 @@
 #include <QScrollBar>
 #include <QPainter>
 #include <QTimer>
+#include <cassert>
 
 class StageListView::Model : public QAbstractTableModel {
 public:

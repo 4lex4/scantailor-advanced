@@ -123,21 +123,15 @@ namespace select_content {
     void Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el) {
         m_ptrSettings->clear();
 
-        CommandLine cli = CommandLine::get();
-
         QDomElement const filter_el(
                 filters_el.namedItem("select-content").toElement()
         );
 
         m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
         m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-
-        if (cli.hasContentDeviation()) {
-            m_ptrSettings->setMaxDeviation(cli.getContentDeviation());
-        } else {
-            m_ptrSettings->setMaxDeviation(
-                    filter_el.attribute("maxDeviation", QString::number(cli.getContentDeviation())).toDouble());
-        }
+        m_ptrSettings->setMaxDeviation(
+                filter_el.attribute("maxDeviation", QString::number(1.0)).toDouble()
+        );
 
         QSizeF box(0.0, 0.0);
         box.setWidth(filter_el.attribute("pageDetectionBoxWidth", "0.0").toDouble());

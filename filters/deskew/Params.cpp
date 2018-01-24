@@ -33,11 +33,6 @@ namespace deskew {
               m_deps(deskew_el.namedItem("dependencies").toElement()),
               m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO),
               m_deviation(deskew_el.attribute("deviation").toDouble()) {
-        CommandLine const& cli = CommandLine::get();
-
-        if (cli.hasDeskew()) {
-            m_mode = cli.getDeskewMode();
-        }
     }
 
     Params::~Params() {

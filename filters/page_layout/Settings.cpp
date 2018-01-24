@@ -22,7 +22,6 @@
 #include "Params.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-#include "CommandLine.h"
 #include <QMutex>
 #include <boost/foreach.hpp>
 #include <boost/multi_index_container.hpp>
@@ -249,16 +248,11 @@ namespace page_layout {
 
 /*=============================== Settings ==================================*/
 
-    Margins Settings::defaultHardMarginsMM() {
-        return CommandLine::get().getDefaultMargins();
-    }
-
     Settings::Settings()
             : m_ptrImpl(new Impl()) {
     }
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         return m_ptrImpl->clear();
@@ -403,7 +397,7 @@ namespace page_layout {
               m_descHeightOrder(m_items.get<DescHeightTag>()),
               m_invalidRect(),
               m_invalidSize(),
-              m_defaultHardMarginsMM(page_layout::Settings::defaultHardMarginsMM()),
+              m_defaultHardMarginsMM(Margins(10.0, 5.0, 10.0, 5.0)),
               m_defaultAlignment(Alignment::TOP, Alignment::HCENTER),
               m_autoMarginsDefault(false) {
     }

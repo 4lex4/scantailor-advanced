@@ -20,8 +20,6 @@
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
-#include "CommandLine.h"
-
 namespace select_content {
     Params::Params(Dependencies const& deps)
             : m_deps(deps),
@@ -77,12 +75,6 @@ namespace select_content {
               m_pageDetectEnabled(filter_el.attribute("page-detect") == "1"),
               m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "1"),
               m_deviation(filter_el.attribute("deviation").toDouble()) {
-        if (m_pageDetectEnabled && !m_contentDetectEnabled && CommandLine::get().isForcePageDetectionDisabled()) {
-            m_pageDetectEnabled = false;
-            m_contentRect = m_pageRect;
-            m_contentDetectEnabled = true;
-            m_contentDetectionMode = MODE_MANUAL;
-        }
     }
 
     Params::~Params() {

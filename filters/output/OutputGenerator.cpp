@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CommandLine.h"
 #include "OutputGenerator.h"
 #include "FilterData.h"
 #include "TaskStatus.h"
@@ -53,6 +52,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <imageproc/BackgroundColorCalculator.h>
+#include <Despeckle.h>
 #include "imageproc/OrthogonalRotation.h"
 
 using namespace imageproc;

@@ -44,11 +44,9 @@ namespace page_layout {
             AGGREGATE_SIZE_CHANGED
         };
 
-        static Margins defaultHardMarginsMM();
-
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         /**
          * \brief Removes all stored data.

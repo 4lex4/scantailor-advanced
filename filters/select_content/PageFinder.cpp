@@ -19,7 +19,6 @@
 
 #include "PageFinder.h"
 
-#include "CommandLine.h"
 #include "DebugImages.h"
 #include "FilterData.h"
 #include "imageproc/BinaryImage.h"

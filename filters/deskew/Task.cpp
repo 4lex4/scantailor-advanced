@@ -94,14 +94,11 @@ namespace deskew {
         OptionsWidget::UiData ui_data;
         ui_data.setDependencies(deps);
 
-        CommandLine const& cli = CommandLine::get();
-
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
-        if (params.get()) {
+        if (params) {
             if ((!deps.matches(params->dependencies())
                  || (params->deskewAngle() != ui_data.effectiveDeskewAngle()))
-                && (params->mode() == MODE_AUTO)
-                && !cli.hasDeskewAngle() && !cli.hasDeskew()) {
+                && (params->mode() == MODE_AUTO)) {
                 params.reset();
             } else {
                 ui_data.setEffectiveDeskewAngle(params->deskewAngle());
@@ -115,7 +112,7 @@ namespace deskew {
             }
         }
 
-        if (!params.get()) {
+        if (!params) {
             QRectF const image_area(
                     data.xform().transformBack().mapRect(data.xform().resultingRect())
             );

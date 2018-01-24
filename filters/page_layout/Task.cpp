@@ -32,8 +32,6 @@
 #include "filters/output/Task.h"
 #include "Dpm.h"
 
-#include "CommandLine.h"
-
 namespace page_layout {
     class Task::UiUpdater : public FilterResult {
     public:

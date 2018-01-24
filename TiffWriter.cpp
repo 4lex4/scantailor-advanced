@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CommandLine.h"
 #include "TiffWriter.h"
 #include "imageproc/Grayscale.h"
 #include "Dpm.h"
@@ -25,6 +24,8 @@
 #include <tiffio.h>
 #include <cmath>
 #include <QtCore/QSettings>
+#include <QtCore/QFile>
+#include <cassert>
 
 /**
  * m_reverseBitsLUT[byte] gives the same byte, but with bit order reversed.
@@ -188,21 +189,13 @@ bool TiffWriter::writeImage(QIODevice& device, QImage const& image) {
     TIFFSetField(tif.handle(), TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
     setDpm(tif, Dpm(image));
 
-    CommandLine const& cli = CommandLine::get();
-
-    if (!cli.hasTiffForceRGB()) {
-        if (cli.hasTiffForceGrayscale()) {
-            return writeBitonalOrIndexed8Image(tif, imageproc::toGrayscale(image));
-        }
-        switch (image.format()) {
-            case QImage::Format_Mono:
-            case QImage::Format_MonoLSB:
-            case QImage::Format_Indexed8:
-                return writeBitonalOrIndexed8Image(tif, image);
-            default:;
-        }
+    switch (image.format()) {
+        case QImage::Format_Mono:
+        case QImage::Format_MonoLSB:
+        case QImage::Format_Indexed8:
+            return writeBitonalOrIndexed8Image(tif, image);
+        default:;
     }
-
     if (image.hasAlphaChannel()) {
         return writeARGB32Image(
                 tif, image.convertToFormat(QImage::Format_ARGB32)

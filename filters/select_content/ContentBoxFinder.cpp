@@ -42,8 +42,6 @@
 #include <queue>
 #include <cmath>
 
-#include "CommandLine.h"
-
 namespace select_content {
     using namespace imageproc;
 
@@ -197,11 +195,7 @@ namespace select_content {
 
         status.throwIfCancelled();
 
-        CommandLine const& cli = CommandLine::get();
         Despeckle::Level despeckleLevel = Despeckle::NORMAL;
-        if (cli.hasContentRect()) {
-            despeckleLevel = cli.getContentDetection();
-        }
 
         BinaryImage despeckled(Despeckle::despeckle(content, Dpi(150, 150), despeckleLevel, status, dbg));
         if (dbg) {
@@ -294,11 +288,7 @@ namespace select_content {
             dbg->add(content_blocks, "except_bordering");
         }
 
-        BinaryImage text_mask(content_blocks);
-        if (cli.hasContentText()) {
-            text_mask = estimateTextMask(content, content_blocks, dbg);
-        }
-
+        BinaryImage text_mask(estimateTextMask(content, content_blocks, dbg));
         if (dbg) {
             QImage text_mask_visualized(content.size(), QImage::Format_ARGB32_Premultiplied);
             text_mask_visualized.fill(0xffffffff);  // Opaque white.

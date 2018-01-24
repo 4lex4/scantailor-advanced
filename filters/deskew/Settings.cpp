@@ -24,8 +24,8 @@
 namespace deskew {
     Settings::Settings()
             : m_avg(0.0),
-              m_sigma(0.0) {
-        m_maxDeviation = CommandLine::get().getSkewDeviation();
+              m_sigma(0.0),
+              m_maxDeviation(5.0) {
     }
 
     Settings::~Settings() = default;

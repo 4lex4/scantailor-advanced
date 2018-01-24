@@ -28,6 +28,7 @@
 #include <boost/lambda/bind.hpp>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
+#include <CommandLine.h>
 
 namespace deskew {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -78,19 +79,13 @@ namespace deskew {
     void Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el) {
         m_ptrSettings->clear();
 
-        CommandLine cli = CommandLine::get();
-
         QDomElement const filter_el(filters_el.namedItem("deskew").toElement());
 
         m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
         m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-
-        if (cli.hasSkewDeviation()) {
-            m_ptrSettings->setMaxDeviation(cli.getSkewDeviation());
-        } else {
-            m_ptrSettings->setMaxDeviation(
-                    filter_el.attribute("maxDeviation", QString::number(cli.getSkewDeviation())).toDouble());
-        }
+        m_ptrSettings->setMaxDeviation(
+                filter_el.attribute("maxDeviation", QString::number(5.0)).toDouble()
+        );
 
         QString const page_tag_name("page");
         QDomNode node(filter_el.firstChild());

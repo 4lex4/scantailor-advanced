@@ -128,21 +128,6 @@ namespace output {
         status.throwIfCancelled();
 
         Params params(m_ptrSettings->getParams(m_pageId));
-        CommandLine const& cli = CommandLine::get();
-
-        if (cli.hasTiffForceKeepColorSpace()) {
-            ColorParams colorParams = params.colorParams();
-            switch (data.origImage().format()) {
-                case QImage::Format_Mono:
-                case QImage::Format_MonoLSB:
-                    colorParams.setColorMode(ColorParams::BLACK_AND_WHITE);
-                    break;
-                default:
-                    colorParams.setColorMode(ColorParams::COLOR_GRAYSCALE);
-                    break;
-            }
-            params.setColorParams(colorParams);
-        }
 
         RenderParams render_params(params.colorParams(), params.splittingOptions());
         QString const out_file_path(m_outFileNameGen.filePathFor(m_pageId));
@@ -520,7 +505,7 @@ namespace output {
                     )
             );
         } else {
-            return FilterResultPtr(0);
+            return FilterResultPtr(nullptr);
         }
     }  // Task::process
 

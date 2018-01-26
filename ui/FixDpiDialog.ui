@@ -1,82 +1,83 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>FixDpiDialog</class>
- <widget class="QDialog" name="FixDpiDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="FixDpiDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
-    <height>354</height>
+    <width>339</width>
+    <height>339</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Fix DPI</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Tab 1</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QTreeView" name="undefinedDpiView" />
+        <widget class="QTreeView" name="undefinedDpiView"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
        <string>Tab 2</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout">
        <item>
-        <widget class="QTreeView" name="allPagesView" />
+        <widget class="QTreeView" name="allPagesView"/>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>DPI</string>
      </property>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
        <spacer>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>0</width>
-          <height>20</height>
+          <height>1</height>
          </size>
         </property>
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="dpiCombo" >
-        <property name="enabled" >
+       <widget class="QComboBox" name="dpiCombo">
+        <property name="enabled">
          <bool>false</bool>
         </property>
         <item>
-         <property name="text" >
+         <property name="text">
           <string>Custom</string>
          </property>
         </item>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="xDpi" >
-        <property name="enabled" >
+       <widget class="QLineEdit" name="xDpi">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="maximumSize" >
+        <property name="maximumSize">
          <size>
           <width>45</width>
           <height>16777215</height>
@@ -85,18 +86,18 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3" >
-        <property name="text" >
+       <widget class="QLabel" name="label_3">
+        <property name="text">
          <string>x</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="yDpi" >
-        <property name="enabled" >
+       <widget class="QLineEdit" name="yDpi">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="maximumSize" >
+        <property name="maximumSize">
          <size>
           <width>45</width>
           <height>16777215</height>
@@ -105,24 +106,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="applyBtn" >
-        <property name="enabled" >
+       <widget class="QPushButton" name="applyBtn">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Apply</string>
         </property>
        </widget>
       </item>
       <item>
        <spacer>
-        <property name="orientation" >
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>0</width>
-          <height>20</height>
+          <height>1</height>
          </size>
         </property>
        </spacer>
@@ -132,31 +133,31 @@
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
-       <width>317</width>
-       <height>16</height>
+       <width>1</width>
+       <height>1</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../resources/resources.qrc" />
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -165,11 +166,11 @@
    <receiver>FixDpiDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>257</x>
      <y>344</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -181,11 +182,11 @@
    <receiver>FixDpiDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>325</x>
      <y>344</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

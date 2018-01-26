@@ -17,7 +17,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -51,7 +60,7 @@ font-weight: bold;</string>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>434</width>
+           <width>1</width>
            <height>7</height>
           </size>
          </property>
@@ -73,7 +82,16 @@ font-weight: bold;</string>
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -157,7 +175,7 @@ font-weight: bold;</string>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>20</width>
+                   <width>1</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -177,7 +195,16 @@ font-weight: bold;</string>
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -193,8 +220,8 @@ font-weight: bold;</string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>446</width>
-                <height>227</height>
+                <width>98</width>
+                <height>715</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -295,7 +322,16 @@ font-weight: bold;</string>
            <string>What won't help</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_8">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -314,8 +350,8 @@ font-weight: bold;</string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>446</width>
-                <height>227</height>
+                <width>98</width>
+                <height>414</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -373,7 +409,7 @@ font-weight: bold;</string>
            <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
-             <height>20</height>
+             <height>1</height>
             </size>
            </property>
           </spacer>
@@ -393,7 +429,7 @@ font-weight: bold;</string>
            <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
-             <height>20</height>
+             <height>1</height>
             </size>
            </property>
           </spacer>

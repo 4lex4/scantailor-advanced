@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>191</height>
+    <width>197</width>
+    <height>201</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -76,8 +76,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -93,8 +93,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -116,8 +116,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -133,8 +133,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -153,8 +153,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -173,8 +173,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>1</width>
+         <height>1</height>
         </size>
        </property>
       </spacer>
@@ -193,8 +193,8 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>1</width>
+         <height>1</height>
         </size>
        </property>
       </spacer>
@@ -208,8 +208,8 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>1</width>
+       <height>1</height>
       </size>
      </property>
     </spacer>

@@ -22,7 +22,7 @@ private:
     std::unordered_map<QToolButton*, page_layout::Alignment> alignmentByButton;
     DefaultParamsProfileManager profileManager;
     int customDpiItemIdx;
-    QString customDpiString;
+    QString customDpiValue;
     int customProfileItemIdx;
     Units currentUnits;
     std::set<QString> reservedProfileNames;

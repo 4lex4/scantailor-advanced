@@ -49,8 +49,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     dpiSelector->addItem("400", "400");
     dpiSelector->addItem("600", "600");
     customDpiItemIdx = dpiSelector->count();
-    customDpiString = "200";
-    dpiSelector->addItem(tr("Custom"), customDpiString);
+    customDpiValue = "200";
+    dpiSelector->addItem(tr("Custom"), customDpiValue);
 
     dewarpingModeCB->addItem(tr("Off"), DewarpingOptions::OFF);
     dewarpingModeCB->addItem(tr("Auto"), DewarpingOptions::AUTO);
@@ -295,13 +295,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
         dpiSelector->setCurrentIndex(dpiIndex);
     } else {
         dpiSelector->setCurrentIndex(customDpiItemIdx);
-        dpiSelector->setEditable(true);
-        dpiSelector->lineEdit()->setText(QString::number(params.getDpi().vertical()));
-        // It looks like we need to set a new validator
-        // every time we make the combo box editable.
-        dpiSelector->setValidator(
-                new QIntValidator(0, 9999, dpiSelector)
-        );
+        customDpiValue = QString::number(params.getDpi().vertical());
     }
 
     const SplittingOptions& splittingOptions = params.getSplittingOptions();
@@ -633,16 +627,15 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
 
     Alignment alignment;
-    alignment.setNull(!alignWithOthersCB->isChecked());
     switch (alignmentMode->currentIndex()) {
         case 0:
             alignment.setVertical(Alignment::VAUTO);
             alignment.setHorizontal(Alignment::HCENTER);
             break;
         case 1:
-            for (auto button : alignmentByButton) {
-                if (button.first->isChecked()) {
-                    alignment = button.second;
+            for (auto item : alignmentByButton) {
+                if (item.first->isChecked()) {
+                    alignment = item.second;
                     break;
                 }
             }
@@ -658,6 +651,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
         default:
             break;
     }
+    alignment.setNull(!alignWithOthersCB->isChecked());
     DefaultParams::PageLayoutParams pageLayoutParams(
             Margins(leftMarginSpinBox->value(),
                     topMarginSpinBox->value(),
@@ -667,7 +661,9 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
             autoMargins->isChecked()
     );
 
-    const int dpi = dpiSelector->currentText().toInt();
+    const int dpi = (dpiSelector->currentIndex() != customDpiItemIdx)
+                    ? dpiSelector->currentText().toInt()
+                    : customDpiValue.toInt();
     ColorParams colorParams;
     colorParams.setColorMode(static_cast<ColorParams::ColorMode>(colorModeSelector->currentData().toInt()));
 
@@ -880,7 +876,7 @@ void DefaultParamsDialog::setNeutralThreshold() {
 void DefaultParamsDialog::dpiSelectionChanged(int index) {
     dpiSelector->setEditable(index == customDpiItemIdx);
     if (index == customDpiItemIdx) {
-        dpiSelector->setEditText(customDpiString);
+        dpiSelector->setEditText(customDpiValue);
         dpiSelector->lineEdit()->selectAll();
         // It looks like we need to set a new validator
         // every time we make the combo box editable.
@@ -892,7 +888,7 @@ void DefaultParamsDialog::dpiSelectionChanged(int index) {
 
 void DefaultParamsDialog::dpiEditTextChanged(const QString& text) {
     if (dpiSelector->currentIndex() == customDpiItemIdx) {
-        customDpiString = text;
+        customDpiValue = text;
     }
 }
 

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Default Params</string>
+   <string>Default parameters</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -390,8 +390,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>193</width>
+            <height>162</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -629,8 +629,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>116</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -798,8 +798,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>314</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1099,8 +1099,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>410</width>
+            <height>258</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -1769,7 +1769,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
+            <width>633</width>
             <height>442</height>
            </rect>
           </property>

@@ -42,6 +42,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
     thresholdMethodBox->addItem(tr("Wolf"), WOLF);
 
+    pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
     pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
     pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
 

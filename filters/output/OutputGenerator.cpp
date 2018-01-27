@@ -748,11 +748,13 @@ namespace output {
 
             if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
                 || !m_outputProcessingParams.isAutoZonesFound()) {
-                bw_mask = estimateBinarizationMask(
-                        status, GrayImage(maybe_normalized),
-                        normalize_illumination_rect,
-                        small_margins_rect, dbg
-                );
+                if (m_pictureShapeOptions.getPictureShape() != OFF_SHAPE) {
+                    bw_mask = estimateBinarizationMask(
+                            status, GrayImage(maybe_normalized),
+                            normalize_illumination_rect,
+                            small_margins_rect, dbg
+                    );
+                }
 
                 // remove auto zones
                 picture_zones.applyToZoneSet(
@@ -766,7 +768,6 @@ namespace output {
                         }
                 );
                 p_settings->setPictureZones(p_pageId, picture_zones);
-
                 m_outputProcessingParams.setAutoZonesFound(false);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
             }
@@ -776,8 +777,7 @@ namespace output {
                 bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
-
+                xform1 *= output_to_transformed;
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {
@@ -790,7 +790,6 @@ namespace output {
                     picture_zones.add(zone1);
                 }
                 p_settings->setPictureZones(p_pageId, picture_zones);
-
                 m_outputProcessingParams.setAutoZonesFound(true);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
 
@@ -1160,13 +1159,15 @@ namespace output {
 
             if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
                 || !m_outputProcessingParams.isAutoZonesFound()) {
-                warped_bw_mask = estimateBinarizationMask(
-                        status, GrayImage(warped_gray_output),
-                        normalize_illumination_rect,
-                        small_margins_rect, dbg
-                );
-                if (dbg) {
-                    dbg->add(warped_bw_mask, "warped_bw_mask");
+                if (m_pictureShapeOptions.getPictureShape() != OFF_SHAPE) {
+                    warped_bw_mask = estimateBinarizationMask(
+                            status, GrayImage(warped_gray_output),
+                            normalize_illumination_rect,
+                            small_margins_rect, dbg
+                    );
+                    if (dbg) {
+                        dbg->add(warped_bw_mask, "warped_bw_mask");
+                    }
                 }
 
                 // remove auto zones
@@ -1181,7 +1182,6 @@ namespace output {
                         }
                 );
                 p_settings->setPictureZones(p_pageId, picture_zones);
-
                 m_outputProcessingParams.setAutoZonesFound(false);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
             }
@@ -1191,8 +1191,7 @@ namespace output {
                 warped_bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1 *= QTransform().translate(-small_margins_rect.x(), -small_margins_rect.y());
-
+                xform1 *= QTransform().translate(-normalize_illumination_rect.x(), -normalize_illumination_rect.y());
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {
@@ -1205,7 +1204,6 @@ namespace output {
                     picture_zones.add(zone1);
                 }
                 p_settings->setPictureZones(p_pageId, picture_zones);
-
                 m_outputProcessingParams.setAutoZonesFound(true);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
 

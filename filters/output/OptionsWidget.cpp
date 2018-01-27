@@ -69,6 +69,7 @@ namespace output {
         addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
         updateBinarizationOptionsDisplay(binarizationOptions->currentIndex());
 
+        pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
         pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
 

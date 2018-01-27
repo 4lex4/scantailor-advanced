@@ -8,6 +8,7 @@ class QDomElement;
 
 namespace output {
     enum PictureShape {
+        OFF_SHAPE,
         FREE_SHAPE,
         RECTANGULAR_SHAPE
     };

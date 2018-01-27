@@ -33,6 +33,8 @@ namespace output {
     PictureShape PictureShapeOptions::parsePictureShape(const QString& str) {
         if (str == "rectangular") {
             return RECTANGULAR_SHAPE;
+        } else if (str == "off") {
+            return OFF_SHAPE;
         } else {
             return FREE_SHAPE;
         }
@@ -41,6 +43,9 @@ namespace output {
     QString PictureShapeOptions::formatPictureShape(PictureShape type) {
         QString str = "";
         switch (type) {
+            case OFF_SHAPE:
+                str = "off";
+                break;
             case FREE_SHAPE:
                 str = "free";
                 break;

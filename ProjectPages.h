@@ -34,7 +34,7 @@
 #include <Qt>
 #include <set>
 #include <vector>
-#include <stddef.h>
+#include <cstddef>
 
 class ImageFileInfo;
 class ImageInfo;
@@ -60,13 +60,13 @@ public:
         TWO_PAGE_LAYOUT
     };
 
-    ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
+    explicit ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
 
     ProjectPages(std::vector<ImageInfo> const& images, Qt::LayoutDirection layout_direction);
 
     ProjectPages(std::vector<ImageFileInfo> const& files, Pages pages, Qt::LayoutDirection layout_direction);
 
-    virtual ~ProjectPages();
+    ~ProjectPages() override;
 
     Qt::LayoutDirection layoutDirection() const;
 
@@ -147,7 +147,7 @@ private:
         bool leftHalfRemoved;  // Both can't be true, and if one is true,
         bool rightHalfRemoved;  // then numLogicalPages is 1.
 
-        ImageDesc(ImageInfo const& image_info);
+        explicit ImageDesc(ImageInfo const& image_info);
 
         ImageDesc(ImageId const& id, ImageMetadata const& metadata, Pages pages);
 

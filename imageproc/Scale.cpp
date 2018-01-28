@@ -157,7 +157,7 @@ namespace imageproc {
         int const dst_stride = dst.stride();
 
         for (int dy = 0; dy < dh; ++dy, dst_line += dst_stride) {
-            int const sy32 = (int) (dy * dy2sy32);
+            auto const sy32 = (int) (dy * dy2sy32);
             int const sy = sy32 >> 5;
             unsigned const top_fraction = 32 - (sy32 & 31);
             unsigned const bottom_fraction = sy32 & 31;
@@ -165,7 +165,7 @@ namespace imageproc {
             uint8_t const* src_line = src_data + sy * src_stride;
 
             for (int dx = 0; dx < dw; ++dx) {
-                int const sx32 = (int) (dx * dx2sx32);
+                auto const sx32 = (int) (dx * dx2sx32);
                 int const sx = sx32 >> 5;
                 unsigned const left_fraction = 32 - (sx32 & 31);
                 unsigned const right_fraction = sx32 & 31;

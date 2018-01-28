@@ -21,8 +21,7 @@
 #include "BitOps.h"
 
 namespace imageproc {
-    SlicedHistogram::SlicedHistogram() {
-    }
+    SlicedHistogram::SlicedHistogram() = default;
 
     SlicedHistogram::SlicedHistogram(BinaryImage const& image, Type const type) {
         switch (type) {

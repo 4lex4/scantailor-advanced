@@ -32,7 +32,7 @@ class ImageId;
 namespace page_layout {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   Params const& params,
@@ -40,9 +40,9 @@ namespace page_layout {
                   QPolygonF const& phys_content_rect,
                   QRectF displayArea);
 
-        virtual void paintOverImage(QPainter& painter,
-                                    QTransform const& image_to_display,
-                                    QTransform const& thumb_to_display);
+        void paintOverImage(QPainter& painter,
+                            QTransform const& image_to_display,
+                            QTransform const& thumb_to_display) override;
 
     private:
         Params m_params;

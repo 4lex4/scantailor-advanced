@@ -93,32 +93,96 @@ namespace output {
         return el;
     }
 
-    ColorParams::ColorMode Params::parseColorMode(QString const& str) {
+    ColorMode Params::parseColorMode(QString const& str) {
         if (str == "bw") {
-            return ColorParams::BLACK_AND_WHITE;
+            return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
-            return ColorParams::COLOR_GRAYSCALE;
+            return COLOR_GRAYSCALE;
         } else if (str == "mixed") {
-            return ColorParams::MIXED;
+            return MIXED;
         } else {
-            return ColorParams::BLACK_AND_WHITE;
+            return BLACK_AND_WHITE;
         }
     }
 
-    QString Params::formatColorMode(ColorParams::ColorMode const mode) {
+    QString Params::formatColorMode(ColorMode const mode) {
         char const* str = "";
         switch (mode) {
-            case ColorParams::BLACK_AND_WHITE:
+            case BLACK_AND_WHITE:
                 str = "bw";
                 break;
-            case ColorParams::COLOR_GRAYSCALE:
+            case COLOR_GRAYSCALE:
                 str = "colorOrGray";
                 break;
-            case ColorParams::MIXED:
+            case MIXED:
                 str = "mixed";
                 break;
         }
 
         return QString::fromLatin1(str);
+    }
+
+    Dpi const& Params::outputDpi() const {
+        return m_dpi;
+    }
+
+    void Params::setOutputDpi(Dpi const& dpi) {
+        m_dpi = dpi;
+    }
+
+    ColorParams const& Params::colorParams() const {
+        return m_colorParams;
+    }
+
+    const PictureShapeOptions& Params::pictureShapeOptions() const {
+        return m_pictureShapeOptions;
+    }
+
+    void Params::setPictureShapeOptions(const PictureShapeOptions& opt) {
+        m_pictureShapeOptions = opt;
+    }
+
+    void Params::setColorParams(ColorParams const& params) {
+        m_colorParams = params;
+    }
+
+    const SplittingOptions& Params::splittingOptions() const {
+        return m_splittingOptions;
+    }
+
+    void Params::setSplittingOptions(const SplittingOptions& opt) {
+        m_splittingOptions = opt;
+    }
+
+    DewarpingOptions const& Params::dewarpingOptions() const {
+        return m_dewarpingOptions;
+    }
+
+    void Params::setDewarpingOptions(DewarpingOptions const& opt) {
+        m_dewarpingOptions = opt;
+    }
+
+    dewarping::DistortionModel const& Params::distortionModel() const {
+        return m_distortionModel;
+    }
+
+    void Params::setDistortionModel(dewarping::DistortionModel const& model) {
+        m_distortionModel = model;
+    }
+
+    DepthPerception const& Params::depthPerception() const {
+        return m_depthPerception;
+    }
+
+    void Params::setDepthPerception(DepthPerception depth_perception) {
+        m_depthPerception = depth_perception;
+    }
+
+    DespeckleLevel Params::despeckleLevel() const {
+        return m_despeckleLevel;
+    }
+
+    void Params::setDespeckleLevel(DespeckleLevel level) {
+        m_despeckleLevel = level;
     }
 }  // namespace output

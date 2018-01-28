@@ -61,7 +61,7 @@ namespace page_split {
         /**
          * \brief Constructs a SINGLE_PAGE_UNCUT layout.
          */
-        PageLayout(QRectF const& full_rect);
+        explicit PageLayout(QRectF const& full_rect);
 
         /**
          * \brief Constructs a SINGLE_PAGE_CUT layout.
@@ -71,20 +71,16 @@ namespace page_split {
         /**
          * \brief Constructs a TWO_PAGES layout.
          */
-        PageLayout(QRectF const full_rect, QLineF const& split_line);
+        PageLayout(QRectF full_rect, QLineF const& split_line);
 
         /**
          * \brief Construct a page layout based on XML data.
          */
-        PageLayout(QDomElement const& layout_el);
+        explicit PageLayout(QDomElement const& layout_el);
 
-        bool isNull() const {
-            return m_uncutOutline.isEmpty();
-        }
+        bool isNull() const;
 
-        Type type() const {
-            return m_type;
-        }
+        Type type() const;
 
         /**
          * \brief Sets layout type and ensures the internal state
@@ -94,9 +90,7 @@ namespace page_split {
 
         LayoutType toLayoutType() const;
 
-        QPolygonF const& uncutOutline() const {
-            return m_uncutOutline;
-        }
+        QPolygonF const& uncutOutline() const;
 
         /**
          * We don't provide a method to set a polygon, but only a rectangle

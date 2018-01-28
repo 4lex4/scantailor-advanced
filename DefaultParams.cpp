@@ -87,7 +87,7 @@ QDomElement DefaultParams::toXml(QDomDocument& doc, QString const& name) const {
     el.appendChild(selectContentParams.toXml(doc, "select-content-params"));
     el.appendChild(pageLayoutParams.toXml(doc, "page-layout-params"));
     el.appendChild(outputParams.toXml(doc, "output-params"));
-    el.setAttribute("units", toString(units));
+    el.setAttribute("units", unitsToString(units));
 
     return el;
 }

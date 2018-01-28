@@ -31,8 +31,7 @@ namespace select_content {
               m_maxDeviation(1.0) {
     }
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
@@ -91,11 +90,11 @@ namespace select_content {
     Settings::getPageParams(PageId const& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        PageParams::const_iterator const it(m_pageParams.find(page_id));
+        auto const it(m_pageParams.find(page_id));
         if (it != m_pageParams.end()) {
-            return std::unique_ptr<Params>(new Params(it->second));
+            return std::make_unique<Params>(it->second);
         } else {
-            return std::unique_ptr<Params>();
+            return nullptr;
         }
     }
 
@@ -103,5 +102,45 @@ namespace select_content {
         QMutexLocker locker(&m_mutex);
 
         return m_pageParams.count(page_id) == 0;
+    }
+
+    double Settings::maxDeviation() const {
+        return m_maxDeviation;
+    }
+
+    void Settings::setMaxDeviation(double md) {
+        m_maxDeviation = md;
+    }
+
+    QSizeF Settings::pageDetectionBox() const {
+        return m_pageDetectionBox;
+    }
+
+    void Settings::setPageDetectionBox(QSizeF size) {
+        m_pageDetectionBox = size;
+    }
+
+    double Settings::pageDetectionTolerance() const {
+        return m_pageDetectionTolerance;
+    }
+
+    void Settings::setPageDetectionTolerance(double tolerance) {
+        m_pageDetectionTolerance = tolerance;
+    }
+
+    double Settings::avg() const {
+        return m_avg;
+    }
+
+    void Settings::setAvg(double a) {
+        m_avg = a;
+    }
+
+    double Settings::std() const {
+        return m_sigma;
+    }
+
+    void Settings::setStd(double s) {
+        m_sigma = s;
     }
 }  // namespace select_content

@@ -174,8 +174,7 @@ namespace imageproc {
  */
     class AbstractRasterOp {
     public:
-        virtual ~AbstractRasterOp() {
-        }
+        virtual ~AbstractRasterOp() = default;
 
         /**
          * \see rasterOp()
@@ -193,7 +192,7 @@ namespace imageproc {
         /**
          * \see rasterOp()
          */
-        virtual void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const {
+        void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const override {
             rasterOp<Rop>(dst, dr, src, sp);
         }
     };

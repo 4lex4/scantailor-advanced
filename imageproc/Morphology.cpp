@@ -84,7 +84,7 @@ namespace imageproc {
 
             // Using push_back(null_image) then swap() avoids atomic operations
             // inside BinaryImage.
-            m_images.push_back(BinaryImage());
+            m_images.emplace_back();
             m_images.back().swap(img);
         }
 
@@ -112,7 +112,7 @@ namespace imageproc {
             /**
              * \brief Constructs a coordinate system relative to the global system.
              */
-            CoordinateSystem(QPoint const& origin)
+            explicit CoordinateSystem(QPoint const& origin)
                     : m_origin(origin) {
             }
 
@@ -174,7 +174,7 @@ namespace imageproc {
             return rect.adjusted(brick.maxX(), brick.maxY(), brick.minX(), brick.minY());
         }
 
-        static int const COMPOSITE_THRESHOLD = 8;
+        int const COMPOSITE_THRESHOLD = 8;
 
         void doInitialCopy(BinaryImage& dst,
                            CoordinateSystem const& dst_cs,
@@ -308,7 +308,7 @@ namespace imageproc {
                 return;
             }
 
-            int const first_phase_steps = (int) sqrt((double) num_steps);
+            auto const first_phase_steps = (int) sqrt((double) num_steps);
 
             BinaryImage tmp(tmp_images.retrieveOrCreate(tmp_image_size));
 
@@ -1169,8 +1169,8 @@ namespace imageproc {
         // Otherwise we may miss a partially outside-of-image match because
         // the origin point was outside of the image as well.
         int const pattern_len = pattern_width * pattern_height;
-        char const* const minus_pos = (char const*) memchr(pattern, '-', pattern_len);
-        char const* const plus_pos = (char const*) memchr(pattern, '+', pattern_len);
+        auto const* const minus_pos = (char const*) memchr(pattern, '-', pattern_len);
+        auto const* const plus_pos = (char const*) memchr(pattern, '+', pattern_len);
         char const* origin_pos;
         if (minus_pos && plus_pos) {
             origin_pos = std::min(minus_pos, plus_pos);
@@ -1184,8 +1184,8 @@ namespace imageproc {
         }
 
         QPoint const origin(
-                (origin_pos - pattern) % pattern_width,
-                (origin_pos - pattern) / pattern_width
+                static_cast<int>((origin_pos - pattern) % pattern_width),
+                static_cast<int>((origin_pos - pattern) / pattern_width)
         );
 
         std::vector<QPoint> hits;

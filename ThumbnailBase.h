@@ -35,22 +35,22 @@ class ThumbnailBase : public QGraphicsItem {
 DECLARE_NON_COPYABLE(ThumbnailBase)
 
 public:
-    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& image_xform);
 
-    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& image_xform,
                   QRectF displayArea);
 
-    virtual ~ThumbnailBase();
+    ~ThumbnailBase() override;
 
-    virtual QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
-    virtual void paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget);
+    void paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget) override;
 
 protected:
     /**

@@ -21,8 +21,7 @@
 #include <QFile>
 #include <QTemporaryFile>
 
-AtomicFileOverwriter::AtomicFileOverwriter() {
-}
+AtomicFileOverwriter::AtomicFileOverwriter() = default;
 
 AtomicFileOverwriter::~AtomicFileOverwriter() {
     abort();
@@ -31,7 +30,7 @@ AtomicFileOverwriter::~AtomicFileOverwriter() {
 QIODevice* AtomicFileOverwriter::startWriting(QString const& file_path) {
     abort();
 
-    m_ptrTempFile.reset(new QTemporaryFile(file_path));
+    m_ptrTempFile = std::make_unique<QTemporaryFile>(file_path);
     m_ptrTempFile->setAutoRemove(false);
     if (!m_ptrTempFile->open()) {
         m_ptrTempFile.reset();
@@ -41,7 +40,7 @@ QIODevice* AtomicFileOverwriter::startWriting(QString const& file_path) {
 }
 
 bool AtomicFileOverwriter::commit() {
-    if (!m_ptrTempFile.get()) {
+    if (!m_ptrTempFile) {
         return false;
     }
 
@@ -63,7 +62,7 @@ bool AtomicFileOverwriter::commit() {
 }
 
 void AtomicFileOverwriter::abort() {
-    if (!m_ptrTempFile.get()) {
+    if (!m_ptrTempFile) {
         return;
     }
 

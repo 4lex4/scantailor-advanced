@@ -51,21 +51,17 @@ namespace output {
     class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
         void preUpdateUI(PageId const& page_id);
 
         void postUpdateUI();
 
-        ImageViewTab lastTab() const {
-            return m_lastTab;
-        }
+        ImageViewTab lastTab() const;
 
-        DepthPerception const& depthPerception() const {
-            return m_depthPerception;
-        }
+        DepthPerception const& depthPerception() const;
 
     signals:
 

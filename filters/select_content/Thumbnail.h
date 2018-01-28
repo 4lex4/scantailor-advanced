@@ -30,7 +30,7 @@ class ImageTransformation;
 namespace select_content {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& xform,
@@ -39,9 +39,9 @@ namespace select_content {
                   bool page_rect_enabled,
                   bool deviant);
 
-        virtual void paintOverImage(QPainter& painter,
-                                    QTransform const& image_to_display,
-                                    QTransform const& thumb_to_display);
+        void paintOverImage(QPainter& painter,
+                            QTransform const& image_to_display,
+                            QTransform const& thumb_to_display) override;
 
     private:
         QRectF m_contentRect;

@@ -35,12 +35,13 @@ public:
         // don't copy the reference counter!
     }
 
-    void operator=(ref_countable const& other) {
+    ref_countable& operator=(ref_countable const& other) {
         // don't copy the reference counter!
+
+        return *this;
     }
 
-    virtual ~ref_countable() {
-    }
+    virtual ~ref_countable() = default;
 
     void ref() const {
         m_refCounter.fetchAndAddRelaxed(1);

@@ -69,15 +69,14 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
     );
 }
 
-ProjectReader::~ProjectReader() {
-}
+ProjectReader::~ProjectReader() = default;
 
 void ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const {
     QDomElement project_el(m_doc.documentElement());
     QDomElement filters_el(project_el.namedItem("filters").toElement());
 
-    std::vector<FilterPtr>::const_iterator it(filters.begin());
-    std::vector<FilterPtr>::const_iterator const end(filters.end());
+    auto it(filters.begin());
+    auto const end(filters.end());
     for (; it != end; ++it) {
         (*it)->loadSettings(*this, filters_el);
     }
@@ -276,7 +275,7 @@ void ProjectReader::processPages(QDomElement const& pages_el) {
 } // ProjectReader::processPages
 
 QString ProjectReader::getDirPath(int const id) const {
-    DirMap::const_iterator const it(m_dirMap.find(id));
+    auto const it(m_dirMap.find(id));
     if (it != m_dirMap.end()) {
         return it->second;
     }
@@ -285,7 +284,7 @@ QString ProjectReader::getDirPath(int const id) const {
 }
 
 ProjectReader::FileRecord ProjectReader::getFileRecord(int id) const {
-    FileMap::const_iterator const it(m_fileMap.find(id));
+    auto const it(m_fileMap.find(id));
     if (it != m_fileMap.end()) {
         return it->second;
     }
@@ -304,7 +303,7 @@ QString ProjectReader::expandFilePath(QString const& path_shorthand) const {
 }
 
 ImageInfo ProjectReader::getImageInfo(int id) const {
-    ImageMap::const_iterator it(m_imageMap.find(id));
+    auto it(m_imageMap.find(id));
     if (it != m_imageMap.end()) {
         return it->second;
     }
@@ -313,7 +312,7 @@ ImageInfo ProjectReader::getImageInfo(int id) const {
 }
 
 ImageId ProjectReader::imageId(int const numeric_id) const {
-    ImageMap::const_iterator it(m_imageMap.find(numeric_id));
+    auto it(m_imageMap.find(numeric_id));
     if (it != m_imageMap.end()) {
         return it->second.id();
     }
@@ -322,7 +321,7 @@ ImageId ProjectReader::imageId(int const numeric_id) const {
 }
 
 PageId ProjectReader::pageId(int numeric_id) const {
-    PageMap::const_iterator it(m_pageMap.find(numeric_id));
+    auto it(m_pageMap.find(numeric_id));
     if (it != m_pageMap.end()) {
         return it->second;
     }

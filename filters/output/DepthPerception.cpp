@@ -45,4 +45,20 @@ namespace output {
     void DepthPerception::setValue(double value) {
         m_value = qBound(minValue(), value, maxValue());
     }
+
+    double DepthPerception::value() const {
+        return m_value;
+    }
+
+    double DepthPerception::minValue() {
+        return 1.0;
+    }
+
+    double DepthPerception::defaultValue() {
+        return 2.0;
+    }
+
+    double DepthPerception::maxValue() {
+        return 3.0;
+    }
 }  // namespace output

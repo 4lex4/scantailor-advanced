@@ -2,10 +2,12 @@
 
 #include "WolfBinarizationOptionsWidget.h"
 
+#include <utility>
+
 namespace output {
 
     WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-            : m_ptrSettings(settings) {
+            : m_ptrSettings(std::move(settings)) {
         setupUi(this);
 
         delayedStateChanger.setSingleShot(true);

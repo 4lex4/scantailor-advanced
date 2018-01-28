@@ -20,18 +20,19 @@
 #include "Utils.h"
 #include "imageproc/PolygonUtils.h"
 #include <QPainter>
+#include <utility>
 
 using namespace imageproc;
 
 namespace page_layout {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          Params const& params,
                          ImageTransformation const& xform,
                          QPolygonF const& phys_content_rect,
                          QRectF displayArea)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform, displayArea),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform, displayArea),
               m_params(params),
               m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
               m_virtOuterRect(displayArea) {

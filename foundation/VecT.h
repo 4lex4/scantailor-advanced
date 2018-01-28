@@ -20,7 +20,7 @@
 #define VEC_T_H_
 
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 #include <cassert>
 
 /**
@@ -65,7 +65,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    VecT(VecT<OT> const& other);
+    explicit VecT(VecT<OT> const& other);
 
     /**
      * \brief Ordinary assignment.
@@ -168,7 +168,7 @@ VecT<T>::VecT(VecT<OT> const& other)
           m_size(other.m_size) {
     T const* other_data = other.data();
     for (size_t i = 0; i < m_size; ++i) {
-        m_data[i] = static_cast<T>(other_data[i]);
+        m_data[i] = other_data[i];
     }
 }
 

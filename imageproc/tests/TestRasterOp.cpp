@@ -22,8 +22,8 @@
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 #include <vector>
-#include <stddef.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdlib>
 #include <cassert>
 
 namespace imageproc {
@@ -113,13 +113,13 @@ namespace imageproc {
                     int const h = 300;
 
                     std::vector<int> src(w * h);
-                    for (size_t i = 0; i < src.size(); ++i) {
-                        src[i] = rand() & 1;
+                    for (int& i : src) {
+                        i = rand() & 1;
                     }
 
                     std::vector<int> dst(w * h);
-                    for (size_t i = 0; i < dst.size(); ++i) {
-                        dst[i] = rand() & 1;
+                    for (int& i : dst) {
+                        i = rand() & 1;
                     }
 
                     std::vector<int> res(w * h);
@@ -141,7 +141,7 @@ namespace imageproc {
 
                 bool Tester1::testSubImage(QRect const& dst_rect, QPoint const& src_pt) const {
                     QImage const dst_before(m_dstBefore.toQImage());
-                    QImage dst(dst_before);
+                    const QImage& dst(dst_before);
                     QImage const src(m_src.toQImage());
 
                     if (!check_subimage_rop<Rop>(dst, dst_rect, src, src_pt)) {

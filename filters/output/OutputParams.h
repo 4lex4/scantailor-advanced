@@ -44,41 +44,23 @@ namespace output {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        OutputImageParams const& outputImageParams() const {
-            return m_outputImageParams;
-        }
+        OutputImageParams const& outputImageParams() const;
 
-        OutputFileParams const& outputFileParams() const {
-            return m_outputFileParams;
-        }
+        OutputFileParams const& outputFileParams() const;
 
-        OutputFileParams const& foregroundFileParams() const {
-            return m_foregroundFileParams;
-        }
+        OutputFileParams const& foregroundFileParams() const;
 
-        OutputFileParams const& backgroundFileParams() const {
-            return m_backgroundFileParams;
-        }
+        OutputFileParams const& backgroundFileParams() const;
 
-        OutputFileParams const& originalBackgroundFileParams() const {
-            return m_originalBackgroundFileParams;
-        }
+        OutputFileParams const& originalBackgroundFileParams() const;
 
-        OutputFileParams const& automaskFileParams() const {
-            return m_automaskFileParams;
-        }
+        OutputFileParams const& automaskFileParams() const;
 
-        OutputFileParams const& specklesFileParams() const {
-            return m_specklesFileParams;
-        }
+        OutputFileParams const& specklesFileParams() const;
 
-        ZoneSet const& pictureZones() const {
-            return m_pictureZones;
-        }
+        ZoneSet const& pictureZones() const;
 
-        ZoneSet const& fillZones() const {
-            return m_fillZones;
-        }
+        ZoneSet const& fillZones() const;
 
     private:
         OutputImageParams m_outputImageParams;

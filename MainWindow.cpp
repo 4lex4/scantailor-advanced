@@ -182,25 +182,25 @@ MainWindow::MainWindow()
     connect(actionPixels, &QAction::toggled, [this](bool checked) {
         if (checked) {
             UnitsProvider::getInstance()->setUnits(PIXELS);
-            QSettings().setValue("settings/units", toString(PIXELS));
+            QSettings().setValue("settings/units", unitsToString(PIXELS));
         }
     });
     connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
         if (checked) {
             UnitsProvider::getInstance()->setUnits(MILLIMETRES);
-            QSettings().setValue("settings/units", toString(MILLIMETRES));
+            QSettings().setValue("settings/units", unitsToString(MILLIMETRES));
         }
     });
     connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
         if (checked) {
             UnitsProvider::getInstance()->setUnits(CENTIMETRES);
-            QSettings().setValue("settings/units", toString(CENTIMETRES));
+            QSettings().setValue("settings/units", unitsToString(CENTIMETRES));
         }
     });
     connect(actionInches, &QAction::toggled, [this](bool checked) {
         if (checked) {
             UnitsProvider::getInstance()->setUnits(INCHES);
-            QSettings().setValue("settings/units", toString(INCHES));
+            QSettings().setValue("settings/units", unitsToString(INCHES));
         }
     });
 
@@ -349,7 +349,7 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow() {
     m_ptrInteractiveQueue->cancelAndClear();
-    if (m_ptrBatchQueue.get()) {
+    if (m_ptrBatchQueue) {
         m_ptrBatchQueue->cancelAndClear();
     }
     m_ptrWorkerThreadPool->shutdown();
@@ -642,7 +642,7 @@ intrusive_ptr<PageOrderProvider const>
 MainWindow::currentPageOrderProvider() const {
     int const idx = sortOptions->currentIndex();
     if (idx < 0) {
-        return intrusive_ptr<PageOrderProvider const>();
+        return nullptr;
     }
 
     intrusive_ptr<AbstractFilter> const filter(m_ptrStages->filterAt(m_curFilter));
@@ -669,7 +669,7 @@ void MainWindow::updateSortOptions() {
 }
 
 void MainWindow::resetThumbSequence(intrusive_ptr<PageOrderProvider const> const& page_order_provider) {
-    if (m_ptrThumbnailCache.get()) {
+    if (m_ptrThumbnailCache) {
         intrusive_ptr<CompositeCacheDrivenTask> const task(
                 createCompositeCacheDrivenTask(m_curFilter)
         );
@@ -689,12 +689,10 @@ void MainWindow::resetThumbSequence(intrusive_ptr<PageOrderProvider const> const
             ThumbnailSequence::RESET_SELECTION, page_order_provider
     );
 
-    if (!m_ptrThumbnailCache.get()) {
+    if (!m_ptrThumbnailCache) {
         // Empty project.
         assert(m_ptrPages->numImages() == 0);
-        m_ptrThumbSequence->setThumbnailFactory(
-                intrusive_ptr<ThumbnailFactory>()
-        );
+        m_ptrThumbSequence->setThumbnailFactory(nullptr);
     }
 
     PageId const page(m_selectedPage.get(getCurrentView()));
@@ -898,7 +896,7 @@ void MainWindow::showRelinkingDialog() {
 }
 
 void MainWindow::performRelinking(intrusive_ptr<AbstractRelinker> const& relinker) {
-    assert(relinker.get());
+    assert(relinker);
 
     if (!isProjectLoaded()) {
         return;
@@ -1115,7 +1113,7 @@ void MainWindow::filterSelectionChanged(QItemSelection const& selected) {
     }
 
     m_ptrInteractiveQueue->cancelAndClear();
-    if (m_ptrBatchQueue.get()) {
+    if (m_ptrBatchQueue) {
         // Should not happen, but just in case.
         m_ptrBatchQueue->cancelAndClear();
     }
@@ -1134,7 +1132,7 @@ void MainWindow::filterSelectionChanged(QItemSelection const& selected) {
     if (!was_below_select_content && now_below_select_content) {
         // IMPORTANT: this needs to go before resetting thumbnails,
         // because it may affect them.
-        if (m_ptrContentBoxPropagator.get()) {
+        if (m_ptrContentBoxPropagator) {
             m_ptrContentBoxPropagator->propagate(*m_ptrPages);
         }  // Otherwise probably no project is loaded.
     }
@@ -1142,7 +1140,7 @@ void MainWindow::filterSelectionChanged(QItemSelection const& selected) {
     if (!was_below_fix_orientation && now_below_fix_orientation) {
         // IMPORTANT: this needs to go before resetting thumbnails,
         // because it may affect them.
-        if (m_ptrPageOrientationPropagator.get()) {
+        if (m_ptrPageOrientationPropagator) {
             m_ptrPageOrientationPropagator->propagate(*m_ptrPages);
         }  // Otherwise probably no project is loaded.
     }
@@ -1280,7 +1278,7 @@ void MainWindow::stopBatchProcessing(MainAreaAction main_area) {
 void MainWindow::filterResult(BackgroundTaskPtr const& task, FilterResultPtr const& result) {
     // Cancelled or not, we must mark it as finished.
     m_ptrInteractiveQueue->processingFinished(task);
-    if (m_ptrBatchQueue.get()) {
+    if (m_ptrBatchQueue) {
         m_ptrBatchQueue->processingFinished(task);
     }
 
@@ -1371,7 +1369,7 @@ void MainWindow::fixDpiDialogRequested() {
 void MainWindow::fixedDpiSubmitted() {
     assert(m_ptrFixDpiDialog);
     assert(m_ptrPages);
-    assert(m_ptrThumbSequence.get());
+    assert(m_ptrThumbSequence);
 
     PageInfo const selected_page_before(m_ptrThumbSequence->selectionLeader());
 
@@ -1579,7 +1577,7 @@ void MainWindow::showAboutDialog() {
     ui.version->setText(QString(tr("version ")) + QString::fromUtf8(VERSION));
 
     QResource license(":/GPLv3.html");
-    ui.licenseViewer->setHtml(QString::fromUtf8((char const*) license.data(), license.size()));
+    ui.licenseViewer->setHtml(QString::fromUtf8((char const*) license.data(), static_cast<int>(license.size())));
 
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowModality(Qt::WindowModal);
@@ -1735,7 +1733,7 @@ void MainWindow::loadPageInteractive(PageInfo const& page) {
         m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page.id());
     }
 
-    assert(m_ptrThumbnailCache.get());
+    assert(m_ptrThumbnailCache);
 
     m_ptrInteractiveQueue->cancelAndClear();
     m_ptrInteractiveQueue->addProcessingTask(
@@ -2036,7 +2034,7 @@ void MainWindow::insertImage(ImageInfo const& new_image, BeforeOrAfter before_or
 
 void MainWindow::removeFromProject(std::set<PageId> const& pages) {
     m_ptrInteractiveQueue->cancelAndRemove(pages);
-    if (m_ptrBatchQueue.get()) {
+    if (m_ptrBatchQueue) {
         m_ptrBatchQueue->cancelAndRemove(pages);
     }
 

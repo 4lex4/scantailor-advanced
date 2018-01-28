@@ -21,7 +21,7 @@
 
 #include "BinaryImage.h"
 #include <QSize>
-#include <stdint.h>
+#include <cstdint>
 #include <cassert>
 
 namespace imageproc {
@@ -154,10 +154,7 @@ namespace imageproc {
                       m_shift(shift) {
             }
 
-            BitProxy(BitProxy const& other)
-                    : m_rWord(other.m_rWord),
-                      m_shift(other.m_shift) {
-            }
+            BitProxy(BitProxy const& other) = default;
 
             BitProxy& operator=(uint32_t bit) {
                 assert(bit <= 1);

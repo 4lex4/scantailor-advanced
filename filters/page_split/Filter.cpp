@@ -27,15 +27,18 @@
 #include "CacheDrivenTask.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include "CommandLine.h"
 #include "OrderBySplitTypeProvider.h"
+#include <filters/deskew/Task.h>
+#include <filters/deskew/CacheDrivenTask.h>
 
 namespace page_split {
-    Filter::Filter(intrusive_ptr<ProjectPages> const& page_sequence,
+    Filter::Filter(intrusive_ptr<ProjectPages> page_sequence,
                    PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrPages(page_sequence),
+            : m_ptrPages(std::move(page_sequence)),
               m_ptrSettings(new Settings),
               m_selectedPageOrder(0) {
         if (CommandLine::get().isGui()) {
@@ -50,12 +53,11 @@ namespace page_split {
 
         ProviderPtr const default_order;
         ProviderPtr const order_by_splitline(new OrderBySplitTypeProvider(m_ptrSettings));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Natural order"), default_order));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Order by split type"), order_by_splitline));
+        m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+        m_pageOrderOptions.emplace_back(tr("Order by split type"), order_by_splitline);
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate("page_split::Filter", "Split Pages");
@@ -178,21 +180,21 @@ namespace page_split {
 
     intrusive_ptr<Task>
     Filter::createTask(PageInfo const& page_info,
-                       intrusive_ptr<deskew::Task> const& next_task,
+                       intrusive_ptr<deskew::Task> next_task,
                        bool const batch_processing,
                        bool const debug) {
         return intrusive_ptr<Task>(
                 new Task(
                         intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrPages,
-                        next_task, page_info, batch_processing, debug
+                        std::move(next_task), page_info, batch_processing, debug
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, m_ptrPages, next_task)
+                new CacheDrivenTask(m_ptrSettings, m_ptrPages, std::move(next_task))
         );
     }
 
@@ -220,5 +222,9 @@ namespace page_split {
         Settings::UpdateAction update;
         update.setLayoutType(pageSplitParams.getLayoutType());
         m_ptrSettings->updatePage(page_id.imageId(), update);
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
     }
 }  // page_split

@@ -35,8 +35,7 @@ namespace deskew {
               m_deviation(deskew_el.attribute("deviation").toDouble()) {
     }
 
-    Params::~Params() {
-    }
+    Params::~Params() = default;
 
     QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
@@ -46,5 +45,29 @@ namespace deskew {
         el.appendChild(m_deps.toXml(doc, "dependencies"));
 
         return el;
+    }
+
+    double Params::deskewAngle() const {
+        return m_deskewAngleDeg;
+    }
+
+    double Params::deviation() const {
+        return m_deviation;
+    }
+
+    void Params::computeDeviation(double avg) {
+        m_deviation = avg - m_deskewAngleDeg;
+    }
+
+    bool Params::isDeviant(double std, double max_dev) const {
+        return std::max(1.5 * std, max_dev) < fabs(m_deviation);
+    }
+
+    Dependencies const& Params::dependencies() const {
+        return m_deps;
+    }
+
+    AutoManualMode Params::mode() const {
+        return m_mode;
     }
 }  // namespace deskew

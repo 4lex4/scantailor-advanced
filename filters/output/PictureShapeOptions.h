@@ -11,7 +11,7 @@ namespace output {
         FREE_SHAPE,
         RECTANGULAR_SHAPE
     };
-    
+
     class PictureShapeOptions {
     public:
         PictureShapeOptions();

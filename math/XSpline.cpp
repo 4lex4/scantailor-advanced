@@ -38,9 +38,9 @@ struct XSpline::TensionDerivedParams {
     double T3m;
 
     // q parameters for GBlendFunc and HBlendFunc.
-    double q[4];
+    double q[4]{ };
     // p parameters for GBlendFunc.
-    double p[4];
+    double p[4]{ };
 
     TensionDerivedParams(double tension1, double tension2);
 };
@@ -67,7 +67,7 @@ private:
 
 class XSpline::HBlendFunc {
 public:
-    HBlendFunc(double q);
+    explicit HBlendFunc(double q);
 
     double value(double u) const;
 
@@ -99,11 +99,11 @@ struct XSpline::DecomposedDerivs {
 
 
 int XSpline::numControlPoints() const {
-    return m_controlPoints.size();
+    return static_cast<int>(m_controlPoints.size());
 }
 
 int XSpline::numSegments() const {
-    return std::max<int>(m_controlPoints.size() - 1, 0);
+    return std::max<int>(static_cast<const int&>(m_controlPoints.size() - 1), 0);
 }
 
 double XSpline::controlPointIndexToT(int idx) const {
@@ -113,7 +113,7 @@ double XSpline::controlPointIndexToT(int idx) const {
 }
 
 void XSpline::appendControlPoint(QPointF const& pos, double tension) {
-    m_controlPoints.push_back(ControlPoint(pos, tension));
+    m_controlPoints.emplace_back(pos, tension);
 }
 
 void XSpline::insertControlPoint(int idx, QPointF const& pos, double tension) {
@@ -299,7 +299,7 @@ int XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double
     idxs[0] = std::max<int>(0, segment - 1);
     idxs[1] = segment;
     idxs[2] = segment + 1;
-    idxs[3] = std::min<int>(segment + 2, m_controlPoints.size() - 1);
+    idxs[3] = std::min<int>(segment + 2, static_cast<const int&>(m_controlPoints.size() - 1));
 
     ControlPoint pts[4];
     for (int i = 0; i < 4; ++i) {
@@ -383,13 +383,13 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(int const segment, doubl
     assert(segment >= 0 && segment < (int) m_controlPoints.size() - 1);
     assert(t >= 0 && t <= 1);
 
-    DecomposedDerivs derivs;
+    DecomposedDerivs derivs{ };
 
     derivs.numControlPoints = 4;  // May be modified later in this function.
     derivs.controlPoints[0] = std::max<int>(0, segment - 1);
     derivs.controlPoints[1] = segment;
     derivs.controlPoints[2] = segment + 1;
-    derivs.controlPoints[3] = std::min<int>(segment + 2, m_controlPoints.size() - 1);
+    derivs.controlPoints[3] = std::min<int>(segment + 2, static_cast<const int&>(m_controlPoints.size() - 1));
 
     ControlPoint pts[4];
     for (int i = 0; i < 4; ++i) {
@@ -705,7 +705,7 @@ QPointF XSpline::pointClosestTo(QPointF const to, double* t, double accuracy) co
 } // XSpline::pointClosestTo
 
 QPointF XSpline::pointClosestTo(QPointF const to, double accuracy) const {
-    return pointClosestTo(to, 0, accuracy);
+    return pointClosestTo(to, nullptr, accuracy);
 }
 
 std::vector<QPointF>
@@ -713,7 +713,7 @@ XSpline::toPolyline(SamplingParams const& params, double from_t, double to_t) co
     struct Sink : public VirtualFunction3<void, QPointF, double, SampleFlags> {
         std::vector<QPointF> polyline;
 
-        virtual void operator()(QPointF pt, double, SampleFlags) {
+        void operator()(QPointF pt, double, SampleFlags) override {
             polyline.push_back(pt);
         }
     };

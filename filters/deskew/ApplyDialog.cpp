@@ -46,8 +46,7 @@ namespace deskew {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ApplyDialog::~ApplyDialog() {
-    }
+    ApplyDialog::~ApplyDialog() = default;
 
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
@@ -66,7 +65,7 @@ namespace deskew {
         } else if (thisEveryOtherRB->isChecked()) {
             std::set<PageId> tmp;
             m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
+            auto it = tmp.begin();
             for (int i = 0; it != tmp.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);
@@ -74,7 +73,7 @@ namespace deskew {
             }
             emit appliedTo(pages);
         } else if (everyOtherSelectedRB->isChecked()) {
-            std::set<PageId>::iterator it = m_selectedPages.begin();
+            auto it = m_selectedPages.begin();
             for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);

@@ -17,6 +17,8 @@
  */
 
 #include "CacheDrivenTask.h"
+
+#include <utility>
 #include "Settings.h"
 #include "Params.h"
 #include "Thumbnail.h"
@@ -28,14 +30,13 @@
 #include "filter_dc/ThumbnailCollector.h"
 
 namespace page_layout {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
-                                     intrusive_ptr<Settings> const& settings)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings) {
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task,
+                                     intrusive_ptr<Settings> settings)
+            : m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
     void CacheDrivenTask::process(PageInfo const& page_info,
                                   AbstractFilterDataCollector* collector,
@@ -44,8 +45,8 @@ namespace page_layout {
         std::unique_ptr<Params> const params(
                 m_ptrSettings->getPageParams(page_info.id())
         );
-        if (!params.get() || !params->contentSizeMM().isValid()) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (!params || !params->contentSizeMM().isValid()) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -81,7 +82,7 @@ namespace page_layout {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(

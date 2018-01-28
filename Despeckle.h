@@ -49,7 +49,7 @@ public:
                                             Dpi const& dpi,
                                             Level level,
                                             TaskStatus const& status,
-                                            DebugImages* dbg = 0);
+                                            DebugImages* dbg = nullptr);
 
     /**
      * \brief A slightly faster, in-place version of despeckle().
@@ -58,7 +58,7 @@ public:
                                  Dpi const& dpi,
                                  Level level,
                                  TaskStatus const& status,
-                                 DebugImages* dbg = 0);
+                                 DebugImages* dbg = nullptr);
 };
 
 

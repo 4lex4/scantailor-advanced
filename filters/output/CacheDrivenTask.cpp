@@ -27,22 +27,22 @@
 #include "filter_dc/AbstractFilterDataCollector.h"
 #include "filter_dc/ThumbnailCollector.h"
 #include <QFileInfo>
+#include <utility>
 
 namespace output {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
                                      OutputFileNameGenerator const& out_file_name_gen)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_outFileNameGen(out_file_name_gen) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
     void CacheDrivenTask::process(PageInfo const& page_info,
                                   AbstractFilterDataCollector* collector,
                                   ImageTransformation const& xform,
                                   QPolygonF const& content_rect_phys) {
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
             Params const params(m_ptrSettings->getParams(page_info.id()));
 
@@ -56,7 +56,7 @@ namespace output {
                         m_ptrSettings->getOutputParams(page_info.id())
                 );
 
-                if (!stored_output_params.get()) {
+                if (!stored_output_params) {
                     need_reprocess = true;
                     break;
                 }

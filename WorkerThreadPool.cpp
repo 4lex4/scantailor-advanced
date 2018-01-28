@@ -20,13 +20,14 @@
 #include "OutOfMemoryHandler.h"
 #include <QCoreApplication>
 #include <QThreadPool>
+#include <utility>
 
 class WorkerThreadPool::TaskResultEvent : public QEvent {
 public:
-    TaskResultEvent(BackgroundTaskPtr const& task, FilterResultPtr const& result)
+    TaskResultEvent(BackgroundTaskPtr task, FilterResultPtr result)
             : QEvent(User),
-              m_ptrTask(task),
-              m_ptrResult(result) {
+              m_ptrTask(std::move(task)),
+              m_ptrResult(std::move(result)) {
     }
 
     BackgroundTaskPtr const& task() const {
@@ -49,8 +50,7 @@ WorkerThreadPool::WorkerThreadPool(QObject* parent)
     updateNumberOfThreads();
 }
 
-WorkerThreadPool::~WorkerThreadPool() {
-}
+WorkerThreadPool::~WorkerThreadPool() = default;
 
 void WorkerThreadPool::shutdown() {
     m_pPool->waitForDone();
@@ -63,13 +63,13 @@ bool WorkerThreadPool::hasSpareCapacity() const {
 void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
     class Runnable : public QRunnable {
     public:
-        Runnable(WorkerThreadPool& owner, BackgroundTaskPtr const& task)
+        Runnable(WorkerThreadPool& owner, BackgroundTaskPtr task)
                 : m_rOwner(owner),
-                  m_ptrTask(task) {
+                  m_ptrTask(std::move(task)) {
             setAutoDelete(true);
         }
 
-        virtual void run()
+        void run()
 
         override {
             if (m_ptrTask->isCancelled()) {
@@ -99,7 +99,7 @@ void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
 }  // WorkerThreadPool::submitTask
 
 void WorkerThreadPool::customEvent(QEvent* event) {
-    if (TaskResultEvent* evt = dynamic_cast<TaskResultEvent*>(event)) {
+    if (auto* evt = dynamic_cast<TaskResultEvent*>(event)) {
         emit taskResult(evt->task(), evt->result());
     }
 }

@@ -48,14 +48,14 @@ namespace deskew {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<select_content::Task> const& next_task,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<select_content::Task> next_task,
              PageId const& page_id,
              bool batch_processing,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
         FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 

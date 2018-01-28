@@ -18,14 +18,15 @@
 
 #include "Thumbnail.h"
 #include <QPainter>
+#include <utility>
 
 namespace deskew {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          ImageTransformation const& xform,
                          bool deviant)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
               m_deviant(deviant) {
     }
 

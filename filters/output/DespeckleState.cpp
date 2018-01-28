@@ -90,7 +90,7 @@ namespace output {
             return result;
         }
 
-        uint32_t* result_line = (uint32_t*) result.bits();
+        auto* result_line = (uint32_t*) result.bits();
         int const result_stride = result.bytesPerLine() / 4;
 
         uint32_t const* speckles_line = speckles.data();
@@ -121,7 +121,7 @@ namespace output {
     BinaryImage DespeckleState::extractBW(QImage const& mixed) {
         BinaryImage result(mixed.size(), WHITE);
 
-        uint32_t const* mixed_line = (uint32_t const*) mixed.bits();
+        auto const* mixed_line = (uint32_t const*) mixed.bits();
         int const mixed_stride = mixed.bytesPerLine() / 4;
 
         uint32_t* result_line = result.data();
@@ -142,5 +142,9 @@ namespace output {
         }
 
         return result;
+    }
+
+    DespeckleLevel DespeckleState::level() const {
+        return m_despeckleLevel;
     }
 }  // namespace output

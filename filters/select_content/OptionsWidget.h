@@ -67,17 +67,11 @@ namespace select_content {
 
             void setPageDetectionMode(AutoManualMode mode);
 
-            bool isContentDetectionEnabled() const {
-                return m_contentDetectionEnabled;
-            }
+            bool isContentDetectionEnabled() const;
 
-            bool isPageDetectionEnabled() const {
-                return m_pageDetectionEnabled;
-            }
+            bool isPageDetectionEnabled() const;
 
-            bool isFineTuningCornersEnabled() const {
-                return m_fineTuneCornersEnabled;
-            }
+            bool isFineTuningCornersEnabled() const;
 
             void setContentDetectionEnabled(bool detect);
 
@@ -102,9 +96,9 @@ namespace select_content {
         };
 
 
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
         void preUpdateUI(PageId const& page_id);
 
@@ -147,9 +141,9 @@ namespace select_content {
         void dimensionsChangedLocally(double);
 
     private:
-        void updateContentModeIndication(AutoManualMode const mode);
+        void updateContentModeIndication(AutoManualMode mode);
 
-        void updatePageModeIndication(AutoManualMode const mode);
+        void updatePageModeIndication(AutoManualMode mode);
 
         void updatePageDetectOptionsDisplay();
 

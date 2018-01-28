@@ -28,7 +28,7 @@
 #include <QCoreApplication>
 #include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 
 class InteractiveXSpline : public InteractionHandler {
 Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
@@ -62,16 +62,16 @@ public:
      *          to the point closest to the cursor will be written there.
      * \return true if the curve is the proximity leader.
      */
-    bool curveIsProximityLeader(InteractionState const& state, QPointF* pt = 0, double* t = 0) const;
+    bool curveIsProximityLeader(InteractionState const& state, QPointF* pt = nullptr, double* t = nullptr) const;
 
 protected:
-    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+    void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
 private:
     struct NoOp;
@@ -81,8 +81,7 @@ private:
         DraggablePoint point;
         ObjectDragHandler handler;
 
-        ControlPoint() {
-        }
+        ControlPoint() = default;
     };
 
     QPointF controlPointPosition(int idx) const;

@@ -68,7 +68,7 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     if (base_name.isEmpty()) {
         base_name = QChar('_');
     }
-    QLabel* label = new QLabel(recentProjectsGroup);
+    auto* label = new QLabel(recentProjectsGroup);
     label->setWordWrap(true);
     label->setTextFormat(Qt::RichText);
     label->setText(Utils::richTextForLink(base_name, file_path));

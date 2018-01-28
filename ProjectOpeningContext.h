@@ -39,7 +39,7 @@ DECLARE_NON_COPYABLE(ProjectOpeningContext)
 public:
     ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc);
 
-    virtual ~ProjectOpeningContext();
+    ~ProjectOpeningContext() override;
 
     void proceed();
 

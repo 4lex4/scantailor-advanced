@@ -19,7 +19,7 @@
 #ifndef MAT_MNT_H_
 #define MAT_MNT_H_
 
-#include <stddef.h>
+#include <cstddef>
 
 template<size_t M, size_t N, typename T>
 class MatMNT;
@@ -41,8 +41,8 @@ class MatMNT {
 public:
     typedef T type;
     enum {
-        ROWS = M,
-        COLS = N
+        ROWS = static_cast<int>(M),
+        COLS = static_cast<int>(N)
     };
 
     /**
@@ -64,7 +64,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    MatMNT(MatMNT<M, N, OT> const& other);
+    explicit MatMNT(MatMNT<M, N, OT> const& other);
 
     /**
      * \brief Assignment from a matrix of same dimensions but another type.

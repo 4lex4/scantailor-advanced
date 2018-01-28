@@ -22,7 +22,7 @@
 #include "NonCopyable.h"
 #include <boost/intrusive/list.hpp>
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * \brief Allocates objects from the heap.

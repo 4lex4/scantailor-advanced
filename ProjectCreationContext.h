@@ -36,9 +36,9 @@ Q_OBJECT
 DECLARE_NON_COPYABLE(ProjectCreationContext)
 
 public:
-    ProjectCreationContext(QWidget* parent);
+    explicit ProjectCreationContext(QWidget* parent);
 
-    virtual ~ProjectCreationContext();
+    ~ProjectCreationContext() override;
 
     std::vector<ImageFileInfo> const& files() const {
         return m_files;

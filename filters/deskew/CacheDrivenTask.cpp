@@ -17,6 +17,8 @@
  */
 
 #include "CacheDrivenTask.h"
+
+#include <utility>
 #include "Thumbnail.h"
 #include "IncompleteThumbnail.h"
 #include "Settings.h"
@@ -26,24 +28,22 @@
 #include "filters/select_content/CacheDrivenTask.h"
 
 namespace deskew {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
-                                     intrusive_ptr<select_content::CacheDrivenTask> const& next_task)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings) {
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
+                                     intrusive_ptr<select_content::CacheDrivenTask> next_task)
+            : m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
     void CacheDrivenTask::process(PageInfo const& page_info,
                                   AbstractFilterDataCollector* collector,
                                   ImageTransformation const& xform) {
         Dependencies const deps(xform.preCropArea(), xform.preRotation());
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
-        if (!params.get()
-            || (!deps.matches(params->dependencies())
-                && (params->mode() == MODE_AUTO))) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (!params || (!deps.matches(params->dependencies())
+                        && (params->mode() == MODE_AUTO))) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -67,7 +67,7 @@ namespace deskew {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(

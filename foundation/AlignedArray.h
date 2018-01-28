@@ -20,8 +20,8 @@
 #define ALIGNED_ARRAY_H_
 
 #include "NonCopyable.h"
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 /**
  * \brief An array of elements starting at address with a specified alignment.
@@ -42,7 +42,7 @@ public:
               m_pStorage(0) {
     }
 
-    AlignedArray(size_t size);
+    explicit AlignedArray(size_t size);
 
     ~AlignedArray() {
         delete[] m_pStorage;
@@ -79,7 +79,7 @@ inline void swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignm
 
 template<typename T, size_t alignment_in_units>
 AlignedArray<T, alignment_in_units>::AlignedArray(size_t size) {
-    int const a = alignment_in_units > 1 ? alignment_in_units : 1;
+    int const a = static_cast<const int>(alignment_in_units > 1 ? alignment_in_units : 1);
     int const am1 = a - 1;
     m_pStorage = new T[size + am1];
     m_pAlignedData = m_pStorage + ((a - ((uintptr_t(m_pStorage) / sizeof(T)) & am1)) & am1);

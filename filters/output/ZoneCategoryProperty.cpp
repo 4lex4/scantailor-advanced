@@ -77,4 +77,12 @@ namespace output {
 
         return str;
     }
+
+    ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zone_category() const {
+        return m_zone_category;
+    }
+
+    void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zone_category) {
+        m_zone_category = zone_category;
+    }
 }  // namespace output

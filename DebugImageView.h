@@ -31,8 +31,8 @@ class DebugImageView : public QStackedWidget, public boost::intrusive::list_base
         boost::intrusive::link_mode<boost::intrusive::auto_unlink>
 > {
 public:
-    DebugImageView(AutoRemovingFile file, boost::function<QWidget*(QImage const&)> const& image_view_factory
-    = boost::function<QWidget*(QImage const&)>(), QWidget* parent = 0);
+    explicit DebugImageView(AutoRemovingFile file, boost::function<QWidget*(QImage const&)> const& image_view_factory
+    = boost::function<QWidget*(QImage const&)>(), QWidget* parent = nullptr);
 
     /**
      * Tells this widget to either display the actual image or just

@@ -22,8 +22,8 @@
 #include <QImage>
 #include <QSize>
 #include <boost/test/auto_unit_test.hpp>
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
 #include <cmath>
 
 namespace imageproc {
@@ -74,7 +74,7 @@ namespace imageproc {
                 uint8_t* line = img.data();
                 for (int y = 0; y < img.height(); ++y) {
                     for (int x = 0; x < img.width(); ++x) {
-                        line[x] = rand() % 256;
+                        line[x] = static_cast<uint8_t>(rand() % 256);
                     }
                     line += img.stride();
                 }

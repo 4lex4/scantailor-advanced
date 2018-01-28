@@ -34,7 +34,7 @@ namespace deskew {
     public:
         ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ApplyDialog();
+        ~ApplyDialog() override;
 
     signals:
 

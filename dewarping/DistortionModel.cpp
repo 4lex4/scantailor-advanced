@@ -23,8 +23,7 @@
 #include <QDomDocument>
 
 namespace dewarping {
-    DistortionModel::DistortionModel() {
-    }
+    DistortionModel::DistortionModel() = default;
 
     DistortionModel::DistortionModel(QDomElement const& el)
             : m_topCurve(el.namedItem("top-curve").toElement()),

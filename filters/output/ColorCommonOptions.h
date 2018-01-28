@@ -39,21 +39,13 @@ namespace output {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        bool cutMargins() const {
-            return m_cutMargins;
-        }
+        bool cutMargins() const;
 
-        void setCutMargins(bool val) {
-            m_cutMargins = val;
-        }
+        void setCutMargins(bool val);
 
-        bool normalizeIllumination() const {
-            return m_normalizeIllumination;
-        }
+        bool normalizeIllumination() const;
 
-        void setNormalizeIllumination(bool val) {
-            m_normalizeIllumination = val;
-        }
+        void setNormalizeIllumination(bool val);
 
         FillingColor getFillingColor() const;
 
@@ -67,6 +59,7 @@ namespace output {
         static FillingColor parseFillingColor(const QString& str);
 
         static QString formatFillingColor(FillingColor type);
+
 
         bool m_cutMargins;
         bool m_normalizeIllumination;

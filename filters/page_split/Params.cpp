@@ -35,8 +35,7 @@ namespace page_split {
               ) {
     }
 
-    Params::~Params() {
-    }
+    Params::~Params() = default;
 
     QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
         QDomElement el(doc.createElement(name));
@@ -47,5 +46,29 @@ namespace page_split {
         el.appendChild(m_deps.toXml(doc, "dependencies"));
 
         return el;
+    }
+
+    PageLayout const& Params::pageLayout() const {
+        return m_layout;
+    }
+
+    void Params::setPageLayout(PageLayout const& layout) {
+        m_layout = layout;
+    }
+
+    Dependencies const& Params::dependencies() const {
+        return m_deps;
+    }
+
+    void Params::setDependencies(Dependencies const& deps) {
+        m_deps = deps;
+    }
+
+    AutoManualMode Params::splitLineMode() const {
+        return m_splitLineMode;
+    }
+
+    void Params::setSplitLineMode(AutoManualMode mode) {
+        m_splitLineMode = mode;
     }
 }  // namespace page_split

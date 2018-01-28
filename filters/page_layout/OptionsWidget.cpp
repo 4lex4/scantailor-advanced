@@ -23,14 +23,15 @@
 #include "ScopedIncDec.h"
 #include "imageproc/Constants.h"
 #include <QSettings>
+#include <utility>
 #include <UnitsProvider.h>
 
 using namespace imageproc::constants;
 
 namespace page_layout {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_ignoreMarginChanges(0),
               m_leftRightLinked(true),
@@ -93,8 +94,7 @@ namespace page_layout {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment) {
         removeUiConnections();
@@ -103,7 +103,7 @@ namespace page_layout {
         m_marginsMM = margins_mm;
         m_alignment = alignment;
 
-        bool old_ignore = m_ignoreMarginChanges;
+        auto old_ignore = static_cast<bool>(m_ignoreMarginChanges);
         m_ignoreMarginChanges = true;
 
         typedef AlignmentByButton::value_type KeyVal;
@@ -305,10 +305,10 @@ namespace page_layout {
     }
 
     void OptionsWidget::alignmentButtonClicked() {
-        QToolButton* const button = dynamic_cast<QToolButton*>(sender());
+        auto* const button = dynamic_cast<QToolButton*>(sender());
         assert(button);
 
-        AlignmentByButton::iterator const it(m_alignmentByButton.find(button));
+        auto const it(m_alignmentByButton.find(button));
         assert(it != m_alignmentByButton.end());
 
         m_alignment = it->second;
@@ -316,7 +316,7 @@ namespace page_layout {
     }
 
     void OptionsWidget::showApplyMarginsDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -329,7 +329,7 @@ namespace page_layout {
     }
 
     void OptionsWidget::showApplyAlignmentDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -533,5 +533,21 @@ namespace page_layout {
                     this, SLOT(alignmentButtonClicked())
             );
         }
+    }
+
+    bool OptionsWidget::leftRightLinked() const {
+        return m_leftRightLinked;
+    }
+
+    bool OptionsWidget::topBottomLinked() const {
+        return m_topBottomLinked;
+    }
+
+    Margins const& OptionsWidget::marginsMM() const {
+        return m_marginsMM;
+    }
+
+    Alignment const& OptionsWidget::alignment() const {
+        return m_alignment;
     }
 }  // namespace page_layout

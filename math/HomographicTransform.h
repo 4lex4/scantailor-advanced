@@ -21,7 +21,7 @@
 
 #include "VecNT.h"
 #include "MatrixCalc.h"
-#include <stddef.h>
+#include <cstddef>
 
 template<size_t N, typename T>
 class HomographicTransform;
@@ -78,7 +78,7 @@ HomographicTransform<N, T>
 HomographicTransformBase<N, T>::inv() const {
     StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
     Mat inv_mat;
-    mc(m_mat, N + 1, N + 1).inv().write(inv_mat);
+    mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)).inv().write(inv_mat);
 
     return HomographicTransform<N, T>(inv_mat);
 }
@@ -88,7 +88,7 @@ typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::ope
     StaticMatrixCalc<T, N + 1, 1> mc;
     VecNT<N + 1, T> const hsrc(from, T(1));
     VecNT<N + 1, T> hdst;
-    (mc(m_mat, N + 1, N + 1) * mc(hsrc, N + 1, 1)).write(hdst);
+    (mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)) * mc(hsrc, static_cast<int>(N + 1), 1)).write(hdst);
     VecNT<N, T> res(&hdst[0]);
     res /= hdst[N];
 

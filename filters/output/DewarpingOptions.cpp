@@ -20,7 +20,7 @@
 #include <cassert>
 
 namespace output {
-    DewarpingOptions::DewarpingOptions(Mode mode, bool needPostDeskew)
+    DewarpingOptions::DewarpingOptions(DewarpingMode mode, bool needPostDeskew)
             : m_mode(mode),
               postDeskew(needPostDeskew) {
     }
@@ -47,7 +47,7 @@ namespace output {
         return !(*this == other);
     }
 
-    void DewarpingOptions::setMode(DewarpingOptions::Mode m_mode) {
+    void DewarpingOptions::setDewarpingMode(DewarpingMode m_mode) {
         DewarpingOptions::m_mode = m_mode;
     }
 
@@ -59,11 +59,11 @@ namespace output {
         return postDeskew;
     }
 
-    DewarpingOptions::Mode DewarpingOptions::mode() const {
+    DewarpingMode DewarpingOptions::dewarpingMode() const {
         return m_mode;
     }
 
-    DewarpingOptions::Mode DewarpingOptions::parseDewarpingMode(QString const& str) {
+    DewarpingMode DewarpingOptions::parseDewarpingMode(QString const& str) {
         if (str == "auto") {
             return AUTO;
         } else if (str == "manual") {
@@ -75,7 +75,7 @@ namespace output {
         }
     }
 
-    QString DewarpingOptions::formatDewarpingMode(DewarpingOptions::Mode mode) {
+    QString DewarpingOptions::formatDewarpingMode(DewarpingMode mode) {
         switch (mode) {
             case OFF:
                 return "off";

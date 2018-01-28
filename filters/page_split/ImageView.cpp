@@ -24,13 +24,14 @@
 #include <QDebug>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <utility>
 
 namespace page_split {
     ImageView::ImageView(QImage const& image,
                          QImage const& downscaled_image,
                          ImageTransformation const& xform,
                          PageLayout const& layout,
-                         intrusive_ptr<ProjectPages> const& pages,
+                         intrusive_ptr<ProjectPages> pages,
                          ImageId const& image_id,
                          bool left_half_removed,
                          bool right_half_removed)
@@ -38,7 +39,7 @@ namespace page_split {
             image, downscaled_image,
             ImagePresentation(xform.transform(), xform.resultingPreCropArea())
     ),
-              m_ptrPages(pages),
+              m_ptrPages(std::move(pages)),
               m_imageId(image_id),
               m_leftUnremoveButton(boost::bind(&ImageView::leftPageCenter, this)),
               m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
@@ -67,8 +68,7 @@ namespace page_split {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
     void ImageView::setupCuttersInteraction() {
         QString const tip(tr("Drag the line or the handles."));

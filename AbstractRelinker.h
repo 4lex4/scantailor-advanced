@@ -26,8 +26,7 @@ class QString;
 
 class AbstractRelinker : public ref_countable {
 public:
-    virtual ~AbstractRelinker() {
-    }
+    ~AbstractRelinker() override = default;
 
     /**
      * Returns the path to be used instead of the given path.

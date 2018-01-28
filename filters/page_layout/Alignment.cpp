@@ -120,5 +120,36 @@ namespace page_layout {
     bool Alignment::operator!=(Alignment const& other) const {
         return !(*this == other);
     }
-    // Alignment::toXml
+
+    Alignment::Vertical Alignment::vertical() const {
+        return m_vert;
+    }
+
+    void Alignment::setVertical(Alignment::Vertical vert) {
+        m_vert = vert;
+    }
+
+    Alignment::Horizontal Alignment::horizontal() const {
+        return m_hor;
+    }
+
+    void Alignment::setHorizontal(Alignment::Horizontal hor) {
+        m_hor = hor;
+    }
+
+    bool Alignment::isNull() const {
+        return m_isNull;
+    }
+
+    void Alignment::setNull(bool is_null) {
+        m_isNull = is_null;
+    }
+
+    double Alignment::tolerance() const {
+        return m_tolerance;
+    }
+
+    void Alignment::setTolerance(double t) {
+        m_tolerance = t;
+    }
 }  // namespace page_layout

@@ -18,8 +18,7 @@
 
 #include "InteractionState.h"
 
-InteractionState::Captor
-& InteractionState::Captor::operator=(Captor& other) {
+InteractionState::Captor& InteractionState::Captor::operator=(Captor& other) {
     swap_nodes(other);
     other.unlink();
 
@@ -27,7 +26,7 @@ InteractionState::Captor
 }
 
 InteractionState::Captor& InteractionState::Captor::operator=(CopyHelper other) {
-    return *this = *other.captor;
+    return (*this = *other.captor);
 }
 
 InteractionState::InteractionState()

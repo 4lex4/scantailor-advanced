@@ -74,7 +74,7 @@ namespace page_split {
         static PageLayout cutAtWhitespace(LayoutType layout_type,
                                           QImage const& input,
                                           ImageTransformation const& pre_xform,
-                                          imageproc::BinaryThreshold const bw_threshold,
+                                          imageproc::BinaryThreshold bw_threshold,
                                           DebugImages* dbg);
 
         static PageLayout cutAtWhitespaceDeskewed150(LayoutType layout_type,

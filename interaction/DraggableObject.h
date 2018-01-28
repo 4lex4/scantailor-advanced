@@ -68,8 +68,7 @@ public:
               m_dragFinishedCallback(&DraggableObject::defaultDragFinished) {
     }
 
-    virtual ~DraggableObject() {
-    }
+    virtual ~DraggableObject() = default;
 
     virtual void paint(QPainter& painter, InteractionState const& interaction) {
         m_paintCallback(painter, interaction);

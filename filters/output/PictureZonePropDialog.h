@@ -28,7 +28,7 @@ namespace output {
     class PictureZonePropDialog : public QDialog {
     Q_OBJECT
     public:
-        PictureZonePropDialog(intrusive_ptr<PropertySet> const& props, QWidget* parent = nullptr);
+        explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
 
     signals:
 

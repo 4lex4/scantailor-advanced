@@ -49,23 +49,23 @@ namespace imageproc {
                 };
 
                 std::list<QRect> c4r;
-                c4r.push_back(QRect(2, 0, 3, 6));
-                c4r.push_back(QRect(0, 3, 2, 1));
-                c4r.push_back(QRect(1, 5, 1, 1));
-                c4r.push_back(QRect(5, 2, 4, 3));
-                c4r.push_back(QRect(0, 6, 7, 2));
-                c4r.push_back(QRect(7, 6, 1, 1));
+                c4r.emplace_back(2, 0, 3, 6);
+                c4r.emplace_back(0, 3, 2, 1);
+                c4r.emplace_back(1, 5, 1, 1);
+                c4r.emplace_back(5, 2, 4, 3);
+                c4r.emplace_back(0, 6, 7, 2);
+                c4r.emplace_back(7, 6, 1, 1);
 
                 std::list<QRect> c8r;
-                c8r.push_back(QRect(0, 0, 9, 6));
-                c8r.push_back(QRect(0, 6, 8, 2));
+                c8r.emplace_back(0, 0, 9, 6);
+                c8r.emplace_back(0, 6, 8, 2);
 
                 BinaryImage img(makeBinaryImage(inp, 9, 8));
 
                 ConnComp cc;
                 ConnCompEraser eraser4(img, CONN4);
                 while (!(cc = eraser4.nextConnComp()).isNull()) {
-                    std::list<QRect>::iterator const it(
+                    auto const it(
                             std::find(c4r.begin(), c4r.end(), cc.rect())
                     );
                     if (it != c4r.end()) {
@@ -78,7 +78,7 @@ namespace imageproc {
 
                 ConnCompEraser eraser8(img, CONN8);
                 while (!(cc = eraser8.nextConnComp()).isNull()) {
-                    std::list<QRect>::iterator const it(
+                    auto const it(
                             std::find(c8r.begin(), c8r.end(), cc.rect())
                     );
                     if (it != c8r.end()) {

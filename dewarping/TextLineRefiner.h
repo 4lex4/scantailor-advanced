@@ -27,7 +27,7 @@
 #include <QLineF>
 #include <vector>
 #include <list>
-#include <stdint.h>
+#include <cstdint>
 
 class Dpi;
 class DebugImages;
@@ -54,7 +54,7 @@ namespace dewarping {
 
         struct SnakeNode {
             Vec2f center;
-            float ribHalfLength;
+            float ribHalfLength{ };
         };
 
         struct Snake {
@@ -68,8 +68,8 @@ namespace dewarping {
 
         struct Step {
             SnakeNode node;
-            uint32_t prevStepIdx;
-            float pathCost;
+            uint32_t prevStepIdx{ 0 };
+            float pathCost{ 0 };
         };
 
         void calcBlurredGradient(Grid<float>& gradient, float h_sigma, float v_sigma) const;
@@ -87,7 +87,7 @@ namespace dewarping {
 
         QImage visualizeGradient(Grid<float> const& gradient) const;
 
-        QImage visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> const* gradient = 0) const;
+        QImage visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> const* gradient = nullptr) const;
 
         imageproc::GrayImage m_image;
         Dpi m_dpi;

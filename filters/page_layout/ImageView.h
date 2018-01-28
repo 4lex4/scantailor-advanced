@@ -53,7 +53,7 @@ namespace page_layout {
                   QRectF const& adapted_content_rect,
                   OptionsWidget const& opt_widget);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 
@@ -124,7 +124,7 @@ namespace page_layout {
             QPointF focalPoint;
         };
 
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
         Proximity cornerProximity(int edge_mask, QRectF const* box, QPointF const& mouse_pos) const;
 

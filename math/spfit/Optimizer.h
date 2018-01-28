@@ -35,7 +35,7 @@ namespace spfit {
     class Optimizer {
         // Member-wise copying is OK.
     public:
-        Optimizer(size_t num_vars = 0);
+        explicit Optimizer(size_t num_vars = 0);
 
         /**
          * Sets linear constraints in the form of b^T * x + c = 0

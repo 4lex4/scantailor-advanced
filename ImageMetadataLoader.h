@@ -43,7 +43,7 @@ public:
      * This function may not be called before main() or after additional
      * threads have been created.
      */
-    static void registerLoader(intrusive_ptr<ImageMetadataLoader> const& loader);
+    static void registerLoader(intrusive_ptr<ImageMetadataLoader> loader);
 
     template<typename OutFunc>
     static Status load(QIODevice& io_device, OutFunc out);
@@ -52,8 +52,7 @@ public:
     static Status load(QString const& file_path, OutFunc out);
 
 protected:
-    virtual ~ImageMetadataLoader() {
-    }
+    ~ImageMetadataLoader() override = default;
 
     /**
      * \brief Loads metadata from a particular image format.

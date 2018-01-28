@@ -24,8 +24,7 @@
 using namespace imageproc;
 
 namespace deskew {
-    Dependencies::Dependencies() {
-    }
+    Dependencies::Dependencies() = default;
 
     Dependencies::Dependencies(QPolygonF const& page_outline, OrthogonalRotation const rotation)
             : m_pageOutline(page_outline),
@@ -45,18 +44,14 @@ namespace deskew {
               ) {
     }
 
-    Dependencies::~Dependencies() {
-    }
+    Dependencies::~Dependencies() = default;
 
     bool Dependencies::matches(Dependencies const& other) const {
         if (m_rotation != other.m_rotation) {
             return false;
         }
-        if (!PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline)) {
-            return false;
-        }
 
-        return true;
+        return PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline);
     }
 
     QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {

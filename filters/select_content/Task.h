@@ -45,9 +45,9 @@ namespace select_content {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<page_layout::Task> const& next_task,
-             intrusive_ptr<Settings> const& settings,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<page_layout::Task> next_task,
+             intrusive_ptr<Settings> settings,
              PageId const& page_id,
              bool batch,
              bool debug);

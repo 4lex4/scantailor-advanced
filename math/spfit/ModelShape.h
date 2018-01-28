@@ -31,8 +31,7 @@ namespace spfit {
  */
     class ModelShape {
     public:
-        virtual ~ModelShape() {
-        }
+        virtual ~ModelShape() = default;
 
         /**
          * Returns a function that approximates the squared distance to the model.

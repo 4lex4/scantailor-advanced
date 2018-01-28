@@ -54,7 +54,7 @@ ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionCo
     std::vector<Zone> selectable_zones(zonesUnderMouse(context));
 
     if (selectable_zones.empty()) {
-        return 0;
+        return nullptr;
     } else {
         return new ZoneContextMenuInteraction(
                 context, interaction, menu_customizer, selectable_zones
@@ -76,7 +76,7 @@ ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context) {
         path.setFillRule(Qt::WindingFill);
         path.addPolygon(zone.spline()->toPolygon());
         if (path.contains(image_mouse_pos)) {
-            selectable_zones.push_back(Zone(zone));
+            selectable_zones.emplace_back(zone);
         }
     }
 
@@ -107,13 +107,13 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     int const alpha = 150;
     QColor color;
 
-    QSignalMapper* hover_map = new QSignalMapper(this);
+    auto* hover_map = new QSignalMapper(this);
     connect(hover_map, SIGNAL(mapped(int)), SLOT(highlightItem(int)));
 
     QPixmap pixmap;
 
-    std::vector<Zone>::iterator it(m_selectableZones.begin());
-    std::vector<Zone>::iterator const end(m_selectableZones.end());
+    auto it(m_selectableZones.begin());
+    auto const end(m_selectableZones.end());
     for (int i = 0; it != end; ++it, ++i, h = (h + h_step) % 360) {
         color.setHsv(h, s, v, alpha);
         it->color = color.toRgb();
@@ -156,8 +156,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     m_ptrMenu->popup(QCursor::pos());
 }
 
-ZoneContextMenuInteraction::~ZoneContextMenuInteraction() {
-}
+ZoneContextMenuInteraction::~ZoneContextMenuInteraction() = default;
 
 void ZoneContextMenuInteraction::onPaint(QPainter& painter, InteractionState const&) {
     painter.setWorldMatrixEnabled(false);

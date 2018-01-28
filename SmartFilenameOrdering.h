@@ -23,8 +23,7 @@ class QFileInfo;
 
 class SmartFilenameOrdering {
 public:
-    SmartFilenameOrdering() {
-    }
+    SmartFilenameOrdering() = default;
 
     /**
      * \brief Compare filenames using a set of heuristic rules.

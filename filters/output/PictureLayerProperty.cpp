@@ -81,4 +81,16 @@ namespace output {
 
         return str;
     }
+
+    PictureLayerProperty::PictureLayerProperty(PictureLayerProperty::Layer layer)
+            : m_layer(layer) {
+    }
+
+    PictureLayerProperty::Layer PictureLayerProperty::layer() const {
+        return m_layer;
+    }
+
+    void PictureLayerProperty::setLayer(PictureLayerProperty::Layer layer) {
+        m_layer = layer;
+    }
 }  // namespace output

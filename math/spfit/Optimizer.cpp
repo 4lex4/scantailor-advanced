@@ -49,7 +49,7 @@ namespace spfit {
         // D: constant part of the gradient of the function we are optimizing.
         // J: constant part of constraint functions.
 
-        std::list<LinearFunction>::const_iterator ctr(constraints.begin());
+        auto ctr(constraints.begin());
         for (size_t i = m_numVars; i < num_dimensions; ++i, ++ctr) {
             b[i] = -ctr->b;
             for (size_t j = 0; j < m_numVars; ++j) {

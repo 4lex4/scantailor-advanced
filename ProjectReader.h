@@ -41,14 +41,14 @@ class ProjectReader {
 public:
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    ProjectReader(QDomDocument const& doc);
+    explicit ProjectReader(QDomDocument const& doc);
 
     ~ProjectReader();
 
     void readFilterSettings(std::vector<FilterPtr> const& filters) const;
 
     bool success() const {
-        return m_ptrPages.get() != 0;
+        return (m_ptrPages != nullptr);
     }
 
     QString const& outputDirectory() const {

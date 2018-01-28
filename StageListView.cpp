@@ -28,20 +28,21 @@
 #include <QPainter>
 #include <QTimer>
 #include <cassert>
+#include <utility>
 
 class StageListView::Model : public QAbstractTableModel {
 public:
-    Model(QObject* parent, intrusive_ptr<StageSequence> const& stages);
+    Model(QObject* parent, intrusive_ptr<StageSequence> stages);
 
     void updateBatchProcessingAnimation(int selected_row, QPixmap const& animation_frame);
 
     void disableBatchProcessingAnimation();
 
-    virtual int columnCount(QModelIndex const& parent) const;
+    int columnCount(QModelIndex const& parent) const override;
 
-    virtual int rowCount(QModelIndex const& parent) const;
+    int rowCount(QModelIndex const& parent) const override;
 
-    virtual QVariant data(QModelIndex const& index, int role) const;
+    QVariant data(QModelIndex const& index, int role) const override;
 
 private:
     intrusive_ptr<StageSequence> m_ptrStages;
@@ -52,9 +53,9 @@ private:
 
 class StageListView::LeftColDelegate : public ChangedStateItemDelegate<QStyledItemDelegate> {
 public:
-    LeftColDelegate(StageListView* view);
+    explicit LeftColDelegate(StageListView* view);
 
-    virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const;
+    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override;
 
 private:
     typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
@@ -65,9 +66,9 @@ private:
 
 class StageListView::RightColDelegate : public ChangedStateItemDelegate<QStyledItemDelegate> {
 public:
-    RightColDelegate(QObject* parent = 0);
+    explicit RightColDelegate(QObject* parent = nullptr);
 
-    virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const;
+    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override;
 
 private:
     typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
@@ -77,7 +78,7 @@ private:
 StageListView::StageListView(QWidget* parent)
         : QTableView(parent),
           m_sizeHint(QTableView::sizeHint()),
-          m_pModel(0),
+          m_pModel(nullptr),
           m_pFirstColDelegate(new LeftColDelegate(this)),
           m_pSecondColDelegate(new RightColDelegate(this)),
           m_curBatchAnimationFrame(0),
@@ -121,8 +122,7 @@ StageListView::StageListView(QWidget* parent)
     );
 }
 
-StageListView::~StageListView() {
-}
+StageListView::~StageListView() = default;
 
 void StageListView::setStages(intrusive_ptr<StageSequence> const& stages) {
     if (QAbstractItemModel* m = model()) {
@@ -321,11 +321,11 @@ int StageListView::selectedRow() const {
 
 /*========================= StageListView::Model ======================*/
 
-StageListView::Model::Model(QObject* parent, intrusive_ptr<StageSequence> const& stages)
+StageListView::Model::Model(QObject* parent, intrusive_ptr<StageSequence> stages)
         : QAbstractTableModel(parent),
-          m_ptrStages(stages),
+          m_ptrStages(std::move(stages)),
           m_curSelectedRow(0) {
-    assert(m_ptrStages.get());
+    assert(m_ptrStages);
 }
 
 void StageListView::Model::updateBatchProcessingAnimation(int const selected_row, QPixmap const& animation_frame) {

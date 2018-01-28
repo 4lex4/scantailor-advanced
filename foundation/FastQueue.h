@@ -23,8 +23,8 @@
 #include <boost/intrusive/list.hpp>
 #include <boost/type_traits/alignment_of.hpp>
 #include <boost/foreach.hpp>
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 #include <cassert>
 
 template<typename T>
@@ -65,7 +65,7 @@ private:
     DECLARE_NON_COPYABLE(Chunk)
 
     public:
-        Chunk(size_t capacity) {
+        explicit Chunk(size_t capacity) {
             uintptr_t const p = (uintptr_t) (this + 1);
             size_t const alignment = boost::alignment_of<T>::value;
             pBegin = (T*) (((p + alignment - 1) / alignment) * alignment);

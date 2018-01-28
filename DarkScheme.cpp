@@ -38,7 +38,7 @@ std::unique_ptr<QPalette> DarkScheme::getPalette() const {
     darkPalette->setColor(QPalette::Disabled, QPalette::HighlightedText,
                           darkPalette->color(QPalette::Disabled, QPalette::WindowText));
 
-    return std::move(darkPalette);
+    return darkPalette;
 }
 
 std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
@@ -46,12 +46,12 @@ std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
 
     QFile qfDarkStyle(QString(":/dark_scheme/stylesheet.qss"));
     if (qfDarkStyle.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qsStylesheet.reset(new QString(qfDarkStyle.readAll()));
+        qsStylesheet = std::make_unique<QString>(qfDarkStyle.readAll());
 
         qfDarkStyle.close();
     }
 
-    return std::move(qsStylesheet);
+    return qsStylesheet;
 }
 
 std::unique_ptr<ColorParams> DarkScheme::getColorParams() const {
@@ -82,5 +82,5 @@ std::unique_ptr<ColorParams> DarkScheme::getColorParams() const {
             "fix_dpi_dialog_error_text_color",
             QColor(0xF3, 0x49, 0x41)));
 
-    return std::move(customColors);
+    return customColors;
 }

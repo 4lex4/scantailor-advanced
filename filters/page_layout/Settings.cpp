@@ -30,6 +30,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/composite_key.hpp>
+#include <utility>
 
 
 using namespace ::boost;
@@ -88,7 +89,7 @@ namespace page_layout {
 
     class Settings::ModifyAlignment {
     public:
-        ModifyAlignment(Alignment const& alignment)
+        explicit ModifyAlignment(Alignment const& alignment)
                 : m_alignment(alignment) {
         }
 
@@ -207,7 +208,7 @@ namespace page_layout {
                                         const_mem_fun<Item, double, &Item::hardWidthMM>
                                 >,
                                 composite_key_compare<
-                                        std::greater<bool>,
+                                        std::greater<>,
                                         std::greater<double>
                                 >
                         >,
@@ -220,7 +221,7 @@ namespace page_layout {
                                         const_mem_fun<Item, double, &Item::hardHeightMM>
                                 >,
                                 composite_key_compare<
-                                        std::greater<bool>,
+                                        std::greater<>,
                                         std::greater<double>
                                 >
                         >
@@ -402,8 +403,7 @@ namespace page_layout {
               m_autoMarginsDefault(false) {
     }
 
-    Settings::Impl::~Impl() {
-    }
+    Settings::Impl::~Impl() = default;
 
     void Settings::Impl::clear() {
         QMutexLocker const locker(&m_mutex);
@@ -468,12 +468,12 @@ namespace page_layout {
 
         Container::iterator const it(m_items.find(page_id));
         if (it == m_items.end()) {
-            return std::unique_ptr<Params>();
+            return nullptr;
         }
 
-        return std::unique_ptr<Params>(
-                new Params(it->hardMarginsMM, it->pageRect, it->contentRect,
-                           it->contentSizeMM, it->alignment, it->autoMargins)
+        return std::make_unique<Params>(
+                it->hardMarginsMM, it->pageRect, it->contentRect,
+                it->contentSizeMM, it->alignment, it->autoMargins
         );
     }
 

@@ -81,7 +81,7 @@ namespace imageproc {
         }
 
         void RgbHistogram::fromRgbImage(QImage const& img) {
-            const uint32_t* img_line = reinterpret_cast<const uint32_t*>(img.bits());
+            const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
             int const img_stride = img.bytesPerLine() / sizeof(uint32_t);
 
             int const width = img.width();
@@ -99,7 +99,7 @@ namespace imageproc {
         }
 
         void RgbHistogram::fromRgbImage(QImage const& img, BinaryImage const& mask) {
-            const uint32_t* img_line = reinterpret_cast<const uint32_t*>(img.bits());
+            const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
             int const img_stride = img.bytesPerLine() / sizeof(uint32_t);
             uint32_t const* mask_line = mask.data();
             int const mask_stride = mask.wordsPerLine();
@@ -152,7 +152,7 @@ namespace imageproc {
         for (int i = best_pos; i < best_pos + window_size; ++i) {
             half_sum += hist[i];
             if (half_sum >= best_sum / 2) {
-                return i;
+                return static_cast<uint8_t>(i);
             }
         }
 

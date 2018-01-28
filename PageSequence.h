@@ -22,7 +22,7 @@
 #include "PageInfo.h"
 #include <vector>
 #include <set>
-#include <stddef.h>
+#include <cstddef>
 
 class PageSequence {
     // Member-wise copying is OK.

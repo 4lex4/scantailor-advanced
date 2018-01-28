@@ -35,7 +35,7 @@ namespace output {
     public:
         ApplyColorsDialog(QWidget* parent, PageId const& page_id, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ApplyColorsDialog();
+        ~ApplyColorsDialog() override;
 
     signals:
 

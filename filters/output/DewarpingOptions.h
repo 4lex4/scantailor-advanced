@@ -23,16 +23,16 @@
 #include <QtXml/QDomElement>
 
 namespace output {
+    enum DewarpingMode {
+        OFF,
+        AUTO,
+        MANUAL,
+        MARGINAL
+    };
+
     class DewarpingOptions {
     public:
-        enum Mode {
-            OFF,
-            AUTO,
-            MANUAL,
-            MARGINAL
-        };
-
-        explicit DewarpingOptions(Mode mode = OFF, bool needPostDeskew = true);
+        explicit DewarpingOptions(DewarpingMode mode = OFF, bool needPostDeskew = true);
 
         explicit DewarpingOptions(QDomElement const& el);
 
@@ -42,20 +42,20 @@ namespace output {
 
         bool operator!=(DewarpingOptions const& other) const;
 
-        DewarpingOptions::Mode mode() const;
+        DewarpingMode dewarpingMode() const;
 
-        void setMode(DewarpingOptions::Mode m_mode);
+        void setDewarpingMode(DewarpingMode m_mode);
 
         bool needPostDeskew() const;
 
         void setPostDeskew(bool postDeskew);
 
-        static DewarpingOptions::Mode parseDewarpingMode(QString const& str);
+        static DewarpingMode parseDewarpingMode(QString const& str);
 
-        static QString formatDewarpingMode(DewarpingOptions::Mode mode);
+        static QString formatDewarpingMode(DewarpingMode mode);
 
     private:
-        DewarpingOptions::Mode m_mode;
+        DewarpingMode m_mode;
         bool postDeskew;
     };
 }

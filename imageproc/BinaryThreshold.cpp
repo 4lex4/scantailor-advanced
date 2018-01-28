@@ -116,7 +116,7 @@ namespace imageproc {
             }
         }
 
-        int threshold = li + (ri - li) * 0.75;
+        auto threshold = static_cast<int>(li + (ri - li) * 0.75);
 
 #ifdef DEBUG
         int otsuThreshold = BinaryThreshold::otsuThreshold(pixels_by_color);

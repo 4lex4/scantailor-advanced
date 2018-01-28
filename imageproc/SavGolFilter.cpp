@@ -50,7 +50,7 @@ namespace imageproc {
                 }
             }
 
-            int const val = static_cast<int>(sum);
+            auto const val = static_cast<int>(sum);
             *dst = static_cast<uint8_t>(qBound(0, val, 255));
         }
 
@@ -201,7 +201,7 @@ namespace imageproc {
                     for (int j = 0; j < kh; ++j, tmp += temp_stride) {
                         sum += *tmp * vert_kernel[j];
                     }
-                    int const val = static_cast<int>(sum);
+                    auto const val = static_cast<int>(sum);
                     dst_line[i] = static_cast<uint8_t>(qBound(0, val, 255));
                 }
 

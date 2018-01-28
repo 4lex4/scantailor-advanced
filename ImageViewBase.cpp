@@ -52,12 +52,12 @@ public:
         return m_ptrResult->isCancelled();
     }
 
-    virtual intrusive_ptr<AbstractCommand0<void>> operator()();
+    intrusive_ptr<AbstractCommand0<void>> operator()() override;
 
 private:
     class Result : public AbstractCommand0<void> {
     public:
-        Result(ImageViewBase* image_view);
+        explicit Result(ImageViewBase* image_view);
 
         void setData(QPoint const& origin, QImage const& hq_image);
 
@@ -69,7 +69,7 @@ private:
             return m_cancelFlag.fetchAndAddRelaxed(0) != 0;
         }
 
-        virtual void operator()();
+        void operator()() override;
 
     private:
         QPointer<ImageViewBase> m_ptrImageView;
@@ -97,7 +97,7 @@ public:
     /**
      * Change the widget focal point to obj.centeredWidgetFocalPoint().
      */
-    TempFocalPointAdjuster(ImageViewBase& obj);
+    explicit TempFocalPointAdjuster(ImageViewBase& obj);
 
     /**
      * Change the widget focal point to \p temp_widget_fp
@@ -117,7 +117,7 @@ private:
 
 class ImageViewBase::TransformChangeWatcher {
 public:
-    TransformChangeWatcher(ImageViewBase& owner);
+    explicit TransformChangeWatcher(ImageViewBase& owner);
 
     ~TransformChangeWatcher();
 
@@ -224,14 +224,13 @@ ImageViewBase::ImageViewBase(QImage const& image,
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), SLOT(reactToScrollBars()));
 }
 
-ImageViewBase::~ImageViewBase() {
-}
+ImageViewBase::~ImageViewBase() = default;
 
 void ImageViewBase::hqTransformSetEnabled(bool const enabled) {
     if (!enabled && m_hqTransformEnabled) {
         // Turning off.
         m_hqTransformEnabled = false;
-        if (m_ptrHqTransformTask.get()) {
+        if (m_ptrHqTransformTask) {
             m_ptrHqTransformTask->cancel();
             m_ptrHqTransformTask.reset();
         }
@@ -660,8 +659,8 @@ void ImageViewBase::updateScrollBars() {
             ymin = std::min<double>(viewport_center.y(), viewport.bottom() - 0.5 * picture.height());
         }
 
-        int const xrange = (int) ceil(xmax - xmin);
-        int const yrange = (int) ceil(ymax - ymin);
+        auto const xrange = (int) ceil(xmax - xmin);
+        auto const yrange = (int) ceil(ymax - ymin);
         int const xfirst = 0;
         int const xlast = xrange - 1;
         int const yfirst = 0;
@@ -959,7 +958,7 @@ void ImageViewBase::scheduleHqVersionRebuild() {
     QTransform const xform(m_imageToVirtual * m_virtualToWidget);
 
     if (!m_timer.isActive() || (m_potentialHqXform != xform)) {
-        if (m_ptrHqTransformTask.get()) {
+        if (m_ptrHqTransformTask) {
             m_ptrHqTransformTask->cancel();
             m_ptrHqTransformTask.reset();
         }
@@ -975,7 +974,7 @@ void ImageViewBase::initiateBuildingHqVersion() {
 
     m_hqPixmap = QPixmap();
 
-    if (m_ptrHqTransformTask.get()) {
+    if (m_ptrHqTransformTask) {
         m_ptrHqTransformTask->cancel();
         m_ptrHqTransformTask.reset();
     }
@@ -1061,7 +1060,7 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
 intrusive_ptr<AbstractCommand0<void>>
 ImageViewBase::HqTransformTask::operator()() {
     if (isCancelled()) {
-        return intrusive_ptr<AbstractCommand0<void>>();
+        return nullptr;
     }
 
     QRect const target_rect(

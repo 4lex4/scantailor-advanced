@@ -79,7 +79,7 @@ namespace page_split {
             }
         }
 
-        return std::move(adaptedCutters);
+        return adaptedCutters;
     }
 
     void PageLayoutAdapter::correctPageLayoutType(PageLayout* layout) {
@@ -149,7 +149,7 @@ namespace page_split {
             newPageLayout = std::make_unique<PageLayout>(outline);
         }
 
-        return std::move(newPageLayout);
+        return newPageLayout;
     }
 
 }

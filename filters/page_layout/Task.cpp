@@ -19,6 +19,8 @@
 #include <UnitsProvider.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
+
+#include <utility>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -35,8 +37,8 @@
 namespace page_layout {
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
-                  intrusive_ptr<Settings> const& settings,
+        UiUpdater(intrusive_ptr<Filter> filter,
+                  intrusive_ptr<Settings> settings,
                   PageId const& page_id,
                   QImage const& image,
                   ImageTransformation const& xform,
@@ -44,9 +46,9 @@ namespace page_layout {
                   bool agg_size_changed,
                   bool batch);
 
-        virtual void updateUI(FilterUiInterface* ui);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -63,21 +65,20 @@ namespace page_layout {
     };
 
 
-    Task::Task(intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<output::Task> const& next_task,
-               intrusive_ptr<Settings> const& settings,
+    Task::Task(intrusive_ptr<Filter> filter,
+               intrusive_ptr<output::Task> next_task,
+               intrusive_ptr<Settings> settings,
                PageId const& page_id,
                bool batch,
                bool debug)
-            : m_ptrFilter(filter),
-              m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)),
               m_pageId(page_id),
               m_batchProcessing(batch) {
     }
 
-    Task::~Task() {
-    }
+    Task::~Task() = default;
 
     FilterResultPtr Task::process(TaskStatus const& status,
                                   FilterData const& data,
@@ -85,7 +86,7 @@ namespace page_layout {
                                   QRectF const& content_rect) {
         status.throwIfCancelled();
 
-        loadDefaultSettings(Dpi(Dpm(data.origImage())));
+        loadDefaultSettings(Dpm(data.origImage()));
 
         QSizeF const content_size_mm(
                 Utils::calcRectSizeMM(data.xform(), content_rect)
@@ -165,16 +166,16 @@ namespace page_layout {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
-                               intrusive_ptr<Settings> const& settings,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+                               intrusive_ptr<Settings> settings,
                                PageId const& page_id,
                                QImage const& image,
                                ImageTransformation const& xform,
                                QRectF const& adapted_content_rect,
                                bool const agg_size_changed,
                                bool const batch)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrSettings(std::move(settings)),
               m_pageId(page_id),
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),
@@ -186,7 +187,7 @@ namespace page_layout {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
+        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
@@ -202,7 +203,7 @@ namespace page_layout {
             return;
         }
 
-        ImageView* view = new ImageView(
+        auto* view = new ImageView(
                 m_ptrSettings, m_pageId, m_image, m_downscaledImage,
                 m_xform, m_adaptedContentRect, *opt_widget
         );

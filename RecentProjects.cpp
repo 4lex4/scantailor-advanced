@@ -53,8 +53,8 @@ void RecentProjects::write(int const max_items) const {
 bool RecentProjects::validate() {
     bool all_ok = true;
 
-    std::list<QString>::iterator it(m_projectFiles.begin());
-    std::list<QString>::iterator const end(m_projectFiles.end());
+    auto it(m_projectFiles.begin());
+    auto const end(m_projectFiles.end());
     while (it != end) {
         if (QFile::exists(*it)) {
             ++it;
@@ -68,9 +68,9 @@ bool RecentProjects::validate() {
 }
 
 void RecentProjects::setMostRecent(QString const& file_path) {
-    std::list<QString>::iterator const begin(m_projectFiles.begin());
-    std::list<QString>::iterator const end(m_projectFiles.end());
-    std::list<QString>::iterator it(std::find(begin, end, file_path));
+    auto const begin(m_projectFiles.begin());
+    auto const end(m_projectFiles.end());
+    auto it(std::find(begin, end, file_path));
     if (it != end) {
         m_projectFiles.splice(begin, m_projectFiles, it);
     } else {

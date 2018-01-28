@@ -24,27 +24,27 @@
 #include "ScopedIncDec.h"
 #include "PageLayoutAdapter.h"
 #include <cassert>
+#include <utility>
 
 namespace page_split {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
-                                 intrusive_ptr<ProjectPages> const& page_sequence,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
+                                 intrusive_ptr<ProjectPages> page_sequence,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
-              m_ptrPages(page_sequence),
+            : m_ptrSettings(std::move(settings)),
+              m_ptrPages(std::move(page_sequence)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_ignoreAutoManualToggle(0),
               m_ignoreLayoutTypeToggle(0) {
         setupUi(this);
         // Workaround for QTBUG-182
-        QButtonGroup* grp = new QButtonGroup(this);
+        auto* grp = new QButtonGroup(this);
         grp->addButton(autoBtn);
         grp->addButton(manualBtn);
 
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
         removeUiConnections();
@@ -216,7 +216,7 @@ namespace page_split {
             return;
         }
 
-        SplitModeDialog* dialog = new SplitModeDialog(
+        auto* dialog = new SplitModeDialog(
                 this, m_pageId, m_pageSelectionAccessor, record.combinedLayoutType(),
                 params->pageLayout().type(), params->splitLineMode() == MODE_AUTO
         );
@@ -372,8 +372,7 @@ namespace page_split {
               m_layoutTypeAutoDetected(false) {
     }
 
-    OptionsWidget::UiData::~UiData() {
-    }
+    OptionsWidget::UiData::~UiData() = default;
 
     void OptionsWidget::UiData::setPageLayout(PageLayout const& layout) {
         m_pageLayout = layout;

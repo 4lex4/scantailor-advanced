@@ -28,7 +28,7 @@ class QString;
 class ErrorWidget : public QWidget, private Ui::ErrorWidget {
 Q_OBJECT
 public:
-    ErrorWidget(QString const& text, Qt::TextFormat fmt = Qt::AutoText);
+    explicit ErrorWidget(QString const& text, Qt::TextFormat fmt = Qt::AutoText);
 
 private slots:
 

@@ -47,7 +47,7 @@ SerializableSpline::SerializableSpline(QDomElement const& el) {
 }
 
 SerializableSpline::SerializableSpline(QPolygonF const& polygon) {
-    for (int i = (int) polygon.size() - 1; i >= 0; i--) {
+    for (int i = polygon.size() - 1; i >= 0; i--) {
         m_points.push_back(polygon[i]);
     }
 }

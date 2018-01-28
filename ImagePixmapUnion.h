@@ -25,8 +25,7 @@
 class ImagePixmapUnion {
     // Member-wise copying is OK.
 public:
-    ImagePixmapUnion() {
-    }
+    ImagePixmapUnion() = default;
 
     ImagePixmapUnion(QImage const& image)
             : m_image(image) {

@@ -19,11 +19,11 @@ public:
                         EditableSpline::Ptr const& spline);
 
 protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
     ZoneInteractionContext& m_rContext;
     EditableSpline::Ptr m_ptrSpline;

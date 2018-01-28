@@ -45,7 +45,7 @@ namespace {
     DECLARE_NON_COPYABLE(ScopedClearAcceptance)
 
     public:
-        ScopedClearAcceptance(QEvent* event);
+        explicit ScopedClearAcceptance(QEvent* event);
 
         ~ScopedClearAcceptance();
 

@@ -24,11 +24,10 @@ ProcessingTaskQueue::Entry::Entry(PageInfo const& page_info, BackgroundTaskPtr c
           takenForProcessing(false) {
 }
 
-ProcessingTaskQueue::ProcessingTaskQueue() {
-}
+ProcessingTaskQueue::ProcessingTaskQueue() = default;
 
 void ProcessingTaskQueue::addProcessingTask(PageInfo const& page_info, BackgroundTaskPtr const& task) {
-    m_queue.push_back(Entry(page_info, task));
+    m_queue.emplace_back(page_info, task);
     m_pageToSelectWhenDone = PageInfo();
 }
 
@@ -48,12 +47,12 @@ BackgroundTaskPtr ProcessingTaskQueue::takeForProcessing() {
         }
     }
 
-    return BackgroundTaskPtr();
+    return nullptr;
 }
 
 void ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task) {
-    std::list<Entry>::iterator it(m_queue.begin());
-    std::list<Entry>::iterator const end(m_queue.end());
+    auto it(m_queue.begin());
+    auto const end(m_queue.end());
 
     for (;; ++it) {
         if (it == end) {
@@ -74,7 +73,7 @@ void ProcessingTaskQueue::processingFinished(BackgroundTaskPtr const& task) {
 
     bool const removing_selected_page = (m_selectedPage.id() == it->pageInfo.id());
 
-    std::list<Entry>::iterator next_it(it);
+    auto next_it(it);
     ++next_it;
 
     if ((next_it == end) && m_pageToSelectWhenDone.isNull()) {
@@ -101,8 +100,8 @@ bool ProcessingTaskQueue::allProcessed() const {
 }
 
 void ProcessingTaskQueue::cancelAndRemove(std::set<PageId> const& pages) {
-    std::list<Entry>::iterator it(m_queue.begin());
-    std::list<Entry>::iterator const end(m_queue.end());
+    auto it(m_queue.begin());
+    auto const end(m_queue.end());
     while (it != end) {
         if (pages.find(it->pageInfo.id()) == pages.end()) {
             ++it;

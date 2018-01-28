@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <algorithm>
-#include <stddef.h>
+#include <cstddef>
 #include <cassert>
 
 /**

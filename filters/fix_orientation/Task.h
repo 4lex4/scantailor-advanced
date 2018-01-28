@@ -42,12 +42,12 @@ namespace fix_orientation {
 
     public:
         Task(ImageId const& image_id,
-             intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<page_split::Task> const& next_task,
+             intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<page_split::Task> next_task,
              bool batch_processing);
 
-        virtual ~Task();
+        ~Task() override;
 
         FilterResultPtr process(TaskStatus const& status, FilterData const& data);
 

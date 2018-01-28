@@ -17,6 +17,8 @@
  */
 
 #include "CacheDrivenTask.h"
+
+#include <utility>
 #include "Thumbnail.h"
 #include "IncompleteThumbnail.h"
 #include "Settings.h"
@@ -28,16 +30,15 @@
 #include "PageLayoutAdapter.h"
 
 namespace page_split {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
                                      intrusive_ptr<ProjectPages> projectPages,
-                                     intrusive_ptr<deskew::CacheDrivenTask> const& next_task)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
-              m_projectPages(projectPages) {
+                                     intrusive_ptr<deskew::CacheDrivenTask> next_task)
+            : m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)),
+              m_projectPages(std::move(projectPages)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
     static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout) {
         switch (layout.type()) {
@@ -69,7 +70,7 @@ namespace page_split {
         Params const* params = record.params();
 
         if (!params || !deps.compatibleWith(*params)) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -100,7 +101,7 @@ namespace page_split {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(

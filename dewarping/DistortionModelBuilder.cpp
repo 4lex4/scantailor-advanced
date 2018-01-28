@@ -61,8 +61,8 @@ namespace dewarping {
         double totalError;
 
         RansacModel()
-                : topCurve(0),
-                  bottomCurve(0),
+                : topCurve(nullptr),
+                  bottomCurve(nullptr),
                   totalError(NumericTraits<double>::max()) {
         }
 
@@ -73,7 +73,7 @@ namespace dewarping {
 
     class DistortionModelBuilder::RansacAlgo {
     public:
-        RansacAlgo(std::vector<TracedCurve> const& all_curves)
+        explicit RansacAlgo(std::vector<TracedCurve> const& all_curves)
                 : m_rAllCurves(all_curves) {
         }
 
@@ -97,7 +97,7 @@ namespace dewarping {
 
     class DistortionModelBuilder::BadCurve : public std::exception {
     public:
-        virtual char const* what() const throw() {
+        char const* what() const throw() override {
             return "Bad curve";
         }
     };
@@ -127,7 +127,7 @@ namespace dewarping {
         if (Vec2d(polyline.back() - polyline.front()).dot(m_rightDirection) > 0) {
             m_ltrPolylines.push_back(polyline);
         } else {
-            m_ltrPolylines.push_back(std::vector<QPointF>(polyline.rbegin(), polyline.rend()));
+            m_ltrPolylines.emplace_back(polyline.rbegin(), polyline.rend());
         }
     }
 
@@ -150,7 +150,7 @@ namespace dewarping {
     }
 
     DistortionModel DistortionModelBuilder::tryBuildModel(DebugImages* dbg, QImage const* dbg_background) const {
-        int num_curves = m_ltrPolylines.size();
+        auto num_curves = static_cast<int>(m_ltrPolylines.size());
 
         if ((num_curves < 2) || (m_bound1.p1() == m_bound1.p2()) || (m_bound2.p1() == m_bound2.p2())) {
             return DistortionModel();
@@ -166,7 +166,7 @@ namespace dewarping {
                 // Just skip it.
             }
         }
-        num_curves = ordered_curves.size();
+        num_curves = static_cast<int>(ordered_curves.size());
         if (num_curves == 0) {
             return DistortionModel();
         }
@@ -233,7 +233,7 @@ namespace dewarping {
     }
 
     Vec2d DistortionModelBuilder::centroid(std::vector<QPointF> const& polyline) {
-        int const num_points = polyline.size();
+        auto const num_points = static_cast<const int>(polyline.size());
         if (num_points == 0) {
             return Vec2d();
         } else if (num_points == 1) {
@@ -357,16 +357,16 @@ namespace dewarping {
 
         class ModelShape : public PolylineModelShape {
         public:
-            ModelShape(std::vector<QPointF> const& polyline)
+            explicit ModelShape(std::vector<QPointF> const& polyline)
                     : PolylineModelShape(polyline) {
             }
 
         protected:
-            virtual SqDistApproximant calcApproximant(QPointF const& pt,
-                                                      FittableSpline::SampleFlags sample_flags,
-                                                      Flags polyline_flags,
-                                                      FrenetFrame const& frenet_frame,
-                                                      double signed_curvature) const {
+            SqDistApproximant calcApproximant(QPointF const& pt,
+                                              FittableSpline::SampleFlags sample_flags,
+                                              Flags polyline_flags,
+                                              FrenetFrame const& frenet_frame,
+                                              double signed_curvature) const override {
                 if (polyline_flags & (POLYLINE_FRONT | POLYLINE_BACK)) {
                     if (sample_flags & FittableSpline::JUNCTION_SAMPLE) {
                         return SqDistApproximant::pointDistance(frenet_frame.origin());
@@ -484,7 +484,7 @@ namespace dewarping {
 
             // A = Att
             boost::scoped_array<double> A(new double[polyline_size * 2]);
-            mc(&At[0], 2, polyline_size).transWrite(&A[0]);
+            mc(&At[0], 2, (int) polyline_size).transWrite(&A[0]);
 
             try {
                 boost::scoped_array<double> errvec(new double[polyline_size]);
@@ -493,11 +493,11 @@ namespace dewarping {
                 // errvec = B - A * (At*A)-1 * At * B
                 // ab = (At*A)-1 * At * B
                 (
-                        mc(&B[0], polyline_size, 1) - mc(&A[0], polyline_size, 2)
-                                                      * ((mc(&At[0], 2, polyline_size)
-                                                          * mc(&A[0], polyline_size, 2)).inv()
-                                                         * (mc(&At[0], 2, polyline_size)
-                                                            * mc(&B[0], polyline_size, 1))).write(ab)
+                        mc(&B[0], (int) polyline_size, 1) - mc(&A[0], (int) polyline_size, 2)
+                                                            * ((mc(&At[0], 2, (int) polyline_size)
+                                                                * mc(&A[0], (int) polyline_size, 2)).inv()
+                                                               * (mc(&At[0], 2, (int) polyline_size)
+                                                                  * mc(&B[0], (int) polyline_size, 1))).write(ab)
                 ).write(&errvec[0]);
 
                 double sum_abs_err = 0;
@@ -562,7 +562,7 @@ namespace dewarping {
 
         for (TracedCurve const& curve : curves) {
             if (!curve.trimmedPolyline.empty()) {
-                painter.drawPolyline(&curve.trimmedPolyline[0], curve.trimmedPolyline.size());
+                painter.drawPolyline(&curve.trimmedPolyline[0], static_cast<int>(curve.trimmedPolyline.size()));
             }
         }
 
@@ -628,7 +628,7 @@ namespace dewarping {
             }
 
             size_t const size = curve.extendedPolyline.size();
-            painter.drawPolyline(&curve.extendedPolyline[0], curve.extendedPolyline.size());
+            painter.drawPolyline(&curve.extendedPolyline[0], static_cast<int>(curve.extendedPolyline.size()));
 
             Vec2d const main_direction(curve.extendedPolyline.back() - curve.extendedPolyline.front());
             std::list<std::vector<int>> reverse_segments;
@@ -642,13 +642,13 @@ namespace dewarping {
                 // We've got a reverse segment.
                 if (!reverse_segments.empty() && (reverse_segments.back().back() == int(i) - 1)) {
                     // Continue the previous sequence.
-                    reverse_segments.back().push_back(i);
+                    reverse_segments.back().push_back(static_cast<int&&>(i));
                 } else {
                     // Start a new sequence.
-                    reverse_segments.push_back(std::vector<int>());
+                    reverse_segments.emplace_back();
                     std::vector<int>& sequence = reverse_segments.back();
-                    sequence.push_back(i - 1);
-                    sequence.push_back(i);
+                    sequence.push_back(static_cast<int&&>(i - 1));
+                    sequence.push_back(static_cast<int&&>(i));
                 }
             }
 

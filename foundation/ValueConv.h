@@ -35,7 +35,7 @@ public:
 template<typename ToType>
 class RoundAndClipValueConv {
 public:
-    RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
+    explicit RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
             : m_min(min),
               m_max(max) {
     }

@@ -29,8 +29,7 @@ class QDomElement;
 class PropertyFactory {
     // Member-wise copying is OK.
 public:
-    virtual ~PropertyFactory() {
-    }
+    virtual ~PropertyFactory() = default;
 
     typedef intrusive_ptr<Property>(* PropertyConstructor)(QDomElement const& el);
 

@@ -30,9 +30,9 @@
 class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
 Q_OBJECT
 public:
-    ProjectFilesDialog(QWidget* parent = 0);
+    explicit ProjectFilesDialog(QWidget* parent = nullptr);
 
-    virtual ~ProjectFilesDialog();
+    ~ProjectFilesDialog() override;
 
     QString inputDirectory() const;
 
@@ -74,7 +74,7 @@ private:
 
     void startLoadingMetadata();
 
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
 
     void finishLoadingMetadata();
 

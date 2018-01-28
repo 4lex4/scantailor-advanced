@@ -74,7 +74,7 @@ namespace imageproc {
         m_distanceBias = -min_distance;
 
         double const max_biased_distance = max_distance + m_distanceBias;
-        int const max_bin = int(
+        auto const max_bin = int(
                 max_biased_distance * m_recipDistanceResolution + 0.5
         );
 
@@ -90,7 +90,7 @@ namespace imageproc {
             double const distance = uv.x() * x + uv.y() * y;
             double const biased_distance = distance + m_distanceBias;
 
-            int const bin = (int) (biased_distance * m_recipDistanceResolution + 0.5);
+            auto const bin = (int) (biased_distance * m_recipDistanceResolution + 0.5);
             assert(bin >= 0 && bin < m_histWidth);
             hist_line[bin] += weight;
 
@@ -125,7 +125,7 @@ namespace imageproc {
         hist_line = &m_histogram[0];
         for (int y = 0; y < m_histHeight; ++y) {
             for (int x = 0; x < m_histWidth; ++x) {
-                unsigned const intensity = (unsigned) floor(
+                auto const intensity = (unsigned) floor(
                         hist_line[x] * 255.0 / max_value + 0.5
                 );
                 intensity_line[x] = (unsigned char) intensity;
@@ -185,7 +185,7 @@ namespace imageproc {
             QPointF const norm_uv(m_angleUnitVectors[center.y()]);
             double const distance = (center.x() + 0.5)
                                     * m_distanceResolution - m_distanceBias;
-            lines.push_back(HoughLine(norm_uv, distance, level));
+            lines.emplace_back(norm_uv, distance, level);
         }
 
         std::sort(lines.begin(), lines.end(), GreaterQualityFirst());

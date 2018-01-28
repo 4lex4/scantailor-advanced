@@ -24,7 +24,7 @@
 #include <QRect>
 #include <QSize>
 #include <QColor>
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 class QImage;
@@ -65,7 +65,7 @@ namespace imageproc {
          *
          * To initialize image data, use fill().
          */
-        BinaryImage(QSize size);
+        explicit BinaryImage(QSize size);
 
         /**
          * \brief Creates a new image filled with specified color.
@@ -197,7 +197,7 @@ namespace imageproc {
          */
         QRect contentBoundingBox(BWColor content_color = BLACK) const;
 
-        void rectangularizeAreas(std::vector<QRect>& areas, const BWColor content_color, const int sensitivity);
+        void rectangularizeAreas(std::vector<QRect>& areas, BWColor content_color, int sensitivity);
 
         int width() const {
             return m_width;

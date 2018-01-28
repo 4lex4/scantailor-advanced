@@ -35,7 +35,7 @@ void SplineVertex::remove() {
     assert(m_ptrNext.get() == this);
 
     m_pPrev->m_ptrNext->m_pPrev = m_pPrev;
-    m_pPrev = 0;
+    m_pPrev = nullptr;
 
     // This may or may not destroy this object,
     // depending on if there are other references to it.
@@ -98,7 +98,7 @@ SplineVertex::Ptr SentinelSplineVertex::thisOrPrevReal(Loop const loop) {
     if ((loop == LOOP) || ((loop == LOOP_IF_BRIDGED) && m_bridged)) {
         return SplineVertex::Ptr(m_pPrev);
     } else {
-        return SplineVertex::Ptr();
+        return nullptr;
     }
 }
 
@@ -106,7 +106,7 @@ SplineVertex::Ptr SentinelSplineVertex::thisOrNextReal(Loop const loop) {
     if ((loop == LOOP) || ((loop == LOOP_IF_BRIDGED) && m_bridged)) {
         return m_ptrNext;
     } else {
-        return SplineVertex::Ptr();
+        return nullptr;
     }
 }
 
@@ -126,7 +126,7 @@ void SentinelSplineVertex::remove() {
 
 SplineVertex::Ptr SentinelSplineVertex::firstVertex() const {
     if (m_ptrNext.get() == this) {
-        return SplineVertex::Ptr();
+        return nullptr;
     } else {
         return m_ptrNext;
     }
@@ -134,7 +134,7 @@ SplineVertex::Ptr SentinelSplineVertex::firstVertex() const {
 
 SplineVertex::Ptr SentinelSplineVertex::lastVertex() const {
     if (m_pPrev == this) {
-        return SplineVertex::Ptr();
+        return nullptr;
     } else {
         return SplineVertex::Ptr(m_pPrev);
     }

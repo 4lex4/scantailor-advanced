@@ -68,14 +68,14 @@ public:
                                               InteractionState& interaction,
                                               MenuCustomizer const& menu_customizer);
 
-    virtual ~ZoneContextMenuInteraction();
+    ~ZoneContextMenuInteraction() override;
 
 protected:
     class Zone : public EditableZoneSet::Zone {
     public:
         QColor color;
 
-        Zone(EditableZoneSet::Zone const& zone)
+        explicit Zone(EditableZoneSet::Zone const& zone)
                 : EditableZoneSet::Zone(zone) {
         }
     };
@@ -107,7 +107,7 @@ private:
 
         void switchToStrokeMode();
 
-        virtual void prepareForSpline(QPainter& painter, EditableSpline::Ptr const& spline);
+        void prepareForSpline(QPainter& painter, EditableSpline::Ptr const& spline) override;
 
     private:
         QColor m_color;
@@ -117,7 +117,7 @@ private:
     static std::vector<ZoneContextMenuItem> defaultMenuCustomizer(EditableZoneSet::Zone const& zone,
                                                                   StandardMenuItems const& std_items);
 
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
     void menuItemTriggered(InteractionState& interaction, ZoneContextMenuItem::Callback const& callback);
 

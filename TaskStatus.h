@@ -21,8 +21,7 @@
 
 class TaskStatus {
 public:
-    virtual ~TaskStatus() {
-    }
+    virtual ~TaskStatus() = default;
 
     virtual void cancel() = 0;
 

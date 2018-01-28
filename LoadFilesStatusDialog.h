@@ -25,7 +25,7 @@
 
 class LoadFilesStatusDialog : public QDialog {
 public:
-    LoadFilesStatusDialog(QWidget* parent = 0);
+    explicit LoadFilesStatusDialog(QWidget* parent = nullptr);
 
     void setLoadedFiles(std::vector<QString> const& files);
 

@@ -28,9 +28,12 @@
 #include "XmlUnmarshaller.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <DefaultParamsProvider.h>
 #include <DefaultParams.h>
 #include "CommandLine.h"
+#include <filters/page_split/Task.h>
+#include <filters/page_split/CacheDrivenTask.h>
 
 namespace fix_orientation {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -42,8 +45,7 @@ namespace fix_orientation {
         }
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate(
@@ -120,20 +122,20 @@ namespace fix_orientation {
     }      // Filter::loadSettings
 
     intrusive_ptr<Task>
-    Filter::createTask(PageId const& page_id, intrusive_ptr<page_split::Task> const& next_task,
+    Filter::createTask(PageId const& page_id, intrusive_ptr<page_split::Task> next_task,
                        bool const batch_processing) {
         return intrusive_ptr<Task>(
                 new Task(
                         page_id.imageId(), intrusive_ptr<Filter>(this),
-                        m_ptrSettings, next_task, batch_processing
+                        m_ptrSettings, std::move(next_task), batch_processing
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+                new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
     }
 
@@ -160,5 +162,9 @@ namespace fix_orientation {
         const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
 
         m_ptrSettings->applyRotation(page_id.imageId(), fixOrientationParams.getImageRotation());
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
     }
 }  // namespace fix_orientation

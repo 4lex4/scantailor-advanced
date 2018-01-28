@@ -32,46 +32,25 @@ namespace output {
 
         explicit RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions);
 
-        bool cutMargins() const {
-            return (m_mask & CUT_MARGINS) != 0;
-        }
+        bool cutMargins() const;
 
-        bool normalizeIllumination() const {
-            return (m_mask & NORMALIZE_ILLUMINATION) != 0;
-        }
+        bool normalizeIllumination() const;
 
-        bool normalizeIlluminationColor() const {
-            return (m_mask & NORMALIZE_ILLUMINATION_COLOR) != 0;
-        }
+        bool normalizeIlluminationColor() const;
 
-        bool needBinarization() const {
-            return (m_mask & NEED_BINARIZATION) != 0;
-        }
+        bool needBinarization() const;
 
-        bool mixedOutput() const {
-            return (m_mask & MIXED_OUTPUT) != 0;
-        }
+        bool mixedOutput() const;
 
-        bool binaryOutput() const {
-            return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT))
-                   == NEED_BINARIZATION;
-        }
+        bool binaryOutput() const;
 
-        bool needSavitzkyGolaySmoothing() const {
-            return (m_mask & SAVITZKY_GOLAY_SMOOTHING) != 0;
-        }
+        bool needSavitzkyGolaySmoothing() const;
 
-        bool needMorphologicalSmoothing() const {
-            return (m_mask & MORPHOLOGICAL_SMOOTHING) != 0;
-        }
+        bool needMorphologicalSmoothing() const;
 
-        bool splitOutput() const {
-            return (m_mask & SPLIT_OUTPUT) != 0;
-        }
+        bool splitOutput() const;
 
-        bool originalBackground() const {
-            return (m_mask & ORIGINAL_BACKGROUND) != 0;
-        }
+        bool originalBackground() const;
 
     private:
         enum {

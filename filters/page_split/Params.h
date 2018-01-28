@@ -23,6 +23,7 @@
 #include "Dependencies.h"
 #include "AutoManualMode.h"
 #include <QString>
+#include <utility>
 
 class QDomDocument;
 class QDomElement;
@@ -34,33 +35,21 @@ namespace page_split {
 
         Params(PageLayout const& layout, Dependencies const& deps, AutoManualMode split_line_mode);
 
-        Params(QDomElement const& el);
+        explicit Params(QDomElement const& el);
 
         ~Params();
 
-        PageLayout const& pageLayout() const {
-            return m_layout;
-        }
+        PageLayout const& pageLayout() const;
 
-        void setPageLayout(PageLayout layout) {
-            m_layout = layout;
-        }
+        void setPageLayout(PageLayout const& layout);
 
-        Dependencies const& dependencies() const {
-            return m_deps;
-        }
+        Dependencies const& dependencies() const;
 
-        void setDependencies(Dependencies deps) {
-            m_deps = deps;
-        }
+        void setDependencies(Dependencies const& deps);
 
-        AutoManualMode splitLineMode() const {
-            return m_splitLineMode;
-        }
+        AutoManualMode splitLineMode() const;
 
-        void setSplitLineMode(AutoManualMode mode) {
-            m_splitLineMode = mode;
-        }
+        void setSplitLineMode(AutoManualMode mode);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

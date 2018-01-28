@@ -121,7 +121,7 @@ namespace output {
 
         if (m_dewarpingOptions != other.m_dewarpingOptions) {
             return false;
-        } else if (m_dewarpingOptions.mode() != DewarpingOptions::OFF) {
+        } else if (m_dewarpingOptions.dewarpingMode() != OFF) {
             if (!m_distortionModel.matches(other.m_distortionModel)) {
                 return false;
             }
@@ -148,12 +148,12 @@ namespace output {
         }
 
         switch (cp1.colorMode()) {
-            case ColorParams::MIXED:
+            case MIXED:
                 if (so1 != so2) {
                     return false;
                 }
                 // fall into
-            case ColorParams::BLACK_AND_WHITE:
+            case BLACK_AND_WHITE:
                 if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
                     return false;
                 }
@@ -161,7 +161,7 @@ namespace output {
                     return false;
                 }
                 // fall into
-            case ColorParams::COLOR_GRAYSCALE:
+            case COLOR_GRAYSCALE:
                 if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
                     return false;
                 }
@@ -181,6 +181,26 @@ namespace output {
 
     const QPolygonF& OutputImageParams::getCropArea() const {
         return m_cropArea;
+    }
+
+    DewarpingOptions const& OutputImageParams::dewarpingMode() const {
+        return m_dewarpingOptions;
+    }
+
+    dewarping::DistortionModel const& OutputImageParams::distortionModel() const {
+        return m_distortionModel;
+    }
+
+    void OutputImageParams::setDistortionModel(dewarping::DistortionModel const& model) {
+        m_distortionModel = model;
+    }
+
+    DepthPerception const& OutputImageParams::depthPerception() const {
+        return m_depthPerception;
+    }
+
+    DespeckleLevel OutputImageParams::despeckleLevel() const {
+        return m_despeckleLevel;
     }
 
 

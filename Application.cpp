@@ -74,7 +74,7 @@ void Application::installLanguage(const QString& locale) {
             break;
         }
     }
-    
+
     this->removeTranslator(&m_translator);
     this->installTranslator(&m_translator);
 

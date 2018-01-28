@@ -1,5 +1,6 @@
 
 #include <QtWidgets/QToolTip>
+#include <utility>
 #include <foundation/ScopedIncDec.h>
 #include "OtsuBinarizationOptionsWidget.h"
 #include "../../Utils.h"
@@ -7,7 +8,7 @@
 namespace output {
 
     OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-            : m_ptrSettings(settings) {
+            : m_ptrSettings(std::move(settings)) {
         setupUi(this);
 
         darkerThresholdLink->setText(
@@ -35,7 +36,7 @@ namespace output {
         m_colorParams = params.colorParams();
 
         updateView();
-        
+
         setupUiConnections();
     }
 

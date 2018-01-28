@@ -38,8 +38,7 @@ class QDomElement;
  */
 class AbstractFilter : public ref_countable {
 public:
-    virtual ~AbstractFilter() {
-    }
+    ~AbstractFilter() override = default;
 
     virtual QString getName() const = 0;
 

@@ -36,7 +36,7 @@ public:
 
     explicit SerializableSpline(QDomElement const& el);
 
-    SerializableSpline(QPolygonF const& polygon);
+    explicit SerializableSpline(QPolygonF const& polygon);
 
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

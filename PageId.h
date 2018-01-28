@@ -69,7 +69,7 @@ public:
 
     static QString subPageToString(SubPage sub_page);
 
-    static SubPage subPageFromString(QString const& string, bool* ok = 0);
+    static SubPage subPageFromString(QString const& string, bool* ok = nullptr);
 
 private:
     ImageId m_imageId;

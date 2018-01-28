@@ -19,8 +19,7 @@
 #include "EditableSpline.h"
 #include "SerializableSpline.h"
 
-EditableSpline::EditableSpline() {
-}
+EditableSpline::EditableSpline() = default;
 
 EditableSpline::EditableSpline(SerializableSpline const& spline) {
     for (QPointF const& pt : spline.toPolygon()) {
@@ -28,7 +27,7 @@ EditableSpline::EditableSpline(SerializableSpline const& spline) {
     }
 
     SplineVertex::Ptr last_vertex(lastVertex());
-    if (last_vertex.get() && (firstVertex()->point() == last_vertex->point())) {
+    if (last_vertex && (firstVertex()->point() == last_vertex->point())) {
         last_vertex->remove();
     }
 

@@ -30,9 +30,9 @@ class QThreadPool;
 class WorkerThreadPool : public QObject {
 Q_OBJECT
 public:
-    WorkerThreadPool(QObject* parent = nullptr);
+    explicit WorkerThreadPool(QObject* parent = nullptr);
 
-    virtual ~WorkerThreadPool();
+    ~WorkerThreadPool() override;
 
     /**
      * \brief Waits for pending jobs to finish and stop the thread.
@@ -53,7 +53,7 @@ signals:
 private:
     class TaskResultEvent;
 
-    virtual void customEvent(QEvent* event) override;
+    void customEvent(QEvent* event) override;
 
     void updateNumberOfThreads();
 

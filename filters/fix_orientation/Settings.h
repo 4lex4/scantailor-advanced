@@ -37,7 +37,7 @@ namespace fix_orientation {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 

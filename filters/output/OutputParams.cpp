@@ -68,4 +68,40 @@ namespace output {
 
         return el;
     }
+
+    OutputImageParams const& OutputParams::outputImageParams() const {
+        return m_outputImageParams;
+    }
+
+    OutputFileParams const& OutputParams::outputFileParams() const {
+        return m_outputFileParams;
+    }
+
+    OutputFileParams const& OutputParams::foregroundFileParams() const {
+        return m_foregroundFileParams;
+    }
+
+    OutputFileParams const& OutputParams::backgroundFileParams() const {
+        return m_backgroundFileParams;
+    }
+
+    OutputFileParams const& OutputParams::originalBackgroundFileParams() const {
+        return m_originalBackgroundFileParams;
+    }
+
+    OutputFileParams const& OutputParams::automaskFileParams() const {
+        return m_automaskFileParams;
+    }
+
+    OutputFileParams const& OutputParams::specklesFileParams() const {
+        return m_specklesFileParams;
+    }
+
+    ZoneSet const& OutputParams::pictureZones() const {
+        return m_pictureZones;
+    }
+
+    ZoneSet const& OutputParams::fillZones() const {
+        return m_fillZones;
+    }
 }  // namespace output

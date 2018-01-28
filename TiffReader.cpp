@@ -26,6 +26,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 #include <cassert>
+#include <cmath>
 
 class TiffReader::TiffHeader {
 public:
@@ -61,7 +62,7 @@ private:
 
 class TiffReader::TiffHandle {
 public:
-    TiffHandle(TIFF* handle)
+    explicit TiffHandle(TIFF* handle)
             : m_pHandle(handle) {
     }
 
@@ -86,10 +87,10 @@ DECLARE_NON_COPYABLE(TiffBuffer)
 
 public:
     TiffBuffer()
-            : m_pData(0) {
+            : m_pData(nullptr) {
     }
 
-    TiffBuffer(tsize_t num_items) {
+    explicit TiffBuffer(tsize_t num_items) {
         m_pData = (T*) _TIFFmalloc(num_items * sizeof(T));
         if (!m_pData) {
             throw std::bad_alloc();
@@ -148,6 +149,9 @@ TiffReader::TiffInfo::TiffInfo(TiffHandle const& tif, TiffHeader const& header)
         case COMPRESSION_CCITTRLE:
         case COMPRESSION_CCITTRLEW:
             photometric = PHOTOMETRIC_MINISWHITE;
+            break;
+        default:
+            break;
     }
 
     TIFFGetField(tif.handle(), TIFFTAG_IMAGEWIDTH, &width);
@@ -168,13 +172,15 @@ bool TiffReader::TiffInfo::mapsToBinaryOrIndexed8() const {
         case PHOTOMETRIC_MINISBLACK:
         case PHOTOMETRIC_MINISWHITE:
             return true;
+        default:
+            break;
     }
 
     return false;
 }
 
 static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     return (tsize_t) dev->read(static_cast<char*>(data), size);
 }
@@ -185,7 +191,7 @@ static tsize_t deviceWrite(thandle_t context, tdata_t data, tsize_t size) {
 }
 
 static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     switch (whence) {
         case SEEK_SET:
@@ -197,20 +203,22 @@ static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
         case SEEK_END:
             dev->seek(dev->size() + offset);
             break;
+        default:
+            break;
     }
 
     return dev->pos();
 }
 
 static int deviceClose(thandle_t context) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
     dev->close();
 
     return 0;
 }
 
 static toff_t deviceSize(thandle_t context) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     return dev->size();
 }
@@ -306,7 +314,7 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
         return QImage();
     }
 
-    if (!TIFFSetDirectory(tif.handle(), page_num)) {
+    if (!TIFFSetDirectory(tif.handle(), (uint16) page_num)) {
         return QImage();
     }
 
@@ -332,7 +340,7 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
 
         // For ABGR -> ARGB conversion.
         TiffBuffer<uint32> tmp_buffer;
-        uint32 const* src_line = 0;
+        uint32 const* src_line = nullptr;
 
         if (image.bytesPerLine() == 4 * info.width) {
             // We can avoid creating a temporary buffer in this case.
@@ -350,7 +358,7 @@ QImage TiffReader::readImage(QIODevice& device, int const page_num) {
             src_line = tmp_buffer.data();
         }
 
-        uint32* dst_line = (uint32*) image.bits();
+        auto* dst_line = (uint32*) image.bits();
         assert(image.bytesPerLine() % 4 == 0);
         int const dst_stride = image.bytesPerLine() / 4;
         for (int y = 0; y < info.height; ++y) {
@@ -421,6 +429,8 @@ Dpi TiffReader::getDpi(float xres, float yres, unsigned res_unit) {
             return Dpi(qRound(xres), qRound(yres));
         case RESUNIT_CENTIMETER:  // cm
             return Dpm(qRound(xres * 100), qRound(yres * 100));
+        default:
+            break;
     }
 
     return Dpi();
@@ -443,9 +453,9 @@ QImage TiffReader::extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo 
     image.setColorCount(num_colors);
 
     if (info.photometric == PHOTOMETRIC_PALETTE) {
-        uint16* pr = 0;
-        uint16* pg = 0;
-        uint16* pb = 0;
+        uint16* pr = nullptr;
+        uint16* pg = nullptr;
+        uint16* pb = nullptr;
         TIFFGetField(tif.handle(), TIFFTAG_COLORMAP, &pr, &pg, &pb);
         if (!pr || !pg || !pb) {
             return QImage();
@@ -457,23 +467,23 @@ QImage TiffReader::extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo 
         }
         double const f = 255.0 / 65535.0;
         for (int i = 0; i < num_colors; ++i) {
-            uint32 const r = (uint32) (pr[i] * f + 0.5);
-            uint32 const g = (uint32) (pg[i] * f + 0.5);
-            uint32 const b = (uint32) (pb[i] * f + 0.5);
+            auto const r = (uint32) std::lround(pr[i] * f);
+            auto const g = (uint32) std::lround(pg[i] * f);
+            auto const b = (uint32) std::lround(pb[i] * f);
             uint32 const a = 0xFF000000;
             image.setColor(i, a | (r << 16) | (g << 8) | b);
         }
     } else if (info.photometric == PHOTOMETRIC_MINISBLACK) {
         double const f = 255.0 / (num_colors - 1);
         for (int i = 0; i < num_colors; ++i) {
-            int const gray = (int) (i * f + 0.5);
+            auto const gray = (int) std::lround(i * f);
             image.setColor(i, qRgb(gray, gray, gray));
         }
     } else if (info.photometric == PHOTOMETRIC_MINISWHITE) {
         double const f = 255.0 / (num_colors - 1);
         int c = num_colors - 1;
         for (int i = 0; i < num_colors; ++i, --c) {
-            int const gray = (int) (c * f + 0.5);
+            auto const gray = (int) std::lround(c * f);
             image.setColor(i, qRgb(gray, gray, gray));
         }
     } else {
@@ -511,7 +521,7 @@ void TiffReader::readAndUnpackLines(TiffHandle const& tif, TiffInfo const& info,
         int bits_in_accum = 0;
 
         uint8 const* src = buf.data();
-        uint8* dst = (uint8*) image.scanLine(y);
+        auto* dst = image.scanLine(y);
 
         for (int i = width; i > 0; --i, ++dst) {
             while (bits_in_accum < bits_per_sample) {

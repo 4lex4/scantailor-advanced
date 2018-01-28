@@ -34,7 +34,7 @@ class ImageTransformation;
 namespace page_split {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& xform,
@@ -42,9 +42,9 @@ namespace page_split {
                   bool left_half_removed,
                   bool right_half_removed);
 
-        virtual void prePaintOverImage(QPainter& painter,
-                                       QTransform const& image_to_display,
-                                       QTransform const& thumb_to_display);
+        void prePaintOverImage(QPainter& painter,
+                               QTransform const& image_to_display,
+                               QTransform const& thumb_to_display) override;
 
     private:
         QPointF subPageCenter(QPolygonF const& left_page,

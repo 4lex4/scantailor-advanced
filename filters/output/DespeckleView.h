@@ -47,7 +47,7 @@ namespace output {
          */
         DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
 
-        virtual ~DespeckleView();
+        ~DespeckleView() override;
 
     public slots:
 
@@ -58,9 +58,9 @@ namespace output {
         void imageViewCreated(ImageViewBase*);
 
     protected:
-        virtual void hideEvent(QHideEvent* evt);
+        void hideEvent(QHideEvent* evt) override;
 
-        virtual void showEvent(QShowEvent* evt);
+        void showEvent(QShowEvent* evt) override;
 
     private:
         class TaskCancelException;

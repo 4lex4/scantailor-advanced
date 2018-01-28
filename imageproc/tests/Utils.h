@@ -39,9 +39,9 @@ namespace imageproc {
 
             QImage makeGrayImage(int const* data, int width, int height);
 
-            void dumpBinaryImage(BinaryImage const& img, char const* name = 0);
+            void dumpBinaryImage(BinaryImage const& img, char const* name = nullptr);
 
-            void dumpGrayImage(QImage const& img, char const* name = 0);
+            void dumpGrayImage(QImage const& img, char const* name = nullptr);
 
             bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
         }  // namespace utils

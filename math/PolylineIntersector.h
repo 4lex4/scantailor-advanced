@@ -39,7 +39,7 @@ public:
     };
 
 
-    PolylineIntersector(std::vector<QPointF> const& polyline);
+    explicit PolylineIntersector(std::vector<QPointF> const& polyline);
 
     QPointF intersect(QLineF const& line, Hint& hint) const;
 

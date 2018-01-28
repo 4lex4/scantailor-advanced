@@ -37,7 +37,7 @@
 #include <QPolygonF>
 #include <vector>
 #include <utility>
-#include <stdint.h>
+#include <cstdint>
 #include "Params.h"
 #include "PageId.h"
 #include "intrusive_ptr.h"
@@ -227,7 +227,7 @@ namespace output {
                                                         imageproc::GrayImage const& gray_source,
                                                         QRect const& source_rect,
                                                         QRect const& source_sub_rect,
-                                                        DebugImages* const dbg) const;
+                                                        DebugImages* dbg) const;
 
         void
         modifyBinarizationMask(imageproc::BinaryImage& bw_mask, QRect const& mask_rect, ZoneSet const& zones) const;

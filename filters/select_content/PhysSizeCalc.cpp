@@ -21,8 +21,7 @@
 #include "PhysicalTransformation.h"
 
 namespace select_content {
-    PhysSizeCalc::PhysSizeCalc() {
-    }
+    PhysSizeCalc::PhysSizeCalc() = default;
 
     PhysSizeCalc::PhysSizeCalc(ImageTransformation const& xform)
             : m_virtToPhys(xform.transformBack() * PhysicalTransformation(xform.origDpi()).pixelsToMM()) {

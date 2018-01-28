@@ -36,8 +36,7 @@
  */
 class SelectedPage {
 public:
-    SelectedPage() {
-    }
+    SelectedPage() = default;
 
     SelectedPage(PageId const& page_id, PageView view);
 

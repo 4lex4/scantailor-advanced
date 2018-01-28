@@ -32,7 +32,7 @@ class ImageViewBase;
 class DragHandler : public InteractionHandler {
 Q_DECLARE_TR_FUNCTIONS(DragHandler)
 public:
-    DragHandler(ImageViewBase& image_view);
+    explicit DragHandler(ImageViewBase& image_view);
 
     DragHandler(ImageViewBase& image_view,
                 boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter);
@@ -40,11 +40,11 @@ public:
     bool isActive() const;
 
 protected:
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
 private:
     void init();

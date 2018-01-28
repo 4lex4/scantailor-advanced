@@ -80,4 +80,20 @@ namespace output {
 
         return str;
     }
+
+    void ColorCommonOptions::setCutMargins(bool val) {
+        m_cutMargins = val;
+    }
+
+    bool ColorCommonOptions::cutMargins() const {
+        return m_cutMargins;
+    }
+
+    bool ColorCommonOptions::normalizeIllumination() const {
+        return m_normalizeIllumination;
+    }
+
+    void ColorCommonOptions::setNormalizeIllumination(bool val) {
+        m_normalizeIllumination = val;
+    }
 }  // namespace output

@@ -33,8 +33,7 @@ public:
         DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
     };
 
-    ImageMetadata() {
-    }
+    ImageMetadata() = default;
 
     ImageMetadata(QSize size, Dpi dpi)
             : m_size(size),

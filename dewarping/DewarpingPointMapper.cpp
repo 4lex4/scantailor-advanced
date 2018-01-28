@@ -64,7 +64,7 @@ namespace dewarping {
 
     QPointF DewarpingPointMapper::mapToWarpedSpace(QPointF const& dewarped_pt) const {
         QPointF dewarped_pt_m = m_postTransform.inverted().map(dewarped_pt);
-        
+
         double const crv_x = (dewarped_pt_m.x() - m_modelDomainLeft) * m_modelXScaleToNormalized;
         double const crv_y = (dewarped_pt_m.y() - m_modelDomainTop) * m_modelYScaleToNormalized;
 

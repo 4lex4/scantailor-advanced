@@ -46,6 +46,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/if.hpp>
+#include <cmath>
 
 using namespace imageproc;
 
@@ -174,7 +175,7 @@ namespace dewarping {
             return true;
         }
         // Threshold angle between a polyline segment and a normal to the previous one.
-        float const cos_threshold = cos((90.0f - 6.0f) * constants::DEG2RAD);
+        auto const cos_threshold = static_cast<const float>(cos((90.0f - 6.0f) * constants::DEG2RAD));
         float const cos_sq_threshold = cos_threshold * cos_threshold;
         bool significant_positive = false;
         bool significant_negative = false;
@@ -192,10 +193,10 @@ namespace dewarping {
             float const sqlen_mult = prev_normal_sqlen * next_segment_sqlen;
             if (sqlen_mult > std::numeric_limits<float>::epsilon()) {
                 float const dot = prev_normal.dot(next_segment);
-                cos_sq = fabs(dot) * dot / sqlen_mult;
+                cos_sq = std::fabs(dot) * dot / sqlen_mult;
             }
 
-            if (fabs(cos_sq) >= cos_sq_threshold) {
+            if (std::fabs(cos_sq) >= cos_sq_threshold) {
                 if (cos_sq > 0) {
                     significant_positive = true;
                 } else {
@@ -239,8 +240,8 @@ namespace dewarping {
         ToLineProjector const proj1(left_bound);
         ToLineProjector const proj2(right_bound);
 
-        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
-        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
+        auto it(polylines.begin());
+        auto const end(polylines.end());
         while (it != end) {
             assert(!it->empty());
             QPointF const front(it->front());
@@ -260,8 +261,8 @@ namespace dewarping {
     void TextLineTracer::filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
                                                  QLineF const& left_bound,
                                                  QLineF const& right_bound) {
-        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
-        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
+        auto it(polylines.begin());
+        auto const end(polylines.end());
         while (it != end) {
             if (!isInsideBounds(it->front(), left_bound, right_bound)
                 && !isInsideBounds(it->back(), left_bound, right_bound)) {
@@ -273,8 +274,8 @@ namespace dewarping {
     }
 
     void TextLineTracer::filterEdgyCurves(std::list<std::vector<QPointF>>& polylines) {
-        std::list<std::vector<QPointF>>::iterator it(polylines.begin());
-        std::list<std::vector<QPointF>>::iterator const end(polylines.end());
+        auto it(polylines.begin());
+        auto const end(polylines.end());
         while (it != end) {
             if (!isCurvatureConsistent(*it)) {
                 polylines.erase(it++);
@@ -428,21 +429,21 @@ namespace dewarping {
             {
                 TowardsLineTracer tracer(&sedm, &main_grid, bounds.first, seed);
                 while (QPoint const* pt = tracer.trace(10.0f)) {
-                    polyline.push_back(*pt);
+                    polyline.emplace_back(*pt);
                 }
                 std::reverse(polyline.begin(), polyline.end());
             }
 
-            polyline.push_back(seed);
+            polyline.emplace_back(seed);
 
             {
                 TowardsLineTracer tracer(&sedm, &main_grid, bounds.second, seed);
                 while (QPoint const* pt = tracer.trace(10.0f)) {
-                    polyline.push_back(*pt);
+                    polyline.emplace_back(*pt);
                 }
             }
 
-            out.push_back(std::vector<QPointF>());
+            out.emplace_back();
             out.back().swap(polyline);
         }
     }  // TextLineTracer::extractTextLines
@@ -559,14 +560,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        auto* overlay_line = (uint32_t*) overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         grad_line = grad.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = grad_line[x] * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 if (value < 0) {
                     overlay_line[x] = qRgba(0, 0, magnitude, magnitude);
                 } else {
@@ -632,7 +633,7 @@ namespace dewarping {
 
         for (std::vector<QPointF> const& polyline : polylines) {
             if (!polyline.empty()) {
-                painter.drawPolyline(&polyline[0], polyline.size());
+                painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
             }
         }
 

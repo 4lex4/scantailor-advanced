@@ -32,11 +32,11 @@ namespace dewarping {
     public:
         Curve();
 
-        Curve(std::vector<QPointF> const& polyline);
+        explicit Curve(std::vector<QPointF> const& polyline);
 
-        Curve(XSpline const& xspline);
+        explicit Curve(XSpline const& xspline);
 
-        Curve(QDomElement const& el);
+        explicit Curve(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

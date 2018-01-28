@@ -88,12 +88,12 @@ public:
 
     mutable Status status;
 
-    Item(ImageId const& image_id, int preceding_load_attepmts, Status status);
+    Item(ImageId const& image_id, int preceding_load_attempts, Status st);
 
     Item(Item const& other);
 
 private:
-    Item& operator=(Item const& other);  // Assignment is forbidden.
+    Item& operator=(Item const& other) = delete;  // Assignment is forbidden.
 };
 
 
@@ -101,23 +101,23 @@ class ThumbnailPixmapCache::Impl : public QThread {
 public:
     Impl(QString const& thumb_dir, QSize const& max_thumb_size, int max_cached_pixmaps, int expiration_threshold);
 
-    ~Impl();
+    ~Impl() override;
 
     void setThumbDir(QString const& thumb_dir);
 
     Status request(ImageId const& image_id,
                    QPixmap& pixmap,
                    bool load_now = false,
-                   std::weak_ptr<CompletionHandler> const* completion_handler = 0);
+                   std::weak_ptr<CompletionHandler> const* completion_handler = nullptr);
 
     void ensureThumbnailExists(ImageId const& image_id, QImage const& image);
 
     void recreateThumbnail(ImageId const& image_id, QImage const& image);
 
 protected:
-    virtual void run();
+    void run() override;
 
-    virtual void customEvent(QEvent* e);
+    void customEvent(QEvent* e) override;
 
 private:
     class LoadResultEvent;
@@ -140,10 +140,10 @@ private:
 
     class BackgroundLoader : public QObject {
     public:
-        BackgroundLoader(Impl& owner);
+        explicit BackgroundLoader(Impl& owner);
 
     protected:
-        virtual void customEvent(QEvent* e);
+        void customEvent(QEvent* e) override;
 
     private:
         Impl& m_rOwner;
@@ -226,9 +226,9 @@ private:
 
 class ThumbnailPixmapCache::Impl::LoadResultEvent : public QEvent {
 public:
-    LoadResultEvent(Impl::LoadQueue::iterator const& lq_t, QImage const& image, ThumbnailLoadResult::Status status);
+    LoadResultEvent(Impl::LoadQueue::iterator const& lq_it, QImage const& image, ThumbnailLoadResult::Status status);
 
-    virtual ~LoadResultEvent();
+    ~LoadResultEvent() override;
 
     Impl::LoadQueue::iterator lqIter() const {
         return m_lqIter;
@@ -267,8 +267,7 @@ ThumbnailPixmapCache::ThumbnailPixmapCache(QString const& thumb_dir,
 ) {
 }
 
-ThumbnailPixmapCache::~ThumbnailPixmapCache() {
-}
+ThumbnailPixmapCache::~ThumbnailPixmapCache() = default;
 
 void ThumbnailPixmapCache::setThumbDir(QString const& thumb_dir) {
     m_ptrImpl->setThumbDir(RelinkablePath::normalize(thumb_dir));
@@ -714,7 +713,7 @@ void ThumbnailPixmapCache::Impl::queuedToInProgress(LoadQueue::iterator const& l
 void ThumbnailPixmapCache::Impl::postLoadResult(LoadQueue::iterator const& lq_it,
                                                 QImage const& image,
                                                 ThumbnailLoadResult::Status const status) {
-    LoadResultEvent* e = new LoadResultEvent(lq_it, image, status);
+    auto* e = new LoadResultEvent(lq_it, image, status);
     QCoreApplication::postEvent(this, e);
 }
 
@@ -783,7 +782,7 @@ void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
     typedef std::weak_ptr<CompletionHandler> WeakHandler;
     for (WeakHandler const& wh : completion_handlers) {
         std::shared_ptr<CompletionHandler> const sh(wh.lock());
-        if (sh.get()) {
+        if (sh) {
             (*sh)(load_result);
         }
     }
@@ -911,13 +910,7 @@ ThumbnailPixmapCache::Item::Item(ImageId const& image_id, int const preceding_lo
           status(st) {
 }
 
-ThumbnailPixmapCache::Item::Item(Item const& other)
-        : imageId(other.imageId),
-          pixmap(other.pixmap),
-          completionHandlers(other.completionHandlers),
-          precedingLoadAttempts(other.precedingLoadAttempts),
-          status(other.status) {
-}
+ThumbnailPixmapCache::Item::Item(Item const& other) = default;
 
 /*=============== ThumbnailPixmapCache::Impl::LoadResultEvent ===============*/
 
@@ -930,8 +923,7 @@ ThumbnailPixmapCache::Impl::LoadResultEvent::LoadResultEvent(Impl::LoadQueue::it
           m_status(status) {
 }
 
-ThumbnailPixmapCache::Impl::LoadResultEvent::~LoadResultEvent() {
-}
+ThumbnailPixmapCache::Impl::LoadResultEvent::~LoadResultEvent() = default;
 
 /*================== ThumbnailPixmapCache::BackgroundLoader =================*/
 

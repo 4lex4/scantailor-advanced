@@ -65,7 +65,7 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
         }
 
         physSizeLine->setVisible(true);
-        physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(toString(units)));
+        physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToString(units)));
     } else {
         physSizeLabel->clear();
         physSizeLine->setVisible(false);

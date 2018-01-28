@@ -74,19 +74,18 @@ namespace deskew {
         rootInteractionHandler().makeLastFollower(m_dragHandler);
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
-        QAction* rotateLeft = new QAction(0);
+        auto* rotateLeft = new QAction(nullptr);
         rotateLeft->setShortcut(QKeySequence(","));
         connect(rotateLeft, SIGNAL(triggered(bool)), SLOT(doRotateLeft()));
         addAction(rotateLeft);
 
-        QAction* rotateRight = new QAction(0);
+        auto* rotateRight = new QAction(nullptr);
         rotateRight->setShortcut(QKeySequence("."));
         connect(rotateRight, SIGNAL(triggered(bool)), SLOT(doRotateRight()));
         addAction(rotateRight);
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
     void ImageView::doRotate(double deg) {
         manualDeskewAngleSetExternally(m_xform.postRotation() + deg);
@@ -262,10 +261,10 @@ namespace deskew {
  */
     QRectF ImageView::getRotationArcSquare() const {
         double const h_margin = 0.5 * m_handlePixmap.width()
-                                + verticalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, 0,
+                                + verticalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr,
                                                                             verticalScrollBar());
         double const v_margin = 0.5 * m_handlePixmap.height()
-                                + horizontalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, 0,
+                                + horizontalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr,
                                                                               horizontalScrollBar());
 
         QRectF reduced_screen_rect(maxViewportRect());

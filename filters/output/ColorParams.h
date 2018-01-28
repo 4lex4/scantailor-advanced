@@ -27,48 +27,37 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
+    enum ColorMode {
+        BLACK_AND_WHITE,
+        COLOR_GRAYSCALE,
+        MIXED
+    };
+
     class ColorParams {
     public:
-        enum ColorMode {
-            BLACK_AND_WHITE,
-            COLOR_GRAYSCALE,
-            MIXED
-        };
-
         ColorParams();
 
-        ColorParams(QDomElement const& el);
+        explicit ColorParams(QDomElement const& el);
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        ColorMode colorMode() const {
-            return m_colorMode;
-        }
+        ColorMode colorMode() const;
 
-        void setColorMode(ColorMode mode) {
-            m_colorMode = mode;
-        }
+        void setColorMode(ColorMode mode);
 
-        ColorCommonOptions const& colorCommonOptions() const {
-            return m_colorCommonOptions;
-        }
+        ColorCommonOptions const& colorCommonOptions() const;
 
-        void setColorCommonOptions(ColorCommonOptions const& opt) {
-            m_colorCommonOptions = opt;
-        }
+        void setColorCommonOptions(ColorCommonOptions const& opt);
 
-        BlackWhiteOptions const& blackWhiteOptions() const {
-            return m_bwOptions;
-        }
+        BlackWhiteOptions const& blackWhiteOptions() const;
 
-        void setBlackWhiteOptions(BlackWhiteOptions const& opt) {
-            m_bwOptions = opt;
-        }
+        void setBlackWhiteOptions(BlackWhiteOptions const& opt);
 
     private:
         static ColorMode parseColorMode(QString const& str);
 
         static QString formatColorMode(ColorMode mode);
+
 
         ColorMode m_colorMode;
         ColorCommonOptions m_colorCommonOptions;

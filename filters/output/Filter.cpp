@@ -26,11 +26,12 @@
 #include "CacheDrivenTask.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <tiff.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
-
 #include "CommandLine.h"
+#include "ThumbnailPixmapCache.h"
 
 namespace output {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -42,8 +43,7 @@ namespace output {
         }
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate("output::Filter", "Output");
@@ -89,7 +89,7 @@ namespace output {
         page_el.appendChild(m_ptrSettings->getOutputProcessingParams(page_id).toXml(doc, "processing-params"));
 
         std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(page_id));
-        if (output_params.get()) {
+        if (output_params) {
             page_el.appendChild(output_params->toXml(doc, "output-params"));
         }
 
@@ -157,19 +157,19 @@ namespace output {
 
     intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+                       intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                        OutputFileNameGenerator const& out_file_name_gen,
                        bool const batch,
                        bool const debug) {
         ImageViewTab lastTab(TAB_OUTPUT);
-        if (m_ptrOptionsWidget.get() != 0) {
+        if (m_ptrOptionsWidget.get() != nullptr) {
             lastTab = m_ptrOptionsWidget->lastTab();
         }
 
         return intrusive_ptr<Task>(
                 new Task(
                         intrusive_ptr<Filter>(this), m_ptrSettings,
-                        thumbnail_cache, page_id, out_file_name_gen,
+                        std::move(thumbnail_cache), page_id, out_file_name_gen,
                         lastTab, batch, debug
                 )
         );
@@ -201,5 +201,9 @@ namespace output {
                        outputParams.getDespeckleLevel()
                 )
         );
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
     }
 }  // namespace output

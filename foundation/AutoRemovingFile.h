@@ -32,7 +32,7 @@ private:
     struct CopyHelper {
         AutoRemovingFile* obj;
 
-        CopyHelper(AutoRemovingFile* o)
+        explicit CopyHelper(AutoRemovingFile* o)
                 : obj(o) {
         }
     };
@@ -40,7 +40,7 @@ private:
 public:
     AutoRemovingFile();
 
-    AutoRemovingFile(QString const& file_path);
+    explicit AutoRemovingFile(QString const& file_path);
 
     AutoRemovingFile(AutoRemovingFile& other);
 

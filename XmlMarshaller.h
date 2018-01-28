@@ -36,7 +36,7 @@ class QRectF;
 
 class XmlMarshaller {
 public:
-    XmlMarshaller(QDomDocument const& doc)
+    explicit XmlMarshaller(QDomDocument const& doc)
             : m_doc(doc) {
     }
 

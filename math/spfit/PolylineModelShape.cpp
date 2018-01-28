@@ -75,7 +75,7 @@ namespace spfit {
             }
         }
         // Check if pt is closer to a vertex than to any segment.
-        int const num_points = m_vertices.size();
+        auto const num_points = static_cast<const int>(m_vertices.size());
         for (int i = 0; i < num_points; ++i) {
             QPointF const vtx(m_vertices[i].point);
             Vec2d const vec(pt - vtx);

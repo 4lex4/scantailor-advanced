@@ -126,9 +126,9 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
 
         if (!((current == prev) && (current == next))) {
             double prev_angle_cos = abs((prev.x() - current.x())
-                                       / sqrt(pow((prev.y() - current.y()), 2) + pow((prev.x() - current.x()), 2)));
+                                        / sqrt(pow((prev.y() - current.y()), 2) + pow((prev.x() - current.x()), 2)));
             double next_angle_cos = abs((next.x() - current.x())
-                                       / sqrt(pow((next.y() - current.y()), 2) + pow((next.x() - current.x()), 2)));
+                                        / sqrt(pow((next.y() - current.y()), 2) + pow((next.x() - current.x()), 2)));
 
 
             if ((prev_angle_cos < next_angle_cos)

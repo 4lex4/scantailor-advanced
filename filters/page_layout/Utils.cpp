@@ -92,10 +92,10 @@ namespace page_layout {
         double width = page_rect.width() - content_rect.width();
         double height = page_rect.height() - content_rect.height();
 
-        double left = double(content_rect.left() - page_rect.left());
-        double right = double(page_rect.right() - content_rect.right());
-        double top = double(content_rect.top() - page_rect.top());
-        double bottom = double(page_rect.bottom() - content_rect.bottom());
+        auto left = double(content_rect.left() - page_rect.left());
+        auto right = double(page_rect.right() - content_rect.right());
+        auto top = double(content_rect.top() - page_rect.top());
+        auto bottom = double(page_rect.bottom() - content_rect.bottom());
         double hspace = left + right;
         double vspace = top + bottom;
 

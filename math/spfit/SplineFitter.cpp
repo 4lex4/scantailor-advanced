@@ -43,7 +43,7 @@ namespace spfit {
     void SplineFitter::addAttractionForce(Vec2d const& spline_point,
                                           std::vector<FittableSpline::LinearCoefficient> const& coeffs,
                                           SqDistApproximant const& sqdist_approx) {
-        int const num_coeffs = coeffs.size();
+        auto const num_coeffs = static_cast<const int>(coeffs.size());
         int const num_vars = num_coeffs * 2;
         QuadraticFunction f(num_vars);
 
@@ -100,7 +100,7 @@ namespace spfit {
             m_tempVars[i * 2] = cp.x();
             m_tempVars[i * 2 + 1] = cp.y();
         }
-        f.recalcForTranslatedArguments(num_vars ? &m_tempVars[0] : 0);
+        f.recalcForTranslatedArguments(num_vars ? &m_tempVars[0] : nullptr);
         // What remains is a mapping from the reduced set of variables to the full set.
         m_tempSparseMap.resize(num_vars);
         for (int i = 0; i < num_coeffs; ++i) {
@@ -119,7 +119,7 @@ namespace spfit {
                       m_rModelShape(model_shape) {
             }
 
-            virtual void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags) {
+            void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags) override {
                 m_rOwner.m_pSpline->linearCombinationAt(t, m_rOwner.m_tempCoeffs);
                 SqDistApproximant const approx(m_rModelShape.localSqDistApproximant(pt, flags));
                 m_rOwner.addAttractionForce(pt, m_rOwner.m_tempCoeffs, approx);

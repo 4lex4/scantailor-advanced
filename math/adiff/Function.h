@@ -22,7 +22,7 @@
 #include "SparseMap.h"
 #include "MatT.h"
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 
 namespace adiff {
 /**

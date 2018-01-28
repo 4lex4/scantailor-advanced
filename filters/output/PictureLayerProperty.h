@@ -37,25 +37,19 @@ namespace output {
             ERASER3
         };
 
-        PictureLayerProperty(Layer layer = NO_OP)
-                : m_layer(layer) {
-        }
+        explicit PictureLayerProperty(Layer layer = NO_OP);
 
-        PictureLayerProperty(QDomElement const& el);
+        explicit PictureLayerProperty(QDomElement const& el);
 
         static void registerIn(PropertyFactory& factory);
 
-        virtual intrusive_ptr<Property> clone() const;
+        intrusive_ptr<Property> clone() const override;
 
-        virtual QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const override;
 
-        Layer layer() const {
-            return m_layer;
-        }
+        Layer layer() const;
 
-        void setLayer(Layer layer) {
-            m_layer = layer;
-        }
+        void setLayer(Layer layer);
 
     private:
         static intrusive_ptr<Property> construct(QDomElement const& el);
@@ -63,6 +57,7 @@ namespace output {
         static Layer layerFromString(QString const& str);
 
         static QString layerToString(Layer layer);
+
 
         static char const m_propertyName[];
         Layer m_layer;

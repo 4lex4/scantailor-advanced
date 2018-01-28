@@ -135,15 +135,15 @@ namespace output {
         BlackWhiteOptions::wolfCoef = wolfCoef;
     }
 
-    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
+    BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
         return binarizationMethod;
     }
 
-    void BlackWhiteOptions::setBinarizationMethod(BlackWhiteOptions::BinarizationMethod binarizationMethod) {
+    void BlackWhiteOptions::setBinarizationMethod(BinarizationMethod binarizationMethod) {
         BlackWhiteOptions::binarizationMethod = binarizationMethod;
     }
 
-    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
+    BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
         if (str == "wolf") {
             return WOLF;
         } else if (str == "sauvola") {
@@ -153,7 +153,7 @@ namespace output {
         }
     }
 
-    QString BlackWhiteOptions::formatBinarizationMethod(BlackWhiteOptions::BinarizationMethod type) {
+    QString BlackWhiteOptions::formatBinarizationMethod(BinarizationMethod type) {
         QString str = "";
         switch (type) {
             case OTSU:
@@ -168,6 +168,22 @@ namespace output {
         }
 
         return str;
+    }
+
+    int BlackWhiteOptions::thresholdAdjustment() const {
+        return m_thresholdAdjustment;
+    }
+
+    void BlackWhiteOptions::setThresholdAdjustment(int val) {
+        m_thresholdAdjustment = val;
+    }
+
+    bool BlackWhiteOptions::normalizeIllumination() const {
+        return m_normalizeIllumination;
+    }
+
+    void BlackWhiteOptions::setNormalizeIllumination(bool val) {
+        m_normalizeIllumination = val;
     }
 
 }  // namespace output

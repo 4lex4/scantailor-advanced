@@ -57,31 +57,21 @@ namespace output {
 
         explicit OutputImageParams(QDomElement const& el);
 
-        DewarpingOptions const& dewarpingMode() const {
-            return m_dewarpingOptions;
-        }
+        DewarpingOptions const& dewarpingMode() const;
 
-        dewarping::DistortionModel const& distortionModel() const {
-            return m_distortionModel;
-        }
+        dewarping::DistortionModel const& distortionModel() const;
 
-        void setDistortionModel(dewarping::DistortionModel const& model) {
-            m_distortionModel = model;
-        }
+        void setDistortionModel(dewarping::DistortionModel const& model);
 
-        DepthPerception const& depthPerception() const {
-            return m_depthPerception;
-        }
+        DepthPerception const& depthPerception() const;
 
-        DespeckleLevel despeckleLevel() const {
-            return m_despeckleLevel;
-        }
+        DespeckleLevel despeckleLevel() const;
 
-        void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
+        void setOutputProcessingParams(OutputProcessingParams const& outputProcessingParams);
 
-        const PictureShapeOptions& getPictureShapeOptions() const;
+        PictureShapeOptions const& getPictureShapeOptions() const;
 
-        const QPolygonF& getCropArea() const;
+        QPolygonF const& getCropArea() const;
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -98,7 +88,7 @@ namespace output {
 
             PartialXform(QTransform const& xform);
 
-            PartialXform(QDomElement const& el);
+            explicit PartialXform(QDomElement const& el);
 
             QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
@@ -114,10 +104,10 @@ namespace output {
         };
 
         static bool colorParamsMatch(ColorParams const& cp1,
-                                     DespeckleLevel const dl1,
+                                     DespeckleLevel dl1,
                                      SplittingOptions const& so1,
                                      ColorParams const& cp2,
-                                     DespeckleLevel const dl2,
+                                     DespeckleLevel dl2,
                                      SplittingOptions const& so2);
 
         /** Pixel size of the output image. */

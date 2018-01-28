@@ -45,8 +45,7 @@ ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& image_view, Editab
           m_showPropertiesCommand(&ZoneInteractionContext::showPropertiesStub) {
 }
 
-ZoneInteractionContext::~ZoneInteractionContext() {
-}
+ZoneInteractionContext::~ZoneInteractionContext() = default;
 
 InteractionHandler* ZoneInteractionContext::createStdDefaultInteraction() {
     return new ZoneDefaultInteraction(*this);

@@ -117,7 +117,7 @@ namespace imageproc {
         if (pivot.top() - bounds.top() >= m_minSize.height()) {
             QRect new_bounds(bounds);
             new_bounds.setBottom(pivot.top() - 1);  // Bottom is inclusive.
-            Region new_region(m_newObstacles.size(), new_bounds);
+            Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
@@ -126,7 +126,7 @@ namespace imageproc {
         if (bounds.bottom() - pivot.bottom() >= m_minSize.height()) {
             QRect new_bounds(bounds);
             new_bounds.setTop(pivot.bottom() + 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
+            Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
@@ -135,7 +135,7 @@ namespace imageproc {
         if (pivot.left() - bounds.left() >= m_minSize.width()) {
             QRect new_bounds(bounds);
             new_bounds.setRight(pivot.left() - 1);  // Right is inclusive.
-            Region new_region(m_newObstacles.size(), new_bounds);
+            Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }
@@ -143,7 +143,7 @@ namespace imageproc {
         if (bounds.right() - pivot.right() >= m_minSize.width()) {
             QRect new_bounds(bounds);
             new_bounds.setLeft(pivot.right() + 1);
-            Region new_region(m_newObstacles.size(), new_bounds);
+            Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
             new_region.addObstacles(region);
             m_ptrQueuedRegions->push(new_region);
         }

@@ -119,7 +119,7 @@ namespace page_split {
         double const line_thickness = 5.0;
         double const max_angle = 7.0;  // degrees
         double const angle_step = 0.25;
-        int const angle_steps_to_max = (int) (max_angle / angle_step);
+        auto const angle_steps_to_max = (int) (max_angle / angle_step);
         int const total_angle_steps = angle_steps_to_max * 2 + 1;
         double const min_angle = -angle_steps_to_max * angle_step;
         HoughLineDetector line_detector(
@@ -132,7 +132,7 @@ namespace page_split {
 
         // We don't want to process areas too close to the vertical edges.
         double const margin_mm = 3.5;
-        int const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
+        auto const margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
 
         int const x_limit = raster_lines.width() - margin;
         int const height = raster_lines.height();
@@ -165,8 +165,8 @@ namespace page_split {
             );
             LineGroup* home_group = nullptr;
 
-            LineGroups::iterator it(line_groups.begin());
-            LineGroups::iterator const end(line_groups.end());
+            auto it(line_groups.begin());
+            auto const end(line_groups.end());
             while (it != end) {
                 LineGroup& group = *it;
                 if (group.belongsHere(new_line)) {
@@ -183,7 +183,7 @@ namespace page_split {
             }
 
             if (!home_group) {
-                line_groups.push_back(LineGroup(new_line));
+                line_groups.emplace_back(new_line);
             }
         }
 
@@ -298,6 +298,18 @@ namespace page_split {
         return QLineF(m_left, m_right);
     }
 
+    QPointF const& VertLineFinder::QualityLine::left() const {
+        return m_left;
+    }
+
+    QPointF const& VertLineFinder::QualityLine::right() const {
+        return m_right;
+    }
+
+    unsigned VertLineFinder::QualityLine::quality() const {
+        return m_quality;
+    }
+
 /*======================= VertLineFinder::LineGroup ========================*/
 
     VertLineFinder::LineGroup::LineGroup(QualityLine const& line)
@@ -317,8 +329,8 @@ namespace page_split {
     }
 
     void VertLineFinder::LineGroup::add(QualityLine const& line) {
-        m_left = std::min(qreal(m_left), line.left().x());
-        m_right = std::max(qreal(m_right), line.right().x());
+        m_left = std::min(m_left, line.left().x());
+        m_right = std::max(m_right, line.right().x());
         if (line.quality() > m_leader.quality()) {
             m_leader = line;
         }
@@ -330,5 +342,9 @@ namespace page_split {
         if (other.leader().quality() > m_leader.quality()) {
             m_leader = other.leader();
         }
+    }
+
+    const VertLineFinder::QualityLine& VertLineFinder::LineGroup::leader() const {
+        return m_leader;
     }
 }  // namespace page_split

@@ -32,13 +32,13 @@ namespace imageproc {
     uint32_t const SEDM::INF_DIST = ~uint32_t(0) - 1;
 
     SEDM::SEDM()
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(),
               m_stride(0) {
     }
 
     SEDM::SEDM(BinaryImage const& image, DistType const dist_type, Borders const borders)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(image.size()),
               m_stride(0) {
         if (image.isNull()) {
@@ -102,7 +102,7 @@ namespace imageproc {
     }
 
     SEDM::SEDM(ConnectivityMap& cmap)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(cmap.size()),
               m_stride(0) {
         if (m_size.isEmpty()) {
@@ -134,7 +134,7 @@ namespace imageproc {
 
     SEDM::SEDM(SEDM const& other)
             : m_data(other.m_data),
-              m_pData(0),
+              m_pData(nullptr),
               m_size(other.m_size),
               m_stride(other.m_stride) {
         if (!m_size.isEmpty()) {

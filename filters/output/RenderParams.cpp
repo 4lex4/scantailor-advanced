@@ -24,21 +24,21 @@ namespace output {
             : m_mask(0) {
         const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
         const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());
-        const ColorParams::ColorMode colorMode = colorParams.colorMode();
+        const ColorMode colorMode = colorParams.colorMode();
 
-        if ((colorMode == ColorParams::BLACK_AND_WHITE) || (colorMode == ColorParams::MIXED)) {
+        if ((colorMode == BLACK_AND_WHITE) || (colorMode == MIXED)) {
             m_mask |= NEED_BINARIZATION;
-            if ((colorMode == ColorParams::MIXED) && splittingOptions.isSplitOutput()) {
+            if ((colorMode == MIXED) && splittingOptions.isSplitOutput()) {
                 m_mask |= SPLIT_OUTPUT;
-                if (splittingOptions.getForegroundType() == SplittingOptions::COLOR_FOREGROUND) {
+                if (splittingOptions.getSplittingMode() == COLOR_FOREGROUND) {
                     m_mask ^= NEED_BINARIZATION;
                 }
-                if ((splittingOptions.getForegroundType() == SplittingOptions::BLACK_AND_WHITE_FOREGROUND)
+                if ((splittingOptions.getSplittingMode() == BLACK_AND_WHITE_FOREGROUND)
                     && (splittingOptions.isOriginalBackground())) {
                     m_mask |= ORIGINAL_BACKGROUND;
                 }
             }
-            if (colorMode == ColorParams::MIXED) {
+            if (colorMode == MIXED) {
                 m_mask |= MIXED_OUTPUT;
             }
             if (blackWhiteOptions.isSavitzkyGolaySmoothingEnabled()) {
@@ -57,5 +57,45 @@ namespace output {
         if (colorCommonOptions.normalizeIllumination()) {
             m_mask |= NORMALIZE_ILLUMINATION_COLOR;
         }
+    }
+
+    bool RenderParams::cutMargins() const {
+        return (m_mask & CUT_MARGINS) != 0;
+    }
+
+    bool RenderParams::normalizeIllumination() const {
+        return (m_mask & NORMALIZE_ILLUMINATION) != 0;
+    }
+
+    bool RenderParams::normalizeIlluminationColor() const {
+        return (m_mask & NORMALIZE_ILLUMINATION_COLOR) != 0;
+    }
+
+    bool RenderParams::needBinarization() const {
+        return (m_mask & NEED_BINARIZATION) != 0;
+    }
+
+    bool RenderParams::mixedOutput() const {
+        return (m_mask & MIXED_OUTPUT) != 0;
+    }
+
+    bool RenderParams::binaryOutput() const {
+        return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT)) == NEED_BINARIZATION;
+    }
+
+    bool RenderParams::needSavitzkyGolaySmoothing() const {
+        return (m_mask & SAVITZKY_GOLAY_SMOOTHING) != 0;
+    }
+
+    bool RenderParams::needMorphologicalSmoothing() const {
+        return (m_mask & MORPHOLOGICAL_SMOOTHING) != 0;
+    }
+
+    bool RenderParams::splitOutput() const {
+        return (m_mask & SPLIT_OUTPUT) != 0;
+    }
+
+    bool RenderParams::originalBackground() const {
+        return (m_mask & ORIGINAL_BACKGROUND) != 0;
     }
 }  // namespace output

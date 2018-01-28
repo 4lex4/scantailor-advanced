@@ -63,4 +63,11 @@ namespace page_split {
             m_clickCallback();
         }
     }
+
+    void UnremoveButton::setClickCallback(const UnremoveButton::ClickCallback& callback) {
+        m_clickCallback = callback;
+    }
+
+    void UnremoveButton::noOp() {
+    }
 }  // namespace page_split

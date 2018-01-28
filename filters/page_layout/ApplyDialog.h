@@ -36,15 +36,13 @@ namespace page_layout {
     public:
         ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ApplyDialog();
+        ~ApplyDialog() override;
 
     signals:
 
-        void accepted(std::set<PageId> const
-                      & pages);
+        void accepted(std::set<PageId> const& pages);
 
-    private
-        slots:
+    private slots:
 
         void onSubmit();
 

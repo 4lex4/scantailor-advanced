@@ -26,21 +26,21 @@ namespace imageproc {
 
                 if (width == 1) {
                     // No transitions allowed.
-                    transitions.push_back(HTransition(0, 0));
+                    transitions.emplace_back(0, 0);
 
                     return;
                 }
 
                 // Only east transition is allowed.
-                transitions.push_back(HTransition(0, 1));
+                transitions.emplace_back(0, 1);
 
                 for (int i = 1; i < width - 1; ++i) {
                     // Both transitions are allowed.
-                    transitions.push_back(HTransition(-1, 1));
+                    transitions.emplace_back(-1, 1);
                 }
 
                 // Only west transition is allowed.
-                transitions.push_back(HTransition(-1, 0));
+                transitions.emplace_back(-1, 0);
             }
 
             void initVertTransitions(std::vector<VTransition>& transitions, int const height) {
@@ -48,21 +48,21 @@ namespace imageproc {
 
                 if (height == 1) {
                     // No transitions allowed.
-                    transitions.push_back(VTransition(0, 0));
+                    transitions.emplace_back(0, 0);
 
                     return;
                 }
 
                 // Only south transition is allowed.
-                transitions.push_back(VTransition(0, ~0));
+                transitions.emplace_back(0, ~0);
 
                 for (int i = 1; i < height - 1; ++i) {
                     // Both transitions are allowed.
-                    transitions.push_back(VTransition(~0, ~0));
+                    transitions.emplace_back(~0, ~0);
                 }
 
                 // Only north transition is allowed.
-                transitions.push_back(VTransition(~0, 0));
+                transitions.emplace_back(~0, 0);
             }
         }          // namespace seed_fill_generic
     }      // namespace detail

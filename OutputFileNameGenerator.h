@@ -32,7 +32,7 @@ class OutputFileNameGenerator {
 public:
     OutputFileNameGenerator();
 
-    OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> const& disambiguator,
+    OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
                             QString const& out_dir,
                             Qt::LayoutDirection layout_direction);
 

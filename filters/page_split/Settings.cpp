@@ -26,8 +26,7 @@ namespace page_split {
             : m_defaultLayoutType(AUTO_LAYOUT_TYPE) {
     }
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
@@ -59,8 +58,8 @@ namespace page_split {
     void Settings::setLayoutTypeForAllPages(LayoutType const layout_type) {
         QMutexLocker locker(&m_mutex);
 
-        PerPageRecords::iterator it(m_perPageRecords.begin());
-        PerPageRecords::iterator const end(m_perPageRecords.end());
+        auto it(m_perPageRecords.begin());
+        auto const end(m_perPageRecords.end());
         while (it != end) {
             if (it->second.hasLayoutTypeConflict(layout_type)) {
                 m_perPageRecords.erase(it++);
@@ -90,7 +89,7 @@ namespace page_split {
     }
 
     Settings::Record Settings::getPageRecordLocked(ImageId const& image_id) const {
-        PerPageRecords::const_iterator it(m_perPageRecords.find(image_id));
+        auto it(m_perPageRecords.find(image_id));
         if (it == m_perPageRecords.end()) {
             return Record(m_defaultLayoutType);
         } else {
@@ -104,7 +103,7 @@ namespace page_split {
     }
 
     void Settings::updatePageLocked(ImageId const& image_id, UpdateAction const& action) {
-        PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
+        auto it(m_perPageRecords.lower_bound(image_id));
         if ((it == m_perPageRecords.end())
             || m_perPageRecords.key_comp()(image_id, it->first)) {
             // No record exists for this page.
@@ -145,7 +144,7 @@ namespace page_split {
     Settings::Record Settings::conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict) {
         QMutexLocker locker(&m_mutex);
 
-        PerPageRecords::iterator it(m_perPageRecords.lower_bound(image_id));
+        auto it(m_perPageRecords.lower_bound(image_id));
         if ((it == m_perPageRecords.end())
             || m_perPageRecords.key_comp()(image_id, it->first)) {
             // No record exists for this page.
@@ -246,6 +245,26 @@ namespace page_split {
         return false;
     }
 
+    LayoutType const* Settings::BaseRecord::layoutType() const {
+        return m_layoutTypeValid ? &m_layoutType : nullptr;
+    }
+
+    Params const* Settings::BaseRecord::params() const {
+        return m_paramsValid ? &m_params : nullptr;
+    }
+
+    bool Settings::BaseRecord::isNull() const {
+        return !(m_paramsValid || m_layoutTypeValid);
+    }
+
+    void Settings::BaseRecord::clearParams() {
+        m_paramsValid = false;
+    }
+
+    void Settings::BaseRecord::clearLayoutType() {
+        m_layoutTypeValid = false;
+    }
+
 /*========================= Settings::Record ========================*/
 
     Settings::Record::Record(LayoutType const default_layout_type)
@@ -290,6 +309,13 @@ namespace page_split {
     }
 
 /*======================= Settings::UpdateAction ======================*/
+
+    Settings::UpdateAction::UpdateAction()
+            : m_params(PageLayout(), Dependencies(), MODE_AUTO),
+              m_layoutType(AUTO_LAYOUT_TYPE),
+              m_paramsAction(DONT_TOUCH),
+              m_layoutTypeAction(DONT_TOUCH) {
+    }
 
     void Settings::UpdateAction::setLayoutType(LayoutType const layout_type) {
         m_layoutType = layout_type;

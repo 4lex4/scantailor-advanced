@@ -73,4 +73,32 @@ namespace page_layout {
 
         return el;
     }
+
+    Margins const& Params::hardMarginsMM() const {
+        return m_hardMarginsMM;
+    }
+
+    QRectF const& Params::contentRect() const {
+        return m_contentRect;
+    }
+
+    QRectF const& Params::pageRect() const {
+        return m_pageRect;
+    }
+
+    QSizeF const& Params::contentSizeMM() const {
+        return m_contentSizeMM;
+    }
+
+    Alignment const& Params::alignment() const {
+        return m_alignment;
+    }
+
+    bool Params::isAutoMarginsEnabled() const {
+        return m_autoMargins;
+    }
+
+    bool Params::isDeviant() const {
+        return m_alignment.isNull();
+    }
 }  // namespace page_layout

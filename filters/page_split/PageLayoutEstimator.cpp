@@ -111,15 +111,15 @@ namespace page_split {
                 }
 
                 // Return a SINGLE_PAGE_UNCUT layout.
-                return std::unique_ptr<PageLayout>(new PageLayout(virtual_image_rect));
+                return std::make_unique<PageLayout>(virtual_image_rect);
             } while (false);
 
             if (ltr_lines.empty()) {
                 // Impossible to detect the layout type.
-                return std::unique_ptr<PageLayout>();
+                return nullptr;
             } else if (ltr_lines.size() > 1) {
-                return std::unique_ptr<PageLayout>(
-                        new PageLayout(virtual_image_rect, ltr_lines.front(), ltr_lines.back())
+                return std::make_unique<PageLayout>(
+                        virtual_image_rect, ltr_lines.front(), ltr_lines.back()
                 );
             } else {
                 assert(ltr_lines.size() == 1);
@@ -130,16 +130,16 @@ namespace page_split {
                             virtual_image_rect.topRight(), virtual_image_rect.bottomRight()
                     );
 
-                    return std::unique_ptr<PageLayout>(
-                            new PageLayout(virtual_image_rect, line, right_line)
+                    return std::make_unique<PageLayout>(
+                            virtual_image_rect, line, right_line
                     );
                 } else {
                     QLineF const left_line(
                             virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft()
                     );
 
-                    return std::unique_ptr<PageLayout>(
-                            new PageLayout(virtual_image_rect, left_line, line)
+                    return std::make_unique<PageLayout>(
+                            virtual_image_rect, left_line, line
                     );
                 }
             }
@@ -156,10 +156,10 @@ namespace page_split {
                                                             QRectF const& virtual_image_rect) {
             if (ltr_lines.empty()) {
                 // Impossible to detect the page layout.
-                return std::unique_ptr<PageLayout>();
+                return nullptr;
             } else if (ltr_lines.size() == 1) {
-                return std::unique_ptr<PageLayout>(
-                        new PageLayout(virtual_image_rect, ltr_lines.front())
+                return std::make_unique<PageLayout>(
+                        virtual_image_rect, ltr_lines.front()
                 );
             }
 
@@ -176,8 +176,8 @@ namespace page_split {
                 }
             }
 
-            return std::unique_ptr<PageLayout>(
-                    new PageLayout(virtual_image_rect, *best_line)
+            return std::make_unique<PageLayout>(
+                    virtual_image_rect, *best_line
             );
         }
 
@@ -220,7 +220,7 @@ namespace page_split {
         std::unique_ptr<PageLayout> layout(
                 tryCutAtFoldingLine(layout_type, input, pre_xform, dbg)
         );
-        if (layout.get()) {
+        if (layout) {
             return *layout;
         }
 
@@ -230,7 +230,7 @@ namespace page_split {
     namespace {
         class BadTwoPageSplitter {
         public:
-            BadTwoPageSplitter(double image_width)
+            explicit BadTwoPageSplitter(double image_width)
                     : m_imageCenter(0.5 * image_width),
                       m_distFromCenterThreshold(0.6 * m_imageCenter) {
             }
@@ -280,8 +280,8 @@ namespace page_split {
         std::vector<QLineF> lines(
                 VertLineFinder::findLines(
                         input, pre_xform, max_lines, dbg,
-                        num_pages == 1 ? &gray_downscaled : 0,
-                        num_pages == 1 ? &out_to_downscaled : 0
+                        num_pages == 1 ? &gray_downscaled : nullptr,
+                        num_pages == 1 ? &out_to_downscaled : nullptr
                 )
         );
 
@@ -395,7 +395,7 @@ namespace page_split {
             double const angle_deg = skew.angle();
             double const tg = tan(angle_deg * constants::DEG2RAD);
 
-            int const margin = (int) ceil(fabs(0.5 * h * tg));
+            auto const margin = (int) ceil(fabs(0.5 * h * tg));
             int const new_width = w - margin * 2;
             if (new_width > 0) {
                 hShearInPlace(img, tg, 0.5 * h, WHITE);
@@ -628,7 +628,7 @@ namespace page_split {
             gaps[i].first = sum;
         }
         sum = 0;
-        for (int i = gaps.size() - 1; i >= 0; --i) {
+        for (auto i = static_cast<int>(gaps.size() - 1); i >= 0; --i) {
             sum += spans[i + 1].width();
             gaps[i].second = sum;
         }
@@ -809,7 +809,7 @@ namespace page_split {
                     widest_gap = i;
                 }
             }
-            for (unsigned i = best_gap + 1; i < gaps.size(); ++i) {
+            for (auto i = static_cast<unsigned int>(best_gap + 1); i < gaps.size(); ++i) {
                 double const min = std::min(gaps[i].first, gaps[i].second);
                 double const max = std::max(gaps[i].first, gaps[i].second);
                 double const ratio = min / max;

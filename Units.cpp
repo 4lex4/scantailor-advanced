@@ -2,7 +2,7 @@
 #include <QtCore/QObject>
 #include "Units.h"
 
-QString toString(const Units units) {
+QString unitsToString(Units units) {
     QString unitsStr;
     switch (units) {
         case PIXELS:

@@ -37,8 +37,7 @@ public:
 
         friend class boost::iterator_core_access;
     public:
-        const_iterator() {
-        }
+        const_iterator() = default;
 
         void increment() {
             ++m_it;
@@ -64,13 +63,11 @@ public:
     typedef const_iterator iterator;
 
 
-    ZoneSet() {
-    }
+    ZoneSet() = default;
 
     ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory);
 
-    virtual ~ZoneSet() {
-    }
+    virtual ~ZoneSet() = default;
 
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

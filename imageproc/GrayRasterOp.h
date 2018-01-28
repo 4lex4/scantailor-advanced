@@ -25,7 +25,7 @@
 #include <QRect>
 #include <QSize>
 #include <stdexcept>
-#include <stdint.h>
+#include <cstdint>
 #include <cassert>
 
 namespace imageproc {

@@ -110,8 +110,7 @@ namespace output {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    DewarpingView::~DewarpingView() {
-    }
+    DewarpingView::~DewarpingView() = default;
 
     void DewarpingView::initNewSpline(XSpline& spline,
                                       QPointF const& p1,
@@ -119,7 +118,7 @@ namespace output {
                                       DewarpingOptions const* p_dewarpingOptions) {
         QLineF const line(p1, p2);
         spline.appendControlPoint(line.p1(), 0);
-        if ((*p_dewarpingOptions).mode() == DewarpingOptions::AUTO) {
+        if ((*p_dewarpingOptions).dewarpingMode() == AUTO) {
             spline.appendControlPoint(line.pointAt(1.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(2.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(3.0 / 4.0), 1);
@@ -292,9 +291,9 @@ namespace output {
     }
 
     void DewarpingView::dragFinished() {
-        if ((m_dewarpingOptions.mode() == DewarpingOptions::AUTO)
-            || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)) {
-            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
+        if ((m_dewarpingOptions.dewarpingMode() == AUTO)
+            || (m_dewarpingOptions.dewarpingMode() == MARGINAL)) {
+            m_dewarpingOptions.setDewarpingMode(MANUAL);
         }
         emit distortionModelChanged(m_distortionModel);
     }

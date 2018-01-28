@@ -20,7 +20,7 @@
 #define MAT_T_H_
 
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 #include <cassert>
 
 /**
@@ -67,7 +67,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    MatT(MatT<OT> const& other);
+    explicit MatT(MatT<OT> const& other);
 
     /**
      * \brief Ordinary assignment.
@@ -184,7 +184,7 @@ MatT<T>::MatT(MatT<OT> const& other)
     size_t const len = m_rows * m_cols;
     T const* other_data = other.data();
     for (size_t i = 0; i < len; ++i) {
-        m_data[i] = static_cast<T>(other_data[i]);
+        m_data[i] = other_data[i];
     }
 }
 

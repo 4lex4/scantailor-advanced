@@ -42,13 +42,13 @@ namespace imageproc {
                 // x
                 // --------------------------------------------------
                 std::vector<QPointF> pts;
-                pts.push_back(QPointF(-100, -100));
-                pts.push_back(QPointF(0, 0));
-                pts.push_back(QPointF(100, 100));
-                pts.push_back(QPointF(200, 200));
-                pts.push_back(QPointF(0, 100));
-                pts.push_back(QPointF(100, 0));
-                pts.push_back(QPointF(-100, 200));
+                pts.emplace_back(-100, -100);
+                pts.emplace_back(0, 0);
+                pts.emplace_back(100, 100);
+                pts.emplace_back(200, 200);
+                pts.emplace_back(0, 100);
+                pts.emplace_back(100, 0);
+                pts.emplace_back(-100, 200);
 
                 std::set<unsigned> line1_idxs;
                 line1_idxs.insert(0);

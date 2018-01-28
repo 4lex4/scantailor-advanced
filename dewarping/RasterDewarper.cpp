@@ -21,6 +21,7 @@
 #include "imageproc/ColorMixer.h"
 #include "imageproc/GrayImage.h"
 #include <QDebug>
+#include <cmath>
 
 #define INTERP_NONE 0
 #define INTERP_BILLINEAR 1
@@ -220,10 +221,10 @@ namespace dewarping {
                 // Note that without using floor() and ceil()
                 // we can't guarantee that src_bottom >= src_top
                 // and src_right >= src_left.
-                int src32_left = (int) floor(f_src32_left);
-                int src32_right = (int) ceil(f_src32_right);
-                int src32_top = (int) floor(f_src32_top);
-                int src32_bottom = (int) ceil(f_src32_bottom);
+                auto src32_left = (int) std::floor(f_src32_left);
+                auto src32_right = (int) std::ceil(f_src32_right);
+                auto src32_top = (int) std::floor(f_src32_top);
+                auto src32_bottom = (int) std::ceil(f_src32_bottom);
                 int src_left = src32_left >> 5;
                 int src_right = (src32_right - 1) >> 5;  // inclusive
                 int src_top = src32_top >> 5;
@@ -431,8 +432,8 @@ namespace dewarping {
             double const model_domain_left = model_domain.left();
             double const model_x_scale = 1.0 / (model_domain.right() - model_domain.left());
 
-            float const model_domain_top = model_domain.top();
-            float const model_y_scale = 1.0 / (model_domain.bottom() - model_domain.top());
+            auto const model_domain_top = static_cast<const float>(model_domain.top());
+            auto const model_y_scale = static_cast<const float>(1.0 / (model_domain.bottom() - model_domain.top()));
 
             std::vector<Vec2f> prev_grid_column(dst_height + 1);
             std::vector<Vec2f> next_grid_column(dst_height + 1);
@@ -475,7 +476,7 @@ namespace dewarping {
                                QRectF const& model_domain,
                                QColor const& bg_color) {
             GrayImage dst(dst_size);
-            uint8_t const bg_sample = qGray(bg_color.rgb());
+            auto const bg_sample = static_cast<const uint8_t>(qGray(bg_color.rgb()));
             dst.fill(bg_sample);
             dewarpGeneric<GrayColorMixer<MixingWeight>, uint8_t>(
                     src.bits(), src.size(), src.bytesPerLine(),

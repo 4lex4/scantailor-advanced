@@ -36,7 +36,7 @@
 
 #endif
 
-#include <stddef.h>
+#include <cstddef>
 #include <cassert>
 
 ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
@@ -74,8 +74,7 @@ ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
     }
 }
 
-ProjectWriter::~ProjectWriter() {
-}
+ProjectWriter::~ProjectWriter() = default;
 
 bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& filters) const {
     QDomDocument doc;
@@ -100,8 +99,8 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
 
     QDomElement filters_el(doc.createElement("filters"));
     root_el.appendChild(filters_el);
-    std::vector<FilterPtr>::const_iterator it(filters.begin());
-    std::vector<FilterPtr>::const_iterator const end(filters.end());
+    auto it(filters.begin());
+    auto const end(filters.end());
     for (; it != end; ++it) {
         filters_el.appendChild((*it)->saveSettings(*this, doc));
     }
@@ -166,7 +165,7 @@ QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
 }
 
 void ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const {
-    MetadataByImage::const_iterator it(m_metadataByImage.find(image_id));
+    auto it(m_metadataByImage.find(image_id));
     assert(it != m_metadataByImage.end());
     ImageMetadata const& metadata = it->second;
 

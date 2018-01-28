@@ -30,15 +30,15 @@ class ImageTransformation;
 namespace deskew {
     class Thumbnail : public ThumbnailBase {
     public:
-        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                   QSizeF const& max_size,
                   ImageId const& image_id,
                   ImageTransformation const& xform,
                   bool deviant = false);
 
-        virtual void prePaintOverImage(QPainter& painter,
-                                       QTransform const& image_to_display,
-                                       QTransform const& thumb_to_display);
+        void prePaintOverImage(QPainter& painter,
+                               QTransform const& image_to_display,
+                               QTransform const& thumb_to_display) override;
 
     private:
         bool m_deviant;

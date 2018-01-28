@@ -17,6 +17,8 @@
  */
 
 #include "ContentBoxPropagator.h"
+
+#include <utility>
 #include "CompositeCacheDrivenTask.h"
 #include "ProjectPages.h"
 #include "PageSequence.h"
@@ -28,7 +30,7 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
 public:
     Collector();
 
-    virtual void process(ImageTransformation const& xform, QRectF const& content_rect);
+    void process(ImageTransformation const& xform, QRectF const& content_rect) override;
 
     bool collected() const {
         return m_collected;
@@ -49,14 +51,13 @@ private:
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> const& page_layout_filter,
-                                           intrusive_ptr<CompositeCacheDrivenTask> const& task)
-        : m_ptrPageLayoutFilter(page_layout_filter),
-          m_ptrTask(task) {
+ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
+                                           intrusive_ptr<CompositeCacheDrivenTask> task)
+        : m_ptrPageLayoutFilter(std::move(page_layout_filter)),
+          m_ptrTask(std::move(task)) {
 }
 
-ContentBoxPropagator::~ContentBoxPropagator() {
-}
+ContentBoxPropagator::~ContentBoxPropagator() = default;
 
 void ContentBoxPropagator::propagate(ProjectPages const& pages) {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));

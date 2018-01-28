@@ -57,7 +57,7 @@ namespace dewarping {
             int vertDist;
 
             bool distToVertLine(int vert_line_x) const {
-                return std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
+                return (bool) std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
             }
 
             Segment(QLine const& line, Vec2d const& vec, int dist)
@@ -94,7 +94,7 @@ namespace dewarping {
 
         class RansacAlgo {
         public:
-            RansacAlgo(std::vector<Segment> const& segments);
+            explicit RansacAlgo(std::vector<Segment> const& segments);
 
             void buildAndAssessModel(Segment const& seed_segment);
 
@@ -124,7 +124,7 @@ namespace dewarping {
 
             void process(int x, VertRange const& range);
 
-            QLineF approximateWithLine(std::vector<Segment>* dbg_segments = 0) const;
+            QLineF approximateWithLine(std::vector<Segment>* dbg_segments = nullptr) const;
 
             QImage visualizeEnvelope(QImage const& background);
 
@@ -223,7 +223,7 @@ namespace dewarping {
 
                 // Now we decide if we need to trim the path before
                 // adding a new element to it to preserve convexity.
-                int mid_idx = m_path.size() - 1;
+                auto mid_idx = static_cast<int>(m_path.size() - 1);
                 int top_idx = mid_idx - 1;
 
                 for (; top_idx >= 0; --top_idx, --mid_idx) {
@@ -278,7 +278,7 @@ namespace dewarping {
                 }
 
                 vec /= sqrt(vec.squaredNorm());
-                segments.push_back(Segment(QLine(pt1, pt2), vec, pt2.y() - pt1.y()));
+                segments.emplace_back(QLine(pt1, pt2), vec, pt2.y() - pt1.y());
             }
 
 
@@ -363,7 +363,7 @@ namespace dewarping {
 
             if (!m_path.empty()) {
                 std::vector<QPointF> const polyline(m_path.begin(), m_path.end());
-                painter.drawPolyline(&polyline[0], polyline.size());
+                painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
             }
 
             painter.setPen(Qt::NoPen);
@@ -407,7 +407,7 @@ namespace dewarping {
             ranges.reserve(width);
 
             for (int x = 0; x < width; ++x) {
-                ranges.push_back(VertRange());
+                ranges.emplace_back();
                 VertRange& range = ranges.back();
 
                 uint32_t const mask = msb >> (x & 31);
@@ -472,7 +472,7 @@ namespace dewarping {
         std::pair<QLineF, QLineF> bounds;
 
         std::vector<Segment> segments;
-        std::vector<Segment>* dbg_segments = dbg ? &segments : 0;
+        std::vector<Segment>* dbg_segments = dbg ? &segments : nullptr;
 
         QLineF left_line(left_processor.approximateWithLine(dbg_segments));
         left_line.translate(-1, 0);

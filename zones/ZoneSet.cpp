@@ -51,8 +51,8 @@ QDomElement ZoneSet::toXml(QDomDocument& doc, QString const& name) const {
 
 void ZoneSet::applyToZoneSet(const std::function<bool(const Zone& zone)>& predicate,
                              const std::function<void(std::list<Zone>& zones,
-                                                const std::list<Zone>::iterator& iter)>& consumer) {
-    for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
+                                                      const std::list<Zone>::iterator& iter)>& consumer) {
+    for (auto it = m_zones.begin(); it != m_zones.end();) {
         if (predicate(*it)) {
             consumer(m_zones, it);
         }

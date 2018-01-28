@@ -37,7 +37,7 @@ public:
      * If line endpoints match, all points will
      * be projected to that point.
      */
-    ToLineProjector(QLineF const& line);
+    explicit ToLineProjector(QLineF const& line);
 
     /**
      * \brief Finds the projection point.

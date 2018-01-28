@@ -22,8 +22,8 @@
 #include <QImage>
 #include <QRect>
 #include <iostream>
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
 #include <cassert>
 
 namespace imageproc {
@@ -47,7 +47,7 @@ namespace imageproc {
                 image.setColorCount(2);
                 image.setColor(0, 0xffffffff);
                 image.setColor(1, 0xff000000);
-                uint32_t* pword = (uint32_t*) image.bits();
+                auto* pword = (uint32_t*) image.bits();
                 assert(image.bytesPerLine() % 4 == 0);
                 uint32_t* const end = pword + image.height() * (image.bytesPerLine() / 4);
                 for (; pword != end; ++pword) {

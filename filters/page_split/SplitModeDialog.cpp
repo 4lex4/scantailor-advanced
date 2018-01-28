@@ -65,8 +65,7 @@ namespace page_split {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    SplitModeDialog::~SplitModeDialog() {
-    }
+    SplitModeDialog::~SplitModeDialog() = default;
 
     void SplitModeDialog::autoDetectionSelected() {
         layoutTypeLabel->setPixmap(QPixmap(":/icons/layout_type_auto.png"));
@@ -104,14 +103,14 @@ namespace page_split {
         } else if (thisEveryOtherRB->isChecked()) {
             std::set<PageId> tmp;
             m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
+            auto it = tmp.begin();
             for (int i = 0; it != tmp.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);
                 }
             }
         } else if (everyOtherSelectedRB->isChecked()) {
-            std::set<PageId>::iterator it = m_selectedPages.begin();
+            auto it = m_selectedPages.begin();
             for (int i = 0; it != m_selectedPages.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);

@@ -21,7 +21,7 @@
 
 #include "NonCopyable.h"
 #include <stdexcept>
-#include <stddef.h>
+#include <cstddef>
 
 template<typename T>
 class StaticPoolBase {

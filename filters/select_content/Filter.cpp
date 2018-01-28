@@ -27,9 +27,12 @@
 #include "OrderByHeightProvider.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include "CommandLine.h"
+#include <filters/page_layout/Task.h>
+#include <filters/page_layout/CacheDrivenTask.h>
 
 namespace select_content {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -46,13 +49,12 @@ namespace select_content {
         ProviderPtr const default_order;
         ProviderPtr const order_by_width(new OrderByWidthProvider(m_ptrSettings));
         ProviderPtr const order_by_height(new OrderByHeightProvider(m_ptrSettings));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Natural order"), default_order));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Order by increasing width"), order_by_width));
-        m_pageOrderOptions.push_back(PageOrderOption(tr("Order by increasing height"), order_by_height));
+        m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+        m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
+        m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return tr("Select Content");
@@ -109,7 +111,7 @@ namespace select_content {
     void
     Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const {
         std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
-        if (!params.get()) {
+        if (!params) {
             return;
         }
 
@@ -173,20 +175,20 @@ namespace select_content {
     }      // Filter::loadSettings
 
     intrusive_ptr<Task>
-    Filter::createTask(PageId const& page_id, intrusive_ptr<page_layout::Task> const& next_task, bool batch,
+    Filter::createTask(PageId const& page_id, intrusive_ptr<page_layout::Task> next_task, bool batch,
                        bool debug) {
         return intrusive_ptr<Task>(
                 new Task(
-                        intrusive_ptr<Filter>(this), next_task,
+                        intrusive_ptr<Filter>(this), std::move(next_task),
                         m_ptrSettings, page_id, batch, debug
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+                new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
     }
 
@@ -209,5 +211,13 @@ namespace select_content {
                        selectContentParams.isPageDetectEnabled(),
                        selectContentParams.isFineTuneCorners())
         );
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
+    }
+
+    void Filter::updateStatistics() {
+        m_ptrSettings->updateDeviation();
     }
 }  // namespace select_content

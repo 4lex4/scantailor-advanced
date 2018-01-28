@@ -24,8 +24,8 @@ NonOwningWidget::NonOwningWidget(QWidget* parent)
 
 NonOwningWidget::~NonOwningWidget() {
     for (QObject* child : children()) {
-        if (QWidget* widget = dynamic_cast<QWidget*>(child)) {
-            widget->setParent(0);
+        if (auto* widget = dynamic_cast<QWidget*>(child)) {
+            widget->setParent(nullptr);
         }
     }
 }

@@ -22,8 +22,8 @@ std::set<PageId>
 PageRange::selectEveryOther(PageId const& base) const {
     std::set<PageId> selection;
 
-    std::vector<PageId>::const_iterator it(pages.begin());
-    std::vector<PageId>::const_iterator const end(pages.end());
+    auto it(pages.begin());
+    auto const end(pages.end());
     for (; it != end && *it != base; ++it) {
         // Continue until we have a match.
     }
@@ -31,7 +31,7 @@ PageRange::selectEveryOther(PageId const& base) const {
         return selection;
     }
 
-    int const base_idx = it - pages.begin();
+    int const base_idx = static_cast<const int>(it - pages.begin());
     int idx = 0;
     for (PageId const& page_id : pages) {
         if (((idx - base_idx) & 1) == 0) {

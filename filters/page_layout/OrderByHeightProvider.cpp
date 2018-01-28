@@ -17,11 +17,13 @@
  */
 
 #include "OrderByHeightProvider.h"
+
+#include <utility>
 #include "Params.h"
 
 namespace page_layout {
-    OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> const& settings)
-            : m_ptrSettings(settings) {
+    OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> settings)
+            : m_ptrSettings(std::move(settings)) {
     }
 
     bool OrderByHeightProvider::precedes(PageId const& lhs_page,
@@ -32,7 +34,7 @@ namespace page_layout {
         std::unique_ptr<Params> const rhs_params(m_ptrSettings->getPageParams(rhs_page));
 
         QSizeF lhs_size;
-        if (lhs_params.get()) {
+        if (lhs_params) {
             Margins const margins(lhs_params->hardMarginsMM());
             lhs_size = lhs_params->contentSizeMM();
             lhs_size += QSizeF(
@@ -40,7 +42,7 @@ namespace page_layout {
             );
         }
         QSizeF rhs_size;
-        if (rhs_params.get()) {
+        if (rhs_params) {
             Margins const margins(rhs_params->hardMarginsMM());
             rhs_size = rhs_params->contentSizeMM();
             rhs_size += QSizeF(

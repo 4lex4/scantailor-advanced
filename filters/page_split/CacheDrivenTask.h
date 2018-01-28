@@ -40,10 +40,11 @@ namespace page_split {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<Settings> const& settings, intrusive_ptr<ProjectPages> projectPages,
-                        intrusive_ptr<deskew::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> settings,
+                        intrusive_ptr<ProjectPages> projectPages,
+                        intrusive_ptr<deskew::CacheDrivenTask> next_task);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
         void
         process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);

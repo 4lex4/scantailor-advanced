@@ -29,7 +29,7 @@ PageId::PageId(ImageId const& image_id, SubPage subpage)
 }
 
 QString PageId::subPageToString(SubPage const sub_page) {
-    char const* str = 0;
+    char const* str = nullptr;
 
     switch (sub_page) {
         case SINGLE_PAGE:

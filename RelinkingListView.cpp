@@ -23,12 +23,12 @@
 
 class RelinkingListView::Delegate : public QStyledItemDelegate {
 public:
-    Delegate(RelinkingListView* owner)
+    explicit Delegate(RelinkingListView* owner)
             : QStyledItemDelegate(owner),
               m_pOwner(owner) {
     }
 
-    virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const {
+    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override {
         m_pOwner->maybeDrawStatusLayer(painter, index, option.rect);
         QStyledItemDelegate::paint(painter, option, index);
     }
@@ -163,7 +163,7 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
 
 void RelinkingListView::GroupAggregator::process(QRect const& rect, int status) {
     if (m_groups.empty() || (m_groups.back().status != status)) {
-        m_groups.push_back(IndicationGroup(rect, status));
+        m_groups.emplace_back(rect, status);
     } else {
         m_groups.back().rect |= rect;
     }

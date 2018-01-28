@@ -28,8 +28,7 @@ public:
     SplineVertex::Ptr prev;
     SplineVertex::Ptr next;
 
-    SplineSegment() {
-    }
+    SplineSegment() = default;
 
     SplineSegment(SplineVertex::Ptr const& prev, SplineVertex::Ptr const& next);
 

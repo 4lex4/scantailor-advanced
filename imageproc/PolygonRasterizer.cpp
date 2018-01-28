@@ -132,7 +132,7 @@ namespace imageproc {
 
     class PolygonRasterizer::Rasterizer {
     public:
-        Rasterizer(QRect const& image_rect, QPolygonF const& poly, Qt::FillRule const fill_rule, bool invert);
+        Rasterizer(QRect const& image_rect, QPolygonF const& poly, Qt::FillRule fill_rule, bool invert);
 
         void fillBinary(BinaryImage& image, BWColor color) const;
 
@@ -154,7 +154,7 @@ namespace imageproc {
         static void windingLineGrayscale(EdgeComponent const* edges,
                                          int num_edges,
                                          uint8_t* line,
-                                         uint8_t pattern,
+                                         uint8_t color,
                                          bool invert);
 
         static void fillBinarySegment(int x_from, int x_to, uint32_t* line, uint32_t pattern);
@@ -296,7 +296,7 @@ namespace imageproc {
             QPointF const from(m_fillPoly[i]);
             QPointF const to(m_fillPoly[i + 1]);
             if (from.y() != to.y()) {
-                m_edges.push_back(Edge(from, to));
+                m_edges.emplace_back(from, to);
             }
         }
 
@@ -306,8 +306,8 @@ namespace imageproc {
             // Add left and right edges with neutral direction (0),
             // to avoid confusing a winding fill.
             QRectF const rect(m_imageRect);
-            m_edges.push_back(Edge(rect.topLeft(), rect.bottomLeft(), 0));
-            m_edges.push_back(Edge(rect.topRight(), rect.bottomRight(), 0));
+            m_edges.emplace_back(rect.topLeft(), rect.bottomLeft(), 0);
+            m_edges.emplace_back(rect.topRight(), rect.bottomRight(), 0);
         }
 
         // Create an ordered list of y coordinates of polygon vertexes.
@@ -329,18 +329,17 @@ namespace imageproc {
         // Break edges into non-overlaping components, then sort them.
         m_edgeComponents.reserve(m_edges.size());
         for (Edge const& edge : m_edges) {
-            std::vector<double>::iterator it(
+            auto it(
                     std::lower_bound(y_values.begin(), y_values.end(), edge.topY())
             );
 
             assert(*it == edge.topY());
 
             do {
-                std::vector<double>::iterator next(it);
+                auto next(it);
                 ++next;
                 assert(next != y_values.end());
-                m_edgeComponents.push_back(
-                        EdgeComponent(&edge, *it, *next)
+                m_edgeComponents.emplace_back(&edge, *it, *next
                 );
                 it = next;
             } while (*it != edge.bottomY());
@@ -393,12 +392,12 @@ namespace imageproc {
 
             if (m_fillRule == Qt::OddEvenFill) {
                 oddEvenLineBinary(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, pattern
                 );
             } else {
                 windingLineBinary(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, pattern, m_invert
                 );
             }
@@ -448,12 +447,12 @@ namespace imageproc {
 
             if (m_fillRule == Qt::OddEvenFill) {
                 oddEvenLineGrayscale(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, color
                 );
             } else {
                 windingLineGrayscale(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, color, m_invert
                 );
             }

@@ -20,7 +20,7 @@
 #define VEC_NT_H_
 
 #include <QPointF>
-#include <stddef.h>
+#include <cstddef>
 
 template<size_t N, typename T>
 class VecNT;
@@ -39,7 +39,7 @@ class VecNT {
 public:
     typedef T type;
     enum {
-        SIZE = N
+        SIZE = static_cast<int>(N)
     };
 
     /**
@@ -53,7 +53,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    explicit VecNT(OT const* data);
+    VecNT(OT const* data);
 
     /**
      * \brief Construction from a vector of same dimension but another type.

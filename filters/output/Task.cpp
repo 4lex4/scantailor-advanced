@@ -46,6 +46,7 @@
 #include "imageproc/PolygonUtils.h"
 #include <boost/bind.hpp>
 #include <QDir>
+#include <utility>
 #include <UnitsProvider.h>
 
 using namespace imageproc;
@@ -55,12 +56,12 @@ namespace output {
     class Task::UiUpdater : public FilterResult {
     Q_DECLARE_TR_FUNCTIONS(output::Task::UiUpdater)
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
-                  intrusive_ptr<Settings> const& settings,
+        UiUpdater(intrusive_ptr<Filter> filter,
+                  intrusive_ptr<Settings> settings,
                   std::unique_ptr<DebugImages> dbg_img,
                   Params const& params,
                   ImageTransformation const& xform,
-                  QTransform postTransform,
+                  QTransform const& postTransform,
                   QRect const& virt_content_rect,
                   PageId const& page_id,
                   QImage const& orig_image,
@@ -71,9 +72,9 @@ namespace output {
                   bool batch,
                   bool debug);
 
-        virtual void updateUI(FilterUiInterface* ui);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -93,35 +94,33 @@ namespace output {
         BinaryImage m_pictureMask;
         DespeckleState m_despeckleState;
         DespeckleVisualization m_despeckleVisualization;
-        DespeckleLevel m_despeckleLevel;
         bool m_batchProcessing;
         bool m_debug;
     };
 
 
-    Task::Task(intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<Settings> const& settings,
-               intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Task::Task(intrusive_ptr<Filter> filter,
+               intrusive_ptr<Settings> settings,
+               intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                PageId const& page_id,
                OutputFileNameGenerator const& out_file_name_gen,
                ImageViewTab const last_tab,
                bool const batch,
                bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrThumbnailCache(thumbnail_cache),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrSettings(std::move(settings)),
+              m_ptrThumbnailCache(std::move(thumbnail_cache)),
               m_pageId(page_id),
               m_outFileNameGen(out_file_name_gen),
               m_lastTab(last_tab),
               m_batchProcessing(batch),
               m_debug(debug) {
         if (debug) {
-            m_ptrDbg.reset(new DebugImages);
+            m_ptrDbg = std::make_unique<DebugImages>();
         }
     }
 
-    Task::~Task() {
-    }
+    Task::~Task() = default;
 
     FilterResultPtr
     Task::process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys) {
@@ -215,7 +214,7 @@ namespace output {
                     m_ptrSettings->getOutputParams(m_pageId)
             );
 
-            if (!stored_output_params.get()) {
+            if (!stored_output_params) {
                 need_reprocess = true;
                 break;
             }
@@ -370,7 +369,7 @@ namespace output {
             // OutputGenerator will write a new distortion model
             // there, if dewarping mode is AUTO.
             DistortionModel distortion_model;
-            if (params.dewarpingOptions().mode() == DewarpingOptions::MANUAL) {
+            if (params.dewarpingOptions().dewarpingMode() == MANUAL) {
                 distortion_model = params.distortionModel();
             }
 
@@ -386,8 +385,8 @@ namespace output {
                     &splitImage
             );
 
-            if (((params.dewarpingOptions().mode() == DewarpingOptions::AUTO) && distortion_model.isValid())
-                || ((params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL) && distortion_model.isValid())
+            if (((params.dewarpingOptions().dewarpingMode() == AUTO) && distortion_model.isValid())
+                || ((params.dewarpingOptions().dewarpingMode() == MARGINAL) && distortion_model.isValid())
                     ) {
                 // A new distortion model was generated.
                 // We need to save it to be able to modify it manually.
@@ -505,7 +504,7 @@ namespace output {
                     )
             );
         } else {
-            return FilterResultPtr(nullptr);
+            return nullptr;
         }
     }  // Task::process
 
@@ -539,12 +538,12 @@ namespace output {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
-                               intrusive_ptr<Settings> const& settings,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+                               intrusive_ptr<Settings> settings,
                                std::unique_ptr<DebugImages> dbg_img,
                                Params const& params,
                                ImageTransformation const& xform,
-                               QTransform postTransform,
+                               QTransform const& postTransform,
                                QRect const& virt_content_rect,
                                PageId const& page_id,
                                QImage const& orig_image,
@@ -554,8 +553,8 @@ namespace output {
                                DespeckleVisualization const& despeckle_visualization,
                                bool const batch,
                                bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrSettings(std::move(settings)),
               m_ptrDbg(std::move(dbg_img)),
               m_params(params),
               m_xform(xform),
@@ -575,7 +574,7 @@ namespace output {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_outputImage)));
+        UnitsProvider::getInstance()->setDpi(Dpm(m_outputImage));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
@@ -619,16 +618,16 @@ namespace output {
 
         std::unique_ptr<QWidget> picture_zone_editor;
         if (m_pictureMask.isNull()) {
-            picture_zone_editor.reset(
-                    new ErrorWidget(tr("Picture zones are only available in Mixed mode."))
+            picture_zone_editor = std::make_unique<ErrorWidget>(
+                    tr("Picture zones are only available in Mixed mode.")
             );
         } else {
-            picture_zone_editor.reset(
-                    new PictureZoneEditor(
-                            m_origImage, downscaled_orig_pixmap, m_pictureMask,
-                            m_xform.transform(), m_xform.resultingPreCropArea(),
-                            m_pageId, m_ptrSettings
-                    )
+            picture_zone_editor = std::make_unique<output::PictureZoneEditor>(
+
+                    m_origImage, downscaled_orig_pixmap, m_pictureMask,
+                    m_xform.transform(), m_xform.resultingPreCropArea(),
+                    m_pageId, m_ptrSettings
+
             );
             QObject::connect(
                     picture_zone_editor.get(), SIGNAL(invalidateThumbnail(PageId const &)),
@@ -645,7 +644,7 @@ namespace output {
         // anyway when another tab is selected.
         boost::function<QPointF(QPointF const&)> orig_to_output;
         boost::function<QPointF(QPointF const&)> output_to_orig;
-        if ((m_params.dewarpingOptions().mode() != DewarpingOptions::OFF) && m_params.distortionModel().isValid()) {
+        if ((m_params.dewarpingOptions().dewarpingMode() != OFF) && m_params.distortionModel().isValid()) {
             std::shared_ptr<DewarpingPointMapper> mapper(
                     new DewarpingPointMapper(
                             m_params.distortionModel(), m_params.depthPerception().value(),
@@ -673,15 +672,15 @@ namespace output {
         tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
 
         std::unique_ptr<QWidget> despeckle_view;
-        if (m_params.colorParams().colorMode() == ColorParams::COLOR_GRAYSCALE) {
-            despeckle_view.reset(
-                    new ErrorWidget(tr("Despeckling can't be done in Color / Grayscale mode."))
+        if (m_params.colorParams().colorMode() == COLOR_GRAYSCALE) {
+            despeckle_view = std::make_unique<ErrorWidget>(
+                    tr("Despeckling can't be done in Color / Grayscale mode.")
             );
         } else {
-            despeckle_view.reset(
-                    new DespeckleView(
-                            m_despeckleState, m_despeckleVisualization, m_debug
-                    )
+            despeckle_view = std::make_unique<output::DespeckleView>(
+
+                    m_despeckleState, m_despeckleVisualization, m_debug
+
             );
             QObject::connect(
                     opt_widget, SIGNAL(despeckleLevelChanged(DespeckleLevel, bool * )),

@@ -17,6 +17,8 @@
  */
 
 #include <UnitsProvider.h>
+
+#include <utility>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -41,7 +43,7 @@ namespace deskew {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
+        UiUpdater(intrusive_ptr<Filter> filter,
                   std::unique_ptr<DebugImages> dbg_img,
                   QImage const& image,
                   PageId const& page_id,
@@ -49,9 +51,9 @@ namespace deskew {
                   OptionsWidget::UiData const& ui_data,
                   bool batch_processing);
 
-        virtual void updateUI(FilterUiInterface* ui);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -67,24 +69,23 @@ namespace deskew {
     };
 
 
-    Task::Task(intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<Settings> const& settings,
-               intrusive_ptr<select_content::Task> const& next_task,
+    Task::Task(intrusive_ptr<Filter> filter,
+               intrusive_ptr<Settings> settings,
+               intrusive_ptr<select_content::Task> next_task,
                PageId const& page_id,
                bool const batch_processing,
                bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrNextTask(next_task),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrSettings(std::move(settings)),
+              m_ptrNextTask(std::move(next_task)),
               m_pageId(page_id),
               m_batchProcessing(batch_processing) {
         if (debug) {
-            m_ptrDbg.reset(new DebugImages);
+            m_ptrDbg = std::make_unique<DebugImages>();
         }
     }
 
-    Task::~Task() {
-    }
+    Task::~Task() = default;
 
     FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
         status.throwIfCancelled();
@@ -132,7 +133,7 @@ namespace deskew {
                                 data.xform().preRotation().toDegrees()
                         )
                 );
-                if (m_ptrDbg.get()) {
+                if (m_ptrDbg) {
                     m_ptrDbg->add(rotated_image, "bw_rotated");
                 }
 
@@ -141,7 +142,7 @@ namespace deskew {
                         data.xform().preRotation().rotate(unrotated_dpm)
                 );
                 cleanup(status, rotated_image, Dpi(rotated_dpm));
-                if (m_ptrDbg.get()) {
+                if (m_ptrDbg) {
                     m_ptrDbg->add(rotated_image, "after_cleanup");
                 }
 
@@ -243,14 +244,14 @@ namespace deskew {
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                                std::unique_ptr<DebugImages> dbg_img,
                                QImage const& image,
                                PageId const& page_id,
                                ImageTransformation const& xform,
                                OptionsWidget::UiData const& ui_data,
                                bool const batch_processing)
-            : m_ptrFilter(filter),
+            : m_ptrFilter(std::move(filter)),
               m_ptrDbg(std::move(dbg_img)),
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),
@@ -262,7 +263,7 @@ namespace deskew {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
+        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
@@ -274,7 +275,7 @@ namespace deskew {
             return;
         }
 
-        ImageView* view = new ImageView(m_image, m_downscaledImage, m_xform);
+        auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(

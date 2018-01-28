@@ -29,7 +29,7 @@ class QAbstractButton;
 class RelinkablePathVisualization : public QWidget {
 Q_OBJECT
 public:
-    RelinkablePathVisualization(QWidget* parent = 0);
+    explicit RelinkablePathVisualization(QWidget* parent = nullptr);
 
     void clear();
 
@@ -41,7 +41,7 @@ signals:
     void clicked(QString const& prefix_path, QString const& suffix_path, int type);
 
 protected:
-    virtual void paintEvent(QPaintEvent* evt);
+    void paintEvent(QPaintEvent* evt) override;
 
 private:
     struct PathComponent;

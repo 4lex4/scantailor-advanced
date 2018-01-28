@@ -38,7 +38,7 @@ namespace output {
         return el;
     }
 
-    ColorParams::ColorMode ColorParams::parseColorMode(QString const& str) {
+    ColorMode ColorParams::parseColorMode(QString const& str) {
         if (str == "bw") {
             return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
@@ -50,7 +50,7 @@ namespace output {
         }
     }
 
-    QString ColorParams::formatColorMode(ColorParams::ColorMode const mode) {
+    QString ColorParams::formatColorMode(ColorMode const mode) {
         char const* str = "";
         switch (mode) {
             case BLACK_AND_WHITE:
@@ -65,5 +65,29 @@ namespace output {
         }
 
         return QString::fromLatin1(str);
+    }
+
+    ColorMode ColorParams::colorMode() const {
+        return m_colorMode;
+    }
+
+    void ColorParams::setColorMode(ColorMode mode) {
+        m_colorMode = mode;
+    }
+
+    ColorCommonOptions const& ColorParams::colorCommonOptions() const {
+        return m_colorCommonOptions;
+    }
+
+    void ColorParams::setColorCommonOptions(ColorCommonOptions const& opt) {
+        m_colorCommonOptions = opt;
+    }
+
+    BlackWhiteOptions const& ColorParams::blackWhiteOptions() const {
+        return m_bwOptions;
+    }
+
+    void ColorParams::setBlackWhiteOptions(BlackWhiteOptions const& opt) {
+        m_bwOptions = opt;
     }
 }  // namespace output

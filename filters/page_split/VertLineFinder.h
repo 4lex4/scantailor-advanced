@@ -48,17 +48,11 @@ namespace page_split {
         public:
             QualityLine(QPointF const& top, QPointF const& bottom, unsigned quality);
 
-            QPointF const& left() const {
-                return m_left;
-            }
+            QPointF const& left() const;
 
-            QPointF const& right() const {
-                return m_right;
-            }
+            QPointF const& right() const;
 
-            unsigned quality() const {
-                return m_quality;
-            }
+            unsigned quality() const;
 
             QLineF toQLine() const;
 
@@ -71,7 +65,7 @@ namespace page_split {
 
         class LineGroup {
         public:
-            LineGroup(QualityLine const& line);
+            explicit LineGroup(QualityLine const& line);
 
             bool belongsHere(QualityLine const& line) const;
 
@@ -79,9 +73,7 @@ namespace page_split {
 
             void merge(LineGroup const& other);
 
-            QualityLine const& leader() const {
-                return m_leader;
-            }
+            QualityLine const& leader() const;
 
         private:
             QualityLine m_leader;

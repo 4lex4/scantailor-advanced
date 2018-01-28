@@ -20,6 +20,7 @@
 #define intrusive_ptr_H_
 
 #include <cstddef>
+#include <utility>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -27,50 +28,57 @@
 
 template<typename T>
 class intrusive_ptr {
-private:
-    struct BooleanTestHelper {
-        int dataMember;
-    };
-
-    typedef int BooleanTestHelper::* BooleanTest;
-
 public:
     class hash;
 
 public:
-    intrusive_ptr()
+    constexpr intrusive_ptr() noexcept
             : m_pObj(nullptr) {
     }
 
-    explicit intrusive_ptr(T* obj);
+    constexpr intrusive_ptr(std::nullptr_t) noexcept
+            : intrusive_ptr() {
+    }
 
-    intrusive_ptr(intrusive_ptr const& other);
+    explicit intrusive_ptr(T* obj) noexcept;
 
-    template<typename OT>
-    intrusive_ptr(intrusive_ptr<OT> const& other);
-
-    ~intrusive_ptr();
-
-    intrusive_ptr& operator=(intrusive_ptr const& rhs);
+    intrusive_ptr(intrusive_ptr const& other) noexcept;
 
     template<typename OT>
-    intrusive_ptr& operator=(intrusive_ptr<OT> const& rhs);
+    intrusive_ptr(intrusive_ptr<OT> const& other) noexcept;
+
+    intrusive_ptr(intrusive_ptr&& other) noexcept;
+
+    template<typename OT>
+    explicit intrusive_ptr(intrusive_ptr<OT>&& other) noexcept;
+
+    ~intrusive_ptr() noexcept;
+
+    intrusive_ptr& operator=(intrusive_ptr const& rhs) noexcept;
+
+    template<typename OT>
+    intrusive_ptr& operator=(intrusive_ptr<OT> const& rhs) noexcept;
+
+    intrusive_ptr& operator=(intrusive_ptr&& rhs) noexcept;
+
+    template<typename OT>
+    intrusive_ptr& operator=(intrusive_ptr<OT>&& rhs) noexcept;
 
     T& operator*() const {
         return *m_pObj;
     }
 
-    T* operator->() const {
+    T* operator->() const noexcept {
         return m_pObj;
     }
 
-    T* get() const {
+    T* get() const noexcept {
         return m_pObj;
     }
 
-    void reset(T* obj = 0);
+    void reset(T* obj = nullptr) noexcept;
 
-    void swap(intrusive_ptr& other);
+    void swap(intrusive_ptr& other) noexcept;
 
     /**
      * Used for boolean tests, like:
@@ -83,14 +91,8 @@ public:
      *   ...
      * }
      * \endcode
-     * This implementation insures that the following expressions fail to compile:
-     * \code
-     * intrusive_ptr<T> ptr = ...;
-     * int i = ptr;
-     * delete ptr;
-     * \endcode
      */
-    inline operator BooleanTest() const;
+    explicit operator bool() const noexcept;
 
 private:
     T* m_pObj;
@@ -118,7 +120,7 @@ inline void intrusive_unref(T& obj) {
 
 template<typename T>
 inline
-intrusive_ptr<T>::intrusive_ptr(T* obj)
+intrusive_ptr<T>::intrusive_ptr(T* obj) noexcept
         : m_pObj(obj) {
     if (obj) {
         intrusive_ref(*obj);
@@ -127,7 +129,7 @@ intrusive_ptr<T>::intrusive_ptr(T* obj)
 
 template<typename T>
 inline
-intrusive_ptr<T>::intrusive_ptr(intrusive_ptr const& other)
+intrusive_ptr<T>::intrusive_ptr(intrusive_ptr const& other) noexcept
         : m_pObj(other.m_pObj) {
     if (m_pObj) {
         intrusive_ref(*m_pObj);
@@ -137,7 +139,7 @@ intrusive_ptr<T>::intrusive_ptr(intrusive_ptr const& other)
 template<typename T>
 template<typename OT>
 inline
-intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT> const& other)
+intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT> const& other) noexcept
         : m_pObj(other.get()) {
     if (m_pObj) {
         intrusive_ref(*m_pObj);
@@ -146,14 +148,29 @@ intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT> const& other)
 
 template<typename T>
 inline
-intrusive_ptr<T>::~intrusive_ptr() {
+intrusive_ptr<T>::intrusive_ptr(intrusive_ptr&& other) noexcept
+        : m_pObj(other.m_pObj) {
+    other.m_pObj = nullptr;
+}
+
+template<typename T>
+template<typename OT>
+inline
+intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT>&& other) noexcept
+        : m_pObj(other.get()) {
+    other.reset();
+}
+
+template<typename T>
+inline
+intrusive_ptr<T>::~intrusive_ptr() noexcept {
     if (m_pObj) {
         intrusive_unref(*m_pObj);
     }
 }
 
 template<typename T>
-inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr const& rhs) {
+inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr const& rhs) noexcept {
     intrusive_ptr(rhs).swap(*this);
 
     return *this;
@@ -161,19 +178,40 @@ inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr const& rhs) {
 
 template<typename T>
 template<typename OT>
-inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr<OT> const& rhs) {
+inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr<OT> const& rhs) noexcept {
     intrusive_ptr(rhs).swap(*this);
 
     return *this;
 }
 
 template<typename T>
-inline void intrusive_ptr<T>::reset(T* obj) {
+inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr&& rhs) noexcept {
+    if (m_pObj != rhs.m_pObj) {
+        m_pObj = rhs.m_pObj;
+        rhs.m_pObj = nullptr;
+    }
+
+    return *this;
+}
+
+template<typename T>
+template<typename OT>
+inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr<OT>&& rhs) noexcept {
+    if (m_pObj != rhs.get()) {
+        m_pObj = rhs.get();
+        rhs.reset();
+    }
+
+    return *this;
+}
+
+template<typename T>
+inline void intrusive_ptr<T>::reset(T* obj) noexcept {
     intrusive_ptr(obj).swap(*this);
 }
 
 template<typename T>
-inline void intrusive_ptr<T>::swap(intrusive_ptr& other) {
+inline void intrusive_ptr<T>::swap(intrusive_ptr& other) noexcept {
     T* obj = other.m_pObj;
     other.m_pObj = m_pObj;
     m_pObj = obj;
@@ -185,14 +223,30 @@ inline void swap(intrusive_ptr<T>& o1, intrusive_ptr<T>& o2) {
 }
 
 template<typename T>
-intrusive_ptr<T>::operator BooleanTest() const {
-    return m_pObj ? &BooleanTestHelper::dataMember : 0;
+inline
+intrusive_ptr<T>::operator bool() const noexcept {
+    return (m_pObj != nullptr);
 }
 
 #define INTRUSIVE_PTR_OP(op) \
     template <typename T> \
     inline bool operator op(intrusive_ptr<T> const& lhs, intrusive_ptr<T> const& rhs) { \
-        return lhs.get() op rhs.get(); \
+        return (lhs.get() op rhs.get()); \
+    } \
+    \
+    template <typename T, typename OT> \
+    inline bool operator op(intrusive_ptr<T> const& lhs, intrusive_ptr<OT> const& rhs) { \
+        return (lhs.get() op rhs.get()); \
+    } \
+    \
+    template <typename T> \
+    inline bool operator op(std::nullptr_t, intrusive_ptr<T> const& rhs) { \
+        return (nullptr op rhs.get()); \
+    } \
+    \
+    template <typename T> \
+    inline bool operator op(intrusive_ptr<T> const& lhs, std::nullptr_t) { \
+        return (lhs.get() op nullptr); \
     }
 
 INTRUSIVE_PTR_OP(==)

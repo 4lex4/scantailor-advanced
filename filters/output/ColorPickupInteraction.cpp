@@ -115,7 +115,7 @@ namespace output {
             return;
         }
 
-        std::vector<uint32_t>::iterator half_pos(bitmixed_colors.begin() + bitmixed_colors.size() / 2);
+        auto half_pos(bitmixed_colors.begin() + bitmixed_colors.size() / 2);
         std::nth_element(bitmixed_colors.begin(), half_pos, bitmixed_colors.end());
         QColor const color(bitUnmixColor(*half_pos));
 

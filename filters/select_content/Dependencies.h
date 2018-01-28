@@ -37,15 +37,13 @@ namespace select_content {
 
         Dependencies();
 
-        Dependencies(QPolygonF const& rotated_page_outline);
+        explicit Dependencies(QPolygonF const& rotated_page_outline);
 
-        Dependencies(QDomElement const& deps_el);
+        explicit Dependencies(QDomElement const& deps_el);
 
         ~Dependencies();
 
-        QPolygonF const& rotatedPageOutline() const {
-            return m_rotatedPageOutline;
-        }
+        QPolygonF const& rotatedPageOutline() const;
 
         bool matches(Dependencies const& other) const;
 

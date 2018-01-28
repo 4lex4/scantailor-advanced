@@ -24,14 +24,14 @@
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
-void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> const& loader) {
-    m_sLoaders.push_back(loader);
+void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> loader) {
+    m_sLoaders.push_back(std::move(loader));
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
                                                           VirtualFunction1<void, ImageMetadata const&>& out) {
-    LoaderList::iterator it(m_sLoaders.begin());
-    LoaderList::iterator const end(m_sLoaders.end());
+    auto it(m_sLoaders.begin());
+    auto const end(m_sLoaders.end());
     for (; it != end; ++it) {
         Status const status = (*it)->loadMetadata(io_device, out);
         if (status != FORMAT_NOT_RECOGNIZED) {

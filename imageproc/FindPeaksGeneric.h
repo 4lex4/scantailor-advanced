@@ -30,7 +30,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
     namespace detail {

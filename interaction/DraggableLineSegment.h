@@ -42,13 +42,13 @@ public:
         m_proximityPriority = priority;
     }
 
-    virtual int proximityPriority() const;
+    int proximityPriority() const override;
 
-    virtual Proximity proximity(QPointF const& mouse_pos);
+    Proximity proximity(QPointF const& mouse_pos) override;
 
-    virtual void dragInitiated(QPointF const& mouse_pos);
+    void dragInitiated(QPointF const& mouse_pos) override;
 
-    virtual void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask);
+    void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) override;
 
     void setPositionCallback(PositionCallback const& callback) {
         m_positionCallback = callback;

@@ -132,10 +132,10 @@ namespace output {
         int const hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
         int const ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
 
-        int hor_value = (int) round(
+        auto hor_value = (int) round(
                 ((focal.x() - rect.left()) / rect.width()) * hor_bar_length - (hor_bar.pageStep() / 2.0)
         );
-        int ver_value = (int) round(
+        auto ver_value = (int) round(
                 ((focal.y() - rect.top()) / rect.height()) * ver_bar_length - (ver_bar.pageStep() / 2.0)
         );
 
@@ -155,7 +155,7 @@ namespace output {
             return resource;
         } else {
             for (QObject* child : parent->children()) {
-                if (resource = findImageViewBase(dynamic_cast<QWidget*>(child))) {
+                if ((resource = findImageViewBase(dynamic_cast<QWidget*>(child)))) {
                     return resource;
                 }
             }
@@ -190,6 +190,8 @@ namespace output {
             case Qt::Key_5:
                 setCurrentIndex(4);
                 event->accept();
+                break;
+            default:
                 break;
         }
     }

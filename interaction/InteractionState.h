@@ -39,20 +39,19 @@ public:
         struct CopyHelper {
             Captor* captor;
 
-            CopyHelper(Captor* cap)
+            explicit CopyHelper(Captor* cap)
                     : captor(cap) {
             }
         };
 
     public:
-        Captor() {
-        }
+        Captor() = default;
 
         Captor(Captor& other) {
             swap_nodes(other);
         }
 
-        Captor(CopyHelper other) {
+        explicit Captor(CopyHelper other) {
             swap_nodes(*other.captor);
         }
 
@@ -60,7 +59,7 @@ public:
 
         Captor& operator=(CopyHelper other);
 
-        operator CopyHelper() {
+        explicit operator CopyHelper() {
             return CopyHelper(this);
         }
 

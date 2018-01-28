@@ -24,7 +24,7 @@
 template<typename T>
 class PayloadEvent : public QEvent {
 public:
-    PayloadEvent(T const& payload)
+    explicit PayloadEvent(T const& payload)
             : QEvent(User),
               m_payload(payload) {
     }

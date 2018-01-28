@@ -36,9 +36,9 @@ class QItemSelection;
 class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
 Q_OBJECT
 public:
-    FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = 0);
+    explicit FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = nullptr);
 
-    virtual ~FixDpiDialog();
+    ~FixDpiDialog() override;
 
     std::vector<ImageFileInfo> const& files() const;
 

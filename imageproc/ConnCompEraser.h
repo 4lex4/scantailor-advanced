@@ -24,7 +24,7 @@
 #include "ConnComp.h"
 #include "BinaryImage.h"
 #include <stack>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
     class ConnComp;

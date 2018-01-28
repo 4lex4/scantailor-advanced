@@ -18,7 +18,7 @@ namespace output {
         bool operator==(OutputProcessingParams const& other) const;
 
         bool operator!=(OutputProcessingParams const& other) const;
-        
+
         bool isWhiteOnBlackAutoDetected() const;
 
         void setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected);

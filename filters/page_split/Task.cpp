@@ -17,6 +17,8 @@
  */
 
 #include <UnitsProvider.h>
+
+#include <utility>
 #include "Task.h"
 #include "TaskStatus.h"
 #include "Filter.h"
@@ -37,8 +39,8 @@ namespace page_split {
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
-                  intrusive_ptr<ProjectPages> const& pages,
+        UiUpdater(intrusive_ptr<Filter> filter,
+                  intrusive_ptr<ProjectPages> pages,
                   std::unique_ptr<DebugImages> dbg_img,
                   QImage const& image,
                   PageInfo const& page_info,
@@ -46,9 +48,9 @@ namespace page_split {
                   OptionsWidget::UiData const& ui_data,
                   bool batch_processing);
 
-        virtual void updateUI(FilterUiInterface* ui);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -79,21 +81,21 @@ namespace page_split {
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    Task::Task(intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<Settings> const& settings,
-               intrusive_ptr<ProjectPages> const& pages,
-               intrusive_ptr<deskew::Task> const& next_task,
+    Task::Task(intrusive_ptr<Filter> filter,
+               intrusive_ptr<Settings> settings,
+               intrusive_ptr<ProjectPages> pages,
+               intrusive_ptr<deskew::Task> next_task,
                PageInfo const& page_info,
                bool const batch_processing,
                bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrSettings(settings),
-              m_ptrPages(pages),
-              m_ptrNextTask(next_task),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrSettings(std::move(settings)),
+              m_ptrPages(std::move(pages)),
+              m_ptrNextTask(std::move(next_task)),
               m_pageInfo(page_info),
               m_batchProcessing(batch_processing) {
         if (debug) {
-            m_ptrDbg.reset(new DebugImages);
+            m_ptrDbg = std::make_unique<DebugImages>();
         }
     }
 
@@ -217,16 +219,16 @@ namespace page_split {
 
 /*============================ Task::UiUpdater =========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
-                               intrusive_ptr<ProjectPages> const& pages,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+                               intrusive_ptr<ProjectPages> pages,
                                std::unique_ptr<DebugImages> dbg_img,
                                QImage const& image,
                                PageInfo const& page_info,
                                ImageTransformation const& xform,
                                OptionsWidget::UiData const& ui_data,
                                bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_ptrPages(pages),
+            : m_ptrFilter(std::move(filter)),
+              m_ptrPages(std::move(pages)),
               m_ptrDbg(std::move(dbg_img)),
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),
@@ -238,7 +240,7 @@ namespace page_split {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpi(Dpm(m_image)));
+        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);

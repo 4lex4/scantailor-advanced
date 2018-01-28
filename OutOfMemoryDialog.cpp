@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <utility>
 
 OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
         : QDialog(parent) {
@@ -39,13 +40,13 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
 }
 
 void OutOfMemoryDialog::setParams(QString const& project_file,
-                                  intrusive_ptr<StageSequence> const& stages,
-                                  intrusive_ptr<ProjectPages> const& pages,
+                                  intrusive_ptr<StageSequence> stages,
+                                  intrusive_ptr<ProjectPages> pages,
                                   SelectedPage const& selected_page,
                                   OutputFileNameGenerator const& out_file_name_gen) {
     m_projectFile = project_file;
-    m_ptrStages = stages;
-    m_ptrPages = pages;
+    m_ptrStages = std::move(stages);
+    m_ptrPages = std::move(pages);
     m_selectedPage = selected_page;
     m_outFileNameGen = out_file_name_gen;
 

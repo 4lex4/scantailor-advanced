@@ -24,14 +24,14 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
+    enum BinarizationMethod {
+        OTSU,
+        SAUVOLA,
+        WOLF
+    };
+
     class BlackWhiteOptions {
     public:
-        enum BinarizationMethod {
-            OTSU,
-            SAUVOLA,
-            WOLF
-        };
-
         BlackWhiteOptions();
 
         explicit BlackWhiteOptions(QDomElement const& el);
@@ -42,21 +42,13 @@ namespace output {
 
         bool operator!=(BlackWhiteOptions const& other) const;
 
-        int thresholdAdjustment() const {
-            return m_thresholdAdjustment;
-        }
+        int thresholdAdjustment() const;
 
-        void setThresholdAdjustment(int val) {
-            m_thresholdAdjustment = val;
-        }
+        void setThresholdAdjustment(int val);
 
-        bool normalizeIllumination() const {
-            return m_normalizeIllumination;
-        }
+        bool normalizeIllumination() const;
 
-        void setNormalizeIllumination(bool val) {
-            m_normalizeIllumination = val;
-        }
+        void setNormalizeIllumination(bool val);
 
         bool isSavitzkyGolaySmoothingEnabled() const;
 
@@ -94,6 +86,7 @@ namespace output {
         static BinarizationMethod parseBinarizationMethod(const QString& str);
 
         static QString formatBinarizationMethod(BinarizationMethod type);
+
 
         int m_thresholdAdjustment;
         bool savitzkyGolaySmoothingEnabled;

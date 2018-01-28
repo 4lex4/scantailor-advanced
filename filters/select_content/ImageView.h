@@ -47,7 +47,7 @@ namespace select_content {
                   QRectF const& page_rect,
                   bool page_rect_enabled);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 

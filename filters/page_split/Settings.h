@@ -44,34 +44,24 @@ namespace page_split {
         public:
             BaseRecord();
 
-            LayoutType const* layoutType() const {
-                return m_layoutTypeValid ? &m_layoutType : nullptr;
-            }
+            LayoutType const* layoutType() const;
 
-            Params const* params() const {
-                return m_paramsValid ? &m_params : nullptr;
-            }
+            Params const* params() const;
 
             /**
              * \brief A record is considered null of it doesn't carry any
              *        information.
              */
-            bool isNull() const {
-                return !(m_paramsValid || m_layoutTypeValid);
-            }
+            bool isNull() const;
 
         protected:
             void setParams(Params const& params);
 
             void setLayoutType(LayoutType layout_type);
 
-            void clearParams() {
-                m_paramsValid = false;
-            }
+            void clearParams();
 
-            void clearLayoutType() {
-                m_layoutTypeValid = false;
-            }
+            void clearLayoutType();
 
             /**
              * \brief Checks if a particular layout type conflicts with PageLayout
@@ -92,7 +82,7 @@ namespace page_split {
         class Record : public BaseRecord {
             // Member-wise copying is OK.
         public:
-            Record(LayoutType default_layout_type);
+            explicit Record(LayoutType default_layout_type);
 
             Record(BaseRecord const& base_record, LayoutType default_layout_type);
 
@@ -110,12 +100,7 @@ namespace page_split {
         class UpdateAction {
             friend class Settings::Record;
         public:
-            UpdateAction()
-                    : m_params(PageLayout(), Dependencies(), MODE_AUTO),
-                      m_layoutType(AUTO_LAYOUT_TYPE),
-                      m_paramsAction(DONT_TOUCH),
-                      m_layoutTypeAction(DONT_TOUCH) {
-            }
+            UpdateAction();
 
             void setLayoutType(LayoutType layout_type);
 
@@ -141,7 +126,7 @@ namespace page_split {
 
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         /**
          * \brief Reset all settings to their initial state.

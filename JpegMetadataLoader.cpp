@@ -22,7 +22,7 @@
 #include "Dpm.h"
 #include <QIODevice>
 #include <QDebug>
-#include <setjmp.h>
+#include <csetjmp>
 #include <cassert>
 
 extern "C" {
@@ -49,7 +49,7 @@ namespace {
         }
 
     private:
-        jpeg_decompress_struct m_info;
+        jpeg_decompress_struct m_info{ };
     };
 
 
@@ -69,7 +69,7 @@ namespace {
     DECLARE_NON_COPYABLE(JpegSourceManager)
 
     public:
-        JpegSourceManager(QIODevice& io_device);
+        explicit JpegSourceManager(QIODevice& io_device);
 
     private:
         static void initSource(j_decompress_ptr cinfo);
@@ -87,12 +87,12 @@ namespace {
         static JpegSourceManager* object(j_decompress_ptr cinfo);
 
         QIODevice& m_rDevice;
-        JOCTET m_buf[4096];
+        JOCTET m_buf[4096]{ };
     };
 
 
     JpegSourceManager::JpegSourceManager(QIODevice& io_device)
-            : m_rDevice(io_device) {
+            : jpeg_source_mgr(), m_rDevice(io_device) {
         init_source = &JpegSourceManager::initSource;
         fill_input_buffer = &JpegSourceManager::fillInputBuffer;
         skip_input_data = &JpegSourceManager::skipInputData;
@@ -167,11 +167,11 @@ namespace {
 
         static JpegErrorManager* object(j_common_ptr cinfo);
 
-        jmp_buf m_jmpBuf;
+        jmp_buf m_jmpBuf{ };
     };
 
 
-    JpegErrorManager::JpegErrorManager() {
+    JpegErrorManager::JpegErrorManager() : jpeg_error_mgr() {
         jpeg_std_error(this);
         error_exit = &JpegErrorManager::errorExit;
     }

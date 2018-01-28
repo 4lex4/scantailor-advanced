@@ -32,7 +32,7 @@ Q_OBJECT
 public:
     Application(int& argc, char** argv);
 
-    virtual bool notify(QObject* receiver, QEvent* e);
+    bool notify(QObject* receiver, QEvent* e) override;
 
     const QString& getCurrentLocale() const;
 

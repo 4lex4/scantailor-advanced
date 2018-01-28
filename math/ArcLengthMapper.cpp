@@ -44,7 +44,7 @@ void ArcLengthMapper::addSample(double x, double fx) {
         arc_len = m_samples.back().arcLen + sqrt(dx * dx + dy * dy);
     }
 
-    m_samples.push_back(Sample(x, arc_len));
+    m_samples.emplace_back(x, arc_len);
     m_prevFX = fx;
 }
 
@@ -81,7 +81,7 @@ double ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const {
         return interpolateArcLenInSegment(arc_len, 0);
     } else if (arc_len > m_samples.back().arcLen) {
         // Beyond the last sample.
-        hint.update(m_samples.size() - 2);
+        hint.update(static_cast<int>(m_samples.size() - 2));
 
         return interpolateArcLenInSegment(arc_len, hint.m_lastSegment);
     }
@@ -101,7 +101,7 @@ double ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const {
     }
     // Do a binary search.
     int left_idx = 0;
-    int right_idx = m_samples.size() - 1;
+    auto right_idx = static_cast<int>(m_samples.size() - 1);
     double left_arc_len = m_samples[left_idx].arcLen;
     while (left_idx + 1 < right_idx) {
         int const mid_idx = (left_idx + right_idx) >> 1;
@@ -136,7 +136,7 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
         return interpolateXInSegment(x, 0);
     } else if (x > m_samples.back().x) {
         // Beyond the last sample.
-        hint.update(m_samples.size() - 2);
+        hint.update(static_cast<int>(m_samples.size() - 2));
 
         return interpolateXInSegment(x, hint.m_lastSegment);
     }
@@ -156,7 +156,7 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     }
     // Do a binary search.
     int left_idx = 0;
-    int right_idx = m_samples.size() - 1;
+    auto right_idx = static_cast<int>(m_samples.size() - 1);
     double left_x = m_samples[left_idx].x;
     while (left_idx + 1 < right_idx) {
         int const mid_idx = (left_idx + right_idx) >> 1;

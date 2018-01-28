@@ -20,7 +20,7 @@
 #define ADIFF_SPARSITY_H_
 
 #include "MatT.h"
-#include <stddef.h>
+#include <cstddef>
 
 namespace adiff {
 /**

@@ -34,7 +34,7 @@ public:
 
     class SegmentIterator {
     public:
-        SegmentIterator(EditableSpline& spline)
+        explicit SegmentIterator(EditableSpline& spline)
                 : m_ptrNextVertex(spline.firstVertex()) {
         }
 

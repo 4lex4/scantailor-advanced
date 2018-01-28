@@ -23,16 +23,17 @@
 #include "BasicImageView.h"
 #include "ProcessingIndicationWidget.h"
 #include <QPointer>
+#include <utility>
 
 class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
 public:
-    ImageLoadResult(QPointer<DebugImageView> const& owner, QImage const& image)
-            : m_ptrOwner(owner),
+    ImageLoadResult(QPointer<DebugImageView> owner, QImage const& image)
+            : m_ptrOwner(std::move(owner)),
               m_image(image) {
     }
 
     // This method is called from the main thread.
-    virtual void operator()() {
+    void operator()() override {
         if (DebugImageView* owner = m_ptrOwner) {
             owner->imageLoaded(m_image);
         }
@@ -51,7 +52,7 @@ public:
               m_filePath(file_path) {
     }
 
-    virtual BackgroundExecutor::TaskResultPtr operator()() {
+    BackgroundExecutor::TaskResultPtr operator()() override {
         QImage image(m_filePath);
 
         return BackgroundExecutor::TaskResultPtr(new ImageLoadResult(m_ptrOwner, image));
@@ -99,7 +100,7 @@ void DebugImageView::imageLoaded(QImage const& image) {
     if (currentWidget() == m_pPlaceholderWidget) {
         std::unique_ptr<QWidget> image_view;
         if (m_imageViewFactory.empty()) {
-            image_view.reset(new BasicImageView(image));
+            image_view = std::make_unique<BasicImageView>(image);
         } else {
             image_view.reset(m_imageViewFactory(image));
         }

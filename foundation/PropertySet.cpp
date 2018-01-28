@@ -34,7 +34,7 @@ PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory) 
 
         QDomElement prop_el(node.toElement());
         intrusive_ptr<Property> prop(factory.construct(prop_el));
-        if (prop.get()) {
+        if (prop) {
             m_props.push_back(prop);
         }
     }

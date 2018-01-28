@@ -136,9 +136,9 @@ namespace imageproc {
         }
 
         if (Before()(p2, p1)) {
-            edges.push_back(QLineF(p2, p1));
+            edges.emplace_back(p2, p1);
         } else {
-            edges.push_back(QLineF(p1, p2));
+            edges.emplace_back(p1, p2);
         }
     }
 
@@ -189,7 +189,7 @@ namespace imageproc {
         // "Monotone chain" algorithm.
         // http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 
-        int const n = point_cloud.size();
+        auto const n = static_cast<const int>(point_cloud.size());
         int k = 0;
         std::vector<QPointF> hull(n * 2);
 

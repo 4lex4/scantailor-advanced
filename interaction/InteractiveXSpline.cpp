@@ -147,7 +147,7 @@ void InteractiveXSpline::onMousePressEvent(QMouseEvent* event, InteractionState&
     }
 
     if (interaction.proximityLeader(m_curveProximity)) {
-        int const segment = int(m_curveProximityT * m_spline.numSegments());
+        auto const segment = int(m_curveProximityT * m_spline.numSegments());
         int const pnt_idx = segment + 1;
 
         m_spline.insertControlPoint(pnt_idx, m_curveProximityPointStorage, 1);

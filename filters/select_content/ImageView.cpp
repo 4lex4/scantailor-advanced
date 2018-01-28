@@ -169,7 +169,7 @@ namespace select_content {
             m_pageRectAreaHandler.setInteractionCursor(cursor);
             makeLastFollower(m_pageRectAreaHandler);
         }
-        
+
         rootInteractionHandler().makeLastFollower(*this);
         rootInteractionHandler().makeLastFollower(m_dragHandler);
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
@@ -184,8 +184,7 @@ namespace select_content {
         connect(remove, SIGNAL(triggered(bool)), this, SLOT(removeContentBox()));
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
     void ImageView::createContentBox() {
         if (!m_contentRect.isEmpty()) {
@@ -368,7 +367,7 @@ namespace select_content {
         } else if (edge_mask & RIGHT) {
             r.setRight(std::max(pos.x(), r.left() + minw));
         }
-        
+
         m_pageRect = widgetToVirtual().mapRect(r);
         forcePageRectDescribeContent();
 

@@ -46,7 +46,7 @@ public:
     /**
      * \brief Load disambiguation information from XML.
      */
-    FileNameDisambiguator(QDomElement const& disambiguator_el);
+    explicit FileNameDisambiguator(QDomElement const& disambiguator_el);
 
     /**
      * \brief Load disambiguation information from XML with file path unpacking.

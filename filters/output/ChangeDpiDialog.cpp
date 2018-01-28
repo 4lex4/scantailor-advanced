@@ -85,8 +85,7 @@ namespace output {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ChangeDpiDialog::~ChangeDpiDialog() {
-    }
+    ChangeDpiDialog::~ChangeDpiDialog() = default;
 
     void ChangeDpiDialog::dpiSelectionChanged(int const index) {
         dpiSelector->setEditable(index == m_customItemIdx);

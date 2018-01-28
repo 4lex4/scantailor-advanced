@@ -36,25 +36,21 @@ namespace output {
             RECTANGULAR_OUTLINE
         };
 
-        ZoneCategoryProperty(ZoneCategory zone_category = MANUAL)
+        explicit ZoneCategoryProperty(ZoneCategory zone_category = MANUAL)
                 : m_zone_category(zone_category) {
         }
 
-        ZoneCategoryProperty(QDomElement const& el);
+        explicit ZoneCategoryProperty(QDomElement const& el);
 
         static void registerIn(PropertyFactory& factory);
 
-        virtual intrusive_ptr<Property> clone() const;
+        intrusive_ptr<Property> clone() const override;
 
-        virtual QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, QString const& name) const override;
 
-        ZoneCategory zone_category() const {
-            return m_zone_category;
-        }
+        ZoneCategory zone_category() const;
 
-        void setZoneCategory(ZoneCategory zone_category) {
-            m_zone_category = zone_category;
-        }
+        void setZoneCategory(ZoneCategory zone_category);
 
     private:
         static intrusive_ptr<Property> construct(QDomElement const& el);
@@ -62,6 +58,7 @@ namespace output {
         static ZoneCategory zoneCategoryFromString(QString const& str);
 
         static QString zoneCategoryToString(ZoneCategory zone_category);
+
 
         static char const m_propertyName[];
         ZoneCategory m_zone_category;

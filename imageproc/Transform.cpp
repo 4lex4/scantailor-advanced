@@ -37,7 +37,7 @@ namespace imageproc {
             }
         };
 
-        static QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min) {
+        QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min) {
             // Imagine a rectangle of (0, 0, 1, 1), except we take
             // centers of its edges instead of its vertices.
             QPolygonF dst_poly;
@@ -55,8 +55,8 @@ namespace imageproc {
             QSizeF const min32(min * 32.0);
 
             return QSizeF(
-                    std::max(min32.width(), qreal(width)),
-                    std::max(min32.height(), qreal(height))
+                    std::max(min32.width(), width),
+                    std::max(min32.height(), height)
             );
         }
 

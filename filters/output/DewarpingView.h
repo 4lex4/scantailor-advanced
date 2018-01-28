@@ -50,7 +50,7 @@ namespace output {
                       dewarping::DistortionModel const& distortion_model,
                       DepthPerception const& depth_perception);
 
-        virtual ~DewarpingView();
+        ~DewarpingView() override;
 
     signals:
 
@@ -61,7 +61,7 @@ namespace output {
         void depthPerceptionChanged(double val);
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
     private:
         static void initNewSpline(XSpline& spline,

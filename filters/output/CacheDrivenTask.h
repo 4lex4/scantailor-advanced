@@ -36,9 +36,9 @@ namespace output {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<Settings> const& settings, OutputFileNameGenerator const& out_file_name_gen);
+        CacheDrivenTask(intrusive_ptr<Settings> settings, OutputFileNameGenerator const& out_file_name_gen);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
         void process(PageInfo const& page_info,
                      AbstractFilterDataCollector* collector,

@@ -56,4 +56,16 @@ namespace output {
     QString FillColorProperty::rgbToString(QRgb rgb) {
         return QColor(rgb).name();
     }
+
+    FillColorProperty::FillColorProperty(const QColor& color)
+            : m_rgb(color.rgb()) {
+    }
+
+    QColor FillColorProperty::color() const {
+        return QColor(m_rgb);
+    }
+
+    void FillColorProperty::setColor(QColor const& color) {
+        m_rgb = color.rgb();
+    }
 }  // namespace output

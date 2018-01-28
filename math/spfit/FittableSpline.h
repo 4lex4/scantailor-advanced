@@ -81,8 +81,7 @@ namespace spfit {
             }
         };
 
-        virtual ~FittableSpline() {
-        }
+        virtual ~FittableSpline() = default;
 
         virtual int numControlPoints() const = 0;
 

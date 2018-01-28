@@ -40,23 +40,17 @@ namespace page_split {
     public:
         Dependencies();
 
-        Dependencies(QDomElement const& el);
+        explicit Dependencies(QDomElement const& el);
 
         Dependencies(QSize const& image_size, OrthogonalRotation rotation, LayoutType layout_type);
 
-        void setLayoutType(LayoutType type) {
-            m_layoutType = type;
-        }
+        void setLayoutType(LayoutType type);
 
-        OrthogonalRotation const& orientation() const {
-            return m_rotation;
-        }
+        OrthogonalRotation const& orientation() const;
 
         bool compatibleWith(Params const& params) const;
 
-        bool isNull() const {
-            return m_imageSize.isNull();
-        }
+        bool isNull() const;
 
         QDomElement toXml(QDomDocument& doc, QString const& tag_name) const;
 

@@ -50,49 +50,41 @@ namespace select_content {
 
     Q_DECLARE_TR_FUNCTIONS(select_content::Filter)
     public:
-        Filter(PageSelectionAccessor const& page_selection_accessor);
+        explicit Filter(PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~Filter();
+        ~Filter() override;
 
-        virtual QString getName() const;
+        QString getName() const override;
 
-        virtual PageView getView() const;
+        PageView getView() const override;
 
-        virtual int selectedPageOrder() const;
+        int selectedPageOrder() const override;
 
-        virtual void selectPageOrder(int option);
+        void selectPageOrder(int option) override;
 
         virtual std::vector<PageOrderOption> pageOrderOptions() const;
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(AbstractRelinker const& relinker) override;
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) override;
 
-        virtual void updateStatistics() {
-            m_ptrSettings->updateDeviation();
-        }
+        void updateStatistics() override;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const override;
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) override;
 
         void loadDefaultSettings(PageId const& page_id) override;
 
         intrusive_ptr<Task> createTask(PageId const& page_id,
-                                       intrusive_ptr<page_layout::Task> const& next_task,
+                                       intrusive_ptr<page_layout::Task> next_task,
                                        bool batch,
                                        bool debug);
 
         intrusive_ptr<CacheDrivenTask>
-        createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> const& next_task);
+        createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> next_task);
 
-        OptionsWidget* optionsWidget() {
-            return m_ptrOptionsWidget.get();
-        }
-
-        Settings* getSettings() {
-            return m_ptrSettings.get();
-        }
+        OptionsWidget* optionsWidget();
 
     private:
         void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;

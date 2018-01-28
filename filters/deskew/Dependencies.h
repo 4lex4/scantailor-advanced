@@ -40,7 +40,7 @@ namespace deskew {
 
         Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
 
-        Dependencies(QDomElement const& deps_el);
+        explicit Dependencies(QDomElement const& deps_el);
 
         ~Dependencies();
 

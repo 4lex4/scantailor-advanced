@@ -35,28 +35,28 @@ class ZoneInteractionContext;
 class ZoneDefaultInteraction : public InteractionHandler {
 Q_DECLARE_TR_FUNCTIONS(ZoneDefaultInteraction)
 public:
-    ZoneDefaultInteraction(ZoneInteractionContext& context);
+    explicit ZoneDefaultInteraction(ZoneInteractionContext& context);
 
 protected:
     ZoneInteractionContext& context() {
         return m_rContext;
     }
 
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-    virtual void onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction);
+    void onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction) override;
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-    virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
+    void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
 private:
     ZoneInteractionContext& m_rContext;

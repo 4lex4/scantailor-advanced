@@ -35,6 +35,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <cmath>
 
 using namespace imageproc;
 
@@ -74,7 +75,7 @@ namespace dewarping {
         uint32_t packedData;
 
         float absDirDeriv() const {
-            return fabs(dirDeriv);
+            return std::fabs(dirDeriv);
         }
 
         void setupForPadding() {
@@ -101,7 +102,7 @@ namespace dewarping {
         }
 
         bool hasPathContinuation() const {
-            return packedData & PATH_CONTINUATION_MASK;
+            return static_cast<bool>(packedData & PATH_CONTINUATION_MASK);
         }
 
         /**
@@ -128,7 +129,7 @@ namespace dewarping {
 
     class TopBottomEdgeTracer::PrioQueue : public PriorityQueue<uint32_t, PrioQueue> {
     public:
-        PrioQueue(Grid<GridNode>& grid)
+        explicit PrioQueue(Grid<GridNode>& grid)
                 : m_pData(grid.data()) {
         }
 
@@ -151,8 +152,8 @@ namespace dewarping {
 
     struct TopBottomEdgeTracer::Step {
         Vec2f pt;
-        uint32_t prevStepIdx;
-        float pathCost;
+        uint32_t prevStepIdx{ };
+        float pathCost{ };
     };
 
 
@@ -161,10 +162,10 @@ namespace dewarping {
                                                      Extractor extractor,
                                                      Vec2f const pos,
                                                      float default_value) {
-        float const x_base = floor(pos[0]);
-        float const y_base = floor(pos[1]);
-        int const x_base_i = (int) x_base;
-        int const y_base_i = (int) y_base;
+        auto const x_base = static_cast<const float>(floor(pos[0]));
+        auto const y_base = static_cast<const float>(floor(pos[1]));
+        auto const x_base_i = (int) x_base;
+        auto const y_base_i = (int) y_base;
 
         if ((x_base_i < 0) || (y_base_i < 0) || (x_base_i + 1 >= grid.width()) || (y_base_i + 1 >= grid.height())) {
             return default_value;
@@ -356,7 +357,7 @@ namespace dewarping {
             for (int x = 0; x < width; ++x) {
                 Vec2f const grad_vec(grid_line[x].xGrad, grid_line[x].yGrad);
                 grid_line[x].dirDeriv = grad_vec.dot(direction);
-                assert(fabs(grid_line[x].dirDeriv) <= 1.0);
+                assert(std::fabs(grid_line[x].dirDeriv) <= 1.0);
             }
 
             grid_line += grid_stride;
@@ -443,14 +444,14 @@ namespace dewarping {
         Vec2f vec(ToLineProjector(line).projectionVector(pt));
         float const sqlen = vec.squaredNorm();
         if (sqlen > 1e-5) {
-            vec /= sqrt(sqlen);
+            vec /= std::sqrt(sqlen);
         }
 
         return vec;
     }
 
     void TopBottomEdgeTracer::prepareForShortestPathsFrom(PrioQueue& queue, Grid<GridNode>& grid, QLineF const& from) {
-        GridNode padding_node;
+        GridNode padding_node{ };
         padding_node.setupForPadding();
         grid.initPadding(padding_node);
 
@@ -501,8 +502,9 @@ namespace dewarping {
                 int const nbh_grid_idx = grid_idx + next_nbh_offsets[i];
                 GridNode* nbh_node = data + nbh_grid_idx;
 
-                assert(fabs(node->dirDeriv) <= 1.0);
-                float const new_cost = std::max<float>(node->pathCost, 1.0f - fabs(node->dirDeriv));
+                assert(std::fabs(node->dirDeriv) <= 1.0);
+                float const new_cost = std::max<float>(node->pathCost,
+                                                       static_cast<const float&>(1.0f - std::fabs(node->dirDeriv)));
                 if (new_cost < nbh_node->pathCost) {
                     nbh_node->pathCost = new_cost;
                     nbh_node->setPrevNeighbourIdx(prev_nbh_indexes[i]);
@@ -588,7 +590,7 @@ namespace dewarping {
             GridNode const* node = data + offset;
 
             // Find the closest path.
-            Path* closest_path = 0;
+            Path* closest_path = nullptr;
             int closest_sqdist = std::numeric_limits<int>::max();
             for (Path& path : best_paths) {
                 QPoint const delta(path.pt - pt);
@@ -609,7 +611,7 @@ namespace dewarping {
             }
 
             if (best_paths.size() < num_best_paths) {
-                best_paths.push_back(Path(pt, node->pathCost));
+                best_paths.emplace_back(pt, node->pathCost);
             } else {
                 // Find the one to kick out (if any).
                 for (Path& path : best_paths) {
@@ -700,7 +702,7 @@ namespace dewarping {
 
         GridNode const* const data = grid.data();
         std::vector<QPointF> snake;
-        snake.push_back(endpoint);
+        snake.emplace_back(endpoint);
         QPoint snake_tail(endpoint);
 
         QPoint pt(endpoint);
@@ -712,14 +714,14 @@ namespace dewarping {
             GridNode const* node = data + grid_offset;
             if (!node->hasPathContinuation()) {
                 if (sqdist >= half_max_dist_sq) {
-                    snake.push_back(pt);
+                    snake.emplace_back(pt);
                     snake_tail = pt;
                 }
                 break;
             }
 
             if (sqdist >= max_dist_sq) {
-                snake.push_back(pt);
+                snake.emplace_back(pt);
                 snake_tail = pt;
             }
 
@@ -831,13 +833,13 @@ namespace dewarping {
                         float cost = prev_step.pathCost + step.pathCost;
 
                         Vec2f const vec(step.pt - prev_step.pt);
-                        float const vec_len = sqrt(vec.squaredNorm());
+                        auto const vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
                         if (vec_len < segment_dist_threshold) {
                             cost += 1000;
                         }
 
                         // Elasticity.
-                        float const dist_diff = fabs(avg_dist - vec_len);
+                        auto const dist_diff = std::fabs(avg_dist - vec_len);
                         cost += elasticity_weight * (dist_diff / avg_dist);
                         // Bending energy.
                         if ((prev_step.prevStepIdx != ~uint32_t(0)) && (vec_len >= segment_dist_threshold)) {
@@ -845,7 +847,7 @@ namespace dewarping {
                             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
                             std::swap(prev_normal[0], prev_normal[1]);
                             prev_normal[0] = -prev_normal[0];
-                            float const prev_normal_len = sqrt(prev_normal.squaredNorm());
+                            auto const prev_normal_len = static_cast<const float>(sqrt(prev_normal.squaredNorm()));
                             if (prev_normal_len < segment_dist_threshold) {
                                 cost += 1000;
                             } else {
@@ -868,7 +870,7 @@ namespace dewarping {
                         step.pathCost = best_cost;
                     }
 
-                    new_paths.push_back(step_storage.size());
+                    new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                     step_storage.push_back(step);
                 }
                 assert(!new_paths.empty());
@@ -964,13 +966,13 @@ namespace dewarping {
                         float cost = prev_step.pathCost + step.pathCost;
 
                         Vec2f const vec(step.pt - prev_step.pt);
-                        float const vec_len = sqrt(vec.squaredNorm());
+                        auto const vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
                         if (vec_len < segment_dist_threshold) {
                             cost += 1000;
                         }
 
                         // Elasticity.
-                        float const dist_diff = fabs(avg_dist - vec_len);
+                        auto const dist_diff = std::fabs(avg_dist - vec_len);
                         cost += elasticity_weight * (dist_diff / avg_dist);
                         // Bending energy.
                         if ((prev_step.prevStepIdx != ~uint32_t(0)) && (vec_len >= segment_dist_threshold)) {
@@ -978,7 +980,7 @@ namespace dewarping {
                             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
                             std::swap(prev_normal[0], prev_normal[1]);
                             prev_normal[0] = -prev_normal[0];
-                            float const prev_normal_len = sqrt(prev_normal.squaredNorm());
+                            auto const prev_normal_len = static_cast<const float>(sqrt(prev_normal.squaredNorm()));
                             if (prev_normal_len < segment_dist_threshold) {
                                 cost += 1000;
                             } else {
@@ -1001,7 +1003,7 @@ namespace dewarping {
                         step.pathCost = best_cost;
                     }
 
-                    new_paths.push_back(step_storage.size());
+                    new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                     step_storage.push_back(step);
                 }
                 assert(!new_paths.empty());
@@ -1085,14 +1087,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        auto* overlay_line = (uint32_t*) overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = grid_line[x].dirDeriv * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 if (value > 0) {
                     // Red for positive gradients which indicate bottom edges.
                     overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
@@ -1145,14 +1147,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        auto* overlay_line = (uint32_t*) overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = grid_line[x].blurred * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
             }
             grid_line += grid_stride;
@@ -1172,7 +1174,7 @@ namespace dewarping {
                                                std::pair<QLineF, QLineF> const& bounds,
                                                std::vector<QPoint> const& path_endpoints) {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-        uint32_t* const canvas_data = (uint32_t*) canvas.bits();
+        auto* const canvas_data = (uint32_t*) canvas.bits();
         int const canvas_stride = canvas.bytesPerLine() / 4;
 
         int const width = grid.width();
@@ -1222,7 +1224,7 @@ namespace dewarping {
                                                std::vector<std::vector<QPoint>> const& paths,
                                                std::pair<QLineF, QLineF> const& bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-        uint32_t* const canvas_data = (uint32_t*) canvas.bits();
+        auto* const canvas_data = (uint32_t*) canvas.bits();
         int const canvas_stride = canvas.bytesPerLine() / 4;
 
         for (std::vector<QPoint> const& path : paths) {
@@ -1263,7 +1265,7 @@ namespace dewarping {
             }
 
             painter.setPen(snake_pen);
-            painter.drawPolyline(&snake[0], snake.size());
+            painter.drawPolyline(&snake[0], static_cast<int>(snake.size()));
             painter.setPen(Qt::NoPen);
             for (QPointF const& knot : snake) {
                 knot_rect.moveCenter(knot);
@@ -1296,7 +1298,7 @@ namespace dewarping {
                 continue;
             }
 
-            painter.drawPolyline(&polyline[0], polyline.size());
+            painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
         }
 
         QPen bounds_pen(Qt::blue);

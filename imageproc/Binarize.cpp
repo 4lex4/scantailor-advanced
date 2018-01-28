@@ -182,8 +182,8 @@ namespace imageproc {
                 double const variance = sqmean - mean * mean;
                 double const deviation = sqrt(fabs(variance));
                 max_deviation = std::max(max_deviation, deviation);
-                means[w * y + x] = mean;
-                deviations[w * y + x] = deviation;
+                means[w * y + x] = (float) mean;
+                deviations[w * y + x] = (float) deviation;
             }
         }
 

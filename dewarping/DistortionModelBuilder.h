@@ -43,7 +43,7 @@ namespace dewarping {
          * \param down_direction A vector pointing approximately downwards in terms of content.
          *        The vector can't be zero-length.
          */
-        DistortionModelBuilder(Vec2d const& down_direction);
+        explicit DistortionModelBuilder(Vec2d const& down_direction);
 
         /**
          * \brief Set the vertical content boundaries.
@@ -82,7 +82,7 @@ namespace dewarping {
          * \return A DistortionModel that may be invalid.
          * \see DistortionModel::isValid()
          */
-        DistortionModel tryBuildModel(DebugImages* dbg = 0, QImage const* dbg_background = 0) const;
+        DistortionModel tryBuildModel(DebugImages* dbg = nullptr, QImage const* dbg_background = nullptr) const;
 
     private:
         struct TracedCurve;

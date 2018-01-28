@@ -12,7 +12,7 @@ enum Units {
     INCHES
 };
 
-QString toString(Units units);
+QString unitsToString(Units units);
 
 Units unitsFromString(const QString& string);
 

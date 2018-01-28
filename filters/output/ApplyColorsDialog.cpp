@@ -41,8 +41,7 @@ namespace output {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ApplyColorsDialog::~ApplyColorsDialog() {
-    }
+    ApplyColorsDialog::~ApplyColorsDialog() = default;
 
     void ApplyColorsDialog::onSubmit() {
         std::set<PageId> pages;

@@ -17,17 +17,17 @@ public:
 
     explicit DefaultParamsProfileManager(const QString& path);
 
-    std::unique_ptr<std::list<QString>> getProfileList();
+    std::unique_ptr<std::list<QString>> getProfileList() const;
 
-    std::unique_ptr<DefaultParams> readProfile(const QString& name);
+    std::unique_ptr<DefaultParams> readProfile(const QString& name) const;
 
-    bool writeProfile(const DefaultParams& params, const QString& name);
+    bool writeProfile(const DefaultParams& params, const QString& name) const;
 
-    bool deleteProfile(const QString& name);
+    bool deleteProfile(const QString& name) const;
 
-    std::unique_ptr<DefaultParams> createDefaultProfile();
+    std::unique_ptr<DefaultParams> createDefaultProfile() const;
 
-    std::unique_ptr<DefaultParams> createSourceProfile();
+    std::unique_ptr<DefaultParams> createSourceProfile() const;
 };
 
 

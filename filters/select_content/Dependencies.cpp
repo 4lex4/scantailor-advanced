@@ -42,8 +42,7 @@ namespace select_content {
               m_invalid(deps_el.attribute("invalid") == "1") {
     }
 
-    Dependencies::~Dependencies() {
-    }
+    Dependencies::~Dependencies() = default;
 
     bool Dependencies::matches(Dependencies const& other) const {
         if (m_invalid) {
@@ -71,5 +70,9 @@ namespace select_content {
 
     void Dependencies::invalidate() {
         m_invalid = true;
+    }
+
+    QPolygonF const& Dependencies::rotatedPageOutline() const {
+        return m_rotatedPageOutline;
     }
 }  // namespace select_content

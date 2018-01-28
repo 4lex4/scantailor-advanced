@@ -32,7 +32,7 @@ namespace spfit {
         /**
          * Sets both the current and the target ratio, so that it doesn't change over time.
          */
-        LinearForceBalancer(double internal_external_ratio);
+        explicit LinearForceBalancer(double internal_external_ratio);
 
         double currentRatio() const {
             return m_currentRatio;

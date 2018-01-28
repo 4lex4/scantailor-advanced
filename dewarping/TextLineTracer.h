@@ -27,7 +27,7 @@
 #include <vector>
 #include <list>
 #include <utility>
-#include <stdint.h>
+#include <cstdint>
 
 class Dpi;
 class QImage;
@@ -53,7 +53,7 @@ namespace dewarping {
                           QRect const& content_rect,
                           DistortionModelBuilder& output,
                           TaskStatus const& status,
-                          DebugImages* dbg = 0);
+                          DebugImages* dbg = nullptr);
 
     private:
         static imageproc::GrayImage downscale(imageproc::GrayImage const& input, Dpi const& dpi);
@@ -101,7 +101,7 @@ namespace dewarping {
 
         static QImage visualizePolylines(QImage const& background,
                                          std::list<std::vector<QPointF>> const& polylines,
-                                         std::pair<QLineF, QLineF> const* vert_bounds = 0);
+                                         std::pair<QLineF, QLineF> const* vert_bounds = nullptr);
     };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_TEXT_LINE_TRACER_H_

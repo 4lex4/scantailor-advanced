@@ -20,7 +20,7 @@
 #define IMAGEPROC_SLICEDHISTOGRAM_H_
 
 #include <vector>
-#include <stddef.h>
+#include <cstddef>
 
 class QRect;
 

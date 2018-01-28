@@ -28,14 +28,14 @@ namespace imageproc {
     uint32_t const ConnectivityMap::UNTAGGED_FG = BACKGROUND - 1;
 
     ConnectivityMap::ConnectivityMap()
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(),
               m_stride(0),
               m_maxLabel(0) {
     }
 
     ConnectivityMap::ConnectivityMap(QSize const& size)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(size),
               m_stride(0),
               m_maxLabel(0) {
@@ -52,7 +52,7 @@ namespace imageproc {
     }
 
     ConnectivityMap::ConnectivityMap(BinaryImage const& image, Connectivity const conn)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(image.size()),
               m_stride(0),
               m_maxLabel(0) {
@@ -89,7 +89,7 @@ namespace imageproc {
 
     ConnectivityMap::ConnectivityMap(ConnectivityMap const& other)
             : m_data(other.m_data),
-              m_pData(0),
+              m_pData(nullptr),
               m_size(other.size()),
               m_stride(other.stride()),
               m_maxLabel(other.m_maxLabel) {
@@ -99,7 +99,7 @@ namespace imageproc {
     }
 
     ConnectivityMap::ConnectivityMap(InfluenceMap const& imap)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(imap.size()),
               m_stride(imap.stride()),
               m_maxLabel(imap.maxLabel()) {
@@ -187,7 +187,7 @@ namespace imageproc {
         uint32_t const* src_line = m_pData;
         int const src_stride = m_stride;
 
-        uint32_t* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
+        auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
         int const dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
 
         for (int y = 0; y < height; ++y) {

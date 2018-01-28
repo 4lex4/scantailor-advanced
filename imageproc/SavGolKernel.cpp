@@ -101,7 +101,7 @@ namespace imageproc {
                 double const b = m_equations[ij];
 
                 if (b == 0.0) {
-                    m_rotations.push_back(Rotation(1.0, 0.0));
+                    m_rotations.emplace_back(1.0, 0.0);
                     continue;
                 }
 
@@ -126,7 +126,7 @@ namespace imageproc {
                 }
                 m_equations[ij] = 0.0;
 
-                m_rotations.push_back(Rotation(sin, cos));
+                m_rotations.emplace_back(sin, cos);
 
                 int ik = ij + 1;  // i * m_numTerms + k
                 int jk = jj + 1;  // j * m_numTerms + k

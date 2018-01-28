@@ -59,6 +59,6 @@ namespace imageproc {
 imageproc::PolynomialSurface estimateBackground(imageproc::GrayImage const& input,
                                                 QPolygonF const& area_to_consider,
                                                 TaskStatus const& status,
-                                                DebugImages* dbg = 0);
+                                                DebugImages* dbg = nullptr);
 
 #endif

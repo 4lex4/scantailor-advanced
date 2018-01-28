@@ -415,4 +415,16 @@ namespace page_split {
             poly << intersection;
         }
     }
+
+    bool PageLayout::isNull() const {
+        return m_uncutOutline.isEmpty();
+    }
+
+    PageLayout::Type PageLayout::type() const {
+        return m_type;
+    }
+
+    QPolygonF const& PageLayout::uncutOutline() const {
+        return m_uncutOutline;
+    }
 }  // namespace page_split

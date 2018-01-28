@@ -143,7 +143,7 @@ namespace imageproc {
                 ConnCompEraserExt eraser4(img, CONN4);
                 while (!(cc = eraser4.nextConnComp()).isNull()) {
                     BinaryImage const cc_img(eraser4.computeConnCompImage());
-                    std::list<BinaryImage>::iterator const it(
+                    auto const it(
                             std::find(c4i.begin(), c4i.end(), cc_img)
                     );
                     if (it != c4i.end()) {
@@ -158,7 +158,7 @@ namespace imageproc {
                 ConnCompEraserExt eraser8(img, CONN8);
                 while (!(cc = eraser8.nextConnComp()).isNull()) {
                     BinaryImage const cc_img(eraser8.computeConnCompImage());
-                    std::list<BinaryImage>::iterator const it(
+                    auto const it(
                             std::find(c8i.begin(), c8i.end(), cc_img)
                     );
                     if (it != c8i.end()) {

@@ -43,7 +43,7 @@ namespace page_split {
                         PageLayout::Type auto_detected_layout_type,
                         bool auto_detected_layout_type_valid);
 
-        virtual ~SplitModeDialog();
+        ~SplitModeDialog() override;
 
     signals:
 

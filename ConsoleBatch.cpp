@@ -59,7 +59,7 @@ ConsoleBatch::ConsoleBatch(std::vector<ImageFileInfo> const& images,
           debug(true),
           m_ptrDisambiguator(new FileNameDisambiguator),
           m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout)) {
-    PageSelectionAccessor const accessor((intrusive_ptr<PageSelectionProvider>()));  // Won't really be used anyway.
+    PageSelectionAccessor const accessor(nullptr);  // Won't really be used anyway.
     m_ptrStages = intrusive_ptr<StageSequence>(new StageSequence(m_ptrPages, accessor));
     // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_dir+"/cache/thumbs", QSize(200,200), 40, 5));
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
@@ -84,7 +84,7 @@ ConsoleBatch::ConsoleBatch(QString const project_file)
     m_ptrReader.reset(new ProjectReader(doc));
     m_ptrPages = m_ptrReader->pages();
 
-    PageSelectionAccessor const accessor((intrusive_ptr<PageSelectionProvider>()));  // Won't be used anyway.
+    PageSelectionAccessor const accessor(nullptr);  // Won't be used anyway.
     m_ptrDisambiguator = m_ptrReader->namingDisambiguator();
 
     m_ptrStages = intrusive_ptr<StageSequence>(new StageSequence(m_ptrPages, accessor));
@@ -304,7 +304,7 @@ void ConsoleBatch::setupSelectContent(std::set<PageId> allPages) {
         select_content::Params params(deps);
         std::unique_ptr<select_content::Params> old_params = select_content->getSettings()->getPageParams(page);
 
-        if (old_params.get()) {
+        if (old_params) {
             params = *old_params;
         }
         // SELECT CONTENT FILTER

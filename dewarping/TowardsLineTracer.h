@@ -24,7 +24,7 @@
 #include <QPoint>
 #include <QRect>
 #include <QLineF>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
     class SEDM;
@@ -45,8 +45,8 @@ namespace dewarping {
         struct Step {
             Vec2d unitVec;
             QPoint vec;
-            int dmOffset;
-            int pmOffset;
+            int dmOffset{ };
+            int pmOffset{ };
         };
 
         void setupSteps();

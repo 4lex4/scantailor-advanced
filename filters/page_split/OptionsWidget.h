@@ -70,11 +70,11 @@ namespace page_split {
         };
 
 
-        OptionsWidget(intrusive_ptr<Settings> const& settings,
-                      intrusive_ptr<ProjectPages> const& page_sequence,
+        OptionsWidget(intrusive_ptr<Settings> settings,
+                      intrusive_ptr<ProjectPages> page_sequence,
                       PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
         void preUpdateUI(PageId const& page_id);
 

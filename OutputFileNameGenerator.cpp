@@ -22,6 +22,7 @@
 #include "AbstractRelinker.h"
 #include <QFileInfo>
 #include <QDir>
+#include <utility>
 
 OutputFileNameGenerator::OutputFileNameGenerator()
         : m_ptrDisambiguator(new FileNameDisambiguator),
@@ -29,13 +30,13 @@ OutputFileNameGenerator::OutputFileNameGenerator()
           m_layoutDirection(Qt::LeftToRight) {
 }
 
-OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> const& disambiguator,
+OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
                                                  QString const& out_dir,
                                                  Qt::LayoutDirection layout_direction)
-        : m_ptrDisambiguator(disambiguator),
+        : m_ptrDisambiguator(std::move(disambiguator)),
           m_outDir(out_dir),
           m_layoutDirection(layout_direction) {
-    assert(m_ptrDisambiguator.get());
+    assert(m_ptrDisambiguator);
 }
 
 void OutputFileNameGenerator::performRelinking(AbstractRelinker const& relinker) {

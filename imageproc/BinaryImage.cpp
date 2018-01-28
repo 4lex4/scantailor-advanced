@@ -27,9 +27,9 @@
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <cassert>
 
 namespace imageproc {
@@ -45,7 +45,7 @@ namespace imageproc {
         struct NumWords {
             size_t numWords;
 
-            NumWords(size_t num_words)
+            explicit NumWords(size_t num_words)
                     : numWords(num_words) {
             }
         };
@@ -82,15 +82,15 @@ namespace imageproc {
                 : m_refCounter(1) {
         }
 
-        SharedData& operator=(SharedData const&);  // forbidden
+        SharedData& operator=(SharedData const&) = delete;  // forbidden
 
         mutable QAtomicInt m_refCounter;
-        uint32_t m_data[1];  // more data follows
+        uint32_t m_data[1]{ };  // more data follows
     };
 
 
     BinaryImage::BinaryImage()
-            : m_pData(0),
+            : m_pData(nullptr),
               m_width(0),
               m_height(0),
               m_wpl(0) {
@@ -160,7 +160,7 @@ namespace imageproc {
     }
 
     BinaryImage::BinaryImage(QImage const& image, BinaryThreshold const threshold)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_width(0),
               m_height(0),
               m_wpl(0) {
@@ -194,7 +194,7 @@ namespace imageproc {
     }
 
     BinaryImage::BinaryImage(QImage const& image, QRect const& rect, BinaryThreshold const threshold)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_width(0),
               m_height(0),
               m_wpl(0) {
@@ -610,7 +610,7 @@ namespace imageproc {
                         if (v) {
                             area.setRight(area.right() - countConsecutiveZeroBitsTrailing(~v));
                         }
-                        areas.push_back(QRect(area));
+                        areas.emplace_back(area);
                         area_found = false;
                     }
                 }
@@ -620,7 +620,7 @@ namespace imageproc {
                 if (v) {
                     area.setRight(area.right() - countConsecutiveZeroBitsTrailing(~v));
                 }
-                areas.push_back(QRect(area));
+                areas.emplace_back(area);
             }
         }
 
@@ -653,7 +653,7 @@ namespace imageproc {
             areas = tmp;
         }
 
-        const float percent = (float) (sensitivity / 100.);
+        const auto percent = (float) (sensitivity / 100.);
         if (percent < 1.) {
             for (QRect& area: areas) {
 
@@ -668,8 +668,8 @@ namespace imageproc {
 
                 uint32_t* pdata = this->data();
 
-                const int criterium = (int) (area.width() * percent);
-                const int criterium_word = (int) (word_width * percent);
+                const auto criterium = (int) (area.width() * percent);
+                const auto criterium_word = (int) (word_width * percent);
 
                 // cut the dirty upper lines
                 for (int y = top; y < bottom; y++) {
@@ -756,7 +756,7 @@ namespace imageproc {
 
     uint32_t* BinaryImage::data() {
         if (isNull()) {
-            return 0;
+            return nullptr;
         }
 
         copyIfShared();
@@ -766,7 +766,7 @@ namespace imageproc {
 
     uint32_t const* BinaryImage::data() const {
         if (isNull()) {
-            return 0;
+            return nullptr;
         }
 
         return m_pData->data();
@@ -783,7 +783,7 @@ namespace imageproc {
         dst.setColor(0, 0xffffffff);
         dst.setColor(1, 0xff000000);
         int const dst_wpl = dst.bytesPerLine() / 4;
-        uint32_t* dst_line = (uint32_t*) dst.bits();
+        auto* dst_line = (uint32_t*) dst.bits();
         uint32_t const* src_line = data();
         int const src_wpl = m_wpl;
 
@@ -819,7 +819,7 @@ namespace imageproc {
         assert(dst.bytesPerLine() % 4 == 0);
 
         int const dst_stride = dst.bytesPerLine() / 4;
-        uint32_t* dst_line = (uint32_t*) dst.bits();
+        auto* dst_line = (uint32_t*) dst.bits();
 
         uint32_t const* src_line = data();
         int const src_stride = m_wpl;
@@ -894,7 +894,7 @@ namespace imageproc {
 
         assert(image.bytesPerLine() % 4 == 0);
         int const src_wpl = image.bytesPerLine() / 4;
-        uint32_t const* src_line = (uint32_t const*) image.bits();
+        auto const* src_line = (uint32_t const*) image.bits();
 
         BinaryImage dst(width, height);
         int const dst_wpl = dst.wordsPerLine();
@@ -925,7 +925,7 @@ namespace imageproc {
 
         assert(image.bytesPerLine() % 4 == 0);
         int const src_wpl = image.bytesPerLine() / 4;
-        uint32_t const* src_line = (uint32_t const*) image.bits();
+        auto const* src_line = (uint32_t const*) image.bits();
         src_line += rect.top() * src_wpl;
         src_line += rect.left() >> 5;
         int const word1_unused_bits = rect.left() & 31;
@@ -1064,7 +1064,7 @@ namespace imageproc {
 
         assert(image.bytesPerLine() % 4 == 0);
         int const src_wpl = image.bytesPerLine() / 4;
-        QRgb const* src_line = (QRgb const*) image.bits();
+        auto const* src_line = (QRgb const*) image.bits();
         src_line += rect.top() * src_wpl + rect.left();
 
         BinaryImage dst(width, height);
@@ -1125,7 +1125,7 @@ namespace imageproc {
 
         assert(image.bytesPerLine() % 4 == 0);
         int const src_wpl = image.bytesPerLine() / 4;
-        QRgb const* src_line = (QRgb const*) image.bits();
+        auto const* src_line = (QRgb const*) image.bits();
         src_line += rect.top() * src_wpl + rect.left();
 
         BinaryImage dst(width, height);
@@ -1195,7 +1195,7 @@ namespace imageproc {
 
         assert(image.bytesPerLine() % 4 == 0);
         int const src_wpl = image.bytesPerLine() / 2;
-        uint16_t const* src_line = (uint16_t const*) image.bits();
+        auto const* src_line = (uint16_t const*) image.bits();
 
         BinaryImage dst(width, height);
         int const dst_wpl = dst.wordsPerLine();
@@ -1342,7 +1342,7 @@ namespace imageproc {
     }
 
     void* BinaryImage::SharedData::operator new(size_t, NumWords const num_words) {
-        SharedData* sd = 0;
+        SharedData* sd = nullptr;
         void* addr = malloc(((char*) &sd->m_data[0] - (char*) sd) + num_words.numWords * 4);
         if (!addr) {
             throw std::bad_alloc();

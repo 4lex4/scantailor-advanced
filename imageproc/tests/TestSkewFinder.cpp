@@ -26,7 +26,7 @@
 #include <QString>
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace imageproc {
     namespace tests {

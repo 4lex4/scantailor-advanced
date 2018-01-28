@@ -27,7 +27,7 @@
 class FilterData {
     // Member-wise copying is OK.
 public:
-    FilterData(QImage const& image);
+    explicit FilterData(QImage const& image);
 
     FilterData(FilterData const& other, ImageTransformation const& xform);
 

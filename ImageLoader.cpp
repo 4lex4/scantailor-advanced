@@ -46,7 +46,7 @@ QImage ImageLoader::load(QIODevice& io_dev, int const page_num) {
     }
 
     QImage image;
-    image.load(&io_dev, 0);
+    image.load(&io_dev, nullptr);
 
     return image;
 }

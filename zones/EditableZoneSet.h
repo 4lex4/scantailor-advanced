@@ -39,8 +39,7 @@ public:
     class Zone {
         friend class EditableZoneSet::const_iterator;
     public:
-        Zone() {
-        }
+        Zone() = default;
 
         EditableSpline::Ptr const& spline() const {
             return m_iter->first;
@@ -98,7 +97,7 @@ public:
 
         Zone m_zone;
         std::list<EditableSpline::Ptr>::const_iterator m_iter;
-        const Map* m_ptrSplineMap;
+        const Map* m_ptrSplineMap{ };
     };
 
     typedef const_iterator iterator;

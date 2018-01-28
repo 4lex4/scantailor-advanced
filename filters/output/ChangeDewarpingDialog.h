@@ -40,7 +40,7 @@ namespace output {
                               DewarpingOptions const& dewarpingOptions,
                               PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ChangeDewarpingDialog();
+        ~ChangeDewarpingDialog() override;
 
     signals:
 
@@ -55,7 +55,7 @@ namespace output {
         PageSequence m_pages;
         std::set<PageId> m_selectedPages;
         PageId m_curPage;
-        DewarpingOptions::Mode m_dewarpingMode;
+        DewarpingMode m_dewarpingMode;
         DewarpingOptions m_dewarpingOptions;
         QButtonGroup* m_pScopeGroup;
     };

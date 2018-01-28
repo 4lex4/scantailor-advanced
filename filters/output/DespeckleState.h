@@ -38,12 +38,12 @@ namespace output {
     class DespeckleState {
         // Member-wise copying is OK.
     public:
-        DespeckleState(QImage const& output, imageproc::BinaryImage const& speckles, DespeckleLevel level,
+        DespeckleState(QImage const& output,
+                       imageproc::BinaryImage const& speckles,
+                       DespeckleLevel level,
                        Dpi const& dpi);
 
-        DespeckleLevel level() const {
-            return m_despeckleLevel;
-        }
+        DespeckleLevel level() const;
 
         DespeckleVisualization visualize() const;
 

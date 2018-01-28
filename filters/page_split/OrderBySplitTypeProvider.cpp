@@ -19,10 +19,11 @@
 
 #include "OrderBySplitTypeProvider.h"
 #include <cassert>
+#include <utility>
 
 namespace page_split {
-    OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings)
-            : m_ptrSettings(settings) {
+    OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> settings)
+            : m_ptrSettings(std::move(settings)) {
     }
 
     bool OrderBySplitTypeProvider::precedes(PageId const& lhs_page,
@@ -38,8 +39,8 @@ namespace page_split {
             return lhs_page < rhs_page;
         }
 
-        assert(lhs_incomplete == false);
-        assert(rhs_incomplete == false);
+        assert(!lhs_incomplete);
+        assert(!rhs_incomplete);
 
         Settings::Record const lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
         Settings::Record const rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));

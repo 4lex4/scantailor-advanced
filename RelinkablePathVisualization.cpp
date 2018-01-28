@@ -48,12 +48,12 @@ struct RelinkablePathVisualization::PathComponent {
 
 class RelinkablePathVisualization::ComponentButton : public QPushButton {
 public:
-    ComponentButton(QWidget* parent = 0)
+    explicit ComponentButton(QWidget* parent = nullptr)
             : QPushButton(parent) {
     }
 
 protected:
-    virtual void paintEvent(QPaintEvent* evt);
+    void paintEvent(QPaintEvent* evt) override;
 };
 
 
@@ -112,7 +112,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
             suffix_path += *it2;
         }
 
-        path_components.push_back(PathComponent(component, prefix_path, suffix_path, RelinkablePath::Dir));
+        path_components.emplace_back(component, prefix_path, suffix_path, RelinkablePath::Dir);
     }
 
     // The last path component is either a file or a dir, while all the previous ones are dirs.
@@ -123,7 +123,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
     int component_idx = -1;
     for (PathComponent& path_component : path_components) {
         ++component_idx;
-        ComponentButton* btn = new ComponentButton(this);
+        auto* btn = new ComponentButton(this);
         m_pLayout->addWidget(btn);
         btn->setText(path_component.label.replace(QChar('/'), QChar('\\')));
         btn->setEnabled(clickable);
@@ -266,7 +266,7 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
     }
 
     int left = -1;  // Existing component (unless -1).
-    int right = components.size() - 1;  // Non-existing component (we checked it above).
+    auto right = static_cast<int>(components.size() - 1);  // Non-existing component (we checked it above).
     while (right - left > 1) {
         int const mid = (left + right + 1) >> 1;
         if (QFile::exists(components[mid].prefixPath)) {
@@ -276,7 +276,7 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
         }
     }
 
-    for (int i = components.size() - 1; i >= 0; --i) {
+    for (auto i = static_cast<int>(components.size() - 1); i >= 0; --i) {
         components[i].exists = (i < right);
     }
 } // RelinkablePathVisualization::checkForExistence

@@ -46,7 +46,7 @@ namespace dewarping {
                           std::pair<QLineF, QLineF> bounds,
                           DistortionModelBuilder& output,
                           TaskStatus const& status,
-                          DebugImages* dbg = 0);
+                          DebugImages* dbg = nullptr);
 
     private:
         struct GridNode;
@@ -99,7 +99,7 @@ namespace dewarping {
         static float
         interpolatedGridValue(Grid<GridNode> const& grid, Extractor extractor, Vec2f pos, float default_value);
 
-        static QImage visualizeGradient(Grid<GridNode> const& grid, QImage const* background = 0);
+        static QImage visualizeGradient(Grid<GridNode> const& grid, QImage const* background = nullptr);
 
         static QImage visualizeBlurredGradient(Grid<GridNode> const& grid);
 

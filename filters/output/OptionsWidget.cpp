@@ -27,11 +27,12 @@
 #include "WolfBinarizationOptionsWidget.h"
 #include "../../Utils.h"
 #include <QToolTip>
+#include <utility>
 
 namespace output {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_despeckleLevel(DESPECKLE_NORMAL),
               m_lastTab(TAB_OUTPUT) {
@@ -42,13 +43,13 @@ namespace output {
         depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
         depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
 
-        colorModeSelector->addItem(tr("Black and White"), ColorParams::BLACK_AND_WHITE);
-        colorModeSelector->addItem(tr("Color / Grayscale"), ColorParams::COLOR_GRAYSCALE);
-        colorModeSelector->addItem(tr("Mixed"), ColorParams::MIXED);
+        colorModeSelector->addItem(tr("Black and White"), BLACK_AND_WHITE);
+        colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
+        colorModeSelector->addItem(tr("Mixed"), MIXED);
 
-        thresholdMethodBox->addItem(tr("Otsu"), BlackWhiteOptions::OTSU);
-        thresholdMethodBox->addItem(tr("Sauvola"), BlackWhiteOptions::SAUVOLA);
-        thresholdMethodBox->addItem(tr("Wolf"), BlackWhiteOptions::WOLF);
+        thresholdMethodBox->addItem(tr("Otsu"), OTSU);
+        thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
+        thresholdMethodBox->addItem(tr("Wolf"), WOLF);
 
         fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
         fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
@@ -83,8 +84,7 @@ namespace output {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
         removeUiConnections();
@@ -126,8 +126,8 @@ namespace output {
     void OptionsWidget::distortionModelChanged(dewarping::DistortionModel const& model) {
         m_ptrSettings->setDistortionModel(m_pageId, model);
 
-        /*if (m_dewarpingOptions.mode() == DewarpingOptions::AUTO)*/ {
-            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
+        /*if (m_dewarpingOptions.mode() == AUTO)*/ {
+            m_dewarpingOptions.setDewarpingMode(MANUAL);
             m_ptrSettings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
             updateDewarpingDisplay();
         }
@@ -135,15 +135,15 @@ namespace output {
 
     void OptionsWidget::colorModeChanged(int const idx) {
         int const mode = colorModeSelector->itemData(idx).toInt();
-        m_colorParams.setColorMode((ColorParams::ColorMode) mode);
+        m_colorParams.setColorMode((ColorMode) mode);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         updateColorsDisplay();
         emit reloadRequested();
     }
 
     void OptionsWidget::thresholdMethodChanged(int idx) {
-        const BlackWhiteOptions::BinarizationMethod method
-                = (BlackWhiteOptions::BinarizationMethod) thresholdMethodBox->itemData(idx).toInt();
+        const BinarizationMethod method
+                = (BinarizationMethod) thresholdMethodBox->itemData(idx).toInt();
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
         blackWhiteOptions.setBinarizationMethod(method);
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
@@ -189,7 +189,7 @@ namespace output {
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
         blackWhiteOptions.setNormalizeIllumination(checked);
 
-        if (m_colorParams.colorMode() == ColorParams::MIXED) {
+        if (m_colorParams.colorMode() == MIXED) {
             if (!checked) {
                 ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
                 colorCommonOptions.setNormalizeIllumination(false);
@@ -219,7 +219,7 @@ namespace output {
     }
 
     void OptionsWidget::changeDpiButtonClicked() {
-        ChangeDpiDialog* dialog = new ChangeDpiDialog(
+        auto* dialog = new ChangeDpiDialog(
                 this, m_outputDpi, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -231,7 +231,7 @@ namespace output {
     }
 
     void OptionsWidget::applyColorsButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -282,7 +282,7 @@ namespace output {
     }
 
     void OptionsWidget::applySplittingButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -344,7 +344,7 @@ namespace output {
     }
 
     void OptionsWidget::applyDespeckleButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -375,7 +375,7 @@ namespace output {
     }
 
     void OptionsWidget::changeDewarpingButtonClicked() {
-        ChangeDewarpingDialog* dialog = new ChangeDewarpingDialog(
+        auto* dialog = new ChangeDewarpingDialog(
                 this, m_pageId, m_dewarpingOptions, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -410,9 +410,9 @@ namespace output {
                 // we reload not just on TAB_FILL_ZONES but on all tabs except TAB_DEWARPING.
                 // PS: the static original <-> dewarped mappings are constructed
                 // in Task::UiUpdater::updateUI().  Look for "new DewarpingPointMapper" there.
-                if ((opt.mode() == DewarpingOptions::AUTO)
+                if ((opt.dewarpingMode() == AUTO)
                     || (m_lastTab != TAB_DEWARPING)
-                    || (opt.mode() == DewarpingOptions::MARGINAL)) {
+                    || (opt.dewarpingMode() == MARGINAL)) {
                     // Switch to the Output tab after reloading.
                     m_lastTab = TAB_OUTPUT;
                     // These depend on the value of m_lastTab.
@@ -430,7 +430,7 @@ namespace output {
     }      // OptionsWidget::dewarpingChanged
 
     void OptionsWidget::applyDepthPerceptionButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -513,22 +513,22 @@ namespace output {
             return;
         }
 
-        if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
-            && (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
+        if ((saved_dewarping_options.dewarpingMode() == OFF)
+            && (params.dewarpingOptions().dewarpingMode() == OFF)) {
         } else if (saved_depth_perception.value() != params.depthPerception().value()) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::AUTO)
-                   && (params.dewarpingOptions().mode() == DewarpingOptions::AUTO)) {
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::MARGINAL)
-                   && (params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == AUTO)
+                   && (params.dewarpingOptions().dewarpingMode() == AUTO)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == MARGINAL)
+                   && (params.dewarpingOptions().dewarpingMode() == MARGINAL)) {
         } else if (!saved_distortion_model.matches(params.distortionModel())) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
-                   != (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == OFF)
+                   != (params.dewarpingOptions().dewarpingMode() == OFF)) {
             emit reloadRequested();
 
             return;
@@ -549,7 +549,7 @@ namespace output {
     void OptionsWidget::updateColorsDisplay() {
         colorModeSelector->blockSignals(true);
 
-        ColorParams::ColorMode const color_mode = m_colorParams.colorMode();
+        ColorMode const color_mode = m_colorParams.colorMode();
         int const color_mode_idx = colorModeSelector->findData(color_mode);
         colorModeSelector->setCurrentIndex(color_mode_idx);
 
@@ -557,14 +557,14 @@ namespace output {
         bool picture_shape_visible = false;
         bool splitting_options_visible = false;
         switch (color_mode) {
-            case ColorParams::MIXED:
+            case MIXED:
                 picture_shape_visible = true;
                 splitting_options_visible = true;
                 // fall into
-            case ColorParams::BLACK_AND_WHITE:
+            case BLACK_AND_WHITE:
                 threshold_options_visible = true;
                 // fall into
-            case ColorParams::COLOR_GRAYSCALE:
+            case COLOR_GRAYSCALE:
                 break;
         }
 
@@ -573,7 +573,7 @@ namespace output {
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
 
         if (!blackWhiteOptions.normalizeIllumination()
-            && color_mode == ColorParams::MIXED) {
+            && color_mode == MIXED) {
             colorCommonOptions.setNormalizeIllumination(false);
         }
         m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -582,10 +582,10 @@ namespace output {
         cutMarginsCB->setChecked(colorCommonOptions.cutMargins());
         cutMarginsCB->setVisible(true);
         equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
-        equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
+        equalizeIlluminationCB->setVisible(color_mode != COLOR_GRAYSCALE);
         equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
-        equalizeIlluminationColorCB->setVisible(color_mode != ColorParams::BLACK_AND_WHITE);
-        equalizeIlluminationColorCB->setEnabled(color_mode == ColorParams::COLOR_GRAYSCALE
+        equalizeIlluminationColorCB->setVisible(color_mode != BLACK_AND_WHITE);
+        equalizeIlluminationColorCB->setEnabled(color_mode == COLOR_GRAYSCALE
                                                 || blackWhiteOptions.normalizeIllumination());
         savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
         savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
@@ -599,11 +599,11 @@ namespace output {
 
         splittingOptions->setVisible(splitting_options_visible);
         splittingCB->setChecked(m_splittingOptions.isSplitOutput());
-        switch (m_splittingOptions.getForegroundType()) {
-            case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
+        switch (m_splittingOptions.getSplittingMode()) {
+            case BLACK_AND_WHITE_FOREGROUND:
                 bwForegroundRB->setChecked(true);
                 break;
-            case SplittingOptions::COLOR_FOREGROUND:
+            case COLOR_FOREGROUND:
                 colorForegroundRB->setChecked(true);
                 break;
         }
@@ -611,8 +611,8 @@ namespace output {
         colorForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
         bwForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
         originalBackgroundCB->setEnabled(m_splittingOptions.isSplitOutput()
-                                         && (m_splittingOptions.getForegroundType()
-                                             == SplittingOptions::BLACK_AND_WHITE_FOREGROUND));
+                                         && (m_splittingOptions.getSplittingMode()
+                                             == BLACK_AND_WHITE_FOREGROUND));
 
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
@@ -643,7 +643,7 @@ namespace output {
             }
 
             for (int i = 0; i < binarizationOptions->count(); i++) {
-                BinarizationOptionsWidget* widget =
+                auto* widget =
                         dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
                 widget->preUpdateUI(m_pageId);
             }
@@ -655,23 +655,23 @@ namespace output {
     void OptionsWidget::updateDewarpingDisplay() {
         depthPerceptionPanel->setVisible(m_lastTab == TAB_DEWARPING);
 
-        switch (m_dewarpingOptions.mode()) {
-            case DewarpingOptions::OFF:
+        switch (m_dewarpingOptions.dewarpingMode()) {
+            case OFF:
                 dewarpingStatusLabel->setText(tr("Off"));
                 break;
-            case DewarpingOptions::AUTO:
+            case AUTO:
                 dewarpingStatusLabel->setText(tr("Auto"));
                 break;
-            case DewarpingOptions::MANUAL:
+            case MANUAL:
                 dewarpingStatusLabel->setText(tr("Manual"));
                 break;
-            case DewarpingOptions::MARGINAL:
+            case MARGINAL:
                 dewarpingStatusLabel->setText(tr("Marginal"));
                 break;
         }
         if (!m_dewarpingOptions.needPostDeskew()
-            && ((m_dewarpingOptions.mode() == DewarpingOptions::MANUAL)
-                || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL))) {
+            && ((m_dewarpingOptions.dewarpingMode() == MANUAL)
+                || (m_dewarpingOptions.dewarpingMode() == MARGINAL))) {
             dewarpingStatusLabel->setText(dewarpingStatusLabel->text()
                                                   .append(" (").append(tr("deskew disabled"))
                                                   .append(")"));
@@ -705,7 +705,7 @@ namespace output {
 
         originalBackgroundCB->setEnabled(checked);
 
-        m_splittingOptions.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
+        m_splittingOptions.setSplittingMode(BLACK_AND_WHITE_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
@@ -717,7 +717,7 @@ namespace output {
 
         originalBackgroundCB->setEnabled(!checked);
 
-        m_splittingOptions.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
+        m_splittingOptions.setSplittingMode(COLOR_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
@@ -992,6 +992,14 @@ namespace output {
                 &delayedReloadRequest, SIGNAL(timeout()),
                 this, SLOT(sendReloadRequested())
         );
+    }
+
+    ImageViewTab OptionsWidget::lastTab() const {
+        return m_lastTab;
+    }
+
+    DepthPerception const& OptionsWidget::depthPerception() const {
+        return m_depthPerception;
     }
 
 }  // namespace output

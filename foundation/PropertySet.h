@@ -31,8 +31,7 @@ class QString;
 
 class PropertySet : public ref_countable {
 public:
-    PropertySet() {
-    }
+    PropertySet() = default;
 
     /**
      * \brief Makes a deep copy of another property set.
@@ -95,7 +94,7 @@ PropertySet::locate() {
         }
     }
 
-    return intrusive_ptr<T>();
+    return nullptr;
 }
 
 template<typename T>
@@ -109,14 +108,14 @@ PropertySet::locate() const {
         }
     }
 
-    return intrusive_ptr<T const>();
+    return nullptr;
 }
 
 template<typename T>
 intrusive_ptr<T>
 PropertySet::locateOrDefault() {
     intrusive_ptr<T> obj(locate<T>());
-    if (!obj.get()) {
+    if (!obj) {
         obj.reset(new T);
     }
 
@@ -127,7 +126,7 @@ template<typename T>
 intrusive_ptr<T const>
 PropertySet::locateOrDefault() const {
     intrusive_ptr<T const> obj(locate<T>());
-    if (!obj.get()) {
+    if (!obj) {
         obj.reset(new T);
     }
 
@@ -138,7 +137,7 @@ template<typename T>
 intrusive_ptr<T>
 PropertySet::locateOrCreate() {
     intrusive_ptr<T> obj(locate<T>());
-    if (!obj.get()) {
+    if (!obj) {
         obj.reset(new T);
         m_props.push_back(obj);
     }

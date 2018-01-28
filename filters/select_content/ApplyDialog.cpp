@@ -48,8 +48,7 @@ namespace select_content {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ApplyDialog::~ApplyDialog() {
-    }
+    ApplyDialog::~ApplyDialog() = default;
 
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
@@ -66,7 +65,7 @@ namespace select_content {
         } else if (thisEveryOtherRB->isChecked()) {
             std::set<PageId> tmp;
             m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
+            auto it = tmp.begin();
             for (int i = 0; it != tmp.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);

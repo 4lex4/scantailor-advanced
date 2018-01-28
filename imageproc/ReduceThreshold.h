@@ -52,7 +52,7 @@ namespace imageproc {
         /**
          * \brief Constructor.  Doesn't do any work by itself.
          */
-        ReduceThreshold(BinaryImage const& image);
+        explicit ReduceThreshold(BinaryImage const& image);
 
         /**
          * \brief Implicit conversion to BinaryImage.

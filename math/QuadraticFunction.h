@@ -21,7 +21,7 @@
 
 #include "MatT.h"
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * A quadratic function from arbitrary number of variables
@@ -62,7 +62,7 @@ public:
      * Constructs a quadratic functiono of the given number of variables,
      * initializing everything to zero.
      */
-    QuadraticFunction(size_t num_vars = 0);
+    explicit QuadraticFunction(size_t num_vars = 0);
 
     /**
      * Resets everything to zero, so that F(x) = 0

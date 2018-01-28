@@ -26,7 +26,7 @@
 #include <QSize>
 #include <boost/scoped_array.hpp>
 #include <iterator>
-#include <string.h>
+#include <cstring>
 
 namespace imageproc {
     class GrayImage;

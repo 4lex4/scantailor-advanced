@@ -55,39 +55,23 @@ namespace page_layout {
 
         Alignment(Vertical vert, Horizontal hor);
 
-        Alignment(QDomElement const& el);
+        explicit Alignment(QDomElement const& el);
 
-        Vertical vertical() const {
-            return m_vert;
-        }
+        Vertical vertical() const;
 
-        void setVertical(Vertical vert) {
-            m_vert = vert;
-        }
+        void setVertical(Vertical vert);
 
-        Horizontal horizontal() const {
-            return m_hor;
-        }
+        Horizontal horizontal() const;
 
-        void setHorizontal(Horizontal hor) {
-            m_hor = hor;
-        }
+        void setHorizontal(Horizontal hor);
 
-        bool isNull() const {
-            return m_isNull;
-        }
+        bool isNull() const;
 
-        void setNull(bool is_null) {
-            m_isNull = is_null;
-        }
+        void setNull(bool is_null);
 
-        double tolerance() const {
-            return m_tolerance;
-        }
+        double tolerance() const;
 
-        void setTolerance(double t) {
-            m_tolerance = t;
-        }
+        void setTolerance(double t);
 
         bool operator==(Alignment const& other) const;
 

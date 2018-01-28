@@ -384,7 +384,7 @@ namespace imageproc {
         int const last_word_idx = (w - 1) >> 5;
         int const last_word_unused_bits = (((last_word_idx + 1) << 5) - w);
         uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const* line = (uint32_t const*) img.bits();
+        auto const* line = (uint32_t const*) img.bits();
         uint32_t const* mask_line = mask.data();
         int const mask_wpl = mask.wordsPerLine();
 

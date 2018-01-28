@@ -61,7 +61,7 @@ namespace imageproc {
 
     ConnCompEraser::ConnCompEraser(BinaryImage const& image, Connectivity conn)
             : m_image(image),
-              m_pLine(0),
+              m_pLine(nullptr),
               m_width(m_image.width()),
               m_height(m_image.height()),
               m_wpl(m_image.wordsPerLine()),
@@ -94,7 +94,7 @@ namespace imageproc {
         int const new_dy_wpl = seg.dy_wpl;
         int const new_y = seg.y + new_dy;
         if ((new_y >= 0) && (new_y < m_height)) {
-            Segment new_seg;
+            Segment new_seg{ };
             new_seg.line = seg.line + new_dy_wpl;
             new_seg.xleft = xleft;
             new_seg.xright = xright;
@@ -115,7 +115,7 @@ namespace imageproc {
         int const new_dy_wpl = -seg.dy_wpl;
         int const new_y = seg.y + new_dy;
         if ((new_y >= 0) && (new_y < m_height)) {
-            Segment new_seg;
+            Segment new_seg{ };
             new_seg.line = seg.line + new_dy_wpl;
             new_seg.xleft = xleft;
             new_seg.xright = xright;
@@ -131,7 +131,7 @@ namespace imageproc {
         assert(m_y >= 0 && m_y < m_height);
 
         if (m_y + 1 < m_height) {
-            Segment seg1;
+            Segment seg1{ };
             seg1.line = m_pLine + m_wpl;
             seg1.xleft = m_x;
             seg1.xright = m_x;
@@ -141,7 +141,7 @@ namespace imageproc {
             m_segStack.push(seg1);
         }
 
-        Segment seg2;
+        Segment seg2{ };
         seg2.line = m_pLine;
         seg2.xleft = m_x;
         seg2.xright = m_x;
@@ -201,7 +201,7 @@ namespace imageproc {
                 word = *pword;
                 if (word) {
                     int const shift = countMostSignificantZeroes(word);
-                    m_x = ((pword - line) << 5) + shift;
+                    m_x = static_cast<int>(((pword - line) << 5) + shift);
                     assert(m_x < m_width);
                     m_y = y;
                     m_pLine = line;
@@ -214,7 +214,7 @@ namespace imageproc {
             word = *pword & stop_word_mask;
             if (word) {
                 int const shift = countMostSignificantZeroes(word);
-                m_x = ((pword - line) << 5) + shift;
+                m_x = static_cast<int>(((pword - line) << 5) + shift);
                 assert(m_x < m_width);
                 m_y = y;
                 m_pLine = line;

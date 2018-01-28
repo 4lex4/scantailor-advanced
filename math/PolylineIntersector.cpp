@@ -32,7 +32,7 @@ void PolylineIntersector::Hint::update(int new_segment) {
 
 PolylineIntersector::PolylineIntersector(std::vector<QPointF> const& polyline)
         : m_polyline(polyline),
-          m_numSegments(polyline.size() - 1) {
+          m_numSegments(static_cast<int>(polyline.size() - 1)) {
 }
 
 QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
@@ -67,7 +67,7 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
     QPointF const origin(normal.p1());
     Vec2d const nv(normal.p2() - normal.p1());
     int left_idx = 0;
-    int right_idx = m_polyline.size() - 1;
+    auto right_idx = static_cast<int>(m_polyline.size() - 1);
     double left_dot = nv.dot(m_polyline[left_idx] - origin);
 
     while (left_idx + 1 < right_idx) {

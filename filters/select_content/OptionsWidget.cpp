@@ -22,12 +22,13 @@
 #include "ScopedIncDec.h"
 
 #include <iostream>
+#include <utility>
 #include <UnitsProvider.h>
 
 namespace select_content {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_ignorePageSizeChanges(0) {
         setupUi(this);
@@ -35,8 +36,7 @@ namespace select_content {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::preUpdateUI(PageId const& page_id) {
         removeUiConnections();
@@ -269,7 +269,7 @@ namespace select_content {
     }
 
     void OptionsWidget::showApplyToDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -406,11 +406,11 @@ namespace select_content {
             : m_contentDetectionMode(MODE_AUTO),
               m_contentDetectionEnabled(true),
               m_pageDetectionEnabled(false),
+              m_pageDetectionMode(MODE_AUTO),
               m_fineTuneCornersEnabled(false) {
     }
 
-    OptionsWidget::UiData::~UiData() {
-    }
+    OptionsWidget::UiData::~UiData() = default;
 
     void OptionsWidget::UiData::setSizeCalc(PhysSizeCalc const& calc) {
         m_sizeCalc = calc;
@@ -470,5 +470,17 @@ namespace select_content {
 
     void OptionsWidget::UiData::setFineTuneCornersEnabled(bool fine_tune) {
         m_fineTuneCornersEnabled = fine_tune;
+    }
+
+    bool OptionsWidget::UiData::isContentDetectionEnabled() const {
+        return m_contentDetectionEnabled;
+    }
+
+    bool OptionsWidget::UiData::isPageDetectionEnabled() const {
+        return m_pageDetectionEnabled;
+    }
+
+    bool OptionsWidget::UiData::isFineTuningCornersEnabled() const {
+        return m_fineTuneCornersEnabled;
     }
 }  // namespace select_content

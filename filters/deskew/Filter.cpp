@@ -26,9 +26,12 @@
 #include "AbstractRelinker.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <CommandLine.h>
+#include <filters/select_content/Task.h>
+#include <filters/select_content/CacheDrivenTask.h>
 
 namespace deskew {
     Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
@@ -38,8 +41,7 @@ namespace deskew {
         }
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate("deskew::Filter", "Deskew");
@@ -122,7 +124,7 @@ namespace deskew {
     void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id,
                                    int const numeric_id) const {
         std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
-        if (!params.get()) {
+        if (!params) {
             return;
         }
 
@@ -135,21 +137,21 @@ namespace deskew {
 
     intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       intrusive_ptr<select_content::Task> const& next_task,
+                       intrusive_ptr<select_content::Task> next_task,
                        bool const batch_processing,
                        bool const debug) {
         return intrusive_ptr<Task>(
                 new Task(
                         intrusive_ptr<Filter>(this), m_ptrSettings,
-                        next_task, page_id, batch_processing, debug
+                        std::move(next_task), page_id, batch_processing, debug
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+                new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
     }
 
@@ -164,5 +166,13 @@ namespace deskew {
                 page_id,
                 Params(deskewParams.getDeskewAngleDeg(), Dependencies(), deskewParams.getMode())
         );
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
+    }
+
+    void Filter::updateStatistics() {
+        m_ptrSettings->updateDeviation();
     }
 }  // namespace deskew

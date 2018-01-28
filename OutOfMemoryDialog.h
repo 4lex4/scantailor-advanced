@@ -31,12 +31,12 @@
 class OutOfMemoryDialog : public QDialog {
 Q_OBJECT
 public:
-    OutOfMemoryDialog(QWidget* parent = 0);
+    explicit OutOfMemoryDialog(QWidget* parent = nullptr);
 
     void setParams(QString const& project_file,
             // may be empty
-                   intrusive_ptr<StageSequence> const& stages,
-                   intrusive_ptr<ProjectPages> const& pages,
+                   intrusive_ptr<StageSequence> stages,
+                   intrusive_ptr<ProjectPages> pages,
                    SelectedPage const& selected_page,
                    OutputFileNameGenerator const& out_file_name_gen);
 

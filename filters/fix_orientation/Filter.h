@@ -52,38 +52,32 @@ namespace fix_orientation {
     DECLARE_NON_COPYABLE(Filter)
 
     public:
-        Filter(PageSelectionAccessor const& page_selection_accessor);
+        explicit Filter(PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~Filter();
+        ~Filter() override;
 
-        virtual QString getName() const;
+        QString getName() const override;
 
-        virtual PageView getView() const;
+        PageView getView() const override;
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(AbstractRelinker const& relinker) override;
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const&);
+        void preUpdateUI(FilterUiInterface* ui, PageId const&) override;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const override;
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) override;
 
         void loadDefaultSettings(PageId const& page_id) override;
 
         intrusive_ptr<Task> createTask(PageId const& page_id,
-                                       intrusive_ptr<page_split::Task> const& next_task,
+                                       intrusive_ptr<page_split::Task> next_task,
                                        bool batch_processing);
 
         intrusive_ptr<CacheDrivenTask>
-        createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> const& next_task);
+        createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> next_task);
 
-        OptionsWidget* optionsWidget() {
-            return m_ptrOptionsWidget.get();
-        }
-
-        Settings* getSettings() {
-            return m_ptrSettings.get();
-        }
+        OptionsWidget* optionsWidget();
 
     private:
         void

@@ -525,9 +525,9 @@ namespace output {
                                         PageId const& p_pageId,
                                         intrusive_ptr<Settings> const& p_settings,
                                         SplitImage* splitImage) {
-        if ((m_dewarpingOptions.mode() == DewarpingOptions::AUTO)
-            || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)
-            || ((m_dewarpingOptions.mode() == DewarpingOptions::MANUAL) && distortion_model.isValid())) {
+        if ((m_dewarpingOptions.dewarpingMode() == AUTO)
+            || (m_dewarpingOptions.dewarpingMode() == MARGINAL)
+            || ((m_dewarpingOptions.dewarpingMode() == MANUAL) && distortion_model.isValid())) {
             return processWithDewarping(
                     status, input, picture_zones, fill_zones,
                     distortion_model, depth_perception,
@@ -623,7 +623,7 @@ namespace output {
         if (needNormalizeIllumination) {
             maybe_normalized = normalizeIlluminationGray(
                     status, input.grayImage(), orig_image_crop_area,
-                    m_xform.transform(), normalize_illumination_rect, 0, dbg
+                    m_xform.transform(), normalize_illumination_rect, nullptr, dbg
             );
         } else {
             if (input.origImage().allGray()) {
@@ -780,8 +780,8 @@ namespace output {
 
                 QTransform inv_xform(xform1.inverted());
 
-                for (int i = 0; i < (int) areas.size(); i++) {
-                    QRectF area0(areas[i]);
+                for (auto i : areas) {
+                    QRectF area0(i);
                     QPolygonF area1(area0);
                     QPolygonF area(inv_xform.map(area1));
 
@@ -1195,8 +1195,8 @@ namespace output {
 
                 QTransform inv_xform(xform1.inverted());
 
-                for (int i = 0; i < (int) areas.size(); i++) {
-                    QRectF area0(areas[i]);
+                for (auto i : areas) {
+                    QRectF area0(i);
                     QPolygonF area1(area0);
                     QPolygonF area(inv_xform.map(area1));
 
@@ -1244,7 +1244,7 @@ namespace output {
             status.throwIfCancelled();
         }
 
-        if (m_dewarpingOptions.mode() == DewarpingOptions::AUTO) {
+        if (m_dewarpingOptions.dewarpingMode() == AUTO) {
             DistortionModelBuilder model_builder(Vec2d(0, 1));
 
             QRect const content_rect(
@@ -1265,8 +1265,7 @@ namespace output {
                 setupTrivialDistortionModel(distortion_model);
             }
 
-            BinaryThreshold bw_threshold(64);
-            BinaryImage bw_image(input.grayImage(), bw_threshold);
+            BinaryImage bw_image(input.grayImage(), BinaryThreshold(64));
 
             QTransform transform = m_xform.preRotation().transform(bw_image.size());
             QTransform inv_transform = transform.inverted();
@@ -1280,12 +1279,12 @@ namespace output {
             std::vector<QPointF> top_polyline;
             std::vector<QPointF> bottom_polyline;
 
-            for (int i = 0; i < (int) top_polyline0.size(); i++) {
-                top_polyline.push_back(transform.map(top_polyline0[i]));
+            for (auto i : top_polyline0) {
+                top_polyline.push_back(transform.map(i));
             }
 
-            for (int i = 0; i < (int) bottom_polyline0.size(); i++) {
-                bottom_polyline.push_back(transform.map(bottom_polyline0[i]));
+            for (auto i : bottom_polyline0) {
+                bottom_polyline.push_back(transform.map(i));
             }
 
 
@@ -1302,8 +1301,8 @@ namespace output {
 
 
                 if (vert_skew_angle_left > max_angle) {
-                    float top_x = top_polyline.front().x();
-                    float bottom_x = bottom_polyline.front().x();
+                    auto top_x = static_cast<float>(top_polyline.front().x());
+                    auto bottom_x = static_cast<float>(bottom_polyline.front().x());
 
                     if (top_x < bottom_x) {
                         std::vector<QPointF> new_bottom_polyline;
@@ -1312,8 +1311,8 @@ namespace output {
 
                         new_bottom_polyline.push_back(pt);
 
-                        for (int i = 0; i < (int) bottom_polyline.size(); i++) {
-                            new_bottom_polyline.push_back(inv_transform.map(bottom_polyline[i]));
+                        for (auto i : bottom_polyline) {
+                            new_bottom_polyline.push_back(inv_transform.map(i));
                         }
 
                         distortion_model.setBottomCurve(dewarping::Curve(new_bottom_polyline));
@@ -1324,8 +1323,8 @@ namespace output {
 
                         new_top_polyline.push_back(pt);
 
-                        for (int i = 0; i < (int) top_polyline.size(); i++) {
-                            new_top_polyline.push_back(inv_transform.map(top_polyline[i]));
+                        for (auto i : top_polyline) {
+                            new_top_polyline.push_back(inv_transform.map(i));
                         }
 
                         distortion_model.setBottomCurve(dewarping::Curve(new_top_polyline));
@@ -1338,16 +1337,16 @@ namespace output {
 
 
                 if (vert_skew_angle_right > max_angle) {
-                    float top_x = top_polyline.back().x();
-                    float bottom_x = bottom_polyline.back().x();
+                    auto top_x = static_cast<float>(top_polyline.back().x());
+                    auto bottom_x = static_cast<float>(bottom_polyline.back().x());
 
                     if (top_x > bottom_x) {
                         std::vector<QPointF> new_bottom_polyline;
 
                         QPointF pt(top_x, bottom_polyline.back().y());
 
-                        for (int i = 0; i < (int) bottom_polyline.size(); i++) {
-                            new_bottom_polyline.push_back(inv_transform.map(bottom_polyline[i]));
+                        for (auto i : bottom_polyline) {
+                            new_bottom_polyline.push_back(inv_transform.map(i));
                         }
 
                         new_bottom_polyline.push_back(pt);
@@ -1358,8 +1357,8 @@ namespace output {
 
                         QPointF pt(bottom_x, top_polyline.back().y());
 
-                        for (int i = 0; i < (int) top_polyline.size(); i++) {
-                            new_top_polyline.push_back(inv_transform.map(top_polyline[i]));
+                        for (auto i : top_polyline) {
+                            new_top_polyline.push_back(inv_transform.map(i));
                         }
 
                         new_top_polyline.push_back(pt);
@@ -1368,9 +1367,8 @@ namespace output {
                     }
                 }
             }
-        } else if (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL) {
-            BinaryThreshold bw_threshold(64);
-            BinaryImage bw_image(input.grayImage(), bw_threshold);
+        } else if (m_dewarpingOptions.dewarpingMode() == MARGINAL) {
+            BinaryImage bw_image(input.grayImage(), BinaryThreshold(64));
 
             QTransform transform = m_xform.preRotation().transform(bw_image.size());
             QTransform inv_transform = transform.inverted();
@@ -1921,7 +1919,7 @@ namespace output {
 
         if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
             PolygonRasterizer::grayFillExcept(
-                    image, qGray(color.rgb()), content_poly, Qt::WindingFill
+                    image, static_cast<unsigned char>(qGray(color.rgb())), content_poly, Qt::WindingFill
             );
 
             return;
@@ -2115,20 +2113,20 @@ namespace output {
         }
 
         const BlackWhiteOptions& blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        const BlackWhiteOptions::BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
+        const BinarizationMethod binarizationMethod = blackWhiteOptions.getBinarizationMethod();
 
         QImage imageToBinarize = image;
 
         BinaryImage binarized;
         switch (binarizationMethod) {
-            case BlackWhiteOptions::OTSU: {
+            case OTSU: {
                 GrayscaleHistogram hist(imageToBinarize);
                 BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
 
                 binarized = BinaryImage(imageToBinarize, adjustThreshold(bw_thresh));
                 break;
             }
-            case BlackWhiteOptions::SAUVOLA: {
+            case SAUVOLA: {
                 QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(),
                                           blackWhiteOptions.getWindowSize());
                 double sauvolaCoef = blackWhiteOptions.getSauvolaCoef();
@@ -2145,11 +2143,11 @@ namespace output {
                 }
                 break;
             }
-            case BlackWhiteOptions::WOLF: {
+            case WOLF: {
                 QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(),
                                           blackWhiteOptions.getWindowSize());
-                unsigned char lowerBound = (unsigned char) blackWhiteOptions.getWolfLowerBound();
-                unsigned char upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
+                auto lowerBound = (unsigned char) blackWhiteOptions.getWolfLowerBound();
+                auto upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
                 double wolfCoef = blackWhiteOptions.getWolfCoef();
 
                 if (m_outputProcessingParams.isWhiteOnBlackMode()) {
@@ -2357,7 +2355,7 @@ namespace output {
                                                       int const pattern_height) {
         hitMissReplaceInPlace(img, WHITE, pattern, pattern_width, pattern_height);
 
-        std::vector<char> pattern_data(pattern_width * pattern_height, ' ');
+        std::vector<char> pattern_data(static_cast<unsigned long long int>(pattern_width * pattern_height), ' ');
         char* const new_pattern = &pattern_data[0];
 
         // Rotate 90 degrees clockwise.
@@ -2527,12 +2525,12 @@ namespace output {
         QPointF pos = spline.controlPointPosition(idx);
 
         for (int j = 0; j < pos.y(); j++) {
-            if (bw_image.getPixel(pos.x(), j) == WHITE) {
+            if (bw_image.getPixel(static_cast<int>(pos.x()), j) == WHITE) {
                 int count = 0;
                 int check_num = 16;
 
                 for (int jj = j; jj < (j + check_num); jj++) {
-                    if (bw_image.getPixel(pos.x(), jj) == WHITE) {
+                    if (bw_image.getPixel(static_cast<int>(pos.x()), jj) == WHITE) {
                         count++;
                     }
                 }
@@ -2552,12 +2550,12 @@ namespace output {
         QPointF pos = spline.controlPointPosition(idx);
 
         for (int j = bw_image.height() - 1; j > pos.y(); j--) {
-            if (bw_image.getPixel(pos.x(), j) == WHITE) {
+            if (bw_image.getPixel(static_cast<int>(pos.x()), j) == WHITE) {
                 int count = 0;
                 int check_num = 16;
 
                 for (int jj = j; jj > (j - check_num); jj--) {
-                    if (bw_image.getPixel(pos.x(), jj) == WHITE) {
+                    if (bw_image.getPixel(static_cast<int>(pos.x()), jj) == WHITE) {
                         count++;
                     }
                 }
@@ -2589,12 +2587,12 @@ namespace output {
         QPointF& pos = polyline[idx];
 
         for (int j = 0; j < pos.y(); j++) {
-            if (bw_image.getPixel(pos.x(), j) == WHITE) {
+            if (bw_image.getPixel(static_cast<int>(pos.x()), j) == WHITE) {
                 int count = 0;
                 int check_num = 16;
 
                 for (int jj = j; jj < (j + check_num); jj++) {
-                    if (bw_image.getPixel(pos.x(), jj) == WHITE) {
+                    if (bw_image.getPixel(static_cast<int>(pos.x()), jj) == WHITE) {
                         count++;
                     }
                 }
@@ -2613,12 +2611,12 @@ namespace output {
         QPointF& pos = polyline[idx];
 
         for (int j = bw_image.height() - 1; j > pos.y(); j--) {
-            if (bw_image.getPixel(pos.x(), j) == WHITE) {
+            if (bw_image.getPixel(static_cast<int>(pos.x()), j) == WHITE) {
                 int count = 0;
                 int check_num = 16;
 
                 for (int jj = j; jj > (j - check_num); jj--) {
-                    if (bw_image.getPixel(pos.x(), jj) == WHITE) {
+                    if (bw_image.getPixel(static_cast<int>(pos.x()), jj) == WHITE) {
                         count++;
                     }
                 }
@@ -2633,7 +2631,7 @@ namespace output {
     }
 
     float OutputGenerator::vert_border_skew_angle(QPointF const& top, QPointF const& bottom) const {
-        return qFabs(qAtan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180 / M_PI);
+        return static_cast<float>(qFabs(qAtan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180 / M_PI));
     }
 
     void OutputGenerator::deskew(QImage* image, const double angle, const QColor& outside_color) const {
@@ -2656,8 +2654,8 @@ namespace output {
                                          DewarpingOptions m_dewarpingOptions,
                                          const QColor& outside_color) const {
         if (m_dewarpingOptions.needPostDeskew()
-            && ((m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)
-                || (m_dewarpingOptions.mode() == DewarpingOptions::MANUAL))) {
+            && ((m_dewarpingOptions.dewarpingMode() == MARGINAL)
+                || (m_dewarpingOptions.dewarpingMode() == MANUAL))) {
             BinaryThreshold bw_threshold(128);
             BinaryImage bw_image(*p_dewarped, bw_threshold);
 

@@ -47,14 +47,14 @@ namespace output {
     DespeckleVisualization::colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi) {
         int const w = image.width();
         int const h = image.height();
-        uint32_t* image_line = (uint32_t*) image.bits();
+        auto* image_line = (uint32_t*) image.bits();
         int const image_stride = image.bytesPerLine() / 4;
 
         SEDM const sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
         uint32_t const* sedm_line = sedm.data();
         int const sedm_stride = sedm.stride();
 
-        float const radius = 15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600;
+        float const radius = static_cast<const float>(15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
         float const sq_radius = radius * radius;
 
         for (int y = 0; y < h; ++y) {
@@ -86,5 +86,17 @@ namespace output {
             sedm_line += sedm_stride;
             image_line += image_stride;
         }
-    }  // DespeckleVisualization::colorizeSpeckles
+    }
+
+    bool DespeckleVisualization::isNull() const {
+        return m_image.isNull();
+    }
+
+    QImage const& DespeckleVisualization::image() const {
+        return m_image;
+    }
+
+    QImage const& DespeckleVisualization::downscaledImage() const {
+        return m_downscaledImage;
+    }
 }  // namespace output

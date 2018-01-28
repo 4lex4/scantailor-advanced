@@ -53,99 +53,55 @@ namespace select_content {
 
         ~Params();
 
-        QRectF const& contentRect() const {
-            return m_contentRect;
-        }
+        QRectF const& contentRect() const;
 
-        QRectF const& pageRect() const {
-            return m_pageRect;
-        }
+        QRectF const& pageRect() const;
 
-        QSizeF const& contentSizeMM() const {
-            return m_contentSizeMM;
-        }
+        QSizeF const& contentSizeMM() const;
 
-        Dependencies const& dependencies() const {
-            return m_deps;
-        }
+        Dependencies const& dependencies() const;
 
-        AutoManualMode contentDetectionMode() const {
-            return m_contentDetectionMode;
-        }
+        AutoManualMode contentDetectionMode() const;
 
-        AutoManualMode pageDetectionMode() const {
-            return m_pageDetectionMode;
-        }
+        AutoManualMode pageDetectionMode() const;
 
-        double deviation() const {
-            return m_deviation;
-        }
+        double deviation() const;
 
-        void setDeviation(double d) {
-            m_deviation = d;
-        }
+        void setDeviation(double d);
 
-        void computeDeviation(double avg) {
-            m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
-        }
+        void computeDeviation(double avg);
 
-        bool isDeviant(double std, double max_dev) {
-            return (max_dev * std) < fabs(m_deviation);
-        }
+        bool isDeviant(double std, double max_dev);
 
-        bool isContentDetectionEnabled() const {
-            return m_contentDetectEnabled;
-        }
+        bool isContentDetectionEnabled() const;
 
-        bool isPageDetectionEnabled() const {
-            return m_pageDetectEnabled;
-        }
+        bool isPageDetectionEnabled() const;
 
-        bool isFineTuningEnabled() const {
-            return m_fineTuneCorners;
-        }
+        bool isFineTuningEnabled() const;
 
-        void setContentDetectionMode(AutoManualMode const& mode) {
-            m_contentDetectionMode = mode;
-        }
+        void setContentDetectionMode(AutoManualMode const& mode);
 
-        void setPageDetectionMode(AutoManualMode const& mode) {
-            m_pageDetectionMode = mode;
-        }
+        void setPageDetectionMode(AutoManualMode const& mode);
 
-        void setContentRect(QRectF const& rect) {
-            m_contentRect = rect;
-        }
+        void setContentRect(QRectF const& rect);
 
-        void setPageRect(QRectF const& rect) {
-            m_pageRect = rect;
-        }
+        void setPageRect(QRectF const& rect);
 
-        void setContentSizeMM(QSizeF const& size) {
-            m_contentSizeMM = size;
-        }
+        void setContentSizeMM(QSizeF const& size);
 
-        void setDependencies(Dependencies const& deps) {
-            m_deps = deps;
-        }
+        void setDependencies(Dependencies const& deps);
 
-        void setContentDetect(bool detect) {
-            m_contentDetectEnabled = detect;
-        }
+        void setContentDetect(bool detect);
 
-        void setPageDetect(bool detect) {
-            m_pageDetectEnabled = detect;
-        }
+        void setPageDetect(bool detect);
 
-        void setFineTuneCorners(bool fine_tune) {
-            m_fineTuneCorners = fine_tune;
-        }
+        void setFineTuneCorners(bool fine_tune);
 
     private:
         QRectF m_contentRect;
         QRectF m_pageRect;
         QSizeF m_contentSizeMM;
-        Dependencies m_deps;      
+        Dependencies m_deps;
         AutoManualMode m_contentDetectionMode;
         AutoManualMode m_pageDetectionMode;
         bool m_contentDetectEnabled;

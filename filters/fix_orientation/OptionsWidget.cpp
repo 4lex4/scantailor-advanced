@@ -22,19 +22,19 @@
 #include "Settings.h"
 #include "ProjectPages.h"
 #include <cassert>
+#include <utility>
 
 namespace fix_orientation {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor) {
         setupUi(this);
 
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::preUpdateUI(PageId const& page_id, OrthogonalRotation const rotation) {
         removeUiConnections();
@@ -71,7 +71,7 @@ namespace fix_orientation {
     }
 
     void OptionsWidget::showApplyToDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);

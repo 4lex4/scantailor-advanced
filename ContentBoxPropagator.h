@@ -40,8 +40,8 @@ namespace page_layout {
  */
 class ContentBoxPropagator {
 public:
-    ContentBoxPropagator(intrusive_ptr<page_layout::Filter> const& page_layout_filter,
-                         intrusive_ptr<CompositeCacheDrivenTask> const& task);
+    ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
+                         intrusive_ptr<CompositeCacheDrivenTask> task);
 
     ~ContentBoxPropagator();
 

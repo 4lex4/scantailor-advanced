@@ -34,8 +34,7 @@ namespace output {
         /*
          * Constructs a null visualization.
          */
-        DespeckleVisualization() {
-        }
+        DespeckleVisualization() = default;
 
         /**
          * \param output The output file, as produced by OutputGenerator::process().
@@ -46,20 +45,15 @@ namespace output {
          */
         DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
 
-        bool isNull() const {
-            return m_image.isNull();
-        }
+        bool isNull() const;
 
-        QImage const& image() const {
-            return m_image;
-        }
+        QImage const& image() const;
 
-        QImage const& downscaledImage() const {
-            return m_downscaledImage;
-        }
+        QImage const& downscaledImage() const;
 
     private:
         static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+
 
         QImage m_image;
         QImage m_downscaledImage;

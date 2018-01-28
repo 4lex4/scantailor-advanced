@@ -27,7 +27,7 @@
 #include "MatT.h"
 #include "VecNT.h"
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 #include <cassert>
 
 template<typename T, typename Alloc>
@@ -79,7 +79,8 @@ namespace mcalc {
 
     template<typename T>
     class Mat {
-        template<typename OT, typename Alloc> friend class ::MatrixCalc;
+        template<typename OT, typename Alloc>
+        friend class ::MatrixCalc;
 
         template<typename OT>
         friend Mat<OT> operator+(Mat<OT> const& m1, Mat<OT> const& m2);
@@ -162,7 +163,7 @@ public:
     }
 
     mcalc::Mat<T> operator()(MatT<T> const& mat) {
-        return mcalc::Mat<T>(&m_alloc, mat.data(), mat.rows(), mat.cols());
+        return mcalc::Mat<T>(&m_alloc, mat.data(), static_cast<int>(mat.rows()), static_cast<int>(mat.cols()));
     }
 
     template<size_t N>
@@ -171,7 +172,7 @@ public:
     }
 
     mcalc::Mat<T> operator()(VecT<T> const& vec) {
-        return mcalc::Mat<T>(&m_alloc, vec.data(), vec.size(), 1);
+        return mcalc::Mat<T>(&m_alloc, vec.data(), static_cast<int>(vec.size()), 1);
     }
 
 private:

@@ -32,7 +32,7 @@ namespace output {
     public:
         ImageView(QImage const& image, QImage const& downscaled_image);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     private:
         DragHandler m_dragHandler;

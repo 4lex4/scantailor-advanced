@@ -34,22 +34,19 @@ namespace page_split {
         typedef boost::function<QPointF()> PositionGetter;
         typedef boost::function<void()> ClickCallback;
 
-        UnremoveButton(PositionGetter const& position_getter);
+        explicit UnremoveButton(PositionGetter const& position_getter);
 
-        void setClickCallback(ClickCallback const& callback) {
-            m_clickCallback = callback;
-        }
+        void setClickCallback(ClickCallback const& callback);
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-        virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+        void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) override;
 
-        virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+        void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
     private:
-        static void noOp() {
-        }
+        static void noOp();
 
         PositionGetter m_positionGetter;
         ClickCallback m_clickCallback;

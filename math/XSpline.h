@@ -57,7 +57,7 @@ public:
         double signedCurvature() const;
     };
 
-    virtual int numControlPoints() const;
+    int numControlPoints() const override;
 
     /**
      * Returns the number of segments, that is spans between adjacent control points.
@@ -88,9 +88,9 @@ public:
 
     void eraseControlPoint(int idx);
 
-    virtual QPointF controlPointPosition(int idx) const;
+    QPointF controlPointPosition(int idx) const override;
 
-    virtual void moveControlPoint(int idx, QPointF const& pos);
+    void moveControlPoint(int idx, QPointF const& pos) override;
 
     double controlPointTension(int idx) const;
 
@@ -113,7 +113,7 @@ public:
     PointAndDerivs pointAndDtsAt(double t) const;
 
     /** \see spfit::FittableSpline::linearCombinationAt() */
-    virtual void linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) const;
+    void linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) const override;
 
     /**
      * Returns a function equivalent to:
@@ -162,10 +162,10 @@ public:
     QPointF pointClosestTo(QPointF to, double accuracy = 0.2) const;
 
     /** \see spfit::FittableSpline::sample() */
-    virtual void sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-                        SamplingParams const& params = SamplingParams(),
-                        double from_t = 0.0,
-                        double to_t = 1.0) const;
+    void sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+                SamplingParams const& params = SamplingParams(),
+                double from_t = 0.0,
+                double to_t = 1.0) const override;
 
     std::vector<QPointF> toPolyline(
             SamplingParams const& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;

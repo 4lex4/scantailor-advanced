@@ -53,8 +53,8 @@ namespace {
  * Keep in mind that we actually operate on squared distances,
  * so we don't need to take that square root.
  */
-    static int const VERTICAL_SCALE = 2;
-    static int const VERTICAL_SCALE_SQ = VERTICAL_SCALE * VERTICAL_SCALE;
+    int const VERTICAL_SCALE = 2;
+    int const VERTICAL_SCALE_SQ = VERTICAL_SCALE * VERTICAL_SCALE;
 
     struct Settings {
         /**
@@ -81,7 +81,7 @@ namespace {
     };
 
     Settings Settings::get(Despeckle::Level const level, Dpi const& dpi) {
-        Settings settings;
+        Settings settings{ };
 
         int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
         double const dpi_factor = min_dpi / 300.0;
@@ -93,17 +93,17 @@ namespace {
         switch (level) {
             case Despeckle::CAUTIOUS:
                 settings.minRelativeParentWeight = 0.125 * dpi_factor;
-                settings.pixelsToSqDist = 10.0 * 10.0;
+                settings.pixelsToSqDist = static_cast<uint32_t>(10.0 * 10.0);
                 settings.bigObjectThreshold = qRound(7 * dpi_factor);
                 break;
             case Despeckle::NORMAL:
                 settings.minRelativeParentWeight = 0.175 * dpi_factor;
-                settings.pixelsToSqDist = 6.5 * 6.5;
+                settings.pixelsToSqDist = static_cast<uint32_t>(6.5 * 6.5);
                 settings.bigObjectThreshold = qRound(12 * dpi_factor);
                 break;
             case Despeckle::AGGRESSIVE:
                 settings.minRelativeParentWeight = 0.225 * dpi_factor;
-                settings.pixelsToSqDist = 3.5 * 3.5;
+                settings.pixelsToSqDist = static_cast<uint32_t>(3.5 * 3.5);
                 settings.bigObjectThreshold = qRound(17 * dpi_factor);
                 break;
         }
@@ -192,14 +192,14 @@ namespace {
         uint32_t raw;
 
         static Distance zero() {
-            Distance dist;
+            Distance dist{ };
             dist.raw = 0;
 
             return dist;
         }
 
         static Distance special() {
-            Distance dist;
+            Distance dist{ };
             dist.vec.x = dist.vec.y = std::numeric_limits<int16_t>::max();
 
             return dist;
@@ -214,7 +214,7 @@ namespace {
         }
 
         void reset(int x) {
-            vec.x = std::numeric_limits<int16_t>::max() - x;
+            vec.x = static_cast<int16_t>(std::numeric_limits<int16_t>::max() - x);
             vec.y = 0;
         }
 
@@ -293,7 +293,7 @@ namespace {
         typedef std::map<Connection, uint32_t> Connections;
 
         Connection const conn(label1, label2);
-        Connections::iterator it(conns.lower_bound(conn));
+        auto it(conns.lower_bound(conn));
         if ((it == conns.end()) || (conn < it->first)) {
             conns.insert(Connections::value_type(conn, sqdist));
         } else if (sqdist < it->second) {
@@ -355,7 +355,7 @@ namespace {
         dist_line[0].reset(0);
         prev_sqdist_line[0] = dist_line[0].sqdist();
         for (int x = 1; x < width; ++x) {
-            dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
+            dist_line[x].vec.x = static_cast<int16_t>(dist_line[x - 1].vec.x - 1);
             prev_sqdist_line[x] = prev_sqdist_line[x - 1]
                                   - (int(dist_line[x - 1].vec.x) << 1) + 1;
         }
@@ -486,7 +486,7 @@ namespace {
         dist_line[0].reset(0);
         prev_sqdist_line[0] = dist_line[0].sqdist();
         for (int x = 1; x < width; ++x) {
-            dist_line[x].vec.x = dist_line[x - 1].vec.x - 1;
+            dist_line[x].vec.x = static_cast<int16_t>(dist_line[x - 1].vec.x - 1);
             prev_sqdist_line[x] = prev_sqdist_line[x - 1]
                                   - (int(dist_line[x - 1].vec.x) << 1) + 1;
         }
@@ -646,8 +646,8 @@ namespace {
                 int const x1 = x + distance_data[offset].vec.x;
                 int const y1 = y + distance_data[offset].vec.y;
 
-                for (int i = 0; i < 4; ++i) {
-                    int const nbh_offset = offset + offsets[i];
+                for (int i : offsets) {
+                    int const nbh_offset = offset + i;
                     uint32_t const nbh_label = cmap_data[nbh_offset];
                     if ((nbh_label == 0) || (nbh_label == label)) {
                         // label 0 can be encountered in
@@ -859,17 +859,17 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
     // While at it, clear the bidirectional connection map.
     std::vector<TargetSourceConn> target_source;
     while (!conns.empty()) {
-        Connections::iterator const it(conns.begin());
+        auto const it(conns.begin());
         uint32_t const label1 = it->first.lesser_label;
         uint32_t const label2 = it->first.greater_label;
         uint32_t const sqdist = it->second;
         Component const& comp1 = components[label1];
         Component const& comp2 = components[label2];
         if (canBeAttachedTo(comp1, comp2, sqdist, settings)) {
-            target_source.push_back(TargetSourceConn(label2, label1));
+            target_source.emplace_back(label2, label1);
         }
         if (canBeAttachedTo(comp2, comp1, sqdist, settings)) {
-            target_source.push_back(TargetSourceConn(label1, label2));
+            target_source.emplace_back(label1, label2);
         }
         conns.erase(it);
     }
@@ -891,7 +891,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
         }
         assert(target_source_idx.size() - 1 == conn.target);
     }
-    for (uint32_t label = target_source_idx.size();
+    for (auto label = static_cast<uint32_t>(target_source_idx.size());
          label <= max_label; ++label) {
         target_source_idx.push_back(num_target_sources);
     }

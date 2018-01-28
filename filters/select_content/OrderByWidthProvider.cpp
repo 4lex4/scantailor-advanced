@@ -18,9 +18,11 @@
 
 #include "OrderByWidthProvider.h"
 
+#include <utility>
+
 namespace select_content {
-    OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> const& settings)
-            : m_ptrSettings(settings) {
+    OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> settings)
+            : m_ptrSettings(std::move(settings)) {
     }
 
     bool OrderByWidthProvider::precedes(PageId const& lhs_page,
@@ -31,11 +33,11 @@ namespace select_content {
         std::unique_ptr<Params> const rhs_params(m_ptrSettings->getPageParams(rhs_page));
 
         QSizeF lhs_size;
-        if (lhs_params.get()) {
+        if (lhs_params) {
             lhs_size = lhs_params->contentRect().size();
         }
         QSizeF rhs_size;
-        if (rhs_params.get()) {
+        if (rhs_params) {
             rhs_size = rhs_params->contentRect().size();
         }
 

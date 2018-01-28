@@ -21,7 +21,7 @@
 
 #include <QSizeF>
 #include <QColor>
-#include <stdint.h>
+#include <cstdint>
 
 class QImage;
 class QRect;

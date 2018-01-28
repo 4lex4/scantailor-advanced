@@ -20,7 +20,7 @@
 #define OUTPUT_OUTPUT_FILE_PARAMS_H_
 
 #include <QtGlobal>
-#include <time.h>
+#include <ctime>
 
 class QDomDocument;
 class QDomElement;
@@ -40,9 +40,7 @@ namespace output {
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-        bool const isValid() const {
-            return m_size >= 0;
-        }
+        bool const isValid() const;
 
         /**
          * \brief Returns true if it's likely we have two identical files.

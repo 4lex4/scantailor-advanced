@@ -21,7 +21,7 @@
 
 #include <QSize>
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 
 class QImage;
 
@@ -119,7 +119,7 @@ namespace imageproc {
          * to access that data.
          */
         Cell const* paddedData() const {
-            return m_pData ? &m_data[0] : 0;
+            return m_pData ? &m_data[0] : nullptr;
         }
 
         /**
@@ -130,7 +130,7 @@ namespace imageproc {
          * to access that data.
          */
         Cell* paddedData() {
-            return m_pData ? &m_data[0] : 0;
+            return m_pData ? &m_data[0] : nullptr;
         }
 
         /**
@@ -166,7 +166,7 @@ namespace imageproc {
         QImage visualized() const;
 
     private:
-        void init(ConnectivityMap const& cmap, BinaryImage const* mask = 0);
+        void init(ConnectivityMap const& cmap, BinaryImage const* mask = nullptr);
 
         std::vector<Cell> m_data;
         Cell* m_pData;

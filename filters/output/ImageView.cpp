@@ -33,6 +33,5 @@ namespace output {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 }  // namespace output

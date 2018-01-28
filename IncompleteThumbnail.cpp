@@ -19,18 +19,18 @@
 #include "IncompleteThumbnail.h"
 #include <QPainter>
 #include <QDebug>
+#include <utility>
 
 QPainterPath IncompleteThumbnail::m_sCachedPath;
 
-IncompleteThumbnail::IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+IncompleteThumbnail::IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                                          QSizeF const& max_size,
                                          ImageId const& image_id,
                                          ImageTransformation const& image_xform)
-        : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform) {
+        : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, image_xform) {
 }
 
-IncompleteThumbnail::~IncompleteThumbnail() {
-}
+IncompleteThumbnail::~IncompleteThumbnail() = default;
 
 void IncompleteThumbnail::drawQuestionMark(QPainter& painter, QRectF const& bounding_rect) {
     QString const text(QString::fromLatin1("?"));

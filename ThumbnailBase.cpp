@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <cmath>
 #include <QtCore/QSettings>
+#include <utility>
 
 using namespace imageproc;
 
@@ -32,11 +33,11 @@ class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, Thumb
 DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
 public:
-    LoadCompletionHandler(ThumbnailBase* thumb)
+    explicit LoadCompletionHandler(ThumbnailBase* thumb)
             : m_pThumb(thumb) {
     }
 
-    virtual void operator()(ThumbnailLoadResult const& result) {
+    void operator()(ThumbnailLoadResult const& result) override {
         m_pThumb->handleLoadResult(result);
     }
 
@@ -45,20 +46,20 @@ private:
 };
 
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform)
-        : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform,
+        : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, image_xform,
                         image_xform.resultingPostCropArea().boundingRect()) {
 }
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                              QSizeF const& max_size,
                              ImageId const& image_id,
                              ImageTransformation const& image_xform,
                              QRectF displayArea)
-        : m_ptrThumbnailCache(thumbnail_cache),
+        : m_ptrThumbnailCache(std::move(thumbnail_cache)),
           m_maxSize(max_size),
           m_imageId(image_id),
           m_imageXform(image_xform),
@@ -67,8 +68,7 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnai
     setImageXform(m_imageXform);
 }
 
-ThumbnailBase::~ThumbnailBase() {
-}
+ThumbnailBase::~ThumbnailBase() = default;
 
 QRectF ThumbnailBase::boundingRect() const {
     return m_boundingRect;
@@ -77,7 +77,7 @@ QRectF ThumbnailBase::boundingRect() const {
 void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget) {
     QPixmap pixmap;
 
-    if (!m_ptrCompletionHandler.get()) {
+    if (!m_ptrCompletionHandler) {
         std::shared_ptr<LoadCompletionHandler> handler(
                 new LoadCompletionHandler(this)
         );
@@ -141,8 +141,8 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     if (!QPixmapCache::find(cache_key, temp_pixmap)
         || (temp_pixmap.width() < display_rect.width())
         || (temp_pixmap.height() < display_rect.width())) {
-        int w = (int) display_rect.width();
-        int h = (int) display_rect.height();
+        auto w = (int) display_rect.width();
+        auto h = (int) display_rect.height();
         // Add some extra, to avoid rectreating the pixmap too often.
         w += w / 10;
         h += h / 10;
@@ -239,7 +239,7 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
 
     QFont font("Serif");
     font.setWeight(QFont::Bold);
-    font.setPixelSize(boundingRect().width() / 2);
+    font.setPixelSize(static_cast<int>(boundingRect().width() / 2));
     painter.setFont(font);
 
     painter.drawText(boundingRect(), Qt::AlignCenter, "*");

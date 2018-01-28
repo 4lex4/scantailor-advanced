@@ -39,10 +39,10 @@ namespace deskew {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<Settings> const& settings,
-                        intrusive_ptr<select_content::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> settings,
+                        intrusive_ptr<select_content::CacheDrivenTask> next_task);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
         void
         process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);

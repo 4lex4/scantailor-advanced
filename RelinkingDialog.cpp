@@ -84,7 +84,7 @@ void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString cons
         replacement_path = QFileDialog::getOpenFileName(
                 this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
                 dir.exists() ? dir.path() : m_projectFileDir,
-                QString(), 0, QFileDialog::DontUseNativeDialog
+                QString(), nullptr, QFileDialog::DontUseNativeDialog
         );
     } else {
         QDir const dir(prefix_path);

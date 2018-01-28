@@ -31,8 +31,7 @@ namespace dewarping {
         }
     };
 
-    Curve::Curve() {
-    }
+    Curve::Curve() = default;
 
     Curve::Curve(std::vector<QPointF> const& polyline)
             : m_polyline(polyline) {
@@ -65,11 +64,7 @@ namespace dewarping {
     }
 
     bool Curve::matches(Curve const& other) const {
-        if (!approxPolylineMatch(m_polyline, other.m_polyline)) {
-            return false;
-        }
-
-        return true;
+        return approxPolylineMatch(m_polyline, other.m_polyline);
     }
 
     std::vector<QPointF>
@@ -79,14 +74,14 @@ namespace dewarping {
         strm.setVersion(QDataStream::Qt_4_4);
         strm.setByteOrder(QDataStream::LittleEndian);
 
-        unsigned const num_points = ba.size() / 8;
+        auto const num_points = static_cast<unsigned int>(ba.size() / 8);
         std::vector<QPointF> points;
         points.reserve(num_points);
 
         for (unsigned i = 0; i < num_points; ++i) {
             float x = 0, y = 0;
             strm >> x >> y;
-            points.push_back(QPointF(x, y));
+            points.emplace_back(x, y);
         }
 
         return points;
@@ -98,7 +93,7 @@ namespace dewarping {
         }
 
         QByteArray ba;
-        ba.reserve(8 * polyline.size());
+        ba.reserve(static_cast<int>(8 * polyline.size()));
         QDataStream strm(&ba, QIODevice::WriteOnly);
         strm.setVersion(QDataStream::Qt_4_4);
         strm.setByteOrder(QDataStream::LittleEndian);
@@ -118,11 +113,7 @@ namespace dewarping {
             return false;
         }
 
-        if (!std::equal(polyline1.begin(), polyline1.end(), polyline2.begin(), CloseEnough())) {
-            return false;
-        }
-
-        return true;
+        return std::equal(polyline1.begin(), polyline1.end(), polyline2.begin(), CloseEnough());
     }
 
     QDomElement Curve::serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name) {

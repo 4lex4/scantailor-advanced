@@ -38,7 +38,7 @@ namespace imageproc {
             throw std::invalid_argument("adjustBrightness: image and brightness have different sizes");
         }
 
-        uint32_t* rgb_line = reinterpret_cast<uint32_t*>(rgb_image.bits());
+        auto* rgb_line = reinterpret_cast<uint32_t*>(rgb_image.bits());
         int const rgb_wpl = rgb_image.bytesPerLine() / 4;
 
         uint8_t const* br_line = brightness.bits();

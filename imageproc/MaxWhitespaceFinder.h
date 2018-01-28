@@ -27,7 +27,7 @@
 #include <vector>
 #include <deque>
 #include <memory>
-#include <stddef.h>
+#include <cstddef>
 
 namespace imageproc {
     class BinaryImage;
@@ -56,7 +56,7 @@ namespace imageproc {
          * \param img The image to find white regions in.
          * \param min_size The minimum dimensions of regions to find.
          */
-        MaxWhitespaceFinder(BinaryImage const& img, QSize min_size = QSize(1, 1));
+        explicit MaxWhitespaceFinder(BinaryImage const& img, QSize min_size = QSize(1, 1));
 
         /**
      * \brief Constructor with customized rectangle ordering.
@@ -187,8 +187,7 @@ namespace imageproc {
         protected:
             typedef MaxWhitespaceFinder::Region Region;
         public:
-            virtual ~PriorityStorage() {
-            }
+            virtual ~PriorityStorage() = default;
 
             virtual bool empty() const = 0;
 
@@ -205,30 +204,30 @@ namespace imageproc {
         template<typename QualityCompare>
         class PriorityStorageImpl : public PriorityStorage {
         public:
-            PriorityStorageImpl(QualityCompare comp)
+            explicit PriorityStorageImpl(QualityCompare comp)
                     : m_qualityLess(comp) {
             }
 
-            virtual bool empty() const {
+            bool empty() const override {
                 return m_priorityQueue.empty();
             }
 
-            virtual size_t size() const {
+            size_t size() const override {
                 return m_priorityQueue.size();
             }
 
-            virtual Region& top() {
+            Region& top() override {
                 return m_priorityQueue.front();
             }
 
-            virtual void push(Region& region);
+            void push(Region& region) override;
 
-            virtual void pop();
+            void pop() override;
 
         private:
             class ProxyComparator {
             public:
-                ProxyComparator(QualityCompare delegate)
+                explicit ProxyComparator(QualityCompare delegate)
                         : m_delegate(delegate) {
                 }
 

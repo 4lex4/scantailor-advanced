@@ -46,8 +46,8 @@ namespace select_content {
         }
 
         double to150 = 150.0 / 25.4;
-        int exp_width = int(to150 * box.width());
-        int exp_height = int(to150 * box.height());
+        auto exp_width = int(to150 * box.width());
+        auto exp_height = int(to150 * box.height());
 
 #ifdef DEBUG
         std::cout << "dpi: " << data.xform().origDpi().horizontal() << std::endl;
@@ -129,7 +129,7 @@ namespace select_content {
 #ifdef DEBUG
         std::cout << "width = " << content_rect.width() << "; height=" << content_rect.height() << std::endl;
 #endif
-        
+
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
         QRectF result = combined_xform.map(QRectF(content_rect)).boundingRect();
@@ -159,7 +159,7 @@ namespace select_content {
         int i = start, edge = start;
         int ms = 0;
         int me = 2 * mid;
-        int min_bp = int(double(me - ms) * 0.95);
+        auto min_bp = int(double(me - ms) * 0.95);
         Qt::GlobalColor black = Qt::color1;
 
         while (i != end) {
@@ -224,8 +224,8 @@ namespace select_content {
                                     int inc_y,
                                     QSize const& size,
                                     double tolerance) {
-        int width_t = size.width() * (1.0 - tolerance);
-        int height_t = size.height() * (1.0 - tolerance);
+        auto width_t = static_cast<int>(size.width() * (1.0 - tolerance));
+        auto height_t = static_cast<int>(size.height() * (1.0 - tolerance));
 
         Qt::GlobalColor black = Qt::color1;
         int pixel = img.pixelIndex(x, y);

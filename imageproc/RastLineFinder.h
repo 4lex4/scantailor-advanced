@@ -25,7 +25,7 @@
 #include <QLineF>
 #include <vector>
 #include <string>
-#include <stddef.h>
+#include <cstddef>
 
 namespace imageproc {
     class RastLineFinderParams {
@@ -128,7 +128,7 @@ namespace imageproc {
         /**
          * \brief Checks if parameters are valid, optionally providing an error string.
          */
-        bool validate(std::string* error = 0) const;
+        bool validate(std::string* error = nullptr) const;
 
     private:
         QPointF m_origin;
@@ -181,7 +181,7 @@ namespace imageproc {
          *         line won't be properly fit to its support points, but merely be
          *         close to an optimal line.
          */
-        QLineF findNext(std::vector<unsigned>* point_idxs = 0);
+        QLineF findNext(std::vector<unsigned>* point_idxs = nullptr);
 
     private:
         class Point {
@@ -189,7 +189,7 @@ namespace imageproc {
             QPointF pt;
             bool available;
 
-            Point(QPointF const& p)
+            explicit Point(QPointF const& p)
                     : pt(p),
                       available(true) {
             }
@@ -198,7 +198,7 @@ namespace imageproc {
 
         class PointUnavailablePred {
         public:
-            PointUnavailablePred(std::vector<Point> const* points)
+            explicit PointUnavailablePred(std::vector<Point> const* points)
                     : m_pPoints(points) {
             }
 

@@ -40,7 +40,7 @@ namespace imageproc {
         // shift = floor(0.5 + shear * (y + 0.5 - y_origin));
         double shift = 0.5 + shear * (0.5 - y_origin);
         double const shift_end = 0.5 + shear * (height - 0.5 - y_origin);
-        int shift1 = (int) floor(shift);
+        auto shift1 = (int) floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);
@@ -111,7 +111,7 @@ namespace imageproc {
         // shift = floor(0.5 + shear * (x + 0.5 - x_origin));
         double shift = 0.5 + shear * (0.5 - x_origin);
         double const shift_end = 0.5 + shear * (width - 0.5 - x_origin);
-        int shift1 = (int) floor(shift);
+        auto shift1 = (int) floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);

@@ -35,7 +35,7 @@ namespace imageproc {
  * \endcode
  * We take every other byte because bit 0 doesn't matter here.
  */
-        static uint8_t const compressBitsLut[128] = {
+        uint8_t const compressBitsLut[128] = {
                 0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
                 0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
                 0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
@@ -261,6 +261,8 @@ namespace imageproc {
                     dst_line[j / 2] |= compressBitsLowerHalf(word);
                 }
                 break;
+            default:
+                break;
         }
 
         m_image = dst;
@@ -299,6 +301,8 @@ namespace imageproc {
                     src_line += src_wpl * 2;
                     dst_line += dst_wpl;
                 }
+                break;
+            default:
                 break;
         }
 

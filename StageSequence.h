@@ -51,7 +51,7 @@ public:
     }
 
     int count() const {
-        return m_filters.size();
+        return static_cast<int>(m_filters.size());
     }
 
     FilterPtr const& filterAt(int idx) const {

@@ -17,6 +17,8 @@
  */
 
 #include "PageOrientationPropagator.h"
+
+#include <utility>
 #include "CompositeCacheDrivenTask.h"
 #include "OrthogonalRotation.h"
 #include "ProjectPages.h"
@@ -26,7 +28,7 @@
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector {
 public:
-    virtual void process(OrthogonalRotation const& orientation) {
+    void process(OrthogonalRotation const& orientation) override {
         m_orientation = orientation;
     }
 
@@ -39,14 +41,13 @@ private:
 };
 
 
-PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> const& page_split_filter,
-                                                     intrusive_ptr<CompositeCacheDrivenTask> const& task)
-        : m_ptrPageSplitFilter(page_split_filter),
-          m_ptrTask(task) {
+PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
+                                                     intrusive_ptr<CompositeCacheDrivenTask> task)
+        : m_ptrPageSplitFilter(std::move(page_split_filter)),
+          m_ptrTask(std::move(task)) {
 }
 
-PageOrientationPropagator::~PageOrientationPropagator() {
-}
+PageOrientationPropagator::~PageOrientationPropagator() = default;
 
 void PageOrientationPropagator::propagate(ProjectPages const& pages) {
     PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));

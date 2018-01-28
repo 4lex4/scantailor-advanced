@@ -32,19 +32,16 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace fix_orientation {
-    class Scope;
-
     class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {
     Q_OBJECT
     public:
         ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ApplyDialog();
+        ~ApplyDialog() override;
 
     signals:
 
-        void appliedTo(std::set<PageId> const
-                       & pages);
+        void appliedTo(std::set<PageId> const& pages);
 
         void appliedToAllPages(std::set<PageId> const& pages);
 

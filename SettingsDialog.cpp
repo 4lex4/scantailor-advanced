@@ -87,8 +87,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     initLanguageList(dynamic_cast<Application*>(qApp)->getCurrentLocale());
 }
 
-SettingsDialog::~SettingsDialog() {
-}
+SettingsDialog::~SettingsDialog() = default;
 
 void SettingsDialog::commitChanges() {
     QSettings settings;

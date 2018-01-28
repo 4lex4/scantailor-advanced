@@ -32,6 +32,7 @@
 #include <QPointer>
 #include <QPainter>
 #include <boost/bind.hpp>
+#include <utility>
 
 namespace output {
     static QRgb const mask_color = 0xff587ff4;
@@ -44,7 +45,7 @@ namespace output {
 
     public:
         MaskTransformTask(PictureZoneEditor* zone_editor,
-                          BinaryImage const& orig_mask,
+                          BinaryImage const& mask,
                           QTransform const& xform,
                           QSize const& target_size);
 
@@ -56,12 +57,12 @@ namespace output {
             return m_ptrResult->isCancelled();
         }
 
-        virtual intrusive_ptr<AbstractCommand0<void>> operator()();
+        intrusive_ptr<AbstractCommand0<void>> operator()() override;
 
     private:
         class Result : public AbstractCommand0<void> {
         public:
-            Result(PictureZoneEditor* zone_editor);
+            explicit Result(PictureZoneEditor* zone_editor);
 
             void setData(QPoint const& origin, QImage const& mask);
 
@@ -73,7 +74,7 @@ namespace output {
                 return m_cancelFlag.fetchAndAddRelaxed(0) != 0;
             }
 
-            virtual void operator()();
+            void operator()() override;
 
         private:
             QPointer<PictureZoneEditor> m_ptrZoneEditor;
@@ -96,7 +97,7 @@ namespace output {
                                          QTransform const& image_to_virt,
                                          QPolygonF const& virt_display_area,
                                          PageId const& page_id,
-                                         intrusive_ptr<Settings> const& settings)
+                                         intrusive_ptr<Settings> settings)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(image_to_virt, virt_display_area),
@@ -108,7 +109,7 @@ namespace output {
               m_origPictureMask(picture_mask),
               m_pictureMaskAnimationPhase(270),
               m_pageId(page_id),
-              m_ptrSettings(settings) {
+              m_ptrSettings(std::move(settings)) {
         m_zones.setDefaultProperties(m_ptrSettings->defaultPictureZoneProperties());
 
         setMouseTracking(true);
@@ -190,7 +191,7 @@ namespace output {
     void PictureZoneEditor::schedulePictureMaskRebuild() {
         if (!m_pictureMaskRebuildTimer.isActive()
             || (m_potentialPictureMaskXform != virtualToWidget())) {
-            if (m_ptrMaskTransformTask.get()) {
+            if (m_ptrMaskTransformTask) {
                 m_ptrMaskTransformTask->cancel();
                 m_ptrMaskTransformTask.reset();
             }
@@ -206,7 +207,7 @@ namespace output {
 
         m_screenPictureMask = QPixmap();
 
-        if (m_ptrMaskTransformTask.get()) {
+        if (m_ptrMaskTransformTask) {
             m_ptrMaskTransformTask->cancel();
             m_ptrMaskTransformTask.reset();
         }
@@ -320,7 +321,7 @@ namespace output {
     intrusive_ptr<AbstractCommand0<void>>
     PictureZoneEditor::MaskTransformTask::operator()() {
         if (isCancelled()) {
-            return intrusive_ptr<AbstractCommand0<void>>();
+            return nullptr;
         }
 
         QRect const target_rect(

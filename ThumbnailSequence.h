@@ -73,11 +73,11 @@ public:
                 AVOID_SCROLLING_TO = 1 << 2
     };
 
-    ThumbnailSequence(QSizeF const& max_logical_thumb_size);
+    explicit ThumbnailSequence(QSizeF const& max_logical_thumb_size);
 
-    ~ThumbnailSequence();
+    ~ThumbnailSequence() override;
 
-    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory);
+    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
 
     void attachView(QGraphicsView* view);
 
@@ -94,9 +94,8 @@ public:
      *        order of ProjectPages.
      */
     void reset(PageSequence const& pages,
-               SelectionAction const selection_action,
-               intrusive_ptr<PageOrderProvider const> const& order_provider
-               = intrusive_ptr<PageOrderProvider const>());
+               SelectionAction selection_action,
+               intrusive_ptr<PageOrderProvider const> order_provider = nullptr);
 
     /** Returns the current page order provider, which may be null. */
     intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;

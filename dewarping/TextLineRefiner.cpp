@@ -26,6 +26,7 @@
 #include <boost/lambda/bind.hpp>
 #include <QPainter>
 #include <QDebug>
+#include <cmath>
 
 using namespace imageproc;
 
@@ -79,7 +80,7 @@ namespace dewarping {
         bool normalMovement(Snake& snake, Grid<float> const& gradient);
 
     private:
-        static float calcExternalEnergy(Grid<float> const& gradient, SnakeNode const& node, Vec2f const down_normal);
+        static float calcExternalEnergy(Grid<float> const& gradient, SnakeNode const& node, Vec2f down_normal);
 
         static float calcElasticityEnergy(SnakeNode const& node1, SnakeNode const& node2, float avg_dist);
 
@@ -183,10 +184,10 @@ namespace dewarping {
     }
 
     float TextLineRefiner::externalEnergyAt(Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside) {
-        float const x_base = floor(pos[0]);
-        float const y_base = floor(pos[1]);
-        int const x_base_i = (int) x_base;
-        int const y_base_i = (int) y_base;
+        auto const x_base = static_cast<const float>(floor(pos[0]));
+        auto const y_base = static_cast<const float>(floor(pos[1]));
+        auto const x_base_i = (int) x_base;
+        auto const y_base_i = (int) y_base;
 
         if ((x_base_i < 0) || (y_base_i < 0) || (x_base_i + 1 >= gradient.width())
             || (y_base_i + 1 >= gradient.height())) {
@@ -212,7 +213,7 @@ namespace dewarping {
             total_length += sqrt(Vec2f(polyline[i] - polyline[i - 1]).squaredNorm());
         }
 
-        int const points_in_snake = total_length / 20;
+        auto const points_in_snake = static_cast<const int>(total_length / 20);
         Snake snake;
         snake.iterationsRemaining = iterations;
 
@@ -222,7 +223,7 @@ namespace dewarping {
         for (size_t i = 1; i < polyline_size; ++i) {
             Vec2f const base(polyline[i - 1]);
             Vec2f const vec((polyline[i] - base));
-            float const next_t = base_t + sqrt(vec.squaredNorm());
+            auto const next_t = static_cast<const float>(base_t + sqrt(vec.squaredNorm()));
 
             while (next_t >= next_insert_t) {
                 float const fraction = (next_insert_t - base_t) / (next_t - base_t);
@@ -273,7 +274,7 @@ namespace dewarping {
             }
 
             Vec2f tangent_vec(0.5 * (prev_segment + next_segment));
-            float const len = sqrt(tangent_vec.squaredNorm());
+            auto const len = static_cast<const float>(sqrt(tangent_vec.squaredNorm()));
             if (len > std::numeric_limits<float>::epsilon()) {
                 tangent_vec /= len;
             }
@@ -350,14 +351,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
+        auto* overlay_line = (uint32_t*) overlay.bits();
         int const overlay_stride = overlay.bytesPerLine() / 4;
 
         gradient_line = gradient.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 float const value = gradient_line[x] * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                int const magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 if (value > 0) {
                     // Red for positive gradients which indicate bottom edges.
                     overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
@@ -394,7 +395,7 @@ namespace dewarping {
         bottom_pen.setWidthF(1.5);
 
         QPen middle_pen(QColor(255, 0, 255));
-        middle_pen.setWidth(1.5);
+        middle_pen.setWidth(static_cast<int>(1.5));
 
         QBrush knot_brush(QColor(255, 255, 0, 180));
         painter.setBrush(knot_brush);
@@ -544,8 +545,8 @@ namespace dewarping {
         std::vector<uint32_t> new_paths;
         std::vector<Step> step_storage;
         // Note that we don't move the first and the last node in tangent direction.
-        paths.push_back(step_storage.size());
-        step_storage.push_back(Step());
+        paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
+        step_storage.emplace_back();
         step_storage.back().prevStepIdx = ~uint32_t(0);
         step_storage.back().node = snake.nodes.front();
         step_storage.back().pathCost = 0;
@@ -556,10 +557,10 @@ namespace dewarping {
             Vec2f const unit_tangent(m_frenetFrames[node_idx].unitTangent);
             Vec2f const down_normal(m_frenetFrames[node_idx].unitDownNormal);
 
-            for (int i = 0; i < NUM_TANGENT_MOVEMENTS; ++i) {
+            for (float tangent_movement : tangent_movements) {
                 Step step;
                 step.prevStepIdx = ~uint32_t(0);
-                step.node.center = initial_pos + tangent_movements[i] * unit_tangent;
+                step.node.center = initial_pos + tangent_movement * unit_tangent;
                 step.node.ribHalfLength = rib;
                 step.pathCost = NumericTraits<float>::max();
 
@@ -585,7 +586,7 @@ namespace dewarping {
                     }
                 }
                 assert(step.prevStepIdx != ~uint32_t(0));
-                new_paths.push_back(step_storage.size());
+                new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                 step_storage.push_back(step);
             }
             assert(!new_paths.empty());
@@ -606,7 +607,7 @@ namespace dewarping {
         // Having found the best path, convert it back to a snake.
         float max_sqdist = 0;
         uint32_t step_idx = best_path_idx;
-        for (int node_idx = num_nodes - 2; node_idx > 0; --node_idx) {
+        for (auto node_idx = static_cast<int>(num_nodes - 2); node_idx > 0; --node_idx) {
             assert(step_idx != ~uint32_t(0));
             Step const& step = step_storage[step_idx];
             SnakeNode& node = snake.nodes[node_idx];
@@ -641,13 +642,13 @@ namespace dewarping {
         // our calculations less accurate.  The proper solution is to provide not N but N*N
         // paths to the 3rd node, each path corresponding to a combination of movement of
         // the first and the second node.  That's the approach we are taking here.
-        for (int i = 0; i < NUM_NORMAL_MOVEMENTS; ++i) {
-            uint32_t const prev_step_idx = step_storage.size();
+        for (float normal_movement : normal_movements) {
+            auto const prev_step_idx = static_cast<const uint32_t>(step_storage.size());
             {
                 // Movements of the first node.
                 Vec2f const down_normal(m_frenetFrames[0].unitDownNormal);
                 Step step;
-                step.node.center = snake.nodes[0].center + normal_movements[i] * down_normal;
+                step.node.center = snake.nodes[0].center + normal_movement * down_normal;
                 step.node.ribHalfLength = snake.nodes[0].ribHalfLength;
                 step.prevStepIdx = ~uint32_t(0);
                 step.pathCost = calcExternalEnergy(gradient, step.node, down_normal);
@@ -655,18 +656,18 @@ namespace dewarping {
                 step_storage.push_back(step);
             }
 
-            for (int j = 0; j < NUM_NORMAL_MOVEMENTS; ++j) {
+            for (float j : normal_movements) {
                 // Movements of the second node.
                 Vec2f const down_normal(m_frenetFrames[1].unitDownNormal);
 
                 Step step;
-                step.node.center = snake.nodes[1].center + normal_movements[j] * down_normal;
+                step.node.center = snake.nodes[1].center + j * down_normal;
                 step.node.ribHalfLength = snake.nodes[1].ribHalfLength;
                 step.prevStepIdx = prev_step_idx;
                 step.pathCost = step_storage[prev_step_idx].pathCost
                                 + calcExternalEnergy(gradient, step.node, down_normal);
 
-                paths.push_back(step_storage.size());
+                paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                 step_storage.push_back(step);
             }
         }
@@ -675,10 +676,10 @@ namespace dewarping {
             SnakeNode const& node = snake.nodes[node_idx];
             Vec2f const down_normal(m_frenetFrames[node_idx].unitDownNormal);
 
-            for (int i = 0; i < NUM_NORMAL_MOVEMENTS; ++i) {
+            for (float normal_movement : normal_movements) {
                 Step step;
                 step.prevStepIdx = ~uint32_t(0);
-                step.node.center = node.center + normal_movements[i] * down_normal;
+                step.node.center = node.center + normal_movement * down_normal;
                 step.node.ribHalfLength = node.ribHalfLength;
                 step.pathCost = NumericTraits<float>::max();
 
@@ -698,7 +699,7 @@ namespace dewarping {
                     }
                 }
                 assert(step.prevStepIdx != ~uint32_t(0));
-                new_paths.push_back(step_storage.size());
+                new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                 step_storage.push_back(step);
             }
             assert(!new_paths.empty());
@@ -719,7 +720,7 @@ namespace dewarping {
         // Having found the best path, convert it back to a snake.
         float max_sqdist = 0;
         uint32_t step_idx = best_path_idx;
-        for (int node_idx = num_nodes - 1; node_idx >= 0; --node_idx) {
+        for (auto node_idx = static_cast<int>(num_nodes - 1); node_idx >= 0; --node_idx) {
             assert(step_idx != ~uint32_t(0));
             Step const& step = step_storage[step_idx];
             SnakeNode& node = snake.nodes[node_idx];
@@ -758,13 +759,13 @@ namespace dewarping {
     float
     TextLineRefiner::Optimizer::calcElasticityEnergy(SnakeNode const& node1, SnakeNode const& node2, float avg_dist) {
         Vec2f const vec(node1.center - node2.center);
-        float const vec_len = sqrt(vec.squaredNorm());
+        auto const vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
 
         if (vec_len < 1.0f) {
             return 1000.0f;  // Penalty for moving too close to another node.
         }
 
-        float const dist_diff = fabs(avg_dist - vec_len);
+        auto const dist_diff = std::fabs(avg_dist - vec_len);
 
         return m_elasticityWeight * (dist_diff / avg_dist);
     }
@@ -773,14 +774,14 @@ namespace dewarping {
                                                         SnakeNode const& prev_node,
                                                         SnakeNode const& prev_prev_node) {
         Vec2f const vec(node.center - prev_node.center);
-        float const vec_len = sqrt(vec.squaredNorm());
+        auto const vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
 
         if (vec_len < 1.0f) {
             return 1000.0f;  // Penalty for moving too close to another node.
         }
 
         Vec2f const prev_vec(prev_node.center - prev_prev_node.center);
-        float const prev_vec_len = sqrt(prev_vec.squaredNorm());
+        auto const prev_vec_len = static_cast<const float>(sqrt(prev_vec.squaredNorm()));
         if (prev_vec_len < 1.0f) {
             return 1000.0f;  // Penalty for moving too close to another node.
         }

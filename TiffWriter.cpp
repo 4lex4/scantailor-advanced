@@ -69,7 +69,7 @@ uint8_t const
 
 class TiffWriter::TiffHandle {
 public:
-    TiffHandle(TIFF* handle)
+    explicit TiffHandle(TIFF* handle)
             : m_pHandle(handle) {
     }
 
@@ -94,13 +94,13 @@ static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
 }
 
 static tsize_t deviceWrite(thandle_t context, tdata_t data, tsize_t size) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     return (tsize_t) dev->write(static_cast<char*>(data), size);
 }
 
 static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     switch (whence) {
         case SEEK_SET:
@@ -112,20 +112,22 @@ static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
         case SEEK_END:
             dev->seek(dev->size() + offset);
             break;
+        default:
+            break;
     }
 
     return dev->pos();
 }
 
 static int deviceClose(thandle_t context) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
     dev->close();
 
     return 0;
 }
 
 static toff_t deviceSize(thandle_t context) {
-    QIODevice* dev = (QIODevice*) context;
+    auto* dev = (QIODevice*) context;
 
     return dev->size();
 }
@@ -217,8 +219,8 @@ void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
         return;
     }
 
-    float xres = 0.01 * dpm.horizontal();  // cm
-    float yres = 0.01 * dpm.vertical();  // cm
+    auto xres = static_cast<float>(0.01 * dpm.horizontal());  // cm
+    auto yres = static_cast<float>(0.01 * dpm.vertical());  // cm
     uint16 unit = RESUNIT_CENTIMETER;
 
     // If we have a round (or almost round) DPI, then
@@ -229,8 +231,8 @@ void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
     double const rounded_ydpi = floor(ydpi + 0.5);
     if ((fabs(xdpi - rounded_xdpi) < 0.02)
         && (fabs(ydpi - rounded_ydpi) < 0.02)) {
-        xres = rounded_xdpi;
-        yres = rounded_ydpi;
+        xres = (float) rounded_xdpi;
+        yres = (float) rounded_ydpi;
         unit = RESUNIT_INCH;
     }
 
@@ -292,9 +294,9 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
         std::vector<uint16> pb(num_colors, 0);
         for (int i = 0; i < color_table.size(); ++i) {
             QRgb const rgb = color_table[i];
-            pr[i] = (0xFFFF * qRed(rgb) + 128) / 255;
-            pg[i] = (0xFFFF * qGreen(rgb) + 128) / 255;
-            pb[i] = (0xFFFF * qBlue(rgb) + 128) / 255;
+            pr[i] = static_cast<unsigned short>((0xFFFF * qRed(rgb) + 128) / 255);
+            pg[i] = static_cast<unsigned short>((0xFFFF * qGreen(rgb) + 128) / 255);
+            pb[i] = static_cast<unsigned short>((0xFFFF * qBlue(rgb) + 128) / 255);
         }
         TIFFSetField(tif.handle(), TIFFTAG_COLORMAP, &pr[0], &pg[0], &pb[0]);
     }
@@ -327,7 +329,7 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image) {
     // Libtiff expects "RR GG BB" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
-        uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
+        auto const* p_src = (uint32_t const*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
             uint32_t const ARGB = *p_src;
@@ -362,7 +364,7 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image) {
     // Libtiff expects "RR GG BB AA" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
-        uint32_t const* p_src = (uint32_t const*) image.scanLine(y);
+        auto const* p_src = (uint32_t const*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
             uint32_t const ARGB = *p_src;

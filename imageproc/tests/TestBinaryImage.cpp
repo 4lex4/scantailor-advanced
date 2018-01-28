@@ -21,7 +21,7 @@
 #include "Utils.h"
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace imageproc {
     namespace tests {

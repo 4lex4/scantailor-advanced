@@ -1,11 +1,13 @@
 
 #include "SauvolaBinarizationOptionsWidget.h"
 
+#include <utility>
+
 
 namespace output {
 
     SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-            : m_ptrSettings(settings) {
+            : m_ptrSettings(std::move(settings)) {
         setupUi(this);
 
         delayedStateChanger.setSingleShot(true);
@@ -22,7 +24,7 @@ namespace output {
         m_outputProcessingParams = m_ptrSettings->getOutputProcessingParams(page_id);
 
         updateView();
-        
+
         setupUiConnections();
     }
 

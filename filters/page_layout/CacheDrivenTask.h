@@ -39,10 +39,10 @@ namespace page_layout {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
-                        intrusive_ptr<Settings> const& settings);
+        CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task,
+                        intrusive_ptr<Settings> settings);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
         void process(PageInfo const& page_info,
                      AbstractFilterDataCollector* collector,

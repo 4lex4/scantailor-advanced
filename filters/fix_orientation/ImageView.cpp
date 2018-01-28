@@ -32,8 +32,7 @@ namespace fix_orientation {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
     void ImageView::setPreRotation(OrthogonalRotation const rotation) {
         if (m_xform.preRotation() == rotation) {

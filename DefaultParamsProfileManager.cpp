@@ -16,7 +16,7 @@ DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path)
         : path(path) {
 }
 
-std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList() {
+std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList() const {
     auto profileList = std::make_unique<std::list<QString>>();
 
     QDir dir(path);
@@ -24,17 +24,16 @@ std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList(
         QList<QFileInfo> fileInfoList = dir.entryInfoList();
         for (const QFileInfo& fileInfo : fileInfoList) {
             if (fileInfo.isFile()
-                && ((fileInfo.suffix() == "stp")
-                    || (fileInfo.suffix() == "xml"))) {
+                && ((fileInfo.suffix() == "stp") || (fileInfo.suffix() == "xml"))) {
                 profileList->push_back(fileInfo.baseName());
             }
         }
     }
 
-    return std::move(profileList);
+    return profileList;
 }
 
-std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QString& name) {
+std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QString& name) const {
     QDir dir(path);
     QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
     if (!profile.exists()) {
@@ -59,7 +58,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QS
     return std::make_unique<DefaultParams>(doc.documentElement());
 }
 
-bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, const QString& name) {
+bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, const QString& name) const {
     QDomDocument doc;
     doc.appendChild(params.toXml(doc, "profile"));
 
@@ -78,11 +77,11 @@ bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, cons
     return false;
 }
 
-std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createDefaultProfile() {
+std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createDefaultProfile() const {
     return std::make_unique<DefaultParams>();
 }
 
-std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile() {
+std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile() const {
     DefaultParams::DeskewParams deskewParams;
     deskewParams.setMode(MODE_MANUAL);
 
@@ -102,7 +101,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
     DefaultParams::OutputParams outputParams;
 
     ColorParams colorParams;
-    colorParams.setColorMode(ColorParams::COLOR_GRAYSCALE);
+    colorParams.setColorMode(COLOR_GRAYSCALE);
 
     ColorCommonOptions colorCommonOptions;
     colorCommonOptions.setCutMargins(false);
@@ -120,7 +119,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
     );
 }
 
-bool DefaultParamsProfileManager::deleteProfile(const QString& name) {
+bool DefaultParamsProfileManager::deleteProfile(const QString& name) const {
     QDir dir(path);
     QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
     if (!profile.exists()) {

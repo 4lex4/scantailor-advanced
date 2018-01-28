@@ -19,8 +19,7 @@
 
 #include "EditableZoneSet.h"
 
-EditableZoneSet::EditableZoneSet() {
-}
+EditableZoneSet::EditableZoneSet() = default;
 
 void EditableZoneSet::setDefaultProperties(PropertySet const& props) {
     m_defaultProps = props;
@@ -49,21 +48,21 @@ void EditableZoneSet::commit() {
 
 intrusive_ptr<PropertySet>
 EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline) {
-    Map::iterator it(m_splineMap.find(spline));
+    auto it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
     } else {
-        return intrusive_ptr<PropertySet>();
+        return nullptr;
     }
 }
 
 intrusive_ptr<PropertySet const>
 EditableZoneSet::propertiesFor(EditableSpline::Ptr const& spline) const {
-    Map::const_iterator it(m_splineMap.find(spline));
+    auto it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
     } else {
-        return intrusive_ptr<PropertySet const>();
+        return nullptr;
     }
 }
 

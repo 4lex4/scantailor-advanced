@@ -10,5 +10,5 @@ UnitsObserver::~UnitsObserver() {
     UnitsProvider::getInstance()->detachObserver(this);
 }
 
-void UnitsObserver::updateDpi(Dpi dpi) {
+void UnitsObserver::updateDpi(const Dpi& dpi) {
 }

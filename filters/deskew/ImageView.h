@@ -41,7 +41,7 @@ namespace deskew {
     public:
         ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 
@@ -56,9 +56,9 @@ namespace deskew {
         void doRotateRight();
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
-        virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction);
+        void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
         void doRotate(double deg);
 

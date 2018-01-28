@@ -24,14 +24,15 @@
 #endif
 
 #define DECLARE_NON_COPYABLE(Class) \
-private: \
+public: \
     /** \brief Copying is forbidden. */ \
-    Class(Class const &); \
+    Class(Class const &) = delete; \
     /** \brief Copying is forbidden. */ \
-    Class& operator=(Class const&); \
+    Class& operator=(Class const&) = delete; \
     /** \brief Moving is forbidden. */ \
-    Class(Class const &&) noexcept; \
+    Class(Class const &&) noexcept = delete; \
     /** \brief Moving is forbidden. */ \
-    Class& operator=(Class const&&) noexcept;
+    Class& operator=(Class const&&) noexcept = delete; \
+private:
 
 #endif

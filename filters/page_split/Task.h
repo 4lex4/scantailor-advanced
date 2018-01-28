@@ -46,10 +46,10 @@ namespace page_split {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<ProjectPages> const& pages,
-             intrusive_ptr<deskew::Task> const& next_task,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<ProjectPages> pages,
+             intrusive_ptr<deskew::Task> next_task,
              PageInfo const& page_info,
              bool batch_processing,
              bool debug);

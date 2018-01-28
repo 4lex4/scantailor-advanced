@@ -21,7 +21,7 @@
 
 #include "AlignedArray.h"
 #include <vector>
-#include <stddef.h>
+#include <cstddef>
 
 class QPoint;
 class QSize;

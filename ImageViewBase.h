@@ -88,7 +88,7 @@ public:
                   ImagePresentation const& presentation,
                   Margins const& margins = Margins());
 
-    virtual ~ImageViewBase();
+    ~ImageViewBase() override;
 
     /**
      * The idea behind this accessor is being able to share a single
@@ -262,27 +262,27 @@ public:
     static BackgroundExecutor& backgroundExecutor();
 
 protected:
-    virtual void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event) override;
 
-    virtual void keyPressEvent(QKeyEvent* event);
+    void keyPressEvent(QKeyEvent* event) override;
 
-    virtual void keyReleaseEvent(QKeyEvent* event);
+    void keyReleaseEvent(QKeyEvent* event) override;
 
-    virtual void mousePressEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event) override;
 
-    virtual void mouseReleaseEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
-    virtual void mouseMoveEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event) override;
 
-    virtual void wheelEvent(QWheelEvent* event);
+    void wheelEvent(QWheelEvent* event) override;
 
-    virtual void contextMenuEvent(QContextMenuEvent* event);
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
-    virtual void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 
-    virtual void enterEvent(QEvent* event);
+    void enterEvent(QEvent* event) override;
 
-    virtual void leaveEvent(QEvent* event);
+    void leaveEvent(QEvent* event) override;
 
     /**
      * Returns the maximum viewport size (as if scrollbars are hidden)

@@ -31,16 +31,16 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     layoutModeCB->addItem(tr("Auto"), MODE_AUTO);
     layoutModeCB->addItem(tr("Manual"), MODE_MANUAL);
 
-    colorModeSelector->addItem(tr("Black and White"), ColorParams::BLACK_AND_WHITE);
-    colorModeSelector->addItem(tr("Color / Grayscale"), ColorParams::COLOR_GRAYSCALE);
-    colorModeSelector->addItem(tr("Mixed"), ColorParams::MIXED);
+    colorModeSelector->addItem(tr("Black and White"), BLACK_AND_WHITE);
+    colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
+    colorModeSelector->addItem(tr("Mixed"), MIXED);
 
     fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
     fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
 
-    thresholdMethodBox->addItem(tr("Otsu"), BlackWhiteOptions::OTSU);
-    thresholdMethodBox->addItem(tr("Sauvola"), BlackWhiteOptions::SAUVOLA);
-    thresholdMethodBox->addItem(tr("Wolf"), BlackWhiteOptions::WOLF);
+    thresholdMethodBox->addItem(tr("Otsu"), OTSU);
+    thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
+    thresholdMethodBox->addItem(tr("Wolf"), WOLF);
 
     pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
     pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
@@ -52,10 +52,10 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     customDpiValue = "200";
     dpiSelector->addItem(tr("Custom"), customDpiValue);
 
-    dewarpingModeCB->addItem(tr("Off"), DewarpingOptions::OFF);
-    dewarpingModeCB->addItem(tr("Auto"), DewarpingOptions::AUTO);
-    dewarpingModeCB->addItem(tr("Manual"), DewarpingOptions::MANUAL);
-    dewarpingModeCB->addItem(tr("Marginal"), DewarpingOptions::MARGINAL);
+    dewarpingModeCB->addItem(tr("Off"), OFF);
+    dewarpingModeCB->addItem(tr("Auto"), AUTO);
+    dewarpingModeCB->addItem(tr("Manual"), MANUAL);
+    dewarpingModeCB->addItem(tr("Marginal"), MARGINAL);
 
     reservedProfileNames.insert("Default");
     reservedProfileNames.insert("Source");
@@ -300,11 +300,11 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
 
     const SplittingOptions& splittingOptions = params.getSplittingOptions();
     splittingCB->setChecked(splittingOptions.isSplitOutput());
-    switch (splittingOptions.getForegroundType()) {
-        case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
+    switch (splittingOptions.getSplittingMode()) {
+        case BLACK_AND_WHITE_FOREGROUND:
             bwForegroundRB->setChecked(true);
             break;
-        case SplittingOptions::COLOR_FOREGROUND:
+        case COLOR_FOREGROUND:
             colorForegroundRB->setChecked(true);
             break;
     }
@@ -326,7 +326,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     }
 
     dewarpingModeCB->setCurrentIndex(
-            dewarpingModeCB->findData(params.getDewarpingOptions().mode())
+            dewarpingModeCB->findData(params.getDewarpingOptions().dewarpingMode())
     );
     dewarpingPostDeskewCB->setChecked(params.getDewarpingOptions().needPostDeskew());
     depthPerceptionSlider->setValue(qRound(params.getDepthPerception().value() * 10));
@@ -512,35 +512,35 @@ void DefaultParamsDialog::alignWithOthersToggled(const bool checked) {
 }
 
 void DefaultParamsDialog::colorModeChanged(const int idx) {
-    const auto colorMode = static_cast<ColorParams::ColorMode>(colorModeSelector->itemData(idx).toInt());
+    const auto colorMode = static_cast<ColorMode>(colorModeSelector->itemData(idx).toInt());
     bool threshold_options_visible = false;
     bool picture_shape_visible = false;
     bool splitting_options_visible = false;
     switch (colorMode) {
-        case ColorParams::MIXED:
+        case MIXED:
             picture_shape_visible = true;
             splitting_options_visible = true;
             // fall into
-        case ColorParams::BLACK_AND_WHITE:
+        case BLACK_AND_WHITE:
             threshold_options_visible = true;
             // fall into
-        case ColorParams::COLOR_GRAYSCALE:
+        case COLOR_GRAYSCALE:
             break;
     }
     thresholdOptions->setEnabled(threshold_options_visible);
     pictureShapeOptions->setEnabled(picture_shape_visible);
     splittingOptions->setEnabled(splitting_options_visible);
 
-    equalizeIlluminationCB->setEnabled(colorMode != ColorParams::COLOR_GRAYSCALE);
-    equalizeIlluminationColorCB->setEnabled(colorMode != ColorParams::BLACK_AND_WHITE);
-    if ((colorMode == ColorParams::MIXED)) {
+    equalizeIlluminationCB->setEnabled(colorMode != COLOR_GRAYSCALE);
+    equalizeIlluminationColorCB->setEnabled(colorMode != BLACK_AND_WHITE);
+    if ((colorMode == MIXED)) {
         if (equalizeIlluminationColorCB->isChecked()) {
             equalizeIlluminationColorCB->setChecked(equalizeIlluminationCB->isChecked());
         }
         equalizeIlluminationColorCB->setEnabled(equalizeIlluminationCB->isChecked());
     }
-    savitzkyGolaySmoothingCB->setEnabled(colorMode != ColorParams::COLOR_GRAYSCALE);
-    morphologicalSmoothingCB->setEnabled(colorMode != ColorParams::COLOR_GRAYSCALE);
+    savitzkyGolaySmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
+    morphologicalSmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
 }
 
 void DefaultParamsDialog::thresholdMethodChanged(const int idx) {
@@ -553,8 +553,8 @@ void DefaultParamsDialog::pictureShapeChanged(const int idx) {
 }
 
 void DefaultParamsDialog::equalizeIlluminationToggled(const bool checked) {
-    const auto colorMode = static_cast<ColorParams::ColorMode>(colorModeSelector->currentData().toInt());
-    if (colorMode == ColorParams::MIXED) {
+    const auto colorMode = static_cast<ColorMode>(colorModeSelector->currentData().toInt());
+    if (colorMode == MIXED) {
         if (equalizeIlluminationColorCB->isChecked()) {
             equalizeIlluminationColorCB->setChecked(checked);
         }
@@ -665,7 +665,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
                     ? dpiSelector->currentText().toInt()
                     : customDpiValue.toInt();
     ColorParams colorParams;
-    colorParams.setColorMode(static_cast<ColorParams::ColorMode>(colorModeSelector->currentData().toInt()));
+    colorParams.setColorMode(static_cast<ColorMode>(colorModeSelector->currentData().toInt()));
 
     ColorCommonOptions colorCommonOptions;
     colorCommonOptions.setFillingColor(
@@ -679,14 +679,14 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     blackWhiteOptions.setNormalizeIllumination(equalizeIlluminationCB->isChecked());
     blackWhiteOptions.setSavitzkyGolaySmoothingEnabled(savitzkyGolaySmoothingCB->isChecked());
     blackWhiteOptions.setMorphologicalSmoothingEnabled(morphologicalSmoothingCB->isChecked());
-    BlackWhiteOptions::BinarizationMethod binarizationMethod
-            = static_cast<BlackWhiteOptions::BinarizationMethod>(thresholdMethodBox->currentData().toInt());
+    BinarizationMethod binarizationMethod
+            = static_cast<BinarizationMethod>(thresholdMethodBox->currentData().toInt());
     blackWhiteOptions.setBinarizationMethod(binarizationMethod);
     blackWhiteOptions.setThresholdAdjustment(thresholdSlider->value());
     blackWhiteOptions.setSauvolaCoef(sauvolaCoef->value());
-    if (binarizationMethod == BlackWhiteOptions::SAUVOLA) {
+    if (binarizationMethod == SAUVOLA) {
         blackWhiteOptions.setWindowSize(sauvolaWindowSize->value());
-    } else if (binarizationMethod == BlackWhiteOptions::WOLF) {
+    } else if (binarizationMethod == WOLF) {
         blackWhiteOptions.setWindowSize(wolfWindowSize->value());
     }
     blackWhiteOptions.setWolfCoef(wolfCoef->value());
@@ -696,8 +696,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
     SplittingOptions splittingOptions;
     splittingOptions.setSplitOutput(splittingCB->isChecked());
-    splittingOptions.setForegroundType(bwForegroundRB->isChecked() ? SplittingOptions::BLACK_AND_WHITE_FOREGROUND
-                                                                   : SplittingOptions::COLOR_FOREGROUND);
+    splittingOptions.setSplittingMode(bwForegroundRB->isChecked() ? BLACK_AND_WHITE_FOREGROUND
+                                                                  : COLOR_FOREGROUND);
     splittingOptions.setOriginalBackground(originalBackgroundCB->isChecked());
 
     PictureShapeOptions pictureShapeOptions;
@@ -705,7 +705,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     pictureShapeOptions.setSensitivity(pictureShapeSensitivitySB->value());
 
     DewarpingOptions dewarpingOptions;
-    dewarpingOptions.setMode(static_cast<DewarpingOptions::Mode>(dewarpingModeCB->currentData().toInt()));
+    dewarpingOptions.setDewarpingMode(static_cast<DewarpingMode>(dewarpingModeCB->currentData().toInt()));
     dewarpingOptions.setPostDeskew(dewarpingPostDeskewCB->isChecked());
 
     DespeckleLevel despeckleLevel;
@@ -739,12 +739,12 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
     defaultParams->setUnits(currentUnits);
 
-    return std::move(defaultParams);
+    return defaultParams;
 }
 
 void DefaultParamsDialog::updateUnits(const Units units) {
     currentUnits = units;
-    unitsLabel->setText(toString(units));
+    unitsLabel->setText(unitsToString(units));
 
     {
         int decimals;

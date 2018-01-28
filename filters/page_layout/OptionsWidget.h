@@ -38,32 +38,24 @@ class ProjectPages;
 namespace page_layout {
     class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, public Ui::PageLayoutOptionsWidget {
+    class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::PageLayoutOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
         void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
 
         void postUpdateUI();
 
-        bool leftRightLinked() const {
-            return m_leftRightLinked;
-        }
+        bool leftRightLinked() const;
 
-        bool topBottomLinked() const {
-            return m_topBottomLinked;
-        }
+        bool topBottomLinked() const;
 
-        Margins const& marginsMM() const {
-            return m_marginsMM;
-        }
+        Margins const& marginsMM() const;
 
-        Alignment const& alignment() const {
-            return m_alignment;
-        }
+        Alignment const& alignment() const;
 
         void updateUnits(Units units) override;
 
@@ -80,6 +72,7 @@ namespace page_layout {
         void aggregateHardSizeChanged();
 
     public slots:
+
         void marginsSetExternally(Margins const& margins_mm);
 
     private slots:

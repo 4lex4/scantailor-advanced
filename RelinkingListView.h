@@ -27,10 +27,10 @@ class QModelIndex;
 
 class RelinkingListView : public QListView {
 public:
-    RelinkingListView(QWidget* parent = 0);
+    explicit RelinkingListView(QWidget* parent = nullptr);
 
 protected:
-    virtual void paintEvent(QPaintEvent* e);
+    void paintEvent(QPaintEvent* e) override;
 
 private:
     class Delegate;

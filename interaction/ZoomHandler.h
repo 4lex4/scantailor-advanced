@@ -35,7 +35,7 @@ public:
         CURSOR
     };
 
-    ZoomHandler(ImageViewBase& image_view);
+    explicit ZoomHandler(ImageViewBase& image_view);
 
     ZoomHandler(ImageViewBase& image_view,
                 boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter);
@@ -49,9 +49,9 @@ public:
     }
 
 protected:
-    virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction);
+    void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
 private:
     ImageViewBase& m_rImageView;

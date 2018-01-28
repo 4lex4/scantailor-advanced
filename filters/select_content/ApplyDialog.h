@@ -32,14 +32,12 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace select_content {
-    class Scope;
-
     class ApplyDialog : public QDialog, private Ui::SelectContentApplyDialog {
     Q_OBJECT
     public:
         ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~ApplyDialog();
+        ~ApplyDialog() override;
 
     signals:
 

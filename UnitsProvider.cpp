@@ -60,9 +60,9 @@ void UnitsProvider::unitsChanged() {
 }
 
 void UnitsProvider::convert(double& horizontalValue,
-                                  double& verticalValue,
-                                  Units fromUnits,
-                                  Units toUnits) const {
+                            double& verticalValue,
+                            Units fromUnits,
+                            Units toUnits) const {
     unitsConverter.convert(horizontalValue, verticalValue, fromUnits, toUnits);
 }
 

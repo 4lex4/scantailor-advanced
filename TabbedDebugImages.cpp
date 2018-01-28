@@ -26,7 +26,7 @@ TabbedDebugImages::TabbedDebugImages(QWidget* parent)
 }
 
 void TabbedDebugImages::currentTabChanged(int const idx) {
-    if (DebugImageView* div = dynamic_cast<DebugImageView*>(widget(idx))) {
+    if (auto* div = dynamic_cast<DebugImageView*>(widget(idx))) {
         div->unlink();
         m_liveViews.push_back(*div);
         removeExcessLiveViews();
@@ -35,7 +35,7 @@ void TabbedDebugImages::currentTabChanged(int const idx) {
 }
 
 void TabbedDebugImages::removeExcessLiveViews() {
-    int remaining = m_liveViews.size();
+    auto remaining = static_cast<int>(m_liveViews.size());
     for (; remaining > MAX_LIVE_VIEWS; --remaining) {
         m_liveViews.front().setLive(false);
         m_liveViews.erase(m_liveViews.begin());

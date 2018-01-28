@@ -22,7 +22,7 @@
 #include <QImage>
 #include <QSize>
 #include <QRect>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
 /**

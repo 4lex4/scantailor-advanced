@@ -18,9 +18,10 @@
 
 #include "Thumbnail.h"
 #include <QPainter>
+#include <utility>
 
 namespace select_content {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                          QSizeF const& max_size,
                          ImageId const& image_id,
                          ImageTransformation const& xform,
@@ -28,7 +29,7 @@ namespace select_content {
                          QRectF const& page_rect,
                          bool page_rect_enabled,
                          bool deviant)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
               m_contentRect(content_rect),
               m_pageRect(page_rect),
               m_pageRectEnabled(page_rect_enabled),

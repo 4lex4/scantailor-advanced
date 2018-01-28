@@ -163,8 +163,7 @@ namespace page_layout {
         recalcBoxesAndFit(opt_widget.marginsMM());
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
     void ImageView::marginsSetExternally(Margins const& margins_mm) {
         AggregateSizeChanged const changed = commitHardMargins(margins_mm);

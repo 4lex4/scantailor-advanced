@@ -27,16 +27,16 @@ PageInfo const& PageSequence::pageAt(size_t const idx) const {
 }
 
 PageInfo const& PageSequence::pageAt(PageId const page) const {
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    auto const end(m_pages.end());
     for (; it != end && it->id() != page; ++it) {
     }
     return *it;
 }
 
 int PageSequence::pageNo(PageId const& page) const {
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    auto const end(m_pages.end());
     int res = 0;
     for (; it != end && it->id() != page; ++it, ++res) {
     }
@@ -58,8 +58,8 @@ std::set<PageId>
 PageSequence::selectPagePlusFollowers(PageId const& page) const {
     std::set<PageId> selection;
 
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    auto const end(m_pages.end());
     for (; it != end && it->id() != page; ++it) {
         // Continue until we have a match.
     }
@@ -74,8 +74,8 @@ std::set<PageId>
 PageSequence::selectEveryOther(PageId const& base) const {
     std::set<PageId> selection;
 
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    auto const end(m_pages.end());
     for (; it != end && it->id() != base; ++it) {
         // Continue until we have a match.
     }
@@ -83,7 +83,7 @@ PageSequence::selectEveryOther(PageId const& base) const {
         return selection;
     }
 
-    int const base_idx = it - m_pages.begin();
+    int const base_idx = static_cast<const int>(it - m_pages.begin());
     int idx = 0;
     for (PageInfo const& page_info : m_pages) {
         if (((idx - base_idx) & 1) == 0) {

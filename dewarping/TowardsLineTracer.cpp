@@ -52,7 +52,7 @@ namespace dewarping {
 
     QPoint const* TowardsLineTracer::trace(float const max_dist) {
         if (m_finished) {
-            return 0;
+            return nullptr;
         }
 
         int const max_sqdist = qRound(max_dist * max_dist);
@@ -125,7 +125,7 @@ namespace dewarping {
 
             return &m_lastOutputPos;
         } else {
-            return 0;
+            return nullptr;
         }
     }  // TowardsLineTracer::trace
 

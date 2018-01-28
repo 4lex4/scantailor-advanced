@@ -36,7 +36,7 @@ namespace select_content {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
@@ -52,45 +52,25 @@ namespace select_content {
 
         bool isParamsNull(PageId const& page_id) const;
 
-        double maxDeviation() const {
-            return m_maxDeviation;
-        }
+        double maxDeviation() const;
 
-        void setMaxDeviation(double md) {
-            m_maxDeviation = md;
-        }
+        void setMaxDeviation(double md);
 
-        QSizeF pageDetectionBox() const {
-            return m_pageDetectionBox;
-        }
+        QSizeF pageDetectionBox() const;
 
-        void setPageDetectionBox(QSizeF size) {
-            m_pageDetectionBox = size;
-        }
+        void setPageDetectionBox(QSizeF size);
 
-        double pageDetectionTolerance() const {
-            return m_pageDetectionTolerance;
-        }
+        double pageDetectionTolerance() const;
 
-        void setPageDetectionTolerance(double tolerance) {
-            m_pageDetectionTolerance = tolerance;
-        }
+        void setPageDetectionTolerance(double tolerance);
 
-        double avg() const {
-            return m_avg;
-        }
+        double avg() const;
 
-        void setAvg(double a) {
-            m_avg = a;
-        }
+        void setAvg(double a);
 
-        double std() const {
-            return m_sigma;
-        }
+        double std() const;
 
-        void setStd(double s) {
-            m_sigma = s;
-        }
+        void setStd(double s);
 
     private:
         typedef std::map<PageId, Params> PageParams;

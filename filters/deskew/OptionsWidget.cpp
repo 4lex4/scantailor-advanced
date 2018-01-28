@@ -17,6 +17,8 @@
  */
 
 #include "OptionsWidget.h"
+
+#include <utility>
 #include "Settings.h"
 #include "ScopedIncDec.h"
 #include "ApplyDialog.h"
@@ -24,9 +26,9 @@
 namespace deskew {
     double const OptionsWidget::MAX_ANGLE = 45.0;
 
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                                  PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+            : m_ptrSettings(std::move(settings)),
               m_ignoreAutoManualToggle(0),
               m_ignoreSpinBoxChanges(0),
               m_pageSelectionAccessor(page_selection_accessor) {
@@ -39,11 +41,10 @@ namespace deskew {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::showDeskewDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -241,8 +242,7 @@ namespace deskew {
               m_mode(MODE_AUTO) {
     }
 
-    OptionsWidget::UiData::~UiData() {
-    }
+    OptionsWidget::UiData::~UiData() = default;
 
     void OptionsWidget::UiData::setEffectiveDeskewAngle(double const degrees) {
         m_effDeskewAngle = degrees;

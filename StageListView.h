@@ -29,13 +29,13 @@ class StageSequence;
 class StageListView : public QTableView {
 Q_OBJECT
 public:
-    StageListView(QWidget* parent);
+    explicit StageListView(QWidget* parent);
 
-    virtual ~StageListView();
+    ~StageListView() override;
 
     void setStages(intrusive_ptr<StageSequence> const& stages);
 
-    virtual QSize sizeHint() const {
+    QSize sizeHint() const override {
         return m_sizeHint;
     }
 
@@ -51,14 +51,14 @@ public slots:
 
 protected slots:
 
-    virtual void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
+    void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) override;
 
 private slots:
 
     void ensureSelectedRowVisible();
 
 protected:
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
 
 private:
     class Model;

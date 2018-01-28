@@ -31,7 +31,7 @@ class QPainter;
  */
 class BubbleAnimation {
 public:
-    BubbleAnimation(int num_bubbles);
+    explicit BubbleAnimation(int num_bubbles);
 
     /**
      * \brief Renders the next frame of the animation.

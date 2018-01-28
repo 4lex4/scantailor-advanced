@@ -97,13 +97,13 @@ public:
 
     ~Impl();
 
-    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory);
+    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
 
     void attachView(QGraphicsView* view);
 
     void reset(PageSequence const& pages,
                SelectionAction const selection_action,
-               intrusive_ptr<PageOrderProvider const> const& provider);
+               intrusive_ptr<PageOrderProvider const> provider);
 
     intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
 
@@ -249,11 +249,9 @@ private:
 
 class ThumbnailSequence::LabelGroup : public QGraphicsItemGroup {
 public:
-    LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> label);
-
     LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
                std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
-               std::unique_ptr<QGraphicsPixmapItem> pixmap = std::unique_ptr<QGraphicsPixmapItem>());
+               std::unique_ptr<QGraphicsPixmapItem> pixmap = nullptr);
 
     void updateAppearence(bool selected, bool selection_leader);
 
@@ -316,8 +314,8 @@ ThumbnailSequence::ThumbnailSequence(QSizeF const& max_logical_thumb_size)
 ThumbnailSequence::~ThumbnailSequence() {
 }
 
-void ThumbnailSequence::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory) {
-    m_ptrImpl->setThumbnailFactory(factory);
+void ThumbnailSequence::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory) {
+    m_ptrImpl->setThumbnailFactory(std::move(factory));
 }
 
 void ThumbnailSequence::attachView(QGraphicsView* const view) {
@@ -326,8 +324,8 @@ void ThumbnailSequence::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::reset(PageSequence const& pages,
                               SelectionAction const selection_action,
-                              intrusive_ptr<PageOrderProvider const> const& order_provider) {
-    m_ptrImpl->reset(pages, selection_action, order_provider);
+                              intrusive_ptr<PageOrderProvider const> order_provider) {
+    m_ptrImpl->reset(pages, selection_action, std::move(order_provider));
 }
 
 intrusive_ptr<PageOrderProvider const>
@@ -426,8 +424,8 @@ ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, QSizeF const& max_logica
 ThumbnailSequence::Impl::~Impl() {
 }
 
-void ThumbnailSequence::Impl::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> const& factory) {
-    m_ptrFactory = factory;
+void ThumbnailSequence::Impl::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory) {
+    m_ptrFactory = std::move(factory);
 }
 
 void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
@@ -436,8 +434,8 @@ void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::Impl::reset(PageSequence const& pages,
                                     SelectionAction const selection_action,
-                                    intrusive_ptr<PageOrderProvider const> const& order_provider) {
-    m_ptrOrderProvider = order_provider;
+                                    intrusive_ptr<PageOrderProvider const> order_provider) {
+    m_ptrOrderProvider = std::move(order_provider);
 
     std::set<PageId> selected;
     PageInfo selection_leader;
@@ -645,7 +643,7 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
     }
 
     // Sort pages in m_itemsInOrder using m_ptrOrderProvider.
-    if (m_ptrOrderProvider.get()) {
+    if (m_ptrOrderProvider) {
         m_itemsInOrder.sort(
                 [this](Item const& lhs, Item const& rhs) {
                     return m_ptrOrderProvider->precedes(
@@ -808,7 +806,7 @@ void ThumbnailSequence::Impl::insert(PageInfo const& page_info, BeforeOrAfter be
 
         if (before_or_after == AFTER) {
             ++ord_it;
-            if (!m_ptrOrderProvider.get()) {
+            if (!m_ptrOrderProvider) {
                 // Advance past not only the target page, but also its other half, if it follows.
                 while (ord_it != m_itemsInOrder.end() && ord_it->pageInfo.imageId() == image) {
                     ++ord_it;
@@ -1173,7 +1171,7 @@ ThumbnailSequence::Impl::ItemsInOrder::iterator ThumbnailSequence::Impl::itemIns
     // Note that to preserve stable ordering, this function *must* return hint,
     // as long as it's an acceptable position.
 
-    if (!m_ptrOrderProvider.get()) {
+    if (!m_ptrOrderProvider) {
         if (dist_from_hint) {
             *dist_from_hint = 0;
         }
@@ -1225,11 +1223,11 @@ std::unique_ptr<QGraphicsItem>
 ThumbnailSequence::Impl::getThumbnail(PageInfo const& page_info) {
     std::unique_ptr<QGraphicsItem> thumb;
 
-    if (m_ptrFactory.get()) {
+    if (m_ptrFactory) {
         thumb = m_ptrFactory->get(page_info);
     }
 
-    if (!thumb.get()) {
+    if (!thumb) {
         thumb.reset(new PlaceholderThumb(m_maxLogicalThumbSize));
     }
 
@@ -1392,7 +1390,7 @@ ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextIte
 
     addToGroup(normal_label.release());
     addToGroup(bold_label.release());
-    if (pixmap.get()) {
+    if (pixmap) {
         addToGroup(pixmap.release());
     }
 }

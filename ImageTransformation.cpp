@@ -26,8 +26,7 @@ ImageTransformation::ImageTransformation(QRectF const& orig_image_rect, Dpi cons
     preScaleToEqualizeDpi();
 }
 
-ImageTransformation::~ImageTransformation() {
-}
+ImageTransformation::~ImageTransformation() = default;
 
 void ImageTransformation::preScaleToDpi(Dpi const& dpi) {
     if (m_origDpi.isNull() || dpi.isNull()) {

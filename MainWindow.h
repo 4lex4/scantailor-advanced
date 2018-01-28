@@ -81,7 +81,7 @@ Q_OBJECT
 public:
     MainWindow();
 
-    virtual ~MainWindow();
+    ~MainWindow() override;
 
     PageSequence allPages() const;
 
@@ -90,9 +90,9 @@ public:
     std::vector<PageRange> selectedRanges() const;
 
 protected:
-    bool eventFilter(QObject* obj, QEvent* ev);
+    bool eventFilter(QObject* obj, QEvent* ev) override;
 
-    void closeEvent(QCloseEvent* event)override ;
+    void closeEvent(QCloseEvent* event) override;
 
     void timerEvent(QTimerEvent* event) override;
 
@@ -155,11 +155,11 @@ private slots:
 
     void stopBatchProcessing(MainAreaAction main_area = UPDATE_MAIN_AREA);
 
-    void invalidateThumbnail(PageId const& page_id);
+    void invalidateThumbnail(PageId const& page_id) override;
 
     void invalidateThumbnail(PageInfo const& page_info);
 
-    void invalidateAllThumbnails();
+    void invalidateAllThumbnails() override;
 
     void showRelinkingDialog();
 
@@ -206,19 +206,19 @@ private:
 
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership);
+    void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) override;
 
-    virtual void setImageWidget(QWidget* widget,
-                                Ownership ownership,
-                                DebugImages* debug_images = 0,
-                                bool clearImageWidget = true);
+    void setImageWidget(QWidget* widget,
+                        Ownership ownership,
+                        DebugImages* debug_images = nullptr,
+                        bool clearImageWidget = true) override;
 
-    virtual intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester();
+    intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() override;
 
     void switchToNewProject(intrusive_ptr<ProjectPages> const& pages,
                             QString const& out_dir,
                             QString const& project_file_path = QString(),
-                            ProjectReader const* project_reader = 0);
+                            ProjectReader const* project_reader = nullptr);
 
     intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache();
 
@@ -262,7 +262,7 @@ private:
 
     void updateMainArea();
 
-    bool checkReadyForOutput(PageId const* ignore = 0) const;
+    bool checkReadyForOutput(PageId const* ignore = nullptr) const;
 
     void loadPageInteractive(PageInfo const& page);
 

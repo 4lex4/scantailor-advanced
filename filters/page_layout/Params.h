@@ -39,35 +39,21 @@ namespace page_layout {
                Alignment const& alignment,
                bool auto_margins);
 
-        Params(QDomElement const& el);
+        explicit Params(QDomElement const& el);
 
-        Margins const& hardMarginsMM() const {
-            return m_hardMarginsMM;
-        }
+        Margins const& hardMarginsMM() const;
 
-        QRectF const& contentRect() const {
-            return m_contentRect;
-        }
+        QRectF const& contentRect() const;
 
-        QRectF const& pageRect() const {
-            return m_pageRect;
-        }
+        QRectF const& pageRect() const;
 
-        QSizeF const& contentSizeMM() const {
-            return m_contentSizeMM;
-        }
+        QSizeF const& contentSizeMM() const;
 
-        Alignment const& alignment() const {
-            return m_alignment;
-        }
+        Alignment const& alignment() const;
 
-        bool isAutoMarginsEnabled() const {
-            return m_autoMargins;
-        }
+        bool isAutoMarginsEnabled() const;
 
-        bool isDeviant() const {
-            return m_alignment.isNull();
-        }
+        bool isDeviant() const;
 
         QDomElement toXml(QDomDocument& doc, QString const& name) const;
 

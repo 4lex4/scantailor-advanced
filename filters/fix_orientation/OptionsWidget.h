@@ -32,9 +32,9 @@ namespace fix_orientation {
     class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
         void preUpdateUI(PageId const& page_id, OrthogonalRotation rotation);
 

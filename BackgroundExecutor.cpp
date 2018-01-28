@@ -24,10 +24,10 @@
 
 class BackgroundExecutor::Dispatcher : public QObject {
 public:
-    Dispatcher(Impl& owner);
+    explicit Dispatcher(Impl& owner);
 
 protected:
-    virtual void customEvent(QEvent* event);
+    void customEvent(QEvent* event) override;
 
 private:
     Impl& m_rOwner;
@@ -36,16 +36,16 @@ private:
 
 class BackgroundExecutor::Impl : public QThread {
 public:
-    Impl(BackgroundExecutor& owner);
+    explicit Impl(BackgroundExecutor& owner);
 
-    ~Impl();
+    ~Impl() override;
 
     void enqueueTask(TaskPtr const& task);
 
 protected:
-    virtual void run();
+    void run() override;
 
-    virtual void customEvent(QEvent* event);
+    void customEvent(QEvent* event) override;
 
 private:
     BackgroundExecutor& m_rOwner;
@@ -60,15 +60,14 @@ BackgroundExecutor::BackgroundExecutor()
         : m_ptrImpl(new Impl(*this)) {
 }
 
-BackgroundExecutor::~BackgroundExecutor() {
-}
+BackgroundExecutor::~BackgroundExecutor() = default;
 
 void BackgroundExecutor::shutdown() {
     m_ptrImpl.reset();
 }
 
 void BackgroundExecutor::enqueueTask(TaskPtr const& task) {
-    if (m_ptrImpl.get()) {
+    if (m_ptrImpl) {
         m_ptrImpl->enqueueTask(task);
     }
 }
@@ -81,7 +80,7 @@ BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner)
 
 void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
     try {
-        TaskEvent* evt = dynamic_cast<TaskEvent*>(event);
+        auto* evt = dynamic_cast<TaskEvent*>(event);
         assert(evt);
 
         TaskPtr const& task = evt->payload();
@@ -125,7 +124,7 @@ void BackgroundExecutor::Impl::run() {
 }
 
 void BackgroundExecutor::Impl::customEvent(QEvent* event) {
-    ResultEvent* evt = dynamic_cast<ResultEvent*>(event);
+    auto* evt = dynamic_cast<ResultEvent*>(event);
     assert(evt);
 
     TaskResultPtr const& result = evt->payload();

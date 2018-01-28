@@ -41,19 +41,19 @@ class QRectF;
  */
 class IncompleteThumbnail : public ThumbnailBase {
 public:
-    IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
+    IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                         QSizeF const& max_size,
                         ImageId const& image_id,
                         ImageTransformation const& image_xform);
 
-    virtual ~IncompleteThumbnail();
+    ~IncompleteThumbnail() override;
 
     static void drawQuestionMark(QPainter& painter, QRectF const& bounding_rect);
 
 protected:
-    virtual void paintOverImage(QPainter& painter,
-                                QTransform const& image_to_display,
-                                QTransform const& thumb_to_display);
+    void paintOverImage(QPainter& painter,
+                        QTransform const& image_to_display,
+                        QTransform const& thumb_to_display) override;
 
 private:
     static QPainterPath m_sCachedPath;

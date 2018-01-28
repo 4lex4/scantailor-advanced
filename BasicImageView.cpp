@@ -32,6 +32,5 @@ BasicImageView::BasicImageView(QImage const& image, ImagePixmapUnion const& down
     rootInteractionHandler().makeLastFollower(m_zoomHandler);
 }
 
-BasicImageView::~BasicImageView() {
-}
+BasicImageView::~BasicImageView() = default;
 

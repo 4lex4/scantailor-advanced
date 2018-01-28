@@ -19,8 +19,8 @@
 #ifndef TIFFWRITER_H_
 #define TIFFWRITER_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include <cstdint>
+#include <cstddef>
 #include <tiff.h>
 
 class QIODevice;

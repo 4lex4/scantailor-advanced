@@ -37,14 +37,13 @@ public:
         TRANSFER_OWNERSHIP
     };
 
-    virtual ~FilterUiInterface() {
-    }
+    virtual ~FilterUiInterface() = default;
 
     virtual void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) = 0;
 
     virtual void setImageWidget(QWidget* widget,
                                 Ownership ownership,
-                                DebugImages* debug_images = 0,
+                                DebugImages* debug_images = nullptr,
                                 bool clearImageWidget = true) = 0;
 
     virtual void invalidateThumbnail(PageId const& page_id) = 0;

@@ -31,15 +31,18 @@
 #include "Utils.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include "CommandLine.h"
+#include <filters/output/Task.h>
+#include <filters/output/CacheDrivenTask.h>
 
 namespace page_layout {
-    Filter::Filter(intrusive_ptr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrPages(pages),
+    Filter::Filter(intrusive_ptr<ProjectPages> pages, PageSelectionAccessor const& page_selection_accessor)
+            : m_ptrPages(std::move(pages)),
               m_ptrSettings(new Settings),
               m_selectedPageOrder(0) {
         if (CommandLine::get().isGui()) {
@@ -117,7 +120,7 @@ namespace page_layout {
     void
     Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const {
         std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
-        if (!params.get()) {
+        if (!params) {
             return;
         }
 
@@ -189,21 +192,21 @@ namespace page_layout {
 
     intrusive_ptr<Task>
     Filter::createTask(PageId const& page_id,
-                       intrusive_ptr<output::Task> const& next_task,
+                       intrusive_ptr<output::Task> next_task,
                        bool const batch,
                        bool const debug) {
         return intrusive_ptr<Task>(
                 new Task(
-                        intrusive_ptr<Filter>(this), next_task,
+                        intrusive_ptr<Filter>(this), std::move(next_task),
                         m_ptrSettings, page_id, batch, debug
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(next_task, m_ptrSettings)
+                new CacheDrivenTask(std::move(next_task), m_ptrSettings)
         );
     }
 
@@ -225,5 +228,9 @@ namespace page_layout {
                        pageLayoutParams.isAutoMargins()
                 )
         );
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
     }
 }  // namespace page_layout

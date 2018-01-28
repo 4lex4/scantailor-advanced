@@ -77,8 +77,7 @@ namespace select_content {
               m_deviation(filter_el.attribute("deviation").toDouble()) {
     }
 
-    Params::~Params() {
-    }
+    Params::~Params() = default;
 
     QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
         XmlMarshaller marshaller(doc);
@@ -96,5 +95,93 @@ namespace select_content {
         el.appendChild(m_deps.toXml(doc, "dependencies"));
 
         return el;
+    }
+
+    QRectF const& Params::contentRect() const {
+        return m_contentRect;
+    }
+
+    QRectF const& Params::pageRect() const {
+        return m_pageRect;
+    }
+
+    QSizeF const& Params::contentSizeMM() const {
+        return m_contentSizeMM;
+    }
+
+    Dependencies const& Params::dependencies() const {
+        return m_deps;
+    }
+
+    AutoManualMode Params::contentDetectionMode() const {
+        return m_contentDetectionMode;
+    }
+
+    AutoManualMode Params::pageDetectionMode() const {
+        return m_pageDetectionMode;
+    }
+
+    double Params::deviation() const {
+        return m_deviation;
+    }
+
+    void Params::setDeviation(double d) {
+        m_deviation = d;
+    }
+
+    void Params::computeDeviation(double avg) {
+        m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
+    }
+
+    bool Params::isDeviant(double std, double max_dev) {
+        return (max_dev * std) < fabs(m_deviation);
+    }
+
+    bool Params::isContentDetectionEnabled() const {
+        return m_contentDetectEnabled;
+    }
+
+    bool Params::isPageDetectionEnabled() const {
+        return m_pageDetectEnabled;
+    }
+
+    bool Params::isFineTuningEnabled() const {
+        return m_fineTuneCorners;
+    }
+
+    void Params::setContentDetectionMode(AutoManualMode const& mode) {
+        m_contentDetectionMode = mode;
+    }
+
+    void Params::setPageDetectionMode(AutoManualMode const& mode) {
+        m_pageDetectionMode = mode;
+    }
+
+    void Params::setContentRect(QRectF const& rect) {
+        m_contentRect = rect;
+    }
+
+    void Params::setPageRect(QRectF const& rect) {
+        m_pageRect = rect;
+    }
+
+    void Params::setContentSizeMM(QSizeF const& size) {
+        m_contentSizeMM = size;
+    }
+
+    void Params::setDependencies(Dependencies const& deps) {
+        m_deps = deps;
+    }
+
+    void Params::setContentDetect(bool detect) {
+        m_contentDetectEnabled = detect;
+    }
+
+    void Params::setPageDetect(bool detect) {
+        m_pageDetectEnabled = detect;
+    }
+
+    void Params::setFineTuneCorners(bool fine_tune) {
+        m_fineTuneCorners = fine_tune;
     }
 }  // namespace content_rect

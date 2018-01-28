@@ -25,7 +25,7 @@
 #include <QColor>
 #include <Qt>
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 
 class QImage;
 
@@ -57,7 +57,7 @@ namespace imageproc {
          *
          * All cells will have the label of zero.
          */
-        ConnectivityMap(QSize const& size);
+        explicit ConnectivityMap(QSize const& size);
 
         /**
          * \brief Labels components in a binary image.
@@ -129,7 +129,7 @@ namespace imageproc {
          * to access that data.
          */
         uint32_t const* paddedData() const {
-            return m_pData ? &m_data[0] : 0;
+            return m_pData ? &m_data[0] : nullptr;
         }
 
         /**
@@ -140,7 +140,7 @@ namespace imageproc {
          * to access that data.
          */
         uint32_t* paddedData() {
-            return m_pData ? &m_data[0] : 0;
+            return m_pData ? &m_data[0] : nullptr;
         }
 
         /**

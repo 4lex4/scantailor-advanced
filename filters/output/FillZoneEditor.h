@@ -43,25 +43,24 @@ class QPainter;
 namespace output {
     class Settings;
 
-
     class FillZoneEditor : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        FillZoneEditor(QImage const& image, ImagePixmapUnion const& downscaled_version,
-                       boost::function<QPointF(QPointF const&)> const& orig_to_image, boost::function<QPointF(
-                QPointF
-                const
-                &)> const& image_to_orig, PageId const& page_id,
-                       intrusive_ptr<Settings> const& settings);
+        FillZoneEditor(QImage const& image,
+                       ImagePixmapUnion const& downscaled_version,
+                       boost::function<QPointF(QPointF const&)> const& orig_to_image,
+                       boost::function<QPointF(QPointF const&)> const& image_to_orig,
+                       PageId const& page_id,
+                       intrusive_ptr<Settings> settings);
 
-        virtual ~FillZoneEditor();
+        ~FillZoneEditor() override;
 
     signals:
 
         void invalidateThumbnail(PageId const& page_id);
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, InteractionState const& interaction) override;
 
     private slots:
 
@@ -86,6 +85,7 @@ namespace output {
         static QColor toBlackWhite(QColor const& color);
 
         static ColorAdapter colorAdapterFor(QImage const& image);
+
 
         ColorAdapter m_colorAdapter;
         EditableZoneSet m_zones;

@@ -79,7 +79,7 @@ void ZoneDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState&
     QTransform const from_screen(m_rContext.imageView().widgetToImage());
     QPointF const shift = (event->pos() + QPointF(0.5, 0.5)) - m_initialMousePos;
     QPointF const splineShift = to_screen.map(m_ptrSpline->firstVertex()->point()) - m_initialSplineFirstVertexPos;
-    
+
     SplineVertex::Ptr vertex(m_ptrSpline->firstVertex());
     do {
         vertex->setPoint(from_screen.map(to_screen.map(vertex->point()) + shift - splineShift));

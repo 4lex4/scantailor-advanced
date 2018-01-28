@@ -531,7 +531,7 @@ namespace select_content {
         int const width = content_blocks.width();
         int const height = content_blocks.height();
 
-        uint16_t const max_spread_dist = std::min(width, height) / 4;
+        auto const max_spread_dist = static_cast<const uint16_t>(std::min(width, height) / 4);
 
         std::vector<uint16_t> map((width + 2) * (height + 2), ~uint16_t(0));
 
@@ -589,7 +589,7 @@ namespace select_content {
             queue.pop();
 
             assert(*cell != 0);
-            uint16_t const new_dist = *cell - 1;
+            auto const new_dist = static_cast<const uint16_t>(*cell - 1);
 
             uint16_t* nbh = cell - map_stride;
             if (new_dist > *nbh) {
@@ -690,6 +690,8 @@ namespace select_content {
                     case 2:
                         hg_line[x >> 5] |= msb >> (x & 31);
                         break;
+                    default:
+                        break;
                 }
             }
             imap_line += imap_stride;
@@ -767,8 +769,7 @@ namespace select_content {
             typedef std::pair<int const*, int const*> Range;
             std::vector<Range> ranges;
             std::vector<Range> splittable_ranges;
-            splittable_ranges.push_back(
-                    Range(&hist[0], &hist[hist.size() - 1])
+            splittable_ranges.emplace_back(&hist[0], &hist[hist.size() - 1]
             );
 
             std::vector<int> max_forward(hist.size());
@@ -825,20 +826,18 @@ namespace select_content {
                 }
 
                 if (best_split_pos) {
-                    splittable_ranges.push_back(
-                            Range(first, best_split_pos - 1)
+                    splittable_ranges.emplace_back(first, best_split_pos - 1
                     );
-                    splittable_ranges.push_back(
-                            Range(best_split_pos + 1, last)
+                    splittable_ranges.emplace_back(best_split_pos + 1, last
                     );
                 } else {
-                    ranges.push_back(Range(first, last));
+                    ranges.emplace_back(first, last);
                 }
             }
 
             for (Range const range : ranges) {
-                int const first = range.first - &hist[0];
-                int const last = range.second - &hist[0];
+                auto const first = static_cast<const int>(range.first - &hist[0]);
+                auto const last = static_cast<const int>(range.second - &hist[0]);
                 if (last - first < min_text_height - 1) {
                     continue;
                 }
@@ -859,7 +858,7 @@ namespace select_content {
                 double const min_fill_factor = 0.22;
                 double const max_fill_factor = 0.65;
 
-                int const center_y = (weighted_y + total_weight / 2) / total_weight;
+                auto const center_y = static_cast<const int>((weighted_y + total_weight / 2) / total_weight);
                 int top = center_y - min_text_height / 2;
                 int bottom = top + min_text_height - 1;
                 int num_black = 0;
@@ -913,7 +912,7 @@ namespace select_content {
                 line_rect.setBottom(cc.rect().top() + bottom);
 
                 // Check if there are enough ultimate eroded points on the line.
-                int ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
+                auto ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
                 if (ueps_todo) {
                     BinaryImage line_ueps(line_rect.size());
                     rasterOp<RopSrc>(line_ueps, line_ueps.rect(), content_blocks, line_rect.topLeft());
@@ -963,13 +962,13 @@ namespace select_content {
             first_non_ws += area.left();
 
             QRect new_area(area);
-            new_area.setLeft(first_non_ws);
+            new_area.setLeft(static_cast<int>(first_non_ws));
             if (new_area.isEmpty()) {
                 return area;
             }
 
             QRect removed_area(area);
-            removed_area.setRight(first_ws - 1);
+            removed_area.setRight(static_cast<int>(first_ws - 1));
             if (removed_area.isEmpty()) {
                 return new_area;
             }
@@ -998,7 +997,7 @@ namespace select_content {
                                       DebugImages* const dbg) {
         SlicedHistogram const hist(content_blocks, area, SlicedHistogram::COLS);
 
-        int start = hist.size() - 1;
+        auto start = static_cast<int>(hist.size() - 1);
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
@@ -1063,13 +1062,13 @@ namespace select_content {
             first_non_ws += area.top();
 
             QRect new_area(area);
-            new_area.setTop(first_non_ws);
+            new_area.setTop(static_cast<int>(first_non_ws));
             if (new_area.isEmpty()) {
                 return area;
             }
 
             QRect removed_area(area);
-            removed_area.setBottom(first_ws - 1);
+            removed_area.setBottom(static_cast<int>(first_ws - 1));
             if (removed_area.isEmpty()) {
                 return new_area;
             }
@@ -1098,7 +1097,7 @@ namespace select_content {
                                        DebugImages* const dbg) {
         SlicedHistogram const hist(content_blocks, area, SlicedHistogram::ROWS);
 
-        int start = hist.size() - 1;
+        auto start = static_cast<int>(hist.size() - 1);
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {

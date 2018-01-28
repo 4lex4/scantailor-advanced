@@ -27,13 +27,14 @@
 #include <QPointer>
 #include <QPainter>
 #include <boost/bind.hpp>
+#include <utility>
 
 namespace output {
     class FillZoneEditor::MenuCustomizer {
     private:
         typedef ZoneContextMenuInteraction::StandardMenuItems StdMenuItems;
     public:
-        MenuCustomizer(FillZoneEditor* editor)
+        explicit MenuCustomizer(FillZoneEditor* editor)
                 : m_pEditor(editor) {
         }
 
@@ -44,13 +45,12 @@ namespace output {
     };
 
 
-    FillZoneEditor::FillZoneEditor(QImage const& image, ImagePixmapUnion const& downscaled_version,
+    FillZoneEditor::FillZoneEditor(QImage const& image,
+                                   ImagePixmapUnion const& downscaled_version,
                                    boost::function<QPointF(QPointF const&)> const& orig_to_image,
-                                   boost::function<QPointF(
-                                           QPointF
-                                           const
-                                           &)> const& image_to_orig, PageId const& page_id,
-                                   intrusive_ptr<Settings> const& settings)
+                                   boost::function<QPointF(QPointF const&)> const& image_to_orig,
+                                   PageId const& page_id,
+                                   intrusive_ptr<Settings> settings)
             : ImageViewBase(
             image, downscaled_version,
             ImagePresentation(QTransform(), QRectF(image.rect())),
@@ -64,7 +64,7 @@ namespace output {
               m_origToImage(orig_to_image),
               m_imageToOrig(image_to_orig),
               m_pageId(page_id),
-              m_ptrSettings(settings) {
+              m_ptrSettings(std::move(settings)) {
         m_zones.setDefaultProperties(m_ptrSettings->defaultFillZoneProperties());
 
         setMouseTracking(true);
@@ -134,7 +134,7 @@ namespace output {
         ZoneSet zones;
 
         for (EditableZoneSet::Zone const& zone : m_zones) {
-            SerializableSpline const spline(SerializableSpline(* zone.spline()).transformed(m_imageToOrig));
+            SerializableSpline const spline = SerializableSpline(*zone.spline()).transformed(m_imageToOrig);
             zones.add(Zone(spline, *zone.properties()));
         }
 
@@ -187,13 +187,11 @@ namespace output {
     FillZoneEditor::MenuCustomizer::operator()(EditableZoneSet::Zone const& zone, StdMenuItems const& std_items) {
         std::vector<ZoneContextMenuItem> items;
         items.reserve(2);
-        items.push_back(
-                ZoneContextMenuItem(
-                        tr("Pick color"),
-                        boost::bind(
-                                &FillZoneEditor::createColorPickupInteraction,
-                                m_pEditor, zone, _1
-                        )
+        items.emplace_back(
+                tr("Pick color"),
+                boost::bind(
+                        &FillZoneEditor::createColorPickupInteraction,
+                        m_pEditor, zone, _1
                 )
         );
         items.push_back(std_items.deleteItem);

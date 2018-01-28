@@ -41,7 +41,7 @@ public:
         return Proximity(sqDist);
     }
 
-    static Proximity pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment = 0);
+    static Proximity pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment = nullptr);
 
     double dist() const {
         return sqrt(m_sqDist);
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    Proximity(double sqDist)
+    explicit Proximity(double sqDist)
             : m_sqDist(sqDist) {
     }
 

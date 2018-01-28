@@ -27,7 +27,7 @@
 
 namespace select_content {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
+                                 const PageSelectionAccessor& page_selection_accessor)
             : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_ignorePageSizeChanges(0) {
@@ -38,7 +38,7 @@ namespace select_content {
 
     OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(PageId const& page_id) {
+    void OptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
         m_pageId = page_id;
@@ -56,7 +56,7 @@ namespace select_content {
         setupUiConnections();
     }
 
-    void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+    void OptionsWidget::postUpdateUI(const UiData& ui_data) {
         removeUiConnections();
 
         m_uiData = ui_data;
@@ -77,7 +77,7 @@ namespace select_content {
         setupUiConnections();
     }
 
-    void OptionsWidget::manualContentRectSet(QRectF const& content_rect) {
+    void OptionsWidget::manualContentRectSet(const QRectF& content_rect) {
         m_uiData.setContentRect(content_rect);
         m_uiData.setContentDetectionMode(MODE_MANUAL);
         m_uiData.setContentDetectionEnabled(true);
@@ -95,7 +95,7 @@ namespace select_content {
         emit invalidateThumbnail(m_pageId);
     }
 
-    void OptionsWidget::manualPageRectSet(QRectF const& page_rect) {
+    void OptionsWidget::manualPageRectSet(const QRectF& page_rect) {
         m_uiData.setPageRect(page_rect);
         m_uiData.setPageDetectionMode(MODE_MANUAL);
         m_uiData.setPageDetectionEnabled(true);
@@ -115,8 +115,8 @@ namespace select_content {
         emit invalidateThumbnail(m_pageId);
     }
 
-    void OptionsWidget::updatePageRectSize(QSizeF const& size) {
-        ScopedIncDec<int> const ignore_scope(m_ignorePageSizeChanges);
+    void OptionsWidget::updatePageRectSize(const QSizeF& size) {
+        const ScopedIncDec<int> ignore_scope(m_ignorePageSizeChanges);
 
         double width = size.width();
         double height = size.height();
@@ -195,7 +195,7 @@ namespace select_content {
         }
     }
 
-    void OptionsWidget::updateContentModeIndication(AutoManualMode const mode) {
+    void OptionsWidget::updateContentModeIndication(const AutoManualMode mode) {
         if (!m_uiData.isContentDetectionEnabled()) {
             contentDetectDisableBtn->setChecked(true);
         } else {
@@ -207,7 +207,7 @@ namespace select_content {
         }
     }
 
-    void OptionsWidget::updatePageModeIndication(AutoManualMode const mode) {
+    void OptionsWidget::updatePageModeIndication(const AutoManualMode mode) {
         if (!m_uiData.isPageDetectionEnabled()) {
             pageDetectDisableBtn->setChecked(true);
         } else {
@@ -274,15 +274,15 @@ namespace select_content {
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(applySelection(std::set<PageId> const &, bool, bool)),
-                this, SLOT(applySelection(std::set<PageId> const &, bool, bool))
+                dialog, SIGNAL(applySelection(const std::set<PageId> &, bool, bool)),
+                this, SLOT(applySelection(const std::set<PageId> &, bool, bool))
         );
         dialog->show();
     }
 
-    void OptionsWidget::applySelection(std::set<PageId> const& pages,
-                                       bool const apply_content_box,
-                                       bool const apply_page_box) {
+    void OptionsWidget::applySelection(const std::set<PageId>& pages,
+                                       const bool apply_content_box,
+                                       const bool apply_page_box) {
         if (pages.empty()) {
             return;
         }
@@ -294,14 +294,14 @@ namespace select_content {
             deps.invalidate();
         }
 
-        Params const params(
+        const Params params(
                 m_uiData.contentRect(), m_uiData.contentSizeMM(), m_uiData.pageRect(),
                 deps, m_uiData.contentDetectionMode(),
                 m_uiData.pageDetectionMode(), m_uiData.isContentDetectionEnabled(),
                 m_uiData.isPageDetectionEnabled(), m_uiData.isFineTuningCornersEnabled()
         );
 
-        for (PageId const& page_id : pages) {
+        for (const PageId& page_id : pages) {
             if (m_pageId == page_id) {
                 continue;
             }
@@ -337,7 +337,7 @@ namespace select_content {
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -412,23 +412,23 @@ namespace select_content {
 
     OptionsWidget::UiData::~UiData() = default;
 
-    void OptionsWidget::UiData::setSizeCalc(PhysSizeCalc const& calc) {
+    void OptionsWidget::UiData::setSizeCalc(const PhysSizeCalc& calc) {
         m_sizeCalc = calc;
     }
 
-    void OptionsWidget::UiData::setContentRect(QRectF const& content_rect) {
+    void OptionsWidget::UiData::setContentRect(const QRectF& content_rect) {
         m_contentRect = content_rect;
     }
 
-    QRectF const& OptionsWidget::UiData::contentRect() const {
+    const QRectF& OptionsWidget::UiData::contentRect() const {
         return m_contentRect;
     }
 
-    void OptionsWidget::UiData::setPageRect(QRectF const& page_rect) {
+    void OptionsWidget::UiData::setPageRect(const QRectF& page_rect) {
         m_pageRect = page_rect;
     }
 
-    QRectF const& OptionsWidget::UiData::pageRect() const {
+    const QRectF& OptionsWidget::UiData::pageRect() const {
         return m_pageRect;
     }
 
@@ -436,11 +436,11 @@ namespace select_content {
         return m_sizeCalc.sizeMM(m_contentRect);
     }
 
-    void OptionsWidget::UiData::setDependencies(Dependencies const& deps) {
+    void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
         m_deps = deps;
     }
 
-    Dependencies const& OptionsWidget::UiData::dependencies() const {
+    const Dependencies& OptionsWidget::UiData::dependencies() const {
         return m_deps;
     }
 

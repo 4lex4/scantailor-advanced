@@ -40,7 +40,7 @@ namespace imageproc {
  * GRopSubtract\<GRopSrc, GRopDst\>.
  */
     template<typename GRop>
-    void grayRasterOp(GrayImage& dst, GrayImage const& src);
+    void grayRasterOp(GrayImage& dst, const GrayImage& src);
 
 /**
  * \brief Raster operation that takes source pixels as they are.
@@ -91,8 +91,8 @@ namespace imageproc {
     class GRopClippedSubtract {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            uint8_t const lhs = Lhs::transform(src, dst);
-            uint8_t const rhs = Rhs::transform(src, dst);
+            const uint8_t lhs = Lhs::transform(src, dst);
+            const uint8_t rhs = Rhs::transform(src, dst);
 
             return lhs > rhs ? lhs - rhs : uint8_t(0);
         }
@@ -111,8 +111,8 @@ namespace imageproc {
     class GRopUnclippedSubtract {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            uint8_t const lhs = Lhs::transform(src, dst);
-            uint8_t const rhs = Rhs::transform(src, dst);
+            const uint8_t lhs = Lhs::transform(src, dst);
+            const uint8_t rhs = Rhs::transform(src, dst);
 
             return lhs - rhs;
         }
@@ -130,9 +130,9 @@ namespace imageproc {
     class GRopClippedAdd {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            unsigned const lhs = Lhs::transform(src, dst);
-            unsigned const rhs = Rhs::transform(src, dst);
-            unsigned const sum = lhs + rhs;
+            const unsigned lhs = Lhs::transform(src, dst);
+            const unsigned rhs = Rhs::transform(src, dst);
+            const unsigned sum = lhs + rhs;
 
             return sum < 256 ? static_cast<uint8_t>(sum) : uint8_t(255);
         }
@@ -151,8 +151,8 @@ namespace imageproc {
     class GRopUnclippedAdd {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            uint8_t const lhs = Lhs::transform(src, dst);
-            uint8_t const rhs = Rhs::transform(src, dst);
+            const uint8_t lhs = Lhs::transform(src, dst);
+            const uint8_t rhs = Rhs::transform(src, dst);
 
             return lhs + rhs;
         }
@@ -167,8 +167,8 @@ namespace imageproc {
     class GRopDarkest {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            uint8_t const lhs = Lhs::transform(src, dst);
-            uint8_t const rhs = Rhs::transform(src, dst);
+            const uint8_t lhs = Lhs::transform(src, dst);
+            const uint8_t rhs = Rhs::transform(src, dst);
 
             return lhs < rhs ? lhs : rhs;
         }
@@ -183,8 +183,8 @@ namespace imageproc {
     class GRopLightest {
     public:
         static uint8_t transform(uint8_t src, uint8_t dst) {
-            uint8_t const lhs = Lhs::transform(src, dst);
-            uint8_t const rhs = Rhs::transform(src, dst);
+            const uint8_t lhs = Lhs::transform(src, dst);
+            const uint8_t rhs = Rhs::transform(src, dst);
 
             return lhs > rhs ? lhs : rhs;
         }
@@ -192,7 +192,7 @@ namespace imageproc {
 
 
     template<typename GRop>
-    void grayRasterOp(GrayImage& dst, GrayImage const& src) {
+    void grayRasterOp(GrayImage& dst, const GrayImage& src) {
         if (dst.isNull() || src.isNull()) {
             throw std::invalid_argument("grayRasterOp: can't operate on null images");
         }
@@ -201,13 +201,13 @@ namespace imageproc {
             throw std::invalid_argument("grayRasterOp: images sizes are not the same");
         }
 
-        uint8_t const* src_line = src.data();
+        const uint8_t* src_line = src.data();
         uint8_t* dst_line = dst.data();
-        int const src_stride = src.stride();
-        int const dst_stride = dst.stride();
+        const int src_stride = src.stride();
+        const int dst_stride = dst.stride();
 
-        int const width = src.width();
-        int const height = src.height();
+        const int width = src.width();
+        const int height = src.height();
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {

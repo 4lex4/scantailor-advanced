@@ -47,13 +47,13 @@ DECLARE_NON_COPYABLE(ProjectWriter)
 public:
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
-                  SelectedPage const& selected_page,
-                  OutputFileNameGenerator const& out_file_name_gen);
+    ProjectWriter(const intrusive_ptr<ProjectPages>& page_sequence,
+                  const SelectedPage& selected_page,
+                  const OutputFileNameGenerator& out_file_name_gen);
 
     ~ProjectWriter();
 
-    bool write(QString const& file_path, std::vector<FilterPtr> const& filters) const;
+    bool write(const QString& file_path, const std::vector<FilterPtr>& filters) const;
 
     /**
      * \p out will be called like this: out(ImageId, numeric_image_id)
@@ -72,7 +72,7 @@ private:
         QString path;
         int numericId;
 
-        Directory(QString const& path, int numeric_id)
+        Directory(const QString& path, int numeric_id)
                 : path(path),
                   numericId(numeric_id) {
         }
@@ -82,7 +82,7 @@ private:
         QString path;
         int numericId;
 
-        File(QString const& path, int numeric_id)
+        File(const QString& path, int numeric_id)
                 : path(path),
                   numericId(numeric_id) {
         }
@@ -95,14 +95,14 @@ private:
         bool leftHalfRemoved;
         bool rightHalfRemoved;
 
-        Image(PageInfo const& page_info, int numeric_id);
+        Image(const PageInfo& page_info, int numeric_id);
     };
 
     struct Page {
         PageId id;
         int numericId;
 
-        Page(PageId const& id, int numeric_id)
+        Page(const PageId& id, int numeric_id)
                 : id(id),
                   numericId(numeric_id) {
         }
@@ -160,21 +160,21 @@ private:
 
     QDomElement processPages(QDomDocument& doc) const;
 
-    void writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const;
+    void writeImageMetadata(QDomDocument& doc, QDomElement& image_el, const ImageId& image_id) const;
 
-    int dirId(QString const& dir_path) const;
+    int dirId(const QString& dir_path) const;
 
-    int fileId(QString const& file_path) const;
+    int fileId(const QString& file_path) const;
 
-    QString packFilePath(QString const& file_path) const;
+    QString packFilePath(const QString& file_path) const;
 
-    int imageId(ImageId const& image_id) const;
+    int imageId(const ImageId& image_id) const;
 
-    int pageId(PageId const& page_id) const;
+    int pageId(const PageId& page_id) const;
 
-    void enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) const;
+    void enumImagesImpl(VirtualFunction2<void, const ImageId&, int>& out) const;
 
-    void enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) const;
+    void enumPagesImpl(VirtualFunction2<void, const PageId&, int>& out) const;
 
     PageSequence m_pageSequence;
     OutputFileNameGenerator m_outFileNameGen;
@@ -190,13 +190,13 @@ private:
 
 template<typename OutFunc>
 void ProjectWriter::enumImages(OutFunc out) const {
-    ProxyFunction2<OutFunc, void, ImageId const&, int> proxy(out);
+    ProxyFunction2<OutFunc, void, const ImageId&, int> proxy(out);
     enumImagesImpl(proxy);
 }
 
 template<typename OutFunc>
 void ProjectWriter::enumPages(OutFunc out) const {
-    ProxyFunction2<OutFunc, void, PageId const&, int> proxy(out);
+    ProxyFunction2<OutFunc, void, const PageId&, int> proxy(out);
     enumPagesImpl(proxy);
 }
 

@@ -26,7 +26,7 @@ public:
     explicit RelinkingSortingModel(QObject* parent = nullptr);
 
 protected:
-    bool lessThan(QModelIndex const& left, QModelIndex const& right) const override;
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 };
 
 

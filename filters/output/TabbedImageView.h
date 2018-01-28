@@ -37,7 +37,7 @@ namespace output {
     public:
         explicit TabbedImageView(QWidget* parent = nullptr);
 
-        void addTab(QWidget* widget, QString const& label, ImageViewTab tab);
+        void addTab(QWidget* widget, const QString& label, ImageViewTab tab);
 
         void setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map);
 
@@ -59,9 +59,9 @@ namespace output {
     private:
         void copyViewZoomAndPos(int old_idx, int new_idx) const;
 
-        QPointF getFocus(QRectF const& rect, QScrollBar const& hor_bar, QScrollBar const& ver_bar) const;
+        QPointF getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const;
 
-        void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, QRectF const& rect, QPointF const& focal) const;
+        void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, const QRectF& rect, const QPointF& focal) const;
 
         ImageViewBase* findImageViewBase(QWidget* parent) const;
 

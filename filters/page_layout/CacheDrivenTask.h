@@ -44,10 +44,10 @@ namespace page_layout {
 
         ~CacheDrivenTask() override;
 
-        void process(PageInfo const& page_info,
+        void process(const PageInfo& page_info,
                      AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform,
-                     QRectF const& content_rect);
+                     const ImageTransformation& xform,
+                     const QRectF& content_rect);
 
     private:
         intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;

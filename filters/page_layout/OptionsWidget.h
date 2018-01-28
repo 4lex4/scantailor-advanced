@@ -41,11 +41,11 @@ namespace page_layout {
     class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::PageLayoutOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment);
+        void preUpdateUI(const PageId& page_id, const Margins& margins_mm, const Alignment& alignment);
 
         void postUpdateUI();
 
@@ -53,9 +53,9 @@ namespace page_layout {
 
         bool topBottomLinked() const;
 
-        Margins const& marginsMM() const;
+        const Margins& marginsMM() const;
 
-        Alignment const& alignment() const;
+        const Alignment& alignment() const;
 
         void updateUnits(Units units) override;
 
@@ -65,15 +65,15 @@ namespace page_layout {
 
         void topBottomLinkToggled(bool linked);
 
-        void alignmentChanged(Alignment const& alignment);
+        void alignmentChanged(const Alignment& alignment);
 
-        void marginsSetLocally(Margins const& margins_mm);
+        void marginsSetLocally(const Margins& margins_mm);
 
         void aggregateHardSizeChanged();
 
     public slots:
 
-        void marginsSetExternally(Margins const& margins_mm);
+        void marginsSetExternally(const Margins& margins_mm);
 
     private slots:
 
@@ -97,9 +97,9 @@ namespace page_layout {
 
         void showApplyAlignmentDialog();
 
-        void applyMargins(std::set<PageId> const& pages);
+        void applyMargins(const std::set<PageId>& pages);
 
-        void applyAlignment(std::set<PageId> const& pages);
+        void applyAlignment(const std::set<PageId>& pages);
 
     private:
         typedef std::map<QToolButton*, Alignment> AlignmentByButton;

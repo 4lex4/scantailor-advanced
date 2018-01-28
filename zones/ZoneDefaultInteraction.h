@@ -42,9 +42,9 @@ protected:
         return m_rContext;
     }
 
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    void onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction) override;
+    void onProximityUpdate(const QPointF& mouse_pos, InteractionState& interaction) override;
 
     void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 

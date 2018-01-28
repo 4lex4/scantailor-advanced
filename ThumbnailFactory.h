@@ -35,12 +35,12 @@ DECLARE_NON_COPYABLE(ThumbnailFactory)
 
 public:
     ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
-                     QSizeF const& max_size,
+                     const QSizeF& max_size,
                      intrusive_ptr<CompositeCacheDrivenTask> task);
 
     ~ThumbnailFactory() override;
 
-    std::unique_ptr<QGraphicsItem> get(PageInfo const& page_info);
+    std::unique_ptr<QGraphicsItem> get(const PageInfo& page_info);
 
 private:
     class Collector;

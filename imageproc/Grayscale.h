@@ -31,9 +31,9 @@ namespace imageproc {
 
     class GrayscaleHistogram {
     public:
-        explicit GrayscaleHistogram(QImage const& img);
+        explicit GrayscaleHistogram(const QImage& img);
 
-        GrayscaleHistogram(QImage const& img, BinaryImage const& mask);
+        GrayscaleHistogram(const QImage& img, const BinaryImage& mask);
 
         int& operator[](int idx) {
             return m_pixels[idx];
@@ -44,17 +44,17 @@ namespace imageproc {
         }
 
     private:
-        void fromMonoImage(QImage const& img);
+        void fromMonoImage(const QImage& img);
 
-        void fromMonoMSBImage(QImage const& img, BinaryImage const& mask);
+        void fromMonoMSBImage(const QImage& img, const BinaryImage& mask);
 
-        void fromGrayscaleImage(QImage const& img);
+        void fromGrayscaleImage(const QImage& img);
 
-        void fromGrayscaleImage(QImage const& img, BinaryImage const& mask);
+        void fromGrayscaleImage(const QImage& img, const BinaryImage& mask);
 
-        void fromAnyImage(QImage const& img);
+        void fromAnyImage(const QImage& img);
 
-        void fromAnyImage(QImage const& img, BinaryImage const& mask);
+        void fromAnyImage(const QImage& img, const BinaryImage& mask);
 
         int m_pixels[256];
     };
@@ -72,7 +72,7 @@ namespace imageproc {
  * \return A grayscale image with proper palette.  Null will be returned
  *         if \p src was null.
  */
-    QImage toGrayscale(QImage const& src);
+    QImage toGrayscale(const QImage& src);
 
 /**
  * \brief Stetch the distribution of gray levels to cover the whole range.
@@ -86,7 +86,7 @@ namespace imageproc {
  * \return A grayscale image, or a null image, if \p src was null.
  */
     GrayImage
-    stretchGrayRange(GrayImage const& src, double black_clip_fraction = 0.0, double white_clip_fraction = 0.0);
+    stretchGrayRange(const GrayImage& src, double black_clip_fraction = 0.0, double white_clip_fraction = 0.0);
 
 /**
  * \brief Create a grayscale image consisting of a 1 pixel frame and an inner area.
@@ -96,7 +96,7 @@ namespace imageproc {
  * \param frame_color The gray level of the frame area.  Defaults to black.
  * \return The resulting image.
  */
-    GrayImage createFramedImage(QSize const& size, unsigned char inner_color = 0xff, unsigned char frame_color = 0x00);
+    GrayImage createFramedImage(const QSize& size, unsigned char inner_color = 0xff, unsigned char frame_color = 0x00);
 
 /**
  * \brief Find the darkest gray level of an image.
@@ -105,6 +105,6 @@ namespace imageproc {
  *        be returned as the darkest image.  If it's not grayscale,
  *        a grayscale copy will be created.
  */
-    unsigned char darkestGrayLevel(QImage const& image);
+    unsigned char darkestGrayLevel(const QImage& image);
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_GRAYSCALE_H_

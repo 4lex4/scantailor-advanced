@@ -23,16 +23,16 @@
 #include <cmath>
 
 namespace imageproc {
-    double const PolygonUtils::ROUNDING_MULTIPLIER = 1 << 12;
-    double const PolygonUtils::ROUNDING_RECIP_MULTIPLIER = 1.0 / ROUNDING_MULTIPLIER;
+    const double PolygonUtils::ROUNDING_MULTIPLIER = 1 << 12;
+    const double PolygonUtils::ROUNDING_RECIP_MULTIPLIER = 1.0 / ROUNDING_MULTIPLIER;
 
     class PolygonUtils::Before {
     public:
-        bool operator()(QPointF const& lhs, QPointF const& rhs) const {
+        bool operator()(const QPointF& lhs, const QPointF& rhs) const {
             return compare(lhs, rhs) < 0;
         }
 
-        bool operator()(QLineF const& lhs, QLineF const& rhs) {
+        bool operator()(const QLineF& lhs, const QLineF& rhs) {
             int comp = compare(lhs.p1(), rhs.p1());
             if (comp != 0) {
                 return comp < 0;
@@ -42,9 +42,9 @@ namespace imageproc {
         }
 
     private:
-        static int compare(QPointF const& lhs, QPointF const& rhs) {
-            double const dx = lhs.x() - rhs.x();
-            double const dy = lhs.y() - rhs.y();
+        static int compare(const QPointF& lhs, const QPointF& rhs) {
+            const double dx = lhs.x() - rhs.x();
+            const double dy = lhs.y() - rhs.y();
             if (fabs(dx) > fabs(dy)) {
                 if (dx < 0.0) {
                     return -1;
@@ -64,18 +64,18 @@ namespace imageproc {
     };
 
 
-    QPolygonF PolygonUtils::round(QPolygonF const& poly) {
+    QPolygonF PolygonUtils::round(const QPolygonF& poly) {
         QPolygonF rounded;
         rounded.reserve(poly.size());
 
-        for (QPointF const& p : poly) {
+        for (const QPointF& p : poly) {
             rounded.push_back(roundPoint(p));
         }
 
         return rounded;
     }
 
-    bool PolygonUtils::fuzzyCompare(QPolygonF const& poly1, QPolygonF const& poly2) {
+    bool PolygonUtils::fuzzyCompare(const QPolygonF& poly1, const QPolygonF& poly2) {
         if ((poly1.size() < 2) && (poly2.size() < 2)) {
             return true;
         } else if ((poly1.size() < 2) || (poly2.size() < 2)) {
@@ -107,19 +107,19 @@ namespace imageproc {
         return fuzzyCompareImpl(edges1, edges2);
     }  // PolygonUtils::fuzzyCompare
 
-    QPointF PolygonUtils::roundPoint(QPointF const& p) {
+    QPointF PolygonUtils::roundPoint(const QPointF& p) {
         return QPointF(roundValue(p.x()), roundValue(p.y()));
     }
 
-    double PolygonUtils::roundValue(double const val) {
+    double PolygonUtils::roundValue(const double val) {
         return floor(val * ROUNDING_MULTIPLIER + 0.5) * ROUNDING_RECIP_MULTIPLIER;
     }
 
     std::vector<QLineF>
-    PolygonUtils::extractAndNormalizeEdges(QPolygonF const& poly) {
+    PolygonUtils::extractAndNormalizeEdges(const QPolygonF& poly) {
         std::vector<QLineF> edges;
 
-        int const num_edges = poly.size();
+        const int num_edges = poly.size();
         if (num_edges > 1) {
             for (int i = 1; i < num_edges; ++i) {
                 maybeAddNormalizedEdge(edges, poly[i - 1], poly[i]);
@@ -130,7 +130,7 @@ namespace imageproc {
         return edges;
     }
 
-    void PolygonUtils::maybeAddNormalizedEdge(std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2) {
+    void PolygonUtils::maybeAddNormalizedEdge(std::vector<QLineF>& edges, const QPointF& p1, const QPointF& p2) {
         if (fuzzyCompareImpl(p1, p2)) {
             return;
         }
@@ -142,9 +142,9 @@ namespace imageproc {
         }
     }
 
-    bool PolygonUtils::fuzzyCompareImpl(std::vector<QLineF> const& lines1, std::vector<QLineF> const& lines2) {
+    bool PolygonUtils::fuzzyCompareImpl(const std::vector<QLineF>& lines1, const std::vector<QLineF>& lines2) {
         assert(lines1.size() == lines2.size());
-        size_t const size = lines1.size();
+        const size_t size = lines1.size();
         for (size_t i = 0; i < size; ++i) {
             if (!fuzzyCompareImpl(lines1[i], lines2[i])) {
                 return false;
@@ -154,21 +154,21 @@ namespace imageproc {
         return true;
     }
 
-    bool PolygonUtils::fuzzyCompareImpl(QLineF const& line1, QLineF const& line2) {
+    bool PolygonUtils::fuzzyCompareImpl(const QLineF& line1, const QLineF& line2) {
         return fuzzyCompareImpl(line1.p1(), line2.p1())
                && fuzzyCompareImpl(line1.p2(), line2.p2());
     }
 
-    bool PolygonUtils::fuzzyCompareImpl(QPointF const& p1, QPointF const& p2) {
-        double const dx = fabs(p1.x() - p2.x());
-        double const dy = fabs(p1.y() - p2.y());
+    bool PolygonUtils::fuzzyCompareImpl(const QPointF& p1, const QPointF& p2) {
+        const double dx = fabs(p1.x() - p2.x());
+        const double dy = fabs(p1.y() - p2.y());
 
         return dx <= ROUNDING_RECIP_MULTIPLIER && dy <= ROUNDING_RECIP_MULTIPLIER;
     }
 
     namespace {
         struct LexicographicPointComparator {
-            bool operator()(QPointF const& p1, QPointF const& p2) const {
+            bool operator()(const QPointF& p1, const QPointF& p2) const {
                 if (p1.x() != p2.x()) {
                     return p1.x() < p2.x();
                 } else {
@@ -180,7 +180,7 @@ namespace imageproc {
 // 2D cross product of OA and OB vectors, i.e. z-component of their 3D cross product.
 // Returns a positive value, if OAB makes a counter-clockwise turn,
 // negative for clockwise turn, and zero if the points are collinear.
-        double cross(QPointF const& O, QPointF const& A, QPointF const& B) {
+        double cross(const QPointF& O, const QPointF& A, const QPointF& B) {
             return (A.x() - O.x()) * (B.y() - O.y()) - (A.y() - O.y()) * (B.x() - O.x());
         }
     }  // anonymous namespace
@@ -189,7 +189,7 @@ namespace imageproc {
         // "Monotone chain" algorithm.
         // http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 
-        auto const n = static_cast<const int>(point_cloud.size());
+        const auto n = static_cast<const int>(point_cloud.size());
         int k = 0;
         std::vector<QPointF> hull(n * 2);
 
@@ -214,7 +214,7 @@ namespace imageproc {
         hull.resize(k);
 
         QPolygonF poly(k);
-        for (QPointF const& pt : hull) {
+        for (const QPointF& pt : hull) {
             poly << pt;
         }
 

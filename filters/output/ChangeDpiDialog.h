@@ -36,21 +36,21 @@ namespace output {
     Q_OBJECT
     public:
         ChangeDpiDialog(QWidget* parent,
-                        Dpi const& dpi,
-                        PageId const& cur_page,
-                        PageSelectionAccessor const& page_selection_accessor);
+                        const Dpi& dpi,
+                        const PageId& cur_page,
+                        const PageSelectionAccessor& page_selection_accessor);
 
         ~ChangeDpiDialog() override;
 
     signals:
 
-        void accepted(std::set<PageId> const& pages, Dpi const& dpi);
+        void accepted(const std::set<PageId>& pages, const Dpi& dpi);
 
     private slots:
 
         void dpiSelectionChanged(int index);
 
-        void dpiEditTextChanged(QString const& text);
+        void dpiEditTextChanged(const QString& text);
 
         void onSubmit();
 

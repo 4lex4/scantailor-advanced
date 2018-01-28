@@ -14,9 +14,9 @@ namespace imageproc {
 
     class BackgroundColorCalculator {
     public:
-        static QColor calcDominantBackgroundColor(QImage const& img);
+        static QColor calcDominantBackgroundColor(const QImage& img);
 
-        static QColor calcDominantBackgroundColorBW(QImage const& img);
+        static QColor calcDominantBackgroundColorBW(const QImage& img);
 
     private:
         static uint8_t calcDominantLevel(const int* hist);

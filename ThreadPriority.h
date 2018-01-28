@@ -52,13 +52,13 @@ public:
 
     int toPosixNiceLevel() const;
 
-    static ThreadPriority load(QSettings const& settings, QString const& key, Priority dflt = Normal);
+    static ThreadPriority load(const QSettings& settings, const QString& key, Priority dflt = Normal);
 
-    static ThreadPriority load(QString const& key, Priority dflt = Normal);
+    static ThreadPriority load(const QString& key, Priority dflt = Normal);
 
-    void save(QSettings& settings, QString const& key);
+    void save(QSettings& settings, const QString& key);
 
-    void save(QString const& key);
+    void save(const QString& key);
 
 private:
     Priority m_prio;

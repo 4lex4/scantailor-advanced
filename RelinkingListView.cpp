@@ -28,7 +28,7 @@ public:
               m_pOwner(owner) {
     }
 
-    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override {
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
         m_pOwner->maybeDrawStatusLayer(painter, index, option.rect);
         QStyledItemDelegate::paint(painter, option, index);
     }
@@ -43,7 +43,7 @@ public:
     QRect rect;
     int status;
 
-    IndicationGroup(QRect const& r, int st)
+    IndicationGroup(const QRect& r, int st)
             : rect(r),
               status(st) {
     }
@@ -52,9 +52,9 @@ public:
 
 class RelinkingListView::GroupAggregator {
 public:
-    void process(QRect const& rect, int status);
+    void process(const QRect& rect, int status);
 
-    std::vector<IndicationGroup> const& groups() const {
+    const std::vector<IndicationGroup>& groups() const {
         return m_groups;
     }
 
@@ -75,8 +75,8 @@ void RelinkingListView::paintEvent(QPaintEvent* e) {
 }
 
 void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
-                                             QModelIndex const& item_index,
-                                             QRect const& item_paint_rect) {
+                                             const QModelIndex& item_index,
+                                             const QRect& item_paint_rect) {
     if (m_statusLayerDrawn) {
         return;
     }
@@ -95,7 +95,7 @@ void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
 }
 
 void RelinkingListView::drawStatusLayer(QPainter* painter) {
-    QRect const drawing_rect(viewport()->rect());
+    const QRect drawing_rect(viewport()->rect());
     QModelIndex top_index(this->indexAt(drawing_rect.topLeft()));
     if (!top_index.isValid()) {
         // No [visible] elements at all?
@@ -109,11 +109,11 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
     }
 
     GroupAggregator group_aggregator;
-    int const rows = top_index.model()->rowCount(top_index.parent());
+    const int rows = top_index.model()->rowCount(top_index.parent());
 
     for (int row = top_index.row(); row < rows; ++row) {
-        QModelIndex const index(top_index.sibling(row, 0));
-        QRect const item_rect(visualRect(index));
+        const QModelIndex index(top_index.sibling(row, 0));
+        const QRect item_rect(visualRect(index));
 
         QRect rect(drawing_rect);
         rect.setTop(item_rect.top());
@@ -121,7 +121,7 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
         rect.setWidth(item_rect.height());
         rect.moveRight(drawing_rect.right());
 
-        int const status = index.data(RelinkingModel::UncommittedStatusRole).toInt();
+        const int status = index.data(RelinkingModel::UncommittedStatusRole).toInt();
         group_aggregator.process(rect, status);
 
         if ((row != top_index.row()) && !item_rect.intersects(drawing_rect)) {
@@ -146,9 +146,9 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
         painter->setPen(pen);
         painter->setBrush(brush);
 
-        for (IndicationGroup const& group : group_aggregator.groups()) {
+        for (const IndicationGroup& group : group_aggregator.groups()) {
             if (group.status == status) {
-                qreal const radius = 0.5 * group.rect.width();
+                const qreal radius = 0.5 * group.rect.width();
                 QRectF rect(group.rect);
                 rect.adjust(pen.widthF(), pen.widthF(), -pen.widthF(), -pen.widthF());
                 painter->drawRoundedRect(rect, radius, radius);
@@ -161,7 +161,7 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
     }
 } // RelinkingListView::drawStatusLayer
 
-void RelinkingListView::GroupAggregator::process(QRect const& rect, int status) {
+void RelinkingListView::GroupAggregator::process(const QRect& rect, int status) {
     if (m_groups.empty() || (m_groups.back().status != status)) {
         m_groups.emplace_back(rect, status);
     } else {

@@ -43,7 +43,7 @@ namespace output {
                                                       m_despeckleLevel(m_despeckleLevel) {
     }
 
-    Params::Params(QDomElement const& el)
+    Params::Params(const QDomElement& el)
             : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
@@ -51,7 +51,7 @@ namespace output {
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
               m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
               m_splittingOptions(el.namedItem("splitting").toElement()) {
-        QDomElement const cp(el.namedItem("color-params").toElement());
+        const QDomElement cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
         m_colorParams.setColorCommonOptions(
                 ColorCommonOptions(
@@ -63,7 +63,7 @@ namespace output {
         );
     }
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -93,7 +93,7 @@ namespace output {
         return el;
     }
 
-    ColorMode Params::parseColorMode(QString const& str) {
+    ColorMode Params::parseColorMode(const QString& str) {
         if (str == "bw") {
             return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
@@ -105,8 +105,8 @@ namespace output {
         }
     }
 
-    QString Params::formatColorMode(ColorMode const mode) {
-        char const* str = "";
+    QString Params::formatColorMode(const ColorMode mode) {
+        const char* str = "";
         switch (mode) {
             case BLACK_AND_WHITE:
                 str = "bw";
@@ -122,15 +122,15 @@ namespace output {
         return QString::fromLatin1(str);
     }
 
-    Dpi const& Params::outputDpi() const {
+    const Dpi& Params::outputDpi() const {
         return m_dpi;
     }
 
-    void Params::setOutputDpi(Dpi const& dpi) {
+    void Params::setOutputDpi(const Dpi& dpi) {
         m_dpi = dpi;
     }
 
-    ColorParams const& Params::colorParams() const {
+    const ColorParams& Params::colorParams() const {
         return m_colorParams;
     }
 
@@ -142,7 +142,7 @@ namespace output {
         m_pictureShapeOptions = opt;
     }
 
-    void Params::setColorParams(ColorParams const& params) {
+    void Params::setColorParams(const ColorParams& params) {
         m_colorParams = params;
     }
 
@@ -154,23 +154,23 @@ namespace output {
         m_splittingOptions = opt;
     }
 
-    DewarpingOptions const& Params::dewarpingOptions() const {
+    const DewarpingOptions& Params::dewarpingOptions() const {
         return m_dewarpingOptions;
     }
 
-    void Params::setDewarpingOptions(DewarpingOptions const& opt) {
+    void Params::setDewarpingOptions(const DewarpingOptions& opt) {
         m_dewarpingOptions = opt;
     }
 
-    dewarping::DistortionModel const& Params::distortionModel() const {
+    const dewarping::DistortionModel& Params::distortionModel() const {
         return m_distortionModel;
     }
 
-    void Params::setDistortionModel(dewarping::DistortionModel const& model) {
+    void Params::setDistortionModel(const dewarping::DistortionModel& model) {
         m_distortionModel = model;
     }
 
-    DepthPerception const& Params::depthPerception() const {
+    const DepthPerception& Params::depthPerception() const {
         return m_depthPerception;
     }
 

@@ -34,13 +34,13 @@ namespace output {
     public:
         explicit DewarpingOptions(DewarpingMode mode = OFF, bool needPostDeskew = true);
 
-        explicit DewarpingOptions(QDomElement const& el);
+        explicit DewarpingOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(DewarpingOptions const& other) const;
+        bool operator==(const DewarpingOptions& other) const;
 
-        bool operator!=(DewarpingOptions const& other) const;
+        bool operator!=(const DewarpingOptions& other) const;
 
         DewarpingMode dewarpingMode() const;
 
@@ -50,7 +50,7 @@ namespace output {
 
         void setPostDeskew(bool postDeskew);
 
-        static DewarpingMode parseDewarpingMode(QString const& str);
+        static DewarpingMode parseDewarpingMode(const QString& str);
 
         static QString formatDewarpingMode(DewarpingMode mode);
 

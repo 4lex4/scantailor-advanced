@@ -31,12 +31,12 @@ namespace fix_orientation {
         m_perImageRotation.clear();
     }
 
-    void Settings::performRelinking(AbstractRelinker const& relinker) {
+    void Settings::performRelinking(const AbstractRelinker& relinker) {
         QMutexLocker locker(&m_mutex);
         PerImageRotation new_rotations;
 
-        for (PerImageRotation::value_type const& kv : m_perImageRotation) {
-            RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
+        for (const PerImageRotation::value_type& kv : m_perImageRotation) {
+            const RelinkablePath old_path(kv.first.filePath(), RelinkablePath::File);
             ImageId new_image_id(kv.first);
             new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
             new_rotations.insert(PerImageRotation::value_type(new_image_id, kv.second));
@@ -45,20 +45,20 @@ namespace fix_orientation {
         m_perImageRotation.swap(new_rotations);
     }
 
-    void Settings::applyRotation(ImageId const& image_id, OrthogonalRotation const rotation) {
+    void Settings::applyRotation(const ImageId& image_id, const OrthogonalRotation rotation) {
         QMutexLocker locker(&m_mutex);
         setImageRotationLocked(image_id, rotation);
     }
 
-    void Settings::applyRotation(std::set<PageId> const& pages, OrthogonalRotation const rotation) {
+    void Settings::applyRotation(const std::set<PageId>& pages, const OrthogonalRotation rotation) {
         QMutexLocker locker(&m_mutex);
 
-        for (PageId const& page : pages) {
+        for (const PageId& page : pages) {
             setImageRotationLocked(page.imageId(), rotation);
         }
     }
 
-    OrthogonalRotation Settings::getRotationFor(ImageId const& image_id) const {
+    OrthogonalRotation Settings::getRotationFor(const ImageId& image_id) const {
         QMutexLocker locker(&m_mutex);
 
         auto it(m_perImageRotation.find(image_id));
@@ -69,11 +69,11 @@ namespace fix_orientation {
         }
     }
 
-    void Settings::setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation) {
+    void Settings::setImageRotationLocked(const ImageId& image_id, const OrthogonalRotation& rotation) {
         Utils::mapSetValue(m_perImageRotation, image_id, rotation);
     }
 
-    bool Settings::isRotationNull(ImageId const& image_id) const {
+    bool Settings::isRotationNull(const ImageId& image_id) const {
         QMutexLocker locker(&m_mutex);
 
         return m_perImageRotation.count(image_id) == 0;

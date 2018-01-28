@@ -29,7 +29,7 @@ namespace fix_orientation {
     class ImageView : public ImageViewBase {
     Q_OBJECT
     public:
-        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
+        ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
 
         ~ImageView() override;
 

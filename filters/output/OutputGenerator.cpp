@@ -67,8 +67,8 @@ namespace output {
                 if (dst - src < 1) {
                     return 0xff;
                 }
-                unsigned const orig = src;
-                unsigned const background = dst;
+                const unsigned orig = src;
+                const unsigned background = dst;
 
                 return static_cast<uint8_t>((orig * 255 + background / 2) / background);
             }
@@ -76,9 +76,9 @@ namespace output {
 
         struct CombineInverted {
             static uint8_t transform(uint8_t src, uint8_t dst) {
-                unsigned const dilated = dst;
-                unsigned const eroded = src;
-                unsigned const res = 255 - (255 - dilated) * eroded / 255;
+                const unsigned dilated = dst;
+                const unsigned eroded = src;
+                const unsigned res = 255 - (255 - dilated) * eroded / 255;
 
                 return static_cast<uint8_t>(res);
             }
@@ -120,8 +120,8 @@ namespace output {
 
         template<typename PixelType>
         void reserveBlackAndWhite(QSize size, int stride, PixelType* data) {
-            int const width = size.width();
-            int const height = size.height();
+            const int width = size.width();
+            const int height = size.height();
 
             PixelType* line = data;
             for (int y = 0; y < height; ++y, line += stride) {
@@ -154,18 +154,18 @@ namespace output {
          */
         template<typename MixedPixel>
         void combineMixed(QImage& mixed,
-                          BinaryImage const& bw_content,
-                          BinaryImage const& bw_mask,
+                          const BinaryImage& bw_content,
+                          const BinaryImage& bw_mask,
                           bool needReserveBlackAndWhite = true) {
             auto* mixed_line = reinterpret_cast<MixedPixel*>(mixed.bits());
-            int const mixed_stride = mixed.bytesPerLine() / sizeof(MixedPixel);
-            uint32_t const* bw_content_line = bw_content.data();
-            int const bw_content_stride = bw_content.wordsPerLine();
-            uint32_t const* bw_mask_line = bw_mask.data();
-            int const bw_mask_stride = bw_mask.wordsPerLine();
-            int const width = mixed.width();
-            int const height = mixed.height();
-            uint32_t const msb = uint32_t(1) << 31;
+            const int mixed_stride = mixed.bytesPerLine() / sizeof(MixedPixel);
+            const uint32_t* bw_content_line = bw_content.data();
+            const int bw_content_stride = bw_content.wordsPerLine();
+            const uint32_t* bw_mask_line = bw_mask.data();
+            const int bw_mask_stride = bw_mask.wordsPerLine();
+            const int width = mixed.width();
+            const int height = mixed.height();
+            const uint32_t msb = uint32_t(1) << 31;
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
@@ -193,8 +193,8 @@ namespace output {
         }  // combineMixed
 
         void combineMixed(QImage& mixed,
-                          BinaryImage const& bw_content,
-                          BinaryImage const& bw_mask,
+                          const BinaryImage& bw_content,
+                          const BinaryImage& bw_mask,
                           bool needReserveBlackAndWhite = true) {
             if ((mixed.format() != QImage::Format_Indexed8)
                 && (mixed.format() != QImage::Format_RGB32)
@@ -294,15 +294,15 @@ namespace output {
         }
     }      // namespace
 
-    OutputGenerator::OutputGenerator(Dpi const& dpi,
-                                     ColorParams const& color_params,
-                                     SplittingOptions const& splitting_options,
-                                     PictureShapeOptions const& picture_shape_options,
-                                     DewarpingOptions const& dewarping_options,
-                                     OutputProcessingParams const& output_processing_params,
+    OutputGenerator::OutputGenerator(const Dpi& dpi,
+                                     const ColorParams& color_params,
+                                     const SplittingOptions& splitting_options,
+                                     const PictureShapeOptions& picture_shape_options,
+                                     const DewarpingOptions& dewarping_options,
+                                     const OutputProcessingParams& output_processing_params,
                                      DespeckleLevel despeckle_level,
-                                     ImageTransformation const& xform,
-                                     QPolygonF const& content_rect_phys)
+                                     const ImageTransformation& xform,
+                                     const QPolygonF& content_rect_phys)
             : m_dpi(dpi),
               m_colorParams(color_params),
               m_splittingOptions(splitting_options),
@@ -324,17 +324,17 @@ namespace output {
         }
     }
 
-    QImage OutputGenerator::process(TaskStatus const& status,
-                                    FilterData const& input,
+    QImage OutputGenerator::process(const TaskStatus& status,
+                                    const FilterData& input,
                                     ZoneSet& picture_zones,
-                                    ZoneSet const& fill_zones,
+                                    const ZoneSet& fill_zones,
                                     dewarping::DistortionModel& distortion_model,
-                                    DepthPerception const& depth_perception,
+                                    const DepthPerception& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
                                     DebugImages* dbg,
-                                    PageId const& p_pageId,
-                                    intrusive_ptr<Settings> const& p_settings,
+                                    const PageId& p_pageId,
+                                    const intrusive_ptr<Settings>& p_settings,
                                     SplitImage* splitImage) {
         QImage image(
                 processImpl(
@@ -347,7 +347,7 @@ namespace output {
         );
         // Set the correct DPI.
         const RenderParams renderParams(m_colorParams, m_splittingOptions);
-        Dpm const output_dpm(m_dpi);
+        const Dpm output_dpm(m_dpi);
 
         if (!renderParams.splitOutput()) {
             assert(!image.isNull());
@@ -372,11 +372,11 @@ namespace output {
         return m_contentRect;
     }
 
-    GrayImage OutputGenerator::normalizeIlluminationGray(TaskStatus const& status,
-                                                         QImage const& input,
-                                                         QPolygonF const& area_to_consider,
-                                                         QTransform const& xform,
-                                                         QRect const& target_rect,
+    GrayImage OutputGenerator::normalizeIlluminationGray(const TaskStatus& status,
+                                                         const QImage& input,
+                                                         const QPolygonF& area_to_consider,
+                                                         const QTransform& xform,
+                                                         const QRect& target_rect,
                                                          GrayImage* background,
                                                          DebugImages* const dbg) {
         GrayImage to_be_normalized(
@@ -393,7 +393,7 @@ namespace output {
         QPolygonF transformed_consideration_area(xform.map(area_to_consider));
         transformed_consideration_area.translate(-target_rect.topLeft());
 
-        PolynomialSurface const bg_ps(
+        const PolynomialSurface bg_ps(
                 estimateBackground(
                         to_be_normalized, transformed_consideration_area,
                         status, dbg
@@ -420,10 +420,10 @@ namespace output {
         return bg_img;
     }  // OutputGenerator::normalizeIlluminationGray
 
-    imageproc::BinaryImage OutputGenerator::estimateBinarizationMask(TaskStatus const& status,
-                                                                     GrayImage const& gray_source,
-                                                                     QRect const& source_rect,
-                                                                     QRect const& source_sub_rect,
+    imageproc::BinaryImage OutputGenerator::estimateBinarizationMask(const TaskStatus& status,
+                                                                     const GrayImage& gray_source,
+                                                                     const QRect& source_rect,
+                                                                     const QRect& source_sub_rect,
                                                                      DebugImages* const dbg) const {
         assert(source_rect.contains(source_sub_rect));
 
@@ -444,8 +444,8 @@ namespace output {
                     source_sub_rect.topLeft() - source_rect.topLeft()
             );
 
-            int const stride = gray_source.stride();
-            int const offset = relative_subrect.top() * stride
+            const int stride = gray_source.stride();
+            const int offset = relative_subrect.top() * stride
                                + relative_subrect.left();
 
             trimmed_image = GrayImage(QImage(
@@ -457,7 +457,7 @@ namespace output {
 
         status.throwIfCancelled();
 
-        QSize const downscaled_size(to300dpi(trimmed_image.size(), m_dpi));
+        const QSize downscaled_size(to300dpi(trimmed_image.size(), m_dpi));
 
         // A 300dpi version of trimmed_image.
         GrayImage downscaled_input(
@@ -471,7 +471,7 @@ namespace output {
         downscaled_input = GrayImage();  // Save memory.
         status.throwIfCancelled();
 
-        BinaryThreshold const threshold(48);
+        const BinaryThreshold threshold(48);
         // Scale back to original size.
         picture_areas = scaleToGray(
                 picture_areas, source_sub_rect.size()
@@ -481,49 +481,49 @@ namespace output {
     }  // OutputGenerator::estimateBinarizationMask
 
     void OutputGenerator::modifyBinarizationMask(imageproc::BinaryImage& bw_mask,
-                                                 QRect const& mask_rect,
-                                                 ZoneSet const& zones) const {
+                                                 const QRect& mask_rect,
+                                                 const ZoneSet& zones) const {
         QTransform xform(m_xform.transform());
         xform *= QTransform().translate(-mask_rect.x(), -mask_rect.y());
 
         typedef PictureLayerProperty PLP;
 
         // Pass 1: ERASER1
-        for (Zone const& zone : zones) {
+        for (const Zone& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
-                QPolygonF const poly(zone.spline().toPolygon());
+                const QPolygonF poly(zone.spline().toPolygon());
                 PolygonRasterizer::fill(bw_mask, BLACK, xform.map(poly), Qt::WindingFill);
             }
         }
 
         // Pass 2: PAINTER2
-        for (Zone const& zone : zones) {
+        for (const Zone& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
-                QPolygonF const poly(zone.spline().toPolygon());
+                const QPolygonF poly(zone.spline().toPolygon());
                 PolygonRasterizer::fill(bw_mask, WHITE, xform.map(poly), Qt::WindingFill);
             }
         }
 
         // Pass 1: ERASER3
-        for (Zone const& zone : zones) {
+        for (const Zone& zone : zones) {
             if (zone.properties().locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
-                QPolygonF const poly(zone.spline().toPolygon());
+                const QPolygonF poly(zone.spline().toPolygon());
                 PolygonRasterizer::fill(bw_mask, BLACK, xform.map(poly), Qt::WindingFill);
             }
         }
     }
 
-    QImage OutputGenerator::processImpl(TaskStatus const& status,
-                                        FilterData const& input,
+    QImage OutputGenerator::processImpl(const TaskStatus& status,
+                                        const FilterData& input,
                                         ZoneSet& picture_zones,
-                                        ZoneSet const& fill_zones,
+                                        const ZoneSet& fill_zones,
                                         dewarping::DistortionModel& distortion_model,
-                                        DepthPerception const& depth_perception,
+                                        const DepthPerception& depth_perception,
                                         imageproc::BinaryImage* auto_picture_mask,
                                         imageproc::BinaryImage* speckles_image,
                                         DebugImages* dbg,
-                                        PageId const& p_pageId,
-                                        intrusive_ptr<Settings> const& p_settings,
+                                        const PageId& p_pageId,
+                                        const intrusive_ptr<Settings>& p_settings,
                                         SplitImage* splitImage) {
         if ((m_dewarpingOptions.dewarpingMode() == AUTO)
             || (m_dewarpingOptions.dewarpingMode() == MARGINAL)
@@ -545,19 +545,19 @@ namespace output {
         }
     }
 
-    QImage OutputGenerator::processWithoutDewarping(TaskStatus const& status,
-                                                    FilterData const& input,
+    QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
+                                                    const FilterData& input,
                                                     ZoneSet& picture_zones,
-                                                    ZoneSet const& fill_zones,
+                                                    const ZoneSet& fill_zones,
                                                     imageproc::BinaryImage* auto_picture_mask,
                                                     imageproc::BinaryImage* speckles_image,
                                                     DebugImages* dbg,
-                                                    PageId const& p_pageId,
-                                                    intrusive_ptr<Settings> const& p_settings,
+                                                    const PageId& p_pageId,
+                                                    const intrusive_ptr<Settings>& p_settings,
                                                     SplitImage* splitImage) {
-        RenderParams const render_params(m_colorParams, m_splittingOptions);
+        const RenderParams render_params(m_colorParams, m_splittingOptions);
 
-        QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
+        const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
         if (m_contentRect.isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
@@ -573,18 +573,18 @@ namespace output {
                 render_params.cutMargins() ? m_contentRect : m_outRect);
 
         // The whole image minus the part cut off by the split line.
-        QRect const big_margins_rect(
+        const QRect big_margins_rect(
                 m_xform.resultingPreCropArea().boundingRect().toRect()
         );
 
         // For various reasons, we need some whitespace around the content
         // area.  This is the number of pixels of such whitespace.
-        int const content_margin = m_dpi.vertical() * 20 / 300;
+        const int content_margin = m_dpi.vertical() * 20 / 300;
 
         // The content area (in output image coordinates) extended
         // with content_margin.  Note that we prevent that extension
         // from reaching the neighboring page.
-        QRect const small_margins_rect(
+        const QRect small_margins_rect(
                 contentRect.adjusted(
                         -content_margin, -content_margin,
                         content_margin, content_margin
@@ -596,14 +596,14 @@ namespace output {
         // generally smaller margins are better, except when there is
         // some garbage that connects the content to the edge of the
         // image area.
-        QRect const normalize_illumination_rect(
+        const QRect normalize_illumination_rect(
                 small_margins_rect
         );
 
         QImage maybe_normalized;
 
         // Crop area in original image coordinates.
-        QPolygonF const orig_image_crop_area(
+        const QPolygonF orig_image_crop_area(
                 m_xform.transformBack().map(
                         m_xform.resultingPreCropArea()
                 )
@@ -723,8 +723,8 @@ namespace output {
 
             status.throwIfCancelled();
 
-            QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-            QRect const dst_rect(contentRect);
+            const QRect src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+            const QRect dst_rect(contentRect);
             rasterOp<RopSrc>(dst, dst_rect, bw_content, src_rect.topLeft());
             bw_content.release();  // Save memory.
 
@@ -806,8 +806,8 @@ namespace output {
                 }
                 auto_picture_mask->fill(BLACK);
 
-                QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                QRect const dst_rect(contentRect);
+                const QRect src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+                const QRect dst_rect(contentRect);
                 rasterOp<RopSrc>(*auto_picture_mask, dst_rect, bw_mask, src_rect.topLeft());
             }
 
@@ -820,8 +820,8 @@ namespace output {
 
             {
                 picture_mask_output = BinaryImage(target_size, BLACK);
-                QRect const src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
-                QRect const dst_rect(contentRect);
+                const QRect src_rect(contentRect.translated(-normalize_illumination_rect.topLeft()));
+                const QRect dst_rect(contentRect);
                 rasterOp<RopSrc>(picture_mask_output, dst_rect, bw_mask, src_rect.topLeft());
             }
 
@@ -937,8 +937,8 @@ namespace output {
                     original_background_dst.fill(outsideOriginalBackgroundColor);
 
                     if (!contentRect.isEmpty()) {
-                        QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                        QRect const dst_rect(contentRect);
+                        const QRect src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+                        const QRect dst_rect(contentRect);
                         drawOver(original_background_dst, dst_rect, original_background, src_rect);
                     }
                     original_background = QImage();
@@ -975,8 +975,8 @@ namespace output {
         dst.fill(outsideBackgroundColor);
 
         if (!contentRect.isEmpty()) {
-            QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-            QRect const dst_rect(contentRect);
+            const QRect src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+            const QRect dst_rect(contentRect);
             drawOver(dst, dst_rect, maybe_normalized, src_rect);
         }
         maybe_normalized = QImage();
@@ -999,21 +999,21 @@ namespace output {
         return dst;
     }  // OutputGenerator::processWithoutDewarping
 
-    QImage OutputGenerator::processWithDewarping(TaskStatus const& status,
-                                                 FilterData const& input,
+    QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
+                                                 const FilterData& input,
                                                  ZoneSet& picture_zones,
-                                                 ZoneSet const& fill_zones,
+                                                 const ZoneSet& fill_zones,
                                                  dewarping::DistortionModel& distortion_model,
-                                                 DepthPerception const& depth_perception,
+                                                 const DepthPerception& depth_perception,
                                                  imageproc::BinaryImage* auto_picture_mask,
                                                  imageproc::BinaryImage* speckles_image,
                                                  DebugImages* dbg,
-                                                 PageId const& p_pageId,
-                                                 intrusive_ptr<Settings> const& p_settings,
+                                                 const PageId& p_pageId,
+                                                 const intrusive_ptr<Settings>& p_settings,
                                                  SplitImage* splitImage) {
-        RenderParams const render_params(m_colorParams, m_splittingOptions);
+        const RenderParams render_params(m_colorParams, m_splittingOptions);
 
-        QSize const target_size(m_outRect.size().expandedTo(QSize(1, 1)));
+        const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
         if (m_contentRect.isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
@@ -1029,18 +1029,18 @@ namespace output {
                 render_params.cutMargins() ? m_contentRect : m_outRect);
 
         // The whole image minus the part cut off by the split line.
-        QRect const big_margins_rect(
+        const QRect big_margins_rect(
                 m_xform.resultingPreCropArea().boundingRect().toRect()
         );
 
         // For various reasons, we need some whitespace around the content
         // area.  This is the number of pixels of such whitespace.
-        int const content_margin = m_dpi.vertical() * 20 / 300;
+        const int content_margin = m_dpi.vertical() * 20 / 300;
 
         // The content area (in output image coordinates) extended
         // with content_margin.  Note that we prevent that extension
         // from reaching the neighboring page.
-        QRect const small_margins_rect(
+        const QRect small_margins_rect(
                 contentRect.adjusted(
                         -content_margin, -content_margin,
                         content_margin, content_margin
@@ -1052,12 +1052,12 @@ namespace output {
         // generally smaller margins are better, except when there is
         // some garbage that connects the content to the edge of the
         // image area.
-        QRect const normalize_illumination_rect(
+        const QRect normalize_illumination_rect(
                 small_margins_rect
         );
 
         // Crop area in original image coordinates.
-        QPolygonF const orig_image_crop_area(
+        const QPolygonF orig_image_crop_area(
                 m_xform.transformBack().map(m_xform.resultingPreCropArea())
         );
 
@@ -1065,7 +1065,7 @@ namespace output {
         QPolygonF normalize_illumination_crop_area(m_xform.resultingPreCropArea());
         normalize_illumination_crop_area.translate(-normalize_illumination_rect.topLeft());
 
-        bool const color_original = !input.origImage().allGray();
+        const bool color_original = !input.origImage().allGray();
 
         QColor outsideBackgroundColor;
         QColor outsideBackgroundColorBW;
@@ -1090,7 +1090,7 @@ namespace output {
 
         BinaryThreshold bw_threshold(128);
 
-        QTransform const norm_illum_to_original(
+        const QTransform norm_illum_to_original(
                 QTransform().translate(
                         normalize_illumination_rect.left(),
                         normalize_illumination_rect.top()
@@ -1219,8 +1219,8 @@ namespace output {
                 auto_picture_mask->fill(BLACK);
 
                 if (!contentRect.isEmpty()) {
-                    QRect const src_rect(contentRect.translated(-small_margins_rect.topLeft()));
-                    QRect const dst_rect(contentRect);
+                    const QRect src_rect(contentRect.translated(-small_margins_rect.topLeft()));
+                    const QRect dst_rect(contentRect);
                     rasterOp<RopSrc>(*auto_picture_mask, dst_rect, warped_bw_mask, src_rect.topLeft());
                 }
             }
@@ -1245,7 +1245,7 @@ namespace output {
         if (m_dewarpingOptions.dewarpingMode() == AUTO) {
             DistortionModelBuilder model_builder(Vec2d(0, 1));
 
-            QRect const content_rect(
+            const QRect content_rect(
                     contentRect.translated(-normalize_illumination_rect.topLeft())
             );
             TextLineTracer::trace(
@@ -1271,8 +1271,8 @@ namespace output {
             int degrees = m_xform.preRotation().toDegrees();
             bw_image = orthogonalRotation(bw_image, degrees);
 
-            std::vector<QPointF> const& top_polyline0 = distortion_model.topCurve().polyline();
-            std::vector<QPointF> const& bottom_polyline0 = distortion_model.bottomCurve().polyline();
+            const std::vector<QPointF>& top_polyline0 = distortion_model.topCurve().polyline();
+            const std::vector<QPointF>& bottom_polyline0 = distortion_model.bottomCurve().polyline();
 
             std::vector<QPointF> top_polyline;
             std::vector<QPointF> bottom_polyline;
@@ -1286,7 +1286,7 @@ namespace output {
             }
 
 
-            PageId const& pageId = p_pageId;
+            const PageId& pageId = p_pageId;
 
             QString stAngle;
 
@@ -1376,14 +1376,14 @@ namespace output {
 
             setupTrivialDistortionModel(distortion_model);
 
-            PageId const& pageId = p_pageId;
+            const PageId& pageId = p_pageId;
 
             int max_red_points = 5;
             XSpline top_spline;
 
-            std::vector<QPointF> const& top_polyline = distortion_model.topCurve().polyline();
+            const std::vector<QPointF>& top_polyline = distortion_model.topCurve().polyline();
 
-            QLineF const top_line(transform.map(top_polyline.front()), transform.map(top_polyline.back()));
+            const QLineF top_line(transform.map(top_polyline.front()), transform.map(top_polyline.back()));
 
             top_spline.appendControlPoint(top_line.p1(), 0);
 
@@ -1412,9 +1412,9 @@ namespace output {
 
             XSpline bottom_spline;
 
-            std::vector<QPointF> const& bottom_polyline = distortion_model.bottomCurve().polyline();
+            const std::vector<QPointF>& bottom_polyline = distortion_model.bottomCurve().polyline();
 
-            QLineF const bottom_line(transform.map(bottom_polyline.front()), transform.map(bottom_polyline.back()));
+            const QLineF bottom_line(transform.map(bottom_polyline.front()), transform.map(bottom_polyline.back()));
 
             bottom_spline.appendControlPoint(bottom_line.p1(), 0);
 
@@ -1485,7 +1485,7 @@ namespace output {
                     QTransform(), normalized_original, m_xform.transform(),
                     distortion_model, depth_perception, outsideBackgroundColor
             );
-        } catch (std::runtime_error const&) {
+        } catch (const std::runtime_error&) {
             // Probably an impossible distortion model.  Let's fall back to a trivial one.
             setupTrivialDistortionModel(distortion_model);
             dewarped = dewarp(
@@ -1507,7 +1507,7 @@ namespace output {
                         m_xform.transform(), contentRect
                 )
         );
-        boost::function<QPointF(QPointF const&)> const orig_to_output(
+        boost::function<QPointF(const QPointF&)> const orig_to_output(
                 boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
         );
 
@@ -1601,7 +1601,7 @@ namespace output {
 
         BinaryImage dewarped_picture_mask;
         if (render_params.mixedOutput()) {
-            QTransform const orig_to_small_margins(
+            const QTransform orig_to_small_margins(
                     m_xform.transform() * QTransform().translate(
                             -small_margins_rect.left(),
                             -small_margins_rect.top()
@@ -1707,7 +1707,7 @@ namespace output {
                                 m_xform.transform(),
                                 distortion_model, depth_perception, outsideBackgroundColor
                         );
-                    } catch (std::runtime_error const&) {
+                    } catch (const std::runtime_error&) {
                         setupTrivialDistortionModel(distortion_model);
                         dewarped = dewarp(
                                 QTransform(), orig_without_illumination,
@@ -1815,8 +1815,8 @@ namespace output {
         distortion_model.setBottomCurve(Curve(bottom_polyline));
     }
 
-    CylindricalSurfaceDewarper OutputGenerator::createDewarper(DistortionModel const& distortion_model,
-                                                               QTransform const& distortion_model_to_target,
+    CylindricalSurfaceDewarper OutputGenerator::createDewarper(const DistortionModel& distortion_model,
+                                                               const QTransform& distortion_model_to_target,
                                                                double depth_perception) {
         if (distortion_model_to_target.isIdentity()) {
             return CylindricalSurfaceDewarper(
@@ -1850,19 +1850,19 @@ namespace output {
  * \param modified_content_rect A vertically shrunk version of outputContentRect().
  *                              See function definition for more details.
  */
-    QImage OutputGenerator::dewarp(QTransform const& orig_to_src,
-                                   QImage const& src,
-                                   QTransform const& src_to_output,
-                                   DistortionModel const& distortion_model,
-                                   DepthPerception const& depth_perception,
-                                   QColor const& bg_color) const {
-        CylindricalSurfaceDewarper const dewarper(
+    QImage OutputGenerator::dewarp(const QTransform& orig_to_src,
+                                   const QImage& src,
+                                   const QTransform& src_to_output,
+                                   const DistortionModel& distortion_model,
+                                   const DepthPerception& depth_perception,
+                                   const QColor& bg_color) const {
+        const CylindricalSurfaceDewarper dewarper(
                 createDewarper(distortion_model, orig_to_src, depth_perception.value())
         );
 
         // Model domain is a rectangle in output image coordinates that
         // will be mapped to our curved quadrilateral.
-        QRect const model_domain(
+        const QRect model_domain(
                 distortion_model.modelDomain(
                         dewarper, orig_to_src * src_to_output, outputContentRect()
                 ).toRect()
@@ -1879,32 +1879,32 @@ namespace output {
         );
     }
 
-    QSize OutputGenerator::from300dpi(QSize const& size, Dpi const& target_dpi) {
-        double const hscale = target_dpi.horizontal() / 300.0;
-        double const vscale = target_dpi.vertical() / 300.0;
-        int const width = qRound(size.width() * hscale);
-        int const height = qRound(size.height() * vscale);
+    QSize OutputGenerator::from300dpi(const QSize& size, const Dpi& target_dpi) {
+        const double hscale = target_dpi.horizontal() / 300.0;
+        const double vscale = target_dpi.vertical() / 300.0;
+        const int width = qRound(size.width() * hscale);
+        const int height = qRound(size.height() * vscale);
 
         return QSize(std::max(1, width), std::max(1, height));
     }
 
-    QSize OutputGenerator::to300dpi(QSize const& size, Dpi const& source_dpi) {
-        double const hscale = 300.0 / source_dpi.horizontal();
-        double const vscale = 300.0 / source_dpi.vertical();
-        int const width = qRound(size.width() * hscale);
-        int const height = qRound(size.height() * vscale);
+    QSize OutputGenerator::to300dpi(const QSize& size, const Dpi& source_dpi) {
+        const double hscale = 300.0 / source_dpi.horizontal();
+        const double vscale = 300.0 / source_dpi.vertical();
+        const int width = qRound(size.width() * hscale);
+        const int height = qRound(size.height() * vscale);
 
         return QSize(std::max(1, width), std::max(1, height));
     }
 
-    QImage OutputGenerator::convertToRGBorRGBA(QImage const& src) {
-        QImage::Format const fmt = src.hasAlphaChannel()
+    QImage OutputGenerator::convertToRGBorRGBA(const QImage& src) {
+        const QImage::Format fmt = src.hasAlphaChannel()
                                    ? QImage::Format_ARGB32 : QImage::Format_RGB32;
 
         return src.convertToFormat(fmt);
     }
 
-    void OutputGenerator::fillMarginsInPlace(QImage& image, QPolygonF const& content_poly, QColor const& color) {
+    void OutputGenerator::fillMarginsInPlace(QImage& image, const QPolygonF& content_poly, const QColor& color) {
         if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
             BinaryImage binaryImage(image);
             PolygonRasterizer::fillExcept(
@@ -1945,13 +1945,13 @@ namespace output {
         image = image.convertToFormat(imageFormat);
     }      // OutputGenerator::fillMarginsInPlace
 
-    void OutputGenerator::fillMarginsInPlace(BinaryImage& image, QPolygonF const& content_poly, BWColor const& color) {
+    void OutputGenerator::fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor& color) {
         PolygonRasterizer::fillExcept(
                 image, color, content_poly, Qt::WindingFill
         );
     }
 
-    void OutputGenerator::fillMarginsInPlace(QImage& image, BinaryImage const& content_mask, QColor const& color) {
+    void OutputGenerator::fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color) {
         if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
             BinaryImage binaryImage(image);
             fillExcept(binaryImage, content_mask, (color == Qt::black) ? BLACK : WHITE);
@@ -1970,12 +1970,12 @@ namespace output {
     }
 
     void
-    OutputGenerator::fillMarginsInPlace(BinaryImage& image, BinaryImage const& content_mask, BWColor const& color) {
+    OutputGenerator::fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, const BWColor& color) {
         fillExcept(image, content_mask, color);
     }
 
-    GrayImage OutputGenerator::detectPictures(GrayImage const& input_300dpi,
-                                              TaskStatus const& status,
+    GrayImage OutputGenerator::detectPictures(const GrayImage& input_300dpi,
+                                              const TaskStatus& status,
                                               DebugImages* const dbg) {
         // We stretch the range of gray levels to cover the whole
         // range of [0, 255].  We do it because we want text
@@ -2047,8 +2047,8 @@ namespace output {
         return holes_filled;
     }  // OutputGenerator::detectPictures
 
-    QImage OutputGenerator::smoothToGrayscale(QImage const& src, Dpi const& dpi) {
-        int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
+    QImage OutputGenerator::smoothToGrayscale(const QImage& src, const Dpi& dpi) {
+        const int min_dpi = std::min(dpi.horizontal(), dpi.vertical());
         int window;
         int degree;
         if (min_dpi <= 200) {
@@ -2069,7 +2069,7 @@ namespace output {
     }
 
     BinaryThreshold OutputGenerator::adjustThreshold(BinaryThreshold threshold) const {
-        int const adjusted = threshold
+        const int adjusted = threshold
                              + m_colorParams.blackWhiteOptions().thresholdAdjustment();
 
         // Hard-bounding threshold values is necessary for example
@@ -2077,15 +2077,15 @@ namespace output {
         return BinaryThreshold(qBound(30, adjusted, 225));
     }
 
-    BinaryThreshold OutputGenerator::calcBinarizationThreshold(QImage const& image, BinaryImage const& mask) const {
+    BinaryThreshold OutputGenerator::calcBinarizationThreshold(const QImage& image, const BinaryImage& mask) const {
         GrayscaleHistogram hist(image, mask);
 
         return adjustThreshold(BinaryThreshold::otsuThreshold(hist));
     }
 
-    BinaryThreshold OutputGenerator::calcBinarizationThreshold(QImage const& image,
-                                                               QPolygonF const& crop_area,
-                                                               BinaryImage const* mask) const {
+    BinaryThreshold OutputGenerator::calcBinarizationThreshold(const QImage& image,
+                                                               const QPolygonF& crop_area,
+                                                               const BinaryImage* mask) const {
         QPainterPath path;
         path.addPolygon(crop_area);
 
@@ -2104,7 +2104,7 @@ namespace output {
         }
     }
 
-    BinaryImage OutputGenerator::binarize(QImage const& image) const {
+    BinaryImage OutputGenerator::binarize(const QImage& image) const {
         if ((image.format() == QImage::Format_Mono)
             || (image.format() == QImage::Format_MonoLSB)) {
             return BinaryImage(image);
@@ -2119,7 +2119,7 @@ namespace output {
         switch (binarizationMethod) {
             case OTSU: {
                 GrayscaleHistogram hist(imageToBinarize);
-                BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
+                const BinaryThreshold bw_thresh(BinaryThreshold::otsuThreshold(hist));
 
                 binarized = BinaryImage(imageToBinarize, adjustThreshold(bw_thresh));
                 break;
@@ -2165,7 +2165,7 @@ namespace output {
         return binarized;
     }
 
-    BinaryImage OutputGenerator::binarize(QImage const& image, BinaryImage const& mask) const {
+    BinaryImage OutputGenerator::binarize(const QImage& image, const BinaryImage& mask) const {
         BinaryImage binarized = binarize(image);
 
         rasterOp<RopAnd<RopSrc, RopDst>>(binarized, mask);
@@ -2174,7 +2174,7 @@ namespace output {
     }
 
     BinaryImage
-    OutputGenerator::binarize(QImage const& image, QPolygonF const& crop_area, BinaryImage const* mask) const {
+    OutputGenerator::binarize(const QImage& image, const QPolygonF& crop_area, const BinaryImage* mask) const {
         QPainterPath path;
         path.addPolygon(crop_area);
 
@@ -2219,15 +2219,15 @@ namespace output {
  * that is, its horizontal and vertical components are equal.
  */
     void OutputGenerator::maybeDespeckleInPlace(imageproc::BinaryImage& image,
-                                                QRect const& image_rect,
-                                                QRect const& mask_rect,
-                                                DespeckleLevel const level,
+                                                const QRect& image_rect,
+                                                const QRect& mask_rect,
+                                                const DespeckleLevel level,
                                                 BinaryImage* speckles_img,
-                                                Dpi const& dpi,
-                                                TaskStatus const& status,
+                                                const Dpi& dpi,
+                                                const TaskStatus& status,
                                                 DebugImages* dbg) const {
-        QRect const src_rect(mask_rect.translated(-image_rect.topLeft()));
-        QRect const dst_rect(mask_rect);
+        const QRect src_rect(mask_rect.translated(-image_rect.topLeft()));
+        const QRect dst_rect(mask_rect);
 
         if (speckles_img) {
             BinaryImage(m_outRect.size(), WHITE).swap(*speckles_img);
@@ -2267,11 +2267,11 @@ namespace output {
         }
     }  // OutputGenerator::maybeDespeckleInPlace
 
-    void OutputGenerator::morphologicalSmoothInPlace(BinaryImage& bin_img, TaskStatus const& status) {
+    void OutputGenerator::morphologicalSmoothInPlace(BinaryImage& bin_img, const TaskStatus& status) {
         // When removing black noise, remove small ones first.
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "XXX"
                             " - "
                             "   ";
@@ -2281,7 +2281,7 @@ namespace output {
         status.throwIfCancelled();
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "X ?"
                             "X  "
                             "X- "
@@ -2294,7 +2294,7 @@ namespace output {
         status.throwIfCancelled();
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "X ?"
                             "X ?"
                             "X  "
@@ -2310,7 +2310,7 @@ namespace output {
         status.throwIfCancelled();
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "XX?"
                             "XX?"
                             "XX "
@@ -2326,7 +2326,7 @@ namespace output {
         status.throwIfCancelled();
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "XX?"
                             "XX "
                             "X+ "
@@ -2339,7 +2339,7 @@ namespace output {
         status.throwIfCancelled();
 
         {
-            char const pattern[]
+            const char pattern[]
                     = "   "
                             "X+X"
                             "XXX";
@@ -2348,22 +2348,22 @@ namespace output {
     }  // OutputGenerator::morphologicalSmoothInPlace
 
     void OutputGenerator::hitMissReplaceAllDirections(imageproc::BinaryImage& img,
-                                                      char const* const pattern,
-                                                      int const pattern_width,
-                                                      int const pattern_height) {
+                                                      const char* const pattern,
+                                                      const int pattern_width,
+                                                      const int pattern_height) {
         hitMissReplaceInPlace(img, WHITE, pattern, pattern_width, pattern_height);
 
         std::vector<char> pattern_data(static_cast<unsigned long long int>(pattern_width * pattern_height), ' ');
         char* const new_pattern = &pattern_data[0];
 
         // Rotate 90 degrees clockwise.
-        char const* p = pattern;
+        const char* p = pattern;
         int new_width = pattern_height;
         int new_height = pattern_width;
         for (int y = 0; y < pattern_height; ++y) {
             for (int x = 0; x < pattern_width; ++x, ++p) {
-                int const new_x = pattern_height - 1 - y;
-                int const new_y = x;
+                const int new_x = pattern_height - 1 - y;
+                const int new_y = x;
                 new_pattern[new_y * new_width + new_x] = *p;
             }
         }
@@ -2375,8 +2375,8 @@ namespace output {
         new_height = pattern_height;
         for (int y = 0; y < pattern_height; ++y) {
             for (int x = 0; x < pattern_width; ++x, ++p) {
-                int const new_x = pattern_width - 1 - x;
-                int const new_y = pattern_height - 1 - y;
+                const int new_x = pattern_width - 1 - x;
+                const int new_y = pattern_height - 1 - y;
                 new_pattern[new_y * new_width + new_x] = *p;
             }
         }
@@ -2387,18 +2387,18 @@ namespace output {
         new_height = pattern_width;
         for (int y = 0; y < pattern_height; ++y) {
             for (int x = 0; x < pattern_width; ++x, ++p) {
-                int const new_x = y;
-                int const new_y = pattern_width - 1 - x;
+                const int new_x = y;
+                const int new_y = pattern_width - 1 - x;
                 new_pattern[new_y * new_width + new_x] = *p;
             }
         }
         hitMissReplaceInPlace(img, WHITE, new_pattern, new_width, new_height);
     }  // OutputGenerator::hitMissReplaceAllDirections
 
-    QSize OutputGenerator::calcLocalWindowSize(Dpi const& dpi) {
-        QSizeF const size_mm(3, 30);
-        QSizeF const size_inch(size_mm * constants::MM2INCH);
-        QSizeF const size_pixels_f(
+    QSize OutputGenerator::calcLocalWindowSize(const Dpi& dpi) {
+        const QSizeF size_mm(3, 30);
+        const QSizeF size_inch(size_mm * constants::MM2INCH);
+        const QSizeF size_pixels_f(
                 dpi.horizontal() * size_inch.width(),
                 dpi.vertical() * size_inch.height()
         );
@@ -2415,9 +2415,9 @@ namespace output {
     }
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
-                                                ZoneSet const& zones,
-                                                boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                                QTransform const& postTransform)
+                                                const ZoneSet& zones,
+                                                boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                                const QTransform& postTransform)
     const {
         if (zones.empty()) {
             return;
@@ -2430,9 +2430,9 @@ namespace output {
             painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setPen(Qt::NoPen);
 
-            for (Zone const& zone : zones) {
-                QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
-                QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+            for (const Zone& zone : zones) {
+                const QColor color(zone.properties().locateOrDefault<FillColorProperty>()->color());
+                const QPolygonF poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
                 painter.setBrush(color);
                 painter.drawPolygon(poly, Qt::WindingFill);
             }
@@ -2446,17 +2446,17 @@ namespace output {
     }
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
-                                                ZoneSet const& zones,
-                                                boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
+                                                const ZoneSet& zones,
+                                                boost::function<QPointF(const QPointF&)>const & orig_to_output) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform()
         );
     }
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
-                                                ZoneSet const& zones,
-                                                QTransform const& postTransform) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+                                                const ZoneSet& zones,
+                                                const QTransform& postTransform) const {
+        typedef QPointF (QTransform::* MapPointFunc)(const QPointF&) const;
         applyFillZonesInPlace(
                 img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
         );
@@ -2466,8 +2466,8 @@ namespace output {
  * A simplified version of the above, using toOutput() for translation
  * from original image to output image coordinates.
  */
-    void OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+    void OutputGenerator::applyFillZonesInPlace(QImage& img, const ZoneSet& zones) const {
+        typedef QPointF (QTransform::* MapPointFunc)(const QPointF&) const;
         applyFillZonesInPlace(
                 img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1)
         );
@@ -2475,34 +2475,34 @@ namespace output {
 
     void
     OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                           ZoneSet const& zones,
-                                           boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                           QTransform const& postTransform) const {
+                                           const ZoneSet& zones,
+                                           boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                           const QTransform& postTransform) const {
         if (zones.empty()) {
             return;
         }
 
-        for (Zone const& zone : zones) {
-            QColor const color(zone.properties().locateOrDefault<FillColorProperty>()->color());
-            BWColor const bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
-            QPolygonF const poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+        for (const Zone& zone : zones) {
+            const QColor color(zone.properties().locateOrDefault<FillColorProperty>()->color());
+            const BWColor bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
+            const QPolygonF poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
             PolygonRasterizer::fill(img, bw_color, poly, Qt::WindingFill);
         }
     }
 
     void
     OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                           ZoneSet const& zones,
-                                           boost::function<QPointF(QPointF const&)> const& orig_to_output) const {
+                                           const ZoneSet& zones,
+                                           boost::function<QPointF(const QPointF&)>const & orig_to_output) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform()
         );
     }
 
     void OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                                ZoneSet const& zones,
-                                                QTransform const& postTransform) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+                                                const ZoneSet& zones,
+                                                const QTransform& postTransform) const {
+        typedef QPointF (QTransform::* MapPointFunc)(const QPointF&) const;
         applyFillZonesInPlace(
                 img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1), postTransform
         );
@@ -2512,8 +2512,8 @@ namespace output {
  * A simplified version of the above, using toOutput() for translation
  * from original image to output image coordinates.
  */
-    void OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const {
-        typedef QPointF (QTransform::* MapPointFunc)(QPointF const&) const;
+    void OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img, const ZoneSet& zones) const {
+        typedef QPointF (QTransform::* MapPointFunc)(const QPointF&) const;
         applyFillZonesInPlace(
                 img, zones, boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1)
         );
@@ -2569,7 +2569,7 @@ namespace output {
         }
     }
 
-    void OutputGenerator::drawPoint(QImage& image, QPointF const& pt) const {
+    void OutputGenerator::drawPoint(QImage& image, const QPointF& pt) const {
         QPoint pts = pt.toPoint();
 
         for (int i = pts.x() - 10; i < pts.x() + 10; i++) {
@@ -2628,7 +2628,7 @@ namespace output {
         }
     }
 
-    float OutputGenerator::vert_border_skew_angle(QPointF const& top, QPointF const& bottom) const {
+    float OutputGenerator::vert_border_skew_angle(const QPointF& top, const QPointF& bottom) const {
         return static_cast<float>(qFabs(qAtan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180 / M_PI));
     }
 
@@ -2658,9 +2658,9 @@ namespace output {
             BinaryImage bw_image(*p_dewarped, bw_threshold);
 
             SkewFinder skew_finder;
-            Skew const skew(skew_finder.findSkew(bw_image));
+            const Skew skew(skew_finder.findSkew(bw_image));
             if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
-                double const angle_deg = skew.angle();
+                const double angle_deg = skew.angle();
 
                 deskew(p_dewarped, angle_deg, outside_color);
 
@@ -2676,8 +2676,8 @@ namespace output {
     }
 
     void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
-                                                       ZoneSet const& zones,
-                                                       BinaryImage const& picture_mask) const {
+                                                       const ZoneSet& zones,
+                                                       const BinaryImage& picture_mask) const {
         BinaryImage bw_content(img, BinaryThreshold(1));
         applyFillZonesInPlace(bw_content, zones);
         applyFillZonesInPlace(img, zones);
@@ -2685,10 +2685,10 @@ namespace output {
     }
 
     void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
-                                                       ZoneSet const& zones,
-                                                       boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                                       QTransform const& postTransform,
-                                                       BinaryImage const& picture_mask) const {
+                                                       const ZoneSet& zones,
+                                                       boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                                       const QTransform& postTransform,
+                                                       const BinaryImage& picture_mask) const {
         BinaryImage bw_content(img, BinaryThreshold(1));
         applyFillZonesInPlace(bw_content, zones, orig_to_output, postTransform);
         applyFillZonesInPlace(img, zones, orig_to_output, postTransform);

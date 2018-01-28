@@ -21,14 +21,14 @@
 #include <QDomDocument>
 
 namespace deskew {
-    Params::Params(double const deskew_angle_deg, Dependencies const& deps, AutoManualMode const mode)
+    Params::Params(const double deskew_angle_deg, const Dependencies& deps, const AutoManualMode mode)
             : m_deskewAngleDeg(deskew_angle_deg),
               m_deps(deps),
               m_mode(mode),
               m_deviation(0.0) {
     }
 
-    Params::Params(QDomElement const& deskew_el)
+    Params::Params(const QDomElement& deskew_el)
             : m_deskewAngleDeg(deskew_el.attribute("angle").toDouble()),
               m_deps(deskew_el.namedItem("dependencies").toElement()),
               m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO),
@@ -37,7 +37,7 @@ namespace deskew {
 
     Params::~Params() = default;
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
         el.setAttribute("angle", Utils::doubleToString(m_deskewAngleDeg));
@@ -63,7 +63,7 @@ namespace deskew {
         return std::max(1.5 * std, max_dev) < fabs(m_deviation);
     }
 
-    Dependencies const& Params::dependencies() const {
+    const Dependencies& Params::dependencies() const {
         return m_deps;
     }
 

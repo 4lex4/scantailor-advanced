@@ -19,17 +19,17 @@
 #include "RelinkablePath.h"
 #include <QStringList>
 
-RelinkablePath::RelinkablePath(QString const& path, Type type)
+RelinkablePath::RelinkablePath(const QString& path, Type type)
         : m_normalizedPath(normalize(path)),
           m_type(type) {
 }
 
-QString RelinkablePath::normalize(QString const& path) {
+QString RelinkablePath::normalize(const QString& path) {
     QString front_slashes(path);
     front_slashes.replace(QChar('\\'), QLatin1String("/"));
 
     QStringList new_components;
-    for (QString const& comp : front_slashes.split(QChar('/'), QString::KeepEmptyParts)) {
+    for (const QString& comp : front_slashes.split(QChar('/'), QString::KeepEmptyParts)) {
         if (comp.isEmpty()) {
             if (new_components.isEmpty()
                 #if _WIN32
@@ -47,7 +47,7 @@ QString RelinkablePath::normalize(QString const& path) {
             if (new_components.isEmpty()) {
                 return QString();  // Error.
             }
-            QString const& last_comp = new_components.back();
+            const QString& last_comp = new_components.back();
             if (last_comp.isEmpty() || last_comp.endsWith(QChar(':'))) {
                 return QString();  // Error.
             }

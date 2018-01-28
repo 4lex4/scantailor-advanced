@@ -42,7 +42,7 @@ namespace imageproc {
                                   IncreaseSignificance increase_significance,
                                   QSize peak_neighborhood,
                                   T outside_values,
-                                  T const* input,
+                                  const T* input,
                                   int input_stride,
                                   QSize size,
                                   T* to_be_raised,
@@ -61,7 +61,7 @@ namespace imageproc {
                 );
 
                 std::vector<T> mask(to_be_raised, to_be_raised + to_be_raised_stride * size.height());
-                int const mask_stride = to_be_raised_stride;
+                const int mask_stride = to_be_raised_stride;
 
                 // Slightly raise the mask relative to to_be_raised.
                 std::transform(mask.begin(), mask.end(), mask.begin(), increase_significance);
@@ -122,7 +122,7 @@ namespace imageproc {
         }
 
         std::vector<T> raised(size.width() * size.height());
-        int const raised_stride = size.width();
+        const int raised_stride = size.width();
 
         detail::find_peaks::raiseAllButPeaks(
                 most_significant, least_significant, increase_significance,
@@ -132,8 +132,8 @@ namespace imageproc {
 
         T* data_line = data;
         T* raised_line = &raised[0];
-        int const w = size.width();
-        int const h = size.height();
+        const int w = size.width();
+        const int h = size.height();
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
@@ -159,7 +159,7 @@ namespace imageproc {
                                  IncreaseSignificance increase_significance,
                                  QSize peak_neighborhood,
                                  T outside_values,
-                                 T const* data,
+                                 const T* data,
                                  int stride,
                                  QSize size) {
         if (size.isEmpty()) {
@@ -167,7 +167,7 @@ namespace imageproc {
         }
 
         std::vector<T> raised(size.width() * size.height());
-        int const raised_stride = size.width();
+        const int raised_stride = size.width();
 
         detail::find_peaks::raiseAllButPeaks(
                 most_significant, least_significant, increase_significance,
@@ -177,12 +177,12 @@ namespace imageproc {
 
         BinaryImage peaks(size, WHITE);
         uint32_t* peaks_line = peaks.data();
-        int const peaks_stride = peaks.wordsPerLine();
-        T const* data_line = data;
-        T const* raised_line = &raised[0];
-        int const w = size.width();
-        int const h = size.height();
-        uint32_t const msb = uint32_t(1) << 31;
+        const int peaks_stride = peaks.wordsPerLine();
+        const T* data_line = data;
+        const T* raised_line = &raised[0];
+        const int w = size.width();
+        const int h = size.height();
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {

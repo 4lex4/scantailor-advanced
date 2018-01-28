@@ -42,11 +42,11 @@ DECLARE_NON_COPYABLE(StageSequence)
 public:
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    StageSequence(intrusive_ptr<ProjectPages> const& pages, PageSelectionAccessor const& page_selection_accessor);
+    StageSequence(const intrusive_ptr<ProjectPages>& pages, const PageSelectionAccessor& page_selection_accessor);
 
-    void performRelinking(AbstractRelinker const& relinker);
+    void performRelinking(const AbstractRelinker& relinker);
 
-    std::vector<FilterPtr> const& filters() const {
+    const std::vector<FilterPtr>& filters() const {
         return m_filters;
     }
 
@@ -54,33 +54,33 @@ public:
         return static_cast<int>(m_filters.size());
     }
 
-    FilterPtr const& filterAt(int idx) const {
+    const FilterPtr& filterAt(int idx) const {
         return m_filters[idx];
     }
 
-    int findFilter(FilterPtr const& filter) const;
+    int findFilter(const FilterPtr& filter) const;
 
-    intrusive_ptr<fix_orientation::Filter> const& fixOrientationFilter() const {
+    const intrusive_ptr<fix_orientation::Filter>& fixOrientationFilter() const {
         return m_ptrFixOrientationFilter;
     }
 
-    intrusive_ptr<page_split::Filter> const& pageSplitFilter() const {
+    const intrusive_ptr<page_split::Filter>& pageSplitFilter() const {
         return m_ptrPageSplitFilter;
     }
 
-    intrusive_ptr<deskew::Filter> const& deskewFilter() const {
+    const intrusive_ptr<deskew::Filter>& deskewFilter() const {
         return m_ptrDeskewFilter;
     }
 
-    intrusive_ptr<select_content::Filter> const& selectContentFilter() const {
+    const intrusive_ptr<select_content::Filter>& selectContentFilter() const {
         return m_ptrSelectContentFilter;
     }
 
-    intrusive_ptr<page_layout::Filter> const& pageLayoutFilter() const {
+    const intrusive_ptr<page_layout::Filter>& pageLayoutFilter() const {
         return m_ptrPageLayoutFilter;
     }
 
-    intrusive_ptr<output::Filter> const& outputFilter() const {
+    const intrusive_ptr<output::Filter>& outputFilter() const {
         return m_ptrOutputFilter;
     }
 

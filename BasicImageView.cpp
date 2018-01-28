@@ -21,7 +21,7 @@
 #include "Dpm.h"
 #include "BasicImageView.h"
 
-BasicImageView::BasicImageView(QImage const& image, ImagePixmapUnion const& downscaled_image, Margins const& margins)
+BasicImageView::BasicImageView(const QImage& image, const ImagePixmapUnion& downscaled_image, const Margins& margins)
         : ImageViewBase(
         image, downscaled_image,
         ImagePresentation(QTransform(), QRectF(image.rect())), margins

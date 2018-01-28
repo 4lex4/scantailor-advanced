@@ -52,7 +52,7 @@ namespace fix_orientation {
     DECLARE_NON_COPYABLE(Filter)
 
     public:
-        explicit Filter(PageSelectionAccessor const& page_selection_accessor);
+        explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
         ~Filter() override;
 
@@ -60,17 +60,17 @@ namespace fix_orientation {
 
         PageView getView() const override;
 
-        void performRelinking(AbstractRelinker const& relinker) override;
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, PageId const&) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageId&) override;
 
-        QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const override;
+        QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-        void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) override;
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(PageId const& page_id) override;
+        void loadDefaultSettings(const PageId& page_id) override;
 
-        intrusive_ptr<Task> createTask(PageId const& page_id,
+        intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<page_split::Task> next_task,
                                        bool batch_processing);
 
@@ -81,7 +81,7 @@ namespace fix_orientation {
 
     private:
         void
-        writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id, int numeric_id) const;
+        writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
 
         intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;

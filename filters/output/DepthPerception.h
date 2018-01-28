@@ -31,7 +31,7 @@ namespace output {
 
         explicit DepthPerception(double value);
 
-        explicit DepthPerception(QString const& from_string);
+        explicit DepthPerception(const QString& from_string);
 
         QString toString() const;
 

@@ -9,7 +9,7 @@ namespace output {
     namespace {
         template<typename MixedPixel>
         void combineImageMono(QImage& mixedImage,
-                              BinaryImage const& foreground) {
+                              const BinaryImage& foreground) {
             auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
             const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
             const uint32_t* foreground_line = foreground.data();
@@ -36,7 +36,7 @@ namespace output {
         }
 
         void combineImageMono(QImage& mixedImage,
-                              BinaryImage const& foreground) {
+                              const BinaryImage& foreground) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {
@@ -52,14 +52,14 @@ namespace output {
 
         template<typename MixedPixel>
         void combineImageMono(QImage& mixedImage,
-                              BinaryImage const& foreground,
-                              BinaryImage const& mask) {
+                              const BinaryImage& foreground,
+                              const BinaryImage& mask) {
             auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
             const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
             const uint32_t* foreground_line = foreground.data();
             const int foreground_stride = foreground.wordsPerLine();
-            uint32_t const* mask_line = mask.data();
-            int const mask_stride = mask.wordsPerLine();
+            const uint32_t* mask_line = mask.data();
+            const int mask_stride = mask.wordsPerLine();
             const int width = mixedImage.width();
             const int height = mixedImage.height();
             const uint32_t msb = uint32_t(1) << 31;
@@ -83,8 +83,8 @@ namespace output {
         }
 
         void combineImageMono(QImage& mixedImage,
-                              BinaryImage const& foreground,
-                              BinaryImage const& mask) {
+                              const BinaryImage& foreground,
+                              const BinaryImage& mask) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {
@@ -100,7 +100,7 @@ namespace output {
 
         template<typename MixedPixel>
         void combineImageColor(QImage& mixedImage,
-                               QImage const& foreground) {
+                               const QImage& foreground) {
             auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
             const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
             const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
@@ -121,7 +121,7 @@ namespace output {
         }
 
         void combineImageColor(QImage& mixedImage,
-                               QImage const& foreground) {
+                               const QImage& foreground) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {
@@ -137,14 +137,14 @@ namespace output {
 
         template<typename MixedPixel>
         void combineImageColor(QImage& mixedImage,
-                               QImage const& foreground,
-                               BinaryImage const& mask) {
+                               const QImage& foreground,
+                               const BinaryImage& mask) {
             auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
             const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
             const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
             const int foreground_stride = foreground.bytesPerLine() / sizeof(MixedPixel);
-            uint32_t const* mask_line = mask.data();
-            int const mask_stride = mask.wordsPerLine();
+            const uint32_t* mask_line = mask.data();
+            const int mask_stride = mask.wordsPerLine();
             const int width = mixedImage.width();
             const int height = mixedImage.height();
             const uint32_t msb = uint32_t(1) << 31;
@@ -162,8 +162,8 @@ namespace output {
         }
 
         void combineImageColor(QImage& mixedImage,
-                               QImage const& foreground,
-                               BinaryImage const& mask) {
+                               const QImage& foreground,
+                               const BinaryImage& mask) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {
@@ -178,7 +178,7 @@ namespace output {
         }
 
         void combineImage(QImage& mixedImage,
-                          QImage const& foreground) {
+                          const QImage& foreground) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {
@@ -194,8 +194,8 @@ namespace output {
         }
 
         void combineImage(QImage& mixedImage,
-                          QImage const& foreground,
-                          BinaryImage const& mask) {
+                          const QImage& foreground,
+                          const BinaryImage& mask) {
             if ((mixedImage.format() != QImage::Format_Indexed8)
                 && (mixedImage.format() != QImage::Format_RGB32)
                 && (mixedImage.format() != QImage::Format_ARGB32)) {

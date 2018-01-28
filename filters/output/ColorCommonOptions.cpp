@@ -26,13 +26,13 @@ namespace output {
               m_fillingColor(BACKGROUND) {
     }
 
-    ColorCommonOptions::ColorCommonOptions(QDomElement const& el)
+    ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
             : m_cutMargins(el.attribute("cutMargins") == "1"),
               m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
               m_fillingColor(parseFillingColor(el.attribute("fillingColor"))) {
     }
 
-    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
         el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
@@ -41,13 +41,13 @@ namespace output {
         return el;
     }
 
-    bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
+    bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
         return (m_normalizeIllumination == other.m_normalizeIllumination)
                && (m_cutMargins == other.m_cutMargins)
                && (m_fillingColor == other.m_fillingColor);
     }
 
-    bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {
+    bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
         return !(*this == other);
     }
 

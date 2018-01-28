@@ -27,7 +27,7 @@ DragHandler::DragHandler(ImageViewBase& image_view)
 }
 
 DragHandler::DragHandler(ImageViewBase& image_view,
-                         boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter)
+                         boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter)
         : m_rImageView(image_view),
           m_interactionPermitter(explicit_interaction_permitter) {
     init();

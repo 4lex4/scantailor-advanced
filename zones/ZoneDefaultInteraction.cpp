@@ -43,14 +43,14 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     );
 }
 
-void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& interaction) {
+void ZoneDefaultInteraction::onPaint(QPainter& painter, const InteractionState& interaction) {
     painter.setWorldMatrixEnabled(false);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    QTransform const to_screen(m_rContext.imageView().imageToWidget());
+    const QTransform to_screen(m_rContext.imageView().imageToWidget());
 
-    for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
-        EditableSpline::Ptr const& spline = zone.spline();
+    for (const EditableZoneSet::Zone& zone : m_rContext.zones()) {
+        const EditableSpline::Ptr& spline = zone.spline();
         m_visualizer.prepareForSpline(painter, spline);
         QPolygonF points;
 
@@ -82,9 +82,9 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
 
         QPen pen(painter.pen());
 
-        QPointF const prev(to_screen.map(m_ptrNearestVertex->prev(SplineVertex::LOOP)->point()));
-        QPointF const pt(to_screen.map(m_ptrNearestVertex->point()));
-        QPointF const next(to_screen.map(m_ptrNearestVertex->next(SplineVertex::LOOP)->point()));
+        const QPointF prev(to_screen.map(m_ptrNearestVertex->prev(SplineVertex::LOOP)->point()));
+        const QPointF pt(to_screen.map(m_ptrNearestVertex->point()));
+        const QPointF next(to_screen.map(m_ptrNearestVertex->next(SplineVertex::LOOP)->point()));
 
         gradient.setStart(prev);
         gradient.setFinalStop(pt);
@@ -98,10 +98,10 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
         painter.drawLine(next, pt);
 
         // Visualize the highlighted vertex.
-        QPointF const screen_vertex(to_screen.map(m_ptrNearestVertex->point()));
+        const QPointF screen_vertex(to_screen.map(m_ptrNearestVertex->point()));
         m_visualizer.drawVertex(painter, screen_vertex, m_visualizer.highlightBrightColor());
     } else if (interaction.proximityLeader(m_segmentProximity)) {
-        QLineF const line(to_screen.map(m_nearestSegment.toLine()));
+        const QLineF line(to_screen.map(m_nearestSegment.toLine()));
         // Draw the highglighed edge in orange.
         QPen pen(painter.pen());
         pen.setColor(m_visualizer.highlightDarkColor());
@@ -114,12 +114,12 @@ void ZoneDefaultInteraction::onPaint(QPainter& painter, InteractionState const& 
     }
 } // ZoneDefaultInteraction::onPaint
 
-void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction) {
+void ZoneDefaultInteraction::onProximityUpdate(const QPointF& mouse_pos, InteractionState& interaction) {
     m_screenMousePos = mouse_pos;
 
-    QTransform const to_screen(m_rContext.imageView().imageToWidget());
-    QTransform const from_screen(m_rContext.imageView().widgetToImage());
-    QPointF const image_mouse_pos(from_screen.map(mouse_pos));
+    const QTransform to_screen(m_rContext.imageView().imageToWidget());
+    const QTransform from_screen(m_rContext.imageView().widgetToImage());
+    const QPointF image_mouse_pos(from_screen.map(mouse_pos));
 
     m_ptrNearestVertex.reset();
     m_ptrNearestVertexSpline.reset();
@@ -132,8 +132,8 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
 
     bool has_zone_under_mouse = false;
 
-    for (EditableZoneSet::Zone const& zone : m_rContext.zones()) {
-        EditableSpline::Ptr const& spline = zone.spline();
+    for (const EditableZoneSet::Zone& zone : m_rContext.zones()) {
+        const EditableSpline::Ptr& spline = zone.spline();
 
         {
             QPainterPath path;
@@ -149,7 +149,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
         // Process vertices.
         for (SplineVertex::Ptr vert(spline->firstVertex());
              vert; vert = vert->next(SplineVertex::NO_LOOP)) {
-            Proximity const proximity(mouse_pos, to_screen.map(vert->point()));
+            const Proximity proximity(mouse_pos, to_screen.map(vert->point()));
             if (proximity < best_vertex_proximity) {
                 m_ptrNearestVertex = vert;
                 m_ptrNearestVertexSpline = spline;
@@ -158,10 +158,10 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
         }
         // Process segments.
         for (EditableSpline::SegmentIterator it(*spline); it.hasNext();) {
-            SplineSegment const segment(it.next());
-            QLineF const line(to_screen.map(segment.toLine()));
+            const SplineSegment segment(it.next());
+            const QLineF line(to_screen.map(segment.toLine()));
             QPointF point_on_segment;
-            Proximity const proximity(Proximity::pointAndLineSegment(mouse_pos, line, &point_on_segment));
+            const Proximity proximity(Proximity::pointAndLineSegment(mouse_pos, line, &point_on_segment));
             if (proximity < best_segment_proximity) {
                 m_nearestSegment = segment;
                 m_ptrNearestSegmentSpline = spline;
@@ -175,7 +175,7 @@ void ZoneDefaultInteraction::onProximityUpdate(QPointF const& mouse_pos, Interac
     interaction.updateProximity(m_segmentProximity, best_segment_proximity, 1);
 
     if (has_zone_under_mouse) {
-        Proximity const zone_area_proximity(std::min(best_vertex_proximity, best_segment_proximity));
+        const Proximity zone_area_proximity(std::min(best_vertex_proximity, best_segment_proximity));
         interaction.updateProximity(m_zoneAreaProximity, zone_area_proximity, -1, zone_area_proximity);
         if (m_activeKeyboardModifiers == Qt::ShiftModifier) {
             interaction.updateProximity(m_zoneAreaDragProximity, Proximity::fromSqDist(0), 0);
@@ -202,7 +202,7 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
         delete this;
         event->accept();
     } else if (interaction.proximityLeader(m_segmentProximity)) {
-        QTransform const from_screen(m_rContext.imageView().widgetToImage());
+        const QTransform from_screen(m_rContext.imageView().widgetToImage());
         SplineVertex::Ptr vertex(m_nearestSegment.splitAt(from_screen.map(m_screenPointOnSegment)));
         makePeerPreceeder(
                 *m_rContext.createVertexDragInteraction(
@@ -245,15 +245,15 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
     }
 
     if (m_activeKeyboardModifiers == (Qt::ControlModifier | Qt::AltModifier)) {
-        QTransform const from_screen(m_rContext.imageView().widgetToImage());
+        const QTransform from_screen(m_rContext.imageView().widgetToImage());
 
         EditableZoneSet::const_iterator latest_zone = --m_rContext.zones().end();
         if (latest_zone != m_rContext.zones().end()) {
             SerializableSpline serializable_spline(*(*latest_zone).spline());
 
-            QPointF const old_center = serializable_spline.toPolygon().boundingRect().center();
-            QPointF const new_center = from_screen.map(event->pos() + QPointF(0.5, 0.5));
-            QPointF const shift = new_center - old_center;
+            const QPointF old_center = serializable_spline.toPolygon().boundingRect().center();
+            const QPointF new_center = from_screen.map(event->pos() + QPointF(0.5, 0.5));
+            const QPointF shift = new_center - old_center;
 
             serializable_spline = serializable_spline.transformed(QTransform().translate(shift.x(), shift.y()));
 
@@ -272,7 +272,7 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
 }
 
 void ZoneDefaultInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-    QTransform const to_screen(m_rContext.imageView().imageToWidget());
+    const QTransform to_screen(m_rContext.imageView().imageToWidget());
 
     m_screenMousePos = to_screen.map(event->pos() + QPointF(0.5, 0.5));
     m_rContext.imageView().update();

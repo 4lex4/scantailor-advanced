@@ -22,7 +22,7 @@
 #include <QMessageBox>
 #include <cassert>
 
-ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, QString const& project_file, QDomDocument const& doc)
+ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, const QString& project_file, const QDomDocument& doc)
         : m_projectFile(project_file),
           m_reader(doc),
           m_pParent(parent) {

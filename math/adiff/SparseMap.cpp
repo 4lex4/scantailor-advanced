@@ -19,7 +19,7 @@
 #include "SparseMap.h"
 
 namespace adiff {
-    size_t const SparseMap<2>::ZERO_ELEMENT = ~size_t(0);
+    const size_t SparseMap<2>::ZERO_ELEMENT = ~size_t(0);
 
     SparseMap<2>::SparseMap(size_t num_vars)
             : m_numVars(num_vars),

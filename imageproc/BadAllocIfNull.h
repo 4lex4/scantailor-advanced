@@ -35,7 +35,7 @@ namespace imageproc {
  * @param image The image to test.
  * @return The image passed as the argument.
  */
-    QImage const& badAllocIfNull(QImage const& image);
+    const QImage& badAllocIfNull(const QImage& image);
 }  // namespace imageproc
 
 #endif 

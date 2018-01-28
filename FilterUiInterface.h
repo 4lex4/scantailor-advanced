@@ -46,7 +46,7 @@ public:
                                 DebugImages* debug_images = nullptr,
                                 bool clearImageWidget = true) = 0;
 
-    virtual void invalidateThumbnail(PageId const& page_id) = 0;
+    virtual void invalidateThumbnail(const PageId& page_id) = 0;
 
     virtual void invalidateAllThumbnails() = 0;
 

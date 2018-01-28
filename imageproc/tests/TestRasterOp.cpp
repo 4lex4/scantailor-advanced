@@ -34,21 +34,21 @@ namespace imageproc {
 
             template<typename Rop>
             static bool
-            check_subimage_rop(QImage const& dst, QRect const& dst_rect, QImage const& src, QPoint const& src_pt) {
+            check_subimage_rop(const QImage& dst, const QRect& dst_rect, const QImage& src, const QPoint& src_pt) {
                 BinaryImage dst_bi(dst);
-                BinaryImage const src_bi(src);
+                const BinaryImage src_bi(src);
                 rasterOp<Rop>(dst_bi, dst_rect, src_bi, src_pt);
                 // Here we assume that full-image raster operations work correctly.
                 BinaryImage dst_subimage(dst.copy(dst_rect));
-                QRect const src_rect(src_pt, dst_rect.size());
-                BinaryImage const src_subimage(src.copy(src_rect));
+                const QRect src_rect(src_pt, dst_rect.size());
+                const BinaryImage src_subimage(src.copy(src_rect));
                 rasterOp<Rop>(dst_subimage, dst_subimage.rect(), src_subimage, QPoint(0, 0));
 
                 return dst_subimage.toQImage() == dst_bi.toQImage().copy(dst_rect);
             }
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 1, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 1, 1, 1, 1,
@@ -59,7 +59,7 @@ namespace imageproc {
                         1, 1, 1, 1, 1, 1, 1, 0, 0
                 };
 
-                static int const mask[] = {
+                static const int mask[] = {
                         0, 0, 0, 1, 1, 1, 0, 0, 0,
                         0, 0, 0, 1, 1, 1, 0, 0, 0,
                         0, 0, 0, 1, 1, 1, 0, 0, 0,
@@ -70,7 +70,7 @@ namespace imageproc {
                         0, 0, 0, 1, 1, 1, 0, 0, 0
                 };
 
-                static int const out[] = {
+                static const int out[] = {
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 1, 0, 0, 0,
@@ -82,7 +82,7 @@ namespace imageproc {
                 };
 
                 BinaryImage img(makeBinaryImage(inp, 9, 8));
-                BinaryImage const mask_img(makeBinaryImage(mask, 9, 8));
+                const BinaryImage mask_img(makeBinaryImage(mask, 9, 8));
 
                 typedef RopAnd<RopDst, RopSrc> Rop;
 
@@ -97,7 +97,7 @@ namespace imageproc {
 
                     bool testFullImage() const;
 
-                    bool testSubImage(QRect const& dst_rect, QPoint const& src_pt) const;
+                    bool testSubImage(const QRect& dst_rect, const QPoint& src_pt) const;
 
                 private:
                     typedef RopXor<RopDst, RopSrc> Rop;
@@ -109,8 +109,8 @@ namespace imageproc {
 
 
                 Tester1::Tester1() {
-                    int const w = 400;
-                    int const h = 300;
+                    const int w = 400;
+                    const int h = 300;
 
                     std::vector<int> src(w * h);
                     for (int& i : src) {
@@ -139,10 +139,10 @@ namespace imageproc {
                     return dst == m_dstAfter;
                 }
 
-                bool Tester1::testSubImage(QRect const& dst_rect, QPoint const& src_pt) const {
-                    QImage const dst_before(m_dstBefore.toQImage());
+                bool Tester1::testSubImage(const QRect& dst_rect, const QPoint& src_pt) const {
+                    const QImage dst_before(m_dstBefore.toQImage());
                     const QImage& dst(dst_before);
-                    QImage const src(m_src.toQImage());
+                    const QImage src(m_src.toQImage());
 
                     if (!check_subimage_rop<Rop>(dst, dst_rect, src, src_pt)) {
                         return false;
@@ -164,7 +164,7 @@ namespace imageproc {
                 public:
                     Tester2();
 
-                    bool testBlockMove(QRect const& rect, int dx, int dy);
+                    bool testBlockMove(const QRect& rect, int dx, int dy);
 
                 private:
                     BinaryImage m_image;
@@ -175,9 +175,9 @@ namespace imageproc {
                     m_image = randomBinaryImage(400, 300);
                 }
 
-                bool Tester2::testBlockMove(QRect const& rect, int const dx, int const dy) {
+                bool Tester2::testBlockMove(const QRect& rect, const int dx, const int dy) {
                     BinaryImage dst(m_image);
-                    QRect const dst_rect(rect.translated(dx, dy));
+                    const QRect dst_rect(rect.translated(dx, dy));
                     rasterOp<RopSrc>(dst, dst_rect, dst, rect.topLeft());
                     QImage q_src(m_image.toQImage());
                     QImage q_dst(dst.toQImage());

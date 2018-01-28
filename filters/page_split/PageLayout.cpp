@@ -32,34 +32,34 @@ namespace page_split {
             : m_type(SINGLE_PAGE_UNCUT) {
     }
 
-    PageLayout::PageLayout(QRectF const& full_rect)
+    PageLayout::PageLayout(const QRectF& full_rect)
             : m_uncutOutline(full_rect),
               m_cutter1(full_rect.topLeft(), full_rect.bottomLeft()),
               m_cutter2(full_rect.topRight(), full_rect.bottomRight()),
               m_type(SINGLE_PAGE_UNCUT) {
     }
 
-    PageLayout::PageLayout(QRectF const& full_rect, QLineF const& cutter1, QLineF const& cutter2)
+    PageLayout::PageLayout(const QRectF& full_rect, const QLineF& cutter1, const QLineF& cutter2)
             : m_uncutOutline(full_rect),
               m_cutter1(cutter1),
               m_cutter2(cutter2),
               m_type(SINGLE_PAGE_CUT) {
     }
 
-    PageLayout::PageLayout(QRectF const full_rect, QLineF const& split_line)
+    PageLayout::PageLayout(const QRectF full_rect, const QLineF& split_line)
             : m_uncutOutline(full_rect),
               m_cutter1(split_line),
               m_type(TWO_PAGES) {
     }
 
-    PageLayout::PageLayout(QPolygonF const& outline, QLineF const& cutter1, QLineF const& cutter2, Type type)
+    PageLayout::PageLayout(const QPolygonF& outline, const QLineF& cutter1, const QLineF& cutter2, Type type)
             : m_uncutOutline(outline),
               m_cutter1(cutter1),
               m_cutter2(cutter2),
               m_type(type) {
     }
 
-    PageLayout::PageLayout(QDomElement const& layout_el)
+    PageLayout::PageLayout(const QDomElement& layout_el)
             : m_uncutOutline(
             XmlUnmarshaller::polygonF(
                     layout_el.namedItem("outline").toElement()
@@ -87,7 +87,7 @@ namespace page_split {
         }
     }
 
-    void PageLayout::setUncutOutline(QRectF const& outline) {
+    void PageLayout::setUncutOutline(const QRectF& outline) {
         m_uncutOutline = outline;
         if (m_uncutOutline.size() < 4) {
             // Empty rect?
@@ -95,13 +95,13 @@ namespace page_split {
         }
     }
 
-    QLineF const& PageLayout::cutterLine(int idx) const {
+    const QLineF& PageLayout::cutterLine(int idx) const {
         assert(idx >= 0 && idx < numCutters());
 
         return idx == 0 ? m_cutter1 : m_cutter2;
     }
 
-    void PageLayout::setCutterLine(int idx, QLineF const& cutter) {
+    void PageLayout::setCutterLine(int idx, const QLineF& cutter) {
         assert(idx >= 0 && idx < numCutters());
         (idx == 0 ? m_cutter1 : m_cutter2) = cutter;
     }
@@ -147,9 +147,9 @@ namespace page_split {
             return QLineF();
         }
 
-        QLineF const raw_line(cutterLine(idx));
-        QPointF const origin(raw_line.p1());
-        QPointF const line_vec(raw_line.p2() - origin);
+        const QLineF raw_line(cutterLine(idx));
+        const QPointF origin(raw_line.p1());
+        const QPointF line_vec(raw_line.p2() - origin);
 
         double min_proj = NumericTraits<double>::max();
         double max_proj = NumericTraits<double>::min();
@@ -160,7 +160,7 @@ namespace page_split {
         double projection;
 
         for (int i = 0; i < 4; ++i) {
-            QLineF const poly_segment(m_uncutOutline[i], m_uncutOutline[(i + 1) & 3]);
+            const QLineF poly_segment(m_uncutOutline[i], m_uncutOutline[(i + 1) & 3]);
             QPointF intersection;
             if (poly_segment.intersect(raw_line, &intersection) == QLineF::NoIntersection) {
                 continue;
@@ -209,11 +209,11 @@ namespace page_split {
                 return QPolygonF();
         }
 
-        QLineF const line1(extendToCover(m_cutter1, m_uncutOutline));
+        const QLineF line1(extendToCover(m_cutter1, m_uncutOutline));
         QLineF line2(extendToCover(m_cutter2, m_uncutOutline));
         ensureSameDirection(line1, line2);
-        QLineF const reverse_line1(line1.p2(), line1.p1());
-        QLineF const reverse_line2(line2.p2(), line2.p1());
+        const QLineF reverse_line1(line1.p2(), line1.p1());
+        const QLineF reverse_line2(line2.p2(), line2.p1());
 
         QPolygonF poly;
         poly << line1.p1();
@@ -238,11 +238,11 @@ namespace page_split {
                 break;
         }
 
-        QLineF const line1(m_uncutOutline[0], m_uncutOutline[3]);
+        const QLineF line1(m_uncutOutline[0], m_uncutOutline[3]);
         QLineF line2(extendToCover(m_cutter1, m_uncutOutline));
         ensureSameDirection(line1, line2);
-        QLineF const reverse_line1(line1.p2(), line1.p1());
-        QLineF const reverse_line2(line2.p2(), line2.p1());
+        const QLineF reverse_line1(line1.p2(), line1.p1());
+        const QLineF reverse_line2(line2.p2(), line2.p1());
 
         QPolygonF poly;
         poly << line1.p1();
@@ -267,11 +267,11 @@ namespace page_split {
                 break;
         }
 
-        QLineF const line1(m_uncutOutline[1], m_uncutOutline[2]);
+        const QLineF line1(m_uncutOutline[1], m_uncutOutline[2]);
         QLineF line2(extendToCover(m_cutter1, m_uncutOutline));
         ensureSameDirection(line1, line2);
-        QLineF const reverse_line1(line1.p2(), line1.p1());
-        QLineF const reverse_line2(line2.p2(), line2.p1());
+        const QLineF reverse_line1(line1.p2(), line1.p1());
+        const QLineF reverse_line2(line2.p2(), line2.p1());
 
         QPolygonF poly;
         poly << line1.p1();
@@ -283,7 +283,7 @@ namespace page_split {
         return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
     }
 
-    QPolygonF PageLayout::pageOutline(PageId::SubPage const page) const {
+    QPolygonF PageLayout::pageOutline(const PageId::SubPage page) const {
         switch (page) {
             case PageId::SINGLE_PAGE:
                 return singlePageOutline();
@@ -298,21 +298,21 @@ namespace page_split {
         return QPolygonF();
     }
 
-    PageLayout PageLayout::transformed(QTransform const& xform) const {
+    PageLayout PageLayout::transformed(const QTransform& xform) const {
         return PageLayout(
                 xform.map(m_uncutOutline),
                 xform.map(m_cutter1), xform.map(m_cutter2), m_type
         );
     }
 
-    QDomElement PageLayout::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement PageLayout::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
         el.setAttribute("type", typeToString(m_type));
         el.appendChild(marshaller.polygonF(m_uncutOutline, "outline"));
 
-        int const num_cutters = numCutters();
+        const int num_cutters = numCutters();
         if (num_cutters > 0) {
             el.appendChild(marshaller.lineF(m_cutter1, "cutter1"));
             if (num_cutters > 1) {
@@ -323,7 +323,7 @@ namespace page_split {
         return el;
     }
 
-    PageLayout::Type PageLayout::typeFromString(QString const& str) {
+    PageLayout::Type PageLayout::typeFromString(const QString& str) {
         if (str == "two-pages") {
             return TWO_PAGES;
         } else if (str == "single-cut") {
@@ -333,8 +333,8 @@ namespace page_split {
         }
     }
 
-    QString PageLayout::typeToString(Type const type) {
-        char const* str = nullptr;
+    QString PageLayout::typeToString(const Type type) {
+        const char* str = nullptr;
         switch (type) {
             case SINGLE_PAGE_UNCUT:
                 str = "single-uncut";
@@ -356,7 +356,7 @@ namespace page_split {
  * two perpendiculars.  This ensures that the resulting line segment intersects
  * all the polygon edges it can possibly intersect.
  */
-    QLineF PageLayout::extendToCover(QLineF const& line, QPolygonF const& poly) {
+    QLineF PageLayout::extendToCover(const QLineF& line, const QPolygonF& poly) {
         if (poly.isEmpty()) {
             return line;
         }
@@ -365,10 +365,10 @@ namespace page_split {
 
         double min = NumericTraits<double>::max();
         double max = NumericTraits<double>::min();
-        ToLineProjector const projector(line);
+        const ToLineProjector projector(line);
 
-        for (QPointF const& pt : poly) {
-            double const scalar = projector.projectionScalar(pt);
+        for (const QPointF& pt : poly) {
+            const double scalar = projector.projectionScalar(pt);
             if (scalar < min) {
                 min = scalar;
             }
@@ -385,10 +385,10 @@ namespace page_split {
  * The angle between lines is interpreted as an angle between vectors
  * (line1.p2() - line1.p1()) and (line2.p2() - line2.p1()).
  */
-    void PageLayout::ensureSameDirection(QLineF const& line1, QLineF& line2) {
-        QPointF const v1(line1.p2() - line1.p1());
-        QPointF const v2(line2.p2() - line2.p1());
-        double const dot = v1.x() * v2.x() + v1.y() * v2.y();
+    void PageLayout::ensureSameDirection(const QLineF& line1, QLineF& line2) {
+        const QPointF v1(line1.p2() - line1.p1());
+        const QPointF v2(line2.p2() - line2.p1());
+        const double dot = v1.x() * v2.x() + v1.y() * v2.y();
         if (dot < 0.0) {
             line2 = QLineF(line2.p2(), line2.p1());
         }
@@ -403,14 +403,14 @@ namespace page_split {
  * When finding the intersection point, we treat \p line1 and \p line2
  * as lines, not line segments.
  */
-    void PageLayout::maybeAddIntersectionPoint(QPolygonF& poly, QLineF const& line1, QLineF const& line2) {
+    void PageLayout::maybeAddIntersectionPoint(QPolygonF& poly, const QLineF& line1, const QLineF& line2) {
         QPointF intersection;
         if (line1.intersect(line2, &intersection) == QLineF::NoIntersection) {
             return;
         }
 
-        ToLineProjector const projector(QLineF(line1.p1(), line2.p1()));
-        double const p = projector.projectionScalar(intersection);
+        const ToLineProjector projector(QLineF(line1.p1(), line2.p1()));
+        const double p = projector.projectionScalar(intersection);
         if ((p > 0.0) && (p < 1.0)) {
             poly << intersection;
         }
@@ -424,7 +424,7 @@ namespace page_split {
         return m_type;
     }
 
-    QPolygonF const& PageLayout::uncutOutline() const {
+    const QPolygonF& PageLayout::uncutOutline() const {
         return m_uncutOutline;
     }
 }  // namespace page_split

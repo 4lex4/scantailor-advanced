@@ -42,10 +42,10 @@ namespace dewarping {
 
     class TopBottomEdgeTracer {
     public:
-        static void trace(imageproc::GrayImage const& image,
+        static void trace(const imageproc::GrayImage& image,
                           std::pair<QLineF, QLineF> bounds,
                           DistortionModelBuilder& output,
-                          TaskStatus const& status,
+                          const TaskStatus& status,
                           DebugImages* dbg = nullptr);
 
     private:
@@ -55,70 +55,70 @@ namespace dewarping {
 
         struct Step;
 
-        static bool intersectWithRect(std::pair<QLineF, QLineF>& bounds, QRectF const& rect);
+        static bool intersectWithRect(std::pair<QLineF, QLineF>& bounds, const QRectF& rect);
 
         static void forceSameDirection(std::pair<QLineF, QLineF>& bounds);
 
         static void calcDirectionalDerivative(Grid<GridNode>& gradient,
-                                              imageproc::GrayImage const& image,
-                                              Vec2f const& direction);
+                                              const imageproc::GrayImage& image,
+                                              const Vec2f& direction);
 
         static void horizontalSobelInPlace(Grid<GridNode>& grid);
 
         static void verticalSobelInPlace(Grid<GridNode>& grid);
 
-        static Vec2f calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds);
+        static Vec2f calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds);
 
-        static Vec2f directionFromPointToLine(QPointF const& pt, QLineF const& line);
+        static Vec2f directionFromPointToLine(const QPointF& pt, const QLineF& line);
 
-        static void prepareForShortestPathsFrom(PrioQueue& queue, Grid<GridNode>& grid, QLineF const& from);
+        static void prepareForShortestPathsFrom(PrioQueue& queue, Grid<GridNode>& grid, const QLineF& from);
 
-        static void propagateShortestPaths(Vec2f const& direction, PrioQueue& queue, Grid<GridNode>& grid);
+        static void propagateShortestPaths(const Vec2f& direction, PrioQueue& queue, Grid<GridNode>& grid);
 
-        static int initNeighbours(int* next_nbh_offsets, int* prev_nbh_indexes, int stride, Vec2f const& direction);
+        static int initNeighbours(int* next_nbh_offsets, int* prev_nbh_indexes, int stride, const Vec2f& direction);
 
-        static std::vector<QPoint> locateBestPathEndpoints(Grid<GridNode> const& grid, QLineF const& line);
+        static std::vector<QPoint> locateBestPathEndpoints(const Grid<GridNode>& grid, const QLineF& line);
 
-        static std::vector<QPoint> tracePathFromEndpoint(Grid<GridNode> const& grid, QPoint const& endpoint);
+        static std::vector<QPoint> tracePathFromEndpoint(const Grid<GridNode>& grid, const QPoint& endpoint);
 
-        static std::vector<QPointF> pathToSnake(Grid<GridNode> const& grid, QPoint const& endpoint);
+        static std::vector<QPointF> pathToSnake(const Grid<GridNode>& grid, const QPoint& endpoint);
 
         static void gaussBlurGradient(Grid<GridNode>& grid);
 
-        static Vec2f downTheHillDirection(QRectF const& page_rect,
-                                          std::vector<QPointF> const& snake,
-                                          Vec2f const& bounds_dir);
+        static Vec2f downTheHillDirection(const QRectF& page_rect,
+                                          const std::vector<QPointF>& snake,
+                                          const Vec2f& bounds_dir);
 
-        static void downTheHillSnake(std::vector<QPointF>& snake, Grid<GridNode> const& grid, Vec2f dir);
+        static void downTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, Vec2f dir);
 
-        static void upTheHillSnake(std::vector<QPointF>& snake, Grid<GridNode> const& grid, Vec2f dir);
+        static void upTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, Vec2f dir);
 
         static int initDisplacementVectors(Vec2f vectors[], Vec2f valid_direction);
 
         template<typename Extractor>
         static float
-        interpolatedGridValue(Grid<GridNode> const& grid, Extractor extractor, Vec2f pos, float default_value);
+        interpolatedGridValue(const Grid<GridNode>& grid, Extractor extractor, Vec2f pos, float default_value);
 
-        static QImage visualizeGradient(Grid<GridNode> const& grid, QImage const* background = nullptr);
+        static QImage visualizeGradient(const Grid<GridNode>& grid, const QImage* background = nullptr);
 
-        static QImage visualizeBlurredGradient(Grid<GridNode> const& grid);
+        static QImage visualizeBlurredGradient(const Grid<GridNode>& grid);
 
-        static QImage visualizePaths(QImage const& background,
-                                     Grid<GridNode> const& grid,
-                                     std::pair<QLineF, QLineF> const& bounds,
-                                     std::vector<QPoint> const& path_endpoints);
+        static QImage visualizePaths(const QImage& background,
+                                     const Grid<GridNode>& grid,
+                                     const std::pair<QLineF, QLineF>& bounds,
+                                     const std::vector<QPoint>& path_endpoints);
 
-        static QImage visualizePaths(QImage const& background,
-                                     std::vector<std::vector<QPoint>> const& paths,
-                                     std::pair<QLineF, QLineF> const& bounds);
+        static QImage visualizePaths(const QImage& background,
+                                     const std::vector<std::vector<QPoint>>& paths,
+                                     const std::pair<QLineF, QLineF>& bounds);
 
-        static QImage visualizeSnakes(QImage const& background,
-                                      std::vector<std::vector<QPointF>> const& snakes,
-                                      std::pair<QLineF, QLineF> const& bounds);
+        static QImage visualizeSnakes(const QImage& background,
+                                      const std::vector<std::vector<QPointF>>& snakes,
+                                      const std::pair<QLineF, QLineF>& bounds);
 
-        static QImage visualizePolylines(QImage const& background,
-                                         std::list<std::vector<QPointF>> const& snakes,
-                                         std::pair<QLineF, QLineF> const& bounds);
+        static QImage visualizePolylines(const QImage& background,
+                                         const std::list<std::vector<QPointF>>& snakes,
+                                         const std::pair<QLineF, QLineF>& bounds);
     };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_TOP_BOTTOM_EDGE_TRACER_H_

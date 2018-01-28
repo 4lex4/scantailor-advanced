@@ -25,12 +25,12 @@ namespace select_content {
             : m_ptrSettings(std::move(settings)) {
     }
 
-    bool OrderByWidthProvider::precedes(PageId const& lhs_page,
-                                        bool const lhs_incomplete,
-                                        PageId const& rhs_page,
-                                        bool const rhs_incomplete) const {
-        std::unique_ptr<Params> const lhs_params(m_ptrSettings->getPageParams(lhs_page));
-        std::unique_ptr<Params> const rhs_params(m_ptrSettings->getPageParams(rhs_page));
+    bool OrderByWidthProvider::precedes(const PageId& lhs_page,
+                                        const bool lhs_incomplete,
+                                        const PageId& rhs_page,
+                                        const bool rhs_incomplete) const {
+        const std::unique_ptr<Params> lhs_params(m_ptrSettings->getPageParams(lhs_page));
+        const std::unique_ptr<Params> rhs_params(m_ptrSettings->getPageParams(rhs_page));
 
         QSizeF lhs_size;
         if (lhs_params) {
@@ -41,8 +41,8 @@ namespace select_content {
             rhs_size = rhs_params->contentRect().size();
         }
 
-        bool const lhs_valid = !lhs_incomplete && lhs_size.isValid();
-        bool const rhs_valid = !rhs_incomplete && rhs_size.isValid();
+        const bool lhs_valid = !lhs_incomplete && lhs_size.isValid();
+        const bool rhs_valid = !rhs_incomplete && rhs_size.isValid();
 
         if (lhs_valid != rhs_valid) {
             // Invalid (unknown) sizes go to the back.

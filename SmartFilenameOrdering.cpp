@@ -19,19 +19,19 @@
 #include "SmartFilenameOrdering.h"
 #include <QFileInfo>
 
-bool SmartFilenameOrdering::operator()(QFileInfo const& lhs, QFileInfo const& rhs) const {
+bool SmartFilenameOrdering::operator()(const QFileInfo& lhs, const QFileInfo& rhs) const {
     // First compare directories.
     if (int comp = lhs.absolutePath().compare(rhs.absolutePath())) {
         return comp < 0;
     }
 
-    QString const lhs_fname(lhs.fileName());
-    QString const rhs_fname(rhs.fileName());
-    QChar const* lhs_ptr = lhs_fname.constData();
-    QChar const* rhs_ptr = rhs_fname.constData();
+    const QString lhs_fname(lhs.fileName());
+    const QString rhs_fname(rhs.fileName());
+    const QChar* lhs_ptr = lhs_fname.constData();
+    const QChar* rhs_ptr = rhs_fname.constData();
     while (!lhs_ptr->isNull() && !rhs_ptr->isNull()) {
-        bool const lhs_is_digit = lhs_ptr->isDigit();
-        bool const rhs_is_digit = rhs_ptr->isDigit();
+        const bool lhs_is_digit = lhs_ptr->isDigit();
+        const bool rhs_is_digit = rhs_ptr->isDigit();
         if (lhs_is_digit != rhs_is_digit) {
             // Digits have priority over non-digits.
             return lhs_is_digit;

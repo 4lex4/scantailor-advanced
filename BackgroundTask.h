@@ -35,7 +35,7 @@ public:
 
     class CancelledException : public std::exception {
     public:
-        char const* what() const throw() override;
+        const char* what() const throw() override;
     };
 
 
@@ -62,7 +62,7 @@ public:
 
 private:
     QAtomicInt m_cancelFlag;
-    Type const m_type;
+    const Type m_type;
 };
 
 

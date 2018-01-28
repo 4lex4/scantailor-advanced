@@ -32,29 +32,29 @@ class QString;
 namespace output {
     class FillColorProperty : public Property {
     public:
-        explicit FillColorProperty(QColor const& color = Qt::white);
+        explicit FillColorProperty(const QColor& color = Qt::white);
 
-        explicit FillColorProperty(QDomElement const& el);
+        explicit FillColorProperty(const QDomElement& el);
 
         static void registerIn(PropertyFactory& factory);
 
         intrusive_ptr<Property> clone() const override;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const override;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
         QColor color() const;
 
-        void setColor(QColor const& color);
+        void setColor(const QColor& color);
 
     private:
-        static intrusive_ptr<Property> construct(QDomElement const& el);
+        static intrusive_ptr<Property> construct(const QDomElement& el);
 
-        static QRgb rgbFromString(QString const& str);
+        static QRgb rgbFromString(const QString& str);
 
         static QString rgbToString(QRgb rgb);
 
 
-        static char const m_propertyName[];
+        static const char m_propertyName[];
         QRgb m_rgb;
     };
 }  // namespace output

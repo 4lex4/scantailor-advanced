@@ -43,11 +43,11 @@ public:
             ++m_it;
         }
 
-        bool equal(const_iterator const& other) const {
+        bool equal(const const_iterator& other) const {
             return m_it == other.m_it;
         }
 
-        Zone const& dereference() const {
+        const Zone& dereference() const {
             return *m_it;
         }
 
@@ -65,17 +65,17 @@ public:
 
     ZoneSet() = default;
 
-    ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory);
+    ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory);
 
     virtual ~ZoneSet() = default;
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     bool empty() const {
         return m_zones.empty();
     }
 
-    void add(Zone const& zone) {
+    void add(const Zone& zone) {
         m_zones.push_back(zone);
     }
 

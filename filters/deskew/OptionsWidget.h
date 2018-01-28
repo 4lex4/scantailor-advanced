@@ -45,9 +45,9 @@ namespace deskew {
 
             double effectiveDeskewAngle() const;
 
-            void setDependencies(Dependencies const& deps);
+            void setDependencies(const Dependencies& deps);
 
-            Dependencies const& dependencies() const;
+            const Dependencies& dependencies() const;
 
             void setMode(AutoManualMode mode);
 
@@ -60,7 +60,7 @@ namespace deskew {
         };
 
 
-        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
         ~OptionsWidget() override;
 
@@ -73,9 +73,9 @@ namespace deskew {
         void manualDeskewAngleSetExternally(double degrees);
 
     public:
-        void preUpdateUI(PageId const& page_id);
+        void preUpdateUI(const PageId& page_id);
 
-        void postUpdateUI(UiData const& ui_data);
+        void postUpdateUI(const UiData& ui_data);
 
     private slots:
 
@@ -85,9 +85,9 @@ namespace deskew {
 
         void showDeskewDialog();
 
-        void appliedTo(std::set<PageId> const& pages);
+        void appliedTo(const std::set<PageId>& pages);
 
-        void appliedToAllPages(std::set<PageId> const& pages);
+        void appliedToAllPages(const std::set<PageId>& pages);
 
     private:
         void updateModeIndication(AutoManualMode mode);
@@ -106,7 +106,7 @@ namespace deskew {
 
         static double degreesToSpinBox(double degrees);
 
-        static double const MAX_ANGLE;
+        static const double MAX_ANGLE;
 
         intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;

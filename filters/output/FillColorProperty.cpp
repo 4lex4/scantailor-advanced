@@ -21,9 +21,9 @@
 #include <QDomDocument>
 
 namespace output {
-    char const FillColorProperty::m_propertyName[] = "FillColorProperty";
+    const char FillColorProperty::m_propertyName[] = "FillColorProperty";
 
-    FillColorProperty::FillColorProperty(QDomElement const& el)
+    FillColorProperty::FillColorProperty(const QDomElement& el)
             : m_rgb(rgbFromString(el.attribute("color"))) {
     }
 
@@ -36,7 +36,7 @@ namespace output {
         return intrusive_ptr<Property>(new FillColorProperty(*this));
     }
 
-    QDomElement FillColorProperty::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("type", m_propertyName);
         el.setAttribute("color", rgbToString(m_rgb));
@@ -45,11 +45,11 @@ namespace output {
     }
 
     intrusive_ptr<Property>
-    FillColorProperty::construct(QDomElement const& el) {
+    FillColorProperty::construct(const QDomElement& el) {
         return intrusive_ptr<Property>(new FillColorProperty(el));
     }
 
-    QRgb FillColorProperty::rgbFromString(QString const& str) {
+    QRgb FillColorProperty::rgbFromString(const QString& str) {
         return QColor(str).rgb();
     }
 
@@ -65,7 +65,7 @@ namespace output {
         return QColor(m_rgb);
     }
 
-    void FillColorProperty::setColor(QColor const& color) {
+    void FillColorProperty::setColor(const QColor& color) {
         m_rgb = color.rgb();
     }
 }  // namespace output

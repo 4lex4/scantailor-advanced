@@ -39,16 +39,16 @@ public:
      */
     typedef boost::function<InteractionHandler*(InteractionState&)> Callback;
 
-    ZoneContextMenuItem(QString const& label, Callback const& callback)
+    ZoneContextMenuItem(const QString& label, const Callback& callback)
             : m_label(label),
               m_callback(callback) {
     }
 
-    QString const& label() const {
+    const QString& label() const {
         return m_label;
     }
 
-    Callback const& callback() const {
+    const Callback& callback() const {
         return m_callback;
     }
 

@@ -20,7 +20,7 @@
 #include <cassert>
 
 namespace page_split {
-    QString layoutTypeToString(LayoutType const layout_type) {
+    QString layoutTypeToString(const LayoutType layout_type) {
         switch (layout_type) {
             case AUTO_LAYOUT_TYPE:
                 return "auto-detect";
@@ -36,7 +36,7 @@ namespace page_split {
         return QString();
     }
 
-    LayoutType layoutTypeFromString(QString const& layout_type) {
+    LayoutType layoutTypeFromString(const QString& layout_type) {
         if (layout_type == "single-uncut") {
             return SINGLE_PAGE_UNCUT;
         } else if (layout_type == "single-cut") {

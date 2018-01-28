@@ -44,7 +44,7 @@ namespace imageproc {
          *        avoid unnecessary copy-on-write.
          * \param conn Defines which neighbouring pixels are considered to be connected.
          */
-        ConnCompEraser(BinaryImage const& image, Connectivity conn);
+        ConnCompEraser(const BinaryImage& image, Connectivity conn);
 
         /**
          * \brief Erase the next connected component and return its bounding box.
@@ -59,7 +59,7 @@ namespace imageproc {
          * Every time nextConnComp() is called, a connected component
          * is erased from the image, assuming there was one.
          */
-        BinaryImage const& image() const {
+        const BinaryImage& image() const {
             return m_image;
         }
 
@@ -85,9 +85,9 @@ namespace imageproc {
 
         struct BBox;
 
-        void pushSegSameDir(Segment const& seg, int xleft, int xright, BBox& bbox);
+        void pushSegSameDir(const Segment& seg, int xleft, int xright, BBox& bbox);
 
-        void pushSegInvDir(Segment const& seg, int xleft, int xright, BBox& bbox);
+        void pushSegInvDir(const Segment& seg, int xleft, int xright, BBox& bbox);
 
         void pushInitialSegments();
 
@@ -97,16 +97,16 @@ namespace imageproc {
 
         ConnComp eraseConnComp8();
 
-        static uint32_t getBit(uint32_t const* line, int x);
+        static uint32_t getBit(const uint32_t* line, int x);
 
         static void clearBit(uint32_t* line, int x);
 
         BinaryImage m_image;
         uint32_t* m_pLine;
-        int const m_width;
-        int const m_height;
-        int const m_wpl;
-        Connectivity const m_connectivity;
+        const int m_width;
+        const int m_height;
+        const int m_wpl;
+        const Connectivity m_connectivity;
         std::stack<Segment> m_segStack;
         int m_x;
         int m_y;

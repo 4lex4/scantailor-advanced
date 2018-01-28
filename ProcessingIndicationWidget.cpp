@@ -25,8 +25,8 @@
 
 using namespace imageproc;
 
-static double const distinction_increase = 1.0 / 5.0;
-static double const distinction_decrease = -1.0 / 3.0;
+static const double distinction_increase = 1.0 / 5.0;
+static const double distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
         : QWidget(parent),

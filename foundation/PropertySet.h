@@ -36,18 +36,18 @@ public:
     /**
      * \brief Makes a deep copy of another property set.
      */
-    PropertySet(PropertySet const& other);
+    PropertySet(const PropertySet& other);
 
-    PropertySet(QDomElement const& el, PropertyFactory const& factory);
+    PropertySet(const QDomElement& el, const PropertyFactory& factory);
 
     /**
      * \brief Makes a deep copy of another property set.
      */
-    PropertySet& operator=(PropertySet const& other);
+    PropertySet& operator=(const PropertySet& other);
 
     void swap(PropertySet& other);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
@@ -87,7 +87,7 @@ template<typename T>
 intrusive_ptr<T>
 PropertySet::locate() {
     PropList::iterator it(m_props.begin());
-    PropList::iterator const end(m_props.end());
+    const PropList::iterator end(m_props.end());
     for (; it != end; ++it) {
         if (T* obj = dynamic_cast<T*>(it->get())) {
             return intrusive_ptr<T>(obj);
@@ -101,9 +101,9 @@ template<typename T>
 intrusive_ptr<T const>
 PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
-    PropList::const_iterator const end(m_props.end());
+    const PropList::const_iterator end(m_props.end());
     for (; it != end; ++it) {
-        if (T const* obj = dynamic_cast<T const*>(it->get())) {
+        if (const T* obj = dynamic_cast<const T*>(it->get())) {
             return intrusive_ptr<T const>(obj);
         }
     }

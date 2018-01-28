@@ -72,15 +72,15 @@ using namespace imageproc;
 namespace output {
     class OutputGenerator {
     public:
-        OutputGenerator(Dpi const& dpi,
-                        ColorParams const& color_params,
-                        SplittingOptions const& splitting_options,
-                        PictureShapeOptions const& picture_shape_options,
-                        DewarpingOptions const& dewarping_options,
-                        OutputProcessingParams const& output_processing_params,
+        OutputGenerator(const Dpi& dpi,
+                        const ColorParams& color_params,
+                        const SplittingOptions& splitting_options,
+                        const PictureShapeOptions& picture_shape_options,
+                        const DewarpingOptions& dewarping_options,
+                        const OutputProcessingParams& output_processing_params,
                         DespeckleLevel despeckle_level,
-                        ImageTransformation const& xform,
-                        QPolygonF const& content_rect_phys);
+                        const ImageTransformation& xform,
+                        const QPolygonF& content_rect_phys);
 
         /**
          * \brief Produce the output image.
@@ -106,17 +106,17 @@ namespace output {
          *        through the whole output generation process again.
          * \param dbg An optional sink for debugging images.
          */
-        QImage process(TaskStatus const& status,
-                       FilterData const& input,
+        QImage process(const TaskStatus& status,
+                       const FilterData& input,
                        ZoneSet& picture_zones,
-                       ZoneSet const& fill_zones,
+                       const ZoneSet& fill_zones,
                        dewarping::DistortionModel& distortion_model,
-                       DepthPerception const& depth_perception,
+                       const DepthPerception& depth_perception,
                        imageproc::BinaryImage* auto_picture_mask,
                        imageproc::BinaryImage* speckles_image,
                        DebugImages* dbg,
-                       PageId const& p_pageId,
-                       intrusive_ptr<Settings> const& p_settings,
+                       const PageId& p_pageId,
+                       const intrusive_ptr<Settings>& p_settings,
                        SplitImage* splitImage);
 
         QSize outputImageSize() const;
@@ -129,48 +129,48 @@ namespace output {
         const QTransform& getPostTransform() const;
 
     private:
-        QImage processImpl(TaskStatus const& status,
-                           FilterData const& input,
+        QImage processImpl(const TaskStatus& status,
+                           const FilterData& input,
                            ZoneSet& picture_zones,
-                           ZoneSet const& fill_zones,
+                           const ZoneSet& fill_zones,
                            dewarping::DistortionModel& distortion_model,
-                           DepthPerception const& depth_perception,
+                           const DepthPerception& depth_perception,
                            imageproc::BinaryImage* auto_picture_mask,
                            imageproc::BinaryImage* speckles_image,
                            DebugImages* dbg,
-                           PageId const& p_pageId,
-                           intrusive_ptr<Settings> const& p_settings,
+                           const PageId& p_pageId,
+                           const intrusive_ptr<Settings>& p_settings,
                            SplitImage* splitImage);
 
-        QImage processWithoutDewarping(TaskStatus const& status,
-                                       FilterData const& input,
+        QImage processWithoutDewarping(const TaskStatus& status,
+                                       const FilterData& input,
                                        ZoneSet& picture_zones,
-                                       ZoneSet const& fill_zones,
+                                       const ZoneSet& fill_zones,
                                        imageproc::BinaryImage* auto_picture_mask,
                                        imageproc::BinaryImage* speckles_image,
                                        DebugImages* dbg,
-                                       PageId const& p_pageId,
-                                       intrusive_ptr<Settings> const& p_settings,
+                                       const PageId& p_pageId,
+                                       const intrusive_ptr<Settings>& p_settings,
                                        SplitImage* splitImage);
 
-        QImage processWithDewarping(TaskStatus const& status,
-                                    FilterData const& input,
+        QImage processWithDewarping(const TaskStatus& status,
+                                    const FilterData& input,
                                     ZoneSet& picture_zones,
-                                    ZoneSet const& fill_zones,
+                                    const ZoneSet& fill_zones,
                                     dewarping::DistortionModel& distortion_model,
-                                    DepthPerception const& depth_perception,
+                                    const DepthPerception& depth_perception,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
                                     DebugImages* dbg,
-                                    PageId const& p_pageId,
-                                    intrusive_ptr<Settings> const& p_settings,
+                                    const PageId& p_pageId,
+                                    const intrusive_ptr<Settings>& p_settings,
                                     SplitImage* splitImage);
 
         void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 
         void movePointToBottomMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 
-        void drawPoint(QImage& image, QPointF const& pt) const;
+        void drawPoint(QImage& image, const QPointF& pt) const;
 
         void deskew(QImage* image, double angle, const QColor& outside_color) const;
 
@@ -182,132 +182,132 @@ namespace output {
 
         void movePointToBottomMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 
-        float vert_border_skew_angle(QPointF const& top, QPointF const& bottom) const;
+        float vert_border_skew_angle(const QPointF& top, const QPointF& bottom) const;
 
         void setupTrivialDistortionModel(dewarping::DistortionModel& distortion_model) const;
 
-        static dewarping::CylindricalSurfaceDewarper createDewarper(dewarping::DistortionModel const& distortion_model,
-                                                                    QTransform const& distortion_model_to_target,
+        static dewarping::CylindricalSurfaceDewarper createDewarper(const dewarping::DistortionModel& distortion_model,
+                                                                    const QTransform& distortion_model_to_target,
                                                                     double depth_perception);
 
-        QImage dewarp(QTransform const& orig_to_src,
-                      QImage const& src,
-                      QTransform const& src_to_output,
-                      dewarping::DistortionModel const& distortion_model,
-                      DepthPerception const& depth_perception,
-                      QColor const& bg_color) const;
+        QImage dewarp(const QTransform& orig_to_src,
+                      const QImage& src,
+                      const QTransform& src_to_output,
+                      const dewarping::DistortionModel& distortion_model,
+                      const DepthPerception& depth_perception,
+                      const QColor& bg_color) const;
 
-        static QSize from300dpi(QSize const& size, Dpi const& target_dpi);
+        static QSize from300dpi(const QSize& size, const Dpi& target_dpi);
 
-        static QSize to300dpi(QSize const& size, Dpi const& source_dpi);
+        static QSize to300dpi(const QSize& size, const Dpi& source_dpi);
 
-        static QImage convertToRGBorRGBA(QImage const& src);
+        static QImage convertToRGBorRGBA(const QImage& src);
 
-        static void fillMarginsInPlace(QImage& image, QPolygonF const& content_poly, QColor const& color);
+        static void fillMarginsInPlace(QImage& image, const QPolygonF& content_poly, const QColor& color);
 
-        static void fillMarginsInPlace(BinaryImage& image, QPolygonF const& content_poly, BWColor const& color);
+        static void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor& color);
 
-        static void fillMarginsInPlace(QImage& image, BinaryImage const& content_mask, QColor const& color);
+        static void fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color);
 
-        static void fillMarginsInPlace(BinaryImage& image, BinaryImage const& content_mask, BWColor const& color);
+        static void fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, const BWColor& color);
 
-        static imageproc::GrayImage normalizeIlluminationGray(TaskStatus const& status,
-                                                              QImage const& input,
-                                                              QPolygonF const& area_to_consider,
-                                                              QTransform const& xform,
-                                                              QRect const& target_rect,
+        static imageproc::GrayImage normalizeIlluminationGray(const TaskStatus& status,
+                                                              const QImage& input,
+                                                              const QPolygonF& area_to_consider,
+                                                              const QTransform& xform,
+                                                              const QRect& target_rect,
                                                               imageproc::GrayImage* background = nullptr,
                                                               DebugImages* dbg = nullptr);
 
-        static imageproc::GrayImage detectPictures(imageproc::GrayImage const& input_300dpi,
-                                                   TaskStatus const& status,
+        static imageproc::GrayImage detectPictures(const imageproc::GrayImage& input_300dpi,
+                                                   const TaskStatus& status,
                                                    DebugImages* dbg = nullptr);
 
-        imageproc::BinaryImage estimateBinarizationMask(TaskStatus const& status,
-                                                        imageproc::GrayImage const& gray_source,
-                                                        QRect const& source_rect,
-                                                        QRect const& source_sub_rect,
+        imageproc::BinaryImage estimateBinarizationMask(const TaskStatus& status,
+                                                        const imageproc::GrayImage& gray_source,
+                                                        const QRect& source_rect,
+                                                        const QRect& source_sub_rect,
                                                         DebugImages* dbg) const;
 
         void
-        modifyBinarizationMask(imageproc::BinaryImage& bw_mask, QRect const& mask_rect, ZoneSet const& zones) const;
+        modifyBinarizationMask(imageproc::BinaryImage& bw_mask, const QRect& mask_rect, const ZoneSet& zones) const;
 
         imageproc::BinaryThreshold adjustThreshold(imageproc::BinaryThreshold threshold) const;
 
         imageproc::BinaryThreshold
-        calcBinarizationThreshold(QImage const& image, imageproc::BinaryImage const& mask) const;
+        calcBinarizationThreshold(const QImage& image, const imageproc::BinaryImage& mask) const;
 
-        imageproc::BinaryThreshold calcBinarizationThreshold(QImage const& image,
-                                                             QPolygonF const& crop_area,
-                                                             imageproc::BinaryImage const* mask = nullptr) const;
+        imageproc::BinaryThreshold calcBinarizationThreshold(const QImage& image,
+                                                             const QPolygonF& crop_area,
+                                                             const imageproc::BinaryImage* mask = nullptr) const;
 
-        BinaryImage binarize(QImage const& image) const;
+        BinaryImage binarize(const QImage& image) const;
 
-        imageproc::BinaryImage binarize(QImage const& image, imageproc::BinaryImage const& mask) const;
+        imageproc::BinaryImage binarize(const QImage& image, const imageproc::BinaryImage& mask) const;
 
-        imageproc::BinaryImage binarize(QImage const& image,
-                                        QPolygonF const& crop_area,
-                                        imageproc::BinaryImage const* mask = nullptr) const;
+        imageproc::BinaryImage binarize(const QImage& image,
+                                        const QPolygonF& crop_area,
+                                        const imageproc::BinaryImage* mask = nullptr) const;
 
         void maybeDespeckleInPlace(imageproc::BinaryImage& image,
-                                   QRect const& image_rect,
-                                   QRect const& mask_rect,
+                                   const QRect& image_rect,
+                                   const QRect& mask_rect,
                                    DespeckleLevel level,
                                    imageproc::BinaryImage* speckles_img,
-                                   Dpi const& dpi,
-                                   TaskStatus const& status,
+                                   const Dpi& dpi,
+                                   const TaskStatus& status,
                                    DebugImages* dbg) const;
 
-        static QImage smoothToGrayscale(QImage const& src, Dpi const& dpi);
+        static QImage smoothToGrayscale(const QImage& src, const Dpi& dpi);
 
-        static void morphologicalSmoothInPlace(imageproc::BinaryImage& img, TaskStatus const& status);
+        static void morphologicalSmoothInPlace(imageproc::BinaryImage& img, const TaskStatus& status);
 
         static void hitMissReplaceAllDirections(imageproc::BinaryImage& img,
-                                                char const* pattern,
+                                                const char* pattern,
                                                 int pattern_width,
                                                 int pattern_height);
 
-        static QSize calcLocalWindowSize(Dpi const& dpi);
+        static QSize calcLocalWindowSize(const Dpi& dpi);
 
         void applyFillZonesInPlace(QImage& img,
-                                   ZoneSet const& zones,
-                                   boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                   QTransform const& postTransform) const;
+                                   const ZoneSet& zones,
+                                   boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                   const QTransform& postTransform) const;
 
         void applyFillZonesInPlace(QImage& img,
-                                   ZoneSet const& zones,
-                                   boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+                                   const ZoneSet& zones,
+                                   boost::function<QPointF(const QPointF&)>const & orig_to_output) const;
 
         void applyFillZonesInPlace(QImage& img,
-                                   ZoneSet const& zones,
-                                   QTransform const& postTransform) const;
+                                   const ZoneSet& zones,
+                                   const QTransform& postTransform) const;
 
-        void applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const;
-
-        void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                   ZoneSet const& zones,
-                                   boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                   QTransform const& postTransform) const;
+        void applyFillZonesInPlace(QImage& img, const ZoneSet& zones) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                   ZoneSet const& zones,
-                                   boost::function<QPointF(QPointF const&)> const& orig_to_output) const;
+                                   const ZoneSet& zones,
+                                   boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                   const QTransform& postTransform) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                   ZoneSet const& zones,
-                                   QTransform const& postTransform) const;
+                                   const ZoneSet& zones,
+                                   boost::function<QPointF(const QPointF&)>const & orig_to_output) const;
 
-        void applyFillZonesInPlace(imageproc::BinaryImage& img, ZoneSet const& zones) const;
+        void applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                   const ZoneSet& zones,
+                                   const QTransform& postTransform) const;
+
+        void applyFillZonesInPlace(imageproc::BinaryImage& img, const ZoneSet& zones) const;
 
         void applyFillZonesToMixedInPlace(QImage& img,
-                                          ZoneSet const& zones,
-                                          imageproc::BinaryImage const& picture_mask) const;
+                                          const ZoneSet& zones,
+                                          const imageproc::BinaryImage& picture_mask) const;
 
         void applyFillZonesToMixedInPlace(QImage& img,
-                                          ZoneSet const& zones,
-                                          boost::function<QPointF(QPointF const&)> const& orig_to_output,
-                                          QTransform const& postTransform,
-                                          imageproc::BinaryImage const& picture_mask) const;
+                                          const ZoneSet& zones,
+                                          boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                          const QTransform& postTransform,
+                                          const imageproc::BinaryImage& picture_mask) const;
 
         Dpi m_dpi;
         ColorParams m_colorParams;

@@ -35,9 +35,9 @@ namespace output {
 
         ColorCommonOptions();
 
-        explicit ColorCommonOptions(QDomElement const& el);
+        explicit ColorCommonOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         bool cutMargins() const;
 
@@ -51,9 +51,9 @@ namespace output {
 
         void setFillingColor(FillingColor fillingColor);
 
-        bool operator==(ColorCommonOptions const& other) const;
+        bool operator==(const ColorCommonOptions& other) const;
 
-        bool operator!=(ColorCommonOptions const& other) const;
+        bool operator!=(const ColorCommonOptions& other) const;
 
     private:
         static FillingColor parseFillingColor(const QString& str);

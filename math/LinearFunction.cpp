@@ -29,8 +29,8 @@ void LinearFunction::reset() {
     b = 0;
 }
 
-double LinearFunction::evaluate(double const* x) const {
-    size_t const num_vars = numVars();
+double LinearFunction::evaluate(const double* x) const {
+    const size_t num_vars = numVars();
 
     double sum = b;
     for (size_t i = 0; i < num_vars; ++i) {
@@ -45,7 +45,7 @@ void LinearFunction::swap(LinearFunction& other) {
     std::swap(b, other.b);
 }
 
-LinearFunction& LinearFunction::operator+=(LinearFunction const& other) {
+LinearFunction& LinearFunction::operator+=(const LinearFunction& other) {
     a += other.a;
     b += other.b;
 

@@ -34,13 +34,13 @@ namespace output {
     public:
         BlackWhiteOptions();
 
-        explicit BlackWhiteOptions(QDomElement const& el);
+        explicit BlackWhiteOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(BlackWhiteOptions const& other) const;
+        bool operator==(const BlackWhiteOptions& other) const;
 
-        bool operator!=(BlackWhiteOptions const& other) const;
+        bool operator!=(const BlackWhiteOptions& other) const;
 
         int thresholdAdjustment() const;
 

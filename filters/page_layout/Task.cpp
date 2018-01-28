@@ -39,10 +39,10 @@ namespace page_layout {
     public:
         UiUpdater(intrusive_ptr<Filter> filter,
                   intrusive_ptr<Settings> settings,
-                  PageId const& page_id,
-                  QImage const& image,
-                  ImageTransformation const& xform,
-                  QRectF const& adapted_content_rect,
+                  const PageId& page_id,
+                  const QImage& image,
+                  const ImageTransformation& xform,
+                  const QRectF& adapted_content_rect,
                   bool agg_size_changed,
                   bool batch);
 
@@ -68,7 +68,7 @@ namespace page_layout {
     Task::Task(intrusive_ptr<Filter> filter,
                intrusive_ptr<output::Task> next_task,
                intrusive_ptr<Settings> settings,
-               PageId const& page_id,
+               const PageId& page_id,
                bool batch,
                bool debug)
             : m_ptrFilter(std::move(filter)),
@@ -80,20 +80,20 @@ namespace page_layout {
 
     Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status,
-                                  FilterData const& data,
-                                  QRectF const& page_rect,
-                                  QRectF const& content_rect) {
+    FilterResultPtr Task::process(const TaskStatus& status,
+                                  const FilterData& data,
+                                  const QRectF& page_rect,
+                                  const QRectF& content_rect) {
         status.throwIfCancelled();
 
         loadDefaultSettings(Dpm(data.origImage()));
 
-        QSizeF const content_size_mm(
+        const QSizeF content_size_mm(
                 Utils::calcRectSizeMM(data.xform(), content_rect)
         );
 
         if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
-            Margins const& margins_mm = Utils::calcMarginsMM(data.xform(), page_rect, content_rect);
+            const Margins& margins_mm = Utils::calcMarginsMM(data.xform(), page_rect, content_rect);
             m_ptrSettings->setHardMarginsMM(
                     m_pageId, margins_mm
             );
@@ -101,7 +101,7 @@ namespace page_layout {
 
         QSizeF agg_hard_size_before;
         QSizeF agg_hard_size_after;
-        Params const params(
+        const Params params(
                 m_ptrSettings->updateContentSizeAndGetParams(
                         m_pageId, page_rect, content_rect, content_size_mm,
                         &agg_hard_size_before, &agg_hard_size_after,
@@ -109,15 +109,15 @@ namespace page_layout {
                 )
         );
 
-        QRectF const adapted_content_rect(
+        const QRectF adapted_content_rect(
                 Utils::adaptContentRect(data.xform(), content_rect)
         );
 
         if (m_ptrNextTask) {
-            QPolygonF const content_rect_phys(
+            const QPolygonF content_rect_phys(
                     data.xform().transformBack().map(adapted_content_rect)
             );
-            QPolygonF const page_rect_phys(
+            const QPolygonF page_rect_phys(
                     Utils::calcPageRectPhys(
                             data.xform(), content_rect_phys,
                             params, agg_hard_size_after, m_ptrSettings->getContentRect()
@@ -168,12 +168,12 @@ namespace page_layout {
 
     Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                                intrusive_ptr<Settings> settings,
-                               PageId const& page_id,
-                               QImage const& image,
-                               ImageTransformation const& xform,
-                               QRectF const& adapted_content_rect,
-                               bool const agg_size_changed,
-                               bool const batch)
+                               const PageId& page_id,
+                               const QImage& image,
+                               const ImageTransformation& xform,
+                               const QRectF& adapted_content_rect,
+                               const bool agg_size_changed,
+                               const bool batch)
             : m_ptrFilter(std::move(filter)),
               m_ptrSettings(std::move(settings)),
               m_pageId(page_id),
@@ -210,20 +210,20 @@ namespace page_layout {
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
 
         QObject::connect(
-                view, SIGNAL(invalidateThumbnail(PageId const &)),
-                opt_widget, SIGNAL(invalidateThumbnail(PageId const &))
+                view, SIGNAL(invalidateThumbnail(const PageId &)),
+                opt_widget, SIGNAL(invalidateThumbnail(const PageId &))
         );
         QObject::connect(
                 view, SIGNAL(invalidateAllThumbnails()),
                 opt_widget, SIGNAL(invalidateAllThumbnails())
         );
         QObject::connect(
-                view, SIGNAL(marginsSetLocally(Margins const &)),
-                opt_widget, SLOT(marginsSetExternally(Margins const &))
+                view, SIGNAL(marginsSetLocally(const Margins &)),
+                opt_widget, SLOT(marginsSetExternally(const Margins &))
         );
         QObject::connect(
-                opt_widget, SIGNAL(marginsSetLocally(Margins const &)),
-                view, SLOT(marginsSetExternally(Margins const &))
+                opt_widget, SIGNAL(marginsSetLocally(const Margins &)),
+                view, SLOT(marginsSetExternally(const Margins &))
         );
         QObject::connect(
                 opt_widget, SIGNAL(topBottomLinkToggled(bool)),
@@ -234,8 +234,8 @@ namespace page_layout {
                 view, SLOT(leftRightLinkToggled(bool))
         );
         QObject::connect(
-                opt_widget, SIGNAL(alignmentChanged(Alignment const &)),
-                view, SLOT(alignmentChanged(Alignment const &))
+                opt_widget, SIGNAL(alignmentChanged(const Alignment &)),
+                view, SLOT(alignmentChanged(const Alignment &))
         );
         QObject::connect(
                 opt_widget, SIGNAL(aggregateHardSizeChanged()),

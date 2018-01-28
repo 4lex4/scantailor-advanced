@@ -81,8 +81,8 @@ namespace imageproc {
                 sum_d += d_p[i];
             }
 
-            auto const a = static_cast<const float>(sum_n_p / (1.0 + sum_d));
-            auto const b = static_cast<const float>(sum_n_m / (1.0 + sum_d));
+            const auto a = static_cast<const float>(sum_n_p / (1.0 + sum_d));
+            const auto b = static_cast<const float>(sum_n_m / (1.0 + sum_d));
 
             for (int i = 0; i <= 4; i++) {
                 bd_p[i] = d_p[i] * a;
@@ -91,7 +91,7 @@ namespace imageproc {
         }          // find_iir_constants
     }      // namespace gauss_blur_impl
 
-    GrayImage gaussBlur(GrayImage const& src, float h_sigma, float v_sigma) {
+    GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma) {
         using namespace boost::lambda;
 
         if (src.isNull()) {

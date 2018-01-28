@@ -56,9 +56,9 @@ public:
         return m_xDpi <= 1 || m_yDpi <= 1;
     }
 
-    bool operator==(Dpi const& other) const;
+    bool operator==(const Dpi& other) const;
 
-    bool operator!=(Dpi const& other) const {
+    bool operator!=(const Dpi& other) const {
         return !(*this == other);
     }
 

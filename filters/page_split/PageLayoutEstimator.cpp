@@ -54,12 +54,12 @@ namespace page_split {
     using namespace imageproc;
 
     namespace {
-        double lineCenterX(QLineF const& line) {
+        double lineCenterX(const QLineF& line) {
             return 0.5 * (line.p1().x() + line.p2().x());
         }
 
         struct CenterComparator {
-            bool operator()(QLineF const& line1, QLineF const& line2) const {
+            bool operator()(const QLineF& line1, const QLineF& line2) const {
                 return lineCenterX(line1) < lineCenterX(line2);
             }
         };
@@ -76,13 +76,13 @@ namespace page_split {
  * \param dbg An optional sink for debugging images.
  * \return The page layout detected or a null unique_ptr.
  */
-        std::unique_ptr<PageLayout> autoDetectSinglePageLayout(LayoutType const layout_type,
-                                                               std::vector<QLineF> const& ltr_lines,
-                                                               QRectF const& virtual_image_rect,
-                                                               GrayImage const& gray_downscaled,
-                                                               QTransform const& out_to_downscaled,
+        std::unique_ptr<PageLayout> autoDetectSinglePageLayout(const LayoutType layout_type,
+                                                               const std::vector<QLineF>& ltr_lines,
+                                                               const QRectF& virtual_image_rect,
+                                                               const GrayImage& gray_downscaled,
+                                                               const QTransform& out_to_downscaled,
                                                                DebugImages* dbg) {
-            double const image_center = virtual_image_rect.center().x();
+            const double image_center = virtual_image_rect.center().x();
 
             // A loop just to be able to break from it.
             do {
@@ -96,15 +96,15 @@ namespace page_split {
                 // ones close to an edge, that looks more like
                 // SINGLE_PAGE_CUT layout.
                 if (!ltr_lines.empty()) {
-                    QLineF const& first_line = ltr_lines.front();
-                    double const line_center = lineCenterX(first_line);
+                    const QLineF& first_line = ltr_lines.front();
+                    const double line_center = lineCenterX(first_line);
                     if (fabs(image_center - line_center) > 0.65 * image_center) {
                         break;
                     }
                 }
                 if (ltr_lines.size() > 1) {
-                    QLineF const& last_line = ltr_lines.back();
-                    double const line_center = lineCenterX(last_line);
+                    const QLineF& last_line = ltr_lines.back();
+                    const double line_center = lineCenterX(last_line);
                     if (fabs(image_center - line_center) > 0.65 * image_center) {
                         break;
                     }
@@ -123,10 +123,10 @@ namespace page_split {
                 );
             } else {
                 assert(ltr_lines.size() == 1);
-                QLineF const& line = ltr_lines.front();
-                double const line_center = lineCenterX(line);
+                const QLineF& line = ltr_lines.front();
+                const double line_center = lineCenterX(line);
                 if (line_center < image_center) {
-                    QLineF const right_line(
+                    const QLineF right_line(
                             virtual_image_rect.topRight(), virtual_image_rect.bottomRight()
                     );
 
@@ -134,7 +134,7 @@ namespace page_split {
                             virtual_image_rect, line, right_line
                     );
                 } else {
-                    QLineF const left_line(
+                    const QLineF left_line(
                             virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft()
                     );
 
@@ -152,8 +152,8 @@ namespace page_split {
  * \param image_size The dimentions of the page image.
  * \return The page layout detected or a null unique_ptr.
  */
-        std::unique_ptr<PageLayout> autoDetectTwoPageLayout(std::vector<QLineF> const& ltr_lines,
-                                                            QRectF const& virtual_image_rect) {
+        std::unique_ptr<PageLayout> autoDetectTwoPageLayout(const std::vector<QLineF>& ltr_lines,
+                                                            const QRectF& virtual_image_rect) {
             if (ltr_lines.empty()) {
                 // Impossible to detect the page layout.
                 return nullptr;
@@ -164,12 +164,12 @@ namespace page_split {
             }
 
             // Find the line closest to the center.
-            double const image_center = virtual_image_rect.center().x();
+            const double image_center = virtual_image_rect.center().x();
             double min_distance = std::numeric_limits<double>::max();
-            QLineF const* best_line = nullptr;
-            for (QLineF const& line : ltr_lines) {
-                double const line_center = lineCenterX(line);
-                double const distance = fabs(line_center - image_center);
+            const QLineF* best_line = nullptr;
+            for (const QLineF& line : ltr_lines) {
+                const double line_center = lineCenterX(line);
+                const double distance = fabs(line_center - image_center);
                 if (distance < min_distance) {
                     min_distance = distance;
                     best_line = &line;
@@ -181,12 +181,12 @@ namespace page_split {
             );
         }
 
-        int numPages(LayoutType const layout_type, ImageTransformation const& pre_xform) {
+        int numPages(const LayoutType layout_type, const ImageTransformation& pre_xform) {
             int num_pages = 0;
 
             switch (layout_type) {
                 case AUTO_LAYOUT_TYPE: {
-                    QSize const image_size(
+                    const QSize image_size(
                             pre_xform.origRect().size().toSize()
                     );
                     num_pages = ProjectPages::adviseNumberOfLogicalPages(
@@ -208,10 +208,10 @@ namespace page_split {
         }
     }  // anonymous namespace
 
-    PageLayout PageLayoutEstimator::estimatePageLayout(LayoutType const layout_type,
-                                                       QImage const& input,
-                                                       ImageTransformation const& pre_xform,
-                                                       BinaryThreshold const bw_threshold,
+    PageLayout PageLayoutEstimator::estimatePageLayout(const LayoutType layout_type,
+                                                       const QImage& input,
+                                                       const ImageTransformation& pre_xform,
+                                                       const BinaryThreshold bw_threshold,
                                                        DebugImages* const dbg) {
         if (layout_type == SINGLE_PAGE_UNCUT) {
             return PageLayout(pre_xform.resultingRect());
@@ -239,8 +239,8 @@ namespace page_split {
              * Returns true if the line is too close to an edge
              * to be the line splitting two pages
              */
-            bool operator()(QLineF const& line) {
-                double const dist = fabs(lineCenterX(line) - m_imageCenter);
+            bool operator()(const QLineF& line) {
+                const double dist = fabs(lineCenterX(line) - m_imageCenter);
 
                 return dist > m_distFromCenterThreshold;
             }
@@ -267,16 +267,16 @@ namespace page_split {
  *         could not be detected.
  */
     std::unique_ptr<PageLayout>
-    PageLayoutEstimator::tryCutAtFoldingLine(LayoutType const layout_type,
-                                             QImage const& input,
-                                             ImageTransformation const& pre_xform,
+    PageLayoutEstimator::tryCutAtFoldingLine(const LayoutType layout_type,
+                                             const QImage& input,
+                                             const ImageTransformation& pre_xform,
                                              DebugImages* const dbg) {
-        int const num_pages = numPages(layout_type, pre_xform);
+        const int num_pages = numPages(layout_type, pre_xform);
 
         GrayImage gray_downscaled;
         QTransform out_to_downscaled;
 
-        int const max_lines = 8;
+        const int max_lines = 8;
         std::vector<QLineF> lines(
                 VertLineFinder::findLines(
                         input, pre_xform, max_lines, dbg,
@@ -287,10 +287,10 @@ namespace page_split {
 
         std::sort(lines.begin(), lines.end(), CenterComparator());
 
-        QRectF const virtual_image_rect(
+        const QRectF virtual_image_rect(
                 pre_xform.transform().mapRect(input.rect())
         );
-        QPointF const center(virtual_image_rect.center());
+        const QPointF center(virtual_image_rect.center());
 
         if (num_pages == 1) {
             // If all of the lines are close to one of the edges,
@@ -298,9 +298,9 @@ namespace page_split {
             // so we take only one of them, the one closest to
             // the center.
             while (lines.size() > 1) {  // just to be able to break from it.
-                QLineF const left_line(lines.front());
-                QLineF const right_line(lines.back());
-                double const threshold = 0.3 * center.x();
+                const QLineF left_line(lines.front());
+                const QLineF right_line(lines.back());
+                const double threshold = 0.3 * center.x();
                 double left_dist = center.x() - lineCenterX(left_line);
                 double right_dist = center.x() - lineCenterX(right_line);
                 if ((left_dist < 0) != (right_dist < 0)) {
@@ -356,10 +356,10 @@ namespace page_split {
  * \return Even if no suitable whitespace was found, this function
  *         will return a PageLayout consistent with the layout_type requested.
  */
-    PageLayout PageLayoutEstimator::cutAtWhitespace(LayoutType const layout_type,
-                                                    QImage const& input,
-                                                    ImageTransformation const& pre_xform,
-                                                    BinaryThreshold const bw_threshold,
+    PageLayout PageLayoutEstimator::cutAtWhitespace(const LayoutType layout_type,
+                                                    const QImage& input,
+                                                    const ImageTransformation& pre_xform,
+                                                    const BinaryThreshold bw_threshold,
                                                     DebugImages* const dbg) {
         QTransform xform;
 
@@ -380,23 +380,23 @@ namespace page_split {
 
         // From now on we work with 150 dpi images.
 
-        bool const left_offcut = checkForLeftOffcut(img);
-        bool const right_offcut = checkForRightOffcut(img);
+        const bool left_offcut = checkForLeftOffcut(img);
+        const bool right_offcut = checkForRightOffcut(img);
 
         SkewFinder skew_finder;
         // We work with 150dpi image, so no further reduction.
         skew_finder.setCoarseReduction(0);
         skew_finder.setFineReduction(0);
         skew_finder.setDesiredAccuracy(0.5);  // fine accuracy is not required.
-        Skew const skew(skew_finder.findSkew(img));
+        const Skew skew(skew_finder.findSkew(img));
         if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
-            int const w = img.width();
-            int const h = img.height();
-            double const angle_deg = skew.angle();
-            double const tg = tan(angle_deg * constants::DEG2RAD);
+            const int w = img.width();
+            const int h = img.height();
+            const double angle_deg = skew.angle();
+            const double tg = tan(angle_deg * constants::DEG2RAD);
 
-            auto const margin = (int) ceil(fabs(0.5 * h * tg));
-            int const new_width = w - margin * 2;
+            const auto margin = (int) ceil(fabs(0.5 * h * tg));
+            const int new_width = w - margin * 2;
             if (new_width > 0) {
                 hShearInPlace(img, tg, 0.5 * h, WHITE);
                 BinaryImage new_img(new_width, h);
@@ -416,8 +416,8 @@ namespace page_split {
             }
         }
 
-        int const num_pages = numPages(layout_type, pre_xform);
-        PageLayout const layout(
+        const int num_pages = numPages(layout_type, pre_xform);
+        const PageLayout layout(
                 cutAtWhitespaceDeskewed150(
                         layout_type, num_pages, img,
                         left_offcut, right_offcut, dbg
@@ -444,16 +444,16 @@ namespace page_split {
  * \param dbg An optional sink for debugging images.
  * \return A PageLAyout consistent with the layout_type requested.
  */
-    PageLayout PageLayoutEstimator::cutAtWhitespaceDeskewed150(LayoutType const layout_type,
-                                                               int const num_pages,
-                                                               BinaryImage const& input,
-                                                               bool const left_offcut,
-                                                               bool const right_offcut,
+    PageLayout PageLayoutEstimator::cutAtWhitespaceDeskewed150(const LayoutType layout_type,
+                                                               const int num_pages,
+                                                               const BinaryImage& input,
+                                                               const bool left_offcut,
+                                                               const bool right_offcut,
                                                                DebugImages* dbg) {
         using namespace boost::lambda;
 
-        int const width = input.width();
-        int const height = input.height();
+        const int width = input.width();
+        const int height = input.height();
 
         BinaryImage cc_img(input.size(), WHITE);
 
@@ -509,11 +509,11 @@ namespace page_split {
         }
     }  // PageLayoutEstimator::cutAtWhitespaceDeskewed150
 
-    imageproc::BinaryImage PageLayoutEstimator::to300DpiBinary(QImage const& img,
+    imageproc::BinaryImage PageLayoutEstimator::to300DpiBinary(const QImage& img,
                                                                QTransform& xform,
-                                                               BinaryThreshold const binary_threshold) {
-        double const xfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterX();
-        double const yfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterY();
+                                                               const BinaryThreshold binary_threshold) {
+        const double xfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterX();
+        const double yfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterY();
         if ((fabs(xfactor - 1.0) < 0.1) && (fabs(yfactor - 1.0) < 0.1)) {
             return BinaryImage(img, binary_threshold);
         }
@@ -521,17 +521,17 @@ namespace page_split {
         QTransform scale_xform;
         scale_xform.scale(xfactor, yfactor);
         xform *= scale_xform;
-        QSize const new_size(
+        const QSize new_size(
                 std::max(1, (int) ceil(xfactor * img.width())),
                 std::max(1, (int) ceil(yfactor * img.height()))
         );
 
-        GrayImage const new_image(scaleToGray(GrayImage(img), new_size));
+        const GrayImage new_image(scaleToGray(GrayImage(img), new_size));
 
         return BinaryImage(new_image, binary_threshold);
     }
 
-    BinaryImage PageLayoutEstimator::removeGarbageAnd2xDownscale(BinaryImage const& image, DebugImages* dbg) {
+    BinaryImage PageLayoutEstimator::removeGarbageAnd2xDownscale(const BinaryImage& image, DebugImages* dbg) {
         BinaryImage reduced(ReduceThreshold(image)(2));
         if (dbg) {
             dbg->add(reduced, "reduced");
@@ -571,18 +571,18 @@ namespace page_split {
         return reduced;
     }  // PageLayoutEstimator::removeGarbageAnd2xDownscale
 
-    bool PageLayoutEstimator::checkForLeftOffcut(BinaryImage const& image) {
-        int const margin = 2;  // Some scanners leave garbage near page borders.
-        int const width = 3;
+    bool PageLayoutEstimator::checkForLeftOffcut(const BinaryImage& image) {
+        const int margin = 2;  // Some scanners leave garbage near page borders.
+        const int width = 3;
         QRect rect(margin, 0, width, image.height());
         rect.adjust(0, margin, 0, -margin);
 
         return image.countBlackPixels(rect) != 0;
     }
 
-    bool PageLayoutEstimator::checkForRightOffcut(BinaryImage const& image) {
-        int const margin = 2;  // Some scanners leave garbage near page borders.
-        int const width = 3;
+    bool PageLayoutEstimator::checkForRightOffcut(const BinaryImage& image) {
+        const int margin = 2;  // Some scanners leave garbage near page borders.
+        const int width = 3;
         QRect rect(image.width() - margin - width, 0, width, image.height());
         rect.adjust(0, margin, 0, -margin);
 
@@ -590,10 +590,10 @@ namespace page_split {
     }
 
     void PageLayoutEstimator::visualizeSpans(DebugImages& dbg,
-                                             std::deque<Span> const& spans,
-                                             BinaryImage const& image,
-                                             char const* label) {
-        int const height = image.height();
+                                             const std::deque<Span>& spans,
+                                             const BinaryImage& image,
+                                             const char* label) {
+        const int height = image.height();
 
         QImage spans_img(
                 image.toQImage().convertToFormat(
@@ -603,9 +603,9 @@ namespace page_split {
 
         {
             QPainter painter(&spans_img);
-            QBrush const brush(QColor(0xff, 0x00, 0x00, 0x50));
-            for (Span const& span : spans) {
-                QRect const rect(span.begin(), 0, span.width(), height);
+            const QBrush brush(QColor(0xff, 0x00, 0x00, 0x50));
+            for (const Span& span : spans) {
+                const QRect rect(span.begin(), 0, span.width(), height);
                 painter.fillRect(rect, brush);
             }
         }
@@ -632,13 +632,13 @@ namespace page_split {
             sum += spans[i + 1].width();
             gaps[i].second = sum;
         }
-        int const total = sum + spans[0].width();
+        const int total = sum + spans[0].width();
 
         int may_be_removed = total / 15;
 
         do {
-            Span const& first = spans.front();
-            Span const& last = spans.back();
+            const Span& first = spans.front();
+            const Span& last = spans.back();
             if (&first == &last) {
                 break;
             }
@@ -658,16 +658,16 @@ namespace page_split {
         } while (!spans.empty());
     }  // PageLayoutEstimator::removeInsignificantEdgeSpans
 
-    PageLayout PageLayoutEstimator::processContentSpansSinglePage(LayoutType const layout_type,
-                                                                  std::deque<Span> const& spans,
-                                                                  int const width,
-                                                                  int const height,
-                                                                  bool const left_offcut,
-                                                                  bool const right_offcut) {
+    PageLayout PageLayoutEstimator::processContentSpansSinglePage(const LayoutType layout_type,
+                                                                  const std::deque<Span>& spans,
+                                                                  const int width,
+                                                                  const int height,
+                                                                  const bool left_offcut,
+                                                                  const bool right_offcut) {
         assert(layout_type == AUTO_LAYOUT_TYPE
                || layout_type == PAGE_PLUS_OFFCUT);
 
-        QRectF const virtual_image_rect(0, 0, width, height);
+        const QRectF virtual_image_rect(0, 0, width, height);
 
         // Just to be able to break from it.
         while (left_offcut && !right_offcut
@@ -689,7 +689,7 @@ namespace page_split {
                 }
             }
 
-            QLineF const right_line(
+            const QLineF right_line(
                     virtual_image_rect.topRight(), virtual_image_rect.bottomRight()
             );
 
@@ -716,7 +716,7 @@ namespace page_split {
                 }
             }
 
-            QLineF const left_line(
+            const QLineF left_line(
                     virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft()
             );
 
@@ -724,8 +724,8 @@ namespace page_split {
         }
 
         if (layout_type == PAGE_PLUS_OFFCUT) {
-            QLineF const line1(virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft());
-            QLineF const line2(virtual_image_rect.topRight(), virtual_image_rect.bottomRight());
+            const QLineF line1(virtual_image_rect.topLeft(), virtual_image_rect.bottomLeft());
+            const QLineF line2(virtual_image_rect.topRight(), virtual_image_rect.bottomRight());
 
             return PageLayout(virtual_image_rect, line1, line2);
         } else {
@@ -734,13 +734,13 @@ namespace page_split {
         }
     }  // PageLayoutEstimator::processContentSpansSinglePage
 
-    PageLayout PageLayoutEstimator::processContentSpansTwoPages(LayoutType const layout_type,
-                                                                std::deque<Span> const& spans,
-                                                                int const width,
-                                                                int const height) {
+    PageLayout PageLayoutEstimator::processContentSpansTwoPages(const LayoutType layout_type,
+                                                                const std::deque<Span>& spans,
+                                                                const int width,
+                                                                const int height) {
         assert(layout_type == AUTO_LAYOUT_TYPE || layout_type == TWO_PAGES);
 
-        QRectF const virtual_image_rect(0, 0, width, height);
+        const QRectF virtual_image_rect(0, 0, width, height);
 
         double x;
         if (spans.empty()) {
@@ -765,8 +765,8 @@ namespace page_split {
                 gaps[i].second = sum;
             }
 #else
-            int const content_begin = spans.front().begin();
-            int const content_end = spans.back().end();
+            const int content_begin = spans.front().begin();
+            const int content_end = spans.back().end();
             for (unsigned i = 0; i < gaps.size(); ++i) {
                 gaps[i].first = spans[i].end() - content_begin;
                 gaps[i].second = content_end - spans[i + 1].begin();
@@ -776,9 +776,9 @@ namespace page_split {
             int best_gap = 0;
             double best_ratio = 0;
             for (unsigned i = 0; i < gaps.size(); ++i) {
-                double const min = std::min(gaps[i].first, gaps[i].second);
-                double const max = std::max(gaps[i].first, gaps[i].second);
-                double const ratio = min / max;
+                const double min = std::min(gaps[i].first, gaps[i].second);
+                const double max = std::max(gaps[i].first, gaps[i].second);
+                const double ratio = min / max;
                 if (ratio > best_ratio) {
                     best_ratio = ratio;
                     best_gap = i;
@@ -792,51 +792,51 @@ namespace page_split {
                 );
             }
 
-            double const acceptable_ratio = best_ratio * 0.90;
+            const double acceptable_ratio = best_ratio * 0.90;
 
             int widest_gap = best_gap;
             int max_width = Span(spans[best_gap], spans[best_gap + 1]).width();
             for (int i = best_gap - 1; i >= 0; --i) {
-                double const min = std::min(gaps[i].first, gaps[i].second);
-                double const max = std::max(gaps[i].first, gaps[i].second);
-                double const ratio = min / max;
+                const double min = std::min(gaps[i].first, gaps[i].second);
+                const double max = std::max(gaps[i].first, gaps[i].second);
+                const double ratio = min / max;
                 if (ratio < acceptable_ratio) {
                     break;
                 }
-                int const width = Span(spans[i], spans[i + 1]).width();
+                const int width = Span(spans[i], spans[i + 1]).width();
                 if (width > max_width) {
                     max_width = width;
                     widest_gap = i;
                 }
             }
             for (auto i = static_cast<unsigned int>(best_gap + 1); i < gaps.size(); ++i) {
-                double const min = std::min(gaps[i].first, gaps[i].second);
-                double const max = std::max(gaps[i].first, gaps[i].second);
-                double const ratio = min / max;
+                const double min = std::min(gaps[i].first, gaps[i].second);
+                const double max = std::max(gaps[i].first, gaps[i].second);
+                const double ratio = min / max;
                 if (ratio < acceptable_ratio) {
                     break;
                 }
-                int const width = Span(spans[i], spans[i + 1]).width();
+                const int width = Span(spans[i], spans[i + 1]).width();
                 if (width > max_width) {
                     max_width = width;
                     widest_gap = i;
                 }
             }
 
-            Span const gap(spans[widest_gap], spans[widest_gap + 1]);
+            const Span gap(spans[widest_gap], spans[widest_gap + 1]);
             x = gap.center();
         }
 
         return PageLayout(virtual_image_rect, vertLine(x));
     }  // PageLayoutEstimator::processContentSpansTwoPages
 
-    PageLayout PageLayoutEstimator::processTwoPagesWithSingleSpan(Span const& span, int width, int height) {
-        QRectF const virtual_image_rect(0, 0, width, height);
+    PageLayout PageLayoutEstimator::processTwoPagesWithSingleSpan(const Span& span, int width, int height) {
+        const QRectF virtual_image_rect(0, 0, width, height);
 
-        double const page_center = 0.5 * width;
-        double const box_center = span.center();
-        double const box_half_width = 0.5 * span.width();
-        double const distance_to_page_center
+        const double page_center = 0.5 * width;
+        const double box_center = span.center();
+        const double box_half_width = 0.5 * span.width();
+        const double distance_to_page_center
                 = fabs(page_center - box_center) - box_half_width;
 
         double x;
@@ -844,8 +844,8 @@ namespace page_split {
         if (distance_to_page_center > 15) {
             x = page_center;
         } else {
-            Span const left_ws(0, span);
-            Span const right_ws(span, width);
+            const Span left_ws(0, span);
+            const Span right_ws(span, width);
             if (left_ws.width() > right_ws.width()) {
                 x = std::max(0, span.begin() - 15);
             } else {

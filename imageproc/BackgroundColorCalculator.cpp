@@ -10,9 +10,9 @@ namespace imageproc {
     namespace {
         class RgbHistogram {
         public:
-            explicit RgbHistogram(QImage const& img);
+            explicit RgbHistogram(const QImage& img);
 
-            RgbHistogram(QImage const& img, BinaryImage const& mask);
+            RgbHistogram(const QImage& img, const BinaryImage& mask);
 
             const int* redChannel() const {
                 return m_red;
@@ -27,16 +27,16 @@ namespace imageproc {
             }
 
         private:
-            void fromRgbImage(QImage const& img);
+            void fromRgbImage(const QImage& img);
 
-            void fromRgbImage(QImage const& img, BinaryImage const& mask);
+            void fromRgbImage(const QImage& img, const BinaryImage& mask);
 
             int m_red[256];
             int m_green[256];
             int m_blue[256];
         };
 
-        RgbHistogram::RgbHistogram(QImage const& img) {
+        RgbHistogram::RgbHistogram(const QImage& img) {
             memset(m_red, 0, sizeof(m_red));
             memset(m_green, 0, sizeof(m_green));
             memset(m_blue, 0, sizeof(m_blue));
@@ -55,7 +55,7 @@ namespace imageproc {
             fromRgbImage(img);
         }
 
-        RgbHistogram::RgbHistogram(QImage const& img, BinaryImage const& mask) {
+        RgbHistogram::RgbHistogram(const QImage& img, const BinaryImage& mask) {
             memset(m_red, 0, sizeof(m_red));
             memset(m_green, 0, sizeof(m_green));
             memset(m_blue, 0, sizeof(m_blue));
@@ -80,13 +80,13 @@ namespace imageproc {
             fromRgbImage(img, mask);
         }
 
-        void RgbHistogram::fromRgbImage(QImage const& img) {
+        void RgbHistogram::fromRgbImage(const QImage& img) {
             const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
-            int const img_stride = img.bytesPerLine() / sizeof(uint32_t);
+            const int img_stride = img.bytesPerLine() / sizeof(uint32_t);
 
-            int const width = img.width();
-            int const height = img.height();
-            uint32_t const msb = uint32_t(1) << 31;
+            const int width = img.width();
+            const int height = img.height();
+            const uint32_t msb = uint32_t(1) << 31;
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
@@ -98,15 +98,15 @@ namespace imageproc {
             }
         }
 
-        void RgbHistogram::fromRgbImage(QImage const& img, BinaryImage const& mask) {
+        void RgbHistogram::fromRgbImage(const QImage& img, const BinaryImage& mask) {
             const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
-            int const img_stride = img.bytesPerLine() / sizeof(uint32_t);
-            uint32_t const* mask_line = mask.data();
-            int const mask_stride = mask.wordsPerLine();
+            const int img_stride = img.bytesPerLine() / sizeof(uint32_t);
+            const uint32_t* mask_line = mask.data();
+            const int mask_stride = mask.wordsPerLine();
 
-            int const width = img.width();
-            int const height = img.height();
-            uint32_t const msb = uint32_t(1) << 31;
+            const int width = img.width();
+            const int height = img.height();
+            const uint32_t msb = uint32_t(1) << 31;
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
@@ -135,13 +135,13 @@ namespace imageproc {
             integral_hist[i] = hist[i] + integral_hist[i - 1];
         }
 
-        int const num_colors = 256;
-        int const window_size = 10;
+        const int num_colors = 256;
+        const int window_size = 10;
 
         int best_pos = 0;
         int best_sum = integral_hist[window_size - 1];
         for (int i = 1; i <= num_colors - window_size; ++i) {
-            int const sum = integral_hist[i + window_size - 1] - integral_hist[i - 1];
+            const int sum = integral_hist[i + window_size - 1] - integral_hist[i - 1];
             if (sum > best_sum) {
                 best_sum = sum;
                 best_pos = i;
@@ -161,7 +161,7 @@ namespace imageproc {
         return 0;
     }   // BackgroundColorCalculator::calcDominantLevel
 
-    QColor BackgroundColorCalculator::calcDominantBackgroundColor(QImage const& img) {
+    QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img) {
         if (!((img.format() == QImage::Format_RGB32)
               || (img.format() == QImage::Format_ARGB32)
               || (img.format() == QImage::Format_Indexed8))) {
@@ -176,14 +176,14 @@ namespace imageproc {
         }
 
         if (img.format() == QImage::Format_Indexed8) {
-            GrayscaleHistogram const hist(img, mask);
+            const GrayscaleHistogram hist(img, mask);
             int raw_hist[256];
             grayHistToArray(raw_hist, hist);
             uint8_t dominant_gray = calcDominantLevel(raw_hist);
 
             return QColor(dominant_gray, dominant_gray, dominant_gray);
         } else {
-            RgbHistogram const hist(img, mask);
+            const RgbHistogram hist(img, mask);
             uint8_t dominant_red = calcDominantLevel(hist.redChannel());
             uint8_t dominant_green = calcDominantLevel(hist.greenChannel());
             uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
@@ -192,7 +192,7 @@ namespace imageproc {
         }
     }
 
-    QColor BackgroundColorCalculator::calcDominantBackgroundColorBW(QImage const& img) {
+    QColor BackgroundColorCalculator::calcDominantBackgroundColorBW(const QImage& img) {
         BinaryImage mask(binarizeOtsu(img));
         if (mask.countBlackPixels() < mask.countWhitePixels()) {
             return Qt::white;

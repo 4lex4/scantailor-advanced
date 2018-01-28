@@ -25,7 +25,7 @@ namespace imageproc {
         return (uint32_t(1) << 31) >> (x % 32);
     }
 
-    static BinaryImage rotate0(BinaryImage const& src, QRect const& src_rect) {
+    static BinaryImage rotate0(const BinaryImage& src, const QRect& src_rect) {
         if (src_rect == src.rect()) {
             return src;
         }
@@ -36,14 +36,14 @@ namespace imageproc {
         return dst;
     }
 
-    static BinaryImage rotate90(BinaryImage const& src, QRect const& src_rect) {
-        int const dst_w = src_rect.height();
-        int const dst_h = src_rect.width();
+    static BinaryImage rotate90(const BinaryImage& src, const QRect& src_rect) {
+        const int dst_w = src_rect.height();
+        const int dst_h = src_rect.width();
         BinaryImage dst(dst_w, dst_h);
         dst.fill(WHITE);
-        int const src_wpl = src.wordsPerLine();
-        int const dst_wpl = dst.wordsPerLine();
-        uint32_t const* const src_data = src.data() + src_rect.bottom() * src_wpl;
+        const int src_wpl = src.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
+        const uint32_t* const src_data = src.data() + src_rect.bottom() * src_wpl;
         uint32_t* dst_line = dst.data();
 
         /*
@@ -55,9 +55,9 @@ namespace imageproc {
          */
 
         for (int dst_y = 0; dst_y < dst_h; ++dst_y) {
-            int const src_x = src_rect.left() + dst_y;
-            uint32_t const* src_pword = src_data + src_x / 32;
-            uint32_t const src_mask = mask(src_x);
+            const int src_x = src_rect.left() + dst_y;
+            const uint32_t* src_pword = src_data + src_x / 32;
+            const uint32_t src_mask = mask(src_x);
 
             for (int dst_x = 0; dst_x < dst_w; ++dst_x) {
                 if (*src_pword & src_mask) {
@@ -72,14 +72,14 @@ namespace imageproc {
         return dst;
     }
 
-    static BinaryImage rotate180(BinaryImage const& src, QRect const& src_rect) {
-        int const dst_w = src_rect.width();
-        int const dst_h = src_rect.height();
+    static BinaryImage rotate180(const BinaryImage& src, const QRect& src_rect) {
+        const int dst_w = src_rect.width();
+        const int dst_h = src_rect.height();
         BinaryImage dst(dst_w, dst_h);
         dst.fill(WHITE);
-        int const src_wpl = src.wordsPerLine();
-        int const dst_wpl = dst.wordsPerLine();
-        uint32_t const* src_line = src.data() + src_rect.bottom() * src_wpl;
+        const int src_wpl = src.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
+        const uint32_t* src_line = src.data() + src_rect.bottom() * src_wpl;
         uint32_t* dst_line = dst.data();
 
         /*
@@ -104,14 +104,14 @@ namespace imageproc {
         return dst;
     }
 
-    static BinaryImage rotate270(BinaryImage const& src, QRect const& src_rect) {
-        int const dst_w = src_rect.height();
-        int const dst_h = src_rect.width();
+    static BinaryImage rotate270(const BinaryImage& src, const QRect& src_rect) {
+        const int dst_w = src_rect.height();
+        const int dst_h = src_rect.width();
         BinaryImage dst(dst_w, dst_h);
         dst.fill(WHITE);
-        int const src_wpl = src.wordsPerLine();
-        int const dst_wpl = dst.wordsPerLine();
-        uint32_t const* const src_data = src.data() + src_rect.top() * src_wpl;
+        const int src_wpl = src.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
+        const uint32_t* const src_data = src.data() + src_rect.top() * src_wpl;
         uint32_t* dst_line = dst.data();
 
         /*
@@ -123,9 +123,9 @@ namespace imageproc {
          */
 
         for (int dst_y = 0; dst_y < dst_h; ++dst_y) {
-            int const src_x = src_rect.right() - dst_y;
-            uint32_t const* src_pword = src_data + src_x / 32;
-            uint32_t const src_mask = mask(src_x);
+            const int src_x = src_rect.right() - dst_y;
+            const uint32_t* src_pword = src_data + src_x / 32;
+            const uint32_t src_mask = mask(src_x);
 
             for (int dst_x = 0; dst_x < dst_w; ++dst_x) {
                 if (*src_pword & src_mask) {
@@ -140,7 +140,7 @@ namespace imageproc {
         return dst;
     }
 
-    BinaryImage orthogonalRotation(BinaryImage const& src, QRect const& src_rect, int const degrees) {
+    BinaryImage orthogonalRotation(const BinaryImage& src, const QRect& src_rect, const int degrees) {
         if (src.isNull() || src_rect.isNull()) {
             return BinaryImage();
         }
@@ -166,7 +166,7 @@ namespace imageproc {
         }
     }
 
-    BinaryImage orthogonalRotation(BinaryImage const& src, int const degrees) {
+    BinaryImage orthogonalRotation(const BinaryImage& src, const int degrees) {
         return orthogonalRotation(src, src.rect(), degrees);
     }
 }  // namespace imageproc

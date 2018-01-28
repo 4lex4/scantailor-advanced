@@ -40,17 +40,17 @@ namespace select_content {
 
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
         void updateDeviation();
 
-        void setPageParams(PageId const& page_id, Params const& params);
+        void setPageParams(const PageId& page_id, const Params& params);
 
-        void clearPageParams(PageId const& page_id);
+        void clearPageParams(const PageId& page_id);
 
-        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
-        bool isParamsNull(PageId const& page_id) const;
+        bool isParamsNull(const PageId& page_id) const;
 
         double maxDeviation() const;
 

@@ -36,13 +36,13 @@ signals:
 
     void openProject();
 
-    void openRecentProject(QString const& project_file);
+    void openRecentProject(const QString& project_file);
 
 protected:
     void paintEvent(QPaintEvent*) override;
 
 private:
-    void addRecentProject(QString const& file_path);
+    void addRecentProject(const QString& file_path);
 };
 
 

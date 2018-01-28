@@ -37,7 +37,7 @@ public:
      * \param image The image to write.  Writing a null image will fail.
      * \return True on success, false on failure.
      */
-    static bool writeImage(QString const& file_path, QImage const& image);
+    static bool writeImage(const QString& file_path, const QImage& image);
 
     /**
      * \brief Writes a QImage in TIFF format to an IO device.
@@ -47,26 +47,26 @@ public:
      * \param image The image to write.  Writing a null image will fail.
      * \return True on success, false on failure.
      */
-    static bool writeImage(QIODevice& device, QImage const& image);
+    static bool writeImage(QIODevice& device, const QImage& image);
 
 private:
     class TiffHandle;
 
-    static void setDpm(TiffHandle const& tif, Dpm const& dpm);
+    static void setDpm(const TiffHandle& tif, const Dpm& dpm);
 
-    static bool writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& image);
+    static bool writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image);
 
-    static bool writeRGB32Image(TiffHandle const& tif, QImage const& image);
+    static bool writeRGB32Image(const TiffHandle& tif, const QImage& image);
 
-    static bool writeARGB32Image(TiffHandle const& tif, QImage const& image);
+    static bool writeARGB32Image(const TiffHandle& tif, const QImage& image);
 
-    static bool write8bitLines(TiffHandle const& tif, QImage const& image);
+    static bool write8bitLines(const TiffHandle& tif, const QImage& image);
 
-    static bool writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image);
+    static bool writeBinaryLinesAsIs(const TiffHandle& tif, const QImage& image);
 
-    static bool writeBinaryLinesReversed(TiffHandle const& tif, QImage const& image);
+    static bool writeBinaryLinesReversed(const TiffHandle& tif, const QImage& image);
 
-    static uint8_t const m_reverseBitsLUT[256];
+    static const uint8_t m_reverseBitsLUT[256];
 };
 
 

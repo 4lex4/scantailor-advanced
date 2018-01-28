@@ -32,41 +32,41 @@ namespace dewarping {
     public:
         Curve();
 
-        explicit Curve(std::vector<QPointF> const& polyline);
+        explicit Curve(const std::vector<QPointF>& polyline);
 
-        explicit Curve(XSpline const& xspline);
+        explicit Curve(const XSpline& xspline);
 
-        explicit Curve(QDomElement const& el);
+        explicit Curve(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         bool isValid() const;
 
-        bool matches(Curve const& other) const;
+        bool matches(const Curve& other) const;
 
-        XSpline const& xspline() const {
+        const XSpline& xspline() const {
             return m_xspline;
         }
 
-        std::vector<QPointF> const& polyline() const {
+        const std::vector<QPointF>& polyline() const {
             return m_polyline;
         }
 
-        static bool splineHasLoops(XSpline const& spline);
+        static bool splineHasLoops(const XSpline& spline);
 
     private:
         struct CloseEnough;
 
-        static std::vector<QPointF> deserializePolyline(QDomElement const& el);
+        static std::vector<QPointF> deserializePolyline(const QDomElement& el);
 
         static QDomElement
-        serializePolyline(std::vector<QPointF> const& polyline, QDomDocument& doc, QString const& name);
+        serializePolyline(const std::vector<QPointF>& polyline, QDomDocument& doc, const QString& name);
 
-        static XSpline deserializeXSpline(QDomElement const& el);
+        static XSpline deserializeXSpline(const QDomElement& el);
 
-        static QDomElement serializeXSpline(XSpline const& xspline, QDomDocument& doc, QString const& name);
+        static QDomElement serializeXSpline(const XSpline& xspline, QDomDocument& doc, const QString& name);
 
-        static bool approxPolylineMatch(std::vector<QPointF> const& polyline1, std::vector<QPointF> const& polyline2);
+        static bool approxPolylineMatch(const std::vector<QPointF>& polyline1, const std::vector<QPointF>& polyline2);
 
         XSpline m_xspline;
         std::vector<QPointF> m_polyline;

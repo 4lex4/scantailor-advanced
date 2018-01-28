@@ -43,7 +43,7 @@ public:
     };
 
     typedef AbstractCommand1<
-            void, ThumbnailLoadResult const&
+            void, const ThumbnailLoadResult&
     > CompletionHandler;
 
     /**
@@ -64,8 +64,8 @@ public:
      *
      * \see ThumbnailLoadResult::REQUEST_EXPIRED
      */
-    ThumbnailPixmapCache(QString const& thumb_dir,
-                         QSize const& max_size,
+    ThumbnailPixmapCache(const QString& thumb_dir,
+                         const QSize& max_size,
                          int max_cached_pixmaps,
                          int expiration_threshold);
 
@@ -74,7 +74,7 @@ public:
      */
     ~ThumbnailPixmapCache() override;
 
-    void setThumbDir(QString const& thumb_dir);
+    void setThumbDir(const QString& thumb_dir);
 
     /**
      * \brief Take the pixmap from cache, if it's there.
@@ -83,14 +83,14 @@ public:
      *
      * \note This function is to be called from the GUI thread only.
      */
-    Status loadFromCache(ImageId const& image_id, QPixmap& pixmap);
+    Status loadFromCache(const ImageId& image_id, QPixmap& pixmap);
 
     /**
      * \brief Take the pixmap from cache or from disk, blocking if necessary.
      *
      * \note This function is to be called from the GUI thread only.
      */
-    Status loadNow(ImageId const& image_id, QPixmap& pixmap);
+    Status loadNow(const ImageId& image_id, QPixmap& pixmap);
 
     /**
      * \brief Take the pixmap from cache or schedule a load request.
@@ -109,7 +109,7 @@ public:
      * class X : public boost::signals::trackable
      * {
      * public:
-     *  void handleCompletion(ThumbnailLoadResult const& result);
+     *  void handleCompletion(const ThumbnailLoadResult& result);
      * };
      *
      * X x;
@@ -122,9 +122,9 @@ public:
      * keep in mind is that only boost::bind() can handle trackable binds.
      * Other methods, for example boost::lambda::bind() can't do that.
      */
-    Status loadRequest(ImageId const& image_id,
+    Status loadRequest(const ImageId& image_id,
                        QPixmap& pixmap,
-                       std::weak_ptr<CompletionHandler> const& completion_handler);
+                       const std::weak_ptr<CompletionHandler>& completion_handler);
 
     /**
      * \brief If no thumbnail exists for this image, create it.
@@ -138,7 +138,7 @@ public:
      *
      * \note This function may be called from any thread, even concurrently.
      */
-    void ensureThumbnailExists(ImageId const& image_id, QImage const& image);
+    void ensureThumbnailExists(const ImageId& image_id, const QImage& image);
 
     /**
      * \brief Re-create and replace the existing thumnail.
@@ -148,7 +148,7 @@ public:
      *
      * \note This function may be called from any thread, even concurrently.
      */
-    void recreateThumbnail(ImageId const& image_id, QImage const& image);
+    void recreateThumbnail(const ImageId& image_id, const QImage& image);
 
 private:
     class Item;

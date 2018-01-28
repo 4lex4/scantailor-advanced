@@ -36,7 +36,7 @@ struct RelinkablePathVisualization::PathComponent {
     RelinkablePath::Type type;  // File or Dir.
     bool exists;
 
-    PathComponent(QString const& lbl, QString const& prefix_path, QString const& suffix_path, RelinkablePath::Type t)
+    PathComponent(const QString& lbl, const QString& prefix_path, const QString& suffix_path, RelinkablePath::Type t)
             : label(lbl),
               prefixPath(prefix_path),
               suffixPath(suffix_path),
@@ -74,7 +74,7 @@ void RelinkablePathVisualization::clear() {
     }
 }
 
-void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable) {
+void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool clickable) {
     clear();
 
     QStringList components(path.normalizedPath().split(QChar('/'), QString::SkipEmptyParts));
@@ -97,7 +97,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
     path_components.reserve(components.size());
 
     for (QStringList::const_iterator it(components.begin()); it != components.end(); ++it) {
-        QString const& component = *it;
+        const QString& component = *it;
 
         if (!prefix_path.isEmpty() && !prefix_path.endsWith('/')) {
             prefix_path += QChar('/');
@@ -145,7 +145,7 @@ void RelinkablePathVisualization::setPath(RelinkablePath const& path, bool click
 }  // RelinkablePathVisualization::setPath
 
 void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
-    QColor const border_color(ColorSchemeManager::instance()->getColorParam(
+    const QColor border_color(ColorSchemeManager::instance()->getColorParam(
             "relinkable_path_visualization_border_color",
             palette().color(QPalette::Window).darker(150)).color());
 
@@ -182,7 +182,7 @@ void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn,
 }  // RelinkablePathVisualization::stylePathComponentButton
 
 void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
-    int const total_items = m_pLayout->count();  // Note that there is an extra stretch item.
+    const int total_items = m_pLayout->count();  // Note that there is an extra stretch item.
     for (int i = 0; i < total_items; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (!widget) {
@@ -198,7 +198,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
             for (int j = 0; j < total_items; ++j) {
                 widget = m_pLayout->itemAt(j)->widget();
                 if (widget) {
-                    bool const highlight = j <= i;
+                    const bool highlight = j <= i;
                     if (widget->property("forceHighlight").toBool() != highlight) {
                         widget->setProperty("forceHighlight", highlight);
                         widget->update();
@@ -213,7 +213,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
             for (int j = 0; j < total_items; ++j) {
                 widget = m_pLayout->itemAt(j)->widget();
                 if (widget) {
-                    bool const highlight = false;
+                    const bool highlight = false;
                     if (widget->property("forceHighlight").toBool() != highlight) {
                         widget->setProperty("forceHighlight", highlight);
                         widget->update();
@@ -226,8 +226,8 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
 }  // RelinkablePathVisualization::paintEvent
 
 void RelinkablePathVisualization::onClicked(int component_idx,
-                                            QString const& prefix_path,
-                                            QString const& suffix_path,
+                                            const QString& prefix_path,
+                                            const QString& suffix_path,
                                             int type) {
     // We'd like highlighting to stick until this method returns.
 
@@ -240,7 +240,7 @@ void RelinkablePathVisualization::onClicked(int component_idx,
 
     emit clicked(prefix_path, suffix_path, type);
     // Note that clear() or setPath() might have been called by a signal handler.
-    int const total_items = m_pLayout->count();  // Note that there is an extra stretch item.
+    const int total_items = m_pLayout->count();  // Note that there is an extra stretch item.
     for (int i = 0; i <= component_idx && i < total_items; ++i) {
         QWidget* widget = m_pLayout->itemAt(i)->widget();
         if (widget) {
@@ -268,7 +268,7 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
     int left = -1;  // Existing component (unless -1).
     auto right = static_cast<int>(components.size() - 1);  // Non-existing component (we checked it above).
     while (right - left > 1) {
-        int const mid = (left + right + 1) >> 1;
+        const int mid = (left + right + 1) >> 1;
         if (QFile::exists(components[mid].prefixPath)) {
             left = mid;
         } else {

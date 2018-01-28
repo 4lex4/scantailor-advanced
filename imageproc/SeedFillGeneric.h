@@ -52,11 +52,11 @@ namespace imageproc {
             template<typename T>
             struct Position {
                 T* seed;
-                T const* mask;
+                const T* mask;
                 int x;
                 int y;
 
-                Position(T* seed_, T const* mask_, int x_, int y_)
+                Position(T* seed_, const T* mask_, int x_, int y_)
                         : seed(seed_),
                           mask(mask_),
                           x(x_),
@@ -71,11 +71,11 @@ namespace imageproc {
             template<typename T, typename SpreadOp, typename MaskOp>
             void seedFillSingleLine(SpreadOp spread_op,
                                     MaskOp mask_op,
-                                    int const line_len,
+                                    const int line_len,
                                     T* seed,
-                                    int const seed_stride,
-                                    T const* mask,
-                                    int const mask_stride) {
+                                    const int seed_stride,
+                                    const T* mask,
+                                    const int mask_stride) {
                 if (line_len == 0) {
                     return;
                 }
@@ -100,19 +100,19 @@ namespace imageproc {
                                         MaskOp mask_op,
                                         FastQueue<Position<T>>& queue,
                                         uint32_t* in_queue_line,
-                                        T const this_val,
+                                        const T this_val,
                                         T* const neighbor,
-                                        T const* const neighbor_mask,
-                                        Position<T> const& base_pos,
-                                        int const x_delta,
-                                        int const y_delta) {
-                T const new_val(mask_op(*neighbor_mask, spread_op(this_val, *neighbor)));
+                                        const T* const neighbor_mask,
+                                        const Position<T>& base_pos,
+                                        const int x_delta,
+                                        const int y_delta) {
+                const T new_val(mask_op(*neighbor_mask, spread_op(this_val, *neighbor)));
                 if (new_val != *neighbor) {
                     *neighbor = new_val;
-                    int const x = base_pos.x + x_delta;
-                    int const y = base_pos.y + y_delta;
+                    const int x = base_pos.x + x_delta;
+                    const int y = base_pos.y + y_delta;
                     uint32_t& in_queue_word = in_queue_line[x >> 5];
-                    uint32_t const in_queue_mask = (uint32_t(1) << 31) >> (x & 31);
+                    const uint32_t in_queue_mask = (uint32_t(1) << 31) >> (x & 31);
                     if (!(in_queue_word & in_queue_mask)) {  // If not already in the queue.
                         queue.push(Position<T>(neighbor, neighbor_mask, x, y));
                         in_queue_word |= in_queue_mask;  // Mark as already in the queue.
@@ -125,21 +125,21 @@ namespace imageproc {
                          MaskOp mask_op,
                          FastQueue<Position<T>>& queue,
                          uint32_t* const in_queue_data,
-                         int const in_queue_stride,
-                         HTransition const* h_transitions,
-                         VTransition const* v_transitions,
-                         int const seed_stride,
-                         int const mask_stride) {
+                         const int in_queue_stride,
+                         const HTransition* h_transitions,
+                         const VTransition* v_transitions,
+                         const int seed_stride,
+                         const int mask_stride) {
                 while (!queue.empty()) {
-                    Position<T> const pos(queue.front());
+                    const Position<T> pos(queue.front());
                     queue.pop();
 
-                    T const this_val(*pos.seed);
-                    HTransition const ht(h_transitions[pos.x]);
-                    VTransition const vt(v_transitions[pos.y]);
+                    const T this_val(*pos.seed);
+                    const HTransition ht(h_transitions[pos.x]);
+                    const VTransition vt(v_transitions[pos.y]);
                     uint32_t* const in_queue_line = in_queue_data + in_queue_stride * pos.y;
                     T* seed;
-                    T const* mask;
+                    const T* mask;
 
                     // Western neighbor.
                     seed = pos.seed + ht.west_delta;
@@ -180,21 +180,21 @@ namespace imageproc {
                          MaskOp mask_op,
                          FastQueue<Position<T>>& queue,
                          uint32_t* const in_queue_data,
-                         int const in_queue_stride,
-                         HTransition const* h_transitions,
-                         VTransition const* v_transitions,
-                         int const seed_stride,
-                         int const mask_stride) {
+                         const int in_queue_stride,
+                         const HTransition* h_transitions,
+                         const VTransition* v_transitions,
+                         const int seed_stride,
+                         const int mask_stride) {
                 while (!queue.empty()) {
-                    Position<T> const pos(queue.front());
+                    const Position<T> pos(queue.front());
                     queue.pop();
 
-                    T const this_val(*pos.seed);
-                    HTransition const ht(h_transitions[pos.x]);
-                    VTransition const vt(v_transitions[pos.y]);
+                    const T this_val(*pos.seed);
+                    const HTransition ht(h_transitions[pos.x]);
+                    const VTransition vt(v_transitions[pos.y]);
                     uint32_t* const in_queue_line = in_queue_data + in_queue_stride * pos.y;
                     T* seed;
-                    T const* mask;
+                    const T* mask;
 
                     // Northern neighbor.
                     seed = pos.seed - (seed_stride & vt.north_mask);
@@ -266,15 +266,15 @@ namespace imageproc {
             void seedFill4(SpreadOp spread_op,
                            MaskOp mask_op,
                            T* const seed,
-                           int const seed_stride,
-                           QSize const size,
-                           T const* const mask,
-                           int const mask_stride) {
-                int const w = size.width();
-                int const h = size.height();
+                           const int seed_stride,
+                           const QSize size,
+                           const T* const mask,
+                           const int mask_stride) {
+                const int w = size.width();
+                const int h = size.height();
 
                 T* seed_line = seed;
-                T const* mask_line = mask;
+                const T* mask_line = mask;
                 T* prev_line = seed_line;
 
                 // Top to bottom.
@@ -302,7 +302,7 @@ namespace imageproc {
                 FastQueue<Position<T>> queue;
                 BinaryImage in_queue(size, WHITE);
                 uint32_t* const in_queue_data = in_queue.data();
-                int const in_queue_stride = in_queue.wordsPerLine();
+                const int in_queue_stride = in_queue.wordsPerLine();
                 std::vector<HTransition> h_transitions;
                 std::vector<VTransition> v_transitions;
                 initHorTransitions(h_transitions, w);
@@ -311,19 +311,19 @@ namespace imageproc {
                 // Bottom to top.
                 uint32_t* in_queue_line = in_queue_data + in_queue_stride * (h - 1);
                 for (int y = h - 1; y >= 0; --y) {
-                    VTransition const vt(v_transitions[y]);
+                    const VTransition vt(v_transitions[y]);
 
                     // Right to left.
                     for (int x = w - 1; x >= 0; --x) {
-                        HTransition const ht(h_transitions[x]);
+                        const HTransition ht(h_transitions[x]);
 
                         T* const p_base_seed = seed_line + x;
-                        T const* const p_base_mask = mask_line + x;
+                        const T* const p_base_mask = mask_line + x;
 
                         T* const p_east_seed = p_base_seed + ht.east_delta;
                         T* const p_south_seed = p_base_seed + (seed_stride & vt.south_mask);
 
-                        T const new_val(
+                        const T new_val(
                                 mask_op(
                                         *p_base_mask,
                                         spread_op(*p_base_seed, spread_op(*p_east_seed, *p_south_seed))
@@ -335,9 +335,9 @@ namespace imageproc {
 
                         *p_base_seed = new_val;
 
-                        Position<T> const pos(p_base_seed, p_base_mask, x, y);
-                        T const* p_east_mask = p_base_mask + ht.east_delta;
-                        T const* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
+                        const Position<T> pos(p_base_seed, p_base_mask, x, y);
+                        const T* p_east_mask = p_base_mask + ht.east_delta;
+                        const T* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
 
                         // Eastern neighbor.
                         processNeighbor(
@@ -367,12 +367,12 @@ namespace imageproc {
             void seedFill8(SpreadOp spread_op,
                            MaskOp mask_op,
                            T* const seed,
-                           int const seed_stride,
-                           QSize const size,
-                           T const* const mask,
-                           int const mask_stride) {
-                int const w = size.width();
-                int const h = size.height();
+                           const int seed_stride,
+                           const QSize size,
+                           const T* const mask,
+                           const int mask_stride) {
+                const int w = size.width();
+                const int h = size.height();
 
                 // Some code below doesn't handle such cases.
                 if (w == 1) {
@@ -384,7 +384,7 @@ namespace imageproc {
                 }
 
                 T* seed_line = seed;
-                T const* mask_line = mask;
+                const T* mask_line = mask;
 
                 // Note: we usually process the first line by assigning
                 // prev_line = seed_line, but in this case prev_line[x + 1]
@@ -447,7 +447,7 @@ namespace imageproc {
                 FastQueue<Position<T>> queue;
                 BinaryImage in_queue(size, WHITE);
                 uint32_t* const in_queue_data = in_queue.data();
-                int const in_queue_stride = in_queue.wordsPerLine();
+                const int in_queue_stride = in_queue.wordsPerLine();
                 std::vector<HTransition> h_transitions;
                 std::vector<VTransition> v_transitions;
                 initHorTransitions(h_transitions, w);
@@ -456,20 +456,20 @@ namespace imageproc {
                 // Bottom to top.
                 uint32_t* in_queue_line = in_queue_data + in_queue_stride * (h - 1);
                 for (int y = h - 1; y >= 0; --y) {
-                    VTransition const vt(v_transitions[y]);
+                    const VTransition vt(v_transitions[y]);
 
                     for (int x = w - 1; x >= 0; --x) {
-                        HTransition const ht(h_transitions[x]);
+                        const HTransition ht(h_transitions[x]);
 
                         T* const p_base_seed = seed_line + x;
-                        T const* const p_base_mask = mask_line + x;
+                        const T* const p_base_mask = mask_line + x;
 
                         T* const p_east_seed = p_base_seed + ht.east_delta;
                         T* const p_south_seed = p_base_seed + (seed_stride & vt.south_mask);
                         T* const p_south_west_seed = p_south_seed + ht.west_delta;
                         T* const p_south_east_seed = p_south_seed + ht.east_delta;
 
-                        T const new_val = mask_op(
+                        const T new_val = mask_op(
                                 *p_base_mask,
                                 spread_op(
                                         *p_base_seed,
@@ -485,11 +485,11 @@ namespace imageproc {
 
                         *p_base_seed = new_val;
 
-                        Position<T> const pos(p_base_seed, p_base_mask, x, y);
-                        T const* p_east_mask = p_base_mask + ht.east_delta;
-                        T const* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
-                        T const* p_south_west_mask = p_south_mask + ht.west_delta;
-                        T const* p_south_east_mask = p_south_mask + ht.east_delta;
+                        const Position<T> pos(p_base_seed, p_base_mask, x, y);
+                        const T* p_east_mask = p_base_mask + ht.east_delta;
+                        const T* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
+                        const T* p_south_west_mask = p_south_mask + ht.west_delta;
+                        const T* p_south_east_mask = p_south_mask + ht.east_delta;
 
                         // Eastern neighbor.
                         processNeighbor(
@@ -567,7 +567,7 @@ namespace imageproc {
                                 T* seed,
                                 int seed_stride,
                                 QSize size,
-                                T const* mask,
+                                const T* mask,
                                 int mask_stride) {
         if (size.isEmpty()) {
             return;

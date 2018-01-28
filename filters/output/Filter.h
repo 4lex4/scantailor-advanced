@@ -45,7 +45,7 @@ namespace output {
     DECLARE_NON_COPYABLE(Filter)
 
     public:
-        explicit Filter(PageSelectionAccessor const& page_selection_accessor);
+        explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
         ~Filter() override;
 
@@ -53,28 +53,28 @@ namespace output {
 
         PageView getView() const override;
 
-        void performRelinking(AbstractRelinker const& relinker) override;
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
 
-        QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const override;
+        QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-        void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) override;
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(PageId const& page_id) override;
+        void loadDefaultSettings(const PageId& page_id) override;
 
-        intrusive_ptr<Task> createTask(PageId const& page_id,
+        intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                                       OutputFileNameGenerator const& out_file_name_gen,
+                                       const OutputFileNameGenerator& out_file_name_gen,
                                        bool batch,
                                        bool debug);
 
-        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen);
 
         OptionsWidget* optionsWidget();
 
     private:
-        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
         intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;

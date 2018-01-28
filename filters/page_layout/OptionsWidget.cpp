@@ -30,7 +30,7 @@ using namespace imageproc::constants;
 
 namespace page_layout {
     OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
+                                 const PageSelectionAccessor& page_selection_accessor)
             : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_ignoreMarginChanges(0),
@@ -96,7 +96,7 @@ namespace page_layout {
 
     OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(PageId const& page_id, Margins const& margins_mm, Alignment const& alignment) {
+    void OptionsWidget::preUpdateUI(const PageId& page_id, const Margins& margins_mm, const Alignment& alignment) {
         removeUiConnections();
 
         m_pageId = page_id;
@@ -107,7 +107,7 @@ namespace page_layout {
         m_ignoreMarginChanges = true;
 
         typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv : m_alignmentByButton) {
+        for (const KeyVal& kv : m_alignmentByButton) {
             if (kv.second == m_alignment) {
                 kv.first->setChecked(true);
             }
@@ -158,12 +158,12 @@ namespace page_layout {
         setupUiConnections();
     }
 
-    void OptionsWidget::marginsSetExternally(Margins const& margins_mm) {
+    void OptionsWidget::marginsSetExternally(const Margins& margins_mm) {
         m_marginsMM = margins_mm;
         updateMarginsDisplay();
     }
 
-    void OptionsWidget::updateUnits(Units const units) {
+    void OptionsWidget::updateUnits(const Units units) {
         removeUiConnections();
 
         int decimals;
@@ -194,13 +194,13 @@ namespace page_layout {
         setupUiConnections();
     }
 
-    void OptionsWidget::horMarginsChanged(double const val) {
+    void OptionsWidget::horMarginsChanged(const double val) {
         if (m_ignoreMarginChanges) {
             return;
         }
 
         if (m_leftRightLinked) {
-            ScopedIncDec<int> const ingore_scope(m_ignoreMarginChanges);
+            const ScopedIncDec<int> ingore_scope(m_ignoreMarginChanges);
             leftMarginSpinBox->setValue(val);
             rightMarginSpinBox->setValue(val);
         }
@@ -217,13 +217,13 @@ namespace page_layout {
         emit marginsSetLocally(m_marginsMM);
     }
 
-    void OptionsWidget::vertMarginsChanged(double const val) {
+    void OptionsWidget::vertMarginsChanged(const double val) {
         if (m_ignoreMarginChanges) {
             return;
         }
 
         if (m_topBottomLinked) {
-            ScopedIncDec<int> const ingore_scope(m_ignoreMarginChanges);
+            const ScopedIncDec<int> ingore_scope(m_ignoreMarginChanges);
             topMarginSpinBox->setValue(val);
             bottomMarginSpinBox->setValue(val);
         }
@@ -308,7 +308,7 @@ namespace page_layout {
         auto* const button = dynamic_cast<QToolButton*>(sender());
         assert(button);
 
-        auto const it(m_alignmentByButton.find(button));
+        const auto it(m_alignmentByButton.find(button));
         assert(it != m_alignmentByButton.end());
 
         m_alignment = it->second;
@@ -322,8 +322,8 @@ namespace page_layout {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Margins"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applyMargins(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applyMargins(const std::set<PageId> &))
         );
         dialog->show();
     }
@@ -335,19 +335,19 @@ namespace page_layout {
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Alignment"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applyAlignment(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applyAlignment(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::applyMargins(std::set<PageId> const& pages) {
+    void OptionsWidget::applyMargins(const std::set<PageId>& pages) {
         if (pages.empty()) {
             return;
         }
 
         const bool autoMarginsEnabled = m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
-        for (PageId const& page_id : pages) {
+        for (const PageId& page_id : pages) {
             if (page_id == m_pageId) {
                 continue;
             }
@@ -364,12 +364,12 @@ namespace page_layout {
         emit invalidateAllThumbnails();
     }
 
-    void OptionsWidget::applyAlignment(std::set<PageId> const& pages) {
+    void OptionsWidget::applyAlignment(const std::set<PageId>& pages) {
         if (pages.empty()) {
             return;
         }
 
-        for (PageId const& page_id : pages) {
+        for (const PageId& page_id : pages) {
             if (page_id == m_pageId) {
                 continue;
             }
@@ -381,7 +381,7 @@ namespace page_layout {
     }
 
     void OptionsWidget::updateMarginsDisplay() {
-        ScopedIncDec<int> const ignore_scope(m_ignoreMarginChanges);
+        const ScopedIncDec<int> ignore_scope(m_ignoreMarginChanges);
 
         double topMarginValue = m_marginsMM.top();
         double bottomMarginValue = m_marginsMM.bottom();
@@ -396,12 +396,12 @@ namespace page_layout {
         rightMarginSpinBox->setValue(rightMarginValue);
     }
 
-    void OptionsWidget::updateLinkDisplay(QToolButton* button, bool const linked) {
+    void OptionsWidget::updateLinkDisplay(QToolButton* button, const bool linked) {
         button->setIcon(linked ? m_chainIcon : m_brokenChainIcon);
     }
 
     void OptionsWidget::updateAlignmentButtonsEnabled() {
-        bool const enabled = alignWithOthersCB->isChecked() && (alignmentMode->currentIndex() == 1);
+        const bool enabled = alignWithOthersCB->isChecked() && (alignmentMode->currentIndex() == 1);
 
         alignTopLeftBtn->setEnabled(enabled);
         alignTopBtn->setEnabled(enabled);
@@ -415,7 +415,7 @@ namespace page_layout {
     }
 
     void OptionsWidget::updateMarginsControlsEnabled() {
-        bool const enabled = !m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
+        const bool enabled = !m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
 
         topMarginSpinBox->setEnabled(enabled);
         bottomMarginSpinBox->setEnabled(enabled);
@@ -472,7 +472,7 @@ namespace page_layout {
         );
 
         typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv : m_alignmentByButton) {
+        for (const KeyVal& kv : m_alignmentByButton) {
             connect(
                     kv.first, SIGNAL(clicked()),
                     this, SLOT(alignmentButtonClicked())
@@ -527,7 +527,7 @@ namespace page_layout {
         );
 
         typedef AlignmentByButton::value_type KeyVal;
-        for (KeyVal const& kv : m_alignmentByButton) {
+        for (const KeyVal& kv : m_alignmentByButton) {
             disconnect(
                     kv.first, SIGNAL(clicked()),
                     this, SLOT(alignmentButtonClicked())
@@ -543,11 +543,11 @@ namespace page_layout {
         return m_topBottomLinked;
     }
 
-    Margins const& OptionsWidget::marginsMM() const {
+    const Margins& OptionsWidget::marginsMM() const {
         return m_marginsMM;
     }
 
-    Alignment const& OptionsWidget::alignment() const {
+    const Alignment& OptionsWidget::alignment() const {
         return m_alignment;
     }
 }  // namespace page_layout

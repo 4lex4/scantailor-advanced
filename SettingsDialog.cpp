@@ -40,7 +40,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.enableOpenglCb->setChecked(
                 settings.value("settings/enable_opengl", false).toBool()
         );
-        QString const openglDevicePattern = ui.openglDeviceLabel->text();
+        const QString openglDevicePattern = ui.openglDeviceLabel->text();
         ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
     }
 
@@ -118,13 +118,13 @@ void SettingsDialog::initLanguageList(const QString& locale) {
     ui.languageBox->clear();
     ui.languageBox->addItem(QLocale::languageToString(QLocale("en").language()), "en");
 
-    QStringList const translation_dirs(
+    const QStringList translation_dirs(
             QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
     );
 
     const QStringList language_file_filter("scantailor_*.qm");
     QStringList fileNames;
-    for (QString const& path : translation_dirs) {
+    for (const QString& path : translation_dirs) {
         fileNames += QDir(path).entryList(language_file_filter);
     }
 

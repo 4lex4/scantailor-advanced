@@ -33,9 +33,9 @@ namespace deskew {
     public:
         // Member-wise copying is OK.
 
-        Params(double deskew_angle_deg, Dependencies const& deps, AutoManualMode mode);
+        Params(double deskew_angle_deg, const Dependencies& deps, AutoManualMode mode);
 
-        explicit Params(QDomElement const& deskew_el);
+        explicit Params(const QDomElement& deskew_el);
 
         ~Params();
 
@@ -47,11 +47,11 @@ namespace deskew {
 
         bool isDeviant(double std, double max_dev) const;
 
-        Dependencies const& dependencies() const;
+        const Dependencies& dependencies() const;
 
         AutoManualMode mode() const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         double m_deskewAngleDeg;

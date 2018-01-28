@@ -11,13 +11,13 @@ namespace output {
               whiteOnBlackAutoDetected(false) {
     }
 
-    OutputProcessingParams::OutputProcessingParams(QDomElement const& el)
+    OutputProcessingParams::OutputProcessingParams(const QDomElement& el)
             : whiteOnBlackMode(el.attribute("whiteOnBlackMode") == "1"),
               autoZonesFound(el.attribute("autoZonesFound") == "1"),
               whiteOnBlackAutoDetected(el.attribute("whiteOnBlackAutoDetected") == "1") {
     }
 
-    QDomElement OutputProcessingParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement OutputProcessingParams::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("whiteOnBlackMode", whiteOnBlackMode ? "1" : "0");
         el.setAttribute("autoZonesFound", autoZonesFound ? "1" : "0");
@@ -26,13 +26,13 @@ namespace output {
         return el;
     }
 
-    bool OutputProcessingParams::operator==(OutputProcessingParams const& other) const {
+    bool OutputProcessingParams::operator==(const OutputProcessingParams& other) const {
         return (whiteOnBlackMode == other.whiteOnBlackMode)
                && (autoZonesFound == other.autoZonesFound)
                && (whiteOnBlackAutoDetected == other.whiteOnBlackAutoDetected);
     }
 
-    bool OutputProcessingParams::operator!=(OutputProcessingParams const& other) const {
+    bool OutputProcessingParams::operator!=(const OutputProcessingParams& other) const {
         return !(*this == other);
     }
 

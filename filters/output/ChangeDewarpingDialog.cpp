@@ -23,9 +23,9 @@
 
 namespace output {
     ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
-                                                 PageId const& cur_page,
-                                                 DewarpingOptions const& dewarpingOptions,
-                                                 PageSelectionAccessor const& page_selection_accessor)
+                                                 const PageId& cur_page,
+                                                 const DewarpingOptions& dewarpingOptions,
+                                                 const PageSelectionAccessor& page_selection_accessor)
             : QDialog(parent),
               m_pages(page_selection_accessor.allPages()),
               m_selectedPages(page_selection_accessor.selectedPages()),

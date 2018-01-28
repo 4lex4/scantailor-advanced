@@ -31,11 +31,11 @@ class PropertyFactory {
 public:
     virtual ~PropertyFactory() = default;
 
-    typedef intrusive_ptr<Property>(* PropertyConstructor)(QDomElement const& el);
+    typedef intrusive_ptr<Property>(* PropertyConstructor)(const QDomElement& el);
 
-    void registerProperty(QString const& property, PropertyConstructor constructor);
+    void registerProperty(const QString& property, PropertyConstructor constructor);
 
-    intrusive_ptr<Property> construct(QDomElement const& el) const;
+    intrusive_ptr<Property> construct(const QDomElement& el) const;
 
 private:
     typedef std::map<QString, PropertyConstructor> Registry;

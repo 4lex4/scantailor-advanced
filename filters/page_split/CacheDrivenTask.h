@@ -47,7 +47,7 @@ namespace page_split {
         ~CacheDrivenTask() override;
 
         void
-        process(PageInfo const& page_info, AbstractFilterDataCollector* collector, ImageTransformation const& xform);
+        process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
     private:
         intrusive_ptr<deskew::CacheDrivenTask> m_ptrNextTask;

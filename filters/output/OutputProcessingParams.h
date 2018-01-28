@@ -11,13 +11,13 @@ namespace output {
     public:
         OutputProcessingParams();
 
-        explicit OutputProcessingParams(QDomElement const& el);
+        explicit OutputProcessingParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(OutputProcessingParams const& other) const;
+        bool operator==(const OutputProcessingParams& other) const;
 
-        bool operator!=(OutputProcessingParams const& other) const;
+        bool operator!=(const OutputProcessingParams& other) const;
 
         bool isWhiteOnBlackAutoDetected() const;
 

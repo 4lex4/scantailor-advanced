@@ -15,7 +15,7 @@ namespace output {
         setupUiConnections();
     }
 
-    void SauvolaBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
+    void SauvolaBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
         const Params params(m_ptrSettings->getParams(page_id));

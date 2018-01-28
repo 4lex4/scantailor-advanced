@@ -24,7 +24,7 @@
 
 class ThumbnailFactory::Collector : public ThumbnailCollector {
 public:
-    Collector(intrusive_ptr<ThumbnailPixmapCache> cache, QSizeF const& max_size);
+    Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size);
 
     void processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) override;
 
@@ -44,7 +44,7 @@ private:
 
 
 ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
-                                   QSizeF const& max_size,
+                                   const QSizeF& max_size,
                                    intrusive_ptr<CompositeCacheDrivenTask> task)
         : m_ptrPixmapCache(std::move(pixmap_cache)),
           m_maxSize(max_size),
@@ -54,7 +54,7 @@ ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_ca
 ThumbnailFactory::~ThumbnailFactory() = default;
 
 std::unique_ptr<QGraphicsItem>
-ThumbnailFactory::get(PageInfo const& page_info) {
+ThumbnailFactory::get(const PageInfo& page_info) {
     Collector collector(m_ptrPixmapCache, m_maxSize);
     m_ptrTask->process(page_info, &collector);
 
@@ -63,7 +63,7 @@ ThumbnailFactory::get(PageInfo const& page_info) {
 
 /*======================= ThumbnailFactory::Collector ======================*/
 
-ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> cache, QSizeF const& max_size)
+ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size)
         : m_ptrCache(std::move(cache)),
           m_maxSize(max_size) {
 }

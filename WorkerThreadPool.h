@@ -44,11 +44,11 @@ public:
 
     bool hasSpareCapacity() const;
 
-    void submitTask(BackgroundTaskPtr const& task);
+    void submitTask(const BackgroundTaskPtr& task);
 
 signals:
 
-    void taskResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
+    void taskResult(const BackgroundTaskPtr& task, const FilterResultPtr& result);
 
 private:
     class TaskResultEvent;

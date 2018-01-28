@@ -38,15 +38,15 @@ namespace imageproc {
  */
 class DebugImages {
 public:
-    void add(QImage const& image,
-             QString const& label,
-             boost::function<QWidget*(QImage const&)> const& image_view_factory
-             = boost::function<QWidget*(QImage const&)>());
+    void add(const QImage& image,
+             const QString& label,
+             boost::function<QWidget*(const QImage&)>const & image_view_factory
+             = boost::function<QWidget*(const QImage&)>());
 
-    void add(imageproc::BinaryImage const& image,
-             QString const& label,
-             boost::function<QWidget*(QImage const&)> const& image_view_factory
-             = boost::function<QWidget*(QImage const&)>());
+    void add(const imageproc::BinaryImage& image,
+             const QString& label,
+             boost::function<QWidget*(const QImage&)>const & image_view_factory
+             = boost::function<QWidget*(const QImage&)>());
 
     bool empty() const {
         return m_sequence.empty();
@@ -60,15 +60,15 @@ public:
      * Returns a null AutoRemovingFile if image sequence is empty.
      */
     AutoRemovingFile
-    retrieveNext(QString* label = nullptr, boost::function<QWidget*(QImage const&)>* image_view_factory = nullptr);
+    retrieveNext(QString* label = nullptr, boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
 
 private:
     struct Item : public ref_countable {
         AutoRemovingFile file;
         QString label;
-        boost::function<QWidget*(QImage const&)> imageViewFactory;
+        boost::function<QWidget*(const QImage&)> imageViewFactory;
 
-        Item(AutoRemovingFile f, QString const& l, boost::function<QWidget*(QImage const&)> const& imf)
+        Item(AutoRemovingFile f, const QString& l, boost::function<QWidget*(const QImage&)>const & imf)
                 : file(f),
                   label(l),
                   imageViewFactory(imf) {

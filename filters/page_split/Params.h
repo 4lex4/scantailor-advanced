@@ -33,25 +33,25 @@ namespace page_split {
     public:
         // Member-wise copying is OK.
 
-        Params(PageLayout const& layout, Dependencies const& deps, AutoManualMode split_line_mode);
+        Params(const PageLayout& layout, const Dependencies& deps, AutoManualMode split_line_mode);
 
-        explicit Params(QDomElement const& el);
+        explicit Params(const QDomElement& el);
 
         ~Params();
 
-        PageLayout const& pageLayout() const;
+        const PageLayout& pageLayout() const;
 
-        void setPageLayout(PageLayout const& layout);
+        void setPageLayout(const PageLayout& layout);
 
-        Dependencies const& dependencies() const;
+        const Dependencies& dependencies() const;
 
-        void setDependencies(Dependencies const& deps);
+        void setDependencies(const Dependencies& deps);
 
         AutoManualMode splitLineMode() const;
 
         void setSplitLineMode(AutoManualMode mode);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         PageLayout m_layout;

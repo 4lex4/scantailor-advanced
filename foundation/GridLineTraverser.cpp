@@ -19,9 +19,9 @@
 #include "GridLineTraverser.h"
 #include "LineIntersectionScalar.h"
 
-GridLineTraverser::GridLineTraverser(QLineF const& line) {
-    QPoint const p1(line.p1().toPoint());
-    QPoint const p2(line.p2().toPoint());
+GridLineTraverser::GridLineTraverser(const QLineF& line) {
+    const QPoint p1(line.p1().toPoint());
+    const QPoint p2(line.p2().toPoint());
     int h_spans, v_spans, num_spans;
     double s1 = 0.0, s2 = 0.0;
     if ((h_spans = abs(p1.x() - p2.x())) > (v_spans = abs(p1.y() - p2.y()))) {
@@ -44,7 +44,7 @@ GridLineTraverser::GridLineTraverser(QLineF const& line) {
 }
 
 QPoint GridLineTraverser::next() {
-    QPointF const pt(m_line.pointAt(m_stopsDone * m_dt));
+    const QPointF pt(m_line.pointAt(m_stopsDone * m_dt));
     ++m_stopsDone;
 
     return pt.toPoint();

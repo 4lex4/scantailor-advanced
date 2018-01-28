@@ -31,20 +31,20 @@
 
 namespace output {
     CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
-                                     OutputFileNameGenerator const& out_file_name_gen)
+                                     const OutputFileNameGenerator& out_file_name_gen)
             : m_ptrSettings(std::move(settings)),
               m_outFileNameGen(out_file_name_gen) {
     }
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform,
-                                  QPolygonF const& content_rect_phys) {
+                                  const ImageTransformation& xform,
+                                  const QPolygonF& content_rect_phys) {
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
-            Params const params(m_ptrSettings->getParams(page_info.id()));
+            const QString out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
+            const Params params(m_ptrSettings->getParams(page_info.id()));
 
             ImageTransformation new_xform(xform);
             new_xform.postScaleToDpi(params.outputDpi());
@@ -61,13 +61,13 @@ namespace output {
                     break;
                 }
 
-                OutputGenerator const generator(
+                const OutputGenerator generator(
                         params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.pictureShapeOptions(), params.dewarpingOptions(),
                         m_ptrSettings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
                         new_xform, content_rect_phys
                 );
-                OutputImageParams const new_output_image_params(
+                const OutputImageParams new_output_image_params(
                         generator.outputImageSize(), generator.outputContentRect(),
                         new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.dewarpingOptions(), params.distortionModel(),
@@ -80,19 +80,19 @@ namespace output {
                     break;
                 }
 
-                ZoneSet const new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
+                const ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
                 if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
                     need_reprocess = true;
                     break;
                 }
 
-                ZoneSet const new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
+                const ZoneSet new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
                 if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
                     need_reprocess = true;
                     break;
                 }
 
-                QFileInfo const out_file_info(out_file_path);
+                const QFileInfo out_file_info(out_file_path);
 
                 if (!out_file_info.exists()) {
                     need_reprocess = true;
@@ -116,7 +116,7 @@ namespace output {
                         )
                 );
             } else {
-                ImageTransformation const out_xform(
+                const ImageTransformation out_xform(
                         new_xform.resultingRect(), params.outputDpi()
                 );
 

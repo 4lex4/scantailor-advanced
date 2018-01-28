@@ -22,14 +22,14 @@
 
 using namespace imageproc;
 
-FilterData::FilterData(QImage const& image)
+FilterData::FilterData(const QImage& image)
         : m_origImage(image),
           m_grayImage(toGrayscale(m_origImage)),
           m_xform(image.rect(), Dpm(image)),
           m_bwThreshold(BinaryThreshold::otsuThreshold(m_grayImage)) {
 }
 
-FilterData::FilterData(FilterData const& other, ImageTransformation const& xform)
+FilterData::FilterData(const FilterData& other, const ImageTransformation& xform)
         : m_origImage(other.m_origImage),
           m_grayImage(other.m_grayImage),
           m_xform(xform),

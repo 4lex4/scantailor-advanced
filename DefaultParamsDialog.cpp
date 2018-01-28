@@ -366,12 +366,12 @@ void DefaultParamsDialog::setupUiConnections() {
     connect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
     connect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
     connect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-    connect(lighterThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setLighterThreshold()));
-    connect(darkerThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setDarkerThreshold()));
+    connect(lighterThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setLighterThreshold()));
+    connect(darkerThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setDarkerThreshold()));
     connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
     connect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
     connect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-    connect(dpiSelector, SIGNAL(editTextChanged(QString const &)), this, SLOT(dpiEditTextChanged(QString const &)));
+    connect(dpiSelector, SIGNAL(editTextChanged(const QString &)), this, SLOT(dpiEditTextChanged(const QString &)));
     connect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     connect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     connect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
@@ -403,12 +403,12 @@ void DefaultParamsDialog::removeUiConnections() {
     disconnect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
     disconnect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
     disconnect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-    disconnect(lighterThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setLighterThreshold()));
-    disconnect(darkerThresholdLink, SIGNAL(linkActivated(QString const &)), this, SLOT(setDarkerThreshold()));
+    disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setLighterThreshold()));
+    disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setDarkerThreshold()));
     disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
     disconnect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
     disconnect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-    disconnect(dpiSelector, SIGNAL(editTextChanged(QString const &)), this, SLOT(dpiEditTextChanged(QString const &)));
+    disconnect(dpiSelector, SIGNAL(editTextChanged(const QString &)), this, SLOT(dpiEditTextChanged(const QString &)));
     disconnect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     disconnect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     disconnect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
@@ -441,7 +441,7 @@ void DefaultParamsDialog::setRotation(const OrthogonalRotation& rotation) {
 }
 
 void DefaultParamsDialog::setRotationPixmap() {
-    char const* path = nullptr;
+    const char* path = nullptr;
 
     switch (orthogonalRotation.toDegrees()) {
         case 0:
@@ -802,7 +802,7 @@ void DefaultParamsDialog::topBottomLinkClicked() {
     topBottomLinkEnabled = !topBottomLinkEnabled;
     setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
     if (topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
-        double const new_margin = std::min(
+        const double new_margin = std::min(
                 topMarginSpinBox->value(), bottomMarginSpinBox->value()
         );
         topMarginSpinBox->setValue(new_margin);
@@ -814,7 +814,7 @@ void DefaultParamsDialog::leftRightLinkClicked() {
     leftRightLinkEnabled = !leftRightLinkEnabled;
     setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
     if (leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
-        double const new_margin = std::min(
+        const double new_margin = std::min(
                 leftMarginSpinBox->value(), rightMarginSpinBox->value()
         );
         leftMarginSpinBox->setValue(new_margin);
@@ -845,13 +845,13 @@ void DefaultParamsDialog::vertMarginsChanged(double val) {
 }
 
 void DefaultParamsDialog::thresholdSliderValueChanged(int value) {
-    QString const tooltip_text(QString::number(value));
+    const QString tooltip_text(QString::number(value));
     thresholdSlider->setToolTip(tooltip_text);
 
     thresholLabel->setText(QString::number(value));
 
     // Show the tooltip immediately.
-    QPoint const center(thresholdSlider->rect().center());
+    const QPoint center(thresholdSlider->rect().center());
     QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
     tooltip_pos.setY(center.y());
     tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
@@ -894,11 +894,11 @@ void DefaultParamsDialog::dpiEditTextChanged(const QString& text) {
 }
 
 void DefaultParamsDialog::depthPerceptionChangedSlot(const int val) {
-    QString const tooltip_text(QString::number(0.1 * val));
+    const QString tooltip_text(QString::number(0.1 * val));
     depthPerceptionSlider->setToolTip(tooltip_text);
 
     // Show the tooltip immediately.
-    QPoint const center(depthPerceptionSlider->rect().center());
+    const QPoint center(depthPerceptionSlider->rect().center());
     QPoint tooltip_pos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
     tooltip_pos.setY(center.y());
     tooltip_pos.setX(qBound(0, tooltip_pos.x(), depthPerceptionSlider->width()));

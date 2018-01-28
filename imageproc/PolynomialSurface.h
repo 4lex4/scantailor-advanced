@@ -50,7 +50,7 @@ namespace imageproc {
          *       pixels will be fine.  Once built, the polynomial surface
          *       may then be rendered in the original size, if necessary.
          */
-        PolynomialSurface(int hor_degree, int vert_degree, GrayImage const& src);
+        PolynomialSurface(int hor_degree, int vert_degree, const GrayImage& src);
 
         /**
          * \brief Calculate a polynomial that approximates portions of the given image.
@@ -71,14 +71,14 @@ namespace imageproc {
          *       pixels will be fine.  Once built, the polynomial surface
          *       may then rendered in the original size, if necessary.
          */
-        PolynomialSurface(int hor_degree, int vert_degree, GrayImage const& src, BinaryImage const& mask);
+        PolynomialSurface(int hor_degree, int vert_degree, const GrayImage& src, const BinaryImage& mask);
 
         /**
          * \brief Visualizes the polynomial surface as a grayscale image.
          *
          * The surface will be stretched / shrunk to fit the new size.
          */
-        GrayImage render(QSize const& size) const;
+        GrayImage render(const QSize& size) const;
 
     private:
         void maybeReduceDegrees(int num_data_points);
@@ -87,14 +87,14 @@ namespace imageproc {
 
         static double calcScale(int dimension);
 
-        static void prepareDataForLeastSquares(GrayImage const& image,
+        static void prepareDataForLeastSquares(const GrayImage& image,
                                                MatT<double>& AtA,
                                                VecT<double>& Atb,
                                                int h_degree,
                                                int v_degree);
 
-        static void prepareDataForLeastSquares(GrayImage const& image,
-                                               BinaryImage const& mask,
+        static void prepareDataForLeastSquares(const GrayImage& image,
+                                               const BinaryImage& mask,
                                                MatT<double>& AtA,
                                                VecT<double>& Atb,
                                                int h_degree,

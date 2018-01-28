@@ -22,26 +22,26 @@
 
 namespace imageproc {
     namespace {
-        int calcNumTerms(int const hor_degree, int const vert_degree) {
+        int calcNumTerms(const int hor_degree, const int vert_degree) {
             return (hor_degree + 1) * (vert_degree + 1);
         }
 
         class Kernel : public SavGolKernel {
         public:
-            Kernel(QSize const& size, QPoint const& origin, int hor_degree, int vert_degree)
+            Kernel(const QSize& size, const QPoint& origin, int hor_degree, int vert_degree)
                     : SavGolKernel(size, origin, hor_degree, vert_degree) {
             }
 
-            void convolve(uint8_t* dst, uint8_t const* src_top_left, int src_bpl) const;
+            void convolve(uint8_t* dst, const uint8_t* src_top_left, int src_bpl) const;
         };
 
 
-        inline void Kernel::convolve(uint8_t* dst, uint8_t const* src_top_left, int src_bpl) const {
-            uint8_t const* p_src = src_top_left;
-            float const* p_kernel = data();
+        inline void Kernel::convolve(uint8_t* dst, const uint8_t* src_top_left, int src_bpl) const {
+            const uint8_t* p_src = src_top_left;
+            const float* p_kernel = data();
             float sum = 0.5;  // For rounding purposes.
-            int const w = width();
-            int const h = height();
+            const int w = width();
+            const int h = height();
 
             for (int y = 0; y < h; ++y, p_src += src_bpl) {
                 for (int x = 0; x < w; ++x) {
@@ -50,18 +50,18 @@ namespace imageproc {
                 }
             }
 
-            auto const val = static_cast<int>(sum);
+            const auto val = static_cast<int>(sum);
             *dst = static_cast<uint8_t>(qBound(0, val, 255));
         }
 
-        QImage savGolFilterGrayToGray(QImage const& src, QSize const& window_size, int const hor_degree,
-                                      int const vert_degree) {
-            int const width = src.width();
-            int const height = src.height();
+        QImage savGolFilterGrayToGray(const QImage& src, const QSize& window_size, const int hor_degree,
+                                      const int vert_degree) {
+            const int width = src.width();
+            const int height = src.height();
 
             // Kernel width and height.
-            int const kw = window_size.width();
-            int const kh = window_size.height();
+            const int kw = window_size.width();
+            const int kh = window_size.height();
 
             if ((kw > width) || (kh > height)) {
                 return src;
@@ -77,7 +77,7 @@ namespace imageproc {
      */
 
             // Co-ordinates of the central point (C) of the kernel.
-            QPoint const k_center(kw / 2, kh / 2);
+            const QPoint k_center(kw / 2, kh / 2);
 
             // Origin is the current hot spot of the kernel.
             // Normally it's at k_center, but sometimes we move
@@ -86,18 +86,18 @@ namespace imageproc {
             QPoint k_origin;
 
             // Length of the top segment (T) of the kernel.
-            int const k_top = k_center.y();
+            const int k_top = k_center.y();
 
             // Length of the bottom segment (B) of the kernel.
-            int const k_bottom = kh - k_top - 1;
+            const int k_bottom = kh - k_top - 1;
 
             // Length of the left segment (L) of the kernel.
-            int const k_left = k_center.x();
+            const int k_left = k_center.x();
             // Length of the right segment (R) of the kernel.
-            int const k_right = kw - k_left - 1;
+            const int k_right = kw - k_left - 1;
 
-            uint8_t const* const src_data = src.bits();
-            int const src_bpl = src.bytesPerLine();
+            const uint8_t* const src_data = src.bits();
+            const int src_bpl = src.bytesPerLine();
 
             QImage dst(width, height, QImage::Format_Indexed8);
             dst.setColorTable(createGrayscalePalette());
@@ -106,9 +106,9 @@ namespace imageproc {
             }
 
             uint8_t* const dst_data = dst.bits();
-            int const dst_bpl = dst.bytesPerLine();
+            const int dst_bpl = dst.bytesPerLine();
             // Top-left corner.
-            uint8_t const* src_line = src_data;
+            const uint8_t* src_line = src_data;
             uint8_t* dst_line = dst_data;
             Kernel kernel(window_size, QPoint(0, 0), hor_degree, vert_degree);
             for (int y = 0; y < k_top; ++y, dst_line += dst_bpl) {
@@ -159,20 +159,20 @@ namespace imageproc {
                     }
 #else
             // Take advantage of Savitzky-Golay filter being separable.
-            SavGolKernel const hor_kernel(
+            const SavGolKernel hor_kernel(
                     QSize(window_size.width(), 1),
                     QPoint(k_center.x(), 0), hor_degree, 0
             );
-            SavGolKernel const vert_kernel(
+            const SavGolKernel vert_kernel(
                     QSize(1, window_size.height()),
                     QPoint(0, k_center.y()), 0, vert_degree
             );
 
-            int const shift = kw - 1;
+            const int shift = kw - 1;
 
             // Allocate a 16-byte aligned temporary storage.
             // That may help the compiler to emit efficient SSE code.
-            int const temp_stride = (width - shift + 3) & ~3;
+            const int temp_stride = (width - shift + 3) & ~3;
             AlignedArray<float, 4> temp_array(temp_stride * height);
             // Horizontal pass.
             src_line = src_data - shift;
@@ -181,7 +181,7 @@ namespace imageproc {
                 for (int i = shift; i < width; ++i) {
                     float sum = 0.0f;
 
-                    uint8_t const* src = src_line + i;
+                    const uint8_t* src = src_line + i;
                     for (int j = 0; j < kw; ++j) {
                         sum += src[j] * hor_kernel[j];
                     }
@@ -201,7 +201,7 @@ namespace imageproc {
                     for (int j = 0; j < kh; ++j, tmp += temp_stride) {
                         sum += *tmp * vert_kernel[j];
                     }
-                    auto const val = static_cast<int>(sum);
+                    const auto val = static_cast<int>(sum);
                     dst_line[i] = static_cast<uint8_t>(qBound(0, val, 255));
                 }
 
@@ -284,7 +284,7 @@ namespace imageproc {
         }  // savGolFilterGrayToGray
     }      // namespace
 
-    QImage savGolFilter(QImage const& src, QSize const& window_size, int const hor_degree, int const vert_degree) {
+    QImage savGolFilter(const QImage& src, const QSize& window_size, const int hor_degree, const int vert_degree) {
         if ((hor_degree < 0) || (vert_degree < 0)) {
             throw std::invalid_argument("savGolFilter: invalid polynomial degree");
         }

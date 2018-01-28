@@ -214,7 +214,7 @@ public:
 
     explicit DefaultParams(const QDomElement& el);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     const FixOrientationParams& getFixOrientationParams() const;
 

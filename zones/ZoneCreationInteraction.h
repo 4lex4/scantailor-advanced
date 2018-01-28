@@ -42,7 +42,7 @@ protected:
         return m_rContext;
     }
 
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 

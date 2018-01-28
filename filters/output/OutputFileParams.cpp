@@ -27,7 +27,7 @@ namespace output {
               m_mtime(0) {
     }
 
-    OutputFileParams::OutputFileParams(QFileInfo const& file_info)
+    OutputFileParams::OutputFileParams(const QFileInfo& file_info)
             : m_size(-1),
               m_mtime(0) {
         if (file_info.exists()) {
@@ -36,7 +36,7 @@ namespace output {
         }
     }
 
-    OutputFileParams::OutputFileParams(QDomElement const& el)
+    OutputFileParams::OutputFileParams(const QDomElement& el)
             : m_size(-1),
               m_mtime(0) {
         if (el.hasAttribute("size")) {
@@ -47,7 +47,7 @@ namespace output {
         }
     }
 
-    QDomElement OutputFileParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement OutputFileParams::toXml(QDomDocument& doc, const QString& name) const {
         if (isValid()) {
             QDomElement el(doc.createElement(name));
             el.setAttribute("size", QString::number(m_size));
@@ -59,12 +59,12 @@ namespace output {
         }
     }
 
-    bool OutputFileParams::matches(OutputFileParams const& other) const {
+    bool OutputFileParams::matches(const OutputFileParams& other) const {
         return isValid() && other.isValid()
                && m_size == other.m_size  /* && m_mtime == other.m_mtime*/;
     }
 
-    bool const OutputFileParams::isValid() const {
+    const bool OutputFileParams::isValid() const {
         return m_size >= 0;
     }
 }  // namespace output

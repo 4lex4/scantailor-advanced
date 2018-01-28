@@ -23,10 +23,10 @@
 #include <QRect>
 #include <QRectF>
 
-void PixmapRenderer::drawPixmap(QPainter& painter, QPixmap const& pixmap) {
-    QTransform const inv_transform(painter.worldTransform().inverted());
-    QRectF const src_rect(inv_transform.map(QRectF(painter.viewport())).boundingRect());
-    QRectF const bounded_src_rect(src_rect.intersected(pixmap.rect()));
+void PixmapRenderer::drawPixmap(QPainter& painter, const QPixmap& pixmap) {
+    const QTransform inv_transform(painter.worldTransform().inverted());
+    const QRectF src_rect(inv_transform.map(QRectF(painter.viewport())).boundingRect());
+    const QRectF bounded_src_rect(src_rect.intersected(pixmap.rect()));
     painter.drawPixmap(bounded_src_rect, pixmap, bounded_src_rect);
 }
 

@@ -29,9 +29,9 @@ namespace page_split {
     public:
         explicit OrderBySplitTypeProvider(intrusive_ptr<Settings> settings);
 
-        bool precedes(PageId const& lhs_page,
+        bool precedes(const PageId& lhs_page,
                       bool lhs_incomplete,
-                      PageId const& rhs_page,
+                      const PageId& rhs_page,
                       bool rhs_incomplete) const override;
 
     private:

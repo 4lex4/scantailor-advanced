@@ -38,11 +38,11 @@ namespace page_layout {
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform,
-                                  QRectF const& content_rect) {
-        std::unique_ptr<Params> const params(
+                                  const ImageTransformation& xform,
+                                  const QRectF& content_rect) {
+        const std::unique_ptr<Params> params(
                 m_ptrSettings->getPageParams(page_info.id())
         );
         if (!params || !params->contentSizeMM().isValid()) {
@@ -61,13 +61,13 @@ namespace page_layout {
             return;
         }
 
-        QRectF const adapted_content_rect(
+        const QRectF adapted_content_rect(
                 Utils::adaptContentRect(xform, content_rect)
         );
-        QPolygonF const content_rect_phys(
+        const QPolygonF content_rect_phys(
                 xform.transformBack().map(adapted_content_rect)
         );
-        QPolygonF const page_rect_phys(
+        const QPolygonF page_rect_phys(
                 Utils::calcPageRectPhys(
                         xform, content_rect_phys, *params,
                         m_ptrSettings->getAggregateHardSizeMM(), m_ptrSettings->getContentRect()

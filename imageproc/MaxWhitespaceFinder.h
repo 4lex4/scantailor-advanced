@@ -56,7 +56,7 @@ namespace imageproc {
          * \param img The image to find white regions in.
          * \param min_size The minimum dimensions of regions to find.
          */
-        explicit MaxWhitespaceFinder(BinaryImage const& img, QSize min_size = QSize(1, 1));
+        explicit MaxWhitespaceFinder(const BinaryImage& img, QSize min_size = QSize(1, 1));
 
         /**
      * \brief Constructor with customized rectangle ordering.
@@ -84,7 +84,7 @@ namespace imageproc {
      * \param min_size The minimum dimensions of regions to find.
      */
         template<typename QualityCompare>
-        MaxWhitespaceFinder(QualityCompare comp, BinaryImage const& img, QSize min_size = QSize(1, 1));
+        MaxWhitespaceFinder(QualityCompare comp, const BinaryImage& img, QSize min_size = QSize(1, 1));
 
         /**
          * \brief Mark a region as black.
@@ -94,7 +94,7 @@ namespace imageproc {
          * \param rect The rectangle to mark as black.  It may exceed
          *        the image area.
          */
-        void addObstacle(QRect const& obstacle);
+        void addObstacle(const QRect& obstacle);
 
         /**
          * \brief Find the next white rectangle.
@@ -123,28 +123,28 @@ namespace imageproc {
     private:
         class Region {
         public:
-            Region(unsigned known_new_obstacles, QRect const& bounds);
+            Region(unsigned known_new_obstacles, const QRect& bounds);
 
             /**
              * A shallow copy.  Copies everything except the obstacle list.
              */
-            Region(Region const& other);
+            Region(const Region& other);
 
-            QRect const& bounds() const {
+            const QRect& bounds() const {
                 return m_bounds;
             }
 
-            std::vector<QRect> const& obstacles() const {
+            const std::vector<QRect>& obstacles() const {
                 return m_obstacles;
             }
 
-            void addObstacle(QRect const& obstacle) {
+            void addObstacle(const QRect& obstacle) {
                 m_obstacles.push_back(obstacle);
             }
 
-            void addObstacles(Region const& other_region);
+            void addObstacles(const Region& other_region);
 
-            void addNewObstacles(std::vector<QRect> const& new_obstacles);
+            void addNewObstacles(const std::vector<QRect>& new_obstacles);
 
             void swap(Region& other);
 
@@ -153,7 +153,7 @@ namespace imageproc {
             }
 
         private:
-            Region& operator=(Region const&);
+            Region& operator=(const Region&);
 
             unsigned m_knownNewObstacles;
             QRect m_bounds;
@@ -161,15 +161,15 @@ namespace imageproc {
         };
 
 
-        void init(BinaryImage const& img);
+        void init(const BinaryImage& img);
 
-        void subdivideUsingObstacles(Region const& region);
+        void subdivideUsingObstacles(const Region& region);
 
-        void subdivideUsingRaster(Region const& region);
+        void subdivideUsingRaster(const Region& region);
 
-        void subdivide(Region const& region, QRect bounds, QRect pivot);
+        void subdivide(const Region& region, QRect bounds, QRect pivot);
 
-        QRect findPivotObstacle(Region const& region) const;
+        QRect findPivotObstacle(const Region& region) const;
 
         QPoint findBlackPixelCloseToCenter(QRect non_white_rect) const;
 
@@ -231,7 +231,7 @@ namespace imageproc {
                         : m_delegate(delegate) {
                 }
 
-                bool operator()(Region const& lhs, Region const& rhs) const {
+                bool operator()(const Region& lhs, const Region& rhs) const {
                     return m_delegate(lhs.bounds(), rhs.bounds());
                 }
 
@@ -267,8 +267,8 @@ namespace imageproc {
  * them instead.  We need this to avoid copying the obstacle list over and over.
  */
         template<typename QualityCompare>
-        void PriorityStorageImpl<QualityCompare>::pushHeap(std::deque<Region>::iterator const begin,
-                                                           std::deque<Region>::iterator const end) {
+        void PriorityStorageImpl<QualityCompare>::pushHeap(const std::deque<Region>::iterator begin,
+                                                           const std::deque<Region>::iterator end) {
             typedef std::vector<Region>::iterator::difference_type Distance;
 
             Distance valueIdx = end - begin - 1;
@@ -288,20 +288,20 @@ namespace imageproc {
  * them instead.  We need this to avoid copying the obstacle list over and over.
  */
         template<typename QualityCompare>
-        void PriorityStorageImpl<QualityCompare>::popHeap(std::deque<Region>::iterator const begin,
-                                                          std::deque<Region>::iterator const end) {
+        void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iterator begin,
+                                                          const std::deque<Region>::iterator end) {
             // Swap the first (top) and the last elements.
             begin->swap(*(end - 1));
 
             typedef std::vector<Region>::iterator::difference_type Distance;
-            Distance const new_length = end - begin - 1;
+            const Distance new_length = end - begin - 1;
             Distance nodeIdx = 0;
             Distance secondChildIdx = 2 * (nodeIdx + 1);
 
             // Lower the new top node all the way down the tree
             // by continuously swapping it with the biggest of its children.
             while (secondChildIdx < new_length) {
-                Distance const firstChildIdx = secondChildIdx - 1;
+                const Distance firstChildIdx = secondChildIdx - 1;
                 Distance biggestChildIdx = firstChildIdx;
 
                 if (m_qualityLess(*(begin + firstChildIdx),
@@ -316,7 +316,7 @@ namespace imageproc {
             }
             if (secondChildIdx == new_length) {
                 // Swap it with its only child.
-                Distance const firstChildIdx = secondChildIdx - 1;
+                const Distance firstChildIdx = secondChildIdx - 1;
                 (begin + nodeIdx)->swap(*(begin + firstChildIdx));
                 nodeIdx = firstChildIdx;
             }
@@ -329,7 +329,7 @@ namespace imageproc {
     }      // namespace max_whitespace_finder
 
     template<typename QualityCompare>
-    MaxWhitespaceFinder::MaxWhitespaceFinder(QualityCompare const comp, BinaryImage const& img, QSize const min_size)
+    MaxWhitespaceFinder::MaxWhitespaceFinder(const QualityCompare comp, const BinaryImage& img, const QSize min_size)
             : m_integralImg(img.size()),
               m_ptrQueuedRegions(
                       new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),

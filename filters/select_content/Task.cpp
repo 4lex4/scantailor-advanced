@@ -39,11 +39,11 @@ namespace select_content {
     class Task::UiUpdater : public FilterResult {
     public:
         UiUpdater(intrusive_ptr<Filter> filter,
-                  PageId const& page_id,
+                  const PageId& page_id,
                   std::unique_ptr<DebugImages> dbg,
-                  QImage const& image,
-                  ImageTransformation const& xform,
-                  OptionsWidget::UiData const& ui_data,
+                  const QImage& image,
+                  const ImageTransformation& xform,
+                  const OptionsWidget::UiData& ui_data,
                   bool batch);
 
         void updateUI(FilterUiInterface* ui) override;
@@ -67,9 +67,9 @@ namespace select_content {
     Task::Task(intrusive_ptr<Filter> filter,
                intrusive_ptr<page_layout::Task> next_task,
                intrusive_ptr<Settings> settings,
-               PageId const& page_id,
-               bool const batch,
-               bool const debug)
+               const PageId& page_id,
+               const bool batch,
+               const bool debug)
             : m_ptrFilter(std::move(filter)),
               m_ptrNextTask(std::move(next_task)),
               m_ptrSettings(std::move(settings)),
@@ -82,12 +82,12 @@ namespace select_content {
 
     Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+    FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         status.throwIfCancelled();
 
         loadDefaultSettings(Dpm(data.origImage()));
 
-        Dependencies const deps(data.xform().resultingPreCropArea());
+        const Dependencies deps(data.xform().resultingPreCropArea());
 
         OptionsWidget::UiData ui_data;
         ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
@@ -221,12 +221,12 @@ namespace select_content {
 /*============================ Task::UiUpdater ==========================*/
 
     Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                               PageId const& page_id,
+                               const PageId& page_id,
                                std::unique_ptr<DebugImages> dbg,
-                               QImage const& image,
-                               ImageTransformation const& xform,
-                               OptionsWidget::UiData const& ui_data,
-                               bool const batch)
+                               const QImage& image,
+                               const ImageTransformation& xform,
+                               const OptionsWidget::UiData& ui_data,
+                               const bool batch)
             : m_ptrFilter(std::move(filter)),
               m_pageId(page_id),
               m_ptrDbg(std::move(dbg)),
@@ -259,20 +259,20 @@ namespace select_content {
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
-                view, SIGNAL(manualContentRectSet(QRectF const &)),
-                opt_widget, SLOT(manualContentRectSet(QRectF const &))
+                view, SIGNAL(manualContentRectSet(const QRectF &)),
+                opt_widget, SLOT(manualContentRectSet(const QRectF &))
         );
         QObject::connect(
-                view, SIGNAL(manualPageRectSet(QRectF const &)),
-                opt_widget, SLOT(manualPageRectSet(QRectF const &))
+                view, SIGNAL(manualPageRectSet(const QRectF &)),
+                opt_widget, SLOT(manualPageRectSet(const QRectF &))
         );
         QObject::connect(
-                view, SIGNAL(pageRectSizeChanged(QSizeF const &)),
-                opt_widget, SLOT(updatePageRectSize(QSizeF const &))
+                view, SIGNAL(pageRectSizeChanged(const QSizeF &)),
+                opt_widget, SLOT(updatePageRectSize(const QSizeF &))
         );
         QObject::connect(
-                opt_widget, SIGNAL(pageRectChangedLocally(QRectF const &)),
-                view, SLOT(pageRectSetExternally(QRectF const &))
+                opt_widget, SIGNAL(pageRectChangedLocally(const QRectF &)),
+                view, SLOT(pageRectSetExternally(const QRectF &))
         );
     }
 }  // namespace select_content

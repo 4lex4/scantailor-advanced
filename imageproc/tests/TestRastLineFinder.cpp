@@ -29,7 +29,7 @@ namespace imageproc {
     namespace tests {
         BOOST_AUTO_TEST_SUITE(RastLineFinderTestSuite);
 
-            static bool matchSupportPoints(std::vector<unsigned> const& idxs1, std::set<unsigned> const& idxs2) {
+            static bool matchSupportPoints(const std::vector<unsigned>& idxs1, const std::set<unsigned>& idxs2) {
                 return std::set<unsigned>(idxs1.begin(), idxs1.end()) == idxs2;
             }
 

@@ -59,7 +59,7 @@ namespace imageproc {
             return m_data;
         }
 
-        uint32_t const* data() const {
+        const uint32_t* data() const {
             return m_data;
         }
 
@@ -82,7 +82,7 @@ namespace imageproc {
                 : m_refCounter(1) {
         }
 
-        SharedData& operator=(SharedData const&) = delete;  // forbidden
+        SharedData& operator=(const SharedData&) = delete;  // forbidden
 
         mutable QAtomicInt m_refCounter;
         uint32_t m_data[1]{ };  // more data follows
@@ -96,7 +96,7 @@ namespace imageproc {
               m_wpl(0) {
     }
 
-    BinaryImage::BinaryImage(int const width, int const height)
+    BinaryImage::BinaryImage(const int width, const int height)
             : m_width(width),
               m_height(height),
               m_wpl((width + 31) / 32) {
@@ -107,7 +107,7 @@ namespace imageproc {
         }
     }
 
-    BinaryImage::BinaryImage(QSize const size)
+    BinaryImage::BinaryImage(const QSize size)
             : m_width(size.width()),
               m_height(size.height()),
               m_wpl((size.width() + 31) / 32) {
@@ -118,7 +118,7 @@ namespace imageproc {
         }
     }
 
-    BinaryImage::BinaryImage(int const width, int const height, BWColor const color)
+    BinaryImage::BinaryImage(const int width, const int height, const BWColor color)
             : m_width(width),
               m_height(height),
               m_wpl((width + 31) / 32) {
@@ -130,7 +130,7 @@ namespace imageproc {
         fill(color);
     }
 
-    BinaryImage::BinaryImage(QSize const size, BWColor const color)
+    BinaryImage::BinaryImage(const QSize size, const BWColor color)
             : m_width(size.width()),
               m_height(size.height()),
               m_wpl((size.width() + 31) / 32) {
@@ -142,14 +142,14 @@ namespace imageproc {
         fill(color);
     }
 
-    BinaryImage::BinaryImage(int const width, int const height, SharedData* const data)
+    BinaryImage::BinaryImage(const int width, const int height, SharedData* const data)
             : m_pData(data),
               m_width(width),
               m_height(height),
               m_wpl((width + 31) / 32) {
     }
 
-    BinaryImage::BinaryImage(BinaryImage const& other)
+    BinaryImage::BinaryImage(const BinaryImage& other)
             : m_pData(other.m_pData),
               m_width(other.m_width),
               m_height(other.m_height),
@@ -159,12 +159,12 @@ namespace imageproc {
         }
     }
 
-    BinaryImage::BinaryImage(QImage const& image, BinaryThreshold const threshold)
+    BinaryImage::BinaryImage(const QImage& image, const BinaryThreshold threshold)
             : m_pData(nullptr),
               m_width(0),
               m_height(0),
               m_wpl(0) {
-        QRect const image_rect(image.rect());
+        const QRect image_rect(image.rect());
 
         switch (image.format()) {
             case QImage::Format_Invalid:
@@ -193,7 +193,7 @@ namespace imageproc {
         }
     }
 
-    BinaryImage::BinaryImage(QImage const& image, QRect const& rect, BinaryThreshold const threshold)
+    BinaryImage::BinaryImage(const QImage& image, const QRect& rect, const BinaryThreshold threshold)
             : m_pData(nullptr),
               m_width(0),
               m_height(0),
@@ -237,7 +237,7 @@ namespace imageproc {
         }
     }
 
-    BinaryImage& BinaryImage::operator=(BinaryImage const& other) {
+    BinaryImage& BinaryImage::operator=(const BinaryImage& other) {
         BinaryImage(other).swap(*this);
 
         return *this;
@@ -255,7 +255,7 @@ namespace imageproc {
             return;
         }
 
-        size_t const num_words = m_height * m_wpl;
+        const size_t num_words = m_height * m_wpl;
 
         assert(m_pData);
         if (!m_pData->isShared()) {
@@ -267,7 +267,7 @@ namespace imageproc {
         } else {
             SharedData* new_data = SharedData::create(num_words);
 
-            uint32_t const* src_data = m_pData->data();
+            const uint32_t* src_data = m_pData->data();
             uint32_t* dst_data = new_data->data();
             for (size_t i = 0; i < num_words; ++i, ++src_data, ++dst_data) {
                 *dst_data = ~*src_data;
@@ -283,10 +283,10 @@ namespace imageproc {
             return BinaryImage();
         }
 
-        size_t const num_words = m_height * m_wpl;
+        const size_t num_words = m_height * m_wpl;
         SharedData* new_data = SharedData::create(num_words);
 
-        uint32_t const* src_data = m_pData->data();
+        const uint32_t* src_data = m_pData->data();
         uint32_t* dst_data = new_data->data();
         for (size_t i = 0; i < num_words; ++i, ++src_data, ++dst_data) {
             *dst_data = ~*src_data;
@@ -295,16 +295,16 @@ namespace imageproc {
         return BinaryImage(m_width, m_height, new_data);
     }
 
-    void BinaryImage::fill(BWColor const color) {
+    void BinaryImage::fill(const BWColor color) {
         if (isNull()) {
             throw std::logic_error("Attempt to fill a null BinaryImage!");
         }
 
-        int const pattern = (color == BLACK) ? ~0 : 0;
+        const int pattern = (color == BLACK) ? ~0 : 0;
         memset(data(), pattern, m_height * m_wpl * 4);
     }
 
-    void BinaryImage::fill(QRect const& rect, BWColor const color) {
+    void BinaryImage::fill(const QRect& rect, const BWColor color) {
         if (rect.isEmpty()) {
             return;
         }
@@ -312,7 +312,7 @@ namespace imageproc {
         fillRectImpl(data(), rect.intersected(this->rect()), color);
     }
 
-    void BinaryImage::fillExcept(QRect const& rect, BWColor const color) {
+    void BinaryImage::fillExcept(const QRect& rect, const BWColor color) {
         if (isNull()) {
             throw std::logic_error("Attempt to fill a null BinaryImage!");
         }
@@ -321,14 +321,14 @@ namespace imageproc {
             return;
         }
 
-        QRect const bounded_rect(rect.intersected(this->rect()));
+        const QRect bounded_rect(rect.intersected(this->rect()));
         if (bounded_rect.isEmpty()) {
             fill(color);
 
             return;
         }
 
-        int const pattern = (color == BLACK) ? ~0 : 0;
+        const int pattern = (color == BLACK) ? ~0 : 0;
         uint32_t* const data = this->data();  // this will call copyIfShared()
         if (bounded_rect.top() > 0) {
             memset(data, pattern, bounded_rect.top() * m_wpl * 4);
@@ -336,16 +336,16 @@ namespace imageproc {
 
         int y_top = bounded_rect.top();
         if (bounded_rect.left() > 0) {
-            QRect const left_rect(
+            const QRect left_rect(
                     0, y_top,
                     bounded_rect.left(), bounded_rect.height()
             );
             fillRectImpl(data, left_rect, color);
         }
 
-        int const x_left = bounded_rect.left() + bounded_rect.width();
+        const int x_left = bounded_rect.left() + bounded_rect.width();
         if (x_left < m_width) {
-            QRect const right_rect(
+            const QRect right_rect(
                     x_left, y_top,
                     m_width - x_left, bounded_rect.height()
             );
@@ -358,13 +358,13 @@ namespace imageproc {
         }
     }  // BinaryImage::fillExcept
 
-    void BinaryImage::fillFrame(QRect const& outer_rect, QRect const& inner_rect, BWColor const color) {
+    void BinaryImage::fillFrame(const QRect& outer_rect, const QRect& inner_rect, const BWColor color) {
         if (isNull()) {
             throw std::logic_error("Attempt to fill a null BinaryImage!");
         }
 
-        QRect const bounded_outer_rect(outer_rect.intersected(this->rect()));
-        QRect const bounded_inner_rect(inner_rect.intersected(bounded_outer_rect));
+        const QRect bounded_outer_rect(outer_rect.intersected(this->rect()));
+        const QRect bounded_inner_rect(inner_rect.intersected(bounded_outer_rect));
         if (bounded_inner_rect == bounded_outer_rect) {
             return;
         } else if (bounded_inner_rect.isEmpty()) {
@@ -410,20 +410,20 @@ namespace imageproc {
         return countWhitePixels(rect());
     }
 
-    int BinaryImage::countBlackPixels(QRect const& rect) const {
-        QRect const r(rect.intersected(this->rect()));
+    int BinaryImage::countBlackPixels(const QRect& rect) const {
+        const QRect r(rect.intersected(this->rect()));
         if (r.isEmpty()) {
             return 0;
         }
 
-        int const top = r.top();
-        int const bottom = r.bottom();
-        int const first_word_idx = r.left() >> 5;
-        int const last_word_idx = r.right() >> 5;  // r.right() is within rect
-        uint32_t const first_word_mask = ~uint32_t(0) >> (r.left() & 31);
-        int const last_word_unused_bits = (last_word_idx << 5) + 31 - r.right();
-        uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const* line = data() + top * m_wpl;
+        const int top = r.top();
+        const int bottom = r.bottom();
+        const int first_word_idx = r.left() >> 5;
+        const int last_word_idx = r.right() >> 5;  // r.right() is within rect
+        const uint32_t first_word_mask = ~uint32_t(0) >> (r.left() & 31);
+        const int last_word_unused_bits = (last_word_idx << 5) + 31 - r.right();
+        const uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
+        const uint32_t* line = data() + top * m_wpl;
 
         int count = 0;
 
@@ -433,7 +433,7 @@ namespace imageproc {
                     count += (line[first_word_idx] >> last_word_unused_bits) & 1;
                 }
             } else {
-                uint32_t const mask = first_word_mask & last_word_mask;
+                const uint32_t mask = first_word_mask & last_word_mask;
                 for (int y = top; y <= bottom; ++y, line += m_wpl) {
                     count += countNonZeroBits(line[first_word_idx] & mask);
                 }
@@ -452,8 +452,8 @@ namespace imageproc {
         return count;
     }  // BinaryImage::countBlackPixels
 
-    int BinaryImage::countWhitePixels(QRect const& rect) const {
-        QRect const r(rect.intersected(this->rect()));
+    int BinaryImage::countWhitePixels(const QRect& rect) const {
+        const QRect r(rect.intersected(this->rect()));
         if (r.isEmpty()) {
             return 0;
         }
@@ -461,23 +461,23 @@ namespace imageproc {
         return r.width() * r.height() - countBlackPixels(r);
     }
 
-    QRect BinaryImage::contentBoundingBox(BWColor const content_color) const {
+    QRect BinaryImage::contentBoundingBox(const BWColor content_color) const {
         if (isNull()) {
             return QRect();
         }
 
-        int const w = m_width;
-        int const h = m_height;
-        int const wpl = m_wpl;
-        int const last_word_idx = (w - 1) >> 5;
-        int const last_word_bits = w - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
-        uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const modifier = (content_color == WHITE) ? ~uint32_t(0) : 0;
-        uint32_t const* const data = this->data();
+        const int w = m_width;
+        const int h = m_height;
+        const int wpl = m_wpl;
+        const int last_word_idx = (w - 1) >> 5;
+        const int last_word_bits = w - (last_word_idx << 5);
+        const int last_word_unused_bits = 32 - last_word_bits;
+        const uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
+        const uint32_t modifier = (content_color == WHITE) ? ~uint32_t(0) : 0;
+        const uint32_t* const data = this->data();
 
         int bottom = -1;  // inclusive
-        uint32_t const* line = data + h * wpl;
+        const uint32_t* line = data + h * wpl;
         for (int y = h - 1; y >= 0; --y) {
             line -= wpl;
             if (!isLineMonotone(line, last_word_idx, last_word_mask, modifier)) {
@@ -510,10 +510,10 @@ namespace imageproc {
                 left = leftmostBitOffset(line, left, modifier);
             }
             if (right != 0) {
-                uint32_t const word
+                const uint32_t word
                         = (line[last_word_idx] ^ modifier) >> last_word_unused_bits;
                 if (word) {
-                    int const offset = countLeastSignificantZeroes(word);
+                    const int offset = countLeastSignificantZeroes(word);
                     if (offset < right) {
                         right = offset;
                     }
@@ -548,7 +548,7 @@ namespace imageproc {
          *
          * https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup
         */
-        inline const int countConsecutiveZeroBitsTrailing(uint32_t v) {
+        const inline int countConsecutiveZeroBitsTrailing(uint32_t v) {
             return MultiplyDeBruijnBitPosition[((uint32_t) ((v & -v) * 0x077CB531U)) >> 27];
         }
 
@@ -558,7 +558,7 @@ namespace imageproc {
          *
          * https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
         */
-        inline const int findPositionOfTheHighestBitSet(uint32_t v) {
+        const inline int findPositionOfTheHighestBitSet(uint32_t v) {
             v |= v >> 1; // first round down to one less than a power of 2
             v |= v >> 2;
             v |= v >> 4;
@@ -575,17 +575,17 @@ namespace imageproc {
             return;
         }
 
-        int const w = m_width;
-        int const h = m_height;
-        int const wpl = m_wpl;
-        int const last_word_idx = (w - 1) >> 5;
-        int const last_word_bits = w - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
-        uint32_t const last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const modifier = (content_color == WHITE) ? ~uint32_t(0) : 0;
-        uint32_t const* const data = this->data();
+        const int w = m_width;
+        const int h = m_height;
+        const int wpl = m_wpl;
+        const int last_word_idx = (w - 1) >> 5;
+        const int last_word_bits = w - (last_word_idx << 5);
+        const int last_word_unused_bits = 32 - last_word_bits;
+        const uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
+        const uint32_t modifier = (content_color == WHITE) ? ~uint32_t(0) : 0;
+        const uint32_t* const data = this->data();
 
-        uint32_t const* line = data;
+        const uint32_t* line = data;
         // create list of filled continuous blocks on each line
         for (int y = 0; y < h; ++y, line += wpl) {
             QRect area;
@@ -764,7 +764,7 @@ namespace imageproc {
         return m_pData->data();
     }
 
-    uint32_t const* BinaryImage::data() const {
+    const uint32_t* BinaryImage::data() const {
         if (isNull()) {
             return nullptr;
         }
@@ -782,10 +782,10 @@ namespace imageproc {
         dst.setColorCount(2);
         dst.setColor(0, 0xffffffff);
         dst.setColor(1, 0xff000000);
-        int const dst_wpl = dst.bytesPerLine() / 4;
+        const int dst_wpl = dst.bytesPerLine() / 4;
         auto* dst_line = (uint32_t*) dst.bits();
-        uint32_t const* src_line = data();
-        int const src_wpl = m_wpl;
+        const uint32_t* src_line = data();
+        const int src_wpl = m_wpl;
 
         for (int i = m_height; i > 0; --i) {
             for (int j = 0; j < src_wpl; ++j) {
@@ -798,31 +798,31 @@ namespace imageproc {
         return dst;
     }
 
-    QImage BinaryImage::toAlphaMask(QColor const& color) const {
+    QImage BinaryImage::toAlphaMask(const QColor& color) const {
         if (isNull()) {
             return QImage();
         }
 
-        int const alpha = color.alpha();
-        int const red = (color.red() * alpha + 128) / 255;
-        int const green = (color.green() * alpha + 128) / 255;
-        int const blue = (color.blue() * alpha + 128) / 255;
-        uint32_t const colors[] = {
+        const int alpha = color.alpha();
+        const int red = (color.red() * alpha + 128) / 255;
+        const int green = (color.green() * alpha + 128) / 255;
+        const int blue = (color.blue() * alpha + 128) / 255;
+        const uint32_t colors[] = {
                 0,  // replaces white
                 qRgba(red, green, blue, alpha)  // replaces black
         };
 
-        int const width = m_width;
-        int const height = m_height;
+        const int width = m_width;
+        const int height = m_height;
 
         QImage dst(width, height, QImage::Format_ARGB32_Premultiplied);
         assert(dst.bytesPerLine() % 4 == 0);
 
-        int const dst_stride = dst.bytesPerLine() / 4;
+        const int dst_stride = dst.bytesPerLine() / 4;
         auto* dst_line = (uint32_t*) dst.bits();
 
-        uint32_t const* src_line = data();
-        int const src_stride = m_wpl;
+        const uint32_t* src_line = data();
+        const int src_stride = m_wpl;
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; ++x) {
@@ -841,15 +841,15 @@ namespace imageproc {
             return;
         }
 
-        size_t const num_words = m_height * m_wpl;
+        const size_t num_words = m_height * m_wpl;
         SharedData* new_data = SharedData::create(num_words);
         memcpy(new_data->data(), m_pData->data(), num_words * 4);
         m_pData->unref();
         m_pData = new_data;
     }
 
-    void BinaryImage::fillRectImpl(uint32_t* const data, QRect const& rect, BWColor const color) {
-        uint32_t const pattern = (color == BLACK) ? ~uint32_t(0) : 0;
+    void BinaryImage::fillRectImpl(uint32_t* const data, const QRect& rect, const BWColor color) {
+        const uint32_t pattern = (color == BLACK) ? ~uint32_t(0) : 0;
 
         if ((rect.x() == 0) && (rect.width() == m_width)) {
             memset(data + rect.y() * m_wpl, pattern, rect.height() * m_wpl * 4);
@@ -857,16 +857,16 @@ namespace imageproc {
             return;
         }
 
-        uint32_t const first_word_idx = rect.left() >> 5;
+        const uint32_t first_word_idx = rect.left() >> 5;
         // Note: rect.right() == rect.left() + rect.width() - 1
-        uint32_t const last_word_idx = rect.right() >> 5;
-        uint32_t const first_word_mask = ~uint32_t(0) >> (rect.left() & 31);
-        uint32_t const last_word_mask = ~uint32_t(0) << (31 - (rect.right() & 31));
+        const uint32_t last_word_idx = rect.right() >> 5;
+        const uint32_t first_word_mask = ~uint32_t(0) >> (rect.left() & 31);
+        const uint32_t last_word_mask = ~uint32_t(0) << (31 - (rect.right() & 31));
         uint32_t* line = data + rect.top() * m_wpl;
 
         if (first_word_idx == last_word_idx) {
             line += first_word_idx;
-            uint32_t const mask = first_word_mask & last_word_mask;
+            const uint32_t mask = first_word_mask & last_word_mask;
             for (int i = rect.height(); i > 0; --i, line += m_wpl) {
                 *line = (*line & ~mask) | (pattern & mask);
             }
@@ -888,16 +888,16 @@ namespace imageproc {
         }
     }  // BinaryImage::fillRectImpl
 
-    BinaryImage BinaryImage::fromMono(QImage const& image) {
-        int const width = image.width();
-        int const height = image.height();
+    BinaryImage BinaryImage::fromMono(const QImage& image) {
+        const int width = image.width();
+        const int height = image.height();
 
         assert(image.bytesPerLine() % 4 == 0);
-        int const src_wpl = image.bytesPerLine() / 4;
-        auto const* src_line = (uint32_t const*) image.bits();
+        const int src_wpl = image.bytesPerLine() / 4;
+        const auto* src_line = (const uint32_t*) image.bits();
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
 
         uint32_t modifier = ~uint32_t(0);
@@ -919,22 +919,22 @@ namespace imageproc {
         return dst;
     }
 
-    BinaryImage BinaryImage::fromMono(QImage const& image, QRect const& rect) {
-        int const width = rect.width();
-        int const height = rect.height();
+    BinaryImage BinaryImage::fromMono(const QImage& image, const QRect& rect) {
+        const int width = rect.width();
+        const int height = rect.height();
 
         assert(image.bytesPerLine() % 4 == 0);
-        int const src_wpl = image.bytesPerLine() / 4;
-        auto const* src_line = (uint32_t const*) image.bits();
+        const int src_wpl = image.bytesPerLine() / 4;
+        const auto* src_line = (const uint32_t*) image.bits();
         src_line += rect.top() * src_wpl;
         src_line += rect.left() >> 5;
-        int const word1_unused_bits = rect.left() & 31;
-        int const word2_unused_bits = 32 - word1_unused_bits;
+        const int word1_unused_bits = rect.left() & 31;
+        const int word2_unused_bits = 32 - word1_unused_bits;
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
-        int const dst_last_word_unused_bits = (dst_wpl << 5) - width;
+        const int dst_last_word_unused_bits = (dst_wpl << 5) - width;
 
         uint32_t modifier = ~uint32_t(0);
         if (image.colorCount() >= 2) {
@@ -956,14 +956,14 @@ namespace imageproc {
                 dst_line += dst_wpl;
             }
         } else {
-            int const last_word_idx = (width - 1) >> 5;
+            const int last_word_idx = (width - 1) >> 5;
             for (int i = height; i > 0; --i) {
                 int j = 0;
                 uint32_t next_word = ntohl(src_line[j]);
                 for (; j < last_word_idx; ++j) {
-                    uint32_t const this_word = next_word;
+                    const uint32_t this_word = next_word;
                     next_word = ntohl(src_line[j + 1]);
-                    uint32_t const dst_word = (this_word << word1_unused_bits)
+                    const uint32_t dst_word = (this_word << word1_unused_bits)
                                               | (next_word >> word2_unused_bits);
                     dst_line[j] = dst_word ^ modifier;
                 }
@@ -983,30 +983,30 @@ namespace imageproc {
         return dst;
     }  // BinaryImage::fromMono
 
-    BinaryImage BinaryImage::fromMonoLSB(QImage const& image) {
+    BinaryImage BinaryImage::fromMonoLSB(const QImage& image) {
         return fromMono(image.convertToFormat(QImage::Format_Mono));
     }
 
-    BinaryImage BinaryImage::fromMonoLSB(QImage const& image, QRect const& rect) {
+    BinaryImage BinaryImage::fromMonoLSB(const QImage& image, const QRect& rect) {
         return fromMono(image.convertToFormat(QImage::Format_Mono), rect);
     }
 
-    BinaryImage BinaryImage::fromIndexed8(QImage const& image, QRect const& rect, int const threshold) {
-        int const width = rect.width();
-        int const height = rect.height();
+    BinaryImage BinaryImage::fromIndexed8(const QImage& image, const QRect& rect, const int threshold) {
+        const int width = rect.width();
+        const int height = rect.height();
 
-        int const src_bpl = image.bytesPerLine();
-        uint8_t const* src_line = image.bits();
+        const int src_bpl = image.bytesPerLine();
+        const uint8_t* src_line = image.bits();
         src_line += rect.top() * src_bpl + rect.left();
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
-        int const last_word_idx = (width - 1) >> 5;
-        int const last_word_bits = width - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
+        const int last_word_idx = (width - 1) >> 5;
+        const int last_word_bits = width - (last_word_idx << 5);
+        const int last_word_unused_bits = 32 - last_word_bits;
 
-        int const num_colors = image.colorCount();
+        const int num_colors = image.colorCount();
         assert(num_colors <= 256);
         int color_to_gray[256];
         int color_idx = 0;
@@ -1019,7 +1019,7 @@ namespace imageproc {
 
         for (int i = height; i > 0; --i) {
             for (int j = 0; j < last_word_idx; ++j) {
-                uint8_t const* const src_pos = &src_line[j << 5];
+                const uint8_t* const src_pos = &src_line[j << 5];
                 uint32_t word = 0;
                 for (int bit = 0; bit < 32; ++bit) {
                     word <<= 1;
@@ -1031,7 +1031,7 @@ namespace imageproc {
             }
 
             // Handle the last word.
-            uint8_t const* const src_pos = &src_line[last_word_idx << 5];
+            const uint8_t* const src_pos = &src_line[last_word_idx << 5];
             uint32_t word = 0;
             for (int bit = 0; bit < last_word_bits; ++bit) {
                 word <<= 1;
@@ -1049,34 +1049,34 @@ namespace imageproc {
         return dst;
     }  // BinaryImage::fromIndexed8
 
-    static inline uint32_t thresholdRgb32(QRgb const c, int const threshold) {
+    static inline uint32_t thresholdRgb32(const QRgb c, const int threshold) {
         // gray = (R * 11 + G * 16 + B * 5) / 32;
         // return (gray < threshold) ? 1 : 0;
 
-        int const sum = qRed(c) * 11 + qGreen(c) * 16 + qBlue(c) * 5;
+        const int sum = qRed(c) * 11 + qGreen(c) * 16 + qBlue(c) * 5;
 
         return (sum < threshold * 32) ? 1 : 0;
     }
 
-    BinaryImage BinaryImage::fromRgb32(QImage const& image, QRect const& rect, int const threshold) {
-        int const width = rect.width();
-        int const height = rect.height();
+    BinaryImage BinaryImage::fromRgb32(const QImage& image, const QRect& rect, const int threshold) {
+        const int width = rect.width();
+        const int height = rect.height();
 
         assert(image.bytesPerLine() % 4 == 0);
-        int const src_wpl = image.bytesPerLine() / 4;
-        auto const* src_line = (QRgb const*) image.bits();
+        const int src_wpl = image.bytesPerLine() / 4;
+        const auto* src_line = (const QRgb*) image.bits();
         src_line += rect.top() * src_wpl + rect.left();
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
-        int const last_word_idx = (width - 1) >> 5;
-        int const last_word_bits = width - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
+        const int last_word_idx = (width - 1) >> 5;
+        const int last_word_bits = width - (last_word_idx << 5);
+        const int last_word_unused_bits = 32 - last_word_bits;
 
         for (int i = height; i > 0; --i) {
             for (int j = 0; j < last_word_idx; ++j) {
-                QRgb const* const src_pos = &src_line[j << 5];
+                const QRgb* const src_pos = &src_line[j << 5];
                 uint32_t word = 0;
                 for (int bit = 0; bit < 32; ++bit) {
                     word <<= 1;
@@ -1086,7 +1086,7 @@ namespace imageproc {
             }
 
             // Handle the last word.
-            QRgb const* const src_pos = &src_line[last_word_idx << 5];
+            const QRgb* const src_pos = &src_line[last_word_idx << 5];
             uint32_t word = 0;
             for (int bit = 0; bit < last_word_bits; ++bit) {
                 word <<= 1;
@@ -1102,8 +1102,8 @@ namespace imageproc {
         return dst;
     }  // BinaryImage::fromRgb32
 
-    static inline uint32_t thresholdArgbPM(QRgb const pm, int const threshold) {
-        int const alpha = qAlpha(pm);
+    static inline uint32_t thresholdArgbPM(const QRgb pm, const int threshold) {
+        const int alpha = qAlpha(pm);
         if (alpha == 0) {
             return 1;  // black
         }
@@ -1114,30 +1114,30 @@ namespace imageproc {
         // gray = (R * 11 + G * 16 + B * 5) / 32;
         // return (gray < threshold) ? 1 : 0;
 
-        int const sum = qRed(pm) * (255 * 11) + qGreen(pm) * (255 * 16) + qBlue(pm) * (255 * 5);
+        const int sum = qRed(pm) * (255 * 11) + qGreen(pm) * (255 * 16) + qBlue(pm) * (255 * 5);
 
         return (sum < alpha * threshold * 32) ? 1 : 0;
     }
 
-    BinaryImage BinaryImage::fromArgb32Premultiplied(QImage const& image, QRect const& rect, int const threshold) {
-        int const width = rect.width();
-        int const height = rect.height();
+    BinaryImage BinaryImage::fromArgb32Premultiplied(const QImage& image, const QRect& rect, const int threshold) {
+        const int width = rect.width();
+        const int height = rect.height();
 
         assert(image.bytesPerLine() % 4 == 0);
-        int const src_wpl = image.bytesPerLine() / 4;
-        auto const* src_line = (QRgb const*) image.bits();
+        const int src_wpl = image.bytesPerLine() / 4;
+        const auto* src_line = (const QRgb*) image.bits();
         src_line += rect.top() * src_wpl + rect.left();
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
-        int const last_word_idx = (width - 1) >> 5;
-        int const last_word_bits = width - (last_word_idx << 5);
-        int const last_word_unused_bits = 32 - last_word_bits;
+        const int last_word_idx = (width - 1) >> 5;
+        const int last_word_bits = width - (last_word_idx << 5);
+        const int last_word_unused_bits = 32 - last_word_bits;
 
         for (int i = height; i > 0; --i) {
             for (int j = 0; j < last_word_idx; ++j) {
-                QRgb const* const src_pos = &src_line[j << 5];
+                const QRgb* const src_pos = &src_line[j << 5];
                 uint32_t word = 0;
                 for (int bit = 0; bit < 32; ++bit) {
                     word <<= 1;
@@ -1147,7 +1147,7 @@ namespace imageproc {
             }
 
             // Handle the last word.
-            QRgb const* const src_pos = &src_line[last_word_idx << 5];
+            const QRgb* const src_pos = &src_line[last_word_idx << 5];
             uint32_t word = 0;
             for (int bit = 0; bit < last_word_bits; ++bit) {
                 word <<= 1;
@@ -1163,49 +1163,49 @@ namespace imageproc {
         return dst;
     }  // BinaryImage::fromArgb32Premultiplied
 
-    static inline uint32_t thresholdRgb16(uint16_t const c16, int const threshold) {
-        int const c = c16;
+    static inline uint32_t thresholdRgb16(const uint16_t c16, const int threshold) {
+        const int c = c16;
 
         // rgb16: RRRRR GGGGGG BBBBB
         // 43210 543210 43210
 
         // r8 = r5 * 8 + r5 / 4 = RRRRR RRR
         // 43210 432
-        int const r8 = ((c >> 8) & 0xF8) | ((c >> 13) & 0x07);
+        const int r8 = ((c >> 8) & 0xF8) | ((c >> 13) & 0x07);
 
         // g8 = g6 * 4 + g6 / 16 = GGGGGG GG
         // 543210 54
-        int const g8 = ((c >> 3) & 0xFC) | ((c >> 9) & 0x03);
+        const int g8 = ((c >> 3) & 0xFC) | ((c >> 9) & 0x03);
 
         // b8 = b5 * 8 + b5 / 4 = BBBBB BBB
         // 43210 432
-        int const b8 = ((c << 3) & 0xF8) | ((c >> 2) & 0x07);
+        const int b8 = ((c << 3) & 0xF8) | ((c >> 2) & 0x07);
 
         // gray = (R * 11 + G * 16 + B * 5) / 32;
         // return (gray < threshold) ? 1 : 0;
 
-        int const sum = r8 * 11 + g8 * 16 + b8 * 5;
+        const int sum = r8 * 11 + g8 * 16 + b8 * 5;
 
         return (sum < threshold * 32) ? 1 : 0;
     }
 
-    BinaryImage BinaryImage::fromRgb16(QImage const& image, QRect const& rect, int const threshold) {
-        int const width = rect.width();
-        int const height = rect.height();
+    BinaryImage BinaryImage::fromRgb16(const QImage& image, const QRect& rect, const int threshold) {
+        const int width = rect.width();
+        const int height = rect.height();
 
         assert(image.bytesPerLine() % 4 == 0);
-        int const src_wpl = image.bytesPerLine() / 2;
-        auto const* src_line = (uint16_t const*) image.bits();
+        const int src_wpl = image.bytesPerLine() / 2;
+        const auto* src_line = (const uint16_t*) image.bits();
 
         BinaryImage dst(width, height);
-        int const dst_wpl = dst.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
         uint32_t* dst_line = dst.data();
-        int const last_word_idx = (width - 1) >> 5;
-        int const last_word_bits = width - (last_word_idx << 5);
+        const int last_word_idx = (width - 1) >> 5;
+        const int last_word_bits = width - (last_word_idx << 5);
 
         for (int i = height; i > 0; --i) {
             for (int j = 0; j < last_word_idx; ++j) {
-                uint16_t const* const src_pos = &src_line[j << 5];
+                const uint16_t* const src_pos = &src_line[j << 5];
                 uint32_t word = 0;
                 for (int bit = 0; bit < 32; ++bit) {
                     word <<= 1;
@@ -1215,7 +1215,7 @@ namespace imageproc {
             }
 
             // Handle the last word.
-            uint16_t const* const src_pos = &src_line[last_word_idx << 5];
+            const uint16_t* const src_pos = &src_line[last_word_idx << 5];
             uint32_t word = 0;
             for (int bit = 0; bit < last_word_bits; ++bit) {
                 word <<= 1;
@@ -1240,18 +1240,18 @@ namespace imageproc {
  * \param modifier If 0, this function check if the line is completely black.
  *        If ~uint32_t(0), this function checks if the line is completely white.
  */
-    bool BinaryImage::isLineMonotone(uint32_t const* const line,
-                                     int const last_word_idx,
-                                     uint32_t const last_word_mask,
-                                     uint32_t const modifier) {
+    bool BinaryImage::isLineMonotone(const uint32_t* const line,
+                                     const int last_word_idx,
+                                     const uint32_t last_word_mask,
+                                     const uint32_t modifier) {
         for (int i = 0; i < last_word_idx; ++i) {
-            uint32_t const word = line[i] ^modifier;
+            const uint32_t word = line[i] ^modifier;
             if (word) {
                 return false;
             }
         }
         // The last (possibly incomplete) word.
-        int const word = (line[last_word_idx] ^ modifier) & last_word_mask;
+        const int word = (line[last_word_idx] ^ modifier) & last_word_mask;
         if (word) {
             return false;
         }
@@ -1259,14 +1259,14 @@ namespace imageproc {
         return true;
     }
 
-    int BinaryImage::leftmostBitOffset(uint32_t const* const line, int const offset_limit, uint32_t const modifier) {
-        int const num_words = (offset_limit + 31) >> 5;
+    int BinaryImage::leftmostBitOffset(const uint32_t* const line, const int offset_limit, const uint32_t modifier) {
+        const int num_words = (offset_limit + 31) >> 5;
 
         int bit_offset = offset_limit;
 
-        uint32_t const* pword = line;
+        const uint32_t* pword = line;
         for (int i = 0; i < num_words; ++i, ++pword) {
-            uint32_t const word = *pword ^modifier;
+            const uint32_t word = *pword ^modifier;
             if (word) {
                 bit_offset = (i << 5) + countMostSignificantZeroes(word);
                 break;
@@ -1276,14 +1276,14 @@ namespace imageproc {
         return std::min(bit_offset, offset_limit);
     }
 
-    int BinaryImage::rightmostBitOffset(uint32_t const* const line, int const offset_limit, uint32_t const modifier) {
-        int const num_words = (offset_limit + 31) >> 5;
+    int BinaryImage::rightmostBitOffset(const uint32_t* const line, const int offset_limit, const uint32_t modifier) {
+        const int num_words = (offset_limit + 31) >> 5;
 
         int bit_offset = offset_limit;
 
-        uint32_t const* pword = line - 1;  // line points to last_word_idx, which we skip
+        const uint32_t* pword = line - 1;  // line points to last_word_idx, which we skip
         for (int i = 0; i < num_words; ++i, --pword) {
-            uint32_t const word = *pword ^modifier;
+            const uint32_t word = *pword ^modifier;
             if (word) {
                 bit_offset = (i << 5) + countLeastSignificantZeroes(word);
                 break;
@@ -1293,7 +1293,7 @@ namespace imageproc {
         return std::min(bit_offset, offset_limit);
     }
 
-    bool operator==(BinaryImage const& lhs, BinaryImage const& rhs) {
+    bool operator==(const BinaryImage& lhs, const BinaryImage& rhs) {
         if (lhs.data() == rhs.data()) {
             // This will also catch the case when both are null.
             return true;
@@ -1305,13 +1305,13 @@ namespace imageproc {
             return false;
         }
 
-        uint32_t const* lhs_line = lhs.data();
-        uint32_t const* rhs_line = rhs.data();
-        int const lhs_wpl = lhs.wordsPerLine();
-        int const rhs_wpl = rhs.wordsPerLine();
-        int const last_bit_idx = lhs.width() - 1;
-        int const last_word_idx = last_bit_idx / 32;
-        uint32_t const last_word_mask = ~uint32_t(0) << (31 - last_bit_idx % 32);
+        const uint32_t* lhs_line = lhs.data();
+        const uint32_t* rhs_line = rhs.data();
+        const int lhs_wpl = lhs.wordsPerLine();
+        const int rhs_wpl = rhs.wordsPerLine();
+        const int last_bit_idx = lhs.width() - 1;
+        const int last_word_idx = last_bit_idx / 32;
+        const uint32_t last_word_mask = ~uint32_t(0) << (31 - last_bit_idx % 32);
 
         for (int i = lhs.height(); i > 0; --i) {
             int j = 0;
@@ -1341,7 +1341,7 @@ namespace imageproc {
         }
     }
 
-    void* BinaryImage::SharedData::operator new(size_t, NumWords const num_words) {
+    void* BinaryImage::SharedData::operator new(size_t, const NumWords num_words) {
         SharedData* sd = nullptr;
         void* addr = malloc(((char*) &sd->m_data[0] - (char*) sd) + num_words.numWords * 4);
         if (!addr) {

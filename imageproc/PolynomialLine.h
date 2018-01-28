@@ -44,7 +44,7 @@ namespace imageproc {
          *        values[0], values[step], values[step * 2]
          */
         template<typename T>
-        PolynomialLine(int degree, T const* values, int num_values, int step);
+        PolynomialLine(int degree, const T* values, int num_values, int step);
 
         /**
          * \brief Output the polynomial as a sequence of values.
@@ -119,14 +119,14 @@ namespace imageproc {
 
         static double calcScale(int num_values);
 
-        static void doLeastSquares(VecT<double> const& data_points, VecT<double>& coeffs);
+        static void doLeastSquares(const VecT<double>& data_points, VecT<double>& coeffs);
 
         VecT<double> m_coeffs;
     };
 
 
     template<typename T>
-    inline T PolynomialLine::StaticCastPostProcessor<T>::operator()(double const val) const {
+    inline T PolynomialLine::StaticCastPostProcessor<T>::operator()(const double val) const {
         return static_cast<T>(val);
     }
 
@@ -137,8 +137,8 @@ namespace imageproc {
     }
 
     template<typename T>
-    inline T PolynomialLine::RoundAndClipPostProcessor<T>::operator()(double const val) const {
-        double const rounded = floor(val + 0.5);
+    inline T PolynomialLine::RoundAndClipPostProcessor<T>::operator()(const double val) const {
+        const double rounded = floor(val + 0.5);
         if (rounded < m_min) {
             return m_min;
         } else if (rounded > m_max) {
@@ -149,14 +149,14 @@ namespace imageproc {
     }
 
     template<typename T>
-    PolynomialLine::PolynomialLine(int degree, T const* values, int const num_values, int const step) {
+    PolynomialLine::PolynomialLine(int degree, const T* values, const int num_values, const int step) {
         validateArguments(degree, num_values);
 
         if (degree + 1 > num_values) {
             degree = num_values - 1;
         }
 
-        int const num_terms = degree + 1;
+        const int num_terms = degree + 1;
 
         VecT<double> data_points(num_values);
         for (int i = 0; i < num_values; ++i, values += step) {
@@ -182,14 +182,14 @@ namespace imageproc {
         }
 
         // Pretend that data points are positioned in range of [0, 1].
-        double const scale = calcScale(num_values);
+        const double scale = calcScale(num_values);
         for (int i = 0; i < num_values; ++i, values += step) {
-            double const position = i * scale;
+            const double position = i * scale;
             double sum = 0.0;
             double pow = 1.0;
 
-            double const* p_coeffs = m_coeffs.data();
-            double const* const p_coeffs_end = p_coeffs + m_coeffs.size();
+            const double* p_coeffs = m_coeffs.data();
+            const double* const p_coeffs_end = p_coeffs + m_coeffs.size();
             for (; p_coeffs != p_coeffs_end; ++p_coeffs, pow *= position) {
                 sum += *p_coeffs * pow;
             }

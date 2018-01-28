@@ -15,7 +15,7 @@ namespace output {
         setupUiConnections();
     }
 
-    void WolfBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
+    void WolfBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
         const Params params(m_ptrSettings->getParams(page_id));

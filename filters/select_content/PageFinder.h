@@ -41,28 +41,28 @@ namespace imageproc {
 namespace select_content {
     class PageFinder {
     public:
-        static QRectF findPageBox(TaskStatus const& status,
-                                  FilterData const& data,
+        static QRectF findPageBox(const TaskStatus& status,
+                                  const FilterData& data,
                                   bool fine_tune,
-                                  QSizeF const& box,
+                                  const QSizeF& box,
                                   double tolerance,
                                   DebugImages* dbg = nullptr);
 
     private:
-        static QRect detectBorders(QImage const& img);
+        static QRect detectBorders(const QImage& img);
 
-        static int detectEdge(QImage const& img, int start, int end, int inc, int mid, Qt::Orientation orient);
+        static int detectEdge(const QImage& img, int start, int end, int inc, int mid, Qt::Orientation orient);
 
-        static void fineTuneCorners(QImage const& img, QRect& rect, QSize const& size, double tolerance);
+        static void fineTuneCorners(const QImage& img, QRect& rect, const QSize& size, double tolerance);
 
-        static bool fineTuneCorner(QImage const& img,
+        static bool fineTuneCorner(const QImage& img,
                                    int& x,
                                    int& y,
                                    int max_x,
                                    int max_y,
                                    int inc_x,
                                    int inc_y,
-                                   QSize const& size,
+                                   const QSize& size,
                                    double tolerance);
     };
 }

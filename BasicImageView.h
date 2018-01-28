@@ -29,9 +29,9 @@
 class BasicImageView : public ImageViewBase {
 Q_OBJECT
 public:
-    explicit BasicImageView(QImage const& image,
-                            ImagePixmapUnion const& downscaled_image = ImagePixmapUnion(),
-                            Margins const& margins = Margins());
+    explicit BasicImageView(const QImage& image,
+                            const ImagePixmapUnion& downscaled_image = ImagePixmapUnion(),
+                            const Margins& margins = Margins());
 
     ~BasicImageView() override;
 

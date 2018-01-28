@@ -32,7 +32,7 @@ public:
      * Returns the path to be used instead of the given path.
      * The same path will be returned if no substitution is to be made.
      */
-    virtual QString substitutionPathFor(RelinkablePath const& orig_path) const = 0;
+    virtual QString substitutionPathFor(const RelinkablePath& orig_path) const = 0;
 };
 
 

@@ -36,14 +36,14 @@ namespace output {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<Settings> settings, OutputFileNameGenerator const& out_file_name_gen);
+        CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& out_file_name_gen);
 
         ~CacheDrivenTask() override;
 
-        void process(PageInfo const& page_info,
+        void process(const PageInfo& page_info,
                      AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform,
-                     QPolygonF const& content_rect_phys);
+                     const ImageTransformation& xform,
+                     const QPolygonF& content_rect_phys);
 
     private:
         intrusive_ptr<Settings> m_ptrSettings;

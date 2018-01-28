@@ -21,7 +21,7 @@
 #include <QMouseEvent>
 
 namespace page_split {
-    UnremoveButton::UnremoveButton(PositionGetter const& position_getter)
+    UnremoveButton::UnremoveButton(const PositionGetter& position_getter)
             : m_positionGetter(position_getter),
               m_clickCallback(&UnremoveButton::noOp),
               m_defaultPixmap(":/icons/trashed-big.png"),
@@ -31,8 +31,8 @@ namespace page_split {
         m_proximityInteraction.setProximityStatusTip(tr("Restore removed page."));
     }
 
-    void UnremoveButton::onPaint(QPainter& painter, InteractionState const& interaction) {
-        QPixmap const& pixmap = interaction.proximityLeader(m_proximityInteraction)
+    void UnremoveButton::onPaint(QPainter& painter, const InteractionState& interaction) {
+        const QPixmap& pixmap = interaction.proximityLeader(m_proximityInteraction)
                                 ? m_hoveredPixmap : m_defaultPixmap;
 
         QRectF rect(pixmap.rect());
@@ -42,11 +42,11 @@ namespace page_split {
         painter.drawPixmap(rect.topLeft(), pixmap);
     }
 
-    void UnremoveButton::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
+    void UnremoveButton::onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
         QRectF rect(m_defaultPixmap.rect());
         rect.moveCenter(m_positionGetter());
 
-        bool const hovered = rect.contains(screen_mouse_pos);
+        const bool hovered = rect.contains(screen_mouse_pos);
         if (hovered != m_wasHovered) {
             m_wasHovered = hovered;
             interaction.setRedrawRequested(true);

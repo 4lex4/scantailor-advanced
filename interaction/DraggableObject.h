@@ -31,11 +31,11 @@ class QPainter;
 class DraggableObject {
 public:
     typedef boost::function<
-            void(QPainter& painter, InteractionState const& interaction)
+            void(QPainter& painter, const InteractionState& interaction)
     > PaintCallback;
 
     typedef boost::function<
-            Proximity(InteractionState const& interaction)
+            Proximity(const InteractionState& interaction)
     > ProximityThresholdCallback;
 
     typedef boost::function<
@@ -43,19 +43,19 @@ public:
     > ProximityPriorityCallback;
 
     typedef boost::function<
-            Proximity(QPointF const& mouse_pos)
+            Proximity(const QPointF& mouse_pos)
     > ProximityCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
+            void(const QPointF& mouse_pos)
     > DragInitiatedCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
+            void(const QPointF& mouse_pos)
     > DragContinuationCallback;
 
     typedef boost::function<
-            void(QPointF const& mouse_pos)
+            void(const QPointF& mouse_pos)
     > DragFinishedCallback;
 
     DraggableObject()
@@ -70,11 +70,11 @@ public:
 
     virtual ~DraggableObject() = default;
 
-    virtual void paint(QPainter& painter, InteractionState const& interaction) {
+    virtual void paint(QPainter& painter, const InteractionState& interaction) {
         m_paintCallback(painter, interaction);
     }
 
-    void setPaintCallback(PaintCallback const& callback) {
+    void setPaintCallback(const PaintCallback& callback) {
         m_paintCallback = callback;
     }
 
@@ -82,11 +82,11 @@ public:
      * \return The maximum distance from the object (in widget coordinates) that
      *         still allows to initiate a dragging operation.
      */
-    virtual Proximity proximityThreshold(InteractionState const& interaction) const {
+    virtual Proximity proximityThreshold(const InteractionState& interaction) const {
         return m_proximityThresholdCallback(interaction);
     }
 
-    void setProximityThresholdCallback(ProximityThresholdCallback const& callback) {
+    void setProximityThresholdCallback(const ProximityThresholdCallback& callback) {
         m_proximityThresholdCallback = callback;
     }
 
@@ -99,7 +99,7 @@ public:
         return m_proximityPriorityCallback();
     }
 
-    void setProximityPriorityCallback(ProximityPriorityCallback const& callback) {
+    void setProximityPriorityCallback(const ProximityPriorityCallback& callback) {
         m_proximityPriorityCallback = callback;
     }
 
@@ -107,52 +107,52 @@ public:
      * \return The proximity from the mouse position in widget coordinates to
      *         any draggable part of the object.
      */
-    virtual Proximity proximity(QPointF const& widget_mouse_pos) {
+    virtual Proximity proximity(const QPointF& widget_mouse_pos) {
         return m_proximityCallback(widget_mouse_pos);
     }
 
-    void setProximityCallback(ProximityCallback const& callback) {
+    void setProximityCallback(const ProximityCallback& callback) {
         m_proximityCallback = callback;
     }
 
     /**
      * \brief Called when dragging is initiated, that is when the mouse button is pressed.
      */
-    virtual void dragInitiated(QPointF const& mouse_pos) {
+    virtual void dragInitiated(const QPointF& mouse_pos) {
         m_dragInitiatedCallback(mouse_pos);
     }
 
-    void setDragInitiatedCallback(DragInitiatedCallback const& callback) {
+    void setDragInitiatedCallback(const DragInitiatedCallback& callback) {
         m_dragInitiatedCallback = callback;
     }
 
     /**
      * \brief Handles a request to move to a particular position in widget coordinates.
      */
-    virtual void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) {
+    virtual void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
         m_dragContinuationCallback(mouse_pos);
     }
 
-    void setDragContinuationCallback(DragInitiatedCallback const& callback) {
+    void setDragContinuationCallback(const DragInitiatedCallback& callback) {
         m_dragContinuationCallback = callback;
     }
 
     /**
      * \brief Called when dragging is finished, that is when the mouse button is released.
      */
-    virtual void dragFinished(QPointF const& mouse_pos) {
+    virtual void dragFinished(const QPointF& mouse_pos) {
         m_dragFinishedCallback(mouse_pos);
     }
 
-    void setDragFinishedCallback(DragFinishedCallback const& callback) {
+    void setDragFinishedCallback(const DragFinishedCallback& callback) {
         m_dragFinishedCallback = callback;
     }
 
 private:
-    static void defaultPaint(QPainter&, InteractionState const&) {
+    static void defaultPaint(QPainter&, const InteractionState&) {
     }
 
-    static Proximity defaultProximityThreshold(InteractionState const& interaction) {
+    static Proximity defaultProximityThreshold(const InteractionState& interaction) {
         return interaction.proximityThreshold();
     }
 
@@ -160,7 +160,7 @@ private:
         return 0;
     }
 
-    static void defaultDragFinished(QPointF const&) {
+    static void defaultDragFinished(const QPointF&) {
     }
 
     PaintCallback m_paintCallback;

@@ -48,60 +48,60 @@ namespace dewarping {
 
     class TextLineTracer {
     public:
-        static void trace(imageproc::GrayImage const& input,
-                          Dpi const& dpi,
-                          QRect const& content_rect,
+        static void trace(const imageproc::GrayImage& input,
+                          const Dpi& dpi,
+                          const QRect& content_rect,
                           DistortionModelBuilder& output,
-                          TaskStatus const& status,
+                          const TaskStatus& status,
                           DebugImages* dbg = nullptr);
 
     private:
-        static imageproc::GrayImage downscale(imageproc::GrayImage const& input, Dpi const& dpi);
+        static imageproc::GrayImage downscale(const imageproc::GrayImage& input, const Dpi& dpi);
 
-        static void sanitizeBinaryImage(imageproc::BinaryImage& image, QRect const& content_rect);
+        static void sanitizeBinaryImage(imageproc::BinaryImage& image, const QRect& content_rect);
 
         static void extractTextLines(std::list<std::vector<QPointF>>& out,
-                                     imageproc::GrayImage const& image,
-                                     std::pair<QLineF, QLineF> const& bounds,
+                                     const imageproc::GrayImage& image,
+                                     const std::pair<QLineF, QLineF>& bounds,
                                      DebugImages* dbg);
 
-        static Vec2f calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds);
+        static Vec2f calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds);
 
-        static imageproc::BinaryImage closeWithObstacles(imageproc::BinaryImage const& image,
-                                                         imageproc::BinaryImage const& obstacles,
-                                                         QSize const& brick);
+        static imageproc::BinaryImage closeWithObstacles(const imageproc::BinaryImage& image,
+                                                         const imageproc::BinaryImage& obstacles,
+                                                         const QSize& brick);
 
-        static QLineF calcMidLine(QLineF const& line1, QLineF const& line2);
+        static QLineF calcMidLine(const QLineF& line1, const QLineF& line2);
 
-        static void findMidLineSeeds(imageproc::SEDM const& sedm, QLineF mid_line, std::vector<QPoint>& seeds);
+        static void findMidLineSeeds(const imageproc::SEDM& sedm, QLineF mid_line, std::vector<QPoint>& seeds);
 
-        static bool isCurvatureConsistent(std::vector<QPointF> const& polyline);
+        static bool isCurvatureConsistent(const std::vector<QPointF>& polyline);
 
-        static bool isInsideBounds(QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound);
+        static bool isInsideBounds(const QPointF& pt, const QLineF& left_bound, const QLineF& right_bound);
 
         static void filterShortCurves(std::list<std::vector<QPointF>>& polylines,
-                                      QLineF const& left_bound,
-                                      QLineF const& right_bound);
+                                      const QLineF& left_bound,
+                                      const QLineF& right_bound);
 
         static void filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
-                                            QLineF const& left_bound,
-                                            QLineF const& right_bound);
+                                            const QLineF& left_bound,
+                                            const QLineF& right_bound);
 
         static void filterEdgyCurves(std::list<std::vector<QPointF>>& polylines);
 
-        static QImage visualizeVerticalBounds(QImage const& background, std::pair<QLineF, QLineF> const& bounds);
+        static QImage visualizeVerticalBounds(const QImage& background, const std::pair<QLineF, QLineF>& bounds);
 
-        static QImage visualizeGradient(QImage const& background, Grid<float> const& grad);
+        static QImage visualizeGradient(const QImage& background, const Grid<float>& grad);
 
-        static QImage visualizeMidLineSeeds(QImage const& background,
-                                            imageproc::BinaryImage const& overlay,
+        static QImage visualizeMidLineSeeds(const QImage& background,
+                                            const imageproc::BinaryImage& overlay,
                                             std::pair<QLineF, QLineF> bounds,
                                             QLineF mid_line,
-                                            std::vector<QPoint> const& seeds);
+                                            const std::vector<QPoint>& seeds);
 
-        static QImage visualizePolylines(QImage const& background,
-                                         std::list<std::vector<QPointF>> const& polylines,
-                                         std::pair<QLineF, QLineF> const* vert_bounds = nullptr);
+        static QImage visualizePolylines(const QImage& background,
+                                         const std::list<std::vector<QPointF>>& polylines,
+                                         const std::pair<QLineF, QLineF>* vert_bounds = nullptr);
     };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_TEXT_LINE_TRACER_H_

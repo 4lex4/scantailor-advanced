@@ -79,7 +79,7 @@ DefaultParams::DefaultParams(const QDomElement& el)
           units(unitsFromString(el.attribute("units"))) {
 }
 
-QDomElement DefaultParams::toXml(QDomDocument& doc, QString const& name) const {
+QDomElement DefaultParams::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
     el.appendChild(fixOrientationParams.toXml(doc, "fix-orientation-params"));
     el.appendChild(deskewParams.toXml(doc, "deskew-params"));

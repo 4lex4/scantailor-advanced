@@ -33,18 +33,18 @@ Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
 public:
     ZoneVertexDragInteraction(ZoneInteractionContext& context,
                               InteractionState& interaction,
-                              EditableSpline::Ptr const& spline,
-                              SplineVertex::Ptr const& vertex);
+                              const EditableSpline::Ptr& spline,
+                              const SplineVertex::Ptr& vertex);
 
 protected:
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
     void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
 private:
-    void checkProximity(InteractionState const& interaction);
+    void checkProximity(const InteractionState& interaction);
 
     ZoneInteractionContext& m_rContext;
     EditableSpline::Ptr m_ptrSpline;

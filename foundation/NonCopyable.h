@@ -26,13 +26,13 @@
 #define DECLARE_NON_COPYABLE(Class) \
 public: \
     /** \brief Copying is forbidden. */ \
-    Class(Class const &) = delete; \
+    Class(const Class&) = delete; \
     /** \brief Copying is forbidden. */ \
-    Class& operator=(Class const&) = delete; \
+    Class& operator=(const Class&) = delete; \
     /** \brief Moving is forbidden. */ \
-    Class(Class const &&) noexcept = delete; \
+    Class(Class&&) noexcept = delete; \
     /** \brief Moving is forbidden. */ \
-    Class& operator=(Class const&&) noexcept = delete; \
+    Class& operator=(Class&&) noexcept = delete; \
 private:
 
 #endif

@@ -33,16 +33,16 @@ public:
     OutputFileNameGenerator();
 
     OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
-                            QString const& out_dir,
+                            const QString& out_dir,
                             Qt::LayoutDirection layout_direction);
 
-    void performRelinking(AbstractRelinker const& relinker);
+    void performRelinking(const AbstractRelinker& relinker);
 
     Qt::LayoutDirection layoutDirection() const {
         return m_layoutDirection;
     }
 
-    QString const& outDir() const {
+    const QString& outDir() const {
         return m_outDir;
     }
 
@@ -50,13 +50,13 @@ public:
         return m_ptrDisambiguator.get();
     }
 
-    FileNameDisambiguator const* disambiguator() const {
+    const FileNameDisambiguator* disambiguator() const {
         return m_ptrDisambiguator.get();
     }
 
-    QString fileNameFor(PageId const& page) const;
+    QString fileNameFor(const PageId& page) const;
 
-    QString filePathFor(PageId const& page) const;
+    QString filePathFor(const PageId& page) const;
 
 private:
     intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;

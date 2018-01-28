@@ -42,57 +42,57 @@ namespace output {
  */
     class OutputImageParams {
     public:
-        OutputImageParams(QSize const& out_image_size,
-                          QRect const& content_rect,
+        OutputImageParams(const QSize& out_image_size,
+                          const QRect& content_rect,
                           ImageTransformation xform,
-                          Dpi const& dpi,
-                          ColorParams const& color_params,
-                          SplittingOptions const& splittingOptions,
-                          DewarpingOptions const& dewarping_options,
-                          dewarping::DistortionModel const& distortion_model,
-                          DepthPerception const& depth_perception,
+                          const Dpi& dpi,
+                          const ColorParams& color_params,
+                          const SplittingOptions& splittingOptions,
+                          const DewarpingOptions& dewarping_options,
+                          const dewarping::DistortionModel& distortion_model,
+                          const DepthPerception& depth_perception,
                           DespeckleLevel despeckle_level,
-                          PictureShapeOptions const& picture_shape_options,
-                          OutputProcessingParams const& output_processing_params);
+                          const PictureShapeOptions& picture_shape_options,
+                          const OutputProcessingParams& output_processing_params);
 
-        explicit OutputImageParams(QDomElement const& el);
+        explicit OutputImageParams(const QDomElement& el);
 
-        DewarpingOptions const& dewarpingMode() const;
+        const DewarpingOptions& dewarpingMode() const;
 
-        dewarping::DistortionModel const& distortionModel() const;
+        const dewarping::DistortionModel& distortionModel() const;
 
-        void setDistortionModel(dewarping::DistortionModel const& model);
+        void setDistortionModel(const dewarping::DistortionModel& model);
 
-        DepthPerception const& depthPerception() const;
+        const DepthPerception& depthPerception() const;
 
         DespeckleLevel despeckleLevel() const;
 
-        void setOutputProcessingParams(OutputProcessingParams const& outputProcessingParams);
+        void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
 
-        PictureShapeOptions const& getPictureShapeOptions() const;
+        const PictureShapeOptions& getPictureShapeOptions() const;
 
-        QPolygonF const& getCropArea() const;
+        const QPolygonF& getCropArea() const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         /**
          * \brief Returns true if two sets of parameters are close enough
          *        to avoid re-generating the output image.
          */
-        bool matches(OutputImageParams const& other) const;
+        bool matches(const OutputImageParams& other) const;
 
     private:
         class PartialXform {
         public:
             PartialXform();
 
-            PartialXform(QTransform const& xform);
+            PartialXform(const QTransform& xform);
 
-            explicit PartialXform(QDomElement const& el);
+            explicit PartialXform(const QDomElement& el);
 
-            QDomElement toXml(QDomDocument& doc, QString const& name) const;
+            QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-            bool matches(PartialXform const& other) const;
+            bool matches(const PartialXform& other) const;
 
         private:
             static bool closeEnough(double v1, double v2);
@@ -103,12 +103,12 @@ namespace output {
             double m_22;
         };
 
-        static bool colorParamsMatch(ColorParams const& cp1,
+        static bool colorParamsMatch(const ColorParams& cp1,
                                      DespeckleLevel dl1,
-                                     SplittingOptions const& so1,
-                                     ColorParams const& cp2,
+                                     const SplittingOptions& so1,
+                                     const ColorParams& cp2,
                                      DespeckleLevel dl2,
-                                     SplittingOptions const& so2);
+                                     const SplittingOptions& so2);
 
         /** Pixel size of the output image. */
         QSize m_size;

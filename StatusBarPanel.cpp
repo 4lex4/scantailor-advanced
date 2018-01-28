@@ -9,7 +9,7 @@ StatusBarPanel::StatusBarPanel() {
 }
 
 void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     if (!mousePos.isNull()) {
         double x = mousePos.x();
@@ -37,7 +37,7 @@ void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
 }
 
 void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     if (!physSize.isNull()) {
         double width = physSize.width();

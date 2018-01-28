@@ -46,24 +46,24 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
         recentProjectsGroup->setVisible(false);
     } else {
         rp.enumerate(
-                [this](QString const& file_path) {
+                [this](const QString& file_path) {
                     addRecentProject(file_path);
                 }
         );
     }
 
     connect(
-            newProjectLabel, SIGNAL(linkActivated(QString const &)),
+            newProjectLabel, SIGNAL(linkActivated(const QString &)),
             this, SIGNAL(newProject())
     );
     connect(
-            openProjectLabel, SIGNAL(linkActivated(QString const &)),
+            openProjectLabel, SIGNAL(linkActivated(const QString &)),
             this, SIGNAL(openProject())
     );
 }
 
-void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
-    QFileInfo const file_info(file_path);
+void NewOpenProjectPanel::addRecentProject(const QString& file_path) {
+    const QFileInfo file_info(file_path);
     QString base_name(file_info.baseName());
     if (base_name.isEmpty()) {
         base_name = QChar('_');
@@ -82,8 +82,8 @@ void NewOpenProjectPanel::addRecentProject(QString const& file_path) {
     recentProjectsGroup->layout()->addWidget(label);
 
     connect(
-            label, SIGNAL(linkActivated(QString const &)),
-            this, SIGNAL(openRecentProject(QString const &))
+            label, SIGNAL(linkActivated(const QString &)),
+            this, SIGNAL(openRecentProject(const QString &))
     );
 }
 
@@ -95,12 +95,12 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
     int left = 0, top = 0, right = 0, bottom = 0;
     layout()->getContentsMargins(&left, &top, &right, &bottom);
 
-    QRect const widget_rect(rect());
-    QRect const except_margins(
+    const QRect widget_rect(rect());
+    const QRect except_margins(
             widget_rect.adjusted(left, top, -right, -bottom)
     );
 
-    int const border = 1;  // Solid line border width.
+    const int border = 1;  // Solid line border width.
 
     QPainter painter(this);
 

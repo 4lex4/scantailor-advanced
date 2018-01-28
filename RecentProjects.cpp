@@ -24,10 +24,10 @@ void RecentProjects::read() {
     QSettings settings;
     std::list<QString> new_list;
 
-    int const size = settings.beginReadArray("project/recent");
+    const int size = settings.beginReadArray("project/recent");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
-        QString const path(settings.value("path").toString());
+        const QString path(settings.value("path").toString());
         new_list.push_back(path);
     }
     settings.endArray();
@@ -35,11 +35,11 @@ void RecentProjects::read() {
     m_projectFiles.swap(new_list);
 }
 
-void RecentProjects::write(int const max_items) const {
+void RecentProjects::write(const int max_items) const {
     QSettings settings;
     settings.beginWriteArray("project/recent");
     int idx = 0;
-    for (QString const& path : m_projectFiles) {
+    for (const QString& path : m_projectFiles) {
         if (idx >= max_items) {
             break;
         }
@@ -54,7 +54,7 @@ bool RecentProjects::validate() {
     bool all_ok = true;
 
     auto it(m_projectFiles.begin());
-    auto const end(m_projectFiles.end());
+    const auto end(m_projectFiles.end());
     while (it != end) {
         if (QFile::exists(*it)) {
             ++it;
@@ -67,9 +67,9 @@ bool RecentProjects::validate() {
     return all_ok;
 }
 
-void RecentProjects::setMostRecent(QString const& file_path) {
-    auto const begin(m_projectFiles.begin());
-    auto const end(m_projectFiles.end());
+void RecentProjects::setMostRecent(const QString& file_path) {
+    const auto begin(m_projectFiles.begin());
+    const auto end(m_projectFiles.end());
     auto it(std::find(begin, end, file_path));
     if (it != end) {
         m_projectFiles.splice(begin, m_projectFiles, it);

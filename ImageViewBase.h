@@ -83,10 +83,10 @@ public:
      *        The units are widget pixels.  This reserved area may
      *        be used for custom drawing or custom controls.
      */
-    ImageViewBase(QImage const& image,
-                  ImagePixmapUnion const& downscaled_version,
-                  ImagePresentation const& presentation,
-                  Margins const& margins = Margins());
+    ImageViewBase(const QImage& image,
+                  const ImagePixmapUnion& downscaled_version,
+                  const ImagePresentation& presentation,
+                  const Margins& margins = Margins());
 
     ~ImageViewBase() override;
 
@@ -94,7 +94,7 @@ public:
      * The idea behind this accessor is being able to share a single
      * downscaled pixmap between multiple image views.
      */
-    QPixmap const& downscaledPixmap() const {
+    const QPixmap& downscaledPixmap() const {
         return m_pixmap;
     }
 
@@ -115,7 +115,7 @@ public:
      * \param image The input image, not null, and with DPI set correctly.
      * \return The image downscaled by an unspecified degree.
      */
-    static QImage createDownscaledImage(QImage const& image);
+    static QImage createDownscaledImage(const QImage& image);
 
     InteractionHandler& rootInteractionHandler() {
         return m_rootInteractionHandler;
@@ -125,23 +125,23 @@ public:
         return m_interactionState;
     }
 
-    InteractionState const& interactionState() const {
+    const InteractionState& interactionState() const {
         return m_interactionState;
     }
 
-    QTransform const& imageToVirtual() const {
+    const QTransform& imageToVirtual() const {
         return m_imageToVirtual;
     }
 
-    QTransform const& virtualToImage() const {
+    const QTransform& virtualToImage() const {
         return m_virtualToImage;
     }
 
-    QTransform const& virtualToWidget() const {
+    const QTransform& virtualToWidget() const {
         return m_virtualToWidget;
     }
 
-    QTransform const& widgetToVirtual() const {
+    const QTransform& widgetToVirtual() const {
         return m_widgetToVirtual;
     }
 
@@ -157,7 +157,7 @@ public:
         viewport()->update();
     }
 
-    QRectF const& virtualDisplayRect() const {
+    const QRectF& virtualDisplayRect() const {
         return m_virtualDisplayArea;
     }
 
@@ -173,7 +173,7 @@ public:
      * Unlike setStatusTip(), this method will display the tooltip
      * immediately, not when the mouse enters the widget next time.
      */
-    void ensureStatusTip(QString const& status_tip);
+    void ensureStatusTip(const QString& status_tip);
 
     /**
      * \brief Get the focal point in widget coordinates.
@@ -196,7 +196,7 @@ public:
      *
      * \see getWidgetFocalPoint()
      */
-    void setWidgetFocalPoint(QPointF const& widget_fp);
+    void setWidgetFocalPoint(const QPointF& widget_fp);
 
     /**
      * \brief Set the focal point in widget coordinates, after adjustring
@@ -207,7 +207,7 @@ public:
      * \see getWidgetFocalPoint()
      * \see setWidgetFocalPoint()
      */
-    void adjustAndSetWidgetFocalPoint(QPointF const& widget_fp);
+    void adjustAndSetWidgetFocalPoint(const QPointF& widget_fp);
 
     /**
      * \brief Sets the widget focal point and recalculates the pixmap focal
@@ -219,18 +219,18 @@ public:
      * \brief Updates image-to-virtual and recalculates
      *        virtual-to-widget transformations.
      */
-    void updateTransform(ImagePresentation const& presentation);
+    void updateTransform(const ImagePresentation& presentation);
 
     /**
      * \brief Same as updateTransform(), but adjusts the focal point
      *        to improve screen space usage.
      */
-    void updateTransformAndFixFocalPoint(ImagePresentation const& presentation, FocalPointMode mode);
+    void updateTransformAndFixFocalPoint(const ImagePresentation& presentation, FocalPointMode mode);
 
     /**
      * \brief Same as updateTransform(), but preserves the visual image scale.
      */
-    void updateTransformPreservingScale(ImagePresentation const& presentation);
+    void updateTransformPreservingScale(const ImagePresentation& presentation);
 
     /**
      * \brief Sets the zoom level.
@@ -328,7 +328,7 @@ private:
 
     void scheduleHqVersionRebuild();
 
-    void hqVersionBuilt(QPoint const& origin, QImage const& image);
+    void hqVersionBuilt(const QPoint& origin, const QImage& image);
 
     void updateStatusTipAndCursor();
 

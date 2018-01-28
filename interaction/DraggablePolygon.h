@@ -16,28 +16,28 @@ public:
     > PositionCallback;
 
     typedef boost::function<
-            void(QPolygonF const& polygon)
+            void(const QPolygonF& polygon)
     > MoveRequestCallback;
 
     DraggablePolygon();
 
     int proximityPriority() const override;
 
-    Proximity proximity(QPointF const& mouse_pos) override;
+    Proximity proximity(const QPointF& mouse_pos) override;
 
-    void dragInitiated(QPointF const& mouse_pos) override;
+    void dragInitiated(const QPointF& mouse_pos) override;
 
-    void dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) override;
+    void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
 
     void setProximityPriority(int priority) {
         m_proximityPriority = priority;
     }
 
-    void setPositionCallback(PositionCallback const& callback) {
+    void setPositionCallback(const PositionCallback& callback) {
         m_positionCallback = callback;
     }
 
-    void setMoveRequestCallback(MoveRequestCallback const& callback) {
+    void setMoveRequestCallback(const MoveRequestCallback& callback) {
         m_moveRequestCallback = callback;
     }
 
@@ -46,7 +46,7 @@ protected:
         return m_positionCallback();
     }
 
-    virtual void polygonMoveRequest(QPolygonF const& polygon) {
+    virtual void polygonMoveRequest(const QPolygonF& polygon) {
         m_moveRequestCallback(polygon);
     }
 

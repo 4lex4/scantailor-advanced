@@ -75,17 +75,17 @@ namespace imageproc {
          * \brief Take labelled regions from a connectivity map
          *        and extend them to cover the whole available area.
          */
-        explicit InfluenceMap(ConnectivityMap const& cmap);
+        explicit InfluenceMap(const ConnectivityMap& cmap);
 
         /**
          * \brief Take labelled regions from a connectivity map
          *        and extend them to cover the area that's black in mask.
          */
-        InfluenceMap(ConnectivityMap const& cmap, BinaryImage const& mask);
+        InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask);
 
-        InfluenceMap(InfluenceMap const& other);
+        InfluenceMap(const InfluenceMap& other);
 
-        InfluenceMap& operator=(InfluenceMap const& other);
+        InfluenceMap& operator=(const InfluenceMap& other);
 
         void swap(InfluenceMap& other);
 
@@ -96,7 +96,7 @@ namespace imageproc {
          * so moving to the next line requires adding stride() rather
          * than size().width().
          */
-        Cell const* data() const {
+        const Cell* data() const {
             return m_pData;
         }
 
@@ -118,7 +118,7 @@ namespace imageproc {
          * labelled as background (label 0).  Sometimes it might be desirable
          * to access that data.
          */
-        Cell const* paddedData() const {
+        const Cell* paddedData() const {
             return m_pData ? &m_data[0] : nullptr;
         }
 
@@ -166,7 +166,7 @@ namespace imageproc {
         QImage visualized() const;
 
     private:
-        void init(ConnectivityMap const& cmap, BinaryImage const* mask = nullptr);
+        void init(const ConnectivityMap& cmap, const BinaryImage* mask = nullptr);
 
         std::vector<Cell> m_data;
         Cell* m_pData;

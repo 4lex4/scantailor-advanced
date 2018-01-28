@@ -32,7 +32,7 @@ namespace imageproc {
               m_maxLabel(0) {
     }
 
-    InfluenceMap::InfluenceMap(ConnectivityMap const& cmap)
+    InfluenceMap::InfluenceMap(const ConnectivityMap& cmap)
             : m_pData(nullptr),
               m_size(),
               m_stride(0),
@@ -44,7 +44,7 @@ namespace imageproc {
         init(cmap);
     }
 
-    InfluenceMap::InfluenceMap(ConnectivityMap const& cmap, BinaryImage const& mask)
+    InfluenceMap::InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask)
             : m_pData(nullptr),
               m_size(),
               m_stride(0),
@@ -59,7 +59,7 @@ namespace imageproc {
         init(cmap, &mask);
     }
 
-    InfluenceMap::InfluenceMap(InfluenceMap const& other)
+    InfluenceMap::InfluenceMap(const InfluenceMap& other)
             : m_data(other.m_data),
               m_pData(nullptr),
               m_size(other.size()),
@@ -70,7 +70,7 @@ namespace imageproc {
         }
     }
 
-    InfluenceMap& InfluenceMap::operator=(InfluenceMap const& other) {
+    InfluenceMap& InfluenceMap::operator=(const InfluenceMap& other) {
         InfluenceMap(other).swap(*this);
 
         return *this;
@@ -84,9 +84,9 @@ namespace imageproc {
         std::swap(m_maxLabel, other.m_maxLabel);
     }
 
-    void InfluenceMap::init(ConnectivityMap const& cmap, BinaryImage const* mask) {
-        int const width = cmap.size().width() + 2;
-        int const height = cmap.size().height() + 2;
+    void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
+        const int width = cmap.size().width() + 2;
+        const int height = cmap.size().height() + 2;
 
         m_size = cmap.size();
         m_stride = width;
@@ -97,7 +97,7 @@ namespace imageproc {
         FastQueue<Cell*> queue;
 
         Cell* cell = &m_data[0];
-        uint32_t const* label = cmap.paddedData();
+        const uint32_t* label = cmap.paddedData();
         for (int i = width * height; i > 0; --i) {
             assert(*label <= cmap.maxLabel());
             cell->label = *label;
@@ -112,10 +112,10 @@ namespace imageproc {
         }
 
         if (mask) {
-            uint32_t const* mask_line = mask->data();
-            int const mask_stride = mask->wordsPerLine();
+            const uint32_t* mask_line = mask->data();
+            const int mask_stride = mask->wordsPerLine();
             cell = m_pData;
-            uint32_t const msb = uint32_t(1) << 31;
+            const uint32_t msb = uint32_t(1) << 31;
             for (int y = 0; y < height - 2; ++y) {
                 for (int x = 0; x < width - 2; ++x, ++cell) {
                     if (mask_line[x >> 5] & (msb >> (x & 31))) {
@@ -151,8 +151,8 @@ namespace imageproc {
             assert(cell->label != 0);
             assert(cell->label <= m_maxLabel);
 
-            int32_t const dx2 = cell->vec.x << 1;
-            int32_t const dy2 = cell->vec.y << 1;
+            const int32_t dx2 = cell->vec.x << 1;
+            const int32_t dy2 = cell->vec.y << 1;
 
             // North-western neighbor.
             Cell* nbh = cell - width - 1;
@@ -245,31 +245,31 @@ namespace imageproc {
             return QImage();
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         QImage dst(m_size, QImage::Format_ARGB32);
         dst.fill(0x00FFFFFF);  // transparent white
-        Cell const* src_line = m_pData;
-        int const src_stride = m_stride;
+        const Cell* src_line = m_pData;
+        const int src_stride = m_stride;
 
         auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
-        int const dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
+        const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t const val = src_line[x].label;
+                const uint32_t val = src_line[x].label;
                 if (val == 0) {
                     continue;
                 }
 
-                int const bits_unused = countMostSignificantZeroes(val);
-                uint32_t const reversed = reverseBits(val) >> bits_unused;
-                uint32_t const mask = ~uint32_t(0) >> bits_unused;
+                const int bits_unused = countMostSignificantZeroes(val);
+                const uint32_t reversed = reverseBits(val) >> bits_unused;
+                const uint32_t mask = ~uint32_t(0) >> bits_unused;
 
-                double const H = 0.99 * (double(reversed) / mask);
-                double const S = 1.0;
-                double const V = 1.0;
+                const double H = 0.99 * (double(reversed) / mask);
+                const double S = 1.0;
+                const double V = 1.0;
                 QColor color;
                 color.setHsvF(H, S, V, 1.0);
 

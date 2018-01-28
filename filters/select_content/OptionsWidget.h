@@ -47,21 +47,21 @@ namespace select_content {
 
             ~UiData();
 
-            void setSizeCalc(PhysSizeCalc const& calc);
+            void setSizeCalc(const PhysSizeCalc& calc);
 
-            void setContentRect(QRectF const& content_rect);
+            void setContentRect(const QRectF& content_rect);
 
-            void setPageRect(QRectF const& content_rect);
+            void setPageRect(const QRectF& content_rect);
 
-            QRectF const& contentRect() const;
+            const QRectF& contentRect() const;
 
-            QRectF const& pageRect() const;
+            const QRectF& pageRect() const;
 
             QSizeF contentSizeMM() const;
 
-            void setDependencies(Dependencies const& deps);
+            void setDependencies(const Dependencies& deps);
 
-            Dependencies const& dependencies() const;
+            const Dependencies& dependencies() const;
 
             void setContentDetectionMode(AutoManualMode mode);
 
@@ -96,33 +96,33 @@ namespace select_content {
         };
 
 
-        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id);
+        void preUpdateUI(const PageId& page_id);
 
-        void postUpdateUI(UiData const& ui_data);
+        void postUpdateUI(const UiData& ui_data);
 
         void updateUnits(Units units) override;
 
     public slots:
 
-        void manualContentRectSet(QRectF const& content_rect);
+        void manualContentRectSet(const QRectF& content_rect);
 
-        void manualPageRectSet(QRectF const& page_rect);
+        void manualPageRectSet(const QRectF& page_rect);
 
-        void updatePageRectSize(QSizeF const& size);
+        void updatePageRectSize(const QSizeF& size);
 
     signals:
 
-        void pageRectChangedLocally(QRectF const& pageRect);
+        void pageRectChangedLocally(const QRectF& pageRect);
 
     private slots:
 
         void showApplyToDialog();
 
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box, bool apply_page_box);
+        void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
 
         void contentDetectAutoToggled();
 

@@ -63,7 +63,7 @@ class ImageTransformation {
 public:
     // Member-wise copying is OK.
 
-    ImageTransformation(QRectF const& orig_image_rect, Dpi const& orig_dpi);
+    ImageTransformation(const QRectF& orig_image_rect, const Dpi& orig_dpi);
 
     ~ImageTransformation();
 
@@ -72,7 +72,7 @@ public:
      *
      * \see \ref transformations Transformations.
      */
-    void preScaleToDpi(Dpi const& dpi);
+    void preScaleToDpi(const Dpi& dpi);
 
     /**
      * \brief Set the 1st step transformation, recalculating the following ones.
@@ -89,7 +89,7 @@ public:
     /**
      * \brief Get the original image DPI.
      */
-    Dpi const& origDpi() const {
+    const Dpi& origDpi() const {
         return m_origDpi;
     }
 
@@ -99,7 +99,7 @@ public:
      * Note that if the original DPI was assymetric, pre-scaling to
      * a symmetric DPI will be applied implicitly.
      */
-    Dpi const& preScaledDpi() const {
+    const Dpi& preScaledDpi() const {
         return m_preScaledDpi;
     }
 
@@ -126,7 +126,7 @@ public:
      *
      * \see \ref transformations Transformations.
      */
-    void setPreCropArea(QPolygonF const& area);
+    void setPreCropArea(const QPolygonF& area);
 
     /**
      * \brief Get the effective pre-crop area in pre-rotated coordinates.
@@ -135,7 +135,7 @@ public:
      * this function returns it as is.  Otherwise, the whole available
      * area is returned.
      */
-    QPolygonF const& preCropArea() const {
+    const QPolygonF& preCropArea() const {
         return m_preCropArea;
     }
 
@@ -145,7 +145,7 @@ public:
      * If no pre-crop area was set, the whole image is assumed to be
      * the pre-crop area.
      */
-    QPolygonF const& resultingPreCropArea() const {
+    const QPolygonF& resultingPreCropArea() const {
         return m_resultingPreCropArea;
     }
 
@@ -180,7 +180,7 @@ public:
     /**
      * \brief Set the 5th step transformation, resetting the following ones.
      */
-    void setPostCropArea(QPolygonF const& area);
+    void setPostCropArea(const QPolygonF& area);
 
     /**
      * \brief Returns the post-crop area after all transformations.
@@ -188,7 +188,7 @@ public:
      * If no post-crop area was set, the whole image is assumed to be
      * the post-crop area.
      */
-    QPolygonF const& resultingPostCropArea() const {
+    const QPolygonF& resultingPostCropArea() const {
         return m_resultingPostCropArea;
     }
 
@@ -197,13 +197,13 @@ public:
      *
      * Passing a null (default constructed) Dpi means "don't apply post-scaling".
      */
-    void postScaleToDpi(Dpi const& dpi);
+    void postScaleToDpi(const Dpi& dpi);
 
     /**
      * \brief Returns the transformation matrix from the original
      *        to resulting image coordinates.
      */
-    QTransform const& transform() const {
+    const QTransform& transform() const {
         return m_transform;
     }
 
@@ -211,14 +211,14 @@ public:
      * \brief Returns the transformation matrix from the resulting
      *        to original image coordinates.
      */
-    QTransform const& transformBack() const {
+    const QTransform& transformBack() const {
         return m_invTransform;
     }
 
     /**
      * \brief Returns the original image rectangle, as specified.
      */
-    QRectF const& origRect() const {
+    const QRectF& origRect() const {
         return m_origRect;
     }
 
@@ -229,16 +229,16 @@ public:
      * to be very close to (0, 0), assuming the original rectangle
      * had it at (0, 0), but it's not guaranteed to be exactly there.
      */
-    QRectF const& resultingRect() const {
+    const QRectF& resultingRect() const {
         return m_resultingRect;
     }
 
 private:
-    QTransform calcCropXform(QPolygonF const& crop_area);
+    QTransform calcCropXform(const QPolygonF& crop_area);
 
     QTransform calcPostRotateXform(double degrees);
 
-    QTransform calcPostScaleXform(Dpi const& target_dpi);
+    QTransform calcPostScaleXform(const Dpi& target_dpi);
 
     void resetPreCropArea();
 

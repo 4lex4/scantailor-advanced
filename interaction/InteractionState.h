@@ -67,39 +67,39 @@ public:
             unlink();
         }
 
-        QCursor const& proximityCursor() const {
+        const QCursor& proximityCursor() const {
             return m_proximityCursor;
         }
 
-        void setProximityCursor(QCursor const& cursor) {
+        void setProximityCursor(const QCursor& cursor) {
             m_proximityCursor = cursor;
         }
 
-        QCursor const& interactionCursor() const {
+        const QCursor& interactionCursor() const {
             return m_interactionCursor;
         }
 
-        void setInteractionCursor(QCursor const& cursor) {
+        void setInteractionCursor(const QCursor& cursor) {
             m_interactionCursor = cursor;
         }
 
-        QString const& proximityStatusTip() const {
+        const QString& proximityStatusTip() const {
             return m_proximityStatusTip;
         }
 
-        void setProximityStatusTip(QString const& tip) {
+        void setProximityStatusTip(const QString& tip) {
             m_proximityStatusTip = tip;
         }
 
-        QString const& interactionStatusTip() const {
+        const QString& interactionStatusTip() const {
             return m_interactionStatusTip;
         }
 
-        void setInteractionStatusTip(QString const& tip) {
+        void setInteractionStatusTip(const QString& tip) {
             m_interactionStatusTip = tip;
         }
 
-        QString const& interactionOrProximityStatusTip() const {
+        const QString& interactionOrProximityStatusTip() const {
             return m_interactionStatusTip.isNull() ? m_proximityStatusTip : m_interactionStatusTip;
         }
 
@@ -119,18 +119,18 @@ public:
         return !m_captorList.empty();
     }
 
-    bool capturedBy(Captor const& captor) const;
+    bool capturedBy(const Captor& captor) const;
 
     void resetProximity();
 
     void updateProximity(Captor& captor,
-                         Proximity const& proximity,
+                         const Proximity& proximity,
                          int priority = 0,
                          Proximity proximity_threshold = Proximity());
 
-    bool proximityLeader(Captor const& captor) const;
+    bool proximityLeader(const Captor& captor) const;
 
-    Proximity const& proximityThreshold() const {
+    const Proximity& proximityThreshold() const {
         return m_proximityThreshold;
     }
 
@@ -138,11 +138,11 @@ public:
 
     QString statusTip() const;
 
-    QString const& defaultStatusTip() const {
+    const QString& defaultStatusTip() const {
         return m_defaultStatusTip;
     }
 
-    void setDefaultStatusTip(QString const& status_tip) {
+    void setDefaultStatusTip(const QString& status_tip) {
         m_defaultStatusTip = status_tip;
     }
 
@@ -162,7 +162,7 @@ private:
     /**
      * Returns true if the provided proximity is better than the stored one.
      */
-    bool betterProximity(Proximity const& proximity, int priority) const;
+    bool betterProximity(const Proximity& proximity, int priority) const;
 
     QString m_defaultStatusTip;
     CaptorList m_captorList;

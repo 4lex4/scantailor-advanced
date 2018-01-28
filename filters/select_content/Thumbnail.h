@@ -31,17 +31,17 @@ namespace select_content {
     class Thumbnail : public ThumbnailBase {
     public:
         Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                  QSizeF const& max_size,
-                  ImageId const& image_id,
-                  ImageTransformation const& xform,
-                  QRectF const& content_rect,
-                  QRectF const& page_rect,
+                  const QSizeF& max_size,
+                  const ImageId& image_id,
+                  const ImageTransformation& xform,
+                  const QRectF& content_rect,
+                  const QRectF& page_rect,
                   bool page_rect_enabled,
                   bool deviant);
 
         void paintOverImage(QPainter& painter,
-                            QTransform const& image_to_display,
-                            QTransform const& thumb_to_display) override;
+                            const QTransform& image_to_display,
+                            const QTransform& thumb_to_display) override;
 
     private:
         QRectF m_contentRect;

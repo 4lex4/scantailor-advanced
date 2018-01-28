@@ -46,21 +46,21 @@ namespace output {
     class FillZoneEditor : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        FillZoneEditor(QImage const& image,
-                       ImagePixmapUnion const& downscaled_version,
-                       boost::function<QPointF(QPointF const&)> const& orig_to_image,
-                       boost::function<QPointF(QPointF const&)> const& image_to_orig,
-                       PageId const& page_id,
+        FillZoneEditor(const QImage& image,
+                       const ImagePixmapUnion& downscaled_version,
+                       boost::function<QPointF(const QPointF&)>const & orig_to_image,
+                       boost::function<QPointF(const QPointF&)>const & image_to_orig,
+                       const PageId& page_id,
                        intrusive_ptr<Settings> settings);
 
         ~FillZoneEditor() override;
 
     signals:
 
-        void invalidateThumbnail(PageId const& page_id);
+        void invalidateThumbnail(const PageId& page_id);
 
     protected:
-        void onPaint(QPainter& painter, InteractionState const& interaction) override;
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     private slots:
 
@@ -71,20 +71,20 @@ namespace output {
     private:
         class MenuCustomizer;
 
-        typedef QColor (* ColorAdapter)(QColor const&);
+        typedef QColor (* ColorAdapter)(const QColor&);
 
         InteractionHandler* createContextMenuInteraction(InteractionState& interaction);
 
         InteractionHandler*
-        createColorPickupInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
+        createColorPickupInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction);
 
-        static QColor toOpaque(QColor const& color);
+        static QColor toOpaque(const QColor& color);
 
-        static QColor toGrayscale(QColor const& color);
+        static QColor toGrayscale(const QColor& color);
 
-        static QColor toBlackWhite(QColor const& color);
+        static QColor toBlackWhite(const QColor& color);
 
-        static ColorAdapter colorAdapterFor(QImage const& image);
+        static ColorAdapter colorAdapterFor(const QImage& image);
 
 
         ColorAdapter m_colorAdapter;
@@ -97,8 +97,8 @@ namespace output {
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
 
-        boost::function<QPointF(QPointF const&)> m_origToImage;
-        boost::function<QPointF(QPointF const&)> m_imageToOrig;
+        boost::function<QPointF(const QPointF&)> m_origToImage;
+        boost::function<QPointF(const QPointF&)> m_imageToOrig;
         PageId m_pageId;
         intrusive_ptr<Settings> m_ptrSettings;
     };

@@ -36,7 +36,7 @@ void OrthogonalRotation::prevClockwiseDirection() {
     }
 }
 
-QSize OrthogonalRotation::rotate(QSize const& dimensions) const {
+QSize OrthogonalRotation::rotate(const QSize& dimensions) const {
     if ((m_degrees == 90) || (m_degrees == 270)) {
         return QSize(dimensions.height(), dimensions.width());
     } else {
@@ -44,11 +44,11 @@ QSize OrthogonalRotation::rotate(QSize const& dimensions) const {
     }
 }
 
-QSize OrthogonalRotation::unrotate(QSize const& dimensions) const {
+QSize OrthogonalRotation::unrotate(const QSize& dimensions) const {
     return rotate(dimensions);
 }
 
-QSizeF OrthogonalRotation::rotate(QSizeF const& dimensions) const {
+QSizeF OrthogonalRotation::rotate(const QSizeF& dimensions) const {
     if ((m_degrees == 90) || (m_degrees == 270)) {
         return QSizeF(dimensions.height(), dimensions.width());
     } else {
@@ -56,11 +56,11 @@ QSizeF OrthogonalRotation::rotate(QSizeF const& dimensions) const {
     }
 }
 
-QSizeF OrthogonalRotation::unrotate(QSizeF const& dimensions) const {
+QSizeF OrthogonalRotation::unrotate(const QSizeF& dimensions) const {
     return rotate(dimensions);
 }
 
-QPointF OrthogonalRotation::rotate(QPointF const& point, double const xmax, double const ymax) const {
+QPointF OrthogonalRotation::rotate(const QPointF& point, const double xmax, const double ymax) const {
     QPointF rotated;
 
     switch (m_degrees) {
@@ -86,7 +86,7 @@ QPointF OrthogonalRotation::rotate(QPointF const& point, double const xmax, doub
     return rotated;
 }
 
-QPointF OrthogonalRotation::unrotate(QPointF const& point, double const xmax, double const ymax) const {
+QPointF OrthogonalRotation::unrotate(const QPointF& point, const double xmax, const double ymax) const {
     QPointF unrotated;
 
     switch (m_degrees) {
@@ -112,7 +112,7 @@ QPointF OrthogonalRotation::unrotate(QPointF const& point, double const xmax, do
     return unrotated;
 }
 
-QTransform OrthogonalRotation::transform(QSizeF const& dimensions) const {
+QTransform OrthogonalRotation::transform(const QSizeF& dimensions) const {
     QTransform t;
 
     switch (m_degrees) {

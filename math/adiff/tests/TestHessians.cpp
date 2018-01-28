@@ -32,11 +32,11 @@ namespace adiff {
                 SparseMap<2> sparse_map(1);
                 sparse_map.markAllNonZero();
 
-                Function<2> const x(0, 3, sparse_map);
-                Function<2> const res(x * x);
+                const Function<2> x(0, 3, sparse_map);
+                const Function<2> res(x * x);
 
-                VecT<double> const gradient(res.gradient(sparse_map));
-                MatT<double> const hessian(res.hessian(sparse_map));
+                const VecT<double> gradient(res.gradient(sparse_map));
+                const MatT<double> hessian(res.hessian(sparse_map));
 
                 // F = 9
                 // Fx = 2 * x = 6
@@ -53,11 +53,11 @@ namespace adiff {
                 SparseMap<2> sparse_map(2);
                 sparse_map.markAllNonZero();
 
-                Function<2> const x(0, 3, sparse_map);
-                Function<2> const res(x * x);
+                const Function<2> x(0, 3, sparse_map);
+                const Function<2> res(x * x);
 
-                VecT<double> const gradient(res.gradient(sparse_map));
-                MatT<double> const hessian(res.hessian(sparse_map));
+                const VecT<double> gradient(res.gradient(sparse_map));
+                const MatT<double> hessian(res.hessian(sparse_map));
 
                 // F = 9
                 // Fx = 2 * x = 6
@@ -81,14 +81,14 @@ namespace adiff {
                 SparseMap<2> sparse_map(2);
                 sparse_map.markAllNonZero();
 
-                Function<2> const x(0, 2, sparse_map);
-                Function<2> const y(1, 3, sparse_map);
-                Function<2> const xxx(x * x * x);
-                Function<2> const yy(y * y);
-                Function<2> const res(xxx * yy);
+                const Function<2> x(0, 2, sparse_map);
+                const Function<2> y(1, 3, sparse_map);
+                const Function<2> xxx(x * x * x);
+                const Function<2> yy(y * y);
+                const Function<2> res(xxx * yy);
 
-                VecT<double> const gradient(res.gradient(sparse_map));
-                MatT<double> const hessian(res.hessian(sparse_map));
+                const VecT<double> gradient(res.gradient(sparse_map));
+                const MatT<double> hessian(res.hessian(sparse_map));
 
                 // F = 72
                 // Fx = 3 * x^2 * y^2 = 108

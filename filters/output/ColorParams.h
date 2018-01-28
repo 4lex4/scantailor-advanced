@@ -37,24 +37,24 @@ namespace output {
     public:
         ColorParams();
 
-        explicit ColorParams(QDomElement const& el);
+        explicit ColorParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         ColorMode colorMode() const;
 
         void setColorMode(ColorMode mode);
 
-        ColorCommonOptions const& colorCommonOptions() const;
+        const ColorCommonOptions& colorCommonOptions() const;
 
-        void setColorCommonOptions(ColorCommonOptions const& opt);
+        void setColorCommonOptions(const ColorCommonOptions& opt);
 
-        BlackWhiteOptions const& blackWhiteOptions() const;
+        const BlackWhiteOptions& blackWhiteOptions() const;
 
-        void setBlackWhiteOptions(BlackWhiteOptions const& opt);
+        void setBlackWhiteOptions(const BlackWhiteOptions& opt);
 
     private:
-        static ColorMode parseColorMode(QString const& str);
+        static ColorMode parseColorMode(const QString& str);
 
         static QString formatColorMode(ColorMode mode);
 

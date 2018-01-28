@@ -48,13 +48,13 @@ namespace select_content {
         Task(intrusive_ptr<Filter> filter,
              intrusive_ptr<page_layout::Task> next_task,
              intrusive_ptr<Settings> settings,
-             PageId const& page_id,
+             const PageId& page_id,
              bool batch,
              bool debug);
 
         ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
     private:
         class UiUpdater;

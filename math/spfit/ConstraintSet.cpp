@@ -21,14 +21,14 @@
 #include <boost/foreach.hpp>
 
 namespace spfit {
-    ConstraintSet::ConstraintSet(FittableSpline const* spline)
+    ConstraintSet::ConstraintSet(const FittableSpline* spline)
             : m_pSpline(spline) {
         assert(spline);
     }
 
-    void ConstraintSet::constrainControlPoint(int cp_idx, QPointF const& pos) {
+    void ConstraintSet::constrainControlPoint(int cp_idx, const QPointF& pos) {
         assert(cp_idx >= 0 && cp_idx < m_pSpline->numControlPoints());
-        QPointF const cp(m_pSpline->controlPointPosition(cp_idx));
+        const QPointF cp(m_pSpline->controlPointPosition(cp_idx));
 
         // Fix x coordinate.
         LinearFunction f(m_pSpline->numControlPoints() * 2);
@@ -42,15 +42,15 @@ namespace spfit {
         m_constraints.push_back(f);
     }
 
-    void ConstraintSet::constrainSplinePoint(double t, QPointF const& pos) {
+    void ConstraintSet::constrainSplinePoint(double t, const QPointF& pos) {
         std::vector<FittableSpline::LinearCoefficient> coeffs;
         m_pSpline->linearCombinationAt(t, coeffs);
 
         // Fix the x coordinate.
         LinearFunction f(m_pSpline->numControlPoints() * 2);
         f.b = -pos.x();
-        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
-            int const cp_idx = coeff.controlPointIdx;
+        for (const FittableSpline::LinearCoefficient& coeff : coeffs) {
+            const int cp_idx = coeff.controlPointIdx;
             f.a[cp_idx * 2] = coeff.coeff;
 
             // Because we want a function from control point displacements, not positions.
@@ -61,8 +61,8 @@ namespace spfit {
         // Fix the y coordinate.
         f.a.fill(0);
         f.b = -pos.y();
-        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
-            int const cp_idx = coeff.controlPointIdx;
+        for (const FittableSpline::LinearCoefficient& coeff : coeffs) {
+            const int cp_idx = coeff.controlPointIdx;
             f.a[cp_idx * 2 + 1] = coeff.coeff;
             // Because we want a function from control point displacements, not positions.
             f.b += m_pSpline->controlPointPosition(cp_idx).y() * coeff.coeff;
@@ -70,7 +70,7 @@ namespace spfit {
         m_constraints.push_back(f);
     }
 
-    void ConstraintSet::constrainControlPoint(int cp_idx, QLineF const& line) {
+    void ConstraintSet::constrainControlPoint(int cp_idx, const QLineF& line) {
         assert(cp_idx >= 0 && cp_idx < m_pSpline->numControlPoints());
 
         if (line.p1() == line.p2()) {
@@ -79,8 +79,8 @@ namespace spfit {
             return;
         }
 
-        double const dx = line.p2().x() - line.p1().x();
-        double const dy = line.p2().y() - line.p1().y();
+        const double dx = line.p2().x() - line.p1().x();
+        const double dy = line.p2().y() - line.p1().y();
 
         // Lx(cp) = p1.x + t * dx
         // Ly(cp) = p1.y + t * dy
@@ -96,14 +96,14 @@ namespace spfit {
         f.b = line.p1().y() * dx - line.p1().x() * dy;
 
         // Make it a function of control point displacements, not control points themselves.
-        QPointF const cp(m_pSpline->controlPointPosition(cp_idx));
+        const QPointF cp(m_pSpline->controlPointPosition(cp_idx));
         f.b += cp.x() * dy;
         f.b += cp.y() * dx;
 
         m_constraints.push_back(f);
     } // ConstraintSet::constrainControlPoint
 
-    void ConstraintSet::constrainSplinePoint(double t, QLineF const& line) {
+    void ConstraintSet::constrainSplinePoint(double t, const QLineF& line) {
         if (line.p1() == line.p2()) {
             constrainSplinePoint(t, line.p1());
 
@@ -113,8 +113,8 @@ namespace spfit {
         std::vector<FittableSpline::LinearCoefficient> coeffs;
         m_pSpline->linearCombinationAt(t, coeffs);
 
-        double const dx = line.p2().x() - line.p1().x();
-        double const dy = line.p2().y() - line.p1().y();
+        const double dx = line.p2().x() - line.p1().x();
+        const double dy = line.p2().y() - line.p1().y();
 
         // Lx(cp) = p1.x + t * dx
         // Ly(cp) = p1.y + t * dy
@@ -126,12 +126,12 @@ namespace spfit {
 
         LinearFunction f(m_pSpline->numControlPoints() * 2);
         f.b = line.p1().y() * dx - line.p1().x() * dy;
-        for (FittableSpline::LinearCoefficient const& coeff : coeffs) {
+        for (const FittableSpline::LinearCoefficient& coeff : coeffs) {
             f.a[coeff.controlPointIdx * 2] = coeff.coeff * dy;
             f.a[coeff.controlPointIdx * 2 + 1] = -coeff.coeff * dx;
 
             // Because we want a function from control point displacements, not positions.
-            QPointF const cp(m_pSpline->controlPointPosition(coeff.controlPointIdx));
+            const QPointF cp(m_pSpline->controlPointPosition(coeff.controlPointIdx));
             f.b += cp.x() * coeff.coeff * dy - cp.y() * coeff.coeff * dx;
         }
         m_constraints.push_back(f);

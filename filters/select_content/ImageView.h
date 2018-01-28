@@ -40,26 +40,26 @@ namespace select_content {
         /**
          * \p content_rect is in virtual image coordinates.
          */
-        ImageView(QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  QRectF const& content_rect,
-                  QRectF const& page_rect,
+        ImageView(const QImage& image,
+                  const QImage& downscaled_image,
+                  const ImageTransformation& xform,
+                  const QRectF& content_rect,
+                  const QRectF& page_rect,
                   bool page_rect_enabled);
 
         ~ImageView() override;
 
     signals:
 
-        void manualContentRectSet(QRectF const& content_rect);
+        void manualContentRectSet(const QRectF& content_rect);
 
-        void manualPageRectSet(QRectF const& page_rect);
+        void manualPageRectSet(const QRectF& page_rect);
 
-        void pageRectSizeChanged(QSizeF const& size);
+        void pageRectSizeChanged(const QSizeF& size);
 
     public slots:
 
-        void pageRectSetExternally(QRectF const& pageRect);
+        void pageRectSetExternally(const QRectF& pageRect);
 
     private slots:
 
@@ -75,27 +75,27 @@ namespace select_content {
             BOTTOM = 8
         };
 
-        void onPaint(QPainter& painter, InteractionState const& interaction) override;
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
         void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
         QPointF contentRectCornerPosition(int edge_mask) const;
 
-        void contentRectCornerMoveRequest(int edge_mask, QPointF const& pos);
+        void contentRectCornerMoveRequest(int edge_mask, const QPointF& pos);
 
         QLineF contentRectEdgePosition(int edge) const;
 
-        void contentRectEdgeMoveRequest(int edge, QLineF const& line);
+        void contentRectEdgeMoveRequest(int edge, const QLineF& line);
 
         void contentRectDragFinished();
 
         QPointF pageRectCornerPosition(int edge_mask) const;
 
-        void pageRectCornerMoveRequest(int edge_mask, QPointF const& pos);
+        void pageRectCornerMoveRequest(int edge_mask, const QPointF& pos);
 
         QLineF pageRectEdgePosition(int edge) const;
 
-        void pageRectEdgeMoveRequest(int edge, QLineF const& line);
+        void pageRectEdgeMoveRequest(int edge, const QLineF& line);
 
         void pageRectDragFinished();
 
@@ -105,11 +105,11 @@ namespace select_content {
 
         QRectF contentRectPosition() const;
 
-        void contentRectMoveRequest(QPolygonF const& pos);
+        void contentRectMoveRequest(const QPolygonF& pos);
 
         QRectF pageRectPosition() const;
 
-        void pageRectMoveRequest(QPolygonF const& pos);
+        void pageRectMoveRequest(const QPolygonF& pos);
 
         DraggablePoint m_contentRectCorners[4];
         ObjectDragHandler m_contentRectCornerHandlers[4];

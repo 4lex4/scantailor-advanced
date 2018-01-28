@@ -29,19 +29,19 @@ BasicSplineVisualizer::BasicSplineVisualizer()
     m_pen.setWidthF(1.5);
 }
 
-void BasicSplineVisualizer::drawSplines(QPainter& painter, QTransform const& to_screen, EditableZoneSet const& zones) {
-    for (EditableZoneSet::Zone const& zone : zones) {
+void BasicSplineVisualizer::drawSplines(QPainter& painter, const QTransform& to_screen, const EditableZoneSet& zones) {
+    for (const EditableZoneSet::Zone& zone : zones) {
         drawSpline(painter, to_screen, zone.spline());
     }
 }
 
-void BasicSplineVisualizer::drawSpline(QPainter& painter, QTransform const& to_screen,
-                                       EditableSpline::Ptr const& spline) {
+void BasicSplineVisualizer::drawSpline(QPainter& painter, const QTransform& to_screen,
+                                       const EditableSpline::Ptr& spline) {
     prepareForSpline(painter, spline);
     painter.drawPolygon(to_screen.map(spline->toPolygon()), Qt::WindingFill);
 }
 
-void BasicSplineVisualizer::drawVertex(QPainter& painter, QPointF const& pt, QColor const& color) {
+void BasicSplineVisualizer::drawVertex(QPainter& painter, const QPointF& pt, const QColor& color) {
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 
@@ -50,7 +50,7 @@ void BasicSplineVisualizer::drawVertex(QPainter& painter, QPointF const& pt, QCo
     painter.drawEllipse(rect);
 }
 
-void BasicSplineVisualizer::prepareForSpline(QPainter& painter, EditableSpline::Ptr const&) {
+void BasicSplineVisualizer::prepareForSpline(QPainter& painter, const EditableSpline::Ptr&) {
     painter.setPen(m_pen);
     painter.setBrush(Qt::NoBrush);
 }

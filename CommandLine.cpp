@@ -34,14 +34,14 @@
 CommandLine CommandLine::m_globalInstance;
 
 
-void CommandLine::set(CommandLine const& cl) {
+void CommandLine::set(const CommandLine& cl) {
     assert(!m_globalInstance.isGlobal());
 
     m_globalInstance = cl;
     m_globalInstance.setGlobal();
 }
 
-bool CommandLine::parseCli(QStringList const& argv) {
+bool CommandLine::parseCli(const QStringList& argv) {
     QRegExp rx("^--([^=]+)=(.*)$");
     QRegExp rx_switch("^--([^=]+)$");
     QRegExp rx_short("^-([^=]+)=(.*)$");
@@ -210,7 +210,7 @@ bool CommandLine::parseCli(QStringList const& argv) {
     return m_error;
 } // CommandLine::parseCli
 
-void CommandLine::addImage(QString const& path) {
+void CommandLine::addImage(const QString& path) {
     QFileInfo file(path);
     m_files.push_back(file);
 }
@@ -255,7 +255,7 @@ void CommandLine::setup() {
 #endif
             continue;
         }
-        ImageId const image_id(m_file.filePath());
+        const ImageId image_id(m_file.filePath());
         ImageMetadata metadata;
         metadata.setDpi(m_dpi);
         std::vector<ImageMetadata> vMetadata;

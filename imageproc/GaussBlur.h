@@ -39,7 +39,7 @@ namespace imageproc {
  * \param v_sigma The standard deviation in vertical direction.
  * \return The blurred image.
  */
-    GrayImage gaussBlur(GrayImage const& src, float h_sigma, float v_sigma);
+    GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma);
 
 /**
  * \brief Applies a 2D gaussian filter on an arbitrary data grid.
@@ -55,8 +55,8 @@ namespace imageproc {
  *        into a float.  Consider using one of the functors from ValueConv.h
  *        The functor will be called like this:
  * \code
- * FloatReader const reader = ...;
- * float const val = reader(input[x]);
+ * const FloatReader reader = ...;
+ * const float val = reader(input[x]);
  * \endcode
  * \param output A random access iterator (usually a pointer)
  *        to the beginning of output data.  Output may point to the same
@@ -67,8 +67,8 @@ namespace imageproc {
  *        converts it into another type and updates an output item.
  *        The functor will be called like this:
  * \code
- * FloatWriter const writer = ...;
- * float const val = ...;
+ * const FloatWriter writer = ...;
+ * const float val = ...;
  * writer(output[x], val);
  * \endcode
  * Consider using boost::lambda, possible in conjunction with one of the functors
@@ -117,27 +117,27 @@ namespace imageproc {
     }  // namespace gauss_blur_impl
 
     template<typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
-    void gaussBlurGeneric(QSize const size,
-                          float const h_sigma,
-                          float const v_sigma,
-                          SrcIt const input,
-                          int const input_stride,
-                          FloatReader const float_reader,
-                          DstIt const output,
-                          int const output_stride,
-                          FloatWriter const float_writer) {
+    void gaussBlurGeneric(const QSize size,
+                          const float h_sigma,
+                          const float v_sigma,
+                          const SrcIt input,
+                          const int input_stride,
+                          const FloatReader float_reader,
+                          const DstIt output,
+                          const int output_stride,
+                          const FloatWriter float_writer) {
         if (size.isEmpty()) {
             return;
         }
 
-        int const width = size.width();
-        int const height = size.height();
-        int const width_height_max = width > height ? width : height;
+        const int width = size.width();
+        const int height = size.height();
+        const int width_height_max = width > height ? width : height;
 
         boost::scoped_array<float> val_p(new float[width_height_max]);
         boost::scoped_array<float> val_m(new float[width_height_max]);
         boost::scoped_array<float> intermediate_image(new float[width * height]);
-        int const intermediate_stride = width;
+        const int intermediate_stride = width;
 
         // IIR parameters.
         float n_p[5], n_m[5], d_p[5], d_m[5], bd_p[5], bd_m[5];
@@ -151,11 +151,11 @@ namespace imageproc {
             SrcIt sp_m(sp_p + (height - 1) * input_stride);
             float* vp = &val_p[0];
             float* vm = &val_m[0] + height - 1;
-            float const initial_p = float_reader(sp_p[0]);
-            float const initial_m = float_reader(sp_m[0]);
+            const float initial_p = float_reader(sp_p[0]);
+            const float initial_m = float_reader(sp_m[0]);
 
             for (int y = 0; y < height; ++y) {
-                int const terms = y < 4 ? y : 4;
+                const int terms = y < 4 ? y : 4;
                 int i = 0;
                 int sp_off = 0;
                 for (; i <= terms; ++i, sp_off += input_stride) {
@@ -179,21 +179,21 @@ namespace imageproc {
         }
         // Horizontal pass.
         gauss_blur_impl::find_iir_constants(n_p, n_m, d_p, d_m, bd_p, bd_m, h_sigma);
-        float const* intermediate_line = &intermediate_image[0];
+        const float* intermediate_line = &intermediate_image[0];
         DstIt output_line(output);
         for (int y = 0; y < height; ++y) {
             memset(&val_p[0], 0, width * sizeof(val_p[0]));
             memset(&val_m[0], 0, width * sizeof(val_m[0]));
 
-            float const* sp_p = intermediate_line;
-            float const* sp_m = intermediate_line + width - 1;
+            const float* sp_p = intermediate_line;
+            const float* sp_m = intermediate_line + width - 1;
             float* vp = &val_p[0];
             float* vm = &val_m[0] + width - 1;
-            float const initial_p = sp_p[0];
-            float const initial_m = sp_m[0];
+            const float initial_p = sp_p[0];
+            const float initial_m = sp_m[0];
 
             for (int x = 0; x < width; ++x) {
-                int const terms = x < 4 ? x : 4;
+                const int terms = x < 4 ? x : 4;
                 int i = 0;
                 for (; i <= terms; ++i) {
                     *vp += n_p[i] * sp_p[-i] - d_p[i] * vp[-i];

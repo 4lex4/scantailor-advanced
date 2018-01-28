@@ -45,16 +45,16 @@ namespace page_layout {
         Task(intrusive_ptr<Filter> filter,
              intrusive_ptr<output::Task> next_task,
              intrusive_ptr<Settings> settings,
-             PageId const& page_id,
+             const PageId& page_id,
              bool batch,
              bool debug);
 
         ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status,
-                                FilterData const& data,
-                                QRectF const& page_rect,
-                                QRectF const& content_rect);
+        FilterResultPtr process(const TaskStatus& status,
+                                const FilterData& data,
+                                const QRectF& page_rect,
+                                const QRectF& content_rect);
 
     private:
         class UiUpdater;

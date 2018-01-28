@@ -44,33 +44,33 @@ namespace output {
                const DewarpingOptions& m_dewarpingOptions,
                DespeckleLevel m_despeckleLevel);
 
-        explicit Params(QDomElement const& el);
+        explicit Params(const QDomElement& el);
 
-        Dpi const& outputDpi() const;
+        const Dpi& outputDpi() const;
 
-        void setOutputDpi(Dpi const& dpi);
+        void setOutputDpi(const Dpi& dpi);
 
-        ColorParams const& colorParams() const;
+        const ColorParams& colorParams() const;
 
-        PictureShapeOptions const& pictureShapeOptions() const;
+        const PictureShapeOptions& pictureShapeOptions() const;
 
-        void setPictureShapeOptions(PictureShapeOptions const& opt);
+        void setPictureShapeOptions(const PictureShapeOptions& opt);
 
-        void setColorParams(ColorParams const& params);
+        void setColorParams(const ColorParams& params);
 
         const SplittingOptions& splittingOptions() const;
 
         void setSplittingOptions(const SplittingOptions& opt);
 
-        DewarpingOptions const& dewarpingOptions() const;
+        const DewarpingOptions& dewarpingOptions() const;
 
-        void setDewarpingOptions(DewarpingOptions const& opt);
+        void setDewarpingOptions(const DewarpingOptions& opt);
 
-        dewarping::DistortionModel const& distortionModel() const;
+        const dewarping::DistortionModel& distortionModel() const;
 
-        void setDistortionModel(dewarping::DistortionModel const& model);
+        void setDistortionModel(const dewarping::DistortionModel& model);
 
-        DepthPerception const& depthPerception() const;
+        const DepthPerception& depthPerception() const;
 
         void setDepthPerception(DepthPerception depth_perception);
 
@@ -78,10 +78,10 @@ namespace output {
 
         void setDespeckleLevel(DespeckleLevel level);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
-        static ColorMode parseColorMode(QString const& str);
+        static ColorMode parseColorMode(const QString& str);
 
         static QString formatColorMode(ColorMode mode);
 

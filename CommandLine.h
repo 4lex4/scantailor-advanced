@@ -47,7 +47,7 @@ namespace page_layout {
 /**
  * CommandLine is a singleton simulation.
  * use CommandLine::get() to get access to global class
- * use CommandLine::set(CommandLine const&) to set the global class
+ * use CommandLine::set(const CommandLine&) to set the global class
  */
 class CommandLine {
     // Member-wise copying is OK.
@@ -59,13 +59,13 @@ public:
         UPSIDEDOWN
     };
 
-    static CommandLine const& get() {
+    static const CommandLine& get() {
         return m_globalInstance;
     }
 
-    static void set(CommandLine const& cl);
+    static void set(const CommandLine& cl);
 
-    explicit CommandLine(QStringList const& argv, bool g = true)
+    explicit CommandLine(const QStringList& argv, bool g = true)
             : m_error(false),
               m_gui(g),
               m_global(false),
@@ -85,19 +85,19 @@ public:
         return m_error;
     }
 
-    std::vector<ImageFileInfo> const& images() const {
+    const std::vector<ImageFileInfo>& images() const {
         return m_images;
     }
 
-    QString const& outputDirectory() const {
+    const QString& outputDirectory() const {
         return m_outputDirectory;
     }
 
-    QString const& projectFile() const {
+    const QString& projectFile() const {
         return m_projectFile;
     }
 
-    QString const& outputProjectFile() const {
+    const QString& outputProjectFile() const {
         return m_outputProjectFile;
     }
 
@@ -411,7 +411,7 @@ private:
         m_global = true;
     }
 
-    bool contains(QString const& key) const {
+    bool contains(const QString& key) const {
         return m_options.contains(key);
     }
 
@@ -449,9 +449,9 @@ private:
     output::DepthPerception m_depthPerception;
     float m_matchLayoutTolerance{ 0.2 };
 
-    bool parseCli(QStringList const& argv);
+    bool parseCli(const QStringList& argv);
 
-    void addImage(QString const& path);
+    void addImage(const QString& path);
 
     void setup();
 

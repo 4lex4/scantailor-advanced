@@ -21,7 +21,7 @@
 namespace imageproc {
     namespace detail {
         namespace seed_fill_generic {
-            void initHorTransitions(std::vector<HTransition>& transitions, int const width) {
+            void initHorTransitions(std::vector<HTransition>& transitions, const int width) {
                 transitions.reserve(width);
 
                 if (width == 1) {
@@ -43,7 +43,7 @@ namespace imageproc {
                 transitions.emplace_back(-1, 0);
             }
 
-            void initVertTransitions(std::vector<VTransition>& transitions, int const height) {
+            void initVertTransitions(std::vector<VTransition>& transitions, const int height) {
                 transitions.reserve(height);
 
                 if (height == 1) {

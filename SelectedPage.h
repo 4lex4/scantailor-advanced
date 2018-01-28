@@ -38,13 +38,13 @@ class SelectedPage {
 public:
     SelectedPage() = default;
 
-    SelectedPage(PageId const& page_id, PageView view);
+    SelectedPage(const PageId& page_id, PageView view);
 
     bool isNull() const {
         return m_pageId.isNull();
     }
 
-    void set(PageId const& page_id, PageView view);
+    void set(const PageId& page_id, PageView view);
 
     PageId get(PageView view) const;
 

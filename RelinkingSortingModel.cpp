@@ -26,9 +26,9 @@ RelinkingSortingModel::RelinkingSortingModel(QObject* parent)
     sort(0);
 }
 
-bool RelinkingSortingModel::lessThan(QModelIndex const& left, QModelIndex const& right) const {
-    int const left_status = left.data(RelinkingModel::UncommittedStatusRole).toInt();
-    int const right_status = right.data(RelinkingModel::UncommittedStatusRole).toInt();
+bool RelinkingSortingModel::lessThan(const QModelIndex& left, const QModelIndex& right) const {
+    const int left_status = left.data(RelinkingModel::UncommittedStatusRole).toInt();
+    const int right_status = right.data(RelinkingModel::UncommittedStatusRole).toInt();
     if (left_status != right_status) {
         if (left_status == RelinkingModel::Missing) {
             return true;  // Missing items go before other ones.
@@ -42,15 +42,15 @@ bool RelinkingSortingModel::lessThan(QModelIndex const& left, QModelIndex const&
         assert(!"Unreachable");
     }
 
-    int const left_type = left.data(RelinkingModel::TypeRole).toInt();
-    int const right_type = right.data(RelinkingModel::TypeRole).toInt();
-    QString const left_path(left.data(RelinkingModel::UncommittedPathRole).toString());
-    QString const right_path(right.data(RelinkingModel::UncommittedPathRole).toString());
+    const int left_type = left.data(RelinkingModel::TypeRole).toInt();
+    const int right_type = right.data(RelinkingModel::TypeRole).toInt();
+    const QString left_path(left.data(RelinkingModel::UncommittedPathRole).toString());
+    const QString right_path(right.data(RelinkingModel::UncommittedPathRole).toString());
 
     if (left_type != right_type) {
         // Directories go above their siblings.
-        QString const left_dir(left_path.left(left_path.lastIndexOf(QChar('/'))));
-        QString const right_dir(right_path.left(right_path.lastIndexOf(QChar('/'))));
+        const QString left_dir(left_path.left(left_path.lastIndexOf(QChar('/'))));
+        const QString right_dir(right_path.left(right_path.lastIndexOf(QChar('/'))));
         if (left_dir == right_dir) {
             return left_type == RelinkablePath::Dir;
         }

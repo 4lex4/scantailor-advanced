@@ -34,15 +34,15 @@ public:
             : m_chunkCapacity(defaultChunkCapacity()) {
     }
 
-    FastQueue(FastQueue const& other);
+    FastQueue(const FastQueue& other);
 
     ~FastQueue() {
         m_chunkList.clear_and_dispose(ChunkDisposer());
     }
 
-    FastQueue& operator=(FastQueue const& other);
+    FastQueue& operator=(const FastQueue& other);
 
-    bool const empty() const {
+    const bool empty() const {
         return m_chunkList.empty();
     }
 
@@ -50,11 +50,11 @@ public:
         return *m_chunkList.front().pBegin;
     }
 
-    T const& front() const {
+    const T& front() const {
         return *m_chunkList.front().pBegin;
     }
 
-    void push(T const& t);
+    void push(const T& t);
 
     void pop();
 
@@ -66,8 +66,8 @@ private:
 
     public:
         explicit Chunk(size_t capacity) {
-            uintptr_t const p = (uintptr_t) (this + 1);
-            size_t const alignment = boost::alignment_of<T>::value;
+            const uintptr_t p = (uintptr_t) (this + 1);
+            const size_t alignment = boost::alignment_of<T>::value;
             pBegin = (T*) (((p + alignment - 1) / alignment) * alignment);
             pEnd = pBegin;
             pBufferEnd = pBegin + capacity;
@@ -111,24 +111,24 @@ private:
 
 
 template<typename T>
-FastQueue<T>::FastQueue(FastQueue const& other)
+FastQueue<T>::FastQueue(const FastQueue& other)
         : m_chunkCapacity(other.m_chunkCapacity) {
     for (Chunk& chunk : other.m_chunkList) {
-        for (T const* obj = chunk->pBegin; obj != chunk->pEnd; ++obj) {
+        for (const T* obj = chunk->pBegin; obj != chunk->pEnd; ++obj) {
             push(*obj);
         }
     }
 }
 
 template<typename T>
-FastQueue<T>& FastQueue<T>::operator=(FastQueue const& other) {
+FastQueue<T>& FastQueue<T>::operator=(const FastQueue& other) {
     FastQueue(other).swap(*this);
 
     return *this;
 }
 
 template<typename T>
-void FastQueue<T>::push(T const& t) {
+void FastQueue<T>::push(const T& t) {
     Chunk* chunk = 0;
 
     if (!m_chunkList.empty()) {
@@ -165,7 +165,7 @@ void FastQueue<T>::pop() {
 template<typename T>
 void FastQueue<T>::swap(FastQueue& other) {
     m_chunkList.swap(other.m_chunkList);
-    size_t const tmp = m_chunkCapacity;
+    const size_t tmp = m_chunkCapacity;
     m_chunkCapacity = other.m_chunkCapacity;
     other.m_chunkCapacity = tmp;
 }

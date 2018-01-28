@@ -43,16 +43,16 @@ namespace output {
          *        If this one is null, it is considered no speckles were detected.
          * \param dpi Dots-per-inch of both images.
          */
-        DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        DespeckleVisualization(const QImage& output, const imageproc::BinaryImage& speckles, const Dpi& dpi);
 
         bool isNull() const;
 
-        QImage const& image() const;
+        const QImage& image() const;
 
-        QImage const& downscaledImage() const;
+        const QImage& downscaledImage() const;
 
     private:
-        static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        static void colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi);
 
 
         QImage m_image;

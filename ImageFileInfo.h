@@ -26,12 +26,12 @@
 class ImageFileInfo {
     // Member-wise copying is OK.
 public:
-    ImageFileInfo(QFileInfo const& file_info, std::vector<ImageMetadata> const& image_info)
+    ImageFileInfo(const QFileInfo& file_info, const std::vector<ImageMetadata>& image_info)
             : m_fileInfo(file_info),
               m_imageInfo(image_info) {
     }
 
-    QFileInfo const& fileInfo() const {
+    const QFileInfo& fileInfo() const {
         return m_fileInfo;
     }
 
@@ -39,7 +39,7 @@ public:
         return m_imageInfo;
     }
 
-    std::vector<ImageMetadata> const& imageInfo() const {
+    const std::vector<ImageMetadata>& imageInfo() const {
         return m_imageInfo;
     }
 

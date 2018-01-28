@@ -29,7 +29,7 @@
 class GridLineTraverser {
     // Member-wise copying is OK.
 public:
-    explicit GridLineTraverser(QLineF const& line);
+    explicit GridLineTraverser(const QLineF& line);
 
     bool hasNext() const {
         return m_stopsDone < m_totalStops;

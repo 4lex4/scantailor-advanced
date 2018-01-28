@@ -25,23 +25,23 @@ namespace imageproc {
  * This is an optimized implementation for the case when every destination
  * pixel maps exactly to a M x N block of source pixels.
  */
-    static GrayImage scaleDownIntGrayToGray(GrayImage const& src, QSize const& dst_size) {
-        int const sw = src.width();
-        int const sh = src.height();
-        int const dw = dst_size.width();
-        int const dh = dst_size.height();
+    static GrayImage scaleDownIntGrayToGray(const GrayImage& src, const QSize& dst_size) {
+        const int sw = src.width();
+        const int sh = src.height();
+        const int dw = dst_size.width();
+        const int dh = dst_size.height();
 
-        int const xscale = sw / dw;
-        int const yscale = sh / dh;
-        int const total_area = xscale * yscale;
+        const int xscale = sw / dw;
+        const int yscale = sh / dh;
+        const int total_area = xscale * yscale;
 
         GrayImage dst(dst_size);
 
-        uint8_t const* src_line = src.data();
+        const uint8_t* src_line = src.data();
         uint8_t* dst_line = dst.data();
-        int const src_stride = src.stride();
-        int const src_stride_scaled = src_stride * yscale;
-        int const dst_stride = dst.stride();
+        const int src_stride = src.stride();
+        const int src_stride_scaled = src_stride * yscale;
+        const int dst_stride = dst.stride();
 
         int sy = 0;
         int dy = 0;
@@ -50,7 +50,7 @@ namespace imageproc {
             int dx = 0;
             for (; dx < dw; ++dx, sx += xscale) {
                 unsigned gray_level = 0;
-                uint8_t const* psrc = src_line + sx;
+                const uint8_t* psrc = src_line + sx;
 
                 for (int i = 0; i < yscale; ++i, psrc += src_stride) {
                     for (int j = 0; j < xscale; ++j) {
@@ -58,7 +58,7 @@ namespace imageproc {
                     }
                 }
 
-                unsigned const pix_value = (gray_level + (total_area >> 1)) / total_area;
+                const unsigned pix_value = (gray_level + (total_area >> 1)) / total_area;
                 assert(pix_value < 256);
                 dst_line[dx] = static_cast<uint8_t>(pix_value);
             }
@@ -74,22 +74,22 @@ namespace imageproc {
  * This is an optimized implementation for the case when every destination
  * pixel maps to a single source pixel (possibly to a part of it).
  */
-    static GrayImage scaleUpIntGrayToGray(GrayImage const& src, QSize const& dst_size) {
-        int const sw = src.width();
-        int const sh = src.height();
-        int const dw = dst_size.width();
-        int const dh = dst_size.height();
+    static GrayImage scaleUpIntGrayToGray(const GrayImage& src, const QSize& dst_size) {
+        const int sw = src.width();
+        const int sh = src.height();
+        const int dw = dst_size.width();
+        const int dh = dst_size.height();
 
-        int const xscale = dw / sw;
-        int const yscale = dh / sh;
+        const int xscale = dw / sw;
+        const int yscale = dh / sh;
 
         GrayImage dst(dst_size);
 
-        uint8_t const* src_line = src.data();
+        const uint8_t* src_line = src.data();
         uint8_t* dst_line = dst.data();
-        int const src_stride = src.stride();
-        int const dst_stride = dst.stride();
-        int const dst_stride_scaled = dst_stride * yscale;
+        const int src_stride = src.stride();
+        const int dst_stride = dst.stride();
+        const int dst_stride_scaled = dst_stride * yscale;
 
         int sy = 0;
         int dy = 0;
@@ -121,7 +121,7 @@ namespace imageproc {
  * int(ratio * (dst_limit - 1)) / 32 < src_limit - 1
  * \endcode
  */
-    static double calc32xRatio1(int const dst, int const src) {
+    static double calc32xRatio1(const int dst, const int src) {
         assert(dst > 0);
         assert(src > 0);
 
@@ -140,39 +140,39 @@ namespace imageproc {
  * the destination image is larger than the source image both
  * horizontally and vertically.
  */
-    static GrayImage scaleUpGrayToGray(GrayImage const& src, QSize const& dst_size) {
-        int const sw = src.width();
-        int const sh = src.height();
-        int const dw = dst_size.width();
-        int const dh = dst_size.height();
+    static GrayImage scaleUpGrayToGray(const GrayImage& src, const QSize& dst_size) {
+        const int sw = src.width();
+        const int sh = src.height();
+        const int dw = dst_size.width();
+        const int dh = dst_size.height();
 
-        double const dx2sx32 = calc32xRatio1(dw, sw);
-        double const dy2sy32 = calc32xRatio1(dh, sh);
+        const double dx2sx32 = calc32xRatio1(dw, sw);
+        const double dy2sy32 = calc32xRatio1(dh, sh);
 
         GrayImage dst(dst_size);
 
-        uint8_t const* const src_data = src.data();
+        const uint8_t* const src_data = src.data();
         uint8_t* dst_line = dst.data();
-        int const src_stride = src.stride();
-        int const dst_stride = dst.stride();
+        const int src_stride = src.stride();
+        const int dst_stride = dst.stride();
 
         for (int dy = 0; dy < dh; ++dy, dst_line += dst_stride) {
-            auto const sy32 = (int) (dy * dy2sy32);
-            int const sy = sy32 >> 5;
-            unsigned const top_fraction = 32 - (sy32 & 31);
-            unsigned const bottom_fraction = sy32 & 31;
+            const auto sy32 = (int) (dy * dy2sy32);
+            const int sy = sy32 >> 5;
+            const unsigned top_fraction = 32 - (sy32 & 31);
+            const unsigned bottom_fraction = sy32 & 31;
             assert(sy + 1 < sh);  // calc32xRatio1() ensures that.
-            uint8_t const* src_line = src_data + sy * src_stride;
+            const uint8_t* src_line = src_data + sy * src_stride;
 
             for (int dx = 0; dx < dw; ++dx) {
-                auto const sx32 = (int) (dx * dx2sx32);
-                int const sx = sx32 >> 5;
-                unsigned const left_fraction = 32 - (sx32 & 31);
-                unsigned const right_fraction = sx32 & 31;
+                const auto sx32 = (int) (dx * dx2sx32);
+                const int sx = sx32 >> 5;
+                const unsigned left_fraction = 32 - (sx32 & 31);
+                const unsigned right_fraction = sx32 & 31;
                 assert(sx + 1 < sw);  // calc32xRatio1() ensures that.
                 unsigned gray_level = 0;
 
-                uint8_t const* psrc = src_line + sx;
+                const uint8_t* psrc = src_line + sx;
                 gray_level += *psrc * left_fraction * top_fraction;
                 ++psrc;
                 gray_level += *psrc * right_fraction * top_fraction;
@@ -181,8 +181,8 @@ namespace imageproc {
                 --psrc;
                 gray_level += *psrc * left_fraction * bottom_fraction;
 
-                unsigned const total_area = 32 * 32;
-                unsigned const pix_value = (gray_level + (total_area >> 1)) / total_area;
+                const unsigned total_area = 32 * 32;
+                const unsigned pix_value = (gray_level + (total_area >> 1)) / total_area;
                 assert(pix_value < 256);
                 dst_line[dx] = static_cast<uint8_t>(pix_value);
             }
@@ -198,7 +198,7 @@ namespace imageproc {
  * (int(ratio * dst_limit) - 1) / 32 < src_limit
  * \endcode
  */
-    static double calc32xRatio2(int const dst, int const src) {
+    static double calc32xRatio2(const int dst, const int src) {
         assert(dst > 0);
         assert(src > 0);
 
@@ -215,11 +215,11 @@ namespace imageproc {
 /**
  * This is a generic implementation of the scaling algorithm.
  */
-    static GrayImage scaleGrayToGray(GrayImage const& src, QSize const& dst_size) {
-        int const sw = src.width();
-        int const sh = src.height();
-        int const dw = dst_size.width();
-        int const dh = dst_size.height();
+    static GrayImage scaleGrayToGray(const GrayImage& src, const QSize& dst_size) {
+        const int sw = src.width();
+        const int sh = src.height();
+        const int dw = dst_size.width();
+        const int dh = dst_size.height();
 
         // Try versions optimized for a particular case.
         if ((sw == dw) && (sh == dh)) {
@@ -232,40 +232,40 @@ namespace imageproc {
             return scaleUpGrayToGray(src, dst_size);
         }
 
-        double const dx2sx32 = calc32xRatio2(dw, sw);
-        double const dy2sy32 = calc32xRatio2(dh, sh);
+        const double dx2sx32 = calc32xRatio2(dw, sw);
+        const double dy2sy32 = calc32xRatio2(dh, sh);
 
         GrayImage dst(dst_size);
 
-        uint8_t const* const src_data = src.data();
+        const uint8_t* const src_data = src.data();
         uint8_t* dst_line = dst.data();
-        int const src_stride = src.stride();
-        int const dst_stride = dst.stride();
+        const int src_stride = src.stride();
+        const int dst_stride = dst.stride();
 
         int sy32bottom = 0;
         for (int dy1 = 1; dy1 <= dh; ++dy1, dst_line += dst_stride) {
-            int const sy32top = sy32bottom;
+            const int sy32top = sy32bottom;
             sy32bottom = (int) (dy1 * dy2sy32);
-            int const sytop = sy32top >> 5;
-            int const sybottom = (sy32bottom - 1) >> 5;
-            unsigned const top_fraction = 32 - (sy32top & 31);
-            unsigned const bottom_fraction = sy32bottom - (sybottom << 5);
+            const int sytop = sy32top >> 5;
+            const int sybottom = (sy32bottom - 1) >> 5;
+            const unsigned top_fraction = 32 - (sy32top & 31);
+            const unsigned bottom_fraction = sy32bottom - (sybottom << 5);
             assert(sybottom < sh);  // calc32xRatio2() ensures that.
-            unsigned const top_area = top_fraction << 5;
-            unsigned const bottom_area = bottom_fraction << 5;
+            const unsigned top_area = top_fraction << 5;
+            const unsigned bottom_area = bottom_fraction << 5;
 
-            uint8_t const* const src_line_const = src_data + sytop * src_stride;
+            const uint8_t* const src_line_const = src_data + sytop * src_stride;
 
             int sx32right = 0;
             for (int dx = 0; dx < dw; ++dx) {
-                int const sx32left = sx32right;
+                const int sx32left = sx32right;
                 sx32right = (int) ((dx + 1) * dx2sx32);
-                int const sxleft = sx32left >> 5;
-                int const sxright = (sx32right - 1) >> 5;
-                unsigned const left_fraction = 32 - (sx32left & 31);
-                unsigned const right_fraction = sx32right - (sxright << 5);
+                const int sxleft = sx32left >> 5;
+                const int sxright = (sx32right - 1) >> 5;
+                const unsigned left_fraction = 32 - (sx32left & 31);
+                const unsigned right_fraction = sx32right - (sxright << 5);
                 assert(sxright < sw);  // calc32xRatio2() ensures that.
-                uint8_t const* src_line = src_line_const;
+                const uint8_t* src_line = src_line_const;
                 unsigned gray_level = 0;
 
                 if (sytop == sybottom) {
@@ -275,10 +275,10 @@ namespace imageproc {
                         continue;
                     } else {
                         // dst pixel maps to a horizontal line of src pixels
-                        unsigned const vert_fraction = sy32bottom - sy32top;
-                        unsigned const left_area = vert_fraction * left_fraction;
-                        unsigned const middle_area = vert_fraction << 5;
-                        unsigned const right_area = vert_fraction * right_fraction;
+                        const unsigned vert_fraction = sy32bottom - sy32top;
+                        const unsigned left_area = vert_fraction * left_fraction;
+                        const unsigned middle_area = vert_fraction << 5;
+                        const unsigned right_area = vert_fraction * right_fraction;
 
                         gray_level += src_line[sxleft] * left_area;
 
@@ -290,10 +290,10 @@ namespace imageproc {
                     }
                 } else if (sxleft == sxright) {
                     // dst pixel maps to a vertical line of src pixels
-                    unsigned const hor_fraction = sx32right - sx32left;
-                    unsigned const top_area = hor_fraction * top_fraction;
-                    unsigned const middle_area = hor_fraction << 5;
-                    unsigned const bottom_area = hor_fraction * bottom_fraction;
+                    const unsigned hor_fraction = sx32right - sx32left;
+                    const unsigned top_area = hor_fraction * top_fraction;
+                    const unsigned middle_area = hor_fraction << 5;
+                    const unsigned bottom_area = hor_fraction * bottom_fraction;
 
                     gray_level += src_line[sxleft] * top_area;
 
@@ -307,12 +307,12 @@ namespace imageproc {
                     gray_level += src_line[sxleft] * bottom_area;
                 } else {
                     // dst pixel maps to a block of src pixels
-                    unsigned const left_area = left_fraction << 5;
-                    unsigned const right_area = right_fraction << 5;
-                    unsigned const topleft_area = top_fraction * left_fraction;
-                    unsigned const topright_area = top_fraction * right_fraction;
-                    unsigned const bottomleft_area = bottom_fraction * left_fraction;
-                    unsigned const bottomright_area = bottom_fraction * right_fraction;
+                    const unsigned left_area = left_fraction << 5;
+                    const unsigned right_area = right_fraction << 5;
+                    const unsigned topleft_area = top_fraction * left_fraction;
+                    const unsigned topright_area = top_fraction * right_fraction;
+                    const unsigned bottomleft_area = bottom_fraction * left_fraction;
+                    const unsigned bottomright_area = bottom_fraction * right_fraction;
 
                     // process the top-left corner
                     gray_level += src_line[sxleft] * topleft_area;
@@ -350,8 +350,8 @@ namespace imageproc {
                     gray_level += src_line[sxright] * bottomright_area;
                 }
 
-                unsigned const total_area = (sy32bottom - sy32top) * (sx32right - sx32left);
-                unsigned const pix_value = (gray_level + (total_area >> 1)) / total_area;
+                const unsigned total_area = (sy32bottom - sy32top) * (sx32right - sx32left);
+                const unsigned pix_value = (gray_level + (total_area >> 1)) / total_area;
                 assert(pix_value < 256);
                 dst_line[dx] = static_cast<uint8_t>(pix_value);
             }
@@ -360,7 +360,7 @@ namespace imageproc {
         return dst;
     }  // scaleGrayToGray
 
-    GrayImage scaleToGray(GrayImage const& src, QSize const& dst_size) {
+    GrayImage scaleToGray(const GrayImage& src, const QSize& dst_size) {
         if (src.isNull()) {
             return src;
         }

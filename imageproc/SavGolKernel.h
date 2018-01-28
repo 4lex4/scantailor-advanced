@@ -29,9 +29,9 @@ class QSize;
 namespace imageproc {
     class SavGolKernel {
     public:
-        SavGolKernel(QSize const& size, QPoint const& origin, int hor_degree, int vert_degree);
+        SavGolKernel(const QSize& size, const QPoint& origin, int hor_degree, int vert_degree);
 
-        void recalcForOrigin(QPoint const& origin);
+        void recalcForOrigin(const QPoint& origin);
 
         int width() const {
             return m_width;
@@ -41,7 +41,7 @@ namespace imageproc {
             return m_height;
         }
 
-        float const* data() const {
+        const float* data() const {
             return m_kernel.data();
         }
 

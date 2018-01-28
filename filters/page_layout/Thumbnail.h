@@ -33,16 +33,16 @@ namespace page_layout {
     class Thumbnail : public ThumbnailBase {
     public:
         Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                  QSizeF const& max_size,
-                  ImageId const& image_id,
-                  Params const& params,
-                  ImageTransformation const& xform,
-                  QPolygonF const& phys_content_rect,
+                  const QSizeF& max_size,
+                  const ImageId& image_id,
+                  const Params& params,
+                  const ImageTransformation& xform,
+                  const QPolygonF& phys_content_rect,
                   QRectF displayArea);
 
         void paintOverImage(QPainter& painter,
-                            QTransform const& image_to_display,
-                            QTransform const& thumb_to_display) override;
+                            const QTransform& image_to_display,
+                            const QTransform& thumb_to_display) override;
 
     private:
         Params m_params;

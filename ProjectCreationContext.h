@@ -40,11 +40,11 @@ public:
 
     ~ProjectCreationContext() override;
 
-    std::vector<ImageFileInfo> const& files() const {
+    const std::vector<ImageFileInfo>& files() const {
         return m_files;
     }
 
-    QString const& outDir() const {
+    const QString& outDir() const {
         return m_outDir;
     }
 

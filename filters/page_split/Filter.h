@@ -54,7 +54,7 @@ namespace page_split {
 
     Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
     public:
-        Filter(intrusive_ptr<ProjectPages> page_sequence, PageSelectionAccessor const& page_selection_accessor);
+        Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor);
 
         ~Filter() override;
 
@@ -62,17 +62,17 @@ namespace page_split {
 
         PageView getView() const override;
 
-        void performRelinking(AbstractRelinker const& relinker) override;
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
 
-        QDomElement saveSettings(ProjectWriter const& wirter, QDomDocument& doc) const override;
+        QDomElement saveSettings(const ProjectWriter& wirter, QDomDocument& doc) const override;
 
-        void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) override;
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(PageId const& page_id) override;
+        void loadDefaultSettings(const PageId& page_id) override;
 
-        intrusive_ptr<Task> createTask(PageInfo const& page_info,
+        intrusive_ptr<Task> createTask(const PageInfo& page_info,
                                        intrusive_ptr<deskew::Task> next_task,
                                        bool batch_processing,
                                        bool debug);
@@ -81,7 +81,7 @@ namespace page_split {
 
         OptionsWidget* optionsWidget();
 
-        void pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation);
+        void pageOrientationUpdate(const ImageId& image_id, const OrthogonalRotation& orientation);
 
         std::vector<PageOrderOption> pageOrderOptions() const override;
 
@@ -92,7 +92,7 @@ namespace page_split {
     private:
         void writeImageSettings(QDomDocument& doc,
                                 QDomElement& filter_el,
-                                ImageId const& image_id,
+                                const ImageId& image_id,
                                 int numeric_id) const;
 
         intrusive_ptr<ProjectPages> m_ptrPages;

@@ -29,20 +29,20 @@
 namespace imageproc {
     namespace tests {
         namespace utils {
-            BinaryImage randomBinaryImage(int const width, int const height) {
+            BinaryImage randomBinaryImage(const int width, const int height) {
                 BinaryImage image(width, height);
                 uint32_t* pword = image.data();
                 uint32_t* const end = pword + image.height() * image.wordsPerLine();
                 for (; pword != end; ++pword) {
-                    uint32_t const w1 = rand() % (1 << 16);
-                    uint32_t const w2 = rand() % (1 << 16);
+                    const uint32_t w1 = rand() % (1 << 16);
+                    const uint32_t w2 = rand() % (1 << 16);
                     *pword = (w1 << 16) | w2;
                 }
 
                 return image;
             }
 
-            QImage randomMonoQImage(int const width, int const height) {
+            QImage randomMonoQImage(const int width, const int height) {
                 QImage image(width, height, QImage::Format_Mono);
                 image.setColorCount(2);
                 image.setColor(0, 0xffffffff);
@@ -51,8 +51,8 @@ namespace imageproc {
                 assert(image.bytesPerLine() % 4 == 0);
                 uint32_t* const end = pword + image.height() * (image.bytesPerLine() / 4);
                 for (; pword != end; ++pword) {
-                    uint32_t const w1 = rand() % (1 << 16);
-                    uint32_t const w2 = rand() % (1 << 16);
+                    const uint32_t w1 = rand() % (1 << 16);
+                    const uint32_t w2 = rand() % (1 << 16);
                     *pword = (w1 << 16) | w2;
                 }
 
@@ -71,11 +71,11 @@ namespace imageproc {
                 return img;
             }
 
-            BinaryImage makeBinaryImage(int const* data, int const width, int const height) {
+            BinaryImage makeBinaryImage(const int* data, const int width, const int height) {
                 return BinaryImage(makeMonoQImage(data, width, height));
             }
 
-            QImage makeMonoQImage(int const* data, int const width, int const height) {
+            QImage makeMonoQImage(const int* data, const int width, const int height) {
                 QImage img(width, height, QImage::Format_Mono);
                 img.setColorCount(2);
                 img.setColor(0, 0xffffffff);
@@ -89,7 +89,7 @@ namespace imageproc {
                 return img;
             }
 
-            QImage makeGrayImage(int const* data, int const width, int const height) {
+            QImage makeGrayImage(const int* data, const int width, const int height) {
                 QImage img(width, height, QImage::Format_Indexed8);
                 img.setColorTable(createGrayscalePalette());
                 for (int y = 0; y < height; ++y) {
@@ -101,7 +101,7 @@ namespace imageproc {
                 return img;
             }
 
-            void dumpBinaryImage(BinaryImage const& img, char const* name) {
+            void dumpBinaryImage(const BinaryImage& img, const char* name) {
                 if (name) {
                     std::cout << name << " = ";
                 }
@@ -112,10 +112,10 @@ namespace imageproc {
                     return;
                 }
 
-                int const width = img.width();
-                int const height = img.height();
-                uint32_t const* line = img.data();
-                int const wpl = img.wordsPerLine();
+                const int width = img.width();
+                const int height = img.height();
+                const uint32_t* line = img.data();
+                const int wpl = img.wordsPerLine();
 
                 std::cout << "{\n";
                 for (int y = 0; y < height; ++y, line += wpl) {
@@ -128,7 +128,7 @@ namespace imageproc {
                 std::cout << "}" << std::endl;
             }
 
-            void dumpGrayImage(QImage const& img, char const* name) {
+            void dumpGrayImage(const QImage& img, const char* name) {
                 if (name) {
                     std::cout << name << " = ";
                 }
@@ -142,8 +142,8 @@ namespace imageproc {
                     std::cout << "Not grayscale image" << std::endl;
                 }
 
-                int const width = img.width();
-                int const height = img.height();
+                const int width = img.width();
+                const int height = img.height();
 
                 std::cout << "{\n";
                 for (int y = 0; y < height; ++y) {
@@ -156,35 +156,35 @@ namespace imageproc {
                 std::cout << "}" << std::endl;
             }
 
-            bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect) {
+            bool surroundingsIntact(const QImage& img1, const QImage& img2, const QRect& rect) {
                 assert(img1.size() == img2.size());
 
-                int const w = img1.width();
-                int const h = img1.height();
+                const int w = img1.width();
+                const int h = img1.height();
 
                 if (rect.left() != 0) {
-                    QRect const left_of(0, 0, rect.x(), h);
+                    const QRect left_of(0, 0, rect.x(), h);
                     if (img1.copy(left_of) != img2.copy(left_of)) {
                         return false;
                     }
                 }
 
                 if (rect.right() != img1.rect().right()) {
-                    QRect const right_of(rect.x() + w, 0, w - rect.x() - rect.width(), h);
+                    const QRect right_of(rect.x() + w, 0, w - rect.x() - rect.width(), h);
                     if (img1.copy(right_of) != img2.copy(right_of)) {
                         return false;
                     }
                 }
 
                 if (rect.top() != 0) {
-                    QRect const top_of(0, 0, w, rect.y());
+                    const QRect top_of(0, 0, w, rect.y());
                     if (img1.copy(top_of) != img2.copy(top_of)) {
                         return false;
                     }
                 }
 
                 if (rect.bottom() != img1.rect().bottom()) {
-                    QRect const bottom_of(
+                    const QRect bottom_of(
                             0, rect.y() + rect.height(), w, h - rect.y() - rect.height()
                     );
                     if (img1.copy(bottom_of) != img2.copy(bottom_of)) {

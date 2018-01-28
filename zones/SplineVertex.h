@@ -68,9 +68,9 @@ public:
      */
     virtual SplineVertex::Ptr thisOrNextReal(Loop loop) = 0;
 
-    virtual QPointF const point() const = 0;
+    virtual const QPointF point() const = 0;
 
-    virtual void setPoint(QPointF const& pt) = 0;
+    virtual void setPoint(const QPointF& pt) = 0;
 
     virtual void remove();
 
@@ -80,9 +80,9 @@ public:
 
     SplineVertex::Ptr next(Loop loop);
 
-    SplineVertex::Ptr insertBefore(QPointF const& pt);
+    SplineVertex::Ptr insertBefore(const QPointF& pt);
 
-    SplineVertex::Ptr insertAfter(QPointF const& pt);
+    SplineVertex::Ptr insertAfter(const QPointF& pt);
 
 protected:
     /**
@@ -108,9 +108,9 @@ public:
 
     SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-    QPointF const point() const override;
+    const QPointF point() const override;
 
-    void setPoint(QPointF const& pt) override;
+    void setPoint(const QPointF& pt) override;
 
     void remove() override;
 
@@ -135,7 +135,7 @@ class RealSplineVertex : public SplineVertex {
 DECLARE_NON_COPYABLE(RealSplineVertex)
 
 public:
-    RealSplineVertex(QPointF const& pt, SplineVertex* prev, SplineVertex* next);
+    RealSplineVertex(const QPointF& pt, SplineVertex* prev, SplineVertex* next);
 
     void ref() const override;
 
@@ -145,9 +145,9 @@ public:
 
     SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-    QPointF const point() const override;
+    const QPointF point() const override;
 
-    void setPoint(QPointF const& pt) override;
+    void setPoint(const QPointF& pt) override;
 
 private:
     QPointF m_point;

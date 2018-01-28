@@ -40,7 +40,7 @@ Application::Application(int& argc, char** argv)
 bool Application::notify(QObject* receiver, QEvent* e) {
     try {
         return QApplication::notify(receiver, e);
-    } catch (std::bad_alloc const&) {
+    } catch (const std::bad_alloc&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
 
         return false;
@@ -52,12 +52,12 @@ void Application::installLanguage(const QString& locale) {
         return;
     }
 
-    QString const translation("scantailor_" + locale);
-    QStringList const translation_dirs(
+    const QString translation("scantailor_" + locale);
+    const QStringList translation_dirs(
             QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
     );
     bool loaded = false;
-    for (QString const& path : translation_dirs) {
+    for (const QString& path : translation_dirs) {
         QString absolute_path;
         if (QDir::isAbsolutePath(path)) {
             absolute_path = path;

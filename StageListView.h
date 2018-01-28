@@ -33,7 +33,7 @@ public:
 
     ~StageListView() override;
 
-    void setStages(intrusive_ptr<StageSequence> const& stages);
+    void setStages(const intrusive_ptr<StageSequence>& stages);
 
     QSize sizeHint() const override {
         return m_sizeHint;
@@ -51,7 +51,7 @@ public slots:
 
 protected slots:
 
-    void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) override;
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
 private slots:
 

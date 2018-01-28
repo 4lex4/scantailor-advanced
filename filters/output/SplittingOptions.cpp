@@ -9,13 +9,13 @@ namespace output {
               originalBackground(false) {
     }
 
-    SplittingOptions::SplittingOptions(QDomElement const& el)
+    SplittingOptions::SplittingOptions(const QDomElement& el)
             : splitOutput(el.attribute("splitOutput") == "1"),
               splittingMode(parseSplittingMode(el.attribute("splittingMode"))),
               originalBackground(el.attribute("originalBackground") == "1") {
     }
 
-    QDomElement SplittingOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement SplittingOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("splitOutput", splitOutput ? "1" : "0");
         el.setAttribute("splittingMode", formatSplittingMode(splittingMode));

@@ -40,7 +40,7 @@ DECLARE_NON_COPYABLE(LoadFileTask)
 
 public:
     LoadFileTask(Type type,
-                 PageInfo const& page,
+                 const PageInfo& page,
                  intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
                  intrusive_ptr<ProjectPages> pages,
                  intrusive_ptr<fix_orientation::Task> next_task);
@@ -52,15 +52,15 @@ public:
 private:
     class ErrorResult;
 
-    void updateImageSizeIfChanged(QImage const& image);
+    void updateImageSizeIfChanged(const QImage& image);
 
     void overrideDpi(QImage& image) const;
 
     intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     ImageId m_imageId;
     ImageMetadata m_imageMetadata;
-    intrusive_ptr<ProjectPages> const m_ptrPages;
-    intrusive_ptr<fix_orientation::Task> const m_ptrNextTask;
+    const intrusive_ptr<ProjectPages> m_ptrPages;
+    const intrusive_ptr<fix_orientation::Task> m_ptrNextTask;
 };
 
 

@@ -30,37 +30,37 @@ class QString;
 namespace output {
     class OutputParams {
     public:
-        OutputParams(OutputImageParams const& output_image_params,
-                     OutputFileParams const& output_file_params,
-                     OutputFileParams const& foreground_file_params,
-                     OutputFileParams const& background_file_params,
-                     OutputFileParams const& original_background_file_params,
-                     OutputFileParams const& automask_file_params,
-                     OutputFileParams const& speckles_file_params,
-                     ZoneSet const& picture_zones,
-                     ZoneSet const& fill_zones);
+        OutputParams(const OutputImageParams& output_image_params,
+                     const OutputFileParams& output_file_params,
+                     const OutputFileParams& foreground_file_params,
+                     const OutputFileParams& background_file_params,
+                     const OutputFileParams& original_background_file_params,
+                     const OutputFileParams& automask_file_params,
+                     const OutputFileParams& speckles_file_params,
+                     const ZoneSet& picture_zones,
+                     const ZoneSet& fill_zones);
 
-        explicit OutputParams(QDomElement const& el);
+        explicit OutputParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        OutputImageParams const& outputImageParams() const;
+        const OutputImageParams& outputImageParams() const;
 
-        OutputFileParams const& outputFileParams() const;
+        const OutputFileParams& outputFileParams() const;
 
-        OutputFileParams const& foregroundFileParams() const;
+        const OutputFileParams& foregroundFileParams() const;
 
-        OutputFileParams const& backgroundFileParams() const;
+        const OutputFileParams& backgroundFileParams() const;
 
-        OutputFileParams const& originalBackgroundFileParams() const;
+        const OutputFileParams& originalBackgroundFileParams() const;
 
-        OutputFileParams const& automaskFileParams() const;
+        const OutputFileParams& automaskFileParams() const;
 
-        OutputFileParams const& specklesFileParams() const;
+        const OutputFileParams& specklesFileParams() const;
 
-        ZoneSet const& pictureZones() const;
+        const ZoneSet& pictureZones() const;
 
-        ZoneSet const& fillZones() const;
+        const ZoneSet& fillZones() const;
 
     private:
         OutputImageParams m_outputImageParams;

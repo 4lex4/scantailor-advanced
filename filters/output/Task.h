@@ -54,15 +54,15 @@ namespace output {
         Task(intrusive_ptr<Filter> filter,
              intrusive_ptr<Settings> settings,
              intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-             PageId const& page_id,
-             OutputFileNameGenerator const& out_file_name_gen,
+             const PageId& page_id,
+             const OutputFileNameGenerator& out_file_name_gen,
              ImageViewTab last_tab,
              bool batch,
              bool debug);
 
         ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys);
 
     private:
         class UiUpdater;

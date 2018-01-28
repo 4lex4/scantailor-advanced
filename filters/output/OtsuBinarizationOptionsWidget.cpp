@@ -28,7 +28,7 @@ namespace output {
         setupUiConnections();
     }
 
-    void OtsuBinarizationOptionsWidget::preUpdateUI(PageId const& page_id) {
+    void OtsuBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
         const Params params(m_ptrSettings->getParams(page_id));
@@ -41,7 +41,7 @@ namespace output {
     }
 
     void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
-        int const value = thresholdSlider->value();
+        const int value = thresholdSlider->value();
         setThresholdAdjustment(value);
 
         emit stateChanged();
@@ -50,11 +50,11 @@ namespace output {
     void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
         thresholLabel->setText(QString::number(value));
 
-        QString const tooltip_text(QString::number(value));
+        const QString tooltip_text(QString::number(value));
         thresholdSlider->setToolTip(tooltip_text);
 
         // Show the tooltip immediately.
-        QPoint const center(thresholdSlider->rect().center());
+        const QPoint center(thresholdSlider->rect().center());
         QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
         tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
@@ -105,11 +105,11 @@ namespace output {
 
     void OtsuBinarizationOptionsWidget::setupUiConnections() {
         connect(
-                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
+                lighterThresholdLink, SIGNAL(linkActivated(const QString &)),
                 this, SLOT(setLighterThreshold())
         );
         connect(
-                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
+                darkerThresholdLink, SIGNAL(linkActivated(const QString &)),
                 this, SLOT(setDarkerThreshold())
         );
         connect(
@@ -132,11 +132,11 @@ namespace output {
 
     void OtsuBinarizationOptionsWidget::removeUiConnections() {
         disconnect(
-                lighterThresholdLink, SIGNAL(linkActivated(QString const &)),
+                lighterThresholdLink, SIGNAL(linkActivated(const QString &)),
                 this, SLOT(setLighterThreshold())
         );
         disconnect(
-                darkerThresholdLink, SIGNAL(linkActivated(QString const &)),
+                darkerThresholdLink, SIGNAL(linkActivated(const QString &)),
                 this, SLOT(setDarkerThreshold())
         );
         disconnect(

@@ -37,7 +37,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 1, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 1, 1, 1, 1,
@@ -65,7 +65,7 @@ namespace imageproc {
                 ConnComp cc;
                 ConnCompEraser eraser4(img, CONN4);
                 while (!(cc = eraser4.nextConnComp()).isNull()) {
-                    auto const it(
+                    const auto it(
                             std::find(c4r.begin(), c4r.end(), cc.rect())
                     );
                     if (it != c4r.end()) {
@@ -78,7 +78,7 @@ namespace imageproc {
 
                 ConnCompEraser eraser8(img, CONN8);
                 while (!(cc = eraser8.nextConnComp()).isNull()) {
-                    auto const it(
+                    const auto it(
                             std::find(c8r.begin(), c8r.end(), cc.rect())
                     );
                     if (it != c8r.end()) {

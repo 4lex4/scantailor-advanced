@@ -41,7 +41,7 @@ public:
      *        image representing the normal state of the button.
      * \param parent An optional parent widget.
      */
-    explicit SkinnedButton(QString const& file, QWidget* parent = nullptr);
+    explicit SkinnedButton(const QString& file, QWidget* parent = nullptr);
 
     /**
      * \brief Construct a skinned button from a set of 3 images.
@@ -56,9 +56,9 @@ public:
      *
      * Note that the sizes of all 3 images should be the same.
      */
-    SkinnedButton(QString const& normal_state_file,
-                  QString const& hover_state_file,
-                  QString const& pressed_state_file,
+    SkinnedButton(const QString& normal_state_file,
+                  const QString& hover_state_file,
+                  const QString& pressed_state_file,
                   QWidget* parent = nullptr);
 
     /**
@@ -69,7 +69,7 @@ public:
      *        This image should have the same size as the normal
      *        state image.
      */
-    void setHoverImage(QString const& file);
+    void setHoverImage(const QString& file);
 
     /**
      * \brief Set the pressed state image.
@@ -79,7 +79,7 @@ public:
      *        This image should have the same size as the normal
      *        state image.
      */
-    void setPressedImage(QString const& file);
+    void setPressedImage(const QString& file);
 
     /**
      * \brief Set the mask of the widget based on the alpha channel

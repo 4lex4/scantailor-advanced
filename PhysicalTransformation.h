@@ -25,13 +25,13 @@ class Dpi;
 
 class PhysicalTransformation {
 public:
-    explicit PhysicalTransformation(Dpi const& dpi);
+    explicit PhysicalTransformation(const Dpi& dpi);
 
-    QTransform const& pixelsToMM() const {
+    const QTransform& pixelsToMM() const {
         return m_pixelsToMM;
     }
 
-    QTransform const& mmToPixels() const {
+    const QTransform& mmToPixels() const {
         return m_mmToPixels;
     }
 

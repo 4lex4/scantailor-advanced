@@ -21,7 +21,7 @@
 
 using namespace imageproc::constants;
 
-bool ImageMetadata::operator==(ImageMetadata const& other) const {
+bool ImageMetadata::operator==(const ImageMetadata& other) const {
     if (m_size != other.m_size) {
         return false;
     } else if (m_dpi.isNull() && other.m_dpi.isNull()) {
@@ -56,7 +56,7 @@ ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixel_size, int dpi) {
         return DPI_TOO_LARGE;
     }
 
-    double const mm = INCH2MM * pixel_size / dpi;
+    const double mm = INCH2MM * pixel_size / dpi;
     if (mm > 500) {
         // This may indicate we are working with very large printed materials,
         // but most likely it indicates the DPI is wrong (too low).

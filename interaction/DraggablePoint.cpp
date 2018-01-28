@@ -24,7 +24,7 @@ DraggablePoint::DraggablePoint()
           m_proximityPriority(1) {
 }
 
-Proximity DraggablePoint::proximityThreshold(InteractionState const& state) const {
+Proximity DraggablePoint::proximityThreshold(const InteractionState& state) const {
     if (m_hitAreaRadius == 0.0) {
         return state.proximityThreshold();
     } else {
@@ -36,15 +36,15 @@ int DraggablePoint::proximityPriority() const {
     return m_proximityPriority;
 }
 
-Proximity DraggablePoint::proximity(QPointF const& mouse_pos) {
+Proximity DraggablePoint::proximity(const QPointF& mouse_pos) {
     return Proximity(pointPosition(), mouse_pos);
 }
 
-void DraggablePoint::dragInitiated(QPointF const& mouse_pos) {
+void DraggablePoint::dragInitiated(const QPointF& mouse_pos) {
     m_pointRelativeToMouse = pointPosition() - mouse_pos;
 }
 
-void DraggablePoint::dragContinuation(QPointF const& mouse_pos, Qt::KeyboardModifiers mask) {
+void DraggablePoint::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
     pointMoveRequest(mouse_pos + m_pointRelativeToMouse, mask);
 }
 

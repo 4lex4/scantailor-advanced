@@ -46,12 +46,12 @@ public:
         ZoneContextMenuItem propertiesItem;
         ZoneContextMenuItem deleteItem;
 
-        StandardMenuItems(ZoneContextMenuItem const& properties_item, ZoneContextMenuItem const& delete_item);
+        StandardMenuItems(const ZoneContextMenuItem& properties_item, const ZoneContextMenuItem& delete_item);
     };
 
     typedef boost::function<
             std::vector<ZoneContextMenuItem>(
-                    EditableZoneSet::Zone const&, StandardMenuItems const&
+                    const EditableZoneSet::Zone&, const StandardMenuItems&
             )
     > MenuCustomizer;
 
@@ -66,7 +66,7 @@ public:
      */
     static ZoneContextMenuInteraction* create(ZoneInteractionContext& context,
                                               InteractionState& interaction,
-                                              MenuCustomizer const& menu_customizer);
+                                              const MenuCustomizer& menu_customizer);
 
     ~ZoneContextMenuInteraction() override;
 
@@ -75,7 +75,7 @@ protected:
     public:
         QColor color;
 
-        explicit Zone(EditableZoneSet::Zone const& zone)
+        explicit Zone(const EditableZoneSet::Zone& zone)
                 : EditableZoneSet::Zone(zone) {
         }
     };
@@ -85,7 +85,7 @@ protected:
 
     ZoneContextMenuInteraction(ZoneInteractionContext& context,
                                InteractionState& interaction,
-                               MenuCustomizer const& menu_customizer,
+                               const MenuCustomizer& menu_customizer,
                                std::vector<Zone>& selectable_zones);
 
     ZoneInteractionContext& context() {
@@ -103,31 +103,31 @@ private:
 
     class Visualizer : public BasicSplineVisualizer {
     public:
-        void switchToFillMode(QColor const& color);
+        void switchToFillMode(const QColor& color);
 
         void switchToStrokeMode();
 
-        void prepareForSpline(QPainter& painter, EditableSpline::Ptr const& spline) override;
+        void prepareForSpline(QPainter& painter, const EditableSpline::Ptr& spline) override;
 
     private:
         QColor m_color;
     };
 
 
-    static std::vector<ZoneContextMenuItem> defaultMenuCustomizer(EditableZoneSet::Zone const& zone,
-                                                                  StandardMenuItems const& std_items);
+    static std::vector<ZoneContextMenuItem> defaultMenuCustomizer(const EditableZoneSet::Zone& zone,
+                                                                  const StandardMenuItems& std_items);
 
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    void menuItemTriggered(InteractionState& interaction, ZoneContextMenuItem::Callback const& callback);
+    void menuItemTriggered(InteractionState& interaction, const ZoneContextMenuItem::Callback& callback);
 
-    InteractionHandler* deleteRequest(EditableZoneSet::Zone const& zone);
+    InteractionHandler* deleteRequest(const EditableZoneSet::Zone& zone);
 
-    InteractionHandler* propertiesRequest(EditableZoneSet::Zone const& zone);
+    InteractionHandler* propertiesRequest(const EditableZoneSet::Zone& zone);
 
-    ZoneContextMenuItem propertiesMenuItemFor(EditableZoneSet::Zone const& zone);
+    ZoneContextMenuItem propertiesMenuItemFor(const EditableZoneSet::Zone& zone);
 
-    ZoneContextMenuItem deleteMenuItemFor(EditableZoneSet::Zone const& zone);
+    ZoneContextMenuItem deleteMenuItemFor(const EditableZoneSet::Zone& zone);
 
     ZoneInteractionContext& m_rContext;
     std::vector<Zone> m_selectableZones;

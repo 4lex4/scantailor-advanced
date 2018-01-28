@@ -22,12 +22,12 @@
 
 using namespace imageproc;
 
-Dpi::Dpi(QSize const size)
+Dpi::Dpi(const QSize size)
         : m_xDpi(size.width()),
           m_yDpi(size.height()) {
 }
 
-Dpi::Dpi(Dpm const dpm)
+Dpi::Dpi(const Dpm dpm)
         : m_xDpi(qRound(dpm.horizontal() * constants::DPM2DPI)),
           m_yDpi(qRound(dpm.vertical() * constants::DPM2DPI)) {
 }
@@ -40,7 +40,7 @@ QSize Dpi::toSize() const {
     }
 }
 
-bool Dpi::operator==(Dpi const& other) const {
+bool Dpi::operator==(const Dpi& other) const {
     return m_xDpi == other.m_xDpi && m_yDpi == other.m_yDpi;
 }
 

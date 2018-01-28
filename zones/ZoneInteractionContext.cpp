@@ -56,13 +56,13 @@ InteractionHandler* ZoneInteractionContext::createStdZoneCreationInteraction(Int
 }
 
 InteractionHandler* ZoneInteractionContext::createStdVertexDragInteraction(InteractionState& interaction,
-                                                                           EditableSpline::Ptr const& spline,
-                                                                           SplineVertex::Ptr const& vertex) {
+                                                                           const EditableSpline::Ptr& spline,
+                                                                           const SplineVertex::Ptr& vertex) {
     return new ZoneVertexDragInteraction(*this, interaction, spline, vertex);
 }
 
 InteractionHandler* ZoneInteractionContext::createStdZoneDragInteraction(InteractionState& interaction,
-                                                                         EditableSpline::Ptr const& spline) {
+                                                                         const EditableSpline::Ptr& spline) {
     return new ZoneDragInteraction(*this, interaction, spline);
 }
 

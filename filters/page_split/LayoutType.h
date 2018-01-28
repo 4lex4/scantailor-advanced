@@ -31,6 +31,6 @@ namespace page_split {
 
     QString layoutTypeToString(LayoutType type);
 
-    LayoutType layoutTypeFromString(QString const& layout_type);
+    LayoutType layoutTypeFromString(const QString& layout_type);
 }  // namespace page_split
 #endif

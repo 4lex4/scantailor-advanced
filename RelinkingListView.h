@@ -38,7 +38,7 @@ private:
 
     class GroupAggregator;
 
-    void maybeDrawStatusLayer(QPainter* painter, QModelIndex const& item_index, QRect const& item_paint_rect);
+    void maybeDrawStatusLayer(QPainter* painter, const QModelIndex& item_index, const QRect& item_paint_rect);
 
     void drawStatusLayer(QPainter* painter);
 

@@ -34,6 +34,6 @@ namespace imageproc {
  * This function is a faster replacement for QImage::scaled(), when
  * dealing with grayscale images.
  */
-    GrayImage scaleToGray(GrayImage const& src, QSize const& dst_size);
+    GrayImage scaleToGray(const GrayImage& src, const QSize& dst_size);
 }  // namespace imageproc
 #endif

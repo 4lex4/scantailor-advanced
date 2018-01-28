@@ -33,7 +33,7 @@ namespace output {
               binarizationMethod(OTSU) {
     }
 
-    BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
+    BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)
             : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()),
               savitzkyGolaySmoothingEnabled(el.attribute("savitzkyGolaySmoothing") == "1"),
               morphologicalSmoothingEnabled(el.attribute("morphologicalSmoothing") == "1"),
@@ -46,7 +46,7 @@ namespace output {
               binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
     }
 
-    QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("thresholdAdj", m_thresholdAdjustment);
         el.setAttribute("savitzkyGolaySmoothing", savitzkyGolaySmoothingEnabled ? "1" : "0");
@@ -62,7 +62,7 @@ namespace output {
         return el;
     }
 
-    bool BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const {
+    bool BlackWhiteOptions::operator==(const BlackWhiteOptions& other) const {
         return (m_thresholdAdjustment == other.m_thresholdAdjustment)
                && (savitzkyGolaySmoothingEnabled == other.savitzkyGolaySmoothingEnabled)
                && (morphologicalSmoothingEnabled == other.morphologicalSmoothingEnabled)
@@ -75,7 +75,7 @@ namespace output {
                && (binarizationMethod == other.binarizationMethod);
     }
 
-    bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
+    bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
         return !(*this == other);
     }
 

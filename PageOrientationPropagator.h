@@ -45,7 +45,7 @@ public:
 
     ~PageOrientationPropagator();
 
-    void propagate(ProjectPages const& pages);
+    void propagate(const ProjectPages& pages);
 
 private:
     class Collector;

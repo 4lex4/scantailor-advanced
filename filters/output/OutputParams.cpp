@@ -22,15 +22,15 @@
 #include <QDomDocument>
 
 namespace output {
-    OutputParams::OutputParams(OutputImageParams const& output_image_params,
-                               OutputFileParams const& output_file_params,
-                               OutputFileParams const& foreground_file_params,
-                               OutputFileParams const& background_file_params,
-                               OutputFileParams const& original_background_file_params,
-                               OutputFileParams const& automask_file_params,
-                               OutputFileParams const& speckles_file_params,
-                               ZoneSet const& picture_zones,
-                               ZoneSet const& fill_zones)
+    OutputParams::OutputParams(const OutputImageParams& output_image_params,
+                               const OutputFileParams& output_file_params,
+                               const OutputFileParams& foreground_file_params,
+                               const OutputFileParams& background_file_params,
+                               const OutputFileParams& original_background_file_params,
+                               const OutputFileParams& automask_file_params,
+                               const OutputFileParams& speckles_file_params,
+                               const ZoneSet& picture_zones,
+                               const ZoneSet& fill_zones)
             : m_outputImageParams(output_image_params),
               m_outputFileParams(output_file_params),
               m_foregroundFileParams(foreground_file_params),
@@ -42,7 +42,7 @@ namespace output {
               m_fillZones(fill_zones) {
     }
 
-    OutputParams::OutputParams(QDomElement const& el)
+    OutputParams::OutputParams(const QDomElement& el)
             : m_outputImageParams(el.namedItem("image").toElement()),
               m_outputFileParams(el.namedItem("file").toElement()),
               m_foregroundFileParams(el.namedItem("foreground_file").toElement()),
@@ -54,7 +54,7 @@ namespace output {
               m_fillZones(el.namedItem("fill-zones").toElement(), FillZonePropFactory()) {
     }
 
-    QDomElement OutputParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement OutputParams::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.appendChild(m_outputImageParams.toXml(doc, "image"));
         el.appendChild(m_outputFileParams.toXml(doc, "file"));
@@ -69,39 +69,39 @@ namespace output {
         return el;
     }
 
-    OutputImageParams const& OutputParams::outputImageParams() const {
+    const OutputImageParams& OutputParams::outputImageParams() const {
         return m_outputImageParams;
     }
 
-    OutputFileParams const& OutputParams::outputFileParams() const {
+    const OutputFileParams& OutputParams::outputFileParams() const {
         return m_outputFileParams;
     }
 
-    OutputFileParams const& OutputParams::foregroundFileParams() const {
+    const OutputFileParams& OutputParams::foregroundFileParams() const {
         return m_foregroundFileParams;
     }
 
-    OutputFileParams const& OutputParams::backgroundFileParams() const {
+    const OutputFileParams& OutputParams::backgroundFileParams() const {
         return m_backgroundFileParams;
     }
 
-    OutputFileParams const& OutputParams::originalBackgroundFileParams() const {
+    const OutputFileParams& OutputParams::originalBackgroundFileParams() const {
         return m_originalBackgroundFileParams;
     }
 
-    OutputFileParams const& OutputParams::automaskFileParams() const {
+    const OutputFileParams& OutputParams::automaskFileParams() const {
         return m_automaskFileParams;
     }
 
-    OutputFileParams const& OutputParams::specklesFileParams() const {
+    const OutputFileParams& OutputParams::specklesFileParams() const {
         return m_specklesFileParams;
     }
 
-    ZoneSet const& OutputParams::pictureZones() const {
+    const ZoneSet& OutputParams::pictureZones() const {
         return m_pictureZones;
     }
 
-    ZoneSet const& OutputParams::fillZones() const {
+    const ZoneSet& OutputParams::fillZones() const {
         return m_fillZones;
     }
 }  // namespace output

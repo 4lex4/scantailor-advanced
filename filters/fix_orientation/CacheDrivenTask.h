@@ -42,7 +42,7 @@ namespace fix_orientation {
 
         ~CacheDrivenTask() override;
 
-        void process(PageInfo const& page_info, AbstractFilterDataCollector* collector) override;
+        void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) override;
 
     private:
         intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;

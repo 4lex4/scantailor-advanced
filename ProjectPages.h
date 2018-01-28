@@ -62,9 +62,9 @@ public:
 
     explicit ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
 
-    ProjectPages(std::vector<ImageInfo> const& images, Qt::LayoutDirection layout_direction);
+    ProjectPages(const std::vector<ImageInfo>& images, Qt::LayoutDirection layout_direction);
 
-    ProjectPages(std::vector<ImageFileInfo> const& files, Pages pages, Qt::LayoutDirection layout_direction);
+    ProjectPages(const std::vector<ImageFileInfo>& files, Pages pages, Qt::LayoutDirection layout_direction);
 
     ~ProjectPages() override;
 
@@ -72,23 +72,23 @@ public:
 
     PageSequence toPageSequence(PageView view) const;
 
-    void listRelinkablePaths(VirtualFunction1<void, RelinkablePath const&>& sink) const;
+    void listRelinkablePaths(VirtualFunction1<void, const RelinkablePath&>& sink) const;
 
     /**
      * \note It's up to the caller to make sure different paths aren't collapsed into one.
      *       Having the same page more the once in a project is not supported by Scan Tailor.
      */
-    void performRelinking(AbstractRelinker const& relinker);
+    void performRelinking(const AbstractRelinker& relinker);
 
-    void setLayoutTypeFor(ImageId const& image_id, LayoutType layout);
+    void setLayoutTypeFor(const ImageId& image_id, LayoutType layout);
 
     void setLayoutTypeForAllPages(LayoutType layout);
 
-    void autoSetLayoutTypeFor(ImageId const& image_id, OrthogonalRotation rotation);
+    void autoSetLayoutTypeFor(const ImageId& image_id, OrthogonalRotation rotation);
 
-    void updateImageMetadata(ImageId const& image_id, ImageMetadata const& metadata);
+    void updateImageMetadata(const ImageId& image_id, const ImageMetadata& metadata);
 
-    static int adviseNumberOfLogicalPages(ImageMetadata const& metadata, OrthogonalRotation rotation);
+    static int adviseNumberOfLogicalPages(const ImageMetadata& metadata, OrthogonalRotation rotation);
 
     int numImages() const;
 
@@ -108,12 +108,12 @@ public:
      *         in the order dependent on the layout direction specified
      *         at construction time.
      */
-    std::vector<PageInfo> insertImage(ImageInfo const& new_image,
+    std::vector<PageInfo> insertImage(const ImageInfo& new_image,
                                       BeforeOrAfter before_or_after,
-                                      ImageId const& existing,
+                                      const ImageId& existing,
                                       PageView view);
 
-    void removePages(std::set<PageId> const& pages);
+    void removePages(const std::set<PageId>& pages);
 
     /**
      * \brief Unremoves half-a-page, if the other half is still present.
@@ -122,7 +122,7 @@ public:
      * \return A PageInfo corresponding to the page restored or
      *         a null PageInfo if restoring failed.
      */
-    PageInfo unremovePage(PageId const& page_id);
+    PageInfo unremovePage(const PageId& page_id);
 
     /**
      * \brief Check if all DPIs are OK, in terms of ImageMetadata::isDpiOK()
@@ -133,7 +133,7 @@ public:
 
     std::vector<ImageFileInfo> toImageFileInfo() const;
 
-    void updateMetadataFrom(std::vector<ImageFileInfo> const& files);
+    void updateMetadataFrom(const std::vector<ImageFileInfo>& files);
 
 signals:
 
@@ -147,32 +147,32 @@ private:
         bool leftHalfRemoved;  // Both can't be true, and if one is true,
         bool rightHalfRemoved;  // then numLogicalPages is 1.
 
-        explicit ImageDesc(ImageInfo const& image_info);
+        explicit ImageDesc(const ImageInfo& image_info);
 
-        ImageDesc(ImageId const& id, ImageMetadata const& metadata, Pages pages);
+        ImageDesc(const ImageId& id, const ImageMetadata& metadata, Pages pages);
 
-        PageId::SubPage logicalPageToSubPage(int logical_page, PageId::SubPage const* sub_pages_in_order) const;
+        PageId::SubPage logicalPageToSubPage(int logical_page, const PageId::SubPage* sub_pages_in_order) const;
     };
 
     void initSubPagesInOrder(Qt::LayoutDirection layout_direction);
 
-    void setLayoutTypeForImpl(ImageId const& image_id, LayoutType layout, bool* modified);
+    void setLayoutTypeForImpl(const ImageId& image_id, LayoutType layout, bool* modified);
 
     void setLayoutTypeForAllPagesImpl(LayoutType layout, bool* modified);
 
-    void autoSetLayoutTypeForImpl(ImageId const& image_id, OrthogonalRotation rotation, bool* modified);
+    void autoSetLayoutTypeForImpl(const ImageId& image_id, OrthogonalRotation rotation, bool* modified);
 
-    void updateImageMetadataImpl(ImageId const& image_id, ImageMetadata const& metadata, bool* modified);
+    void updateImageMetadataImpl(const ImageId& image_id, const ImageMetadata& metadata, bool* modified);
 
-    std::vector<PageInfo> insertImageImpl(ImageInfo const& new_image,
+    std::vector<PageInfo> insertImageImpl(const ImageInfo& new_image,
                                           BeforeOrAfter before_or_after,
-                                          ImageId const& existing,
+                                          const ImageId& existing,
                                           PageView view,
                                           bool& modified);
 
-    void removePagesImpl(std::set<PageId> const& pages, bool& modified);
+    void removePagesImpl(const std::set<PageId>& pages, bool& modified);
 
-    PageInfo unremovePageImpl(PageId const& page_id, bool& modified);
+    PageInfo unremovePageImpl(const PageId& page_id, bool& modified);
 
     mutable QMutex m_mutex;
     std::vector<ImageDesc> m_images;

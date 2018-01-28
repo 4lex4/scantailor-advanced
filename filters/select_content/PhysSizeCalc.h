@@ -31,9 +31,9 @@ namespace select_content {
     public:
         PhysSizeCalc();
 
-        explicit PhysSizeCalc(ImageTransformation const& xform);
+        explicit PhysSizeCalc(const ImageTransformation& xform);
 
-        QSizeF sizeMM(QRectF const& rect_px) const;
+        QSizeF sizeMM(const QRectF& rect_px) const;
 
     private:
         QTransform m_virtToPhys;

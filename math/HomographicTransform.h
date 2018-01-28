@@ -32,15 +32,15 @@ public:
     typedef VecNT<N, T> Vec;
     typedef VecNT<(N + 1) * (N + 1), T> Mat;
 
-    explicit HomographicTransformBase(Mat const& mat)
+    explicit HomographicTransformBase(const Mat& mat)
             : m_mat(mat) {
     }
 
     HomographicTransform<N, T> inv() const;
 
-    Vec operator()(Vec const& from) const;
+    Vec operator()(const Vec& from) const;
 
-    Mat const& mat() const {
+    const Mat& mat() const {
         return m_mat;
     }
 
@@ -52,7 +52,7 @@ private:
 template<size_t N, typename T>
 class HomographicTransform : public HomographicTransformBase<N, T> {
 public:
-    explicit HomographicTransform(typename HomographicTransformBase<N, T>::Mat const& mat)
+    explicit HomographicTransform(const typename HomographicTransformBase<N, T>::Mat& mat)
             : HomographicTransformBase<N, T>(mat) {
     }
 };
@@ -62,7 +62,7 @@ public:
 template<typename T>
 class HomographicTransform<1, T> : public HomographicTransformBase<1, T> {
 public:
-    explicit HomographicTransform(typename HomographicTransformBase<1, T>::Mat const& mat)
+    explicit HomographicTransform(const typename HomographicTransformBase<1, T>::Mat& mat)
             : HomographicTransformBase<1, T>(mat) {
     }
 
@@ -84,7 +84,7 @@ HomographicTransformBase<N, T>::inv() const {
 }
 
 template<size_t N, typename T>
-typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::operator()(Vec const& from) const {
+typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::operator()(const Vec& from) const {
     StaticMatrixCalc<T, N + 1, 1> mc;
     VecNT<N + 1, T> const hsrc(from, T(1));
     VecNT<N + 1, T> hdst;
@@ -98,7 +98,7 @@ typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::ope
 template<typename T>
 T HomographicTransform<1, T>::operator()(T from) const {
     // Optimized version for 1D case.
-    T const* m = this->mat().data();
+    const T* m = this->mat().data();
 
     return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }

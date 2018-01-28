@@ -39,11 +39,11 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
     connect(ui.dontSaveBtn, SIGNAL(clicked()), SLOT(reject()));
 }
 
-void OutOfMemoryDialog::setParams(QString const& project_file,
+void OutOfMemoryDialog::setParams(const QString& project_file,
                                   intrusive_ptr<StageSequence> stages,
                                   intrusive_ptr<ProjectPages> pages,
-                                  SelectedPage const& selected_page,
-                                  OutputFileNameGenerator const& out_file_name_gen) {
+                                  const SelectedPage& selected_page,
+                                  const OutputFileNameGenerator& out_file_name_gen) {
     m_projectFile = project_file;
     m_ptrStages = std::move(stages);
     m_ptrPages = std::move(pages);
@@ -103,7 +103,7 @@ void OutOfMemoryDialog::saveProjectAs() {
     }
 } // OutOfMemoryDialog::saveProjectAs
 
-bool OutOfMemoryDialog::saveProjectWithFeedback(QString const& project_file) {
+bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& project_file) {
     ProjectWriter writer(m_ptrPages, m_selectedPage, m_outFileNameGen);
 
     if (!writer.write(project_file, m_ptrStages->filters())) {

@@ -36,9 +36,9 @@ namespace fix_orientation {
     class Task::UiUpdater : public FilterResult {
     public:
         UiUpdater(intrusive_ptr<Filter> filter,
-                  QImage const& image,
-                  ImageId const& image_id,
-                  ImageTransformation const& xform,
+                  const QImage& image,
+                  const ImageId& image_id,
+                  const ImageTransformation& xform,
                   bool batch_processing);
 
         void updateUI(FilterUiInterface* ui) override;
@@ -57,11 +57,11 @@ namespace fix_orientation {
     };
 
 
-    Task::Task(ImageId const& image_id,
+    Task::Task(const ImageId& image_id,
                intrusive_ptr<Filter> filter,
                intrusive_ptr<Settings> settings,
                intrusive_ptr<page_split::Task> next_task,
-               bool const batch_processing)
+               const bool batch_processing)
             : m_ptrFilter(std::move(filter)),
               m_ptrNextTask(std::move(next_task)),
               m_ptrSettings(std::move(settings)),
@@ -71,7 +71,7 @@ namespace fix_orientation {
 
     Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+    FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         // This function is executed from the worker thread.
 
         status.throwIfCancelled();
@@ -94,10 +94,10 @@ namespace fix_orientation {
 /*============================ Task::UiUpdater ========================*/
 
     Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                               QImage const& image,
-                               ImageId const& image_id,
-                               ImageTransformation const& xform,
-                               bool const batch_processing)
+                               const QImage& image,
+                               const ImageId& image_id,
+                               const ImageTransformation& xform,
+                               const bool batch_processing)
             : m_ptrFilter(std::move(filter)),
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),

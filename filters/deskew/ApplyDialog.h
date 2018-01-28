@@ -32,15 +32,15 @@ namespace deskew {
     class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
     Q_OBJECT
     public:
-        ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
+        ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
         ~ApplyDialog() override;
 
     signals:
 
-        void appliedTo(std::set<PageId> const& pages);
+        void appliedTo(const std::set<PageId>& pages);
 
-        void appliedToAllPages(std::set<PageId> const& pages);
+        void appliedToAllPages(const std::set<PageId>& pages);
 
     private slots:
 

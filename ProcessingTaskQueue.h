@@ -32,7 +32,7 @@ DECLARE_NON_COPYABLE(ProcessingTaskQueue)
 public:
     ProcessingTaskQueue();
 
-    void addProcessingTask(PageInfo const& page_info, BackgroundTaskPtr const& task);
+    void addProcessingTask(const PageInfo& page_info, const BackgroundTaskPtr& task);
 
     /**
      * The first task among those that haven't been already taken for processing
@@ -41,7 +41,7 @@ public:
      */
     BackgroundTaskPtr takeForProcessing();
 
-    void processingFinished(BackgroundTaskPtr const& task);
+    void processingFinished(const BackgroundTaskPtr& task);
 
     /**
      * \brief Returns the page to be visually selected.
@@ -54,7 +54,7 @@ public:
 
     bool allProcessed() const;
 
-    void cancelAndRemove(std::set<PageId> const& pages);
+    void cancelAndRemove(const std::set<PageId>& pages);
 
     void cancelAndClear();
 
@@ -64,7 +64,7 @@ private:
         BackgroundTaskPtr task;
         bool takenForProcessing;
 
-        Entry(PageInfo const& page_info, BackgroundTaskPtr const& task);
+        Entry(const PageInfo& page_info, const BackgroundTaskPtr& task);
     };
 
     std::list<Entry> m_queue;

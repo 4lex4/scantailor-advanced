@@ -36,10 +36,10 @@ namespace dewarping {
  */
     class TowardsLineTracer {
     public:
-        TowardsLineTracer(imageproc::SEDM const* dm, Grid<float> const* pm, QLineF const& line,
-                          QPoint const& initial_pos);
+        TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line,
+                          const QPoint& initial_pos);
 
-        QPoint const* trace(float max_dist);
+        const QPoint* trace(float max_dist);
 
     private:
         struct Step {
@@ -51,9 +51,9 @@ namespace dewarping {
 
         void setupSteps();
 
-        uint32_t const* m_pDmData;
+        const uint32_t* m_pDmData;
         int m_dmStride;
-        float const* m_pPmData;
+        const float* m_pPmData;
         int m_pmStride;
         QRect m_rect;
         QLineF m_line;

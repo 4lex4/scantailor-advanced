@@ -25,12 +25,12 @@
 namespace dewarping {
     DistortionModel::DistortionModel() = default;
 
-    DistortionModel::DistortionModel(QDomElement const& el)
+    DistortionModel::DistortionModel(const QDomElement& el)
             : m_topCurve(el.namedItem("top-curve").toElement()),
               m_bottomCurve(el.namedItem("bottom-curve").toElement()) {
     }
 
-    QDomElement DistortionModel::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement DistortionModel::toXml(QDomDocument& doc, const QString& name) const {
         if (!isValid()) {
             return QDomElement();
         }
@@ -47,7 +47,7 @@ namespace dewarping {
             return false;
         }
 
-        Vec2d const poly[4] = {
+        const Vec2d poly[4] = {
                 m_topCurve.polyline().front(),
                 m_topCurve.polyline().back(),
                 m_bottomCurve.polyline().back(),
@@ -58,15 +58,15 @@ namespace dewarping {
         double max_dot = NumericTraits<double>::min();
 
         for (int i = 0; i < 4; ++i) {
-            Vec2d const cur(poly[i]);
-            Vec2d const prev(poly[(i + 3) & 3]);
-            Vec2d const next(poly[(i + 1) & 3]);
+            const Vec2d cur(poly[i]);
+            const Vec2d prev(poly[(i + 3) & 3]);
+            const Vec2d next(poly[(i + 1) & 3]);
 
             Vec2d prev_normal(cur - prev);
             std::swap(prev_normal[0], prev_normal[1]);
             prev_normal[0] = -prev_normal[0];
 
-            double const dot = prev_normal.dot(next - cur);
+            const double dot = prev_normal.dot(next - cur);
             if (dot < min_dot) {
                 min_dot = dot;
             }
@@ -88,9 +88,9 @@ namespace dewarping {
         return true;
     }  // DistortionModel::isValid
 
-    bool DistortionModel::matches(DistortionModel const& other) const {
-        bool const this_valid = isValid();
-        bool const other_valid = other.isValid();
+    bool DistortionModel::matches(const DistortionModel& other) const {
+        const bool this_valid = isValid();
+        const bool other_valid = other.isValid();
         if (!this_valid && !other_valid) {
             return true;
         } else if (this_valid != other_valid) {
@@ -106,27 +106,27 @@ namespace dewarping {
         return true;
     }
 
-    QRectF DistortionModel::modelDomain(CylindricalSurfaceDewarper const& dewarper,
-                                        QTransform const& to_output,
-                                        QRectF const& output_content_rect) const {
+    QRectF DistortionModel::modelDomain(const CylindricalSurfaceDewarper& dewarper,
+                                        const QTransform& to_output,
+                                        const QRectF& output_content_rect) const {
         QRectF model_domain(boundingBox(to_output));
 
         // We not only uncurl the lines, but also stretch them in curved areas.
         // Because we don't want to reach out of the content box, we shrink
         // the model domain vertically, rather than stretching it horizontally.
-        double const vert_scale = 1.0 / dewarper.directrixArcLength();
+        const double vert_scale = 1.0 / dewarper.directrixArcLength();
         // When scaling model_domain, we want the following point to remain where it is.
-        QPointF const scale_origin(output_content_rect.center());
+        const QPointF scale_origin(output_content_rect.center());
 
-        double const new_upper_part = (scale_origin.y() - model_domain.top()) * vert_scale;
-        double const new_height = model_domain.height() * vert_scale;
+        const double new_upper_part = (scale_origin.y() - model_domain.top()) * vert_scale;
+        const double new_height = model_domain.height() * vert_scale;
         model_domain.setTop(scale_origin.y() - new_upper_part);
         model_domain.setHeight(new_height);
 
         return model_domain;
     }
 
-    QRectF DistortionModel::boundingBox(QTransform const& transform) const {
+    QRectF DistortionModel::boundingBox(const QTransform& transform) const {
         double top = NumericTraits<double>::max();
         double left = top;
         double bottom = NumericTraits<double>::min();

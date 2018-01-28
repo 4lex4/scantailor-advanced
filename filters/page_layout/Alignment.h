@@ -55,7 +55,7 @@ namespace page_layout {
 
         Alignment(Vertical vert, Horizontal hor);
 
-        explicit Alignment(QDomElement const& el);
+        explicit Alignment(const QDomElement& el);
 
         Vertical vertical() const;
 
@@ -73,11 +73,11 @@ namespace page_layout {
 
         void setTolerance(double t);
 
-        bool operator==(Alignment const& other) const;
+        bool operator==(const Alignment& other) const;
 
-        bool operator!=(Alignment const& other) const;
+        bool operator!=(const Alignment& other) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         Vertical m_vert;

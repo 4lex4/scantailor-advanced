@@ -32,12 +32,12 @@
 
 namespace imageproc {
     namespace {
-        int calcNumTerms(int const hor_degree, int const vert_degree) {
+        int calcNumTerms(const int hor_degree, const int vert_degree) {
             return (hor_degree + 1) * (vert_degree + 1);
         }
     }  // anonymous namespace
 
-    SavGolKernel::SavGolKernel(QSize const& size, QPoint const& origin, int const hor_degree, int const vert_degree)
+    SavGolKernel::SavGolKernel(const QSize& size, const QPoint& origin, const int hor_degree, const int vert_degree)
             : m_horDegree(hor_degree),
               m_vertDegree(vert_degree),
               m_width(size.width()),
@@ -97,8 +97,8 @@ namespace imageproc {
         for (int j = 0; j < m_numTerms; ++j, jj += m_numTerms + 1) {
             int ij = jj + m_numTerms;  // i * m_numTerms + j
             for (int i = j + 1; i < m_numDataPoints; ++i, ij += m_numTerms) {
-                double const a = m_equations[jj];
-                double const b = m_equations[ij];
+                const double a = m_equations[jj];
+                const double b = m_equations[ij];
 
                 if (b == 0.0) {
                     m_rotations.emplace_back(1.0, 0.0);
@@ -112,14 +112,14 @@ namespace imageproc {
                     sin = copysign(1.0, b);
                     m_equations[jj] = fabs(b);
                 } else if (fabs(b) > fabs(a)) {
-                    double const t = a / b;
-                    double const u = copysign(sqrt(1.0 + t * t), b);
+                    const double t = a / b;
+                    const double u = copysign(sqrt(1.0 + t * t), b);
                     sin = 1.0 / u;
                     cos = sin * t;
                     m_equations[jj] = b * u;
                 } else {
-                    double const t = b / a;
-                    double const u = copysign(sqrt(1.0 + t * t), a);
+                    const double t = b / a;
+                    const double u = copysign(sqrt(1.0 + t * t), a);
                     cos = 1.0 / u;
                     sin = cos * t;
                     m_equations[jj] = a * u;
@@ -131,7 +131,7 @@ namespace imageproc {
                 int ik = ij + 1;  // i * m_numTerms + k
                 int jk = jj + 1;  // j * m_numTerms + k
                 for (int k = j + 1; k < m_numTerms; ++k, ++ik, ++jk) {
-                    double const temp = cos * m_equations[jk] + sin * m_equations[ik];
+                    const double temp = cos * m_equations[jk] + sin * m_equations[ik];
                     m_equations[ik] = cos * m_equations[ik] - sin * m_equations[jk];
                     m_equations[jk] = temp;
                 }
@@ -139,7 +139,7 @@ namespace imageproc {
         }
     }  // SavGolKernel::QR
 
-    void SavGolKernel::recalcForOrigin(QPoint const& origin) {
+    void SavGolKernel::recalcForOrigin(const QPoint& origin) {
         std::fill(m_dataPoints.begin(), m_dataPoints.end(), 0.0);
         m_dataPoints[origin.y() * m_width + origin.x()] = 1.0;
 
@@ -148,7 +148,7 @@ namespace imageproc {
         std::vector<Rotation>::const_iterator rot(m_rotations.begin());
         for (int j = 0; j < m_numTerms; ++j) {
             for (int i = j + 1; i < m_numDataPoints; ++i, ++rot) {
-                double const temp = rot->cos * dp[j] + rot->sin * dp[i];
+                const double temp = rot->cos * dp[j] + rot->sin * dp[i];
                 dp[i] = rot->cos * dp[i] - rot->sin * dp[j];
                 dp[j] = temp;
             }

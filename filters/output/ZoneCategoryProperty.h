@@ -40,27 +40,27 @@ namespace output {
                 : m_zone_category(zone_category) {
         }
 
-        explicit ZoneCategoryProperty(QDomElement const& el);
+        explicit ZoneCategoryProperty(const QDomElement& el);
 
         static void registerIn(PropertyFactory& factory);
 
         intrusive_ptr<Property> clone() const override;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const override;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
         ZoneCategory zone_category() const;
 
         void setZoneCategory(ZoneCategory zone_category);
 
     private:
-        static intrusive_ptr<Property> construct(QDomElement const& el);
+        static intrusive_ptr<Property> construct(const QDomElement& el);
 
-        static ZoneCategory zoneCategoryFromString(QString const& str);
+        static ZoneCategory zoneCategoryFromString(const QString& str);
 
         static QString zoneCategoryToString(ZoneCategory zone_category);
 
 
-        static char const m_propertyName[];
+        static const char m_propertyName[];
         ZoneCategory m_zone_category;
     };
 }  // namespace output

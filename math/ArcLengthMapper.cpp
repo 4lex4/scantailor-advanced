@@ -38,8 +38,8 @@ void ArcLengthMapper::addSample(double x, double fx) {
     double arc_len = 0;
 
     if (!m_samples.empty()) {
-        double const dx = x - m_samples.back().x;
-        double const dy = fx - m_prevFX;
+        const double dx = x - m_samples.back().x;
+        const double dy = fx - m_prevFX;
         assert(dx > 0);
         arc_len = m_samples.back().arcLen + sqrt(dx * dx + dy * dy);
     }
@@ -60,7 +60,7 @@ void ArcLengthMapper::normalizeRange(double total_arc_len) {
 
     assert(total_arc_len != 0);
 
-    double const scale = total_arc_len / m_samples.back().arcLen;
+    const double scale = total_arc_len / m_samples.back().arcLen;
     for (Sample& sample : m_samples) {
         sample.arcLen *= scale;
     }
@@ -104,8 +104,8 @@ double ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const {
     auto right_idx = static_cast<int>(m_samples.size() - 1);
     double left_arc_len = m_samples[left_idx].arcLen;
     while (left_idx + 1 < right_idx) {
-        int const mid_idx = (left_idx + right_idx) >> 1;
-        double const mid_arc_len = m_samples[mid_idx].arcLen;
+        const int mid_idx = (left_idx + right_idx) >> 1;
+        const double mid_arc_len = m_samples[mid_idx].arcLen;
         if ((arc_len - mid_arc_len) * (arc_len - left_arc_len) <= 0) {
             // Note: <= 0 vs < 0 is actually important for this branch.
             // 0 would indicate either left or mid point is our exact answer.
@@ -159,8 +159,8 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     auto right_idx = static_cast<int>(m_samples.size() - 1);
     double left_x = m_samples[left_idx].x;
     while (left_idx + 1 < right_idx) {
-        int const mid_idx = (left_idx + right_idx) >> 1;
-        double const mid_x = m_samples[mid_idx].x;
+        const int mid_idx = (left_idx + right_idx) >> 1;
+        const double mid_x = m_samples[mid_idx].x;
         if ((x - mid_x) * (x - left_x) <= 0) {
             // Note: <= 0 vs < 0 is actually important for this branch.
             // 0 would indicate either left or mid point is our exact answer.
@@ -182,8 +182,8 @@ bool ArcLengthMapper::checkSegmentForArcLen(double arc_len, int segment) const {
         return false;
     }
 
-    double const left_arc_len = m_samples[segment].arcLen;
-    double const right_arc_len = m_samples[segment + 1].arcLen;
+    const double left_arc_len = m_samples[segment].arcLen;
+    const double right_arc_len = m_samples[segment + 1].arcLen;
 
     return (arc_len - left_arc_len) * (arc_len - right_arc_len) <= 0;
 }
@@ -194,8 +194,8 @@ bool ArcLengthMapper::checkSegmentForX(double x, int segment) const {
         return false;
     }
 
-    double const left_x = m_samples[segment].x;
-    double const right_x = m_samples[segment + 1].x;
+    const double left_x = m_samples[segment].x;
+    const double right_x = m_samples[segment + 1].x;
 
     return (x - left_x) * (x - right_x) <= 0;
 }
@@ -207,11 +207,11 @@ double ArcLengthMapper::interpolateArcLenInSegment(double arc_len, int segment) 
     //
     // x = x0 + (a - a0) * (x1 - x0) / (a1 - a0)
 
-    double const x0 = m_samples[segment].x;
-    double const a0 = m_samples[segment].arcLen;
-    double const x1 = m_samples[segment + 1].x;
-    double const a1 = m_samples[segment + 1].arcLen;
-    double const x = x0 + (arc_len - a0) * (x1 - x0) / (a1 - a0);
+    const double x0 = m_samples[segment].x;
+    const double a0 = m_samples[segment].arcLen;
+    const double x1 = m_samples[segment + 1].x;
+    const double a1 = m_samples[segment + 1].arcLen;
+    const double x = x0 + (arc_len - a0) * (x1 - x0) / (a1 - a0);
 
     return x;
 }
@@ -223,11 +223,11 @@ double ArcLengthMapper::interpolateXInSegment(double x, int segment) const {
     //
     // a = a0 + (a1 - a0) * (x - x0) / (x1 - x0)
 
-    double const x0 = m_samples[segment].x;
-    double const a0 = m_samples[segment].arcLen;
-    double const x1 = m_samples[segment + 1].x;
-    double const a1 = m_samples[segment + 1].arcLen;
-    double const a = a0 + (a1 - a0) * (x - x0) / (x1 - x0);
+    const double x0 = m_samples[segment].x;
+    const double a0 = m_samples[segment].arcLen;
+    const double x1 = m_samples[segment + 1].x;
+    const double a1 = m_samples[segment + 1].arcLen;
+    const double a = a0 + (a1 - a0) * (x - x0) / (x1 - x0);
 
     return a;
 }

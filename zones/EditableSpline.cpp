@@ -21,8 +21,8 @@
 
 EditableSpline::EditableSpline() = default;
 
-EditableSpline::EditableSpline(SerializableSpline const& spline) {
-    for (QPointF const& pt : spline.toPolygon()) {
+EditableSpline::EditableSpline(const SerializableSpline& spline) {
+    for (const QPointF& pt : spline.toPolygon()) {
         appendVertex(pt);
     }
 
@@ -34,7 +34,7 @@ EditableSpline::EditableSpline(SerializableSpline const& spline) {
     setBridged(true);
 }
 
-void EditableSpline::appendVertex(QPointF const& pt) {
+void EditableSpline::appendVertex(const QPointF& pt) {
     m_sentinel.insertBefore(pt);
 }
 

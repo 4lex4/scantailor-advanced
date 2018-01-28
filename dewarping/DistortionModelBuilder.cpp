@@ -43,21 +43,21 @@ namespace dewarping {
         XSpline extendedSpline;
         double order;  // Lesser values correspond to upper curves.
 
-        TracedCurve(std::vector<QPointF> const& trimmed_polyline, XSpline const& extended_spline, double ord)
+        TracedCurve(const std::vector<QPointF>& trimmed_polyline, const XSpline& extended_spline, double ord)
                 : trimmedPolyline(trimmed_polyline),
                   extendedPolyline(extended_spline.toPolyline()),
                   extendedSpline(extended_spline),
                   order(ord) {
         }
 
-        bool operator<(TracedCurve const& rhs) const {
+        bool operator<(const TracedCurve& rhs) const {
             return order < rhs.order;
         }
     };
 
     struct DistortionModelBuilder::RansacModel {
-        TracedCurve const* topCurve;
-        TracedCurve const* bottomCurve;
+        const TracedCurve* topCurve;
+        const TracedCurve* bottomCurve;
         double totalError;
 
         RansacModel()
@@ -73,43 +73,43 @@ namespace dewarping {
 
     class DistortionModelBuilder::RansacAlgo {
     public:
-        explicit RansacAlgo(std::vector<TracedCurve> const& all_curves)
+        explicit RansacAlgo(const std::vector<TracedCurve>& all_curves)
                 : m_rAllCurves(all_curves) {
         }
 
-        void buildAndAssessModel(TracedCurve const* top_curve, TracedCurve const* bottom_curve);
+        void buildAndAssessModel(const TracedCurve* top_curve, const TracedCurve* bottom_curve);
 
         RansacModel& bestModel() {
             return m_bestModel;
         }
 
-        RansacModel const& bestModel() const {
+        const RansacModel& bestModel() const {
             return m_bestModel;
         }
 
     private:
-        double calcReferenceHeight(CylindricalSurfaceDewarper const& dewarper, QPointF const& loc);
+        double calcReferenceHeight(const CylindricalSurfaceDewarper& dewarper, const QPointF& loc);
 
         RansacModel m_bestModel;
-        std::vector<TracedCurve> const& m_rAllCurves;
+        const std::vector<TracedCurve>& m_rAllCurves;
     };
 
 
     class DistortionModelBuilder::BadCurve : public std::exception {
     public:
-        char const* what() const throw() override {
+        const char* what() const throw() override {
             return "Bad curve";
         }
     };
 
 
-    DistortionModelBuilder::DistortionModelBuilder(Vec2d const& down_direction)
+    DistortionModelBuilder::DistortionModelBuilder(const Vec2d& down_direction)
             : m_downDirection(down_direction),
               m_rightDirection(down_direction[1], -down_direction[0]) {
         assert(down_direction.squaredNorm() > 0);
     }
 
-    void DistortionModelBuilder::setVerticalBounds(QLineF const& bound1, QLineF const& bound2) {
+    void DistortionModelBuilder::setVerticalBounds(const QLineF& bound1, const QLineF& bound2) {
         m_bound1 = bound1;
         m_bound2 = bound2;
     }
@@ -119,7 +119,7 @@ namespace dewarping {
         return std::pair<QLineF, QLineF>(m_bound1, m_bound2);
     }
 
-    void DistortionModelBuilder::addHorizontalCurve(std::vector<QPointF> const& polyline) {
+    void DistortionModelBuilder::addHorizontalCurve(const std::vector<QPointF>& polyline) {
         if (polyline.size() < 2) {
             return;
         }
@@ -131,11 +131,11 @@ namespace dewarping {
         }
     }
 
-    void DistortionModelBuilder::transform(QTransform const& xform) {
+    void DistortionModelBuilder::transform(const QTransform& xform) {
         assert(xform.isAffine());
 
-        QLineF const down_line(xform.map(QLineF(QPointF(0, 0), m_downDirection)));
-        QLineF const right_line(xform.map(QLineF(QPointF(0, 0), m_rightDirection)));
+        const QLineF down_line(xform.map(QLineF(QPointF(0, 0), m_downDirection)));
+        const QLineF right_line(xform.map(QLineF(QPointF(0, 0), m_rightDirection)));
 
         m_downDirection = down_line.p2() - down_line.p1();
         m_rightDirection = right_line.p2() - right_line.p1();
@@ -149,7 +149,7 @@ namespace dewarping {
         }
     }
 
-    DistortionModel DistortionModelBuilder::tryBuildModel(DebugImages* dbg, QImage const* dbg_background) const {
+    DistortionModel DistortionModelBuilder::tryBuildModel(DebugImages* dbg, const QImage* dbg_background) const {
         auto num_curves = static_cast<int>(m_ltrPolylines.size());
 
         if ((num_curves < 2) || (m_bound1.p1() == m_bound1.p2()) || (m_bound2.p1() == m_bound2.p2())) {
@@ -159,10 +159,10 @@ namespace dewarping {
         std::vector<TracedCurve> ordered_curves;
         ordered_curves.reserve(num_curves);
 
-        for (std::vector<QPointF> const& polyline : m_ltrPolylines) {
+        for (const std::vector<QPointF>& polyline : m_ltrPolylines) {
             try {
                 ordered_curves.push_back(polylineToCurve(polyline));
-            } catch (BadCurve const&) {
+            } catch (const BadCurve&) {
                 // Just skip it.
             }
         }
@@ -216,24 +216,24 @@ namespace dewarping {
     }  // DistortionModelBuilder::tryBuildModel
 
     DistortionModelBuilder::TracedCurve
-    DistortionModelBuilder::polylineToCurve(std::vector<QPointF> const& polyline) const {
-        std::pair<QLineF, QLineF> const bounds(frontBackBounds(polyline));
+    DistortionModelBuilder::polylineToCurve(const std::vector<QPointF>& polyline) const {
+        const std::pair<QLineF, QLineF> bounds(frontBackBounds(polyline));
 
         // Trim the polyline if necessary.
-        std::vector<QPointF> const trimmed_polyline(maybeTrimPolyline(polyline, bounds));
+        const std::vector<QPointF> trimmed_polyline(maybeTrimPolyline(polyline, bounds));
 
-        Vec2d const centroid(this->centroid(polyline));
+        const Vec2d centroid(this->centroid(polyline));
 
         // Fit the polyline to a spline, extending it to bounds at the same time.
-        XSpline const extended_spline(fitExtendedSpline(trimmed_polyline, centroid, bounds));
+        const XSpline extended_spline(fitExtendedSpline(trimmed_polyline, centroid, bounds));
 
-        double const order = centroid.dot(m_downDirection);
+        const double order = centroid.dot(m_downDirection);
 
         return TracedCurve(trimmed_polyline, extended_spline, order);
     }
 
-    Vec2d DistortionModelBuilder::centroid(std::vector<QPointF> const& polyline) {
-        auto const num_points = static_cast<const int>(polyline.size());
+    Vec2d DistortionModelBuilder::centroid(const std::vector<QPointF>& polyline) {
+        const auto num_points = static_cast<const int>(polyline.size());
         if (num_points == 0) {
             return Vec2d();
         } else if (num_points == 1) {
@@ -244,9 +244,9 @@ namespace dewarping {
         double total_weight = 0;
 
         for (int i = 1; i < num_points; ++i) {
-            QLineF const segment(polyline[i - 1], polyline[i]);
-            Vec2d const center(0.5 * (segment.p1() + segment.p2()));
-            double const weight = segment.length();
+            const QLineF segment(polyline[i - 1], polyline[i]);
+            const Vec2d center(0.5 * (segment.p1() + segment.p2()));
+            const double weight = segment.length();
             accum += center * weight;
             total_weight += weight;
         }
@@ -265,11 +265,11 @@ namespace dewarping {
  * respectively.
  */
     std::pair<QLineF, QLineF>
-    DistortionModelBuilder::frontBackBounds(std::vector<QPointF> const& polyline) const {
+    DistortionModelBuilder::frontBackBounds(const std::vector<QPointF>& polyline) const {
         assert(!polyline.empty());
 
-        ToLineProjector const proj1(m_bound1);
-        ToLineProjector const proj2(m_bound2);
+        const ToLineProjector proj1(m_bound1);
+        const ToLineProjector proj2(m_bound2);
         if (proj1.projectionDist(polyline.front()) + proj2.projectionDist(polyline.back())
             < proj1.projectionDist(polyline.back()) + proj2.projectionDist(polyline.front())) {
             return std::pair<QLineF, QLineF>(m_bound1, m_bound2);
@@ -279,8 +279,8 @@ namespace dewarping {
     }
 
     std::vector<QPointF>
-    DistortionModelBuilder::maybeTrimPolyline(std::vector<QPointF> const& polyline,
-                                              std::pair<QLineF, QLineF> const& bounds) {
+    DistortionModelBuilder::maybeTrimPolyline(const std::vector<QPointF>& polyline,
+                                              const std::pair<QLineF, QLineF>& bounds) {
         std::deque<QPointF> trimmed_polyline(polyline.begin(), polyline.end());
         maybeTrimFront(trimmed_polyline, bounds.first);
         maybeTrimBack(trimmed_polyline, bounds.second);
@@ -288,7 +288,7 @@ namespace dewarping {
         return std::vector<QPointF>(trimmed_polyline.begin(), trimmed_polyline.end());
     }
 
-    bool DistortionModelBuilder::maybeTrimFront(std::deque<QPointF>& polyline, QLineF const& bound) {
+    bool DistortionModelBuilder::maybeTrimFront(std::deque<QPointF>& polyline, const QLineF& bound) {
         if (sidesOfLine(bound, polyline.front(), polyline.back()) >= 0) {
             // Doesn't need trimming.
             return false;
@@ -303,7 +303,7 @@ namespace dewarping {
         return true;
     }
 
-    bool DistortionModelBuilder::maybeTrimBack(std::deque<QPointF>& polyline, QLineF const& bound) {
+    bool DistortionModelBuilder::maybeTrimBack(std::deque<QPointF>& polyline, const QLineF& bound) {
         if (sidesOfLine(bound, polyline.front(), polyline.back()) >= 0) {
             // Doesn't need trimming.
             return false;
@@ -318,37 +318,37 @@ namespace dewarping {
         return true;
     }
 
-    void DistortionModelBuilder::intersectFront(std::deque<QPointF>& polyline, QLineF const& bound) {
+    void DistortionModelBuilder::intersectFront(std::deque<QPointF>& polyline, const QLineF& bound) {
         assert(polyline.size() >= 2);
 
-        QLineF const front_segment(polyline.front(), polyline[1]);
+        const QLineF front_segment(polyline.front(), polyline[1]);
         QPointF intersection;
         if (bound.intersect(front_segment, &intersection) != QLineF::NoIntersection) {
             polyline.front() = intersection;
         }
     }
 
-    void DistortionModelBuilder::intersectBack(std::deque<QPointF>& polyline, QLineF const& bound) {
+    void DistortionModelBuilder::intersectBack(std::deque<QPointF>& polyline, const QLineF& bound) {
         assert(polyline.size() >= 2);
 
-        QLineF const back_segment(polyline[polyline.size() - 2], polyline.back());
+        const QLineF back_segment(polyline[polyline.size() - 2], polyline.back());
         QPointF intersection;
         if (bound.intersect(back_segment, &intersection) != QLineF::NoIntersection) {
             polyline.back() = intersection;
         }
     }
 
-    XSpline DistortionModelBuilder::fitExtendedSpline(std::vector<QPointF> const& polyline,
-                                                      Vec2d const& centroid,
-                                                      std::pair<QLineF, QLineF> const& bounds) {
+    XSpline DistortionModelBuilder::fitExtendedSpline(const std::vector<QPointF>& polyline,
+                                                      const Vec2d& centroid,
+                                                      const std::pair<QLineF, QLineF>& bounds) {
         using namespace spfit;
 
-        QLineF const chord(polyline.front(), polyline.back());
+        const QLineF chord(polyline.front(), polyline.back());
         XSpline spline;
-        int const initial_spline_points = 5;
+        const int initial_spline_points = 5;
         spline.appendControlPoint(chord.pointAt(0), 1);
         for (int i = 1; i < initial_spline_points - 1; ++i) {
-            double const fraction = i / (initial_spline_points - 1.0);
+            const double fraction = i / (initial_spline_points - 1.0);
             spline.appendControlPoint(chord.pointAt(fraction), 1);
         }
         spline.appendControlPoint(chord.pointAt(1), 1);
@@ -357,15 +357,15 @@ namespace dewarping {
 
         class ModelShape : public PolylineModelShape {
         public:
-            explicit ModelShape(std::vector<QPointF> const& polyline)
+            explicit ModelShape(const std::vector<QPointF>& polyline)
                     : PolylineModelShape(polyline) {
             }
 
         protected:
-            SqDistApproximant calcApproximant(QPointF const& pt,
+            SqDistApproximant calcApproximant(const QPointF& pt,
                                               FittableSpline::SampleFlags sample_flags,
                                               Flags polyline_flags,
-                                              FrenetFrame const& frenet_frame,
+                                              const FrenetFrame& frenet_frame,
                                               double signed_curvature) const override {
                 if (polyline_flags & (POLYLINE_FRONT | POLYLINE_BACK)) {
                     if (sample_flags & FittableSpline::JUNCTION_SAMPLE) {
@@ -380,7 +380,7 @@ namespace dewarping {
         };
 
 
-        ModelShape const model_shape(polyline);
+        const ModelShape model_shape(polyline);
         SplineFitter fitter(&spline);
 
         FittableSpline::SamplingParams sampling_params;
@@ -422,7 +422,7 @@ namespace dewarping {
             double internal_force_weight = balancer.calcInternalForceWeight(
                     fitter.internalForce(), fitter.externalForce()
             );
-            OptimizationResult const res(fitter.optimize(internal_force_weight));
+            const OptimizationResult res(fitter.optimize(internal_force_weight));
             if (Curve::splineHasLoops(spline)) {
                 if (iteration == 0) {
                     // Having a loop on the first iteration is not good at all.
@@ -443,8 +443,8 @@ namespace dewarping {
 
 /*============================== RansacAlgo ============================*/
 
-    void DistortionModelBuilder::RansacAlgo::buildAndAssessModel(TracedCurve const* top_curve,
-                                                                 TracedCurve const* bottom_curve)
+    void DistortionModelBuilder::RansacAlgo::buildAndAssessModel(const TracedCurve* top_curve,
+                                                                 const TracedCurve* bottom_curve)
     try {
         DistortionModel model;
         model.setTopCurve(Curve(top_curve->extendedPolyline));
@@ -453,15 +453,15 @@ namespace dewarping {
             return;
         }
 
-        double const depth_perception = 2.0;  // Doesn't matter much here.
-        CylindricalSurfaceDewarper const dewarper(
+        const double depth_perception = 2.0;  // Doesn't matter much here.
+        const CylindricalSurfaceDewarper dewarper(
                 top_curve->extendedPolyline, bottom_curve->extendedPolyline, depth_perception
         );
 
         double error = 0;
-        for (TracedCurve const& curve : m_rAllCurves) {
-            size_t const polyline_size = curve.trimmedPolyline.size();
-            double const r_reference_height = 1.0 / 1.0;  // calcReferenceHeight(dewarper, curve.centroid);
+        for (const TracedCurve& curve : m_rAllCurves) {
+            const size_t polyline_size = curve.trimmedPolyline.size();
+            const double r_reference_height = 1.0 / 1.0;  // calcReferenceHeight(dewarper, curve.centroid);
 
             // We are going to approximate the dewarped polyline by a straight line
             // using linear least-squares: At*A*x = At*B -> x = (At*A)-1 * At*B
@@ -470,9 +470,9 @@ namespace dewarping {
             std::vector<double> B;
             B.reserve(polyline_size);
 
-            for (QPointF const& warped_pt : curve.trimmedPolyline) {
+            for (const QPointF& warped_pt : curve.trimmedPolyline) {
                 // TODO: add another signature with hint for efficiency.
-                QPointF const dewarped_pt(dewarper.mapToDewarpedSpace(warped_pt));
+                const QPointF dewarped_pt(dewarper.mapToDewarpedSpace(warped_pt));
 
                 // ax + b = y  <-> x * a + 1 * b = y
                 At.push_back(dewarped_pt.x());
@@ -508,7 +508,7 @@ namespace dewarping {
                 error += sum_abs_err / polyline_size;
 
                 // TODO: penalty for not being horizontal.
-            } catch (std::runtime_error const&) {
+            } catch (const std::runtime_error&) {
                 // Strictly vertical line?
                 error += 1000;
             }
@@ -520,32 +520,32 @@ namespace dewarping {
             m_bestModel.totalError = error;
         }
     }      // DistortionModelBuilder::RansacAlgo::buildAndAssessModel
-    catch (std::runtime_error const&) {
+    catch (const std::runtime_error&) {
         // Probably CylindricalSurfaceDewarper didn't like something.
     }
 
 #if 0
-    double DistortionModelBuilder::RansacAlgo::calcReferenceHeight(CylindricalSurfaceDewarper const& dewarper,
-                                                                   QPointF const& loc) {
+    double DistortionModelBuilder::RansacAlgo::calcReferenceHeight(const CylindricalSurfaceDewarper& dewarper,
+                                                                   const QPointF& loc) {
     // TODO: ideally, we would use the counterpart of CylindricalSurfaceDewarper::mapGeneratrix(),
     // that would map it the other way, and which doesn't currently exist.
 
-        QPointF const pt1(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, -10)));
-        QPointF const pt2(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, 10)));
+        const QPointF pt1(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, -10)));
+        const QPointF pt2(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, 10)));
 
         return fabs(pt1.y() - pt2.y());
     }
 #endif
 
-    QImage DistortionModelBuilder::visualizeTrimmedPolylines(QImage const& background,
-                                                             std::vector<TracedCurve> const& curves) const {
+    QImage DistortionModelBuilder::visualizeTrimmedPolylines(const QImage& background,
+                                                             const std::vector<TracedCurve>& curves) const {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
 
-        int const width = background.width();
-        int const height = background.height();
-        double const stroke_width = sqrt(double(width * width + height * height)) / 500;
+        const int width = background.width();
+        const int height = background.height();
+        const double stroke_width = sqrt(double(width * width + height * height)) / 500;
 
         // Extend / trim bounds.
         QLineF bound1(m_bound1);
@@ -560,7 +560,7 @@ namespace dewarping {
         painter.drawLine(bound1);
         painter.drawLine(bound2);
 
-        for (TracedCurve const& curve : curves) {
+        for (const TracedCurve& curve : curves) {
             if (!curve.trimmedPolyline.empty()) {
                 painter.drawPolyline(&curve.trimmedPolyline[0], static_cast<int>(curve.trimmedPolyline.size()));
             }
@@ -570,9 +570,9 @@ namespace dewarping {
         QBrush knot_brush(Qt::magenta);
         painter.setBrush(knot_brush);
         painter.setPen(Qt::NoPen);
-        for (TracedCurve const& curve : curves) {
+        for (const TracedCurve& curve : curves) {
             QRectF rect(0, 0, stroke_width, stroke_width);
-            for (QPointF const& knot : curve.trimmedPolyline) {
+            for (const QPointF& knot : curve.trimmedPolyline) {
                 rect.moveCenter(knot);
                 painter.drawEllipse(rect);
             }
@@ -581,16 +581,16 @@ namespace dewarping {
         return canvas;
     }  // DistortionModelBuilder::visualizeTrimmedPolylines
 
-    QImage DistortionModelBuilder::visualizeModel(QImage const& background,
-                                                  std::vector<TracedCurve> const& curves,
-                                                  RansacModel const& model) const {
+    QImage DistortionModelBuilder::visualizeModel(const QImage& background,
+                                                  const std::vector<TracedCurve>& curves,
+                                                  const RansacModel& model) const {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
 
-        int const width = background.width();
-        int const height = background.height();
-        double const stroke_width = sqrt(double(width * width + height * height)) / 500;
+        const int width = background.width();
+        const int height = background.height();
+        const double stroke_width = sqrt(double(width * width + height * height)) / 500;
 
         // Extend / trim bounds.
         QLineF bound1(m_bound1);
@@ -617,7 +617,7 @@ namespace dewarping {
 
         QBrush junction_point_brush(QColor(0xff, 0x00, 0xff, 255));
 
-        for (TracedCurve const& curve : curves) {
+        for (const TracedCurve& curve : curves) {
             if (curve.extendedPolyline.empty()) {
                 continue;
             }
@@ -627,14 +627,14 @@ namespace dewarping {
                 painter.setPen(inactive_curve_pen);
             }
 
-            size_t const size = curve.extendedPolyline.size();
+            const size_t size = curve.extendedPolyline.size();
             painter.drawPolyline(&curve.extendedPolyline[0], static_cast<int>(curve.extendedPolyline.size()));
 
-            Vec2d const main_direction(curve.extendedPolyline.back() - curve.extendedPolyline.front());
+            const Vec2d main_direction(curve.extendedPolyline.back() - curve.extendedPolyline.front());
             std::list<std::vector<int>> reverse_segments;
 
             for (size_t i = 1; i < size; ++i) {
-                Vec2d const dir(curve.extendedPolyline[i] - curve.extendedPolyline[i - 1]);
+                const Vec2d dir(curve.extendedPolyline[i] - curve.extendedPolyline[i - 1]);
                 if (dir.dot(main_direction) >= 0) {
                     continue;
                 }
@@ -656,7 +656,7 @@ namespace dewarping {
 
             if (!reverse_segments.empty()) {
                 painter.setPen(reverse_segments_pen);
-                for (std::vector<int> const& sequence : reverse_segments) {
+                for (const std::vector<int>& sequence : reverse_segments) {
                     assert(!sequence.empty());
                     polyline.clear();
                     for (int idx : sequence) {
@@ -666,14 +666,14 @@ namespace dewarping {
                 }
             }
 
-            int const num_control_points = curve.extendedSpline.numControlPoints();
+            const int num_control_points = curve.extendedSpline.numControlPoints();
             QRectF rect(0, 0, stroke_width, stroke_width);
 
             // Draw junction points.
             painter.setPen(Qt::NoPen);
             painter.setBrush(junction_point_brush);
             for (int i = 0; i < num_control_points; ++i) {
-                double const t = curve.extendedSpline.controlPointIndexToT(i);
+                const double t = curve.extendedSpline.controlPointIndexToT(i);
                 rect.moveCenter(curve.extendedSpline.pointAt(t));
                 painter.drawEllipse(rect);
             }

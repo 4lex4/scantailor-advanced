@@ -27,23 +27,23 @@
 class FilterData {
     // Member-wise copying is OK.
 public:
-    explicit FilterData(QImage const& image);
+    explicit FilterData(const QImage& image);
 
-    FilterData(FilterData const& other, ImageTransformation const& xform);
+    FilterData(const FilterData& other, const ImageTransformation& xform);
 
     imageproc::BinaryThreshold bwThreshold() const {
         return m_bwThreshold;
     }
 
-    ImageTransformation const& xform() const {
+    const ImageTransformation& xform() const {
         return m_xform;
     }
 
-    QImage const& origImage() const {
+    const QImage& origImage() const {
         return m_origImage;
     }
 
-    imageproc::GrayImage const& grayImage() const {
+    const imageproc::GrayImage& grayImage() const {
         return m_grayImage;
     }
 

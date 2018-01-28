@@ -27,19 +27,19 @@ class ImagePixmapUnion {
 public:
     ImagePixmapUnion() = default;
 
-    ImagePixmapUnion(QImage const& image)
+    ImagePixmapUnion(const QImage& image)
             : m_image(image) {
     }
 
-    ImagePixmapUnion(QPixmap const& pixmap)
+    ImagePixmapUnion(const QPixmap& pixmap)
             : m_pixmap(pixmap) {
     }
 
-    QImage const& image() const {
+    const QImage& image() const {
         return m_image;
     }
 
-    QPixmap const& pixmap() const {
+    const QPixmap& pixmap() const {
         return m_pixmap;
     }
 

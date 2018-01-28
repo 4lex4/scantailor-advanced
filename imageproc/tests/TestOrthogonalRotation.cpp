@@ -30,12 +30,12 @@ namespace imageproc {
         BOOST_AUTO_TEST_SUITE(OrthogonalRotationTestSuite);
 
             BOOST_AUTO_TEST_CASE(test_null_image) {
-                BinaryImage const null_img;
+                const BinaryImage null_img;
                 BOOST_CHECK(orthogonalRotation(null_img, 90).isNull());
             }
 
             BOOST_AUTO_TEST_CASE(test_full_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 0, 0, 0, 0, 0, 0, 1, 1,
                         1, 0, 0, 0, 0, 0, 1, 0, 1,
@@ -47,7 +47,7 @@ namespace imageproc {
                         1, 1, 1, 1, 1, 1, 1, 1, 1
                 };
 
-                static int const out1[] = {
+                static const int out1[] = {
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 1, 0, 0, 0, 0, 0, 0, 1,
                         1, 0, 1, 0, 0, 0, 0, 0, 1,
@@ -59,7 +59,7 @@ namespace imageproc {
                         1, 1, 1, 1, 1, 1, 1, 1, 1
                 };
 
-                static int const out2[] = {
+                static const int out2[] = {
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 0, 0, 0, 0, 0, 0, 1, 1,
                         1, 0, 0, 0, 0, 0, 1, 0, 1,
@@ -71,7 +71,7 @@ namespace imageproc {
                         1, 1, 1, 1, 1, 1, 1, 1, 1
                 };
 
-                static int const out3[] = {
+                static const int out3[] = {
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 1, 0, 0, 0, 0, 0, 0, 1,
                         1, 0, 1, 0, 0, 0, 0, 0, 1,
@@ -83,10 +83,10 @@ namespace imageproc {
                         1, 1, 1, 1, 1, 1, 1, 1, 1
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
-                BinaryImage const out1_img(makeBinaryImage(out1, 9, 9));
-                BinaryImage const out2_img(makeBinaryImage(out2, 9, 9));
-                BinaryImage const out3_img(makeBinaryImage(out3, 9, 9));
+                const BinaryImage img(makeBinaryImage(inp, 9, 9));
+                const BinaryImage out1_img(makeBinaryImage(out1, 9, 9));
+                const BinaryImage out2_img(makeBinaryImage(out2, 9, 9));
+                const BinaryImage out3_img(makeBinaryImage(out3, 9, 9));
 
                 BOOST_REQUIRE(orthogonalRotation(img, 0) == img);
                 BOOST_REQUIRE(orthogonalRotation(img, 360) == img);
@@ -99,7 +99,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_sub_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 0, 0, 0, 0, 0, 0, 1, 1,
@@ -111,7 +111,7 @@ namespace imageproc {
                         1, 1, 0, 0, 0, 0, 0, 0, 1
                 };
 
-                static int const out1[] = {
+                static const int out1[] = {
                         0, 0, 0, 0, 0, 0, 1,
                         0, 0, 0, 0, 0, 1, 0,
                         0, 0, 0, 0, 1, 0, 0,
@@ -121,7 +121,7 @@ namespace imageproc {
                         1, 0, 0, 0, 0, 0, 0
                 };
 
-                static int const out2[] = {
+                static const int out2[] = {
                         1, 0, 0, 0, 0, 0, 0,
                         0, 1, 0, 0, 0, 0, 0,
                         0, 0, 1, 0, 0, 0, 0,
@@ -131,7 +131,7 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 1
                 };
 
-                static int const out3[] = {
+                static const int out3[] = {
                         0, 0, 0, 0, 0, 0, 1,
                         0, 0, 0, 0, 0, 1, 0,
                         0, 0, 1, 0, 1, 0, 0,
@@ -141,7 +141,7 @@ namespace imageproc {
                         1, 0, 0, 0, 0, 0, 0
                 };
 
-                static int const out4[] = {
+                static const int out4[] = {
                         1, 0, 0, 0, 0, 0, 0,
                         0, 1, 0, 0, 0, 0, 0,
                         0, 0, 1, 0, 1, 0, 0,
@@ -151,12 +151,12 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 1
                 };
 
-                QRect const rect(1, 2, 7, 7);
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
-                BinaryImage const out1_img(makeBinaryImage(out1, 7, 7));
-                BinaryImage const out2_img(makeBinaryImage(out2, 7, 7));
-                BinaryImage const out3_img(makeBinaryImage(out3, 7, 7));
-                BinaryImage const out4_img(makeBinaryImage(out4, 7, 7));
+                const QRect rect(1, 2, 7, 7);
+                const BinaryImage img(makeBinaryImage(inp, 9, 9));
+                const BinaryImage out1_img(makeBinaryImage(out1, 7, 7));
+                const BinaryImage out2_img(makeBinaryImage(out2, 7, 7));
+                const BinaryImage out3_img(makeBinaryImage(out3, 7, 7));
+                const BinaryImage out4_img(makeBinaryImage(out4, 7, 7));
 
                 BOOST_REQUIRE(orthogonalRotation(img, rect, 0) == out1_img);
                 BOOST_REQUIRE(orthogonalRotation(img, rect, 360) == out1_img);

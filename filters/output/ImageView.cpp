@@ -21,7 +21,7 @@
 #include "OutputMargins.h"
 
 namespace output {
-    ImageView::ImageView(QImage const& image, QImage const& downscaled_image)
+    ImageView::ImageView(const QImage& image, const QImage& downscaled_image)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(QTransform(), QRectF(image.rect())),

@@ -61,22 +61,22 @@ namespace page_split {
         /**
          * \brief Constructs a SINGLE_PAGE_UNCUT layout.
          */
-        explicit PageLayout(QRectF const& full_rect);
+        explicit PageLayout(const QRectF& full_rect);
 
         /**
          * \brief Constructs a SINGLE_PAGE_CUT layout.
          */
-        PageLayout(QRectF const& full_rect, QLineF const& cutter1, QLineF const& cutter2);
+        PageLayout(const QRectF& full_rect, const QLineF& cutter1, const QLineF& cutter2);
 
         /**
          * \brief Constructs a TWO_PAGES layout.
          */
-        PageLayout(QRectF full_rect, QLineF const& split_line);
+        PageLayout(QRectF full_rect, const QLineF& split_line);
 
         /**
          * \brief Construct a page layout based on XML data.
          */
-        explicit PageLayout(QDomElement const& layout_el);
+        explicit PageLayout(const QDomElement& layout_el);
 
         bool isNull() const;
 
@@ -90,7 +90,7 @@ namespace page_split {
 
         LayoutType toLayoutType() const;
 
-        QPolygonF const& uncutOutline() const;
+        const QPolygonF& uncutOutline() const;
 
         /**
          * We don't provide a method to set a polygon, but only a rectangle
@@ -98,7 +98,7 @@ namespace page_split {
          * to a rectangle.  For example, we want to be sure vertices 0 and 3
          * comprise the line corresponding to a left edge of a rectangle.
          */
-        void setUncutOutline(QRectF const& outline);
+        void setUncutOutline(const QRectF& outline);
 
         /**
          * \brief Get a cutter line.
@@ -106,7 +106,7 @@ namespace page_split {
          * \param idx Cutter index, from 0 inclusive to numCutters() exclusive.
          * \return The cutter line with *arbitrary* endpoints.
          */
-        QLineF const& cutterLine(int idx) const;
+        const QLineF& cutterLine(int idx) const;
 
         /**
          * \brief Set a cutter line.
@@ -114,7 +114,7 @@ namespace page_split {
          * \param idx Cutter index, from 0 inclusive to numCutters() exclusive.
          * \param cutter The new cutter line with *arbitrary* endpoints.
          */
-        void setCutterLine(int idx, QLineF const& cutter);
+        void setCutterLine(int idx, const QLineF& cutter);
 
         /**
          * Unlike cutterLine(), which returns a line segment with arbitrary
@@ -162,22 +162,22 @@ namespace page_split {
         /**
          * Returns an affine-transformed version of this layout.
          */
-        PageLayout transformed(QTransform const& xform) const;
+        PageLayout transformed(const QTransform& xform) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
-        PageLayout(QPolygonF const& outline, QLineF const& cutter1, QLineF const& cutter2, Type type);
+        PageLayout(const QPolygonF& outline, const QLineF& cutter1, const QLineF& cutter2, Type type);
 
-        static Type typeFromString(QString const& str);
+        static Type typeFromString(const QString& str);
 
         static QString typeToString(Type type);
 
-        static QLineF extendToCover(QLineF const& line, QPolygonF const& poly);
+        static QLineF extendToCover(const QLineF& line, const QPolygonF& poly);
 
-        static void ensureSameDirection(QLineF const& line1, QLineF& line2);
+        static void ensureSameDirection(const QLineF& line1, QLineF& line2);
 
-        static void maybeAddIntersectionPoint(QPolygonF& poly, QLineF const& line1, QLineF const& line2);
+        static void maybeAddIntersectionPoint(QPolygonF& poly, const QLineF& line1, const QLineF& line2);
 
         /**
          * This polygon always corresponds to a rectangle, unless it's empty.

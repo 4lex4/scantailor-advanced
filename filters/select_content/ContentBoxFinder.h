@@ -38,64 +38,64 @@ namespace imageproc {
 namespace select_content {
     class ContentBoxFinder {
     public:
-        static QRectF findContentBox(TaskStatus const& status,
-                                     FilterData const& data,
-                                     QRectF const& page_rect,
+        static QRectF findContentBox(const TaskStatus& status,
+                                     const FilterData& data,
+                                     const QRectF& page_rect,
                                      DebugImages* dbg = nullptr);
 
     private:
         class Garbage;
 
-        static void segmentGarbage(imageproc::BinaryImage const& garbage,
+        static void segmentGarbage(const imageproc::BinaryImage& garbage,
                                    imageproc::BinaryImage& hor_garbage,
                                    imageproc::BinaryImage& vert_garbage,
                                    DebugImages* dbg);
 
         static void
-        trimContentBlocksInPlace(imageproc::BinaryImage const& content, imageproc::BinaryImage& content_blocks);
+        trimContentBlocksInPlace(const imageproc::BinaryImage& content, imageproc::BinaryImage& content_blocks);
 
         static void inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& content_blocks, DebugImages* dbg);
 
-        static imageproc::BinaryImage estimateTextMask(imageproc::BinaryImage const& content,
-                                                       imageproc::BinaryImage const& content_blocks,
+        static imageproc::BinaryImage estimateTextMask(const imageproc::BinaryImage& content,
+                                                       const imageproc::BinaryImage& content_blocks,
                                                        DebugImages* dbg);
 
-        static void filterShadows(TaskStatus const& status, imageproc::BinaryImage& shadows, DebugImages* dbg);
+        static void filterShadows(const TaskStatus& status, imageproc::BinaryImage& shadows, DebugImages* dbg);
 
-        static QRect trimLeft(imageproc::BinaryImage const& content,
-                              imageproc::BinaryImage const& content_blocks,
-                              imageproc::BinaryImage const& text_mask,
-                              QRect const& area,
+        static QRect trimLeft(const imageproc::BinaryImage& content,
+                              const imageproc::BinaryImage& content_blocks,
+                              const imageproc::BinaryImage& text_mask,
+                              const QRect& area,
                               Garbage& garbage,
                               DebugImages* dbg);
 
-        static QRect trimRight(imageproc::BinaryImage const& content,
-                               imageproc::BinaryImage const& content_blocks,
-                               imageproc::BinaryImage const& text_mask,
-                               QRect const& area,
+        static QRect trimRight(const imageproc::BinaryImage& content,
+                               const imageproc::BinaryImage& content_blocks,
+                               const imageproc::BinaryImage& text_mask,
+                               const QRect& area,
                                Garbage& garbage,
                                DebugImages* dbg);
 
-        static QRect trimTop(imageproc::BinaryImage const& content,
-                             imageproc::BinaryImage const& content_blocks,
-                             imageproc::BinaryImage const& text_mask,
-                             QRect const& area,
+        static QRect trimTop(const imageproc::BinaryImage& content,
+                             const imageproc::BinaryImage& content_blocks,
+                             const imageproc::BinaryImage& text_mask,
+                             const QRect& area,
                              Garbage& garbage,
                              DebugImages* dbg);
 
-        static QRect trimBottom(imageproc::BinaryImage const& content,
-                                imageproc::BinaryImage const& content_blocks,
-                                imageproc::BinaryImage const& text_mask,
-                                QRect const& area,
+        static QRect trimBottom(const imageproc::BinaryImage& content,
+                                const imageproc::BinaryImage& content_blocks,
+                                const imageproc::BinaryImage& text_mask,
+                                const QRect& area,
                                 Garbage& garbage,
                                 DebugImages* dbg);
 
-        static QRect trim(imageproc::BinaryImage const& content,
-                          imageproc::BinaryImage const& content_blocks,
-                          imageproc::BinaryImage const& text_mask,
-                          QRect const& area,
-                          QRect const& new_area,
-                          QRect const& removed_area,
+        static QRect trim(const imageproc::BinaryImage& content,
+                          const imageproc::BinaryImage& content_blocks,
+                          const imageproc::BinaryImage& text_mask,
+                          const QRect& area,
+                          const QRect& new_area,
+                          const QRect& removed_area,
                           Garbage& garbage,
                           bool& can_retry_grouped,
                           DebugImages* dbg);

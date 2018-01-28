@@ -45,33 +45,33 @@ namespace page_layout {
     class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        ImageView(intrusive_ptr<Settings> const& settings,
-                  PageId const& page_id,
-                  QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  QRectF const& adapted_content_rect,
-                  OptionsWidget const& opt_widget);
+        ImageView(const intrusive_ptr<Settings>& settings,
+                  const PageId& page_id,
+                  const QImage& image,
+                  const QImage& downscaled_image,
+                  const ImageTransformation& xform,
+                  const QRectF& adapted_content_rect,
+                  const OptionsWidget& opt_widget);
 
         ~ImageView() override;
 
     signals:
 
-        void invalidateThumbnail(PageId const& page_id);
+        void invalidateThumbnail(const PageId& page_id);
 
         void invalidateAllThumbnails();
 
-        void marginsSetLocally(Margins const& margins_mm);
+        void marginsSetLocally(const Margins& margins_mm);
 
     public slots:
 
-        void marginsSetExternally(Margins const& margins_mm);
+        void marginsSetExternally(const Margins& margins_mm);
 
         void leftRightLinkToggled(bool linked);
 
         void topBottomLinkToggled(bool linked);
 
-        void alignmentChanged(Alignment const& alignment);
+        void alignmentChanged(const Alignment& alignment);
 
         void aggregateHardSizeChanged();
 
@@ -124,21 +124,21 @@ namespace page_layout {
             QPointF focalPoint;
         };
 
-        void onPaint(QPainter& painter, InteractionState const& interaction) override;
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-        Proximity cornerProximity(int edge_mask, QRectF const* box, QPointF const& mouse_pos) const;
+        Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
-        Proximity edgeProximity(int edge_mask, QRectF const* box, QPointF const& mouse_pos) const;
+        Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
-        void dragInitiated(QPointF const& mouse_pos);
+        void dragInitiated(const QPointF& mouse_pos);
 
-        void innerRectDragContinuation(int edge_mask, QPointF const& mouse_pos);
+        void innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
 
-        void middleRectDragContinuation(int edge_mask, QPointF const& mouse_pos);
+        void middleRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
 
         void dragFinished();
 
-        void recalcBoxesAndFit(Margins const& margins_mm);
+        void recalcBoxesAndFit(const Margins& margins_mm);
 
         void updatePresentationTransform(FitMode fit_mode);
 
@@ -148,9 +148,9 @@ namespace page_layout {
 
         void recalcOuterRect();
 
-        QSizeF origRectToSizeMM(QRectF const& rect) const;
+        QSizeF origRectToSizeMM(const QRectF& rect) const;
 
-        AggregateSizeChanged commitHardMargins(Margins const& margins_mm);
+        AggregateSizeChanged commitHardMargins(const Margins& margins_mm);
 
         void invalidateThumbnails(AggregateSizeChanged agg_size_changed);
 
@@ -169,20 +169,20 @@ namespace page_layout {
 
         intrusive_ptr<Settings> m_ptrSettings;
 
-        PageId const m_pageId;
+        const PageId m_pageId;
 
         /**
          * Transformation between the pixel image coordinates and millimeters,
          * assuming that point (0, 0) in pixel coordinates corresponds to point
          * (0, 0) in millimeter coordinates.
          */
-        PhysicalTransformation const m_physXform;
-        ImageTransformation const m_xform;
+        const PhysicalTransformation m_physXform;
+        const ImageTransformation m_xform;
 
         /**
          * Content box in virtual image coordinates.
          */
-        QRectF const m_innerRect;
+        const QRectF m_innerRect;
 
         /**
          * \brief Content box + hard margins in virtual image coordinates.

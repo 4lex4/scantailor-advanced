@@ -31,7 +31,7 @@ namespace output {
     Settings::~Settings() = default;
 
     void Settings::clear() {
-        QMutexLocker const locker(&m_mutex);
+        const QMutexLocker locker(&m_mutex);
 
         initialPictureZoneProps().swap(m_defaultPictureZoneProps);
         initialFillZoneProps().swap(m_defaultFillZoneProps);
@@ -42,8 +42,8 @@ namespace output {
         m_perPageOutputProcessingParams.clear();
     }
 
-    void Settings::performRelinking(AbstractRelinker const& relinker) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::performRelinking(const AbstractRelinker& relinker) {
+        const QMutexLocker locker(&m_mutex);
 
         PerPageParams new_params;
         PerPageOutputParams new_output_params;
@@ -51,36 +51,36 @@ namespace output {
         PerPageZones new_fill_zones;
         PerPageOutputProcessingParams new_output_processing_params;
 
-        for (PerPageParams::value_type const& kv : m_perPageParams) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PerPageParams::value_type& kv : m_perPageParams) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_params.insert(PerPageParams::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageOutputParams::value_type const& kv : m_perPageOutputParams) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PerPageOutputParams::value_type& kv : m_perPageOutputParams) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_output_params.insert(PerPageOutputParams::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageZones::value_type const& kv : m_perPagePictureZones) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PerPageZones::value_type& kv : m_perPagePictureZones) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_picture_zones.insert(PerPageZones::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageZones::value_type const& kv : m_perPageFillZones) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PerPageZones::value_type& kv : m_perPageFillZones) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_fill_zones.insert(PerPageZones::value_type(new_page_id, kv.second));
         }
 
-        for (PerPageOutputProcessingParams::value_type const& kv : m_perPageOutputProcessingParams) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PerPageOutputProcessingParams::value_type& kv : m_perPageOutputProcessingParams) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_output_processing_params.insert(PerPageOutputProcessingParams::value_type(new_page_id, kv.second));
@@ -93,10 +93,10 @@ namespace output {
         m_perPageOutputProcessingParams.swap(new_output_processing_params);
     }      // Settings::performRelinking
 
-    Params Settings::getParams(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    Params Settings::getParams(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.find(page_id));
+        const auto it(m_perPageParams.find(page_id));
         if (it != m_perPageParams.end()) {
             return it->second;
         } else {
@@ -104,15 +104,15 @@ namespace output {
         }
     }
 
-    void Settings::setParams(PageId const& page_id, Params const& params) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setParams(const PageId& page_id, const Params& params) {
+        const QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPageParams, page_id, params);
     }
 
-    void Settings::setColorParams(PageId const& page_id, ColorParams const& prms) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setColorParams(const PageId& page_id, const ColorParams& prms) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setColorParams(prms);
@@ -122,10 +122,10 @@ namespace output {
         }
     }
 
-    void Settings::setPictureShapeOptions(PageId const& page_id, PictureShapeOptions picture_shape_options) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setPictureShapeOptions(const PageId& page_id, PictureShapeOptions picture_shape_options) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setPictureShapeOptions(picture_shape_options);
@@ -135,10 +135,10 @@ namespace output {
         }
     }
 
-    void Settings::setDpi(PageId const& page_id, Dpi const& dpi) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDpi(const PageId& page_id, const Dpi& dpi) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setOutputDpi(dpi);
@@ -148,10 +148,10 @@ namespace output {
         }
     }
 
-    void Settings::setDewarpingOptions(PageId const& page_id, DewarpingOptions const& opt) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDewarpingOptions(const PageId& page_id, const DewarpingOptions& opt) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDewarpingOptions(opt);
@@ -161,10 +161,10 @@ namespace output {
         }
     }
 
-    void Settings::setSplittingOptions(PageId const& page_id, SplittingOptions const& opt) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setSplittingOptions(const PageId& page_id, const SplittingOptions& opt) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setSplittingOptions(opt);
@@ -174,10 +174,10 @@ namespace output {
         }
     }
 
-    void Settings::setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDistortionModel(const PageId& page_id, const dewarping::DistortionModel& model) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDistortionModel(model);
@@ -187,10 +187,10 @@ namespace output {
         }
     }
 
-    void Settings::setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDepthPerception(const PageId& page_id, const DepthPerception& depth_perception) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDepthPerception(depth_perception);
@@ -200,10 +200,10 @@ namespace output {
         }
     }
 
-    void Settings::setDespeckleLevel(PageId const& page_id, DespeckleLevel level) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDespeckleLevel(const PageId& page_id, DespeckleLevel level) {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageParams.lower_bound(page_id));
+        const auto it(m_perPageParams.lower_bound(page_id));
         if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
             Params params;
             params.setDespeckleLevel(level);
@@ -214,10 +214,10 @@ namespace output {
     }
 
     std::unique_ptr<OutputParams>
-    Settings::getOutputParams(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    Settings::getOutputParams(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageOutputParams.find(page_id));
+        const auto it(m_perPageOutputParams.find(page_id));
         if (it != m_perPageOutputParams.end()) {
             return std::make_unique<OutputParams>(it->second);
         } else {
@@ -225,20 +225,20 @@ namespace output {
         }
     }
 
-    void Settings::removeOutputParams(PageId const& page_id) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::removeOutputParams(const PageId& page_id) {
+        const QMutexLocker locker(&m_mutex);
         m_perPageOutputParams.erase(page_id);
     }
 
-    void Settings::setOutputParams(PageId const& page_id, OutputParams const& params) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setOutputParams(const PageId& page_id, const OutputParams& params) {
+        const QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPageOutputParams, page_id, params);
     }
 
-    ZoneSet Settings::pictureZonesForPage(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    ZoneSet Settings::pictureZonesForPage(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPagePictureZones.find(page_id));
+        const auto it(m_perPagePictureZones.find(page_id));
         if (it != m_perPagePictureZones.end()) {
             return it->second;
         } else {
@@ -246,10 +246,10 @@ namespace output {
         }
     }
 
-    ZoneSet Settings::fillZonesForPage(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    ZoneSet Settings::fillZonesForPage(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageFillZones.find(page_id));
+        const auto it(m_perPageFillZones.find(page_id));
         if (it != m_perPageFillZones.end()) {
             return it->second;
         } else {
@@ -257,35 +257,35 @@ namespace output {
         }
     }
 
-    void Settings::setPictureZones(PageId const& page_id, ZoneSet const& zones) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setPictureZones(const PageId& page_id, const ZoneSet& zones) {
+        const QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPagePictureZones, page_id, zones);
     }
 
-    void Settings::setFillZones(PageId const& page_id, ZoneSet const& zones) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setFillZones(const PageId& page_id, const ZoneSet& zones) {
+        const QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPageFillZones, page_id, zones);
     }
 
     PropertySet Settings::defaultPictureZoneProperties() const {
-        QMutexLocker const locker(&m_mutex);
+        const QMutexLocker locker(&m_mutex);
 
         return m_defaultPictureZoneProps;
     }
 
     PropertySet Settings::defaultFillZoneProperties() const {
-        QMutexLocker const locker(&m_mutex);
+        const QMutexLocker locker(&m_mutex);
 
         return m_defaultFillZoneProps;
     }
 
-    void Settings::setDefaultPictureZoneProperties(PropertySet const& props) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDefaultPictureZoneProperties(const PropertySet& props) {
+        const QMutexLocker locker(&m_mutex);
         m_defaultPictureZoneProps = props;
     }
 
-    void Settings::setDefaultFillZoneProperties(PropertySet const& props) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setDefaultFillZoneProperties(const PropertySet& props) {
+        const QMutexLocker locker(&m_mutex);
         m_defaultFillZoneProps = props;
     }
 
@@ -303,10 +303,10 @@ namespace output {
         return props;
     }
 
-    OutputProcessingParams Settings::getOutputProcessingParams(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    OutputProcessingParams Settings::getOutputProcessingParams(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
-        auto const it(m_perPageOutputProcessingParams.find(page_id));
+        const auto it(m_perPageOutputProcessingParams.find(page_id));
         if (it != m_perPageOutputProcessingParams.end()) {
             return it->second;
         } else {
@@ -314,14 +314,14 @@ namespace output {
         }
     }
 
-    void Settings::setOutputProcessingParams(PageId const& page_id,
-                                             OutputProcessingParams const& output_processing_params) {
-        QMutexLocker const locker(&m_mutex);
+    void Settings::setOutputProcessingParams(const PageId& page_id,
+                                             const OutputProcessingParams& output_processing_params) {
+        const QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPageOutputProcessingParams, page_id, output_processing_params);
     }
 
-    bool Settings::isParamsNull(PageId const& page_id) const {
-        QMutexLocker const locker(&m_mutex);
+    bool Settings::isParamsNull(const PageId& page_id) const {
+        const QMutexLocker locker(&m_mutex);
 
         return m_perPageParams.count(page_id) == 0;
     }

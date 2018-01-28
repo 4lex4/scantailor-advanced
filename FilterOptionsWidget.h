@@ -32,13 +32,13 @@ signals:
      */
     void reloadRequested();
 
-    void invalidateThumbnail(PageId const& page_id);
+    void invalidateThumbnail(const PageId& page_id);
 
     /**
      * This signature differs from invalidateThumbnail(PageId) in that
      * it will cause PageInfo stored by ThumbnailSequence to be updated.
      */
-    void invalidateThumbnail(PageInfo const& page_info);
+    void invalidateThumbnail(const PageInfo& page_info);
 
     void invalidateAllThumbnails();
 
@@ -46,7 +46,7 @@ signals:
      * After we've got rid of "Widest Page" / "Tallest Page" links,
      * there is no one using this signal.  It's a candidate for removal.
      */
-    void goToPage(PageId const& page_id);
+    void goToPage(const PageId& page_id);
 };
 
 

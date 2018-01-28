@@ -32,11 +32,11 @@ namespace fix_orientation {
     class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id, OrthogonalRotation rotation);
+        void preUpdateUI(const PageId& page_id, OrthogonalRotation rotation);
 
         void postUpdateUI(OrthogonalRotation rotation);
 
@@ -54,12 +54,12 @@ namespace fix_orientation {
 
         void showApplyToDialog();
 
-        void appliedTo(std::set<PageId> const& pages);
+        void appliedTo(const std::set<PageId>& pages);
 
-        void appliedToAllPages(std::set<PageId> const& pages);
+        void appliedToAllPages(const std::set<PageId>& pages);
 
     private:
-        void setRotation(OrthogonalRotation const& rotation);
+        void setRotation(const OrthogonalRotation& rotation);
 
         void setRotationPixmap();
 

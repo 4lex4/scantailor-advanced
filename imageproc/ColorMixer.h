@@ -30,7 +30,7 @@ namespace imageproc {
             typedef typename Mixer::accum_type accum_type;
             typedef typename Mixer::result_type result_type;
 
-            static result_type mix(Mixer const* mixer, accum_type total_weight) {
+            static result_type mix(const Mixer* mixer, accum_type total_weight) {
                 return mixer->nonIntegerMix(total_weight);
             }
         };
@@ -40,7 +40,7 @@ namespace imageproc {
             typedef typename Mixer::accum_type accum_type;
             typedef typename Mixer::result_type result_type;
 
-            static result_type mix(Mixer const* mixer, accum_type total_weight) {
+            static result_type mix(const Mixer* mixer, accum_type total_weight) {
                 return mixer->integerMix(total_weight);
             }
         };
@@ -99,8 +99,8 @@ namespace imageproc {
 
         uint8_t integerMix(AccumType total_weight) const {
             assert(total_weight > 0);
-            AccumType const half_weight = total_weight >> 1;
-            AccumType const mixed = (m_accum + half_weight) / total_weight;
+            const AccumType half_weight = total_weight >> 1;
+            const AccumType mixed = (m_accum + half_weight) / total_weight;
             return static_cast<uint8_t>(mixed);
         }
 
@@ -150,19 +150,19 @@ namespace imageproc {
     private:
         uint32_t nonIntegerMix(AccumType total_weight) const {
             assert(total_weight > 0);
-            AccumType const scale = AccumType(1) / total_weight;
-            uint32_t const r = uint32_t(AccumType(0.5) + m_redAccum * scale);
-            uint32_t const g = uint32_t(AccumType(0.5) + m_greenAccum * scale);
-            uint32_t const b = uint32_t(AccumType(0.5) + m_blueAccum * scale);
+            const AccumType scale = AccumType(1) / total_weight;
+            const uint32_t r = uint32_t(AccumType(0.5) + m_redAccum * scale);
+            const uint32_t g = uint32_t(AccumType(0.5) + m_greenAccum * scale);
+            const uint32_t b = uint32_t(AccumType(0.5) + m_blueAccum * scale);
             return uint32_t(0xff000000) | (r << 16) | (g << 8) | b;
         }
 
         uint32_t integerMix(AccumType total_weight) const {
             assert(total_weight > 0);
-            AccumType const half_weight = total_weight >> 1;
-            uint32_t const r = uint32_t((m_redAccum + half_weight) / total_weight);
-            uint32_t const g = uint32_t((m_greenAccum + half_weight) / total_weight);
-            uint32_t const b = uint32_t((m_blueAccum + half_weight) / total_weight);
+            const AccumType half_weight = total_weight >> 1;
+            const uint32_t r = uint32_t((m_redAccum + half_weight) / total_weight);
+            const uint32_t g = uint32_t((m_greenAccum + half_weight) / total_weight);
+            const uint32_t b = uint32_t((m_blueAccum + half_weight) / total_weight);
             return uint32_t(0xff000000) | (r << 16) | (g << 8) | b;
         }
 
@@ -199,9 +199,9 @@ namespace imageproc {
         }
 
         /** @see GrayColorMixer:add() */
-        void add(uint32_t const argb, AccumType const weight) {
-            AccumType const alpha = AccumType((argb >> 24) & 0xFF);
-            AccumType const alpha_weight = alpha * weight;
+        void add(const uint32_t argb, const AccumType weight) {
+            const AccumType alpha = AccumType((argb >> 24) & 0xFF);
+            const AccumType alpha_weight = alpha * weight;
             m_alphaAccum += alpha_weight;
             m_redAccum += AccumType((argb >> 16) & 0xFF) * alpha_weight;
             m_greenAccum += AccumType((argb >> 8) & 0xFF) * alpha_weight;
@@ -229,24 +229,24 @@ namespace imageproc {
         uint32_t nonIntegerMix(AccumType total_weight) const {
             assert(total_weight > 0);
             assert(m_alphaAccum > 0);
-            AccumType const scale1 = AccumType(1) / total_weight;
-            AccumType const scale2 = AccumType(1) / m_alphaAccum;
-            uint32_t const a = uint32_t(AccumType(0.5) + m_alphaAccum * scale1);
-            uint32_t const r = uint32_t(AccumType(0.5) + m_redAccum * scale2);
-            uint32_t const g = uint32_t(AccumType(0.5) + m_greenAccum * scale2);
-            uint32_t const b = uint32_t(AccumType(0.5) + m_blueAccum * scale2);
+            const AccumType scale1 = AccumType(1) / total_weight;
+            const AccumType scale2 = AccumType(1) / m_alphaAccum;
+            const uint32_t a = uint32_t(AccumType(0.5) + m_alphaAccum * scale1);
+            const uint32_t r = uint32_t(AccumType(0.5) + m_redAccum * scale2);
+            const uint32_t g = uint32_t(AccumType(0.5) + m_greenAccum * scale2);
+            const uint32_t b = uint32_t(AccumType(0.5) + m_blueAccum * scale2);
             return (a << 24) | (r << 16) | (g << 8) | b;
         }
 
         uint32_t integerMix(AccumType total_weight) const {
             assert(total_weight > 0);
             assert(m_alphaAccum > 0);
-            AccumType const half_weight1 = total_weight >> 1;
-            AccumType const half_weight2 = m_alphaAccum >> 1;
-            uint32_t const a = uint32_t((m_alphaAccum + half_weight1) / total_weight);
-            uint32_t const r = uint32_t((m_redAccum + half_weight2) / m_alphaAccum);
-            uint32_t const g = uint32_t((m_greenAccum + half_weight2) / m_alphaAccum);
-            uint32_t const b = uint32_t((m_blueAccum + half_weight2) / m_alphaAccum);
+            const AccumType half_weight1 = total_weight >> 1;
+            const AccumType half_weight2 = m_alphaAccum >> 1;
+            const uint32_t a = uint32_t((m_alphaAccum + half_weight1) / total_weight);
+            const uint32_t r = uint32_t((m_redAccum + half_weight2) / m_alphaAccum);
+            const uint32_t g = uint32_t((m_greenAccum + half_weight2) / m_alphaAccum);
+            const uint32_t b = uint32_t((m_blueAccum + half_weight2) / m_alphaAccum);
             return (a << 24) | (r << 16) | (g << 8) | b;
         }
 

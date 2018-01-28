@@ -38,11 +38,11 @@ namespace select_content {
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform) {
+                                  const ImageTransformation& xform) {
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
-        Dependencies const deps(xform.resultingPreCropArea());
+        const Dependencies deps(xform.resultingPreCropArea());
         if (!params || !params->dependencies().matches(deps)) {
             if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(

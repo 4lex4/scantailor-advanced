@@ -35,13 +35,13 @@ namespace select_content {
     class ApplyDialog : public QDialog, private Ui::SelectContentApplyDialog {
     Q_OBJECT
     public:
-        ApplyDialog(QWidget* parent, PageId const& cur_page, PageSelectionAccessor const& page_selection_accessor);
+        ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
         ~ApplyDialog() override;
 
     signals:
 
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box, bool apply_page_box);
+        void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
 
     private slots:
 

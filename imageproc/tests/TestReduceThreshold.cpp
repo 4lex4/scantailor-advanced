@@ -33,7 +33,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                int const inp[] = {
+                const int inp[] = {
                         0, 0, 1, 0, 0, 1, 1, 1, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
@@ -46,32 +46,32 @@ namespace imageproc {
                         0, 0, 1, 0, 0, 1, 1, 1, 1, 1,
                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
                 };
-                int const out1[] = {
+                const int out1[] = {
                         0, 1, 1, 1, 0,
                         1, 1, 1, 1, 1,
                         1, 1, 1, 1, 1,
                         1, 1, 1, 1, 1
                 };
-                int const out2[] = {
+                const int out2[] = {
                         0, 0, 0, 1, 0,
                         0, 1, 1, 1, 1,
                         0, 1, 1, 1, 1,
                         1, 1, 1, 1, 1
                 };
-                int const out3[] = {
+                const int out3[] = {
                         0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0,
                         0, 0, 0, 1, 0,
                         0, 1, 1, 1, 1
                 };
-                int const out4[] = {
+                const int out4[] = {
                         0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0,
                         0, 0, 0, 1, 1
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 10, 8));
+                const BinaryImage img(makeBinaryImage(inp, 10, 8));
 
                 BOOST_CHECK(makeBinaryImage(out1, 5, 4) == ReduceThreshold(img)(1));
                 BOOST_CHECK(makeBinaryImage(out2, 5, 4) == ReduceThreshold(img)(2));
@@ -80,19 +80,19 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_lines) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 0, 1, 1, 0, 1, 1, 0
                 };
-                static int const out1[] = {
+                static const int out1[] = {
                         0, 1, 1, 1
                 };
-                static int const out2[] = {
+                static const int out2[] = {
                         0, 1, 1, 1
                 };
-                static int const out3[] = {
+                static const int out3[] = {
                         0, 0, 0, 1
                 };
-                static int const out4[] = {
+                static const int out4[] = {
                         0, 0, 0, 1
                 };
 

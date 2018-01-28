@@ -39,27 +39,27 @@ namespace output {
 
         explicit PictureLayerProperty(Layer layer = NO_OP);
 
-        explicit PictureLayerProperty(QDomElement const& el);
+        explicit PictureLayerProperty(const QDomElement& el);
 
         static void registerIn(PropertyFactory& factory);
 
         intrusive_ptr<Property> clone() const override;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const override;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
         Layer layer() const;
 
         void setLayer(Layer layer);
 
     private:
-        static intrusive_ptr<Property> construct(QDomElement const& el);
+        static intrusive_ptr<Property> construct(const QDomElement& el);
 
-        static Layer layerFromString(QString const& str);
+        static Layer layerFromString(const QString& str);
 
         static QString layerToString(Layer layer);
 
 
-        static char const m_propertyName[];
+        static const char m_propertyName[];
         Layer m_layer;
     };
 }  // namespace output

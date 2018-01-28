@@ -29,10 +29,10 @@ namespace dewarping {
 
     class DewarpingPointMapper {
     public:
-        DewarpingPointMapper(dewarping::DistortionModel const& distortion_model,
+        DewarpingPointMapper(const dewarping::DistortionModel& distortion_model,
                              double depth_perception,
-                             QTransform const& distortion_model_to_output,
-                             QRect const& output_content_rect,
+                             const QTransform& distortion_model_to_output,
+                             const QRect& output_content_rect,
                              const QTransform& postTransform = QTransform());
 
         /**
@@ -40,14 +40,14 @@ namespace dewarping {
          * except it maps to dewarped image coordinates rather than
          * to normalized dewarped coordinates.
          */
-        QPointF mapToDewarpedSpace(QPointF const& warped_pt) const;
+        QPointF mapToDewarpedSpace(const QPointF& warped_pt) const;
 
         /**
          * Similar to CylindricalSurfaceDewarper::mapToWarpedSpace(),
          * except it maps from dewarped image coordinates rather than
          * from normalized dewarped coordinates.
          */
-        QPointF mapToWarpedSpace(QPointF const& dewarped_pt) const;
+        QPointF mapToWarpedSpace(const QPointF& dewarped_pt) const;
 
     private:
         CylindricalSurfaceDewarper m_dewarper;

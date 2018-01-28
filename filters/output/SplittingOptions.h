@@ -14,9 +14,9 @@ namespace output {
     public:
         SplittingOptions();
 
-        explicit SplittingOptions(QDomElement const& el);
+        explicit SplittingOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         bool isSplitOutput() const;
 

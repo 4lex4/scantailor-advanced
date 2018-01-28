@@ -34,15 +34,15 @@ class StageListView::Model : public QAbstractTableModel {
 public:
     Model(QObject* parent, intrusive_ptr<StageSequence> stages);
 
-    void updateBatchProcessingAnimation(int selected_row, QPixmap const& animation_frame);
+    void updateBatchProcessingAnimation(int selected_row, const QPixmap& animation_frame);
 
     void disableBatchProcessingAnimation();
 
-    int columnCount(QModelIndex const& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
 
-    int rowCount(QModelIndex const& parent) const override;
+    int rowCount(const QModelIndex& parent) const override;
 
-    QVariant data(QModelIndex const& index, int role) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
 private:
     intrusive_ptr<StageSequence> m_ptrStages;
@@ -55,7 +55,7 @@ class StageListView::LeftColDelegate : public ChangedStateItemDelegate<QStyledIt
 public:
     explicit LeftColDelegate(StageListView* view);
 
-    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
     typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
@@ -68,7 +68,7 @@ class StageListView::RightColDelegate : public ChangedStateItemDelegate<QStyledI
 public:
     explicit RightColDelegate(QObject* parent = nullptr);
 
-    void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const override;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
     typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
@@ -124,7 +124,7 @@ StageListView::StageListView(QWidget* parent)
 
 StageListView::~StageListView() = default;
 
-void StageListView::setStages(intrusive_ptr<StageSequence> const& stages) {
+void StageListView::setStages(const intrusive_ptr<StageSequence>& stages) {
     if (QAbstractItemModel* m = model()) {
         // Q*View classes don't own their models.
         m->deleteLater();
@@ -139,9 +139,9 @@ void StageListView::setStages(intrusive_ptr<StageSequence> const& stages) {
     h_header->setSectionResizeMode(1, QHeaderView::Fixed);
     if (v_header->count() != 0) {
         // Make the cells in the last column square.
-        int const square_side = v_header->sectionSize(0);
+        const int square_side = v_header->sectionSize(0);
         h_header->resizeSection(1, square_side);
-        int const reduced_square_side = std::max(1, square_side - 6);
+        const int reduced_square_side = std::max(1, square_side - 6);
         createBatchAnimationSequence(reduced_square_side);
     } else {
         // Just to avoid special cases elsewhere.
@@ -161,7 +161,7 @@ void StageListView::setStages(intrusive_ptr<StageSequence> const& stages) {
     updateGeometry();
 } // StageListView::setStages
 
-void StageListView::setBatchProcessingPossible(bool const possible) {
+void StageListView::setBatchProcessingPossible(const bool possible) {
     if (m_batchProcessingPossible == possible) {
         return;
     }
@@ -174,7 +174,7 @@ void StageListView::setBatchProcessingPossible(bool const possible) {
     }
 }
 
-void StageListView::setBatchProcessingInProgress(bool const in_progress) {
+void StageListView::setBatchProcessingInProgress(const bool in_progress) {
     if (m_batchProcessingInProgress == in_progress) {
         return;
     }
@@ -221,7 +221,7 @@ void StageListView::initiateBatchAnimationFrameRendering() {
         return;
     }
 
-    int const selected_row = selectedRow();
+    const int selected_row = selectedRow();
     if (selected_row == -1) {
         return;
     }
@@ -234,7 +234,7 @@ void StageListView::initiateBatchAnimationFrameRendering() {
     }
 }
 
-void StageListView::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) {
+void StageListView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) {
     // Call the base version.
     QTableView::selectionChanged(selected, deselected);
 
@@ -249,12 +249,12 @@ void StageListView::selectionChanged(QItemSelection const& selected, QItemSelect
 
 void StageListView::ensureSelectedRowVisible() {
     // This loop won't run more than one iteration.
-    for (QModelIndex const& idx : selectionModel()->selectedRows(0)) {
+    for (const QModelIndex& idx : selectionModel()->selectedRows(0)) {
         scrollTo(idx, EnsureVisible);
     }
 }
 
-void StageListView::removeLaunchButton(int const row) {
+void StageListView::removeLaunchButton(const int row) {
     if (row == -1) {
         return;
     }
@@ -267,7 +267,7 @@ void StageListView::placeLaunchButton(int row) {
         return;
     }
 
-    QModelIndex const idx(m_pModel->index(row, 0));
+    const QModelIndex idx(m_pModel->index(row, 0));
     QRect button_geometry(visualRect(idx));
 
     // Place it to the right (assuming height is less than width).
@@ -277,14 +277,14 @@ void StageListView::placeLaunchButton(int row) {
     m_pLaunchBtn->show();
 }
 
-void StageListView::createBatchAnimationSequence(int const square_side) {
-    int const num_frames = 8;
+void StageListView::createBatchAnimationSequence(const int square_side) {
+    const int num_frames = 8;
     m_batchAnimationPixmaps.resize(num_frames);
 
-    QColor const head_color(ColorSchemeManager::instance()->getColorParam(
+    const QColor head_color(ColorSchemeManager::instance()->getColorParam(
             "stage_list_head_color",
             palette().color(QPalette::Window).lighter(200)).color());
-    QColor const tail_color(ColorSchemeManager::instance()->getColorParam(
+    const QColor tail_color(ColorSchemeManager::instance()->getColorParam(
             "stage_list_tail_color",
             palette().color(QPalette::Window).lighter(130)).color());
 
@@ -304,14 +304,14 @@ void StageListView::updateRowSpans() {
         return;
     }
 
-    int const count = m_pModel->rowCount(QModelIndex());
+    const int count = m_pModel->rowCount(QModelIndex());
     for (int i = 0; i < count; ++i) {
         setSpan(i, 0, 1, m_batchProcessingInProgress ? 1 : 2);
     }
 }
 
 int StageListView::selectedRow() const {
-    QModelIndexList const selection(selectionModel()->selectedRows(0));
+    const QModelIndexList selection(selectionModel()->selectedRows(0));
     if (selection.empty()) {
         return -1;
     }
@@ -328,8 +328,8 @@ StageListView::Model::Model(QObject* parent, intrusive_ptr<StageSequence> stages
     assert(m_ptrStages);
 }
 
-void StageListView::Model::updateBatchProcessingAnimation(int const selected_row, QPixmap const& animation_frame) {
-    int const max_row = std::max(selected_row, m_curSelectedRow);
+void StageListView::Model::updateBatchProcessingAnimation(const int selected_row, const QPixmap& animation_frame) {
+    const int max_row = std::max(selected_row, m_curSelectedRow);
     m_curSelectedRow = selected_row;
     m_curAnimationFrame = animation_frame;
     emit dataChanged(index(0, 1), index(max_row, 1));
@@ -340,15 +340,15 @@ void StageListView::Model::disableBatchProcessingAnimation() {
     emit dataChanged(index(0, 1), index(m_curSelectedRow, 1));
 }
 
-int StageListView::Model::columnCount(QModelIndex const& parent) const {
+int StageListView::Model::columnCount(const QModelIndex& parent) const {
     return 2;
 }
 
-int StageListView::Model::rowCount(QModelIndex const& parent) const {
+int StageListView::Model::rowCount(const QModelIndex& parent) const {
     return m_ptrStages->count();
 }
 
-QVariant StageListView::Model::data(QModelIndex const& index, int const role) const {
+QVariant StageListView::Model::data(const QModelIndex& index, const int role) const {
     if (role == Qt::DisplayRole) {
         if (index.column() == 0) {
             return m_ptrStages->filterAt(index.row())->getName();
@@ -373,8 +373,8 @@ StageListView::LeftColDelegate::LeftColDelegate(StageListView* view)
 }
 
 void StageListView::LeftColDelegate::paint(QPainter* painter,
-                                           QStyleOptionViewItem const& option,
-                                           QModelIndex const& index) const {
+                                           const QStyleOptionViewItem& option,
+                                           const QModelIndex& index) const {
     SuperClass::paint(painter, option, index);
 
     if ((index.row() == m_pView->selectedRow()) && m_pView->m_pLaunchBtn->isVisible()) {
@@ -392,13 +392,13 @@ StageListView::RightColDelegate::RightColDelegate(QObject* parent)
 }
 
 void StageListView::RightColDelegate::paint(QPainter* painter,
-                                            QStyleOptionViewItem const& option,
-                                            QModelIndex const& index) const {
+                                            const QStyleOptionViewItem& option,
+                                            const QModelIndex& index) const {
     SuperClass::paint(painter, option, index);
 
-    QVariant const var(index.data(Qt::UserRole));
+    const QVariant var(index.data(Qt::UserRole));
     if (!var.isNull()) {
-        QPixmap const pixmap(var.value<QPixmap>());
+        const QPixmap pixmap(var.value<QPixmap>());
         if (!pixmap.isNull()) {
             QRect r(pixmap.rect());
             r.moveCenter(option.rect.center());

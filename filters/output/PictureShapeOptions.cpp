@@ -8,12 +8,12 @@ namespace output {
               sensitivity(100) {
     }
 
-    PictureShapeOptions::PictureShapeOptions(QDomElement const& el)
+    PictureShapeOptions::PictureShapeOptions(const QDomElement& el)
             : pictureShape(parsePictureShape(el.attribute("pictureShape"))),
               sensitivity(el.attribute("sensitivity").toInt()) {
     }
 
-    QDomElement PictureShapeOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement PictureShapeOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("pictureShape", formatPictureShape(pictureShape));
         el.setAttribute("sensitivity", sensitivity);
@@ -21,12 +21,12 @@ namespace output {
         return el;
     }
 
-    bool PictureShapeOptions::operator==(PictureShapeOptions const& other) const {
+    bool PictureShapeOptions::operator==(const PictureShapeOptions& other) const {
         return (pictureShape == other.pictureShape)
                && (sensitivity == other.sensitivity);
     }
 
-    bool PictureShapeOptions::operator!=(PictureShapeOptions const& other) const {
+    bool PictureShapeOptions::operator!=(const PictureShapeOptions& other) const {
         return !(*this == other);
     }
 

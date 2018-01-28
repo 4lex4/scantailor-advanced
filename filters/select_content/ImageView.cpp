@@ -26,11 +26,11 @@
 #include <boost/bind.hpp>
 
 namespace select_content {
-    ImageView::ImageView(QImage const& image,
-                         QImage const& downscaled_image,
-                         ImageTransformation const& xform,
-                         QRectF const& content_rect,
-                         QRectF const& page_rect,
+    ImageView::ImageView(const QImage& image,
+                         const QImage& downscaled_image,
+                         const ImageTransformation& xform,
+                         const QRectF& content_rect,
+                         const QRectF& page_rect,
                          bool page_rect_enabled)
             : ImageViewBase(
             image, downscaled_image,
@@ -50,9 +50,9 @@ namespace select_content {
                 tr("Use the context menu to enable / disable the content box. Hold Shift to drag a box.")
         );
 
-        QString const content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
+        const QString content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
         // Setup corner drag handlers.
-        static int const masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
+        static const int masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
         for (int i = 0; i < 4; ++i) {
             m_contentRectCorners[i].setPositionCallback(
                     boost::bind(&ImageView::contentRectCornerPosition, this, masks_by_corner[i])
@@ -71,7 +71,7 @@ namespace select_content {
             makeLastFollower(m_contentRectCornerHandlers[i]);
         }
         // Setup edge drag handlers.
-        static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
+        static const int masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
         for (int i = 0; i < 4; ++i) {
             m_contentRectEdges[i].setPositionCallback(
                     boost::bind(&ImageView::contentRectEdgePosition, this, masks_by_edge[i])
@@ -91,7 +91,7 @@ namespace select_content {
         }
 
         if (page_rect_enabled) {
-            QString const page_rect_drag_tip(tr("Drag lines or corners to resize the page box."));
+            const QString page_rect_drag_tip(tr("Drag lines or corners to resize the page box."));
             // Setup corner drag handlers.
             for (int i = 0; i < 4; ++i) {
                 m_pageRectCorners[i].setPositionCallback(
@@ -194,7 +194,7 @@ namespace select_content {
             return;
         }
 
-        QRectF const virtual_rect(virtualDisplayRect());
+        const QRectF virtual_rect(virtualDisplayRect());
         QRectF content_rect(0, 0, virtual_rect.width() * 0.7, virtual_rect.height() * 0.7);
         content_rect.moveCenter(virtual_rect.center());
         m_contentRect = content_rect;
@@ -215,7 +215,7 @@ namespace select_content {
         emit manualContentRectSet(m_contentRect);
     }
 
-    void ImageView::onPaint(QPainter& painter, InteractionState const& interaction) {
+    void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) {
         if (m_contentRect.isNull() && !m_pageRectEnabled) {
             return;
         }
@@ -263,7 +263,7 @@ namespace select_content {
     }
 
     QPointF ImageView::contentRectCornerPosition(int edge_mask) const {
-        QRectF const rect(virtualToWidget().mapRect(m_contentRect));
+        const QRectF rect(virtualToWidget().mapRect(m_contentRect));
         QPointF pt;
 
         if (edge_mask & TOP) {
@@ -281,10 +281,10 @@ namespace select_content {
         return pt;
     }
 
-    void ImageView::contentRectCornerMoveRequest(int edge_mask, QPointF const& pos) {
+    void ImageView::contentRectCornerMoveRequest(int edge_mask, const QPointF& pos) {
         QRectF r(virtualToWidget().mapRect(m_contentRect));
-        qreal const minw = m_minBoxSize.width();
-        qreal const minh = m_minBoxSize.height();
+        const qreal minw = m_minBoxSize.width();
+        const qreal minh = m_minBoxSize.height();
 
         if (edge_mask & TOP) {
             r.setTop(std::min(pos.y(), r.bottom() - minh));
@@ -307,7 +307,7 @@ namespace select_content {
     }
 
     QLineF ImageView::contentRectEdgePosition(int edge) const {
-        QRectF const rect(virtualToWidget().mapRect(m_contentRect));
+        const QRectF rect(virtualToWidget().mapRect(m_contentRect));
 
         if (edge == TOP) {
             return QLineF(rect.topLeft(), rect.topRight());
@@ -320,7 +320,7 @@ namespace select_content {
         }
     }
 
-    void ImageView::contentRectEdgeMoveRequest(int edge, QLineF const& line) {
+    void ImageView::contentRectEdgeMoveRequest(int edge, const QLineF& line) {
         contentRectCornerMoveRequest(edge, line.p1());
     }
 
@@ -333,7 +333,7 @@ namespace select_content {
     }
 
     QPointF ImageView::pageRectCornerPosition(int edge_mask) const {
-        QRectF const rect(virtualToWidget().mapRect(m_pageRect));
+        const QRectF rect(virtualToWidget().mapRect(m_pageRect));
         QPointF pt;
 
         if (edge_mask & TOP) {
@@ -351,10 +351,10 @@ namespace select_content {
         return pt;
     }
 
-    void ImageView::pageRectCornerMoveRequest(int edge_mask, QPointF const& pos) {
+    void ImageView::pageRectCornerMoveRequest(int edge_mask, const QPointF& pos) {
         QRectF r(virtualToWidget().mapRect(m_pageRect));
-        qreal const minw = m_minBoxSize.width();
-        qreal const minh = m_minBoxSize.height();
+        const qreal minw = m_minBoxSize.width();
+        const qreal minh = m_minBoxSize.height();
 
         if (edge_mask & TOP) {
             r.setTop(std::min(pos.y(), r.bottom() - minh));
@@ -376,7 +376,7 @@ namespace select_content {
     }
 
     QLineF ImageView::pageRectEdgePosition(int edge) const {
-        QRectF const rect(virtualToWidget().mapRect(m_pageRect));
+        const QRectF rect(virtualToWidget().mapRect(m_pageRect));
 
         if (edge == TOP) {
             return QLineF(rect.topLeft(), rect.topRight());
@@ -389,7 +389,7 @@ namespace select_content {
         }
     }
 
-    void ImageView::pageRectEdgeMoveRequest(int edge, QLineF const& line) {
+    void ImageView::pageRectEdgeMoveRequest(int edge, const QLineF& line) {
         pageRectCornerMoveRequest(edge, line.p1());
     }
 
@@ -397,10 +397,10 @@ namespace select_content {
         emit manualPageRectSet(m_pageRect);
     }
 
-    void ImageView::forceInsideImage(QRectF& widget_rect, int const edge_mask) const {
-        qreal const minw = m_minBoxSize.width();
-        qreal const minh = m_minBoxSize.height();
-        QRectF const image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
+    void ImageView::forceInsideImage(QRectF& widget_rect, const int edge_mask) const {
+        const qreal minw = m_minBoxSize.width();
+        const qreal minh = m_minBoxSize.height();
+        const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
 
         if ((edge_mask & LEFT) && (widget_rect.left() < image_rect.left())) {
             widget_rect.setLeft(image_rect.left());
@@ -433,7 +433,7 @@ namespace select_content {
         return virtualToWidget().mapRect(m_contentRect);
     }
 
-    void ImageView::contentRectMoveRequest(QPolygonF const& poly_pos) {
+    void ImageView::contentRectMoveRequest(const QPolygonF& poly_pos) {
         QRectF contentRectInWidget(poly_pos.boundingRect());
 
         const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
@@ -461,7 +461,7 @@ namespace select_content {
         return virtualToWidget().mapRect(m_pageRect);
     }
 
-    void ImageView::pageRectMoveRequest(QPolygonF const& poly_pos) {
+    void ImageView::pageRectMoveRequest(const QPolygonF& poly_pos) {
         QRectF pageRectInWidget(poly_pos.boundingRect());
 
         const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
@@ -483,7 +483,7 @@ namespace select_content {
         update();
     }
 
-    void ImageView::pageRectSetExternally(QRectF const& pageRect) {
+    void ImageView::pageRectSetExternally(const QRectF& pageRect) {
         if (!m_pageRectEnabled) {
             return;
         }

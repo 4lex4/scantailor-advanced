@@ -29,11 +29,11 @@ void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> load
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
-                                                          VirtualFunction1<void, ImageMetadata const&>& out) {
+                                                          VirtualFunction1<void, const ImageMetadata&>& out) {
     auto it(m_sLoaders.begin());
-    auto const end(m_sLoaders.end());
+    const auto end(m_sLoaders.end());
     for (; it != end; ++it) {
-        Status const status = (*it)->loadMetadata(io_device, out);
+        const Status status = (*it)->loadMetadata(io_device, out);
         if (status != FORMAT_NOT_RECOGNIZED) {
             return status;
         }
@@ -42,8 +42,8 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
     return FORMAT_NOT_RECOGNIZED;
 }
 
-ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QString const& file_path,
-                                                          VirtualFunction1<void, ImageMetadata const&>& out) {
+ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& file_path,
+                                                          VirtualFunction1<void, const ImageMetadata&>& out) {
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         return GENERIC_ERROR;

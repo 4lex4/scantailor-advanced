@@ -27,7 +27,7 @@
 #define DISPATCH(list, call) \
     { \
         HandlerList::iterator it(list->begin()); \
-        HandlerList::iterator const end(list->end()); \
+        const HandlerList::iterator end(list->end()); \
         while (it != end) { \
             (it++)->call; \
         } \
@@ -79,7 +79,7 @@ InteractionHandler::~InteractionHandler() {
     m_ptrFollowers->clear_and_dispose(bind(delete_ptr(), _1));
 }
 
-void InteractionHandler::paint(QPainter& painter, InteractionState const& interaction) {
+void InteractionHandler::paint(QPainter& painter, const InteractionState& interaction) {
     // Keep them alive in case this object gets destroyed.
     intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
     intrusive_ptr<HandlerList> followers(m_ptrFollowers);
@@ -91,7 +91,7 @@ void InteractionHandler::paint(QPainter& painter, InteractionState const& intera
     DISPATCH(followers, paint(painter, interaction));
 }
 
-void InteractionHandler::proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
+void InteractionHandler::proximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
     // Keep them alive in case this object gets destroyed.
     intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
     intrusive_ptr<HandlerList> followers(m_ptrFollowers);
@@ -228,7 +228,7 @@ void InteractionHandler::makeLastFollower(InteractionHandler& handler) {
     m_ptrFollowers->push_back(handler);
 }
 
-bool InteractionHandler::defaultInteractionPermitter(InteractionState const& interaction) {
+bool InteractionHandler::defaultInteractionPermitter(const InteractionState& interaction) {
     return !interaction.captured();
 }
 

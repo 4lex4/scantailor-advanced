@@ -24,11 +24,11 @@
 using namespace imageproc;
 
 namespace output {
-    bool FillZoneComparator::equal(ZoneSet const& lhs, ZoneSet const& rhs) {
+    bool FillZoneComparator::equal(const ZoneSet& lhs, const ZoneSet& rhs) {
         ZoneSet::const_iterator lhs_it(lhs.begin());
         ZoneSet::const_iterator rhs_it(rhs.begin());
-        ZoneSet::const_iterator const lhs_end(lhs.end());
-        ZoneSet::const_iterator const rhs_end(rhs.end());
+        const ZoneSet::const_iterator lhs_end(lhs.end());
+        const ZoneSet::const_iterator rhs_end(rhs.end());
         for (; lhs_it != lhs_end && rhs_it != rhs_end; ++lhs_it, ++rhs_it) {
             if (!equal(*lhs_it, *rhs_it)) {
                 return false;
@@ -38,7 +38,7 @@ namespace output {
         return lhs_it == lhs_end && rhs_it == rhs_end;
     }
 
-    bool FillZoneComparator::equal(Zone const& lhs, Zone const& rhs) {
+    bool FillZoneComparator::equal(const Zone& lhs, const Zone& rhs) {
         if (!PolygonUtils::fuzzyCompare(lhs.spline().toPolygon(), rhs.spline().toPolygon())) {
             return false;
         }
@@ -46,7 +46,7 @@ namespace output {
         return equal(lhs.properties(), rhs.properties());
     }
 
-    bool FillZoneComparator::equal(PropertySet const& lhs, PropertySet const& rhs) {
+    bool FillZoneComparator::equal(const PropertySet& lhs, const PropertySet& rhs) {
         typedef FillColorProperty FCP;
 
         return lhs.locateOrDefault<FCP>()->color() == rhs.locateOrDefault<FCP>()->color();

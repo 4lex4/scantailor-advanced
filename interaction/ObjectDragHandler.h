@@ -40,26 +40,26 @@ public:
         m_pObj = obj;
     }
 
-    void setProximityCursor(QCursor const& cursor);
+    void setProximityCursor(const QCursor& cursor);
 
-    void setInteractionCursor(QCursor const& cursor);
+    void setInteractionCursor(const QCursor& cursor);
 
-    void setProximityStatusTip(QString const& tip);
+    void setProximityStatusTip(const QString& tip);
 
-    void setInteractionStatusTip(QString const& tip);
+    void setInteractionStatusTip(const QString& tip);
 
-    bool interactionInProgress(InteractionState const& interaction) const;
+    bool interactionInProgress(const InteractionState& interaction) const;
 
-    bool proximityLeader(InteractionState const& interaction) const;
+    bool proximityLeader(const InteractionState& interaction) const;
 
     void forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos);
 
     void setKeyboardModifiers(Qt::KeyboardModifiers modifiers);
 
 protected:
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) override;
+    void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
 
     void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 

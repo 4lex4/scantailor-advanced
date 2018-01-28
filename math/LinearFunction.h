@@ -53,11 +53,11 @@ public:
     /**
      * Evaluates a^T * x + b
      */
-    double evaluate(double const* x) const;
+    double evaluate(const double* x) const;
 
     void swap(LinearFunction& other);
 
-    LinearFunction& operator+=(LinearFunction const& other);
+    LinearFunction& operator+=(const LinearFunction& other);
 
     LinearFunction& operator*=(double scalar);
 };

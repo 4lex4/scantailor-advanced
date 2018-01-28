@@ -100,7 +100,7 @@ protected:
 
 public slots:
 
-    void openProject(QString const& project_file);
+    void openProject(const QString& project_file);
 
 private:
     enum MainAreaAction {
@@ -120,20 +120,20 @@ private slots:
 
     void goPrevPage();
 
-    void goToPage(PageId const& page_id);
+    void goToPage(const PageId& page_id);
 
-    void currentPageChanged(PageInfo const& page_info, QRectF const& thumb_rect,
+    void currentPageChanged(const PageInfo& page_info, const QRectF& thumb_rect,
                             ThumbnailSequence::SelectionFlags flags);
 
-    void pageContextMenuRequested(PageInfo const& page_info, QPoint const& screen_pos, bool selected);
+    void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
 
-    void pastLastPageContextMenuRequested(QPoint const& screen_pos);
+    void pastLastPageContextMenuRequested(const QPoint& screen_pos);
 
     void thumbViewFocusToggled(bool checked);
 
     void thumbViewScrolled();
 
-    void filterSelectionChanged(QItemSelection const& selected);
+    void filterSelectionChanged(const QItemSelection& selected);
 
     void switchFilter1();
 
@@ -155,15 +155,15 @@ private slots:
 
     void stopBatchProcessing(MainAreaAction main_area = UPDATE_MAIN_AREA);
 
-    void invalidateThumbnail(PageId const& page_id) override;
+    void invalidateThumbnail(const PageId& page_id) override;
 
-    void invalidateThumbnail(PageInfo const& page_info);
+    void invalidateThumbnail(const PageInfo& page_info);
 
     void invalidateAllThumbnails() override;
 
     void showRelinkingDialog();
 
-    void filterResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
+    void filterResult(const BackgroundTaskPtr& task, const FilterResultPtr& result);
 
     void debugToggled(bool enabled);
 
@@ -215,10 +215,10 @@ private:
 
     intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() override;
 
-    void switchToNewProject(intrusive_ptr<ProjectPages> const& pages,
-                            QString const& out_dir,
-                            QString const& project_file_path = QString(),
-                            ProjectReader const* project_reader = nullptr);
+    void switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
+                            const QString& out_dir,
+                            const QString& project_file_path = QString(),
+                            const ProjectReader* project_reader = nullptr);
 
     intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache();
 
@@ -228,13 +228,13 @@ private:
 
     SavePromptResult promptProjectSave();
 
-    static bool compareFiles(QString const& fpath1, QString const& fpath2);
+    static bool compareFiles(const QString& fpath1, const QString& fpath2);
 
     intrusive_ptr<PageOrderProvider const> currentPageOrderProvider() const;
 
     void updateSortOptions();
 
-    void resetThumbSequence(intrusive_ptr<PageOrderProvider const> const& page_order_provider);
+    void resetThumbSequence(const intrusive_ptr<PageOrderProvider const>& page_order_provider);
 
     void removeWidgetsFromLayout(QLayout* layout);
 
@@ -262,9 +262,9 @@ private:
 
     void updateMainArea();
 
-    bool checkReadyForOutput(PageId const* ignore = nullptr) const;
+    bool checkReadyForOutput(const PageId* ignore = nullptr) const;
 
-    void loadPageInteractive(PageInfo const& page);
+    void loadPageInteractive(const PageInfo& page);
 
     void updateWindowTitle();
 
@@ -272,27 +272,27 @@ private:
 
     void closeProjectWithoutSaving();
 
-    bool saveProjectWithFeedback(QString const& project_file);
+    bool saveProjectWithFeedback(const QString& project_file);
 
-    void showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& existig);
+    void showInsertFileDialog(BeforeOrAfter before_or_after, const ImageId& existig);
 
-    void showRemovePagesDialog(std::set<PageId> const& pages);
+    void showRemovePagesDialog(const std::set<PageId>& pages);
 
-    void insertImage(ImageInfo const& new_image, BeforeOrAfter before_or_after, ImageId existing);
+    void insertImage(const ImageInfo& new_image, BeforeOrAfter before_or_after, ImageId existing);
 
-    void removeFromProject(std::set<PageId> const& pages);
+    void removeFromProject(const std::set<PageId>& pages);
 
-    void eraseOutputFiles(std::set<PageId> const& pages);
+    void eraseOutputFiles(const std::set<PageId>& pages);
 
-    BackgroundTaskPtr createCompositeTask(PageInfo const& page, int last_filter_idx, bool batch, bool debug);
+    BackgroundTaskPtr createCompositeTask(const PageInfo& page, int last_filter_idx, bool batch, bool debug);
 
     intrusive_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int last_filter_idx);
 
     void createBatchProcessingWidget();
 
-    void updateDisambiguationRecords(PageSequence const& pages);
+    void updateDisambiguationRecords(const PageSequence& pages);
 
-    void performRelinking(intrusive_ptr<AbstractRelinker> const& relinker);
+    void performRelinking(const intrusive_ptr<AbstractRelinker>& relinker);
 
     PageSelectionAccessor newPageSelectionAccessor();
 

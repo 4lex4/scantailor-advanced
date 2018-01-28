@@ -26,12 +26,12 @@ using namespace imageproc;
 namespace deskew {
     Dependencies::Dependencies() = default;
 
-    Dependencies::Dependencies(QPolygonF const& page_outline, OrthogonalRotation const rotation)
+    Dependencies::Dependencies(const QPolygonF& page_outline, const OrthogonalRotation rotation)
             : m_pageOutline(page_outline),
               m_rotation(rotation) {
     }
 
-    Dependencies::Dependencies(QDomElement const& deps_el)
+    Dependencies::Dependencies(const QDomElement& deps_el)
             : m_pageOutline(
             XmlUnmarshaller::polygonF(
                     deps_el.namedItem("page-outline").toElement()
@@ -46,7 +46,7 @@ namespace deskew {
 
     Dependencies::~Dependencies() = default;
 
-    bool Dependencies::matches(Dependencies const& other) const {
+    bool Dependencies::matches(const Dependencies& other) const {
         if (m_rotation != other.m_rotation) {
             return false;
         }
@@ -54,7 +54,7 @@ namespace deskew {
         return PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline);
     }
 
-    QDomElement Dependencies::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));

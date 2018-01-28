@@ -46,13 +46,13 @@ namespace page_split {
 
             ~UiData();
 
-            void setPageLayout(PageLayout const& layout);
+            void setPageLayout(const PageLayout& layout);
 
-            PageLayout const& pageLayout() const;
+            const PageLayout& pageLayout() const;
 
-            void setDependencies(Dependencies const& deps);
+            void setDependencies(const Dependencies& deps);
 
-            Dependencies const& dependencies() const;
+            const Dependencies& dependencies() const;
 
             void setSplitLineMode(AutoManualMode mode);
 
@@ -72,21 +72,21 @@ namespace page_split {
 
         OptionsWidget(intrusive_ptr<Settings> settings,
                       intrusive_ptr<ProjectPages> page_sequence,
-                      PageSelectionAccessor const& page_selection_accessor);
+                      const PageSelectionAccessor& page_selection_accessor);
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id);
+        void preUpdateUI(const PageId& page_id);
 
-        void postUpdateUI(UiData const& ui_data);
+        void postUpdateUI(const UiData& ui_data);
 
     signals:
 
-        void pageLayoutSetLocally(PageLayout const& page_layout);
+        void pageLayoutSetLocally(const PageLayout& page_layout);
 
     public slots:
 
-        void pageLayoutSetExternally(PageLayout const& page_layout);
+        void pageLayoutSetExternally(const PageLayout& page_layout);
 
     private slots:
 
@@ -94,7 +94,7 @@ namespace page_split {
 
         void showChangeDialog();
 
-        void layoutTypeSet(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
+        void layoutTypeSet(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
 
         void splitLineModeChanged(bool auto_mode);
 

@@ -35,31 +35,31 @@ namespace select_content {
     public:
         // Member-wise copying is OK.
 
-        explicit Params(Dependencies const& deps);
+        explicit Params(const Dependencies& deps);
 
-        Params(QRectF const& content_rect,
-               QSizeF const& size_mm,
-               QRectF const& page_rect,
-               Dependencies const& deps,
+        Params(const QRectF& content_rect,
+               const QSizeF& size_mm,
+               const QRectF& page_rect,
+               const Dependencies& deps,
                AutoManualMode content_detection_mode,
                AutoManualMode page_detection_mode,
                bool contentDetect,
                bool pageDetect,
                bool fineTuning);
 
-        explicit Params(QDomElement const& filter_el);
+        explicit Params(const QDomElement& filter_el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         ~Params();
 
-        QRectF const& contentRect() const;
+        const QRectF& contentRect() const;
 
-        QRectF const& pageRect() const;
+        const QRectF& pageRect() const;
 
-        QSizeF const& contentSizeMM() const;
+        const QSizeF& contentSizeMM() const;
 
-        Dependencies const& dependencies() const;
+        const Dependencies& dependencies() const;
 
         AutoManualMode contentDetectionMode() const;
 
@@ -79,17 +79,17 @@ namespace select_content {
 
         bool isFineTuningEnabled() const;
 
-        void setContentDetectionMode(AutoManualMode const& mode);
+        void setContentDetectionMode(const AutoManualMode& mode);
 
-        void setPageDetectionMode(AutoManualMode const& mode);
+        void setPageDetectionMode(const AutoManualMode& mode);
 
-        void setContentRect(QRectF const& rect);
+        void setContentRect(const QRectF& rect);
 
-        void setPageRect(QRectF const& rect);
+        void setPageRect(const QRectF& rect);
 
-        void setContentSizeMM(QSizeF const& size);
+        void setContentSizeMM(const QSizeF& size);
 
-        void setDependencies(Dependencies const& deps);
+        void setDependencies(const Dependencies& deps);
 
         void setContentDetect(bool detect);
 

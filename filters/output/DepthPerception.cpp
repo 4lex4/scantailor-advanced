@@ -28,7 +28,7 @@ namespace output {
             : m_value(qBound(minValue(), value, maxValue())) {
     }
 
-    DepthPerception::DepthPerception(QString const& from_string) {
+    DepthPerception::DepthPerception(const QString& from_string) {
         bool ok = false;
         m_value = from_string.toDouble(&ok);
         if (!ok) {

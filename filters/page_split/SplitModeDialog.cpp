@@ -23,11 +23,11 @@
 
 namespace page_split {
     SplitModeDialog::SplitModeDialog(QWidget* const parent,
-                                     PageId const& cur_page,
-                                     PageSelectionAccessor const& page_selection_accessor,
-                                     LayoutType const layout_type,
-                                     PageLayout::Type const auto_detected_layout_type,
-                                     bool const auto_detected_layout_type_valid)
+                                     const PageId& cur_page,
+                                     const PageSelectionAccessor& page_selection_accessor,
+                                     const LayoutType layout_type,
+                                     const PageLayout::Type auto_detected_layout_type,
+                                     const bool auto_detected_layout_type_valid)
             : QDialog(parent),
               m_pages(page_selection_accessor.allPages()),
               m_selectedPages(page_selection_accessor.selectedPages()),
@@ -74,7 +74,7 @@ namespace page_split {
     }
 
     void SplitModeDialog::manualModeSelected() {
-        char const* resource = iconFor(combinedLayoutType());
+        const char* resource = iconFor(combinedLayoutType());
         layoutTypeLabel->setPixmap(QPixmap(resource));
         applyCutOption->setEnabled(true);
     }
@@ -147,8 +147,8 @@ namespace page_split {
         return AUTO_LAYOUT_TYPE;
     }
 
-    char const* SplitModeDialog::iconFor(LayoutType const layout_type) {
-        char const* resource = "";
+    const char* SplitModeDialog::iconFor(const LayoutType layout_type) {
+        const char* resource = "";
 
         switch (layout_type) {
             case AUTO_LAYOUT_TYPE:

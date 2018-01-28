@@ -25,7 +25,7 @@ TabbedDebugImages::TabbedDebugImages(QWidget* parent)
     connect(this, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
 }
 
-void TabbedDebugImages::currentTabChanged(int const idx) {
+void TabbedDebugImages::currentTabChanged(const int idx) {
     if (auto* div = dynamic_cast<DebugImageView*>(widget(idx))) {
         div->unlink();
         m_liveViews.push_back(*div);

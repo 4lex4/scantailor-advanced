@@ -23,19 +23,19 @@
 #include <QDir>
 
 namespace output {
-    QString Utils::automaskDir(QString const& out_dir) {
+    QString Utils::automaskDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("cache/automask");
     }
 
-    QString Utils::predespeckleDir(QString const& out_dir) {
+    QString Utils::predespeckleDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("cache/predespeckle");
     }
 
-    QString Utils::specklesDir(QString const& out_dir) {
+    QString Utils::specklesDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("cache/speckles");
     }
 
-    QTransform Utils::scaleFromToDpi(Dpi const& from, Dpi const& to) {
+    QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
         QTransform xform;
         xform.scale(
                 (double) to.horizontal() / from.horizontal(),
@@ -45,15 +45,15 @@ namespace output {
         return xform;
     }
 
-    QString Utils::foregroundDir(QString const& out_dir) {
+    QString Utils::foregroundDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("foreground");
     }
 
-    QString Utils::backgroundDir(QString const& out_dir) {
+    QString Utils::backgroundDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("background");
     }
 
-    QString Utils::originalBackgroundDir(QString const& out_dir) {
+    QString Utils::originalBackgroundDir(const QString& out_dir) {
         return QDir(out_dir).absoluteFilePath("original_background");
     }
 }  // namespace output

@@ -26,7 +26,7 @@ namespace page_split {
             : m_layoutType(AUTO_LAYOUT_TYPE) {
     }
 
-    Dependencies::Dependencies(QDomElement const& el)
+    Dependencies::Dependencies(const QDomElement& el)
             : m_imageSize(XmlUnmarshaller::size(el.namedItem("size").toElement())),
               m_rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement())),
               m_layoutType(
@@ -36,14 +36,14 @@ namespace page_split {
               ) {
     }
 
-    Dependencies::Dependencies(QSize const& image_size, OrthogonalRotation const rotation, LayoutType const layout_type)
+    Dependencies::Dependencies(const QSize& image_size, const OrthogonalRotation rotation, const LayoutType layout_type)
             : m_imageSize(image_size),
               m_rotation(rotation),
               m_layoutType(layout_type) {
     }
 
-    bool Dependencies::compatibleWith(Params const& params) const {
-        Dependencies const& deps = params.dependencies();
+    bool Dependencies::compatibleWith(const Params& params) const {
+        const Dependencies& deps = params.dependencies();
 
         if (m_imageSize != deps.m_imageSize) {
             return false;
@@ -69,7 +69,7 @@ namespace page_split {
         return false;
     }
 
-    QDomElement Dependencies::toXml(QDomDocument& doc, QString const& tag_name) const {
+    QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tag_name) const {
         if (isNull()) {
             return QDomElement();
         }
@@ -88,7 +88,7 @@ namespace page_split {
         return m_imageSize.isNull();
     }
 
-    OrthogonalRotation const& Dependencies::orientation() const {
+    const OrthogonalRotation& Dependencies::orientation() const {
         return m_rotation;
     }
 

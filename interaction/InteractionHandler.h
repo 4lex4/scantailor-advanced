@@ -42,9 +42,9 @@ public:
 
     virtual ~InteractionHandler();
 
-    void paint(QPainter& painter, InteractionState const& interaction);
+    void paint(QPainter& painter, const InteractionState& interaction);
 
-    void proximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+    void proximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction);
 
     void keyPressEvent(QKeyEvent* event, InteractionState& interaction);
 
@@ -73,10 +73,10 @@ public:
     void makeLastFollower(InteractionHandler& handler);
 
 protected:
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction) {
+    virtual void onPaint(QPainter& painter, const InteractionState& interaction) {
     }
 
-    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
+    virtual void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
     }
 
     virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
@@ -100,7 +100,7 @@ protected:
     virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
     }
 
-    static bool defaultInteractionPermitter(InteractionState const& interaction);
+    static bool defaultInteractionPermitter(const InteractionState& interaction);
 
 private:
     class HandlerList : public ref_countable, public boost::intrusive::list<

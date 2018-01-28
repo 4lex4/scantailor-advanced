@@ -56,9 +56,9 @@ namespace imageproc {
  * -# This implementation can handle dark surroundings around the page,
  *    provided they touch the edges, but it performs better without them.
  */
-imageproc::PolynomialSurface estimateBackground(imageproc::GrayImage const& input,
-                                                QPolygonF const& area_to_consider,
-                                                TaskStatus const& status,
+imageproc::PolynomialSurface estimateBackground(const imageproc::GrayImage& input,
+                                                const QPolygonF& area_to_consider,
+                                                const TaskStatus& status,
                                                 DebugImages* dbg = nullptr);
 
 #endif

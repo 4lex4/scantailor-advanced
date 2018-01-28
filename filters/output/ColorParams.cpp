@@ -23,13 +23,13 @@ namespace output {
             : m_colorMode(BLACK_AND_WHITE) {
     }
 
-    ColorParams::ColorParams(QDomElement const& el)
+    ColorParams::ColorParams(const QDomElement& el)
             : m_colorMode(parseColorMode(el.attribute("colorMode"))),
               m_colorCommonOptions(el.namedItem("color-or-grayscale").toElement()),
               m_bwOptions(el.namedItem("bw").toElement()) {
     }
 
-    QDomElement ColorParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement ColorParams::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("colorMode", formatColorMode(m_colorMode));
         el.appendChild(m_colorCommonOptions.toXml(doc, "color-or-grayscale"));
@@ -38,7 +38,7 @@ namespace output {
         return el;
     }
 
-    ColorMode ColorParams::parseColorMode(QString const& str) {
+    ColorMode ColorParams::parseColorMode(const QString& str) {
         if (str == "bw") {
             return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
@@ -50,8 +50,8 @@ namespace output {
         }
     }
 
-    QString ColorParams::formatColorMode(ColorMode const mode) {
-        char const* str = "";
+    QString ColorParams::formatColorMode(const ColorMode mode) {
+        const char* str = "";
         switch (mode) {
             case BLACK_AND_WHITE:
                 str = "bw";
@@ -75,19 +75,19 @@ namespace output {
         m_colorMode = mode;
     }
 
-    ColorCommonOptions const& ColorParams::colorCommonOptions() const {
+    const ColorCommonOptions& ColorParams::colorCommonOptions() const {
         return m_colorCommonOptions;
     }
 
-    void ColorParams::setColorCommonOptions(ColorCommonOptions const& opt) {
+    void ColorParams::setColorCommonOptions(const ColorCommonOptions& opt) {
         m_colorCommonOptions = opt;
     }
 
-    BlackWhiteOptions const& ColorParams::blackWhiteOptions() const {
+    const BlackWhiteOptions& ColorParams::blackWhiteOptions() const {
         return m_bwOptions;
     }
 
-    void ColorParams::setBlackWhiteOptions(BlackWhiteOptions const& opt) {
+    void ColorParams::setBlackWhiteOptions(const BlackWhiteOptions& opt) {
         m_bwOptions = opt;
     }
 }  // namespace output

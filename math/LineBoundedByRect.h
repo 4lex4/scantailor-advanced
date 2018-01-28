@@ -28,6 +28,6 @@
  * and returns true.  Otherwise returns false and leaves
  * \p line unmodified.
  */
-bool lineBoundedByRect(QLineF& line, QRectF const& rect);
+bool lineBoundedByRect(QLineF& line, const QRectF& rect);
 
 #endif

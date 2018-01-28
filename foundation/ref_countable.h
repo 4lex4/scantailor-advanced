@@ -31,11 +31,11 @@ public:
             : m_refCounter(0) {
     }
 
-    ref_countable(ref_countable const& other) {
+    ref_countable(const ref_countable& other) {
         // don't copy the reference counter!
     }
 
-    ref_countable& operator=(ref_countable const& other) {
+    ref_countable& operator=(const ref_countable& other) {
         // don't copy the reference counter!
 
         return *this;

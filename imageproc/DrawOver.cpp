@@ -23,7 +23,7 @@
 #include <cassert>
 
 namespace imageproc {
-    void drawOver(QImage& dst, QRect const& dst_rect, QImage const& src, QRect const& src_rect) {
+    void drawOver(QImage& dst, const QRect& dst_rect, const QImage& src, const QRect& src_rect) {
         if (src_rect.size() != dst_rect.size()) {
             throw std::invalid_argument("drawOver: source and destination areas have different sizes");
         }
@@ -38,12 +38,12 @@ namespace imageproc {
         }
 
         uint8_t* dst_line = dst.bits();
-        int const dst_bpl = dst.bytesPerLine();
+        const int dst_bpl = dst.bytesPerLine();
 
-        uint8_t const* src_line = src.bits();
-        int const src_bpl = src.bytesPerLine();
+        const uint8_t* src_line = src.bits();
+        const int src_bpl = src.bytesPerLine();
 
-        int const depth = src.depth();
+        const int depth = src.depth();
         assert(dst.depth() == depth);
 
         if (depth % 8 != 0) {
@@ -59,7 +59,7 @@ namespace imageproc {
             return;
         }
 
-        int const stripe_bytes = src_rect.width() * depth / 8;
+        const int stripe_bytes = src_rect.width() * depth / 8;
         dst_line += dst_bpl * dst_rect.top() + dst_rect.left() * depth / 8;
         src_line += src_bpl * src_rect.top() + src_rect.left() * depth / 8;
 

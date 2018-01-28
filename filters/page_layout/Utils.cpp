@@ -25,33 +25,33 @@
 #include <cassert>
 
 namespace page_layout {
-    QRectF Utils::adaptContentRect(ImageTransformation const& xform, QRectF const& content_rect) {
+    QRectF Utils::adaptContentRect(const ImageTransformation& xform, const QRectF& content_rect) {
         if (!content_rect.isEmpty()) {
             return content_rect;
         }
 
-        QPointF const center(xform.resultingRect().center());
-        QPointF const delta(0.01, 0.01);
+        const QPointF center(xform.resultingRect().center());
+        const QPointF delta(0.01, 0.01);
 
         return QRectF(center - delta, center + delta);
     }
 
-    QSizeF Utils::calcRectSizeMM(ImageTransformation const& xform, QRectF const& rect) {
-        PhysicalTransformation const phys_xform(xform.origDpi());
-        QTransform const virt_to_mm(xform.transformBack() * phys_xform.pixelsToMM());
+    QSizeF Utils::calcRectSizeMM(const ImageTransformation& xform, const QRectF& rect) {
+        const PhysicalTransformation phys_xform(xform.origDpi());
+        const QTransform virt_to_mm(xform.transformBack() * phys_xform.pixelsToMM());
 
-        QLineF const hor_line(rect.topLeft(), rect.topRight());
-        QLineF const ver_line(rect.topLeft(), rect.bottomLeft());
+        const QLineF hor_line(rect.topLeft(), rect.topRight());
+        const QLineF ver_line(rect.topLeft(), rect.bottomLeft());
 
-        double const width = virt_to_mm.map(hor_line).length();
-        double const height = virt_to_mm.map(ver_line).length();
+        const double width = virt_to_mm.map(hor_line).length();
+        const double height = virt_to_mm.map(ver_line).length();
 
         return QSizeF(width, height);
     }
 
-    void Utils::extendPolyRectWithMargins(QPolygonF& poly_rect, Margins const& margins) {
-        QPointF const down_uv(getDownUnitVector(poly_rect));
-        QPointF const right_uv(getRightUnitVector(poly_rect));
+    void Utils::extendPolyRectWithMargins(QPolygonF& poly_rect, const Margins& margins) {
+        const QPointF down_uv(getDownUnitVector(poly_rect));
+        const QPointF right_uv(getRightUnitVector(poly_rect));
 
         // top-left
         poly_rect[0] -= down_uv * margins.top();
@@ -77,12 +77,12 @@ namespace page_layout {
     }
 
     Margins
-    Utils::calcMarginsMM(ImageTransformation const& xform, QRectF const& page_rect, QRectF const& content_rect) {
-        QSizeF const content_size_mm(
+    Utils::calcMarginsMM(const ImageTransformation& xform, const QRectF& page_rect, const QRectF& content_rect) {
+        const QSizeF content_size_mm(
                 Utils::calcRectSizeMM(xform, content_rect)
         );
 
-        QSizeF const page_size_mm(
+        const QSizeF page_size_mm(
                 Utils::calcRectSizeMM(xform, page_rect)
         );
 
@@ -107,11 +107,11 @@ namespace page_layout {
         return Margins(lMM, tMM, rMM, bMM);
     }
 
-    Margins Utils::calcSoftMarginsMM(QSizeF const& hard_size_mm,
-                                     QSizeF const& aggregate_hard_size_mm,
-                                     Alignment const& alignment,
-                                     QRectF const& contentRect,
-                                     QRectF const& agg_content_rect) {
+    Margins Utils::calcSoftMarginsMM(const QSizeF& hard_size_mm,
+                                     const QSizeF& aggregate_hard_size_mm,
+                                     const Alignment& alignment,
+                                     const QRectF& contentRect,
+                                     const QRectF& agg_content_rect) {
         if (alignment.isNull()) {
 #ifdef DEBUG
             std::cout << "\tskip soft margins: " << "\n";
@@ -141,9 +141,9 @@ namespace page_layout {
         double left = 0.0;
         double right = 0.0;
 
-        double const delta_width
+        const double delta_width
                 = aggregate_hard_size_mm.width() - hard_size_mm.width();
-        double const delta_height
+        const double delta_height
                 = aggregate_hard_size_mm.height() - hard_size_mm.height();
 
         double leftBorder
@@ -299,17 +299,17 @@ namespace page_layout {
         return Margins(left, top, right, bottom);
     }  // Utils::calcSoftMarginsMM
 
-    QPolygonF Utils::calcPageRectPhys(ImageTransformation const& xform,
-                                      QPolygonF const& content_rect_phys,
-                                      Params const& params,
-                                      QSizeF const& aggregate_hard_size_mm,
-                                      QRectF const& agg_content_rect) {
-        PhysicalTransformation const phys_xform(xform.origDpi());
+    QPolygonF Utils::calcPageRectPhys(const ImageTransformation& xform,
+                                      const QPolygonF& content_rect_phys,
+                                      const Params& params,
+                                      const QSizeF& aggregate_hard_size_mm,
+                                      const QRectF& agg_content_rect) {
+        const PhysicalTransformation phys_xform(xform.origDpi());
 
         QPolygonF poly_mm(phys_xform.pixelsToMM().map(content_rect_phys));
         extendPolyRectWithMargins(poly_mm, params.hardMarginsMM());
 
-        QSizeF const hard_size_mm(
+        const QSizeF hard_size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
                 QLineF(poly_mm[0], poly_mm[3]).length()
         );
@@ -324,16 +324,16 @@ namespace page_layout {
         return phys_xform.mmToPixels().map(poly_mm);
     }
 
-    QPointF Utils::getRightUnitVector(QPolygonF const& poly_rect) {
-        QPointF const top_left(poly_rect[0]);
-        QPointF const top_right(poly_rect[1]);
+    QPointF Utils::getRightUnitVector(const QPolygonF& poly_rect) {
+        const QPointF top_left(poly_rect[0]);
+        const QPointF top_right(poly_rect[1]);
 
         return QLineF(top_left, top_right).unitVector().p2() - top_left;
     }
 
-    QPointF Utils::getDownUnitVector(QPolygonF const& poly_rect) {
-        QPointF const top_left(poly_rect[0]);
-        QPointF const bottom_left(poly_rect[3]);
+    QPointF Utils::getDownUnitVector(const QPolygonF& poly_rect) {
+        const QPointF top_left(poly_rect[0]);
+        const QPointF bottom_left(poly_rect[3]);
 
         return QLineF(top_left, bottom_left).unitVector().p2() - top_left;
     }

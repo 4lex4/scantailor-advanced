@@ -73,7 +73,7 @@ public:
                 AVOID_SCROLLING_TO = 1 << 2
     };
 
-    explicit ThumbnailSequence(QSizeF const& max_logical_thumb_size);
+    explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size);
 
     ~ThumbnailSequence() override;
 
@@ -93,7 +93,7 @@ public:
      *        and insert().  A null order provider indicates to keep the
      *        order of ProjectPages.
      */
-    void reset(PageSequence const& pages,
+    void reset(const PageSequence& pages,
                SelectionAction selection_action,
                intrusive_ptr<PageOrderProvider const> order_provider = nullptr);
 
@@ -115,13 +115,13 @@ public:
      *       one thumbnail at once, use invalidateAllThumbnails()
      *       instead of sequentially calling invalidateThumbnail().
      */
-    void invalidateThumbnail(PageId const& page_id);
+    void invalidateThumbnail(const PageId& page_id);
 
     /**
      * This signature differs from invalidateThumbnail(PageId) in that
      * it will cause PageInfo stored by ThumbnailSequence to be updated.
      */
-    void invalidateThumbnail(PageInfo const& page_info);
+    void invalidateThumbnail(const PageInfo& page_info);
 
     /**
      * \brief Updates appearence of all thumbnails and possibly their order.
@@ -141,7 +141,7 @@ public:
      * with REDUNDANT_SELECTION flag set, in case our page was already the
      * selection leader.
      */
-    bool setSelection(PageId const& page_id);
+    bool setSelection(const PageId& page_id);
 
     /**
      * \brief Returns the current selection leader.
@@ -156,7 +156,7 @@ public:
      * A null PageInfo is returned if the given page wasn't found or
      * there are no pages preceeding it.
      */
-    PageInfo prevPage(PageId const& reference_page) const;
+    PageInfo prevPage(const PageId& reference_page) const;
 
     /**
      * \brief Returns the page immediately following the given one.
@@ -164,7 +164,7 @@ public:
      * A null PageInfo is returned if the given page wasn't found or
      * there are no pages following it.
      */
-    PageInfo nextPage(PageId const& reference_page) const;
+    PageInfo nextPage(const PageId& reference_page) const;
 
     /**
      * \brief Returns the first page in the sequence.
@@ -193,9 +193,9 @@ public:
      * be inserted, unless the request is to insert BEFORE a null ImageId(),
      * which would cause insertion at the end.
      */
-    void insert(PageInfo const& new_page, BeforeOrAfter before_or_after, ImageId const& image);
+    void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
 
-    void removePages(std::set<PageId> const& pages);
+    void removePages(const std::set<PageId>& pages);
 
     /**
      * \brief The bounding rectangle in scene coordinates of the selection leader.
@@ -210,20 +210,20 @@ public:
 
 signals:
 
-    void newSelectionLeader(PageInfo const& page_info, QRectF const& thumb_rect,
+    void newSelectionLeader(const PageInfo& page_info, const QRectF& thumb_rect,
                             ThumbnailSequence::SelectionFlags flags);
 
     /**
      * Emitted when a user right-clicks on a page thumbnail.
      */
-    void pageContextMenuRequested(PageInfo const& page_info, QPoint const& screen_pos, bool selected);
+    void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
 
     /**
      * Emitted when a user right clicks on area below the last page.
      * In the absence of any pages, all the area is considered to be
      * below the last page.
      */
-    void pastLastPageContextMenuRequested(QPoint const& screen_pos);
+    void pastLastPageContextMenuRequested(const QPoint& screen_pos);
 
 private:
     class Item;
@@ -233,7 +233,7 @@ private:
     class LabelGroup;
     class CompositeItem;
 
-    void emitNewSelectionLeader(PageInfo const& page_info, CompositeItem const* composite, SelectionFlags flags);
+    void emitNewSelectionLeader(const PageInfo& page_info, const CompositeItem* composite, SelectionFlags flags);
 
     std::unique_ptr<Impl> m_ptrImpl;
 };

@@ -35,7 +35,7 @@
 #include <utility>
 
 namespace output {
-    static QRgb const mask_color = 0xff587ff4;
+    static const QRgb mask_color = 0xff587ff4;
 
     using namespace imageproc;
 
@@ -45,15 +45,15 @@ namespace output {
 
     public:
         MaskTransformTask(PictureZoneEditor* zone_editor,
-                          BinaryImage const& mask,
-                          QTransform const& xform,
-                          QSize const& target_size);
+                          const BinaryImage& mask,
+                          const QTransform& xform,
+                          const QSize& target_size);
 
         void cancel() {
             m_ptrResult->cancel();
         }
 
-        bool const isCancelled() const {
+        const bool isCancelled() const {
             return m_ptrResult->isCancelled();
         }
 
@@ -64,7 +64,7 @@ namespace output {
         public:
             explicit Result(PictureZoneEditor* zone_editor);
 
-            void setData(QPoint const& origin, QImage const& mask);
+            void setData(const QPoint& origin, const QImage& mask);
 
             void cancel() {
                 m_cancelFlag.fetchAndStoreRelaxed(1);
@@ -91,12 +91,12 @@ namespace output {
     };
 
 
-    PictureZoneEditor::PictureZoneEditor(QImage const& image,
-                                         ImagePixmapUnion const& downscaled_image,
-                                         imageproc::BinaryImage const& picture_mask,
-                                         QTransform const& image_to_virt,
-                                         QPolygonF const& virt_display_area,
-                                         PageId const& page_id,
+    PictureZoneEditor::PictureZoneEditor(const QImage& image,
+                                         const ImagePixmapUnion& downscaled_image,
+                                         const imageproc::BinaryImage& picture_mask,
+                                         const QTransform& image_to_virt,
+                                         const QPolygonF& virt_display_area,
+                                         const PageId& page_id,
                                          intrusive_ptr<Settings> settings)
             : ImageViewBase(
             image, downscaled_image,
@@ -138,7 +138,7 @@ namespace output {
         m_pictureMaskRebuildTimer.setSingleShot(true);
         m_pictureMaskRebuildTimer.setInterval(150);
 
-        for (Zone const& zone : m_ptrSettings->pictureZonesForPage(page_id)) {
+        for (const Zone& zone : m_ptrSettings->pictureZonesForPage(page_id)) {
             EditableSpline::Ptr spline(new EditableSpline(zone.spline()));
             m_zones.addZone(spline, zone.properties());
         }
@@ -148,16 +148,16 @@ namespace output {
         m_ptrSettings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
     }
 
-    void PictureZoneEditor::onPaint(QPainter& painter, InteractionState const& interaction) {
+    void PictureZoneEditor::onPaint(QPainter& painter, const InteractionState& interaction) {
         painter.setWorldTransform(QTransform());
         painter.setRenderHint(QPainter::Antialiasing);
 
         if (!validateScreenPictureMask()) {
             schedulePictureMaskRebuild();
         } else {
-            double const sn = sin(constants::DEG2RAD * m_pictureMaskAnimationPhase);
-            double const scale = 0.5 * (sn + 1.0);  // 0 .. 1
-            double const opacity = 0.35 * scale + 0.15;
+            const double sn = sin(constants::DEG2RAD * m_pictureMaskAnimationPhase);
+            const double scale = 0.5 * (sn + 1.0);  // 0 .. 1
+            const double opacity = 0.35 * scale + 0.15;
 
             QPixmap mask(m_screenPictureMask.rect().size());
             mask.fill(Qt::transparent);
@@ -212,8 +212,8 @@ namespace output {
             m_ptrMaskTransformTask.reset();
         }
 
-        QTransform const xform(virtualToWidget());
-        intrusive_ptr<MaskTransformTask> const task(
+        const QTransform xform(virtualToWidget());
+        const intrusive_ptr<MaskTransformTask> task(
                 new MaskTransformTask(this, m_origPictureMask, xform, viewport()->size())
         );
 
@@ -224,7 +224,7 @@ namespace output {
         m_screenPictureMaskXform = xform;
     }
 
-    void PictureZoneEditor::screenPictureMaskBuilt(QPoint const& origin, QImage const& mask) {
+    void PictureZoneEditor::screenPictureMaskBuilt(const QPoint& origin, const QImage& mask) {
         m_screenPictureMask = QPixmap::fromImage(mask);
         m_screenPictureMaskOrigin = origin;
         m_pictureMaskAnimationPhase = 270;
@@ -244,7 +244,7 @@ namespace output {
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
         // First pass: ERASER1
-        for (EditableZoneSet::Zone const& zone : m_zones) {
+        for (const EditableZoneSet::Zone& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
             }
@@ -253,7 +253,7 @@ namespace output {
         painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
         // Second pass: PAINTER2
-        for (EditableZoneSet::Zone const& zone : m_zones) {
+        for (const EditableZoneSet::Zone& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
             }
@@ -262,14 +262,14 @@ namespace output {
         painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
         // Third pass: ERASER3
-        for (EditableZoneSet::Zone const& zone : m_zones) {
+        for (const EditableZoneSet::Zone& zone : m_zones) {
             if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
                 painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
             }
         }
     }  // PictureZoneEditor::paintOverPictureMask
 
-    void PictureZoneEditor::showPropertiesDialog(EditableZoneSet::Zone const& zone) {
+    void PictureZoneEditor::showPropertiesDialog(const EditableZoneSet::Zone& zone) {
         PropertySet saved_properties;
         zone.properties()->swap(saved_properties);
         *zone.properties() = saved_properties;
@@ -293,7 +293,7 @@ namespace output {
     void PictureZoneEditor::commitZones() {
         ZoneSet zones;
 
-        for (EditableZoneSet::Zone const& zone : m_zones) {
+        for (const EditableZoneSet::Zone& zone : m_zones) {
             zones.add(Zone(*zone.spline(), *zone.properties()));
         }
 
@@ -309,9 +309,9 @@ namespace output {
 /*============================= MaskTransformTask ===============================*/
 
     PictureZoneEditor::MaskTransformTask::MaskTransformTask(PictureZoneEditor* zone_editor,
-                                                            BinaryImage const& mask,
-                                                            QTransform const& xform,
-                                                            QSize const& target_size)
+                                                            const BinaryImage& mask,
+                                                            const QTransform& xform,
+                                                            const QSize& target_size)
             : m_ptrResult(new Result(zone_editor)),
               m_origMask(mask),
               m_xform(xform),
@@ -324,7 +324,7 @@ namespace output {
             return nullptr;
         }
 
-        QRect const target_rect(
+        const QRect target_rect(
                 m_xform.map(
                         QRectF(m_origMask.rect())
                 ).boundingRect().toRect().intersected(
@@ -354,7 +354,7 @@ namespace output {
             : m_ptrZoneEditor(zone_editor) {
     }
 
-    void PictureZoneEditor::MaskTransformTask::Result::setData(QPoint const& origin, QImage const& mask) {
+    void PictureZoneEditor::MaskTransformTask::Result::setData(const QPoint& origin, const QImage& mask) {
         m_mask = mask;
         m_origin = origin;
     }

@@ -38,21 +38,21 @@ namespace output {
     class DespeckleState {
         // Member-wise copying is OK.
     public:
-        DespeckleState(QImage const& output,
-                       imageproc::BinaryImage const& speckles,
+        DespeckleState(const QImage& output,
+                       const imageproc::BinaryImage& speckles,
                        DespeckleLevel level,
-                       Dpi const& dpi);
+                       const Dpi& dpi);
 
         DespeckleLevel level() const;
 
         DespeckleVisualization visualize() const;
 
-        DespeckleState redespeckle(DespeckleLevel level, TaskStatus const& status, DebugImages* dbg = nullptr) const;
+        DespeckleState redespeckle(DespeckleLevel level, const TaskStatus& status, DebugImages* dbg = nullptr) const;
 
     private:
-        static QImage overlaySpeckles(QImage const& mixed, imageproc::BinaryImage const& speckles);
+        static QImage overlaySpeckles(const QImage& mixed, const imageproc::BinaryImage& speckles);
 
-        static imageproc::BinaryImage extractBW(QImage const& mixed);
+        static imageproc::BinaryImage extractBW(const QImage& mixed);
 
         /**
          * This image is the output image produced by OutputGenerator

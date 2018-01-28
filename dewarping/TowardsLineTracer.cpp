@@ -28,10 +28,10 @@
 using namespace imageproc;
 
 namespace dewarping {
-    TowardsLineTracer::TowardsLineTracer(imageproc::SEDM const* dm,
-                                         Grid<float> const* pm,
-                                         QLineF const& line,
-                                         QPoint const& initial_pos)
+    TowardsLineTracer::TowardsLineTracer(const imageproc::SEDM* dm,
+                                         const Grid<float>* pm,
+                                         const QLineF& line,
+                                         const QPoint& initial_pos)
             : m_pDmData(dm->data()),
               m_dmStride(dm->stride()),
               m_pPmData(pm->data()),
@@ -50,18 +50,18 @@ namespace dewarping {
         setupSteps();
     }
 
-    QPoint const* TowardsLineTracer::trace(float const max_dist) {
+    const QPoint* TowardsLineTracer::trace(const float max_dist) {
         if (m_finished) {
             return nullptr;
         }
 
-        int const max_sqdist = qRound(max_dist * max_dist);
+        const int max_sqdist = qRound(max_dist * max_dist);
 
         QPoint cur_pos(m_lastOutputPos);
         QPoint last_content_pos(-1, -1);
 
-        uint32_t const* p_dm = m_pDmData + cur_pos.y() * m_dmStride + cur_pos.x();
-        float const* p_pm = m_pPmData + cur_pos.y() * m_pmStride + cur_pos.x();
+        const uint32_t* p_dm = m_pDmData + cur_pos.y() * m_dmStride + cur_pos.x();
+        const float* p_pm = m_pPmData + cur_pos.y() * m_pmStride + cur_pos.x();
 
         for (;;) {
             int best_dm_idx = -1;
@@ -70,18 +70,18 @@ namespace dewarping {
             float best_probability = NumericTraits<float>::min();
 
             for (int i = 0; i < m_numSteps; ++i) {
-                Step const& step = m_steps[i];
-                QPoint const new_pos(cur_pos + step.vec);
+                const Step& step = m_steps[i];
+                const QPoint new_pos(cur_pos + step.vec);
                 if (!m_rect.contains(new_pos)) {
                     continue;
                 }
 
-                uint32_t const sqd = p_dm[step.dmOffset];
+                const uint32_t sqd = p_dm[step.dmOffset];
                 if (sqd > best_squared_dist) {
                     best_squared_dist = sqd;
                     best_dm_idx = i;
                 }
-                float const probability = p_pm[step.pmOffset];
+                const float probability = p_pm[step.pmOffset];
                 if (probability > best_probability) {
                     best_probability = probability;
                     best_pm_idx = i;
@@ -112,7 +112,7 @@ namespace dewarping {
             p_dm += step.dmOffset;
             p_pm += step.pmOffset;
 
-            QPoint const vec(cur_pos - m_lastOutputPos);
+            const QPoint vec(cur_pos - m_lastOutputPos);
             if (vec.x() * vec.x() + vec.y() * vec.y() > max_sqdist) {
                 m_lastOutputPos = cur_pos;
 
@@ -132,8 +132,8 @@ namespace dewarping {
     void TowardsLineTracer::setupSteps() {
         QPoint all_directions[8];
         // all_directions[0] is north-west, and then clockwise from there.
-        static int const m0p[] = { -1, 0, 1 };
-        static int const p0m[] = { 1, 0, -1 };
+        static const int m0p[] = { -1, 0, 1 };
+        static const int p0m[] = { 1, 0, -1 };
 
         for (int i = 0; i < 3; ++i) {
             // north
@@ -154,7 +154,7 @@ namespace dewarping {
         }
 
         m_numSteps = 0;
-        for (QPoint const dir : all_directions) {
+        for (const QPoint dir : all_directions) {
             if (m_normalTowardsLine.dot(QPointF(dir)) > 0.0) {
                 Step& step = m_steps[m_numSteps];
                 step.vec = dir;
@@ -171,8 +171,8 @@ namespace dewarping {
         using namespace boost::lambda;
         std::sort(
                 m_steps, m_steps + m_numSteps,
-                bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _1))
-                > bind(&Vec2d::dot, m_normalTowardsLine, bind<Vec2d const&>(&Step::unitVec, _2))
+                bind(&Vec2d::dot, m_normalTowardsLine, bind<const Vec2d&>(&Step::unitVec, _1))
+                > bind(&Vec2d::dot, m_normalTowardsLine, bind<const Vec2d&>(&Step::unitVec, _2))
         );
     }  // TowardsLineTracer::setupSteps
 }  // namespace dewarping

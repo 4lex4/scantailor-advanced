@@ -36,12 +36,12 @@ namespace output {
     public:
         ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context);
 
-        void startInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
+        void startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction);
 
-        bool isActive(InteractionState const& interaction) const;
+        bool isActive(const InteractionState& interaction) const;
 
     protected:
-        void onPaint(QPainter& painter, InteractionState const& interaction) override;
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
         void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
@@ -66,8 +66,8 @@ namespace output {
         intrusive_ptr<FillColorProperty> m_ptrFillColorProp;
         int m_dontDrawCircle;
 
-        static uint32_t const m_sBitMixingLUT[3][256];
-        static uint32_t const m_sBitUnmixingLUT[3][256];
+        static const uint32_t m_sBitMixingLUT[3][256];
+        static const uint32_t m_sBitUnmixingLUT[3][256];
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_PICKUP_INTERACTION_H_

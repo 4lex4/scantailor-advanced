@@ -19,8 +19,8 @@
 #include "StageSequence.h"
 #include "ProjectPages.h"
 
-StageSequence::StageSequence(intrusive_ptr<ProjectPages> const& pages,
-                             PageSelectionAccessor const& page_selection_accessor)
+StageSequence::StageSequence(const intrusive_ptr<ProjectPages>& pages,
+                             const PageSelectionAccessor& page_selection_accessor)
         : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
           m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
           m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
@@ -46,15 +46,15 @@ StageSequence::StageSequence(intrusive_ptr<ProjectPages> const& pages,
     m_filters.emplace_back(m_ptrOutputFilter);
 }
 
-void StageSequence::performRelinking(AbstractRelinker const& relinker) {
+void StageSequence::performRelinking(const AbstractRelinker& relinker) {
     for (FilterPtr& filter : m_filters) {
         filter->performRelinking(relinker);
     }
 }
 
-int StageSequence::findFilter(FilterPtr const& filter) const {
+int StageSequence::findFilter(const FilterPtr& filter) const {
     int idx = 0;
-    for (FilterPtr const& f : m_filters) {
+    for (const FilterPtr& f : m_filters) {
         if (f == filter) {
             return idx;
         }

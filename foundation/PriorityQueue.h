@@ -30,7 +30,7 @@
  * \tparam T The type of objects to be stored in the priority queue.
  * \param SubClass A sub class of this class that will be implementing the following:
  *        \li void setIndex(T& obj, size_t heap_idx);
- *        \li bool higherThan(T const& lhs, T const& rhs) const;
+ *        \li bool higherThan(const T& lhs, const T& rhs) const;
  *
  * Also note that this implementation will benefit from a standalone
  * \code
@@ -69,11 +69,11 @@ public:
         return m_index.front();
     }
 
-    T const& front() const {
+    const T& front() const {
         return m_index.front();
     }
 
-    void push(T const& obj);
+    void push(const T& obj);
 
     /**
      * Like push(), but implemented through swapping \p obj with a default
@@ -117,8 +117,8 @@ private:
         return static_cast<SubClass*>(this);
     }
 
-    SubClass const* subClass() const {
-        return static_cast<SubClass const*>(this);
+    const SubClass* subClass() const {
+        return static_cast<const SubClass*>(this);
     }
 
     size_t bubbleUp(size_t idx);
@@ -135,8 +135,8 @@ inline void swap(PriorityQueue<T, SubClass>& o1, PriorityQueue<T, SubClass>& o2)
 }
 
 template<typename T, typename SubClass>
-void PriorityQueue<T, SubClass>::push(T const& obj) {
-    size_t const idx = m_index.size();
+void PriorityQueue<T, SubClass>::push(const T& obj) {
+    const size_t idx = m_index.size();
     m_index.push_back(obj);
     subClass()->setIndex(m_index.back(), idx);
     bubbleUp(idx);
@@ -146,7 +146,7 @@ template<typename T, typename SubClass>
 void PriorityQueue<T, SubClass>::pushDestructive(T& obj) {
     using namespace std;
 
-    size_t const idx = m_index.size();
+    const size_t idx = m_index.size();
     m_index.push_back(T());
     swap(m_index.back(), obj);
     subClass()->setIndex(m_index.back(), idx);
@@ -185,7 +185,7 @@ void PriorityQueue<T, SubClass>::retrieveFront(T& obj) {
 }
 
 template<typename T, typename SubClass>
-void PriorityQueue<T, SubClass>::erase(size_t const idx) {
+void PriorityQueue<T, SubClass>::erase(const size_t idx) {
     using namespace std;
 
     swap(m_index[idx], m_index.back());
@@ -196,7 +196,7 @@ void PriorityQueue<T, SubClass>::erase(size_t const idx) {
 }
 
 template<typename T, typename SubClass>
-void PriorityQueue<T, SubClass>::reposition(size_t const idx) {
+void PriorityQueue<T, SubClass>::reposition(const size_t idx) {
     bubbleUp(bubbleDown(idx));
 }
 
@@ -210,7 +210,7 @@ size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     assert(idx < m_index.size());
 
     while (idx > 0) {
-        size_t const parent_idx = parent(idx);
+        const size_t parent_idx = parent(idx);
         if (!subClass()->higherThan(m_index[idx], m_index[parent_idx])) {
             break;
         }
@@ -227,15 +227,15 @@ template<typename T, typename SubClass>
 size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     using namespace std;
 
-    size_t const len = m_index.size();
+    const size_t len = m_index.size();
     assert(idx < len);
 
     // While any child is greater than the element itself,
     // swap it with the greatest child.
 
     for (;;) {
-        size_t const lft = left(idx);
-        size_t const rgt = right(idx);
+        const size_t lft = left(idx);
+        const size_t rgt = right(idx);
         size_t best_child;
 
         if (rgt < len) {

@@ -65,7 +65,7 @@ namespace {
 static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
     auto* io_device = (QIODevice*) png_get_io_ptr(png_ptr);
     while (length > 0) {
-        qint64 const read = io_device->read((char*) data, length);
+        const qint64 read = io_device->read((char*) data, length);
         if (read <= 0) {
             png_error(png_ptr, "Read Error");
 
@@ -86,7 +86,7 @@ void PngMetadataLoader::registerMyself() {
 }
 
 ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device,
-                                                            VirtualFunction1<void, ImageMetadata const&>& out) {
+                                                            VirtualFunction1<void, const ImageMetadata&>& out) {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }

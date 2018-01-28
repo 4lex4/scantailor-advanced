@@ -35,7 +35,7 @@ public:
     explicit DragHandler(ImageViewBase& image_view);
 
     DragHandler(ImageViewBase& image_view,
-                boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter);
+                boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter);
 
     bool isActive() const;
 
@@ -52,7 +52,7 @@ private:
     ImageViewBase& m_rImageView;
     InteractionState::Captor m_interaction;
     QPoint m_lastMousePos;
-    boost::function<bool(InteractionState const&)> m_interactionPermitter;
+    boost::function<bool(const InteractionState&)> m_interactionPermitter;
 };
 
 

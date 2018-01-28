@@ -32,9 +32,9 @@ namespace page_layout {
               m_tolerance(DEFAULT_TOLERANCE) {
     }
 
-    Alignment::Alignment(QDomElement const& el) {
-        QString const vert(el.attribute("vert"));
-        QString const hor(el.attribute("hor"));
+    Alignment::Alignment(const QDomElement& el) {
+        const QString vert(el.attribute("vert"));
+        const QString hor(el.attribute("hor"));
         m_isNull = el.attribute("null").toInt() != 0;
         m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
 
@@ -63,8 +63,8 @@ namespace page_layout {
         }
     }
 
-    QDomElement Alignment::toXml(QDomDocument& doc, QString const& name) const {
-        char const* vert = nullptr;
+    QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
+        const char* vert = nullptr;
         switch (m_vert) {
             case TOP:
                 vert = "top";
@@ -83,7 +83,7 @@ namespace page_layout {
                 break;
         }
 
-        char const* hor = nullptr;
+        const char* hor = nullptr;
         switch (m_hor) {
             case LEFT:
                 hor = "left";
@@ -111,13 +111,13 @@ namespace page_layout {
         return el;
     }
 
-    bool Alignment::operator==(Alignment const& other) const {
+    bool Alignment::operator==(const Alignment& other) const {
         return (m_vert == other.m_vert)
                && (m_hor == other.m_hor)
                && (m_isNull == other.m_isNull);
     }
 
-    bool Alignment::operator!=(Alignment const& other) const {
+    bool Alignment::operator!=(const Alignment& other) const {
         return !(*this == other);
     }
 

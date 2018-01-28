@@ -21,9 +21,9 @@
 #include <QDomDocument>
 
 namespace output {
-    char const PictureLayerProperty::m_propertyName[] = "PictureZoneProperty";
+    const char PictureLayerProperty::m_propertyName[] = "PictureZoneProperty";
 
-    PictureLayerProperty::PictureLayerProperty(QDomElement const& el)
+    PictureLayerProperty::PictureLayerProperty(const QDomElement& el)
             : m_layer(layerFromString(el.attribute("layer"))) {
     }
 
@@ -36,7 +36,7 @@ namespace output {
         return intrusive_ptr<Property>(new PictureLayerProperty(*this));
     }
 
-    QDomElement PictureLayerProperty::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("type", m_propertyName);
         el.setAttribute("layer", layerToString(m_layer));
@@ -45,11 +45,11 @@ namespace output {
     }
 
     intrusive_ptr<Property>
-    PictureLayerProperty::construct(QDomElement const& el) {
+    PictureLayerProperty::construct(const QDomElement& el) {
         return intrusive_ptr<Property>(new PictureLayerProperty(el));
     }
 
-    PictureLayerProperty::Layer PictureLayerProperty::layerFromString(QString const& str) {
+    PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString& str) {
         if (str == "eraser1") {
             return ERASER1;
         } else if (str == "painter2") {
@@ -62,7 +62,7 @@ namespace output {
     }
 
     QString PictureLayerProperty::layerToString(Layer layer) {
-        char const* str = nullptr;
+        const char* str = nullptr;
 
         switch (layer) {
             case ERASER1:

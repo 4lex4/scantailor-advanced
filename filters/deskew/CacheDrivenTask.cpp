@@ -36,10 +36,10 @@ namespace deskew {
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform) {
-        Dependencies const deps(xform.preCropArea(), xform.preRotation());
+                                  const ImageTransformation& xform) {
+        const Dependencies deps(xform.preCropArea(), xform.preRotation());
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
         if (!params || (!deps.matches(params->dependencies())
                         && (params->mode() == MODE_AUTO))) {

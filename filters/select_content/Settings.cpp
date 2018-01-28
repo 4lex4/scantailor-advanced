@@ -38,12 +38,12 @@ namespace select_content {
         m_pageParams.clear();
     }
 
-    void Settings::performRelinking(AbstractRelinker const& relinker) {
+    void Settings::performRelinking(const AbstractRelinker& relinker) {
         QMutexLocker locker(&m_mutex);
         PageParams new_params;
 
-        for (PageParams::value_type const& kv : m_pageParams) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PageParams::value_type& kv : m_pageParams) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_params.insert(PageParams::value_type(new_page_id, kv.second));
@@ -76,21 +76,21 @@ namespace select_content {
 #endif
     }
 
-    void Settings::setPageParams(PageId const& page_id, Params const& params) {
+    void Settings::setPageParams(const PageId& page_id, const Params& params) {
         QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_pageParams, page_id, params);
     }
 
-    void Settings::clearPageParams(PageId const& page_id) {
+    void Settings::clearPageParams(const PageId& page_id) {
         QMutexLocker locker(&m_mutex);
         m_pageParams.erase(page_id);
     }
 
     std::unique_ptr<Params>
-    Settings::getPageParams(PageId const& page_id) const {
+    Settings::getPageParams(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        auto const it(m_pageParams.find(page_id));
+        const auto it(m_pageParams.find(page_id));
         if (it != m_pageParams.end()) {
             return std::make_unique<Params>(it->second);
         } else {
@@ -98,7 +98,7 @@ namespace select_content {
         }
     }
 
-    bool Settings::isParamsNull(PageId const& page_id) const {
+    bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
         return m_pageParams.count(page_id) == 0;

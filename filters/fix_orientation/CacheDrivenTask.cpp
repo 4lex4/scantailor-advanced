@@ -37,8 +37,8 @@ namespace fix_orientation {
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info, AbstractFilterDataCollector* collector) {
-        QRectF const initial_rect(QPointF(0.0, 0.0), page_info.metadata().size());
+    void CacheDrivenTask::process(const PageInfo& page_info, AbstractFilterDataCollector* collector) {
+        const QRectF initial_rect(QPointF(0.0, 0.0), page_info.metadata().size());
         ImageTransformation xform(initial_rect, page_info.metadata().dpi());
         xform.setPreRotation(m_ptrSettings->getRotationFor(page_info.imageId()));
 

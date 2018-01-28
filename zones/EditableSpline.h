@@ -49,9 +49,9 @@ public:
 
     EditableSpline();
 
-    EditableSpline(SerializableSpline const& spline);
+    EditableSpline(const SerializableSpline& spline);
 
-    void appendVertex(QPointF const& pt);
+    void appendVertex(const QPointF& pt);
 
     SplineVertex::Ptr firstVertex() const {
         return m_sentinel.firstVertex();

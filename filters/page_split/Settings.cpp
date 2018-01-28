@@ -35,12 +35,12 @@ namespace page_split {
         m_defaultLayoutType = AUTO_LAYOUT_TYPE;
     }
 
-    void Settings::performRelinking(AbstractRelinker const& relinker) {
+    void Settings::performRelinking(const AbstractRelinker& relinker) {
         QMutexLocker locker(&m_mutex);
         PerPageRecords new_records;
 
-        for (PerPageRecords::value_type const& kv : m_perPageRecords) {
-            RelinkablePath const old_path(kv.first.filePath(), RelinkablePath::File);
+        for (const PerPageRecords::value_type& kv : m_perPageRecords) {
+            const RelinkablePath old_path(kv.first.filePath(), RelinkablePath::File);
             ImageId new_image_id(kv.first);
             new_image_id.setFilePath(relinker.substitutionPathFor(old_path));
             new_records.insert(PerPageRecords::value_type(new_image_id, kv.second));
@@ -55,11 +55,11 @@ namespace page_split {
         return m_defaultLayoutType;
     }
 
-    void Settings::setLayoutTypeForAllPages(LayoutType const layout_type) {
+    void Settings::setLayoutTypeForAllPages(const LayoutType layout_type) {
         QMutexLocker locker(&m_mutex);
 
         auto it(m_perPageRecords.begin());
-        auto const end(m_perPageRecords.end());
+        const auto end(m_perPageRecords.end());
         while (it != end) {
             if (it->second.hasLayoutTypeConflict(layout_type)) {
                 m_perPageRecords.erase(it++);
@@ -72,23 +72,23 @@ namespace page_split {
         m_defaultLayoutType = layout_type;
     }
 
-    void Settings::setLayoutTypeFor(LayoutType const layout_type, std::set<PageId> const& pages) {
+    void Settings::setLayoutTypeFor(const LayoutType layout_type, const std::set<PageId>& pages) {
         QMutexLocker locker(&m_mutex);
 
         UpdateAction action;
 
-        for (PageId const& page_id : pages) {
+        for (const PageId& page_id : pages) {
             updatePageLocked(page_id.imageId(), action);
         }
     }
 
-    Settings::Record Settings::getPageRecord(ImageId const& image_id) const {
+    Settings::Record Settings::getPageRecord(const ImageId& image_id) const {
         QMutexLocker locker(&m_mutex);
 
         return getPageRecordLocked(image_id);
     }
 
-    Settings::Record Settings::getPageRecordLocked(ImageId const& image_id) const {
+    Settings::Record Settings::getPageRecordLocked(const ImageId& image_id) const {
         auto it(m_perPageRecords.find(image_id));
         if (it == m_perPageRecords.end()) {
             return Record(m_defaultLayoutType);
@@ -97,12 +97,12 @@ namespace page_split {
         }
     }
 
-    void Settings::updatePage(ImageId const& image_id, UpdateAction const& action) {
+    void Settings::updatePage(const ImageId& image_id, const UpdateAction& action) {
         QMutexLocker locker(&m_mutex);
         updatePageLocked(image_id, action);
     }
 
-    void Settings::updatePageLocked(ImageId const& image_id, UpdateAction const& action) {
+    void Settings::updatePageLocked(const ImageId& image_id, const UpdateAction& action) {
         auto it(m_perPageRecords.lower_bound(image_id));
         if ((it == m_perPageRecords.end())
             || m_perPageRecords.key_comp()(image_id, it->first)) {
@@ -126,7 +126,7 @@ namespace page_split {
         }
     }
 
-    void Settings::updatePageLocked(PerPageRecords::iterator const it, UpdateAction const& action) {
+    void Settings::updatePageLocked(const PerPageRecords::iterator it, const UpdateAction& action) {
         Record record(it->second, m_defaultLayoutType);
         record.update(action);
 
@@ -141,7 +141,7 @@ namespace page_split {
         }
     }
 
-    Settings::Record Settings::conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict) {
+    Settings::Record Settings::conditionalUpdate(const ImageId& image_id, const UpdateAction& action, bool* conflict) {
         QMutexLocker locker(&m_mutex);
 
         auto it(m_perPageRecords.lower_bound(image_id));
@@ -210,17 +210,17 @@ namespace page_split {
               m_layoutTypeValid(false) {
     }
 
-    void Settings::BaseRecord::setParams(Params const& params) {
+    void Settings::BaseRecord::setParams(const Params& params) {
         m_params = params;
         m_paramsValid = true;
     }
 
-    void Settings::BaseRecord::setLayoutType(LayoutType const layout_type) {
+    void Settings::BaseRecord::setLayoutType(const LayoutType layout_type) {
         m_layoutType = layout_type;
         m_layoutTypeValid = true;
     }
 
-    bool Settings::BaseRecord::hasLayoutTypeConflict(LayoutType const layout_type) const {
+    bool Settings::BaseRecord::hasLayoutTypeConflict(const LayoutType layout_type) const {
         if (!m_paramsValid) {
             // No data - no conflict.
             return false;
@@ -245,11 +245,11 @@ namespace page_split {
         return false;
     }
 
-    LayoutType const* Settings::BaseRecord::layoutType() const {
+    const LayoutType* Settings::BaseRecord::layoutType() const {
         return m_layoutTypeValid ? &m_layoutType : nullptr;
     }
 
-    Params const* Settings::BaseRecord::params() const {
+    const Params* Settings::BaseRecord::params() const {
         return m_paramsValid ? &m_params : nullptr;
     }
 
@@ -267,11 +267,11 @@ namespace page_split {
 
 /*========================= Settings::Record ========================*/
 
-    Settings::Record::Record(LayoutType const default_layout_type)
+    Settings::Record::Record(const LayoutType default_layout_type)
             : m_defaultLayoutType(default_layout_type) {
     }
 
-    Settings::Record::Record(BaseRecord const& base_record, LayoutType const default_layout_type)
+    Settings::Record::Record(const BaseRecord& base_record, const LayoutType default_layout_type)
             : BaseRecord(base_record),
               m_defaultLayoutType(default_layout_type) {
     }
@@ -280,7 +280,7 @@ namespace page_split {
         return m_layoutTypeValid ? m_layoutType : m_defaultLayoutType;
     }
 
-    void Settings::Record::update(UpdateAction const& action) {
+    void Settings::Record::update(const UpdateAction& action) {
         switch (action.m_layoutTypeAction) {
             case UpdateAction::SET:
                 setLayoutType(action.m_layoutType);
@@ -317,7 +317,7 @@ namespace page_split {
               m_layoutTypeAction(DONT_TOUCH) {
     }
 
-    void Settings::UpdateAction::setLayoutType(LayoutType const layout_type) {
+    void Settings::UpdateAction::setLayoutType(const LayoutType layout_type) {
         m_layoutType = layout_type;
         m_layoutTypeAction = SET;
     }
@@ -326,7 +326,7 @@ namespace page_split {
         m_layoutTypeAction = CLEAR;
     }
 
-    void Settings::UpdateAction::setParams(Params const& params) {
+    void Settings::UpdateAction::setParams(const Params& params) {
         m_params = params;
         m_paramsAction = SET;
     }

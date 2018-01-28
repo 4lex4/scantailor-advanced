@@ -45,7 +45,7 @@ namespace output {
          *        when this widget becomes visible.
          * \param debug Indicates whether debugging is turned on.
          */
-        DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
+        DespeckleView(const DespeckleState& despeckle_state, const DespeckleVisualization& visualization, bool debug);
 
         ~DespeckleView() override;
 
@@ -75,8 +75,8 @@ namespace output {
 
         void initiateDespeckling(AnimationAction anim_action);
 
-        void despeckleDone(DespeckleState const& despeckle_state,
-                           DespeckleVisualization const& visualization,
+        void despeckleDone(const DespeckleState& despeckle_state,
+                           const DespeckleVisualization& visualization,
                            DebugImages* dbg);
 
         void cancelBackgroundTask();

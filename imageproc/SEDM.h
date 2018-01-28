@@ -80,7 +80,7 @@ namespace imageproc {
          * distance to, and borders are to DIST_TO_NO_BORDERS,
          * then the whole distance map will consist of these values.
          */
-        static uint32_t const INF_DIST;
+        static const uint32_t INF_DIST;
 
         /**
          * \brief Constructs a null distance map.
@@ -104,7 +104,7 @@ namespace imageproc {
          *        distance to particular borders.  The borders
          *        are assumed to lie one pixel off the image area.
          */
-        explicit SEDM(BinaryImage const& image, DistType dist_type = DIST_TO_WHITE,
+        explicit SEDM(const BinaryImage& image, DistType dist_type = DIST_TO_WHITE,
                       Borders borders = DIST_TO_ALL_BORDERS);
 
         /**
@@ -120,9 +120,9 @@ namespace imageproc {
          */
         explicit SEDM(ConnectivityMap& cmap);
 
-        SEDM(SEDM const& other);
+        SEDM(const SEDM& other);
 
-        SEDM& operator=(SEDM const& other);
+        SEDM& operator=(const SEDM& other);
 
         void swap(SEDM& other);
 
@@ -152,7 +152,7 @@ namespace imageproc {
         /**
          * \brief Return a matrix of squared distances in row-major order.
          */
-        uint32_t const* data() const {
+        const uint32_t* data() const {
             return m_pData;
         }
 
@@ -189,15 +189,15 @@ namespace imageproc {
 
         BinaryImage findPeakCandidatesNonPadded() const;
 
-        BinaryImage buildEqualMapNonPadded(uint32_t const* src1, uint32_t const* src2) const;
+        BinaryImage buildEqualMapNonPadded(const uint32_t* src1, const uint32_t* src2) const;
 
-        void max3x3(uint32_t const* src, uint32_t* dst) const;
+        void max3x3(const uint32_t* src, uint32_t* dst) const;
 
-        void max3x1(uint32_t const* src, uint32_t* dst) const;
+        void max3x1(const uint32_t* src, uint32_t* dst) const;
 
-        void max1x3(uint32_t const* src, uint32_t* dst) const;
+        void max1x3(const uint32_t* src, uint32_t* dst) const;
 
-        void incrementMaskedPadded(BinaryImage const& mask);
+        void incrementMaskedPadded(const BinaryImage& mask);
 
         std::vector<uint32_t> m_data;
         uint32_t* m_pData;

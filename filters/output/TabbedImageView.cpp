@@ -29,7 +29,7 @@ namespace output {
         setStatusTip(tr("Use Ctrl+1..5 to switch the tabs."));
     }
 
-    void TabbedImageView::addTab(QWidget* widget, QString const& label, ImageViewTab tab) {
+    void TabbedImageView::addTab(QWidget* widget, const QString& label, ImageViewTab tab) {
         QTabWidget::addTab(widget, label);
         m_registry[widget] = tab;
 
@@ -42,8 +42,8 @@ namespace output {
         }
     }
 
-    void TabbedImageView::setCurrentTab(ImageViewTab const tab) {
-        int const cnt = count();
+    void TabbedImageView::setCurrentTab(const ImageViewTab tab) {
+        const int cnt = count();
         for (int i = 0; i < cnt; ++i) {
             QWidget* wgt = widget(i);
             auto it = m_registry.find(wgt);
@@ -56,7 +56,7 @@ namespace output {
         }
     }
 
-    void TabbedImageView::tabChangedSlot(int const idx) {
+    void TabbedImageView::tabChangedSlot(const int idx) {
         QWidget* wgt = widget(idx);
         auto it = m_registry.find(wgt);
         if (it != m_registry.end()) {
@@ -75,7 +75,7 @@ namespace output {
         m_tabImageRectMap = std::move(tab_image_rect_map);
     }
 
-    void TabbedImageView::copyViewZoomAndPos(int const old_idx, int const new_idx) const {
+    void TabbedImageView::copyViewZoomAndPos(const int old_idx, const int new_idx) const {
         if (m_tabImageRectMap == nullptr) {
             return;
         }
@@ -83,14 +83,14 @@ namespace output {
         if ((m_registry.count(widget(old_idx)) == 0) || (m_registry.count(widget(new_idx)) == 0)) {
             return;
         }
-        ImageViewTab const old_view_tab = m_registry.at(widget(old_idx));
-        ImageViewTab const new_view_tab = m_registry.at(widget(new_idx));
+        const ImageViewTab old_view_tab = m_registry.at(widget(old_idx));
+        const ImageViewTab new_view_tab = m_registry.at(widget(new_idx));
 
         if ((m_tabImageRectMap->count(old_view_tab) == 0) || (m_tabImageRectMap->count(new_view_tab) == 0)) {
             return;
         }
-        QRectF const& old_view_rect = m_tabImageRectMap->at(old_view_tab);
-        QRectF const& new_view_rect = m_tabImageRectMap->at(new_view_tab);
+        const QRectF& old_view_rect = m_tabImageRectMap->at(old_view_tab);
+        const QRectF& new_view_rect = m_tabImageRectMap->at(new_view_tab);
 
         auto* old_image_view = findImageViewBase(widget(old_idx));
         auto* new_image_view = findImageViewBase(widget(new_idx));
@@ -102,10 +102,10 @@ namespace output {
         }
 
         if (old_image_view->zoomLevel() != 1.0) {
-            QPointF const view_focus = getFocus(old_view_rect,
+            const QPointF view_focus = getFocus(old_view_rect,
                                                 *old_image_view->horizontalScrollBar(),
                                                 *old_image_view->verticalScrollBar());
-            double const zoom_factor = std::max(new_view_rect.width(), new_view_rect.height())
+            const double zoom_factor = std::max(new_view_rect.width(), new_view_rect.height())
                                        / std::max(old_view_rect.width(), old_view_rect.height());
             new_image_view->setZoomLevel(qMax(1., old_image_view->zoomLevel() * zoom_factor));
             setFocus(*new_image_view->horizontalScrollBar(),
@@ -115,9 +115,9 @@ namespace output {
         }
     }
 
-    QPointF TabbedImageView::getFocus(QRectF const& rect, QScrollBar const& hor_bar, QScrollBar const& ver_bar) const {
-        int const hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
-        int const ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+    QPointF TabbedImageView::getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const {
+        const int hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
+        const int ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
 
         qreal x = ((hor_bar.value() + (hor_bar.pageStep() / 2.0)) / hor_bar_length) * rect.width() + rect.left();
         qreal y = ((ver_bar.value() + (ver_bar.pageStep() / 2.0)) / ver_bar_length) * rect.height() + rect.top();
@@ -127,10 +127,10 @@ namespace output {
 
     void TabbedImageView::setFocus(QScrollBar& hor_bar,
                                    QScrollBar& ver_bar,
-                                   QRectF const& rect,
-                                   QPointF const& focal) const {
-        int const hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
-        int const ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+                                   const QRectF& rect,
+                                   const QPointF& focal) const {
+        const int hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
+        const int ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
 
         auto hor_value = (int) round(
                 ((focal.x() - rect.left()) / rect.width()) * hor_bar_length - (hor_bar.pageStep() / 2.0)

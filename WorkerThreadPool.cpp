@@ -30,11 +30,11 @@ public:
               m_ptrResult(std::move(result)) {
     }
 
-    BackgroundTaskPtr const& task() const {
+    const BackgroundTaskPtr& task() const {
         return m_ptrTask;
     }
 
-    FilterResultPtr const& result() const {
+    const FilterResultPtr& result() const {
         return m_ptrResult;
     }
 
@@ -60,7 +60,7 @@ bool WorkerThreadPool::hasSpareCapacity() const {
     return m_pPool->activeThreadCount() < m_pPool->maxThreadCount();
 }
 
-void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
+void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
     class Runnable : public QRunnable {
     public:
         Runnable(WorkerThreadPool& owner, BackgroundTaskPtr task)
@@ -77,13 +77,13 @@ void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
             }
 
             try {
-                FilterResultPtr const result((*m_ptrTask)());
+                const FilterResultPtr result((*m_ptrTask)());
                 if (result) {
                     QCoreApplication::postEvent(
                             &m_rOwner, new TaskResultEvent(m_ptrTask, result)
                     );
                 }
-            } catch (std::bad_alloc const&) {
+            } catch (const std::bad_alloc&) {
                 OutOfMemoryHandler::instance().handleOutOfMemorySituation();
             }
         }

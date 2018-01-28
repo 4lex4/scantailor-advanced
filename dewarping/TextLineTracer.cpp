@@ -51,11 +51,11 @@
 using namespace imageproc;
 
 namespace dewarping {
-    void TextLineTracer::trace(GrayImage const& input,
-                               Dpi const& dpi,
-                               QRect const& content_rect,
+    void TextLineTracer::trace(const GrayImage& input,
+                               const Dpi& dpi,
+                               const QRect& content_rect,
                                DistortionModelBuilder& output,
-                               TaskStatus const& status,
+                               const TaskStatus& status,
                                DebugImages* dbg) {
         using namespace boost::lambda;
 
@@ -64,16 +64,16 @@ namespace dewarping {
             dbg->add(downscaled, "downscaled");
         }
 
-        int const downscaled_width = downscaled.width();
-        int const downscaled_height = downscaled.height();
+        const int downscaled_width = downscaled.width();
+        const int downscaled_height = downscaled.height();
 
-        double const downscale_x_factor = double(downscaled_width) / input.width();
-        double const downscale_y_factor = double(downscaled_height) / input.height();
+        const double downscale_x_factor = double(downscaled_width) / input.width();
+        const double downscale_y_factor = double(downscaled_height) / input.height();
         QTransform to_orig;
         to_orig.scale(1.0 / downscale_x_factor, 1.0 / downscale_y_factor);
 
-        QRect const downscaled_content_rect(to_orig.inverted().mapRect(content_rect));
-        Dpi const downscaled_dpi(
+        const QRect downscaled_content_rect(to_orig.inverted().mapRect(content_rect));
+        const Dpi downscaled_dpi(
                 qRound(dpi.horizontal() * downscale_x_factor),
                 qRound(dpi.vertical() * downscale_y_factor)
         );
@@ -133,7 +133,7 @@ namespace dewarping {
         }
     }  // TextLineTracer::trace
 
-    GrayImage TextLineTracer::downscale(GrayImage const& input, Dpi const& dpi) {
+    GrayImage TextLineTracer::downscale(const GrayImage& input, const Dpi& dpi) {
         // Downscale to 200 DPI.
         QSize downscaled_size(input.size());
         if ((dpi.horizontal() < 180) || (dpi.horizontal() > 220) || (dpi.vertical() < 180) || (dpi.vertical() > 220)) {
@@ -144,7 +144,7 @@ namespace dewarping {
         return scaleToGray(input, downscaled_size);
     }
 
-    void TextLineTracer::sanitizeBinaryImage(BinaryImage& image, QRect const& content_rect) {
+    void TextLineTracer::sanitizeBinaryImage(BinaryImage& image, const QRect& content_rect) {
         // Kill connected components touching the borders.
         BinaryImage seed(image.size(), WHITE);
         seed.fillExcept(seed.rect().adjusted(1, 1, -1, -1), BLACK);
@@ -163,8 +163,8 @@ namespace dewarping {
 /**
  * Returns false if the curve contains both significant convexities and concavities.
  */
-    bool TextLineTracer::isCurvatureConsistent(std::vector<QPointF> const& polyline) {
-        size_t const num_nodes = polyline.size();
+    bool TextLineTracer::isCurvatureConsistent(const std::vector<QPointF>& polyline) {
+        const size_t num_nodes = polyline.size();
 
         if (num_nodes <= 1) {
             // Even though we can't say anything about curvature in this case,
@@ -175,8 +175,8 @@ namespace dewarping {
             return true;
         }
         // Threshold angle between a polyline segment and a normal to the previous one.
-        auto const cos_threshold = static_cast<const float>(cos((90.0f - 6.0f) * constants::DEG2RAD));
-        float const cos_sq_threshold = cos_threshold * cos_threshold;
+        const auto cos_threshold = static_cast<const float>(cos((90.0f - 6.0f) * constants::DEG2RAD));
+        const float cos_sq_threshold = cos_threshold * cos_threshold;
         bool significant_positive = false;
         bool significant_negative = false;
 
@@ -186,13 +186,13 @@ namespace dewarping {
         float prev_normal_sqlen = prev_normal.squaredNorm();
 
         for (size_t i = 1; i < num_nodes - 1; ++i) {
-            Vec2f const next_segment(polyline[i + 1] - polyline[i]);
-            float const next_segment_sqlen = next_segment.squaredNorm();
+            const Vec2f next_segment(polyline[i + 1] - polyline[i]);
+            const float next_segment_sqlen = next_segment.squaredNorm();
 
             float cos_sq = 0;
-            float const sqlen_mult = prev_normal_sqlen * next_segment_sqlen;
+            const float sqlen_mult = prev_normal_sqlen * next_segment_sqlen;
             if (sqlen_mult > std::numeric_limits<float>::epsilon()) {
-                float const dot = prev_normal.dot(next_segment);
+                const float dot = prev_normal.dot(next_segment);
                 cos_sq = std::fabs(dot) * dot / sqlen_mult;
             }
 
@@ -212,12 +212,12 @@ namespace dewarping {
         return !(significant_positive && significant_negative);
     }  // TextLineTracer::isCurvatureConsistent
 
-    bool TextLineTracer::isInsideBounds(QPointF const& pt, QLineF const& left_bound, QLineF const& right_bound) {
+    bool TextLineTracer::isInsideBounds(const QPointF& pt, const QLineF& left_bound, const QLineF& right_bound) {
         QPointF left_normal_inside(left_bound.normalVector().p2() - left_bound.p1());
         if (left_normal_inside.x() < 0) {
             left_normal_inside = -left_normal_inside;
         }
-        QPointF const left_vec(pt - left_bound.p1());
+        const QPointF left_vec(pt - left_bound.p1());
         if (left_normal_inside.x() * left_vec.x() + left_normal_inside.y() * left_vec.y() < 0) {
             return false;
         }
@@ -226,7 +226,7 @@ namespace dewarping {
         if (right_normal_inside.x() > 0) {
             right_normal_inside = -right_normal_inside;
         }
-        QPointF const right_vec(pt - right_bound.p1());
+        const QPointF right_vec(pt - right_bound.p1());
         if (right_normal_inside.x() * right_vec.x() + right_normal_inside.y() * right_vec.y() < 0) {
             return false;
         }
@@ -235,20 +235,20 @@ namespace dewarping {
     }
 
     void TextLineTracer::filterShortCurves(std::list<std::vector<QPointF>>& polylines,
-                                           QLineF const& left_bound,
-                                           QLineF const& right_bound) {
-        ToLineProjector const proj1(left_bound);
-        ToLineProjector const proj2(right_bound);
+                                           const QLineF& left_bound,
+                                           const QLineF& right_bound) {
+        const ToLineProjector proj1(left_bound);
+        const ToLineProjector proj2(right_bound);
 
         auto it(polylines.begin());
-        auto const end(polylines.end());
+        const auto end(polylines.end());
         while (it != end) {
             assert(!it->empty());
-            QPointF const front(it->front());
-            QPointF const back(it->back());
-            double const front_proj_len = proj1.projectionDist(front);
-            double const back_proj_len = proj2.projectionDist(back);
-            double const chord_len = QLineF(front, back).length();
+            const QPointF front(it->front());
+            const QPointF back(it->back());
+            const double front_proj_len = proj1.projectionDist(front);
+            const double back_proj_len = proj2.projectionDist(back);
+            const double chord_len = QLineF(front, back).length();
 
             if (front_proj_len + back_proj_len > 0.3 * chord_len) {
                 polylines.erase(it++);
@@ -259,10 +259,10 @@ namespace dewarping {
     }
 
     void TextLineTracer::filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
-                                                 QLineF const& left_bound,
-                                                 QLineF const& right_bound) {
+                                                 const QLineF& left_bound,
+                                                 const QLineF& right_bound) {
         auto it(polylines.begin());
-        auto const end(polylines.end());
+        const auto end(polylines.end());
         while (it != end) {
             if (!isInsideBounds(it->front(), left_bound, right_bound)
                 && !isInsideBounds(it->back(), left_bound, right_bound)) {
@@ -275,7 +275,7 @@ namespace dewarping {
 
     void TextLineTracer::filterEdgyCurves(std::list<std::vector<QPointF>>& polylines) {
         auto it(polylines.begin());
-        auto const end(polylines.end());
+        const auto end(polylines.end());
         while (it != end) {
             if (!isCurvatureConsistent(*it)) {
                 polylines.erase(it++);
@@ -286,19 +286,19 @@ namespace dewarping {
     }
 
     void TextLineTracer::extractTextLines(std::list<std::vector<QPointF>>& out,
-                                          imageproc::GrayImage const& image,
-                                          std::pair<QLineF, QLineF> const& bounds,
+                                          const imageproc::GrayImage& image,
+                                          const std::pair<QLineF, QLineF>& bounds,
                                           DebugImages* dbg) {
         using namespace boost::lambda;
 
-        int const width = image.width();
-        int const height = image.height();
-        QSize const size(image.size());
-        Vec2f const direction(calcAvgUnitVector(bounds));
+        const int width = image.width();
+        const int height = image.height();
+        const QSize size(image.size());
+        const Vec2f direction(calcAvgUnitVector(bounds));
         Grid<float> main_grid(image.width(), image.height(), 0);
         Grid<float> aux_grid(image.width(), image.height(), 0);
 
-        float const downscale = 1.0f / (255.0f * 8.0f);
+        const float downscale = 1.0f / (255.0f * 8.0f);
         horizontalSobel<float>(
                 width, height, image.data(), image.stride(), _1 * downscale,
                 aux_grid.data(), aux_grid.stride(), _1 = _2, _1,
@@ -345,7 +345,7 @@ namespace dewarping {
                 main_grid.data(), main_grid.stride(), size,
                 if_then(_1 > var(max), var(max) = _1)
         );
-        float const threshold = max * 15.0f / 255.0f;
+        const float threshold = max * 15.0f / 255.0f;
 
         BinaryImage initial_binarization(image.size());
         rasterOpGeneric(
@@ -413,7 +413,7 @@ namespace dewarping {
         }
 
         initial_binarization.release();  // Save memory.
-        SEDM const sedm(post_binarization);
+        const SEDM sedm(post_binarization);
 
         std::vector<QPoint> seeds;
         QLineF mid_line(calcMidLine(bounds.first, bounds.second));
@@ -423,12 +423,12 @@ namespace dewarping {
         }
 
         post_binarization.release();  // Save memory.
-        for (QPoint const seed : seeds) {
+        for (const QPoint seed : seeds) {
             std::vector<QPointF> polyline;
 
             {
                 TowardsLineTracer tracer(&sedm, &main_grid, bounds.first, seed);
-                while (QPoint const* pt = tracer.trace(10.0f)) {
+                while (const QPoint* pt = tracer.trace(10.0f)) {
                     polyline.emplace_back(*pt);
                 }
                 std::reverse(polyline.begin(), polyline.end());
@@ -438,7 +438,7 @@ namespace dewarping {
 
             {
                 TowardsLineTracer tracer(&sedm, &main_grid, bounds.second, seed);
-                while (QPoint const* pt = tracer.trace(10.0f)) {
+                while (const QPoint* pt = tracer.trace(10.0f)) {
                     polyline.emplace_back(*pt);
                 }
             }
@@ -448,7 +448,7 @@ namespace dewarping {
         }
     }  // TextLineTracer::extractTextLines
 
-    Vec2f TextLineTracer::calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds) {
+    Vec2f TextLineTracer::calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds) {
         Vec2f v1(bounds.first.p2() - bounds.first.p1());
         v1 /= sqrt(v1.squaredNorm());
 
@@ -461,28 +461,28 @@ namespace dewarping {
         return v3;
     }
 
-    BinaryImage TextLineTracer::closeWithObstacles(BinaryImage const& image,
-                                                   BinaryImage const& obstacles,
-                                                   QSize const& brick) {
+    BinaryImage TextLineTracer::closeWithObstacles(const BinaryImage& image,
+                                                   const BinaryImage& obstacles,
+                                                   const QSize& brick) {
         BinaryImage mask(closeBrick(image, brick));
         rasterOp<RopSubtract<RopDst, RopSrc>>(mask, obstacles);
 
         return seedFill(image, mask, CONN4);
     }
 
-    void TextLineTracer::findMidLineSeeds(SEDM const& sedm, QLineF mid_line, std::vector<QPoint>& seeds) {
+    void TextLineTracer::findMidLineSeeds(const SEDM& sedm, QLineF mid_line, std::vector<QPoint>& seeds) {
         lineBoundedByRect(mid_line, QRect(QPoint(0, 0), sedm.size()).adjusted(0, 0, -1, -1));
 
-        uint32_t const* sedm_data = sedm.data();
-        int const sedm_stride = sedm.stride();
+        const uint32_t* sedm_data = sedm.data();
+        const int sedm_stride = sedm.stride();
 
         QPoint prev_pt;
         int32_t prev_level = 0;
         int dir = 1;  // Distance growing.
         GridLineTraverser traverser(mid_line);
         while (traverser.hasNext()) {
-            QPoint const pt(traverser.next());
-            int32_t const level = sedm_data[pt.y() * sedm_stride + pt.x()];
+            const QPoint pt(traverser.next());
+            const int32_t level = sedm_data[pt.y() * sedm_stride + pt.x()];
             if ((level - prev_level) * dir < 0) {
                 // Direction changed.
                 if (dir > 0) {
@@ -496,14 +496,14 @@ namespace dewarping {
         }
     }
 
-    QLineF TextLineTracer::calcMidLine(QLineF const& line1, QLineF const& line2) {
+    QLineF TextLineTracer::calcMidLine(const QLineF& line1, const QLineF& line2) {
         QPointF intersection;
         if (line1.intersect(line2, &intersection) == QLineF::NoIntersection) {
             // Lines are parallel.
-            QPointF const p1(line2.p1());
-            QPointF const p2(ToLineProjector(line1).projectionPoint(p1));
-            QPointF const origin(0.5 * (p1 + p2));
-            QPointF const vector(line2.p2() - line2.p1());
+            const QPointF p1(line2.p1());
+            const QPointF p2(ToLineProjector(line1).projectionPoint(p1));
+            const QPointF origin(0.5 * (p1 + p2));
+            const QPointF vector(line2.p2() - line2.p1());
 
             return QLineF(origin, origin + vector);
         } else {
@@ -517,7 +517,7 @@ namespace dewarping {
         }
     }
 
-    QImage TextLineTracer::visualizeVerticalBounds(QImage const& background, std::pair<QLineF, QLineF> const& bounds) {
+    QImage TextLineTracer::visualizeVerticalBounds(const QImage& background, const std::pair<QLineF, QLineF>& bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
 
         QPainter painter(&canvas);
@@ -533,18 +533,18 @@ namespace dewarping {
         return canvas;
     }
 
-    QImage TextLineTracer::visualizeGradient(QImage const& background, Grid<float> const& grad) {
-        int const width = grad.width();
-        int const height = grad.height();
-        int const grad_stride = grad.stride();
+    QImage TextLineTracer::visualizeGradient(const QImage& background, const Grid<float>& grad) {
+        const int width = grad.width();
+        const int height = grad.height();
+        const int grad_stride = grad.stride();
         // First let's find the maximum and minimum values.
         float min_value = NumericTraits<float>::max();
         float max_value = NumericTraits<float>::min();
 
-        float const* grad_line = grad.data();
+        const float* grad_line = grad.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grad_line[x];
+                const float value = grad_line[x];
                 if (value < min_value) {
                     min_value = value;
                 } else if (value > max_value) {
@@ -561,13 +561,13 @@ namespace dewarping {
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
         auto* overlay_line = (uint32_t*) overlay.bits();
-        int const overlay_stride = overlay.bytesPerLine() / 4;
+        const int overlay_stride = overlay.bytesPerLine() / 4;
 
         grad_line = grad.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grad_line[x] * scale;
-                int const magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
+                const float value = grad_line[x] * scale;
+                const int magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 if (value < 0) {
                     overlay_line[x] = qRgba(0, 0, magnitude, magnitude);
                 } else {
@@ -585,11 +585,11 @@ namespace dewarping {
         return canvas;
     }  // TextLineTracer::visualizeGradient
 
-    QImage TextLineTracer::visualizeMidLineSeeds(QImage const& background,
-                                                 BinaryImage const& overlay,
+    QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
+                                                 const BinaryImage& overlay,
                                                  std::pair<QLineF, QLineF> bounds,
                                                  QLineF mid_line,
-                                                 std::vector<QPoint> const& seeds) {
+                                                 const std::vector<QPoint>& seeds) {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -613,7 +613,7 @@ namespace dewarping {
         painter.setPen(Qt::NoPen);
         painter.setBrush(QColor(0x2d, 0x00, 0x6d, 255));
         QRectF rect(0, 0, 7, 7);
-        for (QPoint const pt : seeds) {
+        for (const QPoint pt : seeds) {
             rect.moveCenter(pt + QPointF(0.5, 0.5));
             painter.drawEllipse(rect);
         }
@@ -621,9 +621,9 @@ namespace dewarping {
         return canvas;
     }  // TextLineTracer::visualizeMidLineSeeds
 
-    QImage TextLineTracer::visualizePolylines(QImage const& background,
-                                              std::list<std::vector<QPointF>> const& polylines,
-                                              std::pair<QLineF, QLineF> const* vert_bounds) {
+    QImage TextLineTracer::visualizePolylines(const QImage& background,
+                                              const std::list<std::vector<QPointF>>& polylines,
+                                              const std::pair<QLineF, QLineF>* vert_bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -631,7 +631,7 @@ namespace dewarping {
         pen.setWidthF(3.0);
         painter.setPen(pen);
 
-        for (std::vector<QPointF> const& polyline : polylines) {
+        for (const std::vector<QPointF>& polyline : polylines) {
             if (!polyline.empty()) {
                 painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
             }

@@ -30,7 +30,7 @@ namespace output {
     class ImageView : public ImageViewBase {
     Q_OBJECT
     public:
-        ImageView(QImage const& image, QImage const& downscaled_image);
+        ImageView(const QImage& image, const QImage& downscaled_image);
 
         ~ImageView() override;
 

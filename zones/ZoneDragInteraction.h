@@ -16,10 +16,10 @@ Q_DECLARE_TR_FUNCTIONS(ZoneDragInteraction)
 public:
     ZoneDragInteraction(ZoneInteractionContext& context,
                         InteractionState& interaction,
-                        EditableSpline::Ptr const& spline);
+                        const EditableSpline::Ptr& spline);
 
 protected:
-    void onPaint(QPainter& painter, InteractionState const& interaction) override;
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 

@@ -26,10 +26,10 @@
 using namespace imageproc;
 
 namespace output {
-    DespeckleState::DespeckleState(QImage const& output,
-                                   imageproc::BinaryImage const& speckles,
+    DespeckleState::DespeckleState(const QImage& output,
+                                   const imageproc::BinaryImage& speckles,
                                    DespeckleLevel level,
-                                   Dpi const& dpi)
+                                   const Dpi& dpi)
             : m_speckles(speckles),
               m_dpi(dpi),
               m_despeckleLevel(level) {
@@ -41,7 +41,7 @@ namespace output {
         return DespeckleVisualization(m_everythingMixed, m_speckles, m_dpi);
     }
 
-    DespeckleState DespeckleState::redespeckle(DespeckleLevel const level, TaskStatus const& status,
+    DespeckleState DespeckleState::redespeckle(const DespeckleLevel level, const TaskStatus& status,
                                                DebugImages* dbg) const {
         DespeckleState new_state(*this);
 
@@ -80,7 +80,7 @@ namespace output {
         return new_state;
     }  // DespeckleState::redespeckle
 
-    QImage DespeckleState::overlaySpeckles(QImage const& mixed, imageproc::BinaryImage const& speckles) {
+    QImage DespeckleState::overlaySpeckles(const QImage& mixed, const imageproc::BinaryImage& speckles) {
         QImage result(mixed.convertToFormat(QImage::Format_RGB32));
         if (result.isNull() && !mixed.isNull()) {
             throw std::bad_alloc();
@@ -91,14 +91,14 @@ namespace output {
         }
 
         auto* result_line = (uint32_t*) result.bits();
-        int const result_stride = result.bytesPerLine() / 4;
+        const int result_stride = result.bytesPerLine() / 4;
 
-        uint32_t const* speckles_line = speckles.data();
-        int const speckles_stride = speckles.wordsPerLine();
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t* speckles_line = speckles.data();
+        const int speckles_stride = speckles.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
 
-        int const width = result.width();
-        int const height = result.height();
+        const int width = result.width();
+        const int height = result.height();
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -118,18 +118,18 @@ namespace output {
  * set to either 0x00 or 0xff.  We enforce this convention when
  * generating output files.
  */
-    BinaryImage DespeckleState::extractBW(QImage const& mixed) {
+    BinaryImage DespeckleState::extractBW(const QImage& mixed) {
         BinaryImage result(mixed.size(), WHITE);
 
-        auto const* mixed_line = (uint32_t const*) mixed.bits();
-        int const mixed_stride = mixed.bytesPerLine() / 4;
+        const auto* mixed_line = (const uint32_t*) mixed.bits();
+        const int mixed_stride = mixed.bytesPerLine() / 4;
 
         uint32_t* result_line = result.data();
-        int const result_stride = result.wordsPerLine();
-        uint32_t const msb = uint32_t(1) << 31;
+        const int result_stride = result.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
 
-        int const width = result.width();
-        int const height = result.height();
+        const int width = result.width();
+        const int height = result.height();
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {

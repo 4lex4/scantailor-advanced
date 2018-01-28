@@ -42,10 +42,10 @@ namespace page_split {
         UiUpdater(intrusive_ptr<Filter> filter,
                   intrusive_ptr<ProjectPages> pages,
                   std::unique_ptr<DebugImages> dbg_img,
-                  QImage const& image,
-                  PageInfo const& page_info,
-                  ImageTransformation const& xform,
-                  OptionsWidget::UiData const& ui_data,
+                  const QImage& image,
+                  const PageInfo& page_info,
+                  const ImageTransformation& xform,
+                  const OptionsWidget::UiData& ui_data,
                   bool batch_processing);
 
         void updateUI(FilterUiInterface* ui) override;
@@ -67,7 +67,7 @@ namespace page_split {
     };
 
 
-    static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout) {
+    static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
         switch (layout.type()) {
             case PageLayout::SINGLE_PAGE_UNCUT:
             case PageLayout::SINGLE_PAGE_CUT:
@@ -85,9 +85,9 @@ namespace page_split {
                intrusive_ptr<Settings> settings,
                intrusive_ptr<ProjectPages> pages,
                intrusive_ptr<deskew::Task> next_task,
-               PageInfo const& page_info,
-               bool const batch_processing,
-               bool const debug)
+               const PageInfo& page_info,
+               const bool batch_processing,
+               const bool debug)
             : m_ptrFilter(std::move(filter)),
               m_ptrSettings(std::move(settings)),
               m_ptrPages(std::move(pages)),
@@ -101,13 +101,13 @@ namespace page_split {
 
     Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+    FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         status.throwIfCancelled();
 
         Settings::Record record(m_ptrSettings->getPageRecord(m_pageInfo.imageId()));
 
-        OrthogonalRotation const pre_rotation(data.xform().preRotation());
-        Dependencies const deps(
+        const OrthogonalRotation pre_rotation(data.xform().preRotation());
+        const Dependencies deps(
                 data.origImage().size(), pre_rotation,
                 record.combinedLayoutType()
         );
@@ -116,7 +116,7 @@ namespace page_split {
         ui_data.setDependencies(deps);
 
         for (;;) {
-            Params const* const params = record.params();
+            const Params* const params = record.params();
 
             PageLayout new_layout;
             std::unique_ptr<Params> new_params;
@@ -193,7 +193,7 @@ namespace page_split {
             break;
         }
 
-        PageLayout const& layout = record.params()->pageLayout();
+        const PageLayout& layout = record.params()->pageLayout();
         ui_data.setLayoutTypeAutoDetected(
                 record.combinedLayoutType() == AUTO_LAYOUT_TYPE
         );
@@ -222,11 +222,11 @@ namespace page_split {
     Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                                intrusive_ptr<ProjectPages> pages,
                                std::unique_ptr<DebugImages> dbg_img,
-                               QImage const& image,
-                               PageInfo const& page_info,
-                               ImageTransformation const& xform,
-                               OptionsWidget::UiData const& ui_data,
-                               bool const batch_processing)
+                               const QImage& image,
+                               const PageInfo& page_info,
+                               const ImageTransformation& xform,
+                               const OptionsWidget::UiData& ui_data,
+                               const bool batch_processing)
             : m_ptrFilter(std::move(filter)),
               m_ptrPages(std::move(pages)),
               m_ptrDbg(std::move(dbg_img)),
@@ -259,16 +259,16 @@ namespace page_split {
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
-                view, SIGNAL(invalidateThumbnail(PageInfo const &)),
-                opt_widget, SIGNAL(invalidateThumbnail(PageInfo const &))
+                view, SIGNAL(invalidateThumbnail(const PageInfo &)),
+                opt_widget, SIGNAL(invalidateThumbnail(const PageInfo &))
         );
         QObject::connect(
-                view, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
-                opt_widget, SLOT(pageLayoutSetExternally(PageLayout const &))
+                view, SIGNAL(pageLayoutSetLocally(const PageLayout &)),
+                opt_widget, SLOT(pageLayoutSetExternally(const PageLayout &))
         );
         QObject::connect(
-                opt_widget, SIGNAL(pageLayoutSetLocally(PageLayout const &)),
-                view, SLOT(pageLayoutSetExternally(PageLayout const &))
+                opt_widget, SIGNAL(pageLayoutSetLocally(const PageLayout &)),
+                view, SLOT(pageLayoutSetExternally(const PageLayout &))
         );
     }  // Task::UiUpdater::updateUI
 }  // namespace page_split

@@ -23,15 +23,15 @@
 #include <QTransform>
 #include <boost/foreach.hpp>
 
-SerializableSpline::SerializableSpline(EditableSpline const& spline) {
+SerializableSpline::SerializableSpline(const EditableSpline& spline) {
     SplineVertex::Ptr vertex(spline.firstVertex());
     for (; vertex; vertex = vertex->next(SplineVertex::NO_LOOP)) {
         m_points.push_back(vertex->point());
     }
 }
 
-SerializableSpline::SerializableSpline(QDomElement const& el) {
-    QString const point_str("point");
+SerializableSpline::SerializableSpline(const QDomElement& el) {
+    const QString point_str("point");
 
     QDomNode node(el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -46,25 +46,25 @@ SerializableSpline::SerializableSpline(QDomElement const& el) {
     }
 }
 
-SerializableSpline::SerializableSpline(QPolygonF const& polygon) {
+SerializableSpline::SerializableSpline(const QPolygonF& polygon) {
     for (int i = polygon.size() - 1; i >= 0; i--) {
         m_points.push_back(polygon[i]);
     }
 }
 
-QDomElement SerializableSpline::toXml(QDomDocument& doc, QString const& name) const {
+QDomElement SerializableSpline::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
 
-    QString const point_str("point");
+    const QString point_str("point");
     XmlMarshaller marshaller(doc);
-    for (QPointF const& pt : m_points) {
+    for (const QPointF& pt : m_points) {
         el.appendChild(marshaller.pointF(pt, point_str));
     }
 
     return el;
 }
 
-SerializableSpline SerializableSpline::transformed(QTransform const& xform) const {
+SerializableSpline SerializableSpline::transformed(const QTransform& xform) const {
     SerializableSpline transformed(*this);
 
     for (QPointF& pt : transformed.m_points) {
@@ -74,7 +74,7 @@ SerializableSpline SerializableSpline::transformed(QTransform const& xform) cons
     return transformed;
 }
 
-SerializableSpline SerializableSpline::transformed(boost::function<QPointF(QPointF const&)> const& xform) const {
+SerializableSpline SerializableSpline::transformed(boost::function<QPointF(const QPointF&)>const & xform) const {
     SerializableSpline transformed(*this);
 
     for (QPointF& pt : transformed.m_points) {

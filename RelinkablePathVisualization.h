@@ -33,12 +33,12 @@ public:
 
     void clear();
 
-    void setPath(RelinkablePath const& path, bool clickable);
+    void setPath(const RelinkablePath& path, bool clickable);
 
 signals:
 
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-    void clicked(QString const& prefix_path, QString const& suffix_path, int type);
+    void clicked(const QString& prefix_path, const QString& suffix_path, int type);
 
 protected:
     void paintEvent(QPaintEvent* evt) override;
@@ -48,7 +48,7 @@ private:
 
     class ComponentButton;
 
-    void onClicked(int component_idx, QString const& prefix_path, QString const& suffix_path, int type);
+    void onClicked(int component_idx, const QString& prefix_path, const QString& suffix_path, int type);
 
     void stylePathComponentButton(QAbstractButton* btn, bool exists);
 

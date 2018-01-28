@@ -27,27 +27,27 @@ ObjectDragHandler::ObjectDragHandler(DraggableObject* obj)
     setInteractionCursor(Qt::ClosedHandCursor);
 }
 
-void ObjectDragHandler::setProximityCursor(QCursor const& cursor) {
+void ObjectDragHandler::setProximityCursor(const QCursor& cursor) {
     m_interaction.setProximityCursor(cursor);
 }
 
-void ObjectDragHandler::setInteractionCursor(QCursor const& cursor) {
+void ObjectDragHandler::setInteractionCursor(const QCursor& cursor) {
     m_interaction.setInteractionCursor(cursor);
 }
 
-void ObjectDragHandler::setProximityStatusTip(QString const& tip) {
+void ObjectDragHandler::setProximityStatusTip(const QString& tip) {
     m_interaction.setProximityStatusTip(tip);
 }
 
-void ObjectDragHandler::setInteractionStatusTip(QString const& tip) {
+void ObjectDragHandler::setInteractionStatusTip(const QString& tip) {
     m_interaction.setInteractionStatusTip(tip);
 }
 
-bool ObjectDragHandler::interactionInProgress(InteractionState const& interaction) const {
+bool ObjectDragHandler::interactionInProgress(const InteractionState& interaction) const {
     return interaction.capturedBy(m_interaction);
 }
 
-bool ObjectDragHandler::proximityLeader(InteractionState const& interaction) const {
+bool ObjectDragHandler::proximityLeader(const InteractionState& interaction) const {
     return interaction.proximityLeader(m_interaction);
 }
 
@@ -56,11 +56,11 @@ void ObjectDragHandler::forceEnterDragState(InteractionState& interaction, QPoin
     m_pObj->dragInitiated(QPointF(0.5, 0.5) + widget_mouse_pos);
 }
 
-void ObjectDragHandler::onPaint(QPainter& painter, InteractionState const& interaction) {
+void ObjectDragHandler::onPaint(QPainter& painter, const InteractionState& interaction) {
     m_pObj->paint(painter, interaction);
 }
 
-void ObjectDragHandler::onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction) {
+void ObjectDragHandler::onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
     if (m_keyboardModifiers != m_activeKeyboardModifiers) {
         return;
     }
@@ -96,7 +96,7 @@ void ObjectDragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& i
     }
 }
 
-void ObjectDragHandler::setKeyboardModifiers(Qt::KeyboardModifiers const modifiers) {
+void ObjectDragHandler::setKeyboardModifiers(const Qt::KeyboardModifiers modifiers) {
     m_keyboardModifiers = modifiers;
 }
 

@@ -40,7 +40,7 @@ namespace page_split {
 
     CacheDrivenTask::~CacheDrivenTask() = default;
 
-    static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout) {
+    static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
         switch (layout.type()) {
             case PageLayout::SINGLE_PAGE_UNCUT:
             case PageLayout::SINGLE_PAGE_CUT:
@@ -54,20 +54,20 @@ namespace page_split {
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform) {
-        Settings::Record const record(
+                                  const ImageTransformation& xform) {
+        const Settings::Record record(
                 m_ptrSettings->getPageRecord(page_info.imageId())
         );
 
-        OrthogonalRotation const pre_rotation(xform.preRotation());
-        Dependencies const deps(
+        const OrthogonalRotation pre_rotation(xform.preRotation());
+        const Dependencies deps(
                 page_info.metadata().size(), pre_rotation,
                 record.combinedLayoutType()
         );
 
-        Params const* params = record.params();
+        const Params* params = record.params();
 
         if (!params || !deps.compatibleWith(*params)) {
             if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {

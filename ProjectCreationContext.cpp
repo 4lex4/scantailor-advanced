@@ -37,7 +37,7 @@ ProjectCreationContext::~ProjectCreationContext() {
 
 namespace {
     template<typename T>
-    bool allDpisOK(T const& container) {
+    bool allDpisOK(const T& container) {
         using namespace boost::lambda;
 
         return std::find_if(

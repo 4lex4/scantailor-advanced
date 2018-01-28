@@ -31,13 +31,13 @@
 using namespace imageproc;
 
 namespace page_layout {
-    ImageView::ImageView(intrusive_ptr<Settings> const& settings,
-                         PageId const& page_id,
-                         QImage const& image,
-                         QImage const& downscaled_image,
-                         ImageTransformation const& xform,
-                         QRectF const& adapted_content_rect,
-                         OptionsWidget const& opt_widget)
+    ImageView::ImageView(const intrusive_ptr<Settings>& settings,
+                         const PageId& page_id,
+                         const QImage& image,
+                         const QImage& downscaled_image,
+                         const ImageTransformation& xform,
+                         const QRectF& adapted_content_rect,
+                         const OptionsWidget& opt_widget)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(xform.transform(), xform.resultingPreCropArea()),
@@ -62,8 +62,8 @@ namespace page_layout {
         );
 
         // Setup interaction stuff.
-        static int const masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
-        static int const masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
+        static const int masks_by_edge[] = { TOP, RIGHT, BOTTOM, LEFT };
+        static const int masks_by_corner[] = { TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT };
         for (int i = 0; i < 4; ++i) {
             // Proximity priority - inner rect higher than middle, corners higher than edges.
             m_innerCorners[i].setProximityPriorityCallback(
@@ -165,26 +165,26 @@ namespace page_layout {
 
     ImageView::~ImageView() = default;
 
-    void ImageView::marginsSetExternally(Margins const& margins_mm) {
-        AggregateSizeChanged const changed = commitHardMargins(margins_mm);
+    void ImageView::marginsSetExternally(const Margins& margins_mm) {
+        const AggregateSizeChanged changed = commitHardMargins(margins_mm);
 
         recalcBoxesAndFit(margins_mm);
 
         invalidateThumbnails(changed);
     }
 
-    void ImageView::leftRightLinkToggled(bool const linked) {
+    void ImageView::leftRightLinkToggled(const bool linked) {
         m_leftRightLinked = linked;
         if (linked) {
             Margins margins_mm(calcHardMarginsMM());
             if (margins_mm.left() != margins_mm.right()) {
-                double const new_margin = std::min(
+                const double new_margin = std::min(
                         margins_mm.left(), margins_mm.right()
                 );
                 margins_mm.setLeft(new_margin);
                 margins_mm.setRight(new_margin);
 
-                AggregateSizeChanged const changed
+                const AggregateSizeChanged changed
                         = commitHardMargins(margins_mm);
 
                 recalcBoxesAndFit(margins_mm);
@@ -195,18 +195,18 @@ namespace page_layout {
         }
     }
 
-    void ImageView::topBottomLinkToggled(bool const linked) {
+    void ImageView::topBottomLinkToggled(const bool linked) {
         m_topBottomLinked = linked;
         if (linked) {
             Margins margins_mm(calcHardMarginsMM());
             if (margins_mm.top() != margins_mm.bottom()) {
-                double const new_margin = std::min(
+                const double new_margin = std::min(
                         margins_mm.top(), margins_mm.bottom()
                 );
                 margins_mm.setTop(new_margin);
                 margins_mm.setBottom(new_margin);
 
-                AggregateSizeChanged const changed
+                const AggregateSizeChanged changed
                         = commitHardMargins(margins_mm);
 
                 recalcBoxesAndFit(margins_mm);
@@ -217,10 +217,10 @@ namespace page_layout {
         }
     }
 
-    void ImageView::alignmentChanged(Alignment const& alignment) {
+    void ImageView::alignmentChanged(const Alignment& alignment) {
         m_alignment = alignment;
 
-        Settings::AggregateSizeChanged const size_changed
+        const Settings::AggregateSizeChanged size_changed
                 = m_ptrSettings->setPageAlignment(m_pageId, alignment);
 
         recalcBoxesAndFit(calcHardMarginsMM());
@@ -239,7 +239,7 @@ namespace page_layout {
         updatePresentationTransform(FIT);
     }
 
-    void ImageView::onPaint(QPainter& painter, InteractionState const& interaction) {
+    void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) {
         QColor bg_color;
         QColor fg_color;
         if (m_alignment.isNull()) {
@@ -297,8 +297,8 @@ namespace page_layout {
         }
     }  // ImageView::onPaint
 
-    Proximity ImageView::cornerProximity(int const edge_mask, QRectF const* box, QPointF const& mouse_pos) const {
-        QRectF const r(virtualToWidget().mapRect(*box));
+    Proximity ImageView::cornerProximity(const int edge_mask, const QRectF* box, const QPointF& mouse_pos) const {
+        const QRectF r(virtualToWidget().mapRect(*box));
         QPointF pt;
 
         if (edge_mask & TOP) {
@@ -316,8 +316,8 @@ namespace page_layout {
         return Proximity(pt, mouse_pos);
     }
 
-    Proximity ImageView::edgeProximity(int const edge_mask, QRectF const* box, QPointF const& mouse_pos) const {
-        QRectF const r(virtualToWidget().mapRect(*box));
+    Proximity ImageView::edgeProximity(const int edge_mask, const QRectF* box, const QPointF& mouse_pos) const {
+        const QRectF r(virtualToWidget().mapRect(*box));
         QLineF line;
 
         switch (edge_mask) {
@@ -344,7 +344,7 @@ namespace page_layout {
         return Proximity::pointAndLineSegment(mouse_pos, line);
     }
 
-    void ImageView::dragInitiated(QPointF const& mouse_pos) {
+    void ImageView::dragInitiated(const QPointF& mouse_pos) {
         m_beforeResizing.middleWidgetRect = virtualToWidget().mapRect(m_middleRect);
         m_beforeResizing.virtToWidget = virtualToWidget();
         m_beforeResizing.widgetToVirt = widgetToVirtual();
@@ -352,12 +352,12 @@ namespace page_layout {
         m_beforeResizing.focalPoint = getWidgetFocalPoint();
     }
 
-    void ImageView::innerRectDragContinuation(int edge_mask, QPointF const& mouse_pos) {
+    void ImageView::innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos) {
         // What really happens when we resize the inner box is resizing
         // the middle box in the opposite direction and moving the scene
         // on screen so that the object being dragged is still under mouse.
 
-        QPointF const delta(mouse_pos - m_beforeResizing.mousePos);
+        const QPointF delta(mouse_pos - m_beforeResizing.mousePos);
         qreal left_adjust = 0;
         qreal right_adjust = 0;
         qreal top_adjust = 0;
@@ -396,7 +396,7 @@ namespace page_layout {
         qreal effective_dx = 0;
         qreal effective_dy = 0;
 
-        QRectF const& old_widget_rect = m_beforeResizing.middleWidgetRect;
+        const QRectF& old_widget_rect = m_beforeResizing.middleWidgetRect;
         if (edge_mask & LEFT) {
             effective_dx = old_widget_rect.left() - widget_rect.left();
         } else if (edge_mask & RIGHT) {
@@ -425,15 +425,15 @@ namespace page_layout {
         emit marginsSetLocally(calcHardMarginsMM());
     }  // ImageView::innerRectDragContinuation
 
-    void ImageView::middleRectDragContinuation(int const edge_mask, QPointF const& mouse_pos) {
-        QPointF const delta(mouse_pos - m_beforeResizing.mousePos);
+    void ImageView::middleRectDragContinuation(const int edge_mask, const QPointF& mouse_pos) {
+        const QPointF delta(mouse_pos - m_beforeResizing.mousePos);
         qreal left_adjust = 0;
         qreal right_adjust = 0;
         qreal top_adjust = 0;
         qreal bottom_adjust = 0;
 
-        QRectF const bounds(maxViewportRect());
-        QRectF const old_middle_rect(m_beforeResizing.middleWidgetRect);
+        const QRectF bounds(maxViewportRect());
+        const QRectF old_middle_rect(m_beforeResizing.middleWidgetRect);
 
         if (edge_mask & LEFT) {
             left_adjust = delta.x();
@@ -490,11 +490,11 @@ namespace page_layout {
     }  // ImageView::middleRectDragContinuation
 
     void ImageView::dragFinished() {
-        AggregateSizeChanged const agg_size_changed(
+        const AggregateSizeChanged agg_size_changed(
                 commitHardMargins(calcHardMarginsMM())
         );
 
-        QRectF const extended_viewport(maxViewportRect().adjusted(-0.5, -0.5, 0.5, 0.5));
+        const QRectF extended_viewport(maxViewportRect().adjusted(-0.5, -0.5, 0.5, 0.5));
         if (extended_viewport.contains(m_beforeResizing.middleWidgetRect)) {
             updatePresentationTransform(FIT);
         } else {
@@ -508,22 +508,22 @@ namespace page_layout {
  * Updates m_middleRect and m_outerRect based on \p margins_mm,
  * m_aggregateHardSizeMM and m_alignment, updates the displayed area.
  */
-    void ImageView::recalcBoxesAndFit(Margins const& margins_mm) {
-        QTransform const virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
-        QTransform const mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
+    void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
+        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+        const QTransform mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
 
         QPolygonF poly_mm(virt_to_mm.map(m_innerRect));
         Utils::extendPolyRectWithMargins(poly_mm, margins_mm);
 
         m_ptrSettings->updateContentRect();
 
-        QRectF const middle_rect(mm_to_virt.map(poly_mm).boundingRect());
+        const QRectF middle_rect(mm_to_virt.map(poly_mm).boundingRect());
 
-        QSizeF const hard_size_mm(
+        const QSizeF hard_size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
                 QLineF(poly_mm[0], poly_mm[3]).length()
         );
-        Margins const soft_margins_mm(
+        const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
                         m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
@@ -532,7 +532,7 @@ namespace page_layout {
 
         Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
-        QRectF const outer_rect(mm_to_virt.map(poly_mm).boundingRect());
+        const QRectF outer_rect(mm_to_virt.map(poly_mm).boundingRect());
         updateTransformAndFixFocalPoint(
                 ImagePresentation(imageToVirtual(),
                                   m_xform.resultingPreCropArea().intersected(outer_rect),
@@ -551,7 +551,7 @@ namespace page_layout {
  *
  * \note virtualToImage() and imageToVirtual() are not affected by this.
  */
-    void ImageView::updatePresentationTransform(FitMode const fit_mode) {
+    void ImageView::updatePresentationTransform(const FitMode fit_mode) {
         if (fit_mode == DONT_FIT) {
             updateTransformPreservingScale(
                     ImagePresentation(imageToVirtual(),
@@ -588,29 +588,29 @@ namespace page_layout {
  * \brief Calculates margins in millimeters between m_innerRect and m_middleRect.
  */
     Margins ImageView::calcHardMarginsMM() const {
-        QPointF const center(m_innerRect.center());
+        const QPointF center(m_innerRect.center());
 
-        QLineF const top_margin_line(
+        const QLineF top_margin_line(
                 QPointF(center.x(), m_middleRect.top()),
                 QPointF(center.x(), m_innerRect.top())
         );
 
-        QLineF const bottom_margin_line(
+        const QLineF bottom_margin_line(
                 QPointF(center.x(), m_innerRect.bottom()),
                 QPointF(center.x(), m_middleRect.bottom())
         );
 
-        QLineF const left_margin_line(
+        const QLineF left_margin_line(
                 QPointF(m_middleRect.left(), center.y()),
                 QPointF(m_innerRect.left(), center.y())
         );
 
-        QLineF const right_margin_line(
+        const QLineF right_margin_line(
                 QPointF(m_innerRect.right(), center.y()),
                 QPointF(m_middleRect.right(), center.y())
         );
 
-        QTransform const virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
 
         Margins margins;
         margins.setTop(virt_to_mm.map(top_margin_line).length());
@@ -626,18 +626,18 @@ namespace page_layout {
  *        and m_alignment.
  */
     void ImageView::recalcOuterRect() {
-        QTransform const virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
-        QTransform const mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
+        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+        const QTransform mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
 
         QPolygonF poly_mm(virt_to_mm.map(m_middleRect));
 
         m_ptrSettings->updateContentRect();
 
-        QSizeF const hard_size_mm(
+        const QSizeF hard_size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
                 QLineF(poly_mm[0], poly_mm[3]).length()
         );
-        Margins const soft_margins_mm(
+        const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
                         m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
@@ -650,13 +650,13 @@ namespace page_layout {
         updatePhysSize();
     }
 
-    QSizeF ImageView::origRectToSizeMM(QRectF const& rect) const {
-        QTransform const virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+    QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
+        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
 
-        QLineF const hor_line(rect.topLeft(), rect.topRight());
-        QLineF const vert_line(rect.topLeft(), rect.bottomLeft());
+        const QLineF hor_line(rect.topLeft(), rect.topRight());
+        const QLineF vert_line(rect.topLeft(), rect.bottomLeft());
 
-        QSizeF const size_mm(
+        const QSizeF size_mm(
                 virt_to_mm.map(hor_line).length(),
                 virt_to_mm.map(vert_line).length()
         );
@@ -664,7 +664,7 @@ namespace page_layout {
         return size_mm;
     }
 
-    ImageView::AggregateSizeChanged ImageView::commitHardMargins(Margins const& margins_mm) {
+    ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& margins_mm) {
         m_ptrSettings->setHardMarginsMM(m_pageId, margins_mm);
         m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM();
 
@@ -678,7 +678,7 @@ namespace page_layout {
         return changed;
     }
 
-    void ImageView::invalidateThumbnails(AggregateSizeChanged const agg_size_changed) {
+    void ImageView::invalidateThumbnails(const AggregateSizeChanged agg_size_changed) {
         if (agg_size_changed == AGGREGATE_SIZE_CHANGED) {
             emit invalidateAllThumbnails();
         } else {

@@ -21,7 +21,7 @@
 #include "XmlUnmarshaller.h"
 
 namespace select_content {
-    Params::Params(Dependencies const& deps)
+    Params::Params(const Dependencies& deps)
             : m_deps(deps),
               m_contentDetectionMode(MODE_AUTO),
               m_pageDetectionMode(MODE_AUTO),
@@ -31,15 +31,15 @@ namespace select_content {
               m_deviation(0.0) {
     }
 
-    Params::Params(QRectF const& content_rect,
-                   QSizeF const& content_size_mm,
-                   QRectF const& page_rect,
-                   Dependencies const& deps,
-                   AutoManualMode const content_detection_mode,
-                   AutoManualMode const page_detection_mode,
-                   bool const contentDetect,
-                   bool const pageDetect,
-                   bool const fineTuning)
+    Params::Params(const QRectF& content_rect,
+                   const QSizeF& content_size_mm,
+                   const QRectF& page_rect,
+                   const Dependencies& deps,
+                   const AutoManualMode content_detection_mode,
+                   const AutoManualMode page_detection_mode,
+                   const bool contentDetect,
+                   const bool pageDetect,
+                   const bool fineTuning)
             : m_contentRect(content_rect),
               m_pageRect(page_rect),
               m_contentSizeMM(content_size_mm),
@@ -52,7 +52,7 @@ namespace select_content {
               m_deviation(0.0) {
     }
 
-    Params::Params(QDomElement const& filter_el)
+    Params::Params(const QDomElement& filter_el)
             : m_contentRect(
             XmlUnmarshaller::rectF(
                     filter_el.namedItem("content-rect").toElement()
@@ -79,7 +79,7 @@ namespace select_content {
 
     Params::~Params() = default;
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -97,19 +97,19 @@ namespace select_content {
         return el;
     }
 
-    QRectF const& Params::contentRect() const {
+    const QRectF& Params::contentRect() const {
         return m_contentRect;
     }
 
-    QRectF const& Params::pageRect() const {
+    const QRectF& Params::pageRect() const {
         return m_pageRect;
     }
 
-    QSizeF const& Params::contentSizeMM() const {
+    const QSizeF& Params::contentSizeMM() const {
         return m_contentSizeMM;
     }
 
-    Dependencies const& Params::dependencies() const {
+    const Dependencies& Params::dependencies() const {
         return m_deps;
     }
 
@@ -149,27 +149,27 @@ namespace select_content {
         return m_fineTuneCorners;
     }
 
-    void Params::setContentDetectionMode(AutoManualMode const& mode) {
+    void Params::setContentDetectionMode(const AutoManualMode& mode) {
         m_contentDetectionMode = mode;
     }
 
-    void Params::setPageDetectionMode(AutoManualMode const& mode) {
+    void Params::setPageDetectionMode(const AutoManualMode& mode) {
         m_pageDetectionMode = mode;
     }
 
-    void Params::setContentRect(QRectF const& rect) {
+    void Params::setContentRect(const QRectF& rect) {
         m_contentRect = rect;
     }
 
-    void Params::setPageRect(QRectF const& rect) {
+    void Params::setPageRect(const QRectF& rect) {
         m_pageRect = rect;
     }
 
-    void Params::setContentSizeMM(QSizeF const& size) {
+    void Params::setContentSizeMM(const QSizeF& size) {
         m_contentSizeMM = size;
     }
 
-    void Params::setDependencies(Dependencies const& deps) {
+    void Params::setDependencies(const Dependencies& deps) {
         m_deps = deps;
     }
 

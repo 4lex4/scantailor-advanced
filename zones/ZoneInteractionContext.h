@@ -42,14 +42,14 @@ public:
     typedef boost::function<
             InteractionHandler*(
                     InteractionState& interaction,
-                    EditableSpline::Ptr const& spline, SplineVertex::Ptr const& vertex
+                    const EditableSpline::Ptr& spline, const SplineVertex::Ptr& vertex
             )
     > VertexDragInteractionCreator;
 
     typedef boost::function<
             InteractionHandler*(
                     InteractionState& interaction,
-                    EditableSpline::Ptr const& spline
+                    const EditableSpline::Ptr& spline
             )
     > ZoneDragInteractionCreator;
 
@@ -58,7 +58,7 @@ public:
     > ContextMenuInteractionCreator;
 
     typedef boost::function<
-            void(EditableZoneSet::Zone const& zone)
+            void(const EditableZoneSet::Zone& zone)
     > ShowPropertiesCommand;
 
     ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones);
@@ -77,7 +77,7 @@ public:
         return m_defaultInteractionCreator();
     }
 
-    void setDefaultInteractionCreator(DefaultInteractionCreator const& creator) {
+    void setDefaultInteractionCreator(const DefaultInteractionCreator& creator) {
         m_defaultInteractionCreator = creator;
     }
 
@@ -85,26 +85,26 @@ public:
         return m_zoneCreationInteractionCreator(interaction);
     }
 
-    void setZoneCreationInteractionCreator(ZoneCreationInteractionCreator const& creator) {
+    void setZoneCreationInteractionCreator(const ZoneCreationInteractionCreator& creator) {
         m_zoneCreationInteractionCreator = creator;
     }
 
     virtual InteractionHandler* createVertexDragInteraction(InteractionState& interaction,
-                                                            EditableSpline::Ptr const& spline,
-                                                            SplineVertex::Ptr const& vertex) {
+                                                            const EditableSpline::Ptr& spline,
+                                                            const SplineVertex::Ptr& vertex) {
         return m_vertexDragInteractionCreator(interaction, spline, vertex);
     }
 
-    void setVertexDragInteractionCreator(VertexDragInteractionCreator const& creator) {
+    void setVertexDragInteractionCreator(const VertexDragInteractionCreator& creator) {
         m_vertexDragInteractionCreator = creator;
     }
 
     virtual InteractionHandler* createZoneDragInteraction(InteractionState& interaction,
-                                                          EditableSpline::Ptr const& spline) {
+                                                          const EditableSpline::Ptr& spline) {
         return m_zoneDragInteractionCreator(interaction, spline);
     }
 
-    void setZoneDragInteractionCreator(ZoneDragInteractionCreator const& creator) {
+    void setZoneDragInteractionCreator(const ZoneDragInteractionCreator& creator) {
         m_zoneDragInteractionCreator = creator;
     }
 
@@ -115,15 +115,15 @@ public:
         return m_contextMenuInteractionCreator(interaction);
     }
 
-    void setContextMenuInteractionCreator(ContextMenuInteractionCreator const& creator) {
+    void setContextMenuInteractionCreator(const ContextMenuInteractionCreator& creator) {
         m_contextMenuInteractionCreator = creator;
     }
 
-    virtual void showPropertiesCommand(EditableZoneSet::Zone const& zone) {
+    virtual void showPropertiesCommand(const EditableZoneSet::Zone& zone) {
         m_showPropertiesCommand(zone);
     }
 
-    void setShowPropertiesCommand(ShowPropertiesCommand const& command) {
+    void setShowPropertiesCommand(const ShowPropertiesCommand& command) {
         m_showPropertiesCommand = command;
     }
 
@@ -142,21 +142,21 @@ private:
      * Creates an instance of ZoneVertexDragInteraction.
      */
     InteractionHandler* createStdVertexDragInteraction(InteractionState& interaction,
-                                                       EditableSpline::Ptr const& spline,
-                                                       SplineVertex::Ptr const& vertex);
+                                                       const EditableSpline::Ptr& spline,
+                                                       const SplineVertex::Ptr& vertex);
 
     /**
      * Creates an instance of ZoneDragInteraction.
      */
     InteractionHandler* createStdZoneDragInteraction(InteractionState& interaction,
-                                                     EditableSpline::Ptr const& spline);
+                                                     const EditableSpline::Ptr& spline);
 
     /**
      * Creates an instance of ZoneContextMenuInteraction.  May return null.
      */
     InteractionHandler* createStdContextMenuInteraction(InteractionState& interaction);
 
-    static void showPropertiesStub(EditableZoneSet::Zone const&) {
+    static void showPropertiesStub(const EditableZoneSet::Zone&) {
     }
 
     ImageViewBase& m_rImageView;

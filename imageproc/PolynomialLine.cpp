@@ -22,7 +22,7 @@
 #include <stdexcept>
 
 namespace imageproc {
-    void PolynomialLine::validateArguments(int const degree, int const num_values) {
+    void PolynomialLine::validateArguments(const int degree, const int num_values) {
         if (degree < 0) {
             throw std::invalid_argument("PolynomialLine: degree is invalid");
         }
@@ -31,7 +31,7 @@ namespace imageproc {
         }
     }
 
-    double PolynomialLine::calcScale(int const num_values) {
+    double PolynomialLine::calcScale(const int num_values) {
         if (num_values <= 1) {
             return 0.0;
         } else {
@@ -39,9 +39,9 @@ namespace imageproc {
         }
     }
 
-    void PolynomialLine::doLeastSquares(VecT<double> const& data_points, VecT<double>& coeffs) {
-        auto const num_terms = static_cast<const int>(coeffs.size());
-        auto const num_values = static_cast<const int>(data_points.size());
+    void PolynomialLine::doLeastSquares(const VecT<double>& data_points, VecT<double>& coeffs) {
+        const auto num_terms = static_cast<const int>(coeffs.size());
+        const auto num_values = static_cast<const int>(data_points.size());
 
         // The least squares equation is A^T*A*x = A^T*b
         // We will be building A^T*A and A^T*b incrementally.
@@ -53,10 +53,10 @@ namespace imageproc {
         VecT<double> powers(num_terms);
 
         // Pretend that data points are positioned in range of [0, 1].
-        double const scale = calcScale(num_values);
+        const double scale = calcScale(num_values);
         for (int x = 0; x < num_values; ++x) {
-            double const position = x * scale;
-            double const data_point = data_points[x];
+            const double position = x * scale;
+            const double data_point = data_points[x];
 
             // Fill the powers vector.
             double pow = 1.0;
@@ -67,10 +67,10 @@ namespace imageproc {
 
             // Update AtA and Atb.
             for (int i = 0; i < num_terms; ++i) {
-                double const i_val = powers[i];
+                const double i_val = powers[i];
                 Atb[i] += i_val * data_point;
                 for (int j = 0; j < num_terms; ++j) {
-                    double const j_val = powers[j];
+                    const double j_val = powers[j];
                     AtA(i, j) += i_val * j_val;
                 }
             }
@@ -84,7 +84,7 @@ namespace imageproc {
         try {
             DynamicMatrixCalc<double> mc;
             mc(AtA).solve(mc(Atb)).write(coeffs.data());
-        } catch (std::runtime_error const&) {
+        } catch (const std::runtime_error&) {
         }
     } // PolynomialLine::doLeastSquares
 }  // namespace imageproc

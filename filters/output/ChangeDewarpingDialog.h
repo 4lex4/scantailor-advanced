@@ -36,15 +36,15 @@ namespace output {
     Q_OBJECT
     public:
         ChangeDewarpingDialog(QWidget* parent,
-                              PageId const& cur_page,
-                              DewarpingOptions const& dewarpingOptions,
-                              PageSelectionAccessor const& page_selection_accessor);
+                              const PageId& cur_page,
+                              const DewarpingOptions& dewarpingOptions,
+                              const PageSelectionAccessor& page_selection_accessor);
 
         ~ChangeDewarpingDialog() override;
 
     signals:
 
-        void accepted(std::set<PageId> const& pages, DewarpingOptions const& dewarpingOptions);
+        void accepted(const std::set<PageId>& pages, const DewarpingOptions& dewarpingOptions);
 
     private slots:
 

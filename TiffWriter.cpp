@@ -30,7 +30,7 @@
 /**
  * m_reverseBitsLUT[byte] gives the same byte, but with bit order reversed.
  */
-uint8_t const
+const uint8_t
         TiffWriter::m_reverseBitsLUT[256] = {
         0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
         0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
@@ -141,7 +141,7 @@ static void deviceUnmap(thandle_t, tdata_t, toff_t) {
     // Not implemented.
 }
 
-bool TiffWriter::writeImage(QString const& file_path, QImage const& image) {
+bool TiffWriter::writeImage(const QString& file_path, const QImage& image) {
     if (image.isNull()) {
         return false;
     }
@@ -160,7 +160,7 @@ bool TiffWriter::writeImage(QString const& file_path, QImage const& image) {
     return true;
 }
 
-bool TiffWriter::writeImage(QIODevice& device, QImage const& image) {
+bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
     if (image.isNull()) {
         return false;
     }
@@ -212,7 +212,7 @@ bool TiffWriter::writeImage(QIODevice& device, QImage const& image) {
 /**
  * Set the physical resolution, if it's defined.
  */
-void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
+void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
     using namespace imageproc::constants;
 
     if (dpm.isNull()) {
@@ -225,10 +225,10 @@ void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
 
     // If we have a round (or almost round) DPI, then
     // write it as DPI rather than dots per cm.
-    double const xdpi = dpm.horizontal() * DPM2DPI;
-    double const ydpi = dpm.vertical() * DPM2DPI;
-    double const rounded_xdpi = floor(xdpi + 0.5);
-    double const rounded_ydpi = floor(ydpi + 0.5);
+    const double xdpi = dpm.horizontal() * DPM2DPI;
+    const double ydpi = dpm.vertical() * DPM2DPI;
+    const double rounded_xdpi = floor(xdpi + 0.5);
+    const double rounded_ydpi = floor(ydpi + 0.5);
     if ((fabs(xdpi - rounded_xdpi) < 0.02)
         && (fabs(ydpi - rounded_ydpi) < 0.02)) {
         xres = (float) rounded_xdpi;
@@ -241,7 +241,7 @@ void TiffWriter::setDpm(TiffHandle const& tif, Dpm const& dpm) {
     TIFFSetField(tif.handle(), TIFFTAG_RESOLUTIONUNIT, unit);
 }
 
-bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const& image) {
+bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image) {
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(1));
 
     uint16 bits_per_sample = 8;
@@ -260,8 +260,8 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
                 // Some programs don't understand
                 // palettized binary images, so don't
                 // use a palette for black and white images.
-                uint32_t const c0 = image.color(0);
-                uint32_t const c1 = image.color(1);
+                const uint32_t c0 = image.color(0);
+                const uint32_t c1 = image.color(1);
                 if ((c0 == 0xffffffff) && (c1 == 0xff000000)) {
                     photometric = PHOTOMETRIC_MINISWHITE;
                 } else if ((c0 == 0xff000000) && (c1 == 0xffffffff)) {
@@ -284,7 +284,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, photometric);
 
     if (photometric == PHOTOMETRIC_PALETTE) {
-        int const num_colors = 1 << bits_per_sample;
+        const int num_colors = 1 << bits_per_sample;
         QVector<QRgb> color_table(image.colorTable());
         if (color_table.size() > num_colors) {
             color_table.resize(num_colors);
@@ -293,7 +293,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
         std::vector<uint16> pg(num_colors, 0);
         std::vector<uint16> pb(num_colors, 0);
         for (int i = 0; i < color_table.size(); ++i) {
-            QRgb const rgb = color_table[i];
+            const QRgb rgb = color_table[i];
             pr[i] = static_cast<unsigned short>((0xFFFF * qRed(rgb) + 128) / 255);
             pg[i] = static_cast<unsigned short>((0xFFFF * qGreen(rgb) + 128) / 255);
             pb[i] = static_cast<unsigned short>((0xFFFF * qBlue(rgb) + 128) / 255);
@@ -312,7 +312,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(TiffHandle const& tif, QImage const
     }
 } // TiffWriter::writeBitonalOrIndexed8Image
 
-bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image) {
+bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
     assert(image.format() == QImage::Format_RGB32);
 
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(3));
@@ -321,18 +321,18 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image) {
     TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
-    int const width = image.width();
-    int const height = image.height();
+    const int width = image.width();
+    const int height = image.height();
 
     std::vector<uint8_t> tmp_line(width * 3);
 
     // Libtiff expects "RR GG BB" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
-        auto const* p_src = (uint32_t const*) image.scanLine(y);
+        const auto* p_src = (const uint32_t*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
-            uint32_t const ARGB = *p_src;
+            const uint32_t ARGB = *p_src;
             p_dst[0] = static_cast<uint8_t>(ARGB >> 16);
             p_dst[1] = static_cast<uint8_t>(ARGB >> 8);
             p_dst[2] = static_cast<uint8_t>(ARGB);
@@ -347,7 +347,7 @@ bool TiffWriter::writeRGB32Image(TiffHandle const& tif, QImage const& image) {
     return true;
 } // TiffWriter::writeRGB32Image
 
-bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image) {
+bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
     assert(image.format() == QImage::Format_ARGB32);
 
     TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(4));
@@ -356,18 +356,18 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image) {
     TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
     TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
-    int const width = image.width();
-    int const height = image.height();
+    const int width = image.width();
+    const int height = image.height();
 
     std::vector<uint8_t> tmp_line(width * 4);
 
     // Libtiff expects "RR GG BB AA" sequences regardless of CPU byte order.
 
     for (int y = 0; y < height; ++y) {
-        auto const* p_src = (uint32_t const*) image.scanLine(y);
+        const auto* p_src = (const uint32_t*) image.scanLine(y);
         uint8_t* p_dst = &tmp_line[0];
         for (int x = 0; x < width; ++x) {
-            uint32_t const ARGB = *p_src;
+            const uint32_t ARGB = *p_src;
             p_dst[0] = static_cast<uint8_t>(ARGB >> 16);
             p_dst[1] = static_cast<uint8_t>(ARGB >> 8);
             p_dst[2] = static_cast<uint8_t>(ARGB);
@@ -383,9 +383,9 @@ bool TiffWriter::writeARGB32Image(TiffHandle const& tif, QImage const& image) {
     return true;
 } // TiffWriter::writeARGB32Image
 
-bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
-    int const width = image.width();
-    int const height = image.height();
+bool TiffWriter::write8bitLines(const TiffHandle& tif, const QImage& image) {
+    const int width = image.width();
+    const int height = image.height();
 
     // TIFFWriteScanline() can actually modify the data you pass it,
     // so we have to use a temporary buffer even when no coversion
@@ -393,7 +393,7 @@ bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
     std::vector<uint8_t> tmp_line(width, 0);
 
     for (int y = 0; y < height; ++y) {
-        uint8_t const* src_line = image.scanLine(y);
+        const uint8_t* src_line = image.scanLine(y);
         memcpy(&tmp_line[0], src_line, tmp_line.size());
         if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
             return false;
@@ -403,17 +403,17 @@ bool TiffWriter::write8bitLines(TiffHandle const& tif, QImage const& image) {
     return true;
 }
 
-bool TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image) {
-    int const width = image.width();
-    int const height = image.height();
+bool TiffWriter::writeBinaryLinesAsIs(const TiffHandle& tif, const QImage& image) {
+    const int width = image.width();
+    const int height = image.height();
     // TIFFWriteScanline() can actually modify the data you pass it,
     // so we have to use a temporary buffer even when no coversion
     // is required.
-    int const bpl = (width + 7) / 8;
+    const int bpl = (width + 7) / 8;
     std::vector<uint8_t> tmp_line(bpl, 0);
 
     for (int y = 0; y < height; ++y) {
-        uint8_t const* src_line = image.scanLine(y);
+        const uint8_t* src_line = image.scanLine(y);
         memcpy(&tmp_line[0], src_line, bpl);
         if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
             return false;
@@ -423,15 +423,15 @@ bool TiffWriter::writeBinaryLinesAsIs(TiffHandle const& tif, QImage const& image
     return true;
 }
 
-bool TiffWriter::writeBinaryLinesReversed(TiffHandle const& tif, QImage const& image) {
-    int const width = image.width();
-    int const height = image.height();
+bool TiffWriter::writeBinaryLinesReversed(const TiffHandle& tif, const QImage& image) {
+    const int width = image.width();
+    const int height = image.height();
 
-    int const bpl = (width + 7) / 8;
+    const int bpl = (width + 7) / 8;
     std::vector<uint8_t> tmp_line(bpl, 0);
 
     for (int y = 0; y < height; ++y) {
-        uint8_t const* src_line = image.scanLine(y);
+        const uint8_t* src_line = image.scanLine(y);
         for (int i = 0; i < bpl; ++i) {
             tmp_line[i] = m_reverseBitsLUT[src_line[i]];
         }

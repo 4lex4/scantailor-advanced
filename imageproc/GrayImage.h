@@ -47,19 +47,19 @@ namespace imageproc {
          *
          * The QImage may be in any format and may be null.
          */
-        explicit GrayImage(QImage const& image);
+        explicit GrayImage(const QImage& image);
 
         /**
-         * \brief Returns a const reference to the underlying QImage.
+         * \brief Returns const a reference to the underlying QImage.
          *
          * The underlying QImage is either a null image or a 8-bit indexed
          * image with a grayscale palette.
          */
-        QImage const& toQImage() const {
+        const QImage& toQImage() const {
             return m_image;
         }
 
-        operator QImage const&() const {
+        operator const QImage&() const {
             return m_image;
         }
 
@@ -75,7 +75,7 @@ namespace imageproc {
             return m_image.bits();
         }
 
-        uint8_t const* data() const {
+        const uint8_t* data() const {
             return m_image.bits();
         }
 
@@ -111,11 +111,11 @@ namespace imageproc {
     };
 
 
-    inline bool operator==(GrayImage const& lhs, GrayImage const& rhs) {
+    inline bool operator==(const GrayImage& lhs, const GrayImage& rhs) {
         return lhs.toQImage() == rhs.toQImage();
     }
 
-    inline bool operator!=(GrayImage const& lhs, GrayImage const& rhs) {
+    inline bool operator!=(const GrayImage& lhs, const GrayImage& rhs) {
         return lhs.toQImage() != rhs.toQImage();
     }
 }  // namespace imageproc

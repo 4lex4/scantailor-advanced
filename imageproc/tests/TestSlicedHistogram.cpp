@@ -28,7 +28,7 @@ namespace imageproc {
     namespace tests {
         using namespace utils;
 
-        static bool checkHistogram(SlicedHistogram const& hist, int const* data_begin, int const* data_end) {
+        static bool checkHistogram(const SlicedHistogram& hist, const int* data_begin, const int* data_end) {
             if (hist.size() != size_t(data_end - data_begin)) {
                 return false;
             }
@@ -44,7 +44,7 @@ namespace imageproc {
         BOOST_AUTO_TEST_SUITE(SlicedHistogramTestSuite);
 
             BOOST_AUTO_TEST_CASE(test_null_image) {
-                BinaryImage const null_img;
+                const BinaryImage null_img;
 
                 SlicedHistogram hor_hist(null_img, SlicedHistogram::ROWS);
                 BOOST_CHECK(hor_hist.size() == 0);
@@ -54,8 +54,8 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_exceeding_area) {
-                BinaryImage const img(1, 1);
-                QRect const area(0, 0, 1, 2);
+                const BinaryImage img(1, 1);
+                const QRect area(0, 0, 1, 2);
 
                 BOOST_CHECK_THROW(
                         SlicedHistogram(img, area, SlicedHistogram::ROWS),
@@ -64,7 +64,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 1, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 1, 0,
@@ -76,15 +76,15 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 1
                 };
 
-                static int const hor_counts[] = {
+                static const int hor_counts[] = {
                         0, 1, 2, 3, 9, 2, 6, 3, 1
                 };
 
-                static int const ver_counts[] = {
+                static const int ver_counts[] = {
                         2, 2, 4, 4, 5, 3, 2, 3, 2
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
+                const BinaryImage img(makeBinaryImage(inp, 9, 9));
 
                 SlicedHistogram hor_hist(img, SlicedHistogram::ROWS);
                 BOOST_CHECK(checkHistogram(hor_hist, hor_counts, hor_counts + 9));

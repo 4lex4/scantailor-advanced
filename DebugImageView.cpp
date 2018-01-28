@@ -27,7 +27,7 @@
 
 class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
 public:
-    ImageLoadResult(QPointer<DebugImageView> owner, QImage const& image)
+    ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image)
             : m_ptrOwner(std::move(owner)),
               m_image(image) {
     }
@@ -47,7 +47,7 @@ private:
 
 class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
 public:
-    ImageLoader(DebugImageView* owner, QString const& file_path)
+    ImageLoader(DebugImageView* owner, const QString& file_path)
             : m_ptrOwner(owner),
               m_filePath(file_path) {
     }
@@ -65,7 +65,7 @@ private:
 
 
 DebugImageView::DebugImageView(AutoRemovingFile file,
-                               boost::function<QWidget*(QImage const&)> const& image_view_factory,
+                               boost::function<QWidget*(const QImage&)>const & image_view_factory,
                                QWidget* parent)
         : QStackedWidget(parent),
           m_file(file),
@@ -75,7 +75,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
     addWidget(m_pPlaceholderWidget);
 }
 
-void DebugImageView::setLive(bool const live) {
+void DebugImageView::setLive(const bool live) {
     if (live && !m_isLive) {
         ImageViewBase::backgroundExecutor().enqueueTask(
                 BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
@@ -92,7 +92,7 @@ void DebugImageView::setLive(bool const live) {
     m_isLive = live;
 }
 
-void DebugImageView::imageLoaded(QImage const& image) {
+void DebugImageView::imageLoaded(const QImage& image) {
     if (!m_isLive) {
         return;
     }

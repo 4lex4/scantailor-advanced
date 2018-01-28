@@ -50,13 +50,13 @@ namespace page_split {
              intrusive_ptr<Settings> settings,
              intrusive_ptr<ProjectPages> pages,
              intrusive_ptr<deskew::Task> next_task,
-             PageInfo const& page_info,
+             const PageInfo& page_info,
              bool batch_processing,
              bool debug);
 
         ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
     private:
         class UiUpdater;

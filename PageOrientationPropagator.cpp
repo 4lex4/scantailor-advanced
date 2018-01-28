@@ -28,11 +28,11 @@
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector {
 public:
-    void process(OrthogonalRotation const& orientation) override {
+    void process(const OrthogonalRotation& orientation) override {
         m_orientation = orientation;
     }
 
-    OrthogonalRotation const& orientation() const {
+    const OrthogonalRotation& orientation() const {
         return m_orientation;
     }
 
@@ -49,10 +49,10 @@ PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::F
 
 PageOrientationPropagator::~PageOrientationPropagator() = default;
 
-void PageOrientationPropagator::propagate(ProjectPages const& pages) {
-    PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
+void PageOrientationPropagator::propagate(const ProjectPages& pages) {
+    const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
 
-    for (PageInfo const& page_info : sequence) {
+    for (const PageInfo& page_info : sequence) {
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         m_ptrPageSplitFilter->pageOrientationUpdate(

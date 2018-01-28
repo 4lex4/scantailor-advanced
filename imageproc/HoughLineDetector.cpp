@@ -32,21 +32,21 @@
 namespace imageproc {
     class HoughLineDetector::GreaterQualityFirst {
     public:
-        bool operator()(HoughLine const& lhs, HoughLine const& rhs) const {
+        bool operator()(const HoughLine& lhs, const HoughLine& rhs) const {
             return lhs.quality() > rhs.quality();
         }
     };
 
 
-    HoughLineDetector::HoughLineDetector(QSize const& input_dimensions,
-                                         double const distance_resolution,
-                                         double const start_angle,
-                                         double const angle_delta,
-                                         int const num_angles)
+    HoughLineDetector::HoughLineDetector(const QSize& input_dimensions,
+                                         const double distance_resolution,
+                                         const double start_angle,
+                                         const double angle_delta,
+                                         const int num_angles)
             : m_distanceResolution(distance_resolution),
               m_recipDistanceResolution(1.0 / distance_resolution) {
-        int const max_x = input_dimensions.width() - 1;
-        int const max_y = input_dimensions.height() - 1;
+        const int max_x = input_dimensions.width() - 1;
+        const int max_y = input_dimensions.height() - 1;
 
         QPoint checkpoints[3];
         checkpoints[0] = QPoint(max_x, max_y);
@@ -61,9 +61,9 @@ namespace imageproc {
             double angle = start_angle + angle_delta * i;
             angle *= constants::DEG2RAD;
 
-            QPointF const uv(cos(angle), sin(angle));
-            for (QPoint const& p : checkpoints) {
-                double const distance = uv.x() * p.x() + uv.y() * p.y();
+            const QPointF uv(cos(angle), sin(angle));
+            for (const QPoint& p : checkpoints) {
+                const double distance = uv.x() * p.x() + uv.y() * p.y();
                 max_distance = std::max(max_distance, distance);
                 min_distance = std::min(min_distance, distance);
             }
@@ -73,8 +73,8 @@ namespace imageproc {
         // We bias distances to make them non-negative.
         m_distanceBias = -min_distance;
 
-        double const max_biased_distance = max_distance + m_distanceBias;
-        auto const max_bin = int(
+        const double max_biased_distance = max_distance + m_distanceBias;
+        const auto max_bin = int(
                 max_biased_distance * m_recipDistanceResolution + 0.5
         );
 
@@ -86,11 +86,11 @@ namespace imageproc {
     void HoughLineDetector::process(int x, int y, unsigned weight) {
         unsigned* hist_line = &m_histogram[0];
 
-        for (QPointF const& uv : m_angleUnitVectors) {
-            double const distance = uv.x() * x + uv.y() * y;
-            double const biased_distance = distance + m_distanceBias;
+        for (const QPointF& uv : m_angleUnitVectors) {
+            const double distance = uv.x() * x + uv.y() * y;
+            const double biased_distance = distance + m_distanceBias;
 
-            auto const bin = (int) (biased_distance * m_recipDistanceResolution + 0.5);
+            const auto bin = (int) (biased_distance * m_recipDistanceResolution + 0.5);
             assert(bin >= 0 && bin < m_histWidth);
             hist_line[bin] += weight;
 
@@ -98,7 +98,7 @@ namespace imageproc {
         }
     }
 
-    QImage HoughLineDetector::visualizeHoughSpace(unsigned const lower_bound) const {
+    QImage HoughLineDetector::visualizeHoughSpace(const unsigned lower_bound) const {
         QImage intensity(m_histWidth, m_histHeight, QImage::Format_Indexed8);
         intensity.setColorTable(createGrayscalePalette());
         if ((m_histWidth > 0) && (m_histHeight > 0) && intensity.isNull()) {
@@ -106,7 +106,7 @@ namespace imageproc {
         }
 
         unsigned max_value = 0;
-        unsigned const* hist_line = &m_histogram[0];
+        const unsigned* hist_line = &m_histogram[0];
         for (int y = 0; y < m_histHeight; ++y) {
             for (int x = 0; x < m_histWidth; ++x) {
                 max_value = std::max(max_value, hist_line[x]);
@@ -121,11 +121,11 @@ namespace imageproc {
         }
 
         unsigned char* intensity_line = intensity.bits();
-        int const intensity_bpl = intensity.bytesPerLine();
+        const int intensity_bpl = intensity.bytesPerLine();
         hist_line = &m_histogram[0];
         for (int y = 0; y < m_histHeight; ++y) {
             for (int x = 0; x < m_histWidth; ++x) {
-                auto const intensity = (unsigned) floor(
+                const auto intensity = (unsigned) floor(
                         hist_line[x] * 255.0 / max_value + 0.5
                 );
                 intensity_line[x] = (unsigned char) intensity;
@@ -134,7 +134,7 @@ namespace imageproc {
             hist_line += m_histWidth;
         }
 
-        BinaryImage const peaks(
+        const BinaryImage peaks(
                 findHistogramPeaks(
                         m_histogram, m_histWidth, m_histHeight, lower_bound
                 )
@@ -163,7 +163,7 @@ namespace imageproc {
     }  // HoughLineDetector::visualizeHoughSpace
 
     std::vector<HoughLine>
-    HoughLineDetector::findLines(unsigned const quality_lower_bound) const {
+    HoughLineDetector::findLines(const unsigned quality_lower_bound) const {
         BinaryImage peaks(
                 findHistogramPeaks(
                         m_histogram, m_histWidth, m_histHeight,
@@ -173,17 +173,17 @@ namespace imageproc {
 
         std::vector<HoughLine> lines;
 
-        QRect const peaks_rect(peaks.rect());
+        const QRect peaks_rect(peaks.rect());
         ConnCompEraser eraser(peaks.release(), CONN8);
         ConnComp cc;
         while (!(cc = eraser.nextConnComp()).isNull()) {
-            unsigned const level = m_histogram[
+            const unsigned level = m_histogram[
                     cc.seed().y() * m_histWidth + cc.seed().x()
             ];
 
-            QPoint const center(cc.rect().center());
-            QPointF const norm_uv(m_angleUnitVectors[center.y()]);
-            double const distance = (center.x() + 0.5)
+            const QPoint center(cc.rect().center());
+            const QPointF norm_uv(m_angleUnitVectors[center.y()]);
+            const double distance = (center.x() + 0.5)
                                     * m_distanceResolution - m_distanceBias;
             lines.emplace_back(norm_uv, distance, level);
         }
@@ -193,10 +193,10 @@ namespace imageproc {
         return lines;
     }
 
-    BinaryImage HoughLineDetector::findHistogramPeaks(std::vector<unsigned> const& hist,
-                                                      int const width,
-                                                      int const height,
-                                                      unsigned const lower_bound) {
+    BinaryImage HoughLineDetector::findHistogramPeaks(const std::vector<unsigned>& hist,
+                                                      const int width,
+                                                      const int height,
+                                                      const unsigned lower_bound) {
         // Peak candidates are connected components of bins having the same
         // value.  Such a connected component may or may not be a peak.
         BinaryImage peak_candidates(
@@ -227,7 +227,7 @@ namespace imageproc {
         // If a bin that has changed its state was a part of a peak candidate,
         // it means a neighboring bin went from equal to a greater value,
         // which indicates that such candidate is not a peak.
-        BinaryImage const not_peaks(seedFill(diff, peak_candidates, CONN8));
+        const BinaryImage not_peaks(seedFill(diff, peak_candidates, CONN8));
 
         rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
 
@@ -240,10 +240,10 @@ namespace imageproc {
  * \li It doesn't have a greater neighbor (in a 5x5 window).
  * \li It's value is not below \p lower_bound.
  */
-    BinaryImage HoughLineDetector::findPeakCandidates(std::vector<unsigned> const& hist,
-                                                      int const width,
-                                                      int const height,
-                                                      unsigned const lower_bound) {
+    BinaryImage HoughLineDetector::findPeakCandidates(const std::vector<unsigned>& hist,
+                                                      const int width,
+                                                      const int height,
+                                                      const unsigned lower_bound) {
         std::vector<unsigned> maxed(hist.size(), 0);
 
         // Every bin becomes the maximum of itself and its neighbors.
@@ -260,13 +260,13 @@ namespace imageproc {
  * Increment bins that correspond to black pixels in \p mask.
  */
     void HoughLineDetector::incrementBinsMasked(std::vector<unsigned>& hist,
-                                                int const width,
-                                                int const height,
-                                                BinaryImage const& mask) {
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
+                                                const int width,
+                                                const int height,
+                                                const BinaryImage& mask) {
+        const uint32_t* mask_line = mask.data();
+        const int mask_wpl = mask.wordsPerLine();
         unsigned* hist_line = &hist[0];
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -283,10 +283,10 @@ namespace imageproc {
  * Every bin in \p dst is set to the maximum of the corresponding bin
  * in \p src and its neighbors in a 5x5 window.
  */
-    void HoughLineDetector::max5x5(std::vector<unsigned> const& src,
+    void HoughLineDetector::max5x5(const std::vector<unsigned>& src,
                                    std::vector<unsigned>& dst,
-                                   int const width,
-                                   int const height) {
+                                   const int width,
+                                   const int height) {
         std::vector<unsigned> tmp(src.size(), 0);
         max3x1(src, tmp, width, height);
         max3x1(tmp, dst, width, height);
@@ -298,17 +298,17 @@ namespace imageproc {
  * Every bin in \p dst is set to the maximum of the corresponding bin
  * in \p src and its left and right neighbors (if it has them).
  */
-    void HoughLineDetector::max3x1(std::vector<unsigned> const& src,
+    void HoughLineDetector::max3x1(const std::vector<unsigned>& src,
                                    std::vector<unsigned>& dst,
-                                   int const width,
-                                   int const height) {
+                                   const int width,
+                                   const int height) {
         if (width == 1) {
             dst = src;
 
             return;
         }
 
-        unsigned const* src_line = &src[0];
+        const unsigned* src_line = &src[0];
         unsigned* dst_line = &dst[0];
 
         for (int y = 0; y < height; ++y) {
@@ -317,9 +317,9 @@ namespace imageproc {
             dst_line[x] = std::max(src_line[x], src_line[x + 1]);
 
             for (++x; x < width - 1; ++x) {
-                unsigned const prev = src_line[x - 1];
-                unsigned const cur = src_line[x];
-                unsigned const next = src_line[x + 1];
+                const unsigned prev = src_line[x - 1];
+                const unsigned cur = src_line[x];
+                const unsigned next = src_line[x + 1];
                 dst_line[x] = std::max(prev, std::max(cur, next));
             }
             // Last column (no right neighbors).
@@ -334,17 +334,17 @@ namespace imageproc {
  * Every bin in \p dst is set to the maximum of the corresponding bin
  * in \p src and its top and bottom neighbors (if it has them).
  */
-    void HoughLineDetector::max1x3(std::vector<unsigned> const& src,
+    void HoughLineDetector::max1x3(const std::vector<unsigned>& src,
                                    std::vector<unsigned>& dst,
-                                   int const width,
-                                   int const height) {
+                                   const int width,
+                                   const int height) {
         if (height == 1) {
             dst = src;
 
             return;
         }
         // First row (no top neighbors).
-        unsigned const* p_src = &src[0];
+        const unsigned* p_src = &src[0];
         unsigned* p_dst = &dst[0];
         for (int x = 0; x < width; ++x) {
             *p_dst = std::max(p_src[0], p_src[width]);
@@ -354,9 +354,9 @@ namespace imageproc {
 
         for (int y = 1; y < height - 1; ++y) {
             for (int x = 0; x < width; ++x) {
-                unsigned const prev = p_src[x - width];
-                unsigned const cur = p_src[x];
-                unsigned const next = p_src[x + width];
+                const unsigned prev = p_src[x - width];
+                const unsigned cur = p_src[x];
+                const unsigned next = p_src[x + width];
                 p_dst[x] = std::max(prev, std::max(cur, next));
             }
 
@@ -376,17 +376,17 @@ namespace imageproc {
  * bins in two histograms have equal values, and those values are not below
  * \p lower_bound.
  */
-    BinaryImage HoughLineDetector::buildEqualMap(std::vector<unsigned> const& src1,
-                                                 std::vector<unsigned> const& src2,
-                                                 int const width,
-                                                 int const height,
-                                                 unsigned const lower_bound) {
+    BinaryImage HoughLineDetector::buildEqualMap(const std::vector<unsigned>& src1,
+                                                 const std::vector<unsigned>& src2,
+                                                 const int width,
+                                                 const int height,
+                                                 const unsigned lower_bound) {
         BinaryImage dst(width, height, WHITE);
         uint32_t* dst_line = dst.data();
-        int const dst_wpl = dst.wordsPerLine();
-        unsigned const* src1_line = &src1[0];
-        unsigned const* src2_line = &src2[0];
-        uint32_t const msb = uint32_t(1) << 31;
+        const int dst_wpl = dst.wordsPerLine();
+        const unsigned* src1_line = &src1[0];
+        const unsigned* src2_line = &src2[0];
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -405,21 +405,21 @@ namespace imageproc {
 
 /*=============================== HoughLine ================================*/
 
-    QPointF HoughLine::pointAtY(double const y) const {
+    QPointF HoughLine::pointAtY(const double y) const {
         double x = (m_distance - y * m_normUnitVector.y()) / m_normUnitVector.x();
 
         return QPointF(x, y);
     }
 
-    QPointF HoughLine::pointAtX(double const x) const {
+    QPointF HoughLine::pointAtX(const double x) const {
         double y = (m_distance - x * m_normUnitVector.x()) / m_normUnitVector.y();
 
         return QPointF(x, y);
     }
 
     QLineF HoughLine::unitSegment() const {
-        QPointF const line_point(m_normUnitVector * m_distance);
-        QPointF const line_vector(m_normUnitVector.y(), -m_normUnitVector.x());
+        const QPointF line_point(m_normUnitVector * m_distance);
+        const QPointF line_vector(m_normUnitVector.y(), -m_normUnitVector.x());
 
         return QLineF(line_point, line_point + line_vector);
     }

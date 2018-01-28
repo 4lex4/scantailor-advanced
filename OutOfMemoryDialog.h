@@ -33,12 +33,12 @@ Q_OBJECT
 public:
     explicit OutOfMemoryDialog(QWidget* parent = nullptr);
 
-    void setParams(QString const& project_file,
+    void setParams(const QString& project_file,
             // may be empty
                    intrusive_ptr<StageSequence> stages,
                    intrusive_ptr<ProjectPages> pages,
-                   SelectedPage const& selected_page,
-                   OutputFileNameGenerator const& out_file_name_gen);
+                   const SelectedPage& selected_page,
+                   const OutputFileNameGenerator& out_file_name_gen);
 
 private slots:
 
@@ -47,7 +47,7 @@ private slots:
     void saveProjectAs();
 
 private:
-    bool saveProjectWithFeedback(QString const& project_file);
+    bool saveProjectWithFeedback(const QString& project_file);
 
     void showSaveSuccessScreen();
 

@@ -20,7 +20,7 @@
 #include "ColorParams.h"
 
 namespace output {
-    RenderParams::RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions)
+    RenderParams::RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions)
             : m_mask(0) {
         const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
         const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());

@@ -31,14 +31,14 @@ namespace deskew {
     class Thumbnail : public ThumbnailBase {
     public:
         Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                  QSizeF const& max_size,
-                  ImageId const& image_id,
-                  ImageTransformation const& xform,
+                  const QSizeF& max_size,
+                  const ImageId& image_id,
+                  const ImageTransformation& xform,
                   bool deviant = false);
 
         void prePaintOverImage(QPainter& painter,
-                               QTransform const& image_to_display,
-                               QTransform const& thumb_to_display) override;
+                               const QTransform& image_to_display,
+                               const QTransform& thumb_to_display) override;
 
     private:
         bool m_deviant;

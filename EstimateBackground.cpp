@@ -52,10 +52,10 @@ struct AbsoluteDifference {
  */
 static void seedFillTopBottomInPlace(GrayImage& image) {
     uint8_t* const data = image.data();
-    int const stride = image.stride();
+    const int stride = image.stride();
 
-    int const width = image.width();
-    int const height = image.height();
+    const int width = image.width();
+    const int height = image.height();
 
     std::vector<uint8_t> seed_line(height, 0xff);
 
@@ -160,9 +160,9 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
     }
 } // morphologicalPreprocessingInPlace
 
-imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
-                                                QPolygonF const& area_to_consider,
-                                                TaskStatus const& status,
+imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
+                                                const QPolygonF& area_to_consider,
+                                                const TaskStatus& status,
                                                 DebugImages* dbg) {
     QSize reduced_size(input.size());
     reduced_size.scale(300, 300, Qt::KeepAspectRatio);
@@ -177,11 +177,11 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
 
     status.throwIfCancelled();
 
-    int const width = background.width();
-    int const height = background.height();
+    const int width = background.width();
+    const int height = background.height();
 
-    uint8_t const* const bg_data = background.data();
-    int const bg_stride = background.stride();
+    const uint8_t* const bg_data = background.data();
+    const int bg_stride = background.stride();
 
     BinaryImage mask(background.size(), BLACK);
 
@@ -204,20 +204,20 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     int mask_stride = mask.wordsPerLine();
 
     std::vector<uint8_t> line(std::max(width, height), 0);
-    uint32_t const msb = uint32_t(1) << 31;
+    const uint32_t msb = uint32_t(1) << 31;
 
     status.throwIfCancelled();
 
     // Smooth every horizontal line with a polynomial,
     // then mask pixels that became significantly lighter.
     for (int x = 0; x < width; ++x) {
-        uint32_t const mask = ~(msb >> (x & 31));
+        const uint32_t mask = ~(msb >> (x & 31));
 
-        int const degree = 2;
+        const int degree = 2;
         PolynomialLine pl(degree, bg_data + x, height, bg_stride);
         pl.output(&line[0], height, 1);
 
-        uint8_t const* p_bg = bg_data + x;
+        const uint8_t* p_bg = bg_data + x;
         uint32_t* p_mask = mask_data + (x >> 5);
         for (int y = 0; y < height; ++y) {
             if (*p_bg + 30 < line[y]) {
@@ -231,10 +231,10 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     status.throwIfCancelled();
     // Smooth every vertical line with a polynomial,
     // then mask pixels that became significantly lighter.
-    uint8_t const* bg_line = bg_data;
+    const uint8_t* bg_line = bg_data;
     uint32_t* mask_line = mask_data;
     for (int y = 0; y < height; ++y) {
-        int const degree = 4;
+        const int degree = 4;
         PolynomialLine pl(degree, bg_line, width, 1);
         pl.output(&line[0], width, 1);
 
@@ -266,8 +266,8 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     mask_stride = mask.wordsPerLine();
     // Check each horizontal line.  If it's mostly
     // white (ignored), then make it completely white.
-    int const last_word_idx = (width - 1) >> 5;
-    uint32_t const last_word_mask = ~uint32_t(0) << (
+    const int last_word_idx = (width - 1) >> 5;
+    const uint32_t last_word_mask = ~uint32_t(0) << (
             32 - width - (last_word_idx << 5)
     );
     mask_line = mask_data;
@@ -293,7 +293,7 @@ imageproc::PolynomialSurface estimateBackground(GrayImage const& input,
     // Check each vertical line.  If it's mostly
     // white (ignored), then make it completely white.
     for (int x = 0; x < width; ++x) {
-        uint32_t const mask = msb >> (x & 31);
+        const uint32_t mask = msb >> (x & 31);
         uint32_t* p_mask = mask_data + (x >> 5);
         int black_count = 0;
         for (int y = 0; y < height; ++y) {

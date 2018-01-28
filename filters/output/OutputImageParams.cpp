@@ -23,18 +23,18 @@
 #include "../../Utils.h"
 
 namespace output {
-    OutputImageParams::OutputImageParams(QSize const& out_image_size,
-                                         QRect const& content_rect,
+    OutputImageParams::OutputImageParams(const QSize& out_image_size,
+                                         const QRect& content_rect,
                                          ImageTransformation xform,
-                                         Dpi const& dpi,
-                                         ColorParams const& color_params,
-                                         SplittingOptions const& splitting_options,
-                                         DewarpingOptions const& dewarping_options,
-                                         dewarping::DistortionModel const& distortion_model,
-                                         DepthPerception const& depth_perception,
+                                         const Dpi& dpi,
+                                         const ColorParams& color_params,
+                                         const SplittingOptions& splitting_options,
+                                         const DewarpingOptions& dewarping_options,
+                                         const dewarping::DistortionModel& distortion_model,
+                                         const DepthPerception& depth_perception,
                                          DespeckleLevel despeckle_level,
-                                         PictureShapeOptions const& picture_shape_options,
-                                         OutputProcessingParams const& output_processing_params)
+                                         const PictureShapeOptions& picture_shape_options,
+                                         const OutputProcessingParams& output_processing_params)
             : m_size(out_image_size),
               m_contentRect(content_rect),
               m_cropArea(xform.resultingPreCropArea()),
@@ -52,7 +52,7 @@ namespace output {
         m_partialXform = xform.transform();
     }
 
-    OutputImageParams::OutputImageParams(QDomElement const& el)
+    OutputImageParams::OutputImageParams(const QDomElement& el)
             : m_size(XmlUnmarshaller::size(el.namedItem("size").toElement())),
               m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
               m_cropArea(XmlUnmarshaller::polygonF(el.namedItem("crop-area").toElement())),
@@ -68,7 +68,7 @@ namespace output {
               m_outputProcessingParams(el.namedItem("processing-params").toElement()) {
     }
 
-    QDomElement OutputImageParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -89,7 +89,7 @@ namespace output {
         return el;
     }
 
-    bool OutputImageParams::matches(OutputImageParams const& other) const {
+    bool OutputImageParams::matches(const OutputImageParams& other) const {
         if (m_size != other.m_size) {
             return false;
         }
@@ -137,12 +137,12 @@ namespace output {
         return true;
     }  // OutputImageParams::matches
 
-    bool OutputImageParams::colorParamsMatch(ColorParams const& cp1,
-                                             DespeckleLevel const dl1,
-                                             SplittingOptions const& so1,
-                                             ColorParams const& cp2,
-                                             DespeckleLevel const dl2,
-                                             SplittingOptions const& so2) {
+    bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
+                                             const DespeckleLevel dl1,
+                                             const SplittingOptions& so1,
+                                             const ColorParams& cp2,
+                                             const DespeckleLevel dl2,
+                                             const SplittingOptions& so2) {
         if (cp1.colorMode() != cp2.colorMode()) {
             return false;
         }
@@ -183,19 +183,19 @@ namespace output {
         return m_cropArea;
     }
 
-    DewarpingOptions const& OutputImageParams::dewarpingMode() const {
+    const DewarpingOptions& OutputImageParams::dewarpingMode() const {
         return m_dewarpingOptions;
     }
 
-    dewarping::DistortionModel const& OutputImageParams::distortionModel() const {
+    const dewarping::DistortionModel& OutputImageParams::distortionModel() const {
         return m_distortionModel;
     }
 
-    void OutputImageParams::setDistortionModel(dewarping::DistortionModel const& model) {
+    void OutputImageParams::setDistortionModel(const dewarping::DistortionModel& model) {
         m_distortionModel = model;
     }
 
-    DepthPerception const& OutputImageParams::depthPerception() const {
+    const DepthPerception& OutputImageParams::depthPerception() const {
         return m_depthPerception;
     }
 
@@ -213,21 +213,21 @@ namespace output {
               m_22() {
     }
 
-    OutputImageParams::PartialXform::PartialXform(QTransform const& xform)
+    OutputImageParams::PartialXform::PartialXform(const QTransform& xform)
             : m_11(xform.m11()),
               m_12(xform.m12()),
               m_21(xform.m21()),
               m_22(xform.m22()) {
     }
 
-    OutputImageParams::PartialXform::PartialXform(QDomElement const& el)
+    OutputImageParams::PartialXform::PartialXform(const QDomElement& el)
             : m_11(el.namedItem("m11").toElement().text().toDouble()),
               m_12(el.namedItem("m12").toElement().text().toDouble()),
               m_21(el.namedItem("m21").toElement().text().toDouble()),
               m_22(el.namedItem("m22").toElement().text().toDouble()) {
     }
 
-    QDomElement OutputImageParams::PartialXform::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement OutputImageParams::PartialXform::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -239,7 +239,7 @@ namespace output {
         return el;
     }
 
-    bool OutputImageParams::PartialXform::matches(PartialXform const& other) const {
+    bool OutputImageParams::PartialXform::matches(const PartialXform& other) const {
         return closeEnough(m_11, other.m_11) && closeEnough(m_12, other.m_12)
                && closeEnough(m_21, other.m_21) && closeEnough(m_22, other.m_22);
     }

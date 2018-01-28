@@ -30,7 +30,7 @@ namespace output {
                 : m_mask(0) {
         }
 
-        explicit RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions);
+        explicit RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions);
 
         bool cutMargins() const;
 

@@ -42,7 +42,7 @@ namespace imageproc {
  * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
  */
     template<typename Rop>
-    void rasterOp(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp);
+    void rasterOp(BinaryImage& dst, const QRect& dr, const BinaryImage& src, const QPoint& sp);
 
 /**
  * \brief Perform pixel-wise logical operations on whole images.
@@ -55,7 +55,7 @@ namespace imageproc {
  * a combination of several Rop* class templates, such as RopXor\<RopSrc, RopDst\>.
  */
     template<typename Rop>
-    void rasterOp(BinaryImage& dst, BinaryImage const& src);
+    void rasterOp(BinaryImage& dst, const BinaryImage& src);
 
 /**
  * \brief Raster operation that takes source pixels as they are.
@@ -179,7 +179,7 @@ namespace imageproc {
         /**
          * \see rasterOp()
          */
-        virtual void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const = 0;
+        virtual void operator()(BinaryImage& dst, const QRect& dr, const BinaryImage& src, const QPoint& sp) const = 0;
     };
 
 
@@ -192,7 +192,7 @@ namespace imageproc {
         /**
          * \see rasterOp()
          */
-        void operator()(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) const override {
+        void operator()(BinaryImage& dst, const QRect& dr, const BinaryImage& src, const QPoint& sp) const override {
             rasterOp<Rop>(dst, dr, src, sp);
         }
     };
@@ -201,17 +201,17 @@ namespace imageproc {
     namespace detail {
         template<typename Rop>
         void rasterOpInDirection(BinaryImage& dst,
-                                 QRect const& dr,
-                                 BinaryImage const& src,
-                                 QPoint const& sp,
-                                 int const dy,
-                                 int const dx) {
-            int const src_start_bit = sp.x() % 32;
-            int const dst_start_bit = dr.x() % 32;
-            int const rightmost_dst_bit = dr.right();  // == dr.x() + dr.width() - 1;
-            int const rightmost_dst_word = rightmost_dst_bit / 32 - dr.x() / 32;
-            uint32_t const leftmost_dst_mask = ~uint32_t(0) >> dst_start_bit;
-            uint32_t const rightmost_dst_mask = ~uint32_t(0) << (31 - rightmost_dst_bit % 32);
+                                 const QRect& dr,
+                                 const BinaryImage& src,
+                                 const QPoint& sp,
+                                 const int dy,
+                                 const int dx) {
+            const int src_start_bit = sp.x() % 32;
+            const int dst_start_bit = dr.x() % 32;
+            const int rightmost_dst_bit = dr.right();  // == dr.x() + dr.width() - 1;
+            const int rightmost_dst_word = rightmost_dst_bit / 32 - dr.x() / 32;
+            const uint32_t leftmost_dst_mask = ~uint32_t(0) >> dst_start_bit;
+            const uint32_t rightmost_dst_mask = ~uint32_t(0) << (31 - rightmost_dst_bit % 32);
 
             int first_dst_word;
             int last_dst_word;
@@ -233,7 +233,7 @@ namespace imageproc {
             int src_span_delta;
             int dst_span_delta;
             uint32_t* dst_span;
-            uint32_t const* src_span;
+            const uint32_t* src_span;
             if (dy == 1) {
                 src_span_delta = src.wordsPerLine();
                 dst_span_delta = dst.wordsPerLine();
@@ -264,13 +264,13 @@ namespace imageproc {
                 // a case because of hardcoded widx + 1.
                 if (first_dst_word == last_dst_word) {
                     assert(first_dst_word == 0);
-                    uint32_t const mask = first_dst_mask & last_dst_mask;
+                    const uint32_t mask = first_dst_mask & last_dst_mask;
 
                     for (int i = dr.height(); i > 0; --i,
                             src_span += src_span_delta, dst_span += dst_span_delta) {
-                        uint32_t const src_word = src_span[0];
-                        uint32_t const dst_word = dst_span[0];
-                        uint32_t const new_dst_word = Rop::transform(src_word, dst_word);
+                        const uint32_t src_word = src_span[0];
+                        const uint32_t dst_word = dst_span[0];
+                        const uint32_t new_dst_word = Rop::transform(src_word, dst_word);
                         dst_span[0] = (dst_word & ~mask) | (new_dst_word & mask);
                     }
                 } else {
@@ -302,30 +302,30 @@ namespace imageproc {
 
             if (first_dst_word == last_dst_word) {
                 assert(first_dst_word == 0);
-                uint32_t const mask = first_dst_mask & last_dst_mask;
-                uint32_t const can_word1 = (~uint32_t(0) << src_word1_shift) & mask;
-                uint32_t const can_word2 = (~uint32_t(0) >> src_word2_shift) & mask;
+                const uint32_t mask = first_dst_mask & last_dst_mask;
+                const uint32_t can_word1 = (~uint32_t(0) << src_word1_shift) & mask;
+                const uint32_t can_word2 = (~uint32_t(0) >> src_word2_shift) & mask;
 
                 for (int i = dr.height(); i > 0; --i,
                         src_span += src_span_delta, dst_span += dst_span_delta) {
                     uint32_t src_word = 0;
                     if (can_word1) {
-                        uint32_t const src_word1 = src_span[0];
+                        const uint32_t src_word1 = src_span[0];
                         src_word |= src_word1 << src_word1_shift;
                     }
                     if (can_word2) {
-                        uint32_t const src_word2 = src_span[1];
+                        const uint32_t src_word2 = src_span[1];
                         src_word |= src_word2 >> src_word2_shift;
                     }
-                    uint32_t const dst_word = dst_span[0];
-                    uint32_t const new_dst_word = Rop::transform(src_word, dst_word);
+                    const uint32_t dst_word = dst_span[0];
+                    const uint32_t new_dst_word = Rop::transform(src_word, dst_word);
                     dst_span[0] = (dst_word & ~mask) | (new_dst_word & mask);
                 }
             } else {
-                uint32_t const can_first_word1 = (~uint32_t(0) << src_word1_shift) & first_dst_mask;
-                uint32_t const can_first_word2 = (~uint32_t(0) >> src_word2_shift) & first_dst_mask;
-                uint32_t const can_last_word1 = (~uint32_t(0) << src_word1_shift) & last_dst_mask;
-                uint32_t const can_last_word2 = (~uint32_t(0) >> src_word2_shift) & last_dst_mask;
+                const uint32_t can_first_word1 = (~uint32_t(0) << src_word1_shift) & first_dst_mask;
+                const uint32_t can_first_word2 = (~uint32_t(0) >> src_word2_shift) & first_dst_mask;
+                const uint32_t can_last_word1 = (~uint32_t(0) << src_word1_shift) & last_dst_mask;
+                const uint32_t can_last_word2 = (~uint32_t(0) >> src_word2_shift) & last_dst_mask;
 
                 for (int i = dr.height(); i > 0; --i,
                         src_span += src_span_delta, dst_span += dst_span_delta) {
@@ -333,11 +333,11 @@ namespace imageproc {
                     // Handle the first (possibly incomplete) dst word in the line.
                     uint32_t src_word = 0;
                     if (can_first_word1) {
-                        uint32_t const src_word1 = src_span[widx];
+                        const uint32_t src_word1 = src_span[widx];
                         src_word |= src_word1 << src_word1_shift;
                     }
                     if (can_first_word2) {
-                        uint32_t const src_word2 = src_span[widx + 1];
+                        const uint32_t src_word2 = src_span[widx + 1];
                         src_word |= src_word2 >> src_word2_shift;
                     }
                     uint32_t dst_word = dst_span[widx];
@@ -345,8 +345,8 @@ namespace imageproc {
                     new_dst_word = (dst_word & ~first_dst_mask) | (new_dst_word & first_dst_mask);
 
                     while ((widx += dx) != last_dst_word) {
-                        uint32_t const src_word1 = src_span[widx];
-                        uint32_t const src_word2 = src_span[widx + 1];
+                        const uint32_t src_word1 = src_span[widx];
+                        const uint32_t src_word2 = src_span[widx + 1];
 
                         dst_word = dst_span[widx];
                         dst_span[widx - dx] = new_dst_word;
@@ -361,11 +361,11 @@ namespace imageproc {
                     // Handle the last (possibly incomplete) dst word in the line.
                     src_word = 0;
                     if (can_last_word1) {
-                        uint32_t const src_word1 = src_span[widx];
+                        const uint32_t src_word1 = src_span[widx];
                         src_word |= src_word1 << src_word1_shift;
                     }
                     if (can_last_word2) {
-                        uint32_t const src_word2 = src_span[widx + 1];
+                        const uint32_t src_word2 = src_span[widx + 1];
                         src_word |= src_word2 >> src_word2_shift;
                     }
 
@@ -381,7 +381,7 @@ namespace imageproc {
     }      // namespace detail
 
     template<typename Rop>
-    void rasterOp(BinaryImage& dst, QRect const& dr, BinaryImage const& src, QPoint const& sp) {
+    void rasterOp(BinaryImage& dst, const QRect& dr, const BinaryImage& src, const QPoint& sp) {
         using namespace detail;
 
         if (dr.isEmpty()) {
@@ -426,7 +426,7 @@ namespace imageproc {
     }  // rasterOp
 
     template<typename Rop>
-    void rasterOp(BinaryImage& dst, BinaryImage const& src) {
+    void rasterOp(BinaryImage& dst, const BinaryImage& src) {
         using namespace detail;
 
         if (dst.isNull() || src.isNull()) {

@@ -30,38 +30,7 @@ class QString;
 
 class ZoneSet {
 public:
-    class const_iterator : public boost::iterator_facade<
-            const_iterator, Zone const, boost::forward_traversal_tag
-    > {
-        friend class ZoneSet;
-
-        friend class boost::iterator_core_access;
-    public:
-        const_iterator() = default;
-
-        void increment() {
-            ++m_it;
-        }
-
-        bool equal(const const_iterator& other) const {
-            return m_it == other.m_it;
-        }
-
-        const Zone& dereference() const {
-            return *m_it;
-        }
-
-    private:
-        explicit const_iterator(std::list<Zone>::const_iterator it)
-                : m_it(it) {
-        }
-
-        std::list<Zone>::const_iterator m_it;
-    };
-
-
-    typedef const_iterator iterator;
-
+    typedef std::list<Zone>::const_iterator const_iterator;
 
     ZoneSet() = default;
 
@@ -76,21 +45,21 @@ public:
     }
 
     void add(const Zone& zone) {
-        m_zones.push_back(zone);
+        m_zones.push_back(zone);     
+    }
+
+    const_iterator erase(const_iterator position) {
+        return m_zones.erase(position);
     }
 
     const_iterator begin() const {
-        return const_iterator(m_zones.begin());
+        return m_zones.begin();
     }
 
     const_iterator end() const {
-        return const_iterator(m_zones.end());
+        return m_zones.end();
     }
-
-    void applyToZoneSet(const std::function<bool(const Zone& zone)>& predicate,
-                        const std::function<void(std::list<Zone>& zones,
-                                                 const std::list<Zone>::iterator& iter)>& consumer);
-
+    
 private:
     std::list<Zone> m_zones;
 };

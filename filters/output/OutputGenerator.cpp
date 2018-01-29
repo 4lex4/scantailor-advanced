@@ -292,6 +292,18 @@ namespace output {
                 applyMask<uint32_t>(image, bw_mask, filling_color);
             }
         }
+
+        void removeAutoPictureZones(ZoneSet& picture_zones) {
+            for (auto it = picture_zones.begin(); it != picture_zones.end();) {
+                const Zone& zone = *it;
+                if (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
+                    == ZoneCategoryProperty::RECTANGULAR_OUTLINE) {
+                    it = picture_zones.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
     }      // namespace
 
     OutputGenerator::OutputGenerator(const Dpi& dpi,
@@ -756,17 +768,7 @@ namespace output {
                     );
                 }
 
-                // remove auto zones
-                picture_zones.applyToZoneSet(
-                        [](const Zone& zone) {
-                            return (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
-                                    == ZoneCategoryProperty::RECTANGULAR_OUTLINE);
-                        },
-                        [](std::list<Zone>& zones,
-                           const std::list<Zone>::iterator& iter) {
-                            zones.erase(iter);
-                        }
-                );
+                removeAutoPictureZones(picture_zones);
                 p_settings->setPictureZones(p_pageId, picture_zones);
                 m_outputProcessingParams.setAutoZonesFound(false);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
@@ -1170,17 +1172,7 @@ namespace output {
                     }
                 }
 
-                // remove auto zones
-                picture_zones.applyToZoneSet(
-                        [](const Zone& zone) {
-                            return (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
-                                    == ZoneCategoryProperty::RECTANGULAR_OUTLINE);
-                        },
-                        [](std::list<Zone>& zones,
-                           const std::list<Zone>::iterator& iter) {
-                            zones.erase(iter);
-                        }
-                );
+                removeAutoPictureZones(picture_zones);
                 p_settings->setPictureZones(p_pageId, picture_zones);
                 m_outputProcessingParams.setAutoZonesFound(false);
                 p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);

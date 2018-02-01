@@ -49,7 +49,8 @@ SET(
         ColorMixer.h
         ColorForId.h
         BackgroundColorCalculator.cpp BackgroundColorCalculator.h
-        BadAllocIfNull.cpp BadAllocIfNull.h)
+        BadAllocIfNull.cpp BadAllocIfNull.h
+        ColorSegmenter.cpp ColorSegmenter.h)
 
 SOURCE_GROUP(Sources FILES ${sources})
 

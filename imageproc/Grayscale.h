@@ -35,11 +35,11 @@ namespace imageproc {
 
         GrayscaleHistogram(const QImage& img, const BinaryImage& mask);
 
-        int& operator[](int idx) {
+        inline int& operator[](int idx) {
             return m_pixels[idx];
         }
 
-        int operator[](int idx) const {
+        inline int operator[](int idx) const {
             return m_pixels[idx];
         }
 

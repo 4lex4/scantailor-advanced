@@ -26,6 +26,7 @@
 #include <Qt>
 #include <vector>
 #include <cstdint>
+#include <unordered_set>
 
 class QImage;
 
@@ -98,6 +99,54 @@ namespace imageproc {
          * the same label.
          */
         void addComponent(const BinaryImage& image);
+
+        /**
+         * Adds another connected components which are built from the input image
+         * with the given connectivity.
+         *
+         * The maxLabel() will become maxLabel() + N afterwards,
+         * where N - number of found connected components of the input image.
+         *
+         * Note: this does't connect components of the current and the input map
+         * even if they are actually connected.
+         * Use @class InfluenceMap for that purpose.
+         *
+         * @param image Image with the components necessary to be added.
+         * @param conn Connectivity used to build the map from the image.
+         */
+        void addComponents(const BinaryImage& image, Connectivity conn);
+
+        /**
+         * Adds another connected components from the another map.
+         *
+         * The maxLabel() will become maxLabel() + other.maxLabel() afterwards.
+         *
+         * Note: this does't connect components of the current and the input map
+         * even if they are actually connected.
+         * Use @class InfluenceMap for that purpose.
+         *
+         * @param other Map containing the components necessary to be added.
+         */
+        void addComponents(const ConnectivityMap& other);
+
+        /**
+         * Removes the connected components with the given labels.
+         *
+         * The maxLabel() will become maxLabel() - N afterwards,
+         * where N - the number of actually removed connected components.
+         *
+         * @param labelsSet Set of labels determining the components needed to be removed.
+         */
+        void removeComponents(const std::unordered_set<uint32_t>& labelsSet);
+
+        /**
+         * Returns the mask of the current map.
+         * The mask returned have white background
+         * and all the labeled connected components are black.
+         *
+         * @return Binary mask of this connected map.
+         */
+        BinaryImage getBinaryMask() const;
 
         /**
          * \brief Returns a pointer to the top-left corner of the map.
@@ -178,9 +227,9 @@ namespace imageproc {
         /**
          * \brief Visualizes each label with a different color.
          *
-         * \param bgcolor Background color.  Transparency is supported.
+         * \param bg_color Background color.  Transparency is supported.
          */
-        QImage visualized(QColor bgcolor = Qt::black) const;
+        QImage visualized(QColor bg_color = Qt::black) const;
 
     private:
         void copyFromInfluenceMap(const InfluenceMap& imap);
@@ -202,8 +251,6 @@ namespace imageproc {
         void markUsedIds(std::vector<uint32_t>& used_map) const;
 
         void remapIds(const std::vector<uint32_t>& map);
-
-        void expandImpl(const BinaryImage* mask);
 
         static const uint32_t BACKGROUND;
         static const uint32_t UNTAGGED_FG;

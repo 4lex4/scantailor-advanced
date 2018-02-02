@@ -203,7 +203,10 @@ namespace output {
 
         static QImage convertToRGBorRGBA(const QImage& src);
 
-        static void fillMarginsInPlace(QImage& image, const QPolygonF& content_poly, const QColor& color);
+        static void fillMarginsInPlace(QImage& image,
+                                       const QPolygonF& content_poly,
+                                       const QColor& color,
+                                       bool antialiasing = true);
 
         static void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor& color);
 
@@ -271,27 +274,30 @@ namespace output {
 
         void applyFillZonesInPlace(QImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)>const & orig_to_output,
-                                   const QTransform& postTransform) const;
+                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   const QTransform& postTransform,
+                                   bool antialiasing = true) const;
 
         void applyFillZonesInPlace(QImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)>const & orig_to_output) const;
+                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   bool antialiasing = true) const;
 
         void applyFillZonesInPlace(QImage& img,
                                    const ZoneSet& zones,
-                                   const QTransform& postTransform) const;
+                                   const QTransform& postTransform,
+                                   bool antialiasing = true) const;
 
-        void applyFillZonesInPlace(QImage& img, const ZoneSet& zones) const;
-
-        void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                                   const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)>const & orig_to_output,
-                                   const QTransform& postTransform) const;
+        void applyFillZonesInPlace(QImage& img, const ZoneSet& zones, bool antialiasing = true) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)>const & orig_to_output) const;
+                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   const QTransform& postTransform) const;
+
+        void applyFillZonesInPlace(imageproc::BinaryImage& img,
+                                   const ZoneSet& zones,
+                                   boost::function<QPointF(const QPointF&)> const& orig_to_output) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    const ZoneSet& zones,
@@ -301,13 +307,15 @@ namespace output {
 
         void applyFillZonesToMixedInPlace(QImage& img,
                                           const ZoneSet& zones,
-                                          const imageproc::BinaryImage& picture_mask) const;
+                                          const imageproc::BinaryImage& picture_mask,
+                                          bool binary_mode) const;
 
         void applyFillZonesToMixedInPlace(QImage& img,
                                           const ZoneSet& zones,
-                                          boost::function<QPointF(const QPointF&)>const & orig_to_output,
+                                          boost::function<QPointF(const QPointF&)> const& orig_to_output,
                                           const QTransform& postTransform,
-                                          const imageproc::BinaryImage& picture_mask) const;
+                                          const imageproc::BinaryImage& picture_mask,
+                                          bool binary_mode) const;
 
         Dpi m_dpi;
         ColorParams m_colorParams;

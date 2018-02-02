@@ -55,6 +55,18 @@ namespace output {
 
         bool operator!=(const ColorCommonOptions& other) const;
 
+        bool isPosterizeEnabled() const;
+
+        void setPosterizeEnabled(bool posterizeEnabled);
+
+        int getPosterizationLevel() const;
+
+        void setPosterizationLevel(int posterizationLevel);
+
+        bool isForceBlackAndWhite() const;
+
+        void setForceBlackAndWhite(bool forceBlackAndWhite);
+
     private:
         static FillingColor parseFillingColor(const QString& str);
 
@@ -64,6 +76,9 @@ namespace output {
         bool m_cutMargins;
         bool m_normalizeIllumination;
         FillingColor m_fillingColor;
+        bool m_posterizeEnabled;
+        int m_posterizationLevel;
+        bool m_forceBlackAndWhite;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

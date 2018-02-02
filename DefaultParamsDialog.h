@@ -81,6 +81,10 @@ private slots:
 
     void thresholdSliderValueChanged(int value);
 
+    void colorSegmentationToggled(bool checked);
+
+    void posterizeToggled(bool checked);
+
     void setLighterThreshold();
 
     void setDarkerThreshold();

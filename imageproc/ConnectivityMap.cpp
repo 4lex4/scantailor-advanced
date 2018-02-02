@@ -168,7 +168,108 @@ namespace imageproc {
         m_maxLabel = new_label;
     }  // ConnectivityMap::addComponent
 
-    QImage ConnectivityMap::visualized(QColor bgcolor) const {
+    void ConnectivityMap::addComponents(const BinaryImage& image, const Connectivity conn) {
+        if (m_size != image.size()) {
+            throw std::invalid_argument("ConnectivityMap::addComponents: sizes don't match");
+        }
+        if (m_size.isEmpty()) {
+            return;
+        }
+
+        addComponents(ConnectivityMap(image, conn));
+    }
+
+    void ConnectivityMap::addComponents(const ConnectivityMap& other) {
+        if (m_size != other.m_size) {
+            throw std::invalid_argument("ConnectivityMap::addComponents: sizes don't match");
+        }
+        if (m_size.isEmpty()) {
+            return;
+        }
+
+        const int width = m_size.width();
+        const int height = m_size.height();
+
+        uint32_t* dst_line = m_pData;
+        const int dst_stride = m_stride;
+
+        const uint32_t* src_line = other.m_pData;
+        const int src_stride = other.m_stride;
+
+        uint32_t new_max_label = m_maxLabel;
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                const uint32_t src_label = src_line[x];
+                if (src_label == 0) {
+                    continue;
+                }
+
+                const uint32_t dst_label = m_maxLabel + src_label;
+                new_max_label = std::max(new_max_label, dst_label);
+
+                dst_line[x] = dst_label;
+            }
+            src_line += src_stride;
+            dst_line += dst_stride;
+        }
+
+        m_maxLabel = new_max_label;
+    }
+
+    void ConnectivityMap::removeComponents(const std::unordered_set<uint32_t>& labelsSet) {
+        if (m_size.isEmpty() || labelsSet.empty()) {
+            return;
+        }
+
+        std::vector<uint32_t> map(m_maxLabel, 0);
+        uint32_t next_label = 1;
+        for (uint32_t i = 0; i < m_maxLabel; i++) {
+            if (labelsSet.find(i + 1) == labelsSet.end()) {
+                map[i] = next_label;
+                next_label++;
+            }
+        }
+
+        for (uint32_t& label : m_data) {
+            if (label != 0) {
+                label = map[label - 1];
+            }
+        }
+
+        m_maxLabel = next_label - 1;
+    }
+
+    BinaryImage ConnectivityMap::getBinaryMask() const {
+        if (m_size.isEmpty()) {
+            return BinaryImage();
+        }
+
+        BinaryImage dst(m_size, WHITE);
+
+        const int width = m_size.width();
+        const int height = m_size.height();
+
+        uint32_t* dst_line = dst.data();
+        const int dst_stride = dst.wordsPerLine();
+
+        const uint32_t* src_line = m_pData;
+        const int src_stride = m_stride;
+
+        const uint32_t msb = uint32_t(1) << 31;
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                if (src_line[x] != 0) {
+                    dst_line[x >> 5] |= (msb >> (x & 31));
+                }
+            }
+            src_line += src_stride;
+            dst_line += dst_stride;
+        }
+
+        return dst;
+    }
+
+    QImage ConnectivityMap::visualized(QColor bg_color) const {
         if (m_size.isEmpty()) {
             return QImage();
         }
@@ -176,13 +277,13 @@ namespace imageproc {
         const int width = m_size.width();
         const int height = m_size.height();
         // Convert to premultiplied RGBA.
-        bgcolor = bgcolor.toRgb();
-        bgcolor.setRedF(bgcolor.redF() * bgcolor.alphaF());
-        bgcolor.setGreenF(bgcolor.greenF() * bgcolor.alphaF());
-        bgcolor.setBlueF(bgcolor.blueF() * bgcolor.alphaF());
+        bg_color = bg_color.toRgb();
+        bg_color.setRedF(bg_color.redF() * bg_color.alphaF());
+        bg_color.setGreenF(bg_color.greenF() * bg_color.alphaF());
+        bg_color.setBlueF(bg_color.blueF() * bg_color.alphaF());
 
         QImage dst(m_size, QImage::Format_ARGB32);
-        dst.fill(bgcolor.rgba());
+        dst.fill(bg_color.rgba());
 
         const uint32_t* src_line = m_pData;
         const int src_stride = m_stride;

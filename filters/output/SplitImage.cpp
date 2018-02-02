@@ -1,252 +1,13 @@
 
 #include <cassert>
 #include <imageproc/RasterOp.h>
+#include <imageproc/ImageCombination.h>
+#include <imageproc/ColorTable.h>
 #include "SplitImage.h"
 
 using namespace imageproc;
 
 namespace output {
-    namespace {
-        template<typename MixedPixel>
-        void combineImageMono(QImage& mixedImage,
-                              const BinaryImage& foreground) {
-            auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-            const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-            const uint32_t* foreground_line = foreground.data();
-            const int foreground_stride = foreground.wordsPerLine();
-            const int width = mixedImage.width();
-            const int height = mixedImage.height();
-            const uint32_t msb = uint32_t(1) << 31;
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    if (foreground_line[x >> 5] & (msb >> (x & 31))) {
-                        uint32_t tmp = foreground_line[x >> 5];
-                        tmp >>= (31 - (x & 31));
-                        tmp &= uint32_t(1);
-
-                        --tmp;
-                        tmp |= 0xff000000;
-                        mixed_line[x] = static_cast<MixedPixel>(tmp);
-                    }
-                }
-                mixed_line += mixed_stride;
-                foreground_line += foreground_stride;
-            }
-        }
-
-        void combineImageMono(QImage& mixedImage,
-                              const BinaryImage& foreground) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if (mixedImage.format() == QImage::Format_Indexed8) {
-                combineImageMono<uint8_t>(mixedImage, foreground);
-            } else {
-                combineImageMono<uint32_t>(mixedImage, foreground);
-            }
-        }
-
-        template<typename MixedPixel>
-        void combineImageMono(QImage& mixedImage,
-                              const BinaryImage& foreground,
-                              const BinaryImage& mask) {
-            auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-            const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-            const uint32_t* foreground_line = foreground.data();
-            const int foreground_stride = foreground.wordsPerLine();
-            const uint32_t* mask_line = mask.data();
-            const int mask_stride = mask.wordsPerLine();
-            const int width = mixedImage.width();
-            const int height = mixedImage.height();
-            const uint32_t msb = uint32_t(1) << 31;
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    if (mask_line[x >> 5] & (msb >> (x & 31))) {
-                        uint32_t tmp = foreground_line[x >> 5];
-                        tmp >>= (31 - (x & 31));
-                        tmp &= uint32_t(1);
-
-                        --tmp;
-                        tmp |= 0xff000000;
-                        mixed_line[x] = static_cast<MixedPixel>(tmp);
-                    }
-                }
-                mixed_line += mixed_stride;
-                foreground_line += foreground_stride;
-                mask_line += mask_stride;
-            }
-        }
-
-        void combineImageMono(QImage& mixedImage,
-                              const BinaryImage& foreground,
-                              const BinaryImage& mask) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if (mixedImage.format() == QImage::Format_Indexed8) {
-                combineImageMono<uint8_t>(mixedImage, foreground, mask);
-            } else {
-                combineImageMono<uint32_t>(mixedImage, foreground, mask);
-            }
-        }
-
-        template<typename MixedPixel>
-        void combineImageColor(QImage& mixedImage,
-                               const QImage& foreground) {
-            auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-            const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-            const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
-            const int foreground_stride = foreground.bytesPerLine() / sizeof(MixedPixel);
-            const int width = mixedImage.width();
-            const int height = mixedImage.height();
-            const auto msb = uint32_t(0x00ffffff);
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    if ((foreground_line[x] & msb) != msb) {
-                        mixed_line[x] = foreground_line[x];
-                    }
-                }
-                mixed_line += mixed_stride;
-                foreground_line += foreground_stride;
-            }
-        }
-
-        void combineImageColor(QImage& mixedImage,
-                               const QImage& foreground) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if (mixedImage.format() == QImage::Format_Indexed8) {
-                combineImageColor<uint8_t>(mixedImage, foreground);
-            } else {
-                combineImageColor<uint32_t>(mixedImage, foreground);
-            }
-        }
-
-        template<typename MixedPixel>
-        void combineImageColor(QImage& mixedImage,
-                               const QImage& foreground,
-                               const BinaryImage& mask) {
-            auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-            const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-            const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
-            const int foreground_stride = foreground.bytesPerLine() / sizeof(MixedPixel);
-            const uint32_t* mask_line = mask.data();
-            const int mask_stride = mask.wordsPerLine();
-            const int width = mixedImage.width();
-            const int height = mixedImage.height();
-            const uint32_t msb = uint32_t(1) << 31;
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    if (mask_line[x >> 5] & (msb >> (x & 31))) {
-                        mixed_line[x] = foreground_line[x];
-                    }
-                }
-                mixed_line += mixed_stride;
-                foreground_line += foreground_stride;
-                mask_line += mask_stride;
-            }
-        }
-
-        void combineImageColor(QImage& mixedImage,
-                               const QImage& foreground,
-                               const BinaryImage& mask) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if (mixedImage.format() == QImage::Format_Indexed8) {
-                combineImageColor<uint8_t>(mixedImage, foreground, mask);
-            } else {
-                combineImageColor<uint32_t>(mixedImage, foreground, mask);
-            }
-        }
-
-        void combineImage(QImage& mixedImage,
-                          const QImage& foreground) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if ((foreground.format() == QImage::Format_Mono)
-                || (foreground.format() == QImage::Format_MonoLSB)) {
-                combineImageMono(mixedImage, BinaryImage(foreground));
-            } else {
-                combineImageColor(mixedImage, foreground);
-            }
-        }
-
-        void combineImage(QImage& mixedImage,
-                          const QImage& foreground,
-                          const BinaryImage& mask) {
-            if ((mixedImage.format() != QImage::Format_Indexed8)
-                && (mixedImage.format() != QImage::Format_RGB32)
-                && (mixedImage.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if ((foreground.format() == QImage::Format_Mono)
-                || (foreground.format() == QImage::Format_MonoLSB)) {
-                combineImageMono(mixedImage, BinaryImage(foreground), mask);
-            } else {
-                combineImageColor(mixedImage, foreground, mask);
-            }
-        }
-
-        template<typename MixedPixel>
-        void applyMask(QImage& image, const BinaryImage& bw_mask) {
-            auto* image_line = reinterpret_cast<MixedPixel*>(image.bits());
-            const int image_stride = image.bytesPerLine() / sizeof(MixedPixel);
-            const uint32_t* bw_mask_line = bw_mask.data();
-            const int bw_mask_stride = bw_mask.wordsPerLine();
-            const int width = image.width();
-            const int height = image.height();
-            const uint32_t msb = uint32_t(1) << 31;
-            const auto fillingPixel = static_cast<MixedPixel>(0xffffffff);
-
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    if (!(bw_mask_line[x >> 5] & (msb >> (x & 31)))) {
-                        image_line[x] = fillingPixel;
-                    }
-                }
-                image_line += image_stride;
-                bw_mask_line += bw_mask_stride;
-            }
-        }
-
-        void applyMask(QImage& image, const BinaryImage& bw_mask) {
-            if ((image.format() != QImage::Format_Indexed8)
-                && (image.format() != QImage::Format_RGB32)
-                && (image.format() != QImage::Format_ARGB32)) {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-
-            if (image.format() == QImage::Format_Indexed8) {
-                applyMask<uint8_t>(image, bw_mask);
-            } else {
-                applyMask<uint32_t>(image, bw_mask);
-            }
-        }
-    } // namespace
-
     SplitImage::SplitImage() = default;
 
     SplitImage::SplitImage(const QImage& foreground, const QImage& background) {
@@ -260,11 +21,6 @@ namespace output {
         if ((background.format() != QImage::Format_Indexed8)
             && (background.format() != QImage::Format_RGB32)
             && (background.format() != QImage::Format_ARGB32)) {
-            return;
-        }
-        if (!((foreground.format() == QImage::Format_Mono)
-              || (foreground.format() == QImage::Format_MonoLSB))
-            && (foreground.format() != background.format())) {
             return;
         }
 
@@ -293,11 +49,6 @@ namespace output {
         if ((originalBackground.format() != QImage::Format_Indexed8)
             && (originalBackground.format() != QImage::Format_RGB32)
             && (originalBackground.format() != QImage::Format_ARGB32)) {
-            return;
-        }
-
-        if (!((foreground.format() == QImage::Format_Mono)
-              || (foreground.format() == QImage::Format_MonoLSB))) {
             return;
         }
 
@@ -338,9 +89,21 @@ namespace output {
         if (!mask.isNull()) {
             QImage foreground(backgroundImage);
             applyMask(foreground, mask);
+
+            const int dpmX = foreground.dotsPerMeterX();
+            const int dpmY = foreground.dotsPerMeterY();
+
             if (binaryForeground) {
                 foreground = foreground.convertToFormat(QImage::Format_Mono);
+            } else if (indexedForeground) {
+                QVector<QRgb> palette = ColorTable(foreground).getPalette();
+                if (palette.size() <= 256) {
+                    foreground = foreground.convertToFormat(QImage::Format_Indexed8, palette);
+                }
             }
+
+            foreground.setDotsPerMeterX(dpmX);
+            foreground.setDotsPerMeterY(dpmY);
 
             return foreground;
         }
@@ -397,5 +160,9 @@ namespace output {
 
     void SplitImage::setOriginalBackgroundImage(const QImage& originalBackgroundImage) {
         SplitImage::originalBackgroundImage = originalBackgroundImage;
+    }
+
+    void SplitImage::setIndexedForeground(bool indexedForeground) {
+        SplitImage::indexedForeground = indexedForeground;
     }
 } // namespace output

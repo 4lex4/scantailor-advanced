@@ -82,6 +82,14 @@ namespace output {
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
 
+        bool isColorSegmentationEnabled() const;
+
+        void setColorSegmentationEnabled(bool colorSegmentationEnabled);
+
+        int getSegmentationNoiseReduction() const;
+
+        void setSegmentationNoiseReduction(int segmentationNoiseReduction);
+
     private:
         static BinarizationMethod parseBinarizationMethod(const QString& str);
 
@@ -98,6 +106,8 @@ namespace output {
         int wolfUpperBound;
         double wolfCoef;
         BinarizationMethod binarizationMethod;
+        bool colorSegmentationEnabled;
+        int segmentationNoiseReduction;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

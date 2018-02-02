@@ -46,7 +46,6 @@ namespace dewarping {
 
 namespace output {
     class Settings;
-    class DewarpingParams;
 
     class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
     Q_OBJECT
@@ -98,6 +97,16 @@ namespace output {
         void pictureShapeChanged(int idx);
 
         void pictureShapeSensitivityChanged(int value);
+
+        void colorSegmentationToggled(bool checked);
+
+        void reduceNoiseChanged(int value);
+
+        void posterizeToggled(bool checked);
+
+        void posterizeLevelChanged(int value);
+
+        void posterizeForceBwToggled(bool checked);
 
         void cutMarginsToggled(bool checked);
 

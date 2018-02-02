@@ -86,7 +86,6 @@ namespace imageproc {
 
             const int width = img.width();
             const int height = img.height();
-            const uint32_t msb = uint32_t(1) << 31;
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {

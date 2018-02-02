@@ -273,6 +273,12 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             fillingColorBox->findData(colorCommonOptions.getFillingColor())
     );
 
+    colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
+    reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
+    posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
+    posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
+    posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+
     thresholdMethodBox->setCurrentIndex(
             thresholdMethodBox->findData(blackWhiteOptions.getBinarizationMethod())
     );
@@ -376,6 +382,8 @@ void DefaultParamsDialog::setupUiConnections() {
     connect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     connect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
     connect(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
+    connect(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
+    connect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
 }
 
 void DefaultParamsDialog::removeUiConnections() {
@@ -413,6 +421,8 @@ void DefaultParamsDialog::removeUiConnections() {
     disconnect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     disconnect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
     disconnect(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
+    disconnect(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
+    disconnect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
 }
 
 void DefaultParamsDialog::rotateLeft() {
@@ -542,6 +552,18 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
     }
     savitzkyGolaySmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
     morphologicalSmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
+
+    colorSegmentationCB->setEnabled(threshold_options_visible);
+    segmenterOptionsWidget->setEnabled(threshold_options_visible);
+    segmenterOptionsWidget->setEnabled(colorSegmentationCB->isChecked());
+    if (threshold_options_visible) {
+        posterizeCB->setEnabled(colorSegmentationCB->isChecked());
+        posterizeOptionsWidget->setEnabled(colorSegmentationCB->isChecked()
+                                           && posterizeCB->isChecked());
+    } else {
+        posterizeCB->setEnabled(true);
+        posterizeOptionsWidget->setEnabled(posterizeCB->isChecked());
+    }
 }
 
 void DefaultParamsDialog::thresholdMethodChanged(const int idx) {
@@ -674,6 +696,9 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
     colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());
+    colorCommonOptions.setPosterizeEnabled(posterizeCB->isChecked());
+    colorCommonOptions.setPosterizationLevel(posterizeLevelSB->value());
+    colorCommonOptions.setForceBlackAndWhite(posterizeForceBwCB->isChecked());
     colorParams.setColorCommonOptions(colorCommonOptions);
 
     BlackWhiteOptions blackWhiteOptions;
@@ -693,6 +718,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     blackWhiteOptions.setWolfCoef(wolfCoef->value());
     blackWhiteOptions.setWolfLowerBound(upperBound->value());
     blackWhiteOptions.setWolfLowerBound(lowerBound->value());
+    blackWhiteOptions.setColorSegmentationEnabled(colorSegmentationCB->isChecked());
+    blackWhiteOptions.setSegmentationNoiseReduction(reduceNoiseSB->value());
     colorParams.setBlackWhiteOptions(blackWhiteOptions);
 
     SplittingOptions splittingOptions;
@@ -1026,4 +1053,16 @@ void DefaultParamsDialog::setTabWidgetsEnabled(const bool enabled) {
         QWidget* widget = tabWidget->widget(i);
         widget->setEnabled(enabled);
     }
+}
+
+void DefaultParamsDialog::colorSegmentationToggled(bool checked) {
+    segmenterOptionsWidget->setEnabled(checked);
+    if ((colorModeSelector->currentData() == BLACK_AND_WHITE) || (colorModeSelector->currentData() == MIXED)) {
+        posterizeCB->setEnabled(checked);
+        posterizeOptionsWidget->setEnabled(checked && posterizeCB->isChecked());
+    }
+}
+
+void DefaultParamsDialog::posterizeToggled(bool checked) {
+    posterizeOptionsWidget->setEnabled(checked);
 }

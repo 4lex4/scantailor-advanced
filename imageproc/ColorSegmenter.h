@@ -32,21 +32,21 @@ namespace imageproc {
             double minAverageWidthThreshold;
 
             /**
-             * Defines the minimum square in pixels that will guarantee
-             * the object won't be removed.
+             * Defines the minimum square in pixels.
+             * If a component has lower that, it will be erased.
              */
             int bigObjectThreshold;
 
         public:
-            explicit Settings(const Dpi& dpi);
+            explicit Settings(const Dpi& dpi, int noiseThreshold);
 
             bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
         };
 
     public:
-        ColorSegmenter(const BinaryImage& image, const QImage& originalImage, const Dpi& dpi);
+        ColorSegmenter(const BinaryImage& image, const QImage& originalImage, const Dpi& dpi, int noiseThreshold);
 
-        ColorSegmenter(const BinaryImage& image, const GrayImage& originalImage, const Dpi& dpi);
+        ColorSegmenter(const BinaryImage& image, const GrayImage& originalImage, const Dpi& dpi, int noiseThreshold);
 
         QImage getImage() const;
 

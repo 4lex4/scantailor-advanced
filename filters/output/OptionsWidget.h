@@ -100,6 +100,8 @@ namespace output {
 
         void colorSegmentationToggled(bool checked);
 
+        void reduceNoiseChanged(int value);
+
         void posterizeToggled(bool checked);
 
         void posterizeLevelChanged(int value);

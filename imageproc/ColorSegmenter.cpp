@@ -63,27 +63,74 @@ namespace imageproc {
 
 /*=============================== ColorSegmenter::Settings ==================================*/
 
-    ColorSegmenter::Settings::Settings(const Dpi& dpi) {
+    ColorSegmenter::Settings::Settings(const Dpi& dpi, const int noiseThreshold) {
         const int average_dpi = (dpi.horizontal() + dpi.vertical()) / 2;
         const double dpi_factor = average_dpi / 600.0;
 
         minAverageWidthThreshold = 3.0 * dpi_factor;
-        bigObjectThreshold = qRound(68 * dpi_factor);
+        bigObjectThreshold = qRound(noiseThreshold * dpi_factor);
     }
 
     inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Component& component,
                                                             const ColorSegmenter::BoundingBox& boundingBox) const {
-        if (component.pixelsCount < bigObjectThreshold) {
+        if (component.pixelsCount <= bigObjectThreshold) {
             return true;
         }
 
         double squareRelation = double(component.square()) / (boundingBox.height() * boundingBox.width());
         double averageWidth = std::min(boundingBox.height(), boundingBox.width()) * squareRelation;
 
-        return (averageWidth < minAverageWidthThreshold);
+        return (averageWidth <= minAverageWidthThreshold);
     }
 
 /*=============================== ColorSegmenter ==================================*/
+
+    ColorSegmenter::ColorSegmenter(const BinaryImage& image,
+                                   const QImage& originalImage,
+                                   const Dpi& dpi,
+                                   const int noiseThreshold)
+            : settings(dpi, noiseThreshold) {
+        if (image.size() != originalImage.size()) {
+            throw std::invalid_argument(
+                    "ColorSegmenter: images size doesn't match."
+            );
+        }
+        if ((originalImage.format() != QImage::Format_Indexed8)
+            && (originalImage.format() != QImage::Format_RGB32)
+            && (originalImage.format() != QImage::Format_ARGB32)) {
+            throw std::invalid_argument("Error: wrong image format.");
+        }
+        if (originalImage.format() == QImage::Format_Indexed8) {
+            if (originalImage.isGrayscale()) {
+                fromGrayscale(image, GrayImage(originalImage));
+                return;
+            } else {
+                throw std::invalid_argument("Error: wrong image format.");
+            }
+        }
+        fromRgb(image, originalImage);
+    }
+
+    ColorSegmenter::ColorSegmenter(const BinaryImage& image,
+                                   const GrayImage& originalImage,
+                                   const Dpi& dpi,
+                                   const int noiseThreshold)
+            : settings(dpi, noiseThreshold) {
+        if (image.size() != originalImage.size()) {
+            throw std::invalid_argument(
+                    "ColorSegmenter: images size doesn't match."
+            );
+        }
+        fromGrayscale(image, originalImage);
+    }
+
+    QImage ColorSegmenter::getImage() const {
+        if (originalImage.format() == QImage::Format_Indexed8) {
+            return buildGrayImage();
+        } else {
+            return buildRgbImage();
+        }
+    }
 
     GrayImage ColorSegmenter::getRgbChannel(const QImage& image, const ColorSegmenter::RgbChannel channel) {
         if ((image.format() != QImage::Format_RGB32)
@@ -118,47 +165,6 @@ namespace imageproc {
         }
 
         return dst;
-    }
-
-    ColorSegmenter::ColorSegmenter(const BinaryImage& image, const QImage& originalImage, const Dpi& dpi)
-            : settings(dpi) {
-        if (image.size() != originalImage.size()) {
-            throw std::invalid_argument(
-                    "ColorSegmenter: images size doesn't match."
-            );
-        }
-        if ((originalImage.format() != QImage::Format_Indexed8)
-            && (originalImage.format() != QImage::Format_RGB32)
-            && (originalImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
-        }
-        if (originalImage.format() == QImage::Format_Indexed8) {
-            if (originalImage.isGrayscale()) {
-                fromGrayscale(image, GrayImage(originalImage));
-                return;
-            } else {
-                throw std::invalid_argument("Error: wrong image format.");
-            }
-        }
-        fromRgb(image, originalImage);
-    }
-
-    ColorSegmenter::ColorSegmenter(const BinaryImage& image, const GrayImage& originalImage, const Dpi& dpi)
-            : settings(dpi) {
-        if (image.size() != originalImage.size()) {
-            throw std::invalid_argument(
-                    "ColorSegmenter: images size doesn't match."
-            );
-        }
-        fromGrayscale(image, originalImage);
-    }
-
-    QImage ColorSegmenter::getImage() const {
-        if (originalImage.format() == QImage::Format_Indexed8) {
-            return buildGrayImage();
-        } else {
-            return buildRgbImage();
-        }
     }
 
     void ColorSegmenter::fromRgb(const BinaryImage& image, const QImage& originalImage) {

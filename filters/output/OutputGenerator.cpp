@@ -702,7 +702,8 @@ namespace output {
                     drawOver(color_image, dst_rect, maybe_normalized, src_rect);
                     maybe_normalized = QImage();
 
-                    segmented_image = ColorSegmenter(dst, color_image, m_dpi).getImage();
+                    const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
+                    segmented_image = ColorSegmenter(dst, color_image, m_dpi, noiseReduction).getImage();
                     dst.release();
                 }
 
@@ -936,7 +937,9 @@ namespace output {
                     {
                         QImage maybe_normalized_content(maybe_normalized);
                         applyMask(maybe_normalized_content, bw_mask_filled);
-                        segmented_image = ColorSegmenter(bw_content, maybe_normalized_content, m_dpi).getImage();
+                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
+                        segmented_image = ColorSegmenter(
+                                bw_content, maybe_normalized_content, m_dpi, noiseReduction).getImage();
                         maybe_normalized_content = QImage();
 
                         if (dbg) {
@@ -1636,7 +1639,9 @@ namespace output {
 
                 return dewarped_bw_content.toQImage();
             } else {
-                QImage segmented_image = ColorSegmenter(dewarped_bw_content, dewarped, m_dpi).getImage();
+                const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
+                QImage segmented_image = ColorSegmenter(
+                        dewarped_bw_content, dewarped, m_dpi, noiseReduction).getImage();
 
                 dewarped = QImage();
                 dewarped_bw_content.release();
@@ -1840,7 +1845,9 @@ namespace output {
                     {
                         QImage dewarped_content(dewarped);
                         applyMask(dewarped_content, dewarped_bw_mask_filled);
-                        segmented_image = ColorSegmenter(dewarped_bw_content, dewarped_content, m_dpi).getImage();
+                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
+                        segmented_image = ColorSegmenter(
+                                dewarped_bw_content, dewarped_content, m_dpi, noiseReduction).getImage();
                         dewarped_content = QImage();
 
                         if (dbg) {
@@ -1901,7 +1908,7 @@ namespace output {
             const bool binary_foreground = (render_params.needBinarization()
                                             && !render_params.needColorSegmentation());
             const bool indexed_foreground = (render_params.needBinarization()
-                                            && render_params.needColorSegmentation());
+                                             && render_params.needColorSegmentation());
 
             splitImage->setMask(dewarped_picture_mask, binary_foreground);
             splitImage->setIndexedForeground(indexed_foreground);

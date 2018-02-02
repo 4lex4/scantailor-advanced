@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>241</width>
-    <height>627</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -88,7 +88,7 @@
         <x>0</x>
         <y>0</y>
         <width>226</width>
-        <height>1115</height>
+        <height>1137</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -542,6 +542,79 @@
                 </widget>
                </item>
                <item>
+                <widget class="QWidget" name="segmenterOptionsWidget" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer_40">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Minimum</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>15</width>
+                      <height>1</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="reduceNoiseLabel">
+                    <property name="text">
+                     <string>Reduce noise:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="reduceNoiseSB">
+                    <property name="toolTip">
+                     <string/>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="minimum">
+                     <number>0</number>
+                    </property>
+                    <property name="maximum">
+                     <number>9999</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_45">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>1</width>
+                      <height>1</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="posterizeCB">
                  <property name="toolTip">
                   <string>Reduce the number of colors of the output image by grouping similar colors.</string>
@@ -579,6 +652,9 @@
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Minimum</enum>
+                      </property>
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>15</width>
@@ -590,7 +666,7 @@
                     <item>
                      <widget class="QLabel" name="posterizeLevelLabel">
                       <property name="text">
-                       <string>Level: </string>
+                       <string>Level:</string>
                       </property>
                      </widget>
                     </item>
@@ -634,6 +710,9 @@
                      <spacer name="horizontalSpacer_34">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Minimum</enum>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
@@ -762,7 +841,7 @@
                 <item>
                  <widget class="QLabel" name="pictureShapeSensitivityLabel">
                   <property name="text">
-                   <string>Sensitivity (%): </string>
+                   <string>Sensitivity (%):</string>
                   </property>
                  </widget>
                 </item>

@@ -31,7 +31,8 @@ namespace output {
               wolfUpperBound(254),
               wolfCoef(0.3),
               binarizationMethod(OTSU),
-              colorSegmentationEnabled(false) {
+              colorSegmentationEnabled(false),
+              segmentationNoiseReduction(68) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)
@@ -45,7 +46,8 @@ namespace output {
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
               binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
-              colorSegmentationEnabled(el.attribute("colorSegmentationEnabled") == "1") {
+              colorSegmentationEnabled(el.attribute("colorSegmentationEnabled") == "1"),
+              segmentationNoiseReduction(el.attribute("segmentationNoiseReduction").toInt()) {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) const {
@@ -61,6 +63,7 @@ namespace output {
         el.setAttribute("wolfCoef", wolfCoef);
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
         el.setAttribute("colorSegmentationEnabled", colorSegmentationEnabled ? "1" : "0");
+        el.setAttribute("segmentationNoiseReduction", segmentationNoiseReduction);
 
         return el;
     }
@@ -76,7 +79,8 @@ namespace output {
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
                && (binarizationMethod == other.binarizationMethod)
-               && (colorSegmentationEnabled == other.colorSegmentationEnabled);
+               && (colorSegmentationEnabled == other.colorSegmentationEnabled)
+               && (segmentationNoiseReduction == other.segmentationNoiseReduction);
     }
 
     bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
@@ -196,6 +200,14 @@ namespace output {
 
     void BlackWhiteOptions::setColorSegmentationEnabled(bool colorSegmentationEnabled) {
         BlackWhiteOptions::colorSegmentationEnabled = colorSegmentationEnabled;
+    }
+
+    int BlackWhiteOptions::getSegmentationNoiseReduction() const {
+        return segmentationNoiseReduction;
+    }
+
+    void BlackWhiteOptions::setSegmentationNoiseReduction(int segmentationNoiseReduction) {
+        BlackWhiteOptions::segmentationNoiseReduction = segmentationNoiseReduction;
     }
 
 }  // namespace output

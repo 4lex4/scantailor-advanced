@@ -618,6 +618,8 @@ namespace output {
         fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
         colorSegmentationCB->setVisible(threshold_options_visible);
+        segmenterOptionsWidget->setVisible(threshold_options_visible);
+        segmenterOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
         if (threshold_options_visible) {
             posterizeCB->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
             posterizeOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled()
@@ -627,6 +629,7 @@ namespace output {
             posterizeOptionsWidget->setEnabled(colorCommonOptions.isPosterizeEnabled());
         }
         colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
+        reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
         posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
         posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
         posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
@@ -757,12 +760,22 @@ namespace output {
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
+        segmenterOptionsWidget->setEnabled(checked);
         if ((m_colorParams.colorMode() == BLACK_AND_WHITE) || (m_colorParams.colorMode() == MIXED)) {
             posterizeCB->setEnabled(checked);
             posterizeOptionsWidget->setEnabled(checked && posterizeCB->isChecked());
         }
 
         emit reloadRequested();
+    }
+
+    void OptionsWidget::reduceNoiseChanged(int value) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        blackWhiteOptions.setSegmentationNoiseReduction(value);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        delayedReloadRequest.start(750);
     }
 
     void OptionsWidget::posterizeToggled(bool checked) {
@@ -855,6 +868,10 @@ namespace output {
         connect(
                 colorSegmentationCB, SIGNAL(clicked(bool)),
                 this, SLOT(colorSegmentationToggled(bool))
+        );
+        connect(
+                reduceNoiseSB, SIGNAL(valueChanged(int)),
+                this, SLOT(reduceNoiseChanged(int))
         );
         connect(
                 posterizeCB, SIGNAL(clicked(bool)),
@@ -984,6 +1001,10 @@ namespace output {
         disconnect(
                 colorSegmentationCB, SIGNAL(clicked(bool)),
                 this, SLOT(colorSegmentationToggled(bool))
+        );
+        disconnect(
+                reduceNoiseSB, SIGNAL(valueChanged(int)),
+                this, SLOT(reduceNoiseChanged(int))
         );
         disconnect(
                 posterizeCB, SIGNAL(clicked(bool)),

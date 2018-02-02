@@ -51,7 +51,8 @@ SET(
         BackgroundColorCalculator.cpp BackgroundColorCalculator.h
         BadAllocIfNull.cpp BadAllocIfNull.h
         ColorSegmenter.cpp ColorSegmenter.h
-        ColorTable.cpp ColorTable.h)
+        ColorTable.cpp ColorTable.h
+        ImageCombination.h ImageCombination.cpp)
 
 SOURCE_GROUP(Sources FILES ${sources})
 

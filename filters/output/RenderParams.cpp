@@ -50,6 +50,16 @@ namespace output {
             if (blackWhiteOptions.normalizeIllumination()) {
                 m_mask |= NORMALIZE_ILLUMINATION;
             }
+            if (blackWhiteOptions.isColorSegmentationEnabled()) {
+                m_mask |= COLOR_SEGMENTATION;
+                if (colorCommonOptions.isPosterizeEnabled()) {
+                    m_mask |= POSTERIZE;
+                }
+            }
+        } else {
+            if (colorCommonOptions.isPosterizeEnabled()) {
+                m_mask |= POSTERIZE;
+            }
         }
         if (colorCommonOptions.cutMargins()) {
             m_mask |= CUT_MARGINS;
@@ -97,5 +107,13 @@ namespace output {
 
     bool RenderParams::originalBackground() const {
         return (m_mask & ORIGINAL_BACKGROUND) != 0;
+    }
+
+    bool RenderParams::needColorSegmentation() const {
+        return (m_mask & COLOR_SEGMENTATION) != 0;
+    }
+
+    bool RenderParams::posterize() const {
+        return (m_mask & POSTERIZE) != 0;
     }
 }  // namespace output

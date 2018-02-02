@@ -245,11 +245,7 @@ namespace output {
                     break;
                 }
             } else {
-                if (!foreground_file_info.exists()) {
-                    need_reprocess = true;
-                    break;
-                }
-                if (!background_file_info.exists()) {
+                if (!foreground_file_info.exists() || !background_file_info.exists()) {
                     need_reprocess = true;
                     break;
                 }

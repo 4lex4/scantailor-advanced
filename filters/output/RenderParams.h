@@ -52,17 +52,23 @@ namespace output {
 
         bool originalBackground() const;
 
+        bool needColorSegmentation() const;
+
+        bool posterize() const;
+
     private:
         enum {
             CUT_MARGINS = 1,
-            NORMALIZE_ILLUMINATION = 2,
-            NEED_BINARIZATION = 4,
-            MIXED_OUTPUT = 8,
-            NORMALIZE_ILLUMINATION_COLOR = 16,
-            SAVITZKY_GOLAY_SMOOTHING = 32,
-            MORPHOLOGICAL_SMOOTHING = 64,
-            SPLIT_OUTPUT = 128,
-            ORIGINAL_BACKGROUND = 256
+            NORMALIZE_ILLUMINATION = 1 << 1,
+            NEED_BINARIZATION = 1 << 2,
+            MIXED_OUTPUT = 1 << 3,
+            NORMALIZE_ILLUMINATION_COLOR = 1 << 4,
+            SAVITZKY_GOLAY_SMOOTHING = 1 << 5,
+            MORPHOLOGICAL_SMOOTHING = 1 << 6,
+            SPLIT_OUTPUT = 1 << 7,
+            ORIGINAL_BACKGROUND = 1 << 8,
+            COLOR_SEGMENTATION = 1 << 9,
+            POSTERIZE = 1 << 10
         };
 
         int m_mask;

@@ -17,6 +17,12 @@ namespace imageproc {
         struct Component;
         struct BoundingBox;
 
+        enum RgbChannel {
+            RED_CHANNEL,
+            GREEN_CHANNEL,
+            BLUE_CHANNEL
+        };
+
         class Settings {
         private:
             /**
@@ -35,12 +41,6 @@ namespace imageproc {
             explicit Settings(const Dpi& dpi);
 
             bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
-        };
-
-        enum RgbChannel {
-            RED_CHANNEL,
-            GREEN_CHANNEL,
-            BLUE_CHANNEL
         };
 
     public:

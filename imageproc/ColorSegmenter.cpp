@@ -68,7 +68,7 @@ namespace imageproc {
         const double dpi_factor = average_dpi / 600.0;
 
         minAverageWidthThreshold = 3.0 * dpi_factor;
-        bigObjectThreshold = qRound(34 * dpi_factor);
+        bigObjectThreshold = qRound(68 * dpi_factor);
     }
 
     inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Component& component,

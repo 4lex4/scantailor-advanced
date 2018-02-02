@@ -30,7 +30,8 @@ namespace output {
               wolfLowerBound(1),
               wolfUpperBound(254),
               wolfCoef(0.3),
-              binarizationMethod(OTSU) {
+              binarizationMethod(OTSU),
+              colorSegmentationEnabled(false) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)
@@ -43,7 +44,8 @@ namespace output {
               wolfLowerBound(el.attribute("wolfLowerBound").toInt()),
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
-              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
+              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
+              colorSegmentationEnabled(el.attribute("colorSegmentationEnabled") == "1") {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) const {
@@ -58,6 +60,7 @@ namespace output {
         el.setAttribute("wolfUpperBound", wolfUpperBound);
         el.setAttribute("wolfCoef", wolfCoef);
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
+        el.setAttribute("colorSegmentationEnabled", colorSegmentationEnabled ? "1" : "0");
 
         return el;
     }
@@ -72,7 +75,8 @@ namespace output {
                && (wolfLowerBound == other.wolfLowerBound)
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
-               && (binarizationMethod == other.binarizationMethod);
+               && (binarizationMethod == other.binarizationMethod)
+               && (colorSegmentationEnabled == other.colorSegmentationEnabled);
     }
 
     bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
@@ -184,6 +188,14 @@ namespace output {
 
     void BlackWhiteOptions::setNormalizeIllumination(bool val) {
         m_normalizeIllumination = val;
+    }
+
+    bool BlackWhiteOptions::isColorSegmentationEnabled() const {
+        return colorSegmentationEnabled;
+    }
+
+    void BlackWhiteOptions::setColorSegmentationEnabled(bool colorSegmentationEnabled) {
+        BlackWhiteOptions::colorSegmentationEnabled = colorSegmentationEnabled;
     }
 
 }  // namespace output

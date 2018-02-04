@@ -62,7 +62,7 @@ namespace imageproc {
 
 
 /**
- * \brief Same as the one above, except one of the images is const a BinaryImage.
+ * \brief Same as the one above, except one of the images is a const BinaryImage.
  *
  * \p operation will be called like this:
  * \code

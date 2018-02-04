@@ -50,7 +50,7 @@ namespace imageproc {
         explicit GrayImage(const QImage& image);
 
         /**
-         * \brief Returns const a reference to the underlying QImage.
+         * \brief Returns a const reference to the underlying QImage.
          *
          * The underlying QImage is either a null image or a 8-bit indexed
          * image with a grayscale palette.

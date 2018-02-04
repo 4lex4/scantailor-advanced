@@ -86,7 +86,7 @@ HomographicTransformBase<N, T>::inv() const {
 template<size_t N, typename T>
 typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::operator()(const Vec& from) const {
     StaticMatrixCalc<T, N + 1, 1> mc;
-    VecNT<N + 1, T> const hsrc(from, T(1));
+    const VecNT<N + 1, T> hsrc(from, T(1));
     VecNT<N + 1, T> hdst;
     (mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)) * mc(hsrc, static_cast<int>(N + 1), 1)).write(hdst);
     VecNT<N, T> res(&hdst[0]);

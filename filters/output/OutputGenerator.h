@@ -274,13 +274,13 @@ namespace output {
 
         void applyFillZonesInPlace(QImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                    const QTransform& postTransform,
                                    bool antialiasing = true) const;
 
         void applyFillZonesInPlace(QImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                    bool antialiasing = true) const;
 
         void applyFillZonesInPlace(QImage& img,
@@ -292,12 +292,12 @@ namespace output {
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                   const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                    const QTransform& postTransform) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    const ZoneSet& zones,
-                                   boost::function<QPointF(const QPointF&)> const& orig_to_output) const;
+                                   const boost::function<QPointF(const QPointF&)>& orig_to_output) const;
 
         void applyFillZonesInPlace(imageproc::BinaryImage& img,
                                    const ZoneSet& zones,
@@ -312,7 +312,7 @@ namespace output {
 
         void applyFillZonesToMixedInPlace(QImage& img,
                                           const ZoneSet& zones,
-                                          boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                          const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                           const QTransform& postTransform,
                                           const imageproc::BinaryImage& picture_mask,
                                           bool binary_mode) const;

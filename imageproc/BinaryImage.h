@@ -237,7 +237,7 @@ namespace imageproc {
         uint32_t* data();
 
         /**
-         * \brief Returns a pointer const to image data.
+         * \brief Returns a pointer to const image data.
          * \return Image data, or 0 in case of a null image.
          *
          * The pointer returned is only valid until call a non-const

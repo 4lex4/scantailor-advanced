@@ -1541,7 +1541,7 @@ namespace output {
                         m_xform.transform(), contentRect
                 )
         );
-        boost::function<QPointF(const QPointF&)> const orig_to_output(
+        const boost::function<QPointF(const QPointF&)> orig_to_output(
                 boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1)
         );
 
@@ -2547,7 +2547,7 @@ namespace output {
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
                                                 const ZoneSet& zones,
-                                                boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                                const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                                 const QTransform& postTransform,
                                                 const bool antialiasing) const {
         if (zones.empty()) {
@@ -2578,7 +2578,7 @@ namespace output {
 
     void OutputGenerator::applyFillZonesInPlace(QImage& img,
                                                 const ZoneSet& zones,
-                                                boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                                const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                                 const bool antialiasing) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform(), antialiasing
@@ -2606,7 +2606,7 @@ namespace output {
     void
     OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
                                            const ZoneSet& zones,
-                                           boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                           const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                            const QTransform& postTransform) const {
         if (zones.empty()) {
             return;
@@ -2623,7 +2623,7 @@ namespace output {
     void
     OutputGenerator::applyFillZonesInPlace(imageproc::BinaryImage& img,
                                            const ZoneSet& zones,
-                                           boost::function<QPointF(const QPointF&)> const& orig_to_output) const {
+                                           const boost::function<QPointF(const QPointF&)>& orig_to_output) const {
         applyFillZonesInPlace(
                 img, zones, orig_to_output, QTransform()
         );
@@ -2823,7 +2823,7 @@ namespace output {
 
     void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
                                                        const ZoneSet& zones,
-                                                       boost::function<QPointF(const QPointF&)> const& orig_to_output,
+                                                       const boost::function<QPointF(const QPointF&)>& orig_to_output,
                                                        const QTransform& postTransform,
                                                        const BinaryImage& picture_mask,
                                                        const bool binary_mode) const {

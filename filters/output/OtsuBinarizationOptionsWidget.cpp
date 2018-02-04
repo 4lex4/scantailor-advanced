@@ -8,7 +8,8 @@
 namespace output {
 
     OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-            : m_ptrSettings(std::move(settings)) {
+            : m_ptrSettings(std::move(settings)),
+              ignoreSliderChanges(0) {
         setupUi(this);
 
         darkerThresholdLink->setText(
@@ -48,6 +49,10 @@ namespace output {
     }
 
     void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
+        if (ignoreSliderChanges) {
+            return;
+        }
+
         thresholLabel->setText(QString::number(value));
 
         const QString tooltip_text(QString::number(value));
@@ -60,12 +65,19 @@ namespace output {
         tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
         tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
         QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
+
+        if (thresholdSlider->isSliderDown()) {
+            return;
+        }
+
+        setThresholdAdjustment(value);
+
+        delayedStateChanger.start(750);
     }
 
     void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
         BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
         if (opt.thresholdAdjustment() == value) {
-            // Didn't change.
             return;
         }
 
@@ -77,6 +89,8 @@ namespace output {
     }
 
     void OtsuBinarizationOptionsWidget::setLighterThreshold() {
+        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+
         thresholdSlider->setValue(thresholdSlider->value() - 1);
         setThresholdAdjustment(thresholdSlider->value());
 
@@ -84,6 +98,8 @@ namespace output {
     }
 
     void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
+        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+
         thresholdSlider->setValue(thresholdSlider->value() + 1);
         setThresholdAdjustment(thresholdSlider->value());
 
@@ -91,6 +107,8 @@ namespace output {
     }
 
     void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
+        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+
         thresholdSlider->setValue(0);
         setThresholdAdjustment(thresholdSlider->value());
 

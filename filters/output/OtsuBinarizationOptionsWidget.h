@@ -17,6 +17,7 @@ namespace output {
         PageId m_pageId;
         ColorParams m_colorParams;
         QTimer delayedStateChanger;
+        int ignoreSliderChanges;
 
     public:
         explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);

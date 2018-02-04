@@ -1,8 +1,10 @@
 
 #include <cmath>
+#include <QtCore/QFileInfo>
 #include "StatusBarPanel.h"
 #include "StatusBarProvider.h"
 #include "UnitsProvider.h"
+#include "PageId.h"
 
 StatusBarPanel::StatusBarPanel() {
     setupUi(this);
@@ -72,17 +74,30 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
     }
 }
 
-void StatusBarPanel::updatePageNum(int pageNumber) {
+void StatusBarPanel::updatePage(int pageNumber, const PageId& pageId) {
     pageNoLabel->setText(tr("p. %1").arg(pageNumber));
+
+    QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).baseName();
+    if (pageFileInfo.size() > 15) {
+        pageFileInfo = "..." + pageFileInfo.right(13);
+    }
+    if (pageId.subPage() != PageId::SINGLE_PAGE) {
+        pageFileInfo = pageFileInfo.right(11) + ((pageId.subPage() == PageId::LEFT_PAGE) ? tr(" [L]") : tr(" [R]"));
+    }
+
+    pageInfoLine->setVisible(true);
+    pageInfo->setText(pageFileInfo);
 }
 
 void StatusBarPanel::clear() {
     mousePosLabel->clear();
     physSizeLabel->clear();
     pageNoLabel->clear();
+    pageInfo->clear();
 
     mousePosLine->setVisible(false);
     physSizeLine->setVisible(false);
+    pageInfoLine->setVisible(false);
 }
 
 void StatusBarPanel::updateUnits(Units) {

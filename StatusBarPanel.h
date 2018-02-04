@@ -7,6 +7,8 @@
 #include "ui_StatusBarPanel.h"
 #include "UnitsObserver.h"
 
+class PageId;
+
 class StatusBarPanel : public QWidget, public UnitsObserver, private Ui::StatusBarPanel {
 Q_OBJECT
 private:
@@ -28,7 +30,7 @@ public:
 
 public slots:
 
-    void updatePageNum(int pageNumber);
+    void updatePage(int pageNumber, const PageId& pageId);
 };
 
 

@@ -80,13 +80,15 @@ namespace output {
             return;
         }
 
-        if ((m_registry.count(widget(old_idx)) == 0) || (m_registry.count(widget(new_idx)) == 0)) {
+        if ((m_registry.find(widget(old_idx)) == m_registry.end())
+            || (m_registry.find(widget(new_idx)) == m_registry.end())) {
             return;
         }
         const ImageViewTab old_view_tab = m_registry.at(widget(old_idx));
         const ImageViewTab new_view_tab = m_registry.at(widget(new_idx));
 
-        if ((m_tabImageRectMap->count(old_view_tab) == 0) || (m_tabImageRectMap->count(new_view_tab) == 0)) {
+        if ((m_tabImageRectMap->find(old_view_tab) == m_tabImageRectMap->end())
+            || (m_tabImageRectMap->find(new_view_tab) == m_tabImageRectMap->end())) {
             return;
         }
         const QRectF& old_view_rect = m_tabImageRectMap->at(old_view_tab);

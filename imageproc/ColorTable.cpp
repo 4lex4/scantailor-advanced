@@ -216,7 +216,7 @@ namespace imageproc {
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     uint32_t color = colorTable[img_line[x]];
-                    uint32_t newColor = (*colorMap.find(color)).second;
+                    uint32_t newColor = colorMap.at(color);
                     img_line[x] = colorToIndexMap[newColor];
                 }
                 img_line += img_stride;
@@ -241,7 +241,7 @@ namespace imageproc {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 uint32_t color = img_line[x];
-                img_line[x] = (*colorMap.find(color)).second;
+                img_line[x] = colorMap.at(color);
             }
             img_line += img_stride;
         }

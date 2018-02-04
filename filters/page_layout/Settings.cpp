@@ -768,7 +768,6 @@ namespace page_layout {
     bool Settings::Impl::isParamsNull(const PageId& page_id) const {
         const QMutexLocker locker(&m_mutex);
 
-        const Container::iterator it(m_items.find(page_id));
-        return (it == m_items.end());
+        return (m_items.find(page_id) == m_items.end());
     }
 }  // namespace page_layout

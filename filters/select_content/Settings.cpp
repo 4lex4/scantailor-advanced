@@ -101,7 +101,7 @@ namespace select_content {
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_pageParams.count(page_id) == 0;
+        return m_pageParams.find(page_id) == m_pageParams.end();
     }
 
     double Settings::maxDeviation() const {

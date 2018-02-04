@@ -104,6 +104,6 @@ namespace deskew {
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_perPageParams.count(page_id) == 0;
+        return m_perPageParams.find(page_id) == m_perPageParams.end();
     }
 }  // namespace deskew

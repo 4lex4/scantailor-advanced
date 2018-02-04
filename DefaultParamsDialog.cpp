@@ -1033,7 +1033,7 @@ void DefaultParamsDialog::profileDeletePressed() {
 }
 
 bool DefaultParamsDialog::isProfileNameReserved(const QString& name) {
-    return reservedProfileNames.count(name) > 0;
+    return reservedProfileNames.find(name) != reservedProfileNames.end();
 }
 
 void DefaultParamsDialog::commitChanges() {

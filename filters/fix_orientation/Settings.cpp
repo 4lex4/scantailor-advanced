@@ -76,6 +76,6 @@ namespace fix_orientation {
     bool Settings::isRotationNull(const ImageId& image_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_perImageRotation.count(image_id) == 0;
+        return m_perImageRotation.find(image_id) == m_perImageRotation.end();
     }
 }  // namespace fix_orientation

@@ -28,6 +28,7 @@
 #include "OpenGLSupport.h"
 #include "ColorSchemeManager.h"
 #include "StatusBarProvider.h"
+#include "UnitsProvider.h"
 #include <QScrollBar>
 #include <QSettings>
 #include <QPointer>
@@ -195,6 +196,13 @@ ImageViewBase::ImageViewBase(const QImage& image,
             &m_timer, SIGNAL(timeout()),
             this, SLOT(initiateBuildingHqVersion())
     );
+
+    {
+        Dpi image_dpi = Dpm(m_image);
+        if (UnitsProvider::getInstance()->getDpi() != image_dpi) {
+            UnitsProvider::getInstance()->setDpi(image_dpi);
+        };
+    }
 
     setMouseTracking(true);
     m_cursorTrackerTimer.setSingleShot(true);

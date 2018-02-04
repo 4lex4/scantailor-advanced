@@ -38,9 +38,15 @@ public:
 
     void installLanguage(const QString& locale);
 
+    std::list<QString> getLanguagesList() const;
+
 private:
+    void initTranslations();
+
+
     QTranslator m_translator;
     QString m_currentLocale;
+    std::map<QString, QString> m_translationsMap;
 };
 
 

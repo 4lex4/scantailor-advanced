@@ -42,8 +42,6 @@ private slots:
 
 private:
 
-    void initLanguageList(const QString& locale);
-
     Ui::SettingsDialog ui;
 };
 

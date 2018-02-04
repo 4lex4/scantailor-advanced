@@ -1561,7 +1561,9 @@ void MainWindow::onSettingsChanged() {
 
     m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
 
-    dynamic_cast<Application*>(qApp)->installLanguage(settings.value("settings/language").toString());
+    if (auto* app = dynamic_cast<Application*>(qApp)) {
+        app->installLanguage(settings.value("settings/language").toString());
+    }
 
     bool highlightDeviation = settings.value("settings/highlight_deviation").toBool();
     if (highlightDeviation != m_highlightDeviation) {

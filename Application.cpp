@@ -34,7 +34,9 @@
 #include <QtCore/QDir>
 
 Application::Application(int& argc, char** argv)
-        : QApplication(argc, argv) {
+        : QApplication(argc, argv),
+          m_currentLocale("en") {
+    initTranslations();
 }
 
 bool Application::notify(QObject* receiver, QEvent* e) {
@@ -52,35 +54,52 @@ void Application::installLanguage(const QString& locale) {
         return;
     }
 
-    const QString translation("scantailor_" + locale);
-    const QStringList translation_dirs(
-            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
-    );
-    bool loaded = false;
-    for (const QString& path : translation_dirs) {
-        QString absolute_path;
-        if (QDir::isAbsolutePath(path)) {
-            absolute_path = path;
-        } else {
-            absolute_path = this->applicationDirPath();
-            absolute_path += QChar('/');
-            absolute_path += path;
-        }
-        absolute_path += QChar('/');
-        absolute_path += translation;
+    if (m_translationsMap.find(locale) != m_translationsMap.end()) {
+        bool loaded = m_translator.load(m_translationsMap[locale]);
 
-        loaded = m_translator.load(absolute_path);
-        if (loaded) {
-            break;
-        }
+        this->removeTranslator(&m_translator);
+        this->installTranslator(&m_translator);
+
+        m_currentLocale = (loaded) ? locale : "en";
+    } else {
+        this->removeTranslator(&m_translator);
+
+        m_currentLocale = "en";
     }
-
-    this->removeTranslator(&m_translator);
-    this->installTranslator(&m_translator);
-
-    m_currentLocale = (loaded) ? locale : "en";
 }
 
 const QString& Application::getCurrentLocale() const {
     return m_currentLocale;
+}
+
+std::list<QString> Application::getLanguagesList() const {
+    std::list<QString> list{ "en" };
+    std::transform(m_translationsMap.begin(), m_translationsMap.end(),
+                   std::back_inserter(list),
+                   [](const std::pair<QString, QString>& val) {
+        return val.first;
+    });
+
+    return list;
+}
+
+void Application::initTranslations() {
+    const QStringList translation_dirs(
+            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
+    );
+
+    const QStringList language_file_filter("scantailor_*.qm");
+    for (const QString& path : translation_dirs) {
+        QDir dir(path);
+        if (dir.exists()) {
+            QStringList translationFileNames = QDir(path).entryList(language_file_filter);
+            for (const QString& fileName : translationFileNames) {
+                QString locale(fileName);
+                locale.truncate(locale.lastIndexOf('.'));
+                locale.remove(0, locale.indexOf('_') + 1);
+
+                m_translationsMap[locale] = dir.absoluteFilePath(fileName);
+            }
+        }
+    }
 }

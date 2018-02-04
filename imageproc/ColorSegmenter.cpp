@@ -175,16 +175,19 @@ namespace imageproc {
         {
             GrayImage redChannel = getRgbChannel(originalImage, RED_CHANNEL);
             redComponent = BinaryImage(redChannel, threshold);
+            rasterOp<RopAnd<RopSrc, RopDst>>(redComponent, image);
         }
         BinaryImage greenComponent;
         {
             GrayImage greenChannel = getRgbChannel(originalImage, GREEN_CHANNEL);
             greenComponent = BinaryImage(greenChannel, threshold);
+            rasterOp<RopAnd<RopSrc, RopDst>>(greenComponent, image);
         }
         BinaryImage blueComponent;
         {
             GrayImage blueChannel = getRgbChannel(originalImage, BLUE_CHANNEL);
             blueComponent = BinaryImage(blueChannel, threshold);
+            rasterOp<RopAnd<RopSrc, RopDst>>(blueComponent, image);
         }
         BinaryImage yellowComponent(redComponent);
         rasterOp<RopAnd<RopSrc, RopDst>>(yellowComponent, greenComponent);

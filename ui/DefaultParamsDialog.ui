@@ -390,8 +390,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>193</width>
-            <height>162</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -629,8 +629,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>116</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -798,8 +798,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>314</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1099,8 +1099,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>410</width>
-            <height>258</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -1853,6 +1853,9 @@
                        </item>
                        <item>
                         <widget class="QCheckBox" name="equalizeIlluminationCB">
+                         <property name="toolTip">
+                          <string>Normalize illumination before binarization.</string>
+                         </property>
                          <property name="text">
                           <string>Equalize illumination (B&amp;&amp;W)</string>
                          </property>
@@ -1860,6 +1863,9 @@
                        </item>
                        <item>
                         <widget class="QCheckBox" name="equalizeIlluminationColorCB">
+                         <property name="toolTip">
+                          <string>Normalize illumination in color mode / in picture zones in mixed mode.</string>
+                         </property>
                          <property name="text">
                           <string>Equalize illumination (Color)</string>
                          </property>

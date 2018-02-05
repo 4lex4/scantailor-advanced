@@ -26,8 +26,10 @@
 #include "Utils.h"
 #include "filter_dc/AbstractFilterDataCollector.h"
 #include "filter_dc/ThumbnailCollector.h"
+#include "RenderParams.h"
 #include <QFileInfo>
 #include <utility>
+#include <QDir>
 
 namespace output {
     CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
@@ -44,7 +46,25 @@ namespace output {
                                   const QPolygonF& content_rect_phys) {
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             const QString out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
+            const QFileInfo out_file_info(out_file_path);
+            const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+            const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+            const QString original_background_dir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
+            const QString foreground_file_path(
+                    QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QString background_file_path(
+                    QDir(background_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QString original_background_file_path(
+                    QDir(original_background_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QFileInfo foreground_file_info(foreground_file_path);
+            const QFileInfo background_file_info(background_file_path);
+            const QFileInfo original_background_file_info(original_background_file_path);
+
             const Params params(m_ptrSettings->getParams(page_info.id()));
+            RenderParams render_params(params.colorParams(), params.splittingOptions());
 
             ImageTransformation new_xform(xform);
             new_xform.postScaleToDpi(params.outputDpi());
@@ -94,14 +114,40 @@ namespace output {
 
                 const QFileInfo out_file_info(out_file_path);
 
-                if (!out_file_info.exists()) {
-                    need_reprocess = true;
-                    break;
-                }
+                if (!render_params.splitOutput()) {
+                    if (!out_file_info.exists()) {
+                        need_reprocess = true;
+                        break;
+                    }
 
-                if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-                    need_reprocess = true;
-                    break;
+                    if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
+                        need_reprocess = true;
+                        break;
+                    }
+                } else {
+                    if (!foreground_file_info.exists() || !background_file_info.exists()) {
+                        need_reprocess = true;
+                        break;
+                    }
+                    if (!(stored_output_params->foregroundFileParams().matches(
+                            OutputFileParams(foreground_file_info)))
+                        || !(stored_output_params->backgroundFileParams().matches(
+                            OutputFileParams(background_file_info)))) {
+                        need_reprocess = true;
+                        break;
+                    }
+
+                    if (render_params.originalBackground()) {
+                        if (!original_background_file_info.exists()) {
+                            need_reprocess = true;
+                            break;
+                        }
+                        if (!(stored_output_params->originalBackgroundFileParams().matches(
+                                OutputFileParams(original_background_file_info)))) {
+                            need_reprocess = true;
+                            break;
+                        }
+                    }
                 }
             } while (false);
 

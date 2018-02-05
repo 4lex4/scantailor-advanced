@@ -305,7 +305,7 @@ namespace output {
                     foreground_image = ImageLoader::load(foreground_file, 0);
                 }
                 if (background_file.open(QIODevice::ReadOnly)) {
-                    background_image = ImageLoader::load(foreground_file, 0);
+                    background_image = ImageLoader::load(background_file, 0);
                 }
 
                 SplitImage tmpSplitImage;
@@ -315,7 +315,7 @@ namespace output {
                     QImage original_background_image;
                     QFile original_background_file(original_background_file_path);
                     if (original_background_file.open(QIODevice::ReadOnly)) {
-                        original_background_image = ImageLoader::load(foreground_file, 0);
+                        original_background_image = ImageLoader::load(original_background_file, 0);
                     }
                     tmpSplitImage = SplitImage(foreground_image, background_image, original_background_image);
                 }

@@ -19,6 +19,7 @@
 #include "ProjectOpeningContext.h"
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
+#include "version.h"
 #include <QMessageBox>
 #include <cassert>
 
@@ -36,7 +37,16 @@ ProjectOpeningContext::~ProjectOpeningContext() {
 void ProjectOpeningContext::proceed() {
     if (!m_reader.success()) {
         deleteLater();
-        QMessageBox::warning(
+        if (!m_reader.getVersion().isNull() && (m_reader.getVersion().toInt() != PROJECT_VERSION)) {
+            QMessageBox::warning(
+                    m_pParent, tr("Error"),
+                    tr("The project file is not compatible with the current application version.")
+            );
+
+            return;
+        }
+
+        QMessageBox::critical(
                 m_pParent, tr("Error"),
                 tr("Unable to interpret the project file.")
         );

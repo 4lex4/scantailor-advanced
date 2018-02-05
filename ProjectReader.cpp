@@ -21,6 +21,7 @@
 #include "FileNameDisambiguator.h"
 #include "AbstractFilter.h"
 #include "XmlUnmarshaller.h"
+#include "version.h"
 #include <QDir>
 #include <boost/bind.hpp>
 
@@ -28,6 +29,12 @@ ProjectReader::ProjectReader(const QDomDocument& doc)
         : m_doc(doc),
           m_ptrDisambiguator(new FileNameDisambiguator) {
     QDomElement project_el(m_doc.documentElement());
+    
+    m_version = project_el.attribute("version");
+    if (m_version.isNull() || (m_version.toInt() != PROJECT_VERSION)) {
+        return;
+    }
+
     m_outDir = project_el.attribute("outputDirectory");
 
     Qt::LayoutDirection layout_direction = Qt::LeftToRight;

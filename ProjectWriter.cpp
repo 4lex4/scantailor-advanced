@@ -25,6 +25,7 @@
 #include "ImageMetadata.h"
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
+#include "version.h"
 #include <QtXml>
 #include <QFile>
 #include <QTextStream>
@@ -80,6 +81,7 @@ bool ProjectWriter::write(const QString& file_path, const std::vector<FilterPtr>
     QDomDocument doc;
     QDomElement root_el(doc.createElement("project"));
     doc.appendChild(root_el);
+    root_el.setAttribute("version", PROJECT_VERSION);
     root_el.setAttribute("outputDirectory", m_outFileNameGen.outDir());
     root_el.setAttribute(
             "layoutDirection",

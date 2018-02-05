@@ -32,7 +32,6 @@
 #include <map>
 
 class QDomElement;
-class ProjectData;
 class ProjectPages;
 class FileNameDisambiguator;
 class AbstractFilter;
@@ -53,6 +52,10 @@ public:
 
     const QString& outputDirectory() const {
         return m_outDir;
+    }
+
+    const QString& getVersion() const {
+        return m_version;
     }
 
     const intrusive_ptr<ProjectPages>& pages() const {
@@ -111,6 +114,7 @@ private:
 
     QDomDocument m_doc;
     QString m_outDir;
+    QString m_version;
     DirMap m_dirMap;
     FileMap m_fileMap;
     ImageMap m_imageMap;

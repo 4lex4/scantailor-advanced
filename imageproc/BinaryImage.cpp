@@ -227,7 +227,7 @@ namespace imageproc {
                 *this = fromRgb16(image, rect, threshold);
                 break;
             default:
-                throw std::runtime_error("Unsupported QImage format");
+                throw std::runtime_error("BinaryImage: Unsupported QImage format");
         }
     }
 

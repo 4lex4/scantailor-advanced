@@ -71,12 +71,12 @@ ConsoleBatch::ConsoleBatch(const QString project_file)
           debug(true) {
     QFile file(project_file);
     if (!file.open(QIODevice::ReadOnly)) {
-        throw std::runtime_error("Unable to open the project file.");
+        throw std::runtime_error("ConsoleBatch: Unable to open the project file.");
     }
 
     QDomDocument doc;
     if (!doc.setContent(&file)) {
-        throw std::runtime_error("The project file is broken.");
+        throw std::runtime_error("ConsoleBatch: The project file is broken.");
     }
 
     file.close();
@@ -166,7 +166,7 @@ void ConsoleBatch::process() {
     if (cli.hasStartFilterIdx()) {
         unsigned int sf = cli.getStartFilterIdx();
         if ((sf < 0) || (sf >= m_ptrStages->filters().size())) {
-            throw std::runtime_error("Start filter out of range");
+            throw std::runtime_error("ConsoleBatch: Start filter out of range");
         }
         startFilterIdx = sf;
     }
@@ -175,7 +175,7 @@ void ConsoleBatch::process() {
     if (cli.hasEndFilterIdx()) {
         unsigned int ef = cli.getEndFilterIdx();
         if ((ef < 0) || (ef >= m_ptrStages->filters().size())) {
-            throw std::runtime_error("End filter out of range");
+            throw std::runtime_error("ConsoleBatch: End filter out of range");
         }
         endFilterIdx = ef;
     }

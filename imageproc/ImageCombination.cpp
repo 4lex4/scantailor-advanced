@@ -282,11 +282,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if (mixedImage.size() != foreground.size()) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if (mixedImage.format() == QImage::Format_Indexed8) {
@@ -300,11 +300,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if ((mixedImage.size() != foreground.size()) || (mixedImage.size() != mask.size())) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if (mixedImage.format() == QImage::Format_Indexed8) {
@@ -318,11 +318,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if (mixedImage.size() != foreground.size()) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if (mixedImage.format() == QImage::Format_Indexed8) {
@@ -344,11 +344,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if ((mixedImage.size() != foreground.size()) || (mixedImage.size() != mask.size())) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if (mixedImage.format() == QImage::Format_Indexed8) {
@@ -370,11 +370,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if (mixedImage.size() != foreground.size()) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if ((foreground.format() == QImage::Format_Mono)
@@ -389,11 +389,11 @@ namespace imageproc {
         if ((mixedImage.format() != QImage::Format_Indexed8)
             && (mixedImage.format() != QImage::Format_RGB32)
             && (mixedImage.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if ((mixedImage.size() != foreground.size()) || (mixedImage.size() != mask.size())) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if ((foreground.format() == QImage::Format_Mono)
@@ -408,11 +408,11 @@ namespace imageproc {
         if ((image.format() != QImage::Format_Indexed8)
             && (image.format() != QImage::Format_RGB32)
             && (image.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ImageCombination: wrong image format.");
         }
 
         if (image.size() != bw_mask.size()) {
-            throw std::invalid_argument("Error: images size don't match.");
+            throw std::invalid_argument("ImageCombination: images size don't match.");
         }
 
         if (image.format() == QImage::Format_Indexed8) {

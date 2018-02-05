@@ -142,7 +142,7 @@ namespace output {
                     reserveBlackAndWhite<uint32_t>(img);
                     break;
                 default:
-                    throw std::invalid_argument("Error: wrong image format.");;
+                    throw std::invalid_argument("reserveBlackAndWhite: wrong image format.");;
             }
         }
 
@@ -178,7 +178,7 @@ namespace output {
                     reserveBlackAndWhite<uint32_t>(img, mask);
                     break;
                 default:
-                    throw std::invalid_argument("Error: wrong image format.");;
+                    throw std::invalid_argument("reserveBlackAndWhite: wrong image format.");;
             }
         }
 

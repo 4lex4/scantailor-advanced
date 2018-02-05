@@ -106,6 +106,577 @@
     </message>
 </context>
 <context>
+    <name>DefaultParamsDialog</name>
+    <message>
+        <location filename="../ui/DefaultParamsDialog.ui" line="+20"/>
+        <source>Default parameters</source>
+        <translation>Параметры по умолчанию</translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Delete</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Units:</source>
+        <translation>Единицы:</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Fix Orientation</source>
+        <translation>Испр. ориент.</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Rotate</source>
+        <translation>Поворот</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <location line="+17"/>
+        <location line="+954"/>
+        <location line="+48"/>
+        <location line="+265"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+26"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+1441"/>
+        <location line="+26"/>
+        <location line="+26"/>
+        <source>...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="-2860"/>
+        <source>Reset</source>
+        <translation>Сбросить</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Split Pages</source>
+        <translation>Разрезка стр.</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location line="+1381"/>
+        <source>Mode</source>
+        <translation>Режим</translation>
+    </message>
+    <message>
+        <location line="-1340"/>
+        <source>Page Layout</source>
+        <translation>Тип разреза</translation>
+    </message>
+    <message>
+        <location line="+168"/>
+        <location line="+69"/>
+        <source>Deskew</source>
+        <translation>Компенс. накл.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+292"/>
+        <location line="+51"/>
+        <location filename="../DefaultParamsDialog.cpp" line="+31"/>
+        <location line="+26"/>
+        <source>Auto</source>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <location line="-327"/>
+        <location line="+289"/>
+        <location filename="../DefaultParamsDialog.cpp" line="-25"/>
+        <location line="+26"/>
+        <source>Manual</source>
+        <translation>Вручную</translation>
+    </message>
+    <message>
+        <location line="-213"/>
+        <source>Select Content</source>
+        <translation>Полезная обл.</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Page Box</source>
+        <translation>Зона распознавания</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+176"/>
+        <source>Disable</source>
+        <translation>Выключить</translation>
+    </message>
+    <message>
+        <location line="-160"/>
+        <location line="+945"/>
+        <source>Options</source>
+        <translation>Настройки</translation>
+    </message>
+    <message>
+        <location line="-924"/>
+        <source>Shift with corners while they are in black. </source>
+        <translation>Скорректировать края по черной области. </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Fine Tune Page Corners</source>
+        <translation>Тонкая настройка краев страницы</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height</source>
+        <translation>Высота</translation>
+    </message>
+    <message>
+        <location line="+86"/>
+        <source>Content Box</source>
+        <translation>Полезная область</translation>
+    </message>
+    <message>
+        <location line="+69"/>
+        <location line="+45"/>
+        <source>Margins</source>
+        <translation>Поля</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Auto Margins</source>
+        <translation>Автоматические поля</translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Top</source>
+        <translation>Сверху</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Right</source>
+        <translation>Справа</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Left</source>
+        <translation>Слева</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Bottom</source>
+        <translation>Снизу</translation>
+    </message>
+    <message>
+        <location line="+92"/>
+        <source>Alignment</source>
+        <translation>Выравнивание</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Auto</source>
+        <comment>auto</comment>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Manual</source>
+        <comment>manual</comment>
+        <translation>Вручную</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Original</source>
+        <comment>original</comment>
+        <translation>Оригинал</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Match size with other pages</source>
+        <translation>Выровнять размер с остальн. стр.</translation>
+    </message>
+    <message>
+        <location line="+282"/>
+        <source>Output</source>
+        <translation>Вывод</translation>
+    </message>
+    <message>
+        <location line="+106"/>
+        <source>Cut margins</source>
+        <translation>Подрезать поля</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Normalize illumination before binarization.</source>
+        <translation>Нормализовать освещенность перед бинаризацией.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Equalize illumination (B&amp;&amp;W)</source>
+        <translation>Выровнять освещение (ЧБ)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
+        <translation>Нормализовать освещенность в цветном режиме / в зонах картинок в смешанном режиме.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Equalize illumination (Color)</source>
+        <translation>Выровнять освещение (Цвет.)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Savitzky-Golay smoothing</source>
+        <translation>Сглаживание Савицкого-Голея</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Morphological smoothing</source>
+        <translation>Морфологическое сглаживание</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Filling</source>
+        <translation>Заливка</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Color: </source>
+        <translation>Цвет: </translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Color operations</source>
+        <translation>Цветовые операции</translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Split the image into color segments and colorize b&amp;w mask.</source>
+        <translation>Поделить изображение на цветовые сегменты и раскрасить ЧБ маску.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color segmentation</source>
+        <translation>Цветовая сегментация</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Reduce noise:</source>
+        <translation>Уменьшить шум:</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Reduce the number of colors of the output image by grouping similar colors.</source>
+        <translation>Уменьшить количество цветов выходного изображения, группируя похожие цвета.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Posterize</source>
+        <translation>Постеризовать</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Level:</source>
+        <translation>Уровень:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
+        <translation>Меньшее значение обозначает меньшее кол-во цветов в выходном изображении, значения 2 и 6 включительно гарантируют индексированое изображение.</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Make dark and light gray gradients black and white respectively.</source>
+        <translation>Сделать темные и светлые оттенки серого черными и белыми соответственно.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Force b&amp;&amp;w</source>
+        <translation>Принудительный ЧБ</translation>
+    </message>
+    <message>
+        <location line="+63"/>
+        <source>Threshold</source>
+        <translation>Порог</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Method:</source>
+        <translation>Метод:</translation>
+    </message>
+    <message>
+        <location line="+75"/>
+        <source>0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Thinner</source>
+        <translation>Тоньше</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Thicker</source>
+        <translation>Жирнее</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Coef:</source>
+        <translation>Коэф.:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+96"/>
+        <source>The dimensions of a pixel neighborhood to consider.</source>
+        <translation>Размер области с соседними пикселями для расчета.</translation>
+    </message>
+    <message>
+        <location line="-83"/>
+        <location line="+96"/>
+        <source>Window size:</source>
+        <translation>Размер окна:</translation>
+    </message>
+    <message>
+        <location line="-89"/>
+        <source>Default value is 0.34.</source>
+        <translation>Значение по умолчанию - 0.34.</translation>
+    </message>
+    <message>
+        <location line="+96"/>
+        <source>The minimum possible gray level that can be made white.</source>
+        <translation>Минимальный уровень серого, который можно сделать белым.</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Upper Bound: </source>
+        <translation>Верхняя граница: </translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower bound: </source>
+        <translation>Нижняя граница: </translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The maximum possible gray level that can be made black.</source>
+        <translation>Максимальный уровень серого, который можно сделать черным.</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Coeff:</source>
+        <translation>Коэф.:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Default value is 0.3.</source>
+        <translation>Значение по умолчанию — 0.3.</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Picture Shape</source>
+        <translation>Форма картинок</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Sensitivity (%):</source>
+        <translation>Чувствительность (%):</translation>
+    </message>
+    <message>
+        <location line="+110"/>
+        <source>Output Resolution (DPI)</source>
+        <translation>Разрешение на выходе (DPI)</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Splitting</source>
+        <translation>Разделение</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Split output</source>
+        <translation>Разделить выход</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>B&amp;&amp;W foreground</source>
+        <translation>ЧБ передний слой</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Save the original background of the foreground layer.</source>
+        <translation>Сохранить оригинальный фон переднего слоя.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Original background</source>
+        <translation>Оригинальный фон</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Color foreground</source>
+        <translation>Цветной передний слой</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Despeckling</source>
+        <translation>Удаление пятен</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>No despeckling</source>
+        <translation>Не удалять пятна</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Cautious despeckling</source>
+        <translation>Осторожное удаление пятен</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Normal despeckling</source>
+        <translation>Обычное удаление пятен</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Aggressive despeckling</source>
+        <translation>Агрессивное удаление пятен</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Dewarping</source>
+        <translation>Выпрямление</translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>Post deskew</source>
+        <translation>Компенсировать поворот</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Depth perception</source>
+        <translation>Восприятие глубины</translation>
+    </message>
+    <message>
+        <location filename="../DefaultParamsDialog.cpp" line="-24"/>
+        <source>Black and White</source>
+        <translation>Черно-белый</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Color / Grayscale</source>
+        <translation>Цветной / Серый</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mixed</source>
+        <translation>Смешанный</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Background</source>
+        <translation>Фон</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>White</source>
+        <translation>Белый</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Otsu</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sauvola</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Wolf</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+11"/>
+        <source>Off</source>
+        <translation>Отключено</translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Free</source>
+        <translation>Свободная</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rectangular</source>
+        <translation>Прямоугольная</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+20"/>
+        <location line="+935"/>
+        <source>Custom</source>
+        <translation>Выборочный</translation>
+    </message>
+    <message>
+        <location line="-950"/>
+        <source>Marginal</source>
+        <translation>По краям</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Default</source>
+        <translation>Стандартный</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Source</source>
+        <translation>Источник</translation>
+    </message>
+    <message>
+        <location line="+913"/>
+        <location line="+19"/>
+        <location line="+17"/>
+        <location line="+16"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <source>Error loading the profile.</source>
+        <translation>Ошибка при загрузке профиля.</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>The name conflicts with a default profile name. Please enter a different name.</source>
+        <translation>Это имя конфликтует со стандартным именем профиля. Введите другое имя.</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Error saving the profile.</source>
+        <translation>Ошибка при сохранении профиля.</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Error deleting the profile.</source>
+        <translation>Ошибка при удалении профиля.</translation>
+    </message>
+</context>
+<context>
     <name>DeskewApplyDialog</name>
     <message>
         <location filename="../filters/deskew/ui/DeskewApplyDialog.ui" line="+20"/>
@@ -209,7 +780,7 @@
 <context>
     <name>FixDpiDialog</name>
     <message>
-        <location filename="../ui/FixDpiDialog.ui" line="+13"/>
+        <location filename="../ui/FixDpiDialog.ui" line="+14"/>
         <source>Fix DPI</source>
         <translation>Исправить DPI</translation>
     </message>
@@ -250,7 +821,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+421"/>
+        <location line="+420"/>
         <source>All Pages</source>
         <translation>Все страницы</translation>
     </message>
@@ -278,7 +849,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../ImageViewBase.cpp" line="+201"/>
+        <location filename="../ImageViewBase.cpp" line="+225"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation>Используйте колесо мыши для увеличения.  В увеличенном виде доступно перетаскивание.</translation>
     </message>
@@ -304,7 +875,7 @@
 <context>
     <name>LoadFileTask</name>
     <message>
-        <location filename="../LoadFileTask.cpp" line="+142"/>
+        <location filename="../LoadFileTask.cpp" line="+141"/>
         <source>The following file could not be loaded:
 %1</source>
         <translation>Файл не загрузился:%1</translation>
@@ -346,7 +917,12 @@
         <translation>Инструменты</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+4"/>
+        <source>Units</source>
+        <translation>Единицы</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
@@ -387,7 +963,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+530"/>
+        <location filename="../MainWindow.cpp" line="+592"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -579,6 +1155,31 @@
         <translation></translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Pixels</source>
+        <translation>Пиксели</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Millimetres</source>
+        <translation>Миллиметры</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Inches</source>
+        <translation>Дюймы</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Centimetres</source>
+        <translation>Сантиметры</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Default parameters ...</source>
+        <translation>Параметры по умолчанию...</translation>
+    </message>
+    <message>
         <location filename="../MainWindow.cpp" line="-79"/>
         <source>Stop batch processing</source>
         <translation>Остановить пакетную обработку</translation>
@@ -589,7 +1190,22 @@
         <translation>Сохранить этот проект?</translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+6"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Discard</source>
+        <translation>Отклонить</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location line="+433"/>
         <source>Insert before ...</source>
         <translation>Вставить перед ...</translation>
     </message>
@@ -609,7 +1225,7 @@
         <translation>Вставить сюда ...</translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+359"/>
         <location line="+62"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
@@ -622,13 +1238,13 @@
     <message>
         <location line="+16"/>
         <location line="+10"/>
-        <location line="+299"/>
+        <location line="+319"/>
         <location line="+29"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-337"/>
+        <location line="-357"/>
         <source>Unable to open the project file.</source>
         <translation>Не удалось открыть файл проекта.</translation>
     </message>
@@ -638,19 +1254,19 @@
         <translation>Файл проекта поврежден.</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+71"/>
         <source>version </source>
         <translation>версия </translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+135"/>
         <source>Output is not yet possible, as the final size of pages is not yet known.
 To determine it, run batch processing at &quot;Select Content&quot; or &quot;Margins&quot;.</source>
         <translation>Вывод невозможен, поскольку еще не известны итоговые размеры страниц.
 Для их определения, прогоните пакетную обработку на этапах &quot;Полезная Область&apos; или &quot;Поля&quot;.</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+38"/>
         <source>Unnamed</source>
         <translation>Без имени</translation>
     </message>
@@ -831,7 +1447,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Нехватка памяти</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+32"/>
         <source>Out of Memory Situation in Scan Tailor</source>
         <translation>Недостаточно памяти для продолжения работы</translation>
     </message>
@@ -841,7 +1457,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Возможные причины</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+42"/>
         <source>Did you have to fix the DPI of your source images? Are you sure the values you entered were correct?</source>
         <translation>Если вам пришлось исправлять DPI ваших исходных изображений, убедитесь в правильности этих исправлений.</translation>
     </message>
@@ -861,7 +1477,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Что может помочь</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>Fix your DPIs. Learn how to &lt;a href=&quot;http://vimeo.com/12524529&quot;&gt;estimate unknown DPIs&lt;/a&gt;.</source>
         <extracomment>Feel free to change the URL to a localized video / text tutorial.</extracomment>
         <translatorcomment>Не стесняйтесь изменять URL на фокусируемое видео / текстовая обучающая программа.</translatorcomment>
@@ -888,7 +1504,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Что не поможет</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>Surprisingly, upgrading your RAM won&apos;t help here. The lack of RAM is compensated by the swap mechanism, which makes things slow, but keeps programs running. An out of memory situation means we ran out of memory address space, which has nothing to do with the amount of RAM you have. The only way to increase the memory address space is to go 64-bit hardware, 64-bit operating system and 64-bit Scan Tailor.</source>
         <translation>Удивительно, но покупка дополнительной памяти не решит данную проблему. Нехватка памяти компенсируется механизмом подкачки, который вызывает &quot;тормоза&quot;, но все-же позволяет программам продолжать работать. В данном случае произошла нехватка не просто памяти, а адресного пространства памяти, которое не имеет ничего общего с реальным объемом памяти, установленном на компьютере. Единственный способ увеличить адресное пространство - переход на 64х-битное железо, 64х-битную операционную систему и 64х-битный Scan Tailor.</translation>
     </message>
@@ -918,7 +1534,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Обратите внимание на то, что хотя Scan Tailor и пытается обработать ситуации нехватки памяти, чтобы дать вам возможность сохранить проект, это не всегда бывает возможно. В этот раз все получилось, но в следующий раз программа может просто &quot;упасть&quot;.</translation>
     </message>
     <message>
-        <location filename="../OutOfMemoryDialog.cpp" line="+77"/>
+        <location filename="../OutOfMemoryDialog.cpp" line="+78"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
@@ -1106,12 +1722,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+37"/>
-        <location line="+869"/>
+        <location line="+1196"/>
         <source>Change ...</source>
         <translation>Применить...</translation>
     </message>
     <message>
-        <location line="-844"/>
+        <location line="-1171"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
@@ -1127,11 +1743,21 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+7"/>
+        <source>Normalize illumination before binarization.</source>
+        <translation>Нормализовать освещенность перед бинаризацией.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
         <translation>Выровнять освещение (ЧБ)</translation>
     </message>
     <message>
         <location line="+7"/>
+        <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
+        <translation>Нормализовать освещенность в цветном режиме / в зонах картинок в смешанном режиме.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Equalize illumination (Color)</source>
         <translation>Выровнять освещение (Цвет.)</translation>
     </message>
@@ -1166,25 +1792,75 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Метод:</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
+        <source>Color operations</source>
+        <translation>Цветовые операции</translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Split the image into color segments and colorize b&amp;w mask.</source>
+        <translation>Поделить изображение на цветовые сегменты и раскрасить ЧБ маску.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color segmentation</source>
+        <translation>Цветовая сегментация</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Reduce noise:</source>
+        <translation>Уменьшить шум:</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Reduce the number of colors of the output image by grouping similar colors.</source>
+        <translation>Уменьшить количество цветов выходного изображения, группируя похожие цвета.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Posterize</source>
+        <translation>Постеризовать</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Level:</source>
+        <translation>Уровень:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
+        <translation>Меньшее значение обозначает меньшее кол-во цветов в выходном изображении, значения 2 и 6 включительно гарантируют индексированое изображение.</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Make dark and light gray gradients black and white respectively.</source>
+        <translation>Сделать темные и светлые оттенки серого черными и белыми соответственно.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Force b&amp;&amp;w</source>
+        <translation>Принудительный ЧБ</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Picture Shape</source>
         <translation>Форма картинок</translation>
     </message>
     <message>
         <location line="+67"/>
-        <source>Sensitivity (%): </source>
-        <translation>Чувствительность (%): </translation>
+        <source>Sensitivity (%):</source>
+        <translation>Чувствительность (%):</translation>
     </message>
     <message>
         <location line="+51"/>
-        <location line="+107"/>
+        <location line="+134"/>
         <location line="+188"/>
         <location line="+71"/>
         <source>Apply To ...</source>
         <translation>Применить...</translation>
     </message>
     <message>
-        <location line="-338"/>
+        <location line="-365"/>
         <source>Splitting</source>
         <translation>Разделение</translation>
     </message>
@@ -1199,7 +1875,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>ЧБ передний слой</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+25"/>
+        <source>Save the original background of the foreground layer.</source>
+        <translation>Сохранить оригинальный фон переднего слоя.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Original background</source>
+        <translation>Оригинальный фон</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Color foreground</source>
         <translation>Цветной передний слой</translation>
     </message>
@@ -1316,24 +2002,14 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Поля</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>Millimeters (mm)</source>
-        <translation>Милиметры (mm)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Inches (in)</source>
-        <translation>Дюймы (in)</translation>
-    </message>
-    <message>
-        <location line="+42"/>
+        <location line="+90"/>
         <source>Top</source>
         <translation>Сверху</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location line="+61"/>
-        <location line="+213"/>
+        <location line="-21"/>
+        <location line="+48"/>
+        <location line="+246"/>
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
@@ -1346,33 +2022,33 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation></translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-379"/>
         <source>Bottom</source>
         <translation>Снизу</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-67"/>
         <source>Left</source>
         <translation>Слева</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="-7"/>
         <source>Right</source>
         <translation>Справа</translation>
     </message>
     <message>
-        <location line="+59"/>
-        <location line="+372"/>
+        <location line="+123"/>
+        <location line="+385"/>
         <source>Apply To ...</source>
         <translation>Применить...</translation>
     </message>
     <message>
-        <location line="-347"/>
+        <location line="-360"/>
         <source>Alignment</source>
         <translation>Выравнивание</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+25"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation>Автоматически</translation>
@@ -1390,12 +2066,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Оригинал</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-259"/>
         <source>Auto Margins</source>
         <translation>Автоматические поля</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+297"/>
         <source>Match size with other pages</source>
         <translation>Выровнять размер с остальн. стр.</translation>
     </message>
@@ -1555,7 +2231,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../ProjectFilesDialog.cpp" line="+300"/>
+        <location filename="../ProjectFilesDialog.cpp" line="+299"/>
         <source>Input Directory</source>
         <translation>Директория ввода</translation>
     </message>
@@ -1687,14 +2363,43 @@ You should remove them from the project.</source>
 <context>
     <name>ProjectOpeningContext</name>
     <message>
-        <location filename="../ProjectOpeningContext.cpp" line="+40"/>
+        <location filename="../ProjectOpeningContext.cpp" line="+42"/>
+        <location line="+8"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-7"/>
+        <source>The project file is not compatible with the current application version.</source>
+        <translation>Файл проекта несовместим с текущей версией приложения.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Unable to interpret the project file.</source>
-        <translation>Не удалось импортировать проект.</translation>
+        <translation>Не удалось интерпритировать файл проекта.</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../Units.cpp" line="+9"/>
+        <source>px</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>mm</source>
+        <translation>мм</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>cm</source>
+        <translation>см</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>in</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1757,16 +2462,6 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+36"/>
-        <source>This options should be enabled when the text or content is placed on the darker background</source>
-        <translation>Эти параметры должны быть включены, когда текст или контент светлее фона</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>White on black mode</source>
-        <translation>Режим белого на черном</translation>
-    </message>
-    <message>
-        <location line="+9"/>
         <source>Coef:</source>
         <translation>Коэф.:</translation>
     </message>
@@ -1776,12 +2471,12 @@ You should remove them from the project.</source>
         <translation>Размер области с соседними пикселями для расчета.</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+29"/>
         <source>Window size:</source>
         <translation>Размер окна:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-16"/>
         <source>Default value is 0.34.</source>
         <translation>Значение по умолчанию - 0.34.</translation>
     </message>
@@ -1805,6 +2500,11 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+10"/>
+        <source>Apply page box</source>
+        <translation>Применить область страницы</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Apply to</source>
         <translation>Область применения</translation>
     </message>
@@ -1871,7 +2571,12 @@ You should remove them from the project.</source>
         <translation>Зона распознавания</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+51"/>
+        <source>Options</source>
+        <translation>Настройки</translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Shift with corners while they are in black. </source>
         <translation>Скорректировать края по черной области. </translation>
     </message>
@@ -1881,54 +2586,40 @@ You should remove them from the project.</source>
         <translation>Тонкая настройка краев страницы</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+125"/>
+        <location line="-69"/>
+        <location line="+192"/>
         <source>Disable</source>
         <translation>Сбросить</translation>
     </message>
     <message>
-        <location line="-109"/>
-        <location line="+122"/>
+        <location line="-176"/>
+        <location line="+160"/>
         <source>Auto</source>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location line="-105"/>
-        <source>Borders in MM</source>
-        <translation>Границы (в милиметрах)</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Left</source>
-        <translation>Слева</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Top</source>
-        <translation>Сверху</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Right</source>
-        <translation>Справа</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Bottom</source>
-        <translation>Снизу</translation>
-    </message>
-    <message>
-        <location line="+33"/>
+        <location line="-6"/>
         <source>Content Box</source>
         <translation>Полезная область</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="-141"/>
+        <location line="+176"/>
         <source>Manual</source>
         <translation>Вручную</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="-99"/>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height</source>
+        <translation>Высота</translation>
+    </message>
+    <message>
+        <location line="+123"/>
         <source>Apply to ...</source>
         <translation>Применить...</translation>
     </message>
@@ -1991,7 +2682,7 @@ You should remove them from the project.</source>
         <translation>Цветное сжатие: </translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="+38"/>
+        <location filename="../SettingsDialog.cpp" line="+37"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
         <translation>Вашим оборудованием / драйвером эта функция не поддерживается</translation>
     </message>
@@ -2034,7 +2725,7 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+53"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
@@ -2047,9 +2738,72 @@ You should remove them from the project.</source>
 <context>
     <name>StageListView</name>
     <message>
-        <location filename="../StageListView.cpp" line="+109"/>
+        <location filename="../StageListView.cpp" line="+111"/>
         <source>Launch batch processing</source>
         <translation>Запустить пакетную обработку</translation>
+    </message>
+</context>
+<context>
+    <name>StatusBarPanel</name>
+    <message>
+        <location filename="../ui/StatusBarPanel.ui" line="+14"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Mouse position.</source>
+        <translation>Позиция курсора.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Mouse position relative to page.</source>
+        <translation>Позиция курсора по отношению к странице.</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Physical size.</source>
+        <translation>Физический размер.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Physical size of image.</source>
+        <translation>Физический размер изображения.</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Page number.</source>
+        <translation>Номер страницы.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Position of the selected page in current order.</source>
+        <translation>Позиция выбранной страницы в текущем порядке.</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Page information.</source>
+        <translation>Информация о странице.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Page name and type.</source>
+        <translation>Имя страницы и тип.</translation>
+    </message>
+    <message>
+        <location filename="../StatusBarPanel.cpp" line="+78"/>
+        <source>p. %1</source>
+        <translation>с. %1</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source> [L]</source>
+        <translation> [Л]</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source> [R]</source>
+        <translation> [П]</translation>
     </message>
 </context>
 <context>
@@ -2074,7 +2828,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../ThumbnailSequence.cpp" line="+1252"/>
+        <location filename="../ThumbnailSequence.cpp" line="+1250"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -2088,16 +2842,6 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+36"/>
-        <source>This options should be enabled when the text or content is placed on the darker background</source>
-        <translation>Эта опция должна быть включена, когда текст или контент светлее фона</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>White on black mode</source>
-        <translation>Режим белого на черном</translation>
-    </message>
-    <message>
-        <location line="+9"/>
         <source>The dimensions of a pixel neighborhood to consider.</source>
         <translation>Размер области с соседними пикселями для расчета.</translation>
     </message>
@@ -2140,7 +2884,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneContextMenuInteraction</name>
     <message>
-        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+230"/>
+        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+229"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -2153,7 +2897,12 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneCreationInteraction</name>
     <message>
-        <location filename="../zones/ZoneCreationInteraction.cpp" line="+303"/>
+        <location filename="../zones/ZoneCreationInteraction.cpp" line="+325"/>
+        <source>Click to finish this rectangular zone.  ESC to cancel.</source>
+        <translation>Кликните для завершения этой прямоугольной зоны.  ESC для отмены.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Click to finish this zone.  ESC to cancel.</source>
         <translation>Кликните для завершения этой зоны.  ESC для отмены.</translation>
     </message>
@@ -2164,16 +2913,16 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+3"/>
-        <source>Zones need to have at least 3 points.  ESC to cancel.</source>
-        <translation>Зоны должны содержать по крайней мере 3 точки.  ESC для отмены.</translation>
+        <source>Hold Ctrl to create a rectangular zone, Alt+LMB to switch to lasso mode.  ESC to cancel.</source>
+        <translation>Удерживайте Ctrl для создания прямоугольной зоны, Alt+ЛКМ для переключения в режим лассо.  ESC для отмены.</translation>
     </message>
 </context>
 <context>
     <name>ZoneDefaultInteraction</name>
     <message>
-        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+32"/>
-        <source>Drag the vertex.</source>
-        <translation>Вершину можно перетаскивать.</translation>
+        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+33"/>
+        <source>Drag the vertex. Hold Ctrl to make the vertex angle right.</source>
+        <translation>Перетаскивайте вершину. Удерживайте Ctrl, чтобы сделать угол при вершине прямым.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2181,20 +2930,28 @@ You should remove them from the project.</source>
         <translation>Кликните для создания новой вершины.</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Right click to edit zone properties.</source>
-        <translation>Правый клик для редактирования свойств зоны.</translation>
+        <location line="+2"/>
+        <source>Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone.</source>
+        <translation>ПКМ для редактирования свойств зоны. Удерживайте Shift для перетаскивания зоны или Shift+Ctrl для копирования. Нажмите Del, чтобы удалить зону.</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Click to start creating a new picture zone.</source>
-        <translation>Кликните чтобы начать создание новой зоны.</translation>
+        <location line="+6"/>
+        <source>Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.</source>
+        <translation>Кликните, чтобы создать новую зону. Используйте Ctrl+Alt+Клик для копирования последней созданной зоны.</translation>
+    </message>
+</context>
+<context>
+    <name>ZoneDragInteraction</name>
+    <message>
+        <location filename="../zones/ZoneDragInteraction.cpp" line="+35"/>
+        <source>Release left mouse button to finish dragging.</source>
+        <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>
 </context>
 <context>
     <name>ZoneVertexDragInteraction</name>
     <message>
-        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+169"/>
+        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+175"/>
         <source>Merge these two vertices.</source>
         <translation>Объединить эти две вершины.</translation>
     </message>
@@ -2207,7 +2964,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::Filter</name>
     <message>
-        <location filename="../filters/deskew/Filter.cpp" line="+42"/>
+        <location filename="../filters/deskew/Filter.cpp" line="+47"/>
         <source>Deskew</source>
         <translation>Компенсация наклона</translation>
     </message>
@@ -2228,7 +2985,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../filters/deskew/OptionsWidget.cpp" line="+50"/>
+        <location filename="../filters/deskew/OptionsWidget.cpp" line="+51"/>
         <source>Apply Deskew</source>
         <translation>Область примененияомпенсацию наклона</translation>
     </message>
@@ -2236,7 +2993,7 @@ You should remove them from the project.</source>
 <context>
     <name>fix_orientation::Filter</name>
     <message>
-        <location filename="../filters/fix_orientation/Filter.cpp" line="+47"/>
+        <location filename="../filters/fix_orientation/Filter.cpp" line="+51"/>
         <source>Fix Orientation</source>
         <translation>Исправление ориентации</translation>
     </message>
@@ -2249,7 +3006,7 @@ You should remove them from the project.</source>
         <translation>Особый</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+51"/>
         <location line="+10"/>
         <location line="+9"/>
         <source>Error</source>
@@ -2274,7 +3031,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::FillZoneEditor</name>
     <message>
-        <location filename="../filters/output/FillZoneEditor.cpp" line="+192"/>
+        <location filename="../filters/output/FillZoneEditor.cpp" line="+191"/>
         <source>Pick color</source>
         <translation>Выбрать цвет</translation>
     </message>
@@ -2282,7 +3039,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Filter</name>
     <message>
-        <location filename="../filters/output/Filter.cpp" line="+47"/>
+        <location filename="../filters/output/Filter.cpp" line="+49"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
@@ -2290,7 +3047,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::OptionsWidget</name>
     <message>
-        <location filename="../filters/output/OptionsWidget.cpp" line="+45"/>
+        <location filename="../filters/output/OptionsWidget.cpp" line="+46"/>
         <source>Black and White</source>
         <translation>Черно-белый</translation>
     </message>
@@ -2330,7 +3087,7 @@ You should remove them from the project.</source>
         <translation>Белый</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Free</source>
         <translation>Свободная</translation>
     </message>
@@ -2340,7 +3097,7 @@ You should remove them from the project.</source>
         <translation>Прямоугольная</translation>
     </message>
     <message>
-        <location line="+217"/>
+        <location line="+214"/>
         <source>Apply Splitting Settings</source>
         <translation>Применить настройки разделения</translation>
     </message>
@@ -2355,7 +3112,8 @@ You should remove them from the project.</source>
         <translation>Применить восприятие глубины</translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="-364"/>
+        <location line="+603"/>
         <source>Off</source>
         <translation>Отключено</translation>
     </message>
@@ -2381,19 +3139,27 @@ You should remove them from the project.</source>
     </message>
 </context>
 <context>
+    <name>output::TabbedImageView</name>
+    <message>
+        <location filename="../filters/output/TabbedImageView.cpp" line="+29"/>
+        <source>Use Ctrl+1..5 to switch the tabs.</source>
+        <translation>Используйте Ctrl+1..5 для переключения табов.</translation>
+    </message>
+</context>
+<context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+595"/>
+        <location filename="../filters/output/Task.cpp" line="+611"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation>Зоны картинок доступны только в режиме &quot;Смешанный&quot;.</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+55"/>
         <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
         <translation>Удаление пятен не делается в режиме &quot;Цветной / Серый&quot;.</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
@@ -2421,7 +3187,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::Filter</name>
     <message>
-        <location filename="../filters/page_layout/Filter.cpp" line="+54"/>
+        <location filename="../filters/page_layout/Filter.cpp" line="+59"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -2436,7 +3202,7 @@ You should remove them from the project.</source>
         <translation>Сортировка по возрастающей высоте</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Margins</source>
         <translation>Поля</translation>
     </message>
@@ -2444,7 +3210,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::ImageView</name>
     <message>
-        <location filename="../filters/page_layout/ImageView.cpp" line="+60"/>
+        <location filename="../filters/page_layout/ImageView.cpp" line="+61"/>
         <source>Resize margins by dragging any of the solid lines.</source>
         <translation>Меняйте размеры полей, перетаскивая хоть внешние, хоть внутренние сплошные линии.</translation>
     </message>
@@ -2452,7 +3218,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+303"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+323"/>
         <source>Apply Margins</source>
         <translation>Применить поля</translation>
     </message>
@@ -2465,7 +3231,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::Filter</name>
     <message>
-        <location filename="../filters/page_split/Filter.cpp" line="+51"/>
+        <location filename="../filters/page_split/Filter.cpp" line="+56"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -2475,7 +3241,7 @@ You should remove them from the project.</source>
         <translation>Сортировка по типу разреза</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Split Pages</source>
         <translation>Разрезка страниц</translation>
     </message>
@@ -2493,13 +3259,13 @@ You should remove them from the project.</source>
     <message>
         <location filename="../filters/page_split/OptionsWidget.cpp" line="+86"/>
         <location line="+91"/>
-        <location line="+106"/>
+        <location line="+114"/>
         <source>Set manually</source>
         <translation>Установлено вручную</translation>
     </message>
     <message>
-        <location line="-147"/>
-        <location line="+144"/>
+        <location line="-155"/>
+        <location line="+152"/>
         <source>Auto detected</source>
         <translation>Определено автоматически</translation>
     </message>
@@ -2515,7 +3281,7 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::Filter</name>
     <message>
-        <location filename="../filters/select_content/Filter.cpp" line="+47"/>
+        <location filename="../filters/select_content/Filter.cpp" line="+52"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -2530,7 +3296,7 @@ You should remove them from the project.</source>
         <translation>Сортировка по возрастающей высоте</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Select Content</source>
         <translation>Полезная область</translation>
     </message>
@@ -2538,9 +3304,9 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::ImageView</name>
     <message>
-        <location filename="../filters/select_content/ImageView.cpp" line="+48"/>
-        <source>Use the context menu to enable / disable the content box.</source>
-        <translation>Используйте контекстное меню для включения / отключения полезной области.</translation>
+        <location filename="../filters/select_content/ImageView.cpp" line="+50"/>
+        <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box.</source>
+        <translation>Используйте контекстное меню для включения / выключения полезной области. Удерживайте Shift для перетаскивания области.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2548,7 +3314,28 @@ You should remove them from the project.</source>
         <translation>Перетаскивайте линии или углы, чтобы изменить размеры полезной области.</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+41"/>
+        <source>Drag lines or corners to resize the page box.</source>
+        <translation>Перетаскивайте стороны или углы для изменения размера области страницы.</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Hold left mouse button to drag the content box.</source>
+        <translation>Зажмите левую кнопку мыши для перетаскивания полезной области.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+20"/>
+        <source>Release left mouse button to finish dragging.</source>
+        <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>Hold left mouse button to drag the page box.</source>
+        <translation>Удерживайте левую кнопку мыши для перетаскивания области страницы.</translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Create Content Box</source>
         <translation>Создать полезную область</translation>
     </message>

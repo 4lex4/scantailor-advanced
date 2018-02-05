@@ -39,7 +39,7 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
     m_zoneAreaDragCopyProximity.setProximityStatusTip("Hold left mouse button to copy and drag the zone.");
     m_zoneAreaDragCopyProximity.setProximityCursor(Qt::DragCopyCursor);
     m_rContext.imageView().interactionState().setDefaultStatusTip(
-            tr("Click to start creating a new picture zone. Use Ctrl+Alt+Click to copy the latest created zone.")
+            tr("Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.")
     );
 }
 

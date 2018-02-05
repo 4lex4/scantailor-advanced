@@ -73,6 +73,10 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     customProfileItemIdx = profileCB->count();
     profileCB->addItem(tr("Custom"), "Custom");
 
+    reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Default")));
+    reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Source")));
+    reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Custom")));
+
     chainIcon.addPixmap(
             QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png"))
     );

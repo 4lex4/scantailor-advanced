@@ -65,10 +65,10 @@ namespace imageproc {
 
     ColorSegmenter::Settings::Settings(const Dpi& dpi, const int noiseThreshold) {
         const int average_dpi = (dpi.horizontal() + dpi.vertical()) / 2;
-        const double dpi_factor = average_dpi / 600.0;
+        const double dpi_factor = average_dpi / 300.0;
 
-        minAverageWidthThreshold = 3.0 * dpi_factor;
-        bigObjectThreshold = qRound(noiseThreshold * dpi_factor);
+        minAverageWidthThreshold = 1.5 * dpi_factor;
+        bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpi_factor);
     }
 
     inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Component& component,

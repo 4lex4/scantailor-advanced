@@ -32,7 +32,7 @@ namespace output {
               wolfCoef(0.3),
               binarizationMethod(OTSU),
               colorSegmentationEnabled(false),
-              segmentationNoiseReduction(68) {
+              segmentationNoiseReduction(12) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)

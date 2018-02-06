@@ -5,10 +5,6 @@ PROJECT("ScanTailor")
 # setting compiler flags
 SET(CMAKE_CXX_STANDARD 17)
 
-IF ((CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX) OR MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-ENDIF ()
-
 IF (MSVC AND WIN_XP)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
@@ -596,6 +592,10 @@ SET(
 SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+
+IF (POLICY CMP0071)
+    cmake_policy(SET CMP0071 NEW)
+ENDIF (POLICY CMP0071)
 
 SOURCE_GROUP("Special Headers" FILES version.h config.h.in)
 

@@ -23,13 +23,15 @@ namespace page_layout {
     Alignment::Alignment()
             : m_vert(VCENTER),
               m_hor(HCENTER),
-              m_tolerance(DEFAULT_TOLERANCE) {
+              m_tolerance(DEFAULT_TOLERANCE),
+              m_isNull(false) {
     }
 
     Alignment::Alignment(Vertical vert, Horizontal hor)
             : m_vert(vert),
               m_hor(hor),
-              m_tolerance(DEFAULT_TOLERANCE) {
+              m_tolerance(DEFAULT_TOLERANCE),
+              m_isNull(false) {
     }
 
     Alignment::Alignment(const QDomElement& el) {

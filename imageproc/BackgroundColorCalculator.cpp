@@ -4,6 +4,9 @@
 #include "Grayscale.h"
 #include "Binarize.h"
 #include "BinaryImage.h"
+#include "RasterOp.h"
+#include "PolygonRasterizer.h"
+#include "Morphology.h"
 
 
 namespace imageproc {
@@ -163,26 +166,31 @@ namespace imageproc {
     QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img) {
         if (!((img.format() == QImage::Format_RGB32)
               || (img.format() == QImage::Format_ARGB32)
-              || (img.format() == QImage::Format_Indexed8))) {
+              || ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()))) {
             throw std::invalid_argument(
                     "BackgroundColorCalculator: wrong image format"
             );
         }
+        if (img.isNull()) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: image is null."
+            );
+        }
 
-        BinaryImage mask(binarizeOtsu(img));
-        if (mask.countBlackPixels() < mask.countWhitePixels()) {
-            mask.invert();
+        BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(img));
+        if (2 * background_mask.countBlackPixels() < background_mask.width() * background_mask.height()) {
+            background_mask.invert();
         }
 
         if (img.format() == QImage::Format_Indexed8) {
-            const GrayscaleHistogram hist(img, mask);
+            const GrayscaleHistogram hist(img, background_mask);
             int raw_hist[256];
             grayHistToArray(raw_hist, hist);
             uint8_t dominant_gray = calcDominantLevel(raw_hist);
 
             return QColor(dominant_gray, dominant_gray, dominant_gray);
         } else {
-            const RgbHistogram hist(img, mask);
+            const RgbHistogram hist(img, background_mask);
             uint8_t dominant_red = calcDominantLevel(hist.redChannel());
             uint8_t dominant_green = calcDominantLevel(hist.greenChannel());
             uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
@@ -191,14 +199,93 @@ namespace imageproc {
         }
     }
 
-    QColor BackgroundColorCalculator::calcDominantBackgroundColorBW(const QImage& img) {
-        BinaryImage mask(binarizeOtsu(img));
-        if (mask.countBlackPixels() < mask.countWhitePixels()) {
-            return Qt::white;
+    QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask) {
+        if (!((img.format() == QImage::Format_RGB32)
+              || (img.format() == QImage::Format_ARGB32)
+              || ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()))) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: wrong image format"
+            );
+        }
+        if (img.isNull()) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: image is null."
+            );
+        }
+        if (img.size() != mask.size()) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: img and mask have different sizes"
+            );
+        }
+
+        BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
+        rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
+        if (2 * background_mask.countBlackPixels() < mask.countBlackPixels()) {
+            background_mask.invert();
+            rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
+        }
+
+        if ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()) {
+            const GrayscaleHistogram hist(img, background_mask);
+            int raw_hist[256];
+            grayHistToArray(raw_hist, hist);
+            uint8_t dominant_gray = calcDominantLevel(raw_hist);
+
+            return QColor(dominant_gray, dominant_gray, dominant_gray);
         } else {
-            return Qt::black;
+            const RgbHistogram hist(img, background_mask);
+            uint8_t dominant_red = calcDominantLevel(hist.redChannel());
+            uint8_t dominant_green = calcDominantLevel(hist.greenChannel());
+            uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
+
+            return QColor(dominant_red, dominant_green, dominant_blue);
         }
     }
 
+    QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area) {
+        if (!((img.format() == QImage::Format_RGB32)
+              || (img.format() == QImage::Format_ARGB32)
+              || ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()))) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: wrong image format"
+            );
+        }
+        if (img.isNull()) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: image is null."
+            );
+        }
+        if (crop_area.intersected(QRectF(img.rect())).isEmpty()) {
+            throw std::invalid_argument(
+                    "BackgroundColorCalculator: the cropping area is wrong."
+            );
+        }
 
-}
+        BinaryImage mask(img.size(), BLACK);
+        PolygonRasterizer::fillExcept(mask, WHITE, crop_area, Qt::WindingFill);
+        mask = erodeBrick(mask, QSize(3, 3), WHITE);
+
+        BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
+        rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
+        if (2 * background_mask.countBlackPixels() < mask.countBlackPixels()) {
+            background_mask.invert();
+            rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
+        }
+
+        if ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()) {
+            const GrayscaleHistogram hist(img, background_mask);
+            int raw_hist[256];
+            grayHistToArray(raw_hist, hist);
+            uint8_t dominant_gray = calcDominantLevel(raw_hist);
+
+            return QColor(dominant_gray, dominant_gray, dominant_gray);
+        } else {
+            const RgbHistogram hist(img, background_mask);
+            uint8_t dominant_red = calcDominantLevel(hist.redChannel());
+            uint8_t dominant_green = calcDominantLevel(hist.greenChannel());
+            uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
+
+            return QColor(dominant_red, dominant_green, dominant_blue);
+        }
+    }
+}    // namespace imageproc

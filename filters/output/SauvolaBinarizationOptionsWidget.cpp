@@ -46,18 +46,10 @@ namespace output {
         delayedStateChanger.start(750);
     }
 
-    void SauvolaBinarizationOptionsWidget::whiteOnBlackModeToggled(bool checked) {
-        m_outputProcessingParams.setWhiteOnBlackMode(checked);
-        m_ptrSettings->setOutputProcessingParams(m_pageId, m_outputProcessingParams);
-
-        emit stateChanged();
-    }
-
     void SauvolaBinarizationOptionsWidget::updateView() {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
         windowSize->setValue(blackWhiteOptions.getWindowSize());
         sauvolaCoef->setValue(blackWhiteOptions.getSauvolaCoef());
-        whiteOnBlackModeCB->setChecked(m_outputProcessingParams.isWhiteOnBlackMode());
     }
 
     void SauvolaBinarizationOptionsWidget::sendStateChanged() {
@@ -77,10 +69,6 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
-        connect(
-                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteOnBlackModeToggled(bool))
-        );
     }
 
     void SauvolaBinarizationOptionsWidget::removeUiConnections() {
@@ -96,10 +84,5 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
-        disconnect(
-                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteOnBlackModeToggled(bool))
-        );
     }
-
 }

@@ -67,7 +67,7 @@ namespace imageproc {
                                               unsigned max_edge_width = 3,
                                               unsigned min_edge_magnitude = 20);
 
-        explicit BinaryThreshold(int threshold)
+        BinaryThreshold(int threshold)
                 : m_threshold(threshold) {
         }
 

@@ -23,7 +23,7 @@ namespace output {
     ColorCommonOptions::ColorCommonOptions()
             : m_cutMargins(true),
               m_normalizeIllumination(false),
-              m_fillingColor(BACKGROUND),
+              m_fillingColor(FILL_BACKGROUND),
               m_posterizeEnabled(false),
               m_posterizationLevel(4),
               m_forceBlackAndWhite(true) {
@@ -63,29 +63,29 @@ namespace output {
         return !(*this == other);
     }
 
-    ColorCommonOptions::FillingColor ColorCommonOptions::getFillingColor() const {
+    FillingColor ColorCommonOptions::getFillingColor() const {
         return m_fillingColor;
     }
 
-    void ColorCommonOptions::setFillingColor(ColorCommonOptions::FillingColor fillingColor) {
+    void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
         ColorCommonOptions::m_fillingColor = fillingColor;
     }
 
-    ColorCommonOptions::FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
+    FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
         if (str == "white") {
-            return WHITE;
+            return FILL_WHITE;
         } else {
-            return BACKGROUND;
+            return FILL_BACKGROUND;
         }
     }
 
-    QString ColorCommonOptions::formatFillingColor(ColorCommonOptions::FillingColor type) {
+    QString ColorCommonOptions::formatFillingColor(FillingColor type) {
         QString str = "";
         switch (type) {
-            case WHITE:
+            case FILL_WHITE:
                 str = "white";
                 break;
-            case BACKGROUND:
+            case FILL_BACKGROUND:
                 str = "background";
                 break;
         }

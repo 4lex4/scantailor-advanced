@@ -31,27 +31,22 @@ public:
 
     FilterData(const FilterData& other, const ImageTransformation& xform);
 
-    imageproc::BinaryThreshold bwThreshold() const {
-        return m_bwThreshold;
-    }
+    imageproc::BinaryThreshold bwThreshold() const;
 
-    const ImageTransformation& xform() const {
-        return m_xform;
-    }
+    const ImageTransformation& xform() const;
 
-    const QImage& origImage() const {
-        return m_origImage;
-    }
+    const QImage& origImage() const;
 
-    const imageproc::GrayImage& grayImage() const {
-        return m_grayImage;
-    }
+    const imageproc::GrayImage& grayImage() const;
+
+    bool isBlackOnWhite() const;
 
 private:
     QImage m_origImage;
     imageproc::GrayImage m_grayImage;
     ImageTransformation m_xform;
     imageproc::BinaryThreshold m_bwThreshold;
+    bool m_blackOnWhite;
 };
 
 

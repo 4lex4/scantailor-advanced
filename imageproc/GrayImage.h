@@ -106,6 +106,10 @@ namespace imageproc {
             return m_image.height();
         }
 
+        void invert();
+
+        GrayImage inverted() const;
+
     private:
         QImage m_image;
     };

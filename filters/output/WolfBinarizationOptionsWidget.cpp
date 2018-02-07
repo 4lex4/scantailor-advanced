@@ -64,20 +64,12 @@ namespace output {
         delayedStateChanger.start(750);
     }
 
-    void WolfBinarizationOptionsWidget::whiteOnBlackModeToggled(bool checked) {
-        m_outputProcessingParams.setWhiteOnBlackMode(checked);
-        m_ptrSettings->setOutputProcessingParams(m_pageId, m_outputProcessingParams);
-
-        emit stateChanged();
-    }
-
     void WolfBinarizationOptionsWidget::updateView() {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
         windowSize->setValue(blackWhiteOptions.getWindowSize());
         lowerBound->setValue(blackWhiteOptions.getWolfLowerBound());
         upperBound->setValue(blackWhiteOptions.getWolfUpperBound());
         wolfCoef->setValue(blackWhiteOptions.getWolfCoef());
-        whiteOnBlackModeCB->setChecked(m_outputProcessingParams.isWhiteOnBlackMode());
     }
 
     void WolfBinarizationOptionsWidget::sendStateChanged() {
@@ -105,10 +97,6 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
-        connect(
-                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteOnBlackModeToggled(bool))
-        );
     }
 
     void WolfBinarizationOptionsWidget::removeUiConnections() {
@@ -132,11 +120,5 @@ namespace output {
                 &delayedStateChanger, SIGNAL(timeout()),
                 this, SLOT(sendStateChanged())
         );
-        disconnect(
-                whiteOnBlackModeCB, SIGNAL(clicked(bool)),
-                this, SLOT(whiteOnBlackModeToggled(bool))
-        );
     }
-
-
 }

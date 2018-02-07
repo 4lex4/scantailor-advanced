@@ -127,8 +127,10 @@ namespace deskew {
                 BinaryImage rotated_image(
                         orthogonalRotation(
                                 BinaryImage(
-                                        data.grayImage(), bounded_image_area,
-                                        data.bwThreshold()
+                                        data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                                        bounded_image_area,
+                                        data.isBlackOnWhite() ? data.bwThreshold()
+                                                              : BinaryThreshold(256 - int(data.bwThreshold()))
                                 ),
                                 data.xform().preRotation().toDegrees()
                         )

@@ -97,12 +97,13 @@ namespace select_content {
             return QRectF();
         }
 
-        const uint8_t darkest_gray_level = darkestGrayLevel(data.grayImage());
+        const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+        const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
         const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
         QImage gray150(
                 transformToGray(
-                        data.grayImage(), xform_150dpi.transform(),
+                        dataGrayImage, xform_150dpi.transform(),
                         xform_150dpi.resultingRect().toRect(),
                         OutsidePixels::assumeColor(outside_color)
                 )

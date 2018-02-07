@@ -122,7 +122,7 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, const QRectF& boun
     painter.setWorldTransform(xform1 * xform2 * xform3, true);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    QPen pen(QColor(0x00, 0x00, 0x00, 60));
+    QPen pen(QColor(0xff, 0x00, 0x00, 80));
     pen.setWidth(2);
     pen.setCosmetic(true);
     painter.setPen(pen);

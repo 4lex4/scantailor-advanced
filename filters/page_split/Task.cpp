@@ -125,8 +125,11 @@ namespace page_split {
                 if (!params || ((record.layoutType() == nullptr) || (*record.layoutType() == AUTO_LAYOUT_TYPE))) {
                     new_layout = PageLayoutEstimator::estimatePageLayout(
                             record.combinedLayoutType(),
-                            data.grayImage(), data.xform(),
-                            data.bwThreshold(), m_ptrDbg.get()
+                            data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                            data.xform(),
+                            data.isBlackOnWhite() ? data.bwThreshold()
+                                                  : BinaryThreshold(256 - int(data.bwThreshold())),
+                            m_ptrDbg.get()
                     );
 
                     status.throwIfCancelled();
@@ -157,9 +160,7 @@ namespace page_split {
             }
 
             Settings::UpdateAction update;
-            if (new_params->splitLineMode() != MODE_AUTO) {
-                update.setLayoutType(new_params->pageLayout().toLayoutType());
-            }
+            update.setLayoutType(new_params->pageLayout().toLayoutType());
             update.setParams(*new_params);
 
 #ifndef NDEBUG

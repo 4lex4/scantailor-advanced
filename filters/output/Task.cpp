@@ -180,13 +180,6 @@ namespace output {
                     outputProcessingParams.setAutoZonesFound(false);
                     m_ptrSettings->setOutputProcessingParams(m_pageId, outputProcessingParams);
                 }
-                if (stored_output_params->outputImageParams().getCropArea().boundingRect().toRect()
-                    != new_xform.resultingPreCropArea().boundingRect().toRect()) {
-                    // if crop area changed, auto recalculate white on black option
-                    OutputProcessingParams outputProcessingParams = m_ptrSettings->getOutputProcessingParams(m_pageId);
-                    outputProcessingParams.setWhiteOnBlackAutoDetected(false);
-                    m_ptrSettings->setOutputProcessingParams(m_pageId, outputProcessingParams);
-                }
             }
         }
 

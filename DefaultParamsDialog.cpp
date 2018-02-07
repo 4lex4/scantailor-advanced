@@ -35,8 +35,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
     colorModeSelector->addItem(tr("Mixed"), MIXED);
 
-    fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
-    fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
+    fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
+    fillingColorBox->addItem(tr("White"), FILL_WHITE);
 
     thresholdMethodBox->addItem(tr("Otsu"), OTSU);
     thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
@@ -542,6 +542,8 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
     pictureShapeOptions->setEnabled(picture_shape_visible);
     splittingOptions->setEnabled(splitting_options_visible);
 
+    fillingOptions->setEnabled(colorMode != BLACK_AND_WHITE);
+
     equalizeIlluminationCB->setEnabled(colorMode != COLOR_GRAYSCALE);
     equalizeIlluminationColorCB->setEnabled(colorMode != BLACK_AND_WHITE);
     if ((colorMode == MIXED)) {
@@ -692,7 +694,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
     ColorCommonOptions colorCommonOptions;
     colorCommonOptions.setFillingColor(
-            static_cast<ColorCommonOptions::FillingColor>(fillingColorBox->currentData().toInt())
+            static_cast<FillingColor>(fillingColorBox->currentData().toInt())
     );
     colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());

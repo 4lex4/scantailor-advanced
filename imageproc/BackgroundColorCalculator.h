@@ -7,6 +7,7 @@
 
 class QImage;
 class QColor;
+class QPolygonF;
 
 namespace imageproc {
     class GrayscaleHistogram;
@@ -16,7 +17,9 @@ namespace imageproc {
     public:
         static QColor calcDominantBackgroundColor(const QImage& img);
 
-        static QColor calcDominantBackgroundColorBW(const QImage& img);
+        static QColor calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask);
+
+        static QColor calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area);
 
     private:
         static uint8_t calcDominantLevel(const int* hist);

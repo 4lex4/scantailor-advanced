@@ -51,8 +51,8 @@ namespace output {
         thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
         thresholdMethodBox->addItem(tr("Wolf"), WOLF);
 
-        fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
-        fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
+        fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
+        fillingColorBox->addItem(tr("White"), FILL_WHITE);
 
         QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget
                 = new OtsuBinarizationOptionsWidget(m_ptrSettings);
@@ -152,8 +152,8 @@ namespace output {
     }
 
     void OptionsWidget::fillingColorChanged(int idx) {
-        const ColorCommonOptions::FillingColor color
-                = (ColorCommonOptions::FillingColor) fillingColorBox->itemData(idx).toInt();
+        const FillingColor color
+                = (FillingColor) fillingColorBox->itemData(idx).toInt();
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         colorCommonOptions.setFillingColor(color);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -615,6 +615,7 @@ namespace output {
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
 
+        fillingOptions->setVisible(color_mode != BLACK_AND_WHITE);
         fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
         colorSegmentationCB->setVisible(threshold_options_visible);

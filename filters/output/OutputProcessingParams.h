@@ -19,22 +19,12 @@ namespace output {
 
         bool operator!=(const OutputProcessingParams& other) const;
 
-        bool isWhiteOnBlackAutoDetected() const;
-
-        void setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected);
-
         bool isAutoZonesFound() const;
 
         void setAutoZonesFound(bool autoZonesFound);
 
-        bool isWhiteOnBlackMode() const;
-
-        void setWhiteOnBlackMode(bool whiteOnBlackMode);
-
     private:
-        bool whiteOnBlackMode;
         bool autoZonesFound;
-        bool whiteOnBlackAutoDetected;
     };
 }
 

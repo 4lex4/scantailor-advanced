@@ -6,30 +6,22 @@
 namespace output {
 
     OutputProcessingParams::OutputProcessingParams()
-            : whiteOnBlackMode(false),
-              autoZonesFound(false),
-              whiteOnBlackAutoDetected(false) {
+            : autoZonesFound(false) {
     }
 
     OutputProcessingParams::OutputProcessingParams(const QDomElement& el)
-            : whiteOnBlackMode(el.attribute("whiteOnBlackMode") == "1"),
-              autoZonesFound(el.attribute("autoZonesFound") == "1"),
-              whiteOnBlackAutoDetected(el.attribute("whiteOnBlackAutoDetected") == "1") {
+            : autoZonesFound(el.attribute("autoZonesFound") == "1") {
     }
 
     QDomElement OutputProcessingParams::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
-        el.setAttribute("whiteOnBlackMode", whiteOnBlackMode ? "1" : "0");
         el.setAttribute("autoZonesFound", autoZonesFound ? "1" : "0");
-        el.setAttribute("whiteOnBlackAutoDetected", whiteOnBlackAutoDetected ? "1" : "0");
 
         return el;
     }
 
     bool OutputProcessingParams::operator==(const OutputProcessingParams& other) const {
-        return (whiteOnBlackMode == other.whiteOnBlackMode)
-               && (autoZonesFound == other.autoZonesFound)
-               && (whiteOnBlackAutoDetected == other.whiteOnBlackAutoDetected);
+        return (autoZonesFound == other.autoZonesFound);
     }
 
     bool OutputProcessingParams::operator!=(const OutputProcessingParams& other) const {
@@ -43,21 +35,4 @@ namespace output {
     void output::OutputProcessingParams::setAutoZonesFound(bool autoZonesFound) {
         OutputProcessingParams::autoZonesFound = autoZonesFound;
     }
-
-    bool output::OutputProcessingParams::isWhiteOnBlackAutoDetected() const {
-        return whiteOnBlackAutoDetected;
-    }
-
-    void output::OutputProcessingParams::setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected) {
-        OutputProcessingParams::whiteOnBlackAutoDetected = whiteOnBlackAutoDetected;
-    }
-
-    bool output::OutputProcessingParams::isWhiteOnBlackMode() const {
-        return whiteOnBlackMode;
-    }
-
-    void output::OutputProcessingParams::setWhiteOnBlackMode(bool whiteOnBlackMode) {
-        OutputProcessingParams::whiteOnBlackMode = whiteOnBlackMode;
-    }
-
 }

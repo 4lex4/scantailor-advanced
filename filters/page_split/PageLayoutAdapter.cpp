@@ -131,7 +131,7 @@ namespace page_split {
         if (pageLayout.type() == PageLayout::SINGLE_PAGE_CUT) {
             std::unique_ptr<QVector<QLineF>> adaptedCutters =
                     PageLayoutAdapter::adaptCutters(
-                            QVector<QLineF>({ pageLayout.cutterLine(0), pageLayout.cutterLine(1) }),
+                            QVector<QLineF>{ pageLayout.cutterLine(0), pageLayout.cutterLine(1) },
                             outline
                     );
             newPageLayout = std::make_unique<PageLayout>(outline,

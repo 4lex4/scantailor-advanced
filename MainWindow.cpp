@@ -74,7 +74,7 @@
 #include "ui_BatchProcessingLowerPanel.h"
 #include "version.h"
 #include "Application.h"
-#include "StatusBarProvider.h"
+#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
 #include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
@@ -149,8 +149,7 @@ MainWindow::MainWindow()
 
     m_pOptionsFrameLayout = new QStackedLayout(filterOptions);
 
-    m_statusBarPanel = std::make_shared<StatusBarPanel>();
-    StatusBarProvider::getInstance()->registerStatusBarPanel(m_statusBarPanel);
+    m_statusBarPanel = std::make_unique<StatusBarPanel>();
     QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
     connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& page_info) {
         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
@@ -1672,8 +1671,8 @@ void MainWindow::updateMainArea() {
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
-        StatusBarProvider::getInstance()->setMousePos(QPointF());
-        StatusBarProvider::getInstance()->setPhysSize(QRectF().size());
+        ImageViewInfoProvider::getInstance()->setMousePos(QPointF());
+        ImageViewInfoProvider::getInstance()->setPhysSize(QRectF().size());
     } else {
         if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
             filterDockWidget->setEnabled(true);
@@ -1820,8 +1819,7 @@ bool MainWindow::closeProjectInteractive() {
 
     switch (promptProjectSave()) {
         case SAVE:
-            if (!Utils::overwritingRename(
-                    backup_file_path, m_projectFile)) {
+            if (!Utils::overwritingRename(backup_file_path, m_projectFile)) {
                 QMessageBox::warning(
                         this, tr("Error"),
                         tr("Error saving the project file!")

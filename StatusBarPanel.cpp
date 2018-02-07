@@ -2,16 +2,16 @@
 #include <cmath>
 #include <QtCore/QFileInfo>
 #include "StatusBarPanel.h"
-#include "StatusBarProvider.h"
+#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
 #include "PageId.h"
 
 StatusBarPanel::StatusBarPanel() {
-    setupUi(this);
+    ui.setupUi(this);
 }
 
 void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
-    const QMutexLocker locker(&m_mutex);
+    const QMutexLocker locker(&mutex);
 
     if (!mousePos.isNull()) {
         double x = mousePos.x();
@@ -30,16 +30,16 @@ void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
                 break;
         }
 
-        mousePosLine->setVisible(true);
-        mousePosLabel->setText(QString("%1, %2").arg(x).arg(y));
+        ui.mousePosLine->setVisible(true);
+        ui.mousePosLabel->setText(QString("%1, %2").arg(x).arg(y));
     } else {
-        mousePosLabel->clear();
-        mousePosLine->setVisible(false);
+        ui.mousePosLabel->clear();
+        ui.mousePosLine->setVisible(false);
     }
 }
 
 void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
-    const QMutexLocker locker(&m_mutex);
+    const QMutexLocker locker(&mutex);
 
     if (!physSize.isNull()) {
         double width = physSize.width();
@@ -66,16 +66,16 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
                 break;
         }
 
-        physSizeLine->setVisible(true);
-        physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToString(units)));
+        ui.physSizeLine->setVisible(true);
+        ui.physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToString(units)));
     } else {
-        physSizeLabel->clear();
-        physSizeLine->setVisible(false);
+        ui.physSizeLabel->clear();
+        ui.physSizeLine->setVisible(false);
     }
 }
 
 void StatusBarPanel::updatePage(int pageNumber, const PageId& pageId) {
-    pageNoLabel->setText(tr("p. %1").arg(pageNumber));
+    ui.pageNoLabel->setText(tr("p. %1").arg(pageNumber));
 
     QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).baseName();
     if (pageFileInfo.size() > 15) {
@@ -85,22 +85,22 @@ void StatusBarPanel::updatePage(int pageNumber, const PageId& pageId) {
         pageFileInfo = pageFileInfo.right(11) + ((pageId.subPage() == PageId::LEFT_PAGE) ? tr(" [L]") : tr(" [R]"));
     }
 
-    pageInfoLine->setVisible(true);
-    pageInfo->setText(pageFileInfo);
+    ui.pageInfoLine->setVisible(true);
+    ui.pageInfo->setText(pageFileInfo);
 }
 
 void StatusBarPanel::clear() {
-    mousePosLabel->clear();
-    physSizeLabel->clear();
-    pageNoLabel->clear();
-    pageInfo->clear();
+    ui.mousePosLabel->clear();
+    ui.physSizeLabel->clear();
+    ui.pageNoLabel->clear();
+    ui.pageInfo->clear();
 
-    mousePosLine->setVisible(false);
-    physSizeLine->setVisible(false);
-    pageInfoLine->setVisible(false);
+    ui.mousePosLine->setVisible(false);
+    ui.physSizeLine->setVisible(false);
+    ui.pageInfoLine->setVisible(false);
 }
 
 void StatusBarPanel::updateUnits(Units) {
-    updateMousePos(StatusBarProvider::getInstance()->getMousePos());
-    updatePhysSize(StatusBarProvider::getInstance()->getPhysSize());
+    updateMousePos(ImageViewInfoProvider::getInstance()->getMousePos());
+    updatePhysSize(ImageViewInfoProvider::getInstance()->getPhysSize());
 }

@@ -547,7 +547,8 @@ SET(
         filter_dc/ThumbnailCollector.h
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
-        StatusBarProvider.cpp StatusBarProvider.h
+        ImageViewInfoProvider.cpp ImageViewInfoProvider.h
+        ImageViewInfoObserver.cpp ImageViewInfoObserver.h
         UnitsProvider.cpp UnitsProvider.h
         UnitsObserver.h UnitsObserver.cpp
 		UnitsConverter.cpp UnitsConverter.h

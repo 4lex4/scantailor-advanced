@@ -6,13 +6,15 @@
 #include <QtCore/QMutex>
 #include "ui_StatusBarPanel.h"
 #include "UnitsObserver.h"
+#include "ImageViewInfoObserver.h"
 
 class PageId;
 
-class StatusBarPanel : public QWidget, public UnitsObserver, private Ui::StatusBarPanel {
+class StatusBarPanel : public QWidget, public UnitsObserver, public ImageViewInfoObserver {
 Q_OBJECT
 private:
-    mutable QMutex m_mutex;
+    mutable QMutex mutex;
+    Ui::StatusBarPanel ui;
 
 public:
     StatusBarPanel();
@@ -20,17 +22,15 @@ public:
     ~StatusBarPanel() override = default;
 
 public:
-    void updateMousePos(const QPointF& mousePos);
+    void updateMousePos(const QPointF& mousePos) override;
 
-    void updatePhysSize(const QSizeF& physSize);
+    void updatePhysSize(const QSizeF& physSize) override;
+
+    void updatePage(int pageNumber, const PageId& pageId);
 
     void clear();
 
     void updateUnits(Units) override;
-
-public slots:
-
-    void updatePage(int pageNumber, const PageId& pageId);
 };
 
 

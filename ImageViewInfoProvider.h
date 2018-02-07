@@ -3,25 +3,27 @@
 #define SCANTAILOR_STATUSBARPROVIDER_H
 
 #include <memory>
+#include <list>
 #include <QPointF>
 #include <QSizeF>
+#include "ImageViewInfoObserver.h"
 
-class StatusBarPanel;
-
-class StatusBarProvider {
+class ImageViewInfoProvider {
 private:
-    static std::unique_ptr<StatusBarProvider> instance;
+    static std::unique_ptr<ImageViewInfoProvider> instance;
 
-    std::weak_ptr<StatusBarPanel> statusBarPanel;
+    std::list<ImageViewInfoObserver*> observers;
     QSizeF physSize;
     QPointF mousePos;
 
-    StatusBarProvider();
+    ImageViewInfoProvider();
 
 public:
-    static StatusBarProvider* getInstance();
+    static ImageViewInfoProvider* getInstance();
 
-    void registerStatusBarPanel(const std::shared_ptr<StatusBarPanel>& statusBarPanel);
+    void attachObserver(ImageViewInfoObserver* observer);
+
+    void detachObserver(ImageViewInfoObserver* observer);
 
     const QSizeF& getPhysSize() const;
 

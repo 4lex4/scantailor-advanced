@@ -27,7 +27,7 @@
 #include "imageproc/Transform.h"
 #include "OpenGLSupport.h"
 #include "ColorSchemeManager.h"
-#include "StatusBarProvider.h"
+#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
 #include <QScrollBar>
 #include <QSettings>
@@ -213,7 +213,7 @@ ImageViewBase::ImageViewBase(const QImage& image,
                 if (!m_cursorPos.isNull()) {
                     cursorPos = m_widgetToVirtual.map(m_cursorPos) - m_virtualImageCropArea.boundingRect().topLeft();
                 }
-                StatusBarProvider::getInstance()->setMousePos(cursorPos);
+                ImageViewInfoProvider::getInstance()->setMousePos(cursorPos);
             }
     );
 
@@ -1050,7 +1050,7 @@ void ImageViewBase::updateCursorPos(const QPointF& pos) {
 }
 
 void ImageViewBase::updatePhysSize() {
-    StatusBarProvider::getInstance()->setPhysSize(m_virtualImageCropArea.boundingRect().size());
+    ImageViewInfoProvider::getInstance()->setPhysSize(m_virtualImageCropArea.boundingRect().size());
 }
 
 /*==================== ImageViewBase::HqTransformTask ======================*/

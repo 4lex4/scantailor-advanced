@@ -26,7 +26,7 @@
 #include <QPainter>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
-#include <StatusBarProvider.h>
+#include <ImageViewInfoProvider.h>
 
 using namespace imageproc;
 
@@ -688,7 +688,7 @@ namespace page_layout {
 
     void ImageView::updatePhysSize() {
         if (m_outerRect.isValid()) {
-            StatusBarProvider::getInstance()->setPhysSize(m_outerRect.size());
+            ImageViewInfoProvider::getInstance()->setPhysSize(m_outerRect.size());
         } else {
             ImageViewBase::updatePhysSize();
         }

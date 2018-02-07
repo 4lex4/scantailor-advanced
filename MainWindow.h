@@ -330,7 +330,7 @@ private:
     QTimer m_autoSaveTimer;
     bool m_autoSaveProject;
     bool m_highlightDeviation;
-    std::shared_ptr<StatusBarPanel> m_statusBarPanel;
+    std::unique_ptr<StatusBarPanel> m_statusBarPanel;
     std::unique_ptr<QActionGroup> m_unitsMenuActionGroup;
 };
 

@@ -18,7 +18,7 @@ SET(
         ZoneVertexDragInteraction.cpp ZoneVertexDragInteraction.h
         ZoneContextMenuInteraction.cpp ZoneContextMenuInteraction.h
         ZoneContextMenuItem.h
-)
+        ZoneDragInteraction.cpp ZoneDragInteraction.h)
 
 SOURCE_GROUP(Sources FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -20,15 +20,15 @@
 #include "Grayscale.h"
 #include "Morphology.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 namespace imageproc {
-    BinaryThreshold BinaryThreshold::otsuThreshold(QImage const& image) {
+    BinaryThreshold BinaryThreshold::otsuThreshold(const QImage& image) {
         return otsuThreshold(GrayscaleHistogram(image));
     }
 
-    BinaryThreshold BinaryThreshold::otsuThreshold(GrayscaleHistogram const& pixels_by_color) {
+    BinaryThreshold BinaryThreshold::otsuThreshold(const GrayscaleHistogram& pixels_by_color) {
         int32_t pixels_by_threshold[256];
         int64_t moment_by_threshold[256];
 
@@ -48,21 +48,21 @@ namespace imageproc {
                                      + int64_t(pixels_by_color[i]) * i;
         }
 
-        int const total_pixels = pixels_by_threshold[255];
-        int64_t const total_moment = moment_by_threshold[255];
+        const int total_pixels = pixels_by_threshold[255];
+        const int64_t total_moment = moment_by_threshold[255];
         double max_variance = 0.0;
         int first_best_threshold = -1;
         int last_best_threshold = -1;
         for (int i = 0; i < 256; ++i) {
-            int const pixels_below = pixels_by_threshold[i];
-            int const pixels_above = total_pixels - pixels_below;
+            const int pixels_below = pixels_by_threshold[i];
+            const int pixels_above = total_pixels - pixels_below;
             if ((pixels_below > 0) && (pixels_above > 0)) {  // prevent division by zero
-                int64_t const moment_below = moment_by_threshold[i];
-                int64_t const moment_above = total_moment - moment_below;
-                double const mean_below = (double) moment_below / pixels_below;
-                double const mean_above = (double) moment_above / pixels_above;
-                double const mean_diff = mean_below - mean_above;
-                double const variance = mean_diff * mean_diff * pixels_below * pixels_above;
+                const int64_t moment_below = moment_by_threshold[i];
+                const int64_t moment_above = total_moment - moment_below;
+                const double mean_below = (double) moment_below / pixels_below;
+                const double mean_above = (double) moment_above / pixels_above;
+                const double mean_diff = mean_below - mean_above;
+                const double variance = mean_diff * mean_diff * pixels_below * pixels_above;
                 if (variance > max_variance) {
                     max_variance = variance;
                     first_best_threshold = i;
@@ -81,11 +81,11 @@ namespace imageproc {
         return BinaryThreshold((first_best_threshold + last_best_threshold) >> 1);
     }  // BinaryThreshold::otsuThreshold
 
-    BinaryThreshold BinaryThreshold::peakThreshold(QImage const& image) {
+    BinaryThreshold BinaryThreshold::peakThreshold(const QImage& image) {
         return peakThreshold(GrayscaleHistogram(image));
     }
 
-    BinaryThreshold BinaryThreshold::peakThreshold(GrayscaleHistogram const& pixels_by_color) {
+    BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixels_by_color) {
         int ri = 255, li = 0;
         int right_peak = pixels_by_color[ri];
         int left_peak = pixels_by_color[li];
@@ -116,7 +116,7 @@ namespace imageproc {
             }
         }
 
-        int threshold = li + (ri - li) * 0.75;
+        auto threshold = static_cast<int>(li + (ri - li) * 0.75);
 
 #ifdef DEBUG
         int otsuThreshold = BinaryThreshold::otsuThreshold(pixels_by_color);
@@ -129,9 +129,9 @@ namespace imageproc {
         return BinaryThreshold(threshold);
     }      // BinaryThreshold::peakThreshold
 
-    BinaryThreshold BinaryThreshold::mokjiThreshold(QImage const& image,
-                                                    unsigned const max_edge_width,
-                                                    unsigned const min_edge_magnitude) {
+    BinaryThreshold BinaryThreshold::mokjiThreshold(const QImage& image,
+                                                    const unsigned max_edge_width,
+                                                    const unsigned min_edge_magnitude) {
         if (max_edge_width < 1) {
             throw std::invalid_argument("mokjiThreshold: invalud max_edge_width");
         }
@@ -139,27 +139,27 @@ namespace imageproc {
             throw std::invalid_argument("mokjiThreshold: invalid min_edge_magnitude");
         }
 
-        GrayImage const gray(image);
+        const GrayImage gray(image);
 
-        int const dilate_size = (max_edge_width + 1) * 2 - 1;
+        const int dilate_size = (max_edge_width + 1) * 2 - 1;
         GrayImage dilated(dilateGray(gray, QSize(dilate_size, dilate_size)));
 
         unsigned matrix[256][256];
         memset(matrix, 0, sizeof(matrix));
 
-        int const w = image.width();
-        int const h = image.height();
-        unsigned char const* src_line = gray.data();
-        int const src_stride = gray.stride();
-        unsigned char const* dilated_line = dilated.data();
-        int const dilated_stride = dilated.stride();
+        const int w = image.width();
+        const int h = image.height();
+        const unsigned char* src_line = gray.data();
+        const int src_stride = gray.stride();
+        const unsigned char* dilated_line = dilated.data();
+        const int dilated_stride = dilated.stride();
 
         src_line += max_edge_width * src_stride;
         dilated_line += max_edge_width * dilated_stride;
         for (int y = max_edge_width; y < h - (int) max_edge_width; ++y) {
             for (int x = max_edge_width; x < w - (int) max_edge_width; ++x) {
-                unsigned const pixel = src_line[x];
-                unsigned const darkest_neighbor = dilated_line[x];
+                const unsigned pixel = src_line[x];
+                const unsigned darkest_neighbor = dilated_line[x];
                 assert(darkest_neighbor <= pixel);
 
                 ++matrix[darkest_neighbor][pixel];
@@ -174,7 +174,7 @@ namespace imageproc {
             for (unsigned n = m + min_edge_magnitude; n < 256; ++n) {
                 assert(n >= m);
 
-                unsigned const val = matrix[m][n];
+                const unsigned val = matrix[m][n];
                 nominator += (m + n) * val;
                 denominator += val;
             }
@@ -184,7 +184,7 @@ namespace imageproc {
             return BinaryThreshold(128);
         }
 
-        double const threshold = 0.5 * nominator / denominator;
+        const double threshold = 0.5 * nominator / denominator;
 
         return BinaryThreshold((int) (threshold + 0.5));
     }  // BinaryThreshold::mokjiThreshold

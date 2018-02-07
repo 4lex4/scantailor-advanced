@@ -20,47 +20,48 @@
 #include "Utils.h"
 #include "imageproc/PolygonUtils.h"
 #include <QPainter>
+#include <utility>
 
 using namespace imageproc;
 
 namespace page_layout {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         Params const& params,
-                         ImageTransformation const& xform,
-                         QPolygonF const& phys_content_rect,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                         const QSizeF& max_size,
+                         const ImageId& image_id,
+                         const Params& params,
+                         const ImageTransformation& xform,
+                         const QPolygonF& phys_content_rect,
                          QRectF displayArea)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform, displayArea),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform, displayArea),
               m_params(params),
               m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
               m_virtOuterRect(displayArea) {
         setExtendedClipArea(true);
     }
 
-    void Thumbnail::paintOverImage(QPainter& painter, QTransform const& image_to_display,
-                                   QTransform const& thumb_to_display) {
+    void Thumbnail::paintOverImage(QPainter& painter, const QTransform& image_to_display,
+                                   const QTransform& thumb_to_display) {
         // We work in display coordinates because we want to be
         // pixel-accurate with what we draw.
         painter.setWorldTransform(QTransform());
 
-        QTransform const virt_to_display(virtToThumb() * thumb_to_display);
+        const QTransform virt_to_display(virtToThumb() * thumb_to_display);
 
-        QRectF const inner_rect(virt_to_display.map(m_virtContentRect).boundingRect());
+        const QRectF inner_rect(virt_to_display.map(m_virtContentRect).boundingRect());
 
         // We extend the outer rectangle because otherwise we may get white
         // thin lines near the edges due to rounding errors and the lack
         // of subpixel accuracy.  Doing that is actually OK, because what
         // we paint will be clipped anyway.
-        QRectF const outer_rect(
-                virt_to_display.map(m_virtOuterRect).boundingRect().toAlignedRect()
+        const QRectF outer_rect(
+                virt_to_display.map(m_virtOuterRect).boundingRect()
         );
 
         QPainterPath outer_outline;
         outer_outline.addPolygon(outer_rect);
 
         QPainterPath content_outline;
-        content_outline.addPolygon(PolygonUtils::round(inner_rect));
+        content_outline.addPolygon(inner_rect);
 
         painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -93,13 +94,9 @@ namespace page_layout {
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
 
-        // toRect() is necessary because we turn off antialiasing.
-        // For some reason, if we let Qt round the coordinates,
-        // the result is slightly different.
-
         // inner rect
         if (!isNullContentRect) {
-            painter.drawRect(inner_rect.toRect());
+            painter.drawRect(inner_rect);
         }
 
         // outer rect
@@ -107,7 +104,7 @@ namespace page_layout {
             pen.setStyle(Qt::DashLine);
         }
         painter.setPen(pen);
-        painter.drawRect(outer_rect.toRect());
+        painter.drawRect(outer_rect);
 
         if (m_params.isDeviant()) {
             paintDeviant(painter);

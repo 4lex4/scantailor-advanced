@@ -22,8 +22,8 @@
 #include "Dpm.h"
 #include <QIODevice>
 #include <QDebug>
-#include <setjmp.h>
-#include <assert.h>
+#include <csetjmp>
+#include <cassert>
 
 extern "C" {
 #include <jpeglib.h>
@@ -49,7 +49,7 @@ namespace {
         }
 
     private:
-        jpeg_decompress_struct m_info;
+        jpeg_decompress_struct m_info{ };
     };
 
 
@@ -69,7 +69,7 @@ namespace {
     DECLARE_NON_COPYABLE(JpegSourceManager)
 
     public:
-        JpegSourceManager(QIODevice& io_device);
+        explicit JpegSourceManager(QIODevice& io_device);
 
     private:
         static void initSource(j_decompress_ptr cinfo);
@@ -87,12 +87,12 @@ namespace {
         static JpegSourceManager* object(j_decompress_ptr cinfo);
 
         QIODevice& m_rDevice;
-        JOCTET m_buf[4096];
+        JOCTET m_buf[4096]{ };
     };
 
 
     JpegSourceManager::JpegSourceManager(QIODevice& io_device)
-            : m_rDevice(io_device) {
+            : jpeg_source_mgr(), m_rDevice(io_device) {
         init_source = &JpegSourceManager::initSource;
         fill_input_buffer = &JpegSourceManager::fillInputBuffer;
         skip_input_data = &JpegSourceManager::skipInputData;
@@ -111,7 +111,7 @@ namespace {
     }
 
     boolean JpegSourceManager::fillInputBufferImpl() {
-        qint64 const bytes_read = m_rDevice.read((char*) m_buf, sizeof(m_buf));
+        const qint64 bytes_read = m_rDevice.read((char*) m_buf, sizeof(m_buf));
         if (bytes_read > 0) {
             bytes_in_buffer = bytes_read;
         } else {
@@ -167,11 +167,11 @@ namespace {
 
         static JpegErrorManager* object(j_common_ptr cinfo);
 
-        jmp_buf m_jmpBuf;
+        jmp_buf m_jmpBuf{ };
     };
 
 
-    JpegErrorManager::JpegErrorManager() {
+    JpegErrorManager::JpegErrorManager() : jpeg_error_mgr() {
         jpeg_std_error(this);
         error_exit = &JpegErrorManager::errorExit;
     }
@@ -198,13 +198,13 @@ void JpegMetadataLoader::registerMyself() {
 }
 
 ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_device,
-                                                             VirtualFunction1<void, ImageMetadata const&>& out) {
+                                                             VirtualFunction1<void, const ImageMetadata&>& out) {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }
 
-    static unsigned char const jpeg_signature[] = { 0xff, 0xd8, 0xff };
-    static int const sig_size = sizeof(jpeg_signature);
+    static const unsigned char jpeg_signature[] = { 0xff, 0xd8, 0xff };
+    static const int sig_size = sizeof(jpeg_signature);
 
     unsigned char signature[sig_size];
     if (io_device.peek((char*) signature, sig_size) != sig_size) {
@@ -223,7 +223,7 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
     JpegSourceManager src_mgr(io_device);
     JpegDecompressHandle cinfo(&err_mgr, &src_mgr);
 
-    int const header_status = jpeg_read_header(cinfo.ptr(), 0);
+    const int header_status = jpeg_read_header(cinfo.ptr(), 0);
     if (header_status == JPEG_HEADER_TABLES_ONLY) {
         return NO_IMAGES;
     }
@@ -236,7 +236,7 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
         return GENERIC_ERROR;
     }
 
-    QSize const size(cinfo->image_width, cinfo->image_height);
+    const QSize size(cinfo->image_width, cinfo->image_height);
     Dpi dpi;
     if (cinfo->density_unit == 1) {
         // Dots per inch.

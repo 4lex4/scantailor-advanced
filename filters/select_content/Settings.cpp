@@ -20,33 +20,30 @@
 #include "Utils.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
-
 #include <iostream>
-#include "CommandLine.h"
 
 namespace select_content {
     Settings::Settings()
             : m_avg(0.0),
               m_sigma(0.0),
               m_pageDetectionBox(0.0, 0.0),
-              m_pageDetectionTolerance(0.1) {
-        m_maxDeviation = CommandLine::get().getContentDeviation();
+              m_pageDetectionTolerance(0.1),
+              m_maxDeviation(1.0) {
     }
 
-    Settings::~Settings() {
-    }
+    Settings::~Settings() = default;
 
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
         m_pageParams.clear();
     }
 
-    void Settings::performRelinking(AbstractRelinker const& relinker) {
+    void Settings::performRelinking(const AbstractRelinker& relinker) {
         QMutexLocker locker(&m_mutex);
         PageParams new_params;
 
-        for (PageParams::value_type const& kv : m_pageParams) {
-            RelinkablePath const old_path(kv.first.imageId().filePath(), RelinkablePath::File);
+        for (const PageParams::value_type& kv : m_pageParams) {
+            const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
             PageId new_page_id(kv.first);
             new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
             new_params.insert(PageParams::value_type(new_page_id, kv.second));
@@ -79,25 +76,71 @@ namespace select_content {
 #endif
     }
 
-    void Settings::setPageParams(PageId const& page_id, Params const& params) {
+    void Settings::setPageParams(const PageId& page_id, const Params& params) {
         QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_pageParams, page_id, params);
     }
 
-    void Settings::clearPageParams(PageId const& page_id) {
+    void Settings::clearPageParams(const PageId& page_id) {
         QMutexLocker locker(&m_mutex);
         m_pageParams.erase(page_id);
     }
 
     std::unique_ptr<Params>
-    Settings::getPageParams(PageId const& page_id) const {
+    Settings::getPageParams(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        PageParams::const_iterator const it(m_pageParams.find(page_id));
+        const auto it(m_pageParams.find(page_id));
         if (it != m_pageParams.end()) {
-            return std::unique_ptr<Params>(new Params(it->second));
+            return std::make_unique<Params>(it->second);
         } else {
-            return std::unique_ptr<Params>();
+            return nullptr;
         }
+    }
+
+    bool Settings::isParamsNull(const PageId& page_id) const {
+        QMutexLocker locker(&m_mutex);
+
+        return m_pageParams.find(page_id) == m_pageParams.end();
+    }
+
+    double Settings::maxDeviation() const {
+        return m_maxDeviation;
+    }
+
+    void Settings::setMaxDeviation(double md) {
+        m_maxDeviation = md;
+    }
+
+    QSizeF Settings::pageDetectionBox() const {
+        return m_pageDetectionBox;
+    }
+
+    void Settings::setPageDetectionBox(QSizeF size) {
+        m_pageDetectionBox = size;
+    }
+
+    double Settings::pageDetectionTolerance() const {
+        return m_pageDetectionTolerance;
+    }
+
+    void Settings::setPageDetectionTolerance(double tolerance) {
+        m_pageDetectionTolerance = tolerance;
+    }
+
+    double Settings::avg() const {
+        return m_avg;
+    }
+
+    void Settings::setAvg(double a) {
+        m_avg = a;
+    }
+
+    double Settings::std() const {
+        return m_sigma;
+    }
+
+    void Settings::setStd(double s) {
+        m_sigma = s;
     }
 }  // namespace select_content

@@ -20,7 +20,7 @@
 #define VALUE_CONV_H_
 
 #include "NumericTraits.h"
-#include <math.h>
+#include <cmath>
 
 template<typename ToType>
 class StaticCastValueConv {
@@ -35,7 +35,7 @@ public:
 template<typename ToType>
 class RoundAndClipValueConv {
 public:
-    RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
+    explicit RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
             : m_min(min),
               m_max(max) {
     }

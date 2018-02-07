@@ -39,18 +39,18 @@ public:
     };
 
 
-    PolylineIntersector(std::vector<QPointF> const& polyline);
+    explicit PolylineIntersector(const std::vector<QPointF>& polyline);
 
-    QPointF intersect(QLineF const& line, Hint& hint) const;
+    QPointF intersect(const QLineF& line, Hint& hint) const;
 
 private:
-    bool intersectsSegment(QLineF const& normal, int segment) const;
+    bool intersectsSegment(const QLineF& normal, int segment) const;
 
-    bool intersectsSpan(QLineF const& normal, QLineF const& span) const;
+    bool intersectsSpan(const QLineF& normal, const QLineF& span) const;
 
-    QPointF intersectWithSegment(QLineF const& line, int segment) const;
+    QPointF intersectWithSegment(const QLineF& line, int segment) const;
 
-    bool tryIntersectingOutsideOfPolyline(QLineF const& line, QPointF& intersection, Hint& hint) const;
+    bool tryIntersectingOutsideOfPolyline(const QLineF& line, QPointF& intersection, Hint& hint) const;
 
     std::vector<QPointF> m_polyline;
     int m_numSegments;

@@ -21,7 +21,7 @@
 #include <QThread>
 #include <QSettings>
 
-static char const* const key = "settings/batch_processing_threads";
+static const char* const key = "settings/batch_processing_threads";
 
 SystemLoadWidget::SystemLoadWidget(QWidget* parent)
         : QWidget(parent),
@@ -76,7 +76,7 @@ void SystemLoadWidget::increaseLoad() {
 
 void SystemLoadWidget::showHideToolTip(int threads) {
     // Show the tooltip immediately.
-    QPoint const center(ui.slider->rect().center());
+    const QPoint center(ui.slider->rect().center());
     QPoint tooltip_pos(ui.slider->mapFromGlobal(QCursor::pos()));
     if ((tooltip_pos.x() < 0) || (tooltip_pos.x() >= ui.slider->width())) {
         tooltip_pos.setX(center.x());

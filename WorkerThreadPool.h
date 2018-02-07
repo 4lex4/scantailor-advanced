@@ -30,9 +30,9 @@ class QThreadPool;
 class WorkerThreadPool : public QObject {
 Q_OBJECT
 public:
-    WorkerThreadPool(QObject* parent = nullptr);
+    explicit WorkerThreadPool(QObject* parent = nullptr);
 
-    virtual ~WorkerThreadPool();
+    ~WorkerThreadPool() override;
 
     /**
      * \brief Waits for pending jobs to finish and stop the thread.
@@ -44,16 +44,16 @@ public:
 
     bool hasSpareCapacity() const;
 
-    void submitTask(BackgroundTaskPtr const& task);
+    void submitTask(const BackgroundTaskPtr& task);
 
 signals:
 
-    void taskResult(BackgroundTaskPtr const& task, FilterResultPtr const& result);
+    void taskResult(const BackgroundTaskPtr& task, const FilterResultPtr& result);
 
 private:
     class TaskResultEvent;
 
-    virtual void customEvent(QEvent* event) override;
+    void customEvent(QEvent* event) override;
 
     void updateNumberOfThreads();
 

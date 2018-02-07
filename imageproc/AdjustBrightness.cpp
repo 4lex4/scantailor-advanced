@@ -20,7 +20,7 @@
 #include <QImage>
 
 namespace imageproc {
-    void adjustBrightness(QImage& rgb_image, QImage const& brightness, double const wr, double const wb) {
+    void adjustBrightness(QImage& rgb_image, const QImage& brightness, const double wr, const double wb) {
         switch (rgb_image.format()) {
             case QImage::Format_RGB32:
             case QImage::Format_ARGB32:
@@ -38,32 +38,32 @@ namespace imageproc {
             throw std::invalid_argument("adjustBrightness: image and brightness have different sizes");
         }
 
-        uint32_t* rgb_line = reinterpret_cast<uint32_t*>(rgb_image.bits());
-        int const rgb_wpl = rgb_image.bytesPerLine() / 4;
+        auto* rgb_line = reinterpret_cast<uint32_t*>(rgb_image.bits());
+        const int rgb_wpl = rgb_image.bytesPerLine() / 4;
 
-        uint8_t const* br_line = brightness.bits();
-        int const br_bpl = brightness.bytesPerLine();
+        const uint8_t* br_line = brightness.bits();
+        const int br_bpl = brightness.bytesPerLine();
 
-        int const width = rgb_image.width();
-        int const height = rgb_image.height();
+        const int width = rgb_image.width();
+        const int height = rgb_image.height();
 
-        double const wg = 1.0 - wr - wb;
-        double const wu = (1.0 - wb);
-        double const wv = (1.0 - wr);
-        double const r_wg = 1.0 / wg;
-        double const r_wu = 1.0 / wu;
-        double const r_wv = 1.0 / wv;
+        const double wg = 1.0 - wr - wb;
+        const double wu = (1.0 - wb);
+        const double wv = (1.0 - wr);
+        const double r_wg = 1.0 / wg;
+        const double r_wu = 1.0 / wu;
+        const double r_wv = 1.0 / wv;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 uint32_t RGB = rgb_line[x];
-                double const R = (RGB >> 16) & 0xFF;
-                double const G = (RGB >> 8) & 0xFF;
-                double const B = RGB & 0xFF;
+                const double R = (RGB >> 16) & 0xFF;
+                const double G = (RGB >> 8) & 0xFF;
+                const double B = RGB & 0xFF;
 
-                double const Y = wr * R + wg * G + wb * B;
-                double const U = (B - Y) * r_wu;
-                double const V = (R - Y) * r_wv;
+                const double Y = wr * R + wg * G + wb * B;
+                const double U = (B - Y) * r_wu;
+                const double V = (R - Y) * r_wv;
 
                 double new_Y = br_line[x];
                 double new_R = new_Y + V * wv;
@@ -81,11 +81,11 @@ namespace imageproc {
         }
     }  // adjustBrightness
 
-    void adjustBrightnessYUV(QImage& rgb_image, QImage const& brightness) {
+    void adjustBrightnessYUV(QImage& rgb_image, const QImage& brightness) {
         adjustBrightness(rgb_image, brightness, 0.299, 0.114);
     }
 
-    void adjustBrightnessGrayscale(QImage& rgb_image, QImage const& brightness) {
+    void adjustBrightnessGrayscale(QImage& rgb_image, const QImage& brightness) {
         adjustBrightness(rgb_image, brightness, 11.0 / 32.0, 5.0 / 32.0);
     }
 }  // namespace imageproc

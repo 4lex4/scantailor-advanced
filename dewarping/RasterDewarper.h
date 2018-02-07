@@ -29,11 +29,11 @@ namespace dewarping {
 
     class RasterDewarper {
     public:
-        static QImage dewarp(QImage const& src,
-                             QSize const& dst_size,
-                             CylindricalSurfaceDewarper const& distortion_model,
-                             QRectF const& model_domain,
-                             QColor const& background_color);
+        static QImage dewarp(const QImage& src,
+                             const QSize& dst_size,
+                             const CylindricalSurfaceDewarper& distortion_model,
+                             const QRectF& model_domain,
+                             const QColor& background_color);
     };
 }  // namespace dewarping
 #endif

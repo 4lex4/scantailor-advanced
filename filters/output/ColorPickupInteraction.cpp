@@ -31,17 +31,17 @@ namespace output {
         m_interaction.setInteractionStatusTip(tr("Click on an area to pick up its color, or ESC to cancel."));
     }
 
-    void ColorPickupInteraction::startInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction) {
+    void ColorPickupInteraction::startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction) {
         typedef FillColorProperty FCP;
         m_ptrFillColorProp = zone.properties()->locateOrCreate<FCP>();
         interaction.capture(m_interaction);
     }
 
-    bool ColorPickupInteraction::isActive(InteractionState const& interaction) const {
+    bool ColorPickupInteraction::isActive(const InteractionState& interaction) const {
         return interaction.capturedBy(m_interaction);
     }
 
-    void ColorPickupInteraction::onPaint(QPainter& painter, InteractionState const& interaction) {
+    void ColorPickupInteraction::onPaint(QPainter& painter, const InteractionState& interaction) {
         if (m_dontDrawCircle) {
             return;
         }
@@ -76,36 +76,36 @@ namespace output {
     }
 
     void ColorPickupInteraction::takeColor() {
-        ScopedIncDec<int> const guard(m_dontDrawCircle);
+        const ScopedIncDec<int> guard(m_dontDrawCircle);
 
-        QRect const rect(targetBoundingRect());
-        QPixmap const pixmap(QPixmap::grabWidget(&m_rContext.imageView(), rect));
+        const QRect rect(targetBoundingRect());
+        const QPixmap pixmap(QPixmap::grabWidget(&m_rContext.imageView(), rect));
         if (pixmap.isNull()) {
             return;
         }
-        QImage const image(pixmap.toImage().convertToFormat(QImage::Format_RGB32));
+        const QImage image(pixmap.toImage().convertToFormat(QImage::Format_RGB32));
 
-        int const width = rect.width();
-        int const height = rect.height();
-        int const x_center = width / 2;
-        int const y_center = height / 2;
-        int const sqdist_threshold = x_center * y_center;
-        uint32_t const* line = (uint32_t*) image.bits();
-        int const stride = image.bytesPerLine() / 4;
+        const int width = rect.width();
+        const int height = rect.height();
+        const int x_center = width / 2;
+        const int y_center = height / 2;
+        const int sqdist_threshold = x_center * y_center;
+        const uint32_t* line = (uint32_t*) image.bits();
+        const int stride = image.bytesPerLine() / 4;
 
         // We are going to take a median color using the bit-mixing technique.
         std::vector<uint32_t> bitmixed_colors;
         bitmixed_colors.reserve(width * height);
         // Take colors from the circle.
         for (int y = 0; y < height; ++y, line += stride) {
-            int const dy = y - y_center;
-            int const dy_sq = dy * dy;
+            const int dy = y - y_center;
+            const int dy_sq = dy * dy;
             for (int x = 0; x < width; ++x) {
-                int const dx = x - x_center;
-                int const dx_sq = dx * dx;
-                int const sqdist = dy_sq + dx_sq;
+                const int dx = x - x_center;
+                const int dx_sq = dx * dx;
+                const int sqdist = dy_sq + dx_sq;
                 if (sqdist <= sqdist_threshold) {
-                    uint32_t const color = line[x];
+                    const uint32_t color = line[x];
                     bitmixed_colors.push_back(bitMixColor(color));
                 }
             }
@@ -115,9 +115,9 @@ namespace output {
             return;
         }
 
-        std::vector<uint32_t>::iterator half_pos(bitmixed_colors.begin() + bitmixed_colors.size() / 2);
+        auto half_pos(bitmixed_colors.begin() + bitmixed_colors.size() / 2);
         std::nth_element(bitmixed_colors.begin(), half_pos, bitmixed_colors.end());
-        QColor const color(bitUnmixColor(*half_pos));
+        const QColor color(bitUnmixColor(*half_pos));
 
         m_ptrFillColorProp->setColor(color);
 
@@ -129,7 +129,7 @@ namespace output {
     }  // ColorPickupInteraction::takeColor
 
     QRect ColorPickupInteraction::targetBoundingRect() const {
-        QPoint const mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()));
+        const QPoint mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()));
         QRect rect(0, 0, 15, 15);  // Odd width and height are needed for symmetry.
         rect.moveCenter(mouse_pos);
 
@@ -144,13 +144,13 @@ namespace output {
         m_rContext.imageView().update();
     }
 
-    uint32_t ColorPickupInteraction::bitMixColor(uint32_t const color) {
+    uint32_t ColorPickupInteraction::bitMixColor(const uint32_t color) {
         return m_sBitMixingLUT[0][(color >> 16) & 0xff]
                | m_sBitMixingLUT[1][(color >> 8) & 0xff]
                | m_sBitMixingLUT[2][color & 0xff];
     }
 
-    uint32_t ColorPickupInteraction::bitUnmixColor(uint32_t const mixed) {
+    uint32_t ColorPickupInteraction::bitUnmixColor(const uint32_t mixed) {
         return m_sBitUnmixingLUT[0][(mixed >> 16) & 0xff]
                | m_sBitUnmixingLUT[1][(mixed >> 8) & 0xff]
                | m_sBitUnmixingLUT[2][mixed & 0xff];
@@ -159,8 +159,8 @@ namespace output {
 /**
  * Generated like this:
  * \code
- * uint32_t const bit23 = 1 << 23;
- * int const bit7 = 1 << 7;
+ * const uint32_t bit23 = 1 << 23;
+ * const int bit7 = 1 << 7;
  * for (int partition = 0; partition < 3; ++partition) {
  *      for (int sample = 0; sample < 256; ++sample) {
  *          uint32_t accum = 0;
@@ -174,7 +174,7 @@ namespace output {
  *  }
  * \endcode
  */
-    uint32_t const ColorPickupInteraction::m_sBitMixingLUT[3][256] = {
+    const uint32_t ColorPickupInteraction::m_sBitMixingLUT[3][256] = {
             {
                     0x00000000, 0x00000004, 0x00000020, 0x00000024, 0x00000100, 0x00000104, 0x00000120, 0x00000124,
                     0x00000800, 0x00000804, 0x00000820, 0x00000824, 0x00000900, 0x00000904, 0x00000920, 0x00000924,
@@ -282,16 +282,16 @@ namespace output {
 /**
  * Generated like this:
  * \code
- * uint32_t const bit23 = 1 << 23;
- * int const bit7 = 1 << 7;
+ * const uint32_t bit23 = 1 << 23;
+ * const int bit7 = 1 << 7;
  * for (int partition = 0; partition < 3; ++partition) {
  *      for (int sample = 0; sample < 256; ++sample) {
  *          uint32_t accum = 0;
  *          for (int bit = 0; bit < 8; ++bit) {
  *              if (sample & (bit7 >> bit)) {
- *                  int const src_offset = bit + partition * 8;
- *                  int const channel = src_offset % 3;
- *                  int const dst_offset = src_offset / 3;
+ *                  const int src_offset = bit + partition * 8;
+ *                  const int channel = src_offset % 3;
+ *                  const int dst_offset = src_offset / 3;
  *                  accum |= bit23 >> (channel * 8 + dst_offset);
  *              }
  *          }
@@ -300,7 +300,7 @@ namespace output {
  *  }
  * \endcode
  */
-    uint32_t const ColorPickupInteraction::m_sBitUnmixingLUT[3][256] = {
+    const uint32_t ColorPickupInteraction::m_sBitUnmixingLUT[3][256] = {
             {
                     0x00000000, 0x00002000, 0x00200000, 0x00202000, 0x00000040, 0x00002040, 0x00200040, 0x00202040,
                     0x00004000, 0x00006000, 0x00204000, 0x00206000, 0x00004040, 0x00006040, 0x00204040, 0x00206040,

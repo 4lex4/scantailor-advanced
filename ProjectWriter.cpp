@@ -25,6 +25,7 @@
 #include "ImageMetadata.h"
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
+#include "version.h"
 #include <QtXml>
 #include <QFile>
 #include <QTextStream>
@@ -36,23 +37,23 @@
 
 #endif
 
-#include <stddef.h>
-#include <assert.h>
+#include <cstddef>
+#include <cassert>
 
-ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
-                             SelectedPage const& selected_page,
-                             OutputFileNameGenerator const& out_file_name_gen)
+ProjectWriter::ProjectWriter(const intrusive_ptr<ProjectPages>& page_sequence,
+                             const SelectedPage& selected_page,
+                             const OutputFileNameGenerator& out_file_name_gen)
         : m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW)),
           m_outFileNameGen(out_file_name_gen),
           m_selectedPage(selected_page),
           m_layoutDirection(page_sequence->layoutDirection()) {
     int next_id = 1;
     for (const PageInfo& page : m_pageSequence) {
-        PageId const& page_id = page.id();
-        ImageId const& image_id = page_id.imageId();
-        QString const& file_path = image_id.filePath();
-        QFileInfo const file_info(file_path);
-        QString const dir_path(file_info.absolutePath());
+        const PageId& page_id = page.id();
+        const ImageId& image_id = page_id.imageId();
+        const QString& file_path = image_id.filePath();
+        const QFileInfo file_info(file_path);
+        const QString dir_path(file_info.absolutePath());
 
         m_metadataByImage[image_id] = page.metadata();
 
@@ -74,13 +75,13 @@ ProjectWriter::ProjectWriter(intrusive_ptr<ProjectPages> const& page_sequence,
     }
 }
 
-ProjectWriter::~ProjectWriter() {
-}
+ProjectWriter::~ProjectWriter() = default;
 
-bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& filters) const {
+bool ProjectWriter::write(const QString& file_path, const std::vector<FilterPtr>& filters) const {
     QDomDocument doc;
     QDomElement root_el(doc.createElement("project"));
     doc.appendChild(root_el);
+    root_el.setAttribute("version", PROJECT_VERSION);
     root_el.setAttribute("outputDirectory", m_outFileNameGen.outDir());
     root_el.setAttribute(
             "layoutDirection",
@@ -100,8 +101,8 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
 
     QDomElement filters_el(doc.createElement("filters"));
     root_el.appendChild(filters_el);
-    std::vector<FilterPtr>::const_iterator it(filters.begin());
-    std::vector<FilterPtr>::const_iterator const end(filters.end());
+    auto it(filters.begin());
+    const auto end(filters.end());
     for (; it != end; ++it) {
         filters_el.appendChild((*it)->saveSettings(*this, doc));
     }
@@ -119,7 +120,7 @@ bool ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const
 QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
     QDomElement dirs_el(doc.createElement("directories"));
 
-    for (Directory const& dir : m_dirs.get<Sequenced>()) {
+    for (const Directory& dir : m_dirs.get<Sequenced>()) {
         QDomElement dir_el(doc.createElement("directory"));
         dir_el.setAttribute("id", dir.numericId);
         dir_el.setAttribute("path", dir.path);
@@ -132,9 +133,9 @@ QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
 QDomElement ProjectWriter::processFiles(QDomDocument& doc) const {
     QDomElement files_el(doc.createElement("files"));
 
-    for (File const& file : m_files.get<Sequenced>()) {
-        QFileInfo const file_info(file.path);
-        QString const& dir_path = file_info.absolutePath();
+    for (const File& file : m_files.get<Sequenced>()) {
+        const QFileInfo file_info(file.path);
+        const QString& dir_path = file_info.absolutePath();
         QDomElement file_el(doc.createElement("file"));
         file_el.setAttribute("id", file.numericId);
         file_el.setAttribute("dirId", dirId(dir_path));
@@ -148,7 +149,7 @@ QDomElement ProjectWriter::processFiles(QDomDocument& doc) const {
 QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
     QDomElement images_el(doc.createElement("images"));
 
-    for (Image const& image : m_images.get<Sequenced>()) {
+    for (const Image& image : m_images.get<Sequenced>()) {
         QDomElement image_el(doc.createElement("image"));
         image_el.setAttribute("id", image.numericId);
         image_el.setAttribute("subPages", image.numSubPages);
@@ -165,10 +166,10 @@ QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
     return images_el;
 }
 
-void ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const {
-    MetadataByImage::const_iterator it(m_metadataByImage.find(image_id));
+void ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el, const ImageId& image_id) const {
+    auto it(m_metadataByImage.find(image_id));
     assert(it != m_metadataByImage.end());
-    ImageMetadata const& metadata = it->second;
+    const ImageMetadata& metadata = it->second;
 
     QDomElement size_el(doc.createElement("size"));
     size_el.setAttribute("width", metadata.size().width());
@@ -184,8 +185,8 @@ void ProjectWriter::writeImageMetadata(QDomDocument& doc, QDomElement& image_el,
 QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     QDomElement pages_el(doc.createElement("pages"));
 
-    PageId const sel_opt_1(m_selectedPage.get(IMAGE_VIEW));
-    PageId const sel_opt_2(m_selectedPage.get(PAGE_VIEW));
+    const PageId sel_opt_1(m_selectedPage.get(IMAGE_VIEW));
+    const PageId sel_opt_2(m_selectedPage.get(PAGE_VIEW));
 
     PageId page_left;
     PageId page_right;
@@ -197,7 +198,7 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
 
 
     for (const PageInfo& page : m_pageSequence) {
-        PageId const& page_id = page.id();
+        const PageId& page_id = page.id();
         QDomElement page_el(doc.createElement("page"));
         page_el.setAttribute("id", pageId(page_id));
         page_el.setAttribute("imageId", imageId(page_id.imageId()));
@@ -213,14 +214,14 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     return pages_el;
 } // ProjectWriter::processPages
 
-int ProjectWriter::dirId(QString const& dir_path) const {
-    Directories::const_iterator const it(m_dirs.find(dir_path));
+int ProjectWriter::dirId(const QString& dir_path) const {
+    const Directories::const_iterator it(m_dirs.find(dir_path));
     assert(it != m_dirs.end());
     return it->numericId;
 }
 
-int ProjectWriter::fileId(QString const& file_path) const {
-    Files::const_iterator const it(m_files.find(file_path));
+int ProjectWriter::fileId(const QString& file_path) const {
+    const Files::const_iterator it(m_files.find(file_path));
     if (it != m_files.end()) {
         return it->numericId;
     } else {
@@ -228,8 +229,8 @@ int ProjectWriter::fileId(QString const& file_path) const {
     }
 }
 
-QString ProjectWriter::packFilePath(QString const& file_path) const {
-    Files::const_iterator const it(m_files.find(file_path));
+QString ProjectWriter::packFilePath(const QString& file_path) const {
+    const Files::const_iterator it(m_files.find(file_path));
     if (it != m_files.end()) {
         return QString::number(it->numericId);
     } else {
@@ -237,33 +238,33 @@ QString ProjectWriter::packFilePath(QString const& file_path) const {
     }
 }
 
-int ProjectWriter::imageId(ImageId const& image_id) const {
-    Images::const_iterator const it(m_images.find(image_id));
+int ProjectWriter::imageId(const ImageId& image_id) const {
+    const Images::const_iterator it(m_images.find(image_id));
     assert(it != m_images.end());
     return it->numericId;
 }
 
-int ProjectWriter::pageId(PageId const& page_id) const {
-    Pages::const_iterator const it(m_pages.find(page_id));
+int ProjectWriter::pageId(const PageId& page_id) const {
+    const Pages::const_iterator it(m_pages.find(page_id));
     assert(it != m_pages.end());
     return it->numericId;
 }
 
-void ProjectWriter::enumImagesImpl(VirtualFunction2<void, ImageId const&, int>& out) const {
-    for (Image const& image : m_images.get<Sequenced>()) {
+void ProjectWriter::enumImagesImpl(VirtualFunction2<void, const ImageId&, int>& out) const {
+    for (const Image& image : m_images.get<Sequenced>()) {
         out(image.id, image.numericId);
     }
 }
 
-void ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) const {
-    for (Page const& page : m_pages.get<Sequenced>()) {
+void ProjectWriter::enumPagesImpl(VirtualFunction2<void, const PageId&, int>& out) const {
+    for (const Page& page : m_pages.get<Sequenced>()) {
         out(page.id, page.numericId);
     }
 }
 
 /*======================== ProjectWriter::Image =========================*/
 
-ProjectWriter::Image::Image(PageInfo const& page, int numeric_id)
+ProjectWriter::Image::Image(const PageInfo& page, int numeric_id)
         : id(page.imageId()),
           numericId(numeric_id),
           numSubPages(page.imageSubPages()),

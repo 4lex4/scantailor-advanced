@@ -21,7 +21,7 @@
 #include "MatrixCalc.h"
 
 namespace spfit {
-    SqDistApproximant::SqDistApproximant(Vec2d const& origin, Vec2d const& u, Vec2d const& v, double m, double n) {
+    SqDistApproximant::SqDistApproximant(const Vec2d& origin, const Vec2d& u, const Vec2d& v, double m, double n) {
         assert(fabs(u.squaredNorm() - 1.0) < 1e-06 && "u is not normalized");
         assert(fabs(v.squaredNorm() - 1.0) < 1e-06 && "v is not normalized");
         assert(fabs(u.dot(v)) < 1e-06 && "u and v are not orthogonal");
@@ -53,21 +53,21 @@ namespace spfit {
         c = m * t[0] * t[0] + n * t[1] * t[1];
     }
 
-    SqDistApproximant SqDistApproximant::pointDistance(Vec2d const& pt) {
+    SqDistApproximant SqDistApproximant::pointDistance(const Vec2d& pt) {
         return weightedPointDistance(pt, 1);
     }
 
-    SqDistApproximant SqDistApproximant::weightedPointDistance(Vec2d const& pt, double weight) {
+    SqDistApproximant SqDistApproximant::weightedPointDistance(const Vec2d& pt, double weight) {
         return SqDistApproximant(pt, Vec2d(1, 0), Vec2d(0, 1), weight, weight);
     }
 
-    SqDistApproximant SqDistApproximant::lineDistance(QLineF const& line) {
+    SqDistApproximant SqDistApproximant::lineDistance(const QLineF& line) {
         return weightedLineDistance(line, 1);
     }
 
-    SqDistApproximant SqDistApproximant::weightedLineDistance(QLineF const& line, double weight) {
+    SqDistApproximant SqDistApproximant::weightedLineDistance(const QLineF& line, double weight) {
         Vec2d u(line.p2() - line.p1());
-        double const sqlen = u.squaredNorm();
+        const double sqlen = u.squaredNorm();
         if (sqlen > 1e-6) {
             u /= sqrt(sqlen);
         } else {
@@ -75,28 +75,28 @@ namespace spfit {
         }
 
         // Unit normal to line.
-        Vec2d const v(-u[1], u[0]);
+        const Vec2d v(-u[1], u[0]);
 
         return SqDistApproximant(line.p1(), u, v, 0, weight);
     }
 
-    SqDistApproximant SqDistApproximant::curveDistance(Vec2d const& reference_point,
-                                                       FrenetFrame const& frenet_frame,
+    SqDistApproximant SqDistApproximant::curveDistance(const Vec2d& reference_point,
+                                                       const FrenetFrame& frenet_frame,
                                                        double signed_curvature) {
         return weightedCurveDistance(reference_point, frenet_frame, signed_curvature, 1);
     }
 
-    SqDistApproximant SqDistApproximant::weightedCurveDistance(Vec2d const& reference_point,
-                                                               FrenetFrame const& frenet_frame,
-                                                               double const signed_curvature,
-                                                               double const weight) {
-        double const abs_curvature = fabs(signed_curvature);
+    SqDistApproximant SqDistApproximant::weightedCurveDistance(const Vec2d& reference_point,
+                                                               const FrenetFrame& frenet_frame,
+                                                               const double signed_curvature,
+                                                               const double weight) {
+        const double abs_curvature = fabs(signed_curvature);
         double m = 0;
 
         if (abs_curvature > std::numeric_limits<double>::epsilon()) {
-            Vec2d const to_reference_point(reference_point - frenet_frame.origin());
-            double const p = 1.0 / abs_curvature;
-            double const d = fabs(frenet_frame.unitNormal().dot(to_reference_point));
+            const Vec2d to_reference_point(reference_point - frenet_frame.origin());
+            const double p = 1.0 / abs_curvature;
+            const double d = fabs(frenet_frame.unitNormal().dot(to_reference_point));
             m = d / (d + p);  // Formula 7 in [2].
         }
 
@@ -106,7 +106,7 @@ namespace spfit {
         );
     }
 
-    double SqDistApproximant::evaluate(Vec2d const& pt) const {
+    double SqDistApproximant::evaluate(const Vec2d& pt) const {
         StaticMatrixCalc<double, 8, 1> mc;
 
         return (mc(pt, 1, 2) * mc(A) * mc(pt, 2, 1) + mc(b, 1, 2) * mc(pt, 2, 1)).rawData()[0] + c;

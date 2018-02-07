@@ -23,7 +23,7 @@
 #include <QPainterPath>
 #include <QImage>
 #include <boost/foreach.hpp>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
 /**
@@ -31,15 +31,15 @@ namespace imageproc {
  */
     class PolygonRasterizer::Edge {
     public:
-        Edge(QPointF const& top, QPointF const& bottom, int vert_direction);
+        Edge(const QPointF& top, const QPointF& bottom, int vert_direction);
 
-        Edge(QPointF const& from, QPointF const& to);
+        Edge(const QPointF& from, const QPointF& to);
 
-        QPointF const& top() const {
+        const QPointF& top() const {
             return m_top;
         }
 
-        QPointF const& bottom() const {
+        const QPointF& bottom() const {
             return m_bottom;
         }
 
@@ -71,7 +71,7 @@ namespace imageproc {
  */
     class PolygonRasterizer::EdgeComponent {
     public:
-        EdgeComponent(Edge const* edge, double top, double bottom)
+        EdgeComponent(const Edge* edge, double top, double bottom)
                 : m_top(top),
                   m_bottom(bottom),
                   m_x(),
@@ -86,7 +86,7 @@ namespace imageproc {
             return m_bottom;
         }
 
-        Edge const& edge() const {
+        const Edge& edge() const {
             return *m_pEdge;
         }
 
@@ -102,21 +102,21 @@ namespace imageproc {
         double m_top;
         double m_bottom;
         double m_x;
-        Edge const* m_pEdge;
+        const Edge* m_pEdge;
     };
 
 
     class PolygonRasterizer::EdgeOrderY {
     public:
-        bool operator()(EdgeComponent const& lhs, EdgeComponent const& rhs) const {
+        bool operator()(const EdgeComponent& lhs, const EdgeComponent& rhs) const {
             return lhs.top() < rhs.top();
         }
 
-        bool operator()(EdgeComponent const& lhs, double rhs) const {
+        bool operator()(const EdgeComponent& lhs, double rhs) const {
             return lhs.bottom() <= rhs;  // bottom is not a part of the interval.
         }
 
-        bool operator()(double lhs, EdgeComponent const& rhs) const {
+        bool operator()(double lhs, const EdgeComponent& rhs) const {
             return lhs < rhs.top();
         }
     };
@@ -124,7 +124,7 @@ namespace imageproc {
 
     class PolygonRasterizer::EdgeOrderX {
     public:
-        bool operator()(EdgeComponent const& lhs, EdgeComponent const& rhs) const {
+        bool operator()(const EdgeComponent& lhs, const EdgeComponent& rhs) const {
             return lhs.x() < rhs.x();
         }
     };
@@ -132,7 +132,7 @@ namespace imageproc {
 
     class PolygonRasterizer::Rasterizer {
     public:
-        Rasterizer(QRect const& image_rect, QPolygonF const& poly, Qt::FillRule const fill_rule, bool invert);
+        Rasterizer(const QRect& image_rect, const QPolygonF& poly, Qt::FillRule fill_rule, bool invert);
 
         void fillBinary(BinaryImage& image, BWColor color) const;
 
@@ -141,20 +141,20 @@ namespace imageproc {
     private:
         void prepareEdges();
 
-        static void oddEvenLineBinary(EdgeComponent const* edges, int num_edges, uint32_t* line, uint32_t pattern);
+        static void oddEvenLineBinary(const EdgeComponent* edges, int num_edges, uint32_t* line, uint32_t pattern);
 
-        static void oddEvenLineGrayscale(EdgeComponent const* edges, int num_edges, uint8_t* line, uint8_t color);
+        static void oddEvenLineGrayscale(const EdgeComponent* edges, int num_edges, uint8_t* line, uint8_t color);
 
-        static void windingLineBinary(EdgeComponent const* edges,
+        static void windingLineBinary(const EdgeComponent* edges,
                                       int num_edges,
                                       uint32_t* line,
                                       uint32_t pattern,
                                       bool invert);
 
-        static void windingLineGrayscale(EdgeComponent const* edges,
+        static void windingLineGrayscale(const EdgeComponent* edges,
                                          int num_edges,
                                          uint8_t* line,
-                                         uint8_t pattern,
+                                         uint8_t color,
                                          bool invert);
 
         static void fillBinarySegment(int x_from, int x_to, uint32_t* line, uint32_t pattern);
@@ -172,9 +172,9 @@ namespace imageproc {
 /*============================= PolygonRasterizer ===========================*/
 
     void PolygonRasterizer::fill(BinaryImage& image,
-                                 BWColor const color,
-                                 QPolygonF const& poly,
-                                 Qt::FillRule const fill_rule) {
+                                 const BWColor color,
+                                 const QPolygonF& poly,
+                                 const Qt::FillRule fill_rule) {
         if (image.isNull()) {
             throw std::invalid_argument("PolygonRasterizer: target image is null");
         }
@@ -184,9 +184,9 @@ namespace imageproc {
     }
 
     void PolygonRasterizer::fillExcept(BinaryImage& image,
-                                       BWColor const color,
-                                       QPolygonF const& poly,
-                                       Qt::FillRule const fill_rule) {
+                                       const BWColor color,
+                                       const QPolygonF& poly,
+                                       const Qt::FillRule fill_rule) {
         if (image.isNull()) {
             throw std::invalid_argument("PolygonRasterizer: target image is null");
         }
@@ -196,9 +196,9 @@ namespace imageproc {
     }
 
     void PolygonRasterizer::grayFill(QImage& image,
-                                     unsigned char const color,
-                                     QPolygonF const& poly,
-                                     Qt::FillRule const fill_rule) {
+                                     const unsigned char color,
+                                     const QPolygonF& poly,
+                                     const Qt::FillRule fill_rule) {
         if (image.isNull()) {
             throw std::invalid_argument("PolygonRasterizer: target image is null");
         }
@@ -211,9 +211,9 @@ namespace imageproc {
     }
 
     void PolygonRasterizer::grayFillExcept(QImage& image,
-                                           unsigned char const color,
-                                           QPolygonF const& poly,
-                                           Qt::FillRule const fill_rule) {
+                                           const unsigned char color,
+                                           const QPolygonF& poly,
+                                           const Qt::FillRule fill_rule) {
         if (image.isNull()) {
             throw std::invalid_argument("PolygonRasterizer: target image is null");
         }
@@ -227,7 +227,7 @@ namespace imageproc {
 
 /*======================= PolygonRasterizer::Edge ==========================*/
 
-    PolygonRasterizer::Edge::Edge(QPointF const& top, QPointF const& bottom, int const vert_direction)
+    PolygonRasterizer::Edge::Edge(const QPointF& top, const QPointF& bottom, const int vert_direction)
             : m_top(top),
               m_bottom(bottom),
               m_deltaX(bottom.x() - top.x()),
@@ -235,7 +235,7 @@ namespace imageproc {
               m_vertDirection(vert_direction) {
     }
 
-    PolygonRasterizer::Edge::Edge(QPointF const& from, QPointF const& to) {
+    PolygonRasterizer::Edge::Edge(const QPointF& from, const QPointF& to) {
         if (from.y() < to.y()) {
             m_vertDirection = 1;
             m_top = from;
@@ -250,17 +250,17 @@ namespace imageproc {
     }
 
     double PolygonRasterizer::Edge::xForY(double y) const {
-        double const fraction = (y - m_top.y()) * m_reDeltaY;
+        const double fraction = (y - m_top.y()) * m_reDeltaY;
 
         return m_top.x() + m_deltaX * fraction;
     }
 
 /*=================== PolygonRasterizer::Rasterizer ====================*/
 
-    PolygonRasterizer::Rasterizer::Rasterizer(QRect const& image_rect,
-                                              QPolygonF const& poly,
-                                              Qt::FillRule const fill_rule,
-                                              bool const invert)
+    PolygonRasterizer::Rasterizer::Rasterizer(const QRect& image_rect,
+                                              const QPolygonF& poly,
+                                              const Qt::FillRule fill_rule,
+                                              const bool invert)
             : m_imageRect(image_rect),
               m_fillRule(fill_rule),
               m_invert(invert) {
@@ -285,7 +285,7 @@ namespace imageproc {
     }
 
     void PolygonRasterizer::Rasterizer::prepareEdges() {
-        int const num_verts = m_fillPoly.size();
+        const int num_verts = m_fillPoly.size();
         if (num_verts == 0) {
             return;
         }
@@ -293,10 +293,10 @@ namespace imageproc {
         // Collect the edges, excluding horizontal and null ones.
         m_edges.reserve(num_verts + 2);
         for (int i = 0; i < num_verts - 1; ++i) {
-            QPointF const from(m_fillPoly[i]);
-            QPointF const to(m_fillPoly[i + 1]);
+            const QPointF from(m_fillPoly[i]);
+            const QPointF to(m_fillPoly[i + 1]);
             if (from.y() != to.y()) {
-                m_edges.push_back(Edge(from, to));
+                m_edges.emplace_back(from, to);
             }
         }
 
@@ -305,15 +305,15 @@ namespace imageproc {
         if (m_invert) {
             // Add left and right edges with neutral direction (0),
             // to avoid confusing a winding fill.
-            QRectF const rect(m_imageRect);
-            m_edges.push_back(Edge(rect.topLeft(), rect.bottomLeft(), 0));
-            m_edges.push_back(Edge(rect.topRight(), rect.bottomRight(), 0));
+            const QRectF rect(m_imageRect);
+            m_edges.emplace_back(rect.topLeft(), rect.bottomLeft(), 0);
+            m_edges.emplace_back(rect.topRight(), rect.bottomRight(), 0);
         }
 
         // Create an ordered list of y coordinates of polygon vertexes.
         std::vector<double> y_values;
         y_values.reserve(num_verts + 2);
-        for (QPointF const& pt : m_fillPoly) {
+        for (const QPointF& pt : m_fillPoly) {
             y_values.push_back(pt.y());
         }
 
@@ -328,19 +328,18 @@ namespace imageproc {
 
         // Break edges into non-overlaping components, then sort them.
         m_edgeComponents.reserve(m_edges.size());
-        for (Edge const& edge : m_edges) {
-            std::vector<double>::iterator it(
+        for (const Edge& edge : m_edges) {
+            auto it(
                     std::lower_bound(y_values.begin(), y_values.end(), edge.topY())
             );
 
             assert(*it == edge.topY());
 
             do {
-                std::vector<double>::iterator next(it);
+                auto next(it);
                 ++next;
                 assert(next != y_values.end());
-                m_edgeComponents.push_back(
-                        EdgeComponent(&edge, *it, *next)
+                m_edgeComponents.emplace_back(&edge, *it, *next
                 );
                 it = next;
             } while (*it != edge.bottomY());
@@ -349,22 +348,22 @@ namespace imageproc {
         std::sort(m_edgeComponents.begin(), m_edgeComponents.end(), EdgeOrderY());
     }  // PolygonRasterizer::Rasterizer::prepareEdges
 
-    void PolygonRasterizer::Rasterizer::fillBinary(BinaryImage& image, BWColor const color) const {
+    void PolygonRasterizer::Rasterizer::fillBinary(BinaryImage& image, const BWColor color) const {
         std::vector<EdgeComponent> edges_for_line;
         typedef std::vector<EdgeComponent>::const_iterator EdgeIter;
 
         uint32_t* line = image.data();
-        int const wpl = image.wordsPerLine();
-        uint32_t const pattern = (color == WHITE) ? 0 : ~uint32_t(0);
+        const int wpl = image.wordsPerLine();
+        const uint32_t pattern = (color == WHITE) ? 0 : ~uint32_t(0);
 
         int i = qRound(m_boundingBox.top());
         line += i * wpl;
-        int const limit = qRound(m_boundingBox.bottom());
+        const int limit = qRound(m_boundingBox.bottom());
         for (; i < limit; ++i, line += wpl, edges_for_line.clear()) {
-            double const y = i + 0.5;
+            const double y = i + 0.5;
 
             // Get edges intersecting this horizontal line.
-            std::pair<EdgeIter, EdgeIter> const range(
+            const std::pair<EdgeIter, EdgeIter> range(
                     std::equal_range(
                             m_edgeComponents.begin(), m_edgeComponents.end(),
                             y, EdgeOrderY()
@@ -393,33 +392,33 @@ namespace imageproc {
 
             if (m_fillRule == Qt::OddEvenFill) {
                 oddEvenLineBinary(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, pattern
                 );
             } else {
                 windingLineBinary(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, pattern, m_invert
                 );
             }
         }
     }  // PolygonRasterizer::Rasterizer::fillBinary
 
-    void PolygonRasterizer::Rasterizer::fillGrayscale(QImage& image, uint8_t const color) const {
+    void PolygonRasterizer::Rasterizer::fillGrayscale(QImage& image, const uint8_t color) const {
         std::vector<EdgeComponent> edges_for_line;
         typedef std::vector<EdgeComponent>::const_iterator EdgeIter;
 
         uint8_t* line = image.bits();
-        int const bpl = image.bytesPerLine();
+        const int bpl = image.bytesPerLine();
 
         int i = qRound(m_boundingBox.top());
         line += i * bpl;
-        int const limit = qRound(m_boundingBox.bottom());
+        const int limit = qRound(m_boundingBox.bottom());
         for (; i < limit; ++i, line += bpl, edges_for_line.clear()) {
-            double const y = i + 0.5;
+            const double y = i + 0.5;
 
             // Get edges intersecting this horizontal line.
-            std::pair<EdgeIter, EdgeIter> const range(
+            const std::pair<EdgeIter, EdgeIter> range(
                     std::equal_range(
                             m_edgeComponents.begin(), m_edgeComponents.end(),
                             y, EdgeOrderY()
@@ -448,53 +447,53 @@ namespace imageproc {
 
             if (m_fillRule == Qt::OddEvenFill) {
                 oddEvenLineGrayscale(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, color
                 );
             } else {
                 windingLineGrayscale(
-                        &edges_for_line.front(), edges_for_line.size(),
+                        &edges_for_line.front(), static_cast<int>(edges_for_line.size()),
                         line, color, m_invert
                 );
             }
         }
     }  // PolygonRasterizer::Rasterizer::fillGrayscale
 
-    void PolygonRasterizer::Rasterizer::oddEvenLineBinary(EdgeComponent const* const edges,
-                                                          int const num_edges,
+    void PolygonRasterizer::Rasterizer::oddEvenLineBinary(const EdgeComponent* const edges,
+                                                          const int num_edges,
                                                           uint32_t* const line,
-                                                          uint32_t const pattern) {
+                                                          const uint32_t pattern) {
         for (int i = 0; i < num_edges - 1; i += 2) {
-            double const x_from = edges[i].x();
-            double const x_to = edges[i + 1].x();
+            const double x_from = edges[i].x();
+            const double x_to = edges[i + 1].x();
             fillBinarySegment(
                     qRound(x_from), qRound(x_to), line, pattern
             );
         }
     }
 
-    void PolygonRasterizer::Rasterizer::oddEvenLineGrayscale(EdgeComponent const* const edges,
-                                                             int const num_edges,
+    void PolygonRasterizer::Rasterizer::oddEvenLineGrayscale(const EdgeComponent* const edges,
+                                                             const int num_edges,
                                                              uint8_t* const line,
-                                                             uint8_t const color) {
+                                                             const uint8_t color) {
         for (int i = 0; i < num_edges - 1; i += 2) {
-            int const from = qRound(edges[i].x());
-            int const to = qRound(edges[i + 1].x());
+            const int from = qRound(edges[i].x());
+            const int to = qRound(edges[i + 1].x());
             memset(line + from, color, to - from);
         }
     }
 
-    void PolygonRasterizer::Rasterizer::windingLineBinary(EdgeComponent const* const edges,
-                                                          int const num_edges,
+    void PolygonRasterizer::Rasterizer::windingLineBinary(const EdgeComponent* const edges,
+                                                          const int num_edges,
                                                           uint32_t* const line,
-                                                          uint32_t const pattern,
+                                                          const uint32_t pattern,
                                                           bool invert) {
         int dir_sum = 0;
         for (int i = 0; i < num_edges - 1; ++i) {
             dir_sum += edges[i].edge().vertDirection();
             if ((dir_sum == 0) == invert) {
-                double const x_from = edges[i].x();
-                double const x_to = edges[i + 1].x();
+                const double x_from = edges[i].x();
+                const double x_to = edges[i + 1].x();
                 fillBinarySegment(
                         qRound(x_from), qRound(x_to), line, pattern
                 );
@@ -502,37 +501,37 @@ namespace imageproc {
         }
     }
 
-    void PolygonRasterizer::Rasterizer::windingLineGrayscale(EdgeComponent const* const edges,
-                                                             int const num_edges,
+    void PolygonRasterizer::Rasterizer::windingLineGrayscale(const EdgeComponent* const edges,
+                                                             const int num_edges,
                                                              uint8_t* const line,
-                                                             uint8_t const color,
+                                                             const uint8_t color,
                                                              bool invert) {
         int dir_sum = 0;
         for (int i = 0; i < num_edges - 1; ++i) {
             dir_sum += edges[i].edge().vertDirection();
             if ((dir_sum == 0) == invert) {
-                int const from = qRound(edges[i].x());
-                int const to = qRound(edges[i + 1].x());
+                const int from = qRound(edges[i].x());
+                const int to = qRound(edges[i + 1].x());
                 memset(line + from, color, to - from);
             }
         }
     }
 
-    void PolygonRasterizer::Rasterizer::fillBinarySegment(int const x_from,
-                                                          int const x_to,
+    void PolygonRasterizer::Rasterizer::fillBinarySegment(const int x_from,
+                                                          const int x_to,
                                                           uint32_t* const line,
-                                                          uint32_t const pattern) {
+                                                          const uint32_t pattern) {
         if (x_from == x_to) {
             return;
         }
 
-        uint32_t const full_mask = ~uint32_t(0);
-        uint32_t const first_word_mask = full_mask >> (x_from & 31);
-        uint32_t const last_word_mask = full_mask << (31 - ((x_to - 1) & 31));
-        int const first_word_idx = x_from >> 5;
-        int const last_word_idx = (x_to - 1) >> 5;  // x_to is exclusive
+        const uint32_t full_mask = ~uint32_t(0);
+        const uint32_t first_word_mask = full_mask >> (x_from & 31);
+        const uint32_t last_word_mask = full_mask << (31 - ((x_to - 1) & 31));
+        const int first_word_idx = x_from >> 5;
+        const int last_word_idx = (x_to - 1) >> 5;  // x_to is exclusive
         if (first_word_idx == last_word_idx) {
-            uint32_t const mask = first_word_mask & last_word_mask;
+            const uint32_t mask = first_word_mask & last_word_mask;
             uint32_t& word = line[first_word_idx];
             word = (word & ~mask) | (pattern & mask);
 

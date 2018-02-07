@@ -5,38 +5,44 @@
 #include <QtXml/QDomElement>
 
 namespace output {
+    enum SplittingMode {
+        BLACK_AND_WHITE_FOREGROUND,
+        COLOR_FOREGROUND
+    };
+
     class SplittingOptions {
     public:
-        enum ForegroundType {
-            BLACK_AND_WHITE_FOREGROUND,
-            COLOR_FOREGROUND
-        };
-
         SplittingOptions();
 
-        explicit SplittingOptions(QDomElement const& el);
+        explicit SplittingOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         bool isSplitOutput() const;
 
         void setSplitOutput(bool splitOutput);
 
-        ForegroundType getForegroundType() const;
+        SplittingMode getSplittingMode() const;
 
-        void setForegroundType(ForegroundType foregroundType);
+        void setSplittingMode(SplittingMode foregroundType);
 
         bool operator==(const SplittingOptions& other) const;
 
         bool operator!=(const SplittingOptions& other) const;
 
-    private:
-        static ForegroundType parseForegroundType(const QString& str);
+        bool isOriginalBackground() const;
 
-        static QString formatForegroundType(ForegroundType type);
+        void setOriginalBackground(bool originalBackground);
+
+    private:
+        static SplittingMode parseSplittingMode(const QString& str);
+
+        static QString formatSplittingMode(SplittingMode type);
+
 
         bool splitOutput;
-        ForegroundType foregroundType;
+        SplittingMode splittingMode;
+        bool originalBackground;
     };
 }
 

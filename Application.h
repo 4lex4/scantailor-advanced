@@ -32,15 +32,21 @@ Q_OBJECT
 public:
     Application(int& argc, char** argv);
 
-    virtual bool notify(QObject* receiver, QEvent* e);
+    bool notify(QObject* receiver, QEvent* e) override;
 
     const QString& getCurrentLocale() const;
 
     void installLanguage(const QString& locale);
 
+    std::list<QString> getLanguagesList() const;
+
 private:
+    void initTranslations();
+
+
     QTranslator m_translator;
     QString m_currentLocale;
+    std::map<QString, QString> m_translationsMap;
 };
 
 

@@ -42,13 +42,15 @@ protected:
         return m_rContext;
     }
 
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
+
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
 private:
     void updateStatusTip();
@@ -80,9 +82,10 @@ private:
     InteractionState::Captor m_interaction;
     EditableSpline::Ptr m_ptrSpline;
     QPointF m_nextVertexImagePos;
-    bool m_ctrl;
+    bool m_rectangularZoneType;
     QPointF m_nextVertexImagePos_mid1;
     QPointF m_nextVertexImagePos_mid2;
+    bool m_lassoMode;
 };
 
 

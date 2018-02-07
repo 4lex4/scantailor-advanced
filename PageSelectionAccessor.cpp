@@ -17,10 +17,12 @@
  */
 
 #include "PageSelectionAccessor.h"
+
+#include <utility>
 #include "PageSequence.h"
 
-PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<PageSelectionProvider const> const& provider)
-        : m_ptrProvider(provider) {
+PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<PageSelectionProvider const> provider)
+        : m_ptrProvider(std::move(provider)) {
 }
 
 PageSequence PageSelectionAccessor::allPages() const {

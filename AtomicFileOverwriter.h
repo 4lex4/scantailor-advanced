@@ -54,7 +54,7 @@ public:
      * If a file is already being written, it calles abort() and then
      * proceeds as usual.
      */
-    QIODevice* startWriting(QString const& file_path);
+    QIODevice* startWriting(const QString& file_path);
 
     /**
      * \brief Replaces the target file with the temporary one.

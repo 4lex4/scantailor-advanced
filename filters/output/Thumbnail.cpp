@@ -18,11 +18,13 @@
 
 #include "Thumbnail.h"
 
+#include <utility>
+
 namespace output {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         ImageTransformation const& xform)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform) {
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                         const QSizeF& max_size,
+                         const ImageId& image_id,
+                         const ImageTransformation& xform)
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform) {
     }
 }  // namespace output

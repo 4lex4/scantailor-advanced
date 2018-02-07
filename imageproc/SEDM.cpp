@@ -29,24 +29,24 @@
 namespace imageproc {
 // Note that -1 is an implementation detail.
 // It exists to make sure INF_DIST + 1 doesn't overflow.
-    uint32_t const SEDM::INF_DIST = ~uint32_t(0) - 1;
+    const uint32_t SEDM::INF_DIST = ~uint32_t(0) - 1;
 
     SEDM::SEDM()
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(),
               m_stride(0) {
     }
 
-    SEDM::SEDM(BinaryImage const& image, DistType const dist_type, Borders const borders)
-            : m_pData(0),
+    SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders borders)
+            : m_pData(nullptr),
               m_size(image.size()),
               m_stride(0) {
         if (image.isNull()) {
             return;
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         m_data.resize((width + 2) * (height + 2), INF_DIST);
         m_stride = width + 2;
@@ -62,7 +62,7 @@ namespace imageproc {
             );
         }
         if (borders & (DIST_TO_LEFT_BORDER | DIST_TO_RIGHT_BORDER)) {
-            int const last = m_stride - 1;
+            const int last = m_stride - 1;
             uint32_t* line = &m_data[0];
             for (int todo = height + 2; todo > 0; --todo) {
                 if (borders & DIST_TO_LEFT_BORDER) {
@@ -85,8 +85,8 @@ namespace imageproc {
         }
 
         uint32_t* p_dist = m_pData;
-        uint32_t const* img_line = image.data();
-        int const img_stride = image.wordsPerLine();
+        const uint32_t* img_line = image.data();
+        const int img_stride = image.wordsPerLine();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x, ++p_dist) {
                 uint32_t word = img_line[x >> 5];
@@ -102,22 +102,22 @@ namespace imageproc {
     }
 
     SEDM::SEDM(ConnectivityMap& cmap)
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(cmap.size()),
               m_stride(0) {
         if (m_size.isEmpty()) {
             return;
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         m_data.resize((width + 2) * (height + 2), INF_DIST);
         m_stride = width + 2;
         m_pData = &m_data[0] + m_stride + 1;
 
         uint32_t* p_dist = m_pData;
-        uint32_t const* p_label = cmap.data();
+        const uint32_t* p_label = cmap.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x, ++p_dist, ++p_label) {
                 if (*p_label) {
@@ -132,9 +132,9 @@ namespace imageproc {
         processRows(cmap);
     }
 
-    SEDM::SEDM(SEDM const& other)
+    SEDM::SEDM(const SEDM& other)
             : m_data(other.m_data),
-              m_pData(0),
+              m_pData(nullptr),
               m_size(other.m_size),
               m_stride(other.m_stride) {
         if (!m_size.isEmpty()) {
@@ -142,7 +142,7 @@ namespace imageproc {
         }
     }
 
-    SEDM& SEDM::operator=(SEDM const& other) {
+    SEDM& SEDM::operator=(const SEDM& other) {
         SEDM(other).swap(*this);
 
         return *this;
@@ -193,7 +193,7 @@ namespace imageproc {
         // If a bin that has changed its state was a part of a peak candidate,
         // it means a neighboring bin went from equal to a greater value,
         // which indicates that such candidate is not a peak.
-        BinaryImage const not_peaks(seedFill(diff, peak_candidates, CONN8));
+        const BinaryImage not_peaks(seedFill(diff, peak_candidates, CONN8));
         diff.release();
 
         rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
@@ -201,26 +201,26 @@ namespace imageproc {
         return peak_candidates;
     }  // SEDM::findPeaksDestructive
 
-    inline uint32_t SEDM::distSq(int const x1, int const x2, uint32_t const dy_sq) {
+    inline uint32_t SEDM::distSq(const int x1, const int x2, const uint32_t dy_sq) {
         if (dy_sq == INF_DIST) {
             return INF_DIST;
         }
-        int const dx = x1 - x2;
-        uint32_t const dx_sq = dx * dx;
+        const int dx = x1 - x2;
+        const uint32_t dx_sq = dx * dx;
 
         return dx_sq + dy_sq;
     }
 
     void SEDM::processColumns() {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         uint32_t* p_sqd = &m_data[0];
         for (int x = 0; x < width; ++x, ++p_sqd) {
             // (d + 1)^2 = d^2 + 2d + 1
             uint32_t b = 1;  // 2d + 1 in the above formula.
             for (int todo = height - 1; todo > 0; --todo) {
-                uint32_t const sqd = *p_sqd + b;
+                const uint32_t sqd = *p_sqd + b;
                 p_sqd += width;
                 if (*p_sqd > sqd) {
                     *p_sqd = sqd;
@@ -232,7 +232,7 @@ namespace imageproc {
 
             b = 1;
             for (int todo = height - 1; todo > 0; --todo) {
-                uint32_t const sqd = *p_sqd + b;
+                const uint32_t sqd = *p_sqd + b;
                 p_sqd -= width;
                 if (*p_sqd > sqd) {
                     *p_sqd = sqd;
@@ -245,8 +245,8 @@ namespace imageproc {
     }  // SEDM::processColumns
 
     void SEDM::processColumns(ConnectivityMap& cmap) {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         uint32_t* p_sqd = &m_data[0];
         uint32_t* p_label = cmap.paddedData();
@@ -254,7 +254,7 @@ namespace imageproc {
             // (d + 1)^2 = d^2 + 2d + 1
             uint32_t b = 1;  // 2d + 1 in the above formula.
             for (int todo = height - 1; todo > 0; --todo) {
-                uint32_t const sqd = *p_sqd + b;
+                const uint32_t sqd = *p_sqd + b;
                 p_sqd += width;
                 p_label += width;
                 if (sqd < *p_sqd) {
@@ -268,7 +268,7 @@ namespace imageproc {
 
             b = 1;
             for (int todo = height - 1; todo > 0; --todo) {
-                uint32_t const sqd = *p_sqd + b;
+                const uint32_t sqd = *p_sqd + b;
                 p_sqd -= width;
                 p_label -= width;
                 if (sqd < *p_sqd) {
@@ -283,8 +283,8 @@ namespace imageproc {
     }  // SEDM::processColumns
 
     void SEDM::processRows() {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         std::vector<int> s(width, 0);
         std::vector<int> t(width, 0);
@@ -305,7 +305,7 @@ namespace imageproc {
                     q = 0;
                     s[0] = x;
                 } else {
-                    int const x2 = s[q];
+                    const int x2 = s[q];
                     if ((line[x] != INF_DIST) && (line[x2] != INF_DIST)) {
                         int w = (x * x + line[x]) - (x2 * x2 + line[x2]);
                         w /= (x - x2) << 1;
@@ -322,7 +322,7 @@ namespace imageproc {
             memcpy(&row_copy[0], line, width * sizeof(*line));
 
             for (int x = width - 1; x >= 0; --x) {
-                int const x2 = s[q];
+                const int x2 = s[q];
                 line[x] = distSq(x, x2, row_copy[x2]);
                 if (x == t[q]) {
                     --q;
@@ -332,8 +332,8 @@ namespace imageproc {
     }  // SEDM::processRows
 
     void SEDM::processRows(ConnectivityMap& cmap) {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         std::vector<int> s(width, 0);
         std::vector<int> t(width, 0);
@@ -356,7 +356,7 @@ namespace imageproc {
                     q = 0;
                     s[0] = x;
                 } else {
-                    int const x2 = s[q];
+                    const int x2 = s[q];
                     if ((line[x] != INF_DIST) && (line[x2] != INF_DIST)) {
                         int w = (x * x + line[x]) - (x2 * x2 + line[x2]);
                         w /= (x - x2) << 1;
@@ -374,7 +374,7 @@ namespace imageproc {
             memcpy(&cmap_row_copy[0], cmap_line, width * sizeof(*cmap_line));
 
             for (int x = width - 1; x >= 0; --x) {
-                int const x2 = s[q];
+                const int x2 = s[q];
                 line[x] = distSq(x, x2, row_copy[x2]);
                 cmap_line[x] = cmap_row_copy[x2];
                 if (x == t[q]) {
@@ -395,17 +395,17 @@ namespace imageproc {
         return buildEqualMapNonPadded(&m_data[0], &maxed[0]);
     }
 
-    BinaryImage SEDM::buildEqualMapNonPadded(uint32_t const* src1, uint32_t const* src2) const {
-        int const width = m_size.width();
-        int const height = m_size.height();
+    BinaryImage SEDM::buildEqualMapNonPadded(const uint32_t* src1, const uint32_t* src2) const {
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         BinaryImage dst(width, height, WHITE);
         uint32_t* dst_line = dst.data();
-        int const dst_wpl = dst.wordsPerLine();
-        int const src_stride = m_stride;
-        uint32_t const* src1_line = src1 + src_stride + 1;
-        uint32_t const* src2_line = src2 + src_stride + 1;
-        uint32_t const msb = uint32_t(1) << 31;
+        const int dst_wpl = dst.wordsPerLine();
+        const int src_stride = m_stride;
+        const uint32_t* src1_line = src1 + src_stride + 1;
+        const uint32_t* src2_line = src2 + src_stride + 1;
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -422,17 +422,17 @@ namespace imageproc {
         return dst;
     }
 
-    void SEDM::max3x3(uint32_t const* src, uint32_t* dst) const {
+    void SEDM::max3x3(const uint32_t* src, uint32_t* dst) const {
         std::vector<uint32_t> tmp(m_data.size(), 0);
         max3x1(src, &tmp[0]);
         max1x3(&tmp[0], dst);
     }
 
-    void SEDM::max3x1(uint32_t const* src, uint32_t* dst) const {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+    void SEDM::max3x1(const uint32_t* src, uint32_t* dst) const {
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
-        uint32_t const* src_line = &src[0];
+        const uint32_t* src_line = &src[0];
         uint32_t* dst_line = &dst[0];
 
         for (int y = 0; y < height; ++y) {
@@ -441,9 +441,9 @@ namespace imageproc {
             dst_line[x] = std::max(src_line[x], src_line[x + 1]);
 
             for (++x; x < width - 1; ++x) {
-                uint32_t const prev = src_line[x - 1];
-                uint32_t const cur = src_line[x];
-                uint32_t const next = src_line[x + 1];
+                const uint32_t prev = src_line[x - 1];
+                const uint32_t cur = src_line[x];
+                const uint32_t next = src_line[x + 1];
                 dst_line[x] = std::max(prev, std::max(cur, next));
             }
 
@@ -455,11 +455,11 @@ namespace imageproc {
         }
     }
 
-    void SEDM::max1x3(uint32_t const* src, uint32_t* dst) const {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+    void SEDM::max1x3(const uint32_t* src, uint32_t* dst) const {
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
         // First row (no top neighbors).
-        uint32_t const* p_src = &src[0];
+        const uint32_t* p_src = &src[0];
         uint32_t* p_dst = &dst[0];
         for (int x = 0; x < width; ++x) {
             *p_dst = std::max(p_src[0], p_src[width]);
@@ -469,9 +469,9 @@ namespace imageproc {
 
         for (int y = 1; y < height - 1; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t const prev = p_src[x - width];
-                uint32_t const cur = p_src[x];
-                uint32_t const next = p_src[x + width];
+                const uint32_t prev = p_src[x - width];
+                const uint32_t cur = p_src[x];
+                const uint32_t next = p_src[x + width];
                 p_dst[x] = std::max(prev, std::max(cur, next));
             }
 
@@ -487,15 +487,15 @@ namespace imageproc {
         }
     }
 
-    void SEDM::incrementMaskedPadded(BinaryImage const& mask) {
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+    void SEDM::incrementMaskedPadded(const BinaryImage& mask) {
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         uint32_t* data_line = &m_data[0];
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
+        const uint32_t* mask_line = mask.data();
+        const int mask_wpl = mask.wordsPerLine();
 
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (mask_line[x >> 5] & (msb >> (x & 31))) {

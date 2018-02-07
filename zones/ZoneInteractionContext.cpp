@@ -21,6 +21,7 @@
 #include "ZoneCreationInteraction.h"
 #include "ZoneVertexDragInteraction.h"
 #include "ZoneContextMenuInteraction.h"
+#include "ZoneDragInteraction.h"
 #include <boost/bind.hpp>
 
 ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones)
@@ -35,14 +36,16 @@ ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& image_view, Editab
           m_vertexDragInteractionCreator(
                   boost::bind(&ZoneInteractionContext::createStdVertexDragInteraction, this, _1, _2, _3)
           ),
+          m_zoneDragInteractionCreator(
+                  boost::bind(&ZoneInteractionContext::createStdZoneDragInteraction, this, _1, _2)
+          ),
           m_contextMenuInteractionCreator(
                   boost::bind(&ZoneInteractionContext::createStdContextMenuInteraction, this, _1)
           ),
           m_showPropertiesCommand(&ZoneInteractionContext::showPropertiesStub) {
 }
 
-ZoneInteractionContext::~ZoneInteractionContext() {
-}
+ZoneInteractionContext::~ZoneInteractionContext() = default;
 
 InteractionHandler* ZoneInteractionContext::createStdDefaultInteraction() {
     return new ZoneDefaultInteraction(*this);
@@ -53,9 +56,14 @@ InteractionHandler* ZoneInteractionContext::createStdZoneCreationInteraction(Int
 }
 
 InteractionHandler* ZoneInteractionContext::createStdVertexDragInteraction(InteractionState& interaction,
-                                                                           EditableSpline::Ptr const& spline,
-                                                                           SplineVertex::Ptr const& vertex) {
+                                                                           const EditableSpline::Ptr& spline,
+                                                                           const SplineVertex::Ptr& vertex) {
     return new ZoneVertexDragInteraction(*this, interaction, spline, vertex);
+}
+
+InteractionHandler* ZoneInteractionContext::createStdZoneDragInteraction(InteractionState& interaction,
+                                                                         const EditableSpline::Ptr& spline) {
+    return new ZoneDragInteraction(*this, interaction, spline);
 }
 
 InteractionHandler* ZoneInteractionContext::createStdContextMenuInteraction(InteractionState& interaction) {

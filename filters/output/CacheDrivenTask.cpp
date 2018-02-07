@@ -26,25 +26,45 @@
 #include "Utils.h"
 #include "filter_dc/AbstractFilterDataCollector.h"
 #include "filter_dc/ThumbnailCollector.h"
+#include "RenderParams.h"
 #include <QFileInfo>
+#include <utility>
+#include <QDir>
 
 namespace output {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
-                                     OutputFileNameGenerator const& out_file_name_gen)
-            : m_ptrSettings(settings),
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
+                                     const OutputFileNameGenerator& out_file_name_gen)
+            : m_ptrSettings(std::move(settings)),
               m_outFileNameGen(out_file_name_gen) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform,
-                                  QPolygonF const& content_rect_phys) {
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            QString const out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
-            Params const params(m_ptrSettings->getParams(page_info.id()));
+                                  const ImageTransformation& xform,
+                                  const QPolygonF& content_rect_phys) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+            const QString out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
+            const QFileInfo out_file_info(out_file_path);
+            const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+            const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+            const QString original_background_dir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
+            const QString foreground_file_path(
+                    QDir(foreground_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QString background_file_path(
+                    QDir(background_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QString original_background_file_path(
+                    QDir(original_background_dir).absoluteFilePath(out_file_info.fileName())
+            );
+            const QFileInfo foreground_file_info(foreground_file_path);
+            const QFileInfo background_file_info(background_file_path);
+            const QFileInfo original_background_file_info(original_background_file_path);
+
+            const Params params(m_ptrSettings->getParams(page_info.id()));
+            RenderParams render_params(params.colorParams(), params.splittingOptions());
 
             ImageTransformation new_xform(xform);
             new_xform.postScaleToDpi(params.outputDpi());
@@ -56,18 +76,18 @@ namespace output {
                         m_ptrSettings->getOutputParams(page_info.id())
                 );
 
-                if (!stored_output_params.get()) {
+                if (!stored_output_params) {
                     need_reprocess = true;
                     break;
                 }
 
-                OutputGenerator const generator(
+                const OutputGenerator generator(
                         params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.pictureShapeOptions(), params.dewarpingOptions(),
                         m_ptrSettings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
                         new_xform, content_rect_phys
                 );
-                OutputImageParams const new_output_image_params(
+                const OutputImageParams new_output_image_params(
                         generator.outputImageSize(), generator.outputContentRect(),
                         new_xform, params.outputDpi(), params.colorParams(), params.splittingOptions(),
                         params.dewarpingOptions(), params.distortionModel(),
@@ -80,28 +100,54 @@ namespace output {
                     break;
                 }
 
-                ZoneSet const new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
+                const ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
                 if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
                     need_reprocess = true;
                     break;
                 }
 
-                ZoneSet const new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
+                const ZoneSet new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
                 if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
                     need_reprocess = true;
                     break;
                 }
 
-                QFileInfo const out_file_info(out_file_path);
+                const QFileInfo out_file_info(out_file_path);
 
-                if (!out_file_info.exists()) {
-                    need_reprocess = true;
-                    break;
-                }
+                if (!render_params.splitOutput()) {
+                    if (!out_file_info.exists()) {
+                        need_reprocess = true;
+                        break;
+                    }
 
-                if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-                    need_reprocess = true;
-                    break;
+                    if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
+                        need_reprocess = true;
+                        break;
+                    }
+                } else {
+                    if (!foreground_file_info.exists() || !background_file_info.exists()) {
+                        need_reprocess = true;
+                        break;
+                    }
+                    if (!(stored_output_params->foregroundFileParams().matches(
+                            OutputFileParams(foreground_file_info)))
+                        || !(stored_output_params->backgroundFileParams().matches(
+                            OutputFileParams(background_file_info)))) {
+                        need_reprocess = true;
+                        break;
+                    }
+
+                    if (render_params.originalBackground()) {
+                        if (!original_background_file_info.exists()) {
+                            need_reprocess = true;
+                            break;
+                        }
+                        if (!(stored_output_params->originalBackgroundFileParams().matches(
+                                OutputFileParams(original_background_file_info)))) {
+                            need_reprocess = true;
+                            break;
+                        }
+                    }
                 }
             } while (false);
 
@@ -116,7 +162,7 @@ namespace output {
                         )
                 );
             } else {
-                ImageTransformation const out_xform(
+                const ImageTransformation out_xform(
                         new_xform.resultingRect(), params.outputDpi()
                 );
 

@@ -18,17 +18,18 @@
  */
 
 #include "OrderBySplitTypeProvider.h"
-#include <assert.h>
+#include <cassert>
+#include <utility>
 
 namespace page_split {
-    OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings)
-            : m_ptrSettings(settings) {
+    OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> settings)
+            : m_ptrSettings(std::move(settings)) {
     }
 
-    bool OrderBySplitTypeProvider::precedes(PageId const& lhs_page,
-                                            bool const lhs_incomplete,
-                                            PageId const& rhs_page,
-                                            bool const rhs_incomplete) const {
+    bool OrderBySplitTypeProvider::precedes(const PageId& lhs_page,
+                                            const bool lhs_incomplete,
+                                            const PageId& rhs_page,
+                                            const bool rhs_incomplete) const {
         if (lhs_incomplete != rhs_incomplete) {
             // Pages with question mark go to the bottom.
             return rhs_incomplete;
@@ -38,14 +39,14 @@ namespace page_split {
             return lhs_page < rhs_page;
         }
 
-        assert(lhs_incomplete == false);
-        assert(rhs_incomplete == false);
+        assert(!lhs_incomplete);
+        assert(!rhs_incomplete);
 
-        Settings::Record const lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
-        Settings::Record const rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));
+        const Settings::Record lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
+        const Settings::Record rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));
 
-        Params const* lhs_params = lhs_record.params();
-        Params const* rhs_params = rhs_record.params();
+        const Params* lhs_params = lhs_record.params();
+        const Params* rhs_params = rhs_record.params();
 
         int lhs_layout_type = lhs_record.combinedLayoutType();
         if (lhs_params) {

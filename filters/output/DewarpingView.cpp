@@ -33,15 +33,15 @@
 namespace output {
     using namespace imageproc;
 
-    DewarpingView::DewarpingView(QImage const& image,
-                                 ImagePixmapUnion const& downscaled_image,
-                                 QTransform const& image_to_virt,
-                                 QPolygonF const& virt_display_area,
-                                 QRectF const& virt_content_rect,
-                                 PageId const& page_id,
+    DewarpingView::DewarpingView(const QImage& image,
+                                 const ImagePixmapUnion& downscaled_image,
+                                 const QTransform& image_to_virt,
+                                 const QPolygonF& virt_display_area,
+                                 const QRectF& virt_content_rect,
+                                 const PageId& page_id,
                                  DewarpingOptions dewarping_options,
-                                 dewarping::DistortionModel const& distortion_model,
-                                 DepthPerception const& depth_perception)
+                                 const dewarping::DistortionModel& distortion_model,
+                                 const DepthPerception& depth_perception)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(image_to_virt, virt_display_area)
@@ -55,12 +55,12 @@ namespace output {
               m_zoomHandler(*this) {
         setMouseTracking(true);
 
-        QPolygonF const source_content_rect(virtualToImage().map(virt_content_rect));
+        const QPolygonF source_content_rect(virtualToImage().map(virt_content_rect));
 
         XSpline top_spline(m_distortionModel.topCurve().xspline());
         XSpline bottom_spline(m_distortionModel.bottomCurve().xspline());
         if (top_spline.numControlPoints() < 2) {
-            std::vector<QPointF> const& polyline = m_distortionModel.topCurve().polyline();
+            const std::vector<QPointF>& polyline = m_distortionModel.topCurve().polyline();
 
             XSpline new_top_spline;
             if (polyline.size() < 2) {
@@ -73,7 +73,7 @@ namespace output {
             top_spline.swap(new_top_spline);
         }
         if (bottom_spline.numControlPoints() < 2) {
-            std::vector<QPointF> const& polyline = m_distortionModel.bottomCurve().polyline();
+            const std::vector<QPointF>& polyline = m_distortionModel.bottomCurve().polyline();
 
             XSpline new_bottom_spline;
             if (polyline.size() < 2) {
@@ -110,16 +110,15 @@ namespace output {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    DewarpingView::~DewarpingView() {
-    }
+    DewarpingView::~DewarpingView() = default;
 
     void DewarpingView::initNewSpline(XSpline& spline,
-                                      QPointF const& p1,
-                                      QPointF const& p2,
-                                      DewarpingOptions const* p_dewarpingOptions) {
-        QLineF const line(p1, p2);
+                                      const QPointF& p1,
+                                      const QPointF& p2,
+                                      const DewarpingOptions* p_dewarpingOptions) {
+        const QLineF line(p1, p2);
         spline.appendControlPoint(line.p1(), 0);
-        if ((*p_dewarpingOptions).mode() == DewarpingOptions::AUTO) {
+        if ((*p_dewarpingOptions).dewarpingMode() == AUTO) {
             spline.appendControlPoint(line.pointAt(1.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(2.0 / 4.0), 1);
             spline.appendControlPoint(line.pointAt(3.0 / 4.0), 1);
@@ -127,11 +126,11 @@ namespace output {
         spline.appendControlPoint(line.p2(), 0);
     }
 
-    void DewarpingView::fitSpline(XSpline& spline, std::vector<QPointF> const& polyline) {
+    void DewarpingView::fitSpline(XSpline& spline, const std::vector<QPointF>& polyline) {
         using namespace spfit;
 
         SplineFitter fitter(&spline);
-        PolylineModelShape const model_shape(polyline);
+        const PolylineModelShape model_shape(polyline);
 
         ConstraintSet constraints(&spline);
         constraints.constrainSplinePoint(0.0, polyline.front());
@@ -154,7 +153,7 @@ namespace output {
             double internal_force_weight = balancer.calcInternalForceWeight(
                     fitter.internalForce(), fitter.externalForce()
             );
-            OptimizationResult const res(fitter.optimize(internal_force_weight));
+            const OptimizationResult res(fitter.optimize(internal_force_weight));
             if (dewarping::Curve::splineHasLoops(spline)) {
                 fitter.undoLastStep();
                 break;
@@ -171,7 +170,7 @@ namespace output {
         update();
     }
 
-    void DewarpingView::onPaint(QPainter& painter, InteractionState const& interaction) {
+    void DewarpingView::onPaint(QPainter& painter, const InteractionState& interaction) {
         painter.setRenderHint(QPainter::Antialiasing);
 
         painter.setPen(Qt::NoPen);
@@ -189,8 +188,8 @@ namespace output {
         painter.setPen(grid_pen);
         painter.setBrush(Qt::NoBrush);
 
-        int const num_vert_grid_lines = 30;
-        int const num_hor_grid_lines = 30;
+        const int num_vert_grid_lines = 30;
+        const int num_hor_grid_lines = 30;
 
         bool valid_model = m_distortionModel.isValid();
 
@@ -205,29 +204,29 @@ namespace output {
                 dewarping::CylindricalSurfaceDewarper::State state;
 
                 for (int j = 0; j < num_vert_grid_lines; ++j) {
-                    double const x = j / (num_vert_grid_lines - 1.0);
-                    dewarping::CylindricalSurfaceDewarper::Generatrix const gtx(dewarper.mapGeneratrix(x, state));
-                    QPointF const gtx_p0(gtx.imgLine.pointAt(gtx.pln2img(0)));
-                    QPointF const gtx_p1(gtx.imgLine.pointAt(gtx.pln2img(1)));
+                    const double x = j / (num_vert_grid_lines - 1.0);
+                    const dewarping::CylindricalSurfaceDewarper::Generatrix gtx(dewarper.mapGeneratrix(x, state));
+                    const QPointF gtx_p0(gtx.imgLine.pointAt(gtx.pln2img(0)));
+                    const QPointF gtx_p1(gtx.imgLine.pointAt(gtx.pln2img(1)));
                     painter.drawLine(gtx_p0, gtx_p1);
                     for (int i = 0; i < num_hor_grid_lines; ++i) {
-                        double const y = i / (num_hor_grid_lines - 1.0);
+                        const double y = i / (num_hor_grid_lines - 1.0);
                         curves[i].push_back(gtx.imgLine.pointAt(gtx.pln2img(y)));
                     }
                 }
 
-                for (QVector<QPointF> const& curve : curves) {
+                for (const QVector<QPointF>& curve : curves) {
                     painter.drawPolyline(curve);
                 }
-            } catch (std::runtime_error const&) {
+            } catch (const std::runtime_error&) {
                 // Still probably a bad model, even though DistortionModel::isValid() was true.
                 valid_model = false;
             }
         }  // valid_model
         if (!valid_model) {
             // Just draw the frame.
-            dewarping::Curve const& top_curve = m_distortionModel.topCurve();
-            dewarping::Curve const& bottom_curve = m_distortionModel.bottomCurve();
+            const dewarping::Curve& top_curve = m_distortionModel.topCurve();
+            const dewarping::Curve& bottom_curve = m_distortionModel.bottomCurve();
             painter.drawLine(top_curve.polyline().front(), bottom_curve.polyline().front());
             painter.drawLine(top_curve.polyline().back(), bottom_curve.polyline().back());
             painter.drawPolyline(QVector<QPointF>::fromStdVector(top_curve.polyline()));
@@ -239,9 +238,9 @@ namespace output {
     }  // DewarpingView::onPaint
 
     void DewarpingView::paintXSpline(QPainter& painter,
-                                     InteractionState const& interaction,
-                                     InteractiveXSpline const& ispline) {
-        XSpline const& spline = ispline.spline();
+                                     const InteractionState& interaction,
+                                     const InteractiveXSpline& ispline) {
+        const XSpline& spline = ispline.spline();
 
         painter.save();
         painter.setBrush(Qt::NoBrush);
@@ -254,7 +253,7 @@ namespace output {
         curve_pen.setCosmetic(true);
         painter.setPen(curve_pen);
 
-        std::vector<QPointF> const polyline(spline.toPolyline());
+        const std::vector<QPointF> polyline(spline.toPolyline());
         painter.drawPolyline(&polyline[0], polyline.size());
 #endif
         // Drawing cosmetic points in transformed coordinates seems unreliable,
@@ -266,7 +265,7 @@ namespace output {
         existing_point_pen.setCosmetic(true);
         painter.setPen(existing_point_pen);
 
-        int const num_control_points = spline.numControlPoints();
+        const int num_control_points = spline.numControlPoints();
         for (int i = 0; i < num_control_points; ++i) {
             painter.drawPoint(sourceToWidget(spline.controlPointPosition(i)));
         }
@@ -292,26 +291,26 @@ namespace output {
     }
 
     void DewarpingView::dragFinished() {
-        if ((m_dewarpingOptions.mode() == DewarpingOptions::AUTO)
-            || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL)) {
-            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
+        if ((m_dewarpingOptions.dewarpingMode() == AUTO)
+            || (m_dewarpingOptions.dewarpingMode() == MARGINAL)) {
+            m_dewarpingOptions.setDewarpingMode(MANUAL);
         }
         emit distortionModelChanged(m_distortionModel);
     }
 
 /** Source image coordinates to widget coordinates. */
-    QPointF DewarpingView::sourceToWidget(QPointF const& pt) const {
+    QPointF DewarpingView::sourceToWidget(const QPointF& pt) const {
         return virtualToWidget().map(imageToVirtual().map(pt));
     }
 
 /** Widget coordinates to source image coordinates. */
-    QPointF DewarpingView::widgetToSource(QPointF const& pt) const {
+    QPointF DewarpingView::widgetToSource(const QPointF& pt) const {
         return virtualToImage().map(widgetToVirtual().map(pt));
     }
 
     QPolygonF DewarpingView::virtMarginArea(int margin_idx) const {
-        dewarping::Curve const& top_curve = m_distortionModel.topCurve();
-        dewarping::Curve const& bottom_curve = m_distortionModel.bottomCurve();
+        const dewarping::Curve& top_curve = m_distortionModel.topCurve();
+        const dewarping::Curve& bottom_curve = m_distortionModel.bottomCurve();
 
         QLineF vert_boundary;  // From top to bottom, that's important!
         if (margin_idx == 0) {  // Left margin.
@@ -336,10 +335,10 @@ namespace output {
         double min = NumericTraits<double>::max();
         double max = NumericTraits<double>::min();
         double normal_max = max;
-        ToLineProjector const vert_line_projector(vert_boundary);
-        ToLineProjector const normal_projector(normal);
-        for (QPointF const& pt : m_virtDisplayArea) {
-            double const p1 = vert_line_projector.projectionScalar(pt);
+        const ToLineProjector vert_line_projector(vert_boundary);
+        const ToLineProjector normal_projector(normal);
+        for (const QPointF& pt : m_virtDisplayArea) {
+            const double p1 = vert_line_projector.projectionScalar(pt);
             if (p1 < min) {
                 min = p1;
             }
@@ -347,7 +346,7 @@ namespace output {
                 max = p1;
             }
 
-            double const p2 = normal_projector.projectionScalar(pt);
+            const double p2 = normal_projector.projectionScalar(pt);
             if (p2 > normal_max) {
                 normal_max = p2;
             }

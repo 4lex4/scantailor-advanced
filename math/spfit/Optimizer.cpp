@@ -30,9 +30,9 @@ namespace spfit {
               m_internalForce(num_vars) {
     }
 
-    void Optimizer::setConstraints(std::list<LinearFunction> const& constraints) {
-        size_t const num_constraints = constraints.size();
-        size_t const num_dimensions = m_numVars + num_constraints;
+    void Optimizer::setConstraints(const std::list<LinearFunction>& constraints) {
+        const size_t num_constraints = constraints.size();
+        const size_t num_dimensions = m_numVars + num_constraints;
 
         MatT<double> A(num_dimensions, num_dimensions);
         VecT<double> b(num_dimensions);
@@ -49,7 +49,7 @@ namespace spfit {
         // D: constant part of the gradient of the function we are optimizing.
         // J: constant part of constraint functions.
 
-        std::list<LinearFunction>::const_iterator ctr(constraints.begin());
+        auto ctr(constraints.begin());
         for (size_t i = m_numVars; i < num_dimensions; ++i, ++ctr) {
             b[i] = -ctr->b;
             for (size_t j = 0; j < m_numVars; ++j) {
@@ -62,16 +62,16 @@ namespace spfit {
         m_b.swap(b);
     } // Optimizer::setConstraints
 
-    void Optimizer::addExternalForce(QuadraticFunction const& force) {
+    void Optimizer::addExternalForce(const QuadraticFunction& force) {
         m_externalForce += force;
     }
 
-    void Optimizer::addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map) {
-        size_t const num_vars = force.numVars();
+    void Optimizer::addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
+        const size_t num_vars = force.numVars();
         for (size_t i = 0; i < num_vars; ++i) {
-            int const ii = sparse_map[i];
+            const int ii = sparse_map[i];
             for (size_t j = 0; j < num_vars; ++j) {
-                int const jj = sparse_map[j];
+                const int jj = sparse_map[j];
                 m_externalForce.A(ii, jj) += force.A(i, j);
             }
             m_externalForce.b[ii] += force.b[i];
@@ -79,16 +79,16 @@ namespace spfit {
         m_externalForce.c += force.c;
     }
 
-    void Optimizer::addInternalForce(QuadraticFunction const& force) {
+    void Optimizer::addInternalForce(const QuadraticFunction& force) {
         m_internalForce += force;
     }
 
-    void Optimizer::addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map) {
-        size_t const num_vars = force.numVars();
+    void Optimizer::addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
+        const size_t num_vars = force.numVars();
         for (size_t i = 0; i < num_vars; ++i) {
-            int const ii = sparse_map[i];
+            const int ii = sparse_map[i];
             for (size_t j = 0; j < num_vars; ++j) {
-                int const jj = sparse_map[j];
+                const int jj = sparse_map[j];
                 m_internalForce.A(ii, jj) += force.A(i, j);
             }
             m_internalForce.b[ii] += force.b[i];
@@ -103,7 +103,7 @@ namespace spfit {
         m_internalForce += m_externalForce;
 
         // For the layout of m_A and m_b, see setConstraints()
-        QuadraticFunction::Gradient const grad(m_internalForce.gradient());
+        const QuadraticFunction::Gradient grad(m_internalForce.gradient());
         for (size_t i = 0; i < m_numVars; ++i) {
             m_b[i] = -grad.b[i];
             for (size_t j = 0; j < m_numVars; ++j) {
@@ -111,12 +111,12 @@ namespace spfit {
             }
         }
 
-        double const total_force_before = m_internalForce.c;
+        const double total_force_before = m_internalForce.c;
         DynamicMatrixCalc<double> mc;
 
         try {
             mc(m_A).solve(mc(m_b)).write(m_x.data());
-        } catch (std::runtime_error const&) {
+        } catch (const std::runtime_error&) {
             m_externalForce.reset();
             m_internalForce.reset();
             m_x.fill(0);  // To make undoLastStep() work as expected.
@@ -124,7 +124,7 @@ namespace spfit {
             return OptimizationResult(total_force_before, total_force_before);
         }
 
-        double const total_force_after = m_internalForce.evaluate(m_x.data());
+        const double total_force_after = m_internalForce.evaluate(m_x.data());
         m_externalForce.reset();  // Now it's finally safe to reset these.
         m_internalForce.reset();
         // The last thing remaining is to adjust constraints,
@@ -144,7 +144,7 @@ namespace spfit {
  * direction == -1 is used for undoing the last step.
  */
     void Optimizer::adjustConstraints(double direction) {
-        size_t const num_dimensions = m_b.size();
+        const size_t num_dimensions = m_b.size();
         for (size_t i = m_numVars; i < num_dimensions; ++i) {
             // See setConstraints() for more information
             // on the layout of m_A and m_b.

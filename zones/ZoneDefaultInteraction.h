@@ -35,24 +35,28 @@ class ZoneInteractionContext;
 class ZoneDefaultInteraction : public InteractionHandler {
 Q_DECLARE_TR_FUNCTIONS(ZoneDefaultInteraction)
 public:
-    ZoneDefaultInteraction(ZoneInteractionContext& context);
+    explicit ZoneDefaultInteraction(ZoneInteractionContext& context);
 
 protected:
     ZoneInteractionContext& context() {
         return m_rContext;
     }
 
-    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    virtual void onProximityUpdate(QPointF const& mouse_pos, InteractionState& interaction);
+    void onProximityUpdate(const QPointF& mouse_pos, InteractionState& interaction) override;
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
+
+    void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
+
+    void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
 private:
     ZoneInteractionContext& m_rContext;
@@ -60,7 +64,10 @@ private:
     InteractionState::Captor m_vertexProximity;
     InteractionState::Captor m_segmentProximity;
     InteractionState::Captor m_zoneAreaProximity;
+    InteractionState::Captor m_zoneAreaDragProximity;
+    InteractionState::Captor m_zoneAreaDragCopyProximity;
     QPointF m_screenMousePos;
+    Qt::KeyboardModifiers m_activeKeyboardModifiers;
 
     /**
      * We want our own drag handler, to be able to monitor it
@@ -84,6 +91,7 @@ private:
     SplineSegment m_nearestSegment;
     EditableSpline::Ptr m_ptrNearestSegmentSpline;
     QPointF m_screenPointOnSegment;
+    EditableSpline::Ptr m_ptrUnderCursorSpline;
 };
 
 

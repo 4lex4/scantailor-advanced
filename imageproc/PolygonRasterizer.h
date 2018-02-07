@@ -31,13 +31,13 @@ namespace imageproc {
 
     class PolygonRasterizer {
     public:
-        static void fill(BinaryImage& image, BWColor color, QPolygonF const& poly, Qt::FillRule fill_rule);
+        static void fill(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void fillExcept(BinaryImage& image, BWColor color, QPolygonF const& poly, Qt::FillRule fill_rule);
+        static void fillExcept(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void grayFill(QImage& image, unsigned char color, QPolygonF const& poly, Qt::FillRule fill_rule);
+        static void grayFill(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void grayFillExcept(QImage& image, unsigned char color, QPolygonF const& poly, Qt::FillRule fill_rule);
+        static void grayFillExcept(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
     private:
         class Edge;

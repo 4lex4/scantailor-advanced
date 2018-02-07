@@ -31,7 +31,7 @@ class QPainter;
  */
 class BubbleAnimation {
 public:
-    BubbleAnimation(int num_bubbles);
+    explicit BubbleAnimation(int num_bubbles);
 
     /**
      * \brief Renders the next frame of the animation.
@@ -45,7 +45,7 @@ public:
      * \return Whether more frames follow.  After returning false,
      *         the next call will render the first frame again.
      */
-    bool nextFrame(QColor const& head_color, QColor const& tail_color, QPaintDevice* pd, QRectF rect = QRectF());
+    bool nextFrame(const QColor& head_color, const QColor& tail_color, QPaintDevice* pd, QRectF rect = QRectF());
 
     /**
      * \brief Renders the next frame of the animation.
@@ -59,7 +59,7 @@ public:
      * \return Whether more frames follow.  After returning false,
      *         the next call will render the first frame again.
      */
-    bool nextFrame(QColor const& head_color, QColor const& tail_color, QPainter* painter, QRectF rect);
+    bool nextFrame(const QColor& head_color, const QColor& tail_color, QPainter* painter, QRectF rect);
 
 private:
     int m_numBubbles;

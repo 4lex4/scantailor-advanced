@@ -21,22 +21,22 @@
 #include "ApplyDialog.h"
 #include "Settings.h"
 #include "ProjectPages.h"
-#include <assert.h>
+#include <cassert>
+#include <utility>
 
 namespace fix_orientation {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
+                                 const PageSelectionAccessor& page_selection_accessor)
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor) {
         setupUi(this);
 
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(PageId const& page_id, OrthogonalRotation const rotation) {
+    void OptionsWidget::preUpdateUI(const PageId& page_id, const OrthogonalRotation rotation) {
         removeUiConnections();
 
         m_pageId = page_id;
@@ -46,7 +46,7 @@ namespace fix_orientation {
         setupUiConnections();
     }
 
-    void OptionsWidget::postUpdateUI(OrthogonalRotation const rotation) {
+    void OptionsWidget::postUpdateUI(const OrthogonalRotation rotation) {
         removeUiConnections();
 
         setRotation(rotation);
@@ -71,22 +71,22 @@ namespace fix_orientation {
     }
 
     void OptionsWidget::showApplyToDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
-                this, SLOT(appliedTo(std::set<PageId> const &))
+                dialog, SIGNAL(appliedTo(const std::set<PageId> &)),
+                this, SLOT(appliedTo(const std::set<PageId> &))
         );
         connect(
-                dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
-                this, SLOT(appliedToAllPages(std::set<PageId> const &))
+                dialog, SIGNAL(appliedToAllPages(const std::set<PageId> &)),
+                this, SLOT(appliedToAllPages(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::appliedTo(std::set<PageId> const& pages) {
+    void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
         if (pages.empty()) {
             return;
         }
@@ -96,18 +96,18 @@ namespace fix_orientation {
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
     }
 
-    void OptionsWidget::appliedToAllPages(std::set<PageId> const& pages) {
+    void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
         m_ptrSettings->applyRotation(pages, m_rotation);
         emit invalidateAllThumbnails();
     }
 
-    void OptionsWidget::setRotation(OrthogonalRotation const rotation) {
+    void OptionsWidget::setRotation(const OrthogonalRotation& rotation) {
         if (rotation == m_rotation) {
             return;
         }
@@ -122,7 +122,7 @@ namespace fix_orientation {
     }
 
     void OptionsWidget::setRotationPixmap() {
-        char const* path = nullptr;
+        const char* path = nullptr;
 
         switch (m_rotation.toDegrees()) {
             case 0:

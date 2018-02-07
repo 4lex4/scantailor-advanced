@@ -26,51 +26,59 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
+    enum FillingColor {
+        FILL_BACKGROUND,
+        FILL_WHITE
+    };
+
     class ColorCommonOptions {
     public:
-        enum FillingColor {
-            BACKGROUND,
-            WHITE
-        };
-
         ColorCommonOptions();
 
-        explicit ColorCommonOptions(QDomElement const& el);
+        explicit ColorCommonOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool cutMargins() const {
-            return m_cutMargins;
-        }
+        bool cutMargins() const;
 
-        void setCutMargins(bool val) {
-            m_cutMargins = val;
-        }
+        void setCutMargins(bool val);
 
-        bool normalizeIllumination() const {
-            return m_normalizeIllumination;
-        }
+        bool normalizeIllumination() const;
 
-        void setNormalizeIllumination(bool val) {
-            m_normalizeIllumination = val;
-        }
+        void setNormalizeIllumination(bool val);
 
         FillingColor getFillingColor() const;
 
         void setFillingColor(FillingColor fillingColor);
 
-        bool operator==(ColorCommonOptions const& other) const;
+        bool operator==(const ColorCommonOptions& other) const;
 
-        bool operator!=(ColorCommonOptions const& other) const;
+        bool operator!=(const ColorCommonOptions& other) const;
+
+        bool isPosterizeEnabled() const;
+
+        void setPosterizeEnabled(bool posterizeEnabled);
+
+        int getPosterizationLevel() const;
+
+        void setPosterizationLevel(int posterizationLevel);
+
+        bool isForceBlackAndWhite() const;
+
+        void setForceBlackAndWhite(bool forceBlackAndWhite);
 
     private:
         static FillingColor parseFillingColor(const QString& str);
 
         static QString formatFillingColor(FillingColor type);
 
+
         bool m_cutMargins;
         bool m_normalizeIllumination;
         FillingColor m_fillingColor;
+        bool m_posterizeEnabled;
+        int m_posterizationLevel;
+        bool m_forceBlackAndWhite;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

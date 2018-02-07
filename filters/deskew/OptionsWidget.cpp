@@ -17,16 +17,18 @@
  */
 
 #include "OptionsWidget.h"
+
+#include <utility>
 #include "Settings.h"
 #include "ScopedIncDec.h"
 #include "ApplyDialog.h"
 
 namespace deskew {
-    double const OptionsWidget::MAX_ANGLE = 45.0;
+    const double OptionsWidget::MAX_ANGLE = 45.0;
 
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
+                                 const PageSelectionAccessor& page_selection_accessor)
+            : m_ptrSettings(std::move(settings)),
               m_ignoreAutoManualToggle(0),
               m_ignoreSpinBoxChanges(0),
               m_pageSelectionAccessor(page_selection_accessor) {
@@ -39,32 +41,31 @@ namespace deskew {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
     void OptionsWidget::showDeskewDialog() {
-        ApplyDialog* dialog = new ApplyDialog(
+        auto* dialog = new ApplyDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Deskew"));
         connect(
-                dialog, SIGNAL(appliedTo(std::set<PageId> const &)),
-                this, SLOT(appliedTo(std::set<PageId> const &))
+                dialog, SIGNAL(appliedTo(const std::set<PageId> &)),
+                this, SLOT(appliedTo(const std::set<PageId> &))
         );
         connect(
-                dialog, SIGNAL(appliedToAllPages(std::set<PageId> const &)),
-                this, SLOT(appliedToAllPages(std::set<PageId> const &))
+                dialog, SIGNAL(appliedToAllPages(const std::set<PageId> &)),
+                this, SLOT(appliedToAllPages(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::appliedTo(std::set<PageId> const& pages) {
+    void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
         if (pages.empty()) {
             return;
         }
 
-        Params const params(
+        const Params params(
                 m_uiData.effectiveDeskewAngle(),
                 m_uiData.dependencies(), m_uiData.mode()
         );
@@ -73,18 +74,18 @@ namespace deskew {
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
     }
 
-    void OptionsWidget::appliedToAllPages(std::set<PageId> const& pages) {
+    void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
         if (pages.empty()) {
             return;
         }
 
-        Params const params(
+        const Params params(
                 m_uiData.effectiveDeskewAngle(),
                 m_uiData.dependencies(), m_uiData.mode()
         );
@@ -92,7 +93,7 @@ namespace deskew {
         emit invalidateAllThumbnails();
     }
 
-    void OptionsWidget::manualDeskewAngleSetExternally(double const degrees) {
+    void OptionsWidget::manualDeskewAngleSetExternally(const double degrees) {
         m_uiData.setEffectiveDeskewAngle(degrees);
         m_uiData.setMode(MODE_MANUAL);
         updateModeIndication(MODE_MANUAL);
@@ -102,7 +103,7 @@ namespace deskew {
         emit invalidateThumbnail(m_pageId);
     }
 
-    void OptionsWidget::preUpdateUI(PageId const& page_id) {
+    void OptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
@@ -116,7 +117,7 @@ namespace deskew {
         setupUiConnections();
     }
 
-    void OptionsWidget::postUpdateUI(UiData const& ui_data) {
+    void OptionsWidget::postUpdateUI(const UiData& ui_data) {
         removeUiConnections();
 
         m_uiData = ui_data;
@@ -128,12 +129,12 @@ namespace deskew {
         setupUiConnections();
     }
 
-    void OptionsWidget::spinBoxValueChanged(double const value) {
+    void OptionsWidget::spinBoxValueChanged(const double value) {
         if (m_ignoreSpinBoxChanges) {
             return;
         }
 
-        double const degrees = spinBoxToDegrees(value);
+        const double degrees = spinBoxToDegrees(value);
         m_uiData.setEffectiveDeskewAngle(degrees);
         m_uiData.setMode(MODE_MANUAL);
         updateModeIndication(MODE_MANUAL);
@@ -143,7 +144,7 @@ namespace deskew {
         emit invalidateThumbnail(m_pageId);
     }
 
-    void OptionsWidget::modeChanged(bool const auto_mode) {
+    void OptionsWidget::modeChanged(const bool auto_mode) {
         if (m_ignoreAutoManualToggle) {
             return;
         }
@@ -158,7 +159,7 @@ namespace deskew {
         }
     }
 
-    void OptionsWidget::updateModeIndication(AutoManualMode const mode) {
+    void OptionsWidget::updateModeIndication(const AutoManualMode mode) {
         ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
         if (mode == MODE_AUTO) {
@@ -177,7 +178,7 @@ namespace deskew {
         angleSpinBox->setEnabled(false);
     }
 
-    void OptionsWidget::setSpinBoxKnownState(double const angle) {
+    void OptionsWidget::setSpinBoxKnownState(const double angle) {
         ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
 
         angleSpinBox->setSpecialValueText("");
@@ -197,7 +198,7 @@ namespace deskew {
         m_ptrSettings->setPageParams(m_pageId, params);
     }
 
-    double OptionsWidget::spinBoxToDegrees(double const sb_value) {
+    double OptionsWidget::spinBoxToDegrees(const double sb_value) {
         // The spin box shows the angle in a usual geometric way,
         // with positive angles going counter-clockwise.
         // Internally, we operate with angles going clockwise,
@@ -205,7 +206,7 @@ namespace deskew {
         return -sb_value;
     }
 
-    double OptionsWidget::degreesToSpinBox(double const degrees) {
+    double OptionsWidget::degreesToSpinBox(const double degrees) {
         // See above.
         return -degrees;
     }
@@ -241,10 +242,9 @@ namespace deskew {
               m_mode(MODE_AUTO) {
     }
 
-    OptionsWidget::UiData::~UiData() {
-    }
+    OptionsWidget::UiData::~UiData() = default;
 
-    void OptionsWidget::UiData::setEffectiveDeskewAngle(double const degrees) {
+    void OptionsWidget::UiData::setEffectiveDeskewAngle(const double degrees) {
         m_effDeskewAngle = degrees;
     }
 
@@ -252,15 +252,15 @@ namespace deskew {
         return m_effDeskewAngle;
     }
 
-    void OptionsWidget::UiData::setDependencies(Dependencies const& deps) {
+    void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
         m_deps = deps;
     }
 
-    Dependencies const& OptionsWidget::UiData::dependencies() const {
+    const Dependencies& OptionsWidget::UiData::dependencies() const {
         return m_deps;
     }
 
-    void OptionsWidget::UiData::setMode(AutoManualMode const mode) {
+    void OptionsWidget::UiData::setMode(const AutoManualMode mode) {
         m_mode = mode;
     }
 

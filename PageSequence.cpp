@@ -18,25 +18,25 @@
 
 #include "PageSequence.h"
 
-void PageSequence::append(PageInfo const& page_info) {
+void PageSequence::append(const PageInfo& page_info) {
     m_pages.push_back(page_info);
 }
 
-PageInfo const& PageSequence::pageAt(size_t const idx) const {
+const PageInfo& PageSequence::pageAt(const size_t idx) const {
     return m_pages.at(idx);  // may throw
 }
 
-PageInfo const& PageSequence::pageAt(PageId const page) const {
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+const PageInfo& PageSequence::pageAt(const PageId page) const {
+    auto it(m_pages.begin());
+    const auto end(m_pages.end());
     for (; it != end && it->id() != page; ++it) {
     }
     return *it;
 }
 
-int PageSequence::pageNo(PageId const& page) const {
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+int PageSequence::pageNo(const PageId& page) const {
+    auto it(m_pages.begin());
+    const auto end(m_pages.end());
     int res = 0;
     for (; it != end && it->id() != page; ++it, ++res) {
     }
@@ -47,7 +47,7 @@ std::set<PageId>
 PageSequence::selectAll() const {
     std::set<PageId> selection;
 
-    for (PageInfo const& page_info : m_pages) {
+    for (const PageInfo& page_info : m_pages) {
         selection.insert(page_info.id());
     }
 
@@ -55,11 +55,11 @@ PageSequence::selectAll() const {
 }
 
 std::set<PageId>
-PageSequence::selectPagePlusFollowers(PageId const& page) const {
+PageSequence::selectPagePlusFollowers(const PageId& page) const {
     std::set<PageId> selection;
 
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    const auto end(m_pages.end());
     for (; it != end && it->id() != page; ++it) {
         // Continue until we have a match.
     }
@@ -71,11 +71,11 @@ PageSequence::selectPagePlusFollowers(PageId const& page) const {
 }
 
 std::set<PageId>
-PageSequence::selectEveryOther(PageId const& base) const {
+PageSequence::selectEveryOther(const PageId& base) const {
     std::set<PageId> selection;
 
-    std::vector<PageInfo>::const_iterator it(m_pages.begin());
-    std::vector<PageInfo>::const_iterator const end(m_pages.end());
+    auto it(m_pages.begin());
+    const auto end(m_pages.end());
     for (; it != end && it->id() != base; ++it) {
         // Continue until we have a match.
     }
@@ -83,9 +83,9 @@ PageSequence::selectEveryOther(PageId const& base) const {
         return selection;
     }
 
-    int const base_idx = it - m_pages.begin();
+    const int base_idx = static_cast<const int>(it - m_pages.begin());
     int idx = 0;
-    for (PageInfo const& page_info : m_pages) {
+    for (const PageInfo& page_info : m_pages) {
         if (((idx - base_idx) & 1) == 0) {
             selection.insert(page_info.id());
         }

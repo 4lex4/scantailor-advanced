@@ -21,13 +21,20 @@
 #include "FileNameDisambiguator.h"
 #include "AbstractFilter.h"
 #include "XmlUnmarshaller.h"
+#include "version.h"
 #include <QDir>
 #include <boost/bind.hpp>
 
-ProjectReader::ProjectReader(QDomDocument const& doc)
+ProjectReader::ProjectReader(const QDomDocument& doc)
         : m_doc(doc),
           m_ptrDisambiguator(new FileNameDisambiguator) {
     QDomElement project_el(m_doc.documentElement());
+    
+    m_version = project_el.attribute("version");
+    if (m_version.isNull() || (m_version.toInt() != PROJECT_VERSION)) {
+        return;
+    }
+
     m_outDir = project_el.attribute("outputDirectory");
 
     Qt::LayoutDirection layout_direction = Qt::LeftToRight;
@@ -35,31 +42,31 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
         layout_direction = Qt::RightToLeft;
     }
 
-    QDomElement const dirs_el(project_el.namedItem("directories").toElement());
+    const QDomElement dirs_el(project_el.namedItem("directories").toElement());
     if (dirs_el.isNull()) {
         return;
     }
     processDirectories(dirs_el);
 
-    QDomElement const files_el(project_el.namedItem("files").toElement());
+    const QDomElement files_el(project_el.namedItem("files").toElement());
     if (files_el.isNull()) {
         return;
     }
     processFiles(files_el);
 
-    QDomElement const images_el(project_el.namedItem("images").toElement());
+    const QDomElement images_el(project_el.namedItem("images").toElement());
     if (images_el.isNull()) {
         return;
     }
     processImages(images_el, layout_direction);
 
-    QDomElement const pages_el(project_el.namedItem("pages").toElement());
+    const QDomElement pages_el(project_el.namedItem("pages").toElement());
     if (pages_el.isNull()) {
         return;
     }
     processPages(pages_el);
     // Load naming disambiguator.  This needs to be done after processing pages.
-    QDomElement const disambig_el(
+    const QDomElement disambig_el(
             project_el.namedItem("file-name-disambiguation").toElement()
     );
     m_ptrDisambiguator.reset(
@@ -69,22 +76,21 @@ ProjectReader::ProjectReader(QDomDocument const& doc)
     );
 }
 
-ProjectReader::~ProjectReader() {
-}
+ProjectReader::~ProjectReader() = default;
 
-void ProjectReader::readFilterSettings(std::vector<FilterPtr> const& filters) const {
+void ProjectReader::readFilterSettings(const std::vector<FilterPtr>& filters) const {
     QDomElement project_el(m_doc.documentElement());
     QDomElement filters_el(project_el.namedItem("filters").toElement());
 
-    std::vector<FilterPtr>::const_iterator it(filters.begin());
-    std::vector<FilterPtr>::const_iterator const end(filters.end());
+    auto it(filters.begin());
+    const auto end(filters.end());
     for (; it != end; ++it) {
         (*it)->loadSettings(*this, filters_el);
     }
 }
 
-void ProjectReader::processDirectories(QDomElement const& dirs_el) {
-    QString const dir_tag_name("directory");
+void ProjectReader::processDirectories(const QDomElement& dirs_el) {
+    const QString dir_tag_name("directory");
 
     QDomNode node(dirs_el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -97,12 +103,12 @@ void ProjectReader::processDirectories(QDomElement const& dirs_el) {
         QDomElement el(node.toElement());
 
         bool ok = true;
-        int const id = el.attribute("id").toInt(&ok);
+        const int id = el.attribute("id").toInt(&ok);
         if (!ok) {
             continue;
         }
 
-        QString const path(el.attribute("path"));
+        const QString path(el.attribute("path"));
         if (path.isEmpty()) {
             continue;
         }
@@ -111,8 +117,8 @@ void ProjectReader::processDirectories(QDomElement const& dirs_el) {
     }
 }
 
-void ProjectReader::processFiles(QDomElement const& files_el) {
-    QString const file_tag_name("file");
+void ProjectReader::processFiles(const QDomElement& files_el) {
+    const QString file_tag_name("file");
 
     QDomNode node(files_el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -125,36 +131,36 @@ void ProjectReader::processFiles(QDomElement const& files_el) {
         QDomElement el(node.toElement());
 
         bool ok = true;
-        int const id = el.attribute("id").toInt(&ok);
+        const int id = el.attribute("id").toInt(&ok);
         if (!ok) {
             continue;
         }
-        int const dir_id = el.attribute("dirId").toInt(&ok);
+        const int dir_id = el.attribute("dirId").toInt(&ok);
         if (!ok) {
             continue;
         }
 
-        QString const name(el.attribute("name"));
+        const QString name(el.attribute("name"));
         if (name.isEmpty()) {
             continue;
         }
 
-        QString const dir_path(getDirPath(dir_id));
+        const QString dir_path(getDirPath(dir_id));
         if (dir_path.isEmpty()) {
             continue;
         }
 
         // Backwards compatibility.
-        bool const compat_multi_page = (el.attribute("multiPage") == "1");
+        const bool compat_multi_page = (el.attribute("multiPage") == "1");
 
-        QString const file_path(QDir(dir_path).filePath(name));
-        FileRecord const rec(file_path, compat_multi_page);
+        const QString file_path(QDir(dir_path).filePath(name));
+        const FileRecord rec(file_path, compat_multi_page);
         m_fileMap.insert(FileMap::value_type(id, rec));
     }
 } // ProjectReader::processFiles
 
-void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirection const layout_direction) {
-    QString const image_tag_name("image");
+void ProjectReader::processImages(const QDomElement& images_el, const Qt::LayoutDirection layout_direction) {
+    const QString image_tag_name("image");
 
     std::vector<ImageInfo> images;
 
@@ -169,37 +175,37 @@ void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirect
         QDomElement el(node.toElement());
 
         bool ok = true;
-        int const id = el.attribute("id").toInt(&ok);
+        const int id = el.attribute("id").toInt(&ok);
         if (!ok) {
             continue;
         }
-        int const sub_pages = el.attribute("subPages").toInt(&ok);
+        const int sub_pages = el.attribute("subPages").toInt(&ok);
         if (!ok) {
             continue;
         }
-        int const file_id = el.attribute("fileId").toInt(&ok);
+        const int file_id = el.attribute("fileId").toInt(&ok);
         if (!ok) {
             continue;
         }
-        int const file_image = el.attribute("fileImage").toInt(&ok);
+        const int file_image = el.attribute("fileImage").toInt(&ok);
         if (!ok) {
             continue;
         }
 
-        QString const removed(el.attribute("removed"));
-        bool const left_half_removed = (removed == "L");
-        bool const right_half_removed = (removed == "R");
+        const QString removed(el.attribute("removed"));
+        const bool left_half_removed = (removed == "L");
+        const bool right_half_removed = (removed == "R");
 
-        FileRecord const file_record(getFileRecord(file_id));
+        const FileRecord file_record(getFileRecord(file_id));
         if (file_record.filePath.isEmpty()) {
             continue;
         }
-        ImageId const image_id(
+        const ImageId image_id(
                 file_record.filePath,
                 file_image + int(file_record.compatMultiPage)
         );
-        ImageMetadata const metadata(processImageMetadata(el));
-        ImageInfo const image_info(
+        const ImageMetadata metadata(processImageMetadata(el));
+        const ImageInfo image_info(
                 image_id, metadata, sub_pages,
                 left_half_removed, right_half_removed
         );
@@ -213,15 +219,15 @@ void ProjectReader::processImages(QDomElement const& images_el, Qt::LayoutDirect
     }
 } // ProjectReader::processImages
 
-ImageMetadata ProjectReader::processImageMetadata(QDomElement const& image_el) {
+ImageMetadata ProjectReader::processImageMetadata(const QDomElement& image_el) {
     QSize size;
     Dpi dpi;
 
-    QDomElement const size_el(image_el.namedItem("size").toElement());
+    const QDomElement size_el(image_el.namedItem("size").toElement());
     if (!size_el.isNull()) {
         size = XmlUnmarshaller::size(size_el);
     }
-    QDomElement const dpi_el(image_el.namedItem("dpi").toElement());
+    const QDomElement dpi_el(image_el.namedItem("dpi").toElement());
     if (!dpi_el.isNull()) {
         dpi = XmlUnmarshaller::dpi(dpi_el);
     }
@@ -229,8 +235,8 @@ ImageMetadata ProjectReader::processImageMetadata(QDomElement const& image_el) {
     return ImageMetadata(size, dpi);
 }
 
-void ProjectReader::processPages(QDomElement const& pages_el) {
-    QString const page_tag_name("page");
+void ProjectReader::processPages(const QDomElement& pages_el) {
+    const QString page_tag_name("page");
 
     QDomNode node(pages_el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -244,29 +250,29 @@ void ProjectReader::processPages(QDomElement const& pages_el) {
 
         bool ok = true;
 
-        int const id = el.attribute("id").toInt(&ok);
+        const int id = el.attribute("id").toInt(&ok);
         if (!ok) {
             continue;
         }
 
-        int const image_id = el.attribute("imageId").toInt(&ok);
+        const int image_id = el.attribute("imageId").toInt(&ok);
         if (!ok) {
             continue;
         }
 
-        PageId::SubPage const sub_page = PageId::subPageFromString(
+        const PageId::SubPage sub_page = PageId::subPageFromString(
                 el.attribute("subPage"), &ok
         );
         if (!ok) {
             continue;
         }
 
-        ImageInfo const image(getImageInfo(image_id));
+        const ImageInfo image(getImageInfo(image_id));
         if (image.id().filePath().isEmpty()) {
             continue;
         }
 
-        PageId const page_id(image.id(), sub_page);
+        const PageId page_id(image.id(), sub_page);
         m_pageMap.insert(PageMap::value_type(id, page_id));
 
         if (el.attribute("selected") == "selected") {
@@ -275,8 +281,8 @@ void ProjectReader::processPages(QDomElement const& pages_el) {
     }
 } // ProjectReader::processPages
 
-QString ProjectReader::getDirPath(int const id) const {
-    DirMap::const_iterator const it(m_dirMap.find(id));
+QString ProjectReader::getDirPath(const int id) const {
+    const auto it(m_dirMap.find(id));
     if (it != m_dirMap.end()) {
         return it->second;
     }
@@ -285,7 +291,7 @@ QString ProjectReader::getDirPath(int const id) const {
 }
 
 ProjectReader::FileRecord ProjectReader::getFileRecord(int id) const {
-    FileMap::const_iterator const it(m_fileMap.find(id));
+    const auto it(m_fileMap.find(id));
     if (it != m_fileMap.end()) {
         return it->second;
     }
@@ -293,9 +299,9 @@ ProjectReader::FileRecord ProjectReader::getFileRecord(int id) const {
     return FileRecord();
 }
 
-QString ProjectReader::expandFilePath(QString const& path_shorthand) const {
+QString ProjectReader::expandFilePath(const QString& path_shorthand) const {
     bool ok = false;
-    int const file_id = path_shorthand.toInt(&ok);
+    const int file_id = path_shorthand.toInt(&ok);
     if (!ok) {
         return QString();
     }
@@ -304,7 +310,7 @@ QString ProjectReader::expandFilePath(QString const& path_shorthand) const {
 }
 
 ImageInfo ProjectReader::getImageInfo(int id) const {
-    ImageMap::const_iterator it(m_imageMap.find(id));
+    auto it(m_imageMap.find(id));
     if (it != m_imageMap.end()) {
         return it->second;
     }
@@ -312,8 +318,8 @@ ImageInfo ProjectReader::getImageInfo(int id) const {
     return ImageInfo();
 }
 
-ImageId ProjectReader::imageId(int const numeric_id) const {
-    ImageMap::const_iterator it(m_imageMap.find(numeric_id));
+ImageId ProjectReader::imageId(const int numeric_id) const {
+    auto it(m_imageMap.find(numeric_id));
     if (it != m_imageMap.end()) {
         return it->second.id();
     }
@@ -322,7 +328,7 @@ ImageId ProjectReader::imageId(int const numeric_id) const {
 }
 
 PageId ProjectReader::pageId(int numeric_id) const {
-    PageMap::const_iterator it(m_pageMap.find(numeric_id));
+    auto it(m_pageMap.find(numeric_id));
     if (it != m_pageMap.end()) {
         return it->second;
     }

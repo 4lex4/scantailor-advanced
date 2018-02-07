@@ -23,39 +23,39 @@
 #include <QtXml/QDomElement>
 
 namespace output {
+    enum DewarpingMode {
+        OFF,
+        AUTO,
+        MANUAL,
+        MARGINAL
+    };
+
     class DewarpingOptions {
     public:
-        enum Mode {
-            OFF,
-            AUTO,
-            MANUAL,
-            MARGINAL
-        };
+        explicit DewarpingOptions(DewarpingMode mode = OFF, bool needPostDeskew = true);
 
-        explicit DewarpingOptions(Mode mode = OFF, bool needPostDeskew = true);
+        explicit DewarpingOptions(const QDomElement& el);
 
-        explicit DewarpingOptions(QDomElement const& el);
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        bool operator==(const DewarpingOptions& other) const;
 
-        bool operator==(DewarpingOptions const& other) const;
+        bool operator!=(const DewarpingOptions& other) const;
 
-        bool operator!=(DewarpingOptions const& other) const;
+        DewarpingMode dewarpingMode() const;
 
-        DewarpingOptions::Mode mode() const;
-
-        void setMode(DewarpingOptions::Mode m_mode);
+        void setDewarpingMode(DewarpingMode m_mode);
 
         bool needPostDeskew() const;
 
         void setPostDeskew(bool postDeskew);
 
-        static DewarpingOptions::Mode parseDewarpingMode(QString const& str);
+        static DewarpingMode parseDewarpingMode(const QString& str);
 
-        static QString formatDewarpingMode(DewarpingOptions::Mode mode);
+        static QString formatDewarpingMode(DewarpingMode mode);
 
     private:
-        DewarpingOptions::Mode m_mode;
+        DewarpingMode m_mode;
         bool postDeskew;
     };
 }

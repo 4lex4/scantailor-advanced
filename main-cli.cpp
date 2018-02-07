@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             cbatch.reset(new ConsoleBatch(cli.images(), cli.outputDirectory(), cli.getLayoutDirection()));
         }
         cbatch->process();
-    } catch (std::exception const& e) {
+    } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
     }

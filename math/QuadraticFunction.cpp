@@ -31,8 +31,8 @@ void QuadraticFunction::reset() {
     c = 0;
 }
 
-double QuadraticFunction::evaluate(double const* x) const {
-    size_t const num_vars = numVars();
+double QuadraticFunction::evaluate(const double* x) const {
+    const size_t num_vars = numVars();
 
     double sum = c;
     for (size_t i = 0; i < num_vars; ++i) {
@@ -46,7 +46,7 @@ double QuadraticFunction::evaluate(double const* x) const {
 }
 
 QuadraticFunction::Gradient QuadraticFunction::gradient() const {
-    size_t const num_vars = numVars();
+    const size_t num_vars = numVars();
     Gradient grad;
 
     MatT<double>(num_vars, num_vars).swap(grad.A);
@@ -61,8 +61,8 @@ QuadraticFunction::Gradient QuadraticFunction::gradient() const {
     return grad;
 }
 
-void QuadraticFunction::recalcForTranslatedArguments(double const* translation) {
-    size_t const num_vars = numVars();
+void QuadraticFunction::recalcForTranslatedArguments(const double* translation) {
+    const size_t num_vars = numVars();
 
     for (size_t i = 0; i < num_vars; ++i) {
         // Bi * (Xi + Ti) = Bi * Xi + Bi * Ti
@@ -72,7 +72,7 @@ void QuadraticFunction::recalcForTranslatedArguments(double const* translation) 
     for (size_t i = 0; i < num_vars; ++i) {
         for (size_t j = 0; j < num_vars; ++j) {
             // (Xi + Ti)*Aij*(Xj + Tj) = Xi*Aij*Xj + Aij*Tj*Xi + Aij*Ti*Xj + Aij*Ti*Tj
-            double const a = A(i, j);
+            const double a = A(i, j);
             b[i] += a * translation[j];
             b[j] += a * translation[i];
             c += a * translation[i] * translation[j];
@@ -86,7 +86,7 @@ void QuadraticFunction::swap(QuadraticFunction& other) {
     std::swap(c, other.c);
 }
 
-QuadraticFunction& QuadraticFunction::operator+=(QuadraticFunction const& other) {
+QuadraticFunction& QuadraticFunction::operator+=(const QuadraticFunction& other) {
     A += other.A;
     b += other.b;
     c += other.c;

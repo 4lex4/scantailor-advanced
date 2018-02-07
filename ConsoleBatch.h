@@ -43,15 +43,15 @@
 class ConsoleBatch {
     // Member-wise copying is OK.
 public:
-    ConsoleBatch(std::vector<ImageFileInfo> const& images,
-                 QString const& output_directory,
-                 Qt::LayoutDirection const layout);
+    ConsoleBatch(const std::vector<ImageFileInfo>& images,
+                 const QString& output_directory,
+                 const Qt::LayoutDirection layout);
 
-    ConsoleBatch(QString const project_file);
+    ConsoleBatch(const QString project_file);
 
     void process();
 
-    void saveProject(QString const project_file);
+    void saveProject(const QString project_file);
 
 private:
     bool batch;
@@ -77,7 +77,7 @@ private:
 
     void setupOutput(std::set<PageId> allPages);
 
-    BackgroundTaskPtr createCompositeTask(PageInfo const& page, int const last_filter_idx);
+    BackgroundTaskPtr createCompositeTask(const PageInfo& page, const int last_filter_idx);
 };
 
 

@@ -45,8 +45,8 @@ namespace imageproc {
                 mask_data[70 + 31] = 1;
                 mask_data[70 + 63] = 1;
 
-                BinaryImage const seed(makeBinaryImage(seed_data, 70, 2));
-                BinaryImage const mask(makeBinaryImage(mask_data, 70, 2));
+                const BinaryImage seed(makeBinaryImage(seed_data, 70, 2));
+                const BinaryImage mask(makeBinaryImage(mask_data, 70, 2));
                 BOOST_CHECK(seedFill(seed, mask, CONN8) == mask);
             }
 
@@ -62,13 +62,13 @@ namespace imageproc {
                 mask_data[70 + 31] = 1;
                 mask_data[70 + 63] = 1;
 
-                BinaryImage const seed(makeBinaryImage(seed_data, 70, 2));
-                BinaryImage const mask(makeBinaryImage(mask_data, 70, 2));
+                const BinaryImage seed(makeBinaryImage(seed_data, 70, 2));
+                const BinaryImage mask(makeBinaryImage(mask_data, 70, 2));
                 BOOST_CHECK(seedFill(seed, mask, CONN8) == BinaryImage(70, 2, WHITE));
             }
 
             BOOST_AUTO_TEST_CASE(test_regression_3) {
-                static int const seed_data[] = {
+                static const int seed_data[] = {
                         1, 1, 0, 1, 0,
                         0, 1, 0, 0, 0,
                         0, 1, 1, 0, 1,
@@ -76,7 +76,7 @@ namespace imageproc {
                         1, 1, 1, 0, 0
                 };
 
-                static int const mask_data[] = {
+                static const int mask_data[] = {
                         0, 1, 0, 0, 1,
                         0, 1, 0, 0, 0,
                         1, 0, 0, 1, 1,
@@ -84,7 +84,7 @@ namespace imageproc {
                         0, 1, 0, 0, 1
                 };
 
-                static int const fill_data[] = {
+                static const int fill_data[] = {
                         0, 1, 0, 0, 0,
                         0, 1, 0, 0, 0,
                         1, 0, 0, 1, 1,
@@ -92,15 +92,15 @@ namespace imageproc {
                         0, 1, 0, 0, 0
                 };
 
-                BinaryImage const seed(makeBinaryImage(seed_data, 5, 5));
-                BinaryImage const mask(makeBinaryImage(mask_data, 5, 5));
-                BinaryImage const fill(makeBinaryImage(fill_data, 5, 5));
+                const BinaryImage seed(makeBinaryImage(seed_data, 5, 5));
+                const BinaryImage mask(makeBinaryImage(mask_data, 5, 5));
+                const BinaryImage fill(makeBinaryImage(fill_data, 5, 5));
 
                 BOOST_REQUIRE(seedFill(seed, mask, CONN8) == fill);
             }
 
             BOOST_AUTO_TEST_CASE(test_regression_4) {
-                static int const seed_data[] = {
+                static const int seed_data[] = {
                         0, 1, 1, 0, 0,
                         1, 0, 0, 1, 0,
                         1, 1, 0, 0, 0,
@@ -108,7 +108,7 @@ namespace imageproc {
                         0, 0, 1, 1, 1
                 };
 
-                static int const mask_data[] = {
+                static const int mask_data[] = {
                         1, 1, 1, 0, 1,
                         1, 1, 0, 1, 0,
                         0, 1, 0, 1, 1,
@@ -116,7 +116,7 @@ namespace imageproc {
                         1, 0, 1, 0, 1
                 };
 
-                static int const fill_data[] = {
+                static const int fill_data[] = {
                         1, 1, 1, 0, 0,
                         1, 1, 0, 1, 0,
                         0, 1, 0, 1, 1,
@@ -124,18 +124,18 @@ namespace imageproc {
                         1, 0, 1, 0, 1
                 };
 
-                BinaryImage const seed(makeBinaryImage(seed_data, 5, 5));
-                BinaryImage const mask(makeBinaryImage(mask_data, 5, 5));
-                BinaryImage const fill(makeBinaryImage(fill_data, 5, 5));
+                const BinaryImage seed(makeBinaryImage(seed_data, 5, 5));
+                const BinaryImage mask(makeBinaryImage(mask_data, 5, 5));
+                const BinaryImage fill(makeBinaryImage(fill_data, 5, 5));
                 BOOST_REQUIRE(seedFill(seed, mask, CONN4) == fill);
             }
 
             BOOST_AUTO_TEST_CASE(test_gray4_random) {
                 for (int i = 0; i < 200; ++i) {
-                    GrayImage const seed(randomGrayImage(5, 5));
-                    GrayImage const mask(randomGrayImage(5, 5));
-                    GrayImage const fill_new(seedFillGray(seed, mask, CONN4));
-                    GrayImage const fill_old(seedFillGraySlow(seed, mask, CONN4));
+                    const GrayImage seed(randomGrayImage(5, 5));
+                    const GrayImage mask(randomGrayImage(5, 5));
+                    const GrayImage fill_new(seedFillGray(seed, mask, CONN4));
+                    const GrayImage fill_old(seedFillGraySlow(seed, mask, CONN4));
                     if (fill_new != fill_old) {
                         BOOST_ERROR("fill_new != fill_old at iteration " << i);
                         dumpGrayImage(seed, "seed");
@@ -149,10 +149,10 @@ namespace imageproc {
 
             BOOST_AUTO_TEST_CASE(test_gray8_random) {
                 for (int i = 0; i < 200; ++i) {
-                    GrayImage const seed(randomGrayImage(5, 5));
-                    GrayImage const mask(randomGrayImage(5, 5));
-                    GrayImage const fill_new(seedFillGray(seed, mask, CONN8));
-                    GrayImage const fill_old(seedFillGraySlow(seed, mask, CONN8));
+                    const GrayImage seed(randomGrayImage(5, 5));
+                    const GrayImage mask(randomGrayImage(5, 5));
+                    const GrayImage fill_new(seedFillGray(seed, mask, CONN8));
+                    const GrayImage fill_old(seedFillGraySlow(seed, mask, CONN8));
                     if (fill_new != fill_old) {
                         BOOST_ERROR("fill_new != fill_old at iteration " << i);
                         dumpGrayImage(seed, "seed");
@@ -166,14 +166,14 @@ namespace imageproc {
 
             BOOST_AUTO_TEST_CASE(test_gray_vs_binary) {
                 for (int i = 0; i < 200; ++i) {
-                    BinaryImage const bin_seed(randomBinaryImage(5, 5));
-                    BinaryImage const bin_mask(randomBinaryImage(5, 5));
-                    GrayImage const gray_seed(toGrayscale(bin_seed.toQImage()));
-                    GrayImage const gray_mask(toGrayscale(bin_mask.toQImage()));
-                    BinaryImage const fill_bin4(seedFill(bin_seed, bin_mask, CONN4));
-                    BinaryImage const fill_bin8(seedFill(bin_seed, bin_mask, CONN8));
-                    GrayImage const fill_gray4(seedFillGray(gray_seed, gray_mask, CONN4));
-                    GrayImage const fill_gray8(seedFillGray(gray_seed, gray_mask, CONN8));
+                    const BinaryImage bin_seed(randomBinaryImage(5, 5));
+                    const BinaryImage bin_mask(randomBinaryImage(5, 5));
+                    const GrayImage gray_seed(toGrayscale(bin_seed.toQImage()));
+                    const GrayImage gray_mask(toGrayscale(bin_mask.toQImage()));
+                    const BinaryImage fill_bin4(seedFill(bin_seed, bin_mask, CONN4));
+                    const BinaryImage fill_bin8(seedFill(bin_seed, bin_mask, CONN8));
+                    const GrayImage fill_gray4(seedFillGray(gray_seed, gray_mask, CONN4));
+                    const GrayImage fill_gray8(seedFillGray(gray_seed, gray_mask, CONN8));
 
                     if (fill_gray4 != GrayImage(fill_bin4.toQImage())) {
                         BOOST_ERROR("grayscale 4-fill != binary 4-fill at index " << i);

@@ -50,7 +50,7 @@ QString OpenGLSupport::deviceName() {
     QOpenGLContext context;
     QOffscreenSurface surface;
     if (context.create() && (surface.create(), true) && context.makeCurrent(&surface)) {
-        name = QString::fromUtf8((char const*) context.functions()->glGetString(GL_RENDERER));
+        name = QString::fromUtf8((const char*) context.functions()->glGetString(GL_RENDERER));
         context.doneCurrent();
     }
 

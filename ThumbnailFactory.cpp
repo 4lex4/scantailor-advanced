@@ -20,16 +20,17 @@
 #include "CompositeCacheDrivenTask.h"
 #include "filter_dc/ThumbnailCollector.h"
 #include <QGraphicsItem>
+#include <utility>
 
 class ThumbnailFactory::Collector : public ThumbnailCollector {
 public:
-    Collector(intrusive_ptr<ThumbnailPixmapCache> const& cache, QSizeF const& max_size);
+    Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size);
 
-    virtual void processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail);
+    void processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) override;
 
-    virtual intrusive_ptr<ThumbnailPixmapCache> thumbnailCache();
+    intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() override;
 
-    virtual QSizeF maxLogicalThumbSize() const;
+    QSizeF maxLogicalThumbSize() const override;
 
     std::unique_ptr<QGraphicsItem> retrieveThumbnail() {
         return std::move(m_ptrThumbnail);
@@ -42,19 +43,18 @@ private:
 };
 
 
-ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> const& pixmap_cache,
-                                   QSizeF const& max_size,
-                                   intrusive_ptr<CompositeCacheDrivenTask> const& task)
-        : m_ptrPixmapCache(pixmap_cache),
+ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
+                                   const QSizeF& max_size,
+                                   intrusive_ptr<CompositeCacheDrivenTask> task)
+        : m_ptrPixmapCache(std::move(pixmap_cache)),
           m_maxSize(max_size),
-          m_ptrTask(task) {
+          m_ptrTask(std::move(task)) {
 }
 
-ThumbnailFactory::~ThumbnailFactory() {
-}
+ThumbnailFactory::~ThumbnailFactory() = default;
 
 std::unique_ptr<QGraphicsItem>
-ThumbnailFactory::get(PageInfo const& page_info) {
+ThumbnailFactory::get(const PageInfo& page_info) {
     Collector collector(m_ptrPixmapCache, m_maxSize);
     m_ptrTask->process(page_info, &collector);
 
@@ -63,8 +63,8 @@ ThumbnailFactory::get(PageInfo const& page_info) {
 
 /*======================= ThumbnailFactory::Collector ======================*/
 
-ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> const& cache, QSizeF const& max_size)
-        : m_ptrCache(cache),
+ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size)
+        : m_ptrCache(std::move(cache)),
           m_maxSize(max_size) {
 }
 

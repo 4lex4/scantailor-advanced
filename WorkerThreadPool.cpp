@@ -20,20 +20,21 @@
 #include "OutOfMemoryHandler.h"
 #include <QCoreApplication>
 #include <QThreadPool>
+#include <utility>
 
 class WorkerThreadPool::TaskResultEvent : public QEvent {
 public:
-    TaskResultEvent(BackgroundTaskPtr const& task, FilterResultPtr const& result)
+    TaskResultEvent(BackgroundTaskPtr task, FilterResultPtr result)
             : QEvent(User),
-              m_ptrTask(task),
-              m_ptrResult(result) {
+              m_ptrTask(std::move(task)),
+              m_ptrResult(std::move(result)) {
     }
 
-    BackgroundTaskPtr const& task() const {
+    const BackgroundTaskPtr& task() const {
         return m_ptrTask;
     }
 
-    FilterResultPtr const& result() const {
+    const FilterResultPtr& result() const {
         return m_ptrResult;
     }
 
@@ -49,8 +50,7 @@ WorkerThreadPool::WorkerThreadPool(QObject* parent)
     updateNumberOfThreads();
 }
 
-WorkerThreadPool::~WorkerThreadPool() {
-}
+WorkerThreadPool::~WorkerThreadPool() = default;
 
 void WorkerThreadPool::shutdown() {
     m_pPool->waitForDone();
@@ -60,16 +60,16 @@ bool WorkerThreadPool::hasSpareCapacity() const {
     return m_pPool->activeThreadCount() < m_pPool->maxThreadCount();
 }
 
-void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
+void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
     class Runnable : public QRunnable {
     public:
-        Runnable(WorkerThreadPool& owner, BackgroundTaskPtr const& task)
+        Runnable(WorkerThreadPool& owner, BackgroundTaskPtr task)
                 : m_rOwner(owner),
-                  m_ptrTask(task) {
+                  m_ptrTask(std::move(task)) {
             setAutoDelete(true);
         }
 
-        virtual void run()
+        void run()
 
         override {
             if (m_ptrTask->isCancelled()) {
@@ -77,13 +77,13 @@ void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
             }
 
             try {
-                FilterResultPtr const result((*m_ptrTask)());
+                const FilterResultPtr result((*m_ptrTask)());
                 if (result) {
                     QCoreApplication::postEvent(
                             &m_rOwner, new TaskResultEvent(m_ptrTask, result)
                     );
                 }
-            } catch (std::bad_alloc const&) {
+            } catch (const std::bad_alloc&) {
                 OutOfMemoryHandler::instance().handleOutOfMemorySituation();
             }
         }
@@ -99,7 +99,7 @@ void WorkerThreadPool::submitTask(BackgroundTaskPtr const& task) {
 }  // WorkerThreadPool::submitTask
 
 void WorkerThreadPool::customEvent(QEvent* event) {
-    if (TaskResultEvent* evt = dynamic_cast<TaskResultEvent*>(event)) {
+    if (auto* evt = dynamic_cast<TaskResultEvent*>(event)) {
         emit taskResult(evt->task(), evt->result());
     }
 }

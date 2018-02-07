@@ -21,7 +21,7 @@
 
 #include <QSizeF>
 #include <QColor>
-#include <stdint.h>
+#include <cstdint>
 
 class QImage;
 class QRect;
@@ -44,7 +44,7 @@ namespace imageproc {
          *
          * Outside pixels may be blended with inside pixels near the edges.
          */
-        static OutsidePixels assumeColor(QColor const& color) {
+        static OutsidePixels assumeColor(const QColor& color) {
             return OutsidePixels(COLOR, color.rgba());
         }
 
@@ -53,7 +53,7 @@ namespace imageproc {
          *
          * Outside pixels won't participate in blending operations.
          */
-        static OutsidePixels assumeWeakColor(QColor const& color) {
+        static OutsidePixels assumeWeakColor(const QColor& color) {
             return OutsidePixels(WEAK | COLOR, color.rgba());
         }
 
@@ -117,11 +117,11 @@ namespace imageproc {
  *         be transformed to Format_RGB32, if the source image
  *         contains colors other than shades of gray.
  */
-    QImage transform(QImage const& src,
-                     QTransform const& xform,
-                     QRect const& dst_rect,
+    QImage transform(const QImage& src,
+                     const QTransform& xform,
+                     const QRect& dst_rect,
                      OutsidePixels outside_pixels,
-                     QSizeF const& min_mapping_area = QSizeF(0.9, 0.9));
+                     const QSizeF& min_mapping_area = QSizeF(0.9, 0.9));
 
 /**
  * \brief Apply an affine transformation to the image.
@@ -129,10 +129,10 @@ namespace imageproc {
  * Same as transform(), except the source image image is converted
  * to grayscale before transforming it.
  */
-    GrayImage transformToGray(QImage const& src,
-                              QTransform const& xform,
-                              QRect const& dst_rect,
+    GrayImage transformToGray(const QImage& src,
+                              const QTransform& xform,
+                              const QRect& dst_rect,
                               OutsidePixels outside_pixels,
-                              QSizeF const& min_mapping_area = QSizeF(0.9, 0.9));
+                              const QSizeF& min_mapping_area = QSizeF(0.9, 0.9));
 }  // namespace imageproc
 #endif // ifndef IMAGEPROC_TRANSFORM_H_

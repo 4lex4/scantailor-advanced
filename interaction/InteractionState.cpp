@@ -18,8 +18,7 @@
 
 #include "InteractionState.h"
 
-InteractionState::Captor
-& InteractionState::Captor::operator=(Captor& other) {
+InteractionState::Captor& InteractionState::Captor::operator=(Captor& other) {
     swap_nodes(other);
     other.unlink();
 
@@ -27,7 +26,7 @@ InteractionState::Captor
 }
 
 InteractionState::Captor& InteractionState::Captor::operator=(CopyHelper other) {
-    return *this = *other.captor;
+    return (*this = *other.captor);
 }
 
 InteractionState::InteractionState()
@@ -41,7 +40,7 @@ void InteractionState::capture(Captor& captor) {
     m_captorList.push_back(captor);
 }
 
-bool InteractionState::capturedBy(Captor const& captor) const {
+bool InteractionState::capturedBy(const Captor& captor) const {
     return !m_captorList.empty() && &m_captorList.back() == &captor;
 }
 
@@ -52,7 +51,7 @@ void InteractionState::resetProximity() {
 }
 
 void InteractionState::updateProximity(Captor& captor,
-                                       Proximity const& proximity,
+                                       const Proximity& proximity,
                                        int priority,
                                        Proximity proximity_threshold) {
     if (captor.is_linked()) {
@@ -73,11 +72,11 @@ void InteractionState::updateProximity(Captor& captor,
     }
 }
 
-bool InteractionState::proximityLeader(Captor const& captor) const {
+bool InteractionState::proximityLeader(const Captor& captor) const {
     return !m_proximityLeader.empty() && &m_proximityLeader.front() == &captor;
 }
 
-bool InteractionState::betterProximity(Proximity const& proximity, int const priority) const {
+bool InteractionState::betterProximity(const Proximity& proximity, const int priority) const {
     if (priority != m_bestProximityPriority) {
         return priority > m_bestProximityPriority;
     }

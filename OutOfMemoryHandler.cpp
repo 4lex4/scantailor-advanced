@@ -35,13 +35,13 @@ OutOfMemoryHandler& OutOfMemoryHandler::instance() {
 }
 
 void OutOfMemoryHandler::allocateEmergencyMemory(size_t bytes) {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     boost::scoped_array<char>(new char[bytes]).swap(m_emergencyBuffer);
 }
 
 void OutOfMemoryHandler::handleOutOfMemorySituation() {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     if (m_hadOOM) {
         return;
@@ -53,7 +53,7 @@ void OutOfMemoryHandler::handleOutOfMemorySituation() {
 }
 
 bool OutOfMemoryHandler::hadOutOfMemorySituation() const {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     return m_hadOOM;
 }

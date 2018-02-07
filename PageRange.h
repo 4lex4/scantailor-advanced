@@ -30,7 +30,7 @@ public:
      */
     std::vector<PageId> pages;
 
-    std::set<PageId> selectEveryOther(PageId const& base) const;
+    std::set<PageId> selectEveryOther(const PageId& base) const;
 };
 
 

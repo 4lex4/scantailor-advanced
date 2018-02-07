@@ -20,8 +20,8 @@
 #include "LineIntersectionScalar.h"
 #include "NumericTraits.h"
 
-bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
-    QLineF const rect_lines[4] = {
+bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
+    const QLineF rect_lines[4] = {
             QLineF(rect.topLeft(), rect.topRight()),
             QLineF(rect.bottomLeft(), rect.bottomRight()),
             QLineF(rect.topLeft(), rect.bottomLeft()),
@@ -33,7 +33,7 @@ bool lineBoundedByRect(QLineF& line, QRectF const& rect) {
 
     double s1 = 0;
     double s2 = 0;
-    for (QLineF const& rect_line : rect_lines) {
+    for (const QLineF& rect_line : rect_lines) {
         if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
             // line is parallel to rect_line.
             continue;

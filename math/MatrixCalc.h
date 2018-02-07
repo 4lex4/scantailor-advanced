@@ -27,8 +27,8 @@
 #include "MatT.h"
 #include "VecNT.h"
 #include "VecT.h"
-#include <stddef.h>
-#include <assert.h>
+#include <cstddef>
+#include <cassert>
 
 template<typename T, typename Alloc>
 class MatrixCalc;
@@ -80,33 +80,32 @@ namespace mcalc {
     template<typename T>
     class Mat {
         template<typename OT, typename Alloc>
-        friend
-        class MatrixCalc;
+        friend class ::MatrixCalc;
 
         template<typename OT>
-        friend Mat<OT> operator+(Mat<OT> const& m1, Mat<OT> const& m2);
+        friend Mat<OT> operator+(const Mat<OT>& m1, const Mat<OT>& m2);
 
         template<typename OT>
-        friend Mat<OT> operator-(Mat<OT> const& m1, Mat<OT> const& m2);
+        friend Mat<OT> operator-(const Mat<OT>& m1, const Mat<OT>& m2);
 
         template<typename OT>
-        friend Mat<OT> operator*(Mat<OT> const& m1, Mat<OT> const& m2);
+        friend Mat<OT> operator*(const Mat<OT>& m1, const Mat<OT>& m2);
 
         template<typename OT>
-        friend Mat<OT> operator*(OT scalar, Mat<OT> const& m);
+        friend Mat<OT> operator*(OT scalar, const Mat<OT>& m);
 
         template<typename OT>
-        friend Mat<OT> operator*(Mat<OT> const& m, OT scalar);
+        friend Mat<OT> operator*(const Mat<OT>& m, OT scalar);
 
         template<typename OT>
-        friend Mat<OT> operator/(Mat<OT> const& m, OT scalar);
+        friend Mat<OT> operator/(const Mat<OT>& m, OT scalar);
 
     public:
         Mat inv() const;
 
-        Mat solve(Mat const& b) const;
+        Mat solve(const Mat& b) const;
 
-        Mat solve(T const* data, int rows, int cols) const;
+        Mat solve(const T* data, int rows, int cols) const;
 
         Mat trans() const;
 
@@ -122,12 +121,12 @@ namespace mcalc {
 
         Mat operator-() const;
 
-        T const* rawData() const {
+        const T* rawData() const {
             return data;
         }
 
     private:
-        Mat(AbstractAllocator<T>* alloc, T const* data, int rows, int cols)
+        Mat(AbstractAllocator<T>* alloc, const T* data, int rows, int cols)
                 : alloc(alloc),
                   data(data),
                   rows(rows),
@@ -135,7 +134,7 @@ namespace mcalc {
         }
 
         AbstractAllocator<T>* alloc;
-        T const* data;
+        const T* data;
         int rows;
         int cols;
     };
@@ -149,31 +148,31 @@ public:
     MatrixCalc() {
     }
 
-    mcalc::Mat<T> operator()(T const* data, int rows, int cols) {
+    mcalc::Mat<T> operator()(const T* data, int rows, int cols) {
         return mcalc::Mat<T>(&m_alloc, data, rows, cols);
     }
 
     template<size_t N>
-    mcalc::Mat<T> operator()(VecNT<N, T> const& vec, int rows, int cols) {
+    mcalc::Mat<T> operator()(const VecNT<N, T>& vec, int rows, int cols) {
         return mcalc::Mat<T>(&m_alloc, vec.data(), rows, cols);
     }
 
     template<size_t M, size_t N>
-    mcalc::Mat<T> operator()(MatMNT<M, N, T> const& mat) {
+    mcalc::Mat<T> operator()(const MatMNT<M, N, T>& mat) {
         return mcalc::Mat<T>(&m_alloc, mat.data(), mat.ROWS, mat.COLS);
     }
 
-    mcalc::Mat<T> operator()(MatT<T> const& mat) {
-        return mcalc::Mat<T>(&m_alloc, mat.data(), mat.rows(), mat.cols());
+    mcalc::Mat<T> operator()(const MatT<T>& mat) {
+        return mcalc::Mat<T>(&m_alloc, mat.data(), static_cast<int>(mat.rows()), static_cast<int>(mat.cols()));
     }
 
     template<size_t N>
-    mcalc::Mat<T> operator()(VecNT<N, T> const& vec) {
+    mcalc::Mat<T> operator()(const VecNT<N, T>& vec) {
         return mcalc::Mat<T>(&m_alloc, vec.data(), vec.SIZE, 1);
     }
 
-    mcalc::Mat<T> operator()(VecT<T> const& vec) {
-        return mcalc::Mat<T>(&m_alloc, vec.data(), vec.size(), 1);
+    mcalc::Mat<T> operator()(const VecT<T>& vec) {
+        return mcalc::Mat<T>(&m_alloc, vec.data(), static_cast<int>(vec.size()), 1);
     }
 
 private:
@@ -201,7 +200,7 @@ namespace mcalc {
 
         T* ident_data = alloc->allocT(rows * cols);
         Mat ident(alloc, ident_data, rows, cols);
-        int const todo = rows * cols;
+        const int todo = rows * cols;
         for (int i = 0; i < todo; ++i) {
             ident_data[i] = T();
         }
@@ -214,7 +213,7 @@ namespace mcalc {
 
     template<typename T>
     Mat<T>
-    Mat<T>::solve(Mat const& b) const {
+    Mat<T>::solve(const Mat& b) const {
         assert(rows == b.rows);
 
         T* x_data = alloc->allocT(cols * b.cols);
@@ -227,7 +226,7 @@ namespace mcalc {
 
     template<typename T>
     Mat<T>
-    Mat<T>::solve(T const* data, int rows, int cols) const {
+    Mat<T>::solve(const T* data, int rows, int cols) const {
         return solve(Mat(alloc, data, rows, cols));
     }
 
@@ -247,7 +246,7 @@ namespace mcalc {
     template<typename T>
     Mat<T>
     Mat<T>::write(T* buf) const {
-        int const todo = rows * cols;
+        const int todo = rows * cols;
         for (int i = 0; i < todo; ++i) {
             buf[i] = data[i];
         }
@@ -269,7 +268,7 @@ namespace mcalc {
     Mat<T>::transWrite(T* buf) const {
         T* p_trans = buf;
         for (int i = 0; i < rows; ++i) {
-            T const* p_src = data + i;
+            const T* p_src = data + i;
             for (int j = 0; j < cols; ++j) {
                 *p_trans = *p_src;
                 ++p_trans;
@@ -296,7 +295,7 @@ namespace mcalc {
         T* p_res = alloc->allocT(rows * cols);
         Mat<T> res(alloc, p_res, rows, cols);
 
-        int const todo = rows * cols;
+        const int todo = rows * cols;
         for (int i = 0; i < todo; ++i) {
             p_res[i] = -data[i];
         }
@@ -305,13 +304,13 @@ namespace mcalc {
     }
 
     template<typename T>
-    Mat<T> operator+(Mat<T> const& m1, Mat<T> const& m2) {
+    Mat<T> operator+(const Mat<T>& m1, const Mat<T>& m2) {
         assert(m1.rows == m2.rows && m1.cols == m2.cols);
 
         T* p_res = m1.alloc->allocT(m1.rows * m1.cols);
         Mat<T> res(m1.alloc, p_res, m1.rows, m1.cols);
 
-        int const todo = m1.rows * m1.cols;
+        const int todo = m1.rows * m1.cols;
         for (int i = 0; i < todo; ++i) {
             p_res[i] = m1.data[i] + m2.data[i];
         }
@@ -320,13 +319,13 @@ namespace mcalc {
     }
 
     template<typename T>
-    Mat<T> operator-(Mat<T> const& m1, Mat<T> const& m2) {
+    Mat<T> operator-(const Mat<T>& m1, const Mat<T>& m2) {
         assert(m1.rows == m2.rows && m1.cols == m2.cols);
 
         T* p_res = m1.alloc->allocT(m1.rows * m1.cols);
         Mat<T> res(m1.alloc, p_res, m1.rows, m1.cols);
 
-        int const todo = m1.rows * m1.cols;
+        const int todo = m1.rows * m1.cols;
         for (int i = 0; i < todo; ++i) {
             p_res[i] = m1.data[i] - m2.data[i];
         }
@@ -335,7 +334,7 @@ namespace mcalc {
     }
 
     template<typename T>
-    Mat<T> operator*(Mat<T> const& m1, Mat<T> const& m2) {
+    Mat<T> operator*(const Mat<T>& m1, const Mat<T>& m2) {
         assert(m1.cols == m2.rows);
 
         T* p_res = m1.alloc->allocT(m1.rows * m2.cols);
@@ -343,8 +342,8 @@ namespace mcalc {
 
         for (int rcol = 0; rcol < res.cols; ++rcol) {
             for (int rrow = 0; rrow < res.rows; ++rrow) {
-                T const* p_m1 = m1.data + rrow;
-                T const* p_m2 = m2.data + rcol * m2.rows;
+                const T* p_m1 = m1.data + rrow;
+                const T* p_m2 = m2.data + rcol * m2.rows;
                 T sum = T();
                 for (int i = 0; i < m1.cols; ++i) {
                     sum += *p_m1 * *p_m2;
@@ -360,11 +359,11 @@ namespace mcalc {
     }
 
     template<typename T>
-    Mat<T> operator*(T scalar, Mat<T> const& m) {
+    Mat<T> operator*(T scalar, const Mat<T>& m) {
         T* p_res = m.alloc->allocT(m.rows * m.cols);
         Mat<T> res(m.alloc, p_res, m.rows, m.cols);
 
-        int const todo = m.rows * m.cols;
+        const int todo = m.rows * m.cols;
         for (int i = 0; i < todo; ++i) {
             p_res[i] = m.data[i] * scalar;
         }
@@ -373,12 +372,12 @@ namespace mcalc {
     }
 
     template<typename T>
-    Mat<T> operator*(Mat<T> const& m, T scalar) {
+    Mat<T> operator*(const Mat<T>& m, T scalar) {
         return scalar * m;
     }
 
     template<typename T>
-    Mat<T> operator/(Mat<T> const& m, T scalar) {
+    Mat<T> operator/(const Mat<T>& m, T scalar) {
         return m * (1.0f / scalar);
     }
 }  // namespace mcalc

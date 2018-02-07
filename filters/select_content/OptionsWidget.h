@@ -31,11 +31,13 @@
 #include <QSizeF>
 #include <QRectF>
 #include <memory>
+#include <UnitsObserver.h>
 
 namespace select_content {
     class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, private Ui::SelectContentOptionsWidget {
+    class OptionsWidget
+            : public FilterOptionsWidget, public UnitsObserver, private Ui::SelectContentOptionsWidget {
     Q_OBJECT
     public:
         class UiData {
@@ -45,103 +47,105 @@ namespace select_content {
 
             ~UiData();
 
-            void setSizeCalc(PhysSizeCalc const& calc);
+            void setSizeCalc(const PhysSizeCalc& calc);
 
-            void setContentRect(QRectF const& content_rect);
+            void setContentRect(const QRectF& content_rect);
 
-            void setPageRect(QRectF const& content_rect);
+            void setPageRect(const QRectF& content_rect);
 
-            QRectF const& contentRect() const;
+            const QRectF& contentRect() const;
 
-            QRectF const& pageRect() const;
+            const QRectF& pageRect() const;
 
             QSizeF contentSizeMM() const;
 
-            void setDependencies(Dependencies const& deps);
+            void setDependencies(const Dependencies& deps);
 
-            Dependencies const& dependencies() const;
+            const Dependencies& dependencies() const;
 
-            void setMode(AutoManualMode mode);
+            void setContentDetectionMode(AutoManualMode mode);
 
-            bool contentDetection() const {
-                return m_contentDetection;
-            }
+            void setPageDetectionMode(AutoManualMode mode);
 
-            bool pageDetection() const {
-                return m_pageDetection;
-            }
+            bool isContentDetectionEnabled() const;
 
-            bool fineTuning() const {
-                return m_fineTuneCorners;
-            }
+            bool isPageDetectionEnabled() const;
 
-            void setContentDetection(bool detect);
+            bool isFineTuningCornersEnabled() const;
 
-            void setPageDetection(bool detect);
+            void setContentDetectionEnabled(bool detect);
 
-            void setFineTuneCorners(bool fine_tune);
+            void setPageDetectionEnabled(bool detect);
 
-            void setPageBorders(double left, double top, double right, double bottom);
+            void setFineTuneCornersEnabled(bool fine_tune);
 
-            void setPageBorders(Margins const& borders) {
-                m_borders = borders;
-            }
+            AutoManualMode contentDetectionMode() const;
 
-            Margins pageBorders() const {
-                return m_borders;
-            }
-
-            AutoManualMode mode() const;
+            AutoManualMode pageDetectionMode() const;
 
         private:
             QRectF m_contentRect;  // In virtual image coordinates.
             QRectF m_pageRect;
             PhysSizeCalc m_sizeCalc;
             Dependencies m_deps;
-            AutoManualMode m_mode;
-            bool m_contentDetection;
-            bool m_pageDetection;
-            bool m_fineTuneCorners;
-            Margins m_borders;
+            AutoManualMode m_contentDetectionMode;
+            AutoManualMode m_pageDetectionMode;
+            bool m_contentDetectionEnabled;
+            bool m_pageDetectionEnabled;
+            bool m_fineTuneCornersEnabled;
         };
 
 
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id);
+        void preUpdateUI(const PageId& page_id);
 
-        void postUpdateUI(UiData const& ui_data);
+        void postUpdateUI(const UiData& ui_data);
+
+        void updateUnits(Units units) override;
 
     public slots:
 
-        void manualContentRectSet(QRectF const& content_rect);
+        void manualContentRectSet(const QRectF& content_rect);
+
+        void manualPageRectSet(const QRectF& page_rect);
+
+        void updatePageRectSize(const QSizeF& size);
+
+    signals:
+
+        void pageRectChangedLocally(const QRectF& pageRect);
 
     private slots:
 
         void showApplyToDialog();
 
-        void applySelection(std::set<PageId> const& pages, bool apply_content_box);
+        void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
 
-        void modeChanged(bool auto_mode);
+        void contentDetectAutoToggled();
 
-        void autoMode();
+        void contentDetectManualToggled();
 
-        void manualMode();
+        void contentDetectDisableToggled();
+
+        void pageDetectAutoToggled();
+
+        void pageDetectManualToggled();
+
+        void pageDetectDisableToggled();
 
         void fineTuningChanged(bool checked);
 
-        void contentDetectionDisabled(void);
-
-        void pageDetectionDisabled(void);
-
-        void pageDetectionEnabled(void);
-
-        void borderChanged();
+        void dimensionsChangedLocally(double);
 
     private:
-        void updateModeIndication(AutoManualMode const mode);
+        void updateContentModeIndication(AutoManualMode mode);
+
+        void updatePageModeIndication(AutoManualMode mode);
+
+        void updatePageDetectOptionsDisplay();
 
         void commitCurrentParams();
 
@@ -153,7 +157,7 @@ namespace select_content {
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
-        int m_ignoreAutoManualToggle;
+        int m_ignorePageSizeChanges;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

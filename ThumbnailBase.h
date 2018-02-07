@@ -35,22 +35,22 @@ class ThumbnailBase : public QGraphicsItem {
 DECLARE_NON_COPYABLE(ThumbnailBase)
 
 public:
-    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                  QSizeF const& max_size,
-                  ImageId const& image_id,
-                  ImageTransformation const& image_xform);
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                  const QSizeF& max_size,
+                  const ImageId& image_id,
+                  const ImageTransformation& image_xform);
 
-    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                  QSizeF const& max_size,
-                  ImageId const& image_id,
-                  ImageTransformation const& image_xform,
+    ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                  const QSizeF& max_size,
+                  const ImageId& image_id,
+                  const ImageTransformation& image_xform,
                   QRectF displayArea);
 
-    virtual ~ThumbnailBase();
+    ~ThumbnailBase() override;
 
-    virtual QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
-    virtual void paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget);
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 protected:
     /**
@@ -72,8 +72,8 @@ protected:
      * for subclasses to restore the painter state.
      */
     virtual void paintOverImage(QPainter& painter,
-                                QTransform const& image_to_display,
-                                QTransform const& thumb_to_display) {
+                                const QTransform& image_to_display,
+                                const QTransform& thumb_to_display) {
     }
 
     /**
@@ -81,8 +81,8 @@ protected:
      *        The only difference is that the painted content will be cropped with the image.
      */
     virtual void prePaintOverImage(QPainter& painter,
-                                   QTransform const& image_to_display,
-                                   QTransform const& thumb_to_display) {
+                                   const QTransform& image_to_display,
+                                   const QTransform& thumb_to_display) {
     }
 
     virtual void paintDeviant(QPainter& painter);
@@ -99,9 +99,9 @@ protected:
         m_extendedClipArea = enabled;
     }
 
-    void setImageXform(ImageTransformation const& image_xform);
+    void setImageXform(const ImageTransformation& image_xform);
 
-    ImageTransformation const& imageXform() const {
+    const ImageTransformation& imageXform() const {
         return m_imageXform;
     }
 
@@ -110,14 +110,14 @@ protected:
      *
      * Virtual image coordinates is what you get after ImageTransformation.
      */
-    QTransform const& virtToThumb() const {
+    const QTransform& virtToThumb() const {
         return m_postScaleXform;
     }
 
 private:
     class LoadCompletionHandler;
 
-    void handleLoadResult(ThumbnailLoadResult const& result);
+    void handleLoadResult(const ThumbnailLoadResult& result);
 
     intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
     QSizeF m_maxSize;

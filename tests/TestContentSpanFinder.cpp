@@ -33,7 +33,7 @@ namespace Tests {
             std::vector<Span> spans;
             span_finder.find(
                     SlicedHistogram(),
-                    [&](Span const& span) {
+                    [&](const Span& span) {
                         spans.push_back(span);
                     }
             );
@@ -58,7 +58,7 @@ namespace Tests {
             span_finder.setMinContentWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, [&](Span const& span) {
+            span_finder.find(hist, [&](const Span& span) {
                                  spans.push_back(span);
                              }
             );
@@ -85,7 +85,7 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, [&](Span const& span) {
+            span_finder.find(hist, [&](const Span& span) {
                                  spans.push_back(span);
                              }
             );
@@ -113,7 +113,7 @@ namespace Tests {
             span_finder.setMinWhitespaceWidth(2);
 
             std::vector<Span> spans;
-            span_finder.find(hist, [&](Span const& span) {
+            span_finder.find(hist, [&](const Span& span) {
                                  spans.push_back(span);
                              }
             );

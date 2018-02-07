@@ -29,10 +29,11 @@
 class BasicImageView : public ImageViewBase {
 Q_OBJECT
 public:
-    BasicImageView(QImage const& image,
-                   ImagePixmapUnion const& downscaled_image = ImagePixmapUnion(), Margins const& margins = Margins());
+    explicit BasicImageView(const QImage& image,
+                            const ImagePixmapUnion& downscaled_image = ImagePixmapUnion(),
+                            const Margins& margins = Margins());
 
-    virtual ~BasicImageView();
+    ~BasicImageView() override;
 
 private:
     DragHandler m_dragHandler;

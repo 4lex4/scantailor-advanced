@@ -21,19 +21,21 @@
 #include "XmlUnmarshaller.h"
 
 namespace page_layout {
-    Params::Params(Margins const& hard_margins_mm,
-                   QRectF const& content_rect,
-                   QRectF const& page_rect,
-                   QSizeF const& content_size_mm,
-                   Alignment const& alignment)
+    Params::Params(const Margins& hard_margins_mm,
+                   const QRectF& content_rect,
+                   const QRectF& page_rect,
+                   const QSizeF& content_size_mm,
+                   const Alignment& alignment,
+                   const bool auto_margins)
             : m_hardMarginsMM(hard_margins_mm),
               m_pageRect(page_rect),
               m_contentRect(content_rect),
               m_contentSizeMM(content_size_mm),
-              m_alignment(alignment) {
+              m_alignment(alignment),
+              m_autoMargins(auto_margins) {
     }
 
-    Params::Params(QDomElement const& el)
+    Params::Params(const QDomElement& el)
             : m_hardMarginsMM(
             XmlUnmarshaller::margins(
                     el.namedItem("hardMarginsMM").toElement()
@@ -54,10 +56,11 @@ namespace page_layout {
                               el.namedItem("contentSizeMM").toElement()
                       )
               ),
-              m_alignment(el.namedItem("alignment").toElement()) {
+              m_alignment(el.namedItem("alignment").toElement()),
+              m_autoMargins(el.attribute("autoMargins") == "1") {
     }
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -66,7 +69,36 @@ namespace page_layout {
         el.appendChild(marshaller.rectF(m_contentRect, "contentRect"));
         el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
         el.appendChild(m_alignment.toXml(doc, "alignment"));
+        el.setAttribute("autoMargins", m_autoMargins ? "1" : "0");
 
         return el;
+    }
+
+    const Margins& Params::hardMarginsMM() const {
+        return m_hardMarginsMM;
+    }
+
+    const QRectF& Params::contentRect() const {
+        return m_contentRect;
+    }
+
+    const QRectF& Params::pageRect() const {
+        return m_pageRect;
+    }
+
+    const QSizeF& Params::contentSizeMM() const {
+        return m_contentSizeMM;
+    }
+
+    const Alignment& Params::alignment() const {
+        return m_alignment;
+    }
+
+    bool Params::isAutoMarginsEnabled() const {
+        return m_autoMargins;
+    }
+
+    bool Params::isDeviant() const {
+        return m_alignment.isNull();
     }
 }  // namespace page_layout

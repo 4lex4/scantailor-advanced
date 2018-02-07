@@ -19,9 +19,9 @@
 #include "PerformanceTimer.h"
 #include <QDebug>
 
-void PerformanceTimer::print(char const* prefix) {
-    clock_t const now = clock();
-    double const sec = double(now - m_start) / CLOCKS_PER_SEC;
+void PerformanceTimer::print(const char* prefix) {
+    const clock_t now = clock();
+    const double sec = double(now - m_start) / CLOCKS_PER_SEC;
     if (sec > 10.0) {
         qDebug() << prefix << (long) sec << " sec";
     } else if (sec > 0.01) {

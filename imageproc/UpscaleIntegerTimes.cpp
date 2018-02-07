@@ -25,14 +25,14 @@ namespace imageproc {
             return (uint32_t(0) - bit) >> (32 - times);
         }
 
-        void expandImpl(BinaryImage& dst, BinaryImage const& src, int const xscale, int const yscale) {
-            int const sw = src.width();
-            int const sh = src.height();
+        void expandImpl(BinaryImage& dst, const BinaryImage& src, const int xscale, const int yscale) {
+            const int sw = src.width();
+            const int sh = src.height();
 
-            int const src_wpl = src.wordsPerLine();
-            int const dst_wpl = dst.wordsPerLine();
+            const int src_wpl = src.wordsPerLine();
+            const int dst_wpl = dst.wordsPerLine();
 
-            uint32_t const* src_line = src.data();
+            const uint32_t* src_line = src.data();
             uint32_t* dst_line = dst.data();
 
             for (int sy = 0; sy < sh; ++sy, src_line += src_wpl) {
@@ -41,9 +41,9 @@ namespace imageproc {
                 int di = 0;
 
                 for (int sx = 0; sx < sw; ++sx) {
-                    uint32_t const src_word = src_line[sx >> 5];
-                    int const src_bit = 31 - (sx & 31);
-                    uint32_t const bit = (src_word >> src_bit) & uint32_t(1);
+                    const uint32_t src_word = src_line[sx >> 5];
+                    const int src_bit = 31 - (sx & 31);
+                    const uint32_t bit = (src_word >> src_bit) & uint32_t(1);
                     int todo = xscale;
 
                     while (dst_bits_remaining <= todo) {
@@ -63,7 +63,7 @@ namespace imageproc {
                     dst_line[di] = dst_word;
                 }
 
-                uint32_t const* first_dst_line = dst_line;
+                const uint32_t* first_dst_line = dst_line;
                 dst_line += dst_wpl;
                 for (int line = 1; line < yscale; ++line, dst_line += dst_wpl) {
                     memcpy(dst_line, first_dst_line, dst_wpl * 4);
@@ -72,7 +72,7 @@ namespace imageproc {
         }  // expandImpl
     }      // namespace
 
-    BinaryImage upscaleIntegerTimes(BinaryImage const& src, int const xscale, int const yscale) {
+    BinaryImage upscaleIntegerTimes(const BinaryImage& src, const int xscale, const int yscale) {
         if (src.isNull() || ((xscale == 1) && (yscale == 1))) {
             return src;
         }
@@ -87,7 +87,7 @@ namespace imageproc {
         return dst;
     }
 
-    BinaryImage upscaleIntegerTimes(BinaryImage const& src, QSize const& dst_size, BWColor const padding) {
+    BinaryImage upscaleIntegerTimes(const BinaryImage& src, const QSize& dst_size, const BWColor padding) {
         if (src.isNull()) {
             BinaryImage dst(dst_size);
             dst.fill(padding);
@@ -95,15 +95,15 @@ namespace imageproc {
             return dst;
         }
 
-        int const xscale = dst_size.width() / src.width();
-        int const yscale = dst_size.height() / src.height();
+        const int xscale = dst_size.width() / src.width();
+        const int yscale = dst_size.height() / src.height();
         if ((xscale < 1) || (yscale < 1)) {
             throw std::invalid_argument("upscaleIntegerTimes: bad dst_size");
         }
 
         BinaryImage dst(dst_size);
         expandImpl(dst, src, xscale, yscale);
-        QRect const rect(0, 0, src.width() * xscale, src.height() * yscale);
+        const QRect rect(0, 0, src.width() * xscale, src.height() * yscale);
         dst.fillExcept(rect, padding);
 
         return dst;

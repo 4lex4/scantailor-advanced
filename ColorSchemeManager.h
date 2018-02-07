@@ -18,7 +18,7 @@ public:
 
     void setColorScheme(const ColorScheme& colorScheme);
 
-    QBrush getColorParam(const std::string& colorParam, const QBrush& defaultColor);
+    QBrush getColorParam(const std::string& colorParam, const QBrush& defaultColor) const;
 };
 
 

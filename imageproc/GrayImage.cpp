@@ -32,7 +32,18 @@ namespace imageproc {
         }
     }
 
-    GrayImage::GrayImage(QImage const& image)
+    GrayImage::GrayImage(const QImage& image)
             : m_image(toGrayscale(image)) {
+    }
+
+    GrayImage GrayImage::inverted() const {
+        GrayImage inverted(*this);
+        inverted.invert();
+
+        return inverted;
+    }
+
+    void GrayImage::invert() {
+        m_image.invertPixels(QImage::InvertRgb);
     }
 }  // namespace imageproc

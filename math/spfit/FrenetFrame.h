@@ -44,17 +44,17 @@ namespace spfit {
          * relative to the X axis direction in the coordinate system from which we derive
          * the curvature.  For 2D computer graphics, the right direction is Y_POINTS_DOWN.
          */
-        FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxisDirection ydir = Y_POINTS_DOWN);
+        FrenetFrame(const Vec2d& origin, const Vec2d& tangent_vector, YAxisDirection ydir = Y_POINTS_DOWN);
 
-        Vec2d const& origin() const {
+        const Vec2d& origin() const {
             return m_origin;
         }
 
-        Vec2d const& unitTangent() const {
+        const Vec2d& unitTangent() const {
             return m_unitTangent;
         }
 
-        Vec2d const& unitNormal() const {
+        const Vec2d& unitNormal() const {
             return m_unitNormal;
         }
 

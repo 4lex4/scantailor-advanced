@@ -31,7 +31,7 @@
 #include <QBrush>
 #include <QColor>
 #include <Qt>
-#include <math.h>
+#include <cmath>
 #include <boost/test/auto_unit_test.hpp>
 
 namespace imageproc {
@@ -40,12 +40,12 @@ namespace imageproc {
 
         BOOST_AUTO_TEST_SUITE(PolygonRasterizerTestSuite);
 
-            static QPolygonF createShape(QSize const& image_size, double radius) {
-                QPointF const center(0.5 * image_size.width(), 0.5 * image_size.height());
-                double const PI = 3.14159265;
+            static QPolygonF createShape(const QSize& image_size, double radius) {
+                const QPointF center(0.5 * image_size.width(), 0.5 * image_size.height());
+                const double PI = 3.14159265;
                 double angle = PI / 2.0;
-                int const num_steps = 5;
-                double const step = PI * 2.0 / num_steps;
+                const int num_steps = 5;
+                const double step = PI * 2.0 / num_steps;
 
                 QPolygonF poly;
 
@@ -58,7 +58,7 @@ namespace imageproc {
                 return poly;
             }
 
-            static bool fuzzyCompare(BinaryImage const& img, QImage const& control) {
+            static bool fuzzyCompare(const BinaryImage& img, const QImage& control) {
                 // Make two binary images from the QImage with slightly different thresholds.
                 BinaryImage control1(control, BinaryThreshold(128 - 30));
                 BinaryImage control2(control, BinaryThreshold(128 + 30));
@@ -73,7 +73,7 @@ namespace imageproc {
                 return control1.countBlackPixels() == 0;
             }
 
-            static bool testFillShape(QSize const& image_size, QPolygonF const& shape, Qt::FillRule fill_rule) {
+            static bool testFillShape(const QSize& image_size, const QPolygonF& shape, Qt::FillRule fill_rule) {
                 BinaryImage b_image(image_size, WHITE);
                 PolygonRasterizer::fill(b_image, BLACK, shape, fill_rule);
 
@@ -91,7 +91,7 @@ namespace imageproc {
                 return fuzzyCompare(b_image, q_image);
             }
 
-            static bool testFillExceptShape(QSize const& image_size, QPolygonF const& shape, Qt::FillRule fill_rule) {
+            static bool testFillExceptShape(const QSize& image_size, const QPolygonF& shape, Qt::FillRule fill_rule) {
                 BinaryImage b_image(image_size, WHITE);
                 PolygonRasterizer::fillExcept(b_image, BLACK, shape, fill_rule);
 
@@ -110,13 +110,13 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_complex_shape) {
-                QSize const image_size(500, 500);
+                const QSize image_size(500, 500);
 
                 // This one fits the image.
-                QPolygonF const smaller_shape(createShape(image_size, 230));
+                const QPolygonF smaller_shape(createShape(image_size, 230));
 
                 // This one doesn't fit the image and will be clipped.
-                QPolygonF const bigger_shape(createShape(image_size, 300));
+                const QPolygonF bigger_shape(createShape(image_size, 300));
 
                 BOOST_CHECK(testFillShape(image_size, smaller_shape, Qt::OddEvenFill));
                 BOOST_CHECK(testFillShape(image_size, smaller_shape, Qt::WindingFill));
@@ -129,9 +129,9 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_corner_cases) {
-                QSize const image_size(500, 500);
-                QPolygonF const shape(QRectF(QPointF(0, 0), image_size));
-                QPolygonF const shape2(QRectF(QPointF(-1, -1), image_size));
+                const QSize image_size(500, 500);
+                const QPolygonF shape(QRectF(QPointF(0, 0), image_size));
+                const QPolygonF shape2(QRectF(QPointF(-1, -1), image_size));
 
                 // This one touches clip rectangle's corners.
                 QPolygonF shape3;

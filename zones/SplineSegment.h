@@ -28,16 +28,15 @@ public:
     SplineVertex::Ptr prev;
     SplineVertex::Ptr next;
 
-    SplineSegment() {
-    }
+    SplineSegment() = default;
 
-    SplineSegment(SplineVertex::Ptr const& prev, SplineVertex::Ptr const& next);
+    SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next);
 
-    SplineVertex::Ptr splitAt(QPointF const& pt);
+    SplineVertex::Ptr splitAt(const QPointF& pt);
 
     bool isValid() const;
 
-    bool operator==(SplineSegment const& other) const {
+    bool operator==(const SplineSegment& other) const {
         return prev == other.prev && next == other.next;
     }
 

@@ -25,17 +25,17 @@ namespace imageproc {
         BOOST_AUTO_TEST_SUITE(MatrixCalcSuite);
 
             BOOST_AUTO_TEST_CASE(test1) {
-                static double const A[] = {
+                static const double A[] = {
                         1, 1, 1,
                         2, 4, -3,
                         3, 6, -5
                 };
 
-                static double const B[] = {
+                static const double B[] = {
                         9, 1, 0
                 };
 
-                static double const control[] = {
+                static const double control[] = {
                         7, -1, 3
                 };
 
@@ -50,7 +50,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test2) {
-                static double const A[] = {
+                static const double A[] = {
                         1, 1, 1,
                         2, 4, -3,
                         3, 6, -5,
@@ -62,7 +62,7 @@ namespace imageproc {
                         9, 1, 0, 10, 1
                 };
 
-                static double const control[] = {
+                static const double control[] = {
                         7, -1, 3
                 };
 
@@ -81,13 +81,13 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test3) {
-                static double const A[] = {
+                static const double A[] = {
                         1, 3, 1,
                         1, 1, 2,
                         2, 3, 4
                 };
 
-                static double const control[] = {
+                static const double control[] = {
                         2, 9, -5,
                         0, -2, 1,
                         -1, -3, 2
@@ -104,20 +104,20 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test4) {
-                static double const A[] = {
+                static const double A[] = {
                         4, 1, 9,
                         6, 2, 8,
                         7, 3, 5,
                         11, 10, 12
                 };
 
-                static double const B[] = {
+                static const double B[] = {
                         2, 9,
                         5, 12,
                         8, 10
                 };
 
-                static double const control[] = {
+                static const double control[] = {
                         85, 138,
                         86, 158,
                         69, 149,

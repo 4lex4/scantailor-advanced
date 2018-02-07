@@ -26,9 +26,9 @@
 using namespace imageproc;
 
 namespace output {
-    DespeckleVisualization::DespeckleVisualization(QImage const& output,
-                                                   imageproc::BinaryImage const& speckles,
-                                                   Dpi const& dpi) {
+    DespeckleVisualization::DespeckleVisualization(const QImage& output,
+                                                   const imageproc::BinaryImage& speckles,
+                                                   const Dpi& dpi) {
         if (output.isNull()) {
             // This can happen in batch processing mode.
             return;
@@ -44,22 +44,22 @@ namespace output {
     }
 
     void
-    DespeckleVisualization::colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi) {
-        int const w = image.width();
-        int const h = image.height();
-        uint32_t* image_line = (uint32_t*) image.bits();
-        int const image_stride = image.bytesPerLine() / 4;
+    DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi) {
+        const int w = image.width();
+        const int h = image.height();
+        auto* image_line = (uint32_t*) image.bits();
+        const int image_stride = image.bytesPerLine() / 4;
 
-        SEDM const sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
-        uint32_t const* sedm_line = sedm.data();
-        int const sedm_stride = sedm.stride();
+        const SEDM sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
+        const uint32_t* sedm_line = sedm.data();
+        const int sedm_stride = sedm.stride();
 
-        float const radius = 15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600;
-        float const sq_radius = radius * radius;
+        const float radius = static_cast<const float>(15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
+        const float sq_radius = radius * radius;
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
-                uint32_t const sq_dist = sedm_line[x];
+                const uint32_t sq_dist = sedm_line[x];
                 if (sq_dist == 0) {
                     // Speckle pixel.
                     image_line[x] = 0xffff0000;  // opaque red
@@ -69,22 +69,34 @@ namespace output {
                     continue;
                 }
 
-                float const alpha_upper_bound = 0.8f;
-                float const scale = alpha_upper_bound / sq_radius;
-                float const alpha = alpha_upper_bound - scale * sq_dist;
+                const float alpha_upper_bound = 0.8f;
+                const float scale = alpha_upper_bound / sq_radius;
+                const float alpha = alpha_upper_bound - scale * sq_dist;
                 if (alpha > 0) {
-                    float const alpha2 = 1.0f - alpha;
-                    float const overlay_r = 255;
-                    float const overlay_g = 0;
-                    float const overlay_b = 0;
-                    float const r = overlay_r * alpha + qRed(image_line[x]) * alpha2;
-                    float const g = overlay_g * alpha + qGreen(image_line[x]) * alpha2;
-                    float const b = overlay_b * alpha + qBlue(image_line[x]) * alpha2;
+                    const float alpha2 = 1.0f - alpha;
+                    const float overlay_r = 255;
+                    const float overlay_g = 0;
+                    const float overlay_b = 0;
+                    const float r = overlay_r * alpha + qRed(image_line[x]) * alpha2;
+                    const float g = overlay_g * alpha + qGreen(image_line[x]) * alpha2;
+                    const float b = overlay_b * alpha + qBlue(image_line[x]) * alpha2;
                     image_line[x] = qRgb(int(r), int(g), int(b));
                 }
             }
             sedm_line += sedm_stride;
             image_line += image_stride;
         }
-    }  // DespeckleVisualization::colorizeSpeckles
+    }
+
+    bool DespeckleVisualization::isNull() const {
+        return m_image.isNull();
+    }
+
+    const QImage& DespeckleVisualization::image() const {
+        return m_image;
+    }
+
+    const QImage& DespeckleVisualization::downscaledImage() const {
+        return m_downscaledImage;
+    }
 }  // namespace output

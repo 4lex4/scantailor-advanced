@@ -24,7 +24,7 @@
 #include <QPoint>
 #include <QRect>
 #include <QLineF>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
     class SEDM;
@@ -36,24 +36,24 @@ namespace dewarping {
  */
     class TowardsLineTracer {
     public:
-        TowardsLineTracer(imageproc::SEDM const* dm, Grid<float> const* pm, QLineF const& line,
-                          QPoint const& initial_pos);
+        TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line,
+                          const QPoint& initial_pos);
 
-        QPoint const* trace(float max_dist);
+        const QPoint* trace(float max_dist);
 
     private:
         struct Step {
             Vec2d unitVec;
             QPoint vec;
-            int dmOffset;
-            int pmOffset;
+            int dmOffset{ };
+            int pmOffset{ };
         };
 
         void setupSteps();
 
-        uint32_t const* m_pDmData;
+        const uint32_t* m_pDmData;
         int m_dmStride;
-        float const* m_pPmData;
+        const float* m_pPmData;
         int m_pmStride;
         QRect m_rect;
         QLineF m_line;

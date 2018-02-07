@@ -17,24 +17,19 @@
  */
 
 #include "ColorParams.h"
-#include "CommandLine.h"
 
 namespace output {
     ColorParams::ColorParams()
-            : m_colorMode(DefaultColorMode()) {
+            : m_colorMode(BLACK_AND_WHITE) {
     }
 
-    ColorParams::ColorParams(QDomElement const& el)
+    ColorParams::ColorParams(const QDomElement& el)
             : m_colorMode(parseColorMode(el.attribute("colorMode"))),
               m_colorCommonOptions(el.namedItem("color-or-grayscale").toElement()),
               m_bwOptions(el.namedItem("bw").toElement()) {
     }
 
-    ColorParams::ColorMode ColorParams::DefaultColorMode() {
-        return CommandLine::get().getDefaultColorMode();
-    }
-
-    QDomElement ColorParams::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement ColorParams::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("colorMode", formatColorMode(m_colorMode));
         el.appendChild(m_colorCommonOptions.toXml(doc, "color-or-grayscale"));
@@ -43,7 +38,7 @@ namespace output {
         return el;
     }
 
-    ColorParams::ColorMode ColorParams::parseColorMode(QString const& str) {
+    ColorMode ColorParams::parseColorMode(const QString& str) {
         if (str == "bw") {
             return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
@@ -51,12 +46,12 @@ namespace output {
         } else if (str == "mixed") {
             return MIXED;
         } else {
-            return DefaultColorMode();
+            return BLACK_AND_WHITE;
         }
     }
 
-    QString ColorParams::formatColorMode(ColorParams::ColorMode const mode) {
-        char const* str = "";
+    QString ColorParams::formatColorMode(const ColorMode mode) {
+        const char* str = "";
         switch (mode) {
             case BLACK_AND_WHITE:
                 str = "bw";
@@ -70,5 +65,29 @@ namespace output {
         }
 
         return QString::fromLatin1(str);
+    }
+
+    ColorMode ColorParams::colorMode() const {
+        return m_colorMode;
+    }
+
+    void ColorParams::setColorMode(ColorMode mode) {
+        m_colorMode = mode;
+    }
+
+    const ColorCommonOptions& ColorParams::colorCommonOptions() const {
+        return m_colorCommonOptions;
+    }
+
+    void ColorParams::setColorCommonOptions(const ColorCommonOptions& opt) {
+        m_colorCommonOptions = opt;
+    }
+
+    const BlackWhiteOptions& ColorParams::blackWhiteOptions() const {
+        return m_bwOptions;
+    }
+
+    void ColorParams::setBlackWhiteOptions(const BlackWhiteOptions& opt) {
+        m_bwOptions = opt;
     }
 }  // namespace output

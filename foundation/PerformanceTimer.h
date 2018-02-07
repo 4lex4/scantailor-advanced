@@ -19,7 +19,7 @@
 #ifndef PERFORMANCETIMER_H_
 #define PERFORMANCETIMER_H_
 
-#include <time.h>
+#include <ctime>
 
 class PerformanceTimer {
 public:
@@ -27,10 +27,10 @@ public:
             : m_start(clock()) {
     }
 
-    void print(char const* prefix = "");
+    void print(const char* prefix = "");
 
 private:
-    clock_t const m_start;
+    const clock_t m_start;
 };
 
 

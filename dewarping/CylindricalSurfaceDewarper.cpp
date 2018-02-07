@@ -44,10 +44,10 @@
 namespace dewarping {
     class CylindricalSurfaceDewarper::CoupledPolylinesIterator {
     public:
-        CoupledPolylinesIterator(std::vector<QPointF> const& img_directrix1,
-                                 std::vector<QPointF> const& img_directrix2,
-                                 HomographicTransform<2, double> const& pln2img,
-                                 HomographicTransform<2, double> const& img2pln);
+        CoupledPolylinesIterator(const std::vector<QPointF>& img_directrix1,
+                                 const std::vector<QPointF>& img_directrix2,
+                                 const HomographicTransform<2, double>& pln2img,
+                                 const HomographicTransform<2, double>& img2pln);
 
         bool next(QPointF& img_pt1, QPointF& img_pt2, double& pln_x);
 
@@ -75,8 +75,8 @@ namespace dewarping {
     };
 
 
-    CylindricalSurfaceDewarper::CylindricalSurfaceDewarper(std::vector<QPointF> const& img_directrix1,
-                                                           std::vector<QPointF> const& img_directrix2,
+    CylindricalSurfaceDewarper::CylindricalSurfaceDewarper(const std::vector<QPointF>& img_directrix1,
+                                                           const std::vector<QPointF>& img_directrix2,
                                                            double depth_perception)
             : m_pln2img(calcPlnToImgHomography(img_directrix1, img_directrix2)),
               m_img2pln(m_pln2img.inv()),
@@ -91,24 +91,24 @@ namespace dewarping {
     }
 
     CylindricalSurfaceDewarper::Generatrix CylindricalSurfaceDewarper::mapGeneratrix(double crv_x, State& state) const {
-        double const pln_x = m_arcLengthMapper.arcLenToX(crv_x, state.m_arcLengthHint);
+        const double pln_x = m_arcLengthMapper.arcLenToX(crv_x, state.m_arcLengthHint);
 
-        Vec2d const pln_top_pt(pln_x, 0);
-        Vec2d const pln_bottom_pt(pln_x, 1);
-        Vec2d const img_top_pt(m_pln2img(pln_top_pt));
-        Vec2d const img_bottom_pt(m_pln2img(pln_bottom_pt));
-        QLineF const img_generatrix(img_top_pt, img_bottom_pt);
-        ToLineProjector const projector(img_generatrix);
-        Vec2d const img_directrix1_pt(
+        const Vec2d pln_top_pt(pln_x, 0);
+        const Vec2d pln_bottom_pt(pln_x, 1);
+        const Vec2d img_top_pt(m_pln2img(pln_top_pt));
+        const Vec2d img_bottom_pt(m_pln2img(pln_bottom_pt));
+        const QLineF img_generatrix(img_top_pt, img_bottom_pt);
+        const ToLineProjector projector(img_generatrix);
+        const Vec2d img_directrix1_pt(
                 m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
         );
-        Vec2d const img_directrix2_pt(
+        const Vec2d img_directrix2_pt(
                 m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
         );
-        Vec2d const img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
-        double const img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
-        double const img_directrix2_proj(projector.projectionScalar(img_directrix2_pt));
-        double const img_straight_line_proj(projector.projectionScalar(img_straight_line_pt));
+        const Vec2d img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
+        const double img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
+        const double img_directrix2_proj(projector.projectionScalar(img_directrix2_pt));
+        const double img_straight_line_proj(projector.projectionScalar(img_straight_line_pt));
 
         boost::array<std::pair<double, double>, 3> pairs;
         pairs[0] = std::make_pair(0.0, img_directrix1_proj);
@@ -123,28 +123,28 @@ namespace dewarping {
         return Generatrix(img_generatrix, H);
     }  // CylindricalSurfaceDewarper::mapGeneratrix
 
-    QPointF CylindricalSurfaceDewarper::mapToDewarpedSpace(QPointF const& img_pt) const {
+    QPointF CylindricalSurfaceDewarper::mapToDewarpedSpace(const QPointF& img_pt) const {
         State state;
 
-        double const pln_x = m_img2pln(img_pt)[0];
-        double const crv_x = m_arcLengthMapper.xToArcLen(pln_x, state.m_arcLengthHint);
+        const double pln_x = m_img2pln(img_pt)[0];
+        const double crv_x = m_arcLengthMapper.xToArcLen(pln_x, state.m_arcLengthHint);
 
-        Vec2d const pln_top_pt(pln_x, 0);
-        Vec2d const pln_bottom_pt(pln_x, 1);
-        Vec2d const img_top_pt(m_pln2img(pln_top_pt));
-        Vec2d const img_bottom_pt(m_pln2img(pln_bottom_pt));
-        QLineF const img_generatrix(img_top_pt, img_bottom_pt);
-        ToLineProjector const projector(img_generatrix);
-        Vec2d const img_directrix1_pt(
+        const Vec2d pln_top_pt(pln_x, 0);
+        const Vec2d pln_bottom_pt(pln_x, 1);
+        const Vec2d img_top_pt(m_pln2img(pln_top_pt));
+        const Vec2d img_bottom_pt(m_pln2img(pln_bottom_pt));
+        const QLineF img_generatrix(img_top_pt, img_bottom_pt);
+        const ToLineProjector projector(img_generatrix);
+        const Vec2d img_directrix1_pt(
                 m_imgDirectrix1Intersector.intersect(img_generatrix, state.m_intersectionHint1)
         );
-        Vec2d const img_directrix2_pt(
+        const Vec2d img_directrix2_pt(
                 m_imgDirectrix2Intersector.intersect(img_generatrix, state.m_intersectionHint2)
         );
-        Vec2d const img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
-        double const img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
-        double const img_directrix2_proj(projector.projectionScalar(img_directrix2_pt));
-        double const img_straight_line_proj(projector.projectionScalar(img_straight_line_pt));
+        const Vec2d img_straight_line_pt(m_pln2img(Vec2d(pln_x, m_plnStraightLineY)));
+        const double img_directrix1_proj(projector.projectionScalar(img_directrix1_pt));
+        const double img_directrix2_proj(projector.projectionScalar(img_directrix2_pt));
+        const double img_straight_line_proj(projector.projectionScalar(img_straight_line_pt));
 
         boost::array<std::pair<double, double>, 3> pairs;
         pairs[0] = std::make_pair(img_directrix1_proj, 0.0);
@@ -154,24 +154,24 @@ namespace dewarping {
         } else {
             pairs[2] = std::make_pair(img_straight_line_proj, m_plnStraightLineY);
         }
-        HomographicTransform<1, double> const H(threePoint1DHomography(pairs));
+        const HomographicTransform<1, double> H(threePoint1DHomography(pairs));
 
-        double const img_pt_proj(projector.projectionScalar(img_pt));
-        double const crv_y = H(img_pt_proj);
+        const double img_pt_proj(projector.projectionScalar(img_pt));
+        const double crv_y = H(img_pt_proj);
 
         return QPointF(crv_x, crv_y);
     }  // CylindricalSurfaceDewarper::mapToDewarpedSpace
 
-    QPointF CylindricalSurfaceDewarper::mapToWarpedSpace(QPointF const& crv_pt) const {
+    QPointF CylindricalSurfaceDewarper::mapToWarpedSpace(const QPointF& crv_pt) const {
         State state;
-        Generatrix const gtx(mapGeneratrix(crv_pt.x(), state));
+        const Generatrix gtx(mapGeneratrix(crv_pt.x(), state));
 
         return gtx.imgLine.pointAt(gtx.pln2img(crv_pt.y()));
     }
 
     HomographicTransform<2, double>
-    CylindricalSurfaceDewarper::calcPlnToImgHomography(std::vector<QPointF> const& img_directrix1,
-                                                       std::vector<QPointF> const& img_directrix2) {
+    CylindricalSurfaceDewarper::calcPlnToImgHomography(const std::vector<QPointF>& img_directrix1,
+                                                       const std::vector<QPointF>& img_directrix2) {
         boost::array<std::pair<QPointF, QPointF>, 4> pairs;
         pairs[0] = std::make_pair(QPointF(0, 0), img_directrix1.front());
         pairs[1] = std::make_pair(QPointF(1, 0), img_directrix1.back());
@@ -181,10 +181,10 @@ namespace dewarping {
         return fourPoint2DHomography(pairs);
     }
 
-    double CylindricalSurfaceDewarper::calcPlnStraightLineY(std::vector<QPointF> const& img_directrix1,
-                                                            std::vector<QPointF> const& img_directrix2,
-                                                            HomographicTransform<2, double> const pln2img,
-                                                            HomographicTransform<2, double> const img2pln) {
+    double CylindricalSurfaceDewarper::calcPlnStraightLineY(const std::vector<QPointF>& img_directrix1,
+                                                            const std::vector<QPointF>& img_directrix2,
+                                                            const HomographicTransform<2, double> pln2img,
+                                                            const HomographicTransform<2, double> img2pln) {
         double pln_y_accum = 0;
         double weight_accum = 0;
 
@@ -193,23 +193,23 @@ namespace dewarping {
         QPointF img_curve2_pt;
         double pln_x;
         while (it.next(img_curve1_pt, img_curve2_pt, pln_x)) {
-            QLineF const img_generatrix(img_curve1_pt, img_curve2_pt);
-            Vec2d const img_line1_pt(pln2img(Vec2d(pln_x, 0)));
-            Vec2d const img_line2_pt(pln2img(Vec2d(pln_x, 1)));
-            ToLineProjector const projector(img_generatrix);
-            double const p1 = 0;
-            double const p2 = projector.projectionScalar(img_line1_pt);
-            double const p3 = projector.projectionScalar(img_line2_pt);
-            double const p4 = 1;
-            double const dp1 = p2 - p1;
-            double const dp2 = p4 - p3;
-            double const weight = fabs(dp1 + dp2);
+            const QLineF img_generatrix(img_curve1_pt, img_curve2_pt);
+            const Vec2d img_line1_pt(pln2img(Vec2d(pln_x, 0)));
+            const Vec2d img_line2_pt(pln2img(Vec2d(pln_x, 1)));
+            const ToLineProjector projector(img_generatrix);
+            const double p1 = 0;
+            const double p2 = projector.projectionScalar(img_line1_pt);
+            const double p3 = projector.projectionScalar(img_line2_pt);
+            const double p4 = 1;
+            const double dp1 = p2 - p1;
+            const double dp2 = p4 - p3;
+            const double weight = fabs(dp1 + dp2);
             if (weight < 0.01) {
                 continue;
             }
 
-            double const p0 = (p3 * dp1 + p2 * dp2) / (dp1 + dp2);
-            Vec2d const img_pt(img_generatrix.pointAt(p0));
+            const double p0 = (p3 * dp1 + p2 * dp2) / (dp1 + dp2);
+            const Vec2d img_pt(img_generatrix.pointAt(p0));
             pln_y_accum += img2pln(img_pt)[1] * weight;
             weight_accum += weight;
         }
@@ -218,7 +218,7 @@ namespace dewarping {
     }  // CylindricalSurfaceDewarper::calcPlnStraightLineY
 
     HomographicTransform<2, double>
-    CylindricalSurfaceDewarper::fourPoint2DHomography(boost::array<std::pair<QPointF, QPointF>, 4> const& pairs) {
+    CylindricalSurfaceDewarper::fourPoint2DHomography(const boost::array<std::pair<QPointF, QPointF>, 4>& pairs) {
         VecNT<64, double> A;
         VecNT<8, double> B;
         double* pa = A.data();
@@ -226,9 +226,9 @@ namespace dewarping {
         int i = 0;
 
         typedef std::pair<QPointF, QPointF> Pair;
-        for (Pair const& pair : pairs) {
-            QPointF const from(pair.first);
-            QPointF const to(pair.second);
+        for (const Pair& pair : pairs) {
+            const QPointF from(pair.first);
+            const QPointF to(pair.second);
 
             pa[8 * 0] = -from.x();
             pa[8 * 1] = -from.y();
@@ -266,16 +266,16 @@ namespace dewarping {
     }  // CylindricalSurfaceDewarper::fourPoint2DHomography
 
     HomographicTransform<1, double>
-    CylindricalSurfaceDewarper::threePoint1DHomography(boost::array<std::pair<double, double>, 3> const& pairs) {
+    CylindricalSurfaceDewarper::threePoint1DHomography(const boost::array<std::pair<double, double>, 3>& pairs) {
         VecNT<9, double> A;
         VecNT<3, double> B;
         double* pa = A.data();
         double* pb = B.data();
 
         typedef std::pair<double, double> Pair;
-        for (Pair const& pair : pairs) {
-            double const from = pair.first;
-            double const to = pair.second;
+        for (const Pair& pair : pairs) {
+            const double from = pair.first;
+            const double to = pair.second;
 
             pa[3 * 0] = -from;
             pa[3 * 1] = -1;
@@ -295,8 +295,8 @@ namespace dewarping {
         return HomographicTransform<1, double>(H);
     }
 
-    void CylindricalSurfaceDewarper::initArcLengthMapper(std::vector<QPointF> const& img_directrix1,
-                                                         std::vector<QPointF> const& img_directrix2) {
+    void CylindricalSurfaceDewarper::initArcLengthMapper(const std::vector<QPointF>& img_directrix1,
+                                                         const std::vector<QPointF>& img_directrix2) {
         double prev_elevation = 0;
         CoupledPolylinesIterator it(img_directrix1, img_directrix2, m_pln2img, m_img2pln);
         QPointF img_curve1_pt;
@@ -311,13 +311,13 @@ namespace dewarping {
                 continue;
             }
 
-            QLineF const img_generatrix(img_curve1_pt, img_curve2_pt);
-            Vec2d const img_line1_pt(m_pln2img(Vec2d(pln_x, 0)));
-            Vec2d const img_line2_pt(m_pln2img(Vec2d(pln_x, 1)));
+            const QLineF img_generatrix(img_curve1_pt, img_curve2_pt);
+            const Vec2d img_line1_pt(m_pln2img(Vec2d(pln_x, 0)));
+            const Vec2d img_line2_pt(m_pln2img(Vec2d(pln_x, 1)));
 
-            ToLineProjector const projector(img_generatrix);
-            double const y1 = projector.projectionScalar(img_line1_pt);
-            double const y2 = projector.projectionScalar(img_line2_pt);
+            const ToLineProjector projector(img_generatrix);
+            const double y1 = projector.projectionScalar(img_line1_pt);
+            const double y2 = projector.projectionScalar(img_line2_pt);
 
             double elevation = m_depthPerception * (1.0 - (y2 - y1));
             elevation = qBound(-0.5, elevation, 0.5);
@@ -336,10 +336,10 @@ namespace dewarping {
 /*======================= CoupledPolylinesIterator =========================*/
 
     CylindricalSurfaceDewarper::CoupledPolylinesIterator::CoupledPolylinesIterator(
-            std::vector<QPointF> const& img_directrix1,
-            std::vector<QPointF> const& img_directrix2,
-            HomographicTransform<2, double> const& pln2img,
-            HomographicTransform<2, double> const& img2pln)
+            const std::vector<QPointF>& img_directrix1,
+            const std::vector<QPointF>& img_directrix2,
+            const HomographicTransform<2, double>& pln2img,
+            const HomographicTransform<2, double>& img2pln)
             : m_seq1It(img_directrix1.begin()),
               m_seq2It(img_directrix2.begin()),
               m_seq1End(img_directrix1.end()),
@@ -370,12 +370,12 @@ namespace dewarping {
 
     void
     CylindricalSurfaceDewarper::CoupledPolylinesIterator::next1(QPointF& img_pt1, QPointF& img_pt2, double& pln_x) {
-        Vec2d const pln_pt1(m_img2pln(m_nextImgPt1));
+        const Vec2d pln_pt1(m_img2pln(m_nextImgPt1));
         pln_x = pln_pt1[0];
         img_pt1 = m_nextImgPt1;
 
-        Vec2d const pln_ptx(pln_pt1[0], pln_pt1[1] + 1);
-        Vec2d const img_ptx(m_pln2img(pln_ptx));
+        const Vec2d pln_ptx(pln_pt1[0], pln_pt1[1] + 1);
+        const Vec2d img_ptx(m_pln2img(pln_ptx));
 
         if (QLineF(img_pt1, img_ptx).intersect(QLineF(m_nextImgPt2, m_prevImgPt2), &img_pt2)
             == QLineF::NoIntersection) {
@@ -390,12 +390,12 @@ namespace dewarping {
 
     void
     CylindricalSurfaceDewarper::CoupledPolylinesIterator::next2(QPointF& img_pt1, QPointF& img_pt2, double& pln_x) {
-        Vec2d const pln_pt2(m_img2pln(m_nextImgPt2));
+        const Vec2d pln_pt2(m_img2pln(m_nextImgPt2));
         pln_x = pln_pt2[0];
         img_pt2 = m_nextImgPt2;
 
-        Vec2d const pln_ptx(pln_pt2[0], pln_pt2[1] + 1);
-        Vec2d const img_ptx(m_pln2img(pln_ptx));
+        const Vec2d pln_ptx(pln_pt2[0], pln_pt2[1] + 1);
+        const Vec2d img_ptx(m_pln2img(pln_ptx));
 
         if (QLineF(img_pt2, img_ptx).intersect(QLineF(m_nextImgPt1, m_prevImgPt1), &img_pt1)
             == QLineF::NoIntersection) {

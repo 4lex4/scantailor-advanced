@@ -23,16 +23,17 @@
 #include "BasicImageView.h"
 #include "ProcessingIndicationWidget.h"
 #include <QPointer>
+#include <utility>
 
 class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
 public:
-    ImageLoadResult(QPointer<DebugImageView> const& owner, QImage const& image)
-            : m_ptrOwner(owner),
+    ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image)
+            : m_ptrOwner(std::move(owner)),
               m_image(image) {
     }
 
     // This method is called from the main thread.
-    virtual void operator()() {
+    void operator()() override {
         if (DebugImageView* owner = m_ptrOwner) {
             owner->imageLoaded(m_image);
         }
@@ -46,12 +47,12 @@ private:
 
 class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
 public:
-    ImageLoader(DebugImageView* owner, QString const& file_path)
+    ImageLoader(DebugImageView* owner, const QString& file_path)
             : m_ptrOwner(owner),
               m_filePath(file_path) {
     }
 
-    virtual BackgroundExecutor::TaskResultPtr operator()() {
+    BackgroundExecutor::TaskResultPtr operator()() override {
         QImage image(m_filePath);
 
         return BackgroundExecutor::TaskResultPtr(new ImageLoadResult(m_ptrOwner, image));
@@ -64,7 +65,7 @@ private:
 
 
 DebugImageView::DebugImageView(AutoRemovingFile file,
-                               boost::function<QWidget*(QImage const&)> const& image_view_factory,
+                               boost::function<QWidget*(const QImage&)>const & image_view_factory,
                                QWidget* parent)
         : QStackedWidget(parent),
           m_file(file),
@@ -74,7 +75,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
     addWidget(m_pPlaceholderWidget);
 }
 
-void DebugImageView::setLive(bool const live) {
+void DebugImageView::setLive(const bool live) {
     if (live && !m_isLive) {
         ImageViewBase::backgroundExecutor().enqueueTask(
                 BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
@@ -91,7 +92,7 @@ void DebugImageView::setLive(bool const live) {
     m_isLive = live;
 }
 
-void DebugImageView::imageLoaded(QImage const& image) {
+void DebugImageView::imageLoaded(const QImage& image) {
     if (!m_isLive) {
         return;
     }
@@ -99,7 +100,7 @@ void DebugImageView::imageLoaded(QImage const& image) {
     if (currentWidget() == m_pPlaceholderWidget) {
         std::unique_ptr<QWidget> image_view;
         if (m_imageViewFactory.empty()) {
-            image_view.reset(new BasicImageView(image));
+            image_view = std::make_unique<BasicImageView>(image);
         } else {
             image_view.reset(m_imageViewFactory(image));
         }

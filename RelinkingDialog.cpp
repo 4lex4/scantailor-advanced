@@ -20,9 +20,9 @@
 #include "RelinkingSortingModel.h"
 #include <QDir>
 #include <QFileDialog>
-#include <assert.h>
+#include <cassert>
 
-RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* parent)
+RelinkingDialog::RelinkingDialog(const QString& project_file_path, QWidget* parent)
         : QDialog(parent),
           m_pSortingModel(new RelinkingSortingModel),
           m_projectFileDir(QFileInfo(project_file_path).path()) {
@@ -35,13 +35,13 @@ RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* pare
 
     connect(
             ui.listView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection const &, QItemSelection const &)),
-            SLOT(selectionChanged(QItemSelection const &, QItemSelection const &))
+            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            SLOT(selectionChanged(const QItemSelection &, const QItemSelection &))
     );
 
     connect(
-            ui.pathVisualization, SIGNAL(clicked(QString const &, QString const &, int)),
-            SLOT(pathButtonClicked(QString const &, QString const &, int))
+            ui.pathVisualization, SIGNAL(clicked(const QString &, const QString &, int)),
+            SLOT(pathButtonClicked(const QString &, const QString &, int))
     );
 
     connect(ui.undoButton, SIGNAL(clicked()), SLOT(undoButtonClicked()));
@@ -50,16 +50,16 @@ RelinkingDialog::RelinkingDialog(QString const& project_file_path, QWidget* pare
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
 
-void RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSelection const& deselected) {
+void RelinkingDialog::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) {
     if (selected.isEmpty()) {
         ui.pathVisualization->clear();
         ui.pathVisualization->setVisible(false);
     } else {
         ui.undoButton->setVisible(false);
 
-        QModelIndex const index(selected.front().topLeft());
-        QString const path(index.data(m_model.UncommittedPathRole).toString());
-        int const type = index.data(m_model.TypeRole).toInt();
+        const QModelIndex index(selected.front().topLeft());
+        const QString path(index.data(m_model.UncommittedPathRole).toString());
+        const int type = index.data(m_model.TypeRole).toInt();
         ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type) type),  /*clickable=*/ true);
         ui.pathVisualization->setVisible(true);
 
@@ -73,21 +73,21 @@ void RelinkingDialog::selectionChanged(QItemSelection const& selected, QItemSele
     ui.errorLabel->setVisible(false);
 }
 
-void RelinkingDialog::pathButtonClicked(QString const& prefix_path, QString const& suffix_path, int const type) {
+void RelinkingDialog::pathButtonClicked(const QString& prefix_path, const QString& suffix_path, const int type) {
     assert(!prefix_path.endsWith(QChar('/')) && !prefix_path.endsWith(QChar('\\')));
     assert(!suffix_path.startsWith(QChar('/')) && !suffix_path.startsWith(QChar('\\')));
 
     QString replacement_path;
 
     if (type == RelinkablePath::File) {
-        QDir const dir(QFileInfo(prefix_path).dir());
+        const QDir dir(QFileInfo(prefix_path).dir());
         replacement_path = QFileDialog::getOpenFileName(
                 this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
                 dir.exists() ? dir.path() : m_projectFileDir,
-                QString(), 0, QFileDialog::DontUseNativeDialog
+                QString(), nullptr, QFileDialog::DontUseNativeDialog
         );
     } else {
-        QDir const dir(prefix_path);
+        const QDir dir(prefix_path);
         replacement_path = QFileDialog::getExistingDirectory(
                 this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
                 dir.exists() ? prefix_path : m_projectFileDir,

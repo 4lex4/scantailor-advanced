@@ -3,9 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
 PROJECT("ScanTailor")
 
 # setting compiler flags
-IF ((CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX) OR MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-ENDIF ()
+SET(CMAKE_CXX_STANDARD 17)
 
 IF (MSVC AND WIN_XP)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
@@ -549,6 +547,15 @@ SET(
         filter_dc/ThumbnailCollector.h
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
+        ImageViewInfoProvider.cpp ImageViewInfoProvider.h
+        ImageViewInfoObserver.cpp ImageViewInfoObserver.h
+        UnitsProvider.cpp UnitsProvider.h
+        UnitsObserver.h UnitsObserver.cpp
+		UnitsConverter.cpp UnitsConverter.h
+        Units.cpp Units.h
+        DefaultParams.cpp DefaultParams.h
+        DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
+		DefaultParamsProvider.cpp DefaultParamsProvider.h
         version.h
         config.h.in
         ${common_ui_files})
@@ -574,7 +581,8 @@ SET(
         SystemLoadWidget.cpp SystemLoadWidget.h
         MainWindow.cpp MainWindow.h
         main.cpp
-)
+        StatusBarPanel.cpp StatusBarPanel.h
+        DefaultParamsDialog.cpp DefaultParamsDialog.h)
 
 SET(
         cli_only_sources
@@ -585,6 +593,10 @@ SET(
 SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+
+IF (POLICY CMP0071)
+    cmake_policy(SET CMP0071 NEW)
+ENDIF (POLICY CMP0071)
 
 SOURCE_GROUP("Special Headers" FILES version.h config.h.in)
 

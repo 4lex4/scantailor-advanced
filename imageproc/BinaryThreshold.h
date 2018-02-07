@@ -39,16 +39,16 @@ namespace imageproc {
         /**
          * \brief Finds the threshold using Otsu’s thresholding method.
          */
-        static BinaryThreshold otsuThreshold(QImage const& image);
+        static BinaryThreshold otsuThreshold(const QImage& image);
 
         /**
          * \brief Finds the threshold using Otsu’s thresholding method.
          */
-        static BinaryThreshold otsuThreshold(GrayscaleHistogram const& pixels_by_color);
+        static BinaryThreshold otsuThreshold(const GrayscaleHistogram& pixels_by_color);
 
-        static BinaryThreshold peakThreshold(QImage const& image);
+        static BinaryThreshold peakThreshold(const QImage& image);
 
-        static BinaryThreshold peakThreshold(GrayscaleHistogram const& pixels_by_color);
+        static BinaryThreshold peakThreshold(const GrayscaleHistogram& pixels_by_color);
 
         /**
      * \brief Image binarization using Mokji's global thresholding method.
@@ -63,11 +63,11 @@ namespace imageproc {
      * \param min_edge_magnitude The minimum color difference in a gradient.
      * \return A black and white image.
      */
-        static BinaryThreshold mokjiThreshold(QImage const& image,
+        static BinaryThreshold mokjiThreshold(const QImage& image,
                                               unsigned max_edge_width = 3,
                                               unsigned min_edge_magnitude = 20);
 
-        explicit BinaryThreshold(int threshold)
+        BinaryThreshold(int threshold)
                 : m_threshold(threshold) {
         }
 

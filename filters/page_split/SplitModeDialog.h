@@ -37,17 +37,17 @@ namespace page_split {
     Q_OBJECT
     public:
         SplitModeDialog(QWidget* parent,
-                        PageId const& cur_page,
-                        PageSelectionAccessor const& page_selection_accessor,
+                        const PageId& cur_page,
+                        const PageSelectionAccessor& page_selection_accessor,
                         LayoutType layout_type,
                         PageLayout::Type auto_detected_layout_type,
                         bool auto_detected_layout_type_valid);
 
-        virtual ~SplitModeDialog();
+        ~SplitModeDialog() override;
 
     signals:
 
-        void accepted(std::set<PageId> const& pages, LayoutType layout_type, bool apply_cut);
+        void accepted(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
 
     private slots:
 
@@ -60,7 +60,7 @@ namespace page_split {
     private:
         LayoutType combinedLayoutType() const;
 
-        static char const* iconFor(LayoutType layout_type);
+        static const char* iconFor(LayoutType layout_type);
 
         PageSequence m_pages;
         std::set<PageId> m_selectedPages;

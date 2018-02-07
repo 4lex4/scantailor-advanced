@@ -36,17 +36,17 @@ class QItemSelection;
 class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
 Q_OBJECT
 public:
-    FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* parent = 0);
+    explicit FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent = nullptr);
 
-    virtual ~FixDpiDialog();
+    ~FixDpiDialog() override;
 
-    std::vector<ImageFileInfo> const& files() const;
+    const std::vector<ImageFileInfo>& files() const;
 
 private slots:
 
     void tabChanged(int tab);
 
-    void selectionChanged(QItemSelection const& selection);
+    void selectionChanged(const QItemSelection& selection);
 
     void dpiComboChangedByUser(int index);
 
@@ -67,11 +67,11 @@ private:
 
     void enableDisableOkButton();
 
-    void updateDpiFromSelection(QItemSelection const& selection);
+    void updateDpiFromSelection(const QItemSelection& selection);
 
     void resetDpiForm();
 
-    void setDpiForm(ImageMetadata const& metadata);
+    void setDpiForm(const ImageMetadata& metadata);
 
     void updateDpiCombo();
 

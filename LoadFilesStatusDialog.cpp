@@ -31,11 +31,11 @@ LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent)
     setFailedFiles(std::vector<QString>());
 }
 
-void LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files) {
+void LoadFilesStatusDialog::setLoadedFiles(const std::vector<QString>& files) {
     ui.tabWidget->setTabText(0, m_loadedTabNameTemplate.arg(files.size()));
 
     QString text;
-    for (QString const& file : files) {
+    for (const QString& file : files) {
         text.append(file);
         text.append(QChar('\n'));
     }
@@ -43,11 +43,11 @@ void LoadFilesStatusDialog::setLoadedFiles(std::vector<QString> const& files) {
     ui.loadedFiles->setPlainText(text);
 }
 
-void LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files) {
+void LoadFilesStatusDialog::setFailedFiles(const std::vector<QString>& files) {
     ui.tabWidget->setTabText(1, m_failedTabNameTemplate.arg(files.size()));
 
     QString text;
-    for (QString const& file : files) {
+    for (const QString& file : files) {
         text.append(file);
         text.append(QChar('\n'));
     }
@@ -55,7 +55,7 @@ void LoadFilesStatusDialog::setFailedFiles(std::vector<QString> const& files) {
     ui.failedFiles->setPlainText(text);
 }
 
-void LoadFilesStatusDialog::setOkButtonName(QString const& name) {
+void LoadFilesStatusDialog::setOkButtonName(const QString& name) {
     ui.buttonBox->button(QDialogButtonBox::Ok)->setText(name);
 }
 

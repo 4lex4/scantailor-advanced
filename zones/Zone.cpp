@@ -19,17 +19,17 @@
 #include "Zone.h"
 #include <QDomDocument>
 
-Zone::Zone(SerializableSpline const& spline, PropertySet const& props)
+Zone::Zone(const SerializableSpline& spline, const PropertySet& props)
         : m_spline(spline),
           m_props(props) {
 }
 
-Zone::Zone(QDomElement const& el, PropertyFactory const& prop_factory)
+Zone::Zone(const QDomElement& el, const PropertyFactory& prop_factory)
         : m_spline(el.namedItem("spline").toElement()),
           m_props(el.namedItem("properties").toElement(), prop_factory) {
 }
 
-Zone::Zone(QPolygonF const& polygon)
+Zone::Zone(const QPolygonF& polygon)
         : m_spline(polygon) {
     m_props.locateOrCreate<output::PictureLayerProperty>()->
             setLayer(output::PictureLayerProperty::PAINTER2);
@@ -38,7 +38,7 @@ Zone::Zone(QPolygonF const& polygon)
             setZoneCategory(output::ZoneCategoryProperty::RECTANGULAR_OUTLINE);
 }
 
-QDomElement Zone::toXml(QDomDocument& doc, QString const& name) const {
+QDomElement Zone::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
     el.appendChild(m_spline.toXml(doc, "spline"));
     el.appendChild(m_props.toXml(doc, "properties"));
@@ -47,7 +47,7 @@ QDomElement Zone::toXml(QDomDocument& doc, QString const& name) const {
 }
 
 bool Zone::isValid() const {
-    QPolygonF const& shape = m_spline.toPolygon();
+    const QPolygonF& shape = m_spline.toPolygon();
 
     switch (shape.size()) {
         case 0:

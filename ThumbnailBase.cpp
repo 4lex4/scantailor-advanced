@@ -25,18 +25,19 @@
 #include <QApplication>
 #include <cmath>
 #include <QtCore/QSettings>
+#include <utility>
 
 using namespace imageproc;
 
-class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, ThumbnailLoadResult const&> {
+class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, const ThumbnailLoadResult&> {
 DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
 public:
-    LoadCompletionHandler(ThumbnailBase* thumb)
+    explicit LoadCompletionHandler(ThumbnailBase* thumb)
             : m_pThumb(thumb) {
     }
 
-    virtual void operator()(ThumbnailLoadResult const& result) {
+    void operator()(const ThumbnailLoadResult& result) override {
         m_pThumb->handleLoadResult(result);
     }
 
@@ -45,20 +46,20 @@ private:
 };
 
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                             QSizeF const& max_size,
-                             ImageId const& image_id,
-                             ImageTransformation const& image_xform)
-        : ThumbnailBase(thumbnail_cache, max_size, image_id, image_xform,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                             const QSizeF& max_size,
+                             const ImageId& image_id,
+                             const ImageTransformation& image_xform)
+        : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, image_xform,
                         image_xform.resultingPostCropArea().boundingRect()) {
 }
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                             QSizeF const& max_size,
-                             ImageId const& image_id,
-                             ImageTransformation const& image_xform,
+ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                             const QSizeF& max_size,
+                             const ImageId& image_id,
+                             const ImageTransformation& image_xform,
                              QRectF displayArea)
-        : m_ptrThumbnailCache(thumbnail_cache),
+        : m_ptrThumbnailCache(std::move(thumbnail_cache)),
           m_maxSize(max_size),
           m_imageId(image_id),
           m_imageXform(image_xform),
@@ -67,33 +68,32 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> const& thumbnai
     setImageXform(m_imageXform);
 }
 
-ThumbnailBase::~ThumbnailBase() {
-}
+ThumbnailBase::~ThumbnailBase() = default;
 
 QRectF ThumbnailBase::boundingRect() const {
     return m_boundingRect;
 }
 
-void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* option, QWidget* widget) {
+void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     QPixmap pixmap;
 
-    if (!m_ptrCompletionHandler.get()) {
+    if (!m_ptrCompletionHandler) {
         std::shared_ptr<LoadCompletionHandler> handler(
                 new LoadCompletionHandler(this)
         );
-        ThumbnailPixmapCache::Status const status
+        const ThumbnailPixmapCache::Status status
                 = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
         if (status == ThumbnailPixmapCache::QUEUED) {
             m_ptrCompletionHandler.swap(handler);
         }
     }
 
-    QTransform const image_to_display(m_postScaleXform * painter->worldTransform());
-    QTransform const thumb_to_display(painter->worldTransform());
+    const QTransform image_to_display(m_postScaleXform * painter->worldTransform());
+    const QTransform thumb_to_display(painter->worldTransform());
 
     if (pixmap.isNull()) {
-        double const border = 1.0;
-        double const shadow = 2.0;
+        const double border = 1.0;
+        const double shadow = 2.0;
         QRectF rect(m_boundingRect);
         rect.adjust(border, border, -(border + shadow), -(border + shadow));
 
@@ -106,13 +106,13 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     }
 
 
-    QSizeF const orig_image_size(m_imageXform.origRect().size());
-    double const x_pre_scale = orig_image_size.width() / pixmap.width();
-    double const y_pre_scale = orig_image_size.height() / pixmap.height();
+    const QSizeF orig_image_size(m_imageXform.origRect().size());
+    const double x_pre_scale = orig_image_size.width() / pixmap.width();
+    const double y_pre_scale = orig_image_size.height() / pixmap.height();
     QTransform pre_scale_xform;
     pre_scale_xform.scale(x_pre_scale, y_pre_scale);
 
-    QTransform const pixmap_to_thumb(
+    const QTransform pixmap_to_thumb(
             pre_scale_xform * m_imageXform.transform() * m_postScaleXform
     );
 
@@ -137,12 +137,12 @@ void ThumbnailBase::paint(QPainter* painter, QStyleOptionGraphicsItem const* opt
     );
 
     QPixmap temp_pixmap;
-    QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
+    const QString cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
         || (temp_pixmap.width() < display_rect.width())
         || (temp_pixmap.height() < display_rect.width())) {
-        int w = (int) display_rect.width();
-        int h = (int) display_rect.height();
+        auto w = (int) display_rect.width();
+        auto h = (int) display_rect.height();
         // Add some extra, to avoid rectreating the pixmap too often.
         w += w / 10;
         h += h / 10;
@@ -239,15 +239,15 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
 
     QFont font("Serif");
     font.setWeight(QFont::Bold);
-    font.setPixelSize(boundingRect().width() / 2);
+    font.setPixelSize(static_cast<int>(boundingRect().width() / 2));
     painter.setFont(font);
 
     painter.drawText(boundingRect(), Qt::AlignCenter, "*");
 }
 
-void ThumbnailBase::setImageXform(ImageTransformation const& image_xform) {
+void ThumbnailBase::setImageXform(const ImageTransformation& image_xform) {
     m_imageXform = image_xform;
-    QSizeF const unscaled_size(
+    const QSizeF unscaled_size(
             m_displayArea.size().expandedTo(QSizeF(1, 1))
     );
     QSizeF scaled_size(unscaled_size);
@@ -255,13 +255,13 @@ void ThumbnailBase::setImageXform(ImageTransformation const& image_xform) {
 
     m_boundingRect = QRectF(QPointF(0.0, 0.0), scaled_size);
 
-    double const x_post_scale = scaled_size.width() / unscaled_size.width();
-    double const y_post_scale = scaled_size.height() / unscaled_size.height();
+    const double x_post_scale = scaled_size.width() / unscaled_size.width();
+    const double y_post_scale = scaled_size.height() / unscaled_size.height();
     m_postScaleXform.reset();
     m_postScaleXform.scale(x_post_scale, y_post_scale);
 }
 
-void ThumbnailBase::handleLoadResult(ThumbnailLoadResult const& result) {
+void ThumbnailBase::handleLoadResult(const ThumbnailLoadResult& result) {
     m_ptrCompletionHandler.reset();
 
     if (result.status() != ThumbnailLoadResult::LOAD_FAILED) {

@@ -24,7 +24,7 @@
 #include <QRect>
 #include <QSize>
 #include <QColor>
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 class QImage;
@@ -65,7 +65,7 @@ namespace imageproc {
          *
          * To initialize image data, use fill().
          */
-        BinaryImage(QSize size);
+        explicit BinaryImage(QSize size);
 
         /**
          * \brief Creates a new image filled with specified color.
@@ -80,7 +80,7 @@ namespace imageproc {
         /**
          * \brief Create a copy of another image.  Copy-on-write is used.
          */
-        BinaryImage(BinaryImage const& other);
+        BinaryImage(const BinaryImage& other);
 
         /**
          * \brief Create a new image by copying the contents of a QImage.
@@ -88,7 +88,7 @@ namespace imageproc {
          * Colors in a QImage are converted to gray first, and then
          * compared against the provided threshold.
          */
-        explicit BinaryImage(QImage const& image, BinaryThreshold threshold = BinaryThreshold(128));
+        explicit BinaryImage(const QImage& image, BinaryThreshold threshold = BinaryThreshold(128));
 
         /**
          * \brief Create a new image by copying a part of a QImage.
@@ -99,7 +99,7 @@ namespace imageproc {
          * Colors in a QImage are converted to gray first, and then
          * compared against the provided threshold.
          */
-        explicit BinaryImage(QImage const& image, QRect const& rect, BinaryThreshold threshold = BinaryThreshold(128));
+        explicit BinaryImage(const QImage& image, const QRect& rect, BinaryThreshold threshold = BinaryThreshold(128));
 
         ~BinaryImage();
 
@@ -110,7 +110,7 @@ namespace imageproc {
          * their data, until one of them accesses it in a non-const way,
          * which is when a private copy of data is created for that image.
          */
-        BinaryImage& operator=(BinaryImage const& other);
+        BinaryImage& operator=(const BinaryImage& other);
 
         /**
          * \brief Returns true if the image is null.
@@ -155,14 +155,14 @@ namespace imageproc {
          *
          * If the bounding rectangle exceedes the image area, it's automatically truncated.
          */
-        void fill(QRect const& rect, BWColor color);
+        void fill(const QRect& rect, BWColor color);
 
         /**
          * \brief Fills a portion of the image with either white or black color.
          *
          * If the bounding rectangle exceedes the image area, it's automatically truncated.
          */
-        void fillExcept(QRect const& rect, BWColor color);
+        void fillExcept(const QRect& rect, BWColor color);
 
         /**
          * \brief Fills the area inside outer_rect but not inside inner_rect.
@@ -170,7 +170,7 @@ namespace imageproc {
          * If inner or outer rectangles exceed the image area, or if inner rectangle
          * exceedes the outer rectangle area, they will be automatically truncated.
          */
-        void fillFrame(QRect const& outer_rect, QRect const& inner_rect, BWColor color);
+        void fillFrame(const QRect& outer_rect, const QRect& inner_rect, BWColor color);
 
         int countBlackPixels() const;
 
@@ -182,7 +182,7 @@ namespace imageproc {
          * The specified rectangle is allowed to extend beyond the image area.
          * In this case, pixels that are outside of the image won't be counted.
          */
-        int countBlackPixels(QRect const& rect) const;
+        int countBlackPixels(const QRect& rect) const;
 
         /**
          * \brief Return the number of white pixels in a specified area.
@@ -190,14 +190,14 @@ namespace imageproc {
          * The specified rectangle is allowed to extend beyond the image area.
          * In this case, pixels that are outside of the image won't be counted.
          */
-        int countWhitePixels(QRect const& rect) const;
+        int countWhitePixels(const QRect& rect) const;
 
         /**
          * \brief Calculates the bounding box of either black or white content.
          */
         QRect contentBoundingBox(BWColor content_color = BLACK) const;
 
-        void rectangularizeAreas(std::vector<QRect>& areas, const BWColor content_color, const int sensitivity);
+        void rectangularizeAreas(std::vector<QRect>& areas, BWColor content_color, int sensitivity);
 
         int width() const {
             return m_width;
@@ -243,7 +243,7 @@ namespace imageproc {
          * The pointer returned is only valid until call a non-const
          * version of data(), because that may trigger copy-on-write.
          */
-        uint32_t const* data() const;
+        const uint32_t* data() const;
 
         /**
          * \brief Convert to a QImage with Format_Mono.
@@ -255,7 +255,7 @@ namespace imageproc {
          *
          * Opaque (black) pixels take the specified color.  Colors with alpha channel are supported.
          */
-        QImage toAlphaMask(QColor const& color) const;
+        QImage toAlphaMask(const QColor& color) const;
 
         void setPixel(int x, int y, BWColor color);
 
@@ -268,29 +268,29 @@ namespace imageproc {
 
         void copyIfShared();
 
-        void fillRectImpl(uint32_t* data, QRect const& rect, BWColor color);
+        void fillRectImpl(uint32_t* data, const QRect& rect, BWColor color);
 
-        static BinaryImage fromMono(QImage const& image);
+        static BinaryImage fromMono(const QImage& image);
 
-        static BinaryImage fromMono(QImage const& image, QRect const& rect);
+        static BinaryImage fromMono(const QImage& image, const QRect& rect);
 
-        static BinaryImage fromMonoLSB(QImage const& image);
+        static BinaryImage fromMonoLSB(const QImage& image);
 
-        static BinaryImage fromMonoLSB(QImage const& image, QRect const& rect);
+        static BinaryImage fromMonoLSB(const QImage& image, const QRect& rect);
 
-        static BinaryImage fromIndexed8(QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromIndexed8(const QImage& image, const QRect& rect, int threshold);
 
-        static BinaryImage fromRgb32(QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromRgb32(const QImage& image, const QRect& rect, int threshold);
 
-        static BinaryImage fromArgb32Premultiplied(QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromArgb32Premultiplied(const QImage& image, const QRect& rect, int threshold);
 
-        static BinaryImage fromRgb16(QImage const& image, QRect const& rect, int threshold);
+        static BinaryImage fromRgb16(const QImage& image, const QRect& rect, int threshold);
 
-        static bool isLineMonotone(uint32_t const* line, int last_word_idx, uint32_t last_word_mask, uint32_t modifier);
+        static bool isLineMonotone(const uint32_t* line, int last_word_idx, uint32_t last_word_mask, uint32_t modifier);
 
-        static int leftmostBitOffset(uint32_t const* line, int offset_limit, uint32_t modifier);
+        static int leftmostBitOffset(const uint32_t* line, int offset_limit, uint32_t modifier);
 
-        static int rightmostBitOffset(uint32_t const* line, int offset_limit, uint32_t modifier);
+        static int rightmostBitOffset(const uint32_t* line, int offset_limit, uint32_t modifier);
 
         SharedData* m_pData;
         int m_width;
@@ -313,12 +313,12 @@ namespace imageproc {
 /**
  * \brief Compares image data.
  */
-    bool operator==(BinaryImage const& lhs, BinaryImage const& rhs);
+    bool operator==(const BinaryImage& lhs, const BinaryImage& rhs);
 
 /**
  * \brief Compares image data.
  */
-    inline bool operator!=(BinaryImage const& lhs, BinaryImage const& rhs) {
+    inline bool operator!=(const BinaryImage& lhs, const BinaryImage& rhs) {
         return !(lhs == rhs);
     }
 }  // namespace imageproc

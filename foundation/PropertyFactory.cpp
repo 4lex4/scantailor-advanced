@@ -19,17 +19,17 @@
 #include "PropertyFactory.h"
 #include <QDomElement>
 
-void PropertyFactory::registerProperty(QString const& property, PropertyConstructor constructor) {
+void PropertyFactory::registerProperty(const QString& property, PropertyConstructor constructor) {
     m_registry[property] = constructor;
 }
 
 intrusive_ptr<Property>
-PropertyFactory::construct(QDomElement const& el) const {
-    Registry::const_iterator it(m_registry.find(el.attribute("type")));
+PropertyFactory::construct(const QDomElement& el) const {
+    auto it(m_registry.find(el.attribute("type")));
     if (it != m_registry.end()) {
         return (*it->second)(el);
     } else {
-        return intrusive_ptr<Property>();
+        return nullptr;
     }
 }
 

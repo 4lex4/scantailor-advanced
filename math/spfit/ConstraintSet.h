@@ -23,7 +23,7 @@
 #include <QPointF>
 #include <QLineF>
 #include <list>
-#include <stddef.h>
+#include <cstddef>
 
 namespace spfit {
     class FittableSpline;
@@ -31,22 +31,22 @@ namespace spfit {
     class ConstraintSet {
         // Member-wise copying is OK.
     public:
-        ConstraintSet(FittableSpline const* spline);
+        explicit ConstraintSet(const FittableSpline* spline);
 
-        std::list<LinearFunction> const& constraints() const {
+        const std::list<LinearFunction>& constraints() const {
             return m_constraints;
         }
 
-        void constrainControlPoint(int cp_idx, QPointF const& pos);
+        void constrainControlPoint(int cp_idx, const QPointF& pos);
 
-        void constrainControlPoint(int cp_idx, QLineF const& line);
+        void constrainControlPoint(int cp_idx, const QLineF& line);
 
-        void constrainSplinePoint(double t, QPointF const& pos);
+        void constrainSplinePoint(double t, const QPointF& pos);
 
-        void constrainSplinePoint(double t, QLineF const& line);
+        void constrainSplinePoint(double t, const QLineF& line);
 
     private:
-        FittableSpline const* m_pSpline;
+        const FittableSpline* m_pSpline;
         std::list<LinearFunction> m_constraints;
     };
 }  // namespace spfit

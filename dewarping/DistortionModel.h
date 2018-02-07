@@ -37,9 +37,9 @@ namespace dewarping {
          */
         DistortionModel();
 
-        explicit DistortionModel(QDomElement const& el);
+        explicit DistortionModel(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         /**
          * Returns true if the model is not null and in addition meets certain
@@ -47,31 +47,31 @@ namespace dewarping {
          */
         bool isValid() const;
 
-        void setTopCurve(Curve const& curve) {
+        void setTopCurve(const Curve& curve) {
             m_topCurve = curve;
         }
 
-        void setBottomCurve(Curve const& curve) {
+        void setBottomCurve(const Curve& curve) {
             m_bottomCurve = curve;
         }
 
-        Curve const& topCurve() const {
+        const Curve& topCurve() const {
             return m_topCurve;
         }
 
-        Curve const& bottomCurve() const {
+        const Curve& bottomCurve() const {
             return m_bottomCurve;
         }
 
-        bool matches(DistortionModel const& other) const;
+        bool matches(const DistortionModel& other) const;
 
         /**
          * Model domain is a rectangle in output image coordinates that
          * will be mapped to our curved quadrilateral.
          */
-        QRectF modelDomain(CylindricalSurfaceDewarper const& dewarper,
-                           QTransform const& to_output,
-                           QRectF const& output_content_rect) const;
+        QRectF modelDomain(const CylindricalSurfaceDewarper& dewarper,
+                           const QTransform& to_output,
+                           const QRectF& output_content_rect) const;
 
     private:
         /**
@@ -81,7 +81,7 @@ namespace dewarping {
          *        where curve points are defined, to the desired coordinate
          *        system, for example to output image coordinates.
          */
-        QRectF boundingBox(QTransform const& transform) const;
+        QRectF boundingBox(const QTransform& transform) const;
 
         Curve m_topCurve;
         Curve m_bottomCurve;

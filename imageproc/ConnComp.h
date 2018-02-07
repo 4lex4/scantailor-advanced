@@ -31,7 +31,7 @@ namespace imageproc {
                 : m_pixCount(0) {
         }
 
-        ConnComp(QPoint const& seed, QRect const& rect, int pix_count)
+        ConnComp(const QPoint& seed, const QRect& rect, int pix_count)
                 : m_seed(seed),
                   m_rect(rect),
                   m_pixCount(pix_count) {
@@ -47,7 +47,7 @@ namespace imageproc {
          * The position is in containing image coordinates,
          * not in the bounding box coordinates.
          */
-        QPoint const& seed() const {
+        const QPoint& seed() const {
             return m_seed;
         }
 
@@ -59,7 +59,7 @@ namespace imageproc {
             return m_rect.height();
         }
 
-        QRect const& rect() const {
+        const QRect& rect() const {
             return m_rect;
         }
 

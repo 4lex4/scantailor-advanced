@@ -33,17 +33,17 @@ namespace imageproc {
 
             QImage randomGrayImage(int width, int height);
 
-            BinaryImage makeBinaryImage(int const* data, int width, int height);
+            BinaryImage makeBinaryImage(const int* data, int width, int height);
 
-            QImage makeMonoQImage(int const* data, int width, int height);
+            QImage makeMonoQImage(const int* data, int width, int height);
 
-            QImage makeGrayImage(int const* data, int width, int height);
+            QImage makeGrayImage(const int* data, int width, int height);
 
-            void dumpBinaryImage(BinaryImage const& img, char const* name = 0);
+            void dumpBinaryImage(const BinaryImage& img, const char* name = nullptr);
 
-            void dumpGrayImage(QImage const& img, char const* name = 0);
+            void dumpGrayImage(const QImage& img, const char* name = nullptr);
 
-            bool surroundingsIntact(QImage const& img1, QImage const& img2, QRect const& rect);
+            bool surroundingsIntact(const QImage& img1, const QImage& img2, const QRect& rect);
         }  // namespace utils
     }  // namespace uests
 }  // namespace imageproc

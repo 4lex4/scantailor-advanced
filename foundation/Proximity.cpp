@@ -20,13 +20,13 @@
 #include <QPointF>
 #include <QLineF>
 
-Proximity::Proximity(QPointF const& p1, QPointF const& p2) {
-    double const dx = p1.x() - p2.x();
-    double const dy = p1.y() - p2.y();
+Proximity::Proximity(const QPointF& p1, const QPointF& p2) {
+    const double dx = p1.x() - p2.x();
+    const double dy = p1.y() - p2.y();
     m_sqDist = dx * dx + dy * dy;  // dx * dy;
 }
 
-Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment) {
+Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment) {
     if (segment.p1() == segment.p2()) {
         // Line segment is zero length.
         if (point_on_segment) {
@@ -45,12 +45,12 @@ Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segmen
     QPointF intersection;
     segment.intersect(perpendicular, &intersection);
 
-    double const dx1 = segment.p1().x() - intersection.x();
-    double const dy1 = segment.p1().y() - intersection.y();
-    double const dx2 = segment.p2().x() - intersection.x();
-    double const dy2 = segment.p2().y() - intersection.y();
-    double const dx12 = dx1 * dx2;
-    double const dy12 = dy1 * dy2;
+    const double dx1 = segment.p1().x() - intersection.x();
+    const double dy1 = segment.p1().y() - intersection.y();
+    const double dx2 = segment.p2().x() - intersection.x();
+    const double dy2 = segment.p2().y() - intersection.y();
+    const double dx12 = dx1 * dx2;
+    const double dy12 = dy1 * dy2;
     if ((dx12 < 0.0) || (dy12 < 0.0) || ((dx12 == 0.0) && (dy12 == 0.0))) {
         // Intersection is on the segment.
         if (point_on_segment) {
@@ -68,7 +68,7 @@ Proximity Proximity::pointAndLineSegment(QPointF const& pt, QLineF const& segmen
     pts[0] = segment.p1();
     pts[1] = segment.p2();
 
-    Proximity const* p_min_prx = std::min_element(prx, prx + 2);
+    const Proximity* p_min_prx = std::min_element(prx, prx + 2);
     if (point_on_segment) {
         *point_on_segment = pts[p_min_prx - prx];
     }

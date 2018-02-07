@@ -22,7 +22,7 @@
 #include "SparseMap.h"
 #include "MatT.h"
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 
 namespace adiff {
 /**
@@ -61,7 +61,7 @@ namespace adiff {
         /**
          * Constructs the "f(x1, x2, ...) = 0" function.
          */
-        explicit Function(SparseMap<2> const& sparse_map);
+        explicit Function(const SparseMap<2>& sparse_map);
 
         /**
          * Constructs a function representing an argument.
@@ -70,17 +70,17 @@ namespace adiff {
          * \param val Argument value.
          * \param sparse_map Tells which derivatives to compute.
          */
-        Function(size_t arg_idx, double val, SparseMap<2> const& sparse_map);
+        Function(size_t arg_idx, double val, const SparseMap<2>& sparse_map);
 
-        VecT<double> gradient(SparseMap<2> const& sparse_map) const;
+        VecT<double> gradient(const SparseMap<2>& sparse_map) const;
 
-        MatT<double> hessian(SparseMap<2> const& sparse_map) const;
+        MatT<double> hessian(const SparseMap<2>& sparse_map) const;
 
         void swap(Function& other);
 
-        Function& operator+=(Function const& other);
+        Function& operator+=(const Function& other);
 
-        Function& operator-=(Function const& other);
+        Function& operator-=(const Function& other);
 
         Function& operator*=(double scalar);
     };
@@ -90,16 +90,16 @@ namespace adiff {
         f1.swap(f2);
     }
 
-    Function<2> operator+(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator+(const Function<2>& f1, const Function<2>& f2);
 
-    Function<2> operator-(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator-(const Function<2>& f1, const Function<2>& f2);
 
-    Function<2> operator*(Function<2> const& f1, Function<2> const& f2);
+    Function<2> operator*(const Function<2>& f1, const Function<2>& f2);
 
-    Function<2> operator*(Function<2> const& f, double scalar);
+    Function<2> operator*(const Function<2>& f, double scalar);
 
-    Function<2> operator*(double scalar, Function<2> const& f);
+    Function<2> operator*(double scalar, const Function<2>& f);
 
-    Function<2> operator/(Function<2> const& num, Function<2> const& den);
+    Function<2> operator/(const Function<2>& num, const Function<2>& den);
 }  // namespace adiff
 #endif // ifndef ADIFF_FUNCTION_H_

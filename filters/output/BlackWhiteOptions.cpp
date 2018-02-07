@@ -30,10 +30,12 @@ namespace output {
               wolfLowerBound(1),
               wolfUpperBound(254),
               wolfCoef(0.3),
-              binarizationMethod(OTSU) {
+              binarizationMethod(OTSU),
+              colorSegmentationEnabled(false),
+              segmentationNoiseReduction(12) {
     }
 
-    BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
+    BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)
             : m_thresholdAdjustment(el.attribute("thresholdAdj").toInt()),
               savitzkyGolaySmoothingEnabled(el.attribute("savitzkyGolaySmoothing") == "1"),
               morphologicalSmoothingEnabled(el.attribute("morphologicalSmoothing") == "1"),
@@ -43,10 +45,12 @@ namespace output {
               wolfLowerBound(el.attribute("wolfLowerBound").toInt()),
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
-              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))) {
+              binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
+              colorSegmentationEnabled(el.attribute("colorSegmentationEnabled") == "1"),
+              segmentationNoiseReduction(el.attribute("segmentationNoiseReduction").toInt()) {
     }
 
-    QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("thresholdAdj", m_thresholdAdjustment);
         el.setAttribute("savitzkyGolaySmoothing", savitzkyGolaySmoothingEnabled ? "1" : "0");
@@ -58,11 +62,13 @@ namespace output {
         el.setAttribute("wolfUpperBound", wolfUpperBound);
         el.setAttribute("wolfCoef", wolfCoef);
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
+        el.setAttribute("colorSegmentationEnabled", colorSegmentationEnabled ? "1" : "0");
+        el.setAttribute("segmentationNoiseReduction", segmentationNoiseReduction);
 
         return el;
     }
 
-    bool BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const {
+    bool BlackWhiteOptions::operator==(const BlackWhiteOptions& other) const {
         return (m_thresholdAdjustment == other.m_thresholdAdjustment)
                && (savitzkyGolaySmoothingEnabled == other.savitzkyGolaySmoothingEnabled)
                && (morphologicalSmoothingEnabled == other.morphologicalSmoothingEnabled)
@@ -72,10 +78,12 @@ namespace output {
                && (wolfLowerBound == other.wolfLowerBound)
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
-               && (binarizationMethod == other.binarizationMethod);
+               && (binarizationMethod == other.binarizationMethod)
+               && (colorSegmentationEnabled == other.colorSegmentationEnabled)
+               && (segmentationNoiseReduction == other.segmentationNoiseReduction);
     }
 
-    bool BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const {
+    bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
         return !(*this == other);
     }
 
@@ -135,15 +143,15 @@ namespace output {
         BlackWhiteOptions::wolfCoef = wolfCoef;
     }
 
-    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
+    BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
         return binarizationMethod;
     }
 
-    void BlackWhiteOptions::setBinarizationMethod(BlackWhiteOptions::BinarizationMethod binarizationMethod) {
+    void BlackWhiteOptions::setBinarizationMethod(BinarizationMethod binarizationMethod) {
         BlackWhiteOptions::binarizationMethod = binarizationMethod;
     }
 
-    BlackWhiteOptions::BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
+    BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
         if (str == "wolf") {
             return WOLF;
         } else if (str == "sauvola") {
@@ -153,7 +161,7 @@ namespace output {
         }
     }
 
-    QString BlackWhiteOptions::formatBinarizationMethod(BlackWhiteOptions::BinarizationMethod type) {
+    QString BlackWhiteOptions::formatBinarizationMethod(BinarizationMethod type) {
         QString str = "";
         switch (type) {
             case OTSU:
@@ -168,6 +176,38 @@ namespace output {
         }
 
         return str;
+    }
+
+    int BlackWhiteOptions::thresholdAdjustment() const {
+        return m_thresholdAdjustment;
+    }
+
+    void BlackWhiteOptions::setThresholdAdjustment(int val) {
+        m_thresholdAdjustment = val;
+    }
+
+    bool BlackWhiteOptions::normalizeIllumination() const {
+        return m_normalizeIllumination;
+    }
+
+    void BlackWhiteOptions::setNormalizeIllumination(bool val) {
+        m_normalizeIllumination = val;
+    }
+
+    bool BlackWhiteOptions::isColorSegmentationEnabled() const {
+        return colorSegmentationEnabled;
+    }
+
+    void BlackWhiteOptions::setColorSegmentationEnabled(bool colorSegmentationEnabled) {
+        BlackWhiteOptions::colorSegmentationEnabled = colorSegmentationEnabled;
+    }
+
+    int BlackWhiteOptions::getSegmentationNoiseReduction() const {
+        return segmentationNoiseReduction;
+    }
+
+    void BlackWhiteOptions::setSegmentationNoiseReduction(int segmentationNoiseReduction) {
+        BlackWhiteOptions::segmentationNoiseReduction = segmentationNoiseReduction;
     }
 
 }  // namespace output

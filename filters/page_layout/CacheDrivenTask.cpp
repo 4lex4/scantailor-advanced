@@ -17,6 +17,8 @@
  */
 
 #include "CacheDrivenTask.h"
+
+#include <utility>
 #include "Settings.h"
 #include "Params.h"
 #include "Thumbnail.h"
@@ -28,24 +30,23 @@
 #include "filter_dc/ThumbnailCollector.h"
 
 namespace page_layout {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
-                                     intrusive_ptr<Settings> const& settings)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings) {
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task,
+                                     intrusive_ptr<Settings> settings)
+            : m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform,
-                                  QRectF const& content_rect) {
-        std::unique_ptr<Params> const params(
+                                  const ImageTransformation& xform,
+                                  const QRectF& content_rect) {
+        const std::unique_ptr<Params> params(
                 m_ptrSettings->getPageParams(page_info.id())
         );
-        if (!params.get() || !params->contentSizeMM().isValid()) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (!params || !params->contentSizeMM().isValid()) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -60,13 +61,13 @@ namespace page_layout {
             return;
         }
 
-        QRectF const adapted_content_rect(
+        const QRectF adapted_content_rect(
                 Utils::adaptContentRect(xform, content_rect)
         );
-        QPolygonF const content_rect_phys(
+        const QPolygonF content_rect_phys(
                 xform.transformBack().map(adapted_content_rect)
         );
-        QPolygonF const page_rect_phys(
+        const QPolygonF page_rect_phys(
                 Utils::calcPageRectPhys(
                         xform, content_rect_phys, *params,
                         m_ptrSettings->getAggregateHardSizeMM(), m_ptrSettings->getContentRect()
@@ -81,7 +82,7 @@ namespace page_layout {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(

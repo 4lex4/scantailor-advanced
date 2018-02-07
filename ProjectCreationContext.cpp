@@ -21,7 +21,7 @@
 #include "ProjectCreationContext.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
-#include <assert.h>
+#include <cassert>
 
 ProjectCreationContext::ProjectCreationContext(QWidget* parent)
         : m_layoutDirection(Qt::LeftToRight),
@@ -37,7 +37,7 @@ ProjectCreationContext::~ProjectCreationContext() {
 
 namespace {
     template<typename T>
-    bool allDpisOK(T const& container) {
+    bool allDpisOK(const T& container) {
         using namespace boost::lambda;
 
         return std::find_if(

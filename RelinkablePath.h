@@ -32,9 +32,9 @@ public:
         Dir
     };
 
-    RelinkablePath(QString const& path, Type type);
+    RelinkablePath(const QString& path, Type type);
 
-    QString const& normalizedPath() const {
+    const QString& normalizedPath() const {
         return m_normalizedPath;
     }
 
@@ -52,7 +52,7 @@ public:
      * \return The normalized string on success or an empty string on failure.
      *         Failure can happen because of unresolvable "/../" components.
      */
-    static QString normalize(QString const& path);
+    static QString normalize(const QString& path);
 
 private:
     QString m_normalizedPath;

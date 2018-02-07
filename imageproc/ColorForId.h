@@ -31,14 +31,14 @@ namespace imageproc {
  */
     template<typename T>
     QColor colorForId(T id) {
-        int const bits_unused = countMostSignificantZeroes(id);
-        int const bits_used = sizeof(T) * 8 - bits_unused;
-        T const reversed = reverseBits(id) >> bits_unused;
-        T const mask = (T(1) << bits_used) - 1;
+        const int bits_unused = countMostSignificantZeroes(id);
+        const int bits_used = sizeof(T) * 8 - bits_unused;
+        const T reversed = reverseBits(id) >> bits_unused;
+        const T mask = (T(1) << bits_used) - 1;
 
-        double const H = 0.99 * double(reversed + 1) / (mask + 1);
-        double const S = 1.0;
-        double const V = 1.0;
+        const double H = 0.99 * double(reversed + 1) / (mask + 1);
+        const double S = 1.0;
+        const double V = 1.0;
         QColor color;
         color.setHsvF(H, S, V);
 

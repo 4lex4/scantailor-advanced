@@ -23,9 +23,9 @@
 
 namespace output {
     ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
-                                     Dpi const& dpi,
-                                     PageId const& cur_page,
-                                     PageSelectionAccessor const& page_selection_accessor)
+                                     const Dpi& dpi,
+                                     const PageId& cur_page,
+                                     const PageSelectionAccessor& page_selection_accessor)
             : QDialog(parent),
               m_pages(page_selection_accessor.allPages()),
               m_selectedPages(page_selection_accessor.selectedPages()),
@@ -42,19 +42,19 @@ namespace output {
 
         dpiSelector->setValidator(new QIntValidator(dpiSelector));
 
-        static int const common_dpis[] = {
+        static const int common_dpis[] = {
                 300, 400, 600
         };
 
-        int const requested_dpi = std::max(dpi.horizontal(), dpi.vertical());
+        const int requested_dpi = std::max(dpi.horizontal(), dpi.vertical());
         m_customDpiString = QString::number(requested_dpi);
 
         int selected_index = -1;
-        for (int const cdpi : common_dpis) {
+        for (const int cdpi : common_dpis) {
             if (cdpi == requested_dpi) {
                 selected_index = dpiSelector->count();
             }
-            QString const cdpi_str(QString::number(cdpi));
+            const QString cdpi_str(QString::number(cdpi));
             dpiSelector->addItem(cdpi_str, cdpi_str);
         }
 
@@ -79,16 +79,15 @@ namespace output {
                 this, SLOT(dpiSelectionChanged(int))
         );
         connect(
-                dpiSelector, SIGNAL(editTextChanged(QString const &)),
-                this, SLOT(dpiEditTextChanged(QString const &))
+                dpiSelector, SIGNAL(editTextChanged(const QString &)),
+                this, SLOT(dpiEditTextChanged(const QString &))
         );
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ChangeDpiDialog::~ChangeDpiDialog() {
-    }
+    ChangeDpiDialog::~ChangeDpiDialog() = default;
 
-    void ChangeDpiDialog::dpiSelectionChanged(int const index) {
+    void ChangeDpiDialog::dpiSelectionChanged(const int index) {
         dpiSelector->setEditable(index == m_customItemIdx);
         if (index == m_customItemIdx) {
             dpiSelector->setEditText(m_customDpiString);
@@ -101,14 +100,14 @@ namespace output {
         }
     }
 
-    void ChangeDpiDialog::dpiEditTextChanged(QString const& text) {
+    void ChangeDpiDialog::dpiEditTextChanged(const QString& text) {
         if (dpiSelector->currentIndex() == m_customItemIdx) {
             m_customDpiString = text;
         }
     }
 
     void ChangeDpiDialog::onSubmit() {
-        QString const dpi_str(dpiSelector->currentText());
+        const QString dpi_str(dpiSelector->currentText());
         if (dpi_str.isEmpty()) {
             QMessageBox::warning(
                     this, tr("Error"),
@@ -118,7 +117,7 @@ namespace output {
             return;
         }
 
-        int const dpi = dpi_str.toInt();
+        const int dpi = dpi_str.toInt();
         if (dpi < 72) {
             QMessageBox::warning(
                     this, tr("Error"),

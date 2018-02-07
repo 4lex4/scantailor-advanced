@@ -39,15 +39,15 @@ public:
      *
      * Stride is also preserved.
      */
-    Grid(Grid const& other);
+    Grid(const Grid& other);
 
     bool isNull() const {
         return m_width <= 0 || m_height <= 0;
     }
 
-    void initPadding(Node const& padding_node);
+    void initPadding(const Node& padding_node);
 
-    void initInterior(Node const& interior_node);
+    void initInterior(const Node& interior_node);
 
     /**
      * \brief Returns a pointer to the beginning of unpadded data.
@@ -59,7 +59,7 @@ public:
     /**
      * \brief Returns a pointer to the beginning of unpadded data.
      */
-    Node const* data() const {
+    const Node* data() const {
         return m_pData;
     }
 
@@ -73,7 +73,7 @@ public:
     /**
      * \brief Returns a pointer to the beginning of padded data.
      */
-    Node const* paddedData() const {
+    const Node* paddedData() const {
         return m_storage.get();
     }
 
@@ -145,21 +145,21 @@ Grid<Node>::Grid(int width, int height, int padding)
 }
 
 template<typename Node>
-Grid<Node>::Grid(Grid const& other)
+Grid<Node>::Grid(const Grid& other)
         : m_storage(new Node[(other.stride() * (other.height() + other.padding() * 2))]),
           m_pData(m_storage.get() + other.stride() * other.padding() + other.padding()),
           m_width(other.width()),
           m_height(other.height()),
           m_stride(other.stride()),
           m_padding(other.padding()) {
-    int const len = m_stride * (m_height + m_padding * 2);
+    const int len = m_stride * (m_height + m_padding * 2);
     for (int i = 0; i < len; ++i) {
         m_storage[i] = other.m_storage[i];
     }
 }
 
 template<typename Node>
-void Grid<Node>::initPadding(Node const& padding_node) {
+void Grid<Node>::initPadding(const Node& padding_node) {
     if (m_padding == 0) {
         // No padding.
         return;
@@ -192,7 +192,7 @@ void Grid<Node>::initPadding(Node const& padding_node) {
 } // >::initPadding
 
 template<typename Node>
-void Grid<Node>::initInterior(Node const& interior_node) {
+void Grid<Node>::initInterior(const Node& interior_node) {
     Node* line = m_pData;
     for (int y = 0; y < m_height; ++y) {
         for (int x = 0; x < m_width; ++x) {

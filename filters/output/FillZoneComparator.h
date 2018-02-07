@@ -26,11 +26,11 @@ class PropertySet;
 namespace output {
     class FillZoneComparator {
     public:
-        static bool equal(ZoneSet const& lhs, ZoneSet const& rhs);
+        static bool equal(const ZoneSet& lhs, const ZoneSet& rhs);
 
-        static bool equal(Zone const& lhs, Zone const& rhs);
+        static bool equal(const Zone& lhs, const Zone& rhs);
 
-        static bool equal(PropertySet const& lhs, PropertySet const& rhs);
+        static bool equal(const PropertySet& lhs, const PropertySet& rhs);
     };
 }  // namespace output
 #endif

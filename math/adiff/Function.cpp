@@ -30,13 +30,13 @@ namespace adiff {
               secondDerivs(num_non_zero_vars) {
     }
 
-    Function<2>::Function(SparseMap<2> const& sparse_map)
+    Function<2>::Function(const SparseMap<2>& sparse_map)
             : value(),
               firstDerivs(sparse_map.numNonZeroElements()),
               secondDerivs(sparse_map.numNonZeroElements()) {
     }
 
-    Function<2>::Function(size_t arg_idx, double val, SparseMap<2> const& sparse_map)
+    Function<2>::Function(size_t arg_idx, double val, const SparseMap<2>& sparse_map)
             : value(val),
               firstDerivs(sparse_map.numNonZeroElements()),
               secondDerivs(sparse_map.numNonZeroElements()) {
@@ -44,18 +44,18 @@ namespace adiff {
         // f(X1, X2, ..., Xi, ...) = Xi
         // Derivatives are calculated accordingly.
 
-        size_t const num_vars = sparse_map.numVars();
+        const size_t num_vars = sparse_map.numVars();
 
         // arg_idx row
         for (size_t i = 0; i < num_vars; ++i) {
-            size_t const u = sparse_map.nonZeroElementIdx(arg_idx, i);
+            const size_t u = sparse_map.nonZeroElementIdx(arg_idx, i);
             if (u != sparse_map.ZERO_ELEMENT) {
                 firstDerivs[u] = 1.0;
             }
         }
         // arg_idx column
         for (size_t i = 0; i < num_vars; ++i) {
-            size_t const u = sparse_map.nonZeroElementIdx(i, arg_idx);
+            const size_t u = sparse_map.nonZeroElementIdx(i, arg_idx);
             if (u != sparse_map.ZERO_ELEMENT) {
                 firstDerivs[u] = 1.0;
             }
@@ -63,12 +63,12 @@ namespace adiff {
     }
 
     VecT<double>
-    Function<2>::gradient(SparseMap<2> const& sparse_map) const {
-        size_t const num_vars = sparse_map.numVars();
+    Function<2>::gradient(const SparseMap<2>& sparse_map) const {
+        const size_t num_vars = sparse_map.numVars();
         VecT<double> grad(num_vars);
 
         for (size_t i = 0; i < num_vars; ++i) {
-            size_t const u = sparse_map.nonZeroElementIdx(i, i);
+            const size_t u = sparse_map.nonZeroElementIdx(i, i);
             if (u != sparse_map.ZERO_ELEMENT) {
                 grad[i] = firstDerivs[u];
             }
@@ -78,20 +78,20 @@ namespace adiff {
     }
 
     MatT<double>
-    Function<2>::hessian(SparseMap<2> const& sparse_map) const {
-        size_t const num_vars = sparse_map.numVars();
+    Function<2>::hessian(const SparseMap<2>& sparse_map) const {
+        const size_t num_vars = sparse_map.numVars();
         MatT<double> hess(num_vars, num_vars);
 
         for (size_t i = 0; i < num_vars; ++i) {
             for (size_t j = 0; j < num_vars; ++j) {
                 double Fij = 0;
-                size_t const ij = sparse_map.nonZeroElementIdx(i, j);
+                const size_t ij = sparse_map.nonZeroElementIdx(i, j);
                 if (ij != sparse_map.ZERO_ELEMENT) {
                     if (i == j) {
                         Fij = secondDerivs[ij];
                     } else {
-                        size_t const ii = sparse_map.nonZeroElementIdx(i, i);
-                        size_t const jj = sparse_map.nonZeroElementIdx(j, j);
+                        const size_t ii = sparse_map.nonZeroElementIdx(i, i);
+                        const size_t jj = sparse_map.nonZeroElementIdx(j, j);
                         assert(ii != sparse_map.ZERO_ELEMENT && jj != sparse_map.ZERO_ELEMENT);
                         Fij = 0.5 * (secondDerivs[ij] - (secondDerivs[ii] + secondDerivs[jj]));
                     }
@@ -109,8 +109,8 @@ namespace adiff {
         secondDerivs.swap(other.secondDerivs);
     }
 
-    Function<2>& Function<2>::operator+=(Function<2> const& other) {
-        size_t const p = firstDerivs.size();
+    Function<2>& Function<2>::operator+=(const Function<2>& other) {
+        const size_t p = firstDerivs.size();
         assert(secondDerivs.size() == p);
         assert(other.firstDerivs.size() == p);
         assert(other.secondDerivs.size() == p);
@@ -125,8 +125,8 @@ namespace adiff {
         return *this;
     }
 
-    Function<2>& Function<2>::operator-=(Function<2> const& other) {
-        size_t const p = firstDerivs.size();
+    Function<2>& Function<2>::operator-=(const Function<2>& other) {
+        const size_t p = firstDerivs.size();
         assert(secondDerivs.size() == p);
         assert(other.firstDerivs.size() == p);
         assert(other.secondDerivs.size() == p);
@@ -142,7 +142,7 @@ namespace adiff {
     }
 
     Function<2>& Function<2>::operator*=(double scalar) {
-        size_t const p = firstDerivs.size();
+        const size_t p = firstDerivs.size();
         value *= scalar;
 
         for (size_t u = 0; u < p; ++u) {
@@ -152,8 +152,8 @@ namespace adiff {
         return *this;
     }
 
-    Function<2> operator+(Function<2> const& f1, Function<2> const& f2) {
-        size_t const p = f1.firstDerivs.size();
+    Function<2> operator+(const Function<2>& f1, const Function<2>& f2) {
+        const size_t p = f1.firstDerivs.size();
         assert(f1.secondDerivs.size() == p);
         assert(f2.firstDerivs.size() == p);
         assert(f2.secondDerivs.size() == p);
@@ -169,8 +169,8 @@ namespace adiff {
         return res;
     }
 
-    Function<2> operator-(Function<2> const& f1, Function<2> const& f2) {
-        size_t const p = f1.firstDerivs.size();
+    Function<2> operator-(const Function<2>& f1, const Function<2>& f2) {
+        const size_t p = f1.firstDerivs.size();
         assert(f1.secondDerivs.size() == p);
         assert(f2.firstDerivs.size() == p);
         assert(f2.secondDerivs.size() == p);
@@ -186,8 +186,8 @@ namespace adiff {
         return res;
     }
 
-    Function<2> operator*(Function<2> const& f1, Function<2> const& f2) {
-        size_t const p = f1.firstDerivs.size();
+    Function<2> operator*(const Function<2>& f1, const Function<2>& f2) {
+        const size_t p = f1.firstDerivs.size();
         assert(f1.secondDerivs.size() == p);
         assert(f2.firstDerivs.size() == p);
         assert(f2.secondDerivs.size() == p);
@@ -204,22 +204,22 @@ namespace adiff {
         return res;
     }
 
-    Function<2> operator*(Function<2> const& f, double scalar) {
+    Function<2> operator*(const Function<2>& f, double scalar) {
         Function<2> res(f);
         res *= scalar;
 
         return res;
     }
 
-    Function<2> operator*(double scalar, Function<2> const& f) {
+    Function<2> operator*(double scalar, const Function<2>& f) {
         Function<2> res(f);
         res *= scalar;
 
         return res;
     }
 
-    Function<2> operator/(Function<2> const& num, Function<2> const& den) {
-        size_t const p = num.firstDerivs.size();
+    Function<2> operator/(const Function<2>& num, const Function<2>& den) {
+        const size_t p = num.firstDerivs.size();
         assert(num.secondDerivs.size() == p);
         assert(den.firstDerivs.size() == p);
         assert(den.secondDerivs.size() == p);
@@ -227,19 +227,19 @@ namespace adiff {
         Function<2> res(p);
         res.value = num.value / den.value;
 
-        double const den2 = den.value * den.value;
-        double const den4 = den2 * den2;
+        const double den2 = den.value * den.value;
+        const double den4 = den2 * den2;
 
         for (size_t u = 0; u < p; ++u) {
             // Derivative of: (num.value / den.value)
-            double const d1 = num.firstDerivs[u] * den.value - num.value * den.firstDerivs[u];
+            const double d1 = num.firstDerivs[u] * den.value - num.value * den.firstDerivs[u];
             res.firstDerivs[u] = d1 / den2;
 
             // Derivative of: (num.firstDerivs[u] * den.value - num.value * den.firstDerivs[u])
-            double const d2 = num.secondDerivs[u] * den.value - num.value * den.secondDerivs[u];
+            const double d2 = num.secondDerivs[u] * den.value - num.value * den.secondDerivs[u];
 
             // Derivative of: den2
-            double const d3 = 2.0 * den.value * den.firstDerivs[u];
+            const double d3 = 2.0 * den.value * den.firstDerivs[u];
 
             // Derivative of: (d1 / den2)
             res.secondDerivs[u] = (d2 * den2 - d1 * d3) / den4;

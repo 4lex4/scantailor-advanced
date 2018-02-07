@@ -19,15 +19,31 @@
 #include "Params.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "CommandLine.h"
 
 namespace output {
     Params::Params()
-            : m_dpi(CommandLine::get().getDefaultOutputDpi()),
+            : m_dpi(600, 600),
               m_despeckleLevel(DESPECKLE_CAUTIOUS) {
     }
 
-    Params::Params(QDomElement const& el)
+    Params::Params(const Dpi& m_dpi,
+                   const ColorParams& m_colorParams,
+                   const SplittingOptions& m_splittingOptions,
+                   const PictureShapeOptions& m_pictureShapeOptions,
+                   const dewarping::DistortionModel& m_distortionModel,
+                   const DepthPerception& m_depthPerception,
+                   const DewarpingOptions& m_dewarpingOptions,
+                   DespeckleLevel m_despeckleLevel) : m_dpi(m_dpi),
+                                                      m_colorParams(m_colorParams),
+                                                      m_splittingOptions(m_splittingOptions),
+                                                      m_pictureShapeOptions(m_pictureShapeOptions),
+                                                      m_distortionModel(m_distortionModel),
+                                                      m_depthPerception(m_depthPerception),
+                                                      m_dewarpingOptions(m_dewarpingOptions),
+                                                      m_despeckleLevel(m_despeckleLevel) {
+    }
+
+    Params::Params(const QDomElement& el)
             : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
               m_distortionModel(el.namedItem("distortion-model").toElement()),
               m_depthPerception(el.attribute("depthPerception")),
@@ -35,7 +51,7 @@ namespace output {
               m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
               m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
               m_splittingOptions(el.namedItem("splitting").toElement()) {
-        QDomElement const cp(el.namedItem("color-params").toElement());
+        const QDomElement cp(el.namedItem("color-params").toElement());
         m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
         m_colorParams.setColorCommonOptions(
                 ColorCommonOptions(
@@ -47,7 +63,7 @@ namespace output {
         );
     }
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
@@ -58,7 +74,7 @@ namespace output {
         el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
         el.appendChild(marshaller.dpi(m_dpi, "dpi"));
         el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
-        
+
         QDomElement cp(doc.createElement("color-params"));
         cp.setAttribute(
                 "colorMode",
@@ -77,32 +93,96 @@ namespace output {
         return el;
     }
 
-    ColorParams::ColorMode Params::parseColorMode(QString const& str) {
+    ColorMode Params::parseColorMode(const QString& str) {
         if (str == "bw") {
-            return ColorParams::BLACK_AND_WHITE;
+            return BLACK_AND_WHITE;
         } else if (str == "colorOrGray") {
-            return ColorParams::COLOR_GRAYSCALE;
+            return COLOR_GRAYSCALE;
         } else if (str == "mixed") {
-            return ColorParams::MIXED;
+            return MIXED;
         } else {
-            return ColorParams::DefaultColorMode();
+            return BLACK_AND_WHITE;
         }
     }
 
-    QString Params::formatColorMode(ColorParams::ColorMode const mode) {
-        char const* str = "";
+    QString Params::formatColorMode(const ColorMode mode) {
+        const char* str = "";
         switch (mode) {
-            case ColorParams::BLACK_AND_WHITE:
+            case BLACK_AND_WHITE:
                 str = "bw";
                 break;
-            case ColorParams::COLOR_GRAYSCALE:
+            case COLOR_GRAYSCALE:
                 str = "colorOrGray";
                 break;
-            case ColorParams::MIXED:
+            case MIXED:
                 str = "mixed";
                 break;
         }
 
         return QString::fromLatin1(str);
+    }
+
+    const Dpi& Params::outputDpi() const {
+        return m_dpi;
+    }
+
+    void Params::setOutputDpi(const Dpi& dpi) {
+        m_dpi = dpi;
+    }
+
+    const ColorParams& Params::colorParams() const {
+        return m_colorParams;
+    }
+
+    const PictureShapeOptions& Params::pictureShapeOptions() const {
+        return m_pictureShapeOptions;
+    }
+
+    void Params::setPictureShapeOptions(const PictureShapeOptions& opt) {
+        m_pictureShapeOptions = opt;
+    }
+
+    void Params::setColorParams(const ColorParams& params) {
+        m_colorParams = params;
+    }
+
+    const SplittingOptions& Params::splittingOptions() const {
+        return m_splittingOptions;
+    }
+
+    void Params::setSplittingOptions(const SplittingOptions& opt) {
+        m_splittingOptions = opt;
+    }
+
+    const DewarpingOptions& Params::dewarpingOptions() const {
+        return m_dewarpingOptions;
+    }
+
+    void Params::setDewarpingOptions(const DewarpingOptions& opt) {
+        m_dewarpingOptions = opt;
+    }
+
+    const dewarping::DistortionModel& Params::distortionModel() const {
+        return m_distortionModel;
+    }
+
+    void Params::setDistortionModel(const dewarping::DistortionModel& model) {
+        m_distortionModel = model;
+    }
+
+    const DepthPerception& Params::depthPerception() const {
+        return m_depthPerception;
+    }
+
+    void Params::setDepthPerception(DepthPerception depth_perception) {
+        m_depthPerception = depth_perception;
+    }
+
+    DespeckleLevel Params::despeckleLevel() const {
+        return m_despeckleLevel;
+    }
+
+    void Params::setDespeckleLevel(DespeckleLevel level) {
+        m_despeckleLevel = level;
     }
 }  // namespace output

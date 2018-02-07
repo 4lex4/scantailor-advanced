@@ -17,6 +17,8 @@
  */
 
 #include "CacheDrivenTask.h"
+
+#include <utility>
 #include "Thumbnail.h"
 #include "IncompleteThumbnail.h"
 #include "Settings.h"
@@ -28,18 +30,17 @@
 #include "PageLayoutAdapter.h"
 
 namespace page_split {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
                                      intrusive_ptr<ProjectPages> projectPages,
-                                     intrusive_ptr<deskew::CacheDrivenTask> const& next_task)
-            : m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
-              m_projectPages(projectPages) {
+                                     intrusive_ptr<deskew::CacheDrivenTask> next_task)
+            : m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)),
+              m_projectPages(std::move(projectPages)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
-    static ProjectPages::LayoutType toPageLayoutType(PageLayout const& layout) {
+    static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
         switch (layout.type()) {
             case PageLayout::SINGLE_PAGE_UNCUT:
             case PageLayout::SINGLE_PAGE_CUT:
@@ -53,23 +54,23 @@ namespace page_split {
         return ProjectPages::ONE_PAGE_LAYOUT;
     }
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform) {
-        Settings::Record const record(
+                                  const ImageTransformation& xform) {
+        const Settings::Record record(
                 m_ptrSettings->getPageRecord(page_info.imageId())
         );
 
-        OrthogonalRotation const pre_rotation(xform.preRotation());
-        Dependencies const deps(
+        const OrthogonalRotation pre_rotation(xform.preRotation());
+        const Dependencies deps(
                 page_info.metadata().size(), pre_rotation,
                 record.combinedLayoutType()
         );
 
-        Params const* params = record.params();
+        const Params* params = record.params();
 
         if (!params || !deps.compatibleWith(*params)) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -100,7 +101,7 @@ namespace page_split {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(

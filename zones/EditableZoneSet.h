@@ -27,26 +27,25 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <map>
+#include <unordered_map>
 
 class EditableZoneSet : public QObject {
 Q_OBJECT
 private:
-    typedef std::map<EditableSpline::Ptr, intrusive_ptr<PropertySet>> Map;
+    typedef std::unordered_map<EditableSpline::Ptr, intrusive_ptr<PropertySet>, EditableSpline::Ptr::hash> Map;
 public:
     class const_iterator;
 
     class Zone {
         friend class EditableZoneSet::const_iterator;
     public:
-        Zone() {
-        }
+        Zone() = default;
 
-        EditableSpline::Ptr const& spline() const {
+        const EditableSpline::Ptr& spline() const {
             return m_iter->first;
         }
 
-        intrusive_ptr<PropertySet> const& properties() const {
+        const intrusive_ptr<PropertySet>& properties() const {
             return m_iter->second;
         }
 
@@ -60,7 +59,7 @@ public:
 
 
     class const_iterator : public boost::iterator_facade<
-            const_iterator, Zone const, boost::forward_traversal_tag
+            const_iterator, Zone const, boost::bidirectional_traversal_tag
     > {
         friend class EditableZoneSet;
 
@@ -75,11 +74,16 @@ public:
             m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
         }
 
-        bool equal(const_iterator const& other) const {
+        void decrement() {
+            --m_iter;
+            m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
+        }
+
+        bool equal(const const_iterator& other) const {
             return m_iter == other.m_iter;
         }
 
-        Zone const& dereference() const {
+        const Zone& dereference() const {
             return m_zone;
         }
 
@@ -93,7 +97,7 @@ public:
 
         Zone m_zone;
         std::list<EditableSpline::Ptr>::const_iterator m_iter;
-        const Map* m_ptrSplineMap;
+        const Map* m_ptrSplineMap{ };
     };
 
     typedef const_iterator iterator;
@@ -108,23 +112,23 @@ public:
         return iterator(m_splineList.end(), const_cast<const Map*>(&m_splineMap));
     }
 
-    PropertySet const& defaultProperties() const {
+    const PropertySet& defaultProperties() const {
         return m_defaultProps;
     }
 
-    void setDefaultProperties(PropertySet const& props);
+    void setDefaultProperties(const PropertySet& props);
 
-    void addZone(EditableSpline::Ptr const& spline);
+    void addZone(const EditableSpline::Ptr& spline);
 
-    void addZone(EditableSpline::Ptr const& spline, PropertySet const& props);
+    void addZone(const EditableSpline::Ptr& spline, const PropertySet& props);
 
-    void removeZone(EditableSpline::Ptr const& spline);
+    void removeZone(const EditableSpline::Ptr& spline);
 
     void commit();
 
-    intrusive_ptr<PropertySet> propertiesFor(EditableSpline::Ptr const& spline);
+    intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
 
-    intrusive_ptr<PropertySet const> propertiesFor(EditableSpline::Ptr const& spline) const;
+    intrusive_ptr<PropertySet const> propertiesFor(const EditableSpline::Ptr& spline) const;
 
 signals:
 

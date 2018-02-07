@@ -60,61 +60,61 @@ namespace page_split {
          *         requested layout type.
          */
         static PageLayout estimatePageLayout(LayoutType layout_type,
-                                             QImage const& input,
-                                             ImageTransformation const& pre_xform,
+                                             const QImage& input,
+                                             const ImageTransformation& pre_xform,
                                              imageproc::BinaryThreshold bw_threshold,
                                              DebugImages* dbg = nullptr);
 
     private:
         static std::unique_ptr<PageLayout> tryCutAtFoldingLine(LayoutType layout_type,
-                                                               QImage const& input,
-                                                               ImageTransformation const& pre_xform,
+                                                               const QImage& input,
+                                                               const ImageTransformation& pre_xform,
                                                                DebugImages* dbg);
 
         static PageLayout cutAtWhitespace(LayoutType layout_type,
-                                          QImage const& input,
-                                          ImageTransformation const& pre_xform,
-                                          imageproc::BinaryThreshold const bw_threshold,
+                                          const QImage& input,
+                                          const ImageTransformation& pre_xform,
+                                          imageproc::BinaryThreshold bw_threshold,
                                           DebugImages* dbg);
 
         static PageLayout cutAtWhitespaceDeskewed150(LayoutType layout_type,
                                                      int num_pages,
-                                                     imageproc::BinaryImage const& input,
+                                                     const imageproc::BinaryImage& input,
                                                      bool left_offcut,
                                                      bool right_offcut,
                                                      DebugImages* dbg);
 
-        static imageproc::BinaryImage to300DpiBinary(QImage const& img,
+        static imageproc::BinaryImage to300DpiBinary(const QImage& img,
                                                      QTransform& xform,
                                                      imageproc::BinaryThreshold threshold);
 
         static imageproc::BinaryImage
-        removeGarbageAnd2xDownscale(imageproc::BinaryImage const& image, DebugImages* dbg);
+        removeGarbageAnd2xDownscale(const imageproc::BinaryImage& image, DebugImages* dbg);
 
-        static bool checkForLeftOffcut(imageproc::BinaryImage const& image);
+        static bool checkForLeftOffcut(const imageproc::BinaryImage& image);
 
-        static bool checkForRightOffcut(imageproc::BinaryImage const& image);
+        static bool checkForRightOffcut(const imageproc::BinaryImage& image);
 
         static void visualizeSpans(DebugImages& dbg,
-                                   std::deque<Span> const& spans,
-                                   imageproc::BinaryImage const& image,
-                                   char const* label);
+                                   const std::deque<Span>& spans,
+                                   const imageproc::BinaryImage& image,
+                                   const char* label);
 
         static void removeInsignificantEdgeSpans(std::deque<Span>& spans);
 
         static PageLayout processContentSpansSinglePage(LayoutType layout_type,
-                                                        std::deque<Span> const& spans,
+                                                        const std::deque<Span>& spans,
                                                         int width,
                                                         int height,
                                                         bool left_offcut,
                                                         bool right_offcut);
 
         static PageLayout processContentSpansTwoPages(LayoutType layout_type,
-                                                      std::deque<Span> const& spans,
+                                                      const std::deque<Span>& spans,
                                                       int width,
                                                       int height);
 
-        static PageLayout processTwoPagesWithSingleSpan(Span const& span, int width, int height);
+        static PageLayout processTwoPagesWithSingleSpan(const Span& span, int width, int height);
 
         static QLineF vertLine(double x);
     };

@@ -57,10 +57,10 @@ namespace dewarping {
             int vertDist;
 
             bool distToVertLine(int vert_line_x) const {
-                return std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
+                return (bool) std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
             }
 
-            Segment(QLine const& line, Vec2d const& vec, int dist)
+            Segment(const QLine& line, const Vec2d& vec, int dist)
                     : line(line),
                       unitVec(vec),
                       vertDist(dist) {
@@ -76,12 +76,12 @@ namespace dewarping {
                     : totalVertDist(0) {
             }
 
-            void add(Segment const& seg) {
+            void add(const Segment& seg) {
                 segments.push_back(seg);
                 totalVertDist += seg.vertDist;
             }
 
-            bool betterThan(RansacModel const& other) const {
+            bool betterThan(const RansacModel& other) const {
                 return totalVertDist > other.totalVertDist;
             }
 
@@ -94,20 +94,20 @@ namespace dewarping {
 
         class RansacAlgo {
         public:
-            RansacAlgo(std::vector<Segment> const& segments);
+            explicit RansacAlgo(const std::vector<Segment>& segments);
 
-            void buildAndAssessModel(Segment const& seed_segment);
+            void buildAndAssessModel(const Segment& seed_segment);
 
             RansacModel& bestModel() {
                 return m_bestModel;
             }
 
-            RansacModel const& bestModel() const {
+            const RansacModel& bestModel() const {
                 return m_bestModel;
             }
 
         private:
-            std::vector<Segment> const& m_rSegments;
+            const std::vector<Segment>& m_rSegments;
             RansacModel m_bestModel;
             double m_cosThreshold;
         };
@@ -120,13 +120,13 @@ namespace dewarping {
                 RIGHT
             };
 
-            SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right);
+            SequentialColumnProcessor(const QSize& page_size, LeftOrRight left_or_right);
 
-            void process(int x, VertRange const& range);
+            void process(int x, const VertRange& range);
 
-            QLineF approximateWithLine(std::vector<Segment>* dbg_segments = 0) const;
+            QLineF approximateWithLine(std::vector<Segment>* dbg_segments = nullptr) const;
 
-            QImage visualizeEnvelope(QImage const& background);
+            QImage visualizeEnvelope(const QImage& background);
 
         private:
             bool topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const;
@@ -135,7 +135,7 @@ namespace dewarping {
 
             bool segmentIsTooLong(QPoint p1, QPoint p2) const;
 
-            QLineF interpolateSegments(std::vector<Segment> const& segments) const;
+            QLineF interpolateSegments(const std::vector<Segment>& segments) const;
 
             // Top and bottom points on the leftmost or the rightmost line.
             QPoint m_leadingTop;
@@ -147,17 +147,17 @@ namespace dewarping {
         };
 
 
-        RansacAlgo::RansacAlgo(std::vector<Segment> const& segments)
+        RansacAlgo::RansacAlgo(const std::vector<Segment>& segments)
                 : m_rSegments(segments),
                   m_cosThreshold(cos(4.0 * constants::DEG2RAD)) {
         }
 
-        void RansacAlgo::buildAndAssessModel(Segment const& seed_segment) {
+        void RansacAlgo::buildAndAssessModel(const Segment& seed_segment) {
             RansacModel cur_model;
             cur_model.add(seed_segment);
 
-            for (Segment const& seg : m_rSegments) {
-                double const cos = seg.unitVec.dot(seed_segment.unitVec);
+            for (const Segment& seg : m_rSegments) {
+                const double cos = seg.unitVec.dot(seed_segment.unitVec);
                 if (cos > m_cosThreshold) {
                     cur_model.add(seg);
                 }
@@ -168,15 +168,15 @@ namespace dewarping {
             }
         }
 
-        SequentialColumnProcessor::SequentialColumnProcessor(QSize const& page_size, LeftOrRight left_or_right)
+        SequentialColumnProcessor::SequentialColumnProcessor(const QSize& page_size, LeftOrRight left_or_right)
                 : m_leftMinusOneRightOne(left_or_right == LEFT ? -1 : 1),
                   m_leftOrRight(left_or_right) {
-            int const w = page_size.width();
-            int const h = page_size.height();
+            const int w = page_size.width();
+            const int h = page_size.height();
             m_maxSegmentSqLen = (w * w + h * h) / 3;
         }
 
-        void SequentialColumnProcessor::process(int x, VertRange const& range) {
+        void SequentialColumnProcessor::process(int x, const VertRange& range) {
             if (!range.isValid()) {
                 return;
             }
@@ -195,10 +195,10 @@ namespace dewarping {
 
             if (range.top < m_path.front().y()) {
                 // Growing towards the top.
-                QPoint const top(x, range.top);
+                const QPoint top(x, range.top);
                 // Now we decide if we need to trim the path before
                 // adding a new element to it to preserve convexity.
-                size_t const size = m_path.size();
+                const size_t size = m_path.size();
                 size_t mid_idx = 0;
                 size_t bottom_idx = 1;
 
@@ -219,11 +219,11 @@ namespace dewarping {
 
             if (range.bottom > m_path.back().y()) {
                 // Growing towards the bottom.
-                QPoint const bottom(x, range.bottom);
+                const QPoint bottom(x, range.bottom);
 
                 // Now we decide if we need to trim the path before
                 // adding a new element to it to preserve convexity.
-                int mid_idx = m_path.size() - 1;
+                auto mid_idx = static_cast<int>(m_path.size() - 1);
                 int top_idx = mid_idx - 1;
 
                 for (; top_idx >= 0; --top_idx, --mid_idx) {
@@ -242,7 +242,7 @@ namespace dewarping {
         }  // SequentialColumnProcessor::process
 
         bool SequentialColumnProcessor::topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const {
-            int const cross_z = crossZ(mid - top, bottom - mid);
+            const int cross_z = crossZ(mid - top, bottom - mid);
 
             return cross_z * m_leftMinusOneRightOne < 0;
         }
@@ -251,9 +251,9 @@ namespace dewarping {
             return v1.x() * v2.y() - v2.x() * v1.y();
         }
 
-        bool SequentialColumnProcessor::segmentIsTooLong(QPoint const p1, QPoint const p2) const {
-            QPoint const v(p2 - p1);
-            int const sqlen = v.x() * v.x() + v.y() * v.y();
+        bool SequentialColumnProcessor::segmentIsTooLong(const QPoint p1, const QPoint p2) const {
+            const QPoint v(p2 - p1);
+            const int sqlen = v.x() * v.x() + v.y() * v.y();
 
             return sqlen > m_maxSegmentSqLen;
         }
@@ -261,14 +261,14 @@ namespace dewarping {
         QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbg_segments) const {
             using namespace boost::lambda;
 
-            size_t const num_points = m_path.size();
+            const size_t num_points = m_path.size();
 
             std::vector<Segment> segments;
             segments.reserve(num_points);
             // Collect line segments from m_path and convert them to unit vectors.
             for (size_t i = 1; i < num_points; ++i) {
-                QPoint const pt1(m_path[i - 1]);
-                QPoint const pt2(m_path[i]);
+                const QPoint pt1(m_path[i - 1]);
+                const QPoint pt2(m_path[i]);
                 assert(pt2.y() > pt1.y());
 
                 Vec2d vec(pt2 - pt1);
@@ -278,7 +278,7 @@ namespace dewarping {
                 }
 
                 vec /= sqrt(vec.squaredNorm());
-                segments.push_back(Segment(QLine(pt1, pt2), vec, pt2.y() - pt1.y()));
+                segments.emplace_back(QLine(pt1, pt2), vec, pt2.y() - pt1.y());
             }
 
 
@@ -290,7 +290,7 @@ namespace dewarping {
             // We want to make sure we do pick a few segments closest
             // to the edge, so let's sort segments appropriately
             // and manually feed the best ones to RANSAC.
-            size_t const num_best_segments = std::min<size_t>(6, segments.size());
+            const size_t num_best_segments = std::min<size_t>(6, segments.size());
             std::partial_sort(
                     segments.begin(), segments.begin() + num_best_segments, segments.end(),
                     bind(&Segment::distToVertLine, _1, m_leadingTop.x())
@@ -300,7 +300,7 @@ namespace dewarping {
                 ransac.buildAndAssessModel(segments[i]);
             }
             // Continue with random samples.
-            int const ransac_iterations = segments.empty() ? 0 : 200;
+            const int ransac_iterations = segments.empty() ? 0 : 200;
             for (int i = 0; i < ransac_iterations; ++i) {
                 ransac.buildAndAssessModel(segments[qrand() % segments.size()]);
             }
@@ -309,7 +309,7 @@ namespace dewarping {
                 return QLineF(m_leadingTop, m_leadingTop + QPointF(0, 1));
             }
 
-            QLineF const line(interpolateSegments(ransac.bestModel().segments));
+            const QLineF line(interpolateSegments(ransac.bestModel().segments));
 
             if (dbg_segments) {
                 // Has to be the last thing we do with best model.
@@ -319,15 +319,15 @@ namespace dewarping {
             return line;
         }  // SequentialColumnProcessor::approximateWithLine
 
-        QLineF SequentialColumnProcessor::interpolateSegments(std::vector<Segment> const& segments) const {
+        QLineF SequentialColumnProcessor::interpolateSegments(const std::vector<Segment>& segments) const {
             assert(!segments.empty());
 
             // First, interpolate the angle of segments.
             Vec2d accum_vec;
             double accum_weight = 0;
 
-            for (Segment const& seg : segments) {
-                double const weight = sqrt(double(seg.vertDist));
+            for (const Segment& seg : segments) {
+                const double weight = sqrt(double(seg.vertDist));
                 accum_vec += weight * seg.unitVec;
                 accum_weight += weight;
             }
@@ -342,7 +342,7 @@ namespace dewarping {
             }
             // normal now points *inside* the image, towards the other bound.
             // Now find the vertex in m_path through which our line should pass.
-            for (QPoint const& pt : m_path) {
+            for (const QPoint& pt : m_path) {
                 if (normal.dot(pt - line.p1()) < 0) {
                     line.setP1(pt);
                     line.setP2(line.p1() + accum_vec);
@@ -352,7 +352,7 @@ namespace dewarping {
             return line;
         }
 
-        QImage SequentialColumnProcessor::visualizeEnvelope(QImage const& background) {
+        QImage SequentialColumnProcessor::visualizeEnvelope(const QImage& background) {
             QImage canvas(background.convertToFormat(QImage::Format_RGB32));
             QPainter painter(&canvas);
             painter.setRenderHint(QPainter::Antialiasing);
@@ -362,8 +362,8 @@ namespace dewarping {
             painter.setPen(pen);
 
             if (!m_path.empty()) {
-                std::vector<QPointF> const polyline(m_path.begin(), m_path.end());
-                painter.drawPolyline(&polyline[0], polyline.size());
+                const std::vector<QPointF> polyline(m_path.begin(), m_path.end());
+                painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
             }
 
             painter.setPen(Qt::NoPen);
@@ -379,7 +379,7 @@ namespace dewarping {
             return canvas;
         }
 
-        QImage visualizeSegments(QImage const& background, std::vector<Segment> const& segments) {
+        QImage visualizeSegments(const QImage& background, const std::vector<Segment>& segments) {
             QImage canvas(background.convertToFormat(QImage::Format_RGB32));
             QPainter painter(&canvas);
             painter.setRenderHint(QPainter::Antialiasing);
@@ -389,7 +389,7 @@ namespace dewarping {
             painter.setPen(pen);
             painter.setOpacity(0.7);
 
-            for (Segment const& seg : segments) {
+            for (const Segment& seg : segments) {
                 painter.drawLine(seg.line);
             }
 
@@ -397,21 +397,21 @@ namespace dewarping {
         }
 
 // For every column in the image, store the top-most and bottom-most black pixel.
-        void calculateVertRanges(imageproc::BinaryImage const& image, std::vector<VertRange>& ranges) {
-            int const width = image.width();
-            int const height = image.height();
-            uint32_t const* image_data = image.data();
-            int const image_stride = image.wordsPerLine();
-            uint32_t const msb = uint32_t(1) << 31;
+        void calculateVertRanges(const imageproc::BinaryImage& image, std::vector<VertRange>& ranges) {
+            const int width = image.width();
+            const int height = image.height();
+            const uint32_t* image_data = image.data();
+            const int image_stride = image.wordsPerLine();
+            const uint32_t msb = uint32_t(1) << 31;
 
             ranges.reserve(width);
 
             for (int x = 0; x < width; ++x) {
-                ranges.push_back(VertRange());
+                ranges.emplace_back();
                 VertRange& range = ranges.back();
 
-                uint32_t const mask = msb >> (x & 31);
-                uint32_t const* p_word = image_data + (x >> 5);
+                const uint32_t mask = msb >> (x & 31);
+                const uint32_t* p_word = image_data + (x >> 5);
 
                 int top_y = 0;
                 for (; top_y < height; ++top_y, p_word += image_stride) {
@@ -432,12 +432,12 @@ namespace dewarping {
             }
         }  // calculateVertRanges
 
-        QLineF extendLine(QLineF const& line, int height) {
+        QLineF extendLine(const QLineF& line, int height) {
             QPointF top_intersection;
             QPointF bottom_intersection;
 
-            QLineF const top_line(QPointF(0, 0), QPointF(1, 0));
-            QLineF const bottom_line(QPointF(0, height), QPointF(1, height));
+            const QLineF top_line(QPointF(0, 0), QPointF(1, 0));
+            const QLineF bottom_line(QPointF(0, height), QPointF(1, height));
 
             line.intersect(top_line, &top_intersection);
             line.intersect(bottom_line, &bottom_intersection);
@@ -446,9 +446,9 @@ namespace dewarping {
         }
     }      // namespace
 
-    std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg) {
-        int const width = image.width();
-        int const height = image.height();
+    std::pair<QLineF, QLineF> detectVertContentBounds(const imageproc::BinaryImage& image, DebugImages* dbg) {
+        const int width = image.width();
+        const int height = image.height();
 
         std::vector<VertRange> cols;
         calculateVertRanges(image, cols);
@@ -464,7 +464,7 @@ namespace dewarping {
         }
 
         if (dbg) {
-            QImage const background(image.toQImage().convertToFormat(QImage::Format_RGB32));
+            const QImage background(image.toQImage().convertToFormat(QImage::Format_RGB32));
             dbg->add(left_processor.visualizeEnvelope(background), "left_envelope");
             dbg->add(right_processor.visualizeEnvelope(background), "right_envelope");
         }
@@ -472,7 +472,7 @@ namespace dewarping {
         std::pair<QLineF, QLineF> bounds;
 
         std::vector<Segment> segments;
-        std::vector<Segment>* dbg_segments = dbg ? &segments : 0;
+        std::vector<Segment>* dbg_segments = dbg ? &segments : nullptr;
 
         QLineF left_line(left_processor.approximateWithLine(dbg_segments));
         left_line.translate(-1, 0);

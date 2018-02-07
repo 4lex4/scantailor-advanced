@@ -35,8 +35,7 @@ public:
 
     SplineVertex(SplineVertex* prev, SplineVertex* next);
 
-    virtual ~SplineVertex() {
-    }
+    virtual ~SplineVertex() = default;
 
     /**
      * We don't want reference counting for sentinel vertices,
@@ -69,9 +68,9 @@ public:
      */
     virtual SplineVertex::Ptr thisOrNextReal(Loop loop) = 0;
 
-    virtual QPointF const point() const = 0;
+    virtual const QPointF point() const = 0;
 
-    virtual void setPoint(QPointF const& pt) = 0;
+    virtual void setPoint(const QPointF& pt) = 0;
 
     virtual void remove();
 
@@ -81,9 +80,9 @@ public:
 
     SplineVertex::Ptr next(Loop loop);
 
-    SplineVertex::Ptr insertBefore(QPointF const& pt);
+    SplineVertex::Ptr insertBefore(const QPointF& pt);
 
-    SplineVertex::Ptr insertAfter(QPointF const& pt);
+    SplineVertex::Ptr insertAfter(const QPointF& pt);
 
 protected:
     /**
@@ -103,17 +102,17 @@ DECLARE_NON_COPYABLE(SentinelSplineVertex)
 public:
     SentinelSplineVertex();
 
-    virtual ~SentinelSplineVertex();
+    ~SentinelSplineVertex() override;
 
-    virtual SplineVertex::Ptr thisOrPrevReal(Loop loop);
+    SplineVertex::Ptr thisOrPrevReal(Loop loop) override;
 
-    virtual SplineVertex::Ptr thisOrNextReal(Loop loop);
+    SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-    virtual QPointF const point() const;
+    const QPointF point() const override;
 
-    virtual void setPoint(QPointF const& pt);
+    void setPoint(const QPointF& pt) override;
 
-    virtual void remove();
+    void remove() override;
 
     SplineVertex::Ptr firstVertex() const;
 
@@ -136,19 +135,19 @@ class RealSplineVertex : public SplineVertex {
 DECLARE_NON_COPYABLE(RealSplineVertex)
 
 public:
-    RealSplineVertex(QPointF const& pt, SplineVertex* prev, SplineVertex* next);
+    RealSplineVertex(const QPointF& pt, SplineVertex* prev, SplineVertex* next);
 
-    virtual void ref() const;
+    void ref() const override;
 
-    virtual void unref() const;
+    void unref() const override;
 
-    virtual SplineVertex::Ptr thisOrPrevReal(Loop loop);
+    SplineVertex::Ptr thisOrPrevReal(Loop loop) override;
 
-    virtual SplineVertex::Ptr thisOrNextReal(Loop loop);
+    SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-    virtual QPointF const point() const;
+    const QPointF point() const override;
 
-    virtual void setPoint(QPointF const& pt);
+    void setPoint(const QPointF& pt) override;
 
 private:
     QPointF m_point;

@@ -46,26 +46,21 @@ namespace dewarping {
 
 namespace output {
     class Settings;
-    class DewarpingParams;
 
     class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
     Q_OBJECT
     public:
-        OptionsWidget(intrusive_ptr<Settings> const& settings, PageSelectionAccessor const& page_selection_accessor);
+        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~OptionsWidget();
+        ~OptionsWidget() override;
 
-        void preUpdateUI(PageId const& page_id);
+        void preUpdateUI(const PageId& page_id);
 
         void postUpdateUI();
 
-        ImageViewTab lastTab() const {
-            return m_lastTab;
-        }
+        ImageViewTab lastTab() const;
 
-        DepthPerception const& depthPerception() const {
-            return m_depthPerception;
-        }
+        const DepthPerception& depthPerception() const;
 
     signals:
 
@@ -77,7 +72,7 @@ namespace output {
 
         void tabChanged(ImageViewTab tab);
 
-        void distortionModelChanged(dewarping::DistortionModel const& model);
+        void distortionModelChanged(const dewarping::DistortionModel& model);
 
     private slots:
 
@@ -87,11 +82,11 @@ namespace output {
 
         void applySplittingButtonClicked();
 
-        void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
+        void dpiChanged(const std::set<PageId>& pages, const Dpi& dpi);
 
-        void applyColorsConfirmed(std::set<PageId> const& pages);
+        void applyColorsConfirmed(const std::set<PageId>& pages);
 
-        void applySplittingOptionsConfirmed(std::set<PageId> const& pages);
+        void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
 
         void colorModeChanged(int idx);
 
@@ -102,6 +97,16 @@ namespace output {
         void pictureShapeChanged(int idx);
 
         void pictureShapeSensitivityChanged(int value);
+
+        void colorSegmentationToggled(bool checked);
+
+        void reduceNoiseChanged(int value);
+
+        void posterizeToggled(bool checked);
+
+        void posterizeLevelChanged(int value);
+
+        void posterizeForceBwToggled(bool checked);
 
         void cutMarginsToggled(bool checked);
 
@@ -119,6 +124,8 @@ namespace output {
 
         void colorForegroundToggled(bool checked);
 
+        void originalBackgroundToggled(bool checked);
+
         void binarizationSettingsChanged();
 
         void despeckleOffSelected();
@@ -131,15 +138,15 @@ namespace output {
 
         void applyDespeckleButtonClicked();
 
-        void applyDespeckleConfirmed(std::set<PageId> const& pages);
+        void applyDespeckleConfirmed(const std::set<PageId>& pages);
 
         void changeDewarpingButtonClicked();
 
-        void dewarpingChanged(std::set<PageId> const& pages, DewarpingOptions const& opt);
+        void dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt);
 
         void applyDepthPerceptionButtonClicked();
 
-        void applyDepthPerceptionConfirmed(std::set<PageId> const& pages);
+        void applyDepthPerceptionConfirmed(const std::set<PageId>& pages);
 
         void depthPerceptionChangedSlot(int val);
 

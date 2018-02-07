@@ -56,7 +56,7 @@ public:
      * to be executed in the thread where this BackgroundExecutor
      * object was constructed.
      */
-    void enqueueTask(TaskPtr const& task);
+    void enqueueTask(const TaskPtr& task);
 
 private:
     class Impl;

@@ -20,7 +20,7 @@
 #define LINEAR_FUNCTION_H_
 
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * A linear function from arbitrary number of variables
@@ -39,7 +39,7 @@ public:
      * Constructs a linear function of the given number of variables,
      * initializing everything to zero.
      */
-    LinearFunction(size_t num_vars = 0);
+    explicit LinearFunction(size_t num_vars = 0);
 
     /**
      * Resets everything to zero, so that F(x) = 0
@@ -53,11 +53,11 @@ public:
     /**
      * Evaluates a^T * x + b
      */
-    double evaluate(double const* x) const;
+    double evaluate(const double* x) const;
 
     void swap(LinearFunction& other);
 
-    LinearFunction& operator+=(LinearFunction const& other);
+    LinearFunction& operator+=(const LinearFunction& other);
 
     LinearFunction& operator*=(double scalar);
 };

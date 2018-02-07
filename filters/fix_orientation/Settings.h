@@ -37,22 +37,24 @@ namespace fix_orientation {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
-        void applyRotation(ImageId const& image_id, OrthogonalRotation rotation);
+        void applyRotation(const ImageId& image_id, OrthogonalRotation rotation);
 
-        void applyRotation(std::set<PageId> const& pages, OrthogonalRotation rotation);
+        void applyRotation(const std::set<PageId>& pages, OrthogonalRotation rotation);
 
-        OrthogonalRotation getRotationFor(ImageId const& image_id) const;
+        OrthogonalRotation getRotationFor(const ImageId& image_id) const;
+
+        bool isRotationNull(const ImageId& image_id) const;
 
     private:
         typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
 
-        void setImageRotationLocked(ImageId const& image_id, OrthogonalRotation const& rotation);
+        void setImageRotationLocked(const ImageId& image_id, const OrthogonalRotation& rotation);
 
         mutable QMutex m_mutex;
         PerImageRotation m_perImageRotation;

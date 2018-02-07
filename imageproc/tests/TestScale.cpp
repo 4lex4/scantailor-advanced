@@ -22,9 +22,9 @@
 #include <QImage>
 #include <QSize>
 #include <boost/test/auto_unit_test.hpp>
-#include <stdint.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdint>
+#include <cstdlib>
+#include <cmath>
 
 namespace imageproc {
     namespace tests {
@@ -33,19 +33,19 @@ namespace imageproc {
         BOOST_AUTO_TEST_SUITE(ScaleTestSuite);
 
             BOOST_AUTO_TEST_CASE(test_null_image) {
-                GrayImage const null_img;
+                const GrayImage null_img;
                 BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
             }
 
-            static bool fuzzyCompare(QImage const& img1, QImage const& img2) {
+            static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
                 BOOST_REQUIRE(img1.size() == img2.size());
 
-                int const width = img1.width();
-                int const height = img1.height();
-                uint8_t const* line1 = img1.bits();
-                uint8_t const* line2 = img2.bits();
-                int const line1_bpl = img1.bytesPerLine();
-                int const line2_bpl = img2.bytesPerLine();
+                const int width = img1.width();
+                const int height = img1.height();
+                const uint8_t* line1 = img1.bits();
+                const uint8_t* line2 = img2.bits();
+                const int line1_bpl = img1.bytesPerLine();
+                const int line2_bpl = img2.bytesPerLine();
 
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x) {
@@ -60,9 +60,9 @@ namespace imageproc {
                 return true;
             }
 
-            static bool checkScale(GrayImage const& img, QSize const& new_size) {
-                GrayImage const scaled1(scaleToGray(img, new_size));
-                GrayImage const scaled2(img.toQImage().scaled(
+            static bool checkScale(const GrayImage& img, const QSize& new_size) {
+                const GrayImage scaled1(scaleToGray(img, new_size));
+                const GrayImage scaled2(img.toQImage().scaled(
                         new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation
                 ));
 
@@ -74,7 +74,7 @@ namespace imageproc {
                 uint8_t* line = img.data();
                 for (int y = 0; y < img.height(); ++y) {
                     for (int x = 0; x < img.width(); ++x) {
-                        line[x] = rand() % 256;
+                        line[x] = static_cast<uint8_t>(rand() % 256);
                     }
                     line += img.stride();
                 }

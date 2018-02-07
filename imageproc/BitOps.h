@@ -21,8 +21,8 @@
 
 namespace imageproc {
     namespace detail {
-        extern unsigned char const bitCounts[256];
-        extern unsigned char const reversedBits[256];
+        extern const unsigned char bitCounts[256];
+        extern const unsigned char reversedBits[256];
 
         template<typename T, int BytesRemaining>
         class NonZeroBits {
@@ -45,13 +45,13 @@ namespace imageproc {
 
         template<typename T, int TotalBytes, int Offset, bool Done = false>
         struct ReverseBytes {
-            static T result(T const val) {
-                int const left_shift = (TotalBytes - Offset - 1) * 8;
-                int const right_shift = Offset * 8;
+            static T result(const T val) {
+                const int left_shift = (TotalBytes - Offset - 1) * 8;
+                const int right_shift = Offset * 8;
 
                 typedef unsigned char Byte;
-                Byte const left_byte = static_cast<Byte>(val >> left_shift);
-                Byte const right_byte = static_cast<Byte>(val >> right_shift);
+                const Byte left_byte = static_cast<Byte>(val >> left_shift);
+                const Byte right_byte = static_cast<Byte>(val >> right_shift);
 
                 T res(
                         ReverseBytes<
@@ -75,7 +75,7 @@ namespace imageproc {
 
         template<typename T>
         struct ReverseBytes<T, 1, 0, false> {
-            static T result(T const val) {
+            static T result(const T val) {
                 typedef unsigned char Byte;
 
                 return T(reversedBits[static_cast<Byte>(val)]);
@@ -85,7 +85,7 @@ namespace imageproc {
 
         template<typename T, int STRIPE_LEN, int BITS_DONE = 0, bool HAVE_MORE_BITS = true>
         struct StripedMaskMSB1 {
-            static T const value
+            static const T value
                     = (((T(1) << STRIPE_LEN) - 1) << (BITS_DONE + STRIPE_LEN))
                       | StripedMaskMSB1
                               <T, STRIPE_LEN, BITS_DONE + STRIPE_LEN * 2,
@@ -95,13 +95,13 @@ namespace imageproc {
 
         template<typename T, int STRIPE_LEN, int BITS_DONE>
         struct StripedMaskMSB1<T, STRIPE_LEN, BITS_DONE, false> {
-            static T const value = 0;
+            static const T value = 0;
         };
 
 
         template<typename T, int STRIPE_LEN, int BITS_DONE = 0, bool HAVE_MORE_BITS = true>
         struct StripedMaskLSB1 {
-            static T const value
+            static const T value
                     = (((T(1) << STRIPE_LEN) - 1) << BITS_DONE)
                       | StripedMaskLSB1
                               <T, STRIPE_LEN, BITS_DONE + STRIPE_LEN * 2,
@@ -111,7 +111,7 @@ namespace imageproc {
 
         template<typename T, int STRIPE_LEN, int BITS_DONE>
         struct StripedMaskLSB1<T, STRIPE_LEN, BITS_DONE, false> {
-            static T const value = 0;
+            static const T value = 0;
         };
 
 
@@ -156,18 +156,18 @@ namespace imageproc {
     }      // namespace detail
 
     template<typename T>
-    int countNonZeroBits(T const val) {
+    int countNonZeroBits(const T val) {
         return detail::NonZeroBits<T, sizeof(T)>::count(val);
     }
 
     template<typename T>
-    T reverseBits(T const val) {
+    T reverseBits(const T val) {
         return detail::ReverseBytes<T, sizeof(T), 0>::result(val);
     }
 
     template<typename T>
-    int countMostSignificantZeroes(T const val) {
-        static int const total_bits = sizeof(T) * 8;
+    int countMostSignificantZeroes(const T val) {
+        static const int total_bits = sizeof(T) * 8;
         int zeroes = total_bits;
 
         if (val) {
@@ -180,8 +180,8 @@ namespace imageproc {
     }
 
     template<typename T>
-    int countLeastSignificantZeroes(T const val) {
-        static int const total_bits = sizeof(T) * 8;
+    int countLeastSignificantZeroes(const T val) {
+        static const int total_bits = sizeof(T) * 8;
         int zeroes = total_bits;
 
         if (val) {

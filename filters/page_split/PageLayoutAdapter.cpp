@@ -4,7 +4,7 @@
 namespace page_split {
 
     QLineF PageLayoutAdapter::adaptCutter(const QLineF& cutterLine,
-                              const QRectF& newRect) {
+                                          const QRectF& newRect) {
         if (!newRect.isValid() || cutterLine.isNull()) {
             return cutterLine;
         }
@@ -36,9 +36,9 @@ namespace page_split {
         return QLineF(upperIntersection, lowerIntersection);
     }
 
-    std::unique_ptr<QList<QLineF>>
-    PageLayoutAdapter::adaptCutters(const QList<QLineF>& cuttersList, const QRectF& newRect) {
-        std::unique_ptr<QList<QLineF>> adaptedCutters = std::make_unique<QList<QLineF>>();
+    std::unique_ptr<QVector<QLineF>>
+    PageLayoutAdapter::adaptCutters(const QVector<QLineF>& cuttersList, const QRectF& newRect) {
+        auto adaptedCutters = std::make_unique<QVector<QLineF>>();
 
         for (QLineF cutter : cuttersList) {
             QLineF adaptedCutter = adaptCutter(cutter, newRect);
@@ -47,7 +47,7 @@ namespace page_split {
 
         std::sort(adaptedCutters->begin(),
                   adaptedCutters->end(),
-                  [](QLineF line1, QLineF line2) -> bool {
+                  [](const QLineF& line1, const QLineF& line2) -> bool {
                       return line1.x1() < line2.x1();
                   }
         );
@@ -79,7 +79,7 @@ namespace page_split {
             }
         }
 
-        return std::move(adaptedCutters);
+        return adaptedCutters;
     }
 
     void PageLayoutAdapter::correctPageLayoutType(PageLayout* layout) {
@@ -120,7 +120,8 @@ namespace page_split {
         }
     }
 
-    std::unique_ptr<PageLayout> PageLayoutAdapter::adaptPageLayout(const PageLayout& pageLayout, const QRectF& outline) {
+    std::unique_ptr<PageLayout>
+    PageLayoutAdapter::adaptPageLayout(const PageLayout& pageLayout, const QRectF& outline) {
         if (pageLayout.uncutOutline().boundingRect() == outline) {
             return std::make_unique<PageLayout>(pageLayout);
         }
@@ -128,9 +129,9 @@ namespace page_split {
         std::unique_ptr<PageLayout> newPageLayout;
 
         if (pageLayout.type() == PageLayout::SINGLE_PAGE_CUT) {
-            std::unique_ptr<QList<QLineF>> adaptedCutters =
+            std::unique_ptr<QVector<QLineF>> adaptedCutters =
                     PageLayoutAdapter::adaptCutters(
-                            QList<QLineF>({ pageLayout.cutterLine(0), pageLayout.cutterLine(1) }),
+                            QVector<QLineF>{ pageLayout.cutterLine(0), pageLayout.cutterLine(1) },
                             outline
                     );
             newPageLayout = std::make_unique<PageLayout>(outline,
@@ -148,7 +149,7 @@ namespace page_split {
             newPageLayout = std::make_unique<PageLayout>(outline);
         }
 
-        return std::move(newPageLayout);
+        return newPageLayout;
     }
 
 }

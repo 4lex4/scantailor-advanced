@@ -45,40 +45,36 @@ namespace output {
     DECLARE_NON_COPYABLE(Filter)
 
     public:
-        Filter(PageSelectionAccessor const& page_selection_accessor);
+        explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~Filter();
+        ~Filter() override;
 
-        virtual QString getName() const;
+        QString getName() const override;
 
-        virtual PageView getView() const;
+        PageView getView() const override;
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        intrusive_ptr<Task> createTask(PageId const& page_id,
-                                       intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                                       OutputFileNameGenerator const& out_file_name_gen,
+        void loadDefaultSettings(const PageId& page_id) override;
+
+        intrusive_ptr<Task> createTask(const PageId& page_id,
+                                       intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                                       const OutputFileNameGenerator& out_file_name_gen,
                                        bool batch,
                                        bool debug);
 
-        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(OutputFileNameGenerator const& out_file_name_gen);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen);
 
-        OptionsWidget* optionsWidget() {
-            return m_ptrOptionsWidget.get();
-        }
-
-        Settings* getSettings() {
-            return m_ptrSettings.get();
-        }
+        OptionsWidget* optionsWidget();
 
     private:
-        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
         intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;

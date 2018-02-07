@@ -27,11 +27,12 @@
 #include "WolfBinarizationOptionsWidget.h"
 #include "../../Utils.h"
 #include <QToolTip>
+#include <utility>
 
 namespace output {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> const& settings,
-                                 PageSelectionAccessor const& page_selection_accessor)
-            : m_ptrSettings(settings),
+    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
+                                 const PageSelectionAccessor& page_selection_accessor)
+            : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
               m_despeckleLevel(DESPECKLE_NORMAL),
               m_lastTab(TAB_OUTPUT) {
@@ -42,16 +43,16 @@ namespace output {
         depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
         depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
 
-        colorModeSelector->addItem(tr("Black and White"), ColorParams::BLACK_AND_WHITE);
-        colorModeSelector->addItem(tr("Color / Grayscale"), ColorParams::COLOR_GRAYSCALE);
-        colorModeSelector->addItem(tr("Mixed"), ColorParams::MIXED);
+        colorModeSelector->addItem(tr("Black and White"), BLACK_AND_WHITE);
+        colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
+        colorModeSelector->addItem(tr("Mixed"), MIXED);
 
-        thresholdMethodBox->addItem(tr("Otsu"), BlackWhiteOptions::OTSU);
-        thresholdMethodBox->addItem(tr("Sauvola"), BlackWhiteOptions::SAUVOLA);
-        thresholdMethodBox->addItem(tr("Wolf"), BlackWhiteOptions::WOLF);
+        thresholdMethodBox->addItem(tr("Otsu"), OTSU);
+        thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
+        thresholdMethodBox->addItem(tr("Wolf"), WOLF);
 
-        fillingColorBox->addItem(tr("Background"), ColorCommonOptions::FillingColor::BACKGROUND);
-        fillingColorBox->addItem(tr("White"), ColorCommonOptions::FillingColor::WHITE);
+        fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
+        fillingColorBox->addItem(tr("White"), FILL_WHITE);
 
         QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget
                 = new OtsuBinarizationOptionsWidget(m_ptrSettings);
@@ -68,6 +69,7 @@ namespace output {
         addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
         updateBinarizationOptionsDisplay(binarizationOptions->currentIndex());
 
+        pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
         pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
         pictureShapeSelector->addItem(tr("Rectangular"), RECTANGULAR_SHAPE);
 
@@ -83,13 +85,12 @@ namespace output {
         setupUiConnections();
     }
 
-    OptionsWidget::~OptionsWidget() {
-    }
+    OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(PageId const& page_id) {
+    void OptionsWidget::preUpdateUI(const PageId& page_id) {
         removeUiConnections();
 
-        Params const params(m_ptrSettings->getParams(page_id));
+        const Params params(m_ptrSettings->getParams(page_id));
         m_pageId = page_id;
         m_outputDpi = params.outputDpi();
         m_colorParams = params.colorParams();
@@ -115,7 +116,7 @@ namespace output {
         setupUiConnections();
     }
 
-    void OptionsWidget::tabChanged(ImageViewTab const tab) {
+    void OptionsWidget::tabChanged(const ImageViewTab tab) {
         m_lastTab = tab;
         updateDpiDisplay();
         updateColorsDisplay();
@@ -123,27 +124,25 @@ namespace output {
         reloadIfNecessary();
     }
 
-    void OptionsWidget::distortionModelChanged(dewarping::DistortionModel const& model) {
+    void OptionsWidget::distortionModelChanged(const dewarping::DistortionModel& model) {
         m_ptrSettings->setDistortionModel(m_pageId, model);
 
-        /*if (m_dewarpingOptions.mode() == DewarpingOptions::AUTO)*/ {
-            m_dewarpingOptions.setMode(DewarpingOptions::MANUAL);
-            m_ptrSettings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
-            updateDewarpingDisplay();
-        }
+        m_dewarpingOptions.setDewarpingMode(MANUAL);
+        m_ptrSettings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
+        updateDewarpingDisplay();
     }
 
-    void OptionsWidget::colorModeChanged(int const idx) {
-        int const mode = colorModeSelector->itemData(idx).toInt();
-        m_colorParams.setColorMode((ColorParams::ColorMode) mode);
+    void OptionsWidget::colorModeChanged(const int idx) {
+        const int mode = colorModeSelector->itemData(idx).toInt();
+        m_colorParams.setColorMode((ColorMode) mode);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
         updateColorsDisplay();
         emit reloadRequested();
     }
 
     void OptionsWidget::thresholdMethodChanged(int idx) {
-        const BlackWhiteOptions::BinarizationMethod method
-                = (BlackWhiteOptions::BinarizationMethod) thresholdMethodBox->itemData(idx).toInt();
+        const BinarizationMethod method
+                = (BinarizationMethod) thresholdMethodBox->itemData(idx).toInt();
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
         blackWhiteOptions.setBinarizationMethod(method);
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
@@ -153,8 +152,8 @@ namespace output {
     }
 
     void OptionsWidget::fillingColorChanged(int idx) {
-        const ColorCommonOptions::FillingColor color
-                = (ColorCommonOptions::FillingColor) fillingColorBox->itemData(idx).toInt();
+        const FillingColor color
+                = (FillingColor) fillingColorBox->itemData(idx).toInt();
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         colorCommonOptions.setFillingColor(color);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -163,7 +162,7 @@ namespace output {
         emit reloadRequested();
     }
 
-    void OptionsWidget::pictureShapeChanged(int const idx) {
+    void OptionsWidget::pictureShapeChanged(const int idx) {
         m_pictureShapeOptions.setPictureShape((PictureShape) (pictureShapeSelector->itemData(idx).toInt()));
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
@@ -177,7 +176,7 @@ namespace output {
         delayedReloadRequest.start(750);
     }
 
-    void OptionsWidget::cutMarginsToggled(bool const checked) {
+    void OptionsWidget::cutMarginsToggled(const bool checked) {
         ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
         colorCommonOptions.setCutMargins(checked);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -185,11 +184,11 @@ namespace output {
         emit reloadRequested();
     }
 
-    void OptionsWidget::equalizeIlluminationToggled(bool const checked) {
+    void OptionsWidget::equalizeIlluminationToggled(const bool checked) {
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
         blackWhiteOptions.setNormalizeIllumination(checked);
 
-        if (m_colorParams.colorMode() == ColorParams::MIXED) {
+        if (m_colorParams.colorMode() == MIXED) {
             if (!checked) {
                 ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
                 colorCommonOptions.setNormalizeIllumination(false);
@@ -204,7 +203,7 @@ namespace output {
         emit reloadRequested();
     }
 
-    void OptionsWidget::equalizeIlluminationColorToggled(bool const checked) {
+    void OptionsWidget::equalizeIlluminationColorToggled(const bool checked) {
         ColorCommonOptions opt(m_colorParams.colorCommonOptions());
         opt.setNormalizeIllumination(checked);
         m_colorParams.setColorCommonOptions(opt);
@@ -219,38 +218,38 @@ namespace output {
     }
 
     void OptionsWidget::changeDpiButtonClicked() {
-        ChangeDpiDialog* dialog = new ChangeDpiDialog(
+        auto* dialog = new ChangeDpiDialog(
                 this, m_outputDpi, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &, Dpi const &)),
-                this, SLOT(dpiChanged(std::set<PageId> const &, Dpi const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &, const Dpi &)),
+                this, SLOT(dpiChanged(const std::set<PageId> &, const Dpi &))
         );
         dialog->show();
     }
 
     void OptionsWidget::applyColorsButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applyColorsConfirmed(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applyColorsConfirmed(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::dpiChanged(std::set<PageId> const& pages, Dpi const& dpi) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setDpi(page_id, dpi);
         }
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -262,8 +261,8 @@ namespace output {
         }
     }
 
-    void OptionsWidget::applyColorsConfirmed(std::set<PageId> const& pages) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::applyColorsConfirmed(const std::set<PageId>& pages) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setColorParams(page_id, m_colorParams);
             m_ptrSettings->setPictureShapeOptions(page_id, m_pictureShapeOptions);
         }
@@ -271,7 +270,7 @@ namespace output {
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -282,27 +281,27 @@ namespace output {
     }
 
     void OptionsWidget::applySplittingButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Splitting Settings"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applySplittingOptionsConfirmed(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applySplittingOptionsConfirmed(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::applySplittingOptionsConfirmed(std::set<PageId> const& pages) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::applySplittingOptionsConfirmed(const std::set<PageId>& pages) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setSplittingOptions(page_id, m_splittingOptions);
         }
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -328,7 +327,7 @@ namespace output {
         handleDespeckleLevelChange(DESPECKLE_AGGRESSIVE);
     }
 
-    void OptionsWidget::handleDespeckleLevelChange(DespeckleLevel const level) {
+    void OptionsWidget::handleDespeckleLevelChange(const DespeckleLevel level) {
         m_despeckleLevel = level;
         m_ptrSettings->setDespeckleLevel(m_pageId, level);
 
@@ -344,27 +343,27 @@ namespace output {
     }
 
     void OptionsWidget::applyDespeckleButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Despeckling Level"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applyDespeckleConfirmed(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applyDespeckleConfirmed(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::applyDespeckleConfirmed(std::set<PageId> const& pages) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::applyDespeckleConfirmed(const std::set<PageId>& pages) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setDespeckleLevel(page_id, m_despeckleLevel);
         }
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -375,26 +374,26 @@ namespace output {
     }
 
     void OptionsWidget::changeDewarpingButtonClicked() {
-        ChangeDewarpingDialog* dialog = new ChangeDewarpingDialog(
+        auto* dialog = new ChangeDewarpingDialog(
                 this, m_pageId, m_dewarpingOptions, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &, DewarpingOptions const &)),
-                this, SLOT(dewarpingChanged(std::set<PageId> const &, DewarpingOptions const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &, const DewarpingOptions &)),
+                this, SLOT(dewarpingChanged(const std::set<PageId> &, const DewarpingOptions &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::dewarpingChanged(std::set<PageId> const& pages, DewarpingOptions const& opt) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setDewarpingOptions(page_id, opt);
         }
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -410,9 +409,9 @@ namespace output {
                 // we reload not just on TAB_FILL_ZONES but on all tabs except TAB_DEWARPING.
                 // PS: the static original <-> dewarped mappings are constructed
                 // in Task::UiUpdater::updateUI().  Look for "new DewarpingPointMapper" there.
-                if ((opt.mode() == DewarpingOptions::AUTO)
+                if ((opt.dewarpingMode() == AUTO)
                     || (m_lastTab != TAB_DEWARPING)
-                    || (opt.mode() == DewarpingOptions::MARGINAL)) {
+                    || (opt.dewarpingMode() == MARGINAL)) {
                     // Switch to the Output tab after reloading.
                     m_lastTab = TAB_OUTPUT;
                     // These depend on the value of m_lastTab.
@@ -430,27 +429,27 @@ namespace output {
     }      // OptionsWidget::dewarpingChanged
 
     void OptionsWidget::applyDepthPerceptionButtonClicked() {
-        ApplyColorsDialog* dialog = new ApplyColorsDialog(
+        auto* dialog = new ApplyColorsDialog(
                 this, m_pageId, m_pageSelectionAccessor
         );
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowTitle(tr("Apply Depth Perception"));
         connect(
-                dialog, SIGNAL(accepted(std::set<PageId> const &)),
-                this, SLOT(applyDepthPerceptionConfirmed(std::set<PageId> const &))
+                dialog, SIGNAL(accepted(const std::set<PageId> &)),
+                this, SLOT(applyDepthPerceptionConfirmed(const std::set<PageId> &))
         );
         dialog->show();
     }
 
-    void OptionsWidget::applyDepthPerceptionConfirmed(std::set<PageId> const& pages) {
-        for (PageId const& page_id : pages) {
+    void OptionsWidget::applyDepthPerceptionConfirmed(const std::set<PageId>& pages) {
+        for (const PageId& page_id : pages) {
             m_ptrSettings->setDepthPerception(page_id, m_depthPerception);
         }
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
         } else {
-            for (PageId const& page_id : pages) {
+            for (const PageId& page_id : pages) {
                 emit invalidateThumbnail(page_id);
             }
         }
@@ -462,11 +461,11 @@ namespace output {
 
     void OptionsWidget::depthPerceptionChangedSlot(int val) {
         m_depthPerception.setValue(0.1 * val);
-        QString const tooltip_text(QString::number(m_depthPerception.value()));
+        const QString tooltip_text(QString::number(m_depthPerception.value()));
         depthPerceptionSlider->setToolTip(tooltip_text);
 
         // Show the tooltip immediately.
-        QPoint const center(depthPerceptionSlider->rect().center());
+        const QPoint center(depthPerceptionSlider->rect().center());
         QPoint tooltip_pos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
         tooltip_pos.setY(center.y());
         tooltip_pos.setX(qBound(0, tooltip_pos.x(), depthPerceptionSlider->width()));
@@ -505,7 +504,7 @@ namespace output {
             return;
         }
 
-        Params const params(m_ptrSettings->getParams(m_pageId));
+        const Params params(m_ptrSettings->getParams(m_pageId));
 
         if (saved_despeckle_level != params.despeckleLevel()) {
             emit reloadRequested();
@@ -513,22 +512,22 @@ namespace output {
             return;
         }
 
-        if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
-            && (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
+        if ((saved_dewarping_options.dewarpingMode() == OFF)
+            && (params.dewarpingOptions().dewarpingMode() == OFF)) {
         } else if (saved_depth_perception.value() != params.depthPerception().value()) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::AUTO)
-                   && (params.dewarpingOptions().mode() == DewarpingOptions::AUTO)) {
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::MARGINAL)
-                   && (params.dewarpingOptions().mode() == DewarpingOptions::MARGINAL)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == AUTO)
+                   && (params.dewarpingOptions().dewarpingMode() == AUTO)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == MARGINAL)
+                   && (params.dewarpingOptions().dewarpingMode() == MARGINAL)) {
         } else if (!saved_distortion_model.matches(params.distortionModel())) {
             emit reloadRequested();
 
             return;
-        } else if ((saved_dewarping_options.mode() == DewarpingOptions::OFF)
-                   != (params.dewarpingOptions().mode() == DewarpingOptions::OFF)) {
+        } else if ((saved_dewarping_options.dewarpingMode() == OFF)
+                   != (params.dewarpingOptions().dewarpingMode() == OFF)) {
             emit reloadRequested();
 
             return;
@@ -549,22 +548,22 @@ namespace output {
     void OptionsWidget::updateColorsDisplay() {
         colorModeSelector->blockSignals(true);
 
-        ColorParams::ColorMode const color_mode = m_colorParams.colorMode();
-        int const color_mode_idx = colorModeSelector->findData(color_mode);
+        const ColorMode color_mode = m_colorParams.colorMode();
+        const int color_mode_idx = colorModeSelector->findData(color_mode);
         colorModeSelector->setCurrentIndex(color_mode_idx);
 
         bool threshold_options_visible = false;
         bool picture_shape_visible = false;
         bool splitting_options_visible = false;
         switch (color_mode) {
-            case ColorParams::MIXED:
+            case MIXED:
                 picture_shape_visible = true;
                 splitting_options_visible = true;
                 // fall into
-            case ColorParams::BLACK_AND_WHITE:
+            case BLACK_AND_WHITE:
                 threshold_options_visible = true;
                 // fall into
-            case ColorParams::COLOR_GRAYSCALE:
+            case COLOR_GRAYSCALE:
                 break;
         }
 
@@ -573,7 +572,7 @@ namespace output {
         BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
 
         if (!blackWhiteOptions.normalizeIllumination()
-            && color_mode == ColorParams::MIXED) {
+            && color_mode == MIXED) {
             colorCommonOptions.setNormalizeIllumination(false);
         }
         m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -582,10 +581,10 @@ namespace output {
         cutMarginsCB->setChecked(colorCommonOptions.cutMargins());
         cutMarginsCB->setVisible(true);
         equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
-        equalizeIlluminationCB->setVisible(color_mode != ColorParams::COLOR_GRAYSCALE);
+        equalizeIlluminationCB->setVisible(color_mode != COLOR_GRAYSCALE);
         equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
-        equalizeIlluminationColorCB->setVisible(color_mode != ColorParams::BLACK_AND_WHITE);
-        equalizeIlluminationColorCB->setEnabled(color_mode == ColorParams::COLOR_GRAYSCALE
+        equalizeIlluminationColorCB->setVisible(color_mode != BLACK_AND_WHITE);
+        equalizeIlluminationColorCB->setEnabled(color_mode == COLOR_GRAYSCALE
                                                 || blackWhiteOptions.normalizeIllumination());
         savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
         savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
@@ -599,24 +598,45 @@ namespace output {
 
         splittingOptions->setVisible(splitting_options_visible);
         splittingCB->setChecked(m_splittingOptions.isSplitOutput());
-        switch (m_splittingOptions.getForegroundType()) {
-            case SplittingOptions::BLACK_AND_WHITE_FOREGROUND:
+        switch (m_splittingOptions.getSplittingMode()) {
+            case BLACK_AND_WHITE_FOREGROUND:
                 bwForegroundRB->setChecked(true);
                 break;
-            case SplittingOptions::COLOR_FOREGROUND:
+            case COLOR_FOREGROUND:
                 colorForegroundRB->setChecked(true);
                 break;
         }
+        originalBackgroundCB->setChecked(m_splittingOptions.isOriginalBackground());
         colorForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
         bwForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
+        originalBackgroundCB->setEnabled(m_splittingOptions.isSplitOutput()
+                                         && (m_splittingOptions.getSplittingMode() == BLACK_AND_WHITE_FOREGROUND));
 
         thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
         binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
 
+        fillingOptions->setVisible(color_mode != BLACK_AND_WHITE);
         fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
+        colorSegmentationCB->setVisible(threshold_options_visible);
+        segmenterOptionsWidget->setVisible(threshold_options_visible);
+        segmenterOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
+        if (threshold_options_visible) {
+            posterizeCB->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
+            posterizeOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled()
+                                               && colorCommonOptions.isPosterizeEnabled());
+        } else {
+            posterizeCB->setEnabled(true);
+            posterizeOptionsWidget->setEnabled(colorCommonOptions.isPosterizeEnabled());
+        }
+        colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
+        reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
+        posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
+        posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
+        posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+
         if (picture_shape_visible) {
-            int const picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
+            const int picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
             pictureShapeSelector->setCurrentIndex(picture_shape_idx);
             pictureShapeSensitivitySB->setValue(m_pictureShapeOptions.getSensitivity());
             pictureShapeSensitivityOptions->setVisible(m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE);
@@ -639,8 +659,7 @@ namespace output {
             }
 
             for (int i = 0; i < binarizationOptions->count(); i++) {
-                BinarizationOptionsWidget* widget =
-                        dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
+                auto* widget = dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
                 widget->preUpdateUI(m_pageId);
             }
         }
@@ -651,23 +670,23 @@ namespace output {
     void OptionsWidget::updateDewarpingDisplay() {
         depthPerceptionPanel->setVisible(m_lastTab == TAB_DEWARPING);
 
-        switch (m_dewarpingOptions.mode()) {
-            case DewarpingOptions::OFF:
+        switch (m_dewarpingOptions.dewarpingMode()) {
+            case OFF:
                 dewarpingStatusLabel->setText(tr("Off"));
                 break;
-            case DewarpingOptions::AUTO:
+            case AUTO:
                 dewarpingStatusLabel->setText(tr("Auto"));
                 break;
-            case DewarpingOptions::MANUAL:
+            case MANUAL:
                 dewarpingStatusLabel->setText(tr("Manual"));
                 break;
-            case DewarpingOptions::MARGINAL:
+            case MARGINAL:
                 dewarpingStatusLabel->setText(tr("Marginal"));
                 break;
         }
         if (!m_dewarpingOptions.needPostDeskew()
-            && ((m_dewarpingOptions.mode() == DewarpingOptions::MANUAL)
-                || (m_dewarpingOptions.mode() == DewarpingOptions::MARGINAL))) {
+            && ((m_dewarpingOptions.dewarpingMode() == MANUAL)
+                || (m_dewarpingOptions.dewarpingMode() == MARGINAL))) {
             dewarpingStatusLabel->setText(dewarpingStatusLabel->text()
                                                   .append(" (").append(tr("deskew disabled"))
                                                   .append(")"));
@@ -698,7 +717,10 @@ namespace output {
         if (!checked) {
             return;
         }
-        m_splittingOptions.setForegroundType(SplittingOptions::BLACK_AND_WHITE_FOREGROUND);
+
+        originalBackgroundCB->setEnabled(checked);
+
+        m_splittingOptions.setSplittingMode(BLACK_AND_WHITE_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
@@ -707,7 +729,10 @@ namespace output {
         if (!checked) {
             return;
         }
-        m_splittingOptions.setForegroundType(SplittingOptions::COLOR_FOREGROUND);
+
+        originalBackgroundCB->setEnabled(!checked);
+
+        m_splittingOptions.setSplittingMode(COLOR_FOREGROUND);
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
         emit reloadRequested();
     }
@@ -717,8 +742,69 @@ namespace output {
 
         bwForegroundRB->setEnabled(checked);
         colorForegroundRB->setEnabled(checked);
+        originalBackgroundCB->setEnabled(checked && bwForegroundRB->isChecked());
 
         m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::originalBackgroundToggled(bool checked) {
+        m_splittingOptions.setOriginalBackground(checked);
+
+        m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+        emit reloadRequested();
+    }
+    
+    void OptionsWidget::colorSegmentationToggled(bool checked) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        blackWhiteOptions.setColorSegmentationEnabled(checked);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        segmenterOptionsWidget->setEnabled(checked);
+        if ((m_colorParams.colorMode() == BLACK_AND_WHITE) || (m_colorParams.colorMode() == MIXED)) {
+            posterizeCB->setEnabled(checked);
+            posterizeOptionsWidget->setEnabled(checked && posterizeCB->isChecked());
+        }
+
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::reduceNoiseChanged(int value) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        blackWhiteOptions.setSegmentationNoiseReduction(value);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::posterizeToggled(bool checked) {
+        ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+        colorCommonOptions.setPosterizeEnabled(checked);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        posterizeOptionsWidget->setEnabled(checked);
+
+        emit reloadRequested();
+    }
+
+    void OptionsWidget::posterizeLevelChanged(int value) {
+        ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+        colorCommonOptions.setPosterizationLevel(value);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::posterizeForceBwToggled(bool checked) {
+        ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+        colorCommonOptions.setForceBlackAndWhite(checked);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
         emit reloadRequested();
     }
 
@@ -779,6 +865,28 @@ namespace output {
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
         );
+
+        connect(
+                colorSegmentationCB, SIGNAL(clicked(bool)),
+                this, SLOT(colorSegmentationToggled(bool))
+        );
+        connect(
+                reduceNoiseSB, SIGNAL(valueChanged(int)),
+                this, SLOT(reduceNoiseChanged(int))
+        );
+        connect(
+                posterizeCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeToggled(bool))
+        );
+        connect(
+                posterizeLevelSB, SIGNAL(valueChanged(int)),
+                this, SLOT(posterizeLevelChanged(int))
+        );
+        connect(
+                posterizeForceBwCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeForceBwToggled(bool))
+        );
+        
         connect(
                 cutMarginsCB, SIGNAL(clicked(bool)),
                 this, SLOT(cutMarginsToggled(bool))
@@ -810,6 +918,10 @@ namespace output {
         connect(
                 colorForegroundRB, SIGNAL(clicked(bool)),
                 this, SLOT(colorForegroundToggled(bool))
+        );
+        connect(
+                originalBackgroundCB, SIGNAL(clicked(bool)),
+                this, SLOT(originalBackgroundToggled(bool))
         );
         connect(
                 applyColorsButton, SIGNAL(clicked()),
@@ -886,6 +998,28 @@ namespace output {
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
         );
+
+        disconnect(
+                colorSegmentationCB, SIGNAL(clicked(bool)),
+                this, SLOT(colorSegmentationToggled(bool))
+        );
+        disconnect(
+                reduceNoiseSB, SIGNAL(valueChanged(int)),
+                this, SLOT(reduceNoiseChanged(int))
+        );
+        disconnect(
+                posterizeCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeToggled(bool))
+        );
+        disconnect(
+                posterizeLevelSB, SIGNAL(valueChanged(int)),
+                this, SLOT(posterizeLevelChanged(int))
+        );
+        disconnect(
+                posterizeForceBwCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeForceBwToggled(bool))
+        );
+        
         disconnect(
                 cutMarginsCB, SIGNAL(clicked(bool)),
                 this, SLOT(cutMarginsToggled(bool))
@@ -917,6 +1051,10 @@ namespace output {
         disconnect(
                 colorForegroundRB, SIGNAL(clicked(bool)),
                 this, SLOT(colorForegroundToggled(bool))
+        );
+        disconnect(
+                originalBackgroundCB, SIGNAL(clicked(bool)),
+                this, SLOT(originalBackgroundToggled(bool))
         );
         disconnect(
                 applyColorsButton, SIGNAL(clicked()),
@@ -967,5 +1105,14 @@ namespace output {
                 this, SLOT(sendReloadRequested())
         );
     }
+
+    ImageViewTab OptionsWidget::lastTab() const {
+        return m_lastTab;
+    }
+
+    const DepthPerception& OptionsWidget::depthPerception() const {
+        return m_depthPerception;
+    }
+
 
 }  // namespace output

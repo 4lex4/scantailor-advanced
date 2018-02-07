@@ -47,45 +47,47 @@ namespace output {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
-        Params getParams(PageId const& page_id) const;
+        Params getParams(const PageId& page_id) const;
 
-        void setParams(PageId const& page_id, Params const& params);
+        void setParams(const PageId& page_id, const Params& params);
 
-        void setColorParams(PageId const& page_id, ColorParams const& prms);
+        bool isParamsNull(const PageId& page_id) const;
 
-        void setPictureShapeOptions(PageId const& page_id, PictureShapeOptions picture_shape_options);
+        void setColorParams(const PageId& page_id, const ColorParams& prms);
 
-        void setDpi(PageId const& page_id, Dpi const& dpi);
+        void setPictureShapeOptions(const PageId& page_id, PictureShapeOptions picture_shape_options);
 
-        void setDewarpingOptions(PageId const& page_id, DewarpingOptions const& opt);
+        void setDpi(const PageId& page_id, const Dpi& dpi);
 
-        void setSplittingOptions(PageId const& page_id, SplittingOptions const& opt);
+        void setDewarpingOptions(const PageId& page_id, const DewarpingOptions& opt);
 
-        void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
+        void setSplittingOptions(const PageId& page_id, const SplittingOptions& opt);
 
-        void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);
+        void setDistortionModel(const PageId& page_id, const dewarping::DistortionModel& model);
 
-        void setDespeckleLevel(PageId const& page_id, DespeckleLevel level);
+        void setDepthPerception(const PageId& page_id, const DepthPerception& depth_perception);
 
-        std::unique_ptr<OutputParams> getOutputParams(PageId const& page_id) const;
+        void setDespeckleLevel(const PageId& page_id, DespeckleLevel level);
 
-        void removeOutputParams(PageId const& page_id);
+        std::unique_ptr<OutputParams> getOutputParams(const PageId& page_id) const;
 
-        void setOutputParams(PageId const& page_id, OutputParams const& params);
+        void removeOutputParams(const PageId& page_id);
 
-        ZoneSet pictureZonesForPage(PageId const& page_id) const;
+        void setOutputParams(const PageId& page_id, const OutputParams& params);
 
-        ZoneSet fillZonesForPage(PageId const& page_id) const;
+        ZoneSet pictureZonesForPage(const PageId& page_id) const;
 
-        void setPictureZones(PageId const& page_id, ZoneSet const& zones);
+        ZoneSet fillZonesForPage(const PageId& page_id) const;
 
-        void setFillZones(PageId const& page_id, ZoneSet const& zones);
+        void setPictureZones(const PageId& page_id, const ZoneSet& zones);
+
+        void setFillZones(const PageId& page_id, const ZoneSet& zones);
 
         /**
          * For now, default zone properties are not persistent.
@@ -95,13 +97,13 @@ namespace output {
 
         PropertySet defaultFillZoneProperties() const;
 
-        void setDefaultPictureZoneProperties(PropertySet const& props);
+        void setDefaultPictureZoneProperties(const PropertySet& props);
 
-        void setDefaultFillZoneProperties(PropertySet const& props);
+        void setDefaultFillZoneProperties(const PropertySet& props);
 
-        OutputProcessingParams getOutputProcessingParams(PageId const& page_id) const;
+        OutputProcessingParams getOutputProcessingParams(const PageId& page_id) const;
 
-        void setOutputProcessingParams(PageId const& page_id, OutputProcessingParams const& output_processing_params);
+        void setOutputProcessingParams(const PageId& page_id, const OutputProcessingParams& output_processing_params);
 
     private:
         typedef std::map<PageId, Params> PerPageParams;

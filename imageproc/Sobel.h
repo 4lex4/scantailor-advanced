@@ -46,7 +46,7 @@ namespace imageproc {
  *        It's called like this:
  *        \code
  *        SrcIt src_it = ...;
- *        T const var(src_reader(*src_it));
+ *        const T var(src_reader(*src_it));
  *        \endcode
  *        Consider using boost::lambda for constructing such a functor,
  *        possibly combined with one of the functors from ValueConf.h
@@ -119,17 +119,17 @@ namespace imageproc {
             typename T, typename SrcIt, typename TmpIt, typename DstIt,
             typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void horizontalSobel(int const width,
-                         int const height,
+    void horizontalSobel(const int width,
+                         const int height,
                          SrcIt src,
                          int src_stride,
                          SrcReader src_reader,
                          TmpIt tmp,
-                         int const tmp_stride,
+                         const int tmp_stride,
                          TmpWriter tmp_writer,
                          TmpReader tmp_reader,
                          DstIt dst,
-                         int const dst_stride,
+                         const int dst_stride,
                          DstWriter dst_writer) {
         if ((width <= 0) || (height <= 0)) {
             return;
@@ -152,7 +152,7 @@ namespace imageproc {
             for (int y = 1; y < height - 1; ++y) {
                 p_src += src_stride;
                 p_tmp += tmp_stride;
-                T const bottom(src_reader(p_src[src_stride]));
+                const T bottom(src_reader(p_src[src_stride]));
                 tmp_writer(*p_tmp, top + mid + mid + bottom);
                 top = mid;
                 mid = bottom;
@@ -175,7 +175,7 @@ namespace imageproc {
 
                 int x = 1;
                 for (; x < width - 1; ++x) {
-                    T const right(tmp_reader(tmp[x + 1]));
+                    const T right(tmp_reader(tmp[x + 1]));
                     dst_writer(dst[x], right - left);
                     left = mid;
                     mid = right;
@@ -193,23 +193,23 @@ namespace imageproc {
             typename T, typename SrcIt, typename TmpIt, typename DstIt,
             typename SrcReader, typename TmpWriter, typename TmpReader, typename DstWriter
     >
-    void verticalSobel(int const width,
-                       int const height,
+    void verticalSobel(const int width,
+                       const int height,
                        SrcIt src,
                        int src_stride,
                        SrcReader src_reader,
                        TmpIt tmp,
-                       int const tmp_stride,
+                       const int tmp_stride,
                        TmpWriter tmp_writer,
                        TmpReader tmp_reader,
                        DstIt dst,
-                       int const dst_stride,
+                       const int dst_stride,
                        DstWriter dst_writer) {
         if ((width <= 0) || (height <= 0)) {
             return;
         }
 
-        TmpIt const tmp_orig(tmp);
+        const TmpIt tmp_orig(tmp);
 
         // Horizontal pre-accumulation pass: mid = left + mid*2 + right
         for (int y = 0; y < height; ++y) {
@@ -223,7 +223,7 @@ namespace imageproc {
 
                 int x = 1;
                 for (; x < width - 1; ++x) {
-                    T const right(src_reader(src[x + 1]));
+                    const T right(src_reader(src[x + 1]));
                     tmp_writer(tmp[x], left + mid + mid + right);
                     left = mid;
                     mid = right;
@@ -252,7 +252,7 @@ namespace imageproc {
             for (int y = 1; y < height - 1; ++y) {
                 p_tmp += tmp_stride;
                 p_dst += dst_stride;
-                T const bottom(tmp_reader(p_tmp[tmp_stride]));
+                const T bottom(tmp_reader(p_tmp[tmp_stride]));
                 dst_writer(*p_dst, bottom - top);
                 top = mid;
                 mid = bottom;

@@ -17,7 +17,7 @@
  */
 
 #include "ReduceThreshold.h"
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     namespace {
@@ -35,7 +35,7 @@ namespace imageproc {
  * \endcode
  * We take every other byte because bit 0 doesn't matter here.
  */
-        static uint8_t const compressBitsLut[128] = {
+        const uint8_t compressBitsLut[128] = {
                 0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
                 0x0, 0x1, 0x0, 0x1, 0x2, 0x3, 0x2, 0x3,
                 0x4, 0x5, 0x4, 0x5, 0x6, 0x7, 0x6, 0x7,
@@ -58,7 +58,7 @@ namespace imageproc {
  * Throw away every other bit starting with bit 0 and
  * pack the remaining bits into the upper half of a word.
  */
-        inline uint32_t compressBitsUpperHalf(uint32_t const bits) {
+        inline uint32_t compressBitsUpperHalf(const uint32_t bits) {
             uint32_t r;
             r = compressBitsLut[(bits >> 25)  /*& 0x7F*/] << 28;
             r |= compressBitsLut[(bits >> 17) & 0x7F] << 24;
@@ -72,7 +72,7 @@ namespace imageproc {
  * Throw away every other bit starting with bit 0 and
  * pack the remaining bits into the lower half of a word.
  */
-        inline uint32_t compressBitsLowerHalf(uint32_t const bits) {
+        inline uint32_t compressBitsLowerHalf(const uint32_t bits) {
             uint32_t r;
             r = compressBitsLut[(bits >> 25)  /*& 0x7F*/] << 12;
             r |= compressBitsLut[(bits >> 17) & 0x7F] << 8;
@@ -82,14 +82,14 @@ namespace imageproc {
             return r;
         }
 
-        inline uint32_t threshold1(uint32_t const top, uint32_t const bottom) {
+        inline uint32_t threshold1(const uint32_t top, const uint32_t bottom) {
             uint32_t word = top | bottom;
             word |= word << 1;
 
             return word;
         }
 
-        inline uint32_t threshold2(uint32_t const top, uint32_t const bottom) {
+        inline uint32_t threshold2(const uint32_t top, const uint32_t bottom) {
             uint32_t word1 = top & bottom;
             word1 |= word1 << 1;
             uint32_t word2 = top | bottom;
@@ -98,7 +98,7 @@ namespace imageproc {
             return word1 | word2;
         }
 
-        inline uint32_t threshold3(uint32_t const top, uint32_t const bottom) {
+        inline uint32_t threshold3(const uint32_t top, const uint32_t bottom) {
             uint32_t word1 = top | bottom;
             word1 &= word1 << 1;
             uint32_t word2 = top & bottom;
@@ -107,7 +107,7 @@ namespace imageproc {
             return word1 & word2;
         }
 
-        inline uint32_t threshold4(uint32_t const top, uint32_t const bottom) {
+        inline uint32_t threshold4(const uint32_t top, const uint32_t bottom) {
             uint32_t word = top & bottom;
             word &= word << 1;
 
@@ -115,23 +115,23 @@ namespace imageproc {
         }
     }      // namespace
 
-    ReduceThreshold::ReduceThreshold(BinaryImage const& image)
+    ReduceThreshold::ReduceThreshold(const BinaryImage& image)
             : m_image(image) {
     }
 
-    ReduceThreshold& ReduceThreshold::reduce(int const threshold) {
+    ReduceThreshold& ReduceThreshold::reduce(const int threshold) {
         if ((threshold < 1) || (threshold > 4)) {
             throw std::invalid_argument("ReduceThreshold: invalid threshold");
         }
 
-        BinaryImage const& src = m_image;
+        const BinaryImage& src = m_image;
 
         if (src.isNull()) {
             return *this;
         }
 
-        int const dst_w = src.width() / 2;
-        int const dst_h = src.height() / 2;
+        const int dst_w = src.width() / 2;
+        const int dst_h = src.height() / 2;
 
         if (dst_h == 0) {
             reduceHorLine(threshold);
@@ -145,13 +145,13 @@ namespace imageproc {
 
         BinaryImage dst(dst_w, dst_h);
 
-        int const dst_wpl = dst.wordsPerLine();
-        int const src_wpl = src.wordsPerLine();
-        int const steps_per_line = (dst_w * 2 + 31) / 32;
+        const int dst_wpl = dst.wordsPerLine();
+        const int src_wpl = src.wordsPerLine();
+        const int steps_per_line = (dst_w * 2 + 31) / 32;
         assert(steps_per_line <= src_wpl);
         assert(steps_per_line / 2 <= dst_wpl);
 
-        uint32_t const* src_line = src.data();
+        const uint32_t* src_line = src.data();
         uint32_t* dst_line = dst.data();
 
         uint32_t word;
@@ -215,8 +215,8 @@ namespace imageproc {
         return *this;
     }  // ReduceThreshold::reduce
 
-    void ReduceThreshold::reduceHorLine(int const threshold) {
-        BinaryImage const& src = m_image;
+    void ReduceThreshold::reduceHorLine(const int threshold) {
+        const BinaryImage& src = m_image;
         assert(src.height() == 1);
 
         if (src.width() == 1) {
@@ -226,8 +226,8 @@ namespace imageproc {
 
         BinaryImage dst(src.width() / 2, 1);
 
-        int const steps_per_line = (dst.width() * 2 + 31) / 32;
-        uint32_t const* src_line = src.data();
+        const int steps_per_line = (dst.width() * 2 + 31) / 32;
+        const uint32_t* src_line = src.data();
         uint32_t* dst_line = dst.data();
         assert(steps_per_line <= src.wordsPerLine());
         assert(steps_per_line / 2 <= dst.wordsPerLine());
@@ -261,13 +261,15 @@ namespace imageproc {
                     dst_line[j / 2] |= compressBitsLowerHalf(word);
                 }
                 break;
+            default:
+                break;
         }
 
         m_image = dst;
     }  // ReduceThreshold::reduceHorLine
 
-    void ReduceThreshold::reduceVertLine(int const threshold) {
-        BinaryImage const& src = m_image;
+    void ReduceThreshold::reduceVertLine(const int threshold) {
+        const BinaryImage& src = m_image;
         assert(src.width() == 1);
 
         if (src.height() == 1) {
@@ -275,12 +277,12 @@ namespace imageproc {
             return;
         }
 
-        int const dst_h = src.height() / 2;
+        const int dst_h = src.height() / 2;
         BinaryImage dst(1, dst_h);
 
-        int const src_wpl = src.wordsPerLine();
-        int const dst_wpl = dst.wordsPerLine();
-        uint32_t const* src_line = src.data();
+        const int src_wpl = src.wordsPerLine();
+        const int dst_wpl = dst.wordsPerLine();
+        const uint32_t* src_line = src.data();
         uint32_t* dst_line = dst.data();
 
         switch (threshold) {
@@ -299,6 +301,8 @@ namespace imageproc {
                     src_line += src_wpl * 2;
                     dst_line += dst_wpl;
                 }
+                break;
+            default:
                 break;
         }
 

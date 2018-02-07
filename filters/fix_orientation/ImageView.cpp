@@ -20,7 +20,7 @@
 #include "ImagePresentation.h"
 
 namespace fix_orientation {
-    ImageView::ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform)
+    ImageView::ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform)
             : ImageViewBase(
             image, downscaled_image,
             ImagePresentation(xform.transform(), xform.resultingPreCropArea())
@@ -32,10 +32,9 @@ namespace fix_orientation {
         rootInteractionHandler().makeLastFollower(m_zoomHandler);
     }
 
-    ImageView::~ImageView() {
-    }
+    ImageView::~ImageView() = default;
 
-    void ImageView::setPreRotation(OrthogonalRotation const rotation) {
+    void ImageView::setPreRotation(const OrthogonalRotation rotation) {
         if (m_xform.preRotation() == rotation) {
             return;
         }

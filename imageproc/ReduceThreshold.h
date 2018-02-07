@@ -52,19 +52,19 @@ namespace imageproc {
         /**
          * \brief Constructor.  Doesn't do any work by itself.
          */
-        ReduceThreshold(BinaryImage const& image);
+        explicit ReduceThreshold(const BinaryImage& image);
 
         /**
          * \brief Implicit conversion to BinaryImage.
          */
-        operator BinaryImage const&() const {
+        operator const BinaryImage&() const {
             return m_image;
         }
 
         /**
          * \brief Returns a reference to the reduced image.
          */
-        BinaryImage const& image() const {
+        const BinaryImage& image() const {
             return m_image;
         }
 

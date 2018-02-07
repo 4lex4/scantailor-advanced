@@ -36,7 +36,7 @@ namespace imageproc {
          * solves many of those bugs.  We don't round to integer values, we
          * only make very minor adjustments.
          */
-        static QPolygonF round(QPolygonF const& poly);
+        static QPolygonF round(const QPolygonF& poly);
 
         /**
          * \brief Test if two polygons are logically equal.
@@ -48,29 +48,29 @@ namespace imageproc {
          *
          * \return true if polygons are logically equal, false otherwise.
          */
-        static bool fuzzyCompare(QPolygonF const& poly1, QPolygonF const& poly2);
+        static bool fuzzyCompare(const QPolygonF& poly1, const QPolygonF& poly2);
 
         static QPolygonF convexHull(std::vector<QPointF> point_cloud);
 
     private:
         class Before;
 
-        static QPointF roundPoint(QPointF const& p);
+        static QPointF roundPoint(const QPointF& p);
 
         static double roundValue(double val);
 
-        static std::vector<QLineF> extractAndNormalizeEdges(QPolygonF const& poly);
+        static std::vector<QLineF> extractAndNormalizeEdges(const QPolygonF& poly);
 
-        static void maybeAddNormalizedEdge(std::vector<QLineF>& edges, QPointF const& p1, QPointF const& p2);
+        static void maybeAddNormalizedEdge(std::vector<QLineF>& edges, const QPointF& p1, const QPointF& p2);
 
-        static bool fuzzyCompareImpl(std::vector<QLineF> const& lines1, std::vector<QLineF> const& lines2);
+        static bool fuzzyCompareImpl(const std::vector<QLineF>& lines1, const std::vector<QLineF>& lines2);
 
-        static bool fuzzyCompareImpl(QLineF const& line1, QLineF const& line2);
+        static bool fuzzyCompareImpl(const QLineF& line1, const QLineF& line2);
 
-        static bool fuzzyCompareImpl(QPointF const& p1, QPointF const& p2);
+        static bool fuzzyCompareImpl(const QPointF& p1, const QPointF& p2);
 
-        static double const ROUNDING_MULTIPLIER;
-        static double const ROUNDING_RECIP_MULTIPLIER;
+        static const double ROUNDING_MULTIPLIER;
+        static const double ROUNDING_RECIP_MULTIPLIER;
     };
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_POLYGONUTILS_H_

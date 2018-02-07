@@ -32,19 +32,19 @@ namespace spfit {
         Optimizer(m_pSpline->numControlPoints() * 2).swap(m_optimizer);
     }
 
-    void SplineFitter::setConstraints(ConstraintSet const& constraints) {
+    void SplineFitter::setConstraints(const ConstraintSet& constraints) {
         m_optimizer.setConstraints(constraints.constraints());
     }
 
-    void SplineFitter::setSamplingParams(FittableSpline::SamplingParams const& params) {
+    void SplineFitter::setSamplingParams(const FittableSpline::SamplingParams& params) {
         m_samplingParams = params;
     }
 
-    void SplineFitter::addAttractionForce(Vec2d const& spline_point,
-                                          std::vector<FittableSpline::LinearCoefficient> const& coeffs,
-                                          SqDistApproximant const& sqdist_approx) {
-        int const num_coeffs = coeffs.size();
-        int const num_vars = num_coeffs * 2;
+    void SplineFitter::addAttractionForce(const Vec2d& spline_point,
+                                          const std::vector<FittableSpline::LinearCoefficient>& coeffs,
+                                          const SqDistApproximant& sqdist_approx) {
+        const auto num_coeffs = static_cast<const int>(coeffs.size());
+        const int num_vars = num_coeffs * 2;
         QuadraticFunction f(num_vars);
 
         // Right now we basically have F(x) = Q(L(x)),
@@ -64,15 +64,15 @@ namespace spfit {
                 // L0 is a linear combination of x components: L0 = [c1 0  c2  0 ...]
                 // L1 is a linear combination of y components: L1 = [ 0 c1  0 c2 ...]
                 // Note that the same coefficients are indeed present in both L0 and L1.
-                double const a = sqdist_approx.A(i, j);
+                const double a = sqdist_approx.A(i, j);
 
                 // Now let's multiply Li by Lj
                 for (int m = 0; m < num_coeffs; ++m) {
-                    double const c1 = coeffs[m].coeff;
-                    int const Li_idx = m * 2 + i;
+                    const double c1 = coeffs[m].coeff;
+                    const int Li_idx = m * 2 + i;
                     for (int n = 0; n < num_coeffs; ++n) {
-                        double const c2 = coeffs[n].coeff;
-                        int const Lj_idx = n * 2 + j;
+                        const double c2 = coeffs[n].coeff;
+                        const int Lj_idx = n * 2 + j;
                         f.A(Li_idx, Lj_idx) += a * c1 * c2;
                     }
                 }
@@ -82,9 +82,9 @@ namespace spfit {
         // Moving on to the linear part of the function.
         for (int i = 0; i < 2; ++i) {
             // Here we have Li * Bi, that is a linear function times a constant.
-            double const b = sqdist_approx.b[i];
+            const double b = sqdist_approx.b[i];
             for (int m = 0; m < num_coeffs; ++m) {
-                int const Li_idx = m * 2 + i;
+                const int Li_idx = m * 2 + i;
                 f.b[Li_idx] += b * coeffs[m].coeff;
             }
         }
@@ -95,12 +95,12 @@ namespace spfit {
         // What we need however, is a function from control point displacements.
         m_tempVars.resize(num_vars);
         for (int i = 0; i < num_coeffs; ++i) {
-            int const cp_idx = coeffs[i].controlPointIdx;
-            QPointF const cp(m_pSpline->controlPointPosition(cp_idx));
+            const int cp_idx = coeffs[i].controlPointIdx;
+            const QPointF cp(m_pSpline->controlPointPosition(cp_idx));
             m_tempVars[i * 2] = cp.x();
             m_tempVars[i * 2 + 1] = cp.y();
         }
-        f.recalcForTranslatedArguments(num_vars ? &m_tempVars[0] : 0);
+        f.recalcForTranslatedArguments(num_vars ? &m_tempVars[0] : nullptr);
         // What remains is a mapping from the reduced set of variables to the full set.
         m_tempSparseMap.resize(num_vars);
         for (int i = 0; i < num_coeffs; ++i) {
@@ -111,23 +111,23 @@ namespace spfit {
         m_optimizer.addExternalForce(f, m_tempSparseMap);
     }  // SplineFitter::addAttractionForce
 
-    void SplineFitter::addAttractionForces(ModelShape const& model_shape, double from_t, double to_t) {
+    void SplineFitter::addAttractionForces(const ModelShape& model_shape, double from_t, double to_t) {
         class SampleProcessor : public VirtualFunction3<void, QPointF, double, FittableSpline::SampleFlags> {
         public:
-            SampleProcessor(SplineFitter& owner, ModelShape const& model_shape)
+            SampleProcessor(SplineFitter& owner, const ModelShape& model_shape)
                     : m_rOwner(owner),
                       m_rModelShape(model_shape) {
             }
 
-            virtual void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags) {
+            void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags) override {
                 m_rOwner.m_pSpline->linearCombinationAt(t, m_rOwner.m_tempCoeffs);
-                SqDistApproximant const approx(m_rModelShape.localSqDistApproximant(pt, flags));
+                const SqDistApproximant approx(m_rModelShape.localSqDistApproximant(pt, flags));
                 m_rOwner.addAttractionForce(pt, m_rOwner.m_tempCoeffs, approx);
             }
 
         private:
             SplineFitter& m_rOwner;
-            ModelShape const& m_rModelShape;
+            const ModelShape& m_rModelShape;
         };
 
 
@@ -135,28 +135,28 @@ namespace spfit {
         m_pSpline->sample(sample_processor, m_samplingParams, from_t, to_t);
     }
 
-    void SplineFitter::addExternalForce(QuadraticFunction const& force) {
+    void SplineFitter::addExternalForce(const QuadraticFunction& force) {
         m_optimizer.addExternalForce(force);
     }
 
-    void SplineFitter::addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map) {
+    void SplineFitter::addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
         m_optimizer.addExternalForce(force, sparse_map);
     }
 
-    void SplineFitter::addInternalForce(QuadraticFunction const& force) {
+    void SplineFitter::addInternalForce(const QuadraticFunction& force) {
         m_optimizer.addInternalForce(force);
     }
 
-    void SplineFitter::addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map) {
+    void SplineFitter::addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
         m_optimizer.addInternalForce(force, sparse_map);
     }
 
     OptimizationResult SplineFitter::optimize(double internal_force_weight) {
-        OptimizationResult const res(m_optimizer.optimize(internal_force_weight));
+        const OptimizationResult res(m_optimizer.optimize(internal_force_weight));
 
-        int const num_control_points = m_pSpline->numControlPoints();
+        const int num_control_points = m_pSpline->numControlPoints();
         for (int i = 0; i < num_control_points; ++i) {
-            Vec2d const delta(m_optimizer.displacementVector() + i * 2);
+            const Vec2d delta(m_optimizer.displacementVector() + i * 2);
             m_pSpline->moveControlPoint(i, m_pSpline->controlPointPosition(i) + delta);
         }
 
@@ -164,9 +164,9 @@ namespace spfit {
     }
 
     void SplineFitter::undoLastStep() {
-        int const num_control_points = m_pSpline->numControlPoints();
+        const int num_control_points = m_pSpline->numControlPoints();
         for (int i = 0; i < num_control_points; ++i) {
-            Vec2d const delta(m_optimizer.displacementVector() + i * 2);
+            const Vec2d delta(m_optimizer.displacementVector() + i * 2);
             m_pSpline->moveControlPoint(i, m_pSpline->controlPointPosition(i) - delta);
         }
 

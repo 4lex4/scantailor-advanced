@@ -26,7 +26,7 @@
 #include "intrusive_ptr.h"
 #include <QCoreApplication>
 #include <QRect>
-#include <stdint.h>
+#include <cstdint>
 
 class ZoneInteractionContext;
 
@@ -36,18 +36,18 @@ namespace output {
     public:
         ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context);
 
-        void startInteraction(EditableZoneSet::Zone const& zone, InteractionState& interaction);
+        void startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction);
 
-        bool isActive(InteractionState const& interaction) const;
+        bool isActive(const InteractionState& interaction) const;
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-        virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+        void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-        virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+        void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-        virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+        void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
     private:
         void takeColor();
@@ -66,8 +66,8 @@ namespace output {
         intrusive_ptr<FillColorProperty> m_ptrFillColorProp;
         int m_dontDrawCircle;
 
-        static uint32_t const m_sBitMixingLUT[3][256];
-        static uint32_t const m_sBitUnmixingLUT[3][256];
+        static const uint32_t m_sBitMixingLUT[3][256];
+        static const uint32_t m_sBitUnmixingLUT[3][256];
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_PICKUP_INTERACTION_H_

@@ -20,8 +20,8 @@
 #define VEC_T_H_
 
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
-#include <assert.h>
+#include <cstddef>
+#include <cassert>
 
 /**
  * \brief A (column) vector of elements of type T.
@@ -52,12 +52,12 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    explicit VecT(size_t size, OT const* data);
+    explicit VecT(size_t size, const OT* data);
 
     /**
      * Ordinary copy-construction.
      */
-    VecT(VecT const& other);
+    VecT(const VecT& other);
 
     /**
      * \brief Construction from a vector of a different type.
@@ -65,12 +65,12 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    VecT(VecT<OT> const& other);
+    explicit VecT(const VecT<OT>& other);
 
     /**
      * \brief Ordinary assignment.
      */
-    VecT& operator=(VecT const& other);
+    VecT& operator=(const VecT& other);
 
     /**
      * \brief Assignment from a vector of a different type.
@@ -78,11 +78,11 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    VecT& operator=(VecT<OT> const& other);
+    VecT& operator=(const VecT<OT>& other);
 
-    VecT& operator+=(VecT const& rhs);
+    VecT& operator+=(const VecT& rhs);
 
-    VecT& operator-=(VecT const& rhs);
+    VecT& operator-=(const VecT& rhs);
 
     VecT& operator*=(T scalar);
 
@@ -90,7 +90,7 @@ public:
         return m_size;
     }
 
-    T const* data() const {
+    const T* data() const {
         return m_data.get();
     }
 
@@ -98,7 +98,7 @@ public:
         return m_data.get();
     }
 
-    T const& operator[](size_t idx) const {
+    const T& operator[](size_t idx) const {
         assert(idx < m_size);
 
         return m_data[idx];
@@ -110,7 +110,7 @@ public:
         return m_data[idx];
     }
 
-    void fill(T const& value);
+    void fill(const T& value);
 
     void swap(VecT& other);
 
@@ -143,7 +143,7 @@ VecT<T>::VecT(size_t size, T initial_value)
 
 template<typename T>
 template<typename OT>
-VecT<T>::VecT(size_t size, OT const* data)
+VecT<T>::VecT(size_t size, const OT* data)
         : m_data(new T[size]),
           m_size(size) {
     for (size_t i = 0; i < size; ++i) {
@@ -152,10 +152,10 @@ VecT<T>::VecT(size_t size, OT const* data)
 }
 
 template<typename T>
-VecT<T>::VecT(VecT const& other)
+VecT<T>::VecT(const VecT& other)
         : m_data(new T[other.m_size]),
           m_size(other.m_size) {
-    T const* other_data = other.data();
+    const T* other_data = other.data();
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] = other_data[i];
     }
@@ -163,17 +163,17 @@ VecT<T>::VecT(VecT const& other)
 
 template<typename T>
 template<typename OT>
-VecT<T>::VecT(VecT<OT> const& other)
+VecT<T>::VecT(const VecT<OT>& other)
         : m_data(new T[other.m_size]),
           m_size(other.m_size) {
-    T const* other_data = other.data();
+    const T* other_data = other.data();
     for (size_t i = 0; i < m_size; ++i) {
-        m_data[i] = static_cast<T>(other_data[i]);
+        m_data[i] = other_data[i];
     }
 }
 
 template<typename T>
-VecT<T>& VecT<T>::operator=(VecT const& other) {
+VecT<T>& VecT<T>::operator=(const VecT& other) {
     VecT(other).swap(*this);
 
     return *this;
@@ -181,14 +181,14 @@ VecT<T>& VecT<T>::operator=(VecT const& other) {
 
 template<typename T>
 template<typename OT>
-VecT<T>& VecT<T>::operator=(VecT<OT> const& other) {
+VecT<T>& VecT<T>::operator=(const VecT<OT>& other) {
     VecT(other).swap(*this);
 
     return *this;
 }
 
 template<typename T>
-VecT<T>& VecT<T>::operator+=(VecT const& rhs) {
+VecT<T>& VecT<T>::operator+=(const VecT& rhs) {
     assert(m_size == rhs.m_size);
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] += rhs.m_data[i];
@@ -198,7 +198,7 @@ VecT<T>& VecT<T>::operator+=(VecT const& rhs) {
 }
 
 template<typename T>
-VecT<T>& VecT<T>::operator-=(VecT const& rhs) {
+VecT<T>& VecT<T>::operator-=(const VecT& rhs) {
     assert(m_size == rhs.m_size);
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] -= rhs.m_data[i];
@@ -208,7 +208,7 @@ VecT<T>& VecT<T>::operator-=(VecT const& rhs) {
 }
 
 template<typename T>
-VecT<T>& VecT<T>::operator*=(T const scalar) {
+VecT<T>& VecT<T>::operator*=(const T scalar) {
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] *= scalar;
     }
@@ -217,7 +217,7 @@ VecT<T>& VecT<T>::operator*=(T const scalar) {
 }
 
 template<typename T>
-void VecT<T>::fill(T const& value) {
+void VecT<T>::fill(const T& value) {
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] = value;
     }
@@ -232,12 +232,12 @@ void VecT<T>::swap(VecT& other) {
 }
 
 template<typename T>
-void swap(VecT<T> const& o1, VecT<T> const& o2) {
+void swap(const VecT<T>& o1, const VecT<T>& o2) {
     o1.swap(o2);
 }
 
 template<typename T>
-VecT<T> operator*(VecT<T> const& vec, double scalar) {
+VecT<T> operator*(const VecT<T>& vec, double scalar) {
     VecT<T> res(vec);
     res *= scalar;
 
@@ -245,7 +245,7 @@ VecT<T> operator*(VecT<T> const& vec, double scalar) {
 }
 
 template<typename T>
-VecT<T> operator*(double scalar, VecT<T> const& vec) {
+VecT<T> operator*(double scalar, const VecT<T>& vec) {
     VecT<T> res(vec);
     res *= scalar;
 

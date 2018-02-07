@@ -45,7 +45,7 @@ public:
      *       to be able to use lower_bound() to find the first page with
      *       a matching image id.
      */
-    explicit PageId(ImageId const& image_id, SubPage subpage = SINGLE_PAGE);
+    explicit PageId(const ImageId& image_id, SubPage subpage = SINGLE_PAGE);
 
     bool isNull() const {
         return m_imageId.isNull();
@@ -55,7 +55,7 @@ public:
         return m_imageId;
     }
 
-    ImageId const& imageId() const {
+    const ImageId& imageId() const {
         return m_imageId;
     }
 
@@ -69,7 +69,7 @@ public:
 
     static QString subPageToString(SubPage sub_page);
 
-    static SubPage subPageFromString(QString const& string, bool* ok = 0);
+    static SubPage subPageFromString(const QString& string, bool* ok = nullptr);
 
 private:
     ImageId m_imageId;
@@ -77,10 +77,10 @@ private:
 };
 
 
-bool operator==(PageId const& lhs, PageId const& rhs);
+bool operator==(const PageId& lhs, const PageId& rhs);
 
-bool operator!=(PageId const& lhs, PageId const& rhs);
+bool operator!=(const PageId& lhs, const PageId& rhs);
 
-bool operator<(PageId const& lhs, PageId const& rhs);
+bool operator<(const PageId& lhs, const PageId& rhs);
 
 #endif // ifndef PAGEID_H_

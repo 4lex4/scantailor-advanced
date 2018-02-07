@@ -33,27 +33,26 @@ public:
         DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
     };
 
-    ImageMetadata() {
-    }
+    ImageMetadata() = default;
 
     ImageMetadata(QSize size, Dpi dpi)
             : m_size(size),
               m_dpi(dpi) {
     }
 
-    QSize const& size() const {
+    const QSize& size() const {
         return m_size;
     }
 
-    void setSize(QSize const& size) {
+    void setSize(const QSize& size) {
         m_size = size;
     }
 
-    Dpi const& dpi() const {
+    const Dpi& dpi() const {
         return m_dpi;
     }
 
-    void setDpi(Dpi const& dpi) {
+    void setDpi(const Dpi& dpi) {
         m_dpi = dpi;
     }
 
@@ -63,9 +62,9 @@ public:
 
     DpiStatus verticalDpiStatus() const;
 
-    bool operator==(ImageMetadata const& other) const;
+    bool operator==(const ImageMetadata& other) const;
 
-    bool operator!=(ImageMetadata const& other) const {
+    bool operator!=(const ImageMetadata& other) const {
         return !(*this == other);
     }
 

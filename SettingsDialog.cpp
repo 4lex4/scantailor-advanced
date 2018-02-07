@@ -23,7 +23,6 @@
 #include <QtWidgets/QMessageBox>
 #include <tiff.h>
 #include <QtCore/QDir>
-#include <config.h>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
         : QDialog(parent) {
@@ -40,7 +39,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.enableOpenglCb->setChecked(
                 settings.value("settings/enable_opengl", false).toBool()
         );
-        QString const openglDevicePattern = ui.openglDeviceLabel->text();
+        const QString openglDevicePattern = ui.openglDeviceLabel->text();
         ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
     }
 
@@ -75,6 +74,19 @@ SettingsDialog::SettingsDialog(QWidget* parent)
             )
     );
 
+    if (auto* app = dynamic_cast<Application*>(qApp)) {
+        for (const QString& locale : app->getLanguagesList()) {
+            QString languageName = QLocale::languageToString(QLocale(locale).language());
+            ui.languageBox->addItem(languageName, locale);
+        }
+
+        ui.languageBox->setCurrentIndex(
+                ui.languageBox->findData(app->getCurrentLocale())
+        );
+
+        ui.languageBox->setEnabled(ui.languageBox->count() > 1);
+    }
+
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
     ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
     ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
@@ -83,12 +95,9 @@ SettingsDialog::SettingsDialog(QWidget* parent)
             ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onColorSchemeChanged(int))
     );
-
-    initLanguageList(dynamic_cast<Application*>(qApp)->getCurrentLocale());
 }
 
-SettingsDialog::~SettingsDialog() {
-}
+SettingsDialog::~SettingsDialog() = default;
 
 void SettingsDialog::commitChanges() {
     QSettings settings;
@@ -114,35 +123,3 @@ void SettingsDialog::onColorSchemeChanged(int idx) {
             tr("ScanTailor need to be restarted to apply the color scheme changes.")
     );
 }
-
-void SettingsDialog::initLanguageList(const QString& locale) {
-    ui.languageBox->clear();
-    ui.languageBox->addItem(QLocale::languageToString(QLocale("en").language()), "en");
-
-    QStringList const translation_dirs(
-            QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts)
-    );
-
-    const QStringList language_file_filter("scantailor_*.qm");
-    QStringList fileNames;
-    for (QString const& path : translation_dirs) {
-        fileNames += QDir(path).entryList(language_file_filter);
-    }
-
-    fileNames.sort();
-
-    for (QString locale : fileNames) {
-        locale.truncate(locale.lastIndexOf('.'));
-        locale.remove(0, locale.indexOf('_') + 1);
-
-        QString lang = QLocale::languageToString(QLocale(locale).language());
-        ui.languageBox->addItem(lang, locale);
-    }
-
-    ui.languageBox->setEnabled(ui.languageBox->count() > 1);
-
-    int currentLangIndex = ui.languageBox->findData(locale);
-    if (currentLangIndex > 0) {
-        ui.languageBox->setCurrentIndex(currentLangIndex);
-    }
-} // SettingsDialog::initLanguageList

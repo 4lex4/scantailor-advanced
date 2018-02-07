@@ -44,7 +44,7 @@ public:
 
     explicit Dpm(QSize size);
 
-    explicit Dpm(QImage const& image);
+    explicit Dpm(const QImage& image);
 
     int horizontal() const {
         return m_xDpm;
@@ -58,9 +58,9 @@ public:
 
     bool isNull() const;
 
-    bool operator==(Dpm const& other) const;
+    bool operator==(const Dpm& other) const;
 
-    bool operator!=(Dpm const& other) const {
+    bool operator!=(const Dpm& other) const {
         return !(*this == other);
     }
 

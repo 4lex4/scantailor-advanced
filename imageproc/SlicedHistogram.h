@@ -20,7 +20,7 @@
 #define IMAGEPROC_SLICEDHISTOGRAM_H_
 
 #include <vector>
-#include <stddef.h>
+#include <cstddef>
 
 class QRect;
 
@@ -51,7 +51,7 @@ namespace imageproc {
          *        an empty histogram.
          * \param type Specifies whether to process columns or rows.
          */
-        SlicedHistogram(BinaryImage const& image, Type type);
+        SlicedHistogram(const BinaryImage& image, Type type);
 
         /**
          * \brief Calculates the histogram of a portion of the image.
@@ -65,7 +65,7 @@ namespace imageproc {
          * \exception std::invalid_argument If \p area is not completely
          *            within image.rect().
          */
-        SlicedHistogram(BinaryImage const& image, QRect const& area, Type type);
+        SlicedHistogram(const BinaryImage& image, const QRect& area, Type type);
 
         size_t size() const {
             return m_data.size();
@@ -75,7 +75,7 @@ namespace imageproc {
             m_data.resize(size);
         }
 
-        int const& operator[](size_t idx) const {
+        const int& operator[](size_t idx) const {
             return m_data[idx];
         }
 
@@ -84,9 +84,9 @@ namespace imageproc {
         }
 
     private:
-        void processHorizontalLines(BinaryImage const& image, QRect const& area);
+        void processHorizontalLines(const BinaryImage& image, const QRect& area);
 
-        void processVerticalLines(BinaryImage const& image, QRect const& area);
+        void processVerticalLines(const BinaryImage& image, const QRect& area);
 
         std::vector<int> m_data;
     };

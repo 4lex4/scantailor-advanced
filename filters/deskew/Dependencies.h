@@ -38,15 +38,15 @@ namespace deskew {
 
         Dependencies();
 
-        Dependencies(QPolygonF const& page_outline, OrthogonalRotation rotation);
+        Dependencies(const QPolygonF& page_outline, OrthogonalRotation rotation);
 
-        Dependencies(QDomElement const& deps_el);
+        explicit Dependencies(const QDomElement& deps_el);
 
         ~Dependencies();
 
-        bool matches(Dependencies const& other) const;
+        bool matches(const Dependencies& other) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         QPolygonF m_pageOutline;

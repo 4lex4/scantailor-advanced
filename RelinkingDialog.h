@@ -34,9 +34,9 @@ class QString;
 class RelinkingDialog : public QDialog {
 Q_OBJECT
 public:
-    explicit RelinkingDialog(QString const& project_file_path, QWidget* parent = 0);
+    explicit RelinkingDialog(const QString& project_file_path, QWidget* parent = nullptr);
 
-    VirtualFunction1<void, RelinkablePath const&>& pathCollector() {
+    VirtualFunction1<void, const RelinkablePath&>& pathCollector() {
         return m_model;
     }
 
@@ -55,10 +55,10 @@ public:
 
 private slots:
 
-    void selectionChanged(QItemSelection const& selected, QItemSelection const& deselected);
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-    void pathButtonClicked(QString const& prefix_path, QString const& suffix_path, int type);
+    void pathButtonClicked(const QString& prefix_path, const QString& suffix_path, int type);
 
     void undoButtonClicked();
 

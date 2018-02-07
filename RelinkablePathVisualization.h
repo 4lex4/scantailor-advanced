@@ -29,26 +29,26 @@ class QAbstractButton;
 class RelinkablePathVisualization : public QWidget {
 Q_OBJECT
 public:
-    RelinkablePathVisualization(QWidget* parent = 0);
+    explicit RelinkablePathVisualization(QWidget* parent = nullptr);
 
     void clear();
 
-    void setPath(RelinkablePath const& path, bool clickable);
+    void setPath(const RelinkablePath& path, bool clickable);
 
 signals:
 
     /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-    void clicked(QString const& prefix_path, QString const& suffix_path, int type);
+    void clicked(const QString& prefix_path, const QString& suffix_path, int type);
 
 protected:
-    virtual void paintEvent(QPaintEvent* evt);
+    void paintEvent(QPaintEvent* evt) override;
 
 private:
     struct PathComponent;
 
     class ComponentButton;
 
-    void onClicked(int component_idx, QString const& prefix_path, QString const& suffix_path, int type);
+    void onClicked(int component_idx, const QString& prefix_path, const QString& suffix_path, int type);
 
     void stylePathComponentButton(QAbstractButton* btn, bool exists);
 

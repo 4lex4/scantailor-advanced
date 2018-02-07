@@ -51,18 +51,18 @@ namespace output {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-             PageId const& page_id,
-             OutputFileNameGenerator const& out_file_name_gen,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+             const PageId& page_id,
+             const OutputFileNameGenerator& out_file_name_gen,
              ImageViewTab last_tab,
              bool batch,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data, QPolygonF const& content_rect_phys);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys);
 
     private:
         class UiUpdater;

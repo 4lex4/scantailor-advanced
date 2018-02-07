@@ -36,22 +36,14 @@
          </spacer>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QComboBox" name="unitsComboBox">
-            <item>
-             <property name="text">
-              <string>Millimeters (mm)</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Inches (in)</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QCheckBox" name="autoMargins">
+          <property name="text">
+           <string>Auto Margins</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer_2">
@@ -85,13 +77,6 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Top</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2" rowspan="2">
            <widget class="QToolButton" name="topBottomLink">
             <property name="minimumSize">
@@ -119,20 +104,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
             <property name="text">
-             <string>Bottom</string>
+             <string>Top</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="bottomMarginSpinBox">
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <double>999.000000000000000</double>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Right</string>
             </property>
            </widget>
           </item>
@@ -140,16 +122,6 @@
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Left</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="leftMarginSpinBox">
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <double>999.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -183,20 +155,23 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Right</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="1">
            <widget class="QDoubleSpinBox" name="rightMarginSpinBox">
             <property name="decimals">
              <number>1</number>
             </property>
             <property name="maximum">
-             <double>999.000000000000000</double>
+             <double>9999.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="bottomMarginSpinBox">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <double>9999.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -206,7 +181,24 @@
              <number>1</number>
             </property>
             <property name="maximum">
-             <double>999.000000000000000</double>
+             <double>9999.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Bottom</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="leftMarginSpinBox">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <double>9999.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -272,12 +264,61 @@
      <property name="title">
       <string>Alignment</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="spacing">
-         <number>0</number>
-        </property>
+        <item>
+         <spacer name="horizontalSpacer_14">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QComboBox" name="alignmentMode">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <item>
+           <property name="text">
+            <string comment="auto">Auto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="manual">Manual</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string comment="original">Original</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
@@ -285,57 +326,21 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>0</width>
-            <height>0</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QComboBox" name="alignmentMode">
-            <property name="currentIndex">
-             <number>1</number>
-            </property>
-            <item>
-             <property name="text">
-              <string comment="auto">Auto</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string comment="manual">Manual</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string comment="original">Original</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="autoMargins">
-            <property name="text">
-             <string>Auto Margins</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="alignWithOthersCB">
-            <property name="text">
-             <string>Match size with other pages</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QCheckBox" name="alignWithOthersCB">
+          <property name="text">
+           <string>Match size with other pages</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer_8">
@@ -344,8 +349,8 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>0</width>
-            <height>0</height>
+            <width>1</width>
+            <height>1</height>
            </size>
           </property>
          </spacer>

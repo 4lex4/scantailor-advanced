@@ -25,8 +25,8 @@
 #include <QColor>
 #include <QString>
 #include <boost/test/auto_unit_test.hpp>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 
 namespace imageproc {
     namespace tests {
@@ -63,7 +63,7 @@ namespace imageproc {
                 }
 
                 SkewFinder skew_finder;
-                Skew const skew(skew_finder.findSkew(BinaryImage(image)));
+                const Skew skew(skew_finder.findSkew(BinaryImage(image)));
                 BOOST_REQUIRE(fabs(skew.angle() - 4.5) < 0.15);
                 BOOST_CHECK(skew.confidence() >= Skew::GOOD_CONFIDENCE);
             }
@@ -72,17 +72,17 @@ namespace imageproc {
                 QImage image(1000, 800, QImage::Format_Mono);
                 image.fill(1);
 
-                int const num_dots = image.width() * image.height() / 5;
+                const int num_dots = image.width() * image.height() / 5;
                 for (int i = 0; i < num_dots; ++i) {
-                    int const x = rand() % image.width();
-                    int const y = rand() % image.height();
+                    const int x = rand() % image.width();
+                    const int y = rand() % image.height();
                     image.setPixel(x, y, 0);
                 }
 
                 SkewFinder skew_finder;
                 skew_finder.setCoarseReduction(0);
                 skew_finder.setFineReduction(0);
-                Skew const skew(skew_finder.findSkew(BinaryImage(image)));
+                const Skew skew(skew_finder.findSkew(BinaryImage(image)));
                 BOOST_CHECK(skew.confidence() < Skew::GOOD_CONFIDENCE);
             }
 

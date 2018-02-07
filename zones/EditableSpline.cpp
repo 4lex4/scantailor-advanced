@@ -19,23 +19,22 @@
 #include "EditableSpline.h"
 #include "SerializableSpline.h"
 
-EditableSpline::EditableSpline() {
-}
+EditableSpline::EditableSpline() = default;
 
-EditableSpline::EditableSpline(SerializableSpline const& spline) {
-    for (QPointF const& pt : spline.toPolygon()) {
+EditableSpline::EditableSpline(const SerializableSpline& spline) {
+    for (const QPointF& pt : spline.toPolygon()) {
         appendVertex(pt);
     }
 
     SplineVertex::Ptr last_vertex(lastVertex());
-    if (last_vertex.get() && (firstVertex()->point() == last_vertex->point())) {
+    if (last_vertex && (firstVertex()->point() == last_vertex->point())) {
         last_vertex->remove();
     }
 
     setBridged(true);
 }
 
-void EditableSpline::appendVertex(QPointF const& pt) {
+void EditableSpline::appendVertex(const QPointF& pt) {
     m_sentinel.insertBefore(pt);
 }
 

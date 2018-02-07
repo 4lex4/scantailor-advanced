@@ -19,10 +19,9 @@
 #include "AutoRemovingFile.h"
 #include <QFile>
 
-AutoRemovingFile::AutoRemovingFile() {
-}
+AutoRemovingFile::AutoRemovingFile() = default;
 
-AutoRemovingFile::AutoRemovingFile(QString const& file_path)
+AutoRemovingFile::AutoRemovingFile(const QString& file_path)
         : m_file(file_path) {
 }
 
@@ -52,8 +51,8 @@ AutoRemovingFile& AutoRemovingFile::operator=(CopyHelper other) {
     return *this;
 }
 
-void AutoRemovingFile::reset(QString const& file) {
-    QString const old_file(file);
+void AutoRemovingFile::reset(const QString& file) {
+    const QString& old_file(file);
 
     m_file = file;
 

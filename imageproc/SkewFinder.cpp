@@ -26,17 +26,17 @@
 #include <QDebug>
 
 namespace imageproc {
-    double const Skew::GOOD_CONFIDENCE = 2.0;
+    const double Skew::GOOD_CONFIDENCE = 2.0;
 
-    double const SkewFinder::DEFAULT_MAX_ANGLE = 7.0;
+    const double SkewFinder::DEFAULT_MAX_ANGLE = 7.0;
 
-    double const SkewFinder::DEFAULT_ACCURACY = 0.1;
+    const double SkewFinder::DEFAULT_ACCURACY = 0.1;
 
-    int const SkewFinder::DEFAULT_COARSE_REDUCTION = 2;
+    const int SkewFinder::DEFAULT_COARSE_REDUCTION = 2;
 
-    int const SkewFinder::DEFAULT_FINE_REDUCTION = 1;
+    const int SkewFinder::DEFAULT_FINE_REDUCTION = 1;
 
-    double const SkewFinder::LOW_SCORE = 1000.0;
+    const double SkewFinder::LOW_SCORE = 1000.0;
 
     SkewFinder::SkewFinder()
             : m_maxAngle(DEFAULT_MAX_ANGLE),
@@ -46,45 +46,45 @@ namespace imageproc {
               m_fineReduction(DEFAULT_FINE_REDUCTION) {
     }
 
-    void SkewFinder::setMaxAngle(double const max_angle) {
+    void SkewFinder::setMaxAngle(const double max_angle) {
         if ((max_angle < 0.0) || (max_angle > 45.0)) {
             throw std::invalid_argument("SkewFinder: max skew angle is invalid");
         }
         m_maxAngle = max_angle;
     }
 
-    void SkewFinder::setDesiredAccuracy(double const accuracy) {
+    void SkewFinder::setDesiredAccuracy(const double accuracy) {
         m_accuracy = accuracy;
     }
 
-    void SkewFinder::setCoarseReduction(int const reduction) {
+    void SkewFinder::setCoarseReduction(const int reduction) {
         if (reduction < 0) {
             throw std::invalid_argument("SkewFinder: coarse reduction is invalid");
         }
         m_coarseReduction = reduction;
     }
 
-    void SkewFinder::setFineReduction(int const reduction) {
+    void SkewFinder::setFineReduction(const int reduction) {
         if (reduction < 0) {
             throw std::invalid_argument("SkewFinder: fine reduction is invalid");
         }
         m_fineReduction = reduction;
     }
 
-    void SkewFinder::setResolutionRatio(double const ratio) {
+    void SkewFinder::setResolutionRatio(const double ratio) {
         if (ratio <= 0.0) {
             throw std::invalid_argument("SkewFinder: resolution ratio is invalid");
         }
         m_resolutionRatio = ratio;
     }
 
-    Skew SkewFinder::findSkew(BinaryImage const& image) const {
+    Skew SkewFinder::findSkew(const BinaryImage& image) const {
         if (image.isNull()) {
             throw std::invalid_argument("SkewFinder: null image was provided");
         }
 
         ReduceThreshold coarse_reduced(image);
-        int const min_reduction = std::min(m_coarseReduction, m_fineReduction);
+        const int min_reduction = std::min(m_coarseReduction, m_fineReduction);
         for (int i = 0; i < min_reduction; ++i) {
             coarse_reduced.reduce(i == 0 ? 1 : 2);
         }
@@ -96,14 +96,14 @@ namespace imageproc {
         }
 
         BinaryImage skewed(coarse_reduced.image().size());
-        double const coarse_step = 1.0;  // degrees
+        const double coarse_step = 1.0;  // degrees
         // Coarse linear search.
         int num_coarse_scores = 0;
         double sum_coarse_scores = 0.0;
         double best_coarse_score = 0.0;
         double best_coarse_angle = -m_maxAngle;
         for (double angle = -m_maxAngle; angle <= m_maxAngle; angle += coarse_step) {
-            double const score = process(coarse_reduced, skewed, angle);
+            const double score = process(coarse_reduced, skewed, angle);
             sum_coarse_scores += score;
             ++num_coarse_scores;
             if (score > best_coarse_score) {
@@ -134,8 +134,8 @@ namespace imageproc {
         double angle_minus = best_coarse_angle - 0.5 * coarse_step;
         double score_plus = process(fine_reduced, skewed, angle_plus);
         double score_minus = process(fine_reduced, skewed, angle_minus);
-        double const fine_score1 = score_plus;
-        double const fine_score2 = score_minus;
+        const double fine_score1 = score_plus;
+        const double fine_score2 = score_minus;
         while (angle_plus - angle_minus > m_accuracy) {
             if (score_plus > score_minus) {
                 angle_minus = 0.5 * (angle_plus + angle_minus);
@@ -178,21 +178,21 @@ namespace imageproc {
         return Skew(-best_angle, confidence - 1.0);
     }  // SkewFinder::findSkew
 
-    double SkewFinder::process(BinaryImage const& src, BinaryImage& dst, double const angle) const {
-        double const tg = tan(angle * constants::DEG2RAD);
-        double const x_center = 0.5 * dst.width();
+    double SkewFinder::process(const BinaryImage& src, BinaryImage& dst, const double angle) const {
+        const double tg = tan(angle * constants::DEG2RAD);
+        const double x_center = 0.5 * dst.width();
         vShearFromTo(src, dst, tg / m_resolutionRatio, x_center, WHITE);
 
         return calcScore(dst);
     }
 
-    double SkewFinder::calcScore(BinaryImage const& image) {
-        int const width = image.width();
-        int const height = image.height();
-        uint32_t const* line = image.data();
-        int const wpl = image.wordsPerLine();
-        int const last_word_idx = (width - 1) >> 5;
-        uint32_t const last_word_mask = ~uint32_t(0) << (31 - ((width - 1) & 31));
+    double SkewFinder::calcScore(const BinaryImage& image) {
+        const int width = image.width();
+        const int height = image.height();
+        const uint32_t* line = image.data();
+        const int wpl = image.wordsPerLine();
+        const int last_word_idx = (width - 1) >> 5;
+        const uint32_t last_word_mask = ~uint32_t(0) << (31 - ((width - 1) & 31));
 
         double score = 0.0;
         int last_line_black_pixels = 0;
@@ -205,7 +205,7 @@ namespace imageproc {
             num_black_pixels += countNonZeroBits(line[i] & last_word_mask);
 
             if (y != 0) {
-                double const diff = num_black_pixels - last_line_black_pixels;
+                const double diff = num_black_pixels - last_line_black_pixels;
                 score += diff * diff;
             }
             last_line_black_pixels = num_black_pixels;

@@ -25,7 +25,7 @@
 class SystemLoadWidget : public QWidget {
 Q_OBJECT
 public:
-    SystemLoadWidget(QWidget* parent = 0);
+    explicit SystemLoadWidget(QWidget* parent = nullptr);
 
 private slots:
 

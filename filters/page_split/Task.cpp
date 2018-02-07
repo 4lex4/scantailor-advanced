@@ -135,6 +135,10 @@ namespace page_split {
                     status.throwIfCancelled();
 
                     new_params = std::make_unique<Params>(new_layout, deps, MODE_AUTO);
+
+                    Dependencies newDeps = deps;
+                    newDeps.setLayoutType(new_layout.toLayoutType());
+                    new_params->setDependencies(newDeps);
                 } else {
                     new_params = std::make_unique<Params>(*params);
 
@@ -154,6 +158,10 @@ namespace page_split {
                 if (correctedPageLayout.type() != params->pageLayout().type()) {
                     new_params = std::make_unique<Params>(*params);
                     new_params->setPageLayout(correctedPageLayout);
+
+                    Dependencies newDeps = deps;
+                    newDeps.setLayoutType(correctedPageLayout.toLayoutType());
+                    new_params->setDependencies(newDeps);
                 } else {
                     break;
                 }

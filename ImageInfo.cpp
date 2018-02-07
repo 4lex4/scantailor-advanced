@@ -24,8 +24,8 @@ ImageInfo::ImageInfo()
           m_rightHalfRemoved(false) {
 }
 
-ImageInfo::ImageInfo(ImageId const& id,
-                     ImageMetadata const& metadata,
+ImageInfo::ImageInfo(const ImageId& id,
+                     const ImageMetadata& metadata,
                      int num_sub_pages,
                      bool left_half_removed,
                      bool right_half_removed)

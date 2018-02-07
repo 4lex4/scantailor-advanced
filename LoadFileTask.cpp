@@ -36,12 +36,12 @@ using namespace imageproc;
 class LoadFileTask::ErrorResult : public FilterResult {
 Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
 public:
-    ErrorResult(QString const& file_path);
+    explicit ErrorResult(const QString& file_path);
 
-    virtual void updateUI(FilterUiInterface* ui);
+    void updateUI(FilterUiInterface* ui) override;
 
-    virtual intrusive_ptr<AbstractFilter> filter() {
-        return intrusive_ptr<AbstractFilter>();
+    intrusive_ptr<AbstractFilter> filter() override {
+        return nullptr;
     }
 
 private:
@@ -51,21 +51,20 @@ private:
 
 
 LoadFileTask::LoadFileTask(Type type,
-                           PageInfo const& page,
-                           intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                           intrusive_ptr<ProjectPages> const& pages,
-                           intrusive_ptr<fix_orientation::Task> const& next_task)
+                           const PageInfo& page,
+                           intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                           intrusive_ptr<ProjectPages> pages,
+                           intrusive_ptr<fix_orientation::Task> next_task)
         : BackgroundTask(type),
-          m_ptrThumbnailCache(thumbnail_cache),
+          m_ptrThumbnailCache(std::move(thumbnail_cache)),
           m_imageId(page.imageId()),
           m_imageMetadata(page.metadata()),
-          m_ptrPages(pages),
-          m_ptrNextTask(next_task) {
+          m_ptrPages(std::move(pages)),
+          m_ptrNextTask(std::move(next_task)) {
     assert(m_ptrNextTask);
 }
 
-LoadFileTask::~LoadFileTask() {
-}
+LoadFileTask::~LoadFileTask() = default;
 
 FilterResultPtr LoadFileTask::operator()() {
     QImage image(ImageLoader::load(m_imageId));
@@ -82,12 +81,12 @@ FilterResultPtr LoadFileTask::operator()() {
 
             return m_ptrNextTask->process(*this, FilterData(image));
         }
-    } catch (CancelledException const&) {
-        return FilterResultPtr();
+    } catch (const CancelledException&) {
+        return nullptr;
     }
 }
 
-void LoadFileTask::updateImageSizeIfChanged(QImage const& image) {
+void LoadFileTask::updateImageSizeIfChanged(const QImage& image) {
     // The user might just replace a file with another one.
     // In that case, we update its size that we store.
     // Note that we don't do the same about DPI, because
@@ -105,14 +104,14 @@ void LoadFileTask::updateImageSizeIfChanged(QImage const& image) {
 void LoadFileTask::overrideDpi(QImage& image) const {
     // Beware: QImage will have a default DPI when loading
     // an image that doesn't specify one.
-    Dpm const dpm(m_imageMetadata.dpi());
+    const Dpm dpm(m_imageMetadata.dpi());
     image.setDotsPerMeterX(dpm.horizontal());
     image.setDotsPerMeterY(dpm.vertical());
 }
 
 /*======================= LoadFileTask::ErrorResult ======================*/
 
-LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
+LoadFileTask::ErrorResult::ErrorResult(const QString& file_path)
         : m_filePath(QDir::toNativeSeparators(file_path)),
           m_fileExists(QFile::exists(file_path)) {
 }
@@ -120,15 +119,15 @@ LoadFileTask::ErrorResult::ErrorResult(QString const& file_path)
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
     class ErrWidget : public ErrorWidget {
     public:
-        ErrWidget(intrusive_ptr<AbstractCommand0<void>> const& relinking_dialog_requester,
-                  QString const& text,
+        ErrWidget(intrusive_ptr<AbstractCommand0<void>> relinking_dialog_requester,
+                  const QString& text,
                   Qt::TextFormat fmt = Qt::AutoText)
                 : ErrorWidget(text, fmt),
-                  m_ptrRelinkingDialogRequester(relinking_dialog_requester) {
+                  m_ptrRelinkingDialogRequester(std::move(relinking_dialog_requester)) {
         }
 
     private:
-        virtual void linkActivated(QString const&) {
+        void linkActivated(const QString&) override {
             (*m_ptrRelinkingDialogRequester)();
         }
 

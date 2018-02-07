@@ -47,7 +47,7 @@ namespace page_layout {
 /**
  * CommandLine is a singleton simulation.
  * use CommandLine::get() to get access to global class
- * use CommandLine::set(CommandLine const&) to set the global class
+ * use CommandLine::set(const CommandLine&) to set the global class
  */
 class CommandLine {
     // Member-wise copying is OK.
@@ -59,13 +59,13 @@ public:
         UPSIDEDOWN
     };
 
-    static CommandLine const& get() {
+    static const CommandLine& get() {
         return m_globalInstance;
     }
 
-    static void set(CommandLine const& cl);
+    static void set(const CommandLine& cl);
 
-    CommandLine(QStringList const& argv, bool g = true)
+    explicit CommandLine(const QStringList& argv, bool g = true)
             : m_error(false),
               m_gui(g),
               m_global(false),
@@ -85,19 +85,19 @@ public:
         return m_error;
     }
 
-    std::vector<ImageFileInfo> const& images() const {
+    const std::vector<ImageFileInfo>& images() const {
         return m_images;
     }
 
-    QString const& outputDirectory() const {
+    const QString& outputDirectory() const {
         return m_outputDirectory;
     }
 
-    QString const& projectFile() const {
+    const QString& projectFile() const {
         return m_projectFile;
     }
 
-    QString const& outputProjectFile() const {
+    const QString& outputProjectFile() const {
         return m_outputProjectFile;
     }
 
@@ -265,11 +265,11 @@ public:
         return m_layoutDirection;
     }
 
-    output::ColorParams::ColorMode getColorMode() const {
+    output::ColorMode getColorMode() const {
         return m_colorMode;
     }
 
-    output::ColorParams::ColorMode getDefaultColorMode() const {
+    output::ColorMode getDefaultColorMode() const {
         return m_defaultColorMode;
     }
 
@@ -400,7 +400,7 @@ private:
     QString m_language;
     QString m_windowTitle;
     QSizeF m_pageDetectionBox;
-    double m_pageDetectionTolerance;
+    double m_pageDetectionTolerance{ 0.1 };
     bool m_defaultNull;
 
     bool isGlobal() {
@@ -411,7 +411,7 @@ private:
         m_global = true;
     }
 
-    bool contains(QString const& key) const {
+    bool contains(const QString& key) const {
         return m_options.contains(key);
     }
 
@@ -424,8 +424,8 @@ private:
 
     page_split::LayoutType m_layoutType;
     Qt::LayoutDirection m_layoutDirection;
-    output::ColorParams::ColorMode m_colorMode;
-    output::ColorParams::ColorMode m_defaultColorMode;
+    output::ColorMode m_colorMode;
+    output::ColorMode m_defaultColorMode;
     output::PictureShape m_pictureShape;
     Dpi m_dpi;
     Dpi m_outputDpi;
@@ -436,30 +436,30 @@ private:
     page_layout::Alignment m_alignment;
     Despeckle::Level m_contentDetection;
     QRectF m_contentRect;
-    double m_contentDeviation;
+    double m_contentDeviation{ 1.0 };
     Orientation m_orientation;
-    int m_threshold;
-    double m_deskewAngle;
+    int m_threshold{ 0 };
+    double m_deskewAngle{ 0.0 };
     AutoManualMode m_deskewMode;
-    double m_skewDeviation;
-    int m_startFilterIdx;
-    int m_endFilterIdx;
+    double m_skewDeviation{ 5.0 };
+    int m_startFilterIdx{ 0 };
+    int m_endFilterIdx{ 5 };
     output::DewarpingOptions m_dewarpingOptions;
     output::DespeckleLevel m_despeckleLevel;
     output::DepthPerception m_depthPerception;
-    float m_matchLayoutTolerance;
+    float m_matchLayoutTolerance{ 0.2f };
 
-    bool parseCli(QStringList const& argv);
+    bool parseCli(const QStringList& argv);
 
-    void addImage(QString const& path);
+    void addImage(const QString& path);
 
     void setup();
 
     page_split::LayoutType fetchLayoutType();
 
-    output::ColorParams::ColorMode fetchColorMode();
+    output::ColorMode fetchColorMode();
 
-    output::ColorParams::ColorMode fetchDefaultColorMode();
+    output::ColorMode fetchDefaultColorMode();
 
     output::PictureShape fetchPictureShape();
 
@@ -497,7 +497,7 @@ private:
 
     int fetchEndFilterIdx();
 
-    output::DewarpingOptions::Mode fetchDewarpingMode();
+    output::DewarpingMode fetchDewarpingMode();
 
     output::DespeckleLevel fetchDespeckleLevel();
 

@@ -23,7 +23,7 @@
 #include <QRect>
 #include <vector>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     namespace detail {
@@ -34,10 +34,10 @@ namespace imageproc {
                                  int todo_within,
                                  int todo_after,
                                  T outside_values,
-                                 T const* src,
-                                 int const src_delta,
+                                 const T* src,
+                                 const int src_delta,
                                  T* dst,
-                                 int const dst_delta) {
+                                 const int dst_delta) {
                 T extremum(outside_values);
 
                 if ((todo_before <= 0) && (todo_within > 0)) {
@@ -75,19 +75,19 @@ namespace imageproc {
 
             template<typename T, typename MinMaxSelector>
             void horizontalPass(MinMaxSelector selector,
-                                QRect const neighborhood,
-                                T const outside_values,
-                                T const* input,
-                                int const input_stride,
-                                QSize const input_size,
+                                const QRect neighborhood,
+                                const T outside_values,
+                                const T* input,
+                                const int input_stride,
+                                const QSize input_size,
                                 T* output,
-                                int const output_stride) {
-                int const se_len = neighborhood.width();
-                int const width = input_size.width();
-                int const width_m1 = width - 1;
-                int const height = input_size.height();
-                int const dx1 = neighborhood.left();
-                int const dx2 = neighborhood.right();
+                                const int output_stride) {
+                const int se_len = neighborhood.width();
+                const int width = input_size.width();
+                const int width_m1 = width - 1;
+                const int height = input_size.height();
+                const int dx1 = neighborhood.left();
+                const int dx2 = neighborhood.right();
 
                 std::vector<T> accum(se_len * 2 - 1);
                 T* const accum_middle = &accum[se_len - 1];
@@ -95,12 +95,12 @@ namespace imageproc {
                 for (int y = 0; y < height; ++y) {
                     for (int dst_segment_first = 0; dst_segment_first < width;
                          dst_segment_first += se_len) {
-                        int const dst_segment_last = std::min(
+                        const int dst_segment_last = std::min(
                                 dst_segment_first + se_len, width
                         ) - 1; // inclusive
-                        int const src_segment_first = dst_segment_first + dx1;
-                        int const src_segment_last = dst_segment_last + dx2;
-                        int const src_segment_middle
+                        const int src_segment_first = dst_segment_first + dx1;
+                        const int src_segment_last = dst_segment_last + dx2;
+                        const int src_segment_middle
                                 = (src_segment_first + src_segment_last) >> 1;
                         // Fill the first half of the accumulator buffer.
                         if ((src_segment_first > width_m1) || (src_segment_middle < 0)) {
@@ -109,14 +109,14 @@ namespace imageproc {
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         } else {
                             // after <- [to <- within <- from] <- before
-                            int const from = std::min(width_m1, src_segment_middle);
-                            int const to = std::max(0, src_segment_first);
+                            const int from = std::min(width_m1, src_segment_middle);
+                            const int to = std::max(0, src_segment_first);
 
-                            int const todo_before = src_segment_middle - from;
-                            int const todo_within = from - to + 1;
-                            int const todo_after = to - src_segment_first;
-                            int const src_delta = -1;
-                            int const dst_delta = -1;
+                            const int todo_before = src_segment_middle - from;
+                            const int todo_within = from - to + 1;
+                            const int todo_after = to - src_segment_first;
+                            const int src_delta = -1;
+                            const int dst_delta = -1;
 
                             fillAccumulator(
                                     selector, todo_before, todo_within, todo_after, outside_values,
@@ -130,14 +130,14 @@ namespace imageproc {
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         } else {
                             // before -> [from -> within -> to] -> after
-                            int const from = std::max(0, src_segment_middle);
-                            int const to = std::min(width_m1, src_segment_last);
+                            const int from = std::max(0, src_segment_middle);
+                            const int to = std::min(width_m1, src_segment_last);
 
-                            int const todo_before = from - src_segment_middle;
-                            int const todo_within = to - from + 1;
-                            int const todo_after = src_segment_last - to;
-                            int const src_delta = 1;
-                            int const dst_delta = 1;
+                            const int todo_before = from - src_segment_middle;
+                            const int todo_within = to - from + 1;
+                            const int todo_after = src_segment_last - to;
+                            const int src_delta = 1;
+                            const int dst_delta = 1;
 
                             fillAccumulator(
                                     selector, todo_before, todo_within, todo_after, outside_values,
@@ -145,8 +145,8 @@ namespace imageproc {
                             );
                         }
 
-                        int const offset1 = dx1 - src_segment_middle;
-                        int const offset2 = dx2 - src_segment_middle;
+                        const int offset1 = dx1 - src_segment_middle;
+                        const int offset2 = dx2 - src_segment_middle;
                         for (int x = dst_segment_first; x <= dst_segment_last; ++x) {
                             output[x] = selector(accum_middle[x + offset1], accum_middle[x + offset2]);
                         }
@@ -159,19 +159,19 @@ namespace imageproc {
 
             template<typename T, typename MinMaxSelector>
             void verticalPass(MinMaxSelector selector,
-                              QRect const neighborhood,
-                              T const outside_values,
-                              T const* input,
-                              int const input_stride,
-                              QSize const input_size,
+                              const QRect neighborhood,
+                              const T outside_values,
+                              const T* input,
+                              const int input_stride,
+                              const QSize input_size,
                               T* output,
-                              int const output_stride) {
-                int const se_len = neighborhood.height();
-                int const width = input_size.width();
-                int const height = input_size.height();
-                int const height_m1 = height - 1;
-                int const dy1 = neighborhood.top();
-                int const dy2 = neighborhood.bottom();
+                              const int output_stride) {
+                const int se_len = neighborhood.height();
+                const int width = input_size.width();
+                const int height = input_size.height();
+                const int height_m1 = height - 1;
+                const int dy1 = neighborhood.top();
+                const int dy2 = neighborhood.bottom();
 
                 std::vector<T> accum(se_len * 2 - 1);
                 T* const accum_middle = &accum[se_len - 1];
@@ -179,12 +179,12 @@ namespace imageproc {
                 for (int x = 0; x < width; ++x) {
                     for (int dst_segment_first = 0; dst_segment_first < height;
                          dst_segment_first += se_len) {
-                        int const dst_segment_last = std::min(
+                        const int dst_segment_last = std::min(
                                 dst_segment_first + se_len, height
                         ) - 1; // inclusive
-                        int const src_segment_first = dst_segment_first + dy1;
-                        int const src_segment_last = dst_segment_last + dy2;
-                        int const src_segment_middle
+                        const int src_segment_first = dst_segment_first + dy1;
+                        const int src_segment_last = dst_segment_last + dy2;
+                        const int src_segment_middle
                                 = (src_segment_first + src_segment_last) >> 1;
                         // Fill the first half of accumulator buffer.
                         if ((src_segment_first > height_m1) || (src_segment_middle < 0)) {
@@ -193,14 +193,14 @@ namespace imageproc {
                             fillWithConstant(&accum.front(), accum_middle, outside_values);
                         } else {
                             // after <- [to <- within <- from] <- before
-                            int const from = std::min(height_m1, src_segment_middle);
-                            int const to = std::max(0, src_segment_first);
+                            const int from = std::min(height_m1, src_segment_middle);
+                            const int to = std::max(0, src_segment_first);
 
-                            int const todo_before = src_segment_middle - from;
-                            int const todo_within = from - to + 1;
-                            int const todo_after = to - src_segment_first;
-                            int const src_delta = -input_stride;
-                            int const dst_delta = -1;
+                            const int todo_before = src_segment_middle - from;
+                            const int todo_within = from - to + 1;
+                            const int todo_after = to - src_segment_first;
+                            const int src_delta = -input_stride;
+                            const int dst_delta = -1;
 
                             fillAccumulator(
                                     selector, todo_before, todo_within, todo_after, outside_values,
@@ -215,14 +215,14 @@ namespace imageproc {
                             fillWithConstant(accum_middle, &accum.back(), outside_values);
                         } else {
                             // before -> [from -> within -> to] -> after
-                            int const from = std::max(0, src_segment_middle);
-                            int const to = std::min(height_m1, src_segment_last);
+                            const int from = std::max(0, src_segment_middle);
+                            const int to = std::min(height_m1, src_segment_last);
 
-                            int const todo_before = from - src_segment_middle;
-                            int const todo_within = to - from + 1;
-                            int const todo_after = src_segment_last - to;
-                            int const src_delta = input_stride;
-                            int const dst_delta = 1;
+                            const int todo_before = from - src_segment_middle;
+                            const int todo_within = to - from + 1;
+                            const int todo_after = src_segment_last - to;
+                            const int src_delta = input_stride;
+                            const int dst_delta = 1;
 
                             fillAccumulator(
                                     selector, todo_before, todo_within, todo_after, outside_values,
@@ -231,8 +231,8 @@ namespace imageproc {
                             );
                         }
 
-                        int const offset1 = dy1 - src_segment_middle;
-                        int const offset2 = dy2 - src_segment_middle;
+                        const int offset1 = dy1 - src_segment_middle;
+                        const int offset2 = dy2 - src_segment_middle;
                         T* p_out = output + dst_segment_first * output_stride;
                         for (int y = dst_segment_first; y <= dst_segment_last; ++y) {
                             *p_out = selector(accum_middle[y + offset1], accum_middle[y + offset2]);
@@ -277,13 +277,13 @@ namespace imageproc {
  */
     template<typename T, typename MinMaxSelector>
     void localMinMaxGeneric(MinMaxSelector selector,
-                            QRect const neighborhood,
-                            T const outside_values,
-                            T const* input,
-                            int const input_stride,
-                            QSize const input_size,
+                            const QRect neighborhood,
+                            const T outside_values,
+                            const T* input,
+                            const int input_stride,
+                            const QSize input_size,
                             T* output,
-                            int const output_stride) {
+                            const int output_stride) {
         assert(!neighborhood.isEmpty());
 
         if (input_size.isEmpty()) {
@@ -291,7 +291,7 @@ namespace imageproc {
         }
 
         std::vector<T> temp(input_size.width() * input_size.height());
-        int const temp_stride = input_size.width();
+        const int temp_stride = input_size.width();
 
         detail::local_min_max::horizontalPass(
                 selector, neighborhood, outside_values,

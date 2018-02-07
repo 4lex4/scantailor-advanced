@@ -44,7 +44,7 @@ namespace dewarping {
             QLineF imgLine;
             HomographicTransform<1, double> pln2img;
 
-            Generatrix(QLineF const& img_line, HomographicTransform<1, double> const& H)
+            Generatrix(const QLineF& img_line, const HomographicTransform<1, double>& H)
                     : imgLine(img_line),
                       pln2img(H) {
             }
@@ -56,8 +56,8 @@ namespace dewarping {
          *        This model assumes that plane is perpendicular to the camera direction.
          *        In practice, just use values between 1 and 3.
          */
-        CylindricalSurfaceDewarper(std::vector<QPointF> const& img_directrix1,
-                                   std::vector<QPointF> const& img_directrix2,
+        CylindricalSurfaceDewarper(const std::vector<QPointF>& img_directrix1,
+                                   const std::vector<QPointF>& img_directrix2,
                                    double depth_perception);
 
         /**
@@ -76,7 +76,7 @@ namespace dewarping {
          * in the beginning of the *.cpp file for more information
          * about coordinate systems we work with.
          */
-        QPointF mapToDewarpedSpace(QPointF const& img_pt) const;
+        QPointF mapToDewarpedSpace(const QPointF& img_pt) const;
 
         /**
          * Transforms a point from dewarped normalized coordinates
@@ -84,27 +84,27 @@ namespace dewarping {
          * of the *.cpp file for more information about coordinate
          * systems we owork with.
          */
-        QPointF mapToWarpedSpace(QPointF const& crv_pt) const;
+        QPointF mapToWarpedSpace(const QPointF& crv_pt) const;
 
     private:
         class CoupledPolylinesIterator;
 
-        static HomographicTransform<2, double> calcPlnToImgHomography(std::vector<QPointF> const& img_directrix1,
-                                                                      std::vector<QPointF> const& img_directrix2);
+        static HomographicTransform<2, double> calcPlnToImgHomography(const std::vector<QPointF>& img_directrix1,
+                                                                      const std::vector<QPointF>& img_directrix2);
 
-        static double calcPlnStraightLineY(std::vector<QPointF> const& img_directrix1,
-                                           std::vector<QPointF> const& img_directrix2,
+        static double calcPlnStraightLineY(const std::vector<QPointF>& img_directrix1,
+                                           const std::vector<QPointF>& img_directrix2,
                                            HomographicTransform<2, double> pln2img,
                                            HomographicTransform<2, double> img2pln);
 
         static HomographicTransform<2, double> fourPoint2DHomography(boost::array<std::pair<QPointF, QPointF>,
-                4> const& pairs);
+                4>const & pairs);
 
         static HomographicTransform<1, double> threePoint1DHomography(boost::array<std::pair<double, double>,
-                3> const& pairs);
+                3>const & pairs);
 
         void
-        initArcLengthMapper(std::vector<QPointF> const& img_directrix1, std::vector<QPointF> const& img_directrix2);
+        initArcLengthMapper(const std::vector<QPointF>& img_directrix1, const std::vector<QPointF>& img_directrix2);
 
         HomographicTransform<2, double> m_pln2img;
         HomographicTransform<2, double> m_img2pln;

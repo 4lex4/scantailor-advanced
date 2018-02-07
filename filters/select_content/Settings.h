@@ -36,59 +36,41 @@ namespace select_content {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
         void updateDeviation();
 
-        void setPageParams(PageId const& page_id, Params const& params);
+        void setPageParams(const PageId& page_id, const Params& params);
 
-        void clearPageParams(PageId const& page_id);
+        void clearPageParams(const PageId& page_id);
 
-        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
-        double maxDeviation() const {
-            return m_maxDeviation;
-        }
+        bool isParamsNull(const PageId& page_id) const;
 
-        void setMaxDeviation(double md) {
-            m_maxDeviation = md;
-        }
+        double maxDeviation() const;
 
-        QSizeF pageDetectionBox() const {
-            return m_pageDetectionBox;
-        }
+        void setMaxDeviation(double md);
 
-        void setPageDetectionBox(QSizeF size) {
-            m_pageDetectionBox = size;
-        }
+        QSizeF pageDetectionBox() const;
 
-        double pageDetectionTolerance() const {
-            return m_pageDetectionTolerance;
-        }
+        void setPageDetectionBox(QSizeF size);
 
-        void setPageDetectionTolerance(double tolerance) {
-            m_pageDetectionTolerance = tolerance;
-        }
+        double pageDetectionTolerance() const;
 
-        double avg() const {
-            return m_avg;
-        }
+        void setPageDetectionTolerance(double tolerance);
 
-        void setAvg(double a) {
-            m_avg = a;
-        }
+        double avg() const;
 
-        double std() const {
-            return m_sigma;
-        }
+        void setAvg(double a);
 
-        void setStd(double s) {
-            m_sigma = s;
-        }
+        double std() const;
+
+        void setStd(double s);
 
     private:
         typedef std::map<PageId, Params> PageParams;

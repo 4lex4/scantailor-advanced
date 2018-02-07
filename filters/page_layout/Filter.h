@@ -52,53 +52,49 @@ namespace page_layout {
 
     Q_DECLARE_TR_FUNCTIONS(page_layout::Filter)
     public:
-        Filter(intrusive_ptr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+        Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~Filter();
+        ~Filter() override;
 
-        virtual QString getName() const;
+        QString getName() const override;
 
-        virtual PageView getView() const;
+        PageView getView() const override;
 
-        virtual void selected();
+        void selected() override;
 
-        virtual int selectedPageOrder() const;
+        int selectedPageOrder() const override;
 
-        virtual void selectPageOrder(int option);
+        void selectPageOrder(int option) override;
 
-        virtual std::vector<PageOrderOption> pageOrderOptions() const;
+        std::vector<PageOrderOption> pageOrderOptions() const override;
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
 
-        virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const;
+        QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void setContentBox(PageId const& page_id, ImageTransformation const& xform, QRectF const& content_rect);
+        void loadDefaultSettings(const PageId& page_id) override;
 
-        void invalidateContentBox(PageId const& page_id);
+        void setContentBox(const PageId& page_id, const ImageTransformation& xform, const QRectF& content_rect);
 
-        bool checkReadyForOutput(ProjectPages const& pages, PageId const* ignore = nullptr);
+        void invalidateContentBox(const PageId& page_id);
 
-        intrusive_ptr<Task> createTask(PageId const& page_id,
-                                       intrusive_ptr<output::Task> const& next_task,
+        bool checkReadyForOutput(const ProjectPages& pages, const PageId* ignore = nullptr);
+
+        intrusive_ptr<Task> createTask(const PageId& page_id,
+                                       intrusive_ptr<output::Task> next_task,
                                        bool batch,
                                        bool debug);
 
-        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task);
 
-        OptionsWidget* optionsWidget() {
-            return m_ptrOptionsWidget.get();
-        }
-
-        Settings* getSettings() {
-            return m_ptrSettings.get();
-        }
+        OptionsWidget* optionsWidget();
 
     private:
-        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id, int numeric_id) const;
+        void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
         intrusive_ptr<ProjectPages> m_ptrPages;
         intrusive_ptr<Settings> m_ptrSettings;

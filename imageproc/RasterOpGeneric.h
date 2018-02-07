@@ -21,8 +21,8 @@
 
 #include "BinaryImage.h"
 #include <QSize>
-#include <stdint.h>
-#include <assert.h>
+#include <cstdint>
+#include <cassert>
 
 namespace imageproc {
 /**
@@ -66,12 +66,12 @@ namespace imageproc {
  *
  * \p operation will be called like this:
  * \code
- * uint32_t const bit1 = <something> ? 1 : 0;
+ * const uint32_t bit1 = <something> ? 1 : 0;
  * operation(bitl, data2[offset2]);
  * \endcode
  */
     template<typename T2, typename Op>
-    void rasterOpGeneric(BinaryImage const& image1, T2* data2, int stride2, Op operation);
+    void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation);
 
 /**
  * \brief Same as the one above, except one of the images is a non-const BinaryImage.
@@ -85,7 +85,7 @@ namespace imageproc {
  * and an assignment operator from uint32_t, expecting 0 or 1 only.
  */
     template<typename T2, typename Op>
-    void rasterOpGeneric(BinaryImage const& image1, T2* data2, int stride2, Op operation);
+    void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation);
 
 
 /*======================== Implementation ==========================*/
@@ -96,8 +96,8 @@ namespace imageproc {
             return;
         }
 
-        int const w = size.width();
-        int const h = size.height();
+        const int w = size.width();
+        const int h = size.height();
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
@@ -113,8 +113,8 @@ namespace imageproc {
             return;
         }
 
-        int const w = size.width();
-        int const h = size.height();
+        const int w = size.width();
+        const int h = size.height();
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
@@ -126,19 +126,19 @@ namespace imageproc {
     }
 
     template<typename T2, typename Op>
-    void rasterOpGeneric(BinaryImage const& image1, T2* data2, int stride2, Op operation) {
+    void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation) {
         if (image1.isNull()) {
             return;
         }
 
-        int const w = image1.width();
-        int const h = image1.height();
-        int const stride1 = image1.wordsPerLine();
-        uint32_t const* data1 = image1.data();
+        const int w = image1.width();
+        const int h = image1.height();
+        const int stride1 = image1.wordsPerLine();
+        const uint32_t* data1 = image1.data();
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
-                int const shift = 31 - (x & 31);
+                const int shift = 31 - (x & 31);
                 operation((data1[x >> 5] >> shift) & uint32_t(1), data2[x]);
             }
             data1 += stride1;
@@ -154,14 +154,11 @@ namespace imageproc {
                       m_shift(shift) {
             }
 
-            BitProxy(BitProxy const& other)
-                    : m_rWord(other.m_rWord),
-                      m_shift(other.m_shift) {
-            }
+            BitProxy(const BitProxy& other) = default;
 
             BitProxy& operator=(uint32_t bit) {
                 assert(bit <= 1);
-                uint32_t const mask = uint32_t(1) << m_shift;
+                const uint32_t mask = uint32_t(1) << m_shift;
                 m_rWord = (m_rWord & ~mask) | (bit << m_shift);
 
                 return *this;
@@ -185,9 +182,9 @@ namespace imageproc {
             return;
         }
 
-        int const w = image1.width();
-        int const h = image1.height();
-        int const stride1 = image1.wordsPerLine();
+        const int w = image1.width();
+        const int h = image1.height();
+        const int stride1 = image1.wordsPerLine();
         uint32_t* data1 = image1.data();
 
         for (int y = 0; y < h; ++y) {

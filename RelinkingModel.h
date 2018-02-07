@@ -35,7 +35,7 @@
 #include <set>
 #include <map>
 
-class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, RelinkablePath const&> {
+class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, const RelinkablePath&> {
 DECLARE_NON_COPYABLE(RelinkingModel)
 
 public:
@@ -53,11 +53,11 @@ public:
 
     RelinkingModel();
 
-    virtual ~RelinkingModel();
+    ~RelinkingModel() override;
 
-    virtual int rowCount(QModelIndex const& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    virtual QVariant data(QModelIndex const& index, int role = Qt::DisplayRole) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
     /**
      * This method guarantees that
@@ -72,13 +72,13 @@ public:
         return m_ptrRelinker;
     }
 
-    virtual void operator()(RelinkablePath const& path) {
+    void operator()(const RelinkablePath& path) override {
         addPath(path);
     }
 
-    void addPath(RelinkablePath const& path);
+    void addPath(const RelinkablePath& path);
 
-    void replacePrefix(QString const& prefix, QString const& replacement, RelinkablePath::Type type);
+    void replacePrefix(const QString& prefix, const QString& replacement, RelinkablePath::Type type);
 
     /**
      * Returns true if we have different original paths remapped to the same one.
@@ -90,10 +90,10 @@ public:
 
     void rollbackChanges();
 
-    void requestStatusUpdate(QModelIndex const& index);
+    void requestStatusUpdate(const QModelIndex& index);
 
 protected:
-    virtual void customEvent(QEvent* event);
+    void customEvent(QEvent* event) override;
 
 private:
     class StatusUpdateThread;
@@ -114,15 +114,15 @@ private:
 
         /**< Same as committedStatus when m_haveUncommittedChanges == false. */
 
-        Item(RelinkablePath const& path);
+        explicit Item(const RelinkablePath& path);
     };
 
     class Relinker : public AbstractRelinker {
     public:
-        void addMapping(QString const& from, QString const& to);
+        void addMapping(const QString& from, const QString& to);
 
         /** Returns path.normalizedPath() if there is no mapping for it. */
-        virtual QString substitutionPathFor(RelinkablePath const& path) const;
+        QString substitutionPathFor(const RelinkablePath& path) const override;
 
         void swap(Relinker& other);
 
@@ -137,7 +137,7 @@ private:
     QPixmap m_folderIcon;
     std::vector<Item> m_items;
     std::set<QString> m_origPathSet;
-    intrusive_ptr<Relinker> const m_ptrRelinker;
+    const intrusive_ptr<Relinker> m_ptrRelinker;
     std::unique_ptr<StatusUpdateThread> m_ptrStatusUpdateThread;
     bool m_haveUncommittedChanges;
 };

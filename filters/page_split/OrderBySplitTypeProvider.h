@@ -27,10 +27,12 @@
 namespace page_split {
     class OrderBySplitTypeProvider : public PageOrderProvider {
     public:
-        OrderBySplitTypeProvider(intrusive_ptr<Settings> const& settings);
+        explicit OrderBySplitTypeProvider(intrusive_ptr<Settings> settings);
 
-        virtual bool precedes(PageId const& lhs_page, bool lhs_incomplete, PageId const& rhs_page,
-                              bool rhs_incomplete) const;
+        bool precedes(const PageId& lhs_page,
+                      bool lhs_incomplete,
+                      const PageId& rhs_page,
+                      bool rhs_incomplete) const override;
 
     private:
         intrusive_ptr<Settings> m_ptrSettings;

@@ -44,7 +44,7 @@ namespace imageproc {
     public:
         IntegralImage(int width, int height);
 
-        explicit IntegralImage(QSize const& size);
+        explicit IntegralImage(const QSize& size);
 
         ~IntegralImage();
 
@@ -71,7 +71,7 @@ namespace imageproc {
          * \note If the rectangle exceeds the image area, the behaviour is
          *       undefined.
          */
-        T sum(QRect const& rect) const;
+        T sum(const QRect& rect) const;
 
     private:
         void init(int width, int height);
@@ -86,14 +86,14 @@ namespace imageproc {
 
 
     template<typename T>
-    IntegralImage<T>::IntegralImage(int const width, int const height)
+    IntegralImage<T>::IntegralImage(const int width, const int height)
             : m_lineSum() { // init with 0 or with default constructor.
         // The first row and column are fake.
         init(width + 1, height + 1);
     }
 
     template<typename T>
-    IntegralImage<T>::IntegralImage(QSize const& size)
+    IntegralImage<T>::IntegralImage(const QSize& size)
             : m_lineSum() { // init with 0 or with default constructor.
         // The first row and column are fake.
         init(size.width() + 1, size.height() + 1);
@@ -105,7 +105,7 @@ namespace imageproc {
     }
 
     template<typename T>
-    void IntegralImage<T>::init(int const width, int const height) {
+    void IntegralImage<T>::init(const int width, const int height) {
         m_width = width;
         m_height = height;
 
@@ -123,7 +123,7 @@ namespace imageproc {
     }
 
     template<typename T>
-    void IntegralImage<T>::push(T const val) {
+    void IntegralImage<T>::push(const T val) {
         m_lineSum += val;
         *m_pCur = *m_pAbove + m_lineSum;
         ++m_pCur;
@@ -141,12 +141,12 @@ namespace imageproc {
     }
 
     template<typename T>
-    inline T IntegralImage<T>::sum(QRect const& rect) const {
+    inline T IntegralImage<T>::sum(const QRect& rect) const {
         // Keep in mind that row 0 and column 0 are fake.
-        int const pre_left = rect.left();
-        int const pre_right = rect.right() + 1;  // QRect::right() is inclusive.
-        int const pre_top = rect.top();
-        int const pre_bottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
+        const int pre_left = rect.left();
+        const int pre_right = rect.right() + 1;  // QRect::right() is inclusive.
+        const int pre_top = rect.top();
+        const int pre_bottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
         T sum(m_pData[pre_bottom * m_width + pre_right]);
         sum -= m_pData[pre_top * m_width + pre_right];
         sum += m_pData[pre_top * m_width + pre_left];

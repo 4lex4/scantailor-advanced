@@ -17,17 +17,18 @@ ColorSchemeManager* ColorSchemeManager::instance() {
 void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
     qApp->setStyle(QStyleFactory::create("Fusion"));
 
-    qApp->setPalette(*colorScheme.getPalette().release());
+    qApp->setPalette(*colorScheme.getPalette());
 
-    if (colorScheme.getStyleSheet() != nullptr) {
-        qApp->setStyleSheet(*colorScheme.getStyleSheet().release());
+    std::unique_ptr<QString> styleSheet = colorScheme.getStyleSheet();
+    if (styleSheet != nullptr) {
+        qApp->setStyleSheet(*styleSheet);
     }
 
     m_ptrColorParams = colorScheme.getColorParams();
 }
 
-QBrush ColorSchemeManager::getColorParam(const std::string& colorParam, const QBrush& defaultColor) {
-    if (m_ptrColorParams->count(colorParam) == 1) {
+QBrush ColorSchemeManager::getColorParam(const std::string& colorParam, const QBrush& defaultColor) const {
+    if (m_ptrColorParams->find(colorParam) != m_ptrColorParams->end()) {
         return m_ptrColorParams->at(colorParam);
     } else {
         return defaultColor;

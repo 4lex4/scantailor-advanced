@@ -36,7 +36,7 @@ public:
      * This method solves the problem above by calculating the visible area
      * of the pixmap and communicating that information to QPainter.
      */
-    static void drawPixmap(QPainter& painter, QPixmap const& pixmap);
+    static void drawPixmap(QPainter& painter, const QPixmap& pixmap);
 };
 
 

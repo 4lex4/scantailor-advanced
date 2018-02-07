@@ -26,17 +26,22 @@
 #include "AbstractRelinker.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
+#include <CommandLine.h>
+#include <filters/select_content/Task.h>
+#include <filters/select_content/CacheDrivenTask.h>
 
 namespace deskew {
-    Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
+    Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
             : m_ptrSettings(new Settings) {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
         }
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate("deskew::Filter", "Deskew");
@@ -46,16 +51,16 @@ namespace deskew {
         return PAGE_VIEW;
     }
 
-    void Filter::performRelinking(AbstractRelinker const& relinker) {
+    void Filter::performRelinking(const AbstractRelinker& relinker) {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* const ui, PageId const& page_id) {
+    void Filter::preUpdateUI(FilterUiInterface* const ui, const PageId& page_id) {
         m_ptrOptionsWidget->preUpdateUI(page_id);
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
-    QDomElement Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const {
+    QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("deskew"));
@@ -65,7 +70,7 @@ namespace deskew {
         filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
 
         writer.enumPages(
-                [&](PageId const& page_id, int const numeric_id) {
+                [&](const PageId& page_id, const int numeric_id) {
                     this->writePageSettings(doc, filter_el, page_id, numeric_id);
                 }
         );
@@ -73,24 +78,18 @@ namespace deskew {
         return filter_el;
     }
 
-    void Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el) {
+    void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
         m_ptrSettings->clear();
 
-        CommandLine cli = CommandLine::get();
-
-        QDomElement const filter_el(filters_el.namedItem("deskew").toElement());
+        const QDomElement filter_el(filters_el.namedItem("deskew").toElement());
 
         m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
         m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
+        m_ptrSettings->setMaxDeviation(
+                filter_el.attribute("maxDeviation", QString::number(5.0)).toDouble()
+        );
 
-        if (cli.hasSkewDeviation()) {
-            m_ptrSettings->setMaxDeviation(cli.getSkewDeviation());
-        } else {
-            m_ptrSettings->setMaxDeviation(
-                    filter_el.attribute("maxDeviation", QString::number(cli.getSkewDeviation())).toDouble());
-        }
-
-        QString const page_tag_name("page");
+        const QString page_tag_name("page");
         QDomNode node(filter_el.firstChild());
         for (; !node.isNull(); node = node.nextSibling()) {
             if (!node.isElement()) {
@@ -99,33 +98,33 @@ namespace deskew {
             if (node.nodeName() != page_tag_name) {
                 continue;
             }
-            QDomElement const el(node.toElement());
+            const QDomElement el(node.toElement());
 
             bool ok = true;
-            int const id = el.attribute("id").toInt(&ok);
+            const int id = el.attribute("id").toInt(&ok);
             if (!ok) {
                 continue;
             }
 
-            PageId const page_id(reader.pageId(id));
+            const PageId page_id(reader.pageId(id));
             if (page_id.isNull()) {
                 continue;
             }
 
-            QDomElement const params_el(el.namedItem("params").toElement());
+            const QDomElement params_el(el.namedItem("params").toElement());
             if (params_el.isNull()) {
                 continue;
             }
 
-            Params const params(params_el);
+            const Params params(params_el);
             m_ptrSettings->setPageParams(page_id, params);
         }
     }      // Filter::loadSettings
 
-    void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, PageId const& page_id,
-                                   int const numeric_id) const {
-        std::unique_ptr<Params> const params(m_ptrSettings->getPageParams(page_id));
-        if (!params.get()) {
+    void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id,
+                                   const int numeric_id) const {
+        const std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_id));
+        if (!params) {
             return;
         }
 
@@ -137,22 +136,43 @@ namespace deskew {
     }
 
     intrusive_ptr<Task>
-    Filter::createTask(PageId const& page_id,
-                       intrusive_ptr<select_content::Task> const& next_task,
-                       bool const batch_processing,
-                       bool const debug) {
+    Filter::createTask(const PageId& page_id,
+                       intrusive_ptr<select_content::Task> next_task,
+                       const bool batch_processing,
+                       const bool debug) {
         return intrusive_ptr<Task>(
                 new Task(
                         intrusive_ptr<Filter>(this), m_ptrSettings,
-                        next_task, page_id, batch_processing, debug
+                        std::move(next_task), page_id, batch_processing, debug
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+                new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
+    }
+
+    void Filter::loadDefaultSettings(const PageId& page_id) {
+        if (!m_ptrSettings->isParamsNull(page_id)) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::DeskewParams& deskewParams = defaultParams.getDeskewParams();
+
+        m_ptrSettings->setPageParams(
+                page_id,
+                Params(deskewParams.getDeskewAngleDeg(), Dependencies(), deskewParams.getMode())
+        );
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
+    }
+
+    void Filter::updateStatistics() {
+        m_ptrSettings->updateDeviation();
     }
 }  // namespace deskew

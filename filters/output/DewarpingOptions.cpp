@@ -20,7 +20,7 @@
 #include <cassert>
 
 namespace output {
-    DewarpingOptions::DewarpingOptions(Mode mode, bool needPostDeskew)
+    DewarpingOptions::DewarpingOptions(DewarpingMode mode, bool needPostDeskew)
             : m_mode(mode),
               postDeskew(needPostDeskew) {
     }
@@ -30,7 +30,7 @@ namespace output {
               postDeskew(el.attribute("postDeskew", "1") == "1") {
     }
 
-    QDomElement DewarpingOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement DewarpingOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("mode", formatDewarpingMode(m_mode));
         el.setAttribute("postDeskew", postDeskew ? "1" : "0");
@@ -38,16 +38,16 @@ namespace output {
         return el;
     }
 
-    bool DewarpingOptions::operator==(DewarpingOptions const& other) const {
+    bool DewarpingOptions::operator==(const DewarpingOptions& other) const {
         return (m_mode == other.m_mode)
                && (postDeskew == other.postDeskew);
     }
 
-    bool DewarpingOptions::operator!=(DewarpingOptions const& other) const {
+    bool DewarpingOptions::operator!=(const DewarpingOptions& other) const {
         return !(*this == other);
     }
 
-    void DewarpingOptions::setMode(DewarpingOptions::Mode m_mode) {
+    void DewarpingOptions::setDewarpingMode(DewarpingMode m_mode) {
         DewarpingOptions::m_mode = m_mode;
     }
 
@@ -59,11 +59,11 @@ namespace output {
         return postDeskew;
     }
 
-    DewarpingOptions::Mode DewarpingOptions::mode() const {
+    DewarpingMode DewarpingOptions::dewarpingMode() const {
         return m_mode;
     }
 
-    DewarpingOptions::Mode DewarpingOptions::parseDewarpingMode(QString const& str) {
+    DewarpingMode DewarpingOptions::parseDewarpingMode(const QString& str) {
         if (str == "auto") {
             return AUTO;
         } else if (str == "manual") {
@@ -75,7 +75,7 @@ namespace output {
         }
     }
 
-    QString DewarpingOptions::formatDewarpingMode(DewarpingOptions::Mode mode) {
+    QString DewarpingOptions::formatDewarpingMode(DewarpingMode mode) {
         switch (mode) {
             case OFF:
                 return "off";

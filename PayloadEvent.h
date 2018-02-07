@@ -24,12 +24,12 @@
 template<typename T>
 class PayloadEvent : public QEvent {
 public:
-    PayloadEvent(T const& payload)
+    explicit PayloadEvent(const T& payload)
             : QEvent(User),
               m_payload(payload) {
     }
 
-    T const& payload() const {
+    const T& payload() const {
         return m_payload;
     }
 

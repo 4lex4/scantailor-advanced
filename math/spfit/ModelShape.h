@@ -31,15 +31,14 @@ namespace spfit {
  */
     class ModelShape {
     public:
-        virtual ~ModelShape() {
-        }
+        virtual ~ModelShape() = default;
 
         /**
          * Returns a function that approximates the squared distance to the model.
          * The function is only accurate in the neighbourhood of \p pt.
          */
         virtual SqDistApproximant
-        localSqDistApproximant(QPointF const& pt, FittableSpline::SampleFlags flags) const = 0;
+        localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags flags) const = 0;
     };
 }  // namespace spfit
 #endif

@@ -10,15 +10,14 @@
 #include <QtCore>
 
 namespace output {
-
     class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
     Q_OBJECT
-
     private:
         intrusive_ptr<Settings> m_ptrSettings;
         PageId m_pageId;
         ColorParams m_colorParams;
-        int m_ignoreThresholdChanges;
+        QTimer delayedStateChanger;
+        int ignoreSliderChanges;
 
     public:
         explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
@@ -29,9 +28,9 @@ namespace output {
 
     private slots:
 
-        void bwThresholdChanged();
+        void thresholdSliderReleased();
 
-        void thresholdValueChanged(int value);
+        void thresholdSliderValueChanged(int value);
 
         void setLighterThreshold();
 
@@ -39,15 +38,17 @@ namespace output {
 
         void setNeutralThreshold();
 
+        void sendStateChanged();
+
     private:
         void updateView();
+
+        void setThresholdAdjustment(int value);
 
         void setupUiConnections();
 
         void removeUiConnections();
     };
-
-
 }
 
 

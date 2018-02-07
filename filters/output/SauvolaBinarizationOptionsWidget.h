@@ -35,8 +35,6 @@ namespace output {
 
         void sauvolaCoefChanged(double value);
 
-        void whiteOnBlackModeToggled(bool checked);
-
         void sendStateChanged();
 
     private:

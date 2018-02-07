@@ -26,9 +26,9 @@ class QIODevice;
 
 class ImageLoader {
 public:
-    static QImage load(QString const& file_path, int page_num = 0);
+    static QImage load(const QString& file_path, int page_num = 0);
 
-    static QImage load(ImageId const& image_id);
+    static QImage load(const ImageId& image_id);
 
     static QImage load(QIODevice& io_dev, int page_num);
 };

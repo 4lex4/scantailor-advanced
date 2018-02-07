@@ -23,7 +23,7 @@
 #include <iostream>
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-#include <math.h>
+#include <cmath>
 
 namespace imageproc {
     namespace tests {
@@ -31,8 +31,8 @@ namespace imageproc {
 
         BOOST_AUTO_TEST_SUITE(SEDMTestSuite);
 
-            bool verifySEDM(SEDM const& sedm, uint32_t const* control) {
-                uint32_t const* line = sedm.data();
+            bool verifySEDM(const SEDM& sedm, const uint32_t* control) {
+                const uint32_t* line = sedm.data();
                 for (int y = 0; y < sedm.size().height(); ++y) {
                     for (int x = 0; x < sedm.size().width(); ++x) {
                         if (line[x] != *control) {
@@ -46,9 +46,9 @@ namespace imageproc {
                 return true;
             }
 
-            void dumpMatrix(uint32_t const* data, QSize size) {
-                int const width = size.width();
-                int const height = size.height();
+            void dumpMatrix(const uint32_t* data, QSize size) {
+                const int width = size.width();
+                const int height = size.height();
                 for (int y = 0; y < height; ++y) {
                     for (int x = 0; x < width; ++x, ++data) {
                         std::cout << *data << ' ';
@@ -58,7 +58,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test1) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 1, 1, 1, 1, 1, 0, 0,
@@ -70,7 +70,7 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
 
-                static uint32_t const out[] = {
+                static const uint32_t out[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 1, 1, 1, 1, 1, 0, 0,
@@ -82,8 +82,8 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
-                SEDM const sedm(img, SEDM::DIST_TO_WHITE, SEDM::DIST_TO_NO_BORDERS);
+                const BinaryImage img(makeBinaryImage(inp, 9, 9));
+                const SEDM sedm(img, SEDM::DIST_TO_WHITE, SEDM::DIST_TO_NO_BORDERS);
                 BOOST_CHECK(verifySEDM(sedm, out));
             }
 

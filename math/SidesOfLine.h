@@ -35,6 +35,6 @@
  *       not a line segment.  If the line is really a point, zero will
  *       always be returned.
  */
-qreal sidesOfLine(QLineF const& line, QPointF const& p1, QPointF const& p2);
+qreal sidesOfLine(const QLineF& line, const QPointF& p1, const QPointF& p2);
 
 #endif

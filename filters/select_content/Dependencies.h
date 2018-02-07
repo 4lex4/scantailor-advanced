@@ -37,22 +37,23 @@ namespace select_content {
 
         Dependencies();
 
-        Dependencies(QPolygonF const& rotated_page_outline);
+        explicit Dependencies(const QPolygonF& rotated_page_outline);
 
-        Dependencies(QDomElement const& deps_el);
+        explicit Dependencies(const QDomElement& deps_el);
 
         ~Dependencies();
 
-        QPolygonF const& rotatedPageOutline() const {
-            return m_rotatedPageOutline;
-        }
+        const QPolygonF& rotatedPageOutline() const;
 
-        bool matches(Dependencies const& other) const;
+        bool matches(const Dependencies& other) const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+        void invalidate();
 
     private:
         QPolygonF m_rotatedPageOutline;
+        bool m_invalid;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_DEPENDENCIES_H_

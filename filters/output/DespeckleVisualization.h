@@ -34,8 +34,7 @@ namespace output {
         /*
          * Constructs a null visualization.
          */
-        DespeckleVisualization() {
-        }
+        DespeckleVisualization() = default;
 
         /**
          * \param output The output file, as produced by OutputGenerator::process().
@@ -44,22 +43,17 @@ namespace output {
          *        If this one is null, it is considered no speckles were detected.
          * \param dpi Dots-per-inch of both images.
          */
-        DespeckleVisualization(QImage const& output, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        DespeckleVisualization(const QImage& output, const imageproc::BinaryImage& speckles, const Dpi& dpi);
 
-        bool isNull() const {
-            return m_image.isNull();
-        }
+        bool isNull() const;
 
-        QImage const& image() const {
-            return m_image;
-        }
+        const QImage& image() const;
 
-        QImage const& downscaledImage() const {
-            return m_downscaledImage;
-        }
+        const QImage& downscaledImage() const;
 
     private:
-        static void colorizeSpeckles(QImage& image, imageproc::BinaryImage const& speckles, Dpi const& dpi);
+        static void colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi);
+
 
         QImage m_image;
         QImage m_downscaledImage;

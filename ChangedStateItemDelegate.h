@@ -30,7 +30,7 @@
 template<typename T = QStyledItemDelegate>
 class ChangedStateItemDelegate : public T {
 public:
-    ChangedStateItemDelegate(QObject* parent = 0)
+    explicit ChangedStateItemDelegate(QObject* parent = nullptr)
             : T(parent),
               m_changedFlags(),
               m_changedMask() {
@@ -54,10 +54,10 @@ public:
         m_changedMask = QStyle::State();
     }
 
-    virtual void paint(QPainter* painter, QStyleOptionViewItem const& option, QModelIndex const& index) const {
-        QStyle::State const orig_state = option.state;
+    virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+        const QStyle::State orig_state = option.state;
 
-        QStyle::State const new_state = (orig_state & ~m_changedMask)
+        const QStyle::State new_state = (orig_state & ~m_changedMask)
                                         | (m_changedFlags & m_changedMask);
 
         // Evil but necessary: the alternative solution of modifying

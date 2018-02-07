@@ -30,13 +30,13 @@ void PolylineIntersector::Hint::update(int new_segment) {
     m_lastSegment = new_segment;
 }
 
-PolylineIntersector::PolylineIntersector(std::vector<QPointF> const& polyline)
+PolylineIntersector::PolylineIntersector(const std::vector<QPointF>& polyline)
         : m_polyline(polyline),
-          m_numSegments(polyline.size() - 1) {
+          m_numSegments(static_cast<int>(polyline.size() - 1)) {
 }
 
-QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
-    QLineF const normal(line.normalVector());
+QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
+    const QLineF normal(line.normalVector());
 
     if (intersectsSegment(normal, hint.m_lastSegment)) {
         return intersectWithSegment(line, hint.m_lastSegment);
@@ -64,15 +64,15 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
         return intersection;
     }
     // OK, let's do a binary search then.
-    QPointF const origin(normal.p1());
-    Vec2d const nv(normal.p2() - normal.p1());
+    const QPointF origin(normal.p1());
+    const Vec2d nv(normal.p2() - normal.p1());
     int left_idx = 0;
-    int right_idx = m_polyline.size() - 1;
+    auto right_idx = static_cast<int>(m_polyline.size() - 1);
     double left_dot = nv.dot(m_polyline[left_idx] - origin);
 
     while (left_idx + 1 < right_idx) {
-        int const mid_idx = (left_idx + right_idx) >> 1;
-        double const mid_dot = nv.dot(m_polyline[mid_idx] - origin);
+        const int mid_idx = (left_idx + right_idx) >> 1;
+        const double mid_dot = nv.dot(m_polyline[mid_idx] - origin);
 
         if (mid_dot * left_dot <= 0) {
             // Note: <= 0 vs < 0 is actually important for this branch.
@@ -89,26 +89,26 @@ QPointF PolylineIntersector::intersect(QLineF const& line, Hint& hint) const {
     return intersectWithSegment(line, left_idx);
 } // PolylineIntersector::intersect
 
-bool PolylineIntersector::intersectsSegment(QLineF const& normal, int segment) const {
+bool PolylineIntersector::intersectsSegment(const QLineF& normal, int segment) const {
     if ((segment < 0) || (segment >= m_numSegments)) {
         return false;
     }
 
-    QLineF const seg_line(m_polyline[segment], m_polyline[segment + 1]);
+    const QLineF seg_line(m_polyline[segment], m_polyline[segment + 1]);
 
     return intersectsSpan(normal, seg_line);
 }
 
-bool PolylineIntersector::intersectsSpan(QLineF const& normal, QLineF const& span) const {
-    Vec2d const v1(normal.p2() - normal.p1());
-    Vec2d const v2(span.p1() - normal.p1());
-    Vec2d const v3(span.p2() - normal.p1());
+bool PolylineIntersector::intersectsSpan(const QLineF& normal, const QLineF& span) const {
+    const Vec2d v1(normal.p2() - normal.p1());
+    const Vec2d v2(span.p1() - normal.p1());
+    const Vec2d v3(span.p2() - normal.p1());
 
     return v1.dot(v2) * v1.dot(v3) <= 0;
 }
 
-QPointF PolylineIntersector::intersectWithSegment(QLineF const& line, int segment) const {
-    QLineF const seg_line(m_polyline[segment], m_polyline[segment + 1]);
+QPointF PolylineIntersector::intersectWithSegment(const QLineF& line, int segment) const {
+    const QLineF seg_line(m_polyline[segment], m_polyline[segment + 1]);
     QPointF intersection;
     if (line.intersect(seg_line, &intersection) == QLineF::NoIntersection) {
         // Considering we were called for a reason, the segment must
@@ -120,22 +120,22 @@ QPointF PolylineIntersector::intersectWithSegment(QLineF const& line, int segmen
     return intersection;
 }
 
-bool PolylineIntersector::tryIntersectingOutsideOfPolyline(QLineF const& line, QPointF& intersection,
+bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line, QPointF& intersection,
                                                            Hint& hint) const {
-    QLineF const normal(line.normalVector());
-    QPointF const origin(normal.p1());
-    Vec2d const nv(normal.p2() - normal.p1());
+    const QLineF normal(line.normalVector());
+    const QPointF origin(normal.p1());
+    const Vec2d nv(normal.p2() - normal.p1());
 
-    Vec2d const front_vec(m_polyline.front() - origin);
-    Vec2d const back_vec(m_polyline.back() - origin);
-    double const front_dot = nv.dot(front_vec);
-    double const back_dot = nv.dot(back_vec);
+    const Vec2d front_vec(m_polyline.front() - origin);
+    const Vec2d back_vec(m_polyline.back() - origin);
+    const double front_dot = nv.dot(front_vec);
+    const double back_dot = nv.dot(back_vec);
 
     if (front_dot * back_dot <= 0) {
         return false;
     }
 
-    ToLineProjector const proj(line);
+    const ToLineProjector proj(line);
 
     if (fabs(front_dot) < fabs(back_dot)) {
         hint.update(-1);

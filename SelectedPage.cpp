@@ -18,11 +18,11 @@
 
 #include "SelectedPage.h"
 
-SelectedPage::SelectedPage(PageId const& page_id, PageView view) {
+SelectedPage::SelectedPage(const PageId& page_id, PageView view) {
     set(page_id, view);
 }
 
-void SelectedPage::set(PageId const& page_id, PageView view) {
+void SelectedPage::set(const PageId& page_id, PageView view) {
     if ((view == PAGE_VIEW) || (page_id.imageId() != m_pageId.imageId())) {
         m_pageId = page_id;
     }

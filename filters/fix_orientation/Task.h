@@ -41,15 +41,15 @@ namespace fix_orientation {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(ImageId const& image_id,
-             intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<page_split::Task> const& next_task,
+        Task(const ImageId& image_id,
+             intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<page_split::Task> next_task,
              bool batch_processing);
 
-        virtual ~Task();
+        ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
     private:
         class UiUpdater;

@@ -42,36 +42,36 @@ namespace page_split {
     class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        ImageView(QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  PageLayout const& layout,
-                  intrusive_ptr<ProjectPages> const& pages,
-                  ImageId const& image_id,
+        ImageView(const QImage& image,
+                  const QImage& downscaled_image,
+                  const ImageTransformation& xform,
+                  const PageLayout& layout,
+                  intrusive_ptr<ProjectPages> pages,
+                  const ImageId& image_id,
                   bool left_half_removed,
                   bool right_half_removed);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 
-        void invalidateThumbnail(PageInfo const& page_info);
+        void invalidateThumbnail(const PageInfo& page_info);
 
-        void pageLayoutSetLocally(PageLayout const& layout);
+        void pageLayoutSetLocally(const PageLayout& layout);
 
     public slots:
 
-        void pageLayoutSetExternally(PageLayout const& layout);
+        void pageLayoutSetExternally(const PageLayout& layout);
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     private:
         void setupCuttersInteraction();
 
         QPointF handlePosition(int line_idx, int handle_idx) const;
 
-        void handleMoveRequest(int line_idx, int handle_idx, QPointF const& pos);
+        void handleMoveRequest(int line_idx, int handle_idx, const QPointF& pos);
 
         QLineF linePosition(int line_idx) const;
 
@@ -115,7 +115,7 @@ namespace page_split {
          */
         QRectF reducedWidgetArea() const;
 
-        static QLineF customInscribedCutterLine(QLineF const& line, QRectF const& rect);
+        static QLineF customInscribedCutterLine(const QLineF& line, const QRectF& rect);
 
         intrusive_ptr<ProjectPages> m_ptrPages;
         ImageId m_imageId;

@@ -48,25 +48,25 @@ namespace deskew {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<Settings> const& settings,
-             intrusive_ptr<select_content::Task> const& next_task,
-             PageId const& page_id,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<Settings> settings,
+             intrusive_ptr<select_content::Task> next_task,
+             const PageId& page_id,
              bool batch_processing,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
     private:
         class UiUpdater;
 
-        static void cleanup(TaskStatus const& status, imageproc::BinaryImage& img, Dpi const& dpi);
+        static void cleanup(const TaskStatus& status, imageproc::BinaryImage& img, const Dpi& dpi);
 
         static int from150dpi(int size, int target_dpi);
 
-        static QSize from150dpi(QSize const& size, Dpi const& target_dpi);
+        static QSize from150dpi(const QSize& size, const Dpi& target_dpi);
 
         intrusive_ptr<Filter> m_ptrFilter;
         intrusive_ptr<Settings> m_ptrSettings;

@@ -31,6 +31,7 @@ class TaskStatus;
 class FilterData;
 class DebugImages;
 class ImageTransformation;
+class Dpi;
 
 namespace page_layout {
     class Task;
@@ -44,19 +45,21 @@ namespace select_content {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<page_layout::Task> const& next_task,
-             intrusive_ptr<Settings> const& settings,
-             PageId const& page_id,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<page_layout::Task> next_task,
+             intrusive_ptr<Settings> settings,
+             const PageId& page_id,
              bool batch,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status, FilterData const& data);
+        FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
     private:
         class UiUpdater;
+
+        void loadDefaultSettings(const Dpi& dpi);
 
         intrusive_ptr<Filter> m_ptrFilter;
         intrusive_ptr<page_layout::Task> m_ptrNextTask;

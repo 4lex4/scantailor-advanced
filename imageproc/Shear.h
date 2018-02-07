@@ -39,7 +39,7 @@ namespace imageproc {
  * \note The source and destination images must have the same size.
  */
     void
-    hShearFromTo(BinaryImage const& src, BinaryImage& dst, double shear, double y_origin, BWColor background_color);
+    hShearFromTo(const BinaryImage& src, BinaryImage& dst, double shear, double y_origin, BWColor background_color);
 
 /**
  * \brief Vertical shear.
@@ -55,21 +55,21 @@ namespace imageproc {
  * \note The source and destination images must have the same size.
  */
     void
-    vShearFromTo(BinaryImage const& src, BinaryImage& dst, double shear, double x_origin, BWColor background_color);
+    vShearFromTo(const BinaryImage& src, BinaryImage& dst, double shear, double x_origin, BWColor background_color);
 
 /**
  * \brief Horizontal shear returing a new image.
  *
  * Same as hShearFromTo(), but creates and returns the destination image.
  */
-    BinaryImage hShear(BinaryImage const& src, double shear, double y_origin, BWColor background_color);
+    BinaryImage hShear(const BinaryImage& src, double shear, double y_origin, BWColor background_color);
 
 /**
  * \brief Vertical shear returning a new image.
  *
  * Same as vShearFromTo(), but creates and returns the destination image.
  */
-    BinaryImage vShear(BinaryImage const& src, double shear, double x_origin, BWColor background_color);
+    BinaryImage vShear(const BinaryImage& src, double shear, double x_origin, BWColor background_color);
 
 /**
  * \brief In-place horizontal shear.

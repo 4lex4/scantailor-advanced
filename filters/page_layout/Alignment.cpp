@@ -19,36 +19,26 @@
 #include "Alignment.h"
 #include <QDomDocument>
 
-#include "CommandLine.h"
-
 namespace page_layout {
     Alignment::Alignment()
             : m_vert(VCENTER),
               m_hor(HCENTER),
               m_tolerance(DEFAULT_TOLERANCE),
-              m_autoMargins(false) {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
+              m_isNull(false) {
     }
 
     Alignment::Alignment(Vertical vert, Horizontal hor)
             : m_vert(vert),
               m_hor(hor),
               m_tolerance(DEFAULT_TOLERANCE),
-              m_autoMargins(false) {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
+              m_isNull(false) {
     }
 
-    Alignment::Alignment(QDomElement const& el) {
-        CommandLine cli = CommandLine::get();
-        m_isNull = cli.getDefaultNull();
-
-        QString const vert(el.attribute("vert"));
-        QString const hor(el.attribute("hor"));
+    Alignment::Alignment(const QDomElement& el) {
+        const QString vert(el.attribute("vert"));
+        const QString hor(el.attribute("hor"));
         m_isNull = el.attribute("null").toInt() != 0;
         m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
-        m_autoMargins = el.attribute("autoMargins") == "true" ? true : false;
 
         if (vert == "top") {
             m_vert = TOP;
@@ -75,8 +65,8 @@ namespace page_layout {
         }
     }
 
-    QDomElement Alignment::toXml(QDomDocument& doc, QString const& name) const {
-        char const* vert = nullptr;
+    QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
+        const char* vert = nullptr;
         switch (m_vert) {
             case TOP:
                 vert = "top";
@@ -95,7 +85,7 @@ namespace page_layout {
                 break;
         }
 
-        char const* hor = nullptr;
+        const char* hor = nullptr;
         switch (m_hor) {
             case LEFT:
                 hor = "left";
@@ -119,8 +109,49 @@ namespace page_layout {
         el.setAttribute("hor", QString::fromLatin1(hor));
         el.setAttribute("null", m_isNull ? 1 : 0);
         el.setAttribute("tolerance", QString::number(m_tolerance));
-        el.setAttribute("autoMargins", m_autoMargins ? "true" : "false");
 
         return el;
-    }      // Alignment::toXml
+    }
+
+    bool Alignment::operator==(const Alignment& other) const {
+        return (m_vert == other.m_vert)
+               && (m_hor == other.m_hor)
+               && (m_isNull == other.m_isNull);
+    }
+
+    bool Alignment::operator!=(const Alignment& other) const {
+        return !(*this == other);
+    }
+
+    Alignment::Vertical Alignment::vertical() const {
+        return m_vert;
+    }
+
+    void Alignment::setVertical(Alignment::Vertical vert) {
+        m_vert = vert;
+    }
+
+    Alignment::Horizontal Alignment::horizontal() const {
+        return m_hor;
+    }
+
+    void Alignment::setHorizontal(Alignment::Horizontal hor) {
+        m_hor = hor;
+    }
+
+    bool Alignment::isNull() const {
+        return m_isNull;
+    }
+
+    void Alignment::setNull(bool is_null) {
+        m_isNull = is_null;
+    }
+
+    double Alignment::tolerance() const {
+        return m_tolerance;
+    }
+
+    void Alignment::setTolerance(double t) {
+        m_tolerance = t;
+    }
 }  // namespace page_layout

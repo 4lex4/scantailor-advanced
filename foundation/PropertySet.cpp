@@ -20,8 +20,8 @@
 #include "PropertyFactory.h"
 #include <QDomDocument>
 
-PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory) {
-    QString const property_str("property");
+PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) {
+    const QString property_str("property");
     QDomNode node(el.firstChild());
 
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -34,21 +34,21 @@ PropertySet::PropertySet(QDomElement const& el, PropertyFactory const& factory) 
 
         QDomElement prop_el(node.toElement());
         intrusive_ptr<Property> prop(factory.construct(prop_el));
-        if (prop.get()) {
+        if (prop) {
             m_props.push_back(prop);
         }
     }
 }
 
-PropertySet::PropertySet(PropertySet const& other) {
+PropertySet::PropertySet(const PropertySet& other) {
     m_props.reserve(other.m_props.size());
 
-    for (intrusive_ptr<Property> const& prop : other.m_props) {
+    for (const intrusive_ptr<Property>& prop : other.m_props) {
         m_props.push_back(prop->clone());
     }
 }
 
-PropertySet& PropertySet::operator=(PropertySet const& other) {
+PropertySet& PropertySet::operator=(const PropertySet& other) {
     PropertySet(other).swap(*this);
 
     return *this;
@@ -58,11 +58,11 @@ void PropertySet::swap(PropertySet& other) {
     m_props.swap(other.m_props);
 }
 
-QDomElement PropertySet::toXml(QDomDocument& doc, QString const& name) const {
-    QString const property_str("property");
+QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
+    const QString property_str("property");
     QDomElement props_el(doc.createElement(name));
 
-    for (intrusive_ptr<Property> const& prop : m_props) {
+    for (const intrusive_ptr<Property>& prop : m_props) {
         props_el.appendChild(prop->toXml(doc, property_str));
     }
 

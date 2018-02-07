@@ -34,7 +34,7 @@ namespace imageproc {
          * \brief The threshold separating good and poor confidence values.
          * \see confidence()
          */
-        static double const GOOD_CONFIDENCE;
+        static const double GOOD_CONFIDENCE;
 
         Skew()
                 : m_angle(0.0),
@@ -76,13 +76,13 @@ namespace imageproc {
     DECLARE_NON_COPYABLE(SkewFinder)
 
     public:
-        static double const DEFAULT_MAX_ANGLE;
+        static const double DEFAULT_MAX_ANGLE;
 
-        static double const DEFAULT_ACCURACY;
+        static const double DEFAULT_ACCURACY;
 
-        static int const DEFAULT_COARSE_REDUCTION;
+        static const int DEFAULT_COARSE_REDUCTION;
 
-        static int const DEFAULT_FINE_REDUCTION;
+        static const int DEFAULT_FINE_REDUCTION;
 
         SkewFinder();
 
@@ -144,14 +144,14 @@ namespace imageproc {
          * \note If the image contains text columns at (slightly) different
          * angles, one of those angles will be found, with a lower confidence.
          */
-        Skew findSkew(BinaryImage const& image) const;
+        Skew findSkew(const BinaryImage& image) const;
 
     private:
-        static double const LOW_SCORE;
+        static const double LOW_SCORE;
 
-        double process(BinaryImage const& src, BinaryImage& dst, double angle) const;
+        double process(const BinaryImage& src, BinaryImage& dst, double angle) const;
 
-        static double calcScore(BinaryImage const& image);
+        static double calcScore(const BinaryImage& image);
 
         double m_maxAngle;
         double m_accuracy;

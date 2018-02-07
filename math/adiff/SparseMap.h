@@ -20,7 +20,7 @@
 #define ADIFF_SPARSITY_H_
 
 #include "MatT.h"
-#include <stddef.h>
+#include <cstddef>
 
 namespace adiff {
 /**
@@ -38,7 +38,7 @@ namespace adiff {
     class SparseMap<2> {
         // Member-wise copying is OK.
     public:
-        static size_t const ZERO_ELEMENT;
+        static const size_t ZERO_ELEMENT;
 
         /**
          * Creates a structure for a (num_vars)x(num_vars) Hessian

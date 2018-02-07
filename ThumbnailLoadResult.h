@@ -52,7 +52,7 @@ public:
                 REQUEST_EXPIRED
     };
 
-    ThumbnailLoadResult(Status status, QPixmap const& pixmap)
+    ThumbnailLoadResult(Status status, const QPixmap& pixmap)
             : m_pixmap(pixmap),
               m_status(status) {
     }
@@ -61,7 +61,7 @@ public:
         return m_status;
     }
 
-    QPixmap const& pixmap() const {
+    const QPixmap& pixmap() const {
         return m_pixmap;
     }
 

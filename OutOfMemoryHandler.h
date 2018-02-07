@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QMutex>
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 
 class OutOfMemoryHandler : public QObject {
 Q_OBJECT

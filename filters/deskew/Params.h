@@ -25,9 +25,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include "CommandLine.h"
-
-class CommandLine;
 class QDomDocument;
 class QDomElement;
 
@@ -36,37 +33,25 @@ namespace deskew {
     public:
         // Member-wise copying is OK.
 
-        Params(double deskew_angle_deg, Dependencies const& deps, AutoManualMode mode);
+        Params(double deskew_angle_deg, const Dependencies& deps, AutoManualMode mode);
 
-        Params(QDomElement const& deskew_el);
+        explicit Params(const QDomElement& deskew_el);
 
         ~Params();
 
-        double deskewAngle() const {
-            return m_deskewAngleDeg;
-        }
+        double deskewAngle() const;
 
-        double deviation() const {
-            return m_deviation;
-        }
+        double deviation() const;
 
-        void computeDeviation(double avg) {
-            m_deviation = avg - m_deskewAngleDeg;
-        }
+        void computeDeviation(double avg);
 
-        bool isDeviant(double std, double max_dev = CommandLine::get().getSkewDeviation()) const {
-            return std::max(1.5 * std, max_dev) < fabs(m_deviation);
-        }
+        bool isDeviant(double std, double max_dev) const;
 
-        Dependencies const& dependencies() const {
-            return m_deps;
-        }
+        const Dependencies& dependencies() const;
 
-        AutoManualMode mode() const {
-            return m_mode;
-        }
+        AutoManualMode mode() const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         double m_deskewAngleDeg;

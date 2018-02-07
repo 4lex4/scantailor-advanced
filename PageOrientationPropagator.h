@@ -40,12 +40,12 @@ namespace page_split {
  */
 class PageOrientationPropagator {
 public:
-    PageOrientationPropagator(intrusive_ptr<page_split::Filter> const& page_split_filter,
-                              intrusive_ptr<CompositeCacheDrivenTask> const& task);
+    PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
+                              intrusive_ptr<CompositeCacheDrivenTask> task);
 
     ~PageOrientationPropagator();
 
-    void propagate(ProjectPages const& pages);
+    void propagate(const ProjectPages& pages);
 
 private:
     class Collector;

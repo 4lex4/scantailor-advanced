@@ -46,23 +46,23 @@ namespace spfit {
          */
         void splineModified();
 
-        void setConstraints(ConstraintSet const& constraints);
+        void setConstraints(const ConstraintSet& constraints);
 
-        void setSamplingParams(FittableSpline::SamplingParams const& sampling_params);
+        void setSamplingParams(const FittableSpline::SamplingParams& sampling_params);
 
-        void addAttractionForce(Vec2d const& spline_point,
-                                std::vector<FittableSpline::LinearCoefficient> const& coeffs,
-                                SqDistApproximant const& sqdist_approx);
+        void addAttractionForce(const Vec2d& spline_point,
+                                const std::vector<FittableSpline::LinearCoefficient>& coeffs,
+                                const SqDistApproximant& sqdist_approx);
 
-        void addAttractionForces(ModelShape const& model_shape, double from_t = 0.0, double to_t = 1.0);
+        void addAttractionForces(const ModelShape& model_shape, double from_t = 0.0, double to_t = 1.0);
 
-        void addExternalForce(QuadraticFunction const& force);
+        void addExternalForce(const QuadraticFunction& force);
 
-        void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+        void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
 
-        void addInternalForce(QuadraticFunction const& force);
+        void addInternalForce(const QuadraticFunction& force);
 
-        void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparce_map);
+        void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparce_map);
 
         /** \see Optimizer::externalForce() */
         double externalForce() const {

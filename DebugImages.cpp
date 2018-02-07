@@ -23,9 +23,9 @@
 #include <QTemporaryFile>
 #include <QDir>
 
-void DebugImages::add(QImage const& image,
-                      QString const& label,
-                      boost::function<QWidget*(QImage const&)> const& image_view_factory) {
+void DebugImages::add(const QImage& image,
+                      const QString& label,
+                      boost::function<QWidget*(const QImage&)>const & image_view_factory) {
     QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
     if (!file.open()) {
         return;
@@ -43,14 +43,14 @@ void DebugImages::add(QImage const& image,
     m_sequence.push_back(intrusive_ptr<Item>(new Item(arem_file, label, image_view_factory)));
 }
 
-void DebugImages::add(imageproc::BinaryImage const& image,
-                      QString const& label,
-                      boost::function<QWidget*(QImage const&)> const& image_view_factory) {
+void DebugImages::add(const imageproc::BinaryImage& image,
+                      const QString& label,
+                      boost::function<QWidget*(const QImage&)>const & image_view_factory) {
     add(image.toQImage(), label, image_view_factory);
 }
 
 AutoRemovingFile DebugImages::retrieveNext(QString* label,
-                                           boost::function<QWidget*(QImage const&)>* image_view_factory) {
+                                           boost::function<QWidget*(const QImage&)>* image_view_factory) {
     if (m_sequence.empty()) {
         return AutoRemovingFile();
     }

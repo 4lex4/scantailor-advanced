@@ -32,7 +32,7 @@ public:
 template<typename Delegate, typename R, typename A1>
 class ProxyFunction1 : public VirtualFunction1<R, A1> {
 public:
-    ProxyFunction1(Delegate delegate)
+    explicit ProxyFunction1(Delegate delegate)
             : m_delegate(delegate) {
     }
 
@@ -58,7 +58,7 @@ public:
 template<typename Delegate, typename R, typename A1, typename A2>
 class ProxyFunction2 : public VirtualFunction2<R, A1, A2> {
 public:
-    ProxyFunction2(Delegate delegate)
+    explicit ProxyFunction2(Delegate delegate)
             : m_delegate(delegate) {
     }
 
@@ -84,7 +84,7 @@ public:
 template<typename Delegate, typename R, typename A1, typename A2, typename A3>
 class ProxyFunction3 : public VirtualFunction3<R, A1, A2, A3> {
 public:
-    ProxyFunction3(Delegate delegate)
+    explicit ProxyFunction3(Delegate delegate)
             : m_delegate(delegate) {
     }
 

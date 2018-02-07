@@ -11,30 +11,20 @@ namespace output {
     public:
         OutputProcessingParams();
 
-        explicit OutputProcessingParams(QDomElement const& el);
+        explicit OutputProcessingParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(OutputProcessingParams const& other) const;
+        bool operator==(const OutputProcessingParams& other) const;
 
-        bool operator!=(OutputProcessingParams const& other) const;
-        
-        bool isWhiteOnBlackAutoDetected() const;
-
-        void setWhiteOnBlackAutoDetected(bool whiteOnBlackAutoDetected);
+        bool operator!=(const OutputProcessingParams& other) const;
 
         bool isAutoZonesFound() const;
 
         void setAutoZonesFound(bool autoZonesFound);
 
-        bool isWhiteOnBlackMode() const;
-
-        void setWhiteOnBlackMode(bool whiteOnBlackMode);
-
     private:
-        bool whiteOnBlackMode;
         bool autoZonesFound;
-        bool whiteOnBlackAutoDetected;
     };
 }
 

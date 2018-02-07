@@ -69,26 +69,26 @@ namespace spfit {
      * j = (p - origin) . v;
      * \endcode
      */
-        SqDistApproximant(Vec2d const& origin, Vec2d const& u, Vec2d const& v, double m, double n);
+        SqDistApproximant(const Vec2d& origin, const Vec2d& u, const Vec2d& v, double m, double n);
 
-        static SqDistApproximant pointDistance(Vec2d const& pt);
+        static SqDistApproximant pointDistance(const Vec2d& pt);
 
-        static SqDistApproximant weightedPointDistance(Vec2d const& pt, double weight);
+        static SqDistApproximant weightedPointDistance(const Vec2d& pt, double weight);
 
-        static SqDistApproximant lineDistance(QLineF const& line);
+        static SqDistApproximant lineDistance(const QLineF& line);
 
-        static SqDistApproximant weightedLineDistance(QLineF const& line, double weight);
+        static SqDistApproximant weightedLineDistance(const QLineF& line, double weight);
 
-        static SqDistApproximant curveDistance(Vec2d const& reference_point,
-                                               FrenetFrame const& frenet_frame,
+        static SqDistApproximant curveDistance(const Vec2d& reference_point,
+                                               const FrenetFrame& frenet_frame,
                                                double signed_curvature);
 
-        static SqDistApproximant weightedCurveDistance(Vec2d const& reference_point,
-                                                       FrenetFrame const& frenet_frame,
+        static SqDistApproximant weightedCurveDistance(const Vec2d& reference_point,
+                                                       const FrenetFrame& frenet_frame,
                                                        double signed_curvature,
                                                        double weight);
 
-        double evaluate(Vec2d const& pt) const;
+        double evaluate(const Vec2d& pt) const;
     };
 }  // namespace spfit
 #endif // ifndef SQDIST_APPROXIMANT_H_

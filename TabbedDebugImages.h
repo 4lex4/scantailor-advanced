@@ -26,7 +26,7 @@
 class TabbedDebugImages : public QTabWidget {
 Q_OBJECT
 public:
-    TabbedDebugImages(QWidget* parent = 0);
+    explicit TabbedDebugImages(QWidget* parent = nullptr);
 
 private slots:
 

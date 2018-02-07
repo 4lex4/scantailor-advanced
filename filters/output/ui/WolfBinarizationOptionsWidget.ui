@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>149</width>
-    <height>125</height>
+    <width>148</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -43,109 +43,95 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>0</width>
-       <height>20</height>
+       <height>1</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QCheckBox" name="whiteOnBlackModeCB">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="windowSize">
        <property name="toolTip">
-        <string>This options should be enabled when the text or content is placed on the darker background</string>
+        <string>The dimensions of a pixel neighborhood to consider.</string>
        </property>
-       <property name="text">
-        <string>White on black mode</string>
+       <property name="minimum">
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
        </property>
       </widget>
      </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="windowSize">
-         <property name="toolTip">
-          <string>The dimensions of a pixel neighborhood to consider.</string>
-         </property>
-         <property name="minimum">
-          <number>5</number>
-         </property>
-         <property name="maximum">
-          <number>9999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="windowSizeLabel">
-         <property name="text">
-          <string>Window size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="lowerBound">
-         <property name="toolTip">
-          <string>The minimum possible gray level that can be made white.</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>254</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="upperBoundLabel">
-         <property name="text">
-          <string>Upper Bound: </string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lowerBoundLabel">
-         <property name="text">
-          <string>Lower bound: </string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QSpinBox" name="upperBound">
-         <property name="toolTip">
-          <string>The maximum possible gray level that can be made black.</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>254</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="wolfCoefLabel">
-         <property name="text">
-          <string>Coeff:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QDoubleSpinBox" name="wolfCoef">
-         <property name="toolTip">
-          <string>Default value is 0.3.</string>
-         </property>
-         <property name="minimum">
-          <double>0.010000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>9.990000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.010000000000000</double>
-         </property>
-        </widget>
-       </item>
-      </layout>
+     <item row="0" column="0">
+      <widget class="QLabel" name="windowSizeLabel">
+       <property name="text">
+        <string>Window size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="lowerBound">
+       <property name="toolTip">
+        <string>The minimum possible gray level that can be made white.</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>254</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="upperBoundLabel">
+       <property name="text">
+        <string>Upper Bound: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lowerBoundLabel">
+       <property name="text">
+        <string>Lower bound: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="upperBound">
+       <property name="toolTip">
+        <string>The maximum possible gray level that can be made black.</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>254</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="wolfCoefLabel">
+       <property name="text">
+        <string>Coeff:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="wolfCoef">
+       <property name="toolTip">
+        <string>Default value is 0.3.</string>
+       </property>
+       <property name="minimum">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>9.990000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -157,7 +143,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>0</width>
-       <height>20</height>
+       <height>1</height>
       </size>
      </property>
     </spacer>

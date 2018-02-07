@@ -20,7 +20,7 @@
 
 namespace imageproc {
     namespace detail {
-        unsigned char const bitCounts[256] = {
+        const unsigned char bitCounts[256] = {
                 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
                 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
                 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
@@ -39,7 +39,7 @@ namespace imageproc {
                 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
         };
 
-        unsigned char const reversedBits[256] = {
+        const unsigned char reversedBits[256] = {
                 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
                 0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0,
                 0x08, 0x88, 0x48, 0xc8, 0x28, 0xa8, 0x68, 0xe8,

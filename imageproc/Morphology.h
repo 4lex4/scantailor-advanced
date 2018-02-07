@@ -35,7 +35,7 @@ namespace imageproc {
         /**
          * \brief Constructs a brick with origin at the center.
          */
-        Brick(QSize const& size);
+        Brick(const QSize& size);
 
         /**
          * \brief Constructs a brick with origin specified relative to its size.
@@ -47,7 +47,7 @@ namespace imageproc {
          * \endcode
          * \note Origin doesn't have to be inside the brick.
          */
-        Brick(QSize const& size, QPoint const& origin);
+        Brick(const QSize& size, const QPoint& origin);
 
         /**
          * \brief Constructs a brick by specifying its bounds.
@@ -126,15 +126,15 @@ namespace imageproc {
  * \param src_surroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-    BinaryImage dilateBrick(BinaryImage const& src,
-                            Brick const& brick,
-                            QRect const& dst_area,
+    BinaryImage dilateBrick(const BinaryImage& src,
+                            const Brick& brick,
+                            const QRect& dst_area,
                             BWColor src_surroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    BinaryImage dilateBrick(BinaryImage const& src, Brick const& brick, BWColor src_surroundings = WHITE);
+    BinaryImage dilateBrick(const BinaryImage& src, const Brick& brick, BWColor src_surroundings = WHITE);
 
 /**
  * \brief Spreads darker pixels over the brick's area.
@@ -147,15 +147,15 @@ namespace imageproc {
  * \param src_surroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-    GrayImage dilateGray(GrayImage const& src,
-                         Brick const& brick,
-                         QRect const& dst_area,
+    GrayImage dilateGray(const GrayImage& src,
+                         const Brick& brick,
+                         const QRect& dst_area,
                          unsigned char src_surroundings = 0xff);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    GrayImage dilateGray(GrayImage const& src, Brick const& brick, unsigned char src_surroundings = 0xff);
+    GrayImage dilateGray(const GrayImage& src, const Brick& brick, unsigned char src_surroundings = 0xff);
 
 /**
  * \brief Turn every white pixel into a brick of white pixels.
@@ -168,15 +168,15 @@ namespace imageproc {
  * \param src_surroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-    BinaryImage erodeBrick(BinaryImage const& src,
-                           Brick const& brick,
-                           QRect const& dst_area,
+    BinaryImage erodeBrick(const BinaryImage& src,
+                           const Brick& brick,
+                           const QRect& dst_area,
                            BWColor src_surroundings = BLACK);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    BinaryImage erodeBrick(BinaryImage const& src, Brick const& brick, BWColor src_surroundings = BLACK);
+    BinaryImage erodeBrick(const BinaryImage& src, const Brick& brick, BWColor src_surroundings = BLACK);
 
 /**
  * \brief Spreads lighter pixels over the brick's area.
@@ -189,15 +189,15 @@ namespace imageproc {
  * \param src_surroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-    GrayImage erodeGray(GrayImage const& src,
-                        Brick const& brick,
-                        QRect const& dst_area,
+    GrayImage erodeGray(const GrayImage& src,
+                        const Brick& brick,
+                        const QRect& dst_area,
                         unsigned char src_surroundings = 0x00);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    GrayImage erodeGray(GrayImage const& src, Brick const& brick, unsigned char src_surroundings = 0x00);
+    GrayImage erodeGray(const GrayImage& src, const Brick& brick, unsigned char src_surroundings = 0x00);
 
 /**
  * \brief Turn the black areas where the brick doesn't fit, into white.
@@ -212,15 +212,15 @@ namespace imageproc {
  *        to fit by going partially off-screen (off the source
  *        image area actually).
  */
-    BinaryImage openBrick(BinaryImage const& src,
-                          QSize const& brick,
-                          QRect const& dst_area,
+    BinaryImage openBrick(const BinaryImage& src,
+                          const QSize& brick,
+                          const QRect& dst_area,
                           BWColor src_surroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    BinaryImage openBrick(BinaryImage const& src, QSize const& brick, BWColor src_surroundings = WHITE);
+    BinaryImage openBrick(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
 
 /**
  * \brief Remove dark areas smaller than the structuring element.
@@ -233,12 +233,12 @@ namespace imageproc {
  * \param src_surroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-    GrayImage openGray(GrayImage const& src, QSize const& brick, QRect const& dst_area, unsigned char src_surroundings);
+    GrayImage openGray(const GrayImage& src, const QSize& brick, const QRect& dst_area, unsigned char src_surroundings);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    GrayImage openGray(GrayImage const& src, QSize const& brick, unsigned char src_surroundings);
+    GrayImage openGray(const GrayImage& src, const QSize& brick, unsigned char src_surroundings);
 
 /**
  * \brief Turn the white areas where the brick doesn't fit, into black.
@@ -253,15 +253,15 @@ namespace imageproc {
  *        to fit by going partially off-screen (off the source
  *        image area actually).
  */
-    BinaryImage closeBrick(BinaryImage const& src,
-                           QSize const& brick,
-                           QRect const& dst_area,
+    BinaryImage closeBrick(const BinaryImage& src,
+                           const QSize& brick,
+                           const QRect& dst_area,
                            BWColor src_surroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    BinaryImage closeBrick(BinaryImage const& src, QSize const& brick, BWColor src_surroundings = WHITE);
+    BinaryImage closeBrick(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
 
 /**
  * \brief Remove light areas smaller than the structuring element.
@@ -275,12 +275,12 @@ namespace imageproc {
  *        surround the source image.
  */
     GrayImage
-    closeGray(GrayImage const& src, QSize const& brick, QRect const& dst_area, unsigned char src_surroundings);
+    closeGray(const GrayImage& src, const QSize& brick, const QRect& dst_area, unsigned char src_surroundings);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-    GrayImage closeGray(GrayImage const& src, QSize const& brick, unsigned char src_surroundings);
+    GrayImage closeGray(const GrayImage& src, const QSize& brick, unsigned char src_surroundings);
 
 /**
  * \brief Performs a hit-miss matching operation.
@@ -292,10 +292,10 @@ namespace imageproc {
  * \param misses Offsets to miss positions relative to the origin point.
  * \return A binary image where black pixels indicate a successful pattern match.
  */
-    BinaryImage hitMissMatch(BinaryImage const& src,
+    BinaryImage hitMissMatch(const BinaryImage& src,
                              BWColor src_surroundings,
-                             std::vector<QPoint> const& hits,
-                             std::vector<QPoint> const& misses);
+                             const std::vector<QPoint>& hits,
+                             const std::vector<QPoint>& misses);
 
 /**
  * \brief A more user-friendly version of a hit-miss match operation.
@@ -305,7 +305,7 @@ namespace imageproc {
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
- * char const* pattern =
+ * const char* pattern =
  *  "?X?"
  *  "X X"
  *  "?X?";
@@ -318,12 +318,12 @@ namespace imageproc {
  *        to place a mark if the pattern matches.
  * \return A binary image where black pixels indicate a successful pattern match.
  */
-    BinaryImage hitMissMatch(BinaryImage const& src,
+    BinaryImage hitMissMatch(const BinaryImage& src,
                              BWColor src_surroundings,
-                             char const* pattern,
+                             const char* pattern,
                              int pattern_width,
                              int pattern_height,
-                             QPoint const& pattern_origin);
+                             const QPoint& pattern_origin);
 
 /**
  * \brief Does a hit-miss match and modifies user-specified pixels.
@@ -333,7 +333,7 @@ namespace imageproc {
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
- * char const* pattern =
+ * const char* pattern =
  *  " - "
  *  "X+X"
  *  "XXX";
@@ -348,9 +348,9 @@ namespace imageproc {
  * \param pattern_height The height of the pattern.
  * \return The result of a match-and-replace operation.
  */
-    BinaryImage hitMissReplace(BinaryImage const& src,
+    BinaryImage hitMissReplace(const BinaryImage& src,
                                BWColor src_surroundings,
-                               char const* pattern,
+                               const char* pattern,
                                int pattern_width,
                                int pattern_height);
 
@@ -362,7 +362,7 @@ namespace imageproc {
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
- * char const* pattern =
+ * const char* pattern =
  *  " - "
  *  "X+X"
  *  "XXX";
@@ -378,7 +378,7 @@ namespace imageproc {
  */
     void hitMissReplaceInPlace(BinaryImage& img,
                                BWColor src_surroundings,
-                               char const* pattern,
+                               const char* pattern,
                                int pattern_width,
                                int pattern_height);
 }  // namespace imageproc

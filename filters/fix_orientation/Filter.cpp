@@ -28,10 +28,15 @@
 #include "XmlUnmarshaller.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <utility>
+#include <DefaultParamsProvider.h>
+#include <DefaultParams.h>
 #include "CommandLine.h"
+#include <filters/page_split/Task.h>
+#include <filters/page_split/CacheDrivenTask.h>
 
 namespace fix_orientation {
-    Filter::Filter(PageSelectionAccessor const& page_selection_accessor)
+    Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
             : m_ptrSettings(new Settings) {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(
@@ -40,8 +45,7 @@ namespace fix_orientation {
         }
     }
 
-    Filter::~Filter() {
-    }
+    Filter::~Filter() = default;
 
     QString Filter::getName() const {
         return QCoreApplication::translate(
@@ -53,13 +57,13 @@ namespace fix_orientation {
         return IMAGE_VIEW;
     }
 
-    void Filter::performRelinking(AbstractRelinker const& relinker) {
+    void Filter::performRelinking(const AbstractRelinker& relinker) {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, PageId const& page_id) {
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
         if (m_ptrOptionsWidget.get()) {
-            OrthogonalRotation const rotation(
+            const OrthogonalRotation rotation(
                     m_ptrSettings->getRotationFor(page_id.imageId())
             );
             m_ptrOptionsWidget->preUpdateUI(page_id, rotation);
@@ -67,12 +71,12 @@ namespace fix_orientation {
         }
     }
 
-    QDomElement Filter::saveSettings(ProjectWriter const& writer, QDomDocument& doc) const {
+    QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
         using namespace boost::lambda;
 
         QDomElement filter_el(doc.createElement("fix-orientation"));
         writer.enumImages(
-                [&](ImageId const& image_id, int const numeric_id) {
+                [&](const ImageId& image_id, const int numeric_id) {
                     this->writeImageSettings(doc, filter_el, image_id, numeric_id);
                 }
         );
@@ -80,12 +84,12 @@ namespace fix_orientation {
         return filter_el;
     }
 
-    void Filter::loadSettings(ProjectReader const& reader, QDomElement const& filters_el) {
+    void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
         m_ptrSettings->clear();
 
         QDomElement filter_el(filters_el.namedItem("fix-orientation").toElement());
 
-        QString const image_tag_name("image");
+        const QString image_tag_name("image");
         QDomNode node(filter_el.firstChild());
         for (; !node.isNull(); node = node.nextSibling()) {
             if (!node.isElement()) {
@@ -97,17 +101,17 @@ namespace fix_orientation {
             QDomElement el(node.toElement());
 
             bool ok = true;
-            int const id = el.attribute("id").toInt(&ok);
+            const int id = el.attribute("id").toInt(&ok);
             if (!ok) {
                 continue;
             }
 
-            ImageId const image_id(reader.imageId(id));
+            const ImageId image_id(reader.imageId(id));
             if (image_id.isNull()) {
                 continue;
             }
 
-            OrthogonalRotation const rotation(
+            const OrthogonalRotation rotation(
                     XmlUnmarshaller::rotation(
                             el.namedItem("rotation").toElement()
                     )
@@ -118,26 +122,26 @@ namespace fix_orientation {
     }      // Filter::loadSettings
 
     intrusive_ptr<Task>
-    Filter::createTask(PageId const& page_id, intrusive_ptr<page_split::Task> const& next_task,
-                       bool const batch_processing) {
+    Filter::createTask(const PageId& page_id, intrusive_ptr<page_split::Task> next_task,
+                       const bool batch_processing) {
         return intrusive_ptr<Task>(
                 new Task(
                         page_id.imageId(), intrusive_ptr<Filter>(this),
-                        m_ptrSettings, next_task, batch_processing
+                        m_ptrSettings, std::move(next_task), batch_processing
                 )
         );
     }
 
     intrusive_ptr<CacheDrivenTask>
-    Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> const& next_task) {
+    Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> next_task) {
         return intrusive_ptr<CacheDrivenTask>(
-                new CacheDrivenTask(m_ptrSettings, next_task)
+                new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
     }
 
-    void Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
-                                    int const numeric_id) const {
-        OrthogonalRotation const rotation(m_ptrSettings->getRotationFor(image_id));
+    void Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id,
+                                    const int numeric_id) const {
+        const OrthogonalRotation rotation(m_ptrSettings->getRotationFor(image_id));
         if (rotation.toDegrees() == 0) {
             return;
         }
@@ -148,5 +152,19 @@ namespace fix_orientation {
         image_el.setAttribute("id", numeric_id);
         image_el.appendChild(marshaller.rotation(rotation, "rotation"));
         filter_el.appendChild(image_el);
+    }
+
+    void Filter::loadDefaultSettings(const PageId& page_id) {
+        if (!m_ptrSettings->isRotationNull(page_id.imageId())) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
+
+        m_ptrSettings->applyRotation(page_id.imageId(), fixOrientationParams.getImageRotation());
+    }
+
+    OptionsWidget* Filter::optionsWidget() {
+        return m_ptrOptionsWidget.get();
     }
 }  // namespace fix_orientation

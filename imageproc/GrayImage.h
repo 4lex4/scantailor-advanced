@@ -22,7 +22,7 @@
 #include <QImage>
 #include <QSize>
 #include <QRect>
-#include <stdint.h>
+#include <cstdint>
 
 namespace imageproc {
 /**
@@ -47,7 +47,7 @@ namespace imageproc {
          *
          * The QImage may be in any format and may be null.
          */
-        explicit GrayImage(QImage const& image);
+        explicit GrayImage(const QImage& image);
 
         /**
          * \brief Returns a const reference to the underlying QImage.
@@ -55,11 +55,11 @@ namespace imageproc {
          * The underlying QImage is either a null image or a 8-bit indexed
          * image with a grayscale palette.
          */
-        QImage const& toQImage() const {
+        const QImage& toQImage() const {
             return m_image;
         }
 
-        operator QImage const&() const {
+        operator const QImage&() const {
             return m_image;
         }
 
@@ -75,7 +75,7 @@ namespace imageproc {
             return m_image.bits();
         }
 
-        uint8_t const* data() const {
+        const uint8_t* data() const {
             return m_image.bits();
         }
 
@@ -106,16 +106,20 @@ namespace imageproc {
             return m_image.height();
         }
 
+        void invert();
+
+        GrayImage inverted() const;
+
     private:
         QImage m_image;
     };
 
 
-    inline bool operator==(GrayImage const& lhs, GrayImage const& rhs) {
+    inline bool operator==(const GrayImage& lhs, const GrayImage& rhs) {
         return lhs.toQImage() == rhs.toQImage();
     }
 
-    inline bool operator!=(GrayImage const& lhs, GrayImage const& rhs) {
+    inline bool operator!=(const GrayImage& lhs, const GrayImage& rhs) {
         return lhs.toQImage() != rhs.toQImage();
     }
 }  // namespace imageproc

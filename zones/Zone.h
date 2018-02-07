@@ -33,15 +33,15 @@ class QString;
 class Zone {
     // Member-wise copying is OK, but that will produce a partly shallow copy.
 public:
-    Zone(SerializableSpline const& spline, PropertySet const& props = PropertySet());
+    explicit Zone(const SerializableSpline& spline, const PropertySet& props = PropertySet());
 
-    Zone(QDomElement const& el, PropertyFactory const& prop_factory);
+    Zone(const QDomElement& el, const PropertyFactory& prop_factory);
 
-    Zone(QPolygonF const& polygon);
+    explicit Zone(const QPolygonF& polygon);
 
-    QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    SerializableSpline const& spline() const {
+    const SerializableSpline& spline() const {
         return m_spline;
     }
 
@@ -49,7 +49,7 @@ public:
         return m_props;
     }
 
-    PropertySet const& properties() const {
+    const PropertySet& properties() const {
         return m_props;
     }
 

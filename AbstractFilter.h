@@ -38,8 +38,7 @@ class QDomElement;
  */
 class AbstractFilter : public ref_countable {
 public:
-    virtual ~AbstractFilter() {
-    }
+    ~AbstractFilter() override = default;
 
     virtual QString getName() const = 0;
 
@@ -59,16 +58,19 @@ public:
         return std::vector<PageOrderOption>();
     }
 
-    virtual void performRelinking(AbstractRelinker const& relinker) = 0;
+    virtual void performRelinking(const AbstractRelinker& relinker) = 0;
 
-    virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id) = 0;
+    virtual void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) = 0;
 
     virtual void updateStatistics() {
     }
 
-    virtual QDomElement saveSettings(ProjectWriter const& writer, QDomDocument& doc) const = 0;
+    virtual QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const = 0;
 
-    virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el) = 0;
+    virtual void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) = 0;
+
+    virtual void loadDefaultSettings(const PageId& page_id) {
+    };
 };
 
 

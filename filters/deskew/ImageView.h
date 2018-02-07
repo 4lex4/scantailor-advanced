@@ -39,9 +39,9 @@ namespace deskew {
     class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        ImageView(QImage const& image, QImage const& downscaled_image, ImageTransformation const& xform);
+        ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 
@@ -56,16 +56,16 @@ namespace deskew {
         void doRotateRight();
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-        virtual void onWheelEvent(QWheelEvent* event, InteractionState& interaction);
+        void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
         void doRotate(double deg);
 
     private:
         QPointF handlePosition(int idx) const;
 
-        void handleMoveRequest(int idx, QPointF const& pos);
+        void handleMoveRequest(int idx, const QPointF& pos);
 
         virtual void dragFinished();
 
@@ -73,11 +73,11 @@ namespace deskew {
 
         QRectF getRotationArcSquare() const;
 
-        std::pair<QPointF, QPointF> getRotationHandles(QRectF const& arc_square) const;
+        std::pair<QPointF, QPointF> getRotationHandles(const QRectF& arc_square) const;
 
-        static int const m_cellSize;
-        static double const m_maxRotationDeg;
-        static double const m_maxRotationSin;
+        static const int m_cellSize;
+        static const double m_maxRotationDeg;
+        static const double m_maxRotationSin;
 
         QPixmap m_handlePixmap;
         DraggablePoint m_handles[2];

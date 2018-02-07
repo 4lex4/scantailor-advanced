@@ -31,13 +31,13 @@
 
 class RelinkingModel::StatusUpdateResponse {
 public:
-    StatusUpdateResponse(QString const& path, int row, Status status)
+    StatusUpdateResponse(const QString& path, int row, Status status)
             : m_path(path),
               m_row(row),
               m_status(status) {
     }
 
-    QString const& path() const {
+    const QString& path() const {
         return m_path;
     }
 
@@ -58,24 +58,24 @@ private:
 
 class RelinkingModel::StatusUpdateThread : private QThread {
 public:
-    StatusUpdateThread(RelinkingModel* owner);
+    explicit StatusUpdateThread(RelinkingModel* owner);
 
     /** This will signal the thread to stop and wait for it to happen. */
-    virtual ~StatusUpdateThread();
+    ~StatusUpdateThread() override;
 
     /**
      * Requests are served from last to first.
      * Requesting the same item multiple times will just move the existing
      * record to the top of the stack.
      */
-    void requestStatusUpdate(QString const& path, int row);
+    void requestStatusUpdate(const QString& path, int row);
 
 private:
     struct Task {
         QString path;
         int row;
 
-        Task(QString const& p, int r)
+        Task(const QString& p, int r)
                 : path(p),
                   row(r) {
         }
@@ -100,7 +100,7 @@ private:
     typedef TaskList::index<OrderedByPathTag>::type TasksByPath;
     typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
 
-    virtual void run();
+    void run() override;
 
     RelinkingModel* m_pOwner;
     TaskList m_tasks;
@@ -123,19 +123,18 @@ RelinkingModel::RelinkingModel()
           m_haveUncommittedChanges(true) {
 }
 
-RelinkingModel::~RelinkingModel() {
-}
+RelinkingModel::~RelinkingModel() = default;
 
-int RelinkingModel::rowCount(QModelIndex const& parent) const {
+int RelinkingModel::rowCount(const QModelIndex& parent) const {
     if (!parent.isValid()) {
-        return m_items.size();
+        return static_cast<int>(m_items.size());
     } else {
         return 0;
     }
 }
 
-QVariant RelinkingModel::data(QModelIndex const& index, int role) const {
-    Item const& item = m_items[index.row()];
+QVariant RelinkingModel::data(const QModelIndex& index, int role) const {
+    const Item& item = m_items[index.row()];
 
     switch (role) {
         case TypeRole:
@@ -156,15 +155,17 @@ QVariant RelinkingModel::data(QModelIndex const& index, int role) const {
             return (item.type == RelinkablePath::Dir) ? m_folderIcon : m_fileIcon;
         case Qt::BackgroundColorRole:
             return QColor(Qt::transparent);
+        default:
+            break;
     }
 
     return QVariant();
 }
 
-void RelinkingModel::addPath(RelinkablePath const& path) {
-    QString const normalized_path(path.normalizedPath());
+void RelinkingModel::addPath(const RelinkablePath& path) {
+    const QString& normalized_path(path.normalizedPath());
 
-    std::pair<std::set<QString>::iterator, bool> const ins(
+    const std::pair<std::set<QString>::iterator, bool> ins(
             m_origPathSet.insert(path.normalizedPath())
     );
     if (!ins.second) {
@@ -172,14 +173,14 @@ void RelinkingModel::addPath(RelinkablePath const& path) {
         return;
     }
 
-    beginInsertRows(QModelIndex(), m_items.size(), m_items.size());
-    m_items.push_back(Item(path));
+    beginInsertRows(QModelIndex(), static_cast<int>(m_items.size()), static_cast<int>(m_items.size()));
+    m_items.emplace_back(path);
     endInsertRows();
 
-    requestStatusUpdate(index(m_items.size() - 1));
+    requestStatusUpdate(index(static_cast<int>(m_items.size() - 1)));
 }
 
-void RelinkingModel::replacePrefix(QString const& prefix, QString const& replacement, RelinkablePath::Type type) {
+void RelinkingModel::replacePrefix(const QString& prefix, const QString& replacement, RelinkablePath::Type type) {
     QString slash_terminated_prefix(prefix);
     ensureEndsWithSlash(slash_terminated_prefix);
 
@@ -198,7 +199,7 @@ void RelinkingModel::replacePrefix(QString const& prefix, QString const& replace
         } else {
             assert(type == RelinkablePath::Dir);
             if (item.uncommittedPath.startsWith(slash_terminated_prefix)) {
-                int const suffix_len = item.uncommittedPath.length() - slash_terminated_prefix.length() + 1;
+                const int suffix_len = item.uncommittedPath.length() - slash_terminated_prefix.length() + 1;
                 item.uncommittedPath = replacement + item.uncommittedPath.right(suffix_len);
                 modified = true;
             } else if (item.uncommittedPath == prefix) {
@@ -231,7 +232,7 @@ bool RelinkingModel::checkForMerges() const {
     std::vector<QString> new_paths;
     new_paths.reserve(m_items.size());
 
-    for (Item const& item : m_items) {
+    for (const Item& item : m_items) {
         new_paths.push_back(item.uncommittedPath);
     }
 
@@ -313,7 +314,7 @@ void RelinkingModel::ensureEndsWithSlash(QString& str) {
     }
 }
 
-void RelinkingModel::requestStatusUpdate(QModelIndex const& index) {
+void RelinkingModel::requestStatusUpdate(const QModelIndex& index) {
     assert(index.isValid());
 
     Item& item = m_items[index.row()];
@@ -324,10 +325,10 @@ void RelinkingModel::requestStatusUpdate(QModelIndex const& index) {
 
 void RelinkingModel::customEvent(QEvent* event) {
     typedef PayloadEvent<StatusUpdateResponse> ResponseEvent;
-    ResponseEvent* evt = dynamic_cast<ResponseEvent*>(event);
+    auto* evt = dynamic_cast<ResponseEvent*>(event);
     assert(evt);
 
-    StatusUpdateResponse const& response = evt->payload();
+    const StatusUpdateResponse& response = evt->payload();
     if ((response.row() < 0) || (response.row() >= int(m_items.size()))) {
         return;
     }
@@ -364,8 +365,8 @@ RelinkingModel::StatusUpdateThread::~StatusUpdateThread() {
     wait();
 }
 
-void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path, int row) {
-    QMutexLocker const locker(&m_mutex);
+void RelinkingModel::StatusUpdateThread::requestStatusUpdate(const QString& path, int row) {
+    const QMutexLocker locker(&m_mutex);
     if (m_exiting) {
         return;
     }
@@ -375,7 +376,7 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path
         return;
     }
 
-    std::pair<TasksByPath::iterator, bool> const ins(
+    const std::pair<TasksByPath::iterator, bool> ins(
             m_rTasksByPath.insert(Task(path, row))
     );
 
@@ -393,11 +394,11 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(QString const& path
 
 void RelinkingModel::StatusUpdateThread::run()
 try {
-    QMutexLocker const locker(&m_mutex);
+    const QMutexLocker locker(&m_mutex);
 
     class MutexUnlocker {
     public:
-        MutexUnlocker(QMutex* mutex)
+        explicit MutexUnlocker(QMutex* mutex)
                 : m_pMutex(mutex) {
             mutex->unlock();
         }
@@ -424,15 +425,15 @@ try {
             continue;
         }
 
-        Task const task(m_rTasksByPriority.front());
+        const Task task(m_rTasksByPriority.front());
         m_pathBeingProcessed = task.path;
         m_rTasksByPriority.pop_front();
 
         {
-            MutexUnlocker const unlocker(&m_mutex);
+            const MutexUnlocker unlocker(&m_mutex);
 
-            bool const exists = QFile::exists(task.path);
-            StatusUpdateResponse const response(task.path, task.row, exists ? Exists : Missing);
+            const bool exists = QFile::exists(task.path);
+            const StatusUpdateResponse response(task.path, task.row, exists ? Exists : Missing);
             QCoreApplication::postEvent(m_pOwner, new PayloadEvent<StatusUpdateResponse>(response));
         }
 
@@ -440,13 +441,13 @@ try {
     }
 }  // RelinkingModel::StatusUpdateThread::run
 
-catch (std::bad_alloc const&) {
+catch (const std::bad_alloc&) {
     OutOfMemoryHandler::instance().handleOutOfMemorySituation();
 }
 
 /*================================ Item =================================*/
 
-RelinkingModel::Item::Item(RelinkablePath const& path)
+RelinkingModel::Item::Item(const RelinkablePath& path)
         : origPath(path.normalizedPath()),
           committedPath(path.normalizedPath()),
           uncommittedPath(path.normalizedPath()),
@@ -457,12 +458,12 @@ RelinkingModel::Item::Item(RelinkablePath const& path)
 
 /*============================== Relinker ================================*/
 
-void RelinkingModel::Relinker::addMapping(QString const& from, QString const& to) {
+void RelinkingModel::Relinker::addMapping(const QString& from, const QString& to) {
     m_mappings[from] = to;
 }
 
-QString RelinkingModel::Relinker::substitutionPathFor(RelinkablePath const& path) const {
-    std::map<QString, QString>::const_iterator const it(m_mappings.find(path.normalizedPath()));
+QString RelinkingModel::Relinker::substitutionPathFor(const RelinkablePath& path) const {
+    const auto it(m_mappings.find(path.normalizedPath()));
     if (it != m_mappings.end()) {
         return it->second;
     } else {

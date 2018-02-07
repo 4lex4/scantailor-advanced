@@ -25,7 +25,10 @@
 class Utils {
 public:
     template<typename M, typename K, typename V>
-    static typename M::iterator mapSetValue(M& map, K const& key, V const& val);
+    static typename M::iterator mapSetValue(M& map, const K& key, const V& val);
+
+    template<typename M, typename K, typename V>
+    static typename M::iterator unorderedMapSetValue(M& map, const K& key, const V& val);
 
     /**
      * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
@@ -33,16 +36,16 @@ public:
      * The idea is to prevent creating a bogus directory structure when loading
      * a project created on another machine.
      */
-    static void maybeCreateCacheDir(QString const& output_dir);
+    static void maybeCreateCacheDir(const QString& output_dir);
 
-    static QString outputDirToThumbDir(QString const& output_dir);
+    static QString outputDirToThumbDir(const QString& output_dir);
 
-    static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(QString const& output_dir);
+    static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(const QString& output_dir);
 
     /**
      * Unlike QFile::rename(), this one overwrites existing files.
      */
-    static bool overwritingRename(QString const& from, QString const& to);
+    static bool overwritingRename(const QString& from, const QString& to);
 
     /**
      * \brief A high precision, locale independent number to string conversion.
@@ -61,17 +64,29 @@ public:
      * \param label The text to show as a link.
      * \param target A URL or something else.  If the link will
      *        be used in a QLable, this string will be passed
-     *        to QLabel::linkActivated(QString const&).
+     *        to QLabel::linkActivated(const QString&).
      * \return The resulting reach text.
      */
-    static QString richTextForLink(QString const& label, QString const& target = QString(QChar('#')));
+    static QString richTextForLink(const QString& label, const QString& target = QString(QChar('#')));
 };
 
 
 template<typename M, typename K, typename V>
-typename M::iterator Utils::mapSetValue(M& map, K const& key, V const& val) {
-    typename M::iterator const it(map.lower_bound(key));
+typename M::iterator Utils::mapSetValue(M& map, const K& key, const V& val) {
+    const typename M::iterator it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {
+        return map.insert(it, typename M::value_type(key, val));
+    } else {
+        it->second = val;
+
+        return it;
+    }
+}
+
+template<typename M, typename K, typename V>
+typename M::iterator Utils::unorderedMapSetValue(M& map, const K& key, const V& val) {
+    const typename M::iterator it(map.find(key));
+    if (it == map.end()) {
         return map.insert(it, typename M::value_type(key, val));
     } else {
         it->second = val;

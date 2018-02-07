@@ -43,7 +43,7 @@ namespace imageproc {
          *        avoid unnecessary copy-on-write.
          * \param conn Defines which neighbouring pixels are considered to be connected.
          */
-        ConnCompEraserExt(BinaryImage const& image, Connectivity conn);
+        ConnCompEraserExt(const BinaryImage& image, Connectivity conn);
 
         /**
          * \brief Erase the next connected component and return its bounding box.
@@ -76,12 +76,12 @@ namespace imageproc {
          * In case nextConnComp() returned a null component or was never called,
          * a null BinaryImage is returned.
          */
-        BinaryImage computeConnCompImageAligned(QRect* rect = 0) const;
+        BinaryImage computeConnCompImageAligned(QRect* rect = nullptr) const;
 
     private:
         ConnCompEraser m_eraser;
 
-        BinaryImage computeDiffImage(QRect const& rect) const;
+        BinaryImage computeDiffImage(const QRect& rect) const;
 
         /**
          * m_lastImage is always one step behind of m_eraser.image().

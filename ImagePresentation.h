@@ -36,39 +36,39 @@
 class ImagePresentation {
     // Member-wise copying is OK.
 public:
-    ImagePresentation(QTransform const& xform, QPolygonF const& crop_area)
+    ImagePresentation(const QTransform& xform, const QPolygonF& crop_area)
             : m_xform(xform),
               m_cropArea(crop_area),
               m_displayArea(crop_area.boundingRect()) {
     }
 
-    ImagePresentation(QTransform const& xform, QPolygonF const& crop_area, QRectF const& display_area)
+    ImagePresentation(const QTransform& xform, const QPolygonF& crop_area, const QRectF& display_area)
             : m_xform(xform),
               m_cropArea(crop_area),
               m_displayArea(display_area) {
     }
 
-    QTransform const& transform() const {
+    const QTransform& transform() const {
         return m_xform;
     }
 
-    void setTransform(QTransform const& xform) {
+    void setTransform(const QTransform& xform) {
         m_xform = xform;
     }
 
-    QPolygonF const& cropArea() const {
+    const QPolygonF& cropArea() const {
         return m_cropArea;
     }
 
-    void setCropArea(QPolygonF const& crop_area) {
+    void setCropArea(const QPolygonF& crop_area) {
         m_cropArea = crop_area;
     }
 
-    QRectF const& displayArea() const {
+    const QRectF& displayArea() const {
         return m_displayArea;
     }
 
-    void setDisplayArea(QRectF const& display_area) {
+    void setDisplayArea(const QRectF& display_area) {
         m_displayArea = display_area;
     }
 

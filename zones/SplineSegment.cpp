@@ -17,14 +17,14 @@
  */
 
 #include "SplineSegment.h"
-#include <assert.h>
+#include <cassert>
 
-SplineSegment::SplineSegment(SplineVertex::Ptr const& prev, SplineVertex::Ptr const& next)
+SplineSegment::SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next)
         : prev(prev),
           next(next) {
 }
 
-SplineVertex::Ptr SplineSegment::splitAt(QPointF const& pt) {
+SplineVertex::Ptr SplineSegment::splitAt(const QPointF& pt) {
     assert(isValid());
 
     return prev->insertAfter(pt);

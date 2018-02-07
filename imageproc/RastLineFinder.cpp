@@ -21,7 +21,7 @@
 #include "VecNT.h"
 #include "Constants.h"
 #include <boost/foreach.hpp>
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 namespace imageproc {
@@ -72,7 +72,7 @@ namespace imageproc {
         return true;
     }  // RastLineFinderParams::validate
 
-    RastLineFinder::RastLineFinder(std::vector<QPointF> const& points, RastLineFinderParams const& params)
+    RastLineFinder::RastLineFinder(const std::vector<QPointF>& points, const RastLineFinderParams& params)
             : m_origin(params.origin()),
               m_angleToleranceRad(params.angleToleranceDeg() * constants::DEG2RAD),
               m_maxDistFromLine(params.maxDistFromLine()),
@@ -89,28 +89,28 @@ namespace imageproc {
 
         double max_sqdist = 0;
 
-        for (QPointF const& pt : points) {
-            m_points.push_back(pt);
-            candidate_idxs.push_back(candidate_idxs.size());
+        for (const QPointF& pt : points) {
+            m_points.emplace_back(pt);
+            candidate_idxs.push_back(static_cast<unsigned int&&>(candidate_idxs.size()));
 
-            double const sqdist = Vec2d(pt - m_origin).squaredNorm();
+            const double sqdist = Vec2d(pt - m_origin).squaredNorm();
             if (sqdist > max_sqdist) {
                 max_sqdist = sqdist;
             }
         }
 
-        float const max_dist = sqrt(max_sqdist) + 1.0;  // + 1.0 to combant rounding issues
+        const auto max_dist = static_cast<const float>(sqrt(max_sqdist) + 1.0);  // + 1.0 to combant rounding issues
 
         double delta_deg = fmod(params.maxAngleDeg() - params.minAngleDeg(), 360.0);
         if (delta_deg < 0) {
             delta_deg += 360;
         }
-        double const min_angle_deg = fmod(params.minAngleDeg(), 360.0);
-        double const max_angle_deg = min_angle_deg + delta_deg;
+        const double min_angle_deg = fmod(params.minAngleDeg(), 360.0);
+        const double max_angle_deg = min_angle_deg + delta_deg;
 
         SearchSpace ssp(
-                *this, -max_dist, max_dist, min_angle_deg * constants::DEG2RAD,
-                max_angle_deg * constants::DEG2RAD, candidate_idxs
+                *this, -max_dist, max_dist, static_cast<float>(min_angle_deg * constants::DEG2RAD),
+                static_cast<float>(max_angle_deg * constants::DEG2RAD), candidate_idxs
         );
         if (ssp.pointIdxs().size() >= m_minSupportPoints) {
             m_orderedSearchSpaces.pushDestructive(ssp);
@@ -175,7 +175,7 @@ namespace imageproc {
         }
     }
 
-    void RastLineFinder::markPointsUnavailable(std::vector<unsigned> const& point_idxs) {
+    void RastLineFinder::markPointsUnavailable(const std::vector<unsigned>& point_idxs) {
         for (unsigned idx : point_idxs) {
             m_points[idx].available = false;
         }
@@ -206,42 +206,42 @@ namespace imageproc {
               m_maxAngleRad(0) {
     }
 
-    RastLineFinder::SearchSpace::SearchSpace(RastLineFinder const& owner,
+    RastLineFinder::SearchSpace::SearchSpace(const RastLineFinder& owner,
                                              float min_dist,
                                              float max_dist,
                                              float min_angle_rad,
                                              float max_angle_rad,
-                                             std::vector<unsigned> const& candidate_idxs)
+                                             const std::vector<unsigned>& candidate_idxs)
             : m_minDist(min_dist),
               m_maxDist(max_dist),
               m_minAngleRad(min_angle_rad),
               m_maxAngleRad(max_angle_rad) {
         m_pointIdxs.reserve(candidate_idxs.size());
 
-        QPointF const origin(owner.m_origin);
+        const QPointF origin(owner.m_origin);
 
-        double const min_sqdist = double(m_minDist) * double(m_minDist);
-        double const max_sqdist = double(m_maxDist) * double(m_maxDist);
+        const double min_sqdist = double(m_minDist) * double(m_minDist);
+        const double max_sqdist = double(m_maxDist) * double(m_maxDist);
 
-        QPointF const min_angle_unit_vec(cos(m_minAngleRad), sin(m_minAngleRad));
-        QPointF const max_angle_unit_vec(cos(m_maxAngleRad), sin(m_maxAngleRad));
+        const QPointF min_angle_unit_vec(std::cos(m_minAngleRad), std::sin(m_minAngleRad));
+        const QPointF max_angle_unit_vec(std::cos(m_maxAngleRad), std::sin(m_maxAngleRad));
 
-        QPointF const min_angle_inner_pt(origin + min_angle_unit_vec * m_minDist);
-        QPointF const max_angle_inner_pt(origin + max_angle_unit_vec * m_minDist);
+        const QPointF min_angle_inner_pt(origin + min_angle_unit_vec * m_minDist);
+        const QPointF max_angle_inner_pt(origin + max_angle_unit_vec * m_minDist);
 
-        QPointF const min_angle_outer_pt(origin + min_angle_unit_vec * m_maxDist);
-        QPointF const max_angle_outer_pt(origin + max_angle_unit_vec * m_maxDist);
+        const QPointF min_angle_outer_pt(origin + min_angle_unit_vec * m_maxDist);
+        const QPointF max_angle_outer_pt(origin + max_angle_unit_vec * m_maxDist);
 
-        Vec2d const min_towards_max_angle_vec(-min_angle_unit_vec.y(), min_angle_unit_vec.x());
-        Vec2d const max_towards_min_angle_vec(max_angle_unit_vec.y(), -max_angle_unit_vec.x());
+        const Vec2d min_towards_max_angle_vec(-min_angle_unit_vec.y(), min_angle_unit_vec.x());
+        const Vec2d max_towards_min_angle_vec(max_angle_unit_vec.y(), -max_angle_unit_vec.x());
 
         for (unsigned idx : candidate_idxs) {
-            Point const& pnt = owner.m_points[idx];
+            const Point& pnt = owner.m_points[idx];
             if (!pnt.available) {
                 continue;
             }
 
-            Vec2d const rel_pt(pnt.pt - origin);
+            const Vec2d rel_pt(pnt.pt - origin);
 
             if ((Vec2d(pnt.pt - min_angle_inner_pt).dot(min_angle_unit_vec) >= 0)
                 && (Vec2d(pnt.pt - max_angle_outer_pt).dot(max_angle_unit_vec) <= 0)) {
@@ -264,21 +264,21 @@ namespace imageproc {
 
         // Compact m_pointIdxs, as we expect a lot of SearchSpace objects
         // to exist at the same time.
-        std::vector<unsigned>(m_pointIdxs).swap(m_pointIdxs);
+        m_pointIdxs.shrink_to_fit();
     }
 
-    QLineF RastLineFinder::SearchSpace::representativeLine(RastLineFinder const& owner) const {
-        float const dist = 0.5f * (m_minDist + m_maxDist);
-        float const angle = 0.5f * (m_minAngleRad + m_maxAngleRad);
-        QPointF const angle_unit_vec(cos(angle), sin(angle));
-        QPointF const angle_norm_vec(-angle_unit_vec.y(), angle_unit_vec.x());
-        QPointF const p1(owner.m_origin + angle_unit_vec * dist);
-        QPointF const p2(p1 + angle_norm_vec);
+    QLineF RastLineFinder::SearchSpace::representativeLine(const RastLineFinder& owner) const {
+        const float dist = 0.5f * (m_minDist + m_maxDist);
+        const float angle = 0.5f * (m_minAngleRad + m_maxAngleRad);
+        const QPointF angle_unit_vec(std::cos(angle), std::sin(angle));
+        const QPointF angle_norm_vec(-angle_unit_vec.y(), angle_unit_vec.x());
+        const QPointF p1(owner.m_origin + angle_unit_vec * dist);
+        const QPointF p2(p1 + angle_norm_vec);
 
         return QLineF(p1, p2);
     }
 
-    bool RastLineFinder::SearchSpace::subdivideDist(RastLineFinder const& owner,
+    bool RastLineFinder::SearchSpace::subdivideDist(const RastLineFinder& owner,
                                                     SearchSpace& subspace1,
                                                     SearchSpace& subspace2) const {
         assert(m_maxDist >= m_minDist);
@@ -289,17 +289,21 @@ namespace imageproc {
 
         if (m_maxDist - m_minDist <= owner.m_angleToleranceRad * 3) {
             // This branch prevents near-infinite subdivision that would have happened without it.
-            SearchSpace ssp1(owner, m_minDist, m_minDist + owner.m_maxDistFromLine * 2, m_minAngleRad, m_maxAngleRad,
+            SearchSpace ssp1(owner, m_minDist, static_cast<float>(m_minDist + owner.m_maxDistFromLine * 2),
+                             m_minAngleRad, m_maxAngleRad,
                              m_pointIdxs);
-            SearchSpace ssp2(owner, m_maxDist - owner.m_maxDistFromLine * 2, m_maxDist, m_minAngleRad, m_maxAngleRad,
+            SearchSpace ssp2(owner, static_cast<float>(m_maxDist - owner.m_maxDistFromLine * 2), m_maxDist,
+                             m_minAngleRad, m_maxAngleRad,
                              m_pointIdxs);
             ssp1.swap(subspace1);
             ssp2.swap(subspace2);
         } else {
-            float const mid_dist = 0.5f * (m_maxDist + m_minDist);
-            SearchSpace ssp1(owner, m_minDist, mid_dist + owner.m_maxDistFromLine, m_minAngleRad, m_maxAngleRad,
+            const float mid_dist = 0.5f * (m_maxDist + m_minDist);
+            SearchSpace ssp1(owner, m_minDist, static_cast<float>(mid_dist + owner.m_maxDistFromLine), m_minAngleRad,
+                             m_maxAngleRad,
                              m_pointIdxs);
-            SearchSpace ssp2(owner, mid_dist - owner.m_maxDistFromLine, m_maxDist, m_minAngleRad, m_maxAngleRad,
+            SearchSpace ssp2(owner, static_cast<float>(mid_dist - owner.m_maxDistFromLine), m_maxDist, m_minAngleRad,
+                             m_maxAngleRad,
                              m_pointIdxs);
             ssp1.swap(subspace1);
             ssp2.swap(subspace2);
@@ -308,7 +312,7 @@ namespace imageproc {
         return true;
     }
 
-    bool RastLineFinder::SearchSpace::subdivideAngle(RastLineFinder const& owner,
+    bool RastLineFinder::SearchSpace::subdivideAngle(const RastLineFinder& owner,
                                                      SearchSpace& subspace1,
                                                      SearchSpace& subspace2) const {
         assert(m_maxAngleRad >= m_minAngleRad);
@@ -317,7 +321,7 @@ namespace imageproc {
             return false;
         }
 
-        float const mid_angle_rad = 0.5f * (m_maxAngleRad + m_minAngleRad);
+        const float mid_angle_rad = 0.5f * (m_maxAngleRad + m_minAngleRad);
 
         SearchSpace ssp1(owner, m_minDist, m_maxDist, m_minAngleRad, mid_angle_rad, m_pointIdxs);
         SearchSpace ssp2(owner, m_minDist, m_maxDist, mid_angle_rad, m_maxAngleRad, m_pointIdxs);

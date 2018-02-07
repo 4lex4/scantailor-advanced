@@ -18,7 +18,7 @@
 
 #include "BackgroundTask.h"
 
-char const* BackgroundTask::CancelledException::what() const throw() {
+const char* BackgroundTask::CancelledException::what() const throw() {
     return "BackgroundTask cancelled";
 }
 

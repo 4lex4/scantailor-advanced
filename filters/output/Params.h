@@ -35,78 +35,55 @@ namespace output {
     public:
         Params();
 
-        Params(QDomElement const& el);
+        Params(const Dpi& m_dpi,
+               const ColorParams& m_colorParams,
+               const SplittingOptions& m_splittingOptions,
+               const PictureShapeOptions& m_pictureShapeOptions,
+               const dewarping::DistortionModel& m_distortionModel,
+               const DepthPerception& m_depthPerception,
+               const DewarpingOptions& m_dewarpingOptions,
+               DespeckleLevel m_despeckleLevel);
 
-        Dpi const& outputDpi() const {
-            return m_dpi;
-        }
+        explicit Params(const QDomElement& el);
 
-        void setOutputDpi(Dpi const& dpi) {
-            m_dpi = dpi;
-        }
+        const Dpi& outputDpi() const;
 
-        ColorParams const& colorParams() const {
-            return m_colorParams;
-        }
+        void setOutputDpi(const Dpi& dpi);
 
-        PictureShapeOptions pictureShapeOptions() const {
-            return m_pictureShapeOptions;
-        }
+        const ColorParams& colorParams() const;
 
-        void setPictureShapeOptions(PictureShapeOptions opt) {
-            m_pictureShapeOptions = opt;
-        }
+        const PictureShapeOptions& pictureShapeOptions() const;
 
-        void setColorParams(ColorParams const& params) {
-            m_colorParams = params;
-        }
+        void setPictureShapeOptions(const PictureShapeOptions& opt);
 
-        const SplittingOptions& splittingOptions() const {
-            return m_splittingOptions;
-        }
+        void setColorParams(const ColorParams& params);
 
-        void setSplittingOptions(const SplittingOptions& opt) {
-            m_splittingOptions = opt;
-        }
+        const SplittingOptions& splittingOptions() const;
 
-        DewarpingOptions const& dewarpingOptions() const {
-            return m_dewarpingOptions;
-        }
+        void setSplittingOptions(const SplittingOptions& opt);
 
-        void setDewarpingOptions(DewarpingOptions const& opt) {
-            m_dewarpingOptions = opt;
-        }
+        const DewarpingOptions& dewarpingOptions() const;
 
-        dewarping::DistortionModel const& distortionModel() const {
-            return m_distortionModel;
-        }
+        void setDewarpingOptions(const DewarpingOptions& opt);
 
-        void setDistortionModel(dewarping::DistortionModel const& model) {
-            m_distortionModel = model;
-        }
+        const dewarping::DistortionModel& distortionModel() const;
 
-        DepthPerception const& depthPerception() const {
-            return m_depthPerception;
-        }
+        void setDistortionModel(const dewarping::DistortionModel& model);
 
-        void setDepthPerception(DepthPerception depth_perception) {
-            m_depthPerception = depth_perception;
-        }
+        const DepthPerception& depthPerception() const;
 
-        DespeckleLevel despeckleLevel() const {
-            return m_despeckleLevel;
-        }
+        void setDepthPerception(DepthPerception depth_perception);
 
-        void setDespeckleLevel(DespeckleLevel level) {
-            m_despeckleLevel = level;
-        }
+        DespeckleLevel despeckleLevel() const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        void setDespeckleLevel(DespeckleLevel level);
+
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
-        static ColorParams::ColorMode parseColorMode(QString const& str);
+        static ColorMode parseColorMode(const QString& str);
 
-        static QString formatColorMode(ColorParams::ColorMode mode);
+        static QString formatColorMode(ColorMode mode);
 
         Dpi m_dpi;
         ColorParams m_colorParams;

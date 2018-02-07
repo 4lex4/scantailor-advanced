@@ -43,7 +43,7 @@ public:
     /**
      * \brief Constructs a span between a point and another span.
      */
-    Span(int begin, Span const& end)
+    Span(int begin, const Span& end)
             : m_begin(begin),
               m_end(end.begin()) {
     }
@@ -51,7 +51,7 @@ public:
     /**
      * \brief Constructs a span between another span and a point.
      */
-    Span(Span const& begin, int end)
+    Span(const Span& begin, int end)
             : m_begin(begin.end()),
               m_end(end) {
     }
@@ -59,7 +59,7 @@ public:
     /**
      * \brief Constructs a span between two other spans.
      */
-    Span(Span const& begin, Span const& end)
+    Span(const Span& begin, const Span& end)
             : m_begin(begin.end()),
               m_end(end.begin()) {
     }
@@ -80,11 +80,11 @@ public:
         return 0.5 * (m_begin + m_end);
     }
 
-    bool operator==(Span const& other) const {
+    bool operator==(const Span& other) const {
         return m_begin == other.m_begin && m_end == other.m_end;
     }
 
-    bool operator!=(Span const& other) const {
+    bool operator!=(const Span& other) const {
         return m_begin != other.m_begin || m_end != other.m_end;
     }
 

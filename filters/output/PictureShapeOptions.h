@@ -8,21 +8,22 @@ class QDomElement;
 
 namespace output {
     enum PictureShape {
+        OFF_SHAPE,
         FREE_SHAPE,
         RECTANGULAR_SHAPE
     };
-    
+
     class PictureShapeOptions {
     public:
         PictureShapeOptions();
 
-        explicit PictureShapeOptions(QDomElement const& el);
+        explicit PictureShapeOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(PictureShapeOptions const& other) const;
+        bool operator==(const PictureShapeOptions& other) const;
 
-        bool operator!=(PictureShapeOptions const& other) const;
+        bool operator!=(const PictureShapeOptions& other) const;
 
         PictureShape getPictureShape() const;
 

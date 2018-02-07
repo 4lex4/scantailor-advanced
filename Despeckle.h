@@ -45,20 +45,20 @@ public:
      * \param status For asynchronous task cancellation.
      * \return The despeckled image.
      */
-    static imageproc::BinaryImage despeckle(imageproc::BinaryImage const& src,
-                                            Dpi const& dpi,
+    static imageproc::BinaryImage despeckle(const imageproc::BinaryImage& src,
+                                            const Dpi& dpi,
                                             Level level,
-                                            TaskStatus const& status,
-                                            DebugImages* dbg = 0);
+                                            const TaskStatus& status,
+                                            DebugImages* dbg = nullptr);
 
     /**
      * \brief A slightly faster, in-place version of despeckle().
      */
     static void despeckleInPlace(imageproc::BinaryImage& image,
-                                 Dpi const& dpi,
+                                 const Dpi& dpi,
                                  Level level,
-                                 TaskStatus const& status,
-                                 DebugImages* dbg = 0);
+                                 const TaskStatus& status,
+                                 DebugImages* dbg = nullptr);
 };
 
 

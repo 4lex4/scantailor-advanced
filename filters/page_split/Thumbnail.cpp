@@ -18,16 +18,17 @@
 
 #include "Thumbnail.h"
 #include <QPainter>
+#include <utility>
 
 namespace page_split {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         ImageTransformation const& xform,
-                         PageLayout const& layout,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                         const QSizeF& max_size,
+                         const ImageId& image_id,
+                         const ImageTransformation& xform,
+                         const PageLayout& layout,
                          bool left_half_removed,
                          bool right_half_removed)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
               m_layout(layout),
               m_leftHalfRemoved(left_half_removed),
               m_rightHalfRemoved(right_half_removed) {
@@ -36,9 +37,9 @@ namespace page_split {
         }
     }
 
-    void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
-                                      QTransform const& thumb_to_display) {
-        QRectF const canvas_rect(imageXform().resultingRect());
+    void Thumbnail::prePaintOverImage(QPainter& painter, const QTransform& image_to_display,
+                                      const QTransform& thumb_to_display) {
+        const QRectF canvas_rect(imageXform().resultingRect());
 
         painter.setRenderHint(QPainter::Antialiasing, false);
         painter.setWorldTransform(image_to_display);
@@ -55,8 +56,8 @@ namespace page_split {
                 painter.drawPolygon(m_layout.singlePageOutline());
                 break;
             case PageLayout::TWO_PAGES: {
-                QPolygonF const left_poly(m_layout.leftPageOutline());
-                QPolygonF const right_poly(m_layout.rightPageOutline());
+                const QPolygonF left_poly(m_layout.leftPageOutline());
+                const QPolygonF right_poly(m_layout.rightPageOutline());
                 painter.setBrush(m_leftHalfRemoved ? QColor(0, 0, 0, 80) : QColor(0, 0, 255, 50));
                 painter.drawPolygon(left_poly);
                 painter.setBrush(m_rightHalfRemoved ? QColor(0, 0, 0, 80) : QColor(255, 0, 0, 50));
@@ -65,8 +66,8 @@ namespace page_split {
                 if (m_leftHalfRemoved || m_rightHalfRemoved) {
                     painter.setWorldTransform(QTransform());
 
-                    int const subpage_idx = m_leftHalfRemoved ? 0 : 1;
-                    QPointF const center(
+                    const int subpage_idx = m_leftHalfRemoved ? 0 : 1;
+                    const QPointF center(
                             subPageCenter(left_poly, right_poly, image_to_display, subpage_idx)
                     );
 
@@ -99,15 +100,15 @@ namespace page_split {
         }
     }  // Thumbnail::paintOverImage
 
-    QPointF Thumbnail::subPageCenter(QPolygonF const& left_page,
-                                     QPolygonF const& right_page,
-                                     QTransform const& image_to_display,
+    QPointF Thumbnail::subPageCenter(const QPolygonF& left_page,
+                                     const QPolygonF& right_page,
+                                     const QTransform& image_to_display,
                                      int subpage_idx) {
         QRectF rects[2];
         rects[0] = left_page.boundingRect();
         rects[1] = right_page.boundingRect();
 
-        double const x_mid = 0.5 * (rects[0].right() + rects[1].left());
+        const double x_mid = 0.5 * (rects[0].right() + rects[1].left());
         rects[0].setRight(x_mid);
         rects[1].setLeft(x_mid);
 

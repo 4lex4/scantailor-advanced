@@ -37,17 +37,17 @@ public:
      * If line endpoints match, all points will
      * be projected to that point.
      */
-    ToLineProjector(QLineF const& line);
+    explicit ToLineProjector(const QLineF& line);
 
     /**
      * \brief Finds the projection point.
      */
-    QPointF projectionPoint(QPointF const& pt) const;
+    QPointF projectionPoint(const QPointF& pt) const;
 
     /**
      * \brief Equivalent to projectionPoint(pt) - pt.
      */
-    QPointF projectionVector(QPointF const& pt) const;
+    QPointF projectionVector(const QPointF& pt) const;
 
     /**
      * Solves the equation of:\n
@@ -55,18 +55,18 @@ public:
      * for x, where p would be the projection point.
      * This function is faster than projectionPoint().
      */
-    double projectionScalar(QPointF const& pt) const;
+    double projectionScalar(const QPointF& pt) const;
 
     /**
      * Returns the distance from \p pt to the projection point.
      */
-    double projectionDist(QPointF const& pt) const;
+    double projectionDist(const QPointF& pt) const;
 
     /**
      * Returns the squared distance from \p pt to the projection point.
      * This function is faster than projectionDist().
      */
-    double projectionSqDist(QPointF const& pt) const;
+    double projectionSqDist(const QPointF& pt) const;
 
 private:
     QPointF m_origin;

@@ -20,7 +20,7 @@
 #define PROXIMITY_H_
 
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 class QPointF;
 class QLineF;
@@ -31,7 +31,7 @@ public:
             : m_sqDist(std::numeric_limits<double>::max()) {
     }
 
-    Proximity(QPointF const& p1, QPointF const& p2);
+    Proximity(const QPointF& p1, const QPointF& p2);
 
     static Proximity fromDist(double dist) {
         return Proximity(dist * dist);
@@ -41,7 +41,7 @@ public:
         return Proximity(sqDist);
     }
 
-    static Proximity pointAndLineSegment(QPointF const& pt, QLineF const& segment, QPointF* point_on_segment = 0);
+    static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment = nullptr);
 
     double dist() const {
         return sqrt(m_sqDist);
@@ -51,32 +51,32 @@ public:
         return m_sqDist;
     }
 
-    bool operator==(Proximity const& rhs) const {
+    bool operator==(const Proximity& rhs) const {
         return m_sqDist == rhs.m_sqDist;
     }
 
-    bool operator!=(Proximity const& rhs) const {
+    bool operator!=(const Proximity& rhs) const {
         return m_sqDist != rhs.m_sqDist;
     }
 
-    bool operator<(Proximity const& rhs) const {
+    bool operator<(const Proximity& rhs) const {
         return m_sqDist < rhs.m_sqDist;
     }
 
-    bool operator>(Proximity const& rhs) const {
+    bool operator>(const Proximity& rhs) const {
         return m_sqDist > rhs.m_sqDist;
     }
 
-    bool operator<=(Proximity const& rhs) const {
+    bool operator<=(const Proximity& rhs) const {
         return m_sqDist <= rhs.m_sqDist;
     }
 
-    bool operator>=(Proximity const& rhs) const {
+    bool operator>=(const Proximity& rhs) const {
         return m_sqDist >= rhs.m_sqDist;
     }
 
 private:
-    Proximity(double sqDist)
+    explicit Proximity(double sqDist)
             : m_sqDist(sqDist) {
     }
 

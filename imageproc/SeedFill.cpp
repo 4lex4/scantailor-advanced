@@ -23,7 +23,7 @@
 
 namespace imageproc {
     namespace {
-        inline uint32_t fillWordHorizontally(uint32_t word, uint32_t const mask) {
+        inline uint32_t fillWordHorizontally(uint32_t word, const uint32_t mask) {
             uint32_t prev_word;
 
             do {
@@ -35,18 +35,18 @@ namespace imageproc {
             return word;
         }
 
-        void seedFill4Iteration(BinaryImage& seed, BinaryImage const& mask) {
-            int const w = seed.width();
-            int const h = seed.height();
+        void seedFill4Iteration(BinaryImage& seed, const BinaryImage& mask) {
+            const int w = seed.width();
+            const int h = seed.height();
 
-            int const seed_wpl = seed.wordsPerLine();
-            int const mask_wpl = mask.wordsPerLine();
-            int const last_word_idx = (w - 1) >> 5;
-            uint32_t const last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
+            const int seed_wpl = seed.wordsPerLine();
+            const int mask_wpl = mask.wordsPerLine();
+            const int last_word_idx = (w - 1) >> 5;
+            const uint32_t last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
 
             uint32_t* seed_line = seed.data();
-            uint32_t const* mask_line = mask.data();
-            uint32_t const* prev_line = seed_line;
+            const uint32_t* mask_line = mask.data();
+            const uint32_t* prev_line = seed_line;
 
             // Top to bottom.
             for (int y = 0; y < h; ++y) {
@@ -56,7 +56,7 @@ namespace imageproc {
                 seed_line[last_word_idx] &= last_word_mask;
                 // Left to right (except the last word).
                 for (int i = 0; i <= last_word_idx; ++i) {
-                    uint32_t const mask = mask_line[i];
+                    const uint32_t mask = mask_line[i];
                     uint32_t word = prev_word << 31;
                     word |= seed_line[i] | prev_line[i];
                     word &= mask;
@@ -87,7 +87,7 @@ namespace imageproc {
                 seed_line[last_word_idx] &= last_word_mask;
                 // Right to left.
                 for (int i = last_word_idx; i >= 0; --i) {
-                    uint32_t const mask = mask_line[i];
+                    const uint32_t mask = mask_line[i];
                     uint32_t word = prev_word >> 31;
                     word |= seed_line[i] | prev_line[i];
                     word &= mask;
@@ -108,18 +108,18 @@ namespace imageproc {
             }
         }  // seedFill4Iteration
 
-        void seedFill8Iteration(BinaryImage& seed, BinaryImage const& mask) {
-            int const w = seed.width();
-            int const h = seed.height();
+        void seedFill8Iteration(BinaryImage& seed, const BinaryImage& mask) {
+            const int w = seed.width();
+            const int h = seed.height();
 
-            int const seed_wpl = seed.wordsPerLine();
-            int const mask_wpl = mask.wordsPerLine();
-            int const last_word_idx = (w - 1) >> 5;
-            uint32_t const last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
+            const int seed_wpl = seed.wordsPerLine();
+            const int mask_wpl = mask.wordsPerLine();
+            const int last_word_idx = (w - 1) >> 5;
+            const uint32_t last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
 
             uint32_t* seed_line = seed.data();
-            uint32_t const* mask_line = mask.data();
-            uint32_t const* prev_line = seed_line;
+            const uint32_t* mask_line = mask.data();
+            const uint32_t* prev_line = seed_line;
 
             // Note: we start with prev_line == seed_line, but in this case
             // prev_line[i + 1] won't be clipped by its mask when we use it to
@@ -139,7 +139,7 @@ namespace imageproc {
                 // Left to right (except the last word).
                 int i = 0;
                 for (; i < last_word_idx; ++i) {
-                    uint32_t const mask = mask_line[i];
+                    const uint32_t mask = mask_line[i];
                     uint32_t word = prev_line[i];
                     word |= (word << 1) | (word >> 1);
                     word |= seed_line[i];
@@ -151,7 +151,7 @@ namespace imageproc {
                     prev_word = word;
                 }
                 // Last word.
-                uint32_t const mask = mask_line[i] & last_word_mask;
+                const uint32_t mask = mask_line[i] & last_word_mask;
                 uint32_t word = prev_line[i];
                 word |= (word << 1) | (word >> 1);
                 word |= seed_line[i];
@@ -178,7 +178,7 @@ namespace imageproc {
                 // Right to left (except the last word).
                 int i = last_word_idx;
                 for (; i > 0; --i) {
-                    uint32_t const mask = mask_line[i];
+                    const uint32_t mask = mask_line[i];
                     uint32_t word = prev_line[i];
                     word |= (word << 1) | (word >> 1);
                     word |= seed_line[i];
@@ -191,7 +191,7 @@ namespace imageproc {
                 }
 
                 // Last word.
-                uint32_t const mask = mask_line[i];
+                const uint32_t mask = mask_line[i];
                 uint32_t word = prev_line[i];
                 word |= (word << 1) | (word >> 1);
                 word |= seed_line[i];
@@ -224,7 +224,7 @@ namespace imageproc {
             return lhs < rhs;
         }
 
-        void seedFillGrayHorLine(uint8_t* seed, uint8_t const* mask, int const line_len) {
+        void seedFillGrayHorLine(uint8_t* seed, const uint8_t* mask, const int line_len) {
             assert(line_len > 0);
 
             *seed = lightest(*seed, *mask);
@@ -243,10 +243,10 @@ namespace imageproc {
         }
 
         void seedFillGrayVertLine(uint8_t* seed,
-                                  int const seed_stride,
-                                  uint8_t const* mask,
-                                  int const mask_stride,
-                                  int const line_len) {
+                                  const int seed_stride,
+                                  const uint8_t* mask,
+                                  const int mask_stride,
+                                  const int line_len) {
             assert(line_len > 0);
 
             *seed = lightest(*seed, *mask);
@@ -267,16 +267,16 @@ namespace imageproc {
 /**
  * \return non-zero if more iterations are required, zero otherwise.
  */
-        uint8_t seedFillGray4SlowIteration(GrayImage& seed, GrayImage const& mask) {
-            int const w = seed.width();
-            int const h = seed.height();
+        uint8_t seedFillGray4SlowIteration(GrayImage& seed, const GrayImage& mask) {
+            const int w = seed.width();
+            const int h = seed.height();
 
             uint8_t* seed_line = seed.data();
-            uint8_t const* mask_line = mask.data();
-            uint8_t const* prev_line = seed_line;
+            const uint8_t* mask_line = mask.data();
+            const uint8_t* prev_line = seed_line;
 
-            int const seed_stride = seed.stride();
-            int const mask_stride = mask.stride();
+            const int seed_stride = seed.stride();
+            const int mask_stride = mask.stride();
 
             uint8_t modified = 0;
 
@@ -285,7 +285,7 @@ namespace imageproc {
                 uint8_t prev_pixel = 0xff;
                 // Left to right.
                 for (int x = 0; x < w; ++x) {
-                    uint8_t const pixel = lightest(
+                    const uint8_t pixel = lightest(
                             mask_line[x],
                             darkest(
                                     prev_pixel,
@@ -311,7 +311,7 @@ namespace imageproc {
                 uint8_t prev_pixel = 0xff;
                 // Right to left.
                 for (int x = w - 1; x >= 0; --x) {
-                    uint8_t const pixel = lightest(
+                    const uint8_t pixel = lightest(
                             mask_line[x],
                             darkest(
                                     prev_pixel,
@@ -334,16 +334,16 @@ namespace imageproc {
 /**
  * \return non-zero if more iterations are required, zero otherwise.
  */
-        uint8_t seedFillGray8SlowIteration(GrayImage& seed, GrayImage const& mask) {
-            int const w = seed.width();
-            int const h = seed.height();
+        uint8_t seedFillGray8SlowIteration(GrayImage& seed, const GrayImage& mask) {
+            const int w = seed.width();
+            const int h = seed.height();
 
             uint8_t* seed_line = seed.data();
-            uint8_t const* mask_line = mask.data();
-            uint8_t const* prev_line = seed_line;
+            const uint8_t* mask_line = mask.data();
+            const uint8_t* prev_line = seed_line;
 
-            int const seed_stride = seed.stride();
-            int const mask_stride = mask.stride();
+            const int seed_stride = seed.stride();
+            const int mask_stride = mask.stride();
 
             uint8_t modified = 0;
 
@@ -462,7 +462,7 @@ namespace imageproc {
         }  // seedFillGray8SlowIteration
     }      // namespace
 
-    BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity const connectivity) {
+    BinaryImage seedFill(const BinaryImage& seed, const BinaryImage& mask, const Connectivity connectivity) {
         if (seed.size() != mask.size()) {
             throw std::invalid_argument("seedFill: seed and mask have different sizes");
         }
@@ -482,14 +482,14 @@ namespace imageproc {
         return img;
     }
 
-    GrayImage seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity) {
+    GrayImage seedFillGray(const GrayImage& seed, const GrayImage& mask, const Connectivity connectivity) {
         GrayImage result(seed);
         seedFillGrayInPlace(result, mask, connectivity);
 
         return result;
     }
 
-    void seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity const connectivity) {
+    void seedFillGrayInPlace(GrayImage& seed, const GrayImage& mask, const Connectivity connectivity) {
         if (seed.size() != mask.size()) {
             throw std::invalid_argument("seedFillGrayInPlace: seed and mask have different sizes");
         }
@@ -505,7 +505,7 @@ namespace imageproc {
         );
     }
 
-    GrayImage seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity const connectivity) {
+    GrayImage seedFillGraySlow(const GrayImage& seed, const GrayImage& mask, const Connectivity connectivity) {
         GrayImage img(seed);
 
         if (connectivity == CONN4) {

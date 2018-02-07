@@ -20,7 +20,7 @@
 #define VEC_NT_H_
 
 #include <QPointF>
-#include <stddef.h>
+#include <cstddef>
 
 template<size_t N, typename T>
 class VecNT;
@@ -39,7 +39,7 @@ class VecNT {
 public:
     typedef T type;
     enum {
-        SIZE = N
+        SIZE = static_cast<int>(N)
     };
 
     /**
@@ -53,7 +53,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    explicit VecNT(OT const* data);
+    VecNT(const OT* data);
 
     /**
      * \brief Construction from a vector of same dimension but another type.
@@ -61,14 +61,14 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    VecNT(VecNT<N, OT> const& other);
+    VecNT(const VecNT<N, OT>& other);
 
     /**
      * \brief Construction from a one-less dimensional
      *        vector and the last element value.
      */
     template<typename OT>
-    VecNT(VecNT<N - 1, OT> const& lesser, T last);
+    VecNT(VecNT<N - 1, OT>const & lesser, T last);
 
     /**
      * \brief 1D vector constructor.
@@ -104,7 +104,7 @@ public:
      * Will not compile for N != 2.  Will compile for any T's that
      * are convertable from qreal by a static cast.
      */
-    VecNT(QPointF const& pt);
+    VecNT(const QPointF& pt);
 
     /**
      * \brief Implicit conversion to QPointF.
@@ -120,29 +120,29 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    VecNT& operator=(VecNT<N, OT> const& other);
+    VecNT& operator=(const VecNT<N, OT>& other);
 
     T& operator[](size_t idx) {
         return m_data[idx];
     }
 
-    T const& operator[](size_t idx) const {
+    const T& operator[](size_t idx) const {
         return m_data[idx];
     }
 
     VecNT& operator+=(T scalar);
 
-    VecNT& operator+=(VecNT const& other);
+    VecNT& operator+=(const VecNT& other);
 
     VecNT& operator-=(T scalar);
 
-    VecNT& operator-=(VecNT const& other);
+    VecNT& operator-=(const VecNT& other);
 
     VecNT& operator*=(T scalar);
 
     VecNT& operator/=(T scalar);
 
-    T const* data() const {
+    const T* data() const {
         return m_data;
     }
 
@@ -155,7 +155,7 @@ public:
      */
     T sum() const;
 
-    T dot(VecNT const& other) const;
+    T dot(const VecNT& other) const;
 
     T squaredNorm() const {
         return dot(*this);
@@ -184,12 +184,12 @@ namespace vecnt {
             data[1] = y;
         }
 
-        static void assign(T* data, QPointF const& pt) {
+        static void assign(T* data, const QPointF& pt) {
             data[0] = static_cast<T>(pt.x());
             data[1] = static_cast<T>(pt.y());
         }
 
-        static QPointF toQPointF(T const* data) {
+        static QPointF toQPointF(const T* data) {
             return QPointF(static_cast<qreal>(data[0]), static_cast<qreal>(data[1]));
         }
     };
@@ -223,7 +223,7 @@ VecNT<N, T>::VecNT() {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>::VecNT(OT const* data) {
+VecNT<N, T>::VecNT(const OT* data) {
     for (size_t i = 0; i < N; ++i) {
         m_data[i] = static_cast<T>(data[i]);
     }
@@ -231,7 +231,7 @@ VecNT<N, T>::VecNT(OT const* data) {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>::VecNT(VecNT<N, OT> const& other) {
+VecNT<N, T>::VecNT(const VecNT<N, OT>& other) {
     for (size_t i = 0; i < N; ++i) {
         m_data[i] = static_cast<T>(other[i]);
     }
@@ -239,7 +239,7 @@ VecNT<N, T>::VecNT(VecNT<N, OT> const& other) {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>::VecNT(VecNT<N - 1, OT> const& lesser, T last) {
+VecNT<N, T>::VecNT(VecNT<N - 1, OT>const & lesser, T last) {
     for (size_t i = 0; i < N - 1; ++i) {
         m_data[i] = static_cast<T>(lesser[i]);
     }
@@ -267,7 +267,7 @@ VecNT<N, T>::VecNT(T x, T y, T z, T w) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T>::VecNT(QPointF const& pt) {
+VecNT<N, T>::VecNT(const QPointF& pt) {
     vecnt::SizeSpecific<N, T>::assign(m_data, pt);
 }
 
@@ -278,7 +278,7 @@ VecNT<N, T>::operator QPointF() const {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>& VecNT<N, T>::operator=(VecNT<N, OT> const& other) {
+VecNT<N, T>& VecNT<N, T>::operator=(const VecNT<N, OT>& other) {
     for (size_t i = 0; i < N; ++i) {
         m_data[i] = static_cast<T>(other[i]);
     }
@@ -296,7 +296,7 @@ VecNT<N, T>& VecNT<N, T>::operator+=(T scalar) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T>& VecNT<N, T>::operator+=(VecNT const& other) {
+VecNT<N, T>& VecNT<N, T>::operator+=(const VecNT& other) {
     for (size_t i = 0; i < N; ++i) {
         m_data[i] += other[i];
     }
@@ -314,7 +314,7 @@ VecNT<N, T>& VecNT<N, T>::operator-=(T scalar) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T>& VecNT<N, T>::operator-=(VecNT<N, T> const& other) {
+VecNT<N, T>& VecNT<N, T>::operator-=(const VecNT<N, T>& other) {
     for (size_t i = 0; i < N; ++i) {
         m_data[i] -= other[i];
     }
@@ -347,7 +347,7 @@ T VecNT<N, T>::sum() const {
 }
 
 template<size_t N, typename T>
-T VecNT<N, T>::dot(VecNT const& other) const {
+T VecNT<N, T>::dot(const VecNT& other) const {
     T sum = T();
     for (size_t i = 0; i < N; ++i) {
         sum += m_data[i] * other[i];
@@ -357,7 +357,7 @@ T VecNT<N, T>::dot(VecNT const& other) const {
 }
 
 template<size_t N, typename T>
-VecNT<N, T> operator+(VecNT<N, T> const& lhs, VecNT<N, T> const& rhs) {
+VecNT<N, T> operator+(const VecNT<N, T>& lhs, const VecNT<N, T>& rhs) {
     VecNT<N, T> res(lhs);
     res += rhs;
 
@@ -365,7 +365,7 @@ VecNT<N, T> operator+(VecNT<N, T> const& lhs, VecNT<N, T> const& rhs) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T> operator-(VecNT<N, T> const& lhs, VecNT<N, T> const& rhs) {
+VecNT<N, T> operator-(const VecNT<N, T>& lhs, const VecNT<N, T>& rhs) {
     VecNT<N, T> res(lhs);
     res -= rhs;
 
@@ -373,7 +373,7 @@ VecNT<N, T> operator-(VecNT<N, T> const& lhs, VecNT<N, T> const& rhs) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T> operator-(VecNT<N, T> const& vec) {
+VecNT<N, T> operator-(const VecNT<N, T>& vec) {
     VecNT<N, T> res(vec);
     for (size_t i = 0; i < N; ++i) {
         res[i] = -res[i];
@@ -383,7 +383,7 @@ VecNT<N, T> operator-(VecNT<N, T> const& vec) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T> operator*(VecNT<N, T> const& vec, T scalar) {
+VecNT<N, T> operator*(const VecNT<N, T>& vec, T scalar) {
     VecNT<N, T> res(vec);
     res *= scalar;
 
@@ -391,7 +391,7 @@ VecNT<N, T> operator*(VecNT<N, T> const& vec, T scalar) {
 }
 
 template<size_t N, typename T>
-VecNT<N, T> operator*(T scalar, VecNT<N, T> const& vec) {
+VecNT<N, T> operator*(T scalar, const VecNT<N, T>& vec) {
     VecNT<N, T> res(vec);
     res *= scalar;
 

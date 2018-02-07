@@ -18,11 +18,11 @@
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
-#include <assert.h>
+#include <cassert>
 
 namespace select_content {
-    ApplyDialog::ApplyDialog(QWidget* parent, PageId const& cur_page,
-                             PageSelectionAccessor const& page_selection_accessor)
+    ApplyDialog::ApplyDialog(QWidget* parent, const PageId& cur_page,
+                             const PageSelectionAccessor& page_selection_accessor)
             : QDialog(parent),
               m_pages(page_selection_accessor.allPages()),
               m_selectedPages(page_selection_accessor.selectedPages()),
@@ -48,8 +48,7 @@ namespace select_content {
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
     }
 
-    ApplyDialog::~ApplyDialog() {
-    }
+    ApplyDialog::~ApplyDialog() = default;
 
     void ApplyDialog::onSubmit() {
         std::set<PageId> pages;
@@ -66,7 +65,7 @@ namespace select_content {
         } else if (thisEveryOtherRB->isChecked()) {
             std::set<PageId> tmp;
             m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-            std::set<PageId>::iterator it = tmp.begin();
+            auto it = tmp.begin();
             for (int i = 0; it != tmp.end(); ++it, ++i) {
                 if (i % 2 == 0) {
                     pages.insert(*it);
@@ -74,11 +73,11 @@ namespace select_content {
             }
         } else if (everyOtherSelectedRB->isChecked()) {
             assert(m_selectedRanges.size() == 1);
-            PageRange const& range = m_selectedRanges.front();
+            const PageRange& range = m_selectedRanges.front();
             range.selectEveryOther(m_curPage).swap(pages);
         }
 
-        emit applySelection(pages, applyContentBoxOption->isChecked());
+        emit applySelection(pages, applyContentBoxOption->isChecked(), applyPageBoxOption->isChecked());
         // We assume the default connection from accept() to accepted() was removed.
         accept();
     }      // ApplyDialog::onSubmit

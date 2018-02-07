@@ -43,13 +43,13 @@ public:
         return m_highlightDarkColor;
     }
 
-    void drawVertex(QPainter& painter, QPointF const& pt, QColor const& color);
+    void drawVertex(QPainter& painter, const QPointF& pt, const QColor& color);
 
-    void drawSplines(QPainter& painter, QTransform const& to_screen, EditableZoneSet const& zones);
+    void drawSplines(QPainter& painter, const QTransform& to_screen, const EditableZoneSet& zones);
 
-    virtual void drawSpline(QPainter& painter, QTransform const& to_screen, EditableSpline::Ptr const& spline);
+    virtual void drawSpline(QPainter& painter, const QTransform& to_screen, const EditableSpline::Ptr& spline);
 
-    virtual void prepareForSpline(QPainter& painter, EditableSpline::Ptr const& spline);
+    virtual void prepareForSpline(QPainter& painter, const EditableSpline::Ptr& spline);
 
 protected:
     QRgb m_solidColor;

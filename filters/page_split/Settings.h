@@ -44,34 +44,24 @@ namespace page_split {
         public:
             BaseRecord();
 
-            LayoutType const* layoutType() const {
-                return m_layoutTypeValid ? &m_layoutType : nullptr;
-            }
+            const LayoutType* layoutType() const;
 
-            Params const* params() const {
-                return m_paramsValid ? &m_params : nullptr;
-            }
+            const Params* params() const;
 
             /**
              * \brief A record is considered null of it doesn't carry any
              *        information.
              */
-            bool isNull() const {
-                return !(m_paramsValid || m_layoutTypeValid);
-            }
+            bool isNull() const;
 
         protected:
-            void setParams(Params const& params);
+            void setParams(const Params& params);
 
             void setLayoutType(LayoutType layout_type);
 
-            void clearParams() {
-                m_paramsValid = false;
-            }
+            void clearParams();
 
-            void clearLayoutType() {
-                m_layoutTypeValid = false;
-            }
+            void clearLayoutType();
 
             /**
              * \brief Checks if a particular layout type conflicts with PageLayout
@@ -92,13 +82,13 @@ namespace page_split {
         class Record : public BaseRecord {
             // Member-wise copying is OK.
         public:
-            Record(LayoutType default_layout_type);
+            explicit Record(LayoutType default_layout_type);
 
-            Record(BaseRecord const& base_record, LayoutType default_layout_type);
+            Record(const BaseRecord& base_record, LayoutType default_layout_type);
 
             LayoutType combinedLayoutType() const;
 
-            void update(UpdateAction const& action);
+            void update(const UpdateAction& action);
 
             bool hasLayoutTypeConflict() const;
 
@@ -110,18 +100,13 @@ namespace page_split {
         class UpdateAction {
             friend class Settings::Record;
         public:
-            UpdateAction()
-                    : m_params(PageLayout(), Dependencies(), MODE_AUTO),
-                      m_layoutType(AUTO_LAYOUT_TYPE),
-                      m_paramsAction(DONT_TOUCH),
-                      m_layoutTypeAction(DONT_TOUCH) {
-            }
+            UpdateAction();
 
             void setLayoutType(LayoutType layout_type);
 
             void clearLayoutType();
 
-            void setParams(Params const& params);
+            void setParams(const Params& params);
 
             void clearParams();
 
@@ -141,14 +126,14 @@ namespace page_split {
 
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         /**
          * \brief Reset all settings to their initial state.
          */
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
         LayoutType defaultLayoutType() const;
 
@@ -162,12 +147,12 @@ namespace page_split {
          * Sets layout type for specified pages, removing other page
          * parameters where they conflict with the new layout type.
          */
-        void setLayoutTypeFor(LayoutType layout_type, std::set<PageId> const& pages);
+        void setLayoutTypeFor(LayoutType layout_type, const std::set<PageId>& pages);
 
         /**
          * \brief Returns all data related to a page as a single object.
          */
-        Record getPageRecord(ImageId const& image_id) const;
+        Record getPageRecord(const ImageId& image_id) const;
 
         /**
          * \brief Performs the requested update on the page.
@@ -176,7 +161,7 @@ namespace page_split {
          * type and page parameters, the page parameters will be
          * cleared.
          */
-        void updatePage(ImageId const& image_id, UpdateAction const& action);
+        void updatePage(const ImageId& image_id, const UpdateAction& action);
 
         /**
          * \brief Performs a conditional update on the page.
@@ -186,16 +171,16 @@ namespace page_split {
          * Whether the update took place or not, the current page record
          * (updated or not) will be returned.
          */
-        Record conditionalUpdate(ImageId const& image_id, UpdateAction const& action, bool* conflict = nullptr);
+        Record conditionalUpdate(const ImageId& image_id, const UpdateAction& action, bool* conflict = nullptr);
 
     private:
         typedef std::map<ImageId, BaseRecord> PerPageRecords;
 
-        Record getPageRecordLocked(ImageId const& image_id) const;
+        Record getPageRecordLocked(const ImageId& image_id) const;
 
-        void updatePageLocked(ImageId const& image_id, UpdateAction const& action);
+        void updatePageLocked(const ImageId& image_id, const UpdateAction& action);
 
-        void updatePageLocked(PerPageRecords::iterator it, UpdateAction const& action);
+        void updatePageLocked(PerPageRecords::iterator it, const UpdateAction& action);
 
         mutable QMutex m_mutex;
         PerPageRecords m_perPageRecords;

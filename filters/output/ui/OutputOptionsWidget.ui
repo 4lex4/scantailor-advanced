@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
-    <height>627</height>
+    <width>241</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -86,9 +86,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-115</y>
-        <width>230</width>
-        <height>988</height>
+        <y>0</y>
+        <width>226</width>
+        <height>1137</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -119,8 +119,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -152,8 +152,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -169,8 +169,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -189,8 +189,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -224,8 +224,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -240,8 +240,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -276,58 +276,64 @@
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>0</width>
-                 <height>17</height>
+                 <width>1</width>
+                 <height>1</height>
                 </size>
                </property>
               </spacer>
              </item>
              <item>
-              <layout class="QFormLayout" name="formLayout">
-               <property name="fieldGrowthPolicy">
-                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-               </property>
-               <property name="horizontalSpacing">
-                <number>0</number>
-               </property>
-               <property name="verticalSpacing">
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <property name="spacing">
                 <number>2</number>
                </property>
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
                <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
                 <number>5</number>
                </property>
                <property name="bottomMargin">
                 <number>5</number>
                </property>
-               <item row="0" column="0">
+               <item>
                 <widget class="QCheckBox" name="cutMarginsCB">
                  <property name="text">
                   <string>Cut margins</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item>
                 <widget class="QCheckBox" name="equalizeIlluminationCB">
+                 <property name="toolTip">
+                  <string>Normalize illumination before binarization.</string>
+                 </property>
                  <property name="text">
                   <string>Equalize illumination (B&amp;&amp;W)</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item>
                 <widget class="QCheckBox" name="equalizeIlluminationColorCB">
+                 <property name="toolTip">
+                  <string>Normalize illumination in color mode / in picture zones in mixed mode.</string>
+                 </property>
                  <property name="text">
                   <string>Equalize illumination (Color)</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item>
                 <widget class="QCheckBox" name="savitzkyGolaySmoothingCB">
                  <property name="text">
                   <string>Savitzky-Golay smoothing</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item>
                 <widget class="QCheckBox" name="morphologicalSmoothingCB">
                  <property name="text">
                   <string>Morphological smoothing</string>
@@ -343,8 +349,8 @@
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>0</width>
-                 <height>17</height>
+                 <width>1</width>
+                 <height>1</height>
                 </size>
                </property>
               </spacer>
@@ -373,8 +379,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -396,8 +402,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -428,8 +434,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -451,8 +457,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -472,6 +478,300 @@
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="colorOperationsOptions">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="title">
+             <string>Color operations</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_30">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>1</width>
+                 <height>1</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_14">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>5</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="colorSegmentationCB">
+                 <property name="toolTip">
+                  <string>Split the image into color segments and colorize b&amp;w mask.</string>
+                 </property>
+                 <property name="statusTip">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>Color segmentation</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="segmenterOptionsWidget" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer_40">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                     <enum>QSizePolicy::Minimum</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>15</width>
+                      <height>1</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="reduceNoiseLabel">
+                    <property name="text">
+                     <string>Reduce noise:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="reduceNoiseSB">
+                    <property name="toolTip">
+                     <string/>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="minimum">
+                     <number>0</number>
+                    </property>
+                    <property name="maximum">
+                     <number>999</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_45">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>1</width>
+                      <height>1</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="posterizeCB">
+                 <property name="toolTip">
+                  <string>Reduce the number of colors of the output image by grouping similar colors.</string>
+                 </property>
+                 <property name="statusTip">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>Posterize</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="posterizeOptionsWidget" native="true">
+                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_17">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <spacer name="horizontalSpacer_32">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Minimum</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>15</width>
+                        <height>1</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="posterizeLevelLabel">
+                      <property name="text">
+                       <string>Level:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="posterizeLevelSB">
+                      <property name="toolTip">
+                       <string>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="minimum">
+                       <number>2</number>
+                      </property>
+                      <property name="maximum">
+                       <number>255</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_33">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>1</width>
+                        <height>1</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_18">
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <spacer name="horizontalSpacer_34">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Minimum</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>15</width>
+                        <height>1</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="posterizeForceBwCB">
+                      <property name="toolTip">
+                       <string>Make dark and light gray gradients black and white respectively.</string>
+                      </property>
+                      <property name="statusTip">
+                       <string/>
+                      </property>
+                      <property name="text">
+                       <string>Force b&amp;&amp;w</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_35">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>1</width>
+                        <height>1</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_31">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>1</width>
+                 <height>1</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="QGroupBox" name="pictureShapeOptions">
             <property name="title">
              <string>Picture Shape</string>
@@ -486,8 +786,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -502,8 +802,8 @@
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>0</width>
-                   <height>20</height>
+                   <width>1</width>
+                   <height>1</height>
                   </size>
                  </property>
                 </spacer>
@@ -532,8 +832,8 @@
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>1</width>
+                    <height>1</height>
                    </size>
                   </property>
                  </spacer>
@@ -541,7 +841,7 @@
                 <item>
                  <widget class="QLabel" name="pictureShapeSensitivityLabel">
                   <property name="text">
-                   <string>Sensitivity (%): </string>
+                   <string>Sensitivity (%):</string>
                   </property>
                  </widget>
                 </item>
@@ -562,8 +862,8 @@
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>40</width>
-                    <height>20</height>
+                    <width>1</width>
+                    <height>1</height>
                    </size>
                   </property>
                  </spacer>
@@ -583,8 +883,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -603,8 +903,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -632,8 +932,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>17</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -658,6 +958,33 @@
                </widget>
               </item>
               <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_16">
+                <item>
+                 <spacer name="horizontalSpacer_29">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>15</width>
+                    <height>1</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="originalBackgroundCB">
+                  <property name="toolTip">
+                   <string>Save the original background of the foreground layer.</string>
+                  </property>
+                  <property name="text">
+                   <string>Original background</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
                <widget class="QRadioButton" name="colorForegroundRB">
                 <property name="text">
                  <string>Color foreground</string>
@@ -673,8 +1000,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>17</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -690,8 +1017,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -710,8 +1037,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -745,8 +1072,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -861,8 +1188,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -878,8 +1205,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -898,8 +1225,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -949,8 +1276,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -969,8 +1296,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -1001,8 +1328,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -1021,8 +1348,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -1038,8 +1365,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>
@@ -1058,8 +1385,8 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>0</width>
-                <height>20</height>
+                <width>1</width>
+                <height>1</height>
                </size>
               </property>
              </spacer>

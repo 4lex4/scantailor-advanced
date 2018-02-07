@@ -17,6 +17,8 @@
  */
 
 #include "ContentBoxPropagator.h"
+
+#include <utility>
 #include "CompositeCacheDrivenTask.h"
 #include "ProjectPages.h"
 #include "PageSequence.h"
@@ -28,17 +30,17 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
 public:
     Collector();
 
-    virtual void process(ImageTransformation const& xform, QRectF const& content_rect);
+    void process(const ImageTransformation& xform, const QRectF& content_rect) override;
 
     bool collected() const {
         return m_collected;
     }
 
-    ImageTransformation const& xform() const {
+    const ImageTransformation& xform() const {
         return m_xform;
     }
 
-    QRectF const& contentRect() const {
+    const QRectF& contentRect() const {
         return m_contentRect;
     }
 
@@ -49,19 +51,18 @@ private:
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> const& page_layout_filter,
-                                           intrusive_ptr<CompositeCacheDrivenTask> const& task)
-        : m_ptrPageLayoutFilter(page_layout_filter),
-          m_ptrTask(task) {
+ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
+                                           intrusive_ptr<CompositeCacheDrivenTask> task)
+        : m_ptrPageLayoutFilter(std::move(page_layout_filter)),
+          m_ptrTask(std::move(task)) {
 }
 
-ContentBoxPropagator::~ContentBoxPropagator() {
-}
+ContentBoxPropagator::~ContentBoxPropagator() = default;
 
-void ContentBoxPropagator::propagate(ProjectPages const& pages) {
-    PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
+void ContentBoxPropagator::propagate(const ProjectPages& pages) {
+    const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
 
-    for (PageInfo const& page_info : sequence) {
+    for (const PageInfo& page_info : sequence) {
         Collector collector;
         m_ptrTask->process(page_info, &collector);
         if (collector.collected()) {
@@ -82,7 +83,7 @@ ContentBoxPropagator::Collector::Collector()
           m_collected(false) {
 }
 
-void ContentBoxPropagator::Collector::process(ImageTransformation const& xform, QRectF const& content_rect) {
+void ContentBoxPropagator::Collector::process(const ImageTransformation& xform, const QRectF& content_rect) {
     m_xform = xform;
     m_contentRect = content_rect;
     m_collected = true;

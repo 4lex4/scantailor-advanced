@@ -30,7 +30,7 @@ namespace imageproc {
         BOOST_AUTO_TEST_SUITE(ShearTestSuite);
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 1, 1, 1, 1, 1, 1, 1, 0,
                         0, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -42,7 +42,7 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
 
-                static int const h_out[] = {
+                static const int h_out[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 1, 1, 1, 1, 1,
                         0, 0, 0, 1, 1, 1, 1, 1, 1,
@@ -54,7 +54,7 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
 
-                static int const v_out[] = {
+                static const int v_out[] = {
                         0, 1, 1, 1, 0, 0, 0, 0, 0,
                         0, 1, 1, 1, 1, 0, 0, 0, 0,
                         0, 1, 1, 1, 1, 1, 0, 0, 0,
@@ -66,14 +66,14 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 1, 1, 1, 0
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 9));
-                BinaryImage const h_out_img(makeBinaryImage(h_out, 9, 9));
-                BinaryImage const v_out_img(makeBinaryImage(v_out, 9, 9));
+                const BinaryImage img(makeBinaryImage(inp, 9, 9));
+                const BinaryImage h_out_img(makeBinaryImage(h_out, 9, 9));
+                const BinaryImage v_out_img(makeBinaryImage(v_out, 9, 9));
 
-                BinaryImage const h_shear = hShear(img, -1.0, 0.5 * img.height(), WHITE);
+                const BinaryImage h_shear = hShear(img, -1.0, 0.5 * img.height(), WHITE);
                 BOOST_REQUIRE(h_shear == h_out_img);
 
-                BinaryImage const v_shear = vShear(img, 1.0, 0.5 * img.width(), WHITE);
+                const BinaryImage v_shear = vShear(img, 1.0, 0.5 * img.width(), WHITE);
                 BOOST_REQUIRE(v_shear == v_out_img);
 
                 BinaryImage h_shear_inplace(img);

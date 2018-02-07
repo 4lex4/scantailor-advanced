@@ -26,8 +26,8 @@
 #include <stdexcept>
 #include <string>
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
-#include <assert.h>
+#include <cstddef>
+#include <cassert>
 
 /**
  * \brief Solves Ax = b using LU decomposition.
@@ -59,7 +59,7 @@ public:
      * \throw std::runtime_error If the system can't be solved.
      */
     template<typename T>
-    void solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const;
+    void solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuffer) const;
 
     /**
      * \brief A simplified version of the one above.
@@ -67,7 +67,7 @@ public:
      * In this version, buffers are allocated internally.
      */
     template<typename T>
-    void solve(T const* A, T* X, T const* B) const;
+    void solve(const T* A, T* X, const T* B) const;
 
 private:
     size_t m_rowsAB;
@@ -77,11 +77,11 @@ private:
 
 
 template<typename T>
-void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuffer) const {
+void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuffer) const {
     using namespace std;  // To catch different overloads of abs()
-    T const epsilon(sqrt(numeric_limits<T>::epsilon()));
+    const T epsilon(sqrt(numeric_limits<T>::epsilon()));
 
-    size_t const num_elements_A = m_rowsAB * m_colsArowsX;
+    const size_t num_elements_A = m_rowsAB * m_colsArowsX;
 
     T* const lu_data = tbuffer;  // Dimensions: m_rowsAB, m_colsArowsX
     tbuffer += num_elements_A;
@@ -103,7 +103,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
         size_t virt_pivot_row = i;
         T largest_abs_pivot(abs(p_col[perm[i]]));
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
-            T const abs_pivot(abs(p_col[perm[j]]));
+            const T abs_pivot(abs(p_col[perm[j]]));
             if (abs_pivot > largest_abs_pivot) {
                 largest_abs_pivot = abs_pivot;
                 virt_pivot_row = j;
@@ -114,16 +114,16 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
             throw std::runtime_error("LinearSolver: not a full rank matrix");
         }
 
-        size_t const phys_pivot_row(perm[virt_pivot_row]);
+        const size_t phys_pivot_row(perm[virt_pivot_row]);
         perm[virt_pivot_row] = perm[i];
         perm[i] = phys_pivot_row;
 
-        T const* const p_pivot = p_col + phys_pivot_row;
-        T const r_pivot(T(1) / *p_pivot);
+        const T* const p_pivot = p_col + phys_pivot_row;
+        const T r_pivot(T(1) / *p_pivot);
 
         // Eliminate entries below the pivot.
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
-            T const* p1 = p_pivot;
+            const T* p1 = p_pivot;
             T* p2 = p_col + perm[j];
             if (abs(*p2) <= epsilon) {
                 // We consider it's already zero.
@@ -131,7 +131,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
                 continue;
             }
 
-            T const factor(*p2 * r_pivot);
+            const T factor(*p2 * r_pivot);
             *p2 = factor;  // Factor goes into L, zero goes into U.
             // Transform the rest of the row.
             for (size_t col = i + 1; col < m_colsArowsX; ++col) {
@@ -146,15 +146,15 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
     T* const y_data = tbuffer;  // Dimensions: m_colsArowsX, m_colsBX
     // tbuffer += m_colsArowsX * m_colsBX;
     T* p_y_col = y_data;
-    T const* p_b_col = B;
+    const T* p_b_col = B;
     for (size_t y_col = 0; y_col < m_colsBX; ++y_col) {
         size_t virt_row = 0;
         for (; virt_row < m_colsArowsX; ++virt_row) {
-            int const phys_row = perm[virt_row];
+            const int phys_row = static_cast<const int>(perm[virt_row]);
             T right(p_b_col[phys_row]);
 
             // Move already calculated factors to the right side.
-            T const* p_lu = lu_data + phys_row;
+            const T* p_lu = lu_data + phys_row;
             // Go left to right, stop at diagonal.
             for (size_t lu_col = 0; lu_col < virt_row; ++lu_col) {
                 right -= *p_lu * p_y_col[lu_col];
@@ -167,11 +167,11 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
 
         // Continue below the square part (if any).
         for (; virt_row < m_rowsAB; ++virt_row) {
-            int const phys_row = perm[virt_row];
+            const int phys_row = static_cast<const int>(perm[virt_row]);
             T right(p_b_col[phys_row]);
 
             // Move everything to the right side, then verify it's zero.
-            T const* p_lu = lu_data + phys_row;
+            const T* p_lu = lu_data + phys_row;
             // Go left to right all the way.
             for (size_t lu_col = 0; lu_col < m_colsArowsX; ++lu_col) {
                 right -= *p_lu * p_y_col[lu_col];
@@ -189,15 +189,15 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
     // Now solve Ux = y
     T* p_x_col = X;
     p_y_col = y_data;
-    T const* p_lu_last_col = lu_data + (m_colsArowsX - 1) * m_rowsAB;
+    const T* p_lu_last_col = lu_data + (m_colsArowsX - 1) * m_rowsAB;
     for (size_t x_col = 0; x_col < m_colsBX; ++x_col) {
-        for (int virt_row = m_colsArowsX - 1; virt_row >= 0; --virt_row) {
+        for (int virt_row = static_cast<int>(m_colsArowsX - 1); virt_row >= 0; --virt_row) {
             T right(p_y_col[virt_row]);
 
             // Move already calculated factors to the right side.
-            T const* p_lu = p_lu_last_col + perm[virt_row];
+            const T* p_lu = p_lu_last_col + perm[virt_row];
             // Go right to left, stop at diagonal.
-            for (int lu_col = m_colsArowsX - 1; lu_col > virt_row; --lu_col) {
+            for (int lu_col = static_cast<int>(m_colsArowsX - 1); lu_col > virt_row; --lu_col) {
                 right -= *p_lu * p_x_col[lu_col];
                 p_lu -= m_rowsAB;
             }
@@ -210,7 +210,7 @@ void LinearSolver::solve(T const* A, T* X, T const* B, T* tbuffer, size_t* pbuff
 } // LinearSolver::solve
 
 template<typename T>
-void LinearSolver::solve(T const* A, T* X, T const* B) const {
+void LinearSolver::solve(const T* A, T* X, const T* B) const {
     boost::scoped_array<T> tbuffer(new T[m_colsArowsX * (m_rowsAB + m_colsBX)]);
     boost::scoped_array<size_t> pbuffer(new size_t[m_rowsAB]);
 

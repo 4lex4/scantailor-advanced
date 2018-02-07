@@ -38,9 +38,9 @@ namespace imageproc {
                 BOOST_CHECK(eraser.nextConnComp().isNull());
             }
 
-            static bool checkAlignedImage(ConnCompEraserExt const& eraser, BinaryImage const& nonaligned) {
-                BinaryImage const aligned(eraser.computeConnCompImageAligned());
-                int const pad = aligned.width() - nonaligned.width();
+            static bool checkAlignedImage(const ConnCompEraserExt& eraser, const BinaryImage& nonaligned) {
+                const BinaryImage aligned(eraser.computeConnCompImageAligned());
+                const int pad = aligned.width() - nonaligned.width();
                 if (pad < 0) {
                     return false;
                 }
@@ -68,7 +68,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_small_image) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 1, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 1, 1, 1, 1,
@@ -81,7 +81,7 @@ namespace imageproc {
 
                 std::list<BinaryImage> c4i;
 
-                static int const out4_1[] = {
+                static const int out4_1[] = {
                         1, 1, 0,
                         0, 1, 0,
                         0, 1, 0,
@@ -91,37 +91,37 @@ namespace imageproc {
                 };
                 c4i.push_back(makeBinaryImage(out4_1, 3, 6));
 
-                static int const out4_2[] = {
+                static const int out4_2[] = {
                         1, 1
                 };
                 c4i.push_back(makeBinaryImage(out4_2, 2, 1));
 
-                static int const out4_3[] = {
+                static const int out4_3[] = {
                         0, 0, 0, 0, 0, 1, 0,
                         1, 1, 1, 1, 1, 1, 1
                 };
                 c4i.push_back(makeBinaryImage(out4_3, 7, 2));
 
-                static int const out4_4[] = {
+                static const int out4_4[] = {
                         1, 1, 1, 1,
                         0, 1, 0, 0,
                         0, 1, 1, 0,
                 };
                 c4i.push_back(makeBinaryImage(out4_4, 4, 3));
 
-                static int const out4_5[] = {
+                static const int out4_5[] = {
                         1
                 };
                 c4i.push_back(makeBinaryImage(out4_5, 1, 1));
 
-                static int const out4_6[] = {
+                static const int out4_6[] = {
                         1
                 };
                 c4i.push_back(makeBinaryImage(out4_6, 1, 1));
 
                 std::list<BinaryImage> c8i;
 
-                static int const out8_1[] = {
+                static const int out8_1[] = {
                         0, 0, 1, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 0, 0, 0, 0,
                         0, 0, 0, 1, 0, 1, 1, 1, 1,
@@ -131,7 +131,7 @@ namespace imageproc {
                 };
                 c8i.push_back(makeBinaryImage(out8_1, 9, 6));
 
-                static int const out8_2[] = {
+                static const int out8_2[] = {
                         0, 0, 0, 0, 0, 1, 0, 1,
                         1, 1, 1, 1, 1, 1, 1, 0,
                 };
@@ -142,8 +142,8 @@ namespace imageproc {
                 ConnComp cc;
                 ConnCompEraserExt eraser4(img, CONN4);
                 while (!(cc = eraser4.nextConnComp()).isNull()) {
-                    BinaryImage const cc_img(eraser4.computeConnCompImage());
-                    std::list<BinaryImage>::iterator const it(
+                    const BinaryImage cc_img(eraser4.computeConnCompImage());
+                    const auto it(
                             std::find(c4i.begin(), c4i.end(), cc_img)
                     );
                     if (it != c4i.end()) {
@@ -157,8 +157,8 @@ namespace imageproc {
 
                 ConnCompEraserExt eraser8(img, CONN8);
                 while (!(cc = eraser8.nextConnComp()).isNull()) {
-                    BinaryImage const cc_img(eraser8.computeConnCompImage());
-                    std::list<BinaryImage>::iterator const it(
+                    const BinaryImage cc_img(eraser8.computeConnCompImage());
+                    const auto it(
                             std::find(c8i.begin(), c8i.end(), cc_img)
                     );
                     if (it != c8i.end()) {

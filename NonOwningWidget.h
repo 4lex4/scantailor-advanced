@@ -27,9 +27,9 @@
  */
 class NonOwningWidget : public QWidget {
 public:
-    NonOwningWidget(QWidget* parent = 0);
+    explicit NonOwningWidget(QWidget* parent = nullptr);
 
-    virtual ~NonOwningWidget();
+    ~NonOwningWidget() override;
 };
 
 

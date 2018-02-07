@@ -21,8 +21,7 @@
 
 class AbstractFilterDataCollector {
 public:
-    virtual ~AbstractFilterDataCollector() {
-    }
+    virtual ~AbstractFilterDataCollector() = default;
 };
 
 

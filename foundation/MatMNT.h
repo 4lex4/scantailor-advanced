@@ -19,7 +19,7 @@
 #ifndef MAT_MNT_H_
 #define MAT_MNT_H_
 
-#include <stddef.h>
+#include <cstddef>
 
 template<size_t M, size_t N, typename T>
 class MatMNT;
@@ -41,8 +41,8 @@ class MatMNT {
 public:
     typedef T type;
     enum {
-        ROWS = M,
-        COLS = N
+        ROWS = static_cast<int>(M),
+        COLS = static_cast<int>(N)
     };
 
     /**
@@ -56,7 +56,7 @@ public:
      * Conversion is done by static casts.  Data elements must be in column-major order.
      */
     template<typename OT>
-    explicit MatMNT(OT const* data);
+    explicit MatMNT(const OT* data);
 
     /**
      * \brief Construction from a matrix of same dimensions but another type.
@@ -64,7 +64,7 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    MatMNT(MatMNT<M, N, OT> const& other);
+    explicit MatMNT(const MatMNT<M, N, OT>& other);
 
     /**
      * \brief Assignment from a matrix of same dimensions but another type.
@@ -72,9 +72,9 @@ public:
      * Conversion is done by static casts.
      */
     template<typename OT>
-    MatMNT& operator=(MatMNT<M, N, OT> const& other);
+    MatMNT& operator=(const MatMNT<M, N, OT>& other);
 
-    T const* data() const {
+    const T* data() const {
         return m_data;
     }
 
@@ -82,7 +82,7 @@ public:
         return m_data;
     }
 
-    T const& operator()(int i, int j) const {
+    const T& operator()(int i, int j) const {
         return m_data[i + j * M];
     }
 
@@ -97,7 +97,7 @@ private:
 
 template<size_t M, size_t N, typename T>
 MatMNT<M, N, T>::MatMNT() {
-    size_t const len = ROWS * COLS;
+    const size_t len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = T();
     }
@@ -105,8 +105,8 @@ MatMNT<M, N, T>::MatMNT() {
 
 template<size_t M, size_t N, typename T>
 template<typename OT>
-MatMNT<M, N, T>::MatMNT(OT const* data) {
-    size_t const len = ROWS * COLS;
+MatMNT<M, N, T>::MatMNT(const OT* data) {
+    const size_t len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = static_cast<T>(data[i]);
     }
@@ -114,9 +114,9 @@ MatMNT<M, N, T>::MatMNT(OT const* data) {
 
 template<size_t M, size_t N, typename T>
 template<typename OT>
-MatMNT<M, N, T>::MatMNT(MatMNT<M, N, OT> const& other) {
-    OT const* data = other.data();
-    size_t const len = ROWS * COLS;
+MatMNT<M, N, T>::MatMNT(const MatMNT<M, N, OT>& other) {
+    const OT* data = other.data();
+    const size_t len = ROWS * COLS;
     for (size_t i = 0; i < len; ++i) {
         m_data[i] = static_cast<T>(data[i]);
     }

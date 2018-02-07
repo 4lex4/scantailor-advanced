@@ -40,12 +40,12 @@ namespace page_layout {
          * non-empty rectangle centered in the page's crop area, which
          * is retrieved from the ImageTransformation.
          */
-        static QRectF adaptContentRect(ImageTransformation const& xform, QRectF const& content_rect);
+        static QRectF adaptContentRect(const ImageTransformation& xform, const QRectF& content_rect);
 
         /**
          * \brief Calculates the physical size of a rectangle in a transformed space.
          */
-        static QSizeF calcRectSizeMM(ImageTransformation const& xform, QRectF const& rect);
+        static QSizeF calcRectSizeMM(const ImageTransformation& xform, const QRectF& rect);
 
         /**
          * \brief Extend a rectangle transformed into a polygon with margins.
@@ -55,7 +55,7 @@ namespace page_layout {
          * (unclosed vs closed polygon).  It must have 90 degree angles and
          * must not be empty.
          */
-        static void extendPolyRectWithMargins(QPolygonF& poly_rect, Margins const& margins);
+        static void extendPolyRectWithMargins(QPolygonF& poly_rect, const Margins& margins);
 
         /**
          * \brief Calculates margins to extend hard_size_mm to aggregate_hard_size_mm.
@@ -66,14 +66,14 @@ namespace page_layout {
          * \return Non-negative margins that extend \p hard_size_mm to
          *         \p aggregate_hard_size_mm.
          */
-        static Margins calcSoftMarginsMM(QSizeF const& hard_size_mm,
-                                         QSizeF const& aggregate_hard_size_mm,
-                                         Alignment const& alignment,
-                                         QRectF const& contentRect,
-                                         QRectF const& agg_content_rect);
+        static Margins calcSoftMarginsMM(const QSizeF& hard_size_mm,
+                                         const QSizeF& aggregate_hard_size_mm,
+                                         const Alignment& alignment,
+                                         const QRectF& contentRect,
+                                         const QRectF& agg_content_rect);
 
         static Margins
-        calcMarginsMM(ImageTransformation const& xform, QRectF const& page_rect, QRectF const& content_rect);
+        calcMarginsMM(const ImageTransformation& xform, const QRectF& page_rect, const QRectF& content_rect);
 
         /**
          * \brief Calculates the page rect (content + hard margins + soft margins)
@@ -84,16 +84,16 @@ namespace page_layout {
          * \param aggregate_hard_size_mm Maximum width and height across all pages.
          * \return Page rectangle (as a polygon) in physical image coordinates.
          */
-        static QPolygonF calcPageRectPhys(ImageTransformation const& xform,
-                                          QPolygonF const& content_rect_phys,
-                                          Params const& params,
-                                          QSizeF const& aggregate_hard_size_mm,
-                                          QRectF const& agg_content_rect);
+        static QPolygonF calcPageRectPhys(const ImageTransformation& xform,
+                                          const QPolygonF& content_rect_phys,
+                                          const Params& params,
+                                          const QSizeF& aggregate_hard_size_mm,
+                                          const QRectF& agg_content_rect);
 
     private:
-        static QPointF getRightUnitVector(QPolygonF const& poly_rect);
+        static QPointF getRightUnitVector(const QPolygonF& poly_rect);
 
-        static QPointF getDownUnitVector(QPolygonF const& poly_rect);
+        static QPointF getDownUnitVector(const QPolygonF& poly_rect);
     };
 }  // namespace page_layout
 #endif // ifndef PAGE_LAYOUT_UTILS_H_

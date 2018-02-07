@@ -21,23 +21,23 @@
 #include "Transform.h"
 #include "Grayscale.h"
 #include <QDebug>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
     namespace {
         struct XLess {
-            bool operator()(QPointF const& lhs, QPointF const& rhs) const {
+            bool operator()(const QPointF& lhs, const QPointF& rhs) const {
                 return lhs.x() < rhs.x();
             }
         };
 
         struct YLess {
-            bool operator()(QPointF const& lhs, QPointF const& rhs) const {
+            bool operator()(const QPointF& lhs, const QPointF& rhs) const {
                 return lhs.y() < rhs.y();
             }
         };
 
-        static QSizeF calcSrcUnitSize(QTransform const& xform, QSizeF const& min) {
+        QSizeF calcSrcUnitSize(const QTransform& xform, const QSizeF& min) {
             // Imagine a rectangle of (0, 0, 1, 1), except we take
             // centers of its edges instead of its vertices.
             QPolygonF dst_poly;
@@ -48,33 +48,33 @@ namespace imageproc {
 
             QPolygonF src_poly(xform.map(dst_poly));
             std::sort(src_poly.begin(), src_poly.end(), XLess());
-            double const width = src_poly.back().x() - src_poly.front().x();
+            const double width = src_poly.back().x() - src_poly.front().x();
             std::sort(src_poly.begin(), src_poly.end(), YLess());
-            double const height = src_poly.back().y() - src_poly.front().y();
+            const double height = src_poly.back().y() - src_poly.front().y();
 
-            QSizeF const min32(min * 32.0);
+            const QSizeF min32(min * 32.0);
 
             return QSizeF(
-                    std::max(min32.width(), qreal(width)),
-                    std::max(min32.height(), qreal(height))
+                    std::max(min32.width(), width),
+                    std::max(min32.height(), height)
             );
         }
 
         template<typename StorageUnit, typename Mixer>
-        static void transformGeneric(StorageUnit const* const src_data,
-                                     int const src_stride,
-                                     QSize const src_size,
+        static void transformGeneric(const StorageUnit* const src_data,
+                                     const int src_stride,
+                                     const QSize src_size,
                                      StorageUnit* const dst_data,
-                                     int const dst_stride,
-                                     QTransform const& xform,
-                                     QRect const& dst_rect,
-                                     StorageUnit const outside_color,
-                                     int const outside_flags,
-                                     QSizeF const& min_mapping_area) {
-            int const sw = src_size.width();
-            int const sh = src_size.height();
-            int const dw = dst_rect.width();
-            int const dh = dst_rect.height();
+                                     const int dst_stride,
+                                     const QTransform& xform,
+                                     const QRect& dst_rect,
+                                     const StorageUnit outside_color,
+                                     const int outside_flags,
+                                     const QSizeF& min_mapping_area) {
+            const int sw = src_size.width();
+            const int sh = src_size.height();
+            const int dw = dst_rect.width();
+            const int dh = dst_rect.height();
 
             StorageUnit* dst_line = dst_data;
 
@@ -86,19 +86,19 @@ namespace imageproc {
             // sx32 = dx*inv_xform.m11() + dy*inv_xform.m21() + inv_xform.dx();
             // sy32 = dy*inv_xform.m22() + dx*inv_xform.m12() + inv_xform.dy();
 
-            QSizeF const src32_unit_size(calcSrcUnitSize(inv_xform, min_mapping_area));
-            int const src32_unit_w = std::max<int>(1, qRound(src32_unit_size.width()));
-            int const src32_unit_h = std::max<int>(1, qRound(src32_unit_size.height()));
+            const QSizeF src32_unit_size(calcSrcUnitSize(inv_xform, min_mapping_area));
+            const int src32_unit_w = std::max<int>(1, qRound(src32_unit_size.width()));
+            const int src32_unit_h = std::max<int>(1, qRound(src32_unit_size.height()));
 
             for (int dy = 0; dy < dh; ++dy, dst_line += dst_stride) {
-                double const f_dy_center = dy + 0.5;
-                double const f_sx32_base = f_dy_center * inv_xform.m21() + inv_xform.dx();
-                double const f_sy32_base = f_dy_center * inv_xform.m22() + inv_xform.dy();
+                const double f_dy_center = dy + 0.5;
+                const double f_sx32_base = f_dy_center * inv_xform.m21() + inv_xform.dx();
+                const double f_sy32_base = f_dy_center * inv_xform.m22() + inv_xform.dy();
 
                 for (int dx = 0; dx < dw; ++dx) {
-                    double const f_dx_center = dx + 0.5;
-                    double const f_sx32_center = f_sx32_base + f_dx_center * inv_xform.m11();
-                    double const f_sy32_center = f_sy32_base + f_dx_center * inv_xform.m12();
+                    const double f_dx_center = dx + 0.5;
+                    const double f_sx32_center = f_sx32_base + f_dx_center * inv_xform.m11();
+                    const double f_sy32_center = f_sy32_base + f_dx_center * inv_xform.m12();
                     int src32_left = (int) f_sx32_center - (src32_unit_w >> 1);
                     int src32_top = (int) f_sy32_center - (src32_unit_h >> 1);
                     int src32_right = src32_left + src32_unit_w;
@@ -115,8 +115,8 @@ namespace imageproc {
                         if (outside_flags & OutsidePixels::COLOR) {
                             dst_line[dx] = outside_color;
                         } else {
-                            int const src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
-                            int const src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
+                            const int src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
+                            const int src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
                             dst_line[dx] = src_data[src_y * src_stride + src_x];
                         }
                         continue;
@@ -135,37 +135,37 @@ namespace imageproc {
                     unsigned background_area = 0;
 
                     if (src_top < 0) {
-                        unsigned const top_fraction = 32 - (src32_top & 31);
-                        unsigned const hor_fraction = src32_right - src32_left;
+                        const unsigned top_fraction = 32 - (src32_top & 31);
+                        const unsigned hor_fraction = src32_right - src32_left;
                         background_area += top_fraction * hor_fraction;
-                        unsigned const full_pixels_ver = -1 - src_top;
+                        const unsigned full_pixels_ver = -1 - src_top;
                         background_area += hor_fraction * (full_pixels_ver << 5);
                         src_top = 0;
                         src32_top = 0;
                     }
                     if (src_bottom >= sh) {
-                        unsigned const bottom_fraction = src32_bottom - (src_bottom << 5);
-                        unsigned const hor_fraction = src32_right - src32_left;
+                        const unsigned bottom_fraction = src32_bottom - (src_bottom << 5);
+                        const unsigned hor_fraction = src32_right - src32_left;
                         background_area += bottom_fraction * hor_fraction;
-                        unsigned const full_pixels_ver = src_bottom - sh;
+                        const unsigned full_pixels_ver = src_bottom - sh;
                         background_area += hor_fraction * (full_pixels_ver << 5);
                         src_bottom = sh - 1;  // inclusive
                         src32_bottom = sh << 5;  // exclusive
                     }
                     if (src_left < 0) {
-                        unsigned const left_fraction = 32 - (src32_left & 31);
-                        unsigned const vert_fraction = src32_bottom - src32_top;
+                        const unsigned left_fraction = 32 - (src32_left & 31);
+                        const unsigned vert_fraction = src32_bottom - src32_top;
                         background_area += left_fraction * vert_fraction;
-                        unsigned const full_pixels_hor = -1 - src_left;
+                        const unsigned full_pixels_hor = -1 - src_left;
                         background_area += vert_fraction * (full_pixels_hor << 5);
                         src_left = 0;
                         src32_left = 0;
                     }
                     if (src_right >= sw) {
-                        unsigned const right_fraction = src32_right - (src_right << 5);
-                        unsigned const vert_fraction = src32_bottom - src32_top;
+                        const unsigned right_fraction = src32_right - (src_right << 5);
+                        const unsigned vert_fraction = src32_bottom - src32_top;
                         background_area += right_fraction * vert_fraction;
-                        unsigned const full_pixels_hor = src_right - sw;
+                        const unsigned full_pixels_hor = src_right - sw;
                         background_area += vert_fraction * (full_pixels_hor << 5);
                         src_right = sw - 1;  // inclusive
                         src32_right = sw << 5;  // exclusive
@@ -181,34 +181,34 @@ namespace imageproc {
                         mixer.add(outside_color, background_area);
                     }
 
-                    unsigned const left_fraction = 32 - (src32_left & 31);
-                    unsigned const top_fraction = 32 - (src32_top & 31);
-                    unsigned const right_fraction = src32_right - (src_right << 5);
-                    unsigned const bottom_fraction = src32_bottom - (src_bottom << 5);
+                    const unsigned left_fraction = 32 - (src32_left & 31);
+                    const unsigned top_fraction = 32 - (src32_top & 31);
+                    const unsigned right_fraction = src32_right - (src_right << 5);
+                    const unsigned bottom_fraction = src32_bottom - (src_bottom << 5);
 
                     assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32
                            == static_cast<unsigned>(src32_right - src32_left));
                     assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32
                            == static_cast<unsigned>(src32_bottom - src32_top));
 
-                    unsigned const src_area = (src32_bottom - src32_top) * (src32_right - src32_left);
+                    const unsigned src_area = (src32_bottom - src32_top) * (src32_right - src32_left);
                     if (src_area == 0) {
                         if ((outside_flags & OutsidePixels::COLOR)) {
                             dst_line[dx] = outside_color;
                         } else {
-                            int const src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
-                            int const src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
+                            const int src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
+                            const int src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
                             dst_line[dx] = src_data[src_y * src_stride + src_x];
                         }
                         continue;
                     }
 
-                    StorageUnit const* src_line = &src_data[src_top * src_stride];
+                    const StorageUnit* src_line = &src_data[src_top * src_stride];
 
                     if (src_top == src_bottom) {
                         if (src_left == src_right) {
                             // dst pixel maps to a single src pixel
-                            StorageUnit const c = src_line[src_left];
+                            const StorageUnit c = src_line[src_left];
                             if (background_area == 0) {
                                 // common case optimization
                                 dst_line[dx] = c;
@@ -217,10 +217,10 @@ namespace imageproc {
                             mixer.add(c, src_area);
                         } else {
                             // dst pixel maps to a horizontal line of src pixels
-                            unsigned const vert_fraction = src32_bottom - src32_top;
-                            unsigned const left_area = vert_fraction * left_fraction;
-                            unsigned const middle_area = vert_fraction << 5;
-                            unsigned const right_area = vert_fraction * right_fraction;
+                            const unsigned vert_fraction = src32_bottom - src32_top;
+                            const unsigned left_area = vert_fraction * left_fraction;
+                            const unsigned middle_area = vert_fraction << 5;
+                            const unsigned right_area = vert_fraction * right_fraction;
 
                             mixer.add(src_line[src_left], left_area);
 
@@ -232,10 +232,10 @@ namespace imageproc {
                         }
                     } else if (src_left == src_right) {
                         // dst pixel maps to a vertical line of src pixels
-                        unsigned const hor_fraction = src32_right - src32_left;
-                        unsigned const top_area = hor_fraction * top_fraction;
-                        unsigned const middle_area = hor_fraction << 5;
-                        unsigned const bottom_area = hor_fraction * bottom_fraction;
+                        const unsigned hor_fraction = src32_right - src32_left;
+                        const unsigned top_area = hor_fraction * top_fraction;
+                        const unsigned middle_area = hor_fraction << 5;
+                        const unsigned bottom_area = hor_fraction * bottom_fraction;
 
                         src_line += src_left;
                         mixer.add(*src_line, top_area);
@@ -250,14 +250,14 @@ namespace imageproc {
                         mixer.add(*src_line, bottom_area);
                     } else {
                         // dst pixel maps to a block of src pixels
-                        unsigned const top_area = top_fraction << 5;
-                        unsigned const bottom_area = bottom_fraction << 5;
-                        unsigned const left_area = left_fraction << 5;
-                        unsigned const right_area = right_fraction << 5;
-                        unsigned const topleft_area = top_fraction * left_fraction;
-                        unsigned const topright_area = top_fraction * right_fraction;
-                        unsigned const bottomleft_area = bottom_fraction * left_fraction;
-                        unsigned const bottomright_area = bottom_fraction * right_fraction;
+                        const unsigned top_area = top_fraction << 5;
+                        const unsigned bottom_area = bottom_fraction << 5;
+                        const unsigned left_area = left_fraction << 5;
+                        const unsigned right_area = right_fraction << 5;
+                        const unsigned topleft_area = top_fraction * left_fraction;
+                        const unsigned topright_area = top_fraction * right_fraction;
+                        const unsigned bottomleft_area = bottom_fraction * left_fraction;
+                        const unsigned bottomright_area = bottom_fraction * right_fraction;
 
                         // process the top-left corner
                         mixer.add(src_line[src_left], topleft_area);
@@ -302,11 +302,11 @@ namespace imageproc {
         }  // transformGeneric
     }      // namespace
 
-    QImage transform(QImage const& src,
-                     QTransform const& xform,
-                     QRect const& dst_rect,
-                     OutsidePixels const outside_pixels,
-                     QSizeF const& min_mapping_area) {
+    QImage transform(const QImage& src,
+                     const QTransform& xform,
+                     const QRect& dst_rect,
+                     const OutsidePixels outside_pixels,
+                     const QSizeF& min_mapping_area) {
         if (src.isNull() || dst_rect.isEmpty()) {
             return QImage();
         }
@@ -346,28 +346,28 @@ namespace imageproc {
                 }
             default:
                 if (!src.hasAlphaChannel() && (qAlpha(outside_pixels.rgba()) == 0xff)) {
-                    QImage const src_rgb32(src.convertToFormat(QImage::Format_RGB32));
+                    const QImage src_rgb32(src.convertToFormat(QImage::Format_RGB32));
                     badAllocIfNull(src_rgb32);
                     QImage dst(dst_rect.size(), QImage::Format_RGB32);
                     badAllocIfNull(dst);
 
                     typedef uint32_t AccumType;
                     transformGeneric<uint32_t, RgbColorMixer<AccumType >>(
-                            (uint32_t const*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
+                            (const uint32_t*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(),
                             (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
                             outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
                     );
 
                     return dst;
                 } else {
-                    QImage const src_argb32(src.convertToFormat(QImage::Format_ARGB32));
+                    const QImage src_argb32(src.convertToFormat(QImage::Format_ARGB32));
                     badAllocIfNull(src_argb32);
                     QImage dst(dst_rect.size(), QImage::Format_ARGB32);
                     badAllocIfNull(dst);
 
                     typedef float AccumType;
                     transformGeneric<uint32_t, ArgbColorMixer<AccumType >>(
-                            (uint32_t const*) src_argb32.bits(),
+                            (const uint32_t*) src_argb32.bits(),
                             src_argb32.bytesPerLine() / 4, src_argb32.size(),
                             (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
                             outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
@@ -378,11 +378,11 @@ namespace imageproc {
         }
     }  // transform
 
-    GrayImage transformToGray(QImage const& src,
-                              QTransform const& xform,
-                              QRect const& dst_rect,
-                              OutsidePixels const outside_pixels,
-                              QSizeF const& min_mapping_area) {
+    GrayImage transformToGray(const QImage& src,
+                              const QTransform& xform,
+                              const QRect& dst_rect,
+                              const OutsidePixels outside_pixels,
+                              const QSizeF& min_mapping_area) {
         if (src.isNull() || dst_rect.isEmpty()) {
             return GrayImage();
         }
@@ -395,7 +395,7 @@ namespace imageproc {
             throw std::invalid_argument("transformToGray: dst_rect is invalid");
         }
 
-        GrayImage const gray_src(src);
+        const GrayImage gray_src(src);
         GrayImage dst(dst_rect.size());
 
         typedef unsigned AccumType;

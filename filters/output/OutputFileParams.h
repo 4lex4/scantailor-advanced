@@ -20,7 +20,7 @@
 #define OUTPUT_OUTPUT_FILE_PARAMS_H_
 
 #include <QtGlobal>
-#include <time.h>
+#include <ctime>
 
 class QDomDocument;
 class QDomElement;
@@ -34,20 +34,18 @@ namespace output {
     public:
         OutputFileParams();
 
-        explicit OutputFileParams(QFileInfo const& file_info);
+        explicit OutputFileParams(const QFileInfo& file_info);
 
-        explicit OutputFileParams(QDomElement const& el);
+        explicit OutputFileParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool const isValid() const {
-            return m_size >= 0;
-        }
+        const bool isValid() const;
 
         /**
          * \brief Returns true if it's likely we have two identical files.
          */
-        bool matches(OutputFileParams const& other) const;
+        bool matches(const OutputFileParams& other) const;
 
     private:
         qint64 m_size;

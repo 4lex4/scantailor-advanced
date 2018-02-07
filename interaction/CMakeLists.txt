@@ -14,7 +14,7 @@ SET(
         DragWatcher.cpp DragWatcher.h
         ZoomHandler.cpp ZoomHandler.h
         InteractiveXSpline.cpp InteractiveXSpline.h
-)
+        DraggablePolygon.cpp DraggablePolygon.h)
 
 SOURCE_GROUP(Sources FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

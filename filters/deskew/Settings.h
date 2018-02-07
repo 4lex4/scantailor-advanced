@@ -37,21 +37,23 @@ namespace deskew {
     public:
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
         void updateDeviation();
 
-        void setPageParams(PageId const& page_id, Params const& params);
+        void setPageParams(const PageId& page_id, const Params& params);
 
-        void clearPageParams(PageId const& page_id);
+        void clearPageParams(const PageId& page_id);
 
-        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
-        void setDegress(std::set<PageId> const& pages, Params const& params);
+        bool isParamsNull(const PageId& page_id) const;
+
+        void setDegress(const std::set<PageId>& pages, const Params& params);
 
         double maxDeviation() const {
             return m_maxDeviation;

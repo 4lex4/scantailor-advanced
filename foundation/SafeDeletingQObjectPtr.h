@@ -26,7 +26,7 @@ class SafeDeletingQObjectPtr {
 DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
 
 public:
-    SafeDeletingQObjectPtr(T* obj = 0)
+    explicit SafeDeletingQObjectPtr(T* obj = 0)
             : m_pObj(obj) {
     }
 

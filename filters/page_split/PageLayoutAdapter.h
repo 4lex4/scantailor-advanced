@@ -4,7 +4,7 @@
 
 #include <QtCore/QLineF>
 #include <QtCore/QRectF>
-#include <QtCore/QList>
+#include <QtCore/QVector>
 #include <memory>
 #include "PageLayout.h"
 
@@ -45,8 +45,8 @@ namespace page_split {
          *
          * @return the list of the adapted cutter lines.
          */
-        static std::unique_ptr<QList<QLineF>> adaptCutters(const QList<QLineF>& cuttersList,
-                                                           const QRectF& newRect);
+        static std::unique_ptr<QVector<QLineF>> adaptCutters(const QVector<QLineF>& cuttersList,
+                                                             const QRectF& newRect);
     };
 }
 

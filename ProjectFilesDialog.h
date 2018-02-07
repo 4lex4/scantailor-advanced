@@ -30,9 +30,9 @@
 class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
 Q_OBJECT
 public:
-    ProjectFilesDialog(QWidget* parent = 0);
+    explicit ProjectFilesDialog(QWidget* parent = nullptr);
 
-    virtual ~ProjectFilesDialog();
+    ~ProjectFilesDialog() override;
 
     QString inputDirectory() const;
 
@@ -46,15 +46,15 @@ public:
 
 private slots:
 
-    static QString sanitizePath(QString const& path);
+    static QString sanitizePath(const QString& path);
 
     void inpDirBrowse();
 
     void outDirBrowse();
 
-    void inpDirEdited(QString const& text);
+    void inpDirEdited(const QString& text);
 
-    void outDirEdited(QString const& text);
+    void outDirEdited(const QString& text);
 
     void addToProject();
 
@@ -68,13 +68,13 @@ private:
     class SortedFileList;
     class ItemVisualOrdering;
 
-    void setInputDir(QString const& dir, bool auto_add_files = true);
+    void setInputDir(const QString& dir, bool auto_add_files = true);
 
-    void setOutputDir(QString const& dir);
+    void setOutputDir(const QString& dir);
 
     void startLoadingMetadata();
 
-    virtual void timerEvent(QTimerEvent* event);
+    void timerEvent(QTimerEvent* event) override;
 
     void finishLoadingMetadata();
 

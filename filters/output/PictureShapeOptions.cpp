@@ -8,12 +8,12 @@ namespace output {
               sensitivity(100) {
     }
 
-    PictureShapeOptions::PictureShapeOptions(QDomElement const& el)
+    PictureShapeOptions::PictureShapeOptions(const QDomElement& el)
             : pictureShape(parsePictureShape(el.attribute("pictureShape"))),
               sensitivity(el.attribute("sensitivity").toInt()) {
     }
 
-    QDomElement PictureShapeOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement PictureShapeOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("pictureShape", formatPictureShape(pictureShape));
         el.setAttribute("sensitivity", sensitivity);
@@ -21,18 +21,20 @@ namespace output {
         return el;
     }
 
-    bool PictureShapeOptions::operator==(PictureShapeOptions const& other) const {
+    bool PictureShapeOptions::operator==(const PictureShapeOptions& other) const {
         return (pictureShape == other.pictureShape)
                && (sensitivity == other.sensitivity);
     }
 
-    bool PictureShapeOptions::operator!=(PictureShapeOptions const& other) const {
+    bool PictureShapeOptions::operator!=(const PictureShapeOptions& other) const {
         return !(*this == other);
     }
 
     PictureShape PictureShapeOptions::parsePictureShape(const QString& str) {
         if (str == "rectangular") {
             return RECTANGULAR_SHAPE;
+        } else if (str == "off") {
+            return OFF_SHAPE;
         } else {
             return FREE_SHAPE;
         }
@@ -41,6 +43,9 @@ namespace output {
     QString PictureShapeOptions::formatPictureShape(PictureShape type) {
         QString str = "";
         switch (type) {
+            case OFF_SHAPE:
+                str = "off";
+                break;
             case FREE_SHAPE:
                 str = "free";
                 break;

@@ -28,6 +28,7 @@ class TaskStatus;
 class FilterData;
 class ImageTransformation;
 class QRectF;
+class Dpi;
 
 namespace output {
     class Task;
@@ -41,22 +42,24 @@ namespace page_layout {
     DECLARE_NON_COPYABLE(Task)
 
     public:
-        Task(intrusive_ptr<Filter> const& filter,
-             intrusive_ptr<output::Task> const& next_task,
-             intrusive_ptr<Settings> const& settings,
-             PageId const& page_id,
+        Task(intrusive_ptr<Filter> filter,
+             intrusive_ptr<output::Task> next_task,
+             intrusive_ptr<Settings> settings,
+             const PageId& page_id,
              bool batch,
              bool debug);
 
-        virtual ~Task();
+        ~Task() override;
 
-        FilterResultPtr process(TaskStatus const& status,
-                                FilterData const& data,
-                                QRectF const& page_rect,
-                                QRectF const& content_rect);
+        FilterResultPtr process(const TaskStatus& status,
+                                const FilterData& data,
+                                const QRectF& page_rect,
+                                const QRectF& content_rect);
 
     private:
         class UiUpdater;
+
+        void loadDefaultSettings(const Dpi& dpi);
 
         intrusive_ptr<Filter> m_ptrFilter;
         intrusive_ptr<output::Task> m_ptrNextTask;

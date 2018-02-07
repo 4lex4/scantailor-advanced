@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <UnitsProvider.h>
+
+#include <utility>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -25,21 +28,22 @@
 #include "TaskStatus.h"
 #include "ImageView.h"
 #include "FilterUiInterface.h"
+#include "Dpm.h"
 
 namespace fix_orientation {
     using imageproc::BinaryThreshold;
 
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
-                  QImage const& image,
-                  ImageId const& image_id,
-                  ImageTransformation const& xform,
+        UiUpdater(intrusive_ptr<Filter> filter,
+                  const QImage& image,
+                  const ImageId& image_id,
+                  const ImageTransformation& xform,
                   bool batch_processing);
 
-        virtual void updateUI(FilterUiInterface* wnd);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -53,22 +57,21 @@ namespace fix_orientation {
     };
 
 
-    Task::Task(ImageId const& image_id,
-               intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<Settings> const& settings,
-               intrusive_ptr<page_split::Task> const& next_task,
-               bool const batch_processing)
-            : m_ptrFilter(filter),
-              m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
+    Task::Task(const ImageId& image_id,
+               intrusive_ptr<Filter> filter,
+               intrusive_ptr<Settings> settings,
+               intrusive_ptr<page_split::Task> next_task,
+               const bool batch_processing)
+            : m_ptrFilter(std::move(filter)),
+              m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)),
               m_imageId(image_id),
               m_batchProcessing(batch_processing) {
     }
 
-    Task::~Task() {
-    }
+    Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+    FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         // This function is executed from the worker thread.
 
         status.throwIfCancelled();
@@ -90,12 +93,12 @@ namespace fix_orientation {
 
 /*============================ Task::UiUpdater ========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
-                               QImage const& image,
-                               ImageId const& image_id,
-                               ImageTransformation const& xform,
-                               bool const batch_processing)
-            : m_ptrFilter(filter),
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+                               const QImage& image,
+                               const ImageId& image_id,
+                               const ImageTransformation& xform,
+                               const bool batch_processing)
+            : m_ptrFilter(std::move(filter)),
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),
               m_imageId(image_id),
@@ -105,6 +108,8 @@ namespace fix_orientation {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
+        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
+
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_xform.preRotation());
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -115,7 +120,7 @@ namespace fix_orientation {
             return;
         }
 
-        ImageView* view = new ImageView(m_image, m_downscaledImage, m_xform);
+        auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
         QObject::connect(
                 opt_widget, SIGNAL(rotated(OrthogonalRotation)),

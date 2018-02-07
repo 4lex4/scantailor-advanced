@@ -19,16 +19,16 @@
 #include "SkinnedButton.h"
 #include <QBitmap>
 
-SkinnedButton::SkinnedButton(QString const& file, QWidget* parent)
+SkinnedButton::SkinnedButton(const QString& file, QWidget* parent)
         : QToolButton(parent),
           m_normalStatePixmap(file),
           m_normalStateFile(file) {
     updateStyleSheet();
 }
 
-SkinnedButton::SkinnedButton(QString const& normal_state_file,
-                             QString const& hover_state_file,
-                             QString const& pressed_state_file,
+SkinnedButton::SkinnedButton(const QString& normal_state_file,
+                             const QString& hover_state_file,
+                             const QString& pressed_state_file,
                              QWidget* parent)
         : QToolButton(parent),
           m_normalStatePixmap(normal_state_file),
@@ -38,12 +38,12 @@ SkinnedButton::SkinnedButton(QString const& normal_state_file,
     updateStyleSheet();
 }
 
-void SkinnedButton::setHoverImage(QString const& file) {
+void SkinnedButton::setHoverImage(const QString& file) {
     m_hoverStateFile = file;
     updateStyleSheet();
 }
 
-void SkinnedButton::setPressedImage(QString const& file) {
+void SkinnedButton::setPressedImage(const QString& file) {
     m_pressedStateFile = file;
     updateStyleSheet();
 }

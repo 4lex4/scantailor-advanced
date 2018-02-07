@@ -18,19 +18,20 @@
 
 #include "Thumbnail.h"
 #include <QPainter>
+#include <utility>
 
 namespace deskew {
-    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> const& thumbnail_cache,
-                         QSizeF const& max_size,
-                         ImageId const& image_id,
-                         ImageTransformation const& xform,
+    Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                         const QSizeF& max_size,
+                         const ImageId& image_id,
+                         const ImageTransformation& xform,
                          bool deviant)
-            : ThumbnailBase(thumbnail_cache, max_size, image_id, xform),
+            : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
               m_deviant(deviant) {
     }
 
-    void Thumbnail::prePaintOverImage(QPainter& painter, QTransform const& image_to_display,
-                                      QTransform const& thumb_to_display) {
+    void Thumbnail::prePaintOverImage(QPainter& painter, const QTransform& image_to_display,
+                                      const QTransform& thumb_to_display) {
         painter.setRenderHint(QPainter::Antialiasing, false);
 
         QPen pen(QColor(0, 0, 0xd1, 70));
@@ -38,17 +39,17 @@ namespace deskew {
         pen.setCosmetic(true);
         painter.setPen(pen);
 
-        QRectF const bounding_rect(boundingRect());
+        const QRectF bounding_rect(boundingRect());
 
-        double const cell_size = 8;
-        double const left = bounding_rect.left();
-        double const right = bounding_rect.right();
-        double const top = bounding_rect.top();
-        double const bottom = bounding_rect.bottom();
-        double const w = bounding_rect.width();
-        double const h = bounding_rect.height();
+        const double cell_size = 8;
+        const double left = bounding_rect.left();
+        const double right = bounding_rect.right();
+        const double top = bounding_rect.top();
+        const double bottom = bounding_rect.bottom();
+        const double w = bounding_rect.width();
+        const double h = bounding_rect.height();
 
-        QPointF const center(bounding_rect.center());
+        const QPointF center(bounding_rect.center());
         QVector<QLineF> lines;
         for (double y = center.y(); y > 0.0; y -= cell_size) {
             lines.push_back(QLineF(left, y, right, y));

@@ -31,16 +31,17 @@ public:
             : m_refCounter(0) {
     }
 
-    ref_countable(ref_countable const& other) {
+    ref_countable(const ref_countable& other) {
         // don't copy the reference counter!
     }
 
-    void operator=(ref_countable const& other) {
+    ref_countable& operator=(const ref_countable& other) {
         // don't copy the reference counter!
+
+        return *this;
     }
 
-    virtual ~ref_countable() {
-    }
+    virtual ~ref_countable() = default;
 
     void ref() const {
         m_refCounter.fetchAndAddRelaxed(1);

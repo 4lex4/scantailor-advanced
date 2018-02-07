@@ -26,10 +26,9 @@ class AbstractFilterDataCollector;
 
 class CompositeCacheDrivenTask : public ref_countable {
 public:
-    virtual ~CompositeCacheDrivenTask() {
-    }
+    ~CompositeCacheDrivenTask() override = default;
 
-    virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector) = 0;
+    virtual void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) = 0;
 };
 
 

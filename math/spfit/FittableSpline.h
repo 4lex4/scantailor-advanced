@@ -81,14 +81,13 @@ namespace spfit {
             }
         };
 
-        virtual ~FittableSpline() {
-        }
+        virtual ~FittableSpline() = default;
 
         virtual int numControlPoints() const = 0;
 
         virtual QPointF controlPointPosition(int idx) const = 0;
 
-        virtual void moveControlPoint(int idx, QPointF const& pos) = 0;
+        virtual void moveControlPoint(int idx, const QPointF& pos) = 0;
 
         /**
          * \brief For a given t, calculates a linear combination of control points that result
@@ -114,7 +113,7 @@ namespace spfit {
          *       and TAIL_SAMPLE respectably.
          */
         virtual void sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
-                            SamplingParams const& params,
+                            const SamplingParams& params,
                             double from_t = 0.0,
                             double to_t = 1.0) const = 0;
     };

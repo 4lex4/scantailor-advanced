@@ -42,8 +42,6 @@
 #include <queue>
 #include <cmath>
 
-#include "CommandLine.h"
-
 namespace select_content {
     using namespace imageproc;
 
@@ -54,15 +52,15 @@ namespace select_content {
             VERT
         };
 
-        Garbage(Type type, BinaryImage const& garbage);
+        Garbage(Type type, const BinaryImage& garbage);
 
-        void add(BinaryImage const& garbage, QRect const& rect);
+        void add(const BinaryImage& garbage, const QRect& rect);
 
-        BinaryImage const& image() const {
+        const BinaryImage& image() const {
             return m_garbage;
         }
 
-        SEDM const& sedm();
+        const SEDM& sedm();
 
     private:
         imageproc::BinaryImage m_garbage;
@@ -74,23 +72,23 @@ namespace select_content {
 
     namespace {
         struct PreferHorizontal {
-            bool operator()(QRect const& lhs, QRect const& rhs) const {
+            bool operator()(const QRect& lhs, const QRect& rhs) const {
                 return lhs.width() * lhs.width() * lhs.height()
                        < rhs.width() * rhs.width() * rhs.height();
             }
         };
 
         struct PreferVertical {
-            bool operator()(QRect const& lhs, QRect const& rhs) const {
+            bool operator()(const QRect& lhs, const QRect& rhs) const {
                 return lhs.width() * lhs.height() * lhs.height()
                        < rhs.width() * rhs.height() * rhs.height();
             }
         };
     }
 
-    QRectF ContentBoxFinder::findContentBox(TaskStatus const& status,
-                                            FilterData const& data,
-                                            QRectF const& page_rect,
+    QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
+                                            const FilterData& data,
+                                            const QRectF& page_rect,
                                             DebugImages* dbg) {
         ImageTransformation xform_150dpi(data.xform());
         xform_150dpi.preScaleToDpi(Dpi(150, 150));
@@ -99,12 +97,13 @@ namespace select_content {
             return QRectF();
         }
 
-        uint8_t const darkest_gray_level = darkestGrayLevel(data.grayImage());
-        QColor const outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
+        const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+        const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
+        const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
         QImage gray150(
                 transformToGray(
-                        data.grayImage(), xform_150dpi.transform(),
+                        dataGrayImage, xform_150dpi.transform(),
                         xform_150dpi.resultingRect().toRect(),
                         OutsidePixels::assumeColor(outside_color)
                 )
@@ -121,8 +120,8 @@ namespace select_content {
             dbg->add(bw150, "bw150");
         }
 
-        double const xscale = 150.0 / data.xform().origDpi().horizontal();
-        double const yscale = 150.0 / data.xform().origDpi().vertical();
+        const double xscale = 150.0 / data.xform().origDpi().horizontal();
+        const double yscale = 150.0 / data.xform().origDpi().vertical();
         QRectF page_rect150(page_rect.left() * xscale, page_rect.top() * yscale,
                             page_rect.right() * xscale, page_rect.bottom() * yscale);
         PolygonRasterizer::fillExcept(
@@ -197,11 +196,7 @@ namespace select_content {
 
         status.throwIfCancelled();
 
-        CommandLine const& cli = CommandLine::get();
         Despeckle::Level despeckleLevel = Despeckle::NORMAL;
-        if (cli.hasContentRect()) {
-            despeckleLevel = cli.getContentDetection();
-        }
 
         BinaryImage despeckled(Despeckle::despeckle(content, Dpi(150, 150), despeckleLevel, status, dbg));
         if (dbg) {
@@ -211,7 +206,7 @@ namespace select_content {
         status.throwIfCancelled();
 
         BinaryImage content_blocks(content.size(), BLACK);
-        int const area_threshold = std::min(content.width(), content.height());
+        const int area_threshold = std::min(content.width(), content.height());
 
         {
             MaxWhitespaceFinder hor_ws_finder(PreferHorizontal(), despeckled);
@@ -225,7 +220,7 @@ namespace select_content {
                     break;
                 }
                 content_blocks.fill(ws, WHITE);
-                int const height_fraction = ws.height() / 5;
+                const int height_fraction = ws.height() / 5;
                 ws.setTop(ws.top() + height_fraction);
                 ws.setBottom(ws.bottom() - height_fraction);
                 hor_ws_finder.addObstacle(ws);
@@ -244,7 +239,7 @@ namespace select_content {
                     break;
                 }
                 content_blocks.fill(ws, WHITE);
-                int const width_fraction = ws.width() / 5;
+                const int width_fraction = ws.width() / 5;
                 ws.setLeft(ws.left() + width_fraction);
                 ws.setRight(ws.right() - width_fraction);
                 vert_ws_finder.addObstacle(ws);
@@ -294,11 +289,7 @@ namespace select_content {
             dbg->add(content_blocks, "except_bordering");
         }
 
-        BinaryImage text_mask(content_blocks);
-        if (cli.hasContentText()) {
-            text_mask = estimateTextMask(content, content_blocks, dbg);
-        }
-
+        BinaryImage text_mask(estimateTextMask(content, content_blocks, dbg));
         if (dbg) {
             QImage text_mask_visualized(content.size(), QImage::Format_ARGB32_Premultiplied);
             text_mask_visualized.fill(0xffffffff);  // Opaque white.
@@ -430,11 +421,14 @@ namespace select_content {
             }
         }
 
+        // Increase the content rect due to cutting off the content at edges because of rescaling made.
+        content_rect.adjust(-1, -1, 1, 1);
+
         // Transform back from 150dpi.
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
 
-        return combined_xform.map(QRectF(content_rect)).boundingRect();
+        return combined_xform.map(QRectF(content_rect)).boundingRect().intersected(data.xform().resultingRect());
     }  // ContentBoxFinder::findContentBox
 
     namespace {
@@ -483,22 +477,22 @@ namespace select_content {
         };
     }      // namespace
 
-    void ContentBoxFinder::trimContentBlocksInPlace(imageproc::BinaryImage const& content,
+    void ContentBoxFinder::trimContentBlocksInPlace(const imageproc::BinaryImage& content,
                                                     imageproc::BinaryImage& content_blocks) {
-        ConnectivityMap const cmap(content_blocks, CONN4);
+        const ConnectivityMap cmap(content_blocks, CONN4);
         std::vector<Bounds> bounds(cmap.maxLabel() + 1);
 
         int width = content.width();
         int height = content.height();
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
 
-        uint32_t const* content_line = content.data();
-        int const content_stride = content.wordsPerLine();
-        uint32_t const* cmap_line = cmap.data();
-        int const cmap_stride = cmap.stride();
+        const uint32_t* content_line = content.data();
+        const int content_stride = content.wordsPerLine();
+        const uint32_t* cmap_line = cmap.data();
+        const int cmap_stride = cmap.stride();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t const label = cmap_line[x];
+                const uint32_t label = cmap_line[x];
                 if (label == 0) {
                     continue;
                 }
@@ -511,11 +505,11 @@ namespace select_content {
         }
 
         uint32_t* cb_line = content_blocks.data();
-        int const cb_stride = content_blocks.wordsPerLine();
+        const int cb_stride = content_blocks.wordsPerLine();
         cmap_line = cmap.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t const label = cmap_line[x];
+                const uint32_t label = cmap_line[x];
                 if (label == 0) {
                     continue;
                 }
@@ -535,17 +529,17 @@ namespace select_content {
         // spread distance.
 
 
-        int const width = content_blocks.width();
-        int const height = content_blocks.height();
+        const int width = content_blocks.width();
+        const int height = content_blocks.height();
 
-        uint16_t const max_spread_dist = std::min(width, height) / 4;
+        const auto max_spread_dist = static_cast<const uint16_t>(std::min(width, height) / 4);
 
         std::vector<uint16_t> map((width + 2) * (height + 2), ~uint16_t(0));
 
         uint32_t* cb_line = content_blocks.data();
-        int const cb_stride = content_blocks.wordsPerLine();
+        const int cb_stride = content_blocks.wordsPerLine();
         uint16_t* map_line = &map[0] + width + 3;
-        int const map_stride = width + 2;
+        const int map_stride = width + 2;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 uint32_t mask = cb_line[x >> 5] >> (31 - (x & 31));
@@ -596,7 +590,7 @@ namespace select_content {
             queue.pop();
 
             assert(*cell != 0);
-            uint16_t const new_dist = *cell - 1;
+            const auto new_dist = static_cast<const uint16_t>(*cell - 1);
 
             uint16_t* nbh = cell - map_stride;
             if (new_dist > *nbh) {
@@ -625,7 +619,7 @@ namespace select_content {
 
         cb_line = content_blocks.data();
         map_line = &map[0] + width + 3;
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (map_line[x] + 1 > 1) {  // If not 0 or ~uint16_t(0)
@@ -637,7 +631,7 @@ namespace select_content {
         }
     }  // ContentBoxFinder::inPlaceRemoveAreasTouchingBorders
 
-    void ContentBoxFinder::segmentGarbage(imageproc::BinaryImage const& garbage,
+    void ContentBoxFinder::segmentGarbage(const imageproc::BinaryImage& garbage,
                                           imageproc::BinaryImage& hor_garbage,
                                           imageproc::BinaryImage& vert_garbage,
                                           DebugImages* dbg) {
@@ -675,18 +669,18 @@ namespace select_content {
         InfluenceMap imap(cmap, garbage);
         cmap = ConnectivityMap();
 
-        int const width = garbage.width();
-        int const height = garbage.height();
+        const int width = garbage.width();
+        const int height = garbage.height();
 
         InfluenceMap::Cell* imap_line = imap.data();
-        int const imap_stride = imap.stride();
+        const int imap_stride = imap.stride();
 
         uint32_t* vg_line = vert_garbage.data();
-        int const vg_stride = vert_garbage.wordsPerLine();
+        const int vg_stride = vert_garbage.wordsPerLine();
         uint32_t* hg_line = hor_garbage.data();
-        int const hg_stride = hor_garbage.wordsPerLine();
+        const int hg_stride = hor_garbage.wordsPerLine();
 
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -696,6 +690,8 @@ namespace select_content {
                         break;
                     case 2:
                         hg_line[x >> 5] |= msb >> (x & 31);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -712,14 +708,14 @@ namespace select_content {
         rasterOp<RopOr<RopSrc, RopDst>>(vert_garbage, unconnected_garbage);
     }  // ContentBoxFinder::segmentGarbage
 
-    imageproc::BinaryImage ContentBoxFinder::estimateTextMask(imageproc::BinaryImage const& content,
-                                                              imageproc::BinaryImage const& content_blocks,
+    imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::BinaryImage& content,
+                                                              const imageproc::BinaryImage& content_blocks,
                                                               DebugImages* dbg) {
         // We differentiate between a text line and a slightly skewed straight
         // line (which may have a fill factor similar to that of text) by the
         // presence of ultimate eroded points.
 
-        BinaryImage const ueps(
+        const BinaryImage ueps(
                 SEDM(content, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS)
                         .findPeaksDestructive()
         );
@@ -745,11 +741,11 @@ namespace select_content {
 
         BinaryImage text_mask(content.size(), WHITE);
 
-        int const min_text_height = 6;
+        const int min_text_height = 6;
 
         ConnCompEraserExt eraser(content_blocks, CONN4);
         for (;;) {
-            ConnComp const cc(eraser.nextConnComp());
+            const ConnComp cc(eraser.nextConnComp());
             if (cc.isNull()) {
                 break;
             }
@@ -766,16 +762,15 @@ namespace select_content {
             // based on despeckled content image.
             rasterOp<RopAnd<RopSrc, RopDst>>(content_img, cc_img);
 
-            SlicedHistogram const hist(content_img, SlicedHistogram::ROWS);
-            SlicedHistogram const block_hist(cc_img, SlicedHistogram::ROWS);
+            const SlicedHistogram hist(content_img, SlicedHistogram::ROWS);
+            const SlicedHistogram block_hist(cc_img, SlicedHistogram::ROWS);
 
             assert(hist.size() != 0);
 
-            typedef std::pair<int const*, int const*> Range;
+            typedef std::pair<const int*, const int*> Range;
             std::vector<Range> ranges;
             std::vector<Range> splittable_ranges;
-            splittable_ranges.push_back(
-                    Range(&hist[0], &hist[hist.size() - 1])
+            splittable_ranges.emplace_back(&hist[0], &hist[hist.size() - 1]
             );
 
             std::vector<int> max_forward(hist.size());
@@ -783,8 +778,8 @@ namespace select_content {
 
             // Try splitting text lines.
             while (!splittable_ranges.empty()) {
-                int const* const first = splittable_ranges.back().first;
-                int const* const last = splittable_ranges.back().second;
+                const int* const first = splittable_ranges.back().first;
+                const int* const last = splittable_ranges.back().second;
                 splittable_ranges.pop_back();
 
                 if (last - first < min_text_height - 1) {
@@ -806,16 +801,16 @@ namespace select_content {
                 }
 
                 int best_magnitude = std::numeric_limits<int>::min();
-                int const* best_split_pos = nullptr;
+                const int* best_split_pos = nullptr;
                 assert(first != last);
-                for (int const* p = first + 1; p != last; ++p) {
-                    int const peak1 = max_forward[p - (first + 1)];
-                    int const peak2 = max_backwards[(last - 1) - p];
+                for (const int* p = first + 1; p != last; ++p) {
+                    const int peak1 = max_forward[p - (first + 1)];
+                    const int peak2 = max_backwards[(last - 1) - p];
                     if (*p * 3.5 > 0.5 * (peak1 + peak2)) {
                         continue;
                     }
-                    int const shoulder1 = peak1 - *p;
-                    int const shoulder2 = peak2 - *p;
+                    const int shoulder1 = peak1 - *p;
+                    const int shoulder2 = peak2 - *p;
                     if ((shoulder1 <= 0) || (shoulder2 <= 0)) {
                         continue;
                     }
@@ -824,7 +819,7 @@ namespace select_content {
                         continue;
                     }
 
-                    int const magnitude = shoulder1 + shoulder2;
+                    const int magnitude = shoulder1 + shoulder2;
                     if (magnitude > best_magnitude) {
                         best_magnitude = magnitude;
                         best_split_pos = p;
@@ -832,20 +827,18 @@ namespace select_content {
                 }
 
                 if (best_split_pos) {
-                    splittable_ranges.push_back(
-                            Range(first, best_split_pos - 1)
+                    splittable_ranges.emplace_back(first, best_split_pos - 1
                     );
-                    splittable_ranges.push_back(
-                            Range(best_split_pos + 1, last)
+                    splittable_ranges.emplace_back(best_split_pos + 1, last
                     );
                 } else {
-                    ranges.push_back(Range(first, last));
+                    ranges.emplace_back(first, last);
                 }
             }
 
-            for (Range const range : ranges) {
-                int const first = range.first - &hist[0];
-                int const last = range.second - &hist[0];
+            for (const Range range : ranges) {
+                const auto first = static_cast<const int>(range.first - &hist[0]);
+                const auto last = static_cast<const int>(range.second - &hist[0]);
                 if (last - first < min_text_height - 1) {
                     continue;
                 }
@@ -853,7 +846,7 @@ namespace select_content {
                 int64_t weighted_y = 0;
                 int total_weight = 0;
                 for (int i = first; i <= last; ++i) {
-                    int const val = hist[i];
+                    const int val = hist[i];
                     weighted_y += val * i;
                     total_weight += val;
                 }
@@ -863,10 +856,10 @@ namespace select_content {
                     continue;
                 }
 
-                double const min_fill_factor = 0.22;
-                double const max_fill_factor = 0.65;
+                const double min_fill_factor = 0.22;
+                const double max_fill_factor = 0.65;
 
-                int const center_y = (weighted_y + total_weight / 2) / total_weight;
+                const auto center_y = static_cast<const int>((weighted_y + total_weight / 2) / total_weight);
                 int top = center_y - min_text_height / 2;
                 int bottom = top + min_text_height - 1;
                 int num_black = 0;
@@ -892,8 +885,8 @@ namespace select_content {
                 // Extend the top and bottom of the text line.
                 while ((top > first || bottom < last)
                        && abs((center_y - top) - (bottom - center_y)) <= 1) {
-                    int const new_top = (top > first) ? top - 1 : top;
-                    int const new_bottom = (bottom < last) ? bottom + 1 : bottom;
+                    const int new_top = (top > first) ? top - 1 : top;
+                    const int new_bottom = (bottom < last) ? bottom + 1 : bottom;
                     num_black += hist[new_top] + hist[new_bottom];
                     num_total += block_hist[new_top] + block_hist[new_bottom];
                     if (num_black < num_total * min_fill_factor) {
@@ -920,7 +913,7 @@ namespace select_content {
                 line_rect.setBottom(cc.rect().top() + bottom);
 
                 // Check if there are enough ultimate eroded points on the line.
-                int ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
+                auto ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
                 if (ueps_todo) {
                     BinaryImage line_ueps(line_rect.size());
                     rasterOp<RopSrc>(line_ueps, line_ueps.rect(), content_blocks, line_rect.topLeft());
@@ -947,13 +940,13 @@ namespace select_content {
         return text_mask;
     }  // ContentBoxFinder::estimateTextMask
 
-    QRect ContentBoxFinder::trimLeft(imageproc::BinaryImage const& content,
-                                     imageproc::BinaryImage const& content_blocks,
-                                     imageproc::BinaryImage const& text,
-                                     QRect const& area,
+    QRect ContentBoxFinder::trimLeft(const imageproc::BinaryImage& content,
+                                     const imageproc::BinaryImage& content_blocks,
+                                     const imageproc::BinaryImage& text,
+                                     const QRect& area,
                                      Garbage& garbage,
                                      DebugImages* const dbg) {
-        SlicedHistogram const hist(content_blocks, area, SlicedHistogram::COLS);
+        const SlicedHistogram hist(content_blocks, area, SlicedHistogram::COLS);
 
         size_t start = 0;
         while (start < hist.size()) {
@@ -970,19 +963,19 @@ namespace select_content {
             first_non_ws += area.left();
 
             QRect new_area(area);
-            new_area.setLeft(first_non_ws);
+            new_area.setLeft(static_cast<int>(first_non_ws));
             if (new_area.isEmpty()) {
                 return area;
             }
 
             QRect removed_area(area);
-            removed_area.setRight(first_ws - 1);
+            removed_area.setRight(static_cast<int>(first_ws - 1));
             if (removed_area.isEmpty()) {
                 return new_area;
             }
 
             bool can_retry_grouped = false;
-            QRect const res = trim(
+            const QRect res = trim(
                     content, content_blocks, text,
                     area, new_area, removed_area,
                     garbage, can_retry_grouped, dbg
@@ -997,15 +990,15 @@ namespace select_content {
         return area;
     }  // ContentBoxFinder::trimLeft
 
-    QRect ContentBoxFinder::trimRight(imageproc::BinaryImage const& content,
-                                      imageproc::BinaryImage const& content_blocks,
-                                      imageproc::BinaryImage const& text,
-                                      QRect const& area,
+    QRect ContentBoxFinder::trimRight(const imageproc::BinaryImage& content,
+                                      const imageproc::BinaryImage& content_blocks,
+                                      const imageproc::BinaryImage& text,
+                                      const QRect& area,
                                       Garbage& garbage,
                                       DebugImages* const dbg) {
-        SlicedHistogram const hist(content_blocks, area, SlicedHistogram::COLS);
+        const SlicedHistogram hist(content_blocks, area, SlicedHistogram::COLS);
 
-        int start = hist.size() - 1;
+        auto start = static_cast<int>(hist.size() - 1);
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
@@ -1032,7 +1025,7 @@ namespace select_content {
             }
 
             bool can_retry_grouped = false;
-            QRect const res = trim(
+            const QRect res = trim(
                     content, content_blocks, text,
                     area, new_area, removed_area,
                     garbage, can_retry_grouped, dbg
@@ -1047,13 +1040,13 @@ namespace select_content {
         return area;
     }  // ContentBoxFinder::trimRight
 
-    QRect ContentBoxFinder::trimTop(imageproc::BinaryImage const& content,
-                                    imageproc::BinaryImage const& content_blocks,
-                                    imageproc::BinaryImage const& text,
-                                    QRect const& area,
+    QRect ContentBoxFinder::trimTop(const imageproc::BinaryImage& content,
+                                    const imageproc::BinaryImage& content_blocks,
+                                    const imageproc::BinaryImage& text,
+                                    const QRect& area,
                                     Garbage& garbage,
                                     DebugImages* const dbg) {
-        SlicedHistogram const hist(content_blocks, area, SlicedHistogram::ROWS);
+        const SlicedHistogram hist(content_blocks, area, SlicedHistogram::ROWS);
 
         size_t start = 0;
         while (start < hist.size()) {
@@ -1070,19 +1063,19 @@ namespace select_content {
             first_non_ws += area.top();
 
             QRect new_area(area);
-            new_area.setTop(first_non_ws);
+            new_area.setTop(static_cast<int>(first_non_ws));
             if (new_area.isEmpty()) {
                 return area;
             }
 
             QRect removed_area(area);
-            removed_area.setBottom(first_ws - 1);
+            removed_area.setBottom(static_cast<int>(first_ws - 1));
             if (removed_area.isEmpty()) {
                 return new_area;
             }
 
             bool can_retry_grouped = false;
-            QRect const res = trim(
+            const QRect res = trim(
                     content, content_blocks, text,
                     area, new_area, removed_area,
                     garbage, can_retry_grouped, dbg
@@ -1097,15 +1090,15 @@ namespace select_content {
         return area;
     }  // ContentBoxFinder::trimTop
 
-    QRect ContentBoxFinder::trimBottom(imageproc::BinaryImage const& content,
-                                       imageproc::BinaryImage const& content_blocks,
-                                       imageproc::BinaryImage const& text,
-                                       QRect const& area,
+    QRect ContentBoxFinder::trimBottom(const imageproc::BinaryImage& content,
+                                       const imageproc::BinaryImage& content_blocks,
+                                       const imageproc::BinaryImage& text,
+                                       const QRect& area,
                                        Garbage& garbage,
                                        DebugImages* const dbg) {
-        SlicedHistogram const hist(content_blocks, area, SlicedHistogram::ROWS);
+        const SlicedHistogram hist(content_blocks, area, SlicedHistogram::ROWS);
 
-        int start = hist.size() - 1;
+        auto start = static_cast<int>(hist.size() - 1);
         while (start >= 0) {
             int first_ws = start;
             for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
@@ -1132,7 +1125,7 @@ namespace select_content {
             }
 
             bool can_retry_grouped = false;
-            QRect const res = trim(
+            const QRect res = trim(
                     content, content_blocks, text,
                     area, new_area, removed_area,
                     garbage, can_retry_grouped, dbg
@@ -1147,12 +1140,12 @@ namespace select_content {
         return area;
     }  // ContentBoxFinder::trimBottom
 
-    QRect ContentBoxFinder::trim(imageproc::BinaryImage const& content,
-                                 imageproc::BinaryImage const& content_blocks,
-                                 imageproc::BinaryImage const& text,
-                                 QRect const& area,
-                                 QRect const& new_area,
-                                 QRect const& removed_area,
+    QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
+                                 const imageproc::BinaryImage& content_blocks,
+                                 const imageproc::BinaryImage& text,
+                                 const QRect& area,
+                                 const QRect& new_area,
+                                 const QRect& removed_area,
                                  Garbage& garbage,
                                  bool& can_retry_grouped,
                                  DebugImages* const dbg) {
@@ -1203,9 +1196,9 @@ namespace select_content {
             return area;
         }
 
-        int const content_pixels = content.countBlackPixels(removed_area);
+        const int content_pixels = content.countBlackPixels(removed_area);
 
-        bool const vertical_cut = (
+        const bool vertical_cut = (
                 new_area.top() == area.top()
                 && new_area.bottom() == area.bottom()
         );
@@ -1216,7 +1209,7 @@ namespace select_content {
         // as garbage.
         double proximity_bias = vertical_cut ? 0.5 : 0.65;
 
-        int const num_text_pixels = text.countBlackPixels(removed_area);
+        const int num_text_pixels = text.countBlackPixels(removed_area);
         if (num_text_pixels == 0) {
             proximity_bias = vertical_cut ? 0.4 : 0.5;
         } else {
@@ -1226,9 +1219,9 @@ namespace select_content {
             // qDebug() << "num_text_pixels = " << num_text_pixels;
             // qDebug() << "total_pixels = " << total_pixels;
             ++total_pixels;  // just in case
-            double const min_text_influence = 0.2;
-            double const max_text_influence = 1.0;
-            int const upper_threshold = 5000;
+            const double min_text_influence = 0.2;
+            const double max_text_influence = 1.0;
+            const int upper_threshold = 5000;
             double text_influence = max_text_influence;
             if (num_text_pixels < upper_threshold) {
                 text_influence = min_text_influence
@@ -1252,7 +1245,7 @@ namespace select_content {
                 content_blocks, new_area.topLeft()
         );
 
-        SEDM const dm_to_others(
+        const SEDM dm_to_others(
                 remaining_content, SEDM::DIST_TO_BLACK,
                 SEDM::DIST_TO_NO_BORDERS
         );
@@ -1261,13 +1254,13 @@ namespace select_content {
         double sum_dist_to_garbage = 0;
         double sum_dist_to_others = 0;
 
-        uint32_t const* cb_line = content_blocks.data();
-        int const cb_stride = content_blocks.wordsPerLine();
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t* cb_line = content_blocks.data();
+        const int cb_stride = content_blocks.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
 
-        uint32_t const* dm_garbage_line = garbage.sedm().data();
-        uint32_t const* dm_others_line = dm_to_others.data();
-        int const dm_stride = dm_to_others.stride();
+        const uint32_t* dm_garbage_line = garbage.sedm().data();
+        const uint32_t* dm_others_line = dm_to_others.data();
+        const int dm_stride = dm_to_others.stride();
 
         int count = 0;
         cb_line += cb_stride * removed_area.top();
@@ -1324,7 +1317,7 @@ namespace select_content {
         }
     }  // ContentBoxFinder::trim
 
-    void ContentBoxFinder::filterShadows(TaskStatus const& status, imageproc::BinaryImage& shadows,
+    void ContentBoxFinder::filterShadows(const TaskStatus& status, imageproc::BinaryImage& shadows,
                                          DebugImages* const dbg) {
         // The input image should only contain shadows from the edges
         // of a page, but in practice it may also contain things like
@@ -1433,7 +1426,7 @@ namespace select_content {
 
 /*====================== ContentBoxFinder::Garbage =====================*/
 
-    ContentBoxFinder::Garbage::Garbage(Type const type, BinaryImage const& garbage)
+    ContentBoxFinder::Garbage::Garbage(const Type type, const BinaryImage& garbage)
             : m_garbage(garbage),
               m_sedmBorders(
                       type == VERT
@@ -1443,14 +1436,14 @@ namespace select_content {
               m_sedmUpdatePending(true) {
     }
 
-    void ContentBoxFinder::Garbage::add(BinaryImage const& garbage, QRect const& rect) {
+    void ContentBoxFinder::Garbage::add(const BinaryImage& garbage, const QRect& rect) {
         rasterOp<RopOr<RopSrc, RopDst>>(
                 m_garbage, rect, garbage, rect.topLeft()
         );
         m_sedmUpdatePending = true;
     }
 
-    SEDM const& ContentBoxFinder::Garbage::sedm() {
+    const SEDM& ContentBoxFinder::Garbage::sedm() {
         if (m_sedmUpdatePending) {
             m_sedm = SEDM(m_garbage, SEDM::DIST_TO_BLACK, m_sedmBorders);
         }

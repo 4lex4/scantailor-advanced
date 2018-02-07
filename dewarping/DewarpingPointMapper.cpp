@@ -21,10 +21,10 @@
 #include <QTransform>
 
 namespace dewarping {
-    DewarpingPointMapper::DewarpingPointMapper(DistortionModel const& distortion_model,
+    DewarpingPointMapper::DewarpingPointMapper(const DistortionModel& distortion_model,
                                                double depth_perception,
-                                               QTransform const& distortion_model_to_output,
-                                               QRect const& output_content_rect,
+                                               const QTransform& distortion_model_to_output,
+                                               const QRect& output_content_rect,
                                                const QTransform& postTransform)
             : m_dewarper(
             CylindricalSurfaceDewarper(
@@ -36,7 +36,7 @@ namespace dewarping {
               m_postTransform(postTransform) {
         // Model domain is a rectangle in output image coordinates that
         // will be mapped to our curved quadrilateral.
-        QRect const model_domain(
+        const QRect model_domain(
                 distortion_model.modelDomain(
                         m_dewarper, distortion_model_to_output, output_content_rect
                 ).toRect()
@@ -54,19 +54,19 @@ namespace dewarping {
         m_modelYScaleToNormalized = 1.0 / m_modelYScaleFromNormalized;
     }
 
-    QPointF DewarpingPointMapper::mapToDewarpedSpace(QPointF const& warped_pt) const {
-        QPointF const crv_pt(m_dewarper.mapToDewarpedSpace(warped_pt));
-        double const dewarped_x = crv_pt.x() * m_modelXScaleFromNormalized + m_modelDomainLeft;
-        double const dewarped_y = crv_pt.y() * m_modelYScaleFromNormalized + m_modelDomainTop;
+    QPointF DewarpingPointMapper::mapToDewarpedSpace(const QPointF& warped_pt) const {
+        const QPointF crv_pt(m_dewarper.mapToDewarpedSpace(warped_pt));
+        const double dewarped_x = crv_pt.x() * m_modelXScaleFromNormalized + m_modelDomainLeft;
+        const double dewarped_y = crv_pt.y() * m_modelYScaleFromNormalized + m_modelDomainTop;
 
         return m_postTransform.map(QPointF(dewarped_x, dewarped_y));
     }
 
-    QPointF DewarpingPointMapper::mapToWarpedSpace(QPointF const& dewarped_pt) const {
+    QPointF DewarpingPointMapper::mapToWarpedSpace(const QPointF& dewarped_pt) const {
         QPointF dewarped_pt_m = m_postTransform.inverted().map(dewarped_pt);
-        
-        double const crv_x = (dewarped_pt_m.x() - m_modelDomainLeft) * m_modelXScaleToNormalized;
-        double const crv_y = (dewarped_pt_m.y() - m_modelDomainTop) * m_modelYScaleToNormalized;
+
+        const double crv_x = (dewarped_pt_m.x() - m_modelDomainLeft) * m_modelXScaleToNormalized;
+        const double crv_y = (dewarped_pt_m.y() - m_modelDomainTop) * m_modelYScaleToNormalized;
 
         return m_dewarper.mapToWarpedSpace(QPointF(crv_x, crv_y));
     }

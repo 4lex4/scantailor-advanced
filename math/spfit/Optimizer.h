@@ -35,7 +35,7 @@ namespace spfit {
     class Optimizer {
         // Member-wise copying is OK.
     public:
-        Optimizer(size_t num_vars = 0);
+        explicit Optimizer(size_t num_vars = 0);
 
         /**
          * Sets linear constraints in the form of b^T * x + c = 0
@@ -45,15 +45,15 @@ namespace spfit {
          * That doesn't mean you have to provide updated constraints
          * on very iteration though, as optimize() will update them for you.
          */
-        void setConstraints(std::list<LinearFunction> const& constraints);
+        void setConstraints(const std::list<LinearFunction>& constraints);
 
-        void addExternalForce(QuadraticFunction const& force);
+        void addExternalForce(const QuadraticFunction& force);
 
-        void addExternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+        void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
 
-        void addInternalForce(QuadraticFunction const& force);
+        void addInternalForce(const QuadraticFunction& force);
 
-        void addInternalForce(QuadraticFunction const& force, std::vector<int> const& sparse_map);
+        void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
 
         size_t numVars() const {
             return m_numVars;
@@ -77,7 +77,7 @@ namespace spfit {
 
         OptimizationResult optimize(double internal_external_ratio);
 
-        double const* displacementVector() const {
+        const double* displacementVector() const {
             return m_x.data();
         }
 

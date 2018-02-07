@@ -40,6 +40,6 @@ namespace dewarping {
  * \note This function assumes a clean image, that is no clutter
  *       or speckles, at least not outside of the content area.
  */
-    std::pair<QLineF, QLineF> detectVertContentBounds(imageproc::BinaryImage const& image, DebugImages* dbg);
+    std::pair<QLineF, QLineF> detectVertContentBounds(const imageproc::BinaryImage& image, DebugImages* dbg);
 }  // namespace dewarping
 #endif

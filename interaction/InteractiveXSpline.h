@@ -28,28 +28,28 @@
 #include <QCoreApplication>
 #include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
-#include <stddef.h>
+#include <cstddef>
 
 class InteractiveXSpline : public InteractionHandler {
 Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
 public:
-    typedef boost::function<QPointF(QPointF const&)> Transform;
+    typedef boost::function<QPointF(const QPointF&)> Transform;
     typedef boost::function<void()> ModifiedCallback;
     typedef boost::function<void()> DragFinishedCallback;
 
     InteractiveXSpline();
 
-    void setSpline(XSpline const& spline);
+    void setSpline(const XSpline& spline);
 
-    XSpline const& spline() const {
+    const XSpline& spline() const {
         return m_spline;
     }
 
-    void setStorageTransform(Transform const& from_storage, Transform const& to_storage);
+    void setStorageTransform(const Transform& from_storage, const Transform& to_storage);
 
-    void setModifiedCallback(ModifiedCallback const& callback);
+    void setModifiedCallback(const ModifiedCallback& callback);
 
-    void setDragFinishedCallback(DragFinishedCallback const& callback);
+    void setDragFinishedCallback(const DragFinishedCallback& callback);
 
     /**
      * \brief Returns true if the curve is a proximity leader.
@@ -62,16 +62,16 @@ public:
      *          to the point closest to the cursor will be written there.
      * \return true if the curve is the proximity leader.
      */
-    bool curveIsProximityLeader(InteractionState const& state, QPointF* pt = 0, double* t = 0) const;
+    bool curveIsProximityLeader(const InteractionState& state, QPointF* pt = nullptr, double* t = nullptr) const;
 
 protected:
-    virtual void onProximityUpdate(QPointF const& screen_mouse_pos, InteractionState& interaction);
+    void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
 
-    virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onMousePressEvent(QMouseEvent* event, InteractionState& interaction);
+    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction);
+    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
 private:
     struct NoOp;
@@ -81,17 +81,16 @@ private:
         DraggablePoint point;
         ObjectDragHandler handler;
 
-        ControlPoint() {
-        }
+        ControlPoint() = default;
     };
 
     QPointF controlPointPosition(int idx) const;
 
-    void controlPointMoveRequest(int idx, QPointF const& pos, Qt::KeyboardModifiers mask);
+    void controlPointMoveRequest(int idx, const QPointF& pos, Qt::KeyboardModifiers mask);
 
     void dragFinished();
 
-    static Vec4d rotationAndScale(QPointF const& from, QPointF const& to);
+    static Vec4d rotationAndScale(const QPointF& from, const QPointF& to);
 
     ModifiedCallback m_modifiedCallback;
     DragFinishedCallback m_dragFinishedCallback;

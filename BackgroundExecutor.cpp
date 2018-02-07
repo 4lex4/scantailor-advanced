@@ -20,14 +20,14 @@
 #include "OutOfMemoryHandler.h"
 #include <QCoreApplication>
 #include <QThread>
-#include <assert.h>
+#include <cassert>
 
 class BackgroundExecutor::Dispatcher : public QObject {
 public:
-    Dispatcher(Impl& owner);
+    explicit Dispatcher(Impl& owner);
 
 protected:
-    virtual void customEvent(QEvent* event);
+    void customEvent(QEvent* event) override;
 
 private:
     Impl& m_rOwner;
@@ -36,16 +36,16 @@ private:
 
 class BackgroundExecutor::Impl : public QThread {
 public:
-    Impl(BackgroundExecutor& owner);
+    explicit Impl(BackgroundExecutor& owner);
 
-    ~Impl();
+    ~Impl() override;
 
-    void enqueueTask(TaskPtr const& task);
+    void enqueueTask(const TaskPtr& task);
 
 protected:
-    virtual void run();
+    void run() override;
 
-    virtual void customEvent(QEvent* event);
+    void customEvent(QEvent* event) override;
 
 private:
     BackgroundExecutor& m_rOwner;
@@ -60,15 +60,14 @@ BackgroundExecutor::BackgroundExecutor()
         : m_ptrImpl(new Impl(*this)) {
 }
 
-BackgroundExecutor::~BackgroundExecutor() {
-}
+BackgroundExecutor::~BackgroundExecutor() = default;
 
 void BackgroundExecutor::shutdown() {
     m_ptrImpl.reset();
 }
 
-void BackgroundExecutor::enqueueTask(TaskPtr const& task) {
-    if (m_ptrImpl.get()) {
+void BackgroundExecutor::enqueueTask(const TaskPtr& task) {
+    if (m_ptrImpl) {
         m_ptrImpl->enqueueTask(task);
     }
 }
@@ -81,19 +80,19 @@ BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner)
 
 void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
     try {
-        TaskEvent* evt = dynamic_cast<TaskEvent*>(event);
+        auto* evt = dynamic_cast<TaskEvent*>(event);
         assert(evt);
 
-        TaskPtr const& task = evt->payload();
+        const TaskPtr& task = evt->payload();
         assert(task);
 
-        TaskResultPtr const result((*task)());
+        const TaskResultPtr result((*task)());
         if (result) {
             QCoreApplication::postEvent(
                     &m_rOwner, new ResultEvent(result)
             );
         }
-    } catch (std::bad_alloc const&) {
+    } catch (const std::bad_alloc&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
     }
 }
@@ -112,7 +111,7 @@ BackgroundExecutor::Impl::~Impl() {
     wait();
 }
 
-void BackgroundExecutor::Impl::enqueueTask(TaskPtr const& task) {
+void BackgroundExecutor::Impl::enqueueTask(const TaskPtr& task) {
     QCoreApplication::postEvent(&m_dispatcher, new TaskEvent(task));
     if (!m_threadStarted) {
         start();
@@ -125,10 +124,10 @@ void BackgroundExecutor::Impl::run() {
 }
 
 void BackgroundExecutor::Impl::customEvent(QEvent* event) {
-    ResultEvent* evt = dynamic_cast<ResultEvent*>(event);
+    auto* evt = dynamic_cast<ResultEvent*>(event);
     assert(evt);
 
-    TaskResultPtr const& result = evt->payload();
+    const TaskResultPtr& result = evt->payload();
     assert(result);
 
     (*result)();

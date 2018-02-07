@@ -25,7 +25,7 @@
 #include <QLineF>
 #include <vector>
 #include <string>
-#include <stddef.h>
+#include <cstddef>
 
 namespace imageproc {
     class RastLineFinderParams {
@@ -37,12 +37,12 @@ namespace imageproc {
          * is a signed distance to the origin. By default the origin is at (0, 0),
          * but you can set it explicitly with this call.
          */
-        void setOrigin(QPointF const& origin) {
+        void setOrigin(const QPointF& origin) {
             m_origin = origin;
         }
 
         /** \see setOrigin() */
-        QPointF const& origin() const {
+        const QPointF& origin() const {
             return m_origin;
         }
 
@@ -128,7 +128,7 @@ namespace imageproc {
         /**
          * \brief Checks if parameters are valid, optionally providing an error string.
          */
-        bool validate(std::string* error = 0) const;
+        bool validate(std::string* error = nullptr) const;
 
     private:
         QPointF m_origin;
@@ -163,7 +163,7 @@ namespace imageproc {
          * \throw std::invalid_argument if \p params are invalid.
          * \see RastLineFinderParams::validate()
          */
-        RastLineFinder(std::vector<QPointF> const& points, RastLineFinderParams const& params);
+        RastLineFinder(const std::vector<QPointF>& points, const RastLineFinderParams& params);
 
         /**
          * Look for the next best line in terms of the number of support points.
@@ -181,7 +181,7 @@ namespace imageproc {
          *         line won't be properly fit to its support points, but merely be
          *         close to an optimal line.
          */
-        QLineF findNext(std::vector<unsigned>* point_idxs = 0);
+        QLineF findNext(std::vector<unsigned>* point_idxs = nullptr);
 
     private:
         class Point {
@@ -189,7 +189,7 @@ namespace imageproc {
             QPointF pt;
             bool available;
 
-            Point(QPointF const& p)
+            explicit Point(const QPointF& p)
                     : pt(p),
                       available(true) {
             }
@@ -198,7 +198,7 @@ namespace imageproc {
 
         class PointUnavailablePred {
         public:
-            PointUnavailablePred(std::vector<Point> const* points)
+            explicit PointUnavailablePred(const std::vector<Point>* points)
                     : m_pPoints(points) {
             }
 
@@ -207,7 +207,7 @@ namespace imageproc {
             }
 
         private:
-            std::vector<Point> const* m_pPoints;
+            const std::vector<Point>* m_pPoints;
         };
 
 
@@ -215,12 +215,12 @@ namespace imageproc {
         public:
             SearchSpace();
 
-            SearchSpace(RastLineFinder const& owner,
+            SearchSpace(const RastLineFinder& owner,
                         float min_dist,
                         float max_dist,
                         float min_angle_rad,
                         float max_angle_rad,
-                        std::vector<unsigned> const& candidate_idxs);
+                        const std::vector<unsigned>& candidate_idxs);
 
             /**
              * Returns a line that corresponds to the center of this search space.
@@ -228,11 +228,11 @@ namespace imageproc {
              * line segment, meaning that exact positions of endpoints can't be
              * counted on.
              */
-            QLineF representativeLine(RastLineFinder const& owner) const;
+            QLineF representativeLine(const RastLineFinder& owner) const;
 
-            bool subdivideDist(RastLineFinder const& owner, SearchSpace& subspace1, SearchSpace& subspace2) const;
+            bool subdivideDist(const RastLineFinder& owner, SearchSpace& subspace1, SearchSpace& subspace2) const;
 
-            bool subdivideAngle(RastLineFinder const& owner, SearchSpace& subspace1, SearchSpace& subspace2) const;
+            bool subdivideAngle(const RastLineFinder& owner, SearchSpace& subspace1, SearchSpace& subspace2) const;
 
             void pruneUnavailablePoints(PointUnavailablePred pred);
 
@@ -240,7 +240,7 @@ namespace imageproc {
                 return m_pointIdxs;
             }
 
-            std::vector<unsigned> const& pointIdxs() const {
+            const std::vector<unsigned>& pointIdxs() const {
                 return m_pointIdxs;
             }
 
@@ -261,7 +261,7 @@ namespace imageproc {
             void setIndex(SearchSpace& obj, size_t heap_idx) {
             }
 
-            bool higherThan(SearchSpace const& lhs, SearchSpace const& rhs) const {
+            bool higherThan(const SearchSpace& lhs, const SearchSpace& rhs) const {
                 return lhs.pointIdxs().size() > rhs.pointIdxs().size();
             }
         };
@@ -269,7 +269,7 @@ namespace imageproc {
 
         void pushIfGoodEnough(SearchSpace& ssp);
 
-        void markPointsUnavailable(std::vector<unsigned> const& point_idxs);
+        void markPointsUnavailable(const std::vector<unsigned>& point_idxs);
 
         void pruneUnavailablePoints();
 

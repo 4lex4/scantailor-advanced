@@ -29,29 +29,21 @@ namespace output {
     public:
         DepthPerception();
 
-        DepthPerception(double value);
+        explicit DepthPerception(double value);
 
-        explicit DepthPerception(QString const& from_string);
+        explicit DepthPerception(const QString& from_string);
 
         QString toString() const;
 
         void setValue(double value);
 
-        double value() const {
-            return m_value;
-        }
+        double value() const;
 
-        static double minValue() {
-            return 1.0;
-        }
+        static double minValue();
 
-        static double defaultValue() {
-            return 2.0;
-        }
+        static double defaultValue();
 
-        static double maxValue() {
-            return 3.0;
-        }
+        static double maxValue();
 
     private:
         double m_value;

@@ -36,8 +36,8 @@ namespace imageproc {
 namespace page_split {
     class VertLineFinder {
     public:
-        static std::vector<QLineF> findLines(QImage const& image,
-                                             ImageTransformation const& xform,
+        static std::vector<QLineF> findLines(const QImage& image,
+                                             const ImageTransformation& xform,
                                              int max_lines,
                                              DebugImages* dbg = nullptr,
                                              imageproc::GrayImage* gray_downscaled = nullptr,
@@ -46,19 +46,13 @@ namespace page_split {
     private:
         class QualityLine {
         public:
-            QualityLine(QPointF const& top, QPointF const& bottom, unsigned quality);
+            QualityLine(const QPointF& top, const QPointF& bottom, unsigned quality);
 
-            QPointF const& left() const {
-                return m_left;
-            }
+            const QPointF& left() const;
 
-            QPointF const& right() const {
-                return m_right;
-            }
+            const QPointF& right() const;
 
-            unsigned quality() const {
-                return m_quality;
-            }
+            unsigned quality() const;
 
             QLineF toQLine() const;
 
@@ -71,17 +65,15 @@ namespace page_split {
 
         class LineGroup {
         public:
-            LineGroup(QualityLine const& line);
+            explicit LineGroup(const QualityLine& line);
 
-            bool belongsHere(QualityLine const& line) const;
+            bool belongsHere(const QualityLine& line) const;
 
-            void add(QualityLine const& line);
+            void add(const QualityLine& line);
 
-            void merge(LineGroup const& other);
+            void merge(const LineGroup& other);
 
-            QualityLine const& leader() const {
-                return m_leader;
-            }
+            const QualityLine& leader() const;
 
         private:
             QualityLine m_leader;
@@ -90,7 +82,7 @@ namespace page_split {
         };
 
 
-        static imageproc::GrayImage removeDarkVertBorders(imageproc::GrayImage const& src);
+        static imageproc::GrayImage removeDarkVertBorders(const imageproc::GrayImage& src);
 
         static void selectVertBorders(imageproc::GrayImage& image);
 

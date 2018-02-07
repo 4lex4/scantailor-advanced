@@ -32,39 +32,30 @@ namespace page_layout {
     class Params {
         // Member-wise copying is OK.
     public:
-        Params(Margins const& hard_margins_mm,
-               QRectF const& page_rect,
-               QRectF const& content_rect,
-               QSizeF const& content_size_mm,
-               Alignment const& alignment);
+        Params(const Margins& hard_margins_mm,
+               const QRectF& page_rect,
+               const QRectF& content_rect,
+               const QSizeF& content_size_mm,
+               const Alignment& alignment,
+               bool auto_margins);
 
-        Params(QDomElement const& el);
+        explicit Params(const QDomElement& el);
 
-        Margins const& hardMarginsMM() const {
-            return m_hardMarginsMM;
-        }
+        const Margins& hardMarginsMM() const;
 
-        QRectF const& contentRect() const {
-            return m_contentRect;
-        }
+        const QRectF& contentRect() const;
 
-        QRectF const& pageRect() const {
-            return m_pageRect;
-        }
+        const QRectF& pageRect() const;
 
-        QSizeF const& contentSizeMM() const {
-            return m_contentSizeMM;
-        }
+        const QSizeF& contentSizeMM() const;
 
-        Alignment const& alignment() const {
-            return m_alignment;
-        }
+        const Alignment& alignment() const;
 
-        bool isDeviant() const {
-            return m_alignment.isNull();
-        }
+        bool isAutoMarginsEnabled() const;
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        bool isDeviant() const;
+
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         Margins m_hardMarginsMM;
@@ -72,6 +63,7 @@ namespace page_layout {
         QRectF m_pageRect;
         QSizeF m_contentSizeMM;
         Alignment m_alignment;
+        bool m_autoMargins;
     };
 }  // namespace page_layout
 #endif // ifndef PAGE_LAYOUT_PARAMS_H_

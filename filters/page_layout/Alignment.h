@@ -55,65 +55,35 @@ namespace page_layout {
 
         Alignment(Vertical vert, Horizontal hor);
 
-        Alignment(QDomElement const& el);
+        explicit Alignment(const QDomElement& el);
 
-        Vertical vertical() const {
-            return m_vert;
-        }
+        Vertical vertical() const;
 
-        void setVertical(Vertical vert) {
-            m_vert = vert;
-        }
+        void setVertical(Vertical vert);
 
-        Horizontal horizontal() const {
-            return m_hor;
-        }
+        Horizontal horizontal() const;
 
-        void setHorizontal(Horizontal hor) {
-            m_hor = hor;
-        }
+        void setHorizontal(Horizontal hor);
 
-        bool isNull() const {
-            return m_isNull;
-        }
+        bool isNull() const;
 
-        void setNull(bool is_null) {
-            m_isNull = is_null;
-        }
+        void setNull(bool is_null);
 
-        double tolerance() const {
-            return m_tolerance;
-        }
+        double tolerance() const;
 
-        void setTolerance(double t) {
-            m_tolerance = t;
-        }
+        void setTolerance(double t);
 
-        bool isAutoMarginsEnabled() const {
-            return m_autoMargins;
-        }
+        bool operator==(const Alignment& other) const;
 
-        void setAutoMargins(bool state) {
-            m_autoMargins = state;
-        }
+        bool operator!=(const Alignment& other) const;
 
-        bool operator==(Alignment const& other) const {
-            return m_vert == other.m_vert && m_hor == other.m_hor
-                   && m_isNull == other.m_isNull && m_autoMargins == other.m_autoMargins;
-        }
-
-        bool operator!=(Alignment const& other) const {
-            return !(*this == other);
-        }
-
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
         Vertical m_vert;
         Horizontal m_hor;
         bool m_isNull;
         double m_tolerance;
-        bool m_autoMargins;
     };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_ALIGNMENT_H_

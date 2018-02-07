@@ -40,7 +40,7 @@ namespace imageproc {
  * The underlying code implements Luc Vincent's iterative seed-fill
  * algorithm: http://www.vincent-net.com/luc/papers/93ieeeip_recons.pdf
  */
-    BinaryImage seedFill(BinaryImage const& seed, BinaryImage const& mask, Connectivity connectivity);
+    BinaryImage seedFill(const BinaryImage& seed, const BinaryImage& mask, Connectivity connectivity);
 
 /**
  * \brief Spread darker colors from seed as long as mask allows it.
@@ -55,12 +55,12 @@ namespace imageproc {
  * The underlying code implements Luc Vincent's hybrid seed-fill algorithm:
  * http://www.vincent-net.com/luc/papers/93ieeeip_recons.pdf
  */
-    GrayImage seedFillGray(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
+    GrayImage seedFillGray(const GrayImage& seed, const GrayImage& mask, Connectivity connectivity);
 
 /**
  * \brief A faster, in-place version of seedFillGray().
  */
-    void seedFillGrayInPlace(GrayImage& seed, GrayImage const& mask, Connectivity connectivity);
+    void seedFillGrayInPlace(GrayImage& seed, const GrayImage& mask, Connectivity connectivity);
 
 /**
  * \brief A slower but more simple implementation of seedFillGray().
@@ -68,6 +68,6 @@ namespace imageproc {
  * This function should not be used for anything but testing the correctness
  * of the fast and complex implementation that is seedFillGray().
  */
-    GrayImage seedFillGraySlow(GrayImage const& seed, GrayImage const& mask, Connectivity connectivity);
+    GrayImage seedFillGraySlow(const GrayImage& seed, const GrayImage& mask, Connectivity connectivity);
 }  // namespace imageproc
 #endif

@@ -44,23 +44,21 @@ namespace page_layout {
             AGGREGATE_SIZE_CHANGED
         };
 
-        static Margins defaultHardMarginsMM();
-
         Settings();
 
-        virtual ~Settings();
+        ~Settings() override;
 
         /**
          * \brief Removes all stored data.
          */
         void clear();
 
-        void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker);
 
         /**
          * \brief Removes all stored data for pages that are not in the provided list.
          */
-        void removePagesMissingFrom(PageSequence const& pages);
+        void removePagesMissingFrom(const PageSequence& pages);
 
         /**
          * \brief Check that we have all the essential parameters for every
@@ -70,38 +68,40 @@ namespace page_layout {
          * \param pages The list of pages to check.
          * \param ignore The page to be ignored by the check.  Optional.
          */
-        bool checkEverythingDefined(PageSequence const& pages, PageId const* ignore = nullptr) const;
+        bool checkEverythingDefined(const PageSequence& pages, const PageId* ignore = nullptr) const;
 
         /**
          * \brief Get all page parameters at once.
          *
          * May return a null unique_ptr if the specified page is unknown to us.
          */
-        std::unique_ptr<Params> getPageParams(PageId const& page_id) const;
+        std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
+
+        bool isParamsNull(const PageId& page_id) const;
 
         /**
          * \brief Set all page parameters at once.
          */
-        void setPageParams(PageId const& page_id, Params const& params);
+        void setPageParams(const PageId& page_id, const Params& params);
 
         /**
          * \brief Updates content size and returns all parameters at once.
          */
-        Params updateContentSizeAndGetParams(PageId const& page_id,
-                                             QRectF const& page_rect,
-                                             QRectF const& content_rect,
-                                             QSizeF const& content_size_mm,
+        Params updateContentSizeAndGetParams(const PageId& page_id,
+                                             const QRectF& page_rect,
+                                             const QRectF& content_rect,
+                                             const QSizeF& content_size_mm,
                                              QSizeF* agg_hard_size_before = nullptr,
                                              QSizeF* agg_hard_size_after = nullptr,
                                              bool suppress_content_rect_update = false);
 
-        QRectF const& updateContentRect();
+        const QRectF& updateContentRect();
 
-        QRectF const& getContentRect();
+        const QRectF& getContentRect();
 
         void setContentRect(const QRectF& contentRect);
 
-        QRectF const& getPageRect();
+        const QRectF& getPageRect();
 
         /**
          * \brief Returns the hard margins for the specified page.
@@ -113,7 +113,7 @@ namespace page_layout {
          * If no margins were assigned to the specified page, the default
          * margins are returned.
          */
-        Margins getHardMarginsMM(PageId const& page_id) const;
+        Margins getHardMarginsMM(const PageId& page_id) const;
 
         /**
          * \brief Sets hard margins for the specified page.
@@ -122,7 +122,7 @@ namespace page_layout {
          * Soft margins are those added to extend the page to match its
          * size with other pages.
          */
-        void setHardMarginsMM(PageId const& page_id, Margins const& margins_mm);
+        void setHardMarginsMM(const PageId& page_id, const Margins& margins_mm);
 
         /**
          * \brief Returns the alignment for the specified page.
@@ -132,7 +132,7 @@ namespace page_layout {
          * If no alignment was specified, the default alignment is returned,
          * which is "center vertically and horizontally".
          */
-        Alignment getPageAlignment(PageId const& page_id) const;
+        Alignment getPageAlignment(const PageId& page_id) const;
 
         /**
          * \brief Sets alignment for the specified page.
@@ -140,16 +140,16 @@ namespace page_layout {
          * Alignments affect the distribution of soft margins and whether this
          * page's size affects others and vice versa.
          */
-        AggregateSizeChanged setPageAlignment(PageId const& page_id, Alignment const& alignment);
+        AggregateSizeChanged setPageAlignment(const PageId& page_id, const Alignment& alignment);
 
         /**
          * \brief Sets content size in millimeters for the specified page.
          *
          * The content size comes from the "Select Content" filter.
          */
-        AggregateSizeChanged setContentSizeMM(PageId const& page_id, QSizeF const& content_size_mm);
+        AggregateSizeChanged setContentSizeMM(const PageId& page_id, const QSizeF& content_size_mm);
 
-        void invalidateContentSize(PageId const& page_id);
+        void invalidateContentSize(const PageId& page_id);
 
         /**
          * \brief Returns the aggregate (max width + max height) hard page size.
@@ -164,7 +164,11 @@ namespace page_layout {
          * the size and alignment of a specified page have changed.
          */
         QSizeF
-        getAggregateHardSizeMM(PageId const& page_id, QSizeF const& hard_size_mm, Alignment const& alignment) const;
+        getAggregateHardSizeMM(const PageId& page_id, const QSizeF& hard_size_mm, const Alignment& alignment) const;
+
+        bool isPageAutoMarginsEnabled(const PageId& page_id);
+
+        void setPageAutoMarginsEnabled(const PageId& page_id, bool state);
 
     private:
         class Impl;

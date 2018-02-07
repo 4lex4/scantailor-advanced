@@ -30,6 +30,7 @@
 
 class DebugImages;
 class ProcessingIndicationWidget;
+class ImageViewBase;
 
 namespace output {
     class DespeckleVisualization;
@@ -44,18 +45,22 @@ namespace output {
          *        when this widget becomes visible.
          * \param debug Indicates whether debugging is turned on.
          */
-        DespeckleView(DespeckleState const& despeckle_state, DespeckleVisualization const& visualization, bool debug);
+        DespeckleView(const DespeckleState& despeckle_state, const DespeckleVisualization& visualization, bool debug);
 
-        virtual ~DespeckleView();
+        ~DespeckleView() override;
 
     public slots:
 
         void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
-    protected:
-        virtual void hideEvent(QHideEvent* evt);
+    signals:
 
-        virtual void showEvent(QShowEvent* evt);
+        void imageViewCreated(ImageViewBase*);
+
+    protected:
+        void hideEvent(QHideEvent* evt) override;
+
+        void showEvent(QShowEvent* evt) override;
 
     private:
         class TaskCancelException;
@@ -70,8 +75,8 @@ namespace output {
 
         void initiateDespeckling(AnimationAction anim_action);
 
-        void despeckleDone(DespeckleState const& despeckle_state,
-                           DespeckleVisualization const& visualization,
+        void despeckleDone(const DespeckleState& despeckle_state,
+                           const DespeckleVisualization& visualization,
                            DebugImages* dbg);
 
         void cancelBackgroundTask();

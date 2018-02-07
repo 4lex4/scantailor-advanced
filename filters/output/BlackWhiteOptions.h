@@ -24,39 +24,31 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
+    enum BinarizationMethod {
+        OTSU,
+        SAUVOLA,
+        WOLF
+    };
+
     class BlackWhiteOptions {
     public:
-        enum BinarizationMethod {
-            OTSU,
-            SAUVOLA,
-            WOLF
-        };
-
         BlackWhiteOptions();
 
-        explicit BlackWhiteOptions(QDomElement const& el);
+        explicit BlackWhiteOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(BlackWhiteOptions const& other) const;
+        bool operator==(const BlackWhiteOptions& other) const;
 
-        bool operator!=(BlackWhiteOptions const& other) const;
+        bool operator!=(const BlackWhiteOptions& other) const;
 
-        int thresholdAdjustment() const {
-            return m_thresholdAdjustment;
-        }
+        int thresholdAdjustment() const;
 
-        void setThresholdAdjustment(int val) {
-            m_thresholdAdjustment = val;
-        }
+        void setThresholdAdjustment(int val);
 
-        bool normalizeIllumination() const {
-            return m_normalizeIllumination;
-        }
+        bool normalizeIllumination() const;
 
-        void setNormalizeIllumination(bool val) {
-            m_normalizeIllumination = val;
-        }
+        void setNormalizeIllumination(bool val);
 
         bool isSavitzkyGolaySmoothingEnabled() const;
 
@@ -90,10 +82,19 @@ namespace output {
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
 
+        bool isColorSegmentationEnabled() const;
+
+        void setColorSegmentationEnabled(bool colorSegmentationEnabled);
+
+        int getSegmentationNoiseReduction() const;
+
+        void setSegmentationNoiseReduction(int segmentationNoiseReduction);
+
     private:
         static BinarizationMethod parseBinarizationMethod(const QString& str);
 
         static QString formatBinarizationMethod(BinarizationMethod type);
+
 
         int m_thresholdAdjustment;
         bool savitzkyGolaySmoothingEnabled;
@@ -105,6 +106,8 @@ namespace output {
         int wolfUpperBound;
         double wolfCoef;
         BinarizationMethod binarizationMethod;
+        bool colorSegmentationEnabled;
+        int segmentationNoiseReduction;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

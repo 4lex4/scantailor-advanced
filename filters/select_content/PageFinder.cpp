@@ -19,7 +19,6 @@
 
 #include "PageFinder.h"
 
-#include "CommandLine.h"
 #include "DebugImages.h"
 #include "FilterData.h"
 #include "imageproc/BinaryImage.h"
@@ -33,12 +32,11 @@
 namespace select_content {
     using namespace imageproc;
 
-    QRectF PageFinder::findPageBox(TaskStatus const& status,
-                                   FilterData const& data,
+    QRectF PageFinder::findPageBox(const TaskStatus& status,
+                                   const FilterData& data,
                                    bool fine_tune,
-                                   QSizeF const& box,
+                                   const QSizeF& box,
                                    double tolerance,
-                                   Margins borders,
                                    DebugImages* dbg) {
         ImageTransformation xform_150dpi(data.xform());
         xform_150dpi.preScaleToDpi(Dpi(150, 150));
@@ -48,8 +46,8 @@ namespace select_content {
         }
 
         double to150 = 150.0 / 25.4;
-        int exp_width = int(to150 * box.width());
-        int exp_height = int(to150 * box.height());
+        auto exp_width = int(to150 * box.width());
+        auto exp_height = int(to150 * box.height());
 
 #ifdef DEBUG
         std::cout << "dpi: " << data.xform().origDpi().horizontal() << std::endl;
@@ -57,12 +55,13 @@ namespace select_content {
         std::cout << "exp_width = " << exp_width << "; exp_height" << exp_height << std::endl;
 #endif
 
-        uint8_t const darkest_gray_level = darkestGrayLevel(data.grayImage());
-        QColor const outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
+        const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+        const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
+        const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
         QImage gray150(
                 transformToGray(
-                        data.grayImage(), xform_150dpi.transform(),
+                        dataGrayImage, xform_150dpi.transform(),
                         xform_150dpi.resultingRect().toRect(),
                         OutsidePixels::assumeColor(outside_color)
                 )
@@ -132,11 +131,6 @@ namespace select_content {
         std::cout << "width = " << content_rect.width() << "; height=" << content_rect.height() << std::endl;
 #endif
 
-        content_rect.setLeft(content_rect.left() + to150 * borders.left());
-        content_rect.setTop(content_rect.top() + to150 * borders.top());
-        content_rect.setRight(content_rect.right() - to150 * borders.right());
-        content_rect.setBottom(content_rect.bottom() - to150 * borders.bottom());
-
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();
         QRectF result = combined_xform.map(QRectF(content_rect)).boundingRect();
@@ -144,7 +138,7 @@ namespace select_content {
         return result;
     }      // PageFinder::findPageBox
 
-    QRect PageFinder::detectBorders(QImage const& img) {
+    QRect PageFinder::detectBorders(const QImage& img) {
         int l = 0, t = 0, r = img.width() - 1, b = img.height() - 1;
         int xmid = r / 2;
         int ymid = b / 2;
@@ -160,13 +154,13 @@ namespace select_content {
 /**
  * shift edge while points around mid are black
  */
-    int PageFinder::detectEdge(QImage const& img, int start, int end, int inc, int mid, Qt::Orientation orient) {
+    int PageFinder::detectEdge(const QImage& img, int start, int end, int inc, int mid, Qt::Orientation orient) {
         int min_size = 10;
         int gap = 0;
         int i = start, edge = start;
         int ms = 0;
         int me = 2 * mid;
-        int min_bp = int(double(me - ms) * 0.95);
+        auto min_bp = int(double(me - ms) * 0.95);
         Qt::GlobalColor black = Qt::color1;
 
         while (i != end) {
@@ -202,7 +196,7 @@ namespace select_content {
         return edge;
     }      // PageFinder::detectEdge
 
-    void PageFinder::fineTuneCorners(QImage const& img, QRect& rect, QSize const& size, double tolerance) {
+    void PageFinder::fineTuneCorners(const QImage& img, QRect& rect, const QSize& size, double tolerance) {
         int l = rect.left(), t = rect.top(), r = rect.right(), b = rect.bottom();
         bool done = false;
 
@@ -222,17 +216,17 @@ namespace select_content {
 /**
  * shift edges until given corner is out of black
  */
-    bool PageFinder::fineTuneCorner(QImage const& img,
+    bool PageFinder::fineTuneCorner(const QImage& img,
                                     int& x,
                                     int& y,
                                     int max_x,
                                     int max_y,
                                     int inc_x,
                                     int inc_y,
-                                    QSize const& size,
+                                    const QSize& size,
                                     double tolerance) {
-        int width_t = size.width() * (1.0 - tolerance);
-        int height_t = size.height() * (1.0 - tolerance);
+        auto width_t = static_cast<int>(size.width() * (1.0 - tolerance));
+        auto height_t = static_cast<int>(size.height() * (1.0 - tolerance));
 
         Qt::GlobalColor black = Qt::color1;
         int pixel = img.pixelIndex(x, y);

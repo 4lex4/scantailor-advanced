@@ -43,7 +43,7 @@ namespace dewarping {
          * \param down_direction A vector pointing approximately downwards in terms of content.
          *        The vector can't be zero-length.
          */
-        DistortionModelBuilder(Vec2d const& down_direction);
+        explicit DistortionModelBuilder(const Vec2d& down_direction);
 
         /**
          * \brief Set the vertical content boundaries.
@@ -52,7 +52,7 @@ namespace dewarping {
          * positions along the line don't really matter.  It also doesn't
          * matter which one is the left bound and which one is the right one.
          */
-        void setVerticalBounds(QLineF const& bound1, QLineF const& bound2);
+        void setVerticalBounds(const QLineF& bound1, const QLineF& bound2);
 
         /**
          * \brief Returns the current vertical bounds.
@@ -69,12 +69,12 @@ namespace dewarping {
          * model is 2, although that doesn't guarantee successful model construction.
          * The more apart the curves are, the better.
          */
-        void addHorizontalCurve(std::vector<QPointF> const& polyline);
+        void addHorizontalCurve(const std::vector<QPointF>& polyline);
 
         /**
          * \brief Applies an affine transformation to the internal representation.
          */
-        void transform(QTransform const& xform);
+        void transform(const QTransform& xform);
 
         /**
          * \brief Tries to build a distortion model based on information provided so far.
@@ -82,7 +82,7 @@ namespace dewarping {
          * \return A DistortionModel that may be invalid.
          * \see DistortionModel::isValid()
          */
-        DistortionModel tryBuildModel(DebugImages* dbg = 0, QImage const* dbg_background = 0) const;
+        DistortionModel tryBuildModel(DebugImages* dbg = nullptr, const QImage* dbg_background = nullptr) const;
 
     private:
         struct TracedCurve;
@@ -91,31 +91,31 @@ namespace dewarping {
         class RansacAlgo;
         class BadCurve;
 
-        TracedCurve polylineToCurve(std::vector<QPointF> const& polyline) const;
+        TracedCurve polylineToCurve(const std::vector<QPointF>& polyline) const;
 
-        static Vec2d centroid(std::vector<QPointF> const& polyline);
+        static Vec2d centroid(const std::vector<QPointF>& polyline);
 
-        std::pair<QLineF, QLineF> frontBackBounds(std::vector<QPointF> const& polyline) const;
+        std::pair<QLineF, QLineF> frontBackBounds(const std::vector<QPointF>& polyline) const;
 
-        static std::vector<QPointF> maybeTrimPolyline(std::vector<QPointF> const& polyline,
-                                                      std::pair<QLineF, QLineF> const& bounds);
+        static std::vector<QPointF> maybeTrimPolyline(const std::vector<QPointF>& polyline,
+                                                      const std::pair<QLineF, QLineF>& bounds);
 
-        static bool maybeTrimFront(std::deque<QPointF>& polyline, QLineF const& bound);
+        static bool maybeTrimFront(std::deque<QPointF>& polyline, const QLineF& bound);
 
-        static bool maybeTrimBack(std::deque<QPointF>& polyline, QLineF const& bound);
+        static bool maybeTrimBack(std::deque<QPointF>& polyline, const QLineF& bound);
 
-        static void intersectFront(std::deque<QPointF>& polyline, QLineF const& bound);
+        static void intersectFront(std::deque<QPointF>& polyline, const QLineF& bound);
 
-        static void intersectBack(std::deque<QPointF>& polyline, QLineF const& bound);
+        static void intersectBack(std::deque<QPointF>& polyline, const QLineF& bound);
 
-        static XSpline fitExtendedSpline(std::vector<QPointF> const& polyline,
-                                         Vec2d const& centroid,
-                                         std::pair<QLineF, QLineF> const& bounds);
+        static XSpline fitExtendedSpline(const std::vector<QPointF>& polyline,
+                                         const Vec2d& centroid,
+                                         const std::pair<QLineF, QLineF>& bounds);
 
-        QImage visualizeTrimmedPolylines(QImage const& background, std::vector<TracedCurve> const& curves) const;
+        QImage visualizeTrimmedPolylines(const QImage& background, const std::vector<TracedCurve>& curves) const;
 
-        QImage visualizeModel(QImage const& background, std::vector<TracedCurve> const& curves,
-                              RansacModel const& model) const;
+        QImage visualizeModel(const QImage& background, const std::vector<TracedCurve>& curves,
+                              const RansacModel& model) const;
 
         Vec2d m_downDirection;
         Vec2d m_rightDirection;

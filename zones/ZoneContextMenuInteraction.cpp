@@ -29,11 +29,11 @@
 
 class ZoneContextMenuInteraction::OrderByArea {
 public:
-    bool operator()(EditableZoneSet::Zone const& lhs, EditableZoneSet::Zone const& rhs) const {
-        QRectF const lhs_bbox(lhs.spline()->toPolygon().boundingRect());
-        QRectF const rhs_bbox(rhs.spline()->toPolygon().boundingRect());
-        qreal const lhs_area = lhs_bbox.width() * lhs_bbox.height();
-        qreal const rhs_area = rhs_bbox.width() * rhs_bbox.height();
+    bool operator()(const EditableZoneSet::Zone& lhs, const EditableZoneSet::Zone& rhs) const {
+        const QRectF lhs_bbox(lhs.spline()->toPolygon().boundingRect());
+        const QRectF rhs_bbox(rhs.spline()->toPolygon().boundingRect());
+        const qreal lhs_area = lhs_bbox.width() * lhs_bbox.height();
+        const qreal rhs_area = rhs_bbox.width() * rhs_bbox.height();
 
         return lhs_area < rhs_area;
     }
@@ -50,11 +50,11 @@ ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionCo
 
 ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionContext& context,
                                                                InteractionState& interaction,
-                                                               MenuCustomizer const& menu_customizer) {
+                                                               const MenuCustomizer& menu_customizer) {
     std::vector<Zone> selectable_zones(zonesUnderMouse(context));
 
     if (selectable_zones.empty()) {
-        return 0;
+        return nullptr;
     } else {
         return new ZoneContextMenuInteraction(
                 context, interaction, menu_customizer, selectable_zones
@@ -64,19 +64,19 @@ ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionCo
 
 std::vector<ZoneContextMenuInteraction::Zone>
 ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context) {
-    QTransform const from_screen(context.imageView().widgetToImage());
-    QPointF const image_mouse_pos(
+    const QTransform from_screen(context.imageView().widgetToImage());
+    const QPointF image_mouse_pos(
             from_screen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5))
     );
 
     // Find zones containing the mouse position.
     std::vector<Zone> selectable_zones;
-    for (EditableZoneSet::Zone const& zone : context.zones()) {
+    for (const EditableZoneSet::Zone& zone : context.zones()) {
         QPainterPath path;
         path.setFillRule(Qt::WindingFill);
         path.addPolygon(zone.spline()->toPolygon());
         if (path.contains(image_mouse_pos)) {
-            selectable_zones.push_back(Zone(zone));
+            selectable_zones.emplace_back(zone);
         }
     }
 
@@ -85,7 +85,7 @@ ZoneContextMenuInteraction::zonesUnderMouse(ZoneInteractionContext& context) {
 
 ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& context,
                                                        InteractionState& interaction,
-                                                       MenuCustomizer const& menu_customizer,
+                                                       const MenuCustomizer& menu_customizer,
                                                        std::vector<Zone>& selectable_zones)
         : m_rContext(context),
           m_ptrMenu(new QMenu(&context.imageView())),
@@ -101,19 +101,19 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     interaction.capture(m_interaction);
 
     int h = 20;
-    int const h_step = 65;
-    int const s = 255 * 64 / 100;
-    int const v = 255 * 96 / 100;
-    int const alpha = 150;
+    const int h_step = 65;
+    const int s = 255 * 64 / 100;
+    const int v = 255 * 96 / 100;
+    const int alpha = 150;
     QColor color;
 
-    QSignalMapper* hover_map = new QSignalMapper(this);
+    auto* hover_map = new QSignalMapper(this);
     connect(hover_map, SIGNAL(mapped(int)), SLOT(highlightItem(int)));
 
     QPixmap pixmap;
 
-    std::vector<Zone>::iterator it(m_selectableZones.begin());
-    std::vector<Zone>::iterator const end(m_selectableZones.end());
+    auto it(m_selectableZones.begin());
+    const auto end(m_selectableZones.end());
     for (int i = 0; it != end; ++it, ++i, h = (h + h_step) % 360) {
         color.setHsv(h, s, v, alpha);
         it->color = color.toRgb();
@@ -124,12 +124,12 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
             pixmap.fill(color);
         }
 
-        StandardMenuItems const std_items(
+        const StandardMenuItems std_items(
                 propertiesMenuItemFor(*it),
                 deleteMenuItemFor(*it)
         );
 
-        for (ZoneContextMenuItem const& item : menu_customizer(*it, std_items)) {
+        for (const ZoneContextMenuItem& item : menu_customizer(*it, std_items)) {
             QAction* action = m_ptrMenu->addAction(pixmap, item.label());
             new QtSignalForwarder(
                     action, SIGNAL(triggered()),
@@ -156,16 +156,15 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     m_ptrMenu->popup(QCursor::pos());
 }
 
-ZoneContextMenuInteraction::~ZoneContextMenuInteraction() {
-}
+ZoneContextMenuInteraction::~ZoneContextMenuInteraction() = default;
 
-void ZoneContextMenuInteraction::onPaint(QPainter& painter, InteractionState const&) {
+void ZoneContextMenuInteraction::onPaint(QPainter& painter, const InteractionState&) {
     painter.setWorldMatrixEnabled(false);
     painter.setRenderHint(QPainter::Antialiasing);
 
     if (m_highlightedZoneIdx >= 0) {
-        QTransform const to_screen(m_rContext.imageView().imageToWidget());
-        Zone const& zone = m_selectableZones[m_highlightedZoneIdx];
+        const QTransform to_screen(m_rContext.imageView().imageToWidget());
+        const Zone& zone = m_selectableZones[m_highlightedZoneIdx];
         m_visualizer.drawSpline(painter, to_screen, zone.spline());
     }
 }
@@ -198,7 +197,7 @@ void ZoneContextMenuInteraction::menuAboutToHide() {
 }
 
 void ZoneContextMenuInteraction::menuItemTriggered(InteractionState& interaction,
-                                                   ZoneContextMenuItem::Callback const& callback) {
+                                                   const ZoneContextMenuItem::Callback& callback) {
     m_menuItemTriggered = true;
     m_visualizer.switchToStrokeMode();
 
@@ -212,34 +211,34 @@ void ZoneContextMenuInteraction::menuItemTriggered(InteractionState& interaction
     deleteLater();
 }
 
-InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(EditableZoneSet::Zone const& zone) {
+InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(const EditableZoneSet::Zone& zone) {
     m_rContext.showPropertiesCommand(zone);
 
     return m_rContext.createDefaultInteraction();
 }
 
-InteractionHandler* ZoneContextMenuInteraction::deleteRequest(EditableZoneSet::Zone const& zone) {
+InteractionHandler* ZoneContextMenuInteraction::deleteRequest(const EditableZoneSet::Zone& zone) {
     m_rContext.zones().removeZone(zone.spline());
     m_rContext.zones().commit();
 
     return m_rContext.createDefaultInteraction();
 }
 
-ZoneContextMenuItem ZoneContextMenuInteraction::deleteMenuItemFor(EditableZoneSet::Zone const& zone) {
+ZoneContextMenuItem ZoneContextMenuInteraction::deleteMenuItemFor(const EditableZoneSet::Zone& zone) {
     return ZoneContextMenuItem(
             tr("Delete"),
             boost::bind(&ZoneContextMenuInteraction::deleteRequest, this, zone)
     );
 }
 
-ZoneContextMenuItem ZoneContextMenuInteraction::propertiesMenuItemFor(EditableZoneSet::Zone const& zone) {
+ZoneContextMenuItem ZoneContextMenuInteraction::propertiesMenuItemFor(const EditableZoneSet::Zone& zone) {
     return ZoneContextMenuItem(
             tr("Properties"),
             boost::bind(&ZoneContextMenuInteraction::propertiesRequest, this, zone)
     );
 }
 
-void ZoneContextMenuInteraction::highlightItem(int const zone_idx) {
+void ZoneContextMenuInteraction::highlightItem(const int zone_idx) {
     if (m_selectableZones.size() > 1) {
         m_visualizer.switchToFillMode(m_selectableZones[zone_idx].color);
     } else {
@@ -250,8 +249,8 @@ void ZoneContextMenuInteraction::highlightItem(int const zone_idx) {
 }
 
 std::vector<ZoneContextMenuItem>
-ZoneContextMenuInteraction::defaultMenuCustomizer(EditableZoneSet::Zone const& zone,
-                                                  StandardMenuItems const& std_items) {
+ZoneContextMenuInteraction::defaultMenuCustomizer(const EditableZoneSet::Zone& zone,
+                                                  const StandardMenuItems& std_items) {
     std::vector<ZoneContextMenuItem> items;
     items.reserve(2);
     items.push_back(std_items.propertiesItem);
@@ -262,15 +261,15 @@ ZoneContextMenuInteraction::defaultMenuCustomizer(EditableZoneSet::Zone const& z
 
 /*========================== StandardMenuItem =========================*/
 
-ZoneContextMenuInteraction::StandardMenuItems::StandardMenuItems(ZoneContextMenuItem const& properties_item,
-                                                                 ZoneContextMenuItem const& delete_item)
+ZoneContextMenuInteraction::StandardMenuItems::StandardMenuItems(const ZoneContextMenuItem& properties_item,
+                                                                 const ZoneContextMenuItem& delete_item)
         : propertiesItem(properties_item),
           deleteItem(delete_item) {
 }
 
 /*============================= Visualizer ============================*/
 
-void ZoneContextMenuInteraction::Visualizer::switchToFillMode(QColor const& color) {
+void ZoneContextMenuInteraction::Visualizer::switchToFillMode(const QColor& color) {
     m_color = color;
 }
 
@@ -278,7 +277,7 @@ void ZoneContextMenuInteraction::Visualizer::switchToStrokeMode() {
     m_color = QColor();
 }
 
-void ZoneContextMenuInteraction::Visualizer::prepareForSpline(QPainter& painter, EditableSpline::Ptr const& spline) {
+void ZoneContextMenuInteraction::Visualizer::prepareForSpline(QPainter& painter, const EditableSpline::Ptr& spline) {
     BasicSplineVisualizer::prepareForSpline(painter, spline);
     if (m_color.isValid()) {
         painter.setBrush(m_color);

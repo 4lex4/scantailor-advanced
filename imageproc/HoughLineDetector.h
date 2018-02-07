@@ -45,13 +45,13 @@ namespace imageproc {
                   m_quality() {
         }
 
-        HoughLine(QPointF const& norm_uv, double distance, unsigned quality)
+        HoughLine(const QPointF& norm_uv, double distance, unsigned quality)
                 : m_normUnitVector(norm_uv),
                   m_distance(distance),
                   m_quality(quality) {
         }
 
-        QPointF const& normUnitVector() const {
+        const QPointF& normUnitVector() const {
             return m_normUnitVector;
         }
 
@@ -104,7 +104,7 @@ namespace imageproc {
          *        angle and the next one.
          * \param num_angles The number of angles to check.
          */
-        HoughLineDetector(QSize const& input_dimensions,
+        HoughLineDetector(const QSize& input_dimensions,
                           double distance_resolution,
                           double start_angle,
                           double angle_delta,
@@ -130,22 +130,22 @@ namespace imageproc {
     private:
         class GreaterQualityFirst;
 
-        static BinaryImage findHistogramPeaks(std::vector<unsigned> const& hist, int width, int height,
+        static BinaryImage findHistogramPeaks(const std::vector<unsigned>& hist, int width, int height,
                                               unsigned lower_bound);
 
-        static BinaryImage findPeakCandidates(std::vector<unsigned> const& hist, int width, int height,
+        static BinaryImage findPeakCandidates(const std::vector<unsigned>& hist, int width, int height,
                                               unsigned lower_bound);
 
-        static void incrementBinsMasked(std::vector<unsigned>& hist, int width, int height, BinaryImage const& mask);
+        static void incrementBinsMasked(std::vector<unsigned>& hist, int width, int height, const BinaryImage& mask);
 
-        static void max5x5(std::vector<unsigned> const& src, std::vector<unsigned>& dst, int width, int height);
+        static void max5x5(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-        static void max3x1(std::vector<unsigned> const& src, std::vector<unsigned>& dst, int width, int height);
+        static void max3x1(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-        static void max1x3(std::vector<unsigned> const& src, std::vector<unsigned>& dst, int width, int height);
+        static void max1x3(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-        static BinaryImage buildEqualMap(std::vector<unsigned> const& src1,
-                                         std::vector<unsigned> const& src2,
+        static BinaryImage buildEqualMap(const std::vector<unsigned>& src1,
+                                         const std::vector<unsigned>& src2,
                                          int width,
                                          int height,
                                          unsigned lower_bound);

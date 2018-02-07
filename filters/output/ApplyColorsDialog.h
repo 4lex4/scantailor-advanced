@@ -33,13 +33,13 @@ namespace output {
     class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
     Q_OBJECT
     public:
-        ApplyColorsDialog(QWidget* parent, PageId const& page_id, PageSelectionAccessor const& page_selection_accessor);
+        ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~ApplyColorsDialog();
+        ~ApplyColorsDialog() override;
 
     signals:
 
-        void accepted(std::set<PageId> const& pages);
+        void accepted(const std::set<PageId>& pages);
 
     private slots:
 

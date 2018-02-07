@@ -35,122 +35,77 @@ namespace select_content {
     public:
         // Member-wise copying is OK.
 
-        Params(QRectF const& rect, QSizeF const& size_mm, Dependencies const& deps, AutoManualMode mode);
+        explicit Params(const Dependencies& deps);
 
-        Params(QRectF const& rect,
-               QSizeF const& size_mm,
-               Dependencies const& deps,
-               AutoManualMode mode,
+        Params(const QRectF& content_rect,
+               const QSizeF& size_mm,
+               const QRectF& page_rect,
+               const Dependencies& deps,
+               AutoManualMode content_detection_mode,
+               AutoManualMode page_detection_mode,
                bool contentDetect,
                bool pageDetect,
-               bool fineTuning,
-               Margins pageBorders = Margins(0, 0, 0, 0));
+               bool fineTuning);
 
-        Params(Dependencies const& deps);
+        explicit Params(const QDomElement& filter_el);
 
-        Params(QDomElement const& filter_el);
+        QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
         ~Params();
 
-        QRectF const& contentRect() const {
-            return m_contentRect;
-        }
+        const QRectF& contentRect() const;
 
-        QRectF const& pageRect() const {
-            return m_pageRect;
-        }
+        const QRectF& pageRect() const;
 
-        QSizeF const& contentSizeMM() const {
-            return m_contentSizeMM;
-        }
+        const QSizeF& contentSizeMM() const;
 
-        Dependencies const& dependencies() const {
-            return m_deps;
-        }
+        const Dependencies& dependencies() const;
 
-        AutoManualMode mode() const {
-            return m_mode;
-        }
+        AutoManualMode contentDetectionMode() const;
 
-        double deviation() const {
-            return m_deviation;
-        }
+        AutoManualMode pageDetectionMode() const;
 
-        void setDeviation(double d) {
-            m_deviation = d;
-        }
+        double deviation() const;
 
-        void computeDeviation(double avg) {
-            m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
-        }
+        void setDeviation(double d);
 
-        bool isDeviant(double std, double max_dev) {
-            return (max_dev * std) < fabs(m_deviation);
-        }
+        void computeDeviation(double avg);
 
-        bool isContentDetectionEnabled() const {
-            return m_contentDetect;
-        }
+        bool isDeviant(double std, double max_dev);
 
-        bool isPageDetectionEnabled() const {
-            return m_pageDetect;
-        }
+        bool isContentDetectionEnabled() const;
 
-        bool isFineTuningEnabled() const {
-            return m_fineTuneCorners;
-        }
+        bool isPageDetectionEnabled() const;
 
-        Margins pageBorders() const {
-            return m_pageBorders;
-        }
+        bool isFineTuningEnabled() const;
 
-        void setPageBorders(Margins borders) {
-            m_pageBorders = borders;
-        }
+        void setContentDetectionMode(const AutoManualMode& mode);
 
-        void setMode(AutoManualMode const& mode) {
-            m_mode = mode;
-        }
+        void setPageDetectionMode(const AutoManualMode& mode);
 
-        void setContentRect(QRectF const& rect) {
-            m_contentRect = rect;
-        }
+        void setContentRect(const QRectF& rect);
 
-        void setPageRect(QRectF const& rect) {
-            m_pageRect = rect;
-        }
+        void setPageRect(const QRectF& rect);
 
-        void setContentSizeMM(QSizeF const& size) {
-            m_contentSizeMM = size;
-        }
+        void setContentSizeMM(const QSizeF& size);
 
-        void setDependencies(Dependencies const& deps) {
-            m_deps = deps;
-        }
+        void setDependencies(const Dependencies& deps);
 
-        void setContentDetect(bool detect) {
-            m_contentDetect = detect;
-        }
+        void setContentDetect(bool detect);
 
-        void setPageDetect(bool detect) {
-            m_pageDetect = detect;
-        }
+        void setPageDetect(bool detect);
 
-        void setFineTuneCorners(bool fine_tune) {
-            m_fineTuneCorners = fine_tune;
-        }
-
-        QDomElement toXml(QDomDocument& doc, QString const& name) const;
+        void setFineTuneCorners(bool fine_tune);
 
     private:
         QRectF m_contentRect;
         QRectF m_pageRect;
-        Margins m_pageBorders;
         QSizeF m_contentSizeMM;
         Dependencies m_deps;
-        AutoManualMode m_mode;
-        bool m_contentDetect;
-        bool m_pageDetect;
+        AutoManualMode m_contentDetectionMode;
+        AutoManualMode m_pageDetectionMode;
+        bool m_contentDetectEnabled;
+        bool m_pageDetectEnabled;
         bool m_fineTuneCorners;
         double m_deviation;
     };

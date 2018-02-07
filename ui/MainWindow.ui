@@ -64,12 +64,24 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menuUnits">
+     <property name="title">
+      <string>Units</string>
+     </property>
+     <addaction name="actionPixels"/>
+     <addaction name="actionMilimeters"/>
+     <addaction name="actionCentimetres"/>
+     <addaction name="actionInches"/>
+    </widget>
     <addaction name="actionFixDpi"/>
     <addaction name="actionRelinking"/>
     <addaction name="separator"/>
     <addaction name="actionDebug"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionDefaults"/>
+    <addaction name="separator"/>
+    <addaction name="menuUnits"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -468,6 +480,46 @@
    </property>
    <property name="shortcut">
     <string>P</string>
+   </property>
+  </action>
+  <action name="actionPixels">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pixels</string>
+   </property>
+  </action>
+  <action name="actionMilimeters">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Millimetres</string>
+   </property>
+  </action>
+  <action name="actionInches">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Inches</string>
+   </property>
+  </action>
+  <action name="actionCentimetres">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Centimetres</string>
+   </property>
+  </action>
+  <action name="actionDefaults">
+   <property name="text">
+    <string>Default parameters ...</string>
    </property>
   </action>
  </widget>

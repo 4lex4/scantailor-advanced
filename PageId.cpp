@@ -17,19 +17,19 @@
  */
 
 #include "PageId.h"
-#include <assert.h>
+#include <cassert>
 
 PageId::PageId()
         : m_subPage(SINGLE_PAGE) {
 }
 
-PageId::PageId(ImageId const& image_id, SubPage subpage)
+PageId::PageId(const ImageId& image_id, SubPage subpage)
         : m_imageId(image_id),
           m_subPage(subpage) {
 }
 
-QString PageId::subPageToString(SubPage const sub_page) {
-    char const* str = 0;
+QString PageId::subPageToString(const SubPage sub_page) {
+    const char* str = nullptr;
 
     switch (sub_page) {
         case SINGLE_PAGE:
@@ -48,7 +48,7 @@ QString PageId::subPageToString(SubPage const sub_page) {
     return QString::fromLatin1(str);
 }
 
-PageId::SubPage PageId::subPageFromString(QString const& string, bool* ok) {
+PageId::SubPage PageId::subPageFromString(const QString& string, bool* ok) {
     bool recognized = true;
     SubPage sub_page = SINGLE_PAGE;
 
@@ -69,15 +69,15 @@ PageId::SubPage PageId::subPageFromString(QString const& string, bool* ok) {
     return sub_page;
 }
 
-bool operator==(PageId const& lhs, PageId const& rhs) {
+bool operator==(const PageId& lhs, const PageId& rhs) {
     return lhs.subPage() == rhs.subPage() && lhs.imageId() == rhs.imageId();
 }
 
-bool operator!=(PageId const& lhs, PageId const& rhs) {
+bool operator!=(const PageId& lhs, const PageId& rhs) {
     return !(lhs == rhs);
 }
 
-bool operator<(PageId const& lhs, PageId const& rhs) {
+bool operator<(const PageId& lhs, const PageId& rhs) {
     if (lhs.imageId() < rhs.imageId()) {
         return true;
     } else if (rhs.imageId() < lhs.imageId()) {

@@ -27,8 +27,8 @@ class PageInfo {
 public:
     PageInfo();
 
-    PageInfo(PageId const& page_id,
-             ImageMetadata const& metadata,
+    PageInfo(const PageId& page_id,
+             const ImageMetadata& metadata,
              int image_sub_pages,
              bool left_half_removed,
              bool right_half_removed);
@@ -37,19 +37,19 @@ public:
         return m_pageId.isNull();
     }
 
-    PageId const& id() const {
+    const PageId& id() const {
         return m_pageId;
     }
 
-    void setId(PageId const& id) {
+    void setId(const PageId& id) {
         m_pageId = id;
     }
 
-    ImageId const& imageId() const {
+    const ImageId& imageId() const {
         return m_pageId.imageId();
     }
 
-    ImageMetadata const& metadata() const {
+    const ImageMetadata& metadata() const {
         return m_metadata;
     }
 

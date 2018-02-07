@@ -27,7 +27,7 @@ ZoomHandler::ZoomHandler(ImageViewBase& image_view)
 }
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view,
-                         boost::function<bool(InteractionState const&)> const& explicit_interaction_permitter)
+                         boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter)
         : m_rImageView(image_view),
           m_interactionPermitter(explicit_interaction_permitter),
           m_focus(CURSOR) {
@@ -50,15 +50,15 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
         // Alredy zoomed out and trying to zoom out more.
 
         // Scroll amount in terms of typical mouse wheel "clicks".
-        double const delta_clicks = event->delta() / 120;
+        const double delta_clicks = event->delta() / 120;
 
-        double const dist = -delta_clicks * 30;  // 30px per "click"
+        const double dist = -delta_clicks * 30;  // 30px per "click"
         m_rImageView.moveTowardsIdealPosition(dist);
 
         return;
     }
 
-    double const degrees = event->delta() / 8.0;
+    const double degrees = event->delta() / 8.0;
     zoom *= pow(2.0, degrees / 60.0);  // 2 times zoom for every 60 degrees
     if (zoom < 1.0) {
         zoom = 1.0;

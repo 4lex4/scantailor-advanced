@@ -21,16 +21,15 @@
 #include "PhysicalTransformation.h"
 
 namespace select_content {
-    PhysSizeCalc::PhysSizeCalc() {
-    }
+    PhysSizeCalc::PhysSizeCalc() = default;
 
-    PhysSizeCalc::PhysSizeCalc(ImageTransformation const& xform)
+    PhysSizeCalc::PhysSizeCalc(const ImageTransformation& xform)
             : m_virtToPhys(xform.transformBack() * PhysicalTransformation(xform.origDpi()).pixelsToMM()) {
     }
 
-    QSizeF PhysSizeCalc::sizeMM(QRectF const& rect_px) const {
-        QPolygonF const poly_mm(m_virtToPhys.map(rect_px));
-        QSizeF const size_mm(
+    QSizeF PhysSizeCalc::sizeMM(const QRectF& rect_px) const {
+        const QPolygonF poly_mm(m_virtToPhys.map(rect_px));
+        const QSizeF size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
                 QLineF(poly_mm[1], poly_mm[2]).length()
         );

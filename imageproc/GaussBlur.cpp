@@ -24,6 +24,7 @@
 #include "Constants.h"
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <cmath>
 
 namespace imageproc {
     namespace gauss_blur_impl {
@@ -33,32 +34,32 @@ namespace imageproc {
              *  using a 4th order approximation of the gaussian operator
              */
 
-            const float div = sqrt(2.0 * constants::PI) * std_dev;
-            const float x0 = -1.783 / std_dev;
-            const float x1 = -1.723 / std_dev;
-            const float x2 = 0.6318 / std_dev;
-            const float x3 = 1.997 / std_dev;
-            const float x4 = 1.6803 / div;
-            const float x5 = 3.735 / div;
-            const float x6 = -0.6803 / div;
-            const float x7 = -0.2598 / div;
+            const auto div = static_cast<const float>(sqrt(2.0 * constants::PI) * std_dev);
+            const auto x0 = static_cast<const float>(-1.783 / std_dev);
+            const auto x1 = static_cast<const float>(-1.723 / std_dev);
+            const auto x2 = static_cast<const float>(0.6318 / std_dev);
+            const auto x3 = static_cast<const float>(1.997 / std_dev);
+            const auto x4 = static_cast<const float>(1.6803 / div);
+            const auto x5 = static_cast<const float>(3.735 / div);
+            const auto x6 = static_cast<const float>(-0.6803 / div);
+            const auto x7 = static_cast<const float>(-0.2598 / div);
 
             n_p[0] = x4 + x6;
-            n_p[1] = (exp(x1) * (x7 * sin(x3) - (x6 + 2 * x4) * cos(x3))
-                      + exp(x0) * (x5 * sin(x2) - (2 * x6 + x4) * cos(x2)));
-            n_p[2] = (2 * exp(x0 + x1)
-                      * ((x4 + x6) * cos(x3) * cos(x2) - x5 * cos(x3) * sin(x2)
-                         - x7 * cos(x2) * sin(x3))
-                      + x6 * exp(2 * x0) + x4 * exp(2 * x1));
-            n_p[3] = (exp(x1 + 2 * x0) * (x7 * sin(x3) - x6 * cos(x3))
-                      + exp(x0 + 2 * x1) * (x5 * sin(x2) - x4 * cos(x2)));
+            n_p[1] = std::exp(x1) * (x7 * std::sin(x3) - (x6 + 2 * x4) * std::cos(x3))
+                     + std::exp(x0) * (x5 * std::sin(x2) - (2 * x6 + x4) * std::cos(x2));
+            n_p[2] = 2 * std::exp(x0 + x1)
+                     * ((x4 + x6) * std::cos(x3) * std::cos(x2) - x5 * std::cos(x3) * std::sin(x2)
+                        - x7 * std::cos(x2) * std::sin(x3))
+                     + x6 * std::exp(2 * x0) + x4 * std::exp(2 * x1);
+            n_p[3] = std::exp(x1 + 2 * x0) * (x7 * std::sin(x3) - x6 * std::cos(x3))
+                     + std::exp(x0 + 2 * x1) * (x5 * std::sin(x2) - x4 * std::cos(x2));
             n_p[4] = 0.0;
 
             d_p[0] = 0.0;
-            d_p[1] = -2 * exp(x1) * cos(x3) - 2 * exp(x0) * cos(x2);
-            d_p[2] = 4 * cos(x3) * cos(x2) * exp(x0 + x1) + exp(2 * x1) + exp(2 * x0);
-            d_p[3] = -2 * cos(x2) * exp(x0 + 2 * x1) - 2 * cos(x3) * exp(x1 + 2 * x0);
-            d_p[4] = exp(2 * x0 + 2 * x1);
+            d_p[1] = -2 * std::exp(x1) * std::cos(x3) - 2 * std::exp(x0) * std::cos(x2);
+            d_p[2] = 4 * std::cos(x3) * std::cos(x2) * std::exp(x0 + x1) + std::exp(2 * x1) + std::exp(2 * x0);
+            d_p[3] = -2 * std::cos(x2) * std::exp(x0 + 2 * x1) - 2 * std::cos(x3) * std::exp(x1 + 2 * x0);
+            d_p[4] = std::exp(2 * x0 + 2 * x1);
 
             for (int i = 0; i <= 4; i++) {
                 d_m[i] = d_p[i];
@@ -80,8 +81,8 @@ namespace imageproc {
                 sum_d += d_p[i];
             }
 
-            float const a = sum_n_p / (1.0 + sum_d);
-            float const b = sum_n_m / (1.0 + sum_d);
+            const auto a = static_cast<const float>(sum_n_p / (1.0 + sum_d));
+            const auto b = static_cast<const float>(sum_n_m / (1.0 + sum_d));
 
             for (int i = 0; i <= 4; i++) {
                 bd_p[i] = d_p[i] * a;
@@ -90,7 +91,7 @@ namespace imageproc {
         }          // find_iir_constants
     }      // namespace gauss_blur_impl
 
-    GrayImage gaussBlur(GrayImage const& src, float h_sigma, float v_sigma) {
+    GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma) {
         using namespace boost::lambda;
 
         if (src.isNull()) {

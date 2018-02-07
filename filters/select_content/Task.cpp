@@ -29,21 +29,26 @@
 #include "filters/page_layout/Task.h"
 
 #include <iostream>
+#include <utility>
+#include <UnitsProvider.h>
+#include <DefaultParams.h>
+#include <DefaultParamsProvider.h>
+#include "Dpm.h"
 
 namespace select_content {
     class Task::UiUpdater : public FilterResult {
     public:
-        UiUpdater(intrusive_ptr<Filter> const& filter,
-                  PageId const& page_id,
+        UiUpdater(intrusive_ptr<Filter> filter,
+                  const PageId& page_id,
                   std::unique_ptr<DebugImages> dbg,
-                  QImage const& image,
-                  ImageTransformation const& xform,
-                  OptionsWidget::UiData const& ui_data,
+                  const QImage& image,
+                  const ImageTransformation& xform,
+                  const OptionsWidget::UiData& ui_data,
                   bool batch);
 
-        virtual void updateUI(FilterUiInterface* ui);
+        void updateUI(FilterUiInterface* ui) override;
 
-        virtual intrusive_ptr<AbstractFilter> filter() {
+        intrusive_ptr<AbstractFilter> filter() override {
             return m_ptrFilter;
         }
 
@@ -59,60 +64,102 @@ namespace select_content {
     };
 
 
-    Task::Task(intrusive_ptr<Filter> const& filter,
-               intrusive_ptr<page_layout::Task> const& next_task,
-               intrusive_ptr<Settings> const& settings,
-               PageId const& page_id,
-               bool const batch,
-               bool const debug)
-            : m_ptrFilter(filter),
-              m_ptrNextTask(next_task),
-              m_ptrSettings(settings),
+    Task::Task(intrusive_ptr<Filter> filter,
+               intrusive_ptr<page_layout::Task> next_task,
+               intrusive_ptr<Settings> settings,
+               const PageId& page_id,
+               const bool batch,
+               const bool debug)
+            : m_ptrFilter(std::move(filter)),
+              m_ptrNextTask(std::move(next_task)),
+              m_ptrSettings(std::move(settings)),
               m_pageId(page_id),
               m_batchProcessing(batch) {
         if (debug) {
-            m_ptrDbg.reset(new DebugImages);
+            m_ptrDbg = std::make_unique<DebugImages>();
         }
     }
 
-    Task::~Task() {
-    }
+    Task::~Task() = default;
 
-    FilterResultPtr Task::process(TaskStatus const& status, FilterData const& data) {
+    FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         status.throwIfCancelled();
 
-        Dependencies const deps(data.xform().resultingPreCropArea());
+        loadDefaultSettings(Dpm(data.origImage()));
+
+        const Dependencies deps(data.xform().resultingPreCropArea());
 
         OptionsWidget::UiData ui_data;
         ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
 
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
-        Params new_params(deps);
 
-        if (params.get()) {
+        Params new_params(deps);
+        if (params) {
             new_params = *params;
             new_params.setDependencies(deps);
         }
 
-        if (!params.get() || !params->dependencies().matches(deps)) {
+        if (!params || !params->dependencies().matches(deps)) {
             QRectF page_rect(data.xform().resultingRect());
             QRectF content_rect(page_rect);
 
-            if (new_params.isPageDetectionEnabled()) {
+            if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_AUTO)) {
                 page_rect = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(),
                                                     m_ptrSettings->pageDetectionBox(),
-                                                    m_ptrSettings->pageDetectionTolerance(), new_params.pageBorders(),
+                                                    m_ptrSettings->pageDetectionTolerance(),
                                                     m_ptrDbg.get());
+            } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
+                // shifting page rect for skewed pages correcting
+                QRectF corrected_page_rect(new_params.pageRect());
+                if (params && new_params.pageRect().isValid() && !params->dependencies().matches(deps)
+                    && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
+                    const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                    const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                    corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                                  (new_page_rect.height() - old_page_rect.height()) / 2);
+                }
+
+                // allow the page box to be out of the page bounds but checking intersecting with the page
+                if (corrected_page_rect.isValid()
+                    && corrected_page_rect.intersected(data.xform().resultingRect()).isValid()) {
+                    page_rect = corrected_page_rect;
+                } else {
+                    page_rect = data.xform().resultingRect();
+                }
+            } else {
+                page_rect = data.xform().resultingRect();
             }
 
-            if (new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_AUTO)) {
+            if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_AUTO)) {
                 content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
-            } else if ((new_params.isContentDetectionEnabled() && (new_params.mode() == MODE_MANUAL)
-                        && (content_rect = new_params.contentRect().intersected(page_rect)).isValid())
+            } else if ((new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_MANUAL))
                        || new_params.contentRect().isEmpty()) {
-                // we don't want the content box to be out of the page bounds so use intersecting
+                if (!new_params.contentRect().isEmpty()) {
+                    // shifting content rect for skewed pages correcting
+                    QRectF corrected_content_rect(new_params.contentRect());
+                    if (params && new_params.contentRect().isValid() && !params->dependencies().matches(deps)
+                        && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
+                        const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
+                        const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
+                        corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
+                                                         (new_page_rect.height() - old_page_rect.height()) / 2);
+                        // we don't want the content box to be out of the page box so use intersecting
+                        corrected_content_rect = corrected_content_rect.intersected(page_rect);
+                    }
+
+                    if (corrected_content_rect.isValid()) {
+                        content_rect = corrected_content_rect;
+                    } else {
+                        content_rect = page_rect;
+                    }
+                }
             } else {
                 content_rect = page_rect;
+            }
+
+            if (content_rect.isValid()) {
+                page_rect |= content_rect;
             }
 
             new_params.setPageRect(page_rect);
@@ -122,14 +169,13 @@ namespace select_content {
         ui_data.setContentRect(new_params.contentRect());
         ui_data.setPageRect(new_params.pageRect());
         ui_data.setDependencies(deps);
-        ui_data.setMode(new_params.mode());
-        ui_data.setContentDetection(new_params.isContentDetectionEnabled());
-        ui_data.setPageDetection(new_params.isPageDetectionEnabled());
-        ui_data.setFineTuneCorners(new_params.isFineTuningEnabled());
-        ui_data.setPageBorders(new_params.pageBorders());
+        ui_data.setContentDetectionMode(new_params.contentDetectionMode());
+        ui_data.setContentDetectionEnabled(new_params.isContentDetectionEnabled());
+        ui_data.setPageDetectionMode(new_params.pageDetectionMode());
+        ui_data.setPageDetectionEnabled(new_params.isPageDetectionEnabled());
+        ui_data.setFineTuneCornersEnabled(new_params.isFineTuningEnabled());
 
-        // required only if content box changed
-        if (!params.get() || !params->dependencies().matches(deps)) {
+        if (!params || !params->dependencies().matches(deps)) {
             new_params.setContentSizeMM(ui_data.contentSizeMM());
         }
 
@@ -151,18 +197,37 @@ namespace select_content {
                     )
             );
         }
-    }  // Task::process
+    }   // Task::process
+
+    void Task::loadDefaultSettings(const Dpi& dpi) {
+        std::unique_ptr<Params> params = m_ptrSettings->getPageParams(m_pageId);
+        if ((params == nullptr) || !params->pageRect().isNull()) {
+            return;
+        }
+        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+        const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
+
+        UnitsConverter unitsConverter(dpi);
+
+        const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
+        double pageRectWidth = pageRectSize.width();
+        double pageRectHeight = pageRectSize.height();
+        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
+
+        params->setPageRect(QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)));
+        m_ptrSettings->setPageParams(m_pageId, *params);
+    }
 
 /*============================ Task::UiUpdater ==========================*/
 
-    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> const& filter,
-                               PageId const& page_id,
+    Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+                               const PageId& page_id,
                                std::unique_ptr<DebugImages> dbg,
-                               QImage const& image,
-                               ImageTransformation const& xform,
-                               OptionsWidget::UiData const& ui_data,
-                               bool const batch)
-            : m_ptrFilter(filter),
+                               const QImage& image,
+                               const ImageTransformation& xform,
+                               const OptionsWidget::UiData& ui_data,
+                               const bool batch)
+            : m_ptrFilter(std::move(filter)),
               m_pageId(page_id),
               m_ptrDbg(std::move(dbg)),
               m_image(image),
@@ -174,6 +239,7 @@ namespace select_content {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
+        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
 
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
@@ -185,15 +251,28 @@ namespace select_content {
             return;
         }
 
-        ImageView* view = new ImageView(
+        auto* view = new ImageView(
                 m_image, m_downscaledImage,
-                m_xform, m_uiData.contentRect(), m_uiData.pageRect()
+                m_xform, m_uiData.contentRect(),
+                m_uiData.pageRect(), m_uiData.isPageDetectionEnabled()
         );
         ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
         QObject::connect(
-                view, SIGNAL(manualContentRectSet(QRectF const &)),
-                opt_widget, SLOT(manualContentRectSet(QRectF const &))
+                view, SIGNAL(manualContentRectSet(const QRectF &)),
+                opt_widget, SLOT(manualContentRectSet(const QRectF &))
+        );
+        QObject::connect(
+                view, SIGNAL(manualPageRectSet(const QRectF &)),
+                opt_widget, SLOT(manualPageRectSet(const QRectF &))
+        );
+        QObject::connect(
+                view, SIGNAL(pageRectSizeChanged(const QSizeF &)),
+                opt_widget, SLOT(updatePageRectSize(const QSizeF &))
+        );
+        QObject::connect(
+                opt_widget, SIGNAL(pageRectChangedLocally(const QRectF &)),
+                view, SLOT(pageRectSetExternally(const QRectF &))
         );
     }
 }  // namespace select_content

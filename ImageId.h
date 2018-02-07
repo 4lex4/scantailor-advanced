@@ -31,19 +31,19 @@ public:
               m_page(0) {
     }
 
-    explicit ImageId(QString const& file_path, int page = 0);
+    explicit ImageId(const QString& file_path, int page = 0);
 
-    explicit ImageId(QFileInfo const& file_info, int page = 0);
+    explicit ImageId(const QFileInfo& file_info, int page = 0);
 
     bool isNull() const {
         return m_filePath.isNull();
     }
 
-    QString const& filePath() const {
+    const QString& filePath() const {
         return m_filePath;
     }
 
-    void setFilePath(QString const& path) {
+    void setFilePath(const QString& path) {
         m_filePath = path;
     }
 
@@ -74,10 +74,10 @@ private:
 };
 
 
-bool operator==(ImageId const& lhs, ImageId const& rhs);
+bool operator==(const ImageId& lhs, const ImageId& rhs);
 
-bool operator!=(ImageId const& lhs, ImageId const& rhs);
+bool operator!=(const ImageId& lhs, const ImageId& rhs);
 
-bool operator<(ImageId const& lhs, ImageId const& rhs);
+bool operator<(const ImageId& lhs, const ImageId& rhs);
 
 #endif // ifndef IMAGEID_H_

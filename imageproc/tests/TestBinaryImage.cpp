@@ -21,7 +21,7 @@
 #include "Utils.h"
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace imageproc {
     namespace tests {
@@ -35,8 +35,8 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_from_to_qimage) {
-                int const w = 50;
-                int const h = 64;
+                const int w = 50;
+                const int h = 64;
                 QImage qimg_argb32(w, h, QImage::Format_ARGB32);
                 QImage qimg_mono(w, h, QImage::Format_Mono);
                 qimg_mono.setColorCount(2);
@@ -44,7 +44,7 @@ namespace imageproc {
                 qimg_mono.setColor(1, 0xff000000);
                 for (int y = 0; y < h; ++y) {
                     for (int x = 0; x < w; ++x) {
-                        int const rnd = rand() & 1;
+                        const int rnd = rand() & 1;
                         qimg_argb32.setPixel(x, y, rnd ? 0x66888888 : 0x66777777);
                         qimg_mono.setPixel(x, y, rnd ? 0 : 1);
                     }
@@ -88,7 +88,7 @@ namespace imageproc {
             BOOST_AUTO_TEST_CASE(test_partial_fill_small) {
                 QImage q_image(randomMonoQImage(100, 100));
 
-                QRect const rect(80, 80, 20, 20);
+                const QRect rect(80, 80, 20, 20);
                 BinaryImage image(q_image);
                 image.fill(rect, WHITE);
                 QImage white_rect(rect.width(), rect.height(), QImage::Format_Mono);
@@ -103,7 +103,7 @@ namespace imageproc {
             BOOST_AUTO_TEST_CASE(test_partial_fill_large) {
                 QImage q_image(randomMonoQImage(100, 100));
 
-                QRect const rect(20, 20, 79, 79);
+                const QRect rect(20, 20, 79, 79);
                 BinaryImage image(q_image);
                 image.fill(rect, WHITE);
                 QImage white_rect(rect.width(), rect.height(), QImage::Format_Mono);
@@ -118,7 +118,7 @@ namespace imageproc {
             BOOST_AUTO_TEST_CASE(test_fill_except) {
                 QImage q_image(randomMonoQImage(100, 100));
 
-                QRect const rect(20, 20, 79, 79);
+                const QRect rect(20, 20, 79, 79);
                 BinaryImage image(q_image);
                 image.fillExcept(rect, BLACK);
 
@@ -133,7 +133,7 @@ namespace imageproc {
             }
 
             BOOST_AUTO_TEST_CASE(test_content_bounding_box4) {
-                static int const inp[] = {
+                static const int inp[] = {
                         0, 0, 0, 0, 0, 0, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 1, 0, 0,
                         0, 0, 0, 0, 0, 1, 0, 0, 0,
@@ -144,7 +144,7 @@ namespace imageproc {
                         0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
 
-                BinaryImage const img(makeBinaryImage(inp, 9, 8));
+                const BinaryImage img(makeBinaryImage(inp, 9, 8));
                 BOOST_CHECK(img.contentBoundingBox() == QRect(1, 1, 6, 6));
             }
 

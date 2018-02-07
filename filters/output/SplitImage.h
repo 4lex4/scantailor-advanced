@@ -14,16 +14,18 @@ namespace output {
      * The class to store and manage output images split to foreground and background layers.
      * It works in two modes:
      *  1.  Storing foreground and background images directly.
-     *      Then use \code SplitImage::toImage() method to get the image from layers.
+     *      Then use SplitImage::toImage() method to get the image from layers.
      *  2.  Storing only an image and mask.
-     *      Then use \code SplitImage::getForegroundImage() and
-     *      \code SplitImage::getBackgroundImage() to get the image layers.
+     *      Then use SplitImage::getForegroundImage() and
+     *      SplitImage::getBackgroundImage() to get the image layers.
      */
     class SplitImage {
     public:
         SplitImage();
 
         SplitImage(const QImage& foreground, const QImage& background);
+
+        SplitImage(const QImage& foreground, const QImage& background, const QImage& originalBackground);
 
         QImage toImage() const;
 
@@ -35,17 +37,25 @@ namespace output {
 
         void setBackgroundImage(const QImage& backgroundImage);
 
-        void setMask(const imageproc::BinaryImage& mask, bool binariryForeground);
+        void setMask(const imageproc::BinaryImage& mask, bool binaryForeground);
 
-        void applyToLayerImages(const std::function<void(QImage&)>& function);
+        void applyToLayerImages(const std::function<void(QImage&)>& consumer);
 
         bool isNull() const;
 
+        const QImage& getOriginalBackgroundImage() const;
+
+        void setOriginalBackgroundImage(const QImage& originalBackgroundImage);
+
+        void setIndexedForeground(bool indexedForeground);
+
     private:
         bool binaryForeground;
+        bool indexedForeground;
         imageproc::BinaryImage mask;
         QImage foregroundImage;
         QImage backgroundImage;
+        QImage originalBackgroundImage;
     };
 }
 

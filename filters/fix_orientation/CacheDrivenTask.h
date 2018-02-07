@@ -37,12 +37,12 @@ namespace fix_orientation {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<Settings> const& settings,
-                        intrusive_ptr<page_split::CacheDrivenTask> const& next_task);
+        CacheDrivenTask(intrusive_ptr<Settings> settings,
+                        intrusive_ptr<page_split::CacheDrivenTask> next_task);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
-        virtual void process(PageInfo const& page_info, AbstractFilterDataCollector* collector);
+        void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) override;
 
     private:
         intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;

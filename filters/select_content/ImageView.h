@@ -28,6 +28,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QString>
+#include <interaction/DraggablePolygon.h>
 
 class ImageTransformation;
 class QMenu;
@@ -39,27 +40,32 @@ namespace select_content {
         /**
          * \p content_rect is in virtual image coordinates.
          */
-        ImageView(QImage const& image,
-                  QImage const& downscaled_image,
-                  ImageTransformation const& xform,
-                  QRectF const& content_rect,
-                  QRectF const& page_rect);
+        ImageView(const QImage& image,
+                  const QImage& downscaled_image,
+                  const ImageTransformation& xform,
+                  const QRectF& content_rect,
+                  const QRectF& page_rect,
+                  bool page_rect_enabled);
 
-        virtual ~ImageView();
+        ~ImageView() override;
 
     signals:
 
-        void manualContentRectSet(QRectF const& content_rect);
+        void manualContentRectSet(const QRectF& content_rect);
+
+        void manualPageRectSet(const QRectF& page_rect);
+
+        void pageRectSizeChanged(const QSizeF& size);
+
+    public slots:
+
+        void pageRectSetExternally(const QRectF& pageRect);
 
     private slots:
 
         void createContentBox();
 
         void removeContentBox();
-
-    protected:
-
-        void keyPressEvent(QKeyEvent* event) override;
 
     private:
         enum Edge {
@@ -69,27 +75,59 @@ namespace select_content {
             BOTTOM = 8
         };
 
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-        void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction);
+        void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
-        QPointF cornerPosition(int edge_mask) const;
+        QPointF contentRectCornerPosition(int edge_mask) const;
 
-        void cornerMoveRequest(int edge_mask, QPointF const& pos);
+        void contentRectCornerMoveRequest(int edge_mask, const QPointF& pos);
 
-        QLineF edgePosition(int edge) const;
+        QLineF contentRectEdgePosition(int edge) const;
 
-        void edgeMoveRequest(int edge, QLineF const& line);
+        void contentRectEdgeMoveRequest(int edge, const QLineF& line);
 
-        void dragFinished();
+        void contentRectDragFinished();
+
+        QPointF pageRectCornerPosition(int edge_mask) const;
+
+        void pageRectCornerMoveRequest(int edge_mask, const QPointF& pos);
+
+        QLineF pageRectEdgePosition(int edge) const;
+
+        void pageRectEdgeMoveRequest(int edge, const QLineF& line);
+
+        void pageRectDragFinished();
 
         void forceInsideImage(QRectF& widget_rect, int edge_mask) const;
 
-        DraggablePoint m_corners[4];
-        ObjectDragHandler m_cornerHandlers[4];
+        void forcePageRectDescribeContent();
 
-        DraggableLineSegment m_edges[4];
-        ObjectDragHandler m_edgeHandlers[4];
+        QRectF contentRectPosition() const;
+
+        void contentRectMoveRequest(const QPolygonF& pos);
+
+        QRectF pageRectPosition() const;
+
+        void pageRectMoveRequest(const QPolygonF& pos);
+
+        DraggablePoint m_contentRectCorners[4];
+        ObjectDragHandler m_contentRectCornerHandlers[4];
+
+        DraggableLineSegment m_contentRectEdges[4];
+        ObjectDragHandler m_contentRectEdgeHandlers[4];
+
+        DraggablePolygon m_contentRectArea;
+        ObjectDragHandler m_contentRectAreaHandler;
+
+        DraggablePoint m_pageRectCorners[4];
+        ObjectDragHandler m_pageRectCornerHandlers[4];
+
+        DraggableLineSegment m_pageRectEdges[4];
+        ObjectDragHandler m_pageRectEdgeHandlers[4];
+
+        DraggablePolygon m_pageRectArea;
+        ObjectDragHandler m_pageRectAreaHandler;
 
         DragHandler m_dragHandler;
         ZoomHandler m_zoomHandler;
@@ -109,6 +147,9 @@ namespace select_content {
          */
         QRectF m_contentRect;
         QRectF m_pageRect;
+
+        bool m_pageRectEnabled;
+        bool m_pageRectReloadRequested;
 
         QSizeF m_minBoxSize;
     };

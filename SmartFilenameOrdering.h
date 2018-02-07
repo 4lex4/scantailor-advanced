@@ -23,8 +23,7 @@ class QFileInfo;
 
 class SmartFilenameOrdering {
 public:
-    SmartFilenameOrdering() {
-    }
+    SmartFilenameOrdering() = default;
 
     /**
      * \brief Compare filenames using a set of heuristic rules.
@@ -36,7 +35,7 @@ public:
      *
      * \return true if \p lhs should go before \p rhs.
      */
-    bool operator()(QFileInfo const& lhs, QFileInfo const& rhs) const;
+    bool operator()(const QFileInfo& lhs, const QFileInfo& rhs) const;
 };
 
 

@@ -32,7 +32,6 @@
 #include <map>
 
 class QDomElement;
-class ProjectData;
 class ProjectPages;
 class FileNameDisambiguator;
 class AbstractFilter;
@@ -41,29 +40,33 @@ class ProjectReader {
 public:
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-    ProjectReader(QDomDocument const& doc);
+    explicit ProjectReader(const QDomDocument& doc);
 
     ~ProjectReader();
 
-    void readFilterSettings(std::vector<FilterPtr> const& filters) const;
+    void readFilterSettings(const std::vector<FilterPtr>& filters) const;
 
     bool success() const {
-        return m_ptrPages.get() != 0;
+        return (m_ptrPages != nullptr);
     }
 
-    QString const& outputDirectory() const {
+    const QString& outputDirectory() const {
         return m_outDir;
     }
 
-    intrusive_ptr<ProjectPages> const& pages() const {
+    const QString& getVersion() const {
+        return m_version;
+    }
+
+    const intrusive_ptr<ProjectPages>& pages() const {
         return m_ptrPages;
     }
 
-    SelectedPage const& selectedPage() const {
+    const SelectedPage& selectedPage() const {
         return m_selectedPage;
     }
 
-    intrusive_ptr<FileNameDisambiguator> const& namingDisambiguator() const {
+    const intrusive_ptr<FileNameDisambiguator>& namingDisambiguator() const {
         return m_ptrDisambiguator;
     }
 
@@ -80,7 +83,7 @@ private:
                 : compatMultiPage(false) {
         }
 
-        FileRecord(QString const& file_path, bool compat_multi_page)
+        FileRecord(const QString& file_path, bool compat_multi_page)
                 : filePath(file_path),
                   compatMultiPage(compat_multi_page) {
         }
@@ -91,26 +94,27 @@ private:
     typedef std::map<int, ImageInfo> ImageMap;
     typedef std::map<int, PageId> PageMap;
 
-    void processDirectories(QDomElement const& dirs_el);
+    void processDirectories(const QDomElement& dirs_el);
 
-    void processFiles(QDomElement const& files_el);
+    void processFiles(const QDomElement& files_el);
 
-    void processImages(QDomElement const& images_el, Qt::LayoutDirection layout_direction);
+    void processImages(const QDomElement& images_el, Qt::LayoutDirection layout_direction);
 
-    ImageMetadata processImageMetadata(QDomElement const& image_el);
+    ImageMetadata processImageMetadata(const QDomElement& image_el);
 
-    void processPages(QDomElement const& pages_el);
+    void processPages(const QDomElement& pages_el);
 
     QString getDirPath(int id) const;
 
     FileRecord getFileRecord(int id) const;
 
-    QString expandFilePath(QString const& path_shorthand) const;
+    QString expandFilePath(const QString& path_shorthand) const;
 
     ImageInfo getImageInfo(int id) const;
 
     QDomDocument m_doc;
     QString m_outDir;
+    QString m_version;
     DirMap m_dirMap;
     FileMap m_fileMap;
     ImageMap m_imageMap;

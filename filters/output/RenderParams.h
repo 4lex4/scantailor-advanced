@@ -30,55 +30,45 @@ namespace output {
                 : m_mask(0) {
         }
 
-        explicit RenderParams(ColorParams const& colorParams, SplittingOptions const& splittingOptions);
+        explicit RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions);
 
-        bool cutMargins() const {
-            return (m_mask & CUT_MARGINS) != 0;
-        }
+        bool cutMargins() const;
 
-        bool normalizeIllumination() const {
-            return (m_mask & NORMALIZE_ILLUMINATION) != 0;
-        }
+        bool normalizeIllumination() const;
 
-        bool normalizeIlluminationColor() const {
-            return (m_mask & NORMALIZE_ILLUMINATION_COLOR) != 0;
-        }
+        bool normalizeIlluminationColor() const;
 
-        bool needBinarization() const {
-            return (m_mask & NEED_BINARIZATION) != 0;
-        }
+        bool needBinarization() const;
 
-        bool mixedOutput() const {
-            return (m_mask & MIXED_OUTPUT) != 0;
-        }
+        bool mixedOutput() const;
 
-        bool binaryOutput() const {
-            return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT))
-                   == NEED_BINARIZATION;
-        }
+        bool binaryOutput() const;
 
-        bool needSavitzkyGolaySmoothing() const {
-            return (m_mask & SAVITZKY_GOLAY_SMOOTHING) != 0;
-        }
+        bool needSavitzkyGolaySmoothing() const;
 
-        bool needMorphologicalSmoothing() const {
-            return (m_mask & MORPHOLOGICAL_SMOOTHING) != 0;
-        }
+        bool needMorphologicalSmoothing() const;
 
-        bool splitOutput() const {
-            return (m_mask & SPLIT_OUTPUT) != 0;
-        }
+        bool splitOutput() const;
+
+        bool originalBackground() const;
+
+        bool needColorSegmentation() const;
+
+        bool posterize() const;
 
     private:
         enum {
             CUT_MARGINS = 1,
-            NORMALIZE_ILLUMINATION = 2,
-            NEED_BINARIZATION = 4,
-            MIXED_OUTPUT = 8,
-            NORMALIZE_ILLUMINATION_COLOR = 16,
-            SAVITZKY_GOLAY_SMOOTHING = 32,
-            MORPHOLOGICAL_SMOOTHING = 64,
-            SPLIT_OUTPUT = 128
+            NORMALIZE_ILLUMINATION = 1 << 1,
+            NEED_BINARIZATION = 1 << 2,
+            MIXED_OUTPUT = 1 << 3,
+            NORMALIZE_ILLUMINATION_COLOR = 1 << 4,
+            SAVITZKY_GOLAY_SMOOTHING = 1 << 5,
+            MORPHOLOGICAL_SMOOTHING = 1 << 6,
+            SPLIT_OUTPUT = 1 << 7,
+            ORIGINAL_BACKGROUND = 1 << 8,
+            COLOR_SEGMENTATION = 1 << 9,
+            POSTERIZE = 1 << 10
         };
 
         int m_mask;

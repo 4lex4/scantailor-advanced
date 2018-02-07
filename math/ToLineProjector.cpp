@@ -19,13 +19,13 @@
 #include <cmath>
 #include "ToLineProjector.h"
 
-ToLineProjector::ToLineProjector(QLineF const& line)
+ToLineProjector::ToLineProjector(const QLineF& line)
         : m_origin(line.p1()),
           m_vec(line.p2() - line.p1()),
           m_mat(m_vec) {
     using namespace std;
     // At*A*x = At*b
-    double const AtA = m_mat.dot(m_mat);
+    const double AtA = m_mat.dot(m_mat);
 
     if (abs(AtA) > numeric_limits<double>::epsilon()) {
         // x = (At*A)-1 * At
@@ -36,25 +36,25 @@ ToLineProjector::ToLineProjector(QLineF const& line)
     }
 }
 
-double ToLineProjector::projectionScalar(QPointF const& pt) const {
-    Vec2d const b(pt - m_origin);
+double ToLineProjector::projectionScalar(const QPointF& pt) const {
+    const Vec2d b(pt - m_origin);
 
     return m_mat.dot(b);
 }
 
-QPointF ToLineProjector::projectionPoint(QPointF const& pt) const {
+QPointF ToLineProjector::projectionPoint(const QPointF& pt) const {
     return m_origin + m_vec * projectionScalar(pt);
 }
 
-QPointF ToLineProjector::projectionVector(QPointF const& pt) const {
+QPointF ToLineProjector::projectionVector(const QPointF& pt) const {
     return projectionPoint(pt) - pt;
 }
 
-double ToLineProjector::projectionDist(QPointF const& pt) const {
+double ToLineProjector::projectionDist(const QPointF& pt) const {
     return sqrt(projectionSqDist(pt));
 }
 
-double ToLineProjector::projectionSqDist(QPointF const& pt) const {
+double ToLineProjector::projectionSqDist(const QPointF& pt) const {
     return Vec2d(projectionPoint(pt) - pt).squaredNorm();
 }
 

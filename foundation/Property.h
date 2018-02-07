@@ -29,7 +29,7 @@ class Property : public ref_countable {
 public:
     virtual intrusive_ptr<Property> clone() const = 0;
 
-    virtual QDomElement toXml(QDomDocument& doc, QString const& name) const = 0;
+    virtual QDomElement toXml(QDomDocument& doc, const QString& name) const = 0;
 };
 
 

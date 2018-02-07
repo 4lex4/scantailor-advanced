@@ -106,6 +106,577 @@
     </message>
 </context>
 <context>
+    <name>DefaultParamsDialog</name>
+    <message>
+        <location filename="../ui/DefaultParamsDialog.ui" line="+20"/>
+        <source>Default parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Units:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Fix Orientation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Rotate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <location line="+17"/>
+        <location line="+954"/>
+        <location line="+48"/>
+        <location line="+265"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+26"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+23"/>
+        <location line="+1441"/>
+        <location line="+26"/>
+        <location line="+26"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-2860"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Split Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location line="+1381"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1340"/>
+        <source>Page Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+168"/>
+        <location line="+69"/>
+        <source>Deskew</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+292"/>
+        <location line="+51"/>
+        <location filename="../DefaultParamsDialog.cpp" line="+31"/>
+        <location line="+26"/>
+        <source>Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-327"/>
+        <location line="+289"/>
+        <location filename="../DefaultParamsDialog.cpp" line="-25"/>
+        <location line="+26"/>
+        <source>Manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-213"/>
+        <source>Select Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Page Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+176"/>
+        <source>Disable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-160"/>
+        <location line="+945"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-924"/>
+        <source>Shift with corners while they are in black. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Fine Tune Page Corners</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+86"/>
+        <source>Content Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+69"/>
+        <location line="+45"/>
+        <source>Margins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Auto Margins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+92"/>
+        <source>Alignment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Auto</source>
+        <comment>auto</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Manual</source>
+        <comment>manual</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Original</source>
+        <comment>original</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Match size with other pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+282"/>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+106"/>
+        <source>Cut margins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Normalize illumination before binarization.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Equalize illumination (B&amp;&amp;W)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Equalize illumination (Color)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Savitzky-Golay smoothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Morphological smoothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Filling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Color: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Color operations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Split the image into color segments and colorize b&amp;w mask.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color segmentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Reduce noise:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Reduce the number of colors of the output image by grouping similar colors.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Posterize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Level:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Make dark and light gray gradients black and white respectively.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Force b&amp;&amp;w</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+63"/>
+        <source>Threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Method:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+75"/>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Thinner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Thicker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Coef:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+96"/>
+        <source>The dimensions of a pixel neighborhood to consider.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-83"/>
+        <location line="+96"/>
+        <source>Window size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-89"/>
+        <source>Default value is 0.34.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+96"/>
+        <source>The minimum possible gray level that can be made white.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Upper Bound: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower bound: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>The maximum possible gray level that can be made black.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Coeff:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Default value is 0.3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Picture Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Sensitivity (%):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+110"/>
+        <source>Output Resolution (DPI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Splitting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Split output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>B&amp;&amp;W foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Save the original background of the foreground layer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Original background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Color foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Despeckling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>No despeckling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Cautious despeckling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Normal despeckling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Aggressive despeckling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Dewarping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>Post deskew</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Depth perception</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DefaultParamsDialog.cpp" line="-24"/>
+        <source>Black and White</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Color / Grayscale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mixed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>White</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Otsu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sauvola</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Wolf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+11"/>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Free</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rectangular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+20"/>
+        <location line="+935"/>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-950"/>
+        <source>Marginal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+913"/>
+        <location line="+19"/>
+        <location line="+17"/>
+        <location line="+16"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <source>Error loading the profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>The name conflicts with a default profile name. Please enter a different name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Error saving the profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Error deleting the profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DeskewApplyDialog</name>
     <message>
         <location filename="../filters/deskew/ui/DeskewApplyDialog.ui" line="+20"/>
@@ -207,7 +778,7 @@
 <context>
     <name>FixDpiDialog</name>
     <message>
-        <location filename="../ui/FixDpiDialog.ui" line="+13"/>
+        <location filename="../ui/FixDpiDialog.ui" line="+14"/>
         <source>Fix DPI</source>
         <translation type="unfinished"></translation>
     </message>
@@ -248,7 +819,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location line="+421"/>
+        <location line="+420"/>
         <source>All Pages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -276,7 +847,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../ImageViewBase.cpp" line="+201"/>
+        <location filename="../ImageViewBase.cpp" line="+225"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -302,7 +873,7 @@
 <context>
     <name>LoadFileTask</name>
     <message>
-        <location filename="../LoadFileTask.cpp" line="+142"/>
+        <location filename="../LoadFileTask.cpp" line="+141"/>
         <source>The following file could not be loaded:
 %1</source>
         <translation type="unfinished"></translation>
@@ -344,7 +915,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+4"/>
+        <source>Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -385,7 +961,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+530"/>
+        <location filename="../MainWindow.cpp" line="+592"/>
         <source>Save Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -577,6 +1153,31 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Millimetres</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Inches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Centimetres</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Default parameters ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../MainWindow.cpp" line="-79"/>
         <source>Stop batch processing</source>
         <translation type="unfinished"></translation>
@@ -587,7 +1188,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+438"/>
+        <location line="+6"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Discard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+433"/>
         <source>Insert before ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -607,7 +1223,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+359"/>
         <location line="+62"/>
         <source>Scan Tailor Projects</source>
         <translation type="unfinished"></translation>
@@ -620,13 +1236,13 @@
     <message>
         <location line="+16"/>
         <location line="+10"/>
-        <location line="+299"/>
+        <location line="+319"/>
         <location line="+29"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-337"/>
+        <location line="-357"/>
         <source>Unable to open the project file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -636,18 +1252,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+71"/>
         <source>version </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+135"/>
         <source>Output is not yet possible, as the final size of pages is not yet known.
 To determine it, run batch processing at &quot;Select Content&quot; or &quot;Margins&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+38"/>
         <source>Unnamed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -826,7 +1442,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+32"/>
         <source>Out of Memory Situation in Scan Tailor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -836,7 +1452,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+42"/>
         <source>Did you have to fix the DPI of your source images? Are you sure the values you entered were correct?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -856,7 +1472,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>Fix your DPIs. Learn how to &lt;a href=&quot;http://vimeo.com/12524529&quot;&gt;estimate unknown DPIs&lt;/a&gt;.</source>
         <extracomment>Feel free to change the URL to a localized video / text tutorial.</extracomment>
         <translation type="unfinished"></translation>
@@ -882,7 +1498,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+39"/>
         <source>Surprisingly, upgrading your RAM won&apos;t help here. The lack of RAM is compensated by the swap mechanism, which makes things slow, but keeps programs running. An out of memory situation means we ran out of memory address space, which has nothing to do with the amount of RAM you have. The only way to increase the memory address space is to go 64-bit hardware, 64-bit operating system and 64-bit Scan Tailor.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -912,7 +1528,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../OutOfMemoryDialog.cpp" line="+77"/>
+        <location filename="../OutOfMemoryDialog.cpp" line="+78"/>
         <source>Scan Tailor Projects</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1100,12 +1716,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+37"/>
-        <location line="+869"/>
+        <location line="+1196"/>
         <source>Change ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-844"/>
+        <location line="-1171"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1121,11 +1737,21 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+7"/>
+        <source>Normalize illumination before binarization.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
+        <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Equalize illumination (Color)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1160,25 +1786,75 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
+        <source>Color operations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Split the image into color segments and colorize b&amp;w mask.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color segmentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Reduce noise:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Reduce the number of colors of the output image by grouping similar colors.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Posterize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Level:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Make dark and light gray gradients black and white respectively.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Force b&amp;&amp;w</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Picture Shape</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+67"/>
-        <source>Sensitivity (%): </source>
+        <source>Sensitivity (%):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+51"/>
-        <location line="+107"/>
+        <location line="+134"/>
         <location line="+188"/>
         <location line="+71"/>
         <source>Apply To ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-338"/>
+        <location line="-365"/>
         <source>Splitting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1193,7 +1869,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+25"/>
+        <source>Save the original background of the foreground layer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Original background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Color foreground</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1308,24 +1994,14 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>Millimeters (mm)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Inches (in)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+42"/>
+        <location line="+90"/>
         <source>Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location line="+61"/>
-        <location line="+213"/>
+        <location line="-21"/>
+        <location line="+48"/>
+        <location line="+246"/>
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
@@ -1338,33 +2014,33 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-379"/>
         <source>Bottom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-67"/>
         <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="-7"/>
         <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+59"/>
-        <location line="+372"/>
+        <location line="+123"/>
+        <location line="+385"/>
         <source>Apply To ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-347"/>
+        <location line="-360"/>
         <source>Alignment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+25"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation type="unfinished"></translation>
@@ -1382,12 +2058,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-259"/>
         <source>Auto Margins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+297"/>
         <source>Match size with other pages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1545,7 +2221,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../ProjectFilesDialog.cpp" line="+300"/>
+        <location filename="../ProjectFilesDialog.cpp" line="+299"/>
         <source>Input Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1669,13 +2345,42 @@ You should remove them from the project.</source>
 <context>
     <name>ProjectOpeningContext</name>
     <message>
-        <location filename="../ProjectOpeningContext.cpp" line="+40"/>
+        <location filename="../ProjectOpeningContext.cpp" line="+42"/>
+        <location line="+8"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-7"/>
+        <source>The project file is not compatible with the current application version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Unable to interpret the project file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../Units.cpp" line="+9"/>
+        <source>px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1739,16 +2444,6 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+36"/>
-        <source>This options should be enabled when the text or content is placed on the darker background</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>White on black mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
         <source>Coef:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1758,12 +2453,12 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+29"/>
         <source>Window size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-16"/>
         <source>Default value is 0.34.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1787,6 +2482,11 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+10"/>
+        <source>Apply page box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Apply to</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1851,7 +2551,12 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+51"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Shift with corners while they are in black. </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1861,54 +2566,40 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+125"/>
+        <location line="-69"/>
+        <location line="+192"/>
         <source>Disable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-109"/>
-        <location line="+122"/>
+        <location line="-176"/>
+        <location line="+160"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-105"/>
-        <source>Borders in MM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Bottom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+33"/>
+        <location line="-6"/>
         <source>Content Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="-141"/>
+        <location line="+176"/>
         <source>Manual</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="-99"/>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+123"/>
         <source>Apply to ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1971,7 +2662,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="+38"/>
+        <location filename="../SettingsDialog.cpp" line="+37"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2014,7 +2705,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+53"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2027,8 +2718,71 @@ You should remove them from the project.</source>
 <context>
     <name>StageListView</name>
     <message>
-        <location filename="../StageListView.cpp" line="+109"/>
+        <location filename="../StageListView.cpp" line="+111"/>
         <source>Launch batch processing</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusBarPanel</name>
+    <message>
+        <location filename="../ui/StatusBarPanel.ui" line="+14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Mouse position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Mouse position relative to page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Physical size.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Physical size of image.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Page number.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Position of the selected page in current order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Page information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Page name and type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusBarPanel.cpp" line="+78"/>
+        <source>p. %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source> [L]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source> [R]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2054,7 +2808,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../ThumbnailSequence.cpp" line="+1252"/>
+        <location filename="../ThumbnailSequence.cpp" line="+1250"/>
         <source>%1 (page %2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2068,16 +2822,6 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+36"/>
-        <source>This options should be enabled when the text or content is placed on the darker background</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>White on black mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
         <source>The dimensions of a pixel neighborhood to consider.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2120,7 +2864,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneContextMenuInteraction</name>
     <message>
-        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+230"/>
+        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+229"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2133,7 +2877,12 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneCreationInteraction</name>
     <message>
-        <location filename="../zones/ZoneCreationInteraction.cpp" line="+303"/>
+        <location filename="../zones/ZoneCreationInteraction.cpp" line="+325"/>
+        <source>Click to finish this rectangular zone.  ESC to cancel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Click to finish this zone.  ESC to cancel.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2144,15 +2893,15 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+3"/>
-        <source>Zones need to have at least 3 points.  ESC to cancel.</source>
+        <source>Hold Ctrl to create a rectangular zone, Alt+LMB to switch to lasso mode.  ESC to cancel.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ZoneDefaultInteraction</name>
     <message>
-        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+32"/>
-        <source>Drag the vertex.</source>
+        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+33"/>
+        <source>Drag the vertex. Hold Ctrl to make the vertex angle right.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2161,20 +2910,28 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Right click to edit zone properties.</source>
+        <location line="+2"/>
+        <source>Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Click to start creating a new picture zone.</source>
+        <location line="+6"/>
+        <source>Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ZoneDragInteraction</name>
+    <message>
+        <location filename="../zones/ZoneDragInteraction.cpp" line="+35"/>
+        <source>Release left mouse button to finish dragging.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ZoneVertexDragInteraction</name>
     <message>
-        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+169"/>
+        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+175"/>
         <source>Merge these two vertices.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2187,7 +2944,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::Filter</name>
     <message>
-        <location filename="../filters/deskew/Filter.cpp" line="+42"/>
+        <location filename="../filters/deskew/Filter.cpp" line="+47"/>
         <source>Deskew</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2208,7 +2965,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../filters/deskew/OptionsWidget.cpp" line="+50"/>
+        <location filename="../filters/deskew/OptionsWidget.cpp" line="+51"/>
         <source>Apply Deskew</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2216,7 +2973,7 @@ You should remove them from the project.</source>
 <context>
     <name>fix_orientation::Filter</name>
     <message>
-        <location filename="../filters/fix_orientation/Filter.cpp" line="+47"/>
+        <location filename="../filters/fix_orientation/Filter.cpp" line="+51"/>
         <source>Fix Orientation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2229,7 +2986,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+51"/>
         <location line="+10"/>
         <location line="+9"/>
         <source>Error</source>
@@ -2254,7 +3011,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::FillZoneEditor</name>
     <message>
-        <location filename="../filters/output/FillZoneEditor.cpp" line="+192"/>
+        <location filename="../filters/output/FillZoneEditor.cpp" line="+191"/>
         <source>Pick color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2262,7 +3019,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Filter</name>
     <message>
-        <location filename="../filters/output/Filter.cpp" line="+47"/>
+        <location filename="../filters/output/Filter.cpp" line="+49"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2270,7 +3027,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::OptionsWidget</name>
     <message>
-        <location filename="../filters/output/OptionsWidget.cpp" line="+45"/>
+        <location filename="../filters/output/OptionsWidget.cpp" line="+46"/>
         <source>Black and White</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2310,7 +3067,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Free</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2320,7 +3077,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+217"/>
+        <location line="+214"/>
         <source>Apply Splitting Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2335,7 +3092,8 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="-364"/>
+        <location line="+603"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2361,19 +3119,27 @@ You should remove them from the project.</source>
     </message>
 </context>
 <context>
+    <name>output::TabbedImageView</name>
+    <message>
+        <location filename="../filters/output/TabbedImageView.cpp" line="+29"/>
+        <source>Use Ctrl+1..5 to switch the tabs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+595"/>
+        <location filename="../filters/output/Task.cpp" line="+611"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+55"/>
         <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2401,7 +3167,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::Filter</name>
     <message>
-        <location filename="../filters/page_layout/Filter.cpp" line="+54"/>
+        <location filename="../filters/page_layout/Filter.cpp" line="+59"/>
         <source>Natural order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2416,7 +3182,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Margins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2424,7 +3190,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::ImageView</name>
     <message>
-        <location filename="../filters/page_layout/ImageView.cpp" line="+60"/>
+        <location filename="../filters/page_layout/ImageView.cpp" line="+61"/>
         <source>Resize margins by dragging any of the solid lines.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2432,7 +3198,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+303"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+323"/>
         <source>Apply Margins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2445,7 +3211,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::Filter</name>
     <message>
-        <location filename="../filters/page_split/Filter.cpp" line="+51"/>
+        <location filename="../filters/page_split/Filter.cpp" line="+56"/>
         <source>Natural order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2455,7 +3221,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Split Pages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2473,13 +3239,13 @@ You should remove them from the project.</source>
     <message>
         <location filename="../filters/page_split/OptionsWidget.cpp" line="+86"/>
         <location line="+91"/>
-        <location line="+106"/>
+        <location line="+114"/>
         <source>Set manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-147"/>
-        <location line="+144"/>
+        <location line="-155"/>
+        <location line="+152"/>
         <source>Auto detected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2495,7 +3261,7 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::Filter</name>
     <message>
-        <location filename="../filters/select_content/Filter.cpp" line="+47"/>
+        <location filename="../filters/select_content/Filter.cpp" line="+52"/>
         <source>Natural order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2510,7 +3276,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Select Content</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2518,8 +3284,8 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::ImageView</name>
     <message>
-        <location filename="../filters/select_content/ImageView.cpp" line="+48"/>
-        <source>Use the context menu to enable / disable the content box.</source>
+        <location filename="../filters/select_content/ImageView.cpp" line="+50"/>
+        <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2528,7 +3294,28 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+41"/>
+        <source>Drag lines or corners to resize the page box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Hold left mouse button to drag the content box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+20"/>
+        <source>Release left mouse button to finish dragging.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>Hold left mouse button to drag the page box.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
         <source>Create Content Box</source>
         <translation type="unfinished"></translation>
     </message>

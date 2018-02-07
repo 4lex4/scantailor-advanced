@@ -35,27 +35,28 @@
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <cmath>
 
 using namespace imageproc;
 
 namespace dewarping {
     struct TopBottomEdgeTracer::GridNode {
     private:
-        static uint32_t const HEAP_IDX_BITS = 28;
-        static uint32_t const PREV_NEIGHBOUR_BITS = 3;
-        static uint32_t const PATH_CONTINUATION_BITS = 1;
+        static const uint32_t HEAP_IDX_BITS = 28;
+        static const uint32_t PREV_NEIGHBOUR_BITS = 3;
+        static const uint32_t PATH_CONTINUATION_BITS = 1;
 
-        static uint32_t const HEAP_IDX_SHIFT = 0;
-        static uint32_t const PREV_NEIGHBOUR_SHIFT = HEAP_IDX_SHIFT + HEAP_IDX_BITS;
-        static uint32_t const PATH_CONTINUATION_SHIFT = PREV_NEIGHBOUR_SHIFT + PREV_NEIGHBOUR_BITS;
+        static const uint32_t HEAP_IDX_SHIFT = 0;
+        static const uint32_t PREV_NEIGHBOUR_SHIFT = HEAP_IDX_SHIFT + HEAP_IDX_BITS;
+        static const uint32_t PATH_CONTINUATION_SHIFT = PREV_NEIGHBOUR_SHIFT + PREV_NEIGHBOUR_BITS;
 
-        static uint32_t const HEAP_IDX_MASK = ((uint32_t(1) << HEAP_IDX_BITS) - uint32_t(1)) << HEAP_IDX_SHIFT;
-        static uint32_t const PREV_NEIGHBOUR_MASK
+        static const uint32_t HEAP_IDX_MASK = ((uint32_t(1) << HEAP_IDX_BITS) - uint32_t(1)) << HEAP_IDX_SHIFT;
+        static const uint32_t PREV_NEIGHBOUR_MASK
                 = ((uint32_t(1) << PREV_NEIGHBOUR_BITS) - uint32_t(1)) << PREV_NEIGHBOUR_SHIFT;
-        static uint32_t const PATH_CONTINUATION_MASK
+        static const uint32_t PATH_CONTINUATION_MASK
                 = ((uint32_t(1) << PATH_CONTINUATION_BITS) - uint32_t(1)) << PATH_CONTINUATION_SHIFT;
     public:
-        static uint32_t const INVALID_HEAP_IDX = HEAP_IDX_MASK >> HEAP_IDX_SHIFT;
+        static const uint32_t INVALID_HEAP_IDX = HEAP_IDX_MASK >> HEAP_IDX_SHIFT;
 
         union {
             float dirDeriv;  // Directional derivative.
@@ -74,7 +75,7 @@ namespace dewarping {
         uint32_t packedData;
 
         float absDirDeriv() const {
-            return fabs(dirDeriv);
+            return std::fabs(dirDeriv);
         }
 
         void setupForPadding() {
@@ -101,7 +102,7 @@ namespace dewarping {
         }
 
         bool hasPathContinuation() const {
-            return packedData & PATH_CONTINUATION_MASK;
+            return static_cast<bool>(packedData & PATH_CONTINUATION_MASK);
         }
 
         /**
@@ -128,7 +129,7 @@ namespace dewarping {
 
     class TopBottomEdgeTracer::PrioQueue : public PriorityQueue<uint32_t, PrioQueue> {
     public:
-        PrioQueue(Grid<GridNode>& grid)
+        explicit PrioQueue(Grid<GridNode>& grid)
                 : m_pData(grid.data()) {
         }
 
@@ -151,41 +152,41 @@ namespace dewarping {
 
     struct TopBottomEdgeTracer::Step {
         Vec2f pt;
-        uint32_t prevStepIdx;
-        float pathCost;
+        uint32_t prevStepIdx{ };
+        float pathCost{ };
     };
 
 
     template<typename Extractor>
-    float TopBottomEdgeTracer::interpolatedGridValue(Grid<GridNode> const& grid,
+    float TopBottomEdgeTracer::interpolatedGridValue(const Grid<GridNode>& grid,
                                                      Extractor extractor,
-                                                     Vec2f const pos,
+                                                     const Vec2f pos,
                                                      float default_value) {
-        float const x_base = floor(pos[0]);
-        float const y_base = floor(pos[1]);
-        int const x_base_i = (int) x_base;
-        int const y_base_i = (int) y_base;
+        const auto x_base = static_cast<const float>(floor(pos[0]));
+        const auto y_base = static_cast<const float>(floor(pos[1]));
+        const auto x_base_i = (int) x_base;
+        const auto y_base_i = (int) y_base;
 
         if ((x_base_i < 0) || (y_base_i < 0) || (x_base_i + 1 >= grid.width()) || (y_base_i + 1 >= grid.height())) {
             return default_value;
         }
 
-        float const x = pos[0] - x_base;
-        float const y = pos[1] - y_base;
-        float const x1 = 1.0f - x;
-        float const y1 = 1.0f - y;
+        const float x = pos[0] - x_base;
+        const float y = pos[1] - y_base;
+        const float x1 = 1.0f - x;
+        const float y1 = 1.0f - y;
 
-        int const stride = grid.stride();
-        GridNode const* base = grid.data() + y_base_i * stride + x_base_i;
+        const int stride = grid.stride();
+        const GridNode* base = grid.data() + y_base_i * stride + x_base_i;
 
         return extractor(base[0]) * x1 * y1 + extractor(base[1]) * x * y1
                + extractor(base[stride]) * x1 * y + extractor(base[stride + 1]) * x * y;
     }
 
-    void TopBottomEdgeTracer::trace(imageproc::GrayImage const& image,
+    void TopBottomEdgeTracer::trace(const imageproc::GrayImage& image,
                                     std::pair<QLineF, QLineF> bounds,
                                     DistortionModelBuilder& output,
-                                    TaskStatus const& status,
+                                    const TaskStatus& status,
                                     DebugImages* dbg) {
         if ((bounds.first.p1() == bounds.first.p2()) || (bounds.second.p1() == bounds.second.p2())) {
             return;  // Bad bounds.
@@ -224,7 +225,7 @@ namespace dewarping {
 
         forceSameDirection(bounds);
 
-        Vec2f const avg_bounds_dir(calcAvgUnitVector(bounds));
+        const Vec2f avg_bounds_dir(calcAvgUnitVector(bounds));
         Grid<GridNode> grid(downscaled.width(), downscaled.height(),  /*padding=*/ 1);
         calcDirectionalDerivative(grid, downscaled, avg_bounds_dir);
         if (dbg) {
@@ -237,9 +238,9 @@ namespace dewarping {
 
         // Shortest paths from bounds.first towards bounds.second.
         prepareForShortestPathsFrom(queue, grid, bounds.first);
-        Vec2f const dir_1st_to_2nd(directionFromPointToLine(bounds.first.pointAt(0.5), bounds.second));
+        const Vec2f dir_1st_to_2nd(directionFromPointToLine(bounds.first.pointAt(0.5), bounds.second));
         propagateShortestPaths(dir_1st_to_2nd, queue, grid);
-        std::vector<QPoint> const endpoints1(locateBestPathEndpoints(grid, bounds.second));
+        const std::vector<QPoint> endpoints1(locateBestPathEndpoints(grid, bounds.second));
         if (dbg) {
             dbg->add(visualizePaths(downscaled, grid, bounds, endpoints1), "best_paths_ltr");
         }
@@ -251,25 +252,25 @@ namespace dewarping {
 
         for (QPoint endpoint : endpoints1) {
             snakes.push_back(pathToSnake(grid, endpoint));
-            Vec2f const dir(downTheHillDirection(downscaled.rect(), snakes.back(), avg_bounds_dir));
+            const Vec2f dir(downTheHillDirection(downscaled.rect(), snakes.back(), avg_bounds_dir));
             downTheHillSnake(snakes.back(), grid, dir);
         }
         if (dbg) {
-            QImage const background(visualizeBlurredGradient(grid));
+            const QImage background(visualizeBlurredGradient(grid));
             dbg->add(visualizeSnakes(background, snakes, bounds), "down_the_hill_snakes");
         }
 
         for (std::vector<QPointF>& snake : snakes) {
-            Vec2f const dir(-downTheHillDirection(downscaled.rect(), snake, avg_bounds_dir));
+            const Vec2f dir(-downTheHillDirection(downscaled.rect(), snake, avg_bounds_dir));
             upTheHillSnake(snake, grid, dir);
         }
         if (dbg) {
-            QImage const background(visualizeGradient(grid));
+            const QImage background(visualizeGradient(grid));
             dbg->add(visualizeSnakes(background, snakes, bounds), "up_the_hill_snakes");
         }
 
         // Convert snakes back to the original coordinate system.
-        QTransform const upscaling_xform(downscaling_xform.inverted());
+        const QTransform upscaling_xform(downscaling_xform.inverted());
         for (std::vector<QPointF>& snake : snakes) {
             for (QPointF& pt : snake) {
                 pt = upscaling_xform.map(pt);
@@ -278,34 +279,34 @@ namespace dewarping {
         }
     }  // TopBottomEdgeTracer::trace
 
-    bool TopBottomEdgeTracer::intersectWithRect(std::pair<QLineF, QLineF>& bounds, QRectF const& rect) {
+    bool TopBottomEdgeTracer::intersectWithRect(std::pair<QLineF, QLineF>& bounds, const QRectF& rect) {
         return lineBoundedByRect(bounds.first, rect) && lineBoundedByRect(bounds.second, rect);
     }
 
     void TopBottomEdgeTracer::forceSameDirection(std::pair<QLineF, QLineF>& bounds) {
-        QPointF const v1(bounds.first.p2() - bounds.first.p1());
-        QPointF const v2(bounds.second.p2() - bounds.second.p1());
+        const QPointF v1(bounds.first.p2() - bounds.first.p1());
+        const QPointF v2(bounds.second.p2() - bounds.second.p1());
         if (v1.x() * v2.x() + v1.y() * v2.y() < 0) {
             bounds.second.setPoints(bounds.second.p2(), bounds.second.p1());
         }
     }
 
     void TopBottomEdgeTracer::calcDirectionalDerivative(Grid<GridNode>& grid,
-                                                        imageproc::GrayImage const& image,
-                                                        Vec2f const& direction) {
+                                                        const imageproc::GrayImage& image,
+                                                        const Vec2f& direction) {
         assert(grid.padding() == 1);
 
-        int const width = grid.width();
-        int const height = grid.height();
+        const int width = grid.width();
+        const int height = grid.height();
 
-        int const grid_stride = grid.stride();
-        int const image_stride = image.stride();
+        const int grid_stride = grid.stride();
+        const int image_stride = image.stride();
 
-        uint8_t const* image_line = image.data();
+        const uint8_t* image_line = image.data();
         GridNode* grid_line = grid.data();
 
         // This ensures that partial derivatives never go beyond the [-1, 1] range.
-        float const scale = 1.0f / (255.0f * 8.0f);
+        const float scale = 1.0f / (255.0f * 8.0f);
 
         // We are going to use both GridNode::gradient and GridNode::pathCost
         // to calculate the gradient.
@@ -354,9 +355,9 @@ namespace dewarping {
         grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                Vec2f const grad_vec(grid_line[x].xGrad, grid_line[x].yGrad);
+                const Vec2f grad_vec(grid_line[x].xGrad, grid_line[x].yGrad);
                 grid_line[x].dirDeriv = grad_vec.dot(direction);
-                assert(fabs(grid_line[x].dirDeriv) <= 1.0);
+                assert(std::fabs(grid_line[x].dirDeriv) <= 1.0);
             }
 
             grid_line += grid_stride;
@@ -366,16 +367,16 @@ namespace dewarping {
     void TopBottomEdgeTracer::horizontalSobelInPlace(Grid<GridNode>& grid) {
         assert(grid.padding() == 1);
 
-        int const width = grid.width();
-        int const height = grid.height();
-        int const grid_stride = grid.stride();
+        const int width = grid.width();
+        const int height = grid.height();
+        const int grid_stride = grid.stride();
 
         // Do a vertical pass.
         for (int x = -1; x < width + 1; ++x) {
             GridNode* p_grid = grid.data() + x;
             float prev = p_grid[-grid_stride].xGrad;
             for (int y = 0; y < height; ++y) {
-                float const cur = p_grid->xGrad;
+                const float cur = p_grid->xGrad;
                 p_grid->xGrad = prev + cur + cur + p_grid[grid_stride].xGrad;
                 prev = cur;
                 p_grid += grid_stride;
@@ -398,9 +399,9 @@ namespace dewarping {
     void TopBottomEdgeTracer::verticalSobelInPlace(Grid<GridNode>& grid) {
         assert(grid.padding() == 1);
 
-        int const width = grid.width();
-        int const height = grid.height();
-        int const grid_stride = grid.stride();
+        const int width = grid.width();
+        const int height = grid.height();
+        const int grid_stride = grid.stride();
         // Do a horizontal pass.
         GridNode* grid_line = grid.paddedData() + 1;
         for (int y = 0; y < height + 2; ++y) {
@@ -418,7 +419,7 @@ namespace dewarping {
             GridNode* p_grid = grid.data() + x;
             float prev = p_grid[-grid_stride].yGrad;
             for (int y = 0; y < height; ++y) {
-                float const cur = p_grid->yGrad;
+                const float cur = p_grid->yGrad;
                 p_grid->yGrad = p_grid[grid_stride].yGrad - prev;
                 prev = cur;
                 p_grid += grid_stride;
@@ -426,7 +427,7 @@ namespace dewarping {
         }
     }
 
-    Vec2f TopBottomEdgeTracer::calcAvgUnitVector(std::pair<QLineF, QLineF> const& bounds) {
+    Vec2f TopBottomEdgeTracer::calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds) {
         Vec2f v1(bounds.first.p2() - bounds.first.p1());
         v1 /= sqrt(v1.squaredNorm());
 
@@ -439,24 +440,24 @@ namespace dewarping {
         return v3;
     }
 
-    Vec2f TopBottomEdgeTracer::directionFromPointToLine(QPointF const& pt, QLineF const& line) {
+    Vec2f TopBottomEdgeTracer::directionFromPointToLine(const QPointF& pt, const QLineF& line) {
         Vec2f vec(ToLineProjector(line).projectionVector(pt));
-        float const sqlen = vec.squaredNorm();
+        const float sqlen = vec.squaredNorm();
         if (sqlen > 1e-5) {
-            vec /= sqrt(sqlen);
+            vec /= std::sqrt(sqlen);
         }
 
         return vec;
     }
 
-    void TopBottomEdgeTracer::prepareForShortestPathsFrom(PrioQueue& queue, Grid<GridNode>& grid, QLineF const& from) {
-        GridNode padding_node;
+    void TopBottomEdgeTracer::prepareForShortestPathsFrom(PrioQueue& queue, Grid<GridNode>& grid, const QLineF& from) {
+        GridNode padding_node{ };
         padding_node.setupForPadding();
         grid.initPadding(padding_node);
 
-        int const width = grid.width();
-        int const height = grid.height();
-        int const stride = grid.stride();
+        const int width = grid.width();
+        const int height = grid.height();
+        const int stride = grid.stride();
         GridNode* const data = grid.data();
 
         GridNode* line = grid.data();
@@ -472,37 +473,38 @@ namespace dewarping {
 
         GridLineTraverser traverser(from);
         while (traverser.hasNext()) {
-            QPoint const pt(traverser.next());
+            const QPoint pt(traverser.next());
 
             // intersectWithRect() ensures that.
             assert(pt.x() >= 0 && pt.y() >= 0 && pt.x() < width && pt.y() < height);
 
-            int const offset = pt.y() * stride + pt.x();
+            const int offset = pt.y() * stride + pt.x();
             data[offset].pathCost = 0;
             queue.push(offset);
         }
     }
 
-    void TopBottomEdgeTracer::propagateShortestPaths(Vec2f const& direction, PrioQueue& queue, Grid<GridNode>& grid) {
+    void TopBottomEdgeTracer::propagateShortestPaths(const Vec2f& direction, PrioQueue& queue, Grid<GridNode>& grid) {
         GridNode* const data = grid.data();
 
         int next_nbh_offsets[8];
         int prev_nbh_indexes[8];
-        int const num_neighbours = initNeighbours(next_nbh_offsets, prev_nbh_indexes, grid.stride(), direction);
+        const int num_neighbours = initNeighbours(next_nbh_offsets, prev_nbh_indexes, grid.stride(), direction);
 
         while (!queue.empty()) {
-            int const grid_idx = queue.front();
+            const int grid_idx = queue.front();
             GridNode* node = data + grid_idx;
             assert(node->pathCost >= 0);
             queue.pop();
             node->setHeapIdx(GridNode::INVALID_HEAP_IDX);
 
             for (int i = 0; i < num_neighbours; ++i) {
-                int const nbh_grid_idx = grid_idx + next_nbh_offsets[i];
+                const int nbh_grid_idx = grid_idx + next_nbh_offsets[i];
                 GridNode* nbh_node = data + nbh_grid_idx;
 
-                assert(fabs(node->dirDeriv) <= 1.0);
-                float const new_cost = std::max<float>(node->pathCost, 1.0f - fabs(node->dirDeriv));
+                assert(std::fabs(node->dirDeriv) <= 1.0);
+                const float new_cost = std::max<float>(node->pathCost,
+                                                       static_cast<const float&>(1.0f - std::fabs(node->dirDeriv)));
                 if (new_cost < nbh_node->pathCost) {
                     nbh_node->pathCost = new_cost;
                     nbh_node->setPrevNeighbourIdx(prev_nbh_indexes[i]);
@@ -517,14 +519,14 @@ namespace dewarping {
     }  // TopBottomEdgeTracer::propagateShortestPaths
 
     int TopBottomEdgeTracer::initNeighbours(int* next_nbh_offsets, int* prev_nbh_indexes, int stride,
-                                            Vec2f const& direction) {
-        int const candidate_offsets[] = {
+                                            const Vec2f& direction) {
+        const int candidate_offsets[] = {
                 -stride - 1, -stride, -stride + 1,
                 -1, 1,
                 stride - 1, stride, stride + 1
         };
 
-        float const candidate_vectors[8][2] = {
+        const float candidate_vectors[8][2] = {
                 { -1.0f, -1.0f },
                 { 0.0f,  -1.0f },
                 { 1.0f,  -1.0f },
@@ -535,7 +537,7 @@ namespace dewarping {
                 { 1.0f,  1.0f }
         };
 
-        static int const opposite_nbh_map[] = {
+        static const int opposite_nbh_map[] = {
                 7, 6, 5,
                 4, 3,
                 2, 1, 0
@@ -543,7 +545,7 @@ namespace dewarping {
 
         int out_idx = 0;
         for (int i = 0; i < 8; ++i) {
-            Vec2f const vec(candidate_vectors[i][0], candidate_vectors[i][1]);
+            const Vec2f vec(candidate_vectors[i][0], candidate_vectors[i][1]);
             if (vec.dot(direction) > 0) {
                 next_nbh_offsets[out_idx] = candidate_offsets[i];
                 prev_nbh_indexes[out_idx] = opposite_nbh_map[i];
@@ -567,32 +569,32 @@ namespace dewarping {
     }
 
     std::vector<QPoint>
-    TopBottomEdgeTracer::locateBestPathEndpoints(Grid<GridNode> const& grid, QLineF const& line) {
-        int const width = grid.width();
-        int const height = grid.height();
-        int const stride = grid.stride();
-        GridNode const* const data = grid.data();
+    TopBottomEdgeTracer::locateBestPathEndpoints(const Grid<GridNode>& grid, const QLineF& line) {
+        const int width = grid.width();
+        const int height = grid.height();
+        const int stride = grid.stride();
+        const GridNode* const data = grid.data();
 
-        size_t const num_best_paths = 2;  // Take N best paths.
-        int const min_sqdist = 100 * 100;
+        const size_t num_best_paths = 2;  // Take N best paths.
+        const int min_sqdist = 100 * 100;
         std::vector<Path> best_paths;
 
         GridLineTraverser traverser(line);
         while (traverser.hasNext()) {
-            QPoint const pt(traverser.next());
+            const QPoint pt(traverser.next());
 
             // intersectWithRect() ensures that.
             assert(pt.x() >= 0 && pt.y() >= 0 && pt.x() < width && pt.y() < height);
 
-            uint32_t const offset = pt.y() * stride + pt.x();
-            GridNode const* node = data + offset;
+            const uint32_t offset = pt.y() * stride + pt.x();
+            const GridNode* node = data + offset;
 
             // Find the closest path.
-            Path* closest_path = 0;
+            Path* closest_path = nullptr;
             int closest_sqdist = std::numeric_limits<int>::max();
             for (Path& path : best_paths) {
-                QPoint const delta(path.pt - pt);
-                int const sqdist = delta.x() * delta.x() + delta.y() * delta.y();
+                const QPoint delta(path.pt - pt);
+                const int sqdist = delta.x() * delta.x() + delta.y() * delta.y();
                 if (sqdist < closest_sqdist) {
                     closest_path = &path;
                     closest_sqdist = sqdist;
@@ -609,7 +611,7 @@ namespace dewarping {
             }
 
             if (best_paths.size() < num_best_paths) {
-                best_paths.push_back(Path(pt, node->pathCost));
+                best_paths.emplace_back(pt, node->pathCost);
             } else {
                 // Find the one to kick out (if any).
                 for (Path& path : best_paths) {
@@ -623,7 +625,7 @@ namespace dewarping {
 
         std::vector<QPoint> best_endpoints;
 
-        for (Path const& path : best_paths) {
+        for (const Path& path : best_paths) {
             if (path.cost < 0.95f) {
                 best_endpoints.push_back(path.pt);
             }
@@ -633,26 +635,26 @@ namespace dewarping {
     }  // TopBottomEdgeTracer::locateBestPathEndpoints
 
     std::vector<QPoint>
-    TopBottomEdgeTracer::tracePathFromEndpoint(Grid<GridNode> const& grid, QPoint const& endpoint) {
-        static int const dx[8] = {
+    TopBottomEdgeTracer::tracePathFromEndpoint(const Grid<GridNode>& grid, const QPoint& endpoint) {
+        static const int dx[8] = {
                 -1, 0, 1,
                 -1, 1,
                 -1, 0, 1
         };
-        static int const dy[8] = {
+        static const int dy[8] = {
                 -1, -1, -1,
                 0, 0,
                 1, 1, 1
         };
 
-        int const stride = grid.stride();
-        int const grid_offsets[8] = {
+        const int stride = grid.stride();
+        const int grid_offsets[8] = {
                 -stride - 1, -stride, -stride + 1,
                 -1, +1,
                 +stride - 1, +stride, +stride + 1
         };
 
-        GridNode const* const data = grid.data();
+        const GridNode* const data = grid.data();
         std::vector<QPoint> path;
 
         QPoint pt(endpoint);
@@ -660,12 +662,12 @@ namespace dewarping {
         for (;;) {
             path.push_back(pt);
 
-            GridNode const* node = data + grid_offset;
+            const GridNode* node = data + grid_offset;
             if (!node->hasPathContinuation()) {
                 break;
             }
 
-            int const nbh_idx = node->prevNeighbourIdx();
+            const int nbh_idx = node->prevNeighbourIdx();
             grid_offset += grid_offsets[nbh_idx];
             pt += QPoint(dx[nbh_idx], dy[nbh_idx]);
         }
@@ -674,56 +676,56 @@ namespace dewarping {
     }  // TopBottomEdgeTracer::tracePathFromEndpoint
 
     std::vector<QPointF>
-    TopBottomEdgeTracer::pathToSnake(Grid<GridNode> const& grid, QPoint const& endpoint) {
-        int const max_dist = 15;  // Maximum distance between two snake knots.
-        int const max_dist_sq = max_dist * max_dist;
-        int const half_max_dist = max_dist / 2;
-        int const half_max_dist_sq = half_max_dist * half_max_dist;
+    TopBottomEdgeTracer::pathToSnake(const Grid<GridNode>& grid, const QPoint& endpoint) {
+        const int max_dist = 15;  // Maximum distance between two snake knots.
+        const int max_dist_sq = max_dist * max_dist;
+        const int half_max_dist = max_dist / 2;
+        const int half_max_dist_sq = half_max_dist * half_max_dist;
 
-        static int const dx[8] = {
+        static const int dx[8] = {
                 -1, 0, 1,
                 -1, 1,
                 -1, 0, 1
         };
-        static int const dy[8] = {
+        static const int dy[8] = {
                 -1, -1, -1,
                 0, 0,
                 1, 1, 1
         };
 
-        int const stride = grid.stride();
-        int const grid_offsets[8] = {
+        const int stride = grid.stride();
+        const int grid_offsets[8] = {
                 -stride - 1, -stride, -stride + 1,
                 -1, +1,
                 +stride - 1, +stride, +stride + 1
         };
 
-        GridNode const* const data = grid.data();
+        const GridNode* const data = grid.data();
         std::vector<QPointF> snake;
-        snake.push_back(endpoint);
+        snake.emplace_back(endpoint);
         QPoint snake_tail(endpoint);
 
         QPoint pt(endpoint);
         int grid_offset = pt.x() + pt.y() * stride;
         for (;;) {
-            QPoint const delta(pt - snake_tail);
-            int const sqdist = delta.x() * delta.x() + delta.y() * delta.y();
+            const QPoint delta(pt - snake_tail);
+            const int sqdist = delta.x() * delta.x() + delta.y() * delta.y();
 
-            GridNode const* node = data + grid_offset;
+            const GridNode* node = data + grid_offset;
             if (!node->hasPathContinuation()) {
                 if (sqdist >= half_max_dist_sq) {
-                    snake.push_back(pt);
+                    snake.emplace_back(pt);
                     snake_tail = pt;
                 }
                 break;
             }
 
             if (sqdist >= max_dist_sq) {
-                snake.push_back(pt);
+                snake.emplace_back(pt);
                 snake_tail = pt;
             }
 
-            int const nbh_idx = node->prevNeighbourIdx();
+            const int nbh_idx = node->prevNeighbourIdx();
             grid_offset += grid_offsets[nbh_idx];
             pt += QPoint(dx[nbh_idx], dy[nbh_idx]);
         }
@@ -741,14 +743,14 @@ namespace dewarping {
         );
     }
 
-    Vec2f TopBottomEdgeTracer::downTheHillDirection(QRectF const& page_rect,
-                                                    std::vector<QPointF> const& snake,
-                                                    Vec2f const& bounds_dir) {
+    Vec2f TopBottomEdgeTracer::downTheHillDirection(const QRectF& page_rect,
+                                                    const std::vector<QPointF>& snake,
+                                                    const Vec2f& bounds_dir) {
         assert(!snake.empty());
 
         // Take the centroid of a snake.
         QPointF centroid;
-        for (QPointF const& pt : snake) {
+        for (const QPointF& pt : snake) {
             centroid += pt;
         }
         centroid /= snake.size();
@@ -756,8 +758,8 @@ namespace dewarping {
         QLineF line(centroid, centroid + bounds_dir);
         lineBoundedByRect(line, page_rect);
         // The downhill direction is the direction *inside* the page.
-        Vec2d const v1(line.p1() - centroid);
-        Vec2d const v2(line.p2() - centroid);
+        const Vec2d v1(line.p1() - centroid);
+        const Vec2d v2(line.p2() - centroid);
         if (v1.squaredNorm() > v2.squaredNorm()) {
             return v1;
         } else {
@@ -766,17 +768,17 @@ namespace dewarping {
     }
 
     void
-    TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, Grid<GridNode> const& grid, Vec2f const dir) {
+    TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, const Vec2f dir) {
         using namespace boost::lambda;
 
-        size_t const num_nodes = snake.size();
+        const size_t num_nodes = snake.size();
         if (num_nodes <= 1) {
             return;
         }
 
         float avg_dist = 0;
         for (size_t i = 1; i < num_nodes; ++i) {
-            Vec2f const vec(snake[i] - snake[i - 1]);
+            const Vec2f vec(snake[i] - snake[i - 1]);
             avg_dist += sqrt(vec.squaredNorm());
         }
         avg_dist /= num_nodes - 1;
@@ -784,13 +786,13 @@ namespace dewarping {
         std::vector<Step> step_storage;
 
         Vec2f displacements[9];
-        int const num_displacements = initDisplacementVectors(displacements, dir);
+        const int num_displacements = initDisplacementVectors(displacements, dir);
 
-        float const elasticity_weight = 0.6f;
-        float const bending_weight = 8.0f;
-        float const external_weight = 0.4f;
+        const float elasticity_weight = 0.6f;
+        const float bending_weight = 8.0f;
+        const float external_weight = 0.4f;
 
-        float const segment_dist_threshold = 1;
+        const float segment_dist_threshold = 1;
 
         for (int iteration = 0; iteration < 40; ++iteration) {
             step_storage.clear();
@@ -799,8 +801,8 @@ namespace dewarping {
             std::vector<uint32_t> new_paths;
 
             for (size_t node_idx = 0; node_idx < num_nodes; ++node_idx) {
-                Vec2f const pt(snake[node_idx]);
-                float const cur_external_energy = interpolatedGridValue(
+                const Vec2f pt(snake[node_idx]);
+                const float cur_external_energy = interpolatedGridValue(
                         grid, bind<float>(&GridNode::blurred, _1), pt, 1000
                 );
 
@@ -810,7 +812,7 @@ namespace dewarping {
                     step.pt = pt + displacements[displacement_idx];
                     step.pathCost = 0;
 
-                    float const adjusted_external_energy = interpolatedGridValue(
+                    const float adjusted_external_energy = interpolatedGridValue(
                             grid, bind<float>(&GridNode::blurred, _1), step.pt, 1000
                     );
                     if (displacement_idx == 0) {
@@ -827,29 +829,29 @@ namespace dewarping {
                     uint32_t best_prev_step_idx = step.prevStepIdx;
 
                     for (uint32_t prev_step_idx : paths) {
-                        Step const& prev_step = step_storage[prev_step_idx];
+                        const Step& prev_step = step_storage[prev_step_idx];
                         float cost = prev_step.pathCost + step.pathCost;
 
-                        Vec2f const vec(step.pt - prev_step.pt);
-                        float const vec_len = sqrt(vec.squaredNorm());
+                        const Vec2f vec(step.pt - prev_step.pt);
+                        const auto vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
                         if (vec_len < segment_dist_threshold) {
                             cost += 1000;
                         }
 
                         // Elasticity.
-                        float const dist_diff = fabs(avg_dist - vec_len);
+                        const auto dist_diff = std::fabs(avg_dist - vec_len);
                         cost += elasticity_weight * (dist_diff / avg_dist);
                         // Bending energy.
                         if ((prev_step.prevStepIdx != ~uint32_t(0)) && (vec_len >= segment_dist_threshold)) {
-                            Step const& prev_prev_step = step_storage[prev_step.prevStepIdx];
+                            const Step& prev_prev_step = step_storage[prev_step.prevStepIdx];
                             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
                             std::swap(prev_normal[0], prev_normal[1]);
                             prev_normal[0] = -prev_normal[0];
-                            float const prev_normal_len = sqrt(prev_normal.squaredNorm());
+                            const auto prev_normal_len = static_cast<const float>(sqrt(prev_normal.squaredNorm()));
                             if (prev_normal_len < segment_dist_threshold) {
                                 cost += 1000;
                             } else {
-                                float const cos = vec.dot(prev_normal) / (vec_len * prev_normal_len);
+                                const float cos = vec.dot(prev_normal) / (vec_len * prev_normal_len);
                                 // cost += 0.7 * fabs(cos);
                                 cost += bending_weight * cos * cos;
                             }
@@ -868,7 +870,7 @@ namespace dewarping {
                         step.pathCost = best_cost;
                     }
 
-                    new_paths.push_back(step_storage.size());
+                    new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                     step_storage.push_back(step);
                 }
                 assert(!new_paths.empty());
@@ -879,7 +881,7 @@ namespace dewarping {
             uint32_t best_path_idx = ~uint32_t(0);
             float best_cost = NumericTraits<float>::max();
             for (uint32_t last_step_idx : paths) {
-                Step const& step = step_storage[last_step_idx];
+                const Step& step = step_storage[last_step_idx];
                 if (step.pathCost < best_cost) {
                     best_cost = step.pathCost;
                     best_path_idx = last_step_idx;
@@ -889,7 +891,7 @@ namespace dewarping {
             snake.clear();
             uint32_t step_idx = best_path_idx;
             while (step_idx != ~uint32_t(0)) {
-                Step const& step = step_storage[step_idx];
+                const Step& step = step_storage[step_idx];
                 snake.push_back(step.pt);
                 step_idx = step.prevStepIdx;
             }
@@ -897,17 +899,17 @@ namespace dewarping {
         }
     }  // TopBottomEdgeTracer::downTheHillSnake
 
-    void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, Grid<GridNode> const& grid, Vec2f const dir) {
+    void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, const Vec2f dir) {
         using namespace boost::lambda;
 
-        size_t const num_nodes = snake.size();
+        const size_t num_nodes = snake.size();
         if (num_nodes <= 1) {
             return;
         }
 
         float avg_dist = 0;
         for (size_t i = 1; i < num_nodes; ++i) {
-            Vec2f const vec(snake[i] - snake[i - 1]);
+            const Vec2f vec(snake[i] - snake[i - 1]);
             avg_dist += sqrt(vec.squaredNorm());
         }
         avg_dist /= num_nodes - 1;
@@ -915,17 +917,17 @@ namespace dewarping {
         std::vector<Step> step_storage;
 
         Vec2f displacements[9];
-        int const num_displacements = initDisplacementVectors(displacements, dir);
+        const int num_displacements = initDisplacementVectors(displacements, dir);
         for (int i = 0; i < num_displacements; ++i) {
             // We need more accuracy here.
             displacements[i] *= 0.5f;
         }
 
-        float const elasticity_weight = 0.6f;
-        float const bending_weight = 3.0f;
-        float const external_weight = 2.0f;
+        const float elasticity_weight = 0.6f;
+        const float bending_weight = 3.0f;
+        const float external_weight = 2.0f;
 
-        float const segment_dist_threshold = 1;
+        const float segment_dist_threshold = 1;
 
         for (int iteration = 0; iteration < 40; ++iteration) {
             step_storage.clear();
@@ -934,8 +936,8 @@ namespace dewarping {
             std::vector<uint32_t> new_paths;
 
             for (size_t node_idx = 0; node_idx < num_nodes; ++node_idx) {
-                Vec2f const pt(snake[node_idx]);
-                float const cur_external_energy = -interpolatedGridValue(
+                const Vec2f pt(snake[node_idx]);
+                const float cur_external_energy = -interpolatedGridValue(
                         grid, bind<float>(&GridNode::absDirDeriv, _1), pt, 1000
                 );
 
@@ -945,7 +947,7 @@ namespace dewarping {
                     step.pt = pt + displacements[displacement_idx];
                     step.pathCost = 0;
 
-                    float const adjusted_external_energy = -interpolatedGridValue(
+                    const float adjusted_external_energy = -interpolatedGridValue(
                             grid, bind<float>(&GridNode::absDirDeriv, _1), step.pt, 1000
                     );
                     if ((displacement_idx == 0) && (adjusted_external_energy > -0.02)) {
@@ -960,29 +962,29 @@ namespace dewarping {
                     uint32_t best_prev_step_idx = step.prevStepIdx;
 
                     for (uint32_t prev_step_idx : paths) {
-                        Step const& prev_step = step_storage[prev_step_idx];
+                        const Step& prev_step = step_storage[prev_step_idx];
                         float cost = prev_step.pathCost + step.pathCost;
 
-                        Vec2f const vec(step.pt - prev_step.pt);
-                        float const vec_len = sqrt(vec.squaredNorm());
+                        const Vec2f vec(step.pt - prev_step.pt);
+                        const auto vec_len = static_cast<const float>(sqrt(vec.squaredNorm()));
                         if (vec_len < segment_dist_threshold) {
                             cost += 1000;
                         }
 
                         // Elasticity.
-                        float const dist_diff = fabs(avg_dist - vec_len);
+                        const auto dist_diff = std::fabs(avg_dist - vec_len);
                         cost += elasticity_weight * (dist_diff / avg_dist);
                         // Bending energy.
                         if ((prev_step.prevStepIdx != ~uint32_t(0)) && (vec_len >= segment_dist_threshold)) {
-                            Step const& prev_prev_step = step_storage[prev_step.prevStepIdx];
+                            const Step& prev_prev_step = step_storage[prev_step.prevStepIdx];
                             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
                             std::swap(prev_normal[0], prev_normal[1]);
                             prev_normal[0] = -prev_normal[0];
-                            float const prev_normal_len = sqrt(prev_normal.squaredNorm());
+                            const auto prev_normal_len = static_cast<const float>(sqrt(prev_normal.squaredNorm()));
                             if (prev_normal_len < segment_dist_threshold) {
                                 cost += 1000;
                             } else {
-                                float const cos = vec.dot(prev_normal) / (vec_len * prev_normal_len);
+                                const float cos = vec.dot(prev_normal) / (vec_len * prev_normal_len);
                                 // cost += 0.7 * fabs(cos);
                                 cost += bending_weight * cos * cos;
                             }
@@ -1001,7 +1003,7 @@ namespace dewarping {
                         step.pathCost = best_cost;
                     }
 
-                    new_paths.push_back(step_storage.size());
+                    new_paths.push_back(static_cast<unsigned int&&>(step_storage.size()));
                     step_storage.push_back(step);
                 }
                 assert(!new_paths.empty());
@@ -1012,7 +1014,7 @@ namespace dewarping {
             uint32_t best_path_idx = ~uint32_t(0);
             float best_cost = NumericTraits<float>::max();
             for (uint32_t last_step_idx : paths) {
-                Step const& step = step_storage[last_step_idx];
+                const Step& step = step_storage[last_step_idx];
                 if (step.pathCost < best_cost) {
                     best_cost = step.pathCost;
                     best_path_idx = last_step_idx;
@@ -1022,7 +1024,7 @@ namespace dewarping {
             snake.clear();
             uint32_t step_idx = best_path_idx;
             while (step_idx != ~uint32_t(0)) {
-                Step const& step = step_storage[step_idx];
+                const Step& step = step_storage[step_idx];
                 snake.push_back(step.pt);
                 step_idx = step.prevStepIdx;
             }
@@ -1036,20 +1038,20 @@ namespace dewarping {
         // over another one with exactly the same score.
         vectors[out_idx++] = Vec2f(0, 0);
 
-        static float const dx[] = {
+        static const float dx[] = {
                 -1, 0, 1,
                 -1, 1,
                 -1, 0, 1
         };
 
-        static float const dy[] = {
+        static const float dy[] = {
                 -1, -1, -1,
                 0, 0,
                 1, 1, 1
         };
 
         for (int i = 0; i < 8; ++i) {
-            Vec2f const vec(dx[i], dy[i]);
+            const Vec2f vec(dx[i], dy[i]);
             if (vec.dot(valid_direction) > 0) {
                 vectors[out_idx++] = vec;
             }
@@ -1058,18 +1060,18 @@ namespace dewarping {
         return out_idx;
     }
 
-    QImage TopBottomEdgeTracer::visualizeGradient(Grid<GridNode> const& grid, QImage const* background) {
-        int const width = grid.width();
-        int const height = grid.height();
-        int const grid_stride = grid.stride();
+    QImage TopBottomEdgeTracer::visualizeGradient(const Grid<GridNode>& grid, const QImage* background) {
+        const int width = grid.width();
+        const int height = grid.height();
+        const int grid_stride = grid.stride();
         // First let's find the maximum and minimum values.
         float min_value = NumericTraits<float>::max();
         float max_value = NumericTraits<float>::min();
 
-        GridNode const* grid_line = grid.data();
+        const GridNode* grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grid_line[x].dirDeriv;
+                const float value = grid_line[x].dirDeriv;
                 if (value < min_value) {
                     min_value = value;
                 } else if (value > max_value) {
@@ -1085,14 +1087,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
-        int const overlay_stride = overlay.bytesPerLine() / 4;
+        auto* overlay_line = (uint32_t*) overlay.bits();
+        const int overlay_stride = overlay.bytesPerLine() / 4;
 
         grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grid_line[x].dirDeriv * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                const float value = grid_line[x].dirDeriv * scale;
+                const int magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 if (value > 0) {
                     // Red for positive gradients which indicate bottom edges.
                     overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
@@ -1118,18 +1120,18 @@ namespace dewarping {
         return canvas;
     }  // TopBottomEdgeTracer::visualizeGradient
 
-    QImage TopBottomEdgeTracer::visualizeBlurredGradient(Grid<GridNode> const& grid) {
-        int const width = grid.width();
-        int const height = grid.height();
-        int const grid_stride = grid.stride();
+    QImage TopBottomEdgeTracer::visualizeBlurredGradient(const Grid<GridNode>& grid) {
+        const int width = grid.width();
+        const int height = grid.height();
+        const int grid_stride = grid.stride();
         // First let's find the maximum and minimum values.
         float min_value = NumericTraits<float>::max();
         float max_value = NumericTraits<float>::min();
 
-        GridNode const* grid_line = grid.data();
+        const GridNode* grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grid_line[x].blurred;
+                const float value = grid_line[x].blurred;
                 if (value < min_value) {
                     min_value = value;
                 } else if (value > max_value) {
@@ -1145,14 +1147,14 @@ namespace dewarping {
         }
 
         QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-        uint32_t* overlay_line = (uint32_t*) overlay.bits();
-        int const overlay_stride = overlay.bytesPerLine() / 4;
+        auto* overlay_line = (uint32_t*) overlay.bits();
+        const int overlay_stride = overlay.bytesPerLine() / 4;
 
         grid_line = grid.data();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                float const value = grid_line[x].blurred * scale;
-                int const magnitude = qBound(0, (int) (fabs(value) + 0.5), 255);
+                const float value = grid_line[x].blurred * scale;
+                const int magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
                 overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
             }
             grid_line += grid_stride;
@@ -1167,41 +1169,41 @@ namespace dewarping {
         return canvas;
     }  // TopBottomEdgeTracer::visualizeBlurredGradient
 
-    QImage TopBottomEdgeTracer::visualizePaths(QImage const& background,
-                                               Grid<GridNode> const& grid,
-                                               std::pair<QLineF, QLineF> const& bounds,
-                                               std::vector<QPoint> const& path_endpoints) {
+    QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
+                                               const Grid<GridNode>& grid,
+                                               const std::pair<QLineF, QLineF>& bounds,
+                                               const std::vector<QPoint>& path_endpoints) {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-        uint32_t* const canvas_data = (uint32_t*) canvas.bits();
-        int const canvas_stride = canvas.bytesPerLine() / 4;
+        auto* const canvas_data = (uint32_t*) canvas.bits();
+        const int canvas_stride = canvas.bytesPerLine() / 4;
 
-        int const width = grid.width();
-        int const height = grid.height();
-        int const grid_stride = grid.stride();
-        GridNode const* const grid_data = grid.data();
+        const int width = grid.width();
+        const int height = grid.height();
+        const int grid_stride = grid.stride();
+        const GridNode* const grid_data = grid.data();
 
-        int const nbh_canvas_offsets[8] = {
+        const int nbh_canvas_offsets[8] = {
                 -canvas_stride - 1, -canvas_stride, -canvas_stride + 1,
                 -1, +1,
                 +canvas_stride - 1, +canvas_stride, +canvas_stride + 1
         };
-        int const nbh_grid_offsets[8] = {
+        const int nbh_grid_offsets[8] = {
                 -grid_stride - 1, -grid_stride, -grid_stride + 1,
                 -1, +1,
                 +grid_stride - 1, +grid_stride, +grid_stride + 1
         };
 
-        for (QPoint const path_endpoint : path_endpoints) {
+        for (const QPoint path_endpoint : path_endpoints) {
             int grid_offset = path_endpoint.x() + path_endpoint.y() * grid_stride;
             int canvas_offset = path_endpoint.x() + path_endpoint.y() * canvas_stride;
             for (;;) {
-                GridNode const* node = grid_data + grid_offset;
+                const GridNode* node = grid_data + grid_offset;
                 canvas_data[canvas_offset] = 0x00ff0000;
                 if (!node->hasPathContinuation()) {
                     break;
                 }
 
-                int const nbh_idx = node->prevNeighbourIdx();
+                const int nbh_idx = node->prevNeighbourIdx();
                 grid_offset += nbh_grid_offsets[nbh_idx];
                 canvas_offset += nbh_canvas_offsets[nbh_idx];
             }
@@ -1218,14 +1220,14 @@ namespace dewarping {
         return canvas;
     }  // TopBottomEdgeTracer::visualizePaths
 
-    QImage TopBottomEdgeTracer::visualizePaths(QImage const& background,
-                                               std::vector<std::vector<QPoint>> const& paths,
-                                               std::pair<QLineF, QLineF> const& bounds) {
+    QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
+                                               const std::vector<std::vector<QPoint>>& paths,
+                                               const std::pair<QLineF, QLineF>& bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_RGB32));
-        uint32_t* const canvas_data = (uint32_t*) canvas.bits();
-        int const canvas_stride = canvas.bytesPerLine() / 4;
+        auto* const canvas_data = (uint32_t*) canvas.bits();
+        const int canvas_stride = canvas.bytesPerLine() / 4;
 
-        for (std::vector<QPoint> const& path : paths) {
+        for (const std::vector<QPoint>& path : paths) {
             for (QPoint pt : path) {
                 canvas_data[pt.x() + pt.y() * canvas_stride] = 0x00ff0000;
             }
@@ -1242,9 +1244,9 @@ namespace dewarping {
         return canvas;
     }
 
-    QImage TopBottomEdgeTracer::visualizeSnakes(QImage const& background,
-                                                std::vector<std::vector<QPointF>> const& snakes,
-                                                std::pair<QLineF, QLineF> const& bounds) {
+    QImage TopBottomEdgeTracer::visualizeSnakes(const QImage& background,
+                                                const std::vector<std::vector<QPointF>>& snakes,
+                                                const std::pair<QLineF, QLineF>& bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -1257,15 +1259,15 @@ namespace dewarping {
 
         QRectF knot_rect(0, 0, 7, 7);
 
-        for (std::vector<QPointF> const& snake : snakes) {
+        for (const std::vector<QPointF>& snake : snakes) {
             if (snake.empty()) {
                 continue;
             }
 
             painter.setPen(snake_pen);
-            painter.drawPolyline(&snake[0], snake.size());
+            painter.drawPolyline(&snake[0], static_cast<int>(snake.size()));
             painter.setPen(Qt::NoPen);
-            for (QPointF const& knot : snake) {
+            for (const QPointF& knot : snake) {
                 knot_rect.moveCenter(knot);
                 painter.drawEllipse(knot_rect);
             }
@@ -1280,9 +1282,9 @@ namespace dewarping {
         return canvas;
     }  // TopBottomEdgeTracer::visualizeSnakes
 
-    QImage TopBottomEdgeTracer::visualizePolylines(QImage const& background,
-                                                   std::list<std::vector<QPointF>> const& polylines,
-                                                   std::pair<QLineF, QLineF> const& bounds) {
+    QImage TopBottomEdgeTracer::visualizePolylines(const QImage& background,
+                                                   const std::list<std::vector<QPointF>>& polylines,
+                                                   const std::pair<QLineF, QLineF>& bounds) {
         QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
         QPainter painter(&canvas);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -1291,12 +1293,12 @@ namespace dewarping {
         polyline_pen.setWidthF(4.0);
         painter.setPen(polyline_pen);
 
-        for (std::vector<QPointF> const& polyline : polylines) {
+        for (const std::vector<QPointF>& polyline : polylines) {
             if (polyline.empty()) {
                 continue;
             }
 
-            painter.drawPolyline(&polyline[0], polyline.size());
+            painter.drawPolyline(&polyline[0], static_cast<int>(polyline.size()));
         }
 
         QPen bounds_pen(Qt::blue);

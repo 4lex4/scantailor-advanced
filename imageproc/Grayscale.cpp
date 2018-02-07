@@ -21,9 +21,9 @@
 #include "BitOps.h"
 
 namespace imageproc {
-    static QImage monoMsbToGrayscale(QImage const& src) {
-        int const width = src.width();
-        int const height = src.height();
+    static QImage monoMsbToGrayscale(const QImage& src) {
+        const int width = src.width();
+        const int height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
@@ -31,10 +31,10 @@ namespace imageproc {
             throw std::bad_alloc();
         }
 
-        uint8_t const* src_line = src.bits();
+        const uint8_t* src_line = src.bits();
         uint8_t* dst_line = dst.bits();
-        int const src_bpl = src.bytesPerLine();
-        int const dst_bpl = dst.bytesPerLine();
+        const int src_bpl = src.bytesPerLine();
+        const int dst_bpl = dst.bytesPerLine();
 
         uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
@@ -47,7 +47,7 @@ namespace imageproc {
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width;) {
-                uint8_t const b = src_line[x / 8];
+                const uint8_t b = src_line[x / 8];
                 for (int i = 7; i >= 0 && x < width; --i, ++x) {
                     dst_line[x] = bin2gray[(b >> i) & 1];
                 }
@@ -63,9 +63,9 @@ namespace imageproc {
         return dst;
     }  // monoMsbToGrayscale
 
-    static QImage monoLsbToGrayscale(QImage const& src) {
-        int const width = src.width();
-        int const height = src.height();
+    static QImage monoLsbToGrayscale(const QImage& src) {
+        const int width = src.width();
+        const int height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
@@ -73,10 +73,10 @@ namespace imageproc {
             throw std::bad_alloc();
         }
 
-        uint8_t const* src_line = src.bits();
+        const uint8_t* src_line = src.bits();
         uint8_t* dst_line = dst.bits();
-        int const src_bpl = src.bytesPerLine();
-        int const dst_bpl = dst.bytesPerLine();
+        const int src_bpl = src.bytesPerLine();
+        const int dst_bpl = dst.bytesPerLine();
 
         uint8_t bin2gray[2] = { 0, 0xff };
         if (src.colorCount() >= 2) {
@@ -89,7 +89,7 @@ namespace imageproc {
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width;) {
-                uint8_t const b = src_line[x / 8];
+                const uint8_t b = src_line[x / 8];
                 for (int i = 0; i < 8 && x < width; ++i, ++x) {
                     dst_line[x] = bin2gray[(b >> i) & 1];
                 }
@@ -105,9 +105,9 @@ namespace imageproc {
         return dst;
     }  // monoLsbToGrayscale
 
-    static QImage anyToGrayscale(QImage const& src) {
-        int const width = src.width();
-        int const height = src.height();
+    static QImage anyToGrayscale(const QImage& src) {
+        const int width = src.width();
+        const int height = src.height();
 
         QImage dst(width, height, QImage::Format_Indexed8);
         dst.setColorTable(createGrayscalePalette());
@@ -116,7 +116,7 @@ namespace imageproc {
         }
 
         uint8_t* dst_line = dst.bits();
-        int const dst_bpl = dst.bytesPerLine();
+        const int dst_bpl = dst.bytesPerLine();
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -140,7 +140,7 @@ namespace imageproc {
         return palette;
     }
 
-    QImage toGrayscale(QImage const& src) {
+    QImage toGrayscale(const QImage& src) {
         if (src.isNull()) {
             return src;
         }
@@ -171,21 +171,21 @@ namespace imageproc {
     }
 
     GrayImage
-    stretchGrayRange(GrayImage const& src, double const black_clip_fraction, double const white_clip_fraction) {
+    stretchGrayRange(const GrayImage& src, const double black_clip_fraction, const double white_clip_fraction) {
         if (src.isNull()) {
             return src;
         }
 
         GrayImage dst(src);
 
-        int const width = dst.width();
-        int const height = dst.height();
+        const int width = dst.width();
+        const int height = dst.height();
 
-        int const num_pixels = width * height;
+        const int num_pixels = width * height;
         int black_clip_pixels = qRound(black_clip_fraction * num_pixels);
         int white_clip_pixels = qRound(white_clip_fraction * num_pixels);
 
-        GrayscaleHistogram const hist(dst);
+        const GrayscaleHistogram hist(dst);
 
         int min = 0;
         if (black_clip_fraction >= 1.0) {
@@ -214,7 +214,7 @@ namespace imageproc {
         uint8_t gray_mapping[256];
 
         if (min >= max) {
-            int const avg = (min + max) / 2;
+            const int avg = (min + max) / 2;
             for (int i = 0; i <= avg; ++i) {
                 gray_mapping[i] = 0;
             }
@@ -223,16 +223,16 @@ namespace imageproc {
             }
         } else {
             for (int i = 0; i < 256; ++i) {
-                int const src_level = qBound(min, i, max);
-                int const num = 255 * (src_level - min);
-                int const denom = max - min;
-                int const dst_level = (num + denom / 2) / denom;
+                const int src_level = qBound(min, i, max);
+                const int num = 255 * (src_level - min);
+                const int denom = max - min;
+                const int dst_level = (num + denom / 2) / denom;
                 gray_mapping[i] = static_cast<uint8_t>(dst_level);
             }
         }
 
         uint8_t* line = dst.data();
-        int const stride = dst.stride();
+        const int stride = dst.stride();
 
         for (int y = 0; y < height; ++y, line += stride) {
             for (int x = 0; x < width; ++x) {
@@ -243,15 +243,15 @@ namespace imageproc {
         return dst;
     }  // stretchGrayRange
 
-    GrayImage createFramedImage(QSize const& size, unsigned char const inner_color, unsigned char const frame_color) {
+    GrayImage createFramedImage(const QSize& size, const unsigned char inner_color, const unsigned char frame_color) {
         GrayImage image(size);
         image.fill(inner_color);
 
-        int const width = size.width();
-        int const height = size.height();
+        const int width = size.width();
+        const int height = size.height();
 
         unsigned char* line = image.data();
-        int const stride = image.stride();
+        const int stride = image.stride();
 
         memset(line, frame_color, width);
 
@@ -265,14 +265,14 @@ namespace imageproc {
         return image;
     }
 
-    unsigned char darkestGrayLevel(QImage const& image) {
-        QImage const gray(toGrayscale(image));
+    unsigned char darkestGrayLevel(const QImage& image) {
+        const QImage gray(toGrayscale(image));
 
-        int const width = image.width();
-        int const height = image.height();
+        const int width = image.width();
+        const int height = image.height();
 
-        unsigned char const* line = image.bits();
-        int const bpl = image.bytesPerLine();
+        const unsigned char* line = image.bits();
+        const int bpl = image.bytesPerLine();
 
         unsigned char darkest = 0xff;
 
@@ -286,7 +286,7 @@ namespace imageproc {
         return darkest;
     }
 
-    GrayscaleHistogram::GrayscaleHistogram(QImage const& img) {
+    GrayscaleHistogram::GrayscaleHistogram(const QImage& img) {
         memset(m_pixels, 0, sizeof(m_pixels));
 
         if (img.isNull()) {
@@ -309,7 +309,7 @@ namespace imageproc {
         }
     }
 
-    GrayscaleHistogram::GrayscaleHistogram(QImage const& img, BinaryImage const& mask) {
+    GrayscaleHistogram::GrayscaleHistogram(const QImage& img, const BinaryImage& mask) {
         memset(m_pixels, 0, sizeof(m_pixels));
 
         if (img.isNull()) {
@@ -340,19 +340,19 @@ namespace imageproc {
         }
     }
 
-    void GrayscaleHistogram::fromMonoImage(QImage const& img) {
-        int const w = img.width();
-        int const h = img.height();
-        int const bpl = img.bytesPerLine();
-        int const last_byte_idx = (w - 1) >> 3;
-        int const last_byte_unused_bits = (((last_byte_idx + 1) << 3) - w);
+    void GrayscaleHistogram::fromMonoImage(const QImage& img) {
+        const int w = img.width();
+        const int h = img.height();
+        const int bpl = img.bytesPerLine();
+        const int last_byte_idx = (w - 1) >> 3;
+        const int last_byte_unused_bits = (((last_byte_idx + 1) << 3) - w);
         uint8_t last_byte_mask = ~uint8_t(0);
         if (img.format() == QImage::Format_MonoLSB) {
             last_byte_mask >>= last_byte_unused_bits;
         } else {
             last_byte_mask <<= last_byte_unused_bits;
         }
-        uint8_t const* line = img.bits();
+        const uint8_t* line = img.bits();
 
         int num_bits_1 = 0;
         for (int y = 0; y < h; ++y, line += bpl) {
@@ -364,7 +364,7 @@ namespace imageproc {
             // The last (possibly incomplete) byte.
             num_bits_1 += countNonZeroBits(line[i] & last_byte_mask);
         }
-        int const num_bits_0 = w * h - num_bits_1;
+        const int num_bits_0 = w * h - num_bits_1;
 
         QRgb color0 = 0xffffffff;
         QRgb color1 = 0xff000000;
@@ -377,29 +377,29 @@ namespace imageproc {
         m_pixels[qGray(color1)] = num_bits_1;
     }  // GrayscaleHistogram::fromMonoImage
 
-    void GrayscaleHistogram::fromMonoMSBImage(QImage const& img, BinaryImage const& mask) {
-        int const w = img.width();
-        int const h = img.height();
-        int const wpl = img.bytesPerLine() >> 2;
-        int const last_word_idx = (w - 1) >> 5;
-        int const last_word_unused_bits = (((last_word_idx + 1) << 5) - w);
+    void GrayscaleHistogram::fromMonoMSBImage(const QImage& img, const BinaryImage& mask) {
+        const int w = img.width();
+        const int h = img.height();
+        const int wpl = img.bytesPerLine() >> 2;
+        const int last_word_idx = (w - 1) >> 5;
+        const int last_word_unused_bits = (((last_word_idx + 1) << 5) - w);
         uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
-        uint32_t const* line = (uint32_t const*) img.bits();
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
+        const auto* line = (const uint32_t*) img.bits();
+        const uint32_t* mask_line = mask.data();
+        const int mask_wpl = mask.wordsPerLine();
 
         int num_bits_0 = 0;
         int num_bits_1 = 0;
         for (int y = 0; y < h; ++y, line += wpl, mask_line += mask_wpl) {
             int i = 0;
             for (; i < last_word_idx; ++i) {
-                uint32_t const mask = mask_line[i];
+                const uint32_t mask = mask_line[i];
                 num_bits_1 += countNonZeroBits(line[i] & mask);
                 num_bits_0 += countNonZeroBits(~line[i] & mask);
             }
 
             // The last (possibly incomplete) word.
-            uint32_t const mask = mask_line[i] & last_word_mask;
+            const uint32_t mask = mask_line[i] & last_word_mask;
             num_bits_1 += countNonZeroBits(line[i] & mask);
             num_bits_0 += countNonZeroBits(~line[i] & mask);
         }
@@ -415,11 +415,11 @@ namespace imageproc {
         m_pixels[qGray(color1)] = num_bits_1;
     }  // GrayscaleHistogram::fromMonoMSBImage
 
-    void GrayscaleHistogram::fromGrayscaleImage(QImage const& img) {
-        int const w = img.width();
-        int const h = img.height();
-        int const bpl = img.bytesPerLine();
-        uint8_t const* line = img.bits();
+    void GrayscaleHistogram::fromGrayscaleImage(const QImage& img) {
+        const int w = img.width();
+        const int h = img.height();
+        const int bpl = img.bytesPerLine();
+        const uint8_t* line = img.bits();
 
         for (int y = 0; y < h; ++y, line += bpl) {
             for (int x = 0; x < w; ++x) {
@@ -428,14 +428,14 @@ namespace imageproc {
         }
     }
 
-    void GrayscaleHistogram::fromGrayscaleImage(QImage const& img, BinaryImage const& mask) {
-        int const w = img.width();
-        int const h = img.height();
-        int const bpl = img.bytesPerLine();
-        uint8_t const* line = img.bits();
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
-        uint32_t const msb = uint32_t(1) << 31;
+    void GrayscaleHistogram::fromGrayscaleImage(const QImage& img, const BinaryImage& mask) {
+        const int w = img.width();
+        const int h = img.height();
+        const int bpl = img.bytesPerLine();
+        const uint8_t* line = img.bits();
+        const uint32_t* mask_line = mask.data();
+        const int mask_wpl = mask.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < h; ++y, line += bpl, mask_line += mask_wpl) {
             for (int x = 0; x < w; ++x) {
@@ -446,9 +446,9 @@ namespace imageproc {
         }
     }
 
-    void GrayscaleHistogram::fromAnyImage(QImage const& img) {
-        int const w = img.width();
-        int const h = img.height();
+    void GrayscaleHistogram::fromAnyImage(const QImage& img) {
+        const int w = img.width();
+        const int h = img.height();
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {
@@ -457,12 +457,12 @@ namespace imageproc {
         }
     }
 
-    void GrayscaleHistogram::fromAnyImage(QImage const& img, BinaryImage const& mask) {
-        int const w = img.width();
-        int const h = img.height();
-        uint32_t const* mask_line = mask.data();
-        int const mask_wpl = mask.wordsPerLine();
-        uint32_t const msb = uint32_t(1) << 31;
+    void GrayscaleHistogram::fromAnyImage(const QImage& img, const BinaryImage& mask) {
+        const int w = img.width();
+        const int h = img.height();
+        const uint32_t* mask_line = mask.data();
+        const int mask_wpl = mask.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
 
         for (int y = 0; y < h; ++y, mask_line += mask_wpl) {
             for (int x = 0; x < w; ++x) {

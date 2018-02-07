@@ -19,8 +19,8 @@
 #include "ZoneSet.h"
 #include <QDomNode>
 
-ZoneSet::ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory) {
-    QString const zone_str("zone");
+ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory) {
+    const QString zone_str("zone");
 
     QDomNode node(el.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
@@ -31,32 +31,21 @@ ZoneSet::ZoneSet(QDomElement const& el, PropertyFactory const& prop_factory) {
             continue;
         }
 
-        Zone const zone(node.toElement(), prop_factory);
+        const Zone zone(node.toElement(), prop_factory);
         if (zone.isValid()) {
             m_zones.push_back(zone);
         }
     }
 }
 
-QDomElement ZoneSet::toXml(QDomDocument& doc, QString const& name) const {
-    QString const zone_str("zone");
+QDomElement ZoneSet::toXml(QDomDocument& doc, const QString& name) const {
+    const QString zone_str("zone");
 
     QDomElement el(doc.createElement(name));
-    for (Zone const& zone : m_zones) {
+    for (const Zone& zone : m_zones) {
         el.appendChild(zone.toXml(doc, zone_str));
     }
 
     return el;
-}
-
-void ZoneSet::applyToZoneSet(const std::function<bool(const Zone& zone)>& predicate,
-                             const std::function<void(std::list<Zone>& zones,
-                                                const std::list<Zone>::iterator& iter)>& consumer) {
-    for (std::list<Zone>::iterator it = m_zones.begin(); it != m_zones.end();) {
-        if (predicate(*it)) {
-            consumer(m_zones, it);
-        }
-        it++;
-    }
 }
 

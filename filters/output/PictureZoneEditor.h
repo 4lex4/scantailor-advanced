@@ -49,22 +49,22 @@ namespace output {
     class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
     public:
-        PictureZoneEditor(QImage const& image,
-                          ImagePixmapUnion const& downscaled_image,
-                          imageproc::BinaryImage const& picture_mask,
-                          QTransform const& image_to_virt,
-                          QPolygonF const& virt_display_area,
-                          PageId const& page_id,
-                          intrusive_ptr<Settings> const& settings);
+        PictureZoneEditor(const QImage& image,
+                          const ImagePixmapUnion& downscaled_image,
+                          const imageproc::BinaryImage& picture_mask,
+                          const QTransform& image_to_virt,
+                          const QPolygonF& virt_display_area,
+                          const PageId& page_id,
+                          intrusive_ptr<Settings> settings);
 
-        virtual ~PictureZoneEditor();
+        ~PictureZoneEditor() override;
 
     signals:
 
-        void invalidateThumbnail(PageId const& page_id);
+        void invalidateThumbnail(const PageId& page_id);
 
     protected:
-        virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+        void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     private slots:
 
@@ -83,11 +83,11 @@ namespace output {
 
         void schedulePictureMaskRebuild();
 
-        void screenPictureMaskBuilt(QPoint const& origin, QImage const& mask);
+        void screenPictureMaskBuilt(const QPoint& origin, const QImage& mask);
 
         void paintOverPictureMask(QPainter& painter);
 
-        void showPropertiesDialog(EditableZoneSet::Zone const& zone);
+        void showPropertiesDialog(const EditableZoneSet::Zone& zone);
 
         EditableZoneSet m_zones;
 

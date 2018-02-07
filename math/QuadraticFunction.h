@@ -21,7 +21,7 @@
 
 #include "MatT.h"
 #include "VecT.h"
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * A quadratic function from arbitrary number of variables
@@ -62,7 +62,7 @@ public:
      * Constructs a quadratic functiono of the given number of variables,
      * initializing everything to zero.
      */
-    QuadraticFunction(size_t num_vars = 0);
+    explicit QuadraticFunction(size_t num_vars = 0);
 
     /**
      * Resets everything to zero, so that F(x) = 0
@@ -76,7 +76,7 @@ public:
     /**
      * Evaluates x^T * A * x + b^T * x + c
      */
-    double evaluate(double const* x) const;
+    double evaluate(const double* x) const;
 
     Gradient gradient() const;
 
@@ -84,11 +84,11 @@ public:
      * f(x) is our function.  This method will replace f(x) with g(x) so that
      * g(x) = f(x + translation)
      */
-    void recalcForTranslatedArguments(double const* translation);
+    void recalcForTranslatedArguments(const double* translation);
 
     void swap(QuadraticFunction& other);
 
-    QuadraticFunction& operator+=(QuadraticFunction const& other);
+    QuadraticFunction& operator+=(const QuadraticFunction& other);
 
     QuadraticFunction& operator*=(double scalar);
 };

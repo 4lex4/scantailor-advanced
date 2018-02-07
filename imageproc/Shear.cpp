@@ -19,14 +19,14 @@
 #include "Shear.h"
 #include "RasterOp.h"
 #include <cmath>
-#include <assert.h>
+#include <cassert>
 
 namespace imageproc {
-    void hShearFromTo(BinaryImage const& src,
+    void hShearFromTo(const BinaryImage& src,
                       BinaryImage& dst,
-                      double const shear,
-                      double const y_origin,
-                      BWColor const background_color) {
+                      const double shear,
+                      const double y_origin,
+                      const BWColor background_color) {
         if (src.isNull() || dst.isNull()) {
             throw std::invalid_argument("Can't shear a null image");
         }
@@ -34,13 +34,13 @@ namespace imageproc {
             throw std::invalid_argument("Can't shear when dst.size() != src.size()");
         }
 
-        int const width = src.width();
-        int const height = src.height();
+        const int width = src.width();
+        const int height = src.height();
 
         // shift = floor(0.5 + shear * (y + 0.5 - y_origin));
         double shift = 0.5 + shear * (0.5 - y_origin);
-        double const shift_end = 0.5 + shear * (height - 0.5 - y_origin);
-        int shift1 = (int) floor(shift);
+        const double shift_end = 0.5 + shear * (height - 0.5 - y_origin);
+        auto shift1 = (int) floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);
@@ -57,29 +57,29 @@ namespace imageproc {
             shift += shear;
             shift2 = (int) floor(shift);
             if ((shift1 != shift2) || (y2 == height)) {
-                int const block_height = y2 - y1;
+                const int block_height = y2 - y1;
                 if (abs(shift1) >= width) {
                     // The shifted block would be completely off the image.
-                    QRect const fr(0, y1, width, block_height);
+                    const QRect fr(0, y1, width, block_height);
                     dst.fill(fr, background_color);
                 } else if (shift1 < 0) {
                     // Shift to the left.
-                    QRect const dr(0, y1, width + shift1, block_height);
-                    QPoint const sp(-shift1, y1);
+                    const QRect dr(0, y1, width + shift1, block_height);
+                    const QPoint sp(-shift1, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
-                    QRect const fr(width + shift1, y1, -shift1, block_height);
+                    const QRect fr(width + shift1, y1, -shift1, block_height);
                     dst.fill(fr, background_color);
                 } else if (shift1 > 0) {
                     // Shift to the right.
-                    QRect const dr(shift1, y1, width - shift1, block_height);
-                    QPoint const sp(0, y1);
+                    const QRect dr(shift1, y1, width - shift1, block_height);
+                    const QPoint sp(0, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
-                    QRect const fr(0, y1, shift1, block_height);
+                    const QRect fr(0, y1, shift1, block_height);
                     dst.fill(fr, background_color);
                 } else {
                     // No shift, just copy.
-                    QRect const dr(0, y1, width, block_height);
-                    QPoint const sp(0, y1);
+                    const QRect dr(0, y1, width, block_height);
+                    const QPoint sp(0, y1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                 }
 
@@ -93,11 +93,11 @@ namespace imageproc {
         }
     }  // hShearFromTo
 
-    void vShearFromTo(BinaryImage const& src,
+    void vShearFromTo(const BinaryImage& src,
                       BinaryImage& dst,
-                      double const shear,
-                      double const x_origin,
-                      BWColor const background_color) {
+                      const double shear,
+                      const double x_origin,
+                      const BWColor background_color) {
         if (src.isNull() || dst.isNull()) {
             throw std::invalid_argument("Can't shear a null image");
         }
@@ -105,13 +105,13 @@ namespace imageproc {
             throw std::invalid_argument("Can't shear when dst.size() != src.size()");
         }
 
-        int const width = src.width();
-        int const height = src.height();
+        const int width = src.width();
+        const int height = src.height();
 
         // shift = floor(0.5 + shear * (x + 0.5 - x_origin));
         double shift = 0.5 + shear * (0.5 - x_origin);
-        double const shift_end = 0.5 + shear * (width - 0.5 - x_origin);
-        int shift1 = (int) floor(shift);
+        const double shift_end = 0.5 + shear * (width - 0.5 - x_origin);
+        auto shift1 = (int) floor(shift);
 
         if (shift1 == floor(shift_end)) {
             assert(shift1 == 0);
@@ -128,29 +128,29 @@ namespace imageproc {
             shift += shear;
             shift2 = (int) floor(shift);
             if ((shift1 != shift2) || (x2 == width)) {
-                int const block_width = x2 - x1;
+                const int block_width = x2 - x1;
                 if (abs(shift1) >= height) {
                     // The shifted block would be completely off the image.
-                    QRect const fr(x1, 0, block_width, height);
+                    const QRect fr(x1, 0, block_width, height);
                     dst.fill(fr, background_color);
                 } else if (shift1 < 0) {
                     // Shift upwards.
-                    QRect const dr(x1, 0, block_width, height + shift1);
-                    QPoint const sp(x1, -shift1);
+                    const QRect dr(x1, 0, block_width, height + shift1);
+                    const QPoint sp(x1, -shift1);
                     rasterOp<RopSrc>(dst, dr, src, sp);
-                    QRect const fr(x1, height + shift1, block_width, -shift1);
+                    const QRect fr(x1, height + shift1, block_width, -shift1);
                     dst.fill(fr, background_color);
                 } else if (shift1 > 0) {
                     // Shift downwards.
-                    QRect const dr(x1, shift1, block_width, height - shift1);
-                    QPoint const sp(x1, 0);
+                    const QRect dr(x1, shift1, block_width, height - shift1);
+                    const QPoint sp(x1, 0);
                     rasterOp<RopSrc>(dst, dr, src, sp);
-                    QRect const fr(x1, 0, block_width, shift1);
+                    const QRect fr(x1, 0, block_width, shift1);
                     dst.fill(fr, background_color);
                 } else {
                     // No shift, just copy.
-                    QRect const dr(x1, 0, block_width, height);
-                    QPoint const sp(x1, 0);
+                    const QRect dr(x1, 0, block_width, height);
+                    const QPoint sp(x1, 0);
                     rasterOp<RopSrc>(dst, dr, src, sp);
                 }
 
@@ -165,7 +165,7 @@ namespace imageproc {
     }  // vShearFromTo
 
     BinaryImage
-    hShear(BinaryImage const& src, double const shear, double const y_origin, BWColor const background_color) {
+    hShear(const BinaryImage& src, const double shear, const double y_origin, const BWColor background_color) {
         BinaryImage dst(src.width(), src.height());
         hShearFromTo(src, dst, shear, y_origin, background_color);
 
@@ -173,18 +173,18 @@ namespace imageproc {
     }
 
     BinaryImage
-    vShear(BinaryImage const& src, double const shear, double const x_origin, BWColor const background_color) {
+    vShear(const BinaryImage& src, const double shear, const double x_origin, const BWColor background_color) {
         BinaryImage dst(src.width(), src.height());
         vShearFromTo(src, dst, shear, x_origin, background_color);
 
         return dst;
     }
 
-    void hShearInPlace(BinaryImage& image, double const shear, double const y_origin, BWColor const background_color) {
+    void hShearInPlace(BinaryImage& image, const double shear, const double y_origin, const BWColor background_color) {
         hShearFromTo(image, image, shear, y_origin, background_color);
     }
 
-    void vShearInPlace(BinaryImage& image, double const shear, double const x_origin, BWColor const background_color) {
+    void vShearInPlace(BinaryImage& image, const double shear, const double x_origin, const BWColor background_color) {
         vShearFromTo(image, image, shear, x_origin, background_color);
     }
 }  // namespace imageproc

@@ -27,25 +27,24 @@
 #include "filters/page_layout/CacheDrivenTask.h"
 
 #include <iostream>
+#include <utility>
 
 namespace select_content {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> const& settings,
-                                     intrusive_ptr<page_layout::CacheDrivenTask> const& next_task)
-            : m_ptrSettings(settings),
-              m_ptrNextTask(next_task) {
+    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
+                                     intrusive_ptr<page_layout::CacheDrivenTask> next_task)
+            : m_ptrSettings(std::move(settings)),
+              m_ptrNextTask(std::move(next_task)) {
     }
 
-    CacheDrivenTask::~CacheDrivenTask() {
-    }
+    CacheDrivenTask::~CacheDrivenTask() = default;
 
-    void CacheDrivenTask::process(PageInfo const& page_info,
+    void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
-                                  ImageTransformation const& xform) {
+                                  const ImageTransformation& xform) {
         std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
-        Dependencies const deps(xform.resultingPreCropArea());
-        if (!params.get() || (!params->dependencies().matches(deps)
-                              && ((params->mode() == MODE_AUTO) || !params->isContentDetectionEnabled()))) {
-            if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        const Dependencies deps(xform.resultingPreCropArea());
+        if (!params || !params->dependencies().matches(deps)) {
+            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
                                 new IncompleteThumbnail(
@@ -60,7 +59,7 @@ namespace select_content {
             return;
         }
 
-        if (ContentBoxCollector* col = dynamic_cast<ContentBoxCollector*>(collector)) {
+        if (auto* col = dynamic_cast<ContentBoxCollector*>(collector)) {
             col->process(xform, params->contentRect());
         }
 
@@ -70,7 +69,7 @@ namespace select_content {
             return;
         }
 
-        if (ThumbnailCollector* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(
@@ -78,6 +77,8 @@ namespace select_content {
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), xform,
                                     params->contentRect(),
+                                    params->pageRect(),
+                                    params->isPageDetectionEnabled(),
                                     params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
                             )
                     )

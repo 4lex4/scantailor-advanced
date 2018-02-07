@@ -54,48 +54,46 @@ namespace page_split {
 
     Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
     public:
-        Filter(intrusive_ptr<ProjectPages> const& page_sequence, PageSelectionAccessor const& page_selection_accessor);
+        Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor);
 
-        virtual ~Filter();
+        ~Filter() override;
 
-        virtual QString getName() const;
+        QString getName() const override;
 
-        virtual PageView getView() const;
+        PageView getView() const override;
 
-        virtual void performRelinking(AbstractRelinker const& relinker);
+        void performRelinking(const AbstractRelinker& relinker) override;
 
-        virtual void preUpdateUI(FilterUiInterface* ui, PageId const& page_id);
+        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
 
-        virtual QDomElement saveSettings(ProjectWriter const& wirter, QDomDocument& doc) const;
+        QDomElement saveSettings(const ProjectWriter& wirter, QDomDocument& doc) const override;
 
-        virtual void loadSettings(ProjectReader const& reader, QDomElement const& filters_el);
+        void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        intrusive_ptr<Task> createTask(PageInfo const& page_info,
-                                       intrusive_ptr<deskew::Task> const& next_task,
+        void loadDefaultSettings(const PageId& page_id) override;
+
+        intrusive_ptr<Task> createTask(const PageInfo& page_info,
+                                       intrusive_ptr<deskew::Task> next_task,
                                        bool batch_processing,
                                        bool debug);
 
-        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> const& next_task);
+        intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task);
 
-        OptionsWidget* optionsWidget() {
-            return m_ptrOptionsWidget.get();
-        }
+        OptionsWidget* optionsWidget();
 
-        void pageOrientationUpdate(ImageId const& image_id, OrthogonalRotation const& orientation);
+        void pageOrientationUpdate(const ImageId& image_id, const OrthogonalRotation& orientation);
 
-        Settings* getSettings() {
-            return m_ptrSettings.get();
-        }
+        std::vector<PageOrderOption> pageOrderOptions() const override;
 
-        virtual std::vector<PageOrderOption> pageOrderOptions() const;
+        int selectedPageOrder() const override;
 
-        virtual int selectedPageOrder() const;
-
-        virtual void selectPageOrder(int option);
+        void selectPageOrder(int option) override;
 
     private:
-        void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, ImageId const& image_id,
-                                int const numeric_id) const;
+        void writeImageSettings(QDomDocument& doc,
+                                QDomElement& filter_el,
+                                const ImageId& image_id,
+                                int numeric_id) const;
 
         intrusive_ptr<ProjectPages> m_ptrPages;
         intrusive_ptr<Settings> m_ptrSettings;

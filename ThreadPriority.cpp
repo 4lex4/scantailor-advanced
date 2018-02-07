@@ -18,7 +18,7 @@
 
 #include "ThreadPriority.h"
 #include <QSettings>
-#include <assert.h>
+#include <cassert>
 
 QThread::Priority ThreadPriority::toQThreadPriority() const {
     switch (m_prio) {
@@ -54,8 +54,8 @@ int ThreadPriority::toPosixNiceLevel() const {
     return 0;
 }
 
-ThreadPriority ThreadPriority::load(QSettings const& settings, QString const& key, Priority dflt) {
-    QString const str(settings.value(key).toString());
+ThreadPriority ThreadPriority::load(const QSettings& settings, const QString& key, Priority dflt) {
+    const QString str(settings.value(key).toString());
     if (str == "normal") {
         return Normal;
     } else if (str == "low") {
@@ -69,14 +69,14 @@ ThreadPriority ThreadPriority::load(QSettings const& settings, QString const& ke
     }
 }
 
-ThreadPriority ThreadPriority::load(QString const& key, Priority dflt) {
+ThreadPriority ThreadPriority::load(const QString& key, Priority dflt) {
     QSettings settings;
 
     return load(settings, key, dflt);
 }
 
-void ThreadPriority::save(QSettings& settings, QString const& key) {
-    char const* str = "";
+void ThreadPriority::save(QSettings& settings, const QString& key) {
+    const char* str = "";
     switch (m_prio) {
         case Normal:
             str = "normal";
@@ -95,7 +95,7 @@ void ThreadPriority::save(QSettings& settings, QString const& key) {
     settings.setValue(key, QString::fromLatin1(str));
 }
 
-void ThreadPriority::save(QString const& key) {
+void ThreadPriority::save(const QString& key) {
     QSettings settings;
     save(settings, key);
 }

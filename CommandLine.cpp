@@ -18,7 +18,7 @@
  */
 
 #include <cstdlib>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <tiff.h>
 
@@ -34,14 +34,14 @@
 CommandLine CommandLine::m_globalInstance;
 
 
-void CommandLine::set(CommandLine const& cl) {
+void CommandLine::set(const CommandLine& cl) {
     assert(!m_globalInstance.isGlobal());
 
     m_globalInstance = cl;
     m_globalInstance.setGlobal();
 }
 
-bool CommandLine::parseCli(QStringList const& argv) {
+bool CommandLine::parseCli(const QStringList& argv) {
     QRegExp rx("^--([^=]+)=(.*)$");
     QRegExp rx_switch("^--([^=]+)$");
     QRegExp rx_short("^-([^=]+)=(.*)$");
@@ -210,7 +210,7 @@ bool CommandLine::parseCli(QStringList const& argv) {
     return m_error;
 } // CommandLine::parseCli
 
-void CommandLine::addImage(QString const& path) {
+void CommandLine::addImage(const QString& path) {
     QFileInfo file(path);
     m_files.push_back(file);
 }
@@ -248,19 +248,19 @@ void CommandLine::setup() {
     m_defaultNull = fetchDefaultNull();
 
     QRegExp exp(".*(tif|tiff|jpg|jpeg|bmp|gif|png|pbm|pgm|ppm|xbm|xpm)$", Qt::CaseInsensitive);
-    for (int i = 0; i < m_files.size(); ++i) {
-        if (!exp.exactMatch(m_files[i].filePath())) {
+    for (auto& m_file : m_files) {
+        if (!exp.exactMatch(m_file.filePath())) {
 #ifdef DEBUG
             std::cout << "Skipping file: " << m_files[i].filePath().toStdString() << std::endl;
 #endif
             continue;
         }
-        ImageId const image_id(m_files[i].filePath());
+        const ImageId image_id(m_file.filePath());
         ImageMetadata metadata;
         metadata.setDpi(m_dpi);
         std::vector<ImageMetadata> vMetadata;
         vMetadata.push_back(metadata);
-        ImageFileInfo image_info(m_files[i], vMetadata);
+        ImageFileInfo image_info(m_file, vMetadata);
         m_images.push_back(image_info);
     }
 }  // CommandLine::setup
@@ -430,36 +430,36 @@ Dpi CommandLine::fetchDpi(QString oname) {
     return Dpi(xdpi, ydpi);
 }
 
-output::ColorParams::ColorMode CommandLine::fetchColorMode() {
+output::ColorMode CommandLine::fetchColorMode() {
     if (!hasColorMode()) {
-        return output::ColorParams::BLACK_AND_WHITE;
+        return output::BLACK_AND_WHITE;
     }
 
     QString cm = m_options["color-mode"].toLower();
 
     if (cm == "color_grayscale") {
-        return output::ColorParams::COLOR_GRAYSCALE;
+        return output::COLOR_GRAYSCALE;
     } else if (cm == "mixed") {
-        return output::ColorParams::MIXED;
+        return output::MIXED;
     }
 
-    return output::ColorParams::BLACK_AND_WHITE;
+    return output::BLACK_AND_WHITE;
 }
 
-output::ColorParams::ColorMode CommandLine::fetchDefaultColorMode() {
+output::ColorMode CommandLine::fetchDefaultColorMode() {
     if (!hasDefaultColorMode()) {
-        return output::ColorParams::BLACK_AND_WHITE;
+        return output::BLACK_AND_WHITE;
     }
 
     QString cm = m_options["default-color-mode"].toLower();
 
     if (cm == "color_grayscale") {
-        return output::ColorParams::COLOR_GRAYSCALE;
+        return output::COLOR_GRAYSCALE;
     } else if (cm == "mixed") {
-        return output::ColorParams::MIXED;
+        return output::MIXED;
     }
 
-    return output::ColorParams::BLACK_AND_WHITE;
+    return output::BLACK_AND_WHITE;
 }
 
 output::PictureShape CommandLine::fetchPictureShape() {
@@ -576,8 +576,6 @@ page_layout::Alignment CommandLine::fetchAlignment() {
         }
     }
 
-    alignment.setAutoMargins(isAutoMarginsEnabled());
-
     return alignment;
 } // CommandLine::fetchAlignment
 
@@ -601,7 +599,7 @@ QRectF CommandLine::fetchContentRect() {
         return QRectF();
     }
 
-    QRegExp rx("([\\d\\.]+)x([\\d\\.]+):([\\d\\.]+)x([\\d\\.]+)");
+    QRegExp rx(R"(([\d\.]+)x([\d\.]+):([\d\.]+)x([\d\.]+))");
 
     if (rx.exactMatch(m_options["content-box"])) {
         return QRectF(rx.cap(1).toFloat(), rx.cap(2).toFloat(), rx.cap(3).toFloat(), rx.cap(4).toFloat());
@@ -697,9 +695,9 @@ int CommandLine::fetchEndFilterIdx() {
     return m_options["end-filter"].toInt() - 1;
 }
 
-output::DewarpingOptions::Mode CommandLine::fetchDewarpingMode() {
+output::DewarpingMode CommandLine::fetchDewarpingMode() {
     if (!hasDewarping()) {
-        return output::DewarpingOptions::OFF;
+        return output::OFF;
     }
 
     return output::DewarpingOptions::parseDewarpingMode(m_options["dewarping"].toLower());
@@ -723,7 +721,7 @@ output::DepthPerception CommandLine::fetchDepthPerception() {
 
 float CommandLine::fetchMatchLayoutTolerance() {
     if (!hasMatchLayoutTolerance()) {
-        return 0.2;
+        return 0.2f;
     }
 
     return m_options["match-layout-tolerance"].toFloat();
@@ -776,7 +774,7 @@ QSizeF CommandLine::fetchPageDetectionBox() const {
         return QSizeF();
     }
 
-    QRegExp rx("([\\d\\.]+)x([\\d\\.]+)");
+    QRegExp rx(R"(([\d\.]+)x([\d\.]+))");
     if (rx.exactMatch(m_options["page-detection-box"])) {
         return QSizeF(rx.cap(1).toFloat(), rx.cap(2).toFloat());
     }

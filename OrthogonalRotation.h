@@ -38,30 +38,30 @@ public:
 
     void prevClockwiseDirection();
 
-    QSize rotate(QSize const& dimensions) const;
+    QSize rotate(const QSize& dimensions) const;
 
-    QSize unrotate(QSize const& dimensions) const;
+    QSize unrotate(const QSize& dimensions) const;
 
-    QSizeF rotate(QSizeF const& dimensions) const;
+    QSizeF rotate(const QSizeF& dimensions) const;
 
-    QSizeF unrotate(QSizeF const& dimensions) const;
+    QSizeF unrotate(const QSizeF& dimensions) const;
 
-    QPointF rotate(QPointF const& point, double xmax, double ymax) const;
+    QPointF rotate(const QPointF& point, double xmax, double ymax) const;
 
-    QPointF unrotate(QPointF const& point, double xmax, double ymax) const;
+    QPointF unrotate(const QPointF& point, double xmax, double ymax) const;
 
-    QTransform transform(QSizeF const& dimensions) const;
+    QTransform transform(const QSizeF& dimensions) const;
 
 private:
     int m_degrees;
 };
 
 
-inline bool operator==(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs) {
+inline bool operator==(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
     return lhs.toDegrees() == rhs.toDegrees();
 }
 
-inline bool operator!=(OrthogonalRotation const& lhs, OrthogonalRotation const& rhs) {
+inline bool operator!=(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
     return lhs.toDegrees() != rhs.toDegrees();
 }
 

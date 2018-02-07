@@ -32,7 +32,7 @@ public:
     static bool canRead(QIODevice& device);
 
     static ImageMetadataLoader::Status readMetadata(QIODevice& device,
-                                                    VirtualFunction1<void, ImageMetadata const&>& out);
+                                                    VirtualFunction1<void, const ImageMetadata&>& out);
 
     /**
      * \brief Reads the image from io device to QImage.
@@ -56,17 +56,17 @@ private:
 
     static TiffHeader readHeader(QIODevice& device);
 
-    static bool checkHeader(TiffHeader const& header);
+    static bool checkHeader(const TiffHeader& header);
 
-    static ImageMetadata currentPageMetadata(TiffHandle const& tif);
+    static ImageMetadata currentPageMetadata(const TiffHandle& tif);
 
     static Dpi getDpi(float xres, float yres, unsigned res_unit);
 
-    static QImage extractBinaryOrIndexed8Image(TiffHandle const& tif, TiffInfo const& info);
+    static QImage extractBinaryOrIndexed8Image(const TiffHandle& tif, const TiffInfo& info);
 
-    static void readLines(TiffHandle const& tif, QImage& image);
+    static void readLines(const TiffHandle& tif, QImage& image);
 
-    static void readAndUnpackLines(TiffHandle const& tif, TiffInfo const& info, QImage& image);
+    static void readAndUnpackLines(const TiffHandle& tif, const TiffInfo& info, QImage& image);
 };
 
 

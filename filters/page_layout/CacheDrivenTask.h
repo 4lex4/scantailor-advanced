@@ -39,15 +39,15 @@ namespace page_layout {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
     public:
-        CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> const& next_task,
-                        intrusive_ptr<Settings> const& settings);
+        CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task,
+                        intrusive_ptr<Settings> settings);
 
-        virtual ~CacheDrivenTask();
+        ~CacheDrivenTask() override;
 
-        void process(PageInfo const& page_info,
+        void process(const PageInfo& page_info,
                      AbstractFilterDataCollector* collector,
-                     ImageTransformation const& xform,
-                     QRectF const& content_rect);
+                     const ImageTransformation& xform,
+                     const QRectF& content_rect);
 
     private:
         intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;

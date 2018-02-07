@@ -23,61 +23,113 @@ namespace output {
     ColorCommonOptions::ColorCommonOptions()
             : m_cutMargins(true),
               m_normalizeIllumination(false),
-              m_fillingColor(BACKGROUND) {
+              m_fillingColor(FILL_BACKGROUND),
+              m_posterizeEnabled(false),
+              m_posterizationLevel(4),
+              m_forceBlackAndWhite(true) {
     }
 
-    ColorCommonOptions::ColorCommonOptions(QDomElement const& el)
+    ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
             : m_cutMargins(el.attribute("cutMargins") == "1"),
               m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
-              m_fillingColor(parseFillingColor(el.attribute("fillingColor"))) {
+              m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
+              m_posterizeEnabled(el.attribute("posterizeEnabled") == "1"),
+              m_posterizationLevel(el.attribute("posterizationLevel").toInt()),
+              m_forceBlackAndWhite(el.attribute("forceBlackAndWhite") == "1") {
     }
 
-    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
         el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
         el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
+        el.setAttribute("posterizeEnabled", m_posterizeEnabled ? "1" : "0");
+        el.setAttribute("posterizationLevel", m_posterizationLevel);
+        el.setAttribute("forceBlackAndWhite", m_forceBlackAndWhite ? "1" : "0");
 
         return el;
     }
 
-    bool ColorCommonOptions::operator==(ColorCommonOptions const& other) const {
+    bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
         return (m_normalizeIllumination == other.m_normalizeIllumination)
                && (m_cutMargins == other.m_cutMargins)
-               && (m_fillingColor == other.m_fillingColor);
+               && (m_fillingColor == other.m_fillingColor)
+               && (m_posterizeEnabled == other.m_posterizeEnabled)
+               && (m_posterizationLevel == other.m_posterizationLevel)
+               && (m_forceBlackAndWhite == other.m_forceBlackAndWhite);
     }
 
-    bool ColorCommonOptions::operator!=(ColorCommonOptions const& other) const {
+    bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
         return !(*this == other);
     }
 
-    ColorCommonOptions::FillingColor ColorCommonOptions::getFillingColor() const {
+    FillingColor ColorCommonOptions::getFillingColor() const {
         return m_fillingColor;
     }
 
-    void ColorCommonOptions::setFillingColor(ColorCommonOptions::FillingColor fillingColor) {
+    void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
         ColorCommonOptions::m_fillingColor = fillingColor;
     }
 
-    ColorCommonOptions::FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
+    FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
         if (str == "white") {
-            return WHITE;
+            return FILL_WHITE;
         } else {
-            return BACKGROUND;
+            return FILL_BACKGROUND;
         }
     }
 
-    QString ColorCommonOptions::formatFillingColor(ColorCommonOptions::FillingColor type) {
+    QString ColorCommonOptions::formatFillingColor(FillingColor type) {
         QString str = "";
         switch (type) {
-            case WHITE:
+            case FILL_WHITE:
                 str = "white";
                 break;
-            case BACKGROUND:
+            case FILL_BACKGROUND:
                 str = "background";
                 break;
         }
 
         return str;
+    }
+
+    void ColorCommonOptions::setCutMargins(bool val) {
+        m_cutMargins = val;
+    }
+
+    bool ColorCommonOptions::cutMargins() const {
+        return m_cutMargins;
+    }
+
+    bool ColorCommonOptions::normalizeIllumination() const {
+        return m_normalizeIllumination;
+    }
+
+    void ColorCommonOptions::setNormalizeIllumination(bool val) {
+        m_normalizeIllumination = val;
+    }
+
+    bool ColorCommonOptions::isPosterizeEnabled() const {
+        return m_posterizeEnabled;
+    }
+
+    void ColorCommonOptions::setPosterizeEnabled(bool posterizeEnabled) {
+        ColorCommonOptions::m_posterizeEnabled = posterizeEnabled;
+    }
+
+    int ColorCommonOptions::getPosterizationLevel() const {
+        return m_posterizationLevel;
+    }
+
+    void ColorCommonOptions::setPosterizationLevel(int posterizationLevel) {
+        ColorCommonOptions::m_posterizationLevel = posterizationLevel;
+    }
+
+    bool ColorCommonOptions::isForceBlackAndWhite() const {
+        return m_forceBlackAndWhite;
+    }
+
+    void ColorCommonOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
+        ColorCommonOptions::m_forceBlackAndWhite = forceBlackAndWhite;
     }
 }  // namespace output

@@ -34,13 +34,13 @@ public:
         STATUS_LOAD_FAILED
     };
 
-    Item(QFileInfo const& file_info, Qt::ItemFlags flags)
+    Item(const QFileInfo& file_info, Qt::ItemFlags flags)
             : m_fileInfo(file_info),
               m_flags(flags),
               m_status(STATUS_DEFAULT) {
     }
 
-    QFileInfo const& fileInfo() const {
+    const QFileInfo& fileInfo() const {
         return m_fileInfo;
     }
 
@@ -56,7 +56,7 @@ public:
         m_status = status;
     }
 
-    std::vector<ImageMetadata> const& perPageMetadata() const {
+    const std::vector<ImageMetadata>& perPageMetadata() const {
         return m_perPageMetadata;
     }
 
@@ -84,7 +84,7 @@ public:
 
     FileList();
 
-    virtual ~FileList();
+    ~FileList() override;
 
     QAbstractItemModel* model() {
         return this;
@@ -93,7 +93,7 @@ public:
     template<typename OutFunc>
     void files(OutFunc out) const;
 
-    Item const& item(QModelIndex const& index) {
+    const Item& item(const QModelIndex& index) {
         return m_items[index.row()];
     }
 
@@ -101,7 +101,7 @@ public:
     void items(OutFunc out) const;
 
     template<typename OutFunc>
-    void items(QItemSelection const& selection, OutFunc out) const;
+    void items(const QItemSelection& selection, OutFunc out) const;
 
     size_t count() const {
         return m_items.size();
@@ -115,18 +115,18 @@ public:
     template<typename It>
     void assign(It begin, It end);
 
-    void remove(QItemSelection const& selection);
+    void remove(const QItemSelection& selection);
 
     void prepareForLoadingFiles();
 
     LoadStatus loadNextFile();
 
 private:
-    virtual int rowCount(QModelIndex const& parent) const;
+    int rowCount(const QModelIndex& parent) const override;
 
-    virtual QVariant data(QModelIndex const& index, int role) const;
+    QVariant data(const QModelIndex& index, int role) const override;
 
-    virtual Qt::ItemFlags flags(QModelIndex const& index) const;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     std::vector<Item> m_items;
     std::deque<int> m_itemsToLoad;
@@ -137,14 +137,14 @@ class ProjectFilesDialog::SortedFileList : private QSortFilterProxyModel {
 DECLARE_NON_COPYABLE(SortedFileList)
 
 public:
-    SortedFileList(FileList& delegate);
+    explicit SortedFileList(FileList& delegate);
 
     QAbstractProxyModel* model() {
         return this;
     }
 
 private:
-    virtual bool lessThan(QModelIndex const& lhs, QModelIndex const& rhs) const;
+    bool lessThan(const QModelIndex& lhs, const QModelIndex& rhs) const override;
 
     FileList& m_rDelegate;
 };
@@ -152,14 +152,14 @@ private:
 
 class ProjectFilesDialog::ItemVisualOrdering {
 public:
-    bool operator()(Item const& lhs, Item const& rhs) const;
+    bool operator()(const Item& lhs, const Item& rhs) const;
 };
 
 
 template<typename OutFunc>
 void ProjectFilesDialog::FileList::files(OutFunc out) const {
-    std::vector<Item>::const_iterator it(m_items.begin());
-    std::vector<Item>::const_iterator const end(m_items.end());
+    auto it(m_items.begin());
+    const auto end(m_items.end());
     for (; it != end; ++it) {
         out(it->fileInfo());
     }
@@ -171,10 +171,10 @@ void ProjectFilesDialog::FileList::items(OutFunc out) const {
 }
 
 template<typename OutFunc>
-void ProjectFilesDialog::FileList::items(QItemSelection const& selection, OutFunc out) const {
+void ProjectFilesDialog::FileList::items(const QItemSelection& selection, OutFunc out) const {
     QListIterator<QItemSelectionRange> it(selection);
     while (it.hasNext()) {
-        QItemSelectionRange const& range = it.next();
+        const QItemSelectionRange& range = it.next();
         for (int row = range.top(); row <= range.bottom(); ++row) {
             out(m_items[row]);
         }
@@ -186,8 +186,8 @@ void ProjectFilesDialog::FileList::append(It begin, It end) {
     if (begin == end) {
         return;
     }
-    size_t const count = std::distance(begin, end);
-    beginInsertRows(QModelIndex(), m_items.size(), m_items.size() + count - 1);
+    const size_t count = std::distance(begin, end);
+    beginInsertRows(QModelIndex(), static_cast<int>(m_items.size()), static_cast<int>(m_items.size() + count - 1));
     m_items.insert(m_items.end(), begin, end);
     endInsertRows();
 }
@@ -220,20 +220,19 @@ ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
     connect(inpDirBrowseBtn, SIGNAL(clicked()), this, SLOT(inpDirBrowse()));
     connect(outDirBrowseBtn, SIGNAL(clicked()), this, SLOT(outDirBrowse()));
     connect(
-            inpDirLine, SIGNAL(textEdited(QString const &)),
-            this, SLOT(inpDirEdited(QString const &))
+            inpDirLine, SIGNAL(textEdited(const QString &)),
+            this, SLOT(inpDirEdited(const QString &))
     );
     connect(
-            outDirLine, SIGNAL(textEdited(QString const &)),
-            this, SLOT(outDirEdited(QString const &))
+            outDirLine, SIGNAL(textEdited(const QString &)),
+            this, SLOT(outDirEdited(const QString &))
     );
     connect(addToProjectBtn, SIGNAL(clicked()), this, SLOT(addToProject()));
     connect(removeFromProjectBtn, SIGNAL(clicked()), this, SLOT(removeFromProject()));
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(onOK()));
 }
 
-ProjectFilesDialog::~ProjectFilesDialog() {
-}
+ProjectFilesDialog::~ProjectFilesDialog() = default;
 
 QString ProjectFilesDialog::inputDirectory() const {
     return inpDirLine->text();
@@ -248,11 +247,11 @@ std::vector<ImageFileInfo>
 ProjectFilesDialog::inProjectFiles() const {
 
     std::vector<ImageFileInfo> files;
-    m_ptrInProjectFiles->items([&](Item const& item) {
-        files.push_back(ImageFileInfo(item.fileInfo(), item.perPageMetadata()));
+    m_ptrInProjectFiles->items([&](const Item& item) {
+        files.emplace_back(item.fileInfo(), item.perPageMetadata());
     });
 
-    std::sort(files.begin(), files.end(), [](ImageFileInfo const& lhs, ImageFileInfo const& rhs) {
+    std::sort(files.begin(), files.end(), [](const ImageFileInfo& lhs, const ImageFileInfo& rhs) {
         return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
     });
 
@@ -267,7 +266,7 @@ bool ProjectFilesDialog::isDpiFixingForced() const {
     return forceFixDpi->isChecked();
 }
 
-QString ProjectFilesDialog::sanitizePath(QString const& path) {
+QString ProjectFilesDialog::sanitizePath(const QString& path) {
     QString trimmed(path.trimmed());
     if (trimmed.startsWith(QChar('"')) && trimmed.endsWith(QChar('"'))) {
         trimmed.chop(1);
@@ -295,7 +294,7 @@ void ProjectFilesDialog::inpDirBrowse() {
         }
     }
 
-    QString const dir(
+    const QString dir(
             QFileDialog::getExistingDirectory(
                     this, tr("Input Directory"), initial_dir
             )
@@ -313,7 +312,7 @@ void ProjectFilesDialog::outDirBrowse() {
         initial_dir = QDir::home().absolutePath();
     }
 
-    QString const dir(
+    const QString dir(
             QFileDialog::getExistingDirectory(
                     this, tr("Output Directory"), initial_dir
             )
@@ -324,17 +323,17 @@ void ProjectFilesDialog::outDirBrowse() {
     }
 }
 
-void ProjectFilesDialog::inpDirEdited(QString const& text) {
+void ProjectFilesDialog::inpDirEdited(const QString& text) {
     setInputDir(sanitizePath(text),  /* auto_add_files= */ false);
 }
 
-void ProjectFilesDialog::outDirEdited(QString const& text) {
+void ProjectFilesDialog::outDirEdited(const QString& text) {
     m_autoOutDir = false;
 }
 
 namespace {
     struct FileInfoLess {
-        bool operator()(QFileInfo const& lhs, QFileInfo const& rhs) const {
+        bool operator()(const QFileInfo& lhs, const QFileInfo& rhs) const {
             if (lhs == rhs) {
                 // This takes into account filesystem's case sensitivity.
                 return false;
@@ -346,7 +345,7 @@ namespace {
 
 }
 
-void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_files) {
+void ProjectFilesDialog::setInputDir(const QString& dir, const bool auto_add_files) {
 
     inpDirLine->setText(QDir::toNativeSeparators(dir));
     if (m_autoOutDir) {
@@ -361,7 +360,7 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
 
         std::vector<QFileInfo> new_files(files.begin(), files.end());
         std::vector<QFileInfo> existing_files;
-        m_ptrInProjectFiles->files([&](QFileInfo const& file_info) {
+        m_ptrInProjectFiles->files([&](const QFileInfo& file_info) {
             existing_files.push_back(file_info);
         });
         std::sort(new_files.begin(), new_files.end(), FileInfoLess());
@@ -377,12 +376,12 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
 
     typedef std::vector<Item> ItemList;
     ItemList items;
-    for (QFileInfo const& file : files) {
+    for (const QFileInfo& file : files) {
         Qt::ItemFlags flags;
         if (m_supportedExtensions.contains(file.suffix().toLower())) {
             flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
         }
-        items.push_back(Item(file, flags));
+        items.emplace_back(file, flags);
     }
 
     m_ptrOffProjectFiles->assign(items.begin(), items.end());
@@ -393,13 +392,13 @@ void ProjectFilesDialog::setInputDir(QString const& dir, bool const auto_add_fil
     }
 } // ProjectFilesDialog::setInputDir
 
-void ProjectFilesDialog::setOutputDir(QString const& dir) {
+void ProjectFilesDialog::setOutputDir(const QString& dir) {
     outDirLine->setText(QDir::toNativeSeparators(dir));
 }
 
 void ProjectFilesDialog::addToProject() {
 
-    QItemSelection const selection(
+    const QItemSelection selection(
             m_ptrOffProjectFilesSorted->model()->mapSelectionToSource(
                     offProjectList->selectionModel()->selection()
             )
@@ -408,7 +407,7 @@ void ProjectFilesDialog::addToProject() {
     typedef std::vector<Item> ItemList;
     ItemList items;
 
-    m_ptrOffProjectFiles->items(selection, [&](Item const& item) {
+    m_ptrOffProjectFiles->items(selection, [&](const Item& item) {
         items.push_back(item);
     });
 
@@ -419,9 +418,9 @@ void ProjectFilesDialog::addToProject() {
 
 void ProjectFilesDialog::removeFromProject() {
 
-    QDir const input_dir(inpDirLine->text());
+    const QDir input_dir(inpDirLine->text());
 
-    QItemSelection const selection(
+    const QItemSelection selection(
             m_ptrInProjectFilesSorted->model()->mapSelectionToSource(
                     inProjectList->selectionModel()->selection()
             )
@@ -430,7 +429,7 @@ void ProjectFilesDialog::removeFromProject() {
     typedef std::vector<Item> ItemList;
     ItemList items;
 
-    m_ptrInProjectFiles->items(selection, [&](Item const& item) {
+    m_ptrInProjectFiles->items(selection, [&](const Item& item) {
         if (item.fileInfo().dir() == input_dir) {
             items.push_back(item);
         }
@@ -449,7 +448,7 @@ void ProjectFilesDialog::onOK() {
         return;
     }
 
-    QDir const inp_dir(inpDirLine->text());
+    const QDir inp_dir(inpDirLine->text());
     if (!inp_dir.isAbsolute() || !inp_dir.exists()) {
         QMessageBox::warning(
                 this, tr("Error"),
@@ -459,7 +458,7 @@ void ProjectFilesDialog::onOK() {
         return;
     }
 
-    QDir const out_dir(outDirLine->text());
+    const QDir out_dir(outDirLine->text());
     if (inp_dir == out_dir) {
         QMessageBox::warning(
                 this, tr("Error"),
@@ -508,7 +507,7 @@ void ProjectFilesDialog::onOK() {
 void ProjectFilesDialog::startLoadingMetadata() {
     m_ptrInProjectFiles->prepareForLoadingFiles();
 
-    progressBar->setMaximum(m_ptrInProjectFiles->count());
+    progressBar->setMaximum(static_cast<int>(m_ptrInProjectFiles->count()));
     inpDirLine->setEnabled(false);
     inpDirBrowseBtn->setEnabled(false);
     outDirLine->setEnabled(false);
@@ -579,22 +578,20 @@ void ProjectFilesDialog::finishLoadingMetadata() {
 
 /*====================== ProjectFilesDialog::FileList ====================*/
 
-ProjectFilesDialog::FileList::FileList() {
-}
+ProjectFilesDialog::FileList::FileList() = default;
 
-ProjectFilesDialog::FileList::~FileList() {
-}
+ProjectFilesDialog::FileList::~FileList() = default;
 
 void ProjectFilesDialog::FileList::clear() {
     if (m_items.empty()) {
         return;
     }
-    beginRemoveRows(QModelIndex(), 0, m_items.size() - 1);
+    beginRemoveRows(QModelIndex(), 0, static_cast<int>(m_items.size() - 1));
     m_items.clear();
     endRemoveRows();
 }
 
-void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
+void ProjectFilesDialog::FileList::remove(const QItemSelection& selection) {
 
     if (selection.isEmpty()) {
         return;
@@ -602,13 +599,13 @@ void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
 
     typedef std::pair<int, int> Range;
     QVector<Range> sorted_ranges;
-    for (auto const& range : selection) {
+    for (const auto& range : selection) {
         sorted_ranges.push_back(Range(range.top(), range.bottom()));
     }
 
     std::sort(
             sorted_ranges.begin(), sorted_ranges.end(),
-            [](Range const& lhs, Range const& rhs) {
+            [](const Range& lhs, const Range& rhs) {
                 return lhs.first < rhs.first;
             }
     );
@@ -616,9 +613,9 @@ void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
     QVectorIterator<Range> it(sorted_ranges);
     int rows_removed = 0;
     while (it.hasNext()) {
-        Range const& range = it.next();
-        int const first = range.first - rows_removed;
-        int const last = range.second - rows_removed;
+        const Range& range = it.next();
+        const int first = range.first - rows_removed;
+        const int last = range.second - rows_removed;
         beginRemoveRows(QModelIndex(), first, last);
         m_items.erase(m_items.begin() + first, m_items.begin() + (last + 1));
         endRemoveRows();
@@ -626,12 +623,12 @@ void ProjectFilesDialog::FileList::remove(QItemSelection const& selection) {
     }
 } // ProjectFilesDialog::FileList::remove
 
-int ProjectFilesDialog::FileList::rowCount(QModelIndex const&) const {
-    return m_items.size();
+int ProjectFilesDialog::FileList::rowCount(const QModelIndex&) const {
+    return static_cast<int>(m_items.size());
 }
 
-QVariant ProjectFilesDialog::FileList::data(QModelIndex const& index, int const role) const {
-    Item const& item = m_items[index.row()];
+QVariant ProjectFilesDialog::FileList::data(const QModelIndex& index, const int role) const {
+    const Item& item = m_items[index.row()];
     switch (role) {
         case Qt::DisplayRole:
             return item.fileInfo().fileName();
@@ -645,19 +642,21 @@ QVariant ProjectFilesDialog::FileList::data(QModelIndex const& index, int const 
                     return QBrush(QColor(0xff, 0x00, 0x00));
             }
             break;
+        default:
+            break;
     }
 
     return QVariant();
 }
 
-Qt::ItemFlags ProjectFilesDialog::FileList::flags(QModelIndex const& index) const {
+Qt::ItemFlags ProjectFilesDialog::FileList::flags(const QModelIndex& index) const {
     return m_items[index.row()].flags();
 }
 
 void ProjectFilesDialog::FileList::prepareForLoadingFiles() {
 
     std::deque<int> item_indexes;
-    int const num_items = m_items.size();
+    const auto num_items = static_cast<const int>(m_items.size());
     for (int i = 0; i < num_items; ++i) {
         item_indexes.push_back(i);
     }
@@ -678,12 +677,12 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
         return NO_MORE_FILES;
     }
 
-    int const item_idx = m_itemsToLoad.front();
+    const int item_idx = m_itemsToLoad.front();
     Item& item = m_items[item_idx];
     std::vector<ImageMetadata> per_page_metadata;
-    QString const file_path(item.fileInfo().absoluteFilePath());
-    ImageMetadataLoader::Status const st = ImageMetadataLoader::load(
-            file_path, [&](ImageMetadata const& metadata) {
+    const QString file_path(item.fileInfo().absoluteFilePath());
+    const ImageMetadataLoader::Status st = ImageMetadataLoader::load(
+            file_path, [&](const ImageMetadata& metadata) {
                 per_page_metadata.push_back(metadata);
             }
     );
@@ -698,7 +697,7 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
         status = LOAD_FAILED;
         item.setStatus(Item::STATUS_LOAD_FAILED);
     }
-    QModelIndex const idx(index(item_idx, 0));
+    const QModelIndex idx(index(item_idx, 0));
     emit dataChanged(idx, idx);
 
     m_itemsToLoad.pop_front();
@@ -715,18 +714,18 @@ ProjectFilesDialog::SortedFileList::SortedFileList(FileList& delegate)
     sort(0);
 }
 
-bool ProjectFilesDialog::SortedFileList::lessThan(QModelIndex const& lhs, QModelIndex const& rhs) const {
-    Item const& lhs_item = m_rDelegate.item(lhs);
-    Item const& rhs_item = m_rDelegate.item(rhs);
+bool ProjectFilesDialog::SortedFileList::lessThan(const QModelIndex& lhs, const QModelIndex& rhs) const {
+    const Item& lhs_item = m_rDelegate.item(lhs);
+    const Item& rhs_item = m_rDelegate.item(rhs);
 
     return ItemVisualOrdering()(lhs_item, rhs_item);
 }
 
 /*=============== ProjectFilesDialog::ItemVisualOrdering =================*/
 
-bool ProjectFilesDialog::ItemVisualOrdering::operator()(Item const& lhs, Item const& rhs) const {
-    bool const lhs_failed = (lhs.status() == Item::STATUS_LOAD_FAILED);
-    bool const rhs_failed = (rhs.status() == Item::STATUS_LOAD_FAILED);
+bool ProjectFilesDialog::ItemVisualOrdering::operator()(const Item& lhs, const Item& rhs) const {
+    const bool lhs_failed = (lhs.status() == Item::STATUS_LOAD_FAILED);
+    const bool rhs_failed = (rhs.status() == Item::STATUS_LOAD_FAILED);
     if (lhs_failed != rhs_failed) {
         // Failed ones go to the top.
         return lhs_failed;

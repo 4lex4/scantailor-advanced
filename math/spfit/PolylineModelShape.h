@@ -39,16 +39,16 @@ namespace spfit {
             POLYLINE_BACK = 1 << 1
         };
 
-        PolylineModelShape(std::vector<QPointF> const& polyline);
+        explicit PolylineModelShape(const std::vector<QPointF>& polyline);
 
-        virtual SqDistApproximant
-        localSqDistApproximant(QPointF const& pt, FittableSpline::SampleFlags sample_flags) const;
+        SqDistApproximant
+        localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags sample_flags) const override;
 
     protected:
-        virtual SqDistApproximant calcApproximant(QPointF const& pt,
+        virtual SqDistApproximant calcApproximant(const QPointF& pt,
                                                   FittableSpline::SampleFlags sample_flags,
                                                   Flags polyline_flags,
-                                                  FrenetFrame const& frenet_frame,
+                                                  const FrenetFrame& frenet_frame,
                                                   double signed_curvature) const;
 
     private:

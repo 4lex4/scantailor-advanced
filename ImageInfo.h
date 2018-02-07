@@ -32,17 +32,17 @@ class ImageInfo {
 public:
     ImageInfo();
 
-    ImageInfo(ImageId const& id,
-              ImageMetadata const& metadata,
+    ImageInfo(const ImageId& id,
+              const ImageMetadata& metadata,
               int num_sub_pages,
               bool left_page_removed,
               bool right_page_removed);
 
-    ImageId const& id() const {
+    const ImageId& id() const {
         return m_id;
     }
 
-    ImageMetadata const& metadata() const {
+    const ImageMetadata& metadata() const {
         return m_metadata;
     }
 

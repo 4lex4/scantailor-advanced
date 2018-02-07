@@ -20,56 +20,39 @@
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
-#include "CommandLine.h"
-
 namespace select_content {
-    Params::Params(QRectF const& content_rect,
-                   QSizeF const& content_size_mm,
-                   Dependencies const& deps,
-                   AutoManualMode const mode)
-            : m_contentRect(content_rect),
-              m_pageRect(content_rect),
-              m_pageBorders(0, 0, 0, 0),
-              m_contentSizeMM(content_size_mm),
-              m_deps(deps),
-              m_mode(mode),
+    Params::Params(const Dependencies& deps)
+            : m_deps(deps),
+              m_contentDetectionMode(MODE_AUTO),
+              m_pageDetectionMode(MODE_AUTO),
+              m_contentDetectEnabled(true),
+              m_pageDetectEnabled(false),
+              m_fineTuneCorners(false),
               m_deviation(0.0) {
-        m_contentDetect = CommandLine::get().isContentDetectionEnabled();
-        m_pageDetect = CommandLine::get().isPageDetectionEnabled();
-        m_fineTuneCorners = CommandLine::get().isFineTuningEnabled();
     }
 
-    Params::Params(QRectF const& content_rect,
-                   QSizeF const& content_size_mm,
-                   Dependencies const& deps,
-                   AutoManualMode const mode,
-                   bool contentDetect,
-                   bool pageDetect,
-                   bool fineTuning,
-                   Margins pageBorders)
+    Params::Params(const QRectF& content_rect,
+                   const QSizeF& content_size_mm,
+                   const QRectF& page_rect,
+                   const Dependencies& deps,
+                   const AutoManualMode content_detection_mode,
+                   const AutoManualMode page_detection_mode,
+                   const bool contentDetect,
+                   const bool pageDetect,
+                   const bool fineTuning)
             : m_contentRect(content_rect),
-              m_pageRect(content_rect),
-              m_pageBorders(pageBorders),
+              m_pageRect(page_rect),
               m_contentSizeMM(content_size_mm),
               m_deps(deps),
-              m_mode(mode),
-              m_contentDetect(contentDetect),
-              m_pageDetect(pageDetect),
+              m_contentDetectionMode(content_detection_mode),
+              m_pageDetectionMode(page_detection_mode),
+              m_contentDetectEnabled(contentDetect),
+              m_pageDetectEnabled(pageDetect),
               m_fineTuneCorners(fineTuning),
               m_deviation(0.0) {
     }
 
-    Params::Params(Dependencies const& deps)
-            : m_deps(deps),
-              m_mode(MODE_AUTO),
-              m_pageBorders(0, 0, 0, 0),
-              m_deviation(0.0) {
-        m_contentDetect = CommandLine::get().isContentDetectionEnabled();
-        m_pageDetect = CommandLine::get().isPageDetectionEnabled();
-        m_fineTuneCorners = CommandLine::get().isFineTuningEnabled();
-    }
-
-    Params::Params(QDomElement const& filter_el)
+    Params::Params(const QDomElement& filter_el)
             : m_contentRect(
             XmlUnmarshaller::rectF(
                     filter_el.namedItem("content-rect").toElement()
@@ -85,43 +68,120 @@ namespace select_content {
                               filter_el.namedItem("content-size-mm").toElement()
                       )
               ),
-              m_pageBorders(
-                      XmlUnmarshaller::margins(
-                              filter_el.namedItem("page-borders").toElement()
-                      )
-              ),
               m_deps(filter_el.namedItem("dependencies").toElement()),
-              m_mode(filter_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-              m_contentDetect(filter_el.attribute("content-detect") == "false" ? false : true),
-              m_pageDetect(filter_el.attribute("page-detect") == "true" ? true : false),
-              m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "true" ? true : false),
+              m_contentDetectionMode(filter_el.attribute("contentDetectionMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
+              m_pageDetectionMode(filter_el.attribute("pageDetectionMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
+              m_contentDetectEnabled(filter_el.attribute("content-detect") == "1"),
+              m_pageDetectEnabled(filter_el.attribute("page-detect") == "1"),
+              m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "1"),
               m_deviation(filter_el.attribute("deviation").toDouble()) {
-        if (m_pageDetect && !m_contentDetect && CommandLine::get().isForcePageDetectionDisabled()) {
-            m_pageDetect = false;
-            m_contentRect = m_pageRect;
-            m_contentDetect = true;
-            m_mode = MODE_MANUAL;
-        }
     }
 
-    Params::~Params() {
-    }
+    Params::~Params() = default;
 
-    QDomElement Params::toXml(QDomDocument& doc, QString const& name) const {
+    QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
         XmlMarshaller marshaller(doc);
 
         QDomElement el(doc.createElement(name));
-        el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
-        el.setAttribute("content-detect", m_contentDetect ? "true" : "false");
-        el.setAttribute("page-detect", m_pageDetect ? "true" : "false");
-        el.setAttribute("fine-tune-corners", m_fineTuneCorners ? "true" : "false");
+        el.setAttribute("contentDetectionMode", (m_contentDetectionMode == MODE_AUTO) ? "auto" : "manual");
+        el.setAttribute("pageDetectionMode", (m_pageDetectionMode == MODE_AUTO) ? "auto" : "manual");
+        el.setAttribute("content-detect", m_contentDetectEnabled ? "1" : "0");
+        el.setAttribute("page-detect", m_pageDetectEnabled ? "1" : "0");
+        el.setAttribute("fine-tune-corners", m_fineTuneCorners ? "1" : "0");
         el.setAttribute("deviation", m_deviation);
         el.appendChild(marshaller.rectF(m_contentRect, "content-rect"));
         el.appendChild(marshaller.rectF(m_pageRect, "page-rect"));
         el.appendChild(marshaller.sizeF(m_contentSizeMM, "content-size-mm"));
-        el.appendChild(marshaller.margins(m_pageBorders, "page-borders"));
         el.appendChild(m_deps.toXml(doc, "dependencies"));
 
         return el;
+    }
+
+    const QRectF& Params::contentRect() const {
+        return m_contentRect;
+    }
+
+    const QRectF& Params::pageRect() const {
+        return m_pageRect;
+    }
+
+    const QSizeF& Params::contentSizeMM() const {
+        return m_contentSizeMM;
+    }
+
+    const Dependencies& Params::dependencies() const {
+        return m_deps;
+    }
+
+    AutoManualMode Params::contentDetectionMode() const {
+        return m_contentDetectionMode;
+    }
+
+    AutoManualMode Params::pageDetectionMode() const {
+        return m_pageDetectionMode;
+    }
+
+    double Params::deviation() const {
+        return m_deviation;
+    }
+
+    void Params::setDeviation(double d) {
+        m_deviation = d;
+    }
+
+    void Params::computeDeviation(double avg) {
+        m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
+    }
+
+    bool Params::isDeviant(double std, double max_dev) {
+        return (max_dev * std) < fabs(m_deviation);
+    }
+
+    bool Params::isContentDetectionEnabled() const {
+        return m_contentDetectEnabled;
+    }
+
+    bool Params::isPageDetectionEnabled() const {
+        return m_pageDetectEnabled;
+    }
+
+    bool Params::isFineTuningEnabled() const {
+        return m_fineTuneCorners;
+    }
+
+    void Params::setContentDetectionMode(const AutoManualMode& mode) {
+        m_contentDetectionMode = mode;
+    }
+
+    void Params::setPageDetectionMode(const AutoManualMode& mode) {
+        m_pageDetectionMode = mode;
+    }
+
+    void Params::setContentRect(const QRectF& rect) {
+        m_contentRect = rect;
+    }
+
+    void Params::setPageRect(const QRectF& rect) {
+        m_pageRect = rect;
+    }
+
+    void Params::setContentSizeMM(const QSizeF& size) {
+        m_contentSizeMM = size;
+    }
+
+    void Params::setDependencies(const Dependencies& deps) {
+        m_deps = deps;
+    }
+
+    void Params::setContentDetect(bool detect) {
+        m_contentDetectEnabled = detect;
+    }
+
+    void Params::setPageDetect(bool detect) {
+        m_pageDetectEnabled = detect;
+    }
+
+    void Params::setFineTuneCorners(bool fine_tune) {
+        m_fineTuneCorners = fine_tune;
     }
 }  // namespace content_rect

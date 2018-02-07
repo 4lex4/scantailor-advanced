@@ -22,28 +22,28 @@
 #include "PageInfo.h"
 #include <vector>
 #include <set>
-#include <stddef.h>
+#include <cstddef>
 
 class PageSequence {
     // Member-wise copying is OK.
 public:
-    void append(PageInfo const& page_info);
+    void append(const PageInfo& page_info);
 
     size_t numPages() const {
         return m_pages.size();
     }
 
-    PageInfo const& pageAt(PageId page) const;
+    const PageInfo& pageAt(PageId page) const;
 
-    PageInfo const& pageAt(size_t idx) const;
+    const PageInfo& pageAt(size_t idx) const;
 
-    int pageNo(PageId const& page) const;
+    int pageNo(const PageId& page) const;
 
     std::set<PageId> selectAll() const;
 
-    std::set<PageId> selectPagePlusFollowers(PageId const& page) const;
+    std::set<PageId> selectPagePlusFollowers(const PageId& page) const;
 
-    std::set<PageId> selectEveryOther(PageId const& base) const;
+    std::set<PageId> selectEveryOther(const PageId& base) const;
 
     std::vector<PageInfo>::iterator begin() {
         return m_pages.begin();

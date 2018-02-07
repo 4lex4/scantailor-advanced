@@ -27,7 +27,7 @@
 #include <QLineF>
 #include <vector>
 #include <list>
-#include <stdint.h>
+#include <cstdint>
 
 class Dpi;
 class DebugImages;
@@ -36,7 +36,7 @@ class QImage;
 namespace dewarping {
     class TextLineRefiner {
     public:
-        TextLineRefiner(imageproc::GrayImage const& image, Dpi const& dpi, Vec2f const& unit_down_vector);
+        TextLineRefiner(const imageproc::GrayImage& image, const Dpi& dpi, const Vec2f& unit_down_vector);
 
         void refine(std::list<std::vector<QPointF>>& polylines, int iterations, DebugImages* dbg) const;
 
@@ -54,7 +54,7 @@ namespace dewarping {
 
         struct SnakeNode {
             Vec2f center;
-            float ribHalfLength;
+            float ribHalfLength{ };
         };
 
         struct Snake {
@@ -68,26 +68,26 @@ namespace dewarping {
 
         struct Step {
             SnakeNode node;
-            uint32_t prevStepIdx;
-            float pathCost;
+            uint32_t prevStepIdx{ 0 };
+            float pathCost{ 0 };
         };
 
         void calcBlurredGradient(Grid<float>& gradient, float h_sigma, float v_sigma) const;
 
-        static float externalEnergyAt(Grid<float> const& gradient, Vec2f const& pos, float penalty_if_outside);
+        static float externalEnergyAt(const Grid<float>& gradient, const Vec2f& pos, float penalty_if_outside);
 
-        static Snake makeSnake(std::vector<QPointF> const& polyline, int iterations);
+        static Snake makeSnake(const std::vector<QPointF>& polyline, int iterations);
 
         static void calcFrenetFrames(std::vector<FrenetFrame>& frenet_frames,
-                                     Snake const& snake,
-                                     SnakeLength const& snake_length,
-                                     Vec2f const& unit_down_vec);
+                                     const Snake& snake,
+                                     const SnakeLength& snake_length,
+                                     const Vec2f& unit_down_vec);
 
-        void evolveSnake(Snake& snake, Grid<float> const& gradient, OnConvergence on_convergence) const;
+        void evolveSnake(Snake& snake, const Grid<float>& gradient, OnConvergence on_convergence) const;
 
-        QImage visualizeGradient(Grid<float> const& gradient) const;
+        QImage visualizeGradient(const Grid<float>& gradient) const;
 
-        QImage visualizeSnakes(std::vector<Snake> const& snakes, Grid<float> const* gradient = 0) const;
+        QImage visualizeSnakes(const std::vector<Snake>& snakes, const Grid<float>* gradient = nullptr) const;
 
         imageproc::GrayImage m_image;
         Dpi m_dpi;

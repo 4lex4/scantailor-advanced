@@ -24,18 +24,18 @@
 #include <QDebug>
 
 namespace imageproc {
-    uint32_t const ConnectivityMap::BACKGROUND = ~uint32_t(0);
-    uint32_t const ConnectivityMap::UNTAGGED_FG = BACKGROUND - 1;
+    const uint32_t ConnectivityMap::BACKGROUND = ~uint32_t(0);
+    const uint32_t ConnectivityMap::UNTAGGED_FG = BACKGROUND - 1;
 
     ConnectivityMap::ConnectivityMap()
-            : m_pData(0),
+            : m_pData(nullptr),
               m_size(),
               m_stride(0),
               m_maxLabel(0) {
     }
 
-    ConnectivityMap::ConnectivityMap(QSize const& size)
-            : m_pData(0),
+    ConnectivityMap::ConnectivityMap(const QSize& size)
+            : m_pData(nullptr),
               m_size(size),
               m_stride(0),
               m_maxLabel(0) {
@@ -43,16 +43,16 @@ namespace imageproc {
             return;
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         m_data.resize((width + 2) * (height + 2), 0);
         m_stride = width + 2;
         m_pData = &m_data[0] + 1 + m_stride;
     }
 
-    ConnectivityMap::ConnectivityMap(BinaryImage const& image, Connectivity const conn)
-            : m_pData(0),
+    ConnectivityMap::ConnectivityMap(const BinaryImage& image, const Connectivity conn)
+            : m_pData(nullptr),
               m_size(image.size()),
               m_stride(0),
               m_maxLabel(0) {
@@ -60,20 +60,20 @@ namespace imageproc {
             return;
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         m_data.resize((width + 2) * (height + 2), BACKGROUND);
         m_stride = width + 2;
         m_pData = &m_data[0] + 1 + m_stride;
 
         uint32_t* dst = m_pData;
-        int const dst_stride = m_stride;
+        const int dst_stride = m_stride;
 
-        uint32_t const* src = image.data();
-        int const src_stride = image.wordsPerLine();
+        const uint32_t* src = image.data();
+        const int src_stride = image.wordsPerLine();
 
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t msb = uint32_t(1) << 31;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (src[x >> 5] & (msb >> (x & 31))) {
@@ -87,9 +87,9 @@ namespace imageproc {
         assignIds(conn);
     }
 
-    ConnectivityMap::ConnectivityMap(ConnectivityMap const& other)
+    ConnectivityMap::ConnectivityMap(const ConnectivityMap& other)
             : m_data(other.m_data),
-              m_pData(0),
+              m_pData(nullptr),
               m_size(other.size()),
               m_stride(other.stride()),
               m_maxLabel(other.m_maxLabel) {
@@ -98,8 +98,8 @@ namespace imageproc {
         }
     }
 
-    ConnectivityMap::ConnectivityMap(InfluenceMap const& imap)
-            : m_pData(0),
+    ConnectivityMap::ConnectivityMap(const InfluenceMap& imap)
+            : m_pData(nullptr),
               m_size(imap.size()),
               m_stride(imap.stride()),
               m_maxLabel(imap.maxLabel()) {
@@ -111,13 +111,13 @@ namespace imageproc {
         copyFromInfluenceMap(imap);
     }
 
-    ConnectivityMap& ConnectivityMap::operator=(ConnectivityMap const& other) {
+    ConnectivityMap& ConnectivityMap::operator=(const ConnectivityMap& other) {
         ConnectivityMap(other).swap(*this);
 
         return *this;
     }
 
-    ConnectivityMap& ConnectivityMap::operator=(InfluenceMap const& imap) {
+    ConnectivityMap& ConnectivityMap::operator=(const InfluenceMap& imap) {
         if ((m_size == imap.size()) && !m_size.isEmpty()) {
             // Common case optimization.
             copyFromInfluenceMap(imap);
@@ -136,7 +136,7 @@ namespace imageproc {
         std::swap(m_maxLabel, other.m_maxLabel);
     }
 
-    void ConnectivityMap::addComponent(BinaryImage const& image) {
+    void ConnectivityMap::addComponent(const BinaryImage& image) {
         if (m_size != image.size()) {
             throw std::invalid_argument("ConnectivityMap::addComponent: sizes dont match");
         }
@@ -144,17 +144,17 @@ namespace imageproc {
             return;
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         uint32_t* dst = m_pData;
-        int const dst_stride = m_stride;
+        const int dst_stride = m_stride;
 
-        uint32_t const* src = image.data();
-        int const src_stride = image.wordsPerLine();
+        const uint32_t* src = image.data();
+        const int src_stride = image.wordsPerLine();
 
-        uint32_t const new_label = m_maxLabel + 1;
-        uint32_t const msb = uint32_t(1) << 31;
+        const uint32_t new_label = m_maxLabel + 1;
+        const uint32_t msb = uint32_t(1) << 31;
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (src[x >> 5] & (msb >> (x & 31))) {
@@ -168,42 +168,143 @@ namespace imageproc {
         m_maxLabel = new_label;
     }  // ConnectivityMap::addComponent
 
-    QImage ConnectivityMap::visualized(QColor bgcolor) const {
+    void ConnectivityMap::addComponents(const BinaryImage& image, const Connectivity conn) {
+        if (m_size != image.size()) {
+            throw std::invalid_argument("ConnectivityMap::addComponents: sizes don't match");
+        }
+        if (m_size.isEmpty()) {
+            return;
+        }
+
+        addComponents(ConnectivityMap(image, conn));
+    }
+
+    void ConnectivityMap::addComponents(const ConnectivityMap& other) {
+        if (m_size != other.m_size) {
+            throw std::invalid_argument("ConnectivityMap::addComponents: sizes don't match");
+        }
+        if (m_size.isEmpty()) {
+            return;
+        }
+
+        const int width = m_size.width();
+        const int height = m_size.height();
+
+        uint32_t* dst_line = m_pData;
+        const int dst_stride = m_stride;
+
+        const uint32_t* src_line = other.m_pData;
+        const int src_stride = other.m_stride;
+
+        uint32_t new_max_label = m_maxLabel;
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                const uint32_t src_label = src_line[x];
+                if (src_label == 0) {
+                    continue;
+                }
+
+                const uint32_t dst_label = m_maxLabel + src_label;
+                new_max_label = std::max(new_max_label, dst_label);
+
+                dst_line[x] = dst_label;
+            }
+            src_line += src_stride;
+            dst_line += dst_stride;
+        }
+
+        m_maxLabel = new_max_label;
+    }
+
+    void ConnectivityMap::removeComponents(const std::unordered_set<uint32_t>& labelsSet) {
+        if (m_size.isEmpty() || labelsSet.empty()) {
+            return;
+        }
+
+        std::vector<uint32_t> map(m_maxLabel, 0);
+        uint32_t next_label = 1;
+        for (uint32_t i = 0; i < m_maxLabel; i++) {
+            if (labelsSet.find(i + 1) == labelsSet.end()) {
+                map[i] = next_label;
+                next_label++;
+            }
+        }
+
+        for (uint32_t& label : m_data) {
+            if (label != 0) {
+                label = map[label - 1];
+            }
+        }
+
+        m_maxLabel = next_label - 1;
+    }
+
+    BinaryImage ConnectivityMap::getBinaryMask() const {
+        if (m_size.isEmpty()) {
+            return BinaryImage();
+        }
+
+        BinaryImage dst(m_size, WHITE);
+
+        const int width = m_size.width();
+        const int height = m_size.height();
+
+        uint32_t* dst_line = dst.data();
+        const int dst_stride = dst.wordsPerLine();
+
+        const uint32_t* src_line = m_pData;
+        const int src_stride = m_stride;
+
+        const uint32_t msb = uint32_t(1) << 31;
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                if (src_line[x] != 0) {
+                    dst_line[x >> 5] |= (msb >> (x & 31));
+                }
+            }
+            src_line += src_stride;
+            dst_line += dst_stride;
+        }
+
+        return dst;
+    }
+
+    QImage ConnectivityMap::visualized(QColor bg_color) const {
         if (m_size.isEmpty()) {
             return QImage();
         }
 
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
         // Convert to premultiplied RGBA.
-        bgcolor = bgcolor.toRgb();
-        bgcolor.setRedF(bgcolor.redF() * bgcolor.alphaF());
-        bgcolor.setGreenF(bgcolor.greenF() * bgcolor.alphaF());
-        bgcolor.setBlueF(bgcolor.blueF() * bgcolor.alphaF());
+        bg_color = bg_color.toRgb();
+        bg_color.setRedF(bg_color.redF() * bg_color.alphaF());
+        bg_color.setGreenF(bg_color.greenF() * bg_color.alphaF());
+        bg_color.setBlueF(bg_color.blueF() * bg_color.alphaF());
 
         QImage dst(m_size, QImage::Format_ARGB32);
-        dst.fill(bgcolor.rgba());
+        dst.fill(bg_color.rgba());
 
-        uint32_t const* src_line = m_pData;
-        int const src_stride = m_stride;
+        const uint32_t* src_line = m_pData;
+        const int src_stride = m_stride;
 
-        uint32_t* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
-        int const dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
+        auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
+        const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                uint32_t const val = src_line[x];
+                const uint32_t val = src_line[x];
                 if (val == 0) {
                     continue;
                 }
 
-                int const bits_unused = countMostSignificantZeroes(val);
-                uint32_t const reversed = reverseBits(val) >> bits_unused;
-                uint32_t const mask = ~uint32_t(0) >> bits_unused;
+                const int bits_unused = countMostSignificantZeroes(val);
+                const uint32_t reversed = reverseBits(val) >> bits_unused;
+                const uint32_t mask = ~uint32_t(0) >> bits_unused;
 
-                double const H = 0.99 * (double(reversed) / mask);
-                double const S = 1.0;
-                double const V = 1.0;
+                const double H = 0.99 * (double(reversed) / mask);
+                const double S = 1.0;
+                const double V = 1.0;
                 QColor color;
                 color.setHsvF(H, S, V, 1.0);
 
@@ -216,15 +317,15 @@ namespace imageproc {
         return dst;
     }  // ConnectivityMap::visualized
 
-    void ConnectivityMap::copyFromInfluenceMap(InfluenceMap const& imap) {
+    void ConnectivityMap::copyFromInfluenceMap(const InfluenceMap& imap) {
         assert(!imap.size().isEmpty());
         assert(imap.size() == m_size);
 
-        int const width = m_size.width() + 2;
-        int const height = m_size.height() + 2;
+        const int width = m_size.width() + 2;
+        const int height = m_size.height() + 2;
 
         uint32_t* dst = &m_data[0];
-        InfluenceMap::Cell const* src = imap.paddedData();
+        const InfluenceMap::Cell* src = imap.paddedData();
         for (int todo = width * height; todo > 0; --todo) {
             *dst = src->label;
             ++dst;
@@ -232,8 +333,8 @@ namespace imageproc {
         }
     }
 
-    void ConnectivityMap::assignIds(Connectivity const conn) {
-        uint32_t const num_initial_tags = initialTagging();
+    void ConnectivityMap::assignIds(const Connectivity conn) {
+        const uint32_t num_initial_tags = initialTagging();
         std::vector<uint32_t> table(num_initial_tags, 0);
 
         switch (conn) {
@@ -264,13 +365,13 @@ namespace imageproc {
  * Tags every object pixel that has a non-object pixel to the left.
  */
     uint32_t ConnectivityMap::initialTagging() {
-        int const width = m_size.width();
-        int const height = m_size.height();
+        const int width = m_size.width();
+        const int height = m_size.height();
 
         uint32_t next_label = 1;
 
         uint32_t* line = m_pData;
-        int const stride = m_stride;
+        const int stride = m_stride;
 
         for (int y = 0; y < height; ++y, line += stride) {
             for (int x = 0; x < width; ++x) {
@@ -286,9 +387,9 @@ namespace imageproc {
     }
 
     void ConnectivityMap::spreadMin4() {
-        int const width = m_size.width();
-        int const height = m_size.height();
-        int const stride = m_stride;
+        const int width = m_size.width();
+        const int height = m_size.height();
+        const int stride = m_stride;
 
         uint32_t* line = m_pData;
         uint32_t* prev_line = m_pData - stride;
@@ -322,7 +423,7 @@ namespace imageproc {
                     continue;
                 }
 
-                uint32_t const new_val = std::min(
+                const uint32_t new_val = std::min(
                         line[x + 1], prev_line[x]
                 );
 
@@ -334,7 +435,7 @@ namespace imageproc {
                 // We compare new_val + 1 < neighbor + 1 to
                 // make BACKGROUND neighbors overflow and become
                 // zero.
-                uint32_t const nvp1 = new_val + 1;
+                const uint32_t nvp1 = new_val + 1;
                 if ((nvp1 < line[x + 1] + 1) || (nvp1 < prev_line[x] + 1)) {
                     queue.push(&line[x]);
                 }
@@ -347,9 +448,9 @@ namespace imageproc {
     }  // ConnectivityMap::spreadMin4
 
     void ConnectivityMap::spreadMin8() {
-        int const width = m_size.width();
-        int const height = m_size.height();
-        int const stride = m_stride;
+        const int width = m_size.width();
+        const int height = m_size.height();
+        const int stride = m_stride;
 
         uint32_t* line = m_pData;
         uint32_t* prev_line = m_pData - stride;
@@ -385,7 +486,7 @@ namespace imageproc {
                     continue;
                 }
 
-                uint32_t const new_val = std::min(
+                const uint32_t new_val = std::min(
                         std::min(prev_line[x - 1], prev_line[x]),
                         std::min(prev_line[x + 1], line[x + 1])
                 );
@@ -399,7 +500,7 @@ namespace imageproc {
                 // We compare new_val + 1 < neighbor + 1 to
                 // make BACKGROUND neighbors overflow and become
                 // zero.
-                uint32_t const nvp1 = new_val + 1;
+                const uint32_t nvp1 = new_val + 1;
                 if ((nvp1 < prev_line[x - 1] + 1)
                     || (nvp1 < prev_line[x] + 1)
                     || (nvp1 < prev_line[x + 1] + 1)
@@ -415,7 +516,7 @@ namespace imageproc {
         processQueue8(queue);
     }  // ConnectivityMap::spreadMin8
 
-    void ConnectivityMap::processNeighbor(FastQueue<uint32_t*>& queue, uint32_t const this_val, uint32_t* neighbor) {
+    void ConnectivityMap::processNeighbor(FastQueue<uint32_t*>& queue, const uint32_t this_val, uint32_t* neighbor) {
         // *neighbor + 1 will overflow if *neighbor == BACKGROUND,
         // which is what we want.
         if (this_val + 1 < *neighbor + 1) {
@@ -425,13 +526,13 @@ namespace imageproc {
     }
 
     void ConnectivityMap::processQueue4(FastQueue<uint32_t*>& queue) {
-        int const stride = m_stride;
+        const int stride = m_stride;
 
         while (!queue.empty()) {
             uint32_t* p = queue.front();
             queue.pop();
 
-            uint32_t const this_val = *p;
+            const uint32_t this_val = *p;
 
             // Northern neighbor.
             p -= stride;
@@ -451,13 +552,13 @@ namespace imageproc {
     }
 
     void ConnectivityMap::processQueue8(FastQueue<uint32_t*>& queue) {
-        int const stride = m_stride;
+        const int stride = m_stride;
 
         while (!queue.empty()) {
             uint32_t* p = queue.front();
             queue.pop();
 
-            uint32_t const this_val = *p;
+            const uint32_t this_val = *p;
 
             // Northern neighbor.
             p -= stride;
@@ -493,11 +594,11 @@ namespace imageproc {
     }  // ConnectivityMap::processQueue8
 
     void ConnectivityMap::markUsedIds(std::vector<uint32_t>& used_map) const {
-        int const width = m_size.width();
-        int const height = m_size.height();
-        int const stride = m_stride;
+        const int width = m_size.width();
+        const int height = m_size.height();
+        const int stride = m_stride;
 
-        uint32_t const* line = m_pData;
+        const uint32_t* line = m_pData;
         // Top to bottom.
         for (int y = 0; y < height; ++y, line += stride) {
             // Left to right.
@@ -510,7 +611,7 @@ namespace imageproc {
         }
     }
 
-    void ConnectivityMap::remapIds(std::vector<uint32_t> const& map) {
+    void ConnectivityMap::remapIds(const std::vector<uint32_t>& map) {
         for (uint32_t& label : m_data) {
             if (label == BACKGROUND) {
                 label = 0;

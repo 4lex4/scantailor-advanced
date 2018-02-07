@@ -721,7 +721,7 @@ output::DepthPerception CommandLine::fetchDepthPerception() {
 
 float CommandLine::fetchMatchLayoutTolerance() {
     if (!hasMatchLayoutTolerance()) {
-        return 0.2;
+        return 0.2f;
     }
 
     return m_options["match-layout-tolerance"].toFloat();

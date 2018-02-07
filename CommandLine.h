@@ -447,7 +447,7 @@ private:
     output::DewarpingOptions m_dewarpingOptions;
     output::DespeckleLevel m_despeckleLevel;
     output::DepthPerception m_depthPerception;
-    float m_matchLayoutTolerance{ 0.2 };
+    float m_matchLayoutTolerance{ 0.2f };
 
     bool parseCli(const QStringList& argv);
 

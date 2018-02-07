@@ -30,11 +30,18 @@ template<typename T>
 class intrusive_ptr {
     template<typename> friend
     class intrusive_ptr;
-    
+
 public:
-    class hash;
+    struct hash;
 
     using pointer = T*;
+
+    template<typename OT>
+    using __enable_if_convertible = typename std::enable_if<
+            std::is_convertible<
+                    typename intrusive_ptr<OT>::pointer, pointer
+            >::value
+    >::type;
 
 public:
     constexpr intrusive_ptr(std::nullptr_t = nullptr) noexcept;
@@ -45,10 +52,10 @@ public:
 
     intrusive_ptr(intrusive_ptr&& other) noexcept;
 
-    template<typename OT, typename = std::_Require<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>>>
+    template<typename OT, typename = __enable_if_convertible<OT>>
     intrusive_ptr(const intrusive_ptr<OT>& other) noexcept;
 
-    template<typename OT, typename = std::_Require<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>>>
+    template<typename OT, typename = __enable_if_convertible<OT>>
     intrusive_ptr(intrusive_ptr<OT>&& other) noexcept;
 
     ~intrusive_ptr() noexcept;
@@ -59,10 +66,10 @@ public:
 
     intrusive_ptr& operator=(intrusive_ptr&& rhs) noexcept;
 
-    template<typename OT, typename = std::_Require<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>>>
+    template<typename OT, typename = __enable_if_convertible<OT>>
     intrusive_ptr& operator=(const intrusive_ptr<OT>& rhs) noexcept;
 
-    template<typename OT, typename = std::_Require<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>>>
+    template<typename OT, typename = __enable_if_convertible<OT>>
     intrusive_ptr& operator=(intrusive_ptr<OT>&& rhs) noexcept;
 
     T& operator*() const;

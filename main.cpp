@@ -75,12 +75,8 @@ int main(int argc, char** argv) {
     if (settings.value("mainWindow/maximized") == false) {
         main_wnd->show();
     } else {
-#ifdef _WIN32
-        main_wnd->show();
-        main_wnd->showMaximized();
-        main_wnd->showNormal();
-#endif
-        main_wnd->showMaximized();
+        // main_wnd->showMaximized();  // Doesn't work for Windows.
+        QTimer::singleShot(0, main_wnd, &QMainWindow::showMaximized);
     }
 
     if (!cli.projectFile().isEmpty()) {

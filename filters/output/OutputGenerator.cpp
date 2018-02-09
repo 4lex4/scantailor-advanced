@@ -757,7 +757,8 @@ namespace output {
                 bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1.translate(-normalize_illumination_rect.left(), -normalize_illumination_rect.top());
+                xform1 *= QTransform().translate(-normalize_illumination_rect.x(),
+                                                 -normalize_illumination_rect.y());
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {
@@ -1243,7 +1244,8 @@ namespace output {
                 warped_bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1 *= QTransform().translate(-normalize_illumination_rect.x(), -normalize_illumination_rect.y());
+                xform1 *= QTransform().translate(-normalize_illumination_rect.x(),
+                                                 -normalize_illumination_rect.y());
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {

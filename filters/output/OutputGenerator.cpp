@@ -571,7 +571,7 @@ namespace output {
         }();
 
         QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
         );
 
         const bool needNormalizeIllumination
@@ -697,8 +697,7 @@ namespace output {
                     drawOver(color_image, dst_rect, maybe_normalized, src_rect);
                     maybe_normalized = QImage();
 
-                    const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                    segmented_image = ColorSegmenter(dst, color_image, m_dpi, noiseReduction).getImage();
+                    segmented_image = segmentImage(dst, color_image);
                     dst.release();
                 }
 
@@ -919,9 +918,7 @@ namespace output {
                     {
                         QImage maybe_normalized_content(maybe_normalized);
                         applyMask(maybe_normalized_content, bw_mask);
-                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                        segmented_image = ColorSegmenter(
-                                bw_content, maybe_normalized_content, m_dpi, noiseReduction).getImage();
+                        segmented_image = segmentImage(bw_content, maybe_normalized_content);
                         maybe_normalized_content = QImage();
 
                         if (dbg) {
@@ -992,7 +989,8 @@ namespace output {
         }
 
         if (render_params.mixedOutput() && render_params.needBinarization()) {
-            applyFillZonesToMixedInPlace(dst, fill_zones, bw_content_mask_output, !render_params.needColorSegmentation());
+            applyFillZonesToMixedInPlace(dst, fill_zones, bw_content_mask_output,
+                                         !render_params.needColorSegmentation());
         } else {
             applyFillZonesInPlace(dst, fill_zones);
         }
@@ -1632,10 +1630,7 @@ namespace output {
 
                 return dewarped_bw_content.toQImage();
             } else {
-                const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                QImage segmented_image = ColorSegmenter(
-                        dewarped_bw_content, dewarped, m_dpi, noiseReduction).getImage();
-
+                QImage segmented_image = segmentImage(dewarped_bw_content, dewarped);
                 dewarped = QImage();
                 dewarped_bw_content.release();
 
@@ -1828,9 +1823,7 @@ namespace output {
                     {
                         QImage dewarped_content(dewarped);
                         applyMask(dewarped_content, dewarped_bw_mask);
-                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                        segmented_image = ColorSegmenter(
-                                dewarped_bw_content, dewarped_content, m_dpi, noiseReduction).getImage();
+                        segmented_image = segmentImage(dewarped_bw_content, dewarped_content);
                         dewarped_content = QImage();
 
                         if (dbg) {
@@ -2838,6 +2831,23 @@ namespace output {
             applyFillZonesInPlace(content, zones, orig_to_output, postTransform, false);
             applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
             combineImageColor(img, content, picture_mask);
+        }
+    }
+
+    QImage OutputGenerator::segmentImage(const BinaryImage& image, const QImage& color_image) const {
+        const BlackWhiteOptions::ColorSegmenterOptions& segmenterOptions
+                = m_colorParams.blackWhiteOptions().getColorSegmenterOptions();
+        if (!color_image.allGray()) {
+            return ColorSegmenter(
+                    image, color_image, m_dpi, segmenterOptions.getNoiseReduction(),
+                    segmenterOptions.getRedThresholdAdjustment(),
+                    segmenterOptions.getGreenThresholdAdjustment(),
+                    segmenterOptions.getBlueThresholdAdjustment()
+            ).getImage();
+        } else {
+            return ColorSegmenter(
+                    image, GrayImage(color_image), m_dpi, segmenterOptions.getNoiseReduction()
+            ).getImage();
         }
     }
 }  // namespace output

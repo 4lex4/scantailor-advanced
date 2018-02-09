@@ -88,7 +88,10 @@ namespace imageproc {
     ColorSegmenter::ColorSegmenter(const BinaryImage& image,
                                    const QImage& originalImage,
                                    const Dpi& dpi,
-                                   const int noiseThreshold)
+                                   const int noiseThreshold,
+                                   const int redThresholdAdjustment,
+                                   const int greenThresholdAdjustment,
+                                   const int blueThresholdAdjustment)
             : settings(dpi, noiseThreshold) {
         if (image.size() != originalImage.size()) {
             throw std::invalid_argument(
@@ -108,7 +111,7 @@ namespace imageproc {
                 throw std::invalid_argument("Error: wrong image format.");
             }
         }
-        fromRgb(image, originalImage);
+        fromRgb(image, originalImage, redThresholdAdjustment, greenThresholdAdjustment, blueThresholdAdjustment);
     }
 
     ColorSegmenter::ColorSegmenter(const BinaryImage& image,
@@ -167,34 +170,40 @@ namespace imageproc {
         return dst;
     }
 
-    void ColorSegmenter::fromRgb(const BinaryImage& image, const QImage& originalImage) {
+    void ColorSegmenter::fromRgb(const BinaryImage& image,
+                                 const QImage& originalImage,
+                                 const int redThresholdAdjustment,
+                                 const int greenThresholdAdjustment,
+                                 const int blueThresholdAdjustment) {
         this->originalImage = originalImage;
 
-        BinaryThreshold threshold = BinaryThreshold::otsuThreshold(originalImage);
         BinaryImage redComponent;
         {
             GrayImage redChannel = getRgbChannel(originalImage, RED_CHANNEL);
-            redComponent = BinaryImage(redChannel, threshold);
+            BinaryThreshold redThreshold = BinaryThreshold::otsuThreshold(redChannel);
+            redComponent = BinaryImage(redChannel, adjustThreshold(redThreshold, redThresholdAdjustment));
             rasterOp<RopAnd<RopSrc, RopDst>>(redComponent, image);
         }
         BinaryImage greenComponent;
         {
             GrayImage greenChannel = getRgbChannel(originalImage, GREEN_CHANNEL);
-            greenComponent = BinaryImage(greenChannel, threshold);
+            BinaryThreshold greenThreshold = BinaryThreshold::otsuThreshold(greenChannel);
+            greenComponent = BinaryImage(greenChannel, adjustThreshold(greenThreshold, greenThresholdAdjustment));
             rasterOp<RopAnd<RopSrc, RopDst>>(greenComponent, image);
         }
         BinaryImage blueComponent;
         {
             GrayImage blueChannel = getRgbChannel(originalImage, BLUE_CHANNEL);
-            blueComponent = BinaryImage(blueChannel, threshold);
+            BinaryThreshold blueThreshold = BinaryThreshold::otsuThreshold(blueChannel);
+            blueComponent = BinaryImage(blueChannel, adjustThreshold(blueThreshold, blueThresholdAdjustment));
             rasterOp<RopAnd<RopSrc, RopDst>>(blueComponent, image);
         }
         BinaryImage yellowComponent(redComponent);
         rasterOp<RopAnd<RopSrc, RopDst>>(yellowComponent, greenComponent);
         BinaryImage magentaComponent(redComponent);
         rasterOp<RopAnd<RopSrc, RopDst>>(magentaComponent, blueComponent);
-        BinaryImage azureComponent(greenComponent);
-        rasterOp<RopAnd<RopSrc, RopDst>>(azureComponent, blueComponent);
+        BinaryImage cyanComponent(greenComponent);
+        rasterOp<RopAnd<RopSrc, RopDst>>(cyanComponent, blueComponent);
 
         BinaryImage blackComponent(blueComponent);
         rasterOp<RopAnd<RopSrc, RopDst>>(blackComponent, yellowComponent);
@@ -204,19 +213,19 @@ namespace imageproc {
         rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, blackComponent);
         rasterOp<RopSubtract<RopDst, RopSrc>>(yellowComponent, blackComponent);
         rasterOp<RopSubtract<RopDst, RopSrc>>(magentaComponent, blackComponent);
-        rasterOp<RopSubtract<RopDst, RopSrc>>(azureComponent, blackComponent);
+        rasterOp<RopSubtract<RopDst, RopSrc>>(cyanComponent, blackComponent);
 
         rasterOp<RopSubtract<RopDst, RopSrc>>(redComponent, yellowComponent);
         rasterOp<RopSubtract<RopDst, RopSrc>>(redComponent, magentaComponent);
         rasterOp<RopSubtract<RopDst, RopSrc>>(greenComponent, yellowComponent);
-        rasterOp<RopSubtract<RopDst, RopSrc>>(greenComponent, azureComponent);
+        rasterOp<RopSubtract<RopDst, RopSrc>>(greenComponent, cyanComponent);
         rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, magentaComponent);
-        rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, azureComponent);
+        rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, cyanComponent);
 
         segmentsMap = ConnectivityMap(blackComponent, CONN8);
         segmentsMap.addComponents(yellowComponent, CONN8);
         segmentsMap.addComponents(magentaComponent, CONN8);
-        segmentsMap.addComponents(azureComponent, CONN8);
+        segmentsMap.addComponents(cyanComponent, CONN8);
         segmentsMap.addComponents(redComponent, CONN8);
         segmentsMap.addComponents(greenComponent, CONN8);
         segmentsMap.addComponents(blueComponent, CONN8);
@@ -404,6 +413,10 @@ namespace imageproc {
         }
 
         return dst;
+    }
+
+    inline BinaryThreshold ColorSegmenter::adjustThreshold(const BinaryThreshold threshold, const int adjustment) {
+        return qBound(1, int(threshold) + adjustment, 255);
     }
 
 } // namespace imageproc

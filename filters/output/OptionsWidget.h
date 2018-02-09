@@ -102,6 +102,12 @@ namespace output {
 
         void reduceNoiseChanged(int value);
 
+        void redAdjustmentChanged(int value);
+
+        void greenAdjustmentChanged(int value);
+
+        void blueAdjustmentChanged(int value);
+
         void posterizeToggled(bool checked);
 
         void posterizeLevelChanged(int value);

@@ -1769,8 +1769,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>646</width>
+            <height>452</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
@@ -2024,7 +2024,7 @@
                        </item>
                        <item>
                         <widget class="QWidget" name="segmenterOptionsWidget" native="true">
-                         <layout class="QHBoxLayout" name="horizontalLayout_29">
+                         <layout class="QVBoxLayout" name="verticalLayout_32">
                           <property name="leftMargin">
                            <number>0</number>
                           </property>
@@ -2038,59 +2038,207 @@
                            <number>0</number>
                           </property>
                           <item>
-                           <spacer name="horizontalSpacer_61">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                             <enum>QSizePolicy::Minimum</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>15</width>
-                              <height>1</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item>
-                           <widget class="QLabel" name="reduceNoiseLabel">
-                            <property name="text">
-                             <string>Reduce noise:</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QSpinBox" name="reduceNoiseSB">
-                            <property name="toolTip">
-                             <string/>
-                            </property>
-                            <property name="alignment">
-                             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                            </property>
-                            <property name="minimum">
+                           <layout class="QHBoxLayout" name="horizontalLayout_29">
+                            <property name="spacing">
                              <number>0</number>
                             </property>
-                            <property name="maximum">
-                             <number>999</number>
-                            </property>
-                            <property name="value">
-                             <number>0</number>
-                            </property>
-                           </widget>
+                            <item>
+                             <spacer name="horizontalSpacer_61">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeType">
+                               <enum>QSizePolicy::Minimum</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>15</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="rLabel">
+                              <property name="text">
+                               <string>R</string>
+                              </property>
+                              <property name="margin">
+                               <number>1</number>
+                              </property>
+                              <property name="indent">
+                               <number>0</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="redAdjustmentSB">
+                              <property name="toolTip">
+                               <string>Red component adjustment. Negative value means the segmenter will be more sensitive to red and vice versa for positive values.</string>
+                              </property>
+                              <property name="frame">
+                               <bool>false</bool>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                              </property>
+                              <property name="minimum">
+                               <number>-99</number>
+                              </property>
+                              <property name="maximum">
+                               <number>99</number>
+                              </property>
+                              <property name="value">
+                               <number>0</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="gLabel">
+                              <property name="text">
+                               <string>G</string>
+                              </property>
+                              <property name="margin">
+                               <number>1</number>
+                              </property>
+                              <property name="indent">
+                               <number>3</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="greenAdjustmentSB">
+                              <property name="toolTip">
+                               <string>Green component adjustment. Negative value means the segmenter will be more sensitive to green and vice versa for positive values.</string>
+                              </property>
+                              <property name="frame">
+                               <bool>false</bool>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                              </property>
+                              <property name="minimum">
+                               <number>-99</number>
+                              </property>
+                              <property name="maximum">
+                               <number>99</number>
+                              </property>
+                              <property name="value">
+                               <number>0</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="bLabel">
+                              <property name="text">
+                               <string>B</string>
+                              </property>
+                              <property name="margin">
+                               <number>1</number>
+                              </property>
+                              <property name="indent">
+                               <number>3</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="blueAdjustmentSB">
+                              <property name="toolTip">
+                               <string>Blue component adjustment. Negative value means the segmenter will be more sensitive to blue and vice versa for positive values.</string>
+                              </property>
+                              <property name="frame">
+                               <bool>false</bool>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                              </property>
+                              <property name="minimum">
+                               <number>-99</number>
+                              </property>
+                              <property name="maximum">
+                               <number>99</number>
+                              </property>
+                              <property name="value">
+                               <number>0</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_62">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>1</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
                           </item>
                           <item>
-                           <spacer name="horizontalSpacer_62">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>1</width>
-                              <height>1</height>
-                             </size>
-                            </property>
-                           </spacer>
+                           <layout class="QHBoxLayout" name="horizontalLayout_30">
+                            <item>
+                             <spacer name="horizontalSpacer_63">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeType">
+                               <enum>QSizePolicy::Minimum</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>15</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="reduceNoiseLabel">
+                              <property name="text">
+                               <string>Reduce noise:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QSpinBox" name="reduceNoiseSB">
+                              <property name="toolTip">
+                               <string/>
+                              </property>
+                              <property name="frame">
+                               <bool>true</bool>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                              </property>
+                              <property name="minimum">
+                               <number>0</number>
+                              </property>
+                              <property name="maximum">
+                               <number>999</number>
+                              </property>
+                              <property name="value">
+                               <number>0</number>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_64">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>1</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
                           </item>
                          </layout>
                         </widget>
@@ -2110,7 +2258,7 @@
                        </item>
                        <item>
                         <widget class="QWidget" name="posterizeOptionsWidget" native="true">
-                         <layout class="QVBoxLayout" name="verticalLayout_32">
+                         <layout class="QVBoxLayout" name="verticalLayout_34">
                           <property name="leftMargin">
                            <number>0</number>
                           </property>
@@ -2124,12 +2272,12 @@
                            <number>0</number>
                           </property>
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_30">
+                           <layout class="QHBoxLayout" name="horizontalLayout_31">
                             <property name="topMargin">
                              <number>0</number>
                             </property>
                             <item>
-                             <spacer name="horizontalSpacer_63">
+                             <spacer name="horizontalSpacer_65">
                               <property name="orientation">
                                <enum>Qt::Horizontal</enum>
                               </property>
@@ -2156,6 +2304,9 @@
                               <property name="toolTip">
                                <string>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</string>
                               </property>
+                              <property name="frame">
+                               <bool>true</bool>
+                              </property>
                               <property name="alignment">
                                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                               </property>
@@ -2168,7 +2319,7 @@
                              </widget>
                             </item>
                             <item>
-                             <spacer name="horizontalSpacer_64">
+                             <spacer name="horizontalSpacer_66">
                               <property name="orientation">
                                <enum>Qt::Horizontal</enum>
                               </property>
@@ -2183,12 +2334,12 @@
                            </layout>
                           </item>
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_31">
+                           <layout class="QHBoxLayout" name="horizontalLayout_32">
                             <property name="topMargin">
                              <number>0</number>
                             </property>
                             <item>
-                             <spacer name="horizontalSpacer_65">
+                             <spacer name="horizontalSpacer_67">
                               <property name="orientation">
                                <enum>Qt::Horizontal</enum>
                               </property>
@@ -2217,7 +2368,7 @@
                              </widget>
                             </item>
                             <item>
-                             <spacer name="horizontalSpacer_66">
+                             <spacer name="horizontalSpacer_68">
                               <property name="orientation">
                                <enum>Qt::Horizontal</enum>
                               </property>
@@ -2237,7 +2388,7 @@
                       </layout>
                      </item>
                      <item>
-                      <spacer name="horizontalSpacer_67">
+                      <spacer name="horizontalSpacer_69">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
                        </property>

@@ -317,6 +317,8 @@ namespace output {
                                           const imageproc::BinaryImage& picture_mask,
                                           bool binary_mode) const;
 
+        QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
+
         Dpi m_dpi;
         ColorParams m_colorParams;
         SplittingOptions m_splittingOptions;

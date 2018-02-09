@@ -277,8 +277,11 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             fillingColorBox->findData(colorCommonOptions.getFillingColor())
     );
 
-    colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
-    reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
+    colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
+    reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
+    redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
+    greenAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getGreenThresholdAdjustment());
+    blueAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getBlueThresholdAdjustment());
     posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
     posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
     posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
@@ -724,8 +727,13 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     blackWhiteOptions.setWolfCoef(wolfCoef->value());
     blackWhiteOptions.setWolfLowerBound(upperBound->value());
     blackWhiteOptions.setWolfLowerBound(lowerBound->value());
-    blackWhiteOptions.setColorSegmentationEnabled(colorSegmentationCB->isChecked());
-    blackWhiteOptions.setSegmentationNoiseReduction(reduceNoiseSB->value());
+    BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+    segmenterOptions.setEnabled(colorSegmentationCB->isChecked());
+    segmenterOptions.setNoiseReduction(reduceNoiseSB->value());
+    segmenterOptions.setRedThresholdAdjustment(redAdjustmentSB->value());
+    segmenterOptions.setGreenThresholdAdjustment(greenAdjustmentSB->value());
+    segmenterOptions.setBlueThresholdAdjustment(blueAdjustmentSB->value());
+    blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
     colorParams.setBlackWhiteOptions(blackWhiteOptions);
 
     SplittingOptions splittingOptions;

@@ -566,6 +566,11 @@ namespace output {
             if (!input.isBlackOnWhite()) {
                 result.invertPixels();
             }
+            if (!result.allGray()
+                && (result.format() != QImage::Format_ARGB32)
+                && (result.format() != QImage::Format_RGB32)) {
+                result = result.convertToFormat(QImage::Format_RGB32);
+            }
 
             return result;
         }();
@@ -1118,6 +1123,11 @@ namespace output {
             QImage result = input.origImage();
             if (!input.isBlackOnWhite()) {
                 result.invertPixels();
+            }
+            if (!result.allGray()
+                && (result.format() != QImage::Format_ARGB32)
+                && (result.format() != QImage::Format_RGB32)) {
+                result = result.convertToFormat(QImage::Format_RGB32);
             }
 
             return result;

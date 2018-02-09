@@ -1319,7 +1319,7 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
                 if (cmd.isEmpty()) {
                     QApplication::beep();
                 } else {
-                    std::system(cmd.toStdString().c_str());
+                    (void) std::system(cmd.toStdString().c_str());
                 }
             }
 

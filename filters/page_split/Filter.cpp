@@ -212,8 +212,8 @@ namespace page_split {
         m_selectedPageOrder = option;
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->getPageRecord(page_id.imageId()).isNull()) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->getPageRecord(page_info.id().imageId()).isNull()) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
@@ -221,7 +221,7 @@ namespace page_split {
 
         Settings::UpdateAction update;
         update.setLayoutType(pageSplitParams.getLayoutType());
-        m_ptrSettings->updatePage(page_id.imageId(), update);
+        m_ptrSettings->updatePage(page_info.id().imageId(), update);
     }
 
     OptionsWidget* Filter::optionsWidget() {

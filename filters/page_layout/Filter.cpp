@@ -39,6 +39,7 @@
 #include "CommandLine.h"
 #include <filters/output/Task.h>
 #include <filters/output/CacheDrivenTask.h>
+#include <UnitsConverter.h>
 
 namespace page_layout {
     Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& page_selection_accessor)
@@ -210,17 +211,26 @@ namespace page_layout {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-        // we need to recalculate the margins later basing on metric units and dpi
+        const UnitsConverter unitsConverter(page_info.metadata().dpi());
+
+        const Margins& margins = pageLayoutParams.getHardMargins();
+        double leftMargin = margins.left();
+        double topMargin = margins.top();
+        double rightMargin = margins.right();
+        double bottomMargin = margins.bottom();
+        unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
+        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
+
         m_ptrSettings->setPageParams(
-                page_id,
-                Params(Margins(-0.01, -0.01, -0.01, -0.01),
+                page_info.id(),
+                Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin),
                        QRectF(),
                        QRectF(),
                        QSizeF(),

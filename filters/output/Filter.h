@@ -29,7 +29,6 @@
 #include "FillZonePropFactory.h"
 #include <QImage>
 
-class PageId;
 class PageSelectionAccessor;
 class ThumbnailPixmapCache;
 class OutputFileNameGenerator;
@@ -61,7 +60,7 @@ namespace output {
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,

@@ -154,14 +154,14 @@ namespace fix_orientation {
         filter_el.appendChild(image_el);
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isRotationNull(page_id.imageId())) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isRotationNull(page_info.id().imageId())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
 
-        m_ptrSettings->applyRotation(page_id.imageId(), fixOrientationParams.getImageRotation());
+        m_ptrSettings->applyRotation(page_info.id().imageId(), fixOrientationParams.getImageRotation());
     }
 
     OptionsWidget* Filter::optionsWidget() {

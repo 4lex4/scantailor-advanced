@@ -30,7 +30,6 @@
 #include <QCoreApplication>
 #include <vector>
 
-class PageId;
 class PageSelectionAccessor;
 class QString;
 
@@ -74,7 +73,7 @@ namespace select_content {
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<page_layout::Task> next_task,

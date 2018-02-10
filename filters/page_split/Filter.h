@@ -29,7 +29,6 @@
 #include "PageOrderOption.h"
 #include <QCoreApplication>
 
-class PageId;
 class ImageId;
 class PageInfo;
 class ProjectPages;
@@ -70,7 +69,7 @@ namespace page_split {
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         intrusive_ptr<Task> createTask(const PageInfo& page_info,
                                        intrusive_ptr<deskew::Task> next_task,

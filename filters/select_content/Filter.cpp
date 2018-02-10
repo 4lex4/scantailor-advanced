@@ -33,6 +33,7 @@
 #include "CommandLine.h"
 #include <filters/page_layout/Task.h>
 #include <filters/page_layout/CacheDrivenTask.h>
+#include <UnitsConverter.h>
 
 namespace select_content {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
@@ -192,18 +193,25 @@ namespace select_content {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
+        const UnitsConverter unitsConverter(page_info.metadata().dpi());
+
+        const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
+        double pageRectWidth = pageRectSize.width();
+        double pageRectHeight = pageRectSize.height();
+        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
+
         m_ptrSettings->setPageParams(
-                page_id,
+                page_info.id(),
                 Params(QRectF(),
                        QSizeF(),
-                       QRectF(),
+                       QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
                        Dependencies(),
                        MODE_AUTO,
                        selectContentParams.getPageDetectMode(),

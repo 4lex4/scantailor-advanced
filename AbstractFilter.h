@@ -25,7 +25,7 @@
 #include <vector>
 
 class FilterUiInterface;
-class PageId;
+class PageInfo;
 class ProjectReader;
 class ProjectWriter;
 class AbstractRelinker;
@@ -69,8 +69,7 @@ public:
 
     virtual void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) = 0;
 
-    virtual void loadDefaultSettings(const PageId& page_id) {
-    };
+    virtual void loadDefaultSettings(const PageInfo& page_info) = 0;
 };
 
 

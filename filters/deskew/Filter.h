@@ -27,7 +27,6 @@
 #include "SafeDeletingQObjectPtr.h"
 #include "Settings.h"
 
-class PageId;
 class QString;
 class PageSelectionAccessor;
 
@@ -64,7 +63,7 @@ namespace deskew {
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<select_content::Task> next_task,

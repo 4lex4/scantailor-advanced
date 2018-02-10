@@ -155,15 +155,15 @@ namespace deskew {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::DeskewParams& deskewParams = defaultParams.getDeskewParams();
 
         m_ptrSettings->setPageParams(
-                page_id,
+                page_info.id(),
                 Params(deskewParams.getDeskewAngleDeg(), Dependencies(), deskewParams.getMode())
         );
     }

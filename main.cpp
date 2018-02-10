@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     JpegMetadataLoader::registerMyself();
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, app.applicationDirPath() + "/config");
 
     QSettings settings;
 

@@ -63,8 +63,6 @@ namespace output {
 
         void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, const QRectF& rect, const QPointF& focal) const;
 
-        ImageViewBase* findImageViewBase(QWidget* parent) const;
-
         std::unordered_map<QWidget*, ImageViewTab> m_registry;
         std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
         int m_prevImageViewTabIndex;

@@ -94,10 +94,10 @@ namespace page_layout {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        const Margins margins_mm(m_ptrSettings->getHardMarginsMM(page_id));
-        const Alignment alignment(m_ptrSettings->getPageAlignment(page_id));
-        m_ptrOptionsWidget->preUpdateUI(page_id, margins_mm, alignment);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        const Margins margins_mm(m_ptrSettings->getHardMarginsMM(page_info.id()));
+        const Alignment alignment(m_ptrSettings->getPageAlignment(page_info.id()));
+        m_ptrOptionsWidget->preUpdateUI(page_info, margins_mm, alignment);
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 

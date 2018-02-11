@@ -55,8 +55,8 @@ namespace deskew {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* const ui, const PageId& page_id) {
-        m_ptrOptionsWidget->preUpdateUI(page_id);
+    void Filter::preUpdateUI(FilterUiInterface* const ui, const PageInfo& page_info) {
+        m_ptrOptionsWidget->preUpdateUI(page_info.id());
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
@@ -121,7 +121,9 @@ namespace deskew {
         }
     }      // Filter::loadSettings
 
-    void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id,
+    void Filter::writePageSettings(QDomDocument& doc,
+                                   QDomElement& filter_el,
+                                   const PageId& page_id,
                                    const int numeric_id) const {
         const std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_id));
         if (!params) {

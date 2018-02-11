@@ -3,6 +3,7 @@
 #include <QtCore/QSettings>
 #include "UnitsProvider.h"
 #include "Dpm.h"
+#include "UnitsConverter.h"
 
 std::unique_ptr<UnitsProvider> UnitsProvider::instance = nullptr;
 
@@ -16,15 +17,6 @@ UnitsProvider* UnitsProvider::getInstance() {
     }
 
     return instance.get();
-}
-
-const Dpi& UnitsProvider::getDpi() const {
-    return unitsConverter.getDpi();
-}
-
-void UnitsProvider::setDpi(const Dpi& dpi) {
-    unitsConverter.setDpi(dpi);
-    dpiChanged();
 }
 
 Units UnitsProvider::getUnits() const {
@@ -41,16 +33,7 @@ void UnitsProvider::attachObserver(UnitsObserver* observer) {
 }
 
 void UnitsProvider::detachObserver(UnitsObserver* observer) {
-    auto it = std::find(observers.begin(), observers.end(), observer);
-    if (it != observers.end()) {
-        observers.erase(it);
-    }
-}
-
-void UnitsProvider::dpiChanged() {
-    for (UnitsObserver* observer : observers) {
-        observer->updateDpi(unitsConverter.getDpi());
-    }
+    observers.remove(observer);
 }
 
 void UnitsProvider::unitsChanged() {
@@ -59,17 +42,10 @@ void UnitsProvider::unitsChanged() {
     }
 }
 
-void UnitsProvider::convert(double& horizontalValue,
-                            double& verticalValue,
-                            Units fromUnits,
-                            Units toUnits) const {
-    unitsConverter.convert(horizontalValue, verticalValue, fromUnits, toUnits);
+void UnitsProvider::convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits, const Dpi& dpi) const {
+    UnitsConverter(dpi).convert(horizontalValue, verticalValue, fromUnits, units);
 }
 
-void UnitsProvider::convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits) const {
-    convert(horizontalValue, verticalValue, fromUnits, units);
-}
-
-void UnitsProvider::convertTo(double& horizontalValue, double& verticalValue, Units toUnits) const {
-    convert(horizontalValue, verticalValue, units, toUnits);
+void UnitsProvider::convertTo(double& horizontalValue, double& verticalValue, Units toUnits, const Dpi& dpi) const {
+    UnitsConverter(dpi).convert(horizontalValue, verticalValue, units, toUnits);
 }

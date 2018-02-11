@@ -7,36 +7,41 @@
 #include <QPointF>
 #include <QSizeF>
 #include "ImageViewInfoObserver.h"
+#include "Dpi.h"
+#include "NonCopyable.h"
 
 class ImageViewInfoProvider {
+    DECLARE_NON_COPYABLE(ImageViewInfoProvider)
+
 private:
-    static std::unique_ptr<ImageViewInfoProvider> instance;
-
     std::list<ImageViewInfoObserver*> observers;
-    QSizeF physSize;
+    Dpi dpi;
     QPointF mousePos;
-
-    ImageViewInfoProvider();
+    QSizeF physSize;
 
 public:
-    static ImageViewInfoProvider* getInstance();
+    explicit ImageViewInfoProvider(const Dpi& dpi);
+
+    ~ImageViewInfoProvider();
 
     void attachObserver(ImageViewInfoObserver* observer);
 
     void detachObserver(ImageViewInfoObserver* observer);
 
-    const QSizeF& getPhysSize() const;
-
     void setPhysSize(const QSizeF& physSize);
-
-    const QPointF& getMousePos() const;
 
     void setMousePos(const QPointF& mousePos);
 
-protected:
-    void physSizeChanged();
+    const Dpi& getDpi() const;
 
-    void mousePosChanged();
+    const QPointF& getMousePos() const;
+
+    const QSizeF& getPhysSize() const;
+
+private:
+    void physSizeChanged(const QSizeF& physSize) const;
+
+    void mousePosChanged(const QPointF& mousePos) const;
 };
 
 

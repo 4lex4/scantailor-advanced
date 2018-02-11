@@ -60,7 +60,7 @@ public:
 
     virtual void performRelinking(const AbstractRelinker& relinker) = 0;
 
-    virtual void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) = 0;
+    virtual void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) = 0;
 
     virtual void updateStatistics() {
     }

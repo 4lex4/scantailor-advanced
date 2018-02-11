@@ -74,7 +74,6 @@
 #include "ui_BatchProcessingLowerPanel.h"
 #include "version.h"
 #include "Application.h"
-#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
 #include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
@@ -787,7 +786,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
 void MainWindow::setImageWidget(QWidget* widget,
                                 const Ownership ownership,
                                 DebugImages* debug_images,
-                                bool clearImageWidget) {
+                                bool clear_image_widget) {
     if (isBatchProcessingInProgress() && (widget != m_ptrBatchProcessingWidget.get())) {
         if (ownership == TRANSFER_OWNERSHIP) {
             delete widget;
@@ -797,16 +796,15 @@ void MainWindow::setImageWidget(QWidget* widget,
     }
 
     QWidget* current_widget = m_pImageFrameLayout->currentWidget();
-    if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != NULL) {
-        if (!clearImageWidget) {
+    if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != nullptr) {
+        if (!clear_image_widget) {
             return;
         }
     }
 
-    bool current_widget_isImage = (dynamic_cast<output::TabbedImageView*>(current_widget) != NULL)
-                                  || (dynamic_cast<ImageViewBase*>(current_widget) != NULL);
+    bool current_widget_is_image = (Utils::castOrFindChild<ImageViewBase*>(current_widget) != nullptr);
 
-    if (clearImageWidget || !current_widget_isImage) {
+    if (clear_image_widget || !current_widget_is_image) {
         removeImageWidget();
     }
 
@@ -816,7 +814,7 @@ void MainWindow::setImageWidget(QWidget* widget,
 
     if (!debug_images || debug_images->empty()) {
         m_pImageFrameLayout->addWidget(widget);
-        if (!clearImageWidget && current_widget_isImage) {
+        if (!clear_image_widget && current_widget_is_image) {
             m_pImageFrameLayout->setCurrentWidget(widget);
         }
     } else {
@@ -1671,8 +1669,6 @@ void MainWindow::updateMainArea() {
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
-        ImageViewInfoProvider::getInstance()->setMousePos(QPointF());
-        ImageViewInfoProvider::getInstance()->setPhysSize(QRectF().size());
     } else {
         if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
             filterDockWidget->setEnabled(true);
@@ -1731,7 +1727,7 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
             m_ptrProcessingIndicationWidget->processingRestartedEffect();
         }
         setImageWidget(m_ptrProcessingIndicationWidget.get(), KEEP_OWNERSHIP, 0, false);
-        m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page.id());
+        m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page);
     }
 
     assert(m_ptrThumbnailCache);

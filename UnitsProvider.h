@@ -5,7 +5,6 @@
 #include <memory>
 #include <list>
 #include "UnitsObserver.h"
-#include "UnitsConverter.h"
 
 class Dpi;
 
@@ -15,16 +14,11 @@ private:
 
     std::list<UnitsObserver*> observers;
     Units units;
-    UnitsConverter unitsConverter;
 
     UnitsProvider();
 
 public:
     static UnitsProvider* getInstance();
-
-    const Dpi& getDpi() const;
-
-    void setDpi(const Dpi& dpi);
 
     Units getUnits() const;
 
@@ -34,14 +28,11 @@ public:
 
     void detachObserver(UnitsObserver* observer);
 
-    void convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const;
+    void convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits, const Dpi& dpi) const;
 
-    void convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits) const;
-
-    void convertTo(double& horizontalValue, double& verticalValue, Units toUnits) const;
+    void convertTo(double& horizontalValue, double& verticalValue, Units toUnits, const Dpi& dpi) const;
 
 protected:
-    void dpiChanged();
 
     void unitsChanged();
 };

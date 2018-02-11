@@ -688,7 +688,7 @@ namespace page_layout {
 
     void ImageView::updatePhysSize() {
         if (m_outerRect.isValid()) {
-            ImageViewInfoProvider::getInstance()->setPhysSize(m_outerRect.size());
+            infoProvider().setPhysSize(m_outerRect.size());
         } else {
             ImageViewBase::updatePhysSize();
         }

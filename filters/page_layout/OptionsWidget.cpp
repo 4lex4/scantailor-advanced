@@ -96,10 +96,11 @@ namespace page_layout {
 
     OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(const PageId& page_id, const Margins& margins_mm, const Alignment& alignment) {
+    void OptionsWidget::preUpdateUI(const PageInfo& page_info, const Margins& margins_mm, const Alignment& alignment) {
         removeUiConnections();
 
-        m_pageId = page_id;
+        m_pageId = page_info.id();
+        m_dpi = page_info.metadata().dpi();
         m_marginsMM = margins_mm;
         m_alignment = alignment;
 
@@ -130,7 +131,7 @@ namespace page_layout {
         alignmentMode->blockSignals(false);
         updateAlignmentButtonsEnabled();
 
-        autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(page_id));
+        autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(m_pageId));
         updateMarginsControlsEnabled();
 
         m_leftRightLinked = m_leftRightLinked && (margins_mm.left() == margins_mm.right());
@@ -208,8 +209,8 @@ namespace page_layout {
         double dummy;
         double leftMarginSpinBoxValue = leftMarginSpinBox->value();
         double rightMarginSpinBoxValue = rightMarginSpinBox->value();
-        UnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES);
-        UnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
+        UnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
 
         m_marginsMM.setLeft(leftMarginSpinBoxValue);
         m_marginsMM.setRight(rightMarginSpinBoxValue);
@@ -231,8 +232,8 @@ namespace page_layout {
         double dummy;
         double topMarginSpinBoxValue = topMarginSpinBox->value();
         double bottomMarginSpinBoxValue = bottomMarginSpinBox->value();
-        UnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES);
-        UnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES, m_dpi);
+        UnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES, m_dpi);
 
         m_marginsMM.setTop(topMarginSpinBoxValue);
         m_marginsMM.setBottom(bottomMarginSpinBoxValue);
@@ -387,8 +388,8 @@ namespace page_layout {
         double bottomMarginValue = m_marginsMM.bottom();
         double leftMarginValue = m_marginsMM.left();
         double rightMarginValue = m_marginsMM.right();
-        UnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES);
-        UnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES);
+        UnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES, m_dpi);
+        UnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES, m_dpi);
 
         topMarginSpinBox->setValue(topMarginValue);
         bottomMarginSpinBox->setValue(bottomMarginValue);

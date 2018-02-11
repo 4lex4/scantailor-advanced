@@ -54,7 +54,7 @@ namespace output {
 
         void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
         QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 

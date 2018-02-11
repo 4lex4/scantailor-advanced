@@ -20,6 +20,7 @@
 #include <ImageViewBase.h>
 #include "DespeckleView.h"
 #include <QKeyEvent>
+#include "../../Utils.h"
 
 namespace output {
     TabbedImageView::TabbedImageView(QWidget* parent)
@@ -65,7 +66,7 @@ namespace output {
 
         copyViewZoomAndPos(m_prevImageViewTabIndex, idx);
 
-        if (findImageViewBase(widget(idx)) != nullptr) {
+        if (Utils::castOrFindChild<ImageViewBase*>(widget(idx)) != nullptr) {
             m_prevImageViewTabIndex = idx;
         }
     }
@@ -94,8 +95,8 @@ namespace output {
         const QRectF& old_view_rect = m_tabImageRectMap->at(old_view_tab);
         const QRectF& new_view_rect = m_tabImageRectMap->at(new_view_tab);
 
-        auto* old_image_view = findImageViewBase(widget(old_idx));
-        auto* new_image_view = findImageViewBase(widget(new_idx));
+        auto* old_image_view = Utils::castOrFindChild<ImageViewBase*>(widget(old_idx));
+        auto* new_image_view = Utils::castOrFindChild<ImageViewBase*>(widget(new_idx));
         if ((old_image_view == nullptr) || (new_image_view == nullptr)) {
             return;
         }
@@ -146,24 +147,6 @@ namespace output {
 
         hor_bar.setValue(hor_value);
         ver_bar.setValue(ver_value);
-    }
-
-    ImageViewBase* TabbedImageView::findImageViewBase(QWidget* parent) const {
-        if (parent == nullptr) {
-            return nullptr;
-        }
-
-        if (auto* resource = dynamic_cast<ImageViewBase*>(parent)) {
-            return resource;
-        } else {
-            for (QObject* child : parent->children()) {
-                if ((resource = findImageViewBase(dynamic_cast<QWidget*>(child)))) {
-                    return resource;
-                }
-            }
-        }
-
-        return nullptr;
     }
 
     void TabbedImageView::keyReleaseEvent(QKeyEvent* event) {

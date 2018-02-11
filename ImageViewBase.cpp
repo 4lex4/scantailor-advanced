@@ -27,8 +27,8 @@
 #include "imageproc/Transform.h"
 #include "OpenGLSupport.h"
 #include "ColorSchemeManager.h"
-#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
+#include "StatusBarPanel.h"
 #include <QScrollBar>
 #include <QSettings>
 #include <QPointer>
@@ -36,6 +36,8 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QGLWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QStatusBar>
 
 using namespace imageproc;
 
@@ -145,7 +147,8 @@ ImageViewBase::ImageViewBase(const QImage& image,
           m_transformChangeWatchersActive(0),
           m_ignoreScrollEvents(0),
           m_ignoreResizeEvents(0),
-          m_hqTransformEnabled(true) {
+          m_hqTransformEnabled(true),
+          m_infoProvider(Dpm(m_image)) {
     /* For some reason, the default viewport fills background with
      * a color different from QPalette::Window. Here we make it not
      * fill it at all, assuming QMainWindow will do that anyway
@@ -197,13 +200,6 @@ ImageViewBase::ImageViewBase(const QImage& image,
             this, SLOT(initiateBuildingHqVersion())
     );
 
-    {
-        Dpi image_dpi = Dpm(m_image);
-        if (UnitsProvider::getInstance()->getDpi() != image_dpi) {
-            UnitsProvider::getInstance()->setDpi(image_dpi);
-        };
-    }
-
     setMouseTracking(true);
     m_cursorTrackerTimer.setSingleShot(true);
     m_cursorTrackerTimer.setInterval(150);  // msec
@@ -213,7 +209,7 @@ ImageViewBase::ImageViewBase(const QImage& image,
                 if (!m_cursorPos.isNull()) {
                     cursorPos = m_widgetToVirtual.map(m_cursorPos) - m_virtualImageCropArea.boundingRect().topLeft();
                 }
-                ImageViewInfoProvider::getInstance()->setMousePos(cursorPos);
+                m_infoProvider.setMousePos(cursorPos);
             }
     );
 
@@ -621,6 +617,16 @@ void ImageViewBase::enterEvent(QEvent* event) {
 void ImageViewBase::leaveEvent(QEvent* event) {
     updateCursorPos(QPointF());
     QAbstractScrollArea::leaveEvent(event);
+}
+
+void ImageViewBase::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+
+    if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
+        if (auto* statusBarPanel = mainWindow->statusBar()->findChild<StatusBarPanel*>()) {
+            statusBarPanel->setInfoProvider(&infoProvider());
+        }
+    }
 }
 
 /**
@@ -1050,7 +1056,11 @@ void ImageViewBase::updateCursorPos(const QPointF& pos) {
 }
 
 void ImageViewBase::updatePhysSize() {
-    ImageViewInfoProvider::getInstance()->setPhysSize(m_virtualImageCropArea.boundingRect().size());
+    m_infoProvider.setPhysSize(m_virtualImageCropArea.boundingRect().size());
+}
+
+ImageViewInfoProvider& ImageViewBase::infoProvider() {
+    return m_infoProvider;
 }
 
 /*==================== ImageViewBase::HqTransformTask ======================*/

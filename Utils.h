@@ -30,6 +30,9 @@ public:
     template<typename M, typename K, typename V>
     static typename M::iterator unorderedMapSetValue(M& map, const K& key, const V& val);
 
+    template<typename T>
+    static T castOrFindChild(QObject* object);
+
     /**
      * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
      *
@@ -92,6 +95,15 @@ typename M::iterator Utils::unorderedMapSetValue(M& map, const K& key, const V& 
         it->second = val;
 
         return it;
+    }
+}
+
+template<typename T>
+T Utils::castOrFindChild(QObject* object) {
+    if (auto result = dynamic_cast<T>(object)) {
+        return result;
+    } else {
+        return object->findChild<T>();
     }
 }
 

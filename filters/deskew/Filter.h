@@ -55,7 +55,7 @@ namespace deskew {
 
         void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
         void updateStatistics() override;
 

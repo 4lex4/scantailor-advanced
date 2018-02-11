@@ -61,12 +61,12 @@ namespace fix_orientation {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
         if (m_ptrOptionsWidget.get()) {
             const OrthogonalRotation rotation(
-                    m_ptrSettings->getRotationFor(page_id.imageId())
+                    m_ptrSettings->getRotationFor(page_info.id().imageId())
             );
-            m_ptrOptionsWidget->preUpdateUI(page_id, rotation);
+            m_ptrOptionsWidget->preUpdateUI(page_info.id(), rotation);
             ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
         }
     }

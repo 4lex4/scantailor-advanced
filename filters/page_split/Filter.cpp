@@ -71,8 +71,8 @@ namespace page_split {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        m_ptrOptionsWidget->preUpdateUI(page_id);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        m_ptrOptionsWidget->preUpdateUI(page_info.id());
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
@@ -160,7 +160,9 @@ namespace page_split {
         m_ptrPages->autoSetLayoutTypeFor(image_id, orientation);
     }
 
-    void Filter::writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id,
+    void Filter::writeImageSettings(QDomDocument& doc,
+                                    QDomElement& filter_el,
+                                    const ImageId& image_id,
                                     const int numeric_id) const {
         const Settings::Record record(m_ptrSettings->getPageRecord(image_id));
 

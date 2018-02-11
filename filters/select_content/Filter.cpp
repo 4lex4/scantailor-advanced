@@ -83,8 +83,8 @@ namespace select_content {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        m_ptrOptionsWidget->preUpdateUI(page_id);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        m_ptrOptionsWidget->preUpdateUI(page_info);
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 

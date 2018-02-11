@@ -13,8 +13,6 @@ public:
 
     virtual ~UnitsObserver();
 
-    virtual void updateDpi(const Dpi& dpi);
-
     virtual void updateUnits(Units units) = 0;
 };
 

@@ -548,7 +548,7 @@ SET(
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
         ImageViewInfoProvider.cpp ImageViewInfoProvider.h
-        ImageViewInfoObserver.cpp ImageViewInfoObserver.h
+        ImageViewInfoObserver.h
         UnitsProvider.cpp UnitsProvider.h
         UnitsObserver.h UnitsObserver.cpp
 		UnitsConverter.cpp UnitsConverter.h

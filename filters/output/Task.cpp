@@ -563,8 +563,6 @@ namespace output {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpm(m_outputImage));
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
@@ -612,15 +610,13 @@ namespace output {
             );
         } else {
             picture_zone_editor = std::make_unique<output::PictureZoneEditor>(
-
                     m_origImage, downscaled_orig_pixmap, m_pictureMask,
                     m_xform.transform(), m_xform.resultingPreCropArea(),
                     m_pageId, m_ptrSettings
-
             );
             QObject::connect(
-                    picture_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId &)),
-                    opt_widget, SIGNAL(invalidateThumbnail(const PageId &))
+                    picture_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)),
+                    opt_widget, SIGNAL(invalidateThumbnail(const PageId&))
             );
             tab_image_rect_map->insert(
                     std::pair<ImageViewTab, QRectF>(TAB_PICTURE_ZONES, m_xform.resultingPreCropArea().boundingRect()));

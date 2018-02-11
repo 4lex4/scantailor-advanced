@@ -1,58 +1,63 @@
 
 #include <QtCore/QRectF>
+#include <QtCore/QMutexLocker>
 #include "ImageViewInfoProvider.h"
+#include "Units.h"
 
-std::unique_ptr<ImageViewInfoProvider> ImageViewInfoProvider::instance = nullptr;
+ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi)
+        : dpi(dpi) {
+};
 
-ImageViewInfoProvider::ImageViewInfoProvider()
-        : physSize(QRectF().size()) {
-}
-
-ImageViewInfoProvider* ImageViewInfoProvider::getInstance() {
-    if (instance == nullptr) {
-        instance.reset(new ImageViewInfoProvider());
+ImageViewInfoProvider::~ImageViewInfoProvider() {
+    for (ImageViewInfoObserver* observer : observers) {
+        observer->clearImageViewInfo();
     }
-
-    return instance.get();
 }
 
 void ImageViewInfoProvider::attachObserver(ImageViewInfoObserver* observer) {
+    observer->updateDpi(dpi);
+    observer->updatePhysSize(physSize);
+    observer->updateMousePos(mousePos);
+
     observers.push_back(observer);
 }
 
 void ImageViewInfoProvider::detachObserver(ImageViewInfoObserver* observer) {
-    auto it = std::find(observers.begin(), observers.end(), observer);
-    if (it != observers.end()) {
-        observers.erase(it);
-    }
-}
+    observer->clearImageViewInfo();
 
-const QSizeF& ImageViewInfoProvider::getPhysSize() const {
-    return physSize;
+    observers.remove(observer);
 }
 
 void ImageViewInfoProvider::setPhysSize(const QSizeF& physSize) {
     ImageViewInfoProvider::physSize = physSize;
-    physSizeChanged();
+    physSizeChanged(physSize);
+}
+
+void ImageViewInfoProvider::setMousePos(const QPointF& mousePos) {
+    ImageViewInfoProvider::mousePos = mousePos;
+    mousePosChanged(mousePos);
+}
+
+void ImageViewInfoProvider::physSizeChanged(const QSizeF& physSize) const {
+    for (ImageViewInfoObserver* observer : observers) {
+        observer->updatePhysSize(physSize);
+    }
+}
+
+void ImageViewInfoProvider::mousePosChanged(const QPointF& mousePos) const {
+    for (ImageViewInfoObserver* observer : observers) {
+        observer->updateMousePos(mousePos);
+    }
+}
+
+const Dpi& ImageViewInfoProvider::getDpi() const {
+    return dpi;
 }
 
 const QPointF& ImageViewInfoProvider::getMousePos() const {
     return mousePos;
 }
 
-void ImageViewInfoProvider::setMousePos(const QPointF& mousePos) {
-    ImageViewInfoProvider::mousePos = mousePos;
-    mousePosChanged();
-}
-
-void ImageViewInfoProvider::physSizeChanged() {
-    for (ImageViewInfoObserver* observer : observers) {
-        observer->updatePhysSize(physSize);
-    }
-}
-
-void ImageViewInfoProvider::mousePosChanged() {
-    for (ImageViewInfoObserver* observer : observers) {
-        observer->updateMousePos(mousePos);
-    }
+const QSizeF& ImageViewInfoProvider::getPhysSize() const {
+    return physSize;
 }

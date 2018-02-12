@@ -36,7 +36,7 @@ public:
 
     void clearImageViewInfo() override;
 
-    void updatePage(int pageNumber, const PageId& pageId);
+    void updatePage(int pageNumber, size_t pageCount, const PageId& pageId);
 
     void clear();
 

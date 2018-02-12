@@ -153,7 +153,8 @@ MainWindow::MainWindow()
     connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& page_info) {
         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
         if (pageSequence.numPages() > 0) {
-            m_statusBarPanel->updatePage(pageSequence.pageNo(page_info.id()) + 1, page_info.id());
+            m_statusBarPanel->updatePage(pageSequence.pageNo(page_info.id()) + 1,
+                                         pageSequence.numPages(), page_info.id());
         } else {
             m_statusBarPanel->clear();
         }
@@ -1684,7 +1685,7 @@ void MainWindow::updateMainArea() {
             filterList->setBatchProcessingPossible(true);
             PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
             if (pageSequence.numPages() > 0) {
-                m_statusBarPanel->updatePage(pageSequence.pageNo(page.id()) + 1, page.id());
+                m_statusBarPanel->updatePage(pageSequence.pageNo(page.id()) + 1, pageSequence.numPages(), page.id());
             }
             loadPageInteractive(page);
         }

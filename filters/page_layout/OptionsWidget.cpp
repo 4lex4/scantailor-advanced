@@ -395,6 +395,11 @@ namespace page_layout {
         bottomMarginSpinBox->setValue(bottomMarginValue);
         leftMarginSpinBox->setValue(leftMarginValue);
         rightMarginSpinBox->setValue(rightMarginValue);
+
+        m_leftRightLinked = m_leftRightLinked && (leftMarginSpinBox->value() == rightMarginSpinBox->value());
+        m_topBottomLinked = m_topBottomLinked && (topMarginSpinBox->value() == bottomMarginSpinBox->value());
+        updateLinkDisplay(topBottomLink, m_topBottomLinked);
+        updateLinkDisplay(leftRightLink, m_leftRightLinked);
     }
 
     void OptionsWidget::updateLinkDisplay(QToolButton* button, const bool linked) {

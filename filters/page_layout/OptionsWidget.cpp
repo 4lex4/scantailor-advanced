@@ -161,6 +161,13 @@ namespace page_layout {
 
     void OptionsWidget::marginsSetExternally(const Margins& margins_mm) {
         m_marginsMM = margins_mm;
+
+        if (autoMargins->isChecked()) {
+            autoMargins->setChecked(false);
+            m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, false);
+            updateMarginsControlsEnabled();
+        }
+
         updateMarginsDisplay();
     }
 

@@ -83,8 +83,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     brokenChainIcon.addPixmap(
             QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
     );
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
     Utils::unorderedMapSetValue(
             alignmentByButton, alignTopLeftBtn,
@@ -233,10 +233,10 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
     bottomMarginSpinBox->setValue(margins.bottom());
     leftMarginSpinBox->setValue(margins.left());
 
-    leftRightLinkEnabled = (margins.top() == margins.bottom());
-    topBottomLinkEnabled = (margins.left() == margins.right());
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    topBottomLinkEnabled= (margins.top() == margins.bottom());
+    leftRightLinkEnabled = (margins.left() == margins.right());
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
     const Alignment& alignment = params.getAlignment();
     if (alignment.vertical() == Alignment::VAUTO) {
@@ -841,7 +841,7 @@ void DefaultParamsDialog::setLinkButtonLinked(QToolButton* button, bool linked) 
 
 void DefaultParamsDialog::topBottomLinkClicked() {
     topBottomLinkEnabled = !topBottomLinkEnabled;
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     if (topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
         const double new_margin = std::min(
                 topMarginSpinBox->value(), bottomMarginSpinBox->value()
@@ -853,7 +853,7 @@ void DefaultParamsDialog::topBottomLinkClicked() {
 
 void DefaultParamsDialog::leftRightLinkClicked() {
     leftRightLinkEnabled = !leftRightLinkEnabled;
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
     if (leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
         const double new_margin = std::min(
                 leftMarginSpinBox->value(), rightMarginSpinBox->value()

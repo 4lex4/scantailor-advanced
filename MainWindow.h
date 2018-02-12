@@ -297,6 +297,8 @@ private:
 
     PageSelectionAccessor newPageSelectionAccessor();
 
+    void setDockWidgetsVisible(bool state);
+
     QSizeF m_maxLogicalThumbSize;
     intrusive_ptr<ProjectPages> m_ptrPages;
     intrusive_ptr<StageSequence> m_ptrStages;

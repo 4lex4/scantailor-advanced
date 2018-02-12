@@ -1661,20 +1661,14 @@ PageView MainWindow::getCurrentView() const {
 void MainWindow::updateMainArea() {
     if (m_ptrPages->numImages() == 0) {
         filterList->setBatchProcessingPossible(false);
-        if (filterDockWidget->isEnabled() || thumbnailsDockWidget->isEnabled()) {
-            filterDockWidget->setEnabled(false);
-            thumbnailsDockWidget->setEnabled(false);
-        }
+        setDockWidgetsVisible(false);
         showNewOpenProjectPanel();
         m_statusBarPanel->clear();
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
     } else {
-        if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
-            filterDockWidget->setEnabled(true);
-            thumbnailsDockWidget->setEnabled(true);
-        }
+        setDockWidgetsVisible(true);
         const PageInfo page(m_ptrThumbSequence->selectionLeader());
         if (page.isNull()) {
             filterList->setBatchProcessingPossible(false);
@@ -2232,5 +2226,10 @@ void MainWindow::changeEvent(QEvent* event) {
                 break;
         }
     }
+}
+
+void MainWindow::setDockWidgetsVisible(bool state) {
+    filterDockWidget->setVisible(state);
+    thumbnailsDockWidget->setVisible(state);
 }
 

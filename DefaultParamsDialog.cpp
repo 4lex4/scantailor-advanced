@@ -982,9 +982,9 @@ void DefaultParamsDialog::profileChanged(const int index) {
     } else {
         std::unique_ptr<DefaultParams> profile = profileManager.readProfile(profileCB->itemData(index).toString());
         if (profile != nullptr) {
-            profileSaveButton->setEnabled(false);
+            profileSaveButton->setEnabled(true);
             profileDeleteButton->setEnabled(true);
-            setTabWidgetsEnabled(false);
+            setTabWidgetsEnabled(true);
 
             loadParams(*profile);
         } else {
@@ -1014,15 +1014,16 @@ void DefaultParamsDialog::profileSavePressed() {
     }
 
     if (profileManager.writeProfile(*buildParams(), profileCB->currentText())) {
-        const QString profileName = profileCB->currentText();
-        profileCB->setItemData(profileCB->currentIndex(), profileName);
-        profileCB->setItemText(profileCB->currentIndex(), profileName);
-        customProfileItemIdx = profileCB->count();
-        profileCB->addItem(tr("Custom"), "Custom");
+        if (profileCB->currentIndex() == customProfileItemIdx) {
+            const QString profileName = profileCB->currentText();
+            profileCB->setItemData(profileCB->currentIndex(), profileName);
+            profileCB->setItemText(profileCB->currentIndex(), profileName);
+            customProfileItemIdx = profileCB->count();
+            profileCB->addItem(tr("Custom"), "Custom");
 
-        profileSaveButton->setEnabled(false);
-        profileDeleteButton->setEnabled(true);
-        setTabWidgetsEnabled(false);
+            profileCB->setEditable(false);
+            profileDeleteButton->setEnabled(true);
+        }
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Error saving the profile."));
     }

@@ -977,6 +977,9 @@ namespace output {
             outsideBackgroundColor = Qt::white;
         } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
             outsideBackgroundColor = input.isBlackOnWhite() ? Qt::white : Qt::black;
+            if (!render_params.needBinarization()) {
+                reserveBlackAndWhite(maybe_normalized);
+            }
         }
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
         dst.fill(outsideBackgroundColor);
@@ -1866,6 +1869,9 @@ namespace output {
             outsideBackgroundColor = Qt::white;
         } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
             outsideBackgroundColor = input.isBlackOnWhite() ? Qt::white : Qt::black;
+            if (!render_params.needBinarization()) {
+                reserveBlackAndWhite(dewarped);
+            }
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 

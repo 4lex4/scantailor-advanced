@@ -1143,8 +1143,15 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
         }  // Otherwise probably no project is loaded.
     }
 
-    focusButton->setChecked(true);  // Should go before resetThumbSequence().
+    const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
+    const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
+
     resetThumbSequence(currentPageOrderProvider());
+
+    if (!focusButton->isChecked()) {
+        thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);
+        thumbView->verticalScrollBar()->setValue(ver_scroll_bar_pos);
+    }
 
     // load default settings for all the pages
     for (const PageInfo& pageInfo : m_ptrThumbSequence->toPageSequence()) {

@@ -1,6 +1,7 @@
 
 #include <cassert>
 #include <unordered_set>
+#include <set>
 #include "ColorTable.h"
 #include "BinaryImage.h"
 
@@ -49,18 +50,23 @@ namespace imageproc {
     }
 
 
-    ColorTable& ColorTable::posterize(const int level, const bool forceBlackAndWhite) {
+    ColorTable& ColorTable::posterize(const int level,
+                                      bool normalize,
+                                      const bool forceBlackAndWhite,
+                                      const int normalizeBlackLevel,
+                                      const int normalizeWhiteLevel) {
         if ((level < 2) || (level > 255)) {
             throw std::invalid_argument("error: level must be a value between 2 and 255 inclusive");
         }
-        if (level == 255) {
+        if ((level == 255) && !normalize && !forceBlackAndWhite) {
             return *this;
         }
 
         std::unordered_map<uint32_t, uint32_t> oldToNewColorMap;
-        size_t newColorsCount;
+        size_t newColorTableSize;
 
         {
+            // Get the palette with statistics.
             std::unordered_map<uint32_t, int> paletteStatMap;
             switch (image.format()) {
                 case QImage::Format_Indexed8:
@@ -74,31 +80,27 @@ namespace imageproc {
                     return *this;
             }
 
+            // We have to normalize palette in order posterize to work with pale images.
+            std::unordered_map<uint32_t, uint32_t> colorToNormalizedMap
+                    = normalizePalette(paletteStatMap, normalizeBlackLevel, normalizeWhiteLevel);
+
+            // Build color groups resulted from splitting RGB space
             std::unordered_map<uint32_t, std::list<uint32_t>> groupMap;
             const double levelStride = 255.0 / level;
             for (const auto& colorAndStat : paletteStatMap) {
                 const uint32_t color = colorAndStat.first;
+                const uint32_t normalized_color = colorToNormalizedMap[color];
 
-                auto redGroupIdx = static_cast<const int>(qRed(color) / levelStride);
-                auto blueGroupIdx = static_cast<const int>(qGreen(color) / levelStride);
-                auto greenGroupIdx = static_cast<const int>(qBlue(color) / levelStride);
+                auto redGroupIdx = static_cast<const int>(qRed(normalized_color) / levelStride);
+                auto blueGroupIdx = static_cast<const int>(qGreen(normalized_color) / levelStride);
+                auto greenGroupIdx = static_cast<const int>(qBlue(normalized_color) / levelStride);
 
                 auto group = static_cast<uint32_t>((redGroupIdx << 16) | (greenGroupIdx << 8) | (blueGroupIdx));
+
                 groupMap[group].push_back(color);
             }
 
-            if (forceBlackAndWhite) {
-                const int maxLevelIdx = level - 1;
-                auto whiteGroup = static_cast<uint32_t>((maxLevelIdx << 16) | (maxLevelIdx << 8) | (maxLevelIdx));
-                uint32_t blackGroup = 0;
-
-                groupMap[whiteGroup].push_back(0xffffffffu);
-                groupMap[blackGroup].push_back(0xff000000u);
-
-                paletteStatMap[0xffffffffu] = std::numeric_limits<int>::max();
-                paletteStatMap[0xff000000u] = std::numeric_limits<int>::max();
-            }
-
+            // Find the most often occurring color in the group and map the other colors in the group to this.
             for (const auto& groupAndColors : groupMap) {
                 const std::list<uint32_t>& colors = groupAndColors.second;
                 assert(!colors.empty());
@@ -110,18 +112,27 @@ namespace imageproc {
                     }
                 }
 
-                for (uint32_t color : colors) {
-                    oldToNewColorMap[color] = mostOftenColorInGroup;
+                if (forceBlackAndWhite) {
+                    if (normalize) {
+                        colorToNormalizedMap[0xff000000u] = 0xff000000u;
+                        colorToNormalizedMap[0xffffffffu] = 0xffffffffu;
+                    }
+                    makeGrayBlackAndWhiteInPlace(mostOftenColorInGroup, colorToNormalizedMap[mostOftenColorInGroup]);
+                }
+
+                for (const uint32_t& color : colors) {
+                    oldToNewColorMap[color] = normalize ? colorToNormalizedMap[mostOftenColorInGroup]
+                                                        : mostOftenColorInGroup;
                 }
             }
 
-            newColorsCount = groupMap.size();
+            newColorTableSize = groupMap.size();
         }
 
         if (image.format() == QImage::Format_Indexed8) {
             remapColorsInIndexedImage(oldToNewColorMap);
         } else {
-            if (newColorsCount <= 256) {
+            if (newColorTableSize <= 256) {
                 buildIndexedImageFromRgb(oldToNewColorMap);
             } else {
                 remapColorsInRgbImage(oldToNewColorMap);
@@ -261,6 +272,99 @@ namespace imageproc {
         }
 
         image = image.convertToFormat(QImage::Format_Indexed8, newColorTable);
+    }
+
+    std::unordered_map<uint32_t, uint32_t> ColorTable::normalizePalette(
+            const std::unordered_map<uint32_t, int>& palette,
+            const int normalizeBlackLevel,
+            const int normalizeWhiteLevel) const {
+        const int pixelCount = image.width() * image.height();
+        const double threshold = 0.0005; // must be larger then (1 / 256)
+
+        int min_level = 255;
+        int max_level = 0;
+        {
+            // Build RGB histogram from colors with statistics
+            int red_hist[256] = { };
+            int green_hist[256] = { };
+            int blue_hist[256] = { };
+            for (const auto& colorAndStat : palette) {
+                const uint32_t color = colorAndStat.first;
+                const int statistics = colorAndStat.second;
+
+                if (color == 0xff000000u) {
+                    red_hist[normalizeBlackLevel] += statistics;
+                    green_hist[normalizeBlackLevel] += statistics;
+                    blue_hist[normalizeBlackLevel] += statistics;
+                    continue;
+                }
+                if (color == 0xffffffffu) {
+                    red_hist[normalizeWhiteLevel] += statistics;
+                    green_hist[normalizeWhiteLevel] += statistics;
+                    blue_hist[normalizeWhiteLevel] += statistics;
+                    continue;
+                }
+
+                red_hist[qRed(color)] += statistics;
+                green_hist[qGreen(color)] += statistics;
+                blue_hist[qBlue(color)] += statistics;
+            }
+
+            // Find the max and min levels discarding a noise
+            for (int level = 0; level < 256; ++level) {
+                if (((double(red_hist[level]) / pixelCount) >= threshold)
+                    || ((double(green_hist[level]) / pixelCount) >= threshold)
+                    || ((double(blue_hist[level]) / pixelCount) >= threshold)) {
+                    if (level < min_level) {
+                        min_level = level;
+                    }
+                    if (level > max_level) {
+                        max_level = level;
+                    }
+                }
+            }
+
+            assert(max_level >= min_level);
+        }
+
+        std::unordered_map<uint32_t, uint32_t> colorToNormalizedMap;
+        for (const auto& colorAndStat : palette) {
+            const uint32_t color = colorAndStat.first;
+            if (color == 0xff000000u) {
+                colorToNormalizedMap[0xff000000u] = 0xff000000u;
+                continue;
+            }
+            if (color == 0xffffffffu) {
+                colorToNormalizedMap[0xffffffffu] = 0xffffffffu;
+                continue;
+            }
+
+            int normalizedRed = qRound((double(qRed(color) - min_level) / (max_level - min_level)) * 255);
+            int normalizedGreen = qRound((double(qGreen(color) - min_level) / (max_level - min_level)) * 255);
+            int normalizedBlue = qRound((double(qBlue(color) - min_level) / (max_level - min_level)) * 255);
+            normalizedRed = qBound(0, normalizedRed, 255);
+            normalizedGreen = qBound(0, normalizedGreen, 255);
+            normalizedBlue = qBound(0, normalizedBlue, 255);
+
+            colorToNormalizedMap[color] = qRgb(normalizedRed, normalizedGreen, normalizedBlue);
+        }
+
+        return colorToNormalizedMap;
+    }
+
+    void ColorTable::makeGrayBlackAndWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
+        QColor color = QColor(normalized).toHsv();
+
+        const bool isGray = (color.saturationF() * color.valueF()) < 0.2;
+        if (isGray) {
+            const int grayLevel = qGray(normalized);
+            const QColor grayColor = QColor(grayLevel, grayLevel, grayLevel).toHsv();
+            if (grayColor.lightnessF() <= 0.5) {
+                rgb = 0xff000000u;
+            } else if (color.lightnessF() >= 0.8) {
+                rgb = 0xffffffffu;
+            }
+        }
     }
 
 }  // namespace imageproc

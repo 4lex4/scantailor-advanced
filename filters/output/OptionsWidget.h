@@ -112,6 +112,8 @@ namespace output {
 
         void posterizeLevelChanged(int value);
 
+        void posterizeNormalizationToggled(bool checked);
+
         void posterizeForceBwToggled(bool checked);
 
         void cutMarginsToggled(bool checked);

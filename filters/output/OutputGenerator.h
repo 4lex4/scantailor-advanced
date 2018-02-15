@@ -319,6 +319,8 @@ namespace output {
 
         QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
 
+        QImage posterizeImage(const QImage& image, const QColor& background_color = Qt::white) const;
+
         Dpi m_dpi;
         ColorParams m_colorParams;
         SplittingOptions m_splittingOptions;

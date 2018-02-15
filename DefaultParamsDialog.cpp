@@ -282,9 +282,10 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
     greenAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getGreenThresholdAdjustment());
     blueAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getBlueThresholdAdjustment());
-    posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
-    posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
-    posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+    posterizeCB->setChecked(colorCommonOptions.getPosterizationOptions().isEnabled());
+    posterizeLevelSB->setValue(colorCommonOptions.getPosterizationOptions().getLevel());
+    posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
+    posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
     thresholdMethodBox->setCurrentIndex(
             thresholdMethodBox->findData(blackWhiteOptions.getBinarizationMethod())
@@ -705,9 +706,12 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
     colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());
-    colorCommonOptions.setPosterizeEnabled(posterizeCB->isChecked());
-    colorCommonOptions.setPosterizationLevel(posterizeLevelSB->value());
-    colorCommonOptions.setForceBlackAndWhite(posterizeForceBwCB->isChecked());
+    ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+    posterizationOptions.setEnabled(posterizeCB->isChecked());
+    posterizationOptions.setLevel(posterizeLevelSB->value());
+    posterizationOptions.setNormalizationEnabled(posterizeNormalizationCB->isChecked());
+    posterizationOptions.setForceBlackAndWhite(posterizeForceBwCB->isChecked());
+    colorCommonOptions.setPosterizationOptions(posterizationOptions);
     colorParams.setColorCommonOptions(colorCommonOptions);
 
     BlackWhiteOptions blackWhiteOptions;

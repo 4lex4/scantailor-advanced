@@ -14,7 +14,11 @@ namespace imageproc {
     public:
         explicit ColorTable(const QImage& image);
 
-        ColorTable& posterize(int level, bool forceBlackAndWhite = false);
+        ColorTable& posterize(int level,
+                              bool normalize = false,
+                              bool forceBlackAndWhite = false,
+                              int normalizeBlackLevel = 0,
+                              int normalizeWhiteLevel = 255);
 
         QVector<QRgb> getPalette() const;
 
@@ -32,6 +36,12 @@ namespace imageproc {
         void remapColorsInRgbImage(const std::unordered_map<uint32_t, uint32_t>& colorMap);
 
         void buildIndexedImageFromRgb(const std::unordered_map<uint32_t, uint32_t>& colorMap);
+
+        std::unordered_map<uint32_t, uint32_t> normalizePalette(const std::unordered_map<uint32_t, int>& palette,
+                                                                int normalizeBlackLevel = 0,
+                                                                int normalizeWhiteLevel = 255) const;
+
+        void makeGrayBlackAndWhiteInPlace(QRgb& rgb, const QRgb& normalized) const;
     };
 }
 

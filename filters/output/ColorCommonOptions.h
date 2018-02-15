@@ -33,6 +33,41 @@ namespace output {
 
     class ColorCommonOptions {
     public:
+        class PosterizationOptions {
+        public:
+            PosterizationOptions();
+
+            explicit PosterizationOptions(const QDomElement& el);
+
+            QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+            bool operator==(const PosterizationOptions& other) const;
+
+            bool operator!=(const PosterizationOptions& other) const;
+
+            bool isEnabled() const;
+
+            void setEnabled(bool enabled);
+
+            int getLevel() const;
+
+            void setLevel(int level);
+
+            bool isNormalizationEnabled() const;
+
+            void setNormalizationEnabled(bool normalizationEnabled);
+
+            bool isForceBlackAndWhite() const;
+
+            void setForceBlackAndWhite(bool forceBlackAndWhite);
+
+        private:
+            bool enabled;
+            int level;
+            bool normalizationEnabled;
+            bool forceBlackAndWhite;
+        };
+
         ColorCommonOptions();
 
         explicit ColorCommonOptions(const QDomElement& el);
@@ -55,17 +90,9 @@ namespace output {
 
         bool operator!=(const ColorCommonOptions& other) const;
 
-        bool isPosterizeEnabled() const;
+        const PosterizationOptions& getPosterizationOptions() const;
 
-        void setPosterizeEnabled(bool posterizeEnabled);
-
-        int getPosterizationLevel() const;
-
-        void setPosterizationLevel(int posterizationLevel);
-
-        bool isForceBlackAndWhite() const;
-
-        void setForceBlackAndWhite(bool forceBlackAndWhite);
+        void setPosterizationOptions(const PosterizationOptions& posterizationOptions);
 
     private:
         static FillingColor parseFillingColor(const QString& str);
@@ -76,9 +103,7 @@ namespace output {
         bool m_cutMargins;
         bool m_normalizeIllumination;
         FillingColor m_fillingColor;
-        bool m_posterizeEnabled;
-        int m_posterizationLevel;
-        bool m_forceBlackAndWhite;
+        PosterizationOptions posterizationOptions;
     };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

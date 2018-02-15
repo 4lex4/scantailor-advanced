@@ -624,19 +624,20 @@ namespace output {
         if (threshold_options_visible) {
             posterizeCB->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
             posterizeOptionsWidget->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled()
-                                               && colorCommonOptions.isPosterizeEnabled());
+                                               && colorCommonOptions.getPosterizationOptions().isEnabled());
         } else {
             posterizeCB->setEnabled(true);
-            posterizeOptionsWidget->setEnabled(colorCommonOptions.isPosterizeEnabled());
+            posterizeOptionsWidget->setEnabled(colorCommonOptions.getPosterizationOptions().isEnabled());
         }
         colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
         reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
         redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
         greenAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getGreenThresholdAdjustment());
         blueAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getBlueThresholdAdjustment());
-        posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
-        posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
-        posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+        posterizeCB->setChecked(colorCommonOptions.getPosterizationOptions().isEnabled());
+        posterizeLevelSB->setValue(colorCommonOptions.getPosterizationOptions().getLevel());
+        posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
+        posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
         if (picture_shape_visible) {
             const int picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
@@ -821,7 +822,9 @@ namespace output {
 
     void OptionsWidget::posterizeToggled(bool checked) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setPosterizeEnabled(checked);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setEnabled(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
@@ -832,16 +835,31 @@ namespace output {
 
     void OptionsWidget::posterizeLevelChanged(int value) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setPosterizationLevel(value);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setLevel(value);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
         delayedReloadRequest.start(750);
     }
 
+    void OptionsWidget::posterizeNormalizationToggled(bool checked) {
+        ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setNormalizationEnabled(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        emit reloadRequested();
+    }
+
     void OptionsWidget::posterizeForceBwToggled(bool checked) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setForceBlackAndWhite(checked);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setForceBlackAndWhite(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
@@ -933,6 +951,10 @@ namespace output {
         connect(
                 posterizeLevelSB, SIGNAL(valueChanged(int)),
                 this, SLOT(posterizeLevelChanged(int))
+        );
+        connect(
+                posterizeNormalizationCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeNormalizationToggled(bool))
         );
         connect(
                 posterizeForceBwCB, SIGNAL(clicked(bool)),
@@ -1078,6 +1100,10 @@ namespace output {
         disconnect(
                 posterizeLevelSB, SIGNAL(valueChanged(int)),
                 this, SLOT(posterizeLevelChanged(int))
+        );
+        disconnect(
+                posterizeNormalizationCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeNormalizationToggled(bool))
         );
         disconnect(
                 posterizeForceBwCB, SIGNAL(clicked(bool)),

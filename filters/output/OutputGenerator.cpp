@@ -725,9 +725,11 @@ namespace output {
                 status.throwIfCancelled();
 
                 if (render_params.posterize()) {
-                    const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                    const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                    segmented_image = ColorTable(segmented_image).posterize(posterize_level, force_bw).getImage();
+                    segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
+
+                    if (dbg) {
+                        dbg->add(segmented_image, "posterized");
+                    }
 
                     status.throwIfCancelled();
                 }
@@ -934,11 +936,7 @@ namespace output {
                         status.throwIfCancelled();
 
                         if (render_params.posterize()) {
-                            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                            segmented_image = ColorTable(segmented_image)
-                                    .posterize(posterize_level, force_bw)
-                                    .getImage();
+                            segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                             if (dbg) {
                                 dbg->add(segmented_image, "posterized");
@@ -1038,9 +1036,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput() && render_params.posterize()) {
-            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-            dst = ColorTable(dst).posterize(posterize_level, force_bw).getImage();
+            dst = posterizeImage(dst);
 
             if (dbg) {
                 dbg->add(dst, "posterized");
@@ -1665,9 +1661,7 @@ namespace output {
                 status.throwIfCancelled();
 
                 if (render_params.posterize()) {
-                    const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                    const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                    segmented_image = ColorTable(segmented_image).posterize(posterize_level, force_bw).getImage();
+                    segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                     if (dbg) {
                         dbg->add(segmented_image, "posterized");
@@ -1845,11 +1839,7 @@ namespace output {
                         status.throwIfCancelled();
 
                         if (render_params.posterize()) {
-                            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                            segmented_image = ColorTable(segmented_image)
-                                    .posterize(posterize_level, force_bw)
-                                    .getImage();
+                            segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                             if (dbg) {
                                 dbg->add(segmented_image, "posterized");
@@ -1927,9 +1917,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput() && render_params.posterize()) {
-            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-            dewarped = ColorTable(dewarped).posterize(posterize_level, force_bw).getImage();
+            dewarped = posterizeImage(dewarped);
 
             if (dbg) {
                 dbg->add(dewarped, "posterized");
@@ -2861,5 +2849,17 @@ namespace output {
                     image, GrayImage(color_image), m_dpi, segmenterOptions.getNoiseReduction()
             ).getImage();
         }
+    }
+
+    QImage OutputGenerator::posterizeImage(const QImage& image, const QColor& background_color) const {
+        const ColorCommonOptions::PosterizationOptions& posterizationOptions
+                = m_colorParams.colorCommonOptions().getPosterizationOptions();
+
+        return ColorTable(image).posterize(
+                posterizationOptions.getLevel(),
+                posterizationOptions.isNormalizationEnabled(),
+                posterizationOptions.isForceBlackAndWhite(),
+                0, qRound(background_color.lightnessF() * 255)
+        ).getImage();
     }
 }  // namespace output

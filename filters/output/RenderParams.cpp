@@ -52,12 +52,12 @@ namespace output {
             }
             if (blackWhiteOptions.getColorSegmenterOptions().isEnabled()) {
                 m_mask |= COLOR_SEGMENTATION;
-                if (colorCommonOptions.isPosterizeEnabled()) {
+                if (colorCommonOptions.getPosterizationOptions().isEnabled()) {
                     m_mask |= POSTERIZE;
                 }
             }
         } else {
-            if (colorCommonOptions.isPosterizeEnabled()) {
+            if (colorCommonOptions.getPosterizationOptions().isEnabled()) {
                 m_mask |= POSTERIZE;
             }
         }

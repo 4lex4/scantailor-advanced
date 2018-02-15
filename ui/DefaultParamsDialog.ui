@@ -112,7 +112,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <property name="documentMode">
       <bool>true</bool>
@@ -1768,9 +1768,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-27</y>
             <width>646</width>
-            <height>452</height>
+            <height>477</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
@@ -2320,6 +2320,55 @@
                             </item>
                             <item>
                              <spacer name="horizontalSpacer_66">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>1</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_33">
+                            <property name="topMargin">
+                             <number>0</number>
+                            </property>
+                            <item>
+                             <spacer name="horizontalSpacer_70">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeType">
+                               <enum>QSizePolicy::Minimum</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>15</width>
+                                <height>1</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QCheckBox" name="posterizeNormalizationCB">
+                              <property name="toolTip">
+                               <string/>
+                              </property>
+                              <property name="statusTip">
+                               <string/>
+                              </property>
+                              <property name="text">
+                               <string>Normalize</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_71">
                               <property name="orientation">
                                <enum>Qt::Horizontal</enum>
                               </property>

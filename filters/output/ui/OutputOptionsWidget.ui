@@ -93,7 +93,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QGroupBox" name="dpiPanel">
+        <widget class="CollapsibleGroupBox" name="dpiPanel">
          <property name="toolTip">
           <string/>
          </property>
@@ -201,7 +201,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="modePanel">
+        <widget class="CollapsibleGroupBox" name="modePanel">
          <property name="title">
           <string>Mode</string>
          </property>
@@ -249,7 +249,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QGroupBox" name="commonOptions">
+           <widget class="CollapsibleGroupBox" name="commonOptions">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -359,7 +359,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="fillingOptions">
+           <widget class="CollapsibleGroupBox" name="fillingOptions">
             <property name="title">
              <string>Filling</string>
             </property>
@@ -414,7 +414,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="thresholdOptions">
+           <widget class="CollapsibleGroupBox" name="thresholdOptions">
             <property name="title">
              <string>Threshold</string>
             </property>
@@ -478,7 +478,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="colorOperationsOptions">
+           <widget class="CollapsibleGroupBox" name="colorOperationsOptions">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -972,7 +972,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="pictureShapeOptions">
+           <widget class="CollapsibleGroupBox" name="pictureShapeOptions">
             <property name="title">
              <string>Picture Shape</string>
             </property>
@@ -1118,7 +1118,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="splittingOptions">
+        <widget class="CollapsibleGroupBox" name="splittingOptions">
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -1252,7 +1252,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="despecklePanel">
+        <widget class="CollapsibleGroupBox" name="despecklePanel">
          <property name="title">
           <string>Despeckling</string>
          </property>
@@ -1440,7 +1440,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="depthPerceptionPanel">
+        <widget class="CollapsibleGroupBox" name="depthPerceptionPanel">
          <property name="title">
           <string>Depth perception</string>
          </property>
@@ -1511,7 +1511,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="dewarpingPanel">
+        <widget class="CollapsibleGroupBox" name="dewarpingPanel">
          <property name="title">
           <string>Dewarping</string>
          </property>
@@ -1618,6 +1618,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header location="global">CollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../resources/resources.qrc"/>
  </resources>

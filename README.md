@@ -39,6 +39,7 @@ brings new ones and fixes.
         * [Measurement units system](#measurement-units-system)
         * [Status bar panel](#status-bar-panel)
         * [Default parameters](#default-parameters)
+        * [Collapsible filter options](#collapsible-filter-options)
 * [Building](#building)
 
 Description
@@ -169,7 +170,7 @@ Features
 5. Optimized memory usage on the output stage.
 
 6. Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
-   Now thumbnails is shown evenly.
+   Now thumbnails are shown evenly.
 
 7. Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
    The option refreshes the thumbnails instantly.
@@ -304,8 +305,12 @@ Features
 
  1. There are two default profiles: "Default" and "Source". The "Default" profile represents default ST filter settings, the "Source" one represents the settings giving the source as output without any changes.
  2. A user can create its own profiles. User profiles are stored in config/profiles folder.
- 3. The system consider the units settings from the [measurement units system](#measurement-units-system). Units are stored in the profile and ST converts the values needed at processing.
+ 3. The system consider the units settings from the [measurement units system](#measurement-units-system). Units are stored in the profile and ST automatically converts the values if needed.
 
+ * ##### Collapsible filter options.
+ Now group boxes containing filter options can be collapsed/expanded.  
+ The collapse status is preserved between restarts of the application.  
+ 
 Building
 ----------
 

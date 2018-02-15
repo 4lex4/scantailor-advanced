@@ -582,7 +582,8 @@ SET(
         MainWindow.cpp MainWindow.h
         main.cpp
         StatusBarPanel.cpp StatusBarPanel.h
-        DefaultParamsDialog.cpp DefaultParamsDialog.h)
+        DefaultParamsDialog.cpp DefaultParamsDialog.h
+        CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
 
 SET(
         cli_only_sources

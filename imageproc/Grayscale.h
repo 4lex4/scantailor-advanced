@@ -75,7 +75,7 @@ namespace imageproc {
     QImage toGrayscale(const QImage& src);
 
 /**
- * \brief Stetch the distribution of gray levels to cover the whole range.
+ * \brief Stretch the distribution of gray levels to cover the whole range.
  *
  * \param src The source image.  It doesn't have to be grayscale.
  * \param black_clip_fraction The fraction of pixels (fractions of 1) that are

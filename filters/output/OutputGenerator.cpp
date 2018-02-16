@@ -2124,7 +2124,7 @@ namespace output {
 
     GrayImage OutputGenerator::detectPictures(const GrayImage& input_300dpi,
                                               const TaskStatus& status,
-                                              DebugImages* const dbg) {
+                                              DebugImages* const dbg) const {
         // We stretch the range of gray levels to cover the whole
         // range of [0, 255].  We do it because we want text
         // and background to be equally far from the center
@@ -2190,6 +2190,15 @@ namespace output {
         reconstructed = GrayImage();
         if (dbg) {
             dbg->add(holes_filled, "holes_filled");
+        }
+
+        if (m_pictureShapeOptions.isHigherSearchSensitivity()) {
+            GrayImage stretched2(stretchGrayRange(holes_filled, 5.0, 0.01));
+            if (dbg) {
+                dbg->add(stretched2, "stretched2");
+            }
+
+            return stretched2;
         }
 
         return holes_filled;

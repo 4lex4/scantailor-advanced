@@ -163,8 +163,12 @@ namespace output {
     }
 
     void OptionsWidget::pictureShapeChanged(const int idx) {
-        m_pictureShapeOptions.setPictureShape((PictureShape) (pictureShapeSelector->itemData(idx).toInt()));
+        const auto shapeMode = static_cast<PictureShape>(pictureShapeSelector->itemData(idx).toInt());
+        m_pictureShapeOptions.setPictureShape(shapeMode);
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
+        pictureShapeSensitivityOptions->setVisible(shapeMode == RECTANGULAR_SHAPE);
+        higherSearchSensitivityCB->setVisible(shapeMode != OFF_SHAPE);
 
         emit reloadRequested();
     }
@@ -174,6 +178,13 @@ namespace output {
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
         delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::higherSearchSensivityToggled(const bool checked) {
+        m_pictureShapeOptions.setHigherSearchSensitivity(checked);
+        m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
+        emit reloadRequested();
     }
 
     void OptionsWidget::cutMarginsToggled(const bool checked) {
@@ -644,6 +655,8 @@ namespace output {
             pictureShapeSelector->setCurrentIndex(picture_shape_idx);
             pictureShapeSensitivitySB->setValue(m_pictureShapeOptions.getSensitivity());
             pictureShapeSensitivityOptions->setVisible(m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE);
+            higherSearchSensitivityCB->setChecked(m_pictureShapeOptions.isHigherSearchSensitivity());
+            higherSearchSensitivityCB->setVisible(m_pictureShapeOptions.getPictureShape() != OFF_SHAPE);
         }
 
         if (threshold_options_visible) {
@@ -923,6 +936,10 @@ namespace output {
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
         );
+        connect(
+                higherSearchSensitivityCB, SIGNAL(clicked(bool)),
+                this, SLOT(higherSearchSensivityToggled(bool))
+        );
 
         connect(
                 colorSegmentationCB, SIGNAL(clicked(bool)),
@@ -1071,6 +1088,10 @@ namespace output {
         disconnect(
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
+        );
+        disconnect(
+                higherSearchSensitivityCB, SIGNAL(clicked(bool)),
+                this, SLOT(higherSearchSensivityToggled(bool))
         );
 
         disconnect(

@@ -98,6 +98,8 @@ namespace output {
 
         void pictureShapeSensitivityChanged(int value);
 
+        void higherSearchSensivityToggled(bool checked);
+
         void colorSegmentationToggled(bool checked);
 
         void reduceNoiseChanged(int value);

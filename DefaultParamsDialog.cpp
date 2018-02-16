@@ -304,6 +304,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             pictureShapeSelector->findData(pictureShapeOptions.getPictureShape())
     );
     pictureShapeSensitivitySB->setValue(pictureShapeOptions.getSensitivity());
+    higherSearchSensitivityCB->setChecked(pictureShapeOptions.isHigherSearchSensitivity());
 
     int dpiIndex = dpiSelector->findData(QString::number(params.getDpi().vertical()));
     if (dpiIndex != -1) {
@@ -581,8 +582,9 @@ void DefaultParamsDialog::thresholdMethodChanged(const int idx) {
 }
 
 void DefaultParamsDialog::pictureShapeChanged(const int idx) {
-    const auto shapeMode = static_cast<PictureShape>(colorModeSelector->itemData(idx).toInt());
+    const auto shapeMode = static_cast<PictureShape>(pictureShapeSelector->itemData(idx).toInt());
     pictureShapeSensitivityOptions->setEnabled(shapeMode == RECTANGULAR_SHAPE);
+    higherSearchSensitivityCB->setEnabled(shapeMode != OFF_SHAPE);
 }
 
 void DefaultParamsDialog::equalizeIlluminationToggled(const bool checked) {
@@ -749,6 +751,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     PictureShapeOptions pictureShapeOptions;
     pictureShapeOptions.setPictureShape(static_cast<PictureShape>(pictureShapeSelector->currentData().toInt()));
     pictureShapeOptions.setSensitivity(pictureShapeSensitivitySB->value());
+    pictureShapeOptions.setHigherSearchSensitivity(higherSearchSensitivityCB->isChecked());
 
     DewarpingOptions dewarpingOptions;
     dewarpingOptions.setDewarpingMode(static_cast<DewarpingMode>(dewarpingModeCB->currentData().toInt()));

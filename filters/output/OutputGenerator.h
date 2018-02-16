@@ -222,9 +222,9 @@ namespace output {
                                                               imageproc::GrayImage* background = nullptr,
                                                               DebugImages* dbg = nullptr);
 
-        static imageproc::GrayImage detectPictures(const imageproc::GrayImage& input_300dpi,
-                                                   const TaskStatus& status,
-                                                   DebugImages* dbg = nullptr);
+        imageproc::GrayImage detectPictures(const imageproc::GrayImage& input_300dpi,
+                                            const TaskStatus& status,
+                                            DebugImages* dbg = nullptr) const;
 
         imageproc::BinaryImage estimateBinarizationMask(const TaskStatus& status,
                                                         const imageproc::GrayImage& gray_source,

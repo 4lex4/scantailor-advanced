@@ -67,8 +67,6 @@ namespace select_content {
 
         void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
-        void updateStatistics() override;
-
         QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;

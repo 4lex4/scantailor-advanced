@@ -108,7 +108,6 @@ namespace deskew {
                 Params new_params(
                         ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
-                new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
             }
         }
@@ -166,7 +165,6 @@ namespace deskew {
                 Params new_params(
                         ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
-                new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
 
                 status.throwIfCancelled();

@@ -62,9 +62,6 @@ public:
 
     virtual void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) = 0;
 
-    virtual void updateStatistics() {
-    }
-
     virtual QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const = 0;
 
     virtual void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) = 0;

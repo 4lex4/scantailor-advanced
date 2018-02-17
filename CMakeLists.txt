@@ -556,6 +556,7 @@ SET(
         DefaultParams.cpp DefaultParams.h
         DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
 		DefaultParamsProvider.cpp DefaultParamsProvider.h
+        DeviationProvider.h
         version.h
         config.h.in
         ${common_ui_files})

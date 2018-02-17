@@ -65,10 +65,6 @@ namespace deskew {
 
         QDomElement filter_el(doc.createElement("deskew"));
 
-        filter_el.setAttribute("average", m_ptrSettings->avg());
-        filter_el.setAttribute("sigma", m_ptrSettings->std());
-        filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
-
         writer.enumPages(
                 [&](const PageId& page_id, const int numeric_id) {
                     this->writePageSettings(doc, filter_el, page_id, numeric_id);
@@ -82,12 +78,6 @@ namespace deskew {
         m_ptrSettings->clear();
 
         const QDomElement filter_el(filters_el.namedItem("deskew").toElement());
-
-        m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
-        m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-        m_ptrSettings->setMaxDeviation(
-                filter_el.attribute("maxDeviation", QString::number(5.0)).toDouble()
-        );
 
         const QString page_tag_name("page");
         QDomNode node(filter_el.firstChild());
@@ -172,9 +162,5 @@ namespace deskew {
 
     OptionsWidget* Filter::optionsWidget() {
         return m_ptrOptionsWidget.get();
-    }
-
-    void Filter::updateStatistics() {
-        m_ptrSettings->updateDeviation();
     }
 }  // namespace deskew

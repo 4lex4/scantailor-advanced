@@ -1275,8 +1275,7 @@ void MainWindow::stopBatchProcessing(MainAreaAction main_area) {
             removeImageWidget();
             break;
     }
-
-    m_ptrStages->filterAt(m_curFilter)->updateStatistics();
+    
     resetThumbSequence(currentPageOrderProvider());
 }
 

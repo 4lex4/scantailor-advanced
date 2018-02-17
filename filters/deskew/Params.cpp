@@ -24,15 +24,13 @@ namespace deskew {
     Params::Params(const double deskew_angle_deg, const Dependencies& deps, const AutoManualMode mode)
             : m_deskewAngleDeg(deskew_angle_deg),
               m_deps(deps),
-              m_mode(mode),
-              m_deviation(0.0) {
+              m_mode(mode) {
     }
 
     Params::Params(const QDomElement& deskew_el)
             : m_deskewAngleDeg(deskew_el.attribute("angle").toDouble()),
               m_deps(deskew_el.namedItem("dependencies").toElement()),
-              m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-              m_deviation(deskew_el.attribute("deviation").toDouble()) {
+              m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {
     }
 
     Params::~Params() = default;
@@ -41,7 +39,6 @@ namespace deskew {
         QDomElement el(doc.createElement(name));
         el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
         el.setAttribute("angle", Utils::doubleToString(m_deskewAngleDeg));
-        el.setAttribute("deviation", m_deviation);
         el.appendChild(m_deps.toXml(doc, "dependencies"));
 
         return el;
@@ -50,19 +47,6 @@ namespace deskew {
     double Params::deskewAngle() const {
         return m_deskewAngleDeg;
     }
-
-    double Params::deviation() const {
-        return m_deviation;
-    }
-
-    void Params::computeDeviation(double avg) {
-        m_deviation = avg - m_deskewAngleDeg;
-    }
-
-    bool Params::isDeviant(double std, double max_dev) const {
-        return std::max(1.5 * std, max_dev) < fabs(m_deviation);
-    }
-
     const Dependencies& Params::dependencies() const {
         return m_deps;
     }

@@ -70,7 +70,7 @@ PageId::SubPage PageId::subPageFromString(const QString& string, bool* ok) {
 }
 
 bool operator==(const PageId& lhs, const PageId& rhs) {
-    return lhs.subPage() == rhs.subPage() && lhs.imageId() == rhs.imageId();
+    return ((lhs.subPage() == rhs.subPage()) && (lhs.imageId() == rhs.imageId()));
 }
 
 bool operator!=(const PageId& lhs, const PageId& rhs) {

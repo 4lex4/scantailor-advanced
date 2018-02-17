@@ -34,6 +34,7 @@
 #include <filters/page_layout/Task.h>
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <UnitsConverter.h>
+#include <OrderByDeviationProvider.h>
 
 namespace select_content {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
@@ -50,9 +51,11 @@ namespace select_content {
         const ProviderPtr default_order;
         const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
         const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
         m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
         m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
         m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;

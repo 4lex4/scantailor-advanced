@@ -32,13 +32,22 @@
 #include <CommandLine.h>
 #include <filters/select_content/Task.h>
 #include <filters/select_content/CacheDrivenTask.h>
+#include <OrderByDeviationProvider.h>
 
 namespace deskew {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
-            : m_ptrSettings(new Settings) {
+            : m_ptrSettings(new Settings),
+              m_selectedPageOrder(0) {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
         }
+
+        typedef PageOrderOption::ProviderPtr ProviderPtr;
+
+        const ProviderPtr default_order;
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
+        m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;
@@ -145,6 +154,20 @@ namespace deskew {
         return intrusive_ptr<CacheDrivenTask>(
                 new CacheDrivenTask(m_ptrSettings, std::move(next_task))
         );
+    }
+
+    std::vector<PageOrderOption>
+    Filter::pageOrderOptions() const {
+        return m_pageOrderOptions;
+    }
+
+    int Filter::selectedPageOrder() const {
+        return m_selectedPageOrder;
+    }
+
+    void Filter::selectPageOrder(int option) {
+        assert((unsigned) option < m_pageOrderOptions.size());
+        m_selectedPageOrder = option;
     }
 
     void Filter::loadDefaultSettings(const PageInfo& page_info) {

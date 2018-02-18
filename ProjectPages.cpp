@@ -23,6 +23,7 @@
 #include "PageSequence.h"
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
+#include <unordered_map>
 #include <boost/foreach.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>

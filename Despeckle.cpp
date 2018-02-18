@@ -23,6 +23,7 @@
 #include "FastQueue.h"
 #include "imageproc/BinaryImage.h"
 #include "imageproc/ConnectivityMap.h"
+#include <unordered_map>
 #include <QImage>
 #include <QDebug>
 

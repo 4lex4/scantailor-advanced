@@ -151,14 +151,14 @@
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
-        <location line="+1441"/>
+        <location line="+1678"/>
         <location line="+26"/>
         <location line="+26"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2860"/>
+        <location line="-3097"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
@@ -373,12 +373,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+43"/>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
         <source>Reduce noise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+47"/>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -398,7 +428,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+61"/>
+        <source>Normalize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Make dark and light gray gradients black and white respectively.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -495,7 +530,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+48"/>
+        <source>Higher search sensivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+99"/>
         <source>Output Resolution (DPI)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -628,12 +668,12 @@
     <message>
         <location line="+7"/>
         <location line="+20"/>
-        <location line="+935"/>
+        <location line="+955"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-950"/>
+        <location line="-970"/>
         <source>Marginal</source>
         <translation type="unfinished"></translation>
     </message>
@@ -648,15 +688,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+913"/>
+        <location line="+932"/>
         <location line="+19"/>
-        <location line="+17"/>
+        <location line="+18"/>
         <location line="+16"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-53"/>
         <source>Error loading the profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -666,7 +706,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Error saving the profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -847,7 +887,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../ImageViewBase.cpp" line="+225"/>
+        <location filename="../ImageViewBase.cpp" line="+221"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -961,7 +1001,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+592"/>
+        <location filename="../MainWindow.cpp" line="+591"/>
         <source>Save Project</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1203,7 +1243,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+433"/>
+        <location line="+432"/>
         <source>Insert before ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1223,7 +1263,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+359"/>
+        <location line="+365"/>
         <location line="+62"/>
         <source>Scan Tailor Projects</source>
         <translation type="unfinished"></translation>
@@ -1236,13 +1276,13 @@
     <message>
         <location line="+16"/>
         <location line="+10"/>
-        <location line="+319"/>
+        <location line="+310"/>
         <location line="+29"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-357"/>
+        <location line="-348"/>
         <source>Unable to open the project file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1257,7 +1297,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+127"/>
         <source>Output is not yet possible, as the final size of pages is not yet known.
 To determine it, run batch processing at &quot;Select Content&quot; or &quot;Margins&quot;.</source>
         <translation type="unfinished"></translation>
@@ -1273,7 +1313,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+67"/>
         <location line="+29"/>
         <source>Error saving the project file!</source>
         <translation type="unfinished"></translation>
@@ -1716,12 +1756,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+37"/>
-        <location line="+1196"/>
+        <location line="+1436"/>
         <source>Change ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1171"/>
+        <location line="-1411"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1801,12 +1841,42 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+43"/>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
         <source>Reduce noise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+47"/>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1826,7 +1896,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+61"/>
+        <source>Normalize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Make dark and light gray gradients black and white respectively.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1847,6 +1922,11 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+51"/>
+        <source>Higher search sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <location line="+134"/>
         <location line="+188"/>
         <location line="+71"/>
@@ -2761,7 +2841,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+35"/>
         <source>Page information.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2771,8 +2851,8 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../StatusBarPanel.cpp" line="+78"/>
-        <source>p. %1</source>
+        <location filename="../StatusBarPanel.cpp" line="+39"/>
+        <source>p. %1 / %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2944,7 +3024,17 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::Filter</name>
     <message>
-        <location filename="../filters/deskew/Filter.cpp" line="+47"/>
+        <location filename="../filters/deskew/Filter.cpp" line="+49"/>
+        <source>Natural order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Order by decreasing deviation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Deskew</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3077,7 +3167,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+225"/>
         <source>Apply Splitting Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3092,8 +3182,8 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-364"/>
-        <location line="+603"/>
+        <location line="-375"/>
+        <location line="+620"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3121,7 +3211,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::TabbedImageView</name>
     <message>
-        <location filename="../filters/output/TabbedImageView.cpp" line="+29"/>
+        <location filename="../filters/output/TabbedImageView.cpp" line="+30"/>
         <source>Use Ctrl+1..5 to switch the tabs.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3129,12 +3219,12 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+611"/>
+        <location filename="../filters/output/Task.cpp" line="+609"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+53"/>
         <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3167,7 +3257,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::Filter</name>
     <message>
-        <location filename="../filters/page_layout/Filter.cpp" line="+59"/>
+        <location filename="../filters/page_layout/Filter.cpp" line="+62"/>
         <source>Natural order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3179,6 +3269,11 @@ You should remove them from the project.</source>
     <message>
         <location line="+1"/>
         <source>Order by increasing height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Order by decreasing deviation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3198,7 +3293,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+323"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+331"/>
         <source>Apply Margins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3261,7 +3356,7 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::Filter</name>
     <message>
-        <location filename="../filters/select_content/Filter.cpp" line="+52"/>
+        <location filename="../filters/select_content/Filter.cpp" line="+55"/>
         <source>Natural order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3273,6 +3368,11 @@ You should remove them from the project.</source>
     <message>
         <location line="+1"/>
         <source>Order by increasing height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Order by decreasing deviation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

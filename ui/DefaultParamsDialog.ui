@@ -2074,7 +2074,7 @@
                             <item>
                              <widget class="QSpinBox" name="redAdjustmentSB">
                               <property name="toolTip">
-                               <string>Red component adjustment. Negative value means the segmenter will be more sensitive to red and vice versa for positive values.</string>
+                               <string>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</string>
                               </property>
                               <property name="frame">
                                <bool>false</bool>
@@ -2109,7 +2109,7 @@
                             <item>
                              <widget class="QSpinBox" name="greenAdjustmentSB">
                               <property name="toolTip">
-                               <string>Green component adjustment. Negative value means the segmenter will be more sensitive to green and vice versa for positive values.</string>
+                               <string>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</string>
                               </property>
                               <property name="frame">
                                <bool>false</bool>
@@ -2144,7 +2144,7 @@
                             <item>
                              <widget class="QSpinBox" name="blueAdjustmentSB">
                               <property name="toolTip">
-                               <string>Blue component adjustment. Negative value means the segmenter will be more sensitive to blue and vice versa for positive values.</string>
+                               <string>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</string>
                               </property>
                               <property name="frame">
                                <bool>false</bool>

@@ -28,7 +28,7 @@
 #include "PageId.h"
 #include <QIcon>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <set>
 #include <UnitsObserver.h>
 
@@ -45,7 +45,7 @@ namespace page_layout {
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(const PageId& page_id, const Margins& margins_mm, const Alignment& alignment);
+        void preUpdateUI(const PageInfo& page_info, const Margins& margins_mm, const Alignment& alignment);
 
         void postUpdateUI();
 
@@ -102,7 +102,7 @@ namespace page_layout {
         void applyAlignment(const std::set<PageId>& pages);
 
     private:
-        typedef std::map<QToolButton*, Alignment> AlignmentByButton;
+        typedef std::unordered_map<QToolButton*, Alignment> AlignmentByButton;
 
         void updateMarginsDisplay();
 
@@ -122,6 +122,7 @@ namespace page_layout {
         QIcon m_brokenChainIcon;
         AlignmentByButton m_alignmentByButton;
         PageId m_pageId;
+        Dpi m_dpi;
         Margins m_marginsMM;
         Alignment m_alignment;
         int m_ignoreMarginChanges;

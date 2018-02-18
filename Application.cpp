@@ -90,9 +90,9 @@ void Application::initTranslations() {
 
     const QStringList language_file_filter("scantailor_*.qm");
     for (const QString& path : translation_dirs) {
-        QDir dir(path);
+        QDir dir(QDir::cleanPath(applicationDirPath() + '/' + path));
         if (dir.exists()) {
-            QStringList translationFileNames = QDir(path).entryList(language_file_filter);
+            QStringList translationFileNames = QDir(dir.path()).entryList(language_file_filter);
             for (const QString& fileName : translationFileNames) {
                 QString locale(fileName);
                 locale.truncate(locale.lastIndexOf('.'));

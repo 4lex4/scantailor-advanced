@@ -56,6 +56,7 @@ class PageSelectionAccessor;
 class FilterOptionsWidget;
 class ProcessingIndicationWidget;
 class ImageInfo;
+class ImageViewBase;
 class PageInfo;
 class QStackedLayout;
 class WorkerThreadPool;
@@ -211,7 +212,7 @@ private:
     void setImageWidget(QWidget* widget,
                         Ownership ownership,
                         DebugImages* debug_images = nullptr,
-                        bool clearImageWidget = true) override;
+                        bool clear_image_widget = true) override;
 
     intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() override;
 
@@ -295,6 +296,8 @@ private:
     void performRelinking(const intrusive_ptr<AbstractRelinker>& relinker);
 
     PageSelectionAccessor newPageSelectionAccessor();
+
+    void setDockWidgetsVisible(bool state);
 
     QSizeF m_maxLogicalThumbSize;
     intrusive_ptr<ProjectPages> m_ptrPages;

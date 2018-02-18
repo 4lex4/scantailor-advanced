@@ -566,12 +566,17 @@ namespace output {
             if (!input.isBlackOnWhite()) {
                 result.invertPixels();
             }
+            if (!result.allGray()
+                && (result.format() != QImage::Format_ARGB32)
+                && (result.format() != QImage::Format_RGB32)) {
+                result = result.convertToFormat(QImage::Format_RGB32);
+            }
 
             return result;
         }();
 
         QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
         );
 
         const bool needNormalizeIllumination
@@ -697,8 +702,7 @@ namespace output {
                     drawOver(color_image, dst_rect, maybe_normalized, src_rect);
                     maybe_normalized = QImage();
 
-                    const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                    segmented_image = ColorSegmenter(dst, color_image, m_dpi, noiseReduction).getImage();
+                    segmented_image = segmentImage(dst, color_image);
                     dst.release();
                 }
 
@@ -721,9 +725,11 @@ namespace output {
                 status.throwIfCancelled();
 
                 if (render_params.posterize()) {
-                    const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                    const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                    segmented_image = ColorTable(segmented_image).posterize(posterize_level, force_bw).getImage();
+                    segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
+
+                    if (dbg) {
+                        dbg->add(segmented_image, "posterized");
+                    }
 
                     status.throwIfCancelled();
                 }
@@ -758,7 +764,8 @@ namespace output {
                 bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1.translate(-normalize_illumination_rect.left(), -normalize_illumination_rect.top());
+                xform1 *= QTransform().translate(-normalize_illumination_rect.x(),
+                                                 -normalize_illumination_rect.y());
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {
@@ -919,9 +926,7 @@ namespace output {
                     {
                         QImage maybe_normalized_content(maybe_normalized);
                         applyMask(maybe_normalized_content, bw_mask);
-                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                        segmented_image = ColorSegmenter(
-                                bw_content, maybe_normalized_content, m_dpi, noiseReduction).getImage();
+                        segmented_image = segmentImage(bw_content, maybe_normalized_content);
                         maybe_normalized_content = QImage();
 
                         if (dbg) {
@@ -931,11 +936,7 @@ namespace output {
                         status.throwIfCancelled();
 
                         if (render_params.posterize()) {
-                            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                            segmented_image = ColorTable(segmented_image)
-                                    .posterize(posterize_level, force_bw)
-                                    .getImage();
+                            segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                             if (dbg) {
                                 dbg->add(segmented_image, "posterized");
@@ -976,6 +977,9 @@ namespace output {
             outsideBackgroundColor = Qt::white;
         } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
             outsideBackgroundColor = input.isBlackOnWhite() ? Qt::white : Qt::black;
+            if (!render_params.needBinarization()) {
+                reserveBlackAndWhite(maybe_normalized);
+            }
         }
         fillMarginsInPlace(maybe_normalized, normalize_illumination_crop_area, outsideBackgroundColor);
         dst.fill(outsideBackgroundColor);
@@ -992,7 +996,8 @@ namespace output {
         }
 
         if (render_params.mixedOutput() && render_params.needBinarization()) {
-            applyFillZonesToMixedInPlace(dst, fill_zones, bw_content_mask_output, !render_params.needColorSegmentation());
+            applyFillZonesToMixedInPlace(dst, fill_zones, bw_content_mask_output,
+                                         !render_params.needColorSegmentation());
         } else {
             applyFillZonesInPlace(dst, fill_zones);
         }
@@ -1034,9 +1039,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput() && render_params.posterize()) {
-            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-            dst = ColorTable(dst).posterize(posterize_level, force_bw).getImage();
+            dst = posterizeImage(dst);
 
             if (dbg) {
                 dbg->add(dst, "posterized");
@@ -1119,6 +1122,11 @@ namespace output {
             QImage result = input.origImage();
             if (!input.isBlackOnWhite()) {
                 result.invertPixels();
+            }
+            if (!result.allGray()
+                && (result.format() != QImage::Format_ARGB32)
+                && (result.format() != QImage::Format_RGB32)) {
+                result = result.convertToFormat(QImage::Format_RGB32);
             }
 
             return result;
@@ -1245,7 +1253,8 @@ namespace output {
                 warped_bw_mask.rectangularizeAreas(areas, WHITE, m_pictureShapeOptions.getSensitivity());
 
                 QTransform xform1(m_xform.transform());
-                xform1 *= QTransform().translate(-normalize_illumination_rect.x(), -normalize_illumination_rect.y());
+                xform1 *= QTransform().translate(-normalize_illumination_rect.x(),
+                                                 -normalize_illumination_rect.y());
                 QTransform inv_xform(xform1.inverted());
 
                 for (auto i : areas) {
@@ -1632,10 +1641,7 @@ namespace output {
 
                 return dewarped_bw_content.toQImage();
             } else {
-                const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                QImage segmented_image = ColorSegmenter(
-                        dewarped_bw_content, dewarped, m_dpi, noiseReduction).getImage();
-
+                QImage segmented_image = segmentImage(dewarped_bw_content, dewarped);
                 dewarped = QImage();
                 dewarped_bw_content.release();
 
@@ -1658,9 +1664,7 @@ namespace output {
                 status.throwIfCancelled();
 
                 if (render_params.posterize()) {
-                    const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                    const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                    segmented_image = ColorTable(segmented_image).posterize(posterize_level, force_bw).getImage();
+                    segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                     if (dbg) {
                         dbg->add(segmented_image, "posterized");
@@ -1828,9 +1832,7 @@ namespace output {
                     {
                         QImage dewarped_content(dewarped);
                         applyMask(dewarped_content, dewarped_bw_mask);
-                        const int noiseReduction = m_colorParams.blackWhiteOptions().getSegmentationNoiseReduction();
-                        segmented_image = ColorSegmenter(
-                                dewarped_bw_content, dewarped_content, m_dpi, noiseReduction).getImage();
+                        segmented_image = segmentImage(dewarped_bw_content, dewarped_content);
                         dewarped_content = QImage();
 
                         if (dbg) {
@@ -1840,11 +1842,7 @@ namespace output {
                         status.throwIfCancelled();
 
                         if (render_params.posterize()) {
-                            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-                            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-                            segmented_image = ColorTable(segmented_image)
-                                    .posterize(posterize_level, force_bw)
-                                    .getImage();
+                            segmented_image = posterizeImage(segmented_image, outsideBackgroundColor);
 
                             if (dbg) {
                                 dbg->add(segmented_image, "posterized");
@@ -1871,6 +1869,9 @@ namespace output {
             outsideBackgroundColor = Qt::white;
         } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
             outsideBackgroundColor = input.isBlackOnWhite() ? Qt::white : Qt::black;
+            if (!render_params.needBinarization()) {
+                reserveBlackAndWhite(dewarped);
+            }
         }
         fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
 
@@ -1922,9 +1923,7 @@ namespace output {
         }
 
         if (!render_params.mixedOutput() && render_params.posterize()) {
-            const int posterize_level = m_colorParams.colorCommonOptions().getPosterizationLevel();
-            const bool force_bw = m_colorParams.colorCommonOptions().isForceBlackAndWhite();
-            dewarped = ColorTable(dewarped).posterize(posterize_level, force_bw).getImage();
+            dewarped = posterizeImage(dewarped);
 
             if (dbg) {
                 dbg->add(dewarped, "posterized");
@@ -2125,7 +2124,7 @@ namespace output {
 
     GrayImage OutputGenerator::detectPictures(const GrayImage& input_300dpi,
                                               const TaskStatus& status,
-                                              DebugImages* const dbg) {
+                                              DebugImages* const dbg) const {
         // We stretch the range of gray levels to cover the whole
         // range of [0, 255].  We do it because we want text
         // and background to be equally far from the center
@@ -2191,6 +2190,15 @@ namespace output {
         reconstructed = GrayImage();
         if (dbg) {
             dbg->add(holes_filled, "holes_filled");
+        }
+
+        if (m_pictureShapeOptions.isHigherSearchSensitivity()) {
+            GrayImage stretched2(stretchGrayRange(holes_filled, 5.0, 0.01));
+            if (dbg) {
+                dbg->add(stretched2, "stretched2");
+            }
+
+            return stretched2;
         }
 
         return holes_filled;
@@ -2839,5 +2847,34 @@ namespace output {
             applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
             combineImageColor(img, content, picture_mask);
         }
+    }
+
+    QImage OutputGenerator::segmentImage(const BinaryImage& image, const QImage& color_image) const {
+        const BlackWhiteOptions::ColorSegmenterOptions& segmenterOptions
+                = m_colorParams.blackWhiteOptions().getColorSegmenterOptions();
+        if (!color_image.allGray()) {
+            return ColorSegmenter(
+                    image, color_image, m_dpi, segmenterOptions.getNoiseReduction(),
+                    segmenterOptions.getRedThresholdAdjustment(),
+                    segmenterOptions.getGreenThresholdAdjustment(),
+                    segmenterOptions.getBlueThresholdAdjustment()
+            ).getImage();
+        } else {
+            return ColorSegmenter(
+                    image, GrayImage(color_image), m_dpi, segmenterOptions.getNoiseReduction()
+            ).getImage();
+        }
+    }
+
+    QImage OutputGenerator::posterizeImage(const QImage& image, const QColor& background_color) const {
+        const ColorCommonOptions::PosterizationOptions& posterizationOptions
+                = m_colorParams.colorCommonOptions().getPosterizationOptions();
+
+        return ColorTable(image).posterize(
+                posterizationOptions.getLevel(),
+                posterizationOptions.isNormalizationEnabled(),
+                posterizationOptions.isForceBlackAndWhite(),
+                0, qRound(background_color.lightnessF() * 255)
+        ).getImage();
     }
 }  // namespace output

@@ -26,7 +26,6 @@
 #include "intrusive_ptr.h"
 #include "SafeDeletingQObjectPtr.h"
 
-class PageId;
 class ImageId;
 class PageSelectionAccessor;
 class QString;
@@ -62,13 +61,13 @@ namespace fix_orientation {
 
         void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, const PageId&) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
         QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         intrusive_ptr<Task> createTask(const PageId& page_id,
                                        intrusive_ptr<page_split::Task> next_task,

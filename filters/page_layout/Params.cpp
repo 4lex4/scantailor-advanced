@@ -97,8 +97,4 @@ namespace page_layout {
     bool Params::isAutoMarginsEnabled() const {
         return m_autoMargins;
     }
-
-    bool Params::isDeviant() const {
-        return m_alignment.isNull();
-    }
 }  // namespace page_layout

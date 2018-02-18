@@ -98,13 +98,23 @@ namespace output {
 
         void pictureShapeSensitivityChanged(int value);
 
+        void higherSearchSensivityToggled(bool checked);
+
         void colorSegmentationToggled(bool checked);
 
         void reduceNoiseChanged(int value);
 
+        void redAdjustmentChanged(int value);
+
+        void greenAdjustmentChanged(int value);
+
+        void blueAdjustmentChanged(int value);
+
         void posterizeToggled(bool checked);
 
         void posterizeLevelChanged(int value);
+
+        void posterizeNormalizationToggled(bool checked);
 
         void posterizeForceBwToggled(bool checked);
 

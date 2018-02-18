@@ -24,11 +24,21 @@
 
 namespace select_content {
     Settings::Settings()
-            : m_avg(0.0),
-              m_sigma(0.0),
-              m_pageDetectionBox(0.0, 0.0),
-              m_pageDetectionTolerance(0.1),
-              m_maxDeviation(1.0) {
+            : m_pageDetectionBox(0.0, 0.0),
+              m_pageDetectionTolerance(0.1) {
+        m_deviationProvider.setComputeValueByKey(
+                [this](const PageId& pageId) -> double {
+                    auto it(m_pageParams.find(pageId));
+                    if (it != m_pageParams.end()) {
+                        const Params& params = it->second;
+                        const QSizeF& contentSize = params.contentRect().size();
+
+                        return std::sqrt(contentSize.width() * contentSize.height() / 4 / 600);
+                    } else {
+                        return .0;
+                    };
+                }
+        );
     }
 
     Settings::~Settings() = default;
@@ -36,6 +46,7 @@ namespace select_content {
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
         m_pageParams.clear();
+        m_deviationProvider.clear();
     }
 
     void Settings::performRelinking(const AbstractRelinker& relinker) {
@@ -50,40 +61,23 @@ namespace select_content {
         }
 
         m_pageParams.swap(new_params);
-    }
 
-    void Settings::updateDeviation() {
-        m_avg = 0.0;
-        for (PageParams::value_type& kv : m_pageParams) {
-            kv.second.computeDeviation(0.0);
-            m_avg += -1 * kv.second.deviation();
+        m_deviationProvider.clear();
+        for (const PageParams::value_type& kv : m_pageParams) {
+            m_deviationProvider.addOrUpdate(kv.first);
         }
-        m_avg = m_avg / double(m_pageParams.size());
-#ifdef DEBUG
-        std::cout << "avg_content = " << m_avg << std::endl;
-#endif
-
-        double sigma2 = 0.0;
-        for (PageParams::value_type& kv : m_pageParams) {
-            kv.second.computeDeviation(m_avg);
-            sigma2 += kv.second.deviation() * kv.second.deviation();
-        }
-        sigma2 = sigma2 / double(m_pageParams.size());
-        m_sigma = sqrt(sigma2);
-#if DEBUG
-        std::cout << "sigma2 = " << sigma2 << std::endl;
-        std::cout << "sigma = " << m_sigma << std::endl;
-#endif
     }
 
     void Settings::setPageParams(const PageId& page_id, const Params& params) {
         QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_pageParams, page_id, params);
+        m_deviationProvider.addOrUpdate(page_id);
     }
 
     void Settings::clearPageParams(const PageId& page_id) {
         QMutexLocker locker(&m_mutex);
         m_pageParams.erase(page_id);
+        m_deviationProvider.remove(page_id);
     }
 
     std::unique_ptr<Params>
@@ -101,15 +95,7 @@ namespace select_content {
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_pageParams.find(page_id) == m_pageParams.end();
-    }
-
-    double Settings::maxDeviation() const {
-        return m_maxDeviation;
-    }
-
-    void Settings::setMaxDeviation(double md) {
-        m_maxDeviation = md;
+        return (m_pageParams.find(page_id) == m_pageParams.end());
     }
 
     QSizeF Settings::pageDetectionBox() const {
@@ -128,19 +114,8 @@ namespace select_content {
         m_pageDetectionTolerance = tolerance;
     }
 
-    double Settings::avg() const {
-        return m_avg;
+    const DeviationProvider <PageId>& Settings::deviationProvider() const {
+        return m_deviationProvider;
     }
 
-    void Settings::setAvg(double a) {
-        m_avg = a;
-    }
-
-    double Settings::std() const {
-        return m_sigma;
-    }
-
-    void Settings::setStd(double s) {
-        m_sigma = s;
-    }
 }  // namespace select_content

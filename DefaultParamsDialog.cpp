@@ -83,42 +83,42 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     brokenChainIcon.addPixmap(
             QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
     );
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopLeftBtn,
             Alignment(Alignment::TOP, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopBtn,
             Alignment(Alignment::TOP, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopRightBtn,
             Alignment(Alignment::TOP, Alignment::RIGHT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignLeftBtn,
             Alignment(Alignment::VCENTER, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignCenterBtn,
             Alignment(Alignment::VCENTER, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignRightBtn,
             Alignment(Alignment::VCENTER, Alignment::RIGHT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomLeftBtn,
             Alignment(Alignment::BOTTOM, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomBtn,
             Alignment(Alignment::BOTTOM, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomRightBtn,
             Alignment(Alignment::BOTTOM, Alignment::RIGHT)
     );
@@ -233,10 +233,10 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
     bottomMarginSpinBox->setValue(margins.bottom());
     leftMarginSpinBox->setValue(margins.left());
 
-    leftRightLinkEnabled = (margins.top() == margins.bottom());
-    topBottomLinkEnabled = (margins.left() == margins.right());
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    topBottomLinkEnabled= (margins.top() == margins.bottom());
+    leftRightLinkEnabled = (margins.left() == margins.right());
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
     const Alignment& alignment = params.getAlignment();
     if (alignment.vertical() == Alignment::VAUTO) {
@@ -277,11 +277,15 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             fillingColorBox->findData(colorCommonOptions.getFillingColor())
     );
 
-    colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
-    reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
-    posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
-    posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
-    posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+    colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
+    reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
+    redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
+    greenAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getGreenThresholdAdjustment());
+    blueAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getBlueThresholdAdjustment());
+    posterizeCB->setChecked(colorCommonOptions.getPosterizationOptions().isEnabled());
+    posterizeLevelSB->setValue(colorCommonOptions.getPosterizationOptions().getLevel());
+    posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
+    posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
     thresholdMethodBox->setCurrentIndex(
             thresholdMethodBox->findData(blackWhiteOptions.getBinarizationMethod())
@@ -300,6 +304,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             pictureShapeSelector->findData(pictureShapeOptions.getPictureShape())
     );
     pictureShapeSensitivitySB->setValue(pictureShapeOptions.getSensitivity());
+    higherSearchSensitivityCB->setChecked(pictureShapeOptions.isHigherSearchSensitivity());
 
     int dpiIndex = dpiSelector->findData(QString::number(params.getDpi().vertical()));
     if (dpiIndex != -1) {
@@ -577,8 +582,9 @@ void DefaultParamsDialog::thresholdMethodChanged(const int idx) {
 }
 
 void DefaultParamsDialog::pictureShapeChanged(const int idx) {
-    const auto shapeMode = static_cast<PictureShape>(colorModeSelector->itemData(idx).toInt());
+    const auto shapeMode = static_cast<PictureShape>(pictureShapeSelector->itemData(idx).toInt());
     pictureShapeSensitivityOptions->setEnabled(shapeMode == RECTANGULAR_SHAPE);
+    higherSearchSensitivityCB->setEnabled(shapeMode != OFF_SHAPE);
 }
 
 void DefaultParamsDialog::equalizeIlluminationToggled(const bool checked) {
@@ -702,9 +708,12 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     );
     colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());
-    colorCommonOptions.setPosterizeEnabled(posterizeCB->isChecked());
-    colorCommonOptions.setPosterizationLevel(posterizeLevelSB->value());
-    colorCommonOptions.setForceBlackAndWhite(posterizeForceBwCB->isChecked());
+    ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+    posterizationOptions.setEnabled(posterizeCB->isChecked());
+    posterizationOptions.setLevel(posterizeLevelSB->value());
+    posterizationOptions.setNormalizationEnabled(posterizeNormalizationCB->isChecked());
+    posterizationOptions.setForceBlackAndWhite(posterizeForceBwCB->isChecked());
+    colorCommonOptions.setPosterizationOptions(posterizationOptions);
     colorParams.setColorCommonOptions(colorCommonOptions);
 
     BlackWhiteOptions blackWhiteOptions;
@@ -724,8 +733,13 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     blackWhiteOptions.setWolfCoef(wolfCoef->value());
     blackWhiteOptions.setWolfLowerBound(upperBound->value());
     blackWhiteOptions.setWolfLowerBound(lowerBound->value());
-    blackWhiteOptions.setColorSegmentationEnabled(colorSegmentationCB->isChecked());
-    blackWhiteOptions.setSegmentationNoiseReduction(reduceNoiseSB->value());
+    BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+    segmenterOptions.setEnabled(colorSegmentationCB->isChecked());
+    segmenterOptions.setNoiseReduction(reduceNoiseSB->value());
+    segmenterOptions.setRedThresholdAdjustment(redAdjustmentSB->value());
+    segmenterOptions.setGreenThresholdAdjustment(greenAdjustmentSB->value());
+    segmenterOptions.setBlueThresholdAdjustment(blueAdjustmentSB->value());
+    blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
     colorParams.setBlackWhiteOptions(blackWhiteOptions);
 
     SplittingOptions splittingOptions;
@@ -737,6 +751,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     PictureShapeOptions pictureShapeOptions;
     pictureShapeOptions.setPictureShape(static_cast<PictureShape>(pictureShapeSelector->currentData().toInt()));
     pictureShapeOptions.setSensitivity(pictureShapeSensitivitySB->value());
+    pictureShapeOptions.setHigherSearchSensitivity(higherSearchSensitivityCB->isChecked());
 
     DewarpingOptions dewarpingOptions;
     dewarpingOptions.setDewarpingMode(static_cast<DewarpingMode>(dewarpingModeCB->currentData().toInt()));
@@ -833,7 +848,7 @@ void DefaultParamsDialog::setLinkButtonLinked(QToolButton* button, bool linked) 
 
 void DefaultParamsDialog::topBottomLinkClicked() {
     topBottomLinkEnabled = !topBottomLinkEnabled;
-    setLinkButtonLinked(topBottomLink, leftRightLinkEnabled);
+    setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     if (topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
         const double new_margin = std::min(
                 topMarginSpinBox->value(), bottomMarginSpinBox->value()
@@ -845,7 +860,7 @@ void DefaultParamsDialog::topBottomLinkClicked() {
 
 void DefaultParamsDialog::leftRightLinkClicked() {
     leftRightLinkEnabled = !leftRightLinkEnabled;
-    setLinkButtonLinked(leftRightLink, topBottomLinkEnabled);
+    setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
     if (leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
         const double new_margin = std::min(
                 leftMarginSpinBox->value(), rightMarginSpinBox->value()
@@ -974,9 +989,9 @@ void DefaultParamsDialog::profileChanged(const int index) {
     } else {
         std::unique_ptr<DefaultParams> profile = profileManager.readProfile(profileCB->itemData(index).toString());
         if (profile != nullptr) {
-            profileSaveButton->setEnabled(false);
+            profileSaveButton->setEnabled(true);
             profileDeleteButton->setEnabled(true);
-            setTabWidgetsEnabled(false);
+            setTabWidgetsEnabled(true);
 
             loadParams(*profile);
         } else {
@@ -1006,15 +1021,16 @@ void DefaultParamsDialog::profileSavePressed() {
     }
 
     if (profileManager.writeProfile(*buildParams(), profileCB->currentText())) {
-        const QString profileName = profileCB->currentText();
-        profileCB->setItemData(profileCB->currentIndex(), profileName);
-        profileCB->setItemText(profileCB->currentIndex(), profileName);
-        customProfileItemIdx = profileCB->count();
-        profileCB->addItem(tr("Custom"), "Custom");
+        if (profileCB->currentIndex() == customProfileItemIdx) {
+            const QString profileName = profileCB->currentText();
+            profileCB->setItemData(profileCB->currentIndex(), profileName);
+            profileCB->setItemText(profileCB->currentIndex(), profileName);
+            customProfileItemIdx = profileCB->count();
+            profileCB->addItem(tr("Custom"), "Custom");
 
-        profileSaveButton->setEnabled(false);
-        profileDeleteButton->setEnabled(true);
-        setTabWidgetsEnabled(false);
+            profileCB->setEditable(false);
+            profileDeleteButton->setEnabled(true);
+        }
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Error saving the profile."));
     }

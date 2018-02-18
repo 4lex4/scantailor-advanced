@@ -38,7 +38,8 @@ namespace page_layout {
                   const Params& params,
                   const ImageTransformation& xform,
                   const QPolygonF& phys_content_rect,
-                  QRectF displayArea);
+                  const QRectF& displayArea,
+                  bool deviant);
 
         void paintOverImage(QPainter& painter,
                             const QTransform& image_to_display,
@@ -48,6 +49,7 @@ namespace page_layout {
         Params m_params;
         QRectF m_virtContentRect;
         QRectF m_virtOuterRect;
+        bool m_deviant;
     };
 }  // namespace page_layout
 #endif

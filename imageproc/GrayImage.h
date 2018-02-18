@@ -110,6 +110,14 @@ namespace imageproc {
 
         GrayImage inverted() const;
 
+        int dotsPerMeterX() const;
+
+        int dotsPerMeterY() const;
+
+        void setDotsPerMeterX(int value);
+
+        void setDotsPerMeterY(int value);
+
     private:
         QImage m_image;
     };

@@ -5,25 +5,29 @@
 namespace output {
     PictureShapeOptions::PictureShapeOptions()
             : pictureShape(FREE_SHAPE),
-              sensitivity(100) {
+              sensitivity(100),
+              higherSearchSensitivity(false) {
     }
 
     PictureShapeOptions::PictureShapeOptions(const QDomElement& el)
             : pictureShape(parsePictureShape(el.attribute("pictureShape"))),
-              sensitivity(el.attribute("sensitivity").toInt()) {
+              sensitivity(el.attribute("sensitivity").toInt()),
+              higherSearchSensitivity(el.attribute("higherSearchSensitivity") == "1") {
     }
 
     QDomElement PictureShapeOptions::toXml(QDomDocument& doc, const QString& name) const {
         QDomElement el(doc.createElement(name));
         el.setAttribute("pictureShape", formatPictureShape(pictureShape));
         el.setAttribute("sensitivity", sensitivity);
+        el.setAttribute("higherSearchSensitivity", higherSearchSensitivity ? "1" : "0");
 
         return el;
     }
 
     bool PictureShapeOptions::operator==(const PictureShapeOptions& other) const {
         return (pictureShape == other.pictureShape)
-               && (sensitivity == other.sensitivity);
+               && (sensitivity == other.sensitivity)
+               && (higherSearchSensitivity == other.higherSearchSensitivity);
     }
 
     bool PictureShapeOptions::operator!=(const PictureShapeOptions& other) const {
@@ -71,6 +75,14 @@ namespace output {
 
     void PictureShapeOptions::setSensitivity(int sensitivity) {
         PictureShapeOptions::sensitivity = sensitivity;
+    }
+
+    bool PictureShapeOptions::isHigherSearchSensitivity() const {
+        return higherSearchSensitivity;
+    }
+
+    void PictureShapeOptions::setHigherSearchSensitivity(bool higherSearchSensitivity) {
+        PictureShapeOptions::higherSearchSensitivity = higherSearchSensitivity;
     }
 
 }

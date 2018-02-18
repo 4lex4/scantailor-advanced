@@ -24,11 +24,16 @@
 
 class Utils {
 public:
-    template<typename M, typename K, typename V>
-    static typename M::iterator mapSetValue(M& map, const K& key, const V& val);
+    template<typename K, typename V, typename Comp, typename Alloc>
+    static typename std::map<K, V, Comp, Alloc>::iterator
+    mapSetValue(std::map<K, V, Comp, Alloc>& map, const K& key, const V& val);
 
-    template<typename M, typename K, typename V>
-    static typename M::iterator unorderedMapSetValue(M& map, const K& key, const V& val);
+    template<typename K, typename V, typename Hash, typename Pred, typename Alloc>
+    static typename std::unordered_map<K, V, Hash, Pred, Alloc>::iterator
+    mapSetValue(std::unordered_map<K, V, Hash, Pred, Alloc>& map, const K& key, const V& val);
+
+    template<typename T>
+    static T castOrFindChild(QObject* object);
 
     /**
      * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
@@ -71,11 +76,12 @@ public:
 };
 
 
-template<typename M, typename K, typename V>
-typename M::iterator Utils::mapSetValue(M& map, const K& key, const V& val) {
-    const typename M::iterator it(map.lower_bound(key));
+template<typename K, typename V, typename Comp, typename Alloc>
+typename std::map<K, V, Comp, Alloc>::iterator
+Utils::mapSetValue(std::map<K, V, Comp, Alloc>& map, const K& key, const V& val) {
+    const auto it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {
-        return map.insert(it, typename M::value_type(key, val));
+        return map.insert(it, typename std::map<K, V, Comp, Alloc>::value_type(key, val));
     } else {
         it->second = val;
 
@@ -83,16 +89,36 @@ typename M::iterator Utils::mapSetValue(M& map, const K& key, const V& val) {
     }
 }
 
-template<typename M, typename K, typename V>
-typename M::iterator Utils::unorderedMapSetValue(M& map, const K& key, const V& val) {
-    const typename M::iterator it(map.find(key));
+template<typename K, typename V, typename Hash, typename Pred, typename Alloc>
+typename std::unordered_map<K, V, Hash, Pred, Alloc>::iterator
+Utils::mapSetValue(std::unordered_map<K, V, Hash, Pred, Alloc>& map, const K& key, const V& val) {
+    const auto it(map.find(key));
     if (it == map.end()) {
-        return map.insert(it, typename M::value_type(key, val));
+        return map.insert(it, typename std::unordered_map<K, V, Hash, Pred, Alloc>::value_type(key, val));
     } else {
         it->second = val;
 
         return it;
     }
+}
+
+template<typename T>
+T Utils::castOrFindChild(QObject* object) {
+    if (object == nullptr) {
+        return nullptr;
+    }
+    
+    if (auto result = dynamic_cast<T>(object)) {
+        return result;
+    } else {
+        for (QObject* child : object->children()) {
+            if (result = castOrFindChild<T>(child)) {
+                return result;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 #endif  // ifndef UTILS_H_

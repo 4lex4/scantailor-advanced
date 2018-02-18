@@ -74,7 +74,6 @@
 #include "ui_BatchProcessingLowerPanel.h"
 #include "version.h"
 #include "Application.h"
-#include "ImageViewInfoProvider.h"
 #include "UnitsProvider.h"
 #include "DefaultParamsDialog.h"
 #include <boost/lambda/lambda.hpp>
@@ -154,7 +153,8 @@ MainWindow::MainWindow()
     connect(m_ptrThumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& page_info) {
         PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
         if (pageSequence.numPages() > 0) {
-            m_statusBarPanel->updatePage(pageSequence.pageNo(page_info.id()) + 1, page_info.id());
+            m_statusBarPanel->updatePage(pageSequence.pageNo(page_info.id()) + 1,
+                                         pageSequence.numPages(), page_info.id());
         } else {
             m_statusBarPanel->clear();
         }
@@ -787,7 +787,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
 void MainWindow::setImageWidget(QWidget* widget,
                                 const Ownership ownership,
                                 DebugImages* debug_images,
-                                bool clearImageWidget) {
+                                bool clear_image_widget) {
     if (isBatchProcessingInProgress() && (widget != m_ptrBatchProcessingWidget.get())) {
         if (ownership == TRANSFER_OWNERSHIP) {
             delete widget;
@@ -797,16 +797,15 @@ void MainWindow::setImageWidget(QWidget* widget,
     }
 
     QWidget* current_widget = m_pImageFrameLayout->currentWidget();
-    if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != NULL) {
-        if (!clearImageWidget) {
+    if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != nullptr) {
+        if (!clear_image_widget) {
             return;
         }
     }
 
-    bool current_widget_isImage = (dynamic_cast<output::TabbedImageView*>(current_widget) != NULL)
-                                  || (dynamic_cast<ImageViewBase*>(current_widget) != NULL);
+    bool current_widget_is_image = (Utils::castOrFindChild<ImageViewBase*>(current_widget) != nullptr);
 
-    if (clearImageWidget || !current_widget_isImage) {
+    if (clear_image_widget || !current_widget_is_image) {
         removeImageWidget();
     }
 
@@ -816,7 +815,7 @@ void MainWindow::setImageWidget(QWidget* widget,
 
     if (!debug_images || debug_images->empty()) {
         m_pImageFrameLayout->addWidget(widget);
-        if (!clearImageWidget && current_widget_isImage) {
+        if (!clear_image_widget && current_widget_is_image) {
             m_pImageFrameLayout->setCurrentWidget(widget);
         }
     } else {
@@ -1144,13 +1143,20 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
         }  // Otherwise probably no project is loaded.
     }
 
-    focusButton->setChecked(true);  // Should go before resetThumbSequence().
+    const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
+    const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
+
     resetThumbSequence(currentPageOrderProvider());
+
+    if (!focusButton->isChecked()) {
+        thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);
+        thumbView->verticalScrollBar()->setValue(ver_scroll_bar_pos);
+    }
 
     // load default settings for all the pages
     for (const PageInfo& pageInfo : m_ptrThumbSequence->toPageSequence()) {
         for (int i = 0; i < m_ptrStages->count(); i++) {
-            m_ptrStages->filterAt(i)->loadDefaultSettings(pageInfo.id());
+            m_ptrStages->filterAt(i)->loadDefaultSettings(pageInfo);
         }
     }
 
@@ -1212,7 +1218,7 @@ void MainWindow::startBatchProcessing() {
     PageInfo page(m_ptrThumbSequence->selectionLeader());
     for (; !page.isNull(); page = m_ptrThumbSequence->nextPage(page.id())) {
         for (int i = 0; i < m_ptrStages->count(); i++) {
-            m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
+            m_ptrStages->filterAt(i)->loadDefaultSettings(page);
         }
         m_ptrBatchQueue->addProcessingTask(
                 page, createCompositeTask(page, m_curFilter,  /*batch=*/ true, m_debug)
@@ -1269,8 +1275,7 @@ void MainWindow::stopBatchProcessing(MainAreaAction main_area) {
             removeImageWidget();
             break;
     }
-
-    m_ptrStages->filterAt(m_curFilter)->updateStatistics();
+    
     resetThumbSequence(currentPageOrderProvider());
 }
 
@@ -1319,7 +1324,7 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
                 if (cmd.isEmpty()) {
                     QApplication::beep();
                 } else {
-                    std::system(cmd.toStdString().c_str());
+                    (void) std::system(cmd.toStdString().c_str());
                 }
             }
 
@@ -1662,22 +1667,14 @@ PageView MainWindow::getCurrentView() const {
 void MainWindow::updateMainArea() {
     if (m_ptrPages->numImages() == 0) {
         filterList->setBatchProcessingPossible(false);
-        if (filterDockWidget->isEnabled() || thumbnailsDockWidget->isEnabled()) {
-            filterDockWidget->setEnabled(false);
-            thumbnailsDockWidget->setEnabled(false);
-        }
+        setDockWidgetsVisible(false);
         showNewOpenProjectPanel();
         m_statusBarPanel->clear();
     } else if (isBatchProcessingInProgress()) {
         filterList->setBatchProcessingPossible(false);
         setImageWidget(m_ptrBatchProcessingWidget.get(), KEEP_OWNERSHIP);
-        ImageViewInfoProvider::getInstance()->setMousePos(QPointF());
-        ImageViewInfoProvider::getInstance()->setPhysSize(QRectF().size());
     } else {
-        if (!(filterDockWidget->isEnabled() && thumbnailsDockWidget->isEnabled())) {
-            filterDockWidget->setEnabled(true);
-            thumbnailsDockWidget->setEnabled(true);
-        }
+        setDockWidgetsVisible(true);
         const PageInfo page(m_ptrThumbSequence->selectionLeader());
         if (page.isNull()) {
             filterList->setBatchProcessingPossible(false);
@@ -1688,7 +1685,7 @@ void MainWindow::updateMainArea() {
             filterList->setBatchProcessingPossible(true);
             PageSequence pageSequence = m_ptrThumbSequence->toPageSequence();
             if (pageSequence.numPages() > 0) {
-                m_statusBarPanel->updatePage(pageSequence.pageNo(page.id()) + 1, page.id());
+                m_statusBarPanel->updatePage(pageSequence.pageNo(page.id()) + 1, pageSequence.numPages(), page.id());
             }
             loadPageInteractive(page);
         }
@@ -1723,7 +1720,7 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
     }
 
     for (int i = 0; i < m_ptrStages->count(); i++) {
-        m_ptrStages->filterAt(i)->loadDefaultSettings(page.id());
+        m_ptrStages->filterAt(i)->loadDefaultSettings(page);
     }
 
     if (!isBatchProcessingInProgress()) {
@@ -1731,7 +1728,7 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
             m_ptrProcessingIndicationWidget->processingRestartedEffect();
         }
         setImageWidget(m_ptrProcessingIndicationWidget.get(), KEEP_OWNERSHIP, 0, false);
-        m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page.id());
+        m_ptrStages->filterAt(m_curFilter)->preUpdateUI(this, page);
     }
 
     assert(m_ptrThumbnailCache);
@@ -2235,5 +2232,10 @@ void MainWindow::changeEvent(QEvent* event) {
                 break;
         }
     }
+}
+
+void MainWindow::setDockWidgetsVisible(bool state) {
+    filterDockWidget->setVisible(state);
+    thumbnailsDockWidget->setVisible(state);
 }
 

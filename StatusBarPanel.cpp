@@ -13,10 +13,66 @@ StatusBarPanel::StatusBarPanel() {
 void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
     const QMutexLocker locker(&mutex);
 
-    if (!mousePos.isNull()) {
+    StatusBarPanel::mousePos = mousePos;
+    mousePosChanged();
+}
+
+void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
+    const QMutexLocker locker(&mutex);
+
+    StatusBarPanel::physSize = physSize;
+    physSizeChanged();
+}
+
+void StatusBarPanel::updateDpi(const Dpi& dpi) {
+    StatusBarPanel::dpi = dpi;
+}
+
+void StatusBarPanel::clearImageViewInfo() {
+    infoProvider = nullptr;
+    updateMousePos(QPointF());
+    updatePhysSize(QRectF().size());
+    dpi = Dpi();
+}
+
+void StatusBarPanel::updatePage(int pageNumber, size_t pageCount, const PageId& pageId) {
+    ui.pageNoLabel->setText(tr("p. %1 / %2").arg(pageNumber).arg(pageCount));
+
+    QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).baseName();
+    if (pageFileInfo.size() > 15) {
+        pageFileInfo = "..." + pageFileInfo.right(13);
+    }
+    if (pageId.subPage() != PageId::SINGLE_PAGE) {
+        pageFileInfo = pageFileInfo.right(11) + ((pageId.subPage() == PageId::LEFT_PAGE) ? tr(" [L]") : tr(" [R]"));
+    }
+
+    ui.pageInfoLine->setVisible(true);
+    ui.pageInfo->setText(pageFileInfo);
+}
+
+void StatusBarPanel::clear() {
+    ui.mousePosLabel->clear();
+    ui.physSizeLabel->clear();
+    ui.pageNoLabel->clear();
+    ui.pageInfo->clear();
+
+    ui.mousePosLine->setVisible(false);
+    ui.physSizeLine->setVisible(false);
+    ui.pageInfoLine->setVisible(false);
+}
+
+void StatusBarPanel::updateUnits(Units) {
+    const QMutexLocker locker(&mutex);
+
+    mousePosChanged();
+    physSizeChanged();
+}
+
+void StatusBarPanel::mousePosChanged() {
+    if (!mousePos.isNull() && !dpi.isNull()) {
         double x = mousePos.x();
         double y = mousePos.y();
-        UnitsProvider::getInstance()->convertFrom(x, y, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(x, y, PIXELS, dpi);
 
         switch (UnitsProvider::getInstance()->getUnits()) {
             case PIXELS:
@@ -38,13 +94,11 @@ void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
     }
 }
 
-void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
-    const QMutexLocker locker(&mutex);
-
-    if (!physSize.isNull()) {
+void StatusBarPanel::physSizeChanged() {
+    if (!physSize.isNull() && !dpi.isNull()) {
         double width = physSize.width();
         double height = physSize.height();
-        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, dpi);
 
         const Units units = UnitsProvider::getInstance()->getUnits();
         switch (units) {
@@ -74,33 +128,13 @@ void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
     }
 }
 
-void StatusBarPanel::updatePage(int pageNumber, const PageId& pageId) {
-    ui.pageNoLabel->setText(tr("p. %1").arg(pageNumber));
-
-    QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).baseName();
-    if (pageFileInfo.size() > 15) {
-        pageFileInfo = "..." + pageFileInfo.right(13);
+void StatusBarPanel::setInfoProvider(ImageViewInfoProvider* infoProvider) {
+    if (this->infoProvider) {
+        infoProvider->detachObserver(this);
     }
-    if (pageId.subPage() != PageId::SINGLE_PAGE) {
-        pageFileInfo = pageFileInfo.right(11) + ((pageId.subPage() == PageId::LEFT_PAGE) ? tr(" [L]") : tr(" [R]"));
+    if (infoProvider) {
+        infoProvider->attachObserver(this);
     }
 
-    ui.pageInfoLine->setVisible(true);
-    ui.pageInfo->setText(pageFileInfo);
-}
-
-void StatusBarPanel::clear() {
-    ui.mousePosLabel->clear();
-    ui.physSizeLabel->clear();
-    ui.pageNoLabel->clear();
-    ui.pageInfo->clear();
-
-    ui.mousePosLine->setVisible(false);
-    ui.physSizeLine->setVisible(false);
-    ui.pageInfoLine->setVisible(false);
-}
-
-void StatusBarPanel::updateUnits(Units) {
-    updateMousePos(ImageViewInfoProvider::getInstance()->getMousePos());
-    updatePhysSize(ImageViewInfoProvider::getInstance()->getPhysSize());
+    this->infoProvider = infoProvider;
 }

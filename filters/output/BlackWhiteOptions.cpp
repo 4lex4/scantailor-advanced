@@ -18,6 +18,7 @@
 
 #include "BlackWhiteOptions.h"
 #include <QDomDocument>
+#include <cmath>
 
 namespace output {
     BlackWhiteOptions::BlackWhiteOptions()
@@ -30,9 +31,7 @@ namespace output {
               wolfLowerBound(1),
               wolfUpperBound(254),
               wolfCoef(0.3),
-              binarizationMethod(OTSU),
-              colorSegmentationEnabled(false),
-              segmentationNoiseReduction(12) {
+              binarizationMethod(OTSU) {
     }
 
     BlackWhiteOptions::BlackWhiteOptions(const QDomElement& el)
@@ -46,8 +45,7 @@ namespace output {
               wolfUpperBound(el.attribute("wolfUpperBound").toInt()),
               wolfCoef(el.attribute("wolfCoef").toDouble()),
               binarizationMethod(parseBinarizationMethod(el.attribute("binarizationMethod"))),
-              colorSegmentationEnabled(el.attribute("colorSegmentationEnabled") == "1"),
-              segmentationNoiseReduction(el.attribute("segmentationNoiseReduction").toInt()) {
+              colorSegmenterOptions(el.namedItem("color-segmenter-options").toElement()) {
     }
 
     QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) const {
@@ -62,8 +60,7 @@ namespace output {
         el.setAttribute("wolfUpperBound", wolfUpperBound);
         el.setAttribute("wolfCoef", wolfCoef);
         el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
-        el.setAttribute("colorSegmentationEnabled", colorSegmentationEnabled ? "1" : "0");
-        el.setAttribute("segmentationNoiseReduction", segmentationNoiseReduction);
+        el.appendChild(colorSegmenterOptions.toXml(doc, "color-segmenter-options"));
 
         return el;
     }
@@ -79,8 +76,7 @@ namespace output {
                && (wolfUpperBound == other.wolfUpperBound)
                && (wolfCoef == other.wolfCoef)
                && (binarizationMethod == other.binarizationMethod)
-               && (colorSegmentationEnabled == other.colorSegmentationEnabled)
-               && (segmentationNoiseReduction == other.segmentationNoiseReduction);
+               && (colorSegmenterOptions == other.colorSegmenterOptions);
     }
 
     bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
@@ -194,20 +190,96 @@ namespace output {
         m_normalizeIllumination = val;
     }
 
-    bool BlackWhiteOptions::isColorSegmentationEnabled() const {
-        return colorSegmentationEnabled;
+    const BlackWhiteOptions::ColorSegmenterOptions& BlackWhiteOptions::getColorSegmenterOptions() const {
+        return colorSegmenterOptions;
     }
 
-    void BlackWhiteOptions::setColorSegmentationEnabled(bool colorSegmentationEnabled) {
-        BlackWhiteOptions::colorSegmentationEnabled = colorSegmentationEnabled;
+    void
+    BlackWhiteOptions::setColorSegmenterOptions(const BlackWhiteOptions::ColorSegmenterOptions& colorSegmenterOptions) {
+        BlackWhiteOptions::colorSegmenterOptions = colorSegmenterOptions;
     }
 
-    int BlackWhiteOptions::getSegmentationNoiseReduction() const {
-        return segmentationNoiseReduction;
+/*=============================== BlackWhiteOptions::ColorSegmenterOptions ==================================*/
+
+    BlackWhiteOptions::ColorSegmenterOptions::ColorSegmenterOptions()
+            : enabled(false),
+              noiseReduction(12),
+              redThresholdAdjustment(0),
+              greenThresholdAdjustment(0),
+              blueThresholdAdjustment(0) {
     }
 
-    void BlackWhiteOptions::setSegmentationNoiseReduction(int segmentationNoiseReduction) {
-        BlackWhiteOptions::segmentationNoiseReduction = segmentationNoiseReduction;
+    BlackWhiteOptions::ColorSegmenterOptions::ColorSegmenterOptions(const QDomElement& el)
+            : enabled(el.attribute("enabled") == "1"),
+              noiseReduction(el.attribute("noiseReduction").toInt()),
+              redThresholdAdjustment(el.attribute("redThresholdAdjustment").toInt()),
+              greenThresholdAdjustment(el.attribute("greenThresholdAdjustment").toInt()),
+              blueThresholdAdjustment(el.attribute("blueThresholdAdjustment").toInt()) {
+    }
+
+    QDomElement BlackWhiteOptions::ColorSegmenterOptions::toXml(QDomDocument& doc, const QString& name) const {
+        QDomElement el(doc.createElement(name));
+        el.setAttribute("colorSegmentationEnabled", enabled ? "1" : "0");
+        el.setAttribute("noiseReduction", noiseReduction);
+        el.setAttribute("redThresholdAdjustment", redThresholdAdjustment);
+        el.setAttribute("greenThresholdAdjustment", greenThresholdAdjustment);
+        el.setAttribute("blueThresholdAdjustment", blueThresholdAdjustment);
+
+        return el;
+    }
+
+    bool
+    BlackWhiteOptions::ColorSegmenterOptions::operator==(const BlackWhiteOptions::ColorSegmenterOptions& other) const {
+        return (enabled == other.enabled)
+               && (noiseReduction == other.noiseReduction)
+               && (redThresholdAdjustment == other.redThresholdAdjustment)
+               && (greenThresholdAdjustment == other.greenThresholdAdjustment)
+               && (blueThresholdAdjustment == other.blueThresholdAdjustment);
+    }
+
+    bool
+    BlackWhiteOptions::ColorSegmenterOptions::operator!=(const BlackWhiteOptions::ColorSegmenterOptions& other) const {
+        return !(*this == other);
+    }
+
+    bool BlackWhiteOptions::ColorSegmenterOptions::isEnabled() const {
+        return enabled;
+    }
+
+    void BlackWhiteOptions::ColorSegmenterOptions::setEnabled(bool enabled) {
+        ColorSegmenterOptions::enabled = enabled;
+    }
+
+    int BlackWhiteOptions::ColorSegmenterOptions::getNoiseReduction() const {
+        return noiseReduction;
+    }
+
+    void BlackWhiteOptions::ColorSegmenterOptions::setNoiseReduction(int noiseReduction) {
+        ColorSegmenterOptions::noiseReduction = noiseReduction;
+    }
+
+    int BlackWhiteOptions::ColorSegmenterOptions::getRedThresholdAdjustment() const {
+        return redThresholdAdjustment;
+    }
+
+    void BlackWhiteOptions::ColorSegmenterOptions::setRedThresholdAdjustment(int redThresholdAdjustment) {
+        ColorSegmenterOptions::redThresholdAdjustment = redThresholdAdjustment;
+    }
+
+    int BlackWhiteOptions::ColorSegmenterOptions::getGreenThresholdAdjustment() const {
+        return greenThresholdAdjustment;
+    }
+
+    void BlackWhiteOptions::ColorSegmenterOptions::setGreenThresholdAdjustment(int greenThresholdAdjustment) {
+        ColorSegmenterOptions::greenThresholdAdjustment = greenThresholdAdjustment;
+    }
+
+    int BlackWhiteOptions::ColorSegmenterOptions::getBlueThresholdAdjustment() const {
+        return blueThresholdAdjustment;
+    }
+
+    void BlackWhiteOptions::ColorSegmenterOptions::setBlueThresholdAdjustment(int blueThresholdAdjustment) {
+        ColorSegmenterOptions::blueThresholdAdjustment = blueThresholdAdjustment;
     }
 
 }  // namespace output

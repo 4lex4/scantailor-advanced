@@ -222,9 +222,9 @@ namespace output {
                                                               imageproc::GrayImage* background = nullptr,
                                                               DebugImages* dbg = nullptr);
 
-        static imageproc::GrayImage detectPictures(const imageproc::GrayImage& input_300dpi,
-                                                   const TaskStatus& status,
-                                                   DebugImages* dbg = nullptr);
+        imageproc::GrayImage detectPictures(const imageproc::GrayImage& input_300dpi,
+                                            const TaskStatus& status,
+                                            DebugImages* dbg = nullptr) const;
 
         imageproc::BinaryImage estimateBinarizationMask(const TaskStatus& status,
                                                         const imageproc::GrayImage& gray_source,
@@ -316,6 +316,10 @@ namespace output {
                                           const QTransform& postTransform,
                                           const imageproc::BinaryImage& picture_mask,
                                           bool binary_mode) const;
+
+        QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
+
+        QImage posterizeImage(const QImage& image, const QColor& background_color = Qt::white) const;
 
         Dpi m_dpi;
         ColorParams m_colorParams;

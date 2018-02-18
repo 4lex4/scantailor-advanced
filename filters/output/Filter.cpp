@@ -57,8 +57,8 @@ namespace output {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        m_ptrOptionsWidget->preUpdateUI(page_id);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        m_ptrOptionsWidget->preUpdateUI(page_info.id());
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
@@ -182,15 +182,15 @@ namespace output {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
 
         m_ptrSettings->setParams(
-                page_id,
+                page_info.id(),
                 Params(outputParams.getDpi(),
                        outputParams.getColorParams(),
                        outputParams.getSplittingOptions(),

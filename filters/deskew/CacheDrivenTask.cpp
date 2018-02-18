@@ -74,7 +74,7 @@ namespace deskew {
                                     thumb_col->thumbnailCache(),
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), new_xform,
-                                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
+                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id(), 1.2, 0.3)
                             )
                     )
             );

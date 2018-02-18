@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="CollapsibleGroupBox" name="pageLayoutGroup">
      <property name="title">
       <string>Page Layout</string>
      </property>
@@ -179,7 +179,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="splitLineGroup">
+    <widget class="CollapsibleGroupBox" name="splitLineGroup">
      <property name="title">
       <string>Split Line</string>
      </property>
@@ -244,6 +244,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header location="global">CollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../resources/resources.qrc"/>
  </resources>

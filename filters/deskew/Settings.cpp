@@ -22,10 +22,19 @@
 #include "AbstractRelinker.h"
 
 namespace deskew {
-    Settings::Settings()
-            : m_avg(0.0),
-              m_sigma(0.0),
-              m_maxDeviation(5.0) {
+    Settings::Settings() {
+        m_deviationProvider.setComputeValueByKey(
+                [this](const PageId& pageId) -> double {
+                    auto it(m_perPageParams.find(pageId));
+                    if (it != m_perPageParams.end()) {
+                        const Params& params = it->second;
+
+                        return params.deskewAngle();
+                    } else {
+                        return .0;
+                    };
+                }
+        );
     }
 
     Settings::~Settings() = default;
@@ -33,6 +42,7 @@ namespace deskew {
     void Settings::clear() {
         QMutexLocker locker(&m_mutex);
         m_perPageParams.clear();
+        m_deviationProvider.clear();
     }
 
     void Settings::performRelinking(const AbstractRelinker& relinker) {
@@ -47,39 +57,23 @@ namespace deskew {
         }
 
         m_perPageParams.swap(new_params);
-    }
 
-    void Settings::updateDeviation() {
-        m_avg = 0.0;
+        m_deviationProvider.clear();
         for (const PerPageParams::value_type& kv : m_perPageParams) {
-            m_avg += kv.second.deskewAngle();
+            m_deviationProvider.addOrUpdate(kv.first);
         }
-        m_avg = m_avg / m_perPageParams.size();
-#ifdef DEBUG
-        std::cout << "avg skew = " << m_avg << std::endl;
-#endif
-
-        double sigma2 = 0.0;
-        for (PerPageParams::value_type& kv : m_perPageParams) {
-            kv.second.computeDeviation(m_avg);
-            sigma2 += kv.second.deviation() * kv.second.deviation();
-        }
-        sigma2 = sigma2 / m_perPageParams.size();
-        m_sigma = sqrt(sigma2);
-#ifdef DEBUG
-        std::cout << "sigma2 = " << sigma2 << std::endl;
-        std::cout << "sigma = " << m_sigma << std::endl;
-#endif
     }
 
     void Settings::setPageParams(const PageId& page_id, const Params& params) {
         QMutexLocker locker(&m_mutex);
         Utils::mapSetValue(m_perPageParams, page_id, params);
+        m_deviationProvider.addOrUpdate(page_id);
     }
 
     void Settings::clearPageParams(const PageId& page_id) {
         QMutexLocker locker(&m_mutex);
         m_perPageParams.erase(page_id);
+        m_deviationProvider.remove(page_id);
     }
 
     std::unique_ptr<Params>
@@ -94,16 +88,21 @@ namespace deskew {
         }
     }
 
-    void Settings::setDegress(const std::set<PageId>& pages, const Params& params) {
+    void Settings::setDegrees(const std::set<PageId>& pages, const Params& params) {
         const QMutexLocker locker(&m_mutex);
         for (const PageId& page : pages) {
             Utils::mapSetValue(m_perPageParams, page, params);
+            m_deviationProvider.addOrUpdate(page);
         }
     }
 
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_perPageParams.find(page_id) == m_perPageParams.end();
+        return (m_perPageParams.find(page_id) == m_perPageParams.end());
+    }
+
+    const DeviationProvider<PageId>& Settings::deviationProvider() const {
+        return m_deviationProvider;
     }
 }  // namespace deskew

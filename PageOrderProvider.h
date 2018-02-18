@@ -33,7 +33,9 @@ public:
      * \p lhs_incomplete and \p rhs_incomplete indicate whether
      * a page is represented by IncompleteThumbnail.
      */
-    virtual bool precedes(const PageId& lhs_page, bool lhs_incomplete, const PageId& rhs_page,
+    virtual bool precedes(const PageId& lhs_page,
+                          bool lhs_incomplete,
+                          const PageId& rhs_page,
                           bool rhs_incomplete) const = 0;
 };
 

@@ -23,6 +23,7 @@
 #include "ref_countable.h"
 #include "Margins.h"
 #include <memory>
+#include <DeviationProvider.h>
 
 class PageId;
 class Margins;
@@ -169,6 +170,8 @@ namespace page_layout {
         bool isPageAutoMarginsEnabled(const PageId& page_id);
 
         void setPageAutoMarginsEnabled(const PageId& page_id, bool state);
+
+        const DeviationProvider<PageId>& deviationProvider() const;
 
     private:
         class Impl;

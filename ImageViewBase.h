@@ -24,6 +24,7 @@
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "ImagePixmapUnion.h"
+#include "ImageViewInfoProvider.h"
 #include <QTimer>
 #include <QWidget>
 #include <QAbstractScrollArea>
@@ -261,6 +262,8 @@ public:
 
     static BackgroundExecutor& backgroundExecutor();
 
+    ImageViewInfoProvider& infoProvider();
+
 protected:
     void paintEvent(QPaintEvent* event) override;
 
@@ -283,6 +286,8 @@ protected:
     void enterEvent(QEvent* event) override;
 
     void leaveEvent(QEvent* event) override;
+
+    void showEvent(QShowEvent *event) override;
 
     /**
      * Returns the maximum viewport size (as if scrollbars are hidden)
@@ -487,6 +492,8 @@ private:
     int m_ignoreResizeEvents;
 
     bool m_hqTransformEnabled;
+
+    ImageViewInfoProvider m_infoProvider;
 };
 
 

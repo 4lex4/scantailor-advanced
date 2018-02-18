@@ -46,4 +46,20 @@ namespace imageproc {
     void GrayImage::invert() {
         m_image.invertPixels(QImage::InvertRgb);
     }
+
+    int GrayImage::dotsPerMeterX() const {
+        return m_image.dotsPerMeterX();
+    }
+
+    int GrayImage::dotsPerMeterY() const {
+        return m_image.dotsPerMeterY();
+    }
+
+    void GrayImage::setDotsPerMeterX(int value) {
+        m_image.setDotsPerMeterX(value);
+    }
+
+    void GrayImage::setDotsPerMeterY(int value) {
+        m_image.setDotsPerMeterY(value);
+    }
 }  // namespace imageproc

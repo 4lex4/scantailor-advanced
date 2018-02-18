@@ -38,11 +38,11 @@ namespace select_content {
 
     OptionsWidget::~OptionsWidget() = default;
 
-    void OptionsWidget::preUpdateUI(const PageId& page_id) {
+    void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
         removeUiConnections();
 
-        m_pageId = page_id;
-
+        m_pageId = page_info.id();
+        m_dpi = page_info.metadata().dpi();
         contentDetectAutoBtn->setEnabled(false);
         contentDetectManualBtn->setEnabled(false);
         contentDetectDisableBtn->setEnabled(false);
@@ -120,7 +120,7 @@ namespace select_content {
 
         double width = size.width();
         double height = size.height();
-        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS);
+        UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, m_dpi);
 
         widthSpinBox->setValue(width);
         heightSpinBox->setValue(height);
@@ -235,7 +235,7 @@ namespace select_content {
 
         double widthSpinBoxValue = widthSpinBox->value();
         double heightSpinBoxValue = heightSpinBox->value();
-        UnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS);
+        UnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS, m_dpi);
 
         QRectF newPageRect = m_uiData.pageRect();
         newPageRect.setSize(QSizeF(widthSpinBoxValue, heightSpinBoxValue));
@@ -264,7 +264,6 @@ namespace select_content {
                 m_uiData.isContentDetectionEnabled(), m_uiData.isPageDetectionEnabled(),
                 m_uiData.isFineTuningCornersEnabled()
         );
-        params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, params);
     }
 

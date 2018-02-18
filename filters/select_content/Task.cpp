@@ -31,8 +31,6 @@
 #include <iostream>
 #include <utility>
 #include <UnitsProvider.h>
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include "Dpm.h"
 
 namespace select_content {
@@ -84,8 +82,6 @@ namespace select_content {
 
     FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
         status.throwIfCancelled();
-
-        loadDefaultSettings(Dpm(data.origImage()));
 
         const Dependencies deps(data.xform().resultingPreCropArea());
 
@@ -179,7 +175,6 @@ namespace select_content {
             new_params.setContentSizeMM(ui_data.contentSizeMM());
         }
 
-        new_params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, new_params);
 
         status.throwIfCancelled();
@@ -198,25 +193,6 @@ namespace select_content {
             );
         }
     }   // Task::process
-
-    void Task::loadDefaultSettings(const Dpi& dpi) {
-        std::unique_ptr<Params> params = m_ptrSettings->getPageParams(m_pageId);
-        if ((params == nullptr) || !params->pageRect().isNull()) {
-            return;
-        }
-        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
-        const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
-
-        UnitsConverter unitsConverter(dpi);
-
-        const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
-        double pageRectWidth = pageRectSize.width();
-        double pageRectHeight = pageRectSize.height();
-        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
-
-        params->setPageRect(QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)));
-        m_ptrSettings->setPageParams(m_pageId, *params);
-    }
 
 /*============================ Task::UiUpdater ==========================*/
 
@@ -239,8 +215,6 @@ namespace select_content {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);

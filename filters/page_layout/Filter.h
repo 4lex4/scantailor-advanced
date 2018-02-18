@@ -29,7 +29,6 @@
 #include <QCoreApplication>
 #include <vector>
 
-class PageId;
 class ProjectPages;
 class PageSelectionAccessor;
 class ImageTransformation;
@@ -70,13 +69,13 @@ namespace page_layout {
 
         void performRelinking(const AbstractRelinker& relinker) override;
 
-        void preUpdateUI(FilterUiInterface* ui, const PageId& page_id) override;
+        void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
         QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
         void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-        void loadDefaultSettings(const PageId& page_id) override;
+        void loadDefaultSettings(const PageInfo& page_info) override;
 
         void setContentBox(const PageId& page_id, const ImageTransformation& xform, const QRectF& content_rect);
 

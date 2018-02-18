@@ -112,8 +112,8 @@ namespace output {
     void Settings::setColorParams(const PageId& page_id, const ColorParams& prms) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setColorParams(prms);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -125,8 +125,8 @@ namespace output {
     void Settings::setPictureShapeOptions(const PageId& page_id, PictureShapeOptions picture_shape_options) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setPictureShapeOptions(picture_shape_options);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -138,8 +138,8 @@ namespace output {
     void Settings::setDpi(const PageId& page_id, const Dpi& dpi) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setOutputDpi(dpi);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -151,8 +151,8 @@ namespace output {
     void Settings::setDewarpingOptions(const PageId& page_id, const DewarpingOptions& opt) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setDewarpingOptions(opt);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -164,8 +164,8 @@ namespace output {
     void Settings::setSplittingOptions(const PageId& page_id, const SplittingOptions& opt) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setSplittingOptions(opt);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -177,8 +177,8 @@ namespace output {
     void Settings::setDistortionModel(const PageId& page_id, const dewarping::DistortionModel& model) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setDistortionModel(model);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -190,8 +190,8 @@ namespace output {
     void Settings::setDepthPerception(const PageId& page_id, const DepthPerception& depth_perception) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setDepthPerception(depth_perception);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
@@ -203,8 +203,8 @@ namespace output {
     void Settings::setDespeckleLevel(const PageId& page_id, DespeckleLevel level) {
         const QMutexLocker locker(&m_mutex);
 
-        const auto it(m_perPageParams.lower_bound(page_id));
-        if ((it == m_perPageParams.end()) || m_perPageParams.key_comp()(page_id, it->first)) {
+        const auto it(m_perPageParams.find(page_id));
+        if (it == m_perPageParams.end()) {
             Params params;
             params.setDespeckleLevel(level);
             m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));

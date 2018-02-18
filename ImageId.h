@@ -80,4 +80,14 @@ bool operator!=(const ImageId& lhs, const ImageId& rhs);
 
 bool operator<(const ImageId& lhs, const ImageId& rhs);
 
+namespace std {
+    template<>
+    struct hash<ImageId> {
+        size_t operator()(const ImageId& imageId) const noexcept {
+            return (hash<string>()(imageId.filePath().toStdString())
+                    ^ hash<int>()(imageId.page()) << 1);
+        }
+    };
+}
+
 #endif // ifndef IMAGEID_H_

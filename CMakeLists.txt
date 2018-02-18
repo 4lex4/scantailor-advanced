@@ -548,7 +548,7 @@ SET(
         filter_dc/ContentBoxCollector.h
         filter_dc/PageOrientationCollector.h
         ImageViewInfoProvider.cpp ImageViewInfoProvider.h
-        ImageViewInfoObserver.cpp ImageViewInfoObserver.h
+        ImageViewInfoObserver.h
         UnitsProvider.cpp UnitsProvider.h
         UnitsObserver.h UnitsObserver.cpp
 		UnitsConverter.cpp UnitsConverter.h
@@ -556,6 +556,8 @@ SET(
         DefaultParams.cpp DefaultParams.h
         DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
 		DefaultParamsProvider.cpp DefaultParamsProvider.h
+        DeviationProvider.h
+        OrderByDeviationProvider.cpp OrderByDeviationProvider.h
         version.h
         config.h.in
         ${common_ui_files})
@@ -582,7 +584,8 @@ SET(
         MainWindow.cpp MainWindow.h
         main.cpp
         StatusBarPanel.cpp StatusBarPanel.h
-        DefaultParamsDialog.cpp DefaultParamsDialog.h)
+        DefaultParamsDialog.cpp DefaultParamsDialog.h
+        CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
 
 SET(
         cli_only_sources

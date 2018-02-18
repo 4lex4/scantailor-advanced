@@ -50,14 +50,14 @@ namespace output {
             if (blackWhiteOptions.normalizeIllumination()) {
                 m_mask |= NORMALIZE_ILLUMINATION;
             }
-            if (blackWhiteOptions.isColorSegmentationEnabled()) {
+            if (blackWhiteOptions.getColorSegmenterOptions().isEnabled()) {
                 m_mask |= COLOR_SEGMENTATION;
-                if (colorCommonOptions.isPosterizeEnabled()) {
+                if (colorCommonOptions.getPosterizationOptions().isEnabled()) {
                     m_mask |= POSTERIZE;
                 }
             }
         } else {
-            if (colorCommonOptions.isPosterizeEnabled()) {
+            if (colorCommonOptions.getPosterizationOptions().isEnabled()) {
                 m_mask |= POSTERIZE;
             }
         }

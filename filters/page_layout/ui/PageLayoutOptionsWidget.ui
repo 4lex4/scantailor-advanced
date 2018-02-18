@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>262</width>
+    <width>235</width>
     <height>496</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QGroupBox" name="marginsGroup">
+    <widget class="CollapsibleGroupBox" name="marginsGroup">
      <property name="title">
       <string>Margins</string>
      </property>
@@ -260,7 +260,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="alignmentGroup">
+    <widget class="CollapsibleGroupBox" name="alignmentGroup">
      <property name="title">
       <string>Alignment</string>
      </property>
@@ -659,6 +659,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header location="global">CollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>topBottomLink</tabstop>
   <tabstop>topMarginSpinBox</tabstop>

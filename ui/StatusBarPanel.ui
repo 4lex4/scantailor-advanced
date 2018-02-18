@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
+    <width>327</width>
     <height>16</height>
    </rect>
   </property>
@@ -103,7 +103,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>31</width>
+       <width>35</width>
        <height>0</height>
       </size>
      </property>
@@ -112,6 +112,9 @@
      </property>
      <property name="statusTip">
       <string>Position of the selected page in current order.</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

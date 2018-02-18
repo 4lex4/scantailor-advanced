@@ -33,13 +33,19 @@ namespace output {
 
         void setSensitivity(int sensitivity);
 
+        bool isHigherSearchSensitivity() const;
+
+        void setHigherSearchSensitivity(bool higherSearchSensitivity);
+
     private:
         static PictureShape parsePictureShape(const QString& str);
 
         static QString formatPictureShape(PictureShape type);
 
+
         PictureShape pictureShape;
         int sensitivity;
+        bool higherSearchSensitivity;
     };
 }
 

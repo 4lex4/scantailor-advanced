@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     JpegMetadataLoader::registerMyself();
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QDir::currentPath() + "/config");
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, app.applicationDirPath() + "/config");
 
     QSettings settings;
 
@@ -75,12 +75,8 @@ int main(int argc, char** argv) {
     if (settings.value("mainWindow/maximized") == false) {
         main_wnd->show();
     } else {
-#ifdef _WIN32
-        main_wnd->show();
-        main_wnd->showMaximized();
-        main_wnd->showNormal();
-#endif
-        main_wnd->showMaximized();
+        // main_wnd->showMaximized();  // Doesn't work for Windows.
+        QTimer::singleShot(0, main_wnd, &QMainWindow::showMaximized);
     }
 
     if (!cli.projectFile().isEmpty()) {

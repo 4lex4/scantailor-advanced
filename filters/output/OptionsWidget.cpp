@@ -163,8 +163,12 @@ namespace output {
     }
 
     void OptionsWidget::pictureShapeChanged(const int idx) {
-        m_pictureShapeOptions.setPictureShape((PictureShape) (pictureShapeSelector->itemData(idx).toInt()));
+        const auto shapeMode = static_cast<PictureShape>(pictureShapeSelector->itemData(idx).toInt());
+        m_pictureShapeOptions.setPictureShape(shapeMode);
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
+        pictureShapeSensitivityOptions->setVisible(shapeMode == RECTANGULAR_SHAPE);
+        higherSearchSensitivityCB->setVisible(shapeMode != OFF_SHAPE);
 
         emit reloadRequested();
     }
@@ -174,6 +178,13 @@ namespace output {
         m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
         delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::higherSearchSensivityToggled(const bool checked) {
+        m_pictureShapeOptions.setHigherSearchSensitivity(checked);
+        m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+
+        emit reloadRequested();
     }
 
     void OptionsWidget::cutMarginsToggled(const bool checked) {
@@ -620,26 +631,32 @@ namespace output {
 
         colorSegmentationCB->setVisible(threshold_options_visible);
         segmenterOptionsWidget->setVisible(threshold_options_visible);
-        segmenterOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
+        segmenterOptionsWidget->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
         if (threshold_options_visible) {
-            posterizeCB->setEnabled(blackWhiteOptions.isColorSegmentationEnabled());
-            posterizeOptionsWidget->setEnabled(blackWhiteOptions.isColorSegmentationEnabled()
-                                               && colorCommonOptions.isPosterizeEnabled());
+            posterizeCB->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
+            posterizeOptionsWidget->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled()
+                                               && colorCommonOptions.getPosterizationOptions().isEnabled());
         } else {
             posterizeCB->setEnabled(true);
-            posterizeOptionsWidget->setEnabled(colorCommonOptions.isPosterizeEnabled());
+            posterizeOptionsWidget->setEnabled(colorCommonOptions.getPosterizationOptions().isEnabled());
         }
-        colorSegmentationCB->setChecked(blackWhiteOptions.isColorSegmentationEnabled());
-        reduceNoiseSB->setValue(blackWhiteOptions.getSegmentationNoiseReduction());
-        posterizeCB->setChecked(colorCommonOptions.isPosterizeEnabled());
-        posterizeLevelSB->setValue(colorCommonOptions.getPosterizationLevel());
-        posterizeForceBwCB->setChecked(colorCommonOptions.isForceBlackAndWhite());
+        colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
+        reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
+        redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
+        greenAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getGreenThresholdAdjustment());
+        blueAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getBlueThresholdAdjustment());
+        posterizeCB->setChecked(colorCommonOptions.getPosterizationOptions().isEnabled());
+        posterizeLevelSB->setValue(colorCommonOptions.getPosterizationOptions().getLevel());
+        posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
+        posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
         if (picture_shape_visible) {
             const int picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
             pictureShapeSelector->setCurrentIndex(picture_shape_idx);
             pictureShapeSensitivitySB->setValue(m_pictureShapeOptions.getSensitivity());
             pictureShapeSensitivityOptions->setVisible(m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE);
+            higherSearchSensitivityCB->setChecked(m_pictureShapeOptions.isHigherSearchSensitivity());
+            higherSearchSensitivityCB->setVisible(m_pictureShapeOptions.getPictureShape() != OFF_SHAPE);
         }
 
         if (threshold_options_visible) {
@@ -757,7 +774,9 @@ namespace output {
     
     void OptionsWidget::colorSegmentationToggled(bool checked) {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        blackWhiteOptions.setColorSegmentationEnabled(checked);
+        BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+        segmenterOptions.setEnabled(checked);
+        blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
@@ -772,16 +791,53 @@ namespace output {
 
     void OptionsWidget::reduceNoiseChanged(int value) {
         BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        blackWhiteOptions.setSegmentationNoiseReduction(value);
+        BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+        segmenterOptions.setNoiseReduction(value);
+        blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
         m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
         delayedReloadRequest.start(750);
     }
 
+    void OptionsWidget::redAdjustmentChanged(int value) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+        segmenterOptions.setRedThresholdAdjustment(value);
+        blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        
+        delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::greenAdjustmentChanged(int value) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+        segmenterOptions.setGreenThresholdAdjustment(value);
+        blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        
+        delayedReloadRequest.start(750);
+    }
+
+    void OptionsWidget::blueAdjustmentChanged(int value) {
+        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+        BlackWhiteOptions::ColorSegmenterOptions segmenterOptions = blackWhiteOptions.getColorSegmenterOptions();
+        segmenterOptions.setBlueThresholdAdjustment(value);
+        blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
+        m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+        
+        delayedReloadRequest.start(750);
+    }
+
     void OptionsWidget::posterizeToggled(bool checked) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setPosterizeEnabled(checked);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setEnabled(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
@@ -792,16 +848,31 @@ namespace output {
 
     void OptionsWidget::posterizeLevelChanged(int value) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setPosterizationLevel(value);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setLevel(value);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
         delayedReloadRequest.start(750);
     }
 
+    void OptionsWidget::posterizeNormalizationToggled(bool checked) {
+        ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setNormalizationEnabled(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
+        m_colorParams.setColorCommonOptions(colorCommonOptions);
+        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+
+        emit reloadRequested();
+    }
+
     void OptionsWidget::posterizeForceBwToggled(bool checked) {
         ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
-        colorCommonOptions.setForceBlackAndWhite(checked);
+        ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
+        posterizationOptions.setForceBlackAndWhite(checked);
+        colorCommonOptions.setPosterizationOptions(posterizationOptions);
         m_colorParams.setColorCommonOptions(colorCommonOptions);
         m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
@@ -865,6 +936,10 @@ namespace output {
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
         );
+        connect(
+                higherSearchSensitivityCB, SIGNAL(clicked(bool)),
+                this, SLOT(higherSearchSensivityToggled(bool))
+        );
 
         connect(
                 colorSegmentationCB, SIGNAL(clicked(bool)),
@@ -875,12 +950,28 @@ namespace output {
                 this, SLOT(reduceNoiseChanged(int))
         );
         connect(
+                redAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(redAdjustmentChanged(int))
+        );
+        connect(
+                greenAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(greenAdjustmentChanged(int))
+        );
+        connect(
+                blueAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(blueAdjustmentChanged(int))
+        );
+        connect(
                 posterizeCB, SIGNAL(clicked(bool)),
                 this, SLOT(posterizeToggled(bool))
         );
         connect(
                 posterizeLevelSB, SIGNAL(valueChanged(int)),
                 this, SLOT(posterizeLevelChanged(int))
+        );
+        connect(
+                posterizeNormalizationCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeNormalizationToggled(bool))
         );
         connect(
                 posterizeForceBwCB, SIGNAL(clicked(bool)),
@@ -998,6 +1089,10 @@ namespace output {
                 pictureShapeSensitivitySB, SIGNAL(valueChanged(int)),
                 this, SLOT(pictureShapeSensitivityChanged(int))
         );
+        disconnect(
+                higherSearchSensitivityCB, SIGNAL(clicked(bool)),
+                this, SLOT(higherSearchSensivityToggled(bool))
+        );
 
         disconnect(
                 colorSegmentationCB, SIGNAL(clicked(bool)),
@@ -1008,12 +1103,28 @@ namespace output {
                 this, SLOT(reduceNoiseChanged(int))
         );
         disconnect(
+                redAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(redAdjustmentChanged(int))
+        );
+        disconnect(
+                greenAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(greenAdjustmentChanged(int))
+        );
+        disconnect(
+                blueAdjustmentSB, SIGNAL(valueChanged(int)),
+                this, SLOT(blueAdjustmentChanged(int))
+        );
+        disconnect(
                 posterizeCB, SIGNAL(clicked(bool)),
                 this, SLOT(posterizeToggled(bool))
         );
         disconnect(
                 posterizeLevelSB, SIGNAL(valueChanged(int)),
                 this, SLOT(posterizeLevelChanged(int))
+        );
+        disconnect(
+                posterizeNormalizationCB, SIGNAL(clicked(bool)),
+                this, SLOT(posterizeNormalizationToggled(bool))
         );
         disconnect(
                 posterizeForceBwCB, SIGNAL(clicked(bool)),
@@ -1113,6 +1224,5 @@ namespace output {
     const DepthPerception& OptionsWidget::depthPerception() const {
         return m_depthPerception;
     }
-
 
 }  // namespace output

@@ -558,19 +558,19 @@ QAbstractSpinBox::up-arrow:pressed {
 }
 
 QSlider:horizontal {
-    margin: 7px 1px 9px 1px;
+    margin: 9px 1px 9px 1px;
 }
 
 QSlider::groove:horizontal {
 	border: none;
-	height: 3px;
+	height: 6px;
 	background-color: #cccccc;
 }
 
 QSlider::handle:horizontal {
 	height: 19px;
 	width: 12px;
-	margin: -19px 0px;
+	margin: -21px 0px;
 	image: url(:/light_scheme/icon_slider_handle.png);
 }
 

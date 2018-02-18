@@ -32,6 +32,47 @@ namespace output {
 
     class BlackWhiteOptions {
     public:
+        class ColorSegmenterOptions {
+        public:
+            ColorSegmenterOptions();
+
+            explicit ColorSegmenterOptions(const QDomElement& el);
+
+            QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+            bool operator==(const ColorSegmenterOptions& other) const;
+
+            bool operator!=(const ColorSegmenterOptions& other) const;
+
+            bool isEnabled() const;
+
+            void setEnabled(bool enabled);
+
+            int getNoiseReduction() const;
+
+            void setNoiseReduction(int noiseReduction);
+
+            int getRedThresholdAdjustment() const;
+
+            void setRedThresholdAdjustment(int redThresholdAdjustment);
+
+            int getGreenThresholdAdjustment() const;
+
+            void setGreenThresholdAdjustment(int greenThresholdAdjustment);
+
+            int getBlueThresholdAdjustment() const;
+
+            void setBlueThresholdAdjustment(int blueThresholdAdjustment);
+
+        private:
+            bool enabled;
+            int noiseReduction;
+            int redThresholdAdjustment;
+            int greenThresholdAdjustment;
+            int blueThresholdAdjustment;
+        };
+
+    public:
         BlackWhiteOptions();
 
         explicit BlackWhiteOptions(const QDomElement& el);
@@ -82,13 +123,9 @@ namespace output {
 
         void setBinarizationMethod(BinarizationMethod binarizationMethod);
 
-        bool isColorSegmentationEnabled() const;
+        const ColorSegmenterOptions& getColorSegmenterOptions() const;
 
-        void setColorSegmentationEnabled(bool colorSegmentationEnabled);
-
-        int getSegmentationNoiseReduction() const;
-
-        void setSegmentationNoiseReduction(int segmentationNoiseReduction);
+        void setColorSegmenterOptions(const ColorSegmenterOptions& colorSegmenterOptions);
 
     private:
         static BinarizationMethod parseBinarizationMethod(const QString& str);
@@ -106,8 +143,7 @@ namespace output {
         int wolfUpperBound;
         double wolfCoef;
         BinarizationMethod binarizationMethod;
-        bool colorSegmentationEnabled;
-        int segmentationNoiseReduction;
+        ColorSegmenterOptions colorSegmenterOptions;
     };
 }
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

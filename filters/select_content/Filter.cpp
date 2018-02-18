@@ -33,6 +33,8 @@
 #include "CommandLine.h"
 #include <filters/page_layout/Task.h>
 #include <filters/page_layout/CacheDrivenTask.h>
+#include <UnitsConverter.h>
+#include <OrderByDeviationProvider.h>
 
 namespace select_content {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
@@ -49,9 +51,11 @@ namespace select_content {
         const ProviderPtr default_order;
         const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
         const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
         m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
         m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
         m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;
@@ -82,8 +86,8 @@ namespace select_content {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        m_ptrOptionsWidget->preUpdateUI(page_id);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        m_ptrOptionsWidget->preUpdateUI(page_info);
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
@@ -92,9 +96,6 @@ namespace select_content {
 
         QDomElement filter_el(doc.createElement("select-content"));
 
-        filter_el.setAttribute("average", m_ptrSettings->avg());
-        filter_el.setAttribute("sigma", m_ptrSettings->std());
-        filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
         filter_el.setAttribute("pageDetectionBoxWidth", m_ptrSettings->pageDetectionBox().width());
         filter_el.setAttribute("pageDetectionBoxHeight", m_ptrSettings->pageDetectionBox().height());
         filter_el.setAttribute("pageDetectionTolerance", m_ptrSettings->pageDetectionTolerance());
@@ -127,12 +128,6 @@ namespace select_content {
 
         const QDomElement filter_el(
                 filters_el.namedItem("select-content").toElement()
-        );
-
-        m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
-        m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-        m_ptrSettings->setMaxDeviation(
-                filter_el.attribute("maxDeviation", QString::number(1.0)).toDouble()
         );
 
         QSizeF box(0.0, 0.0);
@@ -192,18 +187,25 @@ namespace select_content {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
+        const UnitsConverter unitsConverter(page_info.metadata().dpi());
+
+        const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
+        double pageRectWidth = pageRectSize.width();
+        double pageRectHeight = pageRectSize.height();
+        unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
+
         m_ptrSettings->setPageParams(
-                page_id,
+                page_info.id(),
                 Params(QRectF(),
                        QSizeF(),
-                       QRectF(),
+                       QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
                        Dependencies(),
                        MODE_AUTO,
                        selectContentParams.getPageDetectMode(),
@@ -217,7 +219,4 @@ namespace select_content {
         return m_ptrOptionsWidget.get();
     }
 
-    void Filter::updateStatistics() {
-        m_ptrSettings->updateDeviation();
-    }
 }  // namespace select_content

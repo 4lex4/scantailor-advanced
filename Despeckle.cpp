@@ -252,6 +252,18 @@ namespace {
                 return greater_label < rhs.greater_label;
             }
         }
+
+        bool operator==(const Connection& other) const {
+            return (lesser_label == other.lesser_label)
+                   && (greater_label == other.greater_label);
+        }
+
+        struct hash {
+            std::size_t operator()(const Connection& connection) const noexcept {
+                return std::hash<int>()(connection.lesser_label)
+                       ^ std::hash<int>()(connection.greater_label << 1);
+            }
+        };
     };
 
 /**
@@ -289,12 +301,15 @@ namespace {
  * \brief If the association didn't exist, create it,
  *        otherwise the minimum distance.
  */
-    void updateDistance(std::map<Connection, uint32_t>& conns, uint32_t label1, uint32_t label2, uint32_t sqdist) {
-        typedef std::map<Connection, uint32_t> Connections;
+    void updateDistance(std::unordered_map<Connection, uint32_t, Connection::hash>& conns,
+                        uint32_t label1,
+                        uint32_t label2,
+                        uint32_t sqdist) {
+        typedef std::unordered_map<Connection, uint32_t, Connection::hash> Connections;
 
         const Connection conn(label1, label2);
-        auto it(conns.lower_bound(conn));
-        if ((it == conns.end()) || (conn < it->first)) {
+        auto it(conns.find(conn));
+        if (it == conns.end()) {
             conns.insert(Connections::value_type(conn, sqdist));
         } else if (sqdist < it->second) {
             it->second = sqdist;
@@ -630,7 +645,7 @@ namespace {
  */
     void voronoiDistances(const ConnectivityMap& cmap,
                           const std::vector<Distance>& distance_matrix,
-                          std::map<Connection, uint32_t>& conns) {
+                          std::unordered_map<Connection, uint32_t, Connection::hash>& conns) {
         const int width = cmap.size().width();
         const int height = cmap.size().height();
 
@@ -770,7 +785,7 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
     // Now build a bidirectional map of distances between neighboring
     // connected components.
 
-    typedef std::map<Connection, uint32_t> Connections;  // conn -> sqdist
+    typedef std::unordered_map<Connection, uint32_t, Connection::hash> Connections;  // conn -> sqdist
     Connections conns;
 
     voronoiDistances(cmap, distance_matrix, conns);

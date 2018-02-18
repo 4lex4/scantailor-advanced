@@ -28,7 +28,7 @@
 #include "PageId.h"
 #include <QMutex>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <set>
 
 class AbstractRelinker;
@@ -174,7 +174,7 @@ namespace page_split {
         Record conditionalUpdate(const ImageId& image_id, const UpdateAction& action, bool* conflict = nullptr);
 
     private:
-        typedef std::map<ImageId, BaseRecord> PerPageRecords;
+        typedef std::unordered_map<ImageId, BaseRecord> PerPageRecords;
 
         Record getPageRecordLocked(const ImageId& image_id) const;
 

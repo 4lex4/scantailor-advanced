@@ -25,7 +25,8 @@
 #include "Params.h"
 #include <QMutex>
 #include <memory>
-#include <map>
+#include <unordered_map>
+#include <DeviationProvider.h>
 
 class AbstractRelinker;
 
@@ -42,8 +43,6 @@ namespace select_content {
 
         void performRelinking(const AbstractRelinker& relinker);
 
-        void updateDeviation();
-
         void setPageParams(const PageId& page_id, const Params& params);
 
         void clearPageParams(const PageId& page_id);
@@ -51,10 +50,6 @@ namespace select_content {
         std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
         bool isParamsNull(const PageId& page_id) const;
-
-        double maxDeviation() const;
-
-        void setMaxDeviation(double md);
 
         QSizeF pageDetectionBox() const;
 
@@ -64,24 +59,16 @@ namespace select_content {
 
         void setPageDetectionTolerance(double tolerance);
 
-        double avg() const;
-
-        void setAvg(double a);
-
-        double std() const;
-
-        void setStd(double s);
+        const DeviationProvider<PageId>& deviationProvider() const;
 
     private:
-        typedef std::map<PageId, Params> PageParams;
+        typedef std::unordered_map<PageId, Params> PageParams;
 
         mutable QMutex m_mutex;
         PageParams m_pageParams;
-        double m_avg;
-        double m_sigma;
-        double m_maxDeviation;
         QSizeF m_pageDetectionBox;
         double m_pageDetectionTolerance;
+        DeviationProvider<PageId> m_deviationProvider;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_SETTINGS_H_

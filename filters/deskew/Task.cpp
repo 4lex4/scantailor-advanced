@@ -108,7 +108,6 @@ namespace deskew {
                 Params new_params(
                         ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
-                new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
             }
         }
@@ -166,7 +165,6 @@ namespace deskew {
                 Params new_params(
                         ui_data.effectiveDeskewAngle(), deps, ui_data.mode()
                 );
-                new_params.computeDeviation(m_ptrSettings->avg());
                 m_ptrSettings->setPageParams(m_pageId, new_params);
 
                 status.throwIfCancelled();
@@ -265,8 +263,6 @@ namespace deskew {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI(m_uiData);
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);

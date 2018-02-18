@@ -16,11 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <UnitsProvider.h>
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
-
 #include <utility>
+#include <UnitsProvider.h>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -86,8 +83,6 @@ namespace page_layout {
                                   const QRectF& content_rect) {
         status.throwIfCancelled();
 
-        loadDefaultSettings(Dpm(data.origImage()));
-
         const QSizeF content_size_mm(
                 Utils::calcRectSizeMM(data.xform(), content_rect)
         );
@@ -142,28 +137,6 @@ namespace page_layout {
         }
     }   // Task::process
 
-    void Task::loadDefaultSettings(const Dpi& dpi) {
-        if (m_ptrSettings->isParamsNull(m_pageId)
-            || (m_ptrSettings->getHardMarginsMM(m_pageId).top() != -0.01)) {
-            return;
-        }
-
-        const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
-        const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
-
-        UnitsConverter unitsConverter(dpi);
-
-        const Margins& margins = pageLayoutParams.getHardMargins();
-        double leftMargin = margins.left();
-        double topMargin = margins.top();
-        double rightMargin = margins.right();
-        double bottomMargin = margins.bottom();
-        unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
-        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
-
-        m_ptrSettings->setHardMarginsMM(m_pageId, Margins(leftMargin, topMargin, rightMargin, bottomMargin));
-    }
-
 /*============================ Task::UiUpdater ==========================*/
 
     Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
@@ -187,8 +160,6 @@ namespace page_layout {
 
     void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         // This function is executed from the GUI thread.
-        UnitsProvider::getInstance()->setDpi(Dpm(m_image));
-
         OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
         opt_widget->postUpdateUI();
         ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);

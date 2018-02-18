@@ -39,6 +39,8 @@
 #include "CommandLine.h"
 #include <filters/output/Task.h>
 #include <filters/output/CacheDrivenTask.h>
+#include <UnitsConverter.h>
+#include <OrderByDeviationProvider.h>
 
 namespace page_layout {
     Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& page_selection_accessor)
@@ -56,9 +58,11 @@ namespace page_layout {
         const ProviderPtr default_order;
         const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
         const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
         m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
         m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
         m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;
@@ -93,10 +97,10 @@ namespace page_layout {
         m_ptrSettings->performRelinking(relinker);
     }
 
-    void Filter::preUpdateUI(FilterUiInterface* ui, const PageId& page_id) {
-        const Margins margins_mm(m_ptrSettings->getHardMarginsMM(page_id));
-        const Alignment alignment(m_ptrSettings->getPageAlignment(page_id));
-        m_ptrOptionsWidget->preUpdateUI(page_id, margins_mm, alignment);
+    void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
+        const Margins margins_mm(m_ptrSettings->getHardMarginsMM(page_info.id()));
+        const Alignment alignment(m_ptrSettings->getPageAlignment(page_info.id()));
+        m_ptrOptionsWidget->preUpdateUI(page_info, margins_mm, alignment);
         ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
     }
 
@@ -210,17 +214,26 @@ namespace page_layout {
         );
     }
 
-    void Filter::loadDefaultSettings(const PageId& page_id) {
-        if (!m_ptrSettings->isParamsNull(page_id)) {
+    void Filter::loadDefaultSettings(const PageInfo& page_info) {
+        if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
         }
         const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
         const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-        // we need to recalculate the margins later basing on metric units and dpi
+        const UnitsConverter unitsConverter(page_info.metadata().dpi());
+
+        const Margins& margins = pageLayoutParams.getHardMargins();
+        double leftMargin = margins.left();
+        double topMargin = margins.top();
+        double rightMargin = margins.right();
+        double bottomMargin = margins.bottom();
+        unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
+        unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
+
         m_ptrSettings->setPageParams(
-                page_id,
-                Params(Margins(-0.01, -0.01, -0.01, -0.01),
+                page_info.id(),
+                Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin),
                        QRectF(),
                        QRectF(),
                        QSizeF(),

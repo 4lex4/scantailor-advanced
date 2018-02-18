@@ -3,6 +3,7 @@
 #define SCANTAILOR_COLORSEGMENTER_H
 
 #include "ConnectivityMap.h"
+#include "BinaryThreshold.h"
 #include <QImage>
 
 class Dpi;
@@ -44,7 +45,13 @@ namespace imageproc {
         };
 
     public:
-        ColorSegmenter(const BinaryImage& image, const QImage& originalImage, const Dpi& dpi, int noiseThreshold);
+        ColorSegmenter(const BinaryImage& image,
+                       const QImage& originalImage,
+                       const Dpi& dpi,
+                       int noiseThreshold,
+                       int redThresholdAdjustment,
+                       int greenThresholdAdjustment,
+                       int blueThresholdAdjustment);
 
         ColorSegmenter(const BinaryImage& image, const GrayImage& originalImage, const Dpi& dpi, int noiseThreshold);
 
@@ -56,13 +63,19 @@ namespace imageproc {
 
         void reduceNoise();
 
-        void fromRgb(const BinaryImage& image, const QImage& originalImage);
+        void fromRgb(const BinaryImage& image,
+                     const QImage& originalImage,
+                     int redThresholdAdjustment,
+                     int greenThresholdAdjustment,
+                     int blueThresholdAdjustment);
 
         void fromGrayscale(const BinaryImage& image, const GrayImage& originalImage);
 
         QImage buildRgbImage() const;
 
         QImage buildGrayImage() const;
+
+        BinaryThreshold adjustThreshold(BinaryThreshold threshold, int adjustment);
 
         Settings settings;
         ConnectivityMap segmentsMap;

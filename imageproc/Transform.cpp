@@ -300,6 +300,24 @@ namespace imageproc {
                 }
             }
         }  // transformGeneric
+
+        void fixDpiInPlace(QImage& image, const QTransform& xform) {
+            if (xform.isScaling()) {
+                QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
+                xform.mapRect(dpi_rect);
+                image.setDotsPerMeterX(dpi_rect.width());
+                image.setDotsPerMeterX(dpi_rect.width());
+            }
+        }
+
+        void fixDpiInPlace(GrayImage& image, const QTransform& xform) {
+            if (xform.isScaling()) {
+                QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
+                xform.mapRect(dpi_rect);
+                image.setDotsPerMeterX(dpi_rect.width());
+                image.setDotsPerMeterX(dpi_rect.width());
+            }
+        }
     }      // namespace
 
     QImage transform(const QImage& src,
@@ -342,6 +360,8 @@ namespace imageproc {
                                     min_mapping_area
                             );
 
+                    fixDpiInPlace(gray_dst, xform);
+
                     return gray_dst;
                 }
             default:
@@ -358,6 +378,8 @@ namespace imageproc {
                             outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area
                     );
 
+                    fixDpiInPlace(dst, xform);
+
                     return dst;
                 } else {
                     const QImage src_argb32(src.convertToFormat(QImage::Format_ARGB32));
@@ -372,6 +394,8 @@ namespace imageproc {
                             (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect,
                             outside_pixels.rgba(), outside_pixels.flags(), min_mapping_area
                     );
+
+                    fixDpiInPlace(dst, xform);
 
                     return dst;
                 }
@@ -405,6 +429,8 @@ namespace imageproc {
                 outside_pixels.grayLevel(), outside_pixels.flags(),
                 min_mapping_area
         );
+
+        fixDpiInPlace(dst, xform);
 
         return dst;
     }

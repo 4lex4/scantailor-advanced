@@ -100,7 +100,7 @@ namespace select_content {
 
         ~OptionsWidget() override;
 
-        void preUpdateUI(const PageId& page_id);
+        void preUpdateUI(const PageInfo& page_info);
 
         void postUpdateUI(const UiData& ui_data);
 
@@ -157,6 +157,7 @@ namespace select_content {
         UiData m_uiData;
         PageSelectionAccessor m_pageSelectionAccessor;
         PageId m_pageId;
+        Dpi m_dpi;
         int m_ignorePageSizeChanges;
     };
 }  // namespace select_content

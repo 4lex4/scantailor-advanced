@@ -254,7 +254,7 @@ QImage ImageViewBase::createDownscaledImage(const QImage& image) {
 
     // Original and downscaled DPM.
     const Dpm o_dpm(image);
-    const Dpm d_dpm(Dpi(300, 300));
+    const Dpm d_dpm(Dpi(200, 200));
 
     const int o_w = image.width();
     const int o_h = image.height();
@@ -439,61 +439,33 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     // Width of a source pixel in mm, as it's displayed on screen.
     const double pixel_width = widthMM() * xscale / width();
 
+    // Make clipping smooth.
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
     // Disable antialiasing for large zoom levels.
     painter.setRenderHint(QPainter::SmoothPixmapTransform, pixel_width < 0.5);
 
     if (validateHqPixmap()) {
         // HQ pixmap maps one to one to screen pixels, so antialiasing is not necessary.
         painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+        QPainterPath clip_path;
+        clip_path.addPolygon(m_virtualToWidget.map(m_virtualImageCropArea));
+        painter.setClipPath(clip_path);
+
         painter.drawPixmap(m_hqPixmapPos, m_hqPixmap);
     } else {
         scheduleHqVersionRebuild();
 
-        painter.setWorldTransform(
-                m_pixmapToImage * m_imageToVirtual * m_virtualToWidget
-        );
+        QTransform const pixmap_to_virtual(m_pixmapToImage * m_imageToVirtual);
+        painter.setWorldTransform(pixmap_to_virtual * m_virtualToWidget);
+
+        QPainterPath clip_path;
+        clip_path.addPolygon(pixmap_to_virtual.inverted().map(m_virtualImageCropArea));
+        painter.setClipPath(clip_path);
+
         PixmapRenderer::drawPixmap(painter, m_pixmap);
     }
-
-    painter.setRenderHints(QPainter::Antialiasing, true);
-    painter.setWorldMatrixEnabled(false);
-
-    // Cover parts of the image that should not be visible with background.
-    // Note that because of Qt::WA_OpaquePaintEvent attribute, we need
-    // to paint the whole widget, which we do here.
-
-    const QPolygonF image_area(
-            PolygonUtils::round(
-                    m_virtualToWidget.map(
-                            m_imageToVirtual.map(QRectF(m_image.rect()))
-                    )
-            )
-    );
-    const QPolygonF crop_area(
-            PolygonUtils::round(m_virtualToWidget.map(m_virtualImageCropArea))
-    );
-
-    const QPolygonF intersected_area(
-            PolygonUtils::round(image_area.intersected(crop_area))
-    );
-
-    QPainterPath intersected_path;
-    intersected_path.addPolygon(intersected_area);
-
-    QPainterPath containing_path;
-    containing_path.addRect(viewport()->rect());
-
-    const QBrush brush(palette().color(QPalette::Window));
-    QPen pen(brush, 1.0);
-    pen.setCosmetic(true);
-
-    // By using a pen with the same color as the brush, we essentially
-    // expanding the area we are going to draw.  It's necessary because
-    // XRender doesn't provide subpixel accuracy.
-
-    painter.setPen(pen);
-    painter.setBrush(brush);
-    painter.drawPath(containing_path.subtracted(intersected_path));
 
     painter.restore();
 

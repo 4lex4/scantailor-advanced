@@ -27,8 +27,7 @@ namespace select_content {
               m_pageDetectionMode(MODE_AUTO),
               m_contentDetectEnabled(true),
               m_pageDetectEnabled(false),
-              m_fineTuneCorners(false),
-              m_deviation(0.0) {
+              m_fineTuneCorners(false) {
     }
 
     Params::Params(const QRectF& content_rect,
@@ -48,8 +47,7 @@ namespace select_content {
               m_pageDetectionMode(page_detection_mode),
               m_contentDetectEnabled(contentDetect),
               m_pageDetectEnabled(pageDetect),
-              m_fineTuneCorners(fineTuning),
-              m_deviation(0.0) {
+              m_fineTuneCorners(fineTuning) {
     }
 
     Params::Params(const QDomElement& filter_el)
@@ -73,8 +71,7 @@ namespace select_content {
               m_pageDetectionMode(filter_el.attribute("pageDetectionMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
               m_contentDetectEnabled(filter_el.attribute("content-detect") == "1"),
               m_pageDetectEnabled(filter_el.attribute("page-detect") == "1"),
-              m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "1"),
-              m_deviation(filter_el.attribute("deviation").toDouble()) {
+              m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "1") {
     }
 
     Params::~Params() = default;
@@ -88,7 +85,6 @@ namespace select_content {
         el.setAttribute("content-detect", m_contentDetectEnabled ? "1" : "0");
         el.setAttribute("page-detect", m_pageDetectEnabled ? "1" : "0");
         el.setAttribute("fine-tune-corners", m_fineTuneCorners ? "1" : "0");
-        el.setAttribute("deviation", m_deviation);
         el.appendChild(marshaller.rectF(m_contentRect, "content-rect"));
         el.appendChild(marshaller.rectF(m_pageRect, "page-rect"));
         el.appendChild(marshaller.sizeF(m_contentSizeMM, "content-size-mm"));
@@ -119,22 +115,6 @@ namespace select_content {
 
     AutoManualMode Params::pageDetectionMode() const {
         return m_pageDetectionMode;
-    }
-
-    double Params::deviation() const {
-        return m_deviation;
-    }
-
-    void Params::setDeviation(double d) {
-        m_deviation = d;
-    }
-
-    void Params::computeDeviation(double avg) {
-        m_deviation = avg - sqrt(m_contentSizeMM.width() * m_contentSizeMM.height() / 4);
-    }
-
-    bool Params::isDeviant(double std, double max_dev) {
-        return (max_dev * std) < fabs(m_deviation);
     }
 
     bool Params::isContentDetectionEnabled() const {

@@ -264,7 +264,6 @@ namespace select_content {
                 m_uiData.isContentDetectionEnabled(), m_uiData.isPageDetectionEnabled(),
                 m_uiData.isFineTuningCornersEnabled()
         );
-        params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, params);
     }
 

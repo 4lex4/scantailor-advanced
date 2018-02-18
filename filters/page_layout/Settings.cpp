@@ -31,6 +31,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/composite_key.hpp>
 #include <utility>
+#include <DeviationProvider.h>
 
 
 using namespace ::boost;
@@ -188,6 +189,8 @@ namespace page_layout {
 
         void setPageAutoMarginsEnabled(const PageId& page_id, bool state);
 
+        const DeviationProvider<PageId>& deviationProvider() const;
+
     private:
         class SequencedTag;
         class DescWidthTag;
@@ -244,6 +247,7 @@ namespace page_layout {
         QRectF m_contentRect;
         QRectF m_pageRect;
         const bool m_autoMarginsDefault;
+        DeviationProvider<PageId> m_deviationProvider;
     };
 
 
@@ -355,6 +359,10 @@ namespace page_layout {
         return m_ptrImpl->isParamsNull(page_id);
     }
 
+    const DeviationProvider<PageId>& Settings::deviationProvider() const {
+        return m_ptrImpl->deviationProvider();
+    }
+
 /*============================== Settings::Item =============================*/
 
     Settings::Item::Item(const PageId& page_id,
@@ -401,6 +409,23 @@ namespace page_layout {
               m_defaultHardMarginsMM(Margins(10.0, 5.0, 10.0, 5.0)),
               m_defaultAlignment(Alignment::TOP, Alignment::HCENTER),
               m_autoMarginsDefault(false) {
+        m_deviationProvider.setComputeValueByKey(
+                [this](const PageId& pageId) -> double {
+                    auto it(m_items.find(pageId));
+                    if (it != m_items.end()) {
+                        if (it->alignment.isNull()) {
+                            const Margins& hardMarginsMM = it->hardMarginsMM;
+                            const QSizeF& contentSizeMM = it->contentSizeMM;
+
+                            return std::sqrt(it->hardWidthMM() * it->hardHeightMM() / 4 / 25.4);
+                        } else {
+                            return .0;
+                        }
+                    } else {
+                        return .0;
+                    };
+                }
+        );
     }
 
     Settings::Impl::~Impl() = default;
@@ -408,6 +433,7 @@ namespace page_layout {
     void Settings::Impl::clear() {
         const QMutexLocker locker(&m_mutex);
         m_items.clear();
+        m_deviationProvider.clear();
     }
 
     void Settings::Impl::performRelinking(const AbstractRelinker& relinker) {
@@ -422,6 +448,11 @@ namespace page_layout {
         }
 
         m_items.swap(new_items);
+
+        m_deviationProvider.clear();
+        for (const Item& item : m_unorderedItems) {
+            m_deviationProvider.addOrUpdate(item.pageId);
+        }
     }
 
     void Settings::Impl::removePagesMissingFrom(const PageSequence& pages) {
@@ -441,6 +472,7 @@ namespace page_layout {
             if (std::binary_search(sorted_pages.begin(), sorted_pages.end(), it->pageId)) {
                 ++it;
             } else {
+                m_deviationProvider.remove(it->pageId);
                 m_unorderedItems.erase(it++);
             }
         }
@@ -491,6 +523,8 @@ namespace page_layout {
         } else {
             m_items.replace(it, new_item);
         }
+
+        m_deviationProvider.addOrUpdate(page_id);
     }
 
     Params Settings::Impl::updateContentSizeAndGetParams(const PageId& page_id,
@@ -525,6 +559,8 @@ namespace page_layout {
         if (!suppress_content_rect_update) {
             updateContentRect();
         }
+
+        m_deviationProvider.addOrUpdate(page_id);
 
         return Params(
                 item_it->hardMarginsMM, item_it->pageRect, item_it->contentRect,
@@ -596,6 +632,8 @@ namespace page_layout {
         } else {
             m_items.modify(it, ModifyMargins(margins_mm, it->autoMargins));
         }
+
+        m_deviationProvider.addOrUpdate(page_id);
     }
 
     Alignment Settings::Impl::getPageAlignment(const PageId& page_id) const {
@@ -625,6 +663,8 @@ namespace page_layout {
             m_items.modify(it, ModifyAlignment(alignment));
         }
 
+        m_deviationProvider.addOrUpdate(page_id);
+
         const QSizeF agg_size_after(getAggregateHardSizeMMLocked());
         if (agg_size_before == agg_size_after) {
             return AGGREGATE_SIZE_UNCHANGED;
@@ -650,6 +690,8 @@ namespace page_layout {
             m_items.modify(it, ModifyContentSize(content_size_mm, m_invalidRect, it->pageRect));
         }
 
+        m_deviationProvider.addOrUpdate(page_id);
+
         const QSizeF agg_size_after(getAggregateHardSizeMMLocked());
         if (agg_size_before == agg_size_after) {
             return AGGREGATE_SIZE_UNCHANGED;
@@ -665,6 +707,8 @@ namespace page_layout {
         if (it != m_items.end()) {
             m_items.modify(it, ModifyContentSize(m_invalidSize, m_invalidRect, it->pageRect));
         }
+
+        m_deviationProvider.addOrUpdate(page_id);
     }
 
     QSizeF Settings::Impl::getAggregateHardSizeMM() const {
@@ -769,5 +813,9 @@ namespace page_layout {
         const QMutexLocker locker(&m_mutex);
 
         return (m_items.find(page_id) == m_items.end());
+    }
+
+    const DeviationProvider<PageId>& Settings::Impl::deviationProvider() const {
+        return m_deviationProvider;
     }
 }  // namespace page_layout

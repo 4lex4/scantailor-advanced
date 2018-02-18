@@ -65,14 +65,6 @@ namespace select_content {
 
         AutoManualMode pageDetectionMode() const;
 
-        double deviation() const;
-
-        void setDeviation(double d);
-
-        void computeDeviation(double avg);
-
-        bool isDeviant(double std, double max_dev);
-
         bool isContentDetectionEnabled() const;
 
         bool isPageDetectionEnabled() const;
@@ -107,7 +99,6 @@ namespace select_content {
         bool m_contentDetectEnabled;
         bool m_pageDetectEnabled;
         bool m_fineTuneCorners;
-        double m_deviation;
     };
 }  // namespace select_content
 #endif // ifndef SELECT_CONTENT_PARAMS_H_

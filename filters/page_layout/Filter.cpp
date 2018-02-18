@@ -40,6 +40,7 @@
 #include <filters/output/Task.h>
 #include <filters/output/CacheDrivenTask.h>
 #include <UnitsConverter.h>
+#include <OrderByDeviationProvider.h>
 
 namespace page_layout {
     Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& page_selection_accessor)
@@ -57,9 +58,11 @@ namespace page_layout {
         const ProviderPtr default_order;
         const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
         const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
         m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
         m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
         m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;

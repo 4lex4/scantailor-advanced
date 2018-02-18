@@ -31,11 +31,13 @@ namespace page_layout {
                          const Params& params,
                          const ImageTransformation& xform,
                          const QPolygonF& phys_content_rect,
-                         QRectF displayArea)
+                         const QRectF& displayArea,
+                         bool deviant)
             : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform, displayArea),
               m_params(params),
               m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
-              m_virtOuterRect(displayArea) {
+              m_virtOuterRect(displayArea),
+              m_deviant(deviant) {
         setExtendedClipArea(true);
     }
 
@@ -106,7 +108,7 @@ namespace page_layout {
         painter.setPen(pen);
         painter.drawRect(outer_rect);
 
-        if (m_params.isDeviant()) {
+        if (m_deviant) {
             paintDeviant(painter);
         }
     }  // Thumbnail::paintOverImage

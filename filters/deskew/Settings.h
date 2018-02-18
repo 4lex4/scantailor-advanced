@@ -27,6 +27,7 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <DeviationProvider.h>
 
 class AbstractRelinker;
 
@@ -43,8 +44,6 @@ namespace deskew {
 
         void performRelinking(const AbstractRelinker& relinker);
 
-        void updateDeviation();
-
         void setPageParams(const PageId& page_id, const Params& params);
 
         void clearPageParams(const PageId& page_id);
@@ -53,40 +52,16 @@ namespace deskew {
 
         bool isParamsNull(const PageId& page_id) const;
 
-        void setDegress(const std::set<PageId>& pages, const Params& params);
+        void setDegrees(const std::set<PageId>& pages, const Params& params);
 
-        double maxDeviation() const {
-            return m_maxDeviation;
-        }
-
-        void setMaxDeviation(double md) {
-            m_maxDeviation = md;
-        }
-
-        double avg() const {
-            return m_avg;
-        }
-
-        void setAvg(double a) {
-            m_avg = a;
-        }
-
-        double std() const {
-            return m_sigma;
-        }
-
-        void setStd(double s) {
-            m_sigma = s;
-        }
+        const DeviationProvider<PageId>& deviationProvider() const;
 
     private:
         typedef std::map<PageId, Params> PerPageParams;
 
         mutable QMutex m_mutex;
         PerPageParams m_perPageParams;
-        double m_avg;
-        double m_sigma;
-        double m_maxDeviation;
+        DeviationProvider<PageId> m_deviationProvider;
     };
 }  // namespace deskew
 #endif // ifndef DESKEW_SETTINGS_H_

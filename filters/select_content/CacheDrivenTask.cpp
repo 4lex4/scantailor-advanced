@@ -79,7 +79,7 @@ namespace select_content {
                                     params->contentRect(),
                                     params->pageRect(),
                                     params->isPageDetectionEnabled(),
-                                    params->isDeviant(m_ptrSettings->std(), m_ptrSettings->maxDeviation())
+                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id())
                             )
                     )
             );

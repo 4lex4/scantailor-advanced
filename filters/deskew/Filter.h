@@ -26,6 +26,7 @@
 #include "FilterResult.h"
 #include "SafeDeletingQObjectPtr.h"
 #include "Settings.h"
+#include <QCoreApplication>
 
 class QString;
 class PageSelectionAccessor;
@@ -44,6 +45,7 @@ namespace deskew {
     class Filter : public AbstractFilter {
     DECLARE_NON_COPYABLE(Filter)
 
+    Q_DECLARE_TR_FUNCTIONS(deskew::Filter)
     public:
         explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
@@ -56,8 +58,6 @@ namespace deskew {
         void performRelinking(const AbstractRelinker& relinker) override;
 
         void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
-
-        void updateStatistics() override;
 
         QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
@@ -75,11 +75,19 @@ namespace deskew {
 
         OptionsWidget* optionsWidget();
 
+        std::vector<PageOrderOption> pageOrderOptions() const override;
+
+        int selectedPageOrder() const override;
+
+        void selectPageOrder(int option) override;
+
     private:
         void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
         intrusive_ptr<Settings> m_ptrSettings;
         SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+        std::vector<PageOrderOption> m_pageOrderOptions;
+        int m_selectedPageOrder;
     };
 }  // namespace deskew
 #endif  // ifndef DESKEW_FILTER_H_

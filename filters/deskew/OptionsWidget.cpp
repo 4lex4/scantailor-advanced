@@ -69,7 +69,7 @@ namespace deskew {
                 m_uiData.effectiveDeskewAngle(),
                 m_uiData.dependencies(), m_uiData.mode()
         );
-        m_ptrSettings->setDegress(pages, params);
+        m_ptrSettings->setDegrees(pages, params);
 
         if (pages.size() > 1) {
             emit invalidateAllThumbnails();
@@ -89,7 +89,7 @@ namespace deskew {
                 m_uiData.effectiveDeskewAngle(),
                 m_uiData.dependencies(), m_uiData.mode()
         );
-        m_ptrSettings->setDegress(pages, params);
+        m_ptrSettings->setDegrees(pages, params);
         emit invalidateAllThumbnails();
     }
 
@@ -194,7 +194,6 @@ namespace deskew {
                 m_uiData.effectiveDeskewAngle(),
                 m_uiData.dependencies(), m_uiData.mode()
         );
-        params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, params);
     }
 

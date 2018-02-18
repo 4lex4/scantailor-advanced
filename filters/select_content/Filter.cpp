@@ -34,6 +34,7 @@
 #include <filters/page_layout/Task.h>
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <UnitsConverter.h>
+#include <OrderByDeviationProvider.h>
 
 namespace select_content {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
@@ -50,9 +51,11 @@ namespace select_content {
         const ProviderPtr default_order;
         const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
         const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
         m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
         m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
         m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;
@@ -93,9 +96,6 @@ namespace select_content {
 
         QDomElement filter_el(doc.createElement("select-content"));
 
-        filter_el.setAttribute("average", m_ptrSettings->avg());
-        filter_el.setAttribute("sigma", m_ptrSettings->std());
-        filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
         filter_el.setAttribute("pageDetectionBoxWidth", m_ptrSettings->pageDetectionBox().width());
         filter_el.setAttribute("pageDetectionBoxHeight", m_ptrSettings->pageDetectionBox().height());
         filter_el.setAttribute("pageDetectionTolerance", m_ptrSettings->pageDetectionTolerance());
@@ -128,12 +128,6 @@ namespace select_content {
 
         const QDomElement filter_el(
                 filters_el.namedItem("select-content").toElement()
-        );
-
-        m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
-        m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-        m_ptrSettings->setMaxDeviation(
-                filter_el.attribute("maxDeviation", QString::number(1.0)).toDouble()
         );
 
         QSizeF box(0.0, 0.0);
@@ -225,7 +219,4 @@ namespace select_content {
         return m_ptrOptionsWidget.get();
     }
 
-    void Filter::updateStatistics() {
-        m_ptrSettings->updateDeviation();
-    }
 }  // namespace select_content

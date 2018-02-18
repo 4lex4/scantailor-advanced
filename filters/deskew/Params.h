@@ -41,12 +41,6 @@ namespace deskew {
 
         double deskewAngle() const;
 
-        double deviation() const;
-
-        void computeDeviation(double avg);
-
-        bool isDeviant(double std, double max_dev) const;
-
         const Dependencies& dependencies() const;
 
         AutoManualMode mode() const;
@@ -57,7 +51,6 @@ namespace deskew {
         double m_deskewAngleDeg;
         Dependencies m_deps;
         AutoManualMode m_mode;
-        double m_deviation;
     };
 }  // namespace deskew
 #endif // ifndef DESKEW_PARAMS_H_

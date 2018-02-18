@@ -32,13 +32,22 @@
 #include <CommandLine.h>
 #include <filters/select_content/Task.h>
 #include <filters/select_content/CacheDrivenTask.h>
+#include <OrderByDeviationProvider.h>
 
 namespace deskew {
     Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
-            : m_ptrSettings(new Settings) {
+            : m_ptrSettings(new Settings),
+              m_selectedPageOrder(0) {
         if (CommandLine::get().isGui()) {
             m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
         }
+
+        typedef PageOrderOption::ProviderPtr ProviderPtr;
+
+        const ProviderPtr default_order;
+        const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
+        m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+        m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
     }
 
     Filter::~Filter() = default;
@@ -65,10 +74,6 @@ namespace deskew {
 
         QDomElement filter_el(doc.createElement("deskew"));
 
-        filter_el.setAttribute("average", m_ptrSettings->avg());
-        filter_el.setAttribute("sigma", m_ptrSettings->std());
-        filter_el.setAttribute("maxDeviation", m_ptrSettings->maxDeviation());
-
         writer.enumPages(
                 [&](const PageId& page_id, const int numeric_id) {
                     this->writePageSettings(doc, filter_el, page_id, numeric_id);
@@ -82,12 +87,6 @@ namespace deskew {
         m_ptrSettings->clear();
 
         const QDomElement filter_el(filters_el.namedItem("deskew").toElement());
-
-        m_ptrSettings->setAvg(filter_el.attribute("average").toDouble());
-        m_ptrSettings->setStd(filter_el.attribute("sigma").toDouble());
-        m_ptrSettings->setMaxDeviation(
-                filter_el.attribute("maxDeviation", QString::number(5.0)).toDouble()
-        );
 
         const QString page_tag_name("page");
         QDomNode node(filter_el.firstChild());
@@ -157,6 +156,20 @@ namespace deskew {
         );
     }
 
+    std::vector<PageOrderOption>
+    Filter::pageOrderOptions() const {
+        return m_pageOrderOptions;
+    }
+
+    int Filter::selectedPageOrder() const {
+        return m_selectedPageOrder;
+    }
+
+    void Filter::selectPageOrder(int option) {
+        assert((unsigned) option < m_pageOrderOptions.size());
+        m_selectedPageOrder = option;
+    }
+
     void Filter::loadDefaultSettings(const PageInfo& page_info) {
         if (!m_ptrSettings->isParamsNull(page_info.id())) {
             return;
@@ -172,9 +185,5 @@ namespace deskew {
 
     OptionsWidget* Filter::optionsWidget() {
         return m_ptrOptionsWidget.get();
-    }
-
-    void Filter::updateStatistics() {
-        m_ptrSettings->updateDeviation();
     }
 }  // namespace deskew

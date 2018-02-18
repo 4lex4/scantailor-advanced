@@ -90,7 +90,8 @@ namespace page_layout {
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), *params,
                                     xform, content_rect_phys,
-                                    xform.transform().map(page_rect_phys).boundingRect()
+                                    xform.transform().map(page_rect_phys).boundingRect(),
+                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id())
                             )
                     )
             );

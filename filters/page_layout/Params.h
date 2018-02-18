@@ -53,8 +53,6 @@ namespace page_layout {
 
         bool isAutoMarginsEnabled() const;
 
-        bool isDeviant() const;
-
         QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:

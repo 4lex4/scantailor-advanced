@@ -175,7 +175,6 @@ namespace select_content {
             new_params.setContentSizeMM(ui_data.contentSizeMM());
         }
 
-        new_params.computeDeviation(m_ptrSettings->avg());
         m_ptrSettings->setPageParams(m_pageId, new_params);
 
         status.throwIfCancelled();

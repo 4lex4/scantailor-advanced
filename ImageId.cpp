@@ -30,7 +30,7 @@ ImageId::ImageId(const QFileInfo& file_info, const int page)
 }
 
 bool operator==(const ImageId& lhs, const ImageId& rhs) {
-    return lhs.page() == rhs.page() && lhs.filePath() == rhs.filePath();
+    return ((lhs.page() == rhs.page()) && (lhs.filePath() == rhs.filePath()));
 }
 
 bool operator!=(const ImageId& lhs, const ImageId& rhs) {

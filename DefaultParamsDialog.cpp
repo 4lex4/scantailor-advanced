@@ -86,39 +86,39 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopLeftBtn,
             Alignment(Alignment::TOP, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopBtn,
             Alignment(Alignment::TOP, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignTopRightBtn,
             Alignment(Alignment::TOP, Alignment::RIGHT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignLeftBtn,
             Alignment(Alignment::VCENTER, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignCenterBtn,
             Alignment(Alignment::VCENTER, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignRightBtn,
             Alignment(Alignment::VCENTER, Alignment::RIGHT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomLeftBtn,
             Alignment(Alignment::BOTTOM, Alignment::LEFT)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomBtn,
             Alignment(Alignment::BOTTOM, Alignment::HCENTER)
     );
-    Utils::unorderedMapSetValue(
+    Utils::mapSetValue(
             alignmentByButton, alignBottomRightBtn,
             Alignment(Alignment::BOTTOM, Alignment::RIGHT)
     );

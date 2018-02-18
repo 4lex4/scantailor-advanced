@@ -11,7 +11,7 @@ brings new ones and fixes.
     * [**Scan Tailor Enhanced** features](#scan-tailor-enhanced-features)
         * [Auto margins \[improved\]](#auto-margins-improved)
         * [Page detect \[reworked\]](#page-detect-reworked)
-        * [Deviation](#deviation)
+        * [Deviation \[reworked\]](#deviation-reworked)
         * [Picture shape \[reworked\]](#picture-shape-reworked)
         * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-reworked)
     * [**Scan Tailor Featured** features](#scan-tailor-featured-features)
@@ -76,10 +76,12 @@ Features
 
  *This feature has been reworked and is now a part of the [page area](#page-area) feature.*
  
-* ##### Deviation
+* ##### Deviation \[reworked\]
  Deviation feature enables highlighting of different pages. Highlighted in red are pages
  from Deskew filter with too high skew, from Select Content filter pages with different
  size of content and in Margins filter are highlighted pages which does not match others.
+ 
+ *This feature has been reworked. See [Scan Tailor Advanced fixes & improvements](#scan-tailor-advanced-fixes--improvements) for more information.*
  
 * ##### Picture shape \[reworked\]
  Picture shape feature adds option for mixed pages to choose from free shape and rectangular
@@ -149,16 +151,16 @@ Features
 #### **Scan Tailor Advanced** features
 
 * ##### Scan Tailor Advanced fixes & improvements
-1. Portability.
+* Portability.
    The setting is stored in the folder with a program.
 
-2. Page splitting had an influence on output only in b&w mode with dewarping disabled.
+* Page splitting had an influence on output only in b&w mode with dewarping disabled.
    Now it works in all the modes.
    
-3. Page layout and all the other views now consider splitting settings.
+* Page layout and all the other views now consider splitting settings.
    Corresponding improvements are done to thumbnails.
 
-4. Changed Scan Tailor behavior on page split stage.
+* Changed Scan Tailor behavior on page split stage.
      1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
    	    than the page the cut applied to, Scan Tailor tries to adapt cutters instead of fully
    	    rejecting the cut setting and switching to auto mode for those pages as it was before.
@@ -167,18 +169,23 @@ Features
      3. UI: Added cutters interaction between each other. They can't more intersect each other,
    	    which created a wrong page layout configuration before.
 
-5. Optimized memory usage on the output stage.
+* Optimized memory usage on the output stage.
 
-6. Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
+* Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
    Now thumbnails are shown evenly.
 
-7. Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
+* Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
    The option refreshes the thumbnails instantly.
 
-8. Support for processing of images with light content on dark background.
+* Support for processing of images with light content on dark background.
    Now that kind of images can correctly be handled on all the stages. Many book covers are examples of such images.
 
-9. Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
+* Deviation feature reworked.
+    1. A deviation provider implemented.
+    It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
+    2. Added sorting by decreasing deviation.
+
+* Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes
  You can choose a desired color scheme in settings.

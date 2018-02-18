@@ -28,7 +28,7 @@
 #include "PageId.h"
 #include <QIcon>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <set>
 #include <UnitsObserver.h>
 
@@ -102,7 +102,7 @@ namespace page_layout {
         void applyAlignment(const std::set<PageId>& pages);
 
     private:
-        typedef std::map<QToolButton*, Alignment> AlignmentByButton;
+        typedef std::unordered_map<QToolButton*, Alignment> AlignmentByButton;
 
         void updateMarginsDisplay();
 

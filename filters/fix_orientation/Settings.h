@@ -25,7 +25,7 @@
 #include "ImageId.h"
 #include "PageId.h"
 #include <QMutex>
-#include <map>
+#include <unordered_map>
 #include <set>
 
 class AbstractRelinker;
@@ -52,7 +52,7 @@ namespace fix_orientation {
         bool isRotationNull(const ImageId& image_id) const;
 
     private:
-        typedef std::map<ImageId, OrthogonalRotation> PerImageRotation;
+        typedef std::unordered_map<ImageId, OrthogonalRotation> PerImageRotation;
 
         void setImageRotationLocked(const ImageId& image_id, const OrthogonalRotation& rotation);
 

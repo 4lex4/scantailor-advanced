@@ -86,7 +86,7 @@ bool operator<(const PageId& lhs, const PageId& rhs);
 namespace std {
     template<>
     struct hash<PageId> {
-        std::size_t operator()(const PageId& pageId) const noexcept {
+        size_t operator()(const PageId& pageId) const noexcept {
             return (hash<ImageId>()(pageId.imageId())
                     ^ hash<int>()(pageId.subPage()) << 1);
         }

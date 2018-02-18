@@ -29,7 +29,7 @@
 #include <QDomDocument>
 #include <Qt>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class QDomElement;
 class ProjectPages;
@@ -89,10 +89,10 @@ private:
         }
     };
 
-    typedef std::map<int, QString> DirMap;
-    typedef std::map<int, FileRecord> FileMap;
-    typedef std::map<int, ImageInfo> ImageMap;
-    typedef std::map<int, PageId> PageMap;
+    typedef std::unordered_map<int, QString> DirMap;
+    typedef std::unordered_map<int, FileRecord> FileMap;
+    typedef std::unordered_map<int, ImageInfo> ImageMap;
+    typedef std::unordered_map<int, PageId> PageMap;
 
     void processDirectories(const QDomElement& dirs_el);
 

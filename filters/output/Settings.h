@@ -33,7 +33,7 @@
 #include "PropertySet.h"
 #include "OutputProcessingParams.h"
 #include <QMutex>
-#include <map>
+#include <unordered_map>
 #include <memory>
 
 class AbstractRelinker;
@@ -106,10 +106,10 @@ namespace output {
         void setOutputProcessingParams(const PageId& page_id, const OutputProcessingParams& output_processing_params);
 
     private:
-        typedef std::map<PageId, Params> PerPageParams;
-        typedef std::map<PageId, OutputParams> PerPageOutputParams;
-        typedef std::map<PageId, ZoneSet> PerPageZones;
-        typedef std::map<PageId, OutputProcessingParams> PerPageOutputProcessingParams;
+        typedef std::unordered_map<PageId, Params> PerPageParams;
+        typedef std::unordered_map<PageId, OutputParams> PerPageOutputParams;
+        typedef std::unordered_map<PageId, ZoneSet> PerPageZones;
+        typedef std::unordered_map<PageId, OutputProcessingParams> PerPageOutputProcessingParams;
 
         static PropertySet initialPictureZoneProps();
 

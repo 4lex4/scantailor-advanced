@@ -25,7 +25,7 @@
 #include "Params.h"
 #include <QMutex>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <DeviationProvider.h>
 
 class AbstractRelinker;
@@ -62,7 +62,7 @@ namespace select_content {
         const DeviationProvider<PageId>& deviationProvider() const;
 
     private:
-        typedef std::map<PageId, Params> PageParams;
+        typedef std::unordered_map<PageId, Params> PageParams;
 
         mutable QMutex m_mutex;
         PageParams m_pageParams;

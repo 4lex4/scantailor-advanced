@@ -33,7 +33,7 @@
 #include <QString>
 #include <Qt>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class AbstractFilter;
 class ProjectPages;
@@ -110,7 +110,7 @@ private:
 
     class Sequenced;
 
-    typedef std::map<ImageId, ImageMetadata> MetadataByImage;
+    typedef std::unordered_map<ImageId, ImageMetadata> MetadataByImage;
 
     typedef boost::multi_index::multi_index_container<
             Directory,

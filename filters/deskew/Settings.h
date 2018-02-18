@@ -25,7 +25,7 @@
 #include "Params.h"
 #include <QMutex>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <set>
 #include <DeviationProvider.h>
 
@@ -57,7 +57,7 @@ namespace deskew {
         const DeviationProvider<PageId>& deviationProvider() const;
 
     private:
-        typedef std::map<PageId, Params> PerPageParams;
+        typedef std::unordered_map<PageId, Params> PerPageParams;
 
         mutable QMutex m_mutex;
         PerPageParams m_perPageParams;

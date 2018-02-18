@@ -95,7 +95,7 @@ namespace select_content {
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_pageParams.find(page_id) == m_pageParams.end();
+        return (m_pageParams.find(page_id) == m_pageParams.end());
     }
 
     QSizeF Settings::pageDetectionBox() const {

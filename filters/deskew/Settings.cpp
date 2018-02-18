@@ -99,7 +99,7 @@ namespace deskew {
     bool Settings::isParamsNull(const PageId& page_id) const {
         QMutexLocker locker(&m_mutex);
 
-        return m_perPageParams.find(page_id) == m_perPageParams.end();
+        return (m_perPageParams.find(page_id) == m_perPageParams.end());
     }
 
     const DeviationProvider<PageId>& Settings::deviationProvider() const {

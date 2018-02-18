@@ -103,9 +103,8 @@ namespace page_split {
     }
 
     void Settings::updatePageLocked(const ImageId& image_id, const UpdateAction& action) {
-        auto it(m_perPageRecords.lower_bound(image_id));
-        if ((it == m_perPageRecords.end())
-            || m_perPageRecords.key_comp()(image_id, it->first)) {
+        auto it(m_perPageRecords.find(image_id));
+        if (it == m_perPageRecords.end()) {
             // No record exists for this page.
 
             Record record(m_defaultLayoutType);
@@ -144,9 +143,8 @@ namespace page_split {
     Settings::Record Settings::conditionalUpdate(const ImageId& image_id, const UpdateAction& action, bool* conflict) {
         QMutexLocker locker(&m_mutex);
 
-        auto it(m_perPageRecords.lower_bound(image_id));
-        if ((it == m_perPageRecords.end())
-            || m_perPageRecords.key_comp()(image_id, it->first)) {
+        auto it(m_perPageRecords.find(image_id));
+        if (it == m_perPageRecords.end()) {
             // No record exists for this page.
 
             Record record(m_defaultLayoutType);

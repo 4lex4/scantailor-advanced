@@ -3,6 +3,7 @@
 #include <QtXml/QDomDocument>
 #include "DefaultParamsProfileManager.h"
 #include "DefaultParams.h"
+#include "version.h"
 
 using namespace page_split;
 using namespace output;
@@ -55,12 +56,22 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QS
 
     profileFile.close();
 
-    return std::make_unique<DefaultParams>(doc.documentElement());
+    const QDomElement profileElement(doc.documentElement());
+    const QString version = profileElement.attribute("version");
+    if (version.isNull() || (version.toInt() != PROJECT_VERSION)) {
+        return nullptr;
+    }
+    const QDomElement defaultParamsElement(profileElement.namedItem("default-params").toElement());
+
+    return std::make_unique<DefaultParams>(defaultParamsElement);
 }
 
 bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, const QString& name) const {
     QDomDocument doc;
-    doc.appendChild(params.toXml(doc, "profile"));
+    QDomElement rootElement(doc.createElement("profile"));
+    doc.appendChild(rootElement);
+    rootElement.setAttribute("version", PROJECT_VERSION);
+    rootElement.appendChild(params.toXml(doc, "default-params"));
 
     QDir dir(path);
     if (!dir.exists()) {

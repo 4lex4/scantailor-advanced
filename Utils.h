@@ -104,11 +104,21 @@ Utils::mapSetValue(std::unordered_map<K, V, Hash, Pred, Alloc>& map, const K& ke
 
 template<typename T>
 T Utils::castOrFindChild(QObject* object) {
+    if (object == nullptr) {
+        return nullptr;
+    }
+    
     if (auto result = dynamic_cast<T>(object)) {
         return result;
     } else {
-        return object->findChild<T>();
+        for (QObject* child : object->children()) {
+            if (result = castOrFindChild<T>(child)) {
+                return result;
+            }
+        }
     }
+
+    return nullptr;
 }
 
 #endif  // ifndef UTILS_H_

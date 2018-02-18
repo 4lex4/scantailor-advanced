@@ -6,6 +6,7 @@
 #include <QtCore/QPointF>
 #include <QtCore/QSizeF>
 
+class ImageViewInfoProvider;
 class Dpi;
 
 class ImageViewInfoObserver {
@@ -19,6 +20,9 @@ public:
     virtual void updateDpi(const Dpi& dpi) = 0;
 
     virtual void clearImageViewInfo() = 0;
+
+    virtual void setInfoProvider(ImageViewInfoProvider* infoProvider) {
+    }
 };
 
 

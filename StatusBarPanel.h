@@ -42,7 +42,7 @@ public:
 
     void updateUnits(Units) override;
 
-    void setInfoProvider(ImageViewInfoProvider* infoProvider);
+    void setInfoProvider(ImageViewInfoProvider* infoProvider) override;
 
 private:
     void mousePosChanged();

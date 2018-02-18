@@ -21,20 +21,19 @@
 #include "PixmapRenderer.h"
 #include "BackgroundExecutor.h"
 #include "Dpm.h"
-#include "Dpi.h"
 #include "ScopedIncDec.h"
 #include "imageproc/PolygonUtils.h"
 #include "imageproc/Transform.h"
 #include "OpenGLSupport.h"
 #include "ColorSchemeManager.h"
 #include "UnitsProvider.h"
-#include "StatusBarPanel.h"
+#include "Utils.h"
+#include <QApplication>
 #include <QScrollBar>
 #include <QSettings>
 #include <QPointer>
 #include <QPaintEngine>
 #include <QMouseEvent>
-#include <QApplication>
 #include <QGLWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QStatusBar>
@@ -595,8 +594,8 @@ void ImageViewBase::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
 
     if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
-        if (auto* statusBarPanel = mainWindow->statusBar()->findChild<StatusBarPanel*>()) {
-            statusBarPanel->setInfoProvider(&infoProvider());
+        if (auto* infoObserver = Utils::castOrFindChild<ImageViewInfoObserver*>(mainWindow->statusBar())) {
+            infoObserver->setInfoProvider(&infoProvider());
         }
     }
 }

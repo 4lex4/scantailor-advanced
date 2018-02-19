@@ -576,7 +576,7 @@ namespace output {
         }();
 
         QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.preCropArea()
         );
 
         const bool needNormalizeIllumination
@@ -867,7 +867,7 @@ namespace output {
 
                 if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-                            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.preCropArea()
                     );
 
                     if (inputOrigImage.allGray()) {
@@ -1133,7 +1133,7 @@ namespace output {
         }();
 
         QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.preCropArea()
         );
 
         const bool color_original = !inputOrigImage.allGray();
@@ -1775,7 +1775,7 @@ namespace output {
 
                 if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
                     outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
-                            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.resultingPreCropArea()
+                            inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, m_xform.preCropArea()
                     );
 
                     QImage orig_without_illumination;

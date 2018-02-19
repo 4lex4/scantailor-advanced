@@ -963,6 +963,7 @@ void DefaultParamsDialog::profileChanged(const int index) {
     if (index == customProfileItemIdx) {
         profileCB->setEditText(profileCB->currentText());
         profileCB->lineEdit()->selectAll();
+        profileCB->setFocus();
         profileSaveButton->setEnabled(true);
         profileDeleteButton->setEnabled(false);
         setTabWidgetsEnabled(true);
@@ -998,6 +999,7 @@ void DefaultParamsDialog::profileChanged(const int index) {
             QMessageBox::critical(this, tr("Error"), tr("Error loading the profile."));
             profileCB->setCurrentIndex(0);
             profileCB->removeItem(index);
+            customProfileItemIdx--;
 
             profileSaveButton->setEnabled(false);
             profileDeleteButton->setEnabled(false);
@@ -1037,16 +1039,15 @@ void DefaultParamsDialog::profileSavePressed() {
 }
 
 void DefaultParamsDialog::profileDeletePressed() {
-    const ScopedIncDec<int> scopeGuard(ignoreProfileChanges);
-
     if (profileManager.deleteProfile(profileCB->currentText())) {
-        const int deletedProfileIndex = profileCB->currentIndex();
-        profileCB->setCurrentIndex(customProfileItemIdx--);
-        profileCB->removeItem(deletedProfileIndex);
+        {
+            const ScopedIncDec<int> scopeGuard(ignoreProfileChanges);
 
-        profileSaveButton->setEnabled(true);
-        profileDeleteButton->setEnabled(false);
-        setTabWidgetsEnabled(true);
+            const int deletedProfileIndex = profileCB->currentIndex();
+            profileCB->setCurrentIndex(customProfileItemIdx--);
+            profileCB->removeItem(deletedProfileIndex);
+        }
+        profileChanged(customProfileItemIdx);
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Error deleting the profile."));
     }

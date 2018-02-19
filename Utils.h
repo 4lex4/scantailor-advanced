@@ -21,6 +21,8 @@
 
 #include <QString>
 #include "ThumbnailPixmapCache.h"
+#include <map>
+#include <unordered_map>
 
 class Utils {
 public:

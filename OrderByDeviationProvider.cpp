@@ -1,8 +1,8 @@
 
 #include "OrderByDeviationProvider.h"
 
-OrderByDeviationProvider::OrderByDeviationProvider(const DeviationProvider<PageId>& settings)
-        : m_deviationProvider(&settings) {
+OrderByDeviationProvider::OrderByDeviationProvider(const DeviationProvider<PageId>& deviationProvider)
+        : m_deviationProvider(&deviationProvider) {
 }
 
 bool OrderByDeviationProvider::precedes(const PageId& lhs_page,

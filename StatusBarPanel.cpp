@@ -121,7 +121,7 @@ void StatusBarPanel::physSizeChanged() {
         }
 
         ui.physSizeLine->setVisible(true);
-        ui.physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToString(units)));
+        ui.physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToLocalizedString(units)));
     } else {
         ui.physSizeLabel->clear();
         ui.physSizeLine->setVisible(false);

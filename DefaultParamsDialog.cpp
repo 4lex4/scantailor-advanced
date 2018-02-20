@@ -793,7 +793,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
 void DefaultParamsDialog::updateUnits(const Units units) {
     currentUnits = units;
-    unitsLabel->setText(unitsToString(units));
+    unitsLabel->setText(unitsToLocalizedString(units));
 
     {
         int decimals;

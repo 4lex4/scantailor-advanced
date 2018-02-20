@@ -21,8 +21,9 @@
 
 #include "Property.h"
 #include "intrusive_ptr.h"
+#include "Hashes.h"
 #include <QString>
-#include <map>
+#include <unordered_map>
 
 class QDomElement;
 
@@ -38,7 +39,7 @@ public:
     intrusive_ptr<Property> construct(const QDomElement& el) const;
 
 private:
-    typedef std::map<QString, PropertyConstructor> Registry;
+    typedef std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>> Registry;
     Registry m_registry;
 };
 

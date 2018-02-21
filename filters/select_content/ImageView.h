@@ -111,6 +111,7 @@ namespace select_content {
 
         void pageRectMoveRequest(const QPolygonF& pos);
 
+
         DraggablePoint m_contentRectCorners[4];
         ObjectDragHandler m_contentRectCornerHandlers[4];
 

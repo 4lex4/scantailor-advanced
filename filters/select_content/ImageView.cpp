@@ -43,7 +43,8 @@ namespace select_content {
               m_contentRect(content_rect),
               m_pageRect(page_rect),
               m_minBoxSize(10.0, 10.0),
-              m_pageRectEnabled(page_rect_enabled) {
+              m_pageRectEnabled(page_rect_enabled),
+              m_pageRectReloadRequested(false) {
         setMouseTracking(true);
 
         interactionState().setDefaultStatusTip(

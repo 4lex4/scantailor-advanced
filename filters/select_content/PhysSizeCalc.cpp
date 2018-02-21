@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <UnitsConverter.h>
 #include "PhysSizeCalc.h"
 #include "ImageTransformation.h"
-#include "PhysicalTransformation.h"
 
 namespace select_content {
     PhysSizeCalc::PhysSizeCalc() = default;
 
     PhysSizeCalc::PhysSizeCalc(const ImageTransformation& xform)
-            : m_virtToPhys(xform.transformBack() * PhysicalTransformation(xform.origDpi()).pixelsToMM()) {
+            : m_virtToPhys(xform.transformBack() * UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES)) {
     }
 
     QSizeF PhysSizeCalc::sizeMM(const QRectF& rect_px) const {

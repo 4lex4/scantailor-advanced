@@ -21,8 +21,8 @@
 #include "Alignment.h"
 #include "Params.h"
 #include "ImageTransformation.h"
-#include "PhysicalTransformation.h"
 #include <cassert>
+#include <UnitsConverter.h>
 
 namespace page_layout {
     QRectF Utils::adaptContentRect(const ImageTransformation& xform, const QRectF& content_rect) {
@@ -37,8 +37,8 @@ namespace page_layout {
     }
 
     QSizeF Utils::calcRectSizeMM(const ImageTransformation& xform, const QRectF& rect) {
-        const PhysicalTransformation phys_xform(xform.origDpi());
-        const QTransform virt_to_mm(xform.transformBack() * phys_xform.pixelsToMM());
+        const QTransform virt_to_mm(xform.transformBack()
+                                    * UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES));
 
         const QLineF hor_line(rect.topLeft(), rect.topRight());
         const QLineF ver_line(rect.topLeft(), rect.bottomLeft());
@@ -304,9 +304,9 @@ namespace page_layout {
                                       const Params& params,
                                       const QSizeF& aggregate_hard_size_mm,
                                       const QRectF& agg_content_rect) {
-        const PhysicalTransformation phys_xform(xform.origDpi());
+        const QTransform pixelsToMmTransform(UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES));
 
-        QPolygonF poly_mm(phys_xform.pixelsToMM().map(content_rect_phys));
+        QPolygonF poly_mm(pixelsToMmTransform.map(content_rect_phys));
         extendPolyRectWithMargins(poly_mm, params.hardMarginsMM());
 
         const QSizeF hard_size_mm(
@@ -321,7 +321,7 @@ namespace page_layout {
 
         extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
-        return phys_xform.mmToPixels().map(poly_mm);
+        return pixelsToMmTransform.inverted().map(poly_mm);
     }
 
     QPointF Utils::getRightUnitVector(const QPolygonF& poly_rect) {

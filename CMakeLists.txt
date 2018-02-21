@@ -475,7 +475,6 @@ SET(
         PageSelectionAccessor.cpp PageSelectionAccessor.h
         PageSelectionProvider.h
         ContentSpanFinder.cpp ContentSpanFinder.h
-        PhysicalTransformation.cpp PhysicalTransformation.h
         ImageTransformation.cpp ImageTransformation.h
         ImagePixmapUnion.h
         ImageViewBase.cpp ImageViewBase.h

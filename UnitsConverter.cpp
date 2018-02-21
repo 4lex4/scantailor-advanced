@@ -91,6 +91,14 @@ void UnitsConverter::convert(double& horizontalValue,
     }
 }
 
+QTransform UnitsConverter::transform(Units fromUnits, Units toUnits) const {
+    double xScaleFactor = 1.0;
+    double yScaleFactor = 1.0;
+    convert(xScaleFactor, yScaleFactor, fromUnits, toUnits);
+
+    return QTransform().scale(xScaleFactor, yScaleFactor);
+}
+
 const Dpi& UnitsConverter::getDpi() const {
     return dpi;
 }

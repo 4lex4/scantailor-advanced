@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include <utility>
+#include <QtCore/QSettings>
 
 namespace select_content {
     CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
@@ -69,6 +70,10 @@ namespace select_content {
             return;
         }
 
+        QSettings settings;
+        const double deviationCoef = settings.value("settings/selectContentDeviationCoef", 0.35).toDouble();
+        const double deviationThreshold = settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble();
+
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
@@ -79,7 +84,8 @@ namespace select_content {
                                     params->contentRect(),
                                     params->pageRect(),
                                     params->isPageDetectionEnabled(),
-                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id())
+                                    m_ptrSettings->deviationProvider().isDeviant(
+                                            page_info.id(), deviationCoef, deviationThreshold)
                             )
                     )
             );

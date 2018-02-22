@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>311</height>
+    <width>313</width>
+    <height>457</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,16 +35,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="AutoSaveProject">
+       <widget class="QCheckBox" name="autoSaveProjectCB">
         <property name="text">
          <string>Auto-save the existing project</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="highlightDeviationCB">
-        <property name="text">
-         <string>Highlight the thumbnails of pages with high deviation</string>
         </property>
        </widget>
       </item>
@@ -104,9 +97,8 @@
       </item>
      </layout>
      <zorder>enableOpenglCb</zorder>
-     <zorder>AutoSaveProject</zorder>
+     <zorder>autoSaveProjectCB</zorder>
      <zorder>openglDeviceLabel</zorder>
-     <zorder>highlightDeviationCB</zorder>
     </widget>
    </item>
    <item>
@@ -151,6 +143,162 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Deviation</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="highlightDeviationCB">
+        <property name="text">
+         <string>Highlight the thumbnails of pages with high deviation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="deviationParams">
+        <property name="title">
+         <string>Params</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="deskewDeviationLabel">
+             <property name="text">
+              <string>Deksew:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="selectContentDeviationLabel">
+             <property name="text">
+              <string>Select content:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="selectContentDeviationCoefSB">
+             <property name="toolTip">
+              <string>Deviation multiplier: a higher value means lower sensivity.</string>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>9.990000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="marginsDeviationLabel">
+             <property name="text">
+              <string>Margins:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="deskewDeviationCoefSB">
+             <property name="toolTip">
+              <string>Deviation multiplier: a higher value means lower sensivity.</string>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>9.990000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QDoubleSpinBox" name="deskewDeviationThresholdSB">
+             <property name="toolTip">
+              <string>The minimum deviation to be highlighted.</string>
+             </property>
+             <property name="maximum">
+              <double>45.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QDoubleSpinBox" name="selectContentDeviationThresholdSB">
+             <property name="toolTip">
+              <string>The minimum deviation to be highlighted.</string>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <double>999.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="marginsDeviationCoefSB">
+             <property name="toolTip">
+              <string>Deviation multiplier: a higher value means lower sensivity.</string>
+             </property>
+             <property name="minimum">
+              <double>0.100000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>9.990000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QDoubleSpinBox" name="marginsDeviationThresholdSB">
+             <property name="toolTip">
+              <string>The minimum deviation to be highlighted.</string>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <double>999.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>

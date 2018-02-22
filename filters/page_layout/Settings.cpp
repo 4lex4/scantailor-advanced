@@ -414,9 +414,6 @@ namespace page_layout {
                     auto it(m_items.find(pageId));
                     if (it != m_items.end()) {
                         if (it->alignment.isNull()) {
-                            const Margins& hardMarginsMM = it->hardMarginsMM;
-                            const QSizeF& contentSizeMM = it->contentSizeMM;
-
                             return std::sqrt(it->hardWidthMM() * it->hardHeightMM() / 4 / 25.4);
                         } else {
                             return .0;

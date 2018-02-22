@@ -343,7 +343,6 @@ MainWindow::MainWindow()
         }
     }
     m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
-    m_highlightDeviation = settings.value("settings/highlight_deviation", true).toBool();
 }
 
 MainWindow::~MainWindow() {
@@ -1569,11 +1568,7 @@ void MainWindow::onSettingsChanged() {
         app->installLanguage(settings.value("settings/language").toString());
     }
 
-    bool highlightDeviation = settings.value("settings/highlight_deviation").toBool();
-    if (highlightDeviation != m_highlightDeviation) {
-        m_highlightDeviation = highlightDeviation;
-        m_ptrThumbSequence->invalidateAllThumbnails();
-    }
+    m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
 void MainWindow::showAboutDialog() {

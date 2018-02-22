@@ -86,9 +86,18 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
         ui.languageBox->setEnabled(ui.languageBox->count() > 1);
     }
+    
+    ui.deskewDeviationCoefSB->setValue(settings.value("settings/deskewDeviationCoef", 1.5).toDouble());
+    ui.deskewDeviationThresholdSB->setValue(settings.value("settings/deskewDeviationThreshold", 1.0).toDouble());
+    ui.selectContentDeviationCoefSB->setValue(settings.value("settings/selectContentDeviationCoef", 0.35).toDouble());
+    ui.selectContentDeviationThresholdSB->setValue(
+            settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble()
+    );
+    ui.marginsDeviationCoefSB->setValue(settings.value("settings/marginsDeviationCoef", 0.35).toDouble());
+    ui.marginsDeviationThresholdSB->setValue(settings.value("settings/marginsDeviationThreshold", 1.0).toDouble());
 
     connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
-    ui.AutoSaveProject->setChecked(settings.value("settings/auto_save_project").toBool());
+    ui.autoSaveProjectCB->setChecked(settings.value("settings/auto_save_project").toBool());
     ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
 
     connect(
@@ -102,7 +111,7 @@ SettingsDialog::~SettingsDialog() = default;
 void SettingsDialog::commitChanges() {
     QSettings settings;
     settings.setValue("settings/enable_opengl", ui.enableOpenglCb->isChecked());
-    settings.setValue("settings/auto_save_project", ui.AutoSaveProject->isChecked());
+    settings.setValue("settings/auto_save_project", ui.autoSaveProjectCB->isChecked());
     settings.setValue("settings/highlight_deviation", ui.highlightDeviationCB->isChecked());
     if (ui.colorSchemeBox->currentIndex() == 0) {
         settings.setValue("settings/color_scheme", "dark");
@@ -113,6 +122,13 @@ void SettingsDialog::commitChanges() {
     settings.setValue("settings/bw_compression", ui.tiffCompressionBWBox->currentData().toInt());
     settings.setValue("settings/color_compression", ui.tiffCompressionColorBox->currentData().toInt());
     settings.setValue("settings/language", ui.languageBox->currentData().toString());
+
+    settings.setValue("settings/deskewDeviationCoef", ui.deskewDeviationCoefSB->value());
+    settings.setValue("settings/deskewDeviationThreshold", ui.deskewDeviationThresholdSB->value());
+    settings.setValue("settings/selectContentDeviationCoef", ui.selectContentDeviationCoefSB->value());
+    settings.setValue("settings/selectContentDeviationThreshold", ui.selectContentDeviationThresholdSB->value());
+    settings.setValue("settings/marginsDeviationCoef", ui.marginsDeviationCoefSB->value());
+    settings.setValue("settings/marginsDeviationThreshold", ui.marginsDeviationThresholdSB->value());
 
     emit settingsChanged();
 }

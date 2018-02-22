@@ -19,6 +19,7 @@
 #include "CacheDrivenTask.h"
 
 #include <utility>
+#include <QtCore/QSettings>
 #include "Settings.h"
 #include "Params.h"
 #include "Thumbnail.h"
@@ -82,6 +83,10 @@ namespace page_layout {
             return;
         }
 
+        QSettings settings;
+        const double deviationCoef = settings.value("settings/marginsDeviationCoef", 0.35).toDouble();
+        const double deviationThreshold = settings.value("settings/marginsDeviationThreshold", 1.0).toDouble();
+
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
@@ -91,7 +96,8 @@ namespace page_layout {
                                     page_info.imageId(), *params,
                                     xform, content_rect_phys,
                                     xform.transform().map(page_rect_phys).boundingRect(),
-                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id())
+                                    m_ptrSettings->deviationProvider().isDeviant(
+                                            page_info.id(), deviationCoef, deviationThreshold)
                             )
                     )
             );

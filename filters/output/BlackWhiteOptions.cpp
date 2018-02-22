@@ -203,7 +203,7 @@ namespace output {
 
     BlackWhiteOptions::ColorSegmenterOptions::ColorSegmenterOptions()
             : enabled(false),
-              noiseReduction(12),
+              noiseReduction(7),
               redThresholdAdjustment(0),
               greenThresholdAdjustment(0),
               blueThresholdAdjustment(0) {

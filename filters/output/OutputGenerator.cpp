@@ -563,13 +563,13 @@ namespace output {
         const GrayImage inputGrayImage = input.isBlackOnWhite() ? input.grayImage() : input.grayImage().inverted();
         const QImage inputOrigImage = [&input]() {
             QImage result = input.origImage();
-            if (!input.isBlackOnWhite()) {
-                result.invertPixels();
-            }
             if (!result.allGray()
                 && (result.format() != QImage::Format_ARGB32)
                 && (result.format() != QImage::Format_RGB32)) {
                 result = result.convertToFormat(QImage::Format_RGB32);
+            }
+            if (!input.isBlackOnWhite()) {
+                result.invertPixels();
             }
 
             return result;
@@ -1120,13 +1120,13 @@ namespace output {
         const GrayImage inputGrayImage = input.isBlackOnWhite() ? input.grayImage() : input.grayImage().inverted();
         const QImage inputOrigImage = [&input]() {
             QImage result = input.origImage();
-            if (!input.isBlackOnWhite()) {
-                result.invertPixels();
-            }
             if (!result.allGray()
                 && (result.format() != QImage::Format_ARGB32)
                 && (result.format() != QImage::Format_RGB32)) {
                 result = result.convertToFormat(QImage::Format_RGB32);
+            }
+            if (!input.isBlackOnWhite()) {
+                result.invertPixels();
             }
 
             return result;

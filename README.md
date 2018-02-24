@@ -40,6 +40,7 @@ brings new ones and fixes.
         * [Status bar panel](#status-bar-panel)
         * [Default parameters](#default-parameters)
         * [Collapsible filter options](#collapsible-filter-options)
+        * [Auto adjusting content area](#auto-adjusting-content-area)
 * [Building](#building)
 
 Description
@@ -317,6 +318,15 @@ Features
  * ##### Collapsible filter options.
  Now group boxes containing filter options can be collapsed/expanded.  
  The collapse status is preserved between restarts of the application.  
+ 
+ * ##### Auto adjusting content area.
+ 
+ Use **`double-click`** on content to automatically adjust the content area.  
+ If the content is outside the area, the later will automatically be expanded and adjusted to the content at the position where double-click has been,
+ otherwise the area edge, nearest to that position, will be adjusted.
+ 
+ It's much faster now to correct the content area if, for example, the page number has been missed by the auto algorithm.
+ It is no more required to manually and laboriously move the corners and edges of the content box.
  
 Building
 ----------

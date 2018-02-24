@@ -54,6 +54,8 @@ public:
 
     void mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction);
 
+    void mouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction);
+
     void mouseMoveEvent(QMouseEvent* event, InteractionState& interaction);
 
     void wheelEvent(QWheelEvent* event, InteractionState& interaction);
@@ -89,6 +91,9 @@ protected:
     }
 
     virtual void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
+    }
+
+    virtual void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
     }
 
     virtual void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {

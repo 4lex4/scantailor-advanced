@@ -156,6 +156,19 @@ void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState&
     DISPATCH(followers, mouseReleaseEvent(event, interaction));
 }
 
+void InteractionHandler::mouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
+    RETURN_IF_ACCEPTED(event);
+    // Keep them alive in case this object gets destroyed.
+    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+
+    DISPATCH(preceeders, mouseDoubleClickEvent(event, interaction));
+    RETURN_IF_ACCEPTED(event);
+    onMouseDoubleClickEvent(event, interaction);
+    ScopedClearAcceptance guard(event);
+    DISPATCH(followers, mouseDoubleClickEvent(event, interaction));
+}
+
 void InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
     RETURN_IF_ACCEPTED(event);
 

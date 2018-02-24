@@ -99,18 +99,18 @@ Features
 #### **Scan Tailor Featured** features
 
 * ##### Scan Tailor Featured fixes & improvements
-1. Deleted 3 Red Points 
- The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
- mesh are now eliminated. 
-2. Manual dewarping mode auto switch 
- The dewarping mode is now set to MANUAL (from OFF) after the user has moved the dewarping mesh.
-3. Auto dewarping vertical half correction 
- This patch corrects the original auto-dewarping in half
- the cases when it fails. If the vertical content boundary angle (calculated by auto-dewarping)
- exceeds an empirical value (2.75 degrees from vertical), the patch adds a new point to
- the distortion model (with the coordinates equal to the neighboring points) to make
- this boundary vertical. The patch works ONLY for the linear end of the top (bottom)
- horizontal line of the blue mesh (and not for the opposite curved end).
+    * Deleted 3 Red Points 
+      The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
+      mesh are now eliminated. 
+    * Manual dewarping mode auto switch 
+      The dewarping mode is now set to MANUAL (from OFF) after the user has moved the dewarping mesh.
+    * Auto dewarping vertical half correction 
+      This patch corrects the original auto-dewarping in half
+      the cases when it fails. If the vertical content boundary angle (calculated by auto-dewarping)
+      exceeds an empirical value (2.75 degrees from vertical), the patch adds a new point to
+      the distortion model (with the coordinates equal to the neighboring points) to make
+      this boundary vertical. The patch works ONLY for the linear end of the top (bottom)
+      horizontal line of the blue mesh (and not for the opposite curved end).
  
 * ##### Line vertical dragging on dewarp
  You can move the topmost (bottom-most) horizontal blue line of the dewarping mesh up and
@@ -152,41 +152,41 @@ Features
 #### **Scan Tailor Advanced** features
 
 * ##### Scan Tailor Advanced fixes & improvements
-* Portability.
-   The setting is stored in the folder with a program.
-
-* Page splitting had an influence on output only in b&w mode with dewarping disabled.
-   Now it works in all the modes.
-   
-* Page layout and all the other views now consider splitting settings.
-   Corresponding improvements are done to thumbnails.
-
-* Changed Scan Tailor behavior on page split stage.
-     1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
-   	    than the page the cut applied to, Scan Tailor tries to adapt cutters instead of fully
-   	    rejecting the cut setting and switching to auto mode for those pages as it was before.
-   	    The later was annoying as pages could be similar and had the difference in a few pixels.
-     2. Added check to reject invalid cut settings in manual mode.
-     3. UI: Added cutters interaction between each other. They can't more intersect each other,
-   	    which created a wrong page layout configuration before.
-
-* Optimized memory usage on the output stage.
-
-* Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
-   Now thumbnails are shown evenly.
-
-* Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
-   The option refreshes the thumbnails instantly.
-
-* Support for processing of images with light content on dark background.
-   Now that kind of images can correctly be handled on all the stages. Many book covers are examples of such images.
-
-* Deviation feature reworked.
-    1. A deviation provider implemented.
-    It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
-    2. Added sorting by decreasing deviation.
-
-* Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
+    * Portability.
+       The setting is stored in the folder with a program.
+    
+    * Page splitting had an influence on output only in b&w mode with dewarping disabled.
+       Now it works in all the modes.
+       
+    * Page layout and all the other views now consider splitting settings.
+       Corresponding improvements are done to thumbnails.
+    
+    * Changed Scan Tailor behavior on page split stage.
+         1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
+            than the page the cut applied to, Scan Tailor tries to adapt cutters instead of fully
+            rejecting the cut setting and switching to auto mode for those pages as it was before.
+            The later was annoying as pages could be similar and had the difference in a few pixels.
+         2. Added check to reject invalid cut settings in manual mode.
+         3. UI: Added cutters interaction between each other. They can't more intersect each other,
+            which created a wrong page layout configuration before.
+    
+    * Optimized memory usage on the output stage.
+    
+    * Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
+       Now thumbnails are shown evenly.
+    
+    * Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
+       The option refreshes the thumbnails instantly.
+    
+    * Support for processing of images with light content on dark background.
+       Now that kind of images can correctly be handled on all the stages. Many book covers are examples of such images.
+    
+    * Deviation feature reworked.
+        1. A deviation provider implemented.
+        It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
+        2. Added sorting by decreasing deviation.
+    
+    * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes
  You can choose a desired color scheme in settings.

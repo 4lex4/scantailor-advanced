@@ -140,7 +140,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     const QString cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
         || (temp_pixmap.width() < display_rect.width())
-        || (temp_pixmap.height() < display_rect.width())) {
+        || (temp_pixmap.height() < display_rect.height())) {
         auto w = (int) display_rect.width();
         auto h = (int) display_rect.height();
         // Add some extra, to avoid rectreating the pixmap too often.

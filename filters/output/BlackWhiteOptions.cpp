@@ -26,7 +26,7 @@ namespace output {
               savitzkyGolaySmoothingEnabled(true),
               morphologicalSmoothingEnabled(true),
               m_normalizeIllumination(true),
-              windowSize(51),
+              windowSize(200),
               sauvolaCoef(0.34),
               wolfLowerBound(1),
               wolfUpperBound(254),

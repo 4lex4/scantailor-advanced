@@ -65,7 +65,7 @@ namespace select_content {
         }
 
         if (m_ptrNextTask) {
-            m_ptrNextTask->process(page_info, collector, xform, params->contentRect());
+            m_ptrNextTask->process(page_info, collector, xform, params->pageRect(), params->contentRect());
 
             return;
         }

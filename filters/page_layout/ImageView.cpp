@@ -517,8 +517,6 @@ namespace page_layout {
         QPolygonF poly_mm(virt_to_mm.map(m_innerRect));
         Utils::extendPolyRectWithMargins(poly_mm, margins_mm);
 
-        m_ptrSettings->updateContentRect();
-
         const QRectF middle_rect(mm_to_virt.map(poly_mm).boundingRect());
 
         const QSizeF hard_size_mm(
@@ -528,7 +526,10 @@ namespace page_layout {
         const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
-                        m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
+                        m_ptrSettings->getPageParams(m_pageId)->contentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(),
+                        m_ptrSettings->getAggregateContentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->pageRect()
                 )
         );
 
@@ -633,8 +634,6 @@ namespace page_layout {
 
         QPolygonF poly_mm(virt_to_mm.map(m_middleRect));
 
-        m_ptrSettings->updateContentRect();
-
         const QSizeF hard_size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
                 QLineF(poly_mm[0], poly_mm[3]).length()
@@ -642,7 +641,10 @@ namespace page_layout {
         const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
-                        m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
+                        m_ptrSettings->getPageParams(m_pageId)->contentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(),
+                        m_ptrSettings->getAggregateContentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->pageRect()
                 )
         );
 

@@ -665,7 +665,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     switch (alignmentMode->currentIndex()) {
         case 0:
             alignment.setVertical(Alignment::VAUTO);
-            alignment.setHorizontal(Alignment::HCENTER);
+            alignment.setHorizontal(Alignment::HAUTO);
             break;
         case 1:
             for (auto item : alignmentByButton) {

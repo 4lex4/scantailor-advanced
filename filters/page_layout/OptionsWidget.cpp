@@ -276,8 +276,11 @@ namespace page_layout {
         m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, checked);
         updateMarginsControlsEnabled();
 
+        if (m_alignment.vertical() == Alignment::VORIGINAL) {
+            m_alignment.setHorizontal(checked ? Alignment::HORIGINAL : Alignment::HCENTER);
+        }
+
         m_ptrSettings->setPageAlignment(m_pageId, m_alignment);
-        m_ptrSettings->updateContentRect();
         emit reloadRequested();
     }
 
@@ -285,7 +288,7 @@ namespace page_layout {
         switch (idx) {
             case 0:
                 m_alignment.setVertical(Alignment::VAUTO);
-                m_alignment.setHorizontal(Alignment::HCENTER);
+                m_alignment.setHorizontal(Alignment::HAUTO);
                 break;
             case 1:
                 for (auto button : m_alignmentByButton) {
@@ -307,7 +310,6 @@ namespace page_layout {
                 break;
         }
 
-        m_ptrSettings->updateContentRect();
         updateAlignmentButtonsEnabled();
         emit alignmentChanged(m_alignment);
     }
@@ -366,6 +368,12 @@ namespace page_layout {
             } else {
                 m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);
             }
+
+            Alignment alignment = m_ptrSettings->getPageAlignment(page_id);
+            if (alignment.vertical() == Alignment::VORIGINAL) {
+                alignment.setHorizontal(autoMarginsEnabled ? Alignment::HORIGINAL : Alignment::HCENTER);
+                m_ptrSettings->setPageAlignment(page_id, alignment);
+            }
         }
 
         emit aggregateHardSizeChanged();
@@ -382,7 +390,16 @@ namespace page_layout {
                 continue;
             }
 
-            m_ptrSettings->setPageAlignment(page_id, m_alignment);
+            if (m_alignment.vertical() != Alignment::VORIGINAL) {
+                m_ptrSettings->setPageAlignment(page_id, m_alignment);
+            } else {
+                Alignment alignment = m_alignment;
+                alignment.setHorizontal(m_ptrSettings->isPageAutoMarginsEnabled(page_id)
+                                        ? Alignment::HORIGINAL
+                                        : Alignment::HCENTER);
+
+                m_ptrSettings->setPageAlignment(page_id, alignment);
+            }
         }
 
         emit invalidateAllThumbnails();

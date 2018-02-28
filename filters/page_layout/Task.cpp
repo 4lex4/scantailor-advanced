@@ -99,8 +99,7 @@ namespace page_layout {
         const Params params(
                 m_ptrSettings->updateContentSizeAndGetParams(
                         m_pageId, page_rect, content_rect, content_size_mm,
-                        &agg_hard_size_before, &agg_hard_size_after,
-                        (m_ptrNextTask != nullptr)
+                        &agg_hard_size_before, &agg_hard_size_after
                 )
         );
 
@@ -115,7 +114,7 @@ namespace page_layout {
             const QPolygonF page_rect_phys(
                     Utils::calcPageRectPhys(
                             data.xform(), content_rect_phys,
-                            params, agg_hard_size_after, m_ptrSettings->getContentRect()
+                            params, agg_hard_size_after, m_ptrSettings->getAggregateContentRect()
                     )
             );
 

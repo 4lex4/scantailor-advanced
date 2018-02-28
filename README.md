@@ -70,6 +70,7 @@ Features
  bottom or center. Original mode keeps page on their vertical original position.
 
  *This feature has been improved. See [page area](#page-area) feature description.*
+ *Also see [Scan Tailor Advanced fixes & improvements](#scan-tailor-advanced-fixes--improvements)*
 
 * ##### Page detect \[reworked\]
  Page detect feature allows detect page in black margins or switch off page content
@@ -185,6 +186,13 @@ Features
         1. A deviation provider implemented.
         It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
         2. Added sorting by decreasing deviation.
+        
+    * Auto and original alignment modes reworked:
+        1. The original and auto alignment modes didn't work correctly due to the error in code.
+        2. Both the modes didn't work rightly after select content stage or reopening the project file, always requiring secondary batch processing of every page at margins stage to work correctly.
+        3. Reworked calculation method for the original alignment. Now it is more precise.
+        4. Original alignment mode now considers the page box from 4th stage.
+        5. Fixed behaviour of horizontal alignment, when the original mode enabled, and auto margins has been enabled/disabled. Also on applying auto-margins / original alignment to the set of pages, that is now set correctly for each page.
     
     * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 

@@ -149,21 +149,16 @@ namespace page_layout {
                                              const QRectF& content_rect,
                                              const QSizeF& content_size_mm,
                                              QSizeF* agg_hard_size_before,
-                                             QSizeF* agg_hard_size_after,
-                                             bool suppress_content_rect_update);
+                                             QSizeF* agg_hard_size_after);
 
-        const QRectF& updateContentRect();
+        const QRectF& updateAggregateContentRect();
 
-        const QRectF& getContentRect() {
-            return m_contentRect;
+        const QRectF& getAggregateContentRect() {
+            return m_aggregateContentRect;
         }
 
-        void setContentRect(const QRectF& contentRect) {
-            m_contentRect = contentRect;
-        }
-
-        const QRectF& getPageRect() {
-            return m_pageRect;
+        void setAggregateContentRect(const QRectF& aggregateContentRect) {
+            m_aggregateContentRect = aggregateContentRect;
         }
 
         Margins getHardMarginsMM(const PageId& page_id) const;
@@ -244,8 +239,7 @@ namespace page_layout {
         const QSizeF m_invalidSize;
         const Margins m_defaultHardMarginsMM;
         const Alignment m_defaultAlignment;
-        QRectF m_contentRect;
-        QRectF m_pageRect;
+        QRectF m_aggregateContentRect;
         const bool m_autoMarginsDefault;
         DeviationProvider<PageId> m_deviationProvider;
     };
@@ -289,29 +283,23 @@ namespace page_layout {
                                                    const QRectF& content_rect,
                                                    const QSizeF& content_size_mm,
                                                    QSizeF* agg_hard_size_before,
-                                                   QSizeF* agg_hard_size_after,
-                                                   bool suppress_content_rect_update) {
+                                                   QSizeF* agg_hard_size_after) {
         return m_ptrImpl->updateContentSizeAndGetParams(
                 page_id, page_rect, content_rect, content_size_mm,
-                agg_hard_size_before, agg_hard_size_after,
-                suppress_content_rect_update
+                agg_hard_size_before, agg_hard_size_after
         );
     }
 
-    const QRectF& Settings::updateContentRect() {
-        return m_ptrImpl->updateContentRect();
+    const QRectF& Settings::updateAggregateContentRect() {
+        return m_ptrImpl->updateAggregateContentRect();
     }
 
-    const QRectF& Settings::getContentRect() {
-        return m_ptrImpl->getContentRect();
+    const QRectF& Settings::getAggregateContentRect() {
+        return m_ptrImpl->getAggregateContentRect();
     }
 
-    void Settings::setContentRect(const QRectF& contentRect) {
-        m_ptrImpl->setContentRect(contentRect);
-    }
-
-    const QRectF& Settings::getPageRect() {
-        return m_ptrImpl->getPageRect();
+    void Settings::setAggregateContentRect(const QRectF& contentRect) {
+        m_ptrImpl->setAggregateContentRect(contentRect);
     }
 
     Margins Settings::getHardMarginsMM(const PageId& page_id) const {
@@ -529,8 +517,7 @@ namespace page_layout {
                                                          const QRectF& content_rect,
                                                          const QSizeF& content_size_mm,
                                                          QSizeF* agg_hard_size_before,
-                                                         QSizeF* agg_hard_size_after,
-                                                         bool suppress_content_rect_update) {
+                                                         QSizeF* agg_hard_size_after) {
         const QMutexLocker locker(&m_mutex);
 
         if (agg_hard_size_before) {
@@ -553,9 +540,7 @@ namespace page_layout {
             *agg_hard_size_after = getAggregateHardSizeMMLocked();
         }
 
-        if (!suppress_content_rect_update) {
-            updateContentRect();
-        }
+        updateAggregateContentRect();
 
         m_deviationProvider.addOrUpdate(page_id);
 
@@ -565,13 +550,13 @@ namespace page_layout {
         );
     }      // Settings::Impl::updateContentSizeAndGetParams
 
-    const QRectF& Settings::Impl::updateContentRect() {
+    const QRectF& Settings::Impl::updateAggregateContentRect() {
         Container::iterator it = m_items.begin();
         if (it == m_items.end()) {
-            return m_contentRect;
+            return m_aggregateContentRect;
         }
 
-        m_contentRect = it->contentRect;
+        m_aggregateContentRect = it->contentRect;
         for (; it != m_items.end(); it++) {
             if (it->contentRect == m_invalidRect) {
                 continue;
@@ -580,29 +565,13 @@ namespace page_layout {
                 continue;
             }
 
-            QRectF icr(it->contentRect);
+            const QRectF page_rect(it->pageRect);
+            QRectF content_rect(it->contentRect.translated(-page_rect.x(), -page_rect.y()));
 
-            /*
-                std::cout << "\tupateContentRect: " << it->pageId.imageId().filePath().toLatin1().constData() << "\n";
-               std::cout << "m_contentRect.left(): " << m_contentRect.left() << " right(): " << m_contentRect.right() << " top: " << m_contentRect.top() << " bottom: " << m_contentRect.bottom() << std::endl;
-               std::cout << "icr.left(): " << icr.left() << " right(): " << icr.right() << " top: " << icr.top() << " bottom: " << icr.bottom() << std::endl;
-             */
-
-            if (icr.left() < m_contentRect.left()) {
-                m_contentRect.setLeft(icr.left());
-            }
-            if (icr.right() > m_contentRect.right()) {
-                m_contentRect.setRight(icr.right());
-            }
-            if (icr.top() < m_contentRect.top()) {
-                m_contentRect.setTop(icr.top());
-            }
-            if (icr.bottom() > m_contentRect.bottom()) {
-                m_contentRect.setBottom(icr.bottom());
-            }
+            m_aggregateContentRect |= content_rect;
         }
 
-        return m_contentRect;
+        return m_aggregateContentRect;
     }      // Settings::Impl::updateContentRect
 
     Margins Settings::Impl::getHardMarginsMM(const PageId& page_id) const {
@@ -646,7 +615,7 @@ namespace page_layout {
 
     Settings::AggregateSizeChanged Settings::Impl::setPageAlignment(const PageId& page_id, const Alignment& alignment) {
         const QMutexLocker locker(&m_mutex);
-
+        
         const QSizeF agg_size_before(getAggregateHardSizeMMLocked());
 
         const Container::iterator it(m_items.lower_bound(page_id));
@@ -657,6 +626,10 @@ namespace page_layout {
             );
             m_items.insert(it, item);
         } else {
+            if (alignment.isNull() != it->alignment.isNull()) {
+                updateAggregateContentRect();
+            }
+
             m_items.modify(it, ModifyAlignment(alignment));
         }
 

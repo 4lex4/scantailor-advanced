@@ -21,16 +21,14 @@
 
 namespace page_layout {
     Alignment::Alignment()
-            : m_vert(VCENTER),
-              m_hor(HCENTER),
-              m_tolerance(DEFAULT_TOLERANCE),
+            : m_vertical(VCENTER),
+              m_horizontal(HCENTER),
               m_isNull(false) {
     }
 
     Alignment::Alignment(Vertical vert, Horizontal hor)
-            : m_vert(vert),
-              m_hor(hor),
-              m_tolerance(DEFAULT_TOLERANCE),
+            : m_vertical(vert),
+              m_horizontal(hor),
               m_isNull(false) {
     }
 
@@ -38,36 +36,35 @@ namespace page_layout {
         const QString vert(el.attribute("vert"));
         const QString hor(el.attribute("hor"));
         m_isNull = el.attribute("null").toInt() != 0;
-        m_tolerance = el.attribute("tolerance", QString::number(DEFAULT_TOLERANCE)).toDouble();
 
         if (vert == "top") {
-            m_vert = TOP;
+            m_vertical = TOP;
         } else if (vert == "bottom") {
-            m_vert = BOTTOM;
+            m_vertical = BOTTOM;
         } else if (vert == "auto") {
-            m_vert = VAUTO;
+            m_vertical = VAUTO;
         } else if (vert == "original") {
-            m_vert = VORIGINAL;
+            m_vertical = VORIGINAL;
         } else {
-            m_vert = VCENTER;
+            m_vertical = VCENTER;
         }
 
         if (hor == "left") {
-            m_hor = LEFT;
+            m_horizontal = LEFT;
         } else if (hor == "right") {
-            m_hor = RIGHT;
+            m_horizontal = RIGHT;
         } else if (hor == "auto") {
-            m_hor = HAUTO;
+            m_horizontal = HAUTO;
         } else if (vert == "original") {
-            m_hor = HORIGINAL;
+            m_horizontal = HORIGINAL;
         } else {
-            m_hor = HCENTER;
+            m_horizontal = HCENTER;
         }
     }
 
     QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
         const char* vert = nullptr;
-        switch (m_vert) {
+        switch (m_vertical) {
             case TOP:
                 vert = "top";
                 break;
@@ -86,7 +83,7 @@ namespace page_layout {
         }
 
         const char* hor = nullptr;
-        switch (m_hor) {
+        switch (m_horizontal) {
             case LEFT:
                 hor = "left";
                 break;
@@ -108,14 +105,13 @@ namespace page_layout {
         el.setAttribute("vert", QString::fromLatin1(vert));
         el.setAttribute("hor", QString::fromLatin1(hor));
         el.setAttribute("null", m_isNull ? 1 : 0);
-        el.setAttribute("tolerance", QString::number(m_tolerance));
 
         return el;
     }
 
     bool Alignment::operator==(const Alignment& other) const {
-        return (m_vert == other.m_vert)
-               && (m_hor == other.m_hor)
+        return (m_vertical == other.m_vertical)
+               && (m_horizontal == other.m_horizontal)
                && (m_isNull == other.m_isNull);
     }
 
@@ -124,19 +120,19 @@ namespace page_layout {
     }
 
     Alignment::Vertical Alignment::vertical() const {
-        return m_vert;
+        return m_vertical;
     }
 
     void Alignment::setVertical(Alignment::Vertical vert) {
-        m_vert = vert;
+        m_vertical = vert;
     }
 
     Alignment::Horizontal Alignment::horizontal() const {
-        return m_hor;
+        return m_horizontal;
     }
 
     void Alignment::setHorizontal(Alignment::Horizontal hor) {
-        m_hor = hor;
+        m_horizontal = hor;
     }
 
     bool Alignment::isNull() const {
@@ -145,13 +141,5 @@ namespace page_layout {
 
     void Alignment::setNull(bool is_null) {
         m_isNull = is_null;
-    }
-
-    double Alignment::tolerance() const {
-        return m_tolerance;
-    }
-
-    void Alignment::setTolerance(double t) {
-        m_tolerance = t;
     }
 }  // namespace page_layout

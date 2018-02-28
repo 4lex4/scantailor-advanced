@@ -47,6 +47,7 @@ namespace page_layout {
         void process(const PageInfo& page_info,
                      AbstractFilterDataCollector* collector,
                      const ImageTransformation& xform,
+                     const QRectF& page_rect,
                      const QRectF& content_rect);
 
     private:

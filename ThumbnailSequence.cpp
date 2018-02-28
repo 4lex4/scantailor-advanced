@@ -521,7 +521,7 @@ void ThumbnailSequence::Impl::invalidateThumbnail(const PageInfo& page_info) {
 }
 
 void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator id_it) {
-    std::unique_ptr<CompositeItem> composite(getCompositeItem(&* id_it, id_it->pageInfo));
+    std::unique_ptr<CompositeItem> composite(getCompositeItem(&*id_it, id_it->pageInfo));
 
     CompositeItem* const new_composite = composite.get();
     CompositeItem* const old_composite = id_it->composite;
@@ -573,44 +573,89 @@ void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator 
         ord_end = after_new;
     }
 
-    int view_width = m_graphicsScene.views().first()->width();
+    int view_width = 0;
+    if (!m_graphicsScene.views().isEmpty()) {
+        QGraphicsView* gv = m_graphicsScene.views().first();
+        view_width = gv->width();
+        view_width -= gv->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+        if (gv->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, gv)) {
+            view_width -= gv->frameWidth() * 2;
+        }
+    }
 
-    double xoffset = SPACING;
-    double yoffset = SPACING;
-
+    // look for a beginning of a row
+    double yoffset = -1; // undefined value
     if (ord_it != m_itemsInOrder.begin()) {
-        ItemsInOrder::iterator prev(ord_it);
-        --prev;
-        xoffset = prev->composite->pos().x() + prev->composite->boundingRect().width() + SPACING;
-        if (xoffset <= view_width) {
-            yoffset = prev->composite->pos().y() + SPACING;
-        } else {
-            xoffset = SPACING;
-            yoffset = prev->composite->pos().y() + prev->composite->boundingRect().height() + SPACING;
-        }
-    }
-
-    // Reposition items between the old and the new position of our item,
-    // including the item itself.
-    for (; ord_it != ord_end; ++ord_it) {
-        ord_it->composite->setPos(xoffset, yoffset);
-        xoffset += ord_it->composite->boundingRect().width() + SPACING;
-        if (xoffset > view_width) {
-            xoffset = SPACING;
-            yoffset += ord_it->composite->boundingRect().height() + SPACING;
-        }
-    }
-
-    // Reposition the items following both the new and the old position
-    // of the item, if the item size has changed.
-    if (old_size != new_size) {
-        for (; ord_it != m_itemsInOrder.end(); ++ord_it) {
-            ord_it->composite->setPos(xoffset, yoffset);
-            xoffset += ord_it->composite->boundingRect().width() + SPACING;
-            if (xoffset > view_width) {
-                xoffset = SPACING;
-                yoffset += ord_it->composite->boundingRect().height() + SPACING;
+        // can't use ord_it->composite->pos() here
+        ItemsInOrder::iterator it(ord_it);
+        --it;
+        if (it->composite->pos().x() + it->composite->boundingRect().width() +
+            SPACING + ord_it->composite->boundingRect().width() <= view_width) {
+            // not first in a row
+            yoffset = it->composite->pos().y(); // take ordinate of any prev page
+            ord_it = it;
+            if (it != m_itemsInOrder.begin()) {
+                while ((--it)->composite->pos().y() == yoffset) {
+                    ord_it = it;
+                    if (it == m_itemsInOrder.begin()) {
+                        break;
+                    }
+                }
             }
+        }
+    }
+    // now ord_it is at beginning ot a row
+    if (yoffset < 0) {
+        // but it's ordinate is unknown as it's singe page or was first page in row
+        if (ord_it == m_itemsInOrder.begin()) {
+            // it's a first row
+            yoffset = SPACING;
+        } else {
+            // there are rows before and we'll find max height of prev one
+            ItemsInOrder::iterator it(ord_it);
+            --it; //we at end of the prev row
+            double next_yoffset = 0;
+            double row_y = it->composite->pos().y();
+            do {
+                next_yoffset = std::max(it->composite->pos().y() + it->composite->boundingRect().height() + SPACING,
+                                        next_yoffset);
+            } while (it != m_itemsInOrder.begin() && (--it)->composite->pos().y() == row_y);
+            yoffset = next_yoffset;
+        }
+    }
+
+    ord_end = m_itemsInOrder.end();
+    while (ord_it != ord_end) {
+        int items_in_row = 0;
+        double sum_item_widths = 0;
+        double xoffset = SPACING;
+        for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
+            const double item_width = row_it->composite->boundingRect().width();
+            xoffset += item_width;
+            if (xoffset > view_width) {
+                if (items_in_row == 0) {
+                    items_in_row = 1; // at least one page must be in a row
+                    sum_item_widths = item_width;
+                }
+                break;
+            }
+            items_in_row++;
+            sum_item_widths += item_width;
+            xoffset += SPACING;
+        }
+
+        // split exceding width between margins of pages in a row
+        xoffset = SPACING;
+        double next_yoffset = 0;
+        for (; items_in_row > 0; --items_in_row, ++ord_it) {
+            CompositeItem* composite = ord_it->composite;
+            composite->setPos(xoffset, yoffset);
+            xoffset += composite->boundingRect().width() + SPACING;
+            next_yoffset = std::max(ord_it->composite->boundingRect().height() + SPACING, next_yoffset);
+        }
+
+        if (ord_it != ord_end) {
+            yoffset += next_yoffset;
         }
     }
     // Update scene rect.
@@ -655,27 +700,59 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
     }
 
     m_sceneRect = QRectF(0.0, 0.0, 0.0, 0.0);
-    double xoffset = SPACING;
-    double yoffset = SPACING;
 
-    int num_items = 0;
-    int view_width = m_graphicsScene.views().first()->width();
-    for (ord_it = m_itemsInOrder.begin(); ord_it != ord_end; ++ord_it, ++num_items) {
-        CompositeItem* composite = ord_it->composite;
-        composite->setPos(xoffset, yoffset);
-        composite->updateSceneRect(m_sceneRect);
-        composite->updateAppearence(ord_it->isSelected(), ord_it->isSelectionLeader());
-
-        xoffset += composite->boundingRect().width() + SPACING;
-        if (xoffset > view_width) {
-            xoffset = SPACING;
-            yoffset += composite->boundingRect().height() + SPACING;
+    int view_width = 0;
+    if (!m_graphicsScene.views().isEmpty()) {
+        QGraphicsView* gv = m_graphicsScene.views().first();
+        view_width = gv->width();
+        view_width -= gv->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+        if (gv->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, gv)) {
+            view_width -= gv->frameWidth() * 2;
         }
-        m_graphicsScene.addItem(composite);
+    }
+
+    double yoffset = SPACING;
+    ord_it = m_itemsInOrder.begin();
+    while (ord_it != ord_end) {
+        int items_in_row = 0;
+        double sum_item_widths = 0;
+        double xoffset = SPACING;
+        for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
+            const double item_width = row_it->composite->boundingRect().width();
+            xoffset += item_width;
+            if (xoffset > view_width) {
+                if (items_in_row == 0) {
+                    items_in_row = 1; // at least one page must be in a row
+                    sum_item_widths = item_width;
+                }
+                break;
+            }
+            items_in_row++;
+            sum_item_widths += item_width;
+            xoffset += SPACING;
+        }
+
+        // split exceding width between margins of pages in a row
+        xoffset = SPACING;
+        double next_yoffset = 0;
+        for (; items_in_row > 0; --items_in_row, ++ord_it) {
+            CompositeItem* composite = ord_it->composite;
+            composite->setPos(xoffset, yoffset);
+            composite->updateSceneRect(m_sceneRect);
+            composite->updateAppearence(ord_it->isSelected(), ord_it->isSelectionLeader());
+            m_graphicsScene.addItem(composite);
+            xoffset += composite->boundingRect().width() + SPACING;
+            next_yoffset = std::max(composite->boundingRect().height() + SPACING, next_yoffset);
+        }
+        
+        if (ord_it != ord_end) {
+            yoffset += next_yoffset;
+        }
     }
 
     commitSceneRect();
 } // ThumbnailSequence::Impl::invalidateAllThumbnails
+
 
 bool ThumbnailSequence::Impl::setSelection(const PageId& page_id) {
     const ItemsById::iterator id_it(m_itemsById.find(page_id));

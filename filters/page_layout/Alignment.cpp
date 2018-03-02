@@ -26,9 +26,9 @@ namespace page_layout {
               m_isNull(false) {
     }
 
-    Alignment::Alignment(Vertical vert, Horizontal hor)
-            : m_vertical(vert),
-              m_horizontal(hor),
+    Alignment::Alignment(Vertical vertical, Horizontal horizontal)
+            : m_vertical(vertical),
+              m_horizontal(horizontal),
               m_isNull(false) {
     }
 
@@ -123,16 +123,16 @@ namespace page_layout {
         return m_vertical;
     }
 
-    void Alignment::setVertical(Alignment::Vertical vert) {
-        m_vertical = vert;
+    void Alignment::setVertical(Alignment::Vertical vertical) {
+        m_vertical = vertical;
     }
 
     Alignment::Horizontal Alignment::horizontal() const {
         return m_horizontal;
     }
 
-    void Alignment::setHorizontal(Alignment::Horizontal hor) {
-        m_horizontal = hor;
+    void Alignment::setHorizontal(Alignment::Horizontal horizontal) {
+        m_horizontal = horizontal;
     }
 
     bool Alignment::isNull() const {
@@ -141,5 +141,21 @@ namespace page_layout {
 
     void Alignment::setNull(bool is_null) {
         m_isNull = is_null;
+    }
+
+    bool Alignment::isAutoVertical() const {
+        return (m_vertical == VAUTO) || (m_vertical == VORIGINAL);
+    }
+
+    bool Alignment::isAutoHorizontal() const {
+        return (m_horizontal == HAUTO) || (m_horizontal == HORIGINAL);
+    }
+
+    bool Alignment::isOriginal() const {
+        return (m_vertical == VORIGINAL) || (m_horizontal == HORIGINAL);
+    }
+
+    bool Alignment::isAuto() const {
+        return (m_vertical == VAUTO) || (m_horizontal == HAUTO);
     }
 }  // namespace page_layout

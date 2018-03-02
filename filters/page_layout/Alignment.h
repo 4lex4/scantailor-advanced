@@ -51,21 +51,29 @@ namespace page_layout {
          */
         Alignment();
 
-        Alignment(Vertical vert, Horizontal hor);
+        Alignment(Vertical vertical, Horizontal horizontal);
 
         explicit Alignment(const QDomElement& el);
 
         Vertical vertical() const;
 
-        void setVertical(Vertical vert);
+        void setVertical(Vertical vertical);
 
         Horizontal horizontal() const;
 
-        void setHorizontal(Horizontal hor);
+        void setHorizontal(Horizontal horizontal);
 
         bool isNull() const;
 
         void setNull(bool is_null);
+
+        bool isAutoVertical() const;
+
+        bool isAutoHorizontal() const;
+
+        bool isOriginal() const;
+
+        bool isAuto() const;
 
         bool operator==(const Alignment& other) const;
 

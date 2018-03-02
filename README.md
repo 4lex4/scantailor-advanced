@@ -193,7 +193,8 @@ Features
         3. Reworked calculation method for the original alignment. Now it is more precise.
         4. Original alignment mode now considers the page box from 4th stage.
         5. Fixed behaviour of horizontal alignment, when the original mode enabled, and auto margins has been enabled/disabled. Also on applying auto-margins / original alignment to the set of pages, that is now set correctly for each page.
-    
+        6. Added ability to separately control vertical and horizontal automatic alignment when auto or original alignment mode enabled.  
+        
     * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes

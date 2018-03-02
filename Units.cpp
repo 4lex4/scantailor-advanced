@@ -6,16 +6,16 @@ QString unitsToString(Units units) {
     QString unitsStr;
     switch (units) {
         case PIXELS:
-            unitsStr = QObject::tr("px");
+            unitsStr = "px";
             break;
         case MILLIMETRES:
-            unitsStr = QObject::tr("mm");
+            unitsStr = "mm";
             break;
         case CENTIMETRES:
-            unitsStr = QObject::tr("cm");
+            unitsStr = "cm";
             break;
         case INCHES:
-            unitsStr = QObject::tr("in");
+            unitsStr = "in";
             break;
     }
 
@@ -32,4 +32,24 @@ Units unitsFromString(const QString& string) {
     } else {
         return MILLIMETRES;
     }
+}
+
+QString unitsToLocalizedString(Units units) {
+    QString unitsStr;
+    switch (units) {
+        case PIXELS:
+            unitsStr = QObject::tr("px");
+            break;
+        case MILLIMETRES:
+            unitsStr = QObject::tr("mm");
+            break;
+        case CENTIMETRES:
+            unitsStr = QObject::tr("cm");
+            break;
+        case INCHES:
+            unitsStr = QObject::tr("in");
+            break;
+    }
+
+    return unitsStr;
 }

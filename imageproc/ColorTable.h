@@ -24,9 +24,9 @@ namespace imageproc {
 
         QImage getImage() const;
 
-    private:
-        std::unordered_map<uint32_t, int> paletteFromMonoWithStatistics() const;
+        QImage toIndexedImage(const QVector<QRgb>* colorTable = nullptr) const;
 
+    private:
         std::unordered_map<uint32_t, int> paletteFromIndexedWithStatistics() const;
 
         std::unordered_map<uint32_t, int> paletteFromRgbWithStatistics() const;

@@ -33,6 +33,8 @@
 #include <UnitsProvider.h>
 #include "Dpm.h"
 
+using namespace imageproc;
+
 namespace select_content {
     class Task::UiUpdater : public FilterResult {
     public:
@@ -41,6 +43,7 @@ namespace select_content {
                   std::unique_ptr<DebugImages> dbg,
                   const QImage& image,
                   const ImageTransformation& xform,
+                  const GrayImage& gray_image,
                   const OptionsWidget::UiData& ui_data,
                   bool batch);
 
@@ -56,6 +59,7 @@ namespace select_content {
         std::unique_ptr<DebugImages> m_ptrDbg;
         QImage m_image;
         QImage m_downscaledImage;
+        GrayImage m_grayImage;
         ImageTransformation m_xform;
         OptionsWidget::UiData m_uiData;
         bool m_batchProcessing;
@@ -188,7 +192,9 @@ namespace select_content {
             return FilterResultPtr(
                     new UiUpdater(
                             m_ptrFilter, m_pageId, std::move(m_ptrDbg), data.origImage(),
-                            data.xform(), ui_data, m_batchProcessing
+                            data.xform(),
+                            data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                            ui_data, m_batchProcessing
                     )
             );
         }
@@ -201,6 +207,7 @@ namespace select_content {
                                std::unique_ptr<DebugImages> dbg,
                                const QImage& image,
                                const ImageTransformation& xform,
+                               const GrayImage& gray_image,
                                const OptionsWidget::UiData& ui_data,
                                const bool batch)
             : m_ptrFilter(std::move(filter)),
@@ -209,6 +216,7 @@ namespace select_content {
               m_image(image),
               m_downscaledImage(ImageView::createDownscaledImage(image)),
               m_xform(xform),
+              m_grayImage(gray_image),
               m_uiData(ui_data),
               m_batchProcessing(batch) {
     }
@@ -226,7 +234,7 @@ namespace select_content {
         }
 
         auto* view = new ImageView(
-                m_image, m_downscaledImage,
+                m_image, m_downscaledImage, m_grayImage,
                 m_xform, m_uiData.contentRect(),
                 m_uiData.pageRect(), m_uiData.isPageDetectionEnabled()
         );

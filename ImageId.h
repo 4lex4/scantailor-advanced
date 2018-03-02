@@ -20,6 +20,7 @@
 #define IMAGEID_H_
 
 #include <QString>
+#include <foundation/Hashes.h>
 
 class QFileInfo;
 
@@ -84,7 +85,7 @@ namespace std {
     template<>
     struct hash<ImageId> {
         size_t operator()(const ImageId& imageId) const noexcept {
-            return (hash<string>()(imageId.filePath().toStdString())
+            return (hashes::hash<QString>()(imageId.filePath())
                     ^ hash<int>()(imageId.page()) << 1);
         }
     };

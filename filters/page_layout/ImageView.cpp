@@ -27,6 +27,7 @@
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <ImageViewInfoProvider.h>
+#include <UnitsConverter.h>
 
 using namespace imageproc;
 
@@ -48,7 +49,8 @@ namespace page_layout {
               m_zoomHandler(*this),
               m_ptrSettings(settings),
               m_pageId(page_id),
-              m_physXform(xform.origDpi()),
+              m_pixelsToMmXform(UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES)),
+              m_mmToPixelsXform(m_pixelsToMmXform.inverted()),
               m_innerRect(adapted_content_rect),
               m_aggregateHardSizeMM(settings->getAggregateHardSizeMM()),
               m_committedAggregateHardSizeMM(m_aggregateHardSizeMM),
@@ -509,13 +511,11 @@ namespace page_layout {
  * m_aggregateHardSizeMM and m_alignment, updates the displayed area.
  */
     void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
-        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
-        const QTransform mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
+        const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
+        const QTransform mm_to_virt(m_mmToPixelsXform * imageToVirtual());
 
         QPolygonF poly_mm(virt_to_mm.map(m_innerRect));
         Utils::extendPolyRectWithMargins(poly_mm, margins_mm);
-
-        m_ptrSettings->updateContentRect();
 
         const QRectF middle_rect(mm_to_virt.map(poly_mm).boundingRect());
 
@@ -526,7 +526,10 @@ namespace page_layout {
         const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
-                        m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
+                        m_ptrSettings->getPageParams(m_pageId)->contentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(),
+                        m_ptrSettings->getAggregateContentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->pageRect()
                 )
         );
 
@@ -610,7 +613,7 @@ namespace page_layout {
                 QPointF(m_middleRect.right(), center.y())
         );
 
-        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+        const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
 
         Margins margins;
         margins.setTop(virt_to_mm.map(top_margin_line).length());
@@ -626,12 +629,10 @@ namespace page_layout {
  *        and m_alignment.
  */
     void ImageView::recalcOuterRect() {
-        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
-        const QTransform mm_to_virt(m_physXform.mmToPixels() * imageToVirtual());
+        const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
+        const QTransform mm_to_virt(m_mmToPixelsXform * imageToVirtual());
 
         QPolygonF poly_mm(virt_to_mm.map(m_middleRect));
-
-        m_ptrSettings->updateContentRect();
 
         const QSizeF hard_size_mm(
                 QLineF(poly_mm[0], poly_mm[1]).length(),
@@ -640,7 +641,10 @@ namespace page_layout {
         const Margins soft_margins_mm(
                 Utils::calcSoftMarginsMM(
                         hard_size_mm, m_aggregateHardSizeMM, m_alignment,
-                        m_ptrSettings->getPageParams(m_pageId)->contentRect(), m_ptrSettings->getContentRect()
+                        m_ptrSettings->getPageParams(m_pageId)->contentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(),
+                        m_ptrSettings->getAggregateContentRect(),
+                        m_ptrSettings->getPageParams(m_pageId)->pageRect()
                 )
         );
 
@@ -651,7 +655,7 @@ namespace page_layout {
     }
 
     QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
-        const QTransform virt_to_mm(virtualToImage() * m_physXform.pixelsToMM());
+        const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
 
         const QLineF hor_line(rect.topLeft(), rect.topRight());
         const QLineF vert_line(rect.topLeft(), rect.bottomLeft());

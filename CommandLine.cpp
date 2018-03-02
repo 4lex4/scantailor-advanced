@@ -523,10 +523,6 @@ page_layout::Alignment CommandLine::fetchAlignment() {
         }
     }
 
-    if (m_options.contains("alignment-tolerance")) {
-        alignment.setTolerance(m_options["alignment-tolerance"].toFloat());
-    }
-
     if (m_options.contains("alignment")) {
         if (m_options["alignment"] == "original") {
             alignment.setVertical(page_layout::Alignment::VORIGINAL);

@@ -19,6 +19,7 @@
 #include "CacheDrivenTask.h"
 
 #include <utility>
+#include <QtCore/QSettings>
 #include "Settings.h"
 #include "Params.h"
 #include "Thumbnail.h"
@@ -41,11 +42,12 @@ namespace page_layout {
     void CacheDrivenTask::process(const PageInfo& page_info,
                                   AbstractFilterDataCollector* collector,
                                   const ImageTransformation& xform,
+                                  const QRectF& page_rect,
                                   const QRectF& content_rect) {
         const std::unique_ptr<Params> params(
                 m_ptrSettings->getPageParams(page_info.id())
         );
-        if (!params || !params->contentSizeMM().isValid()) {
+        if (!params || (params->contentSizeMM().isEmpty() && !content_rect.isEmpty())) {
             if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
                 thumb_col->processThumbnail(
                         std::unique_ptr<QGraphicsItem>(
@@ -61,6 +63,12 @@ namespace page_layout {
             return;
         }
 
+        Params new_params(
+                m_ptrSettings->updateContentSizeAndGetParams(
+                        page_info.id(), page_rect, content_rect, params->contentSizeMM()
+                )
+        );
+
         const QRectF adapted_content_rect(
                 Utils::adaptContentRect(xform, content_rect)
         );
@@ -69,8 +77,8 @@ namespace page_layout {
         );
         const QPolygonF page_rect_phys(
                 Utils::calcPageRectPhys(
-                        xform, content_rect_phys, *params,
-                        m_ptrSettings->getAggregateHardSizeMM(), m_ptrSettings->getContentRect()
+                        xform, content_rect_phys, new_params,
+                        m_ptrSettings->getAggregateHardSizeMM(), m_ptrSettings->getAggregateContentRect()
                 )
         );
         ImageTransformation new_xform(xform);
@@ -82,16 +90,21 @@ namespace page_layout {
             return;
         }
 
+        QSettings settings;
+        const double deviationCoef = settings.value("settings/marginsDeviationCoef", 0.35).toDouble();
+        const double deviationThreshold = settings.value("settings/marginsDeviationThreshold", 1.0).toDouble();
+
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
                             new Thumbnail(
                                     thumb_col->thumbnailCache(),
                                     thumb_col->maxLogicalThumbSize(),
-                                    page_info.imageId(), *params,
+                                    page_info.imageId(), new_params,
                                     xform, content_rect_phys,
                                     xform.transform().map(page_rect_phys).boundingRect(),
-                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id())
+                                    m_ptrSettings->deviationProvider().isDeviant(
+                                            page_info.id(), deviationCoef, deviationThreshold)
                             )
                     )
             );

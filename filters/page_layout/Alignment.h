@@ -28,8 +28,6 @@ class QString;
 class CommandLine;
 
 namespace page_layout {
-    const double DEFAULT_TOLERANCE = 0.2;
-
     class Alignment {
     public:
         enum Vertical {
@@ -53,25 +51,29 @@ namespace page_layout {
          */
         Alignment();
 
-        Alignment(Vertical vert, Horizontal hor);
+        Alignment(Vertical vertical, Horizontal horizontal);
 
         explicit Alignment(const QDomElement& el);
 
         Vertical vertical() const;
 
-        void setVertical(Vertical vert);
+        void setVertical(Vertical vertical);
 
         Horizontal horizontal() const;
 
-        void setHorizontal(Horizontal hor);
+        void setHorizontal(Horizontal horizontal);
 
         bool isNull() const;
 
         void setNull(bool is_null);
 
-        double tolerance() const;
+        bool isAutoVertical() const;
 
-        void setTolerance(double t);
+        bool isAutoHorizontal() const;
+
+        bool isOriginal() const;
+
+        bool isAuto() const;
 
         bool operator==(const Alignment& other) const;
 
@@ -80,10 +82,9 @@ namespace page_layout {
         QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
     private:
-        Vertical m_vert;
-        Horizontal m_hor;
+        Vertical m_vertical;
+        Horizontal m_horizontal;
         bool m_isNull;
-        double m_tolerance;
     };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_ALIGNMENT_H_

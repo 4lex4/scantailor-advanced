@@ -90,20 +90,11 @@ namespace output {
             QImage foreground(backgroundImage);
             applyMask(foreground, mask);
 
-            const int dpmX = foreground.dotsPerMeterX();
-            const int dpmY = foreground.dotsPerMeterY();
-
             if (binaryForeground) {
                 foreground = foreground.convertToFormat(QImage::Format_Mono);
             } else if (indexedForeground) {
-                QVector<QRgb> palette = ColorTable(foreground).getPalette();
-                if (palette.size() <= 256) {
-                    foreground = foreground.convertToFormat(QImage::Format_Indexed8, palette);
-                }
+                foreground = ColorTable(foreground).toIndexedImage();
             }
-
-            foreground.setDotsPerMeterX(dpmX);
-            foreground.setDotsPerMeterY(dpmY);
 
             return foreground;
         }

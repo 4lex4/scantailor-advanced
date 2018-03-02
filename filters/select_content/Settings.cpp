@@ -31,9 +31,9 @@ namespace select_content {
                     auto it(m_pageParams.find(pageId));
                     if (it != m_pageParams.end()) {
                         const Params& params = it->second;
-                        const QSizeF& contentSize = params.contentRect().size();
+                        const QSizeF& contentSizeMM = params.contentSizeMM();
 
-                        return std::sqrt(contentSize.width() * contentSize.height() / 4 / 600);
+                        return std::sqrt(contentSizeMM.width() * contentSizeMM.height() / 4 / 25.4);
                     } else {
                         return .0;
                     };

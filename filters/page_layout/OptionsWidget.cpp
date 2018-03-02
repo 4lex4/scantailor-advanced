@@ -33,7 +33,6 @@ namespace page_layout {
                                  const PageSelectionAccessor& page_selection_accessor)
             : m_ptrSettings(std::move(settings)),
               m_pageSelectionAccessor(page_selection_accessor),
-              m_ignoreMarginChanges(0),
               m_leftRightLinked(true),
               m_topBottomLinked(true) {
         {
@@ -91,6 +90,11 @@ namespace page_layout {
                 Alignment(Alignment::BOTTOM, Alignment::RIGHT)
         );
 
+        m_alignmentButtonGroup = std::make_unique<QButtonGroup>(this);
+        for (const auto& buttonAndAlignment : m_alignmentByButton) {
+            m_alignmentButtonGroup->addButton(buttonAndAlignment.first);
+        }
+
         setupUiConnections();
     }
 
@@ -107,10 +111,22 @@ namespace page_layout {
         auto old_ignore = static_cast<bool>(m_ignoreMarginChanges);
         m_ignoreMarginChanges = true;
 
-        typedef AlignmentByButton::value_type KeyVal;
-        for (const KeyVal& kv : m_alignmentByButton) {
-            if (kv.second == m_alignment) {
+        for (const auto& kv : m_alignmentByButton) {
+            if (m_alignment.isAuto() || m_alignment.isOriginal()) {
+                if (!m_alignment.isAutoHorizontal()
+                    && (kv.second.vertical() == Alignment::VCENTER)
+                    && (kv.second.horizontal() == m_alignment.horizontal())) {
+                    kv.first->setChecked(true);
+                    break;
+                } else if (!m_alignment.isAutoVertical()
+                           && (kv.second.horizontal() == Alignment::HCENTER)
+                           && (kv.second.vertical() == m_alignment.vertical())) {
+                    kv.first->setChecked(true);
+                    break;
+                }
+            } else if (kv.second == m_alignment) {
                 kv.first->setChecked(true);
+                break;
             }
         }
 
@@ -121,15 +137,19 @@ namespace page_layout {
         alignWithOthersCB->blockSignals(false);
 
         alignmentMode->blockSignals(true);
-        if (alignment.vertical() == Alignment::VAUTO) {
+        if (alignment.isAuto()) {
             alignmentMode->setCurrentIndex(0);
-        } else if (alignment.vertical() == Alignment::VORIGINAL) {
+            autoAlignSettingsGroup->setVisible(true);
+        } else if (alignment.isOriginal()) {
             alignmentMode->setCurrentIndex(2);
+            autoAlignSettingsGroup->setVisible(true);
         } else {
             alignmentMode->setCurrentIndex(1);
+            autoAlignSettingsGroup->setVisible(false);
         }
         alignmentMode->blockSignals(false);
         updateAlignmentButtonsEnabled();
+        updateAutoModeButtons();
 
         autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(m_pageId));
         updateMarginsControlsEnabled();
@@ -208,7 +228,7 @@ namespace page_layout {
         }
 
         if (m_leftRightLinked) {
-            const ScopedIncDec<int> ingore_scope(m_ignoreMarginChanges);
+            const ScopedIncDec<int> ignore_scope(m_ignoreMarginChanges);
             leftMarginSpinBox->setValue(val);
             rightMarginSpinBox->setValue(val);
         }
@@ -231,7 +251,7 @@ namespace page_layout {
         }
 
         if (m_topBottomLinked) {
-            const ScopedIncDec<int> ingore_scope(m_ignoreMarginChanges);
+            const ScopedIncDec<int> ignore_scope(m_ignoreMarginChanges);
             topMarginSpinBox->setValue(val);
             bottomMarginSpinBox->setValue(val);
         }
@@ -276,8 +296,6 @@ namespace page_layout {
         m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, checked);
         updateMarginsControlsEnabled();
 
-        m_ptrSettings->setPageAlignment(m_pageId, m_alignment);
-        m_ptrSettings->updateContentRect();
         emit reloadRequested();
     }
 
@@ -285,41 +303,50 @@ namespace page_layout {
         switch (idx) {
             case 0:
                 m_alignment.setVertical(Alignment::VAUTO);
-                m_alignment.setHorizontal(Alignment::HCENTER);
+                m_alignment.setHorizontal(Alignment::HAUTO);
+                autoAlignSettingsGroup->setVisible(true);
+                updateAutoModeButtons();
                 break;
             case 1:
-                for (auto button : m_alignmentByButton) {
-                    if (button.first->isChecked()) {
-                        m_alignment = button.second;
-                        break;
-                    }
-                }
+                m_alignment = m_alignmentByButton.at(getCheckedAlignmentButton());
+                autoAlignSettingsGroup->setVisible(false);
                 break;
             case 2:
                 m_alignment.setVertical(Alignment::VORIGINAL);
                 if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
                     m_alignment.setHorizontal(Alignment::HORIGINAL);
                 } else {
-                    m_alignment.setHorizontal(Alignment::HCENTER);
+                    m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
                 }
+                autoAlignSettingsGroup->setVisible(true);
+                updateAutoModeButtons();
                 break;
             default:
                 break;
         }
 
-        m_ptrSettings->updateContentRect();
         updateAlignmentButtonsEnabled();
         emit alignmentChanged(m_alignment);
     }
 
     void OptionsWidget::alignmentButtonClicked() {
+        if (m_ignoreAlignmentButtonsChanges) {
+            return;
+        }
+
         auto* const button = dynamic_cast<QToolButton*>(sender());
         assert(button);
 
-        const auto it(m_alignmentByButton.find(button));
-        assert(it != m_alignmentByButton.end());
+        const Alignment& alignment = m_alignmentByButton.at(button);
 
-        m_alignment = it->second;
+        if (m_alignment.isAutoVertical()) {
+            m_alignment.setHorizontal(alignment.horizontal());
+        } else if (m_alignment.isAutoHorizontal()) {
+            m_alignment.setVertical(alignment.vertical());
+        } else {
+            m_alignment = alignment;
+        }
+
         emit alignmentChanged(m_alignment);
     }
 
@@ -414,17 +441,20 @@ namespace page_layout {
     }
 
     void OptionsWidget::updateAlignmentButtonsEnabled() {
-        const bool enabled = alignWithOthersCB->isChecked() && (alignmentMode->currentIndex() == 1);
+        bool enableHorizontalButtons = !m_alignment.isAutoHorizontal() ? alignWithOthersCB->isChecked()
+                                                                       : false;
+        bool enableVerticalButtons = !m_alignment.isAutoVertical() ? alignWithOthersCB->isChecked()
+                                                                   : false;
 
-        alignTopLeftBtn->setEnabled(enabled);
-        alignTopBtn->setEnabled(enabled);
-        alignTopRightBtn->setEnabled(enabled);
-        alignLeftBtn->setEnabled(enabled);
-        alignCenterBtn->setEnabled(enabled);
-        alignRightBtn->setEnabled(enabled);
-        alignBottomLeftBtn->setEnabled(enabled);
-        alignBottomBtn->setEnabled(enabled);
-        alignBottomRightBtn->setEnabled(enabled);
+        alignTopLeftBtn->setEnabled(enableHorizontalButtons && enableVerticalButtons);
+        alignTopBtn->setEnabled(enableVerticalButtons);
+        alignTopRightBtn->setEnabled(enableHorizontalButtons && enableVerticalButtons);
+        alignLeftBtn->setEnabled(enableHorizontalButtons);
+        alignCenterBtn->setEnabled(enableHorizontalButtons || enableVerticalButtons);
+        alignRightBtn->setEnabled(enableHorizontalButtons);
+        alignBottomLeftBtn->setEnabled(enableHorizontalButtons && enableVerticalButtons);
+        alignBottomBtn->setEnabled(enableVerticalButtons);
+        alignBottomRightBtn->setEnabled(enableHorizontalButtons && enableVerticalButtons);
     }
 
     void OptionsWidget::updateMarginsControlsEnabled() {
@@ -483,9 +513,16 @@ namespace page_layout {
                 applyAlignmentBtn, SIGNAL(clicked()),
                 this, SLOT(showApplyAlignmentDialog())
         );
+        connect(
+                autoHorizontalAligningCB, SIGNAL(toggled(bool)),
+                this, SLOT(autoHorizontalAligningToggled(bool))
+        );
+        connect(
+                autoVerticalAligningCB, SIGNAL(toggled(bool)),
+                this, SLOT(autoVerticalAligningToggled(bool))
+        );
 
-        typedef AlignmentByButton::value_type KeyVal;
-        for (const KeyVal& kv : m_alignmentByButton) {
+        for (const auto& kv : m_alignmentByButton) {
             connect(
                     kv.first, SIGNAL(clicked()),
                     this, SLOT(alignmentButtonClicked())
@@ -538,9 +575,16 @@ namespace page_layout {
                 applyAlignmentBtn, SIGNAL(clicked()),
                 this, SLOT(showApplyAlignmentDialog())
         );
+        disconnect(
+                autoHorizontalAligningCB, SIGNAL(toggled(bool)),
+                this, SLOT(autoHorizontalAligningToggled(bool))
+        );
+        disconnect(
+                autoVerticalAligningCB, SIGNAL(toggled(bool)),
+                this, SLOT(autoVerticalAligningToggled(bool))
+        );
 
-        typedef AlignmentByButton::value_type KeyVal;
-        for (const KeyVal& kv : m_alignmentByButton) {
+        for (const auto& kv : m_alignmentByButton) {
             disconnect(
                     kv.first, SIGNAL(clicked()),
                     this, SLOT(alignmentButtonClicked())
@@ -562,5 +606,82 @@ namespace page_layout {
 
     const Alignment& OptionsWidget::alignment() const {
         return m_alignment;
+    }
+
+    void OptionsWidget::autoHorizontalAligningToggled(const bool checked) {
+        if (checked) {
+            m_alignment.setHorizontal((alignmentMode->currentIndex() == 0) ? Alignment::HAUTO : Alignment::HORIGINAL);
+        } else {
+            m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
+        }
+
+        updateAlignmentButtonsEnabled();
+        updateAutoModeButtons();
+        emit alignmentChanged(m_alignment);
+    }
+
+    void OptionsWidget::autoVerticalAligningToggled(const bool checked) {
+        if (checked) {
+            m_alignment.setVertical((alignmentMode->currentIndex() == 0) ? Alignment::VAUTO : Alignment::VORIGINAL);
+        } else {
+            m_alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
+        }
+
+        updateAlignmentButtonsEnabled();
+        updateAutoModeButtons();
+        emit alignmentChanged(m_alignment);
+    }
+
+    void OptionsWidget::updateAutoModeButtons() {
+        const ScopedIncDec<int> scope_guard(m_ignoreAlignmentButtonsChanges);
+
+        if (m_alignment.isAuto() || m_alignment.isOriginal()) {
+            autoVerticalAligningCB->setChecked(m_alignment.isAutoVertical());
+            autoHorizontalAligningCB->setChecked(m_alignment.isAutoHorizontal());
+
+            if (autoVerticalAligningCB->isChecked() && !autoHorizontalAligningCB->isChecked()) {
+                autoVerticalAligningCB->setEnabled(false);
+            } else if (autoHorizontalAligningCB->isChecked() && !autoVerticalAligningCB->isChecked()) {
+                autoHorizontalAligningCB->setEnabled(false);
+            } else {
+                autoVerticalAligningCB->setEnabled(true);
+                autoHorizontalAligningCB->setEnabled(true);
+            }
+        }
+
+        if (m_alignment.isAutoVertical() && !m_alignment.isAutoHorizontal()) {
+            switch (m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {
+                case Alignment::LEFT:
+                    alignLeftBtn->setChecked(true);
+                    break;
+                case Alignment::RIGHT:
+                    alignRightBtn->setChecked(true);
+                    break;
+                default:
+                    alignCenterBtn->setChecked(true);
+                    break;
+            }
+        } else if (m_alignment.isAutoHorizontal() && !m_alignment.isAutoVertical()) {
+            switch (m_alignmentByButton.at(getCheckedAlignmentButton()).vertical()) {
+                case Alignment::TOP:
+                    alignTopBtn->setChecked(true);
+                    break;
+                case Alignment::BOTTOM:
+                    alignBottomBtn->setChecked(true);
+                    break;
+                default:
+                    alignCenterBtn->setChecked(true);
+                    break;
+            }
+        }
+    }
+
+    QToolButton* OptionsWidget::getCheckedAlignmentButton() const {
+        auto* checkedButton = dynamic_cast<QToolButton*>(m_alignmentButtonGroup->checkedButton());
+        if (!checkedButton) {
+            checkedButton = alignCenterBtn;
+        }
+
+        return checkedButton;
     }
 }  // namespace page_layout

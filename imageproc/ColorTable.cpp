@@ -8,9 +8,7 @@
 namespace imageproc {
 
     ColorTable::ColorTable(const QImage& image) {
-        if ((image.format() != QImage::Format_Mono)
-            && (image.format() != QImage::Format_MonoLSB)
-            && (image.format() != QImage::Format_Indexed8)
+        if ((image.format() != QImage::Format_Indexed8)
             && (image.format() != QImage::Format_RGB32)
             && (image.format() != QImage::Format_ARGB32)) {
             throw std::invalid_argument("Image format not supported.");
@@ -26,10 +24,6 @@ namespace imageproc {
     QVector<QRgb> ColorTable::getPalette() const {
         std::unordered_map<uint32_t, int> paletteMap;
         switch (image.format()) {
-            case QImage::Format_Mono:
-            case QImage::Format_MonoLSB:
-                paletteMap = paletteFromMonoWithStatistics();
-                break;
             case QImage::Format_Indexed8:
                 paletteMap = paletteFromIndexedWithStatistics();
                 break;
@@ -142,25 +136,6 @@ namespace imageproc {
         return *this;
     }
 
-    std::unordered_map<uint32_t, int> ColorTable::paletteFromMonoWithStatistics() const {
-        std::unordered_map<uint32_t, int> palette;
-
-        BinaryImage bwImage(image);
-
-        const int allCount = bwImage.size().width() * bwImage.size().height();
-        const int blackCount = bwImage.countBlackPixels();
-        const int whiteCount = allCount - blackCount;
-
-        if (blackCount != 0) {
-            palette[0xff000000u] = blackCount;
-        }
-        if (whiteCount != 0) {
-            palette[0xffffffffu] = whiteCount;
-        }
-
-        return palette;
-    }
-
     std::unordered_map<uint32_t, int> ColorTable::paletteFromIndexedWithStatistics() const {
         std::unordered_map<uint32_t, int> palette;
 
@@ -271,7 +246,7 @@ namespace imageproc {
             newColorTable.push_back(color);
         }
 
-        image = image.convertToFormat(QImage::Format_Indexed8, newColorTable);
+        image = toIndexedImage(&newColorTable);
     }
 
     std::unordered_map<uint32_t, uint32_t> ColorTable::normalizePalette(
@@ -365,6 +340,47 @@ namespace imageproc {
                 rgb = 0xffffffffu;
             }
         }
+    }
+
+    QImage ColorTable::toIndexedImage(const QVector<QRgb>* colorTable) const {
+        if (image.format() == QImage::Format_Indexed8) {
+            return image;
+        }
+
+        const QVector<QRgb>& palette = (colorTable) ? *colorTable : getPalette();
+        if (palette.size() > 256) {
+            return image;
+        }
+
+        QImage dst(image.size(), QImage::Format_Indexed8);
+        dst.setColorTable(palette);
+
+        const int width = image.width();
+        const int height = image.height();
+
+        const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
+        const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+
+        uint8_t* dst_line = dst.bits();
+        const int dst_stride = dst.bytesPerLine();
+
+        std::unordered_map<uint32_t, uint8_t> colorToIndex;
+        for (int i = 0; i < palette.size(); ++i) {
+            colorToIndex[palette[i]] = static_cast<uint8_t>(i);
+        }
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                dst_line[x] = colorToIndex[img_line[x]];
+            }
+            img_line += img_stride;
+            dst_line += dst_stride;
+        }
+
+        dst.setDotsPerMeterX(image.dotsPerMeterX());
+        dst.setDotsPerMeterY(image.dotsPerMeterY());
+
+        return dst;
     }
 
 }  // namespace imageproc

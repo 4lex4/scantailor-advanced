@@ -21,7 +21,6 @@
 
 #include "ImageViewBase.h"
 #include "ImageTransformation.h"
-#include "PhysicalTransformation.h"
 #include "InteractionHandler.h"
 #include "DragHandler.h"
 #include "ZoomHandler.h"
@@ -176,7 +175,9 @@ namespace page_layout {
          * assuming that point (0, 0) in pixel coordinates corresponds to point
          * (0, 0) in millimeter coordinates.
          */
-        const PhysicalTransformation m_physXform;
+        const QTransform m_pixelsToMmXform;
+        const QTransform m_mmToPixelsXform;
+
         const ImageTransformation m_xform;
 
         /**

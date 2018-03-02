@@ -16,4 +16,6 @@ QString unitsToString(Units units);
 
 Units unitsFromString(const QString& string);
 
+QString unitsToLocalizedString(Units units);
+
 #endif //SCANTAILOR_UNITS_H

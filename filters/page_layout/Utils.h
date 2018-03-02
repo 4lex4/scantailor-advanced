@@ -70,7 +70,9 @@ namespace page_layout {
                                          const QSizeF& aggregate_hard_size_mm,
                                          const Alignment& alignment,
                                          const QRectF& contentRect,
-                                         const QRectF& agg_content_rect);
+                                         const QSizeF& contentSizeMM,
+                                         const QRectF& agg_content_rect,
+                                         const QRectF& pageRect);
 
         static Margins
         calcMarginsMM(const ImageTransformation& xform, const QRectF& page_rect, const QRectF& content_rect);

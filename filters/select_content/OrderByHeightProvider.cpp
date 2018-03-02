@@ -34,11 +34,11 @@ namespace select_content {
 
         QSizeF lhs_size;
         if (lhs_params) {
-            lhs_size = lhs_params->contentRect().size();
+            lhs_size = lhs_params->contentSizeMM();
         }
         QSizeF rhs_size;
         if (rhs_params) {
-            rhs_size = rhs_params->contentRect().size();
+            rhs_size = rhs_params->contentSizeMM();
         }
 
         const bool lhs_valid = !lhs_incomplete && lhs_size.isValid();

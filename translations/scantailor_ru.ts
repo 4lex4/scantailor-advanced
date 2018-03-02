@@ -142,7 +142,7 @@
         <location line="+17"/>
         <location line="+954"/>
         <location line="+48"/>
-        <location line="+265"/>
+        <location line="+365"/>
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
@@ -151,14 +151,14 @@
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
-        <location line="+1678"/>
+        <location line="+1677"/>
         <location line="+26"/>
         <location line="+26"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3097"/>
+        <location line="-3196"/>
         <source>Reset</source>
         <translation>Сбросить</translation>
     </message>
@@ -169,12 +169,12 @@
     </message>
     <message>
         <location line="+30"/>
-        <location line="+1381"/>
+        <location line="+1480"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
     <message>
-        <location line="-1340"/>
+        <location line="-1439"/>
         <source>Page Layout</source>
         <translation>Тип разреза</translation>
     </message>
@@ -219,12 +219,12 @@
     </message>
     <message>
         <location line="-160"/>
-        <location line="+945"/>
+        <location line="+1044"/>
         <source>Options</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location line="-924"/>
+        <location line="-1023"/>
         <source>Shift with corners while they are in black. </source>
         <translation>Скорректировать края по черной области. </translation>
     </message>
@@ -303,12 +303,27 @@
         <translation>Оригинал</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+23"/>
+        <source>Auto aligning</source>
+        <translation>Авто выравнивание</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Enable horizontal</source>
+        <translation>Вкл. горизонтальное</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Enable vertical</source>
+        <translation>Вкл. вертикальное</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Match size with other pages</source>
         <translation>Выровнять размер с остальн. стр.</translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+280"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
@@ -668,12 +683,12 @@
     <message>
         <location line="+7"/>
         <location line="+20"/>
-        <location line="+955"/>
+        <location line="+992"/>
         <source>Custom</source>
         <translation>Выборочный</translation>
     </message>
     <message>
-        <location line="-970"/>
+        <location line="-1007"/>
         <source>Marginal</source>
         <translation>По краям</translation>
     </message>
@@ -688,10 +703,10 @@
         <translation>Источник</translation>
     </message>
     <message>
-        <location line="+932"/>
-        <location line="+19"/>
+        <location line="+968"/>
+        <location line="+20"/>
         <location line="+18"/>
-        <location line="+16"/>
+        <location line="+15"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -701,7 +716,7 @@
         <translation>Ошибка при загрузке профиля.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>The name conflicts with a default profile name. Please enter a different name.</source>
         <translation>Это имя конфликтует со стандартным именем профиля. Введите другое имя.</translation>
     </message>
@@ -711,7 +726,7 @@
         <translation>Ошибка при сохранении профиля.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+15"/>
         <source>Error deleting the profile.</source>
         <translation>Ошибка при удалении профиля.</translation>
     </message>
@@ -889,7 +904,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../ImageViewBase.cpp" line="+221"/>
+        <location filename="../ImageViewBase.cpp" line="+220"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation>Используйте колесо мыши для увеличения.  В увеличенном виде доступно перетаскивание.</translation>
     </message>
@@ -1003,7 +1018,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+591"/>
+        <location filename="../MainWindow.cpp" line="+590"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -1245,7 +1260,7 @@
         <translation>Отмена</translation>
     </message>
     <message>
-        <location line="+432"/>
+        <location line="+430"/>
         <source>Insert before ...</source>
         <translation>Вставить перед ...</translation>
     </message>
@@ -1265,7 +1280,7 @@
         <translation>Вставить сюда ...</translation>
     </message>
     <message>
-        <location line="+365"/>
+        <location line="+372"/>
         <location line="+62"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
@@ -1278,13 +1293,13 @@
     <message>
         <location line="+16"/>
         <location line="+10"/>
-        <location line="+310"/>
+        <location line="+306"/>
         <location line="+29"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-348"/>
+        <location line="-344"/>
         <source>Unable to open the project file.</source>
         <translation>Не удалось открыть файл проекта.</translation>
     </message>
@@ -1294,7 +1309,7 @@
         <translation>Файл проекта поврежден.</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+67"/>
         <source>version </source>
         <translation>версия </translation>
     </message>
@@ -2077,7 +2092,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+42"/>
         <source>Margins</source>
         <translation>Поля</translation>
     </message>
@@ -2089,7 +2104,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location line="-21"/>
         <location line="+48"/>
-        <location line="+246"/>
+        <location line="+353"/>
         <location line="+23"/>
         <location line="+23"/>
         <location line="+23"/>
@@ -2102,7 +2117,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation></translation>
     </message>
     <message>
-        <location line="-379"/>
+        <location line="-486"/>
         <source>Bottom</source>
         <translation>Снизу</translation>
     </message>
@@ -2118,17 +2133,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+123"/>
-        <location line="+385"/>
+        <location line="+492"/>
         <source>Apply To ...</source>
         <translation>Применить...</translation>
     </message>
     <message>
-        <location line="-360"/>
+        <location line="-467"/>
         <source>Alignment</source>
         <translation>Выравнивание</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+31"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation>Автоматически</translation>
@@ -2146,12 +2161,27 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Оригинал</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-265"/>
         <source>Auto Margins</source>
         <translation>Автоматические поля</translation>
     </message>
     <message>
-        <location line="+297"/>
+        <location line="+288"/>
+        <source>Auto aligning</source>
+        <translation>Авто выравнивание</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Enable horizontal</source>
+        <translation>Вкл. горизонтальное</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Enable vertical</source>
+        <translation>Вкл. вертикальное</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Match size with other pages</source>
         <translation>Выровнять размер с остальн. стр.</translation>
     </message>
@@ -2462,7 +2492,7 @@ You should remove them from the project.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../Units.cpp" line="+9"/>
+        <location filename="../Units.cpp" line="+41"/>
         <source>px</source>
         <translation></translation>
     </message>
@@ -2732,12 +2762,51 @@ You should remove them from the project.</source>
         <translation>Автосохранение текущего проекта</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+113"/>
+        <source>Deviation</source>
+        <translation>Отклонение</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Highlight the thumbnails of pages with high deviation</source>
         <translation>Подсвечивать страницы с большим отклонением</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
+        <source>Params</source>
+        <translation>Параметры</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Deksew:</source>
+        <translation>Комп. поворота:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Select content:</source>
+        <translation>Полезн. обл.:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location line="+23"/>
+        <location line="+45"/>
+        <source>Deviation multiplier: a higher value means lower sensivity.</source>
+        <translation>Множитель отклонения: большее значение обозначает меньшую чувствительность.</translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <source>Margins:</source>
+        <translation>Поля:</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <location line="+13"/>
+        <location line="+32"/>
+        <source>The minimum deviation to be highlighted.</source>
+        <translation>Минимальное отклонение, которое будет подсвечено.</translation>
+    </message>
+    <message>
+        <location line="-223"/>
         <source>Color Scheme: </source>
         <translation>Цветовая схема: </translation>
     </message>
@@ -2747,7 +2816,7 @@ You should remove them from the project.</source>
         <translation>Язык: </translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+31"/>
         <source>Saving</source>
         <translation>Сохранение</translation>
     </message>
@@ -2805,7 +2874,7 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+69"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
@@ -2908,7 +2977,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../ThumbnailSequence.cpp" line="+1250"/>
+        <location filename="../ThumbnailSequence.cpp" line="+1327"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -3305,7 +3374,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::ImageView</name>
     <message>
-        <location filename="../filters/page_layout/ImageView.cpp" line="+61"/>
+        <location filename="../filters/page_layout/ImageView.cpp" line="+63"/>
         <source>Resize margins by dragging any of the solid lines.</source>
         <translation>Меняйте размеры полей, перетаскивая хоть внешние, хоть внутренние сплошные линии.</translation>
     </message>
@@ -3313,7 +3382,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+331"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+358"/>
         <source>Apply Margins</source>
         <translation>Применить поля</translation>
     </message>
@@ -3404,9 +3473,9 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::ImageView</name>
     <message>
-        <location filename="../filters/select_content/ImageView.cpp" line="+50"/>
-        <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box.</source>
-        <translation>Используйте контекстное меню для включения / выключения полезной области. Удерживайте Shift для перетаскивания области.</translation>
+        <location filename="../filters/select_content/ImageView.cpp" line="+61"/>
+        <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box. Use double-click on content to automatically adjust the content area.</source>
+        <translation>Используйте контекстное меню для включения / выключения полезной области. Удерживайте Shift для перетаскивания области. Используйте двойной клик по контенту, чтобы автоматически настроить полезную область.</translation>
     </message>
     <message>
         <location line="+3"/>

@@ -24,10 +24,20 @@
 #include <QPainter>
 #include <QDebug>
 #include <boost/bind.hpp>
+#include <imageproc/GrayImage.h>
+#include <imageproc/Transform.h>
+#include <imageproc/Binarize.h>
+#include <imageproc/PolygonRasterizer.h>
+#include <TaskStatus.h>
+#include <Despeckle.h>
+#include <map>
+
+using namespace imageproc;
 
 namespace select_content {
     ImageView::ImageView(const QImage& image,
                          const QImage& downscaled_image,
+                         const GrayImage& gray_image,
                          const ImageTransformation& xform,
                          const QRectF& content_rect,
                          const QRectF& page_rect,
@@ -43,11 +53,12 @@ namespace select_content {
               m_contentRect(content_rect),
               m_pageRect(page_rect),
               m_minBoxSize(10.0, 10.0),
-              m_pageRectEnabled(page_rect_enabled) {
+              m_pageRectEnabled(page_rect_enabled),
+              m_pageRectReloadRequested(false) {
         setMouseTracking(true);
 
         interactionState().setDefaultStatusTip(
-                tr("Use the context menu to enable / disable the content box. Hold Shift to drag a box.")
+                tr("Use the context menu to enable / disable the content box. Hold Shift to drag a box. Use double-click on content to automatically adjust the content area.")
         );
 
         const QString content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
@@ -182,6 +193,8 @@ namespace select_content {
         addAction(remove);
         connect(create, SIGNAL(triggered(bool)), this, SLOT(createContentBox()));
         connect(remove, SIGNAL(triggered(bool)), this, SLOT(removeContentBox()));
+
+        buildContentImage(gray_image, xform);
     }
 
     ImageView::~ImageView() = default;
@@ -492,5 +505,133 @@ namespace select_content {
 
         update();
         emit manualPageRectSet(m_pageRect);
+    }
+
+    void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
+        ImageTransformation xform_150dpi(xform);
+        xform_150dpi.preScaleToDpi(Dpi(150, 150));
+
+        QImage gray150(
+                transformToGray(
+                        gray_image, xform_150dpi.transform(),
+                        xform_150dpi.resultingRect().toRect(),
+                        OutsidePixels::assumeColor(Qt::white)
+                )
+        );
+
+        m_contentImage = binarizeWolf(gray150, QSize(51, 51), 50);
+
+        PolygonRasterizer::fillExcept(
+                m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill
+        );
+
+        class EmptyTaskStatus : public TaskStatus {
+            void cancel() override {
+            }
+
+            bool isCancelled() const override {
+                return false;
+            }
+
+            void throwIfCancelled() const override {
+            }
+        } status;
+
+        Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, status);
+
+        m_originalToContentImage = xform_150dpi.transform();
+        m_contentImageToOriginal = m_originalToContentImage.inverted();
+    }
+
+    void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
+        if (event->button() == Qt::LeftButton) {
+            if (!m_contentRect.isEmpty()) {
+                correctContentBox(event->pos());
+            }
+        }
+    }
+
+    void ImageView::correctContentBox(const QPointF& pos) {
+        const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
+        const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
+
+        const QPointF content_pos = widget_to_content_image.map(QPointF(0.5, 0.5) + pos);
+
+        QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
+        finding_area = finding_area.intersected(m_contentImage.rect());
+        if (finding_area.isEmpty()) {
+            return;
+        }
+
+        QRect found_area = findContentInArea(finding_area);
+        if (found_area.isEmpty()) {
+            return;
+        }
+
+        // If click position is inside the content rect, adjust the nearest side of the rect,
+        // else include the content at the position into the content rect.
+        const QPointF pos_in_virtual = widgetToVirtual().map(QPointF(0.5, 0.5) + pos);
+        const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area));
+        if (!m_contentRect.contains(pos_in_virtual)) {
+            m_contentRect |= found_area_in_virtual;
+            forcePageRectDescribeContent();
+        } else {
+            std::map<double, Edge> distanceMap;
+            distanceMap[pos_in_virtual.y() - m_contentRect.top()] = TOP;
+            distanceMap[pos_in_virtual.x() - m_contentRect.left()] = LEFT;
+            distanceMap[m_contentRect.bottom() - pos_in_virtual.y()] = BOTTOM;
+            distanceMap[m_contentRect.right() - pos_in_virtual.x()] = RIGHT;
+
+            const Edge edge = distanceMap.begin()->second;
+            QPointF movePoint;
+            switch (edge) {
+                case TOP:
+                case LEFT:
+                    movePoint = QPointF(found_area_in_virtual.left(), found_area_in_virtual.top());
+                    break;
+                case BOTTOM:
+                case RIGHT:
+                    movePoint = QPointF(found_area_in_virtual.right(), found_area_in_virtual.bottom());
+                    break;
+            }
+
+            contentRectCornerMoveRequest(edge, virtualToWidget().map(movePoint));
+        }
+
+        update();
+        contentRectDragFinished();
+    }
+
+    QRect ImageView::findContentInArea(const QRect& area) {
+        const uint32_t* image_line = m_contentImage.data();
+        const int image_stride = m_contentImage.wordsPerLine();
+        const uint32_t msb = uint32_t(1) << 31;
+
+        int top = std::numeric_limits<int>::max();
+        int left = std::numeric_limits<int>::max();
+        int bottom = std::numeric_limits<int>::min();
+        int right = std::numeric_limits<int>::min();
+
+        image_line += area.top() * image_stride;
+        for (int y = area.top(); y <= area.bottom(); ++y) {
+            for (int x = area.left(); x <= area.right(); ++x) {
+                if (image_line[x >> 5] & (msb >> (x & 31))) {
+                    top = std::min(top, y);
+                    left = std::min(left, x);
+                    bottom = std::max(bottom, y);
+                    right = std::max(right, x);
+                }
+            }
+            image_line += image_stride;
+        }
+
+        if (top > bottom) {
+            return QRect();
+        }
+
+        QRect found_area = QRect(left, top, right - left + 1, bottom - top + 1);
+        found_area.adjust(-1, -1, 1, 1);
+
+        return found_area;
     }
 }  // namespace select_content

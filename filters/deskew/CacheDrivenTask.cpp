@@ -19,6 +19,7 @@
 #include "CacheDrivenTask.h"
 
 #include <utility>
+#include <QtCore/QSettings>
 #include "Thumbnail.h"
 #include "IncompleteThumbnail.h"
 #include "Settings.h"
@@ -67,6 +68,10 @@ namespace deskew {
             return;
         }
 
+        QSettings settings;
+        const double deviationCoef = settings.value("settings/deskewDeviationCoef", 1.5).toDouble();
+        const double deviationThreshold = settings.value("settings/deskewDeviationThreshold", 1.0).toDouble();
+
         if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
             thumb_col->processThumbnail(
                     std::unique_ptr<QGraphicsItem>(
@@ -74,7 +79,8 @@ namespace deskew {
                                     thumb_col->thumbnailCache(),
                                     thumb_col->maxLogicalThumbSize(),
                                     page_info.imageId(), new_xform,
-                                    m_ptrSettings->deviationProvider().isDeviant(page_info.id(), 1.2, 0.3)
+                                    m_ptrSettings->deviationProvider().isDeviant(
+                                            page_info.id(), deviationCoef, deviationThreshold)
                             )
                     )
             );

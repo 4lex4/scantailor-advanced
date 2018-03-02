@@ -20,6 +20,7 @@ private:
     int ignoreMarginChanges;
     OrthogonalRotation orthogonalRotation;
     std::unordered_map<QToolButton*, page_layout::Alignment> alignmentByButton;
+    std::unique_ptr<QButtonGroup> alignmentButtonGroup;
     DefaultParamsProfileManager profileManager;
     int customDpiItemIdx;
     QString customDpiValue;
@@ -55,7 +56,11 @@ private slots:
 
     void alignmentModeChanged(int idx);
 
-    void alignWithOthersToggled(bool checked);
+    void alignWithOthersToggled(bool);
+
+    void autoHorizontalAligningToggled(bool);
+
+    void autoVerticalAligningToggled(bool);
 
     void topBottomLinkClicked();
 
@@ -127,6 +132,12 @@ private:
     void setRotation(const OrthogonalRotation& rotation);
 
     void setRotationPixmap();
+
+    void updateAlignmentButtonsEnabled();
+
+    void updateAutoModeButtons();
+
+    QToolButton* getCheckedAlignmentButton() const;
 
     void setLinkButtonLinked(QToolButton* button, bool linked);
 

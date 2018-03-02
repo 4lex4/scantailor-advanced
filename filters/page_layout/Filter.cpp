@@ -110,7 +110,7 @@ namespace page_layout {
         QDomElement filter_el(doc.createElement("page-layout"));
 
         XmlMarshaller marshaller(doc);
-        filter_el.appendChild(marshaller.rectF(m_ptrSettings->getContentRect(), "contentRect"));
+        filter_el.appendChild(marshaller.rectF(m_ptrSettings->getAggregateContentRect(), "aggregateContentRect"));
 
         writer.enumPages(
                 [&](const PageId& page_id, int numeric_id) {
@@ -142,9 +142,9 @@ namespace page_layout {
                 filters_el.namedItem("page-layout").toElement()
         );
 
-        const QDomElement rect_el = filter_el.namedItem("contentRect").toElement();
+        const QDomElement rect_el = filter_el.namedItem("aggregateContentRect").toElement();
         if (!rect_el.isNull()) {
-            m_ptrSettings->setContentRect(XmlUnmarshaller::rectF(rect_el));
+            m_ptrSettings->setAggregateContentRect(XmlUnmarshaller::rectF(rect_el));
         }
 
         const QString page_tag_name("page");

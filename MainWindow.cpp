@@ -343,7 +343,6 @@ MainWindow::MainWindow()
         }
     }
     m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
-    m_highlightDeviation = settings.value("settings/highlight_deviation", true).toBool();
 }
 
 MainWindow::~MainWindow() {
@@ -962,8 +961,6 @@ void MainWindow::goPrevPage() {
 }
 
 void MainWindow::goToPage(const PageId& page_id) {
-    focusButton->setChecked(true);
-
     m_ptrThumbSequence->setSelection(page_id);
 
     // If the page was already selected, it will be reloaded.
@@ -1192,7 +1189,9 @@ void MainWindow::pageOrderingChanged(int idx) {
         return;
     }
 
-    focusButton->setChecked(true);  // Keep the current page in view.
+    const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
+    const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
+
     m_ptrStages->filterAt(m_curFilter)->selectPageOrder(idx);
 
     m_ptrThumbSequence->reset(
@@ -1200,6 +1199,11 @@ void MainWindow::pageOrderingChanged(int idx) {
             ThumbnailSequence::KEEP_SELECTION,
             currentPageOrderProvider()
     );
+
+    if (!focusButton->isChecked()) {
+        thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);
+        thumbView->verticalScrollBar()->setValue(ver_scroll_bar_pos);
+    }
 }
 
 void MainWindow::reloadRequested() {
@@ -1324,7 +1328,7 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
                 if (cmd.isEmpty()) {
                     QApplication::beep();
                 } else {
-                    (void) std::system(cmd.toStdString().c_str());
+                    Q_UNUSED(std::system(cmd.toStdString().c_str()));
                 }
             }
 
@@ -1569,11 +1573,7 @@ void MainWindow::onSettingsChanged() {
         app->installLanguage(settings.value("settings/language").toString());
     }
 
-    bool highlightDeviation = settings.value("settings/highlight_deviation").toBool();
-    if (highlightDeviation != m_highlightDeviation) {
-        m_highlightDeviation = highlightDeviation;
-        m_ptrThumbSequence->invalidateAllThumbnails();
-    }
+    m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
 void MainWindow::showAboutDialog() {

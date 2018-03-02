@@ -24,6 +24,7 @@
 #include "RelinkablePath.h"
 #include "AbstractRelinker.h"
 #include "intrusive_ptr.h"
+#include "Hashes.h"
 #include <QString>
 #include <QModelIndex>
 #include <QAbstractListModel>
@@ -33,7 +34,7 @@
 #include <memory>
 #include <vector>
 #include <set>
-#include <map>
+#include <unordered_map>
 
 class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, const RelinkablePath&> {
 DECLARE_NON_COPYABLE(RelinkingModel)
@@ -127,7 +128,7 @@ private:
         void swap(Relinker& other);
 
     private:
-        std::map<QString, QString> m_mappings;
+        std::unordered_map<QString, QString, hashes::hash<QString>> m_mappings;
     };
 
 

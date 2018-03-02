@@ -29,9 +29,14 @@
 #include <QSizeF>
 #include <QString>
 #include <interaction/DraggablePolygon.h>
+#include <imageproc/BinaryImage.h>
 
 class ImageTransformation;
 class QMenu;
+
+namespace imageproc {
+    class GrayImage;
+}
 
 namespace select_content {
     class ImageView : public ImageViewBase, private InteractionHandler {
@@ -42,6 +47,7 @@ namespace select_content {
          */
         ImageView(const QImage& image,
                   const QImage& downscaled_image,
+                  const imageproc::GrayImage& gray_image,
                   const ImageTransformation& xform,
                   const QRectF& content_rect,
                   const QRectF& page_rect,
@@ -60,6 +66,9 @@ namespace select_content {
     public slots:
 
         void pageRectSetExternally(const QRectF& pageRect);
+
+    protected:
+        void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
 
     private slots:
 
@@ -111,6 +120,13 @@ namespace select_content {
 
         void pageRectMoveRequest(const QPolygonF& pos);
 
+        void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
+
+        void correctContentBox(const QPointF& pos);
+
+        QRect findContentInArea(const QRect& area);
+
+
         DraggablePoint m_contentRectCorners[4];
         ObjectDragHandler m_contentRectCornerHandlers[4];
 
@@ -152,6 +168,10 @@ namespace select_content {
         bool m_pageRectReloadRequested;
 
         QSizeF m_minBoxSize;
+
+        imageproc::BinaryImage m_contentImage;
+        QTransform m_originalToContentImage;
+        QTransform m_contentImageToOriginal;
     };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_IMAGEVIEW_H_

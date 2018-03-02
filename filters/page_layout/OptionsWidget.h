@@ -93,6 +93,10 @@ namespace page_layout {
 
         void alignmentButtonClicked();
 
+        void autoHorizontalAligningToggled(bool checked);
+
+        void autoVerticalAligningToggled(bool checked);
+
         void showApplyMarginsDialog();
 
         void showApplyAlignmentDialog();
@@ -112,6 +116,10 @@ namespace page_layout {
 
         void updateMarginsControlsEnabled();
 
+        void updateAutoModeButtons();
+
+        QToolButton* getCheckedAlignmentButton() const;
+
         void setupUiConnections();
 
         void removeUiConnections();
@@ -125,9 +133,12 @@ namespace page_layout {
         Dpi m_dpi;
         Margins m_marginsMM;
         Alignment m_alignment;
-        int m_ignoreMarginChanges;
         bool m_leftRightLinked;
         bool m_topBottomLinked;
+        std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+
+        int m_ignoreMarginChanges = 0;
+        int m_ignoreAlignmentButtonsChanges = 0;
     };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

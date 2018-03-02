@@ -26,7 +26,7 @@ namespace output {
               savitzkyGolaySmoothingEnabled(true),
               morphologicalSmoothingEnabled(true),
               m_normalizeIllumination(true),
-              windowSize(51),
+              windowSize(200),
               sauvolaCoef(0.34),
               wolfLowerBound(1),
               wolfUpperBound(254),
@@ -203,7 +203,7 @@ namespace output {
 
     BlackWhiteOptions::ColorSegmenterOptions::ColorSegmenterOptions()
             : enabled(false),
-              noiseReduction(12),
+              noiseReduction(7),
               redThresholdAdjustment(0),
               greenThresholdAdjustment(0),
               blueThresholdAdjustment(0) {

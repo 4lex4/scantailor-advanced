@@ -93,16 +93,13 @@ namespace page_layout {
                                              const QRectF& content_rect,
                                              const QSizeF& content_size_mm,
                                              QSizeF* agg_hard_size_before = nullptr,
-                                             QSizeF* agg_hard_size_after = nullptr,
-                                             bool suppress_content_rect_update = false);
+                                             QSizeF* agg_hard_size_after = nullptr);
 
-        const QRectF& updateContentRect();
+        const QRectF& updateAggregateContentRect();
 
-        const QRectF& getContentRect();
+        const QRectF& getAggregateContentRect();
 
-        void setContentRect(const QRectF& contentRect);
-
-        const QRectF& getPageRect();
+        void setAggregateContentRect(const QRectF& contentRect);
 
         /**
          * \brief Returns the hard margins for the specified page.

@@ -422,8 +422,10 @@ namespace select_content {
         }
 
         // Increase the content rect due to cutting off the content at edges because of rescaling made.
-        content_rect.adjust(-1, -1, 1, 1);
-
+        if (!content_rect.isEmpty()) {
+            content_rect.adjust(-1, -1, 1, 1);
+        }
+        
         // Transform back from 150dpi.
         QTransform combined_xform(xform_150dpi.transform().inverted());
         combined_xform *= data.xform().transform();

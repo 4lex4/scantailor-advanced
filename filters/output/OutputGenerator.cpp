@@ -504,8 +504,12 @@ namespace output {
                                                     SplitImage* splitImage) {
         const RenderParams render_params(m_colorParams, m_splittingOptions);
 
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
+                render_params.cutMargins() ? m_contentRect : m_outRect);
+
+        // If the content area is empty or outside the cropping area, return a blank page.
         const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
-        if (m_contentRect.isEmpty()) {
+        if (m_xform.resultingPreCropArea().intersected(QRectF(contentRect)).isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
                 return emptyImage;
@@ -515,9 +519,6 @@ namespace output {
                 return QImage();
             }
         }
-
-        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
-                render_params.cutMargins() ? m_contentRect : m_outRect);
 
         // The whole image minus the part cut off by the split line.
         const QRect big_margins_rect(
@@ -1065,8 +1066,12 @@ namespace output {
                                                  SplitImage* splitImage) {
         const RenderParams render_params(m_colorParams, m_splittingOptions);
 
+        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
+                render_params.cutMargins() ? m_contentRect : m_outRect);
+
+        // If the content area is empty or outside the cropping area, return a blank page.
         const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
-        if (m_contentRect.isEmpty()) {
+        if (m_xform.resultingPreCropArea().intersected(QRectF(contentRect)).isEmpty()) {
             QImage emptyImage(BinaryImage(target_size, WHITE).toQImage());
             if (!render_params.splitOutput()) {
                 return emptyImage;
@@ -1076,9 +1081,6 @@ namespace output {
                 return QImage();
             }
         }
-
-        QRect contentRect = m_xform.resultingPreCropArea().boundingRect().toRect().intersected(
-                render_params.cutMargins() ? m_contentRect : m_outRect);
 
         // The whole image minus the part cut off by the split line.
         const QRect big_margins_rect(

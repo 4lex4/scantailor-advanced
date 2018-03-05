@@ -136,8 +136,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     );
     thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
 
-    thresholdSlider->setMinimum(-50);
-    thresholdSlider->setMaximum(50);
+    thresholdSlider->setMinimum(-100);
+    thresholdSlider->setMaximum(100);
     thresholLabel->setText(QString::number(thresholdSlider->value()));
 
     const int index = profileCB->findData(DefaultParamsProvider::getInstance()->getProfileName());

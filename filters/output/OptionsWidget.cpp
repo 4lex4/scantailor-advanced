@@ -483,6 +483,7 @@ namespace output {
         tooltip_pos = depthPerceptionSlider->mapToGlobal(tooltip_pos);
         QToolTip::showText(tooltip_pos, tooltip_text, depthPerceptionSlider);
 
+        m_ptrSettings->setDepthPerception(m_pageId, m_depthPerception);
         // Propagate the signal.
         emit depthPerceptionChanged(m_depthPerception.value());
     }

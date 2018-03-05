@@ -105,7 +105,7 @@ namespace imageproc {
          * with the given connectivity.
          *
          * The maxLabel() will become maxLabel() + N afterwards,
-         * where N - number of found connected components of the input image.
+         * where N - number of found connected components in the input image.
          *
          * Note: this does't connect components of the current and the input map
          * even if they are actually connected.
@@ -135,7 +135,7 @@ namespace imageproc {
          * The maxLabel() will become maxLabel() - N afterwards,
          * where N - the number of actually removed connected components.
          *
-         * @param labelsSet Set of labels determining the components needed to be removed.
+         * @param labelsSet Set of labels determining the components which need to be removed.
          */
         void removeComponents(const std::unordered_set<uint32_t>& labelsSet);
 

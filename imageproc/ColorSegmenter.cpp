@@ -138,7 +138,7 @@ namespace imageproc {
     GrayImage ColorSegmenter::getRgbChannel(const QImage& image, const ColorSegmenter::RgbChannel channel) {
         if ((image.format() != QImage::Format_RGB32)
             && (image.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Error: wrong image format.");
+            throw std::invalid_argument("ColorSegmenter: wrong image format.");
         }
 
         GrayImage dst(image.size());
@@ -233,7 +233,7 @@ namespace imageproc {
         reduceNoise();
 
         {
-            // extend map and fill unlabeled components.
+            // extend the map and fill unlabeled components.
             InfluenceMap influenceMap(segmentsMap, image);
             segmentsMap = influenceMap;
         }

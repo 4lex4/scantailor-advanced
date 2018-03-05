@@ -41,7 +41,7 @@ namespace imageproc {
                                                                 int normalizeBlackLevel = 0,
                                                                 int normalizeWhiteLevel = 255) const;
 
-        void makeGrayBlackAndWhiteInPlace(QRgb& rgb, const QRgb& normalized) const;
+        void makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const;
     };
 }
 

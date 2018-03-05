@@ -11,7 +11,7 @@ namespace imageproc {
         if ((image.format() != QImage::Format_Indexed8)
             && (image.format() != QImage::Format_RGB32)
             && (image.format() != QImage::Format_ARGB32)) {
-            throw std::invalid_argument("Image format not supported.");
+            throw std::invalid_argument("ColorTable: Image format not supported.");
         }
 
         this->image = image;
@@ -50,7 +50,7 @@ namespace imageproc {
                                       const int normalizeBlackLevel,
                                       const int normalizeWhiteLevel) {
         if ((level < 2) || (level > 255)) {
-            throw std::invalid_argument("error: level must be a value between 2 and 255 inclusive");
+            throw std::invalid_argument("ColorTable: level must be a value between 2 and 255 inclusive");
         }
         if ((level == 255) && !normalize && !forceBlackAndWhite) {
             return *this;
@@ -74,7 +74,7 @@ namespace imageproc {
                     return *this;
             }
 
-            // We have to normalize palette in order posterize to work with pale images.
+            // We have to normalize palette in order posterization to work with pale images.
             std::unordered_map<uint32_t, uint32_t> colorToNormalizedMap
                     = normalizePalette(paletteStatMap, normalizeBlackLevel, normalizeWhiteLevel);
 
@@ -94,7 +94,7 @@ namespace imageproc {
                 groupMap[group].push_back(color);
             }
 
-            // Find the most often occurring color in the group and map the other colors in the group to this.
+            // Find the most often occurring color in the group and map the other colors in the group to that.
             for (const auto& groupAndColors : groupMap) {
                 const std::list<uint32_t>& colors = groupAndColors.second;
                 assert(!colors.empty());
@@ -111,7 +111,7 @@ namespace imageproc {
                         colorToNormalizedMap[0xff000000u] = 0xff000000u;
                         colorToNormalizedMap[0xffffffffu] = 0xffffffffu;
                     }
-                    makeGrayBlackAndWhiteInPlace(mostOftenColorInGroup, colorToNormalizedMap[mostOftenColorInGroup]);
+                    makeGrayBlackOrWhiteInPlace(mostOftenColorInGroup, colorToNormalizedMap[mostOftenColorInGroup]);
                 }
 
                 for (const uint32_t& color : colors) {
@@ -254,7 +254,7 @@ namespace imageproc {
             const int normalizeBlackLevel,
             const int normalizeWhiteLevel) const {
         const int pixelCount = image.width() * image.height();
-        const double threshold = 0.0005; // must be larger then (1 / 256)
+        const double threshold = 0.0005; // mustn't be larger than (1 / 256)
 
         int min_level = 255;
         int max_level = 0;
@@ -327,7 +327,7 @@ namespace imageproc {
         return colorToNormalizedMap;
     }
 
-    void ColorTable::makeGrayBlackAndWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
+    void ColorTable::makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
         QColor color = QColor(normalized).toHsv();
 
         const bool isGray = (color.saturationF() * color.valueF()) < 0.2;

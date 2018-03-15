@@ -34,7 +34,7 @@
 class QItemSelection;
 
 class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent = nullptr);
 
@@ -60,10 +60,7 @@ private:
     class TreeModel;
     class FilterModel;
 
-    enum Scope {
-        ALL,
-        NOT_OK
-    };
+    enum Scope { ALL, NOT_OK };
 
     void enableDisableOkButton();
 

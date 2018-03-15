@@ -19,10 +19,7 @@
 #include "ImageTransformation.h"
 
 ImageTransformation::ImageTransformation(const QRectF& orig_image_rect, const Dpi& orig_dpi)
-        : m_postRotation(0.0),
-          m_origRect(orig_image_rect),
-          m_resultingRect(orig_image_rect),
-          m_origDpi(orig_dpi) {
+        : m_postRotation(0.0), m_origRect(orig_image_rect), m_resultingRect(orig_image_rect), m_origDpi(orig_dpi) {
     preScaleToEqualizeDpi();
 }
 
@@ -38,9 +35,7 @@ void ImageTransformation::preScaleToDpi(const Dpi& dpi) {
     const double xscale = (double) dpi.horizontal() / m_origDpi.horizontal();
     const double yscale = (double) dpi.vertical() / m_origDpi.vertical();
 
-    const QSizeF new_pre_scaled_image_size(
-            m_origRect.width() * xscale, m_origRect.height() * yscale
-    );
+    const QSizeF new_pre_scaled_image_size(m_origRect.width() * xscale, m_origRect.height() * yscale);
 
     // Undo's for the specified steps.
     const QTransform undo21(m_preRotateXform.inverted() * m_preScaleXform.inverted());
@@ -69,7 +64,7 @@ void ImageTransformation::preScaleToDpi(const Dpi& dpi) {
     m_postScaleXform = calcPostScaleXform(m_postScaledDpi);
 
     update();
-} // ImageTransformation::preScaleToDpi
+}  // ImageTransformation::preScaleToDpi
 
 void ImageTransformation::preScaleToEqualizeDpi() {
     const int min_dpi = std::min(m_origDpi.horizontal(), m_origDpi.vertical());
@@ -138,10 +133,8 @@ QTransform ImageTransformation::calcPostRotateXform(const double degrees) {
         const QPolygonF post_rotate_poly(xform.map(pre_rotate_poly));
         const QRectF post_rotate_rect(post_rotate_poly.boundingRect());
 
-        xform *= QTransform().translate(
-                pre_rotate_rect.left() - post_rotate_rect.left(),
-                pre_rotate_rect.top() - post_rotate_rect.top()
-        );
+        xform *= QTransform().translate(pre_rotate_rect.left() - post_rotate_rect.left(),
+                                        pre_rotate_rect.top() - post_rotate_rect.top());
     }
 
     return xform;
@@ -193,9 +186,9 @@ void ImageTransformation::resetPostScale() {
 }
 
 void ImageTransformation::update() {
-    const QTransform pre_scale_then_pre_rotate(m_preScaleXform * m_preRotateXform);  // 12
-    const QTransform pre_crop_then_post_rotate(m_preCropXform * m_postRotateXform);  // 34
-    const QTransform post_crop_then_post_scale(m_postCropXform * m_postScaleXform);  // 56
+    const QTransform pre_scale_then_pre_rotate(m_preScaleXform * m_preRotateXform);                // 12
+    const QTransform pre_crop_then_post_rotate(m_preCropXform * m_postRotateXform);                // 34
+    const QTransform post_crop_then_post_scale(m_postCropXform * m_postScaleXform);                // 56
     const QTransform pre_crop_and_further(pre_crop_then_post_rotate * post_crop_then_post_scale);  // 3456
     m_transform = pre_scale_then_pre_rotate * pre_crop_and_further;
     m_invTransform = m_transform.inverted();
@@ -209,4 +202,3 @@ void ImageTransformation::update() {
     m_resultingPostCropArea = post_crop_then_post_scale.map(m_postCropArea);
     m_resultingRect = m_resultingPostCropArea.boundingRect();
 }
-

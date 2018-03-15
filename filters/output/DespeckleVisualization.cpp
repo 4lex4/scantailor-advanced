@@ -26,77 +26,76 @@
 using namespace imageproc;
 
 namespace output {
-    DespeckleVisualization::DespeckleVisualization(const QImage& output,
-                                                   const imageproc::BinaryImage& speckles,
-                                                   const Dpi& dpi) {
-        if (output.isNull()) {
-            // This can happen in batch processing mode.
-            return;
-        }
-
-        m_image = output.convertToFormat(QImage::Format_RGB32);
-
-        if (!speckles.isNull()) {
-            colorizeSpeckles(m_image, speckles, dpi);
-        }
-
-        m_downscaledImage = ImageViewBase::createDownscaledImage(m_image);
+DespeckleVisualization::DespeckleVisualization(const QImage& output,
+                                               const imageproc::BinaryImage& speckles,
+                                               const Dpi& dpi) {
+    if (output.isNull()) {
+        // This can happen in batch processing mode.
+        return;
     }
 
-    void
-    DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi) {
-        const int w = image.width();
-        const int h = image.height();
-        auto* image_line = (uint32_t*) image.bits();
-        const int image_stride = image.bytesPerLine() / 4;
+    m_image = output.convertToFormat(QImage::Format_RGB32);
 
-        const SEDM sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
-        const uint32_t* sedm_line = sedm.data();
-        const int sedm_stride = sedm.stride();
+    if (!speckles.isNull()) {
+        colorizeSpeckles(m_image, speckles, dpi);
+    }
 
-        const float radius = static_cast<const float>(15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
-        const float sq_radius = radius * radius;
+    m_downscaledImage = ImageViewBase::createDownscaledImage(m_image);
+}
 
-        for (int y = 0; y < h; ++y) {
-            for (int x = 0; x < w; ++x) {
-                const uint32_t sq_dist = sedm_line[x];
-                if (sq_dist == 0) {
-                    // Speckle pixel.
-                    image_line[x] = 0xffff0000;  // opaque red
-                    continue;
-                } else if ((image_line[x] & 0x00ffffff) == 0x0) {
-                    // Non-speckle black pixel.
-                    continue;
-                }
+void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi) {
+    const int w = image.width();
+    const int h = image.height();
+    auto* image_line = (uint32_t*) image.bits();
+    const int image_stride = image.bytesPerLine() / 4;
 
-                const float alpha_upper_bound = 0.8f;
-                const float scale = alpha_upper_bound / sq_radius;
-                const float alpha = alpha_upper_bound - scale * sq_dist;
-                if (alpha > 0) {
-                    const float alpha2 = 1.0f - alpha;
-                    const float overlay_r = 255;
-                    const float overlay_g = 0;
-                    const float overlay_b = 0;
-                    const float r = overlay_r * alpha + qRed(image_line[x]) * alpha2;
-                    const float g = overlay_g * alpha + qGreen(image_line[x]) * alpha2;
-                    const float b = overlay_b * alpha + qBlue(image_line[x]) * alpha2;
-                    image_line[x] = qRgb(int(r), int(g), int(b));
-                }
+    const SEDM sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
+    const uint32_t* sedm_line = sedm.data();
+    const int sedm_stride = sedm.stride();
+
+    const float radius = static_cast<const float>(15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
+    const float sq_radius = radius * radius;
+
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            const uint32_t sq_dist = sedm_line[x];
+            if (sq_dist == 0) {
+                // Speckle pixel.
+                image_line[x] = 0xffff0000;  // opaque red
+                continue;
+            } else if ((image_line[x] & 0x00ffffff) == 0x0) {
+                // Non-speckle black pixel.
+                continue;
             }
-            sedm_line += sedm_stride;
-            image_line += image_stride;
+
+            const float alpha_upper_bound = 0.8f;
+            const float scale = alpha_upper_bound / sq_radius;
+            const float alpha = alpha_upper_bound - scale * sq_dist;
+            if (alpha > 0) {
+                const float alpha2 = 1.0f - alpha;
+                const float overlay_r = 255;
+                const float overlay_g = 0;
+                const float overlay_b = 0;
+                const float r = overlay_r * alpha + qRed(image_line[x]) * alpha2;
+                const float g = overlay_g * alpha + qGreen(image_line[x]) * alpha2;
+                const float b = overlay_b * alpha + qBlue(image_line[x]) * alpha2;
+                image_line[x] = qRgb(int(r), int(g), int(b));
+            }
         }
+        sedm_line += sedm_stride;
+        image_line += image_stride;
     }
+}
 
-    bool DespeckleVisualization::isNull() const {
-        return m_image.isNull();
-    }
+bool DespeckleVisualization::isNull() const {
+    return m_image.isNull();
+}
 
-    const QImage& DespeckleVisualization::image() const {
-        return m_image;
-    }
+const QImage& DespeckleVisualization::image() const {
+    return m_image;
+}
 
-    const QImage& DespeckleVisualization::downscaledImage() const {
-        return m_downscaledImage;
-    }
+const QImage& DespeckleVisualization::downscaledImage() const {
+    return m_downscaledImage;
+}
 }  // namespace output

@@ -27,4 +27,3 @@ qreal sidesOfLine(const QLineF& line, const QPointF& p1, const QPointF& p2) {
 
     return dot1 * dot2;
 }
-

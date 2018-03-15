@@ -28,7 +28,7 @@
 #include <memory>
 
 class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit ProjectFilesDialog(QWidget* parent = nullptr);
 

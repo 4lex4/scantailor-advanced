@@ -207,7 +207,7 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
         p_x_col += m_colsArowsX;
         p_y_col += m_colsArowsX;
     }
-} // LinearSolver::solve
+}  // LinearSolver::solve
 
 template<typename T>
 void LinearSolver::solve(const T* A, T* X, const T* B) const {
@@ -217,4 +217,4 @@ void LinearSolver::solve(const T* A, T* X, const T* B) const {
     solve(A, X, B, tbuffer.get(), pbuffer.get());
 }
 
-#endif // ifndef LINEAR_SOLVER_H_
+#endif  // ifndef LINEAR_SOLVER_H_

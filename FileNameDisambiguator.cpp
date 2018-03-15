@@ -36,11 +36,11 @@ class FileNameDisambiguator::Impl {
 public:
     Impl();
 
-    Impl(const QDomElement& disambiguator_el, boost::function<QString(const QString&)>const & file_path_unpacker);
+    Impl(const QDomElement& disambiguator_el, boost::function<QString(const QString&)> const& file_path_unpacker);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name, boost::function<QString(
-            const QString&)>const & file_path_packer)
-    const;
+    QDomElement toXml(QDomDocument& doc,
+                      const QString& name,
+                      boost::function<QString(const QString&)> const& file_path_packer) const;
 
     int getLabel(const QString& file_path) const;
 
@@ -66,22 +66,13 @@ private:
 
     typedef multi_index_container<
             Item,
-            indexed_by<
-                    ordered_unique<
-                            tag<ItemsByFilePathTag>,
-                            member<Item, QString, &Item::filePath>
-                    >,
-                    ordered_unique<
-                            tag<ItemsByFileNameLabelTag>,
-                            composite_key<
-                                    Item,
-                                    member<Item, QString, &Item::fileName>,
-                                    member<Item, int, &Item::label>
-                            >
-                    >,
-                    sequenced<tag<UnorderedItemsTag>>
-            >
-    > Container;
+            indexed_by<ordered_unique<tag<ItemsByFilePathTag>, member<Item, QString, &Item::filePath>>,
+                       ordered_unique<tag<ItemsByFileNameLabelTag>,
+                                      composite_key<Item,
+                                                    member<Item, QString, &Item::fileName>,
+                                                    member<Item, int, &Item::label>>>,
+                       sequenced<tag<UnorderedItemsTag>>>>
+            Container;
 
     typedef Container::index<ItemsByFilePathTag>::type ItemsByFilePath;
     typedef Container::index<ItemsByFileNameLabelTag>::type ItemsByFileNameLabel;
@@ -97,8 +88,7 @@ private:
 
 /*====================== FileNameDisambiguator =========================*/
 
-FileNameDisambiguator::FileNameDisambiguator()
-        : m_ptrImpl(new Impl) {
+FileNameDisambiguator::FileNameDisambiguator() : m_ptrImpl(new Impl) {
 }
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguator_el)
@@ -106,7 +96,7 @@ FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguator_el
 }
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguator_el,
-                                             boost::function<QString(const QString&)>const & file_path_unpacker)
+                                             boost::function<QString(const QString&)> const& file_path_unpacker)
         : m_ptrImpl(new Impl(disambiguator_el, file_path_unpacker)) {
 }
 
@@ -114,9 +104,9 @@ QDomElement FileNameDisambiguator::toXml(QDomDocument& doc, const QString& name)
     return m_ptrImpl->toXml(doc, name, boost::lambda::_1);
 }
 
-QDomElement FileNameDisambiguator::toXml(QDomDocument& doc, const QString& name, boost::function<QString(
-        const QString&)>const & file_path_packer)
-const {
+QDomElement FileNameDisambiguator::toXml(QDomDocument& doc,
+                                         const QString& name,
+                                         boost::function<QString(const QString&)> const& file_path_packer) const {
     return m_ptrImpl->toXml(doc, name, file_path_packer);
 }
 
@@ -141,8 +131,8 @@ FileNameDisambiguator::Impl::Impl()
           m_unorderedItems(m_items.get<UnorderedItemsTag>()) {
 }
 
-FileNameDisambiguator::Impl::Impl(const QDomElement& disambiguator_el, boost::function<QString(
-        const QString&)>const & file_path_unpacker)
+FileNameDisambiguator::Impl::Impl(const QDomElement& disambiguator_el,
+                                  boost::function<QString(const QString&)> const& file_path_unpacker)
         : m_items(),
           m_itemsByFilePath(m_items.get<ItemsByFilePathTag>()),
           m_itemsByFileNameLabel(m_items.get<ItemsByFileNameLabelTag>()),
@@ -169,9 +159,9 @@ FileNameDisambiguator::Impl::Impl(const QDomElement& disambiguator_el, boost::fu
     }
 }
 
-QDomElement FileNameDisambiguator::Impl::toXml(QDomDocument& doc, const QString& name, boost::function<QString(
-        const QString&)>const & file_path_packer)
-const {
+QDomElement FileNameDisambiguator::Impl::toXml(QDomDocument& doc,
+                                               const QString& name,
+                                               boost::function<QString(const QString&)> const& file_path_packer) const {
     const QMutexLocker locker(&m_mutex);
 
     QDomElement el(doc.createElement(name));
@@ -214,9 +204,7 @@ int FileNameDisambiguator::Impl::registerFile(const QString& file_path) {
     int label = 0;
 
     const QString file_name(QFileInfo(file_path).fileName());
-    const ItemsByFileNameLabel::iterator fn_it(
-            m_itemsByFileNameLabel.upper_bound(boost::make_tuple(file_name))
-    );
+    const ItemsByFileNameLabel::iterator fn_it(m_itemsByFileNameLabel.upper_bound(boost::make_tuple(file_name)));
     // If the item preceeding fn_it has the same file name,
     // the new file belongs to the same disambiguation group.
     if (fn_it != m_itemsByFileNameLabel.begin()) {
@@ -248,14 +236,9 @@ void FileNameDisambiguator::Impl::performRelinking(const AbstractRelinker& relin
 /*============================ Impl::Item =============================*/
 
 FileNameDisambiguator::Impl::Item::Item(const QString& file_path, int lbl)
-        : filePath(file_path),
-          fileName(QFileInfo(file_path).fileName()),
-          label(lbl) {
+        : filePath(file_path), fileName(QFileInfo(file_path).fileName()), label(lbl) {
 }
 
 FileNameDisambiguator::Impl::Item::Item(const QString& file_path, const QString& file_name, int lbl)
-        : filePath(file_path),
-          fileName(file_name),
-          label(lbl) {
+        : filePath(file_path), fileName(file_name), label(lbl) {
 }
-

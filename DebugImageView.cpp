@@ -28,8 +28,7 @@
 class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
 public:
     ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image)
-            : m_ptrOwner(std::move(owner)),
-              m_image(image) {
+            : m_ptrOwner(std::move(owner)), m_image(image) {
     }
 
     // This method is called from the main thread.
@@ -47,9 +46,7 @@ private:
 
 class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
 public:
-    ImageLoader(DebugImageView* owner, const QString& file_path)
-            : m_ptrOwner(owner),
-              m_filePath(file_path) {
+    ImageLoader(DebugImageView* owner, const QString& file_path) : m_ptrOwner(owner), m_filePath(file_path) {
     }
 
     BackgroundExecutor::TaskResultPtr operator()() override {
@@ -65,7 +62,7 @@ private:
 
 
 DebugImageView::DebugImageView(AutoRemovingFile file,
-                               boost::function<QWidget*(const QImage&)>const & image_view_factory,
+                               boost::function<QWidget*(const QImage&)> const& image_view_factory,
                                QWidget* parent)
         : QStackedWidget(parent),
           m_file(file),
@@ -78,8 +75,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
 void DebugImageView::setLive(const bool live) {
     if (live && !m_isLive) {
         ImageViewBase::backgroundExecutor().enqueueTask(
-                BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get()))
-        );
+                BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get())));
     } else if (!live && m_isLive) {
         if (QWidget* wgt = currentWidget()) {
             if (wgt != m_pPlaceholderWidget) {
@@ -107,4 +103,3 @@ void DebugImageView::imageLoaded(const QImage& image) {
         setCurrentIndex(addWidget(image_view.release()));
     }
 }
-

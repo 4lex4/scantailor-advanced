@@ -18,8 +18,7 @@
 
 #include "NonOwningWidget.h"
 
-NonOwningWidget::NonOwningWidget(QWidget* parent)
-        : QWidget(parent) {
+NonOwningWidget::NonOwningWidget(QWidget* parent) : QWidget(parent) {
 }
 
 NonOwningWidget::~NonOwningWidget() {
@@ -29,4 +28,3 @@ NonOwningWidget::~NonOwningWidget() {
         }
     }
 }
-

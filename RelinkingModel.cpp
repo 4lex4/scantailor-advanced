@@ -31,10 +31,7 @@
 
 class RelinkingModel::StatusUpdateResponse {
 public:
-    StatusUpdateResponse(const QString& path, int row, Status status)
-            : m_path(path),
-              m_row(row),
-              m_status(status) {
+    StatusUpdateResponse(const QString& path, int row, Status status) : m_path(path), m_row(row), m_status(status) {
     }
 
     const QString& path() const {
@@ -75,9 +72,7 @@ private:
         QString path;
         int row;
 
-        Task(const QString& p, int r)
-                : path(p),
-                  row(r) {
+        Task(const QString& p, int r) : path(p), row(r) {
         }
     };
 
@@ -87,15 +82,10 @@ private:
     typedef boost::multi_index_container<
             Task,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::tag<OrderedByPathTag>,
-                            boost::multi_index::member<Task, QString, &Task::path>
-                    >,
-                    boost::multi_index::sequenced<
-                            boost::multi_index::tag<OrderedByPriorityTag>
-                    >
-            >
-    > TaskList;
+                    boost::multi_index::ordered_unique<boost::multi_index::tag<OrderedByPathTag>,
+                                                       boost::multi_index::member<Task, QString, &Task::path>>,
+                    boost::multi_index::sequenced<boost::multi_index::tag<OrderedByPriorityTag>>>>
+            TaskList;
 
     typedef TaskList::index<OrderedByPathTag>::type TasksByPath;
     typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
@@ -144,8 +134,7 @@ QVariant RelinkingModel::data(const QModelIndex& index, int role) const {
         case UncommittedPathRole:
             return item.uncommittedPath;
         case Qt::DisplayRole:
-            if (item.uncommittedPath.startsWith(QChar('/'))
-                && !item.uncommittedPath.startsWith(QLatin1String("//"))) {
+            if (item.uncommittedPath.startsWith(QChar('/')) && !item.uncommittedPath.startsWith(QLatin1String("//"))) {
                 // "//" indicates a network path
                 return item.uncommittedPath;
             } else {
@@ -165,9 +154,7 @@ QVariant RelinkingModel::data(const QModelIndex& index, int role) const {
 void RelinkingModel::addPath(const RelinkablePath& path) {
     const QString& normalized_path(path.normalizedPath());
 
-    const std::pair<std::set<QString>::iterator, bool> ins(
-            m_origPathSet.insert(path.normalizedPath())
-    );
+    const std::pair<std::set<QString>::iterator, bool> ins(m_origPathSet.insert(path.normalizedPath()));
     if (!ins.second) {
         // Not inserted because identical path is already there.
         return;
@@ -376,14 +363,10 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(const QString& path
         return;
     }
 
-    const std::pair<TasksByPath::iterator, bool> ins(
-            m_rTasksByPath.insert(Task(path, row))
-    );
+    const std::pair<TasksByPath::iterator, bool> ins(m_rTasksByPath.insert(Task(path, row)));
 
     // Whether inserted or being already there, move it to the front of priority queue.
-    m_rTasksByPriority.relocate(
-            m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first)
-    );
+    m_rTasksByPriority.relocate(m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first));
 
     if (!isRunning()) {
         start();
@@ -392,14 +375,12 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(const QString& path
     m_cond.wakeOne();
 }
 
-void RelinkingModel::StatusUpdateThread::run()
-try {
+void RelinkingModel::StatusUpdateThread::run() try {
     const QMutexLocker locker(&m_mutex);
 
     class MutexUnlocker {
     public:
-        explicit MutexUnlocker(QMutex* mutex)
-                : m_pMutex(mutex) {
+        explicit MutexUnlocker(QMutex* mutex) : m_pMutex(mutex) {
             mutex->unlock();
         }
 
@@ -474,4 +455,3 @@ QString RelinkingModel::Relinker::substitutionPathFor(const RelinkablePath& path
 void RelinkingModel::Relinker::swap(Relinker& other) {
     m_mappings.swap(other.m_mappings);
 }
-

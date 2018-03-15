@@ -67,4 +67,4 @@ inline void swap(LinearFunction& f1, LinearFunction& f2) {
     f1.swap(f2);
 }
 
-#endif // ifndef LINEAR_FUNCTION_H_
+#endif  // ifndef LINEAR_FUNCTION_H_

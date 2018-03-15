@@ -28,8 +28,8 @@
 
 template<typename T>
 class intrusive_ptr {
-    template<typename> friend
-    class intrusive_ptr;
+    template<typename>
+    friend class intrusive_ptr;
 
 public:
     struct hash;
@@ -37,11 +37,8 @@ public:
     using pointer = T*;
 
     template<typename OT>
-    using __enable_if_convertible = typename std::enable_if<
-            std::is_convertible<
-                    typename intrusive_ptr<OT>::pointer, pointer
-            >::value
-    >::type;
+    using __enable_if_convertible =
+            typename std::enable_if<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>::value>::type;
 
 public:
     constexpr intrusive_ptr(std::nullptr_t = nullptr) noexcept;
@@ -120,38 +117,32 @@ inline void intrusive_ptr<T>::intrusive_unref(const T& obj) const noexcept {
 }
 
 template<typename T>
-constexpr inline intrusive_ptr<T>::intrusive_ptr(std::nullptr_t) noexcept
-        : m_obj(nullptr) {
+constexpr inline intrusive_ptr<T>::intrusive_ptr(std::nullptr_t) noexcept : m_obj(nullptr) {
 }
 
 template<typename T>
-inline intrusive_ptr<T>::intrusive_ptr(T* obj) noexcept
-        : m_obj(obj) {
+inline intrusive_ptr<T>::intrusive_ptr(T* obj) noexcept : m_obj(obj) {
     if (obj) {
         intrusive_ref(*obj);
     }
 }
 
 template<typename T>
-inline intrusive_ptr<T>::intrusive_ptr(const intrusive_ptr& other) noexcept
-        : m_obj(other.fork()) {
+inline intrusive_ptr<T>::intrusive_ptr(const intrusive_ptr& other) noexcept : m_obj(other.fork()) {
 }
 
 template<typename T>
-inline intrusive_ptr<T>::intrusive_ptr(intrusive_ptr&& other) noexcept
-        : m_obj(other.release()) {
-}
-
-template<typename T>
-template<typename OT, typename>
-inline intrusive_ptr<T>::intrusive_ptr(const intrusive_ptr<OT>& other) noexcept
-        : m_obj(other.fork()) {
+inline intrusive_ptr<T>::intrusive_ptr(intrusive_ptr&& other) noexcept : m_obj(other.release()) {
 }
 
 template<typename T>
 template<typename OT, typename>
-inline intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT>&& other) noexcept
-        : m_obj(other.release()) {
+inline intrusive_ptr<T>::intrusive_ptr(const intrusive_ptr<OT>& other) noexcept : m_obj(other.fork()) {
+}
+
+template<typename T>
+template<typename OT, typename>
+inline intrusive_ptr<T>::intrusive_ptr(intrusive_ptr<OT>&& other) noexcept : m_obj(other.release()) {
 }
 
 template<typename T>
@@ -261,25 +252,25 @@ struct intrusive_ptr<T>::hash {
 };
 
 
-#define INTRUSIVE_PTR_OP(op) \
-    template <typename T> \
-    inline bool operator op(const intrusive_ptr<T>& lhs, const intrusive_ptr<T>& rhs) { \
-        return (lhs.get() op rhs.get()); \
-    } \
-    \
-    template <typename T, typename OT> \
+#define INTRUSIVE_PTR_OP(op)                                                             \
+    template<typename T>                                                                 \
+    inline bool operator op(const intrusive_ptr<T>& lhs, const intrusive_ptr<T>& rhs) {  \
+        return (lhs.get() op rhs.get());                                                 \
+    }                                                                                    \
+                                                                                         \
+    template<typename T, typename OT>                                                    \
     inline bool operator op(const intrusive_ptr<T>& lhs, const intrusive_ptr<OT>& rhs) { \
-        return (lhs.get() op rhs.get()); \
-    } \
-    \
-    template <typename T> \
-    inline bool operator op(std::nullptr_t, const intrusive_ptr<T>& rhs) { \
-        return (nullptr op rhs.get()); \
-    } \
-    \
-    template <typename T> \
-    inline bool operator op(const intrusive_ptr<T>& lhs, std::nullptr_t) { \
-        return (lhs.get() op nullptr); \
+        return (lhs.get() op rhs.get());                                                 \
+    }                                                                                    \
+                                                                                         \
+    template<typename T>                                                                 \
+    inline bool operator op(std::nullptr_t, const intrusive_ptr<T>& rhs) {               \
+        return (nullptr op rhs.get());                                                   \
+    }                                                                                    \
+                                                                                         \
+    template<typename T>                                                                 \
+    inline bool operator op(const intrusive_ptr<T>& lhs, std::nullptr_t) {               \
+        return (lhs.get() op nullptr);                                                   \
     }
 
 INTRUSIVE_PTR_OP(==)

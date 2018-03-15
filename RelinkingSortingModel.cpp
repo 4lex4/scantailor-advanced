@@ -20,8 +20,7 @@
 #include "RelinkingModel.h"
 #include <cassert>
 
-RelinkingSortingModel::RelinkingSortingModel(QObject* parent)
-        : QSortFilterProxyModel(parent) {
+RelinkingSortingModel::RelinkingSortingModel(QObject* parent) : QSortFilterProxyModel(parent) {
     setDynamicSortFilter(true);
     sort(0);
 }
@@ -58,5 +57,4 @@ bool RelinkingSortingModel::lessThan(const QModelIndex& left, const QModelIndex&
 
     // The last resort is lexicographical ordering.
     return left_path < right_path;
-} // RelinkingSortingModel::lessThan
-
+}  // RelinkingSortingModel::lessThan

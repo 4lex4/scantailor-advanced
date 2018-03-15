@@ -42,7 +42,7 @@ class QDomDocument;
 class QDomElement;
 
 class ProjectWriter {
-DECLARE_NON_COPYABLE(ProjectWriter)
+    DECLARE_NON_COPYABLE(ProjectWriter)
 
 public:
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
@@ -72,9 +72,7 @@ private:
         QString path;
         int numericId;
 
-        Directory(const QString& path, int numeric_id)
-                : path(path),
-                  numericId(numeric_id) {
+        Directory(const QString& path, int numeric_id) : path(path), numericId(numeric_id) {
         }
     };
 
@@ -82,9 +80,7 @@ private:
         QString path;
         int numericId;
 
-        File(const QString& path, int numeric_id)
-                : path(path),
-                  numericId(numeric_id) {
+        File(const QString& path, int numeric_id) : path(path), numericId(numeric_id) {
         }
     };
 
@@ -102,9 +98,7 @@ private:
         PageId id;
         int numericId;
 
-        Page(const PageId& id, int numeric_id)
-                : id(id),
-                  numericId(numeric_id) {
+        Page(const PageId& id, int numeric_id) : id(id), numericId(numeric_id) {
         }
     };
 
@@ -114,43 +108,31 @@ private:
 
     typedef boost::multi_index::multi_index_container<
             Directory,
-            boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Directory, QString, &Directory::path>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
-            >
-    > Directories;
+            boost::multi_index::indexed_by<boost::multi_index::ordered_unique<
+                                                   boost::multi_index::member<Directory, QString, &Directory::path>>,
+                                           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
+            Directories;
 
     typedef boost::multi_index::multi_index_container<
             File,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<File, QString, &File::path>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
-            >
-    > Files;
+                    boost::multi_index::ordered_unique<boost::multi_index::member<File, QString, &File::path>>,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
+            Files;
 
     typedef boost::multi_index::multi_index_container<
             Image,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Image, ImageId, &Image::id>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
-            >
-    > Images;
+                    boost::multi_index::ordered_unique<boost::multi_index::member<Image, ImageId, &Image::id>>,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
+            Images;
 
     typedef boost::multi_index::multi_index_container<
             Page,
             boost::multi_index::indexed_by<
-                    boost::multi_index::ordered_unique<
-                            boost::multi_index::member<Page, PageId, &Page::id>
-                    >,
-                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>
-            >
-    > Pages;
+                    boost::multi_index::ordered_unique<boost::multi_index::member<Page, PageId, &Page::id>>,
+                    boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
+            Pages;
 
     QDomElement processDirectories(QDomDocument& doc) const;
 

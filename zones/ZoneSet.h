@@ -45,7 +45,7 @@ public:
     }
 
     void add(const Zone& zone) {
-        m_zones.push_back(zone);     
+        m_zones.push_back(zone);
     }
 
     const_iterator erase(const_iterator position) {
@@ -59,7 +59,7 @@ public:
     const_iterator end() const {
         return m_zones.end();
     }
-    
+
 private:
     std::list<Zone> m_zones;
 };

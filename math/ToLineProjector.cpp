@@ -19,10 +19,7 @@
 #include <cmath>
 #include "ToLineProjector.h"
 
-ToLineProjector::ToLineProjector(const QLineF& line)
-        : m_origin(line.p1()),
-          m_vec(line.p2() - line.p1()),
-          m_mat(m_vec) {
+ToLineProjector::ToLineProjector(const QLineF& line) : m_origin(line.p1()), m_vec(line.p2() - line.p1()), m_mat(m_vec) {
     using namespace std;
     // At*A*x = At*b
     const double AtA = m_mat.dot(m_mat);
@@ -57,4 +54,3 @@ double ToLineProjector::projectionDist(const QPointF& pt) const {
 double ToLineProjector::projectionSqDist(const QPointF& pt) const {
     return Vec2d(projectionPoint(pt) - pt).squaredNorm();
 }
-

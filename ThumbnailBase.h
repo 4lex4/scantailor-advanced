@@ -32,7 +32,7 @@
 class ThumbnailLoadResult;
 
 class ThumbnailBase : public QGraphicsItem {
-DECLARE_NON_COPYABLE(ThumbnailBase)
+    DECLARE_NON_COPYABLE(ThumbnailBase)
 
 public:
     ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,

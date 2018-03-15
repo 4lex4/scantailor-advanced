@@ -57,20 +57,14 @@ void InteractiveXSpline::setSpline(const XSpline& spline) {
     const int num_control_points = spline.numControlPoints();
 
     XSpline new_spline(spline);
-    boost::scoped_array<ControlPoint> new_control_points(
-            new ControlPoint[num_control_points]
-    );
+    boost::scoped_array<ControlPoint> new_control_points(new ControlPoint[num_control_points]);
 
     for (int i = 0; i < num_control_points; ++i) {
         new_control_points[i].point.setPositionCallback(
-                boost::bind(&InteractiveXSpline::controlPointPosition, this, i)
-        );
+                boost::bind(&InteractiveXSpline::controlPointPosition, this, i));
         new_control_points[i].point.setMoveRequestCallback(
-                boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1, _2)
-        );
-        new_control_points[i].point.setDragFinishedCallback(
-                boost::bind(&InteractiveXSpline::dragFinished, this)
-        );
+                boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1, _2));
+        new_control_points[i].point.setDragFinishedCallback(boost::bind(&InteractiveXSpline::dragFinished, this));
 
         if ((i == 0) || (i == num_control_points - 1)) {
             // Endpoints can't be deleted.
@@ -90,7 +84,7 @@ void InteractiveXSpline::setSpline(const XSpline& spline) {
     m_controlPoints.swap(new_control_points);
 
     m_modifiedCallback();
-} // InteractiveXSpline::setSpline
+}  // InteractiveXSpline::setSpline
 
 void InteractiveXSpline::setStorageTransform(const Transform& from_storage, const Transform& to_storage) {
     m_fromStorage = from_storage;
@@ -120,9 +114,7 @@ bool InteractiveXSpline::curveIsProximityLeader(const InteractionState& state, Q
 }
 
 void InteractiveXSpline::onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
-    m_curveProximityPointStorage = m_spline.pointClosestTo(
-            m_toStorage(screen_mouse_pos), &m_curveProximityT
-    );
+    m_curveProximityPointStorage = m_spline.pointClosestTo(m_toStorage(screen_mouse_pos), &m_curveProximityT);
     m_curveProximityPointScreen = m_fromStorage(m_curveProximityPointStorage);
 
     const Proximity proximity(screen_mouse_pos, m_curveProximityPointScreen);
@@ -230,9 +222,9 @@ void InteractiveXSpline::controlPointMoveRequest(int idx, const QPointF& pos, Qt
                 MatrixCalc<double> mc;
                 (mc(mat, 2, 2) * mc(pt, 2, 1)).write(pt);
 
-                if (!modified) { // default behavior
+                if (!modified) {  // default behavior
                     m_spline.moveControlPoint(i, pt + origin);
-                } else { // Ctrl or Shift is pressed
+                } else {  // Ctrl or Shift is pressed
                     Vec2d shift = storage_pt - old_pos;
                     QPointF new_position = m_spline.controlPointPosition(i) + shift;
 
@@ -257,7 +249,7 @@ void InteractiveXSpline::controlPointMoveRequest(int idx, const QPointF& pos, Qt
     }
 
     m_modifiedCallback();
-} // InteractiveXSpline::controlPointMoveRequest
+}  // InteractiveXSpline::controlPointMoveRequest
 
 void InteractiveXSpline::dragFinished() {
     m_dragFinishedCallback();
@@ -282,4 +274,3 @@ Vec4d InteractiveXSpline::rotationAndScale(const QPointF& from, const QPointF& t
     A[3] = x[0];
     return A;
 }
-

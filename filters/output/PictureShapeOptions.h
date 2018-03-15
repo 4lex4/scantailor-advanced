@@ -7,46 +7,42 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-    enum PictureShape {
-        OFF_SHAPE,
-        FREE_SHAPE,
-        RECTANGULAR_SHAPE
-    };
+enum PictureShape { OFF_SHAPE, FREE_SHAPE, RECTANGULAR_SHAPE };
 
-    class PictureShapeOptions {
-    public:
-        PictureShapeOptions();
+class PictureShapeOptions {
+public:
+    PictureShapeOptions();
 
-        explicit PictureShapeOptions(const QDomElement& el);
+    explicit PictureShapeOptions(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(const PictureShapeOptions& other) const;
+    bool operator==(const PictureShapeOptions& other) const;
 
-        bool operator!=(const PictureShapeOptions& other) const;
+    bool operator!=(const PictureShapeOptions& other) const;
 
-        PictureShape getPictureShape() const;
+    PictureShape getPictureShape() const;
 
-        void setPictureShape(PictureShape pictureShape);
+    void setPictureShape(PictureShape pictureShape);
 
-        int getSensitivity() const;
+    int getSensitivity() const;
 
-        void setSensitivity(int sensitivity);
+    void setSensitivity(int sensitivity);
 
-        bool isHigherSearchSensitivity() const;
+    bool isHigherSearchSensitivity() const;
 
-        void setHigherSearchSensitivity(bool higherSearchSensitivity);
+    void setHigherSearchSensitivity(bool higherSearchSensitivity);
 
-    private:
-        static PictureShape parsePictureShape(const QString& str);
+private:
+    static PictureShape parsePictureShape(const QString& str);
 
-        static QString formatPictureShape(PictureShape type);
+    static QString formatPictureShape(PictureShape type);
 
 
-        PictureShape pictureShape;
-        int sensitivity;
-        bool higherSearchSensitivity;
-    };
-}
+    PictureShape pictureShape;
+    int sensitivity;
+    bool higherSearchSensitivity;
+};
+}  // namespace output
 
-#endif //SCANTAILOR_PICTURESHAPEOPTIONS_H
+#endif  // SCANTAILOR_PICTURESHAPEOPTIONS_H

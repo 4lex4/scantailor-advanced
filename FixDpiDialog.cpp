@@ -107,14 +107,11 @@ public:
         int fileIdx;
         int imageIdx;
 
-        Item(int file_idx, int image_idx)
-                : fileIdx(file_idx),
-                  imageIdx(image_idx) {
+        Item(int file_idx, int image_idx) : fileIdx(file_idx), imageIdx(image_idx) {
         }
     };
 
-    explicit SizeGroup(const QSize& size)
-            : m_size(size) {
+    explicit SizeGroup(const QSize& size) : m_size(size) {
     }
 
     void append(const Item& item, const ImageMetadata& metadata);
@@ -163,8 +160,7 @@ public:
     void applyDpiToSelection(Scope scope, const Dpi& dpi, const QItemSelection& selection);
 
 private:
-    struct Tag {
-    };
+    struct Tag {};
 
     int columnCount(const QModelIndex& parent) const override;
 
@@ -223,16 +219,14 @@ private:
 
 
 FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent)
-        : QDialog(parent),
-          m_ptrPages(new TreeModel(files)),
-          m_ptrUndefinedDpiPages(new FilterModel(*m_ptrPages)) {
+        : QDialog(parent), m_ptrPages(new TreeModel(files)), m_ptrUndefinedDpiPages(new FilterModel(*m_ptrPages)) {
     setupUi(this);
 
     m_normalPalette = xDpi->palette();
     m_errorPalette = m_normalPalette;
-    m_errorPalette.setColor(QPalette::Text, ColorSchemeManager::instance()->getColorParam(
-            "fix_dpi_dialog_error_text_color",
-            Qt::red).color());
+    m_errorPalette.setColor(
+            QPalette::Text,
+            ColorSchemeManager::instance()->getColorParam("fix_dpi_dialog_error_text_color", Qt::red).color());
 
     dpiCombo->addItem("300 x 300", QSize(300, 300));
     dpiCombo->addItem("400 x 400", QSize(400, 400));
@@ -240,8 +234,7 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
 
     tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
     tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));
-    undefinedDpiView->setModel(m_ptrUndefinedDpiPages->model()),
-            undefinedDpiView->header()->hide();
+    undefinedDpiView->setModel(m_ptrUndefinedDpiPages->model()), undefinedDpiView->header()->hide();
     allPagesView->setModel(m_ptrPages->model());
     allPagesView->header()->hide();
 
@@ -250,35 +243,17 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
     xDpi->setValidator(new QIntValidator(xDpi));
     yDpi->setValidator(new QIntValidator(yDpi));
 
-    connect(
-            tabWidget, SIGNAL(currentChanged(int)),
-            this, SLOT(tabChanged(int))
-    );
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
-    connect(
-            undefinedDpiView->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(selectionChanged(const QItemSelection &))
-    );
-    connect(
-            allPagesView->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(selectionChanged(const QItemSelection &))
-    );
+    connect(undefinedDpiView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(selectionChanged(const QItemSelection&)));
+    connect(allPagesView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(selectionChanged(const QItemSelection&)));
 
-    connect(
-            dpiCombo, SIGNAL(activated(int)),
-            this, SLOT(dpiComboChangedByUser(int))
-    );
+    connect(dpiCombo, SIGNAL(activated(int)), this, SLOT(dpiComboChangedByUser(int)));
 
-    connect(
-            xDpi, SIGNAL(textEdited(const QString &)),
-            this, SLOT(dpiValueChanged())
-    );
-    connect(
-            yDpi, SIGNAL(textEdited(const QString &)),
-            this, SLOT(dpiValueChanged())
-    );
+    connect(xDpi, SIGNAL(textEdited(const QString&)), this, SLOT(dpiValueChanged()));
+    connect(yDpi, SIGNAL(textEdited(const QString&)), this, SLOT(dpiValueChanged()));
 
     connect(applyBtn, SIGNAL(clicked()), this, SLOT(applyClicked()));
 
@@ -321,8 +296,7 @@ void FixDpiDialog::dpiValueChanged() {
     decorateDpiInputField(xDpi, metadata.horizontalDpiStatus());
     decorateDpiInputField(yDpi, metadata.verticalDpiStatus());
 
-    if ((m_xDpiInitialValue == xDpi->text())
-        && (m_yDpiInitialValue == yDpi->text())) {
+    if ((m_xDpiInitialValue == xDpi->text()) && (m_yDpiInitialValue == yDpi->text())) {
         applyBtn->setEnabled(false);
 
         return;
@@ -349,10 +323,7 @@ void FixDpiDialog::applyClicked() {
     } else {
         selection_model = undefinedDpiView->selectionModel();
         const QItemSelection selection(
-                m_ptrUndefinedDpiPages->model()->mapSelectionToSource(
-                        selection_model->selection()
-                )
-        );
+                m_ptrUndefinedDpiPages->model()->mapSelectionToSource(selection_model->selection()));
         m_ptrPages->applyDpiToSelection(NOT_OK, dpi, selection);
     }
 
@@ -459,9 +430,8 @@ void FixDpiDialog::decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiSta
                     tr("DPI is too small. Even if it's correct, you are not going to get acceptable results with it."));
             break;
         case ImageMetadata::DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE:
-            field->setToolTip(
-                    tr(
-                            "DPI is too small for this pixel size. Such combination would probably lead to out of memory errors."));
+            field->setToolTip(tr("DPI is too small for this pixel size. Such combination would probably lead to out of "
+                                 "memory errors."));
             break;
     }
 }
@@ -525,8 +495,7 @@ void FixDpiDialog::SizeGroup::append(const Item& item, const ImageMetadata& meta
 FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_allPagesNodeId;
 FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_sizeGroupNodeId;
 
-FixDpiDialog::TreeModel::TreeModel(const std::vector<ImageFileInfo>& files)
-        : m_files(files) {
+FixDpiDialog::TreeModel::TreeModel(const std::vector<ImageFileInfo>& files) : m_files(files) {
     const auto num_files = static_cast<const int>(m_files.size());
     for (int i = 0; i < num_files; ++i) {
         const ImageFileInfo& file = m_files[i];
@@ -685,9 +654,7 @@ QVariant FixDpiDialog::TreeModel::data(const QModelIndex& index, const int role)
             if (file.imageInfo().size() == 1) {
                 return fname;
             } else {
-                return FixDpiDialog::tr(
-                        "%1 (page %2)"
-                ).arg(fname).arg(item.imageIdx + 1);
+                return FixDpiDialog::tr("%1 (page %2)").arg(fname).arg(item.imageIdx + 1);
             }
         } else if ((role == AGGREGATE_METADATA_ROLE) || (role == AGGREGATE_NOT_OK_METADATA_ROLE)) {
             return QVariant::fromValue(file.imageInfo()[item.imageIdx]);
@@ -695,7 +662,7 @@ QVariant FixDpiDialog::TreeModel::data(const QModelIndex& index, const int role)
     }
 
     return QVariant();
-} // FixDpiDialog::TreeModel::data
+}  // FixDpiDialog::TreeModel::data
 
 void FixDpiDialog::TreeModel::applyDpiToAllGroups(const Scope scope, const Dpi& dpi) {
     const auto num_groups = static_cast<const int>(m_sizes.size());
@@ -713,10 +680,7 @@ void FixDpiDialog::TreeModel::applyDpiToGroup(const Scope scope,
     const std::vector<SizeGroup::Item>& items = group.items();
     const auto num_items = static_cast<const int>(items.size());
     for (int i = 0; i < num_items; ++i) {
-        applyDpiToItem(
-                scope, metadata, items[i],
-                total_dpi_counts, group_dpi_counts
-        );
+        applyDpiToItem(scope, metadata, items[i], total_dpi_counts, group_dpi_counts);
     }
 }
 
@@ -783,12 +747,7 @@ void FixDpiDialog::TreeModel::emitItemChanged(const QModelIndex& idx) {
 FixDpiDialog::SizeGroup& FixDpiDialog::TreeModel::sizeGroupFor(const QSize size) {
     using namespace boost::lambda;
 
-    const auto it(
-            std::find_if(
-                    m_sizes.begin(), m_sizes.end(),
-                    bind(&SizeGroup::size, _1) == size
-            )
-    );
+    const auto it(std::find_if(m_sizes.begin(), m_sizes.end(), bind(&SizeGroup::size, _1) == size));
     if (it != m_sizes.end()) {
         return *it;
     } else {
@@ -804,8 +763,7 @@ QString FixDpiDialog::TreeModel::sizeToString(const QSize size) {
 
 /*====================== FixDpiDialog::FilterModel ======================*/
 
-FixDpiDialog::FilterModel::FilterModel(TreeModel& delegate)
-        : m_rDelegate(delegate) {
+FixDpiDialog::FilterModel::FilterModel(TreeModel& delegate) : m_rDelegate(delegate) {
     setDynamicSortFilter(true);
     setSourceModel(delegate.model());
 }
@@ -821,4 +779,3 @@ QVariant FixDpiDialog::FilterModel::data(const QModelIndex& index, int role) con
 
     return QSortFilterProxyModel::data(index, role);
 }
-

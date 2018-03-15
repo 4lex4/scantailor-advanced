@@ -28,9 +28,7 @@ class PageOrderOption {
 public:
     typedef intrusive_ptr<PageOrderProvider const> ProviderPtr;
 
-    PageOrderOption(const QString& name, ProviderPtr provider)
-            : m_name(name),
-              m_ptrProvider(std::move(provider)) {
+    PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_ptrProvider(std::move(provider)) {
     }
 
     const QString& name() const {
@@ -51,4 +49,4 @@ private:
 };
 
 
-#endif // ifndef PAGE_ORDER_OPTION_H_
+#endif  // ifndef PAGE_ORDER_OPTION_H_

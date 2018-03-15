@@ -28,10 +28,7 @@
 
 class BackgroundTask : public AbstractCommand0<FilterResultPtr>, public TaskStatus {
 public:
-    enum Type {
-        INTERACTIVE,
-        BATCH
-    };
+    enum Type { INTERACTIVE, BATCH };
 
     class CancelledException : public std::exception {
     public:
@@ -39,8 +36,7 @@ public:
     };
 
 
-    explicit BackgroundTask(Type type)
-            : m_type(type) {
+    explicit BackgroundTask(Type type) : m_type(type) {
     }
 
     Type type() const {

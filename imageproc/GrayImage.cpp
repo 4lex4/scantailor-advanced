@@ -20,46 +20,45 @@
 #include "Grayscale.h"
 
 namespace imageproc {
-    GrayImage::GrayImage(QSize size) {
-        if (size.isEmpty()) {
-            return;
-        }
-
-        m_image = QImage(size, QImage::Format_Indexed8);
-        m_image.setColorTable(createGrayscalePalette());
-        if (m_image.isNull()) {
-            throw std::bad_alloc();
-        }
+GrayImage::GrayImage(QSize size) {
+    if (size.isEmpty()) {
+        return;
     }
 
-    GrayImage::GrayImage(const QImage& image)
-            : m_image(toGrayscale(image)) {
+    m_image = QImage(size, QImage::Format_Indexed8);
+    m_image.setColorTable(createGrayscalePalette());
+    if (m_image.isNull()) {
+        throw std::bad_alloc();
     }
+}
 
-    GrayImage GrayImage::inverted() const {
-        GrayImage inverted(*this);
-        inverted.invert();
+GrayImage::GrayImage(const QImage& image) : m_image(toGrayscale(image)) {
+}
 
-        return inverted;
-    }
+GrayImage GrayImage::inverted() const {
+    GrayImage inverted(*this);
+    inverted.invert();
 
-    void GrayImage::invert() {
-        m_image.invertPixels(QImage::InvertRgb);
-    }
+    return inverted;
+}
 
-    int GrayImage::dotsPerMeterX() const {
-        return m_image.dotsPerMeterX();
-    }
+void GrayImage::invert() {
+    m_image.invertPixels(QImage::InvertRgb);
+}
 
-    int GrayImage::dotsPerMeterY() const {
-        return m_image.dotsPerMeterY();
-    }
+int GrayImage::dotsPerMeterX() const {
+    return m_image.dotsPerMeterX();
+}
 
-    void GrayImage::setDotsPerMeterX(int value) {
-        m_image.setDotsPerMeterX(value);
-    }
+int GrayImage::dotsPerMeterY() const {
+    return m_image.dotsPerMeterY();
+}
 
-    void GrayImage::setDotsPerMeterY(int value) {
-        m_image.setDotsPerMeterY(value);
-    }
+void GrayImage::setDotsPerMeterX(int value) {
+    m_image.setDotsPerMeterX(value);
+}
+
+void GrayImage::setDotsPerMeterY(int value) {
+    m_image.setDotsPerMeterY(value);
+}
 }  // namespace imageproc

@@ -27,7 +27,7 @@ class QHBoxLayout;
 class QAbstractButton;
 
 class RelinkablePathVisualization : public QWidget {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit RelinkablePathVisualization(QWidget* parent = nullptr);
 

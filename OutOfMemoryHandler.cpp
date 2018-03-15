@@ -18,8 +18,7 @@
 
 #include "OutOfMemoryHandler.h"
 
-OutOfMemoryHandler::OutOfMemoryHandler()
-        : m_hadOOM(false) {
+OutOfMemoryHandler::OutOfMemoryHandler() : m_hadOOM(false) {
 }
 
 OutOfMemoryHandler& OutOfMemoryHandler::instance() {
@@ -57,4 +56,3 @@ bool OutOfMemoryHandler::hadOutOfMemorySituation() const {
 
     return m_hadOOM;
 }
-

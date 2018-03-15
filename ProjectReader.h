@@ -79,13 +79,11 @@ private:
         QString filePath;
         bool compatMultiPage;  // Backwards compatibility.
 
-        FileRecord()
-                : compatMultiPage(false) {
+        FileRecord() : compatMultiPage(false) {
         }
 
         FileRecord(const QString& file_path, bool compat_multi_page)
-                : filePath(file_path),
-                  compatMultiPage(compat_multi_page) {
+                : filePath(file_path), compatMultiPage(compat_multi_page) {
         }
     };
 
@@ -125,4 +123,4 @@ private:
 };
 
 
-#endif // ifndef PROJECTREADER_H_
+#endif  // ifndef PROJECTREADER_H_

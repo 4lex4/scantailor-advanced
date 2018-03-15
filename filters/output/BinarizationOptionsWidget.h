@@ -6,19 +6,19 @@
 #include <PageId.h>
 
 namespace output {
-    class BinarizationOptionsWidget : public QWidget {
+class BinarizationOptionsWidget : public QWidget {
     Q_OBJECT
-    public:
-        virtual void preUpdateUI(const PageId& m_pageId) = 0;
+public:
+    virtual void preUpdateUI(const PageId& m_pageId) = 0;
 
-    signals:
+signals:
 
-        /**
-         * \brief To be emitted by subclasses when their state has changed.
-         */
-        void stateChanged();
-    };
-}
+    /**
+     * \brief To be emitted by subclasses when their state has changed.
+     */
+    void stateChanged();
+};
+}  // namespace output
 
 
-#endif //SCANTAILOR_BINARIZATIONOPTIONSWIDGET_H
+#endif  // SCANTAILOR_BINARIZATIONOPTIONSWIDGET_H

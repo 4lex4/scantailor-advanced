@@ -31,41 +31,41 @@ class QRectF;
 class Dpi;
 
 namespace output {
-    class Task;
+class Task;
 }
 
 namespace page_layout {
-    class Filter;
-    class Settings;
+class Filter;
+class Settings;
 
-    class Task : public ref_countable {
+class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
-    public:
-        Task(intrusive_ptr<Filter> filter,
-             intrusive_ptr<output::Task> next_task,
-             intrusive_ptr<Settings> settings,
-             const PageId& page_id,
-             bool batch,
-             bool debug);
+public:
+    Task(intrusive_ptr<Filter> filter,
+         intrusive_ptr<output::Task> next_task,
+         intrusive_ptr<Settings> settings,
+         const PageId& page_id,
+         bool batch,
+         bool debug);
 
-        ~Task() override;
+    ~Task() override;
 
-        FilterResultPtr process(const TaskStatus& status,
-                                const FilterData& data,
-                                const QRectF& page_rect,
-                                const QRectF& content_rect);
+    FilterResultPtr process(const TaskStatus& status,
+                            const FilterData& data,
+                            const QRectF& page_rect,
+                            const QRectF& content_rect);
 
-    private:
-        class UiUpdater;
+private:
+    class UiUpdater;
 
-        void loadDefaultSettings(const Dpi& dpi);
+    void loadDefaultSettings(const Dpi& dpi);
 
-        intrusive_ptr<Filter> m_ptrFilter;
-        intrusive_ptr<output::Task> m_ptrNextTask;
-        intrusive_ptr<Settings> m_ptrSettings;
-        PageId m_pageId;
-        bool m_batchProcessing;
-    };
+    intrusive_ptr<Filter> m_ptrFilter;
+    intrusive_ptr<output::Task> m_ptrNextTask;
+    intrusive_ptr<Settings> m_ptrSettings;
+    PageId m_pageId;
+    bool m_batchProcessing;
+};
 }  // namespace page_layout
-#endif // ifndef PAGE_LAYOUT_TASK_H_
+#endif  // ifndef PAGE_LAYOUT_TASK_H_

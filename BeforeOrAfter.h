@@ -19,9 +19,6 @@
 #ifndef BEFORE_OR_AFTER_H_
 #define BEFORE_OR_AFTER_H_
 
-enum BeforeOrAfter {
-    BEFORE,
-    AFTER
-};
+enum BeforeOrAfter { BEFORE, AFTER };
 
 #endif

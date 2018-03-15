@@ -24,8 +24,7 @@
 #include <tiff.h>
 #include <QtCore/QDir>
 
-SettingsDialog::SettingsDialog(QWidget* parent)
-        : QDialog(parent) {
+SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
     ui.setupUi(this);
 
     QSettings settings;
@@ -36,9 +35,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
         ui.openglDeviceLabel->setEnabled(false);
         ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
     } else {
-        ui.enableOpenglCb->setChecked(
-                settings.value("settings/enable_opengl", false).toBool()
-        );
+        ui.enableOpenglCb->setChecked(settings.value("settings/enable_opengl", false).toBool());
         const QString openglDevicePattern = ui.openglDeviceLabel->text();
         ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
     }
@@ -57,22 +54,16 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     ui.tiffCompressionBWBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
     ui.tiffCompressionBWBox->addItem(tr("CCITT G4"), COMPRESSION_CCITTFAX4);
 
-    ui.tiffCompressionBWBox->setCurrentIndex(
-            ui.tiffCompressionBWBox->findData(
-                    settings.value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()
-            )
-    );
+    ui.tiffCompressionBWBox->setCurrentIndex(ui.tiffCompressionBWBox->findData(
+            settings.value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()));
 
     ui.tiffCompressionColorBox->addItem(tr("None"), COMPRESSION_NONE);
     ui.tiffCompressionColorBox->addItem(tr("LZW"), COMPRESSION_LZW);
     ui.tiffCompressionColorBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
     ui.tiffCompressionColorBox->addItem(tr("JPEG"), COMPRESSION_JPEG);
 
-    ui.tiffCompressionColorBox->setCurrentIndex(
-            ui.tiffCompressionColorBox->findData(
-                    settings.value("settings/color_compression", COMPRESSION_LZW).toInt()
-            )
-    );
+    ui.tiffCompressionColorBox->setCurrentIndex(ui.tiffCompressionColorBox->findData(
+            settings.value("settings/color_compression", COMPRESSION_LZW).toInt()));
 
     if (auto* app = dynamic_cast<Application*>(qApp)) {
         for (const QString& locale : app->getLanguagesList()) {
@@ -80,19 +71,16 @@ SettingsDialog::SettingsDialog(QWidget* parent)
             ui.languageBox->addItem(languageName, locale);
         }
 
-        ui.languageBox->setCurrentIndex(
-                ui.languageBox->findData(app->getCurrentLocale())
-        );
+        ui.languageBox->setCurrentIndex(ui.languageBox->findData(app->getCurrentLocale()));
 
         ui.languageBox->setEnabled(ui.languageBox->count() > 1);
     }
-    
+
     ui.deskewDeviationCoefSB->setValue(settings.value("settings/deskewDeviationCoef", 1.5).toDouble());
     ui.deskewDeviationThresholdSB->setValue(settings.value("settings/deskewDeviationThreshold", 1.0).toDouble());
     ui.selectContentDeviationCoefSB->setValue(settings.value("settings/selectContentDeviationCoef", 0.35).toDouble());
     ui.selectContentDeviationThresholdSB->setValue(
-            settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble()
-    );
+            settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble());
     ui.marginsDeviationCoefSB->setValue(settings.value("settings/marginsDeviationCoef", 0.35).toDouble());
     ui.marginsDeviationThresholdSB->setValue(settings.value("settings/marginsDeviationThreshold", 1.0).toDouble());
 
@@ -100,10 +88,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     ui.autoSaveProjectCB->setChecked(settings.value("settings/auto_save_project").toBool());
     ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
 
-    connect(
-            ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(onColorSchemeChanged(int))
-    );
+    connect(ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onColorSchemeChanged(int)));
 }
 
 SettingsDialog::~SettingsDialog() = default;
@@ -134,8 +119,6 @@ void SettingsDialog::commitChanges() {
 }
 
 void SettingsDialog::onColorSchemeChanged(int idx) {
-    QMessageBox::information(
-            this, tr("Information"),
-            tr("ScanTailor need to be restarted to apply the color scheme changes.")
-    );
+    QMessageBox::information(this, tr("Information"),
+                             tr("ScanTailor need to be restarted to apply the color scheme changes."));
 }

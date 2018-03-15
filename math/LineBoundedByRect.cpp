@@ -21,12 +21,9 @@
 #include "NumericTraits.h"
 
 bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
-    const QLineF rect_lines[4] = {
-            QLineF(rect.topLeft(), rect.topRight()),
-            QLineF(rect.bottomLeft(), rect.bottomRight()),
-            QLineF(rect.topLeft(), rect.bottomLeft()),
-            QLineF(rect.topRight(), rect.bottomRight())
-    };
+    const QLineF rect_lines[4]
+            = {QLineF(rect.topLeft(), rect.topRight()), QLineF(rect.bottomLeft(), rect.bottomRight()),
+               QLineF(rect.topLeft(), rect.bottomLeft()), QLineF(rect.topRight(), rect.bottomRight())};
 
     double max = NumericTraits<double>::min();
     double min = NumericTraits<double>::max();
@@ -58,5 +55,4 @@ bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
     } else {
         return false;
     }
-} // lineBoundedByRect
-
+}  // lineBoundedByRect

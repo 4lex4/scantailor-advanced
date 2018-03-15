@@ -32,10 +32,7 @@ class QWidget;
  */
 class FilterUiInterface {
 public:
-    enum Ownership {
-        KEEP_OWNERSHIP,
-        TRANSFER_OWNERSHIP
-    };
+    enum Ownership { KEEP_OWNERSHIP, TRANSFER_OWNERSHIP };
 
     virtual ~FilterUiInterface() = default;
 
@@ -44,7 +41,8 @@ public:
     virtual void setImageWidget(QWidget* widget,
                                 Ownership ownership,
                                 DebugImages* debug_images = nullptr,
-                                bool clearImageWidget = true) = 0;
+                                bool clearImageWidget = true)
+            = 0;
 
     virtual void invalidateThumbnail(const PageId& page_id) = 0;
 

@@ -27,10 +27,7 @@
 class RelinkablePath {
     // Member-wise copying is OK.
 public:
-    enum Type {
-        File,
-        Dir
-    };
+    enum Type { File, Dir };
 
     RelinkablePath(const QString& path, Type type);
 

@@ -19,13 +19,10 @@
 #include "PageId.h"
 #include <cassert>
 
-PageId::PageId()
-        : m_subPage(SINGLE_PAGE) {
+PageId::PageId() : m_subPage(SINGLE_PAGE) {
 }
 
-PageId::PageId(const ImageId& image_id, SubPage subpage)
-        : m_imageId(image_id),
-          m_subPage(subpage) {
+PageId::PageId(const ImageId& image_id, SubPage subpage) : m_imageId(image_id), m_subPage(subpage) {
 }
 
 QString PageId::subPageToString(const SubPage sub_page) {
@@ -86,4 +83,3 @@ bool operator<(const PageId& lhs, const PageId& rhs) {
         return lhs.subPage() < rhs.subPage();
     }
 }
-

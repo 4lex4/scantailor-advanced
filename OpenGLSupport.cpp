@@ -56,4 +56,3 @@ QString OpenGLSupport::deviceName() {
 
     return name;
 }
-

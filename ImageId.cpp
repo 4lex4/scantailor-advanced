@@ -19,14 +19,10 @@
 #include "ImageId.h"
 #include <QFileInfo>
 
-ImageId::ImageId(const QString& file_path, const int page)
-        : m_filePath(file_path),
-          m_page(page) {
+ImageId::ImageId(const QString& file_path, const int page) : m_filePath(file_path), m_page(page) {
 }
 
-ImageId::ImageId(const QFileInfo& file_info, const int page)
-        : m_filePath(file_info.absoluteFilePath()),
-          m_page(page) {
+ImageId::ImageId(const QFileInfo& file_info, const int page) : m_filePath(file_info.absoluteFilePath()), m_page(page) {
 }
 
 bool operator==(const ImageId& lhs, const ImageId& rhs) {
@@ -47,4 +43,3 @@ bool operator<(const ImageId& lhs, const ImageId& rhs) {
 
     return lhs.page() < rhs.page();
 }
-

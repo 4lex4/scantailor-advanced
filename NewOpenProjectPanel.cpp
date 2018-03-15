@@ -23,17 +23,12 @@
 #include <QPainter>
 #include <QFileInfo>
 
-NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
-        : QWidget(parent) {
+NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     recentProjectsGroup->setLayout(new QVBoxLayout);
-    newProjectLabel->setText(
-            Utils::richTextForLink(newProjectLabel->text())
-    );
-    openProjectLabel->setText(
-            Utils::richTextForLink(openProjectLabel->text())
-    );
+    newProjectLabel->setText(Utils::richTextForLink(newProjectLabel->text()));
+    openProjectLabel->setText(Utils::richTextForLink(openProjectLabel->text()));
 
     RecentProjects rp;
     rp.read();
@@ -45,21 +40,11 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent)
     if (rp.isEmpty()) {
         recentProjectsGroup->setVisible(false);
     } else {
-        rp.enumerate(
-                [this](const QString& file_path) {
-                    addRecentProject(file_path);
-                }
-        );
+        rp.enumerate([this](const QString& file_path) { addRecentProject(file_path); });
     }
 
-    connect(
-            newProjectLabel, SIGNAL(linkActivated(const QString &)),
-            this, SIGNAL(newProject())
-    );
-    connect(
-            openProjectLabel, SIGNAL(linkActivated(const QString &)),
-            this, SIGNAL(openProject())
-    );
+    connect(newProjectLabel, SIGNAL(linkActivated(const QString&)), this, SIGNAL(newProject()));
+    connect(openProjectLabel, SIGNAL(linkActivated(const QString&)), this, SIGNAL(openProject()));
 }
 
 void NewOpenProjectPanel::addRecentProject(const QString& file_path) {
@@ -81,10 +66,7 @@ void NewOpenProjectPanel::addRecentProject(const QString& file_path) {
 
     recentProjectsGroup->layout()->addWidget(label);
 
-    connect(
-            label, SIGNAL(linkActivated(const QString &)),
-            this, SIGNAL(openRecentProject(const QString &))
-    );
+    connect(label, SIGNAL(linkActivated(const QString&)), this, SIGNAL(openRecentProject(const QString&)));
 }
 
 void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
@@ -96,18 +78,15 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
     layout()->getContentsMargins(&left, &top, &right, &bottom);
 
     const QRect widget_rect(rect());
-    const QRect except_margins(
-            widget_rect.adjusted(left, top, -right, -bottom)
-    );
+    const QRect except_margins(widget_rect.adjusted(left, top, -right, -bottom));
 
     const int border = 1;  // Solid line border width.
 
     QPainter painter(this);
 
-    painter.setPen(QPen(ColorSchemeManager::instance()->getColorParam(
-            "open_new_project_border_color",
-            palette().windowText()), border));
+    painter.setPen(
+            QPen(ColorSchemeManager::instance()->getColorParam("open_new_project_border_color", palette().windowText()),
+                 border));
 
     painter.drawRect(except_margins);
-} // NewOpenProjectPanel::paintEvent
-
+}  // NewOpenProjectPanel::paintEvent

@@ -31,7 +31,7 @@ class QCursor;
 class QString;
 
 class ObjectDragHandler : public InteractionHandler {
-DECLARE_NON_COPYABLE(ObjectDragHandler)
+    DECLARE_NON_COPYABLE(ObjectDragHandler)
 
 public:
     explicit ObjectDragHandler(DraggableObject* obj = nullptr);

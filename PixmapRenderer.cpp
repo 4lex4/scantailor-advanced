@@ -29,4 +29,3 @@ void PixmapRenderer::drawPixmap(QPainter& painter, const QPixmap& pixmap) {
     const QRectF bounded_src_rect(src_rect.intersected(pixmap.rect()));
     painter.drawPixmap(bounded_src_rect, pixmap, bounded_src_rect);
 }
-

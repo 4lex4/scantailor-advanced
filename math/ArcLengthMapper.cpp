@@ -20,9 +20,7 @@
 #include <cmath>
 #include <cassert>
 
-ArcLengthMapper::Hint::Hint()
-        : m_lastSegment(0),
-          m_direction(1) {
+ArcLengthMapper::Hint::Hint() : m_lastSegment(0), m_direction(1) {
 }
 
 void ArcLengthMapper::Hint::update(int new_segment) {
@@ -30,8 +28,7 @@ void ArcLengthMapper::Hint::update(int new_segment) {
     m_lastSegment = new_segment;
 }
 
-ArcLengthMapper::ArcLengthMapper()
-        : m_prevFX() {
+ArcLengthMapper::ArcLengthMapper() : m_prevFX() {
 }
 
 void ArcLengthMapper::addSample(double x, double fx) {
@@ -119,7 +116,7 @@ double ArcLengthMapper::arcLenToX(double arc_len, Hint& hint) const {
     hint.update(left_idx);
 
     return interpolateArcLenInSegment(arc_len, left_idx);
-} // ArcLengthMapper::arcLenToX
+}  // ArcLengthMapper::arcLenToX
 
 double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     switch (m_samples.size()) {
@@ -174,7 +171,7 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     hint.update(left_idx);
 
     return interpolateXInSegment(x, left_idx);
-} // ArcLengthMapper::xToArcLen
+}  // ArcLengthMapper::xToArcLen
 
 bool ArcLengthMapper::checkSegmentForArcLen(double arc_len, int segment) const {
     assert(m_samples.size() > 1);  // Enforced by the caller.
@@ -231,4 +228,3 @@ double ArcLengthMapper::interpolateXInSegment(double x, int segment) const {
 
     return a;
 }
-

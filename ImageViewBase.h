@@ -59,12 +59,9 @@ class ImagePresentation;
  * \see m_pixmapToImage, m_imageToVirt, m_virtualToWidget, m_widgetToVirtual.
  */
 class ImageViewBase : public QAbstractScrollArea {
-Q_OBJECT
+    Q_OBJECT
 public:
-    enum FocalPointMode {
-        CENTER_IF_FITS,
-        DONT_CENTER
-    };
+    enum FocalPointMode { CENTER_IF_FITS, DONT_CENTER };
 
     /**
      * \brief ImageViewBase constructor.
@@ -289,7 +286,7 @@ protected:
 
     void leaveEvent(QEvent* event) override;
 
-    void showEvent(QShowEvent *event) override;
+    void showEvent(QShowEvent* event) override;
 
     /**
      * Returns the maximum viewport size (as if scrollbars are hidden)

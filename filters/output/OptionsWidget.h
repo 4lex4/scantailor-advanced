@@ -41,158 +41,158 @@
 #include <QtCore/QTimer>
 
 namespace dewarping {
-    class DistortionModel;
+class DistortionModel;
 }
 
 namespace output {
-    class Settings;
+class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
     Q_OBJECT
-    public:
-        OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+public:
+    OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-        ~OptionsWidget() override;
+    ~OptionsWidget() override;
 
-        void preUpdateUI(const PageId& page_id);
+    void preUpdateUI(const PageId& page_id);
 
-        void postUpdateUI();
+    void postUpdateUI();
 
-        ImageViewTab lastTab() const;
+    ImageViewTab lastTab() const;
 
-        const DepthPerception& depthPerception() const;
+    const DepthPerception& depthPerception() const;
 
-    signals:
+signals:
 
-        void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
-        void depthPerceptionChanged(double val);
+    void depthPerceptionChanged(double val);
 
-    public slots:
+public slots:
 
-        void tabChanged(ImageViewTab tab);
+    void tabChanged(ImageViewTab tab);
 
-        void distortionModelChanged(const dewarping::DistortionModel& model);
+    void distortionModelChanged(const dewarping::DistortionModel& model);
 
-    private slots:
+private slots:
 
-        void changeDpiButtonClicked();
+    void changeDpiButtonClicked();
 
-        void applyColorsButtonClicked();
+    void applyColorsButtonClicked();
 
-        void applySplittingButtonClicked();
+    void applySplittingButtonClicked();
 
-        void dpiChanged(const std::set<PageId>& pages, const Dpi& dpi);
+    void dpiChanged(const std::set<PageId>& pages, const Dpi& dpi);
 
-        void applyColorsConfirmed(const std::set<PageId>& pages);
+    void applyColorsConfirmed(const std::set<PageId>& pages);
 
-        void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
+    void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
 
-        void colorModeChanged(int idx);
+    void colorModeChanged(int idx);
 
-        void thresholdMethodChanged(int idx);
+    void thresholdMethodChanged(int idx);
 
-        void fillingColorChanged(int idx);
+    void fillingColorChanged(int idx);
 
-        void pictureShapeChanged(int idx);
+    void pictureShapeChanged(int idx);
 
-        void pictureShapeSensitivityChanged(int value);
+    void pictureShapeSensitivityChanged(int value);
 
-        void higherSearchSensivityToggled(bool checked);
+    void higherSearchSensivityToggled(bool checked);
 
-        void colorSegmentationToggled(bool checked);
+    void colorSegmentationToggled(bool checked);
 
-        void reduceNoiseChanged(int value);
+    void reduceNoiseChanged(int value);
 
-        void redAdjustmentChanged(int value);
+    void redAdjustmentChanged(int value);
 
-        void greenAdjustmentChanged(int value);
+    void greenAdjustmentChanged(int value);
 
-        void blueAdjustmentChanged(int value);
+    void blueAdjustmentChanged(int value);
 
-        void posterizeToggled(bool checked);
+    void posterizeToggled(bool checked);
 
-        void posterizeLevelChanged(int value);
+    void posterizeLevelChanged(int value);
 
-        void posterizeNormalizationToggled(bool checked);
+    void posterizeNormalizationToggled(bool checked);
 
-        void posterizeForceBwToggled(bool checked);
+    void posterizeForceBwToggled(bool checked);
 
-        void cutMarginsToggled(bool checked);
+    void cutMarginsToggled(bool checked);
 
-        void equalizeIlluminationToggled(bool checked);
+    void equalizeIlluminationToggled(bool checked);
 
-        void equalizeIlluminationColorToggled(bool checked);
+    void equalizeIlluminationColorToggled(bool checked);
 
-        void savitzkyGolaySmoothingToggled(bool checked);
+    void savitzkyGolaySmoothingToggled(bool checked);
 
-        void morphologicalSmoothingToggled(bool checked);
+    void morphologicalSmoothingToggled(bool checked);
 
-        void splittingToggled(bool checked);
+    void splittingToggled(bool checked);
 
-        void bwForegroundToggled(bool checked);
+    void bwForegroundToggled(bool checked);
 
-        void colorForegroundToggled(bool checked);
+    void colorForegroundToggled(bool checked);
 
-        void originalBackgroundToggled(bool checked);
+    void originalBackgroundToggled(bool checked);
 
-        void binarizationSettingsChanged();
+    void binarizationSettingsChanged();
 
-        void despeckleOffSelected();
+    void despeckleOffSelected();
 
-        void despeckleCautiousSelected();
+    void despeckleCautiousSelected();
 
-        void despeckleNormalSelected();
+    void despeckleNormalSelected();
 
-        void despeckleAggressiveSelected();
+    void despeckleAggressiveSelected();
 
-        void applyDespeckleButtonClicked();
+    void applyDespeckleButtonClicked();
 
-        void applyDespeckleConfirmed(const std::set<PageId>& pages);
+    void applyDespeckleConfirmed(const std::set<PageId>& pages);
 
-        void changeDewarpingButtonClicked();
+    void changeDewarpingButtonClicked();
 
-        void dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt);
+    void dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt);
 
-        void applyDepthPerceptionButtonClicked();
+    void applyDepthPerceptionButtonClicked();
 
-        void applyDepthPerceptionConfirmed(const std::set<PageId>& pages);
+    void applyDepthPerceptionConfirmed(const std::set<PageId>& pages);
 
-        void depthPerceptionChangedSlot(int val);
+    void depthPerceptionChangedSlot(int val);
 
-        void updateBinarizationOptionsDisplay(int idx);
+    void updateBinarizationOptionsDisplay(int idx);
 
-        void sendReloadRequested();
+    void sendReloadRequested();
 
-    private:
-        void handleDespeckleLevelChange(DespeckleLevel level);
+private:
+    void handleDespeckleLevelChange(DespeckleLevel level);
 
-        void reloadIfNecessary();
+    void reloadIfNecessary();
 
-        void updateDpiDisplay();
+    void updateDpiDisplay();
 
-        void updateColorsDisplay();
+    void updateColorsDisplay();
 
-        void updateDewarpingDisplay();
+    void updateDewarpingDisplay();
 
-        void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+    void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
 
-        void setupUiConnections();
+    void setupUiConnections();
 
-        void removeUiConnections();
+    void removeUiConnections();
 
-        intrusive_ptr<Settings> m_ptrSettings;
-        PageSelectionAccessor m_pageSelectionAccessor;
-        PageId m_pageId;
-        Dpi m_outputDpi;
-        ColorParams m_colorParams;
-        SplittingOptions m_splittingOptions;
-        PictureShapeOptions m_pictureShapeOptions;
-        DepthPerception m_depthPerception;
-        DewarpingOptions m_dewarpingOptions;
-        DespeckleLevel m_despeckleLevel;
-        ImageViewTab m_lastTab;
-        QTimer delayedReloadRequest;
-    };
+    intrusive_ptr<Settings> m_ptrSettings;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    Dpi m_outputDpi;
+    ColorParams m_colorParams;
+    SplittingOptions m_splittingOptions;
+    PictureShapeOptions m_pictureShapeOptions;
+    DepthPerception m_depthPerception;
+    DewarpingOptions m_dewarpingOptions;
+    DespeckleLevel m_despeckleLevel;
+    ImageViewTab m_lastTab;
+    QTimer delayedReloadRequest;
+};
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

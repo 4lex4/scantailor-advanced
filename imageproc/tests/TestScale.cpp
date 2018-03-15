@@ -27,69 +27,67 @@
 #include <cmath>
 
 namespace imageproc {
-    namespace tests {
-        using namespace utils;
+namespace tests {
+using namespace utils;
 
-        BOOST_AUTO_TEST_SUITE(ScaleTestSuite);
+BOOST_AUTO_TEST_SUITE(ScaleTestSuite);
 
-            BOOST_AUTO_TEST_CASE(test_null_image) {
-                const GrayImage null_img;
-                BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
+BOOST_AUTO_TEST_CASE(test_null_image) {
+    const GrayImage null_img;
+    BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
+}
+
+static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
+    BOOST_REQUIRE(img1.size() == img2.size());
+
+    const int width = img1.width();
+    const int height = img1.height();
+    const uint8_t* line1 = img1.bits();
+    const uint8_t* line2 = img2.bits();
+    const int line1_bpl = img1.bytesPerLine();
+    const int line2_bpl = img2.bytesPerLine();
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            if (abs(int(line1[x]) - int(line2[x])) > 1) {
+                return false;
             }
+        }
+        line1 += line1_bpl;
+        line2 += line2_bpl;
+    }
 
-            static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
-                BOOST_REQUIRE(img1.size() == img2.size());
+    return true;
+}
 
-                const int width = img1.width();
-                const int height = img1.height();
-                const uint8_t* line1 = img1.bits();
-                const uint8_t* line2 = img2.bits();
-                const int line1_bpl = img1.bytesPerLine();
-                const int line2_bpl = img2.bytesPerLine();
+static bool checkScale(const GrayImage& img, const QSize& new_size) {
+    const GrayImage scaled1(scaleToGray(img, new_size));
+    const GrayImage scaled2(img.toQImage().scaled(new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
-                for (int y = 0; y < height; ++y) {
-                    for (int x = 0; x < width; ++x) {
-                        if (abs(int(line1[x]) - int(line2[x])) > 1) {
-                            return false;
-                        }
-                    }
-                    line1 += line1_bpl;
-                    line2 += line2_bpl;
-                }
+    return fuzzyCompare(scaled1, scaled2);
+}
 
-                return true;
-            }
+BOOST_AUTO_TEST_CASE(test_random_image) {
+    GrayImage img(QSize(100, 100));
+    uint8_t* line = img.data();
+    for (int y = 0; y < img.height(); ++y) {
+        for (int x = 0; x < img.width(); ++x) {
+            line[x] = static_cast<uint8_t>(rand() % 256);
+        }
+        line += img.stride();
+    }
 
-            static bool checkScale(const GrayImage& img, const QSize& new_size) {
-                const GrayImage scaled1(scaleToGray(img, new_size));
-                const GrayImage scaled2(img.toQImage().scaled(
-                        new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation
-                ));
+    // Unfortunately scaleToGray() and QImage::scaled()
+    // produce too different results when upscaling.
 
-                return fuzzyCompare(scaled1, scaled2);
-            }
+    BOOST_CHECK(checkScale(img, QSize(50, 50)));
+    // BOOST_CHECK(checkScale(img, QSize(200, 200)));
+    BOOST_CHECK(checkScale(img, QSize(80, 80)));
+    // BOOST_CHECK(checkScale(img, QSize(140, 140)));
+    // BOOST_CHECK(checkScale(img, QSize(55, 145)));
+    // BOOST_CHECK(checkScale(img, QSize(145, 55)));
+}
 
-            BOOST_AUTO_TEST_CASE(test_random_image) {
-                GrayImage img(QSize(100, 100));
-                uint8_t* line = img.data();
-                for (int y = 0; y < img.height(); ++y) {
-                    for (int x = 0; x < img.width(); ++x) {
-                        line[x] = static_cast<uint8_t>(rand() % 256);
-                    }
-                    line += img.stride();
-                }
-
-                // Unfortunately scaleToGray() and QImage::scaled()
-                // produce too different results when upscaling.
-
-                BOOST_CHECK(checkScale(img, QSize(50, 50)));
-                // BOOST_CHECK(checkScale(img, QSize(200, 200)));
-                BOOST_CHECK(checkScale(img, QSize(80, 80)));
-                // BOOST_CHECK(checkScale(img, QSize(140, 140)));
-                // BOOST_CHECK(checkScale(img, QSize(55, 145)));
-                // BOOST_CHECK(checkScale(img, QSize(145, 55)));
-            }
-
-        BOOST_AUTO_TEST_SUITE_END();
-    }      // namespace tests
+BOOST_AUTO_TEST_SUITE_END();
+}  // namespace tests
 }  // namespace imageproc

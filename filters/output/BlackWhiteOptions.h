@@ -24,126 +24,122 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-    enum BinarizationMethod {
-        OTSU,
-        SAUVOLA,
-        WOLF
-    };
+enum BinarizationMethod { OTSU, SAUVOLA, WOLF };
 
-    class BlackWhiteOptions {
+class BlackWhiteOptions {
+public:
+    class ColorSegmenterOptions {
     public:
-        class ColorSegmenterOptions {
-        public:
-            ColorSegmenterOptions();
+        ColorSegmenterOptions();
 
-            explicit ColorSegmenterOptions(const QDomElement& el);
-
-            QDomElement toXml(QDomDocument& doc, const QString& name) const;
-
-            bool operator==(const ColorSegmenterOptions& other) const;
-
-            bool operator!=(const ColorSegmenterOptions& other) const;
-
-            bool isEnabled() const;
-
-            void setEnabled(bool enabled);
-
-            int getNoiseReduction() const;
-
-            void setNoiseReduction(int noiseReduction);
-
-            int getRedThresholdAdjustment() const;
-
-            void setRedThresholdAdjustment(int redThresholdAdjustment);
-
-            int getGreenThresholdAdjustment() const;
-
-            void setGreenThresholdAdjustment(int greenThresholdAdjustment);
-
-            int getBlueThresholdAdjustment() const;
-
-            void setBlueThresholdAdjustment(int blueThresholdAdjustment);
-
-        private:
-            bool enabled;
-            int noiseReduction;
-            int redThresholdAdjustment;
-            int greenThresholdAdjustment;
-            int blueThresholdAdjustment;
-        };
-
-    public:
-        BlackWhiteOptions();
-
-        explicit BlackWhiteOptions(const QDomElement& el);
+        explicit ColorSegmenterOptions(const QDomElement& el);
 
         QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(const BlackWhiteOptions& other) const;
+        bool operator==(const ColorSegmenterOptions& other) const;
 
-        bool operator!=(const BlackWhiteOptions& other) const;
+        bool operator!=(const ColorSegmenterOptions& other) const;
 
-        int thresholdAdjustment() const;
+        bool isEnabled() const;
 
-        void setThresholdAdjustment(int val);
+        void setEnabled(bool enabled);
 
-        bool normalizeIllumination() const;
+        int getNoiseReduction() const;
 
-        void setNormalizeIllumination(bool val);
+        void setNoiseReduction(int noiseReduction);
 
-        bool isSavitzkyGolaySmoothingEnabled() const;
+        int getRedThresholdAdjustment() const;
 
-        void setSavitzkyGolaySmoothingEnabled(bool savitzkyGolaySmoothingEnabled);
+        void setRedThresholdAdjustment(int redThresholdAdjustment);
 
-        bool isMorphologicalSmoothingEnabled() const;
+        int getGreenThresholdAdjustment() const;
 
-        void setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled);
+        void setGreenThresholdAdjustment(int greenThresholdAdjustment);
 
-        int getWindowSize() const;
+        int getBlueThresholdAdjustment() const;
 
-        void setWindowSize(int windowSize);
-
-        double getSauvolaCoef() const;
-
-        void setSauvolaCoef(double sauvolaCoef);
-
-        int getWolfLowerBound() const;
-
-        void setWolfLowerBound(int wolfLowerBound);
-
-        int getWolfUpperBound() const;
-
-        void setWolfUpperBound(int wolfUpperBound);
-
-        double getWolfCoef() const;
-
-        void setWolfCoef(double wolfCoef);
-
-        BinarizationMethod getBinarizationMethod() const;
-
-        void setBinarizationMethod(BinarizationMethod binarizationMethod);
-
-        const ColorSegmenterOptions& getColorSegmenterOptions() const;
-
-        void setColorSegmenterOptions(const ColorSegmenterOptions& colorSegmenterOptions);
+        void setBlueThresholdAdjustment(int blueThresholdAdjustment);
 
     private:
-        static BinarizationMethod parseBinarizationMethod(const QString& str);
-
-        static QString formatBinarizationMethod(BinarizationMethod type);
-
-
-        int m_thresholdAdjustment;
-        bool savitzkyGolaySmoothingEnabled;
-        bool morphologicalSmoothingEnabled;
-        bool m_normalizeIllumination;
-        int windowSize;
-        double sauvolaCoef;
-        int wolfLowerBound;
-        int wolfUpperBound;
-        double wolfCoef;
-        BinarizationMethod binarizationMethod;
-        ColorSegmenterOptions colorSegmenterOptions;
+        bool enabled;
+        int noiseReduction;
+        int redThresholdAdjustment;
+        int greenThresholdAdjustment;
+        int blueThresholdAdjustment;
     };
-}
+
+public:
+    BlackWhiteOptions();
+
+    explicit BlackWhiteOptions(const QDomElement& el);
+
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+    bool operator==(const BlackWhiteOptions& other) const;
+
+    bool operator!=(const BlackWhiteOptions& other) const;
+
+    int thresholdAdjustment() const;
+
+    void setThresholdAdjustment(int val);
+
+    bool normalizeIllumination() const;
+
+    void setNormalizeIllumination(bool val);
+
+    bool isSavitzkyGolaySmoothingEnabled() const;
+
+    void setSavitzkyGolaySmoothingEnabled(bool savitzkyGolaySmoothingEnabled);
+
+    bool isMorphologicalSmoothingEnabled() const;
+
+    void setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled);
+
+    int getWindowSize() const;
+
+    void setWindowSize(int windowSize);
+
+    double getSauvolaCoef() const;
+
+    void setSauvolaCoef(double sauvolaCoef);
+
+    int getWolfLowerBound() const;
+
+    void setWolfLowerBound(int wolfLowerBound);
+
+    int getWolfUpperBound() const;
+
+    void setWolfUpperBound(int wolfUpperBound);
+
+    double getWolfCoef() const;
+
+    void setWolfCoef(double wolfCoef);
+
+    BinarizationMethod getBinarizationMethod() const;
+
+    void setBinarizationMethod(BinarizationMethod binarizationMethod);
+
+    const ColorSegmenterOptions& getColorSegmenterOptions() const;
+
+    void setColorSegmenterOptions(const ColorSegmenterOptions& colorSegmenterOptions);
+
+private:
+    static BinarizationMethod parseBinarizationMethod(const QString& str);
+
+    static QString formatBinarizationMethod(BinarizationMethod type);
+
+
+    int m_thresholdAdjustment;
+    bool savitzkyGolaySmoothingEnabled;
+    bool morphologicalSmoothingEnabled;
+    bool m_normalizeIllumination;
+    int windowSize;
+    double sauvolaCoef;
+    int wolfLowerBound;
+    int wolfUpperBound;
+    double wolfCoef;
+    BinarizationMethod binarizationMethod;
+    ColorSegmenterOptions colorSegmenterOptions;
+};
+}  // namespace output
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

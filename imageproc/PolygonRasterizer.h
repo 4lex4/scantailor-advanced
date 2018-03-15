@@ -27,25 +27,25 @@ class QRectF;
 class QImage;
 
 namespace imageproc {
-    class BinaryImage;
+class BinaryImage;
 
-    class PolygonRasterizer {
-    public:
-        static void fill(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
+class PolygonRasterizer {
+public:
+    static void fill(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void fillExcept(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
+    static void fillExcept(BinaryImage& image, BWColor color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void grayFill(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
+    static void grayFill(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-        static void grayFillExcept(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
+    static void grayFillExcept(QImage& image, unsigned char color, const QPolygonF& poly, Qt::FillRule fill_rule);
 
-    private:
-        class Edge;
-        class EdgeComponent;
-        class EdgeOrderY;
-        class EdgeOrderX;
+private:
+    class Edge;
+    class EdgeComponent;
+    class EdgeOrderY;
+    class EdgeOrderX;
 
-        class Rasterizer;
-    };
+    class Rasterizer;
+};
 }  // namespace imageproc
-#endif // ifndef IMAGEPROC_POLYGONRASTERIZER_H_
+#endif  // ifndef IMAGEPROC_POLYGONRASTERIZER_H_

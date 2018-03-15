@@ -28,6 +28,7 @@ class PolylineIntersector {
 public:
     class Hint {
         friend class PolylineIntersector;
+
     public:
         Hint();
 

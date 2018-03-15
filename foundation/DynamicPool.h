@@ -32,7 +32,7 @@
  */
 template<typename T>
 class DynamicPool {
-DECLARE_NON_COPYABLE(DynamicPool)
+    DECLARE_NON_COPYABLE(DynamicPool)
 
 public:
     DynamicPool() {
@@ -49,14 +49,10 @@ public:
     T* alloc(size_t num_elements);
 
 private:
-    enum {
-        OVERALLOCATION_FACTOR = 3
-    };
+    enum { OVERALLOCATION_FACTOR = 3 };
 
     /**< Allocate 3 times the requested size. */
-    enum {
-        OVERALLOCATION_LIMIT = 256
-    };
+    enum { OVERALLOCATION_LIMIT = 256 };
 
     /**< Don't overallocate too much. */
 
@@ -65,9 +61,7 @@ private:
         T* pData;
         size_t remainingElements;
 
-        Chunk()
-                : pData(0),
-                  remainingElements(0) {
+        Chunk() : pData(0), remainingElements(0) {
         }
 
         void init(boost::scoped_array<T>& data, size_t size) {
@@ -133,4 +127,4 @@ size_t DynamicPool<T>::adviseChunkSize(size_t num_elements) {
     return num_elements * (factor + 1);
 }
 
-#endif // ifndef DYNAMIC_POOL_H_
+#endif  // ifndef DYNAMIC_POOL_H_

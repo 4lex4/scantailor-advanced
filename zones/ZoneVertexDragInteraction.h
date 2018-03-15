@@ -29,7 +29,7 @@
 class ZoneInteractionContext;
 
 class ZoneVertexDragInteraction : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
+    Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
 public:
     ZoneVertexDragInteraction(ZoneInteractionContext& context,
                               InteractionState& interaction,

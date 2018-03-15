@@ -46,6 +46,6 @@ namespace imageproc {
  * \endcode
  * Good results for 300 dpi scans are achieved with 7x7 window and 4x4 degree.
  */
-    QImage savGolFilter(const QImage& src, const QSize& window_size, int hor_degree, int vert_degree);
+QImage savGolFilter(const QImage& src, const QSize& window_size, int hor_degree, int vert_degree);
 }  // namespace imageproc
 #endif

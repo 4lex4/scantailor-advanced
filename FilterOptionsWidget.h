@@ -24,7 +24,7 @@
 #include <QWidget>
 
 class FilterOptionsWidget : public QWidget {
-Q_OBJECT
+    Q_OBJECT
 signals:
 
     /**

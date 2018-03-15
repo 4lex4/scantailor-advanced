@@ -102,24 +102,15 @@ StageListView::StageListView(QWidget* parent)
     v_header->setSectionResizeMode(QHeaderView::ResizeToContents);
     v_header->setSectionsMovable(false);
 
-    m_pLaunchBtn = new SkinnedButton(
-            ":/icons/play-small.png",
-            ":/icons/play-small-hovered.png",
-            ":/icons/play-small-pressed.png",
-            viewport()
-    );
+    m_pLaunchBtn = new SkinnedButton(":/icons/play-small.png", ":/icons/play-small-hovered.png",
+                                     ":/icons/play-small-pressed.png", viewport());
     m_pLaunchBtn->setStatusTip(tr("Launch batch processing"));
     m_pLaunchBtn->hide();
 
-    connect(
-            m_pLaunchBtn, SIGNAL(clicked()),
-            this, SIGNAL(launchBatchProcessing())
-    );
+    connect(m_pLaunchBtn, SIGNAL(clicked()), this, SIGNAL(launchBatchProcessing()));
 
-    connect(
-            verticalScrollBar(), SIGNAL(rangeChanged(int, int)),
-            this, SLOT(ensureSelectedRowVisible()), Qt::QueuedConnection
-    );
+    connect(verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(ensureSelectedRowVisible()),
+            Qt::QueuedConnection);
 }
 
 StageListView::~StageListView() = default;
@@ -159,7 +150,7 @@ void StageListView::setStages(const intrusive_ptr<StageSequence>& stages) {
     sp.setVerticalStretch(1);
     setSizePolicy(sp);
     updateGeometry();
-} // StageListView::setStages
+}  // StageListView::setStages
 
 void StageListView::setBatchProcessingPossible(const bool possible) {
     if (m_batchProcessingPossible == possible) {
@@ -204,7 +195,7 @@ void StageListView::setBatchProcessingInProgress(const bool in_progress) {
         killTimer(m_timerId);
         m_timerId = 0;
     }
-} // StageListView::setBatchProcessingInProgress
+}  // StageListView::setBatchProcessingInProgress
 
 void StageListView::timerEvent(QTimerEvent* event) {
     if (event->timerId() != m_timerId) {
@@ -226,9 +217,7 @@ void StageListView::initiateBatchAnimationFrameRendering() {
         return;
     }
 
-    m_pModel->updateBatchProcessingAnimation(
-            selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]
-    );
+    m_pModel->updateBatchProcessingAnimation(selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]);
     if (++m_curBatchAnimationFrame == (int) m_batchAnimationPixmaps.size()) {
         m_curBatchAnimationFrame = 0;
     }
@@ -281,12 +270,14 @@ void StageListView::createBatchAnimationSequence(const int square_side) {
     const int num_frames = 8;
     m_batchAnimationPixmaps.resize(num_frames);
 
-    const QColor head_color(ColorSchemeManager::instance()->getColorParam(
-            "stage_list_head_color",
-            palette().color(QPalette::Window).lighter(200)).color());
-    const QColor tail_color(ColorSchemeManager::instance()->getColorParam(
-            "stage_list_tail_color",
-            palette().color(QPalette::Window).lighter(130)).color());
+    const QColor head_color(
+            ColorSchemeManager::instance()
+                    ->getColorParam("stage_list_head_color", palette().color(QPalette::Window).lighter(200))
+                    .color());
+    const QColor tail_color(
+            ColorSchemeManager::instance()
+                    ->getColorParam("stage_list_tail_color", palette().color(QPalette::Window).lighter(130))
+                    .color());
 
     BubbleAnimation animation(num_frames);
     for (int i = 0; i < num_frames; ++i) {
@@ -322,9 +313,7 @@ int StageListView::selectedRow() const {
 /*========================= StageListView::Model ======================*/
 
 StageListView::Model::Model(QObject* parent, intrusive_ptr<StageSequence> stages)
-        : QAbstractTableModel(parent),
-          m_ptrStages(std::move(stages)),
-          m_curSelectedRow(0) {
+        : QAbstractTableModel(parent), m_ptrStages(std::move(stages)), m_curSelectedRow(0) {
     assert(m_ptrStages);
 }
 
@@ -367,9 +356,7 @@ QVariant StageListView::Model::data(const QModelIndex& index, const int role) co
 
 /*================= StageListView::LeftColDelegate ===================*/
 
-StageListView::LeftColDelegate::LeftColDelegate(StageListView* view)
-        : SuperClass(view),
-          m_pView(view) {
+StageListView::LeftColDelegate::LeftColDelegate(StageListView* view) : SuperClass(view), m_pView(view) {
 }
 
 void StageListView::LeftColDelegate::paint(QPainter* painter,
@@ -387,8 +374,7 @@ void StageListView::LeftColDelegate::paint(QPainter* painter,
 
 /*================= StageListView::RightColDelegate ===================*/
 
-StageListView::RightColDelegate::RightColDelegate(QObject* parent)
-        : SuperClass(parent) {
+StageListView::RightColDelegate::RightColDelegate(QObject* parent) : SuperClass(parent) {
 }
 
 void StageListView::RightColDelegate::paint(QPainter* painter,
@@ -406,4 +392,3 @@ void StageListView::RightColDelegate::paint(QPainter* painter,
         }
     }
 }
-

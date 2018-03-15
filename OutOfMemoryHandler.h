@@ -26,8 +26,8 @@
 #include <cstddef>
 
 class OutOfMemoryHandler : public QObject {
-Q_OBJECT
-DECLARE_NON_COPYABLE(OutOfMemoryHandler)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(OutOfMemoryHandler)
 
 public:
     static OutOfMemoryHandler& instance();

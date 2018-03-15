@@ -266,10 +266,10 @@ private:
     QPolygonF m_postCropArea;
     QPolygonF m_resultingPostCropArea;  // Managed by update().
     Dpi m_origDpi;
-    Dpi m_preScaledDpi;  // Always set, as preScaleToEqualizeDpi() is called from the constructor.
+    Dpi m_preScaledDpi;   // Always set, as preScaleToEqualizeDpi() is called from the constructor.
     Dpi m_postScaledDpi;  // Default constructed object if no post-scaling.
     OrthogonalRotation m_preRotation;
 };
 
 
-#endif // ifndef IMAGETRANSFORMATION_H_
+#endif  // ifndef IMAGETRANSFORMATION_H_

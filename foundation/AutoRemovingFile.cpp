@@ -21,16 +21,13 @@
 
 AutoRemovingFile::AutoRemovingFile() = default;
 
-AutoRemovingFile::AutoRemovingFile(const QString& file_path)
-        : m_file(file_path) {
+AutoRemovingFile::AutoRemovingFile(const QString& file_path) : m_file(file_path) {
 }
 
-AutoRemovingFile::AutoRemovingFile(AutoRemovingFile& other)
-        : m_file(other.release()) {
+AutoRemovingFile::AutoRemovingFile(AutoRemovingFile& other) : m_file(other.release()) {
 }
 
-AutoRemovingFile::AutoRemovingFile(CopyHelper other)
-        : m_file(other.obj->release()) {
+AutoRemovingFile::AutoRemovingFile(CopyHelper other) : m_file(other.obj->release()) {
 }
 
 AutoRemovingFile::~AutoRemovingFile() {
@@ -67,4 +64,3 @@ QString AutoRemovingFile::release() {
 
     return saved;
 }
-

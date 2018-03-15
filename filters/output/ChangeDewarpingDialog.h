@@ -32,32 +32,32 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace output {
-    class ChangeDewarpingDialog : public QDialog {
+class ChangeDewarpingDialog : public QDialog {
     Q_OBJECT
-    public:
-        ChangeDewarpingDialog(QWidget* parent,
-                              const PageId& cur_page,
-                              const DewarpingOptions& dewarpingOptions,
-                              const PageSelectionAccessor& page_selection_accessor);
+public:
+    ChangeDewarpingDialog(QWidget* parent,
+                          const PageId& cur_page,
+                          const DewarpingOptions& dewarpingOptions,
+                          const PageSelectionAccessor& page_selection_accessor);
 
-        ~ChangeDewarpingDialog() override;
+    ~ChangeDewarpingDialog() override;
 
-    signals:
+signals:
 
-        void accepted(const std::set<PageId>& pages, const DewarpingOptions& dewarpingOptions);
+    void accepted(const std::set<PageId>& pages, const DewarpingOptions& dewarpingOptions);
 
-    private slots:
+private slots:
 
-        void onSubmit();
+    void onSubmit();
 
-    private:
-        Ui::OutputChangeDewarpingDialog ui;
-        PageSequence m_pages;
-        std::set<PageId> m_selectedPages;
-        PageId m_curPage;
-        DewarpingMode m_dewarpingMode;
-        DewarpingOptions m_dewarpingOptions;
-        QButtonGroup* m_pScopeGroup;
-    };
+private:
+    Ui::OutputChangeDewarpingDialog ui;
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    PageId m_curPage;
+    DewarpingMode m_dewarpingMode;
+    DewarpingOptions m_dewarpingOptions;
+    QButtonGroup* m_pScopeGroup;
+};
 }  // namespace output
-#endif // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_
+#endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_

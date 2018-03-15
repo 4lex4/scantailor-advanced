@@ -23,8 +23,7 @@
 
 class PerformanceTimer {
 public:
-    PerformanceTimer()
-            : m_start(clock()) {
+    PerformanceTimer() : m_start(clock()) {
     }
 
     void print(const char* prefix = "");

@@ -38,9 +38,7 @@ template<size_t N, typename T>
 class VecNT {
 public:
     typedef T type;
-    enum {
-        SIZE = static_cast<int>(N)
-    };
+    enum { SIZE = static_cast<int>(N) };
 
     /**
      * \brief Initializes vector elements to T().
@@ -68,7 +66,7 @@ public:
      *        vector and the last element value.
      */
     template<typename OT>
-    VecNT(VecNT<N - 1, OT>const & lesser, T last);
+    VecNT(VecNT<N - 1, OT> const& lesser, T last);
 
     /**
      * \brief 1D vector constructor.
@@ -167,51 +165,51 @@ private:
 
 
 namespace vecnt {
-    template<size_t N, typename T>
-    struct SizeSpecific;
+template<size_t N, typename T>
+struct SizeSpecific;
 
-    template<typename T>
-    struct SizeSpecific<1, T> {
-        static void assign(T* data, T x) {
-            data[0] = x;
-        }
-    };
+template<typename T>
+struct SizeSpecific<1, T> {
+    static void assign(T* data, T x) {
+        data[0] = x;
+    }
+};
 
-    template<typename T>
-    struct SizeSpecific<2, T> {
-        static void assign(T* data, T x, T y) {
-            data[0] = x;
-            data[1] = y;
-        }
+template<typename T>
+struct SizeSpecific<2, T> {
+    static void assign(T* data, T x, T y) {
+        data[0] = x;
+        data[1] = y;
+    }
 
-        static void assign(T* data, const QPointF& pt) {
-            data[0] = static_cast<T>(pt.x());
-            data[1] = static_cast<T>(pt.y());
-        }
+    static void assign(T* data, const QPointF& pt) {
+        data[0] = static_cast<T>(pt.x());
+        data[1] = static_cast<T>(pt.y());
+    }
 
-        static QPointF toQPointF(const T* data) {
-            return QPointF(static_cast<qreal>(data[0]), static_cast<qreal>(data[1]));
-        }
-    };
+    static QPointF toQPointF(const T* data) {
+        return QPointF(static_cast<qreal>(data[0]), static_cast<qreal>(data[1]));
+    }
+};
 
-    template<typename T>
-    struct SizeSpecific<3, T> {
-        static void assign(T* data, T x, T y, T z) {
-            data[0] = x;
-            data[1] = y;
-            data[2] = z;
-        }
-    };
+template<typename T>
+struct SizeSpecific<3, T> {
+    static void assign(T* data, T x, T y, T z) {
+        data[0] = x;
+        data[1] = y;
+        data[2] = z;
+    }
+};
 
-    template<typename T>
-    struct SizeSpecific<4, T> {
-        static void assign(T* data, T x, T y, T z, T w) {
-            data[0] = x;
-            data[1] = y;
-            data[2] = z;
-            data[3] = w;
-        }
-    };
+template<typename T>
+struct SizeSpecific<4, T> {
+    static void assign(T* data, T x, T y, T z, T w) {
+        data[0] = x;
+        data[1] = y;
+        data[2] = z;
+        data[3] = w;
+    }
+};
 }  // namespace vecnt
 
 template<size_t N, typename T>
@@ -239,7 +237,7 @@ VecNT<N, T>::VecNT(const VecNT<N, OT>& other) {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>::VecNT(VecNT<N - 1, OT>const & lesser, T last) {
+VecNT<N, T>::VecNT(VecNT<N - 1, OT> const& lesser, T last) {
     for (size_t i = 0; i < N - 1; ++i) {
         m_data[i] = static_cast<T>(lesser[i]);
     }

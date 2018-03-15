@@ -34,84 +34,84 @@
 class ProjectPages;
 
 namespace page_split {
-    class Settings;
+class Settings;
 
-    class OptionsWidget : public FilterOptionsWidget, private Ui::PageSplitOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::PageSplitOptionsWidget {
     Q_OBJECT
+public:
+    class UiData {
+        // Member-wise copying is OK.
     public:
-        class UiData {
-            // Member-wise copying is OK.
-        public:
-            UiData();
+        UiData();
 
-            ~UiData();
+        ~UiData();
 
-            void setPageLayout(const PageLayout& layout);
+        void setPageLayout(const PageLayout& layout);
 
-            const PageLayout& pageLayout() const;
+        const PageLayout& pageLayout() const;
 
-            void setDependencies(const Dependencies& deps);
+        void setDependencies(const Dependencies& deps);
 
-            const Dependencies& dependencies() const;
+        const Dependencies& dependencies() const;
 
-            void setSplitLineMode(AutoManualMode mode);
+        void setSplitLineMode(AutoManualMode mode);
 
-            AutoManualMode splitLineMode() const;
+        AutoManualMode splitLineMode() const;
 
-            bool layoutTypeAutoDetected() const;
+        bool layoutTypeAutoDetected() const;
 
-            void setLayoutTypeAutoDetected(bool val);
-
-        private:
-            PageLayout m_pageLayout;
-            Dependencies m_deps;
-            AutoManualMode m_splitLineMode;
-            bool m_layoutTypeAutoDetected;
-        };
-
-
-        OptionsWidget(intrusive_ptr<Settings> settings,
-                      intrusive_ptr<ProjectPages> page_sequence,
-                      const PageSelectionAccessor& page_selection_accessor);
-
-        ~OptionsWidget() override;
-
-        void preUpdateUI(const PageId& page_id);
-
-        void postUpdateUI(const UiData& ui_data);
-
-    signals:
-
-        void pageLayoutSetLocally(const PageLayout& page_layout);
-
-    public slots:
-
-        void pageLayoutSetExternally(const PageLayout& page_layout);
-
-    private slots:
-
-        void layoutTypeButtonToggled(bool checked);
-
-        void showChangeDialog();
-
-        void layoutTypeSet(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
-
-        void splitLineModeChanged(bool auto_mode);
+        void setLayoutTypeAutoDetected(bool val);
 
     private:
-        void commitCurrentParams();
-
-        void setupUiConnections();
-
-        void removeUiConnections();
-
-        intrusive_ptr<Settings> m_ptrSettings;
-        intrusive_ptr<ProjectPages> m_ptrPages;
-        PageSelectionAccessor m_pageSelectionAccessor;
-        PageId m_pageId;
-        UiData m_uiData;
-        int m_ignoreAutoManualToggle;
-        int m_ignoreLayoutTypeToggle;
+        PageLayout m_pageLayout;
+        Dependencies m_deps;
+        AutoManualMode m_splitLineMode;
+        bool m_layoutTypeAutoDetected;
     };
+
+
+    OptionsWidget(intrusive_ptr<Settings> settings,
+                  intrusive_ptr<ProjectPages> page_sequence,
+                  const PageSelectionAccessor& page_selection_accessor);
+
+    ~OptionsWidget() override;
+
+    void preUpdateUI(const PageId& page_id);
+
+    void postUpdateUI(const UiData& ui_data);
+
+signals:
+
+    void pageLayoutSetLocally(const PageLayout& page_layout);
+
+public slots:
+
+    void pageLayoutSetExternally(const PageLayout& page_layout);
+
+private slots:
+
+    void layoutTypeButtonToggled(bool checked);
+
+    void showChangeDialog();
+
+    void layoutTypeSet(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
+
+    void splitLineModeChanged(bool auto_mode);
+
+private:
+    void commitCurrentParams();
+
+    void setupUiConnections();
+
+    void removeUiConnections();
+
+    intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<ProjectPages> m_ptrPages;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    UiData m_uiData;
+    int m_ignoreAutoManualToggle;
+    int m_ignoreLayoutTypeToggle;
+};
 }  // namespace page_split
-#endif // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
+#endif  // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_

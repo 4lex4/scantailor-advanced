@@ -27,8 +27,7 @@
 
 class ref_countable {
 public:
-    ref_countable()
-            : m_refCounter(0) {
+    ref_countable() : m_refCounter(0) {
     }
 
     ref_countable(const ref_countable& other) {
@@ -58,4 +57,4 @@ private:
 };
 
 
-#endif // ifndef ref_countable_H_
+#endif  // ifndef ref_countable_H_

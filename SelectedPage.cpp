@@ -35,4 +35,3 @@ PageId SelectedPage::get(PageView view) const {
         return PageId(m_pageId.imageId(), PageId::SINGLE_PAGE);
     }
 }
-

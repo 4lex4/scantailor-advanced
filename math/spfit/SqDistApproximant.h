@@ -24,7 +24,7 @@
 #include <QLineF>
 
 namespace spfit {
-    class FrenetFrame;
+class FrenetFrame;
 
 /**
  * A quadratic function of the form:\n
@@ -42,20 +42,19 @@ namespace spfit {
  *
  * \see Eq 8 in [1], Fig 4, 5 in [2].
  */
-    struct SqDistApproximant {
-        Mat22d A;
-        Vec2d b;
-        double c;
+struct SqDistApproximant {
+    Mat22d A;
+    Vec2d b;
+    double c;
 
-        /**
-         * Constructs a distance function that always evaluates to zero.
-         * Passing it to Optimizer::addSample() will have no effect.
-         */
-        SqDistApproximant()
-                : c(0) {
-        }
+    /**
+     * Constructs a distance function that always evaluates to zero.
+     * Passing it to Optimizer::addSample() will have no effect.
+     */
+    SqDistApproximant() : c(0) {
+    }
 
-        /**
+    /**
      * \brief The general case constructor.
      *
      * We have a coordinate system at \p origin with orthonormal basis formed
@@ -69,26 +68,26 @@ namespace spfit {
      * j = (p - origin) . v;
      * \endcode
      */
-        SqDistApproximant(const Vec2d& origin, const Vec2d& u, const Vec2d& v, double m, double n);
+    SqDistApproximant(const Vec2d& origin, const Vec2d& u, const Vec2d& v, double m, double n);
 
-        static SqDistApproximant pointDistance(const Vec2d& pt);
+    static SqDistApproximant pointDistance(const Vec2d& pt);
 
-        static SqDistApproximant weightedPointDistance(const Vec2d& pt, double weight);
+    static SqDistApproximant weightedPointDistance(const Vec2d& pt, double weight);
 
-        static SqDistApproximant lineDistance(const QLineF& line);
+    static SqDistApproximant lineDistance(const QLineF& line);
 
-        static SqDistApproximant weightedLineDistance(const QLineF& line, double weight);
+    static SqDistApproximant weightedLineDistance(const QLineF& line, double weight);
 
-        static SqDistApproximant curveDistance(const Vec2d& reference_point,
-                                               const FrenetFrame& frenet_frame,
-                                               double signed_curvature);
+    static SqDistApproximant curveDistance(const Vec2d& reference_point,
+                                           const FrenetFrame& frenet_frame,
+                                           double signed_curvature);
 
-        static SqDistApproximant weightedCurveDistance(const Vec2d& reference_point,
-                                                       const FrenetFrame& frenet_frame,
-                                                       double signed_curvature,
-                                                       double weight);
+    static SqDistApproximant weightedCurveDistance(const Vec2d& reference_point,
+                                                   const FrenetFrame& frenet_frame,
+                                                   double signed_curvature,
+                                                   double weight);
 
-        double evaluate(const Vec2d& pt) const;
-    };
+    double evaluate(const Vec2d& pt) const;
+};
 }  // namespace spfit
-#endif // ifndef SQDIST_APPROXIMANT_H_
+#endif  // ifndef SQDIST_APPROXIMANT_H_

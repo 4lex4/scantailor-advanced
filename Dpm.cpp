@@ -23,19 +23,14 @@
 
 using namespace imageproc;
 
-Dpm::Dpm(const QSize size)
-        : m_xDpm(size.width()),
-          m_yDpm(size.height()) {
+Dpm::Dpm(const QSize size) : m_xDpm(size.width()), m_yDpm(size.height()) {
 }
 
 Dpm::Dpm(const Dpi dpi)
-        : m_xDpm(qRound(dpi.horizontal() * constants::DPI2DPM)),
-          m_yDpm(qRound(dpi.vertical() * constants::DPI2DPM)) {
+        : m_xDpm(qRound(dpi.horizontal() * constants::DPI2DPM)), m_yDpm(qRound(dpi.vertical() * constants::DPI2DPM)) {
 }
 
-Dpm::Dpm(const QImage& image)
-        : m_xDpm(image.dotsPerMeterX()),
-          m_yDpm(image.dotsPerMeterY()) {
+Dpm::Dpm(const QImage& image) : m_xDpm(image.dotsPerMeterX()), m_yDpm(image.dotsPerMeterY()) {
 }
 
 bool Dpm::isNull() const {
@@ -53,4 +48,3 @@ QSize Dpm::toSize() const {
 bool Dpm::operator==(const Dpm& other) const {
     return m_xDpm == other.m_xDpm && m_yDpm == other.m_yDpm;
 }
-

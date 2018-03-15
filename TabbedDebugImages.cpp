@@ -19,8 +19,7 @@
 #include "DebugImageView.h"
 #include "TabbedDebugImages.h"
 
-TabbedDebugImages::TabbedDebugImages(QWidget* parent)
-        : QTabWidget(parent) {
+TabbedDebugImages::TabbedDebugImages(QWidget* parent) : QTabWidget(parent) {
     setDocumentMode(true);
     connect(this, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
 }
@@ -41,4 +40,3 @@ void TabbedDebugImages::removeExcessLiveViews() {
         m_liveViews.erase(m_liveViews.begin());
     }
 }
-

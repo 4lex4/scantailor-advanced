@@ -84,8 +84,7 @@ private:
 
 
 template<typename T>
-intrusive_ptr<T>
-PropertySet::locate() {
+intrusive_ptr<T> PropertySet::locate() {
     PropList::iterator it(m_props.begin());
     const PropList::iterator end(m_props.end());
     for (; it != end; ++it) {
@@ -98,8 +97,7 @@ PropertySet::locate() {
 }
 
 template<typename T>
-intrusive_ptr<T const>
-PropertySet::locate() const {
+intrusive_ptr<T const> PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
     const PropList::const_iterator end(m_props.end());
     for (; it != end; ++it) {
@@ -112,8 +110,7 @@ PropertySet::locate() const {
 }
 
 template<typename T>
-intrusive_ptr<T>
-PropertySet::locateOrDefault() {
+intrusive_ptr<T> PropertySet::locateOrDefault() {
     intrusive_ptr<T> obj(locate<T>());
     if (!obj) {
         obj.reset(new T);
@@ -123,8 +120,7 @@ PropertySet::locateOrDefault() {
 }
 
 template<typename T>
-intrusive_ptr<T const>
-PropertySet::locateOrDefault() const {
+intrusive_ptr<T const> PropertySet::locateOrDefault() const {
     intrusive_ptr<T const> obj(locate<T>());
     if (!obj) {
         obj.reset(new T);
@@ -134,8 +130,7 @@ PropertySet::locateOrDefault() const {
 }
 
 template<typename T>
-intrusive_ptr<T>
-PropertySet::locateOrCreate() {
+intrusive_ptr<T> PropertySet::locateOrCreate() {
     intrusive_ptr<T> obj(locate<T>());
     if (!obj) {
         obj.reset(new T);

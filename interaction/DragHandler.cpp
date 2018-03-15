@@ -21,22 +21,18 @@
 #include <QMouseEvent>
 
 DragHandler::DragHandler(ImageViewBase& image_view)
-        : m_rImageView(image_view),
-          m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter) {
+        : m_rImageView(image_view), m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter) {
     init();
 }
 
 DragHandler::DragHandler(ImageViewBase& image_view,
-                         boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter)
-        : m_rImageView(image_view),
-          m_interactionPermitter(explicit_interaction_permitter) {
+                         boost::function<bool(const InteractionState&)> const& explicit_interaction_permitter)
+        : m_rImageView(image_view), m_interactionPermitter(explicit_interaction_permitter) {
     init();
 }
 
 void DragHandler::init() {
-    m_interaction.setInteractionStatusTip(
-            tr("Unrestricted dragging is possible by holding down the Shift key.")
-    );
+    m_interaction.setInteractionStatusTip(tr("Unrestricted dragging is possible by holding down the Shift key."));
 }
 
 bool DragHandler::isActive() const {
@@ -46,8 +42,7 @@ bool DragHandler::isActive() const {
 void DragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
     m_lastMousePos = event->pos();
 
-    if ((event->buttons() & (Qt::LeftButton | Qt::MidButton))
-        && !interaction.capturedBy(m_interaction)
+    if ((event->buttons() & (Qt::LeftButton | Qt::MidButton)) && !interaction.capturedBy(m_interaction)
         && m_interactionPermitter(interaction)) {
         interaction.capture(m_interaction);
     }
@@ -81,4 +76,3 @@ void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interac
         }
     }
 }
-

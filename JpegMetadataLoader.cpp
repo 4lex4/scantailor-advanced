@@ -32,167 +32,164 @@ extern "C" {
 namespace {
 /*======================== JpegDecompressionHandle =======================*/
 
-    class JpegDecompressHandle {
+class JpegDecompressHandle {
     DECLARE_NON_COPYABLE(JpegDecompressHandle)
 
-    public:
-        JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr);
+public:
+    JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr);
 
-        ~JpegDecompressHandle();
+    ~JpegDecompressHandle();
 
-        jpeg_decompress_struct* ptr() {
-            return &m_info;
-        }
-
-        jpeg_decompress_struct* operator->() {
-            return &m_info;
-        }
-
-    private:
-        jpeg_decompress_struct m_info{ };
-    };
-
-
-    JpegDecompressHandle::JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr) {
-        m_info.err = err_mgr;
-        jpeg_create_decompress(&m_info);
-        m_info.src = src_mgr;
+    jpeg_decompress_struct* ptr() {
+        return &m_info;
     }
 
-    JpegDecompressHandle::~JpegDecompressHandle() {
-        jpeg_destroy_decompress(&m_info);
+    jpeg_decompress_struct* operator->() {
+        return &m_info;
     }
+
+private:
+    jpeg_decompress_struct m_info{};
+};
+
+
+JpegDecompressHandle::JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr) {
+    m_info.err = err_mgr;
+    jpeg_create_decompress(&m_info);
+    m_info.src = src_mgr;
+}
+
+JpegDecompressHandle::~JpegDecompressHandle() {
+    jpeg_destroy_decompress(&m_info);
+}
 
 /*============================ JpegSourceManager =========================*/
 
-    class JpegSourceManager : public jpeg_source_mgr {
+class JpegSourceManager : public jpeg_source_mgr {
     DECLARE_NON_COPYABLE(JpegSourceManager)
 
-    public:
-        explicit JpegSourceManager(QIODevice& io_device);
+public:
+    explicit JpegSourceManager(QIODevice& io_device);
 
-    private:
-        static void initSource(j_decompress_ptr cinfo);
+private:
+    static void initSource(j_decompress_ptr cinfo);
 
-        static boolean fillInputBuffer(j_decompress_ptr cinfo);
+    static boolean fillInputBuffer(j_decompress_ptr cinfo);
 
-        boolean fillInputBufferImpl();
+    boolean fillInputBufferImpl();
 
-        static void skipInputData(j_decompress_ptr cinfo, long num_bytes);
+    static void skipInputData(j_decompress_ptr cinfo, long num_bytes);
 
-        void skipInputDataImpl(long num_bytes);
+    void skipInputDataImpl(long num_bytes);
 
-        static void termSource(j_decompress_ptr cinfo);
+    static void termSource(j_decompress_ptr cinfo);
 
-        static JpegSourceManager* object(j_decompress_ptr cinfo);
+    static JpegSourceManager* object(j_decompress_ptr cinfo);
 
-        QIODevice& m_rDevice;
-        JOCTET m_buf[4096]{ };
-    };
+    QIODevice& m_rDevice;
+    JOCTET m_buf[4096]{};
+};
 
 
-    JpegSourceManager::JpegSourceManager(QIODevice& io_device)
-            : jpeg_source_mgr(), m_rDevice(io_device) {
-        init_source = &JpegSourceManager::initSource;
-        fill_input_buffer = &JpegSourceManager::fillInputBuffer;
-        skip_input_data = &JpegSourceManager::skipInputData;
-        resync_to_restart = &jpeg_resync_to_restart;
-        term_source = &JpegSourceManager::termSource;
-        bytes_in_buffer = 0;
-        next_input_byte = m_buf;
+JpegSourceManager::JpegSourceManager(QIODevice& io_device) : jpeg_source_mgr(), m_rDevice(io_device) {
+    init_source = &JpegSourceManager::initSource;
+    fill_input_buffer = &JpegSourceManager::fillInputBuffer;
+    skip_input_data = &JpegSourceManager::skipInputData;
+    resync_to_restart = &jpeg_resync_to_restart;
+    term_source = &JpegSourceManager::termSource;
+    bytes_in_buffer = 0;
+    next_input_byte = m_buf;
+}
+
+void JpegSourceManager::initSource(j_decompress_ptr cinfo) {
+    // No-op.
+}
+
+boolean JpegSourceManager::fillInputBuffer(j_decompress_ptr cinfo) {
+    return object(cinfo)->fillInputBufferImpl();
+}
+
+boolean JpegSourceManager::fillInputBufferImpl() {
+    const qint64 bytes_read = m_rDevice.read((char*) m_buf, sizeof(m_buf));
+    if (bytes_read > 0) {
+        bytes_in_buffer = bytes_read;
+    } else {
+        // Insert a fake EOI marker.
+        m_buf[0] = 0xFF;
+        m_buf[1] = JPEG_EOI;
+        bytes_in_buffer = 2;
+    }
+    next_input_byte = m_buf;
+
+    return 1;
+}
+
+void JpegSourceManager::skipInputData(j_decompress_ptr cinfo, long num_bytes) {
+    object(cinfo)->skipInputDataImpl(num_bytes);
+}
+
+void JpegSourceManager::skipInputDataImpl(long num_bytes) {
+    if (num_bytes <= 0) {
+        return;
     }
 
-    void JpegSourceManager::initSource(j_decompress_ptr cinfo) {
-        // No-op.
+    while (num_bytes > (long) bytes_in_buffer) {
+        num_bytes -= (long) bytes_in_buffer;
+        fillInputBufferImpl();
     }
+    next_input_byte += num_bytes;
+    bytes_in_buffer -= num_bytes;
+}
 
-    boolean JpegSourceManager::fillInputBuffer(j_decompress_ptr cinfo) {
-        return object(cinfo)->fillInputBufferImpl();
-    }
+void JpegSourceManager::termSource(j_decompress_ptr cinfo) {
+    // No-op.
+}
 
-    boolean JpegSourceManager::fillInputBufferImpl() {
-        const qint64 bytes_read = m_rDevice.read((char*) m_buf, sizeof(m_buf));
-        if (bytes_read > 0) {
-            bytes_in_buffer = bytes_read;
-        } else {
-            // Insert a fake EOI marker.
-            m_buf[0] = 0xFF;
-            m_buf[1] = JPEG_EOI;
-            bytes_in_buffer = 2;
-        }
-        next_input_byte = m_buf;
-
-        return 1;
-    }
-
-    void JpegSourceManager::skipInputData(j_decompress_ptr cinfo, long num_bytes) {
-        object(cinfo)->skipInputDataImpl(num_bytes);
-    }
-
-    void JpegSourceManager::skipInputDataImpl(long num_bytes) {
-        if (num_bytes <= 0) {
-            return;
-        }
-
-        while (num_bytes > (long) bytes_in_buffer) {
-            num_bytes -= (long) bytes_in_buffer;
-            fillInputBufferImpl();
-        }
-        next_input_byte += num_bytes;
-        bytes_in_buffer -= num_bytes;
-    }
-
-    void JpegSourceManager::termSource(j_decompress_ptr cinfo) {
-        // No-op.
-    }
-
-    JpegSourceManager* JpegSourceManager::object(j_decompress_ptr cinfo) {
-        return static_cast<JpegSourceManager*>(cinfo->src);
-    }
+JpegSourceManager* JpegSourceManager::object(j_decompress_ptr cinfo) {
+    return static_cast<JpegSourceManager*>(cinfo->src);
+}
 
 /*============================= JpegErrorManager ===========================*/
 
-    class JpegErrorManager : public jpeg_error_mgr {
+class JpegErrorManager : public jpeg_error_mgr {
     DECLARE_NON_COPYABLE(JpegErrorManager)
 
-    public:
-        JpegErrorManager();
+public:
+    JpegErrorManager();
 
-        jmp_buf& jmpBuf() {
-            return m_jmpBuf;
-        }
-
-    private:
-        static void errorExit(j_common_ptr cinfo);
-
-        static JpegErrorManager* object(j_common_ptr cinfo);
-
-        jmp_buf m_jmpBuf{ };
-    };
-
-
-    JpegErrorManager::JpegErrorManager() : jpeg_error_mgr() {
-        jpeg_std_error(this);
-        error_exit = &JpegErrorManager::errorExit;
+    jmp_buf& jmpBuf() {
+        return m_jmpBuf;
     }
 
-    void JpegErrorManager::errorExit(j_common_ptr cinfo) {
-        longjmp(object(cinfo)->jmpBuf(), 1);
-    }
+private:
+    static void errorExit(j_common_ptr cinfo);
 
-    JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
-        return static_cast<JpegErrorManager*>(cinfo->err);
-    }
-}  // namespace {
+    static JpegErrorManager* object(j_common_ptr cinfo);
+
+    jmp_buf m_jmpBuf{};
+};
+
+
+JpegErrorManager::JpegErrorManager() : jpeg_error_mgr() {
+    jpeg_std_error(this);
+    error_exit = &JpegErrorManager::errorExit;
+}
+
+void JpegErrorManager::errorExit(j_common_ptr cinfo) {
+    longjmp(object(cinfo)->jmpBuf(), 1);
+}
+
+JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
+    return static_cast<JpegErrorManager*>(cinfo->err);
+}
+}  // namespace
 
 /*============================= JpegMetadataLoader ==========================*/
 
 void JpegMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
-        ImageMetadataLoader::registerLoader(
-                intrusive_ptr<ImageMetadataLoader>(new JpegMetadataLoader)
-        );
+        ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader>(new JpegMetadataLoader));
         registered = true;
     }
 }
@@ -203,7 +200,7 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
         return GENERIC_ERROR;
     }
 
-    static const unsigned char jpeg_signature[] = { 0xff, 0xd8, 0xff };
+    static const unsigned char jpeg_signature[] = {0xff, 0xd8, 0xff};
     static const int sig_size = sizeof(jpeg_signature);
 
     unsigned char signature[sig_size];
@@ -249,5 +246,4 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_devic
     out(ImageMetadata(size, dpi));
 
     return LOADED;
-} // JpegMetadataLoader::loadMetadata
-
+}  // JpegMetadataLoader::loadMetadata

@@ -26,12 +26,8 @@ ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& con
                                                      InteractionState& interaction,
                                                      const EditableSpline::Ptr& spline,
                                                      const SplineVertex::Ptr& vertex)
-        : m_rContext(context),
-          m_ptrSpline(spline),
-          m_ptrVertex(vertex) {
-    const QPointF screen_mouse_pos(
-            m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)
-    );
+        : m_rContext(context), m_ptrSpline(spline), m_ptrVertex(vertex) {
+    const QPointF screen_mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
     const QTransform to_screen(m_rContext.imageView().imageToWidget());
     m_dragOffset = to_screen.map(vertex->point()) - screen_mouse_pos;
 
@@ -89,11 +85,8 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, const InteractionStat
     painter.setPen(gradient_pen);
     painter.drawLine(next, pt);
 
-    m_visualizer.drawVertex(
-            painter, to_screen.map(m_ptrVertex->point()),
-            m_visualizer.highlightBrightColor()
-    );
-} // ZoneVertexDragInteraction::onPaint
+    m_visualizer.drawVertex(painter, to_screen.map(m_ptrVertex->point()), m_visualizer.highlightBrightColor());
+}  // ZoneVertexDragInteraction::onPaint
 
 void ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {
@@ -131,8 +124,7 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
                                         / sqrt(pow((next.y() - current.y()), 2) + pow((next.x() - current.x()), 2)));
 
 
-            if ((prev_angle_cos < next_angle_cos)
-                || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
+            if ((prev_angle_cos < next_angle_cos) || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
                 || (std::isnan(next_angle_cos) && (prev_angle_cos < (1.0 / sqrt(2))))) {
                 prev.setX(current.x());
                 next.setY(current.y());
@@ -177,4 +169,3 @@ void ZoneVertexDragInteraction::checkProximity(const InteractionState& interacti
         m_interaction.setInteractionStatusTip(tr("Move the vertex to one of its neighbors to merge them."));
     }
 }
-

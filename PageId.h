@@ -31,11 +31,7 @@ class QString;
 class PageId {
     // Member-wise copying is OK.
 public:
-    enum SubPage {
-        SINGLE_PAGE,
-        LEFT_PAGE,
-        RIGHT_PAGE
-    };
+    enum SubPage { SINGLE_PAGE, LEFT_PAGE, RIGHT_PAGE };
 
     PageId();
 
@@ -84,13 +80,12 @@ bool operator!=(const PageId& lhs, const PageId& rhs);
 bool operator<(const PageId& lhs, const PageId& rhs);
 
 namespace std {
-    template<>
-    struct hash<PageId> {
-        size_t operator()(const PageId& pageId) const noexcept {
-            return (hash<ImageId>()(pageId.imageId())
-                    ^ hash<int>()(pageId.subPage()) << 1);
-        }
-    };
-}
+template<>
+struct hash<PageId> {
+    size_t operator()(const PageId& pageId) const noexcept {
+        return (hash<ImageId>()(pageId.imageId()) ^ hash<int>()(pageId.subPage()) << 1);
+    }
+};
+}  // namespace std
 
-#endif // ifndef PAGEID_H_
+#endif  // ifndef PAGEID_H_

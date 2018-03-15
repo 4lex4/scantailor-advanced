@@ -20,9 +20,7 @@
 #include "PolylineIntersector.h"
 #include "ToLineProjector.h"
 
-PolylineIntersector::Hint::Hint()
-        : m_lastSegment(0),
-          m_direction(1) {
+PolylineIntersector::Hint::Hint() : m_lastSegment(0), m_direction(1) {
 }
 
 void PolylineIntersector::Hint::update(int new_segment) {
@@ -31,8 +29,7 @@ void PolylineIntersector::Hint::update(int new_segment) {
 }
 
 PolylineIntersector::PolylineIntersector(const std::vector<QPointF>& polyline)
-        : m_polyline(polyline),
-          m_numSegments(static_cast<int>(polyline.size() - 1)) {
+        : m_polyline(polyline), m_numSegments(static_cast<int>(polyline.size() - 1)) {
 }
 
 QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
@@ -87,7 +84,7 @@ QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
     hint.update(left_idx);
 
     return intersectWithSegment(line, left_idx);
-} // PolylineIntersector::intersect
+}  // PolylineIntersector::intersect
 
 bool PolylineIntersector::intersectsSegment(const QLineF& normal, int segment) const {
     if ((segment < 0) || (segment >= m_numSegments)) {
@@ -120,7 +117,8 @@ QPointF PolylineIntersector::intersectWithSegment(const QLineF& line, int segmen
     return intersection;
 }
 
-bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line, QPointF& intersection,
+bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line,
+                                                           QPointF& intersection,
                                                            Hint& hint) const {
     const QLineF normal(line.normalVector());
     const QPointF origin(normal.p1());
@@ -147,4 +145,3 @@ bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line, Q
 
     return true;
 }
-

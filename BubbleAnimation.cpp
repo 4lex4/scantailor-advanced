@@ -26,9 +26,7 @@
 
 using namespace imageproc;
 
-BubbleAnimation::BubbleAnimation(const int num_bubbles)
-        : m_numBubbles(num_bubbles),
-          m_curFrame(0) {
+BubbleAnimation::BubbleAnimation(const int num_bubbles) : m_numBubbles(num_bubbles), m_curFrame(0) {
     assert(m_numBubbles > 0);
 }
 
@@ -42,12 +40,12 @@ bool BubbleAnimation::nextFrame(const QColor& head_color, const QColor& tail_col
     return nextFrame(head_color, tail_color, &painter, rect);
 }
 
-bool BubbleAnimation::nextFrame(const QColor& head_color, const QColor& tail_color, QPainter* painter,
+bool BubbleAnimation::nextFrame(const QColor& head_color,
+                                const QColor& tail_color,
+                                QPainter* painter,
                                 const QRectF rect) {
     const QPointF center(rect.center());
-    const double radius = std::min(
-            center.x() - rect.x(), center.y() - rect.y()
-    );
+    const double radius = std::min(center.x() - rect.x(), center.y() - rect.y());
 
     const double PI = imageproc::constants::PI;
     const double arc_fraction_as_radius = 0.25;
@@ -56,9 +54,7 @@ bool BubbleAnimation::nextFrame(const QColor& head_color, const QColor& tail_col
     // arc_between_bubbles = 2.0 * PI * reduced_radius / m_numBubbles;
     // reduced_radius = radius - bubble_radius.
     // Solving this system of equations, we get:
-    const double reduced_radius = radius / (
-            1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles
-    );
+    const double reduced_radius = radius / (1.0 + 2.0 * PI * arc_fraction_as_radius / m_numBubbles);
     const double bubble_radius = radius - reduced_radius;
 
     const double tail_length = 0.5 * m_numBubbles;
@@ -87,5 +83,4 @@ bool BubbleAnimation::nextFrame(const QColor& head_color, const QColor& tail_col
 
         return false;
     }
-} // BubbleAnimation::nextFrame
-
+}  // BubbleAnimation::nextFrame

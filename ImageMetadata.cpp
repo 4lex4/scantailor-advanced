@@ -70,4 +70,3 @@ ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixel_size, int dpi) {
 
     return DPI_OK;
 }
-

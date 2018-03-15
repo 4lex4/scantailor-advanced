@@ -28,17 +28,14 @@
 class ImageViewBase;
 
 class ZoomHandler : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
+    Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
 public:
-    enum Focus {
-        CENTER,
-        CURSOR
-    };
+    enum Focus { CENTER, CURSOR };
 
     explicit ZoomHandler(ImageViewBase& image_view);
 
     ZoomHandler(ImageViewBase& image_view,
-                boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter);
+                boost::function<bool(const InteractionState&)> const& explicit_interaction_permitter);
 
     Focus focus() const {
         return m_focus;

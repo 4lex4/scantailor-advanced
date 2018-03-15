@@ -56,8 +56,7 @@ private:
 
 /*============================ BackgroundExecutor ==========================*/
 
-BackgroundExecutor::BackgroundExecutor()
-        : m_ptrImpl(new Impl(*this)) {
+BackgroundExecutor::BackgroundExecutor() : m_ptrImpl(new Impl(*this)) {
 }
 
 BackgroundExecutor::~BackgroundExecutor() = default;
@@ -74,8 +73,7 @@ void BackgroundExecutor::enqueueTask(const TaskPtr& task) {
 
 /*===================== BackgroundExecutor::Dispatcher =====================*/
 
-BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner)
-        : m_rOwner(owner) {
+BackgroundExecutor::Dispatcher::Dispatcher(Impl& owner) : m_rOwner(owner) {
 }
 
 void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
@@ -88,9 +86,7 @@ void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
 
         const TaskResultPtr result((*task)());
         if (result) {
-            QCoreApplication::postEvent(
-                    &m_rOwner, new ResultEvent(result)
-            );
+            QCoreApplication::postEvent(&m_rOwner, new ResultEvent(result));
         }
     } catch (const std::bad_alloc&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
@@ -100,9 +96,7 @@ void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
 /*======================= BackgroundExecutor::Impl =========================*/
 
 BackgroundExecutor::Impl::Impl(BackgroundExecutor& owner)
-        : m_rOwner(owner),
-          m_dispatcher(*this),
-          m_threadStarted(false) {
+        : m_rOwner(owner), m_dispatcher(*this), m_threadStarted(false) {
     m_dispatcher.moveToThread(this);
 }
 
@@ -132,4 +126,3 @@ void BackgroundExecutor::Impl::customEvent(QEvent* event) {
 
     (*result)();
 }
-

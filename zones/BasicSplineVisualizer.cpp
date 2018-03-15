@@ -35,7 +35,8 @@ void BasicSplineVisualizer::drawSplines(QPainter& painter, const QTransform& to_
     }
 }
 
-void BasicSplineVisualizer::drawSpline(QPainter& painter, const QTransform& to_screen,
+void BasicSplineVisualizer::drawSpline(QPainter& painter,
+                                       const QTransform& to_screen,
                                        const EditableSpline::Ptr& spline) {
     prepareForSpline(painter, spline);
     painter.drawPolygon(to_screen.map(spline->toPolygon()), Qt::WindingFill);
@@ -54,4 +55,3 @@ void BasicSplineVisualizer::prepareForSpline(QPainter& painter, const EditableSp
     painter.setPen(m_pen);
     painter.setBrush(Qt::NoBrush);
 }
-

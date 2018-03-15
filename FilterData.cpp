@@ -65,4 +65,3 @@ const imageproc::GrayImage& FilterData::grayImage() const {
 bool FilterData::isBlackOnWhite() const {
     return m_blackOnWhite;
 }
-

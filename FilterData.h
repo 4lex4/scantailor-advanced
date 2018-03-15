@@ -50,4 +50,4 @@ private:
 };
 
 
-#endif // ifndef FILTERDATA_H_
+#endif  // ifndef FILTERDATA_H_

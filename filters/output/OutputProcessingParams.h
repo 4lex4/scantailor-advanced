@@ -7,26 +7,26 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-    class OutputProcessingParams {
-    public:
-        OutputProcessingParams();
+class OutputProcessingParams {
+public:
+    OutputProcessingParams();
 
-        explicit OutputProcessingParams(const QDomElement& el);
+    explicit OutputProcessingParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        bool operator==(const OutputProcessingParams& other) const;
+    bool operator==(const OutputProcessingParams& other) const;
 
-        bool operator!=(const OutputProcessingParams& other) const;
+    bool operator!=(const OutputProcessingParams& other) const;
 
-        bool isAutoZonesFound() const;
+    bool isAutoZonesFound() const;
 
-        void setAutoZonesFound(bool autoZonesFound);
+    void setAutoZonesFound(bool autoZonesFound);
 
-    private:
-        bool autoZonesFound;
-    };
-}
+private:
+    bool autoZonesFound;
+};
+}  // namespace output
 
 
-#endif //SCANTAILOR_OUTPUTPROCESSINGPARAMS_H
+#endif  // SCANTAILOR_OUTPUTPROCESSINGPARAMS_H

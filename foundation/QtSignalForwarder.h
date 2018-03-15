@@ -30,8 +30,8 @@
  * at connection time.
  */
 class QtSignalForwarder : public QObject {
-Q_OBJECT
-DECLARE_NON_COPYABLE(QtSignalForwarder)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(QtSignalForwarder)
 
 public:
     /**
@@ -44,7 +44,7 @@ public:
      *        won't be forwarded.
      * \param slot A boost::function to forward the signal to.
      */
-    QtSignalForwarder(QObject* emitter, const char* signal, boost::function<void()>const & slot);
+    QtSignalForwarder(QObject* emitter, const char* signal, boost::function<void()> const& slot);
 
 private slots:
 

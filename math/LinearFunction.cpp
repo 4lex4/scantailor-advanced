@@ -19,9 +19,7 @@
 #include "LinearFunction.h"
 #include <algorithm>
 
-LinearFunction::LinearFunction(size_t num_vars)
-        : a(num_vars),
-          b(0) {
+LinearFunction::LinearFunction(size_t num_vars) : a(num_vars), b(0) {
 }
 
 void LinearFunction::reset() {
@@ -58,4 +56,3 @@ LinearFunction& LinearFunction::operator*=(double scalar) {
 
     return *this;
 }
-

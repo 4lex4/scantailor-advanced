@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //SCANTAILOR_DARKSCHEME_H
+#endif  // SCANTAILOR_DARKSCHEME_H

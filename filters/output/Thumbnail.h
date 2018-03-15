@@ -28,12 +28,12 @@ class ImageId;
 class QSizeF;
 
 namespace output {
-    class Thumbnail : public ThumbnailBase {
-    public:
-        Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                  const QSizeF& max_size,
-                  const ImageId& image_id,
-                  const ImageTransformation& xform);
-    };
+class Thumbnail : public ThumbnailBase {
+public:
+    Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+              const QSizeF& max_size,
+              const ImageId& image_id,
+              const ImageTransformation& xform);
+};
 }  // namespace output
 #endif

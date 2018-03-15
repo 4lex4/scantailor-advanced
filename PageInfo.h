@@ -74,4 +74,4 @@ private:
 };
 
 
-#endif // ifndef PAGEINFO_H_
+#endif  // ifndef PAGEINFO_H_

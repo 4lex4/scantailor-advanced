@@ -23,8 +23,7 @@ void PropertyFactory::registerProperty(const QString& property, PropertyConstruc
     m_registry[property] = constructor;
 }
 
-intrusive_ptr<Property>
-PropertyFactory::construct(const QDomElement& el) const {
+intrusive_ptr<Property> PropertyFactory::construct(const QDomElement& el) const {
     auto it(m_registry.find(el.attribute("type")));
     if (it != m_registry.end()) {
         return (*it->second)(el);
@@ -32,4 +31,3 @@ PropertyFactory::construct(const QDomElement& el) const {
         return nullptr;
     }
 }
-

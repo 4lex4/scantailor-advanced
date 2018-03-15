@@ -22,9 +22,7 @@
 void TiffMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
-        ImageMetadataLoader::registerLoader(
-                intrusive_ptr<ImageMetadataLoader>(new TiffMetadataLoader)
-        );
+        ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader>(new TiffMetadataLoader));
         registered = true;
     }
 }
@@ -33,4 +31,3 @@ ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& io_devic
                                                              VirtualFunction1<void, const ImageMetadata&>& out) {
     return TiffReader::readMetadata(io_device, out);
 }
-

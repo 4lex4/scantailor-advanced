@@ -24,7 +24,7 @@
 class QImage;
 
 namespace imageproc {
-    class GrayscaleHistogram;
+class GrayscaleHistogram;
 
 /**
  * \brief Defines the gray level threshold that separates black from white.
@@ -33,24 +33,24 @@ namespace imageproc {
  * levels in range of [threshold, 255] are considered white.  The threshold
  * itself is considered to be white.
  */
-    class BinaryThreshold {
-        // Member-wise copying is OK.
-    public:
-        /**
-         * \brief Finds the threshold using Otsu’s thresholding method.
-         */
-        static BinaryThreshold otsuThreshold(const QImage& image);
+class BinaryThreshold {
+    // Member-wise copying is OK.
+public:
+    /**
+     * \brief Finds the threshold using Otsu’s thresholding method.
+     */
+    static BinaryThreshold otsuThreshold(const QImage& image);
 
-        /**
-         * \brief Finds the threshold using Otsu’s thresholding method.
-         */
-        static BinaryThreshold otsuThreshold(const GrayscaleHistogram& pixels_by_color);
+    /**
+     * \brief Finds the threshold using Otsu’s thresholding method.
+     */
+    static BinaryThreshold otsuThreshold(const GrayscaleHistogram& pixels_by_color);
 
-        static BinaryThreshold peakThreshold(const QImage& image);
+    static BinaryThreshold peakThreshold(const QImage& image);
 
-        static BinaryThreshold peakThreshold(const GrayscaleHistogram& pixels_by_color);
+    static BinaryThreshold peakThreshold(const GrayscaleHistogram& pixels_by_color);
 
-        /**
+    /**
      * \brief Image binarization using Mokji's global thresholding method.
      *
      * M. M. Mokji, S. A. R. Abu-Bakar: Adaptive Thresholding Based on
@@ -63,24 +63,23 @@ namespace imageproc {
      * \param min_edge_magnitude The minimum color difference in a gradient.
      * \return A black and white image.
      */
-        static BinaryThreshold mokjiThreshold(const QImage& image,
-                                              unsigned max_edge_width = 3,
-                                              unsigned min_edge_magnitude = 20);
+    static BinaryThreshold mokjiThreshold(const QImage& image,
+                                          unsigned max_edge_width = 3,
+                                          unsigned min_edge_magnitude = 20);
 
-        BinaryThreshold(int threshold)
-                : m_threshold(threshold) {
-        }
+    BinaryThreshold(int threshold) : m_threshold(threshold) {
+    }
 
-        operator int() const {
-            return m_threshold;
-        }
+    operator int() const {
+        return m_threshold;
+    }
 
-        BWColor grayToBW(int gray) const {
-            return gray < m_threshold ? BLACK : WHITE;
-        }
+    BWColor grayToBW(int gray) const {
+        return gray < m_threshold ? BLACK : WHITE;
+    }
 
-    private:
-        int m_threshold;
-    };
+private:
+    int m_threshold;
+};
 }  // namespace imageproc
-#endif // ifndef IMAGEPROC_BINARYTHRESHOLD_H_
+#endif  // ifndef IMAGEPROC_BINARYTHRESHOLD_H_

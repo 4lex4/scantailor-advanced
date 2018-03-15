@@ -142,4 +142,4 @@ void DeviationProvider<K, Hash>::clear() {
 }
 
 
-#endif //SCANTAILOR_DEVIATION_H
+#endif  // SCANTAILOR_DEVIATION_H

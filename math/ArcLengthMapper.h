@@ -37,6 +37,7 @@ class ArcLengthMapper {
 public:
     class Hint {
         friend class ArcLengthMapper;
+
     public:
         Hint();
 
@@ -90,9 +91,7 @@ private:
         double x;
         double arcLen;
 
-        Sample(double x, double arc_len)
-                : x(x),
-                  arcLen(arc_len) {
+        Sample(double x, double arc_len) : x(x), arcLen(arc_len) {
         }
     };
 
@@ -109,4 +108,4 @@ private:
 };
 
 
-#endif // ifndef ARC_LENGTH_MAPPER_H_
+#endif  // ifndef ARC_LENGTH_MAPPER_H_

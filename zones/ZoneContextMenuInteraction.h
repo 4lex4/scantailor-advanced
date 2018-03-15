@@ -40,7 +40,7 @@ class QPainter;
 class QMenu;
 
 class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
-Q_OBJECT
+    Q_OBJECT
 public:
     struct StandardMenuItems {
         ZoneContextMenuItem propertiesItem;
@@ -49,11 +49,8 @@ public:
         StandardMenuItems(const ZoneContextMenuItem& properties_item, const ZoneContextMenuItem& delete_item);
     };
 
-    typedef boost::function<
-            std::vector<ZoneContextMenuItem>(
-                    const EditableZoneSet::Zone&, const StandardMenuItems&
-            )
-    > MenuCustomizer;
+    typedef boost::function<std::vector<ZoneContextMenuItem>(const EditableZoneSet::Zone&, const StandardMenuItems&)>
+            MenuCustomizer;
 
     /**
      * \note This factory method will return null if there are no zones
@@ -75,8 +72,7 @@ protected:
     public:
         QColor color;
 
-        explicit Zone(const EditableZoneSet::Zone& zone)
-                : EditableZoneSet::Zone(zone) {
+        explicit Zone(const EditableZoneSet::Zone& zone) : EditableZoneSet::Zone(zone) {
         }
     };
 

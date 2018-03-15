@@ -18,8 +18,7 @@
 
 #include "PageRange.h"
 
-std::set<PageId>
-PageRange::selectEveryOther(const PageId& base) const {
+std::set<PageId> PageRange::selectEveryOther(const PageId& base) const {
     std::set<PageId> selection;
 
     auto it(pages.begin());
@@ -42,4 +41,3 @@ PageRange::selectEveryOther(const PageId& base) const {
 
     return selection;
 }
-

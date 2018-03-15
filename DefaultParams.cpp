@@ -92,8 +92,7 @@ QDomElement DefaultParams::toXml(QDomDocument& doc, const QString& name) const {
     return el;
 }
 
-DefaultParams::DefaultParams()
-        : units(MILLIMETRES) {
+DefaultParams::DefaultParams() : units(MILLIMETRES) {
 }
 
 Units DefaultParams::getUnits() const {
@@ -128,8 +127,7 @@ QDomElement DefaultParams::FixOrientationParams::toXml(QDomDocument& doc, const 
 }
 
 DefaultParams::DeskewParams::DeskewParams(double deskewAngleDeg, AutoManualMode mode)
-        : deskewAngleDeg(deskewAngleDeg),
-          mode(mode) {
+        : deskewAngleDeg(deskewAngleDeg), mode(mode) {
 }
 
 double DefaultParams::DeskewParams::getDeskewAngleDeg() const {
@@ -148,9 +146,7 @@ void DefaultParams::DeskewParams::setMode(AutoManualMode mode) {
     DeskewParams::mode = mode;
 }
 
-DefaultParams::DeskewParams::DeskewParams()
-        : deskewAngleDeg(0.0),
-          mode(MODE_AUTO) {
+DefaultParams::DeskewParams::DeskewParams() : deskewAngleDeg(0.0), mode(MODE_AUTO) {
 }
 
 DefaultParams::DeskewParams::DeskewParams(const QDomElement& el)
@@ -166,8 +162,7 @@ QDomElement DefaultParams::DeskewParams::toXml(QDomDocument& doc, const QString&
     return el;
 }
 
-DefaultParams::PageSplitParams::PageSplitParams(page_split::LayoutType layoutType)
-        : layoutType(layoutType) {
+DefaultParams::PageSplitParams::PageSplitParams(page_split::LayoutType layoutType) : layoutType(layoutType) {
 }
 
 LayoutType DefaultParams::PageSplitParams::getLayoutType() const {
@@ -178,9 +173,7 @@ void DefaultParams::PageSplitParams::setLayoutType(LayoutType layoutType) {
     PageSplitParams::layoutType = layoutType;
 }
 
-DefaultParams::PageSplitParams::PageSplitParams()
-        : layoutType(AUTO_LAYOUT_TYPE) {
-
+DefaultParams::PageSplitParams::PageSplitParams() : layoutType(AUTO_LAYOUT_TYPE) {
 }
 
 DefaultParams::PageSplitParams::PageSplitParams(const QDomElement& el)
@@ -276,14 +269,10 @@ void DefaultParams::SelectContentParams::setPageDetectMode(AutoManualMode pageDe
 DefaultParams::PageLayoutParams::PageLayoutParams(const Margins& hardMargins,
                                                   const page_layout::Alignment& alignment,
                                                   bool autoMargins)
-        : hardMargins(hardMargins),
-          alignment(alignment),
-          autoMargins(autoMargins) {
+        : hardMargins(hardMargins), alignment(alignment), autoMargins(autoMargins) {
 }
 
-DefaultParams::PageLayoutParams::PageLayoutParams()
-        : hardMargins(10, 5, 10, 5),
-          autoMargins(false) {
+DefaultParams::PageLayoutParams::PageLayoutParams() : hardMargins(10, 5, 10, 5), autoMargins(false) {
 }
 
 const Margins& DefaultParams::PageLayoutParams::getHardMargins() const {
@@ -341,9 +330,7 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
           despeckleLevel(despeckleLevel) {
 }
 
-DefaultParams::OutputParams::OutputParams()
-        : despeckleLevel(DESPECKLE_CAUTIOUS),
-          dpi(600, 600) {
+DefaultParams::OutputParams::OutputParams() : despeckleLevel(DESPECKLE_CAUTIOUS), dpi(600, 600) {
 }
 
 const Dpi& DefaultParams::OutputParams::getDpi() const {

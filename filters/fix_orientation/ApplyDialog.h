@@ -32,30 +32,29 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace fix_orientation {
-    class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {
+class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {
     Q_OBJECT
-    public:
-        ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
+public:
+    ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
-        ~ApplyDialog() override;
+    ~ApplyDialog() override;
 
-    signals:
+signals:
 
-        void appliedTo(const std::set<PageId>& pages);
+    void appliedTo(const std::set<PageId>& pages);
 
-        void appliedToAllPages(const std::set<PageId>& pages);
+    void appliedToAllPages(const std::set<PageId>& pages);
 
-    private
-        slots:
+private slots:
 
-        void onSubmit();
+    void onSubmit();
 
-    private:
-        PageSequence m_pages;
-        std::set<PageId> m_selectedPages;
-        std::vector<PageRange> m_selectedRanges;
-        PageId m_curPage;
-        QButtonGroup* m_pBtnGroup;
-    };
+private:
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    std::vector<PageRange> m_selectedRanges;
+    PageId m_curPage;
+    QButtonGroup* m_pBtnGroup;
+};
 }  // namespace fix_orientation
-#endif // ifndef FIX_ORIENTATION_APPLYDIALOG_H_
+#endif  // ifndef FIX_ORIENTATION_APPLYDIALOG_H_

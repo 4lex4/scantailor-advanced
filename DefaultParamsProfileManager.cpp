@@ -9,12 +9,10 @@ using namespace page_split;
 using namespace output;
 using namespace page_layout;
 
-DefaultParamsProfileManager::DefaultParamsProfileManager()
-        : path(qApp->applicationDirPath() + "/config/profiles") {
+DefaultParamsProfileManager::DefaultParamsProfileManager() : path(qApp->applicationDirPath() + "/config/profiles") {
 }
 
-DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path)
-        : path(path) {
+DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path) : path(path) {
 }
 
 std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList() const {
@@ -24,8 +22,7 @@ std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList(
     if (dir.exists()) {
         QList<QFileInfo> fileInfoList = dir.entryInfoList();
         for (const QFileInfo& fileInfo : fileInfoList) {
-            if (fileInfo.isFile()
-                && ((fileInfo.suffix() == "stp") || (fileInfo.suffix() == "xml"))) {
+            if (fileInfo.isFile() && ((fileInfo.suffix() == "stp") || (fileInfo.suffix() == "xml"))) {
                 profileList->push_back(fileInfo.baseName());
             }
         }
@@ -120,14 +117,8 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
 
     outputParams.setColorParams(colorParams);
 
-    return std::make_unique<DefaultParams>(
-            DefaultParams::FixOrientationParams(),
-            deskewParams,
-            pageSplitParams,
-            selectContentParams,
-            pageLayoutParams,
-            outputParams
-    );
+    return std::make_unique<DefaultParams>(DefaultParams::FixOrientationParams(), deskewParams, pageSplitParams,
+                                           selectContentParams, pageLayoutParams, outputParams);
 }
 
 bool DefaultParamsProfileManager::deleteProfile(const QString& name) const {
@@ -143,4 +134,3 @@ bool DefaultParamsProfileManager::deleteProfile(const QString& name) const {
     QFile profileFile(profile.filePath());
     return profileFile.remove();
 }
-

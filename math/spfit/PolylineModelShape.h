@@ -29,33 +29,29 @@
 #include <vector>
 
 namespace spfit {
-    class PolylineModelShape : public ModelShape {
+class PolylineModelShape : public ModelShape {
     DECLARE_NON_COPYABLE(PolylineModelShape)
 
-    public:
-        enum Flags {
-            DEFAULT_FLAGS = 0,
-            POLYLINE_FRONT = 1 << 0,
-            POLYLINE_BACK = 1 << 1
-        };
+public:
+    enum Flags { DEFAULT_FLAGS = 0, POLYLINE_FRONT = 1 << 0, POLYLINE_BACK = 1 << 1 };
 
-        explicit PolylineModelShape(const std::vector<QPointF>& polyline);
+    explicit PolylineModelShape(const std::vector<QPointF>& polyline);
 
-        SqDistApproximant
-        localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags sample_flags) const override;
+    SqDistApproximant localSqDistApproximant(const QPointF& pt,
+                                             FittableSpline::SampleFlags sample_flags) const override;
 
-    protected:
-        virtual SqDistApproximant calcApproximant(const QPointF& pt,
-                                                  FittableSpline::SampleFlags sample_flags,
-                                                  Flags polyline_flags,
-                                                  const FrenetFrame& frenet_frame,
-                                                  double signed_curvature) const;
+protected:
+    virtual SqDistApproximant calcApproximant(const QPointF& pt,
+                                              FittableSpline::SampleFlags sample_flags,
+                                              Flags polyline_flags,
+                                              const FrenetFrame& frenet_frame,
+                                              double signed_curvature) const;
 
-    private:
-        std::vector<XSpline::PointAndDerivs> m_vertices;
-    };
+private:
+    std::vector<XSpline::PointAndDerivs> m_vertices;
+};
 
 
-    DEFINE_FLAG_OPS(PolylineModelShape::Flags)
+DEFINE_FLAG_OPS(PolylineModelShape::Flags)
 }  // namespace spfit
-#endif // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
+#endif  // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_

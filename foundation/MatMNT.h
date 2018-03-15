@@ -40,10 +40,7 @@ template<size_t M, size_t N, typename T>
 class MatMNT {
 public:
     typedef T type;
-    enum {
-        ROWS = static_cast<int>(M),
-        COLS = static_cast<int>(N)
-    };
+    enum { ROWS = static_cast<int>(M), COLS = static_cast<int>(N) };
 
     /**
      * \brief Initializes matrix elements to T().

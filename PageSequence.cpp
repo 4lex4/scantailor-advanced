@@ -43,8 +43,7 @@ int PageSequence::pageNo(const PageId& page) const {
     return (it == end) ? -1 : res;
 }
 
-std::set<PageId>
-PageSequence::selectAll() const {
+std::set<PageId> PageSequence::selectAll() const {
     std::set<PageId> selection;
 
     for (const PageInfo& page_info : m_pages) {
@@ -54,8 +53,7 @@ PageSequence::selectAll() const {
     return selection;
 }
 
-std::set<PageId>
-PageSequence::selectPagePlusFollowers(const PageId& page) const {
+std::set<PageId> PageSequence::selectPagePlusFollowers(const PageId& page) const {
     std::set<PageId> selection;
 
     auto it(m_pages.begin());
@@ -70,8 +68,7 @@ PageSequence::selectPagePlusFollowers(const PageId& page) const {
     return selection;
 }
 
-std::set<PageId>
-PageSequence::selectEveryOther(const PageId& base) const {
+std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
     std::set<PageId> selection;
 
     auto it(m_pages.begin());
@@ -94,4 +91,3 @@ PageSequence::selectEveryOther(const PageId& base) const {
 
     return selection;
 }
-

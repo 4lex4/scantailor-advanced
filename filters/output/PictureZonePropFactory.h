@@ -22,9 +22,9 @@
 #include "PropertyFactory.h"
 
 namespace output {
-    class PictureZonePropFactory : public PropertyFactory {
-    public:
-        PictureZonePropFactory();
-    };
+class PictureZonePropFactory : public PropertyFactory {
+public:
+    PictureZonePropFactory();
+};
 }  // namespace output
 #endif

@@ -23,15 +23,13 @@
 #include "VirtualFunction.h"
 
 namespace imageproc {
-    class SlicedHistogram;
+class SlicedHistogram;
 }
 
 class ContentSpanFinder {
     // Member-wise copying is OK.
 public:
-    ContentSpanFinder()
-            : m_minContentWidth(1),
-              m_minWhitespaceWidth(1) {
+    ContentSpanFinder() : m_minContentWidth(1), m_minWhitespaceWidth(1) {
     }
 
     void setMinContentWidth(int value) {
@@ -66,4 +64,4 @@ void ContentSpanFinder::find(const imageproc::SlicedHistogram& histogram, T hand
     findImpl(histogram, proxy);
 }
 
-#endif // ifndef CONTENTSPANFINDER_H_
+#endif  // ifndef CONTENTSPANFINDER_H_

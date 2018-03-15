@@ -66,5 +66,4 @@ int main(int argc, char** argv) {
     if (cli.hasOutputProject()) {
         cbatch->saveProject(cli.outputProjectFile());
     }
-} // main
-
+}  // main

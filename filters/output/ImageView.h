@@ -27,16 +27,16 @@
 class ImageTransformation;
 
 namespace output {
-    class ImageView : public ImageViewBase {
+class ImageView : public ImageViewBase {
     Q_OBJECT
-    public:
-        ImageView(const QImage& image, const QImage& downscaled_image);
+public:
+    ImageView(const QImage& image, const QImage& downscaled_image);
 
-        ~ImageView() override;
+    ~ImageView() override;
 
-    private:
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-    };
+private:
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+};
 }  // namespace output
 #endif

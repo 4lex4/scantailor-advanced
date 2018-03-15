@@ -19,9 +19,7 @@
 #include "RelinkablePath.h"
 #include <QStringList>
 
-RelinkablePath::RelinkablePath(const QString& path, Type type)
-        : m_normalizedPath(normalize(path)),
-          m_type(type) {
+RelinkablePath::RelinkablePath(const QString& path, Type type) : m_normalizedPath(normalize(path)), m_type(type) {
 }
 
 QString RelinkablePath::normalize(const QString& path) {
@@ -32,10 +30,10 @@ QString RelinkablePath::normalize(const QString& path) {
     for (const QString& comp : front_slashes.split(QChar('/'), QString::KeepEmptyParts)) {
         if (comp.isEmpty()) {
             if (new_components.isEmpty()
-                #if _WIN32
+#if _WIN32
                 || (new_components.size() == 1 && new_components.front().isEmpty())
 #endif
-                    ) {
+            ) {
                 new_components.push_back(comp);
             } else {
                 // This will get rid of redundant slashes, including the trailing slash.
@@ -58,5 +56,4 @@ QString RelinkablePath::normalize(const QString& path) {
     }
 
     return new_components.join(QChar('/'));
-} // RelinkablePath::normalize
-
+}  // RelinkablePath::normalize

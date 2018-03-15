@@ -34,7 +34,7 @@
 using namespace imageproc;
 
 class LoadFileTask::ErrorResult : public FilterResult {
-Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
+    Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
 public:
     explicit ErrorResult(const QString& file_path);
 
@@ -112,8 +112,7 @@ void LoadFileTask::overrideDpi(QImage& image) const {
 /*======================= LoadFileTask::ErrorResult ======================*/
 
 LoadFileTask::ErrorResult::ErrorResult(const QString& file_path)
-        : m_filePath(QDir::toNativeSeparators(file_path)),
-          m_fileExists(QFile::exists(file_path)) {
+        : m_filePath(QDir::toNativeSeparators(file_path)), m_fileExists(QFile::exists(file_path)) {
 }
 
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
@@ -122,8 +121,7 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
         ErrWidget(intrusive_ptr<AbstractCommand0<void>> relinking_dialog_requester,
                   const QString& text,
                   Qt::TextFormat fmt = Qt::AutoText)
-                : ErrorWidget(text, fmt),
-                  m_ptrRelinkingDialogRequester(std::move(relinking_dialog_requester)) {
+                : ErrorWidget(text, fmt), m_ptrRelinkingDialogRequester(std::move(relinking_dialog_requester)) {
         }
 
     private:
@@ -141,14 +139,12 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
         err_msg = tr("The following file could not be loaded:\n%1").arg(m_filePath);
         fmt = Qt::PlainText;
     } else {
-        err_msg = tr(
-                "The following file doesn't exist:<br>%1<br>"
-                        "<br>"
-                        "Use the <a href=\"#relink\">Relinking Tool</a> to locate it."
-        ).arg(m_filePath.toHtmlEscaped());
+        err_msg = tr("The following file doesn't exist:<br>%1<br>"
+                     "<br>"
+                     "Use the <a href=\"#relink\">Relinking Tool</a> to locate it.")
+                          .arg(m_filePath.toHtmlEscaped());
         fmt = Qt::RichText;
     }
     ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), err_msg, fmt), ui->TRANSFER_OWNERSHIP);
     ui->setOptionsWidget(new FilterOptionsWidget, ui->TRANSFER_OWNERSHIP);
-} // LoadFileTask::ErrorResult::updateUI
-
+}  // LoadFileTask::ErrorResult::updateUI

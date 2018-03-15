@@ -33,9 +33,8 @@ public:
     void convertTo(double& horizontalValue, double& verticalValue, Units toUnits, const Dpi& dpi) const;
 
 protected:
-
     void unitsChanged();
 };
 
 
-#endif //SCANTAILOR_UNITSPROVIDER_H
+#endif  // SCANTAILOR_UNITSPROVIDER_H

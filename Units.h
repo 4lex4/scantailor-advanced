@@ -5,12 +5,7 @@
 
 #include <QtCore/QString>
 
-enum Units {
-    PIXELS,
-    MILLIMETRES,
-    CENTIMETRES,
-    INCHES
-};
+enum Units { PIXELS, MILLIMETRES, CENTIMETRES, INCHES };
 
 QString unitsToString(Units units);
 
@@ -18,4 +13,4 @@ Units unitsFromString(const QString& string);
 
 QString unitsToLocalizedString(Units units);
 
-#endif //SCANTAILOR_UNITS_H
+#endif  // SCANTAILOR_UNITS_H

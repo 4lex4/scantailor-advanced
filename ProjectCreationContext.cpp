@@ -24,8 +24,7 @@
 #include <cassert>
 
 ProjectCreationContext::ProjectCreationContext(QWidget* parent)
-        : m_layoutDirection(Qt::LeftToRight),
-          m_pParent(parent) {
+        : m_layoutDirection(Qt::LeftToRight), m_pParent(parent) {
     showProjectFilesDialog();
 }
 
@@ -36,15 +35,12 @@ ProjectCreationContext::~ProjectCreationContext() {
 }
 
 namespace {
-    template<typename T>
-    bool allDpisOK(const T& container) {
-        using namespace boost::lambda;
+template<typename T>
+bool allDpisOK(const T& container) {
+    using namespace boost::lambda;
 
-        return std::find_if(
-                container.begin(), container.end(),
-                !bind(&ImageFileInfo::isDpiOK, _1)
-        ) == container.end();
-    }
+    return std::find_if(container.begin(), container.end(), !bind(&ImageFileInfo::isDpiOK, _1)) == container.end();
+}
 }  // anonymous namespace
 
 void ProjectCreationContext::projectFilesSubmitted() {
@@ -85,14 +81,8 @@ void ProjectCreationContext::showProjectFilesDialog() {
     if (m_pParent) {
         m_ptrProjectFilesDialog->setWindowModality(Qt::WindowModal);
     }
-    connect(
-            m_ptrProjectFilesDialog, SIGNAL(accepted()),
-            this, SLOT(projectFilesSubmitted())
-    );
-    connect(
-            m_ptrProjectFilesDialog, SIGNAL(destroyed(QObject * )),
-            this, SLOT(projectFilesDialogDestroyed())
-    );
+    connect(m_ptrProjectFilesDialog, SIGNAL(accepted()), this, SLOT(projectFilesSubmitted()));
+    connect(m_ptrProjectFilesDialog, SIGNAL(destroyed(QObject*)), this, SLOT(projectFilesDialogDestroyed()));
     m_ptrProjectFilesDialog->show();
 }
 
@@ -104,14 +94,7 @@ void ProjectCreationContext::showFixDpiDialog() {
     if (m_pParent) {
         m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
     }
-    connect(
-            m_ptrFixDpiDialog, SIGNAL(accepted()),
-            this, SLOT(fixedDpiSubmitted())
-    );
-    connect(
-            m_ptrFixDpiDialog, SIGNAL(destroyed(QObject * )),
-            this, SLOT(fixDpiDialogDestroyed())
-    );
+    connect(m_ptrFixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
+    connect(m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
     m_ptrFixDpiDialog->show();
 }
-

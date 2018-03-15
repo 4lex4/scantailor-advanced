@@ -24,8 +24,7 @@
 #include <QSettings>
 #include <utility>
 
-OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent)
-        : QDialog(parent) {
+OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent) : QDialog(parent) {
     ui.setupUi(this);
     if (sizeof(void*) > 4) {
         ui.only_32bit_1->hide();
@@ -73,11 +72,7 @@ void OutOfMemoryDialog::saveProjectAs() {
     }
 
     QString project_file(
-            QFileDialog::getSaveFileName(
-                    this, QString(), project_dir,
-                    tr("Scan Tailor Projects") + " (*.ScanTailor)"
-            )
-    );
+            QFileDialog::getSaveFileName(this, QString(), project_dir, tr("Scan Tailor Projects") + " (*.ScanTailor)"));
     if (project_file.isEmpty()) {
         return;
     }
@@ -91,26 +86,20 @@ void OutOfMemoryDialog::saveProjectAs() {
         showSaveSuccessScreen();
 
         QSettings settings;
-        settings.setValue(
-                "project/lastDir",
-                QFileInfo(m_projectFile).absolutePath()
-        );
+        settings.setValue("project/lastDir", QFileInfo(m_projectFile).absolutePath());
 
         RecentProjects rp;
         rp.read();
         rp.setMostRecent(m_projectFile);
         rp.write();
     }
-} // OutOfMemoryDialog::saveProjectAs
+}  // OutOfMemoryDialog::saveProjectAs
 
 bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& project_file) {
     ProjectWriter writer(m_ptrPages, m_selectedPage, m_outFileNameGen);
 
     if (!writer.write(project_file, m_ptrStages->filters())) {
-        QMessageBox::warning(
-                this, tr("Error"),
-                tr("Error saving the project file!")
-        );
+        QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
 
         return false;
     }
@@ -121,4 +110,3 @@ bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& project_file) {
 void OutOfMemoryDialog::showSaveSuccessScreen() {
     ui.topLevelStack->setCurrentWidget(ui.saveSuccessPage);
 }
-

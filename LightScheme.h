@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //SCANTAILOR_LIGHTSCHEME_H
+#endif  // SCANTAILOR_LIGHTSCHEME_H

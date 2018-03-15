@@ -11,7 +11,7 @@
 #include "DefaultParams.h"
 
 class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
-Q_OBJECT
+    Q_OBJECT
 private:
     QIcon chainIcon;
     QIcon brokenChainIcon;
@@ -151,4 +151,4 @@ private:
 };
 
 
-#endif //SCANTAILOR_DEFAULTPARAMSDIALOG_H
+#endif  // SCANTAILOR_DEFAULTPARAMSDIALOG_H

@@ -43,8 +43,7 @@ private:
 
 PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
                                                      intrusive_ptr<CompositeCacheDrivenTask> task)
-        : m_ptrPageSplitFilter(std::move(page_split_filter)),
-          m_ptrTask(std::move(task)) {
+        : m_ptrPageSplitFilter(std::move(page_split_filter)), m_ptrTask(std::move(task)) {
 }
 
 PageOrientationPropagator::~PageOrientationPropagator() = default;
@@ -55,9 +54,6 @@ void PageOrientationPropagator::propagate(const ProjectPages& pages) {
     for (const PageInfo& page_info : sequence) {
         Collector collector;
         m_ptrTask->process(page_info, &collector);
-        m_ptrPageSplitFilter->pageOrientationUpdate(
-                page_info.imageId(), collector.orientation()
-        );
+        m_ptrPageSplitFilter->pageOrientationUpdate(page_info.imageId(), collector.orientation());
     }
 }
-

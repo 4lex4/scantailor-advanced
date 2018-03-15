@@ -10,46 +10,46 @@
 #include <QtCore>
 
 namespace output {
-    class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
+class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
     Q_OBJECT
-    private:
-        intrusive_ptr<Settings> m_ptrSettings;
-        PageId m_pageId;
-        ColorParams m_colorParams;
-        QTimer delayedStateChanger;
-        int ignoreSliderChanges;
+private:
+    intrusive_ptr<Settings> m_ptrSettings;
+    PageId m_pageId;
+    ColorParams m_colorParams;
+    QTimer delayedStateChanger;
+    int ignoreSliderChanges;
 
-    public:
-        explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+public:
+    explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
-        ~OtsuBinarizationOptionsWidget() override = default;
+    ~OtsuBinarizationOptionsWidget() override = default;
 
-        void preUpdateUI(const PageId& m_pageId) override;
+    void preUpdateUI(const PageId& m_pageId) override;
 
-    private slots:
+private slots:
 
-        void thresholdSliderReleased();
+    void thresholdSliderReleased();
 
-        void thresholdSliderValueChanged(int value);
+    void thresholdSliderValueChanged(int value);
 
-        void setLighterThreshold();
+    void setLighterThreshold();
 
-        void setDarkerThreshold();
+    void setDarkerThreshold();
 
-        void setNeutralThreshold();
+    void setNeutralThreshold();
 
-        void sendStateChanged();
+    void sendStateChanged();
 
-    private:
-        void updateView();
+private:
+    void updateView();
 
-        void setThresholdAdjustment(int value);
+    void setThresholdAdjustment(int value);
 
-        void setupUiConnections();
+    void setupUiConnections();
 
-        void removeUiConnections();
-    };
-}
+    void removeUiConnections();
+};
+}  // namespace output
 
 
-#endif //SCANTAILOR_OTSUBINARIZATIONOPTIONSWIDGET_H
+#endif  // SCANTAILOR_OTSUBINARIZATIONOPTIONSWIDGET_H

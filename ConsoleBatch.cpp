@@ -61,14 +61,13 @@ ConsoleBatch::ConsoleBatch(const std::vector<ImageFileInfo>& images,
           m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout)) {
     const PageSelectionAccessor accessor(nullptr);  // Won't really be used anyway.
     m_ptrStages = intrusive_ptr<StageSequence>(new StageSequence(m_ptrPages, accessor));
-    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_dir+"/cache/thumbs", QSize(200,200), 40, 5));
+    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_dir+"/cache/thumbs",
+    // QSize(200,200), 40, 5));
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
 
-ConsoleBatch::ConsoleBatch(const QString project_file)
-        : batch(true),
-          debug(true) {
+ConsoleBatch::ConsoleBatch(const QString project_file) : batch(true), debug(true) {
     QFile file(project_file);
     if (!file.open(QIODevice::ReadOnly)) {
         throw std::runtime_error("ConsoleBatch: Unable to open the project file.");
@@ -95,7 +94,8 @@ ConsoleBatch::ConsoleBatch(const QString project_file)
     if (!cli.outputDirectory().isEmpty()) {
         output_directory = cli.outputDirectory();
     }
-    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_directory+"/cache/thumbs", QSize(200,200), 40, 5));
+    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new
+    // ThumbnailPixmapCache(output_directory+"/cache/thumbs", QSize(200,200), 40, 5));
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
@@ -113,50 +113,35 @@ BackgroundTaskPtr ConsoleBatch::createCompositeTask(const PageInfo& page, const 
     }
 
     if (last_filter_idx >= m_ptrStages->outputFilterIdx()) {
-        output_task = m_ptrStages->outputFilter()->createTask(
-                page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch, debug
-        );
+        output_task = m_ptrStages->outputFilter()->createTask(page.id(), m_ptrThumbnailCache, m_outFileNameGen, batch,
+                                                              debug);
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageLayoutFilterIdx()) {
-        page_layout_task = m_ptrStages->pageLayoutFilter()->createTask(
-                page.id(), output_task, batch, debug
-        );
+        page_layout_task = m_ptrStages->pageLayoutFilter()->createTask(page.id(), output_task, batch, debug);
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->selectContentFilterIdx()) {
-        select_content_task = m_ptrStages->selectContentFilter()->createTask(
-                page.id(), page_layout_task, batch, debug
-        );
+        select_content_task = m_ptrStages->selectContentFilter()->createTask(page.id(), page_layout_task, batch, debug);
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->deskewFilterIdx()) {
-        deskew_task = m_ptrStages->deskewFilter()->createTask(
-                page.id(), select_content_task, batch, debug
-        );
+        deskew_task = m_ptrStages->deskewFilter()->createTask(page.id(), select_content_task, batch, debug);
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->pageSplitFilterIdx()) {
-        page_split_task = m_ptrStages->pageSplitFilter()->createTask(
-                page, deskew_task, batch, debug
-        );
+        page_split_task = m_ptrStages->pageSplitFilter()->createTask(page, deskew_task, batch, debug);
         debug = false;
     }
     if (last_filter_idx >= m_ptrStages->fixOrientationFilterIdx()) {
-        fix_orientation_task = m_ptrStages->fixOrientationFilter()->createTask(
-                page.id(), page_split_task, batch
-        );
+        fix_orientation_task = m_ptrStages->fixOrientationFilter()->createTask(page.id(), page_split_task, batch);
         debug = false;
     }
     assert(fix_orientation_task);
 
     return BackgroundTaskPtr(
-            new LoadFileTask(
-                    BackgroundTask::BATCH,
-                    page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task
-            )
-    );
-} // ConsoleBatch::createCompositeTask
+            new LoadFileTask(BackgroundTask::BATCH, page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task));
+}  // ConsoleBatch::createCompositeTask
 
 // process the image vector **images** and save output to **output_dir**
 void ConsoleBatch::process() {
@@ -205,7 +190,7 @@ void ConsoleBatch::process() {
     for (int j = 0; j <= endFilterIdx; j++) {
         m_ptrStages->filterAt(j)->updateStatistics();
     }
-} // ConsoleBatch::process
+}  // ConsoleBatch::process
 
 void ConsoleBatch::saveProject(const QString project_file) {
     PageInfo fpage = m_ptrPages->toPageSequence(PAGE_VIEW).pageAt(0);
@@ -442,5 +427,4 @@ void ConsoleBatch::setupOutput(std::set<PageId> allPages) {
 
         output->getSettings()->setParams(page, params);
     }
-} // ConsoleBatch::setupOutput
-
+}  // ConsoleBatch::setupOutput

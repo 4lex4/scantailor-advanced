@@ -24,55 +24,43 @@
 using namespace imageproc;
 
 namespace select_content {
-    Dependencies::Dependencies() :
-            m_invalid(false) {
+Dependencies::Dependencies() : m_invalid(false) {
+}
+
+Dependencies::Dependencies(const QPolygonF& rotated_page_outline)
+        : m_rotatedPageOutline(rotated_page_outline), m_invalid(false) {
+}
+
+Dependencies::Dependencies(const QDomElement& deps_el)
+        : m_rotatedPageOutline(XmlUnmarshaller::polygonF(deps_el.namedItem("rotated-page-outline").toElement())),
+          m_invalid(deps_el.attribute("invalid") == "1") {
+}
+
+Dependencies::~Dependencies() = default;
+
+bool Dependencies::matches(const Dependencies& other) const {
+    if (m_invalid) {
+        return false;
     }
 
-    Dependencies::Dependencies(const QPolygonF& rotated_page_outline)
-            : m_rotatedPageOutline(rotated_page_outline),
-              m_invalid(false) {
-    }
+    return PolygonUtils::fuzzyCompare(m_rotatedPageOutline, other.m_rotatedPageOutline);
+}
 
-    Dependencies::Dependencies(const QDomElement& deps_el)
-            : m_rotatedPageOutline(
-            XmlUnmarshaller::polygonF(
-                    deps_el.namedItem("rotated-page-outline").toElement()
-            )
-    ),
-              m_invalid(deps_el.attribute("invalid") == "1") {
-    }
+QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
+    XmlMarshaller marshaller(doc);
 
-    Dependencies::~Dependencies() = default;
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.polygonF(m_rotatedPageOutline, "rotated-page-outline"));
+    el.setAttribute("invalid", m_invalid ? "1" : "0");
 
-    bool Dependencies::matches(const Dependencies& other) const {
-        if (m_invalid) {
-            return false;
-        }
+    return el;
+}
 
-        return PolygonUtils::fuzzyCompare(
-                m_rotatedPageOutline, other.m_rotatedPageOutline
-        );
-    }
+void Dependencies::invalidate() {
+    m_invalid = true;
+}
 
-    QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
-        XmlMarshaller marshaller(doc);
-
-        QDomElement el(doc.createElement(name));
-        el.appendChild(
-                marshaller.polygonF(
-                        m_rotatedPageOutline, "rotated-page-outline"
-                )
-        );
-        el.setAttribute("invalid", m_invalid ? "1" : "0");
-
-        return el;
-    }
-
-    void Dependencies::invalidate() {
-        m_invalid = true;
-    }
-
-    const QPolygonF& Dependencies::rotatedPageOutline() const {
-        return m_rotatedPageOutline;
-    }
+const QPolygonF& Dependencies::rotatedPageOutline() const {
+    return m_rotatedPageOutline;
+}
 }  // namespace select_content

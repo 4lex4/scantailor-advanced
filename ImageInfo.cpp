@@ -18,10 +18,7 @@
 
 #include "ImageInfo.h"
 
-ImageInfo::ImageInfo()
-        : m_numSubPages(0),
-          m_leftHalfRemoved(false),
-          m_rightHalfRemoved(false) {
+ImageInfo::ImageInfo() : m_numSubPages(0), m_leftHalfRemoved(false), m_rightHalfRemoved(false) {
 }
 
 ImageInfo::ImageInfo(const ImageId& id,
@@ -35,4 +32,3 @@ ImageInfo::ImageInfo(const ImageId& id,
           m_leftHalfRemoved(left_half_removed),
           m_rightHalfRemoved(right_half_removed) {
 }
-

@@ -28,7 +28,7 @@
 #include "OutputFileNameGenerator.h"
 
 class Application : public QApplication {
-Q_OBJECT
+    Q_OBJECT
 public:
     Application(int& argc, char** argv);
 

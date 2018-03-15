@@ -16,4 +16,4 @@ public:
     virtual void updateUnits(Units units) = 0;
 };
 
-#endif //SCANTAILOR_UNITSOBSERVER_H
+#endif  // SCANTAILOR_UNITSOBSERVER_H

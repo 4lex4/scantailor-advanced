@@ -42,7 +42,7 @@ public:
         QPointF firstDeriv;
 
         /**< First derivative with respect to t. */
-        QPointF secondDeriv;  /**< Second derivative with respect to t. */
+        QPointF secondDeriv; /**< Second derivative with respect to t. */
 
         /**
          * \brief Curvature at a given point on the spline.
@@ -167,8 +167,9 @@ public:
                 double from_t = 0.0,
                 double to_t = 1.0) const override;
 
-    std::vector<QPointF> toPolyline(
-            const SamplingParams& params = SamplingParams(), double from_t = 0.0, double to_t = 1.0) const;
+    std::vector<QPointF> toPolyline(const SamplingParams& params = SamplingParams(),
+                                    double from_t = 0.0,
+                                    double to_t = 1.0) const;
 
     void swap(XSpline& other) {
         m_controlPoints.swap(other.m_controlPoints);
@@ -184,13 +185,10 @@ private:
          */
         double tension;
 
-        ControlPoint()
-                : tension(0) {
+        ControlPoint() : tension(0) {
         }
 
-        ControlPoint(const QPointF& p, double tns)
-                : pos(p),
-                  tension(tns) {
+        ControlPoint(const QPointF& p, double tns) : pos(p), tension(tns) {
         }
     };
 
@@ -229,4 +227,4 @@ inline void swap(XSpline& o1, XSpline& o2) {
     o1.swap(o2);
 }
 
-#endif // ifndef XSPLINE_H_
+#endif  // ifndef XSPLINE_H_

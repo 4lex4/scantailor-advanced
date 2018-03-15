@@ -10,21 +10,21 @@ class QColor;
 class QPolygonF;
 
 namespace imageproc {
-    class GrayscaleHistogram;
-    class BinaryImage;
+class GrayscaleHistogram;
+class BinaryImage;
 
-    class BackgroundColorCalculator {
-    public:
-        static QColor calcDominantBackgroundColor(const QImage& img);
+class BackgroundColorCalculator {
+public:
+    static QColor calcDominantBackgroundColor(const QImage& img);
 
-        static QColor calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask);
+    static QColor calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask);
 
-        static QColor calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area);
+    static QColor calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area);
 
-    private:
-        static uint8_t calcDominantLevel(const int* hist);
-    };
-}
+private:
+    static uint8_t calcDominantLevel(const int* hist);
+};
+}  // namespace imageproc
 
 
-#endif //SCANTAILOR_BACKGROUNDCOLORCALCULATOR_H
+#endif  // SCANTAILOR_BACKGROUNDCOLORCALCULATOR_H

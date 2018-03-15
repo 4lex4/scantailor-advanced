@@ -74,5 +74,4 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
     }
 
     return *p_min_prx;
-} // Proximity::pointAndLineSegment
-
+}  // Proximity::pointAndLineSegment

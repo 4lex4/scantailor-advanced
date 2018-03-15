@@ -51,4 +51,3 @@ QImage ImageLoader::load(QIODevice& io_dev, const int page_num) {
 
     return image;
 }
-

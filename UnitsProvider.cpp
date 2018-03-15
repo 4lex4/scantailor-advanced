@@ -7,8 +7,7 @@
 
 std::unique_ptr<UnitsProvider> UnitsProvider::instance = nullptr;
 
-UnitsProvider::UnitsProvider()
-        : units(unitsFromString(QSettings().value("settings/units", "mm").toString())) {
+UnitsProvider::UnitsProvider() : units(unitsFromString(QSettings().value("settings/units", "mm").toString())) {
 }
 
 UnitsProvider* UnitsProvider::getInstance() {

@@ -76,9 +76,9 @@ class QRectF;
 class QLayout;
 
 class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::MainWindow {
-DECLARE_NON_COPYABLE(MainWindow)
+    DECLARE_NON_COPYABLE(MainWindow)
 
-Q_OBJECT
+    Q_OBJECT
 public:
     MainWindow();
 
@@ -104,10 +104,7 @@ public slots:
     void openProject(const QString& project_file);
 
 private:
-    enum MainAreaAction {
-        UPDATE_MAIN_AREA,
-        CLEAR_MAIN_AREA
-    };
+    enum MainAreaAction { UPDATE_MAIN_AREA, CLEAR_MAIN_AREA };
 
 private slots:
 
@@ -123,7 +120,8 @@ private slots:
 
     void goToPage(const PageId& page_id);
 
-    void currentPageChanged(const PageInfo& page_info, const QRectF& thumb_rect,
+    void currentPageChanged(const PageInfo& page_info,
+                            const QRectF& thumb_rect,
                             ThumbnailSequence::SelectionFlags flags);
 
     void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
@@ -199,11 +197,7 @@ private slots:
 private:
     class PageSelectionProviderImpl;
 
-    enum SavePromptResult {
-        SAVE,
-        DONT_SAVE,
-        CANCEL
-    };
+    enum SavePromptResult { SAVE, DONT_SAVE, CANCEL };
 
     typedef intrusive_ptr<AbstractFilter> FilterPtr;
 

@@ -66,7 +66,7 @@ public:
      *        vector and the last element value.
      */
     template<typename OT>
-    VecNT(VecNT<N - 1, OT> const& lesser, T last);
+    VecNT(const VecNT<N - 1, OT>& lesser, T last);
 
     /**
      * \brief 1D vector constructor.
@@ -237,7 +237,7 @@ VecNT<N, T>::VecNT(const VecNT<N, OT>& other) {
 
 template<size_t N, typename T>
 template<typename OT>
-VecNT<N, T>::VecNT(VecNT<N - 1, OT> const& lesser, T last) {
+VecNT<N, T>::VecNT(const VecNT<N - 1, OT>& lesser, T last) {
     for (size_t i = 0; i < N - 1; ++i) {
         m_data[i] = static_cast<T>(lesser[i]);
     }

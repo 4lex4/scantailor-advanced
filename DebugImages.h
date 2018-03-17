@@ -40,12 +40,12 @@ class DebugImages {
 public:
     void add(const QImage& image,
              const QString& label,
-             boost::function<QWidget*(const QImage&)> const& image_view_factory
+             const boost::function<QWidget*(const QImage&)>& image_view_factory
              = boost::function<QWidget*(const QImage&)>());
 
     void add(const imageproc::BinaryImage& image,
              const QString& label,
-             boost::function<QWidget*(const QImage&)> const& image_view_factory
+             const boost::function<QWidget*(const QImage&)>& image_view_factory
              = boost::function<QWidget*(const QImage&)>());
 
     bool empty() const {
@@ -68,7 +68,7 @@ private:
         QString label;
         boost::function<QWidget*(const QImage&)> imageViewFactory;
 
-        Item(AutoRemovingFile f, const QString& l, boost::function<QWidget*(const QImage&)> const& imf)
+        Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
                 : file(f), label(l), imageViewFactory(imf) {
         }
     };

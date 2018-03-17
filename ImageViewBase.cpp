@@ -434,7 +434,7 @@ void ImageViewBase::paintEvent(QPaintEvent* event) {
     } else {
         scheduleHqVersionRebuild();
 
-        QTransform const pixmap_to_virtual(m_pixmapToImage * m_imageToVirtual);
+        const QTransform pixmap_to_virtual(m_pixmapToImage * m_imageToVirtual);
         painter.setWorldTransform(pixmap_to_virtual * m_virtualToWidget);
 
         QPainterPath clip_path;

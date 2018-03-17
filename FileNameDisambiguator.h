@@ -57,7 +57,7 @@ public:
      * the record will be skipped.
      */
     FileNameDisambiguator(const QDomElement& disambiguator_el,
-                          boost::function<QString(const QString&)> const& file_path_unpacker);
+                          const boost::function<QString(const QString&)>& file_path_unpacker);
 
     /**
      * \brief Serialize disambiguation information to XML.
@@ -74,7 +74,7 @@ public:
      */
     QDomElement toXml(QDomDocument& doc,
                       const QString& name,
-                      boost::function<QString(const QString&)> const& file_path_packer) const;
+                      const boost::function<QString(const QString&)>& file_path_packer) const;
 
     int getLabel(const QString& file_path) const;
 

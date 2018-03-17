@@ -35,7 +35,7 @@ public:
     explicit ZoomHandler(ImageViewBase& image_view);
 
     ZoomHandler(ImageViewBase& image_view,
-                boost::function<bool(const InteractionState&)> const& explicit_interaction_permitter);
+                const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
 
     Focus focus() const {
         return m_focus;

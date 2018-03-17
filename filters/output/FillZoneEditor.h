@@ -48,8 +48,8 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
 public:
     FillZoneEditor(const QImage& image,
                    const ImagePixmapUnion& downscaled_version,
-                   boost::function<QPointF(const QPointF&)> const& orig_to_image,
-                   boost::function<QPointF(const QPointF&)> const& image_to_orig,
+                   const boost::function<QPointF(const QPointF&)>& orig_to_image,
+                   const boost::function<QPointF(const QPointF&)>& image_to_orig,
                    const PageId& page_id,
                    intrusive_ptr<Settings> settings);
 

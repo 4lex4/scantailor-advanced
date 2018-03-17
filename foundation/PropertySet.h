@@ -57,7 +57,7 @@ public:
     intrusive_ptr<T> locate();
 
     template<typename T>
-    intrusive_ptr<T const> locate() const;
+    intrusive_ptr<const T> locate() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
@@ -67,7 +67,7 @@ public:
     intrusive_ptr<T> locateOrDefault();
 
     template<typename T>
-    intrusive_ptr<T const> locateOrDefault() const;
+    intrusive_ptr<const T> locateOrDefault() const;
 
     /**
      * Returns a property stored in this set, if one having a suitable
@@ -97,12 +97,12 @@ intrusive_ptr<T> PropertySet::locate() {
 }
 
 template<typename T>
-intrusive_ptr<T const> PropertySet::locate() const {
+intrusive_ptr<const T> PropertySet::locate() const {
     PropList::const_iterator it(m_props.begin());
     const PropList::const_iterator end(m_props.end());
     for (; it != end; ++it) {
         if (const T* obj = dynamic_cast<const T*>(it->get())) {
-            return intrusive_ptr<T const>(obj);
+            return intrusive_ptr<const T>(obj);
         }
     }
 
@@ -120,8 +120,8 @@ intrusive_ptr<T> PropertySet::locateOrDefault() {
 }
 
 template<typename T>
-intrusive_ptr<T const> PropertySet::locateOrDefault() const {
-    intrusive_ptr<T const> obj(locate<T>());
+intrusive_ptr<const T> PropertySet::locateOrDefault() const {
+    intrusive_ptr<const T> obj(locate<T>());
     if (!obj) {
         obj.reset(new T);
     }

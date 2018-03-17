@@ -26,7 +26,7 @@
 class PageOrderOption {
     // Member-wise copying is OK.
 public:
-    typedef intrusive_ptr<PageOrderProvider const> ProviderPtr;
+    typedef intrusive_ptr<const PageOrderProvider> ProviderPtr;
 
     PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_ptrProvider(std::move(provider)) {
     }

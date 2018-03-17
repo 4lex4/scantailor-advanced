@@ -62,7 +62,7 @@ private:
 
 
 DebugImageView::DebugImageView(AutoRemovingFile file,
-                               boost::function<QWidget*(const QImage&)> const& image_view_factory,
+                               const boost::function<QWidget*(const QImage&)>& image_view_factory,
                                QWidget* parent)
         : QStackedWidget(parent),
           m_file(file),

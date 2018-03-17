@@ -104,9 +104,9 @@ public:
 
     void reset(const PageSequence& pages,
                const SelectionAction selection_action,
-               intrusive_ptr<PageOrderProvider const> provider);
+               intrusive_ptr<const PageOrderProvider> provider);
 
-    intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
+    intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
 
     PageSequence toPageSequence() const;
 
@@ -223,7 +223,7 @@ private:
 
     const Item* m_pSelectionLeader;
     intrusive_ptr<ThumbnailFactory> m_ptrFactory;
-    intrusive_ptr<PageOrderProvider const> m_ptrOrderProvider;
+    intrusive_ptr<const PageOrderProvider> m_ptrOrderProvider;
     GraphicsScene m_graphicsScene;
     QRectF m_sceneRect;
 };
@@ -320,11 +320,11 @@ void ThumbnailSequence::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::reset(const PageSequence& pages,
                               const SelectionAction selection_action,
-                              intrusive_ptr<PageOrderProvider const> order_provider) {
+                              intrusive_ptr<const PageOrderProvider> order_provider) {
     m_ptrImpl->reset(pages, selection_action, std::move(order_provider));
 }
 
-intrusive_ptr<PageOrderProvider const> ThumbnailSequence::pageOrderProvider() const {
+intrusive_ptr<const PageOrderProvider> ThumbnailSequence::pageOrderProvider() const {
     return m_ptrImpl->pageOrderProvider();
 }
 
@@ -422,7 +422,7 @@ void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::Impl::reset(const PageSequence& pages,
                                     const SelectionAction selection_action,
-                                    intrusive_ptr<PageOrderProvider const> order_provider) {
+                                    intrusive_ptr<const PageOrderProvider> order_provider) {
     m_ptrOrderProvider = std::move(order_provider);
 
     std::set<PageId> selected;
@@ -473,7 +473,7 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
     }
 }  // ThumbnailSequence::Impl::reset
 
-intrusive_ptr<PageOrderProvider const> ThumbnailSequence::Impl::pageOrderProvider() const {
+intrusive_ptr<const PageOrderProvider> ThumbnailSequence::Impl::pageOrderProvider() const {
     return m_ptrOrderProvider;
 }
 

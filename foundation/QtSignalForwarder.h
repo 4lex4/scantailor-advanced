@@ -44,7 +44,7 @@ public:
      *        won't be forwarded.
      * \param slot A boost::function to forward the signal to.
      */
-    QtSignalForwarder(QObject* emitter, const char* signal, boost::function<void()> const& slot);
+    QtSignalForwarder(QObject* emitter, const char* signal, const boost::function<void()>& slot);
 
 private slots:
 

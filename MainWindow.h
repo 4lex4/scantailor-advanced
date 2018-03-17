@@ -225,11 +225,11 @@ private:
 
     static bool compareFiles(const QString& fpath1, const QString& fpath2);
 
-    intrusive_ptr<PageOrderProvider const> currentPageOrderProvider() const;
+    intrusive_ptr<const PageOrderProvider> currentPageOrderProvider() const;
 
     void updateSortOptions();
 
-    void resetThumbSequence(const intrusive_ptr<PageOrderProvider const>& page_order_provider);
+    void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider);
 
     void removeWidgetsFromLayout(QLayout* layout);
 

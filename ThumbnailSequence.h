@@ -92,10 +92,10 @@ public:
      */
     void reset(const PageSequence& pages,
                SelectionAction selection_action,
-               intrusive_ptr<PageOrderProvider const> order_provider = nullptr);
+               intrusive_ptr<const PageOrderProvider> order_provider = nullptr);
 
     /** Returns the current page order provider, which may be null. */
-    intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
+    intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
 
     PageSequence toPageSequence() const;
 

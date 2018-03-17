@@ -125,7 +125,7 @@ public:
 
     intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
 
-    intrusive_ptr<PropertySet const> propertiesFor(const EditableSpline::Ptr& spline) const;
+    intrusive_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
 
 signals:
 

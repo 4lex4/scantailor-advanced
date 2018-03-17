@@ -535,7 +535,7 @@ bool MainWindow::compareFiles(const QString& fpath1, const QString& fpath2) {
     }
 }
 
-intrusive_ptr<PageOrderProvider const> MainWindow::currentPageOrderProvider() const {
+intrusive_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() const {
     const int idx = sortOptions->currentIndex();
     if (idx < 0) {
         return nullptr;
@@ -564,7 +564,7 @@ void MainWindow::updateSortOptions() {
     }
 }
 
-void MainWindow::resetThumbSequence(const intrusive_ptr<PageOrderProvider const>& page_order_provider) {
+void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider) {
     if (m_ptrThumbnailCache) {
         const intrusive_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
 
@@ -1965,7 +1965,7 @@ void MainWindow::updateDisambiguationRecords(const PageSequence& pages) {
 }
 
 PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
-    intrusive_ptr<PageSelectionProvider const> provider(new PageSelectionProviderImpl(this));
+    intrusive_ptr<const PageSelectionProvider> provider(new PageSelectionProviderImpl(this));
 
     return PageSelectionAccessor(provider);
 }

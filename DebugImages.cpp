@@ -25,7 +25,7 @@
 
 void DebugImages::add(const QImage& image,
                       const QString& label,
-                      boost::function<QWidget*(const QImage&)> const& image_view_factory) {
+                      const boost::function<QWidget*(const QImage&)>& image_view_factory) {
     QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
     if (!file.open()) {
         return;
@@ -45,7 +45,7 @@ void DebugImages::add(const QImage& image,
 
 void DebugImages::add(const imageproc::BinaryImage& image,
                       const QString& label,
-                      boost::function<QWidget*(const QImage&)> const& image_view_factory) {
+                      const boost::function<QWidget*(const QImage&)>& image_view_factory) {
     add(image.toQImage(), label, image_view_factory);
 }
 

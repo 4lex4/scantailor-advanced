@@ -32,7 +32,7 @@ class DebugImageView
           public boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>> {
 public:
     explicit DebugImageView(AutoRemovingFile file,
-                            boost::function<QWidget*(const QImage&)> const& image_view_factory
+                            const boost::function<QWidget*(const QImage&)>& image_view_factory
                             = boost::function<QWidget*(const QImage&)>(),
                             QWidget* parent = nullptr);
 

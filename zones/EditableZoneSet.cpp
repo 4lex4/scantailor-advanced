@@ -55,7 +55,7 @@ intrusive_ptr<PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::
     }
 }
 
-intrusive_ptr<PropertySet const> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
+intrusive_ptr<const PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
     auto it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;

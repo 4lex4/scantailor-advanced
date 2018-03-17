@@ -21,7 +21,7 @@
 #include <utility>
 #include "PageSequence.h"
 
-PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<PageSelectionProvider const> provider)
+PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider)
         : m_ptrProvider(std::move(provider)) {
 }
 

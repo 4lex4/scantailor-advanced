@@ -812,6 +812,8 @@ void MainWindow::goPrevPage() {
 }
 
 void MainWindow::goToPage(const PageId& page_id) {
+    focusButton->setChecked(true);
+
     m_ptrThumbSequence->setSelection(page_id);
 
     // If the page was already selected, it will be reloaded.

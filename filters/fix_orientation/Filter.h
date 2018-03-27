@@ -31,6 +31,7 @@ class PageSelectionAccessor;
 class QString;
 class QDomDocument;
 class QDomElement;
+class ImageSettings;
 
 namespace page_split {
 class Task;
@@ -78,9 +79,16 @@ public:
     OptionsWidget* optionsWidget();
 
 private:
-    void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
+    void writeParams(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
+
+    void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const;
+
+    void writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+
+    void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
 
     intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<ImageSettings> m_ptrImageSettings;
     SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
 };
 }  // namespace fix_orientation

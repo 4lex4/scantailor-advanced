@@ -36,7 +36,7 @@
 
 namespace deskew {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
-        : m_ptrSettings(new Settings), m_selectedPageOrder(0) {
+        : m_ptrSettings(new Settings), m_ptrImageSettings(new ImageSettings), m_selectedPageOrder(0) {
     if (CommandLine::get().isGui()) {
         m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
     }
@@ -61,6 +61,7 @@ PageView Filter::getView() const {
 
 void Filter::performRelinking(const AbstractRelinker& relinker) {
     m_ptrSettings->performRelinking(relinker);
+    m_ptrImageSettings->performRelinking(relinker);
 }
 
 void Filter::preUpdateUI(FilterUiInterface* const ui, const PageInfo& page_info) {
@@ -74,8 +75,10 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
     QDomElement filter_el(doc.createElement("deskew"));
 
     writer.enumPages([&](const PageId& page_id, const int numeric_id) {
-        this->writePageSettings(doc, filter_el, page_id, numeric_id);
+        this->writeParams(doc, filter_el, page_id, numeric_id);
     });
+
+    saveImageSettings(writer, doc, filter_el);
 
     return filter_el;
 }
@@ -115,12 +118,11 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
         const Params params(params_el);
         m_ptrSettings->setPageParams(page_id, params);
     }
+
+    loadImageSettings(reader, filter_el.namedItem("image-settings").toElement());
 }  // Filter::loadSettings
 
-void Filter::writePageSettings(QDomDocument& doc,
-                               QDomElement& filter_el,
-                               const PageId& page_id,
-                               const int numeric_id) const {
+void Filter::writeParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
     const std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_id));
     if (!params) {
         return;
@@ -137,8 +139,8 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        intrusive_ptr<select_content::Task> next_task,
                                        const bool batch_processing,
                                        const bool debug) {
-    return intrusive_ptr<Task>(new Task(intrusive_ptr<Filter>(this), m_ptrSettings, std::move(next_task), page_id,
-                                        batch_processing, debug));
+    return intrusive_ptr<Task>(new Task(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrImageSettings,
+                                        std::move(next_task), page_id, batch_processing, debug));
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task) {
@@ -171,5 +173,62 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
 
 OptionsWidget* Filter::optionsWidget() {
     return m_ptrOptionsWidget.get();
+}
+
+void Filter::saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const {
+    QDomElement image_settings_el(doc.createElement("image-settings"));
+    writer.enumPages([&](const PageId& page_id, const int numeric_id) {
+        this->writeImageParams(doc, image_settings_el, page_id, numeric_id);
+    });
+
+    filter_el.appendChild(image_settings_el);
+}
+
+void Filter::writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
+    const std::unique_ptr<ImageSettings::PageParams> params(m_ptrImageSettings->getPageParams(page_id));
+    if (!params) {
+        return;
+    }
+
+    QDomElement page_el(doc.createElement("page"));
+    page_el.setAttribute("id", numeric_id);
+    page_el.appendChild(params->toXml(doc, "image-params"));
+
+    filter_el.appendChild(page_el);
+}
+
+void Filter::loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el) {
+    m_ptrImageSettings->clear();
+
+    const QString page_tag_name("page");
+    QDomNode node(image_settings_el.firstChild());
+    for (; !node.isNull(); node = node.nextSibling()) {
+        if (!node.isElement()) {
+            continue;
+        }
+        if (node.nodeName() != page_tag_name) {
+            continue;
+        }
+        const QDomElement el(node.toElement());
+
+        bool ok = true;
+        const int id = el.attribute("id").toInt(&ok);
+        if (!ok) {
+            continue;
+        }
+
+        const PageId page_id(reader.pageId(id));
+        if (page_id.isNull()) {
+            continue;
+        }
+
+        const QDomElement params_el(el.namedItem("image-params").toElement());
+        if (params_el.isNull()) {
+            continue;
+        }
+
+        const ImageSettings::PageParams params(params_el);
+        m_ptrImageSettings->setPageParams(page_id, params);
+    }
 }
 }  // namespace deskew

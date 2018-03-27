@@ -22,6 +22,7 @@
 #include "imageproc/BinaryThreshold.h"
 #include "imageproc/GrayImage.h"
 #include "ImageTransformation.h"
+#include "ImageSettings.h"
 #include <QImage>
 
 class FilterData {
@@ -30,6 +31,8 @@ public:
     explicit FilterData(const QImage& image);
 
     FilterData(const FilterData& other, const ImageTransformation& xform);
+
+    FilterData(const FilterData& other);
 
     imageproc::BinaryThreshold bwThreshold() const;
 
@@ -41,12 +44,13 @@ public:
 
     bool isBlackOnWhite() const;
 
+    void updateImageParams(const ImageSettings::PageParams& imageParams);
+
 private:
     QImage m_origImage;
     imageproc::GrayImage m_grayImage;
     ImageTransformation m_xform;
-    imageproc::BinaryThreshold m_bwThreshold;
-    bool m_blackOnWhite;
+    ImageSettings::PageParams m_imageParams;
 };
 
 

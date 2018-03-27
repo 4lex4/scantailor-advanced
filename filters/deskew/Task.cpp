@@ -19,6 +19,7 @@
 #include <UnitsProvider.h>
 
 #include <utility>
+#include <BlackOnWhiteEstimator.h>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -37,6 +38,8 @@
 #include "imageproc/UpscaleIntegerTimes.h"
 #include "imageproc/SeedFill.h"
 #include "imageproc/Morphology.h"
+#include <imageproc/PolygonRasterizer.h>
+#include <imageproc/Grayscale.h>
 
 namespace deskew {
 using namespace imageproc;
@@ -71,12 +74,14 @@ private:
 
 Task::Task(intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
+           intrusive_ptr<ImageSettings> image_settings,
            intrusive_ptr<select_content::Task> next_task,
            const PageId& page_id,
            const bool batch_processing,
            const bool debug)
         : m_ptrFilter(std::move(filter)),
           m_ptrSettings(std::move(settings)),
+          m_ptrImageSettings(std::move(image_settings)),
           m_ptrNextTask(std::move(next_task)),
           m_pageId(page_id),
           m_batchProcessing(batch_processing) {
@@ -87,15 +92,17 @@ Task::Task(intrusive_ptr<Filter> filter,
 
 Task::~Task() = default;
 
-FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
+FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
     status.throwIfCancelled();
 
     const Dependencies deps(data.xform().preCropArea(), data.xform().preRotation());
 
+    std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
+    updateFilterData(status, data, (!params || !deps.matches(params->dependencies())));
+
     OptionsWidget::UiData ui_data;
     ui_data.setDependencies(deps);
 
-    std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
     if (params) {
         if ((!deps.matches(params->dependencies()) || (params->deskewAngle() != ui_data.effectiveDeskewAngle()))
             && (params->mode() == MODE_AUTO)) {
@@ -215,6 +222,23 @@ QSize Task::from150dpi(const QSize& size, const Dpi& target_dpi) {
     const int height = from150dpi(size.height(), target_dpi.vertical());
 
     return QSize(width, height);
+}
+
+void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate) {
+    const std::unique_ptr<ImageSettings::PageParams> params = m_ptrImageSettings->getPageParams(m_pageId);
+    if (!needUpdate && params) {
+        data.updateImageParams(*params);
+    } else {
+        const GrayImage& img = data.grayImage();
+        BinaryImage mask(img.size(), BLACK);
+        PolygonRasterizer::fillExcept(mask, WHITE, data.xform().resultingPreCropArea(), Qt::WindingFill);
+        ImageSettings::PageParams new_params(
+                BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)),
+                BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_ptrDbg.get()));
+
+        m_ptrImageSettings->setPageParams(m_pageId, new_params);
+        data.updateImageParams(new_params);
+    }
 }
 
 /*============================ Task::UiUpdater ==========================*/

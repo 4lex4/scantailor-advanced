@@ -480,6 +480,10 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
     ImageTransformation xform_150dpi(xform);
     xform_150dpi.preScaleToDpi(Dpi(150, 150));
 
+    if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+        return;
+    }
+
     QImage gray150(transformToGray(gray_image, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
                                    OutsidePixels::assumeColor(Qt::white)));
 
@@ -507,7 +511,7 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
 
 void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {
-        if (!m_contentRect.isEmpty()) {
+        if (!m_contentRect.isEmpty() && !m_contentImage.isNull()) {
             correctContentBox(event->pos());
         }
     }

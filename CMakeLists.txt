@@ -557,6 +557,8 @@ SET(
 		DefaultParamsProvider.cpp DefaultParamsProvider.h
         DeviationProvider.h
         OrderByDeviationProvider.cpp OrderByDeviationProvider.h
+        BlackOnWhiteEstimator.cpp BlackOnWhiteEstimator.h
+        ImageSettings.cpp ImageSettings.h
         version.h
         config.h.in
         ${common_ui_files})

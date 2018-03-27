@@ -282,6 +282,52 @@ GrayImage closeGray(const GrayImage& src, const QSize& brick, const QRect& dst_a
 GrayImage closeGray(const GrayImage& src, const QSize& brick, unsigned char src_surroundings);
 
 /**
+ * \brief Extracts small elements and details from given image,
+ *        i.e. places where the structuring element does not fit in,
+ *        and are brighter than their surroundings.
+ *
+ * \param src The source image.
+ * \param brick The brick to fit into black areas.
+ * \param dst_area The area in source image coordinates that
+ *        will be returned as a destination image. It have
+ *        to fit into the source image area.
+ * \param src_surroundings The color of pixels that are assumed to
+ *        surround the source image.
+ */
+BinaryImage whiteTopHatTransform(const BinaryImage& src,
+                                 const QSize& brick,
+                                 const QRect& dst_area,
+                                 BWColor src_surroundings = WHITE);
+
+/**
+ * \brief Same as above, but assumes dst_rect == src.rect()
+ */
+BinaryImage whiteTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+
+/**
+ * \brief Extracts small elements and details from given image,
+ *        i.e. places where the structuring element does not fit in,
+ *        and are darker than their surroundings.
+ *
+ * \param src The source image.
+ * \param brick The brick to fit into white areas.
+ * \param dst_area The area in source image coordinates that
+ *        will be returned as a destination image. It have
+ *        to fit into the source image area.
+ * \param src_surroundings The color of pixels that are assumed to
+ *        surround the source image.
+ */
+BinaryImage blackTopHatTransform(const BinaryImage& src,
+                                 const QSize& brick,
+                                 const QRect& dst_area,
+                                 BWColor src_surroundings = WHITE);
+
+/**
+ * \brief Same as above, but assumes dst_rect == src.rect()
+ */
+BinaryImage blackTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+
+/**
  * \brief Performs a hit-miss matching operation.
  *
  * \param src The input image.

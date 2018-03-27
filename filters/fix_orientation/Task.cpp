@@ -23,7 +23,6 @@
 #include "Filter.h"
 #include "OptionsWidget.h"
 #include "Settings.h"
-#include "FilterData.h"
 #include "filters/page_split/Task.h"
 #include "TaskStatus.h"
 #include "ImageView.h"
@@ -57,24 +56,29 @@ private:
 };
 
 
-Task::Task(const ImageId& image_id,
+Task::Task(const PageId& page_id,
            intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
+           intrusive_ptr<ImageSettings> image_settings,
            intrusive_ptr<page_split::Task> next_task,
            const bool batch_processing)
         : m_ptrFilter(std::move(filter)),
           m_ptrNextTask(std::move(next_task)),
           m_ptrSettings(std::move(settings)),
-          m_imageId(image_id),
+          m_ptrImageSettings(std::move(image_settings)),
+          m_pageId(page_id),
+          m_imageId(m_pageId.imageId()),
           m_batchProcessing(batch_processing) {
 }
 
 Task::~Task() = default;
 
-FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
+FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
     // This function is executed from the worker thread.
 
     status.throwIfCancelled();
+
+    updateFilterData(data);
 
     ImageTransformation xform(data.xform());
     xform.setPreRotation(m_ptrSettings->getRotationFor(m_imageId));
@@ -83,6 +87,17 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
         return m_ptrNextTask->process(status, FilterData(data, xform));
     } else {
         return FilterResultPtr(new UiUpdater(m_ptrFilter, data.origImage(), m_imageId, xform, m_batchProcessing));
+    }
+}
+
+void Task::updateFilterData(FilterData& data) {
+    if (const std::unique_ptr<ImageSettings::PageParams> params = m_ptrImageSettings->getPageParams(m_pageId)) {
+        data.updateImageParams(*params);
+    } else {
+        ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(data.grayImage()), true);
+
+        m_ptrImageSettings->setPageParams(m_pageId, new_params);
+        data.updateImageParams(new_params);
     }
 }
 

@@ -1104,5 +1104,65 @@ void hitMissReplaceInPlace(BinaryImage& img,
 
         rasterOp<RopSubtract<RopDst, RopSrc>>(img, dst_rect, matches, src_rect.topLeft());
     }
-}  // hitMissReplaceInPlace
+}
+
+BinaryImage whiteTopHatTransform(const BinaryImage& src,
+                                 const QSize& brick,
+                                 const QRect& dst_area,
+                                 BWColor src_surroundings) {
+    if (src.isNull()) {
+        throw std::invalid_argument("whiteTopHatTransform: src image is null");
+    }
+    if (brick.isEmpty()) {
+        throw std::invalid_argument("whiteTopHatTransform: brick is empty");
+    }
+    if (dst_area.isEmpty()) {
+        throw std::invalid_argument("whiteTopHatTransform: dst_area is empty");
+    }
+
+    BinaryImage dst(dst_area.size());
+    if (dst_area != src.rect()) {
+        rasterOp<RopSrc>(dst, dst.rect(), src, dst_area.topLeft());
+    } else {
+        dst = src;
+    }
+
+    rasterOp<RopSubtract<RopDst, RopSrc>>(dst, openBrick(src, brick, dst_area, src_surroundings));
+
+    return dst;
+}
+
+BinaryImage whiteTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings) {
+    return whiteTopHatTransform(src, brick, src.rect(), src_surroundings);
+}
+
+BinaryImage blackTopHatTransform(const BinaryImage& src,
+                                 const QSize& brick,
+                                 const QRect& dst_area,
+                                 BWColor src_surroundings) {
+    if (src.isNull()) {
+        throw std::invalid_argument("blackTopHatTransform: src image is null");
+    }
+    if (brick.isEmpty()) {
+        throw std::invalid_argument("blackTopHatTransform: brick is empty");
+    }
+    if (dst_area.isEmpty()) {
+        throw std::invalid_argument("blackTopHatTransform: dst_area is empty");
+    }
+
+    BinaryImage dst(dst_area.size());
+    if (dst_area != src.rect()) {
+        rasterOp<RopSrc>(dst, dst.rect(), src, dst_area.topLeft());
+    } else {
+        dst = src;
+    }
+
+    rasterOp<RopSubtract<RopSrc, RopDst>>(dst, closeBrick(src, brick, dst_area, src_surroundings));
+
+    return dst;
+}
+
+BinaryImage blackTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings) {
+    return blackTopHatTransform(src, brick, src.rect(), src_surroundings);
+}
 }  // namespace imageproc

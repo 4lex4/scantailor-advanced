@@ -68,7 +68,9 @@ namespace dewarping {
 class DistortionModel;
 class CylindricalSurfaceDewarper;
 }  // namespace dewarping
+
 using namespace imageproc;
+
 namespace output {
 class OutputGenerator {
 public:

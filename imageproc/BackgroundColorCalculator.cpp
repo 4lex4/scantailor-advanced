@@ -200,7 +200,7 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
     rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
-    if (2 * background_mask.countBlackPixels() < mask.countBlackPixels()) {
+    if (2 * background_mask.countBlackPixels() <= mask.countBlackPixels()) {
         background_mask.invert();
         rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
     }
@@ -236,11 +236,10 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
 
     BinaryImage mask(img.size(), BLACK);
     PolygonRasterizer::fillExcept(mask, WHITE, crop_area, Qt::WindingFill);
-    mask = erodeBrick(mask, QSize(3, 3), WHITE);
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
     rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
-    if (2 * background_mask.countBlackPixels() < mask.countBlackPixels()) {
+    if (2 * background_mask.countBlackPixels() <= mask.countBlackPixels()) {
         background_mask.invert();
         rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
     }

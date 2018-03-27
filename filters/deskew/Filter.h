@@ -30,6 +30,7 @@
 
 class QString;
 class PageSelectionAccessor;
+class ImageSettings;
 
 namespace select_content {
 class Task;
@@ -81,9 +82,16 @@ public:
     void selectPageOrder(int option) override;
 
 private:
-    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+    void writeParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+
+    void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const;
+
+    void writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+
+    void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
 
     intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<ImageSettings> m_ptrImageSettings;
     SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
     std::vector<PageOrderOption> m_pageOrderOptions;
     int m_selectedPageOrder;

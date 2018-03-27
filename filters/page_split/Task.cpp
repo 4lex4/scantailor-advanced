@@ -120,11 +120,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
 
         if (!params || !deps.compatibleWith(*params)) {
             if (!params || ((record.layoutType() == nullptr) || (*record.layoutType() == AUTO_LAYOUT_TYPE))) {
-                new_layout = PageLayoutEstimator::estimatePageLayout(
-                        record.combinedLayoutType(),
-                        data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(), data.xform(),
-                        data.isBlackOnWhite() ? data.bwThreshold() : BinaryThreshold(256 - int(data.bwThreshold())),
-                        m_ptrDbg.get());
+                new_layout = PageLayoutEstimator::estimatePageLayout(record.combinedLayoutType(), data.grayImage(),
+                                                                     data.xform(), data.bwThreshold(), m_ptrDbg.get());
 
                 status.throwIfCancelled();
 

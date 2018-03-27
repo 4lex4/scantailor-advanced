@@ -19,6 +19,7 @@
 #ifndef FIX_ORIENTATION_TASK_H_
 #define FIX_ORIENTATION_TASK_H_
 
+#include <FilterData.h>
 #include "NonCopyable.h"
 #include "ref_countable.h"
 #include "FilterResult.h"
@@ -26,7 +27,6 @@
 #include "ImageId.h"
 
 class TaskStatus;
-class FilterData;
 class QImage;
 
 namespace page_split {
@@ -41,22 +41,27 @@ class Task : public ref_countable {
     DECLARE_NON_COPYABLE(Task)
 
 public:
-    Task(const ImageId& image_id,
+    Task(const PageId& page_id,
          intrusive_ptr<Filter> filter,
          intrusive_ptr<Settings> settings,
+         intrusive_ptr<ImageSettings> image_settings,
          intrusive_ptr<page_split::Task> next_task,
          bool batch_processing);
 
     ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status, const FilterData& data);
+    FilterResultPtr process(const TaskStatus& status, FilterData data);
 
 private:
     class UiUpdater;
 
+    void updateFilterData(FilterData& data);
+
     intrusive_ptr<Filter> m_ptrFilter;
     intrusive_ptr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
     intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<ImageSettings> m_ptrImageSettings;
+    PageId m_pageId;
     ImageId m_imageId;
     bool m_batchProcessing;
 };

@@ -100,7 +100,7 @@
 <context>
     <name>ColorPickupInteraction</name>
     <message>
-        <location filename="../filters/output/ColorPickupInteraction.cpp" line="+31"/>
+        <location filename="../filters/output/ColorPickupInteraction.cpp" line="+29"/>
         <source>Click on an area to pick up its color, or ESC to cancel.</source>
         <translation>Кликните на область, чтобы захватить ее цвет, или ESC для отмены.</translation>
     </message>
@@ -683,12 +683,12 @@
     <message>
         <location line="+7"/>
         <location line="+20"/>
-        <location line="+992"/>
+        <location line="+905"/>
         <source>Custom</source>
         <translation>Выборочный</translation>
     </message>
     <message>
-        <location line="-1007"/>
+        <location line="-920"/>
         <source>Marginal</source>
         <translation>По краям</translation>
     </message>
@@ -703,25 +703,25 @@
         <translation>Источник</translation>
     </message>
     <message>
-        <location line="+968"/>
-        <location line="+20"/>
-        <location line="+18"/>
+        <location line="+883"/>
+        <location line="+19"/>
+        <location line="+17"/>
         <location line="+15"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-51"/>
         <source>Error loading the profile.</source>
         <translation>Ошибка при загрузке профиля.</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+20"/>
         <source>The name conflicts with a default profile name. Please enter a different name.</source>
         <translation>Это имя конфликтует со стандартным именем профиля. Введите другое имя.</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+16"/>
         <source>Error saving the profile.</source>
         <translation>Ошибка при сохранении профиля.</translation>
     </message>
@@ -819,7 +819,7 @@
 <context>
     <name>DragHandler</name>
     <message>
-        <location filename="../interaction/DragHandler.cpp" line="+38"/>
+        <location filename="../interaction/DragHandler.cpp" line="+35"/>
         <source>Unrestricted dragging is possible by holding down the Shift key.</source>
         <translation>Удерживая кнопку Shift, можно перетаскивать без ограничений.</translation>
     </message>
@@ -870,18 +870,18 @@
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../FixDpiDialog.cpp" line="+241"/>
+        <location filename="../FixDpiDialog.cpp" line="+235"/>
         <source>Need Fixing</source>
         <translation>Необх. испр.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+420"/>
+        <location line="+395"/>
         <source>All Pages</source>
         <translation>Все страницы</translation>
     </message>
     <message>
-        <location line="-207"/>
+        <location line="-205"/>
         <source>DPI is too large and most likely wrong.</source>
         <translation>Слишком большой DPI и, скорее всего, неправильный.</translation>
     </message>
@@ -891,12 +891,12 @@
         <translation>DPI слишком мал. Даже если это правильно, вы не получите приемлемых результатов.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>DPI is too small for this pixel size. Such combination would probably lead to out of memory errors.</source>
         <translation>DPI слишком мал для этого пиксельного размера. Такая комбинация, вероятно, приведет к ошибкам переполнения памяти.</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+224"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -904,7 +904,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../ImageViewBase.cpp" line="+220"/>
+        <location filename="../ImageViewBase.cpp" line="+212"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation>Используйте колесо мыши для увеличения.  В увеличенном виде доступно перетаскивание.</translation>
     </message>
@@ -917,7 +917,7 @@
         <translation>Кликните для создания новой контрольной точки.</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+19"/>
         <source>This point can be dragged. Hold Ctrl or Shift to drag along axes.</source>
         <translation>Контрольная точка доступна для перетаскивания. Удерживайте Ctrl или Shift для перетаскивания вдоль осей.</translation>
     </message>
@@ -930,7 +930,7 @@
 <context>
     <name>LoadFileTask</name>
     <message>
-        <location filename="../LoadFileTask.cpp" line="+141"/>
+        <location filename="../LoadFileTask.cpp" line="+139"/>
         <source>The following file could not be loaded:
 %1</source>
         <translation>Файл не загрузился:%1</translation>
@@ -1018,7 +1018,7 @@
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../MainWindow.cpp" line="+590"/>
+        <location filename="../MainWindow.cpp" line="+491"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
@@ -1235,17 +1235,17 @@
         <translation>Параметры по умолчанию...</translation>
     </message>
     <message>
-        <location filename="../MainWindow.cpp" line="-79"/>
+        <location filename="../MainWindow.cpp" line="-73"/>
         <source>Stop batch processing</source>
         <translation>Остановить пакетную обработку</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+73"/>
         <source>Save the project?</source>
         <translation>Сохранить этот проект?</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -1260,28 +1260,28 @@
         <translation>Отмена</translation>
     </message>
     <message>
-        <location line="+430"/>
+        <location line="+383"/>
         <source>Insert before ...</source>
         <translation>Вставить перед ...</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Insert after ...</source>
         <translation>Вставить после ...</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
         <source>Remove from project ...</source>
         <translation>Удалить из проекта ...</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+18"/>
         <source>Insert here ...</source>
         <translation>Вставить сюда ...</translation>
     </message>
     <message>
-        <location line="+372"/>
-        <location line="+62"/>
+        <location line="+361"/>
+        <location line="+47"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
@@ -1291,37 +1291,37 @@
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <location line="+10"/>
-        <location line="+306"/>
-        <location line="+29"/>
+        <location line="+13"/>
+        <location line="+7"/>
+        <location line="+286"/>
+        <location line="+26"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-319"/>
         <source>Unable to open the project file.</source>
         <translation>Не удалось открыть файл проекта.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>The project file is broken.</source>
         <translation>Файл проекта поврежден.</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+60"/>
         <source>version </source>
         <translation>версия </translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+122"/>
         <source>Output is not yet possible, as the final size of pages is not yet known.
 To determine it, run batch processing at &quot;Select Content&quot; or &quot;Margins&quot;.</source>
         <translation>Вывод невозможен, поскольку еще не известны итоговые размеры страниц.
 Для их определения, прогоните пакетную обработку на этапах &quot;Полезная Область&apos; или &quot;Поля&quot;.</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+35"/>
         <source>Unnamed</source>
         <translation>Без имени</translation>
     </message>
@@ -1331,28 +1331,28 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation></translation>
     </message>
     <message>
-        <location line="+67"/>
-        <location line="+29"/>
+        <location line="+62"/>
+        <location line="+26"/>
         <source>Error saving the project file!</source>
         <translation>Ошибка при сохранении файла!</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+48"/>
         <source>Files to insert</source>
         <translation>Файлы для вставки</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+3"/>
         <source>Images not in project (%1)</source>
         <translation>Изображения не в проекте (%1)</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+44"/>
         <source>Skip failed files</source>
         <translation>Пропустить файлы с ошибкой</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+40"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
@@ -1589,17 +1589,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Обратите внимание на то, что хотя Scan Tailor и пытается обработать ситуации нехватки памяти, чтобы дать вам возможность сохранить проект, это не всегда бывает возможно. В этот раз все получилось, но в следующий раз программа может просто &quot;упасть&quot;.</translation>
     </message>
     <message>
-        <location filename="../OutOfMemoryDialog.cpp" line="+78"/>
+        <location filename="../OutOfMemoryDialog.cpp" line="+75"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+27"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Error saving the project file!</source>
         <translation>Ошибка при сохранении файла!</translation>
     </message>
@@ -2341,7 +2341,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../ProjectFilesDialog.cpp" line="+299"/>
+        <location filename="../ProjectFilesDialog.cpp" line="+277"/>
         <source>Input Directory</source>
         <translation>Директория ввода</translation>
     </message>
@@ -2353,7 +2353,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location line="-9"/>
-        <location filename="../ProjectFilesDialog.cpp" line="+18"/>
+        <location filename="../ProjectFilesDialog.cpp" line="+14"/>
         <source>Output Directory</source>
         <translation>Директория вывода</translation>
     </message>
@@ -2416,32 +2416,32 @@ p, li { white-space: pre-wrap; }
         <translation>Исправить DPI, даже если он выглядят нормально</translation>
     </message>
     <message>
-        <location filename="../ProjectFilesDialog.cpp" line="+128"/>
-        <location line="+9"/>
-        <location line="+10"/>
-        <location line="+23"/>
-        <location line="+10"/>
-        <location line="+69"/>
+        <location filename="../ProjectFilesDialog.cpp" line="+109"/>
+        <location line="+7"/>
+        <location line="+7"/>
+        <location line="+19"/>
+        <location line="+7"/>
+        <location line="+66"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-121"/>
+        <location line="-106"/>
         <source>No files in project!</source>
         <translation>В проекте нет файлов!</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>Input directory is not set or doesn&apos;t exist.</source>
         <translation>Директория ввода не задана или не существует.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>Input and output directories can&apos;t be the same.</source>
         <translation>Директории ввода и вывода не могут совпадать.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+9"/>
         <source>Create Directory?</source>
         <translation>Создать директорию?</translation>
     </message>
@@ -2451,17 +2451,17 @@ p, li { white-space: pre-wrap; }
         <translation>Директория вывода не существует.  Создать ее?</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+9"/>
         <source>Unable to create output directory.</source>
         <translation>Невозможно создать директорию вывода.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>Output directory is not set or doesn&apos;t exist.</source>
         <translation>Директория вывода не задана или не существует.</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+67"/>
         <source>Some of the files failed to load.
 Either we don&apos;t support their format, or they are broken.
 You should remove them from the project.</source>
@@ -2473,18 +2473,18 @@ You should remove them from the project.</source>
 <context>
     <name>ProjectOpeningContext</name>
     <message>
-        <location filename="../ProjectOpeningContext.cpp" line="+42"/>
-        <location line="+8"/>
+        <location filename="../ProjectOpeningContext.cpp" line="+39"/>
+        <location line="+6"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-5"/>
         <source>The project file is not compatible with the current application version.</source>
         <translation>Файл проекта несовместим с текущей версией приложения.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+5"/>
         <source>Unable to interpret the project file.</source>
         <translation>Не удалось интерпритировать файл проекта.</translation>
     </message>
@@ -2530,17 +2530,17 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../RelinkingDialog.cpp" line="+85"/>
+        <location filename="../RelinkingDialog.cpp" line="+80"/>
         <source>Substitution File for %1</source>
         <translation>Файл для %1</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+5"/>
         <source>Substitution Directory for %1</source>
         <translation>Папка для %1</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+24"/>
         <source>This change would merge several files into one.</source>
         <translation>Это изменение объединит несколько файлов в один.</translation>
     </message>
@@ -2742,9 +2742,10 @@ You should remove them from the project.</source>
         <translation>Настройки</translation>
     </message>
     <message>
+        <location line="+13"/>
         <location line="+6"/>
         <source>General</source>
-        <translation>Общее</translation>
+        <translation>Общие</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2762,7 +2763,12 @@ You should remove them from the project.</source>
         <translation>Автосохранение текущего проекта</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+127"/>
+        <source>Processing</source>
+        <translation>Обработка</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Deviation</source>
         <translation>Отклонение</translation>
     </message>
@@ -2806,7 +2812,7 @@ You should remove them from the project.</source>
         <translation>Минимальное отклонение, которое будет подсвечено.</translation>
     </message>
     <message>
-        <location line="-223"/>
+        <location line="-243"/>
         <source>Color Scheme: </source>
         <translation>Цветовая схема: </translation>
     </message>
@@ -2831,12 +2837,12 @@ You should remove them from the project.</source>
         <translation>Цветное сжатие: </translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="+37"/>
+        <location filename="../SettingsDialog.cpp" line="+36"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
         <translation>Вашим оборудованием / драйвером эта функция не поддерживается</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Dark</source>
         <translation>Темная</translation>
     </message>
@@ -2847,34 +2853,34 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location line="+8"/>
-        <location line="+11"/>
+        <location line="+8"/>
         <source>None</source>
         <translation>Без сжатия</translation>
     </message>
     <message>
-        <location line="-10"/>
-        <location line="+11"/>
+        <location line="-7"/>
+        <location line="+8"/>
         <source>LZW</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-10"/>
-        <location line="+11"/>
+        <location line="-7"/>
+        <location line="+8"/>
         <source>Deflate</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-10"/>
+        <location line="-7"/>
         <source>CCITT G4</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+8"/>
         <source>JPEG</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+59"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
@@ -2887,7 +2893,7 @@ You should remove them from the project.</source>
 <context>
     <name>StageListView</name>
     <message>
-        <location filename="../StageListView.cpp" line="+111"/>
+        <location filename="../StageListView.cpp" line="+107"/>
         <source>Launch batch processing</source>
         <translation>Запустить пакетную обработку</translation>
     </message>
@@ -2977,7 +2983,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../ThumbnailSequence.cpp" line="+1327"/>
+        <location filename="../ThumbnailSequence.cpp" line="+1268"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -3033,12 +3039,12 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneContextMenuInteraction</name>
     <message>
-        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+229"/>
+        <location filename="../zones/ZoneContextMenuInteraction.cpp" line="+212"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+4"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
@@ -3046,7 +3052,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneCreationInteraction</name>
     <message>
-        <location filename="../zones/ZoneCreationInteraction.cpp" line="+325"/>
+        <location filename="../zones/ZoneCreationInteraction.cpp" line="+308"/>
         <source>Click to finish this rectangular zone.  ESC to cancel.</source>
         <translation>Кликните для завершения этой прямоугольной зоны.  ESC для отмены.</translation>
     </message>
@@ -3069,7 +3075,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneDefaultInteraction</name>
     <message>
-        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+33"/>
+        <location filename="../zones/ZoneDefaultInteraction.cpp" line="+31"/>
         <source>Drag the vertex. Hold Ctrl to make the vertex angle right.</source>
         <translation>Перетаскивайте вершину. Удерживайте Ctrl, чтобы сделать угол при вершине прямым.</translation>
     </message>
@@ -3079,12 +3085,12 @@ You should remove them from the project.</source>
         <translation>Кликните для создания новой вершины.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone.</source>
         <translation>ПКМ для редактирования свойств зоны. Удерживайте Shift для перетаскивания зоны или Shift+Ctrl для копирования. Нажмите Del, чтобы удалить зону.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.</source>
         <translation>Кликните, чтобы создать новую зону. Используйте Ctrl+Alt+Клик для копирования последней созданной зоны.</translation>
     </message>
@@ -3092,7 +3098,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneDragInteraction</name>
     <message>
-        <location filename="../zones/ZoneDragInteraction.cpp" line="+35"/>
+        <location filename="../zones/ZoneDragInteraction.cpp" line="+34"/>
         <source>Release left mouse button to finish dragging.</source>
         <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>
@@ -3100,7 +3106,7 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneVertexDragInteraction</name>
     <message>
-        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+175"/>
+        <location filename="../zones/ZoneVertexDragInteraction.cpp" line="+167"/>
         <source>Merge these two vertices.</source>
         <translation>Объединить эти две вершины.</translation>
     </message>
@@ -3113,7 +3119,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::Filter</name>
     <message>
-        <location filename="../filters/deskew/Filter.cpp" line="+49"/>
+        <location filename="../filters/deskew/Filter.cpp" line="+48"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -3131,12 +3137,12 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::ImageView</name>
     <message>
-        <location filename="../filters/deskew/ImageView.cpp" line="+48"/>
+        <location filename="../filters/deskew/ImageView.cpp" line="+42"/>
         <source>Use Ctrl+Wheel to rotate or Ctrl+Shift+Wheel for finer rotation.</source>
         <translation>Используйте Ctrl+Колесо мыши для вращения, или Ctrl+Shift+Колесо мыши для более точного вращения.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Drag this handle to rotate the image.</source>
         <translation>Тяните эту рукоятку чтобы повернуть изображение.</translation>
     </message>
@@ -3144,7 +3150,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../filters/deskew/OptionsWidget.cpp" line="+51"/>
+        <location filename="../filters/deskew/OptionsWidget.cpp" line="+48"/>
         <source>Apply Deskew</source>
         <translation>Область примененияомпенсацию наклона</translation>
     </message>
@@ -3152,7 +3158,7 @@ You should remove them from the project.</source>
 <context>
     <name>fix_orientation::Filter</name>
     <message>
-        <location filename="../filters/fix_orientation/Filter.cpp" line="+51"/>
+        <location filename="../filters/fix_orientation/Filter.cpp" line="+50"/>
         <source>Fix Orientation</source>
         <translation>Исправление ориентации</translation>
     </message>
@@ -3160,29 +3166,29 @@ You should remove them from the project.</source>
 <context>
     <name>output::ChangeDpiDialog</name>
     <message>
-        <location filename="../filters/output/ChangeDpiDialog.cpp" line="+62"/>
+        <location filename="../filters/output/ChangeDpiDialog.cpp" line="+60"/>
         <source>Custom</source>
         <translation>Особый</translation>
     </message>
     <message>
-        <location line="+51"/>
-        <location line="+10"/>
-        <location line="+9"/>
+        <location line="+40"/>
+        <location line="+7"/>
+        <location line="+6"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location line="-18"/>
+        <location line="-13"/>
         <source>DPI is not set.</source>
         <translation>DPI не указан.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
         <source>DPI is too low!</source>
         <translation>DPI слишком маленький!</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+6"/>
         <source>DPI is too high!</source>
         <translation>DPI слишком большой!</translation>
     </message>
@@ -3190,7 +3196,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::FillZoneEditor</name>
     <message>
-        <location filename="../filters/output/FillZoneEditor.cpp" line="+191"/>
+        <location filename="../filters/output/FillZoneEditor.cpp" line="+183"/>
         <source>Pick color</source>
         <translation>Выбрать цвет</translation>
     </message>
@@ -3198,7 +3204,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::Filter</name>
     <message>
-        <location filename="../filters/output/Filter.cpp" line="+49"/>
+        <location filename="../filters/output/Filter.cpp" line="+46"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
@@ -3206,7 +3212,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::OptionsWidget</name>
     <message>
-        <location filename="../filters/output/OptionsWidget.cpp" line="+46"/>
+        <location filename="../filters/output/OptionsWidget.cpp" line="+45"/>
         <source>Black and White</source>
         <translation>Черно-белый</translation>
     </message>
@@ -3256,23 +3262,23 @@ You should remove them from the project.</source>
         <translation>Прямоугольная</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+210"/>
         <source>Apply Splitting Settings</source>
         <translation>Применить настройки разделения</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+58"/>
         <source>Apply Despeckling Level</source>
         <translation>Применить уровень удаления пятен</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+76"/>
         <source>Apply Depth Perception</source>
         <translation>Применить восприятие глубины</translation>
     </message>
     <message>
-        <location line="-375"/>
-        <location line="+620"/>
+        <location line="-346"/>
+        <location line="+583"/>
         <source>Off</source>
         <translation>Отключено</translation>
     </message>
@@ -3292,7 +3298,7 @@ You should remove them from the project.</source>
         <translation>По краям</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>deskew disabled</source>
         <translation>Выравнивание отключено</translation>
     </message>
@@ -3300,7 +3306,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::TabbedImageView</name>
     <message>
-        <location filename="../filters/output/TabbedImageView.cpp" line="+30"/>
+        <location filename="../filters/output/TabbedImageView.cpp" line="+28"/>
         <source>Use Ctrl+1..5 to switch the tabs.</source>
         <translation>Используйте Ctrl+1..5 для переключения табов.</translation>
     </message>
@@ -3308,17 +3314,17 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../filters/output/Task.cpp" line="+609"/>
+        <location filename="../filters/output/Task.cpp" line="+543"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation>Зоны картинок доступны только в режиме &quot;Смешанный&quot;.</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+38"/>
         <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
         <translation>Удаление пятен не делается в режиме &quot;Цветной / Серый&quot;.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+15"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
@@ -3346,7 +3352,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::Filter</name>
     <message>
-        <location filename="../filters/page_layout/Filter.cpp" line="+62"/>
+        <location filename="../filters/page_layout/Filter.cpp" line="+58"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -3374,7 +3380,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::ImageView</name>
     <message>
-        <location filename="../filters/page_layout/ImageView.cpp" line="+63"/>
+        <location filename="../filters/page_layout/ImageView.cpp" line="+61"/>
         <source>Resize margins by dragging any of the solid lines.</source>
         <translation>Меняйте размеры полей, перетаскивая хоть внешние, хоть внутренние сплошные линии.</translation>
     </message>
@@ -3382,12 +3388,12 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+358"/>
+        <location filename="../filters/page_layout/OptionsWidget.cpp" line="+322"/>
         <source>Apply Margins</source>
         <translation>Применить поля</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+8"/>
         <source>Apply Alignment</source>
         <translation>Применить выравнивание</translation>
     </message>
@@ -3395,7 +3401,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::Filter</name>
     <message>
-        <location filename="../filters/page_split/Filter.cpp" line="+56"/>
+        <location filename="../filters/page_split/Filter.cpp" line="+49"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -3413,7 +3419,7 @@ You should remove them from the project.</source>
 <context>
     <name>page_split::ImageView</name>
     <message>
-        <location filename="../filters/page_split/ImageView.cpp" line="+74"/>
+        <location filename="../filters/page_split/ImageView.cpp" line="+71"/>
         <source>Drag the line or the handles.</source>
         <translation>Тяните линию или рукоятки.</translation>
     </message>
@@ -3423,13 +3429,13 @@ You should remove them from the project.</source>
     <message>
         <location filename="../filters/page_split/OptionsWidget.cpp" line="+86"/>
         <location line="+91"/>
-        <location line="+114"/>
+        <location line="+104"/>
         <source>Set manually</source>
         <translation>Установлено вручную</translation>
     </message>
     <message>
-        <location line="-155"/>
-        <location line="+152"/>
+        <location line="-145"/>
+        <location line="+142"/>
         <source>Auto detected</source>
         <translation>Определено автоматически</translation>
     </message>
@@ -3445,7 +3451,7 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::Filter</name>
     <message>
-        <location filename="../filters/select_content/Filter.cpp" line="+55"/>
+        <location filename="../filters/select_content/Filter.cpp" line="+52"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
@@ -3473,7 +3479,7 @@ You should remove them from the project.</source>
 <context>
     <name>select_content::ImageView</name>
     <message>
-        <location filename="../filters/select_content/ImageView.cpp" line="+61"/>
+        <location filename="../filters/select_content/ImageView.cpp" line="+58"/>
         <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box. Use double-click on content to automatically adjust the content area.</source>
         <translation>Используйте контекстное меню для включения / выключения полезной области. Удерживайте Shift для перетаскивания области. Используйте двойной клик по контенту, чтобы автоматически настроить полезную область.</translation>
     </message>
@@ -3483,18 +3489,18 @@ You should remove them from the project.</source>
         <translation>Перетаскивайте линии или углы, чтобы изменить размеры полезной области.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+33"/>
         <source>Drag lines or corners to resize the page box.</source>
         <translation>Перетаскивайте стороны или углы для изменения размера области страницы.</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+36"/>
         <source>Hold left mouse button to drag the content box.</source>
         <translation>Зажмите левую кнопку мыши для перетаскивания полезной области.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+20"/>
+        <location line="+14"/>
         <source>Release left mouse button to finish dragging.</source>
         <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>

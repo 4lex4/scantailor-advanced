@@ -325,16 +325,26 @@ std::unordered_map<uint32_t, uint32_t> ColorTable::normalizePalette(const std::u
     return colorToNormalizedMap;
 }
 
-void ColorTable::makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
-    QColor color = QColor(normalized).toHsv();
+namespace {
+bool isGray(const QColor& color) {
+    const double saturation = color.saturationF();
+    const double value = color.valueF();
 
-    const bool isGray = (color.saturationF() * color.valueF()) < 0.2;
-    if (isGray) {
+    const double coefficient = std::max(.0, ((std::max(saturation, value) - 0.28) / 0.72)) + 1;
+
+    return (saturation * value) < (0.1 * coefficient);
+}
+}
+
+void ColorTable::makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
+    const QColor color = QColor(normalized).toHsv();
+
+    if (isGray(color)) {
         const int grayLevel = qGray(normalized);
-        const QColor grayColor = QColor(grayLevel, grayLevel, grayLevel).toHsv();
+        const QColor grayColor = QColor(grayLevel, grayLevel, grayLevel).toHsl();
         if (grayColor.lightnessF() <= 0.5) {
             rgb = 0xff000000u;
-        } else if (color.lightnessF() >= 0.8) {
+        } else if (grayColor.lightnessF() >= 0.8) {
             rgb = 0xffffffffu;
         }
     }

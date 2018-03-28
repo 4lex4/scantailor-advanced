@@ -38,7 +38,7 @@ class QDomDocument;
  * \note This class is thread-safe.
  */
 class FileNameDisambiguator : public ref_countable {
-DECLARE_NON_COPYABLE(FileNameDisambiguator)
+    DECLARE_NON_COPYABLE(FileNameDisambiguator)
 
 public:
     FileNameDisambiguator();
@@ -56,8 +56,8 @@ public:
      * returning the full path.  If unpacker returns an empty string,
      * the record will be skipped.
      */
-    FileNameDisambiguator(const QDomElement& disambiguator_el, boost::function<QString(
-            const QString&)>const & file_path_unpacker);
+    FileNameDisambiguator(const QDomElement& disambiguator_el,
+                          const boost::function<QString(const QString&)>& file_path_unpacker);
 
     /**
      * \brief Serialize disambiguation information to XML.
@@ -72,9 +72,9 @@ public:
      * returning the corresponding shorthand.  If packer returns an empty string,
      * the record will be skipped.
      */
-    QDomElement toXml(QDomDocument& doc, const QString& name, boost::function<QString(
-            const QString&)>const & file_path_packer)
-    const;
+    QDomElement toXml(QDomDocument& doc,
+                      const QString& name,
+                      const boost::function<QString(const QString&)>& file_path_packer) const;
 
     int getLabel(const QString& file_path) const;
 

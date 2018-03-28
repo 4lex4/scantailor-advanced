@@ -24,53 +24,49 @@
 #include <boost/lambda/construct.hpp>
 #include <boost/lambda/bind.hpp>
 
-#define DISPATCH(list, call) \
-    { \
-        HandlerList::iterator it(list->begin()); \
+#define DISPATCH(list, call)                          \
+    {                                                 \
+        HandlerList::iterator it(list->begin());      \
         const HandlerList::iterator end(list->end()); \
-        while (it != end) { \
-            (it++)->call; \
-        } \
+        while (it != end) {                           \
+            (it++)->call;                             \
+        }                                             \
     }
 
-#define RETURN_IF_ACCEPTED(event) \
-    { \
+#define RETURN_IF_ACCEPTED(event)  \
+    {                              \
         if (event->isAccepted()) { \
-            return; \
-        } \
+            return;                \
+        }                          \
     }
 
 namespace {
-    class ScopedClearAcceptance {
+class ScopedClearAcceptance {
     DECLARE_NON_COPYABLE(ScopedClearAcceptance)
 
-    public:
-        explicit ScopedClearAcceptance(QEvent* event);
+public:
+    explicit ScopedClearAcceptance(QEvent* event);
 
-        ~ScopedClearAcceptance();
+    ~ScopedClearAcceptance();
 
-    private:
-        QEvent* m_pEvent;
-        bool m_wasAccepted;
-    };
+private:
+    QEvent* m_pEvent;
+    bool m_wasAccepted;
+};
 
 
-    ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event)
-            : m_pEvent(event),
-              m_wasAccepted(event->isAccepted()) {
-        m_pEvent->setAccepted(false);
+ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event) : m_pEvent(event), m_wasAccepted(event->isAccepted()) {
+    m_pEvent->setAccepted(false);
+}
+
+ScopedClearAcceptance::~ScopedClearAcceptance() {
+    if (m_wasAccepted) {
+        m_pEvent->setAccepted(true);
     }
-
-    ScopedClearAcceptance::~ScopedClearAcceptance() {
-        if (m_wasAccepted) {
-            m_pEvent->setAccepted(true);
-        }
-    }
+}
 }  // anonymous namespace
 
-InteractionHandler::InteractionHandler()
-        : m_ptrPreceeders(new HandlerList),
-          m_ptrFollowers(new HandlerList) {
+InteractionHandler::InteractionHandler() : m_ptrPreceeders(new HandlerList), m_ptrFollowers(new HandlerList) {
 }
 
 InteractionHandler::~InteractionHandler() {
@@ -244,4 +240,3 @@ void InteractionHandler::makeLastFollower(InteractionHandler& handler) {
 bool InteractionHandler::defaultInteractionPermitter(const InteractionState& interaction) {
     return !interaction.captured();
 }
-

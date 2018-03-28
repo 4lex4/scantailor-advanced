@@ -67,5 +67,4 @@ void ContentSpanFinder::findImpl(const SlicedHistogram& histogram, VirtualFuncti
     if (content_end - content_begin >= m_minContentWidth) {
         handler(Span(content_begin, content_end));
     }
-} // ContentSpanFinder::findImpl
-
+}  // ContentSpanFinder::findImpl

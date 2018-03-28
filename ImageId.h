@@ -27,9 +27,7 @@ class QFileInfo;
 class ImageId {
     // Member-wise copying is OK.
 public:
-    ImageId()
-            : m_filePath(),
-              m_page(0) {
+    ImageId() : m_filePath(), m_page(0) {
     }
 
     explicit ImageId(const QString& file_path, int page = 0);
@@ -82,13 +80,12 @@ bool operator!=(const ImageId& lhs, const ImageId& rhs);
 bool operator<(const ImageId& lhs, const ImageId& rhs);
 
 namespace std {
-    template<>
-    struct hash<ImageId> {
-        size_t operator()(const ImageId& imageId) const noexcept {
-            return (hashes::hash<QString>()(imageId.filePath())
-                    ^ hash<int>()(imageId.page()) << 1);
-        }
-    };
-}
+template<>
+struct hash<ImageId> {
+    size_t operator()(const ImageId& imageId) const noexcept {
+        return (hashes::hash<QString>()(imageId.filePath()) ^ hash<int>()(imageId.page()) << 1);
+    }
+};
+}  // namespace std
 
-#endif // ifndef IMAGEID_H_
+#endif  // ifndef IMAGEID_H_

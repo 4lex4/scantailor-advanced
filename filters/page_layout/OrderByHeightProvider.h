@@ -24,17 +24,17 @@
 #include "PageOrderProvider.h"
 
 namespace page_layout {
-    class OrderByHeightProvider : public PageOrderProvider {
-    public:
-        explicit OrderByHeightProvider(intrusive_ptr<Settings> settings);
+class OrderByHeightProvider : public PageOrderProvider {
+public:
+    explicit OrderByHeightProvider(intrusive_ptr<Settings> settings);
 
-        bool precedes(const PageId& lhs_page,
-                      bool lhs_incomplete,
-                      const PageId& rhs_page,
-                      bool rhs_incomplete) const override;
+    bool precedes(const PageId& lhs_page,
+                  bool lhs_incomplete,
+                  const PageId& rhs_page,
+                  bool rhs_incomplete) const override;
 
-    private:
-        intrusive_ptr<Settings> m_ptrSettings;
-    };
+private:
+    intrusive_ptr<Settings> m_ptrSettings;
+};
 }  // namespace page_layout
 #endif

@@ -25,19 +25,11 @@
 class ImageMetadata {
     // Member-wise copying is OK.
 public:
-    enum DpiStatus {
-        DPI_OK,
-        DPI_UNDEFINED,
-        DPI_TOO_LARGE,
-        DPI_TOO_SMALL,
-        DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
-    };
+    enum DpiStatus { DPI_OK, DPI_UNDEFINED, DPI_TOO_LARGE, DPI_TOO_SMALL, DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE };
 
     ImageMetadata() = default;
 
-    ImageMetadata(QSize size, Dpi dpi)
-            : m_size(size),
-              m_dpi(dpi) {
+    ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi) {
     }
 
     const QSize& size() const {
@@ -76,4 +68,4 @@ private:
 };
 
 
-#endif // ifndef IMAGEMETADATA_H_
+#endif  // ifndef IMAGEMETADATA_H_

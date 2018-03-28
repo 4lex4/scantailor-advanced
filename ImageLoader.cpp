@@ -21,6 +21,7 @@
 #include "ImageId.h"
 #include <QImage>
 #include <QFile>
+#include <QtGui/QImageReader>
 
 QImage ImageLoader::load(const ImageId& image_id) {
     return load(image_id.filePath(), image_id.zeroBasedPage());
@@ -46,8 +47,7 @@ QImage ImageLoader::load(QIODevice& io_dev, const int page_num) {
     }
 
     QImage image;
-    image.load(&io_dev, nullptr);
+    QImageReader(&io_dev).read(&image);
 
     return image;
 }
-

@@ -30,10 +30,7 @@
 template<typename T = QStyledItemDelegate>
 class ChangedStateItemDelegate : public T {
 public:
-    explicit ChangedStateItemDelegate(QObject* parent = nullptr)
-            : T(parent),
-              m_changedFlags(),
-              m_changedMask() {
+    explicit ChangedStateItemDelegate(QObject* parent = nullptr) : T(parent), m_changedFlags(), m_changedMask() {
     }
 
     void flagsForceEnabled(QStyle::State flags) {
@@ -57,8 +54,7 @@ public:
     virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
         const QStyle::State orig_state = option.state;
 
-        const QStyle::State new_state = (orig_state & ~m_changedMask)
-                                        | (m_changedFlags & m_changedMask);
+        const QStyle::State new_state = (orig_state & ~m_changedMask) | (m_changedFlags & m_changedMask);
 
         // Evil but necessary: the alternative solution of modifying
         // a copy doesn't work, as option doesn't really point to
@@ -76,4 +72,4 @@ private:
 };
 
 
-#endif // ifndef CHANGEDSTATEITEMDELEGATE_H_
+#endif  // ifndef CHANGEDSTATEITEMDELEGATE_H_

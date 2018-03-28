@@ -31,35 +31,21 @@ class EditableZoneSet;
 
 class ZoneInteractionContext {
 public:
-    typedef boost::function<
-            InteractionHandler*()
-    > DefaultInteractionCreator;
+    typedef boost::function<InteractionHandler*()> DefaultInteractionCreator;
 
-    typedef boost::function<
-            InteractionHandler*(InteractionState& interaction)
-    > ZoneCreationInteractionCreator;
+    typedef boost::function<InteractionHandler*(InteractionState& interaction)> ZoneCreationInteractionCreator;
 
-    typedef boost::function<
-            InteractionHandler*(
-                    InteractionState& interaction,
-                    const EditableSpline::Ptr& spline, const SplineVertex::Ptr& vertex
-            )
-    > VertexDragInteractionCreator;
+    typedef boost::function<InteractionHandler*(InteractionState& interaction,
+                                                const EditableSpline::Ptr& spline,
+                                                const SplineVertex::Ptr& vertex)>
+            VertexDragInteractionCreator;
 
-    typedef boost::function<
-            InteractionHandler*(
-                    InteractionState& interaction,
-                    const EditableSpline::Ptr& spline
-            )
-    > ZoneDragInteractionCreator;
+    typedef boost::function<InteractionHandler*(InteractionState& interaction, const EditableSpline::Ptr& spline)>
+            ZoneDragInteractionCreator;
 
-    typedef boost::function<
-            InteractionHandler*(InteractionState& interaction)
-    > ContextMenuInteractionCreator;
+    typedef boost::function<InteractionHandler*(InteractionState& interaction)> ContextMenuInteractionCreator;
 
-    typedef boost::function<
-            void(const EditableZoneSet::Zone& zone)
-    > ShowPropertiesCommand;
+    typedef boost::function<void(const EditableZoneSet::Zone& zone)> ShowPropertiesCommand;
 
     ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones);
 
@@ -148,8 +134,7 @@ private:
     /**
      * Creates an instance of ZoneDragInteraction.
      */
-    InteractionHandler* createStdZoneDragInteraction(InteractionState& interaction,
-                                                     const EditableSpline::Ptr& spline);
+    InteractionHandler* createStdZoneDragInteraction(InteractionState& interaction, const EditableSpline::Ptr& spline);
 
     /**
      * Creates an instance of ZoneContextMenuInteraction.  May return null.

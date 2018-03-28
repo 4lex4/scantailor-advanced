@@ -79,4 +79,3 @@ SplineSegment EditableSpline::SegmentIterator::next() {
         return SplineSegment(origin, m_ptrNextVertex);
     }
 }
-

@@ -23,7 +23,7 @@
 #include <QWidget>
 
 class SystemLoadWidget : public QWidget {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit SystemLoadWidget(QWidget* parent = nullptr);
 

@@ -70,4 +70,3 @@ void AtomicFileOverwriter::abort() {
     m_ptrTempFile.reset();  // See comments in commit()
     QFile::remove(temp_file_path);
 }
-

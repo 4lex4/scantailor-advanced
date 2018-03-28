@@ -32,35 +32,35 @@ class QButtonGroup;
 class Dpi;
 
 namespace output {
-    class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog {
+class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog {
     Q_OBJECT
-    public:
-        ChangeDpiDialog(QWidget* parent,
-                        const Dpi& dpi,
-                        const PageId& cur_page,
-                        const PageSelectionAccessor& page_selection_accessor);
+public:
+    ChangeDpiDialog(QWidget* parent,
+                    const Dpi& dpi,
+                    const PageId& cur_page,
+                    const PageSelectionAccessor& page_selection_accessor);
 
-        ~ChangeDpiDialog() override;
+    ~ChangeDpiDialog() override;
 
-    signals:
+signals:
 
-        void accepted(const std::set<PageId>& pages, const Dpi& dpi);
+    void accepted(const std::set<PageId>& pages, const Dpi& dpi);
 
-    private slots:
+private slots:
 
-        void dpiSelectionChanged(int index);
+    void dpiSelectionChanged(int index);
 
-        void dpiEditTextChanged(const QString& text);
+    void dpiEditTextChanged(const QString& text);
 
-        void onSubmit();
+    void onSubmit();
 
-    private:
-        PageSequence m_pages;
-        std::set<PageId> m_selectedPages;
-        PageId m_curPage;
-        QButtonGroup* m_pScopeGroup;
-        int m_customItemIdx;
-        QString m_customDpiString;
-    };
+private:
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    PageId m_curPage;
+    QButtonGroup* m_pScopeGroup;
+    int m_customItemIdx;
+    QString m_customDpiString;
+};
 }  // namespace output
-#endif // ifndef OUTPUT_CHANGEDPIDIALOG_H_
+#endif  // ifndef OUTPUT_CHANGEDPIDIALOG_H_

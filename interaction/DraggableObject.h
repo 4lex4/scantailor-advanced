@@ -30,33 +30,19 @@ class QPainter;
 
 class DraggableObject {
 public:
-    typedef boost::function<
-            void(QPainter& painter, const InteractionState& interaction)
-    > PaintCallback;
+    typedef boost::function<void(QPainter& painter, const InteractionState& interaction)> PaintCallback;
 
-    typedef boost::function<
-            Proximity(const InteractionState& interaction)
-    > ProximityThresholdCallback;
+    typedef boost::function<Proximity(const InteractionState& interaction)> ProximityThresholdCallback;
 
-    typedef boost::function<
-            int()
-    > ProximityPriorityCallback;
+    typedef boost::function<int()> ProximityPriorityCallback;
 
-    typedef boost::function<
-            Proximity(const QPointF& mouse_pos)
-    > ProximityCallback;
+    typedef boost::function<Proximity(const QPointF& mouse_pos)> ProximityCallback;
 
-    typedef boost::function<
-            void(const QPointF& mouse_pos)
-    > DragInitiatedCallback;
+    typedef boost::function<void(const QPointF& mouse_pos)> DragInitiatedCallback;
 
-    typedef boost::function<
-            void(const QPointF& mouse_pos)
-    > DragContinuationCallback;
+    typedef boost::function<void(const QPointF& mouse_pos)> DragContinuationCallback;
 
-    typedef boost::function<
-            void(const QPointF& mouse_pos)
-    > DragFinishedCallback;
+    typedef boost::function<void(const QPointF& mouse_pos)> DragFinishedCallback;
 
     DraggableObject()
             : m_paintCallback(&DraggableObject::defaultPaint),

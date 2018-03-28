@@ -45,20 +45,13 @@ class AbstractRelinker;
 class QDomElement;
 
 class ProjectPages : public QObject, public ref_countable {
-Q_OBJECT
-DECLARE_NON_COPYABLE(ProjectPages)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(ProjectPages)
 
 public:
-    enum Pages {
-        ONE_PAGE,
-        TWO_PAGES,
-        AUTO_PAGES
-    };
+    enum Pages { ONE_PAGE, TWO_PAGES, AUTO_PAGES };
 
-    enum LayoutType {
-        ONE_PAGE_LAYOUT,
-        TWO_PAGE_LAYOUT
-    };
+    enum LayoutType { ONE_PAGE_LAYOUT, TWO_PAGE_LAYOUT };
 
     explicit ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
 
@@ -143,8 +136,8 @@ private:
     struct ImageDesc {
         ImageId id;
         ImageMetadata metadata;
-        int numLogicalPages;  // 1 or 2
-        bool leftHalfRemoved;  // Both can't be true, and if one is true,
+        int numLogicalPages;    // 1 or 2
+        bool leftHalfRemoved;   // Both can't be true, and if one is true,
         bool rightHalfRemoved;  // then numLogicalPages is 1.
 
         explicit ImageDesc(const ImageInfo& image_info);
@@ -180,4 +173,4 @@ private:
 };
 
 
-#endif // ifndef PROJECT_PAGES_H_
+#endif  // ifndef PROJECT_PAGES_H_

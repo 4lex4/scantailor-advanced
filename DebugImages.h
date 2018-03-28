@@ -30,7 +30,7 @@ class QImage;
 class QWidget;
 
 namespace imageproc {
-    class BinaryImage;
+class BinaryImage;
 }
 
 /**
@@ -40,12 +40,12 @@ class DebugImages {
 public:
     void add(const QImage& image,
              const QString& label,
-             boost::function<QWidget*(const QImage&)>const & image_view_factory
+             const boost::function<QWidget*(const QImage&)>& image_view_factory
              = boost::function<QWidget*(const QImage&)>());
 
     void add(const imageproc::BinaryImage& image,
              const QString& label,
-             boost::function<QWidget*(const QImage&)>const & image_view_factory
+             const boost::function<QWidget*(const QImage&)>& image_view_factory
              = boost::function<QWidget*(const QImage&)>());
 
     bool empty() const {
@@ -59,8 +59,8 @@ public:
      * are returned by taking pointers to them as arguments.
      * Returns a null AutoRemovingFile if image sequence is empty.
      */
-    AutoRemovingFile
-    retrieveNext(QString* label = nullptr, boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
+    AutoRemovingFile retrieveNext(QString* label = nullptr,
+                                  boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
 
 private:
     struct Item : public ref_countable {
@@ -68,10 +68,8 @@ private:
         QString label;
         boost::function<QWidget*(const QImage&)> imageViewFactory;
 
-        Item(AutoRemovingFile f, const QString& l, boost::function<QWidget*(const QImage&)>const & imf)
-                : file(f),
-                  label(l),
-                  imageViewFactory(imf) {
+        Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
+                : file(f), label(l), imageViewFactory(imf) {
         }
     };
 

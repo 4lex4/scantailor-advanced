@@ -27,26 +27,25 @@ class PageInfo;
 class AbstractFilterDataCollector;
 
 namespace page_split {
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace fix_orientation {
-    class Settings;
+class Settings;
 
-    class CacheDrivenTask : public CompositeCacheDrivenTask {
+class CacheDrivenTask : public CompositeCacheDrivenTask {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
-    public:
-        CacheDrivenTask(intrusive_ptr<Settings> settings,
-                        intrusive_ptr<page_split::CacheDrivenTask> next_task);
+public:
+    CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<page_split::CacheDrivenTask> next_task);
 
-        ~CacheDrivenTask() override;
+    ~CacheDrivenTask() override;
 
-        void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) override;
+    void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) override;
 
-    private:
-        intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;
-        intrusive_ptr<Settings> m_ptrSettings;
-    };
+private:
+    intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;
+    intrusive_ptr<Settings> m_ptrSettings;
+};
 }  // namespace fix_orientation
-#endif // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_
+#endif  // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_

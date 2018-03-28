@@ -63,4 +63,3 @@ int StageSequence::findFilter(const FilterPtr& filter) const {
 
     return -1;
 }
-

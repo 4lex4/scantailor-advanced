@@ -13,7 +13,7 @@
 class PageId;
 
 class StatusBarPanel : public QWidget, public UnitsObserver, public ImageViewInfoObserver {
-Q_OBJECT
+    Q_OBJECT
 private:
     mutable QMutex mutex;
     Ui::StatusBarPanel ui;
@@ -51,4 +51,4 @@ private:
 };
 
 
-#endif //SCANTAILOR_STATUSBARPANEL_H
+#endif  // SCANTAILOR_STATUSBARPANEL_H

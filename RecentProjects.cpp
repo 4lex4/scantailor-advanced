@@ -77,4 +77,3 @@ void RecentProjects::setMostRecent(const QString& file_path) {
         m_projectFiles.push_front(file_path);
     }
 }
-

@@ -26,4 +26,4 @@ public:
 };
 
 
-#endif //SCANTAILOR_UNITSCONVERTER_H
+#endif  // SCANTAILOR_UNITSCONVERTER_H

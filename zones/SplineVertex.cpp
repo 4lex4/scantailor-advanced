@@ -22,9 +22,7 @@
 
 /*============================= SplineVertex ============================*/
 
-SplineVertex::SplineVertex(SplineVertex* prev, SplineVertex* next)
-        : m_pPrev(prev),
-          m_ptrNext(next) {
+SplineVertex::SplineVertex(SplineVertex* prev, SplineVertex* next) : m_pPrev(prev), m_ptrNext(next) {
 }
 
 void SplineVertex::remove() {
@@ -79,9 +77,7 @@ SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
 
 /*========================= SentinelSplineVertex =======================*/
 
-SentinelSplineVertex::SentinelSplineVertex()
-        : SplineVertex(this, this),
-          m_bridged(false) {
+SentinelSplineVertex::SentinelSplineVertex() : SplineVertex(this, this), m_bridged(false) {
 }
 
 SentinelSplineVertex::~SentinelSplineVertex() {
@@ -143,9 +139,7 @@ SplineVertex::Ptr SentinelSplineVertex::lastVertex() const {
 /*============================== RealSplineVertex ============================*/
 
 RealSplineVertex::RealSplineVertex(const QPointF& pt, SplineVertex* prev, SplineVertex* next)
-        : SplineVertex(prev, next),
-          m_point(pt),
-          m_refCounter(0) {
+        : SplineVertex(prev, next), m_point(pt), m_refCounter(0) {
 }
 
 void RealSplineVertex::ref() const {
@@ -173,4 +167,3 @@ const QPointF RealSplineVertex::point() const {
 void RealSplineVertex::setPoint(const QPointF& pt) {
     m_point = pt;
 }
-

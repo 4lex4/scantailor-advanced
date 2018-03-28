@@ -42,7 +42,7 @@ public:
 
     SerializableSpline transformed(const QTransform& xform) const;
 
-    SerializableSpline transformed(boost::function<QPointF(const QPointF&)>const & xform) const;
+    SerializableSpline transformed(const boost::function<QPointF(const QPointF&)>& xform) const;
 
     QPolygonF toPolygon() const {
         return QPolygonF(m_points);

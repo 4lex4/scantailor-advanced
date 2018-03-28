@@ -29,27 +29,25 @@ class AbstractFilterDataCollector;
 class ImageTransformation;
 
 namespace page_layout {
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace select_content {
-    class Settings;
+class Settings;
 
-    class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
-    public:
-        CacheDrivenTask(intrusive_ptr<Settings> settings,
-                        intrusive_ptr<page_layout::CacheDrivenTask> next_task);
+public:
+    CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<page_layout::CacheDrivenTask> next_task);
 
-        ~CacheDrivenTask() override;
+    ~CacheDrivenTask() override;
 
-        void
-        process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
+    void process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
-    private:
-        intrusive_ptr<Settings> m_ptrSettings;
-        intrusive_ptr<page_layout::CacheDrivenTask> m_ptrNextTask;
-    };
+private:
+    intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<page_layout::CacheDrivenTask> m_ptrNextTask;
+};
 }  // namespace select_content
-#endif // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_
+#endif  // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

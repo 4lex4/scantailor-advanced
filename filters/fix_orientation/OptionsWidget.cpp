@@ -25,136 +25,127 @@
 #include <utility>
 
 namespace fix_orientation {
-    OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
-                                 const PageSelectionAccessor& page_selection_accessor)
-            : m_ptrSettings(std::move(settings)),
-              m_pageSelectionAccessor(page_selection_accessor) {
-        setupUi(this);
+OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
+        : m_ptrSettings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor) {
+    setupUi(this);
 
-        setupUiConnections();
+    setupUiConnections();
+}
+
+OptionsWidget::~OptionsWidget() = default;
+
+void OptionsWidget::preUpdateUI(const PageId& page_id, const OrthogonalRotation rotation) {
+    removeUiConnections();
+
+    m_pageId = page_id;
+    m_rotation = rotation;
+    setRotationPixmap();
+
+    setupUiConnections();
+}
+
+void OptionsWidget::postUpdateUI(const OrthogonalRotation rotation) {
+    removeUiConnections();
+
+    setRotation(rotation);
+
+    setupUiConnections();
+}
+
+void OptionsWidget::rotateLeft() {
+    OrthogonalRotation rotation(m_rotation);
+    rotation.prevClockwiseDirection();
+    setRotation(rotation);
+}
+
+void OptionsWidget::rotateRight() {
+    OrthogonalRotation rotation(m_rotation);
+    rotation.nextClockwiseDirection();
+    setRotation(rotation);
+}
+
+void OptionsWidget::resetRotation() {
+    setRotation(OrthogonalRotation());
+}
+
+void OptionsWidget::showApplyToDialog() {
+    auto* dialog = new ApplyDialog(this, m_pageId, m_pageSelectionAccessor);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    connect(dialog, SIGNAL(appliedTo(const std::set<PageId>&)), this, SLOT(appliedTo(const std::set<PageId>&)));
+    connect(dialog, SIGNAL(appliedToAllPages(const std::set<PageId>&)), this,
+            SLOT(appliedToAllPages(const std::set<PageId>&)));
+    dialog->show();
+}
+
+void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
+    if (pages.empty()) {
+        return;
     }
 
-    OptionsWidget::~OptionsWidget() = default;
+    m_ptrSettings->applyRotation(pages, m_rotation);
 
-    void OptionsWidget::preUpdateUI(const PageId& page_id, const OrthogonalRotation rotation) {
-        removeUiConnections();
-
-        m_pageId = page_id;
-        m_rotation = rotation;
-        setRotationPixmap();
-
-        setupUiConnections();
-    }
-
-    void OptionsWidget::postUpdateUI(const OrthogonalRotation rotation) {
-        removeUiConnections();
-
-        setRotation(rotation);
-
-        setupUiConnections();
-    }
-
-    void OptionsWidget::rotateLeft() {
-        OrthogonalRotation rotation(m_rotation);
-        rotation.prevClockwiseDirection();
-        setRotation(rotation);
-    }
-
-    void OptionsWidget::rotateRight() {
-        OrthogonalRotation rotation(m_rotation);
-        rotation.nextClockwiseDirection();
-        setRotation(rotation);
-    }
-
-    void OptionsWidget::resetRotation() {
-        setRotation(OrthogonalRotation());
-    }
-
-    void OptionsWidget::showApplyToDialog() {
-        auto* dialog = new ApplyDialog(
-                this, m_pageId, m_pageSelectionAccessor
-        );
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        connect(
-                dialog, SIGNAL(appliedTo(const std::set<PageId> &)),
-                this, SLOT(appliedTo(const std::set<PageId> &))
-        );
-        connect(
-                dialog, SIGNAL(appliedToAllPages(const std::set<PageId> &)),
-                this, SLOT(appliedToAllPages(const std::set<PageId> &))
-        );
-        dialog->show();
-    }
-
-    void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
-        if (pages.empty()) {
-            return;
-        }
-
-        m_ptrSettings->applyRotation(pages, m_rotation);
-
-        if (pages.size() > 1) {
-            emit invalidateAllThumbnails();
-        } else {
-            for (const PageId& page_id : pages) {
-                emit invalidateThumbnail(page_id);
-            }
-        }
-    }
-
-    void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
-        m_ptrSettings->applyRotation(pages, m_rotation);
+    if (pages.size() > 1) {
         emit invalidateAllThumbnails();
-    }
-
-    void OptionsWidget::setRotation(const OrthogonalRotation& rotation) {
-        if (rotation == m_rotation) {
-            return;
+    } else {
+        for (const PageId& page_id : pages) {
+            emit invalidateThumbnail(page_id);
         }
+    }
+}
 
-        m_rotation = rotation;
-        setRotationPixmap();
+void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
+    m_ptrSettings->applyRotation(pages, m_rotation);
+    emit invalidateAllThumbnails();
+}
 
-        m_ptrSettings->applyRotation(m_pageId.imageId(), rotation);
-
-        emit rotated(rotation);
-        emit invalidateThumbnail(m_pageId);
+void OptionsWidget::setRotation(const OrthogonalRotation& rotation) {
+    if (rotation == m_rotation) {
+        return;
     }
 
-    void OptionsWidget::setRotationPixmap() {
-        const char* path = nullptr;
+    m_rotation = rotation;
+    setRotationPixmap();
 
-        switch (m_rotation.toDegrees()) {
-            case 0:
-                path = ":/icons/big-up-arrow.png";
-                break;
-            case 90:
-                path = ":/icons/big-right-arrow.png";
-                break;
-            case 180:
-                path = ":/icons/big-down-arrow.png";
-                break;
-            case 270:
-                path = ":/icons/big-left-arrow.png";
-                break;
-            default:
-                assert(!"Unreachable");
-        }
+    m_ptrSettings->applyRotation(m_pageId.imageId(), rotation);
 
-        rotationIndicator->setPixmap(QPixmap(path));
+    emit rotated(rotation);
+    emit invalidateThumbnail(m_pageId);
+}
+
+void OptionsWidget::setRotationPixmap() {
+    const char* path = nullptr;
+
+    switch (m_rotation.toDegrees()) {
+        case 0:
+            path = ":/icons/big-up-arrow.png";
+            break;
+        case 90:
+            path = ":/icons/big-right-arrow.png";
+            break;
+        case 180:
+            path = ":/icons/big-down-arrow.png";
+            break;
+        case 270:
+            path = ":/icons/big-left-arrow.png";
+            break;
+        default:
+            assert(!"Unreachable");
     }
 
-    void OptionsWidget::setupUiConnections() {
-        connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-        connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-        connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-        connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
-    }
+    rotationIndicator->setPixmap(QPixmap(path));
+}
 
-    void OptionsWidget::removeUiConnections() {
-        disconnect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-        disconnect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-        disconnect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-        disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
-    }
+void OptionsWidget::setupUiConnections() {
+    connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+    connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+    connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+    connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+}
+
+void OptionsWidget::removeUiConnections() {
+    disconnect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+    disconnect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+    disconnect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+    disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+}
 }  // namespace fix_orientation

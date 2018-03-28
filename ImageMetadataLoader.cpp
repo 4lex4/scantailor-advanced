@@ -51,4 +51,3 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& file_pa
 
     return loadImpl(file, out);
 }
-

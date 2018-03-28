@@ -33,16 +33,11 @@ RelinkingDialog::RelinkingDialog(const QString& project_file_path, QWidget* pare
     ui.errorLabel->setVisible(false);
     ui.undoButton->setVisible(false);
 
-    connect(
-            ui.listView->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            SLOT(selectionChanged(const QItemSelection &, const QItemSelection &))
-    );
+    connect(ui.listView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
-    connect(
-            ui.pathVisualization, SIGNAL(clicked(const QString &, const QString &, int)),
-            SLOT(pathButtonClicked(const QString &, const QString &, int))
-    );
+    connect(ui.pathVisualization, SIGNAL(clicked(const QString&, const QString&, int)),
+            SLOT(pathButtonClicked(const QString&, const QString&, int)));
 
     connect(ui.undoButton, SIGNAL(clicked()), SLOT(undoButtonClicked()));
 
@@ -60,7 +55,7 @@ void RelinkingDialog::selectionChanged(const QItemSelection& selected, const QIt
         const QModelIndex index(selected.front().topLeft());
         const QString path(index.data(m_model.UncommittedPathRole).toString());
         const int type = index.data(m_model.TypeRole).toInt();
-        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type) type),  /*clickable=*/ true);
+        ui.pathVisualization->setPath(RelinkablePath(path, (RelinkablePath::Type) type), /*clickable=*/true);
         ui.pathVisualization->setVisible(true);
 
         if (ui.errorLabel->isVisible()) {
@@ -83,16 +78,12 @@ void RelinkingDialog::pathButtonClicked(const QString& prefix_path, const QStrin
         const QDir dir(QFileInfo(prefix_path).dir());
         replacement_path = QFileDialog::getOpenFileName(
                 this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
-                dir.exists() ? dir.path() : m_projectFileDir,
-                QString(), nullptr, QFileDialog::DontUseNativeDialog
-        );
+                dir.exists() ? dir.path() : m_projectFileDir, QString(), nullptr, QFileDialog::DontUseNativeDialog);
     } else {
         const QDir dir(prefix_path);
         replacement_path = QFileDialog::getExistingDirectory(
                 this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
-                dir.exists() ? prefix_path : m_projectFileDir,
-                QFileDialog::DontUseNativeDialog
-        );
+                dir.exists() ? prefix_path : m_projectFileDir, QFileDialog::DontUseNativeDialog);
     }
     // So what's wrong with native dialogs? The one for directory selection won't show files
     // at all (if you ask it to, the non-native dialog will appear), which is inconvenient
@@ -115,20 +106,18 @@ void RelinkingDialog::pathButtonClicked(const QString& prefix_path, const QStrin
     m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type) type);
 
     if (m_model.checkForMerges()) {
-        ui.errorLabel->setText(
-                tr("This change would merge several files into one.")
-        );
+        ui.errorLabel->setText(tr("This change would merge several files into one."));
         ui.errorLabel->setVisible(true);
         ui.pathVisualization->clear();
         ui.pathVisualization->setVisible(false);
     } else {
-        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type) type),  /*clickable=*/ false);
+        ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type) type), /*clickable=*/false);
         ui.pathVisualization->setVisible(true);
     }
 
     ui.undoButton->setVisible(true);
     ui.listView->update();
-} // RelinkingDialog::pathButtonClicked
+}  // RelinkingDialog::pathButtonClicked
 
 void RelinkingDialog::undoButtonClicked() {
     m_model.rollbackChanges();  // Has to go before selectionChanged()
@@ -139,4 +128,3 @@ void RelinkingDialog::commitChanges() {
     m_model.commitChanges();
     accept();
 }
-

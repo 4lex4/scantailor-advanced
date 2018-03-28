@@ -99,4 +99,3 @@ void ThreadPriority::save(const QString& key) {
     QSettings settings;
     save(settings, key);
 }
-

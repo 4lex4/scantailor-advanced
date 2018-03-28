@@ -25,9 +25,9 @@ class DebugImages;
 class QPolygonF;
 
 namespace imageproc {
-    class PolynomialSurface;
-    class GrayImage;
-}
+class PolynomialSurface;
+class GrayImage;
+}  // namespace imageproc
 
 /**
  * \brief Estimates a grayscale background of a scanned page.

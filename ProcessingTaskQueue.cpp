@@ -19,9 +19,7 @@
 #include "ProcessingTaskQueue.h"
 
 ProcessingTaskQueue::Entry::Entry(const PageInfo& page_info, const BackgroundTaskPtr& tsk)
-        : pageInfo(page_info),
-          task(tsk),
-          takenForProcessing(false) {
+        : pageInfo(page_info), task(tsk), takenForProcessing(false) {
 }
 
 ProcessingTaskQueue::ProcessingTaskQueue() = default;
@@ -130,4 +128,3 @@ void ProcessingTaskQueue::cancelAndClear() {
     }
     m_selectedPage = m_pageToSelectWhenDone;
 }
-

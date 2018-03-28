@@ -49,4 +49,3 @@ QPoint GridLineTraverser::next() {
 
     return pt.toPoint();
 }
-

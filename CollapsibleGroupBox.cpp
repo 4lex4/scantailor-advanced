@@ -5,23 +5,17 @@
 #include <QtGui/QShowEvent>
 #include <foundation/ScopedIncDec.h>
 
-CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent)
-        : QGroupBox(parent) {
+CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent) : QGroupBox(parent) {
     initialize();
 }
 
-CollapsibleGroupBox::CollapsibleGroupBox(const QString& title, QWidget* parent)
-        : QGroupBox(title, parent) {
+CollapsibleGroupBox::CollapsibleGroupBox(const QString& title, QWidget* parent) : QGroupBox(title, parent) {
     initialize();
 }
 
 void CollapsibleGroupBox::initialize() {
-    collapseIcon.addPixmap(
-            QPixmap(QString::fromLatin1(":/icons/minus-16.png"))
-    );
-    expandIcon.addPixmap(
-            QPixmap(QString::fromLatin1(":/icons/plus-16.png"))
-    );
+    collapseIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/minus-16.png")));
+    expandIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/plus-16.png")));
     collapseButton = new QToolButton(this);
     collapseButton->setObjectName("collapseButton");
     collapseButton->setAutoRaise(true);
@@ -214,4 +208,3 @@ QString CollapsibleGroupBox::getSettingsKey() const {
     saveKey = "CollapsibleGroupBox" + saveKey;
     return saveKey;
 }
-

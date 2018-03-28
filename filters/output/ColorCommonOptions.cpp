@@ -20,164 +20,152 @@
 #include <QDomDocument>
 
 namespace output {
-    ColorCommonOptions::ColorCommonOptions()
-            : m_cutMargins(true),
-              m_normalizeIllumination(false),
-              m_fillingColor(FILL_BACKGROUND) {
+ColorCommonOptions::ColorCommonOptions()
+        : m_cutMargins(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {
+}
+
+ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
+        : m_cutMargins(el.attribute("cutMargins") == "1"),
+          m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
+          m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
+          posterizationOptions(el.namedItem("posterization-options").toElement()) {
+}
+
+QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
+    QDomElement el(doc.createElement(name));
+    el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
+    el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
+    el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
+    el.appendChild(posterizationOptions.toXml(doc, "posterization-options"));
+
+    return el;
+}
+
+bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
+    return (m_normalizeIllumination == other.m_normalizeIllumination) && (m_cutMargins == other.m_cutMargins)
+           && (m_fillingColor == other.m_fillingColor) && (posterizationOptions == other.posterizationOptions);
+}
+
+bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
+    return !(*this == other);
+}
+
+FillingColor ColorCommonOptions::getFillingColor() const {
+    return m_fillingColor;
+}
+
+void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
+    ColorCommonOptions::m_fillingColor = fillingColor;
+}
+
+FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
+    if (str == "white") {
+        return FILL_WHITE;
+    } else {
+        return FILL_BACKGROUND;
+    }
+}
+
+QString ColorCommonOptions::formatFillingColor(FillingColor type) {
+    QString str = "";
+    switch (type) {
+        case FILL_WHITE:
+            str = "white";
+            break;
+        case FILL_BACKGROUND:
+            str = "background";
+            break;
     }
 
-    ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
-            : m_cutMargins(el.attribute("cutMargins") == "1"),
-              m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
-              m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
-              posterizationOptions(el.namedItem("posterization-options").toElement()) {
-    }
+    return str;
+}
 
-    QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
-        QDomElement el(doc.createElement(name));
-        el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
-        el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
-        el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
-        el.appendChild(posterizationOptions.toXml(doc, "posterization-options"));
+void ColorCommonOptions::setCutMargins(bool val) {
+    m_cutMargins = val;
+}
 
-        return el;
-    }
+bool ColorCommonOptions::cutMargins() const {
+    return m_cutMargins;
+}
 
-    bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
-        return (m_normalizeIllumination == other.m_normalizeIllumination)
-               && (m_cutMargins == other.m_cutMargins)
-               && (m_fillingColor == other.m_fillingColor)
-               && (posterizationOptions == other.posterizationOptions);
-    }
+bool ColorCommonOptions::normalizeIllumination() const {
+    return m_normalizeIllumination;
+}
 
-    bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
-        return !(*this == other);
-    }
+void ColorCommonOptions::setNormalizeIllumination(bool val) {
+    m_normalizeIllumination = val;
+}
 
-    FillingColor ColorCommonOptions::getFillingColor() const {
-        return m_fillingColor;
-    }
+const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosterizationOptions() const {
+    return posterizationOptions;
+}
 
-    void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
-        ColorCommonOptions::m_fillingColor = fillingColor;
-    }
-
-    FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
-        if (str == "white") {
-            return FILL_WHITE;
-        } else {
-            return FILL_BACKGROUND;
-        }
-    }
-
-    QString ColorCommonOptions::formatFillingColor(FillingColor type) {
-        QString str = "";
-        switch (type) {
-            case FILL_WHITE:
-                str = "white";
-                break;
-            case FILL_BACKGROUND:
-                str = "background";
-                break;
-        }
-
-        return str;
-    }
-
-    void ColorCommonOptions::setCutMargins(bool val) {
-        m_cutMargins = val;
-    }
-
-    bool ColorCommonOptions::cutMargins() const {
-        return m_cutMargins;
-    }
-
-    bool ColorCommonOptions::normalizeIllumination() const {
-        return m_normalizeIllumination;
-    }
-
-    void ColorCommonOptions::setNormalizeIllumination(bool val) {
-        m_normalizeIllumination = val;
-    }
-
-    const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosterizationOptions() const {
-        return posterizationOptions;
-    }
-
-    void
-    ColorCommonOptions::setPosterizationOptions(const ColorCommonOptions::PosterizationOptions& posterizationOptions) {
-        ColorCommonOptions::posterizationOptions = posterizationOptions;
-    }
+void ColorCommonOptions::setPosterizationOptions(const ColorCommonOptions::PosterizationOptions& posterizationOptions) {
+    ColorCommonOptions::posterizationOptions = posterizationOptions;
+}
 
 /*=============================== ColorCommonOptions::PosterizationOptions ==================================*/
 
-    ColorCommonOptions::PosterizationOptions::PosterizationOptions()
-            : enabled(false),
-              level(4),
-              normalizationEnabled(false),
-              forceBlackAndWhite(true) {
-    }
+ColorCommonOptions::PosterizationOptions::PosterizationOptions()
+        : enabled(false), level(4), normalizationEnabled(false), forceBlackAndWhite(true) {
+}
 
-    ColorCommonOptions::PosterizationOptions::PosterizationOptions(const QDomElement& el)
-            : enabled(el.attribute("enabled") == "1"),
-              level(el.attribute("level").toInt()),
-              normalizationEnabled(el.attribute("normalizationEnabled") == "1"),
-              forceBlackAndWhite(el.attribute("forceBlackAndWhite") == "1") {
-    }
+ColorCommonOptions::PosterizationOptions::PosterizationOptions(const QDomElement& el)
+        : enabled(el.attribute("enabled") == "1"),
+          level(el.attribute("level").toInt()),
+          normalizationEnabled(el.attribute("normalizationEnabled") == "1"),
+          forceBlackAndWhite(el.attribute("forceBlackAndWhite") == "1") {
+}
 
-    QDomElement ColorCommonOptions::PosterizationOptions::toXml(QDomDocument& doc, const QString& name) const {
-        QDomElement el(doc.createElement(name));
-        el.setAttribute("enabled", enabled ? "1" : "0");
-        el.setAttribute("level", level);
-        el.setAttribute("normalizationEnabled", normalizationEnabled ? "1" : "0");
-        el.setAttribute("forceBlackAndWhite", forceBlackAndWhite ? "1" : "0");
+QDomElement ColorCommonOptions::PosterizationOptions::toXml(QDomDocument& doc, const QString& name) const {
+    QDomElement el(doc.createElement(name));
+    el.setAttribute("enabled", enabled ? "1" : "0");
+    el.setAttribute("level", level);
+    el.setAttribute("normalizationEnabled", normalizationEnabled ? "1" : "0");
+    el.setAttribute("forceBlackAndWhite", forceBlackAndWhite ? "1" : "0");
 
-        return el;
-    }
+    return el;
+}
 
-    bool
-    ColorCommonOptions::PosterizationOptions::operator==(const ColorCommonOptions::PosterizationOptions& other) const {
-        return (enabled == other.enabled)
-               && (level == other.level)
-               && (normalizationEnabled == other.normalizationEnabled)
-               && (forceBlackAndWhite == other.forceBlackAndWhite);
-    }
+bool ColorCommonOptions::PosterizationOptions::operator==(const ColorCommonOptions::PosterizationOptions& other) const {
+    return (enabled == other.enabled) && (level == other.level) && (normalizationEnabled == other.normalizationEnabled)
+           && (forceBlackAndWhite == other.forceBlackAndWhite);
+}
 
-    bool
-    ColorCommonOptions::PosterizationOptions::operator!=(const ColorCommonOptions::PosterizationOptions& other) const {
-        return !(*this == other);
-    }
+bool ColorCommonOptions::PosterizationOptions::operator!=(const ColorCommonOptions::PosterizationOptions& other) const {
+    return !(*this == other);
+}
 
-    bool ColorCommonOptions::PosterizationOptions::isEnabled() const {
-        return enabled;
-    }
+bool ColorCommonOptions::PosterizationOptions::isEnabled() const {
+    return enabled;
+}
 
-    void ColorCommonOptions::PosterizationOptions::setEnabled(bool enabled) {
-        PosterizationOptions::enabled = enabled;
-    }
+void ColorCommonOptions::PosterizationOptions::setEnabled(bool enabled) {
+    PosterizationOptions::enabled = enabled;
+}
 
-    int ColorCommonOptions::PosterizationOptions::getLevel() const {
-        return level;
-    }
+int ColorCommonOptions::PosterizationOptions::getLevel() const {
+    return level;
+}
 
-    void ColorCommonOptions::PosterizationOptions::setLevel(int level) {
-        PosterizationOptions::level = level;
-    }
+void ColorCommonOptions::PosterizationOptions::setLevel(int level) {
+    PosterizationOptions::level = level;
+}
 
-    bool ColorCommonOptions::PosterizationOptions::isNormalizationEnabled() const {
-        return normalizationEnabled;
-    }
+bool ColorCommonOptions::PosterizationOptions::isNormalizationEnabled() const {
+    return normalizationEnabled;
+}
 
-    void ColorCommonOptions::PosterizationOptions::setNormalizationEnabled(bool normalizationEnabled) {
-        PosterizationOptions::normalizationEnabled = normalizationEnabled;
-    }
+void ColorCommonOptions::PosterizationOptions::setNormalizationEnabled(bool normalizationEnabled) {
+    PosterizationOptions::normalizationEnabled = normalizationEnabled;
+}
 
-    bool ColorCommonOptions::PosterizationOptions::isForceBlackAndWhite() const {
-        return forceBlackAndWhite;
-    }
+bool ColorCommonOptions::PosterizationOptions::isForceBlackAndWhite() const {
+    return forceBlackAndWhite;
+}
 
-    void ColorCommonOptions::PosterizationOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
-        PosterizationOptions::forceBlackAndWhite = forceBlackAndWhite;
-    }
+void ColorCommonOptions::PosterizationOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
+    PosterizationOptions::forceBlackAndWhite = forceBlackAndWhite;
+}
 
 }  // namespace output

@@ -83,21 +83,14 @@ bool ProjectWriter::write(const QString& file_path, const std::vector<FilterPtr>
     doc.appendChild(root_el);
     root_el.setAttribute("version", PROJECT_VERSION);
     root_el.setAttribute("outputDirectory", m_outFileNameGen.outDir());
-    root_el.setAttribute(
-            "layoutDirection",
-            m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL"
-    );
+    root_el.setAttribute("layoutDirection", m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL");
 
     root_el.appendChild(processDirectories(doc));
     root_el.appendChild(processFiles(doc));
     root_el.appendChild(processImages(doc));
     root_el.appendChild(processPages(doc));
-    root_el.appendChild(
-            m_outFileNameGen.disambiguator()->toXml(
-                    doc, "file-name-disambiguation",
-                    boost::bind(&ProjectWriter::packFilePath, this, _1)
-            )
-    );
+    root_el.appendChild(m_outFileNameGen.disambiguator()->toXml(doc, "file-name-disambiguation",
+                                                                boost::bind(&ProjectWriter::packFilePath, this, _1)));
 
     QDomElement filters_el(doc.createElement("filters"));
     root_el.appendChild(filters_el);
@@ -115,7 +108,7 @@ bool ProjectWriter::write(const QString& file_path, const std::vector<FilterPtr>
     }
 
     return false;
-} // ProjectWriter::write
+}  // ProjectWriter::write
 
 QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
     QDomElement dirs_el(doc.createElement("directories"));
@@ -203,8 +196,7 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
         page_el.setAttribute("id", pageId(page_id));
         page_el.setAttribute("imageId", imageId(page_id.imageId()));
         page_el.setAttribute("subPage", page_id.subPageAsString());
-        if ((page_id == sel_opt_1) || (page_id == sel_opt_2)
-            || (page_id == page_left) || (page_id == page_right)) {
+        if ((page_id == sel_opt_1) || (page_id == sel_opt_2) || (page_id == page_left) || (page_id == page_right)) {
             page_el.setAttribute("selected", "selected");
             page_left = page_right = PageId();  // if one of these match other shouldn't
         }
@@ -212,7 +204,7 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     }
 
     return pages_el;
-} // ProjectWriter::processPages
+}  // ProjectWriter::processPages
 
 int ProjectWriter::dirId(const QString& dir_path) const {
     const Directories::const_iterator it(m_dirs.find(dir_path));
@@ -271,4 +263,3 @@ ProjectWriter::Image::Image(const PageInfo& page, int numeric_id)
           leftHalfRemoved(page.leftHalfRemoved()),
           rightHalfRemoved(page.rightHalfRemoved()) {
 }
-

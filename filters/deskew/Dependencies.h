@@ -32,25 +32,25 @@ namespace deskew {
  *
  * Once dependencies change, deskew parameters are no longer valid.
  */
-    class Dependencies {
-    public:
-        // Member-wise copying is OK.
+class Dependencies {
+public:
+    // Member-wise copying is OK.
 
-        Dependencies();
+    Dependencies();
 
-        Dependencies(const QPolygonF& page_outline, OrthogonalRotation rotation);
+    Dependencies(const QPolygonF& page_outline, OrthogonalRotation rotation);
 
-        explicit Dependencies(const QDomElement& deps_el);
+    explicit Dependencies(const QDomElement& deps_el);
 
-        ~Dependencies();
+    ~Dependencies();
 
-        bool matches(const Dependencies& other) const;
+    bool matches(const Dependencies& other) const;
 
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    private:
-        QPolygonF m_pageOutline;
-        OrthogonalRotation m_rotation;
-    };
+private:
+    QPolygonF m_pageOutline;
+    OrthogonalRotation m_rotation;
+};
 }  // namespace deskew
-#endif // ifndef DESKEW_DEPENDENCIES_H_
+#endif  // ifndef DESKEW_DEPENDENCIES_H_

@@ -20,45 +20,43 @@
 #include "../../Utils.h"
 
 namespace output {
-    DepthPerception::DepthPerception()
-            : m_value(defaultValue()) {
-    }
+DepthPerception::DepthPerception() : m_value(defaultValue()) {
+}
 
-    DepthPerception::DepthPerception(double value)
-            : m_value(qBound(minValue(), value, maxValue())) {
-    }
+DepthPerception::DepthPerception(double value) : m_value(qBound(minValue(), value, maxValue())) {
+}
 
-    DepthPerception::DepthPerception(const QString& from_string) {
-        bool ok = false;
-        m_value = from_string.toDouble(&ok);
-        if (!ok) {
-            m_value = defaultValue();
-        } else {
-            m_value = qBound(minValue(), m_value, maxValue());
-        }
+DepthPerception::DepthPerception(const QString& from_string) {
+    bool ok = false;
+    m_value = from_string.toDouble(&ok);
+    if (!ok) {
+        m_value = defaultValue();
+    } else {
+        m_value = qBound(minValue(), m_value, maxValue());
     }
+}
 
-    QString DepthPerception::toString() const {
-        return Utils::doubleToString(m_value);
-    }
+QString DepthPerception::toString() const {
+    return Utils::doubleToString(m_value);
+}
 
-    void DepthPerception::setValue(double value) {
-        m_value = qBound(minValue(), value, maxValue());
-    }
+void DepthPerception::setValue(double value) {
+    m_value = qBound(minValue(), value, maxValue());
+}
 
-    double DepthPerception::value() const {
-        return m_value;
-    }
+double DepthPerception::value() const {
+    return m_value;
+}
 
-    double DepthPerception::minValue() {
-        return 1.0;
-    }
+double DepthPerception::minValue() {
+    return 1.0;
+}
 
-    double DepthPerception::defaultValue() {
-        return 2.0;
-    }
+double DepthPerception::defaultValue() {
+    return 2.0;
+}
 
-    double DepthPerception::maxValue() {
-        return 3.0;
-    }
+double DepthPerception::maxValue() {
+    return 3.0;
+}
 }  // namespace output

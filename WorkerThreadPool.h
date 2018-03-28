@@ -28,7 +28,7 @@
 class QThreadPool;
 
 class WorkerThreadPool : public QObject {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit WorkerThreadPool(QObject* parent = nullptr);
 

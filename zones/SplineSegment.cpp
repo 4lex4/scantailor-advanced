@@ -19,9 +19,7 @@
 #include "SplineSegment.h"
 #include <cassert>
 
-SplineSegment::SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next)
-        : prev(prev),
-          next(next) {
+SplineSegment::SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next) : prev(prev), next(next) {
 }
 
 SplineVertex::Ptr SplineSegment::splitAt(const QPointF& pt) {
@@ -33,4 +31,3 @@ SplineVertex::Ptr SplineSegment::splitAt(const QPointF& pt) {
 bool SplineSegment::isValid() const {
     return prev && next && prev->next(SplineVertex::LOOP_IF_BRIDGED) == next;
 }
-

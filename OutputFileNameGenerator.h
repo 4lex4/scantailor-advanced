@@ -65,4 +65,4 @@ private:
 };
 
 
-#endif // ifndef OUTPUT_FILE_NAME_GENERATOR_H_
+#endif  // ifndef OUTPUT_FILE_NAME_GENERATOR_H_

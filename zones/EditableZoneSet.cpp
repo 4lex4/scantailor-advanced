@@ -26,13 +26,13 @@ void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline) {
-    intrusive_ptr<PropertySet> new_props(new PropertySet(m_defaultProps));
+    auto new_props = make_intrusive<PropertySet>(m_defaultProps);
     m_splineMap.insert(Map::value_type(spline, new_props));
     m_splineList.push_back(spline);
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline, const PropertySet& props) {
-    intrusive_ptr<PropertySet> new_props(new PropertySet(props));
+    auto new_props = make_intrusive<PropertySet>(props);
     m_splineMap.insert(Map::value_type(spline, new_props));
     m_splineList.push_back(spline);
 }
@@ -46,8 +46,7 @@ void EditableZoneSet::commit() {
     emit committed();
 }
 
-intrusive_ptr<PropertySet>
-EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) {
+intrusive_ptr<PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) {
     auto it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
@@ -56,8 +55,7 @@ EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) {
     }
 }
 
-intrusive_ptr<PropertySet const>
-EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
+intrusive_ptr<const PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
     auto it(m_splineMap.find(spline));
     if (it != m_splineMap.end()) {
         return it->second;
@@ -65,4 +63,3 @@ EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
         return nullptr;
     }
 }
-

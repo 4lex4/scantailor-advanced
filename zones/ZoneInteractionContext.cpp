@@ -27,21 +27,15 @@
 ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones)
         : m_rImageView(image_view),
           m_rZones(zones),
-          m_defaultInteractionCreator(
-                  boost::bind(&ZoneInteractionContext::createStdDefaultInteraction, this)
-          ),
+          m_defaultInteractionCreator(boost::bind(&ZoneInteractionContext::createStdDefaultInteraction, this)),
           m_zoneCreationInteractionCreator(
-                  boost::bind(&ZoneInteractionContext::createStdZoneCreationInteraction, this, _1)
-          ),
+                  boost::bind(&ZoneInteractionContext::createStdZoneCreationInteraction, this, _1)),
           m_vertexDragInteractionCreator(
-                  boost::bind(&ZoneInteractionContext::createStdVertexDragInteraction, this, _1, _2, _3)
-          ),
+                  boost::bind(&ZoneInteractionContext::createStdVertexDragInteraction, this, _1, _2, _3)),
           m_zoneDragInteractionCreator(
-                  boost::bind(&ZoneInteractionContext::createStdZoneDragInteraction, this, _1, _2)
-          ),
+                  boost::bind(&ZoneInteractionContext::createStdZoneDragInteraction, this, _1, _2)),
           m_contextMenuInteractionCreator(
-                  boost::bind(&ZoneInteractionContext::createStdContextMenuInteraction, this, _1)
-          ),
+                  boost::bind(&ZoneInteractionContext::createStdContextMenuInteraction, this, _1)),
           m_showPropertiesCommand(&ZoneInteractionContext::showPropertiesStub) {
 }
 
@@ -69,4 +63,3 @@ InteractionHandler* ZoneInteractionContext::createStdZoneDragInteraction(Interac
 InteractionHandler* ZoneInteractionContext::createStdContextMenuInteraction(InteractionState& interaction) {
     return ZoneContextMenuInteraction::create(*this, interaction);
 }
-

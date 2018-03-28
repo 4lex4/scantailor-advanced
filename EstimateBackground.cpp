@@ -71,9 +71,7 @@ static void seedFillTopBottomInPlace(GrayImage& image) {
         prev = 0;  // black
         for (int y = height - 1; y >= 0; --y) {
             p -= stride;
-            *p = prev = std::max(
-                    *p, std::min(seed_line[y], prev)
-            );
+            *p = prev = std::max(*p, std::min(seed_line[y], prev));
         }
     }
 }
@@ -107,10 +105,7 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
 
     // Take the difference between two methods.
     GrayImage diff(image);
-    rasterOpGeneric(
-            diff.data(), diff.stride(), diff.size(),
-            method1.data(), method1.stride(), _1 -= _2
-    );
+    rasterOpGeneric(diff.data(), diff.stride(), diff.size(), method1.data(), method1.stride(), _1 -= _2);
     if (dbg) {
         dbg->add(diff, "raw_diff");
     }
@@ -124,11 +119,8 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
     }
     // Now let's take the difference between the original difference
     // and approximated difference.
-    rasterOpGeneric(
-            diff.data(), diff.stride(), diff.size(),
-            approximated.data(), approximated.stride(),
-            if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1)
-    );
+    rasterOpGeneric(diff.data(), diff.stride(), diff.size(), approximated.data(), approximated.stride(),
+                    if_then_else(_1 > _2, _1 -= _2, _1 = _2 - _1));
     approximated = GrayImage();  // save memory.
     if (dbg) {
         dbg->add(diff, "raw_vs_approx_diff");
@@ -158,7 +150,7 @@ static void morphologicalPreprocessingInPlace(GrayImage& image, DebugImages* dbg
             dbg->add(image, "use_method2");
         }
     }
-} // morphologicalPreprocessingInPlace
+}  // morphologicalPreprocessingInPlace
 
 imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
                                                 const QPolygonF& area_to_consider,
@@ -187,13 +179,8 @@ imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
 
     if (!area_to_consider.isEmpty()) {
         QTransform xform;
-        xform.scale(
-                (double) reduced_size.width() / input.width(),
-                (double) reduced_size.height() / input.height()
-        );
-        PolygonRasterizer::fillExcept(
-                mask, WHITE, xform.map(area_to_consider), Qt::WindingFill
-        );
+        xform.scale((double) reduced_size.width() / input.width(), (double) reduced_size.height() / input.height());
+        PolygonRasterizer::fillExcept(mask, WHITE, xform.map(area_to_consider), Qt::WindingFill);
     }
 
     if (dbg) {
@@ -267,9 +254,7 @@ imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
     // Check each horizontal line.  If it's mostly
     // white (ignored), then make it completely white.
     const int last_word_idx = (width - 1) >> 5;
-    const uint32_t last_word_mask = ~uint32_t(0) << (
-            32 - width - (last_word_idx << 5)
-    );
+    const uint32_t last_word_mask = ~uint32_t(0) << (32 - width - (last_word_idx << 5));
     mask_line = mask_data;
     for (int y = 0; y < height; ++y, mask_line += mask_stride) {
         int black_count = 0;
@@ -284,8 +269,7 @@ imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
         black_count += countNonZeroBits(mask_line[i] & last_word_mask);
 
         if (black_count < width / 4) {
-            memset(mask_line, 0,
-                   (last_word_idx + 1) * sizeof(*mask_line));
+            memset(mask_line, 0, (last_word_idx + 1) * sizeof(*mask_line));
         }
     }
 
@@ -317,5 +301,4 @@ imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
     status.throwIfCancelled();
 
     return PolynomialSurface(8, 5, background, mask);
-} // estimateBackground
-
+}  // estimateBackground

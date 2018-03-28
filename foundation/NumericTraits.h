@@ -22,8 +22,8 @@
 #include <limits>
 
 namespace numeric_traits_impl {
-    template<typename T, bool IsInteger>
-    struct IntegerSpecific;
+template<typename T, bool IsInteger>
+struct IntegerSpecific;
 }  // namespace numeric_traits_impl
 
 /**
@@ -43,9 +43,7 @@ public:
      * integer and floating point types.
      */
     static T min() {
-        return numeric_traits_impl::IntegerSpecific<
-                T, std::numeric_limits<T>::is_integer
-        >::min();
+        return numeric_traits_impl::IntegerSpecific<T, std::numeric_limits<T>::is_integer>::min();
     }
 
 private:
@@ -53,18 +51,18 @@ private:
 
 
 namespace numeric_traits_impl {
-    template<typename T>
-    struct IntegerSpecific<T, true> {
-        static T min() {
-            return std::numeric_limits<T>::min();
-        }
-    };
+template<typename T>
+struct IntegerSpecific<T, true> {
+    static T min() {
+        return std::numeric_limits<T>::min();
+    }
+};
 
-    template<typename T>
-    struct IntegerSpecific<T, false> {
-        static T min() {
-            return -std::numeric_limits<T>::max();
-        }
-    };
+template<typename T>
+struct IntegerSpecific<T, false> {
+    static T min() {
+        return -std::numeric_limits<T>::max();
+    }
+};
 }  // namespace numeric_traits_impl
-#endif // ifndef NUMERIC_TRAITS_H_
+#endif  // ifndef NUMERIC_TRAITS_H_

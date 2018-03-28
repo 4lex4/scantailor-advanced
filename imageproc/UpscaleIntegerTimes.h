@@ -24,12 +24,12 @@
 class QSize;
 
 namespace imageproc {
-    class BinaryImage;
+class BinaryImage;
 
 /**
  * \brief Upscale a binary image integer times in each direction.
  */
-    BinaryImage upscaleIntegerTimes(const BinaryImage& src, int xscale, int yscale);
+BinaryImage upscaleIntegerTimes(const BinaryImage& src, int xscale, int yscale);
 
 /**
  * \brief Upscale a binary image integer times in each direction
@@ -39,6 +39,6 @@ namespace imageproc {
  * by upscaling the source image integer times in each direction and then
  * adding a padding to reach the requested size.
  */
-    BinaryImage upscaleIntegerTimes(const BinaryImage& src, const QSize& dst_size, BWColor padding);
+BinaryImage upscaleIntegerTimes(const BinaryImage& src, const QSize& dst_size, BWColor padding);
 }  // namespace imageproc
 #endif

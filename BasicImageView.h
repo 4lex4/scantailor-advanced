@@ -27,7 +27,7 @@
 #include <QImage>
 
 class BasicImageView : public ImageViewBase {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit BasicImageView(const QImage& image,
                             const ImagePixmapUnion& downscaled_image = ImagePixmapUnion(),

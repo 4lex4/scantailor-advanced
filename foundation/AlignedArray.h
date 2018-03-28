@@ -31,15 +31,13 @@
  */
 template<typename T, size_t alignment_in_units>
 class AlignedArray {
-DECLARE_NON_COPYABLE(AlignedArray)
+    DECLARE_NON_COPYABLE(AlignedArray)
 
 public:
     /**
      * \brief Constructs a null array.
      */
-    AlignedArray()
-            : m_pAlignedData(0),
-              m_pStorage(0) {
+    AlignedArray() : m_pAlignedData(0), m_pStorage(0) {
     }
 
     explicit AlignedArray(size_t size);

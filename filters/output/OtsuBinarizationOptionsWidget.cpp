@@ -7,175 +7,134 @@
 
 namespace output {
 
-    OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-            : m_ptrSettings(std::move(settings)),
-              ignoreSliderChanges(0) {
-        setupUi(this);
+OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
+        : m_ptrSettings(std::move(settings)), ignoreSliderChanges(0) {
+    setupUi(this);
 
-        darkerThresholdLink->setText(
-                Utils::richTextForLink(darkerThresholdLink->text())
-        );
-        lighterThresholdLink->setText(
-                Utils::richTextForLink(lighterThresholdLink->text())
-        );
-        thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
+    darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
+    lighterThresholdLink->setText(Utils::richTextForLink(lighterThresholdLink->text()));
+    thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
 
-        thresholdSlider->setMinimum(-50);
-        thresholdSlider->setMaximum(50);
-        thresholLabel->setText(QString::number(thresholdSlider->value()));
+    thresholdSlider->setMinimum(-100);
+    thresholdSlider->setMaximum(100);
+    thresholLabel->setText(QString::number(thresholdSlider->value()));
 
-        delayedStateChanger.setSingleShot(true);
+    delayedStateChanger.setSingleShot(true);
 
-        setupUiConnections();
+    setupUiConnections();
+}
+
+void OtsuBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
+    removeUiConnections();
+
+    const Params params(m_ptrSettings->getParams(page_id));
+    m_pageId = page_id;
+    m_colorParams = params.colorParams();
+
+    updateView();
+
+    setupUiConnections();
+}
+
+void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
+    const int value = thresholdSlider->value();
+    setThresholdAdjustment(value);
+
+    emit stateChanged();
+}
+
+void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
+    if (ignoreSliderChanges) {
+        return;
     }
 
-    void OtsuBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
-        removeUiConnections();
+    thresholLabel->setText(QString::number(value));
 
-        const Params params(m_ptrSettings->getParams(page_id));
-        m_pageId = page_id;
-        m_colorParams = params.colorParams();
+    const QString tooltip_text(QString::number(value));
+    thresholdSlider->setToolTip(tooltip_text);
 
-        updateView();
+    // Show the tooltip immediately.
+    const QPoint center(thresholdSlider->rect().center());
+    QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
+    tooltip_pos.setY(center.y());
+    tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
+    tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
+    QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
 
-        setupUiConnections();
+    if (thresholdSlider->isSliderDown()) {
+        return;
     }
 
-    void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
-        const int value = thresholdSlider->value();
-        setThresholdAdjustment(value);
+    setThresholdAdjustment(value);
 
-        emit stateChanged();
+    delayedStateChanger.start(750);
+}
+
+void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
+    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+    if (opt.thresholdAdjustment() == value) {
+        return;
     }
 
-    void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
-        if (ignoreSliderChanges) {
-            return;
-        }
+    thresholLabel->setText(QString::number(value));
 
-        thresholLabel->setText(QString::number(value));
+    opt.setThresholdAdjustment(value);
+    m_colorParams.setBlackWhiteOptions(opt);
+    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+}
 
-        const QString tooltip_text(QString::number(value));
-        thresholdSlider->setToolTip(tooltip_text);
+void OtsuBinarizationOptionsWidget::setLighterThreshold() {
+    const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
 
-        // Show the tooltip immediately.
-        const QPoint center(thresholdSlider->rect().center());
-        QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
-        tooltip_pos.setY(center.y());
-        tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
-        tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
-        QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
+    thresholdSlider->setValue(thresholdSlider->value() - 1);
+    setThresholdAdjustment(thresholdSlider->value());
 
-        if (thresholdSlider->isSliderDown()) {
-            return;
-        }
+    delayedStateChanger.start(750);
+}
 
-        setThresholdAdjustment(value);
+void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
+    const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
 
-        delayedStateChanger.start(750);
-    }
+    thresholdSlider->setValue(thresholdSlider->value() + 1);
+    setThresholdAdjustment(thresholdSlider->value());
 
-    void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
-        BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
-        if (opt.thresholdAdjustment() == value) {
-            return;
-        }
+    delayedStateChanger.start(750);
+}
 
-        thresholLabel->setText(QString::number(value));
+void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
+    const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
 
-        opt.setThresholdAdjustment(value);
-        m_colorParams.setBlackWhiteOptions(opt);
-        m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-    }
+    thresholdSlider->setValue(0);
+    setThresholdAdjustment(thresholdSlider->value());
 
-    void OtsuBinarizationOptionsWidget::setLighterThreshold() {
-        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+    emit stateChanged();
+}
 
-        thresholdSlider->setValue(thresholdSlider->value() - 1);
-        setThresholdAdjustment(thresholdSlider->value());
+void OtsuBinarizationOptionsWidget::updateView() {
+    BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+    thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
+    thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
+}
 
-        delayedStateChanger.start(750);
-    }
+void OtsuBinarizationOptionsWidget::setupUiConnections() {
+    connect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+    connect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
+    connect(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
+    connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
+    connect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
+    connect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+}
 
-    void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
-        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+void OtsuBinarizationOptionsWidget::removeUiConnections() {
+    disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+    disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
+    disconnect(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
+    disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
+    disconnect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
+    disconnect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+}
 
-        thresholdSlider->setValue(thresholdSlider->value() + 1);
-        setThresholdAdjustment(thresholdSlider->value());
-
-        delayedStateChanger.start(750);
-    }
-
-    void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
-        const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
-
-        thresholdSlider->setValue(0);
-        setThresholdAdjustment(thresholdSlider->value());
-
-        emit stateChanged();
-    }
-
-    void OtsuBinarizationOptionsWidget::updateView() {
-        BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-        thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
-        thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
-    }
-
-    void OtsuBinarizationOptionsWidget::setupUiConnections() {
-        connect(
-                lighterThresholdLink, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(setLighterThreshold())
-        );
-        connect(
-                darkerThresholdLink, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(setDarkerThreshold())
-        );
-        connect(
-                thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(thresholdSliderReleased())
-        );
-        connect(
-                thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(thresholdSliderValueChanged(int))
-        );
-        connect(
-                neutralThresholdBtn, SIGNAL(clicked()),
-                this, SLOT(setNeutralThreshold())
-        );
-        connect(
-                &delayedStateChanger, SIGNAL(timeout()),
-                this, SLOT(sendStateChanged())
-        );
-    }
-
-    void OtsuBinarizationOptionsWidget::removeUiConnections() {
-        disconnect(
-                lighterThresholdLink, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(setLighterThreshold())
-        );
-        disconnect(
-                darkerThresholdLink, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(setDarkerThreshold())
-        );
-        disconnect(
-                thresholdSlider, SIGNAL(sliderReleased()),
-                this, SLOT(thresholdSliderReleased())
-        );
-        disconnect(
-                thresholdSlider, SIGNAL(valueChanged(int)),
-                this, SLOT(thresholdSliderValueChanged(int))
-        );
-        disconnect(
-                neutralThresholdBtn, SIGNAL(clicked()),
-                this, SLOT(setNeutralThreshold())
-        );
-        disconnect(
-                &delayedStateChanger, SIGNAL(timeout()),
-                this, SLOT(sendStateChanged())
-        );
-    }
-
-    void OtsuBinarizationOptionsWidget::sendStateChanged() {
-        emit stateChanged();
-    }
-}    // namespace output
+void OtsuBinarizationOptionsWidget::sendStateChanged() {
+    emit stateChanged();
+}
+}  // namespace output

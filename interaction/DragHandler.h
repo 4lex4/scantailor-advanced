@@ -30,12 +30,12 @@
 class ImageViewBase;
 
 class DragHandler : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(DragHandler)
+    Q_DECLARE_TR_FUNCTIONS(DragHandler)
 public:
     explicit DragHandler(ImageViewBase& image_view);
 
     DragHandler(ImageViewBase& image_view,
-                boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter);
+                const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
 
     bool isActive() const;
 

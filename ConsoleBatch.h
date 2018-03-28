@@ -81,4 +81,4 @@ private:
 };
 
 
-#endif // ifndef CONSOLEBATCH_H_
+#endif  // ifndef CONSOLEBATCH_H_

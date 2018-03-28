@@ -32,11 +32,11 @@ class ProjectPages;
 class QImage;
 
 namespace fix_orientation {
-    class Task;
+class Task;
 }
 
 class LoadFileTask : public BackgroundTask {
-DECLARE_NON_COPYABLE(LoadFileTask)
+    DECLARE_NON_COPYABLE(LoadFileTask)
 
 public:
     LoadFileTask(Type type,

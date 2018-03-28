@@ -24,43 +24,34 @@
 using namespace imageproc;
 
 namespace deskew {
-    Dependencies::Dependencies() = default;
+Dependencies::Dependencies() = default;
 
-    Dependencies::Dependencies(const QPolygonF& page_outline, const OrthogonalRotation rotation)
-            : m_pageOutline(page_outline),
-              m_rotation(rotation) {
+Dependencies::Dependencies(const QPolygonF& page_outline, const OrthogonalRotation rotation)
+        : m_pageOutline(page_outline), m_rotation(rotation) {
+}
+
+Dependencies::Dependencies(const QDomElement& deps_el)
+        : m_pageOutline(XmlUnmarshaller::polygonF(deps_el.namedItem("page-outline").toElement())),
+          m_rotation(XmlUnmarshaller::rotation(deps_el.namedItem("rotation").toElement())) {
+}
+
+Dependencies::~Dependencies() = default;
+
+bool Dependencies::matches(const Dependencies& other) const {
+    if (m_rotation != other.m_rotation) {
+        return false;
     }
 
-    Dependencies::Dependencies(const QDomElement& deps_el)
-            : m_pageOutline(
-            XmlUnmarshaller::polygonF(
-                    deps_el.namedItem("page-outline").toElement()
-            )
-    ),
-              m_rotation(
-                      XmlUnmarshaller::rotation(
-                              deps_el.namedItem("rotation").toElement()
-                      )
-              ) {
-    }
+    return PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline);
+}
 
-    Dependencies::~Dependencies() = default;
+QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
+    XmlMarshaller marshaller(doc);
 
-    bool Dependencies::matches(const Dependencies& other) const {
-        if (m_rotation != other.m_rotation) {
-            return false;
-        }
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.rotation(m_rotation, "rotation"));
+    el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
 
-        return PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline);
-    }
-
-    QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
-        XmlMarshaller marshaller(doc);
-
-        QDomElement el(doc.createElement(name));
-        el.appendChild(marshaller.rotation(m_rotation, "rotation"));
-        el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
-
-        return el;
-    }
+    return el;
+}
 }  // namespace deskew

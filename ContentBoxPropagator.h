@@ -26,7 +26,7 @@ class CompositeCacheDrivenTask;
 class ProjectPages;
 
 namespace page_layout {
-    class Filter;
+class Filter;
 }
 
 /**

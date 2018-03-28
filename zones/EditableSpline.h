@@ -34,8 +34,7 @@ public:
 
     class SegmentIterator {
     public:
-        explicit SegmentIterator(EditableSpline& spline)
-                : m_ptrNextVertex(spline.firstVertex()) {
+        explicit SegmentIterator(EditableSpline& spline) : m_ptrNextVertex(spline.firstVertex()) {
         }
 
         bool hasNext() const;

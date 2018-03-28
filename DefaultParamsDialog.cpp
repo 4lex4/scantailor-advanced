@@ -77,67 +77,32 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Source")));
     reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Custom")));
 
-    chainIcon.addPixmap(
-            QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png"))
-    );
-    brokenChainIcon.addPixmap(
-            QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png"))
-    );
+    chainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png")));
+    brokenChainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png")));
     setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
 
-    Utils::mapSetValue(
-            alignmentByButton, alignTopLeftBtn,
-            Alignment(Alignment::TOP, Alignment::LEFT)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignTopBtn,
-            Alignment(Alignment::TOP, Alignment::HCENTER)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignTopRightBtn,
-            Alignment(Alignment::TOP, Alignment::RIGHT)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignLeftBtn,
-            Alignment(Alignment::VCENTER, Alignment::LEFT)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignCenterBtn,
-            Alignment(Alignment::VCENTER, Alignment::HCENTER)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignRightBtn,
-            Alignment(Alignment::VCENTER, Alignment::RIGHT)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignBottomLeftBtn,
-            Alignment(Alignment::BOTTOM, Alignment::LEFT)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignBottomBtn,
-            Alignment(Alignment::BOTTOM, Alignment::HCENTER)
-    );
-    Utils::mapSetValue(
-            alignmentByButton, alignBottomRightBtn,
-            Alignment(Alignment::BOTTOM, Alignment::RIGHT)
-    );
+    Utils::mapSetValue(alignmentByButton, alignTopLeftBtn, Alignment(Alignment::TOP, Alignment::LEFT));
+    Utils::mapSetValue(alignmentByButton, alignTopBtn, Alignment(Alignment::TOP, Alignment::HCENTER));
+    Utils::mapSetValue(alignmentByButton, alignTopRightBtn, Alignment(Alignment::TOP, Alignment::RIGHT));
+    Utils::mapSetValue(alignmentByButton, alignLeftBtn, Alignment(Alignment::VCENTER, Alignment::LEFT));
+    Utils::mapSetValue(alignmentByButton, alignCenterBtn, Alignment(Alignment::VCENTER, Alignment::HCENTER));
+    Utils::mapSetValue(alignmentByButton, alignRightBtn, Alignment(Alignment::VCENTER, Alignment::RIGHT));
+    Utils::mapSetValue(alignmentByButton, alignBottomLeftBtn, Alignment(Alignment::BOTTOM, Alignment::LEFT));
+    Utils::mapSetValue(alignmentByButton, alignBottomBtn, Alignment(Alignment::BOTTOM, Alignment::HCENTER));
+    Utils::mapSetValue(alignmentByButton, alignBottomRightBtn, Alignment(Alignment::BOTTOM, Alignment::RIGHT));
 
     alignmentButtonGroup = std::make_unique<QButtonGroup>(this);
     for (const auto& buttonAndAlignment : alignmentByButton) {
         alignmentButtonGroup->addButton(buttonAndAlignment.first);
     }
 
-    darkerThresholdLink->setText(
-            Utils::richTextForLink(darkerThresholdLink->text())
-    );
-    lighterThresholdLink->setText(
-            Utils::richTextForLink(lighterThresholdLink->text())
-    );
+    darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
+    lighterThresholdLink->setText(Utils::richTextForLink(lighterThresholdLink->text()));
     thresholdSlider->setToolTip(QString::number(thresholdSlider->value()));
 
-    thresholdSlider->setMinimum(-50);
-    thresholdSlider->setMaximum(50);
+    thresholdSlider->setMinimum(-100);
+    thresholdSlider->setMaximum(100);
     thresholLabel->setText(QString::number(thresholdSlider->value()));
 
     const int index = profileCB->findData(DefaultParamsProvider::getInstance()->getProfileName());
@@ -157,14 +122,10 @@ void DefaultParamsDialog::updateFixOrientationDisplay(const DefaultParams::FixOr
 void DefaultParamsDialog::updatePageSplitDisplay(const DefaultParams::PageSplitParams& params) {
     LayoutType layoutType = params.getLayoutType();
     if (layoutType == AUTO_LAYOUT_TYPE) {
-        layoutModeCB->setCurrentIndex(
-                layoutModeCB->findData(static_cast<int>(MODE_AUTO))
-        );
+        layoutModeCB->setCurrentIndex(layoutModeCB->findData(static_cast<int>(MODE_AUTO)));
         pageLayoutGroup->setEnabled(false);
     } else {
-        layoutModeCB->setCurrentIndex(
-                layoutModeCB->findData(static_cast<int>(MODE_MANUAL))
-        );
+        layoutModeCB->setCurrentIndex(layoutModeCB->findData(static_cast<int>(MODE_MANUAL)));
         pageLayoutGroup->setEnabled(true);
     }
 
@@ -238,7 +199,7 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
     bottomMarginSpinBox->setValue(margins.bottom());
     leftMarginSpinBox->setValue(margins.left());
 
-    topBottomLinkEnabled= (margins.top() == margins.bottom());
+    topBottomLinkEnabled = (margins.top() == margins.bottom());
     leftRightLinkEnabled = (margins.left() == margins.right());
     setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
@@ -265,13 +226,11 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
 
     for (const auto& kv : alignmentByButton) {
         if (alignment.isAuto() || alignment.isOriginal()) {
-            if (!alignment.isAutoHorizontal()
-                && (kv.second.vertical() == Alignment::VCENTER)
+            if (!alignment.isAutoHorizontal() && (kv.second.vertical() == Alignment::VCENTER)
                 && (kv.second.horizontal() == alignment.horizontal())) {
                 kv.first->setChecked(true);
                 break;
-            } else if (!alignment.isAutoVertical()
-                       && (kv.second.horizontal() == Alignment::HCENTER)
+            } else if (!alignment.isAutoVertical() && (kv.second.horizontal() == Alignment::HCENTER)
                        && (kv.second.vertical() == alignment.vertical())) {
                 kv.first->setChecked(true);
                 break;
@@ -285,9 +244,7 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
 
 void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams& params) {
     const ColorParams& colorParams = params.getColorParams();
-    colorModeSelector->setCurrentIndex(
-            colorModeSelector->findData(colorParams.colorMode())
-    );
+    colorModeSelector->setCurrentIndex(colorModeSelector->findData(colorParams.colorMode()));
 
     const ColorCommonOptions& colorCommonOptions = colorParams.colorCommonOptions();
     const BlackWhiteOptions& blackWhiteOptions = colorParams.blackWhiteOptions();
@@ -297,9 +254,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
     morphologicalSmoothingCB->setChecked(blackWhiteOptions.isMorphologicalSmoothingEnabled());
 
-    fillingColorBox->setCurrentIndex(
-            fillingColorBox->findData(colorCommonOptions.getFillingColor())
-    );
+    fillingColorBox->setCurrentIndex(fillingColorBox->findData(colorCommonOptions.getFillingColor()));
 
     colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
     reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
@@ -311,9 +266,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
     posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
-    thresholdMethodBox->setCurrentIndex(
-            thresholdMethodBox->findData(blackWhiteOptions.getBinarizationMethod())
-    );
+    thresholdMethodBox->setCurrentIndex(thresholdMethodBox->findData(blackWhiteOptions.getBinarizationMethod()));
     thresholdSlider->setValue(blackWhiteOptions.thresholdAdjustment());
     thresholLabel->setText(QString::number(thresholdSlider->value()));
     sauvolaWindowSize->setValue(blackWhiteOptions.getWindowSize());
@@ -324,9 +277,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     wolfCoef->setValue(blackWhiteOptions.getWolfCoef());
 
     const PictureShapeOptions& pictureShapeOptions = params.getPictureShapeOptions();
-    pictureShapeSelector->setCurrentIndex(
-            pictureShapeSelector->findData(pictureShapeOptions.getPictureShape())
-    );
+    pictureShapeSelector->setCurrentIndex(pictureShapeSelector->findData(pictureShapeOptions.getPictureShape()));
     pictureShapeSensitivitySB->setValue(pictureShapeOptions.getSensitivity());
     higherSearchSensitivityCB->setChecked(pictureShapeOptions.isHigherSearchSensitivity());
 
@@ -365,9 +316,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
             break;
     }
 
-    dewarpingModeCB->setCurrentIndex(
-            dewarpingModeCB->findData(params.getDewarpingOptions().dewarpingMode())
-    );
+    dewarpingModeCB->setCurrentIndex(dewarpingModeCB->findData(params.getDewarpingOptions().dewarpingMode()));
     dewarpingPostDeskewCB->setChecked(params.getDewarpingOptions().needPostDeskew());
     depthPerceptionSlider->setValue(qRound(params.getDepthPerception().value() * 10));
 
@@ -405,12 +354,12 @@ void DefaultParamsDialog::setupUiConnections() {
     connect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
     connect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
     connect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-    connect(lighterThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setLighterThreshold()));
-    connect(darkerThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setDarkerThreshold()));
+    connect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+    connect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
     connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
     connect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
     connect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-    connect(dpiSelector, SIGNAL(editTextChanged(const QString &)), this, SLOT(dpiEditTextChanged(const QString &)));
+    connect(dpiSelector, SIGNAL(editTextChanged(const QString&)), this, SLOT(dpiEditTextChanged(const QString&)));
     connect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     connect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     connect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
@@ -446,12 +395,12 @@ void DefaultParamsDialog::removeUiConnections() {
     disconnect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
     disconnect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
     disconnect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-    disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setLighterThreshold()));
-    disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString &)), this, SLOT(setDarkerThreshold()));
+    disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+    disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
     disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
     disconnect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
     disconnect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-    disconnect(dpiSelector, SIGNAL(editTextChanged(const QString &)), this, SLOT(dpiEditTextChanged(const QString &)));
+    disconnect(dpiSelector, SIGNAL(editTextChanged(const QString&)), this, SLOT(dpiEditTextChanged(const QString&)));
     disconnect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     disconnect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
     disconnect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
@@ -597,8 +546,7 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
     segmenterOptionsWidget->setEnabled(colorSegmentationCB->isChecked());
     if (threshold_options_visible) {
         posterizeCB->setEnabled(colorSegmentationCB->isChecked());
-        posterizeOptionsWidget->setEnabled(colorSegmentationCB->isChecked()
-                                           && posterizeCB->isChecked());
+        posterizeOptionsWidget->setEnabled(colorSegmentationCB->isChecked() && posterizeCB->isChecked());
     } else {
         posterizeCB->setEnabled(true);
         posterizeOptionsWidget->setEnabled(posterizeCB->isChecked());
@@ -676,18 +624,13 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     }
     DefaultParams::PageSplitParams pageSplitParams(layoutType);
 
-    DefaultParams::DeskewParams deskewParams(
-            angleSpinBox->value(),
-            deskewAutoBtn->isChecked() ? MODE_AUTO : MODE_MANUAL
-    );
+    DefaultParams::DeskewParams deskewParams(angleSpinBox->value(),
+                                             deskewAutoBtn->isChecked() ? MODE_AUTO : MODE_MANUAL);
 
     DefaultParams::SelectContentParams selectContentParams(
             QSizeF(widthSpinBox->value(), heightSpinBox->value()),
-            pageDetectManualBtn->isChecked() ? MODE_MANUAL : MODE_AUTO,
-            !contentDetectDisableBtn->isChecked(),
-            !pageDetectDisableBtn->isChecked(),
-            fineTuneBtn->isChecked()
-    );
+            pageDetectManualBtn->isChecked() ? MODE_MANUAL : MODE_AUTO, !contentDetectDisableBtn->isChecked(),
+            !pageDetectDisableBtn->isChecked(), fineTuneBtn->isChecked());
 
     Alignment alignment;
     switch (alignmentMode->currentIndex()) {
@@ -722,25 +665,17 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
             break;
     }
     alignment.setNull(!alignWithOthersCB->isChecked());
-    DefaultParams::PageLayoutParams pageLayoutParams(
-            Margins(leftMarginSpinBox->value(),
-                    topMarginSpinBox->value(),
-                    rightMarginSpinBox->value(),
-                    bottomMarginSpinBox->value()),
-            alignment,
-            autoMargins->isChecked()
-    );
+    DefaultParams::PageLayoutParams pageLayoutParams(Margins(leftMarginSpinBox->value(), topMarginSpinBox->value(),
+                                                             rightMarginSpinBox->value(), bottomMarginSpinBox->value()),
+                                                     alignment, autoMargins->isChecked());
 
-    const int dpi = (dpiSelector->currentIndex() != customDpiItemIdx)
-                    ? dpiSelector->currentText().toInt()
-                    : customDpiValue.toInt();
+    const int dpi = (dpiSelector->currentIndex() != customDpiItemIdx) ? dpiSelector->currentText().toInt()
+                                                                      : customDpiValue.toInt();
     ColorParams colorParams;
     colorParams.setColorMode(static_cast<ColorMode>(colorModeSelector->currentData().toInt()));
 
     ColorCommonOptions colorCommonOptions;
-    colorCommonOptions.setFillingColor(
-            static_cast<FillingColor>(fillingColorBox->currentData().toInt())
-    );
+    colorCommonOptions.setFillingColor(static_cast<FillingColor>(fillingColorBox->currentData().toInt()));
     colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());
     ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
@@ -755,8 +690,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     blackWhiteOptions.setNormalizeIllumination(equalizeIlluminationCB->isChecked());
     blackWhiteOptions.setSavitzkyGolaySmoothingEnabled(savitzkyGolaySmoothingCB->isChecked());
     blackWhiteOptions.setMorphologicalSmoothingEnabled(morphologicalSmoothingCB->isChecked());
-    BinarizationMethod binarizationMethod
-            = static_cast<BinarizationMethod>(thresholdMethodBox->currentData().toInt());
+    BinarizationMethod binarizationMethod = static_cast<BinarizationMethod>(thresholdMethodBox->currentData().toInt());
     blackWhiteOptions.setBinarizationMethod(binarizationMethod);
     blackWhiteOptions.setThresholdAdjustment(thresholdSlider->value());
     blackWhiteOptions.setSauvolaCoef(sauvolaCoef->value());
@@ -779,8 +713,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
     SplittingOptions splittingOptions;
     splittingOptions.setSplitOutput(splittingCB->isChecked());
-    splittingOptions.setSplittingMode(bwForegroundRB->isChecked() ? BLACK_AND_WHITE_FOREGROUND
-                                                                  : COLOR_FOREGROUND);
+    splittingOptions.setSplittingMode(bwForegroundRB->isChecked() ? BLACK_AND_WHITE_FOREGROUND : COLOR_FOREGROUND);
     splittingOptions.setOriginalBackground(originalBackgroundCB->isChecked());
 
     PictureShapeOptions pictureShapeOptions;
@@ -803,24 +736,12 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
         despeckleLevel = DESPECKLE_OFF;
     }
 
-    DefaultParams::OutputParams outputParams(
-            Dpi(dpi, dpi),
-            colorParams,
-            splittingOptions,
-            pictureShapeOptions,
-            DepthPerception(0.1 * depthPerceptionSlider->value()),
-            dewarpingOptions,
-            despeckleLevel
-    );
+    DefaultParams::OutputParams outputParams(Dpi(dpi, dpi), colorParams, splittingOptions, pictureShapeOptions,
+                                             DepthPerception(0.1 * depthPerceptionSlider->value()), dewarpingOptions,
+                                             despeckleLevel);
 
     std::unique_ptr<DefaultParams> defaultParams = std::make_unique<DefaultParams>(
-            fixOrientationParams,
-            deskewParams,
-            pageSplitParams,
-            selectContentParams,
-            pageLayoutParams,
-            outputParams
-    );
+            fixOrientationParams, deskewParams, pageSplitParams, selectContentParams, pageLayoutParams, outputParams);
     defaultParams->setUnits(currentUnits);
 
     return defaultParams;
@@ -885,9 +806,7 @@ void DefaultParamsDialog::topBottomLinkClicked() {
     topBottomLinkEnabled = !topBottomLinkEnabled;
     setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
     if (topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
-        const double new_margin = std::min(
-                topMarginSpinBox->value(), bottomMarginSpinBox->value()
-        );
+        const double new_margin = std::min(topMarginSpinBox->value(), bottomMarginSpinBox->value());
         topMarginSpinBox->setValue(new_margin);
         bottomMarginSpinBox->setValue(new_margin);
     }
@@ -897,9 +816,7 @@ void DefaultParamsDialog::leftRightLinkClicked() {
     leftRightLinkEnabled = !leftRightLinkEnabled;
     setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
     if (leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
-        const double new_margin = std::min(
-                leftMarginSpinBox->value(), rightMarginSpinBox->value()
-        );
+        const double new_margin = std::min(leftMarginSpinBox->value(), rightMarginSpinBox->value());
         leftMarginSpinBox->setValue(new_margin);
         rightMarginSpinBox->setValue(new_margin);
     }
@@ -964,9 +881,7 @@ void DefaultParamsDialog::dpiSelectionChanged(int index) {
         dpiSelector->lineEdit()->selectAll();
         // It looks like we need to set a new validator
         // every time we make the combo box editable.
-        dpiSelector->setValidator(
-                new QIntValidator(0, 9999, dpiSelector)
-        );
+        dpiSelector->setValidator(new QIntValidator(0, 9999, dpiSelector));
     }
 }
 
@@ -1050,10 +965,8 @@ void DefaultParamsDialog::profileSavePressed() {
     const ScopedIncDec<int> scopeGuard(ignoreProfileChanges);
 
     if (isProfileNameReserved(profileCB->currentText())) {
-        QMessageBox::information(
-                this, tr("Error"),
-                tr("The name conflicts with a default profile name. Please enter a different name.")
-        );
+        QMessageBox::information(this, tr("Error"),
+                                 tr("The name conflicts with a default profile name. Please enter a different name."));
         return;
     }
 
@@ -1129,10 +1042,8 @@ void DefaultParamsDialog::updateAlignmentButtonsEnabled() {
     bool enableHorizontalButtons;
     bool enableVerticalButtons;
     if ((alignmentMode->currentIndex() == 0) || (alignmentMode->currentIndex() == 2)) {
-        enableHorizontalButtons = !autoHorizontalAligningCB->isChecked() ? alignWithOthersCB->isChecked()
-                                                                         : false;
-        enableVerticalButtons = !autoVerticalAligningCB->isChecked() ? alignWithOthersCB->isChecked()
-                                                                     : false;
+        enableHorizontalButtons = !autoHorizontalAligningCB->isChecked() ? alignWithOthersCB->isChecked() : false;
+        enableVerticalButtons = !autoVerticalAligningCB->isChecked() ? alignWithOthersCB->isChecked() : false;
     } else {
         enableHorizontalButtons = enableVerticalButtons = alignWithOthersCB->isChecked();
     }

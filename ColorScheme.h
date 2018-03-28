@@ -17,7 +17,7 @@ public:
 
     /**
      * List of colors for elements that don't support styling.
-     * 
+     *
      * Available parameters:
      *     thumbnail_sequence_selected_item_text,
      *     thumbnail_sequence_item_text,
@@ -36,4 +36,4 @@ public:
     virtual std::unique_ptr<ColorParams> getColorParams() const = 0;
 };
 
-#endif //SCANTAILOR_COLORSCHEME_H
+#endif  // SCANTAILOR_COLORSCHEME_H

@@ -21,18 +21,11 @@
 
 class Margins {
 public:
-    Margins()
-            : m_top(),
-              m_bottom(),
-              m_left(),
-              m_right() {
+    Margins() : m_top(), m_bottom(), m_left(), m_right() {
     }
 
     Margins(double left, double top, double right, double bottom)
-            : m_top(top),
-              m_bottom(bottom),
-              m_left(left),
-              m_right(right) {
+            : m_top(top), m_bottom(bottom), m_left(left), m_right(right) {
     }
 
     double top() const {

@@ -23,31 +23,20 @@
 using namespace imageproc;
 
 FilterData::FilterData(const QImage& image)
-        : m_origImage(image),
-          m_grayImage(toGrayscale(m_origImage)),
-          m_xform(image.rect(), Dpm(image)),
-          m_bwThreshold(0),
-          m_blackOnWhite(true) {
-    const GrayscaleHistogram grayscaleHistogram(m_grayImage);
-    m_bwThreshold = BinaryThreshold::otsuThreshold(grayscaleHistogram);
-
-    int blackPixelsCount = 0;
-    for (int level = 0; level < m_bwThreshold; ++level) {
-        blackPixelsCount += grayscaleHistogram[level];
-    }
-    m_blackOnWhite = (2 * blackPixelsCount < m_grayImage.width() * m_grayImage.height());
+        : m_origImage(image), m_grayImage(toGrayscale(m_origImage)), m_xform(image.rect(), Dpm(image)) {
 }
 
 FilterData::FilterData(const FilterData& other, const ImageTransformation& xform)
         : m_origImage(other.m_origImage),
           m_grayImage(other.m_grayImage),
           m_xform(xform),
-          m_bwThreshold(other.m_bwThreshold),
-          m_blackOnWhite(other.m_blackOnWhite) {
+          m_imageParams(other.m_imageParams) {
 }
 
+FilterData::FilterData(const FilterData& other) = default;
+
 imageproc::BinaryThreshold FilterData::bwThreshold() const {
-    return m_bwThreshold;
+    return m_imageParams.getBwThreshold();
 }
 
 const ImageTransformation& FilterData::xform() const {
@@ -63,6 +52,9 @@ const imageproc::GrayImage& FilterData::grayImage() const {
 }
 
 bool FilterData::isBlackOnWhite() const {
-    return m_blackOnWhite;
+    return m_imageParams.isBlackOnWhite();
 }
 
+void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
+    m_imageParams = imageParams;
+}

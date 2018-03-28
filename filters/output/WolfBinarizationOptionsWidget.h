@@ -10,43 +10,43 @@
 #include <QtCore>
 
 namespace output {
-    class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::WolfBinarizationOptionsWidget {
+class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::WolfBinarizationOptionsWidget {
     Q_OBJECT
 
-    private:
-        intrusive_ptr<Settings> m_ptrSettings;
-        PageId m_pageId;
-        ColorParams m_colorParams;
-        QTimer delayedStateChanger;
-        OutputProcessingParams m_outputProcessingParams;
+private:
+    intrusive_ptr<Settings> m_ptrSettings;
+    PageId m_pageId;
+    ColorParams m_colorParams;
+    QTimer delayedStateChanger;
+    OutputProcessingParams m_outputProcessingParams;
 
-    public:
-        explicit WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+public:
+    explicit WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
-        ~WolfBinarizationOptionsWidget() override = default;
+    ~WolfBinarizationOptionsWidget() override = default;
 
-        void preUpdateUI(const PageId& m_pageId) override;
+    void preUpdateUI(const PageId& m_pageId) override;
 
-    private slots:
+private slots:
 
-        void windowSizeChanged(int value);
+    void windowSizeChanged(int value);
 
-        void wolfCoefChanged(double value);
+    void wolfCoefChanged(double value);
 
-        void lowerBoundChanged(int value);
+    void lowerBoundChanged(int value);
 
-        void upperBoundChanged(int value);
+    void upperBoundChanged(int value);
 
-        void sendStateChanged();
+    void sendStateChanged();
 
-    private:
-        void updateView();
+private:
+    void updateView();
 
-        void setupUiConnections();
+    void setupUiConnections();
 
-        void removeUiConnections();
-    };
-}
+    void removeUiConnections();
+};
+}  // namespace output
 
 
-#endif //SCANTAILOR_WOLFBINARIZATIONOPTIONSWIDGET_H
+#endif  // SCANTAILOR_WOLFBINARIZATIONOPTIONSWIDGET_H

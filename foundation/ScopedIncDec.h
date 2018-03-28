@@ -26,8 +26,7 @@
 template<class T>
 class ScopedIncDec {
 public:
-    explicit ScopedIncDec(T& counter)
-            : m_counter(counter) {
+    explicit ScopedIncDec(T& counter) : m_counter(counter) {
         ++counter;
     }
 

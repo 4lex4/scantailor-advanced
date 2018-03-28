@@ -31,10 +31,10 @@ class ImageMetadata;
 class ImageMetadataLoader : public ref_countable {
 public:
     enum Status {
-        LOADED,  /**< Loaded successfully */
-        NO_IMAGES,  /**< File contained no images. */
-        FORMAT_NOT_RECOGNIZED,  /**< File format not recognized. */
-        GENERIC_ERROR  /**< Some other error has occured. */
+        LOADED,                /**< Loaded successfully */
+        NO_IMAGES,             /**< File contained no images. */
+        FORMAT_NOT_RECOGNIZED, /**< File format not recognized. */
+        GENERIC_ERROR          /**< Some other error has occured. */
     };
 
     /**

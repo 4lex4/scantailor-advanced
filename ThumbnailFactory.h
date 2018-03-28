@@ -31,7 +31,7 @@ class CompositeCacheDrivenTask;
 class QGraphicsItem;
 
 class ThumbnailFactory : public ref_countable {
-DECLARE_NON_COPYABLE(ThumbnailFactory)
+    DECLARE_NON_COPYABLE(ThumbnailFactory)
 
 public:
     ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,

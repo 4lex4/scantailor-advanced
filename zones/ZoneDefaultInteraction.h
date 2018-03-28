@@ -33,7 +33,7 @@
 class ZoneInteractionContext;
 
 class ZoneDefaultInteraction : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(ZoneDefaultInteraction)
+    Q_DECLARE_TR_FUNCTIONS(ZoneDefaultInteraction)
 public:
     explicit ZoneDefaultInteraction(ZoneInteractionContext& context);
 
@@ -95,4 +95,4 @@ private:
 };
 
 
-#endif // ifndef ZONE_DEFAULT_INTERACTION_H_
+#endif  // ifndef ZONE_DEFAULT_INTERACTION_H_

@@ -23,9 +23,7 @@
 
 class RelinkingListView::Delegate : public QStyledItemDelegate {
 public:
-    explicit Delegate(RelinkingListView* owner)
-            : QStyledItemDelegate(owner),
-              m_pOwner(owner) {
+    explicit Delegate(RelinkingListView* owner) : QStyledItemDelegate(owner), m_pOwner(owner) {
     }
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
@@ -43,9 +41,7 @@ public:
     QRect rect;
     int status;
 
-    IndicationGroup(const QRect& r, int st)
-            : rect(r),
-              status(st) {
+    IndicationGroup(const QRect& r, int st) : rect(r), status(st) {
     }
 };
 
@@ -63,9 +59,7 @@ private:
 };
 
 
-RelinkingListView::RelinkingListView(QWidget* parent)
-        : QListView(parent),
-          m_statusLayerDrawn(false) {
+RelinkingListView::RelinkingListView(QWidget* parent) : QListView(parent), m_statusLayerDrawn(false) {
     setItemDelegate(new Delegate(this));
 }
 
@@ -159,7 +153,7 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
         pen.setColor(QColor(0x6f2719));
         brush.setColor(QColor(0xff674b));
     }
-} // RelinkingListView::drawStatusLayer
+}  // RelinkingListView::drawStatusLayer
 
 void RelinkingListView::GroupAggregator::process(const QRect& rect, int status) {
     if (m_groups.empty() || (m_groups.back().status != status)) {
@@ -168,4 +162,3 @@ void RelinkingListView::GroupAggregator::process(const QRect& rect, int status) 
         m_groups.back().rect |= rect;
     }
 }
-

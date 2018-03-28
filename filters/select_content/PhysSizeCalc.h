@@ -26,17 +26,17 @@
 class ImageTransformation;
 
 namespace select_content {
-    class PhysSizeCalc {
-        // Member-wise copying is OK.
-    public:
-        PhysSizeCalc();
+class PhysSizeCalc {
+    // Member-wise copying is OK.
+public:
+    PhysSizeCalc();
 
-        explicit PhysSizeCalc(const ImageTransformation& xform);
+    explicit PhysSizeCalc(const ImageTransformation& xform);
 
-        QSizeF sizeMM(const QRectF& rect_px) const;
+    QSizeF sizeMM(const QRectF& rect_px) const;
 
-    private:
-        QTransform m_virtToPhys;
-    };
+private:
+    QTransform m_virtToPhys;
+};
 }  // namespace select_content
 #endif

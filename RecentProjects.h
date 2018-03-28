@@ -29,9 +29,7 @@ public:
      * \brief The default value for max_items parameters of
      *        write() and enumerate().
      */
-    enum {
-        DEFAULT_MAX_ITEMS = 7
-    };
+    enum { DEFAULT_MAX_ITEMS = 7 };
 
     /**
      * \brief Reads the list of recent projects from QSettings

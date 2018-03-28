@@ -34,7 +34,7 @@ class QTemporaryFile;
  * in the same directory as the target file.
  */
 class AtomicFileOverwriter {
-DECLARE_NON_COPYABLE(AtomicFileOverwriter)
+    DECLARE_NON_COPYABLE(AtomicFileOverwriter)
 
 public:
     AtomicFileOverwriter();

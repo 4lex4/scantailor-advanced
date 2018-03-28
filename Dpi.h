@@ -28,14 +28,10 @@ class Dpm;
  */
 class Dpi {
 public:
-    Dpi()
-            : m_xDpi(0),
-              m_yDpi(0) {
+    Dpi() : m_xDpi(0), m_yDpi(0) {
     }
 
-    Dpi(int horizontal, int vertical)
-            : m_xDpi(horizontal),
-              m_yDpi(vertical) {
+    Dpi(int horizontal, int vertical) : m_xDpi(horizontal), m_yDpi(vertical) {
     }
 
     Dpi(Dpm dpm);

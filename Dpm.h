@@ -30,14 +30,10 @@ class QImage;
 class Dpm {
     // Member-wise copying is OK.
 public:
-    Dpm()
-            : m_xDpm(0),
-              m_yDpm(0) {
+    Dpm() : m_xDpm(0), m_yDpm(0) {
     }
 
-    Dpm(int horizontal, int vertical)
-            : m_xDpm(horizontal),
-              m_yDpm(vertical) {
+    Dpm(int horizontal, int vertical) : m_xDpm(horizontal), m_yDpm(vertical) {
     }
 
     Dpm(Dpi dpi);
@@ -70,4 +66,4 @@ private:
 };
 
 
-#endif // ifndef DPM_H_
+#endif  // ifndef DPM_H_

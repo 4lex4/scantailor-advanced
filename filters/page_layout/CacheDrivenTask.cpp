@@ -31,83 +31,53 @@
 #include "filter_dc/ThumbnailCollector.h"
 
 namespace page_layout {
-    CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task,
-                                     intrusive_ptr<Settings> settings)
-            : m_ptrNextTask(std::move(next_task)),
-              m_ptrSettings(std::move(settings)) {
+CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task, intrusive_ptr<Settings> settings)
+        : m_ptrNextTask(std::move(next_task)), m_ptrSettings(std::move(settings)) {
+}
+
+CacheDrivenTask::~CacheDrivenTask() = default;
+
+void CacheDrivenTask::process(const PageInfo& page_info,
+                              AbstractFilterDataCollector* collector,
+                              const ImageTransformation& xform,
+                              const QRectF& page_rect,
+                              const QRectF& content_rect) {
+    const std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
+    if (!params || (params->contentSizeMM().isEmpty() && !content_rect.isEmpty())) {
+        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+            thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
+                    thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), xform)));
+        }
+
+        return;
     }
 
-    CacheDrivenTask::~CacheDrivenTask() = default;
+    Params new_params(m_ptrSettings->updateContentSizeAndGetParams(page_info.id(), page_rect, content_rect,
+                                                                   params->contentSizeMM()));
 
-    void CacheDrivenTask::process(const PageInfo& page_info,
-                                  AbstractFilterDataCollector* collector,
-                                  const ImageTransformation& xform,
-                                  const QRectF& page_rect,
-                                  const QRectF& content_rect) {
-        const std::unique_ptr<Params> params(
-                m_ptrSettings->getPageParams(page_info.id())
-        );
-        if (!params || (params->contentSizeMM().isEmpty() && !content_rect.isEmpty())) {
-            if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-                thumb_col->processThumbnail(
-                        std::unique_ptr<QGraphicsItem>(
-                                new IncompleteThumbnail(
-                                        thumb_col->thumbnailCache(),
-                                        thumb_col->maxLogicalThumbSize(),
-                                        page_info.imageId(), xform
-                                )
-                        )
-                );
-            }
+    const QRectF adapted_content_rect(Utils::adaptContentRect(xform, content_rect));
+    const QPolygonF content_rect_phys(xform.transformBack().map(adapted_content_rect));
+    const QPolygonF page_rect_phys(Utils::calcPageRectPhys(xform, content_rect_phys, new_params,
+                                                           m_ptrSettings->getAggregateHardSizeMM(),
+                                                           m_ptrSettings->getAggregateContentRect()));
+    ImageTransformation new_xform(xform);
+    new_xform.setPostCropArea(xform.transform().map(page_rect_phys));
 
-            return;
-        }
+    if (m_ptrNextTask) {
+        m_ptrNextTask->process(page_info, collector, new_xform, content_rect_phys);
 
-        Params new_params(
-                m_ptrSettings->updateContentSizeAndGetParams(
-                        page_info.id(), page_rect, content_rect, params->contentSizeMM()
-                )
-        );
+        return;
+    }
 
-        const QRectF adapted_content_rect(
-                Utils::adaptContentRect(xform, content_rect)
-        );
-        const QPolygonF content_rect_phys(
-                xform.transformBack().map(adapted_content_rect)
-        );
-        const QPolygonF page_rect_phys(
-                Utils::calcPageRectPhys(
-                        xform, content_rect_phys, new_params,
-                        m_ptrSettings->getAggregateHardSizeMM(), m_ptrSettings->getAggregateContentRect()
-                )
-        );
-        ImageTransformation new_xform(xform);
-        new_xform.setPostCropArea(xform.transform().map(page_rect_phys));
+    QSettings settings;
+    const double deviationCoef = settings.value("settings/marginsDeviationCoef", 0.35).toDouble();
+    const double deviationThreshold = settings.value("settings/marginsDeviationThreshold", 1.0).toDouble();
 
-        if (m_ptrNextTask) {
-            m_ptrNextTask->process(page_info, collector, new_xform, content_rect_phys);
-
-            return;
-        }
-
-        QSettings settings;
-        const double deviationCoef = settings.value("settings/marginsDeviationCoef", 0.35).toDouble();
-        const double deviationThreshold = settings.value("settings/marginsDeviationThreshold", 1.0).toDouble();
-
-        if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-            thumb_col->processThumbnail(
-                    std::unique_ptr<QGraphicsItem>(
-                            new Thumbnail(
-                                    thumb_col->thumbnailCache(),
-                                    thumb_col->maxLogicalThumbSize(),
-                                    page_info.imageId(), new_params,
-                                    xform, content_rect_phys,
-                                    xform.transform().map(page_rect_phys).boundingRect(),
-                                    m_ptrSettings->deviationProvider().isDeviant(
-                                            page_info.id(), deviationCoef, deviationThreshold)
-                            )
-                    )
-            );
-        }
-    }      // CacheDrivenTask::process
+    if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
+        thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
+                thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_params, xform,
+                content_rect_phys, xform.transform().map(page_rect_phys).boundingRect(),
+                m_ptrSettings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
+    }
+}  // CacheDrivenTask::process
 }  // namespace page_layout

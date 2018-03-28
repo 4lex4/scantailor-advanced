@@ -48,4 +48,3 @@ QDomElement ZoneSet::toXml(QDomDocument& doc, const QString& name) const {
 
     return el;
 }
-

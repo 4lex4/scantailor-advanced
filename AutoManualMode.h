@@ -19,9 +19,6 @@
 #ifndef AUTOMANUALMODE_H_
 #define AUTOMANUALMODE_H_
 
-enum AutoManualMode {
-    MODE_AUTO,
-    MODE_MANUAL
-};
+enum AutoManualMode { MODE_AUTO, MODE_MANUAL };
 
 #endif

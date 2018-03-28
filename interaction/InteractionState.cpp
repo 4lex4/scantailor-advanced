@@ -103,4 +103,3 @@ QString InteractionState::statusTip() const {
         return m_defaultStatusTip;
     }
 }
-

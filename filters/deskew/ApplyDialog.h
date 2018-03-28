@@ -29,28 +29,28 @@ class QButtonGroup;
 class PageSelectionAccessor;
 
 namespace deskew {
-    class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
+class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
     Q_OBJECT
-    public:
-        ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
+public:
+    ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
-        ~ApplyDialog() override;
+    ~ApplyDialog() override;
 
-    signals:
+signals:
 
-        void appliedTo(const std::set<PageId>& pages);
+    void appliedTo(const std::set<PageId>& pages);
 
-        void appliedToAllPages(const std::set<PageId>& pages);
+    void appliedToAllPages(const std::set<PageId>& pages);
 
-    private slots:
+private slots:
 
-        void onSubmit();
+    void onSubmit();
 
-    private:
-        PageSequence m_pages;
-        PageId m_curPage;
-        std::set<PageId> m_selectedPages;
-        QButtonGroup* m_pScopeGroup;
-    };
+private:
+    PageSequence m_pages;
+    PageId m_curPage;
+    std::set<PageId> m_selectedPages;
+    QButtonGroup* m_pScopeGroup;
+};
 }  // namespace deskew
-#endif // ifndef DESKEW_APPLYDIALOG_H_
+#endif  // ifndef DESKEW_APPLYDIALOG_H_

@@ -2,14 +2,10 @@
 #include "UnitsConverter.h"
 #include "Dpm.h"
 
-UnitsConverter::UnitsConverter(const Dpi& dpi)
-        : dpi(dpi) {
+UnitsConverter::UnitsConverter(const Dpi& dpi) : dpi(dpi) {
 }
 
-void UnitsConverter::convert(double& horizontalValue,
-                             double& verticalValue,
-                             Units fromUnits,
-                             Units toUnits) const {
+void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const {
     if (dpi.isNull() || (fromUnits == toUnits)) {
         return;
     }

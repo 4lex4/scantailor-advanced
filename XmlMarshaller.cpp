@@ -129,4 +129,3 @@ QDomElement XmlMarshaller::margins(const Margins& margins, const QString& name) 
 
     return el;
 }
-

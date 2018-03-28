@@ -20,9 +20,7 @@
 #include <QMouseEvent>
 
 ObjectDragHandler::ObjectDragHandler(DraggableObject* obj)
-        : m_pObj(obj),
-          m_keyboardModifiers(Qt::NoModifier),
-          m_activeKeyboardModifiers(Qt::NoModifier) {
+        : m_pObj(obj), m_keyboardModifiers(Qt::NoModifier), m_activeKeyboardModifiers(Qt::NoModifier) {
     setProximityCursor(Qt::OpenHandCursor);
     setInteractionCursor(Qt::ClosedHandCursor);
 }
@@ -65,10 +63,8 @@ void ObjectDragHandler::onProximityUpdate(const QPointF& screen_mouse_pos, Inter
         return;
     }
 
-    interaction.updateProximity(
-            m_interaction, m_pObj->proximity(screen_mouse_pos),
-            m_pObj->proximityPriority(), m_pObj->proximityThreshold(interaction)
-    );
+    interaction.updateProximity(m_interaction, m_pObj->proximity(screen_mouse_pos), m_pObj->proximityPriority(),
+                                m_pObj->proximityThreshold(interaction));
 }
 
 void ObjectDragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {
@@ -107,4 +103,3 @@ void ObjectDragHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& inte
 void ObjectDragHandler::onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
     m_activeKeyboardModifiers = event->modifiers();
 }
-

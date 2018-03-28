@@ -26,7 +26,7 @@ class CompositeCacheDrivenTask;
 class ProjectPages;
 
 namespace page_split {
-    class Filter;
+class Filter;
 }
 
 /**

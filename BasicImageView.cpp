@@ -22,10 +22,7 @@
 #include "BasicImageView.h"
 
 BasicImageView::BasicImageView(const QImage& image, const ImagePixmapUnion& downscaled_image, const Margins& margins)
-        : ImageViewBase(
-        image, downscaled_image,
-        ImagePresentation(QTransform(), QRectF(image.rect())), margins
-),
+        : ImageViewBase(image, downscaled_image, ImagePresentation(QTransform(), QRectF(image.rect())), margins),
           m_dragHandler(*this),
           m_zoomHandler(*this) {
     rootInteractionHandler().makeLastFollower(m_dragHandler);
@@ -33,4 +30,3 @@ BasicImageView::BasicImageView(const QImage& image, const ImagePixmapUnion& down
 }
 
 BasicImageView::~BasicImageView() = default;
-

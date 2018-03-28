@@ -12,7 +12,7 @@
 class ZoneInteractionContext;
 
 class ZoneDragInteraction : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(ZoneDragInteraction)
+    Q_DECLARE_TR_FUNCTIONS(ZoneDragInteraction)
 public:
     ZoneDragInteraction(ZoneInteractionContext& context,
                         InteractionState& interaction,
@@ -34,4 +34,4 @@ protected:
 };
 
 
-#endif //SCANTAILOR_ZONEDRAGINTERACTION_H
+#endif  // SCANTAILOR_ZONEDRAGINTERACTION_H

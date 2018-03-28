@@ -126,12 +126,7 @@ private:
 
 
 template<typename Node>
-Grid<Node>::Grid()
-        : m_pData(0),
-          m_width(0),
-          m_height(0),
-          m_stride(0),
-          m_padding(0) {
+Grid<Node>::Grid() : m_pData(0), m_width(0), m_height(0), m_stride(0), m_padding(0) {
 }
 
 template<typename Node>
@@ -189,7 +184,7 @@ void Grid<Node>::initPadding(const Node& padding_node) {
         }
         line += m_stride;
     }
-} // >::initPadding
+}  // >::initPadding
 
 template<typename Node>
 void Grid<Node>::initInterior(const Node& interior_node) {
@@ -217,4 +212,4 @@ void swap(Grid<Node>& o1, Grid<Node>& o2) {
     o1.swap(o2);
 }
 
-#endif // ifndef GRID_H_
+#endif  // ifndef GRID_H_

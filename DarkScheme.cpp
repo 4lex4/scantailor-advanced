@@ -25,8 +25,7 @@ std::unique_ptr<QPalette> DarkScheme::getPalette() const {
     darkPalette->setColor(QPalette::Mid, QColor(0x33, 0x33, 0x33));
     darkPalette->setColor(QPalette::Shadow, QColor(0x26, 0x26, 0x26));
     darkPalette->setColor(QPalette::Button, darkPalette->color(QPalette::Base));
-    darkPalette->setColor(QPalette::Disabled, QPalette::Button,
-                          darkPalette->color(QPalette::Disabled, QPalette::Base));
+    darkPalette->setColor(QPalette::Disabled, QPalette::Button, darkPalette->color(QPalette::Disabled, QPalette::Base));
     darkPalette->setColor(QPalette::ButtonText, darkPalette->color(QPalette::WindowText));
     darkPalette->setColor(QPalette::Disabled, QPalette::ButtonText,
                           darkPalette->color(QPalette::Disabled, QPalette::WindowText));
@@ -57,30 +56,17 @@ std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
 std::unique_ptr<ColorParams> DarkScheme::getColorParams() const {
     std::unique_ptr<ColorParams> customColors(new ColorParams());
 
-    customColors->insert(ColorParams::value_type(
-            "thumbnail_sequence_selected_item_background",
-            QColor(0x44, 0x44, 0x44)));
-    customColors->insert(ColorParams::value_type(
-            "open_new_project_border_color",
-            QColor(0x53, 0x53, 0x53)));
-    customColors->insert(ColorParams::value_type(
-            "processing_indication_fade_color",
-            QColor(0x28, 0x28, 0x28)));
-    customColors->insert(ColorParams::value_type(
-            "processing_indication_head_color",
-            QColor(0xDD, 0xDD, 0xDD)));
-    customColors->insert(ColorParams::value_type(
-            "processing_indication_tail_color",
-            QColor(0x6B, 0x6B, 0x6B)));
-    customColors->insert(ColorParams::value_type(
-            "stage_list_head_color",
-            customColors->at("processing_indication_head_color")));
-    customColors->insert(ColorParams::value_type(
-            "stage_list_tail_color",
-            customColors->at("processing_indication_tail_color")));
-    customColors->insert(ColorParams::value_type(
-            "fix_dpi_dialog_error_text_color",
-            QColor(0xF3, 0x49, 0x41)));
+    customColors->insert(
+            ColorParams::value_type("thumbnail_sequence_selected_item_background", QColor(0x44, 0x44, 0x44)));
+    customColors->insert(ColorParams::value_type("open_new_project_border_color", QColor(0x53, 0x53, 0x53)));
+    customColors->insert(ColorParams::value_type("processing_indication_fade_color", QColor(0x28, 0x28, 0x28)));
+    customColors->insert(ColorParams::value_type("processing_indication_head_color", QColor(0xDD, 0xDD, 0xDD)));
+    customColors->insert(ColorParams::value_type("processing_indication_tail_color", QColor(0x6B, 0x6B, 0x6B)));
+    customColors->insert(
+            ColorParams::value_type("stage_list_head_color", customColors->at("processing_indication_head_color")));
+    customColors->insert(
+            ColorParams::value_type("stage_list_tail_color", customColors->at("processing_indication_tail_color")));
+    customColors->insert(ColorParams::value_type("fix_dpi_dialog_error_text_color", QColor(0xF3, 0x49, 0x41)));
 
     return customColors;
 }

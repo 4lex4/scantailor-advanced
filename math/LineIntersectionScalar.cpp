@@ -71,4 +71,3 @@ bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1
 
     return true;
 }
-

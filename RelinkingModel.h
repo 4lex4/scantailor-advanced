@@ -37,20 +37,12 @@
 #include <unordered_map>
 
 class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, const RelinkablePath&> {
-DECLARE_NON_COPYABLE(RelinkingModel)
+    DECLARE_NON_COPYABLE(RelinkingModel)
 
 public:
-    enum Status {
-        Exists,
-        Missing,
-        StatusUpdatePending
-    };
+    enum Status { Exists, Missing, StatusUpdatePending };
 
-    enum {
-        TypeRole = Qt::UserRole,
-        UncommittedPathRole,
-        UncommittedStatusRole
-    };
+    enum { TypeRole = Qt::UserRole, UncommittedPathRole, UncommittedStatusRole };
 
     RelinkingModel();
 

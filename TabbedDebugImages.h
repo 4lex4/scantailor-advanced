@@ -24,7 +24,7 @@
 #include <boost/intrusive/list.hpp>
 
 class TabbedDebugImages : public QTabWidget {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit TabbedDebugImages(QWidget* parent = nullptr);
 
@@ -33,13 +33,9 @@ private slots:
     void currentTabChanged(int idx);
 
 private:
-    typedef boost::intrusive::list<
-            DebugImageView, boost::intrusive::constant_time_size<false>
-    > DebugViewList;
+    typedef boost::intrusive::list<DebugImageView, boost::intrusive::constant_time_size<false>> DebugViewList;
 
-    enum {
-        MAX_LIVE_VIEWS = 3
-    };
+    enum { MAX_LIVE_VIEWS = 3 };
 
     void removeExcessLiveViews();
 

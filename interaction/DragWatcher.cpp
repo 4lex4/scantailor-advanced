@@ -22,9 +22,7 @@
 #include <QDebug>
 
 DragWatcher::DragWatcher(DragHandler& drag_handler)
-        : m_rDragHandler(drag_handler),
-          m_dragMaxSqDist(0),
-          m_dragInProgress(false) {
+        : m_rDragHandler(drag_handler), m_dragMaxSqDist(0), m_dragInProgress(false) {
 }
 
 bool DragWatcher::haveSignificantDrag() const {
@@ -70,4 +68,3 @@ void DragWatcher::updateState(const QPoint mouse_pos) {
         m_dragInProgress = false;
     }
 }
-

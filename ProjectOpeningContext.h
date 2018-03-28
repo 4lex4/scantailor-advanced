@@ -33,8 +33,8 @@ class QWidget;
 class QDomDocument;
 
 class ProjectOpeningContext : public QObject {
-Q_OBJECT
-DECLARE_NON_COPYABLE(ProjectOpeningContext)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(ProjectOpeningContext)
 
 public:
     ProjectOpeningContext(QWidget* parent, const QString& project_file, const QDomDocument& doc);

@@ -27,41 +27,31 @@ public:
     /**
      * \brief Constructs an empty span.
      */
-    Span()
-            : m_begin(0),
-              m_end(0) {
+    Span() : m_begin(0), m_end(0) {
     }
 
     /**
      * \brief Constructs a [begin, end) span.
      */
-    Span(int begin, int end)
-            : m_begin(begin),
-              m_end(end) {
+    Span(int begin, int end) : m_begin(begin), m_end(end) {
     }
 
     /**
      * \brief Constructs a span between a point and another span.
      */
-    Span(int begin, const Span& end)
-            : m_begin(begin),
-              m_end(end.begin()) {
+    Span(int begin, const Span& end) : m_begin(begin), m_end(end.begin()) {
     }
 
     /**
      * \brief Constructs a span between another span and a point.
      */
-    Span(const Span& begin, int end)
-            : m_begin(begin.end()),
-              m_end(end) {
+    Span(const Span& begin, int end) : m_begin(begin.end()), m_end(end) {
     }
 
     /**
      * \brief Constructs a span between two other spans.
      */
-    Span(const Span& begin, const Span& end)
-            : m_begin(begin.end()),
-              m_end(end.begin()) {
+    Span(const Span& begin, const Span& end) : m_begin(begin.end()), m_end(end.begin()) {
     }
 
     int begin() const {

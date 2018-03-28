@@ -36,55 +36,55 @@
 class QRect;
 
 namespace deskew {
-    class ImageView : public ImageViewBase, private InteractionHandler {
+class ImageView : public ImageViewBase, private InteractionHandler {
     Q_OBJECT
-    public:
-        ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
+public:
+    ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
 
-        ~ImageView() override;
+    ~ImageView() override;
 
-    signals:
+signals:
 
-        void manualDeskewAngleSet(double degrees);
+    void manualDeskewAngleSet(double degrees);
 
-    public slots:
+public slots:
 
-        void manualDeskewAngleSetExternally(double degrees);
+    void manualDeskewAngleSetExternally(double degrees);
 
-        void doRotateLeft();
+    void doRotateLeft();
 
-        void doRotateRight();
+    void doRotateRight();
 
-    protected:
-        void onPaint(QPainter& painter, const InteractionState& interaction) override;
+protected:
+    void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-        void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
+    void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
-        void doRotate(double deg);
+    void doRotate(double deg);
 
-    private:
-        QPointF handlePosition(int idx) const;
+private:
+    QPointF handlePosition(int idx) const;
 
-        void handleMoveRequest(int idx, const QPointF& pos);
+    void handleMoveRequest(int idx, const QPointF& pos);
 
-        virtual void dragFinished();
+    virtual void dragFinished();
 
-        QPointF getImageRotationOrigin() const;
+    QPointF getImageRotationOrigin() const;
 
-        QRectF getRotationArcSquare() const;
+    QRectF getRotationArcSquare() const;
 
-        std::pair<QPointF, QPointF> getRotationHandles(const QRectF& arc_square) const;
+    std::pair<QPointF, QPointF> getRotationHandles(const QRectF& arc_square) const;
 
-        static const int m_cellSize;
-        static const double m_maxRotationDeg;
-        static const double m_maxRotationSin;
+    static const int m_cellSize;
+    static const double m_maxRotationDeg;
+    static const double m_maxRotationSin;
 
-        QPixmap m_handlePixmap;
-        DraggablePoint m_handles[2];
-        ObjectDragHandler m_handleInteractors[2];
-        DragHandler m_dragHandler;
-        ZoomHandler m_zoomHandler;
-        ImageTransformation m_xform;
-    };
+    QPixmap m_handlePixmap;
+    DraggablePoint m_handles[2];
+    ObjectDragHandler m_handleInteractors[2];
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
+    ImageTransformation m_xform;
+};
 }  // namespace deskew
 #endif  // ifndef DESKEW_IMAGEVIEW_H_

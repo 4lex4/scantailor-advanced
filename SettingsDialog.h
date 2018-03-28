@@ -23,7 +23,7 @@
 #include <QDialog>
 
 class SettingsDialog : public QDialog {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit SettingsDialog(QWidget* parent = nullptr);
 
@@ -41,7 +41,6 @@ private slots:
     void onColorSchemeChanged(int idx);
 
 private:
-
     Ui::SettingsDialog ui;
 };
 

@@ -19,10 +19,7 @@
 #include "QuadraticFunction.h"
 #include <algorithm>
 
-QuadraticFunction::QuadraticFunction(size_t num_vars)
-        : A(num_vars, num_vars),
-          b(num_vars),
-          c(0) {
+QuadraticFunction::QuadraticFunction(size_t num_vars) : A(num_vars, num_vars), b(num_vars), c(0) {
 }
 
 void QuadraticFunction::reset() {
@@ -101,4 +98,3 @@ QuadraticFunction& QuadraticFunction::operator*=(double scalar) {
 
     return *this;
 }
-

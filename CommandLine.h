@@ -41,7 +41,7 @@
 #include "Despeckle.h"
 
 namespace page_layout {
-    class Alignment;
+class Alignment;
 }
 
 /**
@@ -52,12 +52,7 @@ namespace page_layout {
 class CommandLine {
     // Member-wise copying is OK.
 public:
-    enum Orientation {
-        TOP,
-        LEFT,
-        RIGHT,
-        UPSIDEDOWN
-    };
+    enum Orientation { TOP, LEFT, RIGHT, UPSIDEDOWN };
 
     static const CommandLine& get() {
         return m_globalInstance;
@@ -66,10 +61,7 @@ public:
     static void set(const CommandLine& cl);
 
     explicit CommandLine(const QStringList& argv, bool g = true)
-            : m_error(false),
-              m_gui(g),
-              m_global(false),
-              m_defaultNull(false) {
+            : m_error(false), m_gui(g), m_global(false), m_defaultNull(false) {
         CommandLine::parseCli(argv);
     }
 
@@ -388,9 +380,7 @@ public:
     void printHelp();
 
 private:
-    CommandLine()
-            : m_gui(true),
-              m_global(false) {
+    CommandLine() : m_gui(true), m_global(false) {
     }
 
     static CommandLine m_globalInstance;
@@ -400,7 +390,7 @@ private:
     QString m_language;
     QString m_windowTitle;
     QSizeF m_pageDetectionBox;
-    double m_pageDetectionTolerance{ 0.1 };
+    double m_pageDetectionTolerance{0.1};
     bool m_defaultNull;
 
     bool isGlobal() {
@@ -436,18 +426,18 @@ private:
     page_layout::Alignment m_alignment;
     Despeckle::Level m_contentDetection;
     QRectF m_contentRect;
-    double m_contentDeviation{ 1.0 };
+    double m_contentDeviation{1.0};
     Orientation m_orientation;
-    int m_threshold{ 0 };
-    double m_deskewAngle{ 0.0 };
+    int m_threshold{0};
+    double m_deskewAngle{0.0};
     AutoManualMode m_deskewMode;
-    double m_skewDeviation{ 5.0 };
-    int m_startFilterIdx{ 0 };
-    int m_endFilterIdx{ 5 };
+    double m_skewDeviation{5.0};
+    int m_startFilterIdx{0};
+    int m_endFilterIdx{5};
     output::DewarpingOptions m_dewarpingOptions;
     output::DespeckleLevel m_despeckleLevel;
     output::DepthPerception m_depthPerception;
-    float m_matchLayoutTolerance{ 0.2f };
+    float m_matchLayoutTolerance{0.2f};
 
     bool parseCli(const QStringList& argv);
 
@@ -517,4 +507,4 @@ private:
 };
 
 
-#endif // ifndef COMMANDLINE_H_
+#endif  // ifndef COMMANDLINE_H_

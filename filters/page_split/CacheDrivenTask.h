@@ -30,29 +30,28 @@ class ImageTransformation;
 class ProjectPages;
 
 namespace deskew {
-    class CacheDrivenTask;
+class CacheDrivenTask;
 }
 
 namespace page_split {
-    class Settings;
+class Settings;
 
-    class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask : public ref_countable {
     DECLARE_NON_COPYABLE(CacheDrivenTask)
 
-    public:
-        CacheDrivenTask(intrusive_ptr<Settings> settings,
-                        intrusive_ptr<ProjectPages> projectPages,
-                        intrusive_ptr<deskew::CacheDrivenTask> next_task);
+public:
+    CacheDrivenTask(intrusive_ptr<Settings> settings,
+                    intrusive_ptr<ProjectPages> projectPages,
+                    intrusive_ptr<deskew::CacheDrivenTask> next_task);
 
-        ~CacheDrivenTask() override;
+    ~CacheDrivenTask() override;
 
-        void
-        process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
+    void process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
-    private:
-        intrusive_ptr<deskew::CacheDrivenTask> m_ptrNextTask;
-        intrusive_ptr<Settings> m_ptrSettings;
-        intrusive_ptr<ProjectPages> m_projectPages;
-    };
+private:
+    intrusive_ptr<deskew::CacheDrivenTask> m_ptrNextTask;
+    intrusive_ptr<Settings> m_ptrSettings;
+    intrusive_ptr<ProjectPages> m_projectPages;
+};
 }  // namespace page_split
-#endif // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_
+#endif  // ifndef PAGE_SPLIT_CACHEDRIVENTASK_H_

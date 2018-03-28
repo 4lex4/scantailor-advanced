@@ -74,7 +74,7 @@ SerializableSpline SerializableSpline::transformed(const QTransform& xform) cons
     return transformed;
 }
 
-SerializableSpline SerializableSpline::transformed(boost::function<QPointF(const QPointF&)>const & xform) const {
+SerializableSpline SerializableSpline::transformed(const boost::function<QPointF(const QPointF&)>& xform) const {
     SerializableSpline transformed(*this);
 
     for (QPointF& pt : transformed.m_points) {
@@ -83,4 +83,3 @@ SerializableSpline SerializableSpline::transformed(boost::function<QPointF(const
 
     return transformed;
 }
-

@@ -27,7 +27,7 @@
 class StageSequence;
 
 class StageListView : public QTableView {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit StageListView(QWidget* parent);
 

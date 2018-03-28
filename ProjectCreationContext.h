@@ -32,8 +32,8 @@ class FixDpiDialog;
 class QWidget;
 
 class ProjectCreationContext : public QObject {
-Q_OBJECT
-DECLARE_NON_COPYABLE(ProjectCreationContext)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(ProjectCreationContext)
 
 public:
     explicit ProjectCreationContext(QWidget* parent);

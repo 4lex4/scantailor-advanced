@@ -257,6 +257,6 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
     }
 
     return idx;
-} // >::bubbleDown
+}  // >::bubbleDown
 
-#endif // ifndef PRIORITY_QUEUE_H_
+#endif  // ifndef PRIORITY_QUEUE_H_

@@ -31,7 +31,7 @@
 #include <cstddef>
 
 class InteractiveXSpline : public InteractionHandler {
-Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
+    Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
 public:
     typedef boost::function<QPointF(const QPointF&)> Transform;
     typedef boost::function<void()> ModifiedCallback;

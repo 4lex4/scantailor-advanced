@@ -23,37 +23,34 @@
 #include <QDir>
 
 namespace output {
-    QString Utils::automaskDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("cache/automask");
-    }
+QString Utils::automaskDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/automask");
+}
 
-    QString Utils::predespeckleDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("cache/predespeckle");
-    }
+QString Utils::predespeckleDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/predespeckle");
+}
 
-    QString Utils::specklesDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("cache/speckles");
-    }
+QString Utils::specklesDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("cache/speckles");
+}
 
-    QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
-        QTransform xform;
-        xform.scale(
-                (double) to.horizontal() / from.horizontal(),
-                (double) to.vertical() / from.vertical()
-        );
+QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
+    QTransform xform;
+    xform.scale((double) to.horizontal() / from.horizontal(), (double) to.vertical() / from.vertical());
 
-        return xform;
-    }
+    return xform;
+}
 
-    QString Utils::foregroundDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("foreground");
-    }
+QString Utils::foregroundDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("foreground");
+}
 
-    QString Utils::backgroundDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("background");
-    }
+QString Utils::backgroundDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("background");
+}
 
-    QString Utils::originalBackgroundDir(const QString& out_dir) {
-        return QDir(out_dir).absoluteFilePath("original_background");
-    }
+QString Utils::originalBackgroundDir(const QString& out_dir) {
+    return QDir(out_dir).absoluteFilePath("original_background");
+}
 }  // namespace output

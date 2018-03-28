@@ -30,4 +30,3 @@ void PerformanceTimer::print(const char* prefix) {
         qDebug() << prefix << (long) (sec * 1000000) << " usec";
     }
 }
-

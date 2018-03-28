@@ -25,17 +25,13 @@
 #include <utility>
 
 OutputFileNameGenerator::OutputFileNameGenerator()
-        : m_ptrDisambiguator(new FileNameDisambiguator),
-          m_outDir(),
-          m_layoutDirection(Qt::LeftToRight) {
+        : m_ptrDisambiguator(new FileNameDisambiguator), m_outDir(), m_layoutDirection(Qt::LeftToRight) {
 }
 
 OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
                                                  const QString& out_dir,
                                                  Qt::LayoutDirection layout_direction)
-        : m_ptrDisambiguator(std::move(disambiguator)),
-          m_outDir(out_dir),
-          m_layoutDirection(layout_direction) {
+        : m_ptrDisambiguator(std::move(disambiguator)), m_outDir(out_dir), m_layoutDirection(layout_direction) {
     assert(m_ptrDisambiguator);
 }
 
@@ -54,9 +50,7 @@ QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
         name += QString::fromLatin1("(%1)").arg(label);
     }
     if (page.imageId().isMultiPageFile()) {
-        name += QString::fromLatin1("_page%1").arg(
-                page.imageId().page(), 4, 10, QLatin1Char('0')
-        );
+        name += QString::fromLatin1("_page%1").arg(page.imageId().page(), 4, 10, QLatin1Char('0'));
     }
     if (sub_page != PageId::SINGLE_PAGE) {
         name += QLatin1Char('_');
@@ -73,4 +67,3 @@ QString OutputFileNameGenerator::filePathFor(const PageId& page) const {
 
     return QDir(m_outDir).absoluteFilePath(file_name);
 }
-

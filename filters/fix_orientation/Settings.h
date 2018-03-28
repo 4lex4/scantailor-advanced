@@ -31,33 +31,33 @@
 class AbstractRelinker;
 
 namespace fix_orientation {
-    class Settings : public ref_countable {
+class Settings : public ref_countable {
     DECLARE_NON_COPYABLE(Settings)
 
-    public:
-        Settings();
+public:
+    Settings();
 
-        ~Settings() override;
+    ~Settings() override;
 
-        void clear();
+    void clear();
 
-        void performRelinking(const AbstractRelinker& relinker);
+    void performRelinking(const AbstractRelinker& relinker);
 
-        void applyRotation(const ImageId& image_id, OrthogonalRotation rotation);
+    void applyRotation(const ImageId& image_id, OrthogonalRotation rotation);
 
-        void applyRotation(const std::set<PageId>& pages, OrthogonalRotation rotation);
+    void applyRotation(const std::set<PageId>& pages, OrthogonalRotation rotation);
 
-        OrthogonalRotation getRotationFor(const ImageId& image_id) const;
+    OrthogonalRotation getRotationFor(const ImageId& image_id) const;
 
-        bool isRotationNull(const ImageId& image_id) const;
+    bool isRotationNull(const ImageId& image_id) const;
 
-    private:
-        typedef std::unordered_map<ImageId, OrthogonalRotation> PerImageRotation;
+private:
+    typedef std::unordered_map<ImageId, OrthogonalRotation> PerImageRotation;
 
-        void setImageRotationLocked(const ImageId& image_id, const OrthogonalRotation& rotation);
+    void setImageRotationLocked(const ImageId& image_id, const OrthogonalRotation& rotation);
 
-        mutable QMutex m_mutex;
-        PerImageRotation m_perImageRotation;
-    };
+    mutable QMutex m_mutex;
+    PerImageRotation m_perImageRotation;
+};
 }  // namespace fix_orientation
-#endif // ifndef FIX_ORIENTATION_SETTINGS_H_
+#endif  // ifndef FIX_ORIENTATION_SETTINGS_H_

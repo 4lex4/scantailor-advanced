@@ -27,17 +27,9 @@ class QSettings;
 class ThreadPriority {
     // Member-wise copying is OK.
 public:
-    enum Priority {
-        Minimum,
-        Idle = Minimum,
-        Lowest,
-        Low,
-        Normal,
-        Maximum = Normal
-    };
+    enum Priority { Minimum, Idle = Minimum, Lowest, Low, Normal, Maximum = Normal };
 
-    ThreadPriority(Priority prio)
-            : m_prio(prio) {
+    ThreadPriority(Priority prio) : m_prio(prio) {
     }
 
     void setValue(Priority prio) {
@@ -65,4 +57,4 @@ private:
 };
 
 
-#endif // ifndef THREAD_PRIORITY_H_
+#endif  // ifndef THREAD_PRIORITY_H_

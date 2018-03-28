@@ -124,4 +124,3 @@ QPolygonF XmlUnmarshaller::polygonF(const QDomElement& el) {
 
     return poly;
 }
-

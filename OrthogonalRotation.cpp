@@ -135,4 +135,3 @@ QTransform OrthogonalRotation::transform(const QSizeF& dimensions) const {
 
     return t;
 }
-

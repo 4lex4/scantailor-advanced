@@ -25,11 +25,9 @@
 #include <QDir>
 #include <boost/bind.hpp>
 
-ProjectReader::ProjectReader(const QDomDocument& doc)
-        : m_doc(doc),
-          m_ptrDisambiguator(new FileNameDisambiguator) {
+ProjectReader::ProjectReader(const QDomDocument& doc) : m_doc(doc), m_ptrDisambiguator(new FileNameDisambiguator) {
     QDomElement project_el(m_doc.documentElement());
-    
+
     m_version = project_el.attribute("version");
     if (m_version.isNull() || (m_version.toInt() != PROJECT_VERSION)) {
         return;
@@ -66,14 +64,9 @@ ProjectReader::ProjectReader(const QDomDocument& doc)
     }
     processPages(pages_el);
     // Load naming disambiguator.  This needs to be done after processing pages.
-    const QDomElement disambig_el(
-            project_el.namedItem("file-name-disambiguation").toElement()
-    );
-    m_ptrDisambiguator.reset(
-            new FileNameDisambiguator(
-                    disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)
-            )
-    );
+    const QDomElement disambig_el(project_el.namedItem("file-name-disambiguation").toElement());
+    m_ptrDisambiguator
+            = make_intrusive<FileNameDisambiguator>(disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1));
 }
 
 ProjectReader::~ProjectReader() = default;
@@ -157,7 +150,7 @@ void ProjectReader::processFiles(const QDomElement& files_el) {
         const FileRecord rec(file_path, compat_multi_page);
         m_fileMap.insert(FileMap::value_type(id, rec));
     }
-} // ProjectReader::processFiles
+}  // ProjectReader::processFiles
 
 void ProjectReader::processImages(const QDomElement& images_el, const Qt::LayoutDirection layout_direction) {
     const QString image_tag_name("image");
@@ -200,24 +193,18 @@ void ProjectReader::processImages(const QDomElement& images_el, const Qt::Layout
         if (file_record.filePath.isEmpty()) {
             continue;
         }
-        const ImageId image_id(
-                file_record.filePath,
-                file_image + int(file_record.compatMultiPage)
-        );
+        const ImageId image_id(file_record.filePath, file_image + int(file_record.compatMultiPage));
         const ImageMetadata metadata(processImageMetadata(el));
-        const ImageInfo image_info(
-                image_id, metadata, sub_pages,
-                left_half_removed, right_half_removed
-        );
+        const ImageInfo image_info(image_id, metadata, sub_pages, left_half_removed, right_half_removed);
 
         images.push_back(image_info);
         m_imageMap.insert(ImageMap::value_type(id, image_info));
     }
 
     if (!images.empty()) {
-        m_ptrPages.reset(new ProjectPages(images, layout_direction));
+        m_ptrPages = make_intrusive<ProjectPages>(images, layout_direction);
     }
-} // ProjectReader::processImages
+}  // ProjectReader::processImages
 
 ImageMetadata ProjectReader::processImageMetadata(const QDomElement& image_el) {
     QSize size;
@@ -260,9 +247,7 @@ void ProjectReader::processPages(const QDomElement& pages_el) {
             continue;
         }
 
-        const PageId::SubPage sub_page = PageId::subPageFromString(
-                el.attribute("subPage"), &ok
-        );
+        const PageId::SubPage sub_page = PageId::subPageFromString(el.attribute("subPage"), &ok);
         if (!ok) {
             continue;
         }
@@ -279,7 +264,7 @@ void ProjectReader::processPages(const QDomElement& pages_el) {
             m_selectedPage.set(page_id, PAGE_VIEW);
         }
     }
-} // ProjectReader::processPages
+}  // ProjectReader::processPages
 
 QString ProjectReader::getDirPath(const int id) const {
     const auto it(m_dirMap.find(id));
@@ -335,4 +320,3 @@ PageId ProjectReader::pageId(int numeric_id) const {
 
     return PageId();
 }
-

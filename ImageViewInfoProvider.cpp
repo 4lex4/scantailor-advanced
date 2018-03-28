@@ -4,9 +4,7 @@
 #include "ImageViewInfoProvider.h"
 #include "Units.h"
 
-ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi)
-        : dpi(dpi) {
-};
+ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : dpi(dpi){};
 
 ImageViewInfoProvider::~ImageViewInfoProvider() {
     for (ImageViewInfoObserver* observer : observers) {

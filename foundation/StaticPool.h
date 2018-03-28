@@ -25,12 +25,10 @@
 
 template<typename T>
 class StaticPoolBase {
-DECLARE_NON_COPYABLE(StaticPoolBase)
+    DECLARE_NON_COPYABLE(StaticPoolBase)
 
 public:
-    StaticPoolBase(T* buf, size_t size)
-            : m_pNext(buf),
-              m_sizeRemaining(size) {
+    StaticPoolBase(T* buf, size_t size) : m_pNext(buf), m_sizeRemaining(size) {
     }
 
     /**
@@ -60,11 +58,10 @@ private:
  */
 template<typename T, size_t S>
 class StaticPool : public StaticPoolBase<T> {
-DECLARE_NON_COPYABLE(StaticPool)
+    DECLARE_NON_COPYABLE(StaticPool)
 
 public:
-    StaticPool()
-            : StaticPoolBase<T>(m_buf, S) {
+    StaticPool() : StaticPoolBase<T>(m_buf, S) {
     }
 
 private:

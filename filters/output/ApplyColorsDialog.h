@@ -30,26 +30,26 @@ class PageSelectionAccessor;
 class QButtonGroup;
 
 namespace output {
-    class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
+class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
     Q_OBJECT
-    public:
-        ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
+public:
+    ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
 
-        ~ApplyColorsDialog() override;
+    ~ApplyColorsDialog() override;
 
-    signals:
+signals:
 
-        void accepted(const std::set<PageId>& pages);
+    void accepted(const std::set<PageId>& pages);
 
-    private slots:
+private slots:
 
-        void onSubmit();
+    void onSubmit();
 
-    private:
-        PageSequence m_pages;
-        std::set<PageId> m_selectedPages;
-        PageId m_curPage;
-        QButtonGroup* m_pScopeGroup;
-    };
+private:
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    PageId m_curPage;
+    QButtonGroup* m_pScopeGroup;
+};
 }  // namespace output
-#endif // ifndef OUTPUT_APPLYCOLORSDIALOG_H_
+#endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_

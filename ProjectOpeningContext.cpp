@@ -24,9 +24,7 @@
 #include <cassert>
 
 ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, const QString& project_file, const QDomDocument& doc)
-        : m_projectFile(project_file),
-          m_reader(doc),
-          m_pParent(parent) {
+        : m_projectFile(project_file), m_reader(doc), m_pParent(parent) {
 }
 
 ProjectOpeningContext::~ProjectOpeningContext() {
@@ -38,18 +36,13 @@ void ProjectOpeningContext::proceed() {
     if (!m_reader.success()) {
         deleteLater();
         if (!m_reader.getVersion().isNull() && (m_reader.getVersion().toInt() != PROJECT_VERSION)) {
-            QMessageBox::warning(
-                    m_pParent, tr("Error"),
-                    tr("The project file is not compatible with the current application version.")
-            );
+            QMessageBox::warning(m_pParent, tr("Error"),
+                                 tr("The project file is not compatible with the current application version."));
 
             return;
         }
 
-        QMessageBox::critical(
-                m_pParent, tr("Error"),
-                tr("Unable to interpret the project file.")
-        );
+        QMessageBox::critical(m_pParent, tr("Error"), tr("Unable to interpret the project file."));
 
         return;
     }
@@ -81,14 +74,7 @@ void ProjectOpeningContext::showFixDpiDialog() {
     if (m_pParent) {
         m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
     }
-    connect(
-            m_ptrFixDpiDialog, SIGNAL(accepted()),
-            this, SLOT(fixedDpiSubmitted())
-    );
-    connect(
-            m_ptrFixDpiDialog, SIGNAL(destroyed(QObject * )),
-            this, SLOT(fixDpiDialogDestroyed())
-    );
+    connect(m_ptrFixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
+    connect(m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
     m_ptrFixDpiDialog->show();
 }
-

@@ -25,22 +25,22 @@
 #include <QDialog>
 
 namespace output {
-    class PictureZonePropDialog : public QDialog {
+class PictureZonePropDialog : public QDialog {
     Q_OBJECT
-    public:
-        explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
+public:
+    explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
 
-    signals:
+signals:
 
-        void updated();
+    void updated();
 
-    private slots:
+private slots:
 
-        void itemToggled(bool selected);
+    void itemToggled(bool selected);
 
-    private:
-        Ui::PictureZonePropDialog ui;
-        intrusive_ptr<PropertySet> m_ptrProps;
-    };
+private:
+    Ui::PictureZonePropDialog ui;
+    intrusive_ptr<PropertySet> m_ptrProps;
+};
 }  // namespace output
 #endif

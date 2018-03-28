@@ -27,4 +27,3 @@ void BackgroundTask::throwIfCancelled() const {
         throw CancelledException();
     }
 }
-

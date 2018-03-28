@@ -208,7 +208,7 @@ bool CommandLine::parseCli(const QStringList& argv) {
 #endif
 
     return m_error;
-} // CommandLine::parseCli
+}  // CommandLine::parseCli
 
 void CommandLine::addImage(const QString& path) {
     QFileInfo file(path);
@@ -306,36 +306,32 @@ void CommandLine::printHelp() {
             << std::endl;
     std::cout << "\t--disable-content-detection\t\t-- default: enabled" << std::endl;
     std::cout << "\t--enable-page-detection\t\t\t-- default: disabled" << std::endl;
-    std::cout
-            <<
-            "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while corners are in black"
-            << std::endl;
-    std::cout
-            <<
-            "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and set content detection to manual mode"
-            << std::endl;
+    std::cout << "\t--enable-fine-tuning\t\t\t-- default: disabled; if page detection enabled it moves edges while "
+                 "corners are in black"
+              << std::endl;
+    std::cout << "\t--force-disable-page-detection\t\t-- switch page detection from page project off if enabled and "
+                 "set content detection to manual mode"
+              << std::endl;
     std::cout << "\t--disable-content-text-mask\n\t\t\t\t\t\t-- disable using text mask to estimate a content box"
               << std::endl;
     std::cout << "\t--content-detection=<cautious|normal|aggressive>\n\t\t\t\t\t\t-- default: normal" << std::endl;
-    std::cout
-            <<
-            "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be painted in red"
-            << std::endl;
+    std::cout << "\t--content-deviation=<0.0...)\t\t-- default: 1.0; pages with bigger content deviation will be "
+                 "painted in red"
+              << std::endl;
     std::cout << "\t--content-box=<<left_offset>x<top_offset>:<width>x<height>>" << std::endl;
     std::cout << "\t\t\t\t\t\t-- if set the content detection is se to manual mode" << std::endl;
     std::cout << "\t\t\t\t\t\t   example: --content-box=100x100:1500x2500" << std::endl;
-    std::cout
-            << "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image size)"
-            << std::endl;
+    std::cout << "\t--enable-auto-margins\t\t\t-- sets the margins to original ones (based on detected page or image "
+                 "size)"
+              << std::endl;
     std::cout << "\t--margins=<number>\t\t\t-- sets left, top, right and bottom margins to same number." << std::endl;
     std::cout << "\t\t--margins-left=<number>" << std::endl;
     std::cout << "\t\t--margins-right=<number>" << std::endl;
     std::cout << "\t\t--margins-top=<number>" << std::endl;
     std::cout << "\t\t--margins-bottom=<number>" << std::endl;
-    std::cout
-            <<
-            "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to same number."
-            << std::endl;
+    std::cout << "\t--default-margins=<number>\t\t\t-- sets left, top, right and bottom margins, for new pages, to "
+                 "same number."
+              << std::endl;
     std::cout << "\t\t--default-margins-left=<number>" << std::endl;
     std::cout << "\t\t--default-margins-right=<number>" << std::endl;
     std::cout << "\t\t--default-margins-top=<number>" << std::endl;
@@ -378,7 +374,7 @@ void CommandLine::printHelp() {
     std::cout << "\t\t--page-detection-tolerance=<0.0..1.0>\t-- default: 0.1" << std::endl;
     std::cout << "\t--disable-check-output\t\t\t-- don't check if page is valid when switching to step 6";
     std::cout << std::endl;
-} // CommandLine::printHelp
+}  // CommandLine::printHelp
 
 page_split::LayoutType CommandLine::fetchLayoutType() {
     page_split::LayoutType lt = page_split::AUTO_LAYOUT_TYPE;
@@ -487,10 +483,7 @@ Margins CommandLine::fetchMargins(QString base, Margins def) {
         margins.setRight(m);
     }
 
-    QString lstr = base + "-left",
-            tstr = base + "-top",
-            rstr = base + "-right",
-            bstr = base + "-bottom";
+    QString lstr = base + "-left", tstr = base + "-top", rstr = base + "-right", bstr = base + "-bottom";
 
 
     if (m_options.contains(lstr)) {
@@ -573,7 +566,7 @@ page_layout::Alignment CommandLine::fetchAlignment() {
     }
 
     return alignment;
-} // CommandLine::fetchAlignment
+}  // CommandLine::fetchAlignment
 
 Despeckle::Level CommandLine::fetchContentDetection() {
     Despeckle::Level level = Despeckle::NORMAL;
@@ -724,25 +717,17 @@ float CommandLine::fetchMatchLayoutTolerance() {
 }
 
 bool CommandLine::hasMargins(QString base) const {
-    return m_options.contains(base)
-           || m_options.contains(base + "-left")
-           || m_options.contains(base + "-right")
-           || m_options.contains(base + "-top")
-           || m_options.contains(base + "-bottom");
+    return m_options.contains(base) || m_options.contains(base + "-left") || m_options.contains(base + "-right")
+           || m_options.contains(base + "-top") || m_options.contains(base + "-bottom");
 }
 
 bool CommandLine::hasAlignment() const {
-    return hasMatchLayoutTolerance()
-           || m_options.contains("alignment")
-           || m_options.contains("alignment-vertical")
-           || m_options.contains("alignment-horizontal")
-           || isAutoMarginsEnabled();
+    return hasMatchLayoutTolerance() || m_options.contains("alignment") || m_options.contains("alignment-vertical")
+           || m_options.contains("alignment-horizontal") || isAutoMarginsEnabled();
 }
 
 bool CommandLine::hasOutputDpi() const {
-    return m_options.contains("output-dpi")
-           || m_options.contains("output-dpi-x")
-           || m_options.contains("output-dpi-y");
+    return m_options.contains("output-dpi") || m_options.contains("output-dpi-x") || m_options.contains("output-dpi-y");
 }
 
 bool CommandLine::hasLanguage() const {
@@ -796,4 +781,3 @@ bool CommandLine::fetchDefaultNull() {
 
     return m_defaultNull;
 }
-

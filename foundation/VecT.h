@@ -121,21 +121,18 @@ private:
 
 
 template<typename T>
-VecT<T>::VecT()
-        : m_size(0) {
+VecT<T>::VecT() : m_size(0) {
 }
 
 template<typename T>
 VecT<T>::VecT(size_t size)
         : m_data(new T[size]()),
-        // The "()" will cause elements to be initialized to T().
+          // The "()" will cause elements to be initialized to T().
           m_size(size) {
 }
 
 template<typename T>
-VecT<T>::VecT(size_t size, T initial_value)
-        : m_data(new T[size]),
-          m_size(size) {
+VecT<T>::VecT(size_t size, T initial_value) : m_data(new T[size]), m_size(size) {
     for (size_t i = 0; i < size; ++i) {
         m_data[i] = initial_value;
     }
@@ -143,18 +140,14 @@ VecT<T>::VecT(size_t size, T initial_value)
 
 template<typename T>
 template<typename OT>
-VecT<T>::VecT(size_t size, const OT* data)
-        : m_data(new T[size]),
-          m_size(size) {
+VecT<T>::VecT(size_t size, const OT* data) : m_data(new T[size]), m_size(size) {
     for (size_t i = 0; i < size; ++i) {
         m_data[i] = static_cast<T>(data[i]);
     }
 }
 
 template<typename T>
-VecT<T>::VecT(const VecT& other)
-        : m_data(new T[other.m_size]),
-          m_size(other.m_size) {
+VecT<T>::VecT(const VecT& other) : m_data(new T[other.m_size]), m_size(other.m_size) {
     const T* other_data = other.data();
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] = other_data[i];
@@ -163,9 +156,7 @@ VecT<T>::VecT(const VecT& other)
 
 template<typename T>
 template<typename OT>
-VecT<T>::VecT(const VecT<OT>& other)
-        : m_data(new T[other.m_size]),
-          m_size(other.m_size) {
+VecT<T>::VecT(const VecT<OT>& other) : m_data(new T[other.m_size]), m_size(other.m_size) {
     const T* other_data = other.data();
     for (size_t i = 0; i < m_size; ++i) {
         m_data[i] = other_data[i];
@@ -252,4 +243,4 @@ VecT<T> operator*(double scalar, const VecT<T>& vec) {
     return res;
 }
 
-#endif // ifndef VEC_T_H_
+#endif  // ifndef VEC_T_H_

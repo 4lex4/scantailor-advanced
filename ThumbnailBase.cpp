@@ -30,11 +30,10 @@
 using namespace imageproc;
 
 class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, const ThumbnailLoadResult&> {
-DECLARE_NON_COPYABLE(LoadCompletionHandler)
+    DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
 public:
-    explicit LoadCompletionHandler(ThumbnailBase* thumb)
-            : m_pThumb(thumb) {
+    explicit LoadCompletionHandler(ThumbnailBase* thumb) : m_pThumb(thumb) {
     }
 
     void operator()(const ThumbnailLoadResult& result) override {
@@ -50,7 +49,10 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache
                              const QSizeF& max_size,
                              const ImageId& image_id,
                              const ImageTransformation& image_xform)
-        : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, image_xform,
+        : ThumbnailBase(std::move(thumbnail_cache),
+                        max_size,
+                        image_id,
+                        image_xform,
                         image_xform.resultingPostCropArea().boundingRect()) {
 }
 
@@ -78,11 +80,8 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     QPixmap pixmap;
 
     if (!m_ptrCompletionHandler) {
-        std::shared_ptr<LoadCompletionHandler> handler(
-                new LoadCompletionHandler(this)
-        );
-        const ThumbnailPixmapCache::Status status
-                = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
+        std::shared_ptr<LoadCompletionHandler> handler(new LoadCompletionHandler(this));
+        const ThumbnailPixmapCache::Status status = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
         if (status == ThumbnailPixmapCache::QUEUED) {
             m_ptrCompletionHandler.swap(handler);
         }
@@ -112,34 +111,22 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     QTransform pre_scale_xform;
     pre_scale_xform.scale(x_pre_scale, y_pre_scale);
 
-    const QTransform pixmap_to_thumb(
-            pre_scale_xform * m_imageXform.transform() * m_postScaleXform
-    );
+    const QTransform pixmap_to_thumb(pre_scale_xform * m_imageXform.transform() * m_postScaleXform);
 
     // The polygon to draw into in original image coordinates.
     QPolygonF image_poly(PolygonUtils::round(m_imageXform.resultingPreCropArea()));
     if (!m_extendedClipArea) {
-        image_poly = image_poly.intersected(
-                PolygonUtils::round(
-                        m_imageXform.resultingRect()
-                )
-        );
+        image_poly = image_poly.intersected(PolygonUtils::round(m_imageXform.resultingRect()));
     }
 
     // The polygon to draw into in display coordinates.
     QPolygonF display_poly(image_to_display.map(image_poly));
 
-    QRectF display_rect(
-            image_to_display
-                    .map(PolygonUtils::round(m_displayArea))
-                    .boundingRect()
-                    .toAlignedRect()
-    );
+    QRectF display_rect(image_to_display.map(PolygonUtils::round(m_displayArea)).boundingRect().toAlignedRect());
 
     QPixmap temp_pixmap;
     const QString cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
-    if (!QPixmapCache::find(cache_key, temp_pixmap)
-        || (temp_pixmap.width() < display_rect.width())
+    if (!QPixmapCache::find(cache_key, temp_pixmap) || (temp_pixmap.width() < display_rect.width())
         || (temp_pixmap.height() < display_rect.height())) {
         auto w = (int) display_rect.width();
         auto h = (int) display_rect.height();
@@ -163,9 +150,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     QTransform temp_adjustment;
     temp_adjustment.translate(-display_rect.left(), -display_rect.top());
 
-    temp_painter.setWorldTransform(
-            pixmap_to_thumb * thumb_to_display * temp_adjustment
-    );
+    temp_painter.setWorldTransform(pixmap_to_thumb * thumb_to_display * temp_adjustment);
 
     // Turn off alpha compositing.
     temp_painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -182,10 +167,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     temp_painter.setWorldTransform(thumb_to_display * temp_adjustment);
 
     temp_painter.save();
-    prePaintOverImage(
-            temp_painter, image_to_display * temp_adjustment,
-            thumb_to_display * temp_adjustment
-    );
+    prePaintOverImage(temp_painter, image_to_display * temp_adjustment, thumb_to_display * temp_adjustment);
     temp_painter.restore();
 
     temp_painter.setPen(Qt::NoPen);
@@ -210,10 +192,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     temp_painter.setWorldTransform(thumb_to_display * temp_adjustment);
 
     temp_painter.save();
-    paintOverImage(
-            temp_painter, image_to_display * temp_adjustment,
-            thumb_to_display * temp_adjustment
-    );
+    paintOverImage(temp_painter, image_to_display * temp_adjustment, thumb_to_display * temp_adjustment);
     temp_painter.restore();
 
     temp_painter.end();
@@ -222,7 +201,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter->drawPixmap(QPointF(0, 0), temp_pixmap);
-} // ThumbnailBase::paint
+}  // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
     QSettings settings;
@@ -247,9 +226,7 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
 
 void ThumbnailBase::setImageXform(const ImageTransformation& image_xform) {
     m_imageXform = image_xform;
-    const QSizeF unscaled_size(
-            m_displayArea.size().expandedTo(QSizeF(1, 1))
-    );
+    const QSizeF unscaled_size(m_displayArea.size().expandedTo(QSizeF(1, 1)));
     QSizeF scaled_size(unscaled_size);
     scaled_size.scale(m_maxSize, Qt::KeepAspectRatio);
 
@@ -271,4 +248,3 @@ void ThumbnailBase::handleLoadResult(const ThumbnailLoadResult& result) {
         update();
     }
 }
-

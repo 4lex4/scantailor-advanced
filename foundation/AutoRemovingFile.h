@@ -32,8 +32,7 @@ private:
     struct CopyHelper {
         AutoRemovingFile* obj;
 
-        explicit CopyHelper(AutoRemovingFile* o)
-                : obj(o) {
+        explicit CopyHelper(AutoRemovingFile* o) : obj(o) {
         }
     };
 

@@ -26,8 +26,7 @@ class QTransform;
 
 class OrthogonalRotation {
 public:
-    OrthogonalRotation()
-            : m_degrees(0) {
+    OrthogonalRotation() : m_degrees(0) {
     }
 
     int toDegrees() const {

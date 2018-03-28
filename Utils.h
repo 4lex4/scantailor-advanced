@@ -27,8 +27,9 @@
 class Utils {
 public:
     template<typename K, typename V, typename Comp, typename Alloc>
-    static typename std::map<K, V, Comp, Alloc>::iterator
-    mapSetValue(std::map<K, V, Comp, Alloc>& map, const K& key, const V& val);
+    static typename std::map<K, V, Comp, Alloc>::iterator mapSetValue(std::map<K, V, Comp, Alloc>& map,
+                                                                      const K& key,
+                                                                      const V& val);
 
     template<typename K, typename V, typename Hash, typename Pred, typename Alloc>
     static typename std::unordered_map<K, V, Hash, Pred, Alloc>::iterator
@@ -79,8 +80,9 @@ public:
 
 
 template<typename K, typename V, typename Comp, typename Alloc>
-typename std::map<K, V, Comp, Alloc>::iterator
-Utils::mapSetValue(std::map<K, V, Comp, Alloc>& map, const K& key, const V& val) {
+typename std::map<K, V, Comp, Alloc>::iterator Utils::mapSetValue(std::map<K, V, Comp, Alloc>& map,
+                                                                  const K& key,
+                                                                  const V& val) {
     const auto it(map.lower_bound(key));
     if ((it == map.end()) || map.key_comp()(key, it->first)) {
         return map.insert(it, typename std::map<K, V, Comp, Alloc>::value_type(key, val));
@@ -109,7 +111,7 @@ T Utils::castOrFindChild(QObject* object) {
     if (object == nullptr) {
         return nullptr;
     }
-    
+
     if (auto result = dynamic_cast<T>(object)) {
         return result;
     } else {

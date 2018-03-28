@@ -98,4 +98,4 @@ inline void swap(QuadraticFunction& f1, QuadraticFunction& f2) {
     f1.swap(f2);
 }
 
-#endif // ifndef QUADRATIC_FUNCTION_H_
+#endif  // ifndef QUADRATIC_FUNCTION_H_

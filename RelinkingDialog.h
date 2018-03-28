@@ -32,7 +32,7 @@ class QItemSelection;
 class QString;
 
 class RelinkingDialog : public QDialog {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit RelinkingDialog(const QString& project_file_path, QWidget* parent = nullptr);
 

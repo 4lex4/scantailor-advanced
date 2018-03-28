@@ -42,26 +42,23 @@ class QRectF;
 class QPoint;
 
 class ThumbnailSequence : public QObject {
-Q_OBJECT
-DECLARE_NON_COPYABLE(ThumbnailSequence)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(ThumbnailSequence)
 
 public:
-    enum SelectionAction {
-        KEEP_SELECTION,
-        RESET_SELECTION
-    };
+    enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
 
     enum SelectionFlags {
         DEFAULT_SELECTION_FLAGS = 0,
 
         /** Indicates the item was selected by a user action, rather than programmatically. */
-                SELECTED_BY_USER = 1 << 0,
+        SELECTED_BY_USER = 1 << 0,
 
         /**
          * Indicates that the request to make this item a selection leader was redundant,
          * as it's already a selection leader.
          */
-                REDUNDANT_SELECTION = 1 << 1,
+        REDUNDANT_SELECTION = 1 << 1,
 
         /**
          * This flag is set when Ctrl-clicking the current selection leader while other
@@ -70,7 +67,7 @@ public:
          * In these circumstances, scrolling to make the new selection leader visible
          * is undesireable.
          */
-                AVOID_SCROLLING_TO = 1 << 2
+        AVOID_SCROLLING_TO = 1 << 2
     };
 
     explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size);
@@ -95,10 +92,10 @@ public:
      */
     void reset(const PageSequence& pages,
                SelectionAction selection_action,
-               intrusive_ptr<PageOrderProvider const> order_provider = nullptr);
+               intrusive_ptr<const PageOrderProvider> order_provider = nullptr);
 
     /** Returns the current page order provider, which may be null. */
-    intrusive_ptr<PageOrderProvider const> pageOrderProvider() const;
+    intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
 
     PageSequence toPageSequence() const;
 
@@ -210,7 +207,8 @@ public:
 
 signals:
 
-    void newSelectionLeader(const PageInfo& page_info, const QRectF& thumb_rect,
+    void newSelectionLeader(const PageInfo& page_info,
+                            const QRectF& thumb_rect,
                             ThumbnailSequence::SelectionFlags flags);
 
     /**

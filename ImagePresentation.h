@@ -37,15 +37,11 @@ class ImagePresentation {
     // Member-wise copying is OK.
 public:
     ImagePresentation(const QTransform& xform, const QPolygonF& crop_area)
-            : m_xform(xform),
-              m_cropArea(crop_area),
-              m_displayArea(crop_area.boundingRect()) {
+            : m_xform(xform), m_cropArea(crop_area), m_displayArea(crop_area.boundingRect()) {
     }
 
     ImagePresentation(const QTransform& xform, const QPolygonF& crop_area, const QRectF& display_area)
-            : m_xform(xform),
-              m_cropArea(crop_area),
-              m_displayArea(display_area) {
+            : m_xform(xform), m_cropArea(crop_area), m_displayArea(display_area) {
     }
 
     const QTransform& transform() const {
@@ -79,4 +75,4 @@ private:
 };
 
 
-#endif // ifndef IMAGE_PRESENTATION_H_
+#endif  // ifndef IMAGE_PRESENTATION_H_

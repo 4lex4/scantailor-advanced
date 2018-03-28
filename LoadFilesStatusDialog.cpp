@@ -19,8 +19,7 @@
 #include "LoadFilesStatusDialog.h"
 #include <QPushButton>
 
-LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent)
-        : QDialog(parent) {
+LoadFilesStatusDialog::LoadFilesStatusDialog(QWidget* parent) : QDialog(parent) {
     ui.setupUi(this);
     ui.tabWidget->setCurrentWidget(ui.failedTab);
 
@@ -58,4 +57,3 @@ void LoadFilesStatusDialog::setFailedFiles(const std::vector<QString>& files) {
 void LoadFilesStatusDialog::setOkButtonName(const QString& name) {
     ui.buttonBox->button(QDialogButtonBox::Ok)->setText(name);
 }
-

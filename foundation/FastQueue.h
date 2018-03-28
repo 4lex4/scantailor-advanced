@@ -30,8 +30,7 @@
 template<typename T>
 class FastQueue {
 public:
-    FastQueue()
-            : m_chunkCapacity(defaultChunkCapacity()) {
+    FastQueue() : m_chunkCapacity(defaultChunkCapacity()) {
     }
 
     FastQueue(const FastQueue& other);
@@ -62,11 +61,11 @@ public:
 
 private:
     struct Chunk : public boost::intrusive::list_base_hook<> {
-    DECLARE_NON_COPYABLE(Chunk)
+        DECLARE_NON_COPYABLE(Chunk)
 
     public:
         explicit Chunk(size_t capacity) {
-            const uintptr_t p = (uintptr_t) (this + 1);
+            const uintptr_t p = (uintptr_t)(this + 1);
             const size_t alignment = boost::alignment_of<T>::value;
             pBegin = (T*) (((p + alignment - 1) / alignment) * alignment);
             pEnd = pBegin;
@@ -93,13 +92,11 @@ private:
     struct ChunkDisposer {
         void operator()(Chunk* chunk) {
             chunk->~Chunk();
-            delete[] (char*) chunk;
+            delete[](char*) chunk;
         }
     };
 
-    typedef boost::intrusive::list<
-            Chunk, boost::intrusive::constant_time_size<false>
-    > ChunkList;
+    typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>> ChunkList;
 
     static size_t defaultChunkCapacity() {
         return (sizeof(T) >= 4096) ? 1 : 4096 / sizeof(T);
@@ -111,8 +108,7 @@ private:
 
 
 template<typename T>
-FastQueue<T>::FastQueue(const FastQueue& other)
-        : m_chunkCapacity(other.m_chunkCapacity) {
+FastQueue<T>::FastQueue(const FastQueue& other) : m_chunkCapacity(other.m_chunkCapacity) {
     for (Chunk& chunk : other.m_chunkList) {
         for (const T* obj = chunk->pBegin; obj != chunk->pEnd; ++obj) {
             push(*obj);
@@ -141,11 +137,11 @@ void FastQueue<T>::push(const T& t) {
     if (!chunk) {
         // Create a new chunk.
         char* buf = new char[Chunk::storageRequirement(m_chunkCapacity)];
-        chunk = new(buf) Chunk(m_chunkCapacity);
+        chunk = new (buf) Chunk(m_chunkCapacity);
         m_chunkList.push_back(*chunk);
     }
     // Push to chunk.
-    new(chunk->pEnd)T(t);
+    new (chunk->pEnd) T(t);
     ++chunk->pEnd;
 }
 
@@ -175,4 +171,4 @@ inline void swap(FastQueue<T>& o1, FastQueue<T>& o2) {
     o1.swap(o2);
 }
 
-#endif // ifndef FAST_QUEUE_H_
+#endif  // ifndef FAST_QUEUE_H_

@@ -8,7 +8,7 @@
 #include <unordered_set>
 
 class CollapsibleGroupBox : public QGroupBox {
-Q_OBJECT
+    Q_OBJECT
 
     /**
      * The collapsed state of this group box. If it is set to true, all content is hidden
@@ -55,7 +55,7 @@ protected:
 
     void changeEvent(QEvent* event) override;
 
-    void childEvent(QChildEvent *event) override;
+    void childEvent(QChildEvent* event) override;
 
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -80,4 +80,4 @@ private:
 };
 
 
-#endif //SCANTAILOR_COLLAPSIBLEGROUPBOX_H
+#endif  // SCANTAILOR_COLLAPSIBLEGROUPBOX_H

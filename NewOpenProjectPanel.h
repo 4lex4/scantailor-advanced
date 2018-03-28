@@ -26,7 +26,7 @@
 class QString;
 
 class NewOpenProjectPanel : public QWidget, private Ui::NewOpenProjectPanel {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit NewOpenProjectPanel(QWidget* parent = nullptr);
 

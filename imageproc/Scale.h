@@ -22,7 +22,7 @@
 class QSize;
 
 namespace imageproc {
-    class GrayImage;
+class GrayImage;
 
 /**
  * \brief Converts an image to grayscale and scales it to dst_size.
@@ -34,6 +34,6 @@ namespace imageproc {
  * This function is a faster replacement for QImage::scaled(), when
  * dealing with grayscale images.
  */
-    GrayImage scaleToGray(const GrayImage& src, const QSize& dst_size);
+GrayImage scaleToGray(const GrayImage& src, const QSize& dst_size);
 }  // namespace imageproc
 #endif

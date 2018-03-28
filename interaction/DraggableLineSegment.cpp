@@ -20,8 +20,7 @@
 #include "ImageViewBase.h"
 #include <QPainter>
 
-DraggableLineSegment::DraggableLineSegment()
-        : m_proximityPriority(0) {
+DraggableLineSegment::DraggableLineSegment() : m_proximityPriority(0) {
 }
 
 int DraggableLineSegment::proximityPriority() const {
@@ -40,4 +39,3 @@ void DraggableLineSegment::dragInitiated(const QPointF& mouse_pos) {
 void DraggableLineSegment::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
     lineSegmentMoveRequest(m_initialLinePos.translated(mouse_pos - m_initialMousePos), mask);
 }
-

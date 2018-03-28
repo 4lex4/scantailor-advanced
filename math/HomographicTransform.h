@@ -32,8 +32,7 @@ public:
     typedef VecNT<N, T> Vec;
     typedef VecNT<(N + 1) * (N + 1), T> Mat;
 
-    explicit HomographicTransformBase(const Mat& mat)
-            : m_mat(mat) {
+    explicit HomographicTransformBase(const Mat& mat) : m_mat(mat) {
     }
 
     HomographicTransform<N, T> inv() const;
@@ -74,8 +73,7 @@ public:
 
 
 template<size_t N, typename T>
-HomographicTransform<N, T>
-HomographicTransformBase<N, T>::inv() const {
+HomographicTransform<N, T> HomographicTransformBase<N, T>::inv() const {
     StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
     Mat inv_mat;
     mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)).inv().write(inv_mat);
@@ -103,4 +101,4 @@ T HomographicTransform<1, T>::operator()(T from) const {
     return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }
 
-#endif // ifndef HOMOGRAPHIC_TRANSFORM_H_
+#endif  // ifndef HOMOGRAPHIC_TRANSFORM_H_

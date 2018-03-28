@@ -27,8 +27,7 @@ class QLineF;
 
 class Proximity {
 public:
-    Proximity()
-            : m_sqDist(std::numeric_limits<double>::max()) {
+    Proximity() : m_sqDist(std::numeric_limits<double>::max()) {
     }
 
     Proximity(const QPointF& p1, const QPointF& p2);
@@ -76,8 +75,7 @@ public:
     }
 
 private:
-    explicit Proximity(double sqDist)
-            : m_sqDist(sqDist) {
+    explicit Proximity(double sqDist) : m_sqDist(sqDist) {
     }
 
     double m_sqDist;

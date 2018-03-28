@@ -30,14 +30,16 @@
 #include <unordered_map>
 
 class EditableZoneSet : public QObject {
-Q_OBJECT
+    Q_OBJECT
 private:
     typedef std::unordered_map<EditableSpline::Ptr, intrusive_ptr<PropertySet>, EditableSpline::Ptr::hash> Map;
+
 public:
     class const_iterator;
 
     class Zone {
         friend class EditableZoneSet::const_iterator;
+
     public:
         Zone() = default;
 
@@ -50,23 +52,21 @@ public:
         }
 
     private:
-        explicit Zone(Map::const_iterator it)
-                : m_iter(it) {
+        explicit Zone(Map::const_iterator it) : m_iter(it) {
         }
 
         Map::const_iterator m_iter;
     };
 
 
-    class const_iterator : public boost::iterator_facade<
-            const_iterator, Zone const, boost::bidirectional_traversal_tag
-    > {
+    class const_iterator
+            : public boost::iterator_facade<const_iterator, Zone const, boost::bidirectional_traversal_tag> {
         friend class EditableZoneSet;
 
         friend class boost::iterator_core_access;
+
     public:
-        const_iterator()
-                : m_zone() {
+        const_iterator() : m_zone() {
         }
 
         void increment() {
@@ -88,16 +88,13 @@ public:
         }
 
     private:
-        explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it,
-                                const Map* splineMap)
-                : m_iter(it),
-                  m_ptrSplineMap(splineMap),
-                  m_zone(splineMap->find(*it)) {
+        explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it, const Map* splineMap)
+                : m_iter(it), m_ptrSplineMap(splineMap), m_zone(splineMap->find(*it)) {
         }
 
         Zone m_zone;
         std::list<EditableSpline::Ptr>::const_iterator m_iter;
-        const Map* m_ptrSplineMap{ };
+        const Map* m_ptrSplineMap{};
     };
 
     typedef const_iterator iterator;
@@ -128,7 +125,7 @@ public:
 
     intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
 
-    intrusive_ptr<PropertySet const> propertiesFor(const EditableSpline::Ptr& spline) const;
+    intrusive_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
 
 signals:
 
@@ -142,11 +139,10 @@ private:
 
 
 namespace boost {
-    namespace foreach {
+namespace foreach {
 // Make BOOST_FOREACH work with the above class (necessary for boost >= 1.46 with gcc >= 4.6)
-        template<>
-        struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_ {
-        };
-    }  // namespace foreach
+template<>
+struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_ {};
+}  // namespace foreach
 }  // namespace boost
-#endif // ifndef EDITABLE_ZONE_SET_H_
+#endif  // ifndef EDITABLE_ZONE_SET_H_

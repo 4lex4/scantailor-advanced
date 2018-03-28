@@ -27,10 +27,8 @@ ZoomHandler::ZoomHandler(ImageViewBase& image_view)
 }
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view,
-                         boost::function<bool(const InteractionState&)>const & explicit_interaction_permitter)
-        : m_rImageView(image_view),
-          m_interactionPermitter(explicit_interaction_permitter),
-          m_focus(CURSOR) {
+                         const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter)
+        : m_rImageView(image_view), m_interactionPermitter(explicit_interaction_permitter), m_focus(CURSOR) {
 }
 
 void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
@@ -75,7 +73,7 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
     }
     m_rImageView.setWidgetFocalPointWithoutMoving(focus_point);
     m_rImageView.setZoomLevel(zoom);  // this will call update()
-} // ZoomHandler::onWheelEvent
+}  // ZoomHandler::onWheelEvent
 
 void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
     if (!m_interactionPermitter(interaction)) {
@@ -100,4 +98,3 @@ void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interactio
     m_rImageView.setWidgetFocalPointWithoutMoving(focus_point);
     m_rImageView.setZoomLevel(zoom);  // this will call update()
 }
-

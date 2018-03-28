@@ -68,4 +68,3 @@ QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
 
     return props_el;
 }
-

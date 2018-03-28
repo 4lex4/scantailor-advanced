@@ -23,11 +23,10 @@
 
 template<typename T>
 class SafeDeletingQObjectPtr {
-DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
+    DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
 
 public:
-    explicit SafeDeletingQObjectPtr(T* obj = 0)
-            : m_pObj(obj) {
+    explicit SafeDeletingQObjectPtr(T* obj = 0) : m_pObj(obj) {
     }
 
     ~SafeDeletingQObjectPtr() {

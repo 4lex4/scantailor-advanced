@@ -31,7 +31,7 @@ void PictureLayerProperty::registerIn(PropertyFactory& factory) {
 }
 
 intrusive_ptr<Property> PictureLayerProperty::clone() const {
-    return intrusive_ptr<Property>(new PictureLayerProperty(*this));
+    return make_intrusive<PictureLayerProperty>(*this);
 }
 
 QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -43,7 +43,7 @@ QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) 
 }
 
 intrusive_ptr<Property> PictureLayerProperty::construct(const QDomElement& el) {
-    return intrusive_ptr<Property>(new PictureLayerProperty(el));
+    return make_intrusive<PictureLayerProperty>(el);
 }
 
 PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString& str) {

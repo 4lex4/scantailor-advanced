@@ -63,5 +63,5 @@ intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& o
     const QSize max_pixmap_size(200, 200);
     const QString thumbs_cache_path(outputDirToThumbDir(output_dir));
 
-    return intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(thumbs_cache_path, max_pixmap_size, 40, 5));
+    return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);
 }

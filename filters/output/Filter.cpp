@@ -60,8 +60,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("output"));
 
     writer.enumPages([&](const PageId& page_id, int numeric_id) {
@@ -157,12 +155,12 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
         lastTab = m_ptrOptionsWidget->lastTab();
     }
 
-    return intrusive_ptr<Task>(new Task(intrusive_ptr<Filter>(this), m_ptrSettings, std::move(thumbnail_cache), page_id,
-                                        out_file_name_gen, lastTab, batch, debug));
+    return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_ptrSettings, std::move(thumbnail_cache), page_id,
+                                out_file_name_gen, lastTab, batch, debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(m_ptrSettings, out_file_name_gen));
+    return make_intrusive<CacheDrivenTask>(m_ptrSettings, out_file_name_gen);
 }
 
 void Filter::loadDefaultSettings(const PageInfo& page_info) {

@@ -334,7 +334,7 @@ bool isGray(const QColor& color) {
 
     return (saturation * value) < (0.1 * coefficient);
 }
-}
+}  // namespace
 
 void ColorTable::makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const {
     const QColor color = QColor(normalized).toHsv();

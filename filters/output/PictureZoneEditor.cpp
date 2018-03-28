@@ -206,8 +206,7 @@ void PictureZoneEditor::initiateBuildingScreenPictureMask() {
     }
 
     const QTransform xform(virtualToWidget());
-    const intrusive_ptr<MaskTransformTask> task(
-            new MaskTransformTask(this, m_origPictureMask, xform, viewport()->size()));
+    const auto task = make_intrusive<MaskTransformTask>(this, m_origPictureMask, xform, viewport()->size());
 
     backgroundExecutor().enqueueTask(task);
 

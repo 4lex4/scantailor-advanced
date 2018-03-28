@@ -1247,7 +1247,7 @@ std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageI
     }
 
     if (!thumb) {
-        thumb.reset(new PlaceholderThumb(m_maxLogicalThumbSize));
+        thumb = std::make_unique<PlaceholderThumb>(m_maxLogicalThumbSize);
     }
 
     return thumb;

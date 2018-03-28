@@ -57,8 +57,6 @@ void TextLineTracer::trace(const GrayImage& input,
                            DistortionModelBuilder& output,
                            const TaskStatus& status,
                            DebugImages* dbg) {
-    using namespace boost::lambda;
-
     GrayImage downscaled(downscale(input, dpi));
     if (dbg) {
         dbg->add(downscaled, "downscaled");

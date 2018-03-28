@@ -33,7 +33,7 @@ void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
 }
 
 intrusive_ptr<Property> ZoneCategoryProperty::clone() const {
-    return intrusive_ptr<Property>(new ZoneCategoryProperty(*this));
+    return make_intrusive<ZoneCategoryProperty>(*this);
 }
 
 QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -45,7 +45,7 @@ QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) 
 }
 
 intrusive_ptr<Property> ZoneCategoryProperty::construct(const QDomElement& el) {
-    return intrusive_ptr<Property>(new ZoneCategoryProperty(el));
+    return make_intrusive<ZoneCategoryProperty>(el);
 }
 
 ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(const QString& str) {

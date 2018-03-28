@@ -943,7 +943,7 @@ void ImageViewBase::initiateBuildingHqVersion() {
     }
 
     const QTransform xform(m_imageToVirtual * m_virtualToWidget);
-    const intrusive_ptr<HqTransformTask> task(new HqTransformTask(this, m_image, xform, viewport()->size()));
+    const auto task = make_intrusive<HqTransformTask>(this, m_image, xform, viewport()->size());
 
     backgroundExecutor().enqueueTask(task);
 

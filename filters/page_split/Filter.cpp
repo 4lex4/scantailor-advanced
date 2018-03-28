@@ -70,8 +70,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("page-split"));
     filter_el.setAttribute("defaultLayoutType", layoutTypeToString(m_ptrSettings->defaultLayoutType()));
 
@@ -166,12 +164,12 @@ intrusive_ptr<Task> Filter::createTask(const PageInfo& page_info,
                                        intrusive_ptr<deskew::Task> next_task,
                                        const bool batch_processing,
                                        const bool debug) {
-    return intrusive_ptr<Task>(new Task(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrPages, std::move(next_task),
-                                        page_info, batch_processing, debug));
+    return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrPages, std::move(next_task), page_info,
+                                batch_processing, debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(m_ptrSettings, m_ptrPages, std::move(next_task)));
+    return make_intrusive<CacheDrivenTask>(m_ptrSettings, m_ptrPages, std::move(next_task));
 }
 
 std::vector<PageOrderOption> Filter::pageOrderOptions() const {

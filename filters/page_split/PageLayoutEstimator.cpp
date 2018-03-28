@@ -411,8 +411,6 @@ PageLayout PageLayoutEstimator::cutAtWhitespaceDeskewed150(const LayoutType layo
                                                            const bool left_offcut,
                                                            const bool right_offcut,
                                                            DebugImages* dbg) {
-    using namespace boost::lambda;
-
     const int width = input.width();
     const int height = input.height();
 

@@ -100,8 +100,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("page-layout"));
 
     XmlMarshaller marshaller(doc);
@@ -188,12 +186,12 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        intrusive_ptr<output::Task> next_task,
                                        const bool batch,
                                        const bool debug) {
-    return intrusive_ptr<Task>(
-            new Task(intrusive_ptr<Filter>(this), std::move(next_task), m_ptrSettings, page_id, batch, debug));
+    return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(next_task), m_ptrSettings, page_id, batch,
+                                debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(std::move(next_task), m_ptrSettings));
+    return make_intrusive<CacheDrivenTask>(std::move(next_task), m_ptrSettings);
 }
 
 void Filter::loadDefaultSettings(const PageInfo& page_info) {

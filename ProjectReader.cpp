@@ -65,8 +65,8 @@ ProjectReader::ProjectReader(const QDomDocument& doc) : m_doc(doc), m_ptrDisambi
     processPages(pages_el);
     // Load naming disambiguator.  This needs to be done after processing pages.
     const QDomElement disambig_el(project_el.namedItem("file-name-disambiguation").toElement());
-    m_ptrDisambiguator.reset(
-            new FileNameDisambiguator(disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1)));
+    m_ptrDisambiguator
+            = make_intrusive<FileNameDisambiguator>(disambig_el, boost::bind(&ProjectReader::expandFilePath, this, _1));
 }
 
 ProjectReader::~ProjectReader() = default;
@@ -202,7 +202,7 @@ void ProjectReader::processImages(const QDomElement& images_el, const Qt::Layout
     }
 
     if (!images.empty()) {
-        m_ptrPages.reset(new ProjectPages(images, layout_direction));
+        m_ptrPages = make_intrusive<ProjectPages>(images, layout_direction);
     }
 }  // ProjectReader::processImages
 

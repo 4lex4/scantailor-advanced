@@ -23,9 +23,7 @@
 using namespace imageproc;
 
 FilterData::FilterData(const QImage& image)
-        : m_origImage(image),
-          m_grayImage(toGrayscale(m_origImage)),
-          m_xform(image.rect(), Dpm(image)) {
+        : m_origImage(image), m_grayImage(toGrayscale(m_origImage)), m_xform(image.rect(), Dpm(image)) {
 }
 
 FilterData::FilterData(const FilterData& other, const ImageTransformation& xform)

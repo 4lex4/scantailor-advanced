@@ -60,9 +60,9 @@ ConsoleBatch::ConsoleBatch(const std::vector<ImageFileInfo>& images,
           m_ptrDisambiguator(new FileNameDisambiguator),
           m_ptrPages(new ProjectPages(images, ProjectPages::AUTO_PAGES, layout)) {
     const PageSelectionAccessor accessor(nullptr);  // Won't really be used anyway.
-    m_ptrStages = intrusive_ptr<StageSequence>(new StageSequence(m_ptrPages, accessor));
-    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new ThumbnailPixmapCache(output_dir+"/cache/thumbs",
-    // QSize(200,200), 40, 5));
+    m_ptrStages = make_intrusive<StageSequence>(m_ptrPages, accessor);
+    // m_ptrThumbnailCache = make_intrusive<ThumbnailPixmapCache>(output_dir+"/cache/thumbs",
+    // QSize(200,200), 40, 5);
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }
@@ -80,13 +80,13 @@ ConsoleBatch::ConsoleBatch(const QString project_file) : batch(true), debug(true
 
     file.close();
 
-    m_ptrReader.reset(new ProjectReader(doc));
+    m_ptrReader = std::make_unique<ProjectReader>(doc);
     m_ptrPages = m_ptrReader->pages();
 
     const PageSelectionAccessor accessor(nullptr);  // Won't be used anyway.
     m_ptrDisambiguator = m_ptrReader->namingDisambiguator();
 
-    m_ptrStages = intrusive_ptr<StageSequence>(new StageSequence(m_ptrPages, accessor));
+    m_ptrStages = make_intrusive<StageSequence>(m_ptrPages, accessor);
     m_ptrReader->readFilterSettings(m_ptrStages->filters());
 
     const CommandLine& cli = CommandLine::get();
@@ -94,8 +94,8 @@ ConsoleBatch::ConsoleBatch(const QString project_file) : batch(true), debug(true
     if (!cli.outputDirectory().isEmpty()) {
         output_directory = cli.outputDirectory();
     }
-    // m_ptrThumbnailCache = intrusive_ptr<ThumbnailPixmapCache>(new
-    // ThumbnailPixmapCache(output_directory+"/cache/thumbs", QSize(200,200), 40, 5));
+    // m_ptrThumbnailCache = make_intrusive<    // ThumbnailPixmapCache>(output_directory+"/cache/thumbs",
+    // QSize(200,200), 40, 5);
     m_ptrThumbnailCache = Utils::createThumbnailCache(output_directory);
     m_outFileNameGen = OutputFileNameGenerator(m_ptrDisambiguator, output_directory, m_ptrPages->layoutDirection());
 }

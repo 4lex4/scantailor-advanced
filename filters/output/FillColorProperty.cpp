@@ -31,7 +31,7 @@ void FillColorProperty::registerIn(PropertyFactory& factory) {
 }
 
 intrusive_ptr<Property> FillColorProperty::clone() const {
-    return intrusive_ptr<Property>(new FillColorProperty(*this));
+    return make_intrusive<FillColorProperty>(*this);
 }
 
 QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -43,7 +43,7 @@ QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) con
 }
 
 intrusive_ptr<Property> FillColorProperty::construct(const QDomElement& el) {
-    return intrusive_ptr<Property>(new FillColorProperty(el));
+    return make_intrusive<FillColorProperty>(el);
 }
 
 QRgb FillColorProperty::rgbFromString(const QString& str) {

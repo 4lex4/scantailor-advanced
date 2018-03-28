@@ -26,13 +26,13 @@ void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline) {
-    intrusive_ptr<PropertySet> new_props(new PropertySet(m_defaultProps));
+    auto new_props = make_intrusive<PropertySet>(m_defaultProps);
     m_splineMap.insert(Map::value_type(spline, new_props));
     m_splineList.push_back(spline);
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline, const PropertySet& props) {
-    intrusive_ptr<PropertySet> new_props(new PropertySet(props));
+    auto new_props = make_intrusive<PropertySet>(props);
     m_splineMap.insert(Map::value_type(spline, new_props));
     m_splineList.push_back(spline);
 }

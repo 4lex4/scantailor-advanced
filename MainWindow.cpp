@@ -120,7 +120,7 @@ MainWindow::MainWindow()
           m_debug(false),
           m_closing(false) {
     m_maxLogicalThumbSize = QSize(250, 160);
-    m_ptrThumbSequence.reset(new ThumbnailSequence(m_maxLogicalThumbSize));
+    m_ptrThumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize);
 
     m_thumbResizeTimer.setSingleShot(true);
     connect(&m_thumbResizeTimer, SIGNAL(timeout()), SLOT(invalidateAllThumbnails()));
@@ -339,7 +339,7 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
     updateDisambiguationRecords(pages->toPageSequence(IMAGE_VIEW));
 
     // Recreate the stages and load their state.
-    m_ptrStages.reset(new StageSequence(pages, newPageSelectionAccessor()));
+    m_ptrStages = make_intrusive<StageSequence>(pages, newPageSelectionAccessor());
     if (project_reader) {
         project_reader->readFilterSettings(m_ptrStages->filters());
     }
@@ -359,11 +359,11 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
 
     updateSortOptions();
 
-    m_ptrContentBoxPropagator.reset(new ContentBoxPropagator(
-            m_ptrStages->pageLayoutFilter(), createCompositeCacheDrivenTask(m_ptrStages->selectContentFilterIdx())));
+    m_ptrContentBoxPropagator = std::make_unique<ContentBoxPropagator>(
+            m_ptrStages->pageLayoutFilter(), createCompositeCacheDrivenTask(m_ptrStages->selectContentFilterIdx()));
 
-    m_ptrPageOrientationPropagator.reset(new PageOrientationPropagator(
-            m_ptrStages->pageSplitFilter(), createCompositeCacheDrivenTask(m_ptrStages->fixOrientationFilterIdx())));
+    m_ptrPageOrientationPropagator = std::make_unique<PageOrientationPropagator>(
+            m_ptrStages->pageSplitFilter(), createCompositeCacheDrivenTask(m_ptrStages->fixOrientationFilterIdx()));
 
     // Thumbnails are stored relative to the output directory,
     // so recreate the thumbnail cache.
@@ -568,8 +568,8 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
     if (m_ptrThumbnailCache) {
         const intrusive_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
 
-        m_ptrThumbSequence->setThumbnailFactory(intrusive_ptr<ThumbnailFactory>(
-                new ThumbnailFactory(m_ptrThumbnailCache, m_maxLogicalThumbSize, task)));
+        m_ptrThumbSequence->setThumbnailFactory(
+                make_intrusive<ThumbnailFactory>(m_ptrThumbnailCache, m_maxLogicalThumbSize, task));
     }
 
     m_ptrThumbSequence->reset(m_ptrPages->toPageSequence(getCurrentView()), ThumbnailSequence::RESET_SELECTION,
@@ -727,7 +727,7 @@ intrusive_ptr<AbstractCommand0<void>> MainWindow::relinkingDialogRequester() {
     };
 
 
-    return intrusive_ptr<AbstractCommand0<void>>(new Requester(this));
+    return make_intrusive<Requester>(this);
 }
 
 void MainWindow::showRelinkingDialog() {
@@ -1295,8 +1295,7 @@ void MainWindow::newProject() {
 }
 
 void MainWindow::newProjectCreated(ProjectCreationContext* context) {
-    intrusive_ptr<ProjectPages> pages(
-            new ProjectPages(context->files(), ProjectPages::AUTO_PAGES, context->layoutDirection()));
+    auto pages = make_intrusive<ProjectPages>(context->files(), ProjectPages::AUTO_PAGES, context->layoutDirection());
     switchToNewProject(pages, context->outDir());
 }
 
@@ -1632,7 +1631,7 @@ bool MainWindow::closeProjectInteractive() {
 }  // MainWindow::closeProjectInteractive
 
 void MainWindow::closeProjectWithoutSaving() {
-    intrusive_ptr<ProjectPages> pages(new ProjectPages());
+    auto pages = make_intrusive<ProjectPages>();
     switchToNewProject(pages, QString());
 }
 
@@ -1967,7 +1966,7 @@ void MainWindow::updateDisambiguationRecords(const PageSequence& pages) {
 }
 
 PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
-    intrusive_ptr<const PageSelectionProvider> provider(new PageSelectionProviderImpl(this));
+    auto provider = make_intrusive<PageSelectionProviderImpl>(this);
 
     return PageSelectionAccessor(provider);
 }

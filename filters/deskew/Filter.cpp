@@ -70,8 +70,6 @@ void Filter::preUpdateUI(FilterUiInterface* const ui, const PageInfo& page_info)
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("deskew"));
 
     writer.enumPages([&](const PageId& page_id, const int numeric_id) {
@@ -139,12 +137,12 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        intrusive_ptr<select_content::Task> next_task,
                                        const bool batch_processing,
                                        const bool debug) {
-    return intrusive_ptr<Task>(new Task(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrImageSettings,
-                                        std::move(next_task), page_id, batch_processing, debug));
+    return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrImageSettings, std::move(next_task),
+                                page_id, batch_processing, debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(m_ptrSettings, std::move(next_task)));
+    return make_intrusive<CacheDrivenTask>(m_ptrSettings, std::move(next_task));
 }
 
 std::vector<PageOrderOption> Filter::pageOrderOptions() const {

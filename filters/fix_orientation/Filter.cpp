@@ -68,8 +68,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("fix-orientation"));
     writer.enumImages([&](const ImageId& image_id, const int numeric_id) {
         this->writeParams(doc, filter_el, image_id, numeric_id);
@@ -118,12 +116,12 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
 intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        intrusive_ptr<page_split::Task> next_task,
                                        const bool batch_processing) {
-    return intrusive_ptr<Task>(new Task(page_id, intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrImageSettings,
-                                        std::move(next_task), batch_processing));
+    return make_intrusive<Task>(page_id, intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrImageSettings,
+                                std::move(next_task), batch_processing);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> next_task) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(m_ptrSettings, std::move(next_task)));
+    return make_intrusive<CacheDrivenTask>(m_ptrSettings, std::move(next_task));
 }
 
 void Filter::writeParams(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const {

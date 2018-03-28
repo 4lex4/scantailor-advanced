@@ -53,9 +53,9 @@ int main(int argc, char** argv) {
 
     try {
         if (!cli.projectFile().isEmpty()) {
-            cbatch.reset(new ConsoleBatch(cli.projectFile()));
+            cbatch = std::make_unique<ConsoleBatch>(cli.projectFile());
         } else {
-            cbatch.reset(new ConsoleBatch(cli.images(), cli.outputDirectory(), cli.getLayoutDirection()));
+            cbatch = std::make_unique<ConsoleBatch>(cli.images(), cli.outputDirectory(), cli.getLayoutDirection());
         }
         cbatch->process();
     } catch (const std::exception& e) {

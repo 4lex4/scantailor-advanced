@@ -88,8 +88,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-    using namespace boost::lambda;
-
     QDomElement filter_el(doc.createElement("select-content"));
 
     filter_el.setAttribute("pageDetectionBoxWidth", m_ptrSettings->pageDetectionBox().width());
@@ -164,12 +162,12 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        intrusive_ptr<page_layout::Task> next_task,
                                        bool batch,
                                        bool debug) {
-    return intrusive_ptr<Task>(
-            new Task(intrusive_ptr<Filter>(this), std::move(next_task), m_ptrSettings, page_id, batch, debug));
+    return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(next_task), m_ptrSettings, page_id, batch,
+                                debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> next_task) {
-    return intrusive_ptr<CacheDrivenTask>(new CacheDrivenTask(m_ptrSettings, std::move(next_task)));
+    return make_intrusive<CacheDrivenTask>(m_ptrSettings, std::move(next_task));
 }
 
 void Filter::loadDefaultSettings(const PageInfo& page_info) {

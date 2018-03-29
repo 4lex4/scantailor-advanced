@@ -205,7 +205,7 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
         delete this;
         event->accept();
     } else if (interaction.proximityLeader(m_zoneAreaDragCopyProximity)) {
-        EditableSpline::Ptr new_spline(new EditableSpline(SerializableSpline(*m_ptrUnderCursorSpline)));
+        auto new_spline = make_intrusive<EditableSpline>(SerializableSpline(*m_ptrUnderCursorSpline));
         m_rContext.zones().addZone(new_spline, *m_rContext.zones().propertiesFor(m_ptrUnderCursorSpline));
         makePeerPreceeder(*m_rContext.createZoneDragInteraction(interaction, new_spline));
         delete this;
@@ -238,7 +238,7 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
 
             serializable_spline = serializable_spline.transformed(QTransform().translate(shift.x(), shift.y()));
 
-            EditableSpline::Ptr new_spline(new EditableSpline(serializable_spline));
+            auto new_spline = make_intrusive<EditableSpline>(serializable_spline);
             m_rContext.zones().addZone(new_spline, *(*latest_zone).properties());
             m_rContext.zones().commit();
         }

@@ -88,7 +88,10 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
     ui.autoSaveProjectCB->setChecked(settings.value("settings/auto_save_project").toBool());
     ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
 
-    connect(ui.colorSchemeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onColorSchemeChanged(int)));
+    connect(ui.colorSchemeBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int) {
+        QMessageBox::information(this, tr("Information"),
+                                 tr("ScanTailor need to be restarted to apply the color scheme changes."));
+    });
 }
 
 SettingsDialog::~SettingsDialog() = default;
@@ -116,9 +119,4 @@ void SettingsDialog::commitChanges() {
     settings.setValue("settings/marginsDeviationThreshold", ui.marginsDeviationThresholdSB->value());
 
     emit settingsChanged();
-}
-
-void SettingsDialog::onColorSchemeChanged(int idx) {
-    QMessageBox::information(this, tr("Information"),
-                             tr("ScanTailor need to be restarted to apply the color scheme changes."));
 }

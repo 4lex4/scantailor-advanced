@@ -133,7 +133,7 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
     m_pictureMaskRebuildTimer.setInterval(150);
 
     for (const Zone& zone : m_ptrSettings->pictureZonesForPage(page_id)) {
-        EditableSpline::Ptr spline(new EditableSpline(zone.spline()));
+        auto spline = make_intrusive<EditableSpline>(zone.spline());
         m_zones.addZone(spline, zone.properties());
     }
 }

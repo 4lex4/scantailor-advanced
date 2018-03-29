@@ -45,9 +45,9 @@ Filter::Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAcc
     typedef PageOrderOption::ProviderPtr ProviderPtr;
 
     const ProviderPtr default_order;
-    const ProviderPtr order_by_splitline(new OrderBySplitTypeProvider(m_ptrSettings));
+    const auto order_by_split_type = make_intrusive<OrderBySplitTypeProvider>(m_ptrSettings);
     m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
-    m_pageOrderOptions.emplace_back(tr("Order by split type"), order_by_splitline);
+    m_pageOrderOptions.emplace_back(tr("Order by split type"), order_by_split_type);
 }
 
 Filter::~Filter() = default;

@@ -166,8 +166,8 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
     if (m_ptrNextTask) {
         return m_ptrNextTask->process(status, FilterData(data, new_xform));
     } else {
-        return FilterResultPtr(new UiUpdater(m_ptrFilter, std::move(m_ptrDbg), data.origImage(), m_pageId, new_xform,
-                                             ui_data, m_batchProcessing));
+        return make_intrusive<UiUpdater>(m_ptrFilter, std::move(m_ptrDbg), data.origImage(), m_pageId, new_xform,
+                                         ui_data, m_batchProcessing);
     }
 }  // Task::process
 

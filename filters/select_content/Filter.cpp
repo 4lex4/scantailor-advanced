@@ -46,9 +46,9 @@ Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     typedef PageOrderOption::ProviderPtr ProviderPtr;
 
     const ProviderPtr default_order;
-    const ProviderPtr order_by_width(new OrderByWidthProvider(m_ptrSettings));
-    const ProviderPtr order_by_height(new OrderByHeightProvider(m_ptrSettings));
-    const ProviderPtr order_by_deviation(new OrderByDeviationProvider(m_ptrSettings->deviationProvider()));
+    const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_ptrSettings);
+    const auto order_by_height = make_intrusive<OrderByHeightProvider>(m_ptrSettings);
+    const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_ptrSettings->deviationProvider());
     m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
     m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
     m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);

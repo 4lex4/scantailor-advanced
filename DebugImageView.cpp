@@ -52,7 +52,7 @@ public:
     BackgroundExecutor::TaskResultPtr operator()() override {
         QImage image(m_filePath);
 
-        return BackgroundExecutor::TaskResultPtr(new ImageLoadResult(m_ptrOwner, image));
+        return make_intrusive<ImageLoadResult>(m_ptrOwner, image);
     }
 
 private:
@@ -74,8 +74,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
 
 void DebugImageView::setLive(const bool live) {
     if (live && !m_isLive) {
-        ImageViewBase::backgroundExecutor().enqueueTask(
-                BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get())));
+        ImageViewBase::backgroundExecutor().enqueueTask(make_intrusive<ImageLoader>(this, m_file.get()));
     } else if (!live && m_isLive) {
         if (QWidget* wgt = currentWidget()) {
             if (wgt != m_pPlaceholderWidget) {

@@ -139,8 +139,8 @@ BackgroundTaskPtr ConsoleBatch::createCompositeTask(const PageInfo& page, const 
     }
     assert(fix_orientation_task);
 
-    return BackgroundTaskPtr(
-            new LoadFileTask(BackgroundTask::BATCH, page, m_ptrThumbnailCache, m_ptrPages, fix_orientation_task));
+    return make_intrusive<LoadFileTask>(BackgroundTask::BATCH, page, m_ptrThumbnailCache, m_ptrPages,
+                                        fix_orientation_task);
 }  // ConsoleBatch::createCompositeTask
 
 // process the image vector **images** and save output to **output_dir**

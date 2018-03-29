@@ -204,8 +204,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
         return m_ptrNextTask->process(status, FilterData(data, new_xform));
     }
 
-    return FilterResultPtr(new UiUpdater(m_ptrFilter, m_ptrPages, std::move(m_ptrDbg), data.origImage(), m_pageInfo,
-                                         data.xform(), ui_data, m_batchProcessing));
+    return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrPages, std::move(m_ptrDbg), data.origImage(), m_pageInfo,
+                                     data.xform(), ui_data, m_batchProcessing);
 }  // Task::process
 
 /*============================ Task::UiUpdater =========================*/

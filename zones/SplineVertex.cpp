@@ -60,7 +60,7 @@ SplineVertex::Ptr SplineVertex::next(const Loop loop) {
 }
 
 SplineVertex::Ptr SplineVertex::insertBefore(const QPointF& pt) {
-    SplineVertex::Ptr new_vertex(new RealSplineVertex(pt, m_pPrev, this));
+    auto new_vertex = make_intrusive<RealSplineVertex>(pt, m_pPrev, this);
     m_pPrev->m_ptrNext = new_vertex;
     m_pPrev = new_vertex.get();
 
@@ -68,7 +68,7 @@ SplineVertex::Ptr SplineVertex::insertBefore(const QPointF& pt) {
 }
 
 SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
-    SplineVertex::Ptr new_vertex(new RealSplineVertex(pt, this, m_ptrNext.get()));
+    auto new_vertex = make_intrusive<RealSplineVertex>(pt, this, m_ptrNext.get());
     m_ptrNext->m_pPrev = new_vertex.get();
     m_ptrNext = new_vertex;
 

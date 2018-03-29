@@ -186,9 +186,9 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
         return m_ptrNextTask->process(status, FilterData(data, data.xform()), ui_data.pageRect(),
                                       ui_data.contentRect());
     } else {
-        return FilterResultPtr(new UiUpdater(m_ptrFilter, m_pageId, std::move(m_ptrDbg), data.origImage(), data.xform(),
-                                             data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
-                                             ui_data, m_batchProcessing));
+        return make_intrusive<UiUpdater>(m_ptrFilter, m_pageId, std::move(m_ptrDbg), data.origImage(), data.xform(),
+                                         data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                                         ui_data, m_batchProcessing);
     }
 }  // Task::process
 

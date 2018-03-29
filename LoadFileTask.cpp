@@ -73,7 +73,7 @@ FilterResultPtr LoadFileTask::operator()() {
         throwIfCancelled();
 
         if (image.isNull()) {
-            return FilterResultPtr(new ErrorResult(m_imageId.filePath()));
+            return make_intrusive<ErrorResult>(m_imageId.filePath());
         } else {
             updateImageSizeIfChanged(image);
             overrideDpi(image);

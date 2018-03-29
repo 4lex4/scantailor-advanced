@@ -108,9 +108,9 @@ FilterResultPtr Task::process(const TaskStatus& status,
 
         return m_ptrNextTask->process(status, FilterData(data, new_xform), content_rect_phys);
     } else {
-        return FilterResultPtr(new UiUpdater(m_ptrFilter, m_ptrSettings, m_pageId, data.origImage(), data.xform(),
-                                             adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
-                                             m_batchProcessing));
+        return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrSettings, m_pageId, data.origImage(), data.xform(),
+                                         adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
+                                         m_batchProcessing);
     }
 }  // Task::process
 

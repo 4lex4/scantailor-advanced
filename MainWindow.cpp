@@ -1923,8 +1923,8 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
     }
     assert(fix_orientation_task);
 
-    return BackgroundTaskPtr(new LoadFileTask(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
-                                              m_ptrThumbnailCache, m_ptrPages, fix_orientation_task));
+    return make_intrusive<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
+                                        m_ptrThumbnailCache, m_ptrPages, fix_orientation_task);
 }  // MainWindow::createCompositeTask
 
 intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int last_filter_idx) {

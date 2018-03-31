@@ -24,7 +24,7 @@ ToLineProjector::ToLineProjector(const QLineF& line) : m_origin(line.p1()), m_ve
     // At*A*x = At*b
     const double AtA = m_mat.dot(m_mat);
 
-    if (abs(AtA) > numeric_limits<double>::epsilon()) {
+    if (std::abs(AtA) > numeric_limits<double>::epsilon()) {
         // x = (At*A)-1 * At
         m_mat /= AtA;
     } else {
@@ -48,7 +48,7 @@ QPointF ToLineProjector::projectionVector(const QPointF& pt) const {
 }
 
 double ToLineProjector::projectionDist(const QPointF& pt) const {
-    return sqrt(projectionSqDist(pt));
+    return std::sqrt(projectionSqDist(pt));
 }
 
 double ToLineProjector::projectionSqDist(const QPointF& pt) const {

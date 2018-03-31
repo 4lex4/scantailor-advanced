@@ -113,8 +113,8 @@ void dewarpGeneric(const PixelType* const src_data,
             const float model_y = ((float) dst_y - model_domain_top) * model_y_scale;
             const Vec2f src_pt(origin + vec * homog(model_y));
 
-            const int src_x0 = (int) floor(src_pt[0] - 0.5f);
-            const int src_y0 = (int) floor(src_pt[1] - 0.5f);
+            const int src_x0 = (int) std::floor(src_pt[0] - 0.5f);
+            const int src_y0 = (int) std::floor(src_pt[1] - 0.5f);
             const int src_x1 = src_x0 + 1;
             const int src_y1 = src_y0 + 1;
             const float x = src_pt[0] - src_x0;
@@ -213,7 +213,7 @@ void areaMapGeneratrix(const PixelType* const src_data,
         // Note: the code below is more or less the same as in transformGeneric()
         // in imageproc/Transform.cpp
 
-        // Note that without using floor() and ceil()
+        // Note that without using std::floor() and std::ceil()
         // we can't guarantee that src_bottom >= src_top
         // and src_right >= src_left.
         auto src32_left = (int) std::floor(f_src32_left);

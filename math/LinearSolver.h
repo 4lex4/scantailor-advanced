@@ -78,8 +78,8 @@ private:
 
 template<typename T>
 void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuffer) const {
-    using namespace std;  // To catch different overloads of abs()
-    const T epsilon(sqrt(numeric_limits<T>::epsilon()));
+    using namespace std;  // To catch different overloads of std::abs()
+    const T epsilon(std::sqrt(numeric_limits<T>::epsilon()));
 
     const size_t num_elements_A = m_rowsAB * m_colsArowsX;
 
@@ -101,9 +101,9 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
     for (size_t i = 0; i < m_colsArowsX; ++i, p_col += m_rowsAB) {
         // Find the largest pivot.
         size_t virt_pivot_row = i;
-        T largest_abs_pivot(abs(p_col[perm[i]]));
+        T largest_abs_pivot(std::abs(p_col[perm[i]]));
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
-            const T abs_pivot(abs(p_col[perm[j]]));
+            const T abs_pivot(std::abs(p_col[perm[j]]));
             if (abs_pivot > largest_abs_pivot) {
                 largest_abs_pivot = abs_pivot;
                 virt_pivot_row = j;
@@ -125,7 +125,7 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
         for (size_t j = i + 1; j < m_rowsAB; ++j) {
             const T* p1 = p_pivot;
             T* p2 = p_col + perm[j];
-            if (abs(*p2) <= epsilon) {
+            if (std::abs(*p2) <= epsilon) {
                 // We consider it's already zero.
                 *p2 = T();
                 continue;
@@ -177,7 +177,7 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
                 right -= *p_lu * p_y_col[lu_col];
                 p_lu += m_rowsAB;
             }
-            if (abs(right) > epsilon) {
+            if (std::abs(right) > epsilon) {
                 throw std::runtime_error("LinearSolver: inconsistent overdetermined system");
             }
         }

@@ -104,8 +104,8 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
             std::cout << "width = " << rects[i].width() << "; height=" << rects[i].height() << std::endl;
 #endif
 
-            double err_w = double(abs(exp_width - rects[i].width())) / double(exp_width);
-            double err_h = double(abs(exp_height - rects[i].height())) / double(exp_height);
+            double err_w = double(std::abs(exp_width - rects[i].width())) / double(exp_width);
+            double err_h = double(std::abs(exp_height - rects[i].height())) / double(exp_height);
 #ifdef DEBUG
             std::cout << "err_w=" << err_w << "; err_h" << err_h << std::endl;
 #endif
@@ -227,8 +227,8 @@ bool PageFinder::fineTuneCorner(const QImage& img,
     int pixel = img.pixelIndex(x, y);
     int tx = x + inc_x;
     int ty = y + inc_y;
-    int w = abs(max_x - x);
-    int h = abs(max_y - y);
+    int w = std::abs(max_x - x);
+    int h = std::abs(max_y - y);
 
     if ((!size.isEmpty()) && ((w < width_t) || (h < height_t))) {
         return true;

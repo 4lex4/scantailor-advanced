@@ -84,7 +84,7 @@ void raiseAllButPeaks(MostSignificantSelector most_significant,
  * \param least_significant Same as most_significant, but the oposite operation.
  * \param increase_significance A functor or a pointer to a free function that
  *        takes one argument and returns the next most significant value next
- *        to it.  Hint: for floating point data, use the nextafter() family of
+ *        to it.  Hint: for floating point data, use the std::nextafter() family of
  *        functions.  Their generic versions are available in Boost.
  * \param peak_mutator A functor or a pointer to a free function that will
  *        transform a peak value.  Two typical cases would be returning

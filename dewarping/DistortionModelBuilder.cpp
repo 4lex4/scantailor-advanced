@@ -487,7 +487,7 @@ void DistortionModelBuilder::RansacAlgo::buildAndAssessModel(const TracedCurve* 
 
             double sum_abs_err = 0;
             for (size_t i = 0; i < polyline_size; ++i) {
-                sum_abs_err += fabs(errvec[i]) * r_reference_height;
+                sum_abs_err += std::fabs(errvec[i]) * r_reference_height;
             }
             // Penalty for not being straight.
             error += sum_abs_err / polyline_size;
@@ -518,7 +518,7 @@ catch (const std::runtime_error&) {
         const QPointF pt1(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, -10)));
         const QPointF pt2(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, 10)));
 
-        return fabs(pt1.y() - pt2.y());
+        return std::fabs(pt1.y() - pt2.y());
     }
 #endif
 
@@ -530,7 +530,7 @@ QImage DistortionModelBuilder::visualizeTrimmedPolylines(const QImage& backgroun
 
     const int width = background.width();
     const int height = background.height();
-    const double stroke_width = sqrt(double(width * width + height * height)) / 500;
+    const double stroke_width = std::sqrt(double(width * width + height * height)) / 500;
 
     // Extend / trim bounds.
     QLineF bound1(m_bound1);
@@ -575,7 +575,7 @@ QImage DistortionModelBuilder::visualizeModel(const QImage& background,
 
     const int width = background.width();
     const int height = background.height();
-    const double stroke_width = sqrt(double(width * width + height * height)) / 500;
+    const double stroke_width = std::sqrt(double(width * width + height * height)) / 500;
 
     // Extend / trim bounds.
     QLineF bound1(m_bound1);

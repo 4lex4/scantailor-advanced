@@ -118,14 +118,17 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
         QPointF next = to_screen.map(m_ptrVertex->next(SplineVertex::LOOP)->point());
 
         if (!((current == prev) && (current == next))) {
-            double prev_angle_cos = abs((prev.x() - current.x())
-                                        / sqrt(pow((prev.y() - current.y()), 2) + pow((prev.x() - current.x()), 2)));
-            double next_angle_cos = abs((next.x() - current.x())
-                                        / sqrt(pow((next.y() - current.y()), 2) + pow((next.x() - current.x()), 2)));
+            double prev_angle_cos = std::abs(
+                    (prev.x() - current.x())
+                    / std::sqrt(std::pow((prev.y() - current.y()), 2) + std::pow((prev.x() - current.x()), 2)));
+            double next_angle_cos = std::abs(
+                    (next.x() - current.x())
+                    / std::sqrt(std::pow((next.y() - current.y()), 2) + std::pow((next.x() - current.x()), 2)));
 
 
-            if ((prev_angle_cos < next_angle_cos) || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / sqrt(2))))
-                || (std::isnan(next_angle_cos) && (prev_angle_cos < (1.0 / sqrt(2))))) {
+            if ((prev_angle_cos < next_angle_cos)
+                || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / std::sqrt(2))))
+                || (std::isnan(next_angle_cos) && (prev_angle_cos < (1.0 / std::sqrt(2))))) {
                 prev.setX(current.x());
                 next.setY(current.y());
             } else {

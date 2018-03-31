@@ -75,7 +75,7 @@ bool DistortionModel::isValid() const {
         return false;
     }
 
-    if ((fabs(min_dot) < 0.01) || (fabs(max_dot) < 0.01)) {
+    if ((std::fabs(min_dot) < 0.01) || (std::fabs(max_dot) < 0.01)) {
         // Too close - possible problems with calculating homography.
         return false;
     }

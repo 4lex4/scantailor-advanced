@@ -159,7 +159,7 @@ void TowardsLineTracer::setupSteps() {
             Step& step = m_steps[m_numSteps];
             step.vec = dir;
             step.unitVec = Vec2d(step.vec.x(), step.vec.y());
-            step.unitVec /= sqrt(step.unitVec.squaredNorm());
+            step.unitVec /= std::sqrt(step.unitVec.squaredNorm());
             step.dmOffset = step.vec.y() * m_dmStride + step.vec.x();
             step.pmOffset = step.vec.y() * m_pmStride + step.vec.x();
             ++m_numSteps;

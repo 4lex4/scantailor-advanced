@@ -135,7 +135,7 @@ PolynomialLine::RoundAndClipPostProcessor<T>::RoundAndClipPostProcessor()
 
 template<typename T>
 inline T PolynomialLine::RoundAndClipPostProcessor<T>::operator()(const double val) const {
-    const double rounded = floor(val + 0.5);
+    const double rounded = std::floor(val + 0.5);
     if (rounded < m_min) {
         return m_min;
     } else if (rounded > m_max) {

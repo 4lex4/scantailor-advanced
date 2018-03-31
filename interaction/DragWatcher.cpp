@@ -36,7 +36,7 @@ bool DragWatcher::haveSignificantDrag() const {
         msec_passed += 60 * 60 * 24;
     }
 
-    const double dist_score = sqrt((double) m_dragMaxSqDist) / 12.0;
+    const double dist_score = std::sqrt((double) m_dragMaxSqDist) / 12.0;
     const double time_score = msec_passed / 500.0;
 
     return dist_score + time_score >= 1.0;

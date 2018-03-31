@@ -830,7 +830,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
             }
 
             // Extend the top and bottom of the text line.
-            while ((top > first || bottom < last) && abs((center_y - top) - (bottom - center_y)) <= 1) {
+            while ((top > first || bottom < last) && std::abs((center_y - top) - (bottom - center_y)) <= 1) {
                 const int new_top = (top > first) ? top - 1 : top;
                 const int new_bottom = (bottom < last) ? bottom + 1 : bottom;
                 num_black += hist[new_top] + hist[new_bottom];
@@ -1149,8 +1149,8 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
         double text_influence = max_text_influence;
         if (num_text_pixels < upper_threshold) {
             text_influence = min_text_influence
-                             + (max_text_influence - min_text_influence) * log((double) num_text_pixels)
-                                       / log((double) upper_threshold);
+                             + (max_text_influence - min_text_influence) * std::log((double) num_text_pixels)
+                                       / std::log((double) upper_threshold);
         }
         // qDebug() << "text_influence = " << text_influence;
 
@@ -1183,8 +1183,8 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
     for (int y = removed_area.top(); y <= removed_area.bottom(); ++y) {
         for (int x = removed_area.left(); x <= removed_area.right(); ++x) {
             if (cb_line[x >> 5] & (msb >> (x & 31))) {
-                sum_dist_to_garbage += sqrt((double) dm_garbage_line[x]);
-                sum_dist_to_others += sqrt((double) dm_others_line[x]);
+                sum_dist_to_garbage += std::sqrt((double) dm_garbage_line[x]);
+                sum_dist_to_others += std::sqrt((double) dm_others_line[x]);
                 ++count;
             }
         }

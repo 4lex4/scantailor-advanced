@@ -77,12 +77,12 @@ void StatusBarPanel::mousePosChanged() {
         switch (UnitsProvider::getInstance()->getUnits()) {
             case PIXELS:
             case MILLIMETRES:
-                x = ceil(x);
-                y = ceil(y);
+                x = std::ceil(x);
+                y = std::ceil(y);
                 break;
             default:
-                x = ceil(x * 10) / 10;
-                y = ceil(y * 10) / 10;
+                x = std::ceil(x * 10) / 10;
+                y = std::ceil(y * 10) / 10;
                 break;
         }
 
@@ -103,20 +103,20 @@ void StatusBarPanel::physSizeChanged() {
         const Units units = UnitsProvider::getInstance()->getUnits();
         switch (units) {
             case PIXELS:
-                width = round(width);
-                height = round(height);
+                width = std::round(width);
+                height = std::round(height);
                 break;
             case MILLIMETRES:
-                width = round(width);
-                height = round(height);
+                width = std::round(width);
+                height = std::round(height);
                 break;
             case CENTIMETRES:
-                width = round(width * 10) / 10;
-                height = round(height * 10) / 10;
+                width = std::round(width * 10) / 10;
+                height = std::round(height * 10) / 10;
                 break;
             case INCHES:
-                width = round(width * 10) / 10;
-                height = round(height * 10) / 10;
+                width = std::round(width * 10) / 10;
+                height = std::round(height * 10) / 10;
                 break;
         }
 

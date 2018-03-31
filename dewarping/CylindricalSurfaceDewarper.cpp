@@ -107,7 +107,7 @@ CylindricalSurfaceDewarper::Generatrix CylindricalSurfaceDewarper::mapGeneratrix
     boost::array<std::pair<double, double>, 3> pairs;
     pairs[0] = std::make_pair(0.0, img_directrix1_proj);
     pairs[1] = std::make_pair(1.0, img_directrix2_proj);
-    if ((fabs(m_plnStraightLineY) < 0.05) || (fabs(m_plnStraightLineY - 1.0) < 0.05)) {
+    if ((std::fabs(m_plnStraightLineY) < 0.05) || (std::fabs(m_plnStraightLineY - 1.0) < 0.05)) {
         pairs[2] = std::make_pair(0.5, 0.5 * (img_directrix1_proj + img_directrix2_proj));
     } else {
         pairs[2] = std::make_pair(m_plnStraightLineY, img_straight_line_proj);
@@ -139,7 +139,7 @@ QPointF CylindricalSurfaceDewarper::mapToDewarpedSpace(const QPointF& img_pt) co
     boost::array<std::pair<double, double>, 3> pairs;
     pairs[0] = std::make_pair(img_directrix1_proj, 0.0);
     pairs[1] = std::make_pair(img_directrix2_proj, 1.0);
-    if ((fabs(m_plnStraightLineY) < 0.05) || (fabs(m_plnStraightLineY - 1.0) < 0.05)) {
+    if ((std::fabs(m_plnStraightLineY) < 0.05) || (std::fabs(m_plnStraightLineY - 1.0) < 0.05)) {
         pairs[2] = std::make_pair(0.5 * (img_directrix1_proj + img_directrix2_proj), 0.5);
     } else {
         pairs[2] = std::make_pair(img_straight_line_proj, m_plnStraightLineY);
@@ -193,7 +193,7 @@ double CylindricalSurfaceDewarper::calcPlnStraightLineY(const std::vector<QPoint
         const double p4 = 1;
         const double dp1 = p2 - p1;
         const double dp2 = p4 - p3;
-        const double weight = fabs(dp1 + dp2);
+        const double weight = std::fabs(dp1 + dp2);
         if (weight < 0.01) {
             continue;
         }

@@ -448,7 +448,7 @@ void MainWindow::setupThumbView() {
         inner_width -= thumbView->frameWidth() * 2;
     }
     const int delta_x = thumbView->size().width() - inner_width;
-    thumbView->setMinimumWidth((int) ceil(m_maxLogicalThumbSize.width() + delta_x));
+    thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + delta_x));
 
     m_ptrThumbSequence->attachView(thumbView);
 

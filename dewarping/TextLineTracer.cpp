@@ -102,7 +102,7 @@ void TextLineTracer::trace(const GrayImage& input,
     }
 
     Vec2f unit_down_vector(calcAvgUnitVector(vert_bounds));
-    unit_down_vector /= sqrt(unit_down_vector.squaredNorm());
+    unit_down_vector /= std::sqrt(unit_down_vector.squaredNorm());
     if (unit_down_vector[1] < 0) {
         unit_down_vector = -unit_down_vector;
     }
@@ -171,7 +171,7 @@ bool TextLineTracer::isCurvatureConsistent(const std::vector<QPointF>& polyline)
         return true;
     }
     // Threshold angle between a polyline segment and a normal to the previous one.
-    const auto cos_threshold = static_cast<const float>(cos((90.0f - 6.0f) * constants::DEG2RAD));
+    const auto cos_threshold = static_cast<const float>(std::cos((90.0f - 6.0f) * constants::DEG2RAD));
     const float cos_sq_threshold = cos_threshold * cos_threshold;
     bool significant_positive = false;
     bool significant_negative = false;
@@ -413,13 +413,13 @@ void TextLineTracer::extractTextLines(std::list<std::vector<QPointF>>& out,
 
 Vec2f TextLineTracer::calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds) {
     Vec2f v1(bounds.first.p2() - bounds.first.p1());
-    v1 /= sqrt(v1.squaredNorm());
+    v1 /= std::sqrt(v1.squaredNorm());
 
     Vec2f v2(bounds.second.p2() - bounds.second.p1());
-    v2 /= sqrt(v2.squaredNorm());
+    v2 /= std::sqrt(v2.squaredNorm());
 
     Vec2f v3(v1 + v2);
-    v3 /= sqrt(v3.squaredNorm());
+    v3 /= std::sqrt(v3.squaredNorm());
 
     return v3;
 }
@@ -473,8 +473,8 @@ QLineF TextLineTracer::calcMidLine(const QLineF& line1, const QLineF& line2) {
         // Lines do intersect.
         Vec2d v1(line1.p2() - line1.p1());
         Vec2d v2(line2.p2() - line2.p1());
-        v1 /= sqrt(v1.squaredNorm());
-        v2 /= sqrt(v2.squaredNorm());
+        v1 /= std::sqrt(v1.squaredNorm());
+        v2 /= std::sqrt(v2.squaredNorm());
 
         return QLineF(intersection, intersection + 0.5 * (v1 + v2));
     }

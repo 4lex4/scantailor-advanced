@@ -99,13 +99,13 @@ RastLineFinder::RastLineFinder(const std::vector<QPointF>& points, const RastLin
         }
     }
 
-    const auto max_dist = static_cast<const float>(sqrt(max_sqdist) + 1.0);  // + 1.0 to combant rounding issues
+    const auto max_dist = static_cast<const float>(std::sqrt(max_sqdist) + 1.0);  // + 1.0 to combant rounding issues
 
-    double delta_deg = fmod(params.maxAngleDeg() - params.minAngleDeg(), 360.0);
+    double delta_deg = std::fmod(params.maxAngleDeg() - params.minAngleDeg(), 360.0);
     if (delta_deg < 0) {
         delta_deg += 360;
     }
-    const double min_angle_deg = fmod(params.minAngleDeg(), 360.0);
+    const double min_angle_deg = std::fmod(params.minAngleDeg(), 360.0);
     const double max_angle_deg = min_angle_deg + delta_deg;
 
     SearchSpace ssp(*this, -max_dist, max_dist, static_cast<float>(min_angle_deg * constants::DEG2RAD),

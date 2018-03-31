@@ -50,7 +50,7 @@ public:
         } else if (val > FromType(m_max)) {
             return m_max;
         } else {
-            return static_cast<ToType>(floor(val + 0.5));
+            return static_cast<ToType>(std::floor(val + 0.5));
         }
     }
 

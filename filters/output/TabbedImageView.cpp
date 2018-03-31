@@ -126,10 +126,10 @@ void TabbedImageView::setFocus(QScrollBar& hor_bar,
     const int hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
     const int ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
 
-    auto hor_value
-            = (int) round(((focal.x() - rect.left()) / rect.width()) * hor_bar_length - (hor_bar.pageStep() / 2.0));
-    auto ver_value
-            = (int) round(((focal.y() - rect.top()) / rect.height()) * ver_bar_length - (ver_bar.pageStep() / 2.0));
+    auto hor_value = (int) std::round(((focal.x() - rect.left()) / rect.width()) * hor_bar_length
+                                      - (hor_bar.pageStep() / 2.0));
+    auto ver_value = (int) std::round(((focal.y() - rect.top()) / rect.height()) * ver_bar_length
+                                      - (ver_bar.pageStep() / 2.0));
 
     hor_value = qBound(hor_bar.minimum(), hor_value, hor_bar.maximum());
     ver_value = qBound(ver_bar.minimum(), ver_value, ver_bar.maximum());

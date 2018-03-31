@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(test_line_distance) {
     for (int i = 0; i < 100; ++i) {
         const Vec2d pt1(frand(-50, 50), frand(-50, 50));
         const double angle = frand(0, 2.0 * PI);
-        const Vec2d delta(cos(angle), sin(angle));
+        const Vec2d delta(std::cos(angle), std::sin(angle));
         const QLineF line(pt1, pt1 + delta);
         const SqDistApproximant approx(SqDistApproximant::lineDistance(line));
         const ToLineProjector proj(line);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(test_general_case) {
     for (int i = 0; i < 100; ++i) {
         const Vec2d origin(frand(-50, 50), frand(-50, 50));
         const double angle = frand(0, 2.0 * PI);
-        const Vec2d u(cos(angle), sin(angle));
+        const Vec2d u(std::cos(angle), std::sin(angle));
         Vec2d v(-u[1], u[0]);
         if (rand() & 1) {
             v = -v;

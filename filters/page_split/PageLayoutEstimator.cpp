@@ -98,14 +98,14 @@ std::unique_ptr<PageLayout> autoDetectSinglePageLayout(const LayoutType layout_t
         if (!ltr_lines.empty()) {
             const QLineF& first_line = ltr_lines.front();
             const double line_center = lineCenterX(first_line);
-            if (fabs(image_center - line_center) > 0.65 * image_center) {
+            if (std::fabs(image_center - line_center) > 0.65 * image_center) {
                 break;
             }
         }
         if (ltr_lines.size() > 1) {
             const QLineF& last_line = ltr_lines.back();
             const double line_center = lineCenterX(last_line);
-            if (fabs(image_center - line_center) > 0.65 * image_center) {
+            if (std::fabs(image_center - line_center) > 0.65 * image_center) {
                 break;
             }
         }
@@ -157,7 +157,7 @@ std::unique_ptr<PageLayout> autoDetectTwoPageLayout(const std::vector<QLineF>& l
     const QLineF* best_line = nullptr;
     for (const QLineF& line : ltr_lines) {
         const double line_center = lineCenterX(line);
-        const double distance = fabs(line_center - image_center);
+        const double distance = std::fabs(line_center - image_center);
         if (distance < min_distance) {
             min_distance = distance;
             best_line = &line;
@@ -219,7 +219,7 @@ public:
      * to be the line splitting two pages
      */
     bool operator()(const QLineF& line) {
-        const double dist = fabs(lineCenterX(line) - m_imageCenter);
+        const double dist = std::fabs(lineCenterX(line) - m_imageCenter);
 
         return dist > m_distFromCenterThreshold;
     }
@@ -281,8 +281,8 @@ std::unique_ptr<PageLayout> PageLayoutEstimator::tryCutAtFoldingLine(const Layou
                 break;
             }
 
-            left_dist = fabs(left_dist);
-            right_dist = fabs(right_dist);
+            left_dist = std::fabs(left_dist);
+            right_dist = std::fabs(right_dist);
             if ((left_dist < threshold) || (right_dist < threshold)) {
                 // At least one of them is relatively close
                 // to the center.
@@ -359,9 +359,9 @@ PageLayout PageLayoutEstimator::cutAtWhitespace(const LayoutType layout_type,
         const int w = img.width();
         const int h = img.height();
         const double angle_deg = skew.angle();
-        const double tg = tan(angle_deg * constants::DEG2RAD);
+        const double tg = std::tan(angle_deg * constants::DEG2RAD);
 
-        const auto margin = (int) ceil(fabs(0.5 * h * tg));
+        const auto margin = (int) std::ceil(std::fabs(0.5 * h * tg));
         const int new_width = w - margin * 2;
         if (new_width > 0) {
             hShearInPlace(img, tg, 0.5 * h, WHITE);
@@ -465,15 +465,15 @@ imageproc::BinaryImage PageLayoutEstimator::to300DpiBinary(const QImage& img,
                                                            const BinaryThreshold binary_threshold) {
     const double xfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterX();
     const double yfactor = (300.0 * constants::DPI2DPM) / img.dotsPerMeterY();
-    if ((fabs(xfactor - 1.0) < 0.1) && (fabs(yfactor - 1.0) < 0.1)) {
+    if ((std::fabs(xfactor - 1.0) < 0.1) && (std::fabs(yfactor - 1.0) < 0.1)) {
         return BinaryImage(img, binary_threshold);
     }
 
     QTransform scale_xform;
     scale_xform.scale(xfactor, yfactor);
     xform *= scale_xform;
-    const QSize new_size(std::max(1, (int) ceil(xfactor * img.width())),
-                         std::max(1, (int) ceil(yfactor * img.height())));
+    const QSize new_size(std::max(1, (int) std::ceil(xfactor * img.width())),
+                         std::max(1, (int) std::ceil(yfactor * img.height())));
 
     const GrayImage new_image(scaleToGray(GrayImage(img), new_size));
 
@@ -772,7 +772,7 @@ PageLayout PageLayoutEstimator::processTwoPagesWithSingleSpan(const Span& span, 
     const double page_center = 0.5 * width;
     const double box_center = span.center();
     const double box_half_width = 0.5 * span.width();
-    const double distance_to_page_center = fabs(page_center - box_center) - box_half_width;
+    const double distance_to_page_center = std::fabs(page_center - box_center) - box_half_width;
 
     double x;
 

@@ -91,7 +91,7 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize window_size, const do
             const double sqmean = window_sqsum * r_area;
 
             const double variance = sqmean - mean * mean;
-            const double deviation = sqrt(fabs(variance));
+            const double deviation = std::sqrt(std::fabs(variance));
 
             const double threshold = mean * (1.0 + k * (deviation / 128.0 - 1.0));
 
@@ -176,7 +176,7 @@ BinaryImage binarizeWolf(const QImage& src,
             const double sqmean = window_sqsum * r_area;
 
             const double variance = sqmean - mean * mean;
-            const double deviation = sqrt(fabs(variance));
+            const double deviation = std::sqrt(std::fabs(variance));
             max_deviation = std::max(max_deviation, deviation);
             means[w * y + x] = (float) mean;
             deviations[w * y + x] = (float) deviation;

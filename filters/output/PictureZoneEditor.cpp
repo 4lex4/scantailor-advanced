@@ -149,7 +149,7 @@ void PictureZoneEditor::onPaint(QPainter& painter, const InteractionState& inter
     if (!validateScreenPictureMask()) {
         schedulePictureMaskRebuild();
     } else {
-        const double sn = sin(constants::DEG2RAD * m_pictureMaskAnimationPhase);
+        const double sn = std::sin(constants::DEG2RAD * m_pictureMaskAnimationPhase);
         const double scale = 0.5 * (sn + 1.0);  // 0 .. 1
         const double opacity = 0.35 * scale + 0.15;
 

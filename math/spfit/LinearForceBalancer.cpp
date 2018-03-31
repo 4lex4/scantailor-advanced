@@ -46,7 +46,7 @@ double LinearForceBalancer::calcInternalForceWeight(double internal_force, doubl
     // (internal * lambda) / external = ratio
     // internal * lambda = external * ratio
     double lambda = 0;
-    if (fabs(internal_force) > 1e-6) {
+    if (std::fabs(internal_force) > 1e-6) {
         lambda = m_currentRatio * external_force / internal_force;
     }
 

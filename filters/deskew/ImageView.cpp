@@ -28,7 +28,7 @@
 
 namespace deskew {
 const double ImageView::m_maxRotationDeg = 45.0;
-const double ImageView::m_maxRotationSin = sin(m_maxRotationDeg * imageproc::constants::DEG2RAD);
+const double ImageView::m_maxRotationSin = std::sin(m_maxRotationDeg * imageproc::constants::DEG2RAD);
 const int ImageView::m_cellSize = 20;
 
 ImageView::ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform)
@@ -194,7 +194,7 @@ void ImageView::handleMoveRequest(int idx, const QPointF& pos) {
     double rel_y = abs_y - arc_square.center().y();
     rel_y = qBound(-arc_radius, rel_y, arc_radius);
 
-    double angle_rad = asin(rel_y / arc_radius);
+    double angle_rad = std::asin(rel_y / arc_radius);
     if (idx == 0) {
         angle_rad = -angle_rad;
     }
@@ -219,7 +219,7 @@ void ImageView::dragFinished() {
 QPointF ImageView::getImageRotationOrigin() const {
     const QRectF viewport_rect(maxViewportRect());
 
-    return QPointF(floor(0.5 * viewport_rect.width()) + 0.5, floor(0.5 * viewport_rect.height()) + 0.5);
+    return QPointF(std::floor(0.5 * viewport_rect.width()) + 0.5, std::floor(0.5 * viewport_rect.height()) + 0.5);
 }
 
 /**

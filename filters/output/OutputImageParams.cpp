@@ -238,6 +238,6 @@ bool OutputImageParams::PartialXform::matches(const PartialXform& other) const {
 }
 
 bool OutputImageParams::PartialXform::closeEnough(double v1, double v2) {
-    return fabs(v1 - v2) < 0.0001;
+    return std::fabs(v1 - v2) < 0.0001;
 }
 }  // namespace output

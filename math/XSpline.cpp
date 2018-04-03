@@ -177,7 +177,7 @@ QPointF XSpline::pointAtImpl(int segment, double t) const {
     return pt;
 }
 
-void XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+void XSpline::sample(VirtualFunction<void, QPointF, double, SampleFlags>& sink,
                      const SamplingParams& params,
                      double from_t,
                      double to_t) const {
@@ -211,7 +211,7 @@ void XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
     sink(to_pt, to_t, TAIL_SAMPLE);
 }  // XSpline::sample
 
-void XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+void XSpline::maybeAddMoreSamples(VirtualFunction<void, QPointF, double, SampleFlags>& sink,
                                   double max_sqdist_to_spline,
                                   double max_sqdist_between_samples,
                                   double num_segments,
@@ -702,7 +702,7 @@ QPointF XSpline::pointClosestTo(const QPointF to, double accuracy) const {
 }
 
 std::vector<QPointF> XSpline::toPolyline(const SamplingParams& params, double from_t, double to_t) const {
-    struct Sink : public VirtualFunction3<void, QPointF, double, SampleFlags> {
+    struct Sink : public VirtualFunction<void, QPointF, double, SampleFlags> {
         std::vector<QPointF> polyline;
 
         void operator()(QPointF pt, double, SampleFlags) override {

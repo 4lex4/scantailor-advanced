@@ -21,7 +21,7 @@
 
 using namespace imageproc;
 
-void ContentSpanFinder::findImpl(const SlicedHistogram& histogram, VirtualFunction1<void, Span>& handler) const {
+void ContentSpanFinder::findImpl(const SlicedHistogram& histogram, VirtualFunction<void, Span>& handler) const {
     const auto hist_size = static_cast<const int>(histogram.size());
 
     int i = 0;

@@ -25,7 +25,7 @@
 #include <QPointer>
 #include <utility>
 
-class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
+class DebugImageView::ImageLoadResult : public AbstractCommand<void> {
 public:
     ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image)
             : m_ptrOwner(std::move(owner)), m_image(image) {
@@ -44,7 +44,7 @@ private:
 };
 
 
-class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
+class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
 public:
     ImageLoader(DebugImageView* owner, const QString& file_path) : m_ptrOwner(owner), m_filePath(file_path) {
     }

@@ -710,8 +710,8 @@ void MainWindow::invalidateAllThumbnails() {
     m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
-intrusive_ptr<AbstractCommand0<void>> MainWindow::relinkingDialogRequester() {
-    class Requester : public AbstractCommand0<void> {
+intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
+    class Requester : public AbstractCommand<void> {
     public:
         Requester(MainWindow* wnd) : m_ptrWnd(wnd) {
         }

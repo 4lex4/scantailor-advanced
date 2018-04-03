@@ -56,7 +56,7 @@ private:
 };
 
 
-class DespeckleView::DespeckleTask : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
+class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
 public:
     DespeckleTask(DespeckleView* owner,
                   const DespeckleState& despeckle_state,
@@ -75,7 +75,7 @@ private:
 };
 
 
-class DespeckleView::DespeckleResult : public AbstractCommand0<void> {
+class DespeckleView::DespeckleResult : public AbstractCommand<void> {
 public:
     DespeckleResult(QPointer<DespeckleView> owner,
                     intrusive_ptr<TaskCancelHandle> cancel_handle,

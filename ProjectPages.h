@@ -65,7 +65,7 @@ public:
 
     PageSequence toPageSequence(PageView view) const;
 
-    void listRelinkablePaths(VirtualFunction1<void, const RelinkablePath&>& sink) const;
+    void listRelinkablePaths(VirtualFunction<void, const RelinkablePath&>& sink) const;
 
     /**
      * \note It's up to the caller to make sure different paths aren't collapsed into one.

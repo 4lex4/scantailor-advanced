@@ -39,7 +39,7 @@ static const QRgb mask_color = 0xff587ff4;
 
 using namespace imageproc;
 
-class PictureZoneEditor::MaskTransformTask : public AbstractCommand0<intrusive_ptr<AbstractCommand0<void>>>,
+class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>,
                                              public QObject {
     DECLARE_NON_COPYABLE(MaskTransformTask)
 
@@ -57,10 +57,10 @@ public:
         return m_ptrResult->isCancelled();
     }
 
-    intrusive_ptr<AbstractCommand0<void>> operator()() override;
+    intrusive_ptr<AbstractCommand<void>> operator()() override;
 
 private:
-    class Result : public AbstractCommand0<void> {
+    class Result : public AbstractCommand<void> {
     public:
         explicit Result(PictureZoneEditor* zone_editor);
 
@@ -306,7 +306,7 @@ PictureZoneEditor::MaskTransformTask::MaskTransformTask(PictureZoneEditor* zone_
         : m_ptrResult(new Result(zone_editor)), m_origMask(mask), m_xform(xform), m_targetSize(target_size) {
 }
 
-intrusive_ptr<AbstractCommand0<void>> PictureZoneEditor::MaskTransformTask::operator()() {
+intrusive_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::operator()() {
     if (isCancelled()) {
         return nullptr;
     }

@@ -154,9 +154,9 @@ private:
 
     int pageId(const PageId& page_id) const;
 
-    void enumImagesImpl(VirtualFunction2<void, const ImageId&, int>& out) const;
+    void enumImagesImpl(VirtualFunction<void, const ImageId&, int>& out) const;
 
-    void enumPagesImpl(VirtualFunction2<void, const PageId&, int>& out) const;
+    void enumPagesImpl(VirtualFunction<void, const PageId&, int>& out) const;
 
     PageSequence m_pageSequence;
     OutputFileNameGenerator m_outFileNameGen;
@@ -172,13 +172,13 @@ private:
 
 template<typename OutFunc>
 void ProjectWriter::enumImages(OutFunc out) const {
-    ProxyFunction2<OutFunc, void, const ImageId&, int> proxy(out);
+    ProxyFunction<OutFunc, void, const ImageId&, int> proxy(out);
     enumImagesImpl(proxy);
 }
 
 template<typename OutFunc>
 void ProjectWriter::enumPages(OutFunc out) const {
-    ProxyFunction2<OutFunc, void, const PageId&, int> proxy(out);
+    ProxyFunction<OutFunc, void, const PageId&, int> proxy(out);
     enumPagesImpl(proxy);
 }
 

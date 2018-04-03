@@ -36,7 +36,7 @@
 #include <set>
 #include <unordered_map>
 
-class RelinkingModel : public QAbstractListModel, public VirtualFunction1<void, const RelinkablePath&> {
+class RelinkingModel : public QAbstractListModel, public VirtualFunction<void, const RelinkablePath&> {
     DECLARE_NON_COPYABLE(RelinkingModel)
 
 public:

@@ -208,7 +208,7 @@ private:
                         DebugImages* debug_images = nullptr,
                         bool clear_image_widget = true) override;
 
-    intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() override;
+    intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() override;
 
     void switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
                             const QString& out_dir,

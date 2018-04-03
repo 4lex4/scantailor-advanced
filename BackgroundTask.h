@@ -26,7 +26,7 @@
 #include <QAtomicInt>
 #include <exception>
 
-class BackgroundTask : public AbstractCommand0<FilterResultPtr>, public TaskStatus {
+class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatus {
 public:
     enum Type { INTERACTIVE, BATCH };
 

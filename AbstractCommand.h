@@ -22,31 +22,12 @@
 #include "ref_countable.h"
 #include "intrusive_ptr.h"
 
-template<typename R>
-class AbstractCommand0 : public ref_countable {
+template<typename Res, typename... ArgTypes>
+class AbstractCommand : public ref_countable {
 public:
-    typedef intrusive_ptr<AbstractCommand0> Ptr;
+    typedef intrusive_ptr<AbstractCommand> Ptr;
 
-    virtual R operator()() = 0;
+    virtual Res operator()(ArgTypes... args) = 0;
 };
-
-
-template<typename R, typename A1>
-class AbstractCommand1 : public ref_countable {
-public:
-    typedef intrusive_ptr<AbstractCommand1> Ptr;
-
-    virtual R operator()(A1 arg1) = 0;
-};
-
-
-template<typename R, typename T1, typename T2>
-class AbstractCommand2 : public ref_countable {
-public:
-    typedef intrusive_ptr<AbstractCommand2> Ptr;
-
-    virtual R operator()(T1 arg1, T2 arg2) = 0;
-};
-
 
 #endif  // ifndef ABSTRACTCOMMAND_H_

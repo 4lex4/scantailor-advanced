@@ -67,12 +67,12 @@ protected:
      *        the image metadata.  If there are multiple images (pages) in
      *        the file, this object will be called multiple times.
      */
-    virtual Status loadMetadata(QIODevice& io_device, VirtualFunction1<void, const ImageMetadata&>& out) = 0;
+    virtual Status loadMetadata(QIODevice& io_device, VirtualFunction<void, const ImageMetadata&>& out) = 0;
 
 private:
-    static Status loadImpl(QIODevice& io_device, VirtualFunction1<void, const ImageMetadata&>& out);
+    static Status loadImpl(QIODevice& io_device, VirtualFunction<void, const ImageMetadata&>& out);
 
-    static Status loadImpl(const QString& file_path, VirtualFunction1<void, const ImageMetadata&>& out);
+    static Status loadImpl(const QString& file_path, VirtualFunction<void, const ImageMetadata&>& out);
 
     typedef std::vector<intrusive_ptr<ImageMetadataLoader>> LoaderList;
     static LoaderList m_sLoaders;
@@ -81,14 +81,14 @@ private:
 
 template<typename OutFunc>
 ImageMetadataLoader::Status ImageMetadataLoader::load(QIODevice& io_device, OutFunc out) {
-    ProxyFunction1<OutFunc, void, const ImageMetadata&> proxy(out);
+    ProxyFunction<OutFunc, void, const ImageMetadata&> proxy(out);
 
     return loadImpl(io_device, proxy);
 }
 
 template<typename OutFunc>
 ImageMetadataLoader::Status ImageMetadataLoader::load(const QString& file_path, OutFunc out) {
-    ProxyFunction1<OutFunc, void, const ImageMetadata&> proxy(out);
+    ProxyFunction<OutFunc, void, const ImageMetadata&> proxy(out);
 
     return loadImpl(file_path, proxy);
 }

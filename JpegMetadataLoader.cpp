@@ -195,7 +195,7 @@ void JpegMetadataLoader::registerMyself() {
 }
 
 ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_device,
-                                                             VirtualFunction1<void, const ImageMetadata&>& out) {
+                                                             VirtualFunction<void, const ImageMetadata&>& out) {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }

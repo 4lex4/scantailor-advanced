@@ -40,7 +40,7 @@
 
 using namespace imageproc;
 
-class ImageViewBase::HqTransformTask : public AbstractCommand0<intrusive_ptr<AbstractCommand0<void>>>, public QObject {
+class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>, public QObject {
     DECLARE_NON_COPYABLE(HqTransformTask)
 
 public:
@@ -54,10 +54,10 @@ public:
         return m_ptrResult->isCancelled();
     }
 
-    intrusive_ptr<AbstractCommand0<void>> operator()() override;
+    intrusive_ptr<AbstractCommand<void>> operator()() override;
 
 private:
-    class Result : public AbstractCommand0<void> {
+    class Result : public AbstractCommand<void> {
     public:
         explicit Result(ImageViewBase* image_view);
 
@@ -1019,7 +1019,7 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
         : m_ptrResult(new Result(image_view)), m_image(image), m_xform(xform), m_targetSize(target_size) {
 }
 
-intrusive_ptr<AbstractCommand0<void>> ImageViewBase::HqTransformTask::operator()() {
+intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()() {
     if (isCancelled()) {
         return nullptr;
     }

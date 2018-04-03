@@ -118,7 +118,7 @@ LoadFileTask::ErrorResult::ErrorResult(const QString& file_path)
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
     class ErrWidget : public ErrorWidget {
     public:
-        ErrWidget(intrusive_ptr<AbstractCommand0<void>> relinking_dialog_requester,
+        ErrWidget(intrusive_ptr<AbstractCommand<void>> relinking_dialog_requester,
                   const QString& text,
                   Qt::TextFormat fmt = Qt::AutoText)
                 : ErrorWidget(text, fmt), m_ptrRelinkingDialogRequester(std::move(relinking_dialog_requester)) {
@@ -129,7 +129,7 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
             (*m_ptrRelinkingDialogRequester)();
         }
 
-        intrusive_ptr<AbstractCommand0<void>> m_ptrRelinkingDialogRequester;
+        intrusive_ptr<AbstractCommand<void>> m_ptrRelinkingDialogRequester;
     };
 
 

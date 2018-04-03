@@ -110,7 +110,7 @@ void SplineFitter::addAttractionForce(const Vec2d& spline_point,
 }  // SplineFitter::addAttractionForce
 
 void SplineFitter::addAttractionForces(const ModelShape& model_shape, double from_t, double to_t) {
-    class SampleProcessor : public VirtualFunction3<void, QPointF, double, FittableSpline::SampleFlags> {
+    class SampleProcessor : public VirtualFunction<void, QPointF, double, FittableSpline::SampleFlags> {
     public:
         SampleProcessor(SplineFitter& owner, const ModelShape& model_shape)
                 : m_rOwner(owner), m_rModelShape(model_shape) {

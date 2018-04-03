@@ -162,7 +162,7 @@ public:
     QPointF pointClosestTo(QPointF to, double accuracy = 0.2) const;
 
     /** \see spfit::FittableSpline::sample() */
-    void sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+    void sample(VirtualFunction<void, QPointF, double, SampleFlags>& sink,
                 const SamplingParams& params = SamplingParams(),
                 double from_t = 0.0,
                 double to_t = 1.0) const override;
@@ -207,7 +207,7 @@ private:
 
     DecomposedDerivs decomposedDerivsImpl(int segment, double t) const;
 
-    void maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+    void maybeAddMoreSamples(VirtualFunction<void, QPointF, double, SampleFlags>& sink,
                              double max_sqdist_to_spline,
                              double max_sqdist_between_samples,
                              double num_segments,

@@ -107,7 +107,7 @@ public:
      *       corresponding to them will be marked with HEAD_SAMPLE
      *       and TAIL_SAMPLE respectably.
      */
-    virtual void sample(VirtualFunction<void, QPointF, double, SampleFlags>& sink,
+    virtual void sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                         const SamplingParams& params,
                         double from_t = 0.0,
                         double to_t = 1.0) const = 0;

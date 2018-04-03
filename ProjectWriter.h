@@ -154,9 +154,9 @@ private:
 
     int pageId(const PageId& page_id) const;
 
-    void enumImagesImpl(VirtualFunction<void, const ImageId&, int>& out) const;
+    void enumImagesImpl(const VirtualFunction<void, const ImageId&, int>& out) const;
 
-    void enumPagesImpl(VirtualFunction<void, const PageId&, int>& out) const;
+    void enumPagesImpl(const VirtualFunction<void, const PageId&, int>& out) const;
 
     PageSequence m_pageSequence;
     OutputFileNameGenerator m_outFileNameGen;
@@ -170,16 +170,14 @@ private:
 };
 
 
-template<typename OutFunc>
-void ProjectWriter::enumImages(OutFunc out) const {
-    ProxyFunction<OutFunc, void, const ImageId&, int> proxy(out);
-    enumImagesImpl(proxy);
+template<typename Callable>
+void ProjectWriter::enumImages(Callable out) const {
+    enumImagesImpl(ProxyFunction<Callable, void, const ImageId&, int>(out));
 }
 
-template<typename OutFunc>
-void ProjectWriter::enumPages(OutFunc out) const {
-    ProxyFunction<OutFunc, void, const PageId&, int> proxy(out);
-    enumPagesImpl(proxy);
+template<typename Callable>
+void ProjectWriter::enumPages(Callable out) const {
+    enumPagesImpl(ProxyFunction<Callable, void, const PageId&, int>(out));
 }
 
 #endif  // ifndef PROJECTWRITER_H_

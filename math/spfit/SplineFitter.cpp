@@ -110,26 +110,16 @@ void SplineFitter::addAttractionForce(const Vec2d& spline_point,
 }  // SplineFitter::addAttractionForce
 
 void SplineFitter::addAttractionForces(const ModelShape& model_shape, double from_t, double to_t) {
-    class SampleProcessor : public VirtualFunction<void, QPointF, double, FittableSpline::SampleFlags> {
-    public:
-        SampleProcessor(SplineFitter& owner, const ModelShape& model_shape)
-                : m_rOwner(owner), m_rModelShape(model_shape) {
-        }
-
-        void operator()(QPointF pt, double t, FittableSpline::SampleFlags flags) override {
-            m_rOwner.m_pSpline->linearCombinationAt(t, m_rOwner.m_tempCoeffs);
-            const SqDistApproximant approx(m_rModelShape.localSqDistApproximant(pt, flags));
-            m_rOwner.addAttractionForce(pt, m_rOwner.m_tempCoeffs, approx);
-        }
-
-    private:
-        SplineFitter& m_rOwner;
-        const ModelShape& m_rModelShape;
+    auto sample_processor = [this, &model_shape](const QPointF& pt, double t, FittableSpline::SampleFlags flags) {
+        m_pSpline->linearCombinationAt(t, m_tempCoeffs);
+        const SqDistApproximant approx(model_shape.localSqDistApproximant(pt, flags));
+        addAttractionForce(pt, m_tempCoeffs, approx);
     };
 
-
-    SampleProcessor sample_processor(*this, model_shape);
-    m_pSpline->sample(sample_processor, m_samplingParams, from_t, to_t);
+    m_pSpline->sample(
+            ProxyFunction<decltype(sample_processor), void, const QPointF&, double, FittableSpline::SampleFlags>(
+                    sample_processor),
+            m_samplingParams, from_t, to_t);
 }
 
 void SplineFitter::addExternalForce(const QuadraticFunction& force) {

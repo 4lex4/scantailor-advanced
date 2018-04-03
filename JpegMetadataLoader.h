@@ -37,7 +37,7 @@ public:
     static void registerMyself();
 
 protected:
-    Status loadMetadata(QIODevice& io_device, VirtualFunction<void, const ImageMetadata&>& out) override;
+    Status loadMetadata(QIODevice& io_device, const VirtualFunction<void, const ImageMetadata&>& out) override;
 };
 
 

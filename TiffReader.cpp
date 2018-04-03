@@ -237,7 +237,7 @@ bool TiffReader::canRead(QIODevice& device) {
 }
 
 ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
-                                                     VirtualFunction<void, const ImageMetadata&>& out) {
+                                                     const VirtualFunction<void, const ImageMetadata&>& out) {
     if (!device.isReadable()) {
         return ImageMetadataLoader::GENERIC_ERROR;
     }

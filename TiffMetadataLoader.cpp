@@ -28,6 +28,6 @@ void TiffMetadataLoader::registerMyself() {
 }
 
 ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& io_device,
-                                                             VirtualFunction<void, const ImageMetadata&>& out) {
+                                                             const VirtualFunction<void, const ImageMetadata&>& out) {
     return TiffReader::readMetadata(io_device, out);
 }

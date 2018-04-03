@@ -27,7 +27,7 @@ public:
     virtual ~VirtualFunction() {
     }
 
-    virtual Res operator()(ArgTypes... args) = 0;
+    virtual Res operator()(ArgTypes... args) const = 0;
 };
 
 
@@ -37,7 +37,7 @@ public:
     explicit ProxyFunction(Delegate delegate) : m_delegate(delegate) {
     }
 
-    Res operator()(ArgTypes... args) override {
+    Res operator()(ArgTypes... args) const override {
         return m_delegate(args...);
     }
 

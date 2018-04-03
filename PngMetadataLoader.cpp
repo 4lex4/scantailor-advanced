@@ -84,7 +84,7 @@ void PngMetadataLoader::registerMyself() {
 }
 
 ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device,
-                                                            VirtualFunction<void, const ImageMetadata&>& out) {
+                                                            const VirtualFunction<void, const ImageMetadata&>& out) {
     if (!io_device.isReadable()) {
         return GENERIC_ERROR;
     }

@@ -32,7 +32,7 @@ public:
     static bool canRead(QIODevice& device);
 
     static ImageMetadataLoader::Status readMetadata(QIODevice& device,
-                                                    VirtualFunction<void, const ImageMetadata&>& out);
+                                                    const VirtualFunction<void, const ImageMetadata&>& out);
 
     /**
      * \brief Reads the image from io device to QImage.

@@ -216,7 +216,7 @@ BlackWhiteOptions::ColorSegmenterOptions::ColorSegmenterOptions(const QDomElemen
 
 QDomElement BlackWhiteOptions::ColorSegmenterOptions::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
-    el.setAttribute("colorSegmentationEnabled", enabled ? "1" : "0");
+    el.setAttribute("enabled", enabled ? "1" : "0");
     el.setAttribute("noiseReduction", noiseReduction);
     el.setAttribute("redThresholdAdjustment", redThresholdAdjustment);
     el.setAttribute("greenThresholdAdjustment", greenThresholdAdjustment);

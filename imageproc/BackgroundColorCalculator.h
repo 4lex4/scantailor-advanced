@@ -8,6 +8,7 @@
 class QImage;
 class QColor;
 class QPolygonF;
+class DebugImages;
 
 namespace imageproc {
 class GrayscaleHistogram;
@@ -17,12 +18,16 @@ class BackgroundColorCalculator {
 public:
     static QColor calcDominantBackgroundColor(const QImage& img);
 
-    static QColor calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask);
+    static QColor calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask, DebugImages* dbg = nullptr);
 
-    static QColor calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area);
+    static QColor calcDominantBackgroundColor(const QImage& img,
+                                              const QPolygonF& crop_area,
+                                              DebugImages* dbg = nullptr);
 
 private:
     static uint8_t calcDominantLevel(const int* hist);
+
+    static QColor calcDominantColor(const QImage& img, const BinaryImage& background_mask);
 };
 }  // namespace imageproc
 

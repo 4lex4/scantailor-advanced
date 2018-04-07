@@ -35,6 +35,9 @@
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <UnitsConverter.h>
 #include <OrderByDeviationProvider.h>
+#include <XmlMarshaller.h>
+#include <Utils.h>
+#include <XmlUnmarshaller.h>
 
 namespace select_content {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
@@ -90,9 +93,8 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
     QDomElement filter_el(doc.createElement("select-content"));
 
-    filter_el.setAttribute("pageDetectionBoxWidth", m_ptrSettings->pageDetectionBox().width());
-    filter_el.setAttribute("pageDetectionBoxHeight", m_ptrSettings->pageDetectionBox().height());
-    filter_el.setAttribute("pageDetectionTolerance", m_ptrSettings->pageDetectionTolerance());
+    filter_el.appendChild(XmlMarshaller(doc).sizeF(m_ptrSettings->pageDetectionBox(), "page-detection-box"));
+    filter_el.setAttribute("pageDetectionTolerance", Utils::doubleToString(m_ptrSettings->pageDetectionTolerance()));
 
     writer.enumPages([&](const PageId& page_id, int numeric_id) {
         this->writePageSettings(doc, filter_el, page_id, numeric_id);
@@ -119,11 +121,7 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
 
     const QDomElement filter_el(filters_el.namedItem("select-content").toElement());
 
-    QSizeF box(0.0, 0.0);
-    box.setWidth(filter_el.attribute("pageDetectionBoxWidth", "0.0").toDouble());
-    box.setHeight(filter_el.attribute("pageDetectionBoxHeight", "0.0").toDouble());
-    m_ptrSettings->setPageDetectionBox(box);
-
+    m_ptrSettings->setPageDetectionBox(XmlUnmarshaller::sizeF(filter_el.namedItem("page-detection-box").toElement()));
     m_ptrSettings->setPageDetectionTolerance(filter_el.attribute("pageDetectionTolerance", "0.1").toDouble());
 
     const QString page_tag_name("page");

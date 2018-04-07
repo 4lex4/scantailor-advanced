@@ -17,6 +17,7 @@
  */
 
 #include "BlackWhiteOptions.h"
+#include "../../Utils.h"
 #include <QDomDocument>
 #include <cmath>
 
@@ -55,10 +56,10 @@ QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) con
     el.setAttribute("morphologicalSmoothing", morphologicalSmoothingEnabled ? "1" : "0");
     el.setAttribute("normalizeIlluminationBW", m_normalizeIllumination ? "1" : "0");
     el.setAttribute("windowSize", windowSize);
-    el.setAttribute("sauvolaCoef", sauvolaCoef);
+    el.setAttribute("sauvolaCoef", Utils::doubleToString(sauvolaCoef));
     el.setAttribute("wolfLowerBound", wolfLowerBound);
     el.setAttribute("wolfUpperBound", wolfUpperBound);
-    el.setAttribute("wolfCoef", wolfCoef);
+    el.setAttribute("wolfCoef", Utils::doubleToString(wolfCoef));
     el.setAttribute("binarizationMethod", formatBinarizationMethod(binarizationMethod));
     el.appendChild(colorSegmenterOptions.toXml(doc, "color-segmenter-options"));
 

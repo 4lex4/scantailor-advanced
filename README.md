@@ -179,9 +179,6 @@ Features
     * Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
        The option refreshes the thumbnails instantly.
     
-    * Support for processing of images with light content on dark background.
-       Now that kind of images can correctly be handled on all the stages. Many book covers are examples of such images.
-    
     * Deviation feature reworked.
         1. A deviation provider implemented.
         It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  

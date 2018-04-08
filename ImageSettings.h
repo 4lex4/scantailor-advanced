@@ -19,7 +19,7 @@ public:
     public:
         PageParams();
 
-        PageParams(const imageproc::BinaryThreshold& bwThreshold, bool blackOnWhite);
+        explicit PageParams(const imageproc::BinaryThreshold& bwThreshold);
 
         explicit PageParams(const QDomElement& el);
 
@@ -29,13 +29,8 @@ public:
 
         void setBwThreshold(const imageproc::BinaryThreshold& bwThreshold);
 
-        bool isBlackOnWhite() const;
-
-        void setBlackOnWhite(bool blackOnWhite);
-
     private:
         imageproc::BinaryThreshold bwThreshold;
-        bool blackOnWhite;
     };
 
     ImageSettings() = default;

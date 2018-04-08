@@ -170,7 +170,9 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img)
     checkImageIsValid(img);
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(img));
-    background_mask.invert();
+    if (2 * background_mask.countBlackPixels() <= (background_mask.width() * background_mask.height())) {
+        background_mask.invert();
+    }
 
     return calcDominantColor(img, background_mask);
 }
@@ -185,7 +187,9 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
     }
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
-    background_mask.invert();
+    if (2 * background_mask.countBlackPixels() <= mask.countBlackPixels()) {
+        background_mask.invert();
+    }
     rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
     if (dbg) {
         dbg->add(background_mask, "background_mask");

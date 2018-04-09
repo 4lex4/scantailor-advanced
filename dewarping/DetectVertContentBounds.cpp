@@ -53,7 +53,7 @@ struct Segment {
     int vertDist;
 
     bool distToVertLine(int vert_line_x) const {
-        return (bool) std::min<int>(abs(line.p1().x() - vert_line_x), abs(line.p2().x() - vert_line_x));
+        return (bool) std::min<int>(std::abs(line.p1().x() - vert_line_x), std::abs(line.p2().x() - vert_line_x));
     }
 
     Segment(const QLine& line, const Vec2d& vec, int dist) : line(line), unitVec(vec), vertDist(dist) {
@@ -137,7 +137,7 @@ private:
 
 
 RansacAlgo::RansacAlgo(const std::vector<Segment>& segments)
-        : m_rSegments(segments), m_cosThreshold(cos(4.0 * constants::DEG2RAD)) {
+        : m_rSegments(segments), m_cosThreshold(std::cos(4.0 * constants::DEG2RAD)) {
 }
 
 void RansacAlgo::buildAndAssessModel(const Segment& seed_segment) {
@@ -259,12 +259,12 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbg_
         assert(pt2.y() > pt1.y());
 
         Vec2d vec(pt2 - pt1);
-        if (fabs(vec[0]) > fabs(vec[1])) {
+        if (std::fabs(vec[0]) > std::fabs(vec[1])) {
             // We don't want segments that are more horizontal than vertical.
             continue;
         }
 
-        vec /= sqrt(vec.squaredNorm());
+        vec /= std::sqrt(vec.squaredNorm());
         segments.emplace_back(QLine(pt1, pt2), vec, pt2.y() - pt1.y());
     }
 
@@ -312,7 +312,7 @@ QLineF SequentialColumnProcessor::interpolateSegments(const std::vector<Segment>
     double accum_weight = 0;
 
     for (const Segment& seg : segments) {
-        const double weight = sqrt(double(seg.vertDist));
+        const double weight = std::sqrt(double(seg.vertDist));
         accum_vec += weight * seg.unitVec;
         accum_weight += weight;
     }

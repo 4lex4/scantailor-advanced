@@ -48,9 +48,9 @@ namespace {
  * We want horizontal proximity to have greater weight, so we
  * multiply the vertical component distances by VERTICAL_SCALE,
  * so that the distance is not:\n
- * sqrt(dx^2 + dy^2)\n
+ * std::sqrt(dx^2 + dy^2)\n
  * but:\n
- * sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
+ * std::sqrt(dx^2 + (VERTICAL_SCALE*dy)^2)\n
  * Keep in mind that we actually operate on squared distances,
  * so we don't need to take that square root.
  */

@@ -242,13 +242,13 @@ int ProjectWriter::pageId(const PageId& page_id) const {
     return it->numericId;
 }
 
-void ProjectWriter::enumImagesImpl(VirtualFunction2<void, const ImageId&, int>& out) const {
+void ProjectWriter::enumImagesImpl(const VirtualFunction<void, const ImageId&, int>& out) const {
     for (const Image& image : m_images.get<Sequenced>()) {
         out(image.id, image.numericId);
     }
 }
 
-void ProjectWriter::enumPagesImpl(VirtualFunction2<void, const PageId&, int>& out) const {
+void ProjectWriter::enumPagesImpl(const VirtualFunction<void, const PageId&, int>& out) const {
     for (const Page& page : m_pages.get<Sequenced>()) {
         out(page.id, page.numericId);
     }

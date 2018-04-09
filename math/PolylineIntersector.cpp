@@ -135,7 +135,7 @@ bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line,
 
     const ToLineProjector proj(line);
 
-    if (fabs(front_dot) < fabs(back_dot)) {
+    if (std::fabs(front_dot) < std::fabs(back_dot)) {
         hint.update(-1);
         intersection = proj.projectionPoint(m_polyline.front());
     } else {

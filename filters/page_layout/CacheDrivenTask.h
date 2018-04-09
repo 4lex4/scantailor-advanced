@@ -22,6 +22,7 @@
 #include "NonCopyable.h"
 #include "ref_countable.h"
 #include "intrusive_ptr.h"
+#include <QPolygonF>
 
 class QRectF;
 class PageInfo;
@@ -50,6 +51,8 @@ public:
                  const QRectF& content_rect);
 
 private:
+    static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
+
     intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;
     intrusive_ptr<Settings> m_ptrSettings;
 };

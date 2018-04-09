@@ -38,7 +38,7 @@ class ThumbnailPixmapCache : public ref_countable {
 public:
     enum Status { LOADED, LOAD_FAILED, QUEUED };
 
-    typedef AbstractCommand1<void, const ThumbnailLoadResult&> CompletionHandler;
+    typedef AbstractCommand<void, const ThumbnailLoadResult&> CompletionHandler;
 
     /**
      * \brief Constructor.  To be called from the GUI thread only.

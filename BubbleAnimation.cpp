@@ -64,8 +64,8 @@ bool BubbleAnimation::nextFrame(const QColor& head_color,
 
     for (int i = 0; i < m_numBubbles; ++i) {
         const double angle = -0.5 * PI + 2.0 * PI * (m_curFrame - i) / m_numBubbles;
-        const double s = sin(angle);
-        const double c = cos(angle);
+        const double s = std::sin(angle);
+        const double c = std::cos(angle);
         const QPointF vec(c * reduced_radius, s * reduced_radius);
         QRectF r(0.0, 0.0, 2.0 * bubble_radius, 2.0 * bubble_radius);
         r.moveCenter(center + vec);

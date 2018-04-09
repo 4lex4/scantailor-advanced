@@ -40,7 +40,7 @@
 
 using namespace imageproc;
 
-class ImageViewBase::HqTransformTask : public AbstractCommand0<intrusive_ptr<AbstractCommand0<void>>>, public QObject {
+class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>, public QObject {
     DECLARE_NON_COPYABLE(HqTransformTask)
 
 public:
@@ -54,10 +54,10 @@ public:
         return m_ptrResult->isCancelled();
     }
 
-    intrusive_ptr<AbstractCommand0<void>> operator()() override;
+    intrusive_ptr<AbstractCommand<void>> operator()() override;
 
 private:
-    class Result : public AbstractCommand0<void> {
+    class Result : public AbstractCommand<void> {
     public:
         explicit Result(ImageViewBase* image_view);
 
@@ -321,7 +321,7 @@ void ImageViewBase::moveTowardsIdealPosition(const double pixel_length) {
     }
 
     QPointF vec(ideal_widget_fp - m_widgetFocalPoint);
-    const double max_length = sqrt(vec.x() * vec.x() + vec.y() * vec.y());
+    const double max_length = std::sqrt(vec.x() * vec.x() + vec.y() * vec.y());
     if (pixel_length >= max_length) {
         m_widgetFocalPoint = ideal_widget_fp;
     } else {
@@ -626,8 +626,8 @@ void ImageViewBase::updateScrollBars() {
             ymin = std::min<double>(viewport_center.y(), viewport.bottom() - 0.5 * picture.height());
         }
 
-        const auto xrange = (int) ceil(xmax - xmin);
-        const auto yrange = (int) ceil(ymax - ymin);
+        const auto xrange = (int) std::ceil(xmax - xmin);
+        const auto yrange = (int) std::ceil(ymax - ymin);
         const int xfirst = 0;
         const int xlast = xrange - 1;
         const int yfirst = 0;
@@ -788,12 +788,12 @@ QPointF ImageViewBase::getIdealWidgetFocalPoint(const FocalPointMode mode) const
     } else if ((left_margin < 0.0) && (right_margin > 0.0)) {
         // Move image to the right so that either left_margin or
         // right_margin becomes zero, whichever requires less movement.
-        const double movement = std::min(fabs(left_margin), fabs(right_margin));
+        const double movement = std::min(std::fabs(left_margin), std::fabs(right_margin));
         widget_focal_point.rx() += movement;
     } else if ((right_margin < 0.0) && (left_margin > 0.0)) {
         // Move image to the left so that either left_margin or
         // right_margin becomes zero, whichever requires less movement.
-        const double movement = std::min(fabs(left_margin), fabs(right_margin));
+        const double movement = std::min(std::fabs(left_margin), std::fabs(right_margin));
         widget_focal_point.rx() -= movement;
     }
 
@@ -805,12 +805,12 @@ QPointF ImageViewBase::getIdealWidgetFocalPoint(const FocalPointMode mode) const
     } else if ((top_margin < 0.0) && (bottom_margin > 0.0)) {
         // Move image down so that either top_margin or bottom_margin
         // becomes zero, whichever requires less movement.
-        const double movement = std::min(fabs(top_margin), fabs(bottom_margin));
+        const double movement = std::min(std::fabs(top_margin), std::fabs(bottom_margin));
         widget_focal_point.ry() += movement;
     } else if ((bottom_margin < 0.0) && (top_margin > 0.0)) {
         // Move image up so that either top_margin or bottom_margin
         // becomes zero, whichever requires less movement.
-        const double movement = std::min(fabs(top_margin), fabs(bottom_margin));
+        const double movement = std::min(std::fabs(top_margin), std::fabs(bottom_margin));
         widget_focal_point.ry() -= movement;
     }
 
@@ -859,7 +859,7 @@ void ImageViewBase::adjustAndSetNewWidgetFP(const QPointF proposed_widget_fp, co
     if (towards_ideal.x() * towards_proposed.x() < 0.0) {
         // Wrong direction - no movement at all.
         movement.setX(0.0);
-    } else if (fabs(towards_proposed.x()) > fabs(towards_ideal.x())) {
+    } else if (std::fabs(towards_proposed.x()) > std::fabs(towards_ideal.x())) {
         // Too much movement - limit it.
         movement.setX(towards_ideal.x());
     }
@@ -867,7 +867,7 @@ void ImageViewBase::adjustAndSetNewWidgetFP(const QPointF proposed_widget_fp, co
     if (towards_ideal.y() * towards_proposed.y() < 0.0) {
         // Wrong direction - no movement at all.
         movement.setY(0.0);
-    } else if (fabs(towards_proposed.y()) > fabs(towards_ideal.y())) {
+    } else if (std::fabs(towards_proposed.y()) > std::fabs(towards_ideal.y())) {
         // Too much movement - limit it.
         movement.setY(towards_ideal.y());
     }
@@ -1019,7 +1019,7 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
         : m_ptrResult(new Result(image_view)), m_image(image), m_xform(xform), m_targetSize(target_size) {
 }
 
-intrusive_ptr<AbstractCommand0<void>> ImageViewBase::HqTransformTask::operator()() {
+intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()() {
     if (isCancelled()) {
         return nullptr;
     }

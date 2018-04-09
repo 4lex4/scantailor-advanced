@@ -51,7 +51,7 @@ public:
     /**
      * Returns a callable object that when called will open a relinking dialog.
      */
-    virtual intrusive_ptr<AbstractCommand0<void>> relinkingDialogRequester() = 0;
+    virtual intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() = 0;
 };
 
 

@@ -29,7 +29,7 @@ void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> load
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
-                                                          VirtualFunction1<void, const ImageMetadata&>& out) {
+                                                          const VirtualFunction<void, const ImageMetadata&>& out) {
     auto it(m_sLoaders.begin());
     const auto end(m_sLoaders.end());
     for (; it != end; ++it) {
@@ -43,7 +43,7 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& file_path,
-                                                          VirtualFunction1<void, const ImageMetadata&>& out) {
+                                                          const VirtualFunction<void, const ImageMetadata&>& out) {
     QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         return GENERIC_ERROR;

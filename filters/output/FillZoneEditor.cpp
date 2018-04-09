@@ -83,7 +83,7 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
     rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
     for (const Zone& zone : m_ptrSettings->fillZonesForPage(page_id)) {
-        EditableSpline::Ptr spline(new EditableSpline(zone.spline().transformed(m_origToImage)));
+        auto spline = make_intrusive<EditableSpline>(zone.spline().transformed(m_origToImage));
         m_zones.addZone(spline, zone.properties());
     }
 }

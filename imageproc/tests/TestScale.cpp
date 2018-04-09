@@ -49,7 +49,7 @@ static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
 
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            if (abs(int(line1[x]) - int(line2[x])) > 1) {
+            if (std::abs(int(line1[x]) - int(line2[x])) > 1) {
                 return false;
             }
         }

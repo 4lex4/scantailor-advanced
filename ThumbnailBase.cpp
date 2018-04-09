@@ -29,7 +29,7 @@
 
 using namespace imageproc;
 
-class ThumbnailBase::LoadCompletionHandler : public AbstractCommand1<void, const ThumbnailLoadResult&> {
+class ThumbnailBase::LoadCompletionHandler : public AbstractCommand<void, const ThumbnailLoadResult&> {
     DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
 public:

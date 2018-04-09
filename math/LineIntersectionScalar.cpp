@@ -34,7 +34,7 @@ bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1
     // s1 = |b -v2|/|A|
     // s2 = |v1  b|/|A|
     const double det_A = v2.x() * v1.y() - v1.x() * v2.y();
-    if (fabs(det_A) < std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(det_A) < std::numeric_limits<double>::epsilon()) {
         return false;
     }
 
@@ -62,7 +62,7 @@ bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1
     // s1 = |b -v2|/|A|
     // s2 = |v1  b|/|A|
     const double det_A = v2.x() * v1.y() - v1.x() * v2.y();
-    if (fabs(det_A) < std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(det_A) < std::numeric_limits<double>::epsilon()) {
         return false;
     }
 

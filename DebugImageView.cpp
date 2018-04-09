@@ -25,7 +25,7 @@
 #include <QPointer>
 #include <utility>
 
-class DebugImageView::ImageLoadResult : public AbstractCommand0<void> {
+class DebugImageView::ImageLoadResult : public AbstractCommand<void> {
 public:
     ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image)
             : m_ptrOwner(std::move(owner)), m_image(image) {
@@ -44,7 +44,7 @@ private:
 };
 
 
-class DebugImageView::ImageLoader : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
+class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
 public:
     ImageLoader(DebugImageView* owner, const QString& file_path) : m_ptrOwner(owner), m_filePath(file_path) {
     }
@@ -52,7 +52,7 @@ public:
     BackgroundExecutor::TaskResultPtr operator()() override {
         QImage image(m_filePath);
 
-        return BackgroundExecutor::TaskResultPtr(new ImageLoadResult(m_ptrOwner, image));
+        return make_intrusive<ImageLoadResult>(m_ptrOwner, image);
     }
 
 private:
@@ -74,8 +74,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
 
 void DebugImageView::setLive(const bool live) {
     if (live && !m_isLive) {
-        ImageViewBase::backgroundExecutor().enqueueTask(
-                BackgroundExecutor::TaskPtr(new ImageLoader(this, m_file.get())));
+        ImageViewBase::backgroundExecutor().enqueueTask(make_intrusive<ImageLoader>(this, m_file.get()));
     } else if (!live && m_isLive) {
         if (QWidget* wgt = currentWidget()) {
             if (wgt != m_pPlaceholderWidget) {

@@ -91,7 +91,8 @@ struct XSpline::DecomposedDerivs {
     int numControlPoints;
 
     bool hasNonZeroCoeffs(int idx) const {
-        double sum = fabs(zeroDerivCoeffs[idx]) + fabs(firstDerivCoeffs[idx]) + fabs(secondDerivCoeffs[idx]);
+        double sum = std::fabs(zeroDerivCoeffs[idx]) + std::fabs(firstDerivCoeffs[idx])
+                     + std::fabs(secondDerivCoeffs[idx]);
 
         return sum > std::numeric_limits<double>::epsilon();
     }
@@ -157,7 +158,7 @@ QPointF XSpline::pointAt(double t) const {
         return pointAtImpl(num_segments - 1, 1.0);
     } else {
         const double t2 = t * num_segments;
-        const double segment = floor(t2);
+        const double segment = std::floor(t2);
 
         return pointAtImpl((int) segment, t2 - segment);
     }
@@ -176,7 +177,7 @@ QPointF XSpline::pointAtImpl(int segment, double t) const {
     return pt;
 }
 
-void XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+void XSpline::sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                      const SamplingParams& params,
                      double from_t,
                      double to_t) const {
@@ -210,7 +211,7 @@ void XSpline::sample(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
     sink(to_pt, to_t, TAIL_SAMPLE);
 }  // XSpline::sample
 
-void XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, SampleFlags>& sink,
+void XSpline::maybeAddMoreSamples(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                                   double max_sqdist_to_spline,
                                   double max_sqdist_between_samples,
                                   double num_segments,
@@ -227,7 +228,7 @@ void XSpline::maybeAddMoreSamples(VirtualFunction3<void, QPointF, double, Sample
 
     SampleFlags flags = DEFAULT_SAMPLE;
     double mid_t = 0.5 * (prev_t + next_t);
-    const double nearby_junction_t = floor(mid_t * num_segments + 0.5) * r_num_segments;
+    const double nearby_junction_t = std::floor(mid_t * num_segments + 0.5) * r_num_segments;
 
     // If nearby_junction_t is between prev_t and next_t, make it our mid_t.
     if (((nearby_junction_t - prev_t) * (next_t - prev_t) > 0)
@@ -273,7 +274,7 @@ void XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coef
         num_coeffs = linearCombinationFor(static_coeffs, num_segments - 1, 1.0);
     } else {
         const double t2 = t * num_segments;
-        const double segment = floor(t2);
+        const double segment = std::floor(t2);
         num_coeffs = linearCombinationFor(static_coeffs, (int) segment, t2 - segment);
     }
 
@@ -365,7 +366,7 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivs(const double t) const {
         return decomposedDerivsImpl(num_segments - 1, 1.0);
     } else {
         const double t2 = t * num_segments;
-        const double segment = floor(t2);
+        const double segment = std::floor(t2);
 
         return decomposedDerivsImpl((int) segment, t2 - segment);
     }
@@ -701,18 +702,12 @@ QPointF XSpline::pointClosestTo(const QPointF to, double accuracy) const {
 }
 
 std::vector<QPointF> XSpline::toPolyline(const SamplingParams& params, double from_t, double to_t) const {
-    struct Sink : public VirtualFunction3<void, QPointF, double, SampleFlags> {
-        std::vector<QPointF> polyline;
+    std::vector<QPointF> polyline;
 
-        void operator()(QPointF pt, double, SampleFlags) override {
-            polyline.push_back(pt);
-        }
-    };
+    auto sink = [&polyline](const QPointF& pt, double, SampleFlags) { polyline.push_back(pt); };
+    sample(ProxyFunction<decltype(sink), void, const QPointF&, double, SampleFlags>(sink), params, from_t, to_t);
 
-    Sink sink;
-    sample(sink, params, from_t, to_t);
-
-    return sink.polyline;
+    return polyline;
 }
 
 double XSpline::sqDistToLine(const QPointF& pt, const QLineF& line) {
@@ -841,7 +836,7 @@ double XSpline::HBlendFunc::secondDerivative(double u) const {
 
 double XSpline::PointAndDerivs::signedCurvature() const {
     const double cross = firstDeriv.x() * secondDeriv.y() - firstDeriv.y() * secondDeriv.x();
-    double tlen = sqrt(firstDeriv.x() * firstDeriv.x() + firstDeriv.y() * firstDeriv.y());
+    double tlen = std::sqrt(firstDeriv.x() * firstDeriv.x() + firstDeriv.y() * firstDeriv.y());
 
     return cross / (tlen * tlen * tlen);
 }

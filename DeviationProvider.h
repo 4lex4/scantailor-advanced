@@ -129,7 +129,7 @@ void DeviationProvider<K, Hash>::update() const {
 
 template<typename K, typename Hash>
 void DeviationProvider<K, Hash>::setComputeValueByKey(const std::function<double(const K&)>& computeValueByKey) {
-    DeviationProvider::computeValueByKey = computeValueByKey;
+    this->computeValueByKey = std::move(computeValueByKey);
 }
 
 template<typename K, typename Hash>

@@ -38,8 +38,6 @@ private slots:
 
     void commitChanges();
 
-    void onColorSchemeChanged(int idx);
-
 private:
     Ui::SettingsDialog ui;
 };

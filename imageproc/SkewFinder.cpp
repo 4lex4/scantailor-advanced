@@ -178,7 +178,7 @@ Skew SkewFinder::findSkew(const BinaryImage& image) const {
 }  // SkewFinder::findSkew
 
 double SkewFinder::process(const BinaryImage& src, BinaryImage& dst, const double angle) const {
-    const double tg = tan(angle * constants::DEG2RAD);
+    const double tg = std::tan(angle * constants::DEG2RAD);
     const double x_center = 0.5 * dst.width();
     vShearFromTo(src, dst, tg / m_resolutionRatio, x_center, WHITE);
 

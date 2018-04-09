@@ -448,7 +448,7 @@ void MainWindow::setupThumbView() {
         inner_width -= thumbView->frameWidth() * 2;
     }
     const int delta_x = thumbView->size().width() - inner_width;
-    thumbView->setMinimumWidth((int) ceil(m_maxLogicalThumbSize.width() + delta_x));
+    thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + delta_x));
 
     m_ptrThumbSequence->attachView(thumbView);
 
@@ -710,8 +710,8 @@ void MainWindow::invalidateAllThumbnails() {
     m_ptrThumbSequence->invalidateAllThumbnails();
 }
 
-intrusive_ptr<AbstractCommand0<void>> MainWindow::relinkingDialogRequester() {
-    class Requester : public AbstractCommand0<void> {
+intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
+    class Requester : public AbstractCommand<void> {
     public:
         Requester(MainWindow* wnd) : m_ptrWnd(wnd) {
         }
@@ -1923,8 +1923,8 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
     }
     assert(fix_orientation_task);
 
-    return BackgroundTaskPtr(new LoadFileTask(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
-                                              m_ptrThumbnailCache, m_ptrPages, fix_orientation_task));
+    return make_intrusive<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
+                                        m_ptrThumbnailCache, m_ptrPages, fix_orientation_task);
 }  // MainWindow::createCompositeTask
 
 intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int last_filter_idx) {

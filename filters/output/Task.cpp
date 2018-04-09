@@ -447,10 +447,10 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     }
 
     if (CommandLine::get().isGui()) {
-        return FilterResultPtr(new UiUpdater(m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params, new_xform,
-                                             generator.getPostTransform(), generator.outputContentRect(), m_pageId,
-                                             data.origImage(), out_img, automask_img, despeckle_state,
-                                             despeckle_visualization, m_batchProcessing, m_debug));
+        return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params, new_xform,
+                                         generator.getPostTransform(), generator.outputContentRect(), m_pageId,
+                                         data.origImage(), out_img, automask_img, despeckle_state,
+                                         despeckle_visualization, m_batchProcessing, m_debug);
     } else {
         return nullptr;
     }

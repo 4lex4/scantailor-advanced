@@ -38,7 +38,7 @@ void ArcLengthMapper::addSample(double x, double fx) {
         const double dx = x - m_samples.back().x;
         const double dy = fx - m_prevFX;
         assert(dx > 0);
-        arc_len = m_samples.back().arcLen + sqrt(dx * dx + dy * dy);
+        arc_len = m_samples.back().arcLen + std::sqrt(dx * dx + dy * dy);
     }
 
     m_samples.emplace_back(x, arc_len);

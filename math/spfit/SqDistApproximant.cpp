@@ -22,9 +22,9 @@
 
 namespace spfit {
 SqDistApproximant::SqDistApproximant(const Vec2d& origin, const Vec2d& u, const Vec2d& v, double m, double n) {
-    assert(fabs(u.squaredNorm() - 1.0) < 1e-06 && "u is not normalized");
-    assert(fabs(v.squaredNorm() - 1.0) < 1e-06 && "v is not normalized");
-    assert(fabs(u.dot(v)) < 1e-06 && "u and v are not orthogonal");
+    assert(std::fabs(u.squaredNorm() - 1.0) < 1e-06 && "u is not normalized");
+    assert(std::fabs(v.squaredNorm() - 1.0) < 1e-06 && "v is not normalized");
+    assert(std::fabs(u.dot(v)) < 1e-06 && "u and v are not orthogonal");
 
     // Consider the following equation:
     // w = R*x + t
@@ -69,7 +69,7 @@ SqDistApproximant SqDistApproximant::weightedLineDistance(const QLineF& line, do
     Vec2d u(line.p2() - line.p1());
     const double sqlen = u.squaredNorm();
     if (sqlen > 1e-6) {
-        u /= sqrt(sqlen);
+        u /= std::sqrt(sqlen);
     } else {
         return pointDistance(line.p1());
     }
@@ -90,13 +90,13 @@ SqDistApproximant SqDistApproximant::weightedCurveDistance(const Vec2d& referenc
                                                            const FrenetFrame& frenet_frame,
                                                            const double signed_curvature,
                                                            const double weight) {
-    const double abs_curvature = fabs(signed_curvature);
+    const double abs_curvature = std::fabs(signed_curvature);
     double m = 0;
 
     if (abs_curvature > std::numeric_limits<double>::epsilon()) {
         const Vec2d to_reference_point(reference_point - frenet_frame.origin());
         const double p = 1.0 / abs_curvature;
-        const double d = fabs(frenet_frame.unitNormal().dot(to_reference_point));
+        const double d = std::fabs(frenet_frame.unitNormal().dot(to_reference_point));
         m = d / (d + p);  // Formula 7 in [2].
     }
 

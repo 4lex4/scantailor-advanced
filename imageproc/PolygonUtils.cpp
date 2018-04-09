@@ -45,7 +45,7 @@ private:
     static int compare(const QPointF& lhs, const QPointF& rhs) {
         const double dx = lhs.x() - rhs.x();
         const double dy = lhs.y() - rhs.y();
-        if (fabs(dx) > fabs(dy)) {
+        if (std::fabs(dx) > std::fabs(dy)) {
             if (dx < 0.0) {
                 return -1;
             } else if (dx > 0.0) {
@@ -112,7 +112,7 @@ QPointF PolygonUtils::roundPoint(const QPointF& p) {
 }
 
 double PolygonUtils::roundValue(const double val) {
-    return floor(val * ROUNDING_MULTIPLIER + 0.5) * ROUNDING_RECIP_MULTIPLIER;
+    return std::floor(val * ROUNDING_MULTIPLIER + 0.5) * ROUNDING_RECIP_MULTIPLIER;
 }
 
 std::vector<QLineF> PolygonUtils::extractAndNormalizeEdges(const QPolygonF& poly) {
@@ -158,8 +158,8 @@ bool PolygonUtils::fuzzyCompareImpl(const QLineF& line1, const QLineF& line2) {
 }
 
 bool PolygonUtils::fuzzyCompareImpl(const QPointF& p1, const QPointF& p2) {
-    const double dx = fabs(p1.x() - p2.x());
-    const double dy = fabs(p1.y() - p2.y());
+    const double dx = std::fabs(p1.x() - p2.x());
+    const double dy = std::fabs(p1.y() - p2.y());
 
     return dx <= ROUNDING_RECIP_MULTIPLIER && dy <= ROUNDING_RECIP_MULTIPLIER;
 }

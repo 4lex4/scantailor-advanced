@@ -19,74 +19,26 @@
 #ifndef VIRTUALFUNCTION_H_
 #define VIRTUALFUNCTION_H_
 
-template<typename R, typename A1>
-class VirtualFunction1 {
+#include <utility>
+
+template<typename Res, typename... ArgTypes>
+class VirtualFunction {
 public:
-    virtual ~VirtualFunction1() {
+    virtual ~VirtualFunction() {
     }
 
-    virtual R operator()(A1 arg1) = 0;
+    virtual Res operator()(ArgTypes... args) const = 0;
 };
 
 
-template<typename Delegate, typename R, typename A1>
-class ProxyFunction1 : public VirtualFunction1<R, A1> {
+template<typename Delegate, typename Res, typename... ArgTypes>
+class ProxyFunction : public VirtualFunction<Res, ArgTypes...> {
 public:
-    explicit ProxyFunction1(Delegate delegate) : m_delegate(delegate) {
+    explicit ProxyFunction(Delegate delegate) : m_delegate(delegate) {
     }
 
-    virtual R operator()(A1 arg1) {
-        return m_delegate(arg1);
-    }
-
-private:
-    Delegate m_delegate;
-};
-
-
-template<typename R, typename A1, typename A2>
-class VirtualFunction2 {
-public:
-    virtual ~VirtualFunction2() {
-    }
-
-    virtual R operator()(A1 arg1, A2 arg2) = 0;
-};
-
-
-template<typename Delegate, typename R, typename A1, typename A2>
-class ProxyFunction2 : public VirtualFunction2<R, A1, A2> {
-public:
-    explicit ProxyFunction2(Delegate delegate) : m_delegate(delegate) {
-    }
-
-    virtual R operator()(A1 arg1, A2 arg2) {
-        return m_delegate(arg1, arg2);
-    }
-
-private:
-    Delegate m_delegate;
-};
-
-
-template<typename R, typename A1, typename A2, typename A3>
-class VirtualFunction3 {
-public:
-    virtual ~VirtualFunction3() {
-    }
-
-    virtual R operator()(A1 arg1, A2 arg2, A3 arg3) = 0;
-};
-
-
-template<typename Delegate, typename R, typename A1, typename A2, typename A3>
-class ProxyFunction3 : public VirtualFunction3<R, A1, A2, A3> {
-public:
-    explicit ProxyFunction3(Delegate delegate) : m_delegate(delegate) {
-    }
-
-    virtual R operator()(A1 arg1, A2 arg2, A3 arg3) {
-        return m_delegate(arg1, arg2, arg3);
+    Res operator()(ArgTypes... args) const override {
+        return m_delegate(args...);
     }
 
 private:

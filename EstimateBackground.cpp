@@ -42,7 +42,7 @@ using namespace imageproc;
 
 struct AbsoluteDifference {
     static uint8_t transform(uint8_t src, uint8_t dst) {
-        return static_cast<uint8_t>(abs(int(src) - int(dst)));
+        return static_cast<uint8_t>(std::abs(int(src) - int(dst)));
     }
 };
 

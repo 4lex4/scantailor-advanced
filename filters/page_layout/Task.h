@@ -23,6 +23,7 @@
 #include "ref_countable.h"
 #include "FilterResult.h"
 #include "PageId.h"
+#include <QPolygonF>
 
 class TaskStatus;
 class FilterData;
@@ -59,7 +60,7 @@ public:
 private:
     class UiUpdater;
 
-    void loadDefaultSettings(const Dpi& dpi);
+    static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
     intrusive_ptr<Filter> m_ptrFilter;
     intrusive_ptr<output::Task> m_ptrNextTask;

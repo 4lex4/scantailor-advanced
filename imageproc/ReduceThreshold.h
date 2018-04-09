@@ -27,8 +27,8 @@ namespace imageproc {
  *
  * The dimensions of the target image will be:
  * \code
- * dst_width = max(1, floor(src_width / 2));
- * dst_height = max(1, floor(src_height / 2));
+ * dst_width = max(1, std::floor(src_width / 2));
+ * dst_height = max(1, std::floor(src_height / 2));
  * \endcode
  * \n
  * Processing a null image results in a null image.

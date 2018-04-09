@@ -128,7 +128,7 @@ PageSequence ProjectPages::toPageSequence(const PageView view) const {
     return pages;
 }  // ProjectPages::toPageSequence
 
-void ProjectPages::listRelinkablePaths(VirtualFunction1<void, const RelinkablePath&>& sink) const {
+void ProjectPages::listRelinkablePaths(const VirtualFunction<void, const RelinkablePath&>& sink) const {
     // It's generally a bad idea to do callbacks while holding an internal mutex,
     // so we accumulate results into this vector first.
     std::vector<QString> files;

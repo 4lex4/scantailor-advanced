@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(test_positive_detection) {
 
     SkewFinder skew_finder;
     const Skew skew(skew_finder.findSkew(BinaryImage(image)));
-    BOOST_REQUIRE(fabs(skew.angle() - 4.5) < 0.15);
+    BOOST_REQUIRE(std::fabs(skew.angle() - 4.5) < 0.15);
     BOOST_CHECK(skew.confidence() >= Skew::GOOD_CONFIDENCE);
 }
 

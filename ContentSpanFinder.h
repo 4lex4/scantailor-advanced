@@ -51,17 +51,16 @@ public:
     void find(const imageproc::SlicedHistogram& histogram, T handler) const;
 
 private:
-    void findImpl(const imageproc::SlicedHistogram& histogram, VirtualFunction1<void, Span>& handler) const;
+    void findImpl(const imageproc::SlicedHistogram& histogram, const VirtualFunction<void, const Span&>& handler) const;
 
     int m_minContentWidth;
     int m_minWhitespaceWidth;
 };
 
 
-template<typename T>
-void ContentSpanFinder::find(const imageproc::SlicedHistogram& histogram, T handler) const {
-    ProxyFunction1<T, void, Span> proxy(handler);
-    findImpl(histogram, proxy);
+template<typename Callable>
+void ContentSpanFinder::find(const imageproc::SlicedHistogram& histogram, Callable handler) const {
+    findImpl(histogram, ProxyFunction<Callable, void, const Span&>(handler));
 }
 
 #endif  // ifndef CONTENTSPANFINDER_H_

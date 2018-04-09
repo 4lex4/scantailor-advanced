@@ -36,8 +36,8 @@ class RelinkingDialog : public QDialog {
 public:
     explicit RelinkingDialog(const QString& project_file_path, QWidget* parent = nullptr);
 
-    VirtualFunction1<void, const RelinkablePath&>& pathCollector() {
-        return m_model;
+    ProxyFunction<RelinkingModel&, void, const RelinkablePath&> pathCollector() {
+        return ProxyFunction<RelinkingModel&, void, const RelinkablePath&>(m_model);
     }
 
     /**

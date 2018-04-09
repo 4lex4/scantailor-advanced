@@ -37,12 +37,12 @@ void hShearFromTo(const BinaryImage& src,
     const int width = src.width();
     const int height = src.height();
 
-    // shift = floor(0.5 + shear * (y + 0.5 - y_origin));
+    // shift = std::floor(0.5 + shear * (y + 0.5 - y_origin));
     double shift = 0.5 + shear * (0.5 - y_origin);
     const double shift_end = 0.5 + shear * (height - 0.5 - y_origin);
-    auto shift1 = (int) floor(shift);
+    auto shift1 = (int) std::floor(shift);
 
-    if (shift1 == floor(shift_end)) {
+    if (shift1 == std::floor(shift_end)) {
         assert(shift1 == 0);
         dst = src;
 
@@ -55,10 +55,10 @@ void hShearFromTo(const BinaryImage& src,
     for (;;) {
         ++y2;
         shift += shear;
-        shift2 = (int) floor(shift);
+        shift2 = (int) std::floor(shift);
         if ((shift1 != shift2) || (y2 == height)) {
             const int block_height = y2 - y1;
-            if (abs(shift1) >= width) {
+            if (std::abs(shift1) >= width) {
                 // The shifted block would be completely off the image.
                 const QRect fr(0, y1, width, block_height);
                 dst.fill(fr, background_color);
@@ -108,12 +108,12 @@ void vShearFromTo(const BinaryImage& src,
     const int width = src.width();
     const int height = src.height();
 
-    // shift = floor(0.5 + shear * (x + 0.5 - x_origin));
+    // shift = std::floor(0.5 + shear * (x + 0.5 - x_origin));
     double shift = 0.5 + shear * (0.5 - x_origin);
     const double shift_end = 0.5 + shear * (width - 0.5 - x_origin);
-    auto shift1 = (int) floor(shift);
+    auto shift1 = (int) std::floor(shift);
 
-    if (shift1 == floor(shift_end)) {
+    if (shift1 == std::floor(shift_end)) {
         assert(shift1 == 0);
         dst = src;
 
@@ -126,10 +126,10 @@ void vShearFromTo(const BinaryImage& src,
     for (;;) {
         ++x2;
         shift += shear;
-        shift2 = (int) floor(shift);
+        shift2 = (int) std::floor(shift);
         if ((shift1 != shift2) || (x2 == width)) {
             const int block_width = x2 - x1;
-            if (abs(shift1) >= height) {
+            if (std::abs(shift1) >= height) {
                 // The shifted block would be completely off the image.
                 const QRect fr(x1, 0, block_width, height);
                 dst.fill(fr, background_color);

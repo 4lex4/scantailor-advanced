@@ -57,7 +57,7 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
     }
 
     const double degrees = event->delta() / 8.0;
-    zoom *= pow(2.0, degrees / 60.0);  // 2 times zoom for every 60 degrees
+    zoom *= std::pow(2.0, degrees / 60.0);  // 2 times zoom for every 60 degrees
     if (zoom < 1.0) {
         zoom = 1.0;
     }

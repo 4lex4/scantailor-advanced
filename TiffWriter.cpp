@@ -199,9 +199,9 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
     // write it as DPI rather than dots per cm.
     const double xdpi = dpm.horizontal() * DPM2DPI;
     const double ydpi = dpm.vertical() * DPM2DPI;
-    const double rounded_xdpi = floor(xdpi + 0.5);
-    const double rounded_ydpi = floor(ydpi + 0.5);
-    if ((fabs(xdpi - rounded_xdpi) < 0.02) && (fabs(ydpi - rounded_ydpi) < 0.02)) {
+    const double rounded_xdpi = std::floor(xdpi + 0.5);
+    const double rounded_ydpi = std::floor(ydpi + 0.5);
+    if ((std::fabs(xdpi - rounded_xdpi) < 0.02) && (std::fabs(ydpi - rounded_ydpi) < 0.02)) {
         xres = (float) rounded_xdpi;
         yres = (float) rounded_ydpi;
         unit = RESUNIT_INCH;

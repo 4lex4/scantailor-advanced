@@ -184,8 +184,8 @@ double findAngle(QPointF p1, QPointF p2) {  // return angle between vector (0,0)
     p2 -= p1;
 
     // get angle with (1,0)
-    double a = p2.x() / sqrt(p2.x() * p2.x() + p2.y() * p2.y());
-    return acos(a) * 180.0 / 3.14159265;
+    double a = p2.x() / std::sqrt(p2.x() * p2.x() + p2.y() * p2.y());
+    return std::acos(a) * 180.0 / 3.14159265;
 }
 
 void InteractiveXSpline::controlPointMoveRequest(int idx, const QPointF& pos, Qt::KeyboardModifiers mask) {

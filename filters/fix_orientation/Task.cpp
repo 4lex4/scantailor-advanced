@@ -86,7 +86,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
     if (m_ptrNextTask) {
         return m_ptrNextTask->process(status, FilterData(data, xform));
     } else {
-        return FilterResultPtr(new UiUpdater(m_ptrFilter, data.origImage(), m_imageId, xform, m_batchProcessing));
+        return make_intrusive<UiUpdater>(m_ptrFilter, data.origImage(), m_imageId, xform, m_batchProcessing);
     }
 }
 
@@ -94,7 +94,7 @@ void Task::updateFilterData(FilterData& data) {
     if (const std::unique_ptr<ImageSettings::PageParams> params = m_ptrImageSettings->getPageParams(m_pageId)) {
         data.updateImageParams(*params);
     } else {
-        ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(data.grayImage()), true);
+        ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(data.grayImage()));
 
         m_ptrImageSettings->setPageParams(m_pageId, new_params);
         data.updateImageParams(new_params);

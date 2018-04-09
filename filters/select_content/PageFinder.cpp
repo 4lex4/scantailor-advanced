@@ -55,11 +55,10 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
     std::cout << "exp_width = " << exp_width << "; exp_height" << exp_height << std::endl;
 #endif
 
-    const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
-    const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
+    const uint8_t darkest_gray_level = darkestGrayLevel(data.grayImage());
     const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
-    QImage gray150(transformToGray(dataGrayImage, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+    QImage gray150(transformToGray(data.grayImage(), xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
                                    OutsidePixels::assumeColor(outside_color)));
     if (dbg) {
         dbg->add(gray150, "gray150");
@@ -104,8 +103,8 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
             std::cout << "width = " << rects[i].width() << "; height=" << rects[i].height() << std::endl;
 #endif
 
-            double err_w = double(abs(exp_width - rects[i].width())) / double(exp_width);
-            double err_h = double(abs(exp_height - rects[i].height())) / double(exp_height);
+            double err_w = double(std::abs(exp_width - rects[i].width())) / double(exp_width);
+            double err_h = double(std::abs(exp_height - rects[i].height())) / double(exp_height);
 #ifdef DEBUG
             std::cout << "err_w=" << err_w << "; err_h" << err_h << std::endl;
 #endif
@@ -227,8 +226,8 @@ bool PageFinder::fineTuneCorner(const QImage& img,
     int pixel = img.pixelIndex(x, y);
     int tx = x + inc_x;
     int ty = y + inc_y;
-    int w = abs(max_x - x);
-    int h = abs(max_y - y);
+    int w = std::abs(max_x - x);
+    int h = std::abs(max_y - y);
 
     if ((!size.isEmpty()) && ((w < width_t) || (h < height_t))) {
         return true;

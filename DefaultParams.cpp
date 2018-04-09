@@ -2,6 +2,7 @@
 #include "DefaultParams.h"
 #include "XmlUnmarshaller.h"
 #include "XmlMarshaller.h"
+#include "Utils.h"
 
 using namespace page_split;
 using namespace output;
@@ -156,7 +157,7 @@ DefaultParams::DeskewParams::DeskewParams(const QDomElement& el)
 
 QDomElement DefaultParams::DeskewParams::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
-    el.setAttribute("deskewAngleDeg", deskewAngleDeg);
+    el.setAttribute("deskewAngleDeg", Utils::doubleToString(deskewAngleDeg));
     el.setAttribute("mode", (mode == MODE_AUTO) ? "auto" : "manual");
 
     return el;
@@ -405,7 +406,7 @@ QDomElement DefaultParams::OutputParams::toXml(QDomDocument& doc, const QString&
     el.appendChild(colorParams.toXml(doc, "colorParams"));
     el.appendChild(splittingOptions.toXml(doc, "splittingOptions"));
     el.appendChild(pictureShapeOptions.toXml(doc, "pictureShapeOptions"));
-    el.setAttribute("depthPerception", depthPerception.value());
+    el.setAttribute("depthPerception", Utils::doubleToString(depthPerception.value()));
     el.appendChild(dewarpingOptions.toXml(doc, "dewarpingOptions"));
     el.setAttribute("despeckleLevel", despeckleLevelToString(despeckleLevel));
 

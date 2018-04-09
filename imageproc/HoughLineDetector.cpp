@@ -60,7 +60,7 @@ HoughLineDetector::HoughLineDetector(const QSize& input_dimensions,
         double angle = start_angle + angle_delta * i;
         angle *= constants::DEG2RAD;
 
-        const QPointF uv(cos(angle), sin(angle));
+        const QPointF uv(std::cos(angle), std::sin(angle));
         for (const QPoint& p : checkpoints) {
             const double distance = uv.x() * p.x() + uv.y() * p.y();
             max_distance = std::max(max_distance, distance);
@@ -122,7 +122,7 @@ QImage HoughLineDetector::visualizeHoughSpace(const unsigned lower_bound) const 
     hist_line = &m_histogram[0];
     for (int y = 0; y < m_histHeight; ++y) {
         for (int x = 0; x < m_histWidth; ++x) {
-            const auto intensity = (unsigned) floor(hist_line[x] * 255.0 / max_value + 0.5);
+            const auto intensity = (unsigned) std::floor(hist_line[x] * 255.0 / max_value + 0.5);
             intensity_line[x] = (unsigned char) intensity;
         }
         intensity_line += intensity_bpl;

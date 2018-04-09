@@ -33,7 +33,7 @@ void find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* b
      *  using a 4th order approximation of the gaussian operator
      */
 
-    const auto div = static_cast<const float>(sqrt(2.0 * constants::PI) * std_dev);
+    const auto div = static_cast<const float>(std::sqrt(2.0 * constants::PI) * std_dev);
     const auto x0 = static_cast<const float>(-1.783 / std_dev);
     const auto x1 = static_cast<const float>(-1.723 / std_dev);
     const auto x2 = static_cast<const float>(0.6318 / std_dev);

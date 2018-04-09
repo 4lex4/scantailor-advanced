@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define _ISOC99SOURCE  // For copysign()
+#define _ISOC99SOURCE  // For std::copysign()
 
 #include "SavGolKernel.h"
 #include <QSize>
@@ -25,10 +25,6 @@
 #include <cassert>
 #include <cmath>
 
-#ifdef _MSC_VER
-#undef copysign  // Just in case.
-#define copysign _copysign
-#endif
 
 namespace imageproc {
 namespace {
@@ -106,17 +102,17 @@ void SavGolKernel::QR() {
 
             if (a == 0.0) {
                 cos = 0.0;
-                sin = copysign(1.0, b);
-                m_equations[jj] = fabs(b);
-            } else if (fabs(b) > fabs(a)) {
+                sin = std::copysign(1.0, b);
+                m_equations[jj] = std::fabs(b);
+            } else if (std::fabs(b) > std::fabs(a)) {
                 const double t = a / b;
-                const double u = copysign(sqrt(1.0 + t * t), b);
+                const double u = std::copysign(std::sqrt(1.0 + t * t), b);
                 sin = 1.0 / u;
                 cos = sin * t;
                 m_equations[jj] = b * u;
             } else {
                 const double t = b / a;
-                const double u = copysign(sqrt(1.0 + t * t), a);
+                const double u = std::copysign(std::sqrt(1.0 + t * t), a);
                 cos = 1.0 / u;
                 sin = cos * t;
                 m_equations[jj] = a * u;

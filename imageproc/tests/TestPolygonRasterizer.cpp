@@ -49,10 +49,10 @@ static QPolygonF createShape(const QSize& image_size, double radius) {
 
     QPolygonF poly;
 
-    poly.push_back(center + QPointF(cos(angle), sin(angle)) * radius);
+    poly.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * radius);
     for (int i = 1; i < num_steps; ++i) {
         angle += step * 2;
-        poly.push_back(center + QPointF(cos(angle), sin(angle)) * radius);
+        poly.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * radius);
     }
 
     return poly;

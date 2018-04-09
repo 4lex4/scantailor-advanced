@@ -56,7 +56,7 @@ private:
 };
 
 
-class DespeckleView::DespeckleTask : public AbstractCommand0<BackgroundExecutor::TaskResultPtr> {
+class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
 public:
     DespeckleTask(DespeckleView* owner,
                   const DespeckleState& despeckle_state,
@@ -75,7 +75,7 @@ private:
 };
 
 
-class DespeckleView::DespeckleResult : public AbstractCommand0<void> {
+class DespeckleView::DespeckleResult : public AbstractCommand<void> {
 public:
     DespeckleResult(QPointer<DespeckleView> owner,
                     intrusive_ptr<TaskCancelHandle> cancel_handle,
@@ -164,8 +164,8 @@ void DespeckleView::initiateDespeckling(const AnimationAction anim_action) {
     // Note that we are getting rid of m_initialSpeckles,
     // as we wouldn't need it any more.
 
-    const BackgroundExecutor::TaskPtr task(
-            new DespeckleTask(this, m_despeckleState, m_ptrCancelHandle, m_despeckleLevel, m_debug));
+    const auto task
+            = make_intrusive<DespeckleTask>(this, m_despeckleState, m_ptrCancelHandle, m_despeckleLevel, m_debug);
     ImageViewBase::backgroundExecutor().enqueueTask(task);
 }
 
@@ -241,8 +241,8 @@ BackgroundExecutor::TaskResultPtr DespeckleView::DespeckleTask::operator()() {
 
         m_ptrCancelHandle->throwIfCancelled();
 
-        return BackgroundExecutor::TaskResultPtr(new DespeckleResult(m_ptrOwner, m_ptrCancelHandle, m_despeckleState,
-                                                                     visualization, std::move(m_ptrDbg)));
+        return make_intrusive<DespeckleResult>(m_ptrOwner, m_ptrCancelHandle, m_despeckleState, visualization,
+                                               std::move(m_ptrDbg));
     } catch (const TaskCancelException&) {
         return nullptr;
     }

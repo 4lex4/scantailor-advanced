@@ -293,7 +293,7 @@ void spreadInDirection(BinaryImage& dst,
         return;
     }
 
-    const auto first_phase_steps = (int) sqrt((double) num_steps);
+    const auto first_phase_steps = (int) std::sqrt((double) num_steps);
 
     BinaryImage tmp(tmp_images.retrieveOrCreate(tmp_image_size));
 

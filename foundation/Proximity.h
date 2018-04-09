@@ -43,7 +43,7 @@ public:
     static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment = nullptr);
 
     double dist() const {
-        return sqrt(m_sqDist);
+        return std::sqrt(m_sqDist);
     }
 
     double sqDist() const {

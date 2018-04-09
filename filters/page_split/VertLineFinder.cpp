@@ -123,7 +123,7 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
 
     // We don't want to process areas too close to the vertical edges.
     const double margin_mm = 3.5;
-    const auto margin = (int) floor(0.5 + margin_mm * constants::MM2INCH * dpi);
+    const auto margin = (int) std::floor(0.5 + margin_mm * constants::MM2INCH * dpi);
 
     const int x_limit = raster_lines.width() - margin;
     const int height = raster_lines.height();

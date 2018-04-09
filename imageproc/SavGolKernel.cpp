@@ -25,10 +25,6 @@
 #include <cassert>
 #include <cmath>
 
-#ifdef _MSC_VER
-#undef copysign  // Just in case.
-#define copysign _copysign
-#endif
 
 namespace imageproc {
 namespace {

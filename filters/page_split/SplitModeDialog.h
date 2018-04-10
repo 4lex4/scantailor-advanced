@@ -25,7 +25,10 @@
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
+
+#include <QButtonGroup>
 #include <QDialog>
+
 #include <set>
 
 class ProjectPages;

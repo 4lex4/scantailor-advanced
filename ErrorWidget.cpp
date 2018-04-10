@@ -18,6 +18,9 @@
 
 #include "ErrorWidget.h"
 
+#include <QIcon>
+#include <QStyle>
+
 ErrorWidget::ErrorWidget(const QString& text, Qt::TextFormat fmt) {
     setupUi(this);
     textLabel->setTextFormat(fmt);

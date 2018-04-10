@@ -24,7 +24,10 @@
 #include "PageRange.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
+
+#include <QButtonGroup>
 #include <QDialog>
+
 #include <vector>
 #include <set>
 

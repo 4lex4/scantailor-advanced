@@ -22,7 +22,7 @@
 void TiffMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
-        ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader>(new TiffMetadataLoader));
+        ImageMetadataLoader::registerLoader(make_intrusive<TiffMetadataLoader>());
         registered = true;
     }
 }

@@ -189,7 +189,7 @@ JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
 void JpegMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
-        ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader>(new JpegMetadataLoader));
+        ImageMetadataLoader::registerLoader(make_intrusive<JpegMetadataLoader>());
         registered = true;
     }
 }

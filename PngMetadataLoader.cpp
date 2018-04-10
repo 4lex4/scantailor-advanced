@@ -78,7 +78,7 @@ static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
 void PngMetadataLoader::registerMyself() {
     static bool registered = false;
     if (!registered) {
-        ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader>(new PngMetadataLoader));
+        ImageMetadataLoader::registerLoader(make_intrusive<PngMetadataLoader>());
         registered = true;
     }
 }

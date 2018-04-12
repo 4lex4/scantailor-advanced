@@ -2,13 +2,14 @@
 #ifndef SCANTAILOR_DEFAULTPARAMSDIALOG_H
 #define SCANTAILOR_DEFAULTPARAMSDIALOG_H
 
-#include <QtWidgets/QWidget>
-#include <unordered_map>
-#include <set>
 #include "ui_DefaultParamsDialog.h"
 #include "OrthogonalRotation.h"
 #include "DefaultParamsProfileManager.h"
 #include "DefaultParams.h"
+#include <QButtonGroup>
+#include <QWidget>
+#include <unordered_map>
+#include <set>
 
 class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
     Q_OBJECT

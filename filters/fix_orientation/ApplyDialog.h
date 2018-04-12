@@ -27,9 +27,9 @@
 #include <QDialog>
 #include <vector>
 #include <set>
+#include <QButtonGroup>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace fix_orientation {
 class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {

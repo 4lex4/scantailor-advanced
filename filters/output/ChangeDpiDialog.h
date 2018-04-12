@@ -25,10 +25,10 @@
 #include "intrusive_ptr.h"
 #include <QDialog>
 #include <QString>
+#include <QButtonGroup>
 #include <set>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 class Dpi;
 
 namespace output {

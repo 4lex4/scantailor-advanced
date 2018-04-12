@@ -26,11 +26,11 @@
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
 #include <QDialog>
+#include <QButtonGroup>
 #include <set>
 
 class ProjectPages;
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace page_split {
 class SplitModeDialog : public QDialog, private Ui::PageSplitModeDialog {

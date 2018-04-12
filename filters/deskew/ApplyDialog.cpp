@@ -17,7 +17,6 @@
 
 #include "ApplyDialog.h"
 #include "PageSelectionAccessor.h"
-
 #include <iostream>
 
 namespace deskew {

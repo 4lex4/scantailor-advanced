@@ -26,10 +26,10 @@
 #include "intrusive_ptr.h"
 #include <QDialog>
 #include <QString>
+#include <QButtonGroup>
 #include <set>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace output {
 class ChangeDewarpingDialog : public QDialog {

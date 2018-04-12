@@ -24,10 +24,10 @@
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
 #include <QDialog>
+#include <QButtonGroup>
 #include <set>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace output {
 class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {

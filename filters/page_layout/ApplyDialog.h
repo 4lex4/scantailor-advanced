@@ -25,10 +25,10 @@
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
 #include <QDialog>
+#include <QButtonGroup>
 #include <set>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace page_layout {
 class ApplyDialog : public QDialog, private Ui::PageLayoutApplyDialog {

@@ -25,11 +25,11 @@
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
 #include <QDialog>
+#include <QButtonGroup>
 #include <vector>
 #include <set>
 
 class PageSelectionAccessor;
-class QButtonGroup;
 
 namespace select_content {
 class ApplyDialog : public QDialog, private Ui::SelectContentApplyDialog {

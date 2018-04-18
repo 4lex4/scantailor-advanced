@@ -788,3 +788,14 @@ set(
     "${CMAKE_BINARY_DIR}"
 )
 include(CPack)
+
+# uninstall target
+if (NOT TARGET uninstall)
+    configure_file(
+            "${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+            "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
+            @ONLY)
+
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
+endif()

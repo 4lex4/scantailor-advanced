@@ -86,7 +86,6 @@ include_directories(. foundation math interaction zones)
 # For config.h
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-include(cmake/FindPthreads.cmake)
 include(cmake/SetDefaultBuildType.cmake)
 include(cmake/UpdateTranslations.cmake)
 include(cmake/CopyToBuildDir.cmake)
@@ -274,13 +273,7 @@ else()
 endif()
 set(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost 1.60 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
-if (NOT Boost_FOUND)
-    message(
-            FATAL_ERROR
-            "Could not find boost headers or libraries.\n"
-    )
-endif()
+find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework prg_exec_monitor)
 
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -330,17 +323,9 @@ link_directories(${Qt5LinguistTools_LIBRARIES})
 set(EXTRA_LIBS "")
 
 if (UNIX)
-    FindPthreads()
-    if (PTHREADS_FOUND)
-        add_definitions(${PTHREADS_CFLAGS})
-        link_libraries(${PTHREADS_LIBS})
-    else()
-        message(
-                FATAL_ERROR
-                "Could not detect threading flags.\n"
-                "Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
-        )
-    endif()
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    link_libraries(Threads::Threads)
 elseif (WIN32 AND MSVC)
     add_definitions(-DNOMINMAX)
 endif()

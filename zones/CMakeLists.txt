@@ -1,8 +1,8 @@
-PROJECT(zones)
+project(zones)
 
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(
+set(
         sources
         SplineVertex.cpp SplineVertex.h
         SplineSegment.cpp SplineSegment.h
@@ -20,10 +20,10 @@ SET(
         ZoneContextMenuItem.h
         ZoneDragInteraction.cpp ZoneDragInteraction.h)
 
-SOURCE_GROUP(Sources FILES ${sources})
+source_group(Sources FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-ADD_LIBRARY(zones STATIC ${sources})
+add_library(zones STATIC ${sources})
 
-TRANSLATION_SOURCES(scantailor ${sources})
+translation_sources(scantailor ${sources})

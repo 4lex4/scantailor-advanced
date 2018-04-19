@@ -1,28 +1,28 @@
-INCLUDE_DIRECTORIES(BEFORE ..)
+include_directories(BEFORE ..)
 
-SET(
+set(
         sources
         ${CMAKE_SOURCE_DIR}/tests/main.cpp
         TestSqDistApproximant.cpp
 )
 
-SOURCE_GROUP("Sources" FILES ${sources})
+source_group("Sources" FILES ${sources})
 
-SET(
+set(
         libs
         math Qt5::Core ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
         ${Boost_PRG_EXECUTION_MONITOR_LIBRARY} ${EXTRA_LIBS}
 )
 
-ADD_EXECUTABLE(spfit_tests ${sources})
-TARGET_LINK_LIBRARIES(spfit_tests ${libs})
+add_executable(spfit_tests ${sources})
+target_link_libraries(spfit_tests ${libs})
 
 # We want the executable located where we copy all the DLLs.
-SET_TARGET_PROPERTIES(
+set_target_properties(
         spfit_tests PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
 
-ADD_TEST(NAME spfit_tests COMMAND spfit_tests --log_level=message)
+add_test(NAME spfit_tests COMMAND spfit_tests --log_level=message)
 
 

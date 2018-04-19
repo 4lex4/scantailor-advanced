@@ -1,8 +1,8 @@
-PROJECT("Math library")
+project("Math library")
 
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(
+set(
         GENERIC_SOURCES
         LinearSolver.cpp LinearSolver.h
         MatrixCalc.h
@@ -17,9 +17,9 @@ SET(
         QuadraticFunction.cpp QuadraticFunction.h
         XSpline.cpp XSpline.h
 )
-SOURCE_GROUP("Sources" FILES ${GENERIC_SOURCES})
+source_group("Sources" FILES ${GENERIC_SOURCES})
 
-SET(
+set(
         SPFIT_SOURCES
         spfit/references.txt
         spfit/FittableSpline.h
@@ -33,17 +33,17 @@ SET(
         spfit/Optimizer.cpp spfit/Optimizer.h
         spfit/SplineFitter.cpp spfit/SplineFitter.h
 )
-SOURCE_GROUP("Sources\\Spline Fitting Framework" FILES ${SPFIT_SOURCES})
+source_group("Sources\\Spline Fitting Framework" FILES ${SPFIT_SOURCES})
 
-SET(
+set(
         ADIFF_SOURCES
         adiff/references.txt
         adiff/SparseMap.cpp adiff/SparseMap.h
         adiff/Function.cpp adiff/Function.h
 )
-SOURCE_GROUP("Sources\\Differentiation Framework" FILES ${ADIFF_SOURCES})
+source_group("Sources\\Differentiation Framework" FILES ${ADIFF_SOURCES})
 
-ADD_LIBRARY(math STATIC ${GENERIC_SOURCES} ${SPFIT_SOURCES} ${ADIFF_SOURCES})
+add_library(math STATIC ${GENERIC_SOURCES} ${SPFIT_SOURCES} ${ADIFF_SOURCES})
 
-ADD_SUBDIRECTORY(spfit/tests)
-ADD_SUBDIRECTORY(adiff/tests)
+add_subdirectory(spfit/tests)
+add_subdirectory(adiff/tests)

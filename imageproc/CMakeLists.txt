@@ -1,6 +1,6 @@
-PROJECT(imageproc)
+project(imageproc)
 
-SET(
+set(
         sources
         Constants.h Constants.cpp
         BinaryImage.cpp BinaryImage.h
@@ -54,8 +54,8 @@ SET(
         ColorTable.cpp ColorTable.h
         ImageCombination.h ImageCombination.cpp)
 
-SOURCE_GROUP(Sources FILES ${sources})
+source_group(Sources FILES ${sources})
 
-ADD_LIBRARY(imageproc STATIC ${sources})
+add_library(imageproc STATIC ${sources})
 
-ADD_SUBDIRECTORY(tests)
+add_subdirectory(tests)

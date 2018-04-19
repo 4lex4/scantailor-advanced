@@ -1,8 +1,8 @@
-PROJECT("Foundation library")
+project("Foundation library")
 
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(
+set(
         sources
         NonCopyable.h intrusive_ptr.h ref_countable.h
         AlignedArray.h
@@ -29,8 +29,8 @@ SET(
         Grid.h
         ValueConv.h
         Hashes.h)
-SOURCE_GROUP("Sources" FILES ${sources})
+source_group("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-ADD_LIBRARY(foundation STATIC ${sources})
+add_library(foundation STATIC ${sources})

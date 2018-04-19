@@ -1,6 +1,6 @@
-INCLUDE_DIRECTORIES(BEFORE ..)
+include_directories(BEFORE ..)
 
-SET(
+set(
         sources
         main.cpp
         TestBinaryImage.cpp TestReduceThreshold.cpp
@@ -20,24 +20,24 @@ SET(
         TestRastLineFinder.cpp
         Utils.cpp Utils.h
 )
-SOURCE_GROUP("Sources" FILES ${sources})
+source_group("Sources" FILES ${sources})
 
-SET(
+set(
         libs
         imageproc math foundation Qt5::Widgets Qt5::Xml
         ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
         ${Boost_PRG_EXECUTION_MONITOR_LIBRARY} ${EXTRA_LIBS}
 )
 
-REMOVE_DEFINITIONS(-DBUILDING_IMAGEPROC)
-ADD_EXECUTABLE(imageproc_tests ${sources})
-TARGET_LINK_LIBRARIES(imageproc_tests ${libs})
+remove_definitions(-DBUILDING_IMAGEPROC)
+add_executable(imageproc_tests ${sources})
+target_link_libraries(imageproc_tests ${libs})
 
 # We want the executable located where we copy all the DLLs.
-SET_TARGET_PROPERTIES(
+set_target_properties(
         imageproc_tests PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
 
-ADD_TEST(NAME imageproc_tests COMMAND imageproc_tests --log_level=message)
+add_test(NAME imageproc_tests COMMAND imageproc_tests --log_level=message)
 

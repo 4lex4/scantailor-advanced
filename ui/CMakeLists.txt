@@ -1,1 +1,1 @@
-SOURCE_GROUP("UI Files" FILES ${ui_files})
+source_group("UI Files" FILES ${ui_files})

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
     set(WIN_XP FALSE CACHE BOOLEAN "Whether to build for Windows XP.")
-    
+
     if (WIN_XP)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
@@ -618,12 +618,12 @@ if (WIN32)
 else()
     install(FILES ${QM_FILES} DESTINATION "share/${APPLICATION_NAME}/translations")
 endif()
-    
+
 if (WIN32)
     macro (add_runtime_libs_to_install Configuration Libs)
         set(configurations "${Configuration}")
         if (${configurations} MATCHES "ALL")
-            set(configurations "DEBUG;RELEASE") 
+            set(configurations "DEBUG;RELEASE")
         endif()
         foreach (_config ${configurations})
             foreach (_lib ${Libs})
@@ -633,7 +633,7 @@ if (WIN32)
             endforeach()
         endforeach()
     endmacro()
-    
+
     # Copy some DLLs to the staging dir.
     set(
             qt5_libs
@@ -650,7 +650,7 @@ if (WIN32)
         add_runtime_libs_to_install(DEBUG "${debug_loc}")
         add_runtime_libs_to_install(RELEASE "${release_loc}")
     endforeach()
-    
+
     # Qt's plugins.
     macro (set_release_and_debug_libs VarName ReleaseLib DebugLib)
         set(${VarName}_RELEASE "${ReleaseLib}")
@@ -660,29 +660,33 @@ if (WIN32)
             set(${VarName}_DEBUG "${ReleaseLib}")
         endif()
     endmacro()
-    
+
     set(PLUGINS_DIR "${qt_dirs}/qtbase/plugins")
-    
-    set_release_and_debug_libs(qwindows "${PLUGINS_DIR}/platforms/qwindows.dll" "${PLUGINS_DIR}/platforms/qwindowsd.dll")
+
+    set_release_and_debug_libs(qwindows
+            "${PLUGINS_DIR}/platforms/qwindows.dll"
+            "${PLUGINS_DIR}/platforms/qwindowsd.dll")
     copy_to_build_dir("${qwindows_RELEASE}" SUBDIR platforms CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
     copy_to_build_dir("${qwindows_DEBUG}" SUBDIR platforms CONFIGURATIONS Debug)
     install(PROGRAMS "${qwindows_DEBUG}" CONFIGURATIONS Debug DESTINATION platforms)
     install(PROGRAMS "${qwindows_RELEASE}" CONFIGURATIONS Release DESTINATION platforms)
-    
+
     set_release_and_debug_libs(qjpeg "${PLUGINS_DIR}/imageformats/qjpeg.dll" "${PLUGINS_DIR}/imageformats/qjpegd.dll")
     copy_to_build_dir("${qjpeg_RELEASE}" SUBDIR imageformats CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
     copy_to_build_dir("${qjpeg_DEBUG}" SUBDIR imageformats CONFIGURATIONS Debug)
     install(PROGRAMS "${qjpeg_DEBUG}" CONFIGURATIONS Debug DESTINATION imageformats)
     install(PROGRAMS "${qjpeg_RELEASE}" CONFIGURATIONS Release DESTINATION imageformats)
-    
-    set_release_and_debug_libs(qtaccessible "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll" "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
+
+    set_release_and_debug_libs(qtaccessible
+            "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll"
+            "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
     if (EXISTS "${qtaccessible_RELEASE}")
         copy_to_build_dir("${qtaccessible_RELEASE}" SUBDIR accessible CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
         copy_to_build_dir("${qtaccessible_DEBUG}" SUBDIR accessible CONFIGURATIONS Debug)
         install(PROGRAMS "${qtaccessible_DEBUG}" CONFIGURATIONS Debug DESTINATION accessible)
         install(PROGRAMS "${qtaccessible_RELEASE}" CONFIGURATIONS Release DESTINATION accessible)
     endif()
-    
+
     # Copy image libs
     find_file(JPEG_LIBRARY_RT_REL NAMES libjpeg.dll HINTS "${jpeg_dirs}/bin")
     find_file(JPEG_LIBRARY_RT_DEB NAMES libjpegd.dll HINTS "${jpeg_dirs}/bin")
@@ -707,7 +711,7 @@ if (WIN32)
     if (NOT TIFF_LIBRARY_RT_DEB)
         set(TIFF_LIBRARY_RT_DEB "${TIFF_LIBRARY_RT_REL}")
     endif()
-    
+
     copy_to_build_dir(
             "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}"
             CONFIGURATIONS Release MinSizeRel RelWithDebInfo
@@ -716,8 +720,10 @@ if (WIN32)
             "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}"
             CONFIGURATIONS Debug
     )
-    add_runtime_libs_to_install(DEBUG "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}")
-    add_runtime_libs_to_install(RELEASE "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}")
+    add_runtime_libs_to_install(DEBUG
+            "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}")
+    add_runtime_libs_to_install(RELEASE
+            "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}")
 
     if (MINGW)
         get_filename_component(_mingw_path ${CMAKE_CXX_COMPILER} PATH)
@@ -730,14 +736,16 @@ if (WIN32)
 
     # Generate the target that will actually do the copying.
     generate_copy_to_build_dir_target(copy_to_build_dir)
-    
+
     install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug DESTINATION .)
     install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_RELEASE} CONFIGURATIONS Release DESTINATION .)
 endif()
 
 if (UNIX)
     install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/scantailor.desktop" DESTINATION "share/applications")
-    install(FILES "${CMAKE_SOURCE_DIR}/resources/appicon.svg" DESTINATION "share/icons/hicolor/scalable/apps" RENAME "ScanTailor.svg")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/appicon.svg"
+            DESTINATION "share/icons/hicolor/scalable/apps"
+            RENAME "ScanTailor.svg")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
 endif()
 

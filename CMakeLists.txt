@@ -737,8 +737,7 @@ endif()
 
 if (UNIX)
     install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/scantailor.desktop" DESTINATION "share/applications")
-    install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/icons/32x32/ScanTailor.png" DESTINATION "share/icons/hicolor/32x32/apps")
-    install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/icons/256x256/ScanTailor.png" DESTINATION "share/icons/hicolor/256x256/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/appicon.svg" DESTINATION "share/icons/hicolor/scalable/apps" RENAME "ScanTailor.svg")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
 endif()
 

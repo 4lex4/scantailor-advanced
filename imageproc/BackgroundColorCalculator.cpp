@@ -131,6 +131,15 @@ void checkImageIsValid(const QImage& img) {
         throw std::invalid_argument("BackgroundColorCalculator: image is null.");
     }
 }
+
+bool isBlackOnWhite(const BinaryImage& img) {
+    return (2 * img.countBlackPixels()) <= (img.width() * img.height());
+}
+
+bool isBlackOnWhite(BinaryImage img, const BinaryImage& mask) {
+    rasterOp<RopAnd<RopSrc, RopDst>>(img, mask);
+    return (2 * img.countBlackPixels() <= mask.countBlackPixels());
+}
 }  // namespace
 
 uint8_t BackgroundColorCalculator::calcDominantLevel(const int* hist) {
@@ -170,7 +179,7 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img)
     checkImageIsValid(img);
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(img));
-    if (2 * background_mask.countBlackPixels() <= (background_mask.width() * background_mask.height())) {
+    if (isBlackOnWhite(background_mask)) {
         background_mask.invert();
     }
 
@@ -187,7 +196,7 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
     }
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
-    if (2 * background_mask.countBlackPixels() <= mask.countBlackPixels()) {
+    if (isBlackOnWhite(background_mask, mask)) {
         background_mask.invert();
     }
     rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=ScanTailor Advanced
+Comment=Interactive post-processing tool for scanned pages
+Exec=scantailor %f
+Icon=ScanTailor
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=Graphics;Applications;
+MimeType=application/x-scantailor-project;

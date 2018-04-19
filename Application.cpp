@@ -31,10 +31,12 @@
 #include "Application.h"
 #include "OutOfMemoryHandler.h"
 #include <config.h>
-#include <QtCore/QDir>
+#include <QDir>
+#include <QTemporaryDir>
 
 Application::Application(int& argc, char** argv) : QApplication(argc, argv), m_currentLocale("en") {
     initTranslations();
+    initPortableVersion();
 }
 
 bool Application::notify(QObject* receiver, QEvent* e) {
@@ -83,7 +85,7 @@ void Application::initTranslations() {
 
     const QStringList language_file_filter("scantailor_*.qm");
     for (const QString& path : translation_dirs) {
-        QDir dir(QDir::cleanPath(applicationDirPath() + '/' + path));
+        QDir dir = (QDir::isAbsolutePath(path)) ? QDir(path) : QDir::cleanPath(applicationDirPath() + '/' + path);
         if (dir.exists()) {
             QStringList translationFileNames = QDir(dir.path()).entryList(language_file_filter);
             for (const QString& fileName : translationFileNames) {
@@ -95,4 +97,25 @@ void Application::initTranslations() {
             }
         }
     }
+}
+
+void Application::initPortableVersion() {
+    const QString portableConfigDirName = QString::fromUtf8(PORTABLE_CONFIG_DIR);
+    if (portableConfigDirName.isEmpty()) {
+        return;
+    }
+
+    const QDir portableConfigPath(applicationDirPath() + '/' + portableConfigDirName);
+    if ((portableConfigPath.exists() && QTemporaryDir(portableConfigPath.absolutePath()).isValid())
+        || (!portableConfigPath.exists() && portableConfigPath.mkpath("."))) {
+        m_portableConfigPath = portableConfigPath.absolutePath();
+    }
+}
+
+bool Application::isPortableVersion() const {
+    return !m_portableConfigPath.isNull();
+}
+
+const QString& Application::getPortableConfigPath() const {
+    return m_portableConfigPath;
 }

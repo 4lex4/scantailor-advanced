@@ -23,10 +23,9 @@
 #include "TiffMetadataLoader.h"
 #include "JpegMetadataLoader.h"
 #include "DarkScheme.h"
-
+#include "LightScheme.h"
 #include "CommandLine.h"
 #include "ColorSchemeManager.h"
-#include "LightScheme.h"
 
 int main(int argc, char** argv) {
     // rescaling for high DPI displays
@@ -44,15 +43,17 @@ int main(int argc, char** argv) {
     CommandLine::set(cli);
 
     // This information is used by QSettings.
-    app.setApplicationName("scantailor");
-    app.setOrganizationName("scantailor");
+    app.setApplicationName(APPLICATION_NAME);
+    app.setOrganizationName(ORGANIZATION_NAME);
 
     PngMetadataLoader::registerMyself();
     TiffMetadataLoader::registerMyself();
     JpegMetadataLoader::registerMyself();
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, app.applicationDirPath() + "/config");
+    if (app.isPortableVersion()) {
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, app.getPortableConfigPath());
+    }
 
     QSettings settings;
 
@@ -67,7 +68,7 @@ int main(int argc, char** argv) {
             scheme = std::make_unique<DarkScheme>();
         }
 
-        ColorSchemeManager::instance()->setColorScheme(*scheme.release());
+        ColorSchemeManager::instance()->setColorScheme(*scheme);
     }
 
     auto* main_wnd = new MainWindow();

@@ -68,7 +68,7 @@ MACRO(GENERATE_COPY_TO_BUILD_DIR_TARGET target_name_)
     ADD_CUSTOM_TARGET(
             "${target_name_}" ALL
             COMMAND "${CMAKE_COMMAND}" "-DTARGET_DIR=$<TARGET_FILE_DIR:scantailor>"
-            "-DCFG=$<CONFIGURATION>" -P "${script_}"
+            "-DCFG=$<CONFIG>" -P "${script_}"
             DEPENDS "${script_}" ${deps_}
     )
 ENDMACRO()

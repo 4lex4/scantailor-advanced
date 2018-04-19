@@ -1,15 +1,23 @@
 
 #include <QtGui/QtGui>
 #include <QtXml/QDomDocument>
+#include <config.h>
 #include "DefaultParamsProfileManager.h"
 #include "DefaultParams.h"
 #include "version.h"
+#include "Application.h"
 
 using namespace page_split;
 using namespace output;
 using namespace page_layout;
 
-DefaultParamsProfileManager::DefaultParamsProfileManager() : path(qApp->applicationDirPath() + "/config/profiles") {
+DefaultParamsProfileManager::DefaultParamsProfileManager() {
+    auto* app = dynamic_cast<Application*>(qApp);
+    if (app->isPortableVersion()) {
+        path = app->getPortableConfigPath() + "/profiles";
+    } else {
+        path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
+    }
 }
 
 DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path) : path(path) {

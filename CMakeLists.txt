@@ -1,17 +1,19 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.9.0)
 
-PROJECT("ScanTailor")
+PROJECT("ScanTailor Advanced")
 
 # setting compiler flags
 SET(CMAKE_CXX_STANDARD 17)
 
-IF (MSVC AND WIN_XP)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
-    SET(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE,5.01 /SUBSYSTEM:WINDOWS,5.01 ${CMAKE_EXE_LINKER_FLAGS}")
-ENDIF ()
-
 IF (MSVC)
+    SET(WIN_XP FALSE CACHE BOOLEAN "Whether to build for Windows XP.")
+	
+    IF (WIN_XP)
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
+        SET(CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE,5.01 /SUBSYSTEM:WINDOWS,5.01 ${CMAKE_EXE_LINKER_FLAGS}")
+    ENDIF ()
+
     # Disable checked iterators for extra performance.
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_SECURE_SCL=0")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_SECURE_SCL=0")
@@ -25,6 +27,7 @@ ENDIF ()
 IF (UNIX)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ENDIF ()
 
 SET(
@@ -93,7 +96,7 @@ ST_SET_DEFAULT_BUILD_TYPE(Release)
 
 IF (WIN32)
     FILE(GLOB libs_dir_ "${PROJECT_SOURCE_DIR}/../libs/*libs-build*")
-    get_filename_component(libs_dir_name_ ${libs_dir_} NAME)
+    GET_FILENAME_COMPONENT(libs_dir_name_ ${libs_dir_} NAME)
     FIND_PATH(
             LIB_DIR ${libs_dir_name_}/CMakeLists.txt
             HINTS "${libs_dir_}/.."
@@ -113,7 +116,6 @@ IF (WIN32)
     FILE(GLOB tiff_dir_ "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
     FILE(GLOB qt_dir_ "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
     FILE(GLOB boost_dir_ "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
-    #FILE(GLOB opencv_dir_ "${LIB_DIR}/opencv*")
 ENDIF ()
 
 #=================================== JPEG ===================================#
@@ -146,18 +148,13 @@ FIND_LIBRARY(
         DOC "Path to jpeg library."
 )
 
-IF (JPEG_LIBRARY_DEB)
-    SET(JPEG_LIBRARY optimized ${JPEG_LIBRARY_REL} debug ${JPEG_LIBRARY_DEB})
-ELSE ()
-    SET(JPEG_LIBRARY ${JPEG_LIBRARY_REL})
+IF (JPEG_LIBRARY_REL AND NOT JPEG_LIBRARY_DEB)
+    SET(JPEG_LIBRARY_DEB ${JPEG_LIBRARY_REL})
+ELSEIF (NOT JPEG_LIBRARY_REL)
+    MESSAGE(FATAL_ERROR "Could not find jpeg library.\n")
 ENDIF ()
 
-IF (NOT JPEG_LIBRARY)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find jpeg library.\n"
-    )
-ENDIF ()
+SET(JPEG_LIBRARY optimized "${JPEG_LIBRARY_REL}" debug "${JPEG_LIBRARY_DEB}")
 
 #=================================== ZLIB ===================================#
 
@@ -186,23 +183,18 @@ FIND_LIBRARY(
         ZLIB_LIBRARY_DEB NAMES zd zdlld.lib
         PATHS /usr/local/lib /usr/lib
         HINTS "${zlib_dir_}/stage/lib"
-        DOC "Path to jpeg library."
+        DOC "Path to zlib library."
 )
 
-IF (ZLIB_LIBRARY_DEB)
-    SET(ZLIB_LIBRARY optimized ${ZLIB_LIBRARY_REL} debug ${ZLIB_LIBRARY_DEB})
-ELSE ()
-    SET(ZLIB_LIBRARY ${ZLIB_LIBRARY_REL})
+IF (ZLIB_LIBRARY_REL AND NOT ZLIB_LIBRARY_DEB)
+    SET(ZLIB_LIBRARY_DEB ${ZLIB_LIBRARY_REL})
+ELSEIF (NOT ZLIB_LIBRARY_REL)
+    MESSAGE(FATAL_ERROR "Could not find zlib library.\n")
 ENDIF ()
 
-IF (NOT ZLIB_LIBRARY)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find zlib library.\n"
-    )
-ENDIF ()
+SET(ZLIB_LIBRARY optimized "${ZLIB_LIBRARY_REL}" debug "${ZLIB_LIBRARY_DEB}")
 
-#================================== LIBPNG ==================================#
+#================================== PNG ==================================#
 
 FIND_PATH(
         PNG_INCLUDE_DIR png.h
@@ -232,18 +224,13 @@ FIND_LIBRARY(
         DOC "Path to png library."
 )
 
-IF (PNG_LIBRARY_DEB)
-    SET(PNG_LIBRARY optimized ${PNG_LIBRARY_REL} debug ${PNG_LIBRARY_DEB})
-ELSE ()
-    SET(PNG_LIBRARY ${PNG_LIBRARY_REL})
+IF (PNG_LIBRARY_REL AND NOT PNG_LIBRARY_DEB)
+    SET(PNG_LIBRARY_DEB ${PNG_LIBRARY_REL})
+ELSEIF (NOT PNG_LIBRARY_REL)
+    MESSAGE(FATAL_ERROR "Could not find png library.\n")
 ENDIF ()
 
-IF (NOT PNG_LIBRARY)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find libpng library.\n"
-    )
-ENDIF ()
+SET(PNG_LIBRARY optimized "${PNG_LIBRARY_REL}" debug "${PNG_LIBRARY_DEB}")
 
 #=================================== TIFF ===================================#
 
@@ -255,10 +242,7 @@ FIND_PATH(
         DOC "Path to libtiff headers."
 )
 IF (NOT TIFF_INCLUDE_DIR)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find libtiff headers.\n"
-    )
+    MESSAGE(FATAL_ERROR "Could not find libtiff headers.\n")
 ENDIF ()
 
 INCLUDE_DIRECTORIES("${TIFF_INCLUDE_DIR}")
@@ -278,18 +262,13 @@ FIND_LIBRARY(
         DOC "Path to tiff library."
 )
 
-IF (TIFF_LIBRARY_DEB)
-    SET(TIFF_LIBRARY optimized ${TIFF_LIBRARY_REL} debug ${TIFF_LIBRARY_DEB})
-ELSE ()
-    SET(TIFF_LIBRARY ${TIFF_LIBRARY_REL})
+IF (TIFF_LIBRARY_REL AND NOT TIFF_LIBRARY_DEB)
+    SET(TIFF_LIBRARY_DEB ${TIFF_LIBRARY_REL})
+ELSEIF (NOT TIFF_LIBRARY_REL)
+    MESSAGE(FATAL_ERROR "Could not find libtiff library.\n")
 ENDIF ()
 
-IF (NOT TIFF_LIBRARY)
-    MESSAGE(
-            FATAL_ERROR
-            "Could not find libtiff library.\n"
-    )
-ENDIF ()
+SET(TIFF_LIBRARY optimized "${TIFF_LIBRARY_REL}" debug "${TIFF_LIBRARY_DEB}")
 
 IF (WIN32)
     ADD_DEFINITIONS(-DUSE_LIBTIFF_DLL)
@@ -359,21 +338,6 @@ LINK_DIRECTORIES(${Qt5OpenGL_LIBRARIES})
 INCLUDE_DIRECTORIES(${Qt5LinguistTools_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Qt5LinguistTools_LIBRARIES})
 
-#=================================== OpenCV ===================================#
-
-
-#   find_package(OpenCV PATHS opencv_dir_ REQUIRED)
-#   IF (NOT OpenCV_FOUND)
-#       MESSAGE(
-#               FATAL_ERROR
-#               "Could not find OpenCV headers or libraries.\n"
-#       )
-#   ENDIF ()
-#
-#   INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-#   LINK_DIRECTORIES(${OpenCV_LIBRARIES})
-
-
 #=================================== Main ===================================#
 
 SET(EXTRA_LIBS "")
@@ -403,12 +367,17 @@ ENDIF ()
 LIST(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
 # Prepare config.h
+SET(PORTABLE_VERSION TRUE CACHE BOOLEAN "Whether to build the portable version or not.")
+IF (PORTABLE_VERSION)
+    SET(PORTABLE_CONFIG_DIR "config")
+ENDIF (PORTABLE_VERSION)
+SET(APPLICATION_NAME "scantailor-advanced")
 IF (WIN32)
     SET(TRANSLATION_DIRS ".:translations")
     SET(PLUGIN_DIRS ".")
 ELSE ()
-    SET(TRANSLATION_DIRS ".:${CMAKE_INSTALL_PREFIX}/share/scantailor/translations")
-    SET(PLUGIN_DIRS ".:${CMAKE_INSTALL_PREFIX}/lib/scantailor")
+    SET(TRANSLATION_DIRS ".:translations:../share/${APPLICATION_NAME}/translations")
+    SET(PLUGIN_DIRS ".:../lib/${APPLICATION_NAME}")
 ENDIF ()
 
 CONFIGURE_FILE(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
@@ -633,27 +602,19 @@ ADD_EXECUTABLE(
         ${resource_sources} ${win32_resource_file} resources/icons/COPYING
 )
 
-#ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_sources})
-
 TARGET_LINK_LIBRARIES(
         scantailor
         fix_orientation page_split deskew select_content page_layout output stcore
         dewarping zones interaction imageproc math foundation
         ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-        # ${OpenCV_LIBRARIES}
 )
-#TARGET_LINK_LIBRARIES(
-#        scantailor-cli
-#        fix_orientation page_split deskew select_content page_layout output
-#        stcore dewarping zones interaction imageproc math foundation
-#        ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-#        ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-#        # ${OpenCV_LIBRARIES}
-#)
 
-#INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
-INSTALL(TARGETS scantailor RUNTIME DESTINATION bin)
+IF (WIN32)
+    INSTALL(TARGETS scantailor RUNTIME DESTINATION .)
+ELSE()
+    INSTALL(TARGETS scantailor RUNTIME DESTINATION bin)
+ENDIF()
 
 # Translations
 TRANSLATION_SOURCES(
@@ -680,11 +641,28 @@ ENDFOREACH (ts_file)
 QT5_ADD_TRANSLATION(QM_FILES ${FILTERED_TRANSLATION_FILES})
 ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
 
-INSTALL(FILES ${QM_FILES} DESTINATION "share/scantailor/translations")
-
 IF (WIN32)
+    INSTALL(FILES ${QM_FILES} DESTINATION translations)
+ELSE()
+    INSTALL(FILES ${QM_FILES} DESTINATION "share/${APPLICATION_NAME}/translations")
+ENDIF()
+	
+IF (WIN32)
+    MACRO(ADD_RUNTIME_LIBS_TO_INSTALL Configuration Libs)
+	    SET(configurations "${Configuration}")
+	    IF (${configurations} MATCHES "ALL")
+		    SET(configurations "DEBUG;RELEASE") 
+		ENDIF()
+		FOREACH (_config ${configurations})
+	        FOREACH (_lib ${Libs})
+	            IF (EXISTS "${_lib}")
+	                LIST(APPEND "ADDITIONAL_RUNTIME_LIBS_${_config}" "${_lib}")
+		        ENDIF()
+		    ENDFOREACH()
+		ENDFOREACH()
+    ENDMACRO()
+	
     # Copy some DLLs to the staging dir.
-
     SET(
             qt5_libs
             ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
@@ -697,99 +675,144 @@ IF (WIN32)
         GET_TARGET_PROPERTY(release_loc "${target}" LOCATION_RELEASE)
         COPY_TO_BUILD_DIR("${debug_loc}" CONFIGURATIONS Debug)
         COPY_TO_BUILD_DIR("${release_loc}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+		ADD_RUNTIME_LIBS_TO_INSTALL(DEBUG "${debug_loc}")
+		ADD_RUNTIME_LIBS_TO_INSTALL(RELEASE "${release_loc}")
     ENDFOREACH ()
-
+	
     # Qt's plugins.
+	MACRO(SET_RELEASE_AND_DEBUG_LIBS VarName ReleaseLib DebugLib)
+	    SET(${VarName}_RELEASE "${ReleaseLib}")
+		IF (EXISTS "${DebugLib}")
+	        SET(${VarName}_DEBUG "${DebugLib}")
+        ELSE()
+		    SET(${VarName}_DEBUG "${ReleaseLib}")
+	    ENDIF()
+	ENDMACRO()
+	
     SET(PLUGINS_DIR "${qt_dir_}/qtbase/plugins")
+	
+	SET_RELEASE_AND_DEBUG_LIBS(qwindows "${PLUGINS_DIR}/platforms/qwindows.dll" "${PLUGINS_DIR}/platforms/qwindowsd.dll")
+    COPY_TO_BUILD_DIR("${qwindows_RELEASE}" SUBDIR platforms CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${qwindows_DEBUG}" SUBDIR platforms CONFIGURATIONS Debug)
+	INSTALL(PROGRAMS "${qwindows_DEBUG}" CONFIGURATIONS Debug DESTINATION platforms)
+	INSTALL(PROGRAMS "${qwindows_RELEASE}" CONFIGURATIONS Release DESTINATION platforms)
+    
+	SET_RELEASE_AND_DEBUG_LIBS(qjpeg "${PLUGINS_DIR}/imageformats/qjpeg.dll" "${PLUGINS_DIR}/imageformats/qjpegd.dll")
+    COPY_TO_BUILD_DIR("${qjpeg_RELEASE}" SUBDIR imageformats CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+    COPY_TO_BUILD_DIR("${qjpeg_DEBUG}" SUBDIR imageformats CONFIGURATIONS Debug)
+	INSTALL(PROGRAMS "${qjpeg_DEBUG}" CONFIGURATIONS Debug DESTINATION imageformats)
+	INSTALL(PROGRAMS "${qjpeg_RELEASE}" CONFIGURATIONS Release DESTINATION imageformats)
+	
+	SET_RELEASE_AND_DEBUG_LIBS(qtaccessible "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll" "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
+	IF (EXISTS "${qtaccessible_RELEASE}")
+        COPY_TO_BUILD_DIR("${qtaccessible_RELEASE}" SUBDIR accessible CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+        COPY_TO_BUILD_DIR("${qtaccessible_DEBUG}" SUBDIR accessible CONFIGURATIONS Debug)
+	    INSTALL(PROGRAMS "${qtaccessible_DEBUG}" CONFIGURATIONS Debug DESTINATION accessible)
+	    INSTALL(PROGRAMS "${qtaccessible_RELEASE}" CONFIGURATIONS Release DESTINATION accessible)
+	ENDIF()
+    
+	# Copy image libs
+    FIND_FILE(JPEG_LIBRARY_RT_REL NAMES libjpeg.dll HINTS "${jpeg_dir_}/bin")
+    FIND_FILE(JPEG_LIBRARY_RT_DEB NAMES libjpegd.dll HINTS "${jpeg_dir_}/bin")
+	IF (NOT JPEG_LIBRARY_RT_DEB)
+		SET(JPEG_LIBRARY_RT_DEB "${JPEG_LIBRARY_RT_REL}")
+	ENDIF()
+
+    FIND_FILE(ZLIB_LIBRARY_RT_REL NAMES libz.dll zdll.dll HINTS "${zlib_dir_}/bin")
+    FIND_FILE(ZLIB_LIBRARY_RT_DEB NAMES libzd.dll zdlld.dll HINTS "${zlib_dir_}/bin")
+	IF (NOT ZLIB_LIBRARY_RT_DEB)
+		SET(ZLIB_LIBRARY_RT_DEB "${ZLIB_LIBRARY_RT_REL}")
+	ENDIF()
+
+    FIND_FILE(PNG_LIBRARY_RT_REL NAMES libpng.dll HINTS "${png_dir_1}/bin" "${png_dir_2}/bin")
+    FIND_FILE(PNG_LIBRARY_RT_DEB NAMES libpngd.dll HINTS "${png_dir_1}/bin" "${png_dir_2}/bin")
+	IF (NOT PNG_LIBRARY_RT_DEB)
+		SET(PNG_LIBRARY_RT_DEB "${PNG_LIBRARY_RT_REL}")
+	ENDIF()
+
+    FIND_FILE(TIFF_LIBRARY_RT_REL NAMES libtiff.dll HINTS "${tiff_dir_}/bin")
+    FIND_FILE(TIFF_LIBRARY_RT_DEB NAMES libtiffd.dll HINTS "${tiff_dir_}/bin")
+	IF (NOT TIFF_LIBRARY_RT_DEB)
+		SET(TIFF_LIBRARY_RT_DEB "${TIFF_LIBRARY_RT_REL}")
+	ENDIF()
+	
     COPY_TO_BUILD_DIR(
-            "${PLUGINS_DIR}/platforms/qwindows.dll" SUBDIR platforms
-            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-    )
+	        "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}"
+	        CONFIGURATIONS Release MinSizeRel RelWithDebInfo
+	)
     COPY_TO_BUILD_DIR(
-            "${PLUGINS_DIR}/platforms/qwindowsd.dll" SUBDIR platforms
-            CONFIGURATIONS Debug
-    )
-
-    COPY_TO_BUILD_DIR(
-            "${PLUGINS_DIR}/imageformats/qjpeg.dll" SUBDIR imageformats
-            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-    )
-    COPY_TO_BUILD_DIR(
-            "${PLUGINS_DIR}/imageformats/qjpegd.dll" SUBDIR imageformats
-            CONFIGURATIONS Debug
-    )
-
-    IF (EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll")
-        COPY_TO_BUILD_DIR(
-                "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll" SUBDIR accessible
-                CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-        )
-    ENDIF ()
-    IF (EXISTS "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
-        COPY_TO_BUILD_DIR(
-                "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll" SUBDIR accessible
-                CONFIGURATIONS Debug
-        )
-    ENDIF ()
-
-    FIND_FILE(
-            JPEG_LIBRARY_RT_REL NAMES jpeg libjpeg libjpeg.dll
-            HINTS "${jpeg_dir_}/bin"
-            DOC "Path to jpeg runtime library."
-    )
-    FIND_FILE(
-            JPEG_LIBRARY_RT_DEB NAMES jpegd libjpegd libjpegd.dll
-            HINTS "${jpeg_dir_}/bin"
-            DOC "Path to jpeg runtime library."
-    )
-    COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    COPY_TO_BUILD_DIR("${JPEG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
-
-    FIND_FILE(
-            ZLIB_LIBRARY_RT_REL NAMES z libz libz.dll zdll.dll
-            HINTS "${zlib_dir_}/bin"
-            DOC "Path to zlib runtime library."
-    )
-    FIND_FILE(
-            ZLIB_LIBRARY_RT_DEB NAMES zd libzd libzd.dll zdlld.dll
-            HINTS "${zlib_dir_}/bin"
-            DOC "Path to zlib runtime library."
-    )
-    COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    COPY_TO_BUILD_DIR("${ZLIB_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
-
-    FIND_FILE(
-            PNG_LIBRARY_RT_REL NAMES png libpng libpng.dll
-            HINTS "${png_dir_1}/bin" "${png_dir_2}/bin"
-            DOC "Path to png runtime library."
-    )
-    FIND_FILE(
-            PNG_LIBRARY_RT_DEB NAMES pngd libpngd libpngd.dll
-            HINTS "${png_dir_1}/bin" "${png_dir_2}/bin"
-            DOC "Path to png runtime library."
-    )
-    COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    COPY_TO_BUILD_DIR("${PNG_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
-
-    FIND_FILE(
-            TIFF_LIBRARY_RT_REL NAMES tiff libtiff libtiff.dll
-            HINTS "${tiff_dir_}/bin"
-            DOC "Path to tiff runtime library."
-    )
-    FIND_FILE(
-            TIFF_LIBRARY_RT_DEB NAMES tiffd libtiffd libtiffd.dll
-            HINTS "${tiff_dir_}/bin"
-            DOC "Path to tiff runtime library."
-    )
-    COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_REL}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    COPY_TO_BUILD_DIR("${TIFF_LIBRARY_RT_DEB}" CONFIGURATIONS Debug)
+	        "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}"
+        	CONFIGURATIONS Debug
+	)
+	ADD_RUNTIME_LIBS_TO_INSTALL(DEBUG "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}")
+	ADD_RUNTIME_LIBS_TO_INSTALL(RELEASE "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}")
 
     IF (MINGW)
-        GET_FILENAME_COMPONENT(mingw_path_ ${CMAKE_CXX_COMPILER} PATH)
-        COPY_TO_BUILD_DIR("${mingw_path_}/libgcc_s_seh-1.dll" "${mingw_path_}/libgcc_s_sjlj-1.dll" "${mingw_path_}/libgcc_s_dw2-1.dll"
-                "${mingw_path_}/libstdc++-6.dll" "${mingw_path_}/libwinpthread-1.dll")
-    ENDIF (MINGW)
+        GET_FILENAME_COMPONENT(_mingw_path ${CMAKE_CXX_COMPILER} PATH)
+        FILE(GLOB libgcc_s "${_mingw_path}/libgcc_s_*.dll")
+        FILE(GLOB libstdcpp "${_mingw_path}/libstdc++*.dll")
+        FILE(GLOB libwinpthread "${_mingw_path}/libwinpthread*.dll")
+        COPY_TO_BUILD_DIR("${libgcc_s};${libstdcpp};${libwinpthread}")
+		ADD_RUNTIME_LIBS_TO_INSTALL(ALL "${libgcc_s};${libstdcpp};${libwinpthread}")
+    ENDIF()
 
     # Generate the target that will actually do the copying.
     GENERATE_COPY_TO_BUILD_DIR_TARGET(copy_to_build_dir)
-ENDIF (WIN32)
+	
+	INSTALL(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug DESTINATION .)
+	INSTALL(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_RELEASE} CONFIGURATIONS Release DESTINATION .)
+ENDIF()
+
+IF (UNIX)
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/resources/unix/scantailor.desktop" DESTINATION "share/applications")
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/resources/unix/icons/32x32/ScanTailor.png" DESTINATION "share/icons/hicolor/32x32/apps")
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/resources/unix/icons/256x256/ScanTailor.png" DESTINATION "share/icons/hicolor/256x256/apps")
+    INSTALL(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
+ENDIF()
+
+# Packaging
+IF (WIN32)
+    SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
+    IF (MSVC)
+        SET(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
+    ENDIF()
+ENDIF()
+INCLUDE(InstallRequiredSystemLibraries)
+
+SET(CPACK_PACKAGE_NAME "${APPLICATION_NAME}")
+STRING(REGEX REPLACE "(.*)\\..*\\..*" "\\1" CPACK_PACKAGE_VERSION_MAJOR "${VERSION}")
+STRING(REGEX REPLACE ".*\\.(.*)\\..*" "\\1" CPACK_PACKAGE_VERSION_MINOR "${VERSION}")
+STRING(REGEX REPLACE ".*\\..*\\.(.*)" "\\1" CPACK_PACKAGE_VERSION_PATCH "${VERSION}")
+SET(CPACK_PACKAGE_VENDOR "4lex4 <4lex49@zoho.com>")
+SET(CPACK_PACKAGE_CONTACT "${CPACK_PACKAGE_VENDOR}")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Interactive post-processing tool for scanned pages.")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+SET(CPACK_PACKAGE_EXECUTABLES "scantailor;${CMAKE_PROJECT_NAME}")
+SET(CPACK_CREATE_DESKTOP_LINKS "scantailor")
+IF(WIN32)
+    SET(CPACK_NSIS_INSTALLED_ICON_NAME "scantailor.exe")
+    SET(CPACK_NSIS_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
+    SET(CPACK_NSIS_DISPLAY_NAME "${CMAKE_PROJECT_NAME} ${VERSION}")
+    SET(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
+    SET(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+    SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
+    SET(CPACK_NSIS_CREATE_ICONS_EXTRA
+            "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\""
+    )
+    SET(CPACK_NSIS_DELETE_ICONS_EXTRA
+            "Delete \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\""
+    )
+ENDIF()
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${APPLICATION_NAME}-${VERSION}")
+SET(
+	CPACK_SOURCE_IGNORE_FILES
+	"/\\\\.svn/"
+	"/\\\\.git/"
+	"~$"
+	"\\\\.pcs$"
+	"TODO.txt"
+	"CMakeLists.txt.user"
+	"/doxygen/"
+	"${CMAKE_BINARY_DIR}"
+)
+INCLUDE(CPack)

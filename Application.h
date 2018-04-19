@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QTimer>
 #include <QtCore/QTranslator>
-#include "ui_MainWindow.h"
 #include "FilterUiInterface.h"
 #include "BackgroundTask.h"
 #include "OutputFileNameGenerator.h"
@@ -40,13 +39,20 @@ public:
 
     std::list<QString> getLanguagesList() const;
 
+    bool isPortableVersion() const;
+
+    const QString& getPortableConfigPath() const;
+
 private:
     void initTranslations();
+
+    void initPortableVersion();
 
 
     QTranslator m_translator;
     QString m_currentLocale;
     std::map<QString, QString> m_translationsMap;
+    QString m_portableConfigPath;
 };
 
 

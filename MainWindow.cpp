@@ -489,17 +489,13 @@ void MainWindow::timerEvent(QTimerEvent* const event) {
 
 MainWindow::SavePromptResult MainWindow::promptProjectSave() {
     QMessageBox msgBox(QMessageBox::Question, tr("Save Project"), tr("Save the project?"),
-                       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, this);
-    msgBox.setDefaultButton(QMessageBox::Save);
-
-    msgBox.setButtonText(QMessageBox::Save, tr("Save"));
-    msgBox.setButtonText(QMessageBox::Discard, tr("Discard"));
-    msgBox.setButtonText(QMessageBox::Cancel, tr("Cancel"));
+                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, this);
+    msgBox.setDefaultButton(QMessageBox::Yes);
 
     switch (msgBox.exec()) {
-        case QMessageBox::Save:
+        case QMessageBox::Yes:
             return SAVE;
-        case QMessageBox::Discard:
+        case QMessageBox::No:
             return DONT_SAVE;
         default:
             return CANCEL;

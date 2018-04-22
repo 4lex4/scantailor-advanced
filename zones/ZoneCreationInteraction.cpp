@@ -23,10 +23,11 @@
 #include <QPainter>
 #include <QDebug>
 #include <boost/lambda/lambda.hpp>
+#include <boost/bind.hpp>
 
 ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction)
         : m_rContext(context),
-          m_dragHandler(context.imageView(), boost::lambda::constant(true)),
+          m_dragHandler(context.imageView(), boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, _1)),
           m_dragWatcher(m_dragHandler),
           m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
           m_ptrSpline(new EditableSpline) {
@@ -254,10 +255,14 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
     const QPointF first(to_screen.map(m_ptrSpline->firstVertex()->point()));
     const QPointF last(to_screen.map(m_ptrSpline->lastVertex()->point()));
 
-    if (!m_rectangularZoneType && (event->modifiers() == Qt::ControlModifier)) {
-        m_rectangularZoneType = true;
-        m_lassoMode = false;
-        updateStatusTip();
+    if (!m_rectangularZoneType) {
+        if (event->modifiers() == Qt::ControlModifier) {
+            m_rectangularZoneType = true;
+            m_lassoMode = false;
+            updateStatusTip();
+        } else if ((event->modifiers() == Qt::AltModifier) && (event->buttons() & Qt::LeftButton)) {
+            m_lassoMode = true;
+        }
     }
 
     if (Proximity(last, screen_mouse_pos) <= interaction.proximityThreshold()) {
@@ -320,4 +325,8 @@ void ZoneCreationInteraction::updateStatusTip() {
     }
 
     m_interaction.setInteractionStatusTip(tip);
+}
+
+bool ZoneCreationInteraction::isDragHandlerPermitted(const InteractionState& interaction) const {
+    return !m_lassoMode;
 }

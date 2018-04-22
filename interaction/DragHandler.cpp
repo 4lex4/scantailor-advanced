@@ -49,30 +49,30 @@ void DragHandler::onMousePressEvent(QMouseEvent* event, InteractionState& intera
 }
 
 void DragHandler::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
-    if (interaction.capturedBy(m_interaction)) {
-        m_interaction.release();
-        event->accept();
-    }
-}
-
-void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-    if (!((event->modifiers() == Qt::NoModifier) || (event->modifiers() & Qt::ShiftModifier))) {
+    if (!interaction.capturedBy(m_interaction)) {
         return;
     }
 
-    if (interaction.capturedBy(m_interaction)) {
-        QPoint movement(event->pos());
-        movement -= m_lastMousePos;
-        m_lastMousePos = event->pos();
+    m_interaction.release();
+    event->accept();
+}
 
-        QPointF adjusted_fp(m_rImageView.getWidgetFocalPoint());
-        adjusted_fp += movement;
+void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
+    if (!interaction.capturedBy(m_interaction)) {
+        return;
+    }
 
-        // These will call update() if necessary.
-        if (event->modifiers() & Qt::ShiftModifier) {
-            m_rImageView.setWidgetFocalPoint(adjusted_fp);
-        } else {
-            m_rImageView.adjustAndSetWidgetFocalPoint(adjusted_fp);
-        }
+    QPoint movement(event->pos());
+    movement -= m_lastMousePos;
+    m_lastMousePos = event->pos();
+
+    QPointF adjusted_fp(m_rImageView.getWidgetFocalPoint());
+    adjusted_fp += movement;
+
+    // These will call update() if necessary.
+    if (event->modifiers() & Qt::ShiftModifier) {
+        m_rImageView.setWidgetFocalPoint(adjusted_fp);
+    } else {
+        m_rImageView.adjustAndSetWidgetFocalPoint(adjusted_fp);
     }
 }

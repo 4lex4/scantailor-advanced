@@ -55,6 +55,8 @@ protected:
 private:
     void updateStatusTip();
 
+    bool isDragHandlerPermitted(const InteractionState& interaction) const;
+
     ZoneInteractionContext& m_rContext;
 
     /**

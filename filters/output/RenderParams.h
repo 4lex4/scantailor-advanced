@@ -31,7 +31,9 @@ public:
 
     explicit RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions);
 
-    bool cutMargins() const;
+    bool fillOffcut() const;
+
+    bool fillMargins() const;
 
     bool normalizeIllumination() const;
 
@@ -57,7 +59,7 @@ public:
 
 private:
     enum {
-        CUT_MARGINS = 1,
+        FILL_MARGINS = 1,
         NORMALIZE_ILLUMINATION = 1 << 1,
         NEED_BINARIZATION = 1 << 2,
         MIXED_OUTPUT = 1 << 3,
@@ -67,7 +69,8 @@ private:
         SPLIT_OUTPUT = 1 << 7,
         ORIGINAL_BACKGROUND = 1 << 8,
         COLOR_SEGMENTATION = 1 << 9,
-        POSTERIZE = 1 << 10
+        POSTERIZE = 1 << 10,
+        FILL_OFFCUT = 1 << 11
     };
 
     int m_mask;

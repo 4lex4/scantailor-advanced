@@ -248,7 +248,8 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
 
     const ColorCommonOptions& colorCommonOptions = colorParams.colorCommonOptions();
     const BlackWhiteOptions& blackWhiteOptions = colorParams.blackWhiteOptions();
-    cutMarginsCB->setChecked(colorCommonOptions.cutMargins());
+    fillMarginsCB->setChecked(colorCommonOptions.fillMargins());
+    fillOffcutCB->setChecked(colorCommonOptions.fillOffcut());
     equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
     equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
     savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
@@ -676,7 +677,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
     ColorCommonOptions colorCommonOptions;
     colorCommonOptions.setFillingColor(static_cast<FillingColor>(fillingColorBox->currentData().toInt()));
-    colorCommonOptions.setCutMargins(cutMarginsCB->isChecked());
+    colorCommonOptions.setFillMargins(fillMarginsCB->isChecked());
+    colorCommonOptions.setFillOffcut(fillOffcutCB->isChecked());
     colorCommonOptions.setNormalizeIllumination(equalizeIlluminationColorCB->isChecked());
     ColorCommonOptions::PosterizationOptions posterizationOptions = colorCommonOptions.getPosterizationOptions();
     posterizationOptions.setEnabled(posterizeCB->isChecked());

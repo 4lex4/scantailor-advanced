@@ -120,7 +120,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
     colorParams.setColorMode(COLOR_GRAYSCALE);
 
     ColorCommonOptions colorCommonOptions;
-    colorCommonOptions.setCutMargins(false);
+    colorCommonOptions.setFillMargins(false);
     colorParams.setColorCommonOptions(colorCommonOptions);
 
     outputParams.setColorParams(colorParams);

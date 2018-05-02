@@ -88,7 +88,7 @@
         <x>0</x>
         <y>0</y>
         <width>228</width>
-        <height>1215</height>
+        <height>1234</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -300,9 +300,16 @@
                 <number>5</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="cutMarginsCB">
+                <widget class="QCheckBox" name="fillOffcutCB">
                  <property name="text">
-                  <string>Cut margins</string>
+                  <string>Fill offcut</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="fillMarginsCB">
+                 <property name="text">
+                  <string>Fill margins</string>
                  </property>
                 </widget>
                </item>

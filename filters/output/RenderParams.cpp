@@ -60,16 +60,19 @@ RenderParams::RenderParams(const ColorParams& colorParams, const SplittingOption
             m_mask |= POSTERIZE;
         }
     }
-    if (colorCommonOptions.cutMargins()) {
-        m_mask |= CUT_MARGINS;
+    if (colorCommonOptions.fillMargins()) {
+        m_mask |= FILL_MARGINS;
+    }
+    if (colorCommonOptions.fillOffcut()) {
+        m_mask |= FILL_OFFCUT;
     }
     if (colorCommonOptions.normalizeIllumination()) {
         m_mask |= NORMALIZE_ILLUMINATION_COLOR;
     }
 }
 
-bool RenderParams::cutMargins() const {
-    return (m_mask & CUT_MARGINS) != 0;
+bool RenderParams::fillMargins() const {
+    return (m_mask & FILL_MARGINS) != 0;
 }
 
 bool RenderParams::normalizeIllumination() const {
@@ -114,5 +117,9 @@ bool RenderParams::needColorSegmentation() const {
 
 bool RenderParams::posterize() const {
     return (m_mask & POSTERIZE) != 0;
+}
+
+bool RenderParams::fillOffcut() const {
+    return (m_mask & FILL_OFFCUT) != 0;
 }
 }  // namespace output

@@ -118,7 +118,9 @@ private slots:
 
     void posterizeForceBwToggled(bool checked);
 
-    void cutMarginsToggled(bool checked);
+    void fillMarginsToggled(bool checked);
+
+    void fillOffcutToggled(bool checked);
 
     void equalizeIlluminationToggled(bool checked);
 

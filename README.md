@@ -159,11 +159,11 @@ has't been moved due to dirty realization. Their functionality is fully covered 
       folder with the application executable, ScanTailor Advanced works as a standalone app and stores
       its settings and application data in the appropriate system specific paths.*
     
-    * Page splitting had an influence on output only in b&w mode with dewarping disabled.
-      Now it works in all the modes.
+    * Page splitting settings influence on the output now by filling offcut.
+      Fill offcut option has been added.
        
     * Page layout and all the other views now consider splitting settings.
-      Corresponding improvements are done to thumbnails.
+      Corresponding improvements are done for thumbnails.
     
     * Changed ScanTailor behavior on page split stage.
          1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
@@ -207,8 +207,8 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   **Warning!** More threads requires more memory to use. Exclude situations of that to be overflowed.  
 
 * ##### Full control over settings on output
-  This feature enables to control cut margins, normalizing illumination before binarization,
-  normalizing illumination in color areas options, Savitzky-Golay and morphological smoothing on output
+  This feature enables to control filling margins, normalizing illumination before binarization,
+  normalizing illumination in color areas and Savitzky-Golay and morphological smoothing options at the output stage
   in any mode (of course, those setting that can be applied in the current mode).
  
 * ##### Filling outside areas

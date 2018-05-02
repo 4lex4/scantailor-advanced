@@ -470,10 +470,18 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
                                                 SplitImage* splitImage) {
     const RenderParams render_params(m_colorParams, m_splittingOptions);
 
-    const QPolygonF contentArea = m_xform.resultingPreCropArea().intersected(
-            QRectF(render_params.cutMargins() ? m_contentRect : m_outRect));
+    const QPolygonF preCropArea = [this, &render_params]() {
+        if (render_params.fillOffcut()) {
+            return m_xform.resultingPreCropArea();
+        } else {
+            const QPolygonF imageRectInOutputCs = m_xform.transform().map(m_xform.origRect());
+            return imageRectInOutputCs.intersected(QRectF(m_outRect));
+        }
+    }();
+    const QPolygonF contentArea
+            = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
     const QRect contentRect = contentArea.boundingRect().toRect();
-    const QPolygonF outCropArea = m_xform.resultingPreCropArea().intersected(QRectF(m_outRect));
+    const QPolygonF outCropArea = preCropArea.intersected(QRectF(m_outRect));
 
     const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
     // If the content area is empty or outside the cropping area, return a blank page.
@@ -499,7 +507,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
     // generally smaller margins are better, except when there is
     // some garbage that connects the content to the edge of the
     // image area.
-    const QRect workingBoundingRect(m_xform.resultingPreCropArea()
+    const QRect workingBoundingRect(preCropArea
                                             .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin,
                                                                                      content_margin, content_margin)))
                                             .boundingRect()
@@ -507,7 +515,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
     const QRect contentRectInWorkingCs(contentRect.translated(-workingBoundingRect.topLeft()));
     const QPolygonF contentAreaInWorkingCs(contentArea.translated(-workingBoundingRect.topLeft()));
     const QPolygonF outCropAreaInWorkingCs(outCropArea.translated(-workingBoundingRect.topLeft()));
-    const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(m_xform.resultingPreCropArea()));
+    const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(preCropArea));
     const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
     const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 
@@ -906,7 +914,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
 
         if (render_params.needBinarization() && render_params.originalBackground()) {
             BinaryImage background_mask = BinaryImage(dst, BinaryThreshold(255)).inverted();
-            fillMarginsInPlace(background_mask, m_xform.resultingPreCropArea(), BLACK);
+            fillMarginsInPlace(background_mask, preCropArea, BLACK);
             applyMask(original_background, background_mask, WHITE);
             applyMask(original_background, bw_content_mask_output, BLACK);
 
@@ -943,10 +951,18 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
                                              SplitImage* splitImage) {
     const RenderParams render_params(m_colorParams, m_splittingOptions);
 
-    const QPolygonF contentArea = m_xform.resultingPreCropArea().intersected(
-            QRectF(render_params.cutMargins() ? m_contentRect : m_outRect));
+    const QPolygonF preCropArea = [this, &render_params]() {
+        if (render_params.fillOffcut()) {
+            return m_xform.resultingPreCropArea();
+        } else {
+            const QPolygonF imageRectInOutputCs = m_xform.transform().map(m_xform.origRect());
+            return imageRectInOutputCs.intersected(QRectF(m_outRect));
+        }
+    }();
+    const QPolygonF contentArea
+            = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
     const QRect contentRect = contentArea.boundingRect().toRect();
-    const QPolygonF outCropArea = m_xform.resultingPreCropArea().intersected(QRectF(m_outRect));
+    const QPolygonF outCropArea = preCropArea.intersected(QRectF(m_outRect));
 
     const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
     // If the content area is empty or outside the cropping area, return a blank page.
@@ -972,7 +988,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     // generally smaller margins are better, except when there is
     // some garbage that connects the content to the edge of the
     // image area.
-    const QRect workingBoundingRect(m_xform.resultingPreCropArea()
+    const QRect workingBoundingRect(preCropArea
                                             .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin,
                                                                                      content_margin, content_margin)))
                                             .boundingRect()
@@ -980,7 +996,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     const QRect contentRectInWorkingCs(contentRect.translated(-workingBoundingRect.topLeft()));
     const QPolygonF contentAreaInWorkingCs(contentArea.translated(-workingBoundingRect.topLeft()));
     const QPolygonF outCropAreaInWorkingCs(outCropArea.translated(-workingBoundingRect.topLeft()));
-    const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(m_xform.resultingPreCropArea()));
+    const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(preCropArea));
     const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
     const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 

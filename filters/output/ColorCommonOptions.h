@@ -71,9 +71,13 @@ public:
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool cutMargins() const;
+    bool fillOffcut() const;
 
-    void setCutMargins(bool val);
+    void setFillOffcut(bool fillOffcut);
+
+    bool fillMargins() const;
+
+    void setFillMargins(bool val);
 
     bool normalizeIllumination() const;
 
@@ -97,7 +101,8 @@ private:
     static QString formatFillingColor(FillingColor type);
 
 
-    bool m_cutMargins;
+    bool m_fillOffcut;
+    bool m_fillMargins;
     bool m_normalizeIllumination;
     FillingColor m_fillingColor;
     PosterizationOptions posterizationOptions;

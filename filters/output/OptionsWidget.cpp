@@ -181,9 +181,17 @@ void OptionsWidget::higherSearchSensivityToggled(const bool checked) {
     emit reloadRequested();
 }
 
-void OptionsWidget::cutMarginsToggled(const bool checked) {
+void OptionsWidget::fillMarginsToggled(const bool checked) {
     ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
-    colorCommonOptions.setCutMargins(checked);
+    colorCommonOptions.setFillMargins(checked);
+    m_colorParams.setColorCommonOptions(colorCommonOptions);
+    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+    emit reloadRequested();
+}
+
+void OptionsWidget::fillOffcutToggled(const bool checked) {
+    ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
+    colorCommonOptions.setFillOffcut(checked);
     m_colorParams.setColorCommonOptions(colorCommonOptions);
     m_ptrSettings->setColorParams(m_pageId, m_colorParams);
     emit reloadRequested();
@@ -552,8 +560,10 @@ void OptionsWidget::updateColorsDisplay() {
     m_colorParams.setColorCommonOptions(colorCommonOptions);
     m_ptrSettings->setColorParams(m_pageId, m_colorParams);
 
-    cutMarginsCB->setChecked(colorCommonOptions.cutMargins());
-    cutMarginsCB->setVisible(true);
+    fillMarginsCB->setChecked(colorCommonOptions.fillMargins());
+    fillMarginsCB->setVisible(true);
+    fillOffcutCB->setChecked(colorCommonOptions.fillOffcut());
+    fillOffcutCB->setVisible(true);
     equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
     equalizeIlluminationCB->setVisible(color_mode != COLOR_GRAYSCALE);
     equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
@@ -884,7 +894,8 @@ void OptionsWidget::setupUiConnections() {
     connect(posterizeNormalizationCB, SIGNAL(clicked(bool)), this, SLOT(posterizeNormalizationToggled(bool)));
     connect(posterizeForceBwCB, SIGNAL(clicked(bool)), this, SLOT(posterizeForceBwToggled(bool)));
 
-    connect(cutMarginsCB, SIGNAL(clicked(bool)), this, SLOT(cutMarginsToggled(bool)));
+    connect(fillMarginsCB, SIGNAL(clicked(bool)), this, SLOT(fillMarginsToggled(bool)));
+    connect(fillOffcutCB, SIGNAL(clicked(bool)), this, SLOT(fillOffcutToggled(bool)));
     connect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
     connect(equalizeIlluminationColorCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationColorToggled(bool)));
     connect(savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)), this, SLOT(savitzkyGolaySmoothingToggled(bool)));
@@ -929,7 +940,8 @@ void OptionsWidget::removeUiConnections() {
     disconnect(posterizeNormalizationCB, SIGNAL(clicked(bool)), this, SLOT(posterizeNormalizationToggled(bool)));
     disconnect(posterizeForceBwCB, SIGNAL(clicked(bool)), this, SLOT(posterizeForceBwToggled(bool)));
 
-    disconnect(cutMarginsCB, SIGNAL(clicked(bool)), this, SLOT(cutMarginsToggled(bool)));
+    disconnect(fillMarginsCB, SIGNAL(clicked(bool)), this, SLOT(fillMarginsToggled(bool)));
+    disconnect(fillOffcutCB, SIGNAL(clicked(bool)), this, SLOT(fillOffcutToggled(bool)));
     disconnect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
     disconnect(equalizeIlluminationColorCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationColorToggled(bool)));
     disconnect(savitzkyGolaySmoothingCB, SIGNAL(clicked(bool)), this, SLOT(savitzkyGolaySmoothingToggled(bool)));

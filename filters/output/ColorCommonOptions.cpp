@@ -21,11 +21,12 @@
 
 namespace output {
 ColorCommonOptions::ColorCommonOptions()
-        : m_cutMargins(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {
+        : m_fillMargins(true), m_fillOffcut(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {
 }
 
 ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
-        : m_cutMargins(el.attribute("cutMargins") == "1"),
+        : m_fillMargins(el.attribute("fillMargins") == "1"),
+          m_fillOffcut(el.attribute("fillOffcut") == "1"),
           m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
           m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
           posterizationOptions(el.namedItem("posterization-options").toElement()) {
@@ -33,7 +34,8 @@ ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
 
 QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
-    el.setAttribute("cutMargins", m_cutMargins ? "1" : "0");
+    el.setAttribute("fillMargins", m_fillMargins ? "1" : "0");
+    el.setAttribute("fillOffcut", m_fillOffcut ? "1" : "0");
     el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
     el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
     el.appendChild(posterizationOptions.toXml(doc, "posterization-options"));
@@ -42,8 +44,9 @@ QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) co
 }
 
 bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
-    return (m_normalizeIllumination == other.m_normalizeIllumination) && (m_cutMargins == other.m_cutMargins)
-           && (m_fillingColor == other.m_fillingColor) && (posterizationOptions == other.posterizationOptions);
+    return (m_normalizeIllumination == other.m_normalizeIllumination) && (m_fillMargins == other.m_fillMargins)
+           && (m_fillOffcut == other.m_fillOffcut) && (m_fillingColor == other.m_fillingColor)
+           && (posterizationOptions == other.posterizationOptions);
 }
 
 bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
@@ -80,12 +83,12 @@ QString ColorCommonOptions::formatFillingColor(FillingColor type) {
     return str;
 }
 
-void ColorCommonOptions::setCutMargins(bool val) {
-    m_cutMargins = val;
+void ColorCommonOptions::setFillMargins(bool val) {
+    m_fillMargins = val;
 }
 
-bool ColorCommonOptions::cutMargins() const {
-    return m_cutMargins;
+bool ColorCommonOptions::fillMargins() const {
+    return m_fillMargins;
 }
 
 bool ColorCommonOptions::normalizeIllumination() const {
@@ -102,6 +105,14 @@ const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosteriza
 
 void ColorCommonOptions::setPosterizationOptions(const ColorCommonOptions::PosterizationOptions& posterizationOptions) {
     ColorCommonOptions::posterizationOptions = posterizationOptions;
+}
+
+bool ColorCommonOptions::fillOffcut() const {
+    return m_fillOffcut;
+}
+
+void ColorCommonOptions::setFillOffcut(bool fillOffcut) {
+    m_fillOffcut = fillOffcut;
 }
 
 /*=============================== ColorCommonOptions::PosterizationOptions ==================================*/

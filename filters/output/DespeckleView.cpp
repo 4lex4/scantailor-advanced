@@ -61,7 +61,7 @@ public:
     DespeckleTask(DespeckleView* owner,
                   const DespeckleState& despeckle_state,
                   intrusive_ptr<TaskCancelHandle> cancel_handle,
-                  DespeckleLevel level,
+                  double level,
                   bool debug);
 
     BackgroundExecutor::TaskResultPtr operator()() override;
@@ -71,7 +71,7 @@ private:
     DespeckleState m_despeckleState;
     intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
     std::unique_ptr<DebugImages> m_ptrDbg;
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
 };
 
 
@@ -118,7 +118,7 @@ DespeckleView::~DespeckleView() {
     cancelBackgroundTask();
 }
 
-void DespeckleView::despeckleLevelChanged(const DespeckleLevel new_level, bool* handled) {
+void DespeckleView::despeckleLevelChanged(const double new_level, bool* handled) {
     if (new_level == m_despeckleLevel) {
         return;
     }
@@ -218,7 +218,7 @@ void DespeckleView::removeImageViewWidget() {
 DespeckleView::DespeckleTask::DespeckleTask(DespeckleView* owner,
                                             const DespeckleState& despeckle_state,
                                             intrusive_ptr<TaskCancelHandle> cancel_handle,
-                                            const DespeckleLevel level,
+                                            const double level,
                                             const bool debug)
         : m_ptrOwner(owner),
           m_despeckleState(despeckle_state),

@@ -33,7 +33,7 @@ namespace output {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
         : m_ptrSettings(std::move(settings)),
           m_pageSelectionAccessor(page_selection_accessor),
-          m_despeckleLevel(DESPECKLE_NORMAL),
+          m_despeckleLevel(1.0),
           m_lastTab(TAB_OUTPUT) {
     setupUi(this);
 
@@ -41,6 +41,9 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 
     depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
     depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
+
+    despeckleSlider->setMinimum(qRound(1.0 * 10));
+    despeckleSlider->setMaximum(qRound(3.0 * 10));
 
     colorModeSelector->addItem(tr("Black and White"), BLACK_AND_WHITE);
     colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
@@ -312,23 +315,43 @@ void OptionsWidget::applySplittingOptionsConfirmed(const std::set<PageId>& pages
     }
 }
 
-void OptionsWidget::despeckleOffSelected() {
-    handleDespeckleLevelChange(DESPECKLE_OFF);
+void OptionsWidget::despeckleToggled(bool checked) {
+    if (checked) {
+        handleDespeckleLevelChange(0.1 * despeckleSlider->value());
+    } else {
+        handleDespeckleLevelChange(0);
+    };
+
+    despeckleSlider->setEnabled(checked);
 }
 
-void OptionsWidget::despeckleCautiousSelected() {
-    handleDespeckleLevelChange(DESPECKLE_CAUTIOUS);
+void OptionsWidget::despeckleSliderReleased() {
+    const double value = 0.1 * despeckleSlider->value();
+    handleDespeckleLevelChange(value);
 }
 
-void OptionsWidget::despeckleNormalSelected() {
-    handleDespeckleLevelChange(DESPECKLE_NORMAL);
+void OptionsWidget::despeckleSliderValueChanged(int value) {
+    const double new_value = 0.1 * value;
+
+    const QString tooltip_text(QString::number(new_value));
+    despeckleSlider->setToolTip(tooltip_text);
+
+    // Show the tooltip immediately.
+    const QPoint center(despeckleSlider->rect().center());
+    QPoint tooltip_pos(despeckleSlider->mapFromGlobal(QCursor::pos()));
+    tooltip_pos.setY(center.y());
+    tooltip_pos.setX(qBound(0, tooltip_pos.x(), despeckleSlider->width()));
+    tooltip_pos = despeckleSlider->mapToGlobal(tooltip_pos);
+    QToolTip::showText(tooltip_pos, tooltip_text, despeckleSlider);
+
+    if (despeckleSlider->isSliderDown()) {
+        return;
+    }
+
+    handleDespeckleLevelChange(new_value, true);
 }
 
-void OptionsWidget::despeckleAggressiveSelected() {
-    handleDespeckleLevelChange(DESPECKLE_AGGRESSIVE);
-}
-
-void OptionsWidget::handleDespeckleLevelChange(const DespeckleLevel level) {
+void OptionsWidget::handleDespeckleLevelChange(const double level, const bool delay) {
     m_despeckleLevel = level;
     m_ptrSettings->setDespeckleLevel(m_pageId, level);
 
@@ -339,7 +362,11 @@ void OptionsWidget::handleDespeckleLevelChange(const DespeckleLevel level) {
         // This means we are on the "Despeckling" tab.
         emit invalidateThumbnail(m_pageId);
     } else {
-        emit reloadRequested();
+        if (delay) {
+            delayedReloadRequest.start(750);
+        } else {
+            emit reloadRequested();
+        }
     }
 }
 
@@ -470,7 +497,7 @@ void OptionsWidget::reloadIfNecessary() {
     DewarpingOptions saved_dewarping_options;
     dewarping::DistortionModel saved_distortion_model;
     DepthPerception saved_depth_perception;
-    DespeckleLevel saved_despeckle_level = DESPECKLE_CAUTIOUS;
+    double saved_despeckle_level = 1.0;
 
     std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(m_pageId));
     if (output_params) {
@@ -632,24 +659,18 @@ void OptionsWidget::updateColorsDisplay() {
     }
 
     if (threshold_options_visible) {
-        switch (m_despeckleLevel) {
-            case DESPECKLE_OFF:
-                despeckleOffBtn->setChecked(true);
-                break;
-            case DESPECKLE_CAUTIOUS:
-                despeckleCautiousBtn->setChecked(true);
-                break;
-            case DESPECKLE_NORMAL:
-                despeckleNormalBtn->setChecked(true);
-                break;
-            case DESPECKLE_AGGRESSIVE:
-                despeckleAggressiveBtn->setChecked(true);
-                break;
+        if (m_despeckleLevel != 0) {
+            despeckleCB->setChecked(true);
+            despeckleSlider->setValue(qRound(10 * m_despeckleLevel));
+        } else {
+            despeckleCB->setChecked(false);
         }
+        despeckleSlider->setEnabled(m_despeckleLevel != 0);
+        despeckleSlider->setToolTip(QString::number(0.1 * despeckleSlider->value()));
 
         for (int i = 0; i < binarizationOptions->count(); i++) {
             auto* widget = dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
-            widget->preUpdateUI(m_pageId);
+            widget->updateUi(m_pageId);
         }
     }
 
@@ -912,10 +933,9 @@ void OptionsWidget::setupUiConnections() {
 
     connect(applyDepthPerceptionButton, SIGNAL(clicked()), this, SLOT(applyDepthPerceptionButtonClicked()));
 
-    connect(despeckleOffBtn, SIGNAL(clicked()), this, SLOT(despeckleOffSelected()));
-    connect(despeckleCautiousBtn, SIGNAL(clicked()), this, SLOT(despeckleCautiousSelected()));
-    connect(despeckleNormalBtn, SIGNAL(clicked()), this, SLOT(despeckleNormalSelected()));
-    connect(despeckleAggressiveBtn, SIGNAL(clicked()), this, SLOT(despeckleAggressiveSelected()));
+    connect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
+    connect(despeckleSlider, SIGNAL(sliderReleased()), this, SLOT(despeckleSliderReleased()));
+    connect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
     connect(applyDespeckleButton, SIGNAL(clicked()), this, SLOT(applyDespeckleButtonClicked()));
     connect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     connect(&delayedReloadRequest, SIGNAL(timeout()), this, SLOT(sendReloadRequested()));
@@ -961,10 +981,9 @@ void OptionsWidget::removeUiConnections() {
 
     disconnect(applyDepthPerceptionButton, SIGNAL(clicked()), this, SLOT(applyDepthPerceptionButtonClicked()));
 
-    disconnect(despeckleOffBtn, SIGNAL(clicked()), this, SLOT(despeckleOffSelected()));
-    disconnect(despeckleCautiousBtn, SIGNAL(clicked()), this, SLOT(despeckleCautiousSelected()));
-    disconnect(despeckleNormalBtn, SIGNAL(clicked()), this, SLOT(despeckleNormalSelected()));
-    disconnect(despeckleAggressiveBtn, SIGNAL(clicked()), this, SLOT(despeckleAggressiveSelected()));
+    disconnect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
+    disconnect(despeckleSlider, SIGNAL(sliderReleased()), this, SLOT(despeckleSliderReleased()));
+    disconnect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
     disconnect(applyDespeckleButton, SIGNAL(clicked()), this, SLOT(applyDespeckleButtonClicked()));
     disconnect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
     disconnect(&delayedReloadRequest, SIGNAL(timeout()), this, SLOT(sendReloadRequested()));

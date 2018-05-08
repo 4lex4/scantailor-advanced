@@ -581,13 +581,9 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     if (m_params.colorParams().colorMode() == COLOR_GRAYSCALE) {
         despeckle_view = std::make_unique<ErrorWidget>(tr("Despeckling can't be done in Color / Grayscale mode."));
     } else {
-        despeckle_view = std::make_unique<output::DespeckleView>(
-
-                m_despeckleState, m_despeckleVisualization, m_debug
-
-        );
-        QObject::connect(opt_widget, SIGNAL(despeckleLevelChanged(DespeckleLevel, bool*)), despeckle_view.get(),
-                         SLOT(despeckleLevelChanged(DespeckleLevel, bool*)));
+        despeckle_view = std::make_unique<output::DespeckleView>(m_despeckleState, m_despeckleVisualization, m_debug);
+        QObject::connect(opt_widget, SIGNAL(despeckleLevelChanged(double, bool*)), despeckle_view.get(),
+                         SLOT(despeckleLevelChanged(double, bool*)));
         tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_DESPECKLING, m_xform.resultingRect()));
     }
 

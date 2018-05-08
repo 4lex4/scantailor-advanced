@@ -80,7 +80,7 @@ public:
                     const PictureShapeOptions& picture_shape_options,
                     const DewarpingOptions& dewarping_options,
                     const OutputProcessingParams& output_processing_params,
-                    DespeckleLevel despeckle_level,
+                    double despeckle_level,
                     const ImageTransformation& xform,
                     const QPolygonF& content_rect_phys);
 
@@ -253,7 +253,7 @@ private:
     void maybeDespeckleInPlace(imageproc::BinaryImage& image,
                                const QRect& image_rect,
                                const QRect& mask_rect,
-                               DespeckleLevel level,
+                               double level,
                                imageproc::BinaryImage* speckles_img,
                                const Dpi& dpi,
                                const TaskStatus& status,
@@ -342,7 +342,7 @@ private:
      */
     QRect m_contentRect;
 
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
 
     // store additional transformations after processing such as post deskew after dewarping
     QTransform postTransform;

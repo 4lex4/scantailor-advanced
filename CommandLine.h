@@ -341,7 +341,7 @@ public:
         return m_dewarpingOptions;
     }
 
-    output::DespeckleLevel getDespeckleLevel() const {
+    double getDespeckleLevel() const {
         return m_despeckleLevel;
     }
 
@@ -435,7 +435,7 @@ private:
     int m_startFilterIdx{0};
     int m_endFilterIdx{5};
     output::DewarpingOptions m_dewarpingOptions;
-    output::DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel{2.0};
     output::DepthPerception m_depthPerception;
     float m_matchLayoutTolerance{0.2f};
 
@@ -489,7 +489,7 @@ private:
 
     output::DewarpingMode fetchDewarpingMode();
 
-    output::DespeckleLevel fetchDespeckleLevel();
+    double fetchDespeckleLevel();
 
     output::DepthPerception fetchDepthPerception();
 

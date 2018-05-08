@@ -24,7 +24,7 @@ OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Setti
     setupUiConnections();
 }
 
-void OtsuBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
+void OtsuBinarizationOptionsWidget::updateUi(const PageId& page_id) {
     removeUiConnections();
 
     const Params params(m_ptrSettings->getParams(page_id));

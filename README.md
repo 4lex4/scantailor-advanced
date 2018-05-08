@@ -183,19 +183,23 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
       The option refreshes the thumbnails instantly.
     
-    * Deviation feature reworked.
+    * Deviation feature reworked.  
         1. A deviation provider implemented.  
            It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
         2. Added sorting by decreasing deviation.
         
-    * Auto and original alignment modes reworked:
+    * Auto and original alignment modes reworked:  
         1. The original and auto alignment modes didn't work correctly due to the error in code.
         2. Both the modes didn't work rightly after select content stage or reopening the project file, always requiring secondary batch processing of every page at margins stage to work correctly.
         3. Reworked calculation method for the original alignment. Now it is more precise.
         4. Original alignment mode now considers the page box from 4th stage.
         5. Fixed behaviour of horizontal alignment, when the original mode enabled, and auto margins has been enabled/disabled. Also on applying auto-margins / original alignment to the set of pages, that is now set correctly for each page.
         6. Added ability to separately control vertical and horizontal automatic alignment when auto or original alignment mode enabled.  
-        
+
+    * Changed the way of the adjustment of the despeckle strength.  
+      Now that's set via the slider. It allows to adjust the despeckle strength more smoothly and exactly.
+      Value 1.0 matches the old cautious mode, 2.0 - normal and 3.0 - aggressive.
+
     * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes

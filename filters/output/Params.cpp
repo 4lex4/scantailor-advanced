@@ -19,27 +19,28 @@
 #include "Params.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
+#include "../../Utils.h"
 
 namespace output {
-Params::Params() : m_dpi(600, 600), m_despeckleLevel(DESPECKLE_CAUTIOUS) {
+Params::Params() : m_dpi(600, 600), m_despeckleLevel(1.0) {
 }
 
-Params::Params(const Dpi& m_dpi,
-               const ColorParams& m_colorParams,
-               const SplittingOptions& m_splittingOptions,
-               const PictureShapeOptions& m_pictureShapeOptions,
-               const dewarping::DistortionModel& m_distortionModel,
-               const DepthPerception& m_depthPerception,
-               const DewarpingOptions& m_dewarpingOptions,
-               DespeckleLevel m_despeckleLevel)
-        : m_dpi(m_dpi),
-          m_colorParams(m_colorParams),
-          m_splittingOptions(m_splittingOptions),
-          m_pictureShapeOptions(m_pictureShapeOptions),
-          m_distortionModel(m_distortionModel),
-          m_depthPerception(m_depthPerception),
-          m_dewarpingOptions(m_dewarpingOptions),
-          m_despeckleLevel(m_despeckleLevel),
+Params::Params(const Dpi& dpi,
+               const ColorParams& colorParams,
+               const SplittingOptions& splittingOptions,
+               const PictureShapeOptions& pictureShapeOptions,
+               const dewarping::DistortionModel& distortionModel,
+               const DepthPerception& depthPerception,
+               const DewarpingOptions& dewarpingOptions,
+               const double despeckleLevel)
+        : m_dpi(dpi),
+          m_colorParams(colorParams),
+          m_splittingOptions(splittingOptions),
+          m_pictureShapeOptions(pictureShapeOptions),
+          m_distortionModel(distortionModel),
+          m_depthPerception(depthPerception),
+          m_dewarpingOptions(dewarpingOptions),
+          m_despeckleLevel(despeckleLevel),
           m_blackOnWhite(true) {
 }
 
@@ -49,7 +50,7 @@ Params::Params(const QDomElement& el)
           m_distortionModel(el.namedItem("distortion-model").toElement()),
           m_depthPerception(el.attribute("depthPerception")),
           m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
-          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
+          m_despeckleLevel(el.attribute("despeckleLevel").toDouble()),
           m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
           m_splittingOptions(el.namedItem("splitting").toElement()),
           m_blackOnWhite(el.attribute("blackOnWhite") == "1") {
@@ -63,7 +64,7 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
     el.appendChild(m_pictureShapeOptions.toXml(doc, "picture-shape-options"));
     el.setAttribute("depthPerception", m_depthPerception.toString());
     el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
-    el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
+    el.setAttribute("despeckleLevel", Utils::doubleToString(m_despeckleLevel));
     el.appendChild(marshaller.dpi(m_dpi, "dpi"));
     el.appendChild(m_colorParams.toXml(doc, "color-params"));
     el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
@@ -128,11 +129,11 @@ void Params::setDepthPerception(DepthPerception depth_perception) {
     m_depthPerception = depth_perception;
 }
 
-DespeckleLevel Params::despeckleLevel() const {
+double Params::despeckleLevel() const {
     return m_despeckleLevel;
 }
 
-void Params::setDespeckleLevel(DespeckleLevel level) {
+void Params::setDespeckleLevel(double level) {
     m_despeckleLevel = level;
 }
 

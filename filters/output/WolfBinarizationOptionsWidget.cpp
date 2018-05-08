@@ -15,7 +15,7 @@ WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Setti
     setupUiConnections();
 }
 
-void WolfBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
+void WolfBinarizationOptionsWidget::updateUi(const PageId& page_id) {
     removeUiConnections();
 
     const Params params(m_ptrSettings->getParams(page_id));

@@ -32,7 +32,7 @@ OutputImageParams::OutputImageParams(const QSize& out_image_size,
                                      const DewarpingOptions& dewarping_options,
                                      const dewarping::DistortionModel& distortion_model,
                                      const DepthPerception& depth_perception,
-                                     DespeckleLevel despeckle_level,
+                                     const double despeckle_level,
                                      const PictureShapeOptions& picture_shape_options,
                                      const OutputProcessingParams& output_processing_params,
                                      bool is_black_on_white)
@@ -66,7 +66,7 @@ OutputImageParams::OutputImageParams(const QDomElement& el)
           m_distortionModel(el.namedItem("distortion-model").toElement()),
           m_depthPerception(el.attribute("depthPerception")),
           m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
-          m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
+          m_despeckleLevel(el.attribute("despeckleLevel").toDouble()),
           m_outputProcessingParams(el.namedItem("processing-params").toElement()),
           m_blackOnWhite(el.attribute("blackOnWhite") == "1") {
 }
@@ -86,7 +86,7 @@ QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) con
     el.appendChild(m_distortionModel.toXml(doc, "distortion-model"));
     el.setAttribute("depthPerception", m_depthPerception.toString());
     el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
-    el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
+    el.setAttribute("despeckleLevel", Utils::doubleToString(m_despeckleLevel));
     el.appendChild(m_outputProcessingParams.toXml(doc, "processing-params"));
     el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
 
@@ -146,10 +146,10 @@ bool OutputImageParams::matches(const OutputImageParams& other) const {
 }  // OutputImageParams::matches
 
 bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
-                                         const DespeckleLevel dl1,
+                                         const double dl1,
                                          const SplittingOptions& so1,
                                          const ColorParams& cp2,
-                                         const DespeckleLevel dl2,
+                                         const double dl2,
                                          const SplittingOptions& so2) {
     if (cp1.colorMode() != cp2.colorMode()) {
         return false;
@@ -207,7 +207,7 @@ const DepthPerception& OutputImageParams::depthPerception() const {
     return m_depthPerception;
 }
 
-DespeckleLevel OutputImageParams::despeckleLevel() const {
+double OutputImageParams::despeckleLevel() const {
     return m_despeckleLevel;
 }
 

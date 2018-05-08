@@ -24,7 +24,7 @@ public:
 
     ~OtsuBinarizationOptionsWidget() override = default;
 
-    void preUpdateUI(const PageId& m_pageId) override;
+    void updateUi(const PageId& m_pageId) override;
 
 private slots:
 

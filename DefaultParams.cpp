@@ -321,7 +321,7 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
                                           const output::PictureShapeOptions& pictureShapeOptions,
                                           const output::DepthPerception& depthPerception,
                                           const output::DewarpingOptions& dewarpingOptions,
-                                          output::DespeckleLevel despeckleLevel)
+                                          const double despeckleLevel)
         : dpi(dpi),
           colorParams(colorParams),
           splittingOptions(splittingOptions),
@@ -331,7 +331,7 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
           despeckleLevel(despeckleLevel) {
 }
 
-DefaultParams::OutputParams::OutputParams() : despeckleLevel(DESPECKLE_CAUTIOUS), dpi(600, 600) {
+DefaultParams::OutputParams::OutputParams() : despeckleLevel(1.0), dpi(600, 600) {
 }
 
 const Dpi& DefaultParams::OutputParams::getDpi() const {
@@ -382,11 +382,11 @@ void DefaultParams::OutputParams::setDewarpingOptions(const DewarpingOptions& de
     OutputParams::dewarpingOptions = dewarpingOptions;
 }
 
-DespeckleLevel DefaultParams::OutputParams::getDespeckleLevel() const {
+double DefaultParams::OutputParams::getDespeckleLevel() const {
     return despeckleLevel;
 }
 
-void DefaultParams::OutputParams::setDespeckleLevel(DespeckleLevel despeckleLevel) {
+void DefaultParams::OutputParams::setDespeckleLevel(double despeckleLevel) {
     OutputParams::despeckleLevel = despeckleLevel;
 }
 
@@ -397,7 +397,7 @@ DefaultParams::OutputParams::OutputParams(const QDomElement& el)
           pictureShapeOptions(el.namedItem("pictureShapeOptions").toElement()),
           depthPerception(el.attribute("depthPerception").toDouble()),
           dewarpingOptions(el.namedItem("dewarpingOptions").toElement()),
-          despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))) {
+          despeckleLevel(el.attribute("despeckleLevel").toDouble()) {
 }
 
 QDomElement DefaultParams::OutputParams::toXml(QDomDocument& doc, const QString& name) const {
@@ -408,7 +408,7 @@ QDomElement DefaultParams::OutputParams::toXml(QDomDocument& doc, const QString&
     el.appendChild(pictureShapeOptions.toXml(doc, "pictureShapeOptions"));
     el.setAttribute("depthPerception", Utils::doubleToString(depthPerception.value()));
     el.appendChild(dewarpingOptions.toXml(doc, "dewarpingOptions"));
-    el.setAttribute("despeckleLevel", despeckleLevelToString(despeckleLevel));
+    el.setAttribute("despeckleLevel", Utils::doubleToString(despeckleLevel));
 
     return el;
 }

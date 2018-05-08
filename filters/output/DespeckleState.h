@@ -38,13 +38,13 @@ class DespeckleVisualization;
 class DespeckleState {
     // Member-wise copying is OK.
 public:
-    DespeckleState(const QImage& output, const imageproc::BinaryImage& speckles, DespeckleLevel level, const Dpi& dpi);
+    DespeckleState(const QImage& output, const imageproc::BinaryImage& speckles, double level, const Dpi& dpi);
 
-    DespeckleLevel level() const;
+    double level() const;
 
     DespeckleVisualization visualize() const;
 
-    DespeckleState redespeckle(DespeckleLevel level, const TaskStatus& status, DebugImages* dbg = nullptr) const;
+    DespeckleState redespeckle(double level, const TaskStatus& status, DebugImages* dbg = nullptr) const;
 
 private:
     static QImage overlaySpeckles(const QImage& mixed, const imageproc::BinaryImage& speckles);
@@ -79,7 +79,7 @@ private:
      * Despeckling level at which m_speckles was produced from
      * m_everythingBW.
      */
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_DESPECKLE_STATE_H_

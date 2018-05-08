@@ -360,7 +360,7 @@ void CommandLine::printHelp() {
     std::cout << "\t--fill-margins\t\t\t\t-- default: false" << std::endl;
     std::cout << "\t--normalize-illumination\t\t-- default: false" << std::endl;
     std::cout << "\t--threshold=<n>\t\t\t\t-- n<0 thinner, n>0 thicker; default: 0" << std::endl;
-    std::cout << "\t--despeckle=<off|cautious|normal|aggressive>\n\t\t\t\t\t\t-- default: normal" << std::endl;
+    std::cout << "\t--despeckle=<1.0...3.0>\n\t\t\t\t\t\t-- default: normal" << std::endl;
     std::cout << "\t--dewarping=<off|auto>\t\t\t-- default: off" << std::endl;
     std::cout << "\t--depth-perception=<1.0...3.0>\t\t-- default: 2.0" << std::endl;
     std::cout << "\t--start-filter=<1...6>\t\t\t-- default: 4" << std::endl;
@@ -692,12 +692,12 @@ output::DewarpingMode CommandLine::fetchDewarpingMode() {
     return output::DewarpingOptions::parseDewarpingMode(m_options["dewarping"].toLower());
 }
 
-output::DespeckleLevel CommandLine::fetchDespeckleLevel() {
+double CommandLine::fetchDespeckleLevel() {
     if (!hasDespeckle()) {
-        return output::DESPECKLE_NORMAL;
+        return 2.0;
     }
 
-    return output::despeckleLevelFromString(m_options["despeckle"]);
+    return m_options["despeckle"].toDouble();
 }
 
 output::DepthPerception CommandLine::fetchDepthPerception() {

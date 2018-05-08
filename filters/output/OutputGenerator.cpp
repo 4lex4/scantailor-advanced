@@ -279,7 +279,7 @@ OutputGenerator::OutputGenerator(const Dpi& dpi,
                                  const PictureShapeOptions& picture_shape_options,
                                  const DewarpingOptions& dewarping_options,
                                  const OutputProcessingParams& output_processing_params,
-                                 DespeckleLevel despeckle_level,
+                                 const double despeckle_level,
                                  const ImageTransformation& xform,
                                  const QPolygonF& content_rect_phys)
         : m_dpi(dpi),
@@ -2196,7 +2196,7 @@ BinaryImage OutputGenerator::binarize(const QImage& image, const QPolygonF& crop
 void OutputGenerator::maybeDespeckleInPlace(imageproc::BinaryImage& image,
                                             const QRect& image_rect,
                                             const QRect& mask_rect,
-                                            const DespeckleLevel level,
+                                            const double level,
                                             BinaryImage* speckles_img,
                                             const Dpi& dpi,
                                             const TaskStatus& status,
@@ -2211,22 +2211,8 @@ void OutputGenerator::maybeDespeckleInPlace(imageproc::BinaryImage& image,
         }
     }
 
-    if (level != DESPECKLE_OFF) {
-        Despeckle::Level lvl = Despeckle::NORMAL;
-        switch (level) {
-            case DESPECKLE_CAUTIOUS:
-                lvl = Despeckle::CAUTIOUS;
-                break;
-            case DESPECKLE_NORMAL:
-                lvl = Despeckle::NORMAL;
-                break;
-            case DESPECKLE_AGGRESSIVE:
-                lvl = Despeckle::AGGRESSIVE;
-                break;
-            default:;
-        }
-
-        Despeckle::despeckleInPlace(image, dpi, lvl, status, dbg);
+    if (level != 0) {
+        Despeckle::despeckleInPlace(image, dpi, level, status, dbg);
 
         if (dbg) {
             dbg->add(image, "despeckled");

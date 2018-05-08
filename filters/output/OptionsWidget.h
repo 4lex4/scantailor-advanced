@@ -64,7 +64,7 @@ public:
 
 signals:
 
-    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    void despeckleLevelChanged(double level, bool* handled);
 
     void depthPerceptionChanged(double val);
 
@@ -146,13 +146,11 @@ private slots:
 
     void binarizationSettingsChanged();
 
-    void despeckleOffSelected();
+    void despeckleToggled(bool checked);
 
-    void despeckleCautiousSelected();
+    void despeckleSliderReleased();
 
-    void despeckleNormalSelected();
-
-    void despeckleAggressiveSelected();
+    void despeckleSliderValueChanged(int value);
 
     void applyDespeckleButtonClicked();
 
@@ -173,7 +171,7 @@ private slots:
     void sendReloadRequested();
 
 private:
-    void handleDespeckleLevelChange(DespeckleLevel level);
+    void handleDespeckleLevelChange(double level, bool delay = false);
 
     void reloadIfNecessary();
 
@@ -200,7 +198,7 @@ private:
     PictureShapeOptions m_pictureShapeOptions;
     DepthPerception m_depthPerception;
     DewarpingOptions m_dewarpingOptions;
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
     ImageViewTab m_lastTab;
     QTimer delayedReloadRequest;
 };

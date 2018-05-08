@@ -156,7 +156,7 @@ public:
         output::PictureShapeOptions pictureShapeOptions;
         output::DepthPerception depthPerception;
         output::DewarpingOptions dewarpingOptions;
-        output::DespeckleLevel despeckleLevel;
+        double despeckleLevel;
 
     public:
         OutputParams();
@@ -167,7 +167,7 @@ public:
                      const output::PictureShapeOptions& pictureShapeOptions,
                      const output::DepthPerception& depthPerception,
                      const output::DewarpingOptions& dewarpingOptions,
-                     output::DespeckleLevel despeckleLevel);
+                     double despeckleLevel);
 
         explicit OutputParams(const QDomElement& el);
 
@@ -197,9 +197,9 @@ public:
 
         void setDewarpingOptions(const output::DewarpingOptions& dewarpingOptions);
 
-        output::DespeckleLevel getDespeckleLevel() const;
+        double getDespeckleLevel() const;
 
-        void setDespeckleLevel(output::DespeckleLevel despeckleLevel);
+        void setDespeckleLevel(double despeckleLevel);
     };
 
 public:

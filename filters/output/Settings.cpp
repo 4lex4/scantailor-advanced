@@ -199,7 +199,7 @@ void Settings::setDepthPerception(const PageId& page_id, const DepthPerception& 
     }
 }
 
-void Settings::setDespeckleLevel(const PageId& page_id, DespeckleLevel level) {
+void Settings::setDespeckleLevel(const PageId& page_id, double level) {
     const QMutexLocker locker(&m_mutex);
 
     const auto it(m_perPageParams.find(page_id));

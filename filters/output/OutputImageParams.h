@@ -51,7 +51,7 @@ public:
                       const DewarpingOptions& dewarping_options,
                       const dewarping::DistortionModel& distortion_model,
                       const DepthPerception& depth_perception,
-                      DespeckleLevel despeckle_level,
+                      double despeckle_level,
                       const PictureShapeOptions& picture_shape_options,
                       const OutputProcessingParams& output_processing_params,
                       bool is_black_on_white);
@@ -66,7 +66,7 @@ public:
 
     const DepthPerception& depthPerception() const;
 
-    DespeckleLevel despeckleLevel() const;
+    double despeckleLevel() const;
 
     void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
 
@@ -107,10 +107,10 @@ private:
     };
 
     static bool colorParamsMatch(const ColorParams& cp1,
-                                 DespeckleLevel dl1,
+                                 double dl1,
                                  const SplittingOptions& so1,
                                  const ColorParams& cp2,
-                                 DespeckleLevel dl2,
+                                 double dl2,
                                  const SplittingOptions& so2);
 
     /** Pixel size of the output image. */
@@ -151,7 +151,7 @@ private:
     DewarpingOptions m_dewarpingOptions;
 
     /** Despeckle level of the output image. */
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
 
     /** Per-page params set while processing. */
     OutputProcessingParams m_outputProcessingParams;

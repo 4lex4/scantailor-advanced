@@ -105,6 +105,12 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     thresholdSlider->setMaximum(100);
     thresholLabel->setText(QString::number(thresholdSlider->value()));
 
+    depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
+    depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
+
+    despeckleSlider->setMinimum(qRound(1.0 * 10));
+    despeckleSlider->setMaximum(qRound(3.0 * 10));
+
     const int index = profileCB->findData(DefaultParamsProvider::getInstance()->getProfileName());
     if (index != -1) {
         profileCB->setCurrentIndex(index);
@@ -302,20 +308,14 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     }
     originalBackgroundCB->setChecked(splittingOptions.isOriginalBackground());
 
-    switch (params.getDespeckleLevel()) {
-        case DESPECKLE_OFF:
-            despeckleOffBtn->setChecked(true);
-            break;
-        case DESPECKLE_CAUTIOUS:
-            despeckleCautiousBtn->setChecked(true);
-            break;
-        case DESPECKLE_NORMAL:
-            despeckleNormalBtn->setChecked(true);
-            break;
-        case DESPECKLE_AGGRESSIVE:
-            despeckleAggressiveBtn->setChecked(true);
-            break;
+    const double despeckleLevel = params.getDespeckleLevel();
+    if (despeckleLevel != 0) {
+        despeckleCB->setChecked(true);
+        despeckleSlider->setValue(qRound(10 * despeckleLevel));
+    } else {
+        despeckleCB->setChecked(false);
     }
+    despeckleSlider->setToolTip(QString::number(0.1 * despeckleSlider->value()));
 
     dewarpingModeCB->setCurrentIndex(dewarpingModeCB->findData(params.getDewarpingOptions().dewarpingMode()));
     dewarpingPostDeskewCB->setChecked(params.getDewarpingOptions().needPostDeskew());
@@ -328,6 +328,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
     equalizeIlluminationToggled(equalizeIlluminationCB->isChecked());
     splittingToggled(splittingCB->isChecked());
     dpiSelectionChanged(dpiSelector->currentIndex());
+    despeckleToggled(despeckleCB->isChecked());
 }
 
 void DefaultParamsDialog::setupUiConnections() {
@@ -369,6 +370,8 @@ void DefaultParamsDialog::setupUiConnections() {
     connect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
     connect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
     connect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
+    connect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
+    connect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
 }
 
 void DefaultParamsDialog::removeUiConnections() {
@@ -410,6 +413,8 @@ void DefaultParamsDialog::removeUiConnections() {
     disconnect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
     disconnect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
     disconnect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
+    disconnect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
+    disconnect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
 }
 
 void DefaultParamsDialog::rotateLeft() {
@@ -727,15 +732,11 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
     dewarpingOptions.setDewarpingMode(static_cast<DewarpingMode>(dewarpingModeCB->currentData().toInt()));
     dewarpingOptions.setPostDeskew(dewarpingPostDeskewCB->isChecked());
 
-    DespeckleLevel despeckleLevel;
-    if (despeckleAggressiveBtn->isChecked()) {
-        despeckleLevel = DESPECKLE_AGGRESSIVE;
-    } else if (despeckleNormalBtn->isChecked()) {
-        despeckleLevel = DESPECKLE_NORMAL;
-    } else if (despeckleCautiousBtn->isChecked()) {
-        despeckleLevel = DESPECKLE_CAUTIOUS;
+    double despeckleLevel;
+    if (despeckleCB->isChecked()) {
+        despeckleLevel = 0.1 * despeckleSlider->value();
     } else {
-        despeckleLevel = DESPECKLE_OFF;
+        despeckleLevel = 0;
     }
 
     DefaultParams::OutputParams outputParams(Dpi(dpi, dpi), colorParams, splittingOptions, pictureShapeOptions,
@@ -1117,4 +1118,23 @@ void DefaultParamsDialog::autoHorizontalAligningToggled(bool) {
 void DefaultParamsDialog::autoVerticalAligningToggled(bool) {
     updateAlignmentButtonsEnabled();
     updateAutoModeButtons();
+}
+
+void DefaultParamsDialog::despeckleToggled(bool checked) {
+    despeckleSlider->setEnabled(checked);
+}
+
+void DefaultParamsDialog::despeckleSliderValueChanged(int value) {
+    const double new_value = 0.1 * value;
+
+    const QString tooltip_text(QString::number(new_value));
+    despeckleSlider->setToolTip(tooltip_text);
+
+    // Show the tooltip immediately.
+    const QPoint center(despeckleSlider->rect().center());
+    QPoint tooltip_pos(despeckleSlider->mapFromGlobal(QCursor::pos()));
+    tooltip_pos.setY(center.y());
+    tooltip_pos.setX(qBound(0, tooltip_pos.x(), despeckleSlider->width()));
+    tooltip_pos = despeckleSlider->mapToGlobal(tooltip_pos);
+    QToolTip::showText(tooltip_pos, tooltip_text, despeckleSlider);
 }

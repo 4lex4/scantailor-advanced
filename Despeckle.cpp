@@ -26,6 +26,7 @@
 #include <unordered_map>
 #include <QImage>
 #include <QDebug>
+#include <cmath>
 
 /**
  * \file
@@ -79,6 +80,8 @@ struct Settings {
     int bigObjectThreshold;
 
     static Settings get(Despeckle::Level level, const Dpi& dpi);
+
+    static Settings get(double level, const Dpi& dpi);
 };
 
 Settings Settings::get(const Despeckle::Level level, const Dpi& dpi) {
@@ -94,20 +97,33 @@ Settings Settings::get(const Despeckle::Level level, const Dpi& dpi) {
     switch (level) {
         case Despeckle::CAUTIOUS:
             settings.minRelativeParentWeight = 0.125 * dpi_factor;
-            settings.pixelsToSqDist = static_cast<uint32_t>(10.0 * 10.0);
+            settings.pixelsToSqDist = static_cast<uint32_t>(std::pow(10.0, 2));
             settings.bigObjectThreshold = qRound(7 * dpi_factor);
             break;
         case Despeckle::NORMAL:
             settings.minRelativeParentWeight = 0.175 * dpi_factor;
-            settings.pixelsToSqDist = static_cast<uint32_t>(6.5 * 6.5);
+            settings.pixelsToSqDist = static_cast<uint32_t>(std::pow(6.5, 2));
             settings.bigObjectThreshold = qRound(12 * dpi_factor);
             break;
         case Despeckle::AGGRESSIVE:
             settings.minRelativeParentWeight = 0.225 * dpi_factor;
-            settings.pixelsToSqDist = static_cast<uint32_t>(3.5 * 3.5);
+            settings.pixelsToSqDist = static_cast<uint32_t>(std::pow(3.5, 2));
             settings.bigObjectThreshold = qRound(17 * dpi_factor);
             break;
     }
+
+    return settings;
+}
+
+Settings Settings::get(const double level, const Dpi& dpi) {
+    Settings settings{};
+
+    const int min_dpi = std::min(dpi.horizontal(), dpi.vertical());
+    const double dpi_factor = min_dpi / 300.0;
+
+    settings.minRelativeParentWeight = (0.05 * level + 0.075) * dpi_factor;
+    settings.pixelsToSqDist = static_cast<uint32_t>(std::pow(0.25 * std::pow(level, 2) - 4.25 * level + 14, 2));
+    settings.bigObjectThreshold = qRound((5 * level + 2) * dpi_factor);
 
     return settings;
 }
@@ -675,26 +691,12 @@ void voronoiDistances(const ConnectivityMap& cmap,
         }
     }
 }  // voronoiDistances
-}  // namespace
 
-BinaryImage Despeckle::despeckle(const BinaryImage& src,
-                                 const Dpi& dpi,
-                                 const Level level,
-                                 const TaskStatus& status,
-                                 DebugImages* const dbg) {
-    BinaryImage dst(src);
-    despeckleInPlace(dst, dpi, level, status, dbg);
-
-    return dst;
-}
-
-void Despeckle::despeckleInPlace(BinaryImage& image,
-                                 const Dpi& dpi,
-                                 const Level level,
-                                 const TaskStatus& status,
-                                 DebugImages* const dbg) {
-    const Settings settings(Settings::get(level, dpi));
-
+void despeckleImpl(BinaryImage& image,
+                   const Dpi& dpi,
+                   const Settings& settings,
+                   const TaskStatus& status,
+                   DebugImages* const dbg) {
     ConnectivityMap cmap(image, CONN8);
     if (cmap.maxLabel() == 0) {
         // Completely white image?
@@ -940,4 +942,46 @@ void Despeckle::despeckleInPlace(BinaryImage& image,
         image_line += image_stride;
         cmap_line += cmap_stride;
     }
-}  // Despeckle::despeckleInPlace
+}
+}  // namespace
+
+BinaryImage Despeckle::despeckle(const BinaryImage& src,
+                                 const Dpi& dpi,
+                                 const Level level,
+                                 const TaskStatus& status,
+                                 DebugImages* const dbg) {
+    BinaryImage dst(src);
+    despeckleInPlace(dst, dpi, level, status, dbg);
+
+    return dst;
+}
+
+void Despeckle::despeckleInPlace(BinaryImage& image,
+                                 const Dpi& dpi,
+                                 const Level level,
+                                 const TaskStatus& status,
+                                 DebugImages* const dbg) {
+    const Settings settings = Settings::get(level, dpi);
+    despeckleImpl(image, dpi, settings, status, dbg);
+}
+
+imageproc::BinaryImage Despeckle::despeckle(const imageproc::BinaryImage& src,
+                                            const Dpi& dpi,
+                                            const double level,
+                                            const TaskStatus& status,
+                                            DebugImages* dbg) {
+    BinaryImage dst(src);
+    despeckleInPlace(dst, dpi, level, status, dbg);
+
+    return dst;
+}
+
+void Despeckle::despeckleInPlace(imageproc::BinaryImage& image,
+                                 const Dpi& dpi,
+                                 const double level,
+                                 const TaskStatus& status,
+                                 DebugImages* dbg) {
+    const Settings settings = Settings::get(level, dpi);
+    despeckleImpl(image, dpi, settings, status, dbg);
+}
+// Despeckle::despeckleInPlace

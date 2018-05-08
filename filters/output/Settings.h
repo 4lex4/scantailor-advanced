@@ -73,7 +73,7 @@ public:
 
     void setDepthPerception(const PageId& page_id, const DepthPerception& depth_perception);
 
-    void setDespeckleLevel(const PageId& page_id, DespeckleLevel level);
+    void setDespeckleLevel(const PageId& page_id, double level);
 
     std::unique_ptr<OutputParams> getOutputParams(const PageId& page_id) const;
 

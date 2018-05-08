@@ -114,7 +114,7 @@ void CollapsibleGroupBox::changeEvent(QEvent* event) {
 
 void CollapsibleGroupBox::childEvent(QChildEvent* event) {
     auto* childWidget = dynamic_cast<QWidget*>(event->child());
-    if (childWidget && (event)->type() == QEvent::ChildAdded) {
+    if (childWidget && (event->type() == QEvent::ChildAdded)) {
         if (collapsed) {
             if (childWidget->isVisible()) {
                 collapsedWidgets.insert(childWidget);

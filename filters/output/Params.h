@@ -35,14 +35,14 @@ class Params {
 public:
     Params();
 
-    Params(const Dpi& m_dpi,
-           const ColorParams& m_colorParams,
-           const SplittingOptions& m_splittingOptions,
-           const PictureShapeOptions& m_pictureShapeOptions,
-           const dewarping::DistortionModel& m_distortionModel,
-           const DepthPerception& m_depthPerception,
-           const DewarpingOptions& m_dewarpingOptions,
-           DespeckleLevel m_despeckleLevel);
+    Params(const Dpi& dpi,
+           const ColorParams& colorParams,
+           const SplittingOptions& splittingOptions,
+           const PictureShapeOptions& pictureShapeOptions,
+           const dewarping::DistortionModel& distortionModel,
+           const DepthPerception& depthPerception,
+           const DewarpingOptions& dewarpingOptions,
+           double despeckleLevel);
 
     explicit Params(const QDomElement& el);
 
@@ -74,9 +74,9 @@ public:
 
     void setDepthPerception(DepthPerception depth_perception);
 
-    DespeckleLevel despeckleLevel() const;
+    double despeckleLevel() const;
 
-    void setDespeckleLevel(DespeckleLevel level);
+    void setDespeckleLevel(double level);
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
@@ -85,7 +85,6 @@ public:
     void setBlackOnWhite(bool isBlackOnWhite);
 
 private:
-
     Dpi m_dpi;
     ColorParams m_colorParams;
     SplittingOptions m_splittingOptions;
@@ -93,7 +92,7 @@ private:
     dewarping::DistortionModel m_distortionModel;
     DepthPerception m_depthPerception;
     DewarpingOptions m_dewarpingOptions;
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
     bool m_blackOnWhite;
 };
 }  // namespace output

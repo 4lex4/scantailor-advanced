@@ -51,7 +51,7 @@ public:
 
 public slots:
 
-    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    void despeckleLevelChanged(double level, bool* handled);
 
 signals:
 
@@ -83,7 +83,7 @@ private:
     DespeckleState m_despeckleState;
     intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
     ProcessingIndicationWidget* m_pProcessingIndicator;
-    DespeckleLevel m_despeckleLevel;
+    double m_despeckleLevel;
     bool m_debug;
 };
 }  // namespace output

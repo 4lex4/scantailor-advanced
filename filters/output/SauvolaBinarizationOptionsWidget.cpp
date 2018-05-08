@@ -15,7 +15,7 @@ SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr
     setupUiConnections();
 }
 
-void SauvolaBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
+void SauvolaBinarizationOptionsWidget::updateUi(const PageId& page_id) {
     removeUiConnections();
 
     const Params params(m_ptrSettings->getParams(page_id));

@@ -103,6 +103,10 @@ private slots:
 
     void depthPerceptionChangedSlot(int val);
 
+    void despeckleToggled(bool checked);
+
+    void despeckleSliderValueChanged(int value);
+
     void profileChanged(int index);
 
     void profileSavePressed();

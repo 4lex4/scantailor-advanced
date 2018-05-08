@@ -28,7 +28,7 @@ using namespace imageproc;
 namespace output {
 DespeckleState::DespeckleState(const QImage& output,
                                const imageproc::BinaryImage& speckles,
-                               DespeckleLevel level,
+                               const double level,
                                const Dpi& dpi)
         : m_speckles(speckles), m_dpi(dpi), m_despeckleLevel(level) {
     m_everythingMixed = overlaySpeckles(output, speckles);
@@ -39,7 +39,7 @@ DespeckleVisualization DespeckleState::visualize() const {
     return DespeckleVisualization(m_everythingMixed, m_speckles, m_dpi);
 }
 
-DespeckleState DespeckleState::redespeckle(const DespeckleLevel level,
+DespeckleState DespeckleState::redespeckle(const double level,
                                            const TaskStatus& status,
                                            DebugImages* dbg) const {
     DespeckleState new_state(*this);
@@ -50,25 +50,14 @@ DespeckleState DespeckleState::redespeckle(const DespeckleLevel level,
 
     new_state.m_despeckleLevel = level;
 
-    Despeckle::Level level2 = Despeckle::NORMAL;
-    switch (level) {
-        case DESPECKLE_OFF:
-            // Null speckles image is equivalent to a white one.
-            new_state.m_speckles.release();
+    if (level == 0) {
+        // Null speckles image is equivalent to a white one.
+        new_state.m_speckles.release();
 
-            return new_state;
-        case DESPECKLE_CAUTIOUS:
-            level2 = Despeckle::CAUTIOUS;
-            break;
-        case DESPECKLE_NORMAL:
-            level2 = Despeckle::NORMAL;
-            break;
-        case DESPECKLE_AGGRESSIVE:
-            level2 = Despeckle::AGGRESSIVE;
-            break;
+        return new_state;
     }
 
-    new_state.m_speckles = Despeckle::despeckle(m_everythingBW, m_dpi, level2, status, dbg);
+    new_state.m_speckles = Despeckle::despeckle(m_everythingBW, m_dpi, level, status, dbg);
 
     status.throwIfCancelled();
 
@@ -141,7 +130,7 @@ BinaryImage DespeckleState::extractBW(const QImage& mixed) {
     return result;
 }
 
-DespeckleLevel DespeckleState::level() const {
+double DespeckleState::level() const {
     return m_despeckleLevel;
 }
 }  // namespace output

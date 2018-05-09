@@ -578,6 +578,10 @@ QSlider::handle:horizontal {
 	image: url(:/dark_scheme/icon_slider_handle.png);
 }
 
+QSlider::handle:disabled {
+    image: none;
+}
+
 QToolTip {
     color: palette(window-text);
     background-color: #424242;

@@ -122,7 +122,7 @@ font-weight:bold;</string>
               <string notr="true">font-weight: bold;</string>
              </property>
              <property name="text">
-              <string>Lead Developer</string>
+              <string>Lead Developer of original version</string>
              </property>
             </widget>
            </item>
@@ -130,6 +130,23 @@ font-weight:bold;</string>
             <widget class="QLabel" name="label_5">
              <property name="text">
               <string>Joseph Artsimovich</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="styleSheet">
+              <string notr="true">font-weight: bold;</string>
+             </property>
+             <property name="text">
+              <string>Lead Developer of Advanced version</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>4lex4</string>
              </property>
             </widget>
            </item>
@@ -197,13 +214,6 @@ font-weight:bold;</string>
               <widget class="QLabel" name="label_7">
                <property name="text">
                 <string>Alexander Trufanov - ver. Universal</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_30">
-               <property name="text">
-                <string>4lex4 - ver. Advanced</string>
                </property>
               </widget>
              </item>

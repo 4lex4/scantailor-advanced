@@ -29,14 +29,13 @@ public:
 
     ~SettingsDialog() override;
 
-
 signals:
-
     void settingsChanged();
 
 private slots:
-
     void commitChanges();
+
+    void blackOnWhiteDetectionToggled(bool checked);
 
 private:
     Ui::SettingsDialog ui;

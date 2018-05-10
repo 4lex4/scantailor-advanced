@@ -56,6 +56,8 @@
 #include <imageproc/ColorSegmenter.h>
 #include <imageproc/ColorTable.h>
 #include <imageproc/ImageCombination.h>
+#include <BlackOnWhiteEstimator.h>
+#include <QtCore/QSettings>
 #include "imageproc/OrthogonalRotation.h"
 
 using namespace imageproc;
@@ -239,6 +241,34 @@ void removeAutoPictureZones(ZoneSet& picture_zones) {
         } else {
             ++it;
         }
+    }
+}
+
+bool updateBlackOnWhite(const FilterData& input, const PageId& pageId, const intrusive_ptr<Settings>& p_settings) {
+    QSettings appSettings;
+    Params params = p_settings->getParams(pageId);
+    if ((appSettings.value("settings/blackOnWhiteDetection", true).toBool()
+         && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
+        && !p_settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
+        if (params.isBlackOnWhite() != input.isBlackOnWhite()) {
+            params.setBlackOnWhite(input.isBlackOnWhite());
+            p_settings->setParams(pageId, params);
+        }
+        return input.isBlackOnWhite();
+    } else {
+        return params.isBlackOnWhite();
+    }
+}
+
+BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId,
+                                                       const intrusive_ptr<Settings>& p_settings) {
+    QSettings appSettings;
+    if (!(appSettings.value("settings/blackOnWhiteDetection", true).toBool()
+          && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
+        && !p_settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
+        return BackgroundColorCalculator();
+    } else {
+        return BackgroundColorCalculator(false);
     }
 }
 }  // namespace
@@ -519,18 +549,23 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
     const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
     const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 
-    const GrayImage inputGrayImage = input.grayImage();
-    const QImage inputOrigImage = [&input]() {
+    const bool isBlackOnWhite = updateBlackOnWhite(input, p_pageId, p_settings);
+    const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
+    const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
         QImage result = input.origImage();
         if (!result.allGray() && (result.format() != QImage::Format_ARGB32)
             && (result.format() != QImage::Format_RGB32)) {
             result = result.convertToFormat(QImage::Format_RGB32);
         }
+        if (!isBlackOnWhite) {
+            result.invertPixels();
+        }
 
         return result;
     }();
 
-    QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+    const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(p_pageId, p_settings);
+    QColor outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
             inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
     const bool needNormalizeIllumination
@@ -568,7 +603,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
 
     if (needNormalizeIllumination) {
         outsideBackgroundColor
-                = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized, outCropAreaInWorkingCs, dbg);
+                = backgroundColorCalculator.calcDominantBackgroundColor(maybe_normalized, outCropAreaInWorkingCs, dbg);
     }
 
     status.throwIfCancelled();
@@ -620,6 +655,10 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
         maybeDespeckleInPlace(dst, m_outRect, m_outRect, m_despeckleLevel, speckles_image, m_dpi, status, dbg);
 
         if (!render_params.needColorSegmentation()) {
+            if (!isBlackOnWhite) {
+                dst.invert();
+            }
+
             applyFillZonesInPlace(dst, fill_zones);
 
             return dst.toQImage();
@@ -643,6 +682,10 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
             }
 
             status.throwIfCancelled();
+
+            if (!isBlackOnWhite) {
+                segmented_image.invertPixels();
+            }
 
             applyFillZonesInPlace(segmented_image, fill_zones, false);
 
@@ -782,7 +825,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
             status.throwIfCancelled();
 
             if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
-                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+                outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
                         inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
                 if (inputOrigImage.allGray()) {
@@ -810,7 +853,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
 
                 QColor outsideOriginalBackgroundColor = outsideBackgroundColor;
                 if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
-                    outsideOriginalBackgroundColor = Qt::white;
+                    outsideOriginalBackgroundColor = isBlackOnWhite ? Qt::white : Qt::black;
                 }
                 fillMarginsInPlace(original_background, contentAreaInWorkingCs, outsideOriginalBackgroundColor);
                 original_background_dst.fill(outsideOriginalBackgroundColor);
@@ -881,7 +924,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
     if (render_params.needBinarization()) {
         outsideBackgroundColor = Qt::white;
     } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
-        outsideBackgroundColor = Qt::white;
+        outsideBackgroundColor = isBlackOnWhite ? Qt::white : Qt::black;
         if (!render_params.needBinarization()) {
             reserveBlackAndWhite(maybe_normalized);
         }
@@ -891,6 +934,10 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
 
     drawOver(dst, contentRect, maybe_normalized, contentRectInWorkingCs);
     maybe_normalized = QImage();
+
+    if (!isBlackOnWhite) {
+        dst.invertPixels();
+    }
 
     if (render_params.mixedOutput() && render_params.needBinarization()) {
         applyFillZonesToMixedInPlace(dst, fill_zones, bw_content_mask_output, !render_params.needColorSegmentation());
@@ -913,11 +960,18 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
         splitImage->setBackgroundImage(dst);
 
         if (render_params.needBinarization() && render_params.originalBackground()) {
+            if (!isBlackOnWhite) {
+                dst.invertPixels();
+            }
+
             BinaryImage background_mask = BinaryImage(dst, BinaryThreshold(255)).inverted();
             fillMarginsInPlace(background_mask, preCropArea, BLACK);
-            applyMask(original_background, background_mask, WHITE);
-            applyMask(original_background, bw_content_mask_output, BLACK);
+            applyMask(original_background, background_mask, isBlackOnWhite ? WHITE : BLACK);
+            applyMask(original_background, bw_content_mask_output, isBlackOnWhite ? BLACK : WHITE);
 
+            if (!isBlackOnWhite) {
+                original_background.invertPixels();
+            }
             splitImage->setOriginalBackgroundImage(original_background);
         }
 
@@ -1000,18 +1054,23 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
     const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 
-    const GrayImage inputGrayImage = input.grayImage();
-    const QImage inputOrigImage = [&input]() {
+    const bool isBlackOnWhite = updateBlackOnWhite(input, p_pageId, p_settings);
+    const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
+    const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
         QImage result = input.origImage();
         if (!result.allGray() && (result.format() != QImage::Format_ARGB32)
             && (result.format() != QImage::Format_RGB32)) {
             result = result.convertToFormat(QImage::Format_RGB32);
         }
+        if (!isBlackOnWhite) {
+            result.invertPixels();
+        }
 
         return result;
     }();
 
-    QColor outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+    const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(p_pageId, p_settings);
+    QColor outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
             inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
     const bool color_original = !inputOrigImage.allGray();
@@ -1081,8 +1140,8 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
             }
         }
 
-        outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(normalized_original,
-                                                                                        outCropAreaInOriginalCs, dbg);
+        outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(normalized_original,
+                                                                                       outCropAreaInOriginalCs, dbg);
     }
 
     status.throwIfCancelled();
@@ -1460,6 +1519,10 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
                               status, dbg);
 
         if (!render_params.needColorSegmentation()) {
+            if (!isBlackOnWhite) {
+                dewarped_bw_content.invert();
+            }
+
             applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output, postTransform);
 
             return dewarped_bw_content.toQImage();
@@ -1473,6 +1536,10 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
             }
 
             status.throwIfCancelled();
+
+            if (!isBlackOnWhite) {
+                segmented_image.invertPixels();
+            }
 
             applyFillZonesInPlace(segmented_image, fill_zones, orig_to_output, postTransform, false);
 
@@ -1578,7 +1645,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
             status.throwIfCancelled();
 
             if (needNormalizeIllumination && !render_params.normalizeIlluminationColor()) {
-                outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+                outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
                         inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
                 QImage orig_without_illumination;
@@ -1610,7 +1677,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
 
                 QColor outsideOriginalBackgroundColor = outsideBackgroundColor;
                 if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
-                    outsideOriginalBackgroundColor = Qt::white;
+                    outsideOriginalBackgroundColor = isBlackOnWhite ? Qt::white : Qt::black;
                 }
                 fillMarginsInPlace(original_background, dewarping_content_area_mask, outsideOriginalBackgroundColor);
 
@@ -1662,12 +1729,16 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     if (render_params.needBinarization()) {
         outsideBackgroundColor = Qt::white;
     } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
-        outsideBackgroundColor = Qt::white;
+        outsideBackgroundColor = isBlackOnWhite ? Qt::white : Qt::black;
         if (!render_params.needBinarization()) {
             reserveBlackAndWhite(dewarped);
         }
     }
     fillMarginsInPlace(dewarped, dewarping_content_area_mask, outsideBackgroundColor);
+
+    if (!isBlackOnWhite) {
+        dewarped.invertPixels();
+    }
 
     if (render_params.mixedOutput() && render_params.needBinarization()) {
         applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, postTransform, dewarped_bw_content_mask,
@@ -1691,11 +1762,19 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
         splitImage->setBackgroundImage(dewarped);
 
         if (render_params.needBinarization() && render_params.originalBackground()) {
+            if (!isBlackOnWhite) {
+                dewarped.invertPixels();
+            }
+
             BinaryImage background_mask = BinaryImage(dewarped, BinaryThreshold(255)).inverted();
             fillMarginsInPlace(background_mask, dewarping_content_area_mask, BLACK);
-            applyMask(original_background, background_mask, WHITE);
-            applyMask(original_background, dewarped_bw_content_mask, BLACK);
+            applyMask(original_background, background_mask, isBlackOnWhite ? WHITE : BLACK);
 
+            applyMask(original_background, dewarped_bw_content_mask, isBlackOnWhite ? BLACK : WHITE);
+
+            if (!isBlackOnWhite) {
+                original_background.invertPixels();
+            }
             splitImage->setOriginalBackgroundImage(original_background);
         }
 

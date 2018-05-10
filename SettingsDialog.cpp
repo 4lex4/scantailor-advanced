@@ -76,6 +76,12 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
         ui.languageBox->setEnabled(ui.languageBox->count() > 1);
     }
 
+    ui.blackOnWhiteDetectionCB->setChecked(settings.value("settings/blackOnWhiteDetection", true).toBool());
+    ui.blackOnWhiteDetectionAtOutputCB->setEnabled(ui.blackOnWhiteDetectionCB->isChecked());
+    ui.blackOnWhiteDetectionAtOutputCB->setChecked(
+            settings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool());
+    connect(ui.blackOnWhiteDetectionCB, SIGNAL(clicked(bool)), SLOT(blackOnWhiteDetectionToggled(bool)));
+
     ui.deskewDeviationCoefSB->setValue(settings.value("settings/deskewDeviationCoef", 1.5).toDouble());
     ui.deskewDeviationThresholdSB->setValue(settings.value("settings/deskewDeviationThreshold", 1.0).toDouble());
     ui.selectContentDeviationCoefSB->setValue(settings.value("settings/selectContentDeviationCoef", 0.35).toDouble());
@@ -118,5 +124,12 @@ void SettingsDialog::commitChanges() {
     settings.setValue("settings/marginsDeviationCoef", ui.marginsDeviationCoefSB->value());
     settings.setValue("settings/marginsDeviationThreshold", ui.marginsDeviationThresholdSB->value());
 
+    settings.setValue("settings/blackOnWhiteDetection", ui.blackOnWhiteDetectionCB->isChecked());
+    settings.setValue("settings/blackOnWhiteDetectionAtOutput", ui.blackOnWhiteDetectionAtOutputCB->isChecked());
+
     emit settingsChanged();
+}
+
+void SettingsDialog::blackOnWhiteDetectionToggled(bool checked) {
+    ui.blackOnWhiteDetectionAtOutputCB->setEnabled(checked);
 }

@@ -3,7 +3,6 @@
 #include "BackgroundColorCalculator.h"
 #include "Grayscale.h"
 #include "Binarize.h"
-#include "BinaryImage.h"
 #include "RasterOp.h"
 #include "PolygonRasterizer.h"
 #include "Morphology.h"
@@ -131,15 +130,6 @@ void checkImageIsValid(const QImage& img) {
         throw std::invalid_argument("BackgroundColorCalculator: image is null.");
     }
 }
-
-bool isBlackOnWhite(const BinaryImage& img) {
-    return (2 * img.countBlackPixels()) <= (img.width() * img.height());
-}
-
-bool isBlackOnWhite(BinaryImage img, const BinaryImage& mask) {
-    rasterOp<RopAnd<RopSrc, RopDst>>(img, mask);
-    return (2 * img.countBlackPixels() <= mask.countBlackPixels());
-}
 }  // namespace
 
 uint8_t BackgroundColorCalculator::calcDominantLevel(const int* hist) {
@@ -175,7 +165,7 @@ uint8_t BackgroundColorCalculator::calcDominantLevel(const int* hist) {
     return 0;
 }  // BackgroundColorCalculator::calcDominantLevel
 
-QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img) {
+QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img) const {
     checkImageIsValid(img);
 
     BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(img));
@@ -188,7 +178,7 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img)
 
 QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
                                                               const BinaryImage& mask,
-                                                              DebugImages* dbg) {
+                                                              DebugImages* dbg) const {
     checkImageIsValid(img);
 
     if (img.size() != mask.size()) {
@@ -209,7 +199,7 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
 
 QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
                                                               const QPolygonF& crop_area,
-                                                              DebugImages* dbg) {
+                                                              DebugImages* dbg) const {
     checkImageIsValid(img);
 
     if (crop_area.intersected(QRectF(img.rect())).isEmpty()) {
@@ -238,5 +228,24 @@ QColor BackgroundColorCalculator::calcDominantColor(const QImage& img, const Bin
 
         return QColor(dominant_red, dominant_green, dominant_blue);
     }
+}
+
+BackgroundColorCalculator::BackgroundColorCalculator(bool internalBlackOnWhiteDetection)
+        : internalBlackOnWhiteDetection(internalBlackOnWhiteDetection) {
+}
+
+bool BackgroundColorCalculator::isBlackOnWhite(const BinaryImage& img) const {
+    if (!internalBlackOnWhiteDetection) {
+        return true;
+    }
+    return (2 * img.countBlackPixels()) <= (img.width() * img.height());
+}
+
+bool BackgroundColorCalculator::isBlackOnWhite(BinaryImage img, const BinaryImage& mask) const {
+    if (!internalBlackOnWhiteDetection) {
+        return true;
+    }
+    rasterOp<RopAnd<RopSrc, RopDst>>(img, mask);
+    return (2 * img.countBlackPixels() <= mask.countBlackPixels());
 }
 }  // namespace imageproc

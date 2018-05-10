@@ -53,7 +53,8 @@ public:
                       const DepthPerception& depth_perception,
                       DespeckleLevel despeckle_level,
                       const PictureShapeOptions& picture_shape_options,
-                      const OutputProcessingParams& output_processing_params);
+                      const OutputProcessingParams& output_processing_params,
+                      bool is_black_on_white);
 
     explicit OutputImageParams(const QDomElement& el);
 
@@ -72,6 +73,8 @@ public:
     const PictureShapeOptions& getPictureShapeOptions() const;
 
     const QPolygonF& getCropArea() const;
+
+    void setBlackOnWhite(bool blackOnWhite);
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
@@ -152,6 +155,9 @@ private:
 
     /** Per-page params set while processing. */
     OutputProcessingParams m_outputProcessingParams;
+
+    /** Whether the page has dark content on light background */
+    bool m_blackOnWhite;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_

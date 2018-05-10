@@ -80,10 +80,11 @@ public:
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-private:
-    static ColorMode parseColorMode(const QString& str);
+    bool isBlackOnWhite() const;
 
-    static QString formatColorMode(ColorMode mode);
+    void setBlackOnWhite(bool isBlackOnWhite);
+
+private:
 
     Dpi m_dpi;
     ColorParams m_colorParams;
@@ -93,6 +94,7 @@ private:
     DepthPerception m_depthPerception;
     DewarpingOptions m_dewarpingOptions;
     DespeckleLevel m_despeckleLevel;
+    bool m_blackOnWhite;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_PARAMS_H_

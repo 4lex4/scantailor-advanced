@@ -105,6 +105,8 @@ public:
 
     void setOutputProcessingParams(const PageId& page_id, const OutputProcessingParams& output_processing_params);
 
+    void setBlackOnWhite(const PageId& page_id, bool black_on_white);
+
 private:
     typedef std::unordered_map<PageId, Params> PerPageParams;
     typedef std::unordered_map<PageId, OutputParams> PerPageOutputParams;

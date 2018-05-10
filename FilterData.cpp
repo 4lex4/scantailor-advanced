@@ -51,6 +51,10 @@ const imageproc::GrayImage& FilterData::grayImage() const {
     return m_grayImage;
 }
 
+bool FilterData::isBlackOnWhite() const {
+    return m_imageParams.isBlackOnWhite();
+}
+
 void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
     m_imageParams = imageParams;
 }

@@ -55,10 +55,11 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
     std::cout << "exp_width = " << exp_width << "; exp_height" << exp_height << std::endl;
 #endif
 
-    const uint8_t darkest_gray_level = darkestGrayLevel(data.grayImage());
+    const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+    const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
     const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 
-    QImage gray150(transformToGray(data.grayImage(), xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+    QImage gray150(transformToGray(dataGrayImage, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
                                    OutsidePixels::assumeColor(outside_color)));
     if (dbg) {
         dbg->add(gray150, "gray150");

@@ -41,18 +41,21 @@ std::unique_ptr<ImageSettings::PageParams> ImageSettings::getPageParams(const Pa
 
 /*=============================== ImageSettings::Params ==================================*/
 
-ImageSettings::PageParams::PageParams() : bwThreshold(0) {
+ImageSettings::PageParams::PageParams() : bwThreshold(0), blackOnWhite(true) {
 }
 
-ImageSettings::PageParams::PageParams(const BinaryThreshold& bwThreshold) : bwThreshold(bwThreshold) {
+ImageSettings::PageParams::PageParams(const BinaryThreshold& bwThreshold, bool blackOnWhite)
+        : bwThreshold(bwThreshold), blackOnWhite(blackOnWhite) {
 }
 
-ImageSettings::PageParams::PageParams(const QDomElement& el) : bwThreshold(el.attribute("bwThreshold").toInt()) {
+ImageSettings::PageParams::PageParams(const QDomElement& el)
+        : bwThreshold(el.attribute("bwThreshold").toInt()), blackOnWhite(el.attribute("blackOnWhite") == "1") {
 }
 
 QDomElement ImageSettings::PageParams::toXml(QDomDocument& doc, const QString& name) const {
     QDomElement el(doc.createElement(name));
     el.setAttribute("bwThreshold", bwThreshold);
+    el.setAttribute("blackOnWhite", blackOnWhite ? "1" : "0");
 
     return el;
 }
@@ -63,4 +66,12 @@ const BinaryThreshold& ImageSettings::PageParams::getBwThreshold() const {
 
 void ImageSettings::PageParams::setBwThreshold(const BinaryThreshold& bwThreshold) {
     PageParams::bwThreshold = bwThreshold;
+}
+
+bool ImageSettings::PageParams::isBlackOnWhite() const {
+    return blackOnWhite;
+}
+
+void ImageSettings::PageParams::setBlackOnWhite(bool blackOnWhite) {
+    PageParams::blackOnWhite = blackOnWhite;
 }

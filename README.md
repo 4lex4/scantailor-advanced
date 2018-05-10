@@ -41,6 +41,7 @@ brings new ones and fixes.
         * [Default parameters](#default-parameters)
         * [Collapsible filter options](#collapsible-filter-options)
         * [Auto adjusting content area](#auto-adjusting-content-area)
+        * [Black on white detection](#black-on-white-detection)
 * [Building](#building)
 
 Description
@@ -336,6 +337,14 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   
   It's much faster now to correct the content area if, for example, the page number has been missed by the auto algorithm.
   It is no more required to manually and laboriously move the corners and edges of the content box.
+  
+* ##### Black on white detection
+  This feature allows to process images with light content on dark background correctly by correcting auto algorithms.  
+  
+  Peculiarities:
+    1. Auto detection of pages with light content on dark background can be enabled or disabled in the settings.
+       Auto detection at the output stage is controlled separately.
+    2. Per page control over the mode added into the output filter options.
  
 Building
 ----------

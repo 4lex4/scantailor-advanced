@@ -23,8 +23,13 @@ public:
 
     void setAutoZonesFound(bool autoZonesFound);
 
+    bool isBlackOnWhiteSetManually() const;
+
+    void setBlackOnWhiteSetManually(bool blackOnWhiteSetManually);
+
 private:
     bool autoZonesFound;
+    bool blackOnWhiteSetManually;
 };
 }  // namespace output
 

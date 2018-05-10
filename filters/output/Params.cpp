@@ -39,21 +39,20 @@ Params::Params(const Dpi& m_dpi,
           m_distortionModel(m_distortionModel),
           m_depthPerception(m_depthPerception),
           m_dewarpingOptions(m_dewarpingOptions),
-          m_despeckleLevel(m_despeckleLevel) {
+          m_despeckleLevel(m_despeckleLevel),
+          m_blackOnWhite(true) {
 }
 
 Params::Params(const QDomElement& el)
         : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+          m_colorParams(el.namedItem("color-params").toElement()),
           m_distortionModel(el.namedItem("distortion-model").toElement()),
           m_depthPerception(el.attribute("depthPerception")),
           m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
           m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
           m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
-          m_splittingOptions(el.namedItem("splitting").toElement()) {
-    const QDomElement cp(el.namedItem("color-params").toElement());
-    m_colorParams.setColorMode(parseColorMode(cp.attribute("colorMode")));
-    m_colorParams.setColorCommonOptions(ColorCommonOptions(cp.namedItem("color-or-grayscale").toElement()));
-    m_colorParams.setBlackWhiteOptions(BlackWhiteOptions(cp.namedItem("bw").toElement()));
+          m_splittingOptions(el.namedItem("splitting").toElement()),
+          m_blackOnWhite(el.attribute("blackOnWhite") == "1") {
 }
 
 QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
@@ -66,46 +65,11 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
     el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
     el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
     el.appendChild(marshaller.dpi(m_dpi, "dpi"));
+    el.appendChild(m_colorParams.toXml(doc, "color-params"));
     el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
-
-    QDomElement cp(doc.createElement("color-params"));
-    cp.setAttribute("colorMode", formatColorMode(m_colorParams.colorMode()));
-
-    cp.appendChild(m_colorParams.colorCommonOptions().toXml(doc, "color-or-grayscale"));
-    cp.appendChild(m_colorParams.blackWhiteOptions().toXml(doc, "bw"));
-
-    el.appendChild(cp);
+    el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
 
     return el;
-}
-
-ColorMode Params::parseColorMode(const QString& str) {
-    if (str == "bw") {
-        return BLACK_AND_WHITE;
-    } else if (str == "colorOrGray") {
-        return COLOR_GRAYSCALE;
-    } else if (str == "mixed") {
-        return MIXED;
-    } else {
-        return BLACK_AND_WHITE;
-    }
-}
-
-QString Params::formatColorMode(const ColorMode mode) {
-    const char* str = "";
-    switch (mode) {
-        case BLACK_AND_WHITE:
-            str = "bw";
-            break;
-        case COLOR_GRAYSCALE:
-            str = "colorOrGray";
-            break;
-        case MIXED:
-            str = "mixed";
-            break;
-    }
-
-    return QString::fromLatin1(str);
 }
 
 const Dpi& Params::outputDpi() const {
@@ -170,5 +134,13 @@ DespeckleLevel Params::despeckleLevel() const {
 
 void Params::setDespeckleLevel(DespeckleLevel level) {
     m_despeckleLevel = level;
+}
+
+bool Params::isBlackOnWhite() const {
+    return m_blackOnWhite;
+}
+
+void Params::setBlackOnWhite(bool isBlackOnWhite) {
+    Params::m_blackOnWhite = isBlackOnWhite;
 }
 }  // namespace output

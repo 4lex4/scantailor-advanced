@@ -42,6 +42,8 @@ public:
 
     const imageproc::GrayImage& grayImage() const;
 
+    bool isBlackOnWhite() const;
+
     void updateImageParams(const ImageSettings::PageParams& imageParams);
 
 private:

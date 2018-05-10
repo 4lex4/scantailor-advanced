@@ -19,6 +19,7 @@
 #include <UnitsProvider.h>
 
 #include <utility>
+#include <BlackOnWhiteEstimator.h>
 #include "Task.h"
 #include "Filter.h"
 #include "OptionsWidget.h"
@@ -39,6 +40,7 @@
 #include "imageproc/Morphology.h"
 #include <imageproc/PolygonRasterizer.h>
 #include <imageproc/Grayscale.h>
+#include <QSettings>
 
 namespace deskew {
 using namespace imageproc;
@@ -122,9 +124,12 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
         status.throwIfCancelled();
 
         if (bounded_image_area.isValid()) {
-            BinaryImage rotated_image(
-                    orthogonalRotation(BinaryImage(data.grayImage(), bounded_image_area, data.bwThreshold()),
-                                       data.xform().preRotation().toDegrees()));
+            BinaryImage rotated_image(orthogonalRotation(
+                    BinaryImage(data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                                bounded_image_area,
+                                data.isBlackOnWhite() ? data.bwThreshold()
+                                                      : BinaryThreshold(256 - int(data.bwThreshold()))),
+                    data.xform().preRotation().toDegrees()));
             if (m_ptrDbg) {
                 m_ptrDbg->add(rotated_image, "bw_rotated");
             }
@@ -228,7 +233,13 @@ void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool nee
         const GrayImage& img = data.grayImage();
         BinaryImage mask(img.size(), BLACK);
         PolygonRasterizer::fillExcept(mask, WHITE, data.xform().resultingPreCropArea(), Qt::WindingFill);
-        ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
+        bool isBlackOnWhite = true;
+        if (QSettings().value("settings/blackOnWhiteDetection", true).toBool()) {
+            isBlackOnWhite
+                    = BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_ptrDbg.get());
+        }
+        ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)),
+                                             isBlackOnWhite);
 
         m_ptrImageSettings->setPageParams(m_pageId, new_params);
         data.updateImageParams(new_params);

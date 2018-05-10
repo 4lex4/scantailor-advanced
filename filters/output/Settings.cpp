@@ -323,4 +323,17 @@ bool Settings::isParamsNull(const PageId& page_id) const {
 
     return m_perPageParams.find(page_id) == m_perPageParams.end();
 }
+
+void Settings::setBlackOnWhite(const PageId& page_id, const bool black_on_white) {
+    const QMutexLocker locker(&m_mutex);
+
+    const auto it(m_perPageParams.find(page_id));
+    if (it == m_perPageParams.end()) {
+        Params params;
+        params.setBlackOnWhite(black_on_white);
+        m_perPageParams.insert(it, PerPageParams::value_type(page_id, params));
+    } else {
+        it->second.setBlackOnWhite(black_on_white);
+    }
+}
 }  // namespace output

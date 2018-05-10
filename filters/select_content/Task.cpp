@@ -187,7 +187,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
                                       ui_data.contentRect());
     } else {
         return make_intrusive<UiUpdater>(m_ptrFilter, m_pageId, std::move(m_ptrDbg), data.origImage(), data.xform(),
-                                         data.grayImage(), ui_data, m_batchProcessing);
+                                         data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
+                                         ui_data, m_batchProcessing);
     }
 }  // Task::process
 

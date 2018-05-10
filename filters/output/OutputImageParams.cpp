@@ -34,7 +34,8 @@ OutputImageParams::OutputImageParams(const QSize& out_image_size,
                                      const DepthPerception& depth_perception,
                                      DespeckleLevel despeckle_level,
                                      const PictureShapeOptions& picture_shape_options,
-                                     const OutputProcessingParams& output_processing_params)
+                                     const OutputProcessingParams& output_processing_params,
+                                     bool is_black_on_white)
         : m_size(out_image_size),
           m_contentRect(content_rect),
           m_cropArea(xform.resultingPreCropArea()),
@@ -46,7 +47,8 @@ OutputImageParams::OutputImageParams(const QSize& out_image_size,
           m_depthPerception(depth_perception),
           m_dewarpingOptions(dewarping_options),
           m_despeckleLevel(despeckle_level),
-          m_outputProcessingParams(output_processing_params) {
+          m_outputProcessingParams(output_processing_params),
+          m_blackOnWhite(is_black_on_white) {
     // For historical reasons, we disregard post-cropping and post-scaling here.
     xform.setPostCropArea(QPolygonF());  // Resets post-scale as well.
     m_partialXform = xform.transform();
@@ -65,7 +67,8 @@ OutputImageParams::OutputImageParams(const QDomElement& el)
           m_depthPerception(el.attribute("depthPerception")),
           m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
           m_despeckleLevel(despeckleLevelFromString(el.attribute("despeckleLevel"))),
-          m_outputProcessingParams(el.namedItem("processing-params").toElement()) {
+          m_outputProcessingParams(el.namedItem("processing-params").toElement()),
+          m_blackOnWhite(el.attribute("blackOnWhite") == "1") {
 }
 
 QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) const {
@@ -85,6 +88,7 @@ QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) con
     el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
     el.setAttribute("despeckleLevel", despeckleLevelToString(m_despeckleLevel));
     el.appendChild(m_outputProcessingParams.toXml(doc, "processing-params"));
+    el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
 
     return el;
 }
@@ -131,6 +135,10 @@ bool OutputImageParams::matches(const OutputImageParams& other) const {
     }
 
     if (m_outputProcessingParams != other.m_outputProcessingParams) {
+        return false;
+    }
+
+    if (m_blackOnWhite != other.m_blackOnWhite) {
         return false;
     }
 
@@ -203,6 +211,9 @@ DespeckleLevel OutputImageParams::despeckleLevel() const {
     return m_despeckleLevel;
 }
 
+void OutputImageParams::setBlackOnWhite(bool blackOnWhite) {
+    m_blackOnWhite = blackOnWhite;
+}
 
 /*=============================== PartialXform =============================*/
 

@@ -178,7 +178,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
             generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(),
             params.colorParams(), params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(),
             params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions(),
-            m_ptrSettings->getOutputProcessingParams(m_pageId));
+            m_ptrSettings->getOutputProcessingParams(m_pageId), params.isBlackOnWhite());
 
     ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(m_pageId));
     const ZoneSet new_fill_zones(m_ptrSettings->fillZonesForPage(m_pageId));
@@ -355,7 +355,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
             new_output_image_params.setDistortionModel(distortion_model);
         }
 
-        // Saving refreshed output processing params.
+        // Saving refreshed params and output processing params.
+        new_output_image_params.setBlackOnWhite(m_ptrSettings->getParams(m_pageId).isBlackOnWhite());
         new_output_image_params.setOutputProcessingParams(m_ptrSettings->getOutputProcessingParams(m_pageId));
 
         bool invalidate_params = false;

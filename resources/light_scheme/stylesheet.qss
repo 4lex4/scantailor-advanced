@@ -26,11 +26,11 @@ QPushButton:default, QToolButton:default {
 	border-color: #4b4b4b;
 }
 
-QPushButton:hover, QToolButton:hover, QLineEdit:focus {
+QPushButton:hover, QToolButton:hover, QPushButton:active:focus, QToolButton:active:focus, QLineEdit:active:focus {
 	border-color: #1e76e3;
 }
 
-QPushButton:pressed, QToolButton:pressed {
+QPushButton:pressed, QToolButton:pressed, QPushButton:checked:active:focus, QToolButton:checked:active:focus {
 	border-color: #1e76e3;
 	background-color: #bfbfbf;
 }
@@ -63,7 +63,8 @@ QMenu::indicator:non-exclusive:unchecked {
 	border-radius: 3px;
 }
 
-QCheckBox::indicator:unchecked:hover, QTreeView::indicator:unchecked:hover, QTableView::indicator:unchecked:hover, QGroupBox::indicator:unchecked:hover {
+QCheckBox::indicator:unchecked:hover, QTreeView::indicator:unchecked:hover, QTableView::indicator:unchecked:hover, QGroupBox::indicator:unchecked:hover,
+QCheckBox::indicator:unchecked:active:focus, QTreeView::indicator:unchecked:active:focus, QTableView::indicator:unchecked:active:focus, QGroupBox::indicator:unchecked:active:focus {
     border-color: #1e76e3;
 }
 
@@ -97,7 +98,11 @@ QCheckBox::indicator:indeterminate, QTreeView::indicator:indeterminate, QTableVi
 }
 
 QCheckBox::indicator:checked:hover, QTreeView::indicator:checked:hover, QTableView::indicator:checked:hover, QGroupBox::indicator:checked:hover,
-QCheckBox::indicator:indeterminate:hover, QTreeView::indicator:indeterminate:hover, QTableView::indicator:indeterminate:hover, QGroupBox::indicator:indeterminate:hover {
+QCheckBox::indicator:indeterminate:hover, QTreeView::indicator:indeterminate:hover, QTableView::indicator:indeterminate:hover,
+QGroupBox::indicator:indeterminate:hover,
+QCheckBox::indicator:checked:active:focus, QTreeView::indicator:checked:active:focus, QTableView::indicator:checked:active:focus, QGroupBox::indicator:checked:active:focus,
+QCheckBox::indicator:indeterminate:active:focus, QTreeView::indicator:indeterminate:active:focus, QTableView::indicator:indeterminate:active:focus,
+QGroupBox::indicator:indeterminate:active:focus {
     border: 1px solid #1e76e3;
     margin-left: 0px;
     margin-right: 0px;
@@ -141,7 +146,7 @@ QMenu::indicator:exclusive:unchecked {
 	border-radius: 8px;
 }
 
-QRadioButton::indicator:unchecked:hover {
+QRadioButton::indicator:unchecked:hover, QRadioButton::indicator:unchecked:active:focus {
     border-color: #1e76e3;
 }
 
@@ -165,7 +170,7 @@ QMenu::indicator:exclusive:checked {
     image: url(:/light_scheme/icon_radiobutton_checked.png);
 }
 
-QRadioButton::indicator:checked:hover {
+QRadioButton::indicator:checked:hover, QRadioButton::indicator:checked:active:focus {
     border: 1px solid #1e76e3;
     margin-left: 0px;
     margin-right: 0px;
@@ -321,7 +326,7 @@ QDockWidget::close-button, QDockWidget::float-button {
     height: 22px;
 }
 
-QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+QDockWidget::close-button:hover, QDockWidget::float-button:hover, QDockWidget::close-button:active:focus, QDockWidget::float-button:active:focus {
 	background-color: #ebebeb;
 }
 
@@ -493,7 +498,7 @@ QComboBox:disabled, QAbstractSpinBox:disabled {
 	background-color: #fafafa;
 }
 
-QComboBox:hover, QAbstractSpinBox:focus {
+QComboBox:hover, QComboBox:active:focus, QAbstractSpinBox:active:focus {
 	border-color: #1e76e3;
 }
 

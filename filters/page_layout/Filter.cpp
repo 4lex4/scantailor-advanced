@@ -105,6 +105,14 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
     XmlMarshaller marshaller(doc);
     filter_el.appendChild(marshaller.rectF(m_ptrSettings->getAggregateContentRect(), "aggregateContentRect"));
 
+    if (!m_ptrSettings->guides().empty()) {
+        QDomElement guides_el(doc.createElement("guides"));
+        for (const Guide& guide : m_ptrSettings->guides()) {
+            guides_el.appendChild(guide.toXml(doc, "guide"));
+        }
+        filter_el.appendChild(guides_el);
+    }
+
     writer.enumPages([&](const PageId& page_id, int numeric_id) {
         this->writePageSettings(doc, filter_el, page_id, numeric_id);
     });
@@ -133,6 +141,17 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
     const QDomElement rect_el = filter_el.namedItem("aggregateContentRect").toElement();
     if (!rect_el.isNull()) {
         m_ptrSettings->setAggregateContentRect(XmlUnmarshaller::rectF(rect_el));
+    }
+
+    const QDomElement guides_el = filter_el.namedItem("guides").toElement();
+    if (!guides_el.isNull()) {
+        QDomNode node(guides_el.firstChild());
+        for (; !node.isNull(); node = node.nextSibling()) {
+            if (!node.isElement() || (node.nodeName() != "guide")) {
+                continue;
+            }
+            m_ptrSettings->guides().emplace_back(node.toElement());
+        }
     }
 
     const QString page_tag_name("page");

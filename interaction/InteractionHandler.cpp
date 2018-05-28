@@ -212,7 +212,6 @@ void InteractionHandler::makePeerPreceeder(InteractionHandler& handler) {
 }
 
 void InteractionHandler::makePeerFollower(InteractionHandler& handler) {
-    using namespace boost::intrusive;
     handler.unlink();
     HandlerList::node_algorithms::link_after(this, &handler);
 }

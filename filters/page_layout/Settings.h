@@ -22,6 +22,7 @@
 #include "NonCopyable.h"
 #include "ref_countable.h"
 #include "Margins.h"
+#include "Guide.h"
 #include <memory>
 #include <DeviationProvider.h>
 
@@ -165,6 +166,8 @@ public:
     void setPageAutoMarginsEnabled(const PageId& page_id, bool state);
 
     const DeviationProvider<PageId>& deviationProvider() const;
+
+    std::vector<Guide>& guides();
 
 private:
     class Impl;

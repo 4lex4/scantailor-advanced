@@ -29,11 +29,14 @@
 #include "Alignment.h"
 #include "intrusive_ptr.h"
 #include "PageId.h"
+#include "Guide.h"
 #include <QTransform>
 #include <QSizeF>
 #include <QRectF>
 #include <QPointF>
 #include <QPoint>
+#include <QMenu>
+#include <interaction/DraggableLineSegment.h>
 
 class Margins;
 
@@ -114,6 +117,8 @@ private:
 
     void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
+    void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
+
     Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
     Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
@@ -141,6 +146,41 @@ private:
     AggregateSizeChanged commitHardMargins(const Margins& margins_mm);
 
     void invalidateThumbnails(AggregateSizeChanged agg_size_changed);
+
+    void setupContextMenuInteraction();
+
+    void setupGuides();
+
+    void addHorizontalGuide(double y);
+
+    void addVerticalGuide(double x);
+
+    void removeAllGuides();
+
+    void removeGuide(int index);
+
+    QTransform widgetToGuideCs() const;
+
+    QTransform guideToWidgetCs() const;
+
+    void syncGuidesSettings();
+
+    void setupGuideInteraction(int index);
+
+    QLineF guidePosition(int index) const;
+
+    void guideMoveRequest(int index, QLineF line);
+
+    void guideDragFinished();
+
+    QLineF widgetGuideLine(int index) const;
+
+    int getGuideUnderMouse(const QPointF& screenMousePos, const InteractionState& state) const;
+
+    void enableGuidesInteraction(bool state);
+
+    void forceInscribeGuides();
+
 
     DraggableObject m_innerCorners[4];
     ObjectDragHandler m_innerCornerHandlers[4];
@@ -221,8 +261,22 @@ private:
     StateBeforeResizing m_beforeResizing;
 
     bool m_leftRightLinked;
-
     bool m_topBottomLinked;
+
+    /** Guides settings. */
+    std::unordered_map<int, Guide> m_guides;
+    int m_guidesFreeIndex;
+
+    std::unordered_map<int, DraggableLineSegment> m_draggableGuides;
+    std::unordered_map<int, ObjectDragHandler> m_draggableGuideHandlers;
+
+    QMenu* m_contextMenu;
+    QAction* m_addHorizontalGuideAction;
+    QAction* m_addVerticalGuideAction;
+    QAction* m_removeAllGuidesAction;
+    QAction* m_removeGuideUnderMouseAction;
+    QPointF m_lastContextMenuPos;
+    int m_guideUnderMouse;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

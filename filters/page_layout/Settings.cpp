@@ -181,10 +181,11 @@ public:
 
     const DeviationProvider<PageId>& deviationProvider() const;
 
+    std::vector<Guide>& guides();
+
 private:
     class SequencedTag;
     class DescWidthTag;
-
     class DescHeightTag;
 
     typedef multi_index_container<
@@ -221,6 +222,7 @@ private:
     QRectF m_aggregateContentRect;
     const bool m_autoMarginsDefault;
     DeviationProvider<PageId> m_deviationProvider;
+    std::vector<Guide> m_guides;
 };
 
 
@@ -325,6 +327,10 @@ bool Settings::isParamsNull(const PageId& page_id) const {
 
 const DeviationProvider<PageId>& Settings::deviationProvider() const {
     return m_ptrImpl->deviationProvider();
+}
+
+std::vector<Guide>& Settings::guides() {
+    return m_ptrImpl->guides();
 }
 
 /*============================== Settings::Item =============================*/
@@ -739,5 +745,9 @@ bool Settings::Impl::isParamsNull(const PageId& page_id) const {
 
 const DeviationProvider<PageId>& Settings::Impl::deviationProvider() const {
     return m_deviationProvider;
+}
+
+std::vector<Guide>& Settings::Impl::guides() {
+    return m_guides;
 }
 }  // namespace page_layout

@@ -40,7 +40,7 @@ public:
 
     typedef boost::function<void(const QPointF& mouse_pos)> DragInitiatedCallback;
 
-    typedef boost::function<void(const QPointF& mouse_pos)> DragContinuationCallback;
+    typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> DragContinuationCallback;
 
     typedef boost::function<void(const QPointF& mouse_pos)> DragFinishedCallback;
 
@@ -116,10 +116,10 @@ public:
      * \brief Handles a request to move to a particular position in widget coordinates.
      */
     virtual void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-        m_dragContinuationCallback(mouse_pos);
+        m_dragContinuationCallback(mouse_pos, mask);
     }
 
-    void setDragContinuationCallback(const DragInitiatedCallback& callback) {
+    void setDragContinuationCallback(const DragContinuationCallback& callback) {
         m_dragContinuationCallback = callback;
     }
 

@@ -59,7 +59,9 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
           m_topBottomLinked(opt_widget.topBottomLinked()),
           m_contextMenu(new QMenu(this)),
           m_guidesFreeIndex(0),
-          m_guideUnderMouse(-1) {
+          m_guideUnderMouse(-1),
+          m_innerRectVerticalDragModifier(Qt::ControlModifier),
+          m_innerRectHorizontalDragModifier(Qt::ShiftModifier) {
     setMouseTracking(true);
 
     interactionState().setDefaultStatusTip(tr("Resize margins by dragging any of the solid lines."));
@@ -125,6 +127,23 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
         makeLastFollower(m_innerEdgeHandlers[i]);
         makeLastFollower(m_middleCornerHandlers[i]);
         makeLastFollower(m_middleEdgeHandlers[i]);
+    }
+
+    {
+        m_innerRectArea.setProximityCallback(boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), _1));
+        m_innerRectArea.setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
+        m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, _1, _2));
+        m_innerRectArea.setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
+        m_innerRectAreaHandler.setObject(&m_innerRectArea);
+        m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page."));
+        m_innerRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
+        m_innerRectAreaHandler.setKeyboardModifiers(
+                {m_innerRectVerticalDragModifier, m_innerRectHorizontalDragModifier,
+                 m_innerRectVerticalDragModifier | m_innerRectHorizontalDragModifier});
+        Qt::CursorShape cursor = Qt::DragMoveCursor;
+        m_innerRectAreaHandler.setProximityCursor(cursor);
+        m_innerRectAreaHandler.setInteractionCursor(cursor);
+        makeLastFollower(m_innerRectAreaHandler);
     }
 
     rootInteractionHandler().makeLastFollower(*this);
@@ -770,6 +789,7 @@ void ImageView::syncGuidesSettings() {
 }
 
 void ImageView::setupGuideInteraction(const int index) {
+    m_draggableGuides[index].setProximityPriority(1);
     m_draggableGuides[index].setPositionCallback(boost::bind(&ImageView::guidePosition, this, index));
     m_draggableGuides[index].setMoveRequestCallback(boost::bind(&ImageView::guideMoveRequest, this, index, _1));
     m_draggableGuides[index].setDragFinishedCallback(boost::bind(&ImageView::guideDragFinished, this));
@@ -780,7 +800,7 @@ void ImageView::setupGuideInteraction(const int index) {
     m_draggableGuideHandlers[index].setProximityCursor(cursorShape);
     m_draggableGuideHandlers[index].setInteractionCursor(cursorShape);
     m_draggableGuideHandlers[index].setProximityStatusTip(tr("Drag the guide."));
-    m_draggableGuideHandlers[index].setKeyboardModifiers(Qt::ShiftModifier);
+    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::ShiftModifier});
 
     if (!m_alignment.isNull()) {
         makeLastFollower(m_draggableGuideHandlers[index]);
@@ -884,5 +904,41 @@ void ImageView::forceInscribeGuides() {
     if (need_sync) {
         syncGuidesSettings();
     }
+}
+
+void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::KeyboardModifiers mask) {
+    QPointF delta(mouse_pos - m_beforeResizing.mousePos);
+    if (mask == m_innerRectVerticalDragModifier) {
+        delta.setX(0);
+    } else if (mask == m_innerRectHorizontalDragModifier) {
+        delta.setY(0);
+    }
+
+    QRectF widget_rect(m_beforeResizing.middleWidgetRect);
+    widget_rect.translate(-delta);
+    m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
+    forceNonNegativeHardMargins(m_middleRect);
+
+    // Updating the focal point is what makes the image move
+    // as we drag an inner edge.
+    QPointF fp(m_beforeResizing.focalPoint);
+    fp += delta;
+    setWidgetFocalPoint(fp);
+
+    m_aggregateHardSizeMM
+            = m_ptrSettings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
+
+    recalcOuterRect();
+
+    updatePresentationTransform(DONT_FIT);
+
+    emit marginsSetLocally(calcHardMarginsMM());
+}
+
+Proximity ImageView::rectProximity(const QRectF& box, const QPointF& mouse_pos) const {
+    double value = virtualToWidget().map(box).containsPoint(mouse_pos, Qt::WindingFill)
+                           ? 0
+                           : std::numeric_limits<double>::max();
+    return Proximity::fromSqDist(value);
 }
 }  // namespace page_layout

@@ -181,6 +181,10 @@ private:
 
     void forceInscribeGuides();
 
+    Proximity rectProximity(const QRectF& box, const QPointF& mouse_pos) const;
+
+    void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask);
+
 
     DraggableObject m_innerCorners[4];
     ObjectDragHandler m_innerCornerHandlers[4];
@@ -277,6 +281,12 @@ private:
     QAction* m_removeGuideUnderMouseAction;
     QPointF m_lastContextMenuPos;
     int m_guideUnderMouse;
+
+    DraggableObject m_innerRectArea;
+    ObjectDragHandler m_innerRectAreaHandler;
+
+    Qt::KeyboardModifier m_innerRectVerticalDragModifier;
+    Qt::KeyboardModifier m_innerRectHorizontalDragModifier;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

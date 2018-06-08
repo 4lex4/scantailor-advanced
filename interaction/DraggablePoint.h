@@ -27,7 +27,7 @@ class DraggablePoint : public DraggableObject {
 public:
     typedef boost::function<QPointF()> PositionCallback;
 
-    typedef boost::function<void(const QPointF&, Qt::KeyboardModifiers mask)> MoveRequestCallback;
+    typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> MoveRequestCallback;
 
     DraggablePoint();
 

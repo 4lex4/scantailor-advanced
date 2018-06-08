@@ -130,7 +130,7 @@ ImageView::ImageView(const QImage& image,
         m_contentRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the content box."));
         m_contentRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
         Qt::CursorShape cursor = Qt::DragMoveCursor;
-        m_contentRectAreaHandler.setKeyboardModifiers(Qt::ShiftModifier);
+        m_contentRectAreaHandler.setKeyboardModifiers({Qt::ShiftModifier});
         m_contentRectAreaHandler.setProximityCursor(cursor);
         m_contentRectAreaHandler.setInteractionCursor(cursor);
         makeLastFollower(m_contentRectAreaHandler);
@@ -144,7 +144,7 @@ ImageView::ImageView(const QImage& image,
         m_pageRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page box."));
         m_pageRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
         Qt::CursorShape cursor = Qt::DragMoveCursor;
-        m_pageRectAreaHandler.setKeyboardModifiers(Qt::ShiftModifier);
+        m_pageRectAreaHandler.setKeyboardModifiers({Qt::ShiftModifier});
         m_pageRectAreaHandler.setProximityCursor(cursor);
         m_pageRectAreaHandler.setInteractionCursor(cursor);
         makeLastFollower(m_pageRectAreaHandler);

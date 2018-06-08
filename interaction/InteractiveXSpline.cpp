@@ -67,6 +67,8 @@ void InteractiveXSpline::setSpline(const XSpline& spline) {
         new_control_points[i].point.setDragFinishedCallback(boost::bind(&InteractiveXSpline::dragFinished, this));
 
         if ((i == 0) || (i == num_control_points - 1)) {
+            new_control_points[i].handler.setKeyboardModifiers(
+                    {Qt::NoModifier, Qt::ShiftModifier, Qt::ControlModifier, Qt::ShiftModifier | Qt::ControlModifier});
             // Endpoints can't be deleted.
             new_control_points[i].handler.setProximityStatusTip(
                     tr("This point can be dragged. Hold Ctrl or Shift to drag along axes."));
@@ -189,7 +191,6 @@ double findAngle(QPointF p1, QPointF p2) {  // return angle between vector (0,0)
 }
 
 void InteractiveXSpline::controlPointMoveRequest(int idx, const QPointF& pos, Qt::KeyboardModifiers mask) {
-    // end of modified by monday2000
     const QPointF storage_pt(m_toStorage(pos));
     bool swap_sides = false;
     bool modified = mask.testFlag(Qt::ControlModifier) || mask.testFlag(Qt::ShiftModifier);
@@ -236,7 +237,6 @@ void InteractiveXSpline::controlPointMoveRequest(int idx, const QPointF& pos, Qt
 
                     m_spline.moveControlPoint(i, new_position);
                 }
-                // end of modified by monday2000
             }
         } else {
             // Move the endpoint and distribute midpoints uniformly.

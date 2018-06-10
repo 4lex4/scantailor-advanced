@@ -294,7 +294,7 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
             painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setWorldTransform(QTransform());
 
-            QPen pen(QColor(0x00, 0x92, 0x00));
+            QPen pen(QColor(0x00, 0x9d, 0x9f));
             pen.setCosmetic(true);
             pen.setWidthF(1.5);
             painter.setPen(pen);
@@ -809,7 +809,7 @@ void ImageView::setupGuideInteraction(const int index) {
     m_draggableGuideHandlers[index].setProximityCursor(cursorShape);
     m_draggableGuideHandlers[index].setInteractionCursor(cursorShape);
     m_draggableGuideHandlers[index].setProximityStatusTip(tr("Drag the guide."));
-    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::ShiftModifier});
+    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::AltModifier});
 
     if (!m_alignment.isNull()) {
         makeLastFollower(m_draggableGuideHandlers[index]);

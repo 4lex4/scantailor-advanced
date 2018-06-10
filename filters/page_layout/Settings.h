@@ -169,6 +169,10 @@ public:
 
     std::vector<Guide>& guides();
 
+    bool isShowingMiddleRectEnabled() const;
+
+    void enableShowingMiddleRect(bool state);
+
 private:
     class Impl;
     class Item;

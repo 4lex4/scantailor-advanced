@@ -183,6 +183,10 @@ public:
 
     std::vector<Guide>& guides();
 
+    bool isShowingMiddleRectEnabled() const;
+
+    void enableShowingMiddleRect(bool state);
+
 private:
     class SequencedTag;
     class DescWidthTag;
@@ -223,6 +227,7 @@ private:
     const bool m_autoMarginsDefault;
     DeviationProvider<PageId> m_deviationProvider;
     std::vector<Guide> m_guides;
+    bool m_showMiddleRect;
 };
 
 
@@ -333,6 +338,14 @@ std::vector<Guide>& Settings::guides() {
     return m_ptrImpl->guides();
 }
 
+bool Settings::isShowingMiddleRectEnabled() const {
+    return m_ptrImpl->isShowingMiddleRectEnabled();
+}
+
+void Settings::enableShowingMiddleRect(const bool state) {
+    m_ptrImpl->enableShowingMiddleRect(state);
+}
+
 /*============================== Settings::Item =============================*/
 
 Settings::Item::Item(const PageId& page_id,
@@ -378,7 +391,8 @@ Settings::Impl::Impl()
           m_invalidSize(),
           m_defaultHardMarginsMM(Margins(10.0, 5.0, 10.0, 5.0)),
           m_defaultAlignment(Alignment::TOP, Alignment::HCENTER),
-          m_autoMarginsDefault(false) {
+          m_autoMarginsDefault(false),
+          m_showMiddleRect(true) {
     m_deviationProvider.setComputeValueByKey([this](const PageId& pageId) -> double {
         auto it(m_items.find(pageId));
         if (it != m_items.end()) {
@@ -749,5 +763,13 @@ const DeviationProvider<PageId>& Settings::Impl::deviationProvider() const {
 
 std::vector<Guide>& Settings::Impl::guides() {
     return m_guides;
+}
+
+bool Settings::Impl::isShowingMiddleRectEnabled() const {
+    return m_showMiddleRect;
+}
+
+void Settings::Impl::enableShowingMiddleRect(const bool state) {
+    m_showMiddleRect = state;
 }
 }  // namespace page_layout

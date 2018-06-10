@@ -199,6 +199,10 @@ private:
 
     QRect findContentInArea(const QRect& area) const;
 
+    void enableMiddleRectInteraction(bool state);
+
+    bool isShowingMiddleRectEnabled() const;
+
 
     DraggableObject m_innerCorners[4];
     ObjectDragHandler m_innerCornerHandlers[4];
@@ -293,6 +297,8 @@ private:
     QAction* m_addVerticalGuideAction;
     QAction* m_removeAllGuidesAction;
     QAction* m_removeGuideUnderMouseAction;
+    QAction* m_guideActionsSeparator;
+    QAction* m_showMiddleRectAction;
     QPointF m_lastContextMenuPos;
     int m_guideUnderMouse;
 
@@ -305,6 +311,8 @@ private:
     imageproc::BinaryImage m_contentImage;
     QTransform m_originalToContentImage;
     QTransform m_contentImageToOriginal;
+
+    const bool m_nullContentRect;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

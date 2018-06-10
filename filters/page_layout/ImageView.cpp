@@ -68,7 +68,8 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
           m_guidesFreeIndex(0),
           m_guideUnderMouse(-1),
           m_innerRectVerticalDragModifier(Qt::ControlModifier),
-          m_innerRectHorizontalDragModifier(Qt::ShiftModifier) {
+          m_innerRectHorizontalDragModifier(Qt::ShiftModifier),
+          m_nullContentRect((m_innerRect.width() < 1) && (m_innerRect.height() < 1)) {
     setMouseTracking(true);
 
     interactionState().setDefaultStatusTip(tr("Resize margins by dragging any of the solid lines."));
@@ -130,10 +131,14 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
         m_middleEdgeHandlers[i].setProximityCursor(edge_cursor);
         m_middleEdgeHandlers[i].setInteractionCursor(edge_cursor);
 
-        makeLastFollower(m_innerCornerHandlers[i]);
-        makeLastFollower(m_innerEdgeHandlers[i]);
-        makeLastFollower(m_middleCornerHandlers[i]);
-        makeLastFollower(m_middleEdgeHandlers[i]);
+        if (isShowingMiddleRectEnabled()) {
+            makeLastFollower(m_middleCornerHandlers[i]);
+            makeLastFollower(m_middleEdgeHandlers[i]);
+        }
+        if (!m_nullContentRect) {
+            makeLastFollower(m_innerCornerHandlers[i]);
+            makeLastFollower(m_innerEdgeHandlers[i]);
+        }
     }
 
     {
@@ -223,6 +228,8 @@ void ImageView::alignmentChanged(const Alignment& alignment) {
     enableGuidesInteraction(!m_alignment.isNull());
     forceInscribeGuides();
 
+    enableMiddleRectInteraction(isShowingMiddleRectEnabled());
+
     if (size_changed == Settings::AGGREGATE_SIZE_CHANGED) {
         emit invalidateAllThumbnails();
     } else {
@@ -259,13 +266,10 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
 
     painter.setRenderHint(QPainter::Antialiasing, false);
 
-    // we round inner rect to check whether content rect is empty and this is just an adapted rect.
-    const bool isNullContentRect = m_innerRect.toRect().isEmpty();
-
     painter.setPen(Qt::NoPen);
     painter.setBrush(bg_color);
 
-    if (!isNullContentRect) {
+    if (!m_nullContentRect) {
         painter.drawPath(outer_outline.subtracted(content_outline));
     } else {
         painter.drawPath(outer_outline);
@@ -277,10 +281,10 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);
 
-    if (!isNullContentRect || m_alignment.isNull()) {
+    if (isShowingMiddleRectEnabled()) {
         painter.drawRect(m_middleRect);
     }
-    if (!isNullContentRect) {
+    if (!m_nullContentRect) {
         painter.drawRect(m_innerRect);
     }
 
@@ -675,12 +679,23 @@ void ImageView::setupContextMenuInteraction() {
     m_addVerticalGuideAction = m_contextMenu->addAction(tr("Add a vertical guide"));
     m_removeAllGuidesAction = m_contextMenu->addAction(tr("Remove all the guides"));
     m_removeGuideUnderMouseAction = m_contextMenu->addAction(tr("Remove this guide"));
+    m_guideActionsSeparator = m_contextMenu->addSeparator();
+    m_showMiddleRectAction = m_contextMenu->addAction(tr("Show hard margins rectangle"));
+    m_showMiddleRectAction->setCheckable(true);
+    m_showMiddleRectAction->setChecked(m_ptrSettings->isShowingMiddleRectEnabled());
+
     connect(m_addHorizontalGuideAction, &QAction::triggered,
             [this]() { addHorizontalGuide(widgetToGuideCs().map(m_lastContextMenuPos).y()); });
     connect(m_addVerticalGuideAction, &QAction::triggered,
             [this]() { addVerticalGuide(widgetToGuideCs().map(m_lastContextMenuPos).x()); });
     connect(m_removeAllGuidesAction, &QAction::triggered, boost::bind(&ImageView::removeAllGuides, this));
     connect(m_removeGuideUnderMouseAction, &QAction::triggered, [this]() { removeGuide(m_guideUnderMouse); });
+    connect(m_showMiddleRectAction, &QAction::toggled, [this](bool checked) {
+        if (!m_alignment.isNull() && !m_nullContentRect) {
+            enableMiddleRectInteraction(checked);
+            m_ptrSettings->enableShowingMiddleRect(checked);
+        }
+    });
 }
 
 void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
@@ -704,6 +719,8 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
         m_addVerticalGuideAction->setVisible(true);
         m_removeAllGuidesAction->setVisible(!m_guides.empty());
         m_removeGuideUnderMouseAction->setVisible(false);
+        m_guideActionsSeparator->setVisible(!m_nullContentRect);
+        m_showMiddleRectAction->setVisible(!m_nullContentRect);
 
         m_lastContextMenuPos = eventPos;
     } else {
@@ -711,6 +728,8 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
         m_addVerticalGuideAction->setVisible(false);
         m_removeAllGuidesAction->setVisible(false);
         m_removeGuideUnderMouseAction->setVisible(true);
+        m_guideActionsSeparator->setVisible(false);
+        m_showMiddleRectAction->setVisible(false);
     }
 
     m_contextMenu->popup(event->globalPos());
@@ -1110,5 +1129,29 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
     dragInitiated(virtualToWidget().map(QPointF(0, 0)));
     innerRectMoveRequest(virtualToWidget().map(delta));
     dragFinished();
+}
+
+void ImageView::enableMiddleRectInteraction(const bool state) {
+    bool internal_state = m_middleCornerHandlers[0].is_linked();
+    if (state == internal_state) {
+        // Don't enable or disable the interaction if that's already done.
+        return;
+    }
+
+    if (state) {
+        for (int i = 0; i < 4; ++i) {
+            makeLastFollower(m_middleCornerHandlers[i]);
+            makeLastFollower(m_middleEdgeHandlers[i]);
+        }
+    } else {
+        for (int i = 0; i < 4; ++i) {
+            m_middleCornerHandlers[i].unlink();
+            m_middleEdgeHandlers[i].unlink();
+        }
+    };
+}
+
+bool ImageView::isShowingMiddleRectEnabled() const {
+    return (!m_nullContentRect && m_ptrSettings->isShowingMiddleRectEnabled()) || m_alignment.isNull();
 }
 }  // namespace page_layout

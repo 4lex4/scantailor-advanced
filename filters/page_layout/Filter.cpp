@@ -104,6 +104,7 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
 
     XmlMarshaller marshaller(doc);
     filter_el.appendChild(marshaller.rectF(m_ptrSettings->getAggregateContentRect(), "aggregateContentRect"));
+    filter_el.setAttribute("showMiddleRect", m_ptrSettings->isShowingMiddleRectEnabled() ? "1" : "0");
 
     if (!m_ptrSettings->guides().empty()) {
         QDomElement guides_el(doc.createElement("guides"));
@@ -142,6 +143,7 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
     if (!rect_el.isNull()) {
         m_ptrSettings->setAggregateContentRect(XmlUnmarshaller::rectF(rect_el));
     }
+    m_ptrSettings->enableShowingMiddleRect(filter_el.attribute("showMiddleRect") == "1");
 
     const QDomElement guides_el = filter_el.namedItem("guides").toElement();
     if (!guides_el.isNull()) {

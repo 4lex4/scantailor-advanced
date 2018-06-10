@@ -37,8 +37,13 @@
 #include <QPoint>
 #include <QMenu>
 #include <interaction/DraggableLineSegment.h>
+#include <imageproc/BinaryImage.h>
 
 class Margins;
+
+namespace imageproc {
+class GrayImage;
+}
 
 namespace page_layout {
 class OptionsWidget;
@@ -51,6 +56,7 @@ public:
               const PageId& page_id,
               const QImage& image,
               const QImage& downscaled_image,
+              const imageproc::GrayImage& gray_image,
               const ImageTransformation& xform,
               const QRectF& adapted_content_rect,
               const OptionsWidget& opt_widget);
@@ -119,6 +125,8 @@ private:
 
     void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
+    void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
+
     Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
     Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
@@ -183,7 +191,13 @@ private:
 
     Proximity rectProximity(const QRectF& box, const QPointF& mouse_pos) const;
 
-    void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask);
+    void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
+
+    void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
+
+    void attachContentToNearestGuide(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
+
+    QRect findContentInArea(const QRect& area) const;
 
 
     DraggableObject m_innerCorners[4];
@@ -287,6 +301,10 @@ private:
 
     Qt::KeyboardModifier m_innerRectVerticalDragModifier;
     Qt::KeyboardModifier m_innerRectHorizontalDragModifier;
+
+    imageproc::BinaryImage m_contentImage;
+    QTransform m_originalToContentImage;
+    QTransform m_contentImageToOriginal;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

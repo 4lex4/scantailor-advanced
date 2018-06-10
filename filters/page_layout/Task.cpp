@@ -31,6 +31,8 @@
 #include "filters/output/Task.h"
 #include "Dpm.h"
 
+using namespace imageproc;
+
 namespace page_layout {
 class Task::UiUpdater : public FilterResult {
 public:
@@ -39,6 +41,7 @@ public:
               const PageId& page_id,
               const QImage& image,
               const ImageTransformation& xform,
+              const GrayImage& gray_image,
               const QRectF& adapted_content_rect,
               bool agg_size_changed,
               bool batch);
@@ -55,6 +58,7 @@ private:
     PageId m_pageId;
     QImage m_image;
     QImage m_downscaledImage;
+    GrayImage m_grayImage;
     ImageTransformation m_xform;
     QRectF m_adaptedContentRect;
     bool m_aggSizeChanged;
@@ -109,6 +113,7 @@ FilterResultPtr Task::process(const TaskStatus& status,
         return m_ptrNextTask->process(status, FilterData(data, new_xform), content_rect_phys);
     } else {
         return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrSettings, m_pageId, data.origImage(), data.xform(),
+                                         data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
                                          adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
                                          m_batchProcessing);
     }
@@ -130,6 +135,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const PageId& page_id,
                            const QImage& image,
                            const ImageTransformation& xform,
+                           const GrayImage& gray_image,
                            const QRectF& adapted_content_rect,
                            const bool agg_size_changed,
                            const bool batch)
@@ -139,6 +145,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
           m_image(image),
           m_downscaledImage(ImageView::createDownscaledImage(image)),
           m_xform(xform),
+          m_grayImage(gray_image),
           m_adaptedContentRect(adapted_content_rect),
           m_aggSizeChanged(agg_size_changed),
           m_batchProcessing(batch) {
@@ -160,8 +167,8 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         return;
     }
 
-    auto* view = new ImageView(m_ptrSettings, m_pageId, m_image, m_downscaledImage, m_xform, m_adaptedContentRect,
-                               *opt_widget);
+    auto* view = new ImageView(m_ptrSettings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
+                               m_adaptedContentRect, *opt_widget);
     ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
 
     QObject::connect(view, SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,

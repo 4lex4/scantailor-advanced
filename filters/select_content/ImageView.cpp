@@ -31,6 +31,7 @@
 #include <TaskStatus.h>
 #include <Despeckle.h>
 #include <map>
+#include <EmptyTaskStatus.h>
 
 using namespace imageproc;
 
@@ -415,8 +416,8 @@ QRectF ImageView::contentRectPosition() const {
     return virtualToWidget().mapRect(m_contentRect);
 }
 
-void ImageView::contentRectMoveRequest(const QPolygonF& poly_pos) {
-    QRectF contentRectInWidget(poly_pos.boundingRect());
+void ImageView::contentRectMoveRequest(const QPolygonF& poly_moved) {
+    QRectF contentRectInWidget(poly_moved.boundingRect());
 
     const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
     if (contentRectInWidget.left() < image_rect.left()) {
@@ -443,8 +444,8 @@ QRectF ImageView::pageRectPosition() const {
     return virtualToWidget().mapRect(m_pageRect);
 }
 
-void ImageView::pageRectMoveRequest(const QPolygonF& poly_pos) {
-    QRectF pageRectInWidget(poly_pos.boundingRect());
+void ImageView::pageRectMoveRequest(const QPolygonF& poly_moved) {
+    QRectF pageRectInWidget(poly_moved.boundingRect());
 
     const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
     if (pageRectInWidget.left() > content_rect.left()) {
@@ -491,19 +492,7 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
 
     PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
 
-    class EmptyTaskStatus : public TaskStatus {
-        void cancel() override {
-        }
-
-        bool isCancelled() const override {
-            return false;
-        }
-
-        void throwIfCancelled() const override {
-        }
-    } status;
-
-    Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, status);
+    Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, EmptyTaskStatus());
 
     m_originalToContentImage = xform_150dpi.transform();
     m_contentImageToOriginal = m_originalToContentImage.inverted();
@@ -512,7 +501,7 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
 void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
     if (event->button() == Qt::LeftButton) {
         if (!m_contentRect.isEmpty() && !m_contentImage.isNull()) {
-            correctContentBox(event->pos());
+            correctContentBox(QPointF(0.5, 0.5) + event->pos());
         }
     }
 }
@@ -521,7 +510,7 @@ void ImageView::correctContentBox(const QPointF& pos) {
     const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
     const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
 
-    const QPointF content_pos = widget_to_content_image.map(QPointF(0.5, 0.5) + pos);
+    const QPointF content_pos = widget_to_content_image.map(pos);
 
     QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
     finding_area = finding_area.intersected(m_contentImage.rect());
@@ -536,7 +525,7 @@ void ImageView::correctContentBox(const QPointF& pos) {
 
     // If click position is inside the content rect, adjust the nearest side of the rect,
     // else include the content at the position into the content rect.
-    const QPointF pos_in_virtual = widgetToVirtual().map(QPointF(0.5, 0.5) + pos);
+    const QPointF pos_in_virtual = widgetToVirtual().map(pos);
     const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area));
     if (!m_contentRect.contains(pos_in_virtual)) {
         m_contentRect |= found_area_in_virtual;
@@ -568,7 +557,7 @@ void ImageView::correctContentBox(const QPointF& pos) {
     contentRectDragFinished();
 }
 
-QRect ImageView::findContentInArea(const QRect& area) {
+QRect ImageView::findContentInArea(const QRect& area) const {
     const uint32_t* image_line = m_contentImage.data();
     const int image_stride = m_contentImage.wordsPerLine();
     const uint32_t msb = uint32_t(1) << 31;

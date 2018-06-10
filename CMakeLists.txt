@@ -500,6 +500,7 @@ set(
         OrderByDeviationProvider.cpp OrderByDeviationProvider.h
         BlackOnWhiteEstimator.cpp BlackOnWhiteEstimator.h
         ImageSettings.cpp ImageSettings.h
+        EmptyTaskStatus.h
         version.h
         config.h.in
         ${common_ui_files})

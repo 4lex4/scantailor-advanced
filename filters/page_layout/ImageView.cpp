@@ -29,6 +29,12 @@
 #include <boost/lambda/lambda.hpp>
 #include <ImageViewInfoProvider.h>
 #include <UnitsConverter.h>
+#include <imageproc/GrayImage.h>
+#include <imageproc/Transform.h>
+#include <imageproc/Binarize.h>
+#include <imageproc/PolygonRasterizer.h>
+#include <Despeckle.h>
+#include <EmptyTaskStatus.h>
 
 using namespace imageproc;
 
@@ -37,6 +43,7 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
                      const PageId& page_id,
                      const QImage& image,
                      const QImage& downscaled_image,
+                     const imageproc::GrayImage& gray_image,
                      const ImageTransformation& xform,
                      const QRectF& adapted_content_rect,
                      const OptionsWidget& opt_widget)
@@ -135,7 +142,7 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
         m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, _1, _2));
         m_innerRectArea.setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
         m_innerRectAreaHandler.setObject(&m_innerRectArea);
-        m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page."));
+        m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page content."));
         m_innerRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
         m_innerRectAreaHandler.setKeyboardModifiers(
                 {m_innerRectVerticalDragModifier, m_innerRectHorizontalDragModifier,
@@ -154,6 +161,8 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
     setupGuides();
 
     recalcBoxesAndFit(opt_widget.marginsMM());
+
+    buildContentImage(gray_image, xform);
 }
 
 ImageView::~ImageView() = default;
@@ -936,9 +945,170 @@ void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::Keyboar
 }
 
 Proximity ImageView::rectProximity(const QRectF& box, const QPointF& mouse_pos) const {
-    double value = virtualToWidget().map(box).containsPoint(mouse_pos, Qt::WindingFill)
-                           ? 0
-                           : std::numeric_limits<double>::max();
+    double value = virtualToWidget().mapRect(box).contains(mouse_pos) ? 0 : std::numeric_limits<double>::max();
     return Proximity::fromSqDist(value);
+}
+
+void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
+    ImageTransformation xform_150dpi(xform);
+    xform_150dpi.preScaleToDpi(Dpi(150, 150));
+
+    if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+        return;
+    }
+
+    QImage gray150(transformToGray(gray_image, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+                                   OutsidePixels::assumeColor(Qt::white)));
+
+    m_contentImage = binarizeWolf(gray150, QSize(51, 51), 50);
+
+    PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
+
+    Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, EmptyTaskStatus());
+
+    m_originalToContentImage = xform_150dpi.transform();
+    m_contentImageToOriginal = m_originalToContentImage.inverted();
+}
+
+QRect ImageView::findContentInArea(const QRect& area) const {
+    const uint32_t* image_line = m_contentImage.data();
+    const int image_stride = m_contentImage.wordsPerLine();
+    const uint32_t msb = uint32_t(1) << 31;
+
+    int top = std::numeric_limits<int>::max();
+    int left = std::numeric_limits<int>::max();
+    int bottom = std::numeric_limits<int>::min();
+    int right = std::numeric_limits<int>::min();
+
+    image_line += area.top() * image_stride;
+    for (int y = area.top(); y <= area.bottom(); ++y) {
+        for (int x = area.left(); x <= area.right(); ++x) {
+            if (image_line[x >> 5] & (msb >> (x & 31))) {
+                top = std::min(top, y);
+                left = std::min(left, x);
+                bottom = std::max(bottom, y);
+                right = std::max(right, x);
+            }
+        }
+        image_line += image_stride;
+    }
+
+    if (top > bottom) {
+        return QRect();
+    }
+
+    QRect found_area = QRect(left, top, right - left + 1, bottom - top + 1);
+    found_area.adjust(-1, -1, 1, 1);
+
+    return found_area;
+}
+
+void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
+    if (event->button() == Qt::LeftButton) {
+        if (!m_alignment.isNull() && !m_guides.empty()) {
+            attachContentToNearestGuide(QPointF(0.5, 0.5) + event->pos(), event->modifiers());
+        }
+    }
+}
+
+void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::KeyboardModifiers mask) {
+    const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
+    const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
+
+    const QPointF content_pos = widget_to_content_image.map(pos);
+
+    QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
+    finding_area = finding_area.intersected(m_contentImage.rect());
+    if (finding_area.isEmpty()) {
+        return;
+    }
+
+    QRect found_area = findContentInArea(finding_area);
+    if (found_area.isEmpty()) {
+        return;
+    }
+
+    const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area)).intersected(m_innerRect);
+    if (found_area_in_virtual.isEmpty()) {
+        return;
+    }
+
+    QPointF delta;
+    {
+        double min_dist = std::numeric_limits<int>::max();
+        for (const auto& idxAndGuide : m_guides) {
+            const Guide& guide = idxAndGuide.second;
+            if (guide.getOrientation() == Qt::Vertical) {
+                if (mask == m_innerRectVerticalDragModifier) {
+                    continue;
+                }
+
+                const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().x();
+                const double diff_left = guide_pos_in_virtual - found_area_in_virtual.left();
+                const double diff_right = guide_pos_in_virtual - found_area_in_virtual.right();
+                const double diff = std::abs(diff_left) <= std::abs(diff_right) ? diff_left : diff_right;
+                const double dist = std::abs(diff);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    delta.setX(diff);
+                    delta.setY(0.0);
+                }
+            } else {
+                if (mask == m_innerRectHorizontalDragModifier) {
+                    continue;
+                }
+
+                const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().y();
+                const double diff_top = guide_pos_in_virtual - found_area_in_virtual.top();
+                const double diff_bottom = guide_pos_in_virtual - found_area_in_virtual.bottom();
+                const double diff = std::abs(diff_top) <= std::abs(diff_bottom) ? diff_top : diff_bottom;
+                const double dist = std::abs(diff);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    delta.setX(0.0);
+                    delta.setY(diff);
+                }
+            }
+        }
+    }
+    if (delta.isNull()) {
+        return;
+    }
+
+    {
+        QRectF corrected_middle_rect = m_middleRect;
+        corrected_middle_rect.translate(-delta);
+        corrected_middle_rect |= m_innerRect;
+
+        {
+            // Correct the delta in case of the middle rect size changed.
+            // It means that the center is shifted resulting
+            // the guide will change its position, so we need an extra addition to delta.
+            const double x_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_middleRect.width()), delta.x());
+            const double y_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_middleRect.height()), delta.y());
+            delta.setX(delta.x() + x_correction);
+            delta.setY(delta.y() + y_correction);
+
+            corrected_middle_rect.translate(-x_correction, -y_correction);
+            corrected_middle_rect |= m_innerRect;
+        }
+
+        {
+            // Restrict the delta value in order not to be out of the outer rect.
+            const double x_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_outerRect.width()), delta.x());
+            const double y_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_outerRect.height()), delta.y());
+            delta.setX(delta.x() - x_correction);
+            delta.setY(delta.y() - y_correction);
+        }
+    }
+
+    // Move the page content.
+    dragInitiated(virtualToWidget().map(QPointF(0, 0)));
+    innerRectMoveRequest(virtualToWidget().map(delta));
+    dragFinished();
 }
 }  // namespace page_layout

@@ -42,6 +42,7 @@ brings new ones and fixes.
         * [Collapsible filter options](#collapsible-filter-options)
         * [Auto adjusting content area](#auto-adjusting-content-area)
         * [Black on white detection](#black-on-white-detection)
+        * [Guides](#guides)
 * [Building](#building)
 
 Description
@@ -180,7 +181,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
       Now thumbnails are shown evenly.
     
-    * Added option to control highlighting (with red asterisks) the thumbnails of pages with high deviation. 
+    * Added option to control highlighting the thumbnails of pages with high deviation with red asterisks. 
       The option refreshes the thumbnails instantly.
     
     * Deviation feature reworked.  
@@ -294,8 +295,8 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   Owing to the changes above, there appeared a new way to set margins for books and documents, pages of which have similar formatting. At content selection stage we just set page box and content box to a page, applying those content and page boxes to the pages with similar formatting, use auto margins for those pages at page layout stage instead of adjusting the margins relative to the content box, and then go to the output.
 
 * ##### New zone interaction modes  
-  **`Shift+LMB`** when the cursor is over a zone - drag the zone.  
-  **`Ctrl+Shift+LMB`** when the cursor is over a zone - drag the zone copying.  
+  **`Shift+LMB`** on a zone - drag the zone.  
+  **`Ctrl+Shift+LMB`** on a zone - drag the zone copying.  
   **`Del`** when the cursor is over a zone - delete the zone.  
   **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
   **`Ctrl+Alt+Click`** - copy the latest created zone to the cursor position.  
@@ -348,8 +349,24 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   Peculiarities:
     1. Auto detection of pages with light content on dark background can be enabled or disabled in the settings.
        Auto detection at the output stage is controlled separately.
-    2. Per page control over the mode added into the output filter options.
- 
+    2. There is per page control over the mode in the output filter options.
+    
+* ##### Guides
+  This feature gives you a more flexible type of aid of positioning content. These are horizontal or vertical lines you
+  can display on an page at the margins stage \(when aligning enabled\).  
+  Guides are adaptive to the page soft margins, i.e. when the latter changed the guides on the page
+  are automatically adjusted to match a new content position without requiring manual adjusting.
+  
+  Capabilities:  
+    * **`Right-click`** to create/remove guides from the **context menu** called.  
+    * **`Right-click`** on a guide to delete that guide from the **context menu** called.  
+    * **`Alt+LMB`** - drag the guide under the cursor.  
+    * **`Shift/Ctrl+LMB`** on the content rectangle - drag the page content.
+      Hold **`Shift`** pressed to restrict moving along the horizontal axis only and **`Ctrl`** for the vertical one.  
+    * **`Double click`** on content - automatically attach that content to the nearest guide.
+      Hold **`Shift`** pressed to select vertical guides only and **`Ctrl`** for horizontal ones.  
+    * Use the **context menu** to enable/disable showing the hard margins rectangle.  
+
 Building
 ----------
 

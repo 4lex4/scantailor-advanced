@@ -24,10 +24,17 @@
 #include "Params.h"
 #include "imageproc/PolygonUtils.h"
 #include <QPainter>
+#include <QMouseEvent>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <ImageViewInfoProvider.h>
 #include <UnitsConverter.h>
+#include <imageproc/GrayImage.h>
+#include <imageproc/Transform.h>
+#include <imageproc/Binarize.h>
+#include <imageproc/PolygonRasterizer.h>
+#include <Despeckle.h>
+#include <EmptyTaskStatus.h>
 
 using namespace imageproc;
 
@@ -36,6 +43,7 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
                      const PageId& page_id,
                      const QImage& image,
                      const QImage& downscaled_image,
+                     const imageproc::GrayImage& gray_image,
                      const ImageTransformation& xform,
                      const QRectF& adapted_content_rect,
                      const OptionsWidget& opt_widget)
@@ -55,7 +63,13 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
           m_committedAggregateHardSizeMM(m_aggregateHardSizeMM),
           m_alignment(opt_widget.alignment()),
           m_leftRightLinked(opt_widget.leftRightLinked()),
-          m_topBottomLinked(opt_widget.topBottomLinked()) {
+          m_topBottomLinked(opt_widget.topBottomLinked()),
+          m_contextMenu(new QMenu(this)),
+          m_guidesFreeIndex(0),
+          m_guideUnderMouse(-1),
+          m_innerRectVerticalDragModifier(Qt::ControlModifier),
+          m_innerRectHorizontalDragModifier(Qt::ShiftModifier),
+          m_nullContentRect((m_innerRect.width() < 1) && (m_innerRect.height() < 1)) {
     setMouseTracking(true);
 
     interactionState().setDefaultStatusTip(tr("Resize margins by dragging any of the solid lines."));
@@ -117,17 +131,43 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
         m_middleEdgeHandlers[i].setProximityCursor(edge_cursor);
         m_middleEdgeHandlers[i].setInteractionCursor(edge_cursor);
 
-        makeLastFollower(m_innerCornerHandlers[i]);
-        makeLastFollower(m_innerEdgeHandlers[i]);
-        makeLastFollower(m_middleCornerHandlers[i]);
-        makeLastFollower(m_middleEdgeHandlers[i]);
+        if (isShowingMiddleRectEnabled()) {
+            makeLastFollower(m_middleCornerHandlers[i]);
+            makeLastFollower(m_middleEdgeHandlers[i]);
+        }
+        if (!m_nullContentRect) {
+            makeLastFollower(m_innerCornerHandlers[i]);
+            makeLastFollower(m_innerEdgeHandlers[i]);
+        }
+    }
+
+    {
+        m_innerRectArea.setProximityCallback(boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), _1));
+        m_innerRectArea.setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
+        m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, _1, _2));
+        m_innerRectArea.setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
+        m_innerRectAreaHandler.setObject(&m_innerRectArea);
+        m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page content."));
+        m_innerRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
+        m_innerRectAreaHandler.setKeyboardModifiers(
+                {m_innerRectVerticalDragModifier, m_innerRectHorizontalDragModifier,
+                 m_innerRectVerticalDragModifier | m_innerRectHorizontalDragModifier});
+        Qt::CursorShape cursor = Qt::DragMoveCursor;
+        m_innerRectAreaHandler.setProximityCursor(cursor);
+        m_innerRectAreaHandler.setInteractionCursor(cursor);
+        makeLastFollower(m_innerRectAreaHandler);
     }
 
     rootInteractionHandler().makeLastFollower(*this);
     rootInteractionHandler().makeLastFollower(m_dragHandler);
     rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
+    setupContextMenuInteraction();
+    setupGuides();
+
     recalcBoxesAndFit(opt_widget.marginsMM());
+
+    buildContentImage(gray_image, xform);
 }
 
 ImageView::~ImageView() = default;
@@ -185,6 +225,11 @@ void ImageView::alignmentChanged(const Alignment& alignment) {
 
     recalcBoxesAndFit(calcHardMarginsMM());
 
+    enableGuidesInteraction(!m_alignment.isNull());
+    forceInscribeGuides();
+
+    enableMiddleRectInteraction(isShowingMiddleRectEnabled());
+
     if (size_changed == Settings::AGGREGATE_SIZE_CHANGED) {
         emit invalidateAllThumbnails();
     } else {
@@ -221,13 +266,10 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
 
     painter.setRenderHint(QPainter::Antialiasing, false);
 
-    // we round inner rect to check whether content rect is empty and this is just an adapted rect.
-    const bool isNullContentRect = m_innerRect.toRect().isEmpty();
-
     painter.setPen(Qt::NoPen);
     painter.setBrush(bg_color);
 
-    if (!isNullContentRect) {
+    if (!m_nullContentRect) {
         painter.drawPath(outer_outline.subtracted(content_outline));
     } else {
         painter.drawPath(outer_outline);
@@ -239,10 +281,10 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);
 
-    if (!isNullContentRect || m_alignment.isNull()) {
+    if (isShowingMiddleRectEnabled()) {
         painter.drawRect(m_middleRect);
     }
-    if (!isNullContentRect) {
+    if (!m_nullContentRect) {
         painter.drawRect(m_innerRect);
     }
 
@@ -250,6 +292,23 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
         pen.setStyle(Qt::DashLine);
         painter.setPen(pen);
         painter.drawRect(m_outerRect);
+
+        // Draw guides.
+        if (!m_guides.empty()) {
+            painter.setRenderHint(QPainter::Antialiasing, true);
+            painter.setWorldTransform(QTransform());
+
+            QPen pen(QColor(0x00, 0x9d, 0x9f));
+            pen.setCosmetic(true);
+            pen.setWidthF(1.5);
+            painter.setPen(pen);
+            painter.setBrush(Qt::NoBrush);
+
+            for (const auto& idxAndGuide : m_guides) {
+                const QLineF guide(widgetGuideLine(idxAndGuide.first));
+                painter.drawLine(guide);
+            }
+        }
     }
 }  // ImageView::onPaint
 
@@ -484,7 +543,10 @@ void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
 
     m_middleRect = middle_rect;
     m_outerRect = outer_rect;
+
     updatePhysSize();
+
+    forceInscribeGuides();
 }
 
 /**
@@ -567,6 +629,8 @@ void ImageView::recalcOuterRect() {
 
     m_outerRect = mm_to_virt.map(poly_mm).boundingRect();
     updatePhysSize();
+
+    forceInscribeGuides();
 }
 
 QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
@@ -608,5 +672,486 @@ void ImageView::updatePhysSize() {
     } else {
         ImageViewBase::updatePhysSize();
     }
+}
+
+void ImageView::setupContextMenuInteraction() {
+    m_addHorizontalGuideAction = m_contextMenu->addAction(tr("Add a horizontal guide"));
+    m_addVerticalGuideAction = m_contextMenu->addAction(tr("Add a vertical guide"));
+    m_removeAllGuidesAction = m_contextMenu->addAction(tr("Remove all the guides"));
+    m_removeGuideUnderMouseAction = m_contextMenu->addAction(tr("Remove this guide"));
+    m_guideActionsSeparator = m_contextMenu->addSeparator();
+    m_showMiddleRectAction = m_contextMenu->addAction(tr("Show hard margins rectangle"));
+    m_showMiddleRectAction->setCheckable(true);
+    m_showMiddleRectAction->setChecked(m_ptrSettings->isShowingMiddleRectEnabled());
+
+    connect(m_addHorizontalGuideAction, &QAction::triggered,
+            [this]() { addHorizontalGuide(widgetToGuideCs().map(m_lastContextMenuPos).y()); });
+    connect(m_addVerticalGuideAction, &QAction::triggered,
+            [this]() { addVerticalGuide(widgetToGuideCs().map(m_lastContextMenuPos).x()); });
+    connect(m_removeAllGuidesAction, &QAction::triggered, boost::bind(&ImageView::removeAllGuides, this));
+    connect(m_removeGuideUnderMouseAction, &QAction::triggered, [this]() { removeGuide(m_guideUnderMouse); });
+    connect(m_showMiddleRectAction, &QAction::toggled, [this](bool checked) {
+        if (!m_alignment.isNull() && !m_nullContentRect) {
+            enableMiddleRectInteraction(checked);
+            m_ptrSettings->enableShowingMiddleRect(checked);
+        }
+    });
+}
+
+void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
+    if (interaction.captured()) {
+        // No context menus during resizing.
+        return;
+    }
+    if (m_alignment.isNull()) {
+        return;
+    }
+
+    const QPointF eventPos = QPointF(0.5, 0.5) + event->pos();
+    // No context menus outside the outer rect.
+    if (!m_outerRect.contains(widgetToVirtual().map(eventPos))) {
+        return;
+    }
+
+    m_guideUnderMouse = getGuideUnderMouse(eventPos, interaction);
+    if (m_guideUnderMouse == -1) {
+        m_addHorizontalGuideAction->setVisible(true);
+        m_addVerticalGuideAction->setVisible(true);
+        m_removeAllGuidesAction->setVisible(!m_guides.empty());
+        m_removeGuideUnderMouseAction->setVisible(false);
+        m_guideActionsSeparator->setVisible(!m_nullContentRect);
+        m_showMiddleRectAction->setVisible(!m_nullContentRect);
+
+        m_lastContextMenuPos = eventPos;
+    } else {
+        m_addHorizontalGuideAction->setVisible(false);
+        m_addVerticalGuideAction->setVisible(false);
+        m_removeAllGuidesAction->setVisible(false);
+        m_removeGuideUnderMouseAction->setVisible(true);
+        m_guideActionsSeparator->setVisible(false);
+        m_showMiddleRectAction->setVisible(false);
+    }
+
+    m_contextMenu->popup(event->globalPos());
+}
+
+void ImageView::setupGuides() {
+    for (const Guide& guide : m_ptrSettings->guides()) {
+        m_guides[m_guidesFreeIndex] = guide;
+        setupGuideInteraction(m_guidesFreeIndex++);
+    }
+}
+
+void ImageView::addHorizontalGuide(double y) {
+    if (m_alignment.isNull()) {
+        return;
+    }
+
+    m_guides[m_guidesFreeIndex] = Guide(Qt::Horizontal, y);
+    setupGuideInteraction(m_guidesFreeIndex++);
+
+    update();
+    syncGuidesSettings();
+}
+
+void ImageView::addVerticalGuide(double x) {
+    if (m_alignment.isNull()) {
+        return;
+    }
+
+    m_guides[m_guidesFreeIndex] = Guide(Qt::Vertical, x);
+    setupGuideInteraction(m_guidesFreeIndex++);
+
+    update();
+    syncGuidesSettings();
+}
+
+void ImageView::removeAllGuides() {
+    if (m_alignment.isNull()) {
+        return;
+    }
+
+    m_draggableGuideHandlers.clear();
+    m_draggableGuides.clear();
+
+    m_guides.clear();
+    m_guidesFreeIndex = 0;
+
+    update();
+    syncGuidesSettings();
+}
+
+void ImageView::removeGuide(const int index) {
+    if (m_alignment.isNull()) {
+        return;
+    }
+    if (m_guides.find(index) == m_guides.end()) {
+        return;
+    }
+
+    m_draggableGuideHandlers.erase(index);
+    m_draggableGuides.erase(index);
+
+    m_guides.erase(index);
+
+    update();
+    syncGuidesSettings();
+}
+
+QTransform ImageView::widgetToGuideCs() const {
+    QTransform xform(widgetToVirtual());
+    xform *= QTransform().translate(-m_outerRect.center().x(), -m_outerRect.center().y());
+
+    return xform;
+}
+
+QTransform ImageView::guideToWidgetCs() const {
+    return widgetToGuideCs().inverted();
+}
+
+void ImageView::syncGuidesSettings() {
+    m_ptrSettings->guides().clear();
+    for (const auto& idxAndGuide : m_guides) {
+        m_ptrSettings->guides().push_back(idxAndGuide.second);
+    }
+}
+
+void ImageView::setupGuideInteraction(const int index) {
+    m_draggableGuides[index].setProximityPriority(1);
+    m_draggableGuides[index].setPositionCallback(boost::bind(&ImageView::guidePosition, this, index));
+    m_draggableGuides[index].setMoveRequestCallback(boost::bind(&ImageView::guideMoveRequest, this, index, _1));
+    m_draggableGuides[index].setDragFinishedCallback(boost::bind(&ImageView::guideDragFinished, this));
+
+    const Qt::CursorShape cursorShape
+            = (m_guides[index].getOrientation() == Qt::Horizontal) ? Qt::SplitVCursor : Qt::SplitHCursor;
+    m_draggableGuideHandlers[index].setObject(&m_draggableGuides[index]);
+    m_draggableGuideHandlers[index].setProximityCursor(cursorShape);
+    m_draggableGuideHandlers[index].setInteractionCursor(cursorShape);
+    m_draggableGuideHandlers[index].setProximityStatusTip(tr("Drag the guide."));
+    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::AltModifier});
+
+    if (!m_alignment.isNull()) {
+        makeLastFollower(m_draggableGuideHandlers[index]);
+    }
+}
+
+QLineF ImageView::guidePosition(const int index) const {
+    return widgetGuideLine(index);
+}
+
+void ImageView::guideMoveRequest(const int index, QLineF line) {
+    const QRectF valid_area(virtualToWidget().mapRect(m_outerRect));
+
+    // Limit movement.
+    if (m_guides[index].getOrientation() == Qt::Horizontal) {
+        const double linePos = line.y1();
+        const double top = valid_area.top() - linePos;
+        const double bottom = linePos - valid_area.bottom();
+        if (top > 0.0) {
+            line.translate(0.0, top);
+        } else if (bottom > 0.0) {
+            line.translate(0.0, -bottom);
+        }
+    } else {
+        const double linePos = line.x1();
+        const double left = valid_area.left() - linePos;
+        const double right = linePos - valid_area.right();
+        if (left > 0.0) {
+            line.translate(left, 0.0);
+        } else if (right > 0.0) {
+            line.translate(-right, 0.0);
+        }
+    }
+
+    m_guides[index] = widgetToGuideCs().map(line);
+    update();
+}
+
+void ImageView::guideDragFinished() {
+    syncGuidesSettings();
+}
+
+QLineF ImageView::widgetGuideLine(const int index) const {
+    const QRectF widget_rect(viewport()->rect());
+    const Guide& guide = m_guides.at(index);
+    QLineF guideLine = guideToWidgetCs().map(guide);
+    if (guide.getOrientation() == Qt::Horizontal) {
+        guideLine = QLineF(widget_rect.left(), guideLine.y1(), widget_rect.right(), guideLine.y2());
+    } else {
+        guideLine = QLineF(guideLine.x1(), widget_rect.top(), guideLine.x2(), widget_rect.bottom());
+    }
+
+    return guideLine;
+}
+
+int ImageView::getGuideUnderMouse(const QPointF& screenMousePos, const InteractionState& state) const {
+    for (const auto& idxAndGuide : m_guides) {
+        const QLineF guide(widgetGuideLine(idxAndGuide.first));
+        if (Proximity::pointAndLineSegment(screenMousePos, guide) <= state.proximityThreshold()) {
+            return idxAndGuide.first;
+        }
+    }
+
+    return -1;
+}
+
+void ImageView::enableGuidesInteraction(const bool state) {
+    if (state) {
+        for (auto& idxAndGuideHandler : m_draggableGuideHandlers) {
+            makeLastFollower(idxAndGuideHandler.second);
+        }
+    } else {
+        for (auto& idxAndGuideHandler : m_draggableGuideHandlers) {
+            idxAndGuideHandler.second.unlink();
+        }
+    }
+}
+
+void ImageView::forceInscribeGuides() {
+    if (m_alignment.isNull()) {
+        return;
+    }
+
+    bool need_sync = false;
+    for (const auto& idxAndGuide : m_guides) {
+        const Guide& guide = idxAndGuide.second;
+        const double pos = guide.getPosition();
+        if (guide.getOrientation() == Qt::Vertical) {
+            if (std::abs(pos) > (m_outerRect.width() / 2)) {
+                m_guides[idxAndGuide.first].setPosition(std::copysign(m_outerRect.width() / 2, pos));
+                need_sync = true;
+            }
+        } else {
+            if (std::abs(pos) > (m_outerRect.height() / 2)) {
+                m_guides[idxAndGuide.first].setPosition(std::copysign(m_outerRect.height() / 2, pos));
+                need_sync = true;
+            }
+        }
+    }
+
+    if (need_sync) {
+        syncGuidesSettings();
+    }
+}
+
+void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::KeyboardModifiers mask) {
+    QPointF delta(mouse_pos - m_beforeResizing.mousePos);
+    if (mask == m_innerRectVerticalDragModifier) {
+        delta.setX(0);
+    } else if (mask == m_innerRectHorizontalDragModifier) {
+        delta.setY(0);
+    }
+
+    QRectF widget_rect(m_beforeResizing.middleWidgetRect);
+    widget_rect.translate(-delta);
+    m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
+    forceNonNegativeHardMargins(m_middleRect);
+
+    // Updating the focal point is what makes the image move
+    // as we drag an inner edge.
+    QPointF fp(m_beforeResizing.focalPoint);
+    fp += delta;
+    setWidgetFocalPoint(fp);
+
+    m_aggregateHardSizeMM
+            = m_ptrSettings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
+
+    recalcOuterRect();
+
+    updatePresentationTransform(DONT_FIT);
+
+    emit marginsSetLocally(calcHardMarginsMM());
+}
+
+Proximity ImageView::rectProximity(const QRectF& box, const QPointF& mouse_pos) const {
+    double value = virtualToWidget().mapRect(box).contains(mouse_pos) ? 0 : std::numeric_limits<double>::max();
+    return Proximity::fromSqDist(value);
+}
+
+void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
+    ImageTransformation xform_150dpi(xform);
+    xform_150dpi.preScaleToDpi(Dpi(150, 150));
+
+    if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+        return;
+    }
+
+    QImage gray150(transformToGray(gray_image, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+                                   OutsidePixels::assumeColor(Qt::white)));
+
+    m_contentImage = binarizeWolf(gray150, QSize(51, 51), 50);
+
+    PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
+
+    Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, EmptyTaskStatus());
+
+    m_originalToContentImage = xform_150dpi.transform();
+    m_contentImageToOriginal = m_originalToContentImage.inverted();
+}
+
+QRect ImageView::findContentInArea(const QRect& area) const {
+    const uint32_t* image_line = m_contentImage.data();
+    const int image_stride = m_contentImage.wordsPerLine();
+    const uint32_t msb = uint32_t(1) << 31;
+
+    int top = std::numeric_limits<int>::max();
+    int left = std::numeric_limits<int>::max();
+    int bottom = std::numeric_limits<int>::min();
+    int right = std::numeric_limits<int>::min();
+
+    image_line += area.top() * image_stride;
+    for (int y = area.top(); y <= area.bottom(); ++y) {
+        for (int x = area.left(); x <= area.right(); ++x) {
+            if (image_line[x >> 5] & (msb >> (x & 31))) {
+                top = std::min(top, y);
+                left = std::min(left, x);
+                bottom = std::max(bottom, y);
+                right = std::max(right, x);
+            }
+        }
+        image_line += image_stride;
+    }
+
+    if (top > bottom) {
+        return QRect();
+    }
+
+    QRect found_area = QRect(left, top, right - left + 1, bottom - top + 1);
+    found_area.adjust(-1, -1, 1, 1);
+
+    return found_area;
+}
+
+void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
+    if (event->button() == Qt::LeftButton) {
+        if (!m_alignment.isNull() && !m_guides.empty()) {
+            attachContentToNearestGuide(QPointF(0.5, 0.5) + event->pos(), event->modifiers());
+        }
+    }
+}
+
+void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::KeyboardModifiers mask) {
+    const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
+    const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
+
+    const QPointF content_pos = widget_to_content_image.map(pos);
+
+    QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
+    finding_area = finding_area.intersected(m_contentImage.rect());
+    if (finding_area.isEmpty()) {
+        return;
+    }
+
+    QRect found_area = findContentInArea(finding_area);
+    if (found_area.isEmpty()) {
+        return;
+    }
+
+    const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area)).intersected(m_innerRect);
+    if (found_area_in_virtual.isEmpty()) {
+        return;
+    }
+
+    QPointF delta;
+    {
+        double min_dist = std::numeric_limits<int>::max();
+        for (const auto& idxAndGuide : m_guides) {
+            const Guide& guide = idxAndGuide.second;
+            if (guide.getOrientation() == Qt::Vertical) {
+                if (mask == m_innerRectVerticalDragModifier) {
+                    continue;
+                }
+
+                const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().x();
+                const double diff_left = guide_pos_in_virtual - found_area_in_virtual.left();
+                const double diff_right = guide_pos_in_virtual - found_area_in_virtual.right();
+                const double diff = std::abs(diff_left) <= std::abs(diff_right) ? diff_left : diff_right;
+                const double dist = std::abs(diff);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    delta.setX(diff);
+                    delta.setY(0.0);
+                }
+            } else {
+                if (mask == m_innerRectHorizontalDragModifier) {
+                    continue;
+                }
+
+                const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().y();
+                const double diff_top = guide_pos_in_virtual - found_area_in_virtual.top();
+                const double diff_bottom = guide_pos_in_virtual - found_area_in_virtual.bottom();
+                const double diff = std::abs(diff_top) <= std::abs(diff_bottom) ? diff_top : diff_bottom;
+                const double dist = std::abs(diff);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    delta.setX(0.0);
+                    delta.setY(diff);
+                }
+            }
+        }
+    }
+    if (delta.isNull()) {
+        return;
+    }
+
+    {
+        QRectF corrected_middle_rect = m_middleRect;
+        corrected_middle_rect.translate(-delta);
+        corrected_middle_rect |= m_innerRect;
+
+        {
+            // Correct the delta in case of the middle rect size changed.
+            // It means that the center is shifted resulting
+            // the guide will change its position, so we need an extra addition to delta.
+            const double x_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_middleRect.width()), delta.x());
+            const double y_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_middleRect.height()), delta.y());
+            delta.setX(delta.x() + x_correction);
+            delta.setY(delta.y() + y_correction);
+
+            corrected_middle_rect.translate(-x_correction, -y_correction);
+            corrected_middle_rect |= m_innerRect;
+        }
+
+        {
+            // Restrict the delta value in order not to be out of the outer rect.
+            const double x_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_outerRect.width()), delta.x());
+            const double y_correction
+                    = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_outerRect.height()), delta.y());
+            delta.setX(delta.x() - x_correction);
+            delta.setY(delta.y() - y_correction);
+        }
+    }
+
+    // Move the page content.
+    dragInitiated(virtualToWidget().map(QPointF(0, 0)));
+    innerRectMoveRequest(virtualToWidget().map(delta));
+    dragFinished();
+}
+
+void ImageView::enableMiddleRectInteraction(const bool state) {
+    bool internal_state = m_middleCornerHandlers[0].is_linked();
+    if (state == internal_state) {
+        // Don't enable or disable the interaction if that's already done.
+        return;
+    }
+
+    if (state) {
+        for (int i = 0; i < 4; ++i) {
+            makeLastFollower(m_middleCornerHandlers[i]);
+            makeLastFollower(m_middleEdgeHandlers[i]);
+        }
+    } else {
+        for (int i = 0; i < 4; ++i) {
+            m_middleCornerHandlers[i].unlink();
+            m_middleEdgeHandlers[i].unlink();
+        }
+    };
+}
+
+bool ImageView::isShowingMiddleRectEnabled() const {
+    return (!m_nullContentRect && m_ptrSettings->isShowingMiddleRectEnabled()) || m_alignment.isNull();
 }
 }  // namespace page_layout

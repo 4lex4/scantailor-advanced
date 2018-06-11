@@ -54,7 +54,7 @@ public:
 
     void forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos);
 
-    void setKeyboardModifiers(Qt::KeyboardModifiers modifiers);
+    void setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiers_set);
 
 protected:
     void onPaint(QPainter& painter, const InteractionState& interaction) override;
@@ -74,7 +74,7 @@ protected:
 private:
     DraggableObject* m_pObj;
     InteractionState::Captor m_interaction;
-    Qt::KeyboardModifiers m_keyboardModifiers;
+    std::set<Qt::KeyboardModifiers> m_keyboardModifiersSet;
     Qt::KeyboardModifiers m_activeKeyboardModifiers;
 };
 

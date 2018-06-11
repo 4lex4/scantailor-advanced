@@ -67,9 +67,6 @@ public slots:
 
     void pageRectSetExternally(const QRectF& pageRect);
 
-protected:
-    void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
-
 private slots:
 
     void createContentBox();
@@ -82,6 +79,8 @@ private:
     void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
     void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
+
+    void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
 
     QPointF contentRectCornerPosition(int edge_mask) const;
 
@@ -109,17 +108,17 @@ private:
 
     QRectF contentRectPosition() const;
 
-    void contentRectMoveRequest(const QPolygonF& pos);
+    void contentRectMoveRequest(const QPolygonF& poly_moved);
 
     QRectF pageRectPosition() const;
 
-    void pageRectMoveRequest(const QPolygonF& pos);
+    void pageRectMoveRequest(const QPolygonF& poly_moved);
 
     void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
 
     void correctContentBox(const QPointF& pos);
 
-    QRect findContentInArea(const QRect& area);
+    QRect findContentInArea(const QRect& area) const;
 
 
     DraggablePoint m_contentRectCorners[4];

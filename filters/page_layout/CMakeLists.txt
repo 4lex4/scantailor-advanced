@@ -23,7 +23,7 @@ set(
         Alignment.cpp Alignment.h
         OrderByWidthProvider.cpp OrderByWidthProvider.h
         OrderByHeightProvider.cpp OrderByHeightProvider.h
-)
+        Guide.cpp Guide.h)
 source_group("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

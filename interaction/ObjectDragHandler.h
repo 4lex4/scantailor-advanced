@@ -24,7 +24,7 @@
 #include "InteractionState.h"
 #include "DraggableObject.h"
 #include <QPointF>
-#include <QPointF>
+#include <set>
 
 class QPainter;
 class QCursor;

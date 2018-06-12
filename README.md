@@ -352,10 +352,10 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     2. There is per page control over the mode in the output filter options.
     
 * ##### Guides
-  This feature gives you a more flexible type of aid of positioning content. These are horizontal or vertical lines you
-  can display on an page at the margins stage \(when aligning enabled\).  
-  Guides are adaptive to the page soft margins, i.e. when the latter changed the guides on the page
-  are automatically adjusted to match a new content position without requiring manual adjusting.
+  This feature gives you a more flexible and precise way of positioning content in the page layout.
+  These are horizontal or vertical lines you can display on a page at the margins stage \(when aligning enabled\).  
+  *Note: Guides are adaptive to the page soft margins, i.e. when the latter changed the guides on the page
+  are automatically adjusted to match the new content position without requiring any manual re-adjusting.*
   
   Capabilities:  
     * **`Right-click`** to create/remove guides from the **context menu** called.  
@@ -363,8 +363,9 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * **`Alt+LMB`** - drag the guide under the cursor.  
     * **`Shift/Ctrl+LMB`** on the content rectangle - drag the page content.
       Hold **`Shift`** pressed to restrict moving along the horizontal axis only and **`Ctrl`** for the vertical one.  
-    * **`Double click`** on content - automatically attach that content to the nearest guide.
-      Hold **`Shift`** pressed to select vertical guides only and **`Ctrl`** for horizontal ones.  
+    * **`Double-click`** on content - automatically attach that content to the nearest guide.
+      Hold **`Shift`** pressed to select vertical guides only and **`Ctrl`** for horizontal ones.
+      Hold **`Shift+Ctrl`** to attach that to both the nearest vertical and horizontal guides.  
     * Use the **context menu** to enable/disable showing the hard margins rectangle.  
 
 Building

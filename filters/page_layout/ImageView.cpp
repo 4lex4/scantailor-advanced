@@ -295,12 +295,12 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
 
         // Draw guides.
         if (!m_guides.empty()) {
-            painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setWorldTransform(QTransform());
 
             QPen pen(QColor(0x00, 0x9d, 0x9f));
+            pen.setStyle(Qt::DashLine);
             pen.setCosmetic(true);
-            pen.setWidthF(1.5);
+            pen.setWidthF(2.0);
             painter.setPen(pen);
             painter.setBrush(Qt::NoBrush);
 
@@ -1054,11 +1054,16 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
 
     QPointF delta;
     {
-        double min_dist = std::numeric_limits<int>::max();
+        const bool only_horizontal_direction = (mask == m_innerRectHorizontalDragModifier);
+        const bool only_vertical_direction = (mask == m_innerRectVerticalDragModifier);
+        const bool both_directions = (mask == (m_innerRectVerticalDragModifier | m_innerRectHorizontalDragModifier));
+
+        double min_dist_x = std::numeric_limits<int>::max();
+        double min_dist_y = std::numeric_limits<int>::max();
         for (const auto& idxAndGuide : m_guides) {
             const Guide& guide = idxAndGuide.second;
             if (guide.getOrientation() == Qt::Vertical) {
-                if (mask == m_innerRectVerticalDragModifier) {
+                if (only_vertical_direction) {
                     continue;
                 }
 
@@ -1067,13 +1072,16 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
                 const double diff_right = guide_pos_in_virtual - found_area_in_virtual.right();
                 const double diff = std::abs(diff_left) <= std::abs(diff_right) ? diff_left : diff_right;
                 const double dist = std::abs(diff);
+                const double min_dist = (both_directions) ? min_dist_x : std::min(min_dist_x, min_dist_y);
                 if (dist < min_dist) {
-                    min_dist = dist;
+                    min_dist_x = dist;
                     delta.setX(diff);
-                    delta.setY(0.0);
+                    if (!both_directions) {
+                        delta.setY(0.0);
+                    }
                 }
             } else {
-                if (mask == m_innerRectHorizontalDragModifier) {
+                if (only_horizontal_direction) {
                     continue;
                 }
 
@@ -1082,10 +1090,13 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
                 const double diff_bottom = guide_pos_in_virtual - found_area_in_virtual.bottom();
                 const double diff = std::abs(diff_top) <= std::abs(diff_bottom) ? diff_top : diff_bottom;
                 const double dist = std::abs(diff);
+                const double min_dist = (both_directions) ? min_dist_y : std::min(min_dist_x, min_dist_y);
                 if (dist < min_dist) {
-                    min_dist = dist;
-                    delta.setX(0.0);
+                    min_dist_y = dist;
                     delta.setY(diff);
+                    if (!both_directions) {
+                        delta.setX(0.0);
+                    }
                 }
             }
         }

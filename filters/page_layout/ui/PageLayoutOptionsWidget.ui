@@ -44,7 +44,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-62</y>
         <width>209</width>
         <height>653</height>
        </rect>
@@ -803,12 +803,15 @@
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
           <item>
-           <widget class="QTextEdit" name="textEdit">
+           <widget class="QTextBrowser" name="textBrowser">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="acceptDrops">
+             <bool>true</bool>
             </property>
             <property name="autoFillBackground">
              <bool>false</bool>
@@ -842,12 +845,12 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Alt+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only and &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Double click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only and &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Alt+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only and &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only and &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::NoTextInteraction</set>

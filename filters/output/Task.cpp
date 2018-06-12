@@ -346,8 +346,9 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
                                     write_speckles_file ? &speckles_img : nullptr, m_ptrDbg.get(), m_pageId,
                                     m_ptrSettings, &splitImage);
 
-        if (((params.dewarpingOptions().dewarpingMode() == AUTO) && distortion_model.isValid())
-            || ((params.dewarpingOptions().dewarpingMode() == MARGINAL) && distortion_model.isValid())) {
+        if (((params.dewarpingOptions().dewarpingMode() == AUTO)
+             || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
+            && distortion_model.isValid()) {
             // A new distortion model was generated.
             // We need to save it to be able to modify it manually.
             params.setDistortionModel(distortion_model);
@@ -380,6 +381,11 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
 
             out_img = splitImage.toImage();
             splitImage = SplitImage();
+        } else {
+            // Remove layers if the mode was changed.
+            QFile(foreground_file_path).remove();
+            QFile(background_file_path).remove();
+            QFile(original_background_file_path).remove();
         }
         if (!TiffWriter::writeImage(out_file_path, out_img)) {
             invalidate_params = true;

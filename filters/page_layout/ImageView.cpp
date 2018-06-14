@@ -1160,6 +1160,8 @@ void ImageView::enableMiddleRectInteraction(const bool state) {
             m_middleEdgeHandlers[i].unlink();
         }
     };
+
+    update();
 }
 
 bool ImageView::isShowingMiddleRectEnabled() const {

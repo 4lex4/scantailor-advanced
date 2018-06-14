@@ -237,5 +237,6 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
                      SLOT(updatePageRectSize(const QSizeF&)));
     QObject::connect(opt_widget, SIGNAL(pageRectChangedLocally(const QRectF&)), view,
                      SLOT(pageRectSetExternally(const QRectF&)));
+    QObject::connect(opt_widget, SIGNAL(pageRectStateChanged(bool)), view, SLOT(setPageRectEnabled(bool)));
 }
 }  // namespace select_content

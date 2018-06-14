@@ -42,7 +42,7 @@ ImageView::ImageView(const QImage& image,
                      const ImageTransformation& xform,
                      const QRectF& content_rect,
                      const QRectF& page_rect,
-                     bool page_rect_enabled)
+                     const bool page_rect_enabled)
         : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
           m_dragHandler(*this),
           m_zoomHandler(*this),
@@ -60,9 +60,17 @@ ImageView::ImageView(const QImage& image,
                "on content to automatically adjust the content area."));
 
     const QString content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
-    // Setup corner drag handlers.
+    const QString page_rect_drag_tip(tr("Drag lines or corners to resize the page box."));
+    static const int masks_by_edge[] = {TOP, RIGHT, BOTTOM, LEFT};
     static const int masks_by_corner[] = {TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT};
     for (int i = 0; i < 4; ++i) {
+        // Proximity priority - content rect higher than page, corners higher than edges.
+        m_contentRectCorners[i].setProximityPriority(4);
+        m_contentRectEdges[i].setProximityPriority(3);
+        m_pageRectCorners[i].setProximityPriority(2);
+        m_pageRectEdges[i].setProximityPriority(1);
+
+        // Setup corner drag handlers.
         m_contentRectCorners[i].setPositionCallback(
                 boost::bind(&ImageView::contentRectCornerPosition, this, masks_by_corner[i]));
         m_contentRectCorners[i].setMoveRequestCallback(
@@ -70,14 +78,15 @@ ImageView::ImageView(const QImage& image,
         m_contentRectCorners[i].setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
         m_contentRectCornerHandlers[i].setObject(&m_contentRectCorners[i]);
         m_contentRectCornerHandlers[i].setProximityStatusTip(content_rect_drag_tip);
-        Qt::CursorShape cursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
-        m_contentRectCornerHandlers[i].setProximityCursor(cursor);
-        m_contentRectCornerHandlers[i].setInteractionCursor(cursor);
-        makeLastFollower(m_contentRectCornerHandlers[i]);
-    }
-    // Setup edge drag handlers.
-    static const int masks_by_edge[] = {TOP, RIGHT, BOTTOM, LEFT};
-    for (int i = 0; i < 4; ++i) {
+        m_pageRectCorners[i].setPositionCallback(
+                boost::bind(&ImageView::pageRectCornerPosition, this, masks_by_corner[i]));
+        m_pageRectCorners[i].setMoveRequestCallback(
+                boost::bind(&ImageView::pageRectCornerMoveRequest, this, masks_by_corner[i], _1));
+        m_pageRectCorners[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
+        m_pageRectCornerHandlers[i].setObject(&m_pageRectCorners[i]);
+        m_pageRectCornerHandlers[i].setProximityStatusTip(page_rect_drag_tip);
+
+        // Setup edge drag handlers.
         m_contentRectEdges[i].setPositionCallback(
                 boost::bind(&ImageView::contentRectEdgePosition, this, masks_by_edge[i]));
         m_contentRectEdges[i].setMoveRequestCallback(
@@ -85,70 +94,64 @@ ImageView::ImageView(const QImage& image,
         m_contentRectEdges[i].setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
         m_contentRectEdgeHandlers[i].setObject(&m_contentRectEdges[i]);
         m_contentRectEdgeHandlers[i].setProximityStatusTip(content_rect_drag_tip);
-        Qt::CursorShape cursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
-        m_contentRectEdgeHandlers[i].setProximityCursor(cursor);
-        m_contentRectEdgeHandlers[i].setInteractionCursor(cursor);
-        makeLastFollower(m_contentRectEdgeHandlers[i]);
-    }
+        m_pageRectEdges[i].setPositionCallback(boost::bind(&ImageView::pageRectEdgePosition, this, masks_by_edge[i]));
+        m_pageRectEdges[i].setMoveRequestCallback(
+                boost::bind(&ImageView::pageRectEdgeMoveRequest, this, masks_by_edge[i], _1));
+        m_pageRectEdges[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
+        m_pageRectEdgeHandlers[i].setObject(&m_pageRectEdges[i]);
+        m_pageRectEdgeHandlers[i].setProximityStatusTip(page_rect_drag_tip);
 
-    if (page_rect_enabled) {
-        const QString page_rect_drag_tip(tr("Drag lines or corners to resize the page box."));
-        // Setup corner drag handlers.
-        for (int i = 0; i < 4; ++i) {
-            m_pageRectCorners[i].setPositionCallback(
-                    boost::bind(&ImageView::pageRectCornerPosition, this, masks_by_corner[i]));
-            m_pageRectCorners[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::pageRectCornerMoveRequest, this, masks_by_corner[i], _1));
-            m_pageRectCorners[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
-            m_pageRectCornerHandlers[i].setObject(&m_pageRectCorners[i]);
-            m_pageRectCornerHandlers[i].setProximityStatusTip(page_rect_drag_tip);
-            Qt::CursorShape cursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
-            m_pageRectCornerHandlers[i].setProximityCursor(cursor);
-            m_pageRectCornerHandlers[i].setInteractionCursor(cursor);
+        Qt::CursorShape corner_cursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
+        m_contentRectCornerHandlers[i].setProximityCursor(corner_cursor);
+        m_contentRectCornerHandlers[i].setInteractionCursor(corner_cursor);
+        m_pageRectCornerHandlers[i].setProximityCursor(corner_cursor);
+        m_pageRectCornerHandlers[i].setInteractionCursor(corner_cursor);
+
+        Qt::CursorShape edge_cursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
+        m_contentRectEdgeHandlers[i].setProximityCursor(edge_cursor);
+        m_contentRectEdgeHandlers[i].setInteractionCursor(edge_cursor);
+        m_pageRectEdgeHandlers[i].setProximityCursor(edge_cursor);
+        m_pageRectEdgeHandlers[i].setInteractionCursor(edge_cursor);
+
+        makeLastFollower(m_contentRectCornerHandlers[i]);
+        makeLastFollower(m_contentRectEdgeHandlers[i]);
+        if (m_pageRectEnabled) {
             makeLastFollower(m_pageRectCornerHandlers[i]);
-        }
-        // Setup edge drag handlers.
-        for (int i = 0; i < 4; ++i) {
-            m_pageRectEdges[i].setPositionCallback(
-                    boost::bind(&ImageView::pageRectEdgePosition, this, masks_by_edge[i]));
-            m_pageRectEdges[i].setMoveRequestCallback(
-                    boost::bind(&ImageView::pageRectEdgeMoveRequest, this, masks_by_edge[i], _1));
-            m_pageRectEdges[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
-            m_pageRectEdgeHandlers[i].setObject(&m_pageRectEdges[i]);
-            m_pageRectEdgeHandlers[i].setProximityStatusTip(page_rect_drag_tip);
-            Qt::CursorShape cursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
-            m_pageRectEdgeHandlers[i].setProximityCursor(cursor);
-            m_pageRectEdgeHandlers[i].setInteractionCursor(cursor);
             makeLastFollower(m_pageRectEdgeHandlers[i]);
         }
     }
 
     {
+        // Proximity priority - content rect higher than page
+        m_contentRectArea.setProximityPriority(2);
+        m_pageRectArea.setProximityPriority(1);
+
+        // Setup rectangle drag interaction
         m_contentRectArea.setPositionCallback(boost::bind(&ImageView::contentRectPosition, this));
         m_contentRectArea.setMoveRequestCallback(boost::bind(&ImageView::contentRectMoveRequest, this, _1));
         m_contentRectArea.setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
         m_contentRectAreaHandler.setObject(&m_contentRectArea);
         m_contentRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the content box."));
         m_contentRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
-        Qt::CursorShape cursor = Qt::DragMoveCursor;
-        m_contentRectAreaHandler.setKeyboardModifiers({Qt::ShiftModifier});
-        m_contentRectAreaHandler.setProximityCursor(cursor);
-        m_contentRectAreaHandler.setInteractionCursor(cursor);
-        makeLastFollower(m_contentRectAreaHandler);
-    }
-
-    if (page_rect_enabled) {
         m_pageRectArea.setPositionCallback(boost::bind(&ImageView::pageRectPosition, this));
         m_pageRectArea.setMoveRequestCallback(boost::bind(&ImageView::pageRectMoveRequest, this, _1));
         m_pageRectArea.setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
         m_pageRectAreaHandler.setObject(&m_pageRectArea);
         m_pageRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page box."));
         m_pageRectAreaHandler.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
+
         Qt::CursorShape cursor = Qt::DragMoveCursor;
+        m_contentRectAreaHandler.setKeyboardModifiers({Qt::ShiftModifier});
+        m_contentRectAreaHandler.setProximityCursor(cursor);
+        m_contentRectAreaHandler.setInteractionCursor(cursor);
         m_pageRectAreaHandler.setKeyboardModifiers({Qt::ShiftModifier});
         m_pageRectAreaHandler.setProximityCursor(cursor);
         m_pageRectAreaHandler.setInteractionCursor(cursor);
-        makeLastFollower(m_pageRectAreaHandler);
+
+        makeLastFollower(m_contentRectAreaHandler);
+        if (m_pageRectEnabled) {
+            makeLastFollower(m_pageRectAreaHandler);
+        }
     }
 
     rootInteractionHandler().makeLastFollower(*this);
@@ -206,8 +209,9 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
     painter.setRenderHints(QPainter::Antialiasing, true);
 
     if (m_pageRectEnabled) {
+        // Draw the page bounding box.
         QPen pen(QColor(0xff, 0x7f, 0x00));
-        pen.setWidthF(1.0);
+        pen.setWidthF(2.0);
         pen.setCosmetic(true);
         painter.setPen(pen);
 
@@ -588,5 +592,25 @@ QRect ImageView::findContentInArea(const QRect& area) const {
     found_area.adjust(-1, -1, 1, 1);
 
     return found_area;
+}
+
+void ImageView::setPageRectEnabled(const bool state) {
+    m_pageRectEnabled = state;
+
+    if (state) {
+        for (int i = 0; i < 4; ++i) {
+            makeLastFollower(m_pageRectCornerHandlers[i]);
+            makeLastFollower(m_pageRectEdgeHandlers[i]);
+        }
+        makeLastFollower(m_pageRectAreaHandler);
+    } else {
+        for (int i = 0; i < 4; ++i) {
+            m_pageRectCornerHandlers[i].unlink();
+            m_pageRectEdgeHandlers[i].unlink();
+        }
+        m_pageRectAreaHandler.unlink();
+    };
+
+    update();
 }
 }  // namespace select_content

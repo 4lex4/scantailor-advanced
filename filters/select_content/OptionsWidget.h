@@ -117,6 +117,8 @@ signals:
 
     void pageRectChangedLocally(const QRectF& pageRect);
 
+    void pageRectStateChanged(bool state);
+
 private slots:
 
     void showApplyToDialog();

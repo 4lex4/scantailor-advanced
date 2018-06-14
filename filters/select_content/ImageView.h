@@ -67,6 +67,8 @@ public slots:
 
     void pageRectSetExternally(const QRectF& pageRect);
 
+    void setPageRectEnabled(bool state);
+
 private slots:
 
     void createContentBox();

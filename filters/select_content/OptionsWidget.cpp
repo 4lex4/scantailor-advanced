@@ -162,7 +162,7 @@ void OptionsWidget::pageDetectAutoToggled() {
 }
 
 void OptionsWidget::pageDetectManualToggled() {
-    const bool need_reload = !m_uiData.isPageDetectionEnabled();
+    const bool need_update_state = !m_uiData.isPageDetectionEnabled();
 
     m_uiData.setPageDetectionMode(MODE_MANUAL);
     m_uiData.setPageDetectionEnabled(true);
@@ -173,8 +173,8 @@ void OptionsWidget::pageDetectManualToggled() {
     updatePageDetectOptionsDisplay();
 
     commitCurrentParams();
-    if (need_reload) {
-        emit reloadRequested();
+    if (need_update_state) {
+        emit pageRectStateChanged(true);
     }
 }
 

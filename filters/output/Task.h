@@ -19,15 +19,15 @@
 #ifndef OUTPUT_TASK_H_
 #define OUTPUT_TASK_H_
 
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "FilterResult.h"
-#include "PageId.h"
-#include "ImageViewTab.h"
-#include "OutputFileNameGenerator.h"
 #include <QColor>
-#include <memory>
 #include <QImage>
+#include <memory>
+#include "FilterResult.h"
+#include "ImageViewTab.h"
+#include "NonCopyable.h"
+#include "OutputFileNameGenerator.h"
+#include "PageId.h"
+#include "ref_countable.h"
 
 class DebugImages;
 class TaskStatus;
@@ -48,36 +48,36 @@ class Filter;
 class Settings;
 
 class Task : public ref_countable {
-    DECLARE_NON_COPYABLE(Task)
+  DECLARE_NON_COPYABLE(Task)
 
-public:
-    Task(intrusive_ptr<Filter> filter,
-         intrusive_ptr<Settings> settings,
-         intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-         const PageId& page_id,
-         const OutputFileNameGenerator& out_file_name_gen,
-         ImageViewTab last_tab,
-         bool batch,
-         bool debug);
+ public:
+  Task(intrusive_ptr<Filter> filter,
+       intrusive_ptr<Settings> settings,
+       intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+       const PageId& page_id,
+       const OutputFileNameGenerator& out_file_name_gen,
+       ImageViewTab last_tab,
+       bool batch,
+       bool debug);
 
-    ~Task() override;
+  ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys);
+  FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys);
 
-private:
-    class UiUpdater;
+ private:
+  class UiUpdater;
 
-    void deleteMutuallyExclusiveOutputFiles();
+  void deleteMutuallyExclusiveOutputFiles();
 
-    intrusive_ptr<Filter> m_ptrFilter;
-    intrusive_ptr<Settings> m_ptrSettings;
-    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    OutputFileNameGenerator m_outFileNameGen;
-    ImageViewTab m_lastTab;
-    bool m_batchProcessing;
-    bool m_debug;
+  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+  std::unique_ptr<DebugImages> m_ptrDbg;
+  PageId m_pageId;
+  OutputFileNameGenerator m_outFileNameGen;
+  ImageViewTab m_lastTab;
+  bool m_batchProcessing;
+  bool m_debug;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_TASK_H_

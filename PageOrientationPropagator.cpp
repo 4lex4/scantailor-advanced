@@ -21,39 +21,34 @@
 #include <utility>
 #include "CompositeCacheDrivenTask.h"
 #include "OrthogonalRotation.h"
-#include "ProjectPages.h"
 #include "PageSequence.h"
-#include "filters/page_split/Filter.h"
+#include "ProjectPages.h"
 #include "filter_dc/PageOrientationCollector.h"
+#include "filters/page_split/Filter.h"
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector {
-public:
-    void process(const OrthogonalRotation& orientation) override {
-        m_orientation = orientation;
-    }
+ public:
+  void process(const OrthogonalRotation& orientation) override { m_orientation = orientation; }
 
-    const OrthogonalRotation& orientation() const {
-        return m_orientation;
-    }
+  const OrthogonalRotation& orientation() const { return m_orientation; }
 
-private:
-    OrthogonalRotation m_orientation;
+ private:
+  OrthogonalRotation m_orientation;
 };
 
 
 PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
                                                      intrusive_ptr<CompositeCacheDrivenTask> task)
-        : m_ptrPageSplitFilter(std::move(page_split_filter)), m_ptrTask(std::move(task)) {
-}
+    : m_ptrPageSplitFilter(std::move(page_split_filter)), m_ptrTask(std::move(task)) {}
 
 PageOrientationPropagator::~PageOrientationPropagator() = default;
 
 void PageOrientationPropagator::propagate(const ProjectPages& pages) {
-    const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
+  const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
 
-    for (const PageInfo& page_info : sequence) {
-        Collector collector;
-        m_ptrTask->process(page_info, &collector);
-        m_ptrPageSplitFilter->pageOrientationUpdate(page_info.imageId(), collector.orientation());
-    }
+  for (const PageInfo& page_info : sequence) {
+    Collector collector;
+    m_ptrTask->process(page_info, &collector);
+    m_ptrPageSplitFilter->pageOrientationUpdate(page_info.imageId(), collector.orientation());
+  }
 }

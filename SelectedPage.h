@@ -35,21 +35,19 @@
  * the sub-page, while get(IMAGE_VIEW) will always return SINGLE_PAGE sub-pages.
  */
 class SelectedPage {
-public:
-    SelectedPage() = default;
+ public:
+  SelectedPage() = default;
 
-    SelectedPage(const PageId& page_id, PageView view);
+  SelectedPage(const PageId& page_id, PageView view);
 
-    bool isNull() const {
-        return m_pageId.isNull();
-    }
+  bool isNull() const { return m_pageId.isNull(); }
 
-    void set(const PageId& page_id, PageView view);
+  void set(const PageId& page_id, PageView view);
 
-    PageId get(PageView view) const;
+  PageId get(PageView view) const;
 
-private:
-    PageId m_pageId;
+ private:
+  PageId m_pageId;
 };
 
 

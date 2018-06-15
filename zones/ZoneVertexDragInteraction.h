@@ -19,39 +19,39 @@
 #ifndef ZONE_VERTEX_DRAG_INTERACTION_H_
 #define ZONE_VERTEX_DRAG_INTERACTION_H_
 
+#include <QCoreApplication>
+#include <QPointF>
 #include "BasicSplineVisualizer.h"
 #include "EditableSpline.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"
-#include <QPointF>
-#include <QCoreApplication>
 
 class ZoneInteractionContext;
 
 class ZoneVertexDragInteraction : public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
-public:
-    ZoneVertexDragInteraction(ZoneInteractionContext& context,
-                              InteractionState& interaction,
-                              const EditableSpline::Ptr& spline,
-                              const SplineVertex::Ptr& vertex);
+  Q_DECLARE_TR_FUNCTIONS(ZoneVertexDragInteraction)
+ public:
+  ZoneVertexDragInteraction(ZoneInteractionContext& context,
+                            InteractionState& interaction,
+                            const EditableSpline::Ptr& spline,
+                            const SplineVertex::Ptr& vertex);
 
-protected:
-    void onPaint(QPainter& painter, const InteractionState& interaction) override;
+ protected:
+  void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-private:
-    void checkProximity(const InteractionState& interaction);
+ private:
+  void checkProximity(const InteractionState& interaction);
 
-    ZoneInteractionContext& m_rContext;
-    EditableSpline::Ptr m_ptrSpline;
-    SplineVertex::Ptr m_ptrVertex;
-    InteractionState::Captor m_interaction;
-    BasicSplineVisualizer m_visualizer;
-    QPointF m_dragOffset;
+  ZoneInteractionContext& m_rContext;
+  EditableSpline::Ptr m_ptrSpline;
+  SplineVertex::Ptr m_ptrVertex;
+  InteractionState::Captor m_interaction;
+  BasicSplineVisualizer m_visualizer;
+  QPointF m_dragOffset;
 };
 
 

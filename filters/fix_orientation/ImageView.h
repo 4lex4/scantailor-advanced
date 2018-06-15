@@ -19,28 +19,28 @@
 #ifndef FIX_ORIENTATION_IMAGEVIEW_H_
 #define FIX_ORIENTATION_IMAGEVIEW_H_
 
+#include "DragHandler.h"
+#include "ImageTransformation.h"
 #include "ImageViewBase.h"
 #include "OrthogonalRotation.h"
-#include "ImageTransformation.h"
-#include "DragHandler.h"
 #include "ZoomHandler.h"
 
 namespace fix_orientation {
 class ImageView : public ImageViewBase {
-    Q_OBJECT
-public:
-    ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
+  Q_OBJECT
+ public:
+  ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
 
-    ~ImageView() override;
+  ~ImageView() override;
 
-public slots:
+ public slots:
 
-    void setPreRotation(OrthogonalRotation rotation);
+  void setPreRotation(OrthogonalRotation rotation);
 
-private:
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
-    ImageTransformation m_xform;
+ private:
+  DragHandler m_dragHandler;
+  ZoomHandler m_zoomHandler;
+  ImageTransformation m_xform;
 };
 }  // namespace fix_orientation
 #endif

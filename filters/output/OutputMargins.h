@@ -29,9 +29,8 @@ namespace output {
  * one-to-one relationship.
  */
 class OutputMargins : public Margins {
-public:
-    OutputMargins() : Margins(10.0, 10.0, 10.0, 10.0) {
-    }
+ public:
+  OutputMargins() : Margins(10.0, 10.0, 10.0, 10.0) {}
 };
 }  // namespace output
 #endif

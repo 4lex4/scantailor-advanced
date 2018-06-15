@@ -19,64 +19,58 @@
 #ifndef PROJECTCREATIONCONTEXT_H_
 #define PROJECTCREATIONCONTEXT_H_
 
-#include "NonCopyable.h"
-#include "ImageFileInfo.h"
 #include <QObject>
 #include <QPointer>
 #include <QString>
 #include <Qt>
 #include <vector>
+#include "ImageFileInfo.h"
+#include "NonCopyable.h"
 
 class ProjectFilesDialog;
 class FixDpiDialog;
 class QWidget;
 
 class ProjectCreationContext : public QObject {
-    Q_OBJECT
-    DECLARE_NON_COPYABLE(ProjectCreationContext)
+  Q_OBJECT
+  DECLARE_NON_COPYABLE(ProjectCreationContext)
 
-public:
-    explicit ProjectCreationContext(QWidget* parent);
+ public:
+  explicit ProjectCreationContext(QWidget* parent);
 
-    ~ProjectCreationContext() override;
+  ~ProjectCreationContext() override;
 
-    const std::vector<ImageFileInfo>& files() const {
-        return m_files;
-    }
+  const std::vector<ImageFileInfo>& files() const { return m_files; }
 
-    const QString& outDir() const {
-        return m_outDir;
-    }
+  const QString& outDir() const { return m_outDir; }
 
-    Qt::LayoutDirection layoutDirection() const {
-        return m_layoutDirection;
-    }
+  Qt::LayoutDirection layoutDirection() const { return m_layoutDirection; }
 
-signals:
+ signals:
 
-    void done(ProjectCreationContext* context);
+  void done(ProjectCreationContext* context);
 
-private slots:
+ private slots:
 
-    void projectFilesSubmitted();
+  void projectFilesSubmitted();
 
-    void projectFilesDialogDestroyed();
+  void projectFilesDialogDestroyed();
 
-    void fixedDpiSubmitted();
+  void fixedDpiSubmitted();
 
-    void fixDpiDialogDestroyed();
+  void fixDpiDialogDestroyed();
 
-private:
-    void showProjectFilesDialog();
+ private:
+  void showProjectFilesDialog();
 
-    void showFixDpiDialog();
+  void showFixDpiDialog();
 
-    QPointer<ProjectFilesDialog> m_ptrProjectFilesDialog;
-    QPointer<FixDpiDialog> m_ptrFixDpiDialog;
-    QString m_outDir;
-    std::vector<ImageFileInfo> m_files;
-    Qt::LayoutDirection m_layoutDirection;
-    QWidget* m_pParent;
+  QPointer<ProjectFilesDialog> m_ptrProjectFilesDialog;
+  QPointer<FixDpiDialog> m_ptrFixDpiDialog;
+  QString m_outDir;
+  std::vector<ImageFileInfo> m_files;
+  Qt::LayoutDirection m_layoutDirection;
+  QWidget* m_pParent;
 };
 
 

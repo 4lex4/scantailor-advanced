@@ -19,102 +19,102 @@
 #ifndef DESKEW_OPTIONSWIDGET_H_
 #define DESKEW_OPTIONSWIDGET_H_
 
-#include "ui_DeskewOptionsWidget.h"
-#include "FilterOptionsWidget.h"
-#include "intrusive_ptr.h"
-#include "PageId.h"
-#include "Dependencies.h"
-#include "AutoManualMode.h"
-#include "PageSelectionAccessor.h"
 #include <set>
+#include "AutoManualMode.h"
+#include "Dependencies.h"
+#include "FilterOptionsWidget.h"
+#include "PageId.h"
+#include "PageSelectionAccessor.h"
+#include "intrusive_ptr.h"
+#include "ui_DeskewOptionsWidget.h"
 
 namespace deskew {
 class Settings;
 
 class OptionsWidget : public FilterOptionsWidget, private Ui::DeskewOptionsWidget {
-    Q_OBJECT
-public:
-    class UiData {
-        // Member-wise copying is OK.
-    public:
-        UiData();
+  Q_OBJECT
+ public:
+  class UiData {
+    // Member-wise copying is OK.
+   public:
+    UiData();
 
-        ~UiData();
+    ~UiData();
 
-        void setEffectiveDeskewAngle(double degrees);
+    void setEffectiveDeskewAngle(double degrees);
 
-        double effectiveDeskewAngle() const;
+    double effectiveDeskewAngle() const;
 
-        void setDependencies(const Dependencies& deps);
+    void setDependencies(const Dependencies& deps);
 
-        const Dependencies& dependencies() const;
+    const Dependencies& dependencies() const;
 
-        void setMode(AutoManualMode mode);
+    void setMode(AutoManualMode mode);
 
-        AutoManualMode mode() const;
+    AutoManualMode mode() const;
 
-    private:
-        double m_effDeskewAngle;
-        Dependencies m_deps;
-        AutoManualMode m_mode;
-    };
+   private:
+    double m_effDeskewAngle;
+    Dependencies m_deps;
+    AutoManualMode m_mode;
+  };
 
 
-    OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-    ~OptionsWidget() override;
+  ~OptionsWidget() override;
 
-signals:
+ signals:
 
-    void manualDeskewAngleSet(double degrees);
+  void manualDeskewAngleSet(double degrees);
 
-public slots:
+ public slots:
 
-    void manualDeskewAngleSetExternally(double degrees);
+  void manualDeskewAngleSetExternally(double degrees);
 
-public:
-    void preUpdateUI(const PageId& page_id);
+ public:
+  void preUpdateUI(const PageId& page_id);
 
-    void postUpdateUI(const UiData& ui_data);
+  void postUpdateUI(const UiData& ui_data);
 
-private slots:
+ private slots:
 
-    void spinBoxValueChanged(double skew_degrees);
+  void spinBoxValueChanged(double skew_degrees);
 
-    void modeChanged(bool auto_mode);
+  void modeChanged(bool auto_mode);
 
-    void showDeskewDialog();
+  void showDeskewDialog();
 
-    void appliedTo(const std::set<PageId>& pages);
+  void appliedTo(const std::set<PageId>& pages);
 
-    void appliedToAllPages(const std::set<PageId>& pages);
+  void appliedToAllPages(const std::set<PageId>& pages);
 
-private:
-    void updateModeIndication(AutoManualMode mode);
+ private:
+  void updateModeIndication(AutoManualMode mode);
 
-    void setSpinBoxUnknownState();
+  void setSpinBoxUnknownState();
 
-    void setSpinBoxKnownState(double angle);
+  void setSpinBoxKnownState(double angle);
 
-    void commitCurrentParams();
+  void commitCurrentParams();
 
-    void setupUiConnections();
+  void setupUiConnections();
 
-    void removeUiConnections();
+  void removeUiConnections();
 
-    static double spinBoxToDegrees(double sb_value);
+  static double spinBoxToDegrees(double sb_value);
 
-    static double degreesToSpinBox(double degrees);
+  static double degreesToSpinBox(double degrees);
 
-    static const double MAX_ANGLE;
+  static const double MAX_ANGLE;
 
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageId m_pageId;
-    UiData m_uiData;
-    int m_ignoreAutoManualToggle;
-    int m_ignoreSpinBoxChanges;
+  intrusive_ptr<Settings> m_ptrSettings;
+  PageId m_pageId;
+  UiData m_uiData;
+  int m_ignoreAutoManualToggle;
+  int m_ignoreSpinBoxChanges;
 
-    PageSelectionAccessor m_pageSelectionAccessor;
+  PageSelectionAccessor m_pageSelectionAccessor;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_OPTIONSWIDGET_H_

@@ -19,12 +19,12 @@
 #ifndef LOADFILETASK_H_
 #define LOADFILETASK_H_
 
-#include "NonCopyable.h"
 #include "BackgroundTask.h"
 #include "FilterResult.h"
-#include "intrusive_ptr.h"
 #include "ImageId.h"
 #include "ImageMetadata.h"
+#include "NonCopyable.h"
+#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class PageInfo;
@@ -36,31 +36,31 @@ class Task;
 }
 
 class LoadFileTask : public BackgroundTask {
-    DECLARE_NON_COPYABLE(LoadFileTask)
+  DECLARE_NON_COPYABLE(LoadFileTask)
 
-public:
-    LoadFileTask(Type type,
-                 const PageInfo& page,
-                 intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                 intrusive_ptr<ProjectPages> pages,
-                 intrusive_ptr<fix_orientation::Task> next_task);
+ public:
+  LoadFileTask(Type type,
+               const PageInfo& page,
+               intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+               intrusive_ptr<ProjectPages> pages,
+               intrusive_ptr<fix_orientation::Task> next_task);
 
-    ~LoadFileTask() override;
+  ~LoadFileTask() override;
 
-    FilterResultPtr operator()() override;
+  FilterResultPtr operator()() override;
 
-private:
-    class ErrorResult;
+ private:
+  class ErrorResult;
 
-    void updateImageSizeIfChanged(const QImage& image);
+  void updateImageSizeIfChanged(const QImage& image);
 
-    void overrideDpi(QImage& image) const;
+  void overrideDpi(QImage& image) const;
 
-    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-    ImageId m_imageId;
-    ImageMetadata m_imageMetadata;
-    const intrusive_ptr<ProjectPages> m_ptrPages;
-    const intrusive_ptr<fix_orientation::Task> m_ptrNextTask;
+  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+  ImageId m_imageId;
+  ImageMetadata m_imageMetadata;
+  const intrusive_ptr<ProjectPages> m_ptrPages;
+  const intrusive_ptr<fix_orientation::Task> m_ptrNextTask;
 };
 
 

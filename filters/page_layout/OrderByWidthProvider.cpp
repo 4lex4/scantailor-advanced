@@ -22,37 +22,36 @@
 #include "Params.h"
 
 namespace page_layout {
-OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> settings) : m_ptrSettings(std::move(settings)) {
-}
+OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> settings) : m_ptrSettings(std::move(settings)) {}
 
 bool OrderByWidthProvider::precedes(const PageId& lhs_page,
                                     const bool lhs_incomplete,
                                     const PageId& rhs_page,
                                     const bool rhs_incomplete) const {
-    const std::unique_ptr<Params> lhs_params(m_ptrSettings->getPageParams(lhs_page));
-    const std::unique_ptr<Params> rhs_params(m_ptrSettings->getPageParams(rhs_page));
+  const std::unique_ptr<Params> lhs_params(m_ptrSettings->getPageParams(lhs_page));
+  const std::unique_ptr<Params> rhs_params(m_ptrSettings->getPageParams(rhs_page));
 
-    QSizeF lhs_size;
-    if (lhs_params) {
-        const Margins margins(lhs_params->hardMarginsMM());
-        lhs_size = lhs_params->contentSizeMM();
-        lhs_size += QSizeF(margins.left() + margins.right(), margins.top() + margins.bottom());
-    }
-    QSizeF rhs_size;
-    if (rhs_params) {
-        const Margins margins(rhs_params->hardMarginsMM());
-        rhs_size = rhs_params->contentSizeMM();
-        rhs_size += QSizeF(margins.left() + margins.right(), margins.top() + margins.bottom());
-    }
+  QSizeF lhs_size;
+  if (lhs_params) {
+    const Margins margins(lhs_params->hardMarginsMM());
+    lhs_size = lhs_params->contentSizeMM();
+    lhs_size += QSizeF(margins.left() + margins.right(), margins.top() + margins.bottom());
+  }
+  QSizeF rhs_size;
+  if (rhs_params) {
+    const Margins margins(rhs_params->hardMarginsMM());
+    rhs_size = rhs_params->contentSizeMM();
+    rhs_size += QSizeF(margins.left() + margins.right(), margins.top() + margins.bottom());
+  }
 
-    const bool lhs_valid = !lhs_incomplete && lhs_size.isValid();
-    const bool rhs_valid = !rhs_incomplete && rhs_size.isValid();
+  const bool lhs_valid = !lhs_incomplete && lhs_size.isValid();
+  const bool rhs_valid = !rhs_incomplete && rhs_size.isValid();
 
-    if (lhs_valid != rhs_valid) {
-        // Invalid (unknown) sizes go to the back.
-        return lhs_valid;
-    }
+  if (lhs_valid != rhs_valid) {
+    // Invalid (unknown) sizes go to the back.
+    return lhs_valid;
+  }
 
-    return lhs_size.width() < rhs_size.width();
+  return lhs_size.width() < rhs_size.width();
 }  // OrderByWidthProvider::precedes
 }  // namespace page_layout

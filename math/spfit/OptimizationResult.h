@@ -23,31 +23,27 @@
 
 namespace spfit {
 class OptimizationResult {
-public:
-    OptimizationResult(double force_before, double force_after);
+ public:
+  OptimizationResult(double force_before, double force_after);
 
-    double forceBefore() const {
-        return m_forceBefore;
-    }
+  double forceBefore() const { return m_forceBefore; }
 
-    double forceAfter() const {
-        return m_forceAfter;
-    }
+  double forceAfter() const { return m_forceAfter; }
 
-    /**
-     * \brief Returns force decrease in percents.
-     *
-     * Force decrease can theoretically be negative.
-     *
-     * \note Improvements from different optimization runs can't be compared,
-     *       as the absolute force values depend on the number of samples,
-     *       which varies from one optimization iteration to another.
-     */
-    double improvementPercentage() const;
+  /**
+   * \brief Returns force decrease in percents.
+   *
+   * Force decrease can theoretically be negative.
+   *
+   * \note Improvements from different optimization runs can't be compared,
+   *       as the absolute force values depend on the number of samples,
+   *       which varies from one optimization iteration to another.
+   */
+  double improvementPercentage() const;
 
-private:
-    double m_forceBefore;
-    double m_forceAfter;
+ private:
+  double m_forceBefore;
+  double m_forceAfter;
 };
 }  // namespace spfit
 #endif

@@ -17,115 +17,115 @@
  */
 
 #include "XmlMarshaller.h"
-#include "OrthogonalRotation.h"
-#include "Margins.h"
 #include "Dpi.h"
+#include "Margins.h"
+#include "OrthogonalRotation.h"
 #include "Utils.h"
 
 QDomElement XmlMarshaller::string(const QString& str, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.appendChild(m_doc.createTextNode(str));
+  QDomElement el(m_doc.createElement(name));
+  el.appendChild(m_doc.createTextNode(str));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::size(const QSize& size, const QString& name) {
-    if (size.isNull()) {
-        return QDomElement();
-    }
+  if (size.isNull()) {
+    return QDomElement();
+  }
 
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("width", size.width());
-    el.setAttribute("height", size.height());
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("width", size.width());
+  el.setAttribute("height", size.height());
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::sizeF(const QSizeF& size, const QString& name) {
-    if (size.isNull()) {
-        return QDomElement();
-    }
+  if (size.isNull()) {
+    return QDomElement();
+  }
 
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("width", Utils::doubleToString(size.width()));
-    el.setAttribute("height", Utils::doubleToString(size.height()));
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("width", Utils::doubleToString(size.width()));
+  el.setAttribute("height", Utils::doubleToString(size.height()));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::dpi(const Dpi& dpi, const QString& name) {
-    if (dpi.isNull()) {
-        return QDomElement();
-    }
+  if (dpi.isNull()) {
+    return QDomElement();
+  }
 
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("horizontal", dpi.horizontal());
-    el.setAttribute("vertical", dpi.vertical());
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("horizontal", dpi.horizontal());
+  el.setAttribute("vertical", dpi.vertical());
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::rotation(const OrthogonalRotation& rotation, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("degrees", rotation.toDegrees());
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("degrees", rotation.toDegrees());
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::pointF(const QPointF& p, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("x", Utils::doubleToString(p.x()));
-    el.setAttribute("y", Utils::doubleToString(p.y()));
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("x", Utils::doubleToString(p.x()));
+  el.setAttribute("y", Utils::doubleToString(p.y()));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::lineF(const QLineF& line, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.appendChild(pointF(line.p1(), "p1"));
-    el.appendChild(pointF(line.p2(), "p2"));
+  QDomElement el(m_doc.createElement(name));
+  el.appendChild(pointF(line.p1(), "p1"));
+  el.appendChild(pointF(line.p2(), "p2"));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::rect(const QRect& rect, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("x", QString::number(rect.x()));
-    el.setAttribute("y", QString::number(rect.y()));
-    el.setAttribute("width", QString::number(rect.width()));
-    el.setAttribute("height", QString::number(rect.height()));
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("x", QString::number(rect.x()));
+  el.setAttribute("y", QString::number(rect.y()));
+  el.setAttribute("width", QString::number(rect.width()));
+  el.setAttribute("height", QString::number(rect.height()));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::rectF(const QRectF& rect, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("x", Utils::doubleToString(rect.x()));
-    el.setAttribute("y", Utils::doubleToString(rect.y()));
-    el.setAttribute("width", Utils::doubleToString(rect.width()));
-    el.setAttribute("height", Utils::doubleToString(rect.height()));
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("x", Utils::doubleToString(rect.x()));
+  el.setAttribute("y", Utils::doubleToString(rect.y()));
+  el.setAttribute("width", Utils::doubleToString(rect.width()));
+  el.setAttribute("height", Utils::doubleToString(rect.height()));
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::polygonF(const QPolygonF& poly, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
+  QDomElement el(m_doc.createElement(name));
 
-    QPolygonF::const_iterator it(poly.begin());
-    const QPolygonF::const_iterator end(poly.end());
-    for (; it != end; ++it) {
-        el.appendChild(pointF(*it, "point"));
-    }
+  QPolygonF::const_iterator it(poly.begin());
+  const QPolygonF::const_iterator end(poly.end());
+  for (; it != end; ++it) {
+    el.appendChild(pointF(*it, "point"));
+  }
 
-    return el;
+  return el;
 }
 
 QDomElement XmlMarshaller::margins(const Margins& margins, const QString& name) {
-    QDomElement el(m_doc.createElement(name));
-    el.setAttribute("left", Utils::doubleToString(margins.left()));
-    el.setAttribute("right", Utils::doubleToString(margins.right()));
-    el.setAttribute("top", Utils::doubleToString(margins.top()));
-    el.setAttribute("bottom", Utils::doubleToString(margins.bottom()));
+  QDomElement el(m_doc.createElement(name));
+  el.setAttribute("left", Utils::doubleToString(margins.left()));
+  el.setAttribute("right", Utils::doubleToString(margins.right()));
+  el.setAttribute("top", Utils::doubleToString(margins.top()));
+  el.setAttribute("bottom", Utils::doubleToString(margins.bottom()));
 
-    return el;
+  return el;
 }

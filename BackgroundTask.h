@@ -19,46 +19,39 @@
 #ifndef BACKGROUNDTASK_H_
 #define BACKGROUNDTASK_H_
 
-#include "AbstractCommand.h"
-#include "intrusive_ptr.h"
-#include "FilterResult.h"
-#include "TaskStatus.h"
 #include <QAtomicInt>
 #include <exception>
+#include "AbstractCommand.h"
+#include "FilterResult.h"
+#include "TaskStatus.h"
+#include "intrusive_ptr.h"
 
 class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatus {
-public:
-    enum Type { INTERACTIVE, BATCH };
+ public:
+  enum Type { INTERACTIVE, BATCH };
 
-    class CancelledException : public std::exception {
-    public:
-        const char* what() const throw() override;
-    };
+  class CancelledException : public std::exception {
+   public:
+    const char* what() const throw() override;
+  };
 
 
-    explicit BackgroundTask(Type type) : m_type(type) {
-    }
+  explicit BackgroundTask(Type type) : m_type(type) {}
 
-    Type type() const {
-        return m_type;
-    }
+  Type type() const { return m_type; }
 
-    void cancel() override {
-        m_cancelFlag.store(1);
-    }
+  void cancel() override { m_cancelFlag.store(1); }
 
-    bool isCancelled() const override {
-        return m_cancelFlag.load() != 0;
-    }
+  bool isCancelled() const override { return m_cancelFlag.load() != 0; }
 
-    /**
-     * \brief If cancelled, throws CancelledException.
-     */
-    void throwIfCancelled() const override;
+  /**
+   * \brief If cancelled, throws CancelledException.
+   */
+  void throwIfCancelled() const override;
 
-private:
-    QAtomicInt m_cancelFlag;
-    const Type m_type;
+ private:
+  QAtomicInt m_cancelFlag;
+  const Type m_type;
 };
 
 

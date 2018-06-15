@@ -19,40 +19,40 @@
 #ifndef SELECT_CONTENT_APPLYDIALOG_H_
 #define SELECT_CONTENT_APPLYDIALOG_H_
 
-#include "ui_SelectContentApplyDialog.h"
+#include <QButtonGroup>
+#include <QDialog>
+#include <set>
+#include <vector>
 #include "PageId.h"
 #include "PageRange.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include <QDialog>
-#include <QButtonGroup>
-#include <vector>
-#include <set>
+#include "ui_SelectContentApplyDialog.h"
 
 class PageSelectionAccessor;
 
 namespace select_content {
 class ApplyDialog : public QDialog, private Ui::SelectContentApplyDialog {
-    Q_OBJECT
-public:
-    ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
+  Q_OBJECT
+ public:
+  ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
-    ~ApplyDialog() override;
+  ~ApplyDialog() override;
 
-signals:
+ signals:
 
-    void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
+  void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
 
-private slots:
+ private slots:
 
-    void onSubmit();
+  void onSubmit();
 
-private:
-    PageSequence m_pages;
-    std::set<PageId> m_selectedPages;
-    std::vector<PageRange> m_selectedRanges;
-    PageId m_curPage;
-    QButtonGroup* m_pBtnGroup;
+ private:
+  PageSequence m_pages;
+  std::set<PageId> m_selectedPages;
+  std::vector<PageRange> m_selectedRanges;
+  PageId m_curPage;
+  QButtonGroup* m_pBtnGroup;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_APPLYDIALOG_H_

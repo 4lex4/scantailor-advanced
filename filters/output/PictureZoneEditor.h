@@ -20,22 +20,22 @@
 #ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_
 #define OUTPUT_PICTURE_ZONE_EDITOR_H_
 
-#include "ImageViewBase.h"
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "intrusive_ptr.h"
-#include "PageId.h"
-#include "ZoneInteractionContext.h"
-#include "EditableSpline.h"
-#include "EditableZoneSet.h"
-#include "ZoomHandler.h"
-#include "DragHandler.h"
-#include "ImagePixmapUnion.h"
-#include "imageproc/BinaryImage.h"
-#include <QTransform>
+#include <QPixmap>
 #include <QPoint>
 #include <QTimer>
-#include <QPixmap>
+#include <QTransform>
+#include "DragHandler.h"
+#include "EditableSpline.h"
+#include "EditableZoneSet.h"
+#include "ImagePixmapUnion.h"
+#include "ImageViewBase.h"
+#include "NonCopyable.h"
+#include "PageId.h"
+#include "ZoneInteractionContext.h"
+#include "ZoomHandler.h"
+#include "imageproc/BinaryImage.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class ImageTransformation;
 class InteractionState;
@@ -47,68 +47,68 @@ class Settings;
 
 
 class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
-    Q_OBJECT
-public:
-    PictureZoneEditor(const QImage& image,
-                      const ImagePixmapUnion& downscaled_image,
-                      const imageproc::BinaryImage& picture_mask,
-                      const QTransform& image_to_virt,
-                      const QPolygonF& virt_display_area,
-                      const PageId& page_id,
-                      intrusive_ptr<Settings> settings);
+  Q_OBJECT
+ public:
+  PictureZoneEditor(const QImage& image,
+                    const ImagePixmapUnion& downscaled_image,
+                    const imageproc::BinaryImage& picture_mask,
+                    const QTransform& image_to_virt,
+                    const QPolygonF& virt_display_area,
+                    const PageId& page_id,
+                    intrusive_ptr<Settings> settings);
 
-    ~PictureZoneEditor() override;
+  ~PictureZoneEditor() override;
 
-signals:
+ signals:
 
-    void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& page_id);
 
-protected:
-    void onPaint(QPainter& painter, const InteractionState& interaction) override;
+ protected:
+  void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-private slots:
+ private slots:
 
-    void advancePictureMaskAnimation();
+  void advancePictureMaskAnimation();
 
-    void initiateBuildingScreenPictureMask();
+  void initiateBuildingScreenPictureMask();
 
-    void commitZones();
+  void commitZones();
 
-    void updateRequested();
+  void updateRequested();
 
-private:
-    class MaskTransformTask;
+ private:
+  class MaskTransformTask;
 
-    bool validateScreenPictureMask() const;
+  bool validateScreenPictureMask() const;
 
-    void schedulePictureMaskRebuild();
+  void schedulePictureMaskRebuild();
 
-    void screenPictureMaskBuilt(const QPoint& origin, const QImage& mask);
+  void screenPictureMaskBuilt(const QPoint& origin, const QImage& mask);
 
-    void paintOverPictureMask(QPainter& painter);
+  void paintOverPictureMask(QPainter& painter);
 
-    void showPropertiesDialog(const EditableZoneSet::Zone& zone);
+  void showPropertiesDialog(const EditableZoneSet::Zone& zone);
 
-    EditableZoneSet m_zones;
+  EditableZoneSet m_zones;
 
-    // Must go after m_zones.
-    ZoneInteractionContext m_context;
+  // Must go after m_zones.
+  ZoneInteractionContext m_context;
 
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
+  DragHandler m_dragHandler;
+  ZoomHandler m_zoomHandler;
 
-    imageproc::BinaryImage m_origPictureMask;
-    QPixmap m_screenPictureMask;
-    QPoint m_screenPictureMaskOrigin;
-    QTransform m_screenPictureMaskXform;
-    QTransform m_potentialPictureMaskXform;
-    QTimer m_pictureMaskRebuildTimer;
-    QTimer m_pictureMaskAnimateTimer;
-    int m_pictureMaskAnimationPhase;  // degrees
-    intrusive_ptr<MaskTransformTask> m_ptrMaskTransformTask;
+  imageproc::BinaryImage m_origPictureMask;
+  QPixmap m_screenPictureMask;
+  QPoint m_screenPictureMaskOrigin;
+  QTransform m_screenPictureMaskXform;
+  QTransform m_potentialPictureMaskXform;
+  QTimer m_pictureMaskRebuildTimer;
+  QTimer m_pictureMaskAnimateTimer;
+  int m_pictureMaskAnimationPhase;  // degrees
+  intrusive_ptr<MaskTransformTask> m_ptrMaskTransformTask;
 
-    PageId m_pageId;
-    intrusive_ptr<Settings> m_ptrSettings;
+  PageId m_pageId;
+  intrusive_ptr<Settings> m_ptrSettings;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

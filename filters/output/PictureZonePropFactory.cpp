@@ -22,7 +22,7 @@
 
 namespace output {
 PictureZonePropFactory::PictureZonePropFactory() {
-    PictureLayerProperty::registerIn(*this);
-    ZoneCategoryProperty::registerIn(*this);
+  PictureLayerProperty::registerIn(*this);
+  ZoneCategoryProperty::registerIn(*this);
 }
 }  // namespace output

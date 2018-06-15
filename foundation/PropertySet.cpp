@@ -17,54 +17,54 @@
  */
 
 #include "PropertySet.h"
-#include "PropertyFactory.h"
 #include <QDomDocument>
+#include "PropertyFactory.h"
 
 PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) {
-    const QString property_str("property");
-    QDomNode node(el.firstChild());
+  const QString property_str("property");
+  QDomNode node(el.firstChild());
 
-    for (; !node.isNull(); node = node.nextSibling()) {
-        if (!node.isElement()) {
-            continue;
-        }
-        if (node.nodeName() != property_str) {
-            continue;
-        }
-
-        QDomElement prop_el(node.toElement());
-        intrusive_ptr<Property> prop(factory.construct(prop_el));
-        if (prop) {
-            m_props.push_back(prop);
-        }
+  for (; !node.isNull(); node = node.nextSibling()) {
+    if (!node.isElement()) {
+      continue;
     }
+    if (node.nodeName() != property_str) {
+      continue;
+    }
+
+    QDomElement prop_el(node.toElement());
+    intrusive_ptr<Property> prop(factory.construct(prop_el));
+    if (prop) {
+      m_props.push_back(prop);
+    }
+  }
 }
 
 PropertySet::PropertySet(const PropertySet& other) {
-    m_props.reserve(other.m_props.size());
+  m_props.reserve(other.m_props.size());
 
-    for (const intrusive_ptr<Property>& prop : other.m_props) {
-        m_props.push_back(prop->clone());
-    }
+  for (const intrusive_ptr<Property>& prop : other.m_props) {
+    m_props.push_back(prop->clone());
+  }
 }
 
 PropertySet& PropertySet::operator=(const PropertySet& other) {
-    PropertySet(other).swap(*this);
+  PropertySet(other).swap(*this);
 
-    return *this;
+  return *this;
 }
 
 void PropertySet::swap(PropertySet& other) {
-    m_props.swap(other.m_props);
+  m_props.swap(other.m_props);
 }
 
 QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
-    const QString property_str("property");
-    QDomElement props_el(doc.createElement(name));
+  const QString property_str("property");
+  QDomElement props_el(doc.createElement(name));
 
-    for (const intrusive_ptr<Property>& prop : m_props) {
-        props_el.appendChild(prop->toXml(doc, property_str));
-    }
+  for (const intrusive_ptr<Property>& prop : m_props) {
+    props_el.appendChild(prop->toXml(doc, property_str));
+  }
 
-    return props_el;
+  return props_el;
 }

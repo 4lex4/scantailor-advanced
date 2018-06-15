@@ -17,53 +17,53 @@
  */
 
 #include "DebugImages.h"
-#include "imageproc/BinaryImage.h"
+#include <QDir>
 #include <QImage>
 #include <QImageWriter>
 #include <QTemporaryFile>
-#include <QDir>
+#include "imageproc/BinaryImage.h"
 
 void DebugImages::add(const QImage& image,
                       const QString& label,
                       const boost::function<QWidget*(const QImage&)>& image_view_factory) {
-    QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
-    if (!file.open()) {
-        return;
-    }
+  QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
+  if (!file.open()) {
+    return;
+  }
 
-    AutoRemovingFile arem_file(file.fileName());
-    file.setAutoRemove(false);
+  AutoRemovingFile arem_file(file.fileName());
+  file.setAutoRemove(false);
 
-    QImageWriter writer(&file, "png");
-    writer.setCompression(2);  // Trade space for speed.
-    if (!writer.write(image)) {
-        return;
-    }
+  QImageWriter writer(&file, "png");
+  writer.setCompression(2);  // Trade space for speed.
+  if (!writer.write(image)) {
+    return;
+  }
 
-    m_sequence.push_back(make_intrusive<Item>(arem_file, label, image_view_factory));
+  m_sequence.push_back(make_intrusive<Item>(arem_file, label, image_view_factory));
 }
 
 void DebugImages::add(const imageproc::BinaryImage& image,
                       const QString& label,
                       const boost::function<QWidget*(const QImage&)>& image_view_factory) {
-    add(image.toQImage(), label, image_view_factory);
+  add(image.toQImage(), label, image_view_factory);
 }
 
 AutoRemovingFile DebugImages::retrieveNext(QString* label,
                                            boost::function<QWidget*(const QImage&)>* image_view_factory) {
-    if (m_sequence.empty()) {
-        return AutoRemovingFile();
-    }
+  if (m_sequence.empty()) {
+    return AutoRemovingFile();
+  }
 
-    AutoRemovingFile file(m_sequence.front()->file);
-    if (label) {
-        *label = m_sequence.front()->label;
-    }
-    if (image_view_factory) {
-        *image_view_factory = m_sequence.front()->imageViewFactory;
-    }
+  AutoRemovingFile file(m_sequence.front()->file);
+  if (label) {
+    *label = m_sequence.front()->label;
+  }
+  if (image_view_factory) {
+    *image_view_factory = m_sequence.front()->imageViewFactory;
+  }
 
-    m_sequence.pop_front();
+  m_sequence.pop_front();
 
-    return file;
+  return file;
 }

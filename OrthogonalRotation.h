@@ -25,43 +25,40 @@ class QPointF;
 class QTransform;
 
 class OrthogonalRotation {
-public:
-    OrthogonalRotation() : m_degrees(0) {
-    }
+ public:
+  OrthogonalRotation() : m_degrees(0) {}
 
-    int toDegrees() const {
-        return m_degrees;
-    }
+  int toDegrees() const { return m_degrees; }
 
-    void nextClockwiseDirection();
+  void nextClockwiseDirection();
 
-    void prevClockwiseDirection();
+  void prevClockwiseDirection();
 
-    QSize rotate(const QSize& dimensions) const;
+  QSize rotate(const QSize& dimensions) const;
 
-    QSize unrotate(const QSize& dimensions) const;
+  QSize unrotate(const QSize& dimensions) const;
 
-    QSizeF rotate(const QSizeF& dimensions) const;
+  QSizeF rotate(const QSizeF& dimensions) const;
 
-    QSizeF unrotate(const QSizeF& dimensions) const;
+  QSizeF unrotate(const QSizeF& dimensions) const;
 
-    QPointF rotate(const QPointF& point, double xmax, double ymax) const;
+  QPointF rotate(const QPointF& point, double xmax, double ymax) const;
 
-    QPointF unrotate(const QPointF& point, double xmax, double ymax) const;
+  QPointF unrotate(const QPointF& point, double xmax, double ymax) const;
 
-    QTransform transform(const QSizeF& dimensions) const;
+  QTransform transform(const QSizeF& dimensions) const;
 
-private:
-    int m_degrees;
+ private:
+  int m_degrees;
 };
 
 
 inline bool operator==(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
-    return lhs.toDegrees() == rhs.toDegrees();
+  return lhs.toDegrees() == rhs.toDegrees();
 }
 
 inline bool operator!=(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
-    return lhs.toDegrees() != rhs.toDegrees();
+  return lhs.toDegrees() != rhs.toDegrees();
 }
 
 #endif  // ifndef ORTHOGONALROTATION_H_

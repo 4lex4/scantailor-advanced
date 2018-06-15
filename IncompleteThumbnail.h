@@ -19,9 +19,9 @@
 #ifndef INCOMPLETETHUMBNAIL_H_
 #define INCOMPLETETHUMBNAIL_H_
 
+#include <QPainterPath>
 #include "ThumbnailBase.h"
 #include "intrusive_ptr.h"
-#include <QPainterPath>
 
 class ThumbnailPixmapCache;
 class QSizeF;
@@ -40,23 +40,23 @@ class QRectF;
  * This class implements drawing of such thumbnails with question marks.
  */
 class IncompleteThumbnail : public ThumbnailBase {
-public:
-    IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                        const QSizeF& max_size,
-                        const ImageId& image_id,
-                        const ImageTransformation& image_xform);
+ public:
+  IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                      const QSizeF& max_size,
+                      const ImageId& image_id,
+                      const ImageTransformation& image_xform);
 
-    ~IncompleteThumbnail() override;
+  ~IncompleteThumbnail() override;
 
-    static void drawQuestionMark(QPainter& painter, const QRectF& bounding_rect);
+  static void drawQuestionMark(QPainter& painter, const QRectF& bounding_rect);
 
-protected:
-    void paintOverImage(QPainter& painter,
-                        const QTransform& image_to_display,
-                        const QTransform& thumb_to_display) override;
+ protected:
+  void paintOverImage(QPainter& painter,
+                      const QTransform& image_to_display,
+                      const QTransform& thumb_to_display) override;
 
-private:
-    static QPainterPath m_sCachedPath;
+ private:
+  static QPainterPath m_sCachedPath;
 };
 
 

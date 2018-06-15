@@ -19,16 +19,16 @@
 #ifndef THUMBNAILSEQUENCE_H_
 #define THUMBNAILSEQUENCE_H_
 
-#include "NonCopyable.h"
-#include "FlagOps.h"
-#include "intrusive_ptr.h"
-#include "PageRange.h"
-#include "PageOrderProvider.h"
-#include "BeforeOrAfter.h"
 #include <QObject>
 #include <memory>
-#include <vector>
 #include <set>
+#include <vector>
+#include "BeforeOrAfter.h"
+#include "FlagOps.h"
+#include "NonCopyable.h"
+#include "PageOrderProvider.h"
+#include "PageRange.h"
+#include "intrusive_ptr.h"
 
 class QGraphicsItem;
 class QGraphicsView;
@@ -42,198 +42,196 @@ class QRectF;
 class QPoint;
 
 class ThumbnailSequence : public QObject {
-    Q_OBJECT
-    DECLARE_NON_COPYABLE(ThumbnailSequence)
+  Q_OBJECT
+  DECLARE_NON_COPYABLE(ThumbnailSequence)
 
-public:
-    enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
+ public:
+  enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
 
-    enum SelectionFlags {
-        DEFAULT_SELECTION_FLAGS = 0,
+  enum SelectionFlags {
+    DEFAULT_SELECTION_FLAGS = 0,
 
-        /** Indicates the item was selected by a user action, rather than programmatically. */
-        SELECTED_BY_USER = 1 << 0,
-
-        /**
-         * Indicates that the request to make this item a selection leader was redundant,
-         * as it's already a selection leader.
-         */
-        REDUNDANT_SELECTION = 1 << 1,
-
-        /**
-         * This flag is set when Ctrl-clicking the current selection leader while other
-         * selected items exist.  In this case, the leader will become unselected, and
-         * one of the other selected items will be promoted to a selection leader.
-         * In these circumstances, scrolling to make the new selection leader visible
-         * is undesireable.
-         */
-        AVOID_SCROLLING_TO = 1 << 2
-    };
-
-    explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size);
-
-    ~ThumbnailSequence() override;
-
-    void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
-
-    void attachView(QGraphicsView* view);
+    /** Indicates the item was selected by a user action, rather than programmatically. */
+    SELECTED_BY_USER = 1 << 0,
 
     /**
-     * \brief Re-populate the list of thumbnails.
-     *
-     * \param pages Pages to put in the sequence.
-     * \param selection_action Whether to keep the selection, provided
-     *        selected item(s) are still present in the new list of pages.
-     * \param order_provider The source of ordering information.  It will
-     *        be preserved until the next reset() call and will be taken
-     *        into account by other methods, like invalidateThumbnail()
-     *        and insert().  A null order provider indicates to keep the
-     *        order of ProjectPages.
+     * Indicates that the request to make this item a selection leader was redundant,
+     * as it's already a selection leader.
      */
-    void reset(const PageSequence& pages,
-               SelectionAction selection_action,
-               intrusive_ptr<const PageOrderProvider> order_provider = nullptr);
-
-    /** Returns the current page order provider, which may be null. */
-    intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
-
-    PageSequence toPageSequence() const;
+    REDUNDANT_SELECTION = 1 << 1,
 
     /**
-     * \brief Updates appearence and possibly position of a thumbnail.
-     *
-     * If thumbnail's size or position have changed and this thumbnail
-     * is a selection leader, newSelectionLeader() signal will be emitted
-     * with REDUNDANT_SELECTION flag set.
-     *
-     * \note This function assumes the thumbnail specified by page_id
-     *       is the only thumbnail at incorrect position.  If you do
-     *       something that changes the logical position of more than
-     *       one thumbnail at once, use invalidateAllThumbnails()
-     *       instead of sequentially calling invalidateThumbnail().
+     * This flag is set when Ctrl-clicking the current selection leader while other
+     * selected items exist.  In this case, the leader will become unselected, and
+     * one of the other selected items will be promoted to a selection leader.
+     * In these circumstances, scrolling to make the new selection leader visible
+     * is undesireable.
      */
-    void invalidateThumbnail(const PageId& page_id);
+    AVOID_SCROLLING_TO = 1 << 2
+  };
 
-    /**
-     * This signature differs from invalidateThumbnail(PageId) in that
-     * it will cause PageInfo stored by ThumbnailSequence to be updated.
-     */
-    void invalidateThumbnail(const PageInfo& page_info);
+  explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size);
 
-    /**
-     * \brief Updates appearence of all thumbnails and possibly their order.
-     *
-     * Whether or not order will be updated depends on whether an order provider
-     * was specified by the most recent reset() call.
-     */
-    void invalidateAllThumbnails();
+  ~ThumbnailSequence() override;
 
-    /**
-     * \brief Makes the item a selection leader, and unselects other items.
-     *
-     * \param page_id The page to select.
-     * \return true on success, false if the requested page wasn't found.
-     *
-     * On success, the newSelectionLeader() signal is emitted, possibly
-     * with REDUNDANT_SELECTION flag set, in case our page was already the
-     * selection leader.
-     */
-    bool setSelection(const PageId& page_id);
+  void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
 
-    /**
-     * \brief Returns the current selection leader.
-     *
-     * A null PageInfo is returned if no items are currently selected.
-     */
-    PageInfo selectionLeader() const;
+  void attachView(QGraphicsView* view);
 
-    /**
-     * \brief Returns the page immediately following the given one.
-     *
-     * A null PageInfo is returned if the given page wasn't found or
-     * there are no pages preceeding it.
-     */
-    PageInfo prevPage(const PageId& reference_page) const;
+  /**
+   * \brief Re-populate the list of thumbnails.
+   *
+   * \param pages Pages to put in the sequence.
+   * \param selection_action Whether to keep the selection, provided
+   *        selected item(s) are still present in the new list of pages.
+   * \param order_provider The source of ordering information.  It will
+   *        be preserved until the next reset() call and will be taken
+   *        into account by other methods, like invalidateThumbnail()
+   *        and insert().  A null order provider indicates to keep the
+   *        order of ProjectPages.
+   */
+  void reset(const PageSequence& pages,
+             SelectionAction selection_action,
+             intrusive_ptr<const PageOrderProvider> order_provider = nullptr);
 
-    /**
-     * \brief Returns the page immediately following the given one.
-     *
-     * A null PageInfo is returned if the given page wasn't found or
-     * there are no pages following it.
-     */
-    PageInfo nextPage(const PageId& reference_page) const;
+  /** Returns the current page order provider, which may be null. */
+  intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
 
-    /**
-     * \brief Returns the first page in the sequence.
-     *
-     * A null PageInfo is returned if the sequence is empty.
-     */
-    PageInfo firstPage() const;
+  PageSequence toPageSequence() const;
 
-    /**
-     * \brief Returns the last page in the sequence.
-     *
-     * A null PageInfo is returned if the sequence is empty.
-     */
-    PageInfo lastPage() const;
+  /**
+   * \brief Updates appearence and possibly position of a thumbnail.
+   *
+   * If thumbnail's size or position have changed and this thumbnail
+   * is a selection leader, newSelectionLeader() signal will be emitted
+   * with REDUNDANT_SELECTION flag set.
+   *
+   * \note This function assumes the thumbnail specified by page_id
+   *       is the only thumbnail at incorrect position.  If you do
+   *       something that changes the logical position of more than
+   *       one thumbnail at once, use invalidateAllThumbnails()
+   *       instead of sequentially calling invalidateThumbnail().
+   */
+  void invalidateThumbnail(const PageId& page_id);
 
-    /**
-     * \brief Inserts a page before the first page with matching ImageId.
-     *
-     * If no order provider was specified by the previous reset() call,
-     * we won't allow inserting a page between two halves of another page,
-     * to be compatible with what reset() does.  Otherwise, the new
-     * page will be inserted at a correct position according to the current
-     * order provider.  In this case \p before_or_after doesn't really matter.
-     *
-     * If there are no pages with matching ImageId, the new page won't
-     * be inserted, unless the request is to insert BEFORE a null ImageId(),
-     * which would cause insertion at the end.
-     */
-    void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
+  /**
+   * This signature differs from invalidateThumbnail(PageId) in that
+   * it will cause PageInfo stored by ThumbnailSequence to be updated.
+   */
+  void invalidateThumbnail(const PageInfo& page_info);
 
-    void removePages(const std::set<PageId>& pages);
+  /**
+   * \brief Updates appearence of all thumbnails and possibly their order.
+   *
+   * Whether or not order will be updated depends on whether an order provider
+   * was specified by the most recent reset() call.
+   */
+  void invalidateAllThumbnails();
 
-    /**
-     * \brief The bounding rectangle in scene coordinates of the selection leader.
-     *
-     * Returns a null rectangle if no item is currently selected.
-     */
-    QRectF selectionLeaderSceneRect() const;
+  /**
+   * \brief Makes the item a selection leader, and unselects other items.
+   *
+   * \param page_id The page to select.
+   * \return true on success, false if the requested page wasn't found.
+   *
+   * On success, the newSelectionLeader() signal is emitted, possibly
+   * with REDUNDANT_SELECTION flag set, in case our page was already the
+   * selection leader.
+   */
+  bool setSelection(const PageId& page_id);
 
-    std::set<PageId> selectedItems() const;
+  /**
+   * \brief Returns the current selection leader.
+   *
+   * A null PageInfo is returned if no items are currently selected.
+   */
+  PageInfo selectionLeader() const;
 
-    std::vector<PageRange> selectedRanges() const;
+  /**
+   * \brief Returns the page immediately following the given one.
+   *
+   * A null PageInfo is returned if the given page wasn't found or
+   * there are no pages preceeding it.
+   */
+  PageInfo prevPage(const PageId& reference_page) const;
 
-signals:
+  /**
+   * \brief Returns the page immediately following the given one.
+   *
+   * A null PageInfo is returned if the given page wasn't found or
+   * there are no pages following it.
+   */
+  PageInfo nextPage(const PageId& reference_page) const;
 
-    void newSelectionLeader(const PageInfo& page_info,
-                            const QRectF& thumb_rect,
-                            ThumbnailSequence::SelectionFlags flags);
+  /**
+   * \brief Returns the first page in the sequence.
+   *
+   * A null PageInfo is returned if the sequence is empty.
+   */
+  PageInfo firstPage() const;
 
-    /**
-     * Emitted when a user right-clicks on a page thumbnail.
-     */
-    void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
+  /**
+   * \brief Returns the last page in the sequence.
+   *
+   * A null PageInfo is returned if the sequence is empty.
+   */
+  PageInfo lastPage() const;
 
-    /**
-     * Emitted when a user right clicks on area below the last page.
-     * In the absence of any pages, all the area is considered to be
-     * below the last page.
-     */
-    void pastLastPageContextMenuRequested(const QPoint& screen_pos);
+  /**
+   * \brief Inserts a page before the first page with matching ImageId.
+   *
+   * If no order provider was specified by the previous reset() call,
+   * we won't allow inserting a page between two halves of another page,
+   * to be compatible with what reset() does.  Otherwise, the new
+   * page will be inserted at a correct position according to the current
+   * order provider.  In this case \p before_or_after doesn't really matter.
+   *
+   * If there are no pages with matching ImageId, the new page won't
+   * be inserted, unless the request is to insert BEFORE a null ImageId(),
+   * which would cause insertion at the end.
+   */
+  void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
 
-private:
-    class Item;
-    class Impl;
-    class GraphicsScene;
-    class PlaceholderThumb;
-    class LabelGroup;
-    class CompositeItem;
+  void removePages(const std::set<PageId>& pages);
 
-    void emitNewSelectionLeader(const PageInfo& page_info, const CompositeItem* composite, SelectionFlags flags);
+  /**
+   * \brief The bounding rectangle in scene coordinates of the selection leader.
+   *
+   * Returns a null rectangle if no item is currently selected.
+   */
+  QRectF selectionLeaderSceneRect() const;
 
-    std::unique_ptr<Impl> m_ptrImpl;
+  std::set<PageId> selectedItems() const;
+
+  std::vector<PageRange> selectedRanges() const;
+
+ signals:
+
+  void newSelectionLeader(const PageInfo& page_info, const QRectF& thumb_rect, ThumbnailSequence::SelectionFlags flags);
+
+  /**
+   * Emitted when a user right-clicks on a page thumbnail.
+   */
+  void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
+
+  /**
+   * Emitted when a user right clicks on area below the last page.
+   * In the absence of any pages, all the area is considered to be
+   * below the last page.
+   */
+  void pastLastPageContextMenuRequested(const QPoint& screen_pos);
+
+ private:
+  class Item;
+  class Impl;
+  class GraphicsScene;
+  class PlaceholderThumb;
+  class LabelGroup;
+  class CompositeItem;
+
+  void emitNewSelectionLeader(const PageInfo& page_info, const CompositeItem* composite, SelectionFlags flags);
+
+  std::unique_ptr<Impl> m_ptrImpl;
 };
 
 

@@ -18,39 +18,39 @@
 #ifndef DESKEW_APPLYDIALOG_H_
 #define DESKEW_APPLYDIALOG_H_
 
-#include "ui_DeskewApplyDialog.h"
-#include "PageId.h"
-#include "PageSequence.h"
-#include "intrusive_ptr.h"
 #include <QButtonGroup>
 #include <QDialog>
 #include <set>
+#include "PageId.h"
+#include "PageSequence.h"
+#include "intrusive_ptr.h"
+#include "ui_DeskewApplyDialog.h"
 
 class PageSelectionAccessor;
 
 namespace deskew {
 class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
-    Q_OBJECT
-public:
-    ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
+  Q_OBJECT
+ public:
+  ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
 
-    ~ApplyDialog() override;
+  ~ApplyDialog() override;
 
-signals:
+ signals:
 
-    void appliedTo(const std::set<PageId>& pages);
+  void appliedTo(const std::set<PageId>& pages);
 
-    void appliedToAllPages(const std::set<PageId>& pages);
+  void appliedToAllPages(const std::set<PageId>& pages);
 
-private slots:
+ private slots:
 
-    void onSubmit();
+  void onSubmit();
 
-private:
-    PageSequence m_pages;
-    PageId m_curPage;
-    std::set<PageId> m_selectedPages;
-    QButtonGroup* m_pScopeGroup;
+ private:
+  PageSequence m_pages;
+  PageId m_curPage;
+  std::set<PageId> m_selectedPages;
+  QButtonGroup* m_pScopeGroup;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_APPLYDIALOG_H_

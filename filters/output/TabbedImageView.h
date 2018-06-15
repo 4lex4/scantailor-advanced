@@ -19,53 +19,53 @@
 #ifndef OUTPUT_TABBED_IMAGE_VIEW_H_
 #define OUTPUT_TABBED_IMAGE_VIEW_H_
 
-#include "ImageViewTab.h"
-#include <QWidget>
-#include <QTabWidget>
 #include <QScrollBar>
-#include <unordered_map>
+#include <QTabWidget>
+#include <QWidget>
 #include <memory>
+#include <unordered_map>
+#include "ImageViewTab.h"
 
 class ImageViewBase;
 
 namespace output {
 class TabbedImageView : public QTabWidget {
-    Q_OBJECT
-private:
-    typedef std::unordered_map<ImageViewTab, QRectF, std::hash<int>> TabImageRectMap;
+  Q_OBJECT
+ private:
+  typedef std::unordered_map<ImageViewTab, QRectF, std::hash<int>> TabImageRectMap;
 
-public:
-    explicit TabbedImageView(QWidget* parent = nullptr);
+ public:
+  explicit TabbedImageView(QWidget* parent = nullptr);
 
-    void addTab(QWidget* widget, const QString& label, ImageViewTab tab);
+  void addTab(QWidget* widget, const QString& label, ImageViewTab tab);
 
-    void setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map);
+  void setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map);
 
-public slots:
+ public slots:
 
-    void setCurrentTab(ImageViewTab tab);
+  void setCurrentTab(ImageViewTab tab);
 
-signals:
+ signals:
 
-    void tabChanged(ImageViewTab tab);
+  void tabChanged(ImageViewTab tab);
 
-protected:
-    void keyReleaseEvent(QKeyEvent* event) override;
+ protected:
+  void keyReleaseEvent(QKeyEvent* event) override;
 
-private slots:
+ private slots:
 
-    void tabChangedSlot(int idx);
+  void tabChangedSlot(int idx);
 
-private:
-    void copyViewZoomAndPos(int old_idx, int new_idx) const;
+ private:
+  void copyViewZoomAndPos(int old_idx, int new_idx) const;
 
-    QPointF getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const;
+  QPointF getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const;
 
-    void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, const QRectF& rect, const QPointF& focal) const;
+  void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, const QRectF& rect, const QPointF& focal) const;
 
-    std::unordered_map<QWidget*, ImageViewTab> m_registry;
-    std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
-    int m_prevImageViewTabIndex;
+  std::unordered_map<QWidget*, ImageViewTab> m_registry;
+  std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
+  int m_prevImageViewTabIndex;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_TABBED_IMAGE_VIEW_H_

@@ -21,47 +21,45 @@
 
 namespace page_split {
 Params::Params(const PageLayout& layout, const Dependencies& deps, const AutoManualMode split_line_mode)
-        : m_layout(layout), m_deps(deps), m_splitLineMode(split_line_mode) {
-}
+    : m_layout(layout), m_deps(deps), m_splitLineMode(split_line_mode) {}
 
 Params::Params(const QDomElement& el)
-        : m_layout(el.namedItem("pages").toElement()),
-          m_deps(el.namedItem("dependencies").toElement()),
-          m_splitLineMode(el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {
-}
+    : m_layout(el.namedItem("pages").toElement()),
+      m_deps(el.namedItem("dependencies").toElement()),
+      m_splitLineMode(el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {}
 
 Params::~Params() = default;
 
 QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("mode", m_splitLineMode == MODE_AUTO ? "auto" : "manual");
-    el.appendChild(m_layout.toXml(doc, "pages"));
-    el.appendChild(m_deps.toXml(doc, "dependencies"));
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("mode", m_splitLineMode == MODE_AUTO ? "auto" : "manual");
+  el.appendChild(m_layout.toXml(doc, "pages"));
+  el.appendChild(m_deps.toXml(doc, "dependencies"));
 
-    return el;
+  return el;
 }
 
 const PageLayout& Params::pageLayout() const {
-    return m_layout;
+  return m_layout;
 }
 
 void Params::setPageLayout(const PageLayout& layout) {
-    m_layout = layout;
+  m_layout = layout;
 }
 
 const Dependencies& Params::dependencies() const {
-    return m_deps;
+  return m_deps;
 }
 
 void Params::setDependencies(const Dependencies& deps) {
-    m_deps = deps;
+  m_deps = deps;
 }
 
 AutoManualMode Params::splitLineMode() const {
-    return m_splitLineMode;
+  return m_splitLineMode;
 }
 
 void Params::setSplitLineMode(AutoManualMode mode) {
-    m_splitLineMode = mode;
+  m_splitLineMode = mode;
 }
 }  // namespace page_split

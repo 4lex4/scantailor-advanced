@@ -20,65 +20,68 @@
 #include <QBitmap>
 
 SkinnedButton::SkinnedButton(const QString& file, QWidget* parent)
-        : QToolButton(parent), m_normalStatePixmap(file), m_normalStateFile(file) {
-    updateStyleSheet();
+    : QToolButton(parent), m_normalStatePixmap(file), m_normalStateFile(file) {
+  updateStyleSheet();
 }
 
 SkinnedButton::SkinnedButton(const QString& normal_state_file,
                              const QString& hover_state_file,
                              const QString& pressed_state_file,
                              QWidget* parent)
-        : QToolButton(parent),
-          m_normalStatePixmap(normal_state_file),
-          m_normalStateFile(normal_state_file),
-          m_hoverStateFile(hover_state_file),
-          m_pressedStateFile(pressed_state_file) {
-    updateStyleSheet();
+    : QToolButton(parent),
+      m_normalStatePixmap(normal_state_file),
+      m_normalStateFile(normal_state_file),
+      m_hoverStateFile(hover_state_file),
+      m_pressedStateFile(pressed_state_file) {
+  updateStyleSheet();
 }
 
 void SkinnedButton::setHoverImage(const QString& file) {
-    m_hoverStateFile = file;
-    updateStyleSheet();
+  m_hoverStateFile = file;
+  updateStyleSheet();
 }
 
 void SkinnedButton::setPressedImage(const QString& file) {
-    m_pressedStateFile = file;
-    updateStyleSheet();
+  m_pressedStateFile = file;
+  updateStyleSheet();
 }
 
 void SkinnedButton::setMask() {
-    setMask(m_normalStatePixmap.mask());
+  setMask(m_normalStatePixmap.mask());
 }
 
 QSize SkinnedButton::sizeHint() const {
-    if (m_normalStatePixmap.isNull()) {
-        return QToolButton::sizeHint();
-    } else {
-        return m_normalStatePixmap.size();
-    }
+  if (m_normalStatePixmap.isNull()) {
+    return QToolButton::sizeHint();
+  } else {
+    return m_normalStatePixmap.size();
+  }
 }
 
 void SkinnedButton::updateStyleSheet() {
-    QString style = QString("QToolButton {"
-                            "border: none;"
-                            "background: transparent;"
-                            "image: url(%1);"
-                            "}")
-                            .arg(m_normalStateFile);
+  QString style = QString(
+                      "QToolButton {"
+                      "border: none;"
+                      "background: transparent;"
+                      "image: url(%1);"
+                      "}")
+                      .arg(m_normalStateFile);
 
-    if (!m_hoverStateFile.isEmpty()) {
-        style += QString("QToolButton:hover {"
-                         "image: url(%1);"
-                         "}")
-                         .arg(m_hoverStateFile);
-    }
+  if (!m_hoverStateFile.isEmpty()) {
+    style += QString(
+                 "QToolButton:hover {"
+                 "image: url(%1);"
+                 "}")
+                 .arg(m_hoverStateFile);
+  }
 
-    if (!m_pressedStateFile.isEmpty()) {
-        style += QString("QToolButton:hover:pressed {"
-                         "image: url(%1);"
-                         "}")
-                         .arg(m_pressedStateFile);
-    }
+  if (!m_pressedStateFile.isEmpty()) {
+    style += QString(
+                 "QToolButton:hover:pressed {"
+                 "image: url(%1);"
+                 "}")
+                 .arg(m_pressedStateFile);
+  }
 
-    setStyleSheet(style);
+  setStyleSheet(style);
 }

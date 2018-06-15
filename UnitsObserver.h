@@ -8,12 +8,12 @@
 class Dpi;
 
 class UnitsObserver {
-public:
-    UnitsObserver();
+ public:
+  UnitsObserver();
 
-    virtual ~UnitsObserver();
+  virtual ~UnitsObserver();
 
-    virtual void updateUnits(Units units) = 0;
+  virtual void updateUnits(Units units) = 0;
 };
 
 #endif  // SCANTAILOR_UNITSOBSERVER_H

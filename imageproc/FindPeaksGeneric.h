@@ -19,23 +19,26 @@
 #ifndef IMAGEPROC_FIND_PEAKS_H_
 #define IMAGEPROC_FIND_PEAKS_H_
 
-#include "BinaryImage.h"
-#include "Connectivity.h"
-#include "SeedFillGeneric.h"
-#include "LocalMinMaxGeneric.h"
-#include <QSize>
+#include <QDebug>
 #include <QPoint>
 #include <QRect>
-#include <QDebug>
-#include <vector>
-#include <limits>
+#include <QSize>
 #include <algorithm>
 #include <cstdint>
+#include <limits>
+#include <vector>
+#include "BinaryImage.h"
+#include "Connectivity.h"
+#include "LocalMinMaxGeneric.h"
+#include "SeedFillGeneric.h"
 
 namespace imageproc {
 namespace detail {
 namespace find_peaks {
-template<typename T, typename MostSignificantSelector, typename LeastSignificantSelector, typename IncreaseSignificance>
+template <typename T,
+          typename MostSignificantSelector,
+          typename LeastSignificantSelector,
+          typename IncreaseSignificance>
 void raiseAllButPeaks(MostSignificantSelector most_significant,
                       LeastSignificantSelector least_significant,
                       IncreaseSignificance increase_significance,
@@ -46,25 +49,25 @@ void raiseAllButPeaks(MostSignificantSelector most_significant,
                       QSize size,
                       T* to_be_raised,
                       int to_be_raised_stride) {
-    if (peak_neighborhood.isEmpty()) {
-        peak_neighborhood.setWidth(1);
-        peak_neighborhood.setHeight(1);
-    }
+  if (peak_neighborhood.isEmpty()) {
+    peak_neighborhood.setWidth(1);
+    peak_neighborhood.setHeight(1);
+  }
 
-    // Dilate the peaks and write results to seed.
-    QRect neighborhood(QPoint(0, 0), peak_neighborhood);
-    neighborhood.moveCenter(QPoint(0, 0));
-    localMinMaxGeneric(most_significant, neighborhood, outside_values, input, input_stride, size, to_be_raised,
-                       to_be_raised_stride);
+  // Dilate the peaks and write results to seed.
+  QRect neighborhood(QPoint(0, 0), peak_neighborhood);
+  neighborhood.moveCenter(QPoint(0, 0));
+  localMinMaxGeneric(most_significant, neighborhood, outside_values, input, input_stride, size, to_be_raised,
+                     to_be_raised_stride);
 
-    std::vector<T> mask(to_be_raised, to_be_raised + to_be_raised_stride * size.height());
-    const int mask_stride = to_be_raised_stride;
+  std::vector<T> mask(to_be_raised, to_be_raised + to_be_raised_stride * size.height());
+  const int mask_stride = to_be_raised_stride;
 
-    // Slightly raise the mask relative to to_be_raised.
-    std::transform(mask.begin(), mask.end(), mask.begin(), increase_significance);
+  // Slightly raise the mask relative to to_be_raised.
+  std::transform(mask.begin(), mask.end(), mask.begin(), increase_significance);
 
-    seedFillGenericInPlace(most_significant, least_significant, CONN8, &to_be_raised[0], to_be_raised_stride, size,
-                           &mask[0], mask_stride);
+  seedFillGenericInPlace(most_significant, least_significant, CONN8, &to_be_raised[0], to_be_raised_stride, size,
+                         &mask[0], mask_stride);
 }
 }  // namespace find_peaks
 }  // namespace detail
@@ -99,12 +102,12 @@ void raiseAllButPeaks(MostSignificantSelector most_significant,
  * \param stride The size of a row in the data buffer, in terms of the number of T objects.
  * \param size Grid dimensions.
  */
-template<typename T,
-         typename MostSignificantSelector,
-         typename LeastSignificantSelector,
-         typename IncreaseSignificance,
-         typename PeakMutator,
-         typename NonPeakMutator>
+template <typename T,
+          typename MostSignificantSelector,
+          typename LeastSignificantSelector,
+          typename IncreaseSignificance,
+          typename PeakMutator,
+          typename NonPeakMutator>
 void findPeaksInPlaceGeneric(MostSignificantSelector most_significant,
                              LeastSignificantSelector least_significant,
                              IncreaseSignificance increase_significance,
@@ -115,39 +118,42 @@ void findPeaksInPlaceGeneric(MostSignificantSelector most_significant,
                              T* data,
                              int stride,
                              QSize size) {
-    if (size.isEmpty()) {
-        return;
+  if (size.isEmpty()) {
+    return;
+  }
+
+  std::vector<T> raised(size.width() * size.height());
+  const int raised_stride = size.width();
+
+  detail::find_peaks::raiseAllButPeaks(most_significant, least_significant, increase_significance, peak_neighborhood,
+                                       outside_values, data, stride, size, &raised[0], raised_stride);
+
+  T* data_line = data;
+  T* raised_line = &raised[0];
+  const int w = size.width();
+  const int h = size.height();
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      if (data_line[x] == raised_line[x]) {
+        data_line[x] = peak_mutator(data_line[x]);
+      } else {
+        data_line[x] = non_peak_mutator(data_line[x]);
+      }
     }
-
-    std::vector<T> raised(size.width() * size.height());
-    const int raised_stride = size.width();
-
-    detail::find_peaks::raiseAllButPeaks(most_significant, least_significant, increase_significance, peak_neighborhood,
-                                         outside_values, data, stride, size, &raised[0], raised_stride);
-
-    T* data_line = data;
-    T* raised_line = &raised[0];
-    const int w = size.width();
-    const int h = size.height();
-
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            if (data_line[x] == raised_line[x]) {
-                data_line[x] = peak_mutator(data_line[x]);
-            } else {
-                data_line[x] = non_peak_mutator(data_line[x]);
-            }
-        }
-        raised_line += raised_stride;
-        data_line += stride;
-    }
+    raised_line += raised_stride;
+    data_line += stride;
+  }
 }  // findPeaksInPlaceGeneric
 
 /**
  * \brief Same as findPeaksInPlaceGeneric(), but returning a binary image
  *        rather than mutating the input data.
  */
-template<typename T, typename MostSignificantSelector, typename LeastSignificantSelector, typename IncreaseSignificance>
+template <typename T,
+          typename MostSignificantSelector,
+          typename LeastSignificantSelector,
+          typename IncreaseSignificance>
 BinaryImage findPeaksGeneric(MostSignificantSelector most_significant,
                              LeastSignificantSelector least_significant,
                              IncreaseSignificance increase_significance,
@@ -156,37 +162,37 @@ BinaryImage findPeaksGeneric(MostSignificantSelector most_significant,
                              const T* data,
                              int stride,
                              QSize size) {
-    if (size.isEmpty()) {
-        return BinaryImage();
+  if (size.isEmpty()) {
+    return BinaryImage();
+  }
+
+  std::vector<T> raised(size.width() * size.height());
+  const int raised_stride = size.width();
+
+  detail::find_peaks::raiseAllButPeaks(most_significant, least_significant, increase_significance, peak_neighborhood,
+                                       outside_values, data, stride, size, &raised[0], raised_stride);
+
+  BinaryImage peaks(size, WHITE);
+  uint32_t* peaks_line = peaks.data();
+  const int peaks_stride = peaks.wordsPerLine();
+  const T* data_line = data;
+  const T* raised_line = &raised[0];
+  const int w = size.width();
+  const int h = size.height();
+  const uint32_t msb = uint32_t(1) << 31;
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      if (data_line[x] == raised_line[x]) {
+        peaks_line[x >> 5] |= msb >> (x & 31);
+      }
     }
+    peaks_line += peaks_stride;
+    raised_line += raised_stride;
+    data_line += stride;
+  }
 
-    std::vector<T> raised(size.width() * size.height());
-    const int raised_stride = size.width();
-
-    detail::find_peaks::raiseAllButPeaks(most_significant, least_significant, increase_significance, peak_neighborhood,
-                                         outside_values, data, stride, size, &raised[0], raised_stride);
-
-    BinaryImage peaks(size, WHITE);
-    uint32_t* peaks_line = peaks.data();
-    const int peaks_stride = peaks.wordsPerLine();
-    const T* data_line = data;
-    const T* raised_line = &raised[0];
-    const int w = size.width();
-    const int h = size.height();
-    const uint32_t msb = uint32_t(1) << 31;
-
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            if (data_line[x] == raised_line[x]) {
-                peaks_line[x >> 5] |= msb >> (x & 31);
-            }
-        }
-        peaks_line += peaks_stride;
-        raised_line += raised_stride;
-        data_line += stride;
-    }
-
-    return peaks;
+  return peaks;
 }  // findPeaksGeneric
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_FIND_PEAKS_H_

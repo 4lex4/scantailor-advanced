@@ -29,50 +29,50 @@ class CommandLine;
 
 namespace page_layout {
 class Alignment {
-public:
-    enum Vertical { TOP, VCENTER, BOTTOM, VAUTO, VORIGINAL };
+ public:
+  enum Vertical { TOP, VCENTER, BOTTOM, VAUTO, VORIGINAL };
 
-    enum Horizontal { LEFT, HCENTER, RIGHT, HAUTO, HORIGINAL };
+  enum Horizontal { LEFT, HCENTER, RIGHT, HAUTO, HORIGINAL };
 
-    /**
-     * \brief Constructs a null alignment.
-     */
-    Alignment();
+  /**
+   * \brief Constructs a null alignment.
+   */
+  Alignment();
 
-    Alignment(Vertical vertical, Horizontal horizontal);
+  Alignment(Vertical vertical, Horizontal horizontal);
 
-    explicit Alignment(const QDomElement& el);
+  explicit Alignment(const QDomElement& el);
 
-    Vertical vertical() const;
+  Vertical vertical() const;
 
-    void setVertical(Vertical vertical);
+  void setVertical(Vertical vertical);
 
-    Horizontal horizontal() const;
+  Horizontal horizontal() const;
 
-    void setHorizontal(Horizontal horizontal);
+  void setHorizontal(Horizontal horizontal);
 
-    bool isNull() const;
+  bool isNull() const;
 
-    void setNull(bool is_null);
+  void setNull(bool is_null);
 
-    bool isAutoVertical() const;
+  bool isAutoVertical() const;
 
-    bool isAutoHorizontal() const;
+  bool isAutoHorizontal() const;
 
-    bool isOriginal() const;
+  bool isOriginal() const;
 
-    bool isAuto() const;
+  bool isAuto() const;
 
-    bool operator==(const Alignment& other) const;
+  bool operator==(const Alignment& other) const;
 
-    bool operator!=(const Alignment& other) const;
+  bool operator!=(const Alignment& other) const;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-private:
-    Vertical m_vertical;
-    Horizontal m_horizontal;
-    bool m_isNull;
+ private:
+  Vertical m_vertical;
+  Horizontal m_horizontal;
+  bool m_isNull;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_ALIGNMENT_H_

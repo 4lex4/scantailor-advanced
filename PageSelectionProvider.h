@@ -19,21 +19,21 @@
 #ifndef PAGE_SELECTION_PROVIDER_H_
 #define PAGE_SELECTION_PROVIDER_H_
 
-#include "ref_countable.h"
 #include <set>
 #include <vector>
+#include "ref_countable.h"
 
 class PageSequence;
 class PageId;
 class PageRange;
 
 class PageSelectionProvider : public ref_countable {
-public:
-    virtual PageSequence allPages() const = 0;
+ public:
+  virtual PageSequence allPages() const = 0;
 
-    virtual std::set<PageId> selectedPages() const = 0;
+  virtual std::set<PageId> selectedPages() const = 0;
 
-    virtual std::vector<PageRange> selectedRanges() const = 0;
+  virtual std::vector<PageRange> selectedRanges() const = 0;
 };
 
 

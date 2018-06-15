@@ -28,43 +28,38 @@
  * this class deletes a file.  unique_ptr's copying semantics is also preserved.
  */
 class AutoRemovingFile {
-private:
-    struct CopyHelper {
-        AutoRemovingFile* obj;
+ private:
+  struct CopyHelper {
+    AutoRemovingFile* obj;
 
-        explicit CopyHelper(AutoRemovingFile* o) : obj(o) {
-        }
-    };
+    explicit CopyHelper(AutoRemovingFile* o) : obj(o) {}
+  };
 
-public:
-    AutoRemovingFile();
+ public:
+  AutoRemovingFile();
 
-    explicit AutoRemovingFile(const QString& file_path);
+  explicit AutoRemovingFile(const QString& file_path);
 
-    AutoRemovingFile(AutoRemovingFile& other);
+  AutoRemovingFile(AutoRemovingFile& other);
 
-    AutoRemovingFile(CopyHelper other);
+  AutoRemovingFile(CopyHelper other);
 
-    ~AutoRemovingFile();
+  ~AutoRemovingFile();
 
-    AutoRemovingFile& operator=(AutoRemovingFile& other);
+  AutoRemovingFile& operator=(AutoRemovingFile& other);
 
-    AutoRemovingFile& operator=(CopyHelper other);
+  AutoRemovingFile& operator=(CopyHelper other);
 
-    operator CopyHelper() {
-        return CopyHelper(this);
-    }
+  operator CopyHelper() { return CopyHelper(this); }
 
-    const QString& get() const {
-        return m_file;
-    }
+  const QString& get() const { return m_file; }
 
-    void reset(const QString& file);
+  void reset(const QString& file);
 
-    QString release();
+  QString release();
 
-private:
-    QString m_file;
+ private:
+  QString m_file;
 };
 
 

@@ -26,34 +26,31 @@
 #include <QAtomicInt>
 
 class ref_countable {
-public:
-    ref_countable() : m_refCounter(0) {
+ public:
+  ref_countable() : m_refCounter(0) {}
+
+  ref_countable(const ref_countable& other) {
+    // don't copy the reference counter!
+  }
+
+  ref_countable& operator=(const ref_countable& other) {
+    // don't copy the reference counter!
+
+    return *this;
+  }
+
+  virtual ~ref_countable() = default;
+
+  void ref() const { m_refCounter.fetchAndAddRelaxed(1); }
+
+  void unref() const {
+    if (m_refCounter.fetchAndAddRelease(-1) == 1) {
+      delete this;
     }
+  }
 
-    ref_countable(const ref_countable& other) {
-        // don't copy the reference counter!
-    }
-
-    ref_countable& operator=(const ref_countable& other) {
-        // don't copy the reference counter!
-
-        return *this;
-    }
-
-    virtual ~ref_countable() = default;
-
-    void ref() const {
-        m_refCounter.fetchAndAddRelaxed(1);
-    }
-
-    void unref() const {
-        if (m_refCounter.fetchAndAddRelease(-1) == 1) {
-            delete this;
-        }
-    }
-
-private:
-    mutable QAtomicInt m_refCounter;
+ private:
+  mutable QAtomicInt m_refCounter;
 };
 
 

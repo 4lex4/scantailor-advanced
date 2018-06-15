@@ -19,8 +19,8 @@
 #ifndef ATOMICFILEOVERWRITER_H_
 #define ATOMICFILEOVERWRITER_H_
 
-#include "NonCopyable.h"
 #include <memory>
+#include "NonCopyable.h"
 
 class QString;
 class QIODevice;
@@ -34,43 +34,43 @@ class QTemporaryFile;
  * in the same directory as the target file.
  */
 class AtomicFileOverwriter {
-    DECLARE_NON_COPYABLE(AtomicFileOverwriter)
+  DECLARE_NON_COPYABLE(AtomicFileOverwriter)
 
-public:
-    AtomicFileOverwriter();
+ public:
+  AtomicFileOverwriter();
 
-    /**
-     * \brief Destroys the object and calls abort() if necessary.
-     */
-    ~AtomicFileOverwriter();
+  /**
+   * \brief Destroys the object and calls abort() if necessary.
+   */
+  ~AtomicFileOverwriter();
 
-    /**
-     * \brief Start writing to a temporary file.
-     *
-     * \returns A temporary file as QIODevice, or null of temporary file
-     *          could not be opened.  In latter case, calling abort()
-     *          is not necessary.
-     *
-     * If a file is already being written, it calles abort() and then
-     * proceeds as usual.
-     */
-    QIODevice* startWriting(const QString& file_path);
+  /**
+   * \brief Start writing to a temporary file.
+   *
+   * \returns A temporary file as QIODevice, or null of temporary file
+   *          could not be opened.  In latter case, calling abort()
+   *          is not necessary.
+   *
+   * If a file is already being written, it calles abort() and then
+   * proceeds as usual.
+   */
+  QIODevice* startWriting(const QString& file_path);
 
-    /**
-     * \brief Replaces the target file with the temporary one.
-     *
-     * If replacing failed, false is returned and the temporary file
-     * is removed.
-     */
-    bool commit();
+  /**
+   * \brief Replaces the target file with the temporary one.
+   *
+   * If replacing failed, false is returned and the temporary file
+   * is removed.
+   */
+  bool commit();
 
-    /**
-     * \brief Removes the temporary file without touching the target one.
-     */
-    void abort();
+  /**
+   * \brief Removes the temporary file without touching the target one.
+   */
+  void abort();
 
-private:
-    std::unique_ptr<QTemporaryFile> m_ptrTempFile;
+ private:
+  std::unique_ptr<QTemporaryFile> m_ptrTempFile;
 };
 
 

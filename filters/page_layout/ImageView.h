@@ -19,25 +19,25 @@
 #ifndef PAGE_LAYOUT_IMAGEVIEW_H_
 #define PAGE_LAYOUT_IMAGEVIEW_H_
 
-#include "ImageViewBase.h"
-#include "ImageTransformation.h"
-#include "InteractionHandler.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
-#include "DraggableObject.h"
-#include "ObjectDragHandler.h"
-#include "Alignment.h"
-#include "intrusive_ptr.h"
-#include "PageId.h"
-#include "Guide.h"
-#include <QTransform>
-#include <QSizeF>
-#include <QRectF>
-#include <QPointF>
-#include <QPoint>
-#include <QMenu>
-#include <interaction/DraggableLineSegment.h>
 #include <imageproc/BinaryImage.h>
+#include <interaction/DraggableLineSegment.h>
+#include <QMenu>
+#include <QPoint>
+#include <QPointF>
+#include <QRectF>
+#include <QSizeF>
+#include <QTransform>
+#include "Alignment.h"
+#include "DragHandler.h"
+#include "DraggableObject.h"
+#include "Guide.h"
+#include "ImageTransformation.h"
+#include "ImageViewBase.h"
+#include "InteractionHandler.h"
+#include "ObjectDragHandler.h"
+#include "PageId.h"
+#include "ZoomHandler.h"
+#include "intrusive_ptr.h"
 
 class Margins;
 
@@ -50,269 +50,269 @@ class OptionsWidget;
 class Settings;
 
 class ImageView : public ImageViewBase, private InteractionHandler {
-    Q_OBJECT
-public:
-    ImageView(const intrusive_ptr<Settings>& settings,
-              const PageId& page_id,
-              const QImage& image,
-              const QImage& downscaled_image,
-              const imageproc::GrayImage& gray_image,
-              const ImageTransformation& xform,
-              const QRectF& adapted_content_rect,
-              const OptionsWidget& opt_widget);
+  Q_OBJECT
+ public:
+  ImageView(const intrusive_ptr<Settings>& settings,
+            const PageId& page_id,
+            const QImage& image,
+            const QImage& downscaled_image,
+            const imageproc::GrayImage& gray_image,
+            const ImageTransformation& xform,
+            const QRectF& adapted_content_rect,
+            const OptionsWidget& opt_widget);
 
-    ~ImageView() override;
+  ~ImageView() override;
 
-signals:
+ signals:
 
-    void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& page_id);
 
-    void invalidateAllThumbnails();
+  void invalidateAllThumbnails();
 
-    void marginsSetLocally(const Margins& margins_mm);
+  void marginsSetLocally(const Margins& margins_mm);
 
-public slots:
+ public slots:
 
-    void marginsSetExternally(const Margins& margins_mm);
+  void marginsSetExternally(const Margins& margins_mm);
 
-    void leftRightLinkToggled(bool linked);
+  void leftRightLinkToggled(bool linked);
 
-    void topBottomLinkToggled(bool linked);
+  void topBottomLinkToggled(bool linked);
 
-    void alignmentChanged(const Alignment& alignment);
+  void alignmentChanged(const Alignment& alignment);
 
-    void aggregateHardSizeChanged();
+  void aggregateHardSizeChanged();
 
-protected:
-    void updatePhysSize() override;
+ protected:
+  void updatePhysSize() override;
 
-private:
-    enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
+ private:
+  enum Edge { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
 
-    enum FitMode { FIT, DONT_FIT };
+  enum FitMode { FIT, DONT_FIT };
 
-    enum AggregateSizeChanged { AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED };
+  enum AggregateSizeChanged { AGGREGATE_SIZE_UNCHANGED, AGGREGATE_SIZE_CHANGED };
 
-    struct StateBeforeResizing {
-        /**
-         * Transformation from virtual image coordinates to widget coordinates.
-         */
-        QTransform virtToWidget;
-
-        /**
-         * Transformation from widget coordinates to virtual image coordinates.
-         */
-        QTransform widgetToVirt;
-
-        /**
-         * m_middleRect in widget coordinates.
-         */
-        QRectF middleWidgetRect;
-
-        /**
-         * Mouse pointer position in widget coordinates.
-         */
-        QPointF mousePos;
-
-        /**
-         * The point in image that is to be centered on the screen,
-         * in pixel image coordinates.
-         */
-        QPointF focalPoint;
-    };
-
-    void onPaint(QPainter& painter, const InteractionState& interaction) override;
-
-    void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
-
-    void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
-
-    Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
-
-    Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
-
-    void dragInitiated(const QPointF& mouse_pos);
-
-    void innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
-
-    void middleRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
-
-    void dragFinished();
-
-    void recalcBoxesAndFit(const Margins& margins_mm);
-
-    void updatePresentationTransform(FitMode fit_mode);
-
-    void forceNonNegativeHardMargins(QRectF& middle_rect) const;
-
-    Margins calcHardMarginsMM() const;
-
-    void recalcOuterRect();
-
-    QSizeF origRectToSizeMM(const QRectF& rect) const;
-
-    AggregateSizeChanged commitHardMargins(const Margins& margins_mm);
-
-    void invalidateThumbnails(AggregateSizeChanged agg_size_changed);
-
-    void setupContextMenuInteraction();
-
-    void setupGuides();
-
-    void addHorizontalGuide(double y);
-
-    void addVerticalGuide(double x);
-
-    void removeAllGuides();
-
-    void removeGuide(int index);
-
-    QTransform widgetToGuideCs() const;
-
-    QTransform guideToWidgetCs() const;
-
-    void syncGuidesSettings();
-
-    void setupGuideInteraction(int index);
-
-    QLineF guidePosition(int index) const;
-
-    void guideMoveRequest(int index, QLineF line);
-
-    void guideDragFinished();
-
-    QLineF widgetGuideLine(int index) const;
-
-    int getGuideUnderMouse(const QPointF& screenMousePos, const InteractionState& state) const;
-
-    void enableGuidesInteraction(bool state);
-
-    void forceInscribeGuides();
-
-    Proximity rectProximity(const QRectF& box, const QPointF& mouse_pos) const;
-
-    void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
-
-    void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
-
-    void attachContentToNearestGuide(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
-
-    QRect findContentInArea(const QRect& area) const;
-
-    void enableMiddleRectInteraction(bool state);
-
-    bool isShowingMiddleRectEnabled() const;
-
-
-    DraggableObject m_innerCorners[4];
-    ObjectDragHandler m_innerCornerHandlers[4];
-    DraggableObject m_innerEdges[4];
-    ObjectDragHandler m_innerEdgeHandlers[4];
-
-    DraggableObject m_middleCorners[4];
-    ObjectDragHandler m_middleCornerHandlers[4];
-    DraggableObject m_middleEdges[4];
-    ObjectDragHandler m_middleEdgeHandlers[4];
-
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
-
-    intrusive_ptr<Settings> m_ptrSettings;
-
-    const PageId m_pageId;
+  struct StateBeforeResizing {
+    /**
+     * Transformation from virtual image coordinates to widget coordinates.
+     */
+    QTransform virtToWidget;
 
     /**
-     * Transformation between the pixel image coordinates and millimeters,
-     * assuming that point (0, 0) in pixel coordinates corresponds to point
-     * (0, 0) in millimeter coordinates.
+     * Transformation from widget coordinates to virtual image coordinates.
      */
-    const QTransform m_pixelsToMmXform;
-    const QTransform m_mmToPixelsXform;
-
-    const ImageTransformation m_xform;
+    QTransform widgetToVirt;
 
     /**
-     * Content box in virtual image coordinates.
+     * m_middleRect in widget coordinates.
      */
-    const QRectF m_innerRect;
+    QRectF middleWidgetRect;
 
     /**
-     * \brief Content box + hard margins in virtual image coordinates.
-     *
-     * Hard margins are margins that will be there no matter what.
-     * Soft margins are those added to extend the page to match its
-     * size with other pages.
+     * Mouse pointer position in widget coordinates.
      */
-    QRectF m_middleRect;
+    QPointF mousePos;
 
     /**
-     * \brief Content box + hard + soft margins in virtual image coordinates.
-     *
-     * Hard margins are margins that will be there no matter what.
-     * Soft margins are those added to extend the page to match its
-     * size with other pages.
+     * The point in image that is to be centered on the screen,
+     * in pixel image coordinates.
      */
-    QRectF m_outerRect;
+    QPointF focalPoint;
+  };
 
-    /**
-     * \brief Aggregate (max width + max height) hard page size.
-     *
-     * This one is for displaying purposes only.  It changes during
-     * dragging, and it may differ from what
-     * m_ptrSettings->getAggregateHardSizeMM() would return.
-     *
-     * \see m_committedAggregateHardSizeMM
-     */
-    QSizeF m_aggregateHardSizeMM;
+  void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    /**
-     * \brief Aggregate (max width + max height) hard page size.
-     *
-     * This one is supposed to be the cached version of what
-     * m_ptrSettings->getAggregateHardSizeMM() would return.
-     *
-     * \see m_aggregateHardSizeMM
-     */
-    QSizeF m_committedAggregateHardSizeMM;
+  void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
-    Alignment m_alignment;
+  void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    /**
-     * Some data saved at the beginning of a resizing operation.
-     */
-    StateBeforeResizing m_beforeResizing;
+  Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
-    bool m_leftRightLinked;
-    bool m_topBottomLinked;
+  Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
 
-    /** Guides settings. */
-    std::unordered_map<int, Guide> m_guides;
-    int m_guidesFreeIndex;
+  void dragInitiated(const QPointF& mouse_pos);
 
-    std::unordered_map<int, DraggableLineSegment> m_draggableGuides;
-    std::unordered_map<int, ObjectDragHandler> m_draggableGuideHandlers;
+  void innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
 
-    QMenu* m_contextMenu;
-    QAction* m_addHorizontalGuideAction;
-    QAction* m_addVerticalGuideAction;
-    QAction* m_removeAllGuidesAction;
-    QAction* m_removeGuideUnderMouseAction;
-    QAction* m_guideActionsSeparator;
-    QAction* m_showMiddleRectAction;
-    QPointF m_lastContextMenuPos;
-    int m_guideUnderMouse;
+  void middleRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
 
-    DraggableObject m_innerRectArea;
-    ObjectDragHandler m_innerRectAreaHandler;
+  void dragFinished();
 
-    Qt::KeyboardModifier m_innerRectVerticalDragModifier;
-    Qt::KeyboardModifier m_innerRectHorizontalDragModifier;
+  void recalcBoxesAndFit(const Margins& margins_mm);
 
-    imageproc::BinaryImage m_contentImage;
-    QTransform m_originalToContentImage;
-    QTransform m_contentImageToOriginal;
+  void updatePresentationTransform(FitMode fit_mode);
 
-    const bool m_nullContentRect;
+  void forceNonNegativeHardMargins(QRectF& middle_rect) const;
+
+  Margins calcHardMarginsMM() const;
+
+  void recalcOuterRect();
+
+  QSizeF origRectToSizeMM(const QRectF& rect) const;
+
+  AggregateSizeChanged commitHardMargins(const Margins& margins_mm);
+
+  void invalidateThumbnails(AggregateSizeChanged agg_size_changed);
+
+  void setupContextMenuInteraction();
+
+  void setupGuides();
+
+  void addHorizontalGuide(double y);
+
+  void addVerticalGuide(double x);
+
+  void removeAllGuides();
+
+  void removeGuide(int index);
+
+  QTransform widgetToGuideCs() const;
+
+  QTransform guideToWidgetCs() const;
+
+  void syncGuidesSettings();
+
+  void setupGuideInteraction(int index);
+
+  QLineF guidePosition(int index) const;
+
+  void guideMoveRequest(int index, QLineF line);
+
+  void guideDragFinished();
+
+  QLineF widgetGuideLine(int index) const;
+
+  int getGuideUnderMouse(const QPointF& screenMousePos, const InteractionState& state) const;
+
+  void enableGuidesInteraction(bool state);
+
+  void forceInscribeGuides();
+
+  Proximity rectProximity(const QRectF& box, const QPointF& mouse_pos) const;
+
+  void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
+
+  void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
+
+  void attachContentToNearestGuide(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
+
+  QRect findContentInArea(const QRect& area) const;
+
+  void enableMiddleRectInteraction(bool state);
+
+  bool isShowingMiddleRectEnabled() const;
+
+
+  DraggableObject m_innerCorners[4];
+  ObjectDragHandler m_innerCornerHandlers[4];
+  DraggableObject m_innerEdges[4];
+  ObjectDragHandler m_innerEdgeHandlers[4];
+
+  DraggableObject m_middleCorners[4];
+  ObjectDragHandler m_middleCornerHandlers[4];
+  DraggableObject m_middleEdges[4];
+  ObjectDragHandler m_middleEdgeHandlers[4];
+
+  DragHandler m_dragHandler;
+  ZoomHandler m_zoomHandler;
+
+  intrusive_ptr<Settings> m_ptrSettings;
+
+  const PageId m_pageId;
+
+  /**
+   * Transformation between the pixel image coordinates and millimeters,
+   * assuming that point (0, 0) in pixel coordinates corresponds to point
+   * (0, 0) in millimeter coordinates.
+   */
+  const QTransform m_pixelsToMmXform;
+  const QTransform m_mmToPixelsXform;
+
+  const ImageTransformation m_xform;
+
+  /**
+   * Content box in virtual image coordinates.
+   */
+  const QRectF m_innerRect;
+
+  /**
+   * \brief Content box + hard margins in virtual image coordinates.
+   *
+   * Hard margins are margins that will be there no matter what.
+   * Soft margins are those added to extend the page to match its
+   * size with other pages.
+   */
+  QRectF m_middleRect;
+
+  /**
+   * \brief Content box + hard + soft margins in virtual image coordinates.
+   *
+   * Hard margins are margins that will be there no matter what.
+   * Soft margins are those added to extend the page to match its
+   * size with other pages.
+   */
+  QRectF m_outerRect;
+
+  /**
+   * \brief Aggregate (max width + max height) hard page size.
+   *
+   * This one is for displaying purposes only.  It changes during
+   * dragging, and it may differ from what
+   * m_ptrSettings->getAggregateHardSizeMM() would return.
+   *
+   * \see m_committedAggregateHardSizeMM
+   */
+  QSizeF m_aggregateHardSizeMM;
+
+  /**
+   * \brief Aggregate (max width + max height) hard page size.
+   *
+   * This one is supposed to be the cached version of what
+   * m_ptrSettings->getAggregateHardSizeMM() would return.
+   *
+   * \see m_aggregateHardSizeMM
+   */
+  QSizeF m_committedAggregateHardSizeMM;
+
+  Alignment m_alignment;
+
+  /**
+   * Some data saved at the beginning of a resizing operation.
+   */
+  StateBeforeResizing m_beforeResizing;
+
+  bool m_leftRightLinked;
+  bool m_topBottomLinked;
+
+  /** Guides settings. */
+  std::unordered_map<int, Guide> m_guides;
+  int m_guidesFreeIndex;
+
+  std::unordered_map<int, DraggableLineSegment> m_draggableGuides;
+  std::unordered_map<int, ObjectDragHandler> m_draggableGuideHandlers;
+
+  QMenu* m_contextMenu;
+  QAction* m_addHorizontalGuideAction;
+  QAction* m_addVerticalGuideAction;
+  QAction* m_removeAllGuidesAction;
+  QAction* m_removeGuideUnderMouseAction;
+  QAction* m_guideActionsSeparator;
+  QAction* m_showMiddleRectAction;
+  QPointF m_lastContextMenuPos;
+  int m_guideUnderMouse;
+
+  DraggableObject m_innerRectArea;
+  ObjectDragHandler m_innerRectAreaHandler;
+
+  Qt::KeyboardModifier m_innerRectVerticalDragModifier;
+  Qt::KeyboardModifier m_innerRectHorizontalDragModifier;
+
+  imageproc::BinaryImage m_contentImage;
+  QTransform m_originalToContentImage;
+  QTransform m_contentImageToOriginal;
+
+  const bool m_nullContentRect;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_

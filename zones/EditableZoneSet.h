@@ -20,128 +20,110 @@
 #ifndef EDITABLE_ZONE_SET_H_
 #define EDITABLE_ZONE_SET_H_
 
+#include <QObject>
+#include <boost/foreach.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/mpl/bool.hpp>
+#include <unordered_map>
 #include "EditableSpline.h"
 #include "PropertySet.h"
 #include "intrusive_ptr.h"
-#include <QObject>
-#include <boost/mpl/bool.hpp>
-#include <boost/foreach.hpp>
-#include <boost/iterator/iterator_facade.hpp>
-#include <unordered_map>
 
 class EditableZoneSet : public QObject {
-    Q_OBJECT
-private:
-    typedef std::unordered_map<EditableSpline::Ptr, intrusive_ptr<PropertySet>, EditableSpline::Ptr::hash> Map;
+  Q_OBJECT
+ private:
+  typedef std::unordered_map<EditableSpline::Ptr, intrusive_ptr<PropertySet>, EditableSpline::Ptr::hash> Map;
 
-public:
-    class const_iterator;
+ public:
+  class const_iterator;
 
-    class Zone {
-        friend class EditableZoneSet::const_iterator;
+  class Zone {
+    friend class EditableZoneSet::const_iterator;
 
-    public:
-        Zone() = default;
+   public:
+    Zone() = default;
 
-        const EditableSpline::Ptr& spline() const {
-            return m_iter->first;
-        }
+    const EditableSpline::Ptr& spline() const { return m_iter->first; }
 
-        const intrusive_ptr<PropertySet>& properties() const {
-            return m_iter->second;
-        }
+    const intrusive_ptr<PropertySet>& properties() const { return m_iter->second; }
 
-    private:
-        explicit Zone(Map::const_iterator it) : m_iter(it) {
-        }
+   private:
+    explicit Zone(Map::const_iterator it) : m_iter(it) {}
 
-        Map::const_iterator m_iter;
-    };
+    Map::const_iterator m_iter;
+  };
 
 
-    class const_iterator
-            : public boost::iterator_facade<const_iterator, Zone const, boost::bidirectional_traversal_tag> {
-        friend class EditableZoneSet;
+  class const_iterator : public boost::iterator_facade<const_iterator, Zone const, boost::bidirectional_traversal_tag> {
+    friend class EditableZoneSet;
 
-        friend class boost::iterator_core_access;
+    friend class boost::iterator_core_access;
 
-    public:
-        const_iterator() : m_zone() {
-        }
+   public:
+    const_iterator() : m_zone() {}
 
-        void increment() {
-            ++m_iter;
-            m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
-        }
-
-        void decrement() {
-            --m_iter;
-            m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
-        }
-
-        bool equal(const const_iterator& other) const {
-            return m_iter == other.m_iter;
-        }
-
-        const Zone& dereference() const {
-            return m_zone;
-        }
-
-    private:
-        explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it, const Map* splineMap)
-                : m_iter(it), m_ptrSplineMap(splineMap), m_zone(splineMap->find(*it)) {
-        }
-
-        Zone m_zone;
-        std::list<EditableSpline::Ptr>::const_iterator m_iter;
-        const Map* m_ptrSplineMap{};
-    };
-
-    typedef const_iterator iterator;
-
-    EditableZoneSet();
-
-    const_iterator begin() const {
-        return iterator(m_splineList.begin(), const_cast<const Map*>(&m_splineMap));
+    void increment() {
+      ++m_iter;
+      m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
     }
 
-    const_iterator end() const {
-        return iterator(m_splineList.end(), const_cast<const Map*>(&m_splineMap));
+    void decrement() {
+      --m_iter;
+      m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
     }
 
-    const PropertySet& defaultProperties() const {
-        return m_defaultProps;
-    }
+    bool equal(const const_iterator& other) const { return m_iter == other.m_iter; }
 
-    void setDefaultProperties(const PropertySet& props);
+    const Zone& dereference() const { return m_zone; }
 
-    void addZone(const EditableSpline::Ptr& spline);
+   private:
+    explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it, const Map* splineMap)
+        : m_iter(it), m_ptrSplineMap(splineMap), m_zone(splineMap->find(*it)) {}
 
-    void addZone(const EditableSpline::Ptr& spline, const PropertySet& props);
+    Zone m_zone;
+    std::list<EditableSpline::Ptr>::const_iterator m_iter;
+    const Map* m_ptrSplineMap{};
+  };
 
-    void removeZone(const EditableSpline::Ptr& spline);
+  typedef const_iterator iterator;
 
-    void commit();
+  EditableZoneSet();
 
-    intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
+  const_iterator begin() const { return iterator(m_splineList.begin(), const_cast<const Map*>(&m_splineMap)); }
 
-    intrusive_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
+  const_iterator end() const { return iterator(m_splineList.end(), const_cast<const Map*>(&m_splineMap)); }
 
-signals:
+  const PropertySet& defaultProperties() const { return m_defaultProps; }
 
-    void committed();
+  void setDefaultProperties(const PropertySet& props);
 
-private:
-    Map m_splineMap;
-    std::list<EditableSpline::Ptr> m_splineList;
-    PropertySet m_defaultProps;
+  void addZone(const EditableSpline::Ptr& spline);
+
+  void addZone(const EditableSpline::Ptr& spline, const PropertySet& props);
+
+  void removeZone(const EditableSpline::Ptr& spline);
+
+  void commit();
+
+  intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
+
+  intrusive_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
+
+ signals:
+
+  void committed();
+
+ private:
+  Map m_splineMap;
+  std::list<EditableSpline::Ptr> m_splineList;
+  PropertySet m_defaultProps;
 };
 
 
 namespace boost {
 namespace foreach {
 // Make BOOST_FOREACH work with the above class (necessary for boost >= 1.46 with gcc >= 4.6)
-template<>
+template <>
 struct is_noncopyable<EditableZoneSet> : public boost::mpl::true_ {};
 }  // namespace foreach
 }  // namespace boost

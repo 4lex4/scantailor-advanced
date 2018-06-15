@@ -24,8 +24,8 @@
 class OrthogonalRotation;
 
 class PageOrientationCollector : public AbstractFilterDataCollector {
-public:
-    virtual void process(const OrthogonalRotation& orientation) = 0;
+ public:
+  virtual void process(const OrthogonalRotation& orientation) = 0;
 };
 
 

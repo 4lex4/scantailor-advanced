@@ -22,60 +22,60 @@
 EditableSpline::EditableSpline() = default;
 
 EditableSpline::EditableSpline(const SerializableSpline& spline) {
-    for (const QPointF& pt : spline.toPolygon()) {
-        appendVertex(pt);
-    }
+  for (const QPointF& pt : spline.toPolygon()) {
+    appendVertex(pt);
+  }
 
-    SplineVertex::Ptr last_vertex(lastVertex());
-    if (last_vertex && (firstVertex()->point() == last_vertex->point())) {
-        last_vertex->remove();
-    }
+  SplineVertex::Ptr last_vertex(lastVertex());
+  if (last_vertex && (firstVertex()->point() == last_vertex->point())) {
+    last_vertex->remove();
+  }
 
-    setBridged(true);
+  setBridged(true);
 }
 
 void EditableSpline::appendVertex(const QPointF& pt) {
-    m_sentinel.insertBefore(pt);
+  m_sentinel.insertBefore(pt);
 }
 
 bool EditableSpline::hasAtLeastSegments(int num) const {
-    for (SegmentIterator it((EditableSpline&) *this); num > 0 && it.hasNext(); it.next()) {
-        --num;
-    }
+  for (SegmentIterator it((EditableSpline&) *this); num > 0 && it.hasNext(); it.next()) {
+    --num;
+  }
 
-    return num == 0;
+  return num == 0;
 }
 
 QPolygonF EditableSpline::toPolygon() const {
-    QPolygonF poly;
+  QPolygonF poly;
 
-    SplineVertex::Ptr vertex(firstVertex());
-    for (; vertex; vertex = vertex->next(SplineVertex::NO_LOOP)) {
-        poly.push_back(vertex->point());
-    }
+  SplineVertex::Ptr vertex(firstVertex());
+  for (; vertex; vertex = vertex->next(SplineVertex::NO_LOOP)) {
+    poly.push_back(vertex->point());
+  }
 
-    vertex = lastVertex()->next(SplineVertex::LOOP_IF_BRIDGED);
-    if (vertex) {
-        poly.push_back(vertex->point());
-    }
+  vertex = lastVertex()->next(SplineVertex::LOOP_IF_BRIDGED);
+  if (vertex) {
+    poly.push_back(vertex->point());
+  }
 
-    return poly;
+  return poly;
 }
 
 /*======================== Spline::SegmentIterator =======================*/
 
 bool EditableSpline::SegmentIterator::hasNext() const {
-    return m_ptrNextVertex && m_ptrNextVertex->next(SplineVertex::LOOP_IF_BRIDGED);
+  return m_ptrNextVertex && m_ptrNextVertex->next(SplineVertex::LOOP_IF_BRIDGED);
 }
 
 SplineSegment EditableSpline::SegmentIterator::next() {
-    assert(hasNext());
+  assert(hasNext());
 
-    SplineVertex::Ptr origin(m_ptrNextVertex);
-    m_ptrNextVertex = m_ptrNextVertex->next(SplineVertex::NO_LOOP);
-    if (!m_ptrNextVertex) {
-        return SplineSegment(origin, origin->next(SplineVertex::LOOP_IF_BRIDGED));
-    } else {
-        return SplineSegment(origin, m_ptrNextVertex);
-    }
+  SplineVertex::Ptr origin(m_ptrNextVertex);
+  m_ptrNextVertex = m_ptrNextVertex->next(SplineVertex::NO_LOOP);
+  if (!m_ptrNextVertex) {
+    return SplineSegment(origin, origin->next(SplineVertex::LOOP_IF_BRIDGED));
+  } else {
+    return SplineSegment(origin, m_ptrNextVertex);
+  }
 }

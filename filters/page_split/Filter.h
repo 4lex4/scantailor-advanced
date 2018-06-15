@@ -19,15 +19,15 @@
 #ifndef PAGE_SPLIT_FILTER_H_
 #define PAGE_SPLIT_FILTER_H_
 
-#include "NonCopyable.h"
-#include "AbstractFilter.h"
-#include "PageView.h"
-#include "intrusive_ptr.h"
-#include "FilterResult.h"
-#include "SafeDeletingQObjectPtr.h"
-#include <set>
-#include "PageOrderOption.h"
 #include <QCoreApplication>
+#include <set>
+#include "AbstractFilter.h"
+#include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageOrderOption.h"
+#include "PageView.h"
+#include "SafeDeletingQObjectPtr.h"
+#include "intrusive_ptr.h"
 
 class ImageId;
 class PageInfo;
@@ -49,53 +49,53 @@ class Settings;
 class Params;
 
 class Filter : public AbstractFilter {
-    DECLARE_NON_COPYABLE(Filter)
+  DECLARE_NON_COPYABLE(Filter)
 
-    Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
-public:
-    Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor);
+  Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
+ public:
+  Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor);
 
-    ~Filter() override;
+  ~Filter() override;
 
-    QString getName() const override;
+  QString getName() const override;
 
-    PageView getView() const override;
+  PageView getView() const override;
 
-    void performRelinking(const AbstractRelinker& relinker) override;
+  void performRelinking(const AbstractRelinker& relinker) override;
 
-    void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
+  void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
-    QDomElement saveSettings(const ProjectWriter& wirter, QDomDocument& doc) const override;
+  QDomElement saveSettings(const ProjectWriter& wirter, QDomDocument& doc) const override;
 
-    void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
+  void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-    void loadDefaultSettings(const PageInfo& page_info) override;
+  void loadDefaultSettings(const PageInfo& page_info) override;
 
-    intrusive_ptr<Task> createTask(const PageInfo& page_info,
-                                   intrusive_ptr<deskew::Task> next_task,
-                                   bool batch_processing,
-                                   bool debug);
+  intrusive_ptr<Task> createTask(const PageInfo& page_info,
+                                 intrusive_ptr<deskew::Task> next_task,
+                                 bool batch_processing,
+                                 bool debug);
 
-    intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task);
+  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task);
 
-    OptionsWidget* optionsWidget();
+  OptionsWidget* optionsWidget();
 
-    void pageOrientationUpdate(const ImageId& image_id, const OrthogonalRotation& orientation);
+  void pageOrientationUpdate(const ImageId& image_id, const OrthogonalRotation& orientation);
 
-    std::vector<PageOrderOption> pageOrderOptions() const override;
+  std::vector<PageOrderOption> pageOrderOptions() const override;
 
-    int selectedPageOrder() const override;
+  int selectedPageOrder() const override;
 
-    void selectPageOrder(int option) override;
+  void selectPageOrder(int option) override;
 
-private:
-    void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
+ private:
+  void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
 
-    intrusive_ptr<ProjectPages> m_ptrPages;
-    intrusive_ptr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    std::vector<PageOrderOption> m_pageOrderOptions;
-    int m_selectedPageOrder;
+  intrusive_ptr<ProjectPages> m_ptrPages;
+  intrusive_ptr<Settings> m_ptrSettings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  std::vector<PageOrderOption> m_pageOrderOptions;
+  int m_selectedPageOrder;
 };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_FILTER_H_

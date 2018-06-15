@@ -19,29 +19,28 @@
 #include "DraggablePoint.h"
 #include "ImageViewBase.h"
 
-DraggablePoint::DraggablePoint() : m_hitAreaRadius(), m_proximityPriority(1) {
-}
+DraggablePoint::DraggablePoint() : m_hitAreaRadius(), m_proximityPriority(1) {}
 
 Proximity DraggablePoint::proximityThreshold(const InteractionState& state) const {
-    if (m_hitAreaRadius == 0.0) {
-        return state.proximityThreshold();
-    } else {
-        return Proximity::fromDist(m_hitAreaRadius);
-    }
+  if (m_hitAreaRadius == 0.0) {
+    return state.proximityThreshold();
+  } else {
+    return Proximity::fromDist(m_hitAreaRadius);
+  }
 }
 
 int DraggablePoint::proximityPriority() const {
-    return m_proximityPriority;
+  return m_proximityPriority;
 }
 
 Proximity DraggablePoint::proximity(const QPointF& mouse_pos) {
-    return Proximity(pointPosition(), mouse_pos);
+  return Proximity(pointPosition(), mouse_pos);
 }
 
 void DraggablePoint::dragInitiated(const QPointF& mouse_pos) {
-    m_pointRelativeToMouse = pointPosition() - mouse_pos;
+  m_pointRelativeToMouse = pointPosition() - mouse_pos;
 }
 
 void DraggablePoint::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-    pointMoveRequest(mouse_pos + m_pointRelativeToMouse, mask);
+  pointMoveRequest(mouse_pos + m_pointRelativeToMouse, mask);
 }

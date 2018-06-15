@@ -22,37 +22,37 @@
 #include <QApplication>
 #include <QTimer>
 #include <QtCore/QTranslator>
-#include "FilterUiInterface.h"
 #include "BackgroundTask.h"
+#include "FilterUiInterface.h"
 #include "OutputFileNameGenerator.h"
 
 class Application : public QApplication {
-    Q_OBJECT
-public:
-    Application(int& argc, char** argv);
+  Q_OBJECT
+ public:
+  Application(int& argc, char** argv);
 
-    bool notify(QObject* receiver, QEvent* e) override;
+  bool notify(QObject* receiver, QEvent* e) override;
 
-    const QString& getCurrentLocale() const;
+  const QString& getCurrentLocale() const;
 
-    void installLanguage(const QString& locale);
+  void installLanguage(const QString& locale);
 
-    std::list<QString> getLanguagesList() const;
+  std::list<QString> getLanguagesList() const;
 
-    bool isPortableVersion() const;
+  bool isPortableVersion() const;
 
-    const QString& getPortableConfigPath() const;
+  const QString& getPortableConfigPath() const;
 
-private:
-    void initTranslations();
+ private:
+  void initTranslations();
 
-    void initPortableVersion();
+  void initPortableVersion();
 
 
-    QTranslator m_translator;
-    QString m_currentLocale;
-    std::map<QString, QString> m_translationsMap;
-    QString m_portableConfigPath;
+  QTranslator m_translator;
+  QString m_currentLocale;
+  std::map<QString, QString> m_translationsMap;
+  QString m_portableConfigPath;
 };
 
 

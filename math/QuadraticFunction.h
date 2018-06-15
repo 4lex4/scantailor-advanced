@@ -19,9 +19,9 @@
 #ifndef QUADRATIC_FUNCTION_H_
 #define QUADRATIC_FUNCTION_H_
 
+#include <cstddef>
 #include "MatT.h"
 #include "VecT.h"
-#include <cstddef>
 
 /**
  * A quadratic function from arbitrary number of variables
@@ -36,66 +36,64 @@
  * c: constant component.\n
  */
 class QuadraticFunction {
-    // Member-wise copying is OK.
-public:
-    /**
-     * Quadratic function's gradient can be written in matrix form as:
-     * \code
-     * nabla F(x) = A * x + b
-     * \endcode
-     */
-    class Gradient {
-    public:
-        MatT<double> A;
-        VecT<double> b;
-    };
-
-
-    /**
-     * Matrix A has column-major data storage, so that it can be used with MatrixCalc.
-     */
+  // Member-wise copying is OK.
+ public:
+  /**
+   * Quadratic function's gradient can be written in matrix form as:
+   * \code
+   * nabla F(x) = A * x + b
+   * \endcode
+   */
+  class Gradient {
+   public:
     MatT<double> A;
     VecT<double> b;
-    double c;
+  };
 
-    /**
-     * Constructs a quadratic functiono of the given number of variables,
-     * initializing everything to zero.
-     */
-    explicit QuadraticFunction(size_t num_vars = 0);
 
-    /**
-     * Resets everything to zero, so that F(x) = 0
-     */
-    void reset();
+  /**
+   * Matrix A has column-major data storage, so that it can be used with MatrixCalc.
+   */
+  MatT<double> A;
+  VecT<double> b;
+  double c;
 
-    size_t numVars() const {
-        return b.size();
-    }
+  /**
+   * Constructs a quadratic functiono of the given number of variables,
+   * initializing everything to zero.
+   */
+  explicit QuadraticFunction(size_t num_vars = 0);
 
-    /**
-     * Evaluates x^T * A * x + b^T * x + c
-     */
-    double evaluate(const double* x) const;
+  /**
+   * Resets everything to zero, so that F(x) = 0
+   */
+  void reset();
 
-    Gradient gradient() const;
+  size_t numVars() const { return b.size(); }
 
-    /**
-     * f(x) is our function.  This method will replace f(x) with g(x) so that
-     * g(x) = f(x + translation)
-     */
-    void recalcForTranslatedArguments(const double* translation);
+  /**
+   * Evaluates x^T * A * x + b^T * x + c
+   */
+  double evaluate(const double* x) const;
 
-    void swap(QuadraticFunction& other);
+  Gradient gradient() const;
 
-    QuadraticFunction& operator+=(const QuadraticFunction& other);
+  /**
+   * f(x) is our function.  This method will replace f(x) with g(x) so that
+   * g(x) = f(x + translation)
+   */
+  void recalcForTranslatedArguments(const double* translation);
 
-    QuadraticFunction& operator*=(double scalar);
+  void swap(QuadraticFunction& other);
+
+  QuadraticFunction& operator+=(const QuadraticFunction& other);
+
+  QuadraticFunction& operator*=(double scalar);
 };
 
 
 inline void swap(QuadraticFunction& f1, QuadraticFunction& f2) {
-    f1.swap(f2);
+  f1.swap(f2);
 }
 
 #endif  // ifndef QUADRATIC_FUNCTION_H_

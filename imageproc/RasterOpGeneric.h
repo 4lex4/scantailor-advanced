@@ -19,10 +19,10 @@
 #ifndef IMAGEPROC_RASTER_OP_GENERIC_H_
 #define IMAGEPROC_RASTER_OP_GENERIC_H_
 
-#include "BinaryImage.h"
 #include <QSize>
-#include <cstdint>
 #include <cassert>
+#include <cstdint>
+#include "BinaryImage.h"
 
 namespace imageproc {
 /**
@@ -38,7 +38,7 @@ namespace imageproc {
  * Depending on whether T is const, the operation may be able to modify the image.
  * Hinst: boost::lambda is an easy way to construct operations.
  */
-template<typename T, typename Op>
+template <typename T, typename Op>
 void rasterOpGeneric(T* data, int stride, QSize size, Op operation);
 
 /**
@@ -57,7 +57,7 @@ void rasterOpGeneric(T* data, int stride, QSize size, Op operation);
  * one or both of them.
  * Hinst: boost::lambda is an easy way to construct operations.
  */
-template<typename T1, typename T2, typename Op>
+template <typename T1, typename T2, typename Op>
 void rasterOpGeneric(T1* data1, int stride1, QSize size, T2* data2, int stride2, Op operation);
 
 
@@ -70,7 +70,7 @@ void rasterOpGeneric(T1* data1, int stride1, QSize size, T2* data2, int stride2,
  * operation(bitl, data2[offset2]);
  * \endcode
  */
-template<typename T2, typename Op>
+template <typename T2, typename Op>
 void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation);
 
 /**
@@ -84,115 +84,112 @@ void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op opera
  * BitProxy will have implicit conversion to uint32_t returning 0 or 1,
  * and an assignment operator from uint32_t, expecting 0 or 1 only.
  */
-template<typename T2, typename Op>
+template <typename T2, typename Op>
 void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation);
 
 
 /*======================== Implementation ==========================*/
 
-template<typename T, typename Op>
+template <typename T, typename Op>
 void rasterOpGeneric(T* data, int stride, QSize size, Op operation) {
-    if (size.isEmpty()) {
-        return;
-    }
+  if (size.isEmpty()) {
+    return;
+  }
 
-    const int w = size.width();
-    const int h = size.height();
+  const int w = size.width();
+  const int h = size.height();
 
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            operation(data[x]);
-        }
-        data += stride;
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      operation(data[x]);
     }
+    data += stride;
+  }
 }
 
-template<typename T1, typename T2, typename Op>
+template <typename T1, typename T2, typename Op>
 void rasterOpGeneric(T1* data1, int stride1, QSize size, T2* data2, int stride2, Op operation) {
-    if (size.isEmpty()) {
-        return;
-    }
+  if (size.isEmpty()) {
+    return;
+  }
 
-    const int w = size.width();
-    const int h = size.height();
+  const int w = size.width();
+  const int h = size.height();
 
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            operation(data1[x], data2[x]);
-        }
-        data1 += stride1;
-        data2 += stride2;
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      operation(data1[x], data2[x]);
     }
+    data1 += stride1;
+    data2 += stride2;
+  }
 }
 
-template<typename T2, typename Op>
+template <typename T2, typename Op>
 void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op operation) {
-    if (image1.isNull()) {
-        return;
-    }
+  if (image1.isNull()) {
+    return;
+  }
 
-    const int w = image1.width();
-    const int h = image1.height();
-    const int stride1 = image1.wordsPerLine();
-    const uint32_t* data1 = image1.data();
+  const int w = image1.width();
+  const int h = image1.height();
+  const int stride1 = image1.wordsPerLine();
+  const uint32_t* data1 = image1.data();
 
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            const int shift = 31 - (x & 31);
-            operation((data1[x >> 5] >> shift) & uint32_t(1), data2[x]);
-        }
-        data1 += stride1;
-        data2 += stride2;
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      const int shift = 31 - (x & 31);
+      operation((data1[x >> 5] >> shift) & uint32_t(1), data2[x]);
     }
+    data1 += stride1;
+    data2 += stride2;
+  }
 }
 
 namespace rop_generic_impl {
 class BitProxy {
-public:
-    BitProxy(uint32_t& word, int shift) : m_rWord(word), m_shift(shift) {
-    }
+ public:
+  BitProxy(uint32_t& word, int shift) : m_rWord(word), m_shift(shift) {}
 
-    BitProxy(const BitProxy& other) = default;
+  BitProxy(const BitProxy& other) = default;
 
-    BitProxy& operator=(uint32_t bit) {
-        assert(bit <= 1);
-        const uint32_t mask = uint32_t(1) << m_shift;
-        m_rWord = (m_rWord & ~mask) | (bit << m_shift);
+  BitProxy& operator=(uint32_t bit) {
+    assert(bit <= 1);
+    const uint32_t mask = uint32_t(1) << m_shift;
+    m_rWord = (m_rWord & ~mask) | (bit << m_shift);
 
-        return *this;
-    }
+    return *this;
+  }
 
-    operator uint32_t() const {
-        return (m_rWord >> m_shift) & uint32_t(1);
-    }
+  operator uint32_t() const { return (m_rWord >> m_shift) & uint32_t(1); }
 
-private:
-    uint32_t& m_rWord;
-    int m_shift;
+ private:
+  uint32_t& m_rWord;
+  int m_shift;
 };
 }  // namespace rop_generic_impl
 
-template<typename T2, typename Op>
+template <typename T2, typename Op>
 void rasterOpGeneric(BinaryImage& image1, T2* data2, int stride2, Op operation) {
-    using namespace rop_generic_impl;
+  using namespace rop_generic_impl;
 
-    if (image1.isNull()) {
-        return;
+  if (image1.isNull()) {
+    return;
+  }
+
+  const int w = image1.width();
+  const int h = image1.height();
+  const int stride1 = image1.wordsPerLine();
+  uint32_t* data1 = image1.data();
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      BitProxy bit1(data1[x >> 5], 31 - (x & 31));
+      operation(bit1, data2[x]);
     }
-
-    const int w = image1.width();
-    const int h = image1.height();
-    const int stride1 = image1.wordsPerLine();
-    uint32_t* data1 = image1.data();
-
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            BitProxy bit1(data1[x >> 5], 31 - (x & 31));
-            operation(bit1, data2[x]);
-        }
-        data1 += stride1;
-        data2 += stride2;
-    }
+    data1 += stride1;
+    data2 += stride2;
+  }
 }
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_RASTER_OP_GENERIC_H_

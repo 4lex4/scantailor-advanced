@@ -19,15 +19,15 @@
 #ifndef OUTPUT_FILTER_H_
 #define OUTPUT_FILTER_H_
 
-#include "NonCopyable.h"
-#include "AbstractFilter.h"
-#include "PageView.h"
-#include "intrusive_ptr.h"
-#include "FilterResult.h"
-#include "SafeDeletingQObjectPtr.h"
-#include "PictureZonePropFactory.h"
-#include "FillZonePropFactory.h"
 #include <QImage>
+#include "AbstractFilter.h"
+#include "FillZonePropFactory.h"
+#include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageView.h"
+#include "PictureZonePropFactory.h"
+#include "SafeDeletingQObjectPtr.h"
+#include "intrusive_ptr.h"
 
 class PageSelectionAccessor;
 class ThumbnailPixmapCache;
@@ -41,44 +41,44 @@ class CacheDrivenTask;
 class Settings;
 
 class Filter : public AbstractFilter {
-    DECLARE_NON_COPYABLE(Filter)
+  DECLARE_NON_COPYABLE(Filter)
 
-public:
-    explicit Filter(const PageSelectionAccessor& page_selection_accessor);
+ public:
+  explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
-    ~Filter() override;
+  ~Filter() override;
 
-    QString getName() const override;
+  QString getName() const override;
 
-    PageView getView() const override;
+  PageView getView() const override;
 
-    void performRelinking(const AbstractRelinker& relinker) override;
+  void performRelinking(const AbstractRelinker& relinker) override;
 
-    void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
+  void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
-    QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
+  QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-    void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
+  void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-    void loadDefaultSettings(const PageInfo& page_info) override;
+  void loadDefaultSettings(const PageInfo& page_info) override;
 
-    intrusive_ptr<Task> createTask(const PageId& page_id,
-                                   intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                                   const OutputFileNameGenerator& out_file_name_gen,
-                                   bool batch,
-                                   bool debug);
+  intrusive_ptr<Task> createTask(const PageId& page_id,
+                                 intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                                 const OutputFileNameGenerator& out_file_name_gen,
+                                 bool batch,
+                                 bool debug);
 
-    intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen);
+  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen);
 
-    OptionsWidget* optionsWidget();
+  OptionsWidget* optionsWidget();
 
-private:
-    void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+ private:
+  void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
-    intrusive_ptr<Settings> m_ptrSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    PictureZonePropFactory m_pictureZonePropFactory;
-    FillZonePropFactory m_fillZonePropFactory;
+  intrusive_ptr<Settings> m_ptrSettings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  PictureZonePropFactory m_pictureZonePropFactory;
+  FillZonePropFactory m_fillZonePropFactory;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_FILTER_H_

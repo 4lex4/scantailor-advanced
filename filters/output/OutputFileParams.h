@@ -31,25 +31,25 @@ namespace output {
  * \brief Parameters of the output file used to determine if it has changed.
  */
 class OutputFileParams {
-public:
-    OutputFileParams();
+ public:
+  OutputFileParams();
 
-    explicit OutputFileParams(const QFileInfo& file_info);
+  explicit OutputFileParams(const QFileInfo& file_info);
 
-    explicit OutputFileParams(const QDomElement& el);
+  explicit OutputFileParams(const QDomElement& el);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    const bool isValid() const;
+  const bool isValid() const;
 
-    /**
-     * \brief Returns true if it's likely we have two identical files.
-     */
-    bool matches(const OutputFileParams& other) const;
+  /**
+   * \brief Returns true if it's likely we have two identical files.
+   */
+  bool matches(const OutputFileParams& other) const;
 
-private:
-    qint64 m_size;
-    time_t m_mtime;
+ private:
+  qint64 m_size;
+  time_t m_mtime;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_

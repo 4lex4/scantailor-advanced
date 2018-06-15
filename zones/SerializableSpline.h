@@ -19,9 +19,9 @@
 #ifndef SERIALIZABLE_SPLINE_H_
 #define SERIALIZABLE_SPLINE_H_
 
-#include <QVector>
 #include <QPointF>
 #include <QPolygonF>
+#include <QVector>
 #include <boost/function.hpp>
 
 class EditableSpline;
@@ -31,25 +31,23 @@ class QDomElement;
 class QString;
 
 class SerializableSpline {
-public:
-    SerializableSpline(const EditableSpline& spline);
+ public:
+  SerializableSpline(const EditableSpline& spline);
 
-    explicit SerializableSpline(const QDomElement& el);
+  explicit SerializableSpline(const QDomElement& el);
 
-    explicit SerializableSpline(const QPolygonF& polygon);
+  explicit SerializableSpline(const QPolygonF& polygon);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    SerializableSpline transformed(const QTransform& xform) const;
+  SerializableSpline transformed(const QTransform& xform) const;
 
-    SerializableSpline transformed(const boost::function<QPointF(const QPointF&)>& xform) const;
+  SerializableSpline transformed(const boost::function<QPointF(const QPointF&)>& xform) const;
 
-    QPolygonF toPolygon() const {
-        return QPolygonF(m_points);
-    }
+  QPolygonF toPolygon() const { return QPolygonF(m_points); }
 
-private:
-    QVector<QPointF> m_points;
+ private:
+  QVector<QPointF> m_points;
 };
 
 

@@ -19,53 +19,53 @@
 #ifndef BACKGROUNDEXECUTOR_H_
 #define BACKGROUNDEXECUTOR_H_
 
-#include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "AbstractCommand.h"
-#include "PayloadEvent.h"
 #include <memory>
+#include "AbstractCommand.h"
+#include "NonCopyable.h"
+#include "PayloadEvent.h"
+#include "intrusive_ptr.h"
 
 class BackgroundExecutor {
-    DECLARE_NON_COPYABLE(BackgroundExecutor)
+  DECLARE_NON_COPYABLE(BackgroundExecutor)
 
-public:
-    typedef intrusive_ptr<AbstractCommand<void>> TaskResultPtr;
-    typedef intrusive_ptr<AbstractCommand<TaskResultPtr>> TaskPtr;
+ public:
+  typedef intrusive_ptr<AbstractCommand<void>> TaskResultPtr;
+  typedef intrusive_ptr<AbstractCommand<TaskResultPtr>> TaskPtr;
 
-    BackgroundExecutor();
+  BackgroundExecutor();
 
-    /**
-     * \brief Waits for background tasks to finish, then destroys the object.
-     */
-    ~BackgroundExecutor();
+  /**
+   * \brief Waits for background tasks to finish, then destroys the object.
+   */
+  ~BackgroundExecutor();
 
-    /**
-     * \brief Waits for pending jobs to finish and stop the background thread.
-     *
-     * The destructor also performs these tasks, so this method is only
-     * useful to prematuraly stop task processing.  After shutdown, any
-     * attempts to enqueue a task will be silently ignored.
-     */
-    void shutdown();
+  /**
+   * \brief Waits for pending jobs to finish and stop the background thread.
+   *
+   * The destructor also performs these tasks, so this method is only
+   * useful to prematuraly stop task processing.  After shutdown, any
+   * attempts to enqueue a task will be silently ignored.
+   */
+  void shutdown();
 
-    /**
-     * \brief Enqueue a task for execution in a background thread.
-     *
-     * A task is a functor to be executed in a background thread.
-     * That functor may optionally return another one, that is
-     * to be executed in the thread where this BackgroundExecutor
-     * object was constructed.
-     */
-    void enqueueTask(const TaskPtr& task);
+  /**
+   * \brief Enqueue a task for execution in a background thread.
+   *
+   * A task is a functor to be executed in a background thread.
+   * That functor may optionally return another one, that is
+   * to be executed in the thread where this BackgroundExecutor
+   * object was constructed.
+   */
+  void enqueueTask(const TaskPtr& task);
 
-private:
-    class Impl;
-    class Dispatcher;
+ private:
+  class Impl;
+  class Dispatcher;
 
-    typedef PayloadEvent<TaskPtr> TaskEvent;
-    typedef PayloadEvent<TaskResultPtr> ResultEvent;
+  typedef PayloadEvent<TaskPtr> TaskEvent;
+  typedef PayloadEvent<TaskResultPtr> ResultEvent;
 
-    std::unique_ptr<Impl> m_ptrImpl;
+  std::unique_ptr<Impl> m_ptrImpl;
 };
 
 

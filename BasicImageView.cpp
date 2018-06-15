@@ -16,17 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ImageTransformation.h"
-#include "ImagePresentation.h"
-#include "Dpm.h"
 #include "BasicImageView.h"
+#include "Dpm.h"
+#include "ImagePresentation.h"
+#include "ImageTransformation.h"
 
 BasicImageView::BasicImageView(const QImage& image, const ImagePixmapUnion& downscaled_image, const Margins& margins)
-        : ImageViewBase(image, downscaled_image, ImagePresentation(QTransform(), QRectF(image.rect())), margins),
-          m_dragHandler(*this),
-          m_zoomHandler(*this) {
-    rootInteractionHandler().makeLastFollower(m_dragHandler);
-    rootInteractionHandler().makeLastFollower(m_zoomHandler);
+    : ImageViewBase(image, downscaled_image, ImagePresentation(QTransform(), QRectF(image.rect())), margins),
+      m_dragHandler(*this),
+      m_zoomHandler(*this) {
+  rootInteractionHandler().makeLastFollower(m_dragHandler);
+  rootInteractionHandler().makeLastFollower(m_zoomHandler);
 }
 
 BasicImageView::~BasicImageView() = default;

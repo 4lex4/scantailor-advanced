@@ -19,38 +19,38 @@
 #ifndef FILTERDATA_H_
 #define FILTERDATA_H_
 
+#include <QImage>
+#include "ImageSettings.h"
+#include "ImageTransformation.h"
 #include "imageproc/BinaryThreshold.h"
 #include "imageproc/GrayImage.h"
-#include "ImageTransformation.h"
-#include "ImageSettings.h"
-#include <QImage>
 
 class FilterData {
-    // Member-wise copying is OK.
-public:
-    explicit FilterData(const QImage& image);
+  // Member-wise copying is OK.
+ public:
+  explicit FilterData(const QImage& image);
 
-    FilterData(const FilterData& other, const ImageTransformation& xform);
+  FilterData(const FilterData& other, const ImageTransformation& xform);
 
-    FilterData(const FilterData& other);
+  FilterData(const FilterData& other);
 
-    imageproc::BinaryThreshold bwThreshold() const;
+  imageproc::BinaryThreshold bwThreshold() const;
 
-    const ImageTransformation& xform() const;
+  const ImageTransformation& xform() const;
 
-    const QImage& origImage() const;
+  const QImage& origImage() const;
 
-    const imageproc::GrayImage& grayImage() const;
+  const imageproc::GrayImage& grayImage() const;
 
-    bool isBlackOnWhite() const;
+  bool isBlackOnWhite() const;
 
-    void updateImageParams(const ImageSettings::PageParams& imageParams);
+  void updateImageParams(const ImageSettings::PageParams& imageParams);
 
-private:
-    QImage m_origImage;
-    imageproc::GrayImage m_grayImage;
-    ImageTransformation m_xform;
-    ImageSettings::PageParams m_imageParams;
+ private:
+  QImage m_origImage;
+  imageproc::GrayImage m_grayImage;
+  ImageTransformation m_xform;
+  ImageSettings::PageParams m_imageParams;
 };
 
 

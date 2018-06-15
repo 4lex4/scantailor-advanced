@@ -17,76 +17,74 @@
  */
 
 #include "PictureLayerProperty.h"
-#include "PropertyFactory.h"
 #include <QDomDocument>
+#include "PropertyFactory.h"
 
 namespace output {
 const char PictureLayerProperty::m_propertyName[] = "PictureZoneProperty";
 
-PictureLayerProperty::PictureLayerProperty(const QDomElement& el) : m_layer(layerFromString(el.attribute("layer"))) {
-}
+PictureLayerProperty::PictureLayerProperty(const QDomElement& el) : m_layer(layerFromString(el.attribute("layer"))) {}
 
 void PictureLayerProperty::registerIn(PropertyFactory& factory) {
-    factory.registerProperty(m_propertyName, &PictureLayerProperty::construct);
+  factory.registerProperty(m_propertyName, &PictureLayerProperty::construct);
 }
 
 intrusive_ptr<Property> PictureLayerProperty::clone() const {
-    return make_intrusive<PictureLayerProperty>(*this);
+  return make_intrusive<PictureLayerProperty>(*this);
 }
 
 QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("type", m_propertyName);
-    el.setAttribute("layer", layerToString(m_layer));
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("type", m_propertyName);
+  el.setAttribute("layer", layerToString(m_layer));
 
-    return el;
+  return el;
 }
 
 intrusive_ptr<Property> PictureLayerProperty::construct(const QDomElement& el) {
-    return make_intrusive<PictureLayerProperty>(el);
+  return make_intrusive<PictureLayerProperty>(el);
 }
 
 PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString& str) {
-    if (str == "eraser1") {
-        return ERASER1;
-    } else if (str == "painter2") {
-        return PAINTER2;
-    } else if (str == "eraser3") {
-        return ERASER3;
-    } else {
-        return NO_OP;
-    }
+  if (str == "eraser1") {
+    return ERASER1;
+  } else if (str == "painter2") {
+    return PAINTER2;
+  } else if (str == "eraser3") {
+    return ERASER3;
+  } else {
+    return NO_OP;
+  }
 }
 
 QString PictureLayerProperty::layerToString(Layer layer) {
-    const char* str = nullptr;
+  const char* str = nullptr;
 
-    switch (layer) {
-        case ERASER1:
-            str = "eraser1";
-            break;
-        case PAINTER2:
-            str = "painter2";
-            break;
-        case ERASER3:
-            str = "eraser3";
-            break;
-        default:
-            str = "";
-            break;
-    }
+  switch (layer) {
+    case ERASER1:
+      str = "eraser1";
+      break;
+    case PAINTER2:
+      str = "painter2";
+      break;
+    case ERASER3:
+      str = "eraser3";
+      break;
+    default:
+      str = "";
+      break;
+  }
 
-    return str;
+  return str;
 }
 
-PictureLayerProperty::PictureLayerProperty(PictureLayerProperty::Layer layer) : m_layer(layer) {
-}
+PictureLayerProperty::PictureLayerProperty(PictureLayerProperty::Layer layer) : m_layer(layer) {}
 
 PictureLayerProperty::Layer PictureLayerProperty::layer() const {
-    return m_layer;
+  return m_layer;
 }
 
 void PictureLayerProperty::setLayer(PictureLayerProperty::Layer layer) {
-    m_layer = layer;
+  m_layer = layer;
 }
 }  // namespace output

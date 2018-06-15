@@ -19,8 +19,8 @@
 #ifndef IMAGEPROC_TRANSFORM_H_
 #define IMAGEPROC_TRANSFORM_H_
 
-#include <QSizeF>
 #include <QColor>
+#include <QSizeF>
 #include <cstdint>
 
 class QImage;
@@ -31,59 +31,44 @@ namespace imageproc {
 class GrayImage;
 
 class OutsidePixels {
-    // Member-wise copying is OK.
-public:
-    enum Flags { COLOR = 1 << 0, NEAREST = 1 << 1, WEAK = 1 << 2 };
+  // Member-wise copying is OK.
+ public:
+  enum Flags { COLOR = 1 << 0, NEAREST = 1 << 1, WEAK = 1 << 2 };
 
-    /**
-     * \brief Outside pixels are assumed to be of particular color.
-     *
-     * Outside pixels may be blended with inside pixels near the edges.
-     */
-    static OutsidePixels assumeColor(const QColor& color) {
-        return OutsidePixels(COLOR, color.rgba());
-    }
+  /**
+   * \brief Outside pixels are assumed to be of particular color.
+   *
+   * Outside pixels may be blended with inside pixels near the edges.
+   */
+  static OutsidePixels assumeColor(const QColor& color) { return OutsidePixels(COLOR, color.rgba()); }
 
-    /**
-     * \brief Outside pixels are assumed to be of particular color.
-     *
-     * Outside pixels won't participate in blending operations.
-     */
-    static OutsidePixels assumeWeakColor(const QColor& color) {
-        return OutsidePixels(WEAK | COLOR, color.rgba());
-    }
+  /**
+   * \brief Outside pixels are assumed to be of particular color.
+   *
+   * Outside pixels won't participate in blending operations.
+   */
+  static OutsidePixels assumeWeakColor(const QColor& color) { return OutsidePixels(WEAK | COLOR, color.rgba()); }
 
-    /**
-     * \brief An outside pixel is assumed to be the same as the nearest inside pixel.
-     *
-     * Outside pixels won't participate in blending operations.
-     */
-    static OutsidePixels assumeWeakNearest() {
-        return OutsidePixels(WEAK | NEAREST, 0xff000000);
-    }
+  /**
+   * \brief An outside pixel is assumed to be the same as the nearest inside pixel.
+   *
+   * Outside pixels won't participate in blending operations.
+   */
+  static OutsidePixels assumeWeakNearest() { return OutsidePixels(WEAK | NEAREST, 0xff000000); }
 
-    int flags() const {
-        return m_flags;
-    }
+  int flags() const { return m_flags; }
 
-    QRgb rgba() const {
-        return m_rgba;
-    }
+  QRgb rgba() const { return m_rgba; }
 
-    QRgb rgb() const {
-        return m_rgba | 0xff000000;
-    }
+  QRgb rgb() const { return m_rgba | 0xff000000; }
 
-    uint8_t grayLevel() const {
-        return static_cast<uint8_t>(qGray(m_rgba));
-    }
+  uint8_t grayLevel() const { return static_cast<uint8_t>(qGray(m_rgba)); }
 
-private:
-    OutsidePixels(int flags, QRgb rgba) : m_flags(flags), m_rgba(rgba) {
-    }
+ private:
+  OutsidePixels(int flags, QRgb rgba) : m_flags(flags), m_rgba(rgba) {}
 
-    int m_flags;
-    QRgb m_rgba;
+  int m_flags;
+  QRgb m_rgba;
 };
 
 

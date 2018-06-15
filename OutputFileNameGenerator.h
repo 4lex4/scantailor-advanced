@@ -19,49 +19,41 @@
 #ifndef OUTPUT_FILE_NAME_GENERATOR_H_
 #define OUTPUT_FILE_NAME_GENERATOR_H_
 
-#include "FileNameDisambiguator.h"
-#include "intrusive_ptr.h"
 #include <QString>
 #include <Qt>
+#include "FileNameDisambiguator.h"
+#include "intrusive_ptr.h"
 
 class PageId;
 class AbstractRelinker;
 
 class OutputFileNameGenerator {
-    // Member-wise copying is OK.
-public:
-    OutputFileNameGenerator();
+  // Member-wise copying is OK.
+ public:
+  OutputFileNameGenerator();
 
-    OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
-                            const QString& out_dir,
-                            Qt::LayoutDirection layout_direction);
+  OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
+                          const QString& out_dir,
+                          Qt::LayoutDirection layout_direction);
 
-    void performRelinking(const AbstractRelinker& relinker);
+  void performRelinking(const AbstractRelinker& relinker);
 
-    Qt::LayoutDirection layoutDirection() const {
-        return m_layoutDirection;
-    }
+  Qt::LayoutDirection layoutDirection() const { return m_layoutDirection; }
 
-    const QString& outDir() const {
-        return m_outDir;
-    }
+  const QString& outDir() const { return m_outDir; }
 
-    FileNameDisambiguator* disambiguator() {
-        return m_ptrDisambiguator.get();
-    }
+  FileNameDisambiguator* disambiguator() { return m_ptrDisambiguator.get(); }
 
-    const FileNameDisambiguator* disambiguator() const {
-        return m_ptrDisambiguator.get();
-    }
+  const FileNameDisambiguator* disambiguator() const { return m_ptrDisambiguator.get(); }
 
-    QString fileNameFor(const PageId& page) const;
+  QString fileNameFor(const PageId& page) const;
 
-    QString filePathFor(const PageId& page) const;
+  QString filePathFor(const PageId& page) const;
 
-private:
-    intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
-    QString m_outDir;
-    Qt::LayoutDirection m_layoutDirection;
+ private:
+  intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
+  QString m_outDir;
+  Qt::LayoutDirection m_layoutDirection;
 };
 
 

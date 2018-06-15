@@ -17,11 +17,11 @@
  */
 
 #include "ProcessingIndicationWidget.h"
-#include "imageproc/ColorInterpolation.h"
-#include "ColorSchemeManager.h"
-#include <QTimerEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QTimerEvent>
+#include "ColorSchemeManager.h"
+#include "imageproc/ColorInterpolation.h"
 
 using namespace imageproc;
 
@@ -29,70 +29,68 @@ static const double distinction_increase = 1.0 / 5.0;
 static const double distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
-        : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
-    m_headColor = ColorSchemeManager::instance()
-                          ->getColorParam("processing_indication_head_color",
-                                          palette().color(QPalette::Window).lighter(200))
-                          .color();
-    m_tailColor = ColorSchemeManager::instance()
-                          ->getColorParam("processing_indication_tail_color",
-                                          palette().color(QPalette::Window).lighter(130))
-                          .color();
+    : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
+  m_headColor = ColorSchemeManager::instance()
+                    ->getColorParam("processing_indication_head_color", palette().color(QPalette::Window).lighter(200))
+                    .color();
+  m_tailColor = ColorSchemeManager::instance()
+                    ->getColorParam("processing_indication_tail_color", palette().color(QPalette::Window).lighter(130))
+                    .color();
 }
 
 void ProcessingIndicationWidget::resetAnimation() {
-    m_distinction = 1.0;
-    m_distinctionDelta = distinction_increase;
+  m_distinction = 1.0;
+  m_distinctionDelta = distinction_increase;
 }
 
 void ProcessingIndicationWidget::processingRestartedEffect() {
-    m_distinction = 1.0;
-    m_distinctionDelta = distinction_decrease;
+  m_distinction = 1.0;
+  m_distinctionDelta = distinction_decrease;
 }
 
 void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
-    QRect animation_rect(animationRect());
-    if (!event->rect().contains(animation_rect)) {
-        update(animation_rect);
+  QRect animation_rect(animationRect());
+  if (!event->rect().contains(animation_rect)) {
+    update(animation_rect);
 
-        return;
-    }
+    return;
+  }
 
-    QColor head_color(colorInterpolation(m_tailColor, m_headColor, m_distinction));
+  QColor head_color(colorInterpolation(m_tailColor, m_headColor, m_distinction));
 
-    m_distinction += m_distinctionDelta;
-    if (m_distinction > 1.0) {
-        m_distinction = 1.0;
-    } else if (m_distinction <= 0.0) {
-        m_distinction = 0.0;
-        m_distinctionDelta = distinction_increase;
-    }
+  m_distinction += m_distinctionDelta;
+  if (m_distinction > 1.0) {
+    m_distinction = 1.0;
+  } else if (m_distinction <= 0.0) {
+    m_distinction = 0.0;
+    m_distinctionDelta = distinction_increase;
+  }
 
-    QPainter painter(this);
+  QPainter painter(this);
 
-    QColor fadeColor = ColorSchemeManager::instance()
-                               ->getColorParam("processing_indication_fade_color", palette().background().color())
-                               .color();
-    fadeColor.setAlpha(127);
-    painter.fillRect(rect(), fadeColor);
+  QColor fadeColor = ColorSchemeManager::instance()
+                         ->getColorParam("processing_indication_fade_color", palette().background().color())
+                         .color();
+  fadeColor.setAlpha(127);
+  painter.fillRect(rect(), fadeColor);
 
-    m_animation.nextFrame(head_color, m_tailColor, &painter, animation_rect);
+  m_animation.nextFrame(head_color, m_tailColor, &painter, animation_rect);
 
-    if (m_timerId == 0) {
-        m_timerId = startTimer(180);
-    }
+  if (m_timerId == 0) {
+    m_timerId = startTimer(180);
+  }
 }
 
 void ProcessingIndicationWidget::timerEvent(QTimerEvent* event) {
-    killTimer(event->timerId());
-    m_timerId = 0;
-    update(animationRect());
+  killTimer(event->timerId());
+  m_timerId = 0;
+  update(animationRect());
 }
 
 QRect ProcessingIndicationWidget::animationRect() const {
-    QRect r(0, 0, 80, 80);
-    r.moveCenter(rect().center());
-    r &= rect();
+  QRect r(0, 0, 80, 80);
+  r.moveCenter(rect().center());
+  r &= rect();
 
-    return r;
+  return r;
 }

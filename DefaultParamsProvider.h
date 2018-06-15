@@ -9,22 +9,22 @@
 class DefaultParams;
 
 class DefaultParamsProvider {
-private:
-    static std::unique_ptr<DefaultParamsProvider> instance;
+ private:
+  static std::unique_ptr<DefaultParamsProvider> instance;
 
-    QString profileName;
-    std::unique_ptr<DefaultParams> params;
+  QString profileName;
+  std::unique_ptr<DefaultParams> params;
 
-    DefaultParamsProvider();
+  DefaultParamsProvider();
 
-public:
-    static DefaultParamsProvider* getInstance();
+ public:
+  static DefaultParamsProvider* getInstance();
 
-    const QString& getProfileName() const;
+  const QString& getProfileName() const;
 
-    DefaultParams getParams() const;
+  DefaultParams getParams() const;
 
-    void setParams(std::unique_ptr<DefaultParams> params, const QString& name);
+  void setParams(std::unique_ptr<DefaultParams> params, const QString& name);
 };
 
 

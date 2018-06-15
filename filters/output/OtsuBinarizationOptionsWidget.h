@@ -2,52 +2,52 @@
 #ifndef SCANTAILOR_OTSUBINARIZATIONOPTIONSWIDGET_H
 #define SCANTAILOR_OTSUBINARIZATIONOPTIONSWIDGET_H
 
-#include "ui_OtsuBinarizationOptionsWidget.h"
+#include <QtCore>
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
-#include "intrusive_ptr.h"
 #include "Settings.h"
-#include <QtCore>
+#include "intrusive_ptr.h"
+#include "ui_OtsuBinarizationOptionsWidget.h"
 
 namespace output {
 class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
-    Q_OBJECT
-private:
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageId m_pageId;
-    ColorParams m_colorParams;
-    QTimer delayedStateChanger;
-    int ignoreSliderChanges;
+  Q_OBJECT
+ private:
+  intrusive_ptr<Settings> m_ptrSettings;
+  PageId m_pageId;
+  ColorParams m_colorParams;
+  QTimer delayedStateChanger;
+  int ignoreSliderChanges;
 
-public:
-    explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+ public:
+  explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
-    ~OtsuBinarizationOptionsWidget() override = default;
+  ~OtsuBinarizationOptionsWidget() override = default;
 
-    void updateUi(const PageId& m_pageId) override;
+  void updateUi(const PageId& m_pageId) override;
 
-private slots:
+ private slots:
 
-    void thresholdSliderReleased();
+  void thresholdSliderReleased();
 
-    void thresholdSliderValueChanged(int value);
+  void thresholdSliderValueChanged(int value);
 
-    void setLighterThreshold();
+  void setLighterThreshold();
 
-    void setDarkerThreshold();
+  void setDarkerThreshold();
 
-    void setNeutralThreshold();
+  void setNeutralThreshold();
 
-    void sendStateChanged();
+  void sendStateChanged();
 
-private:
-    void updateView();
+ private:
+  void updateView();
 
-    void setThresholdAdjustment(int value);
+  void setThresholdAdjustment(int value);
 
-    void setupUiConnections();
+  void setupUiConnections();
 
-    void removeUiConnections();
+  void removeUiConnections();
 };
 }  // namespace output
 

@@ -20,60 +20,51 @@
 #ifndef EDITABLE_SPLINE_H_
 #define EDITABLE_SPLINE_H_
 
-#include "ref_countable.h"
-#include "intrusive_ptr.h"
-#include "SplineVertex.h"
-#include "SplineSegment.h"
 #include <QPolygonF>
+#include "SplineSegment.h"
+#include "SplineVertex.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class SerializableSpline;
 
 class EditableSpline : public ref_countable {
-public:
-    typedef intrusive_ptr<EditableSpline> Ptr;
+ public:
+  typedef intrusive_ptr<EditableSpline> Ptr;
 
-    class SegmentIterator {
-    public:
-        explicit SegmentIterator(EditableSpline& spline) : m_ptrNextVertex(spline.firstVertex()) {
-        }
+  class SegmentIterator {
+   public:
+    explicit SegmentIterator(EditableSpline& spline) : m_ptrNextVertex(spline.firstVertex()) {}
 
-        bool hasNext() const;
+    bool hasNext() const;
 
-        SplineSegment next();
+    SplineSegment next();
 
-    private:
-        SplineVertex::Ptr m_ptrNextVertex;
-    };
+   private:
+    SplineVertex::Ptr m_ptrNextVertex;
+  };
 
 
-    EditableSpline();
+  EditableSpline();
 
-    EditableSpline(const SerializableSpline& spline);
+  EditableSpline(const SerializableSpline& spline);
 
-    void appendVertex(const QPointF& pt);
+  void appendVertex(const QPointF& pt);
 
-    SplineVertex::Ptr firstVertex() const {
-        return m_sentinel.firstVertex();
-    }
+  SplineVertex::Ptr firstVertex() const { return m_sentinel.firstVertex(); }
 
-    SplineVertex::Ptr lastVertex() const {
-        return m_sentinel.lastVertex();
-    }
+  SplineVertex::Ptr lastVertex() const { return m_sentinel.lastVertex(); }
 
-    bool hasAtLeastSegments(int num) const;
+  bool hasAtLeastSegments(int num) const;
 
-    bool bridged() const {
-        return m_sentinel.bridged();
-    }
+  bool bridged() const { return m_sentinel.bridged(); }
 
-    void setBridged(bool bridged) {
-        m_sentinel.setBridged(true);
-    }
+  void setBridged(bool bridged) { m_sentinel.setBridged(true); }
 
-    QPolygonF toPolygon() const;
+  QPolygonF toPolygon() const;
 
-private:
-    SentinelSplineVertex m_sentinel;
+ private:
+  SentinelSplineVertex m_sentinel;
 };
 
 

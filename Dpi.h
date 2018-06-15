@@ -27,40 +27,30 @@ class Dpm;
  * \brief Dots per inch (horizontal and vertical).
  */
 class Dpi {
-public:
-    Dpi() : m_xDpi(0), m_yDpi(0) {
-    }
+ public:
+  Dpi() : m_xDpi(0), m_yDpi(0) {}
 
-    Dpi(int horizontal, int vertical) : m_xDpi(horizontal), m_yDpi(vertical) {
-    }
+  Dpi(int horizontal, int vertical) : m_xDpi(horizontal), m_yDpi(vertical) {}
 
-    Dpi(Dpm dpm);
+  Dpi(Dpm dpm);
 
-    explicit Dpi(QSize size);
+  explicit Dpi(QSize size);
 
-    int horizontal() const {
-        return m_xDpi;
-    }
+  int horizontal() const { return m_xDpi; }
 
-    int vertical() const {
-        return m_yDpi;
-    }
+  int vertical() const { return m_yDpi; }
 
-    QSize toSize() const;
+  QSize toSize() const;
 
-    bool isNull() const {
-        return m_xDpi <= 1 || m_yDpi <= 1;
-    }
+  bool isNull() const { return m_xDpi <= 1 || m_yDpi <= 1; }
 
-    bool operator==(const Dpi& other) const;
+  bool operator==(const Dpi& other) const;
 
-    bool operator!=(const Dpi& other) const {
-        return !(*this == other);
-    }
+  bool operator!=(const Dpi& other) const { return !(*this == other); }
 
-private:
-    int m_xDpi;
-    int m_yDpi;
+ private:
+  int m_xDpi;
+  int m_yDpi;
 };
 
 

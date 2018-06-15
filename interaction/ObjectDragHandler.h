@@ -19,63 +19,61 @@
 #ifndef OBJECT_DRAG_HANDLER_H_
 #define OBJECT_DRAG_HANDLER_H_
 
-#include "NonCopyable.h"
-#include "InteractionHandler.h"
-#include "InteractionState.h"
-#include "DraggableObject.h"
 #include <QPointF>
 #include <set>
+#include "DraggableObject.h"
+#include "InteractionHandler.h"
+#include "InteractionState.h"
+#include "NonCopyable.h"
 
 class QPainter;
 class QCursor;
 class QString;
 
 class ObjectDragHandler : public InteractionHandler {
-    DECLARE_NON_COPYABLE(ObjectDragHandler)
+  DECLARE_NON_COPYABLE(ObjectDragHandler)
 
-public:
-    explicit ObjectDragHandler(DraggableObject* obj = nullptr);
+ public:
+  explicit ObjectDragHandler(DraggableObject* obj = nullptr);
 
-    void setObject(DraggableObject* obj) {
-        m_pObj = obj;
-    }
+  void setObject(DraggableObject* obj) { m_pObj = obj; }
 
-    void setProximityCursor(const QCursor& cursor);
+  void setProximityCursor(const QCursor& cursor);
 
-    void setInteractionCursor(const QCursor& cursor);
+  void setInteractionCursor(const QCursor& cursor);
 
-    void setProximityStatusTip(const QString& tip);
+  void setProximityStatusTip(const QString& tip);
 
-    void setInteractionStatusTip(const QString& tip);
+  void setInteractionStatusTip(const QString& tip);
 
-    bool interactionInProgress(const InteractionState& interaction) const;
+  bool interactionInProgress(const InteractionState& interaction) const;
 
-    bool proximityLeader(const InteractionState& interaction) const;
+  bool proximityLeader(const InteractionState& interaction) const;
 
-    void forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos);
+  void forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos);
 
-    void setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiers_set);
+  void setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiers_set);
 
-protected:
-    void onPaint(QPainter& painter, const InteractionState& interaction) override;
+ protected:
+  void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-    void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
+  void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
 
-    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
+  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-    void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
+  void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-private:
-    DraggableObject* m_pObj;
-    InteractionState::Captor m_interaction;
-    std::set<Qt::KeyboardModifiers> m_keyboardModifiersSet;
-    Qt::KeyboardModifiers m_activeKeyboardModifiers;
+ private:
+  DraggableObject* m_pObj;
+  InteractionState::Captor m_interaction;
+  std::set<Qt::KeyboardModifiers> m_keyboardModifiersSet;
+  Qt::KeyboardModifiers m_activeKeyboardModifiers;
 };
 
 

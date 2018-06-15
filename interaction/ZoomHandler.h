@@ -19,42 +19,38 @@
 #ifndef ZOOM_HANDLER_H_
 #define ZOOM_HANDLER_H_
 
+#include <QCoreApplication>
+#include <QPoint>
+#include <boost/function.hpp>
 #include "InteractionHandler.h"
 #include "InteractionState.h"
-#include <QPoint>
-#include <QCoreApplication>
-#include <boost/function.hpp>
 
 class ImageViewBase;
 
 class ZoomHandler : public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
-public:
-    enum Focus { CENTER, CURSOR };
+  Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
+ public:
+  enum Focus { CENTER, CURSOR };
 
-    explicit ZoomHandler(ImageViewBase& image_view);
+  explicit ZoomHandler(ImageViewBase& image_view);
 
-    ZoomHandler(ImageViewBase& image_view,
-                const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
+  ZoomHandler(ImageViewBase& image_view,
+              const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
 
-    Focus focus() const {
-        return m_focus;
-    }
+  Focus focus() const { return m_focus; }
 
-    void setFocus(Focus focus) {
-        m_focus = focus;
-    }
+  void setFocus(Focus focus) { m_focus = focus; }
 
-protected:
-    void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
+ protected:
+  void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
-    void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
+  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
-private:
-    ImageViewBase& m_rImageView;
-    boost::function<bool(const InteractionState&)> m_interactionPermitter;
-    InteractionState::Captor m_interaction;
-    Focus m_focus;
+ private:
+  ImageViewBase& m_rImageView;
+  boost::function<bool(const InteractionState&)> m_interactionPermitter;
+  InteractionState::Captor m_interaction;
+  Focus m_focus;
 };
 
 

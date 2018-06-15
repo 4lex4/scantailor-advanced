@@ -19,81 +19,81 @@
 #ifndef OUTPUT_PARAMS_H_
 #define OUTPUT_PARAMS_H_
 
-#include "Dpi.h"
 #include "ColorParams.h"
-#include "DewarpingOptions.h"
-#include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
+#include "DewarpingOptions.h"
+#include "Dpi.h"
 #include "PictureShapeOptions.h"
+#include "dewarping/DistortionModel.h"
 
 class QDomDocument;
 class QDomElement;
 
 namespace output {
 class Params {
-public:
-    Params();
+ public:
+  Params();
 
-    Params(const Dpi& dpi,
-           const ColorParams& colorParams,
-           const SplittingOptions& splittingOptions,
-           const PictureShapeOptions& pictureShapeOptions,
-           const dewarping::DistortionModel& distortionModel,
-           const DepthPerception& depthPerception,
-           const DewarpingOptions& dewarpingOptions,
-           double despeckleLevel);
+  Params(const Dpi& dpi,
+         const ColorParams& colorParams,
+         const SplittingOptions& splittingOptions,
+         const PictureShapeOptions& pictureShapeOptions,
+         const dewarping::DistortionModel& distortionModel,
+         const DepthPerception& depthPerception,
+         const DewarpingOptions& dewarpingOptions,
+         double despeckleLevel);
 
-    explicit Params(const QDomElement& el);
+  explicit Params(const QDomElement& el);
 
-    const Dpi& outputDpi() const;
+  const Dpi& outputDpi() const;
 
-    void setOutputDpi(const Dpi& dpi);
+  void setOutputDpi(const Dpi& dpi);
 
-    const ColorParams& colorParams() const;
+  const ColorParams& colorParams() const;
 
-    const PictureShapeOptions& pictureShapeOptions() const;
+  const PictureShapeOptions& pictureShapeOptions() const;
 
-    void setPictureShapeOptions(const PictureShapeOptions& opt);
+  void setPictureShapeOptions(const PictureShapeOptions& opt);
 
-    void setColorParams(const ColorParams& params);
+  void setColorParams(const ColorParams& params);
 
-    const SplittingOptions& splittingOptions() const;
+  const SplittingOptions& splittingOptions() const;
 
-    void setSplittingOptions(const SplittingOptions& opt);
+  void setSplittingOptions(const SplittingOptions& opt);
 
-    const DewarpingOptions& dewarpingOptions() const;
+  const DewarpingOptions& dewarpingOptions() const;
 
-    void setDewarpingOptions(const DewarpingOptions& opt);
+  void setDewarpingOptions(const DewarpingOptions& opt);
 
-    const dewarping::DistortionModel& distortionModel() const;
+  const dewarping::DistortionModel& distortionModel() const;
 
-    void setDistortionModel(const dewarping::DistortionModel& model);
+  void setDistortionModel(const dewarping::DistortionModel& model);
 
-    const DepthPerception& depthPerception() const;
+  const DepthPerception& depthPerception() const;
 
-    void setDepthPerception(DepthPerception depth_perception);
+  void setDepthPerception(DepthPerception depth_perception);
 
-    double despeckleLevel() const;
+  double despeckleLevel() const;
 
-    void setDespeckleLevel(double level);
+  void setDespeckleLevel(double level);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool isBlackOnWhite() const;
+  bool isBlackOnWhite() const;
 
-    void setBlackOnWhite(bool isBlackOnWhite);
+  void setBlackOnWhite(bool isBlackOnWhite);
 
-private:
-    Dpi m_dpi;
-    ColorParams m_colorParams;
-    SplittingOptions m_splittingOptions;
-    PictureShapeOptions m_pictureShapeOptions;
-    dewarping::DistortionModel m_distortionModel;
-    DepthPerception m_depthPerception;
-    DewarpingOptions m_dewarpingOptions;
-    double m_despeckleLevel;
-    bool m_blackOnWhite;
+ private:
+  Dpi m_dpi;
+  ColorParams m_colorParams;
+  SplittingOptions m_splittingOptions;
+  PictureShapeOptions m_pictureShapeOptions;
+  dewarping::DistortionModel m_distortionModel;
+  DepthPerception m_depthPerception;
+  DewarpingOptions m_dewarpingOptions;
+  double m_despeckleLevel;
+  bool m_blackOnWhite;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_PARAMS_H_

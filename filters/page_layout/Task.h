@@ -19,11 +19,11 @@
 #ifndef PAGE_LAYOUT_TASK_H_
 #define PAGE_LAYOUT_TASK_H_
 
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "FilterResult.h"
-#include "PageId.h"
 #include <QPolygonF>
+#include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageId.h"
+#include "ref_countable.h"
 
 class TaskStatus;
 class FilterData;
@@ -40,33 +40,33 @@ class Filter;
 class Settings;
 
 class Task : public ref_countable {
-    DECLARE_NON_COPYABLE(Task)
+  DECLARE_NON_COPYABLE(Task)
 
-public:
-    Task(intrusive_ptr<Filter> filter,
-         intrusive_ptr<output::Task> next_task,
-         intrusive_ptr<Settings> settings,
-         const PageId& page_id,
-         bool batch,
-         bool debug);
+ public:
+  Task(intrusive_ptr<Filter> filter,
+       intrusive_ptr<output::Task> next_task,
+       intrusive_ptr<Settings> settings,
+       const PageId& page_id,
+       bool batch,
+       bool debug);
 
-    ~Task() override;
+  ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status,
-                            const FilterData& data,
-                            const QRectF& page_rect,
-                            const QRectF& content_rect);
+  FilterResultPtr process(const TaskStatus& status,
+                          const FilterData& data,
+                          const QRectF& page_rect,
+                          const QRectF& content_rect);
 
-private:
-    class UiUpdater;
+ private:
+  class UiUpdater;
 
-    static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
+  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
-    intrusive_ptr<Filter> m_ptrFilter;
-    intrusive_ptr<output::Task> m_ptrNextTask;
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageId m_pageId;
-    bool m_batchProcessing;
+  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<output::Task> m_ptrNextTask;
+  intrusive_ptr<Settings> m_ptrSettings;
+  PageId m_pageId;
+  bool m_batchProcessing;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_TASK_H_

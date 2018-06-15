@@ -23,17 +23,17 @@
 #include <config.h>
 #endif
 
-#define DECLARE_NON_COPYABLE(Class)              \
-public:                                          \
-    /** \brief Copying is forbidden. */          \
-    Class(const Class&) = delete;                \
-    /** \brief Copying is forbidden. */          \
-    Class& operator=(const Class&) = delete;     \
-    /** \brief Moving is forbidden. */           \
-    Class(Class&&) noexcept = delete;            \
-    /** \brief Moving is forbidden. */           \
-    Class& operator=(Class&&) noexcept = delete; \
-                                                 \
-private:
+#define DECLARE_NON_COPYABLE(Class)            \
+ public:                                       \
+  /** \brief Copying is forbidden. */          \
+  Class(const Class&) = delete;                \
+  /** \brief Copying is forbidden. */          \
+  Class& operator=(const Class&) = delete;     \
+  /** \brief Moving is forbidden. */           \
+  Class(Class&&) noexcept = delete;            \
+  /** \brief Moving is forbidden. */           \
+  Class& operator=(Class&&) noexcept = delete; \
+                                               \
+ private:
 
 #endif

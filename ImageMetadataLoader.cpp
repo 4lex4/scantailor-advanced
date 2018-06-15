@@ -17,37 +17,37 @@
  */
 
 #include "ImageMetadataLoader.h"
-#include "ImageMetadata.h"
-#include <QString>
-#include <QIODevice>
 #include <QFile>
+#include <QIODevice>
+#include <QString>
+#include "ImageMetadata.h"
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
 void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> loader) {
-    m_sLoaders.push_back(std::move(loader));
+  m_sLoaders.push_back(std::move(loader));
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
                                                           const VirtualFunction<void, const ImageMetadata&>& out) {
-    auto it(m_sLoaders.begin());
-    const auto end(m_sLoaders.end());
-    for (; it != end; ++it) {
-        const Status status = (*it)->loadMetadata(io_device, out);
-        if (status != FORMAT_NOT_RECOGNIZED) {
-            return status;
-        }
+  auto it(m_sLoaders.begin());
+  const auto end(m_sLoaders.end());
+  for (; it != end; ++it) {
+    const Status status = (*it)->loadMetadata(io_device, out);
+    if (status != FORMAT_NOT_RECOGNIZED) {
+      return status;
     }
+  }
 
-    return FORMAT_NOT_RECOGNIZED;
+  return FORMAT_NOT_RECOGNIZED;
 }
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& file_path,
                                                           const VirtualFunction<void, const ImageMetadata&>& out) {
-    QFile file(file_path);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return GENERIC_ERROR;
-    }
+  QFile file(file_path);
+  if (!file.open(QIODevice::ReadOnly)) {
+    return GENERIC_ERROR;
+  }
 
-    return loadImpl(file, out);
+  return loadImpl(file, out);
 }

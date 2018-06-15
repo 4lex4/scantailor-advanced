@@ -19,20 +19,20 @@
 #ifndef THUMBNAILCOLLECTOR_H_
 #define THUMBNAILCOLLECTOR_H_
 
-#include "AbstractFilterDataCollector.h"
 #include <memory>
+#include "AbstractFilterDataCollector.h"
 
 class ThumbnailPixmapCache;
 class QGraphicsItem;
 class QSizeF;
 
 class ThumbnailCollector : public AbstractFilterDataCollector {
-public:
-    virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;
+ public:
+  virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;
 
-    virtual intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() = 0;
+  virtual intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() = 0;
 
-    virtual QSizeF maxLogicalThumbSize() const = 0;
+  virtual QSizeF maxLogicalThumbSize() const = 0;
 };
 
 

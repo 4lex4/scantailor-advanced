@@ -19,75 +19,73 @@
 #ifndef STAGELISTVIEW_H_
 #define STAGELISTVIEW_H_
 
-#include "intrusive_ptr.h"
-#include <QTableView>
 #include <QPixmap>
+#include <QTableView>
 #include <vector>
+#include "intrusive_ptr.h"
 
 class StageSequence;
 
 class StageListView : public QTableView {
-    Q_OBJECT
-public:
-    explicit StageListView(QWidget* parent);
+  Q_OBJECT
+ public:
+  explicit StageListView(QWidget* parent);
 
-    ~StageListView() override;
+  ~StageListView() override;
 
-    void setStages(const intrusive_ptr<StageSequence>& stages);
+  void setStages(const intrusive_ptr<StageSequence>& stages);
 
-    QSize sizeHint() const override {
-        return m_sizeHint;
-    }
+  QSize sizeHint() const override { return m_sizeHint; }
 
-signals:
+ signals:
 
-    void launchBatchProcessing();
+  void launchBatchProcessing();
 
-public slots:
+ public slots:
 
-    void setBatchProcessingPossible(bool possible);
+  void setBatchProcessingPossible(bool possible);
 
-    void setBatchProcessingInProgress(bool in_progress);
+  void setBatchProcessingInProgress(bool in_progress);
 
-protected slots:
+ protected slots:
 
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
-private slots:
+ private slots:
 
-    void ensureSelectedRowVisible();
+  void ensureSelectedRowVisible();
 
-protected:
-    void timerEvent(QTimerEvent* event) override;
+ protected:
+  void timerEvent(QTimerEvent* event) override;
 
-private:
-    class Model;
-    class LeftColDelegate;
+ private:
+  class Model;
+  class LeftColDelegate;
 
-    class RightColDelegate;
+  class RightColDelegate;
 
-    void removeLaunchButton(int row);
+  void removeLaunchButton(int row);
 
-    void placeLaunchButton(int row);
+  void placeLaunchButton(int row);
 
-    void initiateBatchAnimationFrameRendering();
+  void initiateBatchAnimationFrameRendering();
 
-    void createBatchAnimationSequence(int square_side);
+  void createBatchAnimationSequence(int square_side);
 
-    void updateRowSpans();
+  void updateRowSpans();
 
-    int selectedRow() const;
+  int selectedRow() const;
 
-    QSize m_sizeHint;
-    Model* m_pModel;
-    LeftColDelegate* m_pFirstColDelegate;
-    RightColDelegate* m_pSecondColDelegate;
-    QWidget* m_pLaunchBtn;
-    std::vector<QPixmap> m_batchAnimationPixmaps;
-    int m_curBatchAnimationFrame;
-    int m_timerId;
-    bool m_batchProcessingPossible;
-    bool m_batchProcessingInProgress;
+  QSize m_sizeHint;
+  Model* m_pModel;
+  LeftColDelegate* m_pFirstColDelegate;
+  RightColDelegate* m_pSecondColDelegate;
+  QWidget* m_pLaunchBtn;
+  std::vector<QPixmap> m_batchAnimationPixmaps;
+  int m_curBatchAnimationFrame;
+  int m_timerId;
+  bool m_batchProcessingPossible;
+  bool m_batchProcessingInProgress;
 };
 
 

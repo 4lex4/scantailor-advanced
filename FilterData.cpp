@@ -23,38 +23,36 @@
 using namespace imageproc;
 
 FilterData::FilterData(const QImage& image)
-        : m_origImage(image), m_grayImage(toGrayscale(m_origImage)), m_xform(image.rect(), Dpm(image)) {
-}
+    : m_origImage(image), m_grayImage(toGrayscale(m_origImage)), m_xform(image.rect(), Dpm(image)) {}
 
 FilterData::FilterData(const FilterData& other, const ImageTransformation& xform)
-        : m_origImage(other.m_origImage),
-          m_grayImage(other.m_grayImage),
-          m_xform(xform),
-          m_imageParams(other.m_imageParams) {
-}
+    : m_origImage(other.m_origImage),
+      m_grayImage(other.m_grayImage),
+      m_xform(xform),
+      m_imageParams(other.m_imageParams) {}
 
 FilterData::FilterData(const FilterData& other) = default;
 
 imageproc::BinaryThreshold FilterData::bwThreshold() const {
-    return m_imageParams.getBwThreshold();
+  return m_imageParams.getBwThreshold();
 }
 
 const ImageTransformation& FilterData::xform() const {
-    return m_xform;
+  return m_xform;
 }
 
 const QImage& FilterData::origImage() const {
-    return m_origImage;
+  return m_origImage;
 }
 
 const imageproc::GrayImage& FilterData::grayImage() const {
-    return m_grayImage;
+  return m_grayImage;
 }
 
 bool FilterData::isBlackOnWhite() const {
-    return m_imageParams.isBlackOnWhite();
+  return m_imageParams.isBlackOnWhite();
 }
 
 void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
-    m_imageParams = imageParams;
+  m_imageParams = imageParams;
 }

@@ -19,68 +19,68 @@
 #ifndef FIXDPIDIALOG_H_
 #define FIXDPIDIALOG_H_
 
-#include "ui_FixDpiDialog.h"
-#include "ImageFileInfo.h"
-#include "ImageMetadata.h"
-#include "Dpi.h"
 #include <QDialog>
-#include <QString>
 #include <QItemSelection>
 #include <QPalette>
 #include <QSize>
-#include <vector>
+#include <QString>
 #include <memory>
+#include <vector>
+#include "Dpi.h"
+#include "ImageFileInfo.h"
+#include "ImageMetadata.h"
+#include "ui_FixDpiDialog.h"
 
 class QItemSelection;
 
 class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
-    Q_OBJECT
-public:
-    explicit FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent = nullptr);
 
-    ~FixDpiDialog() override;
+  ~FixDpiDialog() override;
 
-    const std::vector<ImageFileInfo>& files() const;
+  const std::vector<ImageFileInfo>& files() const;
 
-private slots:
+ private slots:
 
-    void tabChanged(int tab);
+  void tabChanged(int tab);
 
-    void selectionChanged(const QItemSelection& selection);
+  void selectionChanged(const QItemSelection& selection);
 
-    void dpiComboChangedByUser(int index);
+  void dpiComboChangedByUser(int index);
 
-    void dpiValueChanged();
+  void dpiValueChanged();
 
-    void applyClicked();
+  void applyClicked();
 
-private:
-    class DpiCounts;
-    class SizeGroup;
-    class TreeModel;
-    class FilterModel;
+ private:
+  class DpiCounts;
+  class SizeGroup;
+  class TreeModel;
+  class FilterModel;
 
-    enum Scope { ALL, NOT_OK };
+  enum Scope { ALL, NOT_OK };
 
-    void enableDisableOkButton();
+  void enableDisableOkButton();
 
-    void updateDpiFromSelection(const QItemSelection& selection);
+  void updateDpiFromSelection(const QItemSelection& selection);
 
-    void resetDpiForm();
+  void resetDpiForm();
 
-    void setDpiForm(const ImageMetadata& metadata);
+  void setDpiForm(const ImageMetadata& metadata);
 
-    void updateDpiCombo();
+  void updateDpiCombo();
 
-    void decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpi_status) const;
+  void decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpi_status) const;
 
-    std::unique_ptr<TreeModel> m_ptrPages;
-    std::unique_ptr<FilterModel> m_ptrUndefinedDpiPages;
-    QString m_xDpiInitialValue;
-    QString m_yDpiInitialValue;
-    QSize m_selectedItemPixelSize;
-    QPalette m_normalPalette;
-    QPalette m_errorPalette;
+  std::unique_ptr<TreeModel> m_ptrPages;
+  std::unique_ptr<FilterModel> m_ptrUndefinedDpiPages;
+  QString m_xDpiInitialValue;
+  QString m_yDpiInitialValue;
+  QSize m_selectedItemPixelSize;
+  QPalette m_normalPalette;
+  QPalette m_errorPalette;
 };
 
 

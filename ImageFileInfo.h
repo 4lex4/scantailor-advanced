@@ -19,34 +19,27 @@
 #ifndef IMAGEFILEINFO_H_
 #define IMAGEFILEINFO_H_
 
-#include "ImageMetadata.h"
 #include <QFileInfo>
 #include <vector>
+#include "ImageMetadata.h"
 
 class ImageFileInfo {
-    // Member-wise copying is OK.
-public:
-    ImageFileInfo(const QFileInfo& file_info, const std::vector<ImageMetadata>& image_info)
-            : m_fileInfo(file_info), m_imageInfo(image_info) {
-    }
+  // Member-wise copying is OK.
+ public:
+  ImageFileInfo(const QFileInfo& file_info, const std::vector<ImageMetadata>& image_info)
+      : m_fileInfo(file_info), m_imageInfo(image_info) {}
 
-    const QFileInfo& fileInfo() const {
-        return m_fileInfo;
-    }
+  const QFileInfo& fileInfo() const { return m_fileInfo; }
 
-    std::vector<ImageMetadata>& imageInfo() {
-        return m_imageInfo;
-    }
+  std::vector<ImageMetadata>& imageInfo() { return m_imageInfo; }
 
-    const std::vector<ImageMetadata>& imageInfo() const {
-        return m_imageInfo;
-    }
+  const std::vector<ImageMetadata>& imageInfo() const { return m_imageInfo; }
 
-    bool isDpiOK() const;
+  bool isDpiOK() const;
 
-private:
-    QFileInfo m_fileInfo;
-    std::vector<ImageMetadata> m_imageInfo;
+ private:
+  QFileInfo m_fileInfo;
+  std::vector<ImageMetadata> m_imageInfo;
 };
 
 

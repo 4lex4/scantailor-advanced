@@ -19,8 +19,8 @@
 #ifndef SIDES_OF_LINE_H_
 #define SIDES_OF_LINE_H_
 
-#include <QPointF>
 #include <QLineF>
+#include <QPointF>
 
 /**
  * This function allows you to check if a pair of points is on the same

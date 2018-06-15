@@ -19,12 +19,12 @@
 #ifndef RELINKING_DIALOG_H_
 #define RELINKING_DIALOG_H_
 
-#include "ui_RelinkingDialog.h"
-#include "RelinkingModel.h"
-#include "RelinkablePath.h"
-#include "AbstractRelinker.h"
-#include "intrusive_ptr.h"
 #include <QDialog>
+#include "AbstractRelinker.h"
+#include "RelinkablePath.h"
+#include "RelinkingModel.h"
+#include "intrusive_ptr.h"
+#include "ui_RelinkingDialog.h"
 
 class RelinkingSortingModel;
 class QAbstractButton;
@@ -32,43 +32,41 @@ class QItemSelection;
 class QString;
 
 class RelinkingDialog : public QDialog {
-    Q_OBJECT
-public:
-    explicit RelinkingDialog(const QString& project_file_path, QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit RelinkingDialog(const QString& project_file_path, QWidget* parent = nullptr);
 
-    ProxyFunction<RelinkingModel&, void, const RelinkablePath&> pathCollector() {
-        return ProxyFunction<RelinkingModel&, void, const RelinkablePath&>(m_model);
-    }
+  ProxyFunction<RelinkingModel&, void, const RelinkablePath&> pathCollector() {
+    return ProxyFunction<RelinkingModel&, void, const RelinkablePath&>(m_model);
+  }
 
-    /**
-     * This method guarantees that
-     * \code
-     * dialog->relinker().release() == dialog->relinker().release()
-     * \endcode
-     * will hold true for the lifetime of the dialog.
-     * This allows you to take the relinker right after construction
-     * and then use it when accepted() signal is emitted.
-     */
-    intrusive_ptr<AbstractRelinker> relinker() const {
-        return m_model.relinker();
-    }
+  /**
+   * This method guarantees that
+   * \code
+   * dialog->relinker().release() == dialog->relinker().release()
+   * \endcode
+   * will hold true for the lifetime of the dialog.
+   * This allows you to take the relinker right after construction
+   * and then use it when accepted() signal is emitted.
+   */
+  intrusive_ptr<AbstractRelinker> relinker() const { return m_model.relinker(); }
 
-private slots:
+ private slots:
 
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
-    /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-    void pathButtonClicked(const QString& prefix_path, const QString& suffix_path, int type);
+  /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
+  void pathButtonClicked(const QString& prefix_path, const QString& suffix_path, int type);
 
-    void undoButtonClicked();
+  void undoButtonClicked();
 
-    void commitChanges();
+  void commitChanges();
 
-private:
-    Ui::RelinkingDialog ui;
-    RelinkingModel m_model;
-    RelinkingSortingModel* m_pSortingModel;
-    QString m_projectFileDir;
+ private:
+  Ui::RelinkingDialog ui;
+  RelinkingModel m_model;
+  RelinkingSortingModel* m_pSortingModel;
+  QString m_projectFileDir;
 };
 
 

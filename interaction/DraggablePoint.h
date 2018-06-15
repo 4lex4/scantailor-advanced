@@ -19,67 +19,55 @@
 #ifndef DRAGGABLE_POINT_H_
 #define DRAGGABLE_POINT_H_
 
-#include "DraggableObject.h"
 #include <QPointF>
 #include <boost/function.hpp>
+#include "DraggableObject.h"
 
 class DraggablePoint : public DraggableObject {
-public:
-    typedef boost::function<QPointF()> PositionCallback;
+ public:
+  typedef boost::function<QPointF()> PositionCallback;
 
-    typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> MoveRequestCallback;
+  typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> MoveRequestCallback;
 
-    DraggablePoint();
+  DraggablePoint();
 
-    /**
-     * Returns the hit area radius, with zero indicating the global
-     * proximity threshold of InteractionState is to be used.
-     */
-    double hitRadius() const {
-        return m_hitAreaRadius;
-    }
+  /**
+   * Returns the hit area radius, with zero indicating the global
+   * proximity threshold of InteractionState is to be used.
+   */
+  double hitRadius() const { return m_hitAreaRadius; }
 
-    void setHitRadius(double radius) {
-        m_hitAreaRadius = radius;
-    }
+  void setHitRadius(double radius) { m_hitAreaRadius = radius; }
 
-    Proximity proximityThreshold(const InteractionState& interaction) const override;
+  Proximity proximityThreshold(const InteractionState& interaction) const override;
 
-    void setProximityPriority(int priority) {
-        m_proximityPriority = priority;
-    }
+  void setProximityPriority(int priority) { m_proximityPriority = priority; }
 
-    int proximityPriority() const override;
+  int proximityPriority() const override;
 
-    Proximity proximity(const QPointF& mouse_pos) override;
+  Proximity proximity(const QPointF& mouse_pos) override;
 
-    void dragInitiated(const QPointF& mouse_pos) override;
+  void dragInitiated(const QPointF& mouse_pos) override;
 
-    void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
+  void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
 
-    void setPositionCallback(const PositionCallback& callback) {
-        m_positionCallback = callback;
-    }
+  void setPositionCallback(const PositionCallback& callback) { m_positionCallback = callback; }
 
-    void setMoveRequestCallback(const MoveRequestCallback& callback) {
-        m_moveRequestCallback = callback;
-    }
+  void setMoveRequestCallback(const MoveRequestCallback& callback) { m_moveRequestCallback = callback; }
 
-protected:
-    virtual QPointF pointPosition() const {
-        return m_positionCallback();
-    }
+ protected:
+  virtual QPointF pointPosition() const { return m_positionCallback(); }
 
-    virtual void pointMoveRequest(const QPointF& widget_pos, Qt::KeyboardModifiers mask) {
-        m_moveRequestCallback(widget_pos, mask);
-    }
+  virtual void pointMoveRequest(const QPointF& widget_pos, Qt::KeyboardModifiers mask) {
+    m_moveRequestCallback(widget_pos, mask);
+  }
 
-private:
-    PositionCallback m_positionCallback;
-    MoveRequestCallback m_moveRequestCallback;
-    QPointF m_pointRelativeToMouse;
-    double m_hitAreaRadius;
-    int m_proximityPriority;
+ private:
+  PositionCallback m_positionCallback;
+  MoveRequestCallback m_moveRequestCallback;
+  QPointF m_pointRelativeToMouse;
+  double m_hitAreaRadius;
+  int m_proximityPriority;
 };
 
 

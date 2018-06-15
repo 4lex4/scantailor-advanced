@@ -20,13 +20,13 @@
 #include <QDebug>
 
 void PerformanceTimer::print(const char* prefix) {
-    const clock_t now = clock();
-    const double sec = double(now - m_start) / CLOCKS_PER_SEC;
-    if (sec > 10.0) {
-        qDebug() << prefix << (long) sec << " sec";
-    } else if (sec > 0.01) {
-        qDebug() << prefix << (long) (sec * 1000) << " msec";
-    } else {
-        qDebug() << prefix << (long) (sec * 1000000) << " usec";
-    }
+  const clock_t now = clock();
+  const double sec = double(now - m_start) / CLOCKS_PER_SEC;
+  if (sec > 10.0) {
+    qDebug() << prefix << (long) sec << " sec";
+  } else if (sec > 0.01) {
+    qDebug() << prefix << (long) (sec * 1000) << " msec";
+  } else {
+    qDebug() << prefix << (long) (sec * 1000000) << " usec";
+  }
 }

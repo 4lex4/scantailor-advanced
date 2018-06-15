@@ -19,44 +19,44 @@
 #ifndef OUT_OF_MEMORY_DIALOG_H_
 #define OUT_OF_MEMORY_DIALOG_H_
 
-#include "ui_OutOfMemoryDialog.h"
+#include <QDialog>
+#include <QString>
 #include "OutputFileNameGenerator.h"
-#include "intrusive_ptr.h"
-#include "StageSequence.h"
 #include "ProjectPages.h"
 #include "SelectedPage.h"
-#include <QString>
-#include <QDialog>
+#include "StageSequence.h"
+#include "intrusive_ptr.h"
+#include "ui_OutOfMemoryDialog.h"
 
 class OutOfMemoryDialog : public QDialog {
-    Q_OBJECT
-public:
-    explicit OutOfMemoryDialog(QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit OutOfMemoryDialog(QWidget* parent = nullptr);
 
-    void setParams(const QString& project_file,
-                   // may be empty
-                   intrusive_ptr<StageSequence> stages,
-                   intrusive_ptr<ProjectPages> pages,
-                   const SelectedPage& selected_page,
-                   const OutputFileNameGenerator& out_file_name_gen);
+  void setParams(const QString& project_file,
+                 // may be empty
+                 intrusive_ptr<StageSequence> stages,
+                 intrusive_ptr<ProjectPages> pages,
+                 const SelectedPage& selected_page,
+                 const OutputFileNameGenerator& out_file_name_gen);
 
-private slots:
+ private slots:
 
-    void saveProject();
+  void saveProject();
 
-    void saveProjectAs();
+  void saveProjectAs();
 
-private:
-    bool saveProjectWithFeedback(const QString& project_file);
+ private:
+  bool saveProjectWithFeedback(const QString& project_file);
 
-    void showSaveSuccessScreen();
+  void showSaveSuccessScreen();
 
-    Ui::OutOfMemoryDialog ui;
-    QString m_projectFile;
-    intrusive_ptr<StageSequence> m_ptrStages;
-    intrusive_ptr<ProjectPages> m_ptrPages;
-    SelectedPage m_selectedPage;
-    OutputFileNameGenerator m_outFileNameGen;
+  Ui::OutOfMemoryDialog ui;
+  QString m_projectFile;
+  intrusive_ptr<StageSequence> m_ptrStages;
+  intrusive_ptr<ProjectPages> m_ptrPages;
+  SelectedPage m_selectedPage;
+  OutputFileNameGenerator m_outFileNameGen;
 };
 
 

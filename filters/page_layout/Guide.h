@@ -2,40 +2,40 @@
 #ifndef SCANTAILOR_GUIDE_H
 #define SCANTAILOR_GUIDE_H
 
-#include <QtCore>
 #include <QDomElement>
+#include <QtCore>
 
 namespace page_layout {
 class Guide {
-private:
-    Qt::Orientation orientation;
-    double position;
+ private:
+  Qt::Orientation orientation;
+  double position;
 
-public:
-    Guide();
+ public:
+  Guide();
 
-    Guide(Qt::Orientation orientation, double position);
+  Guide(Qt::Orientation orientation, double position);
 
-    Guide(const QLineF& line);
+  Guide(const QLineF& line);
 
-    explicit Guide(const QDomElement& el);
+  explicit Guide(const QDomElement& el);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    operator QLineF() const;
+  operator QLineF() const;
 
-    Qt::Orientation getOrientation() const;
+  Qt::Orientation getOrientation() const;
 
-    double getPosition() const;
+  double getPosition() const;
 
-    void setPosition(double position);
+  void setPosition(double position);
 
-private:
-    static Qt::Orientation lineOrientation(const QLineF& line);
+ private:
+  static Qt::Orientation lineOrientation(const QLineF& line);
 
-    static QString orientationToString(Qt::Orientation orientation);
+  static QString orientationToString(Qt::Orientation orientation);
 
-    static Qt::Orientation orientationFromString(const QString& str);
+  static Qt::Orientation orientationFromString(const QString& str);
 };
 }  // namespace page_layout
 

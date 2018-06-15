@@ -21,38 +21,38 @@
 
 #define BOOST_SIGNALS_NAMESPACE signal
 
+#include <QCoreApplication>
+#include <QPoint>
+#include <boost/function.hpp>
 #include "InteractionHandler.h"
 #include "InteractionState.h"
-#include <QPoint>
-#include <QCoreApplication>
-#include <boost/function.hpp>
 
 class ImageViewBase;
 
 class DragHandler : public InteractionHandler {
-    Q_DECLARE_TR_FUNCTIONS(DragHandler)
-public:
-    explicit DragHandler(ImageViewBase& image_view);
+  Q_DECLARE_TR_FUNCTIONS(DragHandler)
+ public:
+  explicit DragHandler(ImageViewBase& image_view);
 
-    DragHandler(ImageViewBase& image_view,
-                const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
+  DragHandler(ImageViewBase& image_view,
+              const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
 
-    bool isActive() const;
+  bool isActive() const;
 
-protected:
-    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
+ protected:
+  void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-private:
-    void init();
+ private:
+  void init();
 
-    ImageViewBase& m_rImageView;
-    InteractionState::Captor m_interaction;
-    QPoint m_lastMousePos;
-    boost::function<bool(const InteractionState&)> m_interactionPermitter;
+  ImageViewBase& m_rImageView;
+  InteractionState::Captor m_interaction;
+  QPoint m_lastMousePos;
+  boost::function<bool(const InteractionState&)> m_interactionPermitter;
 };
 
 

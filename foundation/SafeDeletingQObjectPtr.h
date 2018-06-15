@@ -21,51 +21,42 @@
 
 #include "NonCopyable.h"
 
-template<typename T>
+template <typename T>
 class SafeDeletingQObjectPtr {
-    DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
+  DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
 
-public:
-    explicit SafeDeletingQObjectPtr(T* obj = 0) : m_pObj(obj) {
+ public:
+  explicit SafeDeletingQObjectPtr(T* obj = 0) : m_pObj(obj) {}
+
+  ~SafeDeletingQObjectPtr() {
+    if (m_pObj) {
+      m_pObj->disconnect();
+      m_pObj->deleteLater();
     }
+  }
 
-    ~SafeDeletingQObjectPtr() {
-        if (m_pObj) {
-            m_pObj->disconnect();
-            m_pObj->deleteLater();
-        }
-    }
+  void reset(T* other) { SafeDeletingQObjectPtr(other).swap(*this); }
 
-    void reset(T* other) {
-        SafeDeletingQObjectPtr(other).swap(*this);
-    }
+  T& operator*() const { return *m_pObj; }
 
-    T& operator*() const {
-        return *m_pObj;
-    }
+  T* operator->() const { return m_pObj; }
 
-    T* operator->() const {
-        return m_pObj;
-    }
+  T* get() const { return m_pObj; }
 
-    T* get() const {
-        return m_pObj;
-    }
+  void swap(SafeDeletingQObjectPtr& other) {
+    T* tmp = m_pObj;
+    m_pObj = other.m_pObj;
+    other.m_pObj = tmp;
+  }
 
-    void swap(SafeDeletingQObjectPtr& other) {
-        T* tmp = m_pObj;
-        m_pObj = other.m_pObj;
-        other.m_pObj = tmp;
-    }
-
-private:
-    T* m_pObj;
+ private:
+  T* m_pObj;
 };
 
 
-template<typename T>
+template <typename T>
 void swap(SafeDeletingQObjectPtr<T>& o1, SafeDeletingQObjectPtr<T>& o2) {
-    o1.swap(o2);
+  o1.swap(o2);
 }
 
 #endif  // ifndef SAFE_DELETING_QOBJECT_PTR_H_

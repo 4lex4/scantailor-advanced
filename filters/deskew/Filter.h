@@ -19,14 +19,14 @@
 #ifndef DESKEW_FILTER_H_
 #define DESKEW_FILTER_H_
 
-#include "NonCopyable.h"
+#include <QCoreApplication>
 #include "AbstractFilter.h"
-#include "PageView.h"
-#include "intrusive_ptr.h"
 #include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageView.h"
 #include "SafeDeletingQObjectPtr.h"
 #include "Settings.h"
-#include <QCoreApplication>
+#include "intrusive_ptr.h"
 
 class QString;
 class PageSelectionAccessor;
@@ -44,57 +44,57 @@ class CacheDrivenTask;
 class Settings;
 
 class Filter : public AbstractFilter {
-    DECLARE_NON_COPYABLE(Filter)
+  DECLARE_NON_COPYABLE(Filter)
 
-    Q_DECLARE_TR_FUNCTIONS(deskew::Filter)
-public:
-    explicit Filter(const PageSelectionAccessor& page_selection_accessor);
+  Q_DECLARE_TR_FUNCTIONS(deskew::Filter)
+ public:
+  explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
-    ~Filter() override;
+  ~Filter() override;
 
-    QString getName() const override;
+  QString getName() const override;
 
-    PageView getView() const override;
+  PageView getView() const override;
 
-    void performRelinking(const AbstractRelinker& relinker) override;
+  void performRelinking(const AbstractRelinker& relinker) override;
 
-    void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
+  void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
 
-    QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
+  QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-    void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
+  void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
 
-    void loadDefaultSettings(const PageInfo& page_info) override;
+  void loadDefaultSettings(const PageInfo& page_info) override;
 
-    intrusive_ptr<Task> createTask(const PageId& page_id,
-                                   intrusive_ptr<select_content::Task> next_task,
-                                   bool batch_processing,
-                                   bool debug);
+  intrusive_ptr<Task> createTask(const PageId& page_id,
+                                 intrusive_ptr<select_content::Task> next_task,
+                                 bool batch_processing,
+                                 bool debug);
 
-    intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task);
+  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> next_task);
 
-    OptionsWidget* optionsWidget();
+  OptionsWidget* optionsWidget();
 
-    std::vector<PageOrderOption> pageOrderOptions() const override;
+  std::vector<PageOrderOption> pageOrderOptions() const override;
 
-    int selectedPageOrder() const override;
+  int selectedPageOrder() const override;
 
-    void selectPageOrder(int option) override;
+  void selectPageOrder(int option) override;
 
-private:
-    void writeParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+ private:
+  void writeParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
-    void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const;
+  void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const;
 
-    void writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+  void writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
-    void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
+  void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
 
-    intrusive_ptr<Settings> m_ptrSettings;
-    intrusive_ptr<ImageSettings> m_ptrImageSettings;
-    SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
-    std::vector<PageOrderOption> m_pageOrderOptions;
-    int m_selectedPageOrder;
+  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<ImageSettings> m_ptrImageSettings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  std::vector<PageOrderOption> m_pageOrderOptions;
+  int m_selectedPageOrder;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_FILTER_H_

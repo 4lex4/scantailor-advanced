@@ -19,28 +19,28 @@
 #ifndef OUTPUT_PICTURE_ZONE_PROP_DIALOG_H_
 #define OUTPUT_PICTURE_ZONE_PROP_DIALOG_H_
 
-#include "ui_PictureZonePropDialog.h"
+#include <QDialog>
 #include "PropertySet.h"
 #include "intrusive_ptr.h"
-#include <QDialog>
+#include "ui_PictureZonePropDialog.h"
 
 namespace output {
 class PictureZonePropDialog : public QDialog {
-    Q_OBJECT
-public:
-    explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
 
-signals:
+ signals:
 
-    void updated();
+  void updated();
 
-private slots:
+ private slots:
 
-    void itemToggled(bool selected);
+  void itemToggled(bool selected);
 
-private:
-    Ui::PictureZonePropDialog ui;
-    intrusive_ptr<PropertySet> m_ptrProps;
+ private:
+  Ui::PictureZonePropDialog ui;
+  intrusive_ptr<PropertySet> m_ptrProps;
 };
 }  // namespace output
 #endif

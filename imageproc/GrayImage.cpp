@@ -21,44 +21,43 @@
 
 namespace imageproc {
 GrayImage::GrayImage(QSize size) {
-    if (size.isEmpty()) {
-        return;
-    }
+  if (size.isEmpty()) {
+    return;
+  }
 
-    m_image = QImage(size, QImage::Format_Indexed8);
-    m_image.setColorTable(createGrayscalePalette());
-    if (m_image.isNull()) {
-        throw std::bad_alloc();
-    }
+  m_image = QImage(size, QImage::Format_Indexed8);
+  m_image.setColorTable(createGrayscalePalette());
+  if (m_image.isNull()) {
+    throw std::bad_alloc();
+  }
 }
 
-GrayImage::GrayImage(const QImage& image) : m_image(toGrayscale(image)) {
-}
+GrayImage::GrayImage(const QImage& image) : m_image(toGrayscale(image)) {}
 
 GrayImage GrayImage::inverted() const {
-    GrayImage inverted(*this);
-    inverted.invert();
+  GrayImage inverted(*this);
+  inverted.invert();
 
-    return inverted;
+  return inverted;
 }
 
 void GrayImage::invert() {
-    m_image.invertPixels(QImage::InvertRgb);
+  m_image.invertPixels(QImage::InvertRgb);
 }
 
 int GrayImage::dotsPerMeterX() const {
-    return m_image.dotsPerMeterX();
+  return m_image.dotsPerMeterX();
 }
 
 int GrayImage::dotsPerMeterY() const {
-    return m_image.dotsPerMeterY();
+  return m_image.dotsPerMeterY();
 }
 
 void GrayImage::setDotsPerMeterX(int value) {
-    m_image.setDotsPerMeterX(value);
+  m_image.setDotsPerMeterX(value);
 }
 
 void GrayImage::setDotsPerMeterY(int value) {
-    m_image.setDotsPerMeterY(value);
+  m_image.setDotsPerMeterY(value);
 }
 }  // namespace imageproc

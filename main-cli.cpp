@@ -25,45 +25,44 @@
 
 
 int main(int argc, char** argv) {
-    QCoreApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
 
 #ifdef _WIN32
-    // Get rid of all references to Qt's installation directory.
-    app.setLibraryPaths(QStringList(app.applicationDirPath()));
+  // Get rid of all references to Qt's installation directory.
+  app.setLibraryPaths(QStringList(app.applicationDirPath()));
 #endif
 
-    // parse command line arguments
-    CommandLine cli(app.arguments(), false);
-    CommandLine::set(cli);
+  // parse command line arguments
+  CommandLine cli(app.arguments(), false);
+  CommandLine::set(cli);
 
-    if (cli.isError()) {
-        cli.printHelp();
+  if (cli.isError()) {
+    cli.printHelp();
 
-        return 1;
+    return 1;
+  }
+
+  if (cli.hasHelp() || cli.outputDirectory().isEmpty() || ((cli.images().size() == 0) && cli.projectFile().isEmpty())) {
+    cli.printHelp();
+
+    return 0;
+  }
+
+  std::unique_ptr<ConsoleBatch> cbatch;
+
+  try {
+    if (!cli.projectFile().isEmpty()) {
+      cbatch = std::make_unique<ConsoleBatch>(cli.projectFile());
+    } else {
+      cbatch = std::make_unique<ConsoleBatch>(cli.images(), cli.outputDirectory(), cli.getLayoutDirection());
     }
+    cbatch->process();
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    exit(1);
+  }
 
-    if (cli.hasHelp() || cli.outputDirectory().isEmpty()
-        || ((cli.images().size() == 0) && cli.projectFile().isEmpty())) {
-        cli.printHelp();
-
-        return 0;
-    }
-
-    std::unique_ptr<ConsoleBatch> cbatch;
-
-    try {
-        if (!cli.projectFile().isEmpty()) {
-            cbatch = std::make_unique<ConsoleBatch>(cli.projectFile());
-        } else {
-            cbatch = std::make_unique<ConsoleBatch>(cli.images(), cli.outputDirectory(), cli.getLayoutDirection());
-        }
-        cbatch->process();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
-
-    if (cli.hasOutputProject()) {
-        cbatch->saveProject(cli.outputProjectFile());
-    }
+  if (cli.hasOutputProject()) {
+    cbatch->saveProject(cli.outputProjectFile());
+  }
 }  // main

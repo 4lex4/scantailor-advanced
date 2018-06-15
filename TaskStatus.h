@@ -20,14 +20,14 @@
 #define TASKSTATUS_H_
 
 class TaskStatus {
-public:
-    virtual ~TaskStatus() = default;
+ public:
+  virtual ~TaskStatus() = default;
 
-    virtual void cancel() = 0;
+  virtual void cancel() = 0;
 
-    virtual bool isCancelled() const = 0;
+  virtual bool isCancelled() const = 0;
 
-    virtual void throwIfCancelled() const = 0;
+  virtual void throwIfCancelled() const = 0;
 };
 
 

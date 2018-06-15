@@ -17,225 +17,224 @@
  */
 
 #include "InteractionHandler.h"
-#include "InteractionState.h"
-#include <QPainter>
 #include <QKeyEvent>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/construct.hpp>
+#include <QPainter>
 #include <boost/lambda/bind.hpp>
+#include <boost/lambda/construct.hpp>
+#include <boost/lambda/lambda.hpp>
+#include "InteractionState.h"
 
-#define DISPATCH(list, call)                          \
-    {                                                 \
-        HandlerList::iterator it(list->begin());      \
-        const HandlerList::iterator end(list->end()); \
-        while (it != end) {                           \
-            (it++)->call;                             \
-        }                                             \
-    }
+#define DISPATCH(list, call)                      \
+  {                                               \
+    HandlerList::iterator it(list->begin());      \
+    const HandlerList::iterator end(list->end()); \
+    while (it != end) {                           \
+      (it++)->call;                               \
+    }                                             \
+  }
 
-#define RETURN_IF_ACCEPTED(event)  \
-    {                              \
-        if (event->isAccepted()) { \
-            return;                \
-        }                          \
-    }
+#define RETURN_IF_ACCEPTED(event) \
+  {                               \
+    if (event->isAccepted()) {    \
+      return;                     \
+    }                             \
+  }
 
 namespace {
 class ScopedClearAcceptance {
-    DECLARE_NON_COPYABLE(ScopedClearAcceptance)
+  DECLARE_NON_COPYABLE(ScopedClearAcceptance)
 
-public:
-    explicit ScopedClearAcceptance(QEvent* event);
+ public:
+  explicit ScopedClearAcceptance(QEvent* event);
 
-    ~ScopedClearAcceptance();
+  ~ScopedClearAcceptance();
 
-private:
-    QEvent* m_pEvent;
-    bool m_wasAccepted;
+ private:
+  QEvent* m_pEvent;
+  bool m_wasAccepted;
 };
 
 
 ScopedClearAcceptance::ScopedClearAcceptance(QEvent* event) : m_pEvent(event), m_wasAccepted(event->isAccepted()) {
-    m_pEvent->setAccepted(false);
+  m_pEvent->setAccepted(false);
 }
 
 ScopedClearAcceptance::~ScopedClearAcceptance() {
-    if (m_wasAccepted) {
-        m_pEvent->setAccepted(true);
-    }
+  if (m_wasAccepted) {
+    m_pEvent->setAccepted(true);
+  }
 }
 }  // anonymous namespace
 
-InteractionHandler::InteractionHandler() : m_ptrPreceeders(new HandlerList), m_ptrFollowers(new HandlerList) {
-}
+InteractionHandler::InteractionHandler() : m_ptrPreceeders(new HandlerList), m_ptrFollowers(new HandlerList) {}
 
 InteractionHandler::~InteractionHandler() {
-    using namespace boost::lambda;
-    m_ptrPreceeders->clear_and_dispose(bind(delete_ptr(), _1));
-    m_ptrFollowers->clear_and_dispose(bind(delete_ptr(), _1));
+  using namespace boost::lambda;
+  m_ptrPreceeders->clear_and_dispose(bind(delete_ptr(), _1));
+  m_ptrFollowers->clear_and_dispose(bind(delete_ptr(), _1));
 }
 
 void InteractionHandler::paint(QPainter& painter, const InteractionState& interaction) {
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, paint(painter, interaction));
-    painter.save();
-    onPaint(painter, interaction);
-    painter.restore();
-    DISPATCH(followers, paint(painter, interaction));
+  DISPATCH(preceeders, paint(painter, interaction));
+  painter.save();
+  onPaint(painter, interaction);
+  painter.restore();
+  DISPATCH(followers, paint(painter, interaction));
 }
 
 void InteractionHandler::proximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, proximityUpdate(screen_mouse_pos, interaction));
-    onProximityUpdate(screen_mouse_pos, interaction);
-    assert(!interaction.captured() && "onProximityUpdate() must not capture interaction");
-    DISPATCH(followers, proximityUpdate(screen_mouse_pos, interaction));
+  DISPATCH(preceeders, proximityUpdate(screen_mouse_pos, interaction));
+  onProximityUpdate(screen_mouse_pos, interaction);
+  assert(!interaction.captured() && "onProximityUpdate() must not capture interaction");
+  DISPATCH(followers, proximityUpdate(screen_mouse_pos, interaction));
 }
 
 void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
+  RETURN_IF_ACCEPTED(event);
 
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, keyPressEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onKeyPressEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, keyPressEvent(event, interaction));
+  DISPATCH(preceeders, keyPressEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onKeyPressEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, keyPressEvent(event, interaction));
 }
 
 void InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  RETURN_IF_ACCEPTED(event);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, keyReleaseEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onKeyReleaseEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, keyReleaseEvent(event, interaction));
+  DISPATCH(preceeders, keyReleaseEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onKeyReleaseEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, keyReleaseEvent(event, interaction));
 }
 
 void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
+  RETURN_IF_ACCEPTED(event);
 
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, mousePressEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onMousePressEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, mousePressEvent(event, interaction));
+  DISPATCH(preceeders, mousePressEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onMousePressEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, mousePressEvent(event, interaction));
 }
 
 void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  RETURN_IF_ACCEPTED(event);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, mouseReleaseEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onMouseReleaseEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, mouseReleaseEvent(event, interaction));
+  DISPATCH(preceeders, mouseReleaseEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onMouseReleaseEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, mouseReleaseEvent(event, interaction));
 }
 
 void InteractionHandler::mouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  RETURN_IF_ACCEPTED(event);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, mouseDoubleClickEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onMouseDoubleClickEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, mouseDoubleClickEvent(event, interaction));
+  DISPATCH(preceeders, mouseDoubleClickEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onMouseDoubleClickEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, mouseDoubleClickEvent(event, interaction));
 }
 
 void InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
+  RETURN_IF_ACCEPTED(event);
 
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, mouseMoveEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onMouseMoveEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, mouseMoveEvent(event, interaction));
+  DISPATCH(preceeders, mouseMoveEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onMouseMoveEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, mouseMoveEvent(event, interaction));
 }
 
 void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
+  RETURN_IF_ACCEPTED(event);
 
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, wheelEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onWheelEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, wheelEvent(event, interaction));
+  DISPATCH(preceeders, wheelEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onWheelEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, wheelEvent(event, interaction));
 }
 
 void InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
-    RETURN_IF_ACCEPTED(event);
-    // Keep them alive in case this object gets destroyed.
-    intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
-    intrusive_ptr<HandlerList> followers(m_ptrFollowers);
+  RETURN_IF_ACCEPTED(event);
+  // Keep them alive in case this object gets destroyed.
+  intrusive_ptr<HandlerList> preceeders(m_ptrPreceeders);
+  intrusive_ptr<HandlerList> followers(m_ptrFollowers);
 
-    DISPATCH(preceeders, contextMenuEvent(event, interaction));
-    RETURN_IF_ACCEPTED(event);
-    onContextMenuEvent(event, interaction);
-    ScopedClearAcceptance guard(event);
-    DISPATCH(followers, contextMenuEvent(event, interaction));
+  DISPATCH(preceeders, contextMenuEvent(event, interaction));
+  RETURN_IF_ACCEPTED(event);
+  onContextMenuEvent(event, interaction);
+  ScopedClearAcceptance guard(event);
+  DISPATCH(followers, contextMenuEvent(event, interaction));
 }
 
 void InteractionHandler::makePeerPreceeder(InteractionHandler& handler) {
-    handler.unlink();
-    HandlerList::node_algorithms::link_before(this, &handler);
+  handler.unlink();
+  HandlerList::node_algorithms::link_before(this, &handler);
 }
 
 void InteractionHandler::makePeerFollower(InteractionHandler& handler) {
-    handler.unlink();
-    HandlerList::node_algorithms::link_after(this, &handler);
+  handler.unlink();
+  HandlerList::node_algorithms::link_after(this, &handler);
 }
 
 void InteractionHandler::makeFirstPreceeder(InteractionHandler& handler) {
-    handler.unlink();
-    m_ptrPreceeders->push_front(handler);
+  handler.unlink();
+  m_ptrPreceeders->push_front(handler);
 }
 
 void InteractionHandler::makeLastPreceeder(InteractionHandler& handler) {
-    handler.unlink();
-    m_ptrPreceeders->push_back(handler);
+  handler.unlink();
+  m_ptrPreceeders->push_back(handler);
 }
 
 void InteractionHandler::makeFirstFollower(InteractionHandler& handler) {
-    handler.unlink();
-    m_ptrFollowers->push_front(handler);
+  handler.unlink();
+  m_ptrFollowers->push_front(handler);
 }
 
 void InteractionHandler::makeLastFollower(InteractionHandler& handler) {
-    handler.unlink();
-    m_ptrFollowers->push_back(handler);
+  handler.unlink();
+  m_ptrFollowers->push_back(handler);
 }
 
 bool InteractionHandler::defaultInteractionPermitter(const InteractionState& interaction) {
-    return !interaction.captured();
+  return !interaction.captured();
 }

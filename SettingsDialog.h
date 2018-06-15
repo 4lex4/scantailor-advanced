@@ -19,26 +19,26 @@
 #ifndef SETTINGS_DIALOG_H_
 #define SETTINGS_DIALOG_H_
 
-#include "ui_SettingsDialog.h"
 #include <QDialog>
+#include "ui_SettingsDialog.h"
 
 class SettingsDialog : public QDialog {
-    Q_OBJECT
-public:
-    explicit SettingsDialog(QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit SettingsDialog(QWidget* parent = nullptr);
 
-    ~SettingsDialog() override;
+  ~SettingsDialog() override;
 
-signals:
-    void settingsChanged();
+ signals:
+  void settingsChanged();
 
-private slots:
-    void commitChanges();
+ private slots:
+  void commitChanges();
 
-    void blackOnWhiteDetectionToggled(bool checked);
+  void blackOnWhiteDetectionToggled(bool checked);
 
-private:
-    Ui::SettingsDialog ui;
+ private:
+  Ui::SettingsDialog ui;
 };
 
 

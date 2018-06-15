@@ -19,8 +19,8 @@
 #ifndef PAGE_ORIENTATION_PROPAGATOR_H_
 #define PAGE_ORIENTATION_PROPAGATOR_H_
 
-#include "intrusive_ptr.h"
 #include <QSizeF>
+#include "intrusive_ptr.h"
 
 class CompositeCacheDrivenTask;
 class ProjectPages;
@@ -39,19 +39,19 @@ class Filter;
  * answer, while "Fix Orientation" provides a hint.
  */
 class PageOrientationPropagator {
-public:
-    PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
-                              intrusive_ptr<CompositeCacheDrivenTask> task);
+ public:
+  PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
+                            intrusive_ptr<CompositeCacheDrivenTask> task);
 
-    ~PageOrientationPropagator();
+  ~PageOrientationPropagator();
 
-    void propagate(const ProjectPages& pages);
+  void propagate(const ProjectPages& pages);
 
-private:
-    class Collector;
+ private:
+  class Collector;
 
-    intrusive_ptr<page_split::Filter> m_ptrPageSplitFilter;
-    intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
+  intrusive_ptr<page_split::Filter> m_ptrPageSplitFilter;
+  intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
 };
 
 

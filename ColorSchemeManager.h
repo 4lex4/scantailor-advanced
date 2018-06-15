@@ -7,18 +7,18 @@
 #include "ColorScheme.h"
 
 class ColorSchemeManager {
-private:
-    static std::unique_ptr<ColorSchemeManager> m_ptrInstance;
-    std::unique_ptr<ColorParams> m_ptrColorParams;
+ private:
+  static std::unique_ptr<ColorSchemeManager> m_ptrInstance;
+  std::unique_ptr<ColorParams> m_ptrColorParams;
 
-    ColorSchemeManager() = default;
+  ColorSchemeManager() = default;
 
-public:
-    static ColorSchemeManager* instance();
+ public:
+  static ColorSchemeManager* instance();
 
-    void setColorScheme(const ColorScheme& colorScheme);
+  void setColorScheme(const ColorScheme& colorScheme);
 
-    QBrush getColorParam(const std::string& colorParam, const QBrush& defaultColor) const;
+  QBrush getColorParam(const std::string& colorParam, const QBrush& defaultColor) const;
 };
 
 

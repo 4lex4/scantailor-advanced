@@ -21,24 +21,24 @@
 
 namespace fix_orientation {
 ImageView::ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform)
-        : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
-          m_dragHandler(*this),
-          m_zoomHandler(*this),
-          m_xform(xform) {
-    rootInteractionHandler().makeLastFollower(m_dragHandler);
-    rootInteractionHandler().makeLastFollower(m_zoomHandler);
+    : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
+      m_dragHandler(*this),
+      m_zoomHandler(*this),
+      m_xform(xform) {
+  rootInteractionHandler().makeLastFollower(m_dragHandler);
+  rootInteractionHandler().makeLastFollower(m_zoomHandler);
 }
 
 ImageView::~ImageView() = default;
 
 void ImageView::setPreRotation(const OrthogonalRotation rotation) {
-    if (m_xform.preRotation() == rotation) {
-        return;
-    }
+  if (m_xform.preRotation() == rotation) {
+    return;
+  }
 
-    m_xform.setPreRotation(rotation);
+  m_xform.setPreRotation(rotation);
 
-    // This should call update() by itself.
-    updateTransform(ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea()));
+  // This should call update() by itself.
+  updateTransform(ImagePresentation(m_xform.transform(), m_xform.resultingPreCropArea()));
 }
 }  // namespace fix_orientation

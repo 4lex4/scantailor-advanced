@@ -22,47 +22,47 @@ namespace imageproc {
 namespace detail {
 namespace seed_fill_generic {
 void initHorTransitions(std::vector<HTransition>& transitions, const int width) {
-    transitions.reserve(width);
+  transitions.reserve(width);
 
-    if (width == 1) {
-        // No transitions allowed.
-        transitions.emplace_back(0, 0);
+  if (width == 1) {
+    // No transitions allowed.
+    transitions.emplace_back(0, 0);
 
-        return;
-    }
+    return;
+  }
 
-    // Only east transition is allowed.
-    transitions.emplace_back(0, 1);
+  // Only east transition is allowed.
+  transitions.emplace_back(0, 1);
 
-    for (int i = 1; i < width - 1; ++i) {
-        // Both transitions are allowed.
-        transitions.emplace_back(-1, 1);
-    }
+  for (int i = 1; i < width - 1; ++i) {
+    // Both transitions are allowed.
+    transitions.emplace_back(-1, 1);
+  }
 
-    // Only west transition is allowed.
-    transitions.emplace_back(-1, 0);
+  // Only west transition is allowed.
+  transitions.emplace_back(-1, 0);
 }
 
 void initVertTransitions(std::vector<VTransition>& transitions, const int height) {
-    transitions.reserve(height);
+  transitions.reserve(height);
 
-    if (height == 1) {
-        // No transitions allowed.
-        transitions.emplace_back(0, 0);
+  if (height == 1) {
+    // No transitions allowed.
+    transitions.emplace_back(0, 0);
 
-        return;
-    }
+    return;
+  }
 
-    // Only south transition is allowed.
-    transitions.emplace_back(0, ~0);
+  // Only south transition is allowed.
+  transitions.emplace_back(0, ~0);
 
-    for (int i = 1; i < height - 1; ++i) {
-        // Both transitions are allowed.
-        transitions.emplace_back(~0, ~0);
-    }
+  for (int i = 1; i < height - 1; ++i) {
+    // Both transitions are allowed.
+    transitions.emplace_back(~0, ~0);
+  }
 
-    // Only north transition is allowed.
-    transitions.emplace_back(~0, 0);
+  // Only north transition is allowed.
+  transitions.emplace_back(~0, 0);
 }
 }  // namespace seed_fill_generic
 }  // namespace detail

@@ -22,44 +22,44 @@
 EditableZoneSet::EditableZoneSet() = default;
 
 void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
-    m_defaultProps = props;
+  m_defaultProps = props;
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline) {
-    auto new_props = make_intrusive<PropertySet>(m_defaultProps);
-    m_splineMap.insert(Map::value_type(spline, new_props));
-    m_splineList.push_back(spline);
+  auto new_props = make_intrusive<PropertySet>(m_defaultProps);
+  m_splineMap.insert(Map::value_type(spline, new_props));
+  m_splineList.push_back(spline);
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline, const PropertySet& props) {
-    auto new_props = make_intrusive<PropertySet>(props);
-    m_splineMap.insert(Map::value_type(spline, new_props));
-    m_splineList.push_back(spline);
+  auto new_props = make_intrusive<PropertySet>(props);
+  m_splineMap.insert(Map::value_type(spline, new_props));
+  m_splineList.push_back(spline);
 }
 
 void EditableZoneSet::removeZone(const EditableSpline::Ptr& spline) {
-    m_splineMap.erase(spline);
-    m_splineList.remove(spline);
+  m_splineMap.erase(spline);
+  m_splineList.remove(spline);
 }
 
 void EditableZoneSet::commit() {
-    emit committed();
+  emit committed();
 }
 
 intrusive_ptr<PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) {
-    auto it(m_splineMap.find(spline));
-    if (it != m_splineMap.end()) {
-        return it->second;
-    } else {
-        return nullptr;
-    }
+  auto it(m_splineMap.find(spline));
+  if (it != m_splineMap.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
 }
 
 intrusive_ptr<const PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
-    auto it(m_splineMap.find(spline));
-    if (it != m_splineMap.end()) {
-        return it->second;
-    } else {
-        return nullptr;
-    }
+  auto it(m_splineMap.find(spline));
+  if (it != m_splineMap.end()) {
+    return it->second;
+  } else {
+    return nullptr;
+  }
 }

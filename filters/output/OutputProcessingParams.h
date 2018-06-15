@@ -8,28 +8,28 @@ class QDomElement;
 
 namespace output {
 class OutputProcessingParams {
-public:
-    OutputProcessingParams();
+ public:
+  OutputProcessingParams();
 
-    explicit OutputProcessingParams(const QDomElement& el);
+  explicit OutputProcessingParams(const QDomElement& el);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool operator==(const OutputProcessingParams& other) const;
+  bool operator==(const OutputProcessingParams& other) const;
 
-    bool operator!=(const OutputProcessingParams& other) const;
+  bool operator!=(const OutputProcessingParams& other) const;
 
-    bool isAutoZonesFound() const;
+  bool isAutoZonesFound() const;
 
-    void setAutoZonesFound(bool autoZonesFound);
+  void setAutoZonesFound(bool autoZonesFound);
 
-    bool isBlackOnWhiteSetManually() const;
+  bool isBlackOnWhiteSetManually() const;
 
-    void setBlackOnWhiteSetManually(bool blackOnWhiteSetManually);
+  void setBlackOnWhiteSetManually(bool blackOnWhiteSetManually);
 
-private:
-    bool autoZonesFound;
-    bool blackOnWhiteSetManually;
+ private:
+  bool autoZonesFound;
+  bool blackOnWhiteSetManually;
 };
 }  // namespace output
 

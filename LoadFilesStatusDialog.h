@@ -19,24 +19,24 @@
 #ifndef LOAD_FILES_STATUS_DIALOG_H_
 #define LOAD_FILES_STATUS_DIALOG_H_
 
-#include "ui_LoadFilesStatusDialog.h"
 #include <QString>
 #include <vector>
+#include "ui_LoadFilesStatusDialog.h"
 
 class LoadFilesStatusDialog : public QDialog {
-public:
-    explicit LoadFilesStatusDialog(QWidget* parent = nullptr);
+ public:
+  explicit LoadFilesStatusDialog(QWidget* parent = nullptr);
 
-    void setLoadedFiles(const std::vector<QString>& files);
+  void setLoadedFiles(const std::vector<QString>& files);
 
-    void setFailedFiles(const std::vector<QString>& failed);
+  void setFailedFiles(const std::vector<QString>& failed);
 
-    void setOkButtonName(const QString& name);
+  void setOkButtonName(const QString& name);
 
-private:
-    Ui::LoadFilesStatusDialog ui;
-    QString m_loadedTabNameTemplate;
-    QString m_failedTabNameTemplate;
+ private:
+  Ui::LoadFilesStatusDialog ui;
+  QString m_loadedTabNameTemplate;
+  QString m_failedTabNameTemplate;
 };
 
 

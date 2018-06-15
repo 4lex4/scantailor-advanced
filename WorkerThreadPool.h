@@ -19,46 +19,46 @@
 #ifndef WORKERTHREADPOOL_H_
 #define WORKERTHREADPOOL_H_
 
-#include "BackgroundTask.h"
-#include "FilterResult.h"
 #include <QObject>
 #include <QSettings>
 #include <memory>
+#include "BackgroundTask.h"
+#include "FilterResult.h"
 
 class QThreadPool;
 
 class WorkerThreadPool : public QObject {
-    Q_OBJECT
-public:
-    explicit WorkerThreadPool(QObject* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit WorkerThreadPool(QObject* parent = nullptr);
 
-    ~WorkerThreadPool() override;
+  ~WorkerThreadPool() override;
 
-    /**
-     * \brief Waits for pending jobs to finish and stop the thread.
-     *
-     * The destructor also performs these tasks, so this method is only
-     * useful to prematuraly stop task processing.
-     */
-    void shutdown();
+  /**
+   * \brief Waits for pending jobs to finish and stop the thread.
+   *
+   * The destructor also performs these tasks, so this method is only
+   * useful to prematuraly stop task processing.
+   */
+  void shutdown();
 
-    bool hasSpareCapacity() const;
+  bool hasSpareCapacity() const;
 
-    void submitTask(const BackgroundTaskPtr& task);
+  void submitTask(const BackgroundTaskPtr& task);
 
-signals:
+ signals:
 
-    void taskResult(const BackgroundTaskPtr& task, const FilterResultPtr& result);
+  void taskResult(const BackgroundTaskPtr& task, const FilterResultPtr& result);
 
-private:
-    class TaskResultEvent;
+ private:
+  class TaskResultEvent;
 
-    void customEvent(QEvent* event) override;
+  void customEvent(QEvent* event) override;
 
-    void updateNumberOfThreads();
+  void updateNumberOfThreads();
 
-    QThreadPool* m_pPool;
-    QSettings m_settings;
+  QThreadPool* m_pPool;
+  QSettings m_settings;
 };
 
 

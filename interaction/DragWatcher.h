@@ -19,9 +19,9 @@
 #ifndef DRAG_WATCHER_H_
 #define DRAG_WATCHER_H_
 
-#include "InteractionHandler.h"
-#include <QPoint>
 #include <QDateTime>
+#include <QPoint>
+#include "InteractionHandler.h"
 
 class DragHandler;
 class InteractionState;
@@ -34,24 +34,24 @@ class QMouseEvent;
  * case we could perform some other operation on mouse release.
  */
 class DragWatcher : public InteractionHandler {
-public:
-    explicit DragWatcher(DragHandler& drag_handler);
+ public:
+  explicit DragWatcher(DragHandler& drag_handler);
 
-    bool haveSignificantDrag() const;
+  bool haveSignificantDrag() const;
 
-protected:
-    void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
+ protected:
+  void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-    void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
+  void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-private:
-    void updateState(QPoint mouse_pos);
+ private:
+  void updateState(QPoint mouse_pos);
 
-    DragHandler& m_rDragHandler;
-    QDateTime m_dragStartTime;
-    QPoint m_dragStartPos;
-    int m_dragMaxSqDist;
-    bool m_dragInProgress;
+  DragHandler& m_rDragHandler;
+  QDateTime m_dragStartTime;
+  QPoint m_dragStartPos;
+  int m_dragMaxSqDist;
+  bool m_dragInProgress;
 };
 
 

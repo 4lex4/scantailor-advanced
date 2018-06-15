@@ -19,28 +19,28 @@
 #ifndef PROPERTY_FACTORY_H_
 #define PROPERTY_FACTORY_H_
 
-#include "Property.h"
-#include "intrusive_ptr.h"
-#include "Hashes.h"
 #include <QString>
 #include <unordered_map>
+#include "Hashes.h"
+#include "Property.h"
+#include "intrusive_ptr.h"
 
 class QDomElement;
 
 class PropertyFactory {
-    // Member-wise copying is OK.
-public:
-    virtual ~PropertyFactory() = default;
+  // Member-wise copying is OK.
+ public:
+  virtual ~PropertyFactory() = default;
 
-    typedef intrusive_ptr<Property> (*PropertyConstructor)(const QDomElement& el);
+  typedef intrusive_ptr<Property> (*PropertyConstructor)(const QDomElement& el);
 
-    void registerProperty(const QString& property, PropertyConstructor constructor);
+  void registerProperty(const QString& property, PropertyConstructor constructor);
 
-    intrusive_ptr<Property> construct(const QDomElement& el) const;
+  intrusive_ptr<Property> construct(const QDomElement& el) const;
 
-private:
-    typedef std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>> Registry;
-    Registry m_registry;
+ private:
+  typedef std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>> Registry;
+  Registry m_registry;
 };
 
 

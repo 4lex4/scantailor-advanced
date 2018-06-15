@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "RasterOp.h"
-#include "BinaryImage.h"
-#include "Utils.h"
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-#include <vector>
+#include <cassert>
 #include <cstddef>
 #include <cstdlib>
-#include <cassert>
+#include <vector>
+#include "BinaryImage.h"
+#include "RasterOp.h"
+#include "Utils.h"
 
 namespace imageproc {
 namespace tests {
@@ -32,147 +32,147 @@ using namespace utils;
 
 BOOST_AUTO_TEST_SUITE(RasterOpTestSuite);
 
-template<typename Rop>
+template <typename Rop>
 static bool check_subimage_rop(const QImage& dst, const QRect& dst_rect, const QImage& src, const QPoint& src_pt) {
-    BinaryImage dst_bi(dst);
-    const BinaryImage src_bi(src);
-    rasterOp<Rop>(dst_bi, dst_rect, src_bi, src_pt);
-    // Here we assume that full-image raster operations work correctly.
-    BinaryImage dst_subimage(dst.copy(dst_rect));
-    const QRect src_rect(src_pt, dst_rect.size());
-    const BinaryImage src_subimage(src.copy(src_rect));
-    rasterOp<Rop>(dst_subimage, dst_subimage.rect(), src_subimage, QPoint(0, 0));
+  BinaryImage dst_bi(dst);
+  const BinaryImage src_bi(src);
+  rasterOp<Rop>(dst_bi, dst_rect, src_bi, src_pt);
+  // Here we assume that full-image raster operations work correctly.
+  BinaryImage dst_subimage(dst.copy(dst_rect));
+  const QRect src_rect(src_pt, dst_rect.size());
+  const BinaryImage src_subimage(src.copy(src_rect));
+  rasterOp<Rop>(dst_subimage, dst_subimage.rect(), src_subimage, QPoint(0, 0));
 
-    return dst_subimage.toQImage() == dst_bi.toQImage().copy(dst_rect);
+  return dst_subimage.toQImage() == dst_bi.toQImage().copy(dst_rect);
 }
 
 BOOST_AUTO_TEST_CASE(test_small_image) {
-    static const int inp[] = {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                              1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0,
-                              1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0};
+  static const int inp[]
+      = {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0,
+         0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0};
 
-    static const int mask[] = {0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-                               0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-                               1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
+  static const int mask[]
+      = {0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+         0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
 
-    static const int out[] = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1,
-                              0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-                              1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
+  static const int out[]
+      = {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
+         0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
 
-    BinaryImage img(makeBinaryImage(inp, 9, 8));
-    const BinaryImage mask_img(makeBinaryImage(mask, 9, 8));
+  BinaryImage img(makeBinaryImage(inp, 9, 8));
+  const BinaryImage mask_img(makeBinaryImage(mask, 9, 8));
 
-    typedef RopAnd<RopDst, RopSrc> Rop;
+  typedef RopAnd<RopDst, RopSrc> Rop;
 
-    rasterOp<Rop>(img, img.rect(), mask_img, QPoint(0, 0));
-    BOOST_CHECK(img == makeBinaryImage(out, 9, 8));
+  rasterOp<Rop>(img, img.rect(), mask_img, QPoint(0, 0));
+  BOOST_CHECK(img == makeBinaryImage(out, 9, 8));
 }
 
 namespace {
 class Tester1 {
-public:
-    Tester1();
+ public:
+  Tester1();
 
-    bool testFullImage() const;
+  bool testFullImage() const;
 
-    bool testSubImage(const QRect& dst_rect, const QPoint& src_pt) const;
+  bool testSubImage(const QRect& dst_rect, const QPoint& src_pt) const;
 
-private:
-    typedef RopXor<RopDst, RopSrc> Rop;
+ private:
+  typedef RopXor<RopDst, RopSrc> Rop;
 
-    BinaryImage m_src;
-    BinaryImage m_dstBefore;
-    BinaryImage m_dstAfter;
+  BinaryImage m_src;
+  BinaryImage m_dstBefore;
+  BinaryImage m_dstAfter;
 };
 
 
 Tester1::Tester1() {
-    const int w = 400;
-    const int h = 300;
+  const int w = 400;
+  const int h = 300;
 
-    std::vector<int> src(w * h);
-    for (int& i : src) {
-        i = rand() & 1;
-    }
+  std::vector<int> src(w * h);
+  for (int& i : src) {
+    i = rand() & 1;
+  }
 
-    std::vector<int> dst(w * h);
-    for (int& i : dst) {
-        i = rand() & 1;
-    }
+  std::vector<int> dst(w * h);
+  for (int& i : dst) {
+    i = rand() & 1;
+  }
 
-    std::vector<int> res(w * h);
-    for (size_t i = 0; i < res.size(); ++i) {
-        res[i] = Rop::transform(src[i], dst[i]) & 1;
-    }
+  std::vector<int> res(w * h);
+  for (size_t i = 0; i < res.size(); ++i) {
+    res[i] = Rop::transform(src[i], dst[i]) & 1;
+  }
 
-    m_src = makeBinaryImage(&src[0], w, h);
-    m_dstBefore = makeBinaryImage(&dst[0], w, h);
-    m_dstAfter = makeBinaryImage(&res[0], w, h);
+  m_src = makeBinaryImage(&src[0], w, h);
+  m_dstBefore = makeBinaryImage(&dst[0], w, h);
+  m_dstAfter = makeBinaryImage(&res[0], w, h);
 }
 
 bool Tester1::testFullImage() const {
-    BinaryImage dst(m_dstBefore);
-    rasterOp<Rop>(dst, dst.rect(), m_src, QPoint(0, 0));
+  BinaryImage dst(m_dstBefore);
+  rasterOp<Rop>(dst, dst.rect(), m_src, QPoint(0, 0));
 
-    return dst == m_dstAfter;
+  return dst == m_dstAfter;
 }
 
 bool Tester1::testSubImage(const QRect& dst_rect, const QPoint& src_pt) const {
-    const QImage dst_before(m_dstBefore.toQImage());
-    const QImage& dst(dst_before);
-    const QImage src(m_src.toQImage());
+  const QImage dst_before(m_dstBefore.toQImage());
+  const QImage& dst(dst_before);
+  const QImage src(m_src.toQImage());
 
-    if (!check_subimage_rop<Rop>(dst, dst_rect, src, src_pt)) {
-        return false;
-    }
+  if (!check_subimage_rop<Rop>(dst, dst_rect, src, src_pt)) {
+    return false;
+  }
 
-    return surroundingsIntact(dst, dst_before, dst_rect);
+  return surroundingsIntact(dst, dst_before, dst_rect);
 }
 }  // namespace
 BOOST_AUTO_TEST_CASE(test_large_image) {
-    Tester1 tester;
-    BOOST_REQUIRE(tester.testFullImage());
-    BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(101, 41)));
-    BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(99, 99)));
-    BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(104, 64)));
+  Tester1 tester;
+  BOOST_REQUIRE(tester.testFullImage());
+  BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(101, 41)));
+  BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(99, 99)));
+  BOOST_REQUIRE(tester.testSubImage(QRect(101, 32, 211, 151), QPoint(104, 64)));
 }
 
 namespace {
 class Tester2 {
-public:
-    Tester2();
+ public:
+  Tester2();
 
-    bool testBlockMove(const QRect& rect, int dx, int dy);
+  bool testBlockMove(const QRect& rect, int dx, int dy);
 
-private:
-    BinaryImage m_image;
+ private:
+  BinaryImage m_image;
 };
 
 
 Tester2::Tester2() {
-    m_image = randomBinaryImage(400, 300);
+  m_image = randomBinaryImage(400, 300);
 }
 
 bool Tester2::testBlockMove(const QRect& rect, const int dx, const int dy) {
-    BinaryImage dst(m_image);
-    const QRect dst_rect(rect.translated(dx, dy));
-    rasterOp<RopSrc>(dst, dst_rect, dst, rect.topLeft());
-    QImage q_src(m_image.toQImage());
-    QImage q_dst(dst.toQImage());
-    if (q_src.copy(rect) != q_dst.copy(dst_rect)) {
-        return false;
-    }
+  BinaryImage dst(m_image);
+  const QRect dst_rect(rect.translated(dx, dy));
+  rasterOp<RopSrc>(dst, dst_rect, dst, rect.topLeft());
+  QImage q_src(m_image.toQImage());
+  QImage q_dst(dst.toQImage());
+  if (q_src.copy(rect) != q_dst.copy(dst_rect)) {
+    return false;
+  }
 
-    return surroundingsIntact(q_dst, q_src, dst_rect);
+  return surroundingsIntact(q_dst, q_src, dst_rect);
 }
 }  // namespace
 BOOST_AUTO_TEST_CASE(test_move_blocks) {
-    Tester2 tester;
-    BOOST_REQUIRE(tester.testBlockMove(QRect(0, 0, 97, 150), 1, 0));
-    BOOST_REQUIRE(tester.testBlockMove(QRect(100, 50, 15, 100), -1, 0));
-    BOOST_REQUIRE(tester.testBlockMove(QRect(200, 200, 200, 100), -1, -1));
-    BOOST_REQUIRE(tester.testBlockMove(QRect(51, 35, 199, 200), 0, 1));
-    BOOST_REQUIRE(tester.testBlockMove(QRect(51, 35, 199, 200), 1, 1));
+  Tester2 tester;
+  BOOST_REQUIRE(tester.testBlockMove(QRect(0, 0, 97, 150), 1, 0));
+  BOOST_REQUIRE(tester.testBlockMove(QRect(100, 50, 15, 100), -1, 0));
+  BOOST_REQUIRE(tester.testBlockMove(QRect(200, 200, 200, 100), -1, -1));
+  BOOST_REQUIRE(tester.testBlockMove(QRect(51, 35, 199, 200), 0, 1));
+  BOOST_REQUIRE(tester.testBlockMove(QRect(51, 35, 199, 200), 1, 1));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

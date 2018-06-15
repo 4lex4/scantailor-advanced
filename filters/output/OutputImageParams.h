@@ -19,17 +19,17 @@
 #ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_
 #define OUTPUT_OUTPUT_IMAGE_PARAMS_H_
 
-#include "Dpi.h"
+#include <ImageTransformation.h>
+#include <QRect>
+#include <QSize>
 #include "ColorParams.h"
-#include "Params.h"
-#include "DewarpingOptions.h"
-#include "dewarping/DistortionModel.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
+#include "DewarpingOptions.h"
+#include "Dpi.h"
 #include "OutputProcessingParams.h"
-#include <QSize>
-#include <QRect>
-#include <ImageTransformation.h>
+#include "Params.h"
+#include "dewarping/DistortionModel.h"
 
 class ImageTransformation;
 class QDomDocument;
@@ -41,123 +41,123 @@ namespace output {
  * \brief Parameters of the output image used to determine if we need to re-generate it.
  */
 class OutputImageParams {
-public:
-    OutputImageParams(const QSize& out_image_size,
-                      const QRect& content_rect,
-                      ImageTransformation xform,
-                      const Dpi& dpi,
-                      const ColorParams& color_params,
-                      const SplittingOptions& splittingOptions,
-                      const DewarpingOptions& dewarping_options,
-                      const dewarping::DistortionModel& distortion_model,
-                      const DepthPerception& depth_perception,
-                      double despeckle_level,
-                      const PictureShapeOptions& picture_shape_options,
-                      const OutputProcessingParams& output_processing_params,
-                      bool is_black_on_white);
+ public:
+  OutputImageParams(const QSize& out_image_size,
+                    const QRect& content_rect,
+                    ImageTransformation xform,
+                    const Dpi& dpi,
+                    const ColorParams& color_params,
+                    const SplittingOptions& splittingOptions,
+                    const DewarpingOptions& dewarping_options,
+                    const dewarping::DistortionModel& distortion_model,
+                    const DepthPerception& depth_perception,
+                    double despeckle_level,
+                    const PictureShapeOptions& picture_shape_options,
+                    const OutputProcessingParams& output_processing_params,
+                    bool is_black_on_white);
 
-    explicit OutputImageParams(const QDomElement& el);
+  explicit OutputImageParams(const QDomElement& el);
 
-    const DewarpingOptions& dewarpingMode() const;
+  const DewarpingOptions& dewarpingMode() const;
 
-    const dewarping::DistortionModel& distortionModel() const;
+  const dewarping::DistortionModel& distortionModel() const;
 
-    void setDistortionModel(const dewarping::DistortionModel& model);
+  void setDistortionModel(const dewarping::DistortionModel& model);
 
-    const DepthPerception& depthPerception() const;
+  const DepthPerception& depthPerception() const;
 
-    double despeckleLevel() const;
+  double despeckleLevel() const;
 
-    void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
+  void setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams);
 
-    const PictureShapeOptions& getPictureShapeOptions() const;
+  const PictureShapeOptions& getPictureShapeOptions() const;
 
-    const QPolygonF& getCropArea() const;
+  const QPolygonF& getCropArea() const;
 
-    void setBlackOnWhite(bool blackOnWhite);
+  void setBlackOnWhite(bool blackOnWhite);
+
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+  /**
+   * \brief Returns true if two sets of parameters are close enough
+   *        to avoid re-generating the output image.
+   */
+  bool matches(const OutputImageParams& other) const;
+
+ private:
+  class PartialXform {
+   public:
+    PartialXform();
+
+    PartialXform(const QTransform& xform);
+
+    explicit PartialXform(const QDomElement& el);
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    /**
-     * \brief Returns true if two sets of parameters are close enough
-     *        to avoid re-generating the output image.
-     */
-    bool matches(const OutputImageParams& other) const;
+    bool matches(const PartialXform& other) const;
 
-private:
-    class PartialXform {
-    public:
-        PartialXform();
+   private:
+    static bool closeEnough(double v1, double v2);
 
-        PartialXform(const QTransform& xform);
+    double m_11;
+    double m_12;
+    double m_21;
+    double m_22;
+  };
 
-        explicit PartialXform(const QDomElement& el);
+  static bool colorParamsMatch(const ColorParams& cp1,
+                               double dl1,
+                               const SplittingOptions& so1,
+                               const ColorParams& cp2,
+                               double dl2,
+                               const SplittingOptions& so2);
 
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  /** Pixel size of the output image. */
+  QSize m_size;
 
-        bool matches(const PartialXform& other) const;
+  /** Content rectangle in output image coordinates. */
+  QRect m_contentRect;
 
-    private:
-        static bool closeEnough(double v1, double v2);
+  /** Crop area in output image coordinates. */
+  QPolygonF m_cropArea;
 
-        double m_11;
-        double m_12;
-        double m_21;
-        double m_22;
-    };
+  /**
+   * Some parameters from the transformation matrix that maps
+   * source image coordinates to unscaled (disregarding dpi changes)
+   * output image coordinates.
+   */
+  PartialXform m_partialXform;
 
-    static bool colorParamsMatch(const ColorParams& cp1,
-                                 double dl1,
-                                 const SplittingOptions& so1,
-                                 const ColorParams& cp2,
-                                 double dl2,
-                                 const SplittingOptions& so2);
+  /** DPI of the output image. */
+  Dpi m_dpi;
 
-    /** Pixel size of the output image. */
-    QSize m_size;
+  /** Non-geometric parameters used to generate the output image. */
+  ColorParams m_colorParams;
 
-    /** Content rectangle in output image coordinates. */
-    QRect m_contentRect;
+  /** Parameters used to generate the split output images. */
+  SplittingOptions m_splittingOptions;
 
-    /** Crop area in output image coordinates. */
-    QPolygonF m_cropArea;
+  /** Shape of the pictures in image */
+  PictureShapeOptions m_pictureShapeOptions;
 
-    /**
-     * Some parameters from the transformation matrix that maps
-     * source image coordinates to unscaled (disregarding dpi changes)
-     * output image coordinates.
-     */
-    PartialXform m_partialXform;
+  /** Two curves and two lines connecting their endpoints.  Used for dewarping. */
+  dewarping::DistortionModel m_distortionModel;
 
-    /** DPI of the output image. */
-    Dpi m_dpi;
+  /** \see imageproc::CylindricalSurfaceDewarper */
+  DepthPerception m_depthPerception;
 
-    /** Non-geometric parameters used to generate the output image. */
-    ColorParams m_colorParams;
+  /** Dewarping mode (Off / Auto / Manual) and options */
+  DewarpingOptions m_dewarpingOptions;
 
-    /** Parameters used to generate the split output images. */
-    SplittingOptions m_splittingOptions;
+  /** Despeckle level of the output image. */
+  double m_despeckleLevel;
 
-    /** Shape of the pictures in image */
-    PictureShapeOptions m_pictureShapeOptions;
+  /** Per-page params set while processing. */
+  OutputProcessingParams m_outputProcessingParams;
 
-    /** Two curves and two lines connecting their endpoints.  Used for dewarping. */
-    dewarping::DistortionModel m_distortionModel;
-
-    /** \see imageproc::CylindricalSurfaceDewarper */
-    DepthPerception m_depthPerception;
-
-    /** Dewarping mode (Off / Auto / Manual) and options */
-    DewarpingOptions m_dewarpingOptions;
-
-    /** Despeckle level of the output image. */
-    double m_despeckleLevel;
-
-    /** Per-page params set while processing. */
-    OutputProcessingParams m_outputProcessingParams;
-
-    /** Whether the page has dark content on light background */
-    bool m_blackOnWhite;
+  /** Whether the page has dark content on light background */
+  bool m_blackOnWhite;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_

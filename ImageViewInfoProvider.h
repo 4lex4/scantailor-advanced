@@ -2,46 +2,46 @@
 #ifndef SCANTAILOR_STATUSBARPROVIDER_H
 #define SCANTAILOR_STATUSBARPROVIDER_H
 
-#include <memory>
-#include <list>
 #include <QPointF>
 #include <QSizeF>
-#include "ImageViewInfoObserver.h"
+#include <list>
+#include <memory>
 #include "Dpi.h"
+#include "ImageViewInfoObserver.h"
 #include "NonCopyable.h"
 
 class ImageViewInfoProvider {
-    DECLARE_NON_COPYABLE(ImageViewInfoProvider)
+  DECLARE_NON_COPYABLE(ImageViewInfoProvider)
 
-private:
-    std::list<ImageViewInfoObserver*> observers;
-    Dpi dpi;
-    QPointF mousePos;
-    QSizeF physSize;
+ private:
+  std::list<ImageViewInfoObserver*> observers;
+  Dpi dpi;
+  QPointF mousePos;
+  QSizeF physSize;
 
-public:
-    explicit ImageViewInfoProvider(const Dpi& dpi);
+ public:
+  explicit ImageViewInfoProvider(const Dpi& dpi);
 
-    ~ImageViewInfoProvider();
+  ~ImageViewInfoProvider();
 
-    void attachObserver(ImageViewInfoObserver* observer);
+  void attachObserver(ImageViewInfoObserver* observer);
 
-    void detachObserver(ImageViewInfoObserver* observer);
+  void detachObserver(ImageViewInfoObserver* observer);
 
-    void setPhysSize(const QSizeF& physSize);
+  void setPhysSize(const QSizeF& physSize);
 
-    void setMousePos(const QPointF& mousePos);
+  void setMousePos(const QPointF& mousePos);
 
-    const Dpi& getDpi() const;
+  const Dpi& getDpi() const;
 
-    const QPointF& getMousePos() const;
+  const QPointF& getMousePos() const;
 
-    const QSizeF& getPhysSize() const;
+  const QSizeF& getPhysSize() const;
 
-private:
-    void physSizeChanged(const QSizeF& physSize) const;
+ private:
+  void physSizeChanged(const QSizeF& physSize) const;
 
-    void mousePosChanged(const QPointF& mousePos) const;
+  void mousePosChanged(const QPointF& mousePos) const;
 };
 
 

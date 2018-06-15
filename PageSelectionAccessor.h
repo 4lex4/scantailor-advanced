@@ -19,28 +19,28 @@
 #ifndef PAGE_SELECTION_ACCESSOR_H_
 #define PAGE_SELECTION_ACCESSOR_H_
 
-#include "PageSelectionProvider.h"
-#include "PageId.h"
-#include "PageRange.h"
-#include "intrusive_ptr.h"
 #include <set>
 #include <vector>
+#include "PageId.h"
+#include "PageRange.h"
+#include "PageSelectionProvider.h"
+#include "intrusive_ptr.h"
 
 class PageSequence;
 
 class PageSelectionAccessor {
-    // Member-wise copying is OK.
-public:
-    explicit PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider);
+  // Member-wise copying is OK.
+ public:
+  explicit PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider);
 
-    PageSequence allPages() const;
+  PageSequence allPages() const;
 
-    std::set<PageId> selectedPages() const;
+  std::set<PageId> selectedPages() const;
 
-    std::vector<PageRange> selectedRanges() const;
+  std::vector<PageRange> selectedRanges() const;
 
-private:
-    intrusive_ptr<const PageSelectionProvider> m_ptrProvider;
+ private:
+  intrusive_ptr<const PageSelectionProvider> m_ptrProvider;
 };
 
 

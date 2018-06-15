@@ -19,33 +19,28 @@
 #ifndef PAGE_ORDER_OPTION_H_
 #define PAGE_ORDER_OPTION_H_
 
-#include "intrusive_ptr.h"
-#include "PageOrderProvider.h"
 #include <QString>
+#include "PageOrderProvider.h"
+#include "intrusive_ptr.h"
 
 class PageOrderOption {
-    // Member-wise copying is OK.
-public:
-    typedef intrusive_ptr<const PageOrderProvider> ProviderPtr;
+  // Member-wise copying is OK.
+ public:
+  typedef intrusive_ptr<const PageOrderProvider> ProviderPtr;
 
-    PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_ptrProvider(std::move(provider)) {
-    }
+  PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_ptrProvider(std::move(provider)) {}
 
-    const QString& name() const {
-        return m_name;
-    }
+  const QString& name() const { return m_name; }
 
-    /**
-     * Returns the ordering information provider.
-     * A null provider is OK and is to be interpreted as default order.
-     */
-    const ProviderPtr& provider() const {
-        return m_ptrProvider;
-    }
+  /**
+   * Returns the ordering information provider.
+   * A null provider is OK and is to be interpreted as default order.
+   */
+  const ProviderPtr& provider() const { return m_ptrProvider; }
 
-private:
-    QString m_name;
-    ProviderPtr m_ptrProvider;
+ private:
+  QString m_name;
+  ProviderPtr m_ptrProvider;
 };
 
 

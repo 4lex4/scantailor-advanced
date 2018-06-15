@@ -17,64 +17,63 @@
  */
 
 #include "ProjectOpeningContext.h"
+#include <QMessageBox>
+#include <cassert>
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
 #include "version.h"
-#include <QMessageBox>
-#include <cassert>
 
 ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, const QString& project_file, const QDomDocument& doc)
-        : m_projectFile(project_file), m_reader(doc), m_pParent(parent) {
-}
+    : m_projectFile(project_file), m_reader(doc), m_pParent(parent) {}
 
 ProjectOpeningContext::~ProjectOpeningContext() {
-    // Deleting a null pointer is OK.
-    delete m_ptrFixDpiDialog;
+  // Deleting a null pointer is OK.
+  delete m_ptrFixDpiDialog;
 }
 
 void ProjectOpeningContext::proceed() {
-    if (!m_reader.success()) {
-        deleteLater();
-        if (!m_reader.getVersion().isNull() && (m_reader.getVersion().toInt() != PROJECT_VERSION)) {
-            QMessageBox::warning(m_pParent, tr("Error"),
-                                 tr("The project file is not compatible with the current application version."));
+  if (!m_reader.success()) {
+    deleteLater();
+    if (!m_reader.getVersion().isNull() && (m_reader.getVersion().toInt() != PROJECT_VERSION)) {
+      QMessageBox::warning(m_pParent, tr("Error"),
+                           tr("The project file is not compatible with the current application version."));
 
-            return;
-        }
-
-        QMessageBox::critical(m_pParent, tr("Error"), tr("Unable to interpret the project file."));
-
-        return;
+      return;
     }
 
-    if (m_reader.pages()->validateDpis()) {
-        deleteLater();
-        emit done(this);
+    QMessageBox::critical(m_pParent, tr("Error"), tr("Unable to interpret the project file."));
 
-        return;
-    }
+    return;
+  }
 
-    showFixDpiDialog();
+  if (m_reader.pages()->validateDpis()) {
+    deleteLater();
+    emit done(this);
+
+    return;
+  }
+
+  showFixDpiDialog();
 }
 
 void ProjectOpeningContext::fixedDpiSubmitted() {
-    m_reader.pages()->updateMetadataFrom(m_ptrFixDpiDialog->files());
-    emit done(this);
+  m_reader.pages()->updateMetadataFrom(m_ptrFixDpiDialog->files());
+  emit done(this);
 }
 
 void ProjectOpeningContext::fixDpiDialogDestroyed() {
-    deleteLater();
+  deleteLater();
 }
 
 void ProjectOpeningContext::showFixDpiDialog() {
-    assert(!m_ptrFixDpiDialog);
-    m_ptrFixDpiDialog = new FixDpiDialog(m_reader.pages()->toImageFileInfo(), m_pParent);
-    m_ptrFixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);
-    m_ptrFixDpiDialog->setAttribute(Qt::WA_QuitOnClose, false);
-    if (m_pParent) {
-        m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
-    }
-    connect(m_ptrFixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
-    connect(m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
-    m_ptrFixDpiDialog->show();
+  assert(!m_ptrFixDpiDialog);
+  m_ptrFixDpiDialog = new FixDpiDialog(m_reader.pages()->toImageFileInfo(), m_pParent);
+  m_ptrFixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);
+  m_ptrFixDpiDialog->setAttribute(Qt::WA_QuitOnClose, false);
+  if (m_pParent) {
+    m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
+  }
+  connect(m_ptrFixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
+  connect(m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
+  m_ptrFixDpiDialog->show();
 }

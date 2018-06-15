@@ -19,37 +19,37 @@
 #ifndef OUTPUT_APPLYCOLORSDIALOG_H_
 #define OUTPUT_APPLYCOLORSDIALOG_H_
 
-#include "ui_OutputApplyColorsDialog.h"
+#include <QButtonGroup>
+#include <QDialog>
+#include <set>
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include <QDialog>
-#include <QButtonGroup>
-#include <set>
+#include "ui_OutputApplyColorsDialog.h"
 
 class PageSelectionAccessor;
 
 namespace output {
 class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
-    Q_OBJECT
-public:
-    ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
+  Q_OBJECT
+ public:
+  ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
 
-    ~ApplyColorsDialog() override;
+  ~ApplyColorsDialog() override;
 
-signals:
+ signals:
 
-    void accepted(const std::set<PageId>& pages);
+  void accepted(const std::set<PageId>& pages);
 
-private slots:
+ private slots:
 
-    void onSubmit();
+  void onSubmit();
 
-private:
-    PageSequence m_pages;
-    std::set<PageId> m_selectedPages;
-    PageId m_curPage;
-    QButtonGroup* m_pScopeGroup;
+ private:
+  PageSequence m_pages;
+  std::set<PageId> m_selectedPages;
+  PageId m_curPage;
+  QButtonGroup* m_pScopeGroup;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_

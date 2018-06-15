@@ -19,25 +19,25 @@
 #include "PageRange.h"
 
 std::set<PageId> PageRange::selectEveryOther(const PageId& base) const {
-    std::set<PageId> selection;
+  std::set<PageId> selection;
 
-    auto it(pages.begin());
-    const auto end(pages.end());
-    for (; it != end && *it != base; ++it) {
-        // Continue until we have a match.
-    }
-    if (it == end) {
-        return selection;
-    }
-
-    const int base_idx = static_cast<const int>(it - pages.begin());
-    int idx = 0;
-    for (const PageId& page_id : pages) {
-        if (((idx - base_idx) & 1) == 0) {
-            selection.insert(page_id);
-        }
-        ++idx;
-    }
-
+  auto it(pages.begin());
+  const auto end(pages.end());
+  for (; it != end && *it != base; ++it) {
+    // Continue until we have a match.
+  }
+  if (it == end) {
     return selection;
+  }
+
+  const int base_idx = static_cast<const int>(it - pages.begin());
+  int idx = 0;
+  for (const PageId& page_id : pages) {
+    if (((idx - base_idx) & 1) == 0) {
+      selection.insert(page_id);
+    }
+    ++idx;
+  }
+
+  return selection;
 }

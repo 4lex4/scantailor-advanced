@@ -25,20 +25,20 @@ class QTransform;
 
 namespace output {
 class Utils {
-public:
-    static QString automaskDir(const QString& out_dir);
+ public:
+  static QString automaskDir(const QString& out_dir);
 
-    static QString predespeckleDir(const QString& out_dir);
+  static QString predespeckleDir(const QString& out_dir);
 
-    static QString specklesDir(const QString& out_dir);
+  static QString specklesDir(const QString& out_dir);
 
-    static QString foregroundDir(const QString& out_dir);
+  static QString foregroundDir(const QString& out_dir);
 
-    static QString backgroundDir(const QString& out_dir);
+  static QString backgroundDir(const QString& out_dir);
 
-    static QString originalBackgroundDir(const QString& out_dir);
+  static QString originalBackgroundDir(const QString& out_dir);
 
-    static QTransform scaleFromToDpi(const Dpi& from, const Dpi& to);
+  static QTransform scaleFromToDpi(const Dpi& from, const Dpi& to);
 };
 }  // namespace output
 #endif

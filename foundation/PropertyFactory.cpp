@@ -20,14 +20,14 @@
 #include <QDomElement>
 
 void PropertyFactory::registerProperty(const QString& property, PropertyConstructor constructor) {
-    m_registry[property] = constructor;
+  m_registry[property] = constructor;
 }
 
 intrusive_ptr<Property> PropertyFactory::construct(const QDomElement& el) const {
-    auto it(m_registry.find(el.attribute("type")));
-    if (it != m_registry.end()) {
-        return (*it->second)(el);
-    } else {
-        return nullptr;
-    }
+  auto it(m_registry.find(el.attribute("type")));
+  if (it != m_registry.end()) {
+    return (*it->second)(el);
+  } else {
+    return nullptr;
+  }
 }

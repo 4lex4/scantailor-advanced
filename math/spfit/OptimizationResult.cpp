@@ -21,15 +21,15 @@
 
 namespace spfit {
 OptimizationResult::OptimizationResult(double force_before, double force_after)
-        : m_forceBefore(std::max<double>(force_before, 0)), m_forceAfter(std::max<double>(force_after, 0)) {
-    // In theory, these distances can't be negative, but in practice they can.
-    // We are going to treat negative ones as they are zeros.
+    : m_forceBefore(std::max<double>(force_before, 0)), m_forceAfter(std::max<double>(force_after, 0)) {
+  // In theory, these distances can't be negative, but in practice they can.
+  // We are going to treat negative ones as they are zeros.
 }
 
 double OptimizationResult::improvementPercentage() const {
-    double improvement = m_forceBefore - m_forceAfter;
-    improvement /= (m_forceBefore + std::numeric_limits<double>::epsilon());
+  double improvement = m_forceBefore - m_forceAfter;
+  improvement /= (m_forceBefore + std::numeric_limits<double>::epsilon());
 
-    return improvement * 100;  // Convert to percents.
+  return improvement * 100;  // Convert to percents.
 }
 }  // namespace spfit

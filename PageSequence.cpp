@@ -19,75 +19,75 @@
 #include "PageSequence.h"
 
 void PageSequence::append(const PageInfo& page_info) {
-    m_pages.push_back(page_info);
+  m_pages.push_back(page_info);
 }
 
 const PageInfo& PageSequence::pageAt(const size_t idx) const {
-    return m_pages.at(idx);  // may throw
+  return m_pages.at(idx);  // may throw
 }
 
 const PageInfo& PageSequence::pageAt(const PageId page) const {
-    auto it(m_pages.begin());
-    const auto end(m_pages.end());
-    for (; it != end && it->id() != page; ++it) {
-    }
-    return *it;
+  auto it(m_pages.begin());
+  const auto end(m_pages.end());
+  for (; it != end && it->id() != page; ++it) {
+  }
+  return *it;
 }
 
 int PageSequence::pageNo(const PageId& page) const {
-    auto it(m_pages.begin());
-    const auto end(m_pages.end());
-    int res = 0;
-    for (; it != end && it->id() != page; ++it, ++res) {
-    }
-    return (it == end) ? -1 : res;
+  auto it(m_pages.begin());
+  const auto end(m_pages.end());
+  int res = 0;
+  for (; it != end && it->id() != page; ++it, ++res) {
+  }
+  return (it == end) ? -1 : res;
 }
 
 std::set<PageId> PageSequence::selectAll() const {
-    std::set<PageId> selection;
+  std::set<PageId> selection;
 
-    for (const PageInfo& page_info : m_pages) {
-        selection.insert(page_info.id());
-    }
+  for (const PageInfo& page_info : m_pages) {
+    selection.insert(page_info.id());
+  }
 
-    return selection;
+  return selection;
 }
 
 std::set<PageId> PageSequence::selectPagePlusFollowers(const PageId& page) const {
-    std::set<PageId> selection;
+  std::set<PageId> selection;
 
-    auto it(m_pages.begin());
-    const auto end(m_pages.end());
-    for (; it != end && it->id() != page; ++it) {
-        // Continue until we have a match.
-    }
-    for (; it != end; ++it) {
-        selection.insert(it->id());
-    }
+  auto it(m_pages.begin());
+  const auto end(m_pages.end());
+  for (; it != end && it->id() != page; ++it) {
+    // Continue until we have a match.
+  }
+  for (; it != end; ++it) {
+    selection.insert(it->id());
+  }
 
-    return selection;
+  return selection;
 }
 
 std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
-    std::set<PageId> selection;
+  std::set<PageId> selection;
 
-    auto it(m_pages.begin());
-    const auto end(m_pages.end());
-    for (; it != end && it->id() != base; ++it) {
-        // Continue until we have a match.
-    }
-    if (it == end) {
-        return selection;
-    }
-
-    const int base_idx = static_cast<const int>(it - m_pages.begin());
-    int idx = 0;
-    for (const PageInfo& page_info : m_pages) {
-        if (((idx - base_idx) & 1) == 0) {
-            selection.insert(page_info.id());
-        }
-        ++idx;
-    }
-
+  auto it(m_pages.begin());
+  const auto end(m_pages.end());
+  for (; it != end && it->id() != base; ++it) {
+    // Continue until we have a match.
+  }
+  if (it == end) {
     return selection;
+  }
+
+  const int base_idx = static_cast<const int>(it - m_pages.begin());
+  int idx = 0;
+  for (const PageInfo& page_info : m_pages) {
+    if (((idx - base_idx) & 1) == 0) {
+      selection.insert(page_info.id());
+    }
+    ++idx;
+  }
+
+  return selection;
 }

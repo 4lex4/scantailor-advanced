@@ -19,56 +19,48 @@
 #ifndef DRAGGABLE_LINE_SEGMENT_H_
 #define DRAGGABLE_LINE_SEGMENT_H_
 
-#include "DraggableObject.h"
-#include <QPointF>
 #include <QLineF>
+#include <QPointF>
 #include <boost/function.hpp>
+#include "DraggableObject.h"
 
 class ObjectDragHandler;
 
 class DraggableLineSegment : public DraggableObject {
-public:
-    typedef boost::function<QLineF()> PositionCallback;
+ public:
+  typedef boost::function<QLineF()> PositionCallback;
 
-    typedef boost::function<void(const QLineF& line, Qt::KeyboardModifiers mask)> MoveRequestCallback;
+  typedef boost::function<void(const QLineF& line, Qt::KeyboardModifiers mask)> MoveRequestCallback;
 
-    DraggableLineSegment();
+  DraggableLineSegment();
 
-    void setProximityPriority(int priority) {
-        m_proximityPriority = priority;
-    }
+  void setProximityPriority(int priority) { m_proximityPriority = priority; }
 
-    int proximityPriority() const override;
+  int proximityPriority() const override;
 
-    Proximity proximity(const QPointF& mouse_pos) override;
+  Proximity proximity(const QPointF& mouse_pos) override;
 
-    void dragInitiated(const QPointF& mouse_pos) override;
+  void dragInitiated(const QPointF& mouse_pos) override;
 
-    void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
+  void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
 
-    void setPositionCallback(const PositionCallback& callback) {
-        m_positionCallback = callback;
-    }
+  void setPositionCallback(const PositionCallback& callback) { m_positionCallback = callback; }
 
-    void setMoveRequestCallback(const MoveRequestCallback& callback) {
-        m_moveRequestCallback = callback;
-    }
+  void setMoveRequestCallback(const MoveRequestCallback& callback) { m_moveRequestCallback = callback; }
 
-protected:
-    virtual QLineF lineSegmentPosition() const {
-        return m_positionCallback();
-    }
+ protected:
+  virtual QLineF lineSegmentPosition() const { return m_positionCallback(); }
 
-    virtual void lineSegmentMoveRequest(const QLineF& line, Qt::KeyboardModifiers mask) {
-        m_moveRequestCallback(line, mask);
-    }
+  virtual void lineSegmentMoveRequest(const QLineF& line, Qt::KeyboardModifiers mask) {
+    m_moveRequestCallback(line, mask);
+  }
 
-private:
-    PositionCallback m_positionCallback;
-    MoveRequestCallback m_moveRequestCallback;
-    QPointF m_initialMousePos;
-    QLineF m_initialLinePos;
-    int m_proximityPriority;
+ private:
+  PositionCallback m_positionCallback;
+  MoveRequestCallback m_moveRequestCallback;
+  QPointF m_initialMousePos;
+  QLineF m_initialLinePos;
+  int m_proximityPriority;
 };
 
 

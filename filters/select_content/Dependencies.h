@@ -32,28 +32,28 @@ namespace select_content {
  * Once dependencies change, the content box is no longer valid.
  */
 class Dependencies {
-public:
-    // Member-wise copying is OK.
+ public:
+  // Member-wise copying is OK.
 
-    Dependencies();
+  Dependencies();
 
-    explicit Dependencies(const QPolygonF& rotated_page_outline);
+  explicit Dependencies(const QPolygonF& rotated_page_outline);
 
-    explicit Dependencies(const QDomElement& deps_el);
+  explicit Dependencies(const QDomElement& deps_el);
 
-    ~Dependencies();
+  ~Dependencies();
 
-    const QPolygonF& rotatedPageOutline() const;
+  const QPolygonF& rotatedPageOutline() const;
 
-    bool matches(const Dependencies& other) const;
+  bool matches(const Dependencies& other) const;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    void invalidate();
+  void invalidate();
 
-private:
-    QPolygonF m_rotatedPageOutline;
-    bool m_invalid;
+ private:
+  QPolygonF m_rotatedPageOutline;
+  bool m_invalid;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_

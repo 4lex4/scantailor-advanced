@@ -19,25 +19,25 @@
 #ifndef BASICIMAGEVIEW_H_
 #define BASICIMAGEVIEW_H_
 
-#include "ImageViewBase.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
-#include "ImagePixmapUnion.h"
-#include "Margins.h"
 #include <QImage>
+#include "DragHandler.h"
+#include "ImagePixmapUnion.h"
+#include "ImageViewBase.h"
+#include "Margins.h"
+#include "ZoomHandler.h"
 
 class BasicImageView : public ImageViewBase {
-    Q_OBJECT
-public:
-    explicit BasicImageView(const QImage& image,
-                            const ImagePixmapUnion& downscaled_image = ImagePixmapUnion(),
-                            const Margins& margins = Margins());
+  Q_OBJECT
+ public:
+  explicit BasicImageView(const QImage& image,
+                          const ImagePixmapUnion& downscaled_image = ImagePixmapUnion(),
+                          const Margins& margins = Margins());
 
-    ~BasicImageView() override;
+  ~BasicImageView() override;
 
-private:
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
+ private:
+  DragHandler m_dragHandler;
+  ZoomHandler m_zoomHandler;
 };
 
 

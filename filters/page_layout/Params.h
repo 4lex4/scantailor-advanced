@@ -19,10 +19,10 @@
 #ifndef PAGE_LAYOUT_PARAMS_H_
 #define PAGE_LAYOUT_PARAMS_H_
 
-#include "Margins.h"
-#include "Alignment.h"
-#include <QSizeF>
 #include <QRectF>
+#include <QSizeF>
+#include "Alignment.h"
+#include "Margins.h"
 
 class QDomDocument;
 class QDomElement;
@@ -30,38 +30,38 @@ class QString;
 
 namespace page_layout {
 class Params {
-    // Member-wise copying is OK.
-public:
-    Params(const Margins& hard_margins_mm,
-           const QRectF& page_rect,
-           const QRectF& content_rect,
-           const QSizeF& content_size_mm,
-           const Alignment& alignment,
-           bool auto_margins);
+  // Member-wise copying is OK.
+ public:
+  Params(const Margins& hard_margins_mm,
+         const QRectF& page_rect,
+         const QRectF& content_rect,
+         const QSizeF& content_size_mm,
+         const Alignment& alignment,
+         bool auto_margins);
 
-    explicit Params(const QDomElement& el);
+  explicit Params(const QDomElement& el);
 
-    const Margins& hardMarginsMM() const;
+  const Margins& hardMarginsMM() const;
 
-    const QRectF& contentRect() const;
+  const QRectF& contentRect() const;
 
-    const QRectF& pageRect() const;
+  const QRectF& pageRect() const;
 
-    const QSizeF& contentSizeMM() const;
+  const QSizeF& contentSizeMM() const;
 
-    const Alignment& alignment() const;
+  const Alignment& alignment() const;
 
-    bool isAutoMarginsEnabled() const;
+  bool isAutoMarginsEnabled() const;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-private:
-    Margins m_hardMarginsMM;
-    QRectF m_contentRect;
-    QRectF m_pageRect;
-    QSizeF m_contentSizeMM;
-    Alignment m_alignment;
-    bool m_autoMargins;
+ private:
+  Margins m_hardMarginsMM;
+  QRectF m_contentRect;
+  QRectF m_pageRect;
+  QSizeF m_contentSizeMM;
+  Alignment m_alignment;
+  bool m_autoMargins;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_PARAMS_H_

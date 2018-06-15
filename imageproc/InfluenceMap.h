@@ -20,8 +20,8 @@
 #define IMAGEPROC_INFLUENCE_MAP_H_
 
 #include <QSize>
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 class QImage;
 
@@ -37,147 +37,133 @@ class ConnectivityMap;
  * a location equidistant from the initial areas of those two labels.
  */
 class InfluenceMap {
-public:
-    struct Vector {
-        int16_t x;
-        int16_t y;
-    };
+ public:
+  struct Vector {
+    int16_t x;
+    int16_t y;
+  };
 
-    struct Cell {
-        /**
-         * The label from the connectivity map.
-         */
-        uint32_t label;
-
-        /**
-         * The squared euclidean distance to the nearest pixel
-         * initially (that is before extension) labelled with
-         * the same label.
-         */
-        uint32_t distSq;
-
-        /**
-         * The vector pointing to the nearest pixel initially
-         * (that is before extension) labelled with the same
-         * label.
-         */
-        Vector vec;
-    };
+  struct Cell {
+    /**
+     * The label from the connectivity map.
+     */
+    uint32_t label;
 
     /**
-     * \brief Construct a null influence map.
-     *
-     * The data() and paddedData() methods return null on such maps.
+     * The squared euclidean distance to the nearest pixel
+     * initially (that is before extension) labelled with
+     * the same label.
      */
-    InfluenceMap();
+    uint32_t distSq;
 
     /**
-     * \brief Take labelled regions from a connectivity map
-     *        and extend them to cover the whole available area.
+     * The vector pointing to the nearest pixel initially
+     * (that is before extension) labelled with the same
+     * label.
      */
-    explicit InfluenceMap(const ConnectivityMap& cmap);
+    Vector vec;
+  };
 
-    /**
-     * \brief Take labelled regions from a connectivity map
-     *        and extend them to cover the area that's black in mask.
-     */
-    InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask);
+  /**
+   * \brief Construct a null influence map.
+   *
+   * The data() and paddedData() methods return null on such maps.
+   */
+  InfluenceMap();
 
-    InfluenceMap(const InfluenceMap& other);
+  /**
+   * \brief Take labelled regions from a connectivity map
+   *        and extend them to cover the whole available area.
+   */
+  explicit InfluenceMap(const ConnectivityMap& cmap);
 
-    InfluenceMap& operator=(const InfluenceMap& other);
+  /**
+   * \brief Take labelled regions from a connectivity map
+   *        and extend them to cover the area that's black in mask.
+   */
+  InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask);
 
-    void swap(InfluenceMap& other);
+  InfluenceMap(const InfluenceMap& other);
 
-    /**
-     * \brief Returns a pointer to the top-left corner of the map.
-     *
-     * The data is stored in row-major order, and is padded,
-     * so moving to the next line requires adding stride() rather
-     * than size().width().
-     */
-    const Cell* data() const {
-        return m_pData;
-    }
+  InfluenceMap& operator=(const InfluenceMap& other);
 
-    /**
-     * \brief Returns a pointer to the top-left corner of the map.
-     *
-     * The data is stored in row-major order, and is padded,
-     * so moving to the next line requires adding stride() rather
-     * than size().width().
-     */
-    Cell* data() {
-        return m_pData;
-    }
+  void swap(InfluenceMap& other);
 
-    /**
-     * \brief Returns a pointer to the top-left corner of padding of the map.
-     *
-     * The actually has a fake line from each side.  Those lines are
-     * labelled as background (label 0).  Sometimes it might be desirable
-     * to access that data.
-     */
-    const Cell* paddedData() const {
-        return m_pData ? &m_data[0] : nullptr;
-    }
+  /**
+   * \brief Returns a pointer to the top-left corner of the map.
+   *
+   * The data is stored in row-major order, and is padded,
+   * so moving to the next line requires adding stride() rather
+   * than size().width().
+   */
+  const Cell* data() const { return m_pData; }
 
-    /**
-     * \brief Returns a pointer to the top-left corner of padding of the map.
-     *
-     * The actually has a fake line from each side.  Those lines are
-     * labelled as background (label 0).  Sometimes it might be desirable
-     * to access that data.
-     */
-    Cell* paddedData() {
-        return m_pData ? &m_data[0] : nullptr;
-    }
+  /**
+   * \brief Returns a pointer to the top-left corner of the map.
+   *
+   * The data is stored in row-major order, and is padded,
+   * so moving to the next line requires adding stride() rather
+   * than size().width().
+   */
+  Cell* data() { return m_pData; }
 
-    /**
-     * \brief Returns non-padded dimensions of the map.
-     */
-    QSize size() const {
-        return m_size;
-    }
+  /**
+   * \brief Returns a pointer to the top-left corner of padding of the map.
+   *
+   * The actually has a fake line from each side.  Those lines are
+   * labelled as background (label 0).  Sometimes it might be desirable
+   * to access that data.
+   */
+  const Cell* paddedData() const { return m_pData ? &m_data[0] : nullptr; }
 
-    /**
-     * \brief Returns the number of units on a padded line.
-     *
-     * Whether working with padded or non-padded maps, adding
-     * this number to a data pointer will move it one line down.
-     */
-    int stride() const {
-        return m_stride;
-    }
+  /**
+   * \brief Returns a pointer to the top-left corner of padding of the map.
+   *
+   * The actually has a fake line from each side.  Those lines are
+   * labelled as background (label 0).  Sometimes it might be desirable
+   * to access that data.
+   */
+  Cell* paddedData() { return m_pData ? &m_data[0] : nullptr; }
 
-    /**
-     * \brief Returns the maximum label present on the map.
-     */
-    uint32_t maxLabel() const {
-        return m_maxLabel;
-    }
+  /**
+   * \brief Returns non-padded dimensions of the map.
+   */
+  QSize size() const { return m_size; }
 
-    /**
-     * \brief Visualizes each label with a different color.
-     *
-     * Label 0 (which is assigned to background) is represented
-     * by transparent pixels.
-     */
-    QImage visualized() const;
+  /**
+   * \brief Returns the number of units on a padded line.
+   *
+   * Whether working with padded or non-padded maps, adding
+   * this number to a data pointer will move it one line down.
+   */
+  int stride() const { return m_stride; }
 
-private:
-    void init(const ConnectivityMap& cmap, const BinaryImage* mask = nullptr);
+  /**
+   * \brief Returns the maximum label present on the map.
+   */
+  uint32_t maxLabel() const { return m_maxLabel; }
 
-    std::vector<Cell> m_data;
-    Cell* m_pData;
-    QSize m_size;
-    int m_stride;
-    uint32_t m_maxLabel;
+  /**
+   * \brief Visualizes each label with a different color.
+   *
+   * Label 0 (which is assigned to background) is represented
+   * by transparent pixels.
+   */
+  QImage visualized() const;
+
+ private:
+  void init(const ConnectivityMap& cmap, const BinaryImage* mask = nullptr);
+
+  std::vector<Cell> m_data;
+  Cell* m_pData;
+  QSize m_size;
+  int m_stride;
+  uint32_t m_maxLabel;
 };
 
 
 inline void swap(InfluenceMap& o1, InfluenceMap& o2) {
-    o1.swap(o2);
+  o1.swap(o2);
 }
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_INFLUENCE_MAP_H_

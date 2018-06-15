@@ -19,42 +19,42 @@
 #ifndef RELINKABLE_PATH_VISUALIZATION_H_
 #define RELINKABLE_PATH_VISUALIZATION_H_
 
-#include <QWidget>
 #include <QString>
+#include <QWidget>
 
 class RelinkablePath;
 class QHBoxLayout;
 class QAbstractButton;
 
 class RelinkablePathVisualization : public QWidget {
-    Q_OBJECT
-public:
-    explicit RelinkablePathVisualization(QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit RelinkablePathVisualization(QWidget* parent = nullptr);
 
-    void clear();
+  void clear();
 
-    void setPath(const RelinkablePath& path, bool clickable);
+  void setPath(const RelinkablePath& path, bool clickable);
 
-signals:
+ signals:
 
-    /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-    void clicked(const QString& prefix_path, const QString& suffix_path, int type);
+  /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
+  void clicked(const QString& prefix_path, const QString& suffix_path, int type);
 
-protected:
-    void paintEvent(QPaintEvent* evt) override;
+ protected:
+  void paintEvent(QPaintEvent* evt) override;
 
-private:
-    struct PathComponent;
+ private:
+  struct PathComponent;
 
-    class ComponentButton;
+  class ComponentButton;
 
-    void onClicked(int component_idx, const QString& prefix_path, const QString& suffix_path, int type);
+  void onClicked(int component_idx, const QString& prefix_path, const QString& suffix_path, int type);
 
-    void stylePathComponentButton(QAbstractButton* btn, bool exists);
+  void stylePathComponentButton(QAbstractButton* btn, bool exists);
 
-    static void checkForExistence(std::vector<PathComponent>& components);
+  static void checkForExistence(std::vector<PathComponent>& components);
 
-    QHBoxLayout* m_pLayout;
+  QHBoxLayout* m_pLayout;
 };
 
 

@@ -19,42 +19,42 @@
 #ifndef POLYLINE_INTERSECTOR_H_
 #define POLYLINE_INTERSECTOR_H_
 
-#include "VecNT.h"
-#include <QPointF>
 #include <QLineF>
+#include <QPointF>
 #include <vector>
+#include "VecNT.h"
 
 class PolylineIntersector {
-public:
-    class Hint {
-        friend class PolylineIntersector;
+ public:
+  class Hint {
+    friend class PolylineIntersector;
 
-    public:
-        Hint();
+   public:
+    Hint();
 
-    private:
-        void update(int new_segment);
+   private:
+    void update(int new_segment);
 
-        int m_lastSegment;
-        int m_direction;
-    };
+    int m_lastSegment;
+    int m_direction;
+  };
 
 
-    explicit PolylineIntersector(const std::vector<QPointF>& polyline);
+  explicit PolylineIntersector(const std::vector<QPointF>& polyline);
 
-    QPointF intersect(const QLineF& line, Hint& hint) const;
+  QPointF intersect(const QLineF& line, Hint& hint) const;
 
-private:
-    bool intersectsSegment(const QLineF& normal, int segment) const;
+ private:
+  bool intersectsSegment(const QLineF& normal, int segment) const;
 
-    bool intersectsSpan(const QLineF& normal, const QLineF& span) const;
+  bool intersectsSpan(const QLineF& normal, const QLineF& span) const;
 
-    QPointF intersectWithSegment(const QLineF& line, int segment) const;
+  QPointF intersectWithSegment(const QLineF& line, int segment) const;
 
-    bool tryIntersectingOutsideOfPolyline(const QLineF& line, QPointF& intersection, Hint& hint) const;
+  bool tryIntersectingOutsideOfPolyline(const QLineF& line, QPointF& intersection, Hint& hint) const;
 
-    std::vector<QPointF> m_polyline;
-    int m_numSegments;
+  std::vector<QPointF> m_polyline;
+  int m_numSegments;
 };
 
 

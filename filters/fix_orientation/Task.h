@@ -20,11 +20,11 @@
 #define FIX_ORIENTATION_TASK_H_
 
 #include <FilterData.h>
-#include "NonCopyable.h"
-#include "ref_countable.h"
 #include "FilterResult.h"
-#include "intrusive_ptr.h"
 #include "ImageId.h"
+#include "NonCopyable.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class TaskStatus;
 class QImage;
@@ -38,32 +38,32 @@ class Filter;
 class Settings;
 
 class Task : public ref_countable {
-    DECLARE_NON_COPYABLE(Task)
+  DECLARE_NON_COPYABLE(Task)
 
-public:
-    Task(const PageId& page_id,
-         intrusive_ptr<Filter> filter,
-         intrusive_ptr<Settings> settings,
-         intrusive_ptr<ImageSettings> image_settings,
-         intrusive_ptr<page_split::Task> next_task,
-         bool batch_processing);
+ public:
+  Task(const PageId& page_id,
+       intrusive_ptr<Filter> filter,
+       intrusive_ptr<Settings> settings,
+       intrusive_ptr<ImageSettings> image_settings,
+       intrusive_ptr<page_split::Task> next_task,
+       bool batch_processing);
 
-    ~Task() override;
+  ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status, FilterData data);
+  FilterResultPtr process(const TaskStatus& status, FilterData data);
 
-private:
-    class UiUpdater;
+ private:
+  class UiUpdater;
 
-    void updateFilterData(FilterData& data);
+  void updateFilterData(FilterData& data);
 
-    intrusive_ptr<Filter> m_ptrFilter;
-    intrusive_ptr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
-    intrusive_ptr<Settings> m_ptrSettings;
-    intrusive_ptr<ImageSettings> m_ptrImageSettings;
-    PageId m_pageId;
-    ImageId m_imageId;
-    bool m_batchProcessing;
+  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
+  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<ImageSettings> m_ptrImageSettings;
+  PageId m_pageId;
+  ImageId m_imageId;
+  bool m_batchProcessing;
 };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_TASK_H_

@@ -20,51 +20,33 @@
 #define MARGINS_H_
 
 class Margins {
-public:
-    Margins() : m_top(), m_bottom(), m_left(), m_right() {
-    }
+ public:
+  Margins() : m_top(), m_bottom(), m_left(), m_right() {}
 
-    Margins(double left, double top, double right, double bottom)
-            : m_top(top), m_bottom(bottom), m_left(left), m_right(right) {
-    }
+  Margins(double left, double top, double right, double bottom)
+      : m_top(top), m_bottom(bottom), m_left(left), m_right(right) {}
 
-    double top() const {
-        return m_top;
-    }
+  double top() const { return m_top; }
 
-    void setTop(double val) {
-        m_top = val;
-    }
+  void setTop(double val) { m_top = val; }
 
-    double bottom() const {
-        return m_bottom;
-    }
+  double bottom() const { return m_bottom; }
 
-    void setBottom(double val) {
-        m_bottom = val;
-    }
+  void setBottom(double val) { m_bottom = val; }
 
-    double left() const {
-        return m_left;
-    }
+  double left() const { return m_left; }
 
-    void setLeft(double val) {
-        m_left = val;
-    }
+  void setLeft(double val) { m_left = val; }
 
-    double right() const {
-        return m_right;
-    }
+  double right() const { return m_right; }
 
-    void setRight(double val) {
-        m_right = val;
-    }
+  void setRight(double val) { m_right = val; }
 
-private:
-    double m_top;
-    double m_bottom;
-    double m_left;
-    double m_right;
+ private:
+  double m_top;
+  double m_bottom;
+  double m_left;
+  double m_right;
 };
 
 

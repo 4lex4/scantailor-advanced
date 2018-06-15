@@ -19,9 +19,9 @@
 #ifndef TO_LINE_PROJECTOR_H_
 #define TO_LINE_PROJECTOR_H_
 
-#include "VecNT.h"
-#include <QPointF>
 #include <QLineF>
+#include <QPointF>
+#include "VecNT.h"
 
 /**
  * \brief Projects points onto a line (not a line segment).
@@ -30,48 +30,48 @@
  * to the given point.
  */
 class ToLineProjector {
-public:
-    /**
-     * \brief Initializes line projector.
-     *
-     * If line endpoints match, all points will
-     * be projected to that point.
-     */
-    explicit ToLineProjector(const QLineF& line);
+ public:
+  /**
+   * \brief Initializes line projector.
+   *
+   * If line endpoints match, all points will
+   * be projected to that point.
+   */
+  explicit ToLineProjector(const QLineF& line);
 
-    /**
-     * \brief Finds the projection point.
-     */
-    QPointF projectionPoint(const QPointF& pt) const;
+  /**
+   * \brief Finds the projection point.
+   */
+  QPointF projectionPoint(const QPointF& pt) const;
 
-    /**
-     * \brief Equivalent to projectionPoint(pt) - pt.
-     */
-    QPointF projectionVector(const QPointF& pt) const;
+  /**
+   * \brief Equivalent to projectionPoint(pt) - pt.
+   */
+  QPointF projectionVector(const QPointF& pt) const;
 
-    /**
-     * Solves the equation of:\n
-     * line.p1() + x * (line.p2() - line.p1()) = p\n
-     * for x, where p would be the projection point.
-     * This function is faster than projectionPoint().
-     */
-    double projectionScalar(const QPointF& pt) const;
+  /**
+   * Solves the equation of:\n
+   * line.p1() + x * (line.p2() - line.p1()) = p\n
+   * for x, where p would be the projection point.
+   * This function is faster than projectionPoint().
+   */
+  double projectionScalar(const QPointF& pt) const;
 
-    /**
-     * Returns the distance from \p pt to the projection point.
-     */
-    double projectionDist(const QPointF& pt) const;
+  /**
+   * Returns the distance from \p pt to the projection point.
+   */
+  double projectionDist(const QPointF& pt) const;
 
-    /**
-     * Returns the squared distance from \p pt to the projection point.
-     * This function is faster than projectionDist().
-     */
-    double projectionSqDist(const QPointF& pt) const;
+  /**
+   * Returns the squared distance from \p pt to the projection point.
+   * This function is faster than projectionDist().
+   */
+  double projectionSqDist(const QPointF& pt) const;
 
-private:
-    QPointF m_origin;
-    QPointF m_vec;
-    Vec2d m_mat;
+ private:
+  QPointF m_origin;
+  QPointF m_vec;
+  Vec2d m_mat;
 };
 
 

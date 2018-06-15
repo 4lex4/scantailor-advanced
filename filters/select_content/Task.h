@@ -19,13 +19,13 @@
 #ifndef SELECT_CONTENT_TASK_H_
 #define SELECT_CONTENT_TASK_H_
 
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "FilterResult.h"
-#include "PageId.h"
-#include <QSizeF>
 #include <QRectF>
+#include <QSizeF>
 #include <memory>
+#include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageId.h"
+#include "ref_countable.h"
 
 class TaskStatus;
 class FilterData;
@@ -42,29 +42,29 @@ class Filter;
 class Settings;
 
 class Task : public ref_countable {
-    DECLARE_NON_COPYABLE(Task)
+  DECLARE_NON_COPYABLE(Task)
 
-public:
-    Task(intrusive_ptr<Filter> filter,
-         intrusive_ptr<page_layout::Task> next_task,
-         intrusive_ptr<Settings> settings,
-         const PageId& page_id,
-         bool batch,
-         bool debug);
+ public:
+  Task(intrusive_ptr<Filter> filter,
+       intrusive_ptr<page_layout::Task> next_task,
+       intrusive_ptr<Settings> settings,
+       const PageId& page_id,
+       bool batch,
+       bool debug);
 
-    ~Task() override;
+  ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status, const FilterData& data);
+  FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
-private:
-    class UiUpdater;
+ private:
+  class UiUpdater;
 
-    intrusive_ptr<Filter> m_ptrFilter;
-    intrusive_ptr<page_layout::Task> m_ptrNextTask;
-    intrusive_ptr<Settings> m_ptrSettings;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    bool m_batchProcessing;
+  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<page_layout::Task> m_ptrNextTask;
+  intrusive_ptr<Settings> m_ptrSettings;
+  std::unique_ptr<DebugImages> m_ptrDbg;
+  PageId m_pageId;
+  bool m_batchProcessing;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_TASK_H_

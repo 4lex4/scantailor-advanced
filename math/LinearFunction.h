@@ -19,8 +19,8 @@
 #ifndef LINEAR_FUNCTION_H_
 #define LINEAR_FUNCTION_H_
 
-#include "VecT.h"
 #include <cstddef>
+#include "VecT.h"
 
 /**
  * A linear function from arbitrary number of variables
@@ -30,41 +30,39 @@
  * \endcode
  */
 class LinearFunction {
-    // Member-wise copying is OK.
-public:
-    VecT<double> a;
-    double b;
+  // Member-wise copying is OK.
+ public:
+  VecT<double> a;
+  double b;
 
-    /**
-     * Constructs a linear function of the given number of variables,
-     * initializing everything to zero.
-     */
-    explicit LinearFunction(size_t num_vars = 0);
+  /**
+   * Constructs a linear function of the given number of variables,
+   * initializing everything to zero.
+   */
+  explicit LinearFunction(size_t num_vars = 0);
 
-    /**
-     * Resets everything to zero, so that F(x) = 0
-     */
-    void reset();
+  /**
+   * Resets everything to zero, so that F(x) = 0
+   */
+  void reset();
 
-    size_t numVars() const {
-        return a.size();
-    }
+  size_t numVars() const { return a.size(); }
 
-    /**
-     * Evaluates a^T * x + b
-     */
-    double evaluate(const double* x) const;
+  /**
+   * Evaluates a^T * x + b
+   */
+  double evaluate(const double* x) const;
 
-    void swap(LinearFunction& other);
+  void swap(LinearFunction& other);
 
-    LinearFunction& operator+=(const LinearFunction& other);
+  LinearFunction& operator+=(const LinearFunction& other);
 
-    LinearFunction& operator*=(double scalar);
+  LinearFunction& operator*=(double scalar);
 };
 
 
 inline void swap(LinearFunction& f1, LinearFunction& f2) {
-    f1.swap(f2);
+  f1.swap(f2);
 }
 
 #endif  // ifndef LINEAR_FUNCTION_H_

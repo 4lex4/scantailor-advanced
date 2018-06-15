@@ -24,60 +24,59 @@
 #include <QString>
 #include <vector>
 
-#include "intrusive_ptr.h"
 #include "BackgroundTask.h"
 #include "FilterResult.h"
+#include "ImageFileInfo.h"
 #include "OutputFileNameGenerator.h"
 #include "PageId.h"
 #include "PageInfo.h"
+#include "PageSelectionAccessor.h"
 #include "PageView.h"
 #include "ProjectPages.h"
-#include "ImageFileInfo.h"
-#include "ThumbnailPixmapCache.h"
-#include "OutputFileNameGenerator.h"
-#include "StageSequence.h"
-#include "PageSelectionAccessor.h"
 #include "ProjectReader.h"
+#include "StageSequence.h"
+#include "ThumbnailPixmapCache.h"
+#include "intrusive_ptr.h"
 
 
 class ConsoleBatch {
-    // Member-wise copying is OK.
-public:
-    ConsoleBatch(const std::vector<ImageFileInfo>& images,
-                 const QString& output_directory,
-                 const Qt::LayoutDirection layout);
+  // Member-wise copying is OK.
+ public:
+  ConsoleBatch(const std::vector<ImageFileInfo>& images,
+               const QString& output_directory,
+               const Qt::LayoutDirection layout);
 
-    ConsoleBatch(const QString project_file);
+  ConsoleBatch(const QString project_file);
 
-    void process();
+  void process();
 
-    void saveProject(const QString project_file);
+  void saveProject(const QString project_file);
 
-private:
-    bool batch;
-    bool debug;
-    intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
-    intrusive_ptr<ProjectPages> m_ptrPages;
-    intrusive_ptr<StageSequence> m_ptrStages;
-    OutputFileNameGenerator m_outFileNameGen;
-    intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-    std::unique_ptr<ProjectReader> m_ptrReader;
+ private:
+  bool batch;
+  bool debug;
+  intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
+  intrusive_ptr<ProjectPages> m_ptrPages;
+  intrusive_ptr<StageSequence> m_ptrStages;
+  OutputFileNameGenerator m_outFileNameGen;
+  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+  std::unique_ptr<ProjectReader> m_ptrReader;
 
-    void setupFilter(int idx, std::set<PageId> allPages);
+  void setupFilter(int idx, std::set<PageId> allPages);
 
-    void setupFixOrientation(std::set<PageId> allPages);
+  void setupFixOrientation(std::set<PageId> allPages);
 
-    void setupPageSplit(std::set<PageId> allPages);
+  void setupPageSplit(std::set<PageId> allPages);
 
-    void setupDeskew(std::set<PageId> allPages);
+  void setupDeskew(std::set<PageId> allPages);
 
-    void setupSelectContent(std::set<PageId> allPages);
+  void setupSelectContent(std::set<PageId> allPages);
 
-    void setupPageLayout(std::set<PageId> allPages);
+  void setupPageLayout(std::set<PageId> allPages);
 
-    void setupOutput(std::set<PageId> allPages);
+  void setupOutput(std::set<PageId> allPages);
 
-    BackgroundTaskPtr createCompositeTask(const PageInfo& page, const int last_filter_idx);
+  BackgroundTaskPtr createCompositeTask(const PageInfo& page, const int last_filter_idx);
 };
 
 

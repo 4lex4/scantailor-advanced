@@ -17,61 +17,57 @@
  */
 
 #include "ThumbnailFactory.h"
-#include "CompositeCacheDrivenTask.h"
-#include "filter_dc/ThumbnailCollector.h"
 #include <QGraphicsItem>
 #include <utility>
+#include "CompositeCacheDrivenTask.h"
+#include "filter_dc/ThumbnailCollector.h"
 
 class ThumbnailFactory::Collector : public ThumbnailCollector {
-public:
-    Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size);
+ public:
+  Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size);
 
-    void processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) override;
+  void processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) override;
 
-    intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() override;
+  intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() override;
 
-    QSizeF maxLogicalThumbSize() const override;
+  QSizeF maxLogicalThumbSize() const override;
 
-    std::unique_ptr<QGraphicsItem> retrieveThumbnail() {
-        return std::move(m_ptrThumbnail);
-    }
+  std::unique_ptr<QGraphicsItem> retrieveThumbnail() { return std::move(m_ptrThumbnail); }
 
-private:
-    intrusive_ptr<ThumbnailPixmapCache> m_ptrCache;
-    QSizeF m_maxSize;
-    std::unique_ptr<QGraphicsItem> m_ptrThumbnail;
+ private:
+  intrusive_ptr<ThumbnailPixmapCache> m_ptrCache;
+  QSizeF m_maxSize;
+  std::unique_ptr<QGraphicsItem> m_ptrThumbnail;
 };
 
 
 ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
                                    const QSizeF& max_size,
                                    intrusive_ptr<CompositeCacheDrivenTask> task)
-        : m_ptrPixmapCache(std::move(pixmap_cache)), m_maxSize(max_size), m_ptrTask(std::move(task)) {
-}
+    : m_ptrPixmapCache(std::move(pixmap_cache)), m_maxSize(max_size), m_ptrTask(std::move(task)) {}
 
 ThumbnailFactory::~ThumbnailFactory() = default;
 
 std::unique_ptr<QGraphicsItem> ThumbnailFactory::get(const PageInfo& page_info) {
-    Collector collector(m_ptrPixmapCache, m_maxSize);
-    m_ptrTask->process(page_info, &collector);
+  Collector collector(m_ptrPixmapCache, m_maxSize);
+  m_ptrTask->process(page_info, &collector);
 
-    return collector.retrieveThumbnail();
+  return collector.retrieveThumbnail();
 }
 
 /*======================= ThumbnailFactory::Collector ======================*/
 
 ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size)
-        : m_ptrCache(std::move(cache)), m_maxSize(max_size) {
-}
+    : m_ptrCache(std::move(cache)), m_maxSize(max_size) {}
 
 void ThumbnailFactory::Collector::processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) {
-    m_ptrThumbnail = std::move(thumbnail);
+  m_ptrThumbnail = std::move(thumbnail);
 }
 
 intrusive_ptr<ThumbnailPixmapCache> ThumbnailFactory::Collector::thumbnailCache() {
-    return m_ptrCache;
+  return m_ptrCache;
 }
 
 QSizeF ThumbnailFactory::Collector::maxLogicalThumbSize() const {
-    return m_maxSize;
+  return m_maxSize;
 }

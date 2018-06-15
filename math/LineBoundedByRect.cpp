@@ -21,38 +21,37 @@
 #include "NumericTraits.h"
 
 bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
-    const QLineF rect_lines[4]
-            = {QLineF(rect.topLeft(), rect.topRight()), QLineF(rect.bottomLeft(), rect.bottomRight()),
-               QLineF(rect.topLeft(), rect.bottomLeft()), QLineF(rect.topRight(), rect.bottomRight())};
+  const QLineF rect_lines[4] = {QLineF(rect.topLeft(), rect.topRight()), QLineF(rect.bottomLeft(), rect.bottomRight()),
+                                QLineF(rect.topLeft(), rect.bottomLeft()), QLineF(rect.topRight(), rect.bottomRight())};
 
-    double max = NumericTraits<double>::min();
-    double min = NumericTraits<double>::max();
+  double max = NumericTraits<double>::min();
+  double min = NumericTraits<double>::max();
 
-    double s1 = 0;
-    double s2 = 0;
-    for (const QLineF& rect_line : rect_lines) {
-        if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
-            // line is parallel to rect_line.
-            continue;
-        }
-        if ((s1 < 0) || (s1 > 1)) {
-            // Intersection outside of rect.
-            continue;
-        }
-
-        if (s2 > max) {
-            max = s2;
-        }
-        if (s2 < min) {
-            min = s2;
-        }
+  double s1 = 0;
+  double s2 = 0;
+  for (const QLineF& rect_line : rect_lines) {
+    if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
+      // line is parallel to rect_line.
+      continue;
+    }
+    if ((s1 < 0) || (s1 > 1)) {
+      // Intersection outside of rect.
+      continue;
     }
 
-    if (max > min) {
-        line = QLineF(line.pointAt(min), line.pointAt(max));
-
-        return true;
-    } else {
-        return false;
+    if (s2 > max) {
+      max = s2;
     }
+    if (s2 < min) {
+      min = s2;
+    }
+  }
+
+  if (max > min) {
+    line = QLineF(line.pointAt(min), line.pointAt(max));
+
+    return true;
+  } else {
+    return false;
+  }
 }  // lineBoundedByRect

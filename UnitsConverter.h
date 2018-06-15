@@ -8,21 +8,21 @@
 #include "Units.h"
 
 class UnitsConverter {
-private:
-    Dpi dpi;
+ private:
+  Dpi dpi;
 
-public:
-    UnitsConverter() = default;
+ public:
+  UnitsConverter() = default;
 
-    explicit UnitsConverter(const Dpi& dpi);
+  explicit UnitsConverter(const Dpi& dpi);
 
-    void convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const;
+  void convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const;
 
-    QTransform transform(Units fromUnits, Units toUnits) const;
+  QTransform transform(Units fromUnits, Units toUnits) const;
 
-    const Dpi& getDpi() const;
+  const Dpi& getDpi() const;
 
-    void setDpi(const Dpi& dpi);
+  void setDpi(const Dpi& dpi);
 };
 
 

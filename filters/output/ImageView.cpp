@@ -22,14 +22,11 @@
 
 namespace output {
 ImageView::ImageView(const QImage& image, const QImage& downscaled_image)
-        : ImageViewBase(image,
-                        downscaled_image,
-                        ImagePresentation(QTransform(), QRectF(image.rect())),
-                        OutputMargins()),
-          m_dragHandler(*this),
-          m_zoomHandler(*this) {
-    rootInteractionHandler().makeLastFollower(m_dragHandler);
-    rootInteractionHandler().makeLastFollower(m_zoomHandler);
+    : ImageViewBase(image, downscaled_image, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
+      m_dragHandler(*this),
+      m_zoomHandler(*this) {
+  rootInteractionHandler().makeLastFollower(m_dragHandler);
+  rootInteractionHandler().makeLastFollower(m_zoomHandler);
 }
 
 ImageView::~ImageView() = default;

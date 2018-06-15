@@ -19,30 +19,26 @@
 #ifndef SPLINE_SEGMENT_H_
 #define SPLINE_SEGMENT_H_
 
-#include "SplineVertex.h"
-#include <QPointF>
 #include <QLineF>
+#include <QPointF>
+#include "SplineVertex.h"
 
 class SplineSegment {
-public:
-    SplineVertex::Ptr prev;
-    SplineVertex::Ptr next;
+ public:
+  SplineVertex::Ptr prev;
+  SplineVertex::Ptr next;
 
-    SplineSegment() = default;
+  SplineSegment() = default;
 
-    SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next);
+  SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next);
 
-    SplineVertex::Ptr splitAt(const QPointF& pt);
+  SplineVertex::Ptr splitAt(const QPointF& pt);
 
-    bool isValid() const;
+  bool isValid() const;
 
-    bool operator==(const SplineSegment& other) const {
-        return prev == other.prev && next == other.next;
-    }
+  bool operator==(const SplineSegment& other) const { return prev == other.prev && next == other.next; }
 
-    QLineF toLine() const {
-        return QLineF(prev->point(), next->point());
-    }
+  QLineF toLine() const { return QLineF(prev->point(), next->point()); }
 };
 
 

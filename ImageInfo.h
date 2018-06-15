@@ -28,42 +28,32 @@
  * ProjectPages doesn't operate with ImageInfo objects, but with PageInfo ones.
  */
 class ImageInfo {
-    // Member-wise copying is OK.
-public:
-    ImageInfo();
+  // Member-wise copying is OK.
+ public:
+  ImageInfo();
 
-    ImageInfo(const ImageId& id,
-              const ImageMetadata& metadata,
-              int num_sub_pages,
-              bool left_page_removed,
-              bool right_page_removed);
+  ImageInfo(const ImageId& id,
+            const ImageMetadata& metadata,
+            int num_sub_pages,
+            bool left_page_removed,
+            bool right_page_removed);
 
-    const ImageId& id() const {
-        return m_id;
-    }
+  const ImageId& id() const { return m_id; }
 
-    const ImageMetadata& metadata() const {
-        return m_metadata;
-    }
+  const ImageMetadata& metadata() const { return m_metadata; }
 
-    int numSubPages() const {
-        return m_numSubPages;
-    }
+  int numSubPages() const { return m_numSubPages; }
 
-    bool leftHalfRemoved() const {
-        return m_leftHalfRemoved;
-    }
+  bool leftHalfRemoved() const { return m_leftHalfRemoved; }
 
-    bool rightHalfRemoved() const {
-        return m_rightHalfRemoved;
-    }
+  bool rightHalfRemoved() const { return m_rightHalfRemoved; }
 
-private:
-    ImageId m_id;
-    ImageMetadata m_metadata;
-    int m_numSubPages;        // 1 or 2
-    bool m_leftHalfRemoved;   // Both can't be true, and if one is true,
-    bool m_rightHalfRemoved;  // then m_numSubPages is 1.
+ private:
+  ImageId m_id;
+  ImageMetadata m_metadata;
+  int m_numSubPages;        // 1 or 2
+  bool m_leftHalfRemoved;   // Both can't be true, and if one is true,
+  bool m_rightHalfRemoved;  // then m_numSubPages is 1.
 };
 
 

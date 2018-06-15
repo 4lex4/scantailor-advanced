@@ -19,10 +19,10 @@
 #ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_
 #define PAGE_LAYOUT_CACHEDRIVENTASK_H_
 
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "intrusive_ptr.h"
 #include <QPolygonF>
+#include "NonCopyable.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class QRectF;
 class PageInfo;
@@ -37,24 +37,24 @@ namespace page_layout {
 class Settings;
 
 class CacheDrivenTask : public ref_countable {
-    DECLARE_NON_COPYABLE(CacheDrivenTask)
+  DECLARE_NON_COPYABLE(CacheDrivenTask)
 
-public:
-    CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task, intrusive_ptr<Settings> settings);
+ public:
+  CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task, intrusive_ptr<Settings> settings);
 
-    ~CacheDrivenTask() override;
+  ~CacheDrivenTask() override;
 
-    void process(const PageInfo& page_info,
-                 AbstractFilterDataCollector* collector,
-                 const ImageTransformation& xform,
-                 const QRectF& page_rect,
-                 const QRectF& content_rect);
+  void process(const PageInfo& page_info,
+               AbstractFilterDataCollector* collector,
+               const ImageTransformation& xform,
+               const QRectF& page_rect,
+               const QRectF& content_rect);
 
-private:
-    static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
+ private:
+  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
-    intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;
-    intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;
+  intrusive_ptr<Settings> m_ptrSettings;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_

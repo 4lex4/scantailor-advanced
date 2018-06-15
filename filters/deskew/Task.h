@@ -19,12 +19,12 @@
 #ifndef DESKEW_TASK_H_
 #define DESKEW_TASK_H_
 
-#include "NonCopyable.h"
-#include "ref_countable.h"
-#include "FilterResult.h"
-#include "PageId.h"
-#include <memory>
 #include <FilterData.h>
+#include <memory>
+#include "FilterResult.h"
+#include "NonCopyable.h"
+#include "PageId.h"
+#include "ref_countable.h"
 
 class TaskStatus;
 class QImage;
@@ -45,39 +45,39 @@ class Filter;
 class Settings;
 
 class Task : public ref_countable {
-    DECLARE_NON_COPYABLE(Task)
+  DECLARE_NON_COPYABLE(Task)
 
-public:
-    Task(intrusive_ptr<Filter> filter,
-         intrusive_ptr<Settings> settings,
-         intrusive_ptr<ImageSettings> image_settings,
-         intrusive_ptr<select_content::Task> next_task,
-         const PageId& page_id,
-         bool batch_processing,
-         bool debug);
+ public:
+  Task(intrusive_ptr<Filter> filter,
+       intrusive_ptr<Settings> settings,
+       intrusive_ptr<ImageSettings> image_settings,
+       intrusive_ptr<select_content::Task> next_task,
+       const PageId& page_id,
+       bool batch_processing,
+       bool debug);
 
-    ~Task() override;
+  ~Task() override;
 
-    FilterResultPtr process(const TaskStatus& status, FilterData data);
+  FilterResultPtr process(const TaskStatus& status, FilterData data);
 
-private:
-    class UiUpdater;
+ private:
+  class UiUpdater;
 
-    static void cleanup(const TaskStatus& status, imageproc::BinaryImage& img, const Dpi& dpi);
+  static void cleanup(const TaskStatus& status, imageproc::BinaryImage& img, const Dpi& dpi);
 
-    static int from150dpi(int size, int target_dpi);
+  static int from150dpi(int size, int target_dpi);
 
-    static QSize from150dpi(const QSize& size, const Dpi& target_dpi);
+  static QSize from150dpi(const QSize& size, const Dpi& target_dpi);
 
-    void updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate);
+  void updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate);
 
-    intrusive_ptr<Filter> m_ptrFilter;
-    intrusive_ptr<Settings> m_ptrSettings;
-    intrusive_ptr<ImageSettings> m_ptrImageSettings;
-    intrusive_ptr<select_content::Task> m_ptrNextTask;
-    std::unique_ptr<DebugImages> m_ptrDbg;
-    PageId m_pageId;
-    bool m_batchProcessing;
+  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<ImageSettings> m_ptrImageSettings;
+  intrusive_ptr<select_content::Task> m_ptrNextTask;
+  std::unique_ptr<DebugImages> m_ptrDbg;
+  PageId m_pageId;
+  bool m_batchProcessing;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_TASK_H_

@@ -38,154 +38,140 @@ class BinaryImage;
  * unit_vector is the normal vector for that line.
  */
 class HoughLine {
-public:
-    HoughLine() : m_normUnitVector(), m_distance(), m_quality() {
-    }
+ public:
+  HoughLine() : m_normUnitVector(), m_distance(), m_quality() {}
 
-    HoughLine(const QPointF& norm_uv, double distance, unsigned quality)
-            : m_normUnitVector(norm_uv), m_distance(distance), m_quality(quality) {
-    }
+  HoughLine(const QPointF& norm_uv, double distance, unsigned quality)
+      : m_normUnitVector(norm_uv), m_distance(distance), m_quality(quality) {}
 
-    const QPointF& normUnitVector() const {
-        return m_normUnitVector;
-    }
+  const QPointF& normUnitVector() const { return m_normUnitVector; }
 
-    double distance() const {
-        return m_distance;
-    }
+  double distance() const { return m_distance; }
 
-    /**
-     * \brief The sum of weights of points on the line.
-     *
-     * The weight of a point is an argument to HoughLineDetector::put().
-     */
-    unsigned quality() const {
-        return m_quality;
-    }
+  /**
+   * \brief The sum of weights of points on the line.
+   *
+   * The weight of a point is an argument to HoughLineDetector::put().
+   */
+  unsigned quality() const { return m_quality; }
 
-    QPointF pointAtY(double y) const;
+  QPointF pointAtY(double y) const;
 
-    QPointF pointAtX(double x) const;
+  QPointF pointAtX(double x) const;
 
-    /**
-     * \brief Returns an arbitrary line segment of length 1.
-     */
-    QLineF unitSegment() const;
+  /**
+   * \brief Returns an arbitrary line segment of length 1.
+   */
+  QLineF unitSegment() const;
 
-private:
-    QPointF m_normUnitVector;
-    double m_distance;
-    unsigned m_quality;
+ private:
+  QPointF m_normUnitVector;
+  double m_distance;
+  unsigned m_quality;
 };
 
 
 class HoughLineDetector {
-public:
-    /**
-     * \brief A line finder based on Hough transform.
-     *
-     * \param input_dimensions The range of valid input coordinates,
-     *        which are [0, width - 1] for x and [0, height - 1] for y.
-     * \param distance_resolution The distance in input units that
-     *        represents the width of the lines we are searching for.
-     *        The more this parameter is, the more pixels on the sides
-     *        of a line will be considered a part of it.
-     *        Normally this parameter greater than 1, but theoretically
-     *        it maybe any positive value.
-     * \param start_angle The first angle to check for.  This angle
-     *        is between the normal vector of a line we are looking for
-     *        and the X axis.  The angle is in degrees.
-     * \param angle_delta The difference (in degrees) between an
-     *        angle and the next one.
-     * \param num_angles The number of angles to check.
-     */
-    HoughLineDetector(const QSize& input_dimensions,
-                      double distance_resolution,
-                      double start_angle,
-                      double angle_delta,
-                      int num_angles);
+ public:
+  /**
+   * \brief A line finder based on Hough transform.
+   *
+   * \param input_dimensions The range of valid input coordinates,
+   *        which are [0, width - 1] for x and [0, height - 1] for y.
+   * \param distance_resolution The distance in input units that
+   *        represents the width of the lines we are searching for.
+   *        The more this parameter is, the more pixels on the sides
+   *        of a line will be considered a part of it.
+   *        Normally this parameter greater than 1, but theoretically
+   *        it maybe any positive value.
+   * \param start_angle The first angle to check for.  This angle
+   *        is between the normal vector of a line we are looking for
+   *        and the X axis.  The angle is in degrees.
+   * \param angle_delta The difference (in degrees) between an
+   *        angle and the next one.
+   * \param num_angles The number of angles to check.
+   */
+  HoughLineDetector(const QSize& input_dimensions,
+                    double distance_resolution,
+                    double start_angle,
+                    double angle_delta,
+                    int num_angles);
 
-    /**
-     * \brief Processes a point with a specified weight.
-     */
-    void process(int x, int y, unsigned weight = 1);
+  /**
+   * \brief Processes a point with a specified weight.
+   */
+  void process(int x, int y, unsigned weight = 1);
 
-    QImage visualizeHoughSpace(unsigned lower_bound) const;
+  QImage visualizeHoughSpace(unsigned lower_bound) const;
 
-    /**
-     * \brief Returns the lines found among the input points.
-     *
-     * The lines will be ordered by the descending quality.
-     * \see HoughLineDetector::Line::quality()
-     *
-     * \param quality_lower_bound The minimum acceptable line quality.
-     */
-    std::vector<HoughLine> findLines(unsigned quality_lower_bound) const;
+  /**
+   * \brief Returns the lines found among the input points.
+   *
+   * The lines will be ordered by the descending quality.
+   * \see HoughLineDetector::Line::quality()
+   *
+   * \param quality_lower_bound The minimum acceptable line quality.
+   */
+  std::vector<HoughLine> findLines(unsigned quality_lower_bound) const;
 
-private:
-    class GreaterQualityFirst;
+ private:
+  class GreaterQualityFirst;
 
-    static BinaryImage findHistogramPeaks(const std::vector<unsigned>& hist,
-                                          int width,
-                                          int height,
-                                          unsigned lower_bound);
+  static BinaryImage findHistogramPeaks(const std::vector<unsigned>& hist, int width, int height, unsigned lower_bound);
 
-    static BinaryImage findPeakCandidates(const std::vector<unsigned>& hist,
-                                          int width,
-                                          int height,
-                                          unsigned lower_bound);
+  static BinaryImage findPeakCandidates(const std::vector<unsigned>& hist, int width, int height, unsigned lower_bound);
 
-    static void incrementBinsMasked(std::vector<unsigned>& hist, int width, int height, const BinaryImage& mask);
+  static void incrementBinsMasked(std::vector<unsigned>& hist, int width, int height, const BinaryImage& mask);
 
-    static void max5x5(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
+  static void max5x5(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-    static void max3x1(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
+  static void max3x1(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-    static void max1x3(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
+  static void max1x3(const std::vector<unsigned>& src, std::vector<unsigned>& dst, int width, int height);
 
-    static BinaryImage buildEqualMap(const std::vector<unsigned>& src1,
-                                     const std::vector<unsigned>& src2,
-                                     int width,
-                                     int height,
-                                     unsigned lower_bound);
+  static BinaryImage buildEqualMap(const std::vector<unsigned>& src1,
+                                   const std::vector<unsigned>& src2,
+                                   int width,
+                                   int height,
+                                   unsigned lower_bound);
 
-    /**
-     * \brief A 2D histogram laid out in raster order.
-     *
-     * Rows correspond to line angles while columns correspond to
-     * line distances from the origin.
-     */
-    std::vector<unsigned> m_histogram;
+  /**
+   * \brief A 2D histogram laid out in raster order.
+   *
+   * Rows correspond to line angles while columns correspond to
+   * line distances from the origin.
+   */
+  std::vector<unsigned> m_histogram;
 
-    /**
-     * \brief An array of sines (y) and cosines(x) of angles we working with.
-     */
-    std::vector<QPointF> m_angleUnitVectors;
+  /**
+   * \brief An array of sines (y) and cosines(x) of angles we working with.
+   */
+  std::vector<QPointF> m_angleUnitVectors;
 
-    /**
-     * \see HoughLineDetector:HoughLineDetector()
-     */
-    double m_distanceResolution;
+  /**
+   * \see HoughLineDetector:HoughLineDetector()
+   */
+  double m_distanceResolution;
 
-    /**
-     * 1.0 / m_distanceResolution
-     */
-    double m_recipDistanceResolution;
+  /**
+   * 1.0 / m_distanceResolution
+   */
+  double m_recipDistanceResolution;
 
-    /**
-     * The value to be added to distance to make sure it's positive.
-     */
-    double m_distanceBias;
+  /**
+   * The value to be added to distance to make sure it's positive.
+   */
+  double m_distanceBias;
 
-    /**
-     * The width of m_histogram.
-     */
-    int m_histWidth;
+  /**
+   * The width of m_histogram.
+   */
+  int m_histWidth;
 
-    /**
-     * The height of m_histogram.
-     */
-    int m_histHeight;
+  /**
+   * The height of m_histogram.
+   */
+  int m_histHeight;
 };
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_HOUGHLINEDETECTOR_H_

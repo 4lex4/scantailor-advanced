@@ -48,47 +48,41 @@ namespace imageproc {
  * \endcode
  */
 class ReduceThreshold {
-public:
-    /**
-     * \brief Constructor.  Doesn't do any work by itself.
-     */
-    explicit ReduceThreshold(const BinaryImage& image);
+ public:
+  /**
+   * \brief Constructor.  Doesn't do any work by itself.
+   */
+  explicit ReduceThreshold(const BinaryImage& image);
 
-    /**
-     * \brief Implicit conversion to BinaryImage.
-     */
-    operator const BinaryImage&() const {
-        return m_image;
-    }
+  /**
+   * \brief Implicit conversion to BinaryImage.
+   */
+  operator const BinaryImage&() const { return m_image; }
 
-    /**
-     * \brief Returns a reference to the reduced image.
-     */
-    const BinaryImage& image() const {
-        return m_image;
-    }
+  /**
+   * \brief Returns a reference to the reduced image.
+   */
+  const BinaryImage& image() const { return m_image; }
 
-    /**
-     * \brief Performs a reduction and returns *this.
-     */
-    ReduceThreshold& reduce(int threshold);
+  /**
+   * \brief Performs a reduction and returns *this.
+   */
+  ReduceThreshold& reduce(int threshold);
 
-    /**
-     * \brief Operator () performs a reduction and returns *this.
-     */
-    ReduceThreshold& operator()(int threshold) {
-        return reduce(threshold);
-    }
+  /**
+   * \brief Operator () performs a reduction and returns *this.
+   */
+  ReduceThreshold& operator()(int threshold) { return reduce(threshold); }
 
-private:
-    void reduceHorLine(int threshold);
+ private:
+  void reduceHorLine(int threshold);
 
-    void reduceVertLine(int threshold);
+  void reduceVertLine(int threshold);
 
-    /**
-     * \brief The result of a previous reduction.
-     */
-    BinaryImage m_image;
+  /**
+   * \brief The result of a previous reduction.
+   */
+  BinaryImage m_image;
 };
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_REDUCETHRESHOLD_H_

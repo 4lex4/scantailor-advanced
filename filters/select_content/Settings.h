@@ -19,56 +19,56 @@
 #ifndef SELECT_CONTENT_SETTINGS_H_
 #define SELECT_CONTENT_SETTINGS_H_
 
-#include "ref_countable.h"
-#include "NonCopyable.h"
-#include "PageId.h"
-#include "Params.h"
+#include <DeviationProvider.h>
 #include <QMutex>
 #include <memory>
 #include <unordered_map>
-#include <DeviationProvider.h>
+#include "NonCopyable.h"
+#include "PageId.h"
+#include "Params.h"
+#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace select_content {
 class Settings : public ref_countable {
-    DECLARE_NON_COPYABLE(Settings)
+  DECLARE_NON_COPYABLE(Settings)
 
-public:
-    Settings();
+ public:
+  Settings();
 
-    ~Settings() override;
+  ~Settings() override;
 
-    void clear();
+  void clear();
 
-    void performRelinking(const AbstractRelinker& relinker);
+  void performRelinking(const AbstractRelinker& relinker);
 
-    void setPageParams(const PageId& page_id, const Params& params);
+  void setPageParams(const PageId& page_id, const Params& params);
 
-    void clearPageParams(const PageId& page_id);
+  void clearPageParams(const PageId& page_id);
 
-    std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
+  std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
-    bool isParamsNull(const PageId& page_id) const;
+  bool isParamsNull(const PageId& page_id) const;
 
-    QSizeF pageDetectionBox() const;
+  QSizeF pageDetectionBox() const;
 
-    void setPageDetectionBox(QSizeF size);
+  void setPageDetectionBox(QSizeF size);
 
-    double pageDetectionTolerance() const;
+  double pageDetectionTolerance() const;
 
-    void setPageDetectionTolerance(double tolerance);
+  void setPageDetectionTolerance(double tolerance);
 
-    const DeviationProvider<PageId>& deviationProvider() const;
+  const DeviationProvider<PageId>& deviationProvider() const;
 
-private:
-    typedef std::unordered_map<PageId, Params> PageParams;
+ private:
+  typedef std::unordered_map<PageId, Params> PageParams;
 
-    mutable QMutex m_mutex;
-    PageParams m_pageParams;
-    QSizeF m_pageDetectionBox;
-    double m_pageDetectionTolerance;
-    DeviationProvider<PageId> m_deviationProvider;
+  mutable QMutex m_mutex;
+  PageParams m_pageParams;
+  QSizeF m_pageDetectionBox;
+  double m_pageDetectionTolerance;
+  DeviationProvider<PageId> m_deviationProvider;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_SETTINGS_H_

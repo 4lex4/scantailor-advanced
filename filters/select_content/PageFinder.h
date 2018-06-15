@@ -20,8 +20,8 @@
 #ifndef SELECT_CONTENT_PAGEFINDER_H_
 #define SELECT_CONTENT_PAGEFINDER_H_
 
-#include "imageproc/BinaryThreshold.h"
 #include "Margins.h"
+#include "imageproc/BinaryThreshold.h"
 
 #include <Qt>
 
@@ -40,30 +40,30 @@ class BinaryImage;
 
 namespace select_content {
 class PageFinder {
-public:
-    static QRectF findPageBox(const TaskStatus& status,
-                              const FilterData& data,
-                              bool fine_tune,
-                              const QSizeF& box,
-                              double tolerance,
-                              DebugImages* dbg = nullptr);
+ public:
+  static QRectF findPageBox(const TaskStatus& status,
+                            const FilterData& data,
+                            bool fine_tune,
+                            const QSizeF& box,
+                            double tolerance,
+                            DebugImages* dbg = nullptr);
 
-private:
-    static QRect detectBorders(const QImage& img);
+ private:
+  static QRect detectBorders(const QImage& img);
 
-    static int detectEdge(const QImage& img, int start, int end, int inc, int mid, Qt::Orientation orient);
+  static int detectEdge(const QImage& img, int start, int end, int inc, int mid, Qt::Orientation orient);
 
-    static void fineTuneCorners(const QImage& img, QRect& rect, const QSize& size, double tolerance);
+  static void fineTuneCorners(const QImage& img, QRect& rect, const QSize& size, double tolerance);
 
-    static bool fineTuneCorner(const QImage& img,
-                               int& x,
-                               int& y,
-                               int max_x,
-                               int max_y,
-                               int inc_x,
-                               int inc_y,
-                               const QSize& size,
-                               double tolerance);
+  static bool fineTuneCorner(const QImage& img,
+                             int& x,
+                             int& y,
+                             int max_x,
+                             int max_y,
+                             int inc_x,
+                             int inc_y,
+                             const QSize& size,
+                             double tolerance);
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_PAGEFINDER_H_

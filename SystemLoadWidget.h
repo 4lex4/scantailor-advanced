@@ -19,31 +19,31 @@
 #ifndef SYSTEM_LOAD_WIDGET_H_
 #define SYSTEM_LOAD_WIDGET_H_
 
-#include "ui_SystemLoadWidget.h"
 #include <QWidget>
+#include "ui_SystemLoadWidget.h"
 
 class SystemLoadWidget : public QWidget {
-    Q_OBJECT
-public:
-    explicit SystemLoadWidget(QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit SystemLoadWidget(QWidget* parent = nullptr);
 
-private slots:
+ private slots:
 
-    void sliderPressed();
+  void sliderPressed();
 
-    void sliderMoved(int threads);
+  void sliderMoved(int threads);
 
-    void valueChanged(int threads);
+  void valueChanged(int threads);
 
-    void decreaseLoad();
+  void decreaseLoad();
 
-    void increaseLoad();
+  void increaseLoad();
 
-private:
-    void showHideToolTip(int threads);
+ private:
+  void showHideToolTip(int threads);
 
-    Ui::SystemLoadWidget ui;
-    int m_maxThreads;
+  Ui::SystemLoadWidget ui;
+  int m_maxThreads;
 };
 
 

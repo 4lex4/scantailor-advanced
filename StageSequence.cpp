@@ -21,45 +21,45 @@
 
 StageSequence::StageSequence(const intrusive_ptr<ProjectPages>& pages,
                              const PageSelectionAccessor& page_selection_accessor)
-        : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
-          m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
-          m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
-          m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
-          m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
-          m_ptrOutputFilter(new output::Filter(page_selection_accessor)) {
-    m_fixOrientationFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrFixOrientationFilter);
+    : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
+      m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
+      m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
+      m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
+      m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
+      m_ptrOutputFilter(new output::Filter(page_selection_accessor)) {
+  m_fixOrientationFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrFixOrientationFilter);
 
-    m_pageSplitFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrPageSplitFilter);
+  m_pageSplitFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrPageSplitFilter);
 
-    m_deskewFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrDeskewFilter);
+  m_deskewFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrDeskewFilter);
 
-    m_selectContentFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrSelectContentFilter);
+  m_selectContentFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrSelectContentFilter);
 
-    m_pageLayoutFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrPageLayoutFilter);
+  m_pageLayoutFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrPageLayoutFilter);
 
-    m_outputFilterIdx = static_cast<int>(m_filters.size());
-    m_filters.emplace_back(m_ptrOutputFilter);
+  m_outputFilterIdx = static_cast<int>(m_filters.size());
+  m_filters.emplace_back(m_ptrOutputFilter);
 }
 
 void StageSequence::performRelinking(const AbstractRelinker& relinker) {
-    for (FilterPtr& filter : m_filters) {
-        filter->performRelinking(relinker);
-    }
+  for (FilterPtr& filter : m_filters) {
+    filter->performRelinking(relinker);
+  }
 }
 
 int StageSequence::findFilter(const FilterPtr& filter) const {
-    int idx = 0;
-    for (const FilterPtr& f : m_filters) {
-        if (f == filter) {
-            return idx;
-        }
-        ++idx;
+  int idx = 0;
+  for (const FilterPtr& f : m_filters) {
+    if (f == filter) {
+      return idx;
     }
+    ++idx;
+  }
 
-    return -1;
+  return -1;
 }

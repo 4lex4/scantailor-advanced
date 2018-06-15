@@ -19,12 +19,12 @@
 #ifndef DEWARPING_TOWARDS_LINE_TRACER_H_
 #define DEWARPING_TOWARDS_LINE_TRACER_H_
 
-#include "VecNT.h"
-#include "Grid.h"
+#include <QLineF>
 #include <QPoint>
 #include <QRect>
-#include <QLineF>
 #include <cstdint>
+#include "Grid.h"
+#include "VecNT.h"
 
 namespace imageproc {
 class SEDM;
@@ -35,32 +35,32 @@ namespace dewarping {
  * This class is used for tracing a path towards intersection with a given line.
  */
 class TowardsLineTracer {
-public:
-    TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line, const QPoint& initial_pos);
+ public:
+  TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line, const QPoint& initial_pos);
 
-    const QPoint* trace(float max_dist);
+  const QPoint* trace(float max_dist);
 
-private:
-    struct Step {
-        Vec2d unitVec;
-        QPoint vec;
-        int dmOffset{};
-        int pmOffset{};
-    };
+ private:
+  struct Step {
+    Vec2d unitVec;
+    QPoint vec;
+    int dmOffset{};
+    int pmOffset{};
+  };
 
-    void setupSteps();
+  void setupSteps();
 
-    const uint32_t* m_pDmData;
-    int m_dmStride;
-    const float* m_pPmData;
-    int m_pmStride;
-    QRect m_rect;
-    QLineF m_line;
-    Vec2d m_normalTowardsLine;
-    QPoint m_lastOutputPos;
-    Step m_steps[5];
-    int m_numSteps;
-    bool m_finished;
+  const uint32_t* m_pDmData;
+  int m_dmStride;
+  const float* m_pPmData;
+  int m_pmStride;
+  QRect m_rect;
+  QLineF m_line;
+  Vec2d m_normalTowardsLine;
+  QPoint m_lastOutputPos;
+  Step m_steps[5];
+  int m_numSteps;
+  bool m_finished;
 };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_TOWARDS_LINE_TRACER_H_

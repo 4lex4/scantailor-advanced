@@ -29,33 +29,33 @@ class QString;
 
 namespace output {
 class PictureLayerProperty : public Property {
-public:
-    enum Layer { NO_OP, ERASER1, PAINTER2, ERASER3 };
+ public:
+  enum Layer { NO_OP, ERASER1, PAINTER2, ERASER3 };
 
-    explicit PictureLayerProperty(Layer layer = NO_OP);
+  explicit PictureLayerProperty(Layer layer = NO_OP);
 
-    explicit PictureLayerProperty(const QDomElement& el);
+  explicit PictureLayerProperty(const QDomElement& el);
 
-    static void registerIn(PropertyFactory& factory);
+  static void registerIn(PropertyFactory& factory);
 
-    intrusive_ptr<Property> clone() const override;
+  intrusive_ptr<Property> clone() const override;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const override;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
-    Layer layer() const;
+  Layer layer() const;
 
-    void setLayer(Layer layer);
+  void setLayer(Layer layer);
 
-private:
-    static intrusive_ptr<Property> construct(const QDomElement& el);
+ private:
+  static intrusive_ptr<Property> construct(const QDomElement& el);
 
-    static Layer layerFromString(const QString& str);
+  static Layer layerFromString(const QString& str);
 
-    static QString layerToString(Layer layer);
+  static QString layerToString(Layer layer);
 
 
-    static const char m_propertyName[];
-    Layer m_layer;
+  static const char m_propertyName[];
+  Layer m_layer;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_PICTURE_LAYER_PROPERTY_H_

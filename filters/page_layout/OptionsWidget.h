@@ -19,18 +19,18 @@
 #ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_
 #define PAGE_LAYOUT_OPTIONSWIDGET_H_
 
-#include "ui_PageLayoutOptionsWidget.h"
-#include "FilterOptionsWidget.h"
-#include "PageSelectionAccessor.h"
-#include "intrusive_ptr.h"
-#include "Margins.h"
-#include "Alignment.h"
-#include "PageId.h"
+#include <UnitsObserver.h>
 #include <QIcon>
 #include <memory>
-#include <unordered_map>
 #include <set>
-#include <UnitsObserver.h>
+#include <unordered_map>
+#include "Alignment.h"
+#include "FilterOptionsWidget.h"
+#include "Margins.h"
+#include "PageId.h"
+#include "PageSelectionAccessor.h"
+#include "intrusive_ptr.h"
+#include "ui_PageLayoutOptionsWidget.h"
 
 class QToolButton;
 class ProjectPages;
@@ -39,106 +39,106 @@ namespace page_layout {
 class Settings;
 
 class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::PageLayoutOptionsWidget {
-    Q_OBJECT
-public:
-    OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  Q_OBJECT
+ public:
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-    ~OptionsWidget() override;
+  ~OptionsWidget() override;
 
-    void preUpdateUI(const PageInfo& page_info, const Margins& margins_mm, const Alignment& alignment);
+  void preUpdateUI(const PageInfo& page_info, const Margins& margins_mm, const Alignment& alignment);
 
-    void postUpdateUI();
+  void postUpdateUI();
 
-    bool leftRightLinked() const;
+  bool leftRightLinked() const;
 
-    bool topBottomLinked() const;
+  bool topBottomLinked() const;
 
-    const Margins& marginsMM() const;
+  const Margins& marginsMM() const;
 
-    const Alignment& alignment() const;
+  const Alignment& alignment() const;
 
-    void updateUnits(Units units) override;
+  void updateUnits(Units units) override;
 
-signals:
+ signals:
 
-    void leftRightLinkToggled(bool linked);
+  void leftRightLinkToggled(bool linked);
 
-    void topBottomLinkToggled(bool linked);
+  void topBottomLinkToggled(bool linked);
 
-    void alignmentChanged(const Alignment& alignment);
+  void alignmentChanged(const Alignment& alignment);
 
-    void marginsSetLocally(const Margins& margins_mm);
+  void marginsSetLocally(const Margins& margins_mm);
 
-    void aggregateHardSizeChanged();
+  void aggregateHardSizeChanged();
 
-public slots:
+ public slots:
 
-    void marginsSetExternally(const Margins& margins_mm);
+  void marginsSetExternally(const Margins& margins_mm);
 
-private slots:
+ private slots:
 
-    void horMarginsChanged(double val);
+  void horMarginsChanged(double val);
 
-    void vertMarginsChanged(double val);
+  void vertMarginsChanged(double val);
 
-    void autoMarginsToggled(bool checked);
+  void autoMarginsToggled(bool checked);
 
-    void alignmentModeChanged(int idx);
+  void alignmentModeChanged(int idx);
 
-    void topBottomLinkClicked();
+  void topBottomLinkClicked();
 
-    void leftRightLinkClicked();
+  void leftRightLinkClicked();
 
-    void alignWithOthersToggled();
+  void alignWithOthersToggled();
 
-    void alignmentButtonClicked();
+  void alignmentButtonClicked();
 
-    void autoHorizontalAligningToggled(bool checked);
+  void autoHorizontalAligningToggled(bool checked);
 
-    void autoVerticalAligningToggled(bool checked);
+  void autoVerticalAligningToggled(bool checked);
 
-    void showApplyMarginsDialog();
+  void showApplyMarginsDialog();
 
-    void showApplyAlignmentDialog();
+  void showApplyAlignmentDialog();
 
-    void applyMargins(const std::set<PageId>& pages);
+  void applyMargins(const std::set<PageId>& pages);
 
-    void applyAlignment(const std::set<PageId>& pages);
+  void applyAlignment(const std::set<PageId>& pages);
 
-private:
-    typedef std::unordered_map<QToolButton*, Alignment> AlignmentByButton;
+ private:
+  typedef std::unordered_map<QToolButton*, Alignment> AlignmentByButton;
 
-    void updateMarginsDisplay();
+  void updateMarginsDisplay();
 
-    void updateLinkDisplay(QToolButton* button, bool linked);
+  void updateLinkDisplay(QToolButton* button, bool linked);
 
-    void updateAlignmentButtonsEnabled();
+  void updateAlignmentButtonsEnabled();
 
-    void updateMarginsControlsEnabled();
+  void updateMarginsControlsEnabled();
 
-    void updateAutoModeButtons();
+  void updateAutoModeButtons();
 
-    QToolButton* getCheckedAlignmentButton() const;
+  QToolButton* getCheckedAlignmentButton() const;
 
-    void setupUiConnections();
+  void setupUiConnections();
 
-    void removeUiConnections();
+  void removeUiConnections();
 
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageSelectionAccessor m_pageSelectionAccessor;
-    QIcon m_chainIcon;
-    QIcon m_brokenChainIcon;
-    AlignmentByButton m_alignmentByButton;
-    PageId m_pageId;
-    Dpi m_dpi;
-    Margins m_marginsMM;
-    Alignment m_alignment;
-    bool m_leftRightLinked;
-    bool m_topBottomLinked;
-    std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+  intrusive_ptr<Settings> m_ptrSettings;
+  PageSelectionAccessor m_pageSelectionAccessor;
+  QIcon m_chainIcon;
+  QIcon m_brokenChainIcon;
+  AlignmentByButton m_alignmentByButton;
+  PageId m_pageId;
+  Dpi m_dpi;
+  Margins m_marginsMM;
+  Alignment m_alignment;
+  bool m_leftRightLinked;
+  bool m_topBottomLinked;
+  std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
 
-    int m_ignoreMarginChanges = 0;
-    int m_ignoreAlignmentButtonsChanges = 0;
+  int m_ignoreMarginChanges = 0;
+  int m_ignoreAlignmentButtonsChanges = 0;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

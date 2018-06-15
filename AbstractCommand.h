@@ -19,15 +19,15 @@
 #ifndef ABSTRACTCOMMAND_H_
 #define ABSTRACTCOMMAND_H_
 
-#include "ref_countable.h"
 #include "intrusive_ptr.h"
+#include "ref_countable.h"
 
-template<typename Res, typename... ArgTypes>
+template <typename Res, typename... ArgTypes>
 class AbstractCommand : public ref_countable {
-public:
-    typedef intrusive_ptr<AbstractCommand> Ptr;
+ public:
+  typedef intrusive_ptr<AbstractCommand> Ptr;
 
-    virtual Res operator()(ArgTypes... args) = 0;
+  virtual Res operator()(ArgTypes... args) = 0;
 };
 
 #endif  // ifndef ABSTRACTCOMMAND_H_

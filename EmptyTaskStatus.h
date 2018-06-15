@@ -4,15 +4,11 @@
 #include "TaskStatus.h"
 
 class EmptyTaskStatus : public TaskStatus {
-    void cancel() override {
-    }
+  void cancel() override {}
 
-    bool isCancelled() const override {
-        return false;
-    }
+  bool isCancelled() const override { return false; }
 
-    void throwIfCancelled() const override {
-    }
+  void throwIfCancelled() const override {}
 };
 
-#endif //SCANTAILOR_ADVANCED_EMPTYTASKSTATUS_H
+#endif  // SCANTAILOR_ADVANCED_EMPTYTASKSTATUS_H

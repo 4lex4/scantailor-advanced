@@ -30,7 +30,8 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
           m_dragHandler(context.imageView(), boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, _1)),
           m_dragWatcher(m_dragHandler),
           m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
-          m_ptrSpline(new EditableSpline) {
+          m_ptrSpline(new EditableSpline),
+          m_lassoModeModifiers(Qt::ShiftModifier | Qt::AltModifier) {
     const QPointF screen_mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
     const QTransform from_screen(m_rContext.imageView().widgetToImage());
     m_nextVertexImagePos = from_screen.map(screen_mouse_pos);
@@ -173,7 +174,7 @@ void ZoneCreationInteraction::onMousePressEvent(QMouseEvent* event, InteractionS
         return;
     }
 
-    if (!m_rectangularZoneType && (event->modifiers() == Qt::AltModifier)) {
+    if (!m_rectangularZoneType && (event->modifiers() == m_lassoModeModifiers)) {
         m_lassoMode = true;
     }
 
@@ -260,7 +261,7 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
             m_rectangularZoneType = true;
             m_lassoMode = false;
             updateStatusTip();
-        } else if ((event->modifiers() == Qt::AltModifier) && (event->buttons() & Qt::LeftButton)) {
+        } else if (!m_lassoMode && (event->modifiers() == m_lassoModeModifiers) && (event->buttons() & Qt::LeftButton)) {
             m_lassoMode = true;
         }
     }
@@ -320,7 +321,7 @@ void ZoneCreationInteraction::updateStatusTip() {
                 tip = tr("Connect first and last points to finish this zone.  ESC to cancel.");
             }
         } else {
-            tip = tr("Hold Ctrl to create a rectangular zone, Alt+LMB to switch to lasso mode.  ESC to cancel.");
+            tip = tr("Hold Ctrl to create a rectangular zone or Shift+Alt+LMB to use lasso mode.  ESC to cancel.");
         }
     }
 

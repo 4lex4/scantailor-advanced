@@ -88,6 +88,7 @@ private:
     QPointF m_nextVertexImagePos_mid1;
     QPointF m_nextVertexImagePos_mid2;
     bool m_lassoMode;
+    Qt::KeyboardModifiers m_lassoModeModifiers;
 };
 
 

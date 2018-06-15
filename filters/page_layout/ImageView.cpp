@@ -828,7 +828,7 @@ void ImageView::setupGuideInteraction(const int index) {
     m_draggableGuideHandlers[index].setProximityCursor(cursorShape);
     m_draggableGuideHandlers[index].setInteractionCursor(cursorShape);
     m_draggableGuideHandlers[index].setProximityStatusTip(tr("Drag the guide."));
-    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::AltModifier});
+    m_draggableGuideHandlers[index].setKeyboardModifiers({Qt::ShiftModifier});
 
     if (!m_alignment.isNull()) {
         makeLastFollower(m_draggableGuideHandlers[index]);

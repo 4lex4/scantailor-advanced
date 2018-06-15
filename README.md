@@ -298,10 +298,10 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   **`Shift+LMB`** on a zone - drag the zone.  
   **`Ctrl+Shift+LMB`** on a zone - drag the zone copying.  
   **`Del`** when the cursor is over a zone - delete the zone.  
-  **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
+  Hold **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
   **`Ctrl+Alt+Click`** - copy the latest created zone to the cursor position.  
-  **`Ctrl`** when creating a new zone - switch to rectangular mode.  
-  **`Alt`** when creating a new zone - switch to lasso (free drawing) mode.  
+  **`Ctrl`** while creating a new zone - switch to rectangular mode.  
+  Hold **`Shift+Alt+LMB`** while creating a new zone - use lasso (free drawing) mode.  
 
 * ##### Saving zoom and focus on switching output tabs
   The save is precise and considers the images transformations.  
@@ -360,11 +360,12 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   Capabilities:  
     * **`Right-click`** to create/remove guides from the **context menu** called.  
     * **`Right-click`** on a guide to delete that guide from the **context menu** called.  
-    * **`Alt+LMB`** - drag the guide under the cursor.  
+    * **`Shift+LMB`** - drag the guide under the cursor.  
     * **`Shift/Ctrl+LMB`** on the content rectangle - drag the page content.
-      Hold **`Shift`** pressed to restrict moving along the horizontal axis only and **`Ctrl`** for the vertical one.  
+      Hold **`Shift`** pressed to restrict moving along the horizontal axis only or **`Ctrl`** for the vertical one.
+      Hold **`Shift+Ctrl`** for usual dragging.  
     * **`Double-click`** on content - automatically attach that content to the nearest guide.
-      Hold **`Shift`** pressed to select vertical guides only and **`Ctrl`** for horizontal ones.
+      Hold **`Shift`** pressed to select vertical guides only or **`Ctrl`** for horizontal ones.
       Hold **`Shift+Ctrl`** to attach that to both the nearest vertical and horizontal guides.  
     * Use the **context menu** to enable/disable showing the hard margins rectangle.  
 

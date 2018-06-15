@@ -173,6 +173,7 @@ void OptionsWidget::pageDetectManualToggled() {
   commitCurrentParams();
   if (need_update_state) {
     emit pageRectStateChanged(true);
+    emit invalidateThumbnail(m_pageId);
   }
 }
 

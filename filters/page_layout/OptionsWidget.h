@@ -21,6 +21,7 @@
 
 #include <UnitsObserver.h>
 #include <QIcon>
+#include <list>
 #include <memory>
 #include <set>
 #include <unordered_map>
@@ -139,6 +140,8 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   int m_ignoreMarginChanges = 0;
   int m_ignoreAlignmentButtonsChanges = 0;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_

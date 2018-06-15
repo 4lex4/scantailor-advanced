@@ -22,6 +22,7 @@
 #include <UnitsObserver.h>
 #include <QRectF>
 #include <QSizeF>
+#include <list>
 #include <memory>
 #include "AutoManualMode.h"
 #include "Dependencies.h"
@@ -160,6 +161,8 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
   PageId m_pageId;
   Dpi m_dpi;
   int m_ignorePageSizeChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_

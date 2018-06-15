@@ -116,22 +116,24 @@ void OtsuBinarizationOptionsWidget::updateView() {
   thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OtsuBinarizationOptionsWidget::setupUiConnections() {
-  connect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
-  connect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
-  connect(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
-  connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
-  connect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
-  connect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+  CONNECT(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
+  CONNECT(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
+  CONNECT(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
+  CONNECT(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
+  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
+#undef CONNECT
+
 void OtsuBinarizationOptionsWidget::removeUiConnections() {
-  disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
-  disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
-  disconnect(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
-  disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
-  disconnect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
-  disconnect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 
 void OtsuBinarizationOptionsWidget::sendStateChanged() {

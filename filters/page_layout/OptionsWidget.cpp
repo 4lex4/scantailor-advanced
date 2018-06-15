@@ -422,44 +422,35 @@ void OptionsWidget::updateMarginsControlsEnabled() {
   leftRightLink->setEnabled(enabled);
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OptionsWidget::setupUiConnections() {
-  connect(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  connect(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  connect(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  connect(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  connect(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  connect(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
-  connect(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
-  connect(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
-  connect(applyMarginsBtn, SIGNAL(clicked()), this, SLOT(showApplyMarginsDialog()));
-  connect(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled()));
-  connect(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
-  connect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  connect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
+  CONNECT(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
+  CONNECT(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
+  CONNECT(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
+  CONNECT(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
+  CONNECT(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
+  CONNECT(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
+  CONNECT(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
+  CONNECT(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
+  CONNECT(applyMarginsBtn, SIGNAL(clicked()), this, SLOT(showApplyMarginsDialog()));
+  CONNECT(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled()));
+  CONNECT(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
+  CONNECT(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
+  CONNECT(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
 
   for (const auto& kv : m_alignmentByButton) {
-    connect(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
+    CONNECT(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
   }
 }
 
-void OptionsWidget::removeUiConnections() {
-  disconnect(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  disconnect(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  disconnect(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  disconnect(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  disconnect(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  disconnect(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
-  disconnect(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
-  disconnect(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
-  disconnect(applyMarginsBtn, SIGNAL(clicked()), this, SLOT(showApplyMarginsDialog()));
-  disconnect(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled()));
-  disconnect(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
-  disconnect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  disconnect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
+#undef CONNECT
 
-  for (const auto& kv : m_alignmentByButton) {
-    disconnect(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
+void OptionsWidget::removeUiConnections() {
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
   }
+  m_connectionList.clear();
 }
 
 bool OptionsWidget::leftRightLinked() const {

@@ -56,15 +56,20 @@ void SauvolaBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
-  connect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-  connect(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
-  connect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
+  CONNECT(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
+  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
+#undef CONNECT
+
 void SauvolaBinarizationOptionsWidget::removeUiConnections() {
-  disconnect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-  disconnect(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
-  disconnect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 }  // namespace output

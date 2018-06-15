@@ -193,16 +193,21 @@ double OptionsWidget::degreesToSpinBox(const double degrees) {
   return -degrees;
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OptionsWidget::setupUiConnections() {
-  connect(angleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
-  connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
-  connect(applyDeskewBtn, SIGNAL(clicked()), this, SLOT(showDeskewDialog()));
+  CONNECT(angleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
+  CONNECT(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
+  CONNECT(applyDeskewBtn, SIGNAL(clicked()), this, SLOT(showDeskewDialog()));
 }
 
+#undef CONNECT
+
 void OptionsWidget::removeUiConnections() {
-  disconnect(angleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
-  disconnect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(modeChanged(bool)));
-  disconnect(applyDeskewBtn, SIGNAL(clicked()), this, SLOT(showDeskewDialog()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 
 /*========================== OptionsWidget::UiData =========================*/

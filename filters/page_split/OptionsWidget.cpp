@@ -306,20 +306,23 @@ void OptionsWidget::commitCurrentParams() {
   m_ptrSettings->updatePage(m_pageId.imageId(), update);
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OptionsWidget::setupUiConnections() {
-  connect(singlePageUncutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  connect(pagePlusOffcutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  connect(twoPagesBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  connect(changeBtn, SIGNAL(clicked()), this, SLOT(showChangeDialog()));
-  connect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(splitLineModeChanged(bool)));
+  CONNECT(singlePageUncutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
+  CONNECT(pagePlusOffcutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
+  CONNECT(twoPagesBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
+  CONNECT(changeBtn, SIGNAL(clicked()), this, SLOT(showChangeDialog()));
+  CONNECT(autoBtn, SIGNAL(toggled(bool)), this, SLOT(splitLineModeChanged(bool)));
 }
 
+#undef CONNECT
+
 void OptionsWidget::removeUiConnections() {
-  disconnect(singlePageUncutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  disconnect(pagePlusOffcutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  disconnect(twoPagesBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
-  disconnect(changeBtn, SIGNAL(clicked()), this, SLOT(showChangeDialog()));
-  disconnect(autoBtn, SIGNAL(toggled(bool)), this, SLOT(splitLineModeChanged(bool)));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 
 /*============================= Widget::UiData ==========================*/

@@ -359,30 +359,28 @@ void OptionsWidget::updateUnits(Units units) {
   setupUiConnections();
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OptionsWidget::setupUiConnections() {
-  connect(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
-  connect(heightSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
-  connect(contentDetectAutoBtn, SIGNAL(pressed()), this, SLOT(contentDetectAutoToggled()));
-  connect(contentDetectManualBtn, SIGNAL(pressed()), this, SLOT(contentDetectManualToggled()));
-  connect(contentDetectDisableBtn, SIGNAL(pressed()), this, SLOT(contentDetectDisableToggled()));
-  connect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
-  connect(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
-  connect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
-  connect(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
-  connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+  CONNECT(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
+  CONNECT(heightSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
+  CONNECT(contentDetectAutoBtn, SIGNAL(pressed()), this, SLOT(contentDetectAutoToggled()));
+  CONNECT(contentDetectManualBtn, SIGNAL(pressed()), this, SLOT(contentDetectManualToggled()));
+  CONNECT(contentDetectDisableBtn, SIGNAL(pressed()), this, SLOT(contentDetectDisableToggled()));
+  CONNECT(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
+  CONNECT(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
+  CONNECT(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
+  CONNECT(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
+  CONNECT(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
 }
 
+#undef CONNECT
+
 void OptionsWidget::removeUiConnections() {
-  disconnect(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
-  disconnect(heightSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
-  disconnect(contentDetectAutoBtn, SIGNAL(pressed()), this, SLOT(contentDetectAutoToggled()));
-  disconnect(contentDetectManualBtn, SIGNAL(pressed()), this, SLOT(contentDetectManualToggled()));
-  disconnect(contentDetectDisableBtn, SIGNAL(pressed()), this, SLOT(contentDetectDisableToggled()));
-  disconnect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
-  disconnect(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
-  disconnect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
-  disconnect(fineTuneBtn, SIGNAL(toggled(bool)), this, SLOT(fineTuningChanged(bool)));
-  disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 
 

@@ -4,6 +4,7 @@
 #define SCANTAILOR_SAUVOLABINARIZATIONOPTIONS_H
 
 #include <QtCore>
+#include <list>
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"
@@ -21,6 +22,8 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
   ColorParams m_colorParams;
   QTimer delayedStateChanger;
   OutputProcessingParams m_outputProcessingParams;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 
  public:
   explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);

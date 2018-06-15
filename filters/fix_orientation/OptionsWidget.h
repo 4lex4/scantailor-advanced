@@ -19,6 +19,7 @@
 #ifndef FIX_ORIENTATION_OPTIONSWIDGET_H_
 #define FIX_ORIENTATION_OPTIONSWIDGET_H_
 
+#include <list>
 #include "FilterOptionsWidget.h"
 #include "OrthogonalRotation.h"
 #include "PageId.h"
@@ -71,6 +72,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptions
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   OrthogonalRotation m_rotation;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_OPTIONSWIDGET_H_

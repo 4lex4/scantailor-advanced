@@ -3,6 +3,7 @@
 #define SCANTAILOR_OTSUBINARIZATIONOPTIONSWIDGET_H
 
 #include <QtCore>
+#include <list>
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"
@@ -18,6 +19,8 @@ class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
   ColorParams m_colorParams;
   QTimer delayedStateChanger;
   int ignoreSliderChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 
  public:
   explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);

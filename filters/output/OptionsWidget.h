@@ -23,6 +23,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QTimer>
 #include <QtWidgets/QStackedLayout>
+#include <list>
 #include <memory>
 #include <set>
 #include "BinarizationOptionsWidget.h"
@@ -201,6 +202,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidge
   double m_despeckleLevel;
   ImageViewTab m_lastTab;
   QTimer delayedReloadRequest;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

@@ -19,6 +19,7 @@
 #ifndef DESKEW_OPTIONSWIDGET_H_
 #define DESKEW_OPTIONSWIDGET_H_
 
+#include <list>
 #include <set>
 #include "AutoManualMode.h"
 #include "Dependencies.h"
@@ -115,6 +116,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::DeskewOptionsWidge
   int m_ignoreSpinBoxChanges;
 
   PageSelectionAccessor m_pageSelectionAccessor;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_OPTIONSWIDGET_H_

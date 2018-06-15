@@ -331,90 +331,58 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
   despeckleToggled(despeckleCB->isChecked());
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void DefaultParamsDialog::setupUiConnections() {
-  connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-  connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-  connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-  connect(layoutModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(layoutModeChanged(int)));
-  connect(deskewAutoBtn, SIGNAL(toggled(bool)), this, SLOT(deskewModeChanged(bool)));
-  connect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
-  connect(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
-  connect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
-  connect(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  connect(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
-  connect(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled(bool)));
-  connect(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
-  connect(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
-  connect(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  connect(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  connect(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  connect(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  connect(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
-  connect(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
-  connect(pictureShapeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureShapeChanged(int)));
-  connect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
-  connect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
-  connect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
-  connect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-  connect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
-  connect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
-  connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
-  connect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
-  connect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-  connect(dpiSelector, SIGNAL(editTextChanged(const QString&)), this, SLOT(dpiEditTextChanged(const QString&)));
-  connect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
-  connect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
-  connect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
-  connect(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
-  connect(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
-  connect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
-  connect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  connect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
-  connect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
-  connect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
+  CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+  CONNECT(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+  CONNECT(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+  CONNECT(layoutModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(layoutModeChanged(int)));
+  CONNECT(deskewAutoBtn, SIGNAL(toggled(bool)), this, SLOT(deskewModeChanged(bool)));
+  CONNECT(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
+  CONNECT(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
+  CONNECT(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
+  CONNECT(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
+  CONNECT(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
+  CONNECT(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled(bool)));
+  CONNECT(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
+  CONNECT(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
+  CONNECT(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
+  CONNECT(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
+  CONNECT(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
+  CONNECT(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
+  CONNECT(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
+  CONNECT(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
+  CONNECT(pictureShapeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureShapeChanged(int)));
+  CONNECT(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
+  CONNECT(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
+  CONNECT(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
+  CONNECT(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
+  CONNECT(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
+  CONNECT(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
+  CONNECT(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
+  CONNECT(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
+  CONNECT(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
+  CONNECT(dpiSelector, SIGNAL(editTextChanged(const QString&)), this, SLOT(dpiEditTextChanged(const QString&)));
+  CONNECT(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
+  CONNECT(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
+  CONNECT(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
+  CONNECT(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
+  CONNECT(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
+  CONNECT(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
+  CONNECT(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
+  CONNECT(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
+  CONNECT(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
+  CONNECT(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
 }
 
+#undef CONNECT
+
 void DefaultParamsDialog::removeUiConnections() {
-  disconnect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-  disconnect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-  disconnect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-  disconnect(layoutModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(layoutModeChanged(int)));
-  disconnect(deskewAutoBtn, SIGNAL(toggled(bool)), this, SLOT(deskewModeChanged(bool)));
-  disconnect(pageDetectAutoBtn, SIGNAL(pressed()), this, SLOT(pageDetectAutoToggled()));
-  disconnect(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
-  disconnect(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
-  disconnect(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  disconnect(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
-  disconnect(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled(bool)));
-  disconnect(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
-  disconnect(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
-  disconnect(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  disconnect(bottomMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
-  disconnect(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  disconnect(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
-  disconnect(colorModeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(colorModeChanged(int)));
-  disconnect(thresholdMethodBox, SIGNAL(currentIndexChanged(int)), this, SLOT(thresholdMethodChanged(int)));
-  disconnect(pictureShapeSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(pictureShapeChanged(int)));
-  disconnect(equalizeIlluminationCB, SIGNAL(clicked(bool)), this, SLOT(equalizeIlluminationToggled(bool)));
-  disconnect(splittingCB, SIGNAL(clicked(bool)), this, SLOT(splittingToggled(bool)));
-  disconnect(bwForegroundRB, SIGNAL(clicked(bool)), this, SLOT(bwForegroundToggled(bool)));
-  disconnect(colorForegroundRB, SIGNAL(clicked(bool)), this, SLOT(colorForegroundToggled(bool)));
-  disconnect(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
-  disconnect(darkerThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setDarkerThreshold()));
-  disconnect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
-  disconnect(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
-  disconnect(dpiSelector, SIGNAL(activated(int)), this, SLOT(dpiSelectionChanged(int)));
-  disconnect(dpiSelector, SIGNAL(editTextChanged(const QString&)), this, SLOT(dpiEditTextChanged(const QString&)));
-  disconnect(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
-  disconnect(profileCB, SIGNAL(currentIndexChanged(int)), this, SLOT(profileChanged(int)));
-  disconnect(profileSaveButton, SIGNAL(pressed()), this, SLOT(profileSavePressed()));
-  disconnect(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
-  disconnect(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
-  disconnect(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
-  disconnect(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  disconnect(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
-  disconnect(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
-  disconnect(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 
 void DefaultParamsDialog::rotateLeft() {

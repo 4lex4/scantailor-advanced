@@ -76,19 +76,22 @@ void WolfBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void WolfBinarizationOptionsWidget::setupUiConnections() {
-  connect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-  connect(lowerBound, SIGNAL(valueChanged(int)), this, SLOT(lowerBoundChanged(int)));
-  connect(upperBound, SIGNAL(valueChanged(int)), this, SLOT(upperBoundChanged(int)));
-  connect(wolfCoef, SIGNAL(valueChanged(double)), this, SLOT(wolfCoefChanged(double)));
-  connect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
+  CONNECT(lowerBound, SIGNAL(valueChanged(int)), this, SLOT(lowerBoundChanged(int)));
+  CONNECT(upperBound, SIGNAL(valueChanged(int)), this, SLOT(upperBoundChanged(int)));
+  CONNECT(wolfCoef, SIGNAL(valueChanged(double)), this, SLOT(wolfCoefChanged(double)));
+  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
+#undef CONNECT
+
 void WolfBinarizationOptionsWidget::removeUiConnections() {
-  disconnect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-  disconnect(lowerBound, SIGNAL(valueChanged(int)), this, SLOT(lowerBoundChanged(int)));
-  disconnect(upperBound, SIGNAL(valueChanged(int)), this, SLOT(upperBoundChanged(int)));
-  disconnect(wolfCoef, SIGNAL(valueChanged(double)), this, SLOT(wolfCoefChanged(double)));
-  disconnect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 }  // namespace output

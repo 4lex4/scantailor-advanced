@@ -19,6 +19,7 @@
 #ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
 #define PAGE_SPLIT_OPTIONSWIDGET_H_
 
+#include <list>
 #include <set>
 #include "AutoManualMode.h"
 #include "Dependencies.h"
@@ -112,6 +113,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::PageSplitOptionsWi
   UiData m_uiData;
   int m_ignoreAutoManualToggle;
   int m_ignoreLayoutTypeToggle;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_

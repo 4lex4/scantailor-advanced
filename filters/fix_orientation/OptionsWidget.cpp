@@ -135,17 +135,21 @@ void OptionsWidget::setRotationPixmap() {
   rotationIndicator->setPixmap(QPixmap(path));
 }
 
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+
 void OptionsWidget::setupUiConnections() {
-  connect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-  connect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-  connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-  connect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+  CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
+  CONNECT(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
+  CONNECT(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
+  CONNECT(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
 }
 
+#undef CONNECT
+
 void OptionsWidget::removeUiConnections() {
-  disconnect(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
-  disconnect(rotateRightBtn, SIGNAL(clicked()), this, SLOT(rotateRight()));
-  disconnect(resetBtn, SIGNAL(clicked()), this, SLOT(resetRotation()));
-  disconnect(applyToBtn, SIGNAL(clicked()), this, SLOT(showApplyToDialog()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 }  // namespace fix_orientation

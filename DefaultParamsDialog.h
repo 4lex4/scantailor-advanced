@@ -4,6 +4,7 @@
 
 #include <QButtonGroup>
 #include <QWidget>
+#include <list>
 #include <set>
 #include <unordered_map>
 #include "DefaultParams.h"
@@ -29,6 +30,8 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   Units currentUnits;
   std::set<QString> reservedProfileNames;
   int ignoreProfileChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 
  public:
   explicit DefaultParamsDialog(QWidget* parent = nullptr);

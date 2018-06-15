@@ -32,7 +32,7 @@ class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatu
 
   class CancelledException : public std::exception {
    public:
-    const char* what() const throw() override;
+    const char* what() const noexcept override;
   };
 
 

@@ -82,7 +82,7 @@ class DistortionModelBuilder::RansacAlgo {
 
 class DistortionModelBuilder::BadCurve : public std::exception {
  public:
-  const char* what() const throw() override { return "Bad curve"; }
+  const char* what() const noexcept override { return "Bad curve"; }
 };
 
 

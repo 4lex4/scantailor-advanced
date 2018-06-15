@@ -37,7 +37,7 @@ using namespace imageproc;
 namespace output {
 class DespeckleView::TaskCancelException : public std::exception {
  public:
-  const char* what() const throw() override { return "Task cancelled"; }
+  const char* what() const noexcept override { return "Task cancelled"; }
 };
 
 

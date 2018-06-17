@@ -102,11 +102,11 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     QRectF page_rect(data.xform().resultingRect());
     QRectF content_rect(page_rect);
 
-    if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_AUTO)) {
+    if (new_params.pageDetectionMode() == MODE_AUTO) {
       page_rect
           = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(), m_ptrSettings->pageDetectionBox(),
                                     m_ptrSettings->pageDetectionTolerance(), m_ptrDbg.get());
-    } else if (new_params.isPageDetectionEnabled() && (new_params.pageDetectionMode() == MODE_MANUAL)) {
+    } else if (new_params.pageDetectionMode() == MODE_MANUAL) {
       // shifting page rect for skewed pages correcting
       QRectF corrected_page_rect(new_params.pageRect());
       if (params && new_params.pageRect().isValid() && !params->dependencies().matches(deps)
@@ -127,10 +127,9 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
       page_rect = data.xform().resultingRect();
     }
 
-    if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_AUTO)) {
+    if (new_params.contentDetectionMode() == MODE_AUTO) {
       content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
-    } else if ((new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_MANUAL))
-               || new_params.contentRect().isEmpty()) {
+    } else if ((new_params.contentDetectionMode() == MODE_MANUAL) || new_params.contentRect().isEmpty()) {
       if (!new_params.contentRect().isEmpty()) {
         // shifting content rect for skewed pages correcting
         QRectF corrected_content_rect(new_params.contentRect());
@@ -166,9 +165,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   ui_data.setPageRect(new_params.pageRect());
   ui_data.setDependencies(deps);
   ui_data.setContentDetectionMode(new_params.contentDetectionMode());
-  ui_data.setContentDetectionEnabled(new_params.isContentDetectionEnabled());
   ui_data.setPageDetectionMode(new_params.pageDetectionMode());
-  ui_data.setPageDetectionEnabled(new_params.isPageDetectionEnabled());
   ui_data.setFineTuneCornersEnabled(new_params.isFineTuningEnabled());
 
   if (!params || !params->dependencies().matches(deps)) {
@@ -221,7 +218,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   }
 
   auto* view = new ImageView(m_image, m_downscaledImage, m_grayImage, m_xform, m_uiData.contentRect(),
-                             m_uiData.pageRect(), m_uiData.isPageDetectionEnabled());
+                             m_uiData.pageRect(), m_uiData.pageDetectionMode() != MODE_DISABLED);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
 
   QObject::connect(view, SIGNAL(manualContentRectSet(const QRectF&)), opt_widget,

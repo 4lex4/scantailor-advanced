@@ -24,9 +24,7 @@ namespace select_content {
 Params::Params(const Dependencies& deps)
     : m_deps(deps),
       m_contentDetectionMode(MODE_AUTO),
-      m_pageDetectionMode(MODE_AUTO),
-      m_contentDetectEnabled(true),
-      m_pageDetectEnabled(false),
+      m_pageDetectionMode(MODE_DISABLED),
       m_fineTuneCorners(false) {}
 
 Params::Params(const QRectF& content_rect,
@@ -35,29 +33,23 @@ Params::Params(const QRectF& content_rect,
                const Dependencies& deps,
                const AutoManualMode content_detection_mode,
                const AutoManualMode page_detection_mode,
-               const bool contentDetect,
-               const bool pageDetect,
-               const bool fineTuning)
+               const bool fine_tune_corners)
     : m_contentRect(content_rect),
       m_pageRect(page_rect),
       m_contentSizeMM(content_size_mm),
       m_deps(deps),
       m_contentDetectionMode(content_detection_mode),
       m_pageDetectionMode(page_detection_mode),
-      m_contentDetectEnabled(contentDetect),
-      m_pageDetectEnabled(pageDetect),
-      m_fineTuneCorners(fineTuning) {}
+      m_fineTuneCorners(fine_tune_corners) {}
 
 Params::Params(const QDomElement& filter_el)
     : m_contentRect(XmlUnmarshaller::rectF(filter_el.namedItem("content-rect").toElement())),
       m_pageRect(XmlUnmarshaller::rectF(filter_el.namedItem("page-rect").toElement())),
       m_contentSizeMM(XmlUnmarshaller::sizeF(filter_el.namedItem("content-size-mm").toElement())),
       m_deps(filter_el.namedItem("dependencies").toElement()),
-      m_contentDetectionMode(filter_el.attribute("contentDetectionMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-      m_pageDetectionMode(filter_el.attribute("pageDetectionMode") == "manual" ? MODE_MANUAL : MODE_AUTO),
-      m_contentDetectEnabled(filter_el.attribute("content-detect") == "1"),
-      m_pageDetectEnabled(filter_el.attribute("page-detect") == "1"),
-      m_fineTuneCorners(filter_el.attribute("fine-tune-corners") == "1") {}
+      m_contentDetectionMode(stringToAutoManualMode(filter_el.attribute("contentDetectionMode"))),
+      m_pageDetectionMode(stringToAutoManualMode(filter_el.attribute("pageDetectionMode"))),
+      m_fineTuneCorners(filter_el.attribute("fineTuneCorners") == "1") {}
 
 Params::~Params() = default;
 
@@ -65,11 +57,9 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   XmlMarshaller marshaller(doc);
 
   QDomElement el(doc.createElement(name));
-  el.setAttribute("contentDetectionMode", (m_contentDetectionMode == MODE_AUTO) ? "auto" : "manual");
-  el.setAttribute("pageDetectionMode", (m_pageDetectionMode == MODE_AUTO) ? "auto" : "manual");
-  el.setAttribute("content-detect", m_contentDetectEnabled ? "1" : "0");
-  el.setAttribute("page-detect", m_pageDetectEnabled ? "1" : "0");
-  el.setAttribute("fine-tune-corners", m_fineTuneCorners ? "1" : "0");
+  el.setAttribute("contentDetectionMode", autoManualModeToString(m_contentDetectionMode));
+  el.setAttribute("pageDetectionMode", autoManualModeToString(m_pageDetectionMode));
+  el.setAttribute("fineTuneCorners", m_fineTuneCorners ? "1" : "0");
   el.appendChild(marshaller.rectF(m_contentRect, "content-rect"));
   el.appendChild(marshaller.rectF(m_pageRect, "page-rect"));
   el.appendChild(marshaller.sizeF(m_contentSizeMM, "content-size-mm"));
@@ -102,23 +92,15 @@ AutoManualMode Params::pageDetectionMode() const {
   return m_pageDetectionMode;
 }
 
-bool Params::isContentDetectionEnabled() const {
-  return m_contentDetectEnabled;
-}
-
-bool Params::isPageDetectionEnabled() const {
-  return m_pageDetectEnabled;
-}
-
 bool Params::isFineTuningEnabled() const {
   return m_fineTuneCorners;
 }
 
-void Params::setContentDetectionMode(const AutoManualMode& mode) {
+void Params::setContentDetectionMode(const AutoManualMode mode) {
   m_contentDetectionMode = mode;
 }
 
-void Params::setPageDetectionMode(const AutoManualMode& mode) {
+void Params::setPageDetectionMode(const AutoManualMode mode) {
   m_pageDetectionMode = mode;
 }
 
@@ -138,15 +120,7 @@ void Params::setDependencies(const Dependencies& deps) {
   m_deps = deps;
 }
 
-void Params::setContentDetect(bool detect) {
-  m_contentDetectEnabled = detect;
-}
-
-void Params::setPageDetect(bool detect) {
-  m_pageDetectEnabled = detect;
-}
-
-void Params::setFineTuneCorners(bool fine_tune) {
-  m_fineTuneCorners = fine_tune;
+void Params::setFineTuneCornersEnabled(bool fine_tune_corners) {
+  m_fineTuneCorners = fine_tune_corners;
 }
 }  // namespace select_content

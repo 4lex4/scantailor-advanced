@@ -472,7 +472,7 @@ set(
     SelectedPage.cpp SelectedPage.h
     Utils.cpp Utils.h
     PageView.h
-    AutoManualMode.h
+    AutoManualMode.cpp AutoManualMode.h
     AbstractCommand.h
     AbstractFilter.h
     BeforeOrAfter.h

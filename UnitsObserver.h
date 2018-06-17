@@ -8,9 +8,10 @@
 class Dpi;
 
 class UnitsObserver {
- public:
+ protected:
   UnitsObserver();
 
+ public:
   virtual ~UnitsObserver();
 
   virtual void updateUnits(Units units) = 0;

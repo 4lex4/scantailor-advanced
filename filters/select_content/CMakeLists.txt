@@ -8,8 +8,7 @@ set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
 source_group("UI Files" FILES ${ui_files})
 source_group("Generated" FILES ${ui_sources})
 
-set(
-    sources
+set(sources
     ImageView.cpp ImageView.h
     Filter.cpp Filter.h
     OptionsWidget.cpp OptionsWidget.h
@@ -24,8 +23,8 @@ set(
     Thumbnail.cpp Thumbnail.h
     PhysSizeCalc.cpp PhysSizeCalc.h
     OrderByWidthProvider.cpp OrderByWidthProvider.h
-    OrderByHeightProvider.cpp OrderByHeightProvider.h
-)
+    OrderByHeightProvider.cpp OrderByHeightProvider.h)
+
 source_group("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

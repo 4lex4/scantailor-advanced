@@ -19,12 +19,12 @@
 #ifndef SELECT_CONTENT_OPTIONSWIDGET_H_
 #define SELECT_CONTENT_OPTIONSWIDGET_H_
 
+#include <AutoManualMode.h>
 #include <UnitsObserver.h>
 #include <QRectF>
 #include <QSizeF>
 #include <list>
 #include <memory>
-#include "AutoManualMode.h"
 #include "Dependencies.h"
 #include "FilterOptionsWidget.h"
 #include "PageId.h"
@@ -67,15 +67,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
     void setPageDetectionMode(AutoManualMode mode);
 
-    bool isContentDetectionEnabled() const;
-
-    bool isPageDetectionEnabled() const;
-
     bool isFineTuningCornersEnabled() const;
-
-    void setContentDetectionEnabled(bool detect);
-
-    void setPageDetectionEnabled(bool detect);
 
     void setFineTuneCornersEnabled(bool fine_tune);
 
@@ -90,8 +82,6 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
     Dependencies m_deps;
     AutoManualMode m_contentDetectionMode;
     AutoManualMode m_pageDetectionMode;
-    bool m_contentDetectionEnabled;
-    bool m_pageDetectionEnabled;
     bool m_fineTuneCornersEnabled;
   };
 

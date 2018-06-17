@@ -168,19 +168,20 @@ void DefaultParamsDialog::updateDeskewDisplay(const DefaultParams::DeskewParams&
 }
 
 void DefaultParamsDialog::updateSelectContentDisplay(const DefaultParams::SelectContentParams& params) {
-  if (params.isPageDetectEnabled()) {
-    pageDetectOptions->setEnabled(true);
-    AutoManualMode pageDetectMode = params.getPageDetectMode();
-    fineTuneBtn->setEnabled(pageDetectMode == MODE_AUTO);
-    dimensionsWidget->setEnabled(pageDetectMode == MODE_MANUAL);
-    if (pageDetectMode == MODE_AUTO) {
+  const AutoManualMode pageDetectMode = params.getPageDetectMode();
+  pageDetectOptions->setEnabled(pageDetectMode != MODE_DISABLED);
+  fineTuneBtn->setEnabled(pageDetectMode == MODE_AUTO);
+  dimensionsWidget->setEnabled(pageDetectMode == MODE_MANUAL);
+  switch (pageDetectMode) {
+    case MODE_AUTO:
       pageDetectAutoBtn->setChecked(true);
-    } else {
+      break;
+    case MODE_MANUAL:
       pageDetectManualBtn->setChecked(true);
-    }
-  } else {
-    pageDetectOptions->setEnabled(false);
-    pageDetectDisableBtn->setChecked(true);
+      break;
+    case MODE_DISABLED:
+      pageDetectDisableBtn->setChecked(true);
+      break;
   }
 
   if (params.isContentDetectEnabled()) {
@@ -600,9 +601,11 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
   DefaultParams::DeskewParams deskewParams(angleSpinBox->value(), deskewAutoBtn->isChecked() ? MODE_AUTO : MODE_MANUAL);
 
-  DefaultParams::SelectContentParams selectContentParams(
-      QSizeF(widthSpinBox->value(), heightSpinBox->value()), pageDetectManualBtn->isChecked() ? MODE_MANUAL : MODE_AUTO,
-      !contentDetectDisableBtn->isChecked(), !pageDetectDisableBtn->isChecked(), fineTuneBtn->isChecked());
+  const AutoManualMode pageBoxMode
+      = pageDetectDisableBtn->isChecked() ? MODE_DISABLED : pageDetectManualBtn->isChecked() ? MODE_MANUAL : MODE_AUTO;
+  DefaultParams::SelectContentParams selectContentParams(QSizeF(widthSpinBox->value(), heightSpinBox->value()),
+                                                         !contentDetectDisableBtn->isChecked(), pageBoxMode,
+                                                         fineTuneBtn->isChecked());
 
   Alignment alignment;
   switch (alignmentMode->currentIndex()) {

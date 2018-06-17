@@ -181,10 +181,9 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
 
   m_ptrSettings->setPageParams(
-      page_info.id(),
-      Params(QRectF(), QSizeF(), QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)), Dependencies(),
-             MODE_AUTO, selectContentParams.getPageDetectMode(), selectContentParams.isContentDetectEnabled(),
-             selectContentParams.isPageDetectEnabled(), selectContentParams.isFineTuneCorners()));
+      page_info.id(), Params(QRectF(), QSizeF(), QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
+                             Dependencies(), selectContentParams.isContentDetectEnabled() ? MODE_AUTO : MODE_DISABLED,
+                             selectContentParams.getPageDetectMode(), selectContentParams.isFineTuneCorners()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

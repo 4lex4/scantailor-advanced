@@ -68,7 +68,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
     thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
         thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), xform,
-        params->contentRect(), params->pageRect(), params->isPageDetectionEnabled(),
+        params->contentRect(), params->pageRect(), params->pageDetectionMode() != MODE_DISABLED,
         m_ptrSettings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
   }
 }  // CacheDrivenTask::process

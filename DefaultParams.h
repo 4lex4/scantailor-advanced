@@ -81,18 +81,16 @@ class DefaultParams {
   class SelectContentParams {
    private:
     QSizeF pageRectSize;
-    AutoManualMode pageDetectMode;
     bool contentDetectEnabled;
-    bool pageDetectEnabled;
+    AutoManualMode pageDetectMode;
     bool fineTuneCorners;
 
    public:
     SelectContentParams();
 
     SelectContentParams(const QSizeF& pageRectSize,
-                        AutoManualMode pageDetectMode,
                         bool contentDetectEnabled,
-                        bool pageDetectEnabled,
+                        AutoManualMode pageDetectMode,
                         bool fineTuneCorners);
 
     explicit SelectContentParams(const QDomElement& el);
@@ -106,10 +104,6 @@ class DefaultParams {
     bool isContentDetectEnabled() const;
 
     void setContentDetectEnabled(bool contentDetectEnabled);
-
-    bool isPageDetectEnabled() const;
-
-    void setPageDetectEnabled(bool pageDetectEnabled);
 
     bool isFineTuneCorners() const;
 

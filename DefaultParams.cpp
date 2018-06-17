@@ -178,21 +178,18 @@ QDomElement DefaultParams::PageSplitParams::toXml(QDomDocument& doc, const QStri
 }
 
 DefaultParams::SelectContentParams::SelectContentParams(const QSizeF& pageRectSize,
-                                                        AutoManualMode pageDetectMode,
                                                         bool contentDetectEnabled,
-                                                        bool pageDetectEnabled,
+                                                        AutoManualMode pageDetectMode,
                                                         bool fineTuneCorners)
     : pageRectSize(pageRectSize),
-      pageDetectMode(pageDetectMode),
       contentDetectEnabled(contentDetectEnabled),
-      pageDetectEnabled(pageDetectEnabled),
+      pageDetectMode(pageDetectMode),
       fineTuneCorners(fineTuneCorners) {}
 
 DefaultParams::SelectContentParams::SelectContentParams()
     : pageRectSize(QSizeF(210, 297)),
-      pageDetectMode(MODE_AUTO),
       contentDetectEnabled(true),
-      pageDetectEnabled(false),
+      pageDetectMode(MODE_DISABLED),
       fineTuneCorners(false) {}
 
 const QSizeF& DefaultParams::SelectContentParams::getPageRectSize() const {
@@ -211,14 +208,6 @@ void DefaultParams::SelectContentParams::setContentDetectEnabled(bool contentDet
   SelectContentParams::contentDetectEnabled = contentDetectEnabled;
 }
 
-bool DefaultParams::SelectContentParams::isPageDetectEnabled() const {
-  return pageDetectEnabled;
-}
-
-void DefaultParams::SelectContentParams::setPageDetectEnabled(bool pageDetectEnabled) {
-  SelectContentParams::pageDetectEnabled = pageDetectEnabled;
-}
-
 bool DefaultParams::SelectContentParams::isFineTuneCorners() const {
   return fineTuneCorners;
 }
@@ -229,17 +218,15 @@ void DefaultParams::SelectContentParams::setFineTuneCorners(bool fineTuneCorners
 
 DefaultParams::SelectContentParams::SelectContentParams(const QDomElement& el)
     : pageRectSize(XmlUnmarshaller::sizeF(el.namedItem("pageRectSize").toElement())),
-      pageDetectMode((el.attribute("pageDetectMode") == "manual") ? MODE_MANUAL : MODE_AUTO),
       contentDetectEnabled(el.attribute("contentDetectEnabled") == "1"),
-      pageDetectEnabled(el.attribute("pageDetectEnabled") == "1"),
+      pageDetectMode(stringToAutoManualMode(el.attribute("pageDetectMode"))),
       fineTuneCorners(el.attribute("fineTuneCorners") == "1") {}
 
 QDomElement DefaultParams::SelectContentParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(XmlMarshaller(doc).sizeF(pageRectSize, "pageRectSize"));
-  el.setAttribute("pageDetectMode", (pageDetectMode == MODE_AUTO) ? "auto" : "manual");
   el.setAttribute("contentDetectEnabled", contentDetectEnabled ? "1" : "0");
-  el.setAttribute("pageDetectEnabled", pageDetectEnabled ? "1" : "0");
+  el.setAttribute("pageDetectMode", autoManualModeToString(pageDetectMode));
   el.setAttribute("fineTuneCorners", fineTuneCorners ? "1" : "0");
 
   return el;

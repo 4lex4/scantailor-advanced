@@ -19,10 +19,10 @@
 #ifndef SELECT_CONTENT_PARAMS_H_
 #define SELECT_CONTENT_PARAMS_H_
 
+#include <AutoManualMode.h>
 #include <QRectF>
 #include <QSizeF>
 #include <cmath>
-#include "AutoManualMode.h"
 #include "Dependencies.h"
 #include "Margins.h"
 
@@ -43,9 +43,7 @@ class Params {
          const Dependencies& deps,
          AutoManualMode content_detection_mode,
          AutoManualMode page_detection_mode,
-         bool contentDetect,
-         bool pageDetect,
-         bool fineTuning);
+         bool fine_tune_corners);
 
   explicit Params(const QDomElement& filter_el);
 
@@ -65,15 +63,11 @@ class Params {
 
   AutoManualMode pageDetectionMode() const;
 
-  bool isContentDetectionEnabled() const;
-
-  bool isPageDetectionEnabled() const;
-
   bool isFineTuningEnabled() const;
 
-  void setContentDetectionMode(const AutoManualMode& mode);
+  void setContentDetectionMode(AutoManualMode mode);
 
-  void setPageDetectionMode(const AutoManualMode& mode);
+  void setPageDetectionMode(AutoManualMode mode);
 
   void setContentRect(const QRectF& rect);
 
@@ -83,11 +77,7 @@ class Params {
 
   void setDependencies(const Dependencies& deps);
 
-  void setContentDetect(bool detect);
-
-  void setPageDetect(bool detect);
-
-  void setFineTuneCorners(bool fine_tune);
+  void setFineTuneCornersEnabled(bool fine_tune_corners);
 
  private:
   QRectF m_contentRect;
@@ -96,8 +86,6 @@ class Params {
   Dependencies m_deps;
   AutoManualMode m_contentDetectionMode;
   AutoManualMode m_pageDetectionMode;
-  bool m_contentDetectEnabled;
-  bool m_pageDetectEnabled;
   bool m_fineTuneCorners;
 };
 }  // namespace select_content

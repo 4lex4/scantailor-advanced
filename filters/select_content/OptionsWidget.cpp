@@ -40,14 +40,10 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
 
   m_pageId = page_info.id();
   m_dpi = page_info.metadata().dpi();
-  contentDetectAutoBtn->setEnabled(false);
-  contentDetectManualBtn->setEnabled(false);
-  contentDetectDisableBtn->setEnabled(false);
-  pageDetectAutoBtn->setEnabled(false);
-  pageDetectManualBtn->setEnabled(false);
-  pageDetectDisableBtn->setEnabled(false);
 
-  updatePageDetectOptionsDisplay();
+  contentBoxGroup->setEnabled(false);
+  pageBoxGroup->setEnabled(false);
+
   updateUnits(UnitsProvider::getInstance()->getUnits());
 
   setupUiConnections();
@@ -61,12 +57,8 @@ void OptionsWidget::postUpdateUI(const UiData& ui_data) {
   updateContentModeIndication(ui_data.contentDetectionMode());
   updatePageModeIndication(ui_data.pageDetectionMode());
 
-  contentDetectAutoBtn->setEnabled(true);
-  contentDetectManualBtn->setEnabled(true);
-  contentDetectDisableBtn->setEnabled(true);
-  pageDetectAutoBtn->setEnabled(true);
-  pageDetectManualBtn->setEnabled(true);
-  pageDetectDisableBtn->setEnabled(true);
+  contentBoxGroup->setEnabled(true);
+  pageBoxGroup->setEnabled(true);
 
   updatePageDetectOptionsDisplay();
   updatePageRectSize(m_uiData.pageRect().size());
@@ -77,11 +69,10 @@ void OptionsWidget::postUpdateUI(const UiData& ui_data) {
 void OptionsWidget::manualContentRectSet(const QRectF& content_rect) {
   m_uiData.setContentRect(content_rect);
   m_uiData.setContentDetectionMode(MODE_MANUAL);
-  m_uiData.setContentDetectionEnabled(true);
 
   updateContentModeIndication(MODE_MANUAL);
 
-  if (m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO)) {
+  if (m_uiData.pageDetectionMode() == MODE_AUTO) {
     m_uiData.setPageDetectionMode(MODE_MANUAL);
     updatePageModeIndication(MODE_MANUAL);
     updatePageDetectOptionsDisplay();
@@ -95,11 +86,10 @@ void OptionsWidget::manualContentRectSet(const QRectF& content_rect) {
 void OptionsWidget::manualPageRectSet(const QRectF& page_rect) {
   m_uiData.setPageRect(page_rect);
   m_uiData.setPageDetectionMode(MODE_MANUAL);
-  m_uiData.setPageDetectionEnabled(true);
 
   updatePageModeIndication(MODE_MANUAL);
 
-  if (m_uiData.isContentDetectionEnabled() && (m_uiData.contentDetectionMode() == MODE_AUTO)) {
+  if (m_uiData.contentDetectionMode() == MODE_AUTO) {
     m_uiData.setContentDetectionMode(MODE_MANUAL);
     updateContentModeIndication(MODE_MANUAL);
   }
@@ -125,7 +115,6 @@ void OptionsWidget::updatePageRectSize(const QSizeF& size) {
 
 void OptionsWidget::contentDetectAutoToggled() {
   m_uiData.setContentDetectionMode(MODE_AUTO);
-  m_uiData.setContentDetectionEnabled(true);
 
   commitCurrentParams();
   emit reloadRequested();
@@ -133,9 +122,8 @@ void OptionsWidget::contentDetectAutoToggled() {
 
 void OptionsWidget::contentDetectManualToggled() {
   m_uiData.setContentDetectionMode(MODE_MANUAL);
-  m_uiData.setContentDetectionEnabled(true);
 
-  if (m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO)) {
+  if (m_uiData.pageDetectionMode() == MODE_AUTO) {
     m_uiData.setPageDetectionMode(MODE_MANUAL);
     updatePageModeIndication(MODE_MANUAL);
     updatePageDetectOptionsDisplay();
@@ -145,7 +133,7 @@ void OptionsWidget::contentDetectManualToggled() {
 }
 
 void OptionsWidget::contentDetectDisableToggled() {
-  m_uiData.setContentDetectionEnabled(false);
+  m_uiData.setContentDetectionMode(MODE_DISABLED);
   commitCurrentParams();
   contentDetectDisableBtn->setChecked(true);
   emit reloadRequested();
@@ -153,18 +141,16 @@ void OptionsWidget::contentDetectDisableToggled() {
 
 void OptionsWidget::pageDetectAutoToggled() {
   m_uiData.setPageDetectionMode(MODE_AUTO);
-  m_uiData.setPageDetectionEnabled(true);
   updatePageDetectOptionsDisplay();
   commitCurrentParams();
   emit reloadRequested();
 }
 
 void OptionsWidget::pageDetectManualToggled() {
-  const bool need_update_state = !m_uiData.isPageDetectionEnabled();
+  const bool need_update_state = (m_uiData.pageDetectionMode() == MODE_DISABLED);
 
   m_uiData.setPageDetectionMode(MODE_MANUAL);
-  m_uiData.setPageDetectionEnabled(true);
-  if (m_uiData.isContentDetectionEnabled() && (m_uiData.contentDetectionMode() == MODE_AUTO)) {
+  if (m_uiData.contentDetectionMode() == MODE_AUTO) {
     m_uiData.setContentDetectionMode(MODE_MANUAL);
     updateContentModeIndication(MODE_MANUAL);
   }
@@ -178,7 +164,7 @@ void OptionsWidget::pageDetectManualToggled() {
 }
 
 void OptionsWidget::pageDetectDisableToggled() {
-  m_uiData.setPageDetectionEnabled(false);
+  m_uiData.setPageDetectionMode(MODE_DISABLED);
   updatePageDetectOptionsDisplay();
   commitCurrentParams();
   pageDetectDisableBtn->setChecked(true);
@@ -188,40 +174,44 @@ void OptionsWidget::pageDetectDisableToggled() {
 void OptionsWidget::fineTuningChanged(bool checked) {
   m_uiData.setFineTuneCornersEnabled(checked);
   commitCurrentParams();
-  if (m_uiData.isPageDetectionEnabled()) {
+  if (m_uiData.pageDetectionMode() == MODE_AUTO) {
     emit reloadRequested();
   }
 }
 
 void OptionsWidget::updateContentModeIndication(const AutoManualMode mode) {
-  if (!m_uiData.isContentDetectionEnabled()) {
-    contentDetectDisableBtn->setChecked(true);
-  } else {
-    if (mode == MODE_AUTO) {
+  switch (mode) {
+    case MODE_AUTO:
       contentDetectAutoBtn->setChecked(true);
-    } else {
+      break;
+    case MODE_MANUAL:
       contentDetectManualBtn->setChecked(true);
-    }
+      break;
+    case MODE_DISABLED:
+      contentDetectDisableBtn->setChecked(true);
+      break;
   }
 }
 
 void OptionsWidget::updatePageModeIndication(const AutoManualMode mode) {
-  if (!m_uiData.isPageDetectionEnabled()) {
-    pageDetectDisableBtn->setChecked(true);
-  } else {
-    if (mode == MODE_AUTO) {
+  switch (mode) {
+    case MODE_AUTO:
       pageDetectAutoBtn->setChecked(true);
-    } else {
+      break;
+    case MODE_MANUAL:
       pageDetectManualBtn->setChecked(true);
-    }
+      break;
+    case MODE_DISABLED:
+      pageDetectDisableBtn->setChecked(true);
+      break;
   }
 }
 
 void OptionsWidget::updatePageDetectOptionsDisplay() {
   fineTuneBtn->setChecked(m_uiData.isFineTuningCornersEnabled());
-  pageDetectOptions->setVisible(m_uiData.isPageDetectionEnabled());
-  fineTuneBtn->setVisible(m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_AUTO));
-  dimensionsWidget->setVisible(m_uiData.isPageDetectionEnabled() && (m_uiData.pageDetectionMode() == MODE_MANUAL));
+  pageDetectOptions->setVisible(m_uiData.pageDetectionMode() != MODE_DISABLED);
+  fineTuneBtn->setVisible(m_uiData.pageDetectionMode() == MODE_AUTO);
+  dimensionsWidget->setVisible(m_uiData.pageDetectionMode() == MODE_MANUAL);
 }
 
 void OptionsWidget::dimensionsChangedLocally(double) {
@@ -242,21 +232,19 @@ void OptionsWidget::dimensionsChangedLocally(double) {
 void OptionsWidget::commitCurrentParams() {
   Dependencies deps(m_uiData.dependencies());
   // we need recalculate the boxes on switching to auto mode or if content box disabled
-  if ((!m_uiData.isContentDetectionEnabled() || m_uiData.contentDetectionMode() == MODE_AUTO)
-      || (m_uiData.isPageDetectionEnabled() && m_uiData.pageDetectionMode() == MODE_AUTO)) {
+  if ((m_uiData.contentDetectionMode() != MODE_MANUAL) || (m_uiData.pageDetectionMode() == MODE_AUTO)) {
     deps.invalidate();
   }
   // if page detection has been disabled its recalculation required
-  if (!m_uiData.isPageDetectionEnabled()) {
+  if (m_uiData.pageDetectionMode() == MODE_DISABLED) {
     const std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(m_pageId);
-    if ((old_params != nullptr) && old_params->isPageDetectionEnabled()) {
+    if ((old_params != nullptr) && (old_params->pageDetectionMode() != MODE_DISABLED)) {
       deps.invalidate();
     }
   }
 
   Params params(m_uiData.contentRect(), m_uiData.contentSizeMM(), m_uiData.pageRect(), deps,
-                m_uiData.contentDetectionMode(), m_uiData.pageDetectionMode(), m_uiData.isContentDetectionEnabled(),
-                m_uiData.isPageDetectionEnabled(), m_uiData.isFineTuningCornersEnabled());
+                m_uiData.contentDetectionMode(), m_uiData.pageDetectionMode(), m_uiData.isFineTuningCornersEnabled());
   m_ptrSettings->setPageParams(m_pageId, params);
 }
 
@@ -277,14 +265,12 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
 
   Dependencies deps(m_uiData.dependencies());
   // we need recalculate the boxes on switching to auto mode or if content box disabled
-  if ((!m_uiData.isContentDetectionEnabled() || m_uiData.contentDetectionMode() == MODE_AUTO)
-      || (m_uiData.isPageDetectionEnabled() && m_uiData.pageDetectionMode() == MODE_AUTO)) {
+  if (((m_uiData.contentDetectionMode() != MODE_MANUAL) || (m_uiData.pageDetectionMode() == MODE_AUTO))) {
     deps.invalidate();
   }
 
   const Params params(m_uiData.contentRect(), m_uiData.contentSizeMM(), m_uiData.pageRect(), deps,
                       m_uiData.contentDetectionMode(), m_uiData.pageDetectionMode(),
-                      m_uiData.isContentDetectionEnabled(), m_uiData.isPageDetectionEnabled(),
                       m_uiData.isFineTuningCornersEnabled());
 
   for (const PageId& page_id : pages) {
@@ -296,22 +282,22 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
 
     std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
     if (old_params != nullptr) {
-      if (new_params.isContentDetectionEnabled() && (new_params.contentDetectionMode() == MODE_MANUAL)) {
+      if (new_params.contentDetectionMode() == MODE_MANUAL) {
         if (!apply_content_box) {
           new_params.setContentRect(old_params->contentRect());
           new_params.setContentSizeMM(old_params->contentSizeMM());
         }
       }
 
-      if (!new_params.isPageDetectionEnabled() || (new_params.pageDetectionMode() == MODE_MANUAL)) {
+      if (new_params.pageDetectionMode() == MODE_AUTO) {
         // if page detection has been disabled its recalculation required
-        if (!new_params.isPageDetectionEnabled() && old_params->isPageDetectionEnabled()) {
+        if ((new_params.pageDetectionMode() != MODE_DISABLED) && (old_params->pageDetectionMode() == MODE_DISABLED)) {
           Dependencies new_deps(new_params.dependencies());
           new_deps.invalidate();
           new_params.setDependencies(new_deps);
         }
 
-        if (new_params.isPageDetectionEnabled() && !apply_page_box) {
+        if ((new_params.pageDetectionMode() != MODE_DISABLED) && !apply_page_box) {
           new_params.setPageRect(old_params->pageRect());
         }
       }
@@ -387,11 +373,7 @@ void OptionsWidget::removeUiConnections() {
 /*========================= OptionsWidget::UiData ======================*/
 
 OptionsWidget::UiData::UiData()
-    : m_contentDetectionMode(MODE_AUTO),
-      m_contentDetectionEnabled(true),
-      m_pageDetectionEnabled(false),
-      m_pageDetectionMode(MODE_AUTO),
-      m_fineTuneCornersEnabled(false) {}
+    : m_contentDetectionMode(MODE_AUTO), m_pageDetectionMode(MODE_DISABLED), m_fineTuneCornersEnabled(false) {}
 
 OptionsWidget::UiData::~UiData() = default;
 
@@ -442,25 +424,8 @@ void OptionsWidget::UiData::setPageDetectionMode(AutoManualMode mode) {
 AutoManualMode OptionsWidget::UiData::pageDetectionMode() const {
   return m_pageDetectionMode;
 }
-
-void OptionsWidget::UiData::setContentDetectionEnabled(bool detect) {
-  m_contentDetectionEnabled = detect;
-}
-
-void OptionsWidget::UiData::setPageDetectionEnabled(bool detect) {
-  m_pageDetectionEnabled = detect;
-}
-
 void OptionsWidget::UiData::setFineTuneCornersEnabled(bool fine_tune) {
   m_fineTuneCornersEnabled = fine_tune;
-}
-
-bool OptionsWidget::UiData::isContentDetectionEnabled() const {
-  return m_contentDetectionEnabled;
-}
-
-bool OptionsWidget::UiData::isPageDetectionEnabled() const {
-  return m_pageDetectionEnabled;
 }
 
 bool OptionsWidget::UiData::isFineTuningCornersEnabled() const {

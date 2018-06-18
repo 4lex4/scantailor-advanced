@@ -79,10 +79,10 @@ class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
   void finishLoadingMetadata();
 
   QSet<QString> m_supportedExtensions;
-  std::unique_ptr<FileList> m_ptrOffProjectFiles;
-  std::unique_ptr<SortedFileList> m_ptrOffProjectFilesSorted;
-  std::unique_ptr<FileList> m_ptrInProjectFiles;
-  std::unique_ptr<SortedFileList> m_ptrInProjectFilesSorted;
+  std::unique_ptr<FileList> m_offProjectFiles;
+  std::unique_ptr<SortedFileList> m_offProjectFilesSorted;
+  std::unique_ptr<FileList> m_inProjectFiles;
+  std::unique_ptr<SortedFileList> m_inProjectFilesSorted;
   int m_loadTimerId;
   bool m_metadataLoadFailed;
   bool m_autoOutDir;

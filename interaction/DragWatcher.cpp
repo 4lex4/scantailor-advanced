@@ -22,7 +22,7 @@
 #include "DragHandler.h"
 
 DragWatcher::DragWatcher(DragHandler& drag_handler)
-    : m_rDragHandler(drag_handler), m_dragMaxSqDist(0), m_dragInProgress(false) {}
+    : m_dragHandler(drag_handler), m_dragMaxSqDist(0), m_dragInProgress(false) {}
 
 bool DragWatcher::haveSignificantDrag() const {
   if (!m_dragInProgress) {
@@ -50,7 +50,7 @@ void DragWatcher::onMouseMoveEvent(QMouseEvent* event, InteractionState&) {
 }
 
 void DragWatcher::updateState(const QPoint mouse_pos) {
-  if (m_rDragHandler.isActive()) {
+  if (m_dragHandler.isActive()) {
     if (!m_dragInProgress) {
       m_dragStartTime = QDateTime::currentDateTime();
       m_dragStartPos = mouse_pos;

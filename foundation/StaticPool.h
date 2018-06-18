@@ -28,7 +28,7 @@ class StaticPoolBase {
   DECLARE_NON_COPYABLE(StaticPoolBase)
 
  public:
-  StaticPoolBase(T* buf, size_t size) : m_pNext(buf), m_sizeRemaining(size) {}
+  StaticPoolBase(T* buf, size_t size) : m_next(buf), m_sizeRemaining(size) {}
 
   /**
    * \brief Allocates a sequence of objects.
@@ -44,7 +44,7 @@ class StaticPoolBase {
   T* alloc(size_t num_elements);
 
  private:
-  T* m_pNext;
+  T* m_next;
   size_t m_sizeRemaining;
 };
 
@@ -73,8 +73,8 @@ T* StaticPoolBase<T>::alloc(size_t num_elements) {
     throw std::runtime_error("StaticPool overflow");
   }
 
-  T* sequence = m_pNext;
-  m_pNext += num_elements;
+  T* sequence = m_next;
+  m_next += num_elements;
   m_sizeRemaining -= num_elements;
 
   return sequence;

@@ -68,7 +68,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptions
 
   void removeUiConnections();
 
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   OrthogonalRotation m_rotation;

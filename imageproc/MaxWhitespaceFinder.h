@@ -166,7 +166,7 @@ class MaxWhitespaceFinder {
   QRect extendBlackPixelToBlackBox(QPoint pixel, QRect bounds) const;
 
   IntegralImage<unsigned> m_integralImg;
-  std::unique_ptr<max_whitespace_finder::PriorityStorage> m_ptrQueuedRegions;
+  std::unique_ptr<max_whitespace_finder::PriorityStorage> m_queuedRegions;
   std::vector<QRect> m_newObstacles;
   QSize m_minSize;
 };
@@ -308,7 +308,7 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
 template <typename QualityCompare>
 MaxWhitespaceFinder::MaxWhitespaceFinder(const QualityCompare comp, const BinaryImage& img, const QSize min_size)
     : m_integralImg(img.size()),
-      m_ptrQueuedRegions(new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
+      m_queuedRegions(new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
       m_minSize(min_size) {
   init(img);
 }

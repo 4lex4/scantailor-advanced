@@ -32,29 +32,29 @@ class PngHandle {
 
   ~PngHandle();
 
-  png_structp handle() const { return m_pPng; }
+  png_structp handle() const { return m_png; }
 
-  png_infop info() const { return m_pInfo; }
+  png_infop info() const { return m_info; }
 
  private:
-  png_structp m_pPng;
-  png_infop m_pInfo;
+  png_structp m_png;
+  png_infop m_info;
 };
 
 
 PngHandle::PngHandle() {
-  m_pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!m_pPng) {
+  m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  if (!m_png) {
     throw std::bad_alloc();
   }
-  m_pInfo = png_create_info_struct(m_pPng);
-  if (!m_pInfo) {
+  m_info = png_create_info_struct(m_png);
+  if (!m_info) {
     throw std::bad_alloc();
   }
 }
 
 PngHandle::~PngHandle() {
-  png_destroy_read_struct(&m_pPng, &m_pInfo, nullptr);
+  png_destroy_read_struct(&m_png, &m_info, nullptr);
 }
 }  // namespace
 

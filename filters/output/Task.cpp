@@ -74,12 +74,12 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_ptrFilter; }
+  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<Settings> m_ptrSettings;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<Settings> m_settings;
+  std::unique_ptr<DebugImages> m_dbg;
   Params m_params;
   ImageTransformation m_xform;
   QTransform m_outputPostTransform;
@@ -105,16 +105,16 @@ Task::Task(intrusive_ptr<Filter> filter,
            const ImageViewTab last_tab,
            const bool batch,
            const bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrSettings(std::move(settings)),
-      m_ptrThumbnailCache(std::move(thumbnail_cache)),
+    : m_filter(std::move(filter)),
+      m_settings(std::move(settings)),
+      m_thumbnailCache(std::move(thumbnail_cache)),
       m_pageId(page_id),
       m_outFileNameGen(out_file_name_gen),
       m_lastTab(last_tab),
       m_batchProcessing(batch),
       m_debug(debug) {
   if (debug) {
-    m_ptrDbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImages>();
   }
 }
 
@@ -123,7 +123,7 @@ Task::~Task() = default;
 FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys) {
   status.throwIfCancelled();
 
-  Params params(m_ptrSettings->getParams(m_pageId));
+  Params params(m_settings->getParams(m_pageId));
 
   RenderParams render_params(params.colorParams(), params.splittingOptions());
   const QString out_file_path(m_outFileNameGen.filePathFor(m_pageId));
@@ -155,34 +155,34 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       = params.despeckleLevel() != DESPECKLE_OFF && render_params.needBinarization() && !m_batchProcessing;
 
   {
-    std::unique_ptr<OutputParams> stored_output_params(m_ptrSettings->getOutputParams(m_pageId));
+    std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(m_pageId));
     if (stored_output_params != nullptr) {
       if (stored_output_params->outputImageParams().getPictureShapeOptions() != params.pictureShapeOptions()) {
         // if picture shape options changed, reset auto picture zones
-        OutputProcessingParams outputProcessingParams = m_ptrSettings->getOutputProcessingParams(m_pageId);
+        OutputProcessingParams outputProcessingParams = m_settings->getOutputProcessingParams(m_pageId);
         outputProcessingParams.setAutoZonesFound(false);
-        m_ptrSettings->setOutputProcessingParams(m_pageId, outputProcessingParams);
+        m_settings->setOutputProcessingParams(m_pageId, outputProcessingParams);
       }
     }
   }
 
   OutputGenerator generator(params.outputDpi(), params.colorParams(), params.splittingOptions(),
                             params.pictureShapeOptions(), params.dewarpingOptions(),
-                            m_ptrSettings->getOutputProcessingParams(m_pageId), params.despeckleLevel(), new_xform,
+                            m_settings->getOutputProcessingParams(m_pageId), params.despeckleLevel(), new_xform,
                             content_rect_phys);
 
   OutputImageParams new_output_image_params(
       generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(), params.colorParams(),
       params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(), params.depthPerception(),
-      params.despeckleLevel(), params.pictureShapeOptions(), m_ptrSettings->getOutputProcessingParams(m_pageId),
+      params.despeckleLevel(), params.pictureShapeOptions(), m_settings->getOutputProcessingParams(m_pageId),
       params.isBlackOnWhite());
 
-  ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(m_pageId));
-  const ZoneSet new_fill_zones(m_ptrSettings->fillZonesForPage(m_pageId));
+  ZoneSet new_picture_zones(m_settings->pictureZonesForPage(m_pageId));
+  const ZoneSet new_fill_zones(m_settings->fillZonesForPage(m_pageId));
 
   bool need_reprocess = false;
   do {  // Just to be able to break from it.
-    std::unique_ptr<OutputParams> stored_output_params(m_ptrSettings->getOutputParams(m_pageId));
+    std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(m_pageId));
 
     if (!stored_output_params) {
       need_reprocess = true;
@@ -341,20 +341,20 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     out_img
         = generator.process(status, data, new_picture_zones, new_fill_zones, distortion_model, params.depthPerception(),
                             write_automask ? &automask_img : nullptr, write_speckles_file ? &speckles_img : nullptr,
-                            m_ptrDbg.get(), m_pageId, m_ptrSettings, &splitImage);
+                            m_dbg.get(), m_pageId, m_settings, &splitImage);
 
     if (((params.dewarpingOptions().dewarpingMode() == AUTO) || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
         && distortion_model.isValid()) {
       // A new distortion model was generated.
       // We need to save it to be able to modify it manually.
       params.setDistortionModel(distortion_model);
-      m_ptrSettings->setParams(m_pageId, params);
+      m_settings->setParams(m_pageId, params);
       new_output_image_params.setDistortionModel(distortion_model);
     }
 
     // Saving refreshed params and output processing params.
-    new_output_image_params.setBlackOnWhite(m_ptrSettings->getParams(m_pageId).isBlackOnWhite());
-    new_output_image_params.setOutputProcessingParams(m_ptrSettings->getOutputProcessingParams(m_pageId));
+    new_output_image_params.setBlackOnWhite(m_settings->getParams(m_pageId).isBlackOnWhite());
+    new_output_image_params.setOutputProcessingParams(m_settings->getOutputProcessingParams(m_pageId));
 
     bool invalidate_params = false;
 
@@ -417,7 +417,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     }
 
     if (invalidate_params) {
-      m_ptrSettings->removeOutputParams(m_pageId);
+      m_settings->removeOutputParams(m_pageId);
     } else {
       // Note that we can't reuse *_file_info objects
       // as we've just overwritten those files.
@@ -431,10 +431,10 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
           write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path)) : OutputFileParams(), new_picture_zones,
           new_fill_zones);
 
-      m_ptrSettings->setOutputParams(m_pageId, out_params);
+      m_settings->setOutputParams(m_pageId, out_params);
     }
 
-    m_ptrThumbnailCache->recreateThumbnail(ImageId(out_file_path), out_img);
+    m_thumbnailCache->recreateThumbnail(ImageId(out_file_path), out_img);
   }
 
   const DespeckleState despeckle_state(out_img, speckles_img, params.despeckleLevel(), params.outputDpi());
@@ -448,7 +448,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
   }
 
   if (CommandLine::get().isGui()) {
-    return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrSettings, std::move(m_ptrDbg), params, new_xform,
+    return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, new_xform,
                                      generator.getPostTransform(), generator.outputContentRect(), m_pageId,
                                      data.origImage(), out_img, automask_img, despeckle_state, despeckle_visualization,
                                      m_batchProcessing, m_debug);
@@ -490,9 +490,9 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const DespeckleVisualization& despeckle_visualization,
                            const bool batch,
                            const bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrSettings(std::move(settings)),
-      m_ptrDbg(std::move(dbg_img)),
+    : m_filter(std::move(filter)),
+      m_settings(std::move(settings)),
+      m_dbg(std::move(dbg_img)),
       m_params(params),
       m_xform(xform),
       m_outputPostTransform(postTransform),
@@ -510,7 +510,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+  OptionsWidget* const opt_widget = m_filter->optionsWidget();
   opt_widget->postUpdateUI();
   ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
 
@@ -544,7 +544,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   } else {
     picture_zone_editor = std::make_unique<output::PictureZoneEditor>(
         m_origImage, downscaled_orig_pixmap, m_pictureMask, m_xform.transform(), m_xform.resultingPreCropArea(),
-        m_pageId, m_ptrSettings);
+        m_pageId, m_settings);
     QObject::connect(picture_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
                      SIGNAL(invalidateThumbnail(const PageId&)));
     tab_image_rect_map->insert(
@@ -571,7 +571,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   }
 
   std::unique_ptr<QWidget> fill_zone_editor(new FillZoneEditor(m_outputImage, downscaled_output_pixmap, orig_to_output,
-                                                               output_to_orig, m_pageId, m_ptrSettings));
+                                                               output_to_orig, m_pageId, m_settings));
   QObject::connect(fill_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
                    SIGNAL(invalidateThumbnail(const PageId&)));
   tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
@@ -599,6 +599,6 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
 
   QObject::connect(tab_widget.get(), SIGNAL(tabChanged(ImageViewTab)), opt_widget, SLOT(tabChanged(ImageViewTab)));
 
-  ui->setImageWidget(tab_widget.release(), ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+  ui->setImageWidget(tab_widget.release(), ui->TRANSFER_OWNERSHIP, m_dbg.get());
 }  // Task::UiUpdater::updateUI
 }  // namespace output

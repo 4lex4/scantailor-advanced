@@ -32,25 +32,25 @@ class ThumbnailFactory::Collector : public ThumbnailCollector {
 
   QSizeF maxLogicalThumbSize() const override;
 
-  std::unique_ptr<QGraphicsItem> retrieveThumbnail() { return std::move(m_ptrThumbnail); }
+  std::unique_ptr<QGraphicsItem> retrieveThumbnail() { return std::move(m_thumbnail); }
 
  private:
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrCache;
+  intrusive_ptr<ThumbnailPixmapCache> m_cache;
   QSizeF m_maxSize;
-  std::unique_ptr<QGraphicsItem> m_ptrThumbnail;
+  std::unique_ptr<QGraphicsItem> m_thumbnail;
 };
 
 
 ThumbnailFactory::ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
                                    const QSizeF& max_size,
                                    intrusive_ptr<CompositeCacheDrivenTask> task)
-    : m_ptrPixmapCache(std::move(pixmap_cache)), m_maxSize(max_size), m_ptrTask(std::move(task)) {}
+    : m_pixmapCache(std::move(pixmap_cache)), m_maxSize(max_size), m_task(std::move(task)) {}
 
 ThumbnailFactory::~ThumbnailFactory() = default;
 
 std::unique_ptr<QGraphicsItem> ThumbnailFactory::get(const PageInfo& page_info) {
-  Collector collector(m_ptrPixmapCache, m_maxSize);
-  m_ptrTask->process(page_info, &collector);
+  Collector collector(m_pixmapCache, m_maxSize);
+  m_task->process(page_info, &collector);
 
   return collector.retrieveThumbnail();
 }
@@ -58,14 +58,14 @@ std::unique_ptr<QGraphicsItem> ThumbnailFactory::get(const PageInfo& page_info) 
 /*======================= ThumbnailFactory::Collector ======================*/
 
 ThumbnailFactory::Collector::Collector(intrusive_ptr<ThumbnailPixmapCache> cache, const QSizeF& max_size)
-    : m_ptrCache(std::move(cache)), m_maxSize(max_size) {}
+    : m_cache(std::move(cache)), m_maxSize(max_size) {}
 
 void ThumbnailFactory::Collector::processThumbnail(std::unique_ptr<QGraphicsItem> thumbnail) {
-  m_ptrThumbnail = std::move(thumbnail);
+  m_thumbnail = std::move(thumbnail);
 }
 
 intrusive_ptr<ThumbnailPixmapCache> ThumbnailFactory::Collector::thumbnailCache() {
-  return m_ptrCache;
+  return m_cache;
 }
 
 QSizeF ThumbnailFactory::Collector::maxLogicalThumbSize() const {

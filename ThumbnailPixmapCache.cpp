@@ -141,7 +141,7 @@ class ThumbnailPixmapCache::Impl : public QThread {
     void customEvent(QEvent* e) override;
 
    private:
-    Impl& m_rOwner;
+    Impl& m_owner;
   };
 
 
@@ -246,36 +246,36 @@ ThumbnailPixmapCache::ThumbnailPixmapCache(const QString& thumb_dir,
                                            const QSize& max_thumb_size,
                                            const int max_cached_pixmaps,
                                            const int expiration_threshold)
-    : m_ptrImpl(
-          new Impl(RelinkablePath::normalize(thumb_dir), max_thumb_size, max_cached_pixmaps, expiration_threshold)) {}
+    : m_impl(new Impl(RelinkablePath::normalize(thumb_dir), max_thumb_size, max_cached_pixmaps, expiration_threshold)) {
+}
 
 ThumbnailPixmapCache::~ThumbnailPixmapCache() = default;
 
 void ThumbnailPixmapCache::setThumbDir(const QString& thumb_dir) {
-  m_ptrImpl->setThumbDir(RelinkablePath::normalize(thumb_dir));
+  m_impl->setThumbDir(RelinkablePath::normalize(thumb_dir));
 }
 
 ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadFromCache(const ImageId& image_id, QPixmap& pixmap) {
-  return m_ptrImpl->request(image_id, pixmap);
+  return m_impl->request(image_id, pixmap);
 }
 
 ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadNow(const ImageId& image_id, QPixmap& pixmap) {
-  return m_ptrImpl->request(image_id, pixmap, true);
+  return m_impl->request(image_id, pixmap, true);
 }
 
 ThumbnailPixmapCache::Status ThumbnailPixmapCache::loadRequest(
     const ImageId& image_id,
     QPixmap& pixmap,
     const std::weak_ptr<CompletionHandler>& completion_handler) {
-  return m_ptrImpl->request(image_id, pixmap, false, &completion_handler);
+  return m_impl->request(image_id, pixmap, false, &completion_handler);
 }
 
 void ThumbnailPixmapCache::ensureThumbnailExists(const ImageId& image_id, const QImage& image) {
-  m_ptrImpl->ensureThumbnailExists(image_id, image);
+  m_impl->ensureThumbnailExists(image_id, image);
 }
 
 void ThumbnailPixmapCache::recreateThumbnail(const ImageId& image_id, const QImage& image) {
-  m_ptrImpl->recreateThumbnail(image_id, image);
+  m_impl->recreateThumbnail(image_id, image);
 }
 
 /*======================= ThumbnailPixmapCache::Impl ========================*/
@@ -861,8 +861,8 @@ ThumbnailPixmapCache::Impl::LoadResultEvent::~LoadResultEvent() = default;
 
 /*================== ThumbnailPixmapCache::BackgroundLoader =================*/
 
-ThumbnailPixmapCache::Impl::BackgroundLoader::BackgroundLoader(Impl& owner) : m_rOwner(owner) {}
+ThumbnailPixmapCache::Impl::BackgroundLoader::BackgroundLoader(Impl& owner) : m_owner(owner) {}
 
 void ThumbnailPixmapCache::Impl::BackgroundLoader::customEvent(QEvent*) {
-  m_rOwner.backgroundProcessing();
+  m_owner.backgroundProcessing();
 }

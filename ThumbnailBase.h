@@ -111,7 +111,7 @@ class ThumbnailBase : public QGraphicsItem {
 
   void handleLoadResult(const ThumbnailLoadResult& result);
 
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   QSizeF m_maxSize;
   ImageId m_imageId;
   ImageTransformation m_imageXform;
@@ -124,7 +124,7 @@ class ThumbnailBase : public QGraphicsItem {
    */
   QTransform m_postScaleXform;
 
-  std::shared_ptr<LoadCompletionHandler> m_ptrCompletionHandler;
+  std::shared_ptr<LoadCompletionHandler> m_completionHandler;
   bool m_extendedClipArea;
 };
 

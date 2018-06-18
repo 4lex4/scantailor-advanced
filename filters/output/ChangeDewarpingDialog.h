@@ -57,7 +57,7 @@ class ChangeDewarpingDialog : public QDialog {
   PageId m_curPage;
   DewarpingMode m_dewarpingMode;
   DewarpingOptions m_dewarpingOptions;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_

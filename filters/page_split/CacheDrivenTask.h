@@ -49,8 +49,8 @@ class CacheDrivenTask : public ref_countable {
   void process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<deskew::CacheDrivenTask> m_ptrNextTask;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<deskew::CacheDrivenTask> m_nextTask;
+  intrusive_ptr<Settings> m_settings;
   intrusive_ptr<ProjectPages> m_projectPages;
 };
 }  // namespace page_split

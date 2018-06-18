@@ -44,8 +44,8 @@ class CacheDrivenTask : public CompositeCacheDrivenTask {
   void process(const PageInfo& page_info, AbstractFilterDataCollector* collector) override;
 
  private:
-  intrusive_ptr<page_split::CacheDrivenTask> m_ptrNextTask;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<page_split::CacheDrivenTask> m_nextTask;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_CACHEDRIVENTASK_H_

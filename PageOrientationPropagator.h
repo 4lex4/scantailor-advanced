@@ -50,8 +50,8 @@ class PageOrientationPropagator {
  private:
   class Collector;
 
-  intrusive_ptr<page_split::Filter> m_ptrPageSplitFilter;
-  intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
+  intrusive_ptr<page_split::Filter> m_pageSplitFilter;
+  intrusive_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

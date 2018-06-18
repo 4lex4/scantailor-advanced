@@ -54,7 +54,7 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
       m_xform(xform),
       m_dragHandler(*this),
       m_zoomHandler(*this),
-      m_ptrSettings(settings),
+      m_settings(settings),
       m_pageId(page_id),
       m_pixelsToMmXform(UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES)),
       m_mmToPixelsXform(m_pixelsToMmXform.inverted()),
@@ -220,7 +220,7 @@ void ImageView::topBottomLinkToggled(const bool linked) {
 void ImageView::alignmentChanged(const Alignment& alignment) {
   m_alignment = alignment;
 
-  const Settings::AggregateSizeChanged size_changed = m_ptrSettings->setPageAlignment(m_pageId, alignment);
+  const Settings::AggregateSizeChanged size_changed = m_settings->setPageAlignment(m_pageId, alignment);
 
   recalcBoxesAndFit(calcHardMarginsMM());
 
@@ -237,7 +237,7 @@ void ImageView::alignmentChanged(const Alignment& alignment) {
 }
 
 void ImageView::aggregateHardSizeChanged() {
-  m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM();
+  m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM();
   m_committedAggregateHardSizeMM = m_aggregateHardSizeMM;
   recalcOuterRect();
   updatePresentationTransform(FIT);
@@ -428,7 +428,7 @@ void ImageView::innerRectDragContinuation(int edge_mask, const QPointF& mouse_po
   fp += QPointF(effective_dx, effective_dy);
   setWidgetFocalPoint(fp);
 
-  m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
+  m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
 
   recalcOuterRect();
 
@@ -490,7 +490,7 @@ void ImageView::middleRectDragContinuation(const int edge_mask, const QPointF& m
     forceNonNegativeHardMargins(m_middleRect);  // invalidates widget_rect
   }
 
-  m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
+  m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
 
   recalcOuterRect();
 
@@ -527,9 +527,9 @@ void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
 
   const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
   const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
-      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_ptrSettings->getPageParams(m_pageId)->contentRect(),
-      m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(), m_ptrSettings->getAggregateContentRect(),
-      m_ptrSettings->getPageParams(m_pageId)->pageRect()));
+      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
+      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getAggregateContentRect(),
+      m_settings->getPageParams(m_pageId)->pageRect()));
 
   Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
@@ -617,9 +617,9 @@ void ImageView::recalcOuterRect() {
 
   const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
   const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
-      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_ptrSettings->getPageParams(m_pageId)->contentRect(),
-      m_ptrSettings->getPageParams(m_pageId)->contentSizeMM(), m_ptrSettings->getAggregateContentRect(),
-      m_ptrSettings->getPageParams(m_pageId)->pageRect()));
+      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
+      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getAggregateContentRect(),
+      m_settings->getPageParams(m_pageId)->pageRect()));
 
   Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
@@ -641,8 +641,8 @@ QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
 }
 
 ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& margins_mm) {
-  m_ptrSettings->setHardMarginsMM(m_pageId, margins_mm);
-  m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM();
+  m_settings->setHardMarginsMM(m_pageId, margins_mm);
+  m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM();
 
   AggregateSizeChanged changed = AGGREGATE_SIZE_UNCHANGED;
   if (m_committedAggregateHardSizeMM != m_aggregateHardSizeMM) {
@@ -678,7 +678,7 @@ void ImageView::setupContextMenuInteraction() {
   m_guideActionsSeparator = m_contextMenu->addSeparator();
   m_showMiddleRectAction = m_contextMenu->addAction(tr("Show hard margins rectangle"));
   m_showMiddleRectAction->setCheckable(true);
-  m_showMiddleRectAction->setChecked(m_ptrSettings->isShowingMiddleRectEnabled());
+  m_showMiddleRectAction->setChecked(m_settings->isShowingMiddleRectEnabled());
 
   connect(m_addHorizontalGuideAction, &QAction::triggered,
           [this]() { addHorizontalGuide(widgetToGuideCs().map(m_lastContextMenuPos).y()); });
@@ -689,7 +689,7 @@ void ImageView::setupContextMenuInteraction() {
   connect(m_showMiddleRectAction, &QAction::toggled, [this](bool checked) {
     if (!m_alignment.isNull() && !m_nullContentRect) {
       enableMiddleRectInteraction(checked);
-      m_ptrSettings->enableShowingMiddleRect(checked);
+      m_settings->enableShowingMiddleRect(checked);
     }
   });
 }
@@ -732,7 +732,7 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
 }
 
 void ImageView::setupGuides() {
-  for (const Guide& guide : m_ptrSettings->guides()) {
+  for (const Guide& guide : m_settings->guides()) {
     m_guides[m_guidesFreeIndex] = guide;
     setupGuideInteraction(m_guidesFreeIndex++);
   }
@@ -806,9 +806,9 @@ QTransform ImageView::guideToWidgetCs() const {
 }
 
 void ImageView::syncGuidesSettings() {
-  m_ptrSettings->guides().clear();
+  m_settings->guides().clear();
   for (const auto& idxAndGuide : m_guides) {
-    m_ptrSettings->guides().push_back(idxAndGuide.second);
+    m_settings->guides().push_back(idxAndGuide.second);
   }
 }
 
@@ -949,7 +949,7 @@ void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::Keyboar
   fp += delta;
   setWidgetFocalPoint(fp);
 
-  m_aggregateHardSizeMM = m_ptrSettings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
+  m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
 
   recalcOuterRect();
 
@@ -1160,6 +1160,6 @@ void ImageView::enableMiddleRectInteraction(const bool state) {
 }
 
 bool ImageView::isShowingMiddleRectEnabled() const {
-  return (!m_nullContentRect && m_ptrSettings->isShowingMiddleRectEnabled()) || m_alignment.isNull();
+  return (!m_nullContentRect && m_settings->isShowingMiddleRectEnabled()) || m_alignment.isNull();
 }
 }  // namespace page_layout

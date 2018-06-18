@@ -57,10 +57,10 @@ class Task : public ref_countable {
 
   void updateFilterData(FilterData& data);
 
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<page_split::Task> m_ptrNextTask;  // if null, this task is the final one
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ImageSettings> m_ptrImageSettings;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<page_split::Task> m_nextTask;  // if null, this task is the final one
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ImageSettings> m_imageSettings;
   PageId m_pageId;
   ImageId m_imageId;
   bool m_batchProcessing;

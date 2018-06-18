@@ -99,7 +99,7 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
   boost::function<QPointF(const QPointF&)> m_origToImage;
   boost::function<QPointF(const QPointF&)> m_imageToOrig;
   PageId m_pageId;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_FILL_ZONE_EDITOR_H_

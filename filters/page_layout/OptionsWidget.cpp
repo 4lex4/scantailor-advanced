@@ -30,7 +30,7 @@ using namespace imageproc::constants;
 
 namespace page_layout {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)),
+    : m_settings(std::move(settings)),
       m_pageSelectionAccessor(page_selection_accessor),
       m_leftRightLinked(true),
       m_topBottomLinked(true) {
@@ -117,7 +117,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info, const Margins& margin
   updateAlignmentButtonsEnabled();
   updateAutoModeButtons();
 
-  autoMargins->setChecked(m_ptrSettings->isPageAutoMarginsEnabled(m_pageId));
+  autoMargins->setChecked(m_settings->isPageAutoMarginsEnabled(m_pageId));
   updateMarginsControlsEnabled();
 
   m_leftRightLinked = m_leftRightLinked && (margins_mm.left() == margins_mm.right());
@@ -139,7 +139,7 @@ void OptionsWidget::postUpdateUI() {
   marginsGroup->setEnabled(true);
   alignmentGroup->setEnabled(true);
 
-  m_marginsMM = m_ptrSettings->getHardMarginsMM(m_pageId);
+  m_marginsMM = m_settings->getHardMarginsMM(m_pageId);
   updateMarginsDisplay();
 
   setupUiConnections();
@@ -150,7 +150,7 @@ void OptionsWidget::marginsSetExternally(const Margins& margins_mm) {
 
   if (autoMargins->isChecked()) {
     autoMargins->setChecked(false);
-    m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, false);
+    m_settings->setPageAutoMarginsEnabled(m_pageId, false);
     updateMarginsControlsEnabled();
   }
 
@@ -259,7 +259,7 @@ void OptionsWidget::autoMarginsToggled(bool checked) {
     return;
   }
 
-  m_ptrSettings->setPageAutoMarginsEnabled(m_pageId, checked);
+  m_settings->setPageAutoMarginsEnabled(m_pageId, checked);
   updateMarginsControlsEnabled();
 
   emit reloadRequested();
@@ -279,7 +279,7 @@ void OptionsWidget::alignmentModeChanged(int idx) {
       break;
     case 2:
       m_alignment.setVertical(Alignment::VORIGINAL);
-      if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
+      if (m_settings->isPageAutoMarginsEnabled(m_pageId)) {
         m_alignment.setHorizontal(Alignment::HORIGINAL);
       } else {
         m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
@@ -337,17 +337,17 @@ void OptionsWidget::applyMargins(const std::set<PageId>& pages) {
     return;
   }
 
-  const bool autoMarginsEnabled = m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
+  const bool autoMarginsEnabled = m_settings->isPageAutoMarginsEnabled(m_pageId);
   for (const PageId& page_id : pages) {
     if (page_id == m_pageId) {
       continue;
     }
 
-    m_ptrSettings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
+    m_settings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
     if (autoMarginsEnabled) {
-      m_ptrSettings->invalidateContentSize(page_id);
+      m_settings->invalidateContentSize(page_id);
     } else {
-      m_ptrSettings->setHardMarginsMM(page_id, m_marginsMM);
+      m_settings->setHardMarginsMM(page_id, m_marginsMM);
     }
   }
 
@@ -365,7 +365,7 @@ void OptionsWidget::applyAlignment(const std::set<PageId>& pages) {
       continue;
     }
 
-    m_ptrSettings->setPageAlignment(page_id, m_alignment);
+    m_settings->setPageAlignment(page_id, m_alignment);
   }
 
   emit invalidateAllThumbnails();
@@ -412,7 +412,7 @@ void OptionsWidget::updateAlignmentButtonsEnabled() {
 }
 
 void OptionsWidget::updateMarginsControlsEnabled() {
-  const bool enabled = !m_ptrSettings->isPageAutoMarginsEnabled(m_pageId);
+  const bool enabled = !m_settings->isPageAutoMarginsEnabled(m_pageId);
 
   topMarginSpinBox->setEnabled(enabled);
   bottomMarginSpinBox->setEnabled(enabled);

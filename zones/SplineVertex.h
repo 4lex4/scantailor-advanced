@@ -80,13 +80,13 @@ class SplineVertex {
 
  protected:
   /**
-   * The reason m_pPrev is an ordinary pointer rather than a smart pointer
+   * The reason m_prev is an ordinary pointer rather than a smart pointer
    * is that we don't want pairs of vertices holding smart pointers to each
    * other.  Note that we don't have a loop of smart pointers, because
    * sentinel vertices aren't reference counted.
    */
-  SplineVertex* m_pPrev;
-  SplineVertex::Ptr m_ptrNext;
+  SplineVertex* m_prev;
+  SplineVertex::Ptr m_next;
 };
 
 
@@ -141,7 +141,7 @@ class RealSplineVertex : public SplineVertex {
 
  private:
   QPointF m_point;
-  mutable int m_refCounter;
+  mutable int m_counter;
 };
 
 

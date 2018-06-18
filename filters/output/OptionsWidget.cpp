@@ -31,7 +31,7 @@
 
 namespace output {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)),
+    : m_settings(std::move(settings)),
       m_pageSelectionAccessor(page_selection_accessor),
       m_despeckleLevel(1.0),
       m_lastTab(TAB_OUTPUT) {
@@ -56,10 +56,10 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
 
-  QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget = new OtsuBinarizationOptionsWidget(m_ptrSettings);
+  QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget = new OtsuBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
-      = new SauvolaBinarizationOptionsWidget(m_ptrSettings);
-  QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget = new WolfBinarizationOptionsWidget(m_ptrSettings);
+      = new SauvolaBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget = new WolfBinarizationOptionsWidget(m_settings);
 
   while (binarizationOptions->count() != 0) {
     binarizationOptions->removeWidget(binarizationOptions->widget(0));
@@ -87,7 +87,7 @@ OptionsWidget::~OptionsWidget() = default;
 void OptionsWidget::preUpdateUI(const PageId& page_id) {
   removeUiConnections();
 
-  const Params params(m_ptrSettings->getParams(page_id));
+  const Params params(m_settings->getParams(page_id));
   m_pageId = page_id;
   m_outputDpi = params.outputDpi();
   m_colorParams = params.colorParams();
@@ -122,17 +122,17 @@ void OptionsWidget::tabChanged(const ImageViewTab tab) {
 }
 
 void OptionsWidget::distortionModelChanged(const dewarping::DistortionModel& model) {
-  m_ptrSettings->setDistortionModel(m_pageId, model);
+  m_settings->setDistortionModel(m_pageId, model);
 
   m_dewarpingOptions.setDewarpingMode(MANUAL);
-  m_ptrSettings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
+  m_settings->setDewarpingOptions(m_pageId, m_dewarpingOptions);
   updateDewarpingDisplay();
 }
 
 void OptionsWidget::colorModeChanged(const int idx) {
   const int mode = colorModeSelector->itemData(idx).toInt();
   m_colorParams.setColorMode((ColorMode) mode);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   updateColorsDisplay();
   emit reloadRequested();
 }
@@ -142,7 +142,7 @@ void OptionsWidget::thresholdMethodChanged(int idx) {
   BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
   blackWhiteOptions.setBinarizationMethod(method);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   emit reloadRequested();
 }
@@ -152,7 +152,7 @@ void OptionsWidget::fillingColorChanged(int idx) {
   ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
   colorCommonOptions.setFillingColor(color);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   emit reloadRequested();
 }
@@ -160,7 +160,7 @@ void OptionsWidget::fillingColorChanged(int idx) {
 void OptionsWidget::pictureShapeChanged(const int idx) {
   const auto shapeMode = static_cast<PictureShape>(pictureShapeSelector->itemData(idx).toInt());
   m_pictureShapeOptions.setPictureShape(shapeMode);
-  m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+  m_settings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
   pictureShapeSensitivityOptions->setVisible(shapeMode == RECTANGULAR_SHAPE);
   higherSearchSensitivityCB->setVisible(shapeMode != OFF_SHAPE);
@@ -170,14 +170,14 @@ void OptionsWidget::pictureShapeChanged(const int idx) {
 
 void OptionsWidget::pictureShapeSensitivityChanged(int value) {
   m_pictureShapeOptions.setSensitivity(value);
-  m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+  m_settings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
   delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::higherSearchSensivityToggled(const bool checked) {
   m_pictureShapeOptions.setHigherSearchSensitivity(checked);
-  m_ptrSettings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
+  m_settings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
   emit reloadRequested();
 }
@@ -186,7 +186,7 @@ void OptionsWidget::fillMarginsToggled(const bool checked) {
   ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
   colorCommonOptions.setFillMargins(checked);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -194,7 +194,7 @@ void OptionsWidget::fillOffcutToggled(const bool checked) {
   ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
   colorCommonOptions.setFillOffcut(checked);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -213,7 +213,7 @@ void OptionsWidget::equalizeIlluminationToggled(const bool checked) {
   }
 
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -221,7 +221,7 @@ void OptionsWidget::equalizeIlluminationColorToggled(const bool checked) {
   ColorCommonOptions opt(m_colorParams.colorCommonOptions());
   opt.setNormalizeIllumination(checked);
   m_colorParams.setColorCommonOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -248,7 +248,7 @@ void OptionsWidget::applyColorsButtonClicked() {
 
 void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setDpi(page_id, dpi);
+    m_settings->setDpi(page_id, dpi);
   }
 
   if (pages.size() > 1) {
@@ -268,8 +268,8 @@ void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
 
 void OptionsWidget::applyColorsConfirmed(const std::set<PageId>& pages) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setColorParams(page_id, m_colorParams);
-    m_ptrSettings->setPictureShapeOptions(page_id, m_pictureShapeOptions);
+    m_settings->setColorParams(page_id, m_colorParams);
+    m_settings->setPictureShapeOptions(page_id, m_pictureShapeOptions);
   }
 
   if (pages.size() > 1) {
@@ -296,7 +296,7 @@ void OptionsWidget::applySplittingButtonClicked() {
 
 void OptionsWidget::applySplittingOptionsConfirmed(const std::set<PageId>& pages) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setSplittingOptions(page_id, m_splittingOptions);
+    m_settings->setSplittingOptions(page_id, m_splittingOptions);
   }
 
   if (pages.size() > 1) {
@@ -350,7 +350,7 @@ void OptionsWidget::despeckleSliderValueChanged(int value) {
 
 void OptionsWidget::handleDespeckleLevelChange(const double level, const bool delay) {
   m_despeckleLevel = level;
-  m_ptrSettings->setDespeckleLevel(m_pageId, level);
+  m_settings->setDespeckleLevel(m_pageId, level);
 
   bool handled = false;
   emit despeckleLevelChanged(level, &handled);
@@ -378,7 +378,7 @@ void OptionsWidget::applyDespeckleButtonClicked() {
 
 void OptionsWidget::applyDespeckleConfirmed(const std::set<PageId>& pages) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setDespeckleLevel(page_id, m_despeckleLevel);
+    m_settings->setDespeckleLevel(page_id, m_despeckleLevel);
   }
 
   if (pages.size() > 1) {
@@ -404,7 +404,7 @@ void OptionsWidget::changeDewarpingButtonClicked() {
 
 void OptionsWidget::dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setDewarpingOptions(page_id, opt);
+    m_settings->setDewarpingOptions(page_id, opt);
   }
 
   if (pages.size() > 1) {
@@ -454,7 +454,7 @@ void OptionsWidget::applyDepthPerceptionButtonClicked() {
 
 void OptionsWidget::applyDepthPerceptionConfirmed(const std::set<PageId>& pages) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setDepthPerception(page_id, m_depthPerception);
+    m_settings->setDepthPerception(page_id, m_depthPerception);
   }
 
   if (pages.size() > 1) {
@@ -483,7 +483,7 @@ void OptionsWidget::depthPerceptionChangedSlot(int val) {
   tooltip_pos = depthPerceptionSlider->mapToGlobal(tooltip_pos);
   QToolTip::showText(tooltip_pos, tooltip_text, depthPerceptionSlider);
 
-  m_ptrSettings->setDepthPerception(m_pageId, m_depthPerception);
+  m_settings->setDepthPerception(m_pageId, m_depthPerception);
   // Propagate the signal.
   emit depthPerceptionChanged(m_depthPerception.value());
 }
@@ -496,7 +496,7 @@ void OptionsWidget::reloadIfNecessary() {
   DepthPerception saved_depth_perception;
   double saved_despeckle_level = 1.0;
 
-  std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(m_pageId));
+  std::unique_ptr<OutputParams> output_params(m_settings->getOutputParams(m_pageId));
   if (output_params) {
     saved_picture_zones = output_params->pictureZones();
     saved_fill_zones = output_params->fillZones();
@@ -506,17 +506,17 @@ void OptionsWidget::reloadIfNecessary() {
     saved_despeckle_level = output_params->outputImageParams().despeckleLevel();
   }
 
-  if (!PictureZoneComparator::equal(saved_picture_zones, m_ptrSettings->pictureZonesForPage(m_pageId))) {
+  if (!PictureZoneComparator::equal(saved_picture_zones, m_settings->pictureZonesForPage(m_pageId))) {
     emit reloadRequested();
 
     return;
-  } else if (!FillZoneComparator::equal(saved_fill_zones, m_ptrSettings->fillZonesForPage(m_pageId))) {
+  } else if (!FillZoneComparator::equal(saved_fill_zones, m_settings->fillZonesForPage(m_pageId))) {
     emit reloadRequested();
 
     return;
   }
 
-  const Params params(m_ptrSettings->getParams(m_pageId));
+  const Params params(m_settings->getParams(m_pageId));
 
   if (saved_despeckle_level != params.despeckleLevel()) {
     emit reloadRequested();
@@ -581,7 +581,7 @@ void OptionsWidget::updateColorsDisplay() {
     colorCommonOptions.setNormalizeIllumination(false);
   }
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   fillMarginsCB->setChecked(colorCommonOptions.fillMargins());
   fillMarginsCB->setVisible(true);
@@ -704,7 +704,7 @@ void OptionsWidget::savitzkyGolaySmoothingToggled(bool checked) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setSavitzkyGolaySmoothingEnabled(checked);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -712,7 +712,7 @@ void OptionsWidget::morphologicalSmoothingToggled(bool checked) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setMorphologicalSmoothingEnabled(checked);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
   emit reloadRequested();
 }
 
@@ -724,7 +724,7 @@ void OptionsWidget::bwForegroundToggled(bool checked) {
   originalBackgroundCB->setEnabled(checked);
 
   m_splittingOptions.setSplittingMode(BLACK_AND_WHITE_FOREGROUND);
-  m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+  m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
 }
 
@@ -736,7 +736,7 @@ void OptionsWidget::colorForegroundToggled(bool checked) {
   originalBackgroundCB->setEnabled(!checked);
 
   m_splittingOptions.setSplittingMode(COLOR_FOREGROUND);
-  m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+  m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
 }
 
@@ -747,14 +747,14 @@ void OptionsWidget::splittingToggled(bool checked) {
   colorForegroundRB->setEnabled(checked);
   originalBackgroundCB->setEnabled(checked && bwForegroundRB->isChecked());
 
-  m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+  m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
 }
 
 void OptionsWidget::originalBackgroundToggled(bool checked) {
   m_splittingOptions.setOriginalBackground(checked);
 
-  m_ptrSettings->setSplittingOptions(m_pageId, m_splittingOptions);
+  m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
 }
 
@@ -764,7 +764,7 @@ void OptionsWidget::colorSegmentationToggled(bool checked) {
   segmenterOptions.setEnabled(checked);
   blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   segmenterOptionsWidget->setEnabled(checked);
   if ((m_colorParams.colorMode() == BLACK_AND_WHITE) || (m_colorParams.colorMode() == MIXED)) {
@@ -781,7 +781,7 @@ void OptionsWidget::reduceNoiseChanged(int value) {
   segmenterOptions.setNoiseReduction(value);
   blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedReloadRequest.start(750);
 }
@@ -792,7 +792,7 @@ void OptionsWidget::redAdjustmentChanged(int value) {
   segmenterOptions.setRedThresholdAdjustment(value);
   blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedReloadRequest.start(750);
 }
@@ -803,7 +803,7 @@ void OptionsWidget::greenAdjustmentChanged(int value) {
   segmenterOptions.setGreenThresholdAdjustment(value);
   blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedReloadRequest.start(750);
 }
@@ -814,7 +814,7 @@ void OptionsWidget::blueAdjustmentChanged(int value) {
   segmenterOptions.setBlueThresholdAdjustment(value);
   blackWhiteOptions.setColorSegmenterOptions(segmenterOptions);
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedReloadRequest.start(750);
 }
@@ -825,7 +825,7 @@ void OptionsWidget::posterizeToggled(bool checked) {
   posterizationOptions.setEnabled(checked);
   colorCommonOptions.setPosterizationOptions(posterizationOptions);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   posterizeOptionsWidget->setEnabled(checked);
 
@@ -838,7 +838,7 @@ void OptionsWidget::posterizeLevelChanged(int value) {
   posterizationOptions.setLevel(value);
   colorCommonOptions.setPosterizationOptions(posterizationOptions);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedReloadRequest.start(750);
 }
@@ -849,7 +849,7 @@ void OptionsWidget::posterizeNormalizationToggled(bool checked) {
   posterizationOptions.setNormalizationEnabled(checked);
   colorCommonOptions.setPosterizationOptions(posterizationOptions);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   emit reloadRequested();
 }
@@ -860,7 +860,7 @@ void OptionsWidget::posterizeForceBwToggled(bool checked) {
   posterizationOptions.setForceBlackAndWhite(checked);
   colorCommonOptions.setPosterizationOptions(posterizationOptions);
   m_colorParams.setColorCommonOptions(colorCommonOptions);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   emit reloadRequested();
 }
@@ -959,10 +959,10 @@ const DepthPerception& OptionsWidget::depthPerception() const {
 }
 
 void OptionsWidget::blackOnWhiteToggled(bool value) {
-  m_ptrSettings->setBlackOnWhite(m_pageId, value);
-  OutputProcessingParams processingParams = m_ptrSettings->getOutputProcessingParams(m_pageId);
+  m_settings->setBlackOnWhite(m_pageId, value);
+  OutputProcessingParams processingParams = m_settings->getOutputProcessingParams(m_pageId);
   processingParams.setBlackOnWhiteSetManually(true);
-  m_ptrSettings->setOutputProcessingParams(m_pageId, processingParams);
+  m_settings->setOutputProcessingParams(m_pageId, processingParams);
 
   emit reloadRequested();
 }
@@ -978,10 +978,10 @@ void OptionsWidget::applyProcessingParamsClicked() {
 
 void OptionsWidget::applyProcessingParamsConfirmed(const std::set<PageId>& pages) {
   for (const PageId& page_id : pages) {
-    m_ptrSettings->setBlackOnWhite(page_id, m_ptrSettings->getParams(m_pageId).isBlackOnWhite());
-    OutputProcessingParams processingParams = m_ptrSettings->getOutputProcessingParams(page_id);
+    m_settings->setBlackOnWhite(page_id, m_settings->getParams(m_pageId).isBlackOnWhite());
+    OutputProcessingParams processingParams = m_settings->getOutputProcessingParams(page_id);
     processingParams.setBlackOnWhiteSetManually(true);
-    m_ptrSettings->setOutputProcessingParams(page_id, processingParams);
+    m_settings->setOutputProcessingParams(page_id, processingParams);
   }
 
   if (pages.size() > 1) {
@@ -998,6 +998,6 @@ void OptionsWidget::applyProcessingParamsConfirmed(const std::set<PageId>& pages
 }
 
 void OptionsWidget::updateProcessingDisplay() {
-  blackOnWhiteCB->setChecked(m_ptrSettings->getParams(m_pageId).isBlackOnWhite());
+  blackOnWhiteCB->setChecked(m_settings->getParams(m_pageId).isBlackOnWhite());
 }
 }  // namespace output

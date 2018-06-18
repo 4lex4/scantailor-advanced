@@ -25,8 +25,8 @@
 #include "ZoneVertexDragInteraction.h"
 
 ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones)
-    : m_rImageView(image_view),
-      m_rZones(zones),
+    : m_imageView(image_view),
+      m_zones(zones),
       m_defaultInteractionCreator(boost::bind(&ZoneInteractionContext::createStdDefaultInteraction, this)),
       m_zoneCreationInteractionCreator(
           boost::bind(&ZoneInteractionContext::createStdZoneCreationInteraction, this, _1)),

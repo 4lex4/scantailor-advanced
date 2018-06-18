@@ -77,10 +77,10 @@ class StageListView : public QTableView {
   int selectedRow() const;
 
   QSize m_sizeHint;
-  Model* m_pModel;
-  LeftColDelegate* m_pFirstColDelegate;
-  RightColDelegate* m_pSecondColDelegate;
-  QWidget* m_pLaunchBtn;
+  Model* m_model;
+  LeftColDelegate* m_firstColDelegate;
+  RightColDelegate* m_secondColDelegate;
+  QWidget* m_launchBtn;
   std::vector<QPixmap> m_batchAnimationPixmaps;
   int m_curBatchAnimationFrame;
   int m_timerId;

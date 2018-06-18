@@ -53,8 +53,8 @@ class CacheDrivenTask : public ref_countable {
  private:
   static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
-  intrusive_ptr<output::CacheDrivenTask> m_ptrNextTask;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<output::CacheDrivenTask> m_nextTask;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_CACHEDRIVENTASK_H_

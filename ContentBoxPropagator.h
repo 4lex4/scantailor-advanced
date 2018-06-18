@@ -50,8 +50,8 @@ class ContentBoxPropagator {
  private:
   class Collector;
 
-  intrusive_ptr<page_layout::Filter> m_ptrPageLayoutFilter;
-  intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
+  intrusive_ptr<page_layout::Filter> m_pageLayoutFilter;
+  intrusive_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

@@ -8,7 +8,7 @@
 namespace output {
 
 OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_ptrSettings(std::move(settings)), ignoreSliderChanges(0) {
+    : m_settings(std::move(settings)), ignoreSliderChanges(0) {
   setupUi(this);
 
   darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
@@ -27,7 +27,7 @@ OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Setti
 void OtsuBinarizationOptionsWidget::updateUi(const PageId& page_id) {
   removeUiConnections();
 
-  const Params params(m_ptrSettings->getParams(page_id));
+  const Params params(m_settings->getParams(page_id));
   m_pageId = page_id;
   m_colorParams = params.colorParams();
 
@@ -80,7 +80,7 @@ void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
 
   opt.setThresholdAdjustment(value);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 }
 
 void OtsuBinarizationOptionsWidget::setLighterThreshold() {

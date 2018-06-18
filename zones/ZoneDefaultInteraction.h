@@ -38,7 +38,7 @@ class ZoneDefaultInteraction : public InteractionHandler {
   explicit ZoneDefaultInteraction(ZoneInteractionContext& context);
 
  protected:
-  ZoneInteractionContext& context() { return m_rContext; }
+  ZoneInteractionContext& context() { return m_context; }
 
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
@@ -57,7 +57,7 @@ class ZoneDefaultInteraction : public InteractionHandler {
   void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
  private:
-  ZoneInteractionContext& m_rContext;
+  ZoneInteractionContext& m_context;
   BasicSplineVisualizer m_visualizer;
   InteractionState::Captor m_vertexProximity;
   InteractionState::Captor m_segmentProximity;
@@ -82,14 +82,14 @@ class ZoneDefaultInteraction : public InteractionHandler {
   DragWatcher m_dragWatcher;
 
   // These are valid if m_vertexProximity is the proximity leader.
-  SplineVertex::Ptr m_ptrNearestVertex;
-  EditableSpline::Ptr m_ptrNearestVertexSpline;
+  SplineVertex::Ptr m_nearestVertex;
+  EditableSpline::Ptr m_nearestVertexSpline;
 
   // These are valid if m_segmentProximity is the proximity leader.
   SplineSegment m_nearestSegment;
-  EditableSpline::Ptr m_ptrNearestSegmentSpline;
+  EditableSpline::Ptr m_nearestSegmentSpline;
   QPointF m_screenPointOnSegment;
-  EditableSpline::Ptr m_ptrUnderCursorSpline;
+  EditableSpline::Ptr m_underCursorSpline;
 };
 
 

@@ -49,7 +49,7 @@ class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;
   PageId m_curPage;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_

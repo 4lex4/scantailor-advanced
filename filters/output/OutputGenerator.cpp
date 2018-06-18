@@ -244,15 +244,15 @@ void removeAutoPictureZones(ZoneSet& picture_zones) {
   }
 }
 
-bool updateBlackOnWhite(const FilterData& input, const PageId& pageId, const intrusive_ptr<Settings>& p_settings) {
+bool updateBlackOnWhite(const FilterData& input, const PageId& pageId, const intrusive_ptr<Settings>& settings) {
   QSettings appSettings;
-  Params params = p_settings->getParams(pageId);
+  Params params = settings->getParams(pageId);
   if ((appSettings.value("settings/blackOnWhiteDetection", true).toBool()
        && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
-      && !p_settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
+      && !settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
     if (params.isBlackOnWhite() != input.isBlackOnWhite()) {
       params.setBlackOnWhite(input.isBlackOnWhite());
-      p_settings->setParams(pageId, params);
+      settings->setParams(pageId, params);
     }
     return input.isBlackOnWhite();
   } else {
@@ -261,11 +261,11 @@ bool updateBlackOnWhite(const FilterData& input, const PageId& pageId, const int
 }
 
 BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId,
-                                                       const intrusive_ptr<Settings>& p_settings) {
+                                                       const intrusive_ptr<Settings>& settings) {
   QSettings appSettings;
   if (!(appSettings.value("settings/blackOnWhiteDetection", true).toBool()
         && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
-      && !p_settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
+      && !settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
     return BackgroundColorCalculator();
   } else {
     return BackgroundColorCalculator(false);
@@ -312,11 +312,11 @@ QImage OutputGenerator::process(const TaskStatus& status,
                                 imageproc::BinaryImage* auto_picture_mask,
                                 imageproc::BinaryImage* speckles_image,
                                 DebugImages* dbg,
-                                const PageId& p_pageId,
-                                const intrusive_ptr<Settings>& p_settings,
+                                const PageId& pageId,
+                                const intrusive_ptr<Settings>& settings,
                                 SplitImage* splitImage) {
   QImage image(processImpl(status, input, picture_zones, fill_zones, distortion_model, depth_perception,
-                           auto_picture_mask, speckles_image, dbg, p_pageId, p_settings, splitImage));
+                           auto_picture_mask, speckles_image, dbg, pageId, settings, splitImage));
   // Set the correct DPI.
   const RenderParams renderParams(m_colorParams, m_splittingOptions);
   const Dpm output_dpm(m_dpi);
@@ -475,16 +475,16 @@ QImage OutputGenerator::processImpl(const TaskStatus& status,
                                     imageproc::BinaryImage* auto_picture_mask,
                                     imageproc::BinaryImage* speckles_image,
                                     DebugImages* dbg,
-                                    const PageId& p_pageId,
-                                    const intrusive_ptr<Settings>& p_settings,
+                                    const PageId& pageId,
+                                    const intrusive_ptr<Settings>& settings,
                                     SplitImage* splitImage) {
   if ((m_dewarpingOptions.dewarpingMode() == AUTO) || (m_dewarpingOptions.dewarpingMode() == MARGINAL)
       || ((m_dewarpingOptions.dewarpingMode() == MANUAL) && distortion_model.isValid())) {
     return processWithDewarping(status, input, picture_zones, fill_zones, distortion_model, depth_perception,
-                                auto_picture_mask, speckles_image, dbg, p_pageId, p_settings, splitImage);
+                                auto_picture_mask, speckles_image, dbg, pageId, settings, splitImage);
   } else {
     return processWithoutDewarping(status, input, picture_zones, fill_zones, auto_picture_mask, speckles_image, dbg,
-                                   p_pageId, p_settings, splitImage);
+                                   pageId, settings, splitImage);
   }
 }
 
@@ -495,8 +495,8 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
                                                 imageproc::BinaryImage* auto_picture_mask,
                                                 imageproc::BinaryImage* speckles_image,
                                                 DebugImages* dbg,
-                                                const PageId& p_pageId,
-                                                const intrusive_ptr<Settings>& p_settings,
+                                                const PageId& pageId,
+                                                const intrusive_ptr<Settings>& settings,
                                                 SplitImage* splitImage) {
   const RenderParams render_params(m_colorParams, m_splittingOptions);
 
@@ -549,7 +549,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
   const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
   const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 
-  const bool isBlackOnWhite = updateBlackOnWhite(input, p_pageId, p_settings);
+  const bool isBlackOnWhite = updateBlackOnWhite(input, pageId, settings);
   const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
   const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
     QImage result = input.origImage();
@@ -563,7 +563,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
     return result;
   }();
 
-  const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(p_pageId, p_settings);
+  const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(pageId, settings);
   QColor outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
       inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
@@ -721,9 +721,9 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
       }
 
       removeAutoPictureZones(picture_zones);
-      p_settings->setPictureZones(p_pageId, picture_zones);
+      settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(false);
-      p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
+      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
     }
     if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
         && !m_outputProcessingParams.isAutoZonesFound()) {
@@ -743,9 +743,9 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
 
         picture_zones.add(zone1);
       }
-      p_settings->setPictureZones(p_pageId, picture_zones);
+      settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(true);
-      p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
+      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
 
       bw_mask.fill(BLACK);
     }
@@ -999,8 +999,8 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
                                              imageproc::BinaryImage* auto_picture_mask,
                                              imageproc::BinaryImage* speckles_image,
                                              DebugImages* dbg,
-                                             const PageId& p_pageId,
-                                             const intrusive_ptr<Settings>& p_settings,
+                                             const PageId& pageId,
+                                             const intrusive_ptr<Settings>& settings,
                                              SplitImage* splitImage) {
   const RenderParams render_params(m_colorParams, m_splittingOptions);
 
@@ -1053,7 +1053,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
   const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
   const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
 
-  const bool isBlackOnWhite = updateBlackOnWhite(input, p_pageId, p_settings);
+  const bool isBlackOnWhite = updateBlackOnWhite(input, pageId, settings);
   const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
   const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
     QImage result = input.origImage();
@@ -1067,7 +1067,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     return result;
   }();
 
-  const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(p_pageId, p_settings);
+  const BackgroundColorCalculator backgroundColorCalculator = getBackgroundColorCalculator(pageId, settings);
   QColor outsideBackgroundColor = backgroundColorCalculator.calcDominantBackgroundColor(
       inputOrigImage.allGray() ? inputGrayImage : inputOrigImage, outCropAreaInOriginalCs, dbg);
 
@@ -1161,9 +1161,9 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
       }
 
       removeAutoPictureZones(picture_zones);
-      p_settings->setPictureZones(p_pageId, picture_zones);
+      settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(false);
-      p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
+      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
     }
     if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
         && !m_outputProcessingParams.isAutoZonesFound()) {
@@ -1183,9 +1183,9 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
 
         picture_zones.add(zone1);
       }
-      p_settings->setPictureZones(p_pageId, picture_zones);
+      settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(true);
-      p_settings->setOutputProcessingParams(p_pageId, m_outputProcessingParams);
+      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
 
       warped_bw_mask.fill(BLACK);
     }
@@ -1252,7 +1252,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     }
 
 
-    const PageId& pageId = p_pageId;
+    const PageId& pageId = pageId;
 
     QString stAngle;
 
@@ -1342,7 +1342,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
 
     setupTrivialDistortionModel(distortion_model);
 
-    const PageId& pageId = p_pageId;
+    const PageId& pageId = pageId;
 
     int max_red_points = 5;
     XSpline top_spline;
@@ -2584,20 +2584,20 @@ void OutputGenerator::deskew(QImage* image, const double angle, const QColor& ou
   *image = imageproc::transform(*image, rot, image->rect(), OutsidePixels::assumeWeakColor(outside_color));
 }
 
-double OutputGenerator::maybe_deskew(QImage* p_dewarped,
+double OutputGenerator::maybe_deskew(QImage* dewarped,
                                      DewarpingOptions m_dewarpingOptions,
                                      const QColor& outside_color) const {
   if (m_dewarpingOptions.needPostDeskew()
       && ((m_dewarpingOptions.dewarpingMode() == MARGINAL) || (m_dewarpingOptions.dewarpingMode() == MANUAL))) {
     BinaryThreshold bw_threshold(128);
-    BinaryImage bw_image(*p_dewarped, bw_threshold);
+    BinaryImage bw_image(*dewarped, bw_threshold);
 
     SkewFinder skew_finder;
     const Skew skew(skew_finder.findSkew(bw_image));
     if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
       const double angle_deg = skew.angle();
 
-      deskew(p_dewarped, angle_deg, outside_color);
+      deskew(dewarped, angle_deg, outside_color);
 
       return angle_deg;
     }

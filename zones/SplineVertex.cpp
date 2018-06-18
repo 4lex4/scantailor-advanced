@@ -22,21 +22,21 @@
 
 /*============================= SplineVertex ============================*/
 
-SplineVertex::SplineVertex(SplineVertex* prev, SplineVertex* next) : m_pPrev(prev), m_ptrNext(next) {}
+SplineVertex::SplineVertex(SplineVertex* prev, SplineVertex* next) : m_prev(prev), m_next(next) {}
 
 void SplineVertex::remove() {
   // Be very careful here - don't let this object
   // be destroyed before we've finished working with it.
 
-  m_pPrev->m_ptrNext.swap(m_ptrNext);
-  assert(m_ptrNext.get() == this);
+  m_prev->m_next.swap(m_next);
+  assert(m_next.get() == this);
 
-  m_pPrev->m_ptrNext->m_pPrev = m_pPrev;
-  m_pPrev = nullptr;
+  m_prev->m_next->m_prev = m_prev;
+  m_prev = nullptr;
 
   // This may or may not destroy this object,
   // depending on if there are other references to it.
-  m_ptrNext.reset();
+  m_next.reset();
 }
 
 bool SplineVertex::hasAtLeastSiblings(const int num) {
@@ -51,25 +51,25 @@ bool SplineVertex::hasAtLeastSiblings(const int num) {
 }
 
 SplineVertex::Ptr SplineVertex::prev(const Loop loop) {
-  return m_pPrev->thisOrPrevReal(loop);
+  return m_prev->thisOrPrevReal(loop);
 }
 
 SplineVertex::Ptr SplineVertex::next(const Loop loop) {
-  return m_ptrNext->thisOrNextReal(loop);
+  return m_next->thisOrNextReal(loop);
 }
 
 SplineVertex::Ptr SplineVertex::insertBefore(const QPointF& pt) {
-  auto new_vertex = make_intrusive<RealSplineVertex>(pt, m_pPrev, this);
-  m_pPrev->m_ptrNext = new_vertex;
-  m_pPrev = new_vertex.get();
+  auto new_vertex = make_intrusive<RealSplineVertex>(pt, m_prev, this);
+  m_prev->m_next = new_vertex;
+  m_prev = new_vertex.get();
 
   return new_vertex;
 }
 
 SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
-  auto new_vertex = make_intrusive<RealSplineVertex>(pt, this, m_ptrNext.get());
-  m_ptrNext->m_pPrev = new_vertex.get();
-  m_ptrNext = new_vertex;
+  auto new_vertex = make_intrusive<RealSplineVertex>(pt, this, m_next.get());
+  m_next->m_prev = new_vertex.get();
+  m_next = new_vertex;
 
   return new_vertex;
 }
@@ -79,18 +79,18 @@ SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
 SentinelSplineVertex::SentinelSplineVertex() : SplineVertex(this, this), m_bridged(false) {}
 
 SentinelSplineVertex::~SentinelSplineVertex() {
-  // Just releasing m_ptrNext is not enough, because in case some external
+  // Just releasing m_next is not enough, because in case some external
   // object holds a reference to a vertix of this spline, that vertex will
-  // still (possibly indirectly) reference us through a chain of m_ptrNext
+  // still (possibly indirectly) reference us through a chain of m_next
   // smart pointers.  Therefore, we explicitly unlink each node.
-  while (m_ptrNext.get() != this) {
-    m_ptrNext->remove();
+  while (m_next.get() != this) {
+    m_next->remove();
   }
 }
 
 SplineVertex::Ptr SentinelSplineVertex::thisOrPrevReal(const Loop loop) {
   if ((loop == LOOP) || ((loop == LOOP_IF_BRIDGED) && m_bridged)) {
-    return SplineVertex::Ptr(m_pPrev);
+    return SplineVertex::Ptr(m_prev);
   } else {
     return nullptr;
   }
@@ -98,7 +98,7 @@ SplineVertex::Ptr SentinelSplineVertex::thisOrPrevReal(const Loop loop) {
 
 SplineVertex::Ptr SentinelSplineVertex::thisOrNextReal(const Loop loop) {
   if ((loop == LOOP) || ((loop == LOOP_IF_BRIDGED) && m_bridged)) {
-    return m_ptrNext;
+    return m_next;
   } else {
     return nullptr;
   }
@@ -119,32 +119,32 @@ void SentinelSplineVertex::remove() {
 }
 
 SplineVertex::Ptr SentinelSplineVertex::firstVertex() const {
-  if (m_ptrNext.get() == this) {
+  if (m_next.get() == this) {
     return nullptr;
   } else {
-    return m_ptrNext;
+    return m_next;
   }
 }
 
 SplineVertex::Ptr SentinelSplineVertex::lastVertex() const {
-  if (m_pPrev == this) {
+  if (m_prev == this) {
     return nullptr;
   } else {
-    return SplineVertex::Ptr(m_pPrev);
+    return SplineVertex::Ptr(m_prev);
   }
 }
 
 /*============================== RealSplineVertex ============================*/
 
 RealSplineVertex::RealSplineVertex(const QPointF& pt, SplineVertex* prev, SplineVertex* next)
-    : SplineVertex(prev, next), m_point(pt), m_refCounter(0) {}
+    : SplineVertex(prev, next), m_point(pt), m_counter(0) {}
 
 void RealSplineVertex::ref() const {
-  ++m_refCounter;
+  ++m_counter;
 }
 
 void RealSplineVertex::unref() const {
-  if (--m_refCounter == 0) {
+  if (--m_counter == 0) {
     delete this;
   }
 }

@@ -80,8 +80,8 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
                                                        InteractionState& interaction,
                                                        const MenuCustomizer& menu_customizer,
                                                        std::vector<Zone>& selectable_zones)
-    : m_rContext(context),
-      m_ptrMenu(new QMenu(&context.imageView())),
+    : m_context(context),
+      m_menu(new QMenu(&context.imageView())),
       m_highlightedZoneIdx(-1),
       m_menuItemTriggered(false) {
 #ifdef Q_OS_MAC
@@ -120,7 +120,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
     const StandardMenuItems std_items(propertiesMenuItemFor(*it), deleteMenuItemFor(*it));
 
     for (const ZoneContextMenuItem& item : menu_customizer(*it, std_items)) {
-      QAction* action = m_ptrMenu->addAction(pixmap, item.label());
+      QAction* action = m_menu->addAction(pixmap, item.label());
       new QtSignalForwarder(
           action, SIGNAL(triggered()),
           boost::bind(&ZoneContextMenuInteraction::menuItemTriggered, this, boost::ref(interaction), item.callback()));
@@ -129,14 +129,14 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
       connect(action, SIGNAL(hovered()), hover_map, SLOT(map()));
     }
 
-    m_ptrMenu->addSeparator();
+    m_menu->addSeparator();
   }
   // The queued connection is used to ensure it gets called *after*
   // QAction::triggered().
-  connect(m_ptrMenu.get(), SIGNAL(aboutToHide()), SLOT(menuAboutToHide()), Qt::QueuedConnection);
+  connect(m_menu.get(), SIGNAL(aboutToHide()), SLOT(menuAboutToHide()), Qt::QueuedConnection);
 
   highlightItem(0);
-  m_ptrMenu->popup(QCursor::pos());
+  m_menu->popup(QCursor::pos());
 }
 
 ZoneContextMenuInteraction::~ZoneContextMenuInteraction() = default;
@@ -146,7 +146,7 @@ void ZoneContextMenuInteraction::onPaint(QPainter& painter, const InteractionSta
   painter.setRenderHint(QPainter::Antialiasing);
 
   if (m_highlightedZoneIdx >= 0) {
-    const QTransform to_screen(m_rContext.imageView().imageToWidget());
+    const QTransform to_screen(m_context.imageView().imageToWidget());
     const Zone& zone = m_selectableZones[m_highlightedZoneIdx];
     m_visualizer.drawSpline(painter, to_screen, zone.spline());
   }
@@ -169,13 +169,13 @@ void ZoneContextMenuInteraction::menuAboutToHide() {
   }
 #endif
 
-  InteractionHandler* next_handler = m_rContext.createDefaultInteraction();
+  InteractionHandler* next_handler = m_context.createDefaultInteraction();
   if (next_handler) {
     makePeerPreceeder(*next_handler);
   }
 
   unlink();
-  m_rContext.imageView().update();
+  m_context.imageView().update();
   deleteLater();
 }
 
@@ -190,21 +190,21 @@ void ZoneContextMenuInteraction::menuItemTriggered(InteractionState& interaction
   }
 
   unlink();
-  m_rContext.imageView().update();
+  m_context.imageView().update();
   deleteLater();
 }
 
 InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(const EditableZoneSet::Zone& zone) {
-  m_rContext.showPropertiesCommand(zone);
+  m_context.showPropertiesCommand(zone);
 
-  return m_rContext.createDefaultInteraction();
+  return m_context.createDefaultInteraction();
 }
 
 InteractionHandler* ZoneContextMenuInteraction::deleteRequest(const EditableZoneSet::Zone& zone) {
-  m_rContext.zones().removeZone(zone.spline());
-  m_rContext.zones().commit();
+  m_context.zones().removeZone(zone.spline());
+  m_context.zones().commit();
 
-  return m_rContext.createDefaultInteraction();
+  return m_context.createDefaultInteraction();
 }
 
 ZoneContextMenuItem ZoneContextMenuInteraction::deleteMenuItemFor(const EditableZoneSet::Zone& zone) {
@@ -222,7 +222,7 @@ void ZoneContextMenuInteraction::highlightItem(const int zone_idx) {
     m_visualizer.switchToStrokeMode();
   }
   m_highlightedZoneIdx = zone_idx;
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }
 
 std::vector<ZoneContextMenuItem> ZoneContextMenuInteraction::defaultMenuCustomizer(const EditableZoneSet::Zone& zone,

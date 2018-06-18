@@ -25,10 +25,10 @@
 ZoneDragInteraction::ZoneDragInteraction(ZoneInteractionContext& context,
                                          InteractionState& interaction,
                                          const EditableSpline::Ptr& spline)
-    : m_rContext(context), m_ptrSpline(spline) {
-  m_initialMousePos = m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5);
+    : m_context(context), m_spline(spline) {
+  m_initialMousePos = m_context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5);
 
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
   m_initialSplineFirstVertexPos = to_screen.map(spline->firstVertex()->point());
 
   m_interaction.setInteractionStatusTip(tr("Release left mouse button to finish dragging."));
@@ -40,19 +40,19 @@ void ZoneDragInteraction::onPaint(QPainter& painter, const InteractionState& int
   painter.setWorldMatrixEnabled(false);
   painter.setRenderHint(QPainter::Antialiasing);
 
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
 
-  for (const EditableZoneSet::Zone& zone : m_rContext.zones()) {
+  for (const EditableZoneSet::Zone& zone : m_context.zones()) {
     const EditableSpline::Ptr& spline = zone.spline();
 
-    if (spline != m_ptrSpline) {
+    if (spline != m_spline) {
       // Draw the whole spline in solid color.
       m_visualizer.drawSpline(painter, to_screen, spline);
       continue;
     }
     // Draw the solid part of the spline.
     QPolygonF points;
-    for (SplineVertex::Ptr vertex(m_ptrSpline->firstVertex()); vertex != m_ptrSpline->firstVertex();
+    for (SplineVertex::Ptr vertex(m_spline->firstVertex()); vertex != m_spline->firstVertex();
          vertex = vertex->next(SplineVertex::LOOP)) {
       points.push_back(to_screen.map(vertex->point()));
     }
@@ -66,22 +66,22 @@ void ZoneDragInteraction::onPaint(QPainter& painter, const InteractionState& int
 
 void ZoneDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
   if (event->button() == Qt::LeftButton) {
-    m_rContext.zones().commit();
-    makePeerPreceeder(*m_rContext.createDefaultInteraction());
+    m_context.zones().commit();
+    makePeerPreceeder(*m_context.createDefaultInteraction());
     delete this;
   }
 }
 
 void ZoneDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
+  const QTransform from_screen(m_context.imageView().widgetToImage());
   const QPointF shift = (event->pos() + QPointF(0.5, 0.5)) - m_initialMousePos;
-  const QPointF splineShift = to_screen.map(m_ptrSpline->firstVertex()->point()) - m_initialSplineFirstVertexPos;
+  const QPointF splineShift = to_screen.map(m_spline->firstVertex()->point()) - m_initialSplineFirstVertexPos;
 
-  SplineVertex::Ptr vertex(m_ptrSpline->firstVertex());
+  SplineVertex::Ptr vertex(m_spline->firstVertex());
   do {
     vertex->setPoint(from_screen.map(to_screen.map(vertex->point()) + shift - splineShift));
-  } while (vertex = vertex->next(SplineVertex::LOOP), vertex != m_ptrSpline->firstVertex());
+  } while (vertex = vertex->next(SplineVertex::LOOP), vertex != m_spline->firstVertex());
 
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }  // ZoneDragInteraction::onMouseMoveEvent

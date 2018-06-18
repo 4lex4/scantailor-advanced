@@ -62,8 +62,8 @@ class ProjectOpeningContext : public QObject {
 
   QString m_projectFile;
   ProjectReader m_reader;
-  QPointer<FixDpiDialog> m_ptrFixDpiDialog;
-  QWidget* m_pParent;
+  QPointer<FixDpiDialog> m_fixDpiDialog;
+  QWidget* m_parent;
 };
 
 

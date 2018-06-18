@@ -60,10 +60,10 @@ class ColorPickupInteraction : public InteractionHandler {
 
   static uint32_t bitUnmixColor(uint32_t mixed);
 
-  EditableZoneSet& m_rZones;
-  ZoneInteractionContext& m_rContext;
+  EditableZoneSet& m_zones;
+  ZoneInteractionContext& m_context;
   InteractionState::Captor m_interaction;
-  intrusive_ptr<FillColorProperty> m_ptrFillColorProp;
+  intrusive_ptr<FillColorProperty> m_fillColorProp;
   int m_dontDrawCircle;
 
   static const uint32_t m_sBitMixingLUT[3][256];

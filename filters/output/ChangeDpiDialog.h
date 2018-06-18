@@ -58,7 +58,7 @@ class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog {
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;
   PageId m_curPage;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
   int m_customItemIdx;
   QString m_customDpiString;
 };

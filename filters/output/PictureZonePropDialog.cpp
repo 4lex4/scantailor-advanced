@@ -23,10 +23,10 @@
 
 namespace output {
 PictureZonePropDialog::PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent)
-    : QDialog(parent), m_ptrProps(std::move(props)) {
+    : QDialog(parent), m_props(std::move(props)) {
   ui.setupUi(this);
 
-  switch (m_ptrProps->locateOrDefault<PictureLayerProperty>()->layer()) {
+  switch (m_props->locateOrDefault<PictureLayerProperty>()->layer()) {
     case PictureLayerProperty::NO_OP:
       break;
     case PictureLayerProperty::ERASER1:
@@ -57,7 +57,7 @@ void PictureZonePropDialog::itemToggled(bool selected) {
     layer = PictureLayerProperty::ERASER3;
   }
 
-  m_ptrProps->locateOrCreate<PictureLayerProperty>()->setLayer(layer);
+  m_props->locateOrCreate<PictureLayerProperty>()->setLayer(layer);
 
   emit updated();
 }

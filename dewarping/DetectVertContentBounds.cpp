@@ -87,7 +87,7 @@ class RansacAlgo {
   const RansacModel& bestModel() const { return m_bestModel; }
 
  private:
-  const std::vector<Segment>& m_rSegments;
+  const std::vector<Segment>& m_segments;
   RansacModel m_bestModel;
   double m_cosThreshold;
 };
@@ -125,13 +125,13 @@ class SequentialColumnProcessor {
 
 
 RansacAlgo::RansacAlgo(const std::vector<Segment>& segments)
-    : m_rSegments(segments), m_cosThreshold(std::cos(4.0 * constants::DEG2RAD)) {}
+    : m_segments(segments), m_cosThreshold(std::cos(4.0 * constants::DEG2RAD)) {}
 
 void RansacAlgo::buildAndAssessModel(const Segment& seed_segment) {
   RansacModel cur_model;
   cur_model.add(seed_segment);
 
-  for (const Segment& seg : m_rSegments) {
+  for (const Segment& seg : m_segments) {
     const double cos = seg.unitVec.dot(seed_segment.unitVec);
     if (cos > m_cosThreshold) {
       cur_model.add(seg);

@@ -54,12 +54,12 @@ LoadFileTask::LoadFileTask(Type type,
                            intrusive_ptr<ProjectPages> pages,
                            intrusive_ptr<fix_orientation::Task> next_task)
     : BackgroundTask(type),
-      m_ptrThumbnailCache(std::move(thumbnail_cache)),
+      m_thumbnailCache(std::move(thumbnail_cache)),
       m_imageId(page.imageId()),
       m_imageMetadata(page.metadata()),
-      m_ptrPages(std::move(pages)),
-      m_ptrNextTask(std::move(next_task)) {
-  assert(m_ptrNextTask);
+      m_pages(std::move(pages)),
+      m_nextTask(std::move(next_task)) {
+  assert(m_nextTask);
 }
 
 LoadFileTask::~LoadFileTask() = default;
@@ -75,9 +75,9 @@ FilterResultPtr LoadFileTask::operator()() {
     } else {
       updateImageSizeIfChanged(image);
       overrideDpi(image);
-      m_ptrThumbnailCache->ensureThumbnailExists(m_imageId, image);
+      m_thumbnailCache->ensureThumbnailExists(m_imageId, image);
 
-      return m_ptrNextTask->process(*this, FilterData(image));
+      return m_nextTask->process(*this, FilterData(image));
     }
   } catch (const CancelledException&) {
     return nullptr;
@@ -95,7 +95,7 @@ void LoadFileTask::updateImageSizeIfChanged(const QImage& image) {
   // creating a project).
   if (image.size() != m_imageMetadata.size()) {
     m_imageMetadata.setSize(image.size());
-    m_ptrPages->updateImageMetadata(m_imageId, m_imageMetadata);
+    m_pages->updateImageMetadata(m_imageId, m_imageMetadata);
   }
 }
 
@@ -118,12 +118,12 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
     ErrWidget(intrusive_ptr<AbstractCommand<void>> relinking_dialog_requester,
               const QString& text,
               Qt::TextFormat fmt = Qt::AutoText)
-        : ErrorWidget(text, fmt), m_ptrRelinkingDialogRequester(std::move(relinking_dialog_requester)) {}
+        : ErrorWidget(text, fmt), m_relinkingDialogRequester(std::move(relinking_dialog_requester)) {}
 
    private:
-    void linkActivated(const QString&) override { (*m_ptrRelinkingDialogRequester)(); }
+    void linkActivated(const QString&) override { (*m_relinkingDialogRequester)(); }
 
-    intrusive_ptr<AbstractCommand<void>> m_ptrRelinkingDialogRequester;
+    intrusive_ptr<AbstractCommand<void>> m_relinkingDialogRequester;
   };
 
 

@@ -109,7 +109,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::DeskewOptionsWidge
 
   static const double MAX_ANGLE;
 
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   UiData m_uiData;
   int m_ignoreAutoManualToggle;

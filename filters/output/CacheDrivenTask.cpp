@@ -33,7 +33,7 @@
 
 namespace output {
 CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& out_file_name_gen)
-    : m_ptrSettings(std::move(settings)), m_outFileNameGen(out_file_name_gen) {}
+    : m_settings(std::move(settings)), m_outFileNameGen(out_file_name_gen) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
@@ -55,7 +55,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
     const QFileInfo background_file_info(background_file_path);
     const QFileInfo original_background_file_info(original_background_file_path);
 
-    const Params params(m_ptrSettings->getParams(page_info.id()));
+    const Params params(m_settings->getParams(page_info.id()));
     RenderParams render_params(params.colorParams(), params.splittingOptions());
 
     ImageTransformation new_xform(xform);
@@ -64,7 +64,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
     bool need_reprocess = false;
 
     do {  // Just to be able to break from it.
-      std::unique_ptr<OutputParams> stored_output_params(m_ptrSettings->getOutputParams(page_info.id()));
+      std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(page_info.id()));
 
       if (!stored_output_params) {
         need_reprocess = true;
@@ -73,26 +73,26 @@ void CacheDrivenTask::process(const PageInfo& page_info,
 
       const OutputGenerator generator(params.outputDpi(), params.colorParams(), params.splittingOptions(),
                                       params.pictureShapeOptions(), params.dewarpingOptions(),
-                                      m_ptrSettings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
+                                      m_settings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
                                       new_xform, content_rect_phys);
       const OutputImageParams new_output_image_params(
           generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(),
           params.colorParams(), params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(),
           params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions(),
-          m_ptrSettings->getOutputProcessingParams(page_info.id()), params.isBlackOnWhite());
+          m_settings->getOutputProcessingParams(page_info.id()), params.isBlackOnWhite());
 
       if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
         need_reprocess = true;
         break;
       }
 
-      const ZoneSet new_picture_zones(m_ptrSettings->pictureZonesForPage(page_info.id()));
+      const ZoneSet new_picture_zones(m_settings->pictureZonesForPage(page_info.id()));
       if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
         need_reprocess = true;
         break;
       }
 
-      const ZoneSet new_fill_zones(m_ptrSettings->fillZonesForPage(page_info.id()));
+      const ZoneSet new_fill_zones(m_settings->fillZonesForPage(page_info.id()));
       if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
         need_reprocess = true;
         break;

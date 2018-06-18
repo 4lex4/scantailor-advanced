@@ -47,7 +47,7 @@ class ZoomHandler : public InteractionHandler {
   void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
  private:
-  ImageViewBase& m_rImageView;
+  ImageViewBase& m_imageView;
   boost::function<bool(const InteractionState&)> m_interactionPermitter;
   InteractionState::Captor m_interaction;
   Focus m_focus;

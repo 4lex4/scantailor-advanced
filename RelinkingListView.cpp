@@ -23,15 +23,15 @@
 
 class RelinkingListView::Delegate : public QStyledItemDelegate {
  public:
-  explicit Delegate(RelinkingListView* owner) : QStyledItemDelegate(owner), m_pOwner(owner) {}
+  explicit Delegate(RelinkingListView* owner) : QStyledItemDelegate(owner), m_owner(owner) {}
 
   void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override {
-    m_pOwner->maybeDrawStatusLayer(painter, index, option.rect);
+    m_owner->maybeDrawStatusLayer(painter, index, option.rect);
     QStyledItemDelegate::paint(painter, option, index);
   }
 
  private:
-  RelinkingListView* m_pOwner;
+  RelinkingListView* m_owner;
 };
 
 

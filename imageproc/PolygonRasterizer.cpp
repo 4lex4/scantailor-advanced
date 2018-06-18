@@ -61,13 +61,13 @@ class PolygonRasterizer::Edge {
  */
 class PolygonRasterizer::EdgeComponent {
  public:
-  EdgeComponent(const Edge* edge, double top, double bottom) : m_top(top), m_bottom(bottom), m_x(), m_pEdge(edge) {}
+  EdgeComponent(const Edge* edge, double top, double bottom) : m_top(top), m_bottom(bottom), m_x(), m_edge(edge) {}
 
   double top() const { return m_top; }
 
   double bottom() const { return m_bottom; }
 
-  const Edge& edge() const { return *m_pEdge; }
+  const Edge& edge() const { return *m_edge; }
 
   double x() const { return m_x; }
 
@@ -77,7 +77,7 @@ class PolygonRasterizer::EdgeComponent {
   double m_top;
   double m_bottom;
   double m_x;
-  const Edge* m_pEdge;
+  const Edge* m_edge;
 };
 
 

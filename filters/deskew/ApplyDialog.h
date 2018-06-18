@@ -50,7 +50,7 @@ class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
   PageSequence m_pages;
   PageId m_curPage;
   std::set<PageId> m_selectedPages;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_APPLYDIALOG_H_

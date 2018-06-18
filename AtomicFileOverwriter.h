@@ -70,7 +70,7 @@ class AtomicFileOverwriter {
   void abort();
 
  private:
-  std::unique_ptr<QTemporaryFile> m_ptrTempFile;
+  std::unique_ptr<QTemporaryFile> m_tempFile;
 };
 
 

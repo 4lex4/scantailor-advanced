@@ -46,8 +46,8 @@ class CacheDrivenTask : public ref_countable {
   void process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<page_layout::CacheDrivenTask> m_ptrNextTask;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<page_layout::CacheDrivenTask> m_nextTask;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_CACHEDRIVENTASK_H_

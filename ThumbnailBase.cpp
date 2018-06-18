@@ -33,12 +33,12 @@ class ThumbnailBase::LoadCompletionHandler : public AbstractCommand<void, const 
   DECLARE_NON_COPYABLE(LoadCompletionHandler)
 
  public:
-  explicit LoadCompletionHandler(ThumbnailBase* thumb) : m_pThumb(thumb) {}
+  explicit LoadCompletionHandler(ThumbnailBase* thumb) : m_thumb(thumb) {}
 
-  void operator()(const ThumbnailLoadResult& result) override { m_pThumb->handleLoadResult(result); }
+  void operator()(const ThumbnailLoadResult& result) override { m_thumb->handleLoadResult(result); }
 
  private:
-  ThumbnailBase* m_pThumb;
+  ThumbnailBase* m_thumb;
 };
 
 
@@ -57,7 +57,7 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache
                              const ImageId& image_id,
                              const ImageTransformation& image_xform,
                              QRectF displayArea)
-    : m_ptrThumbnailCache(std::move(thumbnail_cache)),
+    : m_thumbnailCache(std::move(thumbnail_cache)),
       m_maxSize(max_size),
       m_imageId(image_id),
       m_imageXform(image_xform),
@@ -75,11 +75,11 @@ QRectF ThumbnailBase::boundingRect() const {
 void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
   QPixmap pixmap;
 
-  if (!m_ptrCompletionHandler) {
+  if (!m_completionHandler) {
     std::shared_ptr<LoadCompletionHandler> handler(new LoadCompletionHandler(this));
-    const ThumbnailPixmapCache::Status status = m_ptrThumbnailCache->loadRequest(m_imageId, pixmap, handler);
+    const ThumbnailPixmapCache::Status status = m_thumbnailCache->loadRequest(m_imageId, pixmap, handler);
     if (status == ThumbnailPixmapCache::QUEUED) {
-      m_ptrCompletionHandler.swap(handler);
+      m_completionHandler.swap(handler);
     }
   }
 
@@ -235,7 +235,7 @@ void ThumbnailBase::setImageXform(const ImageTransformation& image_xform) {
 }
 
 void ThumbnailBase::handleLoadResult(const ThumbnailLoadResult& result) {
-  m_ptrCompletionHandler.reset();
+  m_completionHandler.reset();
 
   if (result.status() != ThumbnailLoadResult::LOAD_FAILED) {
     // Note that we don't store result.pixmap() in

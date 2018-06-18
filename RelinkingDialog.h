@@ -65,7 +65,7 @@ class RelinkingDialog : public QDialog {
  private:
   Ui::RelinkingDialog ui;
   RelinkingModel m_model;
-  RelinkingSortingModel* m_pSortingModel;
+  RelinkingSortingModel* m_sortingModel;
   QString m_projectFileDir;
 };
 

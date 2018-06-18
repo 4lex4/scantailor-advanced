@@ -65,17 +65,17 @@ QPolygonF EditableSpline::toPolygon() const {
 /*======================== Spline::SegmentIterator =======================*/
 
 bool EditableSpline::SegmentIterator::hasNext() const {
-  return m_ptrNextVertex && m_ptrNextVertex->next(SplineVertex::LOOP_IF_BRIDGED);
+  return m_nextVertex && m_nextVertex->next(SplineVertex::LOOP_IF_BRIDGED);
 }
 
 SplineSegment EditableSpline::SegmentIterator::next() {
   assert(hasNext());
 
-  SplineVertex::Ptr origin(m_ptrNextVertex);
-  m_ptrNextVertex = m_ptrNextVertex->next(SplineVertex::NO_LOOP);
-  if (!m_ptrNextVertex) {
+  SplineVertex::Ptr origin(m_nextVertex);
+  m_nextVertex = m_nextVertex->next(SplineVertex::NO_LOOP);
+  if (!m_nextVertex) {
     return SplineSegment(origin, origin->next(SplineVertex::LOOP_IF_BRIDGED));
   } else {
-    return SplineSegment(origin, m_ptrNextVertex);
+    return SplineSegment(origin, m_nextVertex);
   }
 }

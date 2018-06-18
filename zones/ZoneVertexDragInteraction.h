@@ -46,9 +46,9 @@ class ZoneVertexDragInteraction : public InteractionHandler {
  private:
   void checkProximity(const InteractionState& interaction);
 
-  ZoneInteractionContext& m_rContext;
-  EditableSpline::Ptr m_ptrSpline;
-  SplineVertex::Ptr m_ptrVertex;
+  ZoneInteractionContext& m_context;
+  EditableSpline::Ptr m_spline;
+  SplineVertex::Ptr m_vertex;
   InteractionState::Captor m_interaction;
   BasicSplineVisualizer m_visualizer;
   QPointF m_dragOffset;

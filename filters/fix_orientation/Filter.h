@@ -87,9 +87,9 @@ class Filter : public AbstractFilter {
 
   void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
 
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ImageSettings> m_ptrImageSettings;
-  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ImageSettings> m_imageSettings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
 };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_FILTER_H_

@@ -83,7 +83,7 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
                              const MenuCustomizer& menu_customizer,
                              std::vector<Zone>& selectable_zones);
 
-  ZoneInteractionContext& context() { return m_rContext; }
+  ZoneInteractionContext& context() { return m_context; }
 
  private slots:
 
@@ -122,11 +122,11 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
 
   ZoneContextMenuItem deleteMenuItemFor(const EditableZoneSet::Zone& zone);
 
-  ZoneInteractionContext& m_rContext;
+  ZoneInteractionContext& m_context;
   std::vector<Zone> m_selectableZones;
   InteractionState::Captor m_interaction;
   Visualizer m_visualizer;
-  std::unique_ptr<QMenu> m_ptrMenu;
+  std::unique_ptr<QMenu> m_menu;
   int m_highlightedZoneIdx;
   bool m_menuItemTriggered;
 #ifdef Q_OS_MAC

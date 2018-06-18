@@ -84,10 +84,10 @@ class RelinkingModel::StatusUpdateThread : private QThread {
 
   void run() override;
 
-  RelinkingModel* m_pOwner;
+  RelinkingModel* m_owner;
   TaskList m_tasks;
-  TasksByPath& m_rTasksByPath;
-  TasksByPriority& m_rTasksByPriority;
+  TasksByPath& m_tasksByPath;
+  TasksByPriority& m_tasksByPriority;
   QString m_pathBeingProcessed;
   QMutex m_mutex;
   QWaitCondition m_cond;
@@ -100,8 +100,8 @@ class RelinkingModel::StatusUpdateThread : private QThread {
 RelinkingModel::RelinkingModel()
     : m_fileIcon(":/icons/file-16.png"),
       m_folderIcon(":/icons/folder-16.png"),
-      m_ptrRelinker(new Relinker),
-      m_ptrStatusUpdateThread(new StatusUpdateThread(this)),
+      m_relinker(new Relinker),
+      m_statusUpdateThread(new StatusUpdateThread(this)),
       m_haveUncommittedChanges(true) {}
 
 RelinkingModel::~RelinkingModel() = default;
@@ -250,7 +250,7 @@ void RelinkingModel::commitChanges() {
     emit dataChanged(index(modified_rowspan_begin), index(row));
   }
 
-  m_ptrRelinker->swap(new_relinker);
+  m_relinker->swap(new_relinker);
   m_haveUncommittedChanges = false;
 }  // RelinkingModel::commitChanges
 
@@ -298,7 +298,7 @@ void RelinkingModel::requestStatusUpdate(const QModelIndex& index) {
   Item& item = m_items[index.row()];
   item.uncommittedStatus = StatusUpdatePending;
 
-  m_ptrStatusUpdateThread->requestStatusUpdate(item.uncommittedPath, index.row());
+  m_statusUpdateThread->requestStatusUpdate(item.uncommittedPath, index.row());
 }
 
 void RelinkingModel::customEvent(QEvent* event) {
@@ -326,10 +326,10 @@ void RelinkingModel::customEvent(QEvent* event) {
 
 RelinkingModel::StatusUpdateThread::StatusUpdateThread(RelinkingModel* owner)
     : QThread(owner),
-      m_pOwner(owner),
+      m_owner(owner),
       m_tasks(),
-      m_rTasksByPath(m_tasks.get<OrderedByPathTag>()),
-      m_rTasksByPriority(m_tasks.get<OrderedByPriorityTag>()),
+      m_tasksByPath(m_tasks.get<OrderedByPathTag>()),
+      m_tasksByPriority(m_tasks.get<OrderedByPriorityTag>()),
       m_exiting(false) {}
 
 RelinkingModel::StatusUpdateThread::~StatusUpdateThread() {
@@ -353,10 +353,10 @@ void RelinkingModel::StatusUpdateThread::requestStatusUpdate(const QString& path
     return;
   }
 
-  const std::pair<TasksByPath::iterator, bool> ins(m_rTasksByPath.insert(Task(path, row)));
+  const std::pair<TasksByPath::iterator, bool> ins(m_tasksByPath.insert(Task(path, row)));
 
   // Whether inserted or being already there, move it to the front of priority queue.
-  m_rTasksByPriority.relocate(m_rTasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first));
+  m_tasksByPriority.relocate(m_tasksByPriority.end(), m_tasks.project<OrderedByPriorityTag>(ins.first));
 
   if (!isRunning()) {
     start();
@@ -370,12 +370,12 @@ void RelinkingModel::StatusUpdateThread::run() try {
 
   class MutexUnlocker {
    public:
-    explicit MutexUnlocker(QMutex* mutex) : m_pMutex(mutex) { mutex->unlock(); }
+    explicit MutexUnlocker(QMutex* mutex) : m_mutex(mutex) { mutex->unlock(); }
 
-    ~MutexUnlocker() { m_pMutex->lock(); }
+    ~MutexUnlocker() { m_mutex->lock(); }
 
    private:
-    QMutex* const m_pMutex;
+    QMutex* const m_mutex;
   };
 
 
@@ -392,16 +392,16 @@ void RelinkingModel::StatusUpdateThread::run() try {
       continue;
     }
 
-    const Task task(m_rTasksByPriority.front());
+    const Task task(m_tasksByPriority.front());
     m_pathBeingProcessed = task.path;
-    m_rTasksByPriority.pop_front();
+    m_tasksByPriority.pop_front();
 
     {
       const MutexUnlocker unlocker(&m_mutex);
 
       const bool exists = QFile::exists(task.path);
       const StatusUpdateResponse response(task.path, task.row, exists ? Exists : Missing);
-      QCoreApplication::postEvent(m_pOwner, new PayloadEvent<StatusUpdateResponse>(response));
+      QCoreApplication::postEvent(m_owner, new PayloadEvent<StatusUpdateResponse>(response));
     }
 
     m_pathBeingProcessed.clear();

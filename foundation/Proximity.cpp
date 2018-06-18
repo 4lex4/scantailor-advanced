@@ -68,10 +68,10 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   pts[0] = segment.p1();
   pts[1] = segment.p2();
 
-  const Proximity* p_min_prx = std::min_element(prx, prx + 2);
+  const Proximity* min_prx = std::min_element(prx, prx + 2);
   if (point_on_segment) {
-    *point_on_segment = pts[p_min_prx - prx];
+    *point_on_segment = pts[min_prx - prx];
   }
 
-  return *p_min_prx;
+  return *min_prx;
 }  // Proximity::pointAndLineSegment

@@ -155,7 +155,7 @@ class ConnectivityMap {
    * so moving to the next line requires adding stride() rather
    * than size().width().
    */
-  const uint32_t* data() const { return m_pData; }
+  const uint32_t* data() const { return m_plainData; }
 
   /**
    * \brief Returns a pointer to the top-left corner of the map.
@@ -164,7 +164,7 @@ class ConnectivityMap {
    * so moving to the next line requires adding stride() rather
    * than size().width().
    */
-  uint32_t* data() { return m_pData; }
+  uint32_t* data() { return m_plainData; }
 
   /**
    * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -173,7 +173,7 @@ class ConnectivityMap {
    * labelled as background (label 0).  Sometimes it might be desirable
    * to access that data.
    */
-  const uint32_t* paddedData() const { return m_pData ? &m_data[0] : nullptr; }
+  const uint32_t* paddedData() const { return m_plainData ? &m_data[0] : nullptr; }
 
   /**
    * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -182,7 +182,7 @@ class ConnectivityMap {
    * labelled as background (label 0).  Sometimes it might be desirable
    * to access that data.
    */
-  uint32_t* paddedData() { return m_pData ? &m_data[0] : nullptr; }
+  uint32_t* paddedData() { return m_plainData ? &m_data[0] : nullptr; }
 
   /**
    * \brief Returns non-padded dimensions of the map.
@@ -240,7 +240,7 @@ class ConnectivityMap {
   static const uint32_t UNTAGGED_FG;
 
   std::vector<uint32_t> m_data;
-  uint32_t* m_pData;
+  uint32_t* m_plainData;
   QSize m_size;
   int m_stride;
   uint32_t m_maxLabel;
@@ -253,7 +253,7 @@ inline void swap(ConnectivityMap& o1, ConnectivityMap& o2) {
 
 template <typename T>
 ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int src_stride, const Connectivity conn)
-    : m_pData(0), m_size(size), m_stride(0), m_maxLabel(0) {
+    : m_plainData(0), m_size(size), m_stride(0), m_maxLabel(0) {
   if (size.isEmpty()) {
     return;
   }
@@ -263,9 +263,9 @@ ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int src_s
 
   m_data.resize((width + 2) * (height + 2), BACKGROUND);
   m_stride = width + 2;
-  m_pData = &m_data[0] + 1 + m_stride;
+  m_plainData = &m_data[0] + 1 + m_stride;
 
-  uint32_t* dst = m_pData;
+  uint32_t* dst = m_plainData;
   const int dst_stride = m_stride;
 
   for (int y = 0; y < height; ++y) {

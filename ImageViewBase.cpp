@@ -46,9 +46,9 @@ class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<Abst
  public:
   HqTransformTask(ImageViewBase* image_view, const QImage& image, const QTransform& xform, const QSize& target_size);
 
-  void cancel() { m_ptrResult->cancel(); }
+  void cancel() { m_result->cancel(); }
 
-  const bool isCancelled() const { return m_ptrResult->isCancelled(); }
+  const bool isCancelled() const { return m_result->isCancelled(); }
 
   intrusive_ptr<AbstractCommand<void>> operator()() override;
 
@@ -66,14 +66,14 @@ class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<Abst
     void operator()() override;
 
    private:
-    QPointer<ImageViewBase> m_ptrImageView;
+    QPointer<ImageViewBase> m_imageView;
     QPoint m_origin;
     QImage m_hqImage;
     mutable QAtomicInt m_cancelFlag;
   };
 
 
-  intrusive_ptr<Result> m_ptrResult;
+  intrusive_ptr<Result> m_result;
   QImage m_image;
   QTransform m_xform;
   QSize m_targetSize;
@@ -104,7 +104,7 @@ class ImageViewBase::TempFocalPointAdjuster {
   ~TempFocalPointAdjuster();
 
  private:
-  ImageViewBase& m_rObj;
+  ImageViewBase& m_obj;
   QPointF m_origWidgetFP;
 };
 
@@ -116,7 +116,7 @@ class ImageViewBase::TransformChangeWatcher {
   ~TransformChangeWatcher();
 
  private:
-  ImageViewBase& m_rOwner;
+  ImageViewBase& m_owner;
   QTransform m_imageToVirtual;
   QTransform m_virtualToWidget;
   QRectF m_virtualDisplayArea;
@@ -215,9 +215,9 @@ void ImageViewBase::hqTransformSetEnabled(const bool enabled) {
   if (!enabled && m_hqTransformEnabled) {
     // Turning off.
     m_hqTransformEnabled = false;
-    if (m_ptrHqTransformTask) {
-      m_ptrHqTransformTask->cancel();
-      m_ptrHqTransformTask.reset();
+    if (m_hqTransformTask) {
+      m_hqTransformTask->cancel();
+      m_hqTransformTask.reset();
     }
     if (!m_hqPixmap.isNull()) {
       m_hqPixmap = QPixmap();
@@ -911,9 +911,9 @@ void ImageViewBase::scheduleHqVersionRebuild() {
   const QTransform xform(m_imageToVirtual * m_virtualToWidget);
 
   if (!m_timer.isActive() || (m_potentialHqXform != xform)) {
-    if (m_ptrHqTransformTask) {
-      m_ptrHqTransformTask->cancel();
-      m_ptrHqTransformTask.reset();
+    if (m_hqTransformTask) {
+      m_hqTransformTask->cancel();
+      m_hqTransformTask.reset();
     }
     m_potentialHqXform = xform;
   }
@@ -927,9 +927,9 @@ void ImageViewBase::initiateBuildingHqVersion() {
 
   m_hqPixmap = QPixmap();
 
-  if (m_ptrHqTransformTask) {
-    m_ptrHqTransformTask->cancel();
-    m_ptrHqTransformTask.reset();
+  if (m_hqTransformTask) {
+    m_hqTransformTask->cancel();
+    m_hqTransformTask.reset();
   }
 
   const QTransform xform(m_imageToVirtual * m_virtualToWidget);
@@ -937,7 +937,7 @@ void ImageViewBase::initiateBuildingHqVersion() {
 
   backgroundExecutor().enqueueTask(task);
 
-  m_ptrHqTransformTask = task;
+  m_hqTransformTask = task;
   m_hqXform = xform;
   m_hqSourceId = m_image.cacheKey();
 }
@@ -952,7 +952,7 @@ void ImageViewBase::hqVersionBuilt(const QPoint& origin, const QImage& image) {
 
   m_hqPixmap = QPixmap::fromImage(image);
   m_hqPixmapPos = origin;
-  m_ptrHqTransformTask.reset();
+  m_hqTransformTask.reset();
   update();
 }
 
@@ -1006,7 +1006,7 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* image_view,
                                                 const QImage& image,
                                                 const QTransform& xform,
                                                 const QSize& target_size)
-    : m_ptrResult(new Result(image_view)), m_image(image), m_xform(xform), m_targetSize(target_size) {}
+    : m_result(new Result(image_view)), m_image(image), m_xform(xform), m_targetSize(target_size) {}
 
 intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()() {
   if (isCancelled()) {
@@ -1026,14 +1026,14 @@ intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()(
   hq_image = hq_image.convertToFormat(hq_image.hasAlphaChannel() ? QImage::Format_ARGB32_Premultiplied
                                                                  : QImage::Format_RGB32);
 
-  m_ptrResult->setData(target_rect.topLeft(), hq_image);
+  m_result->setData(target_rect.topLeft(), hq_image);
 
-  return m_ptrResult;
+  return m_result;
 }
 
 /*================ ImageViewBase::HqTransformTask::Result ================*/
 
-ImageViewBase::HqTransformTask::Result::Result(ImageViewBase* image_view) : m_ptrImageView(image_view) {}
+ImageViewBase::HqTransformTask::Result::Result(ImageViewBase* image_view) : m_imageView(image_view) {}
 
 void ImageViewBase::HqTransformTask::Result::setData(const QPoint& origin, const QImage& hq_image) {
   m_hqImage = hq_image;
@@ -1041,42 +1041,42 @@ void ImageViewBase::HqTransformTask::Result::setData(const QPoint& origin, const
 }
 
 void ImageViewBase::HqTransformTask::Result::operator()() {
-  if (m_ptrImageView && !isCancelled()) {
-    m_ptrImageView->hqVersionBuilt(m_origin, m_hqImage);
+  if (m_imageView && !isCancelled()) {
+    m_imageView->hqVersionBuilt(m_origin, m_hqImage);
   }
 }
 
 /*================= ImageViewBase::TempFocalPointAdjuster =================*/
 
 ImageViewBase::TempFocalPointAdjuster::TempFocalPointAdjuster(ImageViewBase& obj)
-    : m_rObj(obj), m_origWidgetFP(obj.getWidgetFocalPoint()) {
+    : m_obj(obj), m_origWidgetFP(obj.getWidgetFocalPoint()) {
   obj.setWidgetFocalPointWithoutMoving(obj.centeredWidgetFocalPoint());
 }
 
 ImageViewBase::TempFocalPointAdjuster::TempFocalPointAdjuster(ImageViewBase& obj, const QPointF temp_widget_fp)
-    : m_rObj(obj), m_origWidgetFP(obj.getWidgetFocalPoint()) {
+    : m_obj(obj), m_origWidgetFP(obj.getWidgetFocalPoint()) {
   obj.setWidgetFocalPointWithoutMoving(temp_widget_fp);
 }
 
 ImageViewBase::TempFocalPointAdjuster::~TempFocalPointAdjuster() {
-  m_rObj.setWidgetFocalPointWithoutMoving(m_origWidgetFP);
+  m_obj.setWidgetFocalPointWithoutMoving(m_origWidgetFP);
 }
 
 /*================== ImageViewBase::TransformChangeWatcher ================*/
 
 ImageViewBase::TransformChangeWatcher::TransformChangeWatcher(ImageViewBase& owner)
-    : m_rOwner(owner),
+    : m_owner(owner),
       m_imageToVirtual(owner.m_imageToVirtual),
       m_virtualToWidget(owner.m_virtualToWidget),
       m_virtualDisplayArea(owner.m_virtualDisplayArea) {
-  ++m_rOwner.m_transformChangeWatchersActive;
+  ++m_owner.m_transformChangeWatchersActive;
 }
 
 ImageViewBase::TransformChangeWatcher::~TransformChangeWatcher() {
-  if (--m_rOwner.m_transformChangeWatchersActive == 0) {
-    if ((m_imageToVirtual != m_rOwner.m_imageToVirtual) || (m_virtualToWidget != m_rOwner.m_virtualToWidget)
-        || (m_virtualDisplayArea != m_rOwner.m_virtualDisplayArea)) {
-      m_rOwner.transformChanged();
+  if (--m_owner.m_transformChangeWatchersActive == 0) {
+    if ((m_imageToVirtual != m_owner.m_imageToVirtual) || (m_virtualToWidget != m_owner.m_virtualToWidget)
+        || (m_virtualDisplayArea != m_owner.m_virtualDisplayArea)) {
+      m_owner.transformChanged();
     }
   }
 }

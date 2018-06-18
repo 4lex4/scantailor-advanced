@@ -57,11 +57,11 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_ptrFilter; }
+  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_ptrFilter;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
   PageId m_pageId;
@@ -78,14 +78,14 @@ Task::Task(intrusive_ptr<Filter> filter,
            const PageId& page_id,
            const bool batch_processing,
            const bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrSettings(std::move(settings)),
-      m_ptrImageSettings(std::move(image_settings)),
-      m_ptrNextTask(std::move(next_task)),
+    : m_filter(std::move(filter)),
+      m_settings(std::move(settings)),
+      m_imageSettings(std::move(image_settings)),
+      m_nextTask(std::move(next_task)),
       m_pageId(page_id),
       m_batchProcessing(batch_processing) {
   if (debug) {
-    m_ptrDbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImages>();
   }
 }
 
@@ -96,7 +96,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
 
   const Dependencies deps(data.xform().preCropArea(), data.xform().preRotation());
 
-  std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
+  std::unique_ptr<Params> params(m_settings->getPageParams(m_pageId));
   updateFilterData(status, data, (!params || !deps.matches(params->dependencies())));
 
   OptionsWidget::UiData ui_data;
@@ -111,7 +111,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
       ui_data.setMode(params->mode());
 
       Params new_params(ui_data.effectiveDeskewAngle(), deps, ui_data.mode());
-      m_ptrSettings->setPageParams(m_pageId, new_params);
+      m_settings->setPageParams(m_pageId, new_params);
     }
   }
 
@@ -126,15 +126,15 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
           BinaryImage(data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(), bounded_image_area,
                       data.isBlackOnWhite() ? data.bwThreshold() : BinaryThreshold(256 - int(data.bwThreshold()))),
           data.xform().preRotation().toDegrees()));
-      if (m_ptrDbg) {
-        m_ptrDbg->add(rotated_image, "bw_rotated");
+      if (m_dbg) {
+        m_dbg->add(rotated_image, "bw_rotated");
       }
 
       const QSize unrotated_dpm(Dpm(data.origImage()).toSize());
       const Dpm rotated_dpm(data.xform().preRotation().rotate(unrotated_dpm));
       cleanup(status, rotated_image, Dpi(rotated_dpm));
-      if (m_ptrDbg) {
-        m_ptrDbg->add(rotated_image, "after_cleanup");
+      if (m_dbg) {
+        m_dbg->add(rotated_image, "after_cleanup");
       }
 
       status.throwIfCancelled();
@@ -151,7 +151,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
       ui_data.setMode(MODE_AUTO);
 
       Params new_params(ui_data.effectiveDeskewAngle(), deps, ui_data.mode());
-      m_ptrSettings->setPageParams(m_pageId, new_params);
+      m_settings->setPageParams(m_pageId, new_params);
 
       status.throwIfCancelled();
     }
@@ -160,10 +160,10 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
   ImageTransformation new_xform(data.xform());
   new_xform.setPostRotation(ui_data.effectiveDeskewAngle());
 
-  if (m_ptrNextTask) {
-    return m_ptrNextTask->process(status, FilterData(data, new_xform));
+  if (m_nextTask) {
+    return m_nextTask->process(status, FilterData(data, new_xform));
   } else {
-    return make_intrusive<UiUpdater>(m_ptrFilter, std::move(m_ptrDbg), data.origImage(), m_pageId, new_xform, ui_data,
+    return make_intrusive<UiUpdater>(m_filter, std::move(m_dbg), data.origImage(), m_pageId, new_xform, ui_data,
                                      m_batchProcessing);
   }
 }  // Task::process
@@ -222,7 +222,7 @@ QSize Task::from150dpi(const QSize& size, const Dpi& target_dpi) {
 }
 
 void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate) {
-  const std::unique_ptr<ImageSettings::PageParams> params = m_ptrImageSettings->getPageParams(m_pageId);
+  const std::unique_ptr<ImageSettings::PageParams> params = m_imageSettings->getPageParams(m_pageId);
   if (!needUpdate && params) {
     data.updateImageParams(*params);
   } else {
@@ -231,11 +231,11 @@ void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool nee
     PolygonRasterizer::fillExcept(mask, WHITE, data.xform().resultingPreCropArea(), Qt::WindingFill);
     bool isBlackOnWhite = true;
     if (QSettings().value("settings/blackOnWhiteDetection", true).toBool()) {
-      isBlackOnWhite = BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_ptrDbg.get());
+      isBlackOnWhite = BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_dbg.get());
     }
     ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)), isBlackOnWhite);
 
-    m_ptrImageSettings->setPageParams(m_pageId, new_params);
+    m_imageSettings->setPageParams(m_pageId, new_params);
     data.updateImageParams(new_params);
   }
 }
@@ -249,8 +249,8 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const ImageTransformation& xform,
                            const OptionsWidget::UiData& ui_data,
                            const bool batch_processing)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrDbg(std::move(dbg_img)),
+    : m_filter(std::move(filter)),
+      m_dbg(std::move(dbg_img)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
       m_pageId(page_id),
@@ -260,7 +260,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+  OptionsWidget* const opt_widget = m_filter->optionsWidget();
   opt_widget->postUpdateUI(m_uiData);
   ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
 
@@ -271,7 +271,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   }
 
   auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
-  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 
   QObject::connect(view, SIGNAL(manualDeskewAngleSet(double)), opt_widget,
                    SLOT(manualDeskewAngleSetExternally(double)));

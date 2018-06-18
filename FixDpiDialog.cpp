@@ -196,12 +196,12 @@ class FixDpiDialog::FilterModel : private QSortFilterProxyModel {
 
   QVariant data(const QModelIndex& index, int role) const override;
 
-  TreeModel& m_rDelegate;
+  TreeModel& m_delegate;
 };
 
 
 FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent)
-    : QDialog(parent), m_ptrPages(new TreeModel(files)), m_ptrUndefinedDpiPages(new FilterModel(*m_ptrPages)) {
+    : QDialog(parent), m_pages(new TreeModel(files)), m_undefinedDpiPages(new FilterModel(*m_pages)) {
   setupUi(this);
 
   m_normalPalette = xDpi->palette();
@@ -216,8 +216,8 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
 
   tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
   tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));
-  undefinedDpiView->setModel(m_ptrUndefinedDpiPages->model()), undefinedDpiView->header()->hide();
-  allPagesView->setModel(m_ptrPages->model());
+  undefinedDpiView->setModel(m_undefinedDpiPages->model()), undefinedDpiView->header()->hide();
+  allPagesView->setModel(m_pages->model());
   allPagesView->header()->hide();
 
   xDpi->setMaxLength(4);
@@ -245,7 +245,7 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
 FixDpiDialog::~FixDpiDialog() = default;
 
 const std::vector<ImageFileInfo>& FixDpiDialog::files() const {
-  return m_ptrPages->files();
+  return m_pages->files();
 }
 
 void FixDpiDialog::tabChanged(const int tab) {
@@ -301,11 +301,11 @@ void FixDpiDialog::applyClicked() {
   if (tabWidget->currentIndex() == ALL_PAGES_TAB) {
     selection_model = allPagesView->selectionModel();
     const QItemSelection selection(selection_model->selection());
-    m_ptrPages->applyDpiToSelection(ALL, dpi, selection);
+    m_pages->applyDpiToSelection(ALL, dpi, selection);
   } else {
     selection_model = undefinedDpiView->selectionModel();
-    const QItemSelection selection(m_ptrUndefinedDpiPages->model()->mapSelectionToSource(selection_model->selection()));
-    m_ptrPages->applyDpiToSelection(NOT_OK, dpi, selection);
+    const QItemSelection selection(m_undefinedDpiPages->model()->mapSelectionToSource(selection_model->selection()));
+    m_pages->applyDpiToSelection(NOT_OK, dpi, selection);
   }
 
   updateDpiFromSelection(selection_model->selection());
@@ -313,7 +313,7 @@ void FixDpiDialog::applyClicked() {
 }
 
 void FixDpiDialog::enableDisableOkButton() {
-  const bool enable = m_ptrPages->allDpisOK();
+  const bool enable = m_pages->allDpisOK();
   buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);
 }
 
@@ -745,13 +745,13 @@ QString FixDpiDialog::TreeModel::sizeToString(const QSize size) {
 
 /*====================== FixDpiDialog::FilterModel ======================*/
 
-FixDpiDialog::FilterModel::FilterModel(TreeModel& delegate) : m_rDelegate(delegate) {
+FixDpiDialog::FilterModel::FilterModel(TreeModel& delegate) : m_delegate(delegate) {
   setDynamicSortFilter(true);
   setSourceModel(delegate.model());
 }
 
 bool FixDpiDialog::FilterModel::filterAcceptsRow(const int source_row, const QModelIndex& source_parent) const {
-  return m_rDelegate.isVisibleForFilter(source_parent, source_row);
+  return m_delegate.isVisibleForFilter(source_parent, source_row);
 }
 
 QVariant FixDpiDialog::FilterModel::data(const QModelIndex& index, int role) const {

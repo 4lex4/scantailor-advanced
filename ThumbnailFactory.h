@@ -45,9 +45,9 @@ class ThumbnailFactory : public ref_countable {
  private:
   class Collector;
 
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrPixmapCache;
+  intrusive_ptr<ThumbnailPixmapCache> m_pixmapCache;
   QSizeF m_maxSize;
-  intrusive_ptr<CompositeCacheDrivenTask> m_ptrTask;
+  intrusive_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

@@ -55,9 +55,9 @@ class BinaryImage::SharedData {
 
   const uint32_t* data() const { return m_data; }
 
-  bool isShared() const { return m_refCounter.fetchAndAddRelaxed(0) > 1; }
+  bool isShared() const { return m_counter.fetchAndAddRelaxed(0) > 1; }
 
-  void ref() const { m_refCounter.ref(); }
+  void ref() const { m_counter.ref(); }
 
   void unref() const;
 
@@ -66,21 +66,21 @@ class BinaryImage::SharedData {
   static void operator delete(void* addr, NumWords num_words);
 
  private:
-  SharedData() : m_refCounter(1) {}
+  SharedData() : m_counter(1) {}
 
   SharedData& operator=(const SharedData&) = delete;  // forbidden
 
-  mutable QAtomicInt m_refCounter;
+  mutable QAtomicInt m_counter;
   uint32_t m_data[1]{};  // more data follows
 };
 
 
-BinaryImage::BinaryImage() : m_pData(nullptr), m_width(0), m_height(0), m_wpl(0) {}
+BinaryImage::BinaryImage() : m_data(nullptr), m_width(0), m_height(0), m_wpl(0) {}
 
 BinaryImage::BinaryImage(const int width, const int height)
     : m_width(width), m_height(height), m_wpl((width + 31) / 32) {
   if ((m_width > 0) && (m_height > 0)) {
-    m_pData = SharedData::create(m_height * m_wpl);
+    m_data = SharedData::create(m_height * m_wpl);
   } else {
     throw std::invalid_argument("BinaryImage dimensions are wrong");
   }
@@ -89,7 +89,7 @@ BinaryImage::BinaryImage(const int width, const int height)
 BinaryImage::BinaryImage(const QSize size)
     : m_width(size.width()), m_height(size.height()), m_wpl((size.width() + 31) / 32) {
   if ((m_width > 0) && (m_height > 0)) {
-    m_pData = SharedData::create(m_height * m_wpl);
+    m_data = SharedData::create(m_height * m_wpl);
   } else {
     throw std::invalid_argument("BinaryImage dimensions are wrong");
   }
@@ -98,7 +98,7 @@ BinaryImage::BinaryImage(const QSize size)
 BinaryImage::BinaryImage(const int width, const int height, const BWColor color)
     : m_width(width), m_height(height), m_wpl((width + 31) / 32) {
   if ((m_width > 0) && (m_height > 0)) {
-    m_pData = SharedData::create(m_height * m_wpl);
+    m_data = SharedData::create(m_height * m_wpl);
   } else {
     throw std::invalid_argument("BinaryImage dimensions are wrong");
   }
@@ -108,7 +108,7 @@ BinaryImage::BinaryImage(const int width, const int height, const BWColor color)
 BinaryImage::BinaryImage(const QSize size, const BWColor color)
     : m_width(size.width()), m_height(size.height()), m_wpl((size.width() + 31) / 32) {
   if ((m_width > 0) && (m_height > 0)) {
-    m_pData = SharedData::create(m_height * m_wpl);
+    m_data = SharedData::create(m_height * m_wpl);
   } else {
     throw std::invalid_argument("BinaryImage dimensions are wrong");
   }
@@ -116,17 +116,17 @@ BinaryImage::BinaryImage(const QSize size, const BWColor color)
 }
 
 BinaryImage::BinaryImage(const int width, const int height, SharedData* const data)
-    : m_pData(data), m_width(width), m_height(height), m_wpl((width + 31) / 32) {}
+    : m_data(data), m_width(width), m_height(height), m_wpl((width + 31) / 32) {}
 
 BinaryImage::BinaryImage(const BinaryImage& other)
-    : m_pData(other.m_pData), m_width(other.m_width), m_height(other.m_height), m_wpl(other.m_wpl) {
-  if (m_pData) {
-    m_pData->ref();
+    : m_data(other.m_data), m_width(other.m_width), m_height(other.m_height), m_wpl(other.m_wpl) {
+  if (m_data) {
+    m_data->ref();
   }
 }
 
 BinaryImage::BinaryImage(const QImage& image, const BinaryThreshold threshold)
-    : m_pData(nullptr), m_width(0), m_height(0), m_wpl(0) {
+    : m_data(nullptr), m_width(0), m_height(0), m_wpl(0) {
   const QRect image_rect(image.rect());
 
   switch (image.format()) {
@@ -157,7 +157,7 @@ BinaryImage::BinaryImage(const QImage& image, const BinaryThreshold threshold)
 }
 
 BinaryImage::BinaryImage(const QImage& image, const QRect& rect, const BinaryThreshold threshold)
-    : m_pData(nullptr), m_width(0), m_height(0), m_wpl(0) {
+    : m_data(nullptr), m_width(0), m_height(0), m_wpl(0) {
   if (rect.isEmpty()) {
     return;
   } else if (rect.intersected(image.rect()) != rect) {
@@ -192,8 +192,8 @@ BinaryImage::BinaryImage(const QImage& image, const QRect& rect, const BinaryThr
 }
 
 BinaryImage::~BinaryImage() {
-  if (m_pData) {
-    m_pData->unref();
+  if (m_data) {
+    m_data->unref();
   }
 }
 
@@ -204,7 +204,7 @@ BinaryImage& BinaryImage::operator=(const BinaryImage& other) {
 }
 
 void BinaryImage::swap(BinaryImage& other) {
-  std::swap(m_pData, other.m_pData);
+  std::swap(m_data, other.m_data);
   std::swap(m_width, other.m_width);
   std::swap(m_height, other.m_height);
   std::swap(m_wpl, other.m_wpl);
@@ -217,8 +217,8 @@ void BinaryImage::invert() {
 
   const size_t num_words = m_height * m_wpl;
 
-  assert(m_pData);
-  if (!m_pData->isShared()) {
+  assert(m_data);
+  if (!m_data->isShared()) {
     // In-place operation
     uint32_t* data = this->data();
     for (size_t i = 0; i < num_words; ++i, ++data) {
@@ -227,14 +227,14 @@ void BinaryImage::invert() {
   } else {
     SharedData* new_data = SharedData::create(num_words);
 
-    const uint32_t* src_data = m_pData->data();
+    const uint32_t* src_data = m_data->data();
     uint32_t* dst_data = new_data->data();
     for (size_t i = 0; i < num_words; ++i, ++src_data, ++dst_data) {
       *dst_data = ~*src_data;
     }
 
-    m_pData->unref();
-    m_pData = new_data;
+    m_data->unref();
+    m_data = new_data;
   }
 }
 
@@ -246,7 +246,7 @@ BinaryImage BinaryImage::inverted() const {
   const size_t num_words = m_height * m_wpl;
   SharedData* new_data = SharedData::create(num_words);
 
-  const uint32_t* src_data = m_pData->data();
+  const uint32_t* src_data = m_data->data();
   uint32_t* dst_data = new_data->data();
   for (size_t i = 0; i < num_words; ++i, ++src_data, ++dst_data) {
     *dst_data = ~*src_data;
@@ -706,7 +706,7 @@ uint32_t* BinaryImage::data() {
 
   copyIfShared();
 
-  return m_pData->data();
+  return m_data->data();
 }
 
 const uint32_t* BinaryImage::data() const {
@@ -714,7 +714,7 @@ const uint32_t* BinaryImage::data() const {
     return nullptr;
   }
 
-  return m_pData->data();
+  return m_data->data();
 }
 
 QImage BinaryImage::toQImage() const {
@@ -781,16 +781,16 @@ QImage BinaryImage::toAlphaMask(const QColor& color) const {
 }  // BinaryImage::toAlphaMask
 
 void BinaryImage::copyIfShared() {
-  assert(m_pData);
-  if (!m_pData->isShared()) {
+  assert(m_data);
+  if (!m_data->isShared()) {
     return;
   }
 
   const size_t num_words = m_height * m_wpl;
   SharedData* new_data = SharedData::create(num_words);
-  memcpy(new_data->data(), m_pData->data(), num_words * 4);
-  m_pData->unref();
-  m_pData = new_data;
+  memcpy(new_data->data(), m_data->data(), num_words * 4);
+  m_data->unref();
+  m_data = new_data;
 }
 
 void BinaryImage::fillRectImpl(uint32_t* const data, const QRect& rect, const BWColor color) {
@@ -1278,7 +1278,7 @@ bool operator==(const BinaryImage& lhs, const BinaryImage& rhs) {
 /*====================== BinaryIamge::SharedData ========================*/
 
 void BinaryImage::SharedData::unref() const {
-  if (!m_refCounter.deref()) {
+  if (!m_counter.deref()) {
     this->~SharedData();
     free((void*) this);
   }

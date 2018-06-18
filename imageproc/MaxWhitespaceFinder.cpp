@@ -37,7 +37,7 @@ class AreaCompare {
 
 MaxWhitespaceFinder::MaxWhitespaceFinder(const BinaryImage& img, QSize min_size)
     : m_integralImg(img.size()),
-      m_ptrQueuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
+      m_queuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
       m_minSize(min_size) {
   init(img);
 }
@@ -57,23 +57,23 @@ void MaxWhitespaceFinder::init(const BinaryImage& img) {
   }
 
   Region region(0, img.rect());
-  m_ptrQueuedRegions->push(region);
+  m_queuedRegions->push(region);
 }
 
 void MaxWhitespaceFinder::addObstacle(const QRect& obstacle) {
-  if (m_ptrQueuedRegions->size() == 1) {
-    m_ptrQueuedRegions->top().addObstacle(obstacle);
+  if (m_queuedRegions->size() == 1) {
+    m_queuedRegions->top().addObstacle(obstacle);
   } else {
     m_newObstacles.push_back(obstacle);
   }
 }
 
 QRect MaxWhitespaceFinder::next(const ObstacleMode obstacle_mode, int max_iterations) {
-  while (max_iterations-- > 0 && !m_ptrQueuedRegions->empty()) {
-    Region& top_region = m_ptrQueuedRegions->top();
+  while (max_iterations-- > 0 && !m_queuedRegions->empty()) {
+    Region& top_region = m_queuedRegions->top();
     Region region(top_region);
     region.swapObstacles(top_region);
-    m_ptrQueuedRegions->pop();
+    m_queuedRegions->pop();
 
     region.addNewObstacles(m_newObstacles);
 
@@ -119,7 +119,7 @@ void MaxWhitespaceFinder::subdivide(const Region& region, const QRect bounds, co
     new_bounds.setBottom(pivot.top() - 1);  // Bottom is inclusive.
     Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
     new_region.addObstacles(region);
-    m_ptrQueuedRegions->push(new_region);
+    m_queuedRegions->push(new_region);
   }
 
   // Area below the pivot obstacle.
@@ -128,7 +128,7 @@ void MaxWhitespaceFinder::subdivide(const Region& region, const QRect bounds, co
     new_bounds.setTop(pivot.bottom() + 1);
     Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
     new_region.addObstacles(region);
-    m_ptrQueuedRegions->push(new_region);
+    m_queuedRegions->push(new_region);
   }
 
   // Area to the left of the pivot obstacle.
@@ -137,7 +137,7 @@ void MaxWhitespaceFinder::subdivide(const Region& region, const QRect bounds, co
     new_bounds.setRight(pivot.left() - 1);  // Right is inclusive.
     Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
     new_region.addObstacles(region);
-    m_ptrQueuedRegions->push(new_region);
+    m_queuedRegions->push(new_region);
   }
   // Area to the right of the pivot obstacle.
   if (bounds.right() - pivot.right() >= m_minSize.width()) {
@@ -145,7 +145,7 @@ void MaxWhitespaceFinder::subdivide(const Region& region, const QRect bounds, co
     new_bounds.setLeft(pivot.right() + 1);
     Region new_region(static_cast<unsigned int>(m_newObstacles.size()), new_bounds);
     new_region.addObstacles(region);
-    m_ptrQueuedRegions->push(new_region);
+    m_queuedRegions->push(new_region);
   }
 }  // MaxWhitespaceFinder::subdivide
 

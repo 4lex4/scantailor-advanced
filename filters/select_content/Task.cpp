@@ -49,12 +49,12 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_ptrFilter; }
+  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_ptrFilter;
+  intrusive_ptr<Filter> m_filter;
   PageId m_pageId;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
   GrayImage m_grayImage;
@@ -70,13 +70,13 @@ Task::Task(intrusive_ptr<Filter> filter,
            const PageId& page_id,
            const bool batch,
            const bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrNextTask(std::move(next_task)),
-      m_ptrSettings(std::move(settings)),
+    : m_filter(std::move(filter)),
+      m_nextTask(std::move(next_task)),
+      m_settings(std::move(settings)),
       m_pageId(page_id),
       m_batchProcessing(batch) {
   if (debug) {
-    m_ptrDbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImages>();
   }
 }
 
@@ -90,7 +90,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   OptionsWidget::UiData ui_data;
   ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
 
-  std::unique_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
+  std::unique_ptr<Params> params(m_settings->getPageParams(m_pageId));
 
   Params new_params(deps);
   if (params) {
@@ -104,8 +104,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
 
     if (new_params.pageDetectionMode() == MODE_AUTO) {
       page_rect
-          = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(), m_ptrSettings->pageDetectionBox(),
-                                    m_ptrSettings->pageDetectionTolerance(), m_ptrDbg.get());
+          = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(), m_settings->pageDetectionBox(),
+                                    m_settings->pageDetectionTolerance(), m_dbg.get());
     } else if (new_params.pageDetectionMode() == MODE_MANUAL) {
       // shifting page rect for skewed pages correcting
       QRectF corrected_page_rect(new_params.pageRect());
@@ -128,7 +128,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     }
 
     if (new_params.contentDetectionMode() == MODE_AUTO) {
-      content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_ptrDbg.get());
+      content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_dbg.get());
     } else if ((new_params.contentDetectionMode() == MODE_MANUAL) || new_params.contentRect().isEmpty()) {
       if (!new_params.contentRect().isEmpty()) {
         // shifting content rect for skewed pages correcting
@@ -172,14 +172,14 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     new_params.setContentSizeMM(ui_data.contentSizeMM());
   }
 
-  m_ptrSettings->setPageParams(m_pageId, new_params);
+  m_settings->setPageParams(m_pageId, new_params);
 
   status.throwIfCancelled();
 
-  if (m_ptrNextTask) {
-    return m_ptrNextTask->process(status, FilterData(data, data.xform()), ui_data.pageRect(), ui_data.contentRect());
+  if (m_nextTask) {
+    return m_nextTask->process(status, FilterData(data, data.xform()), ui_data.pageRect(), ui_data.contentRect());
   } else {
-    return make_intrusive<UiUpdater>(m_ptrFilter, m_pageId, std::move(m_ptrDbg), data.origImage(), data.xform(),
+    return make_intrusive<UiUpdater>(m_filter, m_pageId, std::move(m_dbg), data.origImage(), data.xform(),
                                      data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(), ui_data,
                                      m_batchProcessing);
   }
@@ -195,9 +195,9 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const GrayImage& gray_image,
                            const OptionsWidget::UiData& ui_data,
                            const bool batch)
-    : m_ptrFilter(std::move(filter)),
+    : m_filter(std::move(filter)),
       m_pageId(page_id),
-      m_ptrDbg(std::move(dbg)),
+      m_dbg(std::move(dbg)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
       m_xform(xform),
@@ -207,7 +207,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+  OptionsWidget* const opt_widget = m_filter->optionsWidget();
   opt_widget->postUpdateUI(m_uiData);
   ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
 
@@ -219,7 +219,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
 
   auto* view = new ImageView(m_image, m_downscaledImage, m_grayImage, m_xform, m_uiData.contentRect(),
                              m_uiData.pageRect(), m_uiData.pageDetectionMode() != MODE_DISABLED);
-  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 
   QObject::connect(view, SIGNAL(manualContentRectSet(const QRectF&)), opt_widget,
                    SLOT(manualContentRectSet(const QRectF&)));

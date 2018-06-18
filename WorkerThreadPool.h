@@ -57,7 +57,7 @@ class WorkerThreadPool : public QObject {
 
   void updateNumberOfThreads();
 
-  QThreadPool* m_pPool;
+  QThreadPool* m_pool;
   QSettings m_settings;
 };
 

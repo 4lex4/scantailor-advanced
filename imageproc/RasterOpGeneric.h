@@ -149,22 +149,22 @@ void rasterOpGeneric(const BinaryImage& image1, T2* data2, int stride2, Op opera
 namespace rop_generic_impl {
 class BitProxy {
  public:
-  BitProxy(uint32_t& word, int shift) : m_rWord(word), m_shift(shift) {}
+  BitProxy(uint32_t& word, int shift) : m_word(word), m_shift(shift) {}
 
   BitProxy(const BitProxy& other) = default;
 
   BitProxy& operator=(uint32_t bit) {
     assert(bit <= 1);
     const uint32_t mask = uint32_t(1) << m_shift;
-    m_rWord = (m_rWord & ~mask) | (bit << m_shift);
+    m_word = (m_word & ~mask) | (bit << m_shift);
 
     return *this;
   }
 
-  operator uint32_t() const { return (m_rWord >> m_shift) & uint32_t(1); }
+  operator uint32_t() const { return (m_word >> m_shift) & uint32_t(1); }
 
  private:
-  uint32_t& m_rWord;
+  uint32_t& m_word;
   int m_shift;
 };
 }  // namespace rop_generic_impl

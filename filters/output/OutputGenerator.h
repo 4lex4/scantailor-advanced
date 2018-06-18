@@ -116,8 +116,8 @@ class OutputGenerator {
                  imageproc::BinaryImage* auto_picture_mask,
                  imageproc::BinaryImage* speckles_image,
                  DebugImages* dbg,
-                 const PageId& p_pageId,
-                 const intrusive_ptr<Settings>& p_settings,
+                 const PageId& pageId,
+                 const intrusive_ptr<Settings>& settings,
                  SplitImage* splitImage);
 
   QSize outputImageSize() const;
@@ -139,8 +139,8 @@ class OutputGenerator {
                      imageproc::BinaryImage* auto_picture_mask,
                      imageproc::BinaryImage* speckles_image,
                      DebugImages* dbg,
-                     const PageId& p_pageId,
-                     const intrusive_ptr<Settings>& p_settings,
+                     const PageId& pageId,
+                     const intrusive_ptr<Settings>& settings,
                      SplitImage* splitImage);
 
   QImage processWithoutDewarping(const TaskStatus& status,
@@ -150,8 +150,8 @@ class OutputGenerator {
                                  imageproc::BinaryImage* auto_picture_mask,
                                  imageproc::BinaryImage* speckles_image,
                                  DebugImages* dbg,
-                                 const PageId& p_pageId,
-                                 const intrusive_ptr<Settings>& p_settings,
+                                 const PageId& pageId,
+                                 const intrusive_ptr<Settings>& settings,
                                  SplitImage* splitImage);
 
   QImage processWithDewarping(const TaskStatus& status,
@@ -163,8 +163,8 @@ class OutputGenerator {
                               imageproc::BinaryImage* auto_picture_mask,
                               imageproc::BinaryImage* speckles_image,
                               DebugImages* dbg,
-                              const PageId& p_pageId,
-                              const intrusive_ptr<Settings>& p_settings,
+                              const PageId& pageId,
+                              const intrusive_ptr<Settings>& settings,
                               SplitImage* splitImage);
 
   void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
@@ -175,7 +175,7 @@ class OutputGenerator {
 
   void deskew(QImage* image, double angle, const QColor& outside_color) const;
 
-  double maybe_deskew(QImage* p_dewarped, DewarpingOptions dewarping_options, const QColor& outside_color) const;
+  double maybe_deskew(QImage* dewarped, DewarpingOptions dewarping_options, const QColor& outside_color) const;
 
   void movePointToTopMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 

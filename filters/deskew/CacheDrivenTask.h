@@ -46,8 +46,8 @@ class CacheDrivenTask : public ref_countable {
   void process(const PageInfo& page_info, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<select_content::CacheDrivenTask> m_ptrNextTask;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<select_content::CacheDrivenTask> m_nextTask;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_CACHEDRIVENTASK_H_

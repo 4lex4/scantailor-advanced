@@ -51,14 +51,14 @@ class RelinkablePathVisualization::ComponentButton : public QPushButton {
 
 
 RelinkablePathVisualization::RelinkablePathVisualization(QWidget* parent)
-    : QWidget(parent), m_pLayout(new QHBoxLayout(this)) {
-  m_pLayout->setSpacing(0);
-  m_pLayout->setMargin(0);
+    : QWidget(parent), m_layout(new QHBoxLayout(this)) {
+  m_layout->setSpacing(0);
+  m_layout->setMargin(0);
 }
 
 void RelinkablePathVisualization::clear() {
-  for (int count; (count = m_pLayout->count());) {
-    QLayoutItem* item = m_pLayout->takeAt(count - 1);
+  for (int count; (count = m_layout->count());) {
+    QLayoutItem* item = m_layout->takeAt(count - 1);
     if (QWidget* wgt = item->widget()) {
       wgt->deleteLater();  // We may be called from the widget's signal.
     }
@@ -116,7 +116,7 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
   for (PathComponent& path_component : path_components) {
     ++component_idx;
     auto* btn = new ComponentButton(this);
-    m_pLayout->addWidget(btn);
+    m_layout->addWidget(btn);
     btn->setText(path_component.label.replace(QChar('/'), QChar('\\')));
     btn->setEnabled(clickable);
     if (clickable) {
@@ -129,7 +129,7 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
                                       path_component.prefixPath, path_component.suffixPath, path_component.type));
   }
 
-  m_pLayout->addStretch();
+  m_layout->addStretch();
 }  // RelinkablePathVisualization::setPath
 
 void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
@@ -173,9 +173,9 @@ void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn,
 }  // RelinkablePathVisualization::stylePathComponentButton
 
 void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
-  const int total_items = m_pLayout->count();  // Note that there is an extra stretch item.
+  const int total_items = m_layout->count();  // Note that there is an extra stretch item.
   for (int i = 0; i < total_items; ++i) {
-    QWidget* widget = m_pLayout->itemAt(i)->widget();
+    QWidget* widget = m_layout->itemAt(i)->widget();
     if (!widget) {
       continue;
     }
@@ -187,7 +187,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
       widget->setProperty("highlightEnforcer", true);
       // Update the forceHighlight attribute for all buttons.
       for (int j = 0; j < total_items; ++j) {
-        widget = m_pLayout->itemAt(j)->widget();
+        widget = m_layout->itemAt(j)->widget();
         if (widget) {
           const bool highlight = j <= i;
           if (widget->property("forceHighlight").toBool() != highlight) {
@@ -202,7 +202,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
 
       // Update the forceHighlight attribute for all buttons.
       for (int j = 0; j < total_items; ++j) {
-        widget = m_pLayout->itemAt(j)->widget();
+        widget = m_layout->itemAt(j)->widget();
         if (widget) {
           const bool highlight = false;
           if (widget->property("forceHighlight").toBool() != highlight) {
@@ -223,7 +223,7 @@ void RelinkablePathVisualization::onClicked(int component_idx,
   // We'd like highlighting to stick until this method returns.
 
   for (int i = 0; i <= component_idx; ++i) {
-    QWidget* widget = m_pLayout->itemAt(i)->widget();
+    QWidget* widget = m_layout->itemAt(i)->widget();
     if (widget) {
       widget->setProperty("stickHighlight", true);
     }
@@ -231,9 +231,9 @@ void RelinkablePathVisualization::onClicked(int component_idx,
 
   emit clicked(prefix_path, suffix_path, type);
   // Note that clear() or setPath() might have been called by a signal handler.
-  const int total_items = m_pLayout->count();  // Note that there is an extra stretch item.
+  const int total_items = m_layout->count();  // Note that there is an extra stretch item.
   for (int i = 0; i <= component_idx && i < total_items; ++i) {
-    QWidget* widget = m_pLayout->itemAt(i)->widget();
+    QWidget* widget = m_layout->itemAt(i)->widget();
     if (widget) {
       widget->setProperty("stickHighlight", false);
     }

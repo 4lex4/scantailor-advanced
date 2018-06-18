@@ -50,12 +50,12 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_ptrFilter; }
+  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<ProjectPages> m_ptrPages;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<ProjectPages> m_pages;
+  std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
   PageInfo m_pageInfo;
@@ -86,14 +86,14 @@ Task::Task(intrusive_ptr<Filter> filter,
            const PageInfo& page_info,
            const bool batch_processing,
            const bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrSettings(std::move(settings)),
-      m_ptrPages(std::move(pages)),
-      m_ptrNextTask(std::move(next_task)),
+    : m_filter(std::move(filter)),
+      m_settings(std::move(settings)),
+      m_pages(std::move(pages)),
+      m_nextTask(std::move(next_task)),
       m_pageInfo(page_info),
       m_batchProcessing(batch_processing) {
   if (debug) {
-    m_ptrDbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImages>();
   }
 }
 
@@ -102,7 +102,7 @@ Task::~Task() = default;
 FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
   status.throwIfCancelled();
 
-  Settings::Record record(m_ptrSettings->getPageRecord(m_pageInfo.imageId()));
+  Settings::Record record(m_settings->getPageRecord(m_pageInfo.imageId()));
 
   const OrthogonalRotation pre_rotation(data.xform().preRotation());
   const Dependencies deps(data.origImage().size(), pre_rotation, record.combinedLayoutType());
@@ -119,7 +119,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     if (!params || !deps.compatibleWith(*params)) {
       if (!params || ((record.layoutType() == nullptr) || (*record.layoutType() == AUTO_LAYOUT_TYPE))) {
         new_layout = PageLayoutEstimator::estimatePageLayout(record.combinedLayoutType(), data.grayImage(),
-                                                             data.xform(), data.bwThreshold(), m_ptrDbg.get());
+                                                             data.xform(), data.bwThreshold(), m_dbg.get());
 
         status.throwIfCancelled();
 
@@ -171,7 +171,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
 #endif
 
     bool conflict = false;
-    record = m_ptrSettings->conditionalUpdate(m_pageInfo.imageId(), update, &conflict);
+    record = m_settings->conditionalUpdate(m_pageInfo.imageId(), update, &conflict);
     if (conflict && !record.params()) {
       // If there was a conflict, it means
       // the record was updated by another
@@ -193,17 +193,17 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   ui_data.setPageLayout(layout);
   ui_data.setSplitLineMode(record.params()->splitLineMode());
 
-  m_ptrPages->setLayoutTypeFor(m_pageInfo.imageId(), toPageLayoutType(layout));
+  m_pages->setLayoutTypeFor(m_pageInfo.imageId(), toPageLayoutType(layout));
 
-  if (m_ptrNextTask != nullptr) {
+  if (m_nextTask != nullptr) {
     ImageTransformation new_xform(data.xform());
     new_xform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
 
-    return m_ptrNextTask->process(status, FilterData(data, new_xform));
+    return m_nextTask->process(status, FilterData(data, new_xform));
   }
 
-  return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrPages, std::move(m_ptrDbg), data.origImage(), m_pageInfo,
-                                   data.xform(), ui_data, m_batchProcessing);
+  return make_intrusive<UiUpdater>(m_filter, m_pages, std::move(m_dbg), data.origImage(), m_pageInfo, data.xform(),
+                                   ui_data, m_batchProcessing);
 }  // Task::process
 
 /*============================ Task::UiUpdater =========================*/
@@ -216,9 +216,9 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const ImageTransformation& xform,
                            const OptionsWidget::UiData& ui_data,
                            const bool batch_processing)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrPages(std::move(pages)),
-      m_ptrDbg(std::move(dbg_img)),
+    : m_filter(std::move(filter)),
+      m_pages(std::move(pages)),
+      m_dbg(std::move(dbg_img)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
       m_pageInfo(page_info),
@@ -228,7 +228,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+  OptionsWidget* const opt_widget = m_filter->optionsWidget();
   opt_widget->postUpdateUI(m_uiData);
   ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
 
@@ -238,9 +238,9 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     return;
   }
 
-  auto view = new ImageView(m_image, m_downscaledImage, m_xform, m_uiData.pageLayout(), m_ptrPages,
-                            m_pageInfo.imageId(), m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved());
-  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+  auto view = new ImageView(m_image, m_downscaledImage, m_xform, m_uiData.pageLayout(), m_pages, m_pageInfo.imageId(),
+                            m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved());
+  ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 
   QObject::connect(view, SIGNAL(invalidateThumbnail(const PageInfo&)), opt_widget,
                    SIGNAL(invalidateThumbnail(const PageInfo&)));

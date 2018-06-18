@@ -27,7 +27,7 @@
 
 namespace select_content {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor), m_ignorePageSizeChanges(0) {
+    : m_settings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor), m_ignorePageSizeChanges(0) {
   setupUi(this);
 
   setupUiConnections();
@@ -237,7 +237,7 @@ void OptionsWidget::commitCurrentParams() {
   }
   // if page detection has been disabled its recalculation required
   if (m_uiData.pageDetectionMode() == MODE_DISABLED) {
-    const std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(m_pageId);
+    const std::unique_ptr<Params> old_params = m_settings->getPageParams(m_pageId);
     if ((old_params != nullptr) && (old_params->pageDetectionMode() != MODE_DISABLED)) {
       deps.invalidate();
     }
@@ -245,7 +245,7 @@ void OptionsWidget::commitCurrentParams() {
 
   Params params(m_uiData.contentRect(), m_uiData.contentSizeMM(), m_uiData.pageRect(), deps,
                 m_uiData.contentDetectionMode(), m_uiData.pageDetectionMode(), m_uiData.isFineTuningCornersEnabled());
-  m_ptrSettings->setPageParams(m_pageId, params);
+  m_settings->setPageParams(m_pageId, params);
 }
 
 void OptionsWidget::showApplyToDialog() {
@@ -280,7 +280,7 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
 
     Params new_params(params);
 
-    std::unique_ptr<Params> old_params = m_ptrSettings->getPageParams(page_id);
+    std::unique_ptr<Params> old_params = m_settings->getPageParams(page_id);
     if (old_params != nullptr) {
       if (new_params.contentDetectionMode() == MODE_MANUAL) {
         if (!apply_content_box) {
@@ -303,7 +303,7 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
       }
     }
 
-    m_ptrSettings->setPageParams(page_id, new_params);
+    m_settings->setPageParams(page_id, new_params);
   }
 
   if (pages.size() > 1) {

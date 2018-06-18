@@ -75,7 +75,7 @@ class SplineFitter {
   void undoLastStep();
 
  private:
-  FittableSpline* m_pSpline;
+  FittableSpline* m_spline;
   Optimizer m_optimizer;
   FittableSpline::SamplingParams m_samplingParams;
   std::vector<double> m_tempVars;

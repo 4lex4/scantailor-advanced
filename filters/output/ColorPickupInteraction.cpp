@@ -25,13 +25,13 @@
 
 namespace output {
 ColorPickupInteraction::ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context)
-    : m_rZones(zones), m_rContext(context), m_dontDrawCircle(0) {
+    : m_zones(zones), m_context(context), m_dontDrawCircle(0) {
   m_interaction.setInteractionStatusTip(tr("Click on an area to pick up its color, or ESC to cancel."));
 }
 
 void ColorPickupInteraction::startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction) {
   typedef FillColorProperty FCP;
-  m_ptrFillColorProp = zone.properties()->locateOrCreate<FCP>();
+  m_fillColorProp = zone.properties()->locateOrCreate<FCP>();
   interaction.capture(m_interaction);
 }
 
@@ -63,7 +63,7 @@ void ColorPickupInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
 }
 
 void ColorPickupInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }
 
 void ColorPickupInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
@@ -77,7 +77,7 @@ void ColorPickupInteraction::takeColor() {
   const ScopedIncDec<int> guard(m_dontDrawCircle);
 
   const QRect rect(targetBoundingRect());
-  const QPixmap pixmap(QPixmap::grabWidget(&m_rContext.imageView(), rect));
+  const QPixmap pixmap(QPixmap::grabWidget(&m_context.imageView(), rect));
   if (pixmap.isNull()) {
     return;
   }
@@ -117,17 +117,17 @@ void ColorPickupInteraction::takeColor() {
   std::nth_element(bitmixed_colors.begin(), half_pos, bitmixed_colors.end());
   const QColor color(bitUnmixColor(*half_pos));
 
-  m_ptrFillColorProp->setColor(color);
+  m_fillColorProp->setColor(color);
 
   // Update default properties.
-  PropertySet default_props(m_rZones.defaultProperties());
+  PropertySet default_props(m_zones.defaultProperties());
   default_props.locateOrCreate<FillColorProperty>()->setColor(color);
-  m_rZones.setDefaultProperties(default_props);
-  m_rZones.commit();
+  m_zones.setDefaultProperties(default_props);
+  m_zones.commit();
 }  // ColorPickupInteraction::takeColor
 
 QRect ColorPickupInteraction::targetBoundingRect() const {
-  const QPoint mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()));
+  const QPoint mouse_pos(m_context.imageView().mapFromGlobal(QCursor::pos()));
   QRect rect(0, 0, 15, 15);  // Odd width and height are needed for symmetry.
   rect.moveCenter(mouse_pos);
 
@@ -135,11 +135,11 @@ QRect ColorPickupInteraction::targetBoundingRect() const {
 }
 
 void ColorPickupInteraction::switchToDefaultInteraction() {
-  m_ptrFillColorProp.reset();
+  m_fillColorProp.reset();
   m_interaction.release();
-  makePeerPreceeder(*m_rContext.createDefaultInteraction());
+  makePeerPreceeder(*m_context.createDefaultInteraction());
   unlink();
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }
 
 uint32_t ColorPickupInteraction::bitMixColor(const uint32_t color) {

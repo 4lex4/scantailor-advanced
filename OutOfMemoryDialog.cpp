@@ -44,8 +44,8 @@ void OutOfMemoryDialog::setParams(const QString& project_file,
                                   const SelectedPage& selected_page,
                                   const OutputFileNameGenerator& out_file_name_gen) {
   m_projectFile = project_file;
-  m_ptrStages = std::move(stages);
-  m_ptrPages = std::move(pages);
+  m_stages = std::move(stages);
+  m_pages = std::move(pages);
   m_selectedPage = selected_page;
   m_outFileNameGen = out_file_name_gen;
 
@@ -96,9 +96,9 @@ void OutOfMemoryDialog::saveProjectAs() {
 }  // OutOfMemoryDialog::saveProjectAs
 
 bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& project_file) {
-  ProjectWriter writer(m_ptrPages, m_selectedPage, m_outFileNameGen);
+  ProjectWriter writer(m_pages, m_selectedPage, m_outFileNameGen);
 
-  if (!writer.write(project_file, m_ptrStages->filters())) {
+  if (!writer.write(project_file, m_stages->filters())) {
     QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
 
     return false;

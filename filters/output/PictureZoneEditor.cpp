@@ -49,9 +49,9 @@ class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_pt
                     const QTransform& xform,
                     const QSize& target_size);
 
-  void cancel() { m_ptrResult->cancel(); }
+  void cancel() { m_result->cancel(); }
 
-  const bool isCancelled() const { return m_ptrResult->isCancelled(); }
+  const bool isCancelled() const { return m_result->isCancelled(); }
 
   intrusive_ptr<AbstractCommand<void>> operator()() override;
 
@@ -69,14 +69,14 @@ class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_pt
     void operator()() override;
 
    private:
-    QPointer<PictureZoneEditor> m_ptrZoneEditor;
+    QPointer<PictureZoneEditor> m_zoneEditor;
     QPoint m_origin;
     QImage m_mask;
     mutable QAtomicInt m_cancelFlag;
   };
 
 
-  intrusive_ptr<Result> m_ptrResult;
+  intrusive_ptr<Result> m_result;
   BinaryImage m_origMask;
   QTransform m_xform;
   QSize m_targetSize;
@@ -97,8 +97,8 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
       m_origPictureMask(picture_mask),
       m_pictureMaskAnimationPhase(270),
       m_pageId(page_id),
-      m_ptrSettings(std::move(settings)) {
-  m_zones.setDefaultProperties(m_ptrSettings->defaultPictureZoneProperties());
+      m_settings(std::move(settings)) {
+  m_zones.setDefaultProperties(m_settings->defaultPictureZoneProperties());
 
   setMouseTracking(true);
 
@@ -124,14 +124,14 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
   m_pictureMaskRebuildTimer.setSingleShot(true);
   m_pictureMaskRebuildTimer.setInterval(150);
 
-  for (const Zone& zone : m_ptrSettings->pictureZonesForPage(page_id)) {
+  for (const Zone& zone : m_settings->pictureZonesForPage(page_id)) {
     auto spline = make_intrusive<EditableSpline>(zone.spline());
     m_zones.addZone(spline, zone.properties());
   }
 }
 
 PictureZoneEditor::~PictureZoneEditor() {
-  m_ptrSettings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
+  m_settings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
 }
 
 void PictureZoneEditor::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -176,9 +176,9 @@ bool PictureZoneEditor::validateScreenPictureMask() const {
 
 void PictureZoneEditor::schedulePictureMaskRebuild() {
   if (!m_pictureMaskRebuildTimer.isActive() || (m_potentialPictureMaskXform != virtualToWidget())) {
-    if (m_ptrMaskTransformTask) {
-      m_ptrMaskTransformTask->cancel();
-      m_ptrMaskTransformTask.reset();
+    if (m_maskTransformTask) {
+      m_maskTransformTask->cancel();
+      m_maskTransformTask.reset();
     }
     m_potentialPictureMaskXform = virtualToWidget();
   }
@@ -192,9 +192,9 @@ void PictureZoneEditor::initiateBuildingScreenPictureMask() {
 
   m_screenPictureMask = QPixmap();
 
-  if (m_ptrMaskTransformTask) {
-    m_ptrMaskTransformTask->cancel();
-    m_ptrMaskTransformTask.reset();
+  if (m_maskTransformTask) {
+    m_maskTransformTask->cancel();
+    m_maskTransformTask.reset();
   }
 
   const QTransform xform(virtualToWidget());
@@ -203,7 +203,7 @@ void PictureZoneEditor::initiateBuildingScreenPictureMask() {
   backgroundExecutor().enqueueTask(task);
 
   m_screenPictureMask = QPixmap();
-  m_ptrMaskTransformTask = task;
+  m_maskTransformTask = task;
   m_screenPictureMaskXform = xform;
 }
 
@@ -212,7 +212,7 @@ void PictureZoneEditor::screenPictureMaskBuilt(const QPoint& origin, const QImag
   m_screenPictureMaskOrigin = origin;
   m_pictureMaskAnimationPhase = 270;
 
-  m_ptrMaskTransformTask.reset();
+  m_maskTransformTask.reset();
   update();
 }
 
@@ -266,7 +266,7 @@ void PictureZoneEditor::showPropertiesDialog(const EditableZoneSet::Zone& zone) 
   if (dialog.exec() == QDialog::Accepted) {
     m_zones.setDefaultProperties(*zone.properties());
     m_zones.commit();
-    m_ptrSettings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
+    m_settings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
   } else {
     zone.properties()->swap(saved_properties);
     update();
@@ -280,7 +280,7 @@ void PictureZoneEditor::commitZones() {
     zones.add(Zone(*zone.spline(), *zone.properties()));
   }
 
-  m_ptrSettings->setPictureZones(m_pageId, zones);
+  m_settings->setPictureZones(m_pageId, zones);
 
   emit invalidateThumbnail(m_pageId);
 }
@@ -295,7 +295,7 @@ PictureZoneEditor::MaskTransformTask::MaskTransformTask(PictureZoneEditor* zone_
                                                         const BinaryImage& mask,
                                                         const QTransform& xform,
                                                         const QSize& target_size)
-    : m_ptrResult(new Result(zone_editor)), m_origMask(mask), m_xform(xform), m_targetSize(target_size) {}
+    : m_result(new Result(zone_editor)), m_origMask(mask), m_xform(xform), m_targetSize(target_size) {}
 
 intrusive_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::operator()() {
   if (isCancelled()) {
@@ -312,14 +312,14 @@ intrusive_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::opera
   mask.fill(mask_color);
   mask.setAlphaChannel(gray_mask);
 
-  m_ptrResult->setData(target_rect.topLeft(), mask);
+  m_result->setData(target_rect.topLeft(), mask);
 
-  return m_ptrResult;
+  return m_result;
 }
 
 /*===================== MaskTransformTask::Result ===================*/
 
-PictureZoneEditor::MaskTransformTask::Result::Result(PictureZoneEditor* zone_editor) : m_ptrZoneEditor(zone_editor) {}
+PictureZoneEditor::MaskTransformTask::Result::Result(PictureZoneEditor* zone_editor) : m_zoneEditor(zone_editor) {}
 
 void PictureZoneEditor::MaskTransformTask::Result::setData(const QPoint& origin, const QImage& mask) {
   m_mask = mask;
@@ -327,8 +327,8 @@ void PictureZoneEditor::MaskTransformTask::Result::setData(const QPoint& origin,
 }
 
 void PictureZoneEditor::MaskTransformTask::Result::operator()() {
-  if (m_ptrZoneEditor && !isCancelled()) {
-    m_ptrZoneEditor->screenPictureMaskBuilt(m_origin, m_mask);
+  if (m_zoneEditor && !isCancelled()) {
+    m_zoneEditor->screenPictureMaskBuilt(m_origin, m_mask);
   }
 }
 }  // namespace output

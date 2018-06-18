@@ -145,7 +145,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   void removeUiConnections();
 
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   UiData m_uiData;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;

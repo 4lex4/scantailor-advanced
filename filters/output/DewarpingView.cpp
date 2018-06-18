@@ -110,10 +110,10 @@ DewarpingView::~DewarpingView() = default;
 void DewarpingView::initNewSpline(XSpline& spline,
                                   const QPointF& p1,
                                   const QPointF& p2,
-                                  const DewarpingOptions* p_dewarpingOptions) {
+                                  const DewarpingOptions* dewarpingOptions) {
   const QLineF line(p1, p2);
   spline.appendControlPoint(line.p1(), 0);
-  if ((*p_dewarpingOptions).dewarpingMode() == AUTO) {
+  if ((*dewarpingOptions).dewarpingMode() == AUTO) {
     spline.appendControlPoint(line.pointAt(1.0 / 4.0), 1);
     spline.appendControlPoint(line.pointAt(2.0 / 4.0), 1);
     spline.appendControlPoint(line.pointAt(3.0 / 4.0), 1);

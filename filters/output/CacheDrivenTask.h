@@ -46,7 +46,7 @@ class CacheDrivenTask : public ref_countable {
                const QPolygonF& content_rect_phys);
 
  private:
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   OutputFileNameGenerator m_outFileNameGen;
 };
 }  // namespace output

@@ -27,15 +27,15 @@ ApplyDialog::ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSele
       m_selectedPages(page_selection_accessor.selectedPages()),
       m_selectedRanges(page_selection_accessor.selectedRanges()),
       m_curPage(cur_page),
-      m_pScopeGroup(new QButtonGroup(this)) {
+      m_scopeGroup(new QButtonGroup(this)) {
   setupUi(this);
-  m_pScopeGroup->addButton(thisPageRB);
-  m_pScopeGroup->addButton(allPagesRB);
-  m_pScopeGroup->addButton(thisPageAndFollowersRB);
-  m_pScopeGroup->addButton(selectedPagesRB);
-  m_pScopeGroup->addButton(everyOtherRB);
-  m_pScopeGroup->addButton(thisEveryOtherRB);
-  m_pScopeGroup->addButton(everyOtherSelectedRB);
+  m_scopeGroup->addButton(thisPageRB);
+  m_scopeGroup->addButton(allPagesRB);
+  m_scopeGroup->addButton(thisPageAndFollowersRB);
+  m_scopeGroup->addButton(selectedPagesRB);
+  m_scopeGroup->addButton(everyOtherRB);
+  m_scopeGroup->addButton(thisEveryOtherRB);
+  m_scopeGroup->addButton(everyOtherSelectedRB);
 
   if (m_selectedPages.size() <= 1) {
     selectedPagesRB->setEnabled(false);

@@ -14,7 +14,7 @@ namespace output {
 class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
   Q_OBJECT
  private:
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer delayedStateChanger;

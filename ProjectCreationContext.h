@@ -65,12 +65,12 @@ class ProjectCreationContext : public QObject {
 
   void showFixDpiDialog();
 
-  QPointer<ProjectFilesDialog> m_ptrProjectFilesDialog;
-  QPointer<FixDpiDialog> m_ptrFixDpiDialog;
+  QPointer<ProjectFilesDialog> m_projectFilesDialog;
+  QPointer<FixDpiDialog> m_fixDpiDialog;
   QString m_outDir;
   std::vector<ImageFileInfo> m_files;
   Qt::LayoutDirection m_layoutDirection;
-  QWidget* m_pParent;
+  QWidget* m_parent;
 };
 
 

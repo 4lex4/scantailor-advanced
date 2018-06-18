@@ -140,12 +140,12 @@ class SEDM {
   /**
    * \brief Return a matrix of squared distances in row-major order.
    */
-  uint32_t* data() { return m_pData; }
+  uint32_t* data() { return m_plainData; }
 
   /**
    * \brief Return a matrix of squared distances in row-major order.
    */
-  const uint32_t* data() const { return m_pData; }
+  const uint32_t* data() const { return m_plainData; }
 
   /**
    * \brief Finds peaks on the distance map, altering it in the process.
@@ -191,7 +191,7 @@ class SEDM {
   void incrementMaskedPadded(const BinaryImage& mask);
 
   std::vector<uint32_t> m_data;
-  uint32_t* m_pData;
+  uint32_t* m_plainData;
   QSize m_size;
   int m_stride;
 };

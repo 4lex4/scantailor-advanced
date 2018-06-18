@@ -105,10 +105,10 @@ class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
   QTimer m_pictureMaskRebuildTimer;
   QTimer m_pictureMaskAnimateTimer;
   int m_pictureMaskAnimationPhase;  // degrees
-  intrusive_ptr<MaskTransformTask> m_ptrMaskTransformTask;
+  intrusive_ptr<MaskTransformTask> m_maskTransformTask;
 
   PageId m_pageId;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_

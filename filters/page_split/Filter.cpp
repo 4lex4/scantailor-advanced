@@ -37,15 +37,15 @@
 
 namespace page_split {
 Filter::Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrPages(std::move(page_sequence)), m_ptrSettings(new Settings), m_selectedPageOrder(0) {
+    : m_pages(std::move(page_sequence)), m_settings(new Settings), m_selectedPageOrder(0) {
   if (CommandLine::get().isGui()) {
-    m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, m_ptrPages, page_selection_accessor));
+    m_optionsWidget.reset(new OptionsWidget(m_settings, m_pages, page_selection_accessor));
   }
 
   typedef PageOrderOption::ProviderPtr ProviderPtr;
 
   const ProviderPtr default_order;
-  const auto order_by_split_type = make_intrusive<OrderBySplitTypeProvider>(m_ptrSettings);
+  const auto order_by_split_type = make_intrusive<OrderBySplitTypeProvider>(m_settings);
   m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
   m_pageOrderOptions.emplace_back(tr("Order by split type"), order_by_split_type);
 }
@@ -61,17 +61,17 @@ PageView Filter::getView() const {
 }
 
 void Filter::performRelinking(const AbstractRelinker& relinker) {
-  m_ptrSettings->performRelinking(relinker);
+  m_settings->performRelinking(relinker);
 }
 
 void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
-  m_ptrOptionsWidget->preUpdateUI(page_info.id());
-  ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
+  m_optionsWidget->preUpdateUI(page_info.id());
+  ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
   QDomElement filter_el(doc.createElement("page-split"));
-  filter_el.setAttribute("defaultLayoutType", layoutTypeToString(m_ptrSettings->defaultLayoutType()));
+  filter_el.setAttribute("defaultLayoutType", layoutTypeToString(m_settings->defaultLayoutType()));
 
   writer.enumImages([&](const ImageId& image_id, const int numeric_id) {
     this->writeImageSettings(doc, filter_el, image_id, numeric_id);
@@ -81,11 +81,11 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
 }
 
 void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
-  m_ptrSettings->clear();
+  m_settings->clear();
 
   const QDomElement filter_el(filters_el.namedItem("page-split").toElement());
   const QString default_layout_type(filter_el.attribute("defaultLayoutType"));
-  m_ptrSettings->setLayoutTypeForAllPages(layoutTypeFromString(default_layout_type));
+  m_settings->setLayoutTypeForAllPages(layoutTypeFromString(default_layout_type));
 
   const QString image_tag_name("image");
   QDomNode node(filter_el.firstChild());
@@ -121,12 +121,12 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
       update.setParams(Params(params_el));
     }
 
-    m_ptrSettings->updatePage(image_id, update);
+    m_settings->updatePage(image_id, update);
   }
 }  // Filter::loadSettings
 
 void Filter::pageOrientationUpdate(const ImageId& image_id, const OrthogonalRotation& orientation) {
-  const Settings::Record record(m_ptrSettings->getPageRecord(image_id));
+  const Settings::Record record(m_settings->getPageRecord(image_id));
 
   if (record.layoutType() && (*record.layoutType() != AUTO_LAYOUT_TYPE)) {
     // The layout type was set manually, so we don't care about orientation.
@@ -139,14 +139,14 @@ void Filter::pageOrientationUpdate(const ImageId& image_id, const OrthogonalRota
   }
 
   // Use orientation to update the number of logical pages in an image.
-  m_ptrPages->autoSetLayoutTypeFor(image_id, orientation);
+  m_pages->autoSetLayoutTypeFor(image_id, orientation);
 }
 
 void Filter::writeImageSettings(QDomDocument& doc,
                                 QDomElement& filter_el,
                                 const ImageId& image_id,
                                 const int numeric_id) const {
-  const Settings::Record record(m_ptrSettings->getPageRecord(image_id));
+  const Settings::Record record(m_settings->getPageRecord(image_id));
 
   QDomElement image_el(doc.createElement("image"));
   image_el.setAttribute("id", numeric_id);
@@ -164,12 +164,12 @@ intrusive_ptr<Task> Filter::createTask(const PageInfo& page_info,
                                        intrusive_ptr<deskew::Task> next_task,
                                        const bool batch_processing,
                                        const bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_ptrSettings, m_ptrPages, std::move(next_task), page_info,
+  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, m_pages, std::move(next_task), page_info,
                               batch_processing, debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> next_task) {
-  return make_intrusive<CacheDrivenTask>(m_ptrSettings, m_ptrPages, std::move(next_task));
+  return make_intrusive<CacheDrivenTask>(m_settings, m_pages, std::move(next_task));
 }
 
 std::vector<PageOrderOption> Filter::pageOrderOptions() const {
@@ -186,7 +186,7 @@ void Filter::selectPageOrder(int option) {
 }
 
 void Filter::loadDefaultSettings(const PageInfo& page_info) {
-  if (!m_ptrSettings->getPageRecord(page_info.id().imageId()).isNull()) {
+  if (!m_settings->getPageRecord(page_info.id().imageId()).isNull()) {
     return;
   }
   const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
@@ -194,10 +194,10 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
 
   Settings::UpdateAction update;
   update.setLayoutType(pageSplitParams.getLayoutType());
-  m_ptrSettings->updatePage(page_info.id().imageId(), update);
+  m_settings->updatePage(page_info.id().imageId(), update);
 }
 
 OptionsWidget* Filter::optionsWidget() {
-  return m_ptrOptionsWidget.get();
+  return m_optionsWidget.get();
 }
 }  // namespace page_split

@@ -54,7 +54,7 @@ class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {
   std::set<PageId> m_selectedPages;
   std::vector<PageRange> m_selectedRanges;
   PageId m_curPage;
-  QButtonGroup* m_pBtnGroup;
+  QButtonGroup* m_btnGroup;
 };
 }  // namespace fix_orientation
 #endif  // ifndef FIX_ORIENTATION_APPLYDIALOG_H_

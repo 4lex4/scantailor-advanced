@@ -117,7 +117,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   static QLineF customInscribedCutterLine(const QLineF& line, const QRectF& rect);
 
-  intrusive_ptr<ProjectPages> m_ptrPages;
+  intrusive_ptr<ProjectPages> m_pages;
   ImageId m_imageId;
   DraggablePoint m_handles[2][2];
   ObjectDragHandler m_handleInteractors[2][2];

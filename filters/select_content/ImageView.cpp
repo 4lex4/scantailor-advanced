@@ -46,8 +46,8 @@ ImageView::ImageView(const QImage& image,
     : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
       m_dragHandler(*this),
       m_zoomHandler(*this),
-      m_pNoContentMenu(new QMenu(this)),
-      m_pHaveContentMenu(new QMenu(this)),
+      m_noContentMenu(new QMenu(this)),
+      m_haveContentMenu(new QMenu(this)),
       m_contentRect(content_rect),
       m_pageRect(page_rect),
       m_minBoxSize(10.0, 10.0),
@@ -156,8 +156,8 @@ ImageView::ImageView(const QImage& image,
   rootInteractionHandler().makeLastFollower(m_dragHandler);
   rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
-  QAction* create = m_pNoContentMenu->addAction(tr("Create Content Box"));
-  QAction* remove = m_pHaveContentMenu->addAction(tr("Remove Content Box"));
+  QAction* create = m_noContentMenu->addAction(tr("Create Content Box"));
+  QAction* remove = m_haveContentMenu->addAction(tr("Remove Content Box"));
   create->setShortcut(QKeySequence("Ins"));
   remove->setShortcut(QKeySequence("Delete"));
   addAction(create);
@@ -241,9 +241,9 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
   }
 
   if (m_contentRect.isEmpty()) {
-    m_pNoContentMenu->popup(event->globalPos());
+    m_noContentMenu->popup(event->globalPos());
   } else {
-    m_pHaveContentMenu->popup(event->globalPos());
+    m_haveContentMenu->popup(event->globalPos());
   }
 }
 

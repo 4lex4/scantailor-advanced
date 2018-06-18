@@ -51,9 +51,9 @@ class ZoneInteractionContext {
 
   virtual ~ZoneInteractionContext();
 
-  ImageViewBase& imageView() { return m_rImageView; }
+  ImageViewBase& imageView() { return m_imageView; }
 
-  EditableZoneSet& zones() { return m_rZones; }
+  EditableZoneSet& zones() { return m_zones; }
 
   virtual InteractionHandler* createDefaultInteraction() { return m_defaultInteractionCreator(); }
 
@@ -131,8 +131,8 @@ class ZoneInteractionContext {
 
   static void showPropertiesStub(const EditableZoneSet::Zone&) {}
 
-  ImageViewBase& m_rImageView;
-  EditableZoneSet& m_rZones;
+  ImageViewBase& m_imageView;
+  EditableZoneSet& m_zones;
   DefaultInteractionCreator m_defaultInteractionCreator;
   ZoneCreationInteractionCreator m_zoneCreationInteractionCreator;
   VertexDragInteractionCreator m_vertexDragInteractionCreator;

@@ -87,35 +87,35 @@ class FileNameDisambiguator::Impl {
 
 /*====================== FileNameDisambiguator =========================*/
 
-FileNameDisambiguator::FileNameDisambiguator() : m_ptrImpl(new Impl) {}
+FileNameDisambiguator::FileNameDisambiguator() : m_impl(new Impl) {}
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguator_el)
-    : m_ptrImpl(new Impl(disambiguator_el, boost::lambda::_1)) {}
+    : m_impl(new Impl(disambiguator_el, boost::lambda::_1)) {}
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguator_el,
                                              const boost::function<QString(const QString&)>& file_path_unpacker)
-    : m_ptrImpl(new Impl(disambiguator_el, file_path_unpacker)) {}
+    : m_impl(new Impl(disambiguator_el, file_path_unpacker)) {}
 
 QDomElement FileNameDisambiguator::toXml(QDomDocument& doc, const QString& name) const {
-  return m_ptrImpl->toXml(doc, name, boost::lambda::_1);
+  return m_impl->toXml(doc, name, boost::lambda::_1);
 }
 
 QDomElement FileNameDisambiguator::toXml(QDomDocument& doc,
                                          const QString& name,
                                          const boost::function<QString(const QString&)>& file_path_packer) const {
-  return m_ptrImpl->toXml(doc, name, file_path_packer);
+  return m_impl->toXml(doc, name, file_path_packer);
 }
 
 int FileNameDisambiguator::getLabel(const QString& file_path) const {
-  return m_ptrImpl->getLabel(file_path);
+  return m_impl->getLabel(file_path);
 }
 
 int FileNameDisambiguator::registerFile(const QString& file_path) {
-  return m_ptrImpl->registerFile(file_path);
+  return m_impl->registerFile(file_path);
 }
 
 void FileNameDisambiguator::performRelinking(const AbstractRelinker& relinker) {
-  m_ptrImpl->performRelinking(relinker);
+  m_impl->performRelinking(relinker);
 }
 
 /*==================== FileNameDisambiguator::Impl ====================*/

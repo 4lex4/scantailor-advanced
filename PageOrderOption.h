@@ -28,7 +28,7 @@ class PageOrderOption {
  public:
   typedef intrusive_ptr<const PageOrderProvider> ProviderPtr;
 
-  PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_ptrProvider(std::move(provider)) {}
+  PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_provider(std::move(provider)) {}
 
   const QString& name() const { return m_name; }
 
@@ -36,11 +36,11 @@ class PageOrderOption {
    * Returns the ordering information provider.
    * A null provider is OK and is to be interpreted as default order.
    */
-  const ProviderPtr& provider() const { return m_ptrProvider; }
+  const ProviderPtr& provider() const { return m_provider; }
 
  private:
   QString m_name;
-  ProviderPtr m_ptrProvider;
+  ProviderPtr m_provider;
 };
 
 

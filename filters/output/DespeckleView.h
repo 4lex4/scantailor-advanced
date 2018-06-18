@@ -81,8 +81,8 @@ class DespeckleView : public QStackedWidget {
   void removeImageViewWidget();
 
   DespeckleState m_despeckleState;
-  intrusive_ptr<TaskCancelHandle> m_ptrCancelHandle;
-  ProcessingIndicationWidget* m_pProcessingIndicator;
+  intrusive_ptr<TaskCancelHandle> m_cancelHandle;
+  ProcessingIndicationWidget* m_processingIndicator;
   double m_despeckleLevel;
   bool m_debug;
 };

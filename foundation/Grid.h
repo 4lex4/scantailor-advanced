@@ -50,12 +50,12 @@ class Grid {
   /**
    * \brief Returns a pointer to the beginning of unpadded data.
    */
-  Node* data() { return m_pData; }
+  Node* data() { return m_data; }
 
   /**
    * \brief Returns a pointer to the beginning of unpadded data.
    */
-  const Node* data() const { return m_pData; }
+  const Node* data() const { return m_data; }
 
   /**
    * \brief Returns a pointer to the beginning of padded data.
@@ -99,7 +99,7 @@ class Grid {
   }
 
   boost::scoped_array<Node> m_storage;
-  Node* m_pData;
+  Node* m_data;
   int m_width;
   int m_height;
   int m_stride;
@@ -108,12 +108,12 @@ class Grid {
 
 
 template <typename Node>
-Grid<Node>::Grid() : m_pData(0), m_width(0), m_height(0), m_stride(0), m_padding(0) {}
+Grid<Node>::Grid() : m_data(0), m_width(0), m_height(0), m_stride(0), m_padding(0) {}
 
 template <typename Node>
 Grid<Node>::Grid(int width, int height, int padding)
     : m_storage(new Node[(width + padding * 2) * (height + padding * 2)]),
-      m_pData(m_storage.get() + (width + padding * 2) * padding + padding),
+      m_data(m_storage.get() + (width + padding * 2) * padding + padding),
       m_width(width),
       m_height(height),
       m_stride(width + padding * 2),
@@ -122,7 +122,7 @@ Grid<Node>::Grid(int width, int height, int padding)
 template <typename Node>
 Grid<Node>::Grid(const Grid& other)
     : m_storage(new Node[(other.stride() * (other.height() + other.padding() * 2))]),
-      m_pData(m_storage.get() + other.stride() * other.padding() + other.padding()),
+      m_data(m_storage.get() + other.stride() * other.padding() + other.padding()),
       m_width(other.width()),
       m_height(other.height()),
       m_stride(other.stride()),
@@ -168,7 +168,7 @@ void Grid<Node>::initPadding(const Node& padding_node) {
 
 template <typename Node>
 void Grid<Node>::initInterior(const Node& interior_node) {
-  Node* line = m_pData;
+  Node* line = m_data;
   for (int y = 0; y < m_height; ++y) {
     for (int x = 0; x < m_width; ++x) {
       line[x] = interior_node;
@@ -180,7 +180,7 @@ void Grid<Node>::initInterior(const Node& interior_node) {
 template <typename Node>
 void Grid<Node>::swap(Grid& other) {
   m_storage.swap(other.m_storage);
-  basicSwap(m_pData, other.m_pData);
+  basicSwap(m_data, other.m_data);
   basicSwap(m_width, other.m_width);
   basicSwap(m_height, other.m_height);
   basicSwap(m_stride, other.m_stride);

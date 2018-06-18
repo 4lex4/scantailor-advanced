@@ -40,7 +40,7 @@ class PageSelectionAccessor {
   std::vector<PageRange> selectedRanges() const;
 
  private:
-  intrusive_ptr<const PageSelectionProvider> m_ptrProvider;
+  intrusive_ptr<const PageSelectionProvider> m_provider;
 };
 
 

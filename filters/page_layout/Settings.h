@@ -181,7 +181,7 @@ class Settings : public ref_countable {
 
   class ModifyContentSize;
 
-  std::unique_ptr<Impl> m_ptrImpl;
+  std::unique_ptr<Impl> m_impl;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_SETTINGS_H_

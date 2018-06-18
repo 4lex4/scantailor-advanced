@@ -65,7 +65,7 @@ class SplitModeDialog : public QDialog, private Ui::PageSplitModeDialog {
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;
   PageId m_curPage;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
   LayoutType m_layoutType;
   PageLayout::Type m_autoDetectedLayoutType;
   bool m_autoDetectedLayoutTypeValid;

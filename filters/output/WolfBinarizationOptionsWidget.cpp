@@ -7,7 +7,7 @@
 namespace output {
 
 WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_ptrSettings(std::move(settings)) {
+    : m_settings(std::move(settings)) {
   setupUi(this);
 
   delayedStateChanger.setSingleShot(true);
@@ -18,10 +18,10 @@ WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Setti
 void WolfBinarizationOptionsWidget::updateUi(const PageId& page_id) {
   removeUiConnections();
 
-  const Params params(m_ptrSettings->getParams(page_id));
+  const Params params(m_settings->getParams(page_id));
   m_pageId = page_id;
   m_colorParams = params.colorParams();
-  m_outputProcessingParams = m_ptrSettings->getOutputProcessingParams(page_id);
+  m_outputProcessingParams = m_settings->getOutputProcessingParams(page_id);
 
   updateView();
 
@@ -32,7 +32,7 @@ void WolfBinarizationOptionsWidget::windowSizeChanged(int value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWindowSize(value);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedStateChanger.start(750);
 }
@@ -41,7 +41,7 @@ void WolfBinarizationOptionsWidget::lowerBoundChanged(int value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWolfLowerBound(value);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedStateChanger.start(750);
 }
@@ -50,7 +50,7 @@ void WolfBinarizationOptionsWidget::upperBoundChanged(int value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWolfUpperBound(value);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedStateChanger.start(750);
 }
@@ -59,7 +59,7 @@ void WolfBinarizationOptionsWidget::wolfCoefChanged(double value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWolfCoef(value);
   m_colorParams.setBlackWhiteOptions(opt);
-  m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
   delayedStateChanger.start(750);
 }

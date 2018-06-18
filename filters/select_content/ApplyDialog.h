@@ -52,7 +52,7 @@ class ApplyDialog : public QDialog, private Ui::SelectContentApplyDialog {
   std::set<PageId> m_selectedPages;
   std::vector<PageRange> m_selectedRanges;
   PageId m_curPage;
-  QButtonGroup* m_pBtnGroup;
+  QButtonGroup* m_btnGroup;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_APPLYDIALOG_H_

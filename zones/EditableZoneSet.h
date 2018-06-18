@@ -64,12 +64,12 @@ class EditableZoneSet : public QObject {
 
     void increment() {
       ++m_iter;
-      m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
+      m_zone.m_iter = m_splineMap->find(*m_iter);
     }
 
     void decrement() {
       --m_iter;
-      m_zone.m_iter = m_ptrSplineMap->find(*m_iter);
+      m_zone.m_iter = m_splineMap->find(*m_iter);
     }
 
     bool equal(const const_iterator& other) const { return m_iter == other.m_iter; }
@@ -78,11 +78,11 @@ class EditableZoneSet : public QObject {
 
    private:
     explicit const_iterator(std::list<EditableSpline::Ptr>::const_iterator it, const Map* splineMap)
-        : m_iter(it), m_ptrSplineMap(splineMap), m_zone(splineMap->find(*it)) {}
+        : m_iter(it), m_splineMap(splineMap), m_zone(splineMap->find(*it)) {}
 
     Zone m_zone;
     std::list<EditableSpline::Ptr>::const_iterator m_iter;
-    const Map* m_ptrSplineMap{};
+    const Map* m_splineMap{};
   };
 
   typedef const_iterator iterator;

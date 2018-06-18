@@ -190,7 +190,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidge
 
   void removeUiConnections();
 
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   Dpi m_outputDpi;

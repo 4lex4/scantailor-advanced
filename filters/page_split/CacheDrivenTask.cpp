@@ -33,9 +33,7 @@ namespace page_split {
 CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
                                  intrusive_ptr<ProjectPages> projectPages,
                                  intrusive_ptr<deskew::CacheDrivenTask> next_task)
-    : m_ptrNextTask(std::move(next_task)),
-      m_ptrSettings(std::move(settings)),
-      m_projectPages(std::move(projectPages)) {}
+    : m_nextTask(std::move(next_task)), m_settings(std::move(settings)), m_projectPages(std::move(projectPages)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
@@ -56,7 +54,7 @@ static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
 void CacheDrivenTask::process(const PageInfo& page_info,
                               AbstractFilterDataCollector* collector,
                               const ImageTransformation& xform) {
-  const Settings::Record record(m_ptrSettings->getPageRecord(page_info.imageId()));
+  const Settings::Record record(m_settings->getPageRecord(page_info.imageId()));
 
   const OrthogonalRotation pre_rotation(xform.preRotation());
   const Dependencies deps(page_info.metadata().size(), pre_rotation, record.combinedLayoutType());
@@ -80,10 +78,10 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   // so we must additionally ensure here that we display right number of pages.
   m_projectPages->setLayoutTypeFor(page_info.id().imageId(), toPageLayoutType(layout));
 
-  if (m_ptrNextTask) {
+  if (m_nextTask) {
     ImageTransformation new_xform(xform);
     new_xform.setPreCropArea(layout.pageOutline(page_info.id().subPage()).toPolygon());
-    m_ptrNextTask->process(page_info, collector, new_xform);
+    m_nextTask->process(page_info, collector, new_xform);
 
     return;
   }

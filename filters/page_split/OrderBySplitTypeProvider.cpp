@@ -23,7 +23,7 @@
 
 namespace page_split {
 OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> settings)
-    : m_ptrSettings(std::move(settings)) {}
+    : m_settings(std::move(settings)) {}
 
 bool OrderBySplitTypeProvider::precedes(const PageId& lhs_page,
                                         const bool lhs_incomplete,
@@ -41,8 +41,8 @@ bool OrderBySplitTypeProvider::precedes(const PageId& lhs_page,
   assert(!lhs_incomplete);
   assert(!rhs_incomplete);
 
-  const Settings::Record lhs_record(m_ptrSettings->getPageRecord(lhs_page.imageId()));
-  const Settings::Record rhs_record(m_ptrSettings->getPageRecord(rhs_page.imageId()));
+  const Settings::Record lhs_record(m_settings->getPageRecord(lhs_page.imageId()));
+  const Settings::Record rhs_record(m_settings->getPageRecord(rhs_page.imageId()));
 
   const Params* lhs_params = lhs_record.params();
   const Params* rhs_params = rhs_record.params();

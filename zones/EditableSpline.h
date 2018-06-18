@@ -34,14 +34,14 @@ class EditableSpline : public ref_countable {
 
   class SegmentIterator {
    public:
-    explicit SegmentIterator(EditableSpline& spline) : m_ptrNextVertex(spline.firstVertex()) {}
+    explicit SegmentIterator(EditableSpline& spline) : m_nextVertex(spline.firstVertex()) {}
 
     bool hasNext() const;
 
     SplineSegment next();
 
    private:
-    SplineVertex::Ptr m_ptrNextVertex;
+    SplineVertex::Ptr m_nextVertex;
   };
 
 

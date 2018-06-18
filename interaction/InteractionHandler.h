@@ -101,8 +101,8 @@ class InteractionHandler
                       public boost::intrusive::list<InteractionHandler, boost::intrusive::constant_time_size<false>> {};
 
 
-  intrusive_ptr<HandlerList> m_ptrPreceeders;
-  intrusive_ptr<HandlerList> m_ptrFollowers;
+  intrusive_ptr<HandlerList> m_preceeders;
+  intrusive_ptr<HandlerList> m_followers;
 };
 
 

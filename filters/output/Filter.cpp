@@ -34,9 +34,9 @@
 #include "ThumbnailPixmapCache.h"
 
 namespace output {
-Filter::Filter(const PageSelectionAccessor& page_selection_accessor) : m_ptrSettings(new Settings) {
+Filter::Filter(const PageSelectionAccessor& page_selection_accessor) : m_settings(new Settings) {
   if (CommandLine::get().isGui()) {
-    m_ptrOptionsWidget.reset(new OptionsWidget(m_ptrSettings, page_selection_accessor));
+    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
   }
 }
 
@@ -51,12 +51,12 @@ PageView Filter::getView() const {
 }
 
 void Filter::performRelinking(const AbstractRelinker& relinker) {
-  m_ptrSettings->performRelinking(relinker);
+  m_settings->performRelinking(relinker);
 }
 
 void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
-  m_ptrOptionsWidget->preUpdateUI(page_info.id());
-  ui->setOptionsWidget(m_ptrOptionsWidget.get(), ui->KEEP_OWNERSHIP);
+  m_optionsWidget->preUpdateUI(page_info.id());
+  ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
@@ -69,17 +69,17 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
 }
 
 void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
-  const Params params(m_ptrSettings->getParams(page_id));
+  const Params params(m_settings->getParams(page_id));
 
   QDomElement page_el(doc.createElement("page"));
   page_el.setAttribute("id", numeric_id);
 
-  page_el.appendChild(m_ptrSettings->pictureZonesForPage(page_id).toXml(doc, "zones"));
-  page_el.appendChild(m_ptrSettings->fillZonesForPage(page_id).toXml(doc, "fill-zones"));
+  page_el.appendChild(m_settings->pictureZonesForPage(page_id).toXml(doc, "zones"));
+  page_el.appendChild(m_settings->fillZonesForPage(page_id).toXml(doc, "fill-zones"));
   page_el.appendChild(params.toXml(doc, "params"));
-  page_el.appendChild(m_ptrSettings->getOutputProcessingParams(page_id).toXml(doc, "processing-params"));
+  page_el.appendChild(m_settings->getOutputProcessingParams(page_id).toXml(doc, "processing-params"));
 
-  std::unique_ptr<OutputParams> output_params(m_ptrSettings->getOutputParams(page_id));
+  std::unique_ptr<OutputParams> output_params(m_settings->getOutputParams(page_id));
   if (output_params) {
     page_el.appendChild(output_params->toXml(doc, "output-params"));
   }
@@ -88,7 +88,7 @@ void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const 
 }
 
 void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
-  m_ptrSettings->clear();
+  m_settings->clear();
 
   const QDomElement filter_el(filters_el.namedItem("output").toElement());
 
@@ -116,30 +116,30 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
 
     const ZoneSet picture_zones(el.namedItem("zones").toElement(), m_pictureZonePropFactory);
     if (!picture_zones.empty()) {
-      m_ptrSettings->setPictureZones(page_id, picture_zones);
+      m_settings->setPictureZones(page_id, picture_zones);
     }
 
     const ZoneSet fill_zones(el.namedItem("fill-zones").toElement(), m_fillZonePropFactory);
     if (!fill_zones.empty()) {
-      m_ptrSettings->setFillZones(page_id, fill_zones);
+      m_settings->setFillZones(page_id, fill_zones);
     }
 
     const QDomElement params_el(el.namedItem("params").toElement());
     if (!params_el.isNull()) {
       const Params params(params_el);
-      m_ptrSettings->setParams(page_id, params);
+      m_settings->setParams(page_id, params);
     }
 
     const QDomElement output_processing_params_el(el.namedItem("processing-params").toElement());
     if (!output_processing_params_el.isNull()) {
       const OutputProcessingParams output_processing_params(output_processing_params_el);
-      m_ptrSettings->setOutputProcessingParams(page_id, output_processing_params);
+      m_settings->setOutputProcessingParams(page_id, output_processing_params);
     }
 
     const QDomElement output_params_el(el.namedItem("output-params").toElement());
     if (!output_params_el.isNull()) {
       const OutputParams output_params(output_params_el);
-      m_ptrSettings->setOutputParams(page_id, output_params);
+      m_settings->setOutputParams(page_id, output_params);
     }
   }
 }  // Filter::loadSettings
@@ -150,26 +150,26 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
                                        const bool batch,
                                        const bool debug) {
   ImageViewTab lastTab(TAB_OUTPUT);
-  if (m_ptrOptionsWidget.get() != nullptr) {
-    lastTab = m_ptrOptionsWidget->lastTab();
+  if (m_optionsWidget.get() != nullptr) {
+    lastTab = m_optionsWidget->lastTab();
   }
 
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_ptrSettings, std::move(thumbnail_cache), page_id,
+  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, std::move(thumbnail_cache), page_id,
                               out_file_name_gen, lastTab, batch, debug);
 }
 
 intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen) {
-  return make_intrusive<CacheDrivenTask>(m_ptrSettings, out_file_name_gen);
+  return make_intrusive<CacheDrivenTask>(m_settings, out_file_name_gen);
 }
 
 void Filter::loadDefaultSettings(const PageInfo& page_info) {
-  if (!m_ptrSettings->isParamsNull(page_info.id())) {
+  if (!m_settings->isParamsNull(page_info.id())) {
     return;
   }
   const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
   const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
 
-  m_ptrSettings->setParams(
+  m_settings->setParams(
       page_info.id(),
       Params(outputParams.getDpi(), outputParams.getColorParams(), outputParams.getSplittingOptions(),
              outputParams.getPictureShapeOptions(), dewarping::DistortionModel(), outputParams.getDepthPerception(),
@@ -177,6 +177,6 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
 }
 
 OptionsWidget* Filter::optionsWidget() {
-  return m_ptrOptionsWidget.get();
+  return m_optionsWidget.get();
 }
 }  // namespace output

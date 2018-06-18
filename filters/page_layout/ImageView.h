@@ -217,7 +217,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;
 
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
 
   const PageId m_pageId;
 
@@ -259,7 +259,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
    *
    * This one is for displaying purposes only.  It changes during
    * dragging, and it may differ from what
-   * m_ptrSettings->getAggregateHardSizeMM() would return.
+   * m_settings->getAggregateHardSizeMM() would return.
    *
    * \see m_committedAggregateHardSizeMM
    */
@@ -269,7 +269,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
    * \brief Aggregate (max width + max height) hard page size.
    *
    * This one is supposed to be the cached version of what
-   * m_ptrSettings->getAggregateHardSizeMM() would return.
+   * m_settings->getAggregateHardSizeMM() would return.
    *
    * \see m_aggregateHardSizeMM
    */

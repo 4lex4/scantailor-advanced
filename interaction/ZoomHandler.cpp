@@ -21,13 +21,13 @@
 #include "ImageViewBase.h"
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view)
-    : m_rImageView(image_view),
+    : m_imageView(image_view),
       m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter),
       m_focus(CURSOR) {}
 
 ZoomHandler::ZoomHandler(ImageViewBase& image_view,
                          const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter)
-    : m_rImageView(image_view), m_interactionPermitter(explicit_interaction_permitter), m_focus(CURSOR) {}
+    : m_imageView(image_view), m_interactionPermitter(explicit_interaction_permitter), m_focus(CURSOR) {}
 
 void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
   if (event->orientation() != Qt::Vertical) {
@@ -40,7 +40,7 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
 
   event->accept();
 
-  double zoom = m_rImageView.zoomLevel();
+  double zoom = m_imageView.zoomLevel();
 
   if ((zoom == 1.0) && (event->delta() < 0)) {
     // Alredy zoomed out and trying to zoom out more.
@@ -49,7 +49,7 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
     const double delta_clicks = event->delta() / 120;
 
     const double dist = -delta_clicks * 30;  // 30px per "click"
-    m_rImageView.moveTowardsIdealPosition(dist);
+    m_imageView.moveTowardsIdealPosition(dist);
 
     return;
   }
@@ -63,14 +63,14 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
   QPointF focus_point;
   switch (m_focus) {
     case CENTER:
-      focus_point = QRectF(m_rImageView.rect()).center();
+      focus_point = QRectF(m_imageView.rect()).center();
       break;
     case CURSOR:
       focus_point = event->pos() + QPointF(0.5, 0.5);
       break;
   }
-  m_rImageView.setWidgetFocalPointWithoutMoving(focus_point);
-  m_rImageView.setZoomLevel(zoom);  // this will call update()
+  m_imageView.setWidgetFocalPointWithoutMoving(focus_point);
+  m_imageView.setZoomLevel(zoom);  // this will call update()
 }  // ZoomHandler::onWheelEvent
 
 void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
@@ -78,7 +78,7 @@ void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interactio
     return;
   }
 
-  double zoom = m_rImageView.zoomLevel();
+  double zoom = m_imageView.zoomLevel();
 
   switch (event->key()) {
     case Qt::Key_Plus:
@@ -91,8 +91,8 @@ void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interactio
       return;
   }
 
-  QPointF focus_point = QRectF(m_rImageView.rect()).center();
+  QPointF focus_point = QRectF(m_imageView.rect()).center();
 
-  m_rImageView.setWidgetFocalPointWithoutMoving(focus_point);
-  m_rImageView.setZoomLevel(zoom);  // this will call update()
+  m_imageView.setWidgetFocalPointWithoutMoving(focus_point);
+  m_imageView.setZoomLevel(zoom);  // this will call update()
 }

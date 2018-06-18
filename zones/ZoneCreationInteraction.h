@@ -38,7 +38,7 @@ class ZoneCreationInteraction : public InteractionHandler {
   ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction);
 
  protected:
-  ZoneInteractionContext& context() { return m_rContext; }
+  ZoneInteractionContext& context() { return m_context; }
 
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
@@ -55,7 +55,7 @@ class ZoneCreationInteraction : public InteractionHandler {
 
   bool isDragHandlerPermitted(const InteractionState& interaction) const;
 
-  ZoneInteractionContext& m_rContext;
+  ZoneInteractionContext& m_context;
 
   /**
    * We have our own drag handler even though there is already a global one
@@ -80,7 +80,7 @@ class ZoneCreationInteraction : public InteractionHandler {
 
   BasicSplineVisualizer m_visualizer;
   InteractionState::Captor m_interaction;
-  EditableSpline::Ptr m_ptrSpline;
+  EditableSpline::Ptr m_spline;
   QPointF m_nextVertexImagePos;
   bool m_rectangularZoneType;
   QPointF m_nextVertexImagePos_mid1;

@@ -47,7 +47,7 @@ class DragWatcher : public InteractionHandler {
  private:
   void updateState(QPoint mouse_pos);
 
-  DragHandler& m_rDragHandler;
+  DragHandler& m_dragHandler;
   QDateTime m_dragStartTime;
   QPoint m_dragStartPos;
   int m_dragMaxSqDist;

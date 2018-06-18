@@ -61,7 +61,7 @@ class RelinkingModel : public QAbstractListModel {
    * This allows you to take the relinker right after construction
    * and then use it when accepted() signal is emitted.
    */
-  intrusive_ptr<AbstractRelinker> relinker() const { return m_ptrRelinker; }
+  intrusive_ptr<AbstractRelinker> relinker() const { return m_relinker; }
 
   void operator()(const RelinkablePath& path) { addPath(path); }
 
@@ -126,8 +126,8 @@ class RelinkingModel : public QAbstractListModel {
   QPixmap m_folderIcon;
   std::vector<Item> m_items;
   std::set<QString> m_origPathSet;
-  const intrusive_ptr<Relinker> m_ptrRelinker;
-  std::unique_ptr<StatusUpdateThread> m_ptrStatusUpdateThread;
+  const intrusive_ptr<Relinker> m_relinker;
+  std::unique_ptr<StatusUpdateThread> m_statusUpdateThread;
   bool m_haveUncommittedChanges;
 };
 

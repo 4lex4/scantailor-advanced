@@ -8,8 +8,8 @@
 
 class ColorSchemeManager {
  private:
-  static std::unique_ptr<ColorSchemeManager> m_ptrInstance;
-  std::unique_ptr<ColorParams> m_ptrColorParams;
+  static std::unique_ptr<ColorSchemeManager> m_instance;
+  std::unique_ptr<ColorParams> m_colorParams;
 
   ColorSchemeManager() = default;
 

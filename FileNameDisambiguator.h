@@ -85,7 +85,7 @@ class FileNameDisambiguator : public ref_countable {
  private:
   class Impl;
 
-  std::unique_ptr<Impl> m_ptrImpl;
+  std::unique_ptr<Impl> m_impl;
 };
 
 

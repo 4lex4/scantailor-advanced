@@ -96,7 +96,7 @@ class InfluenceMap {
    * so moving to the next line requires adding stride() rather
    * than size().width().
    */
-  const Cell* data() const { return m_pData; }
+  const Cell* data() const { return m_plainData; }
 
   /**
    * \brief Returns a pointer to the top-left corner of the map.
@@ -105,7 +105,7 @@ class InfluenceMap {
    * so moving to the next line requires adding stride() rather
    * than size().width().
    */
-  Cell* data() { return m_pData; }
+  Cell* data() { return m_plainData; }
 
   /**
    * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -114,7 +114,7 @@ class InfluenceMap {
    * labelled as background (label 0).  Sometimes it might be desirable
    * to access that data.
    */
-  const Cell* paddedData() const { return m_pData ? &m_data[0] : nullptr; }
+  const Cell* paddedData() const { return m_plainData ? &m_data[0] : nullptr; }
 
   /**
    * \brief Returns a pointer to the top-left corner of padding of the map.
@@ -123,7 +123,7 @@ class InfluenceMap {
    * labelled as background (label 0).  Sometimes it might be desirable
    * to access that data.
    */
-  Cell* paddedData() { return m_pData ? &m_data[0] : nullptr; }
+  Cell* paddedData() { return m_plainData ? &m_data[0] : nullptr; }
 
   /**
    * \brief Returns non-padded dimensions of the map.
@@ -155,7 +155,7 @@ class InfluenceMap {
   void init(const ConnectivityMap& cmap, const BinaryImage* mask = nullptr);
 
   std::vector<Cell> m_data;
-  Cell* m_pData;
+  Cell* m_plainData;
   QSize m_size;
   int m_stride;
   uint32_t m_maxLabel;

@@ -71,11 +71,11 @@ class Task : public ref_countable {
 
   void updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate);
 
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ImageSettings> m_ptrImageSettings;
-  intrusive_ptr<select_content::Task> m_ptrNextTask;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ImageSettings> m_imageSettings;
+  intrusive_ptr<select_content::Task> m_nextTask;
+  std::unique_ptr<DebugImages> m_dbg;
   PageId m_pageId;
   bool m_batchProcessing;
 };

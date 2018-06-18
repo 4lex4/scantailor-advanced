@@ -25,9 +25,9 @@
 class QImage;
 
 namespace imageproc {
-InfluenceMap::InfluenceMap() : m_pData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {}
+InfluenceMap::InfluenceMap() : m_plainData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {}
 
-InfluenceMap::InfluenceMap(const ConnectivityMap& cmap) : m_pData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {
+InfluenceMap::InfluenceMap(const ConnectivityMap& cmap) : m_plainData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {
   if (cmap.size().isEmpty()) {
     return;
   }
@@ -36,7 +36,7 @@ InfluenceMap::InfluenceMap(const ConnectivityMap& cmap) : m_pData(nullptr), m_si
 }
 
 InfluenceMap::InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask)
-    : m_pData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {
+    : m_plainData(nullptr), m_size(), m_stride(0), m_maxLabel(0) {
   if (cmap.size().isEmpty()) {
     return;
   }
@@ -49,12 +49,12 @@ InfluenceMap::InfluenceMap(const ConnectivityMap& cmap, const BinaryImage& mask)
 
 InfluenceMap::InfluenceMap(const InfluenceMap& other)
     : m_data(other.m_data),
-      m_pData(nullptr),
+      m_plainData(nullptr),
       m_size(other.size()),
       m_stride(other.stride()),
       m_maxLabel(other.m_maxLabel) {
   if (!m_size.isEmpty()) {
-    m_pData = &m_data[0] + m_stride + 1;
+    m_plainData = &m_data[0] + m_stride + 1;
   }
 }
 
@@ -66,7 +66,7 @@ InfluenceMap& InfluenceMap::operator=(const InfluenceMap& other) {
 
 void InfluenceMap::swap(InfluenceMap& other) {
   m_data.swap(other.m_data);
-  std::swap(m_pData, other.m_pData);
+  std::swap(m_plainData, other.m_plainData);
   std::swap(m_size, other.m_size);
   std::swap(m_stride, other.m_stride);
   std::swap(m_maxLabel, other.m_maxLabel);
@@ -79,7 +79,7 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
   m_size = cmap.size();
   m_stride = width;
   m_data.resize(width * height);
-  m_pData = &m_data[0] + width + 1;
+  m_plainData = &m_data[0] + width + 1;
   m_maxLabel = cmap.maxLabel();
 
   FastQueue<Cell*> queue;
@@ -102,7 +102,7 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
   if (mask) {
     const uint32_t* mask_line = mask->data();
     const int mask_stride = mask->wordsPerLine();
-    cell = m_pData;
+    cell = m_plainData;
     const uint32_t msb = uint32_t(1) << 31;
     for (int y = 0; y < height - 2; ++y) {
       for (int x = 0; x < width - 2; ++x, ++cell) {
@@ -116,7 +116,7 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
       cell += 2;
     }
   } else {
-    cell = m_pData;
+    cell = m_plainData;
     for (int y = 0; y < height - 2; ++y) {
       for (int x = 0; x < width - 2; ++x, ++cell) {
         if (cell->label == 0) {
@@ -238,7 +238,7 @@ QImage InfluenceMap::visualized() const {
 
   QImage dst(m_size, QImage::Format_ARGB32);
   dst.fill(0x00FFFFFF);  // transparent white
-  const Cell* src_line = m_pData;
+  const Cell* src_line = m_plainData;
   const int src_stride = m_stride;
 
   auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());

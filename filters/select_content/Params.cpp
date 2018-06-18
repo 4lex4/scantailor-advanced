@@ -22,10 +22,7 @@
 
 namespace select_content {
 Params::Params(const Dependencies& deps)
-    : m_deps(deps),
-      m_contentDetectionMode(MODE_AUTO),
-      m_pageDetectionMode(MODE_DISABLED),
-      m_fineTuneCorners(false) {}
+    : m_deps(deps), m_contentDetectionMode(MODE_AUTO), m_pageDetectionMode(MODE_DISABLED), m_fineTuneCorners(false) {}
 
 Params::Params(const QRectF& content_rect,
                const QSizeF& content_size_mm,

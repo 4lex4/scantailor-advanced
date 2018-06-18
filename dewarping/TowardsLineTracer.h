@@ -50,9 +50,9 @@ class TowardsLineTracer {
 
   void setupSteps();
 
-  const uint32_t* m_pDmData;
+  const uint32_t* m_dmData;
   int m_dmStride;
-  const float* m_pPmData;
+  const float* m_pmData;
   int m_pmStride;
   QRect m_rect;
   QLineF m_line;

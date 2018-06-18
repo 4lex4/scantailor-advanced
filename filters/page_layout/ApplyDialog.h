@@ -51,7 +51,7 @@ class ApplyDialog : public QDialog, private Ui::PageLayoutApplyDialog {
   std::set<PageId> m_selectedPages;
   std::vector<PageRange> m_selectedRanges;
   PageId m_curPage;
-  QButtonGroup* m_pScopeGroup;
+  QButtonGroup* m_scopeGroup;
 };
 }  // namespace page_layout
 #endif  // ifndef PAGE_LAYOUT_APPLYDIALOG_H_

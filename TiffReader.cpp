@@ -48,18 +48,18 @@ class TiffReader::TiffHeader {
 
 class TiffReader::TiffHandle {
  public:
-  explicit TiffHandle(TIFF* handle) : m_pHandle(handle) {}
+  explicit TiffHandle(TIFF* handle) : m_handle(handle) {}
 
   ~TiffHandle() {
-    if (m_pHandle) {
-      TIFFClose(m_pHandle);
+    if (m_handle) {
+      TIFFClose(m_handle);
     }
   }
 
-  TIFF* handle() const { return m_pHandle; }
+  TIFF* handle() const { return m_handle; }
 
  private:
-  TIFF* m_pHandle;
+  TIFF* m_handle;
 };
 
 
@@ -68,27 +68,27 @@ class TiffReader::TiffBuffer {
   DECLARE_NON_COPYABLE(TiffBuffer)
 
  public:
-  TiffBuffer() : m_pData(nullptr) {}
+  TiffBuffer() : m_data(nullptr) {}
 
   explicit TiffBuffer(tsize_t num_items) {
-    m_pData = (T*) _TIFFmalloc(num_items * sizeof(T));
-    if (!m_pData) {
+    m_data = (T*) _TIFFmalloc(num_items * sizeof(T));
+    if (!m_data) {
       throw std::bad_alloc();
     }
   }
 
   ~TiffBuffer() {
-    if (m_pData) {
-      _TIFFfree(m_pData);
+    if (m_data) {
+      _TIFFfree(m_data);
     }
   }
 
-  T* data() { return m_pData; }
+  T* data() { return m_data; }
 
-  void swap(TiffBuffer& other) { std::swap(m_pData, other.m_pData); }
+  void swap(TiffBuffer& other) { std::swap(m_data, other.m_data); }
 
  private:
-  T* m_pData;
+  T* m_data;
 };
 
 

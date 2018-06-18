@@ -22,12 +22,12 @@
 #include "ModelShape.h"
 
 namespace spfit {
-SplineFitter::SplineFitter(FittableSpline* spline) : m_pSpline(spline), m_optimizer(spline->numControlPoints() * 2) {
+SplineFitter::SplineFitter(FittableSpline* spline) : m_spline(spline), m_optimizer(spline->numControlPoints() * 2) {
   // Each control point is a pair of (x, y) varaiables.
 }
 
 void SplineFitter::splineModified() {
-  Optimizer(m_pSpline->numControlPoints() * 2).swap(m_optimizer);
+  Optimizer(m_spline->numControlPoints() * 2).swap(m_optimizer);
 }
 
 void SplineFitter::setConstraints(const ConstraintSet& constraints) {
@@ -94,7 +94,7 @@ void SplineFitter::addAttractionForce(const Vec2d& spline_point,
   m_tempVars.resize(num_vars);
   for (int i = 0; i < num_coeffs; ++i) {
     const int cp_idx = coeffs[i].controlPointIdx;
-    const QPointF cp(m_pSpline->controlPointPosition(cp_idx));
+    const QPointF cp(m_spline->controlPointPosition(cp_idx));
     m_tempVars[i * 2] = cp.x();
     m_tempVars[i * 2 + 1] = cp.y();
   }
@@ -111,15 +111,14 @@ void SplineFitter::addAttractionForce(const Vec2d& spline_point,
 
 void SplineFitter::addAttractionForces(const ModelShape& model_shape, double from_t, double to_t) {
   auto sample_processor = [this, &model_shape](const QPointF& pt, double t, FittableSpline::SampleFlags flags) {
-    m_pSpline->linearCombinationAt(t, m_tempCoeffs);
+    m_spline->linearCombinationAt(t, m_tempCoeffs);
     const SqDistApproximant approx(model_shape.localSqDistApproximant(pt, flags));
     addAttractionForce(pt, m_tempCoeffs, approx);
   };
 
-  m_pSpline->sample(
-      ProxyFunction<decltype(sample_processor), void, const QPointF&, double, FittableSpline::SampleFlags>(
-          sample_processor),
-      m_samplingParams, from_t, to_t);
+  m_spline->sample(ProxyFunction<decltype(sample_processor), void, const QPointF&, double, FittableSpline::SampleFlags>(
+                       sample_processor),
+                   m_samplingParams, from_t, to_t);
 }
 
 void SplineFitter::addExternalForce(const QuadraticFunction& force) {
@@ -141,20 +140,20 @@ void SplineFitter::addInternalForce(const QuadraticFunction& force, const std::v
 OptimizationResult SplineFitter::optimize(double internal_force_weight) {
   const OptimizationResult res(m_optimizer.optimize(internal_force_weight));
 
-  const int num_control_points = m_pSpline->numControlPoints();
+  const int num_control_points = m_spline->numControlPoints();
   for (int i = 0; i < num_control_points; ++i) {
     const Vec2d delta(m_optimizer.displacementVector() + i * 2);
-    m_pSpline->moveControlPoint(i, m_pSpline->controlPointPosition(i) + delta);
+    m_spline->moveControlPoint(i, m_spline->controlPointPosition(i) + delta);
   }
 
   return res;
 }
 
 void SplineFitter::undoLastStep() {
-  const int num_control_points = m_pSpline->numControlPoints();
+  const int num_control_points = m_spline->numControlPoints();
   for (int i = 0; i < num_control_points; ++i) {
     const Vec2d delta(m_optimizer.displacementVector() + i * 2);
-    m_pSpline->moveControlPoint(i, m_pSpline->controlPointPosition(i) - delta);
+    m_spline->moveControlPoint(i, m_spline->controlPointPosition(i) - delta);
   }
 
   m_optimizer.undoLastStep();  // Zeroes the displacement vector among other things.

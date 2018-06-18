@@ -27,7 +27,7 @@ namespace deskew {
 const double OptionsWidget::MAX_ANGLE = 45.0;
 
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)),
+    : m_settings(std::move(settings)),
       m_ignoreAutoManualToggle(0),
       m_ignoreSpinBoxChanges(0),
       m_pageSelectionAccessor(page_selection_accessor) {
@@ -58,7 +58,7 @@ void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
   }
 
   const Params params(m_uiData.effectiveDeskewAngle(), m_uiData.dependencies(), m_uiData.mode());
-  m_ptrSettings->setDegrees(pages, params);
+  m_settings->setDegrees(pages, params);
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
@@ -75,7 +75,7 @@ void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
   }
 
   const Params params(m_uiData.effectiveDeskewAngle(), m_uiData.dependencies(), m_uiData.mode());
-  m_ptrSettings->setDegrees(pages, params);
+  m_settings->setDegrees(pages, params);
   emit invalidateAllThumbnails();
 }
 
@@ -137,7 +137,7 @@ void OptionsWidget::modeChanged(const bool auto_mode) {
 
   if (auto_mode) {
     m_uiData.setMode(MODE_AUTO);
-    m_ptrSettings->clearPageParams(m_pageId);
+    m_settings->clearPageParams(m_pageId);
     emit reloadRequested();
   } else {
     m_uiData.setMode(MODE_MANUAL);
@@ -177,7 +177,7 @@ void OptionsWidget::setSpinBoxKnownState(const double angle) {
 
 void OptionsWidget::commitCurrentParams() {
   Params params(m_uiData.effectiveDeskewAngle(), m_uiData.dependencies(), m_uiData.mode());
-  m_ptrSettings->setPageParams(m_pageId, params);
+  m_settings->setPageParams(m_pageId, params);
 }
 
 double OptionsWidget::spinBoxToDegrees(const double sb_value) {

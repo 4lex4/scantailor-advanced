@@ -64,7 +64,7 @@ struct DistortionModelBuilder::RansacModel {
 
 class DistortionModelBuilder::RansacAlgo {
  public:
-  explicit RansacAlgo(const std::vector<TracedCurve>& all_curves) : m_rAllCurves(all_curves) {}
+  explicit RansacAlgo(const std::vector<TracedCurve>& all_curves) : m_allCurves(all_curves) {}
 
   void buildAndAssessModel(const TracedCurve* top_curve, const TracedCurve* bottom_curve);
 
@@ -76,7 +76,7 @@ class DistortionModelBuilder::RansacAlgo {
   double calcReferenceHeight(const CylindricalSurfaceDewarper& dewarper, const QPointF& loc);
 
   RansacModel m_bestModel;
-  const std::vector<TracedCurve>& m_rAllCurves;
+  const std::vector<TracedCurve>& m_allCurves;
 };
 
 
@@ -431,7 +431,7 @@ void DistortionModelBuilder::RansacAlgo::buildAndAssessModel(const TracedCurve* 
                                             depth_perception);
 
   double error = 0;
-  for (const TracedCurve& curve : m_rAllCurves) {
+  for (const TracedCurve& curve : m_allCurves) {
     const size_t polyline_size = curve.trimmedPolyline.size();
     const double r_reference_height = 1.0 / 1.0;  // calcReferenceHeight(dewarper, curve.centroid);
 

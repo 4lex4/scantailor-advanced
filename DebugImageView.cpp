@@ -27,33 +27,33 @@
 
 class DebugImageView::ImageLoadResult : public AbstractCommand<void> {
  public:
-  ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image) : m_ptrOwner(std::move(owner)), m_image(image) {}
+  ImageLoadResult(QPointer<DebugImageView> owner, const QImage& image) : m_owner(std::move(owner)), m_image(image) {}
 
   // This method is called from the main thread.
   void operator()() override {
-    if (DebugImageView* owner = m_ptrOwner) {
+    if (DebugImageView* owner = m_owner) {
       owner->imageLoaded(m_image);
     }
   }
 
  private:
-  QPointer<DebugImageView> m_ptrOwner;
+  QPointer<DebugImageView> m_owner;
   QImage m_image;
 };
 
 
 class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
  public:
-  ImageLoader(DebugImageView* owner, const QString& file_path) : m_ptrOwner(owner), m_filePath(file_path) {}
+  ImageLoader(DebugImageView* owner, const QString& file_path) : m_owner(owner), m_filePath(file_path) {}
 
   BackgroundExecutor::TaskResultPtr operator()() override {
     QImage image(m_filePath);
 
-    return make_intrusive<ImageLoadResult>(m_ptrOwner, image);
+    return make_intrusive<ImageLoadResult>(m_owner, image);
   }
 
  private:
-  QPointer<DebugImageView> m_ptrOwner;
+  QPointer<DebugImageView> m_owner;
   QString m_filePath;
 };
 
@@ -64,9 +64,9 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
     : QStackedWidget(parent),
       m_file(file),
       m_imageViewFactory(image_view_factory),
-      m_pPlaceholderWidget(new ProcessingIndicationWidget(this)),
+      m_placeholderWidget(new ProcessingIndicationWidget(this)),
       m_isLive(false) {
-  addWidget(m_pPlaceholderWidget);
+  addWidget(m_placeholderWidget);
 }
 
 void DebugImageView::setLive(const bool live) {
@@ -74,7 +74,7 @@ void DebugImageView::setLive(const bool live) {
     ImageViewBase::backgroundExecutor().enqueueTask(make_intrusive<ImageLoader>(this, m_file.get()));
   } else if (!live && m_isLive) {
     if (QWidget* wgt = currentWidget()) {
-      if (wgt != m_pPlaceholderWidget) {
+      if (wgt != m_placeholderWidget) {
         removeWidget(wgt);
         delete wgt;
       }
@@ -89,7 +89,7 @@ void DebugImageView::imageLoaded(const QImage& image) {
     return;
   }
 
-  if (currentWidget() == m_pPlaceholderWidget) {
+  if (currentWidget() == m_placeholderWidget) {
     std::unique_ptr<QWidget> image_view;
     if (m_imageViewFactory.empty()) {
       image_view = std::make_unique<BasicImageView>(image);

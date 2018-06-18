@@ -32,18 +32,18 @@ SplitModeDialog::SplitModeDialog(QWidget* const parent,
       m_pages(page_selection_accessor.allPages()),
       m_selectedPages(page_selection_accessor.selectedPages()),
       m_curPage(cur_page),
-      m_pScopeGroup(new QButtonGroup(this)),
+      m_scopeGroup(new QButtonGroup(this)),
       m_layoutType(layout_type),
       m_autoDetectedLayoutType(auto_detected_layout_type),
       m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid) {
   setupUi(this);
-  m_pScopeGroup->addButton(thisPageRB);
-  m_pScopeGroup->addButton(allPagesRB);
-  m_pScopeGroup->addButton(thisPageAndFollowersRB);
-  m_pScopeGroup->addButton(thisEveryOtherRB);
-  m_pScopeGroup->addButton(everyOtherRB);
-  m_pScopeGroup->addButton(selectedPagesRB);
-  m_pScopeGroup->addButton(everyOtherSelectedRB);
+  m_scopeGroup->addButton(thisPageRB);
+  m_scopeGroup->addButton(allPagesRB);
+  m_scopeGroup->addButton(thisPageAndFollowersRB);
+  m_scopeGroup->addButton(thisEveryOtherRB);
+  m_scopeGroup->addButton(everyOtherRB);
+  m_scopeGroup->addButton(selectedPagesRB);
+  m_scopeGroup->addButton(everyOtherSelectedRB);
   if (m_selectedPages.size() <= 1) {
     selectedPagesRB->setEnabled(false);
     selectedPagesHint->setEnabled(false);

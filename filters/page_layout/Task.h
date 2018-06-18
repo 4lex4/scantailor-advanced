@@ -62,9 +62,9 @@ class Task : public ref_countable {
 
   static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<output::Task> m_ptrNextTask;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<output::Task> m_nextTask;
+  intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   bool m_batchProcessing;
 };

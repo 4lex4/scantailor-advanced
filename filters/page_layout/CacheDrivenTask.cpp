@@ -32,7 +32,7 @@
 
 namespace page_layout {
 CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task, intrusive_ptr<Settings> settings)
-    : m_ptrNextTask(std::move(next_task)), m_ptrSettings(std::move(settings)) {}
+    : m_nextTask(std::move(next_task)), m_settings(std::move(settings)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
@@ -41,7 +41,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
                               const ImageTransformation& xform,
                               const QRectF& page_rect,
                               const QRectF& content_rect) {
-  const std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
+  const std::unique_ptr<Params> params(m_settings->getPageParams(page_info.id()));
   if (!params || (params->contentSizeMM().isEmpty() && !content_rect.isEmpty())) {
     if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
       thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
@@ -52,19 +52,19 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   }
 
   Params new_params(
-      m_ptrSettings->updateContentSizeAndGetParams(page_info.id(), page_rect, content_rect, params->contentSizeMM()));
+      m_settings->updateContentSizeAndGetParams(page_info.id(), page_rect, content_rect, params->contentSizeMM()));
 
   const QRectF adapted_content_rect(Utils::adaptContentRect(xform, content_rect));
   const QPolygonF content_rect_phys(xform.transformBack().map(adapted_content_rect));
   const QPolygonF page_rect_phys(Utils::calcPageRectPhys(xform, content_rect_phys, new_params,
-                                                         m_ptrSettings->getAggregateHardSizeMM(),
-                                                         m_ptrSettings->getAggregateContentRect()));
+                                                         m_settings->getAggregateHardSizeMM(),
+                                                         m_settings->getAggregateContentRect()));
 
   ImageTransformation new_xform(xform);
   new_xform.setPostCropArea(shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
 
-  if (m_ptrNextTask) {
-    m_ptrNextTask->process(page_info, collector, new_xform, content_rect_phys);
+  if (m_nextTask) {
+    m_nextTask->process(page_info, collector, new_xform, content_rect_phys);
 
     return;
   }
@@ -74,10 +74,10 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   const double deviationThreshold = settings.value("settings/marginsDeviationThreshold", 1.0).toDouble();
 
   if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-    thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
-        thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_params, xform,
-        content_rect_phys, xform.transform().map(page_rect_phys).boundingRect(),
-        m_ptrSettings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
+    thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(
+        new Thumbnail(thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_params,
+                      xform, content_rect_phys, xform.transform().map(page_rect_phys).boundingRect(),
+                      m_settings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
   }
 }  // CacheDrivenTask::process
 

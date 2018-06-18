@@ -21,29 +21,29 @@
 
 StageSequence::StageSequence(const intrusive_ptr<ProjectPages>& pages,
                              const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrFixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
-      m_ptrPageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
-      m_ptrDeskewFilter(new deskew::Filter(page_selection_accessor)),
-      m_ptrSelectContentFilter(new select_content::Filter(page_selection_accessor)),
-      m_ptrPageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
-      m_ptrOutputFilter(new output::Filter(page_selection_accessor)) {
+    : m_fixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
+      m_pageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
+      m_deskewFilter(new deskew::Filter(page_selection_accessor)),
+      m_selectContentFilter(new select_content::Filter(page_selection_accessor)),
+      m_pageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
+      m_outputFilter(new output::Filter(page_selection_accessor)) {
   m_fixOrientationFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrFixOrientationFilter);
+  m_filters.emplace_back(m_fixOrientationFilter);
 
   m_pageSplitFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrPageSplitFilter);
+  m_filters.emplace_back(m_pageSplitFilter);
 
   m_deskewFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrDeskewFilter);
+  m_filters.emplace_back(m_deskewFilter);
 
   m_selectContentFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrSelectContentFilter);
+  m_filters.emplace_back(m_selectContentFilter);
 
   m_pageLayoutFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrPageLayoutFilter);
+  m_filters.emplace_back(m_pageLayoutFilter);
 
   m_outputFilterIdx = static_cast<int>(m_filters.size());
-  m_filters.emplace_back(m_ptrOutputFilter);
+  m_filters.emplace_back(m_outputFilter);
 }
 
 void StageSequence::performRelinking(const AbstractRelinker& relinker) {

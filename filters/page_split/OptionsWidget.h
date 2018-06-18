@@ -106,8 +106,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::PageSplitOptionsWi
 
   void removeUiConnections();
 
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ProjectPages> m_ptrPages;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ProjectPages> m_pages;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   UiData m_uiData;

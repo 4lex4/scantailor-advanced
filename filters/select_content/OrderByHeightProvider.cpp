@@ -21,14 +21,14 @@
 #include <utility>
 
 namespace select_content {
-OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> settings) : m_ptrSettings(std::move(settings)) {}
+OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> settings) : m_settings(std::move(settings)) {}
 
 bool OrderByHeightProvider::precedes(const PageId& lhs_page,
                                      const bool lhs_incomplete,
                                      const PageId& rhs_page,
                                      const bool rhs_incomplete) const {
-  const std::unique_ptr<Params> lhs_params(m_ptrSettings->getPageParams(lhs_page));
-  const std::unique_ptr<Params> rhs_params(m_ptrSettings->getPageParams(rhs_page));
+  const std::unique_ptr<Params> lhs_params(m_settings->getPageParams(lhs_page));
+  const std::unique_ptr<Params> rhs_params(m_settings->getPageParams(rhs_page));
 
   QSizeF lhs_size;
   if (lhs_params) {

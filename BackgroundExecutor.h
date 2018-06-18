@@ -65,7 +65,7 @@ class BackgroundExecutor {
   typedef PayloadEvent<TaskPtr> TaskEvent;
   typedef PayloadEvent<TaskResultPtr> ResultEvent;
 
-  std::unique_ptr<Impl> m_ptrImpl;
+  std::unique_ptr<Impl> m_impl;
 };
 
 

@@ -49,18 +49,18 @@ const uint8_t TiffWriter::m_reverseBitsLUT[256]
 
 class TiffWriter::TiffHandle {
  public:
-  explicit TiffHandle(TIFF* handle) : m_pHandle(handle) {}
+  explicit TiffHandle(TIFF* handle) : m_handle(handle) {}
 
   ~TiffHandle() {
-    if (m_pHandle) {
-      TIFFClose(m_pHandle);
+    if (m_handle) {
+      TIFFClose(m_handle);
     }
   }
 
-  TIFF* handle() const { return m_pHandle; }
+  TIFF* handle() const { return m_handle; }
 
  private:
-  TIFF* m_pHandle;
+  TIFF* m_handle;
 };
 
 

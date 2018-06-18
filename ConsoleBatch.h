@@ -55,12 +55,12 @@ class ConsoleBatch {
  private:
   bool batch;
   bool debug;
-  intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
-  intrusive_ptr<ProjectPages> m_ptrPages;
-  intrusive_ptr<StageSequence> m_ptrStages;
+  intrusive_ptr<FileNameDisambiguator> m_disambiguator;
+  intrusive_ptr<ProjectPages> m_pages;
+  intrusive_ptr<StageSequence> m_stages;
   OutputFileNameGenerator m_outFileNameGen;
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-  std::unique_ptr<ProjectReader> m_ptrReader;
+  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::unique_ptr<ProjectReader> m_reader;
 
   void setupFilter(int idx, std::set<PageId> allPages);
 

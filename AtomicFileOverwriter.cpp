@@ -30,27 +30,27 @@ AtomicFileOverwriter::~AtomicFileOverwriter() {
 QIODevice* AtomicFileOverwriter::startWriting(const QString& file_path) {
   abort();
 
-  m_ptrTempFile = std::make_unique<QTemporaryFile>(file_path);
-  m_ptrTempFile->setAutoRemove(false);
-  if (!m_ptrTempFile->open()) {
-    m_ptrTempFile.reset();
+  m_tempFile = std::make_unique<QTemporaryFile>(file_path);
+  m_tempFile->setAutoRemove(false);
+  if (!m_tempFile->open()) {
+    m_tempFile.reset();
   }
 
-  return m_ptrTempFile.get();
+  return m_tempFile.get();
 }
 
 bool AtomicFileOverwriter::commit() {
-  if (!m_ptrTempFile) {
+  if (!m_tempFile) {
     return false;
   }
 
-  const QString temp_file_path(m_ptrTempFile->fileName());
-  const QString target_path(m_ptrTempFile->fileTemplate());
+  const QString temp_file_path(m_tempFile->fileName());
+  const QString target_path(m_tempFile->fileTemplate());
 
   // Yes, we have to destroy this object here, because:
   // 1. Under Windows, open files can't be renamed or deleted.
   // 2. QTemporaryFile::close() doesn't really close it.
-  m_ptrTempFile.reset();
+  m_tempFile.reset();
 
   if (!Utils::overwritingRename(temp_file_path, target_path)) {
     QFile::remove(temp_file_path);
@@ -62,11 +62,11 @@ bool AtomicFileOverwriter::commit() {
 }
 
 void AtomicFileOverwriter::abort() {
-  if (!m_ptrTempFile) {
+  if (!m_tempFile) {
     return;
   }
 
-  const QString temp_file_path(m_ptrTempFile->fileName());
-  m_ptrTempFile.reset();  // See comments in commit()
+  const QString temp_file_path(m_tempFile->fileName());
+  m_tempFile.reset();  // See comments in commit()
   QFile::remove(temp_file_path);
 }

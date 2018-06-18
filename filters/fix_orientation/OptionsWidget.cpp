@@ -26,7 +26,7 @@
 
 namespace fix_orientation {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor) {
+    : m_settings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor) {
   setupUi(this);
 
   setupUiConnections();
@@ -82,7 +82,7 @@ void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
     return;
   }
 
-  m_ptrSettings->applyRotation(pages, m_rotation);
+  m_settings->applyRotation(pages, m_rotation);
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
@@ -94,7 +94,7 @@ void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
 }
 
 void OptionsWidget::appliedToAllPages(const std::set<PageId>& pages) {
-  m_ptrSettings->applyRotation(pages, m_rotation);
+  m_settings->applyRotation(pages, m_rotation);
   emit invalidateAllThumbnails();
 }
 
@@ -106,7 +106,7 @@ void OptionsWidget::setRotation(const OrthogonalRotation& rotation) {
   m_rotation = rotation;
   setRotationPixmap();
 
-  m_ptrSettings->applyRotation(m_pageId.imageId(), rotation);
+  m_settings->applyRotation(m_pageId.imageId(), rotation);
 
   emit rotated(rotation);
   emit invalidateThumbnail(m_pageId);

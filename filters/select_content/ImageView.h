@@ -147,12 +147,12 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   /**
    * The context menu to be shown if there is no content box.
    */
-  QMenu* m_pNoContentMenu;
+  QMenu* m_noContentMenu;
 
   /**
    * The context menu to be shown if there exists a content box.
    */
-  QMenu* m_pHaveContentMenu;
+  QMenu* m_haveContentMenu;
 
   /**
    * Content box in virtual image coordinates.

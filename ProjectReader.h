@@ -46,17 +46,17 @@ class ProjectReader {
 
   void readFilterSettings(const std::vector<FilterPtr>& filters) const;
 
-  bool success() const { return (m_ptrPages != nullptr); }
+  bool success() const { return (m_pages != nullptr); }
 
   const QString& outputDirectory() const { return m_outDir; }
 
   const QString& getVersion() const { return m_version; }
 
-  const intrusive_ptr<ProjectPages>& pages() const { return m_ptrPages; }
+  const intrusive_ptr<ProjectPages>& pages() const { return m_pages; }
 
   const SelectedPage& selectedPage() const { return m_selectedPage; }
 
-  const intrusive_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_ptrDisambiguator; }
+  const intrusive_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_disambiguator; }
 
   ImageId imageId(int numeric_id) const;
 
@@ -104,8 +104,8 @@ class ProjectReader {
   ImageMap m_imageMap;
   PageMap m_pageMap;
   SelectedPage m_selectedPage;
-  intrusive_ptr<ProjectPages> m_ptrPages;
-  intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
+  intrusive_ptr<ProjectPages> m_pages;
+  intrusive_ptr<FileNameDisambiguator> m_disambiguator;
 };
 
 

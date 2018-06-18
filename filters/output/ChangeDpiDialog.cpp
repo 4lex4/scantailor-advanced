@@ -30,12 +30,12 @@ ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
       m_pages(page_selection_accessor.allPages()),
       m_selectedPages(page_selection_accessor.selectedPages()),
       m_curPage(cur_page),
-      m_pScopeGroup(new QButtonGroup(this)) {
+      m_scopeGroup(new QButtonGroup(this)) {
   setupUi(this);
-  m_pScopeGroup->addButton(thisPageRB);
-  m_pScopeGroup->addButton(allPagesRB);
-  m_pScopeGroup->addButton(thisPageAndFollowersRB);
-  m_pScopeGroup->addButton(selectedPagesRB);
+  m_scopeGroup->addButton(thisPageRB);
+  m_scopeGroup->addButton(allPagesRB);
+  m_scopeGroup->addButton(thisPageAndFollowersRB);
+  m_scopeGroup->addButton(selectedPagesRB);
   if (m_selectedPages.size() <= 1) {
     selectedPagesWidget->setEnabled(false);
   }

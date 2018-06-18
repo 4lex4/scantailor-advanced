@@ -50,7 +50,7 @@ class DebugImageView
 
   AutoRemovingFile m_file;
   boost::function<QWidget*(const QImage&)> m_imageViewFactory;
-  QWidget* m_pPlaceholderWidget;
+  QWidget* m_placeholderWidget;
   bool m_isLive;
 };
 

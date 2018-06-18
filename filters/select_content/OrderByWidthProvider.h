@@ -34,7 +34,7 @@ class OrderByWidthProvider : public PageOrderProvider {
                 bool rhs_incomplete) const override;
 
  private:
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
 };
 }  // namespace select_content
 #endif

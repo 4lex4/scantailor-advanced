@@ -61,11 +61,11 @@ class Task : public ref_countable {
  private:
   class UiUpdater;
 
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ProjectPages> m_ptrPages;
-  intrusive_ptr<deskew::Task> m_ptrNextTask;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ProjectPages> m_pages;
+  intrusive_ptr<deskew::Task> m_nextTask;
+  std::unique_ptr<DebugImages> m_dbg;
   PageInfo m_pageInfo;
   bool m_batchProcessing;
 };

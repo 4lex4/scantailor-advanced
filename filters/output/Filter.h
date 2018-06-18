@@ -75,8 +75,8 @@ class Filter : public AbstractFilter {
  private:
   void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
-  intrusive_ptr<Settings> m_ptrSettings;
-  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  intrusive_ptr<Settings> m_settings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   PictureZonePropFactory m_pictureZonePropFactory;
   FillZonePropFactory m_fillZonePropFactory;
 };

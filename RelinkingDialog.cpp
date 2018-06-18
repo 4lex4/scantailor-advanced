@@ -24,11 +24,11 @@
 
 RelinkingDialog::RelinkingDialog(const QString& project_file_path, QWidget* parent)
     : QDialog(parent),
-      m_pSortingModel(new RelinkingSortingModel),
+      m_sortingModel(new RelinkingSortingModel),
       m_projectFileDir(QFileInfo(project_file_path).path()) {
   ui.setupUi(this);
-  m_pSortingModel->setSourceModel(&m_model);
-  ui.listView->setModel(m_pSortingModel);
+  m_sortingModel->setSourceModel(&m_model);
+  ui.listView->setModel(m_sortingModel);
   ui.listView->setTextElideMode(Qt::ElideMiddle);
   ui.errorLabel->setVisible(false);
   ui.undoButton->setVisible(false);

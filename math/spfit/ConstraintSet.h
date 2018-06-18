@@ -44,7 +44,7 @@ class ConstraintSet {
   void constrainSplinePoint(double t, const QLineF& line);
 
  private:
-  const FittableSpline* m_pSpline;
+  const FittableSpline* m_spline;
   std::list<LinearFunction> m_constraints;
 };
 }  // namespace spfit

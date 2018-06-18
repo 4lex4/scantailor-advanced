@@ -32,9 +32,9 @@ TowardsLineTracer::TowardsLineTracer(const imageproc::SEDM* dm,
                                      const Grid<float>* pm,
                                      const QLineF& line,
                                      const QPoint& initial_pos)
-    : m_pDmData(dm->data()),
+    : m_dmData(dm->data()),
       m_dmStride(dm->stride()),
-      m_pPmData(pm->data()),
+      m_pmData(pm->data()),
       m_pmStride(pm->stride()),
       m_rect(QPoint(0, 0), dm->size()),
       m_line(line),
@@ -60,8 +60,8 @@ const QPoint* TowardsLineTracer::trace(const float max_dist) {
   QPoint cur_pos(m_lastOutputPos);
   QPoint last_content_pos(-1, -1);
 
-  const uint32_t* p_dm = m_pDmData + cur_pos.y() * m_dmStride + cur_pos.x();
-  const float* p_pm = m_pPmData + cur_pos.y() * m_pmStride + cur_pos.x();
+  const uint32_t* p_dm = m_dmData + cur_pos.y() * m_dmStride + cur_pos.x();
+  const float* p_pm = m_pmData + cur_pos.y() * m_pmStride + cur_pos.x();
 
   for (;;) {
     int best_dm_idx = -1;

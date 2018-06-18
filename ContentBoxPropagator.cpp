@@ -47,7 +47,7 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
 
 ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
                                            intrusive_ptr<CompositeCacheDrivenTask> task)
-    : m_ptrPageLayoutFilter(std::move(page_layout_filter)), m_ptrTask(std::move(task)) {}
+    : m_pageLayoutFilter(std::move(page_layout_filter)), m_task(std::move(task)) {}
 
 ContentBoxPropagator::~ContentBoxPropagator() = default;
 
@@ -56,11 +56,11 @@ void ContentBoxPropagator::propagate(const ProjectPages& pages) {
 
   for (const PageInfo& page_info : sequence) {
     Collector collector;
-    m_ptrTask->process(page_info, &collector);
+    m_task->process(page_info, &collector);
     if (collector.collected()) {
-      m_ptrPageLayoutFilter->setContentBox(page_info.id(), collector.xform(), collector.contentRect());
+      m_pageLayoutFilter->setContentBox(page_info.id(), collector.xform(), collector.contentRect());
     } else {
-      m_ptrPageLayoutFilter->invalidateContentBox(page_info.id());
+      m_pageLayoutFilter->invalidateContentBox(page_info.id());
     }
   }
 }

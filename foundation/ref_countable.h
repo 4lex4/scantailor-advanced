@@ -27,7 +27,7 @@
 
 class ref_countable {
  public:
-  ref_countable() : m_refCounter(0) {}
+  ref_countable() : m_counter(0) {}
 
   ref_countable(const ref_countable& other) {
     // don't copy the reference counter!
@@ -41,16 +41,16 @@ class ref_countable {
 
   virtual ~ref_countable() = default;
 
-  void ref() const { m_refCounter.fetchAndAddRelaxed(1); }
+  void ref() const { m_counter.fetchAndAddRelaxed(1); }
 
   void unref() const {
-    if (m_refCounter.fetchAndAddRelease(-1) == 1) {
+    if (m_counter.fetchAndAddRelease(-1) == 1) {
       delete this;
     }
   }
 
  private:
-  mutable QAtomicInt m_refCounter;
+  mutable QAtomicInt m_counter;
 };
 
 

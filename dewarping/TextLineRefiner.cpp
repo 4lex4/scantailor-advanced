@@ -41,7 +41,7 @@ class TextLineRefiner::SnakeLength {
 
   float arcLengthAt(size_t node_idx) const { return m_integralLength[node_idx]; }
 
-  float arcLengthFractionAt(size_t node_idx) const { return m_integralLength[node_idx] * m_rTotalLength; }
+  float arcLengthFractionAt(size_t node_idx) const { return m_integralLength[node_idx] * m_reciprocalTotalLength; }
 
   float lengthFromTo(size_t from_node_idx, size_t to_node_idx) const {
     return m_integralLength[to_node_idx] - m_integralLength[from_node_idx];
@@ -50,7 +50,7 @@ class TextLineRefiner::SnakeLength {
  private:
   std::vector<float> m_integralLength;
   float m_totalLength;
-  float m_rTotalLength;  // Reciprocal of the above.
+  float m_reciprocalTotalLength;
   float m_avgSegmentLength;
 };
 
@@ -420,7 +420,7 @@ QImage TextLineRefiner::visualizeSnakes(const std::vector<Snake>& snakes, const 
 /*============================ SnakeLength =============================*/
 
 TextLineRefiner::SnakeLength::SnakeLength(const Snake& snake)
-    : m_integralLength(snake.nodes.size()), m_totalLength(), m_rTotalLength(), m_avgSegmentLength() {
+    : m_integralLength(snake.nodes.size()), m_totalLength(), m_reciprocalTotalLength(), m_avgSegmentLength() {
   const size_t num_nodes = snake.nodes.size();
   float arc_length_accum = 0;
   for (size_t i = 1; i < num_nodes; ++i) {
@@ -430,7 +430,7 @@ TextLineRefiner::SnakeLength::SnakeLength(const Snake& snake)
   }
   m_totalLength = arc_length_accum;
   if (m_totalLength > std::numeric_limits<float>::epsilon()) {
-    m_rTotalLength = 1.0f / m_totalLength;
+    m_reciprocalTotalLength = 1.0f / m_totalLength;
   }
   if (num_nodes > 1) {
     m_avgSegmentLength = m_totalLength / (num_nodes - 1);

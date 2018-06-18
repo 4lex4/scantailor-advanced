@@ -23,15 +23,14 @@
 #include "FixDpiDialog.h"
 #include "ProjectFilesDialog.h"
 
-ProjectCreationContext::ProjectCreationContext(QWidget* parent)
-    : m_layoutDirection(Qt::LeftToRight), m_pParent(parent) {
+ProjectCreationContext::ProjectCreationContext(QWidget* parent) : m_layoutDirection(Qt::LeftToRight), m_parent(parent) {
   showProjectFilesDialog();
 }
 
 ProjectCreationContext::~ProjectCreationContext() {
   // Deleting a null pointer is OK.
-  delete m_ptrProjectFilesDialog;
-  delete m_ptrFixDpiDialog;
+  delete m_projectFilesDialog;
+  delete m_fixDpiDialog;
 }
 
 namespace {
@@ -44,14 +43,14 @@ bool allDpisOK(const T& container) {
 }  // anonymous namespace
 
 void ProjectCreationContext::projectFilesSubmitted() {
-  m_files = m_ptrProjectFilesDialog->inProjectFiles();
-  m_outDir = m_ptrProjectFilesDialog->outputDirectory();
+  m_files = m_projectFilesDialog->inProjectFiles();
+  m_outDir = m_projectFilesDialog->outputDirectory();
   m_layoutDirection = Qt::LeftToRight;
-  if (m_ptrProjectFilesDialog->isRtlLayout()) {
+  if (m_projectFilesDialog->isRtlLayout()) {
     m_layoutDirection = Qt::RightToLeft;
   }
 
-  if (!m_ptrProjectFilesDialog->isDpiFixingForced() && allDpisOK(m_files)) {
+  if (!m_projectFilesDialog->isDpiFixingForced() && allDpisOK(m_files)) {
     emit done(this);
   } else {
     showFixDpiDialog();
@@ -59,13 +58,13 @@ void ProjectCreationContext::projectFilesSubmitted() {
 }
 
 void ProjectCreationContext::projectFilesDialogDestroyed() {
-  if (!m_ptrFixDpiDialog) {
+  if (!m_fixDpiDialog) {
     deleteLater();
   }
 }
 
 void ProjectCreationContext::fixedDpiSubmitted() {
-  m_files = m_ptrFixDpiDialog->files();
+  m_files = m_fixDpiDialog->files();
   emit done(this);
 }
 
@@ -74,27 +73,27 @@ void ProjectCreationContext::fixDpiDialogDestroyed() {
 }
 
 void ProjectCreationContext::showProjectFilesDialog() {
-  assert(!m_ptrProjectFilesDialog);
-  m_ptrProjectFilesDialog = new ProjectFilesDialog(m_pParent);
-  m_ptrProjectFilesDialog->setAttribute(Qt::WA_DeleteOnClose);
-  m_ptrProjectFilesDialog->setAttribute(Qt::WA_QuitOnClose, false);
-  if (m_pParent) {
-    m_ptrProjectFilesDialog->setWindowModality(Qt::WindowModal);
+  assert(!m_projectFilesDialog);
+  m_projectFilesDialog = new ProjectFilesDialog(m_parent);
+  m_projectFilesDialog->setAttribute(Qt::WA_DeleteOnClose);
+  m_projectFilesDialog->setAttribute(Qt::WA_QuitOnClose, false);
+  if (m_parent) {
+    m_projectFilesDialog->setWindowModality(Qt::WindowModal);
   }
-  connect(m_ptrProjectFilesDialog, SIGNAL(accepted()), this, SLOT(projectFilesSubmitted()));
-  connect(m_ptrProjectFilesDialog, SIGNAL(destroyed(QObject*)), this, SLOT(projectFilesDialogDestroyed()));
-  m_ptrProjectFilesDialog->show();
+  connect(m_projectFilesDialog, SIGNAL(accepted()), this, SLOT(projectFilesSubmitted()));
+  connect(m_projectFilesDialog, SIGNAL(destroyed(QObject*)), this, SLOT(projectFilesDialogDestroyed()));
+  m_projectFilesDialog->show();
 }
 
 void ProjectCreationContext::showFixDpiDialog() {
-  assert(!m_ptrFixDpiDialog);
-  m_ptrFixDpiDialog = new FixDpiDialog(m_files, m_pParent);
-  m_ptrFixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);
-  m_ptrFixDpiDialog->setAttribute(Qt::WA_QuitOnClose, false);
-  if (m_pParent) {
-    m_ptrFixDpiDialog->setWindowModality(Qt::WindowModal);
+  assert(!m_fixDpiDialog);
+  m_fixDpiDialog = new FixDpiDialog(m_files, m_parent);
+  m_fixDpiDialog->setAttribute(Qt::WA_DeleteOnClose);
+  m_fixDpiDialog->setAttribute(Qt::WA_QuitOnClose, false);
+  if (m_parent) {
+    m_fixDpiDialog->setWindowModality(Qt::WindowModal);
   }
-  connect(m_ptrFixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
-  connect(m_ptrFixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
-  m_ptrFixDpiDialog->show();
+  connect(m_fixDpiDialog, SIGNAL(accepted()), this, SLOT(fixedDpiSubmitted()));
+  connect(m_fixDpiDialog, SIGNAL(destroyed(QObject*)), this, SLOT(fixDpiDialogDestroyed()));
+  m_fixDpiDialog->show();
 }

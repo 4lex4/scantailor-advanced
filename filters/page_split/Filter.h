@@ -91,9 +91,9 @@ class Filter : public AbstractFilter {
  private:
   void writeImageSettings(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
 
-  intrusive_ptr<ProjectPages> m_ptrPages;
-  intrusive_ptr<Settings> m_ptrSettings;
-  SafeDeletingQObjectPtr<OptionsWidget> m_ptrOptionsWidget;
+  intrusive_ptr<ProjectPages> m_pages;
+  intrusive_ptr<Settings> m_settings;
+  SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   std::vector<PageOrderOption> m_pageOrderOptions;
   int m_selectedPageOrder;
 };

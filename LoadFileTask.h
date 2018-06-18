@@ -56,11 +56,11 @@ class LoadFileTask : public BackgroundTask {
 
   void overrideDpi(QImage& image) const;
 
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
+  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   ImageId m_imageId;
   ImageMetadata m_imageMetadata;
-  const intrusive_ptr<ProjectPages> m_ptrPages;
-  const intrusive_ptr<fix_orientation::Task> m_ptrNextTask;
+  const intrusive_ptr<ProjectPages> m_pages;
+  const intrusive_ptr<fix_orientation::Task> m_nextTask;
 };
 
 

@@ -40,7 +40,7 @@ class PictureZonePropDialog : public QDialog {
 
  private:
   Ui::PictureZonePropDialog ui;
-  intrusive_ptr<PropertySet> m_ptrProps;
+  intrusive_ptr<PropertySet> m_props;
 };
 }  // namespace output
 #endif

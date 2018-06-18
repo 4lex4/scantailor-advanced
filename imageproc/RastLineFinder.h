@@ -173,12 +173,12 @@ class RastLineFinder {
 
   class PointUnavailablePred {
    public:
-    explicit PointUnavailablePred(const std::vector<Point>* points) : m_pPoints(points) {}
+    explicit PointUnavailablePred(const std::vector<Point>* points) : m_points(points) {}
 
-    bool operator()(unsigned idx) const { return !(*m_pPoints)[idx].available; }
+    bool operator()(unsigned idx) const { return !(*m_points)[idx].available; }
 
    private:
-    const std::vector<Point>* m_pPoints;
+    const std::vector<Point>* m_points;
   };
 
 

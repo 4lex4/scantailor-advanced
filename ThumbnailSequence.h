@@ -231,7 +231,7 @@ class ThumbnailSequence : public QObject {
 
   void emitNewSelectionLeader(const PageInfo& page_info, const CompositeItem* composite, SelectionFlags flags);
 
-  std::unique_ptr<Impl> m_ptrImpl;
+  std::unique_ptr<Impl> m_impl;
 };
 
 

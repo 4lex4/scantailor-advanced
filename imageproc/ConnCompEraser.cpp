@@ -52,14 +52,14 @@ inline void ConnCompEraser::clearBit(uint32_t* const line, const int x) {
 
 ConnCompEraser::ConnCompEraser(const BinaryImage& image, Connectivity conn)
     : m_image(image),
-      m_pLine(nullptr),
+      m_line(nullptr),
       m_width(m_image.width()),
       m_height(m_image.height()),
       m_wpl(m_image.wordsPerLine()),
       m_connectivity(conn),
       m_x(0),
       m_y(0) {
-  // By initializing m_pLine with 0 instead of m_image.data(),
+  // By initializing m_line with 0 instead of m_image.data(),
   // we avoid copy-on-write, provided that the caller used image.release().
 }
 
@@ -123,7 +123,7 @@ void ConnCompEraser::pushInitialSegments() {
 
   if (m_y + 1 < m_height) {
     Segment seg1{};
-    seg1.line = m_pLine + m_wpl;
+    seg1.line = m_line + m_wpl;
     seg1.xleft = m_x;
     seg1.xright = m_x;
     seg1.y = m_y + 1;
@@ -133,7 +133,7 @@ void ConnCompEraser::pushInitialSegments() {
   }
 
   Segment seg2{};
-  seg2.line = m_pLine;
+  seg2.line = m_line;
   seg2.xleft = m_x;
   seg2.xright = m_x;
   seg2.y = m_y;
@@ -147,16 +147,16 @@ bool ConnCompEraser::moveToNextBlackPixel() {
     return false;
   }
 
-  if (!m_pLine) {
-    // By initializing m_pLine with 0 instead of m_image.data(),
+  if (!m_line) {
+    // By initializing m_line with 0 instead of m_image.data(),
     // we allow the caller to delete his copy of the image
     // to avoid copy-on-write.
     // We could also try to avoid copy-on-write in the case of
     // a completely white image, but I don't think it's worth it.
-    m_pLine = m_image.data();
+    m_line = m_image.data();
   }
 
-  uint32_t* line = m_pLine;
+  uint32_t* line = m_line;
   const uint32_t* pword = line + (m_x >> 5);
 
   // Stop word is a last word in line that holds data.
@@ -195,7 +195,7 @@ bool ConnCompEraser::moveToNextBlackPixel() {
         m_x = static_cast<int>(((pword - line) << 5) + shift);
         assert(m_x < m_width);
         m_y = y;
-        m_pLine = line;
+        m_line = line;
 
         return true;
       }
@@ -208,7 +208,7 @@ bool ConnCompEraser::moveToNextBlackPixel() {
       m_x = static_cast<int>(((pword - line) << 5) + shift);
       assert(m_x < m_width);
       m_y = y;
-      m_pLine = line;
+      m_line = line;
 
       return true;
     }

@@ -82,12 +82,12 @@ class JpegSourceManager : public jpeg_source_mgr {
 
   static JpegSourceManager* object(j_decompress_ptr cinfo);
 
-  QIODevice& m_rDevice;
+  QIODevice& m_device;
   JOCTET m_buf[4096]{};
 };
 
 
-JpegSourceManager::JpegSourceManager(QIODevice& io_device) : jpeg_source_mgr(), m_rDevice(io_device) {
+JpegSourceManager::JpegSourceManager(QIODevice& io_device) : jpeg_source_mgr(), m_device(io_device) {
   init_source = &JpegSourceManager::initSource;
   fill_input_buffer = &JpegSourceManager::fillInputBuffer;
   skip_input_data = &JpegSourceManager::skipInputData;
@@ -106,7 +106,7 @@ boolean JpegSourceManager::fillInputBuffer(j_decompress_ptr cinfo) {
 }
 
 boolean JpegSourceManager::fillInputBufferImpl() {
-  const qint64 bytes_read = m_rDevice.read((char*) m_buf, sizeof(m_buf));
+  const qint64 bytes_read = m_device.read((char*) m_buf, sizeof(m_buf));
   if (bytes_read > 0) {
     bytes_in_buffer = bytes_read;
   } else {

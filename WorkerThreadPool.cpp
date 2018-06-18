@@ -25,50 +25,50 @@
 class WorkerThreadPool::TaskResultEvent : public QEvent {
  public:
   TaskResultEvent(BackgroundTaskPtr task, FilterResultPtr result)
-      : QEvent(User), m_ptrTask(std::move(task)), m_ptrResult(std::move(result)) {}
+      : QEvent(User), m_task(std::move(task)), m_result(std::move(result)) {}
 
-  const BackgroundTaskPtr& task() const { return m_ptrTask; }
+  const BackgroundTaskPtr& task() const { return m_task; }
 
-  const FilterResultPtr& result() const { return m_ptrResult; }
+  const FilterResultPtr& result() const { return m_result; }
 
  private:
-  BackgroundTaskPtr m_ptrTask;
-  FilterResultPtr m_ptrResult;
+  BackgroundTaskPtr m_task;
+  FilterResultPtr m_result;
 };
 
 
-WorkerThreadPool::WorkerThreadPool(QObject* parent) : QObject(parent), m_pPool(new QThreadPool(this)) {
+WorkerThreadPool::WorkerThreadPool(QObject* parent) : QObject(parent), m_pool(new QThreadPool(this)) {
   updateNumberOfThreads();
 }
 
 WorkerThreadPool::~WorkerThreadPool() = default;
 
 void WorkerThreadPool::shutdown() {
-  m_pPool->waitForDone();
+  m_pool->waitForDone();
 }
 
 bool WorkerThreadPool::hasSpareCapacity() const {
-  return m_pPool->activeThreadCount() < m_pPool->maxThreadCount();
+  return m_pool->activeThreadCount() < m_pool->maxThreadCount();
 }
 
 void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
   class Runnable : public QRunnable {
    public:
-    Runnable(WorkerThreadPool& owner, BackgroundTaskPtr task) : m_rOwner(owner), m_ptrTask(std::move(task)) {
+    Runnable(WorkerThreadPool& owner, BackgroundTaskPtr task) : m_owner(owner), m_task(std::move(task)) {
       setAutoDelete(true);
     }
 
     void run()
 
         override {
-      if (m_ptrTask->isCancelled()) {
+      if (m_task->isCancelled()) {
         return;
       }
 
       try {
-        const FilterResultPtr result((*m_ptrTask)());
+        const FilterResultPtr result((*m_task)());
         if (result) {
-          QCoreApplication::postEvent(&m_rOwner, new TaskResultEvent(m_ptrTask, result));
+          QCoreApplication::postEvent(&m_owner, new TaskResultEvent(m_task, result));
         }
       } catch (const std::bad_alloc&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
@@ -76,13 +76,13 @@ void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
     }
 
    private:
-    WorkerThreadPool& m_rOwner;
-    BackgroundTaskPtr m_ptrTask;
+    WorkerThreadPool& m_owner;
+    BackgroundTaskPtr m_task;
   };
 
 
   updateNumberOfThreads();
-  m_pPool->start(new Runnable(*this, task));
+  m_pool->start(new Runnable(*this, task));
 }  // WorkerThreadPool::submitTask
 
 void WorkerThreadPool::customEvent(QEvent* event) {
@@ -106,5 +106,5 @@ void WorkerThreadPool::updateNumberOfThreads() {
 
   int num_threads = m_settings.value("settings/batch_processing_threads", max_threads).toInt();
   num_threads = std::min<int>(num_threads, max_threads);
-  m_pPool->setMaxThreadCount(num_threads);
+  m_pool->setMaxThreadCount(num_threads);
 }

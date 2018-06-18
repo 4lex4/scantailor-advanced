@@ -42,16 +42,16 @@ class OutputFileNameGenerator {
 
   const QString& outDir() const { return m_outDir; }
 
-  FileNameDisambiguator* disambiguator() { return m_ptrDisambiguator.get(); }
+  FileNameDisambiguator* disambiguator() { return m_disambiguator.get(); }
 
-  const FileNameDisambiguator* disambiguator() const { return m_ptrDisambiguator.get(); }
+  const FileNameDisambiguator* disambiguator() const { return m_disambiguator.get(); }
 
   QString fileNameFor(const PageId& page) const;
 
   QString filePathFor(const PageId& page) const;
 
  private:
-  intrusive_ptr<FileNameDisambiguator> m_ptrDisambiguator;
+  intrusive_ptr<FileNameDisambiguator> m_disambiguator;
   QString m_outDir;
   Qt::LayoutDirection m_layoutDirection;
 };

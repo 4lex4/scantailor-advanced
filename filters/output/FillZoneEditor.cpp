@@ -35,12 +35,12 @@ class FillZoneEditor::MenuCustomizer {
   typedef ZoneContextMenuInteraction::StandardMenuItems StdMenuItems;
 
  public:
-  explicit MenuCustomizer(FillZoneEditor* editor) : m_pEditor(editor) {}
+  explicit MenuCustomizer(FillZoneEditor* editor) : m_editor(editor) {}
 
   std::vector<ZoneContextMenuItem> operator()(const EditableZoneSet::Zone& zone, const StdMenuItems& std_items);
 
  private:
-  FillZoneEditor* m_pEditor;
+  FillZoneEditor* m_editor;
 };
 
 
@@ -59,8 +59,8 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
       m_origToImage(orig_to_image),
       m_imageToOrig(image_to_orig),
       m_pageId(page_id),
-      m_ptrSettings(std::move(settings)) {
-  m_zones.setDefaultProperties(m_ptrSettings->defaultFillZoneProperties());
+      m_settings(std::move(settings)) {
+  m_zones.setDefaultProperties(m_settings->defaultFillZoneProperties());
 
   setMouseTracking(true);
 
@@ -78,14 +78,14 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
   rootInteractionHandler().makeLastFollower(m_dragHandler);
   rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
-  for (const Zone& zone : m_ptrSettings->fillZonesForPage(page_id)) {
+  for (const Zone& zone : m_settings->fillZonesForPage(page_id)) {
     auto spline = make_intrusive<EditableSpline>(zone.spline().transformed(m_origToImage));
     m_zones.addZone(spline, zone.properties());
   }
 }
 
 FillZoneEditor::~FillZoneEditor() {
-  m_ptrSettings->setDefaultFillZoneProperties(m_zones.defaultProperties());
+  m_settings->setDefaultFillZoneProperties(m_zones.defaultProperties());
 }
 
 void FillZoneEditor::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -127,7 +127,7 @@ void FillZoneEditor::commitZones() {
     zones.add(Zone(spline, *zone.properties()));
   }
 
-  m_ptrSettings->setFillZones(m_pageId, zones);
+  m_settings->setFillZones(m_pageId, zones);
 
   emit invalidateThumbnail(m_pageId);
 }
@@ -176,7 +176,7 @@ std::vector<ZoneContextMenuItem> FillZoneEditor::MenuCustomizer::operator()(cons
                                                                             const StdMenuItems& std_items) {
   std::vector<ZoneContextMenuItem> items;
   items.reserve(2);
-  items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_pEditor, zone, _1));
+  items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_editor, zone, _1));
   items.push_back(std_items.deleteItem);
 
   return items;

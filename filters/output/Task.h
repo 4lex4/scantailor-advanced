@@ -69,10 +69,10 @@ class Task : public ref_countable {
 
   void deleteMutuallyExclusiveOutputFiles();
 
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<Settings> m_ptrSettings;
-  intrusive_ptr<ThumbnailPixmapCache> m_ptrThumbnailCache;
-  std::unique_ptr<DebugImages> m_ptrDbg;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<Settings> m_settings;
+  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::unique_ptr<DebugImages> m_dbg;
   PageId m_pageId;
   OutputFileNameGenerator m_outFileNameGen;
   ImageViewTab m_lastTab;

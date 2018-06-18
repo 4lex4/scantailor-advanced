@@ -26,31 +26,31 @@ class SafeDeletingQObjectPtr {
   DECLARE_NON_COPYABLE(SafeDeletingQObjectPtr)
 
  public:
-  explicit SafeDeletingQObjectPtr(T* obj = 0) : m_pObj(obj) {}
+  explicit SafeDeletingQObjectPtr(T* obj = 0) : m_obj(obj) {}
 
   ~SafeDeletingQObjectPtr() {
-    if (m_pObj) {
-      m_pObj->disconnect();
-      m_pObj->deleteLater();
+    if (m_obj) {
+      m_obj->disconnect();
+      m_obj->deleteLater();
     }
   }
 
   void reset(T* other) { SafeDeletingQObjectPtr(other).swap(*this); }
 
-  T& operator*() const { return *m_pObj; }
+  T& operator*() const { return *m_obj; }
 
-  T* operator->() const { return m_pObj; }
+  T* operator->() const { return m_obj; }
 
-  T* get() const { return m_pObj; }
+  T* get() const { return m_obj; }
 
   void swap(SafeDeletingQObjectPtr& other) {
-    T* tmp = m_pObj;
-    m_pObj = other.m_pObj;
-    other.m_pObj = tmp;
+    T* tmp = m_obj;
+    m_obj = other.m_obj;
+    other.m_obj = tmp;
   }
 
  private:
-  T* m_pObj;
+  T* m_obj;
 };
 
 

@@ -222,32 +222,32 @@ class Settings::Impl {
 
 /*=============================== Settings ==================================*/
 
-Settings::Settings() : m_ptrImpl(new Impl()) {}
+Settings::Settings() : m_impl(new Impl()) {}
 
 Settings::~Settings() = default;
 
 void Settings::clear() {
-  return m_ptrImpl->clear();
+  return m_impl->clear();
 }
 
 void Settings::performRelinking(const AbstractRelinker& relinker) {
-  m_ptrImpl->performRelinking(relinker);
+  m_impl->performRelinking(relinker);
 }
 
 void Settings::removePagesMissingFrom(const PageSequence& pages) {
-  m_ptrImpl->removePagesMissingFrom(pages);
+  m_impl->removePagesMissingFrom(pages);
 }
 
 bool Settings::checkEverythingDefined(const PageSequence& pages, const PageId* ignore) const {
-  return m_ptrImpl->checkEverythingDefined(pages, ignore);
+  return m_impl->checkEverythingDefined(pages, ignore);
 }
 
 std::unique_ptr<Params> Settings::getPageParams(const PageId& page_id) const {
-  return m_ptrImpl->getPageParams(page_id);
+  return m_impl->getPageParams(page_id);
 }
 
 void Settings::setPageParams(const PageId& page_id, const Params& params) {
-  return m_ptrImpl->setPageParams(page_id, params);
+  return m_impl->setPageParams(page_id, params);
 }
 
 Params Settings::updateContentSizeAndGetParams(const PageId& page_id,
@@ -256,82 +256,82 @@ Params Settings::updateContentSizeAndGetParams(const PageId& page_id,
                                                const QSizeF& content_size_mm,
                                                QSizeF* agg_hard_size_before,
                                                QSizeF* agg_hard_size_after) {
-  return m_ptrImpl->updateContentSizeAndGetParams(page_id, page_rect, content_rect, content_size_mm,
-                                                  agg_hard_size_before, agg_hard_size_after);
+  return m_impl->updateContentSizeAndGetParams(page_id, page_rect, content_rect, content_size_mm, agg_hard_size_before,
+                                               agg_hard_size_after);
 }
 
 const QRectF& Settings::updateAggregateContentRect() {
-  return m_ptrImpl->updateAggregateContentRect();
+  return m_impl->updateAggregateContentRect();
 }
 
 const QRectF& Settings::getAggregateContentRect() {
-  return m_ptrImpl->getAggregateContentRect();
+  return m_impl->getAggregateContentRect();
 }
 
 void Settings::setAggregateContentRect(const QRectF& contentRect) {
-  m_ptrImpl->setAggregateContentRect(contentRect);
+  m_impl->setAggregateContentRect(contentRect);
 }
 
 Margins Settings::getHardMarginsMM(const PageId& page_id) const {
-  return m_ptrImpl->getHardMarginsMM(page_id);
+  return m_impl->getHardMarginsMM(page_id);
 }
 
 void Settings::setHardMarginsMM(const PageId& page_id, const Margins& margins_mm) {
-  m_ptrImpl->setHardMarginsMM(page_id, margins_mm);
+  m_impl->setHardMarginsMM(page_id, margins_mm);
 }
 
 Alignment Settings::getPageAlignment(const PageId& page_id) const {
-  return m_ptrImpl->getPageAlignment(page_id);
+  return m_impl->getPageAlignment(page_id);
 }
 
 Settings::AggregateSizeChanged Settings::setPageAlignment(const PageId& page_id, const Alignment& alignment) {
-  return m_ptrImpl->setPageAlignment(page_id, alignment);
+  return m_impl->setPageAlignment(page_id, alignment);
 }
 
 Settings::AggregateSizeChanged Settings::setContentSizeMM(const PageId& page_id, const QSizeF& content_size_mm) {
-  return m_ptrImpl->setContentSizeMM(page_id, content_size_mm);
+  return m_impl->setContentSizeMM(page_id, content_size_mm);
 }
 
 void Settings::invalidateContentSize(const PageId& page_id) {
-  return m_ptrImpl->invalidateContentSize(page_id);
+  return m_impl->invalidateContentSize(page_id);
 }
 
 QSizeF Settings::getAggregateHardSizeMM() const {
-  return m_ptrImpl->getAggregateHardSizeMM();
+  return m_impl->getAggregateHardSizeMM();
 }
 
 QSizeF Settings::getAggregateHardSizeMM(const PageId& page_id,
                                         const QSizeF& hard_size_mm,
                                         const Alignment& alignment) const {
-  return m_ptrImpl->getAggregateHardSizeMM(page_id, hard_size_mm, alignment);
+  return m_impl->getAggregateHardSizeMM(page_id, hard_size_mm, alignment);
 }
 
 bool Settings::isPageAutoMarginsEnabled(const PageId& page_id) {
-  return m_ptrImpl->isPageAutoMarginsEnabled(page_id);
+  return m_impl->isPageAutoMarginsEnabled(page_id);
 }
 
 void Settings::setPageAutoMarginsEnabled(const PageId& page_id, const bool state) {
-  return m_ptrImpl->setPageAutoMarginsEnabled(page_id, state);
+  return m_impl->setPageAutoMarginsEnabled(page_id, state);
 }
 
 bool Settings::isParamsNull(const PageId& page_id) const {
-  return m_ptrImpl->isParamsNull(page_id);
+  return m_impl->isParamsNull(page_id);
 }
 
 const DeviationProvider<PageId>& Settings::deviationProvider() const {
-  return m_ptrImpl->deviationProvider();
+  return m_impl->deviationProvider();
 }
 
 std::vector<Guide>& Settings::guides() {
-  return m_ptrImpl->guides();
+  return m_impl->guides();
 }
 
 bool Settings::isShowingMiddleRectEnabled() const {
-  return m_ptrImpl->isShowingMiddleRectEnabled();
+  return m_impl->isShowingMiddleRectEnabled();
 }
 
 void Settings::enableShowingMiddleRect(const bool state) {
-  m_ptrImpl->enableShowingMiddleRect(state);
+  m_impl->enableShowingMiddleRect(state);
 }
 
 /*============================== Settings::Item =============================*/

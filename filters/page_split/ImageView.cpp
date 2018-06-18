@@ -36,7 +36,7 @@ ImageView::ImageView(const QImage& image,
                      bool left_half_removed,
                      bool right_half_removed)
     : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
-      m_ptrPages(std::move(pages)),
+      m_pages(std::move(pages)),
       m_imageId(image_id),
       m_leftUnremoveButton(boost::bind(&ImageView::leftPageCenter, this)),
       m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
@@ -369,7 +369,7 @@ QPointF ImageView::rightPageCenter() const {
 }
 
 void ImageView::unremoveLeftPage() {
-  PageInfo page_info(m_ptrPages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE)));
+  PageInfo page_info(m_pages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE)));
   m_leftUnremoveButton.unlink();
   m_leftPageRemoved = false;
 
@@ -382,7 +382,7 @@ void ImageView::unremoveLeftPage() {
 }
 
 void ImageView::unremoveRightPage() {
-  PageInfo page_info(m_ptrPages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE)));
+  PageInfo page_info(m_pages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE)));
   m_rightUnremoveButton.unlink();
   m_rightPageRemoved = false;
 

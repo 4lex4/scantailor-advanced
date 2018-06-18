@@ -17,7 +17,7 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
   Q_OBJECT
 
  private:
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer delayedStateChanger;

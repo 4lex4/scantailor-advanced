@@ -115,7 +115,7 @@ class ProjectFilesDialog::SortedFileList : private QSortFilterProxyModel {
  private:
   bool lessThan(const QModelIndex& lhs, const QModelIndex& rhs) const override;
 
-  FileList& m_rDelegate;
+  FileList& m_delegate;
 };
 
 
@@ -169,10 +169,10 @@ void ProjectFilesDialog::FileList::assign(It begin, It end) {
 
 ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
     : QDialog(parent),
-      m_ptrOffProjectFiles(new FileList),
-      m_ptrOffProjectFilesSorted(new SortedFileList(*m_ptrOffProjectFiles)),
-      m_ptrInProjectFiles(new FileList),
-      m_ptrInProjectFilesSorted(new SortedFileList(*m_ptrInProjectFiles)),
+      m_offProjectFiles(new FileList),
+      m_offProjectFilesSorted(new SortedFileList(*m_offProjectFiles)),
+      m_inProjectFiles(new FileList),
+      m_inProjectFilesSorted(new SortedFileList(*m_inProjectFiles)),
       m_loadTimerId(0),
       m_metadataLoadFailed(false),
       m_autoOutDir(true) {
@@ -183,8 +183,8 @@ ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
   m_supportedExtensions.insert("tiff");
 
   setupUi(this);
-  offProjectList->setModel(m_ptrOffProjectFilesSorted->model());
-  inProjectList->setModel(m_ptrInProjectFilesSorted->model());
+  offProjectList->setModel(m_offProjectFilesSorted->model());
+  inProjectList->setModel(m_inProjectFilesSorted->model());
 
   connect(inpDirBrowseBtn, SIGNAL(clicked()), this, SLOT(inpDirBrowse()));
   connect(outDirBrowseBtn, SIGNAL(clicked()), this, SLOT(outDirBrowse()));
@@ -208,7 +208,7 @@ QString ProjectFilesDialog::outputDirectory() const {
 
 std::vector<ImageFileInfo> ProjectFilesDialog::inProjectFiles() const {
   std::vector<ImageFileInfo> files;
-  m_ptrInProjectFiles->items([&](const Item& item) { files.emplace_back(item.fileInfo(), item.perPageMetadata()); });
+  m_inProjectFiles->items([&](const Item& item) { files.emplace_back(item.fileInfo(), item.perPageMetadata()); });
 
   std::sort(files.begin(), files.end(), [](const ImageFileInfo& lhs, const ImageFileInfo& rhs) {
     return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
@@ -310,7 +310,7 @@ void ProjectFilesDialog::setInputDir(const QString& dir, const bool auto_add_fil
 
     std::vector<QFileInfo> new_files(files.begin(), files.end());
     std::vector<QFileInfo> existing_files;
-    m_ptrInProjectFiles->files([&](const QFileInfo& file_info) { existing_files.push_back(file_info); });
+    m_inProjectFiles->files([&](const QFileInfo& file_info) { existing_files.push_back(file_info); });
     std::sort(new_files.begin(), new_files.end(), FileInfoLess());
     std::sort(existing_files.begin(), existing_files.end(), FileInfoLess());
 
@@ -329,9 +329,9 @@ void ProjectFilesDialog::setInputDir(const QString& dir, const bool auto_add_fil
     items.emplace_back(file, flags);
   }
 
-  m_ptrOffProjectFiles->assign(items.begin(), items.end());
+  m_offProjectFiles->assign(items.begin(), items.end());
 
-  if (auto_add_files && (m_ptrInProjectFiles->count() == 0)) {
+  if (auto_add_files && (m_inProjectFiles->count() == 0)) {
     offProjectList->selectAll();
     addToProject();
   }
@@ -343,15 +343,15 @@ void ProjectFilesDialog::setOutputDir(const QString& dir) {
 
 void ProjectFilesDialog::addToProject() {
   const QItemSelection selection(
-      m_ptrOffProjectFilesSorted->model()->mapSelectionToSource(offProjectList->selectionModel()->selection()));
+      m_offProjectFilesSorted->model()->mapSelectionToSource(offProjectList->selectionModel()->selection()));
 
   typedef std::vector<Item> ItemList;
   ItemList items;
 
-  m_ptrOffProjectFiles->items(selection, [&](const Item& item) { items.push_back(item); });
+  m_offProjectFiles->items(selection, [&](const Item& item) { items.push_back(item); });
 
-  m_ptrInProjectFiles->append(items.begin(), items.end());
-  m_ptrOffProjectFiles->remove(selection);
+  m_inProjectFiles->append(items.begin(), items.end());
+  m_offProjectFiles->remove(selection);
 }
 
 
@@ -359,23 +359,23 @@ void ProjectFilesDialog::removeFromProject() {
   const QDir input_dir(inpDirLine->text());
 
   const QItemSelection selection(
-      m_ptrInProjectFilesSorted->model()->mapSelectionToSource(inProjectList->selectionModel()->selection()));
+      m_inProjectFilesSorted->model()->mapSelectionToSource(inProjectList->selectionModel()->selection()));
 
   typedef std::vector<Item> ItemList;
   ItemList items;
 
-  m_ptrInProjectFiles->items(selection, [&](const Item& item) {
+  m_inProjectFiles->items(selection, [&](const Item& item) {
     if (item.fileInfo().dir() == input_dir) {
       items.push_back(item);
     }
   });
 
-  m_ptrOffProjectFiles->append(items.begin(), items.end());
-  m_ptrInProjectFiles->remove(selection);
+  m_offProjectFiles->append(items.begin(), items.end());
+  m_inProjectFiles->remove(selection);
 }
 
 void ProjectFilesDialog::onOK() {
-  if (m_ptrInProjectFiles->count() == 0) {
+  if (m_inProjectFiles->count() == 0) {
     QMessageBox::warning(this, tr("Error"), tr("No files in project!"));
 
     return;
@@ -424,9 +424,9 @@ void ProjectFilesDialog::onOK() {
 }  // ProjectFilesDialog::onOK
 
 void ProjectFilesDialog::startLoadingMetadata() {
-  m_ptrInProjectFiles->prepareForLoadingFiles();
+  m_inProjectFiles->prepareForLoadingFiles();
 
-  progressBar->setMaximum(static_cast<int>(m_ptrInProjectFiles->count()));
+  progressBar->setMaximum(static_cast<int>(m_inProjectFiles->count()));
   inpDirLine->setEnabled(false);
   inpDirBrowseBtn->setEnabled(false);
   outDirLine->setEnabled(false);
@@ -451,7 +451,7 @@ void ProjectFilesDialog::timerEvent(QTimerEvent* event) {
     return;
   }
 
-  switch (m_ptrInProjectFiles->loadNextFile()) {
+  switch (m_inProjectFiles->loadNextFile()) {
     case FileList::NO_MORE_FILES:
       finishLoadingMetadata();
       break;
@@ -609,15 +609,15 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
 
 /*================= ProjectFilesDialog::SortedFileList ===================*/
 
-ProjectFilesDialog::SortedFileList::SortedFileList(FileList& delegate) : m_rDelegate(delegate) {
+ProjectFilesDialog::SortedFileList::SortedFileList(FileList& delegate) : m_delegate(delegate) {
   setSourceModel(delegate.model());
   setDynamicSortFilter(true);
   sort(0);
 }
 
 bool ProjectFilesDialog::SortedFileList::lessThan(const QModelIndex& lhs, const QModelIndex& rhs) const {
-  const Item& lhs_item = m_rDelegate.item(lhs);
-  const Item& rhs_item = m_rDelegate.item(rhs);
+  const Item& lhs_item = m_delegate.item(lhs);
+  const Item& rhs_item = m_delegate.item(rhs);
 
   return ItemVisualOrdering()(lhs_item, rhs_item);
 }

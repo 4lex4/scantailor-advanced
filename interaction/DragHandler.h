@@ -49,7 +49,7 @@ class DragHandler : public InteractionHandler {
  private:
   void init();
 
-  ImageViewBase& m_rImageView;
+  ImageViewBase& m_imageView;
   InteractionState::Captor m_interaction;
   QPoint m_lastMousePos;
   boost::function<bool(const InteractionState&)> m_interactionPermitter;

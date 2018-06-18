@@ -117,7 +117,7 @@ class BinaryImage {
    *
    * Null images have zero width, height and wordsPerLine.
    */
-  bool isNull() const { return !m_pData; }
+  bool isNull() const { return !m_data; }
 
   /**
    * \brief Swaps two images.
@@ -280,7 +280,7 @@ class BinaryImage {
 
   static int rightmostBitOffset(const uint32_t* line, int offset_limit, uint32_t modifier);
 
-  SharedData* m_pData;
+  SharedData* m_data;
   int m_width;
   int m_height;
   int m_wpl;  // words per line

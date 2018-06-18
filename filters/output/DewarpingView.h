@@ -67,7 +67,7 @@ class DewarpingView : public ImageViewBase, protected InteractionHandler {
   static void initNewSpline(XSpline& spline,
                             const QPointF& p1,
                             const QPointF& p2,
-                            const DewarpingOptions* p_dewarpingOptions = nullptr);
+                            const DewarpingOptions* dewarpingOptions = nullptr);
 
   static void fitSpline(XSpline& spline, const std::vector<QPointF>& polyline);
 

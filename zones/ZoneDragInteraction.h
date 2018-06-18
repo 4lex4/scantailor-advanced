@@ -25,8 +25,8 @@ class ZoneDragInteraction : public InteractionHandler {
 
   void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-  ZoneInteractionContext& m_rContext;
-  EditableSpline::Ptr m_ptrSpline;
+  ZoneInteractionContext& m_context;
+  EditableSpline::Ptr m_spline;
   QPointF m_initialMousePos;
   QPointF m_initialSplineFirstVertexPos;
   InteractionState::Captor m_interaction;

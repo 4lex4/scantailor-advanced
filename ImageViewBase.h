@@ -367,7 +367,7 @@ class ImageViewBase : public QAbstractScrollArea {
   /**
    * The pending (if any) high quality transformation task.
    */
-  intrusive_ptr<HqTransformTask> m_ptrHqTransformTask;
+  intrusive_ptr<HqTransformTask> m_hqTransformTask;
 
   /**
    * Transformation from m_pixmap coordinates to m_image coordinates.

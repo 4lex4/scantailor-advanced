@@ -31,10 +31,10 @@ namespace imageproc {
 // It exists to make sure INF_DIST + 1 doesn't overflow.
 const uint32_t SEDM::INF_DIST = ~uint32_t(0) - 1;
 
-SEDM::SEDM() : m_pData(nullptr), m_size(), m_stride(0) {}
+SEDM::SEDM() : m_plainData(nullptr), m_size(), m_stride(0) {}
 
 SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders borders)
-    : m_pData(nullptr), m_size(image.size()), m_stride(0) {
+    : m_plainData(nullptr), m_size(image.size()), m_stride(0) {
   if (image.isNull()) {
     return;
   }
@@ -44,7 +44,7 @@ SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders bor
 
   m_data.resize((width + 2) * (height + 2), INF_DIST);
   m_stride = width + 2;
-  m_pData = &m_data[0] + m_stride + 1;
+  m_plainData = &m_data[0] + m_stride + 1;
 
   if (borders & DIST_TO_TOP_BORDER) {
     memset(&m_data[0], 0, m_stride * sizeof(m_data[0]));
@@ -75,7 +75,7 @@ SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders bor
     initial_distance[1] = 0;         // black
   }
 
-  uint32_t* p_dist = m_pData;
+  uint32_t* p_dist = m_plainData;
   const uint32_t* img_line = image.data();
   const int img_stride = image.wordsPerLine();
   for (int y = 0; y < height; ++y) {
@@ -92,7 +92,7 @@ SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders bor
   processRows();
 }
 
-SEDM::SEDM(ConnectivityMap& cmap) : m_pData(nullptr), m_size(cmap.size()), m_stride(0) {
+SEDM::SEDM(ConnectivityMap& cmap) : m_plainData(nullptr), m_size(cmap.size()), m_stride(0) {
   if (m_size.isEmpty()) {
     return;
   }
@@ -102,9 +102,9 @@ SEDM::SEDM(ConnectivityMap& cmap) : m_pData(nullptr), m_size(cmap.size()), m_str
 
   m_data.resize((width + 2) * (height + 2), INF_DIST);
   m_stride = width + 2;
-  m_pData = &m_data[0] + m_stride + 1;
+  m_plainData = &m_data[0] + m_stride + 1;
 
-  uint32_t* p_dist = m_pData;
+  uint32_t* p_dist = m_plainData;
   const uint32_t* p_label = cmap.data();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x, ++p_dist, ++p_label) {
@@ -120,9 +120,10 @@ SEDM::SEDM(ConnectivityMap& cmap) : m_pData(nullptr), m_size(cmap.size()), m_str
   processRows(cmap);
 }
 
-SEDM::SEDM(const SEDM& other) : m_data(other.m_data), m_pData(nullptr), m_size(other.m_size), m_stride(other.m_stride) {
+SEDM::SEDM(const SEDM& other)
+    : m_data(other.m_data), m_plainData(nullptr), m_size(other.m_size), m_stride(other.m_stride) {
   if (!m_size.isEmpty()) {
-    m_pData = &m_data[0] + m_stride + 1;
+    m_plainData = &m_data[0] + m_stride + 1;
   }
 }
 
@@ -134,7 +135,7 @@ SEDM& SEDM::operator=(const SEDM& other) {
 
 void SEDM::swap(SEDM& other) {
   m_data.swap(other.m_data);
-  std::swap(m_pData, other.m_pData);
+  std::swap(m_plainData, other.m_plainData);
   std::swap(m_size, other.m_size);
   std::swap(m_stride, other.m_stride);
 }

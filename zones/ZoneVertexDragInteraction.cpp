@@ -26,9 +26,9 @@ ZoneVertexDragInteraction::ZoneVertexDragInteraction(ZoneInteractionContext& con
                                                      InteractionState& interaction,
                                                      const EditableSpline::Ptr& spline,
                                                      const SplineVertex::Ptr& vertex)
-    : m_rContext(context), m_ptrSpline(spline), m_ptrVertex(vertex) {
-  const QPointF screen_mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
+    : m_context(context), m_spline(spline), m_vertex(vertex) {
+  const QPointF screen_mouse_pos(m_context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
+  const QTransform to_screen(m_context.imageView().imageToWidget());
   m_dragOffset = to_screen.map(vertex->point()) - screen_mouse_pos;
 
   interaction.capture(m_interaction);
@@ -39,20 +39,20 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, const InteractionStat
   painter.setWorldMatrixEnabled(false);
   painter.setRenderHint(QPainter::Antialiasing);
 
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
 
-  for (const EditableZoneSet::Zone& zone : m_rContext.zones()) {
+  for (const EditableZoneSet::Zone& zone : m_context.zones()) {
     const EditableSpline::Ptr& spline = zone.spline();
 
-    if (spline != m_ptrSpline) {
+    if (spline != m_spline) {
       // Draw the whole spline in solid color.
       m_visualizer.drawSpline(painter, to_screen, spline);
       continue;
     }
     // Draw the solid part of the spline.
     QPolygonF points;
-    SplineVertex::Ptr vertex(m_ptrVertex->next(SplineVertex::LOOP));
-    for (; vertex != m_ptrVertex; vertex = vertex->next(SplineVertex::LOOP)) {
+    SplineVertex::Ptr vertex(m_vertex->next(SplineVertex::LOOP));
+    for (; vertex != m_vertex; vertex = vertex->next(SplineVertex::LOOP)) {
       points.push_back(to_screen.map(vertex->point()));
     }
 
@@ -70,9 +70,9 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, const InteractionStat
 
   painter.setBrush(Qt::NoBrush);
 
-  const QPointF pt(to_screen.map(m_ptrVertex->point()));
-  const QPointF prev(to_screen.map(m_ptrVertex->prev(SplineVertex::LOOP)->point()));
-  const QPointF next(to_screen.map(m_ptrVertex->next(SplineVertex::LOOP)->point()));
+  const QPointF pt(to_screen.map(m_vertex->point()));
+  const QPointF prev(to_screen.map(m_vertex->prev(SplineVertex::LOOP)->point()));
+  const QPointF next(to_screen.map(m_vertex->next(SplineVertex::LOOP)->point()));
 
   gradient.setStart(prev);
   gradient.setFinalStop(pt);
@@ -85,37 +85,37 @@ void ZoneVertexDragInteraction::onPaint(QPainter& painter, const InteractionStat
   painter.setPen(gradient_pen);
   painter.drawLine(next, pt);
 
-  m_visualizer.drawVertex(painter, to_screen.map(m_ptrVertex->point()), m_visualizer.highlightBrightColor());
+  m_visualizer.drawVertex(painter, to_screen.map(m_vertex->point()), m_visualizer.highlightBrightColor());
 }  // ZoneVertexDragInteraction::onPaint
 
 void ZoneVertexDragInteraction::onMouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
   if (event->button() == Qt::LeftButton) {
-    if ((m_ptrVertex->point() == m_ptrVertex->next(SplineVertex::LOOP)->point())
-        || (m_ptrVertex->point() == m_ptrVertex->prev(SplineVertex::LOOP)->point())) {
-      if (m_ptrVertex->hasAtLeastSiblings(3)) {
-        m_ptrVertex->remove();
+    if ((m_vertex->point() == m_vertex->next(SplineVertex::LOOP)->point())
+        || (m_vertex->point() == m_vertex->prev(SplineVertex::LOOP)->point())) {
+      if (m_vertex->hasAtLeastSiblings(3)) {
+        m_vertex->remove();
       }
     }
 
-    m_rContext.zones().commit();
-    makePeerPreceeder(*m_rContext.createDefaultInteraction());
+    m_context.zones().commit();
+    makePeerPreceeder(*m_context.createDefaultInteraction());
     delete this;
   }
 }
 
 void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
-  m_ptrVertex->setPoint(from_screen.map(event->pos() + QPointF(0.5, 0.5) + m_dragOffset));
+  const QTransform from_screen(m_context.imageView().widgetToImage());
+  m_vertex->setPoint(from_screen.map(event->pos() + QPointF(0.5, 0.5) + m_dragOffset));
 
   checkProximity(interaction);
 
   const Qt::KeyboardModifiers mask = event->modifiers();
   if (mask == Qt::ControlModifier) {
-    const QTransform to_screen(m_rContext.imageView().imageToWidget());
+    const QTransform to_screen(m_context.imageView().imageToWidget());
 
-    const QPointF current = to_screen.map(m_ptrVertex->point());
-    QPointF prev = to_screen.map(m_ptrVertex->prev(SplineVertex::LOOP)->point());
-    QPointF next = to_screen.map(m_ptrVertex->next(SplineVertex::LOOP)->point());
+    const QPointF current = to_screen.map(m_vertex->point());
+    QPointF prev = to_screen.map(m_vertex->prev(SplineVertex::LOOP)->point());
+    QPointF next = to_screen.map(m_vertex->next(SplineVertex::LOOP)->point());
 
     if (!((current == prev) && (current == next))) {
       double prev_angle_cos
@@ -135,32 +135,32 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
         prev.setY(current.y());
       }
 
-      m_ptrVertex->prev(SplineVertex::LOOP)->setPoint(from_screen.map(prev));
-      m_ptrVertex->next(SplineVertex::LOOP)->setPoint(from_screen.map(next));
+      m_vertex->prev(SplineVertex::LOOP)->setPoint(from_screen.map(prev));
+      m_vertex->next(SplineVertex::LOOP)->setPoint(from_screen.map(next));
     }
   }
 
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }  // ZoneVertexDragInteraction::onMouseMoveEvent
 
 void ZoneVertexDragInteraction::checkProximity(const InteractionState& interaction) {
   bool can_merge = false;
 
-  if (m_ptrVertex->hasAtLeastSiblings(3)) {
-    const QTransform to_screen(m_rContext.imageView().imageToWidget());
-    const QPointF origin(to_screen.map(m_ptrVertex->point()));
+  if (m_vertex->hasAtLeastSiblings(3)) {
+    const QTransform to_screen(m_context.imageView().imageToWidget());
+    const QPointF origin(to_screen.map(m_vertex->point()));
 
-    const QPointF prev(m_ptrVertex->prev(SplineVertex::LOOP)->point());
+    const QPointF prev(m_vertex->prev(SplineVertex::LOOP)->point());
     const Proximity prox_prev(origin, to_screen.map(prev));
 
-    const QPointF next(m_ptrVertex->next(SplineVertex::LOOP)->point());
+    const QPointF next(m_vertex->next(SplineVertex::LOOP)->point());
     const Proximity prox_next(origin, to_screen.map(next));
 
     if ((prox_prev <= interaction.proximityThreshold()) && (prox_prev < prox_next)) {
-      m_ptrVertex->setPoint(prev);
+      m_vertex->setPoint(prev);
       can_merge = true;
     } else if (prox_next <= interaction.proximityThreshold()) {
-      m_ptrVertex->setPoint(next);
+      m_vertex->setPoint(next);
       can_merge = true;
     }
   }

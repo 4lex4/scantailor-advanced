@@ -26,14 +26,14 @@
 #include "ZoneInteractionContext.h"
 
 ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction)
-    : m_rContext(context),
+    : m_context(context),
       m_dragHandler(context.imageView(), boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, _1)),
       m_dragWatcher(m_dragHandler),
       m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
-      m_ptrSpline(new EditableSpline),
+      m_spline(new EditableSpline),
       m_lassoModeModifiers(Qt::ShiftModifier | Qt::AltModifier) {
-  const QPointF screen_mouse_pos(m_rContext.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
+  const QPointF screen_mouse_pos(m_context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
+  const QTransform from_screen(m_context.imageView().widgetToImage());
   m_nextVertexImagePos = from_screen.map(screen_mouse_pos);
 
   m_nextVertexImagePos_mid1 = m_nextVertexImagePos;
@@ -48,7 +48,7 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
   makeLastFollower(m_zoomHandler);
 
   interaction.capture(m_interaction);
-  m_ptrSpline->appendVertex(m_nextVertexImagePos);
+  m_spline->appendVertex(m_nextVertexImagePos);
 
   updateStatusTip();
 }
@@ -57,10 +57,10 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
   painter.setWorldMatrixEnabled(false);
   painter.setRenderHint(QPainter::Antialiasing);
 
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
+  const QTransform from_screen(m_context.imageView().widgetToImage());
 
-  m_visualizer.drawSplines(painter, to_screen, m_rContext.zones());
+  m_visualizer.drawSplines(painter, to_screen, m_context.zones());
 
   QPen solid_line_pen(m_visualizer.solidColor());
   solid_line_pen.setCosmetic(true);
@@ -96,11 +96,11 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
   gradient_mid2.setColorAt(1.0, stop_color);
 
   if (m_rectangularZoneType) {
-    if (m_nextVertexImagePos != m_ptrSpline->firstVertex()->point()) {
+    if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
       m_visualizer.drawVertex(painter, to_screen.map(m_nextVertexImagePos_mid1), m_visualizer.highlightBrightColor());
       m_visualizer.drawVertex(painter, to_screen.map(m_nextVertexImagePos_mid2), m_visualizer.highlightBrightColor());
 
-      const QLineF line1_mid1(to_screen.map(QLineF(m_ptrSpline->firstVertex()->point(), m_nextVertexImagePos_mid1)));
+      const QLineF line1_mid1(to_screen.map(QLineF(m_spline->firstVertex()->point(), m_nextVertexImagePos_mid1)));
       gradient_mid1.setStart(line1_mid1.p1());
       gradient_mid1.setFinalStop(line1_mid1.p2());
       gradient_pen.setBrush(gradient_mid1);
@@ -114,7 +114,7 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
       painter.setPen(gradient_pen);
       painter.drawLine(line2_mid1);
 
-      const QLineF line1_mid2(to_screen.map(QLineF(m_ptrSpline->firstVertex()->point(), m_nextVertexImagePos_mid2)));
+      const QLineF line1_mid2(to_screen.map(QLineF(m_spline->firstVertex()->point(), m_nextVertexImagePos_mid2)));
       gradient_mid1.setStart(line1_mid2.p1());
       gradient_mid1.setFinalStop(line1_mid2.p2());
       gradient_pen.setBrush(gradient_mid1);
@@ -129,11 +129,11 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
       painter.drawLine(line2_mid2);
     }
   } else {
-    for (EditableSpline::SegmentIterator it(*m_ptrSpline); it.hasNext();) {
+    for (EditableSpline::SegmentIterator it(*m_spline); it.hasNext();) {
       const SplineSegment segment(it.next());
       const QLineF line(to_screen.map(segment.toLine()));
 
-      if ((segment.prev == m_ptrSpline->firstVertex()) && (segment.prev->point() == m_nextVertexImagePos)) {
+      if ((segment.prev == m_spline->firstVertex()) && (segment.prev->point() == m_nextVertexImagePos)) {
         gradient.setStart(line.p2());
         gradient.setFinalStop(line.p1());
         gradient_pen.setBrush(gradient);
@@ -145,7 +145,7 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
       }
     }
 
-    const QLineF line(to_screen.map(QLineF(m_ptrSpline->lastVertex()->point(), m_nextVertexImagePos)));
+    const QLineF line(to_screen.map(QLineF(m_spline->lastVertex()->point(), m_nextVertexImagePos)));
     gradient.setStart(line.p1());
     gradient.setFinalStop(line.p2());
     gradient_pen.setBrush(gradient);
@@ -158,8 +158,8 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
 
 void ZoneCreationInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
   if (event->key() == Qt::Key_Escape) {
-    makePeerPreceeder(*m_rContext.createDefaultInteraction());
-    m_rContext.imageView().update();
+    makePeerPreceeder(*m_context.createDefaultInteraction());
+    m_context.imageView().update();
     delete this;
     event->accept();
   }
@@ -186,55 +186,55 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
   }
   m_lassoMode = false;
 
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
+  const QTransform from_screen(m_context.imageView().widgetToImage());
   const QPointF screen_mouse_pos(event->pos() + QPointF(0.5, 0.5));
   const QPointF image_mouse_pos(from_screen.map(screen_mouse_pos));
 
   if (m_rectangularZoneType) {
-    if (m_nextVertexImagePos != m_ptrSpline->firstVertex()->point()) {
-      QPointF first_point = m_ptrSpline->firstVertex()->point();
+    if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
+      QPointF first_point = m_spline->firstVertex()->point();
 
-      m_ptrSpline.reset(new EditableSpline);
+      m_spline.reset(new EditableSpline);
 
-      m_ptrSpline->appendVertex(first_point);
-      m_ptrSpline->appendVertex(m_nextVertexImagePos_mid1);
-      m_ptrSpline->appendVertex(m_nextVertexImagePos);
-      m_ptrSpline->appendVertex(m_nextVertexImagePos_mid2);
+      m_spline->appendVertex(first_point);
+      m_spline->appendVertex(m_nextVertexImagePos_mid1);
+      m_spline->appendVertex(m_nextVertexImagePos);
+      m_spline->appendVertex(m_nextVertexImagePos_mid2);
 
-      m_ptrSpline->setBridged(true);
-      m_rContext.zones().addZone(m_ptrSpline);
-      m_rContext.zones().commit();
+      m_spline->setBridged(true);
+      m_context.zones().addZone(m_spline);
+      m_context.zones().commit();
     }
 
-    makePeerPreceeder(*m_rContext.createDefaultInteraction());
-    m_rContext.imageView().update();
+    makePeerPreceeder(*m_context.createDefaultInteraction());
+    m_context.imageView().update();
     delete this;
   } else {
-    if (m_ptrSpline->hasAtLeastSegments(2) && (m_nextVertexImagePos == m_ptrSpline->firstVertex()->point())) {
+    if (m_spline->hasAtLeastSegments(2) && (m_nextVertexImagePos == m_spline->firstVertex()->point())) {
       // Finishing the spline.  Bridging the first and the last points
       // will create another segment.
-      m_ptrSpline->setBridged(true);
-      m_rContext.zones().addZone(m_ptrSpline);
-      m_rContext.zones().commit();
+      m_spline->setBridged(true);
+      m_context.zones().addZone(m_spline);
+      m_context.zones().commit();
 
-      makePeerPreceeder(*m_rContext.createDefaultInteraction());
-      m_rContext.imageView().update();
+      makePeerPreceeder(*m_context.createDefaultInteraction());
+      m_context.imageView().update();
       delete this;
-    } else if (m_nextVertexImagePos == m_ptrSpline->lastVertex()->point()) {
+    } else if (m_nextVertexImagePos == m_spline->lastVertex()->point()) {
       // Removing the last vertex.
-      m_ptrSpline->lastVertex()->remove();
-      if (!m_ptrSpline->firstVertex()) {
+      m_spline->lastVertex()->remove();
+      if (!m_spline->firstVertex()) {
         // If it was the only vertex, cancelling spline creation.
-        makePeerPreceeder(*m_rContext.createDefaultInteraction());
-        m_rContext.imageView().update();
+        makePeerPreceeder(*m_context.createDefaultInteraction());
+        m_context.imageView().update();
         delete this;
       }
     } else {
       // Adding a new vertex, provided we are not too close to the previous one.
-      const Proximity prox(screen_mouse_pos, m_ptrSpline->lastVertex()->point());
+      const Proximity prox(screen_mouse_pos, m_spline->lastVertex()->point());
       if (prox > interaction.proximityThreshold()) {
-        m_ptrSpline->appendVertex(image_mouse_pos);
+        m_spline->appendVertex(image_mouse_pos);
         updateStatusTip();
       }
     }
@@ -245,12 +245,12 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
 
 void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
   const QPointF screen_mouse_pos(event->pos() + QPointF(0.5, 0.5));
-  const QTransform to_screen(m_rContext.imageView().imageToWidget());
-  const QTransform from_screen(m_rContext.imageView().widgetToImage());
+  const QTransform to_screen(m_context.imageView().imageToWidget());
+  const QTransform from_screen(m_context.imageView().widgetToImage());
 
   m_nextVertexImagePos = from_screen.map(screen_mouse_pos);
-  const QPointF first(to_screen.map(m_ptrSpline->firstVertex()->point()));
-  const QPointF last(to_screen.map(m_ptrSpline->lastVertex()->point()));
+  const QPointF first(to_screen.map(m_spline->firstVertex()->point()));
+  const QPointF last(to_screen.map(m_spline->lastVertex()->point()));
 
   if (!m_rectangularZoneType) {
     if (event->modifiers() == Qt::ControlModifier) {
@@ -263,15 +263,15 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
   }
 
   if (Proximity(last, screen_mouse_pos) <= interaction.proximityThreshold()) {
-    m_nextVertexImagePos = m_ptrSpline->lastVertex()->point();
-  } else if (m_ptrSpline->hasAtLeastSegments(2) || m_rectangularZoneType) {
+    m_nextVertexImagePos = m_spline->lastVertex()->point();
+  } else if (m_spline->hasAtLeastSegments(2) || m_rectangularZoneType) {
     if (Proximity(first, screen_mouse_pos) <= interaction.proximityThreshold()) {
-      m_nextVertexImagePos = m_ptrSpline->firstVertex()->point();
+      m_nextVertexImagePos = m_spline->firstVertex()->point();
       updateStatusTip();
     }
   }
 
-  if (m_rectangularZoneType && (m_nextVertexImagePos != m_ptrSpline->firstVertex()->point())) {
+  if (m_rectangularZoneType && (m_nextVertexImagePos != m_spline->firstVertex()->point())) {
     QPointF screen_mouse_pos_mid1;
     screen_mouse_pos_mid1.setX(first.x());
     screen_mouse_pos_mid1.setY(screen_mouse_pos.y());
@@ -295,23 +295,23 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
   if (m_lassoMode) {
     Proximity min_distance = Proximity::fromDist(10);
     if ((Proximity(last, screen_mouse_pos) > min_distance) && (Proximity(first, screen_mouse_pos) > min_distance)) {
-      m_ptrSpline->appendVertex(m_nextVertexImagePos);
+      m_spline->appendVertex(m_nextVertexImagePos);
     }
   }
 
-  m_rContext.imageView().update();
+  m_context.imageView().update();
 }  // ZoneCreationInteraction::onMouseMoveEvent
 
 void ZoneCreationInteraction::updateStatusTip() {
   QString tip;
 
   if (m_rectangularZoneType) {
-    if (m_nextVertexImagePos != m_ptrSpline->firstVertex()->point()) {
+    if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
       tip = tr("Click to finish this rectangular zone.  ESC to cancel.");
     }
   } else {
-    if (m_ptrSpline->hasAtLeastSegments(2)) {
-      if (m_nextVertexImagePos == m_ptrSpline->firstVertex()->point()) {
+    if (m_spline->hasAtLeastSegments(2)) {
+      if (m_nextVertexImagePos == m_spline->firstVertex()->point()) {
         tip = tr("Click to finish this zone.  ESC to cancel.");
       } else {
         tip = tr("Connect first and last points to finish this zone.  ESC to cancel.");

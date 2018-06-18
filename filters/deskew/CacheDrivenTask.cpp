@@ -31,7 +31,7 @@
 namespace deskew {
 CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
                                  intrusive_ptr<select_content::CacheDrivenTask> next_task)
-    : m_ptrNextTask(std::move(next_task)), m_ptrSettings(std::move(settings)) {}
+    : m_nextTask(std::move(next_task)), m_settings(std::move(settings)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
@@ -39,7 +39,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
                               AbstractFilterDataCollector* collector,
                               const ImageTransformation& xform) {
   const Dependencies deps(xform.preCropArea(), xform.preRotation());
-  std::unique_ptr<Params> params(m_ptrSettings->getPageParams(page_info.id()));
+  std::unique_ptr<Params> params(m_settings->getPageParams(page_info.id()));
   if (!params || (!deps.matches(params->dependencies()) && (params->mode() == MODE_AUTO))) {
     if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
       thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
@@ -52,8 +52,8 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   ImageTransformation new_xform(xform);
   new_xform.setPostRotation(params->deskewAngle());
 
-  if (m_ptrNextTask) {
-    m_ptrNextTask->process(page_info, collector, new_xform);
+  if (m_nextTask) {
+    m_nextTask->process(page_info, collector, new_xform);
 
     return;
   }
@@ -63,9 +63,9 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   const double deviationThreshold = settings.value("settings/deskewDeviationThreshold", 1.0).toDouble();
 
   if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-    thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
-        thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_xform,
-        m_ptrSettings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
+    thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(
+        new Thumbnail(thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_xform,
+                      m_settings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
   }
 }  // CacheDrivenTask::process
 }  // namespace deskew

@@ -36,7 +36,7 @@ class ObjectDragHandler : public InteractionHandler {
  public:
   explicit ObjectDragHandler(DraggableObject* obj = nullptr);
 
-  void setObject(DraggableObject* obj) { m_pObj = obj; }
+  void setObject(DraggableObject* obj) { m_obj = obj; }
 
   void setProximityCursor(const QCursor& cursor);
 
@@ -70,7 +70,7 @@ class ObjectDragHandler : public InteractionHandler {
   void onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) override;
 
  private:
-  DraggableObject* m_pObj;
+  DraggableObject* m_obj;
   InteractionState::Captor m_interaction;
   std::set<Qt::KeyboardModifiers> m_keyboardModifiersSet;
   Qt::KeyboardModifiers m_activeKeyboardModifiers;

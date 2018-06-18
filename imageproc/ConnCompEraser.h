@@ -100,7 +100,7 @@ class ConnCompEraser {
   static void clearBit(uint32_t* line, int x);
 
   BinaryImage m_image;
-  uint32_t* m_pLine;
+  uint32_t* m_line;
   const int m_width;
   const int m_height;
   const int m_wpl;

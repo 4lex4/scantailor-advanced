@@ -25,24 +25,24 @@
 #include "RelinkablePath.h"
 
 OutputFileNameGenerator::OutputFileNameGenerator()
-    : m_ptrDisambiguator(new FileNameDisambiguator), m_outDir(), m_layoutDirection(Qt::LeftToRight) {}
+    : m_disambiguator(new FileNameDisambiguator), m_outDir(), m_layoutDirection(Qt::LeftToRight) {}
 
 OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
                                                  const QString& out_dir,
                                                  Qt::LayoutDirection layout_direction)
-    : m_ptrDisambiguator(std::move(disambiguator)), m_outDir(out_dir), m_layoutDirection(layout_direction) {
-  assert(m_ptrDisambiguator);
+    : m_disambiguator(std::move(disambiguator)), m_outDir(out_dir), m_layoutDirection(layout_direction) {
+  assert(m_disambiguator);
 }
 
 void OutputFileNameGenerator::performRelinking(const AbstractRelinker& relinker) {
-  m_ptrDisambiguator->performRelinking(relinker);
+  m_disambiguator->performRelinking(relinker);
   m_outDir = relinker.substitutionPathFor(RelinkablePath(m_outDir, RelinkablePath::Dir));
 }
 
 QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
   const bool ltr = (m_layoutDirection == Qt::LeftToRight);
   const PageId::SubPage sub_page = page.subPage();
-  const int label = m_ptrDisambiguator->getLabel(page.imageId().filePath());
+  const int label = m_disambiguator->getLabel(page.imageId().filePath());
 
   QString name(QFileInfo(page.imageId().filePath()).completeBaseName());
   if (label != 0) {

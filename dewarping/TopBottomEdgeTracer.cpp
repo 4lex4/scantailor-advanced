@@ -122,16 +122,16 @@ struct TopBottomEdgeTracer::GridNode {
 
 class TopBottomEdgeTracer::PrioQueue : public PriorityQueue<uint32_t, PrioQueue> {
  public:
-  explicit PrioQueue(Grid<GridNode>& grid) : m_pData(grid.data()) {}
+  explicit PrioQueue(Grid<GridNode>& grid) : m_data(grid.data()) {}
 
-  bool higherThan(uint32_t lhs, uint32_t rhs) const { return m_pData[lhs].pathCost < m_pData[rhs].pathCost; }
+  bool higherThan(uint32_t lhs, uint32_t rhs) const { return m_data[lhs].pathCost < m_data[rhs].pathCost; }
 
-  void setIndex(uint32_t grid_idx, size_t heap_idx) { m_pData[grid_idx].setHeapIdx(static_cast<uint32_t>(heap_idx)); }
+  void setIndex(uint32_t grid_idx, size_t heap_idx) { m_data[grid_idx].setHeapIdx(static_cast<uint32_t>(heap_idx)); }
 
   void reposition(GridNode* node) { PriorityQueue<uint32_t, PrioQueue>::reposition(node->heapIdx()); }
 
  private:
-  GridNode* const m_pData;
+  GridNode* const m_data;
 };
 
 

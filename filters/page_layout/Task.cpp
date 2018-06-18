@@ -48,11 +48,11 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_ptrFilter; }
+  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_ptrFilter;
-  intrusive_ptr<Settings> m_ptrSettings;
+  intrusive_ptr<Filter> m_filter;
+  intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   QImage m_image;
   QImage m_downscaledImage;
@@ -70,9 +70,9 @@ Task::Task(intrusive_ptr<Filter> filter,
            const PageId& page_id,
            bool batch,
            bool debug)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrNextTask(std::move(next_task)),
-      m_ptrSettings(std::move(settings)),
+    : m_filter(std::move(filter)),
+      m_nextTask(std::move(next_task)),
+      m_settings(std::move(settings)),
       m_pageId(page_id),
       m_batchProcessing(batch) {}
 
@@ -86,29 +86,29 @@ FilterResultPtr Task::process(const TaskStatus& status,
 
   const QSizeF content_size_mm(Utils::calcRectSizeMM(data.xform(), content_rect));
 
-  if (m_ptrSettings->isPageAutoMarginsEnabled(m_pageId)) {
+  if (m_settings->isPageAutoMarginsEnabled(m_pageId)) {
     const Margins& margins_mm = Utils::calcMarginsMM(data.xform(), page_rect, content_rect);
-    m_ptrSettings->setHardMarginsMM(m_pageId, margins_mm);
+    m_settings->setHardMarginsMM(m_pageId, margins_mm);
   }
 
   QSizeF agg_hard_size_before;
   QSizeF agg_hard_size_after;
-  const Params params(m_ptrSettings->updateContentSizeAndGetParams(m_pageId, page_rect, content_rect, content_size_mm,
-                                                                   &agg_hard_size_before, &agg_hard_size_after));
+  const Params params(m_settings->updateContentSizeAndGetParams(m_pageId, page_rect, content_rect, content_size_mm,
+                                                                &agg_hard_size_before, &agg_hard_size_after));
 
   const QRectF adapted_content_rect(Utils::adaptContentRect(data.xform(), content_rect));
 
-  if (m_ptrNextTask) {
+  if (m_nextTask) {
     const QPolygonF content_rect_phys(data.xform().transformBack().map(adapted_content_rect));
     const QPolygonF page_rect_phys(Utils::calcPageRectPhys(data.xform(), content_rect_phys, params, agg_hard_size_after,
-                                                           m_ptrSettings->getAggregateContentRect()));
+                                                           m_settings->getAggregateContentRect()));
 
     ImageTransformation new_xform(data.xform());
     new_xform.setPostCropArea(shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
 
-    return m_ptrNextTask->process(status, FilterData(data, new_xform), content_rect_phys);
+    return m_nextTask->process(status, FilterData(data, new_xform), content_rect_phys);
   } else {
-    return make_intrusive<UiUpdater>(m_ptrFilter, m_ptrSettings, m_pageId, data.origImage(), data.xform(),
+    return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
                                      data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
                                      adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
                                      m_batchProcessing);
@@ -135,8 +135,8 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const QRectF& adapted_content_rect,
                            const bool agg_size_changed,
                            const bool batch)
-    : m_ptrFilter(std::move(filter)),
-      m_ptrSettings(std::move(settings)),
+    : m_filter(std::move(filter)),
+      m_settings(std::move(settings)),
       m_pageId(page_id),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
@@ -148,7 +148,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+  OptionsWidget* const opt_widget = m_filter->optionsWidget();
   opt_widget->postUpdateUI();
   ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
 
@@ -162,7 +162,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     return;
   }
 
-  auto* view = new ImageView(m_ptrSettings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
+  auto* view = new ImageView(m_settings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
                              m_adaptedContentRect, *opt_widget);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
 

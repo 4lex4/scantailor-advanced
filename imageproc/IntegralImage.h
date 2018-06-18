@@ -76,9 +76,9 @@ class IntegralImage {
  private:
   void init(int width, int height);
 
-  T* m_pData;
-  T* m_pCur;
-  T* m_pAbove;
+  T* m_data;
+  T* m_cur;
+  T* m_above;
   T m_lineSum;
   int m_width;
   int m_height;
@@ -100,7 +100,7 @@ IntegralImage<T>::IntegralImage(const QSize& size) : m_lineSum() {  // init with
 
 template <typename T>
 IntegralImage<T>::~IntegralImage() {
-  delete[] m_pData;
+  delete[] m_data;
 }
 
 template <typename T>
@@ -108,25 +108,25 @@ void IntegralImage<T>::init(const int width, const int height) {
   m_width = width;
   m_height = height;
 
-  m_pData = new T[width * height];
+  m_data = new T[width * height];
 
   // Initialize the first (fake) row.
   // As for the fake column, we initialize its elements in beginRow().
-  T* p = m_pData;
+  T* p = m_data;
   for (int i = 0; i < width; ++i, ++p) {
     *p = T();
   }
 
-  m_pAbove = m_pData;
-  m_pCur = m_pAbove + width;  // Skip the first row.
+  m_above = m_data;
+  m_cur = m_above + width;  // Skip the first row.
 }
 
 template <typename T>
 void IntegralImage<T>::push(const T val) {
   m_lineSum += val;
-  *m_pCur = *m_pAbove + m_lineSum;
-  ++m_pCur;
-  ++m_pAbove;
+  *m_cur = *m_above + m_lineSum;
+  ++m_cur;
+  ++m_above;
 }
 
 template <typename T>
@@ -134,9 +134,9 @@ void IntegralImage<T>::beginRow() {
   m_lineSum = T();
 
   // Initialize and skip the fake column.
-  *m_pCur = T();
-  ++m_pCur;
-  ++m_pAbove;
+  *m_cur = T();
+  ++m_cur;
+  ++m_above;
 }
 
 template <typename T>
@@ -146,10 +146,10 @@ inline T IntegralImage<T>::sum(const QRect& rect) const {
   const int pre_right = rect.right() + 1;  // QRect::right() is inclusive.
   const int pre_top = rect.top();
   const int pre_bottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
-  T sum(m_pData[pre_bottom * m_width + pre_right]);
-  sum -= m_pData[pre_top * m_width + pre_right];
-  sum += m_pData[pre_top * m_width + pre_left];
-  sum -= m_pData[pre_bottom * m_width + pre_left];
+  T sum(m_data[pre_bottom * m_width + pre_right]);
+  sum -= m_data[pre_top * m_width + pre_right];
+  sum += m_data[pre_top * m_width + pre_left];
+  sum -= m_data[pre_bottom * m_width + pre_left];
 
   return sum;
 }

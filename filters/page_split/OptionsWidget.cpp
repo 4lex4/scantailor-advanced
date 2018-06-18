@@ -30,8 +30,8 @@ namespace page_split {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
                              intrusive_ptr<ProjectPages> page_sequence,
                              const PageSelectionAccessor& page_selection_accessor)
-    : m_ptrSettings(std::move(settings)),
-      m_ptrPages(std::move(page_sequence)),
+    : m_settings(std::move(settings)),
+      m_pages(std::move(page_sequence)),
       m_pageSelectionAccessor(page_selection_accessor),
       m_ignoreAutoManualToggle(0),
       m_ignoreLayoutTypeToggle(0) {
@@ -53,7 +53,7 @@ void OptionsWidget::preUpdateUI(const PageId& page_id) {
   ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
 
   m_pageId = page_id;
-  const Settings::Record record(m_ptrSettings->getPageRecord(page_id.imageId()));
+  const Settings::Record record(m_settings->getPageRecord(page_id.imageId()));
   const LayoutType layout_type(record.combinedLayoutType());
 
   switch (layout_type) {
@@ -176,10 +176,10 @@ void OptionsWidget::layoutTypeButtonToggled(const bool checked) {
   splitLineGroup->setVisible(lt != SINGLE_PAGE_UNCUT);
   scopeLabel->setText(tr("Set manually"));
 
-  m_ptrPages->setLayoutTypeFor(m_pageId.imageId(), plt);
+  m_pages->setLayoutTypeFor(m_pageId.imageId(), plt);
 
   if ((lt == PAGE_PLUS_OFFCUT) || ((lt != SINGLE_PAGE_UNCUT) && (m_uiData.splitLineMode() == MODE_AUTO))) {
-    m_ptrSettings->updatePage(m_pageId.imageId(), update);
+    m_settings->updatePage(m_pageId.imageId(), update);
     emit reloadRequested();
   } else {
     PageLayout::Type plt;
@@ -195,7 +195,7 @@ void OptionsWidget::layoutTypeButtonToggled(const bool checked) {
     const Params new_params(new_layout, m_uiData.dependencies(), m_uiData.splitLineMode());
 
     update.setParams(new_params);
-    m_ptrSettings->updatePage(m_pageId.imageId(), update);
+    m_settings->updatePage(m_pageId.imageId(), update);
 
     m_uiData.setPageLayout(new_layout);
 
@@ -205,7 +205,7 @@ void OptionsWidget::layoutTypeButtonToggled(const bool checked) {
 }  // OptionsWidget::layoutTypeButtonToggled
 
 void OptionsWidget::showChangeDialog() {
-  const Settings::Record record(m_ptrSettings->getPageRecord(m_pageId.imageId()));
+  const Settings::Record record(m_settings->getPageRecord(m_pageId.imageId()));
   const Params* params = record.params();
   if (!params) {
     return;
@@ -224,7 +224,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
     return;
   }
 
-  const Params params = *(m_ptrSettings->getPageRecord(m_pageId.imageId()).params());
+  const Params params = *(m_settings->getPageRecord(m_pageId.imageId()).params());
 
   if (layout_type != AUTO_LAYOUT_TYPE) {
     for (const PageId& page_id : pages) {
@@ -237,7 +237,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
       if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
         Params new_params(params);
 
-        const Params* old_params = m_ptrSettings->getPageRecord(page_id.imageId()).params();
+        const Params* old_params = m_settings->getPageRecord(page_id.imageId()).params();
         if (old_params != nullptr) {
           std::unique_ptr<PageLayout> newPageLayout = PageLayoutAdapter::adaptPageLayout(
               params.pageLayout(), old_params->pageLayout().uncutOutline().boundingRect());
@@ -252,7 +252,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
 
         update_params.setParams(new_params);
       }
-      m_ptrSettings->updatePage(page_id.imageId(), update_params);
+      m_settings->updatePage(page_id.imageId(), update_params);
     }
   } else {
     for (const PageId& page_id : pages) {
@@ -262,7 +262,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
 
       Settings::UpdateAction update_params;
       update_params.setLayoutType(layout_type);
-      m_ptrSettings->updatePage(page_id.imageId(), update_params);
+      m_settings->updatePage(page_id.imageId(), update_params);
     }
   }
 
@@ -290,7 +290,7 @@ void OptionsWidget::splitLineModeChanged(const bool auto_mode) {
   if (auto_mode) {
     Settings::UpdateAction update;
     update.clearParams();
-    m_ptrSettings->updatePage(m_pageId.imageId(), update);
+    m_settings->updatePage(m_pageId.imageId(), update);
     m_uiData.setSplitLineMode(MODE_AUTO);
     emit reloadRequested();
   } else {
@@ -303,7 +303,7 @@ void OptionsWidget::commitCurrentParams() {
   const Params params(m_uiData.pageLayout(), m_uiData.dependencies(), m_uiData.splitLineMode());
   Settings::UpdateAction update;
   update.setParams(params);
-  m_ptrSettings->updatePage(m_pageId.imageId(), update);
+  m_settings->updatePage(m_pageId.imageId(), update);
 }
 
 #define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));

@@ -525,10 +525,15 @@ void ImageView::correctContentBox(const QPointF& pos) {
     return;
   }
 
+  const QPointF pos_in_virtual = widgetToVirtual().map(pos);
+  const QRectF found_area_in_virtual
+      = content_image_to_virtual.mapRect(QRectF(found_area)).intersected(virtualDisplayRect());
+  if (found_area_in_virtual.isEmpty()) {
+    return;
+  }
+
   // If click position is inside the content rect, adjust the nearest side of the rect,
   // else include the content at the position into the content rect.
-  const QPointF pos_in_virtual = widgetToVirtual().map(pos);
-  const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area));
   if (!m_contentRect.contains(pos_in_virtual)) {
     m_contentRect |= found_area_in_virtual;
     forcePageRectDescribeContent();

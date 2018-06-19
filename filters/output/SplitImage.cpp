@@ -62,7 +62,7 @@ QImage SplitImage::toImage() const {
     }
 
     QImage dst(m_backgroundImage);
-    combineImage(dst, m_foregroundImage);
+    combineImages(dst, m_foregroundImage);
 
     return dst;
   } else {
@@ -70,11 +70,11 @@ QImage SplitImage::toImage() const {
 
     {
       BinaryImage backgroundMask = BinaryImage(m_originalBackgroundImage, BinaryThreshold(1));
-      combineImage(dst, m_backgroundImage, backgroundMask);
+      combineImages(dst, m_backgroundImage, backgroundMask);
     }
     {
       BinaryImage foregroundMask = BinaryImage(m_originalBackgroundImage, BinaryThreshold(255)).inverted();
-      combineImage(dst, (m_mask.isNull()) ? m_foregroundImage : m_backgroundImage, foregroundMask);
+      combineImages(dst, (m_mask.isNull()) ? m_foregroundImage : m_backgroundImage, foregroundMask);
     }
 
     return dst;

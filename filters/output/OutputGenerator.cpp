@@ -866,7 +866,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
       }
 
       if (!render_params.needColorSegmentation()) {
-        combineImageMono(maybe_normalized, bw_content, bw_mask);
+        combineImages(maybe_normalized, bw_content, bw_mask);
       } else {
         QImage segmented_image;
         {
@@ -892,7 +892,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
           }
         }
 
-        combineImageColor(maybe_normalized, segmented_image, bw_mask);
+        combineImages(maybe_normalized, segmented_image, bw_mask);
       }
 
       reserveBlackAndWhite(maybe_normalized, bw_mask.inverted());
@@ -1683,7 +1683,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
       }
 
       if (!render_params.needColorSegmentation()) {
-        combineImageMono(dewarped, dewarped_bw_content, dewarped_bw_mask);
+        combineImages(dewarped, dewarped_bw_content, dewarped_bw_mask);
       } else {
         QImage segmented_image;
         {
@@ -1709,7 +1709,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
           }
         }
 
-        combineImageColor(dewarped, segmented_image, dewarped_bw_mask);
+        combineImages(dewarped, segmented_image, dewarped_bw_mask);
       }
 
       reserveBlackAndWhite(dewarped, dewarped_bw_mask.inverted());
@@ -2617,13 +2617,13 @@ void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
     BinaryImage bw_content(img, BinaryThreshold(1));
     applyFillZonesInPlace(bw_content, zones);
     applyFillZonesInPlace(img, zones);
-    combineImageMono(img, bw_content, picture_mask);
+    combineImages(img, bw_content, picture_mask);
   } else {
     QImage content(img);
     applyMask(content, picture_mask);
     applyFillZonesInPlace(content, zones, false);
     applyFillZonesInPlace(img, zones);
-    combineImageColor(img, content, picture_mask);
+    combineImages(img, content, picture_mask);
   }
 }
 
@@ -2637,13 +2637,13 @@ void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,
     BinaryImage bw_content(img, BinaryThreshold(1));
     applyFillZonesInPlace(bw_content, zones, orig_to_output, postTransform);
     applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
-    combineImageMono(img, bw_content, picture_mask);
+    combineImages(img, bw_content, picture_mask);
   } else {
     QImage content(img);
     applyMask(content, picture_mask);
     applyFillZonesInPlace(content, zones, orig_to_output, postTransform, false);
     applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
-    combineImageColor(img, content, picture_mask);
+    combineImages(img, content, picture_mask);
   }
 }
 

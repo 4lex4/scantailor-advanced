@@ -9,17 +9,13 @@ class QImage;
 namespace imageproc {
 class BinaryImage;
 
-void combineImageMono(QImage& mixedImage, const BinaryImage& foreground);
+void combineImages(QImage& mixedImage, const BinaryImage& foreground);
 
-void combineImageMono(QImage& mixedImage, const BinaryImage& foreground, const BinaryImage& mask);
+void combineImages(QImage& mixedImage, const BinaryImage& foreground, const BinaryImage& mask);
 
-void combineImageColor(QImage& mixedImage, const QImage& foreground);
+void combineImages(QImage& mixedImage, const QImage& foreground);
 
-void combineImageColor(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask);
-
-void combineImage(QImage& mixedImage, const QImage& foreground);
-
-void combineImage(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask);
+void combineImages(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask);
 
 void applyMask(QImage& image, const BinaryImage& bw_mask, BWColor filling_color = WHITE);
 }  // namespace imageproc

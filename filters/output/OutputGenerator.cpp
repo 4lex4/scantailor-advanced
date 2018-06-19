@@ -950,11 +950,12 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
   status.throwIfCancelled();
 
   if (render_params.splitOutput()) {
-    const bool binary_foreground = (render_params.needBinarization() && !render_params.needColorSegmentation());
-    const bool indexed_foreground = (render_params.needBinarization() && render_params.needColorSegmentation());
+    const SplitImage::ForegroundType foreground_type
+        = render_params.needBinarization()
+              ? render_params.needColorSegmentation() ? SplitImage::INDEXED_FOREGROUND : SplitImage::BINARY_FOREGROUND
+              : SplitImage::COLOR_FOREGROUND;
 
-    splitImage->setMask(bw_content_mask_output, binary_foreground);
-    splitImage->setIndexedForeground(indexed_foreground);
+    splitImage->setMask(bw_content_mask_output, foreground_type);
     splitImage->setBackgroundImage(dst);
 
     if (render_params.needBinarization() && render_params.originalBackground()) {
@@ -1750,11 +1751,12 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
   status.throwIfCancelled();
 
   if (render_params.splitOutput()) {
-    const bool binary_foreground = (render_params.needBinarization() && !render_params.needColorSegmentation());
-    const bool indexed_foreground = (render_params.needBinarization() && render_params.needColorSegmentation());
+    const SplitImage::ForegroundType foreground_type
+        = render_params.needBinarization()
+              ? render_params.needColorSegmentation() ? SplitImage::INDEXED_FOREGROUND : SplitImage::BINARY_FOREGROUND
+              : SplitImage::COLOR_FOREGROUND;
 
-    splitImage->setMask(dewarped_bw_content_mask, binary_foreground);
-    splitImage->setIndexedForeground(indexed_foreground);
+    splitImage->setMask(dewarped_bw_content_mask, foreground_type);
     splitImage->setBackgroundImage(dewarped);
 
     if (render_params.needBinarization() && render_params.originalBackground()) {

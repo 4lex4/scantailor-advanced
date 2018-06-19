@@ -21,6 +21,12 @@ namespace output {
  */
 class SplitImage {
  public:
+  enum ForegroundType {
+    COLOR_FOREGROUND,
+    BINARY_FOREGROUND,
+    INDEXED_FOREGROUND
+  };
+
   SplitImage();
 
   SplitImage(const QImage& foreground, const QImage& background);
@@ -37,7 +43,7 @@ class SplitImage {
 
   void setBackgroundImage(const QImage& backgroundImage);
 
-  void setMask(const imageproc::BinaryImage& mask, bool binaryForeground);
+  void setMask(const imageproc::BinaryImage& mask, ForegroundType foregroundType);
 
   void applyToLayerImages(const std::function<void(QImage&)>& consumer);
 
@@ -47,15 +53,12 @@ class SplitImage {
 
   void setOriginalBackgroundImage(const QImage& originalBackgroundImage);
 
-  void setIndexedForeground(bool indexedForeground);
-
  private:
-  bool m_isBinaryForeground;
-  bool m_isIndexedForeground;
   imageproc::BinaryImage m_mask;
   QImage m_foregroundImage;
   QImage m_backgroundImage;
   QImage m_originalBackgroundImage;
+  ForegroundType m_foregroundType = COLOR_FOREGROUND;
 };
 }  // namespace output
 

@@ -86,10 +86,15 @@ QImage SplitImage::getForegroundImage() const {
     QImage foreground(m_backgroundImage);
     applyMask(foreground, m_mask);
 
-    if (m_isBinaryForeground) {
-      foreground = foreground.convertToFormat(QImage::Format_Mono);
-    } else if (m_isIndexedForeground) {
-      foreground = ColorTable(foreground).toIndexedImage();
+    switch (m_foregroundType) {
+      case BINARY_FOREGROUND:
+        foreground = foreground.convertToFormat(QImage::Format_Mono);
+        break;
+      case INDEXED_FOREGROUND:
+        foreground = ColorTable(foreground).toIndexedImage();
+        break;
+      default:
+        break;
     }
 
     return foreground;
@@ -100,7 +105,7 @@ QImage SplitImage::getForegroundImage() const {
 
 void SplitImage::setForegroundImage(const QImage& foregroundImage) {
   m_mask = BinaryImage();
-  SplitImage::m_foregroundImage = foregroundImage;
+  m_foregroundImage = foregroundImage;
 }
 
 QImage SplitImage::getBackgroundImage() const {
@@ -115,7 +120,7 @@ QImage SplitImage::getBackgroundImage() const {
 }
 
 void SplitImage::setBackgroundImage(const QImage& backgroundImage) {
-  SplitImage::m_backgroundImage = backgroundImage;
+  m_backgroundImage = backgroundImage;
 }
 
 void SplitImage::applyToLayerImages(const std::function<void(QImage&)>& consumer) {
@@ -134,10 +139,10 @@ bool SplitImage::isNull() const {
   return (m_foregroundImage.isNull() && m_mask.isNull()) || m_backgroundImage.isNull();
 }
 
-void SplitImage::setMask(const BinaryImage& mask, bool binaryForeground) {
+void SplitImage::setMask(const BinaryImage& mask, const ForegroundType foregroundType) {
   m_foregroundImage = QImage();
-  SplitImage::m_mask = mask;
-  SplitImage::m_isBinaryForeground = binaryForeground;
+  m_mask = mask;
+  m_foregroundType = foregroundType;
 }
 
 const QImage& SplitImage::getOriginalBackgroundImage() const {
@@ -145,10 +150,6 @@ const QImage& SplitImage::getOriginalBackgroundImage() const {
 }
 
 void SplitImage::setOriginalBackgroundImage(const QImage& originalBackgroundImage) {
-  SplitImage::m_originalBackgroundImage = originalBackgroundImage;
-}
-
-void SplitImage::setIndexedForeground(bool indexedForeground) {
-  SplitImage::m_isIndexedForeground = indexedForeground;
+  m_originalBackgroundImage = originalBackgroundImage;
 }
 }  // namespace output

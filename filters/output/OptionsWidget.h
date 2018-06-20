@@ -201,7 +201,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidge
   DewarpingOptions m_dewarpingOptions;
   double m_despeckleLevel;
   ImageViewTab m_lastTab;
-  QTimer delayedReloadRequest;
+  QTimer m_delayedReloadRequest;
 
   std::list<QMetaObject::Connection> m_connectionList;
 };

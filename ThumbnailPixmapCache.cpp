@@ -529,7 +529,7 @@ void ThumbnailPixmapCache::Impl::backgroundProcessing() {
   // This method is called from a background thread.
   assert(QCoreApplication::instance()->thread() != QThread::currentThread());
 
-  for (;;) {
+  while (true) {
     try {
       // We are going to initialize these while holding the mutex.
       LoadQueue::iterator lq_it;

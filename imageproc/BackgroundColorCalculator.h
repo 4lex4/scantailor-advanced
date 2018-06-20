@@ -33,8 +33,7 @@ class BackgroundColorCalculator {
 
   bool isBlackOnWhite(BinaryImage img, const BinaryImage& mask) const;
 
-
-  bool internalBlackOnWhiteDetection;
+  bool m_internalBlackOnWhiteDetection;
 };
 }  // namespace imageproc
 

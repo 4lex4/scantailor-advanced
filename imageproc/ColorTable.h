@@ -8,9 +8,6 @@
 
 namespace imageproc {
 class ColorTable {
- private:
-  QImage image;
-
  public:
   explicit ColorTable(const QImage& image);
 
@@ -42,6 +39,8 @@ class ColorTable {
                                                           int normalizeWhiteLevel = 255) const;
 
   void makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) const;
+
+  QImage m_image;
 };
 }  // namespace imageproc
 

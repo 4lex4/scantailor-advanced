@@ -2,6 +2,7 @@
 #ifndef SCANTAILOR_STATUSBARPROVIDER_H
 #define SCANTAILOR_STATUSBARPROVIDER_H
 
+#include <foundation/NonCopyable.h>
 #include <QPointF>
 #include <QSizeF>
 #include <list>
@@ -12,13 +13,6 @@
 
 class ImageViewInfoProvider {
   DECLARE_NON_COPYABLE(ImageViewInfoProvider)
-
- private:
-  std::list<ImageViewInfoObserver*> observers;
-  Dpi dpi;
-  QPointF mousePos;
-  QSizeF physSize;
-
  public:
   explicit ImageViewInfoProvider(const Dpi& dpi);
 
@@ -42,6 +36,11 @@ class ImageViewInfoProvider {
   void physSizeChanged(const QSizeF& physSize) const;
 
   void mousePosChanged(const QPointF& mousePos) const;
+
+  std::list<ImageViewInfoObserver*> m_observers;
+  Dpi m_dpi;
+  QPointF m_mousePos;
+  QSizeF m_physSize;
 };
 
 

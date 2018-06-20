@@ -187,7 +187,7 @@ QPoint MaxWhitespaceFinder::findBlackPixelCloseToCenter(const QRect non_white_re
   // as possible to each other, so that no more than 1 pixel separates
   // their corresponding edges.
 
-  for (;;) {
+  while (true) {
     const int outer_inner_dw = outer_rect.width() - inner_rect.width();
     const int outer_inner_dh = outer_rect.height() - inner_rect.height();
 
@@ -298,7 +298,7 @@ QRect MaxWhitespaceFinder::extendBlackPixelToBlackBox(const QPoint pixel, const 
   // each other, so that no more than 1 pixel separates their
   // corresponding edges.
 
-  for (;;) {
+  while (true) {
     const int outer_inner_dw = outer_rect.width() - inner_rect.width();
     const int outer_inner_dh = outer_rect.height() - inner_rect.height();
 

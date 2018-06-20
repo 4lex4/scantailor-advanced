@@ -37,7 +37,7 @@ class intrusive_ptr {
   using pointer = T*;
 
   template <typename OT>
-  using __enable_if_convertible =
+  using enable_if_convertible =
       typename std::enable_if<std::is_convertible<typename intrusive_ptr<OT>::pointer, pointer>::value>::type;
 
  public:
@@ -49,10 +49,10 @@ class intrusive_ptr {
 
   intrusive_ptr(intrusive_ptr&& other) noexcept;
 
-  template <typename OT, typename = __enable_if_convertible<OT>>
+  template <typename OT, typename = enable_if_convertible<OT>>
   intrusive_ptr(const intrusive_ptr<OT>& other) noexcept;
 
-  template <typename OT, typename = __enable_if_convertible<OT>>
+  template <typename OT, typename = enable_if_convertible<OT>>
   intrusive_ptr(intrusive_ptr<OT>&& other) noexcept;
 
   ~intrusive_ptr() noexcept;
@@ -63,10 +63,10 @@ class intrusive_ptr {
 
   intrusive_ptr& operator=(intrusive_ptr&& rhs) noexcept;
 
-  template <typename OT, typename = __enable_if_convertible<OT>>
+  template <typename OT, typename = enable_if_convertible<OT>>
   intrusive_ptr& operator=(const intrusive_ptr<OT>& rhs) noexcept;
 
-  template <typename OT, typename = __enable_if_convertible<OT>>
+  template <typename OT, typename = enable_if_convertible<OT>>
   intrusive_ptr& operator=(intrusive_ptr<OT>&& rhs) noexcept;
 
   T& operator*() const;

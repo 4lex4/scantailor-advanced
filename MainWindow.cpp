@@ -510,7 +510,7 @@ bool MainWindow::compareFiles(const QString& fpath1, const QString& fpath2) {
   }
 
   const int chunk_size = 4096;
-  for (;;) {
+  while (true) {
     const QByteArray chunk1(file1.read(chunk_size));
     const QByteArray chunk2(file2.read(chunk_size));
     if (chunk1.size() != chunk2.size()) {

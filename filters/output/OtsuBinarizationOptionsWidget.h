@@ -13,15 +13,6 @@
 namespace output {
 class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
   Q_OBJECT
- private:
-  intrusive_ptr<Settings> m_settings;
-  PageId m_pageId;
-  ColorParams m_colorParams;
-  QTimer delayedStateChanger;
-  int ignoreSliderChanges;
-
-  std::list<QMetaObject::Connection> m_connectionList;
-
  public:
   explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
@@ -51,6 +42,14 @@ class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
   void setupUiConnections();
 
   void removeUiConnections();
+
+  intrusive_ptr<Settings> m_settings;
+  PageId m_pageId;
+  ColorParams m_colorParams;
+  QTimer m_delayedStateChanger;
+  int m_ignoreSliderChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 

@@ -341,8 +341,8 @@ class OutputGenerator {
 
   double m_despeckleLevel;
 
-  // store additional transformations after processing such as post deskew after dewarping
-  QTransform postTransform;
+  /** Store additional transformations after processing such as post deskew after dewarping.*/
+  QTransform m_postTransform;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUTGENERATOR_H_

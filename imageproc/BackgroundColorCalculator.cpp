@@ -225,17 +225,17 @@ QColor BackgroundColorCalculator::calcDominantColor(const QImage& img, const Bin
 }
 
 BackgroundColorCalculator::BackgroundColorCalculator(bool internalBlackOnWhiteDetection)
-    : internalBlackOnWhiteDetection(internalBlackOnWhiteDetection) {}
+    : m_internalBlackOnWhiteDetection(internalBlackOnWhiteDetection) {}
 
 bool BackgroundColorCalculator::isBlackOnWhite(const BinaryImage& img) const {
-  if (!internalBlackOnWhiteDetection) {
+  if (!m_internalBlackOnWhiteDetection) {
     return true;
   }
   return (2 * img.countBlackPixels()) <= (img.width() * img.height());
 }
 
 bool BackgroundColorCalculator::isBlackOnWhite(BinaryImage img, const BinaryImage& mask) const {
-  if (!internalBlackOnWhiteDetection) {
+  if (!m_internalBlackOnWhiteDetection) {
     return true;
   }
   rasterOp<RopAnd<RopSrc, RopDst>>(img, mask);

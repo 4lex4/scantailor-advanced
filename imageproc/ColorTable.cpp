@@ -13,16 +13,16 @@ ColorTable::ColorTable(const QImage& image) {
     throw std::invalid_argument("ColorTable: Image format not supported.");
   }
 
-  this->image = image;
+  this->m_image = image;
 }
 
 QImage ColorTable::getImage() const {
-  return image;
+  return m_image;
 }
 
 QVector<QRgb> ColorTable::getPalette() const {
   std::unordered_map<uint32_t, int> paletteMap;
-  switch (image.format()) {
+  switch (m_image.format()) {
     case QImage::Format_Indexed8:
       paletteMap = paletteFromIndexedWithStatistics();
       break;
@@ -61,7 +61,7 @@ ColorTable& ColorTable::posterize(const int level,
   {
     // Get the palette with statistics.
     std::unordered_map<uint32_t, int> paletteStatMap;
-    switch (image.format()) {
+    switch (m_image.format()) {
       case QImage::Format_Indexed8:
         paletteStatMap = paletteFromIndexedWithStatistics();
         break;
@@ -121,7 +121,7 @@ ColorTable& ColorTable::posterize(const int level,
     newColorTableSize = groupMap.size();
   }
 
-  if (image.format() == QImage::Format_Indexed8) {
+  if (m_image.format() == QImage::Format_Indexed8) {
     remapColorsInIndexedImage(oldToNewColorMap);
   } else {
     if (newColorTableSize <= 256) {
@@ -137,13 +137,13 @@ ColorTable& ColorTable::posterize(const int level,
 std::unordered_map<uint32_t, int> ColorTable::paletteFromIndexedWithStatistics() const {
   std::unordered_map<uint32_t, int> palette;
 
-  const int width = image.width();
-  const int height = image.height();
+  const int width = m_image.width();
+  const int height = m_image.height();
 
-  const uint8_t* img_line = image.bits();
-  const int img_stride = image.bytesPerLine();
+  const uint8_t* img_line = m_image.bits();
+  const int img_stride = m_image.bytesPerLine();
 
-  QVector<QRgb> colorTable = image.colorTable();
+  QVector<QRgb> colorTable = m_image.colorTable();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -161,11 +161,11 @@ std::unordered_map<uint32_t, int> ColorTable::paletteFromIndexedWithStatistics()
 std::unordered_map<uint32_t, int> ColorTable::paletteFromRgbWithStatistics() const {
   std::unordered_map<uint32_t, int> palette;
 
-  const int width = image.width();
-  const int height = image.height();
+  const int width = m_image.width();
+  const int height = m_image.height();
 
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  const auto* img_line = reinterpret_cast<const uint32_t*>(m_image.bits());
+  const int img_stride = m_image.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -189,13 +189,13 @@ void ColorTable::remapColorsInIndexedImage(const std::unordered_map<uint32_t, ui
   }
 
   {
-    const int width = image.width();
-    const int height = image.height();
+    const int width = m_image.width();
+    const int height = m_image.height();
 
-    uint8_t* img_line = image.bits();
-    const int img_stride = image.bytesPerLine();
+    uint8_t* img_line = m_image.bits();
+    const int img_stride = m_image.bytesPerLine();
 
-    QVector<QRgb> colorTable = image.colorTable();
+    QVector<QRgb> colorTable = m_image.colorTable();
 
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
@@ -212,15 +212,15 @@ void ColorTable::remapColorsInIndexedImage(const std::unordered_map<uint32_t, ui
     newColorTable[colorAndIndex.second] = colorAndIndex.first;
   }
 
-  image.setColorTable(newColorTable);
+  m_image.setColorTable(newColorTable);
 }
 
 void ColorTable::remapColorsInRgbImage(const std::unordered_map<uint32_t, uint32_t>& colorMap) {
-  const int width = image.width();
-  const int height = image.height();
+  const int width = m_image.width();
+  const int height = m_image.height();
 
-  auto* img_line = reinterpret_cast<uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  auto* img_line = reinterpret_cast<uint32_t*>(m_image.bits());
+  const int img_stride = m_image.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -244,13 +244,13 @@ void ColorTable::buildIndexedImageFromRgb(const std::unordered_map<uint32_t, uin
     newColorTable.push_back(color);
   }
 
-  image = toIndexedImage(&newColorTable);
+  m_image = toIndexedImage(&newColorTable);
 }
 
 std::unordered_map<uint32_t, uint32_t> ColorTable::normalizePalette(const std::unordered_map<uint32_t, int>& palette,
                                                                     const int normalizeBlackLevel,
                                                                     const int normalizeWhiteLevel) const {
-  const int pixelCount = image.width() * image.height();
+  const int pixelCount = m_image.width() * m_image.height();
   const double threshold = 0.0005;  // mustn't be larger than (1 / 256)
 
   int min_level = 255;
@@ -350,23 +350,23 @@ void ColorTable::makeGrayBlackOrWhiteInPlace(QRgb& rgb, const QRgb& normalized) 
 }
 
 QImage ColorTable::toIndexedImage(const QVector<QRgb>* colorTable) const {
-  if (image.format() == QImage::Format_Indexed8) {
-    return image;
+  if (m_image.format() == QImage::Format_Indexed8) {
+    return m_image;
   }
 
   const QVector<QRgb>& palette = (colorTable) ? *colorTable : getPalette();
   if (palette.size() > 256) {
-    return image;
+    return m_image;
   }
 
-  QImage dst(image.size(), QImage::Format_Indexed8);
+  QImage dst(m_image.size(), QImage::Format_Indexed8);
   dst.setColorTable(palette);
 
-  const int width = image.width();
-  const int height = image.height();
+  const int width = m_image.width();
+  const int height = m_image.height();
 
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  const auto* img_line = reinterpret_cast<const uint32_t*>(m_image.bits());
+  const int img_stride = m_image.bytesPerLine() / sizeof(uint32_t);
 
   uint8_t* dst_line = dst.bits();
   const int dst_stride = dst.bytesPerLine();
@@ -384,8 +384,8 @@ QImage ColorTable::toIndexedImage(const QVector<QRgb>* colorTable) const {
     dst_line += dst_stride;
   }
 
-  dst.setDotsPerMeterX(image.dotsPerMeterX());
-  dst.setDotsPerMeterY(image.dotsPerMeterY());
+  dst.setDotsPerMeterX(m_image.dotsPerMeterX());
+  dst.setDotsPerMeterY(m_image.dotsPerMeterY());
 
   return dst;
 }

@@ -3,14 +3,13 @@
 #define SCANTAILOR_COLORSCHEMEMANAGER_H
 
 
+#include <foundation/NonCopyable.h>
 #include <memory>
 #include "ColorScheme.h"
 
 class ColorSchemeManager {
+  DECLARE_NON_COPYABLE(ColorSchemeManager)
  private:
-  static std::unique_ptr<ColorSchemeManager> m_instance;
-  std::unique_ptr<ColorParams> m_colorParams;
-
   ColorSchemeManager() = default;
 
  public:
@@ -19,6 +18,11 @@ class ColorSchemeManager {
   void setColorScheme(const ColorScheme& colorScheme);
 
   QBrush getColorParam(const std::string& colorParam, const QBrush& defaultColor) const;
+
+ private:
+  static std::unique_ptr<ColorSchemeManager> m_instance;
+
+  std::unique_ptr<ColorParams> m_colorParams;
 };
 
 

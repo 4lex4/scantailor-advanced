@@ -10,7 +10,7 @@ SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr
     : m_settings(std::move(settings)) {
   setupUi(this);
 
-  delayedStateChanger.setSingleShot(true);
+  m_delayedStateChanger.setSingleShot(true);
 
   setupUiConnections();
 }
@@ -34,7 +34,7 @@ void SauvolaBinarizationOptionsWidget::windowSizeChanged(int value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void SauvolaBinarizationOptionsWidget::sauvolaCoefChanged(double value) {
@@ -43,7 +43,7 @@ void SauvolaBinarizationOptionsWidget::sauvolaCoefChanged(double value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void SauvolaBinarizationOptionsWidget::updateView() {
@@ -61,7 +61,7 @@ void SauvolaBinarizationOptionsWidget::sendStateChanged() {
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
   CONNECT(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
-  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(&m_delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
 #undef CONNECT

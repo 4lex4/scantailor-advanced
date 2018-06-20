@@ -21,11 +21,11 @@ using namespace page_layout;
 
 DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     : QDialog(parent),
-      leftRightLinkEnabled(true),
-      topBottomLinkEnabled(true),
-      ignoreMarginChanges(0),
-      currentUnits(MILLIMETRES),
-      ignoreProfileChanges(0) {
+      m_leftRightLinkEnabled(true),
+      m_topBottomLinkEnabled(true),
+      m_ignoreMarginChanges(0),
+      m_currentUnits(MILLIMETRES),
+      m_ignoreProfileChanges(0) {
   setupUi(this);
 
   layoutModeCB->addItem(tr("Auto"), MODE_AUTO);
@@ -49,52 +49,52 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   dpiSelector->addItem("300", "300");
   dpiSelector->addItem("400", "400");
   dpiSelector->addItem("600", "600");
-  customDpiItemIdx = dpiSelector->count();
-  customDpiValue = "200";
-  dpiSelector->addItem(tr("Custom"), customDpiValue);
+  m_customDpiItemIdx = dpiSelector->count();
+  m_customDpiValue = "200";
+  dpiSelector->addItem(tr("Custom"), m_customDpiValue);
 
   dewarpingModeCB->addItem(tr("Off"), OFF);
   dewarpingModeCB->addItem(tr("Auto"), AUTO);
   dewarpingModeCB->addItem(tr("Manual"), MANUAL);
   dewarpingModeCB->addItem(tr("Marginal"), MARGINAL);
 
-  reservedProfileNames.insert("Default");
-  reservedProfileNames.insert("Source");
-  reservedProfileNames.insert("Custom");
+  m_reservedProfileNames.insert("Default");
+  m_reservedProfileNames.insert("Source");
+  m_reservedProfileNames.insert("Custom");
 
   profileCB->addItem(tr("Default"), "Default");
   profileCB->addItem(tr("Source"), "Source");
-  std::unique_ptr<std::list<QString>> profileList = profileManager.getProfileList();
+  std::unique_ptr<std::list<QString>> profileList = m_profileManager.getProfileList();
   for (const QString& profileName : *profileList) {
     if (!isProfileNameReserved(profileName)) {
       profileCB->addItem(profileName, profileName);
     }
   }
-  customProfileItemIdx = profileCB->count();
+  m_customProfileItemIdx = profileCB->count();
   profileCB->addItem(tr("Custom"), "Custom");
 
-  reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Default")));
-  reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Source")));
-  reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Custom")));
+  m_reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Default")));
+  m_reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Source")));
+  m_reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Custom")));
 
-  chainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png")));
-  brokenChainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png")));
-  setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
-  setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
+  m_chainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png")));
+  m_brokenChainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png")));
+  setLinkButtonLinked(topBottomLink, m_topBottomLinkEnabled);
+  setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
 
-  Utils::mapSetValue(alignmentByButton, alignTopLeftBtn, Alignment(Alignment::TOP, Alignment::LEFT));
-  Utils::mapSetValue(alignmentByButton, alignTopBtn, Alignment(Alignment::TOP, Alignment::HCENTER));
-  Utils::mapSetValue(alignmentByButton, alignTopRightBtn, Alignment(Alignment::TOP, Alignment::RIGHT));
-  Utils::mapSetValue(alignmentByButton, alignLeftBtn, Alignment(Alignment::VCENTER, Alignment::LEFT));
-  Utils::mapSetValue(alignmentByButton, alignCenterBtn, Alignment(Alignment::VCENTER, Alignment::HCENTER));
-  Utils::mapSetValue(alignmentByButton, alignRightBtn, Alignment(Alignment::VCENTER, Alignment::RIGHT));
-  Utils::mapSetValue(alignmentByButton, alignBottomLeftBtn, Alignment(Alignment::BOTTOM, Alignment::LEFT));
-  Utils::mapSetValue(alignmentByButton, alignBottomBtn, Alignment(Alignment::BOTTOM, Alignment::HCENTER));
-  Utils::mapSetValue(alignmentByButton, alignBottomRightBtn, Alignment(Alignment::BOTTOM, Alignment::RIGHT));
+  Utils::mapSetValue(m_alignmentByButton, alignTopLeftBtn, Alignment(Alignment::TOP, Alignment::LEFT));
+  Utils::mapSetValue(m_alignmentByButton, alignTopBtn, Alignment(Alignment::TOP, Alignment::HCENTER));
+  Utils::mapSetValue(m_alignmentByButton, alignTopRightBtn, Alignment(Alignment::TOP, Alignment::RIGHT));
+  Utils::mapSetValue(m_alignmentByButton, alignLeftBtn, Alignment(Alignment::VCENTER, Alignment::LEFT));
+  Utils::mapSetValue(m_alignmentByButton, alignCenterBtn, Alignment(Alignment::VCENTER, Alignment::HCENTER));
+  Utils::mapSetValue(m_alignmentByButton, alignRightBtn, Alignment(Alignment::VCENTER, Alignment::RIGHT));
+  Utils::mapSetValue(m_alignmentByButton, alignBottomLeftBtn, Alignment(Alignment::BOTTOM, Alignment::LEFT));
+  Utils::mapSetValue(m_alignmentByButton, alignBottomBtn, Alignment(Alignment::BOTTOM, Alignment::HCENTER));
+  Utils::mapSetValue(m_alignmentByButton, alignBottomRightBtn, Alignment(Alignment::BOTTOM, Alignment::RIGHT));
 
-  alignmentButtonGroup = std::make_unique<QButtonGroup>(this);
-  for (const auto& buttonAndAlignment : alignmentByButton) {
-    alignmentButtonGroup->addButton(buttonAndAlignment.first);
+  m_alignmentButtonGroup = std::make_unique<QButtonGroup>(this);
+  for (const auto& buttonAndAlignment : m_alignmentByButton) {
+    m_alignmentButtonGroup->addButton(buttonAndAlignment.first);
   }
 
   darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
@@ -121,7 +121,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
 }
 
 void DefaultParamsDialog::updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params) {
-  orthogonalRotation = params.getImageRotation();
+  m_orthogonalRotation = params.getImageRotation();
   setRotationPixmap();
 }
 
@@ -206,10 +206,10 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
   bottomMarginSpinBox->setValue(margins.bottom());
   leftMarginSpinBox->setValue(margins.left());
 
-  topBottomLinkEnabled = (margins.top() == margins.bottom());
-  leftRightLinkEnabled = (margins.left() == margins.right());
-  setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
-  setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
+  m_topBottomLinkEnabled = (margins.top() == margins.bottom());
+  m_leftRightLinkEnabled = (margins.left() == margins.right());
+  setLinkButtonLinked(topBottomLink, m_topBottomLinkEnabled);
+  setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
 
   const Alignment& alignment = params.getAlignment();
   if (alignment.isAuto()) {
@@ -231,7 +231,7 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
 
   alignWithOthersCB->setChecked(!alignment.isNull());
 
-  for (const auto& kv : alignmentByButton) {
+  for (const auto& kv : m_alignmentByButton) {
     if (alignment.isAuto() || alignment.isOriginal()) {
       if (!alignment.isAutoHorizontal() && (kv.second.vertical() == Alignment::VCENTER)
           && (kv.second.horizontal() == alignment.horizontal())) {
@@ -293,8 +293,8 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
   if (dpiIndex != -1) {
     dpiSelector->setCurrentIndex(dpiIndex);
   } else {
-    dpiSelector->setCurrentIndex(customDpiItemIdx);
-    customDpiValue = QString::number(params.getDpi().vertical());
+    dpiSelector->setCurrentIndex(m_customDpiItemIdx);
+    m_customDpiValue = QString::number(params.getDpi().vertical());
   }
 
   const SplittingOptions& splittingOptions = params.getSplittingOptions();
@@ -307,7 +307,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
       colorForegroundRB->setChecked(true);
       break;
   }
-  originalBackgroundCB->setChecked(splittingOptions.isOriginalBackground());
+  originalBackgroundCB->setChecked(splittingOptions.isOriginalBackgroundEnabled());
 
   const double despeckleLevel = params.getDespeckleLevel();
   if (despeckleLevel != 0) {
@@ -387,13 +387,13 @@ void DefaultParamsDialog::removeUiConnections() {
 }
 
 void DefaultParamsDialog::rotateLeft() {
-  OrthogonalRotation rotation(orthogonalRotation);
+  OrthogonalRotation rotation(m_orthogonalRotation);
   rotation.prevClockwiseDirection();
   setRotation(rotation);
 }
 
 void DefaultParamsDialog::rotateRight() {
-  OrthogonalRotation rotation(orthogonalRotation);
+  OrthogonalRotation rotation(m_orthogonalRotation);
   rotation.nextClockwiseDirection();
   setRotation(rotation);
 }
@@ -403,18 +403,18 @@ void DefaultParamsDialog::resetRotation() {
 }
 
 void DefaultParamsDialog::setRotation(const OrthogonalRotation& rotation) {
-  if (rotation == orthogonalRotation) {
+  if (rotation == m_orthogonalRotation) {
     return;
   }
 
-  orthogonalRotation = rotation;
+  m_orthogonalRotation = rotation;
   setRotationPixmap();
 }
 
 void DefaultParamsDialog::setRotationPixmap() {
   const char* path = nullptr;
 
-  switch (orthogonalRotation.toDegrees()) {
+  switch (m_orthogonalRotation.toDegrees()) {
     case 0:
       path = ":/icons/big-up-arrow.png";
       break;
@@ -585,7 +585,7 @@ void DefaultParamsDialog::loadParams(const DefaultParams& params) {
 }
 
 std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
-  DefaultParams::FixOrientationParams fixOrientationParams(orthogonalRotation);
+  DefaultParams::FixOrientationParams fixOrientationParams(m_orthogonalRotation);
 
   LayoutType layoutType;
   if (layoutModeCB->currentData() == MODE_AUTO) {
@@ -613,27 +613,27 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
       if (autoVerticalAligningCB->isChecked()) {
         alignment.setVertical(Alignment::VAUTO);
       } else {
-        alignment.setVertical(alignmentByButton.at(getCheckedAlignmentButton()).vertical());
+        alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
       }
       if (autoHorizontalAligningCB->isChecked()) {
         alignment.setHorizontal(Alignment::HAUTO);
       } else {
-        alignment.setHorizontal(alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
+        alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
       }
       break;
     case 1:
-      alignment = alignmentByButton.at(getCheckedAlignmentButton());
+      alignment = m_alignmentByButton.at(getCheckedAlignmentButton());
       break;
     case 2:
       if (autoVerticalAligningCB->isChecked()) {
         alignment.setVertical(Alignment::VORIGINAL);
       } else {
-        alignment.setVertical(alignmentByButton.at(getCheckedAlignmentButton()).vertical());
+        alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
       }
       if (autoHorizontalAligningCB->isChecked()) {
         alignment.setHorizontal(Alignment::HORIGINAL);
       } else {
-        alignment.setHorizontal(alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
+        alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
       }
       break;
     default:
@@ -644,8 +644,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
                                                            rightMarginSpinBox->value(), bottomMarginSpinBox->value()),
                                                    alignment, autoMargins->isChecked());
 
-  const int dpi
-      = (dpiSelector->currentIndex() != customDpiItemIdx) ? dpiSelector->currentText().toInt() : customDpiValue.toInt();
+  const int dpi = (dpiSelector->currentIndex() != m_customDpiItemIdx) ? dpiSelector->currentText().toInt()
+                                                                      : m_customDpiValue.toInt();
   ColorParams colorParams;
   colorParams.setColorMode(static_cast<ColorMode>(colorModeSelector->currentData().toInt()));
 
@@ -690,7 +690,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
   SplittingOptions splittingOptions;
   splittingOptions.setSplitOutput(splittingCB->isChecked());
   splittingOptions.setSplittingMode(bwForegroundRB->isChecked() ? BLACK_AND_WHITE_FOREGROUND : COLOR_FOREGROUND);
-  splittingOptions.setOriginalBackground(originalBackgroundCB->isChecked());
+  splittingOptions.setOriginalBackgroundEnabled(originalBackgroundCB->isChecked());
 
   PictureShapeOptions pictureShapeOptions;
   pictureShapeOptions.setPictureShape(static_cast<PictureShape>(pictureShapeSelector->currentData().toInt()));
@@ -714,13 +714,13 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
 
   std::unique_ptr<DefaultParams> defaultParams = std::make_unique<DefaultParams>(
       fixOrientationParams, deskewParams, pageSplitParams, selectContentParams, pageLayoutParams, outputParams);
-  defaultParams->setUnits(currentUnits);
+  defaultParams->setUnits(m_currentUnits);
 
   return defaultParams;
 }
 
 void DefaultParamsDialog::updateUnits(const Units units) {
-  currentUnits = units;
+  m_currentUnits = units;
   unitsLabel->setText(unitsToLocalizedString(units));
 
   {
@@ -771,13 +771,13 @@ void DefaultParamsDialog::updateUnits(const Units units) {
 }
 
 void DefaultParamsDialog::setLinkButtonLinked(QToolButton* button, bool linked) {
-  button->setIcon(linked ? chainIcon : brokenChainIcon);
+  button->setIcon(linked ? m_chainIcon : m_brokenChainIcon);
 }
 
 void DefaultParamsDialog::topBottomLinkClicked() {
-  topBottomLinkEnabled = !topBottomLinkEnabled;
-  setLinkButtonLinked(topBottomLink, topBottomLinkEnabled);
-  if (topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
+  m_topBottomLinkEnabled = !m_topBottomLinkEnabled;
+  setLinkButtonLinked(topBottomLink, m_topBottomLinkEnabled);
+  if (m_topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
     const double new_margin = std::min(topMarginSpinBox->value(), bottomMarginSpinBox->value());
     topMarginSpinBox->setValue(new_margin);
     bottomMarginSpinBox->setValue(new_margin);
@@ -785,9 +785,9 @@ void DefaultParamsDialog::topBottomLinkClicked() {
 }
 
 void DefaultParamsDialog::leftRightLinkClicked() {
-  leftRightLinkEnabled = !leftRightLinkEnabled;
-  setLinkButtonLinked(leftRightLink, leftRightLinkEnabled);
-  if (leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
+  m_leftRightLinkEnabled = !m_leftRightLinkEnabled;
+  setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
+  if (m_leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
     const double new_margin = std::min(leftMarginSpinBox->value(), rightMarginSpinBox->value());
     leftMarginSpinBox->setValue(new_margin);
     rightMarginSpinBox->setValue(new_margin);
@@ -795,22 +795,22 @@ void DefaultParamsDialog::leftRightLinkClicked() {
 }
 
 void DefaultParamsDialog::horMarginsChanged(double val) {
-  if (ignoreMarginChanges) {
+  if (m_ignoreMarginChanges) {
     return;
   }
-  if (leftRightLinkEnabled) {
-    const ScopedIncDec<int> scopeGuard(ignoreMarginChanges);
+  if (m_leftRightLinkEnabled) {
+    const ScopedIncDec<int> scopeGuard(m_ignoreMarginChanges);
     leftMarginSpinBox->setValue(val);
     rightMarginSpinBox->setValue(val);
   }
 }
 
 void DefaultParamsDialog::vertMarginsChanged(double val) {
-  if (ignoreMarginChanges) {
+  if (m_ignoreMarginChanges) {
     return;
   }
-  if (topBottomLinkEnabled) {
-    const ScopedIncDec<int> scopeGuard(ignoreMarginChanges);
+  if (m_topBottomLinkEnabled) {
+    const ScopedIncDec<int> scopeGuard(m_ignoreMarginChanges);
     topMarginSpinBox->setValue(val);
     bottomMarginSpinBox->setValue(val);
   }
@@ -847,9 +847,9 @@ void DefaultParamsDialog::setNeutralThreshold() {
 }
 
 void DefaultParamsDialog::dpiSelectionChanged(int index) {
-  dpiSelector->setEditable(index == customDpiItemIdx);
-  if (index == customDpiItemIdx) {
-    dpiSelector->setEditText(customDpiValue);
+  dpiSelector->setEditable(index == m_customDpiItemIdx);
+  if (index == m_customDpiItemIdx) {
+    dpiSelector->setEditText(m_customDpiValue);
     dpiSelector->lineEdit()->selectAll();
     // It looks like we need to set a new validator
     // every time we make the combo box editable.
@@ -858,8 +858,8 @@ void DefaultParamsDialog::dpiSelectionChanged(int index) {
 }
 
 void DefaultParamsDialog::dpiEditTextChanged(const QString& text) {
-  if (dpiSelector->currentIndex() == customDpiItemIdx) {
-    customDpiValue = text;
+  if (dpiSelector->currentIndex() == m_customDpiItemIdx) {
+    m_customDpiValue = text;
   }
 }
 
@@ -877,12 +877,12 @@ void DefaultParamsDialog::depthPerceptionChangedSlot(const int val) {
 }
 
 void DefaultParamsDialog::profileChanged(const int index) {
-  if (ignoreProfileChanges) {
+  if (m_ignoreProfileChanges) {
     return;
   }
 
-  profileCB->setEditable(index == customProfileItemIdx);
-  if (index == customProfileItemIdx) {
+  profileCB->setEditable(index == m_customProfileItemIdx);
+  if (index == m_customProfileItemIdx) {
     profileCB->setEditText(profileCB->currentText());
     profileCB->lineEdit()->selectAll();
     profileCB->setFocus();
@@ -900,17 +900,17 @@ void DefaultParamsDialog::profileChanged(const int index) {
     profileDeleteButton->setEnabled(false);
     setTabWidgetsEnabled(false);
 
-    std::unique_ptr<DefaultParams> defaultProfile = profileManager.createDefaultProfile();
+    std::unique_ptr<DefaultParams> defaultProfile = m_profileManager.createDefaultProfile();
     loadParams(*defaultProfile);
   } else if (profileCB->currentData().toString() == "Source") {
     profileSaveButton->setEnabled(false);
     profileDeleteButton->setEnabled(false);
     setTabWidgetsEnabled(false);
 
-    std::unique_ptr<DefaultParams> sourceProfile = profileManager.createSourceProfile();
+    std::unique_ptr<DefaultParams> sourceProfile = m_profileManager.createSourceProfile();
     loadParams(*sourceProfile);
   } else {
-    std::unique_ptr<DefaultParams> profile = profileManager.readProfile(profileCB->itemData(index).toString());
+    std::unique_ptr<DefaultParams> profile = m_profileManager.readProfile(profileCB->itemData(index).toString());
     if (profile != nullptr) {
       profileSaveButton->setEnabled(true);
       profileDeleteButton->setEnabled(true);
@@ -921,20 +921,20 @@ void DefaultParamsDialog::profileChanged(const int index) {
       QMessageBox::critical(this, tr("Error"), tr("Error loading the profile."));
       profileCB->setCurrentIndex(0);
       profileCB->removeItem(index);
-      customProfileItemIdx--;
+      m_customProfileItemIdx--;
 
       profileSaveButton->setEnabled(false);
       profileDeleteButton->setEnabled(false);
       setTabWidgetsEnabled(false);
 
-      std::unique_ptr<DefaultParams> defaultProfile = profileManager.createDefaultProfile();
+      std::unique_ptr<DefaultParams> defaultProfile = m_profileManager.createDefaultProfile();
       loadParams(*defaultProfile);
     }
   }
 }
 
 void DefaultParamsDialog::profileSavePressed() {
-  const ScopedIncDec<int> scopeGuard(ignoreProfileChanges);
+  const ScopedIncDec<int> scopeGuard(m_ignoreProfileChanges);
 
   if (isProfileNameReserved(profileCB->currentText())) {
     QMessageBox::information(this, tr("Error"),
@@ -942,12 +942,12 @@ void DefaultParamsDialog::profileSavePressed() {
     return;
   }
 
-  if (profileManager.writeProfile(*buildParams(), profileCB->currentText())) {
-    if (profileCB->currentIndex() == customProfileItemIdx) {
+  if (m_profileManager.writeProfile(*buildParams(), profileCB->currentText())) {
+    if (profileCB->currentIndex() == m_customProfileItemIdx) {
       const QString profileName = profileCB->currentText();
       profileCB->setItemData(profileCB->currentIndex(), profileName);
       profileCB->setItemText(profileCB->currentIndex(), profileName);
-      customProfileItemIdx = profileCB->count();
+      m_customProfileItemIdx = profileCB->count();
       profileCB->addItem(tr("Custom"), "Custom");
 
       profileCB->setEditable(false);
@@ -959,31 +959,31 @@ void DefaultParamsDialog::profileSavePressed() {
 }
 
 void DefaultParamsDialog::profileDeletePressed() {
-  if (profileManager.deleteProfile(profileCB->currentText())) {
+  if (m_profileManager.deleteProfile(profileCB->currentText())) {
     {
-      const ScopedIncDec<int> scopeGuard(ignoreProfileChanges);
+      const ScopedIncDec<int> scopeGuard(m_ignoreProfileChanges);
 
       const int deletedProfileIndex = profileCB->currentIndex();
-      profileCB->setCurrentIndex(customProfileItemIdx--);
+      profileCB->setCurrentIndex(m_customProfileItemIdx--);
       profileCB->removeItem(deletedProfileIndex);
     }
-    profileChanged(customProfileItemIdx);
+    profileChanged(m_customProfileItemIdx);
   } else {
     QMessageBox::critical(this, tr("Error"), tr("Error deleting the profile."));
   }
 }
 
 bool DefaultParamsDialog::isProfileNameReserved(const QString& name) {
-  return reservedProfileNames.find(name) != reservedProfileNames.end();
+  return m_reservedProfileNames.find(name) != m_reservedProfileNames.end();
 }
 
 void DefaultParamsDialog::commitChanges() {
   const QString profile = profileCB->currentData().toString();
   std::unique_ptr<DefaultParams> params;
   if (profile == "Default") {
-    params = profileManager.createDefaultProfile();
+    params = m_profileManager.createDefaultProfile();
   } else if (profile == "Source") {
-    params = profileManager.createSourceProfile();
+    params = m_profileManager.createSourceProfile();
   } else {
     params = buildParams();
   }
@@ -1044,7 +1044,7 @@ void DefaultParamsDialog::updateAutoModeButtons() {
   }
 
   if (autoVerticalAligningCB->isChecked() && !autoHorizontalAligningCB->isChecked()) {
-    switch (alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {
+    switch (m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {
       case Alignment::LEFT:
         alignLeftBtn->setChecked(true);
         break;
@@ -1056,7 +1056,7 @@ void DefaultParamsDialog::updateAutoModeButtons() {
         break;
     }
   } else if (autoHorizontalAligningCB->isChecked() && !autoVerticalAligningCB->isChecked()) {
-    switch (alignmentByButton.at(getCheckedAlignmentButton()).vertical()) {
+    switch (m_alignmentByButton.at(getCheckedAlignmentButton()).vertical()) {
       case Alignment::TOP:
         alignTopBtn->setChecked(true);
         break;
@@ -1071,7 +1071,7 @@ void DefaultParamsDialog::updateAutoModeButtons() {
 }
 
 QToolButton* DefaultParamsDialog::getCheckedAlignmentButton() const {
-  auto* checkedButton = dynamic_cast<QToolButton*>(alignmentButtonGroup->checkedButton());
+  auto* checkedButton = dynamic_cast<QToolButton*>(m_alignmentButtonGroup->checkedButton());
   if (!checkedButton) {
     checkedButton = alignCenterBtn;
   }

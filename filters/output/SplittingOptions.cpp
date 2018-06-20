@@ -4,44 +4,44 @@
 namespace output {
 
 SplittingOptions::SplittingOptions()
-    : splitOutput(false), splittingMode(BLACK_AND_WHITE_FOREGROUND), originalBackground(false) {}
+    : m_isSplitOutput(false), m_splittingMode(BLACK_AND_WHITE_FOREGROUND), m_isOriginalBackgroundEnabled(false) {}
 
 SplittingOptions::SplittingOptions(const QDomElement& el)
-    : splitOutput(el.attribute("splitOutput") == "1"),
-      splittingMode(parseSplittingMode(el.attribute("splittingMode"))),
-      originalBackground(el.attribute("originalBackground") == "1") {}
+    : m_isSplitOutput(el.attribute("splitOutput") == "1"),
+      m_splittingMode(parseSplittingMode(el.attribute("splittingMode"))),
+      m_isOriginalBackgroundEnabled(el.attribute("originalBackground") == "1") {}
 
 QDomElement SplittingOptions::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
-  el.setAttribute("splitOutput", splitOutput ? "1" : "0");
-  el.setAttribute("splittingMode", formatSplittingMode(splittingMode));
-  el.setAttribute("originalBackground", originalBackground ? "1" : "0");
+  el.setAttribute("splitOutput", m_isSplitOutput ? "1" : "0");
+  el.setAttribute("splittingMode", formatSplittingMode(m_splittingMode));
+  el.setAttribute("originalBackground", m_isOriginalBackgroundEnabled ? "1" : "0");
 
   return el;
 }
 
 bool SplittingOptions::isSplitOutput() const {
-  return splitOutput;
+  return m_isSplitOutput;
 }
 
 void SplittingOptions::setSplitOutput(bool splitOutput) {
-  SplittingOptions::splitOutput = splitOutput;
+  SplittingOptions::m_isSplitOutput = splitOutput;
 }
 
 SplittingMode SplittingOptions::getSplittingMode() const {
-  return splittingMode;
+  return m_splittingMode;
 }
 
 void SplittingOptions::setSplittingMode(SplittingMode foregroundType) {
-  SplittingOptions::splittingMode = foregroundType;
+  SplittingOptions::m_splittingMode = foregroundType;
 }
 
-bool SplittingOptions::isOriginalBackground() const {
-  return originalBackground;
+bool SplittingOptions::isOriginalBackgroundEnabled() const {
+  return m_isOriginalBackgroundEnabled;
 }
 
-void SplittingOptions::setOriginalBackground(bool originalBackground) {
-  SplittingOptions::originalBackground = originalBackground;
+void SplittingOptions::setOriginalBackgroundEnabled(bool enable) {
+  SplittingOptions::m_isOriginalBackgroundEnabled = enable;
 }
 
 SplittingMode SplittingOptions::parseSplittingMode(const QString& str) {
@@ -67,8 +67,8 @@ QString SplittingOptions::formatSplittingMode(const SplittingMode type) {
 }
 
 bool SplittingOptions::operator==(const SplittingOptions& other) const {
-  return (splitOutput == other.splitOutput) && (splittingMode == other.splittingMode)
-         && (originalBackground == other.originalBackground);
+  return (m_isSplitOutput == other.m_isSplitOutput) && (m_splittingMode == other.m_splittingMode)
+         && (m_isOriginalBackgroundEnabled == other.m_isOriginalBackgroundEnabled);
 }
 
 bool SplittingOptions::operator!=(const SplittingOptions& other) const {

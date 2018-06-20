@@ -10,7 +10,7 @@ WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Setti
     : m_settings(std::move(settings)) {
   setupUi(this);
 
-  delayedStateChanger.setSingleShot(true);
+  m_delayedStateChanger.setSingleShot(true);
 
   setupUiConnections();
 }
@@ -34,7 +34,7 @@ void WolfBinarizationOptionsWidget::windowSizeChanged(int value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void WolfBinarizationOptionsWidget::lowerBoundChanged(int value) {
@@ -43,7 +43,7 @@ void WolfBinarizationOptionsWidget::lowerBoundChanged(int value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void WolfBinarizationOptionsWidget::upperBoundChanged(int value) {
@@ -52,7 +52,7 @@ void WolfBinarizationOptionsWidget::upperBoundChanged(int value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void WolfBinarizationOptionsWidget::wolfCoefChanged(double value) {
@@ -61,7 +61,7 @@ void WolfBinarizationOptionsWidget::wolfCoefChanged(double value) {
   m_colorParams.setBlackWhiteOptions(opt);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void WolfBinarizationOptionsWidget::updateView() {
@@ -83,7 +83,7 @@ void WolfBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(lowerBound, SIGNAL(valueChanged(int)), this, SLOT(lowerBoundChanged(int)));
   CONNECT(upperBound, SIGNAL(valueChanged(int)), this, SLOT(upperBoundChanged(int)));
   CONNECT(wolfCoef, SIGNAL(valueChanged(double)), this, SLOT(wolfCoefChanged(double)));
-  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(&m_delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
 #undef CONNECT

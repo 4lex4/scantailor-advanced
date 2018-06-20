@@ -27,19 +27,18 @@ class SplittingOptions {
 
   bool operator!=(const SplittingOptions& other) const;
 
-  bool isOriginalBackground() const;
+  bool isOriginalBackgroundEnabled() const;
 
-  void setOriginalBackground(bool originalBackground);
+  void setOriginalBackgroundEnabled(bool enable);
 
  private:
   static SplittingMode parseSplittingMode(const QString& str);
 
   static QString formatSplittingMode(SplittingMode type);
 
-
-  bool splitOutput;
-  SplittingMode splittingMode;
-  bool originalBackground;
+  bool m_isSplitOutput;
+  SplittingMode m_splittingMode;
+  bool m_isOriginalBackgroundEnabled;
 };
 }  // namespace output
 

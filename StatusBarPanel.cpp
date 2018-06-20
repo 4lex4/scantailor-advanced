@@ -11,28 +11,28 @@ StatusBarPanel::StatusBarPanel() {
 }
 
 void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
-  const QMutexLocker locker(&mutex);
+  const QMutexLocker locker(&m_mutex);
 
-  StatusBarPanel::mousePos = mousePos;
+  StatusBarPanel::m_mousePos = mousePos;
   mousePosChanged();
 }
 
 void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
-  const QMutexLocker locker(&mutex);
+  const QMutexLocker locker(&m_mutex);
 
-  StatusBarPanel::physSize = physSize;
+  StatusBarPanel::m_physSize = physSize;
   physSizeChanged();
 }
 
 void StatusBarPanel::updateDpi(const Dpi& dpi) {
-  StatusBarPanel::dpi = dpi;
+  StatusBarPanel::m_dpi = dpi;
 }
 
 void StatusBarPanel::clearImageViewInfo() {
-  infoProvider = nullptr;
+  m_infoProvider = nullptr;
   updateMousePos(QPointF());
   updatePhysSize(QRectF().size());
-  dpi = Dpi();
+  m_dpi = Dpi();
 }
 
 void StatusBarPanel::updatePage(int pageNumber, size_t pageCount, const PageId& pageId) {
@@ -62,17 +62,17 @@ void StatusBarPanel::clear() {
 }
 
 void StatusBarPanel::updateUnits(Units) {
-  const QMutexLocker locker(&mutex);
+  const QMutexLocker locker(&m_mutex);
 
   mousePosChanged();
   physSizeChanged();
 }
 
 void StatusBarPanel::mousePosChanged() {
-  if (!mousePos.isNull() && !dpi.isNull()) {
-    double x = mousePos.x();
-    double y = mousePos.y();
-    UnitsProvider::getInstance()->convertFrom(x, y, PIXELS, dpi);
+  if (!m_mousePos.isNull() && !m_dpi.isNull()) {
+    double x = m_mousePos.x();
+    double y = m_mousePos.y();
+    UnitsProvider::getInstance()->convertFrom(x, y, PIXELS, m_dpi);
 
     switch (UnitsProvider::getInstance()->getUnits()) {
       case PIXELS:
@@ -95,10 +95,10 @@ void StatusBarPanel::mousePosChanged() {
 }
 
 void StatusBarPanel::physSizeChanged() {
-  if (!physSize.isNull() && !dpi.isNull()) {
-    double width = physSize.width();
-    double height = physSize.height();
-    UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, dpi);
+  if (!m_physSize.isNull() && !m_dpi.isNull()) {
+    double width = m_physSize.width();
+    double height = m_physSize.height();
+    UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, m_dpi);
 
     const Units units = UnitsProvider::getInstance()->getUnits();
     switch (units) {
@@ -129,12 +129,12 @@ void StatusBarPanel::physSizeChanged() {
 }
 
 void StatusBarPanel::setInfoProvider(ImageViewInfoProvider* infoProvider) {
-  if (this->infoProvider) {
+  if (m_infoProvider) {
     infoProvider->detachObserver(this);
   }
   if (infoProvider) {
     infoProvider->attachObserver(this);
   }
 
-  this->infoProvider = infoProvider;
+  m_infoProvider = infoProvider;
 }

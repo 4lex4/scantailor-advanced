@@ -20,9 +20,6 @@
 class DefaultParams {
  public:
   class FixOrientationParams {
-   private:
-    OrthogonalRotation imageRotation;
-
    public:
     FixOrientationParams() = default;
 
@@ -35,13 +32,12 @@ class DefaultParams {
     const OrthogonalRotation& getImageRotation() const;
 
     void setImageRotation(const OrthogonalRotation& imageRotation);
+
+   private:
+    OrthogonalRotation m_imageRotation;
   };
 
   class DeskewParams {
-   private:
-    double deskewAngleDeg;
-    AutoManualMode mode;
-
    public:
     DeskewParams();
 
@@ -58,12 +54,13 @@ class DefaultParams {
     AutoManualMode getMode() const;
 
     void setMode(AutoManualMode mode);
+
+   private:
+    double m_deskewAngleDeg;
+    AutoManualMode m_mode;
   };
 
   class PageSplitParams {
-   private:
-    page_split::LayoutType layoutType;
-
    public:
     PageSplitParams();
 
@@ -76,15 +73,12 @@ class DefaultParams {
     page_split::LayoutType getLayoutType() const;
 
     void setLayoutType(page_split::LayoutType layoutType);
+
+   private:
+    page_split::LayoutType m_layoutType;
   };
 
   class SelectContentParams {
-   private:
-    QSizeF pageRectSize;
-    bool contentDetectEnabled;
-    AutoManualMode pageDetectMode;
-    bool fineTuneCorners;
-
    public:
     SelectContentParams();
 
@@ -112,14 +106,15 @@ class DefaultParams {
     AutoManualMode getPageDetectMode() const;
 
     void setPageDetectMode(AutoManualMode pageDetectMode);
+
+   private:
+    QSizeF m_pageRectSize;
+    bool m_contentDetectEnabled;
+    AutoManualMode m_pageDetectMode;
+    bool m_fineTuneCorners;
   };
 
   class PageLayoutParams {
-   private:
-    Margins hardMargins;
-    page_layout::Alignment alignment;
-    bool autoMargins;
-
    public:
     PageLayoutParams();
 
@@ -140,18 +135,14 @@ class DefaultParams {
     bool isAutoMargins() const;
 
     void setAutoMargins(bool autoMargins);
+
+   private:
+    Margins m_hardMargins;
+    page_layout::Alignment m_alignment;
+    bool m_autoMargins;
   };
 
   class OutputParams {
-   private:
-    Dpi dpi;
-    output::ColorParams colorParams;
-    output::SplittingOptions splittingOptions;
-    output::PictureShapeOptions pictureShapeOptions;
-    output::DepthPerception depthPerception;
-    output::DewarpingOptions dewarpingOptions;
-    double despeckleLevel;
-
    public:
     OutputParams();
 
@@ -194,6 +185,15 @@ class DefaultParams {
     double getDespeckleLevel() const;
 
     void setDespeckleLevel(double despeckleLevel);
+
+   private:
+    Dpi m_dpi;
+    output::ColorParams m_colorParams;
+    output::SplittingOptions m_splittingOptions;
+    output::PictureShapeOptions m_pictureShapeOptions;
+    output::DepthPerception m_depthPerception;
+    output::DewarpingOptions m_dewarpingOptions;
+    double m_despeckleLevel;
   };
 
  public:
@@ -239,13 +239,13 @@ class DefaultParams {
   void setUnits(Units units);
 
  private:
-  FixOrientationParams fixOrientationParams;
-  DeskewParams deskewParams;
-  PageSplitParams pageSplitParams;
-  SelectContentParams selectContentParams;
-  PageLayoutParams pageLayoutParams;
-  OutputParams outputParams;
-  Units units;
+  FixOrientationParams m_fixOrientationParams;
+  DeskewParams m_deskewParams;
+  PageSplitParams m_pageSplitParams;
+  SelectContentParams m_selectContentParams;
+  PageLayoutParams m_pageLayoutParams;
+  OutputParams m_outputParams;
+  Units m_units;
 };
 
 

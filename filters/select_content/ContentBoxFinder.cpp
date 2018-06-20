@@ -695,7 +695,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
   const int min_text_height = 6;
 
   ConnCompEraserExt eraser(content_blocks, CONN4);
-  for (;;) {
+  while (true) {
     const ConnComp cc(eraser.nextConnComp());
     if (cc.isNull()) {
       break;

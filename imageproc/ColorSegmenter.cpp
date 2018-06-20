@@ -55,20 +55,20 @@ ColorSegmenter::Settings::Settings(const Dpi& dpi, const int noiseThreshold) {
   const int average_dpi = (dpi.horizontal() + dpi.vertical()) / 2;
   const double dpi_factor = average_dpi / 300.0;
 
-  minAverageWidthThreshold = 1.5 * dpi_factor;
-  bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpi_factor);
+  m_minAverageWidthThreshold = 1.5 * dpi_factor;
+  m_bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpi_factor);
 }
 
 inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Component& component,
                                                         const ColorSegmenter::BoundingBox& boundingBox) const {
-  if (component.pixelsCount <= bigObjectThreshold) {
+  if (component.pixelsCount <= m_bigObjectThreshold) {
     return true;
   }
 
   double squareRelation = double(component.square()) / (boundingBox.height() * boundingBox.width());
   double averageWidth = std::min(boundingBox.height(), boundingBox.width()) * squareRelation;
 
-  return (averageWidth <= minAverageWidthThreshold);
+  return (averageWidth <= m_minAverageWidthThreshold);
 }
 
 /*=============================== ColorSegmenter ==================================*/
@@ -80,7 +80,7 @@ ColorSegmenter::ColorSegmenter(const BinaryImage& image,
                                const int redThresholdAdjustment,
                                const int greenThresholdAdjustment,
                                const int blueThresholdAdjustment)
-    : settings(dpi, noiseThreshold) {
+    : m_settings(dpi, noiseThreshold) {
   if (image.size() != originalImage.size()) {
     throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
   }
@@ -103,7 +103,7 @@ ColorSegmenter::ColorSegmenter(const BinaryImage& image,
                                const GrayImage& originalImage,
                                const Dpi& dpi,
                                const int noiseThreshold)
-    : settings(dpi, noiseThreshold) {
+    : m_settings(dpi, noiseThreshold) {
   if (image.size() != originalImage.size()) {
     throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
   }
@@ -111,7 +111,7 @@ ColorSegmenter::ColorSegmenter(const BinaryImage& image,
 }
 
 QImage ColorSegmenter::getImage() const {
-  if (originalImage.format() == QImage::Format_Indexed8) {
+  if (m_originalImage.format() == QImage::Format_Indexed8) {
     return buildGrayImage();
   } else {
     return buildRgbImage();
@@ -157,7 +157,7 @@ void ColorSegmenter::fromRgb(const BinaryImage& image,
                              const int redThresholdAdjustment,
                              const int greenThresholdAdjustment,
                              const int blueThresholdAdjustment) {
-  this->originalImage = originalImage;
+  this->m_originalImage = originalImage;
 
   BinaryImage redComponent;
   {
@@ -204,43 +204,43 @@ void ColorSegmenter::fromRgb(const BinaryImage& image,
   rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, magentaComponent);
   rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, cyanComponent);
 
-  segmentsMap = ConnectivityMap(blackComponent, CONN8);
-  segmentsMap.addComponents(yellowComponent, CONN8);
-  segmentsMap.addComponents(magentaComponent, CONN8);
-  segmentsMap.addComponents(cyanComponent, CONN8);
-  segmentsMap.addComponents(redComponent, CONN8);
-  segmentsMap.addComponents(greenComponent, CONN8);
-  segmentsMap.addComponents(blueComponent, CONN8);
+  m_segmentsMap = ConnectivityMap(blackComponent, CONN8);
+  m_segmentsMap.addComponents(yellowComponent, CONN8);
+  m_segmentsMap.addComponents(magentaComponent, CONN8);
+  m_segmentsMap.addComponents(cyanComponent, CONN8);
+  m_segmentsMap.addComponents(redComponent, CONN8);
+  m_segmentsMap.addComponents(greenComponent, CONN8);
+  m_segmentsMap.addComponents(blueComponent, CONN8);
 
   reduceNoise();
 
   {
     // extend the map and fill unlabeled components.
-    InfluenceMap influenceMap(segmentsMap, image);
-    segmentsMap = influenceMap;
+    InfluenceMap influenceMap(m_segmentsMap, image);
+    m_segmentsMap = influenceMap;
   }
 
   BinaryImage remainingComponents(image);
-  rasterOp<RopSubtract<RopDst, RopSrc>>(remainingComponents, segmentsMap.getBinaryMask());
-  segmentsMap.addComponents(remainingComponents, CONN8);
+  rasterOp<RopSubtract<RopDst, RopSrc>>(remainingComponents, m_segmentsMap.getBinaryMask());
+  m_segmentsMap.addComponents(remainingComponents, CONN8);
 }
 
 void ColorSegmenter::fromGrayscale(const BinaryImage& image, const GrayImage& originalImage) {
-  this->originalImage = originalImage;
-  this->segmentsMap = ConnectivityMap(image, CONN8);
+  this->m_originalImage = originalImage;
+  this->m_segmentsMap = ConnectivityMap(image, CONN8);
 }
 
 void ColorSegmenter::reduceNoise() {
-  std::vector<Component> components(segmentsMap.maxLabel() + 1);
-  std::vector<BoundingBox> boundingBoxes(segmentsMap.maxLabel() + 1);
+  std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
+  std::vector<BoundingBox> boundingBoxes(m_segmentsMap.maxLabel() + 1);
 
-  const QSize size = segmentsMap.size();
+  const QSize size = m_segmentsMap.size();
   const int width = size.width();
   const int height = size.height();
 
   // Count the number of pixels and the bounding rect of each component.
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* map_line = m_segmentsMap.data();
+  const int map_stride = m_segmentsMap.stride();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
       const uint32_t label = map_line[x];
@@ -252,34 +252,34 @@ void ColorSegmenter::reduceNoise() {
 
   // creating set of labels determining components to be removed
   std::unordered_set<uint32_t> labels;
-  for (uint32_t label = 1; label <= segmentsMap.maxLabel(); ++label) {
-    if (settings.eligibleForDelete(components[label], boundingBoxes[label])) {
+  for (uint32_t label = 1; label <= m_segmentsMap.maxLabel(); ++label) {
+    if (m_settings.eligibleForDelete(components[label], boundingBoxes[label])) {
       labels.insert(label);
     }
   }
 
-  segmentsMap.removeComponents(labels);
+  m_segmentsMap.removeComponents(labels);
 }
 
 QImage ColorSegmenter::buildRgbImage() const {
-  if (originalImage.size().isEmpty()) {
+  if (m_originalImage.size().isEmpty()) {
     return QImage();
   }
 
-  const int width = originalImage.width();
-  const int height = originalImage.height();
+  const int width = m_originalImage.width();
+  const int height = m_originalImage.height();
 
-  std::vector<uint32_t> colorMap(segmentsMap.maxLabel() + 1, 0);
+  std::vector<uint32_t> colorMap(m_segmentsMap.maxLabel() + 1, 0);
 
   {
-    const uint32_t* map_line = segmentsMap.data();
-    const int map_stride = segmentsMap.stride();
+    const uint32_t* map_line = m_segmentsMap.data();
+    const int map_stride = m_segmentsMap.stride();
 
-    const auto* img_line = reinterpret_cast<const uint32_t*>(originalImage.bits());
-    const int img_stride = originalImage.bytesPerLine() / sizeof(uint32_t);
+    const auto* img_line = reinterpret_cast<const uint32_t*>(m_originalImage.bits());
+    const int img_stride = m_originalImage.bytesPerLine() / sizeof(uint32_t);
 
-    std::vector<Component> components(segmentsMap.maxLabel() + 1);
-    std::vector<RgbColor> rgbSumMap(segmentsMap.maxLabel() + 1);
+    std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
+    std::vector<RgbColor> rgbSumMap(m_segmentsMap.maxLabel() + 1);
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         const uint32_t label = map_line[x];
@@ -296,7 +296,7 @@ QImage ColorSegmenter::buildRgbImage() const {
       img_line += img_stride;
     }
 
-    for (int label = 1; label <= segmentsMap.maxLabel(); label++) {
+    for (int label = 1; label <= m_segmentsMap.maxLabel(); label++) {
       const auto red = static_cast<uint32_t>(std::round(double(rgbSumMap[label].red) / components[label].pixelsCount));
       const auto green
           = static_cast<uint32_t>(std::round(double(rgbSumMap[label].green) / components[label].pixelsCount));
@@ -307,14 +307,14 @@ QImage ColorSegmenter::buildRgbImage() const {
     }
   }
 
-  QImage dst(originalImage.size(), QImage::Format_ARGB32_Premultiplied);
+  QImage dst(m_originalImage.size(), QImage::Format_ARGB32_Premultiplied);
   dst.fill(Qt::white);
 
   auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
   const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
 
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* map_line = m_segmentsMap.data();
+  const int map_stride = m_segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -333,24 +333,24 @@ QImage ColorSegmenter::buildRgbImage() const {
 }
 
 QImage ColorSegmenter::buildGrayImage() const {
-  if (originalImage.size().isEmpty()) {
+  if (m_originalImage.size().isEmpty()) {
     return QImage();
   }
 
-  const int width = originalImage.width();
-  const int height = originalImage.height();
+  const int width = m_originalImage.width();
+  const int height = m_originalImage.height();
 
-  std::vector<uint8_t> colorMap(segmentsMap.maxLabel() + 1, 0);
+  std::vector<uint8_t> colorMap(m_segmentsMap.maxLabel() + 1, 0);
 
   {
-    const uint32_t* map_line = segmentsMap.data();
-    const int map_stride = segmentsMap.stride();
+    const uint32_t* map_line = m_segmentsMap.data();
+    const int map_stride = m_segmentsMap.stride();
 
-    const auto* img_line = originalImage.bits();
-    const int img_stride = originalImage.bytesPerLine();
+    const auto* img_line = m_originalImage.bits();
+    const int img_stride = m_originalImage.bytesPerLine();
 
-    std::vector<Component> components(segmentsMap.maxLabel() + 1);
-    std::vector<uint32_t> graySumMap(segmentsMap.maxLabel() + 1, 0);
+    std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
+    std::vector<uint32_t> graySumMap(m_segmentsMap.maxLabel() + 1, 0);
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         const uint32_t label = map_line[x];
@@ -365,19 +365,19 @@ QImage ColorSegmenter::buildGrayImage() const {
       img_line += img_stride;
     }
 
-    for (int label = 1; label <= segmentsMap.maxLabel(); label++) {
+    for (int label = 1; label <= m_segmentsMap.maxLabel(); label++) {
       colorMap[label] = static_cast<uint8_t>(std::round(double(graySumMap[label]) / components[label].pixelsCount));
     }
   }
 
-  GrayImage dst(originalImage.size());
+  GrayImage dst(m_originalImage.size());
   dst.fill(0xff);
 
   uint8_t* dst_line = dst.data();
   const int dst_stride = dst.stride();
 
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* map_line = m_segmentsMap.data();
+  const int map_stride = m_segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {

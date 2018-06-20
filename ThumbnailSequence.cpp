@@ -959,7 +959,7 @@ std::vector<PageRange> ThumbnailSequence::Impl::selectedRanges() const {
 
   ItemsInOrder::iterator it(m_itemsInOrder.begin());
   const ItemsInOrder::iterator end(m_itemsInOrder.end());
-  for (;;) {
+  while (true) {
     for (; it != end && !it->isSelected(); ++it) {
       // Skip unselected items.
     }
@@ -1042,7 +1042,7 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
   flags |= AVOID_SCROLLING_TO;
   ItemsInOrder::iterator ord_it1(m_items.project<ItemsInOrderTag>(id_it));
   ItemsInOrder::iterator ord_it2(ord_it1);
-  for (;;) {
+  while (true) {
     if (ord_it1 != m_itemsInOrder.begin()) {
       --ord_it1;
       if (ord_it1->isSelected()) {
@@ -1092,7 +1092,7 @@ void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& id_
   // Let's find out.
   ItemsInOrder::iterator ord_it1(endpoint1);
   ItemsInOrder::iterator ord_it2(endpoint1);
-  for (;;) {
+  while (true) {
     if (ord_it1 != m_itemsInOrder.begin()) {
       --ord_it1;
       if (ord_it1 == endpoint2) {

@@ -14,28 +14,28 @@ CollapsibleGroupBox::CollapsibleGroupBox(const QString& title, QWidget* parent) 
 }
 
 void CollapsibleGroupBox::initialize() {
-  collapseIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/minus-16.png")));
-  expandIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/plus-16.png")));
-  collapseButton = new QToolButton(this);
-  collapseButton->setObjectName("collapseButton");
-  collapseButton->setAutoRaise(true);
-  collapseButton->setFixedSize(14, 14);
-  collapseButton->setIconSize(QSize(12, 12));
-  collapseButton->setIcon(collapseIcon);
-  setFocusProxy(collapseButton);
+  m_collapseIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/minus-16.png")));
+  m_expandIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/plus-16.png")));
+  m_collapseButton = new QToolButton(this);
+  m_collapseButton->setObjectName("collapseButton");
+  m_collapseButton->setAutoRaise(true);
+  m_collapseButton->setFixedSize(14, 14);
+  m_collapseButton->setIconSize(QSize(12, 12));
+  m_collapseButton->setIcon(m_collapseIcon);
+  setFocusProxy(m_collapseButton);
   setFocusPolicy(Qt::StrongFocus);
 
-  connect(collapseButton, &QAbstractButton::clicked, this, &CollapsibleGroupBox::toggleCollapsed);
+  connect(m_collapseButton, &QAbstractButton::clicked, this, &CollapsibleGroupBox::toggleCollapsed);
   connect(this, &QGroupBox::toggled, this, &CollapsibleGroupBox::checkToggled);
   connect(this, &QGroupBox::clicked, this, &CollapsibleGroupBox::checkClicked);
 }
 
 void CollapsibleGroupBox::setCollapsed(const bool collapse) {
-  const bool changed = (collapse != collapsed);
+  const bool changed = (collapse != m_collapsed);
 
   if (changed) {
-    collapsed = collapse;
-    collapseButton->setIcon(collapse ? expandIcon : collapseIcon);
+    m_collapsed = collapse;
+    m_collapseButton->setIcon(collapse ? m_expandIcon : m_collapseIcon);
 
     updateWidgets();
 
@@ -44,11 +44,11 @@ void CollapsibleGroupBox::setCollapsed(const bool collapse) {
 }
 
 bool CollapsibleGroupBox::isCollapsed() const {
-  return collapsed;
+  return m_collapsed;
 }
 
 void CollapsibleGroupBox::checkToggled(bool) {
-  collapseButton->setEnabled(true);
+  m_collapseButton->setEnabled(true);
 }
 
 void CollapsibleGroupBox::checkClicked(bool checked) {
@@ -62,7 +62,7 @@ void CollapsibleGroupBox::checkClicked(bool checked) {
 void CollapsibleGroupBox::toggleCollapsed() {
   // verify if sender is this group box's collapse button
   auto* sender = dynamic_cast<QToolButton*>(QObject::sender());
-  const bool isSenderCollapseButton = (sender && (sender == collapseButton));
+  const bool isSenderCollapseButton = (sender && (sender == m_collapseButton));
 
   if (isSenderCollapseButton) {
     setCollapsed(!isCollapsed());
@@ -70,21 +70,21 @@ void CollapsibleGroupBox::toggleCollapsed() {
 }
 
 void CollapsibleGroupBox::updateWidgets() {
-  const ScopedIncDec<int> guard(ignoreVisibilityEvents);
+  const ScopedIncDec<int> guard(m_ignoreVisibilityEvents);
 
-  if (collapsed) {
+  if (m_collapsed) {
     for (QObject* child : children()) {
       auto* widget = dynamic_cast<QWidget*>(child);
-      if (widget && (widget != collapseButton) && widget->isVisible()) {
-        collapsedWidgets.insert(widget);
+      if (widget && (widget != m_collapseButton) && widget->isVisible()) {
+        m_collapsedWidgets.insert(widget);
         widget->hide();
       }
     }
   } else {
     for (QObject* child : children()) {
       auto* widget = dynamic_cast<QWidget*>(child);
-      if (widget && (widget != collapseButton) && (collapsedWidgets.find(widget) != collapsedWidgets.end())) {
-        collapsedWidgets.erase(widget);
+      if (widget && (widget != m_collapseButton) && (m_collapsedWidgets.find(widget) != m_collapsedWidgets.end())) {
+        m_collapsedWidgets.erase(widget);
         widget->show();
       }
     }
@@ -93,11 +93,11 @@ void CollapsibleGroupBox::updateWidgets() {
 
 void CollapsibleGroupBox::showEvent(QShowEvent* event) {
   // initialize widget on first show event only
-  if (shown) {
+  if (m_shown) {
     event->accept();
     return;
   }
-  shown = true;
+  m_shown = true;
 
   loadState();
 
@@ -108,16 +108,16 @@ void CollapsibleGroupBox::changeEvent(QEvent* event) {
   QGroupBox::changeEvent(event);
 
   if ((event->type() == QEvent::EnabledChange) && isEnabled()) {
-    collapseButton->setEnabled(true);
+    m_collapseButton->setEnabled(true);
   }
 }
 
 void CollapsibleGroupBox::childEvent(QChildEvent* event) {
   auto* childWidget = dynamic_cast<QWidget*>(event->child());
   if (childWidget && (event->type() == QEvent::ChildAdded)) {
-    if (collapsed) {
+    if (m_collapsed) {
       if (childWidget->isVisible()) {
-        collapsedWidgets.insert(childWidget);
+        m_collapsedWidgets.insert(childWidget);
         childWidget->hide();
       }
     }
@@ -129,16 +129,16 @@ void CollapsibleGroupBox::childEvent(QChildEvent* event) {
 }
 
 bool CollapsibleGroupBox::eventFilter(QObject* watched, QEvent* event) {
-  if (collapsed && !ignoreVisibilityEvents) {
+  if (m_collapsed && !m_ignoreVisibilityEvents) {
     auto* childWidget = dynamic_cast<QWidget*>(watched);
     if (childWidget) {
       if (event->type() == QEvent::ShowToParent) {
-        const ScopedIncDec<int> guard(ignoreVisibilityEvents);
+        const ScopedIncDec<int> guard(m_ignoreVisibilityEvents);
 
-        collapsedWidgets.insert(childWidget);
+        m_collapsedWidgets.insert(childWidget);
         childWidget->hide();
       } else if (event->type() == QEvent::HideToParent) {
-        collapsedWidgets.erase(childWidget);
+        m_collapsedWidgets.erase(childWidget);
       }
     }
   }
@@ -182,7 +182,7 @@ void CollapsibleGroupBox::loadState() {
 }
 
 void CollapsibleGroupBox::saveState() {
-  if (!shown || !isEnabled()) {
+  if (!m_shown || !isEnabled()) {
     return;
   }
 

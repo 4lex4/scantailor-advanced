@@ -52,7 +52,7 @@ void hShearFromTo(const BinaryImage& src,
   int shift2 = shift1;
   int y1 = 0;
   int y2 = 0;
-  for (;;) {
+  while (true) {
     ++y2;
     shift += shear;
     shift2 = (int) std::floor(shift);
@@ -123,7 +123,7 @@ void vShearFromTo(const BinaryImage& src,
   int shift2 = shift1;
   int x1 = 0;
   int x2 = 0;
-  for (;;) {
+  while (true) {
     ++x2;
     shift += shear;
     shift2 = (int) std::floor(shift);

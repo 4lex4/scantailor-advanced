@@ -14,14 +14,6 @@ class PageId;
 
 class StatusBarPanel : public QWidget, public UnitsObserver, public ImageViewInfoObserver {
   Q_OBJECT
- private:
-  mutable QMutex mutex;
-  Ui::StatusBarPanel ui;
-  QPointF mousePos;
-  QSizeF physSize;
-  Dpi dpi;
-  ImageViewInfoProvider* infoProvider;
-
  public:
   StatusBarPanel();
 
@@ -48,6 +40,13 @@ class StatusBarPanel : public QWidget, public UnitsObserver, public ImageViewInf
   void mousePosChanged();
 
   void physSizeChanged();
+
+  Ui::StatusBarPanel ui;
+  mutable QMutex m_mutex;
+  QPointF m_mousePos;
+  QSizeF m_physSize;
+  Dpi m_dpi;
+  ImageViewInfoProvider* m_infoProvider;
 };
 
 

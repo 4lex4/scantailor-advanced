@@ -379,7 +379,7 @@ void RelinkingModel::StatusUpdateThread::run() try {
   };
 
 
-  for (;;) {
+  while (true) {
     if (m_exiting) {
       break;
     }

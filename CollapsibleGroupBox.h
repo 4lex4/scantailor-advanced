@@ -68,15 +68,15 @@ class CollapsibleGroupBox : public QGroupBox {
   QString getSettingsKey() const;
 
  private:
-  bool collapsed = false;
-  bool shown = false;
-  QToolButton* collapseButton = nullptr;
+  bool m_collapsed = false;
+  bool m_shown = false;
+  QToolButton* m_collapseButton = nullptr;
 
-  QIcon collapseIcon;
-  QIcon expandIcon;
+  QIcon m_collapseIcon;
+  QIcon m_expandIcon;
 
-  int ignoreVisibilityEvents = 0;
-  std::unordered_set<QWidget*> collapsedWidgets;
+  int m_ignoreVisibilityEvents = 0;
+  std::unordered_set<QWidget*> m_collapsedWidgets;
 };
 
 

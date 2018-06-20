@@ -59,10 +59,10 @@ class ColorCommonOptions {
     void setForceBlackAndWhite(bool forceBlackAndWhite);
 
    private:
-    bool enabled;
-    int level;
-    bool normalizationEnabled;
-    bool forceBlackAndWhite;
+    bool m_isEnabled;
+    int m_level;
+    bool m_isNormalizationEnabled;
+    bool m_forceBlackAndWhite;
   };
 
   ColorCommonOptions();
@@ -105,7 +105,7 @@ class ColorCommonOptions {
   bool m_fillMargins;
   bool m_normalizeIllumination;
   FillingColor m_fillingColor;
-  PosterizationOptions posterizationOptions;
+  PosterizationOptions m_posterizationOptions;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

@@ -25,8 +25,8 @@ SplitImage::SplitImage(const QImage& foreground, const QImage& background) {
     return;
   }
 
-  foregroundImage = foreground;
-  backgroundImage = background;
+  m_foregroundImage = foreground;
+  m_backgroundImage = background;
 }
 
 SplitImage::SplitImage(const QImage& foreground, const QImage& background, const QImage& originalBackground)
@@ -48,7 +48,7 @@ SplitImage::SplitImage(const QImage& foreground, const QImage& background, const
     return;
   }
 
-  originalBackgroundImage = originalBackground;
+  m_originalBackgroundImage = originalBackground;
 }
 
 QImage SplitImage::toImage() const {
@@ -56,25 +56,25 @@ QImage SplitImage::toImage() const {
     return QImage();
   }
 
-  if (originalBackgroundImage.isNull()) {
-    if (!mask.isNull()) {
-      return backgroundImage;
+  if (m_originalBackgroundImage.isNull()) {
+    if (!m_mask.isNull()) {
+      return m_backgroundImage;
     }
 
-    QImage dst(backgroundImage);
-    combineImage(dst, foregroundImage);
+    QImage dst(m_backgroundImage);
+    combineImage(dst, m_foregroundImage);
 
     return dst;
   } else {
-    QImage dst(originalBackgroundImage);
+    QImage dst(m_originalBackgroundImage);
 
     {
-      BinaryImage backgroundMask = BinaryImage(originalBackgroundImage, BinaryThreshold(1));
-      combineImage(dst, backgroundImage, backgroundMask);
+      BinaryImage backgroundMask = BinaryImage(m_originalBackgroundImage, BinaryThreshold(1));
+      combineImage(dst, m_backgroundImage, backgroundMask);
     }
     {
-      BinaryImage foregroundMask = BinaryImage(originalBackgroundImage, BinaryThreshold(255)).inverted();
-      combineImage(dst, (mask.isNull()) ? foregroundImage : backgroundImage, foregroundMask);
+      BinaryImage foregroundMask = BinaryImage(m_originalBackgroundImage, BinaryThreshold(255)).inverted();
+      combineImage(dst, (m_mask.isNull()) ? m_foregroundImage : m_backgroundImage, foregroundMask);
     }
 
     return dst;
@@ -82,73 +82,73 @@ QImage SplitImage::toImage() const {
 }
 
 QImage SplitImage::getForegroundImage() const {
-  if (!mask.isNull()) {
-    QImage foreground(backgroundImage);
-    applyMask(foreground, mask);
+  if (!m_mask.isNull()) {
+    QImage foreground(m_backgroundImage);
+    applyMask(foreground, m_mask);
 
-    if (binaryForeground) {
+    if (m_isBinaryForeground) {
       foreground = foreground.convertToFormat(QImage::Format_Mono);
-    } else if (indexedForeground) {
+    } else if (m_isIndexedForeground) {
       foreground = ColorTable(foreground).toIndexedImage();
     }
 
     return foreground;
   }
 
-  return foregroundImage;
+  return m_foregroundImage;
 }
 
 void SplitImage::setForegroundImage(const QImage& foregroundImage) {
-  mask = BinaryImage();
-  SplitImage::foregroundImage = foregroundImage;
+  m_mask = BinaryImage();
+  SplitImage::m_foregroundImage = foregroundImage;
 }
 
 QImage SplitImage::getBackgroundImage() const {
-  if (!mask.isNull()) {
-    QImage background(backgroundImage);
-    applyMask(background, mask.inverted());
+  if (!m_mask.isNull()) {
+    QImage background(m_backgroundImage);
+    applyMask(background, m_mask.inverted());
 
     return background;
   }
 
-  return backgroundImage;
+  return m_backgroundImage;
 }
 
 void SplitImage::setBackgroundImage(const QImage& backgroundImage) {
-  SplitImage::backgroundImage = backgroundImage;
+  SplitImage::m_backgroundImage = backgroundImage;
 }
 
 void SplitImage::applyToLayerImages(const std::function<void(QImage&)>& consumer) {
-  if (!foregroundImage.isNull()) {
-    consumer(foregroundImage);
+  if (!m_foregroundImage.isNull()) {
+    consumer(m_foregroundImage);
   }
-  if (!backgroundImage.isNull()) {
-    consumer(backgroundImage);
+  if (!m_backgroundImage.isNull()) {
+    consumer(m_backgroundImage);
   }
-  if (!originalBackgroundImage.isNull()) {
-    consumer(originalBackgroundImage);
+  if (!m_originalBackgroundImage.isNull()) {
+    consumer(m_originalBackgroundImage);
   }
 }
 
 bool SplitImage::isNull() const {
-  return (foregroundImage.isNull() && mask.isNull()) || backgroundImage.isNull();
+  return (m_foregroundImage.isNull() && m_mask.isNull()) || m_backgroundImage.isNull();
 }
 
 void SplitImage::setMask(const BinaryImage& mask, bool binaryForeground) {
-  foregroundImage = QImage();
-  SplitImage::mask = mask;
-  SplitImage::binaryForeground = binaryForeground;
+  m_foregroundImage = QImage();
+  SplitImage::m_mask = mask;
+  SplitImage::m_isBinaryForeground = binaryForeground;
 }
 
 const QImage& SplitImage::getOriginalBackgroundImage() const {
-  return originalBackgroundImage;
+  return m_originalBackgroundImage;
 }
 
 void SplitImage::setOriginalBackgroundImage(const QImage& originalBackgroundImage) {
-  SplitImage::originalBackgroundImage = originalBackgroundImage;
+  SplitImage::m_originalBackgroundImage = originalBackgroundImage;
 }
 
 void SplitImage::setIndexedForeground(bool indexedForeground) {
-  SplitImage::indexedForeground = indexedForeground;
+  SplitImage::m_isIndexedForeground = indexedForeground;
 }
 }  // namespace output

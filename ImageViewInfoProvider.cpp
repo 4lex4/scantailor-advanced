@@ -4,58 +4,58 @@
 #include <QtCore/QRectF>
 #include "Units.h"
 
-ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : dpi(dpi){};
+ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : m_dpi(dpi){};
 
 ImageViewInfoProvider::~ImageViewInfoProvider() {
-  for (ImageViewInfoObserver* observer : observers) {
+  for (ImageViewInfoObserver* observer : m_observers) {
     observer->clearImageViewInfo();
   }
 }
 
 void ImageViewInfoProvider::attachObserver(ImageViewInfoObserver* observer) {
-  observer->updateDpi(dpi);
-  observer->updatePhysSize(physSize);
-  observer->updateMousePos(mousePos);
+  observer->updateDpi(m_dpi);
+  observer->updatePhysSize(m_physSize);
+  observer->updateMousePos(m_mousePos);
 
-  observers.push_back(observer);
+  m_observers.push_back(observer);
 }
 
 void ImageViewInfoProvider::detachObserver(ImageViewInfoObserver* observer) {
   observer->clearImageViewInfo();
 
-  observers.remove(observer);
+  m_observers.remove(observer);
 }
 
 void ImageViewInfoProvider::setPhysSize(const QSizeF& physSize) {
-  ImageViewInfoProvider::physSize = physSize;
+  ImageViewInfoProvider::m_physSize = physSize;
   physSizeChanged(physSize);
 }
 
 void ImageViewInfoProvider::setMousePos(const QPointF& mousePos) {
-  ImageViewInfoProvider::mousePos = mousePos;
+  ImageViewInfoProvider::m_mousePos = mousePos;
   mousePosChanged(mousePos);
 }
 
 void ImageViewInfoProvider::physSizeChanged(const QSizeF& physSize) const {
-  for (ImageViewInfoObserver* observer : observers) {
+  for (ImageViewInfoObserver* observer : m_observers) {
     observer->updatePhysSize(physSize);
   }
 }
 
 void ImageViewInfoProvider::mousePosChanged(const QPointF& mousePos) const {
-  for (ImageViewInfoObserver* observer : observers) {
+  for (ImageViewInfoObserver* observer : m_observers) {
     observer->updateMousePos(mousePos);
   }
 }
 
 const Dpi& ImageViewInfoProvider::getDpi() const {
-  return dpi;
+  return m_dpi;
 }
 
 const QPointF& ImageViewInfoProvider::getMousePos() const {
-  return mousePos;
+  return m_mousePos;
 }
 
 const QSizeF& ImageViewInfoProvider::getPhysSize() const {
-  return physSize;
+  return m_physSize;
 }

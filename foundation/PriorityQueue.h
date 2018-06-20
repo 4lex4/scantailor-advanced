@@ -210,7 +210,7 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
   // While any child is greater than the element itself,
   // swap it with the greatest child.
 
-  for (;;) {
+  while (true) {
     const size_t lft = left(idx);
     const size_t rgt = right(idx);
     size_t best_child;

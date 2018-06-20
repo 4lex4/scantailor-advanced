@@ -2,7 +2,7 @@
 #ifndef SCANTAILOR_IMAGESETTINGS_H
 #define SCANTAILOR_IMAGESETTINGS_H
 
-
+#include <foundation/NonCopyable.h>
 #include <foundation/ref_countable.h>
 #include <imageproc/BinaryThreshold.h>
 #include <QtCore/QMutex>
@@ -14,6 +14,7 @@
 class AbstractRelinker;
 
 class ImageSettings : public ref_countable {
+  DECLARE_NON_COPYABLE(ImageSettings)
  public:
   class PageParams {
    public:
@@ -34,8 +35,8 @@ class ImageSettings : public ref_countable {
     void setBlackOnWhite(bool blackOnWhite);
 
    private:
-    imageproc::BinaryThreshold bwThreshold;
-    bool blackOnWhite;
+    imageproc::BinaryThreshold m_bwThreshold;
+    bool m_blackOnWhite;
   };
 
   ImageSettings() = default;
@@ -53,8 +54,8 @@ class ImageSettings : public ref_countable {
  private:
   typedef std::unordered_map<PageId, PageParams> PerPageParams;
 
-  mutable QMutex mutex;
-  PerPageParams perPageParams;
+  mutable QMutex m_mutex;
+  PerPageParams m_perPageParams;
 };
 
 

@@ -22,21 +22,21 @@
 #include <QFileInfo>
 
 namespace output {
-OutputFileParams::OutputFileParams() : m_size(-1), m_mtime(0) {}
+OutputFileParams::OutputFileParams() : m_size(-1), m_modifiedTime(0) {}
 
-OutputFileParams::OutputFileParams(const QFileInfo& file_info) : m_size(-1), m_mtime(0) {
+OutputFileParams::OutputFileParams(const QFileInfo& file_info) : m_size(-1), m_modifiedTime(0) {
   if (file_info.exists()) {
     m_size = file_info.size();
-    m_mtime = file_info.lastModified().toTime_t();
+    m_modifiedTime = file_info.lastModified().toTime_t();
   }
 }
 
-OutputFileParams::OutputFileParams(const QDomElement& el) : m_size(-1), m_mtime(0) {
+OutputFileParams::OutputFileParams(const QDomElement& el) : m_size(-1), m_modifiedTime(0) {
   if (el.hasAttribute("size")) {
     m_size = (qint64) el.attribute("size").toLongLong();
   }
   if (el.hasAttribute("mtime")) {
-    m_mtime = (time_t) el.attribute("mtime").toLongLong();
+    m_modifiedTime = (time_t) el.attribute("mtime").toLongLong();
   }
 }
 
@@ -44,7 +44,7 @@ QDomElement OutputFileParams::toXml(QDomDocument& doc, const QString& name) cons
   if (isValid()) {
     QDomElement el(doc.createElement(name));
     el.setAttribute("size", QString::number(m_size));
-    el.setAttribute("mtime", QString::number(m_mtime));
+    el.setAttribute("mtime", QString::number(m_modifiedTime));
 
     return el;
   } else {

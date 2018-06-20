@@ -13,16 +13,6 @@
 namespace output {
 class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::WolfBinarizationOptionsWidget {
   Q_OBJECT
-
- private:
-  intrusive_ptr<Settings> m_settings;
-  PageId m_pageId;
-  ColorParams m_colorParams;
-  QTimer delayedStateChanger;
-  OutputProcessingParams m_outputProcessingParams;
-
-  std::list<QMetaObject::Connection> m_connectionList;
-
  public:
   explicit WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
@@ -48,6 +38,14 @@ class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
   void setupUiConnections();
 
   void removeUiConnections();
+
+  intrusive_ptr<Settings> m_settings;
+  PageId m_pageId;
+  ColorParams m_colorParams;
+  QTimer m_delayedStateChanger;
+  OutputProcessingParams m_outputProcessingParams;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 

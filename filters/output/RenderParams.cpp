@@ -33,7 +33,7 @@ RenderParams::RenderParams(const ColorParams& colorParams, const SplittingOption
         m_mask ^= NEED_BINARIZATION;
       }
       if ((splittingOptions.getSplittingMode() == BLACK_AND_WHITE_FOREGROUND)
-          && (splittingOptions.isOriginalBackground())) {
+          && (splittingOptions.isOriginalBackgroundEnabled())) {
         m_mask |= ORIGINAL_BACKGROUND;
       }
     }

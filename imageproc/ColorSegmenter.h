@@ -14,32 +14,6 @@ class BinaryImage;
 class GrayImage;
 
 class ColorSegmenter {
- private:
-  struct Component;
-  struct BoundingBox;
-
-  enum RgbChannel { RED_CHANNEL, GREEN_CHANNEL, BLUE_CHANNEL };
-
-  class Settings {
-   private:
-    /**
-     * Defines the minimum average width threshold.
-     * When a component has lower that, it will be erased.
-     */
-    double minAverageWidthThreshold;
-
-    /**
-     * Defines the minimum square in pixels.
-     * If a component has lower that, it will be erased.
-     */
-    int bigObjectThreshold;
-
-   public:
-    explicit Settings(const Dpi& dpi, int noiseThreshold);
-
-    bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
-  };
-
  public:
   ColorSegmenter(const BinaryImage& image,
                  const QImage& originalImage,
@@ -54,6 +28,31 @@ class ColorSegmenter {
   QImage getImage() const;
 
  private:
+  struct Component;
+  struct BoundingBox;
+
+  enum RgbChannel { RED_CHANNEL, GREEN_CHANNEL, BLUE_CHANNEL };
+
+  class Settings {
+   public:
+    explicit Settings(const Dpi& dpi, int noiseThreshold);
+
+    bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
+
+   private:
+    /**
+     * Defines the minimum average width threshold.
+     * When a component has lower that, it will be erased.
+     */
+    double m_minAverageWidthThreshold;
+
+    /**
+     * Defines the minimum square in pixels.
+     * If a component has lower that, it will be erased.
+     */
+    int m_bigObjectThreshold;
+  };
+
   static GrayImage getRgbChannel(const QImage& image, RgbChannel channel);
 
   void reduceNoise();
@@ -72,9 +71,9 @@ class ColorSegmenter {
 
   BinaryThreshold adjustThreshold(BinaryThreshold threshold, int adjustment);
 
-  Settings settings;
-  ConnectivityMap segmentsMap;
-  QImage originalImage;
+  Settings m_settings;
+  ConnectivityMap m_segmentsMap;
+  QImage m_originalImage;
 };
 }  // namespace imageproc
 

@@ -7,10 +7,6 @@
 
 namespace page_layout {
 class Guide {
- private:
-  Qt::Orientation orientation;
-  double position;
-
  public:
   Guide();
 
@@ -36,6 +32,9 @@ class Guide {
   static QString orientationToString(Qt::Orientation orientation);
 
   static Qt::Orientation orientationFromString(const QString& str);
+
+  Qt::Orientation m_orientation;
+  double m_position;
 };
 }  // namespace page_layout
 

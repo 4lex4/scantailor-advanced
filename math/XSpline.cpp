@@ -495,7 +495,7 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(const int segment, const
   int merge_idx = 0;
   int read_idx = 1;
   const int end = 4;
-  for (;;) {
+  while (true) {
     assert(merge_idx != read_idx);
     for (; read_idx != end && derivs.controlPoints[read_idx] == derivs.controlPoints[merge_idx]; ++read_idx) {
       // Merge

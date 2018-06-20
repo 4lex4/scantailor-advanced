@@ -2,21 +2,14 @@
 #ifndef SCANTAILOR_DEVIATION_H
 #define SCANTAILOR_DEVIATION_H
 
+#include <foundation/NonCopyable.h>
 #include <cmath>
 #include <functional>
 #include <unordered_map>
 
 template <typename K, typename Hash = std::hash<K>>
 class DeviationProvider {
- private:
-  std::function<double(const K&)> computeValueByKey;
-  std::unordered_map<K, double, Hash> keyValueMap;
-
-  // Cached values.
-  mutable bool needUpdate = false;
-  mutable double meanValue = 0.0;
-  mutable double standardDeviation = 0.0;
-
+  DECLARE_NON_COPYABLE(DeviationProvider)
  public:
   DeviationProvider() = default;
 
@@ -38,106 +31,115 @@ class DeviationProvider {
 
  protected:
   void update() const;
+
+ private:
+  std::function<double(const K&)> m_computeValueByKey;
+  std::unordered_map<K, double, Hash> m_keyValueMap;
+
+  // Cached values.
+  mutable bool m_needUpdate = false;
+  mutable double m_meanValue = 0.0;
+  mutable double m_standardDeviation = 0.0;
 };
 
 
 template <typename K, typename Hash>
 DeviationProvider<K, Hash>::DeviationProvider(const std::function<double(const K&)>& computeValueByKey)
-    : computeValueByKey(computeValueByKey) {}
+    : m_computeValueByKey(computeValueByKey) {}
 
 template <typename K, typename Hash>
 bool DeviationProvider<K, Hash>::isDeviant(const K& key, const double coefficient, const double threshold) const {
-  if (keyValueMap.find(key) == keyValueMap.end()) {
+  if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
     return false;
   }
-  if (keyValueMap.size() < 3) {
+  if (m_keyValueMap.size() < 3) {
     return false;
   }
 
   update();
 
-  return (std::abs(keyValueMap.at(key) - meanValue) > std::max((coefficient * standardDeviation), threshold));
+  return (std::abs(m_keyValueMap.at(key) - m_meanValue) > std::max((coefficient * m_standardDeviation), threshold));
 }
 
 template <typename K, typename Hash>
 double DeviationProvider<K, Hash>::getDeviationValue(const K& key) const {
-  if (keyValueMap.find(key) == keyValueMap.end()) {
+  if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
     return .0;
   }
-  if (keyValueMap.size() < 2) {
+  if (m_keyValueMap.size() < 2) {
     return .0;
   }
 
   update();
 
-  return std::abs(keyValueMap.at(key) - meanValue);
+  return std::abs(m_keyValueMap.at(key) - m_meanValue);
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::addOrUpdate(const K& key) {
-  needUpdate = true;
+  m_needUpdate = true;
 
-  keyValueMap[key] = computeValueByKey(key);
+  m_keyValueMap[key] = m_computeValueByKey(key);
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::addOrUpdate(const K& key, const double value) {
-  needUpdate = true;
+  m_needUpdate = true;
 
-  keyValueMap[key] = value;
+  m_keyValueMap[key] = value;
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::remove(const K& key) {
-  needUpdate = true;
+  m_needUpdate = true;
 
-  if (keyValueMap.find(key) == keyValueMap.end()) {
+  if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
     return;
   }
 
-  keyValueMap.erase(key);
+  m_keyValueMap.erase(key);
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::update() const {
-  if (!needUpdate) {
+  if (!m_needUpdate) {
     return;
   }
-  if (keyValueMap.size() < 2) {
+  if (m_keyValueMap.size() < 2) {
     return;
   }
 
   {
     double sum = .0;
-    for (const std::pair<K, double>& keyAndValue : keyValueMap) {
+    for (const std::pair<K, double>& keyAndValue : m_keyValueMap) {
       sum += keyAndValue.second;
     }
-    meanValue = sum / keyValueMap.size();
+    m_meanValue = sum / m_keyValueMap.size();
   }
 
   {
     double differencesSum = .0;
-    for (const std::pair<K, double>& keyAndValue : keyValueMap) {
-      differencesSum += std::pow(keyAndValue.second - meanValue, 2);
+    for (const std::pair<K, double>& keyAndValue : m_keyValueMap) {
+      differencesSum += std::pow(keyAndValue.second - m_meanValue, 2);
     }
-    standardDeviation = std::sqrt(differencesSum / (keyValueMap.size() - 1));
+    m_standardDeviation = std::sqrt(differencesSum / (m_keyValueMap.size() - 1));
   }
 
-  needUpdate = false;
+  m_needUpdate = false;
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::setComputeValueByKey(const std::function<double(const K&)>& computeValueByKey) {
-  this->computeValueByKey = std::move(computeValueByKey);
+  this->m_computeValueByKey = std::move(computeValueByKey);
 }
 
 template <typename K, typename Hash>
 void DeviationProvider<K, Hash>::clear() {
-  keyValueMap.clear();
+  m_keyValueMap.clear();
 
-  needUpdate = false;
-  meanValue = 0.0;
-  standardDeviation = 0.0;
+  m_needUpdate = false;
+  m_meanValue = 0.0;
+  m_standardDeviation = 0.0;
 }
 
 

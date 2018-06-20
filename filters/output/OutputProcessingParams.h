@@ -28,8 +28,8 @@ class OutputProcessingParams {
   void setBlackOnWhiteSetManually(bool blackOnWhiteSetManually);
 
  private:
-  bool autoZonesFound;
-  bool blackOnWhiteSetManually;
+  bool m_autoZonesFound;
+  bool m_blackOnWhiteSetManually;
 };
 }  // namespace output
 

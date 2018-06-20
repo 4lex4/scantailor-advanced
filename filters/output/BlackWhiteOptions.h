@@ -61,11 +61,11 @@ class BlackWhiteOptions {
     void setBlueThresholdAdjustment(int blueThresholdAdjustment);
 
    private:
-    bool enabled;
-    int noiseReduction;
-    int redThresholdAdjustment;
-    int greenThresholdAdjustment;
-    int blueThresholdAdjustment;
+    bool m_isEnabled;
+    int m_noiseReduction;
+    int m_redThresholdAdjustment;
+    int m_greenThresholdAdjustment;
+    int m_blueThresholdAdjustment;
   };
 
  public:
@@ -130,16 +130,16 @@ class BlackWhiteOptions {
 
 
   int m_thresholdAdjustment;
-  bool savitzkyGolaySmoothingEnabled;
-  bool morphologicalSmoothingEnabled;
+  bool m_savitzkyGolaySmoothingEnabled;
+  bool m_morphologicalSmoothingEnabled;
   bool m_normalizeIllumination;
-  int windowSize;
-  double sauvolaCoef;
-  int wolfLowerBound;
-  int wolfUpperBound;
-  double wolfCoef;
-  BinarizationMethod binarizationMethod;
-  ColorSegmenterOptions colorSegmenterOptions;
+  int m_windowSize;
+  double m_sauvolaCoef;
+  int m_wolfLowerBound;
+  int m_wolfUpperBound;
+  double m_wolfCoef;
+  BinarizationMethod m_binarizationMethod;
+  ColorSegmenterOptions m_colorSegmenterOptions;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_BLACK_WHITE_OPTIONS_H_

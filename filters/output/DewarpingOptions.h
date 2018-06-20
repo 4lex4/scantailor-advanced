@@ -51,7 +51,7 @@ class DewarpingOptions {
 
  private:
   DewarpingMode m_mode;
-  bool postDeskew;
+  bool m_needPostDeskew;
 };
 }  // namespace output
 #endif

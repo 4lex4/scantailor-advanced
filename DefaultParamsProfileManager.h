@@ -3,6 +3,7 @@
 #define SCANTAILOR_DEFAULTPARAMSPROFILEMANAGER_H
 
 
+#include <foundation/NonCopyable.h>
 #include <QtCore/QString>
 #include <list>
 #include <memory>
@@ -10,9 +11,7 @@
 class DefaultParams;
 
 class DefaultParamsProfileManager {
- private:
-  QString path;
-
+  DECLARE_NON_COPYABLE(DefaultParamsProfileManager)
  public:
   DefaultParamsProfileManager();
 
@@ -29,6 +28,9 @@ class DefaultParamsProfileManager {
   std::unique_ptr<DefaultParams> createDefaultProfile() const;
 
   std::unique_ptr<DefaultParams> createSourceProfile() const;
+
+ private:
+  QString m_path;
 };
 
 

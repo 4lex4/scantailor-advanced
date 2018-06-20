@@ -50,12 +50,12 @@ class SplitImage {
   void setIndexedForeground(bool indexedForeground);
 
  private:
-  bool binaryForeground;
-  bool indexedForeground;
-  imageproc::BinaryImage mask;
-  QImage foregroundImage;
-  QImage backgroundImage;
-  QImage originalBackgroundImage;
+  bool m_isBinaryForeground;
+  bool m_isIndexedForeground;
+  imageproc::BinaryImage m_mask;
+  QImage m_foregroundImage;
+  QImage m_backgroundImage;
+  QImage m_originalBackgroundImage;
 };
 }  // namespace output
 

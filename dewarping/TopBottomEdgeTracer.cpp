@@ -611,7 +611,7 @@ std::vector<QPoint> TopBottomEdgeTracer::tracePathFromEndpoint(const Grid<GridNo
 
   QPoint pt(endpoint);
   int grid_offset = pt.x() + pt.y() * stride;
-  for (;;) {
+  while (true) {
     path.push_back(pt);
 
     const GridNode* node = data + grid_offset;
@@ -646,7 +646,7 @@ std::vector<QPointF> TopBottomEdgeTracer::pathToSnake(const Grid<GridNode>& grid
 
   QPoint pt(endpoint);
   int grid_offset = pt.x() + pt.y() * stride;
-  for (;;) {
+  while (true) {
     const QPoint delta(pt - snake_tail);
     const int sqdist = delta.x() * delta.x() + delta.y() * delta.y();
 
@@ -1111,7 +1111,7 @@ QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
   for (const QPoint path_endpoint : path_endpoints) {
     int grid_offset = path_endpoint.x() + path_endpoint.y() * grid_stride;
     int canvas_offset = path_endpoint.x() + path_endpoint.y() * canvas_stride;
-    for (;;) {
+    while (true) {
       const GridNode* node = grid_data + grid_offset;
       canvas_data[canvas_offset] = 0x00ff0000;
       if (!node->hasPathContinuation()) {

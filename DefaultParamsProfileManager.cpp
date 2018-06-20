@@ -14,18 +14,18 @@ using namespace page_layout;
 DefaultParamsProfileManager::DefaultParamsProfileManager() {
   auto* app = dynamic_cast<Application*>(qApp);
   if (app->isPortableVersion()) {
-    path = app->getPortableConfigPath() + "/profiles";
+    m_path = app->getPortableConfigPath() + "/profiles";
   } else {
-    path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
+    m_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
   }
 }
 
-DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path) : path(path) {}
+DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path) : m_path(path) {}
 
 std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList() const {
   auto profileList = std::make_unique<std::list<QString>>();
 
-  QDir dir(path);
+  QDir dir(m_path);
   if (dir.exists()) {
     QList<QFileInfo> fileInfoList = dir.entryInfoList();
     for (const QFileInfo& fileInfo : fileInfoList) {
@@ -39,7 +39,7 @@ std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList(
 }
 
 std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QString& name) const {
-  QDir dir(path);
+  QDir dir(m_path);
   QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
   if (!profile.exists()) {
     profile = dir.absoluteFilePath(name + ".xml");
@@ -77,7 +77,7 @@ bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, cons
   rootElement.setAttribute("version", PROJECT_VERSION);
   rootElement.appendChild(params.toXml(doc, "default-params"));
 
-  QDir dir(path);
+  QDir dir(m_path);
   if (!dir.exists()) {
     dir.mkpath(".");
   }
@@ -129,7 +129,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
 }
 
 bool DefaultParamsProfileManager::deleteProfile(const QString& name) const {
-  QDir dir(path);
+  QDir dir(m_path);
   QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
   if (!profile.exists()) {
     profile = dir.absoluteFilePath(name + ".xml");

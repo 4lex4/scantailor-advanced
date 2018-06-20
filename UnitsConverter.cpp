@@ -2,14 +2,14 @@
 #include "UnitsConverter.h"
 #include "Dpm.h"
 
-UnitsConverter::UnitsConverter(const Dpi& dpi) : dpi(dpi) {}
+UnitsConverter::UnitsConverter(const Dpi& dpi) : m_dpi(dpi) {}
 
 void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Units fromUnits, Units toUnits) const {
-  if (dpi.isNull() || (fromUnits == toUnits)) {
+  if (m_dpi.isNull() || (fromUnits == toUnits)) {
     return;
   }
 
-  auto dpm = Dpm(dpi);
+  auto dpm = Dpm(m_dpi);
   switch (fromUnits) {
     case PIXELS:
       switch (toUnits) {
@@ -22,8 +22,8 @@ void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Uni
           verticalValue = verticalValue / dpm.vertical() * 100.;
           break;
         case INCHES:
-          horizontalValue /= dpi.horizontal();
-          verticalValue /= dpi.vertical();
+          horizontalValue /= m_dpi.horizontal();
+          verticalValue /= m_dpi.vertical();
           break;
         default:
           break;
@@ -40,8 +40,8 @@ void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Uni
           verticalValue = verticalValue / 10.;
           break;
         case INCHES:
-          horizontalValue = horizontalValue / 1000. * dpm.horizontal() / dpi.horizontal();
-          verticalValue = verticalValue / 1000. * dpm.vertical() / dpi.vertical();
+          horizontalValue = horizontalValue / 1000. * dpm.horizontal() / m_dpi.horizontal();
+          verticalValue = verticalValue / 1000. * dpm.vertical() / m_dpi.vertical();
           break;
         default:
           break;
@@ -58,8 +58,8 @@ void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Uni
           verticalValue = verticalValue * 10.;
           break;
         case INCHES:
-          horizontalValue = horizontalValue / 100. * dpm.horizontal() / dpi.horizontal();
-          verticalValue = verticalValue / 100. * dpm.vertical() / dpi.vertical();
+          horizontalValue = horizontalValue / 100. * dpm.horizontal() / m_dpi.horizontal();
+          verticalValue = verticalValue / 100. * dpm.vertical() / m_dpi.vertical();
           break;
         default:
           break;
@@ -68,16 +68,16 @@ void UnitsConverter::convert(double& horizontalValue, double& verticalValue, Uni
     case INCHES:
       switch (toUnits) {
         case PIXELS:
-          horizontalValue *= dpi.horizontal();
-          verticalValue *= dpi.vertical();
+          horizontalValue *= m_dpi.horizontal();
+          verticalValue *= m_dpi.vertical();
           break;
         case MILLIMETRES:
-          horizontalValue = horizontalValue * dpi.horizontal() / dpm.horizontal() * 1000.;
-          verticalValue = verticalValue * dpi.vertical() / dpm.vertical() * 1000.;
+          horizontalValue = horizontalValue * m_dpi.horizontal() / dpm.horizontal() * 1000.;
+          verticalValue = verticalValue * m_dpi.vertical() / dpm.vertical() * 1000.;
           break;
         case CENTIMETRES:
-          horizontalValue = horizontalValue * dpi.horizontal() / dpm.horizontal() * 100.;
-          verticalValue = verticalValue * dpi.vertical() / dpm.vertical() * 100.;
+          horizontalValue = horizontalValue * m_dpi.horizontal() / dpm.horizontal() * 100.;
+          verticalValue = verticalValue * m_dpi.vertical() / dpm.vertical() * 100.;
           break;
         default:
           break;
@@ -95,9 +95,9 @@ QTransform UnitsConverter::transform(Units fromUnits, Units toUnits) const {
 }
 
 const Dpi& UnitsConverter::getDpi() const {
-  return dpi;
+  return m_dpi;
 }
 
 void UnitsConverter::setDpi(const Dpi& dpi) {
-  UnitsConverter::dpi = dpi;
+  UnitsConverter::m_dpi = dpi;
 }

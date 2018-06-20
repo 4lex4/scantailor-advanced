@@ -49,7 +49,7 @@ class OutputFileParams {
 
  private:
   qint64 m_size;
-  time_t m_mtime;
+  time_t m_modifiedTime;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_

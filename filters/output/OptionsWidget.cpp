@@ -37,7 +37,7 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
       m_lastTab(TAB_OUTPUT) {
   setupUi(this);
 
-  delayedReloadRequest.setSingleShot(true);
+  m_delayedReloadRequest.setSingleShot(true);
 
   depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
   depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
@@ -172,7 +172,7 @@ void OptionsWidget::pictureShapeSensitivityChanged(int value) {
   m_pictureShapeOptions.setSensitivity(value);
   m_settings->setPictureShapeOptions(m_pageId, m_pictureShapeOptions);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::higherSearchSensivityToggled(const bool checked) {
@@ -360,7 +360,7 @@ void OptionsWidget::handleDespeckleLevelChange(const double level, const bool de
     emit invalidateThumbnail(m_pageId);
   } else {
     if (delay) {
-      delayedReloadRequest.start(750);
+      m_delayedReloadRequest.start(750);
     } else {
       emit reloadRequested();
     }
@@ -612,7 +612,7 @@ void OptionsWidget::updateColorsDisplay() {
       colorForegroundRB->setChecked(true);
       break;
   }
-  originalBackgroundCB->setChecked(m_splittingOptions.isOriginalBackground());
+  originalBackgroundCB->setChecked(m_splittingOptions.isOriginalBackgroundEnabled());
   colorForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
   bwForegroundRB->setEnabled(m_splittingOptions.isSplitOutput());
   originalBackgroundCB->setEnabled(m_splittingOptions.isSplitOutput()
@@ -752,7 +752,7 @@ void OptionsWidget::splittingToggled(bool checked) {
 }
 
 void OptionsWidget::originalBackgroundToggled(bool checked) {
-  m_splittingOptions.setOriginalBackground(checked);
+  m_splittingOptions.setOriginalBackgroundEnabled(checked);
 
   m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
@@ -783,7 +783,7 @@ void OptionsWidget::reduceNoiseChanged(int value) {
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::redAdjustmentChanged(int value) {
@@ -794,7 +794,7 @@ void OptionsWidget::redAdjustmentChanged(int value) {
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::greenAdjustmentChanged(int value) {
@@ -805,7 +805,7 @@ void OptionsWidget::greenAdjustmentChanged(int value) {
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::blueAdjustmentChanged(int value) {
@@ -816,7 +816,7 @@ void OptionsWidget::blueAdjustmentChanged(int value) {
   m_colorParams.setBlackWhiteOptions(blackWhiteOptions);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::posterizeToggled(bool checked) {
@@ -840,7 +840,7 @@ void OptionsWidget::posterizeLevelChanged(int value) {
   m_colorParams.setColorCommonOptions(colorCommonOptions);
   m_settings->setColorParams(m_pageId, m_colorParams);
 
-  delayedReloadRequest.start(750);
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::posterizeNormalizationToggled(bool checked) {
@@ -935,7 +935,7 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
   CONNECT(applyDespeckleButton, SIGNAL(clicked()), this, SLOT(applyDespeckleButtonClicked()));
   CONNECT(depthPerceptionSlider, SIGNAL(valueChanged(int)), this, SLOT(depthPerceptionChangedSlot(int)));
-  CONNECT(&delayedReloadRequest, SIGNAL(timeout()), this, SLOT(sendReloadRequested()));
+  CONNECT(&m_delayedReloadRequest, SIGNAL(timeout()), this, SLOT(sendReloadRequested()));
 
   CONNECT(blackOnWhiteCB, SIGNAL(clicked(bool)), this, SLOT(blackOnWhiteToggled(bool)));
   CONNECT(applyProcessingOptionsButton, SIGNAL(clicked()), this, SLOT(applyProcessingParamsClicked()));

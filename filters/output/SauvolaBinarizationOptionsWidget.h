@@ -15,16 +15,6 @@ namespace output {
 class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
                                          private Ui::SauvolaBinarizationOptionsWidget {
   Q_OBJECT
-
- private:
-  intrusive_ptr<Settings> m_settings;
-  PageId m_pageId;
-  ColorParams m_colorParams;
-  QTimer delayedStateChanger;
-  OutputProcessingParams m_outputProcessingParams;
-
-  std::list<QMetaObject::Connection> m_connectionList;
-
  public:
   explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
@@ -46,6 +36,14 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
   void setupUiConnections();
 
   void removeUiConnections();
+
+  intrusive_ptr<Settings> m_settings;
+  PageId m_pageId;
+  ColorParams m_colorParams;
+  QTimer m_delayedStateChanger;
+  OutputProcessingParams m_outputProcessingParams;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 

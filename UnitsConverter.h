@@ -8,9 +8,6 @@
 #include "Units.h"
 
 class UnitsConverter {
- private:
-  Dpi dpi;
-
  public:
   UnitsConverter() = default;
 
@@ -23,6 +20,9 @@ class UnitsConverter {
   const Dpi& getDpi() const;
 
   void setDpi(const Dpi& dpi);
+
+ private:
+  Dpi m_dpi;
 };
 
 

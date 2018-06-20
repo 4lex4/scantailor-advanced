@@ -39,9 +39,9 @@ class PictureShapeOptions {
   static QString formatPictureShape(PictureShape type);
 
 
-  PictureShape pictureShape;
-  int sensitivity;
-  bool higherSearchSensitivity;
+  PictureShape m_pictureShape;
+  int m_sensitivity;
+  bool m_higherSearchSensitivity;
 };
 }  // namespace output
 

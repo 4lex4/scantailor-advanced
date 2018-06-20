@@ -8,7 +8,7 @@
 namespace output {
 
 OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_settings(std::move(settings)), ignoreSliderChanges(0) {
+    : m_settings(std::move(settings)), m_ignoreSliderChanges(0) {
   setupUi(this);
 
   darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
@@ -19,7 +19,7 @@ OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Setti
   thresholdSlider->setMaximum(100);
   thresholLabel->setText(QString::number(thresholdSlider->value()));
 
-  delayedStateChanger.setSingleShot(true);
+  m_delayedStateChanger.setSingleShot(true);
 
   setupUiConnections();
 }
@@ -44,7 +44,7 @@ void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
 }
 
 void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
-  if (ignoreSliderChanges) {
+  if (m_ignoreSliderChanges) {
     return;
   }
 
@@ -67,7 +67,7 @@ void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
 
   setThresholdAdjustment(value);
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
@@ -84,25 +84,25 @@ void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
 }
 
 void OtsuBinarizationOptionsWidget::setLighterThreshold() {
-  const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
 
   thresholdSlider->setValue(thresholdSlider->value() - 1);
   setThresholdAdjustment(thresholdSlider->value());
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
-  const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
 
   thresholdSlider->setValue(thresholdSlider->value() + 1);
   setThresholdAdjustment(thresholdSlider->value());
 
-  delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
-  const ScopedIncDec<int> scopeGuard(ignoreSliderChanges);
+  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
 
   thresholdSlider->setValue(0);
   setThresholdAdjustment(thresholdSlider->value());
@@ -124,7 +124,7 @@ void OtsuBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(thresholdSlider, SIGNAL(sliderReleased()), this, SLOT(thresholdSliderReleased()));
   CONNECT(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(thresholdSliderValueChanged(int)));
   CONNECT(neutralThresholdBtn, SIGNAL(clicked()), this, SLOT(setNeutralThreshold()));
-  CONNECT(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(&m_delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
 #undef CONNECT

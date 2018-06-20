@@ -2,19 +2,15 @@
 #ifndef SCANTAILOR_DEFAULTPARAMSPROVIDER_H
 #define SCANTAILOR_DEFAULTPARAMSPROVIDER_H
 
-
+#include <foundation/NonCopyable.h>
 #include <QtCore/QString>
 #include <memory>
 
 class DefaultParams;
 
 class DefaultParamsProvider {
+  DECLARE_NON_COPYABLE(DefaultParamsProvider)
  private:
-  static std::unique_ptr<DefaultParamsProvider> instance;
-
-  QString profileName;
-  std::unique_ptr<DefaultParams> params;
-
   DefaultParamsProvider();
 
  public:
@@ -25,6 +21,12 @@ class DefaultParamsProvider {
   DefaultParams getParams() const;
 
   void setParams(std::unique_ptr<DefaultParams> params, const QString& name);
+
+ private:
+  static std::unique_ptr<DefaultParamsProvider> m_instance;
+
+  QString m_profileName;
+  std::unique_ptr<DefaultParams> m_params;
 };
 
 

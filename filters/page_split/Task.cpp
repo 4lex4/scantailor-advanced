@@ -110,7 +110,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   OptionsWidget::UiData ui_data;
   ui_data.setDependencies(deps);
 
-  for (;;) {
+  while (true) {
     const Params* const params = record.params();
 
     PageLayout new_layout;

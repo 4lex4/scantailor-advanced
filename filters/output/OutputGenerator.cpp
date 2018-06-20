@@ -260,8 +260,7 @@ bool updateBlackOnWhite(const FilterData& input, const PageId& pageId, const int
   }
 }
 
-BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId,
-                                                       const intrusive_ptr<Settings>& settings) {
+BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId, const intrusive_ptr<Settings>& settings) {
   QSettings appSettings;
   if (!(appSettings.value("settings/blackOnWhiteDetection", true).toBool()
         && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
@@ -1459,7 +1458,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     post_rotate.rotate(-deskew_angle);
     post_rotate.translate(-center.x(), -center.y());
 
-    postTransform = post_rotate;
+    m_postTransform = post_rotate;
   }
 
   BinaryImage dewarping_content_area_mask(inputGrayImage.size(), BLACK);
@@ -1520,7 +1519,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
         dewarped_bw_content.invert();
       }
 
-      applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output, postTransform);
+      applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output, m_postTransform);
 
       return dewarped_bw_content.toQImage();
     } else {
@@ -1538,7 +1537,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
         segmented_image.invertPixels();
       }
 
-      applyFillZonesInPlace(segmented_image, fill_zones, orig_to_output, postTransform, false);
+      applyFillZonesInPlace(segmented_image, fill_zones, orig_to_output, m_postTransform, false);
 
       if (dbg) {
         dbg->add(segmented_image, "segmented_with_fill_zones");
@@ -1738,10 +1737,10 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
   }
 
   if (render_params.mixedOutput() && render_params.needBinarization()) {
-    applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, postTransform, dewarped_bw_content_mask,
+    applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, m_postTransform, dewarped_bw_content_mask,
                                  !render_params.needColorSegmentation());
   } else {
-    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, postTransform);
+    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, m_postTransform);
   }
 
   if (dbg) {
@@ -2607,7 +2606,7 @@ double OutputGenerator::maybe_deskew(QImage* dewarped,
 }
 
 const QTransform& OutputGenerator::getPostTransform() const {
-  return postTransform;
+  return m_postTransform;
 }
 
 void OutputGenerator::applyFillZonesToMixedInPlace(QImage& img,

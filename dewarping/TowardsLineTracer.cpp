@@ -63,7 +63,7 @@ const QPoint* TowardsLineTracer::trace(const float max_dist) {
   const uint32_t* p_dm = m_dmData + cur_pos.y() * m_dmStride + cur_pos.x();
   const float* p_pm = m_pmData + cur_pos.y() * m_pmStride + cur_pos.x();
 
-  for (;;) {
+  while (true) {
     int best_dm_idx = -1;
     int best_pm_idx = -1;
     uint32_t best_squared_dist = 0;

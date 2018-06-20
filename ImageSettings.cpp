@@ -7,32 +7,32 @@
 using namespace imageproc;
 
 void ImageSettings::clear() {
-  QMutexLocker locker(&mutex);
-  perPageParams.clear();
+  QMutexLocker locker(&m_mutex);
+  m_perPageParams.clear();
 }
 
 void ImageSettings::performRelinking(const AbstractRelinker& relinker) {
-  QMutexLocker locker(&mutex);
+  QMutexLocker locker(&m_mutex);
   PerPageParams newParams;
-  for (const auto& kv : perPageParams) {
+  for (const auto& kv : m_perPageParams) {
     const RelinkablePath oldPath(kv.first.imageId().filePath(), RelinkablePath::File);
     PageId newPageId(kv.first);
     newPageId.imageId().setFilePath(relinker.substitutionPathFor(oldPath));
     newParams.insert(PerPageParams::value_type(newPageId, kv.second));
   }
 
-  perPageParams.swap(newParams);
+  m_perPageParams.swap(newParams);
 }
 
 void ImageSettings::setPageParams(const PageId& page_id, const PageParams& params) {
-  QMutexLocker locker(&mutex);
-  Utils::mapSetValue(perPageParams, page_id, params);
+  QMutexLocker locker(&m_mutex);
+  Utils::mapSetValue(m_perPageParams, page_id, params);
 }
 
 std::unique_ptr<ImageSettings::PageParams> ImageSettings::getPageParams(const PageId& page_id) const {
-  QMutexLocker locker(&mutex);
-  const auto it(perPageParams.find(page_id));
-  if (it != perPageParams.end()) {
+  QMutexLocker locker(&m_mutex);
+  const auto it(m_perPageParams.find(page_id));
+  if (it != m_perPageParams.end()) {
     return std::make_unique<PageParams>(it->second);
   } else {
     return nullptr;
@@ -41,34 +41,34 @@ std::unique_ptr<ImageSettings::PageParams> ImageSettings::getPageParams(const Pa
 
 /*=============================== ImageSettings::Params ==================================*/
 
-ImageSettings::PageParams::PageParams() : bwThreshold(0), blackOnWhite(true) {}
+ImageSettings::PageParams::PageParams() : m_bwThreshold(0), m_blackOnWhite(true) {}
 
 ImageSettings::PageParams::PageParams(const BinaryThreshold& bwThreshold, bool blackOnWhite)
-    : bwThreshold(bwThreshold), blackOnWhite(blackOnWhite) {}
+    : m_bwThreshold(bwThreshold), m_blackOnWhite(blackOnWhite) {}
 
 ImageSettings::PageParams::PageParams(const QDomElement& el)
-    : bwThreshold(el.attribute("bwThreshold").toInt()), blackOnWhite(el.attribute("blackOnWhite") == "1") {}
+    : m_bwThreshold(el.attribute("bwThreshold").toInt()), m_blackOnWhite(el.attribute("blackOnWhite") == "1") {}
 
 QDomElement ImageSettings::PageParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
-  el.setAttribute("bwThreshold", bwThreshold);
-  el.setAttribute("blackOnWhite", blackOnWhite ? "1" : "0");
+  el.setAttribute("bwThreshold", m_bwThreshold);
+  el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
 
   return el;
 }
 
 const BinaryThreshold& ImageSettings::PageParams::getBwThreshold() const {
-  return bwThreshold;
+  return m_bwThreshold;
 }
 
 void ImageSettings::PageParams::setBwThreshold(const BinaryThreshold& bwThreshold) {
-  PageParams::bwThreshold = bwThreshold;
+  PageParams::m_bwThreshold = bwThreshold;
 }
 
 bool ImageSettings::PageParams::isBlackOnWhite() const {
-  return blackOnWhite;
+  return m_blackOnWhite;
 }
 
 void ImageSettings::PageParams::setBlackOnWhite(bool blackOnWhite) {
-  PageParams::blackOnWhite = blackOnWhite;
+  PageParams::m_blackOnWhite = blackOnWhite;
 }

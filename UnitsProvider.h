@@ -2,6 +2,7 @@
 #ifndef SCANTAILOR_UNITSPROVIDER_H
 #define SCANTAILOR_UNITSPROVIDER_H
 
+#include <foundation/NonCopyable.h>
 #include <list>
 #include <memory>
 #include "UnitsObserver.h"
@@ -9,12 +10,8 @@
 class Dpi;
 
 class UnitsProvider {
+  DECLARE_NON_COPYABLE(UnitsProvider)
  private:
-  static std::unique_ptr<UnitsProvider> instance;
-
-  std::list<UnitsObserver*> observers;
-  Units units;
-
   UnitsProvider();
 
  public:
@@ -34,6 +31,12 @@ class UnitsProvider {
 
  protected:
   void unitsChanged();
+
+ private:
+  static std::unique_ptr<UnitsProvider> m_instance;
+
+  std::list<UnitsObserver*> m_observers;
+  Units m_units;
 };
 
 

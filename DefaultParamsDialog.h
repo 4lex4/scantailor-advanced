@@ -14,25 +14,6 @@
 
 class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   Q_OBJECT
- private:
-  QIcon chainIcon;
-  QIcon brokenChainIcon;
-  bool leftRightLinkEnabled;
-  bool topBottomLinkEnabled;
-  int ignoreMarginChanges;
-  OrthogonalRotation orthogonalRotation;
-  std::unordered_map<QToolButton*, page_layout::Alignment> alignmentByButton;
-  std::unique_ptr<QButtonGroup> alignmentButtonGroup;
-  DefaultParamsProfileManager profileManager;
-  int customDpiItemIdx;
-  QString customDpiValue;
-  int customProfileItemIdx;
-  Units currentUnits;
-  std::set<QString> reservedProfileNames;
-  int ignoreProfileChanges;
-
-  std::list<QMetaObject::Connection> m_connectionList;
-
  public:
   explicit DefaultParamsDialog(QWidget* parent = nullptr);
 
@@ -156,6 +137,24 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   bool isProfileNameReserved(const QString& name);
 
   void setTabWidgetsEnabled(bool enabled);
+
+  QIcon m_chainIcon;
+  QIcon m_brokenChainIcon;
+  bool m_leftRightLinkEnabled;
+  bool m_topBottomLinkEnabled;
+  int m_ignoreMarginChanges;
+  OrthogonalRotation m_orthogonalRotation;
+  std::unordered_map<QToolButton*, page_layout::Alignment> m_alignmentByButton;
+  std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+  DefaultParamsProfileManager m_profileManager;
+  int m_customDpiItemIdx;
+  QString m_customDpiValue;
+  int m_customProfileItemIdx;
+  Units m_currentUnits;
+  std::set<QString> m_reservedProfileNames;
+  int m_ignoreProfileChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 
 

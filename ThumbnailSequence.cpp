@@ -1275,8 +1275,11 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
   bold_font.setWeight(QFont::Bold);
   bold_text_item->setFont(bold_font);
 
-  bold_text_item->setBrush(ColorSchemeManager::instance()->getColorParam("thumbnail_sequence_selected_item_text",
-                                                                         QApplication::palette().highlightedText()));
+  const QBrush selected_item_text_color = ColorSchemeManager::instance()->getColorParam(
+      ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
+  const QBrush selection_leader_text_color = ColorSchemeManager::instance()->getColorParam(
+      ColorScheme::ThumbnailSequenceSelectionLeaderText, selected_item_text_color);
+  bold_text_item->setBrush(selection_leader_text_color);
 
   QRectF normal_text_box(normal_text_item->boundingRect());
   QRectF bold_text_box(bold_text_item->boundingRect());
@@ -1361,8 +1364,6 @@ void ThumbnailSequence::Item::setSelectionLeader(bool selection_leader) const {
 
   if ((was_selected != m_isSelected) || (was_selection_leader != m_isSelectionLeader)) {
     composite->updateAppearence(m_isSelected, m_isSelectionLeader);
-  }
-  if (was_selected != m_isSelected) {
     composite->update();
   }
 }
@@ -1405,14 +1406,17 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
   m_normalLabel->setVisible(!selection_leader);
   m_boldLabel->setVisible(selection_leader);
 
+  const QBrush item_text_color = ColorSchemeManager::instance()->getColorParam(ColorScheme::ThumbnailSequenceItemText,
+                                                                               QApplication::palette().text());
+  const QBrush selected_item_text_color = ColorSchemeManager::instance()->getColorParam(
+      ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
+
   if (selection_leader) {
     assert(selected);
   } else if (selected) {
-    m_normalLabel->setBrush(ColorSchemeManager::instance()->getColorParam("thumbnail_sequence_selected_item_text",
-                                                                          QApplication::palette().highlightedText()));
+    m_normalLabel->setBrush(selected_item_text_color);
   } else {
-    m_normalLabel->setBrush(
-        ColorSchemeManager::instance()->getColorParam("thumbnail_sequence_item_text", QApplication::palette().text()));
+    m_normalLabel->setBrush(item_text_color);
   }
 }
 
@@ -1474,10 +1478,15 @@ QRectF ThumbnailSequence::CompositeItem::boundingRect() const {
 void ThumbnailSequence::CompositeItem::paint(QPainter* painter,
                                              const QStyleOptionGraphicsItem* option,
                                              QWidget* widget) {
-  if (m_item->isSelected()) {
-    painter->fillRect(boundingRect(), ColorSchemeManager::instance()->getColorParam(
-                                          "thumbnail_sequence_selected_item_background",
-                                          QApplication::palette().color(QPalette::Highlight)));
+  const QBrush selected_item_background_color = ColorSchemeManager::instance()->getColorParam(
+      ColorScheme::ThumbnailSequenceSelectedItemBackground, QApplication::palette().color(QPalette::Highlight));
+  const QBrush selection_leader_background_color = ColorSchemeManager::instance()->getColorParam(
+      ColorScheme::ThumbnailSequenceSelectionLeaderBackground, selected_item_background_color);
+
+  if (m_item->isSelectionLeader()) {
+    painter->fillRect(boundingRect(), selection_leader_background_color);
+  } else if (m_item->isSelected()) {
+    painter->fillRect(boundingRect(), selected_item_background_color);
   }
 }
 

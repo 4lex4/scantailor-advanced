@@ -135,7 +135,7 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
 void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
   const QColor border_color(
       ColorSchemeManager::instance()
-          ->getColorParam("relinkable_path_visualization_border_color", palette().color(QPalette::Window).darker(150))
+          ->getColorParam(ColorScheme::RelinkablePathVisualizationBorder, palette().color(QPalette::Window).darker(150))
           .color());
 
   QString style = "QAbstractButton {\n"

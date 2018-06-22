@@ -30,12 +30,14 @@ static const double distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
     : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
-  m_headColor = ColorSchemeManager::instance()
-                    ->getColorParam("processing_indication_head_color", palette().color(QPalette::Window).lighter(200))
-                    .color();
-  m_tailColor = ColorSchemeManager::instance()
-                    ->getColorParam("processing_indication_tail_color", palette().color(QPalette::Window).lighter(130))
-                    .color();
+  m_headColor
+      = ColorSchemeManager::instance()
+            ->getColorParam(ColorScheme::ProcessingIndicationHeadColor, palette().color(QPalette::Window).lighter(200))
+            .color();
+  m_tailColor
+      = ColorSchemeManager::instance()
+            ->getColorParam(ColorScheme::ProcessingIndicationTail, palette().color(QPalette::Window).lighter(130))
+            .color();
 }
 
 void ProcessingIndicationWidget::resetAnimation() {
@@ -69,7 +71,7 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
   QPainter painter(this);
 
   QColor fadeColor = ColorSchemeManager::instance()
-                         ->getColorParam("processing_indication_fade_color", palette().background().color())
+                         ->getColorParam(ColorScheme::ProcessingIndicationFade, palette().background().color())
                          .color();
   fadeColor.setAlpha(127);
   painter.fillRect(rect(), fadeColor);

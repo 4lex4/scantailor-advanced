@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 std::unique_ptr<QPalette> DarkScheme::getPalette() const {
-  std::unique_ptr<QPalette> darkPalette(new QPalette());
+  auto darkPalette = std::make_unique<QPalette>();
 
   darkPalette->setColor(QPalette::Window, QColor(0x53, 0x53, 0x53));
   darkPalette->setColor(QPalette::WindowText, QColor(0xDD, 0xDD, 0xDD));
@@ -53,20 +53,18 @@ std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
   return qsStylesheet;
 }
 
-std::unique_ptr<ColorParams> DarkScheme::getColorParams() const {
-  std::unique_ptr<ColorParams> customColors(new ColorParams());
+std::unique_ptr<ColorScheme::ColorParams> DarkScheme::getColorParams() const {
+  auto customColors = std::make_unique<ColorParams>();
 
-  customColors->insert(
-      ColorParams::value_type("thumbnail_sequence_selected_item_background", QColor(0x44, 0x44, 0x44)));
-  customColors->insert(ColorParams::value_type("open_new_project_border_color", QColor(0x53, 0x53, 0x53)));
-  customColors->insert(ColorParams::value_type("processing_indication_fade_color", QColor(0x28, 0x28, 0x28)));
-  customColors->insert(ColorParams::value_type("processing_indication_head_color", QColor(0xDD, 0xDD, 0xDD)));
-  customColors->insert(ColorParams::value_type("processing_indication_tail_color", QColor(0x6B, 0x6B, 0x6B)));
-  customColors->insert(
-      ColorParams::value_type("stage_list_head_color", customColors->at("processing_indication_head_color")));
-  customColors->insert(
-      ColorParams::value_type("stage_list_tail_color", customColors->at("processing_indication_tail_color")));
-  customColors->insert(ColorParams::value_type("fix_dpi_dialog_error_text_color", QColor(0xF3, 0x49, 0x41)));
+  customColors->insert(ColorParams::value_type(ThumbnailSequenceSelectedItemBackground, QColor(0x42, 0x42, 0x42)));
+  customColors->insert(ColorParams::value_type(ThumbnailSequenceSelectionLeaderBackground, QColor(0x4E, 0x4E, 0x4E)));
+  customColors->insert(ColorParams::value_type(OpenNewProjectBorder, QColor(0x53, 0x53, 0x53)));
+  customColors->insert(ColorParams::value_type(ProcessingIndicationFade, QColor(0x28, 0x28, 0x28)));
+  customColors->insert(ColorParams::value_type(ProcessingIndicationHeadColor, QColor(0xDD, 0xDD, 0xDD)));
+  customColors->insert(ColorParams::value_type(ProcessingIndicationTail, QColor(0x6B, 0x6B, 0x6B)));
+  customColors->insert(ColorParams::value_type(StageListHead, customColors->at(ProcessingIndicationHeadColor)));
+  customColors->insert(ColorParams::value_type(StageListTail, customColors->at(ProcessingIndicationTail)));
+  customColors->insert(ColorParams::value_type(FixDpiDialogErrorText, QColor(0xF3, 0x49, 0x41)));
 
   return customColors;
 }

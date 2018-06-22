@@ -5,8 +5,6 @@
 #include <QtGui/QPalette>
 #include <unordered_map>
 
-typedef std::unordered_map<std::string, QColor> ColorParams;
-
 class ColorScheme {
  public:
   virtual ~ColorScheme() = default;
@@ -15,21 +13,26 @@ class ColorScheme {
 
   virtual std::unique_ptr<QString> getStyleSheet() const = 0;
 
+  enum ColorParam {
+    ThumbnailSequenceItemText,
+    ThumbnailSequenceSelectedItemText,
+    ThumbnailSequenceSelectedItemBackground,
+    ThumbnailSequenceSelectionLeaderText,
+    ThumbnailSequenceSelectionLeaderBackground,
+    RelinkablePathVisualizationBorder,
+    OpenNewProjectBorder,
+    ProcessingIndicationHeadColor,
+    ProcessingIndicationTail,
+    ProcessingIndicationFade,
+    StageListHead,
+    StageListTail,
+    FixDpiDialogErrorText
+  };
+
+  using ColorParams = std::unordered_map<ColorParam, QColor>;
+
   /**
    * List of colors for elements that don't support styling.
-   *
-   * Available parameters:
-   *     thumbnail_sequence_selected_item_text,
-   *     thumbnail_sequence_item_text,
-   *     thumbnail_sequence_selected_item_background,
-   *     relinkable_path_visualization_border_color,
-   *     open_new_project_border_color,
-   *     processing_indication_head_color,
-   *     processing_indication_tail_color,
-   *     processing_indication_fade_color,
-   *     stage_list_head_color,
-   *     stage_list_tail_color,
-   *     fix_dpi_dialog_error_text_color
    *
    * @return the list of colors to override the default values by the color scheme
    */

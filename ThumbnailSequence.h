@@ -132,13 +132,15 @@ class ThumbnailSequence : public QObject {
    * \brief Makes the item a selection leader, and unselects other items.
    *
    * \param page_id The page to select.
+   * \param selection_action Whether to keep the selection, provided
+   *        selected item(s) are still present in the new list of pages.
    * \return true on success, false if the requested page wasn't found.
    *
    * On success, the newSelectionLeader() signal is emitted, possibly
    * with REDUNDANT_SELECTION flag set, in case our page was already the
    * selection leader.
    */
-  bool setSelection(const PageId& page_id);
+  bool setSelection(const PageId& page_id, SelectionAction selection_action = RESET_SELECTION);
 
   /**
    * \brief Returns the current selection leader.
@@ -148,10 +150,10 @@ class ThumbnailSequence : public QObject {
   PageInfo selectionLeader() const;
 
   /**
-   * \brief Returns the page immediately following the given one.
+   * \brief Returns the page immediately preceding the given one.
    *
    * A null PageInfo is returned if the given page wasn't found or
-   * there are no pages preceeding it.
+   * there are no pages preceding it.
    */
   PageInfo prevPage(const PageId& reference_page) const;
 
@@ -162,6 +164,22 @@ class ThumbnailSequence : public QObject {
    * there are no pages following it.
    */
   PageInfo nextPage(const PageId& reference_page) const;
+
+  /**
+ * \brief Returns the selected page preceding the given one.
+ *
+ * A null PageInfo is returned if the given page wasn't found or
+ * there are no pages preceding it.
+ */
+  PageInfo prevSelectedPage(const PageId& reference_page) const;
+
+  /**
+   * \brief Returns the selected page following the given one.
+   *
+   * A null PageInfo is returned if the given page wasn't found or
+   * there are no pages following it.
+   */
+  PageInfo nextSelectedPage(const PageId& reference_page) const;
 
   /**
    * \brief Returns the first page in the sequence.

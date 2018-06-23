@@ -108,13 +108,17 @@ class ThumbnailSequence::Impl {
 
   void invalidateAllThumbnails();
 
-  bool setSelection(const PageId& page_id);
+  bool setSelection(const PageId& page_id, SelectionAction selection_action);
 
   PageInfo selectionLeader() const;
 
   PageInfo prevPage(const PageId& page_id) const;
 
   PageInfo nextPage(const PageId& page_id) const;
+
+  PageInfo prevSelectedPage(const PageId& reference_page) const;
+
+  PageInfo nextSelectedPage(const PageId& reference_page) const;
 
   PageInfo firstPage() const;
 
@@ -329,8 +333,8 @@ void ThumbnailSequence::invalidateAllThumbnails() {
   m_impl->invalidateAllThumbnails();
 }
 
-bool ThumbnailSequence::setSelection(const PageId& page_id) {
-  return m_impl->setSelection(page_id);
+bool ThumbnailSequence::setSelection(const PageId& page_id, const SelectionAction selection_action) {
+  return m_impl->setSelection(page_id, selection_action);
 }
 
 PageInfo ThumbnailSequence::selectionLeader() const {
@@ -343,6 +347,14 @@ PageInfo ThumbnailSequence::prevPage(const PageId& reference_page) const {
 
 PageInfo ThumbnailSequence::nextPage(const PageId& reference_page) const {
   return m_impl->nextPage(reference_page);
+}
+
+PageInfo ThumbnailSequence::prevSelectedPage(const PageId& reference_page) const {
+  return m_impl->prevSelectedPage(reference_page);
+}
+
+PageInfo ThumbnailSequence::nextSelectedPage(const PageId& reference_page) const {
+  return m_impl->nextSelectedPage(reference_page);
 }
 
 PageInfo ThumbnailSequence::firstPage() const {
@@ -725,7 +737,7 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
 }  // ThumbnailSequence::Impl::invalidateAllThumbnails
 
 
-bool ThumbnailSequence::Impl::setSelection(const PageId& page_id) {
+bool ThumbnailSequence::Impl::setSelection(const PageId& page_id, const SelectionAction selection_action) {
   const ItemsById::iterator id_it(m_itemsById.find(page_id));
   if (id_it == m_itemsById.end()) {
     return false;
@@ -733,23 +745,31 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& page_id) {
 
   const bool was_selection_leader = (&*id_it == m_selectionLeader);
 
-  // Clear selection from all items except the one for which
-  // selection is requested.
-  SelectedThenUnselected::iterator it(m_selectedThenUnselected.begin());
-  while (it != m_selectedThenUnselected.end()) {
-    const Item& item = *it;
-    if (!item.isSelected()) {
-      break;
-    }
-
-    ++it;
-
-    if (&*id_it != &item) {
-      item.setSelected(false);
-      moveToUnselected(&item);
-      if (m_selectionLeader == &item) {
-        m_selectionLeader = nullptr;
+  if (selection_action != KEEP_SELECTION) {
+    // Clear selection from all items except the one for which
+    // selection is requested.
+    SelectedThenUnselected::iterator it(m_selectedThenUnselected.begin());
+    while (it != m_selectedThenUnselected.end()) {
+      const Item& item = *it;
+      if (!item.isSelected()) {
+        break;
       }
+
+      ++it;
+
+      if (&*id_it != &item) {
+        item.setSelected(false);
+        moveToUnselected(&item);
+        if (m_selectionLeader == &item) {
+          m_selectionLeader = nullptr;
+        }
+      }
+    }
+  } else {
+    // Only reset selection leader.
+    if (m_selectionLeader && !was_selection_leader) {
+      m_selectionLeader->setSelectionLeader(false);
+      m_selectionLeader = nullptr;
     }
   }
 
@@ -812,6 +832,51 @@ PageInfo ThumbnailSequence::Impl::nextPage(const PageId& reference_page) const {
     ++ord_it;
     if (ord_it != m_itemsInOrder.end()) {
       return ord_it->pageInfo;
+    }
+  }
+
+  return PageInfo();
+}
+
+PageInfo ThumbnailSequence::Impl::prevSelectedPage(const PageId& reference_page) const {
+  ItemsInOrder::iterator ord_it;
+
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+    // Common case optimization.
+    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+  } else {
+    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+  }
+
+  if (ord_it != m_itemsInOrder.end()) {
+    while (ord_it != m_itemsInOrder.begin()) {
+      --ord_it;
+      if (ord_it->isSelected()) {
+        return ord_it->pageInfo;
+      }
+    }
+  }
+
+  return PageInfo();
+}
+
+PageInfo ThumbnailSequence::Impl::nextSelectedPage(const PageId& reference_page) const {
+  ItemsInOrder::iterator ord_it;
+
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+    // Common case optimization.
+    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+  } else {
+    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+  }
+
+  if (ord_it != m_itemsInOrder.end()) {
+    ++ord_it;
+    while (ord_it != m_itemsInOrder.end()) {
+      if (ord_it->isSelected()) {
+        return ord_it->pageInfo;
+      }
+      ++ord_it;
     }
   }
 
@@ -1350,8 +1415,6 @@ void ThumbnailSequence::Item::setSelected(bool selected) const {
 
   if ((was_selected != m_isSelected) || (was_selection_leader != m_isSelectionLeader)) {
     composite->updateAppearence(m_isSelected, m_isSelectionLeader);
-  }
-  if (was_selected != m_isSelected) {
     composite->update();
   }
 }

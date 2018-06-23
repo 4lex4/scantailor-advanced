@@ -200,6 +200,10 @@ MainWindow::MainWindow()
   addAction(actionPrevPage);
   addAction(actionPrevPageQ);
   addAction(actionNextPageW);
+  addAction(actionNextSelectedPage);
+  addAction(actionPrevSelectedPage);
+  addAction(actionNextSelectedPageW);
+  addAction(actionPrevSelectedPageQ);
 
   addAction(actionSwitchFilter1);
   addAction(actionSwitchFilter2);
@@ -216,6 +220,10 @@ MainWindow::MainWindow()
   connect(actionNextPage, SIGNAL(triggered(bool)), SLOT(goNextPage()));
   connect(actionPrevPageQ, SIGNAL(triggered(bool)), this, SLOT(goPrevPage()));
   connect(actionNextPageW, SIGNAL(triggered(bool)), this, SLOT(goNextPage()));
+  connect(actionPrevSelectedPage, SIGNAL(triggered(bool)), SLOT(goPrevSelectedPage()));
+  connect(actionNextSelectedPage, SIGNAL(triggered(bool)), SLOT(goNextSelectedPage()));
+  connect(actionPrevSelectedPageQ, SIGNAL(triggered(bool)), this, SLOT(goPrevSelectedPage()));
+  connect(actionNextSelectedPageW, SIGNAL(triggered(bool)), this, SLOT(goNextSelectedPage()));
   connect(actionAbout, SIGNAL(triggered(bool)), this, SLOT(showAboutDialog()));
   connect(&OutOfMemoryHandler::instance(), SIGNAL(outOfMemory()), SLOT(handleOutOfMemorySituation()));
 
@@ -798,10 +806,32 @@ void MainWindow::goPrevPage() {
   }
 }
 
-void MainWindow::goToPage(const PageId& page_id) {
+void MainWindow::goNextSelectedPage() {
+  if (isBatchProcessingInProgress() || !isProjectLoaded()) {
+    return;
+  }
+
+  const PageInfo next_selected_page(m_thumbSequence->nextSelectedPage(m_thumbSequence->selectionLeader().id()));
+  if (!next_selected_page.isNull()) {
+    goToPage(next_selected_page.id(), ThumbnailSequence::KEEP_SELECTION);
+  }
+}
+
+void MainWindow::goPrevSelectedPage() {
+  if (isBatchProcessingInProgress() || !isProjectLoaded()) {
+    return;
+  }
+
+  const PageInfo prev_selected_page(m_thumbSequence->prevSelectedPage(m_thumbSequence->selectionLeader().id()));
+  if (!prev_selected_page.isNull()) {
+    goToPage(prev_selected_page.id(), ThumbnailSequence::KEEP_SELECTION);
+  }
+}
+
+void MainWindow::goToPage(const PageId& page_id, const ThumbnailSequence::SelectionAction selection_action) {
   focusButton->setChecked(true);
 
-  m_thumbSequence->setSelection(page_id);
+  m_thumbSequence->setSelection(page_id, selection_action);
 
   // If the page was already selected, it will be reloaded.
   // That's by design.

@@ -174,7 +174,7 @@
           </size>
          </property>
          <property name="statusTip">
-          <string>Use Home, End, PgUp (or Q), PgDown (or W) to navigate between pages.</string>
+          <string>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or  Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -510,6 +510,9 @@
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionMilimeters">
    <property name="checkable">
@@ -524,6 +527,9 @@
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionInches">
    <property name="checkable">
@@ -534,6 +540,9 @@
    </property>
    <property name="shortcut">
     <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionCentimetres">
@@ -546,6 +555,9 @@
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionDefaults">
    <property name="text">
@@ -553,6 +565,62 @@
    </property>
    <property name="shortcut">
     <string notr="true"/>
+   </property>
+  </action>
+  <action name="actionPrevSelectedPageQ">
+   <property name="text">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+Q</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNextSelectedPageW">
+   <property name="text">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+W</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNextSelectedPage">
+   <property name="text">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+PgDown</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionPrevSelectedPage">
+   <property name="text">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+PgUp</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

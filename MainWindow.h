@@ -118,7 +118,12 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void goPrevPage();
 
-  void goToPage(const PageId& page_id);
+  void goNextSelectedPage();
+
+  void goPrevSelectedPage();
+
+  void goToPage(const PageId& page_id,
+                ThumbnailSequence::SelectionAction selection_action = ThumbnailSequence::RESET_SELECTION);
 
   void currentPageChanged(const PageInfo& page_info, const QRectF& thumb_rect, ThumbnailSequence::SelectionFlags flags);
 

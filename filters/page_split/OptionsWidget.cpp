@@ -228,12 +228,8 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
 
   if (layout_type != AUTO_LAYOUT_TYPE) {
     for (const PageId& page_id : pages) {
-      if (m_pageId == page_id) {
-        continue;
-      }
-
-      Settings::UpdateAction update_params;
-      update_params.setLayoutType(layout_type);
+      Settings::UpdateAction update_action;
+      update_action.setLayoutType(layout_type);
       if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
         Params new_params(params);
 
@@ -242,7 +238,7 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
           std::unique_ptr<PageLayout> newPageLayout = PageLayoutAdapter::adaptPageLayout(
               params.pageLayout(), old_params->pageLayout().uncutOutline().boundingRect());
 
-          update_params.setLayoutType(newPageLayout->toLayoutType());
+          update_action.setLayoutType(newPageLayout->toLayoutType());
           new_params.setPageLayout(*newPageLayout);
 
           Dependencies oldDeps = old_params->dependencies();
@@ -250,16 +246,12 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
           new_params.setDependencies(oldDeps);
         }
 
-        update_params.setParams(new_params);
+        update_action.setParams(new_params);
       }
-      m_settings->updatePage(page_id.imageId(), update_params);
+      m_settings->updatePage(page_id.imageId(), update_action);
     }
   } else {
     for (const PageId& page_id : pages) {
-      if (m_pageId == page_id) {
-        continue;
-      }
-
       Settings::UpdateAction update_params;
       update_params.setLayoutType(layout_type);
       m_settings->updatePage(page_id.imageId(), update_params);

@@ -103,61 +103,43 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   status.throwIfCancelled();
 
   Settings::Record record(m_settings->getPageRecord(m_pageInfo.imageId()));
-
-  const OrthogonalRotation pre_rotation(data.xform().preRotation());
-  const Dependencies deps(data.origImage().size(), pre_rotation, record.combinedLayoutType());
-
-  OptionsWidget::UiData ui_data;
-  ui_data.setDependencies(deps);
+  Dependencies deps(data.origImage().size(), data.xform().preRotation(), record.combinedLayoutType());
 
   while (true) {
     const Params* const params = record.params();
 
+    LayoutType new_layout_type = record.combinedLayoutType();
+    AutoManualMode split_line_mode = MODE_AUTO;
     PageLayout new_layout;
-    std::unique_ptr<Params> new_params;
 
     if (!params || !deps.compatibleWith(*params)) {
-      if (!params || ((record.layoutType() == nullptr) || (*record.layoutType() == AUTO_LAYOUT_TYPE))) {
+      if (!params || (record.combinedLayoutType() == AUTO_LAYOUT_TYPE)) {
         new_layout = PageLayoutEstimator::estimatePageLayout(record.combinedLayoutType(), data.grayImage(),
                                                              data.xform(), data.bwThreshold(), m_dbg.get());
 
         status.throwIfCancelled();
-
-        new_params = std::make_unique<Params>(new_layout, deps, MODE_AUTO);
-
-        Dependencies newDeps = deps;
-        newDeps.setLayoutType(new_layout.toLayoutType());
-        new_params->setDependencies(newDeps);
       } else {
-        new_params = std::make_unique<Params>(*params);
-
-        std::unique_ptr<PageLayout> newPageLayout
-            = PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
-
-        new_params->setPageLayout(*newPageLayout);
-
-        Dependencies newDeps = deps;
-        newDeps.setLayoutType(newPageLayout->toLayoutType());
-        new_params->setDependencies(newDeps);
+        new_layout = *PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
+        new_layout_type = new_layout.toLayoutType();
+        split_line_mode = params->splitLineMode();
       }
     } else {
-      PageLayout correctedPageLayout = params->pageLayout();
-      PageLayoutAdapter::correctPageLayoutType(&correctedPageLayout);
-      if (correctedPageLayout.type() != params->pageLayout().type()) {
-        new_params = std::make_unique<Params>(*params);
-        new_params->setPageLayout(correctedPageLayout);
-
-        Dependencies newDeps = deps;
-        newDeps.setLayoutType(correctedPageLayout.toLayoutType());
-        new_params->setDependencies(newDeps);
-      } else {
+      PageLayout corrected_page_layout = params->pageLayout();
+      PageLayoutAdapter::correctPageLayoutType(&corrected_page_layout);
+      if (corrected_page_layout.type() == params->pageLayout().type()) {
         break;
+      } else {
+        new_layout = corrected_page_layout;
+        new_layout_type = new_layout.toLayoutType();
+        split_line_mode = params->splitLineMode();
       }
     }
+    deps.setLayoutType(new_layout_type);
+    const Params new_params(new_layout, deps, split_line_mode);
 
     Settings::UpdateAction update;
-    update.setLayoutType(new_params->pageLayout().toLayoutType());
-    update.setParams(*new_params);
+    update.setLayoutType(new_layout_type);
+    update.setParams(new_params);
 
 #ifndef NDEBUG
     {
@@ -188,6 +170,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     break;
   }
 
+  OptionsWidget::UiData ui_data;
+  ui_data.setDependencies(deps);
   const PageLayout& layout = record.params()->pageLayout();
   ui_data.setLayoutTypeAutoDetected(record.combinedLayoutType() == AUTO_LAYOUT_TYPE);
   ui_data.setPageLayout(layout);

@@ -8,41 +8,41 @@ brings new ones and fixes.
 #### <u>Contents</u>:
 * [Description](#description)
 * [Features](#features)
-    * [**ScanTailor Enhanced**](#scantailor-enhanced)
-        * [Auto margins \[improved\]](#auto-margins-improved)
-        * [Page detect \[reworked\]](#page-detect-reworked)
-        * [Deviation \[reworked\]](#deviation-reworked)
-        * [Picture shape \[reworked\]](#picture-shape-reworked)
-        * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-reworked)
-    * [**ScanTailor Featured**](#scantailor-featured)
-        * [ScanTailor Featured fixes & improvements](#scantailor-featured-fixes--improvements)
-        * [Line vertical dragging on dewarp](#line-vertical-dragging-on-dewarp)
-        * [Square picture zones \[reworked\]](#square-picture-zones-reworked)
-        * [Auto save project \[optimized\]](#auto-save-project-optimized)
-        * [Quadro Zoner \[reworked\]](#quadro-zoner-reworked)
-        * [Marginal dewarping](#marginal-dewarping)
-    * [**ScanTailor Advanced**](#scantailor-advanced-features)
-        * [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements)
-        * [Light and Dark color schemes](#light-and-dark-color-schemes)
-        * [Multi-threading support for batch processing](#multi-threading-support-for-batch-processing)
-        * [Full control over settings on output](#full-control-over-settings-on-output)
-        * [Filling outside areas](#filling-outside-areas)
-        * [Tiff compression](#tiff-compression)
-        * [Adaptive binarization](#adaptive-binarization)
-        * [Splitting output](#splitting-output)
-        * [Original background](#original-background)
-        * [Color segmenter and posterization](#color-segmenter-and-posterization)
-        * [Rectangular picture shape](#rectangular-picture-shape)
-        * [Page area](#page-area)
-        * [New zone interaction modes](#new-zone-interaction-modes)
-        * [Saving zoom and focus on switching output tabs](#saving-zoom-and-focus-on-switching-output-tabs)
-        * [Measurement units system](#measurement-units-system)
-        * [Status bar panel](#status-bar-panel)
-        * [Default parameters](#default-parameters)
-        * [Collapsible filter options](#collapsible-filter-options)
-        * [Auto adjusting content area](#auto-adjusting-content-area)
-        * [Black on white detection](#black-on-white-detection)
-        * [Guides](#guides)
+  * [**ScanTailor Enhanced**](#scantailor-enhanced)
+    * [Auto margins \[improved\]](#auto-margins-improved)
+    * [Page detect \[reworked\]](#page-detect-reworked)
+    * [Deviation \[reworked\]](#deviation-reworked)
+    * [Picture shape \[reworked\]](#picture-shape-reworked)
+    * [Multi column thumbnails view \[reworked\]](#multi-column-thumbnails-view-reworked)
+  * [**ScanTailor Featured**](#scantailor-featured)
+    * [ScanTailor Featured fixes & improvements](#scantailor-featured-fixes--improvements)
+    * [Line vertical dragging on dewarp](#line-vertical-dragging-on-dewarp)
+    * [Square picture zones \[reworked\]](#square-picture-zones-reworked)
+    * [Auto save project \[optimized\]](#auto-save-project-optimized)
+    * [Quadro Zoner \[reworked\]](#quadro-zoner-reworked)
+    * [Marginal dewarping](#marginal-dewarping)
+  * [**ScanTailor Advanced**](#scantailor-advanced-features)
+    * [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements)
+    * [Light and Dark color schemes](#light-and-dark-color-schemes)
+    * [Multi-threading support for batch processing](#multi-threading-support-for-batch-processing)
+    * [Full control over settings on output](#full-control-over-settings-on-output)
+    * [Filling outside areas](#filling-outside-areas)
+    * [Tiff compression](#tiff-compression)
+    * [Adaptive binarization](#adaptive-binarization)
+    * [Splitting output](#splitting-output)
+    * [Original background](#original-background)
+    * [Color segmenter and posterization](#color-segmenter-and-posterization)
+    * [Rectangular picture shape](#rectangular-picture-shape)
+    * [Page area](#page-area)
+    * [New zone interaction modes](#new-zone-interaction-modes)
+    * [Saving zoom and focus on switching output tabs](#saving-zoom-and-focus-on-switching-output-tabs)
+    * [Measurement units system](#measurement-units-system)
+    * [Status bar panel](#status-bar-panel)
+    * [Default parameters](#default-parameters)
+    * [Collapsible filter options](#collapsible-filter-options)
+    * [Auto adjusting content area](#auto-adjusting-content-area)
+    * [Black on white detection](#black-on-white-detection)
+    * [Guides](#guides)
 * [Building](#building)
 
 Description
@@ -102,18 +102,18 @@ Features
 #### ScanTailor Featured
 
 * ##### ScanTailor Featured fixes & improvements
-    * Deleted 3 Red Points.   
-      The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
-      mesh are now eliminated. 
-    * Manual dewarping mode auto switch.   
-      The dewarping mode is now set to MANUAL (from OFF) after the user has moved the dewarping mesh.
-    * Auto dewarping vertical half correction.   
-      This patch corrects the original auto-dewarping in half
-      the cases when it fails. If the vertical content boundary angle (calculated by auto-dewarping)
-      exceeds an empirical value (2.75 degrees from vertical), the patch adds a new point to
-      the distortion model (with the coordinates equal to the neighboring points) to make
-      this boundary vertical. The patch works ONLY for the linear end of the top (bottom)
-      horizontal line of the blue mesh (and not for the opposite curved end).
+  * Deleted 3 Red Points.   
+    The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
+    mesh are now eliminated. 
+  * Manual dewarping mode auto switch.   
+    The dewarping mode is now set to MANUAL (from OFF) after the user has moved the dewarping mesh.
+  * Auto dewarping vertical half correction.   
+    This patch corrects the original auto-dewarping in half
+    the cases when it fails. If the vertical content boundary angle (calculated by auto-dewarping)
+    exceeds an empirical value (2.75 degrees from vertical), the patch adds a new point to
+    the distortion model (with the coordinates equal to the neighboring points) to make
+    this boundary vertical. The patch works ONLY for the linear end of the top (bottom)
+    horizontal line of the blue mesh (and not for the opposite curved end).
  
 * ##### Line vertical dragging on dewarp
   You can move the topmost (bottom-most) horizontal blue line of the dewarping mesh up and
@@ -155,53 +155,59 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 #### <a name="scantailor-advanced-features"></a> ScanTailor Advanced
 
 * ##### ScanTailor Advanced fixes & improvements
-    * Portability.  
-      The settings and program files are stored in the folder with the application.  
-      *Note: If installed into a system directory, where config and data files can't be written into the
-      folder with the application executable, ScanTailor Advanced works as a standalone app and stores
-      its settings and application data in the appropriate system specific paths.*
-    
-    * Page splitting settings influence on the output now by filling offcut.
-      Fill offcut option has been added.
-       
-    * Page layout and all the other views now consider splitting settings.
-      Corresponding improvements are done for thumbnails.
-    
-    * Changed ScanTailor behavior on page split stage.
-         1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
-            than the page the cut applied to, ScanTailor tries to adapt cutters instead of fully
-            rejecting the cut setting and switching to auto mode for those pages as it was before.
-            The later was annoying as pages could be similar and had the difference in a few pixels.
-         2. Added check to reject invalid cut settings in manual mode.
-         3. UI: Added cutters interaction between each other. They can't more intersect each other,
-            which created a wrong page layout configuration before.
-    
-    * Optimized memory usage on the output stage.
-    
-    * Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
-      Now thumbnails are shown evenly.
-    
-    * Added option to control highlighting the thumbnails of pages with high deviation with red asterisks. 
-      The option refreshes the thumbnails instantly.
-    
-    * Deviation feature reworked.  
-        1. A deviation provider implemented.  
-           It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
-        2. Added sorting by decreasing deviation.
-        
-    * Auto and original alignment modes reworked:  
-        1. The original and auto alignment modes didn't work correctly due to the error in code.
-        2. Both the modes didn't work rightly after select content stage or reopening the project file, always requiring secondary batch processing of every page at margins stage to work correctly.
-        3. Reworked calculation method for the original alignment. Now it is more precise.
-        4. Original alignment mode now considers the page box from 4th stage.
-        5. Fixed behaviour of horizontal alignment, when the original mode enabled, and auto margins has been enabled/disabled. Also on applying auto-margins / original alignment to the set of pages, that is now set correctly for each page.
-        6. Added ability to separately control vertical and horizontal automatic alignment when auto or original alignment mode enabled.  
+  * Portability.  
+    The settings and program files are stored in the folder with the application.  
+    *Note: If installed into a system directory, where config and data files can't be written into the
+    folder with the application executable, ScanTailor Advanced works as a standalone app and stores
+    its settings and application data in the appropriate system specific paths.*
+  
+  * Page splitting settings now influence on the output by filling offcut.
+    Fill offcut option has been added.
+     
+  * Page layout and all the other views now consider splitting settings.
+    Corresponding improvements are done for thumbnails.
+  
+  * Changed ScanTailor behavior on page split stage.
+    1. Reworked apply cut feature. Now on applying cut to the pages with different dimensions 
+       than the page the cut applied to, ScanTailor tries to adapt cutters instead of fully
+       rejecting the cut setting and switching to auto mode for those pages as it was before.
+       The later was annoying as pages could be similar and had the difference in a few pixels.
+    2. Added check to reject invalid cut settings in manual mode.
+    3. UI: Added cutters interaction between each other. They can't more intersect each other,
+       which created a wrong page layout configuration before.
+  
+  * Optimized memory usage on the output stage.
+  
+  * Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
+    Now thumbnails are shown evenly.
+  
+  * Added option to control highlighting the thumbnails of pages with high deviation with red asterisks. 
+    The option refreshes the thumbnails instantly.
+  
+  * Deviation feature reworked.  
+    1. A deviation provider implemented.  
+       It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
+    2. Added sorting by decreasing deviation.
+      
+  * Auto and original alignment modes reworked:  
+    1. The original and auto alignment modes didn't work correctly due to the error in code.
+    2. Both the modes didn't work rightly after select content stage or reopening the project file, always requiring secondary batch processing of every page at margins stage to work correctly.
+    3. Reworked calculation method for the original alignment. Now it is more precise.
+    4. Original alignment mode now considers the page box from 4th stage.
+    5. Fixed behaviour of horizontal alignment, when the original mode enabled, and auto margins has been enabled/disabled. Also on applying auto-margins / original alignment to the set of pages, that is now set correctly for each page.
+    6. Added ability to separately control vertical and horizontal automatic alignment when auto or original alignment mode enabled.  
 
-    * Changed the way of the adjustment of the despeckle strength.  
-      Now that's set via the slider. It allows to adjust the despeckle strength more smoothly and exactly.
-      Value 1.0 matches the old cautious mode, 2.0 - normal and 3.0 - aggressive.
+  * Changed the way of the adjustment of the despeckle strength.  
+    Now that's set via the slider. It allows to adjust the despeckle strength more smoothly and exactly.
+    Value 1.0 matches the old cautious mode, 2.0 - normal and 3.0 - aggressive.
+    
+  * Improvements on the thumbnails view:  
+    * Saving selection of pages on filter switch.
+    * Separate highlighting for selection leader in thumbnails.
+    * Navigating between selected pages.
+      Use **`Shift+PgUp/Q`** and **`Shift+PgDown/W`** to navigate between selected pages.
 
-    * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
+  * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
 * ##### Light and Dark color schemes
   You can choose a desired color scheme in settings.

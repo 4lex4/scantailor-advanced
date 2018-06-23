@@ -231,22 +231,20 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
       Settings::UpdateAction update_action;
       update_action.setLayoutType(layout_type);
       if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
-        Params new_params(params);
+        Params new_page_params(params);
+        const Params* old_page_params = m_settings->getPageRecord(page_id.imageId()).params();
+        if (old_page_params) {
+          PageLayout new_page_layout = PageLayoutAdapter::adaptPageLayout(
+              params.pageLayout(), old_page_params->pageLayout().uncutOutline().boundingRect());
 
-        const Params* old_params = m_settings->getPageRecord(page_id.imageId()).params();
-        if (old_params != nullptr) {
-          std::unique_ptr<PageLayout> newPageLayout = PageLayoutAdapter::adaptPageLayout(
-              params.pageLayout(), old_params->pageLayout().uncutOutline().boundingRect());
+          update_action.setLayoutType(new_page_layout.toLayoutType());
+          new_page_params.setPageLayout(new_page_layout);
 
-          update_action.setLayoutType(newPageLayout->toLayoutType());
-          new_params.setPageLayout(*newPageLayout);
-
-          Dependencies oldDeps = old_params->dependencies();
-          oldDeps.setLayoutType(newPageLayout->toLayoutType());
-          new_params.setDependencies(oldDeps);
+          Dependencies deps = old_page_params->dependencies();
+          deps.setLayoutType(new_page_layout.toLayoutType());
+          new_page_params.setDependencies(deps);
         }
-
-        update_action.setParams(new_params);
+        update_action.setParams(new_page_params);
       }
       m_settings->updatePage(page_id.imageId(), update_action);
     }

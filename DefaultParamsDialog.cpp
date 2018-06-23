@@ -64,8 +64,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
 
   profileCB->addItem(tr("Default"), "Default");
   profileCB->addItem(tr("Source"), "Source");
-  std::unique_ptr<std::list<QString>> profileList = m_profileManager.getProfileList();
-  for (const QString& profileName : *profileList) {
+  const std::list<QString> profileList = m_profileManager.getProfileList();
+  for (const QString& profileName : profileList) {
     if (!isProfileNameReserved(profileName)) {
       profileCB->addItem(profileName, profileName);
     }

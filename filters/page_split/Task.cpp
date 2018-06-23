@@ -119,7 +119,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
 
         status.throwIfCancelled();
       } else {
-        new_layout = *PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
+        new_layout = PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
         new_layout_type = new_layout.toLayoutType();
         split_line_mode = params->splitLineMode();
       }

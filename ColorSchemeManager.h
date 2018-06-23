@@ -22,7 +22,7 @@ class ColorSchemeManager {
  private:
   static std::unique_ptr<ColorSchemeManager> m_instance;
 
-  std::unique_ptr<ColorScheme::ColorParams> m_colorParams;
+  ColorScheme::ColorParams m_colorParams;
 };
 
 

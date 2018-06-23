@@ -22,15 +22,15 @@ DefaultParamsProfileManager::DefaultParamsProfileManager() {
 
 DefaultParamsProfileManager::DefaultParamsProfileManager(const QString& path) : m_path(path) {}
 
-std::unique_ptr<std::list<QString>> DefaultParamsProfileManager::getProfileList() const {
-  auto profileList = std::make_unique<std::list<QString>>();
+std::list<QString> DefaultParamsProfileManager::getProfileList() const {
+  std::list<QString> profileList;
 
   QDir dir(m_path);
   if (dir.exists()) {
     QList<QFileInfo> fileInfoList = dir.entryInfoList();
     for (const QFileInfo& fileInfo : fileInfoList) {
       if (fileInfo.isFile() && ((fileInfo.suffix() == "stp") || (fileInfo.suffix() == "xml"))) {
-        profileList->push_back(fileInfo.baseName());
+        profileList.push_back(fileInfo.baseName());
       }
     }
   }

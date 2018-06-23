@@ -16,7 +16,7 @@ ColorSchemeManager* ColorSchemeManager::instance() {
 
 void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
   qApp->setStyle(QStyleFactory::create("Fusion"));
-  qApp->setPalette(*colorScheme.getPalette());
+  qApp->setPalette(colorScheme.getPalette());
   if (std::unique_ptr<QString> styleSheet = colorScheme.getStyleSheet()) {
     qApp->setStyleSheet(*styleSheet);
   }
@@ -24,8 +24,8 @@ void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
 }
 
 QBrush ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QBrush& defaultColor) const {
-  const auto it = m_colorParams->find(colorParam);
-  if (it != m_colorParams->end()) {
+  const auto it = m_colorParams.find(colorParam);
+  if (it != m_colorParams.end()) {
     return it->second;
   } else {
     return defaultColor;

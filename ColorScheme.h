@@ -9,7 +9,7 @@ class ColorScheme {
  public:
   virtual ~ColorScheme() = default;
 
-  virtual std::unique_ptr<QPalette> getPalette() const = 0;
+  virtual QPalette getPalette() const = 0;
 
   virtual std::unique_ptr<QString> getStyleSheet() const = 0;
 
@@ -36,7 +36,7 @@ class ColorScheme {
    *
    * @return the list of colors to override the default values by the color scheme
    */
-  virtual std::unique_ptr<ColorParams> getColorParams() const = 0;
+  virtual ColorParams getColorParams() const = 0;
 };
 
 #endif  // SCANTAILOR_COLORSCHEME_H

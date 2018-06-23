@@ -35,25 +35,24 @@ QLineF PageLayoutAdapter::adaptCutter(const QLineF& cutterLine, const QRectF& ne
   return QLineF(upperIntersection, lowerIntersection);
 }
 
-std::unique_ptr<QVector<QLineF>> PageLayoutAdapter::adaptCutters(const QVector<QLineF>& cuttersList,
-                                                                 const QRectF& newRect) {
-  auto adaptedCutters = std::make_unique<QVector<QLineF>>();
+QVector<QLineF> PageLayoutAdapter::adaptCutters(const QVector<QLineF>& cuttersList, const QRectF& newRect) {
+  QVector<QLineF> adaptedCutters;
 
   for (QLineF cutter : cuttersList) {
     QLineF adaptedCutter = adaptCutter(cutter, newRect);
-    adaptedCutters->append(adaptedCutter);
+    adaptedCutters.append(adaptedCutter);
   }
 
-  std::sort(adaptedCutters->begin(), adaptedCutters->end(),
+  std::sort(adaptedCutters.begin(), adaptedCutters.end(),
             [](const QLineF& line1, const QLineF& line2) -> bool { return line1.x1() < line2.x1(); });
 
   // checking whether the cutters intersect each other inside the new rect, and if so fixing that
   const qreal upperBound = newRect.top();
   const qreal lowerBound = newRect.bottom();
-  for (int i = 1; i < adaptedCutters->size(); i++) {
+  for (int i = 1; i < adaptedCutters.size(); i++) {
     QPointF intersection;
-    QLineF cutterLeft = adaptedCutters->at(i - 1);
-    QLineF cutterRight = adaptedCutters->at(i);
+    QLineF cutterLeft = adaptedCutters.at(i - 1);
+    QLineF cutterRight = adaptedCutters.at(i);
 
     if (cutterLeft.intersect(cutterRight, &intersection) == QLineF::NoIntersection) {
       continue;
@@ -69,8 +68,8 @@ std::unique_ptr<QVector<QLineF>> PageLayoutAdapter::adaptCutters(const QVector<Q
         cutterLeft.setP1(QPointF(intersection.x(), newY));
         cutterRight.setP1(QPointF(intersection.x(), newY));
       }
-      adaptedCutters->replace(i - 1, cutterLeft);
-      adaptedCutters->replace(i, cutterRight);
+      adaptedCutters.replace(i - 1, cutterLeft);
+      adaptedCutters.replace(i, cutterRight);
     }
   }
 
@@ -113,27 +112,26 @@ void PageLayoutAdapter::correctPageLayoutType(PageLayout* layout) {
   }
 }
 
-std::unique_ptr<PageLayout> PageLayoutAdapter::adaptPageLayout(const PageLayout& pageLayout, const QRectF& outline) {
+PageLayout PageLayoutAdapter::adaptPageLayout(const PageLayout& pageLayout, const QRectF& outline) {
   if (pageLayout.uncutOutline().boundingRect() == outline) {
-    return std::make_unique<PageLayout>(pageLayout);
+    return pageLayout;
   }
 
-  std::unique_ptr<PageLayout> newPageLayout;
+  PageLayout newPageLayout;
 
   if (pageLayout.type() == PageLayout::SINGLE_PAGE_CUT) {
-    std::unique_ptr<QVector<QLineF>> adaptedCutters
-        = PageLayoutAdapter::adaptCutters(QVector<QLineF>{pageLayout.cutterLine(0), pageLayout.cutterLine(1)}, outline);
-    newPageLayout = std::make_unique<PageLayout>(outline, adaptedCutters->at(0), adaptedCutters->at(1));
-    correctPageLayoutType(newPageLayout.get());
+    const QVector<QLineF> adaptedCutters
+        = PageLayoutAdapter::adaptCutters({pageLayout.cutterLine(0), pageLayout.cutterLine(1)}, outline);
+    newPageLayout = PageLayout(outline, adaptedCutters.at(0), adaptedCutters.at(1));
+    correctPageLayoutType(&newPageLayout);
   } else if (pageLayout.type() == PageLayout::TWO_PAGES) {
     QLineF adaptedCutter = PageLayoutAdapter::adaptCutter(pageLayout.cutterLine(0), outline);
-    newPageLayout = std::make_unique<PageLayout>(outline, adaptedCutter);
-    correctPageLayoutType(newPageLayout.get());
+    newPageLayout = PageLayout(outline, adaptedCutter);
+    correctPageLayoutType(&newPageLayout);
   } else {
-    newPageLayout = std::make_unique<PageLayout>(outline);
+    newPageLayout = PageLayout(outline);
   }
 
   return newPageLayout;
 }
-
 }  // namespace page_split

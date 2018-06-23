@@ -10,11 +10,11 @@
 
 class DarkScheme : public ColorScheme {
  public:
-  std::unique_ptr<QPalette> getPalette() const override;
+  QPalette getPalette() const override;
 
   std::unique_ptr<QString> getStyleSheet() const override;
 
-  std::unique_ptr<ColorParams> getColorParams() const override;
+  ColorParams getColorParams() const override;
 };
 
 

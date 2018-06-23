@@ -17,7 +17,7 @@ class DefaultParamsProfileManager {
 
   explicit DefaultParamsProfileManager(const QString& path);
 
-  std::unique_ptr<std::list<QString>> getProfileList() const;
+  std::list<QString> getProfileList() const;
 
   std::unique_ptr<DefaultParams> readProfile(const QString& name) const;
 

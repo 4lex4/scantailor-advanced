@@ -137,7 +137,6 @@ class ThumbnailSequence::Impl {
  private:
   class ItemsByIdTag;
   class ItemsInOrderTag;
-
   class SelectedThenUnselectedTag;
 
   typedef multi_index_container<
@@ -390,7 +389,7 @@ ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logica
       m_itemsById(m_items.get<ItemsByIdTag>()),
       m_itemsInOrder(m_items.get<ItemsInOrderTag>()),
       m_selectedThenUnselected(m_items.get<SelectedThenUnselectedTag>()),
-      m_selectionLeader(0) {
+      m_selectionLeader(nullptr) {
   m_graphicsScene.setContextMenuEventCallback(
       [&](QGraphicsSceneContextMenuEvent* evt) { this->sceneContextMenuEvent(evt); });
 }
@@ -426,21 +425,37 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
     return;
   }
 
-  const Item* some_selected_item = 0;
-
+  const Item* some_selected_item = nullptr;
   for (const PageInfo& page_info : pages) {
     std::unique_ptr<CompositeItem> composite(getCompositeItem(0, page_info));
     m_itemsInOrder.push_back(Item(page_info, composite.release()));
     const Item* item = &m_itemsInOrder.back();
     item->composite->setItem(item);
 
-    if (selected.find(page_info.id()) != selected.end()) {
+    const ImageId& image_id = page_info.id().imageId();
+
+    bool item_found = (selected.find(page_info.id()) != selected.end());
+    if (!item_found) {
+      switch (page_info.id().subPage()) {
+        case PageId::LEFT_PAGE:
+        case PageId::RIGHT_PAGE:
+          item_found = (selected.find(PageId(image_id, PageId::SINGLE_PAGE)) != selected.end());
+          break;
+        case PageId::SINGLE_PAGE:
+          item_found = (selected.find(PageId(image_id, PageId::LEFT_PAGE)) != selected.end())
+                       || (selected.find(PageId(image_id, PageId::RIGHT_PAGE)) != selected.end());
+          break;
+      }
+    }
+    if (item_found) {
       item->setSelected(true);
       moveToSelected(item);
       some_selected_item = item;
-    }
-    if (page_info.id() == selection_leader.id()) {
-      m_selectionLeader = item;
+
+      if ((page_info.id() == selection_leader.id())
+          || (!m_selectionLeader && (image_id == selection_leader.id().imageId()))) {
+        m_selectionLeader = item;
+      }
     }
   }
 
@@ -451,7 +466,6 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
       m_selectionLeader = some_selected_item;
     }
   }
-
   if (m_selectionLeader) {
     m_selectionLeader->setSelectionLeader(true);
     m_owner.emitNewSelectionLeader(selection_leader, m_selectionLeader->composite, DEFAULT_SELECTION_FLAGS);
@@ -734,7 +748,7 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& page_id) {
       item.setSelected(false);
       moveToUnselected(&item);
       if (m_selectionLeader == &item) {
-        m_selectionLeader = 0;
+        m_selectionLeader = nullptr;
       }
     }
   }
@@ -903,7 +917,7 @@ void ThumbnailSequence::Impl::removePages(const std::set<PageId>& to_remove) {
     } else {
       // Removing this page.
       if (m_selectionLeader == &*ord_it) {
-        m_selectionLeader = 0;
+        m_selectionLeader = nullptr;
       }
       pos_delta.ry() -= ord_it->composite->boundingRect().height() + SPACING;
       delete ord_it->composite;
@@ -1038,7 +1052,7 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
     return;
   }
   // Select the new selection leader among other selected items.
-  m_selectionLeader = 0;
+  m_selectionLeader = nullptr;
   flags |= AVOID_SCROLLING_TO;
   ItemsInOrder::iterator ord_it1(m_items.project<ItemsInOrderTag>(id_it));
   ItemsInOrder::iterator ord_it2(ord_it1);
@@ -1142,7 +1156,7 @@ void ThumbnailSequence::Impl::selectItemNoModifiers(const ItemsById::iterator& i
 }
 
 void ThumbnailSequence::Impl::clear() {
-  m_selectionLeader = 0;
+  m_selectionLeader = nullptr;
 
   ItemsInOrder::iterator it(m_itemsInOrder.begin());
   const ItemsInOrder::iterator end(m_itemsInOrder.end());
@@ -1158,7 +1172,7 @@ void ThumbnailSequence::Impl::clear() {
 }
 
 void ThumbnailSequence::Impl::clearSelection() {
-  m_selectionLeader = 0;
+  m_selectionLeader = nullptr;
 
   for (const Item& item : m_selectedThenUnselected) {
     if (!item.isSelected()) {

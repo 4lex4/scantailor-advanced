@@ -227,7 +227,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateSortOptions();
 
-  void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider);
+  void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider,
+                          ThumbnailSequence::SelectionAction selection_action = ThumbnailSequence::RESET_SELECTION);
 
   void removeWidgetsFromLayout(QLayout* layout);
 

@@ -550,7 +550,8 @@ void MainWindow::updateSortOptions() {
   }
 }
 
-void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider) {
+void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider,
+                                    const ThumbnailSequence::SelectionAction selection_action) {
   if (m_thumbnailCache) {
     const intrusive_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
 
@@ -558,8 +559,7 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
         make_intrusive<ThumbnailFactory>(m_thumbnailCache, m_maxLogicalThumbSize, task));
   }
 
-  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), ThumbnailSequence::RESET_SELECTION,
-                         page_order_provider);
+  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), selection_action, page_order_provider);
 
   if (!m_thumbnailCache) {
     // Empty project.
@@ -567,20 +567,22 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
     m_thumbSequence->setThumbnailFactory(nullptr);
   }
 
-  const PageId page(m_selectedPage.get(getCurrentView()));
-  if (m_thumbSequence->setSelection(page)) {
-    // OK
-  } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::LEFT_PAGE))) {
-    // OK
-  } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::RIGHT_PAGE))) {
-    // OK
-  } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::SINGLE_PAGE))) {
-    // OK
-  } else {
-    // Last resort.
-    m_thumbSequence->setSelection(m_thumbSequence->firstPage().id());
+  if (selection_action != ThumbnailSequence::KEEP_SELECTION) {
+    const PageId page(m_selectedPage.get(getCurrentView()));
+    if (m_thumbSequence->setSelection(page)) {
+      // OK
+    } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::LEFT_PAGE))) {
+      // OK
+    } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::RIGHT_PAGE))) {
+      // OK
+    } else if (m_thumbSequence->setSelection(PageId(page.imageId(), PageId::SINGLE_PAGE))) {
+      // OK
+    } else {
+      // Last resort.
+      m_thumbSequence->setSelection(m_thumbSequence->firstPage().id());
+    }
   }
-}  // MainWindow::resetThumbSequence
+}
 
 void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership ownership) {
   if (isBatchProcessingInProgress()) {
@@ -972,7 +974,7 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
   const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
   const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
 
-  resetThumbSequence(currentPageOrderProvider());
+  resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
 
   if (!focusButton->isChecked()) {
     thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);

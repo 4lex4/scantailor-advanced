@@ -111,8 +111,10 @@ ImageView::ImageView(const QImage& image,
     m_pageRectEdgeHandlers[i].setProximityCursor(edge_cursor);
     m_pageRectEdgeHandlers[i].setInteractionCursor(edge_cursor);
 
-    makeLastFollower(m_contentRectCornerHandlers[i]);
-    makeLastFollower(m_contentRectEdgeHandlers[i]);
+    if (m_contentRect.isValid()) {
+      makeLastFollower(m_contentRectCornerHandlers[i]);
+      makeLastFollower(m_contentRectEdgeHandlers[i]);
+    }
     if (m_pageRectEnabled) {
       makeLastFollower(m_pageRectCornerHandlers[i]);
       makeLastFollower(m_pageRectEdgeHandlers[i]);
@@ -146,7 +148,9 @@ ImageView::ImageView(const QImage& image,
     m_pageRectAreaHandler.setProximityCursor(cursor);
     m_pageRectAreaHandler.setInteractionCursor(cursor);
 
-    makeLastFollower(m_contentRectAreaHandler);
+    if (m_contentRect.isValid()) {
+      makeLastFollower(m_contentRectAreaHandler);
+    }
     if (m_pageRectEnabled) {
       makeLastFollower(m_pageRectAreaHandler);
     }
@@ -182,6 +186,9 @@ void ImageView::createContentBox() {
   QRectF content_rect(0, 0, virtual_rect.width() * 0.7, virtual_rect.height() * 0.7);
   content_rect.moveCenter(virtual_rect.center());
   m_contentRect = content_rect;
+  forcePageRectDescribeContent();
+  enableContentRectInteraction(true);
+
   update();
   emit manualContentRectSet(m_contentRect);
 }
@@ -194,7 +201,9 @@ void ImageView::removeContentBox() {
     return;
   }
 
+  enableContentRectInteraction(false);
   m_contentRect = QRectF();
+  
   update();
   emit manualContentRectSet(m_contentRect);
 }
@@ -406,6 +415,10 @@ void ImageView::forceInsideImage(QRectF& widget_rect, const int edge_mask) const
 }
 
 void ImageView::forcePageRectDescribeContent() {
+  if (!m_contentRect.isValid()) {
+    return;
+  }
+
   const QRectF oldPageRect = m_pageRect;
   m_pageRect |= m_contentRect;
   if (m_pageRectEnabled && (m_pageRect != oldPageRect)) {
@@ -449,18 +462,20 @@ QRectF ImageView::pageRectPosition() const {
 void ImageView::pageRectMoveRequest(const QPolygonF& poly_moved) {
   QRectF pageRectInWidget(poly_moved.boundingRect());
 
-  const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
-  if (pageRectInWidget.left() > content_rect.left()) {
-    pageRectInWidget.translate(content_rect.left() - pageRectInWidget.left(), 0);
-  }
-  if (pageRectInWidget.right() < content_rect.right()) {
-    pageRectInWidget.translate(content_rect.right() - pageRectInWidget.right(), 0);
-  }
-  if (pageRectInWidget.top() > content_rect.top()) {
-    pageRectInWidget.translate(0, content_rect.top() - pageRectInWidget.top());
-  }
-  if (pageRectInWidget.bottom() < content_rect.bottom()) {
-    pageRectInWidget.translate(0, content_rect.bottom() - pageRectInWidget.bottom());
+  if (m_contentRect.isValid()) {
+    const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
+    if (pageRectInWidget.left() > content_rect.left()) {
+      pageRectInWidget.translate(content_rect.left() - pageRectInWidget.left(), 0);
+    }
+    if (pageRectInWidget.right() < content_rect.right()) {
+      pageRectInWidget.translate(content_rect.right() - pageRectInWidget.right(), 0);
+    }
+    if (pageRectInWidget.top() > content_rect.top()) {
+      pageRectInWidget.translate(0, content_rect.top() - pageRectInWidget.top());
+    }
+    if (pageRectInWidget.bottom() < content_rect.bottom()) {
+      pageRectInWidget.translate(0, content_rect.bottom() - pageRectInWidget.bottom());
+    }
   }
 
   m_pageRect = widgetToVirtual().mapRect(pageRectInWidget);
@@ -599,7 +614,27 @@ QRect ImageView::findContentInArea(const QRect& area) const {
 
 void ImageView::setPageRectEnabled(const bool state) {
   m_pageRectEnabled = state;
+  enablePageRectInteraction(state);
+  update();
+}
 
+void ImageView::enableContentRectInteraction(const bool state) {
+  if (state) {
+    for (int i = 0; i < 4; ++i) {
+      makeLastFollower(m_contentRectCornerHandlers[i]);
+      makeLastFollower(m_contentRectEdgeHandlers[i]);
+    }
+    makeLastFollower(m_contentRectAreaHandler);
+  } else {
+    for (int i = 0; i < 4; ++i) {
+      m_contentRectCornerHandlers[i].unlink();
+      m_contentRectEdgeHandlers[i].unlink();
+    }
+    m_contentRectAreaHandler.unlink();
+  }
+}
+
+void ImageView::enablePageRectInteraction(const bool state) {
   if (state) {
     for (int i = 0; i < 4; ++i) {
       makeLastFollower(m_pageRectCornerHandlers[i]);
@@ -612,8 +647,6 @@ void ImageView::setPageRectEnabled(const bool state) {
       m_pageRectEdgeHandlers[i].unlink();
     }
     m_pageRectAreaHandler.unlink();
-  };
-
-  update();
+  }
 }
 }  // namespace select_content

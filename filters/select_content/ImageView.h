@@ -122,6 +122,10 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   QRect findContentInArea(const QRect& area) const;
 
+  void enableContentRectInteraction(bool state);
+
+  void enablePageRectInteraction(bool state);
+
 
   DraggablePoint m_contentRectCorners[4];
   ObjectDragHandler m_contentRectCornerHandlers[4];

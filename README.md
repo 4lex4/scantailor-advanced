@@ -33,7 +33,6 @@ brings new ones and fixes.
     * [Original background](#original-background)
     * [Color segmenter and posterization](#color-segmenter-and-posterization)
     * [Rectangular picture shape](#rectangular-picture-shape)
-    * [Page area](#page-area)
     * [New zone interaction modes](#new-zone-interaction-modes)
     * [Saving zoom and focus on switching output tabs](#saving-zoom-and-focus-on-switching-output-tabs)
     * [Measurement units system](#measurement-units-system)
@@ -78,7 +77,8 @@ Features
   Page detect feature allows detect page in black margins or switch off page content
   detection and keep original page layout.
   
-  *This feature has been reworked and is now a part of the [page area](#page-area) feature.*
+  *This feature has been reworked.*
+  *See [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements) for more information.*
  
 * ##### Deviation \[reworked\]
   Deviation feature enables highlighting of different pages. Highlighted in red are pages
@@ -188,7 +188,17 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     1. A deviation provider implemented.  
        It supports caching and recalculates the values on demand. There isn't more any necessity to store deviation in page parameters and so in the project file, that approach caused some problems as the deviation is not actually a page parameter and depends on all the pages in the project.  
     2. Added sorting by decreasing deviation.
-      
+
+  * Page/content boxes and auto margins features fixes & improvements.  
+    1. Added a feature of dragging both content and page areas by using **`Shift+LMB`** combination.
+    2. A page box implementation reworked. Now it's interactive and can be adjusted by the same way as a content box is done.
+    3. The page rectangle does not require refreshing page and won't be reset on the content area changes.
+    4. Implemented applying the page/content boxes to the other pages automatically correcting the position of the boxes.
+    5. Added width and height parameters to regulate the page box size in manual mode.
+    6. Auto margins option has been moved out of the alignment settings and does no more force to use only the original layout.
+    7. Auto margins feature now considers page box changes made at the selection content stage.
+    8. Other bug fixes and improvements.
+
   * Auto and original alignment modes reworked:  
     1. The original and auto alignment modes didn't work correctly due to the error in code.
     2. Both the modes didn't work rightly after select content stage or reopening the project file, always requiring secondary batch processing of every page at margins stage to work correctly.
@@ -280,25 +290,6 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 * ##### Rectangular picture shape
   "Quadro" picture shape mode from Featured was merged with Rectangular one from Enhanced. Also removed restriction of ver. Featured on deleting all the auto zones. Before it resulted in resetting all the auto zones back.
   Added sensitivity option. If sensitivity equals 25%, the results will be the same as they were in old "Quadro" mode, if 100% - as in old "Rectangular".
-
-* ##### Page area
-  This feature is a further development of the auto margins and page box features from version Enhanced.
-  
-  Selection content stage changes:
-    1. A page box implementation reworked. Now it's interactive and can be adjusted by the same way as a content box is done.
-    2. The page rectangle does not require refreshing page and won't be reset on the content area changes.
-    3. The page rectangle is now drawn in the thumbnails.
-    4. Implemented the new feature of applying the page box set manually to the other pages. For pages of a different size ST automatically corrects page box place. The same change has been made to applying the content box feature.
-    5. Added a feature of dragging both content and page areas by using **`Shift+LMB`** combination.
-    6. Added width and height parameters to regulate the page box size in manual mode.
-    7. A page area is now allowed to be out of the page bounds in manual mode.
-    
-  Page layout stage changes:
-    1. Auto margins option has been moved out of alignment settings and does no more force to use only the original layout.
-    2. Auto margins feature now considers page box changes on the 4th stage.
-    3. Corresponding bug fixes.
-  
-  Owing to the changes above, there appeared a new way to set margins for books and documents, pages of which have similar formatting. At content selection stage we just set page box and content box to a page, applying those content and page boxes to the pages with similar formatting, use auto margins for those pages at page layout stage instead of adjusting the margins relative to the content box, and then go to the output.
 
 * ##### New zone interaction modes  
   **`Shift+LMB`** on a zone - drag the zone.  

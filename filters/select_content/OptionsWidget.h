@@ -116,17 +116,9 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
 
-  void contentDetectAutoToggled();
+  void contentDetectToggled(AutoManualMode mode);
 
-  void contentDetectManualToggled();
-
-  void contentDetectDisableToggled();
-
-  void pageDetectAutoToggled();
-
-  void pageDetectManualToggled();
-
-  void pageDetectDisableToggled();
+  void pageDetectToggled(AutoManualMode mode);
 
   void fineTuningChanged(bool checked);
 
@@ -140,6 +132,8 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
   void updatePageDetectOptionsDisplay();
 
   void commitCurrentParams();
+
+  void updateDependenciesIfNecessary();
 
   void setupUiConnections();
 

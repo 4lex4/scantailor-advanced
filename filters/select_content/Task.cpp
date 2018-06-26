@@ -85,12 +85,10 @@ Task::~Task() = default;
 FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) {
   status.throwIfCancelled();
 
-  const Dependencies deps(data.xform().resultingPreCropArea());
-
-  OptionsWidget::UiData ui_data;
-  ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
-
   std::unique_ptr<Params> params(m_settings->getPageParams(m_pageId));
+  const Dependencies deps = (params) ? Dependencies(data.xform().resultingPreCropArea(), params->contentDetectionMode(),
+                                                    params->pageDetectionMode(), params->isFineTuningEnabled())
+                                     : Dependencies(data.xform().resultingPreCropArea());
 
   Params new_params(deps);
   if (params) {
@@ -98,79 +96,60 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     new_params.setDependencies(deps);
   }
 
-  if (!params || !params->dependencies().matches(deps)) {
-    QRectF page_rect(data.xform().resultingRect());
-    QRectF content_rect(page_rect);
+  const PhysSizeCalc phys_size_calc(data.xform());
 
-    if (new_params.pageDetectionMode() == MODE_AUTO) {
-      page_rect
-          = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(), m_settings->pageDetectionBox(),
-                                    m_settings->pageDetectionTolerance(), m_dbg.get());
-    } else if (new_params.pageDetectionMode() == MODE_MANUAL) {
-      // shifting page rect for skewed pages correcting
-      QRectF corrected_page_rect(new_params.pageRect());
-      if (params && new_params.pageRect().isValid() && !params->dependencies().matches(deps)
-          && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
-        const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
-        const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
-        corrected_page_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
-                                      (new_page_rect.height() - old_page_rect.height()) / 2);
-      }
+  bool need_update_content_box = false;
+  bool need_update_page_box = false;
 
-      // allow the page box to be out of the page bounds but checking intersecting with the page
-      if (corrected_page_rect.isValid() && corrected_page_rect.intersected(data.xform().resultingRect()).isValid()) {
-        page_rect = corrected_page_rect;
-      } else {
+  if (!params || !deps.compatibleWith(params->dependencies(), &need_update_content_box, &need_update_page_box)) {
+    QRectF page_rect(new_params.pageRect());
+    QRectF content_rect(new_params.contentRect());
+
+    if (need_update_page_box) {
+      if (new_params.pageDetectionMode() == MODE_AUTO) {
+        page_rect
+            = PageFinder::findPageBox(status, data, new_params.isFineTuningEnabled(), m_settings->pageDetectionBox(),
+                                      m_settings->pageDetectionTolerance(), m_dbg.get());
+      } else if (new_params.pageDetectionMode() == MODE_DISABLED) {
         page_rect = data.xform().resultingRect();
       }
-    } else {
-      page_rect = data.xform().resultingRect();
-    }
 
-    if (new_params.contentDetectionMode() == MODE_AUTO) {
-      content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_dbg.get());
-    } else if ((new_params.contentDetectionMode() == MODE_MANUAL) || new_params.contentRect().isEmpty()) {
-      if (!new_params.contentRect().isEmpty()) {
-        // shifting content rect for skewed pages correcting
-        QRectF corrected_content_rect(new_params.contentRect());
-        if (params && new_params.contentRect().isValid() && !params->dependencies().matches(deps)
-            && params->dependencies().rotatedPageOutline().boundingRect().isValid()) {
-          const QRectF new_page_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
-          const QRectF old_page_rect = params->dependencies().rotatedPageOutline().boundingRect();
-          corrected_content_rect.translate((new_page_rect.width() - old_page_rect.width()) / 2,
-                                           (new_page_rect.height() - old_page_rect.height()) / 2);
-          // we don't want the content box to be out of the page box so use intersecting
-          corrected_content_rect = corrected_content_rect.intersected(page_rect);
-        }
-
-        if (corrected_content_rect.isValid()) {
-          content_rect = corrected_content_rect;
-        } else {
-          content_rect = page_rect;
-        }
+      if (!data.xform().resultingRect().intersected(page_rect).isValid()) {
+        page_rect = data.xform().resultingRect();
       }
-    } else {
-      content_rect = page_rect;
+
+      // Force update the content box if it doesn't fit into the page box updated.
+      if (content_rect.isValid() && (content_rect.intersected(page_rect)) != content_rect) {
+        need_update_content_box = true;
+      }
+
+      new_params.setPageRect(page_rect);
     }
 
-    if (content_rect.isValid()) {
-      page_rect |= content_rect;
-    }
+    if (need_update_content_box) {
+      if (new_params.contentDetectionMode() == MODE_AUTO) {
+        content_rect = ContentBoxFinder::findContentBox(status, data, page_rect, m_dbg.get());
+      } else if (new_params.contentDetectionMode() == MODE_DISABLED) {
+        content_rect = page_rect;
+      }
 
-    new_params.setPageRect(page_rect);
-    new_params.setContentRect(content_rect);
+      if (content_rect.isValid()) {
+        content_rect &= page_rect;
+      }
+
+      new_params.setContentRect(content_rect);
+      new_params.setContentSizeMM(phys_size_calc.sizeMM(content_rect));
+    }
   }
 
+  OptionsWidget::UiData ui_data;
+  ui_data.setSizeCalc(phys_size_calc);
   ui_data.setContentRect(new_params.contentRect());
   ui_data.setPageRect(new_params.pageRect());
   ui_data.setDependencies(deps);
   ui_data.setContentDetectionMode(new_params.contentDetectionMode());
   ui_data.setPageDetectionMode(new_params.pageDetectionMode());
   ui_data.setFineTuneCornersEnabled(new_params.isFineTuningEnabled());
-
-  if (!params || !params->dependencies().matches(deps)) {
-    new_params.setContentSizeMM(ui_data.contentSizeMM());
-  }
 
   m_settings->setPageParams(m_pageId, new_params);
 

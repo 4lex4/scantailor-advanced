@@ -41,8 +41,11 @@ void CacheDrivenTask::process(const PageInfo& page_info,
                               AbstractFilterDataCollector* collector,
                               const ImageTransformation& xform) {
   std::unique_ptr<Params> params(m_settings->getPageParams(page_info.id()));
-  const Dependencies deps(xform.resultingPreCropArea());
-  if (!params || !params->dependencies().matches(deps)) {
+  const Dependencies deps = (params) ? Dependencies(xform.resultingPreCropArea(), params->contentDetectionMode(),
+                                                    params->pageDetectionMode(), params->isFineTuningEnabled())
+                                     : Dependencies(xform.resultingPreCropArea());
+
+  if (!params || !deps.compatibleWith(params->dependencies())) {
     if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
       thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
           thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), xform)));

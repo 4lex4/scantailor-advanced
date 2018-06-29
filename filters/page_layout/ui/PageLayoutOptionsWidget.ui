@@ -835,16 +835,16 @@
              </size>
             </property>
             <property name="acceptDrops">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Use mouse wheel or hold LMB and move the cursor to scroll the content.</string>
+             <string/>
             </property>
             <property name="toolTipDuration">
              <number>-1</number>
             </property>
             <property name="statusTip">
-             <string>Use mouse wheel or hold LMB and move the cursor to scroll the content.</string>
+             <string/>
             </property>
             <property name="autoFillBackground">
              <bool>false</bool>
@@ -886,7 +886,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="textInteractionFlags">
-             <set>Qt::NoTextInteraction</set>
+             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
             </property>
            </widget>
           </item>

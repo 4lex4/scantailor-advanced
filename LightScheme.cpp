@@ -44,7 +44,7 @@ QPalette LightScheme::getPalette() const {
 std::unique_ptr<QString> LightScheme::getStyleSheet() const {
   std::unique_ptr<QString> styleSheet = nullptr;
 
-  QFile styleSheetFile(QString(":/light_scheme/stylesheet.qss"));
+  QFile styleSheetFile(QString(":/light_scheme/qss/stylesheet.qss"));
   if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     styleSheet = std::make_unique<QString>(styleSheetFile.readAll());
 

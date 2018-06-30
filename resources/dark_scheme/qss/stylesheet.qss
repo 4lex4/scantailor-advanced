@@ -59,17 +59,28 @@ QPushButton:flat, QToolButton:flat {
   border: none;
 }
 
-QCheckBox::indicator, QTreeView::indicator, QTableView::indicator, QGroupBox::indicator, QMenu::indicator:non-exclusive,
-QRadioButton::indicator, QMenu::indicator:exclusive {
+QCheckBox::indicator, QTreeView::indicator, QTableView::indicator, QGroupBox::indicator, QRadioButton::indicator {
   width: 0.875em;
   height: 0.875em;
   margin: 0.0625em;
 }
 
-QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indicator:unchecked, QGroupBox::indicator:unchecked,
-QMenu::indicator:non-exclusive:unchecked {
+QMenu::indicator:non-exclusive, QMenu::indicator:exclusive {
+  width: 0.875em;
+  height: 0.875em;
+  margin: 0.0625em 0.0625em 0.0625em 0.1875em;
+}
+
+QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indicator:unchecked, QGroupBox::indicator:unchecked {
   border: 0.0625em solid #666666;
   margin: 0em;
+  background-color: palette(base);
+  border-radius: 0.1719em;
+}
+
+QMenu::indicator:non-exclusive:unchecked {
+  border: 0.0625em solid #666666;
+  margin: 0em 0em 0em 0.125em;
   background-color: palette(base);
   border-radius: 0.1719em;
 }
@@ -145,10 +156,16 @@ QCheckBox::indicator:indeterminate:disabled, QTreeView::indicator:indeterminate:
   image: url(:/dark_scheme/icons/icon_checkbox_indeterminate_disabled.png);
 }
 
-QRadioButton::indicator:unchecked,
-QMenu::indicator:exclusive:unchecked {
+QRadioButton::indicator:unchecked {
   border: 0.0625em solid #666666;
   margin: 0em;
+  background-color: palette(base);
+  border-radius: 0.4844em;
+}
+
+QMenu::indicator:exclusive:unchecked {
+  border: 0.0625em solid #666666;
+  margin: 0em 0em 0em 0.125em;
   background-color: palette(base);
   border-radius: 0.4844em;
 }

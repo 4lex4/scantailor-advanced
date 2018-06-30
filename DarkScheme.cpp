@@ -1,5 +1,6 @@
 
 #include "DarkScheme.h"
+#include <QStyleFactory>
 #include <memory>
 #include <unordered_map>
 
@@ -40,30 +41,34 @@ QPalette DarkScheme::getPalette() const {
 }
 
 std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
-  std::unique_ptr<QString> qsStylesheet = nullptr;
+  std::unique_ptr<QString> styleSheet = nullptr;
 
-  QFile qfDarkStyle(QString(":/dark_scheme/stylesheet.qss"));
-  if (qfDarkStyle.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    qsStylesheet = std::make_unique<QString>(qfDarkStyle.readAll());
+  QFile styleSheetFile(QString(":/dark_scheme/stylesheet.qss"));
+  if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    styleSheet = std::make_unique<QString>(styleSheetFile.readAll());
 
-    qfDarkStyle.close();
+    styleSheetFile.close();
   }
 
-  return qsStylesheet;
+  return styleSheet;
 }
 
 ColorScheme::ColorParams DarkScheme::getColorParams() const {
   ColorScheme::ColorParams customColors;
 
-  customColors.insert(ColorParams::value_type(ThumbnailSequenceSelectedItemBackground, QColor(0x42, 0x42, 0x42)));
-  customColors.insert(ColorParams::value_type(ThumbnailSequenceSelectionLeaderBackground, QColor(0x4E, 0x4E, 0x4E)));
-  customColors.insert(ColorParams::value_type(OpenNewProjectBorder, QColor(0x53, 0x53, 0x53)));
-  customColors.insert(ColorParams::value_type(ProcessingIndicationFade, QColor(0x28, 0x28, 0x28)));
-  customColors.insert(ColorParams::value_type(ProcessingIndicationHeadColor, QColor(0xDD, 0xDD, 0xDD)));
-  customColors.insert(ColorParams::value_type(ProcessingIndicationTail, QColor(0x6B, 0x6B, 0x6B)));
-  customColors.insert(ColorParams::value_type(StageListHead, customColors.at(ProcessingIndicationHeadColor)));
-  customColors.insert(ColorParams::value_type(StageListTail, customColors.at(ProcessingIndicationTail)));
-  customColors.insert(ColorParams::value_type(FixDpiDialogErrorText, QColor(0xF3, 0x49, 0x41)));
+  customColors[ThumbnailSequenceSelectedItemBackground] = QColor(0x42, 0x42, 0x42);
+  customColors[ThumbnailSequenceSelectionLeaderBackground] = QColor(0x4E, 0x4E, 0x4E);
+  customColors[OpenNewProjectBorder] = QColor(0x53, 0x53, 0x53);
+  customColors[ProcessingIndicationFade] = QColor(0x28, 0x28, 0x28);
+  customColors[ProcessingIndicationHeadColor] = QColor(0xDD, 0xDD, 0xDD);
+  customColors[ProcessingIndicationTail] = QColor(0x6B, 0x6B, 0x6B);
+  customColors[StageListHead] = customColors.at(ProcessingIndicationHeadColor);
+  customColors[StageListTail] = customColors.at(ProcessingIndicationTail);
+  customColors[FixDpiDialogErrorText] = QColor(0xF3, 0x49, 0x41);
 
   return customColors;
+}
+
+QStyle* DarkScheme::getStyle() const {
+  return QStyleFactory::create("Fusion");
 }

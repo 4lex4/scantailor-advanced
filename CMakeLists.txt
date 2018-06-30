@@ -396,8 +396,7 @@ if (WIN32)
   source_group("Resources" FILES resources/win32/resources.rc)
 endif()
 
-set(
-    common_sources
+set(common_sources
     BackgroundExecutor.cpp BackgroundExecutor.h
     PixmapRenderer.cpp PixmapRenderer.h
     BubbleAnimation.cpp BubbleAnimation.h
@@ -467,6 +466,7 @@ set(
     ColorScheme.h
     DarkScheme.cpp DarkScheme.h
     LightScheme.cpp LightScheme.h
+    NativeScheme.cpp NativeScheme.h
     ColorSchemeManager.cpp ColorSchemeManager.h
     PageRange.cpp PageRange.h
     SelectedPage.cpp SelectedPage.h
@@ -505,8 +505,7 @@ set(
     config.h.in
     ${common_ui_files})
 
-set(
-    gui_only_sources
+set(gui_only_sources
     Application.cpp Application.h
     SkinnedButton.cpp SkinnedButton.h
     RelinkablePathVisualization.cpp RelinkablePathVisualization.h
@@ -530,11 +529,9 @@ set(
     DefaultParamsDialog.cpp DefaultParamsDialog.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
 
-set(
-    cli_only_sources
+set(cli_only_sources
     ConsoleBatch.cpp ConsoleBatch.h
-    main-cli.cpp
-)
+    main-cli.cpp)
 
 source_group("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

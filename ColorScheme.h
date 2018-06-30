@@ -2,12 +2,15 @@
 #ifndef SCANTAILOR_COLORSCHEME_H
 #define SCANTAILOR_COLORSCHEME_H
 
+#include <QStyle>
 #include <QtGui/QPalette>
 #include <unordered_map>
 
 class ColorScheme {
  public:
   virtual ~ColorScheme() = default;
+
+  virtual QStyle* getStyle() const = 0;
 
   virtual QPalette getPalette() const = 0;
 

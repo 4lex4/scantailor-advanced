@@ -44,7 +44,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-202</y>
+        <y>0</y>
         <width>209</width>
         <height>804</height>
        </rect>
@@ -54,6 +54,9 @@
         <widget class="CollapsibleGroupBox" name="marginsGroup">
          <property name="title">
           <string>Margins</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -300,6 +303,9 @@
          <property name="title">
           <string>Alignment</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="topMargin">
            <number>9</number>
@@ -363,6 +369,9 @@
            <widget class="QGroupBox" name="autoAlignSettingsGroup">
             <property name="title">
              <string>Auto aligning</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <property name="leftMargin">
@@ -797,6 +806,9 @@
          </property>
          <property name="title">
           <string>Guides Help</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <property name="sizeConstraint">

@@ -19,6 +19,9 @@
      <property name="title">
       <string>Rotate</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <layout class="QVBoxLayout">
       <item>
        <layout class="QHBoxLayout">

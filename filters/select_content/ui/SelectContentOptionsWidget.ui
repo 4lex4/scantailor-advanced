@@ -19,6 +19,9 @@
      <property name="title">
       <string>Page Box</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="2">
        <widget class="QPushButton" name="pageDetectDisableBtn">
@@ -194,6 +197,9 @@
     <widget class="CollapsibleGroupBox" name="contentBoxGroup">
      <property name="title">
       <string>Content Box</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="1">

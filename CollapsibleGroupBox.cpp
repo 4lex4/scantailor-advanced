@@ -25,6 +25,8 @@ void CollapsibleGroupBox::initialize() {
   setFocusProxy(m_collapseButton);
   setFocusPolicy(Qt::StrongFocus);
 
+  this->setAlignment(Qt::AlignCenter);
+
   connect(m_collapseButton, &QAbstractButton::clicked, this, &CollapsibleGroupBox::toggleCollapsed);
   connect(this, &QGroupBox::toggled, this, &CollapsibleGroupBox::checkToggled);
   connect(this, &QGroupBox::clicked, this, &CollapsibleGroupBox::checkClicked);

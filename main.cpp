@@ -26,6 +26,7 @@
 #include "PngMetadataLoader.h"
 #include "TiffMetadataLoader.h"
 #include "config.h"
+#include "NativeScheme.h"
 
 int main(int argc, char** argv) {
   // rescaling for high DPI displays
@@ -62,7 +63,9 @@ int main(int argc, char** argv) {
   {
     QString val = settings.value("settings/color_scheme", "dark").toString();
     std::unique_ptr<ColorScheme> scheme;
-    if (val == "light") {
+    if (val == "native") {
+      scheme = std::make_unique<NativeScheme>();
+    } else if (val == "light") {
       scheme = std::make_unique<LightScheme>();
     } else {
       scheme = std::make_unique<DarkScheme>();

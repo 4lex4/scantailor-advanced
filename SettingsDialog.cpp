@@ -42,8 +42,11 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
 
   ui.colorSchemeBox->addItem(tr("Dark"));
   ui.colorSchemeBox->addItem(tr("Light"));
+  ui.colorSchemeBox->addItem(tr("Native"));
   QString val = settings.value("settings/color_scheme", "dark").toString();
-  if (val == "light") {
+  if (val == "native") {
+    ui.colorSchemeBox->setCurrentIndex(2);
+  } else if (val == "light") {
     ui.colorSchemeBox->setCurrentIndex(1);
   } else {
     ui.colorSchemeBox->setCurrentIndex(0);
@@ -111,6 +114,8 @@ void SettingsDialog::commitChanges() {
     settings.setValue("settings/color_scheme", "dark");
   } else if (ui.colorSchemeBox->currentIndex() == 1) {
     settings.setValue("settings/color_scheme", "light");
+  } else if (ui.colorSchemeBox->currentIndex() == 2) {
+    settings.setValue("settings/color_scheme", "native");
   }
 
   settings.setValue("settings/bw_compression", ui.tiffCompressionBWBox->currentData().toInt());

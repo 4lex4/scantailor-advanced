@@ -84,9 +84,9 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
 
   QPainter painter(this);
 
-  painter.setPen(
-      QPen(ColorSchemeManager::instance()->getColorParam(ColorScheme::OpenNewProjectBorder, palette().windowText()),
-           border));
+  const QBrush border_brush
+      = ColorSchemeManager::instance()->getColorParam(ColorScheme::OpenNewProjectBorder, palette().windowText());
+  painter.setPen(QPen(border_brush, border));
 
   painter.drawRect(except_margins);
 }  // NewOpenProjectPanel::paintEvent

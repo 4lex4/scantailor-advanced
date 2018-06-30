@@ -1,13 +1,12 @@
-
-#ifndef SCANTAILOR_DARKSCHEME_H
-#define SCANTAILOR_DARKSCHEME_H
+#ifndef SCANTAILOR_ADVANCED_NATIVESCHEME_H
+#define SCANTAILOR_ADVANCED_NATIVESCHEME_H
 
 #include <QtCore>
 #include <QtGui>
 #include <memory>
 #include "ColorScheme.h"
 
-class DarkScheme : public ColorScheme {
+class NativeScheme : public ColorScheme {
  public:
   QStyle* getStyle() const override;
 
@@ -18,5 +17,4 @@ class DarkScheme : public ColorScheme {
   ColorParams getColorParams() const override;
 };
 
-
-#endif  // SCANTAILOR_DARKSCHEME_H
+#endif //SCANTAILOR_ADVANCED_NATIVESCHEME_H

@@ -203,7 +203,7 @@
    <property name="minimumSize">
     <size>
      <width>274</width>
-     <height>134</height>
+     <height>204</height>
     </size>
    </property>
    <property name="features">
@@ -220,7 +220,7 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -276,11 +276,49 @@
       </widget>
      </item>
      <item>
-      <widget class="NonOwningWidget" name="filterOptions" native="true"/>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>256</width>
+          <height>185</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="NonOwningWidget" name="filterOptions" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
     </layout>
-    <zorder>filterOptions</zorder>
-    <zorder>filterList</zorder>
    </widget>
   </widget>
   <action name="actionDebug">

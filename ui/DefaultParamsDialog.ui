@@ -393,8 +393,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>193</width>
+            <height>162</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -635,8 +635,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>116</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -807,8 +807,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>314</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1114,8 +1114,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>410</width>
+            <height>319</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -2701,11 +2701,6 @@
                              </item>
                              <item>
                               <widget class="QLabel" name="thresholLabel">
-                               <property name="font">
-                                <font>
-                                 <pointsize>8</pointsize>
-                                </font>
-                               </property>
                                <property name="frameShape">
                                 <enum>QFrame::NoFrame</enum>
                                </property>

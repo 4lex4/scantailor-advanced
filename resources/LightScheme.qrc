@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="/">
     <file>light_scheme/qss/stylesheet.qss</file>
+    <file>light_scheme/qss/stylesheet_win.qss</file>
     <file>light_scheme/icons/icon_close.png</file>
     <file>light_scheme/icons/icon_undock.png</file>
     <file>light_scheme/icons/icon_branch_closed.png</file>

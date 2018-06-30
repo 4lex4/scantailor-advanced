@@ -43,7 +43,11 @@ QPalette DarkScheme::getPalette() const {
 std::unique_ptr<QString> DarkScheme::getStyleSheet() const {
   std::unique_ptr<QString> styleSheet = nullptr;
 
+#ifdef _WIN32
+  QFile styleSheetFile(QString(":/dark_scheme/qss/stylesheet_win.qss"));
+#else
   QFile styleSheetFile(QString(":/dark_scheme/qss/stylesheet.qss"));
+#endif
   if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     styleSheet = std::make_unique<QString>(styleSheetFile.readAll());
 

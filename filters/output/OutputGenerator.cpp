@@ -1251,9 +1251,6 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
       bottom_polyline.push_back(transform.map(i));
     }
 
-
-    const PageId& pageId = pageId;
-
     QString stAngle;
 
     float max_angle = 2.75;
@@ -1341,8 +1338,6 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
     bw_image = orthogonalRotation(bw_image, degrees);
 
     setupTrivialDistortionModel(distortion_model);
-
-    const PageId& pageId = pageId;
 
     int max_red_points = 5;
     XSpline top_spline;
@@ -1453,7 +1448,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
   {
     QTransform post_rotate;
 
-    QPointF center(m_outRect.width() / 2, m_outRect.height() / 2);
+    QPointF center(m_outRect.width() / 2.0, m_outRect.height() / 2.0);
 
     post_rotate.translate(center.x(), center.y());
     post_rotate.rotate(-deskew_angle);
@@ -2575,7 +2570,7 @@ void OutputGenerator::deskew(QImage* image, const double angle, const QColor& ou
     return;
   }
 
-  QPointF center(image->width() / 2, image->height() / 2);
+  QPointF center(image->width() / 2.0, image->height() / 2.0);
 
   QTransform rot;
   rot.translate(center.x(), center.y());

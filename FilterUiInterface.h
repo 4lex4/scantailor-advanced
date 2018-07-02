@@ -41,7 +41,7 @@ class FilterUiInterface {
   virtual void setImageWidget(QWidget* widget,
                               Ownership ownership,
                               DebugImages* debug_images = nullptr,
-                              bool clearImageWidget = true)
+                              bool overlay = false)
       = 0;
 
   virtual void invalidateThumbnail(const PageId& page_id) = 0;

@@ -209,7 +209,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   void setImageWidget(QWidget* widget,
                       Ownership ownership,
                       DebugImages* debug_images = nullptr,
-                      bool clear_image_widget = true) override;
+                      bool overlay = false) override;
 
   intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() override;
 

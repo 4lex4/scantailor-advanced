@@ -639,28 +639,15 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
   connect(widget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
 }  // MainWindow::setOptionsWidget
 
-void MainWindow::setImageWidget(QWidget* widget,
-                                const Ownership ownership,
-                                DebugImages* debug_images,
-                                bool clear_image_widget) {
+void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, DebugImages* debug_images, bool overlay) {
   if (isBatchProcessingInProgress() && (widget != m_batchProcessingWidget.get())) {
     if (ownership == TRANSFER_OWNERSHIP) {
       delete widget;
     }
-
     return;
   }
 
-  QWidget* current_widget = m_imageFrameLayout->currentWidget();
-  if (dynamic_cast<ProcessingIndicationWidget*>(current_widget) != nullptr) {
-    if (!clear_image_widget) {
-      return;
-    }
-  }
-
-  bool current_widget_is_image = (Utils::castOrFindChild<ImageViewBase*>(current_widget) != nullptr);
-
-  if (clear_image_widget || !current_widget_is_image) {
+  if (!overlay) {
     removeImageWidget();
   }
 
@@ -669,18 +656,20 @@ void MainWindow::setImageWidget(QWidget* widget,
   }
 
   if (!debug_images || debug_images->empty()) {
-    m_imageFrameLayout->addWidget(widget);
-    if (!clear_image_widget && current_widget_is_image) {
-      m_imageFrameLayout->setCurrentWidget(widget);
+    if (widget != m_imageFrameLayout->currentWidget()) {
+      m_imageFrameLayout->addWidget(widget);
+      if (overlay) {
+        m_imageFrameLayout->setCurrentWidget(widget);
+      }
     }
   } else {
     m_tabbedDebugImages->addTab(widget, "Main");
     AutoRemovingFile file;
     QString label;
     while (!(file = debug_images->retrieveNext(&label)).get().isNull()) {
-      QWidget* widget = new DebugImageView(file);
-      m_imageWidgetCleanup.add(widget);
-      m_tabbedDebugImages->addTab(widget, label);
+      QWidget* view = new DebugImageView(file);
+      m_imageWidgetCleanup.add(view);
+      m_tabbedDebugImages->addTab(view, label);
     }
     m_imageFrameLayout->addWidget(m_tabbedDebugImages.get());
   }
@@ -712,8 +701,8 @@ intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
     Requester(MainWindow* wnd) : m_wnd(wnd) {}
 
     virtual void operator()() {
-      if (MainWindow* wnd = m_wnd) {
-        wnd->showRelinkingDialog();
+      if (!m_wnd.isNull()) {
+        m_wnd->showRelinkingDialog();
       }
     }
 
@@ -1442,7 +1431,7 @@ void MainWindow::removeFilterOptionsWidget() {
   // Delete the old widget we were owning, if any.
   m_optionsWidgetCleanup.clear();
 
-  m_optionsWidget = 0;
+  m_optionsWidget = nullptr;
 }
 
 void MainWindow::updateProjectActions() {
@@ -1545,7 +1534,8 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
     if (m_imageFrameLayout->indexOf(m_processingIndicationWidget.get()) != -1) {
       m_processingIndicationWidget->processingRestartedEffect();
     }
-    setImageWidget(m_processingIndicationWidget.get(), KEEP_OWNERSHIP, 0, false);
+    bool current_widget_is_image = (Utils::castOrFindChild<ImageViewBase*>(m_imageFrameLayout->widget(0)) != nullptr);
+    setImageWidget(m_processingIndicationWidget.get(), KEEP_OWNERSHIP, nullptr, current_widget_is_image);
     m_stages->filterAt(m_curFilter)->preUpdateUI(this, page);
   }
 

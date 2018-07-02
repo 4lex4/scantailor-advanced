@@ -141,6 +141,13 @@ ImageViewBase::ImageViewBase(const QImage& image,
       m_hqTransformEnabled(true),
       m_infoProvider(Dpm(m_image)) {
   /* For some reason, the default viewport fills background with
+   * a color different from QPalette::Window at the first show on Windows.
+   * Here we make it not fill it automatically at all
+   * doing the work in paintEvent().
+   */
+  setAttribute(Qt::WA_OpaquePaintEvent);
+
+  /* For some reason, the default viewport fills background with
    * a color different from QPalette::Window. Here we make it not
    * fill it at all, assuming QMainWindow will do that anyway
    * (with the correct color). Note that an attempt to do the same
@@ -400,6 +407,10 @@ void ImageViewBase::ensureStatusTip(const QString& status_tip) {
 
 void ImageViewBase::paintEvent(QPaintEvent* event) {
   QPainter painter(viewport());
+
+  // Fill the background as Qt::WA_OpaquePaintEvent attribute is enabled.
+  painter.fillRect(viewport()->rect(), palette().color(backgroundRole()));
+
   painter.save();
 
   const double xscale = m_virtualToWidget.m11();

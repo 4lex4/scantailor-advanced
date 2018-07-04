@@ -21,6 +21,8 @@ brings new ones and fixes.
     * [Auto save project \[optimized\]](#auto-save-project-optimized)
     * [Quadro Zoner \[reworked\]](#quadro-zoner-reworked)
     * [Marginal dewarping](#marginal-dewarping)
+  * [**ScanTailor Universal**](#scantailor-universal)
+    * [ScanTailor Universal fixes & improvements](#scantailor-universal-fixes--improvements)
   * [**ScanTailor Advanced**](#scantailor-advanced-features)
     * [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements)
     * [Light and Dark color schemes](#light-and-dark-color-schemes)
@@ -151,6 +153,15 @@ Features
 has't been moved due to dirty realization. Their functionality is fully covered by 
 [full control over settings on output](#full-control-over-settings-on-output) and 
 [splitting output](#splitting-output) features.*
+
+#### ScanTailor Universal
+
+* ##### ScanTailor Universal fixes & improvements
+  * Improvements for the thumbnail view.  
+    1. More accurate multi-column list handling.
+    2. Scaling thumbnails via **`Alt+Wheel`**.
+    
+  * Fixed some bugs of official and Enhanced version.
 
 #### <a name="scantailor-advanced-features"></a> ScanTailor Advanced
 

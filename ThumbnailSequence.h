@@ -223,6 +223,10 @@ class ThumbnailSequence : public QObject {
 
   std::vector<PageRange> selectedRanges() const;
 
+  const QSizeF& getMaxLogicalThumbSize() const;
+
+  void setMaxLogicalThumbSize(const QSizeF& size);
+
  signals:
 
   void newSelectionLeader(const PageInfo& page_info, const QRectF& thumb_rect, ThumbnailSequence::SelectionFlags flags);

@@ -174,7 +174,7 @@
           </size>
          </property>
          <property name="statusTip">
-          <string>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or  Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones.</string>
+          <string>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones. Alt+Wheel - scale thumbnails.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignHCenter|Qt::AlignTop</set>

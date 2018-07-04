@@ -218,8 +218,6 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
                           const QString& project_file_path = QString(),
                           const ProjectReader* project_reader = nullptr);
 
-  intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache();
-
   void setupThumbView();
 
   void showNewOpenProjectPanel();
@@ -297,6 +295,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void setDockWidgetsVisible(bool state);
 
+  void scaleThumbnails(const QWheelEvent* wheel_event);
+
   QSizeF m_maxLogicalThumbSize;
   intrusive_ptr<ProjectPages> m_pages;
   intrusive_ptr<StageSequence> m_stages;
@@ -326,8 +326,6 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   int m_ignorePageOrderingChanges;
   bool m_debug;
   bool m_closing;
-  bool m_beepOnBatchProcessingCompletion;
-  QTimer m_thumbResizeTimer;
   QTimer m_autoSaveTimer;
   bool m_autoSaveProject;
   std::unique_ptr<StatusBarPanel> m_statusBarPanel;

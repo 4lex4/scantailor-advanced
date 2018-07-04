@@ -64,7 +64,7 @@ ColorScheme::ColorParams LightScheme::getColorParams() const {
   customColors[ThumbnailSequenceSelectedItemBackground] = QColor(0x72, 0x72, 0x72);
   customColors[ThumbnailSequenceSelectedItemText] = Qt::white;
   customColors[ThumbnailSequenceItemText] = Qt::black;
-  customColors[ThumbnailSequenceSelectionLeaderBackground] = QColor(0x69, 0x69, 0x69);
+  customColors[ThumbnailSequenceSelectionLeaderBackground] = QColor(0x5E, 0x5E, 0x5E);
   customColors[OpenNewProjectBorder] = QColor(0xCC, 0xCC, 0xCC);
   customColors[ProcessingIndicationFade] = QColor(0x93, 0x93, 0x93);
   customColors[ProcessingIndicationHeadColor] = QColor(0x30, 0x30, 0x30);

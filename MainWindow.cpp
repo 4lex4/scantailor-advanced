@@ -112,11 +112,10 @@ MainWindow::MainWindow()
       m_ignorePageOrderingChanges(0),
       m_debug(false),
       m_closing(false) {
-  m_maxLogicalThumbSize = QSize(250, 160);
-  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize);
+  QSettings app_settings;
 
-  m_thumbResizeTimer.setSingleShot(true);
-  connect(&m_thumbResizeTimer, SIGNAL(timeout()), SLOT(invalidateAllThumbnails()));
+  m_maxLogicalThumbSize = app_settings.value("settings/max_logical_thumb_size", QSize(250, 160)).toSizeF();
+  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize);
 
   m_autoSaveTimer.setSingleShot(true);
   connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
@@ -455,9 +454,17 @@ void MainWindow::setupThumbView() {
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
   if ((obj == thumbView) && (ev->type() == QEvent::Resize)) {
-    m_thumbResizeTimer.start(200);
+    emit invalidateAllThumbnails();
   }
 
+  if ((obj == thumbView || obj == thumbView->verticalScrollBar()) && (ev->type() == QEvent::Wheel)) {
+    QWheelEvent* wheel_event = static_cast<QWheelEvent*>(ev);
+    if (wheel_event->modifiers() == Qt::AltModifier) {
+      scaleThumbnails(wheel_event);
+      wheel_event->accept();
+      return true;
+    }
+  }
   return false;
 }
 
@@ -1992,4 +1999,25 @@ void MainWindow::changeEvent(QEvent* event) {
 void MainWindow::setDockWidgetsVisible(bool state) {
   filterDockWidget->setVisible(state);
   thumbnailsDockWidget->setVisible(state);
+}
+
+void MainWindow::scaleThumbnails(const QWheelEvent* wheel_event) {
+  const QPoint& angle_delta = wheel_event->angleDelta();
+  const int wheel_dist = angle_delta.x() + angle_delta.y();
+
+  if (std::abs(wheel_dist) >= 30) {
+    const double dx = std::copysign(25.0, wheel_dist);
+    const double dy = std::copysign(16.0, wheel_dist);
+    const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
+    const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
+    m_maxLogicalThumbSize = QSizeF(width, height);
+    if (m_thumbSequence) {
+      m_thumbSequence->setMaxLogicalThumbSize(m_maxLogicalThumbSize);
+    }
+    
+    setupThumbView();
+    resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
+
+    QSettings().setValue("settings/max_logical_thumb_size", m_maxLogicalThumbSize);
+  }
 }

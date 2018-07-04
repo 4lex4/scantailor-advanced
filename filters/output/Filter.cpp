@@ -19,6 +19,7 @@
 #include "Filter.h"
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
+#include <OrderByCompleteness.h>
 #include <tiff.h>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -34,10 +35,16 @@
 #include "ThumbnailPixmapCache.h"
 
 namespace output {
-Filter::Filter(const PageSelectionAccessor& page_selection_accessor) : m_settings(new Settings) {
+Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
+    : m_settings(new Settings), m_selectedPageOrder(0) {
   if (CommandLine::get().isGui()) {
     m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
   }
+
+  const PageOrderOption::ProviderPtr default_order;
+  const auto order_by_completeness = make_intrusive<OrderByCompleteness>();
+  m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
+  m_pageOrderOptions.emplace_back(tr("Order by completeness"), order_by_completeness);
 }
 
 Filter::~Filter() = default;
@@ -178,5 +185,18 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
 
 OptionsWidget* Filter::optionsWidget() {
   return m_optionsWidget.get();
+}
+
+std::vector<PageOrderOption> Filter::pageOrderOptions() const {
+  return m_pageOrderOptions;
+}
+
+int Filter::selectedPageOrder() const {
+  return m_selectedPageOrder;
+}
+
+void Filter::selectPageOrder(int option) {
+  assert((unsigned) option < m_pageOrderOptions.size());
+  m_selectedPageOrder = option;
 }
 }  // namespace output

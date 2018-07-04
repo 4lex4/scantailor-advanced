@@ -42,9 +42,7 @@ Filter::Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAcc
     m_optionsWidget.reset(new OptionsWidget(m_settings, m_pages, page_selection_accessor));
   }
 
-  typedef PageOrderOption::ProviderPtr ProviderPtr;
-
-  const ProviderPtr default_order;
+  const PageOrderOption::ProviderPtr default_order;
   const auto order_by_split_type = make_intrusive<OrderBySplitTypeProvider>(m_settings);
   m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
   m_pageOrderOptions.emplace_back(tr("Order by split type"), order_by_split_type);

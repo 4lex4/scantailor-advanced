@@ -41,9 +41,7 @@ Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
   }
 
-  typedef PageOrderOption::ProviderPtr ProviderPtr;
-
-  const ProviderPtr default_order;
+  const PageOrderOption::ProviderPtr default_order;
   const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
   m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
   m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);

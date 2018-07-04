@@ -19,6 +19,7 @@
 #ifndef OUTPUT_FILTER_H_
 #define OUTPUT_FILTER_H_
 
+#include <QCoreApplication>
 #include <QImage>
 #include "AbstractFilter.h"
 #include "FillZonePropFactory.h"
@@ -43,6 +44,7 @@ class Settings;
 class Filter : public AbstractFilter {
   DECLARE_NON_COPYABLE(Filter)
 
+  Q_DECLARE_TR_FUNCTIONS(output::Filter)
  public:
   explicit Filter(const PageSelectionAccessor& page_selection_accessor);
 
@@ -72,6 +74,12 @@ class Filter : public AbstractFilter {
 
   OptionsWidget* optionsWidget();
 
+  std::vector<PageOrderOption> pageOrderOptions() const override;
+
+  int selectedPageOrder() const override;
+
+  void selectPageOrder(int option) override;
+
  private:
   void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
 
@@ -79,6 +87,8 @@ class Filter : public AbstractFilter {
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   PictureZonePropFactory m_pictureZonePropFactory;
   FillZonePropFactory m_fillZonePropFactory;
+  std::vector<PageOrderOption> m_pageOrderOptions;
+  int m_selectedPageOrder;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_FILTER_H_

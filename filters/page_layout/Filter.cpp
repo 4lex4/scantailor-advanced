@@ -49,9 +49,7 @@ Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& p
     m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
   }
 
-  typedef PageOrderOption::ProviderPtr ProviderPtr;
-
-  const ProviderPtr default_order;
+  const PageOrderOption::ProviderPtr default_order;
   const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_settings);
   const auto order_by_height = make_intrusive<OrderByHeightProvider>(m_settings);
   const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());

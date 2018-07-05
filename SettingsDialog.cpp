@@ -21,6 +21,7 @@
 #include <QSettings>
 #include <QtCore/QDir>
 #include <QtWidgets/QMessageBox>
+#include <cmath>
 #include "Application.h"
 #include "OpenGLSupport.h"
 

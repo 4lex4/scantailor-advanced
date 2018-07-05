@@ -27,6 +27,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QTransform>
+#include <unordered_map>
 #include "Alignment.h"
 #include "DragHandler.h"
 #include "DraggableObject.h"

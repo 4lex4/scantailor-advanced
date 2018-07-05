@@ -32,7 +32,7 @@ class ColorScheme {
     FixDpiDialogErrorText
   };
 
-  using ColorParams = std::unordered_map<ColorParam, QColor>;
+  using ColorParams = std::unordered_map<ColorParam, QColor, std::hash<int>>;
 
   /**
    * List of colors for elements that don't support styling.
